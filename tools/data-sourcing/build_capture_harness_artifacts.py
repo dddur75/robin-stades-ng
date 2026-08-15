@@ -55,13 +55,16 @@ CONTRACT_TYPES = (
 
 
 def _json_text(value: object) -> str:
-    return json.dumps(
-        value,
-        ensure_ascii=False,
-        indent=2,
-        sort_keys=True,
-        allow_nan=False,
-    ) + "\n"
+    return (
+        json.dumps(
+            value,
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+            allow_nan=False,
+        )
+        + "\n"
+    )
 
 
 def _load_pack(repo: Path) -> dict[str, Any]:
@@ -69,6 +72,11 @@ def _load_pack(repo: Path) -> dict[str, Any]:
         dict[str, Any],
         json.loads((repo / FIXTURE_PATH).read_text(encoding="utf-8")),
     )
+
+
+def _load_compatibility_witness(repo: Path) -> dict[str, Any]:
+    path = repo / "reports" / "data-sourcing" / "canary-harness-compatibility-witness-v1.json"
+    return cast(dict[str, Any], json.loads(path.read_text(encoding="utf-8")))
 
 
 def _contract_inventory() -> list[dict[str, object]]:
@@ -138,15 +146,14 @@ def _synthetic_proof(repo: Path) -> tuple[CaptureManifest, OfflineReplayResult, 
             ingested_at=ingested,
         )
         replay = store.replay(manifest.snapshot_id)
-        outputs = b"".join(
-            path.read_bytes() for path in store.root.rglob("*") if path.is_file()
-        )
+        outputs = b"".join(path.read_bytes() for path in store.root.rglob("*") if path.is_file())
         sentinel_occurrences = outputs.count(sentinel.encode("utf-8"))
     return manifest, replay, sentinel_occurrences
 
 
 def build_reports(repo: Path) -> dict[str, str]:
     manifest, replay, sentinel_occurrences = _synthetic_proof(repo)
+    compatibility = _load_compatibility_witness(repo)
     policy = InternalRetentionPolicy()
     contract_report = {
         "schema_version": SCHEMA_VERSION,
@@ -199,9 +206,7 @@ def build_reports(repo: Path) -> dict[str, str]:
         "public_terms_review": {
             "reviewed_at": "2026-08-15",
             "terms_url": "https://the-odds-api.com/terms-and-conditions.html",
-            "official_domain_warning_url": (
-                "https://the-odds-api.com/impersonation-warning.html"
-            ),
+            "official_domain_warning_url": ("https://the-odds-api.com/impersonation-warning.html"),
             "compatible_use": "internal analytical tool without raw redistribution",
             "prohibited_use": "standalone resale, repackaging, or redistribution of raw data",
             "public_raw_retention_duration": "NOT_STATED",
@@ -229,17 +234,72 @@ def build_reports(repo: Path) -> dict[str, str]:
             "normalized retained evidence boundary",
         ],
         "threats": [
-            {"id": "T01", "threat": "secret disclosure", "control": "opaque capability with mandatory public-material scan; stable input-free request exception; no value in fingerprint, receipt, log, exception, or path", "test": "tests/capture/test_capture_harness.py::test_invalid_request_exception_hides_secret_sentinel"},
-            {"id": "T02", "threat": "unauthorized network", "control": "no transport implementation; LIVE_CANARY gate; socket and DNS test blockade", "test": "tests/capture/conftest.py"},
-            {"id": "T03", "threat": "quota, retry, or budget-ledger semantic overrun", "control": "persistent fsync hash-chained budget with cross-process file lock and validated cumulative transitions; retry zero; complete and internally coherent quota headers", "test": "tests/capture/test_capture_harness.py::test_budget_ledger_rejects_semantically_rehashed_reset"},
-            {"id": "T04", "threat": "redirect or host confusion", "control": "exact HTTPS host allowlist and redirects disabled", "test": "tests/capture/test_capture_harness.py::test_request_guards_fail_closed"},
-            {"id": "T05", "threat": "parser-before-receipt evidence loss", "control": "raw SHA-256 and content-addressed write precede parsing", "test": "tests/capture/test_capture_harness.py::test_invalid_json_is_hashed_before_parse_and_quarantined"},
-            {"id": "T06", "threat": "raw persistence beyond policy, unaudited deletion, or capture-versus-TTL race", "control": "shared inter-process capture/TTL lock; TTL-governed intake receipt before raw; 30-day write-ahead hash-chained deletion ledger", "test": "tests/capture/test_capture_harness.py::test_capture_and_ttl_are_serialized_for_the_same_raw_hash"},
-            {"id": "T07", "threat": "ambiguous, duplicated, many-to-one, unused, or revision-divergent mapping", "control": "bijective and exhaustive mapping set, including revisions, bound to snapshot identity; duplicate event/bookmaker checks", "test": "tests/capture/test_capture_harness.py::test_mapping_lineage_is_bound_to_snapshot_identity"},
-            {"id": "T10", "threat": "tampered receipt, missing intake, backdated manifest, or broken provenance link", "control": "self-verifying digests; explicit final-to-intake and captured-at links; cross-link and normalized-hash checks before replay proof", "test": "tests/capture/test_capture_harness.py::test_receipt_manifest_and_normalized_links_fail_closed_on_tamper"},
-            {"id": "T11", "threat": "oversized raw exhausts local storage", "control": "size rejection after hashing but before intake raw persistence", "test": "tests/capture/test_capture_harness.py::test_http_redirect_size_and_quota_fail_closed"},
-            {"id": "T08", "threat": "backdated availability", "control": "available_at is max(first observed, market last update)", "test": "tests/capture/test_capture_harness.py::test_available_at_is_never_backdated"},
-            {"id": "T09", "threat": "real raw payload enters Git or a synchronized root", "control": "capture store requires an exact explicitly approved local root and rejects Git ancestors or known synchronized path markers; live remains blocked pending OS-backed sync-root verification", "test": "tests/capture/test_capture_harness.py::test_retention_and_workspace_guards"},
+            {
+                "id": "T01",
+                "threat": "secret disclosure",
+                "control": "opaque capability with mandatory public-material scan; stable input-free request exception; no value in fingerprint, receipt, log, exception, or path",
+                "test": "tests/capture/test_capture_harness.py::test_invalid_request_exception_hides_secret_sentinel",
+            },
+            {
+                "id": "T02",
+                "threat": "unauthorized network",
+                "control": "no transport implementation; LIVE_CANARY gate; socket and DNS test blockade",
+                "test": "tests/capture/conftest.py",
+            },
+            {
+                "id": "T03",
+                "threat": "quota, retry, or budget-ledger semantic overrun",
+                "control": "persistent fsync hash-chained budget with cross-process file lock and validated cumulative transitions; retry zero; complete and internally coherent quota headers",
+                "test": "tests/capture/test_capture_harness.py::test_budget_ledger_rejects_semantically_rehashed_reset",
+            },
+            {
+                "id": "T04",
+                "threat": "redirect or host confusion",
+                "control": "exact HTTPS host allowlist and redirects disabled",
+                "test": "tests/capture/test_capture_harness.py::test_request_guards_fail_closed",
+            },
+            {
+                "id": "T05",
+                "threat": "parser-before-receipt evidence loss",
+                "control": "raw SHA-256 and content-addressed write precede parsing",
+                "test": "tests/capture/test_capture_harness.py::test_invalid_json_is_hashed_before_parse_and_quarantined",
+            },
+            {
+                "id": "T06",
+                "threat": "raw persistence beyond policy, unaudited deletion, or capture-versus-TTL race",
+                "control": "shared inter-process capture/TTL lock; TTL-governed intake receipt before raw; 30-day write-ahead hash-chained deletion ledger",
+                "test": "tests/capture/test_capture_harness.py::test_capture_and_ttl_are_serialized_for_the_same_raw_hash",
+            },
+            {
+                "id": "T07",
+                "threat": "ambiguous, duplicated, many-to-one, unused, or revision-divergent mapping",
+                "control": "bijective and exhaustive mapping set, including revisions, bound to snapshot identity; duplicate event/bookmaker checks",
+                "test": "tests/capture/test_capture_harness.py::test_mapping_lineage_is_bound_to_snapshot_identity",
+            },
+            {
+                "id": "T10",
+                "threat": "tampered receipt, missing intake, backdated manifest, or broken provenance link",
+                "control": "self-verifying digests; explicit final-to-intake and captured-at links; cross-link and normalized-hash checks before replay proof",
+                "test": "tests/capture/test_capture_harness.py::test_receipt_manifest_and_normalized_links_fail_closed_on_tamper",
+            },
+            {
+                "id": "T11",
+                "threat": "oversized raw exhausts local storage",
+                "control": "size rejection after hashing but before intake raw persistence",
+                "test": "tests/capture/test_capture_harness.py::test_http_redirect_size_and_quota_fail_closed",
+            },
+            {
+                "id": "T08",
+                "threat": "backdated availability",
+                "control": "available_at is max(first observed, market last update)",
+                "test": "tests/capture/test_capture_harness.py::test_available_at_is_never_backdated",
+            },
+            {
+                "id": "T09",
+                "threat": "real raw payload enters Git or a synchronized root",
+                "control": "capture store requires an exact explicitly approved local root and rejects Git ancestors or known synchronized path markers; live remains blocked pending OS-backed sync-root verification",
+                "test": "tests/capture/test_capture_harness.py::test_retention_and_workspace_guards",
+            },
         ],
         "residual_risk": "NON_ZERO_BOUNDED_INTERNAL_DECISION",
         "open_p0": 0,
@@ -261,6 +321,16 @@ def build_reports(repo: Path) -> dict[str, str]:
         "network_calls": 0,
         "provider_calls": 0,
         "raw_hash_verified_before_parse": True,
+        "real_canary_compatibility": {
+            "external_canary_reference": compatibility["external_canary_reference"],
+            "external_evidence_pack_sha256": compatibility["external_evidence_pack_sha256"],
+            "captures_admitted": compatibility["captures_admitted"],
+            "real_raw_payloads_committed": False,
+            "network_calls": compatibility["network_call_count"],
+            "provider_calls": compatibility["provider_call_count"],
+            "provider_secret_reads": compatibility["provider_secret_read_count"],
+            "verdict": compatibility["replay_verdict"],
+        },
         "verdict": "ROBIN_OFFLINE_CAPTURE_REPLAY_PROVEN",
     }
     live_plan = {
@@ -284,9 +354,18 @@ def build_reports(repo: Path) -> dict[str, str]:
                 "quota-observation.json",
                 "capture-manifest.json",
             ],
-            "present_allowed_metadata_files": [],
-            "status": "ABSENT_ALLOWED_METADATA_NOT_FOUND",
+            "present_allowed_metadata_files": [
+                "schema-observation.json",
+                "market-coverage.json",
+                "quota-observation.json",
+                "capture-manifest.json",
+            ],
+            "status": "EXTERNAL_COMPATIBILITY_EVIDENCE_VERIFIED",
             "provider_payload_copied_to_git": False,
+            "external_canary_reference": compatibility["external_canary_reference"],
+            "external_evidence_pack_sha256": compatibility["external_evidence_pack_sha256"],
+            "c2_final_classification": compatibility["c2_final_classification"],
+            "real_data_leak_count": compatibility["real_data_leak_count"],
         },
         "future_prerequisites": [
             "SEPARATE_OWNER_AUTHORIZATION",
@@ -329,8 +408,7 @@ def check_reports(output: Path, reports: dict[str, str]) -> None:
     failures = [
         name
         for name, content in reports.items()
-        if not (output / name).is_file()
-        or (output / name).read_bytes() != content.encode("utf-8")
+        if not (output / name).is_file() or (output / name).read_bytes() != content.encode("utf-8")
     ]
     if failures:
         raise SystemExit(f"CAPTURE_HARNESS_REPORT_CHECK_FAILED:{','.join(failures)}")
@@ -352,9 +430,7 @@ def main() -> int:
     args = parse_args()
     repo = args.repo.resolve()
     output = (
-        args.output.resolve()
-        if args.output is not None
-        else repo / "reports" / "data-sourcing"
+        args.output.resolve() if args.output is not None else repo / "reports" / "data-sourcing"
     )
     reports = build_reports(repo)
     if args.check:

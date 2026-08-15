@@ -1,0 +1,18 @@
+{
+  "C0": "SUCCESS_CAPTURED_AND_REPLAYED",
+  "C1": "MISSED_NOT_BACKDATED",
+  "C2": "VALID_CAPTURED_AND_REPLAYED",
+  "artifact": "canary-final-disposition-v1",
+  "c1_backdated_or_replaced": false,
+  "c2_relaunched": false,
+  "captures_admitted": 2,
+  "captures_discovered": 2,
+  "captures_excluded": 0,
+  "external_canary_reference": "LA_LIGA_OPENING_NIGHT_CANARY_20260815",
+  "live_canary_authorized": false,
+  "mission_credits_consumed": 0,
+  "mission_provider_calls": 0,
+  "mission_provider_secret_reads": 0,
+  "schema_version": "robin-canary-harness-compatibility-v1",
+  "verdict": "ROBIN_CANARY_TO_HARNESS_COMPATIBILITY_PROVEN"
+}

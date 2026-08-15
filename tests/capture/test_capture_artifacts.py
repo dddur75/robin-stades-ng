@@ -76,6 +76,7 @@ def test_retention_report_matches_executable_contract() -> None:
 def test_offline_proof_and_live_lock_are_explicit() -> None:
     proof = _json("offline-replay-proof-v1.json")
     live = _json("live-canary-plan-v1.json")
+    witness = _json("canary-harness-compatibility-witness-v1.json")
     assert proof["fixture_provenance"] == "ENTIRELY_SYNTHETIC_NO_PROVIDER_PAYLOAD"
     assert proof["replay"]["byte_identical"] is True
     assert proof["replay"]["deterministic"] is True
@@ -91,9 +92,21 @@ def test_offline_proof_and_live_lock_are_explicit() -> None:
         "promotions": 0,
         "bets": 0,
     }
+    assert proof["real_canary_compatibility"] == {
+        "external_canary_reference": "LA_LIGA_OPENING_NIGHT_CANARY_20260815",
+        "external_evidence_pack_sha256": witness["external_evidence_pack_sha256"],
+        "captures_admitted": 2,
+        "real_raw_payloads_committed": False,
+        "network_calls": 0,
+        "provider_calls": 0,
+        "provider_secret_reads": 0,
+        "verdict": "ROBIN_REAL_PAYLOAD_OFFLINE_REPLAY_PROVEN",
+    }
     assert live["canary_metadata_integration"]["status"] == (
-        "ABSENT_ALLOWED_METADATA_NOT_FOUND"
+        "EXTERNAL_COMPATIBILITY_EVIDENCE_VERIFIED"
     )
+    assert live["canary_metadata_integration"]["provider_payload_copied_to_git"] is False
+    assert live["canary_metadata_integration"]["real_data_leak_count"] == 0
 
 
 def test_threat_model_has_no_open_p0_or_p1() -> None:

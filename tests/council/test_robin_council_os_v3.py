@@ -407,7 +407,7 @@ def test_point_in_time_lineage_authority_is_offline_bounded_and_exact() -> None:
         "github_actions_observe",
     ]
     assert manifest["source_hash"] == (
-        "ad864e0fb8345cc5864b79dc2671758e2dab1b2ec23b44a92b7267ac16656454"
+        "fd1de7f4c573047d15ef1561fc8f4e8a1dd5558534234f53941c9cba22e265a3"
     )
     assert manifest["expires_at"] == "2026-08-17T23:59:59Z"
 
@@ -434,14 +434,14 @@ def test_point_in_time_lineage_authority_is_offline_bounded_and_exact() -> None:
     ]
     allowed_paths = mission["allowed_paths"]
     assert allowed_paths == sorted(allowed_paths)
-    assert len(allowed_paths) == len(set(allowed_paths)) == 99
+    assert len(allowed_paths) == len(set(allowed_paths)) == 113
     assert hashlib.sha256(
         json.dumps(
             allowed_paths,
             ensure_ascii=False,
             separators=(",", ":"),
         ).encode()
-    ).hexdigest() == "5603e112b5e442b452ade81d46c3452ee835f07ffaeb3fdb64163f3902275c41"
+    ).hexdigest() == "07977602548623af20bf6b5f5267702bc8c64e19b09171645121e2e44e96b01a"
     assert all(
         path
         and path == path.strip()

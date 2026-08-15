@@ -81,9 +81,19 @@ Le pack `tests/capture/fixtures/synthetic-odds-responses-v1.json` ne contient au
 
 Les équipes, bookmakers, identifiants et prix sont fictifs. Aucun payload réel, nom de bookmaker associé à un prix réel, URL authentifiée ou clé n'est admis dans Git.
 
-## Limites et arrêt
+## Témoin de compatibilité du canari réel
 
-La présence locale du workspace canari a été constatée, mais aucun des quatre fichiers de métadonnées autorisés n'y était présent. Aucune métadonnée canari n'a donc été intégrée et aucune exploration plus large du répertoire n'a été effectuée.
+Le workspace externe `LA_LIGA_OPENING_NIGHT_CANARY_20260815` a été inventorié en lecture seule après la fermeture de sa fenêtre. C0 et C2 possèdent chacun un reçu complet, un payload content-addressed dont le SHA-256 correspond au reçu, un statut HTTP 200, une tentative unique, zéro retry et un replay local byte-identique. C1 reste `MISSED_NOT_BACKDATED`; C2 n'a pas été relancée et ses timestamps prouvent une capture dans la fenêtre autorisée.
+
+Les octets réels ont été relus directement depuis le workspace externe, leur SHA-256 vérifié avant parsing, puis passés au harness PR59 avec sockets, DNS et clients HTTP bloqués. Le store PR59 utilisé pour le replay était éphémère et a été supprimé à la sortie. Aucun payload brut, nom d'équipe, bookmaker, identifiant d'événement fournisseur ou cote détaillée n'est entré dans Git. Seuls les hashes, algorithmes de fingerprint et agrégats de couverture sont enregistrés dans `reports/data-sourcing/`.
+
+Les algorithmes de fingerprint diffèrent : le canari historique utilise des chemins JSON Pointer avec wildcard et un type numérique unifié, tandis que PR59 utilise des chemins `$`/dot avec wildcard et distingue les entiers. Une signature neutre qui lie chemins, types, cardinalités et présence optionnelle établit `STRUCTURAL_SCHEMA_EQUIVALENCE_PASS` pour C0 et C2. Au grain événement–bookmaker–marché–outcome, une projection indépendante est identique à la sortie PR59 pour l'identité, le prix, le point, `market_last_update` et `available_at = max(robin_first_observed_at, market_last_update)`; seules son empreinte et ses agrégats sont conservés. Le statut de mapping est lié à l'appartenance exacte des événements au manifest externe du canari, puis fourni au harness sous forme d'identifiants opaques; aucune qualité de rapprochement avec un référentiel de fixtures de production n'est revendiquée. Le payload contient aussi `h2h_lay`; ce marché est observé et compté séparément, mais volontairement ignoré sans élargir le contrat PR59 borné à `h2h` et `totals`.
+
+Le canari historique expire le brut trente jours après ingestion, tandis que PR59 l'expire trente jours après première observation. La compatibilité n'accepte cet écart que parce que l'expiration PR59 est vérifiée observation par observation comme antérieure ou égale à celle du canari : elle ne prolonge jamais la rétention. Le hash commité du pack externe ancre tous les livrables matériels hors `manifest.json` et `sha256sums.txt`, notamment le scan anti-fuite fail-closed, les gardes environnement/réseau et les journaux de commandes; le manifest inventorie ces fichiers et enregistre la racine.
+
+Le témoin conclut `ROBIN_CANARY_TO_HARNESS_COMPATIBILITY_PROVEN`, `ROBIN_REAL_PAYLOAD_OFFLINE_REPLAY_PROVEN` et `ROBIN_REAL_SCHEMA_WITNESS_V1_RECORDED`. La couverture h2h est positive mais bornée. Totals a été observé mais reste `TOTALS_COVERAGE_TO_BE_PROVEN`. La présence de `bookmakers[].markets[].last_update` pour h2h et totals permet uniquement `MARKET_SYNCHRONIZATION_OBSERVABLE_DESIGN_ONLY`, sans validation économique ou scientifique.
+
+## Limites et arrêt
 
 Le harness n'autorise pas le live. Une mission séparée devra fournir une autorisation propriétaire, initialiser et éprouver le budget persistant sous concurrence réelle, fournir un workspace local non synchronisé vérifié par l'OS, une politique active et orchestrée, une clé d'environnement, puis exiger replay et secret scan. Aucun de ces prérequis n'autorise une archive brute permanente, une saison complète, une expérience, une promotion ou un pari.
 

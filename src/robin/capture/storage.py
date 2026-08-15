@@ -48,7 +48,7 @@ def _exclusive_file_lock(path: Path) -> Iterator[None]:
         if os.name == "nt":
             import msvcrt
 
-            msvcrt.locking(stream.fileno(), msvcrt.LK_LOCK, 1)
+            getattr(msvcrt, "locking")(stream.fileno(), getattr(msvcrt, "LK_LOCK"), 1)
         else:
             import fcntl
 
@@ -60,7 +60,9 @@ def _exclusive_file_lock(path: Path) -> Iterator[None]:
             if os.name == "nt":
                 import msvcrt
 
-                msvcrt.locking(stream.fileno(), msvcrt.LK_UNLCK, 1)
+                getattr(msvcrt, "locking")(
+                    stream.fileno(), getattr(msvcrt, "LK_UNLCK"), 1
+                )
             else:
                 import fcntl
 

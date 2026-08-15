@@ -1,0 +1,3192 @@
+{
+  "expected_cardinality": {
+    "event_bookmaker_occurrence_count": 76,
+    "event_count": 4,
+    "h2h_market_object_count": 76,
+    "h2h_outcome_count": 228,
+    "supported_normalized_observation_count": 330,
+    "totals_by_event": [
+      13,
+      13,
+      13,
+      12
+    ],
+    "totals_market_object_count": 51,
+    "totals_outcome_count": 102,
+    "unique_bookmaker_count": 19,
+    "unsupported_market_object_count": 8
+  },
+  "expected_neutral_path_type_signature_sha256": "2f93a94eabce6f732cc632216fb09349afbd0387421a35823b8b5d5a6948161c",
+  "identity_policy": {
+    "bookmaker_prefix": "bookmaker_",
+    "event_prefix": "event-synthetic-",
+    "prices": "ARTIFICIAL_VALUES_ABOVE_100",
+    "teams": [
+      "Home Alpha",
+      "Away Beta"
+    ],
+    "timestamps": "FICTIONAL_2030"
+  },
+  "provenance": "ENTIRELY_SYNTHETIC_NO_PROVIDER_PAYLOAD",
+  "responses": {
+    "c0_cardinality_equivalent": [
+      {
+        "away_team": "Away Beta",
+        "bookmakers": [
+          {
+            "key": "bookmaker_alpha",
+            "last_update": "2030-01-01T00:00:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-01T00:00:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 101.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 102.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 103.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-01T00:00:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 900.5,
+                    "price": 501.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 900.5,
+                    "price": 502.05
+                  }
+                ]
+              },
+              {
+                "key": "h2h_lay",
+                "last_update": "2030-01-01T00:00:45Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 401.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 402.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 403.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 001"
+          },
+          {
+            "key": "bookmaker_beta",
+            "last_update": "2030-01-01T00:01:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-01T00:01:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 104.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 105.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 106.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-01T00:01:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 901.5,
+                    "price": 503.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 901.5,
+                    "price": 504.05
+                  }
+                ]
+              },
+              {
+                "key": "h2h_lay",
+                "last_update": "2030-01-01T00:01:45Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 404.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 405.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 406.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 002"
+          },
+          {
+            "key": "bookmaker_synthetic_003",
+            "last_update": "2030-01-01T00:02:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-01T00:02:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 107.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 108.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 109.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-01T00:02:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 902.5,
+                    "price": 505.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 902.5,
+                    "price": 506.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 003"
+          },
+          {
+            "key": "bookmaker_synthetic_004",
+            "last_update": "2030-01-01T00:03:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-01T00:03:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 110.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 111.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 112.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-01T00:03:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 903.5,
+                    "price": 507.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 903.5,
+                    "price": 508.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 004"
+          },
+          {
+            "key": "bookmaker_synthetic_005",
+            "last_update": "2030-01-01T00:04:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-01T00:04:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 113.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 114.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 115.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-01T00:04:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 904.5,
+                    "price": 509.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 904.5,
+                    "price": 510.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 005"
+          },
+          {
+            "key": "bookmaker_synthetic_006",
+            "last_update": "2030-01-01T00:05:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-01T00:05:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 116.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 117.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 118.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-01T00:05:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 905.5,
+                    "price": 511.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 905.5,
+                    "price": 512.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 006"
+          },
+          {
+            "key": "bookmaker_synthetic_007",
+            "last_update": "2030-01-01T00:06:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-01T00:06:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 119.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 120.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 121.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-01T00:06:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 906.5,
+                    "price": 513.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 906.5,
+                    "price": 514.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 007"
+          },
+          {
+            "key": "bookmaker_synthetic_008",
+            "last_update": "2030-01-01T00:07:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-01T00:07:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 122.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 123.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 124.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-01T00:07:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 907.5,
+                    "price": 515.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 907.5,
+                    "price": 516.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 008"
+          },
+          {
+            "key": "bookmaker_synthetic_009",
+            "last_update": "2030-01-01T00:08:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-01T00:08:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 125.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 126.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 127.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-01T00:08:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 908.5,
+                    "price": 517.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 908.5,
+                    "price": 518.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 009"
+          },
+          {
+            "key": "bookmaker_synthetic_010",
+            "last_update": "2030-01-01T00:09:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-01T00:09:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 128.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 129.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 130.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-01T00:09:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 909.5,
+                    "price": 519.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 909.5,
+                    "price": 520.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 010"
+          },
+          {
+            "key": "bookmaker_synthetic_011",
+            "last_update": "2030-01-01T00:10:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-01T00:10:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 131.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 132.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 133.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-01T00:10:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 910.5,
+                    "price": 521.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 910.5,
+                    "price": 522.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 011"
+          },
+          {
+            "key": "bookmaker_synthetic_012",
+            "last_update": "2030-01-01T00:11:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-01T00:11:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 134.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 135.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 136.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-01T00:11:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 911.5,
+                    "price": 523.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 911.5,
+                    "price": 524.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 012"
+          },
+          {
+            "key": "bookmaker_synthetic_013",
+            "last_update": "2030-01-01T00:12:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-01T00:12:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 137.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 138.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 139.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-01T00:12:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 912.5,
+                    "price": 525.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 912.5,
+                    "price": 526.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 013"
+          },
+          {
+            "key": "bookmaker_synthetic_014",
+            "last_update": "2030-01-01T00:13:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-01T00:13:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 140.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 141.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 142.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 014"
+          },
+          {
+            "key": "bookmaker_synthetic_015",
+            "last_update": "2030-01-01T00:14:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-01T00:14:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 143.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 144.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 145.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 015"
+          },
+          {
+            "key": "bookmaker_synthetic_016",
+            "last_update": "2030-01-01T00:15:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-01T00:15:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 146.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 147.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 148.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 016"
+          },
+          {
+            "key": "bookmaker_synthetic_017",
+            "last_update": "2030-01-01T00:16:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-01T00:16:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 149.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 150.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 151.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 017"
+          },
+          {
+            "key": "bookmaker_synthetic_018",
+            "last_update": "2030-01-01T00:17:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-01T00:17:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 152.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 153.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 154.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 018"
+          },
+          {
+            "key": "bookmaker_synthetic_019",
+            "last_update": "2030-01-01T00:18:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-01T00:18:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 155.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 156.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 157.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 019"
+          }
+        ],
+        "commence_time": "2030-02-01T20:00:00Z",
+        "home_team": "Home Alpha",
+        "id": "event-synthetic-001",
+        "sport_key": "soccer_synthetic_alpha",
+        "sport_title": "Synthetic Football"
+      },
+      {
+        "away_team": "Away Beta",
+        "bookmakers": [
+          {
+            "key": "bookmaker_alpha",
+            "last_update": "2030-01-02T00:00:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-02T00:00:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 158.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 159.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 160.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-02T00:00:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 919.5,
+                    "price": 539.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 919.5,
+                    "price": 540.05
+                  }
+                ]
+              },
+              {
+                "key": "h2h_lay",
+                "last_update": "2030-01-02T00:00:45Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 458.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 459.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 460.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 001"
+          },
+          {
+            "key": "bookmaker_beta",
+            "last_update": "2030-01-02T00:01:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-02T00:01:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 161.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 162.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 163.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-02T00:01:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 920.5,
+                    "price": 541.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 920.5,
+                    "price": 542.05
+                  }
+                ]
+              },
+              {
+                "key": "h2h_lay",
+                "last_update": "2030-01-02T00:01:45Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 461.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 462.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 463.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 002"
+          },
+          {
+            "key": "bookmaker_synthetic_003",
+            "last_update": "2030-01-02T00:02:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-02T00:02:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 164.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 165.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 166.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-02T00:02:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 921.5,
+                    "price": 543.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 921.5,
+                    "price": 544.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 003"
+          },
+          {
+            "key": "bookmaker_synthetic_004",
+            "last_update": "2030-01-02T00:03:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-02T00:03:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 167.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 168.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 169.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-02T00:03:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 922.5,
+                    "price": 545.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 922.5,
+                    "price": 546.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 004"
+          },
+          {
+            "key": "bookmaker_synthetic_005",
+            "last_update": "2030-01-02T00:04:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-02T00:04:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 170.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 171.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 172.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-02T00:04:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 923.5,
+                    "price": 547.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 923.5,
+                    "price": 548.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 005"
+          },
+          {
+            "key": "bookmaker_synthetic_006",
+            "last_update": "2030-01-02T00:05:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-02T00:05:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 173.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 174.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 175.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-02T00:05:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 924.5,
+                    "price": 549.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 924.5,
+                    "price": 550.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 006"
+          },
+          {
+            "key": "bookmaker_synthetic_007",
+            "last_update": "2030-01-02T00:06:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-02T00:06:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 176.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 177.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 178.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-02T00:06:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 925.5,
+                    "price": 551.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 925.5,
+                    "price": 552.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 007"
+          },
+          {
+            "key": "bookmaker_synthetic_008",
+            "last_update": "2030-01-02T00:07:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-02T00:07:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 179.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 180.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 181.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-02T00:07:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 926.5,
+                    "price": 553.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 926.5,
+                    "price": 554.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 008"
+          },
+          {
+            "key": "bookmaker_synthetic_009",
+            "last_update": "2030-01-02T00:08:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-02T00:08:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 182.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 183.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 184.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-02T00:08:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 927.5,
+                    "price": 555.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 927.5,
+                    "price": 556.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 009"
+          },
+          {
+            "key": "bookmaker_synthetic_010",
+            "last_update": "2030-01-02T00:09:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-02T00:09:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 185.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 186.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 187.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-02T00:09:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 928.5,
+                    "price": 557.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 928.5,
+                    "price": 558.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 010"
+          },
+          {
+            "key": "bookmaker_synthetic_011",
+            "last_update": "2030-01-02T00:10:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-02T00:10:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 188.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 189.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 190.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-02T00:10:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 929.5,
+                    "price": 559.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 929.5,
+                    "price": 560.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 011"
+          },
+          {
+            "key": "bookmaker_synthetic_012",
+            "last_update": "2030-01-02T00:11:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-02T00:11:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 191.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 192.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 193.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-02T00:11:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 930.5,
+                    "price": 561.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 930.5,
+                    "price": 562.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 012"
+          },
+          {
+            "key": "bookmaker_synthetic_013",
+            "last_update": "2030-01-02T00:12:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-02T00:12:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 194.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 195.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 196.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-02T00:12:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 931.5,
+                    "price": 563.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 931.5,
+                    "price": 564.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 013"
+          },
+          {
+            "key": "bookmaker_synthetic_014",
+            "last_update": "2030-01-02T00:13:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-02T00:13:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 197.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 198.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 199.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 014"
+          },
+          {
+            "key": "bookmaker_synthetic_015",
+            "last_update": "2030-01-02T00:14:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-02T00:14:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 200.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 201.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 202.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 015"
+          },
+          {
+            "key": "bookmaker_synthetic_016",
+            "last_update": "2030-01-02T00:15:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-02T00:15:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 203.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 204.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 205.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 016"
+          },
+          {
+            "key": "bookmaker_synthetic_017",
+            "last_update": "2030-01-02T00:16:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-02T00:16:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 206.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 207.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 208.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 017"
+          },
+          {
+            "key": "bookmaker_synthetic_018",
+            "last_update": "2030-01-02T00:17:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-02T00:17:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 209.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 210.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 211.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 018"
+          },
+          {
+            "key": "bookmaker_synthetic_019",
+            "last_update": "2030-01-02T00:18:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-02T00:18:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 212.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 213.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 214.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 019"
+          }
+        ],
+        "commence_time": "2030-02-02T20:00:00Z",
+        "home_team": "Home Alpha",
+        "id": "event-synthetic-002",
+        "sport_key": "soccer_synthetic_alpha",
+        "sport_title": "Synthetic Football"
+      },
+      {
+        "away_team": "Away Beta",
+        "bookmakers": [
+          {
+            "key": "bookmaker_alpha",
+            "last_update": "2030-01-03T00:00:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-03T00:00:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 215.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 216.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 217.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-03T00:00:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 938.5,
+                    "price": 577.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 938.5,
+                    "price": 578.05
+                  }
+                ]
+              },
+              {
+                "key": "h2h_lay",
+                "last_update": "2030-01-03T00:00:45Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 515.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 516.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 517.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 001"
+          },
+          {
+            "key": "bookmaker_beta",
+            "last_update": "2030-01-03T00:01:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-03T00:01:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 218.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 219.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 220.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-03T00:01:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 939.5,
+                    "price": 579.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 939.5,
+                    "price": 580.05
+                  }
+                ]
+              },
+              {
+                "key": "h2h_lay",
+                "last_update": "2030-01-03T00:01:45Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 518.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 519.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 520.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 002"
+          },
+          {
+            "key": "bookmaker_synthetic_003",
+            "last_update": "2030-01-03T00:02:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-03T00:02:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 221.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 222.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 223.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-03T00:02:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 940.5,
+                    "price": 581.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 940.5,
+                    "price": 582.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 003"
+          },
+          {
+            "key": "bookmaker_synthetic_004",
+            "last_update": "2030-01-03T00:03:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-03T00:03:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 224.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 225.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 226.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-03T00:03:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 941.5,
+                    "price": 583.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 941.5,
+                    "price": 584.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 004"
+          },
+          {
+            "key": "bookmaker_synthetic_005",
+            "last_update": "2030-01-03T00:04:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-03T00:04:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 227.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 228.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 229.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-03T00:04:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 942.5,
+                    "price": 585.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 942.5,
+                    "price": 586.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 005"
+          },
+          {
+            "key": "bookmaker_synthetic_006",
+            "last_update": "2030-01-03T00:05:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-03T00:05:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 230.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 231.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 232.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-03T00:05:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 943.5,
+                    "price": 587.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 943.5,
+                    "price": 588.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 006"
+          },
+          {
+            "key": "bookmaker_synthetic_007",
+            "last_update": "2030-01-03T00:06:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-03T00:06:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 233.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 234.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 235.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-03T00:06:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 944.5,
+                    "price": 589.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 944.5,
+                    "price": 590.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 007"
+          },
+          {
+            "key": "bookmaker_synthetic_008",
+            "last_update": "2030-01-03T00:07:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-03T00:07:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 236.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 237.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 238.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-03T00:07:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 945.5,
+                    "price": 591.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 945.5,
+                    "price": 592.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 008"
+          },
+          {
+            "key": "bookmaker_synthetic_009",
+            "last_update": "2030-01-03T00:08:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-03T00:08:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 239.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 240.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 241.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-03T00:08:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 946.5,
+                    "price": 593.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 946.5,
+                    "price": 594.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 009"
+          },
+          {
+            "key": "bookmaker_synthetic_010",
+            "last_update": "2030-01-03T00:09:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-03T00:09:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 242.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 243.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 244.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-03T00:09:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 947.5,
+                    "price": 595.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 947.5,
+                    "price": 596.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 010"
+          },
+          {
+            "key": "bookmaker_synthetic_011",
+            "last_update": "2030-01-03T00:10:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-03T00:10:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 245.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 246.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 247.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-03T00:10:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 948.5,
+                    "price": 597.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 948.5,
+                    "price": 598.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 011"
+          },
+          {
+            "key": "bookmaker_synthetic_012",
+            "last_update": "2030-01-03T00:11:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-03T00:11:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 248.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 249.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 250.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-03T00:11:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 949.5,
+                    "price": 599.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 949.5,
+                    "price": 600.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 012"
+          },
+          {
+            "key": "bookmaker_synthetic_013",
+            "last_update": "2030-01-03T00:12:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-03T00:12:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 251.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 252.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 253.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-03T00:12:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 950.5,
+                    "price": 601.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 950.5,
+                    "price": 602.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 013"
+          },
+          {
+            "key": "bookmaker_synthetic_014",
+            "last_update": "2030-01-03T00:13:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-03T00:13:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 254.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 255.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 256.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 014"
+          },
+          {
+            "key": "bookmaker_synthetic_015",
+            "last_update": "2030-01-03T00:14:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-03T00:14:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 257.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 258.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 259.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 015"
+          },
+          {
+            "key": "bookmaker_synthetic_016",
+            "last_update": "2030-01-03T00:15:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-03T00:15:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 260.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 261.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 262.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 016"
+          },
+          {
+            "key": "bookmaker_synthetic_017",
+            "last_update": "2030-01-03T00:16:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-03T00:16:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 263.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 264.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 265.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 017"
+          },
+          {
+            "key": "bookmaker_synthetic_018",
+            "last_update": "2030-01-03T00:17:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-03T00:17:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 266.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 267.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 268.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 018"
+          },
+          {
+            "key": "bookmaker_synthetic_019",
+            "last_update": "2030-01-03T00:18:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-03T00:18:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 269.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 270.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 271.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 019"
+          }
+        ],
+        "commence_time": "2030-02-03T20:00:00Z",
+        "home_team": "Home Alpha",
+        "id": "event-synthetic-003",
+        "sport_key": "soccer_synthetic_alpha",
+        "sport_title": "Synthetic Football"
+      },
+      {
+        "away_team": "Away Beta",
+        "bookmakers": [
+          {
+            "key": "bookmaker_alpha",
+            "last_update": "2030-01-04T00:00:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-04T00:00:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 272.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 273.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 274.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-04T00:00:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 957.5,
+                    "price": 615.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 957.5,
+                    "price": 616.05
+                  }
+                ]
+              },
+              {
+                "key": "h2h_lay",
+                "last_update": "2030-01-04T00:00:45Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 572.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 573.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 574.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 001"
+          },
+          {
+            "key": "bookmaker_beta",
+            "last_update": "2030-01-04T00:01:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-04T00:01:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 275.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 276.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 277.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-04T00:01:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 958.5,
+                    "price": 617.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 958.5,
+                    "price": 618.05
+                  }
+                ]
+              },
+              {
+                "key": "h2h_lay",
+                "last_update": "2030-01-04T00:01:45Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 575.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 576.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 577.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 002"
+          },
+          {
+            "key": "bookmaker_synthetic_003",
+            "last_update": "2030-01-04T00:02:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-04T00:02:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 278.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 279.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 280.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-04T00:02:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 959.5,
+                    "price": 619.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 959.5,
+                    "price": 620.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 003"
+          },
+          {
+            "key": "bookmaker_synthetic_004",
+            "last_update": "2030-01-04T00:03:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-04T00:03:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 281.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 282.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 283.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-04T00:03:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 960.5,
+                    "price": 621.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 960.5,
+                    "price": 622.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 004"
+          },
+          {
+            "key": "bookmaker_synthetic_005",
+            "last_update": "2030-01-04T00:04:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-04T00:04:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 284.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 285.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 286.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-04T00:04:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 961.5,
+                    "price": 623.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 961.5,
+                    "price": 624.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 005"
+          },
+          {
+            "key": "bookmaker_synthetic_006",
+            "last_update": "2030-01-04T00:05:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-04T00:05:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 287.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 288.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 289.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-04T00:05:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 962.5,
+                    "price": 625.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 962.5,
+                    "price": 626.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 006"
+          },
+          {
+            "key": "bookmaker_synthetic_007",
+            "last_update": "2030-01-04T00:06:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-04T00:06:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 290.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 291.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 292.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-04T00:06:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 963.5,
+                    "price": 627.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 963.5,
+                    "price": 628.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 007"
+          },
+          {
+            "key": "bookmaker_synthetic_008",
+            "last_update": "2030-01-04T00:07:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-04T00:07:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 293.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 294.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 295.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-04T00:07:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 964.5,
+                    "price": 629.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 964.5,
+                    "price": 630.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 008"
+          },
+          {
+            "key": "bookmaker_synthetic_009",
+            "last_update": "2030-01-04T00:08:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-04T00:08:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 296.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 297.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 298.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-04T00:08:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 965.5,
+                    "price": 631.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 965.5,
+                    "price": 632.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 009"
+          },
+          {
+            "key": "bookmaker_synthetic_010",
+            "last_update": "2030-01-04T00:09:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-04T00:09:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 299.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 300.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 301.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-04T00:09:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 966.5,
+                    "price": 633.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 966.5,
+                    "price": 634.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 010"
+          },
+          {
+            "key": "bookmaker_synthetic_011",
+            "last_update": "2030-01-04T00:10:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-04T00:10:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 302.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 303.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 304.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-04T00:10:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 967.5,
+                    "price": 635.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 967.5,
+                    "price": 636.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 011"
+          },
+          {
+            "key": "bookmaker_synthetic_012",
+            "last_update": "2030-01-04T00:11:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-04T00:11:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 305.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 306.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 307.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-04T00:11:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 968.5,
+                    "price": 637.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 968.5,
+                    "price": 638.05
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 012"
+          },
+          {
+            "key": "bookmaker_synthetic_013",
+            "last_update": "2030-01-04T00:12:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-04T00:12:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 308.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 309.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 310.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 013"
+          },
+          {
+            "key": "bookmaker_synthetic_014",
+            "last_update": "2030-01-04T00:13:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-04T00:13:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 311.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 312.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 313.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 014"
+          },
+          {
+            "key": "bookmaker_synthetic_015",
+            "last_update": "2030-01-04T00:14:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-04T00:14:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 314.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 315.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 316.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 015"
+          },
+          {
+            "key": "bookmaker_synthetic_016",
+            "last_update": "2030-01-04T00:15:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-04T00:15:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 317.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 318.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 319.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 016"
+          },
+          {
+            "key": "bookmaker_synthetic_017",
+            "last_update": "2030-01-04T00:16:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-04T00:16:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 320.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 321.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 322.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 017"
+          },
+          {
+            "key": "bookmaker_synthetic_018",
+            "last_update": "2030-01-04T00:17:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-04T00:17:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 323.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 324.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 325.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 018"
+          },
+          {
+            "key": "bookmaker_synthetic_019",
+            "last_update": "2030-01-04T00:18:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-04T00:18:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 326.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 327.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 328.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 019"
+          }
+        ],
+        "commence_time": "2030-02-04T20:00:00Z",
+        "home_team": "Home Alpha",
+        "id": "event-synthetic-004",
+        "sport_key": "soccer_synthetic_alpha",
+        "sport_title": "Synthetic Football"
+      }
+    ],
+    "structural_optional_timestamp_paths": [
+      {
+        "away_team": "Away Beta",
+        "bookmakers": [
+          {
+            "key": "bookmaker_alpha",
+            "last_update": "2030-01-01T00:00:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-01T00:00:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 101.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 102.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 103.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-01T00:00:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 900.5,
+                    "price": 501.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 900.5,
+                    "price": 502.05
+                  }
+                ]
+              },
+              {
+                "key": "h2h_lay",
+                "last_update": "2030-01-01T00:00:45Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 401.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 402.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 403.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 001"
+          },
+          {
+            "key": "bookmaker_beta",
+            "markets": [
+              {
+                "key": "h2h",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 104.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 105.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 106.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-01T00:01:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 901.5,
+                    "price": 503.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 901.5,
+                    "price": 504.05
+                  }
+                ]
+              },
+              {
+                "key": "h2h_lay",
+                "last_update": "2030-01-01T00:01:45Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 404.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 405.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 406.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 002"
+          }
+        ],
+        "commence_time": "2030-02-01T20:00:00Z",
+        "home_team": "Home Alpha",
+        "id": "event-synthetic-001",
+        "sport_key": "soccer_synthetic_alpha",
+        "sport_title": "Synthetic Football"
+      },
+      {
+        "away_team": "Away Beta",
+        "bookmakers": [
+          {
+            "key": "bookmaker_alpha",
+            "last_update": "2030-01-02T00:00:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-02T00:00:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 158.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 159.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 160.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-02T00:00:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 919.5,
+                    "price": 539.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 919.5,
+                    "price": 540.05
+                  }
+                ]
+              },
+              {
+                "key": "h2h_lay",
+                "last_update": "2030-01-02T00:00:45Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 458.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 459.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 460.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 001"
+          },
+          {
+            "key": "bookmaker_beta",
+            "last_update": "2030-01-02T00:01:50Z",
+            "markets": [
+              {
+                "key": "h2h",
+                "last_update": "2030-01-02T00:01:00Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 161.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 162.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 163.03
+                  }
+                ]
+              },
+              {
+                "key": "totals",
+                "last_update": "2030-01-02T00:01:30Z",
+                "outcomes": [
+                  {
+                    "name": "Over",
+                    "point": 920.5,
+                    "price": 541.04
+                  },
+                  {
+                    "name": "Under",
+                    "point": 920.5,
+                    "price": 542.05
+                  }
+                ]
+              },
+              {
+                "key": "h2h_lay",
+                "last_update": "2030-01-02T00:01:45Z",
+                "outcomes": [
+                  {
+                    "name": "Away Beta",
+                    "price": 461.01
+                  },
+                  {
+                    "name": "Draw",
+                    "price": 462.02
+                  },
+                  {
+                    "name": "Home Alpha",
+                    "price": 463.03
+                  }
+                ]
+              }
+            ],
+            "title": "Synthetic Bookmaker 002"
+          }
+        ],
+        "commence_time": "2030-02-02T20:00:00Z",
+        "home_team": "Home Alpha",
+        "id": "event-synthetic-002",
+        "sport_key": "soccer_synthetic_alpha",
+        "sport_title": "Synthetic Football"
+      }
+    ]
+  },
+  "schema_version": "robin-synthetic-canary-equivalent-v1"
+}

@@ -8,6 +8,16 @@
   "provider_calls": 0,
   "raw_hash_verified_before_parse": true,
   "raw_payload_sha256": "98270fbef1d77646fdd345856eb73b9d6d976a4b555cc69f27f564317a647299",
+  "real_canary_compatibility": {
+    "captures_admitted": 2,
+    "external_canary_reference": "LA_LIGA_OPENING_NIGHT_CANARY_20260815",
+    "external_evidence_pack_sha256": "75c83d644dd54b49fd259430a7903497ac75d5ccd311bdae2d4196c7af199ab0",
+    "network_calls": 0,
+    "provider_calls": 0,
+    "provider_secret_reads": 0,
+    "real_raw_payloads_committed": false,
+    "verdict": "ROBIN_REAL_PAYLOAD_OFFLINE_REPLAY_PROVEN"
+  },
   "receipt_id": "4b7589b9c827048a1eae298a6dd222d74b8e90ac5a3e71860fe4bbf85df31cc4",
   "replay": {
     "byte_identical": true,
