@@ -30,6 +30,7 @@ PR58_FINAL_HEAD = "bdb5be144ee0f6e9cf33b446f32a1808ada74de1"
 PR58_MERGE_SHA = "72e6cd625f7668fdcc095e63a847b6e7e9cf860f"
 CONVERGENCE_MANIFEST_SHA256 = "269f4066b13e88f4397aecd6f1a3d7ba154dc8468415581ce0f6b8922f1537b4"
 ACCESS_DATE = "2026-08-15"
+PILOT_RETENTION_POLICY = "INTERNAL_MARKET_DATA_RETENTION_POLICY_V1"
 
 STATUS = [
     "DESIGN_ONLY",
@@ -1470,9 +1471,22 @@ def build_pilot() -> dict[str, Any]:
             "shared_raw_receipt_rule": "One neutral raw payload may map to different roles in different experiments; role-bound snapshot IDs and feature access controls prevent within-experiment leakage. EXP006 H2 is TARGET.",
         },
         "retention": {
-            "status": "RAW_PAYLOAD_RETENTION_WRITTEN_CONFIRMATION_REQUIRED",
-            "provisional_mechanics": "append-only immutable storage; exact duration intentionally unset",
-            "stop_rule": "No raw provider payload is retained until written permission covers internal receipt-backed retention.",
+            "status": PILOT_RETENTION_POLICY,
+            "authorized_scope": "bounded research pilot",
+            "purpose": "internal analytics only",
+            "raw_storage": "local non-synchronised",
+            "raw_ttl_days": 30,
+            "normalized_observations_retained": True,
+            "raw_sha256_retained": True,
+            "derived_data_retained": True,
+            "automated_deletion_required": True,
+            "resale_allowed": False,
+            "redistribution_allowed": False,
+            "public_raw_endpoint_allowed": False,
+            "full_season_permanent_raw_archive_allowed": False,
+            "explicit_provider_retention_authorization_claimed": False,
+            "legal_risk": "NON_ZERO_BOUNDED_INTERNAL_DECISION",
+            "stop_rule": "Stop if the 30-day raw TTL, automated deletion, local non-synchronised boundary, or internal-only boundary cannot be enforced.",
         },
         "thresholds": {
             "h2h": "at least five complete 1X2 bookmakers for at least 80% of all 18 fixtures at each required frozen window",
@@ -1493,7 +1507,7 @@ def build_pilot() -> dict[str, Any]:
             "zero secret is present in payload metadata, receipts, logs or repository artifacts",
         ],
         "stop_criteria": [
-            "legal retention not confirmed in writing",
+            "internal retention policy absent, invalid, or automated 30-day raw deletion fails",
             "H12/H6 or H1 lower-bound contract not frozen",
             "EXP010 market clock/window semantics not frozen",
             "fixture/settlement Source 2 not selected and approved",
@@ -1525,7 +1539,7 @@ def blocker_entry(row: dict[str, Any]) -> dict[str, Any]:
     if category == "A":
         cost = "Odds capture fits S0/S2 planning; Source 2 cost TBD"
         legal = (
-            "The Odds API raw-retention permission and Source 2 licence require written approval"
+            "The bounded odds pilot uses the internal 30-day policy; Source 2 and any wider raw-retention scope require separate approval"
         )
         priority = "P0"
     elif category == "B":
@@ -1538,7 +1552,10 @@ def blocker_entry(row: dict[str, Any]) -> dict[str, Any]:
         cost = (
             "Small canary fits free quota; scale prohibited until empirical gate/protocol amendment"
         )
-        legal = "Raw-retention approval required; provider timestamp is not proven bookmaker-native"
+        legal = (
+            "Internal 30-day pilot policy required; provider timestamp is not proven "
+            "bookmaker-native and wider retention remains unauthorized"
+        )
         priority = "P0_DESIGN_GATE"
     else:
         cost = "Unknown until an admissible coach-claims source exists"
@@ -1560,7 +1577,7 @@ def blocker_entry(row: dict[str, Any]) -> dict[str, Any]:
         "legal_risk": legal,
         "priority": priority,
         "unblock_action": {
-            "A": "close retention + Source 2, freeze missing target rules, then run receipt canary",
+            "A": "enforce the internal 30-day pilot policy + close Source 2, freeze missing target rules, then seek separate canary authorization",
             "B": "complete A plus contract and materialize the named enrichment source",
             "C": "amend protocol and/or pass empirical totals/timestamp canary before scale",
             "D": "identify and contract a versioned coach effective-at source; otherwise remain blocked",
@@ -1597,7 +1614,7 @@ def build_roadmap() -> dict[str, Any]:
             "candidate": "The Odds API current",
             "temporal_proof": "combined raw bytes, quota headers, local observation/ingestion and cutoff",
             "cost": "500 credits/month free; $30/month for 20K",
-            "legal_risk": "raw retention duration not stated publicly",
+            "legal_risk": "public terms state no raw retention duration; bounded internal 30-day pilot decision only",
             "priority": "P0",
         },
         {
@@ -1607,7 +1624,7 @@ def build_roadmap() -> dict[str, Any]:
             "candidate": "The Odds API combined event-odds canary",
             "temporal_proof": "same receipt, fixture, bookmaker, complete h2h+totals point 2.5, market.last_update",
             "cost": "up to 2 credits per event request in one region",
-            "legal_risk": "same retention caveat; no European coverage warranty",
+            "legal_risk": "same bounded 30-day pilot decision; no European coverage warranty",
             "priority": "P0_GATE",
         },
         {
@@ -1707,7 +1724,7 @@ def build_roadmap() -> dict[str, Any]:
         "minimal_three_source_sequence": [
             {
                 "order": 0,
-                "gate": "Unify PR56/PR57 receipt contracts, freeze H12/H6 and H1 selection, obtain written raw-retention approval.",
+                "gate": "Unify PR56/PR57 receipt contracts, freeze H12/H6 and H1 selection, and enforce INTERNAL_MARKET_DATA_RETENTION_POLICY_V1 for the bounded pilot.",
             },
             {
                 "order": 1,
@@ -1736,7 +1753,7 @@ def build_roadmap() -> dict[str, Any]:
             "Replace matchday budgets with fixture interval scheduling and rerun quota/monthly peak calculations after official kickoff revisions.",
             "Define paired h2h/totals on one combined event receipt, same fixture/bookmaker, point 2.5, market freshness/skew and joint coverage threshold.",
             "Select an approved prospective fixture/revision/settlement authority.",
-            "Confirm The Odds API raw-retention terms in writing and reverify prices/quotas and Sportmonks add-ons.",
+            "Keep the internal 30-day retention decision bounded to the pilot; obtain separate written authority before any permanent or full-season raw archive, and reverify prices/quotas and Sportmonks add-ons.",
             "Add deterministic generators, schemas and golden replay tests for hand-authored reports and complete receipts.",
             "Only under separate authorization, preserve expiring external evidence first; never backdate.",
             "Then run one future Ligue 1 canary; scale only after two matchdays, valid receipts, replay, rights, coverage and quota gates.",
@@ -1783,7 +1800,9 @@ def build_assumptions(protocols: dict[str, Any]) -> dict[str, Any]:
                 "5M": {"monthly_credits": 5000000, "monthly_usd": 119},
                 "15M": {"monthly_credits": 15000000, "monthly_usd": 249},
             },
-            "retention_verdict": "RAW_PAYLOAD_RETENTION_WRITTEN_CONFIRMATION_REQUIRED",
+            "retention_verdict": PILOT_RETENTION_POLICY,
+            "retention_scope": "BOUNDED_RESEARCH_PILOT_ONLY",
+            "explicit_provider_retention_authorization_claimed": False,
         },
         "calendar_assumptions": {
             "official_full_season_fixture_counts": {
@@ -1823,7 +1842,7 @@ def build_assumptions(protocols: dict[str, Any]) -> dict[str, Any]:
         ],
         "legal_caveats": [
             "The Odds API public terms allow analytics/apps but forbid resale/repackaging/redistribution as a standalone data product.",
-            "Public terms do not state a raw-payload retention duration; written confirmation is a pilot stop gate.",
+            "Public terms do not state a raw-payload retention duration; the 30-day internal policy is a bounded risk decision, not an explicit provider authorization.",
             "Official calendars are used for internal source mapping and derived timing, not bulk republication.",
             "Provider accuracy/freshness is not warranted; runtime mapping and operator verification remain required.",
         ],
@@ -1976,7 +1995,7 @@ PR56 annonçait 648 appels/1 296 crédits en multipliant journées×fenêtres. C
 - Settlement : 18 reçus requis, mais appels/coût indéterminés tant que Source 2 n’est pas choisie.
 - Seuil h2h : ≥5 bookmakers complets sur ≥80 % des 18 fixtures à chaque fenêtre gelée.
 - Seuil totals : ≥5 bookmakers appariés h2h+totals 2.5 dans le même reçu sur ≥4/5 canaris, à H24, H2 et H1.
-- Rétention : `RAW_PAYLOAD_RETENTION_WRITTEN_CONFIRMATION_REQUIRED`; son absence arrête le pilote.
+- Rétention : `INTERNAL_MARKET_DATA_RETENTION_POLICY_V1`, stockage brut local non synchronisé, TTL 30 jours et suppression automatisée ; toute défaillance arrête le pilote.
 
 Le pilote ne « débloque » statistiquement aucune expérience : les minima vont de 1 003 à 2 400 unités et aucun label n’est capturé ici. Il valide seulement la mécanique pour 001-010 et 023-025. Les expériences B attendent Source 2/3 ; EXP020 reste bloquée faute de pipeline coach effective-at.
 
@@ -1990,7 +2009,7 @@ Les calendriers officiels servent au bootstrap et au contrôle, pas de licence i
 
 ## Réserve juridique et technique
 
-Les conditions publiques The Odds API permettent les outils analytiques mais interdisent la revente/repackaging d’un flux brut autonome. Elles ne fixent aucune durée publique de rétention des payloads. Avant tout appel : confirmation écrite de rétention, licence `APPROVED`, secret hors reçus/logs, stockage append-only et replay byte-identique. `market.last_update` est un timestamp de fraîcheur provider, pas une preuve de timestamp natif bookmaker.
+Les conditions publiques The Odds API permettent les outils analytiques mais interdisent la revente/repackaging d’un flux brut autonome. Elles ne fixent aucune durée publique de rétention des payloads. `INTERNAL_MARKET_DATA_RETENTION_POLICY_V1` accepte donc un risque non nul, borné au pilote interne avec TTL brute de 30 jours ; elle ne prétend pas constituer une autorisation contractuelle explicite et n’autorise ni archive brute permanente ni saison complète. Avant tout appel séparément autorisé : secret hors reçus/logs, stockage append-only et replay byte-identique. `market.last_update` est un timestamp de fraîcheur provider, pas une preuve de timestamp natif bookmaker.
 
 ## Continuation exacte requise pour PR56
 
@@ -2147,7 +2166,8 @@ def build_convergence_report(
         "gates": {
             "totals": "TOTALS_COVERAGE_TO_BE_PROVEN",
             "exp009": "EXP009_PROTOCOL_SUCCESSOR_REQUIRED_BEFORE_EXECUTION",
-            "raw_payload_retention": "RAW_PAYLOAD_RETENTION_WRITTEN_CONFIRMATION_REQUIRED",
+            "raw_payload_retention": PILOT_RETENTION_POLICY,
+            "raw_payload_retention_scope": "BOUNDED_RESEARCH_PILOT_ONLY",
             "pilot_authorization": "NOT_AUTHORIZED",
         },
         "official_source_revalidation": {
@@ -2189,7 +2209,7 @@ def build_convergence_report(
             "ROBIN_FIRST_RECEIPT_BACKED_CAPTURE_PILOT_SPECIFIED_NOT_AUTHORIZED",
             "EXP009_PROTOCOL_SUCCESSOR_REQUIRED_BEFORE_EXECUTION",
             "TOTALS_COVERAGE_TO_BE_PROVEN",
-            "RAW_PAYLOAD_RETENTION_WRITTEN_CONFIRMATION_REQUIRED",
+            PILOT_RETENTION_POLICY,
             "MARKET_SYNCHRONIZATION_OBSERVABLE_DESIGN_ONLY",
             "NO_PROVIDER_CALL",
             "NO_PURCHASE",

@@ -1,0 +1,227 @@
+{
+  "artifact": "capture-harness-contract-v1",
+  "contracts": [
+    {
+      "fields": [
+        "provider",
+        "scheme",
+        "host",
+        "endpoint",
+        "sport_key",
+        "region",
+        "markets",
+        "odds_format",
+        "date_format",
+        "allow_redirects",
+        "retries",
+        "timeout_seconds"
+      ],
+      "json_schema_sha256": "3167b12081643a35d17c0965d486278f7f431d6f7bbf8653078274de76118df1",
+      "name": "ProviderRequestSpec"
+    },
+    {
+      "fields": [
+        "algorithm",
+        "request_sha256",
+        "request"
+      ],
+      "json_schema_sha256": "1c83235c372b235d90b9df57fce9ff98820630b55827239abc5be703056d3e44",
+      "name": "RequestFingerprint"
+    },
+    {
+      "fields": [
+        "maximum_requests",
+        "used_requests",
+        "maximum_credits",
+        "used_credits"
+      ],
+      "json_schema_sha256": "a3cf009ca08ca948a0ea6cd64891ab3357dd9d13c485437e98375df85a721385",
+      "name": "CaptureBudget"
+    },
+    {
+      "fields": [
+        "requests_remaining",
+        "requests_used",
+        "requests_last",
+        "observed_at"
+      ],
+      "json_schema_sha256": "427b2d4da07f6086ad56e3ee4be292bbf15f58e60ac1bd5344527e84d38ae242",
+      "name": "QuotaObservation"
+    },
+    {
+      "fields": [
+        "receipt_id",
+        "intake_receipt_id",
+        "request_fingerprint_sha256",
+        "payload_sha256",
+        "payload_byte_length",
+        "http_status",
+        "quota",
+        "robin_first_observed_at",
+        "robin_ingested_at",
+        "available_at",
+        "raw_expires_at",
+        "raw_storage_key",
+        "schema_fingerprint_sha256",
+        "admission_status",
+        "rejection_code"
+      ],
+      "json_schema_sha256": "93d89a104be74d505ee7166a4249424084c940bdaa01ed5a298f499abe1b8ba5",
+      "name": "RawPayloadReceipt"
+    },
+    {
+      "fields": [
+        "snapshot_id",
+        "fixture_id",
+        "provider_event_id",
+        "receipt_id",
+        "payload_sha256",
+        "bookmaker_key",
+        "market_key",
+        "market_last_update",
+        "outcome_name",
+        "price",
+        "point",
+        "available_at"
+      ],
+      "json_schema_sha256": "9d53d0464a8a4b823c662efa5bc1269782ee8683eff20e95015d57464c00760c",
+      "name": "NormalizedMarketObservation"
+    },
+    {
+      "fields": [
+        "algorithm",
+        "schema_sha256",
+        "paths_and_types"
+      ],
+      "json_schema_sha256": "8a7f0bb70989db57979ec8e57a798239f71b968f6cd94d8027c7d793a98242fa",
+      "name": "SchemaFingerprint"
+    },
+    {
+      "fields": [
+        "provider_event_id",
+        "fixture_id",
+        "status",
+        "candidate_fixture_ids",
+        "mapping_revision"
+      ],
+      "json_schema_sha256": "91d647d342a379f7a74fbabc988e64bd5971878f718abe61361a69edfcea0fc3",
+      "name": "FixtureMapping"
+    },
+    {
+      "fields": [
+        "schema_version",
+        "manifest_sha256",
+        "snapshot_id",
+        "receipt_id",
+        "request_fingerprint_sha256",
+        "raw_payload_sha256",
+        "schema_fingerprint",
+        "fixture_mappings",
+        "observation_count",
+        "normalized_sha256",
+        "normalized_storage_key",
+        "captured_at",
+        "mode",
+        "network_calls",
+        "provider_calls",
+        "live_canary_authorized",
+        "promoted",
+        "bet_calculated"
+      ],
+      "json_schema_sha256": "acecdf77cfa19ea2b3836bcc361d3b2771abcf4d19f00170ec159006bb0d3a6a",
+      "name": "CaptureManifest"
+    },
+    {
+      "fields": [
+        "policy_id",
+        "purpose",
+        "resale_allowed",
+        "redistribution_allowed",
+        "public_raw_endpoint_allowed",
+        "raw_storage",
+        "raw_ttl_days",
+        "normalized_observations_retained",
+        "raw_sha256_retained",
+        "derived_data_retained",
+        "automated_deletion_required",
+        "legal_risk",
+        "authorized_scope",
+        "full_season_permanent_raw_archive_allowed",
+        "explicit_provider_retention_authorization_claimed"
+      ],
+      "json_schema_sha256": "301f0041fd402d741a4cfd57da0b9da2398e0d9e5ea000d66abf93249b4467d2",
+      "name": "InternalRetentionPolicy"
+    },
+    {
+      "fields": [
+        "snapshot_id",
+        "receipt_id",
+        "raw_payload_sha256",
+        "normalized_sha256",
+        "observation_count",
+        "byte_identical",
+        "deterministic",
+        "raw_hash_verified_before_parse",
+        "network_calls",
+        "provider_calls",
+        "verdict"
+      ],
+      "json_schema_sha256": "f548fc2a7b3f2f5d10ebd611dc2c155c5e7f51bf05f31c0b5304757ba5263cdd",
+      "name": "OfflineReplayResult"
+    }
+  ],
+  "default_mode": "VALIDATE_OFFLINE",
+  "guards": [
+    "HOST_ALLOWLIST_REQUIRED",
+    "TLS_REQUIRED",
+    "REDIRECTS_FORBIDDEN",
+    "PERSISTENT_LOCKED_BUDGET_REQUIRED_AND_BOUNDED",
+    "RETRIES_ZERO",
+    "MARKET_ALLOWLIST_REQUIRED",
+    "REGION_ALLOWLIST_REQUIRED",
+    "SECRET_REQUIRED_FOR_FUTURE_LIVE_AND_NEVER_RETAINED",
+    "RETENTION_POLICY_REQUIRED",
+    "EXPLICIT_LOCAL_CAPTURE_ROOT_APPROVAL_REQUIRED",
+    "CAPTURE_WORKSPACE_OUTSIDE_GIT",
+    "CAPTURE_WORKSPACE_NOT_SYNCHRONIZED"
+  ],
+  "modes": {
+    "DRY_RUN": {
+      "network_calls": 0,
+      "provider_calls": 0
+    },
+    "LIVE_CANARY": {
+      "authorized": false,
+      "status": "DISABLED_NOT_AUTHORIZED"
+    },
+    "VALIDATE_OFFLINE": {
+      "network_calls": 0,
+      "provider_calls": 0
+    }
+  },
+  "properties": [
+    "ATOMIC_CREATE_IF_ABSENT",
+    "IDEMPOTENT",
+    "APPEND_ONLY_METADATA",
+    "TTL_WRITE_AHEAD_HASH_CHAIN",
+    "COLLISION_FAIL_CLOSED",
+    "RAW_TTL_30_DAYS",
+    "OFFLINE_REPLAY"
+  ],
+  "safety": [
+    "NO_PROVIDER_CALL",
+    "NO_PURCHASE",
+    "NO_PROMOTION",
+    "NO_BET"
+  ],
+  "schema_version": "robin-capture-harness-artifacts-v1",
+  "storage_layout": [
+    "raw/sha256/<prefix>/<sha>.bin",
+    "receipts/<receipt_id>.json",
+    "normalized/<snapshot_id>.jsonl",
+    "manifests/<snapshot_id>.json",
+    "quarantine/",
+    "deletion-ledger.jsonl",
+    "budget-ledger.jsonl"
+  ]
+}

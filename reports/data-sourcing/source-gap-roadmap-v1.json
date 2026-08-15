@@ -6,7 +6,7 @@
     "Replace matchday budgets with fixture interval scheduling and rerun quota/monthly peak calculations after official kickoff revisions.",
     "Define paired h2h/totals on one combined event receipt, same fixture/bookmaker, point 2.5, market freshness/skew and joint coverage threshold.",
     "Select an approved prospective fixture/revision/settlement authority.",
-    "Confirm The Odds API raw-retention terms in writing and reverify prices/quotas and Sportmonks add-ons.",
+    "Keep the internal 30-day retention decision bounded to the pilot; obtain separate written authority before any permanent or full-season raw archive, and reverify prices/quotas and Sportmonks add-ons.",
     "Add deterministic generators, schemas and golden replay tests for hand-authored reports and complete receipts.",
     "Only under separate authorization, preserve expiring external evidence first; never backdate.",
     "Then run one future Ligue 1 canary; scale only after two matchdays, valid receipts, replay, rights, coverage and quota gates."
@@ -18,7 +18,7 @@
       "current_coverage": "schema/documentation only; no receipts",
       "data_domain": "odds h2h",
       "experiments": "001-010, 011-025 as declared",
-      "legal_risk": "raw retention duration not stated publicly",
+      "legal_risk": "public terms state no raw retention duration; bounded internal 30-day pilot decision only",
       "priority": "P0",
       "temporal_proof": "combined raw bytes, quota headers, local observation/ingestion and cutoff"
     },
@@ -28,7 +28,7 @@
       "current_coverage": "COVERAGE_TO_BE_PROVEN",
       "data_domain": "totals 2.5",
       "experiments": "010,016,023,024,025",
-      "legal_risk": "same retention caveat; no European coverage warranty",
+      "legal_risk": "same bounded 30-day pilot decision; no European coverage warranty",
       "priority": "P0_GATE",
       "temporal_proof": "same receipt, fixture, bookmaker, complete h2h+totals point 2.5, market.last_update"
     },
@@ -125,7 +125,7 @@
   ],
   "minimal_three_source_sequence": [
     {
-      "gate": "Unify PR56/PR57 receipt contracts, freeze H12/H6 and H1 selection, obtain written raw-retention approval.",
+      "gate": "Unify PR56/PR57 receipt contracts, freeze H12/H6 and H1 selection, and enforce INTERNAL_MARKET_DATA_RETENTION_POLICY_V1 for the bounded pilot.",
       "order": 0
     },
     {

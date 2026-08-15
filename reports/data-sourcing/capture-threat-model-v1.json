@@ -1,0 +1,82 @@
+{
+  "artifact": "capture-threat-model-v1",
+  "open_p0": 0,
+  "open_p1": 0,
+  "residual_risk": "NON_ZERO_BOUNDED_INTERNAL_DECISION",
+  "schema_version": "robin-capture-harness-artifacts-v1",
+  "threats": [
+    {
+      "control": "opaque capability with mandatory public-material scan; stable input-free request exception; no value in fingerprint, receipt, log, exception, or path",
+      "id": "T01",
+      "test": "tests/capture/test_capture_harness.py::test_invalid_request_exception_hides_secret_sentinel",
+      "threat": "secret disclosure"
+    },
+    {
+      "control": "no transport implementation; LIVE_CANARY gate; socket and DNS test blockade",
+      "id": "T02",
+      "test": "tests/capture/conftest.py",
+      "threat": "unauthorized network"
+    },
+    {
+      "control": "persistent fsync hash-chained budget with cross-process file lock and validated cumulative transitions; retry zero; complete and internally coherent quota headers",
+      "id": "T03",
+      "test": "tests/capture/test_capture_harness.py::test_budget_ledger_rejects_semantically_rehashed_reset",
+      "threat": "quota, retry, or budget-ledger semantic overrun"
+    },
+    {
+      "control": "exact HTTPS host allowlist and redirects disabled",
+      "id": "T04",
+      "test": "tests/capture/test_capture_harness.py::test_request_guards_fail_closed",
+      "threat": "redirect or host confusion"
+    },
+    {
+      "control": "raw SHA-256 and content-addressed write precede parsing",
+      "id": "T05",
+      "test": "tests/capture/test_capture_harness.py::test_invalid_json_is_hashed_before_parse_and_quarantined",
+      "threat": "parser-before-receipt evidence loss"
+    },
+    {
+      "control": "shared inter-process capture/TTL lock; TTL-governed intake receipt before raw; 30-day write-ahead hash-chained deletion ledger",
+      "id": "T06",
+      "test": "tests/capture/test_capture_harness.py::test_capture_and_ttl_are_serialized_for_the_same_raw_hash",
+      "threat": "raw persistence beyond policy, unaudited deletion, or capture-versus-TTL race"
+    },
+    {
+      "control": "bijective and exhaustive mapping set, including revisions, bound to snapshot identity; duplicate event/bookmaker checks",
+      "id": "T07",
+      "test": "tests/capture/test_capture_harness.py::test_mapping_lineage_is_bound_to_snapshot_identity",
+      "threat": "ambiguous, duplicated, many-to-one, unused, or revision-divergent mapping"
+    },
+    {
+      "control": "self-verifying digests; explicit final-to-intake and captured-at links; cross-link and normalized-hash checks before replay proof",
+      "id": "T10",
+      "test": "tests/capture/test_capture_harness.py::test_receipt_manifest_and_normalized_links_fail_closed_on_tamper",
+      "threat": "tampered receipt, missing intake, backdated manifest, or broken provenance link"
+    },
+    {
+      "control": "size rejection after hashing but before intake raw persistence",
+      "id": "T11",
+      "test": "tests/capture/test_capture_harness.py::test_http_redirect_size_and_quota_fail_closed",
+      "threat": "oversized raw exhausts local storage"
+    },
+    {
+      "control": "available_at is max(first observed, market last update)",
+      "id": "T08",
+      "test": "tests/capture/test_capture_harness.py::test_available_at_is_never_backdated",
+      "threat": "backdated availability"
+    },
+    {
+      "control": "capture store requires an exact explicitly approved local root and rejects Git ancestors or known synchronized path markers; live remains blocked pending OS-backed sync-root verification",
+      "id": "T09",
+      "test": "tests/capture/test_capture_harness.py::test_retention_and_workspace_guards",
+      "threat": "real raw payload enters Git or a synchronized root"
+    }
+  ],
+  "trust_boundaries": [
+    "future environment-only secret boundary",
+    "pre-network request guard boundary",
+    "raw bytes before parser boundary",
+    "local non-synchronised storage boundary",
+    "normalized retained evidence boundary"
+  ]
+}

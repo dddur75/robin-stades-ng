@@ -1,0 +1,46 @@
+{
+  "artifact": "live-canary-plan-v1",
+  "authorization": false,
+  "canary_metadata_integration": {
+    "allowed_metadata_files": [
+      "schema-observation.json",
+      "market-coverage.json",
+      "quota-observation.json",
+      "capture-manifest.json"
+    ],
+    "present_allowed_metadata_files": [],
+    "provider_payload_copied_to_git": false,
+    "status": "ABSENT_ALLOWED_METADATA_NOT_FOUND",
+    "workspace_directory_present": true
+  },
+  "future_prerequisites": [
+    "SEPARATE_OWNER_AUTHORIZATION",
+    "EXACT_CAPTURE_BUDGET",
+    "PERSISTENT_MULTI_PROCESS_BUDGET_CONCURRENCY_PROOF",
+    "INTERNAL_MARKET_DATA_RETENTION_POLICY_V1_ACTIVE",
+    "EXPLICITLY_APPROVED_LOCAL_NON_SYNCHRONISED_WORKSPACE",
+    "OS_BACKED_CLOUD_FILES_NETWORK_DRIVE_AND_SYNC_ROOT_VERIFICATION",
+    "THE_ODDS_API_KEY_ENVIRONMENT_ONLY",
+    "ZERO_RETRIES_AND_ZERO_REDIRECTS",
+    "POST_CAPTURE_SECRET_SCAN_AND_OFFLINE_REPLAY"
+  ],
+  "mission_effects": {
+    "bets": 0,
+    "credits_consumed": 0,
+    "network_calls": 0,
+    "promotions": 0,
+    "provider_calls": 0,
+    "purchases": 0,
+    "secret_reads": 0
+  },
+  "schema_version": "robin-capture-harness-artifacts-v1",
+  "status": [
+    "DISABLED",
+    "NOT_AUTHORIZED",
+    "ROBIN_LIVE_CANARY_DISABLED",
+    "NO_PROVIDER_CALL",
+    "NO_PURCHASE",
+    "NO_PROMOTION",
+    "NO_BET"
+  ]
+}

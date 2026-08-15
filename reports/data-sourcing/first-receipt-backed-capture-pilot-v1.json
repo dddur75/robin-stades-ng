@@ -2825,9 +2825,22 @@
     ]
   },
   "retention": {
-    "provisional_mechanics": "append-only immutable storage; exact duration intentionally unset",
-    "status": "RAW_PAYLOAD_RETENTION_WRITTEN_CONFIRMATION_REQUIRED",
-    "stop_rule": "No raw provider payload is retained until written permission covers internal receipt-backed retention."
+    "authorized_scope": "bounded research pilot",
+    "automated_deletion_required": true,
+    "derived_data_retained": true,
+    "explicit_provider_retention_authorization_claimed": false,
+    "full_season_permanent_raw_archive_allowed": false,
+    "legal_risk": "NON_ZERO_BOUNDED_INTERNAL_DECISION",
+    "normalized_observations_retained": true,
+    "public_raw_endpoint_allowed": false,
+    "purpose": "internal analytics only",
+    "raw_sha256_retained": true,
+    "raw_storage": "local non-synchronised",
+    "raw_ttl_days": 30,
+    "redistribution_allowed": false,
+    "resale_allowed": false,
+    "status": "INTERNAL_MARKET_DATA_RETENTION_POLICY_V1",
+    "stop_rule": "Stop if the 30-day raw TTL, automated deletion, local non-synchronised boundary, or internal-only boundary cannot be enforced."
   },
   "schema_version": "robin-first-pilot-specification-v1",
   "scope": {
@@ -3256,7 +3269,7 @@
     "ROBIN_FIRST_RECEIPT_BACKED_CAPTURE_PILOT_SPECIFIED_NOT_AUTHORIZED"
   ],
   "stop_criteria": [
-    "legal retention not confirmed in writing",
+    "internal retention policy absent, invalid, or automated 30-day raw deletion fails",
     "H12/H6 or H1 lower-bound contract not frozen",
     "EXP010 market clock/window semantics not frozen",
     "fixture/settlement Source 2 not selected and approved",

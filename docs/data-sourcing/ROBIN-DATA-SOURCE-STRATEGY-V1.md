@@ -34,7 +34,7 @@ Résultats reproduits par `tools/data-sourcing/recalculate_convergence.py` :
 
 The Odds API v4 reste la Source 1 candidate, exclusivement sur `the-odds-api.com`. Le fournisseur signale `theoddsapi.com` sans tirets comme imposteur. La documentation officielle event-odds expose `bookmakers[].markets[].last_update`, donc la synchronisation est `MARKET_SYNCHRONIZATION_OBSERVABLE_DESIGN_ONLY` au grain bookmaker-marché ; sa couverture réelle h2h/totals doit encore être mesurée. `totals` reste `TOTALS_COVERAGE_TO_BE_PROVEN`.
 
-Les conditions publiques autorisent des outils analytiques mais ne constituent pas une confirmation écrite de conservation indéfinie des payloads bruts. Le gate `RAW_PAYLOAD_RETENTION_WRITTEN_CONFIRMATION_REQUIRED` bloque donc tout appel réel. Les statuts restent `NOT_AUTHORIZED`, `NO_PROVIDER_CALL`, `NO_PURCHASE`, `NO_PROMOTION` et `NO_BET`.
+Les conditions publiques autorisent des outils analytiques, interdisent la redistribution brute autonome et ne constituent pas une confirmation écrite de conservation indéfinie. Pour le seul pilote de recherche borné, `INTERNAL_MARKET_DATA_RETENTION_POLICY_V1` impose un stockage brut local non synchronisé, une TTL de 30 jours et la suppression automatisée, tout en enregistrant `NON_ZERO_BOUNDED_INTERNAL_DECISION`. Cette décision interne n'est pas une autorisation contractuelle explicite et n'autorise ni archive brute permanente ni saison complète. Les statuts restent `NOT_AUTHORIZED`, `NO_PROVIDER_CALL`, `NO_PURCHASE`, `NO_PROMOTION` et `NO_BET`.
 
 ## Pourquoi cette décision
 
@@ -213,7 +213,7 @@ Le premier pilote futur est [spécifié](../../reports/data-sourcing/first-recei
 - payload brut exact et SHA-256, `source_published_at` si disponible, `robin_first_observed_at`, `robin_ingested_at`, `available_at`, fingerprint de schéma, révision du code, `snapshot_id` et contrat de replay ;
 - replay hors réseau byte-identique, mapping fixture déterministe, absence de fuite future et séparation stricte PREDICTOR/TARGET/LABEL.
 
-Le pilote s'arrête notamment si la confirmation écrite de rétention manque, si le mapping est ambigu, si le reçu ou le timestamp est insuffisant, si la couverture totals/bookmakers est trop faible, si le coût dépasse le modèle ou si un secret apparaît. Une autorisation propriétaire distincte sera nécessaire après fermeture de tous ces gates.
+Le pilote s'arrête notamment si la politique interne, sa TTL brute de 30 jours ou sa suppression automatisée ne peuvent être appliquées, si le mapping est ambigu, si le reçu ou le timestamp est insuffisant, si la couverture totals/bookmakers est trop faible, si le coût dépasse le modèle ou si un secret apparaît. Une autorisation propriétaire distincte restera nécessaire pour lancer le canari, puis une décision juridique séparée sera requise avant toute rétention brute permanente ou extension pleine saison.
 
 ## Ce que cette priorité remplace ou retarde
 

@@ -62,7 +62,7 @@
   },
   "legal_caveats": [
     "The Odds API public terms allow analytics/apps but forbid resale/repackaging/redistribution as a standalone data product.",
-    "Public terms do not state a raw-payload retention duration; written confirmation is a pilot stop gate.",
+    "Public terms do not state a raw-payload retention duration; the 30-day internal policy is a bounded risk decision, not an explicit provider authorization.",
     "Official calendars are used for internal source mapping and derived timing, not bulk republication.",
     "Provider accuracy/freshness is not warranted; runtime mapping and operator verification remain required."
   ],
@@ -333,6 +333,7 @@
   },
   "provider_facts": {
     "bulk_odds_cost": "requested market count × requested region count",
+    "explicit_provider_retention_authorization_claimed": false,
     "forbidden_impostor_domain": "https://theoddsapi.com/",
     "market_sync_field": "bookmakers[].markets[].last_update",
     "market_sync_grain": "bookmaker_market",
@@ -360,7 +361,8 @@
       },
       "starter_monthly_credits": 500
     },
-    "retention_verdict": "RAW_PAYLOAD_RETENTION_WRITTEN_CONFIRMATION_REQUIRED",
+    "retention_scope": "BOUNDED_RESEARCH_PILOT_ONLY",
+    "retention_verdict": "INTERNAL_MARKET_DATA_RETENTION_POLICY_V1",
     "totals_verdict": "TOTALS_COVERAGE_TO_BE_PROVEN"
   },
   "schema_version": "robin-assumptions-and-official-sources-v1",
