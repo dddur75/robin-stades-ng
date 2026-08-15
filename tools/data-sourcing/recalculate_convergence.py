@@ -3,7 +3,8 @@
 
 The script reads immutable Git objects from an analysis clone, embeds only public
 calendar facts collected for this design review, and performs no network call.
-It never writes inside the Git repository passed with --repo.
+It writes only to the explicit output directory; in-repository output is restricted
+to reports/data-sourcing.
 """
 
 from __future__ import annotations
@@ -799,6 +800,81 @@ def grouping_metrics(items: list[dict[str, Any]], groups: list[dict[str, Any]]) 
         ),
         "protocols_preserved_meaning": "Temporal-window admissibility only; this is not evidence that markets, labels, supplementary sources or sample-size gates are satisfied.",
     }
+
+
+def verify_call_group_contract(schedule: dict[str, Any]) -> None:
+    """Recompute grouping coverage, keys, roles, and time bounds from requirements."""
+    for window_id, expected_window in WINDOWS.items():
+        observed_window = schedule["window_definitions"].get(window_id)
+        for field in (
+            "authority",
+            "role",
+            "role_class",
+            "protocol_role_bindings",
+            "maximum_staleness_minutes",
+        ):
+            if observed_window is None or observed_window.get(field) != expected_window.get(field):
+                raise AssertionError(f"window authority mismatch: {window_id}:{field}")
+    requirements = schedule["capture_requirements"]
+    by_id = {item["requirement_id"]: item for item in requirements}
+    if len(by_id) != len(requirements):
+        raise AssertionError("duplicate capture requirement id")
+
+    coverage: Counter[str] = Counter()
+    for group in schedule["call_groups"]:
+        scheduled = parse_utc(group["scheduled_at"])
+        members = [by_id[requirement_id] for requirement_id in group["requirement_ids"]]
+        if not members:
+            raise AssertionError(f"empty call group: {group['call_group_id']}")
+        coverage.update(group["requirement_ids"])
+        if any(member["source_request_key"] != group["source_request_key"] for member in members):
+            raise AssertionError(f"request-key mismatch: {group['call_group_id']}")
+        if any(
+            not (
+                parse_utc(member["earliest_admissible_time"])
+                <= scheduled
+                <= parse_utc(member["latest_admissible_time"])
+            )
+            for member in members
+        ):
+            raise AssertionError(f"admissible interval violated: {group['call_group_id']}")
+        for member in members:
+            expected_window = WINDOWS[member["window_id"]]
+            bindings = member["protocol_role_bindings"]
+            if set(bindings["PREDICTOR"]) & set(bindings["TARGET"]):
+                raise AssertionError(f"protocol role collision: {member['requirement_id']}")
+            if (
+                member["temporal_role"] != expected_window["role"]
+                or bindings != expected_window["protocol_role_bindings"]
+                or member["window_authority"] != expected_window["authority"]
+                or member["source_request_key"]["temporal_role_class"]
+                != expected_window["role_class"]
+            ):
+                raise AssertionError(f"window binding mismatch: {member['requirement_id']}")
+            expected = requirement_interval(parse_utc(member["kickoff_at"]), member["window_id"])
+            observed = (
+                parse_utc(member["earliest_admissible_time"]),
+                parse_utc(member["latest_admissible_time"]),
+                parse_utc(member["ideal_capture_time"]),
+            )
+            if observed != expected:
+                raise AssertionError(
+                    f"kickoff-derived interval mismatch: {member['requirement_id']}"
+                )
+        if sorted({member["fixture_id"] for member in members}) != group["fixture_ids"]:
+            raise AssertionError(f"fixture membership mismatch: {group['call_group_id']}")
+        if sorted({member["window_id"] for member in members}) != group["windows_satisfied"]:
+            raise AssertionError(f"window membership mismatch: {group['call_group_id']}")
+        roles = {member["temporal_role"] for member in members}
+        role_classes = {member["source_request_key"]["temporal_role_class"] for member in members}
+        if roles != {group["temporal_role"]} or role_classes != {group["temporal_role_class"]}:
+            raise AssertionError(f"temporal role collision: {group['call_group_id']}")
+        if group["credit_cost"] != len(group["source_request_key"]["markets"]):
+            raise AssertionError(f"credit cost mismatch: {group['call_group_id']}")
+
+    expected_coverage = Counter({requirement_id: 1 for requirement_id in by_id})
+    if coverage != expected_coverage:
+        raise AssertionError("capture requirements must be covered exactly once")
 
 
 def grouped_candidate_snapshot_calls(
@@ -1732,6 +1808,15 @@ def build_assumptions(protocols: dict[str, Any]) -> dict[str, Any]:
             "annual_grouping": "planning groups are extrapolated and do not assume cross-window coincidences",
             "pilot": "all 18 Ligue 1 J1/J2 fixtures; five canary fixtures; no data call in this mission",
         },
+        "provenance_boundary": {
+            "deterministic_reproduction_scope": "Pinned Git authorities plus embedded, dated public facts produce the same repository reports byte-for-byte.",
+            "does_not_claim": "Immutable provenance of live official web-page bytes; no web payload is committed.",
+            "external_pack": {
+                "status": "EXTERNAL_INPUT_NOT_REPRODUCIBLE_FROM_REPOSITORY",
+                "manifest_sha256_reference": CONVERGENCE_MANIFEST_SHA256,
+                "repository_evidence": "NOT_COMMITTED_BY_MISSION_RULE",
+            },
+        },
         "official_sources": [
             dict(source_id=key, accessed_at=ACCESS_DATE, **value)
             for key, value in SOURCE_URLS.items()
@@ -1933,6 +2018,7 @@ def validate_bundle_objects(
     budgets: dict[str, Any],
     pilot: dict[str, Any],
 ) -> list[dict[str, Any]]:
+    verify_call_group_contract(schedule)
     rows = matrix["experiments"]
     ids = [row["experiment_id"] for row in rows]
     checks = [
@@ -1954,10 +2040,8 @@ def validate_bundle_objects(
         },
         {"check": "no_activation", "passed": pilot["authorization"] == "NOT_AUTHORIZED"},
         {
-            "check": "all_groups_valid",
-            "passed": all(
-                all(group["compatibility_proof"].values()) for group in schedule["call_groups"]
-            ),
+            "check": "call_groups_recomputed_from_requirements",
+            "passed": True,
         },
         {
             "check": "h2_staleness_15m",
@@ -2008,6 +2092,16 @@ def build_convergence_report(
         "schema_version": "robin-data-hypothesis-convergence-v1",
         "sealed_at": sealed_at,
         "source_pack_manifest_sha256": CONVERGENCE_MANIFEST_SHA256,
+        "reproducibility_scope": {
+            "verdict": "DATA_HYPOTHESIS_CONVERGENCE_REPRODUCIBLE",
+            "proves": "Deterministic transformation of pinned Git authorities and embedded dated facts into eight byte-identical repository reports.",
+            "does_not_prove": "Immutable provenance of live official web-page bytes or future provider coverage.",
+            "external_pack_boundary": {
+                "status": "EXTERNAL_INPUT_NOT_REPRODUCIBLE_FROM_REPOSITORY",
+                "manifest_sha256_reference": CONVERGENCE_MANIFEST_SHA256,
+                "repository_evidence": "NOT_COMMITTED_BY_MISSION_RULE",
+            },
+        },
         "status": STATUS + ["DATA_HYPOTHESIS_CONVERGENCE_REPRODUCIBLE"],
         "git_authority": assumptions["git_authority"],
         "reproduced_metrics": {
@@ -2058,6 +2152,7 @@ def build_convergence_report(
         },
         "official_source_revalidation": {
             "accessed_at": ACCESS_DATE,
+            "provenance_status": "LIVE_OFFICIAL_PAGES_REVALIDATED_NO_PAGE_BYTES_COMMITTED",
             "official_domain": provider["official_domain_only"],
             "forbidden_impostor_domain": provider["forbidden_impostor_domain"],
             "cost_formula": provider["bulk_odds_cost"],

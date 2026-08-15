@@ -14,6 +14,7 @@ from collections.abc import Mapping, Sequence
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit, urlunsplit
 
 WEIGHTS: dict[str, int] = {
     "temporal_proof": 20,
@@ -38,6 +39,32 @@ LEGAL_VETO_STATUSES = {
     "UNCLEAR",
     "UNCLEAR_CONDITIONAL",
     "UNKNOWN",
+}
+
+ADMISSIBLE_LICENCE_STATUSES = {"DOCUMENTED_CONDITIONAL", "OPEN"}
+RECOGNIZED_LICENCE_STATUSES = ADMISSIBLE_LICENCE_STATUSES | LEGAL_VETO_STATUSES
+ADMISSIBLE_RIGHTS_VALUES = {
+    "commercial_use": {
+        "Allowed for an application/analytics subject to terms; raw resale prohibited.",
+        "Allowed for application/analytics under terms; no raw-data resale.",
+        "Allowed subject to subscription/terms; raw resale prohibited.",
+        "Allowed under CC0.",
+        "Allowed under paid terms; raw resale prohibited.",
+        "Allowed with attribution through commercial plan.",
+        "Allowed with CC BY attribution and service etiquette.",
+        "Data licence permits it with attribution, but commercial service access requires subscription.",
+        "Data reusable with attribution; service commercial access requires subscription.",
+    },
+    "raw_payload_retention": {
+        "Allowed under CC BY 4.0 with attribution.",
+        "Allowed under CC0 and Git pinning.",
+        "Allowed under CC0.",
+        "Allowed under subscription terms, no raw resale.",
+        "Allowed with attribution.",
+        "Internal audit retention only; written confirmation required before bulk acquisition.",
+        "Retain for internal audit; confirm long-term retention wording before scale; never redistribute raw data.",
+        "Robin must retain within rights because provider history expires after seven days.",
+    },
 }
 
 REQUIRED_SOURCE_FIELDS = {
@@ -94,10 +121,20 @@ def score_source(source: Mapping[str, Any]) -> int:
     licence_status = licence_terms.get("status")
     if not isinstance(licence_status, str) or not licence_status:
         raise InventoryError(f"{source['source_id']}: licence_terms.status is required")
+    if licence_status not in RECOGNIZED_LICENCE_STATUSES:
+        raise InventoryError(f"{source['source_id']}: unrecognized licence status {licence_status}")
     if licence_status in LEGAL_VETO_STATUSES and source_class != "D":
         raise InventoryError(
             f"{source['source_id']}: licence status {licence_status} requires class D"
         )
+    for field in ("commercial_use", "raw_payload_retention"):
+        value = source[field]
+        if not isinstance(value, str) or not value.strip():
+            raise InventoryError(f"{source['source_id']}: {field} must be a non-empty string")
+        if source_class != "D" and value not in ADMISSIBLE_RIGHTS_VALUES[field]:
+            raise InventoryError(
+                f"{source['source_id']}: {field} is not an admissible reviewed value"
+            )
 
     scores = source["scores"]
     rationales = source["score_rationales"]
@@ -226,6 +263,18 @@ def _json_profile(path: Path) -> tuple[int, list[dict[str, str]], str | None, st
     return len(rows), schema, (min(events) if events else None), (max(events) if events else None)
 
 
+def _safe_request_url(value: str) -> str:
+    """Return a secret-free public URL or fail before any receipt is materialized."""
+    parts = urlsplit(value)
+    if parts.scheme not in {"http", "https"} or not parts.hostname:
+        raise InventoryError("request_url must be an absolute HTTP(S) URL")
+    if parts.username is not None or parts.password is not None:
+        raise InventoryError("credential-bearing request_url is forbidden")
+    if parts.query:
+        raise InventoryError("query-bearing request_url is forbidden")
+    return urlunsplit((parts.scheme, parts.netloc, parts.path, "", ""))
+
+
 def profile_sample(
     path: Path,
     *,
@@ -247,7 +296,7 @@ def profile_sample(
     return {
         "source_id": source_id,
         "downloaded_at": downloaded_at,
-        "request_url": request_url,
+        "request_url": _safe_request_url(request_url),
         "status_http": status_http,
         "payload_sha256": hashlib.sha256(payload).hexdigest(),
         "bytes": len(payload),

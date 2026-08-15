@@ -15,6 +15,11 @@
     "pr56_initial_head_sha": "81211569f7f5ae1139a4be50b90c643a00d3fdd6",
     "sealed_manifest_sha256": "269f4066b13e88f4397aecd6f1a3d7ba154dc8468415581ce0f6b8922f1537b4"
   },
+  "reproducibility_boundary": {
+    "proves": "Deterministic regeneration of the eight convergence reports from pinned Git authorities and embedded dated facts.",
+    "does_not_prove": "Immutable provenance of live official web-page bytes or future provider coverage.",
+    "external_pack_status": "EXTERNAL_INPUT_NOT_REPRODUCIBLE_FROM_REPOSITORY"
+  },
   "single_priority": {
     "source": "The Odds API v4 current odds",
     "official_domain": "the-odds-api.com",

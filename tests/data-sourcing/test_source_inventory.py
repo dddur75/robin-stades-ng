@@ -30,14 +30,14 @@ def _source(source_id: str, source_class: str = "C") -> dict[str, Any]:
         "official_url": "https://example.test",
         "access_type": "public",
         "licence_terms": {"status": "OPEN", "summary": "documented"},
-        "commercial_use": "reviewed",
+        "commercial_use": "Allowed under CC0.",
         "history_available": "yes",
         "league_coverage": ["league"],
         "season_coverage": "current",
         "frequency": "daily",
         "latency": "unknown",
         "timestamps_provided": ["updated_at"],
-        "raw_payload_retention": "allowed",
+        "raw_payload_retention": "Allowed under CC0.",
         "stable_identifiers": "yes",
         "quality": "reviewed",
         "schema_change_risk": "medium",
@@ -88,6 +88,35 @@ def test_legal_uncertainty_requires_class_d() -> None:
         source_inventory.score_source(candidate)
 
 
+def test_unknown_licence_status_fails_closed() -> None:
+    candidate = _source("typo", "C")
+    candidate["licence_terms"] = {"status": "TYPO_UNKNOWN_RIGHTS", "summary": "unknown"}
+
+    with pytest.raises(source_inventory.InventoryError, match="unrecognized licence status"):
+        source_inventory.score_source(candidate)
+
+
+@pytest.mark.parametrize("field", ["commercial_use", "raw_payload_retention"])
+def test_legal_use_fields_must_be_non_empty_strings(field: str) -> None:
+    candidate = _source("empty-rights", "C")
+    candidate[field] = ""
+
+    with pytest.raises(source_inventory.InventoryError, match=field):
+        source_inventory.score_source(candidate)
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [("commercial_use", "PROHIBITED"), ("raw_payload_retention", "FORBIDDEN")],
+)
+def test_non_d_rights_values_use_a_fail_closed_allowlist(field: str, value: str) -> None:
+    candidate = _source("unreviewed-rights", "C")
+    candidate[field] = value
+
+    with pytest.raises(source_inventory.InventoryError, match="not an admissible reviewed value"):
+        source_inventory.score_source(candidate)
+
+
 def test_rejects_score_above_weight() -> None:
     candidate = _source("invalid")
     scores = dict(candidate["scores"])
@@ -133,6 +162,62 @@ def test_profile_csv_orders_day_first_dates_chronologically(tmp_path: Path) -> N
 
     assert receipt["first_event"] == "2025-08-31"
     assert receipt["last_event"] == "2026-02-01"
+
+
+@pytest.mark.parametrize(
+    "request_url",
+    [
+        "https://user:password@example.test/sample.csv",
+        "https://example.test/sample.csv?apiKey=synthetic-not-a-real-key",
+        "https://example.test/sample.csv?access_token=synthetic-not-a-real-token",
+        "https://example.test/sample.csv?client_secret=synthetic-not-a-real-secret",
+        "https://example.test/sample.csv?x-api-key=synthetic-not-a-real-key",
+    ],
+)
+def test_profile_rejects_credential_bearing_request_urls(tmp_path: Path, request_url: str) -> None:
+    sample = tmp_path / "sample.csv"
+    sample.write_text("Date,Home\n2026-08-01,A\n", encoding="utf-8")
+
+    with pytest.raises(source_inventory.InventoryError, match="bearing request_url"):
+        source_inventory.profile_sample(
+            sample,
+            source_id="public-sample",
+            request_url=request_url,
+            downloaded_at="2026-08-14T12:00:00Z",
+            status_http=200,
+            licence_note="CC0",
+        )
+
+
+def test_profile_rejects_all_query_strings(tmp_path: Path) -> None:
+    sample = tmp_path / "sample.csv"
+    sample.write_text("Date,Home\n2026-08-01,A\n", encoding="utf-8")
+
+    with pytest.raises(source_inventory.InventoryError, match="query-bearing request_url"):
+        source_inventory.profile_sample(
+            sample,
+            source_id="public-sample",
+            request_url="https://example.test/sample.csv?season=2026",
+            downloaded_at="2026-08-14T12:00:00Z",
+            status_http=200,
+            licence_note="CC0",
+        )
+
+
+def test_profile_strips_url_fragment(tmp_path: Path) -> None:
+    sample = tmp_path / "sample.csv"
+    sample.write_text("Date,Home\n2026-08-01,A\n", encoding="utf-8")
+
+    receipt = source_inventory.profile_sample(
+        sample,
+        source_id="public-sample",
+        request_url="https://example.test/sample.csv#local-note",
+        downloaded_at="2026-08-14T12:00:00Z",
+        status_http=200,
+        licence_note="CC0",
+    )
+
+    assert receipt["request_url"] == "https://example.test/sample.csv"
 
 
 def test_cli_writes_scorecard(tmp_path: Path) -> None:

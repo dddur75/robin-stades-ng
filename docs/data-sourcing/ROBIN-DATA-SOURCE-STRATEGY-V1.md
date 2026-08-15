@@ -245,6 +245,8 @@ Elle ne répare pas rétroactivement le passé. Le premier `robin_first_observed
 
 ## Livrables et reproductibilité
 
+Le verdict `DATA_HYPOTHESIS_CONVERGENCE_REPRODUCIBLE` qualifie la transformation déterministe des autorités Git épinglées et des faits publics datés vers huit rapports byte-identiques. Il ne prétend pas prouver l'immutabilité des octets des pages web officielles. Le SHA-256 du manifeste du pack externe est enregistré comme référence de mission ; ce pack reste volontairement hors Git et n'est donc pas reproductible depuis le seul dépôt.
+
 - [Inventaire des données existantes](../../reports/data-sourcing/existing-data-inventory-v1.json)
 - [Inventaire des 23 sources candidates](../../reports/data-sourcing/source-candidate-inventory-v1.json)
 - [Scorecard reproductible](../../reports/data-sourcing/source-priority-scorecard-v1.json)

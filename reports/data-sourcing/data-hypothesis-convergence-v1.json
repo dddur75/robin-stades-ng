@@ -53,6 +53,7 @@
     "forbidden_impostor_domain": "https://theoddsapi.com/",
     "impersonator_warning": "https://the-odds-api.com/impersonation-warning.html",
     "official_domain": "https://the-odds-api.com/",
+    "provenance_status": "LIVE_OFFICIAL_PAGES_REVALIDATED_NO_PAGE_BYTES_COMMITTED",
     "public_plans": {
       "100K_monthly_credits": 100000,
       "100K_monthly_usd": 59,
@@ -97,6 +98,16 @@
       "annual_credits": 13236,
       "monthly_capacity_with_reserve": 1986
     }
+  },
+  "reproducibility_scope": {
+    "does_not_prove": "Immutable provenance of live official web-page bytes or future provider coverage.",
+    "external_pack_boundary": {
+      "manifest_sha256_reference": "269f4066b13e88f4397aecd6f1a3d7ba154dc8468415581ce0f6b8922f1537b4",
+      "repository_evidence": "NOT_COMMITTED_BY_MISSION_RULE",
+      "status": "EXTERNAL_INPUT_NOT_REPRODUCIBLE_FROM_REPOSITORY"
+    },
+    "proves": "Deterministic transformation of pinned Git authorities and embedded dated facts into eight byte-identical repository reports.",
+    "verdict": "DATA_HYPOTHESIS_CONVERGENCE_REPRODUCIBLE"
   },
   "schema_version": "robin-data-hypothesis-convergence-v1",
   "sealed_at": "2026-08-14T22:22:16Z",
@@ -148,7 +159,7 @@
       "passed": true
     },
     {
-      "check": "all_groups_valid",
+      "check": "call_groups_recomputed_from_requirements",
       "passed": true
     },
     {

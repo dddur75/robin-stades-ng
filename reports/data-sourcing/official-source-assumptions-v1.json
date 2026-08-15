@@ -322,6 +322,15 @@
       "url": "https://images.legaseriea.it/image/private/fl_attachment/prd/czailts3apyt3kuxjran.pdf"
     }
   ],
+  "provenance_boundary": {
+    "deterministic_reproduction_scope": "Pinned Git authorities plus embedded, dated public facts produce the same repository reports byte-for-byte.",
+    "does_not_claim": "Immutable provenance of live official web-page bytes; no web payload is committed.",
+    "external_pack": {
+      "manifest_sha256_reference": "269f4066b13e88f4397aecd6f1a3d7ba154dc8468415581ce0f6b8922f1537b4",
+      "repository_evidence": "NOT_COMMITTED_BY_MISSION_RULE",
+      "status": "EXTERNAL_INPUT_NOT_REPRODUCIBLE_FROM_REPOSITORY"
+    }
+  },
   "provider_facts": {
     "bulk_odds_cost": "requested market count × requested region count",
     "forbidden_impostor_domain": "https://theoddsapi.com/",
