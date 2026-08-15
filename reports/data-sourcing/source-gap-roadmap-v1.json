@@ -1,0 +1,160 @@
+{
+  "exact_pr56_continuation": [
+    "Integrate both dependent commits 88c20ffe3bf05bfba6580bd489f859af695a85c4 then 81211569f7f5ae1139a4be50b90c643a00d3fdd6, or merge the full head ancestry; keep inventory/recommendation-only status.",
+    "Add a source→field→experiment matrix covering settlement, xG/xGA, promoted cohorts, derbies, multi-competition calendars, rest, congestion and coach tenure.",
+    "Unify PR56/PR57 into one receipt superset with ingested_at<=cutoff, approved licence, receipt hash, mapping/projection revisions and distinct TARGET/LABEL receipts.",
+    "Replace matchday budgets with fixture interval scheduling and rerun quota/monthly peak calculations after official kickoff revisions.",
+    "Define paired h2h/totals on one combined event receipt, same fixture/bookmaker, point 2.5, market freshness/skew and joint coverage threshold.",
+    "Select an approved prospective fixture/revision/settlement authority.",
+    "Confirm The Odds API raw-retention terms in writing and reverify prices/quotas and Sportmonks add-ons.",
+    "Add deterministic generators, schemas and golden replay tests for hand-authored reports and complete receipts.",
+    "Only under separate authorization, preserve expiring external evidence first; never backdate.",
+    "Then run one future Ligue 1 canary; scale only after two matchdays, valid receipts, replay, rights, coverage and quota gates."
+  ],
+  "gaps": [
+    {
+      "candidate": "The Odds API current",
+      "cost": "500 credits/month free; $30/month for 20K",
+      "current_coverage": "schema/documentation only; no receipts",
+      "data_domain": "odds h2h",
+      "experiments": "001-010, 011-025 as declared",
+      "legal_risk": "raw retention duration not stated publicly",
+      "priority": "P0",
+      "temporal_proof": "combined raw bytes, quota headers, local observation/ingestion and cutoff"
+    },
+    {
+      "candidate": "The Odds API combined event-odds canary",
+      "cost": "up to 2 credits per event request in one region",
+      "current_coverage": "COVERAGE_TO_BE_PROVEN",
+      "data_domain": "totals 2.5",
+      "experiments": "010,016,023,024,025",
+      "legal_risk": "same retention caveat; no European coverage warranty",
+      "priority": "P0_GATE",
+      "temporal_proof": "same receipt, fixture, bookmaker, complete h2h+totals point 2.5, market.last_update"
+    },
+    {
+      "candidate": "official league publications for bootstrap; Sportmonks Football core as Source 2 candidate",
+      "cost": "Sportmonks base €29/month quoted by PR56; reverify before decision",
+      "current_coverage": "official calendars prove pairs; most future exact UTC times remain mutable",
+      "data_domain": "fixtures + kickoff revisions",
+      "experiments": "all 25",
+      "legal_risk": "contract and retention review; official calendars not a licence to republish full lists",
+      "priority": "P0",
+      "temporal_proof": "versioned raw fixture receipt, published/first-observed/ingested times and supersession chain"
+    },
+    {
+      "candidate": "Source 2 fixture+settlement provider",
+      "cost": "TBD after provider selection",
+      "current_coverage": "no prospective settlement recommendation in PR56",
+      "data_domain": "settled results/labels",
+      "experiments": "all 25",
+      "legal_risk": "result rights, corrections and retention must be contractual",
+      "priority": "P0",
+      "temporal_proof": "result_available_at and settlement_receipt_at with immutable supersession"
+    },
+    {
+      "candidate": "contracted Sportmonks xG add-on or equivalent",
+      "cost": "add-on price not quantified in PR56; written quote required",
+      "current_coverage": "data/xg.parquet absent",
+      "data_domain": "xG/xGA",
+      "experiments": "011-013,021",
+      "legal_risk": "field-level predictive/retention rights require contract",
+      "priority": "P1_SOURCE3",
+      "temporal_proof": "pre-cutoff historical match receipts; current-match xG barred before settlement"
+    },
+    {
+      "candidate": "derive from approved Source 2 results plus Source 3 xG",
+      "cost": "derived compute plus Source 2/3",
+      "current_coverage": "derived legacy surfaces are not PIT-proven",
+      "data_domain": "form + strength + standings",
+      "experiments": "011-013,021-022",
+      "legal_risk": "inherits source contracts",
+      "priority": "P1",
+      "temporal_proof": "expanding training-only snapshots frozen before cutoff"
+    },
+    {
+      "candidate": "official season membership/publication captured before season",
+      "cost": "low internal curation after Source 2",
+      "current_coverage": "no PR56 family/source/receipt",
+      "data_domain": "promoted cohorts",
+      "experiments": "015 (and dependency overreach in 014/016)",
+      "legal_risk": "citation/derived metadata only; no bulk republication",
+      "priority": "P1",
+      "temporal_proof": "versioned preseason registry with source receipt and effective season"
+    },
+    {
+      "candidate": "human-approved versioned preseason registry with primary/public sources",
+      "cost": "low curation; review time",
+      "current_coverage": "PR56 omitted config/derbys.yaml; existing seed is unversioned/unreceipted for science",
+      "data_domain": "derby registry",
+      "experiments": "016 (and dependency overreach in 014/015)",
+      "legal_risk": "source-specific citation and database-right review",
+      "priority": "P1",
+      "temporal_proof": "freeze before season; source URLs, observed_at, revision and pair identity"
+    },
+    {
+      "candidate": "Sportmonks multi-competition fixtures/results + official revisions",
+      "cost": "base/coverage quote to reverify",
+      "current_coverage": "no PIT-complete multi-competition calendar",
+      "data_domain": "multi-competition calendars, rest, congestion, Europe",
+      "experiments": "017-019",
+      "legal_risk": "fixture rights and retention review",
+      "priority": "P1",
+      "temporal_proof": "kickoff/status/completion/extra-time receipts with supersession"
+    },
+    {
+      "candidate": "Wikidata revisions (CC0) plus Source 2 venue identity",
+      "cost": "free",
+      "current_coverage": "not bound to fixture-effective receipts",
+      "data_domain": "venue coordinates",
+      "experiments": "014,017-019",
+      "legal_risk": "low, completeness/identity QA remains",
+      "priority": "P1",
+      "temporal_proof": "revision ID, retrieved_at, venue-effective interval and neutral-site flag"
+    },
+    {
+      "candidate": "none admissible yet; official club/league claims need a versioned capture design",
+      "cost": "unknown",
+      "current_coverage": "no prospective effective-at source pipeline",
+      "data_domain": "coach changes/tenure",
+      "experiments": "020 (over-specified dependency also affects 021-022)",
+      "legal_risk": "claim provenance and automated capture rights unresolved",
+      "priority": "P2_BLOCKED",
+      "temporal_proof": "official_effective_at plus first observed/ingested receipt and supersession"
+    }
+  ],
+  "minimal_three_source_sequence": [
+    {
+      "gate": "Unify PR56/PR57 receipt contracts, freeze H12/H6 and H1 selection, obtain written raw-retention approval.",
+      "order": 0
+    },
+    {
+      "activation": "NOT_AUTHORIZED",
+      "order": 1,
+      "purpose": "odds h2h plus event-specific totals/timestamp canary",
+      "source": "The Odds API current"
+    },
+    {
+      "activation": "SOURCE_SELECTION_AND_CONTRACT_PENDING",
+      "order": 2,
+      "purpose": "event identity, kickoff revisions, results and settled labels",
+      "source": "fixture + settlement provider (Sportmonks Football core candidate)"
+    },
+    {
+      "activation": "QUOTE_RIGHTS_AND_SCHEMA_PENDING",
+      "order": 3,
+      "purpose": "unlock highest-priority B experiments 011-013 and support 021",
+      "source": "first enriched source: contracted xG/xGA add-on"
+    }
+  ],
+  "schema_version": "robin-source-gap-roadmap-v1",
+  "status": [
+    "DESIGN_ONLY",
+    "NOT_ACTIVATED",
+    "NOT_AUTHORIZED",
+    "NO_PROVIDER_CALL",
+    "NO_PURCHASE",
+    "NO_PROMOTION",
+    "NO_BET"
+  ]
+}

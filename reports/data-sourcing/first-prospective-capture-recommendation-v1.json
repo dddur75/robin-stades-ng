@@ -1,123 +1,147 @@
 {
-  "schema_version": "1.0.0",
-  "recommendation_id": "robin-first-prospective-capture-v1",
-  "decided_at": "2026-08-14T17:30:00Z",
-  "status": "RECOMMENDED_NOT_ACTIVATED",
+  "schema_version": "robin-first-prospective-capture-recommendation-v1",
+  "recommendation_id": "ROBIN_FIRST_RECEIPT_BACKED_CAPTURE_PILOT_V1",
+  "updated_at": "2026-08-15",
+  "status": [
+    "DESIGN_ONLY",
+    "NOT_AUTHORIZED",
+    "NO_PROVIDER_CALL",
+    "NO_PURCHASE",
+    "NO_PROMOTION",
+    "NO_BET"
+  ],
+  "authority": {
+    "current_main_sha": "72e6cd625f7668fdcc095e63a847b6e7e9cf860f",
+    "pr56_initial_head_sha": "81211569f7f5ae1139a4be50b90c643a00d3fdd6",
+    "sealed_manifest_sha256": "269f4066b13e88f4397aecd6f1a3d7ba154dc8468415581ce0f6b8922f1537b4"
+  },
   "single_priority": {
-    "source_id": "the-odds-api-current",
     "source": "The Odds API v4 current odds",
-    "official_url": "https://the-odds-api.com/liveapi/guides/v4/",
-    "why_first": "Robin has historical fixtures/results but no local intraday odds snapshot corpus and no historical receipt objects. This source is the highest-scoring class-C candidate, fits the existing sport-key/market concepts, has provider last-update fields, permits analytics under published terms, and can start within the public Starter credit allowance after approval.",
-    "data": [
-      "exact raw JSON response bytes",
-      "event and sport identifiers",
-      "bookmaker key/title and last_update",
-      "h2h home/draw/away decimal prices",
-      "totals price/point pairs filtered analytically to 2.5 without discarding raw response",
-      "Robin-controlled receipt and schema fingerprint"
+    "official_domain": "the-odds-api.com",
+    "official_docs": "https://the-odds-api.com/liveapi/guides/v4/",
+    "official_terms": "https://the-odds-api.com/terms-and-conditions.html",
+    "official_impersonation_warning": "https://the-odds-api.com/impersonation-warning.html",
+    "accessed_at": "2026-08-15",
+    "impostor_domain": "theoddsapi.com",
+    "why_first": "The local corpus has no immutable receipt-backed intraday odds history. A small current-odds pilot can prove timestamps, payload retention, fixture identity, market coverage, quota receipts and offline replay before any scientific execution or scale decision."
+  },
+  "recommended_pilot": {
+    "specification": "reports/data-sourcing/first-receipt-backed-capture-pilot-v1.json",
+    "competition": "Ligue 1",
+    "matchdays": 2,
+    "maximum_fixtures": 18,
+    "canary_fixtures": 5,
+    "planned_http_calls": 75,
+    "planned_billable_calls": 73,
+    "maximum_credits": 88,
+    "backfill": false,
+    "activation": "SEPARATE_AUTHORIZATION_REQUIRED"
+  },
+  "markets": {
+    "h2h": "PRIMARY_ODDS_FOUNDATION",
+    "totals": "TOTALS_COVERAGE_TO_BE_PROVEN",
+    "market_evidence": [
+      {
+        "market": "h2h",
+        "pilot_role": "systematic predictor and target snapshots where the frozen experiment protocol assigns those roles",
+        "credit_cost_per_region": 1
+      },
+      {
+        "market": "totals",
+        "pilot_role": "canary coverage measurement only until coverage is proven",
+        "credit_cost_per_region": 1
+      }
     ],
-    "leagues": [
-      {"competition": "Ligue 1", "sport_key": "soccer_france_ligue_one", "expected_fixtures_per_season": 306, "expected_calls_per_season": 204, "expected_credits_per_season": 408, "windows": ["J-7", "J-3", "J-1", "H-6", "H-2", "NEAR_KICKOFF"]},
-      {"competition": "Premier League", "sport_key": "soccer_epl", "expected_fixtures_per_season": 380, "expected_calls_per_season": 114, "expected_credits_per_season": 228, "windows": ["J-1", "H-2", "NEAR_KICKOFF"]},
-      {"competition": "Liga", "sport_key": "soccer_spain_la_liga", "expected_fixtures_per_season": 380, "expected_calls_per_season": 114, "expected_credits_per_season": 228, "windows": ["J-1", "H-2", "NEAR_KICKOFF"]},
-      {"competition": "Bundesliga", "sport_key": "soccer_germany_bundesliga", "expected_fixtures_per_season": 306, "expected_calls_per_season": 102, "expected_credits_per_season": 204, "windows": ["J-1", "H-2", "NEAR_KICKOFF"]},
-      {"competition": "Serie A", "sport_key": "soccer_italy_serie_a", "expected_fixtures_per_season": 380, "expected_calls_per_season": 114, "expected_credits_per_season": 228, "windows": ["J-1", "H-2", "NEAR_KICKOFF"]}
-    ],
-    "markets": {
-      "provider_market_keys": ["h2h", "totals"],
-      "robin_initial_markets": ["1X2", "OVER_UNDER_2_5"],
-      "region": "eu",
-      "odds_format": "decimal",
-      "date_format": "iso",
-      "deferred_markets": ["draw_no_bet", "double_chance", "btts", "alternate_spreads/asian handicap", "additional-player markets"],
-      "deferral_reason": "First prove receipt completeness, fixture identity, coverage and quota economics on two high-value featured markets."
+    "strategy_comparison": [
+      {
+        "strategy": "H2H_ONLY",
+        "status": "SYSTEMATIC_BASELINE"
+      },
+      {
+        "strategy": "H2H_PLUS_TOTALS_SYSTEMATIC",
+        "status": "REJECTED_UNTIL_TOTALS_COVERAGE_PROVEN"
+      },
+      {
+        "strategy": "H2H_SYSTEMATIC_PLUS_TOTALS_PILOT",
+        "status": "SELECTED_DESIGN_ONLY"
+      },
+      {
+        "strategy": "TOTALS_AFTER_COVERAGE_THRESHOLD",
+        "status": "GATED_BY_TOTALS_COVERAGE_TO_BE_PROVEN"
+      }
+    ]
+  },
+  "temporal_roles": {
+    "H24": {
+      "role": "PREDICTOR",
+      "maximum_staleness_minutes": 120
     },
-    "frequency": {
-      "policy": "Capture once per competition/window, not continuous polling.",
-      "window_tolerance_seconds": 3600,
-      "window_tolerance_scope": "Applies to J-7, J-3, J-1, H-6 and H-2 only.",
-      "near_kickoff_definition": "Target kickoff minus 15 minutes; accepted one-sided interval [kickoff-20m, kickoff-10m]. Outside that interval record MISSED_WINDOW. At or after kickoff quarantine as POST_KICKOFF and never substitute it for NEAR_KICKOFF.",
-      "retry_policy": "No blind retry after a valid response; each response, including partial/empty, receives its own receipt. Network retries use bounded backoff and a new observation timestamp."
+    "H2": {
+      "role": "PREDICTOR_OR_TARGET_AS_FROZEN_BY_PROTOCOL",
+      "maximum_staleness_minutes": 15
     },
-    "expected_cost": {
-      "monetary": {"amount": 0, "currency": "USD", "period": "month", "plan": "Starter, if the public 500-credit/month allowance and pricing remain unchanged", "price_checked_at": "2026-08-14"},
-      "credits_per_call": 2,
-      "calculation": "2 provider markets x 1 region",
-      "season_projection_credits": 1296,
-      "average_credits_per_week": 24.92,
-      "plan_allowance_credits_per_month": 500,
-      "guardrail": "Do not call if remaining credits cannot cover the response plus reserve; re-check price/terms before approval and every renewal."
-    },
-    "expected_volume": {
-      "fixtures_per_five_league_season": 1752,
-      "competition_window_calls_per_season": 648,
-      "fixture_window_expectations_per_season": 6174,
-      "raw_bytes": null,
-      "bookmaker_quotes": null,
-      "why_unknown": "Response size and bookmaker/market availability are dynamic and must be measured by the first approved snapshot; no paid/authenticated call was made in this mission.",
-      "git_raw_payloads_allowed": 0
-    },
-    "request_identity_template": {
-      "method": "GET",
-      "path_template": "/v4/sports/{sport_key}/odds",
-      "canonical_query_without_secret": {"regions": "eu", "markets": "h2h,totals", "oddsFormat": "decimal", "dateFormat": "iso"},
-      "secret_handling": "API key is neither stored in request_identity nor logged; secret value must never enter Git or receipts.",
-      "endpoint_note": "Use the provider's documented authenticated endpoint only after separate activation approval."
-    },
-    "receipt_contract": {
-      "required_fields": ["source_name", "source_url", "request_identity", "payload_sha256", "source_published_at", "robin_first_observed_at", "robin_ingested_at", "available_at", "schema_fingerprint", "capture_code_revision", "licence_status", "snapshot_candidate_id"],
-      "source_name": "the-odds-api-current",
-      "source_url": "https://api.the-odds-api.com/v4/sports/{sport_key}/odds",
-      "source_published_at_rule": "Set null on the response-level receipt because the current-odds response has no single documented publication timestamp. On each bookmaker child projection, preserve last_update as source_published_at only when its provider semantics and clock checks pass.",
-      "available_at_rule": "Response receipt: robin_first_observed_at. Bookmaker child: max(trusted bookmaker last_update, receipt robin_first_observed_at); if last_update is missing/untrusted, use robin_first_observed_at and record the downgrade; never earlier than either.",
-      "snapshot_candidate_id_rule": "sha256(canonical source_name + request_identity + payload_sha256 + robin_first_observed_at)",
-      "immutability": "Payload bytes and receipt are append-only; later provider states create new snapshot candidates.",
-      "admission_rule": "A quote is usable for a feature only when receipt is complete, payload hash verifies, fixture mapping is unambiguous and available_at <= feature_cutoff_at."
-    },
-    "first_snapshot": {
-      "activation_status": "DO_NOT_RUN_IN_THIS_MISSION",
-      "scope": "One approved GET for the next verified Ligue 1 matchday at its first due J-7 window; if J-7 is already past, use the next due window and label it exactly rather than backdating.",
-      "sport_key": "soccer_france_ligue_one",
-      "markets": ["h2h", "totals"],
-      "region": "eu",
-      "expected_http_calls": 1,
-      "expected_credits": 2,
-      "raw_storage": "Immutable storage outside Git; production store and retention approval are separate decisions.",
-      "receipt_storage": "Store adjacent to payload and in a queryable receipt index only after separate implementation approval.",
-      "no_backfill_rule": "The first real robin_first_observed_at is capture time; never assign it to earlier matches or existing legacy odds."
-    },
-    "success_criteria": [
-      "HTTP 200 response and exact payload bytes retained with matching SHA-256 and byte count.",
-      "One complete receipt with all 12 LOOP55-compatible required fields and an immutable capture_code_revision.",
-      "At least one provider event maps uniquely to a verified Ligue 1 fixture without name-only ambiguity.",
-      "Every admitted h2h bookmaker has home, draw and away outcomes; every admitted O/U projection identifies its point and both sides.",
-      "At least five bookmakers provide complete h2h for at least 80% of returned mapped fixtures; lower coverage is retained but the pilot is classified insufficient.",
-      "All source and Robin timestamps normalize to UTC; any future clock skew or missing source timestamp is quarantined/downgraded; NEAR_KICKOFF is accepted only in [T-20m, T-10m].",
-      "A no-network replay from stored bytes reproduces the schema fingerprint, fixture/market projections and payload hash exactly.",
-      "Secrets, authorization headers and raw payload bodies are absent from Git/log artifacts.",
-      "Actual credits used, response bytes, event count, bookmaker count, market completeness and schema drift are measured against the estimate."
-    ],
-    "scale_gate": "Scale to the full five-league schedule only after two matchdays, at least five fixtures and at least two critical windows pass all receipt/replay criteria, legal retention is confirmed, monthly peak credits remain below allowance plus reserve, and no production lock is bypassed.",
-    "replaces_or_delays": {
-      "replaces": ["The empty 86-row odds archive ledger as evidence of capture", "Semantic opening/closing labels as a substitute for exact observed-at snapshots", "Any plan to infer intraday movement from data/matches.parquet"],
-      "delays": ["Paid historical Odds API acquisition", "Sportmonks Premium Odds subscription", "DNB/double-chance/BTTS/Asian-handicap expansion", "API-Football player availability expansion unless written rights clearance is obtained", "Weather capture"],
-      "does_not_replace": ["Historical fixtures/results baseline", "Future licensed injury/suspension feed", "Venue/travel and forecast-as-known weather research"]
+    "H1": {
+      "role": "TARGET_WHEN_REQUIRED_BY_FROZEN_PROTOCOL",
+      "rule": "TARGET snapshots are never eligible as predictors"
     }
   },
-  "source_evidence": {
-    "candidate_score": 94,
-    "candidate_class": "C",
-    "local_projection": "reports/prospective-observatory/five-league-cost-projection.json",
-    "local_policy_reference": "configs/prospective_observatory_v1.json",
-    "official_pricing": "https://the-odds-api.com/",
-    "official_markets": "https://the-odds-api.com/sports-odds-data/betting-markets.html",
-    "official_update_intervals": "https://the-odds-api.com/sports-odds-data/update-intervals.html",
-    "official_terms": "https://the-odds-api.com/terms-and-conditions.html"
+  "exp009": {
+    "candidate_windows": ["H24", "H12", "H6", "H2"],
+    "gate": "EXP009_PROTOCOL_SUCCESSOR_REQUIRED_BEFORE_EXECUTION"
   },
-  "non_actions_confirmed": [
-    "No API key read or used.",
-    "No authenticated or paid provider call made.",
-    "No purchase, subscription or activation performed.",
-    "No Robin source, workflow, database, R2 object or production lock changed."
-  ]
+  "market_synchronization": {
+    "verdict": "MARKET_SYNCHRONIZATION_OBSERVABLE_DESIGN_ONLY",
+    "official_field": "bookmakers[].markets[].last_update",
+    "observational_grain": "bookmaker_market",
+    "reason": "The official v4 event-odds response documents last_update on each market nested under a bookmaker, so synchronization is observable by design but remains unproved until a receipt-backed payload exists."
+  },
+  "receipt_contract": {
+    "required": [
+      "exact raw response bytes outside Git",
+      "payload_sha256 and byte count",
+      "canonical secret-free request identity",
+      "provider response quota headers",
+      "source_published_at when documented at the retained grain",
+      "robin_first_observed_at",
+      "robin_ingested_at",
+      "available_at",
+      "schema_fingerprint",
+      "capture_code_revision",
+      "snapshot_id",
+      "offline replay result"
+    ],
+    "replay": "No-network replay must reproduce payload hash, schema fingerprint, fixture mapping and market projections byte-for-byte or fail closed."
+  },
+  "gates": [
+    "EXP009_PROTOCOL_SUCCESSOR_REQUIRED_BEFORE_EXECUTION",
+    "TOTALS_COVERAGE_TO_BE_PROVEN",
+    "RAW_PAYLOAD_RETENTION_WRITTEN_CONFIRMATION_REQUIRED",
+    "SEPARATE_CAPTURE_AUTHORIZATION_REQUIRED"
+  ],
+  "budget_context": {
+    "canonical_scenario": "S6",
+    "annual_credits": 13236,
+    "monthly_capacity_with_reserve": 1986,
+    "provider_cost_model": "requested markets multiplied by requested regions",
+    "quota_headers": [
+      "x-requests-remaining",
+      "x-requests-used",
+      "x-requests-last"
+    ]
+  },
+  "legacy_projection": {
+    "calls": 648,
+    "credits": 1296,
+    "status": "NON_CANONICAL_SUPERSEDED_BY_EVENT_AWARE_PLAN"
+  },
+  "external_effects": {
+    "provider_calls": 0,
+    "authenticated_calls": 0,
+    "purchases": 0,
+    "subscriptions": 0,
+    "promotions": 0,
+    "bets": 0,
+    "production_changes": 0
+  },
+  "next_mission": "FIRST_RECEIPT_BACKED_CAPTURE_PILOT_V1"
 }

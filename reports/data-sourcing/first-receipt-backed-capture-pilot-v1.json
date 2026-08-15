@@ -1,0 +1,3306 @@
+{
+  "authorization": "NOT_AUTHORIZED",
+  "bulk_call_groups": [
+    {
+      "call_group_id": "CALL-GROUP-0001",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-01"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-01:H24:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-20T18:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H24"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0002",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-01"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-01:H12:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-21T06:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H12"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0003",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-01"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-01:H6:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-21T12:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H6"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0004",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-02"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-02:H24:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-21T15:15:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H24"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0005",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-01"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-01:H2:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-21T16:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING"
+      },
+      "temporal_role": "MIXED_BY_PROTOCOL_WITH_DISTINCT_BINDINGS",
+      "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING",
+      "windows_satisfied": [
+        "H2"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0006",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-01"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-01:H1:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-21T17:50:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "TARGET_CAPTURE"
+      },
+      "temporal_role": "TARGET",
+      "temporal_role_class": "TARGET_CAPTURE",
+      "windows_satisfied": [
+        "H1"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0007",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-03",
+        "L1-2026-27-MD01-04",
+        "L1-2026-27-MD01-05",
+        "L1-2026-27-MD01-06"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-03:H24:bulk_odds:h2h",
+        "L1-2026-27-MD01-04:H24:bulk_odds:h2h",
+        "L1-2026-27-MD01-05:H24:bulk_odds:h2h",
+        "L1-2026-27-MD01-06:H24:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-21T18:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H24"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0008",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-02"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-02:H12:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-22T03:15:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H12"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0009",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-03",
+        "L1-2026-27-MD01-04",
+        "L1-2026-27-MD01-05",
+        "L1-2026-27-MD01-06"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-03:H12:bulk_odds:h2h",
+        "L1-2026-27-MD01-04:H12:bulk_odds:h2h",
+        "L1-2026-27-MD01-05:H12:bulk_odds:h2h",
+        "L1-2026-27-MD01-06:H12:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-22T06:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H12"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0010",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-02"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-02:H6:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-22T09:15:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H6"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0011",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-03",
+        "L1-2026-27-MD01-04",
+        "L1-2026-27-MD01-05",
+        "L1-2026-27-MD01-06",
+        "L1-2026-27-MD01-07"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-03:H6:bulk_odds:h2h",
+        "L1-2026-27-MD01-04:H6:bulk_odds:h2h",
+        "L1-2026-27-MD01-05:H6:bulk_odds:h2h",
+        "L1-2026-27-MD01-06:H6:bulk_odds:h2h",
+        "L1-2026-27-MD01-07:H24:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-22T12:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H24",
+        "H6"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0012",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-02"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-02:H2:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-22T13:15:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING"
+      },
+      "temporal_role": "MIXED_BY_PROTOCOL_WITH_DISTINCT_BINDINGS",
+      "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING",
+      "windows_satisfied": [
+        "H2"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0013",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-02"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-02:H1:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-22T14:20:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "TARGET_CAPTURE"
+      },
+      "temporal_role": "TARGET",
+      "temporal_role_class": "TARGET_CAPTURE",
+      "windows_satisfied": [
+        "H1"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0014",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-08"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-08:H24:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-22T15:15:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H24"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0015",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-03",
+        "L1-2026-27-MD01-04",
+        "L1-2026-27-MD01-05",
+        "L1-2026-27-MD01-06"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-03:H2:bulk_odds:h2h",
+        "L1-2026-27-MD01-04:H2:bulk_odds:h2h",
+        "L1-2026-27-MD01-05:H2:bulk_odds:h2h",
+        "L1-2026-27-MD01-06:H2:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-22T16:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING"
+      },
+      "temporal_role": "MIXED_BY_PROTOCOL_WITH_DISTINCT_BINDINGS",
+      "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING",
+      "windows_satisfied": [
+        "H2"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0016",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-03",
+        "L1-2026-27-MD01-04",
+        "L1-2026-27-MD01-05",
+        "L1-2026-27-MD01-06"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-03:H1:bulk_odds:h2h",
+        "L1-2026-27-MD01-04:H1:bulk_odds:h2h",
+        "L1-2026-27-MD01-05:H1:bulk_odds:h2h",
+        "L1-2026-27-MD01-06:H1:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-22T17:50:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "TARGET_CAPTURE"
+      },
+      "temporal_role": "TARGET",
+      "temporal_role_class": "TARGET_CAPTURE",
+      "windows_satisfied": [
+        "H1"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0017",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-09"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-09:H24:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-22T18:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H24"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0018",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-07"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-07:H12:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-23T01:00:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H12"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0019",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-08"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-08:H12:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-23T03:15:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H12"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0020",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-09"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-09:H12:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-23T06:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H12"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0021",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-07"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-07:H6:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-23T07:00:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H6"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0022",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-08"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-08:H6:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-23T09:15:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H6"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0023",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-07"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-07:H2:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-23T11:00:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING"
+      },
+      "temporal_role": "MIXED_BY_PROTOCOL_WITH_DISTINCT_BINDINGS",
+      "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING",
+      "windows_satisfied": [
+        "H2"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0024",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-07"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-07:H1:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-23T12:05:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "TARGET_CAPTURE"
+      },
+      "temporal_role": "TARGET",
+      "temporal_role_class": "TARGET_CAPTURE",
+      "windows_satisfied": [
+        "H1"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0025",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-09"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-09:H6:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-23T12:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H6"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0026",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-08"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-08:H2:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-23T13:15:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING"
+      },
+      "temporal_role": "MIXED_BY_PROTOCOL_WITH_DISTINCT_BINDINGS",
+      "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING",
+      "windows_satisfied": [
+        "H2"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0027",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-08"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-08:H1:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-23T14:20:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "TARGET_CAPTURE"
+      },
+      "temporal_role": "TARGET",
+      "temporal_role_class": "TARGET_CAPTURE",
+      "windows_satisfied": [
+        "H1"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0028",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-09"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-09:H2:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-23T16:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING"
+      },
+      "temporal_role": "MIXED_BY_PROTOCOL_WITH_DISTINCT_BINDINGS",
+      "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING",
+      "windows_satisfied": [
+        "H2"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0029",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD01-09"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD01-09:H1:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-23T17:50:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "TARGET_CAPTURE"
+      },
+      "temporal_role": "TARGET",
+      "temporal_role_class": "TARGET_CAPTURE",
+      "windows_satisfied": [
+        "H1"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0030",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-01"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-01:H24:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-27T18:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H24"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0031",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-01"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-01:H12:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-28T06:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H12"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0032",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-01"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-01:H6:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-28T12:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H6"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0033",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-02"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-02:H24:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-28T15:15:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H24"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0034",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-01"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-01:H2:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-28T16:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING"
+      },
+      "temporal_role": "MIXED_BY_PROTOCOL_WITH_DISTINCT_BINDINGS",
+      "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING",
+      "windows_satisfied": [
+        "H2"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0035",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-01"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-01:H1:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-28T17:50:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "TARGET_CAPTURE"
+      },
+      "temporal_role": "TARGET",
+      "temporal_role_class": "TARGET_CAPTURE",
+      "windows_satisfied": [
+        "H1"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0036",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-03",
+        "L1-2026-27-MD02-04",
+        "L1-2026-27-MD02-05",
+        "L1-2026-27-MD02-06"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-03:H24:bulk_odds:h2h",
+        "L1-2026-27-MD02-04:H24:bulk_odds:h2h",
+        "L1-2026-27-MD02-05:H24:bulk_odds:h2h",
+        "L1-2026-27-MD02-06:H24:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-28T18:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H24"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0037",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-02"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-02:H12:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-29T03:15:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H12"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0038",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-03",
+        "L1-2026-27-MD02-04",
+        "L1-2026-27-MD02-05",
+        "L1-2026-27-MD02-06"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-03:H12:bulk_odds:h2h",
+        "L1-2026-27-MD02-04:H12:bulk_odds:h2h",
+        "L1-2026-27-MD02-05:H12:bulk_odds:h2h",
+        "L1-2026-27-MD02-06:H12:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-29T06:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H12"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0039",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-02"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-02:H6:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-29T09:15:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H6"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0040",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-03",
+        "L1-2026-27-MD02-04",
+        "L1-2026-27-MD02-05",
+        "L1-2026-27-MD02-06",
+        "L1-2026-27-MD02-07"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-03:H6:bulk_odds:h2h",
+        "L1-2026-27-MD02-04:H6:bulk_odds:h2h",
+        "L1-2026-27-MD02-05:H6:bulk_odds:h2h",
+        "L1-2026-27-MD02-06:H6:bulk_odds:h2h",
+        "L1-2026-27-MD02-07:H24:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-29T12:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H24",
+        "H6"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0041",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-02"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-02:H2:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-29T13:15:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING"
+      },
+      "temporal_role": "MIXED_BY_PROTOCOL_WITH_DISTINCT_BINDINGS",
+      "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING",
+      "windows_satisfied": [
+        "H2"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0042",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-02"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-02:H1:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-29T14:20:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "TARGET_CAPTURE"
+      },
+      "temporal_role": "TARGET",
+      "temporal_role_class": "TARGET_CAPTURE",
+      "windows_satisfied": [
+        "H1"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0043",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-08"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-08:H24:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-29T15:15:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H24"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0044",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-03",
+        "L1-2026-27-MD02-04",
+        "L1-2026-27-MD02-05",
+        "L1-2026-27-MD02-06"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-03:H2:bulk_odds:h2h",
+        "L1-2026-27-MD02-04:H2:bulk_odds:h2h",
+        "L1-2026-27-MD02-05:H2:bulk_odds:h2h",
+        "L1-2026-27-MD02-06:H2:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-29T16:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING"
+      },
+      "temporal_role": "MIXED_BY_PROTOCOL_WITH_DISTINCT_BINDINGS",
+      "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING",
+      "windows_satisfied": [
+        "H2"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0045",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-03",
+        "L1-2026-27-MD02-04",
+        "L1-2026-27-MD02-05",
+        "L1-2026-27-MD02-06"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-03:H1:bulk_odds:h2h",
+        "L1-2026-27-MD02-04:H1:bulk_odds:h2h",
+        "L1-2026-27-MD02-05:H1:bulk_odds:h2h",
+        "L1-2026-27-MD02-06:H1:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-29T17:50:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "TARGET_CAPTURE"
+      },
+      "temporal_role": "TARGET",
+      "temporal_role_class": "TARGET_CAPTURE",
+      "windows_satisfied": [
+        "H1"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0046",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-09"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-09:H24:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-29T18:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H24"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0047",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-07"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-07:H12:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-30T01:00:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H12"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0048",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-08"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-08:H12:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-30T03:15:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H12"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0049",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-09"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-09:H12:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-30T06:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H12"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0050",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-07"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-07:H6:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-30T07:00:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H6"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0051",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-08"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-08:H6:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-30T09:15:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H6"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0052",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-07"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-07:H2:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-30T11:00:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING"
+      },
+      "temporal_role": "MIXED_BY_PROTOCOL_WITH_DISTINCT_BINDINGS",
+      "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING",
+      "windows_satisfied": [
+        "H2"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0053",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-07"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-07:H1:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-30T12:05:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "TARGET_CAPTURE"
+      },
+      "temporal_role": "TARGET",
+      "temporal_role_class": "TARGET_CAPTURE",
+      "windows_satisfied": [
+        "H1"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0054",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-09"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-09:H6:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-30T12:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE"
+      },
+      "temporal_role": "PREDICTOR",
+      "temporal_role_class": "PREDICTOR_CAPTURE",
+      "windows_satisfied": [
+        "H6"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0055",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-08"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-08:H2:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-30T13:15:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING"
+      },
+      "temporal_role": "MIXED_BY_PROTOCOL_WITH_DISTINCT_BINDINGS",
+      "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING",
+      "windows_satisfied": [
+        "H2"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0056",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-08"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-08:H1:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-30T14:20:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "TARGET_CAPTURE"
+      },
+      "temporal_role": "TARGET",
+      "temporal_role_class": "TARGET_CAPTURE",
+      "windows_satisfied": [
+        "H1"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0057",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-09"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-09:H2:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-30T16:45:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING"
+      },
+      "temporal_role": "MIXED_BY_PROTOCOL_WITH_DISTINCT_BINDINGS",
+      "temporal_role_class": "PREDICTOR_CAPTURE_WITH_EXP006_TARGET_BINDING",
+      "windows_satisfied": [
+        "H2"
+      ]
+    },
+    {
+      "call_group_id": "CALL-GROUP-0058",
+      "compatibility_proof": {
+        "no_cutoff_violated": true,
+        "same_markets": true,
+        "same_region": true,
+        "same_sport_key": true,
+        "scheduled_inside_every_interval": true,
+        "target_not_used_as_predictor": true
+      },
+      "credit_cost": 1,
+      "fixture_ids": [
+        "L1-2026-27-MD02-09"
+      ],
+      "requirement_ids": [
+        "L1-2026-27-MD02-09:H1:bulk_odds:h2h"
+      ],
+      "role_binding_rule": "A neutral raw receipt may support different experiments, but every experiment gets an explicit role-bound snapshot; EXP006 H2 is TARGET and never enters its predictor pipeline.",
+      "scheduled_at": "2026-08-30T17:50:00Z",
+      "source_request_key": {
+        "date_format": "iso",
+        "endpoint_family": "bulk_odds",
+        "markets": [
+          "h2h"
+        ],
+        "odds_format": "decimal",
+        "region": "eu",
+        "source": "THE_ODDS_API_V4",
+        "sport_key": "soccer_france_ligue_one",
+        "temporal_role_class": "TARGET_CAPTURE"
+      },
+      "temporal_role": "TARGET",
+      "temporal_role_class": "TARGET_CAPTURE",
+      "windows_satisfied": [
+        "H1"
+      ]
+    }
+  ],
+  "capture_mechanics_tested_for": [
+    "RDS-EXP-V1-001",
+    "RDS-EXP-V1-002",
+    "RDS-EXP-V1-003",
+    "RDS-EXP-V1-004",
+    "RDS-EXP-V1-005",
+    "RDS-EXP-V1-006",
+    "RDS-EXP-V1-007",
+    "RDS-EXP-V1-008",
+    "RDS-EXP-V1-009",
+    "RDS-EXP-V1-010",
+    "RDS-EXP-V1-023",
+    "RDS-EXP-V1-024",
+    "RDS-EXP-V1-025"
+  ],
+  "event_odds_canary_calls": [
+    {
+      "endpoint": "/v4/sports/{sport}/events/{eventId}/odds",
+      "fixture_id": "L1-2026-27-MD01-01",
+      "markets": [
+        "h2h",
+        "totals"
+      ],
+      "maximum_credit_cost": 2,
+      "protocol_role_bindings": {
+        "PREDICTOR": [
+          "RDS-EXP-V1-006",
+          "RDS-EXP-V1-008",
+          "RDS-EXP-V1-009",
+          "RDS-EXP-V1-010"
+        ],
+        "TARGET": []
+      },
+      "purpose": "same-receipt bookmaker×market last_update and paired totals 2.5 coverage",
+      "region": "eu",
+      "scheduled_at": "2026-08-20T18:45:00Z",
+      "temporal_role": "PREDICTOR",
+      "window_id": "H24"
+    },
+    {
+      "endpoint": "/v4/sports/{sport}/events/{eventId}/odds",
+      "fixture_id": "L1-2026-27-MD01-01",
+      "markets": [
+        "h2h",
+        "totals"
+      ],
+      "maximum_credit_cost": 2,
+      "protocol_role_bindings": {
+        "PREDICTOR": [
+          "RDS-EXP-V1-001",
+          "RDS-EXP-V1-002",
+          "RDS-EXP-V1-003",
+          "RDS-EXP-V1-004",
+          "RDS-EXP-V1-005",
+          "RDS-EXP-V1-007",
+          "RDS-EXP-V1-008",
+          "RDS-EXP-V1-009",
+          "RDS-EXP-V1-010",
+          "RDS-EXP-V1-011",
+          "RDS-EXP-V1-012",
+          "RDS-EXP-V1-013",
+          "RDS-EXP-V1-014",
+          "RDS-EXP-V1-015",
+          "RDS-EXP-V1-016",
+          "RDS-EXP-V1-017",
+          "RDS-EXP-V1-018",
+          "RDS-EXP-V1-019",
+          "RDS-EXP-V1-020",
+          "RDS-EXP-V1-021",
+          "RDS-EXP-V1-022",
+          "RDS-EXP-V1-023",
+          "RDS-EXP-V1-024",
+          "RDS-EXP-V1-025"
+        ],
+        "TARGET": [
+          "RDS-EXP-V1-006"
+        ]
+      },
+      "purpose": "same-receipt bookmaker×market last_update and paired totals 2.5 coverage",
+      "region": "eu",
+      "scheduled_at": "2026-08-21T16:45:00Z",
+      "temporal_role": "MIXED_BY_PROTOCOL_WITH_DISTINCT_BINDINGS",
+      "window_id": "H2"
+    },
+    {
+      "endpoint": "/v4/sports/{sport}/events/{eventId}/odds",
+      "fixture_id": "L1-2026-27-MD01-01",
+      "markets": [
+        "h2h",
+        "totals"
+      ],
+      "maximum_credit_cost": 2,
+      "protocol_role_bindings": {
+        "PREDICTOR": [],
+        "TARGET": [
+          "RDS-EXP-V1-005",
+          "RDS-EXP-V1-023"
+        ]
+      },
+      "purpose": "same-receipt bookmaker×market last_update and paired totals 2.5 coverage",
+      "region": "eu",
+      "scheduled_at": "2026-08-21T17:45:00Z",
+      "temporal_role": "TARGET",
+      "window_id": "H1"
+    },
+    {
+      "endpoint": "/v4/sports/{sport}/events/{eventId}/odds",
+      "fixture_id": "L1-2026-27-MD01-02",
+      "markets": [
+        "h2h",
+        "totals"
+      ],
+      "maximum_credit_cost": 2,
+      "protocol_role_bindings": {
+        "PREDICTOR": [
+          "RDS-EXP-V1-006",
+          "RDS-EXP-V1-008",
+          "RDS-EXP-V1-009",
+          "RDS-EXP-V1-010"
+        ],
+        "TARGET": []
+      },
+      "purpose": "same-receipt bookmaker×market last_update and paired totals 2.5 coverage",
+      "region": "eu",
+      "scheduled_at": "2026-08-21T15:15:00Z",
+      "temporal_role": "PREDICTOR",
+      "window_id": "H24"
+    },
+    {
+      "endpoint": "/v4/sports/{sport}/events/{eventId}/odds",
+      "fixture_id": "L1-2026-27-MD01-02",
+      "markets": [
+        "h2h",
+        "totals"
+      ],
+      "maximum_credit_cost": 2,
+      "protocol_role_bindings": {
+        "PREDICTOR": [
+          "RDS-EXP-V1-001",
+          "RDS-EXP-V1-002",
+          "RDS-EXP-V1-003",
+          "RDS-EXP-V1-004",
+          "RDS-EXP-V1-005",
+          "RDS-EXP-V1-007",
+          "RDS-EXP-V1-008",
+          "RDS-EXP-V1-009",
+          "RDS-EXP-V1-010",
+          "RDS-EXP-V1-011",
+          "RDS-EXP-V1-012",
+          "RDS-EXP-V1-013",
+          "RDS-EXP-V1-014",
+          "RDS-EXP-V1-015",
+          "RDS-EXP-V1-016",
+          "RDS-EXP-V1-017",
+          "RDS-EXP-V1-018",
+          "RDS-EXP-V1-019",
+          "RDS-EXP-V1-020",
+          "RDS-EXP-V1-021",
+          "RDS-EXP-V1-022",
+          "RDS-EXP-V1-023",
+          "RDS-EXP-V1-024",
+          "RDS-EXP-V1-025"
+        ],
+        "TARGET": [
+          "RDS-EXP-V1-006"
+        ]
+      },
+      "purpose": "same-receipt bookmaker×market last_update and paired totals 2.5 coverage",
+      "region": "eu",
+      "scheduled_at": "2026-08-22T13:15:00Z",
+      "temporal_role": "MIXED_BY_PROTOCOL_WITH_DISTINCT_BINDINGS",
+      "window_id": "H2"
+    },
+    {
+      "endpoint": "/v4/sports/{sport}/events/{eventId}/odds",
+      "fixture_id": "L1-2026-27-MD01-02",
+      "markets": [
+        "h2h",
+        "totals"
+      ],
+      "maximum_credit_cost": 2,
+      "protocol_role_bindings": {
+        "PREDICTOR": [],
+        "TARGET": [
+          "RDS-EXP-V1-005",
+          "RDS-EXP-V1-023"
+        ]
+      },
+      "purpose": "same-receipt bookmaker×market last_update and paired totals 2.5 coverage",
+      "region": "eu",
+      "scheduled_at": "2026-08-22T14:15:00Z",
+      "temporal_role": "TARGET",
+      "window_id": "H1"
+    },
+    {
+      "endpoint": "/v4/sports/{sport}/events/{eventId}/odds",
+      "fixture_id": "L1-2026-27-MD01-09",
+      "markets": [
+        "h2h",
+        "totals"
+      ],
+      "maximum_credit_cost": 2,
+      "protocol_role_bindings": {
+        "PREDICTOR": [
+          "RDS-EXP-V1-006",
+          "RDS-EXP-V1-008",
+          "RDS-EXP-V1-009",
+          "RDS-EXP-V1-010"
+        ],
+        "TARGET": []
+      },
+      "purpose": "same-receipt bookmaker×market last_update and paired totals 2.5 coverage",
+      "region": "eu",
+      "scheduled_at": "2026-08-22T18:45:00Z",
+      "temporal_role": "PREDICTOR",
+      "window_id": "H24"
+    },
+    {
+      "endpoint": "/v4/sports/{sport}/events/{eventId}/odds",
+      "fixture_id": "L1-2026-27-MD01-09",
+      "markets": [
+        "h2h",
+        "totals"
+      ],
+      "maximum_credit_cost": 2,
+      "protocol_role_bindings": {
+        "PREDICTOR": [
+          "RDS-EXP-V1-001",
+          "RDS-EXP-V1-002",
+          "RDS-EXP-V1-003",
+          "RDS-EXP-V1-004",
+          "RDS-EXP-V1-005",
+          "RDS-EXP-V1-007",
+          "RDS-EXP-V1-008",
+          "RDS-EXP-V1-009",
+          "RDS-EXP-V1-010",
+          "RDS-EXP-V1-011",
+          "RDS-EXP-V1-012",
+          "RDS-EXP-V1-013",
+          "RDS-EXP-V1-014",
+          "RDS-EXP-V1-015",
+          "RDS-EXP-V1-016",
+          "RDS-EXP-V1-017",
+          "RDS-EXP-V1-018",
+          "RDS-EXP-V1-019",
+          "RDS-EXP-V1-020",
+          "RDS-EXP-V1-021",
+          "RDS-EXP-V1-022",
+          "RDS-EXP-V1-023",
+          "RDS-EXP-V1-024",
+          "RDS-EXP-V1-025"
+        ],
+        "TARGET": [
+          "RDS-EXP-V1-006"
+        ]
+      },
+      "purpose": "same-receipt bookmaker×market last_update and paired totals 2.5 coverage",
+      "region": "eu",
+      "scheduled_at": "2026-08-23T16:45:00Z",
+      "temporal_role": "MIXED_BY_PROTOCOL_WITH_DISTINCT_BINDINGS",
+      "window_id": "H2"
+    },
+    {
+      "endpoint": "/v4/sports/{sport}/events/{eventId}/odds",
+      "fixture_id": "L1-2026-27-MD01-09",
+      "markets": [
+        "h2h",
+        "totals"
+      ],
+      "maximum_credit_cost": 2,
+      "protocol_role_bindings": {
+        "PREDICTOR": [],
+        "TARGET": [
+          "RDS-EXP-V1-005",
+          "RDS-EXP-V1-023"
+        ]
+      },
+      "purpose": "same-receipt bookmaker×market last_update and paired totals 2.5 coverage",
+      "region": "eu",
+      "scheduled_at": "2026-08-23T17:45:00Z",
+      "temporal_role": "TARGET",
+      "window_id": "H1"
+    },
+    {
+      "endpoint": "/v4/sports/{sport}/events/{eventId}/odds",
+      "fixture_id": "L1-2026-27-MD02-01",
+      "markets": [
+        "h2h",
+        "totals"
+      ],
+      "maximum_credit_cost": 2,
+      "protocol_role_bindings": {
+        "PREDICTOR": [
+          "RDS-EXP-V1-006",
+          "RDS-EXP-V1-008",
+          "RDS-EXP-V1-009",
+          "RDS-EXP-V1-010"
+        ],
+        "TARGET": []
+      },
+      "purpose": "same-receipt bookmaker×market last_update and paired totals 2.5 coverage",
+      "region": "eu",
+      "scheduled_at": "2026-08-27T18:45:00Z",
+      "temporal_role": "PREDICTOR",
+      "window_id": "H24"
+    },
+    {
+      "endpoint": "/v4/sports/{sport}/events/{eventId}/odds",
+      "fixture_id": "L1-2026-27-MD02-01",
+      "markets": [
+        "h2h",
+        "totals"
+      ],
+      "maximum_credit_cost": 2,
+      "protocol_role_bindings": {
+        "PREDICTOR": [
+          "RDS-EXP-V1-001",
+          "RDS-EXP-V1-002",
+          "RDS-EXP-V1-003",
+          "RDS-EXP-V1-004",
+          "RDS-EXP-V1-005",
+          "RDS-EXP-V1-007",
+          "RDS-EXP-V1-008",
+          "RDS-EXP-V1-009",
+          "RDS-EXP-V1-010",
+          "RDS-EXP-V1-011",
+          "RDS-EXP-V1-012",
+          "RDS-EXP-V1-013",
+          "RDS-EXP-V1-014",
+          "RDS-EXP-V1-015",
+          "RDS-EXP-V1-016",
+          "RDS-EXP-V1-017",
+          "RDS-EXP-V1-018",
+          "RDS-EXP-V1-019",
+          "RDS-EXP-V1-020",
+          "RDS-EXP-V1-021",
+          "RDS-EXP-V1-022",
+          "RDS-EXP-V1-023",
+          "RDS-EXP-V1-024",
+          "RDS-EXP-V1-025"
+        ],
+        "TARGET": [
+          "RDS-EXP-V1-006"
+        ]
+      },
+      "purpose": "same-receipt bookmaker×market last_update and paired totals 2.5 coverage",
+      "region": "eu",
+      "scheduled_at": "2026-08-28T16:45:00Z",
+      "temporal_role": "MIXED_BY_PROTOCOL_WITH_DISTINCT_BINDINGS",
+      "window_id": "H2"
+    },
+    {
+      "endpoint": "/v4/sports/{sport}/events/{eventId}/odds",
+      "fixture_id": "L1-2026-27-MD02-01",
+      "markets": [
+        "h2h",
+        "totals"
+      ],
+      "maximum_credit_cost": 2,
+      "protocol_role_bindings": {
+        "PREDICTOR": [],
+        "TARGET": [
+          "RDS-EXP-V1-005",
+          "RDS-EXP-V1-023"
+        ]
+      },
+      "purpose": "same-receipt bookmaker×market last_update and paired totals 2.5 coverage",
+      "region": "eu",
+      "scheduled_at": "2026-08-28T17:45:00Z",
+      "temporal_role": "TARGET",
+      "window_id": "H1"
+    },
+    {
+      "endpoint": "/v4/sports/{sport}/events/{eventId}/odds",
+      "fixture_id": "L1-2026-27-MD02-09",
+      "markets": [
+        "h2h",
+        "totals"
+      ],
+      "maximum_credit_cost": 2,
+      "protocol_role_bindings": {
+        "PREDICTOR": [
+          "RDS-EXP-V1-006",
+          "RDS-EXP-V1-008",
+          "RDS-EXP-V1-009",
+          "RDS-EXP-V1-010"
+        ],
+        "TARGET": []
+      },
+      "purpose": "same-receipt bookmaker×market last_update and paired totals 2.5 coverage",
+      "region": "eu",
+      "scheduled_at": "2026-08-29T18:45:00Z",
+      "temporal_role": "PREDICTOR",
+      "window_id": "H24"
+    },
+    {
+      "endpoint": "/v4/sports/{sport}/events/{eventId}/odds",
+      "fixture_id": "L1-2026-27-MD02-09",
+      "markets": [
+        "h2h",
+        "totals"
+      ],
+      "maximum_credit_cost": 2,
+      "protocol_role_bindings": {
+        "PREDICTOR": [
+          "RDS-EXP-V1-001",
+          "RDS-EXP-V1-002",
+          "RDS-EXP-V1-003",
+          "RDS-EXP-V1-004",
+          "RDS-EXP-V1-005",
+          "RDS-EXP-V1-007",
+          "RDS-EXP-V1-008",
+          "RDS-EXP-V1-009",
+          "RDS-EXP-V1-010",
+          "RDS-EXP-V1-011",
+          "RDS-EXP-V1-012",
+          "RDS-EXP-V1-013",
+          "RDS-EXP-V1-014",
+          "RDS-EXP-V1-015",
+          "RDS-EXP-V1-016",
+          "RDS-EXP-V1-017",
+          "RDS-EXP-V1-018",
+          "RDS-EXP-V1-019",
+          "RDS-EXP-V1-020",
+          "RDS-EXP-V1-021",
+          "RDS-EXP-V1-022",
+          "RDS-EXP-V1-023",
+          "RDS-EXP-V1-024",
+          "RDS-EXP-V1-025"
+        ],
+        "TARGET": [
+          "RDS-EXP-V1-006"
+        ]
+      },
+      "purpose": "same-receipt bookmaker×market last_update and paired totals 2.5 coverage",
+      "region": "eu",
+      "scheduled_at": "2026-08-30T16:45:00Z",
+      "temporal_role": "MIXED_BY_PROTOCOL_WITH_DISTINCT_BINDINGS",
+      "window_id": "H2"
+    },
+    {
+      "endpoint": "/v4/sports/{sport}/events/{eventId}/odds",
+      "fixture_id": "L1-2026-27-MD02-09",
+      "markets": [
+        "h2h",
+        "totals"
+      ],
+      "maximum_credit_cost": 2,
+      "protocol_role_bindings": {
+        "PREDICTOR": [],
+        "TARGET": [
+          "RDS-EXP-V1-005",
+          "RDS-EXP-V1-023"
+        ]
+      },
+      "purpose": "same-receipt bookmaker×market last_update and paired totals 2.5 coverage",
+      "region": "eu",
+      "scheduled_at": "2026-08-30T17:45:00Z",
+      "temporal_role": "TARGET",
+      "window_id": "H1"
+    }
+  ],
+  "experiments_execution_unblocked": [],
+  "experiments_still_blocked": {
+    "B": "supplementary feature sources remain unselected/unmaterialized",
+    "C": "protocol or totals/synchronization gates remain",
+    "D": "coach effective-at pipeline remains unavailable",
+    "all_25": "No experiment reaches its frozen minimum sample and no settled labels are collected by this design mission."
+  },
+  "markets": {
+    "paired_definition": "same fixture, bookmaker, combined event-odds receipt, complete h2h, bilateral totals outcome at point=2.5",
+    "pilot": [
+      "h2h",
+      "totals:2.5"
+    ],
+    "strategy_comparison": [
+      {
+        "credits_per_region": 1,
+        "status": "SYSTEMATIC_BASELINE",
+        "strategy": "H2H_ONLY"
+      },
+      {
+        "credits_per_region": 2,
+        "status": "REJECTED_UNTIL_TOTALS_COVERAGE_PROVEN",
+        "strategy": "H2H_PLUS_TOTALS_SYSTEMATIC"
+      },
+      {
+        "credits_per_region": "1 systematic; 2 on five canaries",
+        "status": "SELECTED_DESIGN_ONLY",
+        "strategy": "H2H_SYSTEMATIC_PLUS_TOTALS_PILOT"
+      },
+      {
+        "credits_per_region": 2,
+        "status": "GATED_BY_TOTALS_COVERAGE_TO_BE_PROVEN",
+        "strategy": "TOTALS_AFTER_COVERAGE_THRESHOLD"
+      }
+    ],
+    "systematic": [
+      "h2h"
+    ],
+    "totals_status": "TOTALS_COVERAGE_TO_BE_PROVEN"
+  },
+  "payloads_retained_if_authorized": [
+    "exact raw response bytes",
+    "HTTP status, content type, byte length and safe headers without API key",
+    "canonical request identity with secret redacted",
+    "quota headers",
+    "receipt JSON and canonical receipt SHA-256",
+    "fixture mapping projection",
+    "bookmaker×market×outcome projection including market.last_update",
+    "explicit absence/partial-market evidence"
+  ],
+  "pilot_id": "ROBIN-L1-J1-J2-2026-27-RECEIPT-CANARY-V1",
+  "planned_calls": {
+    "bulk_h2h_calls_after_grouping": 58,
+    "bulk_h2h_calls_before_grouping": 90,
+    "combined_event_odds_canary_calls": 15,
+    "free_event_discovery_calls": 2,
+    "settlement_source_calls": null,
+    "settlement_source_status": "SOURCE_2_NOT_SELECTED",
+    "the_odds_api_chargeable_calls": 73,
+    "the_odds_api_total_http_calls": 75
+  },
+  "planned_credits": {
+    "bulk_h2h": 58,
+    "combined_event_odds_canary_maximum": 30,
+    "free_plan_capacity": 500,
+    "total_maximum": 88
+  },
+  "receipt_contract": {
+    "field_applicability": {
+      "LABEL_receipts_add": [
+        "result_available_at",
+        "settlement_receipt_at"
+      ],
+      "TARGET_receipts_add": [
+        "target_window_id",
+        "target_window_end"
+      ],
+      "all_receipts": [
+        "receipt_id",
+        "source_name",
+        "source_url",
+        "request_identity",
+        "request_identity_secret_redacted",
+        "payload_sha256",
+        "payload_byte_length",
+        "http_status",
+        "safe_response_headers",
+        "source_published_at",
+        "robin_first_observed_at",
+        "robin_ingested_at",
+        "available_at",
+        "capture_code_revision",
+        "mapping_revision",
+        "projection_revision",
+        "storage_identity",
+        "availability_status",
+        "supersedes_receipt_id",
+        "schema_fingerprint",
+        "licence_status",
+        "snapshot_candidate_id",
+        "receipt_canonical_sha256",
+        "x_requests_remaining",
+        "x_requests_used",
+        "x_requests_last"
+      ]
+    },
+    "licence_invariant": "licence_status must equal APPROVED before admission",
+    "required_fields": [
+      "receipt_id",
+      "source_name",
+      "source_url",
+      "request_identity",
+      "request_identity_secret_redacted",
+      "payload_sha256",
+      "payload_byte_length",
+      "http_status",
+      "safe_response_headers",
+      "source_published_at",
+      "robin_first_observed_at",
+      "robin_ingested_at",
+      "available_at",
+      "capture_code_revision",
+      "mapping_revision",
+      "projection_revision",
+      "storage_identity",
+      "availability_status",
+      "supersedes_receipt_id",
+      "schema_fingerprint",
+      "licence_status",
+      "snapshot_candidate_id",
+      "receipt_canonical_sha256",
+      "x_requests_remaining",
+      "x_requests_used",
+      "x_requests_last",
+      "target_window_id",
+      "target_window_end",
+      "result_available_at",
+      "settlement_receipt_at"
+    ],
+    "storage": "immutable append-only raw bytes and receipts outside Git; no secret in path, payload metadata or logs",
+    "time_invariants": [
+      "robin_first_observed_at <= robin_ingested_at",
+      "available_at=max(trusted source_published_at, robin_first_observed_at)",
+      "PREDICTOR: available_at<=cutoff_at and robin_ingested_at<=cutoff_at",
+      "TARGET: target_window_id and target_window_end required; stored separately and never exposed to feature computation",
+      "LABEL: result_available_at and settlement_receipt_at are required"
+    ]
+  },
+  "retention": {
+    "provisional_mechanics": "append-only immutable storage; exact duration intentionally unset",
+    "status": "RAW_PAYLOAD_RETENTION_WRITTEN_CONFIRMATION_REQUIRED",
+    "stop_rule": "No raw provider payload is retained until written permission covers internal receipt-backed retention."
+  },
+  "schema_version": "robin-first-pilot-specification-v1",
+  "scope": {
+    "canary_fixture_count": 5,
+    "competition": "Ligue 1",
+    "fixture_count": 18,
+    "fixtures": [
+      {
+        "away_team": "Strasbourg",
+        "competition": "Ligue 1",
+        "fixture_id": "L1-2026-27-MD01-01",
+        "home_team": "Marseille",
+        "kickoff_at": "2026-08-21T18:45:00Z",
+        "kickoff_time_status": "OFFICIAL_EXACT_UTC_FOR_INCLUDED_J1_J2",
+        "league_code": "L1",
+        "mapping_status": "PROVISIONAL_UNTIL_PROVIDER_EVENT_ID_RECEIPT",
+        "matchday": 1,
+        "provider_event_id": null,
+        "region": "eu",
+        "season": "2026-27",
+        "source_ids": [
+          "ligue1_calendar",
+          "ligue1_pdf",
+          "ligue1_times"
+        ],
+        "sport_key": "soccer_france_ligue_one"
+      },
+      {
+        "away_team": "Auxerre",
+        "competition": "Ligue 1",
+        "fixture_id": "L1-2026-27-MD01-02",
+        "home_team": "Lens",
+        "kickoff_at": "2026-08-22T15:15:00Z",
+        "kickoff_time_status": "OFFICIAL_EXACT_UTC_FOR_INCLUDED_J1_J2",
+        "league_code": "L1",
+        "mapping_status": "PROVISIONAL_UNTIL_PROVIDER_EVENT_ID_RECEIPT",
+        "matchday": 1,
+        "provider_event_id": null,
+        "region": "eu",
+        "season": "2026-27",
+        "source_ids": [
+          "ligue1_calendar",
+          "ligue1_pdf",
+          "ligue1_times"
+        ],
+        "sport_key": "soccer_france_ligue_one"
+      },
+      {
+        "away_team": "Lyon",
+        "competition": "Ligue 1",
+        "fixture_id": "L1-2026-27-MD01-03",
+        "home_team": "Toulouse",
+        "kickoff_at": "2026-08-22T18:45:00Z",
+        "kickoff_time_status": "OFFICIAL_EXACT_UTC_FOR_INCLUDED_J1_J2",
+        "league_code": "L1",
+        "mapping_status": "PROVISIONAL_UNTIL_PROVIDER_EVENT_ID_RECEIPT",
+        "matchday": 1,
+        "provider_event_id": null,
+        "region": "eu",
+        "season": "2026-27",
+        "source_ids": [
+          "ligue1_calendar",
+          "ligue1_pdf",
+          "ligue1_times"
+        ],
+        "sport_key": "soccer_france_ligue_one"
+      },
+      {
+        "away_team": "Lorient",
+        "competition": "Ligue 1",
+        "fixture_id": "L1-2026-27-MD01-04",
+        "home_team": "Nice",
+        "kickoff_at": "2026-08-22T18:45:00Z",
+        "kickoff_time_status": "OFFICIAL_EXACT_UTC_FOR_INCLUDED_J1_J2",
+        "league_code": "L1",
+        "mapping_status": "PROVISIONAL_UNTIL_PROVIDER_EVENT_ID_RECEIPT",
+        "matchday": 1,
+        "provider_event_id": null,
+        "region": "eu",
+        "season": "2026-27",
+        "source_ids": [
+          "ligue1_calendar",
+          "ligue1_pdf",
+          "ligue1_times"
+        ],
+        "sport_key": "soccer_france_ligue_one"
+      },
+      {
+        "away_team": "Paris FC",
+        "competition": "Ligue 1",
+        "fixture_id": "L1-2026-27-MD01-05",
+        "home_team": "Troyes",
+        "kickoff_at": "2026-08-22T18:45:00Z",
+        "kickoff_time_status": "OFFICIAL_EXACT_UTC_FOR_INCLUDED_J1_J2",
+        "league_code": "L1",
+        "mapping_status": "PROVISIONAL_UNTIL_PROVIDER_EVENT_ID_RECEIPT",
+        "matchday": 1,
+        "provider_event_id": null,
+        "region": "eu",
+        "season": "2026-27",
+        "source_ids": [
+          "ligue1_calendar",
+          "ligue1_pdf",
+          "ligue1_times"
+        ],
+        "sport_key": "soccer_france_ligue_one"
+      },
+      {
+        "away_team": "Brest",
+        "competition": "Ligue 1",
+        "fixture_id": "L1-2026-27-MD01-06",
+        "home_team": "Le Mans",
+        "kickoff_at": "2026-08-22T18:45:00Z",
+        "kickoff_time_status": "OFFICIAL_EXACT_UTC_FOR_INCLUDED_J1_J2",
+        "league_code": "L1",
+        "mapping_status": "PROVISIONAL_UNTIL_PROVIDER_EVENT_ID_RECEIPT",
+        "matchday": 1,
+        "provider_event_id": null,
+        "region": "eu",
+        "season": "2026-27",
+        "source_ids": [
+          "ligue1_calendar",
+          "ligue1_pdf",
+          "ligue1_times"
+        ],
+        "sport_key": "soccer_france_ligue_one"
+      },
+      {
+        "away_team": "Lille",
+        "competition": "Ligue 1",
+        "fixture_id": "L1-2026-27-MD01-07",
+        "home_team": "Angers",
+        "kickoff_at": "2026-08-23T13:00:00Z",
+        "kickoff_time_status": "OFFICIAL_EXACT_UTC_FOR_INCLUDED_J1_J2",
+        "league_code": "L1",
+        "mapping_status": "PROVISIONAL_UNTIL_PROVIDER_EVENT_ID_RECEIPT",
+        "matchday": 1,
+        "provider_event_id": null,
+        "region": "eu",
+        "season": "2026-27",
+        "source_ids": [
+          "ligue1_calendar",
+          "ligue1_pdf",
+          "ligue1_times"
+        ],
+        "sport_key": "soccer_france_ligue_one"
+      },
+      {
+        "away_team": "Monaco",
+        "competition": "Ligue 1",
+        "fixture_id": "L1-2026-27-MD01-08",
+        "home_team": "Le Havre",
+        "kickoff_at": "2026-08-23T15:15:00Z",
+        "kickoff_time_status": "OFFICIAL_EXACT_UTC_FOR_INCLUDED_J1_J2",
+        "league_code": "L1",
+        "mapping_status": "PROVISIONAL_UNTIL_PROVIDER_EVENT_ID_RECEIPT",
+        "matchday": 1,
+        "provider_event_id": null,
+        "region": "eu",
+        "season": "2026-27",
+        "source_ids": [
+          "ligue1_calendar",
+          "ligue1_pdf",
+          "ligue1_times"
+        ],
+        "sport_key": "soccer_france_ligue_one"
+      },
+      {
+        "away_team": "Rennes",
+        "competition": "Ligue 1",
+        "fixture_id": "L1-2026-27-MD01-09",
+        "home_team": "Paris Saint-Germain",
+        "kickoff_at": "2026-08-23T18:45:00Z",
+        "kickoff_time_status": "OFFICIAL_EXACT_UTC_FOR_INCLUDED_J1_J2",
+        "league_code": "L1",
+        "mapping_status": "PROVISIONAL_UNTIL_PROVIDER_EVENT_ID_RECEIPT",
+        "matchday": 1,
+        "provider_event_id": null,
+        "region": "eu",
+        "season": "2026-27",
+        "source_ids": [
+          "ligue1_calendar",
+          "ligue1_pdf",
+          "ligue1_times"
+        ],
+        "sport_key": "soccer_france_ligue_one"
+      },
+      {
+        "away_team": "Paris Saint-Germain",
+        "competition": "Ligue 1",
+        "fixture_id": "L1-2026-27-MD02-01",
+        "home_team": "Lille",
+        "kickoff_at": "2026-08-28T18:45:00Z",
+        "kickoff_time_status": "OFFICIAL_EXACT_UTC_FOR_INCLUDED_J1_J2",
+        "league_code": "L1",
+        "mapping_status": "PROVISIONAL_UNTIL_PROVIDER_EVENT_ID_RECEIPT",
+        "matchday": 2,
+        "provider_event_id": null,
+        "region": "eu",
+        "season": "2026-27",
+        "source_ids": [
+          "ligue1_calendar",
+          "ligue1_pdf",
+          "ligue1_times"
+        ],
+        "sport_key": "soccer_france_ligue_one"
+      },
+      {
+        "away_team": "Lens",
+        "competition": "Ligue 1",
+        "fixture_id": "L1-2026-27-MD02-02",
+        "home_team": "Strasbourg",
+        "kickoff_at": "2026-08-29T15:15:00Z",
+        "kickoff_time_status": "OFFICIAL_EXACT_UTC_FOR_INCLUDED_J1_J2",
+        "league_code": "L1",
+        "mapping_status": "PROVISIONAL_UNTIL_PROVIDER_EVENT_ID_RECEIPT",
+        "matchday": 2,
+        "provider_event_id": null,
+        "region": "eu",
+        "season": "2026-27",
+        "source_ids": [
+          "ligue1_calendar",
+          "ligue1_pdf",
+          "ligue1_times"
+        ],
+        "sport_key": "soccer_france_ligue_one"
+      },
+      {
+        "away_team": "Le Havre",
+        "competition": "Ligue 1",
+        "fixture_id": "L1-2026-27-MD02-03",
+        "home_team": "Lyon",
+        "kickoff_at": "2026-08-29T18:45:00Z",
+        "kickoff_time_status": "OFFICIAL_EXACT_UTC_FOR_INCLUDED_J1_J2",
+        "league_code": "L1",
+        "mapping_status": "PROVISIONAL_UNTIL_PROVIDER_EVENT_ID_RECEIPT",
+        "matchday": 2,
+        "provider_event_id": null,
+        "region": "eu",
+        "season": "2026-27",
+        "source_ids": [
+          "ligue1_calendar",
+          "ligue1_pdf",
+          "ligue1_times"
+        ],
+        "sport_key": "soccer_france_ligue_one"
+      },
+      {
+        "away_team": "Troyes",
+        "competition": "Ligue 1",
+        "fixture_id": "L1-2026-27-MD02-04",
+        "home_team": "Lorient",
+        "kickoff_at": "2026-08-29T18:45:00Z",
+        "kickoff_time_status": "OFFICIAL_EXACT_UTC_FOR_INCLUDED_J1_J2",
+        "league_code": "L1",
+        "mapping_status": "PROVISIONAL_UNTIL_PROVIDER_EVENT_ID_RECEIPT",
+        "matchday": 2,
+        "provider_event_id": null,
+        "region": "eu",
+        "season": "2026-27",
+        "source_ids": [
+          "ligue1_calendar",
+          "ligue1_pdf",
+          "ligue1_times"
+        ],
+        "sport_key": "soccer_france_ligue_one"
+      },
+      {
+        "away_team": "Toulouse",
+        "competition": "Ligue 1",
+        "fixture_id": "L1-2026-27-MD02-05",
+        "home_team": "Brest",
+        "kickoff_at": "2026-08-29T18:45:00Z",
+        "kickoff_time_status": "OFFICIAL_EXACT_UTC_FOR_INCLUDED_J1_J2",
+        "league_code": "L1",
+        "mapping_status": "PROVISIONAL_UNTIL_PROVIDER_EVENT_ID_RECEIPT",
+        "matchday": 2,
+        "provider_event_id": null,
+        "region": "eu",
+        "season": "2026-27",
+        "source_ids": [
+          "ligue1_calendar",
+          "ligue1_pdf",
+          "ligue1_times"
+        ],
+        "sport_key": "soccer_france_ligue_one"
+      },
+      {
+        "away_team": "Angers",
+        "competition": "Ligue 1",
+        "fixture_id": "L1-2026-27-MD02-06",
+        "home_team": "Auxerre",
+        "kickoff_at": "2026-08-29T18:45:00Z",
+        "kickoff_time_status": "OFFICIAL_EXACT_UTC_FOR_INCLUDED_J1_J2",
+        "league_code": "L1",
+        "mapping_status": "PROVISIONAL_UNTIL_PROVIDER_EVENT_ID_RECEIPT",
+        "matchday": 2,
+        "provider_event_id": null,
+        "region": "eu",
+        "season": "2026-27",
+        "source_ids": [
+          "ligue1_calendar",
+          "ligue1_pdf",
+          "ligue1_times"
+        ],
+        "sport_key": "soccer_france_ligue_one"
+      },
+      {
+        "away_team": "Nice",
+        "competition": "Ligue 1",
+        "fixture_id": "L1-2026-27-MD02-07",
+        "home_team": "Paris FC",
+        "kickoff_at": "2026-08-30T13:00:00Z",
+        "kickoff_time_status": "OFFICIAL_EXACT_UTC_FOR_INCLUDED_J1_J2",
+        "league_code": "L1",
+        "mapping_status": "PROVISIONAL_UNTIL_PROVIDER_EVENT_ID_RECEIPT",
+        "matchday": 2,
+        "provider_event_id": null,
+        "region": "eu",
+        "season": "2026-27",
+        "source_ids": [
+          "ligue1_calendar",
+          "ligue1_pdf",
+          "ligue1_times"
+        ],
+        "sport_key": "soccer_france_ligue_one"
+      },
+      {
+        "away_team": "Le Mans",
+        "competition": "Ligue 1",
+        "fixture_id": "L1-2026-27-MD02-08",
+        "home_team": "Rennes",
+        "kickoff_at": "2026-08-30T15:15:00Z",
+        "kickoff_time_status": "OFFICIAL_EXACT_UTC_FOR_INCLUDED_J1_J2",
+        "league_code": "L1",
+        "mapping_status": "PROVISIONAL_UNTIL_PROVIDER_EVENT_ID_RECEIPT",
+        "matchday": 2,
+        "provider_event_id": null,
+        "region": "eu",
+        "season": "2026-27",
+        "source_ids": [
+          "ligue1_calendar",
+          "ligue1_pdf",
+          "ligue1_times"
+        ],
+        "sport_key": "soccer_france_ligue_one"
+      },
+      {
+        "away_team": "Marseille",
+        "competition": "Ligue 1",
+        "fixture_id": "L1-2026-27-MD02-09",
+        "home_team": "Monaco",
+        "kickoff_at": "2026-08-30T18:45:00Z",
+        "kickoff_time_status": "OFFICIAL_EXACT_UTC_FOR_INCLUDED_J1_J2",
+        "league_code": "L1",
+        "mapping_status": "PROVISIONAL_UNTIL_PROVIDER_EVENT_ID_RECEIPT",
+        "matchday": 2,
+        "provider_event_id": null,
+        "region": "eu",
+        "season": "2026-27",
+        "source_ids": [
+          "ligue1_calendar",
+          "ligue1_pdf",
+          "ligue1_times"
+        ],
+        "sport_key": "soccer_france_ligue_one"
+      }
+    ],
+    "market_sync_canary_fixture_ids": [
+      "L1-2026-27-MD01-01",
+      "L1-2026-27-MD01-02",
+      "L1-2026-27-MD01-09",
+      "L1-2026-27-MD02-01",
+      "L1-2026-27-MD02-09"
+    ],
+    "matchdays": [
+      1,
+      2
+    ],
+    "no_backfill": true
+  },
+  "snapshot_schema": {
+    "identity": [
+      "snapshot_id",
+      "fixture_id",
+      "receipt_id",
+      "payload_sha256",
+      "projection_sha256"
+    ],
+    "lineage": [
+      "capture_code_revision",
+      "mapping_revision",
+      "projection_revision",
+      "schema_fingerprint"
+    ],
+    "market": [
+      "bookmaker_key",
+      "market_key",
+      "market_last_update",
+      "outcome_name",
+      "price",
+      "point"
+    ],
+    "role_isolation": "PREDICTOR, TARGET and LABEL snapshots have distinct identities and storage prefixes.",
+    "shared_raw_receipt_rule": "One neutral raw payload may map to different roles in different experiments; role-bound snapshot IDs and feature access controls prevent within-experiment leakage. EXP006 H2 is TARGET.",
+    "temporal": [
+      "window_id",
+      "temporal_role",
+      "cutoff_at",
+      "available_at",
+      "robin_ingested_at",
+      "target_window_id",
+      "target_window_end",
+      "result_available_at",
+      "settlement_receipt_at"
+    ]
+  },
+  "status": [
+    "DESIGN_ONLY",
+    "NOT_ACTIVATED",
+    "NOT_AUTHORIZED",
+    "NO_PROVIDER_CALL",
+    "NO_PURCHASE",
+    "NO_PROMOTION",
+    "NO_BET",
+    "ROBIN_FIRST_RECEIPT_BACKED_CAPTURE_PILOT_SPECIFIED_NOT_AUTHORIZED"
+  ],
+  "stop_criteria": [
+    "legal retention not confirmed in writing",
+    "H12/H6 or H1 lower-bound contract not frozen",
+    "EXP010 market clock/window semantics not frozen",
+    "fixture/settlement Source 2 not selected and approved",
+    "schema instability or incomplete receipt",
+    "ambiguous fixture mapping",
+    "market-level timestamps absent or not pairable",
+    "fewer than five complete h2h books on 80% of fixtures",
+    "paired totals 2.5 threshold fails",
+    "observed quota exceeds the model",
+    "offline byte-identical replay fails",
+    "source host is not the official the-odds-api.com domain",
+    "a secret appears in any artifact or log"
+  ],
+  "success_criteria": [
+    "100% raw payloads and canonical receipts have SHA-256",
+    "100% calls have robin_first_observed_at and robin_ingested_at",
+    "available_at is never backdated and ingestion is no later than cutoff for predictors",
+    "100% fixture mappings are deterministic and unambiguous",
+    "offline replay produces byte-identical canonical projections without network",
+    "TARGET is never used as a feature",
+    "h2h and paired totals thresholds pass",
+    "market-level timestamps are present for both markets in one receipt",
+    "The Odds API credit consumption is <= 88 and quota headers reconcile exactly",
+    "zero secret is present in payload metadata, receipts, logs or repository artifacts"
+  ],
+  "thresholds": {
+    "h2h": "at least five complete 1X2 bookmakers for at least 80% of all 18 fixtures at each required frozen window",
+    "mapping": "100% deterministic one-to-one event mapping with kickoff/team normalization evidence",
+    "market_timestamp": "both market-level last_update values non-null for every admitted pair; provider freshness skew computed within one combined receipt",
+    "totals": "at least five same-receipt paired bookmakers with complete h2h and bilateral point=2.5 totals for at least 80% (4/5) canary fixtures at H24, H2 and H1"
+  },
+  "windows": {
+    "authority_caveat": "H12/H6, the strict H1 lower bound and EXP010 market-clock semantics must be frozen in an amended protocol before any activation.",
+    "event_odds_canary": [
+      "H24",
+      "H2",
+      "H1"
+    ],
+    "systematic_bulk": [
+      "H24",
+      "H12",
+      "H6",
+      "H2",
+      "H1"
+    ]
+  }
+}
