@@ -1,0 +1,2753 @@
+{
+  "catalogue_version": "ROBIN_HYPOTHESIS_CATALOGUE_V1",
+  "content_hash_algorithm": "SHA256_CANONICAL_JSON_EXCLUDING_CONTENT_SHA256",
+  "content_sha256": "90477b6a30e9ca57f58385e0fee5e98ff1211db623b6cf0930732a5a5a900c4a",
+  "entries": [
+    {
+      "components": {
+        "compute_cost": 5,
+        "cross_league_stability": 8,
+        "data_availability": 11,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 13,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-03D219CCBA1EEA95",
+      "multiplicity_family": "FAMILY_1X2_PRICE_STRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 1,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 78
+    },
+    {
+      "components": {
+        "compute_cost": 5,
+        "cross_league_stability": 8,
+        "data_availability": 11,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 13,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-1803A3CDBB2BCFC0",
+      "multiplicity_family": "FAMILY_1X2_PRICE_STRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 2,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 78
+    },
+    {
+      "components": {
+        "compute_cost": 5,
+        "cross_league_stability": 8,
+        "data_availability": 11,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 13,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-328CDA1D320CE319",
+      "multiplicity_family": "FAMILY_1X2_PRICE_STRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 3,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 78
+    },
+    {
+      "components": {
+        "compute_cost": 5,
+        "cross_league_stability": 8,
+        "data_availability": 11,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 13,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-385A45A61321BA34",
+      "multiplicity_family": "FAMILY_1X2_PRICE_STRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 4,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 78
+    },
+    {
+      "components": {
+        "compute_cost": 5,
+        "cross_league_stability": 8,
+        "data_availability": 11,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 13,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-5DFC672EFC7B819C",
+      "multiplicity_family": "FAMILY_1X2_PRICE_STRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 5,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 78
+    },
+    {
+      "components": {
+        "compute_cost": 5,
+        "cross_league_stability": 8,
+        "data_availability": 11,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 13,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-8CB162372BB7C038",
+      "multiplicity_family": "FAMILY_1X2_PRICE_STRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 6,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 78
+    },
+    {
+      "components": {
+        "compute_cost": 5,
+        "cross_league_stability": 8,
+        "data_availability": 11,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 13,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-91A67C4991FA2149",
+      "multiplicity_family": "FAMILY_1X2_PRICE_STRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 7,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 78
+    },
+    {
+      "components": {
+        "compute_cost": 5,
+        "cross_league_stability": 8,
+        "data_availability": 11,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 13,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-9A77B339C767DF3E",
+      "multiplicity_family": "FAMILY_1X2_PRICE_STRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 8,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 78
+    },
+    {
+      "components": {
+        "compute_cost": 5,
+        "cross_league_stability": 8,
+        "data_availability": 11,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 13,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-B3807F2D2D54B2B9",
+      "multiplicity_family": "FAMILY_1X2_PRICE_STRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 9,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 78
+    },
+    {
+      "components": {
+        "compute_cost": 5,
+        "cross_league_stability": 8,
+        "data_availability": 11,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 13,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-C23C4031115FEC38",
+      "multiplicity_family": "FAMILY_1X2_PRICE_STRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 10,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 78
+    },
+    {
+      "components": {
+        "compute_cost": 5,
+        "cross_league_stability": 8,
+        "data_availability": 11,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 13,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-DA05AC022AC1143D",
+      "multiplicity_family": "FAMILY_1X2_PRICE_STRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 11,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 78
+    },
+    {
+      "components": {
+        "compute_cost": 5,
+        "cross_league_stability": 7,
+        "data_availability": 11,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 13,
+        "originality": 7,
+        "point_in_time_provability": 13,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-DD465EC4A81302FF",
+      "multiplicity_family": "FAMILY_1X2_PRICE_STRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "DIRECT_MECHANISM_CREDIT",
+        "CROSS_LEAGUE_TRANSFER_PENALTY"
+      ],
+      "score_rank": 12,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 78
+    },
+    {
+      "components": {
+        "compute_cost": 5,
+        "cross_league_stability": 8,
+        "data_availability": 11,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 13,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-FAD99A8A86523395",
+      "multiplicity_family": "FAMILY_1X2_PRICE_STRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 13,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 78
+    },
+    {
+      "components": {
+        "compute_cost": 5,
+        "cross_league_stability": 7,
+        "data_availability": 11,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 13,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-1232ED28901C42C7",
+      "multiplicity_family": "FAMILY_1X2_PRICE_STRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_LEAGUE_TRANSFER_PENALTY"
+      ],
+      "score_rank": 14,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 77
+    },
+    {
+      "components": {
+        "compute_cost": 5,
+        "cross_league_stability": 7,
+        "data_availability": 11,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 13,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-D2F9F27589927D2B",
+      "multiplicity_family": "FAMILY_1X2_PRICE_STRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_LEAGUE_TRANSFER_PENALTY"
+      ],
+      "score_rank": 15,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 77
+    },
+    {
+      "components": {
+        "compute_cost": 5,
+        "cross_league_stability": 7,
+        "data_availability": 11,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 13,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-E4CC42F1875AE8A6",
+      "multiplicity_family": "FAMILY_1X2_PRICE_STRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_LEAGUE_TRANSFER_PENALTY"
+      ],
+      "score_rank": 16,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 77
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 14,
+        "originality": 7,
+        "point_in_time_provability": 10,
+        "statistical_power": 7,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-662CE4FC1430ABEF",
+      "multiplicity_family": "FAMILY_SCHEDULE_FATIGUE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "DIRECT_MECHANISM_CREDIT"
+      ],
+      "score_rank": 17,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 73
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 14,
+        "originality": 7,
+        "point_in_time_provability": 10,
+        "statistical_power": 7,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-6F4F69C29C8913B3",
+      "multiplicity_family": "FAMILY_SCHEDULE_FATIGUE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "DIRECT_MECHANISM_CREDIT"
+      ],
+      "score_rank": 18,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 73
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 14,
+        "originality": 7,
+        "point_in_time_provability": 10,
+        "statistical_power": 7,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-9270438E65B7E803",
+      "multiplicity_family": "FAMILY_SCHEDULE_FATIGUE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "DIRECT_MECHANISM_CREDIT"
+      ],
+      "score_rank": 19,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 73
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 14,
+        "originality": 7,
+        "point_in_time_provability": 10,
+        "statistical_power": 7,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-9D1EED5247B6001A",
+      "multiplicity_family": "FAMILY_SCHEDULE_FATIGUE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "DIRECT_MECHANISM_CREDIT"
+      ],
+      "score_rank": 20,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 73
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 14,
+        "originality": 7,
+        "point_in_time_provability": 10,
+        "statistical_power": 7,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-A43CF38A8FCAF4FD",
+      "multiplicity_family": "FAMILY_SCHEDULE_FATIGUE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "DIRECT_MECHANISM_CREDIT"
+      ],
+      "score_rank": 21,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 73
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 14,
+        "originality": 7,
+        "point_in_time_provability": 10,
+        "statistical_power": 7,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-ABE0967060F4D7E2",
+      "multiplicity_family": "FAMILY_SCHEDULE_FATIGUE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "DIRECT_MECHANISM_CREDIT"
+      ],
+      "score_rank": 22,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 73
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 14,
+        "originality": 7,
+        "point_in_time_provability": 10,
+        "statistical_power": 7,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-D45317B12D4B8266",
+      "multiplicity_family": "FAMILY_SCHEDULE_FATIGUE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "DIRECT_MECHANISM_CREDIT"
+      ],
+      "score_rank": 23,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 73
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 13,
+        "originality": 7,
+        "point_in_time_provability": 10,
+        "statistical_power": 7,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-03F3CD676765DAD2",
+      "multiplicity_family": "FAMILY_SCHEDULE_FATIGUE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 24,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 72
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 13,
+        "originality": 7,
+        "point_in_time_provability": 10,
+        "statistical_power": 7,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-75DF3F75CBA1D3BB",
+      "multiplicity_family": "FAMILY_SCHEDULE_FATIGUE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 25,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 72
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 13,
+        "originality": 7,
+        "point_in_time_provability": 10,
+        "statistical_power": 7,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-898B80F7F297FDB6",
+      "multiplicity_family": "FAMILY_SCHEDULE_FATIGUE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 26,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 72
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 13,
+        "originality": 7,
+        "point_in_time_provability": 10,
+        "statistical_power": 7,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-AD29B93B19EE82C1",
+      "multiplicity_family": "FAMILY_SCHEDULE_FATIGUE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 27,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 72
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 13,
+        "originality": 7,
+        "point_in_time_provability": 10,
+        "statistical_power": 7,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-B52E565C25308CF0",
+      "multiplicity_family": "FAMILY_SCHEDULE_FATIGUE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 28,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 72
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 13,
+        "originality": 7,
+        "point_in_time_provability": 10,
+        "statistical_power": 7,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-ED0327F00A989875",
+      "multiplicity_family": "FAMILY_SCHEDULE_FATIGUE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 29,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 72
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 9,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 14,
+        "originality": 7,
+        "point_in_time_provability": 8,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-02FE77B5E57BEEB5",
+      "multiplicity_family": "FAMILY_FORM_REGRESSION",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "DIRECT_MECHANISM_CREDIT"
+      ],
+      "score_rank": 30,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 72
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 9,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 14,
+        "originality": 7,
+        "point_in_time_provability": 8,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-07CE54FBD8B6AB6C",
+      "multiplicity_family": "FAMILY_FORM_REGRESSION",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "DIRECT_MECHANISM_CREDIT"
+      ],
+      "score_rank": 31,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 72
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 9,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 14,
+        "originality": 7,
+        "point_in_time_provability": 8,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-A87BBA2C92282449",
+      "multiplicity_family": "FAMILY_FORM_REGRESSION",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "DIRECT_MECHANISM_CREDIT"
+      ],
+      "score_rank": 32,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 72
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 9,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 14,
+        "originality": 7,
+        "point_in_time_provability": 8,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-C02922D638B33123",
+      "multiplicity_family": "FAMILY_FORM_REGRESSION",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "DIRECT_MECHANISM_CREDIT"
+      ],
+      "score_rank": 33,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 72
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 9,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 14,
+        "originality": 7,
+        "point_in_time_provability": 8,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-D99A2291A3A3CE76",
+      "multiplicity_family": "FAMILY_FORM_REGRESSION",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "DIRECT_MECHANISM_CREDIT"
+      ],
+      "score_rank": 34,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 72
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 9,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 14,
+        "originality": 7,
+        "point_in_time_provability": 8,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-DCD02350A11D9E61",
+      "multiplicity_family": "FAMILY_FORM_REGRESSION",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "DIRECT_MECHANISM_CREDIT"
+      ],
+      "score_rank": 35,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 72
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 9,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 14,
+        "originality": 7,
+        "point_in_time_provability": 8,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-EC3CFF2DA544ECB5",
+      "multiplicity_family": "FAMILY_FORM_REGRESSION",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "DIRECT_MECHANISM_CREDIT"
+      ],
+      "score_rank": 36,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 72
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 9,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 14,
+        "originality": 7,
+        "point_in_time_provability": 8,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-F63B8E2C3F20B898",
+      "multiplicity_family": "FAMILY_FORM_REGRESSION",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "DIRECT_MECHANISM_CREDIT"
+      ],
+      "score_rank": 37,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 72
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 9,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 14,
+        "originality": 7,
+        "point_in_time_provability": 8,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-F9BD3309D0EB3840",
+      "multiplicity_family": "FAMILY_FORM_REGRESSION",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "DIRECT_MECHANISM_CREDIT"
+      ],
+      "score_rank": 38,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 72
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 9,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 13,
+        "originality": 7,
+        "point_in_time_provability": 8,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-1897A90F9711E272",
+      "multiplicity_family": "FAMILY_FORM_REGRESSION",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 39,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 71
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 9,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 13,
+        "originality": 7,
+        "point_in_time_provability": 8,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-27FBF2FF23835630",
+      "multiplicity_family": "FAMILY_FORM_REGRESSION",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 40,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 71
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 9,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 13,
+        "originality": 7,
+        "point_in_time_provability": 8,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-2E38CCA2E50AA5F5",
+      "multiplicity_family": "FAMILY_FORM_REGRESSION",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 41,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 71
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 9,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 13,
+        "originality": 7,
+        "point_in_time_provability": 8,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-617A6E095FACE393",
+      "multiplicity_family": "FAMILY_FORM_REGRESSION",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 42,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 71
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 9,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 13,
+        "originality": 7,
+        "point_in_time_provability": 8,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-972CD504C78BA140",
+      "multiplicity_family": "FAMILY_FORM_REGRESSION",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 43,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 71
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 9,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 13,
+        "originality": 7,
+        "point_in_time_provability": 8,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-BECE1FA73B27F041",
+      "multiplicity_family": "FAMILY_FORM_REGRESSION",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 44,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 71
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 9,
+        "statistical_power": 7,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-6A1DF6FD62532207",
+      "multiplicity_family": "FAMILY_VENUE_COHORT",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 45,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 70
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 9,
+        "statistical_power": 7,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-6A22595EFE91B469",
+      "multiplicity_family": "FAMILY_VENUE_COHORT",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 46,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 70
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 9,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 13,
+        "originality": 7,
+        "point_in_time_provability": 9,
+        "statistical_power": 7,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-7FFB5E828830E938",
+      "multiplicity_family": "FAMILY_SCHEDULE_FATIGUE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "EXTRA_SOURCE_DATA_AND_PIT_PENALTY"
+      ],
+      "score_rank": 47,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 70
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 9,
+        "statistical_power": 7,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-E1752C945E1DC3F4",
+      "multiplicity_family": "FAMILY_VENUE_COHORT",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 48,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 70
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 9,
+        "statistical_power": 7,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-E5F7C1F499873815",
+      "multiplicity_family": "FAMILY_VENUE_COHORT",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 49,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 70
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 9,
+        "statistical_power": 7,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-F007A99FA619F758",
+      "multiplicity_family": "FAMILY_VENUE_COHORT",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 50,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 70
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 8,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 14,
+        "originality": 7,
+        "point_in_time_provability": 7,
+        "statistical_power": 8,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-3F7ED9F340E531AA",
+      "multiplicity_family": "FAMILY_FORM_REGRESSION",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "DIRECT_MECHANISM_CREDIT",
+        "EXTRA_SOURCE_DATA_AND_PIT_PENALTY"
+      ],
+      "score_rank": 51,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 70
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 9,
+        "statistical_power": 6,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-010FB0B958AC18B2",
+      "multiplicity_family": "FAMILY_VENUE_COHORT",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "RARE_COHORT_POWER_PENALTY"
+      ],
+      "score_rank": 52,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 69
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 9,
+        "statistical_power": 6,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-425F3DBF28B7E503",
+      "multiplicity_family": "FAMILY_VENUE_COHORT",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "RARE_COHORT_POWER_PENALTY"
+      ],
+      "score_rank": 53,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 69
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 9,
+        "statistical_power": 6,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-8256AA2BA302D995",
+      "multiplicity_family": "FAMILY_VENUE_COHORT",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "RARE_COHORT_POWER_PENALTY"
+      ],
+      "score_rank": 54,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 69
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 9,
+        "statistical_power": 6,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-8B72B66CC44E2BFB",
+      "multiplicity_family": "FAMILY_VENUE_COHORT",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "RARE_COHORT_POWER_PENALTY"
+      ],
+      "score_rank": 55,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 69
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 10,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 9,
+        "statistical_power": 6,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-961ACD65B1CAD26F",
+      "multiplicity_family": "FAMILY_VENUE_COHORT",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "RARE_COHORT_POWER_PENALTY"
+      ],
+      "score_rank": 56,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 69
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 8,
+        "data_availability": 9,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 7,
+        "point_in_time_provability": 8,
+        "statistical_power": 7,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-AE4DF09057F6D2F2",
+      "multiplicity_family": "FAMILY_VENUE_COHORT",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "EXTRA_SOURCE_DATA_AND_PIT_PENALTY"
+      ],
+      "score_rank": 57,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 68
+    },
+    {
+      "components": {
+        "compute_cost": 3,
+        "cross_league_stability": 8,
+        "data_availability": 9,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 8,
+        "point_in_time_provability": 8,
+        "statistical_power": 6,
+        "strategic_value": 4
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-3D026EEE44EC43B0",
+      "multiplicity_family": "FAMILY_VENUE_COHORT",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_MARKET_DATA_PIT_AND_COMPUTE_PENALTY_ORIGINALITY_CREDIT",
+        "RARE_COHORT_POWER_PENALTY"
+      ],
+      "score_rank": 58,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 67
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 7,
+        "data_availability": 7,
+        "falsifiability": 8,
+        "mechanistic_plausibility": 13,
+        "originality": 8,
+        "point_in_time_provability": 6,
+        "statistical_power": 6,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-29DEAEFBA356C39E",
+      "multiplicity_family": "FAMILY_TEAM_STATE_RANKING",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "DIRECT_MECHANISM_CREDIT"
+      ],
+      "score_rank": 59,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 64
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 7,
+        "data_availability": 7,
+        "falsifiability": 8,
+        "mechanistic_plausibility": 13,
+        "originality": 8,
+        "point_in_time_provability": 6,
+        "statistical_power": 6,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-9D1B9534B780E73A",
+      "multiplicity_family": "FAMILY_TEAM_STATE_RANKING",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "DIRECT_MECHANISM_CREDIT"
+      ],
+      "score_rank": 60,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 64
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 6,
+        "data_availability": 6,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 11,
+        "originality": 9,
+        "point_in_time_provability": 6,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-EF38A561690962BA",
+      "multiplicity_family": "FAMILY_BOOKMAKER_MICROSTRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "DIRECT_MECHANISM_CREDIT"
+      ],
+      "score_rank": 61,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 63
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 7,
+        "data_availability": 7,
+        "falsifiability": 8,
+        "mechanistic_plausibility": 12,
+        "originality": 8,
+        "point_in_time_provability": 6,
+        "statistical_power": 6,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-18A3230082BA0E89",
+      "multiplicity_family": "FAMILY_TEAM_STATE_RANKING",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 62,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 63
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 7,
+        "data_availability": 7,
+        "falsifiability": 8,
+        "mechanistic_plausibility": 12,
+        "originality": 8,
+        "point_in_time_provability": 6,
+        "statistical_power": 6,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-360BA2CCCA124617",
+      "multiplicity_family": "FAMILY_TEAM_STATE_RANKING",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 63,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 63
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 7,
+        "data_availability": 7,
+        "falsifiability": 8,
+        "mechanistic_plausibility": 12,
+        "originality": 8,
+        "point_in_time_provability": 6,
+        "statistical_power": 6,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-3E6DE36B499B4705",
+      "multiplicity_family": "FAMILY_TEAM_STATE_RANKING",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 64,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 63
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 7,
+        "data_availability": 7,
+        "falsifiability": 8,
+        "mechanistic_plausibility": 12,
+        "originality": 8,
+        "point_in_time_provability": 6,
+        "statistical_power": 6,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-BD0C22A2DE9A96A6",
+      "multiplicity_family": "FAMILY_TEAM_STATE_RANKING",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 65,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 63
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 7,
+        "data_availability": 7,
+        "falsifiability": 8,
+        "mechanistic_plausibility": 12,
+        "originality": 8,
+        "point_in_time_provability": 6,
+        "statistical_power": 6,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-CBD8F0A27A6BE558",
+      "multiplicity_family": "FAMILY_TEAM_STATE_RANKING",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 66,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 63
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 7,
+        "data_availability": 7,
+        "falsifiability": 8,
+        "mechanistic_plausibility": 12,
+        "originality": 8,
+        "point_in_time_provability": 6,
+        "statistical_power": 6,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-D7C872ACE78EB2A9",
+      "multiplicity_family": "FAMILY_TEAM_STATE_RANKING",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 67,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 63
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 7,
+        "data_availability": 7,
+        "falsifiability": 8,
+        "mechanistic_plausibility": 12,
+        "originality": 8,
+        "point_in_time_provability": 6,
+        "statistical_power": 6,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-E8DE9B4C79CCA0D1",
+      "multiplicity_family": "FAMILY_TEAM_STATE_RANKING",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 68,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 63
+    },
+    {
+      "components": {
+        "compute_cost": 2,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 13,
+        "originality": 10,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-22D1A09693C52E77",
+      "multiplicity_family": "FAMILY_CROSS_MARKET",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_MARKET_DATA_PIT_AND_COMPUTE_PENALTY_ORIGINALITY_CREDIT",
+        "DIRECT_MECHANISM_CREDIT"
+      ],
+      "score_rank": 69,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 63
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 6,
+        "data_availability": 6,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 10,
+        "originality": 9,
+        "point_in_time_provability": 6,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-0802A21B1A58E786",
+      "multiplicity_family": "FAMILY_BOOKMAKER_MICROSTRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 70,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 6,
+        "data_availability": 6,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 10,
+        "originality": 9,
+        "point_in_time_provability": 6,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-33D811159D4D6F95",
+      "multiplicity_family": "FAMILY_BOOKMAKER_MICROSTRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 71,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 6,
+        "data_availability": 6,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 10,
+        "originality": 9,
+        "point_in_time_provability": 6,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-7FE0573038E6B4D7",
+      "multiplicity_family": "FAMILY_BOOKMAKER_MICROSTRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 72,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 6,
+        "data_availability": 6,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 10,
+        "originality": 9,
+        "point_in_time_provability": 6,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-85D1E0A4D95C4DF2",
+      "multiplicity_family": "FAMILY_BOOKMAKER_MICROSTRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 73,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 6,
+        "data_availability": 6,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 10,
+        "originality": 9,
+        "point_in_time_provability": 6,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-9F18BA3D737DAAFF",
+      "multiplicity_family": "FAMILY_BOOKMAKER_MICROSTRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 74,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 6,
+        "data_availability": 6,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 10,
+        "originality": 9,
+        "point_in_time_provability": 6,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-A3B25A25A02A2844",
+      "multiplicity_family": "FAMILY_BOOKMAKER_MICROSTRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 75,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 6,
+        "data_availability": 6,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 10,
+        "originality": 9,
+        "point_in_time_provability": 6,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-C9E5C7AAB32B98DC",
+      "multiplicity_family": "FAMILY_BOOKMAKER_MICROSTRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 76,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 6,
+        "data_availability": 6,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 10,
+        "originality": 9,
+        "point_in_time_provability": 6,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-DF759D05878DC724",
+      "multiplicity_family": "FAMILY_BOOKMAKER_MICROSTRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 77,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 6,
+        "data_availability": 7,
+        "falsifiability": 8,
+        "mechanistic_plausibility": 12,
+        "originality": 8,
+        "point_in_time_provability": 6,
+        "statistical_power": 6,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-14BC5484488C4864",
+      "multiplicity_family": "FAMILY_TEAM_STATE_RANKING",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_LEAGUE_TRANSFER_PENALTY"
+      ],
+      "score_rank": 78,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 7,
+        "data_availability": 7,
+        "falsifiability": 8,
+        "mechanistic_plausibility": 12,
+        "originality": 8,
+        "point_in_time_provability": 6,
+        "statistical_power": 5,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-98D4A062B6177343",
+      "multiplicity_family": "FAMILY_TEAM_STATE_RANKING",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "RARE_COHORT_POWER_PENALTY"
+      ],
+      "score_rank": 79,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 2,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 10,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-0B9BDE5A7C521970",
+      "multiplicity_family": "FAMILY_CROSS_MARKET",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_MARKET_DATA_PIT_AND_COMPUTE_PENALTY_ORIGINALITY_CREDIT"
+      ],
+      "score_rank": 80,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 2,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 10,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-122D17B515D03FBE",
+      "multiplicity_family": "FAMILY_CROSS_MARKET",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_MARKET_DATA_PIT_AND_COMPUTE_PENALTY_ORIGINALITY_CREDIT"
+      ],
+      "score_rank": 81,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 2,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 10,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-1F1A907F5173E842",
+      "multiplicity_family": "FAMILY_CROSS_MARKET",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_MARKET_DATA_PIT_AND_COMPUTE_PENALTY_ORIGINALITY_CREDIT"
+      ],
+      "score_rank": 82,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 2,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 10,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-27037C60FB5AFE99",
+      "multiplicity_family": "FAMILY_CROSS_MARKET",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_MARKET_DATA_PIT_AND_COMPUTE_PENALTY_ORIGINALITY_CREDIT"
+      ],
+      "score_rank": 83,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 2,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 10,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-2CF38D55B213FD15",
+      "multiplicity_family": "FAMILY_CROSS_MARKET",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_MARKET_DATA_PIT_AND_COMPUTE_PENALTY_ORIGINALITY_CREDIT"
+      ],
+      "score_rank": 84,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 2,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 10,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-2DA3EEAC9211A8E0",
+      "multiplicity_family": "FAMILY_CROSS_MARKET",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_MARKET_DATA_PIT_AND_COMPUTE_PENALTY_ORIGINALITY_CREDIT"
+      ],
+      "score_rank": 85,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 2,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 10,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-45734A317835BC9B",
+      "multiplicity_family": "FAMILY_CROSS_MARKET",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_MARKET_DATA_PIT_AND_COMPUTE_PENALTY_ORIGINALITY_CREDIT"
+      ],
+      "score_rank": 86,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 3,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 9,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-65CD2FE3F8AF51D4",
+      "multiplicity_family": "FAMILY_MARKET_DYNAMICS",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "DIRECT_MECHANISM_CREDIT"
+      ],
+      "score_rank": 87,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 2,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 10,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-6D54E031BE09C66F",
+      "multiplicity_family": "FAMILY_CROSS_MARKET",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_MARKET_DATA_PIT_AND_COMPUTE_PENALTY_ORIGINALITY_CREDIT"
+      ],
+      "score_rank": 88,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 2,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 10,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-8EE0F19341A8A171",
+      "multiplicity_family": "FAMILY_CROSS_MARKET",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_MARKET_DATA_PIT_AND_COMPUTE_PENALTY_ORIGINALITY_CREDIT"
+      ],
+      "score_rank": 89,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 2,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 10,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-98D5F926026DC3DA",
+      "multiplicity_family": "FAMILY_CROSS_MARKET",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_MARKET_DATA_PIT_AND_COMPUTE_PENALTY_ORIGINALITY_CREDIT"
+      ],
+      "score_rank": 90,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 2,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 10,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-BC45FA77C7D079C0",
+      "multiplicity_family": "FAMILY_CROSS_MARKET",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_MARKET_DATA_PIT_AND_COMPUTE_PENALTY_ORIGINALITY_CREDIT"
+      ],
+      "score_rank": 91,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 2,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 10,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-BC7D300F8F7C7837",
+      "multiplicity_family": "FAMILY_CROSS_MARKET",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_MARKET_DATA_PIT_AND_COMPUTE_PENALTY_ORIGINALITY_CREDIT"
+      ],
+      "score_rank": 92,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 2,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 10,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-C3F11E865CF26CB2",
+      "multiplicity_family": "FAMILY_CROSS_MARKET",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_MARKET_DATA_PIT_AND_COMPUTE_PENALTY_ORIGINALITY_CREDIT"
+      ],
+      "score_rank": 93,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 2,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 10,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-F2B2BFA12168F95B",
+      "multiplicity_family": "FAMILY_CROSS_MARKET",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_MARKET_DATA_PIT_AND_COMPUTE_PENALTY_ORIGINALITY_CREDIT"
+      ],
+      "score_rank": 94,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 2,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 12,
+        "originality": 10,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-FD194F378BD9DF4C",
+      "multiplicity_family": "FAMILY_CROSS_MARKET",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_MARKET_DATA_PIT_AND_COMPUTE_PENALTY_ORIGINALITY_CREDIT"
+      ],
+      "score_rank": 95,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 62
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 5,
+        "data_availability": 6,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 10,
+        "originality": 9,
+        "point_in_time_provability": 6,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-D18C15306BD1350D",
+      "multiplicity_family": "FAMILY_BOOKMAKER_MICROSTRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_LEAGUE_TRANSFER_PENALTY"
+      ],
+      "score_rank": 96,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 61
+    },
+    {
+      "components": {
+        "compute_cost": 3,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 11,
+        "originality": 9,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-38A812297E5C40F1",
+      "multiplicity_family": "FAMILY_MARKET_DYNAMICS",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 97,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 61
+    },
+    {
+      "components": {
+        "compute_cost": 3,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 11,
+        "originality": 9,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-3CB5F8AA64A8DF64",
+      "multiplicity_family": "FAMILY_MARKET_DYNAMICS",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 98,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 61
+    },
+    {
+      "components": {
+        "compute_cost": 3,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 11,
+        "originality": 9,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-60389DF40BF9717E",
+      "multiplicity_family": "FAMILY_MARKET_DYNAMICS",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 99,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 61
+    },
+    {
+      "components": {
+        "compute_cost": 3,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 11,
+        "originality": 9,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-768A1392F651FAE7",
+      "multiplicity_family": "FAMILY_MARKET_DYNAMICS",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 100,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 61
+    },
+    {
+      "components": {
+        "compute_cost": 3,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 11,
+        "originality": 9,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-8CB22597A05CBE7C",
+      "multiplicity_family": "FAMILY_MARKET_DYNAMICS",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 101,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 61
+    },
+    {
+      "components": {
+        "compute_cost": 3,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 11,
+        "originality": 9,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-9988F603E756066D",
+      "multiplicity_family": "FAMILY_MARKET_DYNAMICS",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 102,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 61
+    },
+    {
+      "components": {
+        "compute_cost": 3,
+        "cross_league_stability": 7,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 11,
+        "originality": 9,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-9D8B9FC7D1384C4B",
+      "multiplicity_family": "FAMILY_MARKET_DYNAMICS",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC"
+      ],
+      "score_rank": 103,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 61
+    },
+    {
+      "components": {
+        "compute_cost": 3,
+        "cross_league_stability": 6,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 10,
+        "originality": 10,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-34CF9D3A47D0ED42",
+      "multiplicity_family": "FAMILY_BOOKMAKER_MICROSTRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_MARKET_DATA_PIT_AND_COMPUTE_PENALTY_ORIGINALITY_CREDIT"
+      ],
+      "score_rank": 104,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 60
+    },
+    {
+      "components": {
+        "compute_cost": 3,
+        "cross_league_stability": 6,
+        "data_availability": 5,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 11,
+        "originality": 9,
+        "point_in_time_provability": 5,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-A6C5CB54A2880FCE",
+      "multiplicity_family": "FAMILY_MARKET_DYNAMICS",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_LEAGUE_TRANSFER_PENALTY"
+      ],
+      "score_rank": 105,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 60
+    },
+    {
+      "components": {
+        "compute_cost": 2,
+        "cross_league_stability": 7,
+        "data_availability": 4,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 11,
+        "originality": 10,
+        "point_in_time_provability": 4,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-A0C8A2CBC52F4CF9",
+      "multiplicity_family": "FAMILY_MARKET_DYNAMICS",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_MARKET_DATA_PIT_AND_COMPUTE_PENALTY_ORIGINALITY_CREDIT"
+      ],
+      "score_rank": 106,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 59
+    },
+    {
+      "components": {
+        "compute_cost": 2,
+        "cross_league_stability": 7,
+        "data_availability": 4,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 11,
+        "originality": 10,
+        "point_in_time_provability": 4,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-F3C9955492E671C9",
+      "multiplicity_family": "FAMILY_MARKET_DYNAMICS",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "CROSS_MARKET_DATA_PIT_AND_COMPUTE_PENALTY_ORIGINALITY_CREDIT"
+      ],
+      "score_rank": 107,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 59
+    },
+    {
+      "components": {
+        "compute_cost": 3,
+        "cross_league_stability": 7,
+        "data_availability": 3,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 11,
+        "originality": 9,
+        "point_in_time_provability": 2,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-EF312AD6AADA093E",
+      "multiplicity_family": "FAMILY_MARKET_DYNAMICS",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "EXTRA_SOURCE_DATA_AND_PIT_PENALTY",
+        "MISSING_SOURCE_CONTRACT_CAP"
+      ],
+      "score_rank": 108,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 56
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 6,
+        "data_availability": 3,
+        "falsifiability": 9,
+        "mechanistic_plausibility": 10,
+        "originality": 9,
+        "point_in_time_provability": 2,
+        "statistical_power": 7,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-2700B6D9EFFFFD5E",
+      "multiplicity_family": "FAMILY_BOOKMAKER_MICROSTRUCTURE",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "EXTRA_SOURCE_DATA_AND_PIT_PENALTY",
+        "MISSING_SOURCE_CONTRACT_CAP"
+      ],
+      "score_rank": 109,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 55
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 7,
+        "data_availability": 3,
+        "falsifiability": 8,
+        "mechanistic_plausibility": 13,
+        "originality": 8,
+        "point_in_time_provability": 2,
+        "statistical_power": 5,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-BFB8C2DD1D390675",
+      "multiplicity_family": "FAMILY_TEAM_STATE_RANKING",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "RARE_COHORT_POWER_PENALTY",
+        "DIRECT_MECHANISM_CREDIT",
+        "MISSING_SOURCE_CONTRACT_CAP"
+      ],
+      "score_rank": 110,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 55
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 7,
+        "data_availability": 3,
+        "falsifiability": 8,
+        "mechanistic_plausibility": 12,
+        "originality": 8,
+        "point_in_time_provability": 2,
+        "statistical_power": 5,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-0412EB8B8A0E23BE",
+      "multiplicity_family": "FAMILY_TEAM_STATE_RANKING",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "RARE_COHORT_POWER_PENALTY",
+        "MISSING_SOURCE_CONTRACT_CAP"
+      ],
+      "score_rank": 111,
+      "selected_for_first_25": true,
+      "selection_note": "Selected by frozen family quota, mechanism breadth, falsifiability and prospective data plan; current data gates still apply.",
+      "total": 54
+    },
+    {
+      "components": {
+        "compute_cost": 4,
+        "cross_league_stability": 7,
+        "data_availability": 3,
+        "falsifiability": 8,
+        "mechanistic_plausibility": 12,
+        "originality": 8,
+        "point_in_time_provability": 2,
+        "statistical_power": 5,
+        "strategic_value": 5
+      },
+      "historical_roi_used": false,
+      "hypothesis_id": "RDS-HYP-V1-BC381E5C1F26D334",
+      "multiplicity_family": "FAMILY_TEAM_STATE_RANKING",
+      "rationale_codes": [
+        "FAMILY_BASELINE_RUBRIC",
+        "RARE_COHORT_POWER_PENALTY",
+        "MISSING_SOURCE_CONTRACT_CAP"
+      ],
+      "score_rank": 112,
+      "selected_for_first_25": false,
+      "selection_note": "Retained in the catalogue but outside the first frozen portfolio.",
+      "total": 54
+    }
+  ],
+  "external_effects": {
+    "live_workflow_dispatches": 0,
+    "neon_api_calls": 0,
+    "production_postgresql_connections": 0,
+    "production_sql_reads": 0,
+    "production_sql_writes": 0,
+    "promotions": 0,
+    "provider_calls": 0,
+    "purchases": 0,
+    "r2_operations": 0,
+    "real_bets": 0,
+    "social_publications": 0
+  },
+  "immutable_base_revision": "6cb8de636890959bd2ddb7e1c791a2eb04ee8763",
+  "point_in_time_contract_version": "robin-point-in-time-lineage-v1",
+  "report_id": "hypothesis-priority-scorecard-v1",
+  "reproducibility": {
+    "builder": "tools/hypothesis-lab/build_catalogue.py",
+    "command": "python tools/hypothesis-lab/build_catalogue.py --check",
+    "deterministic": true,
+    "portfolio_source": "tools/hypothesis-lab/portfolio-strata-v1.json",
+    "portfolio_source_sha256": "6fb2b8e7892435f83a576987321ed1dd71c44af84b7f08b144500750ade883df",
+    "raw_candidate_source": "tools/hypothesis-lab/raw-candidates-v1.json",
+    "raw_candidate_source_sha256": "28b44600831835612e505614dd92d38f6f7fd0b65cff17728f0f70cf4daac45e",
+    "source": "tools/hypothesis-lab/catalogue-source-v1.json",
+    "source_sha256": "7281137c1ded116c67e6f64888ad74da9250400defc6ecb8837b315e159a355b",
+    "wall_clock_timestamp_included": false
+  },
+  "rubric": {
+    "compute_cost": {
+      "historical_roi_allowed": false,
+      "maximum": 5
+    },
+    "cross_league_stability": {
+      "historical_roi_allowed": false,
+      "maximum": 10
+    },
+    "data_availability": {
+      "historical_roi_allowed": false,
+      "maximum": 15
+    },
+    "falsifiability": {
+      "historical_roi_allowed": false,
+      "maximum": 10
+    },
+    "mechanistic_plausibility": {
+      "historical_roi_allowed": false,
+      "maximum": 15
+    },
+    "originality": {
+      "historical_roi_allowed": false,
+      "maximum": 10
+    },
+    "point_in_time_provability": {
+      "historical_roi_allowed": false,
+      "maximum": 20
+    },
+    "statistical_power": {
+      "historical_roi_allowed": false,
+      "maximum": 10
+    },
+    "strategic_value": {
+      "historical_roi_allowed": false,
+      "maximum": 5
+    }
+  },
+  "schema_version": "robin-hypothesis-priority-scorecard-v1",
+  "selection_policy": {
+    "blocked_data_policy": "A scientifically important blocked protocol may remain in the design portfolio, but cannot execute until its source contract is proven.",
+    "family_quotas": {
+      "FAMILY_1X2_PRICE_STRUCTURE": 4,
+      "FAMILY_BOOKMAKER_MICROSTRUCTURE": 3,
+      "FAMILY_CROSS_MARKET": 3,
+      "FAMILY_FORM_REGRESSION": 3,
+      "FAMILY_MARKET_DYNAMICS": 3,
+      "FAMILY_SCHEDULE_FATIGUE": 3,
+      "FAMILY_TEAM_STATE_RANKING": 3,
+      "FAMILY_VENUE_COHORT": 3
+    },
+    "historical_roi_used": false,
+    "portfolio_source": "tools/hypothesis-lab/portfolio-strata-v1.json",
+    "scorecard_order": "total, PIT, falsifiability, hypothesis_id",
+    "selected_count": 25,
+    "stratum_rule": "select exactly one operationally complete hypothesis per frozen stratum",
+    "within_stratum_tie_break": "nonblocked, total score, PIT, falsifiability, power, CPU cost, estimand hash"
+  },
+  "status": {
+    "betting_status": "NO_BET",
+    "promotion_status": "NO_PROMOTION",
+    "research_status": "EXPLORATORY",
+    "validation_status": "UNVALIDATED"
+  },
+  "status_labels": [
+    "EXPLORATORY",
+    "UNVALIDATED",
+    "NO_PROMOTION",
+    "NO_BET"
+  ],
+  "truth_kernel_version": "ROBIN_SCIENTIFIC_TRUTH_KERNEL_V1"
+}

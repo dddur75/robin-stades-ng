@@ -1,0 +1,1034 @@
+{
+  "common_operational_rules": {
+    "H2": "latest immutable receipt at or before kickoff_at-PT2H; maximum staleness 15 minutes",
+    "H24": "latest immutable receipt at or before kickoff_at-PT24H; maximum staleness 120 minutes",
+    "calibration_residual": "R_k = 1(outcome=k) - p_branch(k)",
+    "consensus": "median across at least five complete bookmakers unless a stricter stratum threshold is frozen",
+    "price_band_eligibility": "raw median decimal odds, branch-neutral, so both de-vig branches test identical fixtures",
+    "primary_parameter": "exactly one per hypothesis and per de-vig branch; branches remain separate",
+    "training_only_parameters": "quantiles and standardization use the expanding training block and remain frozen for the next scored block"
+  },
+  "content_sha256": "d5d90a18a671a2c894d62378bbfa9339442d8bd73c3eacbad242c8bd78c68db0",
+  "historical_roi_used": false,
+  "immutable_base_revision": "6cb8de636890959bd2ddb7e1c791a2eb04ee8763",
+  "portfolio_size": 25,
+  "schema_version": "robin-portfolio-strata-v1",
+  "selection_flags_from_catalogue_used": false,
+  "status_labels": [
+    "EXPLORATORY",
+    "UNVALIDATED",
+    "NO_PROMOTION",
+    "NO_BET"
+  ],
+  "strata": [
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_1X2_PRICE_STRUCTURE",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "draw_residual_minus_mean_home_away_residual",
+        "exposure": "Probability-matched draw calibration residual versus the mean home/away residual",
+        "frozen_thresholds": {
+          "boundary_rule": "left_closed_right_open_except_final_bin",
+          "probability_bin_width": 0.05
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "residual_contrast ~ outcome_class + probability_bin + league_season",
+          "link": "IDENTITY",
+          "outcome_transformation": "NONE_AFTER_DECLARED_RESIDUAL_CONSTRUCTION",
+          "power_design_class": "CLUSTERED_LINEAR_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "CATEGORICAL_THREE_LEVEL_CONTRAST",
+          "primary_parameter": "draw_residual_minus_mean_home_away_residual",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Receipt-backed settled current-fixture label; never a pre-cutoff predictor."
+      },
+      "portfolio_order": 1,
+      "required_expected_direction": "DRAW_ABSOLUTE_RESIDUAL_HIGHER",
+      "required_topic_tags": [
+        "pricing_1x2",
+        "draw_pricing",
+        "league_bias"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_DRAW_CALIBRATION"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_1X2_PRICE_STRUCTURE",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "mean_favourite_calibration_residual",
+        "exposure": "Very short favourite defined from branch-neutral raw median odds",
+        "frozen_thresholds": {
+          "boundary_equality_included": true,
+          "favourite_raw_median_decimal_odds_max": 1.5
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "favourite_residual ~ 1 + league_season",
+          "link": "IDENTITY",
+          "outcome_transformation": "NONE_AFTER_DECLARED_RESIDUAL_CONSTRUCTION",
+          "power_design_class": "CLUSTERED_LINEAR_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "ADJUSTED_INTERCEPT",
+          "primary_parameter": "mean_favourite_calibration_residual",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Receipt-backed settled current-fixture label; never a pre-cutoff predictor."
+      },
+      "portfolio_order": 2,
+      "required_expected_direction": "FAVOURITE_REALIZATION_BELOW_CALIBRATION_CURVE",
+      "required_topic_tags": [
+        "pricing_1x2",
+        "short_favourites"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_VERY_SHORT_FAVOURITE"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_1X2_PRICE_STRUCTURE",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "mean_outsider_calibration_residual",
+        "exposure": "Long outsider outcome defined from branch-neutral raw median odds",
+        "frozen_thresholds": {
+          "boundary_equality_included": true,
+          "outsider_raw_median_decimal_odds_min": 6.0
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "outsider_residual ~ 1 + league_season",
+          "link": "IDENTITY",
+          "outcome_transformation": "NONE_AFTER_DECLARED_RESIDUAL_CONSTRUCTION",
+          "power_design_class": "CLUSTERED_LINEAR_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "ADJUSTED_INTERCEPT",
+          "primary_parameter": "mean_outsider_calibration_residual",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Receipt-backed settled current-fixture label; never a pre-cutoff predictor."
+      },
+      "portfolio_order": 3,
+      "required_expected_direction": "LONGSHOT_REALIZATION_BELOW_CALIBRATION_CURVE",
+      "required_topic_tags": [
+        "pricing_1x2",
+        "long_outsiders"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_LONG_OUTSIDER"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_1X2_PRICE_STRUCTURE",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "calibration_slope_change_per_overround_unit",
+        "exposure": "Complete-market overround equals sum(1/raw_decimal_odds)-1",
+        "frozen_thresholds": {
+          "complete_market_required": true,
+          "overround_unit": 0.01
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "calibration_residual ~ overround + outcome + league_season",
+          "link": "IDENTITY",
+          "outcome_transformation": "NONE_AFTER_DECLARED_RESIDUAL_CONSTRUCTION",
+          "power_design_class": "CLUSTERED_LINEAR_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "CONTINUOUS_SLOPE",
+          "primary_parameter": "calibration_slope_change_per_overround_unit",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Receipt-backed settled current-fixture label; never a pre-cutoff predictor."
+      },
+      "portfolio_order": 4,
+      "required_expected_direction": "CALIBRATION_SLOPE_DECREASES_WITH_OVERROUND",
+      "required_topic_tags": [
+        "pricing_1x2",
+        "overround",
+        "league_bias"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_OVERROUND_SLOPE"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_BOOKMAKER_MICROSTRUCTURE",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "dispersion_H1_minus_dispersion_H2",
+        "exposure": "Across-book standard deviation of logit de-vig probabilities at H2 and the next declared prematch window",
+        "frozen_thresholds": {
+          "h1_tolerance_minutes": 5,
+          "later_window": "H1",
+          "minimum_complete_bookmakers": 5
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "dispersion_H1_minus_dispersion_H2 ~ dispersion_H2 + league_season",
+          "link": "IDENTITY",
+          "outcome_transformation": "NONE_AFTER_DECLARED_RESIDUAL_CONSTRUCTION",
+          "power_design_class": "CLUSTERED_LINEAR_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "ADJUSTED_INTERCEPT",
+          "primary_parameter": "dispersion_H1_minus_dispersion_H2",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Primary model outcome: receipt-backed H1 1X2 dispersion target. The settled fixture label is separate and may score only declared secondary calibration metrics after the event; it is never a predictor or primary-model outcome."
+      },
+      "portfolio_order": 5,
+      "required_expected_direction": "DISPERSION_PREDICTS_CONSENSUS_CONTRACTION",
+      "required_topic_tags": [
+        "bookmaker_dispersion",
+        "odds_movements"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_DISPERSION_CONTRACTION"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_BOOKMAKER_MICROSTRUCTURE",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H24; the declared H2 target is isolated from predictors; missing/partial declared markets fail closed.",
+        "estimand": "rho_minus_one",
+        "exposure": "Book-specific logit probability deviation from same-cutoff median consensus",
+        "frozen_thresholds": {
+          "early_window": "H24",
+          "late_window": "H2",
+          "minimum_complete_bookmakers": 5
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "AUTOREGRESSIVE_FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "book_deviation_H2 ~ book_deviation_H24 + book + league_season",
+          "link": "IDENTITY",
+          "outcome_transformation": "NONE_AFTER_DECLARED_RESIDUAL_CONSTRUCTION",
+          "power_design_class": "AUTOREGRESSIVE_SLOPE_MONTE_CARLO",
+          "power_design_matrix_class": "AUTOREGRESSIVE_SLOPE_MINUS_ONE",
+          "primary_parameter": "rho_minus_one",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Primary model outcome: receipt-backed H2 bookmaker deviations from the same-window median consensus. The settled fixture label is separate and may score only declared secondary calibration metrics after the event; it is never a predictor or primary-model outcome."
+      },
+      "portfolio_order": 6,
+      "required_expected_direction": "BOOKMAKER_DEVIATION_REVERTS",
+      "required_topic_tags": [
+        "bookmaker_bias",
+        "bookmaker_dispersion"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_BOOKMAKER_REVERSION"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_BOOKMAKER_MICROSTRUCTURE",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "dispersion_low_minus_reference",
+        "exposure": "Frozen coverage-count liquidity proxy; mid-coverage fixtures excluded from the primary contrast",
+        "frozen_thresholds": {
+          "excluded_coverage_max": 9,
+          "excluded_coverage_min": 7,
+          "low_coverage_bookmakers_max": 6,
+          "low_coverage_bookmakers_min": 5,
+          "reference_coverage_bookmakers_min": 10
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "dispersion ~ low_coverage + outcome + league_season",
+          "link": "IDENTITY",
+          "outcome_transformation": "NONE_AFTER_DECLARED_RESIDUAL_CONSTRUCTION",
+          "power_design_class": "CLUSTERED_LINEAR_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "BINARY_MAIN_EFFECT",
+          "primary_parameter": "dispersion_low_minus_reference",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Receipt-backed settled current-fixture label; never a pre-cutoff predictor."
+      },
+      "portfolio_order": 7,
+      "required_expected_direction": "LOW_LIQUIDITY_PROXY_INCREASES_DISPERSION",
+      "required_topic_tags": [
+        "liquidity_bias",
+        "bookmaker_dispersion"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_LIQUIDITY_PROXY"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_MARKET_DYNAMICS",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "paired_log_loss_H2_minus_H24",
+        "exposure": "Paired proper-score contrast on identical fixtures at H24 and H2",
+        "frozen_thresholds": {
+          "h24_max_staleness_minutes": 120,
+          "h2_max_staleness_minutes": 15
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "PAIRED_FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "paired_log_loss_difference ~ 1 + league_season",
+          "link": "IDENTITY",
+          "outcome_transformation": "NONE_AFTER_DECLARED_RESIDUAL_CONSTRUCTION",
+          "power_design_class": "PAIRED_CLUSTERED_GAUSSIAN_MONTE_CARLO",
+          "power_design_matrix_class": "PAIRED_DIFFERENCE_INTERCEPT",
+          "primary_parameter": "paired_log_loss_H2_minus_H24",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Receipt-backed settled current-fixture label; never a pre-cutoff predictor."
+      },
+      "portfolio_order": 8,
+      "required_expected_direction": "H2_PROPER_SCORE_LOWER_THAN_H24",
+      "required_topic_tags": [
+        "odds_movements",
+        "pricing_1x2"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_H24_H2_GAIN"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_MARKET_DYNAMICS",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "brier_residual_variance_high_minus_reference",
+        "exposure": "Total variation of median logit probabilities across declared intraday snapshots",
+        "frozen_thresholds": {
+          "high_regime_threshold": "expanding_training_block_Q75",
+          "holdout_quantile_recomputation_forbidden": true,
+          "minimum_snapshots": 4
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "LOG_VARIANCE_FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "log(max(squared_brier_residual,1e-8)) ~ high_volatility + league_season",
+          "link": "IDENTITY",
+          "outcome_transformation": "LOG_MAX_POSITIVE_OUTCOME_EPSILON_1E_8",
+          "power_design_class": "LOG_VARIANCE_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "BINARY_MAIN_EFFECT",
+          "primary_parameter": "brier_residual_variance_high_minus_reference",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Receipt-backed settled current-fixture label; never a pre-cutoff predictor."
+      },
+      "portfolio_order": 9,
+      "required_expected_direction": "HIGH_VOLATILITY_CALIBRATION_VARIANCE_HIGHER",
+      "required_topic_tags": [
+        "volatility_regimes",
+        "odds_movements"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_HIGH_VOLATILITY"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_MARKET_DYNAMICS",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "coherence_loss_misaligned_minus_synchronized",
+        "exposure": "Absolute receipt-time skew between complete 1X2 and total snapshots",
+        "frozen_thresholds": {
+          "excluded_gap_minutes": "(2,10]",
+          "misaligned_minutes_strictly_greater_than": 10,
+          "synchronized_minutes_max": 2
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "coherence_loss ~ misaligned + league_season",
+          "link": "IDENTITY",
+          "outcome_transformation": "NONE_AFTER_DECLARED_RESIDUAL_CONSTRUCTION",
+          "power_design_class": "CLUSTERED_LINEAR_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "BINARY_MAIN_EFFECT",
+          "primary_parameter": "coherence_loss_misaligned_minus_synchronized",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Receipt-backed settled current-fixture label; never a pre-cutoff predictor."
+      },
+      "portfolio_order": 10,
+      "required_expected_direction": "TIME_GAP_INCREASES_COHERENCE_RESIDUAL",
+      "required_topic_tags": [
+        "markets_unsynchronised",
+        "interaction_1x2_over_under"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_MARKET_SYNCHRONIZATION"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_FORM_REGRESSION",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "adjusted_recent_form_coefficient",
+        "exposure": "Opponent-adjusted recent league form with frozen exponential weights",
+        "frozen_thresholds": {
+          "lag_weight_base": 0.8,
+          "lookback_league_matches": 5,
+          "opponent_strength_snapshot": "pre_cutoff_frozen"
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "result_residual ~ adjusted_recent_form + long_term_strength + venue",
+          "link": "IDENTITY",
+          "outcome_transformation": "NONE_AFTER_DECLARED_RESIDUAL_CONSTRUCTION",
+          "power_design_class": "CLUSTERED_LINEAR_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "CONTINUOUS_SLOPE",
+          "primary_parameter": "adjusted_recent_form_coefficient",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Receipt-backed settled current-fixture label; never a pre-cutoff predictor."
+      },
+      "portfolio_order": 11,
+      "required_expected_direction": "ADJUSTED_FORM_COEFFICIENT_NON_ZERO",
+      "required_topic_tags": [
+        "recent_form",
+        "regression_to_mean"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_RECENT_FORM"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_FORM_REGRESSION",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "next_match_goals_minus_xg_contrast",
+        "exposure": "Training-standardized goals-minus-xG over the prior eight matches",
+        "frozen_thresholds": {
+          "boundary_equality_included": true,
+          "lookback_matches": 8,
+          "overperformance_training_z_min": 1.0
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "next_goals_minus_xg ~ overperformance + strength + venue",
+          "link": "IDENTITY",
+          "outcome_transformation": "NONE_AFTER_DECLARED_RESIDUAL_CONSTRUCTION",
+          "power_design_class": "CLUSTERED_LINEAR_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "BINARY_MAIN_EFFECT",
+          "primary_parameter": "next_match_goals_minus_xg_contrast",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Receipt-backed settled current-fixture label; never a pre-cutoff predictor."
+      },
+      "portfolio_order": 12,
+      "required_expected_direction": "GOALS_OVER_XG_REVERTS_TOWARD_ZERO",
+      "required_topic_tags": [
+        "goals_xg_overperformance",
+        "regression_to_mean"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_GOALS_XG_REVERSION"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_FORM_REGRESSION",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "current_concession_residual_contrast",
+        "exposure": "Clean-sheet streak unsupported by xGA improvement",
+        "frozen_thresholds": {
+          "clean_sheet_window_matches": 4,
+          "clean_sheets_min": 3,
+          "xga90_improvement_max": 0.1,
+          "xga_reference_matches": 8
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "concession_residual ~ unsupported_clean_sheet + strength + venue",
+          "link": "IDENTITY",
+          "outcome_transformation": "NONE_AFTER_DECLARED_RESIDUAL_CONSTRUCTION",
+          "power_design_class": "CLUSTERED_LINEAR_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "BINARY_MAIN_EFFECT",
+          "primary_parameter": "current_concession_residual_contrast",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Receipt-backed settled current-fixture label; never a pre-cutoff predictor."
+      },
+      "portfolio_order": 13,
+      "required_expected_direction": "UNSUPPORTED_CLEAN_SHEETS_REVERT",
+      "required_topic_tags": [
+        "clean_sheets",
+        "regression_to_mean"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_CLEAN_SHEET_REVERSION"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_VENUE_COHORT",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "venue_specific_form_coefficient",
+        "exposure": "Same-venue EWMA contrasted with all-venue EWMA",
+        "frozen_thresholds": {
+          "all_venue_lookback": 12,
+          "ewma_decay": 0.8,
+          "same_venue_lookback": 6
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "result_residual ~ same_venue_ewma_minus_all_venue_ewma + strength",
+          "link": "IDENTITY",
+          "outcome_transformation": "NONE_AFTER_DECLARED_RESIDUAL_CONSTRUCTION",
+          "power_design_class": "CLUSTERED_LINEAR_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "CONTINUOUS_SLOPE",
+          "primary_parameter": "venue_specific_form_coefficient",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Receipt-backed settled current-fixture label; never a pre-cutoff predictor."
+      },
+      "portfolio_order": 14,
+      "required_expected_direction": "VENUE_SPECIFIC_FORM_COEFFICIENT_NON_ZERO",
+      "required_topic_tags": [
+        "home_away",
+        "recent_form"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_VENUE_FORM"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_VENUE_COHORT",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "calibration_variance_ratio_promoted_to_established",
+        "exposure": "Promotion status frozen by preseason registry and early-season fixture index",
+        "frozen_thresholds": {
+          "boundary_equality_included": true,
+          "early_fixture_count_max": 8
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "LOG_VARIANCE_FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "log(max(squared_calibration_residual,1e-8)) ~ promoted_early + league_season",
+          "link": "IDENTITY",
+          "outcome_transformation": "LOG_MAX_POSITIVE_OUTCOME_EPSILON_1E_8",
+          "power_design_class": "LOG_VARIANCE_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "BINARY_MAIN_EFFECT",
+          "primary_parameter": "calibration_variance_ratio_promoted_to_established",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Receipt-backed settled current-fixture label; never a pre-cutoff predictor."
+      },
+      "portfolio_order": 15,
+      "required_expected_direction": "PROMOTED_EARLY_CALIBRATION_VARIANCE_HIGHER",
+      "required_topic_tags": [
+        "promoted_teams",
+        "season_moment"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_PROMOTED_EARLY"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_VENUE_COHORT",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "derby_by_low_total_draw_interaction",
+        "exposure": "Preseason derby registry crossed with proportional under-2.5 probability",
+        "frozen_thresholds": {
+          "boundary_equality_included": true,
+          "derby_registry_freeze": "preseason",
+          "under_2_5_probability_min": 0.55
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "draw_residual ~ derby * low_total + strength + league_season",
+          "link": "IDENTITY",
+          "outcome_transformation": "NONE_AFTER_DECLARED_RESIDUAL_CONSTRUCTION",
+          "power_design_class": "CLUSTERED_LINEAR_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "JOINT_BINARY_INTERACTION",
+          "primary_parameter": "derby_by_low_total_draw_interaction",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Receipt-backed settled current-fixture label; never a pre-cutoff predictor."
+      },
+      "portfolio_order": 16,
+      "required_expected_direction": "DERBY_DRAW_AND_LOW_TOTAL_INTERACTION_POSITIVE",
+      "required_topic_tags": [
+        "derbies",
+        "draw_pricing",
+        "interaction_1x2_over_under"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_DERBY_LOW_TOTAL"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_SCHEDULE_FATIGUE",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "rest_differential_coefficient",
+        "exposure": "Completed days since prior competitive kickoff, capped before differencing",
+        "frozen_thresholds": {
+          "absolute_difference_days_min": 2,
+          "rest_days_cap": 14,
+          "rest_days_floor": 2
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "result_residual ~ rest_differential + strength + venue",
+          "link": "IDENTITY",
+          "outcome_transformation": "NONE_AFTER_DECLARED_RESIDUAL_CONSTRUCTION",
+          "power_design_class": "CLUSTERED_LINEAR_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "CONTINUOUS_SLOPE",
+          "primary_parameter": "rest_differential_coefficient",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Receipt-backed settled current-fixture label; never a pre-cutoff predictor."
+      },
+      "portfolio_order": 17,
+      "required_expected_direction": "REST_DIFFERENTIAL_COEFFICIENT_POSITIVE",
+      "required_topic_tags": [
+        "rest",
+        "fatigue"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_REST_DIFFERENTIAL"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_SCHEDULE_FATIGUE",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "second_half_minus_first_half_congestion_effect",
+        "exposure": "Competitive kickoff count in the preceding eight complete 24-hour periods",
+        "frozen_thresholds": {
+          "boundary_equality_included": true,
+          "competitive_kickoffs_min": 3,
+          "lookback_hours": 192
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "half_result_residual ~ congested * second_half + strength + venue",
+          "link": "IDENTITY",
+          "outcome_transformation": "NONE_AFTER_DECLARED_RESIDUAL_CONSTRUCTION",
+          "power_design_class": "CLUSTERED_LINEAR_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "JOINT_BINARY_INTERACTION",
+          "primary_parameter": "second_half_minus_first_half_congestion_effect",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Receipt-backed settled current-fixture label; never a pre-cutoff predictor."
+      },
+      "portfolio_order": 18,
+      "required_expected_direction": "CONGESTION_SECOND_HALF_EFFECT_MORE_NEGATIVE",
+      "required_topic_tags": [
+        "congestion_calendar",
+        "fatigue"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_CONGESTION_SECOND_HALF"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_SCHEDULE_FATIGUE",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "post_europe_minus_pre_europe_effect",
+        "exposure": "Receipt-backed UEFA kickoff within 72 hours before or after the domestic fixture",
+        "frozen_thresholds": {
+          "europe_window_hours_max": 72,
+          "post_minus_pre_contrast_order_frozen": true
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "result_residual ~ post_europe + pre_europe + rest + strength + venue",
+          "link": "IDENTITY",
+          "outcome_transformation": "NONE_AFTER_DECLARED_RESIDUAL_CONSTRUCTION",
+          "power_design_class": "CLUSTERED_LINEAR_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "MUTUALLY_EXCLUSIVE_BINARY_CONTRAST",
+          "primary_parameter": "post_europe_minus_pre_europe_effect",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Receipt-backed settled current-fixture label; never a pre-cutoff predictor."
+      },
+      "portfolio_order": 19,
+      "required_expected_direction": "POST_EUROPE_EFFECT_MORE_NEGATIVE_THAN_PRE",
+      "required_topic_tags": [
+        "europe_before_after",
+        "fatigue",
+        "rest"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_EUROPE_SANDWICH"
+    },
+    {
+      "blocked_fallback_allowed": true,
+      "family_id": "FAMILY_TEAM_STATE_RANKING",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "log_residual_variance_ratio_post_to_pre",
+        "exposure": "First three league fixtures after receipt-backed official coach effective_at versus prior six",
+        "frozen_thresholds": {
+          "official_effective_at_receipt_required": true,
+          "post_change_fixtures": 3,
+          "pre_change_fixtures": 6
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "LOG_VARIANCE_FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "log(max(squared_result_residual,1e-8)) ~ post_coach_change + strength + venue",
+          "link": "IDENTITY",
+          "outcome_transformation": "LOG_MAX_POSITIVE_OUTCOME_EPSILON_1E_8",
+          "power_design_class": "LOG_VARIANCE_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "BINARY_MAIN_EFFECT",
+          "primary_parameter": "log_residual_variance_ratio_post_to_pre",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Receipt-backed settled current-fixture label; never a pre-cutoff predictor."
+      },
+      "portfolio_order": 20,
+      "required_expected_direction": "COACH_CHANGE_VARIANCE_INCREASES",
+      "required_topic_tags": [
+        "coach_change",
+        "volatility_regimes"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_COACH_CHANGE_VARIANCE"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_TEAM_STATE_RANKING",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "subsequent_result_residual_coefficient",
+        "exposure": "Training-standardized points-minus-frozen-strength/xG expectation from matchweek eight",
+        "frozen_thresholds": {
+          "boundary_equality_included": true,
+          "matchweek_min": 8,
+          "overranking_training_z_min": 1.0
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "subsequent_result_residual ~ overranking_gap + strength + venue",
+          "link": "IDENTITY",
+          "outcome_transformation": "NONE_AFTER_DECLARED_RESIDUAL_CONSTRUCTION",
+          "power_design_class": "CLUSTERED_LINEAR_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "CONTINUOUS_SLOPE",
+          "primary_parameter": "subsequent_result_residual_coefficient",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Receipt-backed settled current-fixture label; never a pre-cutoff predictor."
+      },
+      "portfolio_order": 21,
+      "required_expected_direction": "POINTS_STRENGTH_GAP_REVERTS",
+      "required_topic_tags": [
+        "misleading_ranking",
+        "regression_to_mean",
+        "season_moment"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_MISLEADING_RANKING"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_TEAM_STATE_RANKING",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "spline_prediction_abs_z2_minus_frozen_linear_prediction_abs_z2",
+        "exposure": "Frozen within-league strength gap with fixed spline basis",
+        "frozen_thresholds": {
+          "extreme_absolute_z_min": 1.5,
+          "spline_knots_z": [
+            -2,
+            -1,
+            0,
+            1,
+            2
+          ]
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "FROZEN_BASIS_FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "calibration_residual ~ spline(strength_gap,frozen_knots) + venue",
+          "link": "IDENTITY",
+          "outcome_transformation": "NONE_AFTER_DECLARED_RESIDUAL_CONSTRUCTION",
+          "power_design_class": "FROZEN_SPLINE_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "FROZEN_SPLINE_CONTRAST",
+          "primary_parameter": "spline_prediction_abs_z2_minus_frozen_linear_prediction_abs_z2",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Receipt-backed settled current-fixture label; never a pre-cutoff predictor."
+      },
+      "portfolio_order": 22,
+      "required_expected_direction": "STRENGTH_GAP_CURVATURE_NON_ZERO",
+      "required_topic_tags": [
+        "difference_in_level",
+        "pricing_1x2"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_EXTREME_STRENGTH_GAP"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_CROSS_MARKET",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "later_alignment_coefficient",
+        "exposure": "Train-only mapping from 1X2 probability vector to over-2.5 probability",
+        "frozen_thresholds": {
+          "holdout_quantile_recomputation_forbidden": true,
+          "incoherence_threshold": "expanding_training_block_Q90_absolute_residual",
+          "same_cutoff_skew_minutes_max": 2,
+          "target_h1_tolerance_minutes": 5,
+          "target_window": "H1"
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "later_alignment_H1 ~ cross_market_incoherence_H2 + league_season",
+          "link": "IDENTITY",
+          "outcome_transformation": "NONE_AFTER_DECLARED_RESIDUAL_CONSTRUCTION",
+          "power_design_class": "CLUSTERED_LINEAR_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "CONTINUOUS_SLOPE",
+          "primary_parameter": "later_alignment_coefficient",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Primary model outcome: receipt-backed H1 cross-market alignment target. The settled fixture label is separate and may score only declared secondary calibration metrics after the event; it is never a predictor or primary-model outcome."
+      },
+      "portfolio_order": 23,
+      "required_expected_direction": "CROSS_MARKET_RESIDUAL_PREDICTS_LATER_ALIGNMENT",
+      "required_topic_tags": [
+        "interaction_1x2_over_under",
+        "markets_unsynchronised"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_1X2_TOTAL_COHERENCE"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_CROSS_MARKET",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "short_favourite_by_low_total_draw_interaction",
+        "exposure": "Branch-neutral favourite odds crossed with proportional under-2.5 probability",
+        "frozen_thresholds": {
+          "boundary_equality_included": true,
+          "favourite_raw_median_decimal_odds_max": 1.65,
+          "under_2_5_probability_min": 0.55
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "draw_residual ~ short_favourite * low_total + league_season",
+          "link": "IDENTITY",
+          "outcome_transformation": "NONE_AFTER_DECLARED_RESIDUAL_CONSTRUCTION",
+          "power_design_class": "CLUSTERED_LINEAR_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "JOINT_BINARY_INTERACTION",
+          "primary_parameter": "short_favourite_by_low_total_draw_interaction",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Receipt-backed settled current-fixture label; never a pre-cutoff predictor."
+      },
+      "portfolio_order": 24,
+      "required_expected_direction": "LOW_TOTAL_INCREASES_DRAW_FOR_SHORT_FAVOURITE",
+      "required_topic_tags": [
+        "favourite_low_total",
+        "draw_pricing",
+        "short_favourites"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_SHORT_FAVOURITE_LOW_TOTAL"
+    },
+    {
+      "blocked_fallback_allowed": false,
+      "family_id": "FAMILY_CROSS_MARKET",
+      "operational_definition": {
+        "boundary_policy": "Only equality rules explicitly named in frozen_thresholds are included; all other open/closed boundaries are literal.",
+        "eligibility": "All predictor receipts satisfy H2; missing/partial declared markets fail closed.",
+        "estimand": "long_outsider_by_high_total_interaction",
+        "exposure": "Branch-neutral outsider odds crossed with proportional over-2.5 probability",
+        "frozen_thresholds": {
+          "boundary_equality_included": true,
+          "outsider_raw_median_decimal_odds_min": 6.0,
+          "over_2_5_probability_min": 0.6
+        },
+        "model": {
+          "cluster": "fixture",
+          "error_distribution": "GAUSSIAN_WORKING_DISTRIBUTION_AFTER_DECLARED_TRANSFORMATION",
+          "estimator_family": "FIXED_EFFECTS_LINEAR_MODEL",
+          "fixed_effects": [
+            "league_season"
+          ],
+          "formula": "outsider_win_residual ~ long_outsider * high_total + league_season",
+          "link": "IDENTITY",
+          "outcome_transformation": "NONE_AFTER_DECLARED_RESIDUAL_CONSTRUCTION",
+          "power_design_class": "CLUSTERED_LINEAR_SCALAR_CONTRAST_MONTE_CARLO",
+          "power_design_matrix_class": "JOINT_BINARY_INTERACTION",
+          "primary_parameter": "long_outsider_by_high_total_interaction",
+          "standardization": "TRAINING_BLOCK_MEAN_AND_SD_FROZEN_THEN_APPLIED_UNCHANGED_TO_HOLDOUT",
+          "variance_model": "LEAGUE_SEASON_BLOCK_CLUSTER_ROBUST_SANDWICH"
+        },
+        "outcome": "Receipt-backed settled current-fixture label; never a pre-cutoff predictor."
+      },
+      "portfolio_order": 25,
+      "required_expected_direction": "HIGH_TOTAL_INCREASES_LONGSHOT_REALIZATION",
+      "required_topic_tags": [
+        "outsider_high_total",
+        "long_outsiders"
+      ],
+      "selection_rule": "OPERATIONALLY_COMPLETE_THEN_NONBLOCKED_THEN_SCORE_PIT_FALSIFIABILITY_POWER_CPU_ESTIMAND_HASH",
+      "stratum_id": "PORTFOLIO_LONG_OUTSIDER_HIGH_TOTAL"
+    }
+  ]
+}
