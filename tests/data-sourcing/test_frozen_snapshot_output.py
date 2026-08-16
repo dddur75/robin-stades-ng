@@ -56,7 +56,7 @@ def test_synthetic_test_output_may_use_a_non_synchronized_temp_root(
 
 
 def test_unc_output_is_rejected_before_resolution(monkeypatch: pytest.MonkeyPatch) -> None:
-    unc = Path(r"\\server\share\snapshots")
+    unc = Path(r"\\server\share\snapshots")  # PORTABILITY_TEST_FIXTURE
 
     def forbidden_resolve(*_args: object, **_kwargs: object) -> Path:
         raise AssertionError("UNC path was resolved before rejection")

@@ -93,13 +93,18 @@ def test_direct_real_source_pin_and_remote_drive_fail_before_metadata(
     monkeypatch.setattr(source_module, "_is_remote_drive", forbidden_probe)
     monkeypatch.setattr(source_module, "_reject_reparse_path", forbidden_metadata)
     with pytest.raises(SnapshotValidationError, match="BATCH_SOURCE_APPROVED_ROOT_MISMATCH"):
-        verify_finalized_batch(Path(r"Z:\wrong\batch"), observation_seconds=300)
+        verify_finalized_batch(
+            Path(r"Z:\wrong\batch"),  # PORTABILITY_TEST_FIXTURE
+            observation_seconds=300,
+        )
 
-    monkeypatch.setenv("LOCALAPPDATA", r"Z:\AppData\Local")
+    monkeypatch.setenv("LOCALAPPDATA", r"Z:\AppData\Local")  # PORTABILITY_TEST_FIXTURE
     monkeypatch.setattr(source_module, "_is_remote_drive", lambda _path: True)
     with pytest.raises(SnapshotValidationError, match="BATCH_SOURCE_NETWORK_SHARE_FORBIDDEN"):
         verify_finalized_batch(
-            Path(r"Z:\AppData\Local\Robin\five-canary-receipt-batch-20260816"),
+            Path(
+                r"Z:\AppData\Local\Robin\five-canary-receipt-batch-20260816"  # PORTABILITY_TEST_FIXTURE
+            ),
             observation_seconds=300,
         )
 
@@ -108,7 +113,7 @@ def test_direct_real_source_pin_and_remote_drive_fail_before_metadata(
     ("protocols_path", "matrix_path", "reports_path", "error_code"),
     (
         (
-            Path(r"\\server\share\protocols.json"),
+            Path(r"\\server\share\protocols.json"),  # PORTABILITY_TEST_FIXTURE
             None,
             None,
             "FROZEN_SNAPSHOT_PROTOCOLS_NETWORK_SHARE_FORBIDDEN",
@@ -118,7 +123,7 @@ def test_direct_real_source_pin_and_remote_drive_fail_before_metadata(
             / "reports"
             / "hypothesis-lab"
             / "first-25-experiment-protocols-v1.json",
-            Path(r"\\server\share\matrix.json"),
+            Path(r"\\server\share\matrix.json"),  # PORTABILITY_TEST_FIXTURE
             None,
             "FROZEN_SNAPSHOT_MATRIX_NETWORK_SHARE_FORBIDDEN",
         ),
@@ -128,7 +133,7 @@ def test_direct_real_source_pin_and_remote_drive_fail_before_metadata(
             / "hypothesis-lab"
             / "first-25-experiment-protocols-v1.json",
             None,
-            Path(r"\\server\share\reports"),
+            Path(r"\\server\share\reports"),  # PORTABILITY_TEST_FIXTURE
             "FROZEN_SNAPSHOT_REPORTS_NETWORK_SHARE_FORBIDDEN",
         ),
     ),

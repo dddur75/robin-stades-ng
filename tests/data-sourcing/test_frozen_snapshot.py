@@ -694,8 +694,8 @@ def test_reports_exclude_real_tokens_paths_secrets_and_authenticated_urls(
 @pytest.mark.parametrize(
     "leaked_path",
     (
-        r"C:\Temp\secret.json",
-        r"D:\research\batch\raw.bin",
+        r"C:\Temp\secret.json",  # PORTABILITY_TEST_FIXTURE
+        r"D:\research\batch\raw.bin",  # PORTABILITY_TEST_FIXTURE
         "/tmp/robin/secret.json",
         "/workspace/private/batch.json",
     ),

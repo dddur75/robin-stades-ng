@@ -189,7 +189,7 @@ def test_remote_drive_is_rejected_before_reparse_metadata(
         SnapshotValidationError, match="FROZEN_SNAPSHOT_PROTOCOLS_NETWORK_SHARE_FORBIDDEN"
     ):
         _validated_local_path(
-            Path(r"Z:\remote\protocols.json"),
+            Path(r"Z:\remote\protocols.json"),  # PORTABILITY_TEST_FIXTURE
             unc_code="FROZEN_SNAPSHOT_PROTOCOLS_NETWORK_SHARE_FORBIDDEN",
         )
 
@@ -207,7 +207,7 @@ def test_repository_path_mismatch_fails_before_remote_drive_probe(
     monkeypatch.setattr(freeze_module, "_is_remote_drive", forbidden_probe)
     with pytest.raises(SnapshotValidationError, match="REPOSITORY_PATH_MISMATCH"):
         _validated_repository_path(
-            Path(r"Z:\remote\protocols.json"),
+            Path(r"Z:\remote\protocols.json"),  # PORTABILITY_TEST_FIXTURE
             expected,
             mismatch_code="REPOSITORY_PATH_MISMATCH",
         )
