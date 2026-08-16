@@ -239,6 +239,7 @@ def test_activation_is_on_demand_bounded_and_references_known_agents() -> None:
         "CHRONOS_LOOP53",
         "SCIENTIFIC_TRUTH_KERNEL",
         "POINT_IN_TIME_LINEAGE",
+        "FIRST_FROZEN_RECEIPT_BACKED_SNAPSHOT",
         "COVERAGE_P0",
         "HYPERGRAPH",
         "COCKPIT",
@@ -319,6 +320,7 @@ def test_agent_report_schema_requires_the_mission_contract() -> None:
         "CHRONOS_LOOP53",
         "SCIENTIFIC_TRUTH_KERNEL",
         "POINT_IN_TIME_LINEAGE",
+        "FIRST_FROZEN_RECEIPT_BACKED_SNAPSHOT",
         "COVERAGE_P0",
         "HYPERGRAPH",
         "COCKPIT",
@@ -573,6 +575,130 @@ def test_point_in_time_lineage_authority_is_offline_bounded_and_exact() -> None:
     assert [edge["from_claim_id"] for edge in record157_edges] == (
         expected_record157_proof
     )
+
+
+def test_first_frozen_snapshot_authority_is_exact_offline_and_secret_free() -> None:
+    matrix = load_json("configs/agents/mission-activation-matrix-v3.json")
+    manifest = load_json("configs/execution/first-frozen-receipt-backed-snapshot-v1.json")
+    assert set(manifest) == {
+        "mission_id",
+        "authorized_stages",
+        "maximum_stage",
+        "external_effects",
+        "compute_budget",
+        "time_budget",
+        "source_hash",
+        "expires_at",
+    }
+    assert manifest == {
+        "mission_id": "FIRST_FROZEN_RECEIPT_BACKED_SNAPSHOT",
+        "authorized_stages": ["E1"],
+        "maximum_stage": "E1",
+        "external_effects": [
+            "local_temporary_synthetic_contract_snapshot_write",
+            "local_temporary_synthetic_contract_report_set_write",
+            "git_remote_write_non_force",
+            "github_pull_request_write",
+            "github_actions_observe",
+        ],
+        "compute_budget": 2000,
+        "time_budget": 172800,
+        "source_hash": ("df111223524b89b1b8fa51867ee84dba3cb6367d18020c758f1f164b97c1d258"),
+        "expires_at": "2026-08-18T00:30:00Z",
+    }
+    mission = matrix["missions"]["FIRST_FROZEN_RECEIPT_BACKED_SNAPSHOT"]
+    assert mission["writer"] == "C0"
+    assert mission["scale_ceiling"] == manifest["maximum_stage"]
+    assert mission["agents"] == [
+        "C0",
+        "C1",
+        "C2",
+        "C4",
+        "DP5",
+        "DP6",
+        "RP8",
+        "RP9",
+        "A1",
+    ]
+    allowed_paths = mission["allowed_paths"]
+    assert allowed_paths == sorted(allowed_paths)
+    assert len(allowed_paths) == len(set(allowed_paths)) == 38
+    assert (
+        hashlib.sha256(
+            json.dumps(
+                allowed_paths,
+                ensure_ascii=False,
+                separators=(",", ":"),
+            ).encode()
+        ).hexdigest()
+        == "e4e0dfcca3413bb6d4dc80152a0ac184038119c6b3578a5bbe61bd0acb94a72e"
+    )
+    assert mission["delivery_keys"] == {
+        "data": ["DP6", "C2"],
+        "platform": ["DP5"],
+        "science": ["C2", "RP8", "RP9", "A1"],
+        "security": ["C4", "C1"],
+    }
+    authorization = matrix["authorization"]
+    effect_budget = authorization["first_frozen_snapshot_effect_budget"]
+    assert effect_budget.split(";") == [
+        "LOCAL_NON_EXECUTION_EVIDENCE_READS_EXACT_2_READ_ONLY",
+        "LOCAL_SYNTHETIC_CONTRACT_SNAPSHOT_WRITES_MAX_2_DELETE_AFTER_VERIFICATION",
+        "LOCAL_SYNTHETIC_CONTRACT_REPORT_SET_WRITES_MAX_2_DELETE_AFTER_VERIFICATION",
+        "LOCAL_REAL_BATCH_CAPTURE_FILE_READS_0",
+        "LOCAL_REAL_SNAPSHOT_WRITES_0",
+        "LOCAL_SYNTHETIC_SNAPSHOT_CHECK_WRITES_0",
+        "LOCAL_SYNTHETIC_REPORT_CHECK_WRITES_0",
+        "PROVIDER_NETWORK_CALLS_0",
+        "PROVIDER_DNS_RESOLUTION_0",
+        "PROVIDER_SECRET_READS_0",
+        "NEON_API_CALLS_0",
+        "POSTGRESQL_PRODUCTION_CONNECTIONS_0",
+        "SQL_READS_0",
+        "SQL_WRITES_0",
+        "R2_OPERATIONS_0",
+        "LIVE_WORKFLOW_DISPATCHES_0",
+        "PURCHASES_0",
+        "PROMOTIONS_0",
+        "REAL_BETS_0",
+        "BACKTESTS_0",
+        "EDGE_CALCULATIONS_0",
+    ]
+    for lock in (
+        "PROVIDER_NETWORK_CALLS_0",
+        "PROVIDER_DNS_RESOLUTION_0",
+        "PROVIDER_SECRET_READS_0",
+        "NEON_API_CALLS_0",
+        "POSTGRESQL_PRODUCTION_CONNECTIONS_0",
+        "R2_OPERATIONS_0",
+        "PURCHASES_0",
+        "PROMOTIONS_0",
+        "REAL_BETS_0",
+        "BACKTESTS_0",
+        "EDGE_CALCULATIONS_0",
+    ):
+        assert lock in effect_budget
+    delivery = authorization["first_frozen_snapshot_delivery"]
+    assert "REQUIRE_EXACT_BASE_26CBB8E14814093CC44E17A46A3EF2C899B13D07" in delivery
+    assert "ALLOW_ONE_DRAFT_PULL_REQUEST_TITLED_FROZEN_RECEIPT_BACKED_SNAPSHOT_TOOLING_V1" in delivery
+    assert "FORBID_READY_MERGE_MAIN_MODIFICATION" in delivery
+    assert "REAL_BATCH_NOT_EXECUTED" in delivery
+    assert "ZERO_ACCUMULATION_CANDIDATES" in delivery
+    boundary = authorization["first_frozen_snapshot_source_boundary"]
+    assert boundary.split(";") == [
+        "READ_ONLY_EXACT_NON_EXECUTION_REPORT_AND_PREFLIGHT_EVIDENCE",
+        "FORBID_FINALIZED_JSON_POLLING_AND_REAL_CAPTURE_FILE_READS",
+        "REAL_BATCH_STATUS_NOT_EXECUTED",
+        "REAL_CAPTURE_COUNT_0",
+        "REAL_SNAPSHOT_STATUS_NOT_CREATED",
+        "EXPERIMENT_READINESS_NOT_ASSESSED_ON_REAL_DATA",
+        "SYNTHETIC_FIXTURES_CONTRACT_VALIDATION_ONLY",
+        "REQUIRE_FAIL_CLOSED_REAL_DATA_GATE_AND_ZERO_ACCUMULATION_CANDIDATES",
+        "REQUIRE_SEVEN_COMMITTABLE_SYNTHETIC_AGGREGATE_REPORTS_PLUS_SANITIZED_NON_EXECUTION_WITNESS",
+        "RAW_AND_DETAILED_NORMALIZED_DATA_EXTERNAL_ONLY",
+        "GIT_HASHES_COUNTS_RATIOS_SCHEMA_FINGERPRINTS_STATUSES_PSEUDONYMS_AND_AGGREGATES_ONLY",
+        "REAL_DATA_AND_SECRET_LEAK_COUNT_0",
+    ]
 
 
 def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it() -> None:

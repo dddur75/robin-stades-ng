@@ -1,0 +1,48 @@
+{
+  "accumulation_candidates": [],
+  "artifact": "five-canary-batch-non-execution-witness-v1",
+  "authorized_main_sha": "26cbb8e14814093cc44e17a46a3ef2c899b13d07",
+  "bets": 0,
+  "credits_consumed": 0,
+  "dns_resolutions": 0,
+  "evidence": [
+    {
+      "logical_reference": "P0_NON_EXECUTION_REPORT",
+      "sha256": "055ac930a71baf99307b54713da861316808fbef6bc23c60c93042d69ec6667c"
+    },
+    {
+      "logical_reference": "PREFLIGHT_EVIDENCE",
+      "sha256": "2d26a1b72a503972b81ecc537c34c8733094629635731d88fbf637e92c90f88a"
+    }
+  ],
+  "experiment_readiness_status": "NOT_ASSESSED_ON_REAL_DATA",
+  "external_reference": "FIVE_CANARY_BATCH_PRELIMINARY_PREFLIGHT_20260816",
+  "failed_gate": "REPOSITORY_LIVE_ACTIVATION_REQUIRED",
+  "git_repository_writes": 0,
+  "provider_calls": 0,
+  "real_batch_status": "NOT_EXECUTED",
+  "real_capture_count": 0,
+  "real_data_status": "NOT_AVAILABLE",
+  "real_executable_experiment_count": 0,
+  "real_snapshot_count": 0,
+  "real_snapshot_status": "NOT_CREATED",
+  "reason": "BATCH_REQUIRES_REPOSITORY_ACTIVATION",
+  "retries": 0,
+  "schema_version": "robin-five-canary-non-execution-witness-v1",
+  "secret_exposure_count": 0,
+  "secret_reads": 0,
+  "status": "NOT_EXECUTED",
+  "synthetic_validation_status": "PASS",
+  "tooling_status": "OFFLINE_DRAFT_READY",
+  "verdicts": [
+    "FIVE_CANARY_BATCH_BLOCKED_BY_MISSING_REPOSITORY_ACTIVATION",
+    "REAL_BATCH_NOT_AVAILABLE",
+    "NO_REAL_SNAPSHOT_CREATED",
+    "NO_EXPERIMENT_READINESS_CLAIMED",
+    "ZERO_ACCUMULATION_CANDIDATES_WITH_CLOSED_DATA_GATE",
+    "NO_PROVIDER_CALL",
+    "NO_SECRET_READ",
+    "NO_PROMOTION",
+    "NO_BET"
+  ]
+}

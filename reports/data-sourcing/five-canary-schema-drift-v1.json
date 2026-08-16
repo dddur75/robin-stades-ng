@@ -1,0 +1,292 @@
+{
+  "artifact": "five-canary-schema-drift-v1",
+  "capture_count": 5,
+  "captures": [
+    {
+      "capture_label": "C0",
+      "field_path_and_type_count": 21,
+      "outcome_structure_sha256": "85dcfcceb627955b144bfdc2ad2a39330376e976c672c35208da9b83cbae994c",
+      "provider_schema_fingerprint_sha256": "ddf1abc71817e5def985b7847665ac89fcf3d068af0f1bba17ce0a2d4b8445db",
+      "quota_header_fields": [
+        "observed_at",
+        "requests_last",
+        "requests_remaining",
+        "requests_used"
+      ],
+      "structural_schema_fingerprint_sha256": "944954b76df253fd592f407c97c7d648df9c11abadb89a0c62395d4beadf1b51"
+    },
+    {
+      "capture_label": "C1",
+      "field_path_and_type_count": 21,
+      "outcome_structure_sha256": "85dcfcceb627955b144bfdc2ad2a39330376e976c672c35208da9b83cbae994c",
+      "provider_schema_fingerprint_sha256": "ddf1abc71817e5def985b7847665ac89fcf3d068af0f1bba17ce0a2d4b8445db",
+      "quota_header_fields": [
+        "observed_at",
+        "requests_last",
+        "requests_remaining",
+        "requests_used"
+      ],
+      "structural_schema_fingerprint_sha256": "944954b76df253fd592f407c97c7d648df9c11abadb89a0c62395d4beadf1b51"
+    },
+    {
+      "capture_label": "C2",
+      "field_path_and_type_count": 21,
+      "outcome_structure_sha256": "85dcfcceb627955b144bfdc2ad2a39330376e976c672c35208da9b83cbae994c",
+      "provider_schema_fingerprint_sha256": "ddf1abc71817e5def985b7847665ac89fcf3d068af0f1bba17ce0a2d4b8445db",
+      "quota_header_fields": [
+        "observed_at",
+        "requests_last",
+        "requests_remaining",
+        "requests_used"
+      ],
+      "structural_schema_fingerprint_sha256": "944954b76df253fd592f407c97c7d648df9c11abadb89a0c62395d4beadf1b51"
+    },
+    {
+      "capture_label": "C3",
+      "field_path_and_type_count": 21,
+      "outcome_structure_sha256": "85dcfcceb627955b144bfdc2ad2a39330376e976c672c35208da9b83cbae994c",
+      "provider_schema_fingerprint_sha256": "ddf1abc71817e5def985b7847665ac89fcf3d068af0f1bba17ce0a2d4b8445db",
+      "quota_header_fields": [
+        "observed_at",
+        "requests_last",
+        "requests_remaining",
+        "requests_used"
+      ],
+      "structural_schema_fingerprint_sha256": "944954b76df253fd592f407c97c7d648df9c11abadb89a0c62395d4beadf1b51"
+    },
+    {
+      "capture_label": "C4",
+      "field_path_and_type_count": 21,
+      "outcome_structure_sha256": "85dcfcceb627955b144bfdc2ad2a39330376e976c672c35208da9b83cbae994c",
+      "provider_schema_fingerprint_sha256": "ddf1abc71817e5def985b7847665ac89fcf3d068af0f1bba17ce0a2d4b8445db",
+      "quota_header_fields": [
+        "observed_at",
+        "requests_last",
+        "requests_remaining",
+        "requests_used"
+      ],
+      "structural_schema_fingerprint_sha256": "944954b76df253fd592f407c97c7d648df9c11abadb89a0c62395d4beadf1b51"
+    }
+  ],
+  "claim_id": "DATA.FROZEN_SNAPSHOT.SCHEMA_DRIFT.V1.001",
+  "overall_classification": "NO_SCHEMA_DRIFT",
+  "pairwise_comparisons": [
+    {
+      "bookmaker_continuity": {
+        "denominator": 5,
+        "grain": "unique bookmaker identity across capture pair",
+        "numerator": 5,
+        "ratio": 1.0
+      },
+      "classification": "NO_SCHEMA_DRIFT",
+      "event_continuity": {
+        "denominator": 5,
+        "grain": "unique provider event across capture pair",
+        "numerator": 5,
+        "ratio": 1.0
+      },
+      "left_capture": "C0",
+      "market_set_changed": false,
+      "optional_field_path_delta_count": 0,
+      "outcome_structure_changed": false,
+      "quota_header_fields_changed": false,
+      "right_capture": "C1"
+    },
+    {
+      "bookmaker_continuity": {
+        "denominator": 5,
+        "grain": "unique bookmaker identity across capture pair",
+        "numerator": 5,
+        "ratio": 1.0
+      },
+      "classification": "NO_SCHEMA_DRIFT",
+      "event_continuity": {
+        "denominator": 5,
+        "grain": "unique provider event across capture pair",
+        "numerator": 5,
+        "ratio": 1.0
+      },
+      "left_capture": "C0",
+      "market_set_changed": false,
+      "optional_field_path_delta_count": 0,
+      "outcome_structure_changed": false,
+      "quota_header_fields_changed": false,
+      "right_capture": "C2"
+    },
+    {
+      "bookmaker_continuity": {
+        "denominator": 5,
+        "grain": "unique bookmaker identity across capture pair",
+        "numerator": 5,
+        "ratio": 1.0
+      },
+      "classification": "NO_SCHEMA_DRIFT",
+      "event_continuity": {
+        "denominator": 5,
+        "grain": "unique provider event across capture pair",
+        "numerator": 5,
+        "ratio": 1.0
+      },
+      "left_capture": "C0",
+      "market_set_changed": false,
+      "optional_field_path_delta_count": 0,
+      "outcome_structure_changed": false,
+      "quota_header_fields_changed": false,
+      "right_capture": "C3"
+    },
+    {
+      "bookmaker_continuity": {
+        "denominator": 5,
+        "grain": "unique bookmaker identity across capture pair",
+        "numerator": 5,
+        "ratio": 1.0
+      },
+      "classification": "NO_SCHEMA_DRIFT",
+      "event_continuity": {
+        "denominator": 5,
+        "grain": "unique provider event across capture pair",
+        "numerator": 5,
+        "ratio": 1.0
+      },
+      "left_capture": "C0",
+      "market_set_changed": false,
+      "optional_field_path_delta_count": 0,
+      "outcome_structure_changed": false,
+      "quota_header_fields_changed": false,
+      "right_capture": "C4"
+    },
+    {
+      "bookmaker_continuity": {
+        "denominator": 5,
+        "grain": "unique bookmaker identity across capture pair",
+        "numerator": 5,
+        "ratio": 1.0
+      },
+      "classification": "NO_SCHEMA_DRIFT",
+      "event_continuity": {
+        "denominator": 5,
+        "grain": "unique provider event across capture pair",
+        "numerator": 5,
+        "ratio": 1.0
+      },
+      "left_capture": "C1",
+      "market_set_changed": false,
+      "optional_field_path_delta_count": 0,
+      "outcome_structure_changed": false,
+      "quota_header_fields_changed": false,
+      "right_capture": "C2"
+    },
+    {
+      "bookmaker_continuity": {
+        "denominator": 5,
+        "grain": "unique bookmaker identity across capture pair",
+        "numerator": 5,
+        "ratio": 1.0
+      },
+      "classification": "NO_SCHEMA_DRIFT",
+      "event_continuity": {
+        "denominator": 5,
+        "grain": "unique provider event across capture pair",
+        "numerator": 5,
+        "ratio": 1.0
+      },
+      "left_capture": "C1",
+      "market_set_changed": false,
+      "optional_field_path_delta_count": 0,
+      "outcome_structure_changed": false,
+      "quota_header_fields_changed": false,
+      "right_capture": "C3"
+    },
+    {
+      "bookmaker_continuity": {
+        "denominator": 5,
+        "grain": "unique bookmaker identity across capture pair",
+        "numerator": 5,
+        "ratio": 1.0
+      },
+      "classification": "NO_SCHEMA_DRIFT",
+      "event_continuity": {
+        "denominator": 5,
+        "grain": "unique provider event across capture pair",
+        "numerator": 5,
+        "ratio": 1.0
+      },
+      "left_capture": "C1",
+      "market_set_changed": false,
+      "optional_field_path_delta_count": 0,
+      "outcome_structure_changed": false,
+      "quota_header_fields_changed": false,
+      "right_capture": "C4"
+    },
+    {
+      "bookmaker_continuity": {
+        "denominator": 5,
+        "grain": "unique bookmaker identity across capture pair",
+        "numerator": 5,
+        "ratio": 1.0
+      },
+      "classification": "NO_SCHEMA_DRIFT",
+      "event_continuity": {
+        "denominator": 5,
+        "grain": "unique provider event across capture pair",
+        "numerator": 5,
+        "ratio": 1.0
+      },
+      "left_capture": "C2",
+      "market_set_changed": false,
+      "optional_field_path_delta_count": 0,
+      "outcome_structure_changed": false,
+      "quota_header_fields_changed": false,
+      "right_capture": "C3"
+    },
+    {
+      "bookmaker_continuity": {
+        "denominator": 5,
+        "grain": "unique bookmaker identity across capture pair",
+        "numerator": 5,
+        "ratio": 1.0
+      },
+      "classification": "NO_SCHEMA_DRIFT",
+      "event_continuity": {
+        "denominator": 5,
+        "grain": "unique provider event across capture pair",
+        "numerator": 5,
+        "ratio": 1.0
+      },
+      "left_capture": "C2",
+      "market_set_changed": false,
+      "optional_field_path_delta_count": 0,
+      "outcome_structure_changed": false,
+      "quota_header_fields_changed": false,
+      "right_capture": "C4"
+    },
+    {
+      "bookmaker_continuity": {
+        "denominator": 5,
+        "grain": "unique bookmaker identity across capture pair",
+        "numerator": 5,
+        "ratio": 1.0
+      },
+      "classification": "NO_SCHEMA_DRIFT",
+      "event_continuity": {
+        "denominator": 5,
+        "grain": "unique provider event across capture pair",
+        "numerator": 5,
+        "ratio": 1.0
+      },
+      "left_capture": "C3",
+      "market_set_changed": false,
+      "optional_field_path_delta_count": 0,
+      "outcome_structure_changed": false,
+      "quota_header_fields_changed": false,
+      "right_capture": "C4"
+    }
+  ],
+  "provider_event_ids_committed": false,
+  "real_bookmaker_identities_committed": false,
+  "real_data_status": "NOT_AVAILABLE",
+  "schema_version": "robin-five-canary-schema-drift-v1",
+  "synthetic_validation_status": "PASS",
+  "tooling_status": "OFFLINE_DRAFT_READY",
+  "verdict": "FROZEN_SNAPSHOT_SYNTHETIC_SCHEMA_CONTRACT_VALIDATED"
+}
