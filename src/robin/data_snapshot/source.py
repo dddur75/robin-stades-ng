@@ -61,6 +61,7 @@ from robin.data_snapshot.contracts import (
 from robin.data_snapshot.leak_scan import serialized_secret_or_authenticated_url_occurrences
 from robin.data_snapshot.stability import (
     ContinuousTreeObservation,
+    _windows_drive_type,
     continuous_tree_observer,
 )
 
@@ -308,9 +309,7 @@ def _is_remote_drive(path: Path) -> bool:
     drive, _tail = os.path.splitdrive(os.path.abspath(os.fspath(path)))
     if not drive:
         return False
-    import ctypes
-
-    return bool(ctypes.windll.kernel32.GetDriveTypeW(f"{drive}\\") == 4)
+    return bool(_windows_drive_type(f"{drive}\\") == 4)
 
 
 def _reject_reparse_path(path: Path) -> None:

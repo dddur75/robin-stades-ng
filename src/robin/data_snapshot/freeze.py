@@ -42,6 +42,7 @@ from robin.data_snapshot.source import (
     _reject_reparse_path,
     verify_finalized_batch,
 )
+from robin.data_snapshot.stability import _windows_drive_type
 
 _WINDOWS_ABSOLUTE_PATH = re.compile(
     r"(?:[A-Za-z]:[\\/]|\\\\[^\\/\s]+[\\/][^\\/\s]+)", re.IGNORECASE
@@ -601,10 +602,7 @@ def _is_remote_drive(path: Path) -> bool:
     drive, _tail = os.path.splitdrive(os.path.abspath(os.fspath(path)))
     if not drive:
         return False
-    import ctypes
-
-    drive_type = ctypes.windll.kernel32.GetDriveTypeW(f"{drive}\\")
-    return bool(drive_type == 4)
+    return bool(_windows_drive_type(f"{drive}\\") == 4)
 
 
 def _same_lexical_path(left: Path, right: Path) -> bool:

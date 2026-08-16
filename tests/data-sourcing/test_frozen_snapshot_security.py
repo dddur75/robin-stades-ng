@@ -4,6 +4,7 @@ import _socket
 import os
 import socket
 import subprocess
+from collections.abc import Callable
 from pathlib import Path
 
 import pytest
@@ -154,7 +155,7 @@ def test_repository_validation_trusts_only_ancestors_above_the_pinned_worktree(
     expected = (
         _REPOSITORY_ROOT / "reports" / "hypothesis-lab" / "first-25-experiment-protocols-v1.json"
     )
-    original = freeze_module._is_reparse_point
+    original = source_module._is_reparse_point
 
     monkeypatch.setattr(
         freeze_module,
@@ -318,7 +319,7 @@ def test_network_blockade_intercepts_udp_dns_and_low_level_socket_without_networ
     datagram = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
         with NetworkBlockade() as blockade:
-            attempts = (
+            attempts: tuple[tuple[Callable[..., object], tuple[object, ...]], ...] = (
                 (datagram.sendto, (b"offline-probe", ("127.0.0.1", 9))),
                 (socket.getaddrinfo, ("offline.invalid", 443)),
                 (_socket.getaddrinfo, ("offline.invalid", 443, 0, 0, 0, 0)),

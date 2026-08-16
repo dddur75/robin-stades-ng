@@ -6,11 +6,12 @@ import ctypes
 import os
 import stat
 import sys
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from ctypes import wintypes
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Protocol
+from typing import Any, Protocol, cast
 
 from robin.data_snapshot.contracts import SnapshotValidationError
 
@@ -19,6 +20,215 @@ _UNSUPPORTED = "CONTINUOUS_TREE_OBSERVATION_UNSUPPORTED"
 _ARM_FAILED = "CONTINUOUS_TREE_OBSERVATION_ARM_FAILED"
 _FAILED = "CONTINUOUS_TREE_OBSERVATION_FAILED"
 _CLOSED = "CONTINUOUS_TREE_OBSERVATION_CLOSED"
+_WINDOWS_API_UNAVAILABLE = "WINDOWS_STABILITY_API_UNAVAILABLE"
+
+
+class _CtypesFunction(Protocol):
+    argtypes: list[object]
+    restype: object
+
+    def __call__(self, *args: object) -> object: ...
+
+
+class _WinDllLoader(Protocol):
+    def __call__(self, name: str, *, use_last_error: bool) -> object: ...
+
+
+_CreateFileW = Callable[[str, int, int, object | None, int, int, object | None], int | None]
+_CreateEventW = Callable[[object | None, bool, bool, str | None], int | None]
+_ReadDirectoryChangesW = Callable[
+    [int, object, int, bool, int, object | None, object, object | None], int
+]
+_WaitForSingleObject = Callable[[int, int], int]
+_CancelIoEx = Callable[[int, object], int]
+_GetOverlappedResult = Callable[[int, object, object, bool], int]
+_GetFileInformationByHandle = Callable[[int, object], int]
+_CloseHandle = Callable[[int], int]
+_GetDriveTypeW = Callable[[str], int]
+
+
+@dataclass(frozen=True, slots=True)
+class _WindowsApi:
+    create_file: _CreateFileW
+    create_event: _CreateEventW
+    read_directory_changes: _ReadDirectoryChangesW
+    wait_for_single_object: _WaitForSingleObject
+    cancel_io: _CancelIoEx
+    get_overlapped_result: _GetOverlappedResult
+    get_file_information: _GetFileInformationByHandle
+    close_handle: _CloseHandle
+    get_drive_type: _GetDriveTypeW
+    get_last_error: Callable[[], int]
+    set_last_error: Callable[[int], int]
+
+
+def _configured_ctypes_function(
+    owner: object,
+    name: str,
+    *,
+    argtypes: tuple[object, ...],
+    restype: object,
+) -> _CtypesFunction:
+    raw_function = getattr(owner, name, None)
+    if not callable(raw_function):
+        raise SnapshotValidationError(_WINDOWS_API_UNAVAILABLE)
+    function = cast(_CtypesFunction, raw_function)
+    try:
+        function.argtypes = list(argtypes)
+        function.restype = restype
+    except (AttributeError, TypeError, ValueError):
+        raise SnapshotValidationError(_WINDOWS_API_UNAVAILABLE) from None
+    return function
+
+
+def _resolve_windows_api(ctypes_module: object = ctypes) -> _WindowsApi:
+    """Resolve the exact Windows symbols behind a narrow, typed boundary."""
+
+    if sys.platform != "win32":
+        raise SnapshotValidationError(_WINDOWS_API_UNAVAILABLE)
+    raw_loader = getattr(ctypes_module, "WinDLL", None)
+    raw_get_last_error = getattr(ctypes_module, "get_last_error", None)
+    raw_set_last_error = getattr(ctypes_module, "set_last_error", None)
+    if not all(callable(value) for value in (raw_loader, raw_get_last_error, raw_set_last_error)):
+        raise SnapshotValidationError(_WINDOWS_API_UNAVAILABLE)
+    loader = cast(_WinDllLoader, raw_loader)
+    try:
+        kernel32 = loader("kernel32", use_last_error=True)
+        create_file = cast(
+            _CreateFileW,
+            _configured_ctypes_function(
+                kernel32,
+                "CreateFileW",
+                argtypes=(
+                    wintypes.LPCWSTR,
+                    wintypes.DWORD,
+                    wintypes.DWORD,
+                    wintypes.LPVOID,
+                    wintypes.DWORD,
+                    wintypes.DWORD,
+                    wintypes.HANDLE,
+                ),
+                restype=wintypes.HANDLE,
+            ),
+        )
+        create_event = cast(
+            _CreateEventW,
+            _configured_ctypes_function(
+                kernel32,
+                "CreateEventW",
+                argtypes=(
+                    wintypes.LPVOID,
+                    wintypes.BOOL,
+                    wintypes.BOOL,
+                    wintypes.LPCWSTR,
+                ),
+                restype=wintypes.HANDLE,
+            ),
+        )
+        read_directory_changes = cast(
+            _ReadDirectoryChangesW,
+            _configured_ctypes_function(
+                kernel32,
+                "ReadDirectoryChangesW",
+                argtypes=(
+                    wintypes.HANDLE,
+                    wintypes.LPVOID,
+                    wintypes.DWORD,
+                    wintypes.BOOL,
+                    wintypes.DWORD,
+                    wintypes.LPVOID,
+                    ctypes.POINTER(_WindowsOverlapped),
+                    wintypes.LPVOID,
+                ),
+                restype=wintypes.BOOL,
+            ),
+        )
+        wait_for_single_object = cast(
+            _WaitForSingleObject,
+            _configured_ctypes_function(
+                kernel32,
+                "WaitForSingleObject",
+                argtypes=(wintypes.HANDLE, wintypes.DWORD),
+                restype=wintypes.DWORD,
+            ),
+        )
+        cancel_io = cast(
+            _CancelIoEx,
+            _configured_ctypes_function(
+                kernel32,
+                "CancelIoEx",
+                argtypes=(wintypes.HANDLE, ctypes.POINTER(_WindowsOverlapped)),
+                restype=wintypes.BOOL,
+            ),
+        )
+        get_overlapped_result = cast(
+            _GetOverlappedResult,
+            _configured_ctypes_function(
+                kernel32,
+                "GetOverlappedResult",
+                argtypes=(
+                    wintypes.HANDLE,
+                    ctypes.POINTER(_WindowsOverlapped),
+                    ctypes.POINTER(wintypes.DWORD),
+                    wintypes.BOOL,
+                ),
+                restype=wintypes.BOOL,
+            ),
+        )
+        get_file_information = cast(
+            _GetFileInformationByHandle,
+            _configured_ctypes_function(
+                kernel32,
+                "GetFileInformationByHandle",
+                argtypes=(
+                    wintypes.HANDLE,
+                    ctypes.POINTER(_WindowsByHandleFileInformation),
+                ),
+                restype=wintypes.BOOL,
+            ),
+        )
+        close_handle = cast(
+            _CloseHandle,
+            _configured_ctypes_function(
+                kernel32,
+                "CloseHandle",
+                argtypes=(wintypes.HANDLE,),
+                restype=wintypes.BOOL,
+            ),
+        )
+        get_drive_type = cast(
+            _GetDriveTypeW,
+            _configured_ctypes_function(
+                kernel32,
+                "GetDriveTypeW",
+                argtypes=(wintypes.LPCWSTR,),
+                restype=wintypes.UINT,
+            ),
+        )
+    except SnapshotValidationError:
+        raise
+    except (AttributeError, OSError, TypeError, ValueError):
+        raise SnapshotValidationError(_WINDOWS_API_UNAVAILABLE) from None
+    return _WindowsApi(
+        create_file=create_file,
+        create_event=create_event,
+        read_directory_changes=read_directory_changes,
+        wait_for_single_object=wait_for_single_object,
+        cancel_io=cancel_io,
+        get_overlapped_result=get_overlapped_result,
+        get_file_information=get_file_information,
+        close_handle=close_handle,
+        get_drive_type=get_drive_type,
+        get_last_error=cast(Callable[[], int], raw_get_last_error),
+        set_last_error=cast(Callable[[int], int], raw_set_last_error),
+    )
+
+
+def _windows_drive_type(root: str, *, api: _WindowsApi | None = None) -> int:
+    if sys.platform != "win32":
+        raise SnapshotValidationError(_WINDOWS_API_UNAVAILABLE)
+    resolved = api if api is not None else _resolve_windows_api()
+    return int(resolved.get_drive_type(root))
 
 
 class ContinuousTreeObservation(Protocol):
@@ -79,75 +289,28 @@ class _WindowsTreeObservation:
     _INVALID_HANDLE_VALUE = ctypes.c_void_p(-1).value
     _BUFFER_BYTES = 64 * 1024
 
-    def __init__(self, root: Path) -> None:
+    def __init__(self, root: Path, *, windows_api: _WindowsApi | None = None) -> None:
         self._closed = False
         self._changed = False
         self._armed = False
         self._handle = 0
         self._event = 0
         self._file_handles: list[int] = []
-        self._kernel32: Any = None
-        self._buffer: Any = None
+        self._windows_api = windows_api
+        self._buffer: object | None = None
         self._overlapped = _WindowsOverlapped()
         self._arm(root)
 
-    def _arm(self, root: Path) -> None:
-        win_dll = getattr(ctypes, "WinDLL", None)
-        if win_dll is None:
-            raise SnapshotValidationError(_UNSUPPORTED)
-        try:
-            kernel32: Any = win_dll("kernel32", use_last_error=True)
-            kernel32.CreateFileW.argtypes = [
-                wintypes.LPCWSTR,
-                wintypes.DWORD,
-                wintypes.DWORD,
-                wintypes.LPVOID,
-                wintypes.DWORD,
-                wintypes.DWORD,
-                wintypes.HANDLE,
-            ]
-            kernel32.CreateFileW.restype = wintypes.HANDLE
-            kernel32.CreateEventW.argtypes = [
-                wintypes.LPVOID,
-                wintypes.BOOL,
-                wintypes.BOOL,
-                wintypes.LPCWSTR,
-            ]
-            kernel32.CreateEventW.restype = wintypes.HANDLE
-            kernel32.ReadDirectoryChangesW.argtypes = [
-                wintypes.HANDLE,
-                wintypes.LPVOID,
-                wintypes.DWORD,
-                wintypes.BOOL,
-                wintypes.DWORD,
-                wintypes.LPVOID,
-                ctypes.POINTER(_WindowsOverlapped),
-                wintypes.LPVOID,
-            ]
-            kernel32.ReadDirectoryChangesW.restype = wintypes.BOOL
-            kernel32.WaitForSingleObject.argtypes = [wintypes.HANDLE, wintypes.DWORD]
-            kernel32.WaitForSingleObject.restype = wintypes.DWORD
-            kernel32.CancelIoEx.argtypes = [
-                wintypes.HANDLE,
-                ctypes.POINTER(_WindowsOverlapped),
-            ]
-            kernel32.CancelIoEx.restype = wintypes.BOOL
-            kernel32.GetOverlappedResult.argtypes = [
-                wintypes.HANDLE,
-                ctypes.POINTER(_WindowsOverlapped),
-                ctypes.POINTER(wintypes.DWORD),
-                wintypes.BOOL,
-            ]
-            kernel32.GetOverlappedResult.restype = wintypes.BOOL
-            kernel32.GetFileInformationByHandle.argtypes = [
-                wintypes.HANDLE,
-                ctypes.POINTER(_WindowsByHandleFileInformation),
-            ]
-            kernel32.GetFileInformationByHandle.restype = wintypes.BOOL
-            kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
-            kernel32.CloseHandle.restype = wintypes.BOOL
+    def _require_windows_api(self) -> _WindowsApi:
+        if self._windows_api is None:
+            raise SnapshotValidationError(_FAILED)
+        return self._windows_api
 
-            raw_handle = kernel32.CreateFileW(
+    def _arm(self, root: Path) -> None:
+        try:
+            api = self._windows_api if self._windows_api is not None else _resolve_windows_api()
+            self._windows_api = api
+            raw_handle = api.create_file(
                 os.path.abspath(os.fspath(root)),
                 self._FILE_LIST_DIRECTORY,
                 self._FILE_SHARE_READ | self._FILE_SHARE_WRITE,
@@ -161,18 +324,17 @@ class _WindowsTreeObservation:
             if raw_handle in {None, self._INVALID_HANDLE_VALUE}:
                 raise SnapshotValidationError(_ARM_FAILED)
             self._handle = int(raw_handle)
-            self._kernel32 = kernel32
 
-            raw_event = kernel32.CreateEventW(None, True, False, None)
+            raw_event = api.create_event(None, True, False, None)
             if not raw_event:
                 raise SnapshotValidationError(_ARM_FAILED)
             self._event = int(raw_event)
             self._overlapped.hEvent = self._event
             self._buffer = ctypes.create_string_buffer(self._BUFFER_BYTES)
 
-            ctypes.set_last_error(0)
+            api.set_last_error(0)
             started = bool(
-                kernel32.ReadDirectoryChangesW(
+                api.read_directory_changes(
                     self._handle,
                     self._buffer,
                     self._BUFFER_BYTES,
@@ -183,7 +345,7 @@ class _WindowsTreeObservation:
                     None,
                 )
             )
-            if not started and ctypes.get_last_error() != self._ERROR_IO_PENDING:
+            if not started and api.get_last_error() != self._ERROR_IO_PENDING:
                 raise SnapshotValidationError(_ARM_FAILED)
             self._armed = True
             self._lock_tree_files(root)
@@ -228,7 +390,8 @@ class _WindowsTreeObservation:
                 self._lock_file(Path(entry.path))
 
     def _lock_file(self, path: Path) -> None:
-        raw_handle = self._kernel32.CreateFileW(
+        api = self._require_windows_api()
+        raw_handle = api.create_file(
             os.path.abspath(os.fspath(path)),
             self._GENERIC_READ,
             self._FILE_SHARE_READ,
@@ -241,29 +404,30 @@ class _WindowsTreeObservation:
             raise SnapshotValidationError(_ARM_FAILED)
         handle = int(raw_handle)
         information = _WindowsByHandleFileInformation()
-        if not self._kernel32.GetFileInformationByHandle(handle, ctypes.byref(information)):
-            self._kernel32.CloseHandle(handle)
+        if not api.get_file_information(handle, ctypes.byref(information)):
+            api.close_handle(handle)
             raise SnapshotValidationError(_ARM_FAILED)
         if (
             information.dwFileAttributes
             & (self._FILE_ATTRIBUTE_DIRECTORY | self._FILE_ATTRIBUTE_REPARSE_POINT)
             or information.nNumberOfLinks != 1
         ):
-            self._kernel32.CloseHandle(handle)
+            api.close_handle(handle)
             raise SnapshotValidationError(_ARM_FAILED)
         self._file_handles.append(handle)
 
     def _release_unarmed(self) -> None:
-        if self._kernel32 is None:
+        if self._windows_api is None:
             return
+        api = self._windows_api
         for handle in reversed(self._file_handles):
-            self._kernel32.CloseHandle(handle)
+            api.close_handle(handle)
         self._file_handles.clear()
         if self._event:
-            self._kernel32.CloseHandle(self._event)
+            api.close_handle(self._event)
             self._event = 0
         if self._handle:
-            self._kernel32.CloseHandle(self._handle)
+            api.close_handle(self._handle)
             self._handle = 0
 
     def assert_unchanged(self) -> None:
@@ -271,7 +435,7 @@ class _WindowsTreeObservation:
             raise SnapshotValidationError(_CLOSED)
         if self._changed:
             raise SnapshotValidationError(_MUTATED)
-        result = int(self._kernel32.WaitForSingleObject(self._event, 0))
+        result = int(self._require_windows_api().wait_for_single_object(self._event, 0))
         if result == self._WAIT_TIMEOUT:
             return
         if result == self._WAIT_OBJECT_0:
@@ -281,36 +445,35 @@ class _WindowsTreeObservation:
 
     def _cancel_and_release(self) -> str | None:
         failure: str | None = None
+        api = self._require_windows_api()
         if self._armed:
-            ctypes.set_last_error(0)
-            cancelled = bool(
-                self._kernel32.CancelIoEx(self._handle, ctypes.byref(self._overlapped))
-            )
-            cancel_error = ctypes.get_last_error()
+            api.set_last_error(0)
+            cancelled = bool(api.cancel_io(self._handle, ctypes.byref(self._overlapped)))
+            cancel_error = api.get_last_error()
             if not cancelled and cancel_error != self._ERROR_NOT_FOUND:
                 failure = _FAILED
             transferred = wintypes.DWORD()
-            ctypes.set_last_error(0)
+            api.set_last_error(0)
             completed = bool(
-                self._kernel32.GetOverlappedResult(
+                api.get_overlapped_result(
                     self._handle,
                     ctypes.byref(self._overlapped),
                     ctypes.byref(transferred),
                     True,
                 )
             )
-            completion_error = ctypes.get_last_error()
+            completion_error = api.get_last_error()
             if completed:
                 failure = _MUTATED
             elif completion_error != self._ERROR_OPERATION_ABORTED:
                 failure = _FAILED
         for handle in reversed(self._file_handles):
-            if not self._kernel32.CloseHandle(handle):
+            if not api.close_handle(handle):
                 failure = failure or _FAILED
         self._file_handles.clear()
-        if self._event and not self._kernel32.CloseHandle(self._event):
+        if self._event and not api.close_handle(self._event):
             failure = failure or _FAILED
-        if self._handle and not self._kernel32.CloseHandle(self._handle):
+        if self._handle and not api.close_handle(self._handle):
             failure = failure or _FAILED
         self._event = 0
         self._handle = 0
