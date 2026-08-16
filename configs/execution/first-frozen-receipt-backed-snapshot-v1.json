@@ -1,0 +1,16 @@
+{
+  "mission_id": "FIRST_FROZEN_RECEIPT_BACKED_SNAPSHOT",
+  "authorized_stages": ["E1"],
+  "maximum_stage": "E1",
+  "external_effects": [
+    "local_temporary_synthetic_contract_snapshot_write",
+    "local_temporary_synthetic_contract_report_set_write",
+    "git_remote_write_non_force",
+    "github_pull_request_write",
+    "github_actions_observe"
+  ],
+  "compute_budget": 2000,
+  "time_budget": 172800,
+  "source_hash": "df111223524b89b1b8fa51867ee84dba3cb6367d18020c758f1f164b97c1d258",
+  "expires_at": "2026-08-18T00:30:00Z"
+}

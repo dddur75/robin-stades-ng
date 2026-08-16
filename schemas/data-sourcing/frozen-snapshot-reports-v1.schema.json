@@ -1,0 +1,1661 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://robin-des-stades.invalid/schemas/data-sourcing/frozen-snapshot-reports-v1.schema.json",
+  "title": "Robin first frozen snapshot committable reports v1",
+  "description": "Discriminated union for the seven aggregate-only synthetic contract reports and the sanitized non-execution witness. Each branch is selected by an exact artifact value.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/contractReport"
+    },
+    {
+      "$ref": "#/$defs/qualityReport"
+    },
+    {
+      "$ref": "#/$defs/schemaDriftReport"
+    },
+    {
+      "$ref": "#/$defs/temporalCoverageReport"
+    },
+    {
+      "$ref": "#/$defs/externalReferenceReport"
+    },
+    {
+      "$ref": "#/$defs/readinessReport"
+    },
+    {
+      "$ref": "#/$defs/accumulationReport"
+    },
+    {
+      "$ref": "#/$defs/nonExecutionWitnessReport"
+    }
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "dateTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "nonNegativeInteger": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ratio": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "denominator",
+        "grain",
+        "numerator",
+        "ratio"
+      ],
+      "properties": {
+        "denominator": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "grain": {
+          "type": "string",
+          "minLength": 1
+        },
+        "numerator": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "ratio": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        }
+      }
+    },
+    "mappingStatus": {
+      "enum": [
+        "FIXTURE_MAPPING_PROVEN",
+        "FIXTURE_MAPPING_UNPROVEN",
+        "FIXTURE_MAPPING_AMBIGUOUS",
+        "FIXTURE_MAPPING_CONFLICT"
+      ]
+    },
+    "windowStatus": {
+      "enum": [
+        "WINDOW_VALID",
+        "WINDOW_MISSED",
+        "WINDOW_NOT_APPLICABLE",
+        "WINDOW_RECEIPT_INVALID",
+        "WINDOW_MAPPING_AMBIGUOUS"
+      ]
+    },
+    "readinessStatus": {
+      "enum": [
+        "OBSERVATION_PIPELINE_PROVEN",
+        "ACCUMULATION_STARTED",
+        "WINDOW_COVERAGE_PARTIAL",
+        "MARKET_COVERAGE_PARTIAL",
+        "MISSING_SETTLEMENT_LABEL_SOURCE",
+        "MISSING_ENRICHED_SOURCE",
+        "MINIMUM_SAMPLE_NOT_REACHED",
+        "PROTOCOL_SUCCESSOR_REQUIRED",
+        "DATA_GATE_BLOCKED"
+      ]
+    },
+    "experimentId": {
+      "enum": [
+        "RDS-EXP-V1-001",
+        "RDS-EXP-V1-002",
+        "RDS-EXP-V1-003",
+        "RDS-EXP-V1-004",
+        "RDS-EXP-V1-005",
+        "RDS-EXP-V1-006",
+        "RDS-EXP-V1-007",
+        "RDS-EXP-V1-008",
+        "RDS-EXP-V1-009",
+        "RDS-EXP-V1-010",
+        "RDS-EXP-V1-011",
+        "RDS-EXP-V1-012",
+        "RDS-EXP-V1-013",
+        "RDS-EXP-V1-014",
+        "RDS-EXP-V1-015",
+        "RDS-EXP-V1-016",
+        "RDS-EXP-V1-017",
+        "RDS-EXP-V1-018",
+        "RDS-EXP-V1-019",
+        "RDS-EXP-V1-020",
+        "RDS-EXP-V1-021",
+        "RDS-EXP-V1-022",
+        "RDS-EXP-V1-023",
+        "RDS-EXP-V1-024",
+        "RDS-EXP-V1-025"
+      ]
+    },
+    "contractReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact",
+        "canonicalization",
+        "claim_id",
+        "denominators",
+        "immutable_marker",
+        "manifest_fields",
+        "network_policy",
+        "raw_payloads_in_git",
+        "readiness_statuses",
+        "schema_version",
+        "real_data_status",
+        "real_snapshot_status",
+        "snapshot_scope",
+        "synthetic_validation_status",
+        "tooling_status"
+      ],
+      "properties": {
+        "artifact": {
+          "const": "frozen-snapshot-contract-v1"
+        },
+        "canonicalization": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "encoding",
+            "json",
+            "snapshot_id"
+          ],
+          "properties": {
+            "encoding": {
+              "const": "UTF-8"
+            },
+            "json": {
+              "type": "string",
+              "minLength": 1
+            },
+            "snapshot_id": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "claim_id": {
+          "const": "DATA.FROZEN_SNAPSHOT.CONTRACT.V1.001"
+        },
+        "denominators": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "immutable_marker": {
+          "const": "FROZEN.json written last"
+        },
+        "manifest_fields": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "network_policy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "raw_payloads_in_git": {
+          "const": false
+        },
+        "readiness_statuses": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/readinessStatus"
+          }
+        },
+        "schema_version": {
+          "const": "robin-frozen-snapshot-contract-v1"
+        },
+        "real_data_status": {
+          "enum": ["NOT_AVAILABLE", "AVAILABLE"]
+        },
+        "real_snapshot_status": {
+          "enum": ["NOT_CREATED", "CREATED"]
+        },
+        "snapshot_scope": {
+          "enum": ["SYNTHETIC_CONTRACT_ONLY", "REAL_RECEIPT_BACKED"]
+        },
+        "synthetic_validation_status": {
+          "const": "PASS"
+        },
+        "tooling_status": {
+          "const": "OFFLINE_DRAFT_READY"
+        }
+      }
+    },
+    "qualityReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact",
+        "batch_id",
+        "capture_quality",
+        "claim_id",
+        "denominator_grains",
+        "denominators",
+        "duplicate_counts",
+        "duplicate_observation_count",
+        "mapping_status_counts",
+        "network_calls",
+        "provider_calls",
+        "quality_limits",
+        "raw_hash_verified_before_parse_count",
+        "real_capture_count",
+        "real_data_status",
+        "schema_version",
+        "secret_reads",
+        "synthetic_capture_count",
+        "synthetic_validation_status",
+        "tooling_status",
+        "verdict"
+      ],
+      "properties": {
+        "artifact": {
+          "const": "five-canary-batch-quality-summary-v1"
+        },
+        "batch_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "capture_quality": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": {
+            "$ref": "#/$defs/captureQuality"
+          }
+        },
+        "claim_id": {
+          "const": "DATA.FROZEN_SNAPSHOT.QUALITY.V1.001"
+        },
+        "denominator_grains": {
+          "$ref": "#/$defs/denominatorGrains"
+        },
+        "denominators": {
+          "$ref": "#/$defs/denominators"
+        },
+        "duplicate_counts": {
+          "$ref": "#/$defs/duplicateCounts"
+        },
+        "duplicate_observation_count": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "mapping_status_counts": {
+          "type": "object",
+          "propertyNames": {
+            "$ref": "#/$defs/mappingStatus"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/nonNegativeInteger"
+          }
+        },
+        "network_calls": {
+          "const": 0
+        },
+        "provider_calls": {
+          "const": 0
+        },
+        "quality_limits": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "raw_hash_verified_before_parse_count": { "const": 5 },
+        "real_capture_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "real_data_status": { "enum": ["NOT_AVAILABLE", "AVAILABLE"] },
+        "schema_version": {
+          "const": "robin-five-canary-batch-quality-v1"
+        },
+        "secret_reads": {
+          "const": 0
+        },
+        "synthetic_capture_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "synthetic_validation_status": { "const": "PASS" },
+        "tooling_status": { "const": "OFFLINE_DRAFT_READY" },
+        "verdict": {
+          "enum": [
+            "FIVE_CANARY_BATCH_QUALITY_PROFILED",
+            "FROZEN_SNAPSHOT_SYNTHETIC_QUALITY_CONTRACT_VALIDATED"
+          ]
+        }
+      }
+    },
+    "captureQuality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bookmaker_continuity_identity_count",
+        "bookmaker_timestamp_coverage",
+        "capture_label",
+        "contract_market_tokens",
+        "duplicate_bookmaker_identity_count",
+        "duplicate_market_identity_count",
+        "duplicate_observation_count",
+        "duplicate_outcome_identity_count",
+        "duplicate_provider_event_identity_count",
+        "event_bookmaker_occurrence_count",
+        "event_count",
+        "h2h_completeness",
+        "h2h_presence",
+        "line_consistency",
+        "market_object_counts",
+        "market_timestamp_coverage",
+        "missingness",
+        "normalized_observation_count",
+        "outcome_cardinality",
+        "outcome_counts",
+        "receipt_proof",
+        "totals_completeness",
+        "totals_presence",
+        "unique_bookmaker_count",
+        "unique_provider_event_count"
+      ],
+      "properties": {
+        "bookmaker_continuity_identity_count": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "bookmaker_timestamp_coverage": {
+          "$ref": "#/$defs/ratio"
+        },
+        "capture_label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_market_tokens": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "duplicate_bookmaker_identity_count": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "duplicate_market_identity_count": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "duplicate_observation_count": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "duplicate_outcome_identity_count": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "duplicate_provider_event_identity_count": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "event_bookmaker_occurrence_count": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "event_count": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "h2h_completeness": {
+          "$ref": "#/$defs/ratio"
+        },
+        "h2h_presence": {
+          "$ref": "#/$defs/ratio"
+        },
+        "line_consistency": {
+          "$ref": "#/$defs/ratio"
+        },
+        "market_object_counts": {
+          "$ref": "#/$defs/marketCounts"
+        },
+        "market_timestamp_coverage": {
+          "$ref": "#/$defs/ratio"
+        },
+        "missingness": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "bookmaker_timestamp_missing",
+            "invalid_timestamp_count",
+            "market_timestamp_missing",
+            "totals_market_missing"
+          ],
+          "properties": {
+            "bookmaker_timestamp_missing": {
+              "$ref": "#/$defs/nonNegativeInteger"
+            },
+            "invalid_timestamp_count": {
+              "$ref": "#/$defs/nonNegativeInteger"
+            },
+            "market_timestamp_missing": {
+              "$ref": "#/$defs/nonNegativeInteger"
+            },
+            "totals_market_missing": {
+              "$ref": "#/$defs/nonNegativeInteger"
+            }
+          }
+        },
+        "normalized_observation_count": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "outcome_cardinality": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "propertyNames": {
+              "pattern": "^[0-9]+$"
+            },
+            "additionalProperties": {
+              "$ref": "#/$defs/nonNegativeInteger"
+            }
+          }
+        },
+        "outcome_counts": {
+          "$ref": "#/$defs/marketCounts"
+        },
+        "receipt_proof": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "raw_hash_verified_before_parse",
+            "receipt_id"
+          ],
+          "properties": {
+            "raw_hash_verified_before_parse": {
+              "const": true
+            },
+            "receipt_id": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "totals_completeness": {
+          "$ref": "#/$defs/ratio"
+        },
+        "totals_presence": {
+          "$ref": "#/$defs/ratio"
+        },
+        "unique_bookmaker_count": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "unique_provider_event_count": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        }
+      }
+    },
+    "marketCounts": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/nonNegativeInteger"
+      }
+    },
+    "denominators": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "HTTP_request_count",
+        "ambiguous_fixture_count",
+        "billable_request_count",
+        "capture_window_count",
+        "credit_count",
+        "event_bookmaker_occurrence_count",
+        "event_count",
+        "h2h_market_object_count",
+        "h2h_outcome_count",
+        "missed_window_count",
+        "mutualized_window_count",
+        "normalized_observation_count",
+        "raw_payload_count",
+        "receipt_count",
+        "satisfied_window_count",
+        "selected_fixture_count",
+        "totals_market_object_count",
+        "totals_outcome_count",
+        "unique_bookmaker_count",
+        "uniquely_mapped_fixture_count"
+      ],
+      "properties": {
+        "HTTP_request_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "ambiguous_fixture_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "billable_request_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "capture_window_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "credit_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "event_bookmaker_occurrence_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "event_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "h2h_market_object_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "h2h_outcome_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "missed_window_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "mutualized_window_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "normalized_observation_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "raw_payload_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "receipt_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "satisfied_window_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "selected_fixture_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "totals_market_object_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "totals_outcome_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "unique_bookmaker_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "uniquely_mapped_fixture_count": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "denominatorGrains": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "HTTP_request_count",
+        "ambiguous_fixture_count",
+        "billable_request_count",
+        "capture_window_count",
+        "credit_count",
+        "event_bookmaker_occurrence_count",
+        "event_count",
+        "h2h_market_object_count",
+        "h2h_outcome_count",
+        "missed_window_count",
+        "mutualized_window_count",
+        "normalized_observation_count",
+        "raw_payload_count",
+        "receipt_count",
+        "satisfied_window_count",
+        "selected_fixture_count",
+        "totals_market_object_count",
+        "totals_outcome_count",
+        "unique_bookmaker_count",
+        "uniquely_mapped_fixture_count"
+      ],
+      "properties": {
+        "HTTP_request_count": { "type": "string" },
+        "ambiguous_fixture_count": { "type": "string" },
+        "billable_request_count": { "type": "string" },
+        "capture_window_count": { "type": "string" },
+        "credit_count": { "type": "string" },
+        "event_bookmaker_occurrence_count": { "type": "string" },
+        "event_count": { "type": "string" },
+        "h2h_market_object_count": { "type": "string" },
+        "h2h_outcome_count": { "type": "string" },
+        "missed_window_count": { "type": "string" },
+        "mutualized_window_count": { "type": "string" },
+        "normalized_observation_count": { "type": "string" },
+        "raw_payload_count": { "type": "string" },
+        "receipt_count": { "type": "string" },
+        "satisfied_window_count": { "type": "string" },
+        "selected_fixture_count": { "type": "string" },
+        "totals_market_object_count": { "type": "string" },
+        "totals_outcome_count": { "type": "string" },
+        "unique_bookmaker_count": { "type": "string" },
+        "uniquely_mapped_fixture_count": { "type": "string" }
+      }
+    },
+    "duplicateCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bookmaker_identity",
+        "market_identity",
+        "observation",
+        "outcome_identity",
+        "provider_event_identity",
+        "raw_payload_reference",
+        "receipt_id"
+      ],
+      "properties": {
+        "bookmaker_identity": { "$ref": "#/$defs/nonNegativeInteger" },
+        "market_identity": { "$ref": "#/$defs/nonNegativeInteger" },
+        "observation": { "$ref": "#/$defs/nonNegativeInteger" },
+        "outcome_identity": { "$ref": "#/$defs/nonNegativeInteger" },
+        "provider_event_identity": { "$ref": "#/$defs/nonNegativeInteger" },
+        "raw_payload_reference": { "$ref": "#/$defs/nonNegativeInteger" },
+        "receipt_id": { "$ref": "#/$defs/nonNegativeInteger" }
+      }
+    },
+    "schemaDriftReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact",
+        "capture_count",
+        "captures",
+        "claim_id",
+        "overall_classification",
+        "pairwise_comparisons",
+        "provider_event_ids_committed",
+        "real_data_status",
+        "real_bookmaker_identities_committed",
+        "schema_version",
+        "synthetic_validation_status",
+        "tooling_status",
+        "verdict"
+      ],
+      "properties": {
+        "artifact": { "const": "five-canary-schema-drift-v1" },
+        "capture_count": { "const": 5 },
+        "captures": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": { "$ref": "#/$defs/schemaCapture" }
+        },
+        "claim_id": { "const": "DATA.FROZEN_SNAPSHOT.SCHEMA_DRIFT.V1.001" },
+        "overall_classification": { "$ref": "#/$defs/driftClassification" },
+        "pairwise_comparisons": {
+          "type": "array",
+          "minItems": 10,
+          "maxItems": 10,
+          "items": { "$ref": "#/$defs/schemaPair" }
+        },
+        "provider_event_ids_committed": { "const": false },
+        "real_data_status": { "enum": ["NOT_AVAILABLE", "AVAILABLE"] },
+        "real_bookmaker_identities_committed": { "const": false },
+        "schema_version": { "const": "robin-five-canary-schema-drift-v1" },
+        "synthetic_validation_status": { "const": "PASS" },
+        "tooling_status": { "const": "OFFLINE_DRAFT_READY" },
+        "verdict": {
+          "enum": [
+            "REAL_MARKET_SCHEMA_DRIFT_CLASSIFIED",
+            "FROZEN_SNAPSHOT_SYNTHETIC_SCHEMA_CONTRACT_VALIDATED"
+          ]
+        }
+      }
+    },
+    "driftClassification": {
+      "enum": [
+        "BREAKING_SCHEMA_DRIFT",
+        "COMPATIBLE_OPTIONAL_DRIFT",
+        "COVERAGE_DRIFT_ONLY",
+        "NO_SCHEMA_DRIFT"
+      ]
+    },
+    "schemaCapture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capture_label",
+        "field_path_and_type_count",
+        "outcome_structure_sha256",
+        "provider_schema_fingerprint_sha256",
+        "quota_header_fields",
+        "structural_schema_fingerprint_sha256"
+      ],
+      "properties": {
+        "capture_label": { "type": "string", "minLength": 1 },
+        "field_path_and_type_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "outcome_structure_sha256": { "$ref": "#/$defs/sha256" },
+        "provider_schema_fingerprint_sha256": { "$ref": "#/$defs/sha256" },
+        "quota_header_fields": { "$ref": "#/$defs/stringArray" },
+        "structural_schema_fingerprint_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "schemaPair": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bookmaker_continuity",
+        "classification",
+        "event_continuity",
+        "left_capture",
+        "market_set_changed",
+        "optional_field_path_delta_count",
+        "outcome_structure_changed",
+        "quota_header_fields_changed",
+        "right_capture"
+      ],
+      "properties": {
+        "bookmaker_continuity": { "$ref": "#/$defs/ratio" },
+        "classification": { "$ref": "#/$defs/driftClassification" },
+        "event_continuity": { "$ref": "#/$defs/ratio" },
+        "left_capture": { "type": "string", "minLength": 1 },
+        "market_set_changed": { "type": "boolean" },
+        "optional_field_path_delta_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "outcome_structure_changed": { "type": "boolean" },
+        "quota_header_fields_changed": { "type": "boolean" },
+        "right_capture": { "type": "string", "minLength": 1 }
+      }
+    },
+    "temporalCoverageReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact",
+        "claim_id",
+        "entries",
+        "mutualized_window_count",
+        "real_data_status",
+        "role_bound_valid_windows",
+        "schema_version",
+        "status_counts",
+        "synthetic_validation_status",
+        "tooling_status",
+        "verdict",
+        "window_claims_backdated"
+      ],
+      "properties": {
+        "artifact": { "const": "five-canary-temporal-coverage-v1" },
+        "claim_id": { "const": "DATA.FROZEN_SNAPSHOT.TEMPORAL_COVERAGE.V1.001" },
+        "entries": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/temporalEntry" }
+        },
+        "mutualized_window_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "real_data_status": { "enum": ["NOT_AVAILABLE", "AVAILABLE"] },
+        "role_bound_valid_windows": { "$ref": "#/$defs/stringArray" },
+        "schema_version": { "const": "robin-five-canary-temporal-coverage-v1" },
+        "status_counts": {
+          "type": "object",
+          "propertyNames": { "$ref": "#/$defs/windowStatus" },
+          "additionalProperties": { "$ref": "#/$defs/nonNegativeInteger" }
+        },
+        "synthetic_validation_status": { "const": "PASS" },
+        "tooling_status": { "const": "OFFLINE_DRAFT_READY" },
+        "verdict": {
+          "enum": [
+            "REAL_TEMPORAL_WINDOW_COVERAGE_PROFILED",
+            "FROZEN_SNAPSHOT_SYNTHETIC_TEMPORAL_CONTRACT_VALIDATED"
+          ]
+        },
+        "window_claims_backdated": { "const": 0 }
+      }
+    },
+    "temporalEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "availability_source",
+        "available_at",
+        "capture_label",
+        "claimed_window",
+        "derived_cutoff_at",
+        "earliest_admissible",
+        "fixture_pseudonym",
+        "kickoff",
+        "latest_admissible",
+        "mapping_status",
+        "normalized_row_available_at_max",
+        "normalized_row_count",
+        "receipt_proof",
+        "robin_first_observed_at",
+        "robin_ingested_at",
+        "staleness_seconds_at_cutoff",
+        "staleness_seconds_before_kickoff",
+        "status",
+        "target_predictor_cutoff_at",
+        "target_window_end_at",
+        "temporal_role",
+        "window_contract_issue"
+      ],
+      "properties": {
+        "availability_source": { "type": ["string", "null"] },
+        "available_at": { "$ref": "#/$defs/nullableDateTime" },
+        "capture_label": { "type": "string" },
+        "claimed_window": { "type": ["string", "null"] },
+        "derived_cutoff_at": { "$ref": "#/$defs/nullableDateTime" },
+        "earliest_admissible": { "$ref": "#/$defs/nullableDateTime" },
+        "fixture_pseudonym": { "type": "string", "pattern": "^fixture-[0-9a-f]{16}$" },
+        "kickoff": { "$ref": "#/$defs/nullableDateTime" },
+        "latest_admissible": { "$ref": "#/$defs/nullableDateTime" },
+        "mapping_status": { "$ref": "#/$defs/mappingStatus" },
+        "normalized_row_available_at_max": { "$ref": "#/$defs/nullableDateTime" },
+        "normalized_row_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "receipt_proof": {
+          "oneOf": [
+            { "$ref": "#/$defs/temporalReceiptProof" },
+            { "type": "null" }
+          ]
+        },
+        "robin_first_observed_at": { "$ref": "#/$defs/nullableDateTime" },
+        "robin_ingested_at": { "$ref": "#/$defs/nullableDateTime" },
+        "staleness_seconds_at_cutoff": { "type": ["integer", "null"] },
+        "staleness_seconds_before_kickoff": { "type": ["integer", "null"] },
+        "status": { "$ref": "#/$defs/windowStatus" },
+        "target_predictor_cutoff_at": { "$ref": "#/$defs/nullableDateTime" },
+        "target_window_end_at": { "$ref": "#/$defs/nullableDateTime" },
+        "temporal_role": { "enum": ["PREDICTOR", "TARGET", "UNSPECIFIED"] },
+        "window_contract_issue": { "type": ["string", "null"] }
+      }
+    },
+    "nullableDateTime": {
+      "oneOf": [
+        { "$ref": "#/$defs/dateTime" },
+        { "type": "null" }
+      ]
+    },
+    "temporalReceiptProof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["raw_payload_sha256", "receipt_id"],
+      "properties": {
+        "raw_payload_sha256": { "$ref": "#/$defs/sha256" },
+        "receipt_id": { "type": "string", "minLength": 1 }
+      }
+    },
+    "externalReferenceReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "absolute_local_path_serialized",
+        "artifact",
+        "claim_id",
+        "external_snapshot_reference",
+        "provider_event_ids_committed",
+        "raw_payload_sha256_list",
+        "real_data_status",
+        "real_bookmakers_committed",
+        "real_odds_committed",
+        "real_raw_payloads_committed",
+        "real_teams_committed",
+        "real_snapshot_count",
+        "real_snapshot_status",
+        "retention_policy_sha256",
+        "schema_version",
+        "source_batch_id",
+        "source_batch_manifest_sha256",
+        "status",
+        "synthetic_validation_status",
+        "tooling_status"
+      ],
+      "properties": {
+        "absolute_local_path_serialized": { "const": false },
+        "artifact": { "const": "first-snapshot-external-reference-v1" },
+        "claim_id": { "const": "DATA.FROZEN_SNAPSHOT.EXTERNAL_REFERENCE.V1.001" },
+        "external_snapshot_reference": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["logical_store", "snapshot_id"],
+          "properties": {
+            "logical_store": {
+              "enum": [
+                "ROBIN_LOCAL_CONTENT_ADDRESSED_SNAPSHOTS",
+                "SYNTHETIC_TEMPORARY_CONTRACT_SNAPSHOTS"
+              ]
+            },
+            "snapshot_id": { "$ref": "#/$defs/sha256" }
+          }
+        },
+        "provider_event_ids_committed": { "const": false },
+        "raw_payload_sha256_list": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": { "$ref": "#/$defs/sha256" }
+        },
+        "real_data_status": { "enum": ["NOT_AVAILABLE", "AVAILABLE"] },
+        "real_bookmakers_committed": { "const": false },
+        "real_odds_committed": { "const": false },
+        "real_raw_payloads_committed": { "const": false },
+        "real_teams_committed": { "const": false },
+        "real_snapshot_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "real_snapshot_status": { "enum": ["NOT_CREATED", "CREATED"] },
+        "retention_policy_sha256": { "$ref": "#/$defs/sha256" },
+        "schema_version": { "const": "robin-first-snapshot-external-reference-v1" },
+        "source_batch_id": { "type": "string", "minLength": 1 },
+        "source_batch_manifest_sha256": { "$ref": "#/$defs/sha256" },
+        "status": {
+          "enum": [
+            "EXTERNAL_FROZEN_READ_ONLY_REFERENCE",
+            "SYNTHETIC_CONTRACT_SNAPSHOT_REFERENCE_ONLY"
+          ]
+        },
+        "synthetic_validation_status": { "const": "PASS" },
+        "tooling_status": { "const": "OFFLINE_DRAFT_READY" }
+      }
+    },
+    "readinessReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact",
+        "claim_id",
+        "executable_protocol_count",
+        "execution_count",
+        "experiment_readiness_status",
+        "performance_selection_used",
+        "pipeline_observed_fixture_count",
+        "protocol_eligible_fixture_count",
+        "protocol_count",
+        "protocol_source_sha256",
+        "protocols",
+        "real_data_status",
+        "real_executable_experiment_count",
+        "real_readiness_claimed",
+        "schema_version",
+        "status_counts",
+        "synthetic_validation_status",
+        "tooling_status",
+        "verdicts"
+      ],
+      "properties": {
+        "artifact": { "const": "experiment-readiness-gate-v1" },
+        "claim_id": { "const": "SCIENCE.FROZEN_SNAPSHOT.READINESS.V1.001" },
+        "executable_protocol_count": { "const": 0 },
+        "execution_count": { "const": 0 },
+        "experiment_readiness_status": {
+          "enum": ["NOT_ASSESSED_ON_REAL_DATA", "ASSESSED_ON_REAL_DATA"]
+        },
+        "performance_selection_used": { "const": false },
+        "pipeline_observed_fixture_count": { "$ref": "#/$defs/nonNegativeInteger" },
+        "protocol_eligible_fixture_count": { "const": 0 },
+        "protocol_count": { "const": 25 },
+        "protocol_source_sha256": {
+          "const": "317355fa5d55696d8ea6538aad62737b0ea9583e4614b74644903d3f87a7e0e5"
+        },
+        "real_data_status": { "enum": ["NOT_AVAILABLE", "AVAILABLE"] },
+        "real_executable_experiment_count": { "const": 0 },
+        "real_readiness_claimed": { "type": "boolean" },
+        "protocols": {
+          "type": "array",
+          "minItems": 25,
+          "maxItems": 25,
+          "allOf": [
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-001" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-002" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-003" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-004" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-005" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-006" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-007" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-008" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-009" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-010" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-011" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-012" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-013" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-014" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-015" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-016" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-017" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-018" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-019" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-020" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-021" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-022" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-023" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-024" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": {
+                  "experiment_id": { "const": "RDS-EXP-V1-025" }
+                }
+              },
+              "minContains": 1,
+              "maxContains": 1
+            }
+          ],
+          "items": { "$ref": "#/$defs/protocolReadiness" }
+        },
+        "schema_version": { "const": "robin-experiment-readiness-gate-v1" },
+        "status_counts": {
+          "type": "object",
+          "propertyNames": { "$ref": "#/$defs/readinessStatus" },
+          "additionalProperties": { "$ref": "#/$defs/nonNegativeInteger" }
+        },
+        "synthetic_validation_status": { "const": "PASS" },
+        "tooling_status": { "const": "OFFLINE_DRAFT_READY" },
+        "verdicts": { "$ref": "#/$defs/stringArray" }
+      }
+    },
+    "protocolReadiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "blocking_gates",
+        "bookmaker_grain",
+        "coverage_fraction",
+        "experiment_id",
+        "holdout_contract",
+        "labels",
+        "league_grain",
+        "maximum_staleness",
+        "metadata",
+        "minimum_sample_contract",
+        "minimum_snapshots",
+        "minimum_snapshot_contract",
+        "next_required_accumulation",
+        "observed_fixtures",
+        "observed_window_roles",
+        "observed_windows",
+        "pipeline_observation_fraction",
+        "predictor_cutoff",
+        "protocol_eligible_fixtures",
+        "receipt_requirements",
+        "required_bookmaker_grain",
+        "required_label_source",
+        "required_labels",
+        "required_markets",
+        "required_metadata",
+        "required_source_receipts",
+        "required_timestamps",
+        "required_window_roles",
+        "required_windows",
+        "settlement_requirements",
+        "status",
+        "synthetic_contract_observed_fixtures",
+        "target_window"
+      ],
+      "properties": {
+        "blocking_gates": { "$ref": "#/$defs/stringArray" },
+        "bookmaker_grain": { "type": ["object", "null"] },
+        "coverage_fraction": { "$ref": "#/$defs/ratio" },
+        "experiment_id": { "$ref": "#/$defs/experimentId" },
+        "holdout_contract": { "type": "object" },
+        "labels": { "type": ["array", "null"] },
+        "league_grain": { "type": ["object", "null"] },
+        "maximum_staleness": { "type": ["object", "null"] },
+        "metadata": { "type": ["array", "null"] },
+        "minimum_sample_contract": { "type": ["object", "null"] },
+        "minimum_snapshots": { "type": ["object", "null"] },
+        "minimum_snapshot_contract": { "type": ["object", "null"] },
+        "next_required_accumulation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "fixtures_remaining",
+            "missing_markets",
+            "missing_window_roles",
+            "missing_windows",
+            "settlement_label_source"
+          ],
+          "properties": {
+            "fixtures_remaining": { "$ref": "#/$defs/nonNegativeInteger" },
+            "missing_markets": { "$ref": "#/$defs/stringArray" },
+            "missing_window_roles": { "$ref": "#/$defs/stringArray" },
+            "missing_windows": { "$ref": "#/$defs/stringArray" },
+            "settlement_label_source": { "type": "string", "minLength": 1 }
+          }
+        },
+        "observed_fixtures": { "$ref": "#/$defs/nonNegativeInteger" },
+        "observed_window_roles": { "$ref": "#/$defs/stringArray" },
+        "observed_windows": { "$ref": "#/$defs/stringArray" },
+        "pipeline_observation_fraction": { "$ref": "#/$defs/ratio" },
+        "predictor_cutoff": { "type": ["object", "null"] },
+        "protocol_eligible_fixtures": { "const": 0 },
+        "receipt_requirements": { "type": ["object", "null"] },
+        "required_bookmaker_grain": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["minimum_complete_bookmakers", "unit"],
+          "properties": {
+            "minimum_complete_bookmakers": {
+              "oneOf": [
+                { "$ref": "#/$defs/nonNegativeInteger" },
+                { "type": "object" },
+                { "type": "null" }
+              ]
+            },
+            "unit": { "type": "string", "minLength": 1 }
+          }
+        },
+        "required_label_source": { "type": "string", "minLength": 1 },
+        "required_labels": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "required_markets": { "$ref": "#/$defs/stringArray" },
+        "required_metadata": {
+          "type": "array",
+          "items": { "type": ["object", "string"] }
+        },
+        "required_source_receipts": { "$ref": "#/$defs/stringArray" },
+        "required_timestamps": { "$ref": "#/$defs/stringArray" },
+        "required_window_roles": { "$ref": "#/$defs/stringArray" },
+        "required_windows": { "$ref": "#/$defs/stringArray" },
+        "settlement_requirements": { "type": ["object", "null"] },
+        "status": { "$ref": "#/$defs/readinessStatus" },
+        "synthetic_contract_observed_fixtures": {
+          "$ref": "#/$defs/nonNegativeInteger"
+        },
+        "target_window": { "type": ["object", "null"] },
+        "unfrozen_intermediate_predictor_windows": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["count", "names", "status"],
+          "properties": {
+            "count": { "type": ["integer", "null"], "minimum": 0 },
+            "names": { "$ref": "#/$defs/stringArray" },
+            "status": { "const": "NOT_FROZEN_PROTOCOL_SUCCESSOR_REQUIRED" }
+          }
+        }
+      }
+    },
+    "accumulationReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact",
+        "candidate_count",
+        "candidates",
+        "claim_id",
+        "economic_or_performance_ranking_used",
+        "meaning",
+        "not_a_claim_of",
+        "real_accumulation_claimed",
+        "real_data_status",
+        "schema_version",
+        "synthetic_validation_status",
+        "tooling_status",
+        "verdict"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "required": ["candidate_count"],
+            "properties": { "candidate_count": { "const": 3 } }
+          },
+          "then": {
+            "properties": { "candidates": { "minItems": 3, "maxItems": 3 } }
+          }
+        },
+        {
+          "if": {
+            "required": ["candidate_count"],
+            "properties": { "candidate_count": { "const": 4 } }
+          },
+          "then": {
+            "properties": { "candidates": { "minItems": 4, "maxItems": 4 } }
+          }
+        },
+        {
+          "if": {
+            "required": ["candidate_count"],
+            "properties": { "candidate_count": { "const": 5 } }
+          },
+          "then": {
+            "properties": { "candidates": { "minItems": 5, "maxItems": 5 } }
+          }
+        }
+      ],
+      "oneOf": [
+        {
+          "required": ["candidate_count", "candidates", "meaning", "verdict"],
+          "properties": {
+            "candidate_count": { "const": 0 },
+            "candidates": { "maxItems": 0 },
+            "meaning": { "const": "DATA_GATE_BLOCKED_NO_SUBSTANTIAL_CAPTURE_CLAIM" },
+            "verdict": {
+              "enum": [
+                "DATA_GATE_BLOCKED_NO_ACCUMULATION_CANDIDATE",
+                "ZERO_ACCUMULATION_CANDIDATES_WITH_CLOSED_DATA_GATE"
+              ]
+            }
+          }
+        },
+        {
+          "required": ["candidate_count", "candidates", "meaning", "verdict"],
+          "properties": {
+            "candidate_count": { "type": "integer", "minimum": 3, "maximum": 5 },
+            "candidates": { "minItems": 3, "maxItems": 5 },
+            "meaning": { "const": "PIPELINE_CAN_CAPTURE_A_SUBSTANTIAL_PART_OF_REQUIRED_DATA_ONLY" },
+            "verdict": { "const": "FIRST_ACCUMULATION_CANDIDATES_IDENTIFIED" }
+          }
+        }
+      ],
+      "properties": {
+        "artifact": { "const": "first-accumulation-candidates-v1" },
+        "candidate_count": { "type": "integer", "enum": [0, 3, 4, 5] },
+        "candidates": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 5,
+          "allOf": [
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": { "experiment_id": { "const": "RDS-EXP-V1-001" } }
+              },
+              "minContains": 0,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": { "experiment_id": { "const": "RDS-EXP-V1-002" } }
+              },
+              "minContains": 0,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": { "experiment_id": { "const": "RDS-EXP-V1-003" } }
+              },
+              "minContains": 0,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": { "experiment_id": { "const": "RDS-EXP-V1-004" } }
+              },
+              "minContains": 0,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["experiment_id"],
+                "properties": { "experiment_id": { "const": "RDS-EXP-V1-007" } }
+              },
+              "minContains": 0,
+              "maxContains": 1
+            }
+          ],
+          "items": { "$ref": "#/$defs/accumulationCandidate" }
+        },
+        "claim_id": { "const": "SCIENCE.FROZEN_SNAPSHOT.ACCUMULATION.V1.001" },
+        "economic_or_performance_ranking_used": { "const": false },
+        "meaning": {
+          "enum": [
+            "DATA_GATE_BLOCKED_NO_SUBSTANTIAL_CAPTURE_CLAIM",
+            "PIPELINE_CAN_CAPTURE_A_SUBSTANTIAL_PART_OF_REQUIRED_DATA_ONLY"
+          ]
+        },
+        "not_a_claim_of": { "$ref": "#/$defs/stringArray" },
+        "real_accumulation_claimed": { "const": false },
+        "real_data_status": { "enum": ["NOT_AVAILABLE", "AVAILABLE"] },
+        "schema_version": { "const": "robin-first-accumulation-candidates-v1" },
+        "synthetic_validation_status": { "const": "PASS" },
+        "tooling_status": { "const": "OFFLINE_DRAFT_READY" },
+        "verdict": {
+          "enum": [
+            "DATA_GATE_BLOCKED_NO_ACCUMULATION_CANDIDATE",
+            "ZERO_ACCUMULATION_CANDIDATES_WITH_CLOSED_DATA_GATE",
+            "FIRST_ACCUMULATION_CANDIDATES_IDENTIFIED"
+          ]
+        }
+      }
+    },
+    "accumulationCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "accumulation_duration",
+        "capture_cost",
+        "estimated_fixtures_required",
+        "experiment_id",
+        "label_source",
+        "main_gate",
+        "remaining_windows",
+        "selection_basis",
+        "supplementary_source"
+      ],
+      "properties": {
+        "accumulation_duration": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["required_inputs", "status"],
+          "properties": {
+            "required_inputs": { "$ref": "#/$defs/stringArray" },
+            "status": { "const": "TO_BE_SIZED_IN_PROSPECTIVE_DATA_ACCUMULATION_CAMPAIGN_V1" }
+          }
+        },
+        "capture_cost": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "campaign_cost_status",
+            "fixture_cost_assignment",
+            "provider_cost_grain",
+            "provider_purchase_authorized"
+          ],
+          "properties": {
+            "campaign_cost_status": { "const": "TO_BE_SIZED_FROM_REQUEST_MARKET_REGION_PLAN" },
+            "fixture_cost_assignment": { "const": "FORBIDDEN_FIXTURES_MAY_BE_MUTUALIZED_IN_ONE_REQUEST" },
+            "provider_cost_grain": { "type": "string", "minLength": 1 },
+            "provider_purchase_authorized": { "const": false }
+          }
+        },
+        "estimated_fixtures_required": { "$ref": "#/$defs/nonNegativeInteger" },
+        "experiment_id": {
+          "enum": [
+            "RDS-EXP-V1-001",
+            "RDS-EXP-V1-002",
+            "RDS-EXP-V1-003",
+            "RDS-EXP-V1-004",
+            "RDS-EXP-V1-007"
+          ]
+        },
+        "label_source": { "type": "string", "minLength": 1 },
+        "main_gate": { "$ref": "#/$defs/readinessStatus" },
+        "remaining_windows": { "$ref": "#/$defs/stringArray" },
+        "selection_basis": { "$ref": "#/$defs/stringArray" },
+        "supplementary_source": { "type": "string", "minLength": 1 }
+      }
+    },
+    "nonExecutionWitnessReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "accumulation_candidates",
+        "artifact",
+        "authorized_main_sha",
+        "bets",
+        "credits_consumed",
+        "dns_resolutions",
+        "evidence",
+        "experiment_readiness_status",
+        "external_reference",
+        "failed_gate",
+        "git_repository_writes",
+        "provider_calls",
+        "real_batch_status",
+        "real_capture_count",
+        "real_data_status",
+        "real_executable_experiment_count",
+        "real_snapshot_count",
+        "real_snapshot_status",
+        "reason",
+        "retries",
+        "schema_version",
+        "secret_exposure_count",
+        "secret_reads",
+        "status",
+        "synthetic_validation_status",
+        "tooling_status",
+        "verdicts"
+      ],
+      "properties": {
+        "accumulation_candidates": { "type": "array", "maxItems": 0 },
+        "artifact": { "const": "five-canary-batch-non-execution-witness-v1" },
+        "authorized_main_sha": {
+          "const": "26cbb8e14814093cc44e17a46a3ef2c899b13d07"
+        },
+        "bets": { "const": 0 },
+        "credits_consumed": { "const": 0 },
+        "dns_resolutions": { "const": 0 },
+        "evidence": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["logical_reference", "sha256"],
+            "properties": {
+              "logical_reference": {
+                "enum": ["P0_NON_EXECUTION_REPORT", "PREFLIGHT_EVIDENCE"]
+              },
+              "sha256": { "$ref": "#/$defs/sha256" }
+            }
+          }
+        },
+        "experiment_readiness_status": {
+          "const": "NOT_ASSESSED_ON_REAL_DATA"
+        },
+        "external_reference": {
+          "const": "FIVE_CANARY_BATCH_PRELIMINARY_PREFLIGHT_20260816"
+        },
+        "failed_gate": { "const": "REPOSITORY_LIVE_ACTIVATION_REQUIRED" },
+        "git_repository_writes": { "const": 0 },
+        "provider_calls": { "const": 0 },
+        "real_batch_status": { "const": "NOT_EXECUTED" },
+        "real_capture_count": { "const": 0 },
+        "real_data_status": { "const": "NOT_AVAILABLE" },
+        "real_executable_experiment_count": { "const": 0 },
+        "real_snapshot_count": { "const": 0 },
+        "real_snapshot_status": { "const": "NOT_CREATED" },
+        "reason": { "const": "BATCH_REQUIRES_REPOSITORY_ACTIVATION" },
+        "retries": { "const": 0 },
+        "schema_version": { "const": "robin-five-canary-non-execution-witness-v1" },
+        "secret_exposure_count": { "const": 0 },
+        "secret_reads": { "const": 0 },
+        "status": { "const": "NOT_EXECUTED" },
+        "synthetic_validation_status": { "const": "PASS" },
+        "tooling_status": { "const": "OFFLINE_DRAFT_READY" },
+        "verdicts": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "FIVE_CANARY_BATCH_BLOCKED_BY_MISSING_REPOSITORY_ACTIVATION",
+              "REAL_BATCH_NOT_AVAILABLE",
+              "NO_REAL_SNAPSHOT_CREATED",
+              "NO_EXPERIMENT_READINESS_CLAIMED",
+              "ZERO_ACCUMULATION_CANDIDATES_WITH_CLOSED_DATA_GATE",
+              "NO_PROVIDER_CALL",
+              "NO_SECRET_READ",
+              "NO_PROMOTION",
+              "NO_BET"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

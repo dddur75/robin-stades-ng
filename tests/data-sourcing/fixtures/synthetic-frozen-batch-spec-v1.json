@@ -1,0 +1,23 @@
+{
+  "batch_id": "SYNTHETIC_FIVE_CANARY_RECEIPT_BATCH_V1",
+  "capture_labels": [
+    "C0",
+    "C1",
+    "C2",
+    "C3",
+    "C4"
+  ],
+  "fixture_count": 5,
+  "markets": [
+    "h2h",
+    "totals"
+  ],
+  "provenance": "ENTIRELY_SYNTHETIC_NO_PROVIDER_PAYLOAD",
+  "window_ids": [
+    "H24",
+    "H12",
+    "H6",
+    "H2",
+    "H1"
+  ]
+}

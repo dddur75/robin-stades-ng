@@ -1,0 +1,19 @@
+{
+  "artifact": "first-accumulation-candidates-v1",
+  "candidate_count": 0,
+  "candidates": [],
+  "claim_id": "SCIENCE.FROZEN_SNAPSHOT.ACCUMULATION.V1.001",
+  "economic_or_performance_ranking_used": false,
+  "meaning": "DATA_GATE_BLOCKED_NO_SUBSTANTIAL_CAPTURE_CLAIM",
+  "not_a_claim_of": [
+    "hypothesis plausibility",
+    "validation",
+    "promotion"
+  ],
+  "real_accumulation_claimed": false,
+  "real_data_status": "NOT_AVAILABLE",
+  "schema_version": "robin-first-accumulation-candidates-v1",
+  "synthetic_validation_status": "PASS",
+  "tooling_status": "OFFLINE_DRAFT_READY",
+  "verdict": "ZERO_ACCUMULATION_CANDIDATES_WITH_CLOSED_DATA_GATE"
+}

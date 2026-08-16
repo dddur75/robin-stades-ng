@@ -1,0 +1,510 @@
+{
+  "artifact": "five-canary-batch-quality-summary-v1",
+  "batch_id": "SYNTHETIC_FIVE_CANARY_RECEIPT_BATCH_V1",
+  "capture_quality": [
+    {
+      "bookmaker_continuity_identity_count": 5,
+      "bookmaker_timestamp_coverage": {
+        "denominator": 25,
+        "grain": "event×bookmaker×capture",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "capture_label": "C0",
+      "contract_market_tokens": [
+        "h2h",
+        "totals:2.5"
+      ],
+      "duplicate_bookmaker_identity_count": 0,
+      "duplicate_market_identity_count": 0,
+      "duplicate_observation_count": 0,
+      "duplicate_outcome_identity_count": 0,
+      "duplicate_provider_event_identity_count": 0,
+      "event_bookmaker_occurrence_count": 25,
+      "event_count": 5,
+      "h2h_completeness": {
+        "denominator": 25,
+        "grain": "h2h market object",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "h2h_presence": {
+        "denominator": 25,
+        "grain": "event×bookmaker×capture",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "line_consistency": {
+        "denominator": 25,
+        "grain": "totals market object",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "market_object_counts": {
+        "h2h": 25,
+        "totals": 25
+      },
+      "market_timestamp_coverage": {
+        "denominator": 50,
+        "grain": "market object",
+        "numerator": 50,
+        "ratio": 1.0
+      },
+      "missingness": {
+        "bookmaker_timestamp_missing": 0,
+        "invalid_timestamp_count": 0,
+        "market_timestamp_missing": 0,
+        "totals_market_missing": 0
+      },
+      "normalized_observation_count": 125,
+      "outcome_cardinality": {
+        "h2h": {
+          "3": 25
+        },
+        "totals": {
+          "2": 25
+        }
+      },
+      "outcome_counts": {
+        "h2h": 75,
+        "totals": 50
+      },
+      "receipt_proof": {
+        "raw_hash_verified_before_parse": true,
+        "receipt_id": "b1e357536d1fe671a669459d595dc53443ad6e56b44994b81bb9de02f972f38b"
+      },
+      "totals_completeness": {
+        "denominator": 25,
+        "grain": "totals market object",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "totals_presence": {
+        "denominator": 25,
+        "grain": "event×bookmaker×capture",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "unique_bookmaker_count": 5,
+      "unique_provider_event_count": 5
+    },
+    {
+      "bookmaker_continuity_identity_count": 5,
+      "bookmaker_timestamp_coverage": {
+        "denominator": 25,
+        "grain": "event×bookmaker×capture",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "capture_label": "C1",
+      "contract_market_tokens": [
+        "h2h",
+        "totals:2.5"
+      ],
+      "duplicate_bookmaker_identity_count": 0,
+      "duplicate_market_identity_count": 0,
+      "duplicate_observation_count": 0,
+      "duplicate_outcome_identity_count": 0,
+      "duplicate_provider_event_identity_count": 0,
+      "event_bookmaker_occurrence_count": 25,
+      "event_count": 5,
+      "h2h_completeness": {
+        "denominator": 25,
+        "grain": "h2h market object",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "h2h_presence": {
+        "denominator": 25,
+        "grain": "event×bookmaker×capture",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "line_consistency": {
+        "denominator": 25,
+        "grain": "totals market object",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "market_object_counts": {
+        "h2h": 25,
+        "totals": 25
+      },
+      "market_timestamp_coverage": {
+        "denominator": 50,
+        "grain": "market object",
+        "numerator": 50,
+        "ratio": 1.0
+      },
+      "missingness": {
+        "bookmaker_timestamp_missing": 0,
+        "invalid_timestamp_count": 0,
+        "market_timestamp_missing": 0,
+        "totals_market_missing": 0
+      },
+      "normalized_observation_count": 125,
+      "outcome_cardinality": {
+        "h2h": {
+          "3": 25
+        },
+        "totals": {
+          "2": 25
+        }
+      },
+      "outcome_counts": {
+        "h2h": 75,
+        "totals": 50
+      },
+      "receipt_proof": {
+        "raw_hash_verified_before_parse": true,
+        "receipt_id": "09bf65e055875dc80ff59c3ebc898340225639f886e54ff3e26d6171ad6da6a7"
+      },
+      "totals_completeness": {
+        "denominator": 25,
+        "grain": "totals market object",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "totals_presence": {
+        "denominator": 25,
+        "grain": "event×bookmaker×capture",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "unique_bookmaker_count": 5,
+      "unique_provider_event_count": 5
+    },
+    {
+      "bookmaker_continuity_identity_count": 5,
+      "bookmaker_timestamp_coverage": {
+        "denominator": 25,
+        "grain": "event×bookmaker×capture",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "capture_label": "C2",
+      "contract_market_tokens": [
+        "h2h",
+        "totals:2.5"
+      ],
+      "duplicate_bookmaker_identity_count": 0,
+      "duplicate_market_identity_count": 0,
+      "duplicate_observation_count": 0,
+      "duplicate_outcome_identity_count": 0,
+      "duplicate_provider_event_identity_count": 0,
+      "event_bookmaker_occurrence_count": 25,
+      "event_count": 5,
+      "h2h_completeness": {
+        "denominator": 25,
+        "grain": "h2h market object",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "h2h_presence": {
+        "denominator": 25,
+        "grain": "event×bookmaker×capture",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "line_consistency": {
+        "denominator": 25,
+        "grain": "totals market object",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "market_object_counts": {
+        "h2h": 25,
+        "totals": 25
+      },
+      "market_timestamp_coverage": {
+        "denominator": 50,
+        "grain": "market object",
+        "numerator": 50,
+        "ratio": 1.0
+      },
+      "missingness": {
+        "bookmaker_timestamp_missing": 0,
+        "invalid_timestamp_count": 0,
+        "market_timestamp_missing": 0,
+        "totals_market_missing": 0
+      },
+      "normalized_observation_count": 125,
+      "outcome_cardinality": {
+        "h2h": {
+          "3": 25
+        },
+        "totals": {
+          "2": 25
+        }
+      },
+      "outcome_counts": {
+        "h2h": 75,
+        "totals": 50
+      },
+      "receipt_proof": {
+        "raw_hash_verified_before_parse": true,
+        "receipt_id": "f3d7841ab2e912dbe9bac74a5eb9db23ba0722c226180e6490b41da558ad0234"
+      },
+      "totals_completeness": {
+        "denominator": 25,
+        "grain": "totals market object",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "totals_presence": {
+        "denominator": 25,
+        "grain": "event×bookmaker×capture",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "unique_bookmaker_count": 5,
+      "unique_provider_event_count": 5
+    },
+    {
+      "bookmaker_continuity_identity_count": 5,
+      "bookmaker_timestamp_coverage": {
+        "denominator": 25,
+        "grain": "event×bookmaker×capture",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "capture_label": "C3",
+      "contract_market_tokens": [
+        "h2h",
+        "totals:2.5"
+      ],
+      "duplicate_bookmaker_identity_count": 0,
+      "duplicate_market_identity_count": 0,
+      "duplicate_observation_count": 0,
+      "duplicate_outcome_identity_count": 0,
+      "duplicate_provider_event_identity_count": 0,
+      "event_bookmaker_occurrence_count": 25,
+      "event_count": 5,
+      "h2h_completeness": {
+        "denominator": 25,
+        "grain": "h2h market object",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "h2h_presence": {
+        "denominator": 25,
+        "grain": "event×bookmaker×capture",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "line_consistency": {
+        "denominator": 25,
+        "grain": "totals market object",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "market_object_counts": {
+        "h2h": 25,
+        "totals": 25
+      },
+      "market_timestamp_coverage": {
+        "denominator": 50,
+        "grain": "market object",
+        "numerator": 50,
+        "ratio": 1.0
+      },
+      "missingness": {
+        "bookmaker_timestamp_missing": 0,
+        "invalid_timestamp_count": 0,
+        "market_timestamp_missing": 0,
+        "totals_market_missing": 0
+      },
+      "normalized_observation_count": 125,
+      "outcome_cardinality": {
+        "h2h": {
+          "3": 25
+        },
+        "totals": {
+          "2": 25
+        }
+      },
+      "outcome_counts": {
+        "h2h": 75,
+        "totals": 50
+      },
+      "receipt_proof": {
+        "raw_hash_verified_before_parse": true,
+        "receipt_id": "781961cca20b06c43fc3b39b06276371f58adc43238fb04280294c9420e87f55"
+      },
+      "totals_completeness": {
+        "denominator": 25,
+        "grain": "totals market object",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "totals_presence": {
+        "denominator": 25,
+        "grain": "event×bookmaker×capture",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "unique_bookmaker_count": 5,
+      "unique_provider_event_count": 5
+    },
+    {
+      "bookmaker_continuity_identity_count": 5,
+      "bookmaker_timestamp_coverage": {
+        "denominator": 25,
+        "grain": "event×bookmaker×capture",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "capture_label": "C4",
+      "contract_market_tokens": [
+        "h2h",
+        "totals:2.5"
+      ],
+      "duplicate_bookmaker_identity_count": 0,
+      "duplicate_market_identity_count": 0,
+      "duplicate_observation_count": 0,
+      "duplicate_outcome_identity_count": 0,
+      "duplicate_provider_event_identity_count": 0,
+      "event_bookmaker_occurrence_count": 25,
+      "event_count": 5,
+      "h2h_completeness": {
+        "denominator": 25,
+        "grain": "h2h market object",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "h2h_presence": {
+        "denominator": 25,
+        "grain": "event×bookmaker×capture",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "line_consistency": {
+        "denominator": 25,
+        "grain": "totals market object",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "market_object_counts": {
+        "h2h": 25,
+        "totals": 25
+      },
+      "market_timestamp_coverage": {
+        "denominator": 50,
+        "grain": "market object",
+        "numerator": 50,
+        "ratio": 1.0
+      },
+      "missingness": {
+        "bookmaker_timestamp_missing": 0,
+        "invalid_timestamp_count": 0,
+        "market_timestamp_missing": 0,
+        "totals_market_missing": 0
+      },
+      "normalized_observation_count": 125,
+      "outcome_cardinality": {
+        "h2h": {
+          "3": 25
+        },
+        "totals": {
+          "2": 25
+        }
+      },
+      "outcome_counts": {
+        "h2h": 75,
+        "totals": 50
+      },
+      "receipt_proof": {
+        "raw_hash_verified_before_parse": true,
+        "receipt_id": "0740c4155b0d5af8d69aced0d9baa4412f62f1436377d884591f909b21718856"
+      },
+      "totals_completeness": {
+        "denominator": 25,
+        "grain": "totals market object",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "totals_presence": {
+        "denominator": 25,
+        "grain": "event×bookmaker×capture",
+        "numerator": 25,
+        "ratio": 1.0
+      },
+      "unique_bookmaker_count": 5,
+      "unique_provider_event_count": 5
+    }
+  ],
+  "claim_id": "DATA.FROZEN_SNAPSHOT.QUALITY.V1.001",
+  "denominator_grains": {
+    "HTTP_request_count": "HTTP request",
+    "ambiguous_fixture_count": "unique selected fixture",
+    "billable_request_count": "billable provider request",
+    "capture_window_count": "fixture×claimed window requirement",
+    "credit_count": "provider credit",
+    "event_bookmaker_occurrence_count": "event×bookmaker×capture",
+    "event_count": "provider event×capture",
+    "h2h_market_object_count": "h2h market object×capture",
+    "h2h_outcome_count": "h2h outcome×capture",
+    "missed_window_count": "fixture×claimed window requirement",
+    "mutualized_window_count": "additional window served by an existing receipt",
+    "normalized_observation_count": "deduplicated capture×event×bookmaker×market×outcome×point",
+    "raw_payload_count": "distinct content-addressed raw payload",
+    "receipt_count": "admitted final receipt",
+    "satisfied_window_count": "fixture×claimed window requirement",
+    "selected_fixture_count": "unique selected fixture",
+    "totals_market_object_count": "totals market object×capture",
+    "totals_outcome_count": "totals outcome×capture",
+    "unique_bookmaker_count": "unique bookmaker identity across batch",
+    "uniquely_mapped_fixture_count": "unique selected fixture"
+  },
+  "denominators": {
+    "HTTP_request_count": 5,
+    "ambiguous_fixture_count": 0,
+    "billable_request_count": 5,
+    "capture_window_count": 25,
+    "credit_count": 10,
+    "event_bookmaker_occurrence_count": 125,
+    "event_count": 25,
+    "h2h_market_object_count": 125,
+    "h2h_outcome_count": 375,
+    "missed_window_count": 0,
+    "mutualized_window_count": 20,
+    "normalized_observation_count": 625,
+    "raw_payload_count": 5,
+    "receipt_count": 5,
+    "satisfied_window_count": 25,
+    "selected_fixture_count": 5,
+    "totals_market_object_count": 125,
+    "totals_outcome_count": 250,
+    "unique_bookmaker_count": 5,
+    "uniquely_mapped_fixture_count": 5
+  },
+  "duplicate_counts": {
+    "bookmaker_identity": 0,
+    "market_identity": 0,
+    "observation": 0,
+    "outcome_identity": 0,
+    "provider_event_identity": 0,
+    "raw_payload_reference": 0,
+    "receipt_id": 0
+  },
+  "duplicate_observation_count": 0,
+  "mapping_status_counts": {
+    "FIXTURE_MAPPING_PROVEN": 5
+  },
+  "network_calls": 0,
+  "provider_calls": 0,
+  "quality_limits": [
+    "SYNTHETIC_TOTALS_CONTRACT_VALIDATED",
+    "REAL_TOTALS_COVERAGE_NOT_ASSESSED",
+    "NO_REAL_DATA_GENERALIZATION_FROM_SYNTHETIC_FIXTURES"
+  ],
+  "raw_hash_verified_before_parse_count": 5,
+  "real_capture_count": 0,
+  "real_data_status": "NOT_AVAILABLE",
+  "schema_version": "robin-five-canary-batch-quality-v1",
+  "secret_reads": 0,
+  "synthetic_capture_count": 5,
+  "synthetic_validation_status": "PASS",
+  "tooling_status": "OFFLINE_DRAFT_READY",
+  "verdict": "FROZEN_SNAPSHOT_SYNTHETIC_QUALITY_CONTRACT_VALIDATED"
+}

@@ -1,0 +1,78 @@
+{
+  "artifact": "frozen-snapshot-internal-reviews-v1",
+  "schema_version": "robin-frozen-snapshot-internal-reviews-v1",
+  "mission_id": "FIRST_FROZEN_RECEIPT_BACKED_SNAPSHOT",
+  "reviewed_base_revision": "26cbb8e14814093cc44e17a46a3ef2c899b13d07",
+  "reviewed_scope": "OFFLINE_TOOLING_SYNTHETIC_CONTRACT_AND_NON_EXECUTION_WITNESS_ONLY",
+  "reviews": [
+    {
+      "agent_id": "DP6",
+      "axis": "DATA_RECEIPTS_TEMPORALITY_AND_EXPERIMENT_CONTRACTS",
+      "open_p0": 0,
+      "open_p1": 0,
+      "recommended_action": "PASS_OFFLINE_DRAFT_ONLY",
+      "verified": [
+        "final receipt, intake receipt, raw payload, normalized observations and technical manifest are exhaustively identity-bound",
+        "fixture mappings, role-bound windows, timestamps, bookmaker cardinality and market coverage fail closed",
+        "all 25 experiment protocol contracts remain source-hash pinned and no real readiness is inferred",
+        "a closed scientific data gate yields zero accumulation candidates and aborts before materialization"
+      ]
+    },
+    {
+      "agent_id": "DP5",
+      "axis": "ARCHITECTURE_FILESYSTEM_AND_IMMUTABILITY",
+      "open_p0": 0,
+      "open_p1": 0,
+      "recommended_action": "PASS_OFFLINE_DRAFT_ONLY",
+      "verified": [
+        "source, snapshot and report roots are exact, disjoint and guarded before resolution",
+        "junctions, reparse points, remote drives, symlinks and hardlinks fail closed",
+        "continuous operating-system observation covers the stability interval and restored transient mutations",
+        "runtime schemas are exact-path, content-pinned and applied before any snapshot or report write"
+      ]
+    },
+    {
+      "agent_id": "C4",
+      "axis": "SECURITY_SECRETS_NETWORK_AND_ANTI_LEAK",
+      "open_p0": 0,
+      "open_p1": 0,
+      "recommended_action": "PASS_OFFLINE_DRAFT_ONLY",
+      "verified": [
+        "recursive secret scanning covers embedded assignments, duplicate JSON keys and common credential names",
+        "authenticated and signed URLs are rejected while exact environment placeholders remain admissible",
+        "the Python network blockade counts and rejects DNS, socket, HTTP and low-level socket routes used by the CLI graph",
+        "committable reports reject raw prices, provider data, secrets, authenticated URLs and absolute paths"
+      ]
+    },
+    {
+      "agent_id": "C0",
+      "axis": "OFFLINE_DELIVERY_AND_FAIL_CLOSED_CLAIMS",
+      "open_p0": 0,
+      "open_p1": 0,
+      "recommended_action": "PASS_OFFLINE_DRAFT_ONLY",
+      "verified": [
+        "the two authorized non-execution proofs are represented only by hashes and sanitized zero-effect facts",
+        "synthetic contract reports distinguish tooling status, synthetic validation status and unavailable real data",
+        "real batch, capture, snapshot, experiment readiness and accumulation counts remain zero or not assessed",
+        "the delivery authorizes a Draft pull request only and does not authorize Ready, merge, promotion or betting"
+      ]
+    }
+  ],
+  "aggregate": {
+    "independent_review_count": 4,
+    "open_p0": 0,
+    "open_p1": 0,
+    "verdict": "PASS_OFFLINE_DRAFT_ONLY"
+  },
+  "real_batch_status": "NOT_EXECUTED",
+  "real_capture_count": 0,
+  "real_snapshot_status": "NOT_CREATED",
+  "real_snapshot_count": 0,
+  "experiment_readiness_status": "NOT_ASSESSED_ON_REAL_DATA",
+  "real_executable_experiment_count": 0,
+  "accumulation_candidates": [],
+  "provider_calls": 0,
+  "secret_reads": 0,
+  "promotions": 0,
+  "bets": 0
+}

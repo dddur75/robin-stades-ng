@@ -1,0 +1,31 @@
+{
+  "absolute_local_path_serialized": false,
+  "artifact": "first-snapshot-external-reference-v1",
+  "claim_id": "DATA.FROZEN_SNAPSHOT.EXTERNAL_REFERENCE.V1.001",
+  "external_snapshot_reference": {
+    "logical_store": "SYNTHETIC_TEMPORARY_CONTRACT_SNAPSHOTS",
+    "snapshot_id": "ef9fa4f358c2c27a19e08034fae02b7a104b704938957e83606d75503cba327a"
+  },
+  "provider_event_ids_committed": false,
+  "raw_payload_sha256_list": [
+    "1a0edb3e6896de1d4499917639f481ee71ed57aa7b4552686edb234fba01c8be",
+    "872f30d04e22f53fbaf40211aea5f9af5b59c124269298221f490c8928a84a1e",
+    "e76bf997a0864f6b9d88a6d696d562f07f1ec995caeada77e3b3821445a552e6",
+    "301b4676701782acc9cbd434c6c9ab215e88d94a36f1cbc81a9055c20e6cdd40",
+    "15d7cf931863daf4f1522ea3311bd52f1786f37e841b4f39e51a862abb196d98"
+  ],
+  "real_bookmakers_committed": false,
+  "real_data_status": "NOT_AVAILABLE",
+  "real_odds_committed": false,
+  "real_raw_payloads_committed": false,
+  "real_snapshot_count": 0,
+  "real_snapshot_status": "NOT_CREATED",
+  "real_teams_committed": false,
+  "retention_policy_sha256": "29e2fe9b395c8cd436c95b68e3b8f8774d6ce32927a6a1c2f3723329e56b2c46",
+  "schema_version": "robin-first-snapshot-external-reference-v1",
+  "source_batch_id": "SYNTHETIC_FIVE_CANARY_RECEIPT_BATCH_V1",
+  "source_batch_manifest_sha256": "c03b700039054f26136e3ab8efa8d49cc13aa077e045f3d21eb7bc2feddbf7c1",
+  "status": "SYNTHETIC_CONTRACT_SNAPSHOT_REFERENCE_ONLY",
+  "synthetic_validation_status": "PASS",
+  "tooling_status": "OFFLINE_DRAFT_READY"
+}

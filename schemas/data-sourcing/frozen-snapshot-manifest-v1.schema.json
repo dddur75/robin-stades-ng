@@ -1,0 +1,341 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://robin-des-stades.invalid/schemas/data-sourcing/frozen-snapshot-manifest-v1.schema.json",
+  "title": "Robin first frozen receipt-backed snapshot manifest v1",
+  "description": "Fail-closed contract for the content-addressed external snapshot manifest. Dynamic capture labels remain map keys; all stable document and item fields are closed.",
+  "type": "object",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "required": ["snapshot_scope"],
+        "properties": { "snapshot_scope": { "const": "SYNTHETIC_CONTRACT_ONLY" } }
+      },
+      "then": {
+        "properties": {
+          "real_data_status": { "const": "NOT_AVAILABLE" },
+          "real_snapshot_status": { "const": "NOT_CREATED" },
+          "source_batch_id": { "const": "SYNTHETIC_FIVE_CANARY_RECEIPT_BATCH_V1" }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["snapshot_scope"],
+        "properties": { "snapshot_scope": { "const": "REAL_RECEIPT_BACKED" } }
+      },
+      "then": {
+        "properties": {
+          "real_data_status": { "const": "AVAILABLE" },
+          "real_snapshot_status": { "const": "CREATED" }
+        }
+      }
+    }
+  ],
+  "required": [
+    "snapshot_id",
+    "snapshot_version",
+    "source_batch_id",
+    "source_batch_manifest_sha256",
+    "authorized_main_sha",
+    "capture_harness_version",
+    "capture_code_revision",
+    "receipt_ids",
+    "raw_payload_sha256_list",
+    "normalized_partition_hashes",
+    "request_fingerprints",
+    "capture_windows",
+    "fixture_mapping_statuses",
+    "schema_fingerprints",
+    "quota_observations",
+    "retention_policy_hash",
+    "raw_delete_after_values",
+    "quality_report_hash",
+    "readiness_report_hash",
+    "schema_drift_report_hash",
+    "temporal_coverage_report_hash",
+    "accumulation_report_hash",
+    "external_reference_template_hash",
+    "frozen_marker_contract_hash",
+    "receipt_index_hash",
+    "source_inventory_hash",
+    "source_reference_hash",
+    "created_at",
+    "status",
+    "snapshot_scope",
+    "real_data_status",
+    "real_snapshot_status",
+    "tooling_status"
+  ],
+  "properties": {
+    "snapshot_id": {
+      "$ref": "#/$defs/sha256"
+    },
+    "snapshot_version": {
+      "const": "robin-first-frozen-receipt-backed-snapshot-v1"
+    },
+    "source_batch_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_batch_manifest_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "authorized_main_sha": {
+      "const": "26cbb8e14814093cc44e17a46a3ef2c899b13d07"
+    },
+    "capture_harness_version": {
+      "const": "robin-receipt-capture-harness-v1"
+    },
+    "capture_code_revision": {
+      "const": "828dde735c9104ee033fb199922d115f7b08578e"
+    },
+    "receipt_ids": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/sha256"
+      }
+    },
+    "raw_payload_sha256_list": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "$ref": "#/$defs/sha256"
+      }
+    },
+    "normalized_partition_hashes": {
+      "type": "object",
+      "minProperties": 5,
+      "maxProperties": 5,
+      "propertyNames": {
+        "pattern": "^normalized/[A-Za-z0-9._-]+\\.jsonl$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/sha256"
+      }
+    },
+    "request_fingerprints": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "$ref": "#/$defs/sha256"
+      }
+    },
+    "capture_windows": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/captureWindow"
+      }
+    },
+    "fixture_mapping_statuses": {
+      "type": "object",
+      "minProperties": 5,
+      "maxProperties": 5,
+      "propertyNames": {
+        "$ref": "#/$defs/captureLabel"
+      },
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "$ref": "#/$defs/mappingStatus"
+        }
+      }
+    },
+    "schema_fingerprints": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "$ref": "#/$defs/sha256"
+      }
+    },
+    "quota_observations": {
+      "type": "object",
+      "minProperties": 5,
+      "maxProperties": 5,
+      "propertyNames": {
+        "$ref": "#/$defs/captureLabel"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/quotaObservation"
+      }
+    },
+    "retention_policy_hash": {
+      "$ref": "#/$defs/sha256"
+    },
+    "raw_delete_after_values": {
+      "type": "object",
+      "minProperties": 5,
+      "maxProperties": 5,
+      "propertyNames": {
+        "$ref": "#/$defs/captureLabel"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/dateTime"
+      }
+    },
+    "quality_report_hash": {
+      "$ref": "#/$defs/sha256"
+    },
+    "readiness_report_hash": {
+      "$ref": "#/$defs/sha256"
+    },
+    "schema_drift_report_hash": {
+      "$ref": "#/$defs/sha256"
+    },
+    "temporal_coverage_report_hash": {
+      "$ref": "#/$defs/sha256"
+    },
+    "accumulation_report_hash": {
+      "$ref": "#/$defs/sha256"
+    },
+    "external_reference_template_hash": {
+      "$ref": "#/$defs/sha256"
+    },
+    "frozen_marker_contract_hash": {
+      "$ref": "#/$defs/sha256"
+    },
+    "receipt_index_hash": {
+      "$ref": "#/$defs/sha256"
+    },
+    "source_inventory_hash": {
+      "$ref": "#/$defs/sha256"
+    },
+    "source_reference_hash": {
+      "$ref": "#/$defs/sha256"
+    },
+    "created_at": {
+      "$ref": "#/$defs/dateTime"
+    },
+    "status": {
+      "const": "FROZEN"
+    },
+    "snapshot_scope": {
+      "enum": ["SYNTHETIC_CONTRACT_ONLY", "REAL_RECEIPT_BACKED"]
+    },
+    "real_data_status": {
+      "enum": ["NOT_AVAILABLE", "AVAILABLE"]
+    },
+    "real_snapshot_status": {
+      "enum": ["NOT_CREATED", "CREATED"]
+    },
+    "tooling_status": {
+      "const": "OFFLINE_DRAFT_READY"
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "dateTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "captureLabel": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9._:-]+$"
+    },
+    "mappingStatus": {
+      "enum": [
+        "FIXTURE_MAPPING_PROVEN",
+        "FIXTURE_MAPPING_UNPROVEN",
+        "FIXTURE_MAPPING_AMBIGUOUS",
+        "FIXTURE_MAPPING_CONFLICT"
+      ]
+    },
+    "captureWindow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capture_label",
+        "claimed_window",
+        "earliest_admissible",
+        "fixture_pseudonym",
+        "latest_admissible",
+        "status"
+      ],
+      "properties": {
+        "capture_label": {
+          "$ref": "#/$defs/captureLabel"
+        },
+        "claimed_window": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "earliest_admissible": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/dateTime"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "fixture_pseudonym": {
+          "type": "string",
+          "pattern": "^fixture-[0-9a-f]{16}$"
+        },
+        "latest_admissible": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/dateTime"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "WINDOW_VALID",
+            "WINDOW_MISSED",
+            "WINDOW_NOT_APPLICABLE",
+            "WINDOW_RECEIPT_INVALID",
+            "WINDOW_MAPPING_AMBIGUOUS"
+          ]
+        }
+      }
+    },
+    "quotaObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observed_at",
+        "requests_last",
+        "requests_remaining",
+        "requests_used"
+      ],
+      "properties": {
+        "requests_last": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "observed_at": {
+          "$ref": "#/$defs/dateTime"
+        },
+        "requests_remaining": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "requests_used": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}
