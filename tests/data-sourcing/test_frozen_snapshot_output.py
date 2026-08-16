@@ -17,7 +17,10 @@ def test_real_snapshot_output_is_pinned_to_approved_localappdata_root() -> None:
     assert _validate_external_output_root(approved) == approved.resolve()
 
 
-def test_real_snapshot_output_rejects_an_arbitrary_local_root(tmp_path: Path) -> None:
+def test_real_snapshot_output_rejects_an_arbitrary_local_root(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("LOCALAPPDATA", str(tmp_path / "local-appdata"))
     with pytest.raises(SnapshotValidationError, match="SNAPSHOT_OUTPUT_APPROVED_ROOT_MISMATCH"):
         _validate_external_output_root(tmp_path / "snapshots")
 

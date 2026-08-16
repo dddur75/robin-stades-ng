@@ -1702,6 +1702,9 @@ def _verify_finalized_batch_impl(
         raise SnapshotValidationError("BATCH_SOURCE_NETWORK_SHARE_FORBIDDEN")
     _reject_reparse_path(unresolved)
     resolved = unresolved.resolve()
+    # A marker link is invalid batch structure, not a watcher-arm failure.  Check
+    # its metadata before arming the observer; no source bytes are read here.
+    _reject_reparse_components(resolved, "FINALIZED.json")
     if continuous_observation is None:
         with continuous_tree_observer(resolved) as observation:
             return _verify_finalized_batch_impl(

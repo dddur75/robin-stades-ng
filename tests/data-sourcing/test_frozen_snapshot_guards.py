@@ -7,6 +7,7 @@ import pytest
 import robin.data_snapshot.source as source_module
 from robin.data_snapshot.contracts import (
     EXPECTED_BATCH_ID,
+    EXPECTED_EXTERNAL_BATCH_DIRECTORY,
     SYNTHETIC_BATCH_ID,
     SnapshotValidationError,
 )
@@ -17,6 +18,7 @@ from robin.data_snapshot.source import verify_finalized_batch
 def test_real_observation_cannot_be_shortened_or_faked_before_source_read(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    monkeypatch.setenv("LOCALAPPDATA", str(tmp_path / "local-appdata"))
     reads: list[Path] = []
     original = Path.read_bytes
 
@@ -92,19 +94,19 @@ def test_direct_real_source_pin_and_remote_drive_fail_before_metadata(
 
     monkeypatch.setattr(source_module, "_is_remote_drive", forbidden_probe)
     monkeypatch.setattr(source_module, "_reject_reparse_path", forbidden_metadata)
+    monkeypatch.setenv("LOCALAPPDATA", r"C:\AppData\Local")  # PORTABILITY_TEST_FIXTURE
     with pytest.raises(SnapshotValidationError, match="BATCH_SOURCE_APPROVED_ROOT_MISMATCH"):
         verify_finalized_batch(
             Path(r"Z:\wrong\batch"),  # PORTABILITY_TEST_FIXTURE
             observation_seconds=300,
         )
 
-    monkeypatch.setenv("LOCALAPPDATA", r"Z:\AppData\Local")  # PORTABILITY_TEST_FIXTURE
+    remote_local_appdata = Path(r"Z:\AppData\Local")  # PORTABILITY_TEST_FIXTURE
+    monkeypatch.setenv("LOCALAPPDATA", str(remote_local_appdata))
     monkeypatch.setattr(source_module, "_is_remote_drive", lambda _path: True)
     with pytest.raises(SnapshotValidationError, match="BATCH_SOURCE_NETWORK_SHARE_FORBIDDEN"):
         verify_finalized_batch(
-            Path(
-                r"Z:\AppData\Local\Robin\five-canary-receipt-batch-20260816"  # PORTABILITY_TEST_FIXTURE
-            ),
+            remote_local_appdata / "Robin" / EXPECTED_EXTERNAL_BATCH_DIRECTORY,
             observation_seconds=300,
         )
 
