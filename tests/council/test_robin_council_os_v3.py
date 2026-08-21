@@ -2554,11 +2554,20 @@ def test_bounded_live_canary_capability_has_exact_append_only_evidence_successio
         "GOV.BOUNDED_LIVE_CANARY.FINAL.REVIEW.V1.001",
         "GOV.COUNCIL.BOUNDED_LIVE_CANARY.EVIDENCE.SUCCESSION.LEDGER.V1.001",
     ]
-    assert len(graph["claims"]) == 377
-    assert len(graph["decision_nodes"]) == 162
-    assert len(graph["edges"]) == 663
+    correction_proof = [
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.029",
+        "GOV.COUNCIL.BOUNDED_LIVE_CANARY.EVIDENCE.SUCCESSION.LEDGER.V1.002",
+    ]
+    assert len(graph["claims"]) == 379
+    assert len(graph["decision_nodes"]) == 163
+    assert len(graph["edges"]) == 665
     assert graph["generated_at"].startswith("2026-08-21T")
-    assert all(claims[claim_id]["status"] == "VERIFIED" for claim_id in proof)
+    assert all(
+        claims[claim_id]["status"] == "VERIFIED"
+        for claim_id in proof
+        if claim_id not in {proof[1], proof[8]}
+    )
+    assert all(claims[claim_id]["status"] == "VERIFIED" for claim_id in correction_proof)
 
     successor_map = {
         "GOV.AUTHORIZATION.CHRONOS_LOOP53.018": proof[0],
@@ -2573,12 +2582,16 @@ def test_bounded_live_canary_capability_has_exact_append_only_evidence_successio
         assert claims[old_claim_id]["superseded_by"] == successor_id
 
     assert claims[proof[0]]["successor_of"] == "GOV.AUTHORIZATION.CHRONOS_LOOP53.018"
-    assert claims[proof[1]]["successor_of"] == (
-        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.027"
-    )
+    assert claims[proof[1]]["successor_of"] == ("GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.027")
     assert claims[proof[8]]["successor_of"] == (
         "GOV.COUNCIL.PR60.EVIDENCE.SUCCESSION.LEDGER.V1.001"
     )
+    assert claims[proof[1]]["status"] == "SUPERSEDED"
+    assert claims[proof[1]]["superseded_by"] == correction_proof[0]
+    assert claims[correction_proof[0]]["successor_of"] == proof[1]
+    assert claims[proof[8]]["status"] == "SUPERSEDED"
+    assert claims[proof[8]]["superseded_by"] == correction_proof[1]
+    assert claims[correction_proof[1]]["successor_of"] == proof[8]
 
     records = [
         json.loads(line)
@@ -2587,13 +2600,11 @@ def test_bounded_live_canary_capability_has_exact_append_only_evidence_successio
         .splitlines()
         if line.strip()
     ]
-    record = records[-1]
+    record = next(item for item in records if item["decision_id"] == "RCV3-20260821-169")
     assert record["decision_id"] == "RCV3-20260821-169"
     assert record["decision"] == "PASS_AND_HOLD"
     assert record["proof"] == proof
-    assert record["context"]["mission_id"] == (
-        "BOUNDED_MULTI_LEAGUE_LIVE_CANARY_CAPABILITY_V1"
-    )
+    assert record["context"]["mission_id"] == ("BOUNDED_MULTI_LEAGUE_LIVE_CANARY_CAPABILITY_V1")
     assert record["context"]["defects"] == {"open_p0": 0, "open_p1": 0}
     assert record["context"]["delivery_authority"]["draft_pr_authorized_now"] is True
     assert record["context"]["delivery_authority"]["merge_authorized_now"] is False
@@ -2617,3 +2628,23 @@ def test_bounded_live_canary_capability_has_exact_append_only_evidence_successio
     edges = [edge for edge in graph["edges"] if edge["to_decision_id"] == record["decision_id"]]
     assert [edge["edge_id"] for edge in edges] == [f"EDGE.{index}" for index in range(655, 664)]
     assert [edge["from_claim_id"] for edge in edges] == proof
+
+    correction = records[-1]
+    assert correction["decision_id"] == "RCV3-20260821-170"
+    assert correction["decision"] == "PASS_AND_HOLD"
+    assert correction["proof"] == correction_proof
+    assert correction["context"]["pr"] == 61
+    assert correction["context"]["failed_run"] == 32524911145
+    assert correction["context"]["failed_job"] == 96904796847
+    assert correction["context"]["defects"] == {"open_p0": 0, "open_p1": 0}
+    assert correction["context"]["external_effects"] == record["context"]["external_effects"]
+
+    correction_node = next(
+        node for node in graph["decision_nodes"] if node["decision_id"] == correction["decision_id"]
+    )
+    assert correction_node["ledger_record_hash"] == correction["hash"]
+    correction_edges = [
+        edge for edge in graph["edges"] if edge["to_decision_id"] == correction["decision_id"]
+    ]
+    assert [edge["edge_id"] for edge in correction_edges] == ["EDGE.664", "EDGE.665"]
+    assert [edge["from_claim_id"] for edge in correction_edges] == correction_proof

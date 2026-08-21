@@ -58,8 +58,8 @@ def test_missing_linux_mount_identity_fails_closed(tmp_path: Path) -> None:
 
 
 def test_unc_paths_are_rejected_by_path_semantics() -> None:
-    assert _is_unc_path(Path(r"\\synthetic-server\capture")) is True
-    assert _is_unc_path(Path("//synthetic-server/capture")) is True
+    assert _is_unc_path(Path(r"\\synthetic-server\capture")) is True  # PORTABILITY_TEST_FIXTURE
+    assert _is_unc_path(Path("//synthetic-server/capture")) is True  # PORTABILITY_TEST_FIXTURE
 
 
 def test_capture_store_constructor_does_not_write_through_raw_symlink(
