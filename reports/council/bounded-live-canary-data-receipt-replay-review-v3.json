@@ -1,0 +1,114 @@
+{
+  "agent_id": "DP6",
+  "mission_id": "BOUNDED_MULTI_LEAGUE_LIVE_CANARY_CAPABILITY_V1",
+  "facts_verified": [
+    {
+      "claim": "Les trois compteurs quota sont bornés aux entiers signés 64 bits et les valeurs fournisseur hors borne produisent un terminal durable, relisible et sans nouvelle exécution.",
+      "evidence_refs": [
+        "src/robin/capture/contracts.py:QuotaObservation",
+        "src/robin/capture/harness.py:_safe_integer_header",
+        "tests/capture/test_live_canary_capability.py::test_out_of_int64_quota_counters_are_terminal_readable_and_never_retried"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "store_terminal_receipt recroise le receipt avec la lease, le permit, le dispatch, l'attempt, l'intake, le receipt de capture, le manifest et le replay avant toute écriture terminale.",
+      "evidence_refs": [
+        "src/robin/capture/live_storage.py:_validate_terminal_receipt_durable_lineage",
+        "src/robin/capture/live_storage.py:store_terminal_receipt",
+        "tests/capture/test_live_canary_capability.py::test_terminal_store_refuses_self_consistent_receipt_without_durable_lease",
+        "tests/capture/test_live_canary_capability.py::test_terminal_store_refuses_rehashed_receipt_diverging_from_durable_attempt"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "SUCCESS, QUOTA_RECONCILIATION_FAILED, OFFLINE_REPLAY_FAILED et PAYLOAD_REJECTED sont liés à l'état durable de réconciliation approprié; DISPATCH_OUTCOME_UNKNOWN reste conservateur avant ou après réconciliation.",
+      "evidence_refs": [
+        "src/robin/capture/live_storage.py:verify_terminal_budget_state",
+        "src/robin/capture/storage.py:_verify_live_execution_lineage",
+        "tests/capture/test_live_canary_capability.py::test_live_replay_binds_terminal_disposition_to_budget_reconciliation",
+        "tests/capture/test_live_canary_capability.py::test_offline_replay_failure_still_produces_one_durable_terminal_receipt",
+        "tests/capture/test_live_canary_capability.py::test_abrupt_child_process_exit_burns_item_without_automatic_retry"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le chemin d'ingestion calcule le SHA-256, durable l'intake puis écrit le raw content-addressed avant tout décodage JSON.",
+      "evidence_refs": [
+        "src/robin/capture/harness.py:CaptureHarness._record_response_locked",
+        "tests/capture/test_live_canary_capability.py::test_synthetic_live_flow_is_one_shot_receipt_backed_and_replayable",
+        "tests/capture/test_capture_harness.py::test_invalid_json_is_hashed_before_parse_and_quarantined"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le replay public exige le terminal complet; son ancien paramètre public préterminal n'existe plus.",
+      "evidence_refs": [
+        "src/robin/capture/storage.py:CaptureStore.replay",
+        "src/robin/capture/storage.py:CaptureStore._replay_preterminal_live"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le replay live fonctionne dans un processus frais avec zéro appel réseau, zéro appel fournisseur et zéro lecture de secret.",
+      "evidence_refs": [
+        "tests/capture/test_live_canary_capability.py::test_live_offline_replay_succeeds_in_fresh_process_without_secret_or_network",
+        "src/robin/capture/storage.py:CaptureStore._replay"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les altérations de raw, receipts, manifest, normalized, lease, permit, attempt, terminal, marqueurs et budget échouent fermées; les collisions content-addressed et la TTL générique sont couvertes.",
+      "evidence_refs": [
+        "tests/capture/test_live_canary_capability.py::test_live_replay_rejects_each_tampered_or_missing_durable_lineage_edge",
+        "tests/capture/test_live_canary_capability.py::test_live_replay_requires_canonical_bytes_for_every_control_edge",
+        "tests/capture/test_live_canary_capability.py::test_live_replay_cross_checks_rehashed_terminal_semantics_against_attempt",
+        "tests/capture/test_capture_harness.py::test_storage_collision_fails_closed",
+        "tests/capture/test_capture_harness.py::test_raw_ttl_deletion_preserves_receipt_and_normalized_data"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La sélection indépendante finale des correctifs et chemins critiques passe intégralement.",
+      "evidence_refs": [
+        "pytest ciblé DP6: 11 passed in 26.98s"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "Aucun payload fournisseur réel ni activation réelle n'a été observé, conformément à la mission capability-only.",
+    "La convention Python underscore reste la seule barrière empêchant un consommateur volontaire d'appeler le replay préterminal interne."
+  ],
+  "assumptions": [
+    "La racine de capture reste sous l'ACL locale exclusive attestée par le propriétaire.",
+    "Le gate de compatibilité porte sur l'API publique supportée; les appels directs aux méthodes underscore sont hors contrat."
+  ],
+  "main_objection": "Aucun défaut P0/P1 subsistant; deux durcissements P2 restent possibles autour de l'isolation du replay préterminal interne et d'une régression TTL spécifiquement live.",
+  "risks": [
+    {
+      "risk": "[P2] _replay_preterminal_live et _replay(...allow_preterminal_live=True) restent techniquement appelables sur l'objet Python, bien qu'ils ne fassent plus partie de l'API publique supportée.",
+      "severity": "MEDIUM",
+      "evidence_refs": [
+        "src/robin/capture/storage.py:CaptureStore._replay_preterminal_live",
+        "src/robin/capture/storage.py:CaptureStore._replay"
+      ]
+    },
+    {
+      "risk": "[P2] La TTL est fortement testée dans CaptureStore, mais il manque un scénario bout-en-bout live terminal puis suppression TTL puis replay local refusé sans secret/réseau.",
+      "severity": "MEDIUM",
+      "evidence_refs": [
+        "tests/capture/test_capture_harness.py::test_raw_ttl_deletion_preserves_receipt_and_normalized_data",
+        "tests/capture/test_live_canary_capability.py::test_live_offline_replay_succeeds_in_fresh_process_without_secret_or_network"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Conserver verts les tests quota int64, terminal forgé, permutations SUCCESS↔QUOTA_RECONCILIATION_FAILED, OFFLINE_REPLAY_FAILED, crash post-réconciliation et replay frais sans réseau/secret.",
+  "recommended_action": "ACCEPT pour le gate DP6; traiter les deux P2 comme durcissements non bloquants avant tout élargissement au-delà du canary borné.",
+  "scale_condition": "Ne pas généraliser la capacité avant une autorisation propriétaire séparée liée au SHA final, et idéalement isoler le replay préterminal derrière une capacité interne non directement accessible.",
+  "estimated_compute": "Validation indépendante ciblée locale: 11 tests, 26.98 secondes; aucun calcul externe.",
+  "estimated_external_cost": "0; aucun réseau fournisseur, secret réel ou service externe utilisé.",
+  "estimated_human_time": "Environ 1 à 2 heures pour fermer les deux durcissements P2 et ajouter leurs régressions.",
+  "maintenance_impact": "Faible: les invariants critiques sont centralisés dans CaptureStore et LiveStateStore; les P2 demandent des tests et une séparation d'interface limitée.",
+  "confidence": 0.96
+}

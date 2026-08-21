@@ -1,0 +1,82 @@
+{
+  "agent_id": "C4",
+  "mission_id": "BOUNDED_MULTI_LEAGUE_LIVE_CANARY_CAPABILITY_V1",
+  "facts_verified": [
+    {
+      "claim": "Le transport utilise une IP globale-unicast unique hash-liée, sans DNS, avec peer exact, SNI/Host canoniques et deadline monotone absolue jusque dans les lectures de headers et body.",
+      "evidence_refs": [
+        "src/robin/capture/live_contracts.py:51-64",
+        "src/robin/capture/live_transport.py:231-359",
+        "src/robin/capture/live_transport.py:537-632",
+        "tests/capture/test_live_canary_transport.py:568-803"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le secret est lu une seule fois après permit durable et revalidation repo/TTL/authority/root; aucun chemin de recovery ne réautorise secret ou réseau.",
+      "evidence_refs": [
+        "src/robin/capture/live_executor.py:1218-1344",
+        "src/robin/capture/live_executor.py:1512-1670",
+        "tests/capture/test_live_canary_capability.py:1950-2420"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les identités repository, control-temp, exécutable Git et capture-root sont liées à l’autorisation et revalidées; les TOCTOU concurrents relèvent explicitement de la boundary propriétaire ACL exclusive.",
+      "evidence_refs": [
+        "src/robin/capture/live_contracts.py:75-152",
+        "src/robin/capture/storage.py:415-474",
+        "src/robin/capture/live_executor.py:129-208",
+        "src/robin/capture/live_executor.py:293-825",
+        "tools/data-sourcing/run_bounded_live_canary_v1.py:113-229"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le threat model généré reflète no-DNS, deadline absolue, IP unique et les trois racines sous boundary ACL.",
+      "evidence_refs": [
+        "reports/data-sourcing/capture-threat-model-v1.json:5-20",
+        "reports/data-sourcing/capture-threat-model-v1.json:79-92",
+        "tools/data-sourcing/build_capture_harness_artifacts.py:268-352"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les preuves multiprocess/crash et la matrice CI Ubuntu/Windows couvrent locks, tombstones, recovery sans retry et guards reparse/hardlink.",
+      "evidence_refs": [
+        "src/robin/capture/live_storage.py:173-252",
+        "tests/capture/test_live_canary_capability.py:2178-2420",
+        ".github/workflows/ci.yml:97-400"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "C4 n’a pas relancé les tests afin de préserver la revue strictement read-only; le succès des validations locales est rapporté séparément par C0.",
+    "Les ACL réelles restent une attestation externe et ne sont pas prouvées cryptographiquement par le runtime.",
+    "Aucun DNS, réseau fournisseur ou secret réel n’a été utilisé."
+  ],
+  "assumptions": [
+    "Le pin OwnerAuthorization séparé est authentifié hors système.",
+    "La boundary OWNER_ATTESTED_EXCLUSIVE_OS_ACL_NO_CONCURRENT_MUTATOR couvre toutes les racines et l’exécutable Git pendant l’opération.",
+    "L’OS rapporte fidèlement les identités filesystem/socket et le temps monotone."
+  ],
+  "main_objection": "Aucune objection P0/P1. Le seul résidu P2 confirmé est l’absence d’ancre externe de tête pour le deletion ledger.",
+  "risks": [
+    {
+      "risk": "[P2] Une troncature du deletion ledger sur une frontière de ligne valide peut produire une nouvelle chaîne cohérente, faute de tête externe ou d’événements content-addressed permettant de détecter le rollback.",
+      "severity": "MEDIUM",
+      "evidence_refs": [
+        "src/robin/capture/storage.py:1358-1425"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Conserver obligatoires les tests synthétiques direct-IP/slow-header, spawn/crash et la matrice complète Ubuntu/Windows; aucun test réel fournisseur n’est requis.",
+  "recommended_action": "ACCEPT. Traiter séparément l’ancrage anti-rollback du deletion ledger.",
+  "scale_condition": "Nouvelle revue avant DNS, multi-IP, retry/failover, proxy, parallélisme accru ou abandon de la boundary ACL exclusive.",
+  "estimated_compute": "Faible; relecture statique locale.",
+  "estimated_external_cost": "0",
+  "estimated_human_time": "Deux à quatre heures pour fermer le P2 restant.",
+  "maintenance_impact": "Modéré uniquement si une tête durable ancrée est ajoutée au deletion ledger.",
+  "confidence": 0.96
+}

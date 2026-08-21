@@ -1,0 +1,101 @@
+{
+  "accumulation_candidates": [],
+  "allowed_markets": [
+    "h2h",
+    "totals"
+  ],
+  "artifact": "bounded-live-canary-capability-v1",
+  "automatic_activation": false,
+  "bet": false,
+  "bets": 0,
+  "capability_status": "IMPLEMENTED_SYNTHETICALLY_TESTED_NO_REAL_ACTIVATION",
+  "capability_version": "robin-bounded-multi-league-live-canary-v1",
+  "claim_ids": {
+    "capability_contract": "GOV.BOUNDED_LIVE_CANARY.CAPABILITY.REPORT.V1.001",
+    "non_execution_state": "SCIENCE.BOUNDED_LIVE_CANARY.NON_EXECUTION.V1.001",
+    "zero_external_effects": "SECURITY.BOUNDED_LIVE_CANARY.ZERO_EFFECTS.V1.001"
+  },
+  "contract_schemas": {
+    "ActivationEnvelopeV1": "476a90d9857a26236580c05fdfd7142f43c94622b2d3f89acc799897acf04382",
+    "LiveAdmissionPermitV1": "391099c2fc057766bcc9f1e4d6ec9cd4500b46840e521ab497e1b4ef3395f3c6",
+    "LiveCaptureLineageV1": "8a156669342401a1403428dc55e44ff5d6fabd02fb5de2d12684b4543a6a7566",
+    "LiveExecutionAttemptReceiptV1": "7b7ae7309b6fd9f43d34e37ecba2c02fd20a8473fa4d72e91510da376856b5d9",
+    "LiveExecutionReceiptV1": "6b681f79bb674f22e1f7fbf9e9b6383bba824ef8dabe8419286cf3cd46fbca62",
+    "LiveLeaseV1": "76f764f346b0854645ad218788a75479ba1b2ee09f97c0150fecc7f2cc74f481",
+    "LivePlanItemV1": "9fc331ffb9812339c3805ffd03e712c816b4a758f3175527dfa9479d81ffc8a0",
+    "LivePlanV1": "72cabee2d77e5ff0779b85a33eb174ab404be649a54b3dd710cbb6d4130764f0",
+    "LiveResponseIntakeClaimV1": "0aa48e2b74fd97358b9a2fcf9dfe51232e37b9728f23b580cddb5aa2188d331e",
+    "OwnerAuthorizationV1": "3326137e4905449f3b8b7e07c88c8c20164b28b0e823c42d68f4011a6873eca8",
+    "PublicProviderRequestV1": "48e174f82ffceb38d02b903596c8cfa9941cceab5e393b0eba35f617255c2583"
+  },
+  "default_state": "DEFAULT_DENY",
+  "experiment_readiness_status": "NOT_ASSESSED_ON_REAL_DATA",
+  "external_owner_authenticity_boundary": "EXTERNALLY_VERIFIED_NOT_CRYPTOGRAPHICALLY_PROVEN",
+  "golden_pack_path": "tests/capture/fixtures/bounded-live-canary-v1-golden-pack.json",
+  "golden_pack_sha256": "c7b9428ac589fdbf7de38246d31372876ebeae25261c15d714f1c3de7f7dd5a3",
+  "hash_dag": [
+    "OWNER_AUTHORIZATION_HASH",
+    "ACTIVATION_SCOPE_SHA256_WITHOUT_PLAN",
+    "PLAN_HASH_BINDS_ACTIVATION_SCOPE",
+    "FINAL_ACTIVATION_HASH_BINDS_PLAN_HASH"
+  ],
+  "local_execution_boundary": "OWNER_ATTESTED_EXCLUSIVE_OS_ACL_NO_CONCURRENT_MUTATOR",
+  "market_policy": [
+    [
+      "h2h"
+    ],
+    [
+      "totals"
+    ],
+    [
+      "h2h",
+      "totals"
+    ]
+  ],
+  "mission_id": "BOUNDED_MULTI_LEAGUE_LIVE_CANARY_CAPABILITY_V1",
+  "network_calls": 0,
+  "network_calls_scope": "PROVIDER_AND_PROVIDER_DNS_ONLY_AUTHORIZED_GIT_GITHUB_DELIVERY_EXCLUDED",
+  "next_required_external_action": "SEPARATE_OWNER_AUTHORIZATION_BOUND_TO_FINAL_MERGED_MAIN_SHA",
+  "promotion": false,
+  "promotions": 0,
+  "provider_network_policy": "OWNER_APPROVED_CANONICAL_GLOBAL_IP_DIRECT_SOCKET_NO_DNS_EXACT_PEER_TLS_SNI_HOST",
+  "purchases": 0,
+  "real_activation_present": false,
+  "real_activation_status": "NOT_CREATED",
+  "real_authorization_present": false,
+  "real_authorization_status": "NOT_CREATED",
+  "real_batch_status": "NOT_EXECUTED",
+  "real_capture_count": 0,
+  "real_executable_experiment_count": 0,
+  "real_provider_calls": 0,
+  "real_provider_dns_calls": 0,
+  "real_secret_reads": 0,
+  "real_snapshot_count": 0,
+  "real_snapshot_status": "NOT_CREATED",
+  "region_policy": "eu",
+  "schema_version": "robin-bounded-live-canary-capability-report-v1",
+  "sport_allowlist": [
+    "soccer_spain_la_liga",
+    "soccer_france_ligue_one",
+    "soccer_epl",
+    "soccer_italy_serie_a",
+    "soccer_germany_bundesliga"
+  ],
+  "storage_layout": [
+    "live/authority-bindings",
+    "live/leases",
+    "live/budget-events",
+    "live/dispatch-armed",
+    "live/admission-consumed",
+    "live/admission-consumed-anchors",
+    "live/dispatch-started",
+    "live/dispatch-started-anchors",
+    "live/response-intake-claimed",
+    "live/response-intake-anchors",
+    "live/capture-lineage",
+    "live/execution-attempts",
+    "live/execution-receipts",
+    "live/terminal"
+  ],
+  "storage_policy": "OUTSIDE_GIT_LOCAL_NON_SYNCHRONISED_CONTENT_ADDRESSED_TTL_GOVERNED"
+}

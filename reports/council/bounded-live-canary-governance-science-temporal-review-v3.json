@@ -1,0 +1,116 @@
+{
+  "agent_id": "C2",
+  "mission_id": "BOUNDED_MULTI_LEAGUE_LIVE_CANARY_CAPABILITY_V1",
+  "facts_verified": [
+    {
+      "claim": "Le worktree est sur la branche exacte codex/bounded-multi-league-live-canary-capability-v1, au HEAD/base exact 780e224492ca9b689826857e9edf6aa9ab95d8f5, avec zéro commit au-dessus de cette base.",
+      "evidence_refs": [
+        "git branch --show-current => codex/bounded-multi-league-live-canary-capability-v1",
+        "git rev-parse HEAD => 780e224492ca9b689826857e9edf6aa9ab95d8f5",
+        "git rev-list --count 780e224492ca9b689826857e9edf6aa9ab95d8f5..HEAD => 0",
+        "configs/agents/mission-activation-matrix-v3.json:26"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le manifeste contient exactement les huit champs Council requis, autorise seulement E1 et n'accorde aucune autorité fournisseur, secret ou activation live.",
+      "evidence_refs": [
+        "configs/execution/bounded-multi-league-live-canary-capability-v1.json:1-16",
+        "tests/council/test_bounded_live_canary_governance.py:13-55"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La matrice nomme C0 rédacteur, C2/C4/DP6 reviewers, fixe E1, sépare explicitement la livraison de capacité de toute exécution live réelle et contient 40 chemins triés, uniques et relatifs dont le hash canonique est fafa054d0cb47f60367161f826696a119b86cf53f2eeb69bf31cb972acae55ea.",
+      "evidence_refs": [
+        "configs/agents/mission-activation-matrix-v3.json:26-28",
+        "configs/agents/mission-activation-matrix-v3.json:349-403",
+        "tests/council/test_bounded_live_canary_governance.py:57-116"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les rapports indépendants C4 et DP6 sont présents, conformes au schéma et concluent ACCEPT sans P0 ni P1; le rapport C2 et l'agrégat final étaient encore absents au moment de la revue et constituent des obligations mécaniques précommit.",
+      "evidence_refs": [
+        "reports/council/bounded-live-canary-security-review-v3.json",
+        "reports/council/bounded-live-canary-data-receipt-replay-review-v3.json",
+        "reports/council/bounded-live-canary-governance-science-temporal-review-v3.json => absent avant remise C2",
+        "reports/council/bounded-live-canary-final-review-v3.json => absent avant agrégation"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le rapport de capacité déclare zéro autorisation et activation réelles, zéro appel fournisseur ou DNS fournisseur, zéro lecture de secret réel, aucun batch réel, aucune capture réelle et aucun snapshot réel; ses trois claim IDs sont déterministes.",
+      "evidence_refs": [
+        "reports/data-sourcing/bounded-live-canary-capability-v1.json:11-16",
+        "reports/data-sourcing/bounded-live-canary-capability-v1.json:49-78",
+        "tests/capture/test_live_canary_artifacts.py:76-111"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La portée de network_calls est explicitement limitée au fournisseur et au DNS fournisseur; les opérations Git/GitHub de livraison autorisées en sont exclues.",
+      "evidence_refs": [
+        "reports/data-sourcing/bounded-live-canary-capability-v1.json:56-57",
+        "tools/data-sourcing/build_bounded_live_canary_artifacts.py:211-214"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La CI définit des gates Ubuntu et Windows read-only de douze minutes, checkoutant le SHA exact sans credentials persistants, refusant le secret fournisseur, validant les artefacts synthétiques et rendant le job repository-wide fail-closed sur le succès des deux gates.",
+      "evidence_refs": [
+        ".github/workflows/ci.yml:97-400",
+        "tests/jalon10/test_workflows_and_guards.py:93-170",
+        "tests/portability/test_chronos_portable_ci_contract.py:62-105",
+        "tests/portability/test_chronos_portable_ci_contract.py:159-172"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le ledger et le graphe restent byte-identiques à la base et ne contiennent encore ni décision ni claims de cette mission; leur ajout après matérialisation des trois reviews et de l'agrégat est une succession append-only précommit, pas un défaut runtime.",
+      "evidence_refs": [
+        "git diff --quiet HEAD -- reports/council/decision-ledger.jsonl => 0",
+        "git diff --quiet HEAD -- reports/evidence/evidence-graph.json => 0",
+        "reports/council/decision-ledger.jsonl",
+        "reports/evidence/evidence-graph.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La sélection locale gouvernance, artefacts et contrats CI ciblés passe.",
+      "evidence_refs": [
+        "pytest ciblé C2 sous Python 3.12: 12 passed in 1.29s"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "L'état distant des threads de PR, la mergeabilité et la CI exact-head après commit n'ont pas été observés, conformément à l'interdiction réseau de cette revue.",
+    "L'intention propriétaire sur la portée universelle ou limitée au control-plane des plafonds LOC reste non spécifiée.",
+    "Les ACL exclusives et l'authenticité de l'autorisation propriétaire future restent des attestations externes."
+  ],
+  "assumptions": [
+    "C0 matérialisera ce rapport sans en changer le sens, puis produira l'agrégat final avant les ajouts append-only au ledger et au graphe.",
+    "Les octets revus resteront inchangés jusqu'au commit; toute correction substantielle exige une nouvelle revue.",
+    "network_calls conserve sa portée explicite fournisseur et DNS fournisseur uniquement."
+  ],
+  "main_objection": "Aucune objection P0/P1. Une ambiguïté P2 subsiste: scale-policy-v3.json ne précise pas si ses plafonds LOC s'appliquent universellement ou seulement au control-plane Council V3.1.",
+  "risks": [
+    {
+      "risk": "[P2] La documentation refuse explicitement de revendiquer WITHIN_1000_2000. Si l'intention propriétaire rend production_lines_max=1000 et test_lines_max=2000 universels, cette livraison doit devenir FAIL_AND_REDESIGN et ne peut pas s'auto-déroger.",
+      "severity": "MEDIUM",
+      "evidence_refs": [
+        "configs/experiments/scale-policy-v3.json:112-118",
+        "docs/data-sourcing/BOUNDED-MULTI-LEAGUE-LIVE-CANARY-CAPABILITY-V1.md:172-179"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Faire confirmer la portée des plafonds LOC par le propriétaire; si elle reste limitée au control-plane, matérialiser C2 et l'agrégat, préserver intégralement les préfixes ledger/graph, ajouter les trois claim nodes et la décision liée, puis exiger les gates Ubuntu/Windows et la CI exact-head vertes.",
+  "recommended_action": "ACCEPT pour le gate C2, avec P0=0, P1=0 et P2=1. Les fichiers C2, agrégat, ledger et graphe sont des obligations mécaniques précommit. Cet ACCEPT n'autorise ni activation réelle, ni fournisseur, ni secret, ni batch, ni snapshot, ni merge.",
+  "scale_condition": "Aucune montée en charge live. Toute utilisation future exige une autorisation propriétaire externe séparée liée au SHA final fusionné de main; une portée LOC universelle impose au contraire FAIL_AND_REDESIGN.",
+  "estimated_compute": "Relecture statique et 12 tests ciblés locaux; 1.29 seconde de tests, sans workload réel.",
+  "estimated_external_cost": "0; aucun réseau, fournisseur, secret ou service externe utilisé.",
+  "estimated_human_time": "Environ 30 à 60 minutes pour matérialiser l'agrégat et effectuer les ajouts append-only, hors CI.",
+  "maintenance_impact": "Faible si la portée LOC est clarifiée; modéré si les plafonds doivent être universalisés et imposent un redécoupage.",
+  "confidence": 0.98
+}

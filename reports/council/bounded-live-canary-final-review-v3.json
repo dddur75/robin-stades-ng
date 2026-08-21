@@ -1,0 +1,102 @@
+{
+  "schema_version": "robin-bounded-live-canary-final-review-v3",
+  "mission_id": "BOUNDED_MULTI_LEAGUE_LIVE_CANARY_CAPABILITY_V1",
+  "reviewed_at": "2026-08-21T20:14:28Z",
+  "base_revision": "780e224492ca9b689826857e9edf6aa9ab95d8f5",
+  "branch": "codex/bounded-multi-league-live-canary-capability-v1",
+  "reviewed_scope": "CAPABILITY_ONLY_SYNTHETIC_AND_DEFAULT_DENY",
+  "claim_id": "GOV.BOUNDED_LIVE_CANARY.FINAL.REVIEW.V1.001",
+  "reviewers": [
+    {
+      "agent_id": "DP6",
+      "axis": "DATA_RECEIPT_REPLAY",
+      "report": "reports/council/bounded-live-canary-data-receipt-replay-review-v3.json",
+      "verdict": "ACCEPT",
+      "open_p0": 0,
+      "open_p1": 0,
+      "open_p2": 2,
+      "open_critical_threads": 0
+    },
+    {
+      "agent_id": "C4",
+      "axis": "SECURITY_SECRET_NETWORK_ANTI_REPLAY",
+      "report": "reports/council/bounded-live-canary-security-review-v3.json",
+      "verdict": "ACCEPT",
+      "open_p0": 0,
+      "open_p1": 0,
+      "open_p2": 1,
+      "open_critical_threads": 0
+    },
+    {
+      "agent_id": "C2",
+      "axis": "GOVERNANCE_SCIENCE_TEMPORAL_LINEAGE",
+      "report": "reports/council/bounded-live-canary-governance-science-temporal-review-v3.json",
+      "verdict": "ACCEPT",
+      "open_p0": 0,
+      "open_p1": 0,
+      "open_p2": 1,
+      "open_critical_threads": 0
+    }
+  ],
+  "aggregate_gate": {
+    "open_p0": 0,
+    "open_p1": 0,
+    "open_p2": 4,
+    "open_critical_threads": 0,
+    "independent_review_count": 3,
+    "required_axes_covered": true
+  },
+  "residual_p2": [
+    {
+      "finding_id": "BMLC-DATA-001",
+      "summary": "Le replay préterminal interne reste techniquement appelable par convention Python underscore.",
+      "owner": "DP6",
+      "blocking": false
+    },
+    {
+      "finding_id": "BMLC-DATA-002",
+      "summary": "La TTL générique est testée, mais pas encore un cycle TTL live terminal bout-en-bout.",
+      "owner": "DP6",
+      "blocking": false
+    },
+    {
+      "finding_id": "BMLC-SEC-001",
+      "summary": "Le deletion ledger hash-chaîné ne possède pas d'ancre externe empêchant le rollback d'un suffixe complet.",
+      "owner": "C4",
+      "blocking": false
+    },
+    {
+      "finding_id": "BMLC-GOV-001",
+      "summary": "La policy JSON n'explicite pas la portée des plafonds LOC V3.1; aucune conformité WITHIN_1000_2000 n'est revendiquée.",
+      "owner": "C2",
+      "blocking": false
+    }
+  ],
+  "real_execution_state": {
+    "real_authorization": "NOT_CREATED",
+    "real_activation": "NOT_CREATED",
+    "provider_network_calls": 0,
+    "provider_dns_calls": 0,
+    "real_secret_reads": 0,
+    "real_batch": "NOT_EXECUTED",
+    "real_snapshot": "NOT_CREATED",
+    "experiment_readiness": "NOT_ASSESSED_ON_REAL_DATA",
+    "accumulation_candidates": [],
+    "purchases": 0,
+    "promotions": 0,
+    "bets": 0
+  },
+  "delivery_gate": {
+    "draft_delivery_authorized": true,
+    "ready_for_review_authorized": false,
+    "merge_authorized": false,
+    "exact_head_ci": "PENDING",
+    "github_review_threads": "NOT_OBSERVED_PRE_PR",
+    "mergeable_state": "NOT_OBSERVED_PRE_PR",
+    "required_merge_method": "MERGE_COMMIT"
+  },
+  "verdict": "ACCEPT_CAPABILITY_ONLY_FOR_DRAFT_DELIVERY",
+  "live_default_state": "DEFAULT_DENY",
+  "real_live_execution_authorized": false,
+  "next_required_external_action": "SEPARATE_OWNER_AUTHORIZATION_BOUND_TO_FINAL_MERGED_MAIN_SHA"
+}

@@ -45,7 +45,7 @@
         "requests_last",
         "observed_at"
       ],
-      "json_schema_sha256": "427b2d4da07f6086ad56e3ee4be292bbf15f58e60ac1bd5344527e84d38ae242",
+      "json_schema_sha256": "c9aeb5fa3823542eaefcec3593b23ee379f0c6be507aa7982df1647590b20c4e",
       "name": "QuotaObservation"
     },
     {
@@ -66,7 +66,7 @@
         "admission_status",
         "rejection_code"
       ],
-      "json_schema_sha256": "93d89a104be74d505ee7166a4249424084c940bdaa01ed5a298f499abe1b8ba5",
+      "json_schema_sha256": "ee0822901490318d8fd53a404d1b42cb23600250cc4e16f01ca52ccead55b610",
       "name": "RawPayloadReceipt"
     },
     {
@@ -128,7 +128,7 @@
         "promoted",
         "bet_calculated"
       ],
-      "json_schema_sha256": "acecdf77cfa19ea2b3836bcc361d3b2771abcf4d19f00170ec159006bb0d3a6a",
+      "json_schema_sha256": "31377fa32f948530ae86b3b5da883cc8d90b87c2baf0c2feefaa64b6de78734c",
       "name": "CaptureManifest"
     },
     {
@@ -164,10 +164,287 @@
         "raw_hash_verified_before_parse",
         "network_calls",
         "provider_calls",
+        "secret_reads_count",
         "verdict"
       ],
-      "json_schema_sha256": "f548fc2a7b3f2f5d10ebd611dc2c155c5e7f51bf05f31c0b5304757ba5263cdd",
+      "json_schema_sha256": "3af27952a8cd25603f04aa98b9981f32401c06eec7fa1d161663367afdd425bb",
       "name": "OfflineReplayResult"
+    },
+    {
+      "fields": [
+        "schema_version",
+        "authorization_id",
+        "mission_id",
+        "capability_version",
+        "repository_identity",
+        "owner_identity",
+        "provenance",
+        "authenticity_boundary",
+        "authorized_main_sha",
+        "issued_at_utc",
+        "not_before_utc",
+        "expires_at_utc",
+        "allowed_sport_keys",
+        "allowed_region",
+        "allowed_market_sets",
+        "maximum_http_calls",
+        "maximum_credits",
+        "maximum_plan_items",
+        "approved_capture_root_fingerprint",
+        "approved_repository_root_fingerprint",
+        "approved_control_temp_root_fingerprint",
+        "approved_git_executable_sha256",
+        "approved_provider_ip_address",
+        "local_execution_boundary",
+        "authorization_nonce",
+        "canonical_authorization_hash"
+      ],
+      "json_schema_sha256": "3326137e4905449f3b8b7e07c88c8c20164b28b0e823c42d68f4011a6873eca8",
+      "name": "OwnerAuthorizationV1"
+    },
+    {
+      "fields": [
+        "schema_version",
+        "activation_id",
+        "authorization_id",
+        "authorization_hash",
+        "repository_sha",
+        "sport_key",
+        "region",
+        "markets",
+        "not_before_utc",
+        "expires_at_utc",
+        "maximum_http_calls",
+        "maximum_credits",
+        "plan_sha256",
+        "activation_nonce",
+        "activation_scope_sha256",
+        "canonical_activation_hash"
+      ],
+      "json_schema_sha256": "476a90d9857a26236580c05fdfd7142f43c94622b2d3f89acc799897acf04382",
+      "name": "ActivationEnvelopeV1"
+    },
+    {
+      "fields": [
+        "schema_version",
+        "plan_id",
+        "activation_id",
+        "activation_hash",
+        "repository_sha",
+        "created_at_utc",
+        "expires_at_utc",
+        "items",
+        "maximum_http_calls",
+        "maximum_credits",
+        "canonical_plan_hash"
+      ],
+      "json_schema_sha256": "72cabee2d77e5ff0779b85a33eb174ab404be649a54b3dd710cbb6d4130764f0",
+      "name": "LivePlanV1"
+    },
+    {
+      "fields": [
+        "schema_version",
+        "item_id",
+        "plan_id",
+        "sequence",
+        "sport_key",
+        "region",
+        "markets",
+        "provider_request_fingerprint",
+        "fixture_mappings_sha256",
+        "not_before_utc",
+        "expires_at_utc",
+        "maximum_http_calls",
+        "maximum_credits",
+        "purpose",
+        "window_label",
+        "canonical_item_hash"
+      ],
+      "json_schema_sha256": "9fc331ffb9812339c3805ffd03e712c816b4a758f3175527dfa9479d81ffc8a0",
+      "name": "LivePlanItemV1"
+    },
+    {
+      "fields": [
+        "schema_version",
+        "lease_id",
+        "authorization_id",
+        "authorization_hash",
+        "activation_id",
+        "activation_hash",
+        "repository_sha",
+        "plan_id",
+        "plan_hash",
+        "item_id",
+        "item_hash",
+        "request_fingerprint_sha256",
+        "authorization_binding_key_sha256",
+        "authorization_binding_payload_sha256",
+        "activation_binding_key_sha256",
+        "activation_binding_payload_sha256",
+        "acquired_at_utc",
+        "expires_at_utc",
+        "state"
+      ],
+      "json_schema_sha256": "76f764f346b0854645ad218788a75479ba1b2ee09f97c0150fecc7f2cc74f481",
+      "name": "LiveLeaseV1"
+    },
+    {
+      "fields": [
+        "schema_version",
+        "capture_root_fingerprint",
+        "authorization_id",
+        "authorization_hash",
+        "activation_id",
+        "activation_hash",
+        "repository_sha",
+        "plan_id",
+        "plan_hash",
+        "item_id",
+        "item_hash",
+        "request_fingerprint_sha256",
+        "lease_id",
+        "authorization_binding_key_sha256",
+        "authorization_binding_payload_sha256",
+        "activation_binding_key_sha256",
+        "activation_binding_payload_sha256",
+        "reserved_credits",
+        "dispatch_armed_marker_sha256",
+        "budget_dispatch_entry_sha256",
+        "canonical_permit_sha256"
+      ],
+      "json_schema_sha256": "391099c2fc057766bcc9f1e4d6ec9cd4500b46840e521ab497e1b4ef3395f3c6",
+      "name": "LiveAdmissionPermitV1"
+    },
+    {
+      "fields": [
+        "schema_version",
+        "canonical_intake_claim_sha256",
+        "canonical_permit_sha256",
+        "dispatch_started_marker_sha256",
+        "item_hash",
+        "payload_sha256",
+        "payload_byte_length",
+        "first_observed_at_utc",
+        "ingested_at_utc"
+      ],
+      "json_schema_sha256": "0aa48e2b74fd97358b9a2fcf9dfe51232e37b9728f23b580cddb5aa2188d331e",
+      "name": "LiveResponseIntakeClaimV1"
+    },
+    {
+      "fields": [
+        "schema_version",
+        "manifest_id",
+        "manifest_hash",
+        "request",
+        "request_fingerprint_sha256",
+        "expected_sport_key",
+        "expected_region",
+        "expected_markets",
+        "admission_permit",
+        "response_intake_claim",
+        "canonical_lineage_sha256"
+      ],
+      "json_schema_sha256": "8a156669342401a1403428dc55e44ff5d6fabd02fb5de2d12684b4543a6a7566",
+      "name": "LiveCaptureLineageV1"
+    },
+    {
+      "fields": [
+        "schema_version",
+        "execution_attempt_id",
+        "authorization_hash",
+        "activation_hash",
+        "plan_hash",
+        "item_hash",
+        "lease_id",
+        "request_fingerprint_sha256",
+        "response_intake_claim_sha256",
+        "dispatch_started_at_utc",
+        "first_observed_at_utc",
+        "ingested_at_utc",
+        "prepared_at_utc",
+        "http_status",
+        "network_calls",
+        "provider_calls",
+        "retries",
+        "redirects",
+        "secret_reads_count",
+        "payload_sha256",
+        "payload_byte_length",
+        "capture_receipt_id",
+        "manifest_id",
+        "manifest_hash",
+        "canonical_attempt_sha256"
+      ],
+      "json_schema_sha256": "7b7ae7309b6fd9f43d34e37ecba2c02fd20a8473fa4d72e91510da376856b5d9",
+      "name": "LiveExecutionAttemptReceiptV1"
+    },
+    {
+      "fields": [
+        "schema_version",
+        "execution_receipt_id",
+        "authorization_id",
+        "authorization_hash",
+        "activation_id",
+        "activation_hash",
+        "repository_sha",
+        "plan_id",
+        "plan_hash",
+        "item_id",
+        "item_hash",
+        "lease_id",
+        "lease_hash",
+        "request_fingerprint_sha256",
+        "response_intake_claim_sha256",
+        "execution_attempt_id",
+        "dispatch_started_at_utc",
+        "first_observed_at_utc",
+        "ingested_at_utc",
+        "terminal_at_utc",
+        "http_status",
+        "network_calls",
+        "provider_calls",
+        "retries",
+        "redirects",
+        "reserved_requests",
+        "reserved_credits",
+        "observed_quota",
+        "payload_sha256",
+        "payload_byte_length",
+        "intake_receipt_id",
+        "final_receipt_id",
+        "manifest_id",
+        "manifest_hash",
+        "offline_replay_verdict",
+        "secret_reads_count",
+        "secret_retained",
+        "terminal_disposition"
+      ],
+      "json_schema_sha256": "6b681f79bb674f22e1f7fbf9e9b6383bba824ef8dabe8419286cf3cd46fbca62",
+      "name": "LiveExecutionReceiptV1"
+    },
+    {
+      "fields": [
+        "schema_version",
+        "scheme",
+        "host",
+        "port",
+        "method",
+        "endpoint",
+        "sport_key",
+        "region",
+        "markets",
+        "odds_format",
+        "date_format",
+        "timeout_seconds",
+        "redirects",
+        "retries",
+        "certificate_verification_required",
+        "environment_proxy_allowed",
+        "maximum_response_bytes",
+        "approved_provider_ip_address"
+      ],
+      "json_schema_sha256": "48e174f82ffceb38d02b903596c8cfa9941cceab5e393b0eba35f617255c2583",
+      "name": "PublicProviderRequestV1"
     }
   ],
   "default_mode": "VALIDATE_OFFLINE",
@@ -192,7 +469,8 @@
     },
     "LIVE_CANARY": {
       "authorized": false,
-      "status": "DISABLED_NOT_AUTHORIZED"
+      "capability_available": true,
+      "status": "DEFAULT_DENY_EXTERNAL_OWNER_AUTHORIZATION_REQUIRED"
     },
     "VALIDATE_OFFLINE": {
       "network_calls": 0,
@@ -222,6 +500,14 @@
     "manifests/<snapshot_id>.json",
     "quarantine/",
     "deletion-ledger.jsonl",
-    "budget-ledger.jsonl"
+    "budget-ledger.jsonl",
+    "live/authority-bindings/",
+    "live/leases/",
+    "live/dispatch-armed/",
+    "live/capture-lineage/",
+    "live/execution-attempts/",
+    "live/execution-receipts/",
+    "live/terminal/",
+    "live-budget-ledger.jsonl"
   ]
 }

@@ -1,0 +1,16 @@
+{
+  "mission_id": "BOUNDED_MULTI_LEAGUE_LIVE_CANARY_CAPABILITY_V1",
+  "authorized_stages": ["E1"],
+  "maximum_stage": "E1",
+  "external_effects": [
+    "local_temporary_synthetic_capture_write",
+    "git_remote_write_non_force",
+    "github_pull_request_write",
+    "github_merge_commit",
+    "github_actions_observe"
+  ],
+  "compute_budget": 5000,
+  "time_budget": 345600,
+  "source_hash": "1dc339d2561fc97383c14fb3da10b17a6a2b754cba583937b0c0b399fecceda2",
+  "expires_at": "2026-08-25T23:59:59Z"
+}

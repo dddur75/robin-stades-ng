@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 from collections.abc import Iterable, Mapping
 from datetime import UTC, datetime
 from decimal import Decimal, InvalidOperation
@@ -38,11 +39,55 @@ def _reject_duplicate_keys(pairs: list[tuple[str, object]]) -> dict[str, object]
 
 
 def decode_json_payload(payload: bytes) -> JsonValue:
+    def reject_constant(_value: str) -> None:
+        raise CaptureValidationError("CAPTURE_JSON_NON_FINITE_NUMBER")
+
+    def parse_float(value: str) -> float:
+        parsed = float(value)
+        if not math.isfinite(parsed):
+            raise CaptureValidationError("CAPTURE_JSON_NON_FINITE_NUMBER")
+        return parsed
+
+    def parse_int(value: str) -> int:
+        if len(value.removeprefix("-")) > 19:
+            raise CaptureValidationError("CAPTURE_JSON_INTEGER_OUT_OF_RANGE")
+        parsed = int(value)
+        if not -(2**63) <= parsed < 2**63:
+            raise CaptureValidationError("CAPTURE_JSON_INTEGER_OUT_OF_RANGE")
+        return parsed
+
     try:
         text = payload.decode("utf-8", errors="strict")
-        value = json.loads(text, object_pairs_hook=_reject_duplicate_keys)
-    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        value = json.loads(
+            text,
+            object_pairs_hook=_reject_duplicate_keys,
+            parse_constant=reject_constant,
+            parse_float=parse_float,
+            parse_int=parse_int,
+        )
+    except CaptureValidationError:
+        raise
+    except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
         raise CaptureValidationError("CAPTURE_JSON_INVALID") from exc
+    except RecursionError as exc:
+        raise CaptureValidationError("CAPTURE_JSON_DEPTH_EXCEEDED") from exc
+    stack: list[tuple[object, int]] = [(value, 0)]
+    nodes = 0
+    while stack:
+        current, depth = stack.pop()
+        nodes += 1
+        if depth > 64 or nodes > 100_000:
+            raise CaptureValidationError("CAPTURE_JSON_COMPLEXITY_EXCEEDED")
+        if isinstance(current, dict):
+            if any(0xD800 <= ord(character) <= 0xDFFF for key in current for character in key):
+                raise CaptureValidationError("CAPTURE_JSON_SURROGATE_FORBIDDEN")
+            stack.extend((child, depth + 1) for child in current.values())
+        elif isinstance(current, list):
+            stack.extend((child, depth + 1) for child in current)
+        elif isinstance(current, str) and any(
+            0xD800 <= ord(character) <= 0xDFFF for character in current
+        ):
+            raise CaptureValidationError("CAPTURE_JSON_SURROGATE_FORBIDDEN")
     return cast(JsonValue, value)
 
 
@@ -262,6 +307,8 @@ def normalize_payload(
     *,
     receipt: RawPayloadReceipt,
     mappings: tuple[FixtureMapping, ...],
+    allowed_markets: tuple[str, ...] | None = None,
+    expected_sport_key: str | None = None,
 ) -> tuple[SchemaFingerprint, tuple[NormalizedMarketObservation, ...]]:
     if not isinstance(value, list):
         raise CaptureValidationError("CAPTURE_PAYLOAD_ROOT_NOT_ARRAY")
@@ -272,6 +319,13 @@ def normalize_payload(
 
     for raw_event in value:
         event = _object(raw_event, code="CAPTURE_EVENT_INVALID")
+        if expected_sport_key is not None:
+            event_sport_key = _string(
+                event.get("sport_key"),
+                code="CAPTURE_EVENT_SPORT_KEY_INVALID",
+            )
+            if event_sport_key != expected_sport_key:
+                raise CaptureValidationError("CAPTURE_EVENT_SPORT_KEY_MISMATCH")
         event_id = _string(event.get("id"), code="CAPTURE_EVENT_ID_INVALID")
         if event_id in seen_event_ids:
             raise CaptureValidationError("CAPTURE_EVENT_DUPLICATED")
@@ -287,9 +341,7 @@ def normalize_payload(
         seen_bookmakers: set[str] = set()
         for raw_bookmaker in bookmakers:
             bookmaker = _object(raw_bookmaker, code="CAPTURE_BOOKMAKER_INVALID")
-            bookmaker_key = _string(
-                bookmaker.get("key"), code="CAPTURE_BOOKMAKER_KEY_INVALID"
-            )
+            bookmaker_key = _string(bookmaker.get("key"), code="CAPTURE_BOOKMAKER_KEY_INVALID")
             if bookmaker_key in seen_bookmakers:
                 raise CaptureValidationError("CAPTURE_BOOKMAKER_DUPLICATED")
             seen_bookmakers.add(bookmaker_key)
@@ -298,6 +350,8 @@ def normalize_payload(
             for raw_market in markets:
                 market = _object(raw_market, code="CAPTURE_MARKET_INVALID")
                 market_key = _string(market.get("key"), code="CAPTURE_MARKET_KEY_INVALID")
+                if allowed_markets is not None and market_key not in allowed_markets:
+                    raise CaptureValidationError("CAPTURE_UNREQUESTED_MARKET")
                 if market_key not in {"h2h", "totals"}:
                     continue
                 if market_key in seen_markets:
@@ -316,6 +370,8 @@ def normalize_payload(
                     )
                 else:
                     complete = _complete_totals(outcomes)
+                if allowed_markets is not None and not complete:
+                    raise CaptureValidationError("CAPTURE_REQUESTED_MARKET_INCOMPLETE")
                 for outcome_name, price, point in complete:
                     rows.append(
                         _ObservationCore(
@@ -332,6 +388,8 @@ def normalize_payload(
                             available_at=available_at,
                         )
                     )
+            if allowed_markets is not None and seen_markets != set(allowed_markets):
+                raise CaptureValidationError("CAPTURE_REQUESTED_MARKET_MISSING")
 
     if seen_event_ids != set(mapping_by_event):
         raise CaptureValidationError("CAPTURE_FIXTURE_MAPPING_UNUSED")
