@@ -207,6 +207,46 @@ def test_contained_command_success_returns_strict_utf8_stdout() -> None:
     assert stdout == "contained-ok\n"
 
 
+@pytest.mark.skipif(os.name != "nt", reason="Windows Job Object accounting")
+def test_windows_success_waits_for_job_accounting_to_settle(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    real_active_processes = workspace_bootstrap._WindowsJobObject.active_processes
+    stale_zero_observations = 0
+
+    def active_processes_with_settlement_lag(
+        job: workspace_bootstrap._WindowsJobObject,
+    ) -> int:
+        nonlocal stale_zero_observations
+        active_processes = real_active_processes(job)
+        if active_processes == 0 and stale_zero_observations < 3:
+            stale_zero_observations += 1
+            return 1
+        return active_processes
+
+    monkeypatch.setattr(
+        workspace_bootstrap._WindowsJobObject,
+        "active_processes",
+        active_processes_with_settlement_lag,
+    )
+
+    stdout = SubprocessCommandRunner().run(
+        (
+            os.path.abspath(sys.executable),
+            "-I",
+            "-B",
+            "-c",
+            "print('settled-ok')",
+        ),
+        cwd=None,
+        environment=_isolated_python_environment(),
+        timeout_seconds=5,
+    )
+
+    assert stdout == "settled-ok\n"
+    assert stale_zero_observations == 3
+
+
 def test_contained_command_start_failure_is_sanitized(tmp_path: Path) -> None:
     missing = tmp_path / "missing-command.exe"
     with pytest.raises(WorkspaceBootstrapError, match="WORKSPACE_COMMAND_START_FAILED"):

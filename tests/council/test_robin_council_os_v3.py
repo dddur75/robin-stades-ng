@@ -799,9 +799,9 @@ def test_jalon4_wall_clock_decay_fix_authority_and_succession_are_exact() -> Non
 
     graph = load_json("reports/evidence/evidence-graph.json")
     claims = {claim["claim_id"]: claim for claim in graph["claims"]}
-    assert len(graph["claims"]) == 404
-    assert len(graph["decision_nodes"]) == 166
-    assert len(graph["edges"]) == 698
+    assert len(graph["claims"]) == 409
+    assert len(graph["decision_nodes"]) == 167
+    assert len(graph["edges"]) == 707
     expected_statuses = {
         expected_proof[0]: "SUPERSEDED",
         expected_proof[1]: "SUPERSEDED",
@@ -936,9 +936,9 @@ def test_bounded_live_canary_successor_v2_authority_and_succession_are_exact() -
 
     graph = load_json("reports/evidence/evidence-graph.json")
     claims = {claim["claim_id"]: claim for claim in graph["claims"]}
-    assert len(graph["claims"]) == 404
-    assert len(graph["decision_nodes"]) == 166
-    assert len(graph["edges"]) == 698
+    assert len(graph["claims"]) == 409
+    assert len(graph["decision_nodes"]) == 167
+    assert len(graph["edges"]) == 707
     assert {claim_id: claims[claim_id]["status"] for claim_id in expected_proof} == {
         expected_proof[0]: "SUPERSEDED",
         expected_proof[1]: "SUPERSEDED",
@@ -1067,9 +1067,9 @@ def test_real_execution_bootstrap_closure_v1_authority_and_succession_are_exact(
 
     graph = load_json("reports/evidence/evidence-graph.json")
     claims = {claim["claim_id"]: claim for claim in graph["claims"]}
-    assert len(graph["claims"]) == 404
-    assert len(graph["decision_nodes"]) == 166
-    assert len(graph["edges"]) == 698
+    assert len(graph["claims"]) == 409
+    assert len(graph["decision_nodes"]) == 167
+    assert len(graph["edges"]) == 707
     assert {claim_id: claims[claim_id]["status"] for claim_id in expected_proof} == {
         expected_proof[0]: "SUPERSEDED",
         expected_proof[1]: "SUPERSEDED",
@@ -1320,9 +1320,9 @@ def test_real_execution_bootstrap_closure_v1_authority_and_succession_are_exact(
     assert postmerge_context["external_effects"] == record["context"]["external_effects"]
     assert postmerge_context["provider_dns_budget"] == {"used": 0, "remaining": 1}
     assert {claim_id: claims[claim_id]["status"] for claim_id in postmerge_correction_proof} == {
-        postmerge_correction_proof[0]: "PARTIAL",
-        postmerge_correction_proof[1]: "PARTIAL",
-        **{claim_id: "VERIFIED" for claim_id in postmerge_correction_proof[2:]},
+        **{claim_id: "SUPERSEDED" for claim_id in postmerge_correction_proof[:4]},
+        **{claim_id: "VERIFIED" for claim_id in postmerge_correction_proof[4:8]},
+        postmerge_correction_proof[8]: "SUPERSEDED",
     }
     postmerge_successors = {
         correction_proof[0]: postmerge_correction_proof[0],
@@ -1350,6 +1350,188 @@ def test_real_execution_bootstrap_closure_v1_authority_and_succession_are_exact(
         f"EDGE.{number}" for number in range(690, 699)
     ]
     assert [edge["from_claim_id"] for edge in postmerge_edges] == (postmerge_correction_proof)
+
+    accounting_correction_proof = [
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.024",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.033",
+        "PORTABILITY.REAL_EXECUTION_BOOTSTRAP.WORKSPACE.FULL_CLONE.JOB_ACCOUNTING.SETTLEMENT.V1.001",
+        "PORTABILITY.REAL_EXECUTION_BOOTSTRAP.WORKSPACE.FULL_CLONE.JOB_ACCOUNTING.REGRESSION.V1.001",
+        "DATA.REAL_EXECUTION_BOOTSTRAP.CLOSURE.DP6.REVIEW.V1.001",
+        "SECURITY.REAL_EXECUTION_BOOTSTRAP.CLOSURE.C4.REVIEW.V1.001",
+        "GOV.REAL_EXECUTION_BOOTSTRAP.CLOSURE.C2.REVIEW.V1.001",
+        "GOV.REAL_EXECUTION_BOOTSTRAP.CLOSURE.FINAL.REVIEW.V1.001",
+        "GOV.COUNCIL.REAL_EXECUTION_BOOTSTRAP.CLOSURE.EVIDENCE.SUCCESSION.LEDGER.V1.004",
+    ]
+    accounting_correction = next(
+        item for item in ledger if item["decision_id"] == "RCV3-20260822-174"
+    )
+    assert accounting_correction["previous_hash"] == postmerge_correction["hash"]
+    assert accounting_correction["proof"] == accounting_correction_proof
+    assert accounting_correction["decision"] == "PASS_AND_HOLD"
+    accounting_context = accounting_correction["context"]
+    assert accounting_context["candidate_context"] is True
+    assert accounting_context["commit_context"] is False
+    assert accounting_context["base_revision"] == ("c40e59f52ad55beb18ca65aeeac4afdcb469d99e")
+    assert accounting_context["correction_candidate_parent_sha"] == (
+        "c40e59f52ad55beb18ca65aeeac4afdcb469d99e"
+    )
+    assert accounting_context["files"] == [
+        "reports/council/decision-ledger.jsonl",
+        "reports/evidence/evidence-graph.json",
+        "src/robin/capture/workspace_bootstrap.py",
+        "tests/capture/test_real_capture_workspace_bootstrap.py",
+        "tests/council/test_robin_council_os_v3.py",
+    ]
+    assert accounting_context["scope"] == {
+        "allowed_paths": 38,
+        "corrective_changed_paths": 5,
+        "pull_request_changed_paths": 5,
+        "outside_allowlist": [],
+        "allowlist_sha256": ("0f7ecdb5faf9421fd7d7558810efdc9fb9363641dcd9adb1e7eadb98710b2b6b"),
+    }
+    assert accounting_context["failed_postmerge_main_ci"] == {
+        "run_id": 32588435694,
+        "event": "push",
+        "attempt": 1,
+        "head_sha": "c40e59f52ad55beb18ca65aeeac4afdcb469d99e",
+        "status": "completed",
+        "conclusion": "failure",
+        "completed_at_utc": "2026-08-22T18:06:25Z",
+        "job_conclusions": {"success": 12, "failure": 2, "skipped": 2},
+        "rerun_performed": False,
+        "root_cause_job_ids": [97068256979],
+        "failed_jobs": [
+            {
+                "job_id": 97068256979,
+                "name": "Bounded live canary - Windows",
+                "classification": "INDEPENDENT_ROOT_CAUSE",
+                "independent_defect": True,
+                "failed_step_number": 8,
+                "failed_step": "Compiler et tester la capacité bornée",
+                "failed_step_completed_at_utc": "2026-08-22T17:50:18Z",
+                "pytest_passed": 401,
+                "pytest_failed": 1,
+                "pytest_duration_seconds": 438.31,
+                "failing_test": ("test_contained_command_success_returns_strict_utf8_stdout"),
+                "error_code": "WORKSPACE_COMMAND_RESIDUAL_DESCENDANT",
+            },
+            {
+                "job_id": 97071527791,
+                "name": "tests",
+                "classification": "FAIL_CLOSED_PREREQUISITE_PROPAGATION",
+                "independent_defect": False,
+                "root_cause_job_ids": [97068256979],
+                "failed_step_number": 3,
+                "failed_step": "Refuser tout prerequis absent, annule ou en echec",
+                "failed_step_completed_at_utc": "2026-08-22T18:06:22Z",
+                "downstream_test_steps_skipped": True,
+            },
+        ],
+    }
+    assert accounting_context["aborted_postmerge_create"] == {
+        "total_create_attempt_ordinal": 2,
+        "runtime_root": "${LOCALAPPDATA}/RobinRuntimeBootstrapClosureV1",
+        "status": "ABORTED_SAFETY_HOLD_ON_FAILED_MERGED_MAIN_CI",
+        "creation_receipt_created": False,
+        "authority_receipt_created": False,
+        "wrapper_interrupt_terminated_owner": False,
+        "failed_root_retained": True,
+        "failed_root_reuse_authorized": False,
+        "failed_root_cleanup_authorized": False,
+    }
+    assert accounting_context["safety_termination"] == {
+        "job_owner_pid": 57224,
+        "tracked_process_ids": [52976, 57224, 23268, 13404, 31340, 49232, 37716, 55528],
+        "job_owner_force_terminated_once": True,
+        "windows_kill_on_job_close": True,
+        "confirmation_delay_milliseconds": 750,
+        "tracked_survivor_count": 0,
+        "retry_performed": False,
+    }
+    assert accounting_context["retry_semantics"] == {
+        "total_create_attempts": 2,
+        "original_clone_timeout_same_failure_ordinal": 1,
+        "attempt_2_is_same_failure": False,
+        "provider_retries": 0,
+        "next_total_create_attempt_ordinal": 3,
+        "next_attempt_requires_corrective_merge": True,
+        "next_attempt_requires_exact_merged_main_ci_success": True,
+        "next_attempt_requires_fresh_root": True,
+        "original_failure_recurrence_action": "FAIL_AND_REDESIGN_RETURN_E1",
+        "further_same_failure_attempt_authorized": False,
+    }
+    assert accounting_context["corrected_contract"] == {
+        "windows_normal_exit_quiescence_grace_seconds": 1.0,
+        "maximum_poll_interval_seconds": 0.025,
+        "monotonic_deadline": True,
+        "success_requires_observed_zero_active_processes": True,
+        "persistent_nonzero_terminates_and_confirms": True,
+        "persistent_nonzero_error": "WORKSPACE_COMMAND_RESIDUAL_DESCENDANT",
+        "user_controlled_grace": False,
+        "partial_state_reuse_forbidden": True,
+        "automatic_partial_state_cleanup": False,
+    }
+    assert accounting_context["reviews"] == {
+        reviewer: {
+            "verdict": "ACCEPT",
+            "p0": 0,
+            "p1": 0,
+            "p2": 0,
+            "open_threads": 0,
+        }
+        for reviewer in ("DP6", "C4", "C2")
+    }
+    assert accounting_context["delivery_authority"] == {
+        "continuation_derived_from_unfulfilled_owner_outcome": True,
+        "matrix_grants_additional_pull_request": False,
+        "rcv173_grants_additional_pull_request": False,
+        "one_corrective_commit_authorized_now": True,
+        "one_non_force_push_authorized_now": True,
+        "new_draft_pull_request_authorized_now": True,
+        "automatic_new_exact_head_ci_required": True,
+        "failed_main_run_rerun_authorized": False,
+        "runtime_retry_authorized_before_corrective_merge_and_main_ci": False,
+        "ready_authorized_now": False,
+        "merge_authorized_now": False,
+        "force_push_authorized": False,
+        "squash_merge_authorized": False,
+        "rebase_merge_authorized": False,
+        "admin_bypass_authorized": False,
+        "branch_deletion_authorized": False,
+    }
+    assert accounting_context["external_effects"] == postmerge_context["external_effects"]
+    assert accounting_context["provider_dns_budget"] == {"used": 0, "remaining": 1}
+    assert {claim_id: claims[claim_id]["status"] for claim_id in accounting_correction_proof} == {
+        accounting_correction_proof[0]: "PARTIAL",
+        accounting_correction_proof[1]: "PARTIAL",
+        **{claim_id: "VERIFIED" for claim_id in accounting_correction_proof[2:]},
+    }
+    accounting_successors = {
+        postmerge_correction_proof[0]: accounting_correction_proof[0],
+        postmerge_correction_proof[1]: accounting_correction_proof[1],
+        postmerge_correction_proof[2]: accounting_correction_proof[2],
+        postmerge_correction_proof[3]: accounting_correction_proof[3],
+        postmerge_correction_proof[8]: accounting_correction_proof[8],
+    }
+    for predecessor, successor in accounting_successors.items():
+        assert claims[predecessor]["status"] == "SUPERSEDED"
+        assert claims[predecessor]["superseded_by"] == successor
+
+    accounting_node = next(
+        item
+        for item in graph["decision_nodes"]
+        if item["decision_id"] == accounting_correction["decision_id"]
+    )
+    assert accounting_node["ledger_record_hash"] == accounting_correction["hash"]
+    accounting_edges = [
+        edge
+        for edge in graph["edges"]
+        if edge["to_decision_id"] == accounting_correction["decision_id"]
+    ]
+    assert [edge["edge_id"] for edge in accounting_edges] == [
+        f"EDGE.{number}" for number in range(699, 708)
+    ]
+    assert [edge["from_claim_id"] for edge in accounting_edges] == (accounting_correction_proof)
 
 
 def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it() -> None:

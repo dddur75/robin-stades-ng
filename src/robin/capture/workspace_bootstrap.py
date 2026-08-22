@@ -44,6 +44,7 @@ _SMALL_GIT_COMMAND_TIMEOUT_SECONDS = 120
 _GIT_CLONE_TIMEOUT_SECONDS = 3_600
 _GIT_CHECKOUT_TIMEOUT_SECONDS = 900
 _GIT_FSCK_TIMEOUT_SECONDS = 1_800
+_WINDOWS_NORMAL_EXIT_QUIESCENCE_GRACE_SECONDS = 1.0
 _COMMAND_TERMINATION_GRACE_SECONDS = 10.0
 _POSIX_SOFT_TERMINATION_GRACE_SECONDS = 1.0
 
@@ -317,6 +318,15 @@ class _WindowsJobObject:
             raise WorkspaceBootstrapError("WORKSPACE_COMMAND_TERMINATION_UNCONFIRMED")
         return int(accounting.ActiveProcesses)
 
+    def wait_for_quiescence(self, timeout_seconds: float) -> bool:
+        deadline = time.monotonic() + max(0.0, timeout_seconds)
+        while self.active_processes() != 0:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                return False
+            time.sleep(min(0.025, remaining))
+        return True
+
     def terminate_and_confirm(self) -> None:
         try:
             active_processes = self.active_processes()
@@ -457,7 +467,7 @@ class SubprocessCommandRunner:
                 self._terminate_windows_command(job, gate)
                 raise
 
-            if job.active_processes() != 0:
+            if not job.wait_for_quiescence(_WINDOWS_NORMAL_EXIT_QUIESCENCE_GRACE_SECONDS):
                 self._terminate_windows_command(job, gate)
                 raise WorkspaceBootstrapError("WORKSPACE_COMMAND_RESIDUAL_DESCENDANT")
             return self._decode_result(
