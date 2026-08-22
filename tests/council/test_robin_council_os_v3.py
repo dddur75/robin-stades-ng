@@ -799,9 +799,9 @@ def test_jalon4_wall_clock_decay_fix_authority_and_succession_are_exact() -> Non
 
     graph = load_json("reports/evidence/evidence-graph.json")
     claims = {claim["claim_id"]: claim for claim in graph["claims"]}
-    assert len(graph["claims"]) == 399
-    assert len(graph["decision_nodes"]) == 165
-    assert len(graph["edges"]) == 689
+    assert len(graph["claims"]) == 404
+    assert len(graph["decision_nodes"]) == 166
+    assert len(graph["edges"]) == 698
     expected_statuses = {
         expected_proof[0]: "SUPERSEDED",
         expected_proof[1]: "SUPERSEDED",
@@ -936,9 +936,9 @@ def test_bounded_live_canary_successor_v2_authority_and_succession_are_exact() -
 
     graph = load_json("reports/evidence/evidence-graph.json")
     claims = {claim["claim_id"]: claim for claim in graph["claims"]}
-    assert len(graph["claims"]) == 399
-    assert len(graph["decision_nodes"]) == 165
-    assert len(graph["edges"]) == 689
+    assert len(graph["claims"]) == 404
+    assert len(graph["decision_nodes"]) == 166
+    assert len(graph["edges"]) == 698
     assert {claim_id: claims[claim_id]["status"] for claim_id in expected_proof} == {
         expected_proof[0]: "SUPERSEDED",
         expected_proof[1]: "SUPERSEDED",
@@ -1067,9 +1067,9 @@ def test_real_execution_bootstrap_closure_v1_authority_and_succession_are_exact(
 
     graph = load_json("reports/evidence/evidence-graph.json")
     claims = {claim["claim_id"]: claim for claim in graph["claims"]}
-    assert len(graph["claims"]) == 399
-    assert len(graph["decision_nodes"]) == 165
-    assert len(graph["edges"]) == 689
+    assert len(graph["claims"]) == 404
+    assert len(graph["decision_nodes"]) == 166
+    assert len(graph["edges"]) == 698
     assert {claim_id: claims[claim_id]["status"] for claim_id in expected_proof} == {
         expected_proof[0]: "SUPERSEDED",
         expected_proof[1]: "SUPERSEDED",
@@ -1177,9 +1177,13 @@ def test_real_execution_bootstrap_closure_v1_authority_and_succession_are_exact(
     }
     assert correction["context"]["external_effects"] == record["context"]["external_effects"]
     assert {claim_id: claims[claim_id]["status"] for claim_id in correction_proof} == {
-        correction_proof[0]: "PARTIAL",
-        correction_proof[1]: "PARTIAL",
-        **{claim_id: "VERIFIED" for claim_id in correction_proof[2:]},
+        correction_proof[0]: "SUPERSEDED",
+        correction_proof[1]: "SUPERSEDED",
+        correction_proof[2]: "SUPERSEDED",
+        correction_proof[3]: "VERIFIED",
+        correction_proof[4]: "SUPERSEDED",
+        **{claim_id: "VERIFIED" for claim_id in correction_proof[5:9]},
+        correction_proof[9]: "SUPERSEDED",
     }
     correction_successors = {
         expected_proof[0]: correction_proof[0],
@@ -1201,6 +1205,151 @@ def test_real_execution_bootstrap_closure_v1_authority_and_succession_are_exact(
         f"EDGE.{number}" for number in range(680, 690)
     ]
     assert [edge["from_claim_id"] for edge in correction_edges] == correction_proof
+
+    postmerge_correction_proof = [
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.023",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.032",
+        "PORTABILITY.REAL_EXECUTION_BOOTSTRAP.WORKSPACE.FULL_CLONE.TIMEOUT.BUDGET.V1.001",
+        "PORTABILITY.REAL_EXECUTION_BOOTSTRAP.WORKSPACE.FULL_CLONE.TIMEOUT.REGRESSION.V1.001",
+        "DATA.REAL_EXECUTION_BOOTSTRAP.CLOSURE.DP6.REVIEW.V1.001",
+        "SECURITY.REAL_EXECUTION_BOOTSTRAP.CLOSURE.C4.REVIEW.V1.001",
+        "GOV.REAL_EXECUTION_BOOTSTRAP.CLOSURE.C2.REVIEW.V1.001",
+        "GOV.REAL_EXECUTION_BOOTSTRAP.CLOSURE.FINAL.REVIEW.V1.001",
+        "GOV.COUNCIL.REAL_EXECUTION_BOOTSTRAP.CLOSURE.EVIDENCE.SUCCESSION.LEDGER.V1.003",
+    ]
+    postmerge_correction = next(
+        item for item in ledger if item["decision_id"] == "RCV3-20260822-173"
+    )
+    assert postmerge_correction["previous_hash"] == correction["hash"]
+    assert postmerge_correction["proof"] == postmerge_correction_proof
+    assert postmerge_correction["decision"] == "PASS_AND_HOLD"
+    postmerge_context = postmerge_correction["context"]
+    assert postmerge_context["candidate_context"] is True
+    assert postmerge_context["commit_context"] is False
+    assert postmerge_context["base_revision"] == ("d50fb62f04549f5a0413cf91d3f3fe88b1c5e9a6")
+    assert postmerge_context["correction_candidate_parent_sha"] == (
+        "d50fb62f04549f5a0413cf91d3f3fe88b1c5e9a6"
+    )
+    assert postmerge_context["files"] == [
+        "reports/council/decision-ledger.jsonl",
+        "reports/evidence/evidence-graph.json",
+        "src/robin/capture/workspace_bootstrap.py",
+        "tests/capture/test_real_capture_workspace_bootstrap.py",
+        "tests/council/test_robin_council_os_v3.py",
+    ]
+    assert postmerge_context["scope"] == {
+        "allowed_paths": 38,
+        "corrective_changed_paths": 5,
+        "pull_request_changed_paths": 5,
+        "outside_allowlist": [],
+        "allowlist_sha256": ("0f7ecdb5faf9421fd7d7558810efdc9fb9363641dcd9adb1e7eadb98710b2b6b"),
+    }
+    failed_create = postmerge_context["failed_postmerge_create"]
+    assert failed_create == {
+        "authorized_main_sha": "d50fb62f04549f5a0413cf91d3f3fe88b1c5e9a6",
+        "runtime_root": "${LOCALAPPDATA}/RobinRuntime",
+        "create_timeout_seconds": 300,
+        "status": "FAILED",
+        "error_code": "WORKSPACE_COMMAND_FAILED",
+        "creation_receipt_created": False,
+        "authority_receipt_created": False,
+        "staging_pack_bytes": 2_998_659_804,
+        "pack_first_observed_at_utc": "2026-08-22T15:30:53.5753938Z",
+        "pack_finalized_at_utc": "2026-08-22T15:45:27.4989281Z",
+        "pack_write_span_seconds": 873.9235343,
+        "late_origin_main_sha": "d50fb62f04549f5a0413cf91d3f3fe88b1c5e9a6",
+        "runtime_repository_created": False,
+        "checkout_completed": False,
+        "final_validation_completed": False,
+        "post_timeout_descendant_effect_observed": True,
+        "failed_root_retained": True,
+        "failed_root_reuse_authorized": False,
+        "failed_root_cleanup_authorized": False,
+    }
+    assert postmerge_context["corrected_contract"] == {
+        "full_clone_timeout_seconds": 3600,
+        "checkout_timeout_seconds": 900,
+        "fsck_timeout_seconds": 1800,
+        "small_git_read_timeout_seconds": 120,
+        "windows_job_object_kill_on_close": True,
+        "windows_target_launch_blocked_until_job_assignment": True,
+        "timeout_returns_only_after_process_tree_quiescence": True,
+        "posix_process_group_termination": True,
+        "partial_state_reuse_forbidden": True,
+        "automatic_partial_state_cleanup": False,
+        "user_controlled_timeout": False,
+    }
+    assert postmerge_context["defects"] == {
+        "open_p0": 0,
+        "open_p1": 0,
+        "open_p2": 0,
+        "open_critical_threads": 0,
+        "resolved_defect_ids": [
+            "TASKD-POSTMERGE-CLONE-TIMEOUT-001",
+            "TASKD-POSTMERGE-TIMEOUT-DESCENDANT-002",
+        ],
+        "similar_failure_ordinal": 1,
+        "next_same_failure_action": "FAIL_AND_REDESIGN_RETURN_E1",
+        "third_same_attempt_authorized": False,
+    }
+    assert postmerge_context["reviews"] == {
+        reviewer: {
+            "verdict": "ACCEPT",
+            "p0": 0,
+            "p1": 0,
+            "p2": 0,
+            "open_threads": 0,
+        }
+        for reviewer in ("DP6", "C4", "C2")
+    }
+    assert postmerge_context["delivery_authority"] == {
+        "postmerge_consequential_corrective_pr_derived_from_unfulfilled_owner_outcome": True,
+        "one_corrective_commit_authorized_now": True,
+        "one_non_force_push_authorized_now": True,
+        "new_draft_pull_request_authorized_now": True,
+        "automatic_new_exact_head_ci_required": True,
+        "failed_runtime_retry_authorized_before_corrective_merge": False,
+        "ready_authorized_now": False,
+        "merge_authorized_now": False,
+        "force_push_authorized": False,
+        "squash_merge_authorized": False,
+        "rebase_merge_authorized": False,
+        "admin_bypass_authorized": False,
+        "branch_deletion_authorized": False,
+    }
+    assert postmerge_context["external_effects"] == record["context"]["external_effects"]
+    assert postmerge_context["provider_dns_budget"] == {"used": 0, "remaining": 1}
+    assert {claim_id: claims[claim_id]["status"] for claim_id in postmerge_correction_proof} == {
+        postmerge_correction_proof[0]: "PARTIAL",
+        postmerge_correction_proof[1]: "PARTIAL",
+        **{claim_id: "VERIFIED" for claim_id in postmerge_correction_proof[2:]},
+    }
+    postmerge_successors = {
+        correction_proof[0]: postmerge_correction_proof[0],
+        correction_proof[1]: postmerge_correction_proof[1],
+        correction_proof[2]: postmerge_correction_proof[2],
+        correction_proof[4]: postmerge_correction_proof[3],
+        correction_proof[9]: postmerge_correction_proof[8],
+    }
+    for predecessor, successor in postmerge_successors.items():
+        assert claims[predecessor]["status"] == "SUPERSEDED"
+        assert claims[predecessor]["superseded_by"] == successor
+
+    postmerge_node = next(
+        item
+        for item in graph["decision_nodes"]
+        if item["decision_id"] == postmerge_correction["decision_id"]
+    )
+    assert postmerge_node["ledger_record_hash"] == postmerge_correction["hash"]
+    postmerge_edges = [
+        edge
+        for edge in graph["edges"]
+        if edge["to_decision_id"] == postmerge_correction["decision_id"]
+    ]
+    assert [edge["edge_id"] for edge in postmerge_edges] == [
+        f"EDGE.{number}" for number in range(690, 699)
+    ]
+    assert [edge["from_claim_id"] for edge in postmerge_edges] == (postmerge_correction_proof)
 
 
 def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it() -> None:
