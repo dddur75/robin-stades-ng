@@ -1,0 +1,71 @@
+{
+  "schema_version": "robin-real-execution-bootstrap-final-review-v3",
+  "mission_id": "REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1",
+  "reviewed_at": "2026-08-22T12:16:28Z",
+  "base_revision": "0591f01c580eb853890e9c1c304a78c21ba9de63",
+  "branch": "codex/real-execution-bootstrap-closure-v1",
+  "reviewed_scope": "ADDITIVE_V2_BOOTSTRAP_CLOSURE_ENGINEERING_WITH_ZERO_PREMERGE_REAL_EFFECTS",
+  "claim_id": "GOV.REAL_EXECUTION_BOOTSTRAP.CLOSURE.FINAL.REVIEW.V1.001",
+  "reviewers": [
+    {
+      "agent_id": "DP6",
+      "axis": "DATA_RECEIPT_POST_CAPTURE_MAPPING_CAUSALITY_REPLAY",
+      "report": "reports/council/real-execution-bootstrap-dp6-review-v3.json",
+      "verdict": "ACCEPT",
+      "open_p0": 0,
+      "open_p1": 0,
+      "open_p2": 0,
+      "open_critical_threads": 0
+    },
+    {
+      "agent_id": "C4",
+      "axis": "NETWORK_BINDING_DNS_SECRET_TRANSPORT_LOCAL_ROOTS",
+      "report": "reports/council/real-execution-bootstrap-c4-review-v3.json",
+      "verdict": "ACCEPT",
+      "open_p0": 0,
+      "open_p1": 0,
+      "open_p2": 0,
+      "open_critical_threads": 0
+    },
+    {
+      "agent_id": "C2",
+      "axis": "OWNER_AUTHORITY_GOVERNANCE_TEMPORAL_SCOPE",
+      "report": "reports/council/real-execution-bootstrap-c2-review-v3.json",
+      "verdict": "ACCEPT",
+      "open_p0": 0,
+      "open_p1": 0,
+      "open_p2": 0,
+      "open_critical_threads": 0
+    }
+  ],
+  "aggregate_gate": {
+    "open_p0": 0,
+    "open_p1": 0,
+    "open_p2": 0,
+    "open_critical_threads": 0,
+    "independent_review_count": 3,
+    "required_axes_covered": true
+  },
+  "real_effects": {
+    "engineering_provider_dns_resolutions": 0,
+    "provider_tcp_connections": 0,
+    "provider_http_calls": 0,
+    "real_secret_reads": 0,
+    "real_capture_calls": 0,
+    "real_batch": "NOT_EXECUTED",
+    "real_snapshot": "NOT_CREATED"
+  },
+  "delivery_gate": {
+    "draft_delivery_authorized": true,
+    "ready_for_review_authorized": false,
+    "merge_authorized": false,
+    "exact_head_ci": "PENDING",
+    "github_review_threads": "NOT_OBSERVED_PRE_PR",
+    "mergeable_state": "NOT_OBSERVED_PRE_PR",
+    "required_merge_method": "MERGE_COMMIT"
+  },
+  "verdict": "ACCEPT_ENGINEERING_FOR_DRAFT_DELIVERY",
+  "live_default_state": "DEFAULT_DENY",
+  "real_live_execution_authorized": false,
+  "next_required_external_action": "DRAFT_PR_EXACT_HEAD_CI_AND_MERGE_BEFORE_BOUNDED_POSTMERGE_BOOTSTRAP"
+}

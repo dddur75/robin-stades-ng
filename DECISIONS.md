@@ -214,3 +214,20 @@ calibrations sont choisies sur Validation seulement. DuckDB 1.5.4 et Polars
 - Les mappings fixture/marché ambigus ne sont jamais utilisés.
 - Pinnacle récent dégradé est conservé pour audit mais exclu des agrégats.
 - R2 est privé, S3-compatible, sans suppression par défaut.
+
+## ADR — Real Execution Bootstrap Closure V1 — 2026-08-22
+
+Statut : `ACCEPT_ENGINEERING_FOR_DRAFT_DELIVERY`
+
+- Les contrats V1 historiques restent relisibles ; la première exécution réelle
+  utilisera uniquement les successeurs V2 additifs.
+- L'autorité pré-dispatch lie un ensemble figé de cibles officielles. Les
+  identifiants fournisseur et leur mapping sont dérivés uniquement après le hash,
+  le reçu intake pending et la persistance durable du raw.
+- Le runtime fournisseur conserve zéro DNS. Une seule résolution publique est
+  autorisée après merge, protégée par une réservation mission-globale durable,
+  sans TCP, HTTP ni lecture de secret.
+- Un reçu `CREATE` ne porte aucune autorité. Seul un reçu `VERIFY` émis depuis le
+  clone autonome exact, hors synchronisation, peut alimenter la préparation.
+- La mission s'arrête à un owner-review pack non exécuté. Aucune autorisation
+  propriétaire réelle, activation, capture, promotion ou pari n'est créée.

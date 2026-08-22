@@ -15,10 +15,19 @@ from collections.abc import Callable, Iterator, Mapping
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path, PurePosixPath
-from typing import Literal, Protocol, Self
+from typing import Literal, Protocol, Self, TypeAlias, cast
 
 from pydantic import Field, model_validator
 
+from robin.capture.bootstrap_contracts import (
+    ActivationEnvelopeV2,
+    FixtureTargetSetV1,
+    LivePlanItemV2,
+    LivePlanV2,
+    OwnerAuthorizationV2,
+    ProviderNetworkBindingV1,
+    RealExecutionMissionManifestV1,
+)
 from robin.capture.contracts import (
     AdmissionStatus,
     CaptureBudget,
@@ -53,7 +62,9 @@ from robin.capture.live_storage import (
 from robin.capture.live_transport import (
     LiveTransport,
     LiveTransportError,
+    LiveTransportV2,
     PublicProviderRequestV1,
+    PublicProviderRequestV2,
     SecretReader,
     reject_unsafe_response,
     validate_provider_secret,
@@ -94,12 +105,51 @@ class RepositoryStateV1(FrozenContract):
         return self
 
 
+class RepositoryStateV2(FrozenContract):
+    schema_version: Literal["robin-live-repository-state-v2"] = "robin-live-repository-state-v2"
+    repository_identity: Literal["dddur75/robin-stades-ng"] = "dddur75/robin-stades-ng"
+    head_sha: str = Field(pattern=r"^[0-9a-f]{40}$")
+    main_sha: str = Field(pattern=r"^[0-9a-f]{40}$")
+    worktree_clean: Literal[True] = True
+    repository_root_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    control_temp_root_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    git_executable_canonical_path: str = Field(min_length=1, max_length=1024)
+    git_executable_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    standalone_git_directory: Literal[True] = True
+    local_execution_boundary: Literal["OWNER_ATTESTED_EXCLUSIVE_OS_ACL_NO_CONCURRENT_MUTATOR"] = (
+        "OWNER_ATTESTED_EXCLUSIVE_OS_ACL_NO_CONCURRENT_MUTATOR"
+    )
+
+    @model_validator(mode="after")
+    def validate_exact_main(self) -> Self:
+        if self.head_sha != self.main_sha:
+            raise ValueError("LIVE_REPOSITORY_NOT_EXACT_MAIN")
+        if os.path.normcase(os.path.abspath(self.git_executable_canonical_path)) != (
+            self.git_executable_canonical_path
+        ):
+            raise ValueError("LIVE_GIT_EXECUTABLE_PATH_NOT_CANONICAL")
+        return self
+
+
 class RepositoryStateReader(Protocol):
     def read(self) -> RepositoryStateV1: ...
 
+    def read_v2(
+        self,
+        *,
+        approved_git_executable_path: str,
+        approved_git_executable_sha256: str,
+    ) -> RepositoryStateV2: ...
+
+
+LiveAuthorization: TypeAlias = OwnerAuthorizationV1 | OwnerAuthorizationV2
+LiveActivation: TypeAlias = ActivationEnvelopeV1 | ActivationEnvelopeV2
+LivePlan: TypeAlias = LivePlanV1 | LivePlanV2
+LivePlanItem: TypeAlias = LivePlanItemV1 | LivePlanItemV2
+
 
 class OwnerAuthorizationVerifier(Protocol):
-    def verify(self, authorization: OwnerAuthorizationV1) -> None: ...
+    def verify(self, authorization: LiveAuthorization) -> None: ...
 
 
 class PinnedOwnerAuthorizationVerifier:
@@ -112,9 +162,39 @@ class PinnedOwnerAuthorizationVerifier:
             raise LiveGuardError("LIVE_OWNER_AUTHORIZATION_PIN_INVALID")
         self.expected_authorization_sha256 = expected_authorization_sha256
 
-    def verify(self, authorization: OwnerAuthorizationV1) -> None:
+    def verify(self, authorization: LiveAuthorization) -> None:
         if authorization.canonical_authorization_hash != self.expected_authorization_sha256:
             raise LiveGuardError("LIVE_OWNER_AUTHORIZATION_PIN_MISMATCH")
+
+
+class ReviewedOwnerAuthorizationVerifierV2:
+    """Require the exact review candidate artifact that the authorization promotes."""
+
+    def __init__(self, review_candidate: OwnerAuthorizationV2) -> None:
+        try:
+            candidate = OwnerAuthorizationV2.model_validate(
+                review_candidate.model_dump(mode="json")
+            )
+        except (AttributeError, CaptureContractError, TypeError, ValueError):
+            raise LiveGuardError("LIVE_OWNER_REVIEW_CANDIDATE_INVALID") from None
+        if (
+            candidate.authorization_status != "OWNER_REVIEW_CANDIDATE"
+            or candidate.review_candidate_sha256 is not None
+        ):
+            raise LiveGuardError("LIVE_OWNER_REVIEW_CANDIDATE_INVALID")
+        self.review_candidate = candidate
+
+    def verify(self, authorization: LiveAuthorization) -> None:
+        if not isinstance(authorization, OwnerAuthorizationV2):
+            raise LiveGuardError("LIVE_OWNER_AUTHORIZATION_VERSION_MISMATCH")
+        if (
+            authorization.authorization_status != "OWNER_AUTHORIZED"
+            or authorization.review_candidate_sha256
+            != self.review_candidate.canonical_authorization_hash
+            or authorization.canonical_authorization_hash
+            != self.review_candidate.expected_promoted_authorization_hash()
+        ):
+            raise LiveGuardError("LIVE_OWNER_REVIEW_CANDIDATE_MISMATCH")
 
 
 class GitRepositoryStateReader:
@@ -824,6 +904,67 @@ class GitRepositoryStateReader:
             control_temp_root_fingerprint=self._control_temp_fingerprint,
         )
 
+    def _assert_standalone_git_directory(self) -> None:
+        git_directory = self.repository_root / ".git"
+        try:
+            _reject_reparse_path(git_directory)
+            metadata = git_directory.lstat()
+        except (CaptureStorageError, OSError):
+            raise LiveGuardError("LIVE_STANDALONE_GIT_DIRECTORY_REQUIRED") from None
+        if not stat.S_ISDIR(metadata.st_mode):
+            raise LiveGuardError("LIVE_STANDALONE_GIT_DIRECTORY_REQUIRED")
+        forbidden_paths = (
+            git_directory / "commondir",
+            git_directory / "shallow",
+            git_directory / "shallow.lock",
+            git_directory / "worktrees",
+            git_directory / "modules",
+        )
+        if any(_path_exists_no_follow(path) for path in forbidden_paths):
+            raise LiveGuardError("LIVE_STANDALONE_GIT_DIRECTORY_REQUIRED")
+        hooks = git_directory / "hooks"
+        if _path_exists_no_follow(hooks):
+            try:
+                if any(hooks.iterdir()):
+                    raise LiveGuardError("LIVE_GIT_HOOKS_FORBIDDEN")
+            except OSError:
+                raise LiveGuardError("LIVE_GIT_HOOKS_FORBIDDEN") from None
+
+    def read_v2(
+        self,
+        *,
+        approved_git_executable_path: str,
+        approved_git_executable_sha256: str,
+    ) -> RepositoryStateV2:
+        expected_path = os.path.normcase(os.path.abspath(approved_git_executable_path))
+        observed_path = os.path.normcase(os.path.abspath(os.fspath(self.git_executable)))
+        if expected_path != approved_git_executable_path or observed_path != expected_path:
+            raise LiveGuardError("LIVE_GIT_EXECUTABLE_PATH_MISMATCH")
+        if approved_git_executable_sha256 != self.git_executable_sha256:
+            raise LiveGuardError("LIVE_GIT_EXECUTABLE_PIN_MISMATCH")
+        self._assert_standalone_git_directory()
+        if self._executable_sha256(self.git_executable) != approved_git_executable_sha256:
+            raise LiveGuardError("LIVE_GIT_EXECUTABLE_IDENTITY_CHANGED")
+        state = self.read()
+        self._assert_standalone_git_directory()
+        if (
+            os.path.normcase(os.path.abspath(os.fspath(self.git_executable))) != expected_path
+            or self._executable_sha256(self.git_executable) != approved_git_executable_sha256
+        ):
+            raise LiveGuardError("LIVE_GIT_EXECUTABLE_IDENTITY_CHANGED")
+        return RepositoryStateV2(
+            repository_identity=state.repository_identity,
+            head_sha=state.head_sha,
+            main_sha=state.main_sha,
+            worktree_clean=True,
+            repository_root_fingerprint=state.repository_root_fingerprint,
+            control_temp_root_fingerprint=state.control_temp_root_fingerprint,
+            git_executable_canonical_path=expected_path,
+            git_executable_sha256=approved_git_executable_sha256,
+            standalone_git_directory=True,
+            local_execution_boundary=state.local_execution_boundary,
+        )
+
 
 def fixture_mappings_sha256(mappings: tuple[FixtureMapping, ...]) -> str:
     return canonical_sha256([mapping.model_dump(mode="json") for mapping in mappings])
@@ -839,7 +980,7 @@ class BoundedLiveCanaryExecutor:
         repository_state_reader: RepositoryStateReader,
         owner_authorization_verifier: OwnerAuthorizationVerifier,
         secret_reader: SecretReader,
-        transport: LiveTransport,
+        transport: LiveTransport | LiveTransportV2,
         clock: Callable[[], datetime],
         maximum_payload_bytes: int = 1_048_576,
         stage_observer: Callable[[str], None] | None = None,
@@ -879,10 +1020,11 @@ class BoundedLiveCanaryExecutor:
 
     @staticmethod
     def _validate_authority(
-        authorization: OwnerAuthorizationV1,
-        activation: ActivationEnvelopeV1,
+        authorization: LiveAuthorization,
+        activation: LiveActivation,
         *,
         now: datetime,
+        network_binding: ProviderNetworkBindingV1 | None = None,
     ) -> None:
         if not authorization.not_before_utc <= now < authorization.expires_at_utc:
             raise LiveGuardError("LIVE_OWNER_AUTHORIZATION_NOT_ACTIVE")
@@ -905,10 +1047,34 @@ class BoundedLiveCanaryExecutor:
             or activation.expires_at_utc > authorization.expires_at_utc
         ):
             raise LiveGuardError("LIVE_ACTIVATION_AUTHORITY_ESCALATION")
+        if isinstance(authorization, OwnerAuthorizationV2):
+            if not isinstance(activation, ActivationEnvelopeV2) or network_binding is None:
+                raise LiveGuardError("LIVE_SUCCESSOR_AUTHORITY_INCOMPLETE")
+            try:
+                network_binding.assert_current(now)
+            except (CaptureContractError, TypeError, ValueError):
+                raise LiveGuardError("LIVE_PROVIDER_NETWORK_BINDING_EXPIRED") from None
+            if (
+                activation.provider_network_binding_sha256
+                != authorization.provider_network_binding_sha256
+                or activation.fixture_target_set_sha256 != authorization.fixture_target_set_sha256
+                or network_binding.canonical_binding_hash
+                != authorization.provider_network_binding_sha256
+                or network_binding.selected_ip_address != authorization.approved_provider_ip_address
+                or network_binding.resolution_claim.campaign_selection_sha256
+                != authorization.campaign_selection_sha256
+                or network_binding.resolution_claim.fixture_target_set_sha256
+                != authorization.fixture_target_set_sha256
+                or authorization.expires_at_utc > network_binding.expires_at_utc
+                or activation.expires_at_utc > network_binding.expires_at_utc
+            ):
+                raise LiveGuardError("LIVE_SUCCESSOR_AUTHORITY_BINDING_MISMATCH")
+        elif not isinstance(activation, ActivationEnvelopeV1) or network_binding is not None:
+            raise LiveGuardError("LIVE_CONTRACT_VERSION_MISMATCH")
 
     @staticmethod
     def _validate_activation_ttl(
-        activation: ActivationEnvelopeV1,
+        activation: LiveActivation,
         *,
         now: datetime,
     ) -> None:
@@ -917,9 +1083,9 @@ class BoundedLiveCanaryExecutor:
 
     @staticmethod
     def _validate_plan(
-        authorization: OwnerAuthorizationV1,
-        activation: ActivationEnvelopeV1,
-        plan: LivePlanV1,
+        authorization: LiveAuthorization,
+        activation: LiveActivation,
+        plan: LivePlan,
     ) -> None:
         if (
             plan.activation_id != activation.activation_id
@@ -943,16 +1109,33 @@ class BoundedLiveCanaryExecutor:
             for item in plan.items
         ):
             raise LiveGuardError("LIVE_PLAN_ITEM_SCOPE_MISMATCH")
+        if isinstance(plan, LivePlanV2):
+            if not isinstance(authorization, OwnerAuthorizationV2) or not isinstance(
+                activation, ActivationEnvelopeV2
+            ):
+                raise LiveGuardError("LIVE_CONTRACT_VERSION_MISMATCH")
+            if (
+                plan.provider_network_binding_sha256 != activation.provider_network_binding_sha256
+                or plan.fixture_target_set_sha256 != activation.fixture_target_set_sha256
+                or plan.expires_at_utc > authorization.expires_at_utc
+            ):
+                raise LiveGuardError("LIVE_PLAN_SUCCESSOR_BINDING_MISMATCH")
+        elif not isinstance(authorization, OwnerAuthorizationV1) or not isinstance(
+            activation, ActivationEnvelopeV1
+        ):
+            raise LiveGuardError("LIVE_CONTRACT_VERSION_MISMATCH")
 
     @staticmethod
     def _validate_item(
-        activation: ActivationEnvelopeV1,
-        plan: LivePlanV1,
-        item: LivePlanItemV1,
+        activation: LiveActivation,
+        plan: LivePlan,
+        item: LivePlanItem,
         request: ProviderRequestSpec,
         mappings: tuple[FixtureMapping, ...],
         *,
         now: datetime,
+        fixture_target_set: FixtureTargetSetV1 | None = None,
+        network_binding: ProviderNetworkBindingV1 | None = None,
     ) -> RequestFingerprint:
         matching = tuple(candidate for candidate in plan.items if candidate.item_id == item.item_id)
         if len(matching) != 1 or matching[0] != item:
@@ -970,19 +1153,90 @@ class BoundedLiveCanaryExecutor:
         fingerprint = RequestFingerprint.create(request)
         if fingerprint.request_sha256 != item.provider_request_fingerprint:
             raise LiveGuardError("LIVE_PLAN_ITEM_REQUEST_FINGERPRINT_MISMATCH")
-        if tuple(sorted(mappings, key=lambda value: value.provider_event_id)) != mappings:
-            raise LiveGuardError("LIVE_FIXTURE_MAPPINGS_NOT_CANONICAL")
-        if fixture_mappings_sha256(mappings) != item.fixture_mappings_sha256:
-            raise LiveGuardError("LIVE_FIXTURE_MAPPINGS_HASH_MISMATCH")
+        if isinstance(item, LivePlanItemV2):
+            if (
+                not isinstance(activation, ActivationEnvelopeV2)
+                or not isinstance(plan, LivePlanV2)
+                or fixture_target_set is None
+                or network_binding is None
+                or mappings
+                or item.fixture_target_set_sha256 != fixture_target_set.canonical_set_hash
+                or item.provider_network_binding_sha256 != network_binding.canonical_binding_hash
+                or item.fixture_target_set_sha256 != plan.fixture_target_set_sha256
+                or item.provider_network_binding_sha256 != plan.provider_network_binding_sha256
+                or fixture_target_set.sport_key != item.sport_key
+                or item.expires_at_utc > network_binding.expires_at_utc
+            ):
+                raise LiveGuardError("LIVE_PLAN_ITEM_SUCCESSOR_BINDING_MISMATCH")
+            try:
+                network_binding.assert_current(now)
+            except (CaptureContractError, TypeError, ValueError):
+                raise LiveGuardError("LIVE_PROVIDER_NETWORK_BINDING_EXPIRED") from None
+        else:
+            if (
+                not isinstance(activation, ActivationEnvelopeV1)
+                or not isinstance(plan, LivePlanV1)
+                or fixture_target_set is not None
+                or network_binding is not None
+            ):
+                raise LiveGuardError("LIVE_CONTRACT_VERSION_MISMATCH")
+            if tuple(sorted(mappings, key=lambda value: value.provider_event_id)) != mappings:
+                raise LiveGuardError("LIVE_FIXTURE_MAPPINGS_NOT_CANONICAL")
+            if fixture_mappings_sha256(mappings) != item.fixture_mappings_sha256:
+                raise LiveGuardError("LIVE_FIXTURE_MAPPINGS_HASH_MISMATCH")
         return fingerprint
+
+    def _read_repository_state(
+        self,
+        authorization: LiveAuthorization,
+    ) -> RepositoryStateV1 | RepositoryStateV2:
+        if isinstance(authorization, OwnerAuthorizationV2):
+            try:
+                return self.repository_state_reader.read_v2(
+                    approved_git_executable_path=authorization.approved_git_executable_path,
+                    approved_git_executable_sha256=(authorization.approved_git_executable_sha256),
+                )
+            except AttributeError:
+                raise LiveGuardError("LIVE_V2_REPOSITORY_READER_REQUIRED") from None
+        return self.repository_state_reader.read()
+
+    @staticmethod
+    def _assert_repository_matches(
+        repository: RepositoryStateV1 | RepositoryStateV2,
+        authorization: LiveAuthorization,
+        activation: LiveActivation,
+    ) -> None:
+        if (
+            repository.repository_identity != authorization.repository_identity
+            or repository.head_sha != authorization.authorized_main_sha
+            or repository.main_sha != authorization.authorized_main_sha
+            or repository.repository_root_fingerprint
+            != authorization.approved_repository_root_fingerprint
+            or repository.control_temp_root_fingerprint
+            != authorization.approved_control_temp_root_fingerprint
+            or repository.local_execution_boundary != authorization.local_execution_boundary
+            or activation.repository_sha != authorization.authorized_main_sha
+        ):
+            raise LiveGuardError("LIVE_REPOSITORY_SHA_MISMATCH")
+        if isinstance(authorization, OwnerAuthorizationV2):
+            if (
+                not isinstance(repository, RepositoryStateV2)
+                or repository.git_executable_canonical_path
+                != authorization.approved_git_executable_path
+                or repository.git_executable_sha256 != authorization.approved_git_executable_sha256
+                or not repository.standalone_git_directory
+            ):
+                raise LiveGuardError("LIVE_V2_REPOSITORY_BINDING_MISMATCH")
+        elif not isinstance(repository, RepositoryStateV1):
+            raise LiveGuardError("LIVE_CONTRACT_VERSION_MISMATCH")
 
     def _terminal_receipt(
         self,
         *,
-        authorization: OwnerAuthorizationV1,
-        activation: ActivationEnvelopeV1,
-        plan: LivePlanV1,
-        item: LivePlanItemV1,
+        authorization: LiveAuthorization,
+        activation: LiveActivation,
+        plan: LivePlan,
+        item: LivePlanItem,
         lease: LiveLeaseV1,
         reservation: LiveBudgetReservation | None,
         fingerprint: RequestFingerprint,
@@ -1053,10 +1307,10 @@ class BoundedLiveCanaryExecutor:
         self,
         terminal: LiveExecutionReceiptV1,
         *,
-        authorization: OwnerAuthorizationV1,
-        activation: ActivationEnvelopeV1,
-        plan: LivePlanV1,
-        item: LivePlanItemV1,
+        authorization: LiveAuthorization,
+        activation: LiveActivation,
+        plan: LivePlan,
+        item: LivePlanItem,
         permit: object,
         lease: LiveLeaseV1,
         fingerprint: RequestFingerprint,
@@ -1218,12 +1472,14 @@ class BoundedLiveCanaryExecutor:
     def _recover_started_dispatch(
         self,
         *,
-        authorization: OwnerAuthorizationV1,
-        activation: ActivationEnvelopeV1,
-        plan: LivePlanV1,
-        item: LivePlanItemV1,
+        authorization: LiveAuthorization,
+        activation: LiveActivation,
+        plan: LivePlan,
+        item: LivePlanItem,
         request: ProviderRequestSpec,
         mappings: tuple[FixtureMapping, ...],
+        fixture_target_set: FixtureTargetSetV1 | None = None,
+        network_binding: ProviderNetworkBindingV1 | None = None,
     ) -> LiveExecutionReceiptV1 | None:
         try:
             recovery = self.live_store.load_dispatch_started(item.canonical_item_hash)
@@ -1247,8 +1503,22 @@ class BoundedLiveCanaryExecutor:
             or permit.item_hash != item.canonical_item_hash
             or permit.request_fingerprint_sha256 != fingerprint.request_sha256
             or item.provider_request_fingerprint != fingerprint.request_sha256
-            or fixture_mappings_sha256(mappings) != item.fixture_mappings_sha256
             or tuple(candidate for candidate in plan.items if candidate == item) != (item,)
+        ):
+            raise LiveStorageError("LIVE_DISPATCH_RECOVERY_SCOPE_MISMATCH")
+        if isinstance(item, LivePlanItemV2):
+            if (
+                fixture_target_set is None
+                or network_binding is None
+                or mappings
+                or item.fixture_target_set_sha256 != fixture_target_set.canonical_set_hash
+                or item.provider_network_binding_sha256 != network_binding.canonical_binding_hash
+            ):
+                raise LiveStorageError("LIVE_DISPATCH_RECOVERY_SCOPE_MISMATCH")
+        elif (
+            fixture_target_set is not None
+            or network_binding is not None
+            or fixture_mappings_sha256(mappings) != item.fixture_mappings_sha256
         ):
             raise LiveStorageError("LIVE_DISPATCH_RECOVERY_SCOPE_MISMATCH")
         try:
@@ -1343,24 +1613,142 @@ class BoundedLiveCanaryExecutor:
                 mappings=lock_mappings,
             )
 
+    def execute_v2(
+        self,
+        *,
+        mode: CaptureMode | str,
+        authorization: OwnerAuthorizationV2,
+        activation: ActivationEnvelopeV2,
+        plan: LivePlanV2,
+        item: LivePlanItemV2,
+        request: ProviderRequestSpec,
+        fixture_target_set: FixtureTargetSetV1,
+        provider_network_binding: ProviderNetworkBindingV1,
+        mission_manifest: RealExecutionMissionManifestV1,
+        review_candidate: OwnerAuthorizationV2,
+    ) -> LiveExecutionReceiptV1:
+        """Execute one successor item without any pre-dispatch provider fixture IDs."""
+
+        try:
+            lock_mode = CaptureMode(mode)
+        except ValueError:
+            raise LiveGuardError("LIVE_MODE_INVALID") from None
+        if lock_mode is not CaptureMode.LIVE_CANARY:
+            raise LiveGuardError("LIVE_MODE_EXPLICIT_REQUIRED")
+        try:
+            lock_authorization = OwnerAuthorizationV2.model_validate(
+                authorization.model_dump(mode="json")
+            )
+            lock_activation = ActivationEnvelopeV2.model_validate(
+                activation.model_dump(mode="json")
+            )
+            lock_plan = LivePlanV2.model_validate(plan.model_dump(mode="json"))
+            lock_item = LivePlanItemV2.model_validate(item.model_dump(mode="json"))
+            lock_request = ProviderRequestSpec.model_validate(request.model_dump(mode="json"))
+            lock_targets = FixtureTargetSetV1.model_validate(
+                fixture_target_set.model_dump(mode="json")
+            )
+            lock_binding = ProviderNetworkBindingV1.model_validate(
+                provider_network_binding.model_dump(mode="json")
+            )
+            lock_manifest = RealExecutionMissionManifestV1.issue(
+                **mission_manifest.model_dump(mode="python")
+            )
+            lock_review_candidate = OwnerAuthorizationV2.model_validate(
+                review_candidate.model_dump(mode="json")
+            )
+        except (AttributeError, CaptureContractError, TypeError, ValueError):
+            raise LiveGuardError("LIVE_INPUT_CONTRACT_INVALID") from None
+        if lock_authorization.authorization_status != "OWNER_AUTHORIZED":
+            raise LiveGuardError("LIVE_OWNER_AUTHORIZATION_CANDIDATE_NOT_EXECUTABLE")
+        preflight_now = ensure_utc(self.clock(), field="live_successor_preflight_at")
+        if (
+            lock_review_candidate.authorization_status != "OWNER_REVIEW_CANDIDATE"
+            or lock_review_candidate.review_candidate_sha256 is not None
+            or lock_authorization.review_candidate_sha256
+            != lock_review_candidate.canonical_authorization_hash
+            or lock_authorization.mission_manifest_sha256
+            != lock_manifest.canonical_manifest_sha256()
+            or lock_authorization.mission_expires_at_utc != lock_manifest.expires_at
+            or preflight_now >= lock_manifest.expires_at
+            or lock_authorization.fixture_target_set_sha256 != lock_targets.canonical_set_hash
+            or lock_authorization.provider_network_binding_sha256
+            != lock_binding.canonical_binding_hash
+            or lock_authorization.approved_provider_ip_address != lock_binding.selected_ip_address
+            or lock_targets.workspace_receipt_sha256 != lock_authorization.workspace_receipt_sha256
+            or lock_binding.resolution_claim.workspace_receipt_sha256
+            != lock_authorization.workspace_receipt_sha256
+            or lock_binding.resolution_claim.mission_manifest_sha256
+            != lock_authorization.mission_manifest_sha256
+            or lock_binding.resolution_claim.mission_expires_at_utc
+            != lock_authorization.mission_expires_at_utc
+            or lock_binding.resolution_claim.campaign_selection_sha256
+            != lock_authorization.campaign_selection_sha256
+            or lock_binding.resolution_claim.fixture_target_set_sha256
+            != lock_authorization.fixture_target_set_sha256
+        ):
+            raise LiveGuardError("LIVE_SUCCESSOR_AUTHORITY_BINDING_MISMATCH")
+        self.live_store.assert_capture_root(lock_authorization.approved_capture_root_fingerprint)
+        self.capture_store.store_fixture_target_set(lock_targets)
+        self.capture_store.store_provider_network_binding(lock_binding)
+        if (
+            self.capture_store.load_fixture_target_set(lock_targets.canonical_set_hash)
+            != lock_targets
+            or self.capture_store.load_provider_network_binding(lock_binding.canonical_binding_hash)
+            != lock_binding
+        ):
+            raise LiveGuardError("LIVE_SUCCESSOR_EVIDENCE_NOT_DURABLE")
+        with self.live_store.item_execution_lock(lock_item.canonical_item_hash):
+            return self._execute_once_locked(
+                mode=lock_mode,
+                authorization=lock_authorization,
+                activation=lock_activation,
+                plan=lock_plan,
+                item=lock_item,
+                request=lock_request,
+                mappings=(),
+                fixture_target_set=lock_targets,
+                network_binding=lock_binding,
+            )
+
     def _execute_once_locked(
         self,
         *,
         mode: CaptureMode | str,
-        authorization: OwnerAuthorizationV1,
-        activation: ActivationEnvelopeV1,
-        plan: LivePlanV1,
-        item: LivePlanItemV1,
+        authorization: LiveAuthorization,
+        activation: LiveActivation,
+        plan: LivePlan,
+        item: LivePlanItem,
         request: ProviderRequestSpec,
         mappings: tuple[FixtureMapping, ...],
+        fixture_target_set: FixtureTargetSetV1 | None = None,
+        network_binding: ProviderNetworkBindingV1 | None = None,
     ) -> LiveExecutionReceiptV1:
         try:
-            authorization = OwnerAuthorizationV1.model_validate(
-                authorization.model_dump(mode="json")
-            )
-            activation = ActivationEnvelopeV1.model_validate(activation.model_dump(mode="json"))
-            plan = LivePlanV1.model_validate(plan.model_dump(mode="json"))
-            item = LivePlanItemV1.model_validate(item.model_dump(mode="json"))
+            if isinstance(authorization, OwnerAuthorizationV2):
+                authorization = OwnerAuthorizationV2.model_validate(
+                    authorization.model_dump(mode="json")
+                )
+                activation = ActivationEnvelopeV2.model_validate(activation.model_dump(mode="json"))
+                plan = LivePlanV2.model_validate(plan.model_dump(mode="json"))
+                item = LivePlanItemV2.model_validate(item.model_dump(mode="json"))
+                if fixture_target_set is None or network_binding is None:
+                    raise ValueError("LIVE_SUCCESSOR_EVIDENCE_MISSING")
+                fixture_target_set = FixtureTargetSetV1.model_validate(
+                    fixture_target_set.model_dump(mode="json")
+                )
+                network_binding = ProviderNetworkBindingV1.model_validate(
+                    network_binding.model_dump(mode="json")
+                )
+            else:
+                authorization = OwnerAuthorizationV1.model_validate(
+                    authorization.model_dump(mode="json")
+                )
+                activation = ActivationEnvelopeV1.model_validate(activation.model_dump(mode="json"))
+                plan = LivePlanV1.model_validate(plan.model_dump(mode="json"))
+                item = LivePlanItemV1.model_validate(item.model_dump(mode="json"))
+                if fixture_target_set is not None or network_binding is not None:
+                    raise ValueError("LIVE_CONTRACT_VERSION_MISMATCH")
             request = ProviderRequestSpec.model_validate(request.model_dump(mode="json"))
             mappings = tuple(
                 FixtureMapping.model_validate(mapping.model_dump(mode="json"))
@@ -1383,29 +1771,25 @@ class BoundedLiveCanaryExecutor:
             item=item,
             request=request,
             mappings=mappings,
+            fixture_target_set=fixture_target_set,
+            network_binding=network_binding,
         )
         if recovered is not None:
             return recovered
         self.live_store.assert_item_not_previously_claimed(item.canonical_item_hash)
 
-        repository = self.repository_state_reader.read()
-        if (
-            repository.repository_identity != authorization.repository_identity
-            or repository.head_sha != authorization.authorized_main_sha
-            or repository.main_sha != authorization.authorized_main_sha
-            or repository.repository_root_fingerprint
-            != authorization.approved_repository_root_fingerprint
-            or repository.control_temp_root_fingerprint
-            != authorization.approved_control_temp_root_fingerprint
-            or repository.local_execution_boundary != authorization.local_execution_boundary
-            or activation.repository_sha != authorization.authorized_main_sha
-        ):
-            raise LiveGuardError("LIVE_REPOSITORY_SHA_MISMATCH")
+        repository = self._read_repository_state(authorization)
+        self._assert_repository_matches(repository, authorization, activation)
         self._emit("02_REPOSITORY_EXACT_SHA_VERIFIED")
 
         now = ensure_utc(self.clock(), field="live_validation_at")
         self.owner_authorization_verifier.verify(authorization)
-        self._validate_authority(authorization, activation, now=now)
+        self._validate_authority(
+            authorization,
+            activation,
+            now=now,
+            network_binding=network_binding,
+        )
         self._emit("03_OWNER_AUTHORIZATION_VALIDATED")
         self._emit("04_ACTIVATION_VALIDATED")
         self._validate_activation_ttl(activation, now=now)
@@ -1422,6 +1806,8 @@ class BoundedLiveCanaryExecutor:
             request,
             mappings,
             now=now,
+            fixture_target_set=fixture_target_set,
+            network_binding=network_binding,
         )
         self._emit("08_PLAN_ITEM_VALIDATED")
 
@@ -1468,15 +1854,27 @@ class BoundedLiveCanaryExecutor:
             raise LiveStorageError("LIVE_CAPTURE_ROOT_FINGERPRINT_MISMATCH") from None
         self._emit("11_CAPTURE_ROOT_REVALIDATED")
         try:
-            public_request = PublicProviderRequestV1.from_spec(
-                request,
-                maximum_response_bytes=self.maximum_payload_bytes,
-                approved_provider_ip_address=authorization.approved_provider_ip_address,
-            )
+            public_request: PublicProviderRequestV1 | PublicProviderRequestV2
+            if isinstance(authorization, OwnerAuthorizationV2):
+                if network_binding is None:
+                    raise LiveGuardError("LIVE_SUCCESSOR_EVIDENCE_MISSING")
+                network_binding.assert_current(self.clock())
+                public_request = PublicProviderRequestV2.from_spec(
+                    request,
+                    maximum_response_bytes=self.maximum_payload_bytes,
+                    provider_network_binding=network_binding,
+                )
+                cast(LiveTransportV2, self.transport).preflight(public_request)
+            else:
+                public_request = PublicProviderRequestV1.from_spec(
+                    request,
+                    maximum_response_bytes=self.maximum_payload_bytes,
+                    approved_provider_ip_address=authorization.approved_provider_ip_address,
+                )
+                cast(LiveTransport, self.transport).preflight(public_request)
             public_material = public_request.canonical_public_bytes()
             if not public_material or request.model_dump_json().find("apiKey") >= 0:
                 raise LiveGuardError("LIVE_PUBLIC_REQUEST_MATERIAL_INVALID")
-            self.transport.preflight(public_request)
             self._emit("12_PUBLIC_REQUEST_FINALIZED")
             armed_at = ensure_utc(self.clock(), field="live_dispatch_armed_at")
             admission_permit = self.live_store.arm_dispatch(
@@ -1510,20 +1908,15 @@ class BoundedLiveCanaryExecutor:
         self._crash_point("AFTER_DISPATCH_ARMED")
 
         try:
-            repository = self.repository_state_reader.read()
-            if (
-                repository.repository_identity != authorization.repository_identity
-                or repository.head_sha != authorization.authorized_main_sha
-                or repository.main_sha != authorization.authorized_main_sha
-                or repository.repository_root_fingerprint
-                != authorization.approved_repository_root_fingerprint
-                or repository.control_temp_root_fingerprint
-                != authorization.approved_control_temp_root_fingerprint
-                or repository.local_execution_boundary != authorization.local_execution_boundary
-            ):
-                raise LiveGuardError("LIVE_REPOSITORY_SHA_MISMATCH")
+            repository = self._read_repository_state(authorization)
+            self._assert_repository_matches(repository, authorization, activation)
             pre_secret_now = ensure_utc(self.clock(), field="live_pre_secret_validation_at")
-            self._validate_authority(authorization, activation, now=pre_secret_now)
+            self._validate_authority(
+                authorization,
+                activation,
+                now=pre_secret_now,
+                network_binding=network_binding,
+            )
             self._validate_activation_ttl(activation, now=pre_secret_now)
             self._validate_plan(authorization, activation, plan)
             self._validate_item(
@@ -1533,6 +1926,8 @@ class BoundedLiveCanaryExecutor:
                 request,
                 mappings,
                 now=pre_secret_now,
+                fixture_target_set=fixture_target_set,
+                network_binding=network_binding,
             )
             self.live_store.assert_capture_root(authorization.approved_capture_root_fingerprint)
             admission_permit = self.live_store.verify_admission_permit(
@@ -1574,18 +1969,8 @@ class BoundedLiveCanaryExecutor:
                 )
             self._emit("13_PROVIDER_SECRET_READ_ONCE")
             try:
-                repository = self.repository_state_reader.read()
-                if (
-                    repository.repository_identity != authorization.repository_identity
-                    or repository.head_sha != authorization.authorized_main_sha
-                    or repository.main_sha != authorization.authorized_main_sha
-                    or repository.repository_root_fingerprint
-                    != authorization.approved_repository_root_fingerprint
-                    or repository.control_temp_root_fingerprint
-                    != authorization.approved_control_temp_root_fingerprint
-                    or repository.local_execution_boundary != authorization.local_execution_boundary
-                ):
-                    raise LiveGuardError("LIVE_REPOSITORY_SHA_MISMATCH")
+                repository = self._read_repository_state(authorization)
+                self._assert_repository_matches(repository, authorization, activation)
                 after_secret_now = ensure_utc(
                     self.clock(),
                     field="live_post_secret_validation_at",
@@ -1594,6 +1979,7 @@ class BoundedLiveCanaryExecutor:
                     authorization,
                     activation,
                     now=after_secret_now,
+                    network_binding=network_binding,
                 )
                 self._validate_activation_ttl(activation, now=after_secret_now)
                 self._validate_plan(authorization, activation, plan)
@@ -1604,6 +1990,8 @@ class BoundedLiveCanaryExecutor:
                     request,
                     mappings,
                     now=after_secret_now,
+                    fixture_target_set=fixture_target_set,
+                    network_binding=network_binding,
                 )
                 self.live_store.assert_capture_root(authorization.approved_capture_root_fingerprint)
                 self.live_store.verify_admission_permit(
@@ -1618,6 +2006,7 @@ class BoundedLiveCanaryExecutor:
                     authorization,
                     activation,
                     now=dispatch_started,
+                    network_binding=network_binding,
                 )
                 self._validate_activation_ttl(activation, now=dispatch_started)
                 self._validate_item(
@@ -1627,6 +2016,8 @@ class BoundedLiveCanaryExecutor:
                     request,
                     mappings,
                     now=dispatch_started,
+                    fixture_target_set=fixture_target_set,
+                    network_binding=network_binding,
                 )
                 self.live_store.mark_dispatch_started(
                     admission_permit,
@@ -1647,7 +2038,16 @@ class BoundedLiveCanaryExecutor:
             self._emit("14_DISPATCH_STARTED")
             self._crash_point("AFTER_DISPATCH_STARTED")
             try:
-                response = self.transport.dispatch(public_request, api_key=api_key)
+                if isinstance(public_request, PublicProviderRequestV2):
+                    response = cast(LiveTransportV2, self.transport).dispatch(
+                        public_request,
+                        api_key=api_key,
+                    )
+                else:
+                    response = cast(LiveTransport, self.transport).dispatch(
+                        public_request,
+                        api_key=api_key,
+                    )
                 if isinstance(response.payload, bytes) and isinstance(response.headers, Mapping):
                     reject_unsafe_response(response.payload, response.headers, api_key)
             except Exception:
@@ -1742,18 +2142,33 @@ class BoundedLiveCanaryExecutor:
         rejection: CaptureRejected | None = None
         ingestion_failed = False
         try:
-            manifest = harness.record_live_response(
-                request,
-                expected_request_fingerprint_sha256=fingerprint.request_sha256,
-                payload=response.payload,
-                http_status=response.http_status,
-                response_headers=response.headers,
-                mappings=mappings,
-                admission_permit=admission_permit,
-                first_observed_at=first_observed,
-                ingested_at=ingested,
-                stage_observer=self._ingestion_stage,
-            )
+            if fixture_target_set is not None and network_binding is not None:
+                manifest = harness.record_live_response_v2(
+                    request,
+                    expected_request_fingerprint_sha256=fingerprint.request_sha256,
+                    payload=response.payload,
+                    http_status=response.http_status,
+                    response_headers=response.headers,
+                    fixture_target_set=fixture_target_set,
+                    provider_network_binding_sha256=(network_binding.canonical_binding_hash),
+                    admission_permit=admission_permit,
+                    first_observed_at=first_observed,
+                    ingested_at=ingested,
+                    stage_observer=self._ingestion_stage,
+                )
+            else:
+                manifest = harness.record_live_response(
+                    request,
+                    expected_request_fingerprint_sha256=fingerprint.request_sha256,
+                    payload=response.payload,
+                    http_status=response.http_status,
+                    response_headers=response.headers,
+                    mappings=mappings,
+                    admission_permit=admission_permit,
+                    first_observed_at=first_observed,
+                    ingested_at=ingested,
+                    stage_observer=self._ingestion_stage,
+                )
             final_receipt = self.capture_store.load_receipt(manifest.receipt_id)
         except CaptureRejected as error:
             rejection = error

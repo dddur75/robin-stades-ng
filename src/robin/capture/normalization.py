@@ -428,3 +428,103 @@ def normalize_payload(
         for row in canonical_rows
     )
     return schema, observations
+
+
+def normalize_payload_v2(
+    value: JsonValue,
+    *,
+    receipt: RawPayloadReceipt,
+    mapping_evidence: object,
+    allowed_markets: tuple[str, ...] | None = None,
+    expected_sport_key: str | None = None,
+) -> tuple[SchemaFingerprint, tuple[NormalizedMarketObservation, ...], str]:
+    """Project only proven mappings while preserving the full raw schema lineage.
+
+    V2 mapping evidence is exhaustive for provider events, but ambiguous and
+    unmapped events are deliberately excluded from the scientific projection.
+    The raw payload, receipt and full mapping set remain evidence.
+    """
+
+    from robin.capture.fixture_mapping import PostCaptureFixtureMappingV1
+
+    try:
+        evidence = PostCaptureFixtureMappingV1.model_validate(
+            cast(Any, mapping_evidence).model_dump(mode="json")
+        )
+    except (AttributeError, TypeError, ValueError):
+        raise CaptureValidationError("CAPTURE_V2_MAPPING_BINDING_INVALID") from None
+    mappings = evidence.mappings
+    if not isinstance(value, list):
+        raise CaptureValidationError("CAPTURE_PAYLOAD_ROOT_NOT_ARRAY")
+    raw_schema = schema_fingerprint(value)
+    mapping_by_event: dict[str, FixtureMapping] = {}
+    for mapping in mappings:
+        if mapping.provider_event_id in mapping_by_event:
+            raise CaptureValidationError("CAPTURE_FIXTURE_MAPPING_DUPLICATED")
+        mapping_by_event[mapping.provider_event_id] = mapping
+
+    seen_event_ids: set[str] = set()
+    admitted_payload: list[JsonValue] = []
+    admitted_mappings: list[FixtureMapping] = []
+    for raw_event in value:
+        event = _object(raw_event, code="CAPTURE_EVENT_INVALID")
+        event_id = _string(event.get("id"), code="CAPTURE_EVENT_ID_INVALID")
+        if event_id in seen_event_ids:
+            raise CaptureValidationError("CAPTURE_EVENT_DUPLICATED")
+        seen_event_ids.add(event_id)
+        candidate_mapping = mapping_by_event.get(event_id)
+        if candidate_mapping is None:
+            raise CaptureValidationError("CAPTURE_FIXTURE_MAPPING_MISSING")
+        if candidate_mapping.status is MappingStatus.MAPPED:
+            admitted_payload.append(raw_event)
+            admitted_mappings.append(candidate_mapping)
+    if seen_event_ids != set(mapping_by_event):
+        raise CaptureValidationError("CAPTURE_FIXTURE_MAPPING_UNUSED")
+
+    canonical_admitted_mappings = tuple(
+        sorted(admitted_mappings, key=lambda item: item.provider_event_id)
+    )
+    _projected_schema, projected = normalize_payload(
+        cast(JsonValue, admitted_payload),
+        receipt=receipt,
+        mappings=canonical_admitted_mappings,
+        allowed_markets=allowed_markets,
+        expected_sport_key=expected_sport_key,
+    )
+    row_material = [
+        {
+            "fixture_id": row.fixture_id,
+            "provider_event_id": row.provider_event_id,
+            "receipt_id": row.receipt_id,
+            "payload_sha256": row.payload_sha256,
+            "bookmaker_key": row.bookmaker_key,
+            "market_key": row.market_key,
+            "market_last_update": row.market_last_update,
+            "outcome_name": row.outcome_name,
+            "price": row.price,
+            "point": row.point,
+            "available_at": row.available_at,
+        }
+        for row in projected
+    ]
+    projected_snapshot_id = snapshot_id_for_observation_rows(
+        receipt_id=receipt.receipt_id,
+        schema_fingerprint_sha256=raw_schema.schema_sha256,
+        mappings=mappings,
+        observations=row_material,
+    )
+    snapshot_id = canonical_sha256(
+        {
+            "schema_version": "robin-scientific-projection-v2",
+            "fixture_target_set_sha256": evidence.fixture_target_set_sha256,
+            "post_capture_mapping_sha256": evidence.canonical_mapping_hash,
+            "projected_snapshot_sha256": projected_snapshot_id,
+        }
+    )
+    observations = tuple(
+        NormalizedMarketObservation.model_validate(
+            {**row.model_dump(mode="python"), "snapshot_id": snapshot_id}
+        )
+        for row in projected
+    )
+    return raw_schema, observations, snapshot_id

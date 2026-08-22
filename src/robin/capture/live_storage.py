@@ -10,8 +10,14 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import cast
+from typing import TypeAlias, cast
 
+from robin.capture.bootstrap_contracts import (
+    ActivationEnvelopeV2,
+    LivePlanItemV2,
+    LivePlanV2,
+    OwnerAuthorizationV2,
+)
 from robin.capture.contracts import (
     AdmissionStatus,
     CaptureContractError,
@@ -45,6 +51,11 @@ from robin.capture.storage import (
     _safe_read_bounded,
     _safe_regular_file,
 )
+
+LiveAuthorization: TypeAlias = OwnerAuthorizationV1 | OwnerAuthorizationV2
+LiveActivation: TypeAlias = ActivationEnvelopeV1 | ActivationEnvelopeV2
+LivePlan: TypeAlias = LivePlanV1 | LivePlanV2
+LivePlanItem: TypeAlias = LivePlanItemV1 | LivePlanItemV2
 
 
 class LiveStorageError(RuntimeError):
@@ -255,17 +266,43 @@ class LiveStateStore:
 
     @staticmethod
     def _validated_chain(
-        authorization: OwnerAuthorizationV1,
-        activation: ActivationEnvelopeV1,
-        plan: LivePlanV1,
-        item: LivePlanItemV1,
-    ) -> tuple[OwnerAuthorizationV1, ActivationEnvelopeV1, LivePlanV1, LivePlanItemV1]:
+        authorization: LiveAuthorization,
+        activation: LiveActivation,
+        plan: LivePlan,
+        item: LivePlanItem,
+    ) -> tuple[LiveAuthorization, LiveActivation, LivePlan, LivePlanItem]:
         try:
+            material = (
+                authorization.model_dump(mode="json"),
+                activation.model_dump(mode="json"),
+                plan.model_dump(mode="json"),
+                item.model_dump(mode="json"),
+            )
+            if material[0].get("schema_version") == "robin-owner-authorization-v2":
+                if tuple(value.get("schema_version") for value in material[1:]) != (
+                    "robin-live-activation-envelope-v2",
+                    "robin-live-plan-v2",
+                    "robin-live-plan-item-v2",
+                ):
+                    raise ValueError("LIVE_STORAGE_MIXED_CONTRACT_VERSION")
+                return (
+                    OwnerAuthorizationV2.model_validate(material[0]),
+                    ActivationEnvelopeV2.model_validate(material[1]),
+                    LivePlanV2.model_validate(material[2]),
+                    LivePlanItemV2.model_validate(material[3]),
+                )
+            if tuple(value.get("schema_version") for value in material) != (
+                "robin-owner-authorization-v1",
+                "robin-live-activation-envelope-v1",
+                "robin-live-plan-v1",
+                "robin-live-plan-item-v1",
+            ):
+                raise ValueError("LIVE_STORAGE_MIXED_CONTRACT_VERSION")
             return (
-                OwnerAuthorizationV1.model_validate(authorization.model_dump(mode="json")),
-                ActivationEnvelopeV1.model_validate(activation.model_dump(mode="json")),
-                LivePlanV1.model_validate(plan.model_dump(mode="json")),
-                LivePlanItemV1.model_validate(item.model_dump(mode="json")),
+                OwnerAuthorizationV1.model_validate(material[0]),
+                ActivationEnvelopeV1.model_validate(material[1]),
+                LivePlanV1.model_validate(material[2]),
+                LivePlanItemV1.model_validate(material[3]),
             )
         except (AttributeError, CaptureContractError, TypeError, ValueError):
             raise LiveStorageError("LIVE_STORAGE_INPUT_CONTRACT_INVALID") from None
@@ -273,8 +310,8 @@ class LiveStateStore:
     @staticmethod
     def _binding_payload(
         *,
-        authorization: OwnerAuthorizationV1,
-        activation: ActivationEnvelopeV1,
+        authorization: LiveAuthorization,
+        activation: LiveActivation,
         binding: str,
     ) -> bytes:
         material = {
@@ -316,10 +353,10 @@ class LiveStateStore:
     def acquire_lease(
         self,
         *,
-        authorization: OwnerAuthorizationV1,
-        activation: ActivationEnvelopeV1,
-        plan: LivePlanV1,
-        item: LivePlanItemV1,
+        authorization: LiveAuthorization,
+        activation: LiveActivation,
+        plan: LivePlan,
+        item: LivePlanItem,
         acquired_at: datetime,
     ) -> LiveLeaseV1:
         authorization, activation, plan, item = self._validated_chain(
@@ -398,7 +435,7 @@ class LiveStateStore:
     def _assert_prior_plan_leases_are_budgeted(
         self,
         *,
-        plan: LivePlanV1,
+        plan: LivePlan,
         current_item_hash: str,
         items: dict[str, _BudgetItem],
     ) -> None:
@@ -677,10 +714,10 @@ class LiveStateStore:
     def reserve_budget(
         self,
         *,
-        authorization: OwnerAuthorizationV1,
-        activation: ActivationEnvelopeV1,
-        plan: LivePlanV1,
-        item: LivePlanItemV1,
+        authorization: LiveAuthorization,
+        activation: LiveActivation,
+        plan: LivePlan,
+        item: LivePlanItem,
         reserved_at: datetime,
     ) -> LiveBudgetReservation:
         authorization, activation, plan, item = self._validated_chain(
@@ -749,10 +786,10 @@ class LiveStateStore:
     def arm_dispatch(
         self,
         *,
-        authorization: OwnerAuthorizationV1,
-        activation: ActivationEnvelopeV1,
-        plan: LivePlanV1,
-        item: LivePlanItemV1,
+        authorization: LiveAuthorization,
+        activation: LiveActivation,
+        plan: LivePlan,
+        item: LivePlanItem,
         lease: LiveLeaseV1,
         request_fingerprint_sha256: str,
         armed_at: datetime,
@@ -1351,10 +1388,10 @@ class LiveStateStore:
     def reconcile_budget(
         self,
         *,
-        authorization: OwnerAuthorizationV1,
-        activation: ActivationEnvelopeV1,
-        plan: LivePlanV1,
-        item: LivePlanItemV1,
+        authorization: LiveAuthorization,
+        activation: LiveActivation,
+        plan: LivePlan,
+        item: LivePlanItem,
         quota: QuotaObservation,
         reconciled_at: datetime,
     ) -> None:
