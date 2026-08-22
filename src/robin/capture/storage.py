@@ -1057,11 +1057,173 @@ class CaptureStore:
             raise CaptureStorageError("CAPTURE_NORMALIZED_PROVENANCE_LINK_MISMATCH")
         return manifest
 
+    def store_fixture_target_set(self, target_set: object) -> None:
+        from robin.capture.bootstrap_contracts import FixtureTargetSetV1
+
+        validated = FixtureTargetSetV1.model_validate(cast(Any, target_set).model_dump(mode="json"))
+        self._write_immutable(
+            f"live/fixture-target-sets/{validated.canonical_set_hash}.json",
+            canonical_json_bytes(validated.model_dump(mode="json")) + b"\n",
+        )
+
+    def load_fixture_target_set(self, target_set_sha256: str) -> object:
+        from robin.capture.bootstrap_contracts import FixtureTargetSetV1
+
+        try:
+            payload = _safe_read_bounded(
+                self._path(f"live/fixture-target-sets/{target_set_sha256}.json"),
+                maximum_bytes=_MAX_CONTRACT_BYTES,
+            )
+            target_set = FixtureTargetSetV1.model_validate_json(payload)
+        except (OSError, ValueError):
+            raise CaptureStorageError("FIXTURE_TARGET_SET_INVALID_OR_MISSING") from None
+        if (
+            payload != canonical_json_bytes(target_set.model_dump(mode="json")) + b"\n"
+            or target_set.canonical_set_hash != target_set_sha256
+        ):
+            raise CaptureStorageError("FIXTURE_TARGET_SET_HASH_MISMATCH")
+        return target_set
+
+    def store_provider_network_binding(self, binding: object) -> None:
+        from robin.capture.bootstrap_contracts import ProviderNetworkBindingV1
+
+        validated = ProviderNetworkBindingV1.model_validate(
+            cast(Any, binding).model_dump(mode="json")
+        )
+        self._write_immutable(
+            f"live/provider-network-bindings/{validated.canonical_binding_hash}.json",
+            canonical_json_bytes(validated.model_dump(mode="json")) + b"\n",
+        )
+
+    def load_provider_network_binding(self, binding_sha256: str) -> object:
+        from robin.capture.bootstrap_contracts import ProviderNetworkBindingV1
+
+        try:
+            payload = _safe_read_bounded(
+                self._path(f"live/provider-network-bindings/{binding_sha256}.json"),
+                maximum_bytes=_MAX_CONTRACT_BYTES,
+            )
+            binding = ProviderNetworkBindingV1.model_validate_json(payload)
+        except (OSError, ValueError):
+            raise CaptureStorageError("PROVIDER_NETWORK_BINDING_INVALID_OR_MISSING") from None
+        if (
+            payload != canonical_json_bytes(binding.model_dump(mode="json")) + b"\n"
+            or binding.canonical_binding_hash != binding_sha256
+        ):
+            raise CaptureStorageError("PROVIDER_NETWORK_BINDING_HASH_MISMATCH")
+        return binding
+
+    def store_post_capture_fixture_mapping(self, mapping: object) -> None:
+        from robin.capture.fixture_mapping import (
+            PostCaptureFixtureMappingV1,
+            derive_post_capture_fixture_mappings_v1,
+        )
+
+        validated = PostCaptureFixtureMappingV1.model_validate(
+            cast(Any, mapping).model_dump(mode="json")
+        )
+        target_set = self.load_fixture_target_set(validated.fixture_target_set_sha256)
+        receipt = self.load_receipt(validated.intake_receipt_id)
+        raw = self.load_raw(receipt)
+        if (
+            receipt.payload_sha256 != validated.raw_payload_sha256
+            or receipt.raw_storage_key != validated.raw_storage_key
+            or hashlib.sha256(raw).hexdigest() != validated.raw_payload_sha256
+            or receipt.admission_status is not AdmissionStatus.INTAKE_PENDING
+        ):
+            raise CaptureStorageError("POST_CAPTURE_MAPPING_RAW_LINEAGE_MISMATCH")
+        try:
+            derived = derive_post_capture_fixture_mappings_v1(
+                raw,
+                target_set=cast(Any, target_set),
+                intake_receipt=receipt,
+                raw_storage_key=validated.raw_storage_key,
+            )
+        except (CaptureContractError, ValueError):
+            raise CaptureStorageError("POST_CAPTURE_MAPPING_SEMANTIC_REDERIVATION_FAILED") from None
+        if derived != validated:
+            raise CaptureStorageError("POST_CAPTURE_MAPPING_SEMANTIC_MISMATCH")
+        self._write_immutable(
+            f"live/post-capture-mappings/{validated.canonical_mapping_hash}.json",
+            canonical_json_bytes(validated.model_dump(mode="json")) + b"\n",
+        )
+
+    def load_post_capture_fixture_mapping(self, mapping_sha256: str) -> object:
+        from robin.capture.fixture_mapping import (
+            PostCaptureFixtureMappingV1,
+            derive_post_capture_fixture_mappings_v1,
+        )
+
+        try:
+            payload = _safe_read_bounded(
+                self._path(f"live/post-capture-mappings/{mapping_sha256}.json"),
+                maximum_bytes=_MAX_CONTRACT_BYTES,
+            )
+            mapping = PostCaptureFixtureMappingV1.model_validate_json(payload)
+        except (OSError, ValueError):
+            raise CaptureStorageError("POST_CAPTURE_MAPPING_INVALID_OR_MISSING") from None
+        if (
+            payload != canonical_json_bytes(mapping.model_dump(mode="json")) + b"\n"
+            or mapping.canonical_mapping_hash != mapping_sha256
+        ):
+            raise CaptureStorageError("POST_CAPTURE_MAPPING_HASH_MISMATCH")
+        target_set = self.load_fixture_target_set(mapping.fixture_target_set_sha256)
+        receipt = self.load_receipt(mapping.intake_receipt_id)
+        raw = self.load_raw(receipt)
+        if (
+            cast(Any, target_set).canonical_set_hash != mapping.fixture_target_set_sha256
+            or receipt.payload_sha256 != mapping.raw_payload_sha256
+            or receipt.raw_storage_key != mapping.raw_storage_key
+            or hashlib.sha256(raw).hexdigest() != mapping.raw_payload_sha256
+            or receipt.admission_status is not AdmissionStatus.INTAKE_PENDING
+        ):
+            raise CaptureStorageError("POST_CAPTURE_MAPPING_LINEAGE_MISMATCH")
+        try:
+            derived = derive_post_capture_fixture_mappings_v1(
+                raw,
+                target_set=cast(Any, target_set),
+                intake_receipt=receipt,
+                raw_storage_key=mapping.raw_storage_key,
+            )
+        except (CaptureContractError, ValueError):
+            raise CaptureStorageError("POST_CAPTURE_MAPPING_SEMANTIC_REDERIVATION_FAILED") from None
+        if derived != mapping:
+            raise CaptureStorageError("POST_CAPTURE_MAPPING_SEMANTIC_MISMATCH")
+        return mapping
+
+    @staticmethod
+    def _assert_v2_lineage_mapping_summary(lineage: object, mapping: object) -> None:
+        mapped_targets = len(cast(Any, mapping).mapped_target_ids)
+        non_admitted_targets = len(cast(Any, mapping).unmatched_target_ids)
+        expected_admission = (
+            "NONE" if mapped_targets == 0 else "FULL" if non_admitted_targets == 0 else "PARTIAL"
+        )
+        if (
+            cast(Any, lineage).mapped_target_count != mapped_targets
+            or cast(Any, lineage).non_admitted_target_count != non_admitted_targets
+            or cast(Any, lineage).mapped_provider_event_count
+            != cast(Any, mapping).mapped_provider_event_count
+            or cast(Any, lineage).non_admitted_provider_event_count
+            != cast(Any, mapping).non_admitted_provider_event_count
+            or cast(Any, lineage).scientific_admission != expected_admission
+        ):
+            raise CaptureStorageError("LIVE_V2_MAPPING_SUMMARY_MISMATCH")
+
     def store_live_capture_lineage(self, lineage: object) -> None:
+        from robin.capture.bootstrap_contracts import LiveCaptureLineageV2
         from robin.capture.live_contracts import LiveCaptureLineageV1
         from robin.capture.live_storage import LiveStateStore
 
-        validated = LiveCaptureLineageV1.model_validate(cast(Any, lineage).model_dump(mode="json"))
+        material = cast(Any, lineage).model_dump(mode="json")
+        validated: LiveCaptureLineageV1 | LiveCaptureLineageV2
+        if material.get("schema_version") == "robin-live-capture-lineage-v2":
+            validated = LiveCaptureLineageV2.model_validate(material)
+            mapping = self.load_post_capture_fixture_mapping(validated.post_capture_mapping_sha256)
+            if cast(Any, mapping).fixture_target_set_sha256 != validated.fixture_target_set_sha256:
+                raise CaptureStorageError("LIVE_V2_MAPPING_LINEAGE_MISMATCH")
+            self._assert_v2_lineage_mapping_summary(validated, mapping)
+        else:
+            validated = LiveCaptureLineageV1.model_validate(material)
         if (
             LiveStateStore(self).load_response_intake_claim(validated.admission_permit.item_hash)
             != validated.response_intake_claim
@@ -1073,6 +1235,7 @@ class CaptureStore:
         )
 
     def _load_live_capture_lineage(self, manifest: CaptureManifest) -> object:
+        from robin.capture.bootstrap_contracts import LiveCaptureLineageV2
         from robin.capture.live_contracts import LiveCaptureLineageV1
 
         try:
@@ -1080,7 +1243,12 @@ class CaptureStore:
                 self._path(f"live/capture-lineage/{manifest.snapshot_id}.json"),
                 maximum_bytes=_MAX_CONTRACT_BYTES,
             )
-            lineage = LiveCaptureLineageV1.model_validate_json(lineage_bytes)
+            lineage_material = strict_json_object(lineage_bytes)
+            lineage: LiveCaptureLineageV1 | LiveCaptureLineageV2
+            if lineage_material.get("schema_version") == "robin-live-capture-lineage-v2":
+                lineage = LiveCaptureLineageV2.model_validate(lineage_material)
+            else:
+                lineage = LiveCaptureLineageV1.model_validate(lineage_material)
         except (OSError, ValueError):
             raise CaptureStorageError("LIVE_CAPTURE_LINEAGE_INVALID_OR_MISSING") from None
         if (
@@ -1108,6 +1276,11 @@ class CaptureStore:
             or claim.ingested_at_utc != receipt.robin_ingested_at
         ):
             raise CaptureStorageError("LIVE_RESPONSE_INTAKE_CLAIM_MISMATCH")
+        if isinstance(lineage, LiveCaptureLineageV2):
+            mapping = self.load_post_capture_fixture_mapping(lineage.post_capture_mapping_sha256)
+            if cast(Any, mapping).fixture_target_set_sha256 != lineage.fixture_target_set_sha256:
+                raise CaptureStorageError("LIVE_V2_MAPPING_LINEAGE_MISMATCH")
+            self._assert_v2_lineage_mapping_summary(lineage, mapping)
         return lineage
 
     def _verify_live_execution_lineage(
@@ -1297,20 +1470,40 @@ class CaptureStore:
         receipt = self.load_receipt(manifest.receipt_id)
         raw = self.load_raw(receipt)
         # load_raw verifies the raw SHA-256 before JSON decoding or normalization.
-        from robin.capture.normalization import decode_json_payload
+        from robin.capture.bootstrap_contracts import LiveCaptureLineageV2
+        from robin.capture.normalization import decode_json_payload, normalize_payload_v2
 
         decoded = decode_json_payload(raw)
-        schema, observations = normalize_payload(
-            decoded,
-            receipt=receipt,
-            mappings=manifest.fixture_mappings,
-            allowed_markets=(
-                cast(Any, live_lineage).expected_markets if live_lineage is not None else None
-            ),
-            expected_sport_key=(
-                cast(Any, live_lineage).expected_sport_key if live_lineage is not None else None
-            ),
-        )
+        replayed_v2_snapshot_id: str | None = None
+        if isinstance(live_lineage, LiveCaptureLineageV2):
+            mapping_evidence = self.load_post_capture_fixture_mapping(
+                live_lineage.post_capture_mapping_sha256
+            )
+            schema, observations, replayed_v2_snapshot_id = normalize_payload_v2(
+                decoded,
+                receipt=receipt,
+                mapping_evidence=mapping_evidence,
+                allowed_markets=live_lineage.expected_markets,
+                expected_sport_key=live_lineage.expected_sport_key,
+            )
+            if (
+                cast(Any, mapping_evidence).mappings != manifest.fixture_mappings
+                or cast(Any, mapping_evidence).fixture_target_set_sha256
+                != live_lineage.fixture_target_set_sha256
+            ):
+                raise CaptureStorageError("POST_CAPTURE_MAPPING_MANIFEST_MISMATCH")
+        else:
+            schema, observations = normalize_payload(
+                decoded,
+                receipt=receipt,
+                mappings=manifest.fixture_mappings,
+                allowed_markets=(
+                    cast(Any, live_lineage).expected_markets if live_lineage is not None else None
+                ),
+                expected_sport_key=(
+                    cast(Any, live_lineage).expected_sport_key if live_lineage is not None else None
+                ),
+            )
         replayed = normalized_jsonl_bytes(observations)
         expected = _safe_read_bounded(
             self._path(manifest.normalized_storage_key),
@@ -1321,6 +1514,8 @@ class CaptureStore:
         replayed_snapshot_id = (
             observations[0].snapshot_id
             if observations
+            else replayed_v2_snapshot_id
+            if replayed_v2_snapshot_id is not None
             else snapshot_id_for_observation_rows(
                 receipt_id=receipt.receipt_id,
                 schema_fingerprint_sha256=schema.schema_sha256,

@@ -19,6 +19,7 @@ from urllib.parse import unquote_to_bytes, urlencode
 
 from pydantic import Field, model_validator
 
+from robin.capture.bootstrap_contracts import ProviderNetworkBindingV1
 from robin.capture.contracts import (
     ALLOWED_PROVIDER_HOST,
     SECRET_ENV_NAME,
@@ -90,6 +91,66 @@ class PublicProviderRequestV1(FrozenContract):
         return canonical_json_bytes(self.model_dump(mode="json"))
 
 
+class PublicProviderRequestV2(FrozenContract):
+    """Successor request carrying the complete, immutable network binding."""
+
+    schema_version: Literal["robin-public-provider-request-v2"] = "robin-public-provider-request-v2"
+    scheme: Literal["https"] = "https"
+    host: Literal["api.the-odds-api.com"] = "api.the-odds-api.com"
+    port: Literal[443] = 443
+    method: Literal["GET"] = "GET"
+    endpoint: str
+    sport_key: str
+    region: Literal["eu"] = "eu"
+    markets: tuple[Literal["h2h", "totals"], ...]
+    odds_format: Literal["decimal"] = "decimal"
+    date_format: Literal["iso"] = "iso"
+    timeout_seconds: int = Field(ge=1, le=30)
+    redirects: Literal[0] = 0
+    retries: Literal[0] = 0
+    certificate_verification_required: Literal[True] = True
+    environment_proxy_allowed: Literal[False] = False
+    maximum_response_bytes: int = Field(gt=0, le=10_485_760)
+    provider_network_binding: ProviderNetworkBindingV1
+
+    @classmethod
+    def from_spec(
+        cls,
+        spec: ProviderRequestSpec,
+        *,
+        maximum_response_bytes: int,
+        provider_network_binding: ProviderNetworkBindingV1,
+    ) -> Self:
+        return cls(
+            endpoint=spec.endpoint,
+            sport_key=spec.sport_key,
+            region=spec.region,
+            markets=spec.markets,
+            odds_format=spec.odds_format,
+            date_format=spec.date_format,
+            timeout_seconds=spec.timeout_seconds,
+            maximum_response_bytes=maximum_response_bytes,
+            provider_network_binding=provider_network_binding,
+        )
+
+    @model_validator(mode="after")
+    def validate_public_request(self) -> Self:
+        if self.sport_key not in LIVE_ALLOWED_SPORT_KEYS:
+            raise ValueError("LIVE_PUBLIC_REQUEST_SPORT_FORBIDDEN")
+        if self.endpoint != f"/v4/sports/{self.sport_key}/odds":
+            raise ValueError("LIVE_PUBLIC_REQUEST_ENDPOINT_MISMATCH")
+        if self.provider_network_binding.canonical_hostname != self.host:
+            raise ValueError("LIVE_PUBLIC_REQUEST_NETWORK_HOST_MISMATCH")
+        return self
+
+    @property
+    def approved_provider_ip_address(self) -> str:
+        return self.provider_network_binding.selected_ip_address
+
+    def canonical_public_bytes(self) -> bytes:
+        return canonical_json_bytes(self.model_dump(mode="json"))
+
+
 @dataclass(frozen=True, slots=True)
 class LiveTransportResponse:
     http_status: int
@@ -108,6 +169,17 @@ class LiveTransport(Protocol):
     def dispatch(
         self,
         request: PublicProviderRequestV1,
+        *,
+        api_key: str,
+    ) -> LiveTransportResponse: ...
+
+
+class LiveTransportV2(Protocol):
+    def preflight(self, request: PublicProviderRequestV2) -> None: ...
+
+    def dispatch(
+        self,
+        request: PublicProviderRequestV2,
         *,
         api_key: str,
     ) -> LiveTransportResponse: ...
@@ -227,6 +299,20 @@ ConnectionFactory = Callable[
     _HttpsConnection,
 ]
 
+ConnectionFactoryV2 = Callable[
+    [
+        str,
+        str,
+        int,
+        float,
+        ssl.SSLContext,
+        Callable[[], float],
+        float,
+        Callable[[], None],
+    ],
+    _HttpsConnection,
+]
+
 
 class _DeadlineSocketRaw(io.RawIOBase):
     """Raw reader that reapplies one absolute deadline before every recv."""
@@ -310,6 +396,7 @@ class _PinnedAddressHttpsConnection(http.client.HTTPSConnection):
         context: ssl.SSLContext,
         monotonic: Callable[[], float],
         started: float,
+        pre_connect_guard: Callable[[], None] | None = None,
     ) -> None:
         super().__init__(host=host, port=port, timeout=timeout, context=context)
         self._approved_ip_address = approved_ip_address
@@ -317,6 +404,7 @@ class _PinnedAddressHttpsConnection(http.client.HTTPSConnection):
         self._deadline_monotonic = monotonic
         self._deadline_started = started
         self._deadline_seconds = timeout
+        self._pre_connect_guard = pre_connect_guard
 
     def _remaining(self) -> float:
         return _remaining_dispatch_seconds(
@@ -328,6 +416,8 @@ class _PinnedAddressHttpsConnection(http.client.HTTPSConnection):
     def connect(self) -> None:
         if getattr(self, "_tunnel_host", None) is not None:
             raise LiveTransportError("LIVE_TRANSPORT_TUNNEL_FORBIDDEN")
+        if self._pre_connect_guard is not None:
+            self._pre_connect_guard()
         address = ipaddress.ip_address(self._approved_ip_address)
         family = socket.AF_INET6 if address.version == 6 else socket.AF_INET
         endpoint: tuple[object, ...] = (
@@ -376,6 +466,31 @@ def _default_connection_factory(
             context=context,
             monotonic=monotonic,
             started=started,
+        ),
+    )
+
+
+def _default_connection_factory_v2(
+    host: str,
+    approved_ip_address: str,
+    port: int,
+    timeout: float,
+    context: ssl.SSLContext,
+    monotonic: Callable[[], float],
+    started: float,
+    pre_connect_guard: Callable[[], None],
+) -> _HttpsConnection:
+    return cast(
+        _HttpsConnection,
+        _PinnedAddressHttpsConnection(
+            host=host,
+            approved_ip_address=approved_ip_address,
+            port=port,
+            timeout=timeout,
+            context=context,
+            monotonic=monotonic,
+            started=started,
+            pre_connect_guard=pre_connect_guard,
         ),
     )
 
@@ -577,6 +692,173 @@ class StrictHttpsTransport:
                     }
                 )
             }"
+            connection.request(
+                "GET",
+                target,
+                headers={
+                    "Accept": "application/json",
+                    "Connection": "close",
+                    "Host": request.host,
+                },
+            )
+            _verify_connection_peer(connection, request.approved_provider_ip_address)
+            remaining = _remaining_dispatch_seconds(
+                started=started,
+                timeout_seconds=timeout_seconds,
+                monotonic=self._monotonic,
+            )
+            _tighten_connection_timeout(connection, remaining)
+            response = connection.getresponse()
+            remaining = _remaining_dispatch_seconds(
+                started=started,
+                timeout_seconds=timeout_seconds,
+                monotonic=self._monotonic,
+            )
+            _tighten_connection_timeout(connection, remaining)
+            observed = ensure_utc(self._clock(), field="transport_first_observed_at")
+            payload = _read_response_with_deadline(
+                response,
+                maximum_bytes=request.maximum_response_bytes,
+                timeout_seconds=timeout_seconds,
+                monotonic=self._monotonic,
+                started=started,
+                tighten_timeout=lambda remaining: _tighten_connection_timeout(
+                    connection,
+                    remaining,
+                ),
+            )
+            status = response.status
+            raw_headers = response.getheaders()
+            reject_unsafe_response(payload, raw_headers, api_key)
+            headers = _sanitized_headers(raw_headers)
+        except LiveTransportError:
+            raise
+        except BaseException:
+            raise LiveTransportError("LIVE_TRANSPORT_DISPATCH_FAILED") from None
+        finally:
+            target = ""
+            api_key = ""
+            if connection is not None:
+                try:
+                    connection.close()
+                except BaseException:
+                    pass
+        if not isinstance(status, int) or isinstance(status, bool) or not 100 <= status <= 599:
+            raise LiveTransportError("LIVE_TRANSPORT_STATUS_INVALID")
+        return LiveTransportResponse(
+            http_status=status,
+            headers=headers,
+            payload=payload,
+            first_observed_at_utc=observed,
+        )
+
+
+class StrictHttpsTransportV2:
+    """Direct TLS transport that treats binding freshness as a connect-time gate."""
+
+    def __init__(
+        self,
+        *,
+        clock: Callable[[], datetime],
+        connection_factory: ConnectionFactoryV2 = _default_connection_factory_v2,
+        ssl_context_factory: Callable[[], ssl.SSLContext] = ssl.create_default_context,
+        monotonic: Callable[[], float] = time.monotonic,
+    ) -> None:
+        self._clock = clock
+        self._connection_factory = connection_factory
+        self._ssl_context_factory = ssl_context_factory
+        self._monotonic = monotonic
+        self._prepared: tuple[PublicProviderRequestV2, ssl.SSLContext] | None = None
+
+    @staticmethod
+    def _validated_request(request: PublicProviderRequestV2) -> PublicProviderRequestV2:
+        try:
+            return PublicProviderRequestV2.model_validate(request.model_dump(mode="json"))
+        except (AttributeError, CaptureContractError, TypeError, ValueError):
+            raise LiveTransportError("LIVE_PUBLIC_REQUEST_INVALID") from None
+
+    @staticmethod
+    def _validate_tls_context(context: ssl.SSLContext) -> None:
+        StrictHttpsTransport._validate_tls_context(context)
+
+    def _assert_binding_current(self, request: PublicProviderRequestV2) -> None:
+        try:
+            request.provider_network_binding.assert_current(self._clock())
+        except (CaptureContractError, TypeError, ValueError):
+            raise LiveTransportError("LIVE_PROVIDER_NETWORK_BINDING_EXPIRED") from None
+
+    def preflight(self, request: PublicProviderRequestV2) -> None:
+        validated = self._validated_request(request)
+        self._assert_binding_current(validated)
+        forbidden_tls_environment = {
+            "SSLKEYLOGFILE": "LIVE_TRANSPORT_TLS_KEYLOG_FORBIDDEN",
+            "SSL_CERT_FILE": "LIVE_TRANSPORT_TLS_TRUST_ENV_FORBIDDEN",
+            "SSL_CERT_DIR": "LIVE_TRANSPORT_TLS_TRUST_ENV_FORBIDDEN",
+        }
+        for variable, code in forbidden_tls_environment.items():
+            if variable in os.environ:
+                raise LiveTransportError(code)
+        context = self._ssl_context_factory()
+        self._validate_tls_context(context)
+        self._assert_binding_current(validated)
+        if self._prepared is not None:
+            raise LiveTransportError("LIVE_TRANSPORT_ALREADY_PREFLIGHTED")
+        self._prepared = (validated, context)
+
+    def dispatch(
+        self,
+        request: PublicProviderRequestV2,
+        *,
+        api_key: str,
+    ) -> LiveTransportResponse:
+        connection: Any | None = None
+        target = ""
+        try:
+            request = self._validated_request(request)
+            if request.host != ALLOWED_PROVIDER_HOST:
+                raise LiveTransportError("LIVE_TRANSPORT_HOST_FORBIDDEN")
+            self._assert_binding_current(request)
+            api_key = validate_provider_secret(api_key)
+            self._assert_binding_current(request)
+            if self._prepared is None or self._prepared[0] != request:
+                raise LiveTransportError("LIVE_TRANSPORT_PREFLIGHT_REQUIRED")
+            context = self._prepared[1]
+            self._prepared = None
+            self._validate_tls_context(context)
+            timeout_seconds = float(request.timeout_seconds)
+            started = self._monotonic()
+
+            def guard_binding_at_connect() -> None:
+                self._assert_binding_current(request)
+
+            self._assert_binding_current(request)
+            connection = self._connection_factory(
+                request.host,
+                request.approved_provider_ip_address,
+                request.port,
+                timeout_seconds,
+                context,
+                self._monotonic,
+                started,
+                guard_binding_at_connect,
+            )
+            set_debug_level = getattr(connection, "set_debuglevel", None)
+            if callable(set_debug_level):
+                set_debug_level(0)
+            if getattr(connection, "debuglevel", 0) != 0:
+                raise LiveTransportError("LIVE_TRANSPORT_DEBUG_OUTPUT_FORBIDDEN")
+            target = f"{request.endpoint}?{
+                urlencode(
+                    {
+                        'regions': request.region,
+                        'markets': ','.join(request.markets),
+                        'oddsFormat': request.odds_format,
+                        'dateFormat': request.date_format,
+                        'apiKey': api_key,
+                    }
+                )
+            }"
+            self._assert_binding_current(request)
             connection.request(
                 "GET",
                 target,

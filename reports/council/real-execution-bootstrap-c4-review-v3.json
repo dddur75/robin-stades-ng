@@ -1,0 +1,105 @@
+{
+  "agent_id": "C4",
+  "mission_id": "REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1",
+  "facts_verified": [
+    {
+      "claim": "DNS preparation durably consumes one mission-global attempt before the workspace-local marker and sole resolver call; it revalidates mission, campaign winner, claim age, review window, and control-root identity without provider HTTP, TCP, or secret access.",
+      "evidence_refs": [
+        "src/robin/capture/provider_network.py:69-419",
+        "tools/data-sourcing/prepare_provider_network_binding_v1.py:52-103",
+        "tests/capture/test_provider_network_binding.py:468-780",
+        "tests/council/test_real_execution_bootstrap_governance.py:197-220"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "ProviderNetworkBindingV1 rejects malformed and complete reviewed special-purpose address space, canonicalizes and deduplicates eligible addresses, deterministically selects the first IPv4-then-IPv6 packed address, hash-binds the result, and enforces exact short expiry.",
+      "evidence_refs": [
+        "src/robin/capture/bootstrap_contracts.py:81-208,220-351",
+        "tests/capture/test_provider_network_binding.py:93-194"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The V2 runtime performs zero DNS and one direct socket connection to the selected numeric IP, with no retry or failover, exact peer checks, hostname SNI, and binding-expiry checks immediately before socket creation and throughout dispatch admission.",
+      "evidence_refs": [
+        "src/robin/capture/live_transport.py:386-495,756-920",
+        "src/robin/capture/live_executor.py:1022-1073,1850-2045",
+        "tests/capture/test_provider_network_binding.py:401-466"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "V2 authority binds the exact canonical Git executable path and SHA-256, standalone repository/control fingerprints, exact HEAD and origin/main SHA, hardened metadata/config/index/worktree state, and revalidates them before secret access and dispatch.",
+      "evidence_refs": [
+        "src/robin/capture/bootstrap_contracts.py:1223-1363",
+        "src/robin/capture/live_executor.py:200-966,1189-1230,1910-2025",
+        "src/robin/capture/workspace_bootstrap.py:441-541,659-733",
+        "tests/capture/test_live_canary_successor_v2.py:563-620",
+        "tests/capture/test_real_capture_workspace_bootstrap.py:414-530"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Workspace authority requires an exact in-clone VERIFY entrypoint and imported package, standalone detached Git, fixed ACL-capable non-synchronized roots, SID-based exclusive ACLs, no UNC/cloud/reparse escape, immutable contained outputs, and the exact tracked mission-manifest path.",
+      "evidence_refs": [
+        "src/robin/capture/workspace_bootstrap.py:113-357,638-771,807-1059",
+        "tests/capture/test_real_capture_workspace_bootstrap.py:176-594"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Campaign selection rederives the complete current winner, and DNS plus owner-review authority bind that exact selection and target set. TTL is clamped to mission, campaign, usable-window, and kickoff-minus-five-minutes ceilings; owner-pack completion returns NETWORK_BINDING_EXPIRED when appropriate.",
+      "evidence_refs": [
+        "src/robin/capture/bootstrap_contracts.py:1016-1220,1712-1964",
+        "src/robin/capture/provider_network.py:250-379",
+        "src/robin/capture/owner_review_pack.py:31-235",
+        "tests/capture/test_live_canary_successor_v2.py:744-1099,1211-1300",
+        "tests/capture/test_provider_network_binding.py:600-744"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Historical V1 behavior remains additive and replay-compatible: the frozen-tree historical transport and one-shot receipt-backed replay checks passed 51 of 51.",
+      "evidence_refs": [
+        "src/robin/capture/live_executor.py:1050-1186,1725-2155",
+        "src/robin/capture/live_transport.py:450-753",
+        "tests/capture/test_live_canary_transport.py",
+        "tests/capture/test_live_canary_capability.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Frozen-tree verification produced 137 functional passes, one host symlink-capability skip, clean Ruff and Ruff-format, strict mypy success across 20 source files, clean Bandit, and clean diff integrity. The real-host read-only candidate was NTFS, fixed, ACL-exclusive, non-synchronized, and remained uncreated.",
+      "evidence_refs": [
+        "tests/capture/test_provider_network_binding.py",
+        "tests/capture/test_real_capture_workspace_bootstrap.py",
+        "tests/capture/test_live_canary_successor_v2.py",
+        "tests/capture/test_post_capture_fixture_mapping.py",
+        "tests/council/test_real_execution_bootstrap_governance.py",
+        ".github/workflows/ci.yml:105-181,338-429"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "No real DNS, provider TCP/HTTP, provider secret, after-merge clone, or live capture was exercised; those effects were explicitly outside this read-only review.",
+    "The local host could not create the directory symlink used by one negative test; the Windows CI junction and hardlink proof remains the decisive platform gate.",
+    "Reviewer reports, aggregate review, decision-ledger entry, and evidence-graph claim remain to be materialized. This is mechanical pending work, not a functional C4 finding."
+  ],
+  "assumptions": [
+    "Windows filesystem, ACL, SID, socket-peer, and clock APIs report their state faithfully.",
+    "The external owner-authenticity boundary and exclusive-ACL no-concurrent-mutator attestation hold as explicitly modeled.",
+    "Production preparation and execution use the verified in-clone CLIs and exact tracked mission manifest."
+  ],
+  "main_objection": "No functional C4 objection remains. open_p0=0, open_p1=0, open_p2=0, open_critical_threads=0.",
+  "risks": [],
+  "minimum_decisive_test": "Materialize the three schema-valid reviews, aggregate, ledger, and evidence graph; rerun the currently mechanical governance assertion; then require exact-head Ubuntu and Windows CI. Do not perform the authorized DNS operation before merge and exact runtime verification.",
+  "recommended_action": "ACCEPT engineering for draft delivery with P0=0, P1=0, P2=0, and critical=0. Complete only the pending mechanical governance materialization and exact-head CI before any post-merge bootstrap effect.",
+  "scale_condition": "Remain at E1 and default-deny. Require a new C4 review for any change to hostname, IP eligibility, TTL, mission claim scope, workspace/ACL provenance, Git binding, DNS behavior, proxying, retries, failover, concurrency, provider, or secret boundary.",
+  "estimated_compute": "Low: targeted local tests and static analysis only; no corpus replay and no external network operation.",
+  "estimated_external_cost": "0",
+  "estimated_human_time": "Approximately 15-30 minutes for mechanical report, ledger, graph materialization and exact-head CI dispatch.",
+  "maintenance_impact": "Moderate: additive V2 contracts preserve V1 replay, while the reviewed special-purpose IP registry and Windows boundary policy require explicit maintenance when standards or platform behavior change.",
+  "confidence": 0.98
+}

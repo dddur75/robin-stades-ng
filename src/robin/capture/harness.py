@@ -11,6 +11,7 @@ from typing import Literal
 
 from pydantic import Field
 
+from robin.capture.bootstrap_contracts import FixtureTargetSetV1, LiveCaptureLineageV2
 from robin.capture.contracts import (
     MAX_SIGNED_64,
     SECRET_ENV_NAME,
@@ -31,6 +32,11 @@ from robin.capture.contracts import (
     canonical_json_bytes,
     ensure_utc,
 )
+from robin.capture.fixture_mapping import (
+    PostCaptureFixtureMappingV1,
+    PostCaptureMappingError,
+    derive_post_capture_fixture_mappings_v1,
+)
 from robin.capture.live_contracts import (
     LiveAdmissionPermitV1,
     LiveCaptureLineageV1,
@@ -40,11 +46,12 @@ from robin.capture.normalization import (
     CaptureValidationError,
     decode_json_payload,
     normalize_payload,
+    normalize_payload_v2,
     normalized_jsonl_bytes,
     schema_fingerprint,
     snapshot_id_for_observation_rows,
 )
-from robin.capture.storage import CaptureStore
+from robin.capture.storage import CaptureStorageError, CaptureStore
 
 LIVE_CANARY_AUTHORIZED = False
 DEFAULT_CAPTURE_MODE = CaptureMode.VALIDATE_OFFLINE
@@ -367,6 +374,75 @@ class CaptureHarness:
                 stage_observer=stage_observer,
             )
 
+    def record_live_response_v2(
+        self,
+        request: ProviderRequestSpec,
+        *,
+        expected_request_fingerprint_sha256: str,
+        payload: bytes,
+        http_status: int,
+        response_headers: Mapping[str, str],
+        fixture_target_set: FixtureTargetSetV1,
+        provider_network_binding_sha256: str,
+        admission_permit: LiveAdmissionPermitV1,
+        first_observed_at: datetime,
+        ingested_at: datetime,
+        stage_observer: Callable[[str], None] | None = None,
+    ) -> CaptureManifest:
+        """Admit V2 bytes and learn provider IDs only after durable raw evidence."""
+
+        fingerprint = RequestFingerprint.create(request)
+        permit = LiveAdmissionPermitV1.model_validate(admission_permit.model_dump(mode="json"))
+        targets = FixtureTargetSetV1.model_validate(fixture_target_set.model_dump(mode="json"))
+        from robin.capture.live_storage import LiveStateStore
+
+        live_state = LiveStateStore(self.store)
+        permit = live_state.verify_admission_permit(permit, consume=False)
+        try:
+            stored_targets = self.store.load_fixture_target_set(targets.canonical_set_hash)
+        except CaptureStorageError:
+            raise CaptureGuardError("LIVE_FIXTURE_TARGET_SET_NOT_DURABLE") from None
+        if fingerprint.request_sha256 != expected_request_fingerprint_sha256:
+            raise CaptureGuardError("LIVE_REQUEST_FINGERPRINT_MISMATCH")
+        if (
+            permit.capture_root_fingerprint != self.store.capture_root_fingerprint()
+            or permit.request_fingerprint_sha256 != fingerprint.request_sha256
+            or permit.reserved_credits != len(request.markets)
+            or targets.sport_key != request.sport_key
+            or stored_targets != targets
+        ):
+            raise CaptureGuardError("LIVE_ADMISSION_PERMIT_MISMATCH")
+        response_intake_claim = live_state.claim_live_response_intake(
+            permit,
+            payload_sha256=hashlib.sha256(payload).hexdigest(),
+            payload_byte_length=len(payload),
+            first_observed_at=first_observed_at,
+            ingested_at=ingested_at,
+        )
+        with self.store.capture_transaction():
+            return self._record_response_locked(
+                request,
+                fingerprint=fingerprint,
+                estimated_credits=len(request.markets),
+                payload=payload,
+                http_status=http_status,
+                response_headers=response_headers,
+                mappings=(),
+                fixture_target_set=targets,
+                provider_network_binding_sha256=provider_network_binding_sha256,
+                first_observed_at=first_observed_at,
+                ingested_at=ingested_at,
+                manifest_mode="LIVE_CANARY",
+                network_calls=1,
+                provider_calls=1,
+                live_canary_authorized=True,
+                exact_response_markets=request.markets,
+                expected_response_sport_key=request.sport_key,
+                live_admission_permit=permit,
+                live_response_intake_claim=response_intake_claim,
+                stage_observer=stage_observer,
+            )
+
     def _record_response_locked(
         self,
         request: ProviderRequestSpec,
@@ -377,6 +453,8 @@ class CaptureHarness:
         http_status: int,
         response_headers: Mapping[str, str],
         mappings: tuple[FixtureMapping, ...],
+        fixture_target_set: FixtureTargetSetV1 | None = None,
+        provider_network_binding_sha256: str | None = None,
         first_observed_at: datetime,
         ingested_at: datetime,
         manifest_mode: Literal["VALIDATE_OFFLINE", "LIVE_CANARY"],
@@ -392,6 +470,12 @@ class CaptureHarness:
         def observe(stage: str) -> None:
             if stage_observer is not None:
                 stage_observer(stage)
+
+        if fixture_target_set is None:
+            if provider_network_binding_sha256 is not None:
+                raise CaptureGuardError("CAPTURE_V2_BINDING_INCOMPLETE")
+        elif mappings or provider_network_binding_sha256 is None:
+            raise CaptureGuardError("CAPTURE_V2_BINDING_INCOMPLETE")
 
         observed = ensure_utc(first_observed_at, field="first_observed_at")
         ingested = ensure_utc(ingested_at, field="ingested_at")
@@ -454,6 +538,8 @@ class CaptureHarness:
         schema: SchemaFingerprint | None = None
         quota: QuotaObservation | None = None
         normalized: tuple[NormalizedMarketObservation, ...] = ()
+        mapping_evidence: PostCaptureFixtureMappingV1 | None = None
+        v2_snapshot_id: str | None = None
         lowered_headers = {key.casefold(): value for key, value in response_headers.items()}
 
         if 300 <= http_status <= 399 or "location" in lowered_headers:
@@ -471,7 +557,27 @@ class CaptureHarness:
                 decoded = decode_json_payload(payload)
                 schema = schema_fingerprint(decoded)
                 observe("SCHEMA_FINGERPRINT_COMPUTED")
-            except (CaptureValidationError, CaptureContractError) as exc:
+                if fixture_target_set is not None:
+                    durable_intake = self.store.load_receipt(intake_receipt.receipt_id)
+                    durable_raw = self.store.load_raw(durable_intake)
+                    if durable_raw != payload:
+                        raise PostCaptureMappingError("POST_CAPTURE_RAW_HASH_MISMATCH")
+                    observe("IDENTITY_ENVELOPE_PARSE_STARTED")
+                    mapping_evidence = derive_post_capture_fixture_mappings_v1(
+                        durable_raw,
+                        target_set=fixture_target_set,
+                        intake_receipt=durable_intake,
+                        raw_storage_key=raw_storage_key,
+                    )
+                    observe("POST_CAPTURE_MAPPING_DERIVED")
+                    self.store.store_post_capture_fixture_mapping(mapping_evidence)
+                    mappings = mapping_evidence.mappings
+                    observe("POST_CAPTURE_MAPPING_EVIDENCE_DURABLE")
+            except (
+                CaptureValidationError,
+                CaptureContractError,
+                PostCaptureMappingError,
+            ) as exc:
                 rejection_code = exc.code
 
         admitted_material = _ReceiptMaterial(
@@ -491,13 +597,22 @@ class CaptureHarness:
 
         if rejection_code is None and decoded is not None:
             try:
-                schema, normalized = normalize_payload(
-                    decoded,
-                    receipt=admitted_receipt,
-                    mappings=mappings,
-                    allowed_markets=exact_response_markets,
-                    expected_sport_key=expected_response_sport_key,
-                )
+                if mapping_evidence is None:
+                    schema, normalized = normalize_payload(
+                        decoded,
+                        receipt=admitted_receipt,
+                        mappings=mappings,
+                        allowed_markets=exact_response_markets,
+                        expected_sport_key=expected_response_sport_key,
+                    )
+                else:
+                    schema, normalized, v2_snapshot_id = normalize_payload_v2(
+                        decoded,
+                        receipt=admitted_receipt,
+                        mapping_evidence=mapping_evidence,
+                        allowed_markets=exact_response_markets,
+                        expected_sport_key=expected_response_sport_key,
+                    )
                 observe("NORMALIZATION_COMPLETED")
             except (CaptureValidationError, CaptureContractError) as exc:
                 rejection_code = exc.code
@@ -533,6 +648,8 @@ class CaptureHarness:
         snapshot_id = (
             normalized[0].snapshot_id
             if normalized
+            else v2_snapshot_id
+            if v2_snapshot_id is not None
             else snapshot_id_for_observation_rows(
                 receipt_id=admitted_receipt.receipt_id,
                 schema_fingerprint_sha256=schema.schema_sha256,
@@ -565,17 +682,51 @@ class CaptureHarness:
         if live_admission_permit is not None:
             if live_response_intake_claim is None:
                 raise CaptureGuardError("LIVE_RESPONSE_INTAKE_CLAIM_MISSING")
-            lineage = LiveCaptureLineageV1.issue(
-                manifest_id=manifest.snapshot_id,
-                manifest_hash=manifest.manifest_sha256,
-                request=request,
-                request_fingerprint_sha256=fingerprint.request_sha256,
-                expected_sport_key=request.sport_key,
-                expected_region=request.region,
-                expected_markets=request.markets,
-                admission_permit=live_admission_permit,
-                response_intake_claim=live_response_intake_claim,
-            )
+            lineage: LiveCaptureLineageV1 | LiveCaptureLineageV2
+            if mapping_evidence is None:
+                lineage = LiveCaptureLineageV1.issue(
+                    manifest_id=manifest.snapshot_id,
+                    manifest_hash=manifest.manifest_sha256,
+                    request=request,
+                    request_fingerprint_sha256=fingerprint.request_sha256,
+                    expected_sport_key=request.sport_key,
+                    expected_region=request.region,
+                    expected_markets=request.markets,
+                    admission_permit=live_admission_permit,
+                    response_intake_claim=live_response_intake_claim,
+                )
+            else:
+                if fixture_target_set is None or provider_network_binding_sha256 is None:
+                    raise CaptureGuardError("CAPTURE_V2_BINDING_INCOMPLETE")
+                mapped_targets = len(mapping_evidence.mapped_target_ids)
+                non_admitted_targets = len(mapping_evidence.unmatched_target_ids)
+                lineage = LiveCaptureLineageV2.issue(
+                    manifest_id=manifest.snapshot_id,
+                    manifest_hash=manifest.manifest_sha256,
+                    request=request,
+                    request_fingerprint_sha256=fingerprint.request_sha256,
+                    expected_sport_key=request.sport_key,
+                    expected_region=request.region,
+                    expected_markets=request.markets,
+                    fixture_target_set_sha256=fixture_target_set.canonical_set_hash,
+                    provider_network_binding_sha256=provider_network_binding_sha256,
+                    post_capture_mapping_sha256=mapping_evidence.canonical_mapping_hash,
+                    scientific_admission=(
+                        "NONE"
+                        if mapped_targets == 0
+                        else "FULL"
+                        if non_admitted_targets == 0
+                        else "PARTIAL"
+                    ),
+                    mapped_target_count=mapped_targets,
+                    non_admitted_target_count=non_admitted_targets,
+                    mapped_provider_event_count=mapping_evidence.mapped_provider_event_count,
+                    non_admitted_provider_event_count=(
+                        mapping_evidence.non_admitted_provider_event_count
+                    ),
+                    admission_permit=live_admission_permit,
+                    response_intake_claim=live_response_intake_claim,
+                )
             self.store.store_live_capture_lineage(lineage)
             observe("LIVE_CAPTURE_LINEAGE_DURABLE")
         self.store.store_manifest(manifest)

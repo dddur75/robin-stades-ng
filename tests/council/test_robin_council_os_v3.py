@@ -228,6 +228,7 @@ def test_activation_is_on_demand_bounded_and_references_known_agents() -> None:
         "FIRST_FROZEN_RECEIPT_BACKED_SNAPSHOT",
         "JALON4_WALL_CLOCK_DECAY_FIX_V1",
         "BOUNDED_MULTI_LEAGUE_LIVE_CANARY_CAPABILITY_SUCCESSOR_V2",
+        "REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1",
         "COVERAGE_P0",
         "HYPERGRAPH",
         "COCKPIT",
@@ -311,6 +312,7 @@ def test_agent_report_schema_requires_the_mission_contract() -> None:
         "FIRST_FROZEN_RECEIPT_BACKED_SNAPSHOT",
         "JALON4_WALL_CLOCK_DECAY_FIX_V1",
         "BOUNDED_MULTI_LEAGUE_LIVE_CANARY_CAPABILITY_SUCCESSOR_V2",
+        "REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1",
         "COVERAGE_P0",
         "HYPERGRAPH",
         "COCKPIT",
@@ -797,9 +799,9 @@ def test_jalon4_wall_clock_decay_fix_authority_and_succession_are_exact() -> Non
 
     graph = load_json("reports/evidence/evidence-graph.json")
     claims = {claim["claim_id"]: claim for claim in graph["claims"]}
-    assert len(graph["claims"]) == 383
-    assert len(graph["decision_nodes"]) == 163
-    assert len(graph["edges"]) == 669
+    assert len(graph["claims"]) == 393
+    assert len(graph["decision_nodes"]) == 164
+    assert len(graph["edges"]) == 679
     expected_statuses = {
         expected_proof[0]: "SUPERSEDED",
         expected_proof[1]: "SUPERSEDED",
@@ -934,13 +936,15 @@ def test_bounded_live_canary_successor_v2_authority_and_succession_are_exact() -
 
     graph = load_json("reports/evidence/evidence-graph.json")
     claims = {claim["claim_id"]: claim for claim in graph["claims"]}
-    assert len(graph["claims"]) == 383
-    assert len(graph["decision_nodes"]) == 163
-    assert len(graph["edges"]) == 669
+    assert len(graph["claims"]) == 393
+    assert len(graph["decision_nodes"]) == 164
+    assert len(graph["edges"]) == 679
     assert {claim_id: claims[claim_id]["status"] for claim_id in expected_proof} == {
-        expected_proof[0]: "PARTIAL",
-        expected_proof[1]: "PARTIAL",
-        **{claim_id: "VERIFIED" for claim_id in expected_proof[2:]},
+        expected_proof[0]: "SUPERSEDED",
+        expected_proof[1]: "SUPERSEDED",
+        expected_proof[2]: "SUPERSEDED",
+        **{claim_id: "VERIFIED" for claim_id in expected_proof[3:8]},
+        expected_proof[8]: "SUPERSEDED",
     }
     for predecessor in (
         "GOV.CI.POSTMERGE.TIMEOUT.BUDGET.PR58.WORKFLOW.V1.001",
@@ -957,6 +961,136 @@ def test_bounded_live_canary_successor_v2_authority_and_succession_are_exact() -
     assert node["ledger_record_hash"] == record["hash"]
     edges = [edge for edge in graph["edges"] if edge["to_decision_id"] == record["decision_id"]]
     assert [edge["edge_id"] for edge in edges] == [f"EDGE.{number}" for number in range(661, 670)]
+    assert [edge["from_claim_id"] for edge in edges] == expected_proof
+
+
+def test_real_execution_bootstrap_closure_v1_authority_and_succession_are_exact() -> None:
+    matrix = load_json("configs/agents/mission-activation-matrix-v3.json")
+    manifest = load_json("configs/execution/real-execution-bootstrap-closure-v1.json")
+    assert manifest == {
+        "mission_id": "REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1",
+        "authorized_stages": ["E1"],
+        "maximum_stage": "E1",
+        "external_effects": [
+            "local_standalone_runtime_create_after_merge",
+            "github_public_full_clone_after_merge",
+            "provider_public_dns_resolution_exactly_once_after_merge",
+            "official_schedule_public_read_after_merge",
+            "git_remote_write_non_force",
+            "github_pull_request_write",
+            "github_merge_commit",
+            "github_actions_observe",
+        ],
+        "compute_budget": 8000,
+        "time_budget": 345600,
+        "source_hash": "0783d995e95c0a8a969f76ff3f468c3b96a697155a7ad01e0676963c6bab9f43",
+        "expires_at": "2026-08-26T10:00:00Z",
+    }
+
+    mission = matrix["missions"]["REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1"]
+    assert mission["agents"] == ["C0", "C2", "C4", "DP6"]
+    assert mission["writer"] == "C0"
+    assert mission["scale_ceiling"] == "E1"
+    assert mission["delivery_keys"] == {
+        "data": ["DP6"],
+        "security": ["C4"],
+        "governance": ["C2"],
+    }
+    assert len(mission["allowed_paths"]) == 38
+    assert mission["allowed_paths"] == sorted(set(mission["allowed_paths"]))
+    assert (
+        hashlib.sha256(
+            json.dumps(mission["allowed_paths"], ensure_ascii=False, separators=(",", ":")).encode()
+        ).hexdigest()
+        == "0f7ecdb5faf9421fd7d7558810efdc9fb9363641dcd9adb1e7eadb98710b2b6b"
+    )
+
+    authorization = matrix["authorization"]
+    delivery = authorization["real_execution_bootstrap_closure_v1_delivery"]
+    ordering = authorization["real_execution_bootstrap_closure_v1_ordering"]
+    effects = authorization["real_execution_bootstrap_closure_v1_effect_budget"]
+    live = authorization["real_execution_bootstrap_closure_v1_live_boundary"]
+    assert "REQUIRE_EXACT_BASE_0591F01C580EB853890E9C1C304A78C21BA9DE63" in delivery
+    assert "DRAFT_PULL_REQUEST_TITLED_REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1" in delivery
+    assert "MERGE_COMMIT_ONLY" in delivery
+    assert "POST_MERGE_PROVIDER_DNS_RESOLUTION_EXACTLY_1" in effects
+    assert "PROVIDER_HTTP_CALLS_0" in effects
+    assert "REAL_PROVIDER_SECRET_READS_0" in effects
+    assert "ENGINEERING_AND_EXACT_HEAD_CI_AND_THREE_REVIEWS_AND_MERGE_FIRST" in ordering
+    assert "STOP_BEFORE_ENVIRONMENT_SECRET_READER_OR_PROVIDER_TRANSPORT" in ordering
+    assert "NO_REAL_LIVE_CAPTURE_AUTHORIZED" in live
+
+    expected_proof = [
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.021",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.030",
+        "GOV.CI.REAL_EXECUTION_BOOTSTRAP.CLOSURE.WORKFLOW.V1.001",
+        "GOV.AUTHORIZATION.REAL_EXECUTION_BOOTSTRAP.CLOSURE.MANIFEST.V1.001",
+        "DATA.REAL_EXECUTION_BOOTSTRAP.CLOSURE.DP6.REVIEW.V1.001",
+        "SECURITY.REAL_EXECUTION_BOOTSTRAP.CLOSURE.C4.REVIEW.V1.001",
+        "GOV.REAL_EXECUTION_BOOTSTRAP.CLOSURE.C2.REVIEW.V1.001",
+        "GOV.REAL_EXECUTION_BOOTSTRAP.CLOSURE.FINAL.REVIEW.V1.001",
+        "SECURITY.REAL_EXECUTION_BOOTSTRAP.CLOSURE.ZERO.EFFECTS.V1.001",
+        "GOV.COUNCIL.REAL_EXECUTION_BOOTSTRAP.CLOSURE.EVIDENCE.SUCCESSION.LEDGER.V1.001",
+    ]
+    ledger = [
+        json.loads(line)
+        for line in (ROOT / "reports/council/decision-ledger.jsonl")
+        .read_text(encoding="utf-8")
+        .splitlines()
+        if line.strip()
+    ]
+    record = next(item for item in ledger if item["decision_id"] == "RCV3-20260822-171")
+    assert record["previous_hash"] == (
+        "971510aa8e766a7d538c908c314abc89726214d16ffb30d5a7f178e63c6b4a63"
+    )
+    assert record["proof"] == expected_proof
+    assert record["context"]["defects"] == {
+        "open_p0": 0,
+        "open_p1": 0,
+        "open_p2": 0,
+        "open_critical_threads": 0,
+    }
+    assert record["context"]["external_effects"] == {
+        "engineering_provider_dns_resolutions": 0,
+        "provider_tcp_connections": 0,
+        "provider_http_calls": 0,
+        "real_secret_reads": 0,
+        "real_capture_calls": 0,
+        "real_owner_authorizations": 0,
+        "real_activations": 0,
+        "real_batches": 0,
+        "real_snapshots": 0,
+        "purchases": 0,
+        "promotions": 0,
+        "real_bets": 0,
+    }
+
+    graph = load_json("reports/evidence/evidence-graph.json")
+    claims = {claim["claim_id"]: claim for claim in graph["claims"]}
+    assert len(graph["claims"]) == 393
+    assert len(graph["decision_nodes"]) == 164
+    assert len(graph["edges"]) == 679
+    assert {claim_id: claims[claim_id]["status"] for claim_id in expected_proof} == {
+        expected_proof[0]: "PARTIAL",
+        expected_proof[1]: "PARTIAL",
+        **{claim_id: "VERIFIED" for claim_id in expected_proof[2:]},
+    }
+    predecessors = {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.020": expected_proof[0],
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.029": expected_proof[1],
+        "GOV.CI.BOUNDED_LIVE_CANARY.CAPABILITY.WORKFLOW.V2.001": expected_proof[2],
+        "GOV.COUNCIL.BOUNDED_LIVE_CANARY.EVIDENCE.SUCCESSION.LEDGER.V2.001": (expected_proof[9]),
+    }
+    for predecessor, successor in predecessors.items():
+        assert claims[predecessor]["status"] == "SUPERSEDED"
+        assert claims[predecessor]["superseded_by"] == successor
+
+    node = next(
+        item for item in graph["decision_nodes"] if item["decision_id"] == record["decision_id"]
+    )
+    assert node["ledger_record_hash"] == record["hash"]
+    edges = [edge for edge in graph["edges"] if edge["to_decision_id"] == record["decision_id"]]
+    assert [edge["edge_id"] for edge in edges] == [f"EDGE.{number}" for number in range(670, 680)]
     assert [edge["from_claim_id"] for edge in edges] == expected_proof
 
 

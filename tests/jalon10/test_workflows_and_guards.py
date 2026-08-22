@@ -121,12 +121,19 @@ def test_bounded_live_canary_ubuntu_job_pins_required_quality_gates() -> None:
         "src/robin/capture",
         "tools/data-sourcing/build_capture_harness_artifacts.py",
         "tools/data-sourcing/build_bounded_live_canary_artifacts.py",
+        "tools/data-sourcing/build_owner_review_pack_v1.py",
+        "tools/data-sourcing/freeze_official_fixture_target_set_v1.py",
+        "tools/data-sourcing/prepare_provider_network_binding_v1.py",
+        "tools/data-sourcing/prepare_real_capture_workspace_v1.py",
         "tools/data-sourcing/run_bounded_live_canary_v1.py",
+        "tools/data-sourcing/run_bounded_live_canary_v2.py",
+        "tools/data-sourcing/select_campaign_window_v1.py",
     )
     ruff_paths = (
         *required_python_paths[:1],
         "tests/capture",
         "tests/council/test_bounded_live_canary_governance.py",
+        "tests/council/test_real_execution_bootstrap_governance.py",
         "tests/jalon10/test_workflows_and_guards.py",
         "tests/portability/test_chronos_portable_ci_contract.py",
         *required_python_paths[1:],
@@ -135,6 +142,7 @@ def test_bounded_live_canary_ubuntu_job_pins_required_quality_gates() -> None:
         *required_python_paths[:1],
         "tests/capture",
         "tests/council/test_bounded_live_canary_governance.py",
+        "tests/council/test_real_execution_bootstrap_governance.py",
         *required_python_paths[1:],
     )
     quality_commands = {
@@ -194,12 +202,14 @@ def test_bounded_live_canary_ubuntu_job_pins_required_quality_gates() -> None:
         "configs/agents/agent-report-schema-v3.json",
         "configs/agents/mission-activation-matrix-v3.json",
         "configs/execution/bounded-multi-league-live-canary-capability-v2.json",
+        "configs/execution/real-execution-bootstrap-closure-v1.json",
         "reports/data-sourcing/bounded-live-canary-capability-v1.json",
         "reports/data-sourcing/capture-harness-contract-v1.json",
         "reports/data-sourcing/capture-threat-model-v1.json",
         "reports/data-sourcing/internal-retention-policy-v1.json",
         "reports/data-sourcing/live-canary-plan-v1.json",
         "reports/data-sourcing/offline-replay-proof-v1.json",
+        "reports/data-sourcing/real-execution-bootstrap-closure-v1.json",
         "tests/capture/fixtures/bounded-live-canary-v1-golden-pack.json",
     ):
         assert required_json in schema_validation
@@ -223,6 +233,7 @@ def test_bounded_live_canary_ubuntu_job_pins_required_quality_gates() -> None:
     for required_test_path in (
         "tests/capture",
         "tests/council/test_bounded_live_canary_governance.py",
+        "tests/council/test_real_execution_bootstrap_governance.py",
         "tests/jalon10/test_workflows_and_guards.py",
         "tests/portability/test_chronos_portable_ci_contract.py",
     ):
