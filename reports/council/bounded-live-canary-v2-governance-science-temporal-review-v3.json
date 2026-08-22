@@ -37,7 +37,7 @@
     {
       "claim": "Le source_hash du manifeste correspond octet pour octet au brief propriétaire successor NIGHT LOOP, lequel autorise explicitement la branche, la PR et le merge V2 depuis JALON4_FIXED_MAIN_SHA.",
       "evidence_refs": [
-        "C:/Users/ddura/.codex/attachments/47f34581-7755-4f5a-9e49-21f9ba288a14/pasted-text.txt",
+        "owner-provided NIGHT LOOP attachment id 47f34581-7755-4f5a-9e49-21f9ba288a14 (external to repository)",
         "raw attachment bytes => 25948",
         "raw attachment SHA-256 => 44afeb5095e34157cf13e9b7990b07ce6af80d7b99d3341c136f6707ccb5f00c",
         "configs/execution/bounded-multi-league-live-canary-capability-v2.json source_hash => 44afeb5095e34157cf13e9b7990b07ce6af80d7b99d3341c136f6707ccb5f00c"
