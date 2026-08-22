@@ -2,13 +2,14 @@ from __future__ import annotations
 
 import gzip
 import json
-from datetime import UTC, date, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta, tzinfo
 from pathlib import Path
 
 import pytest
 import yaml
 from sqlalchemy import inspect
 
+import scripts.run_shadow_pipeline as shadow_pipeline
 from robin.ingestion.scheduler import (
     BudgetLevel,
     BudgetState,
@@ -59,6 +60,21 @@ from scripts.run_shadow_pipeline import (
 )
 
 NOW = datetime(2026, 7, 24, 12, tzinfo=UTC)
+FIXTURE_KICKOFF = datetime(2026, 8, 21, 18, 45, tzinfo=UTC)
+
+
+def freeze_shadow_clock(
+    monkeypatch: pytest.MonkeyPatch,
+    instant: datetime,
+) -> None:
+    class FrozenDateTime(datetime):
+        @classmethod
+        def now(cls, tz: tzinfo | None = None) -> datetime:
+            if tz is None:
+                return instant.replace(tzinfo=None)
+            return instant.astimezone(tz)
+
+    monkeypatch.setattr(shadow_pipeline, "datetime", FrozenDateTime)
 
 
 def sample_record(kind: str = "quality_runs") -> DurableRecord:
@@ -103,7 +119,7 @@ def minimal_state(root: Path) -> Path:
     fixtures = [
         {
             "id": "fixture-1",
-            "commence_time": "2026-08-21T18:45:00Z",
+            "commence_time": FIXTURE_KICKOFF.isoformat().replace("+00:00", "Z"),
             "home_team": "Marseille",
             "away_team": "Strasbourg",
             "sport_title": "Ligue 1",
@@ -868,11 +884,29 @@ def test_prediction_bloquee_sans_stockage_durable(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     state = minimal_state(tmp_path)
+    freeze_shadow_clock(monkeypatch, NOW)
     monkeypatch.setenv("DURABLE_STORAGE_REQUIRED", "true")
     summary = pre_match_shadow(state, mock=False)
     blocked = json.loads((state / "predictions" / "blocked.json").read_text())
     assert summary["predictions"] == 0
+    assert summary["predictions_blocked"] == 1
     assert blocked[0]["reason"] == "DURABLE_STORAGE_UNAVAILABLE"
+
+
+def test_prediction_ignore_un_fixture_expire_avant_le_controle_durable(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    state = minimal_state(tmp_path)
+    freeze_shadow_clock(monkeypatch, FIXTURE_KICKOFF)
+    monkeypatch.setenv("DURABLE_STORAGE_REQUIRED", "true")
+
+    summary = pre_match_shadow(state, mock=False)
+
+    blocked = json.loads((state / "predictions" / "blocked.json").read_text())
+    assert summary["predictions"] == 0
+    assert summary["predictions_blocked"] == 0
+    assert blocked == []
 
 
 def test_configuration_reste_verrouillee_et_durable() -> None:

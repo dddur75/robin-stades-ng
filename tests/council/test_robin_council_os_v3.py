@@ -240,6 +240,7 @@ def test_activation_is_on_demand_bounded_and_references_known_agents() -> None:
         "SCIENTIFIC_TRUTH_KERNEL",
         "POINT_IN_TIME_LINEAGE",
         "FIRST_FROZEN_RECEIPT_BACKED_SNAPSHOT",
+        "JALON4_WALL_CLOCK_DECAY_FIX_V1",
         "COVERAGE_P0",
         "HYPERGRAPH",
         "COCKPIT",
@@ -699,6 +700,157 @@ def test_first_frozen_snapshot_authority_is_exact_offline_and_secret_free() -> N
         "GIT_HASHES_COUNTS_RATIOS_SCHEMA_FINGERPRINTS_STATUSES_PSEUDONYMS_AND_AGGREGATES_ONLY",
         "REAL_DATA_AND_SECRET_LEAK_COUNT_0",
     ]
+
+
+def test_jalon4_wall_clock_decay_fix_authority_and_succession_are_exact() -> None:
+    matrix = load_json("configs/agents/mission-activation-matrix-v3.json")
+    manifest = load_json("configs/execution/jalon4-wall-clock-decay-fix-v1.json")
+    assert manifest == {
+        "mission_id": "JALON4_WALL_CLOCK_DECAY_FIX_V1",
+        "authorized_stages": ["E1"],
+        "maximum_stage": "E1",
+        "external_effects": [
+            "local_temporary_synthetic_test_write",
+            "git_remote_write_non_force",
+            "github_pull_request_write",
+            "github_merge_commit",
+            "github_actions_observe",
+        ],
+        "compute_budget": 1000,
+        "time_budget": 86400,
+        "source_hash": (
+            "44afeb5095e34157cf13e9b7990b07ce6af80d7b99d3341c136f6707ccb5f00c"
+        ),
+        "expires_at": "2026-08-23T23:59:59Z",
+    }
+
+    mission = matrix["missions"]["JALON4_WALL_CLOCK_DECAY_FIX_V1"]
+    assert mission == {
+        "agents": ["C0", "C2", "C4", "DP6"],
+        "writer": "C0",
+        "allowed_paths": [
+            "configs/agents/mission-activation-matrix-v3.json",
+            "configs/execution/jalon4-wall-clock-decay-fix-v1.json",
+            "reports/council/decision-ledger.jsonl",
+            "reports/evidence/evidence-graph.json",
+            "tests/council/test_robin_council_os_v3.py",
+            "tests/jalon4/test_durable_shadow.py",
+        ],
+        "scale_ceiling": "E1",
+        "delivery_keys": {
+            "data": ["DP6"],
+            "governance": ["C2"],
+            "security": ["C4"],
+        },
+    }
+    assert hashlib.sha256(
+        json.dumps(
+            mission["allowed_paths"], ensure_ascii=False, separators=(",", ":")
+        ).encode()
+    ).hexdigest() == "430941e5aea501b830f632ee09662a35a7233774a0c9634859003edf8a4e77ef"
+
+    authorization = matrix["authorization"]
+    assert authorization["jalon4_wall_clock_decay_fix_base"] == (
+        "REQUIRE_EXACT_BASE_780E224492CA9B689826857E9EDF6AA9AB95D8F5_AND_"
+        "BRANCH_CODEX_JALON4_WALL_CLOCK_DECAY_FIX_V1;ON_BASE_DRIFT_FAIL_AND_STOP"
+    )
+    assert authorization["jalon4_wall_clock_decay_fix_effect_budget"].split(
+        ";"
+    ) == [
+        "LOCAL_TEMPORARY_SYNTHETIC_TEST_WRITES_PYTEST_TMP_ONLY",
+        "BUSINESS_DATA_NETWORK_CALLS_0",
+        "PROVIDER_CALLS_0",
+        "PROVIDER_DNS_CALLS_0",
+        "PROVIDER_SECRET_READS_0",
+        "REAL_OWNER_AUTHORIZATIONS_0",
+        "REAL_ACTIVATIONS_0",
+        "REAL_BATCHES_0",
+        "REAL_SNAPSHOTS_0",
+        "PRODUCTION_WRITES_0",
+        "R2_OPERATIONS_0",
+        "LIVE_WORKFLOW_DISPATCHES_0",
+        "PURCHASES_0",
+        "PROMOTIONS_0",
+        "REAL_BETS_0",
+    ]
+    delivery = authorization["jalon4_wall_clock_decay_fix_delivery"]
+    for required in (
+        "MAXIMUM_ONE_DIRECTLY_CONSEQUENTIAL_CORRECTIVE_PUSH",
+        "DRAFT_PULL_REQUEST_TITLED_JALON_4_WALL_CLOCK_DECAY_FIX_V1",
+        "MERGE_COMMIT_ONLY",
+        "EXACT_HEAD_REPOSITORY_WIDE_CI_GREEN",
+        "TEST_ONLY_EXPLICIT_CLOCK_AND_EXPIRED_FIXTURE_MIRROR",
+        "FORBID_ARBITRARY_FUTURE_DATE_SHIFT_NOW_PLUS_DELTA_PRODUCTION_CODE_CHANGE",
+        "PROVIDER_ACCESS_SECRET_READ_PRODUCTION_ACCESS_PROMOTION_AND_BET",
+    ):
+        assert required in delivery
+
+    expected_proof = [
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.019",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.028",
+        "GOV.AUTHORIZATION.JALON4.WALL_CLOCK.DECAY.MANIFEST.V1.001",
+        "TEMPORAL.JALON4.WALL_CLOCK.DECAY.REGRESSION.V1.001",
+        "SECURITY.JALON4.WALL_CLOCK.DECAY.ZERO.EFFECTS.V1.001",
+        "GOV.COUNCIL.JALON4.WALL_CLOCK.DECAY.EVIDENCE.SUCCESSION.LEDGER.V1.001",
+    ]
+    ledger = [
+        json.loads(line)
+        for line in (ROOT / "reports/council/decision-ledger.jsonl")
+        .read_text(encoding="utf-8")
+        .splitlines()
+        if line.strip()
+    ]
+    record = next(
+        item for item in ledger if item["decision_id"] == "RCV3-20260822-169"
+    )
+    assert record["previous_hash"] == (
+        "a2b01c2b33e60b163a4c3163c8d67d8f7dbc2924832b6c2885224bc747d25f72"
+    )
+    assert record["proof"] == expected_proof
+    assert record["context"]["defects"] == {
+        "open_p0": 0,
+        "open_p1": 0,
+        "resolved_p1": 1,
+        "resolved_p1_ids": ["J4TIME-001"],
+    }
+
+    graph = load_json("reports/evidence/evidence-graph.json")
+    claims = {claim["claim_id"]: claim for claim in graph["claims"]}
+    assert len(graph["claims"]) == 374
+    assert len(graph["decision_nodes"]) == 162
+    assert len(graph["edges"]) == 660
+    expected_statuses = {
+        expected_proof[0]: "PARTIAL",
+        expected_proof[1]: "PARTIAL",
+        **{claim_id: "VERIFIED" for claim_id in expected_proof[2:]},
+    }
+    assert {
+        claim_id: claims[claim_id]["status"] for claim_id in expected_proof
+    } == expected_statuses
+    assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.018"]["superseded_by"] == (
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.019"
+    )
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.027"][
+        "superseded_by"
+    ] == "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.028"
+    assert claims["GOV.COUNCIL.PR60.EVIDENCE.SUCCESSION.LEDGER.V1.001"][
+        "superseded_by"
+    ] == "GOV.COUNCIL.JALON4.WALL_CLOCK.DECAY.EVIDENCE.SUCCESSION.LEDGER.V1.001"
+    node = next(
+        item
+        for item in graph["decision_nodes"]
+        if item["decision_id"] == record["decision_id"]
+    )
+    assert node["ledger_record_hash"] == record["hash"]
+    edges = [
+        edge
+        for edge in graph["edges"]
+        if edge["to_decision_id"] == record["decision_id"]
+    ]
+    assert [edge["edge_id"] for edge in edges] == [
+        f"EDGE.{number}" for number in range(655, 661)
+    ]
+    assert [edge["from_claim_id"] for edge in edges] == expected_proof
 
 
 def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it() -> None:

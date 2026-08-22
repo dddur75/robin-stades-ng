@@ -1,0 +1,16 @@
+{
+  "mission_id": "JALON4_WALL_CLOCK_DECAY_FIX_V1",
+  "authorized_stages": ["E1"],
+  "maximum_stage": "E1",
+  "external_effects": [
+    "local_temporary_synthetic_test_write",
+    "git_remote_write_non_force",
+    "github_pull_request_write",
+    "github_merge_commit",
+    "github_actions_observe"
+  ],
+  "compute_budget": 1000,
+  "time_budget": 86400,
+  "source_hash": "44afeb5095e34157cf13e9b7990b07ce6af80d7b99d3341c136f6707ccb5f00c",
+  "expires_at": "2026-08-23T23:59:59Z"
+}
