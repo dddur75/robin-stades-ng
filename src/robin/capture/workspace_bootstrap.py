@@ -2,12 +2,17 @@
 
 from __future__ import annotations
 
+import ctypes
 import hashlib
 import inspect
 import os
+import signal
 import stat
 import subprocess  # nosec B404
-from collections.abc import Mapping, Sequence
+import sys
+import time
+from collections.abc import Callable, Mapping, Sequence
+from ctypes import wintypes
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -35,6 +40,38 @@ BootstrapMode = Literal["CREATE", "VERIFY", "INSPECT"]
 
 _MAXIMUM_MISSION_MANIFEST_BYTES = 1_048_576
 
+_SMALL_GIT_COMMAND_TIMEOUT_SECONDS = 120
+_GIT_CLONE_TIMEOUT_SECONDS = 3_600
+_GIT_CHECKOUT_TIMEOUT_SECONDS = 900
+_GIT_FSCK_TIMEOUT_SECONDS = 1_800
+_COMMAND_TERMINATION_GRACE_SECONDS = 10.0
+_POSIX_SOFT_TERMINATION_GRACE_SECONDS = 1.0
+
+_JOB_OBJECT_BASIC_ACCOUNTING_INFORMATION = 1
+_JOB_OBJECT_EXTENDED_LIMIT_INFORMATION = 9
+_JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x00002000
+_PROCESS_TERMINATE = 0x0001
+_PROCESS_SET_QUOTA = 0x0100
+_JOB_TERMINATION_EXIT_CODE = 124
+_WINDOWS_GATE_TARGET_START_FAILED = 254
+_WINDOWS_GATE_RELEASE_TOKEN = b"\x01"
+_WINDOWS_GATE_SOURCE = """
+import subprocess
+import sys
+
+if sys.stdin.buffer.read(1) != b"\\x01":
+    raise SystemExit(253)
+try:
+    child = subprocess.Popen(
+        sys.argv[1:],
+        stdin=subprocess.DEVNULL,
+        close_fds=True,
+    )
+except (OSError, ValueError):
+    raise SystemExit(254)
+raise SystemExit(child.wait())
+"""
+
 _FILE_ATTRIBUTE_REPARSE_POINT = 0x00000400
 _FILE_ATTRIBUTE_OFFLINE = 0x00001000
 _FILE_ATTRIBUTE_RECALL_ON_OPEN = 0x00040000
@@ -51,6 +88,55 @@ class WorkspaceBootstrapError(RuntimeError):
     def __init__(self, code: str) -> None:
         self.code = code
         super().__init__(code)
+
+
+class _IoCounters(ctypes.Structure):
+    _fields_ = [
+        ("ReadOperationCount", ctypes.c_ulonglong),
+        ("WriteOperationCount", ctypes.c_ulonglong),
+        ("OtherOperationCount", ctypes.c_ulonglong),
+        ("ReadTransferCount", ctypes.c_ulonglong),
+        ("WriteTransferCount", ctypes.c_ulonglong),
+        ("OtherTransferCount", ctypes.c_ulonglong),
+    ]
+
+
+class _JobObjectBasicLimitInformation(ctypes.Structure):
+    _fields_ = [
+        ("PerProcessUserTimeLimit", ctypes.c_longlong),
+        ("PerJobUserTimeLimit", ctypes.c_longlong),
+        ("LimitFlags", wintypes.DWORD),
+        ("MinimumWorkingSetSize", ctypes.c_size_t),
+        ("MaximumWorkingSetSize", ctypes.c_size_t),
+        ("ActiveProcessLimit", wintypes.DWORD),
+        ("Affinity", ctypes.c_size_t),
+        ("PriorityClass", wintypes.DWORD),
+        ("SchedulingClass", wintypes.DWORD),
+    ]
+
+
+class _JobObjectExtendedLimitInformation(ctypes.Structure):
+    _fields_ = [
+        ("BasicLimitInformation", _JobObjectBasicLimitInformation),
+        ("IoInfo", _IoCounters),
+        ("ProcessMemoryLimit", ctypes.c_size_t),
+        ("JobMemoryLimit", ctypes.c_size_t),
+        ("PeakProcessMemoryUsed", ctypes.c_size_t),
+        ("PeakJobMemoryUsed", ctypes.c_size_t),
+    ]
+
+
+class _JobObjectBasicAccountingInformation(ctypes.Structure):
+    _fields_ = [
+        ("TotalUserTime", ctypes.c_longlong),
+        ("TotalKernelTime", ctypes.c_longlong),
+        ("ThisPeriodTotalUserTime", ctypes.c_longlong),
+        ("ThisPeriodTotalKernelTime", ctypes.c_longlong),
+        ("TotalPageFaultCount", wintypes.DWORD),
+        ("TotalProcesses", wintypes.DWORD),
+        ("ActiveProcesses", wintypes.DWORD),
+        ("TotalTerminatedProcesses", wintypes.DWORD),
+    ]
 
 
 @dataclass(frozen=True, slots=True)
@@ -82,6 +168,188 @@ class CommandRunner(Protocol):
     ) -> str: ...
 
 
+class _CtypesFunction(Protocol):
+    argtypes: list[object]
+    restype: object
+
+    def __call__(self, *args: object) -> object: ...
+
+
+def _configured_windows_function(
+    owner: object,
+    name: str,
+    *,
+    argtypes: tuple[object, ...],
+    restype: object,
+) -> _CtypesFunction:
+    raw_function = getattr(owner, name, None)
+    if not callable(raw_function):
+        raise WorkspaceBootstrapError("WORKSPACE_COMMAND_CONTAINMENT_FAILED")
+    function = cast(_CtypesFunction, raw_function)
+    try:
+        function.argtypes = list(argtypes)
+        function.restype = restype
+    except (AttributeError, TypeError, ValueError):
+        raise WorkspaceBootstrapError("WORKSPACE_COMMAND_CONTAINMENT_FAILED") from None
+    return function
+
+
+def _windows_handle_value(value: object) -> int:
+    if isinstance(value, int):
+        return value
+    raw_value = getattr(value, "value", None)
+    return raw_value if isinstance(raw_value, int) else 0
+
+
+class _WindowsJobObject:
+    """Own one anonymous non-breakaway job and prove its process count reaches zero."""
+
+    def __init__(self) -> None:
+        if os.name != "nt":
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_CONTAINMENT_FAILED")
+        raw_loader = getattr(ctypes, "WinDLL", None)
+        if not callable(raw_loader):
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_CONTAINMENT_FAILED")
+        try:
+            kernel32 = raw_loader("kernel32", use_last_error=True)
+            self._create_job = _configured_windows_function(
+                kernel32,
+                "CreateJobObjectW",
+                argtypes=(wintypes.LPVOID, wintypes.LPCWSTR),
+                restype=wintypes.HANDLE,
+            )
+            self._set_information = _configured_windows_function(
+                kernel32,
+                "SetInformationJobObject",
+                argtypes=(
+                    wintypes.HANDLE,
+                    ctypes.c_int,
+                    wintypes.LPVOID,
+                    wintypes.DWORD,
+                ),
+                restype=wintypes.BOOL,
+            )
+            self._open_process = _configured_windows_function(
+                kernel32,
+                "OpenProcess",
+                argtypes=(wintypes.DWORD, wintypes.BOOL, wintypes.DWORD),
+                restype=wintypes.HANDLE,
+            )
+            self._assign_process = _configured_windows_function(
+                kernel32,
+                "AssignProcessToJobObject",
+                argtypes=(wintypes.HANDLE, wintypes.HANDLE),
+                restype=wintypes.BOOL,
+            )
+            self._terminate_job = _configured_windows_function(
+                kernel32,
+                "TerminateJobObject",
+                argtypes=(wintypes.HANDLE, wintypes.UINT),
+                restype=wintypes.BOOL,
+            )
+            self._query_information = _configured_windows_function(
+                kernel32,
+                "QueryInformationJobObject",
+                argtypes=(
+                    wintypes.HANDLE,
+                    ctypes.c_int,
+                    wintypes.LPVOID,
+                    wintypes.DWORD,
+                    ctypes.POINTER(wintypes.DWORD),
+                ),
+                restype=wintypes.BOOL,
+            )
+            self._close_handle = _configured_windows_function(
+                kernel32,
+                "CloseHandle",
+                argtypes=(wintypes.HANDLE,),
+                restype=wintypes.BOOL,
+            )
+        except WorkspaceBootstrapError:
+            raise
+        except (AttributeError, OSError, TypeError, ValueError):
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_CONTAINMENT_FAILED") from None
+
+        self._handle = _windows_handle_value(self._create_job(None, None))
+        if not self._handle:
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_CONTAINMENT_FAILED")
+        limits = _JobObjectExtendedLimitInformation()
+        limits.BasicLimitInformation.LimitFlags = _JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
+        if not bool(
+            self._set_information(
+                self._handle,
+                _JOB_OBJECT_EXTENDED_LIMIT_INFORMATION,
+                ctypes.byref(limits),
+                ctypes.sizeof(limits),
+            )
+        ):
+            self.close()
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_CONTAINMENT_FAILED")
+
+    def assign_process(self, process_id: int) -> None:
+        process_handle = _windows_handle_value(
+            self._open_process(
+                _PROCESS_SET_QUOTA | _PROCESS_TERMINATE,
+                False,
+                process_id,
+            )
+        )
+        if not process_handle:
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_CONTAINMENT_FAILED")
+        try:
+            assigned = bool(self._assign_process(self._required_handle(), process_handle))
+        finally:
+            handle_closed = bool(self._close_handle(process_handle))
+        if not assigned or not handle_closed:
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_CONTAINMENT_FAILED")
+
+    def active_processes(self) -> int:
+        accounting = _JobObjectBasicAccountingInformation()
+        if not bool(
+            self._query_information(
+                self._required_handle(),
+                _JOB_OBJECT_BASIC_ACCOUNTING_INFORMATION,
+                ctypes.byref(accounting),
+                ctypes.sizeof(accounting),
+                None,
+            )
+        ):
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_TERMINATION_UNCONFIRMED")
+        return int(accounting.ActiveProcesses)
+
+    def terminate_and_confirm(self) -> None:
+        try:
+            active_processes = self.active_processes()
+            terminated = bool(
+                self._terminate_job(self._required_handle(), _JOB_TERMINATION_EXIT_CODE)
+            )
+            if not terminated and active_processes != 0 and self.active_processes() != 0:
+                raise WorkspaceBootstrapError("WORKSPACE_COMMAND_TERMINATION_UNCONFIRMED")
+            deadline = time.monotonic() + _COMMAND_TERMINATION_GRACE_SECONDS
+            while self.active_processes() != 0:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise WorkspaceBootstrapError("WORKSPACE_COMMAND_TERMINATION_UNCONFIRMED")
+                time.sleep(min(0.025, remaining))
+        except WorkspaceBootstrapError as error:
+            if error.code == "WORKSPACE_COMMAND_TERMINATION_UNCONFIRMED":
+                raise
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_TERMINATION_UNCONFIRMED") from None
+        except (OSError, TypeError, ValueError):
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_TERMINATION_UNCONFIRMED") from None
+
+    def close(self) -> None:
+        handle = getattr(self, "_handle", 0)
+        self._handle = 0
+        if handle and not bool(self._close_handle(handle)):
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_CONTAINMENT_FAILED")
+
+    def _required_handle(self) -> int:
+        if not self._handle:
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_CONTAINMENT_FAILED")
+        return self._handle
+
+
 class SubprocessCommandRunner:
     def run(
         self,
@@ -91,23 +359,251 @@ class SubprocessCommandRunner:
         environment: Mapping[str, str],
         timeout_seconds: int,
     ) -> str:
+        if timeout_seconds <= 0:
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_TIMEOUT_INVALID")
+        if os.name == "nt":
+            return self._run_windows(
+                arguments,
+                cwd=cwd,
+                environment=environment,
+                timeout_seconds=timeout_seconds,
+            )
+        return self._run_posix(
+            arguments,
+            cwd=cwd,
+            environment=environment,
+            timeout_seconds=timeout_seconds,
+        )
+
+    @staticmethod
+    def _decode_result(
+        returncode: int | None,
+        stdout: bytes,
+        stderr: bytes,
+        *,
+        gate_target_start_failed: bool,
+    ) -> str:
         try:
-            result = subprocess.run(  # noqa: S603  # nosec B603
+            decoded_stdout = (
+                stdout.decode("utf-8", errors="strict").replace("\r\n", "\n").replace("\r", "\n")
+            )
+            stderr.decode("utf-8", errors="strict").replace("\r\n", "\n").replace("\r", "\n")
+        except UnicodeError:
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_OUTPUT_INVALID") from None
+        if returncode is None:
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_TERMINATION_UNCONFIRMED")
+        if gate_target_start_failed and returncode == _WINDOWS_GATE_TARGET_START_FAILED:
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_START_FAILED")
+        if returncode != 0:
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_FAILED")
+        return decoded_stdout
+
+    def _run_windows(
+        self,
+        arguments: Sequence[str],
+        *,
+        cwd: Path | None,
+        environment: Mapping[str, str],
+        timeout_seconds: int,
+    ) -> str:
+        deadline = time.monotonic() + timeout_seconds
+        job = _WindowsJobObject()
+        gate: subprocess.Popen[bytes] | None = None
+        assigned = False
+        try:
+            try:
+                gate = subprocess.Popen(  # noqa: S603  # nosec B603
+                    (
+                        os.path.abspath(sys.executable),
+                        "-I",
+                        "-B",
+                        "-c",
+                        _WINDOWS_GATE_SOURCE,
+                        *arguments,
+                    ),
+                    cwd=cwd,
+                    env=dict(environment),
+                    stdin=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=False,
+                    close_fds=True,
+                )
+            except (OSError, ValueError):
+                raise WorkspaceBootstrapError("WORKSPACE_COMMAND_START_FAILED") from None
+            try:
+                job.assign_process(gate.pid)
+                assigned = True
+            except WorkspaceBootstrapError:
+                self._kill_blocked_gate(gate)
+                raise
+
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                self._terminate_windows_command(job, gate)
+                raise WorkspaceBootstrapError("WORKSPACE_COMMAND_TIMEOUT")
+            try:
+                stdout, stderr = gate.communicate(
+                    input=_WINDOWS_GATE_RELEASE_TOKEN,
+                    timeout=remaining,
+                )
+            except subprocess.TimeoutExpired:
+                self._terminate_windows_command(job, gate)
+                raise WorkspaceBootstrapError("WORKSPACE_COMMAND_TIMEOUT") from None
+            except (OSError, subprocess.SubprocessError):
+                self._terminate_windows_command(job, gate)
+                raise WorkspaceBootstrapError("WORKSPACE_COMMAND_FAILED") from None
+            except BaseException:
+                self._terminate_windows_command(job, gate)
+                raise
+
+            if job.active_processes() != 0:
+                self._terminate_windows_command(job, gate)
+                raise WorkspaceBootstrapError("WORKSPACE_COMMAND_RESIDUAL_DESCENDANT")
+            return self._decode_result(
+                gate.returncode,
+                stdout,
+                stderr,
+                gate_target_start_failed=True,
+            )
+        finally:
+            cleanup_error: WorkspaceBootstrapError | None = None
+            if gate is not None and gate.poll() is None:
+                try:
+                    if assigned:
+                        self._terminate_windows_command(job, gate)
+                    else:
+                        self._kill_blocked_gate(gate)
+                except WorkspaceBootstrapError as error:
+                    cleanup_error = error
+            try:
+                job.close()
+            except WorkspaceBootstrapError as error:
+                cleanup_error = cleanup_error or error
+            if cleanup_error is not None:
+                raise cleanup_error
+
+    @staticmethod
+    def _kill_blocked_gate(gate: subprocess.Popen[bytes]) -> None:
+        try:
+            gate.kill()
+            gate.communicate(timeout=_COMMAND_TERMINATION_GRACE_SECONDS)
+        except (OSError, subprocess.SubprocessError):
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_CONTAINMENT_FAILED") from None
+        if gate.poll() is None:
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_CONTAINMENT_FAILED")
+
+    @staticmethod
+    def _terminate_windows_command(
+        job: _WindowsJobObject,
+        gate: subprocess.Popen[bytes],
+    ) -> None:
+        job.terminate_and_confirm()
+        try:
+            gate.communicate(timeout=_COMMAND_TERMINATION_GRACE_SECONDS)
+        except (OSError, subprocess.SubprocessError):
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_TERMINATION_UNCONFIRMED") from None
+        if gate.poll() is None:
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_TERMINATION_UNCONFIRMED")
+
+    def _run_posix(
+        self,
+        arguments: Sequence[str],
+        *,
+        cwd: Path | None,
+        environment: Mapping[str, str],
+        timeout_seconds: int,
+    ) -> str:
+        try:
+            process = subprocess.Popen(  # noqa: S603  # nosec B603
                 list(arguments),
                 cwd=cwd,
                 env=dict(environment),
-                check=False,
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                errors="strict",
-                timeout=timeout_seconds,
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=False,
+                close_fds=True,
+                start_new_session=True,
             )
-        except (OSError, subprocess.SubprocessError, UnicodeError):
+        except (OSError, ValueError):
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_START_FAILED") from None
+        try:
+            stdout, stderr = process.communicate(timeout=timeout_seconds)
+        except subprocess.TimeoutExpired:
+            self._terminate_posix_command(process)
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_TIMEOUT") from None
+        except (OSError, subprocess.SubprocessError):
+            self._terminate_posix_command(process)
             raise WorkspaceBootstrapError("WORKSPACE_COMMAND_FAILED") from None
-        if result.returncode != 0:
-            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_FAILED")
-        return result.stdout
+        except BaseException:
+            self._terminate_posix_command(process)
+            raise
+        raw_killpg = getattr(os, "killpg", None)
+        if not callable(raw_killpg):
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_CONTAINMENT_FAILED")
+        killpg = cast(Callable[[int, int], None], raw_killpg)
+        if self._posix_process_group_exists(killpg, process.pid):
+            self._terminate_posix_command(process)
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_RESIDUAL_DESCENDANT")
+        return self._decode_result(
+            process.returncode,
+            stdout,
+            stderr,
+            gate_target_start_failed=False,
+        )
+
+    @staticmethod
+    def _terminate_posix_command(process: subprocess.Popen[bytes]) -> None:
+        raw_killpg = getattr(os, "killpg", None)
+        if not callable(raw_killpg):
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_TERMINATION_UNCONFIRMED")
+        killpg = cast(Callable[[int, int], None], raw_killpg)
+        raw_sigkill = getattr(signal, "SIGKILL", None)
+        if not isinstance(raw_sigkill, int):
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_TERMINATION_UNCONFIRMED")
+        process_group = process.pid
+        try:
+            try:
+                killpg(process_group, signal.SIGTERM)
+            except ProcessLookupError:
+                pass
+            try:
+                process.communicate(timeout=_POSIX_SOFT_TERMINATION_GRACE_SECONDS)
+            except subprocess.TimeoutExpired:
+                pass
+            if SubprocessCommandRunner._posix_process_group_exists(killpg, process_group):
+                try:
+                    killpg(process_group, raw_sigkill)
+                except ProcessLookupError:
+                    pass
+            deadline = time.monotonic() + _COMMAND_TERMINATION_GRACE_SECONDS
+            while SubprocessCommandRunner._posix_process_group_exists(killpg, process_group):
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise WorkspaceBootstrapError("WORKSPACE_COMMAND_TERMINATION_UNCONFIRMED")
+                time.sleep(min(0.025, remaining))
+            remaining = max(0.001, deadline - time.monotonic())
+            process.communicate(timeout=remaining)
+        except WorkspaceBootstrapError:
+            raise
+        except (OSError, subprocess.SubprocessError):
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_TERMINATION_UNCONFIRMED") from None
+        if process.poll() is None:
+            raise WorkspaceBootstrapError("WORKSPACE_COMMAND_TERMINATION_UNCONFIRMED")
+
+    @staticmethod
+    def _posix_process_group_exists(
+        killpg: Callable[[int, int], None],
+        process_group: int,
+    ) -> bool:
+        try:
+            killpg(process_group, 0)
+        except ProcessLookupError:
+            return False
+        except PermissionError:
+            return True
+        return True
 
 
 def _acl_security_probe_script_v1() -> str:
@@ -446,7 +942,7 @@ def _git(
     environment: Mapping[str, str],
     repository: Path | None,
     *arguments: str,
-    timeout_seconds: int = 120,
+    timeout_seconds: int = _SMALL_GIT_COMMAND_TIMEOUT_SECONDS,
 ) -> str:
     prefix = list(_git_prefix(git_executable))
     if repository is not None:
@@ -558,7 +1054,7 @@ def _assert_safe_git_tree(
         "fsck",
         "--full",
         "--strict",
-        timeout_seconds=300,
+        timeout_seconds=_GIT_FSCK_TIMEOUT_SECONDS,
     )
 
 
@@ -588,7 +1084,7 @@ def _create_exact_clone(
         environment["GIT_TEMPLATE_DIR"],
         EXPECTED_ORIGIN,
         os.fspath(staging),
-        timeout_seconds=300,
+        timeout_seconds=_GIT_CLONE_TIMEOUT_SECONDS,
     )
     if (
         _git(
@@ -625,7 +1121,7 @@ def _create_exact_clone(
         "checkout",
         "--detach",
         expected_main_sha,
-        timeout_seconds=300,
+        timeout_seconds=_GIT_CHECKOUT_TIMEOUT_SECONDS,
     )
     staging.rename(repository)
 

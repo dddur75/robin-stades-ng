@@ -4,6 +4,8 @@ import hashlib
 import inspect
 import json
 import os
+import sys
+import time
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Mapping, Sequence
@@ -14,6 +16,7 @@ import robin.capture.workspace_bootstrap as workspace_bootstrap
 from robin.capture.workspace_bootstrap import (
     EXPECTED_ORIGIN,
     LocalBoundaryInspection,
+    SubprocessCommandRunner,
     WorkspaceBootstrapError,
     _acl_security_probe_script_v1,
     _assert_roots_non_overlapping,
@@ -121,6 +124,7 @@ class FakeGitRunner:
         self.attached_head = attached_head
         self.index_flag_output = index_flag_output
         self.calls: list[tuple[str, ...]] = []
+        self.timed_calls: list[tuple[tuple[str, ...], int]] = []
 
     def run(
         self,
@@ -130,9 +134,10 @@ class FakeGitRunner:
         environment: Mapping[str, str],
         timeout_seconds: int,
     ) -> str:
-        del cwd, timeout_seconds
+        del cwd
         call = tuple(arguments)
         self.calls.append(call)
+        self.timed_calls.append((call, timeout_seconds))
         assert "THE_ODDS_API_KEY" not in environment
         if "clone" in call:
             destination = Path(call[-1])
@@ -172,6 +177,186 @@ def git_executable(tmp_path: Path) -> Path:
     path.parent.mkdir(parents=True)
     path.write_bytes(b"synthetic-git-binary")
     return path
+
+
+def _isolated_python_environment() -> dict[str, str]:
+    environment = {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "LANG": "C",
+        "LC_ALL": "C",
+    }
+    for name in ("SystemRoot", "WINDIR"):
+        if name in os.environ:
+            environment[name] = os.environ[name]
+    return environment
+
+
+def test_contained_command_success_returns_strict_utf8_stdout() -> None:
+    stdout = SubprocessCommandRunner().run(
+        (
+            os.path.abspath(sys.executable),
+            "-I",
+            "-B",
+            "-c",
+            "print('contained-ok')",
+        ),
+        cwd=None,
+        environment=_isolated_python_environment(),
+        timeout_seconds=5,
+    )
+    assert stdout == "contained-ok\n"
+
+
+def test_contained_command_start_failure_is_sanitized(tmp_path: Path) -> None:
+    missing = tmp_path / "missing-command.exe"
+    with pytest.raises(WorkspaceBootstrapError, match="WORKSPACE_COMMAND_START_FAILED"):
+        SubprocessCommandRunner().run(
+            (os.fspath(missing),),
+            cwd=None,
+            environment=_isolated_python_environment(),
+            timeout_seconds=5,
+        )
+
+
+def test_command_timeout_returns_only_after_descendant_tree_is_quiescent(
+    tmp_path: Path,
+) -> None:
+    heartbeat = tmp_path / "descendant-heartbeat.bin"
+    descendant = (
+        "import pathlib,signal,sys,time\n"
+        "signal.signal(signal.SIGTERM,signal.SIG_IGN)\n"
+        "path=pathlib.Path(sys.argv[1])\n"
+        "while True:\n"
+        "    with path.open('ab') as stream:\n"
+        "        stream.write(b'x')\n"
+        "        stream.flush()\n"
+        "    time.sleep(0.02)\n"
+    )
+    root = (
+        "import subprocess,sys,time\n"
+        "subprocess.Popen(\n"
+        "    [sys.executable,'-I','-B','-c',sys.argv[1],sys.argv[2]],\n"
+        "    stdin=subprocess.DEVNULL,\n"
+        "    stdout=subprocess.DEVNULL,\n"
+        "    stderr=subprocess.DEVNULL,\n"
+        "    close_fds=True,\n"
+        ")\n"
+        "time.sleep(60)\n"
+    )
+    runner = SubprocessCommandRunner()
+    with pytest.raises(WorkspaceBootstrapError, match="WORKSPACE_COMMAND_TIMEOUT"):
+        runner.run(
+            (
+                os.path.abspath(sys.executable),
+                "-I",
+                "-B",
+                "-c",
+                root,
+                descendant,
+                os.fspath(heartbeat),
+            ),
+            cwd=None,
+            environment=_isolated_python_environment(),
+            timeout_seconds=2,
+        )
+    assert heartbeat.is_file()
+    observed_size = heartbeat.stat().st_size
+    assert observed_size > 0
+    time.sleep(0.25)
+    assert heartbeat.stat().st_size == observed_size
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows Job Object assignment barrier")
+def test_windows_gate_never_launches_target_before_job_assignment(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    marker = tmp_path / "target-launched.txt"
+
+    def reject_assignment(_job: object, _process_id: int) -> None:
+        raise WorkspaceBootstrapError("WORKSPACE_COMMAND_CONTAINMENT_FAILED")
+
+    monkeypatch.setattr(
+        workspace_bootstrap._WindowsJobObject,
+        "assign_process",
+        reject_assignment,
+    )
+    with pytest.raises(
+        WorkspaceBootstrapError,
+        match="WORKSPACE_COMMAND_CONTAINMENT_FAILED",
+    ):
+        SubprocessCommandRunner().run(
+            (
+                os.path.abspath(sys.executable),
+                "-I",
+                "-B",
+                "-c",
+                "import pathlib,sys; pathlib.Path(sys.argv[1]).write_text('launched')",
+                os.fspath(marker),
+            ),
+            cwd=None,
+            environment=_isolated_python_environment(),
+            timeout_seconds=5,
+        )
+    assert not marker.exists()
+
+
+def test_completed_root_with_live_descendant_is_failed_and_terminated() -> None:
+    root = (
+        "import subprocess,sys\n"
+        "subprocess.Popen(\n"
+        "    [sys.executable,'-I','-B','-c','import time; time.sleep(60)'],\n"
+        "    stdin=subprocess.DEVNULL,\n"
+        "    stdout=subprocess.DEVNULL,\n"
+        "    stderr=subprocess.DEVNULL,\n"
+        "    close_fds=True,\n"
+        ")\n"
+    )
+    with pytest.raises(
+        WorkspaceBootstrapError,
+        match="WORKSPACE_COMMAND_RESIDUAL_DESCENDANT",
+    ):
+        SubprocessCommandRunner().run(
+            (os.path.abspath(sys.executable), "-I", "-B", "-c", root),
+            cwd=None,
+            environment=_isolated_python_environment(),
+            timeout_seconds=5,
+        )
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows Job Object termination proof")
+def test_windows_unconfirmed_termination_has_a_distinct_failure_code(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    real_terminate = workspace_bootstrap._WindowsJobObject.terminate_and_confirm
+
+    def terminate_then_refuse_attestation(
+        job: workspace_bootstrap._WindowsJobObject,
+    ) -> None:
+        real_terminate(job)
+        raise WorkspaceBootstrapError("WORKSPACE_COMMAND_TERMINATION_UNCONFIRMED")
+
+    monkeypatch.setattr(
+        workspace_bootstrap._WindowsJobObject,
+        "terminate_and_confirm",
+        terminate_then_refuse_attestation,
+    )
+    with pytest.raises(
+        WorkspaceBootstrapError,
+        match="WORKSPACE_COMMAND_TERMINATION_UNCONFIRMED",
+    ):
+        SubprocessCommandRunner().run(
+            (
+                os.path.abspath(sys.executable),
+                "-I",
+                "-B",
+                "-c",
+                "import time; time.sleep(60)",
+            ),
+            cwd=None,
+            environment=_isolated_python_environment(),
+            timeout_seconds=1,
+        )
 
 
 @pytest.mark.skipif(os.name != "nt", reason="Windows registry behavior")
@@ -363,6 +548,14 @@ def test_create_produces_standalone_exact_clone_receipt_and_zero_provider_effect
     receipt_path = runtime / "control-temp" / f"workspace-{receipt.canonical_receipt_hash}.json"
     assert receipt_path.is_file()
     assert sum("clone" in call for call in runner.calls) == 1
+    assert [timeout for call, timeout in runner.timed_calls if "clone" in call] == [3600]
+    assert [timeout for call, timeout in runner.timed_calls if "checkout" in call] == [900]
+    assert [timeout for call, timeout in runner.timed_calls if "fsck" in call] == [1800]
+    assert all(
+        timeout == 120
+        for call, timeout in runner.timed_calls
+        if not any(command in call for command in ("clone", "checkout", "fsck"))
+    )
 
     monkeypatch.setattr(
         workspace_bootstrap,
