@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import inspect
 import json
+import os
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Mapping, Sequence
@@ -171,6 +172,166 @@ def git_executable(tmp_path: Path) -> Path:
     path.parent.mkdir(parents=True)
     path.write_bytes(b"synthetic-git-binary")
     return path
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows registry behavior")
+def test_absent_sync_provider_registry_root_is_a_safe_empty_source(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    import winreg
+
+    real_open_key = winreg.OpenKey
+
+    def open_key(root: int, sub_key: str, *args: object, **kwargs: object) -> object:
+        if root == winreg.HKEY_CURRENT_USER and sub_key == r"Software\SyncEngines\Providers":
+            raise FileNotFoundError(2, "registry key not found", sub_key)
+        return real_open_key(root, sub_key, *args, **kwargs)
+
+    sync_root = tmp_path / "environment-sync-root"
+    monkeypatch.setenv("OneDrive", str(sync_root))
+    for variable in ("OneDriveConsumer", "OneDriveCommercial", "Dropbox"):
+        monkeypatch.delenv(variable, raising=False)
+    monkeypatch.setattr(winreg, "OpenKey", open_key)
+
+    assert workspace_bootstrap._registered_windows_sync_roots() == (
+        Path(os.path.normcase(os.path.abspath(sync_root))),
+    )
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows registry behavior")
+@pytest.mark.parametrize(
+    "failure_point",
+    [
+        "root_open",
+        "enum_key",
+        "enum_key_missing",
+        "child_open",
+        "enum_value",
+        "enum_value_missing",
+    ],
+)
+def test_sync_provider_registry_inspection_errors_fail_closed(
+    monkeypatch: pytest.MonkeyPatch,
+    failure_point: str,
+) -> None:
+    import winreg
+
+    class FakeKey:
+        def __init__(self, name: str) -> None:
+            self.name = name
+
+        def __enter__(self) -> FakeKey:
+            return self
+
+        def __exit__(self, *_args: object) -> None:
+            return None
+
+    providers = FakeKey("providers")
+    provider = FakeKey("provider")
+
+    def open_key(root: object, sub_key: str, *args: object, **kwargs: object) -> FakeKey:
+        del args, kwargs
+        if root == winreg.HKEY_CURRENT_USER:
+            assert sub_key == r"Software\SyncEngines\Providers"
+            if failure_point == "root_open":
+                raise PermissionError(5, "registry access denied", sub_key)
+            return providers
+        assert root is providers
+        assert sub_key == "provider-1"
+        if failure_point == "child_open":
+            raise PermissionError(5, "registry access denied", sub_key)
+        return provider
+
+    def enum_key(key: FakeKey, index: int) -> str:
+        assert key is providers
+        assert index == 0
+        if failure_point == "enum_key":
+            raise PermissionError(5, "registry access denied")
+        if failure_point == "enum_key_missing":
+            raise FileNotFoundError(2, "registry key disappeared")
+        return "provider-1"
+
+    def enum_value(key: FakeKey, index: int) -> tuple[str, str, int]:
+        assert key is provider
+        assert index == 0
+        if failure_point == "enum_value":
+            raise PermissionError(5, "registry access denied")
+        if failure_point == "enum_value_missing":
+            raise FileNotFoundError(2, "registry value disappeared")
+        raise AssertionError("EnumValue should only succeed at the selected failure point")
+
+    monkeypatch.setattr(winreg, "OpenKey", open_key)
+    monkeypatch.setattr(winreg, "EnumKey", enum_key)
+    monkeypatch.setattr(winreg, "EnumValue", enum_value)
+
+    with pytest.raises(
+        WorkspaceBootstrapError, match="LOCAL_RUNTIME_SYNC_ROOT_INSPECTION_UNAVAILABLE"
+    ):
+        workspace_bootstrap._registered_windows_sync_roots()
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows registry behavior")
+def test_sync_provider_registry_no_more_items_is_normal_completion(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import winreg
+
+    class FakeKey:
+        def __enter__(self) -> FakeKey:
+            return self
+
+        def __exit__(self, *_args: object) -> None:
+            return None
+
+    def no_more_items(*_args: object) -> str:
+        error = OSError(259, "no more data")
+        error.winerror = 259
+        raise error
+
+    monkeypatch.setattr(winreg, "OpenKey", lambda *_args, **_kwargs: FakeKey())
+    monkeypatch.setattr(winreg, "EnumKey", no_more_items)
+    for variable in ("OneDrive", "OneDriveConsumer", "OneDriveCommercial", "Dropbox"):
+        monkeypatch.delenv(variable, raising=False)
+
+    assert workspace_bootstrap._registered_windows_sync_roots() == ()
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows registry behavior")
+def test_disappearing_sync_provider_child_key_is_safely_skipped(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import winreg
+
+    class FakeKey:
+        def __enter__(self) -> FakeKey:
+            return self
+
+        def __exit__(self, *_args: object) -> None:
+            return None
+
+    providers = FakeKey()
+
+    def open_key(root: object, sub_key: str, *args: object, **kwargs: object) -> FakeKey:
+        del args, kwargs
+        if root == winreg.HKEY_CURRENT_USER:
+            return providers
+        raise FileNotFoundError(2, "provider key disappeared", sub_key)
+
+    def enum_key(key: FakeKey, index: int) -> str:
+        assert key is providers
+        if index == 0:
+            return "provider-1"
+        error = OSError(259, "no more data")
+        error.winerror = 259
+        raise error
+
+    monkeypatch.setattr(winreg, "OpenKey", open_key)
+    monkeypatch.setattr(winreg, "EnumKey", enum_key)
+    for variable in ("OneDrive", "OneDriveConsumer", "OneDriveCommercial", "Dropbox"):
+        monkeypatch.delenv(variable, raising=False)
+
+    assert workspace_bootstrap._registered_windows_sync_roots() == ()
 
 
 def test_create_produces_standalone_exact_clone_receipt_and_zero_provider_effects(

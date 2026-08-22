@@ -7,7 +7,7 @@ import socket
 from collections.abc import Callable, Iterable
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any, Protocol
+from typing import Any, Protocol, cast
 
 from robin.capture.bootstrap_contracts import (
     MIN_OWNER_REVIEW_WINDOW,
@@ -180,7 +180,8 @@ def _mission_global_claim_registry_root_v1() -> Path:
         import ctypes
 
         buffer = ctypes.create_unicode_buffer(32_768)
-        result = ctypes.windll.shell32.SHGetFolderPathW(
+        windows_api = cast(Any, ctypes).windll
+        result = windows_api.shell32.SHGetFolderPathW(
             None,
             0x001C,
             None,

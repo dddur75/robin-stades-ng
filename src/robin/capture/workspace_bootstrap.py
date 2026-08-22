@@ -11,7 +11,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Literal, Protocol
+from typing import Any, Literal, Protocol, cast
 
 from robin.capture.bootstrap_contracts import (
     RealCaptureWorkspaceReceiptV1,
@@ -197,6 +197,10 @@ def _is_within(path: Path, parent: Path) -> bool:
         return False
 
 
+def _windows_registry_enumeration_complete(error: OSError) -> bool:
+    return getattr(error, "winerror", None) == 259
+
+
 def _registered_windows_sync_roots() -> tuple[Path, ...]:
     if os.name != "nt":
         raise WorkspaceBootstrapError("LOCAL_RUNTIME_WINDOWS_REQUIRED")
@@ -207,32 +211,48 @@ def _registered_windows_sync_roots() -> tuple[Path, ...]:
             candidates.add(os.path.normcase(os.path.abspath(value)))
     try:
         import winreg
+    except ImportError:
+        raise WorkspaceBootstrapError("LOCAL_RUNTIME_SYNC_ROOT_INSPECTION_UNAVAILABLE") from None
 
-        with winreg.OpenKey(
-            winreg.HKEY_CURRENT_USER,
+    registry = cast(Any, winreg)
+    try:
+        providers_key = registry.OpenKey(
+            registry.HKEY_CURRENT_USER,
             r"Software\SyncEngines\Providers",
-        ) as providers:
+        )
+    except FileNotFoundError:
+        return tuple(Path(value) for value in sorted(candidates))
+    except OSError:
+        raise WorkspaceBootstrapError("LOCAL_RUNTIME_SYNC_ROOT_INSPECTION_UNAVAILABLE") from None
+
+    try:
+        with providers_key as providers:
             provider_index = 0
             while True:
                 try:
-                    provider_name = winreg.EnumKey(providers, provider_index)
-                except OSError:
-                    break
+                    provider_name = registry.EnumKey(providers, provider_index)
+                except OSError as error:
+                    if _windows_registry_enumeration_complete(error):
+                        break
+                    raise
                 provider_index += 1
                 try:
-                    with winreg.OpenKey(providers, provider_name) as provider:
-                        value_index = 0
-                        while True:
-                            try:
-                                _name, value, _kind = winreg.EnumValue(provider, value_index)
-                            except OSError:
-                                break
-                            value_index += 1
-                            if isinstance(value, str) and os.path.isabs(value):
-                                candidates.add(os.path.normcase(os.path.abspath(value)))
-                except OSError:
+                    provider_key = registry.OpenKey(providers, provider_name)
+                except FileNotFoundError:
                     continue
-    except (ImportError, OSError):
+                with provider_key as provider:
+                    value_index = 0
+                    while True:
+                        try:
+                            _name, value, _kind = registry.EnumValue(provider, value_index)
+                        except OSError as error:
+                            if _windows_registry_enumeration_complete(error):
+                                break
+                            raise
+                        value_index += 1
+                        if isinstance(value, str) and os.path.isabs(value):
+                            candidates.add(os.path.normcase(os.path.abspath(value)))
+    except OSError:
         raise WorkspaceBootstrapError("LOCAL_RUNTIME_SYNC_ROOT_INSPECTION_UNAVAILABLE") from None
     return tuple(Path(value) for value in sorted(candidates))
 
@@ -260,7 +280,8 @@ class WindowsBoundaryInspector:
         from ctypes import wintypes
 
         root = Path(path.anchor)
-        get_drive_type = ctypes.windll.kernel32.GetDriveTypeW
+        windows_api = cast(Any, ctypes).windll
+        get_drive_type = windows_api.kernel32.GetDriveTypeW
         get_drive_type.argtypes = [wintypes.LPCWSTR]
         get_drive_type.restype = wintypes.UINT
         drive_type = int(get_drive_type(os.fspath(root)))
@@ -269,7 +290,7 @@ class WindowsBoundaryInspector:
         serial = wintypes.DWORD()
         maximum_component = wintypes.DWORD()
         flags = wintypes.DWORD()
-        success = ctypes.windll.kernel32.GetVolumeInformationW(
+        success = windows_api.kernel32.GetVolumeInformationW(
             os.fspath(root),
             volume_name,
             len(volume_name),
@@ -783,8 +804,9 @@ def discover_local_runtime_candidates_v1() -> tuple[Path, ...]:
     try:
         import ctypes
 
-        mask = int(ctypes.windll.kernel32.GetLogicalDrives())
-        get_drive_type = ctypes.windll.kernel32.GetDriveTypeW
+        windows_api = cast(Any, ctypes).windll
+        mask = int(windows_api.kernel32.GetLogicalDrives())
+        get_drive_type = windows_api.kernel32.GetDriveTypeW
         for index in range(26):
             if mask & (1 << index):
                 root = f"{chr(ord('A') + index)}:\\"

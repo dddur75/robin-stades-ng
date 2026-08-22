@@ -799,9 +799,9 @@ def test_jalon4_wall_clock_decay_fix_authority_and_succession_are_exact() -> Non
 
     graph = load_json("reports/evidence/evidence-graph.json")
     claims = {claim["claim_id"]: claim for claim in graph["claims"]}
-    assert len(graph["claims"]) == 393
-    assert len(graph["decision_nodes"]) == 164
-    assert len(graph["edges"]) == 679
+    assert len(graph["claims"]) == 399
+    assert len(graph["decision_nodes"]) == 165
+    assert len(graph["edges"]) == 689
     expected_statuses = {
         expected_proof[0]: "SUPERSEDED",
         expected_proof[1]: "SUPERSEDED",
@@ -936,9 +936,9 @@ def test_bounded_live_canary_successor_v2_authority_and_succession_are_exact() -
 
     graph = load_json("reports/evidence/evidence-graph.json")
     claims = {claim["claim_id"]: claim for claim in graph["claims"]}
-    assert len(graph["claims"]) == 393
-    assert len(graph["decision_nodes"]) == 164
-    assert len(graph["edges"]) == 679
+    assert len(graph["claims"]) == 399
+    assert len(graph["decision_nodes"]) == 165
+    assert len(graph["edges"]) == 689
     assert {claim_id: claims[claim_id]["status"] for claim_id in expected_proof} == {
         expected_proof[0]: "SUPERSEDED",
         expected_proof[1]: "SUPERSEDED",
@@ -1067,13 +1067,14 @@ def test_real_execution_bootstrap_closure_v1_authority_and_succession_are_exact(
 
     graph = load_json("reports/evidence/evidence-graph.json")
     claims = {claim["claim_id"]: claim for claim in graph["claims"]}
-    assert len(graph["claims"]) == 393
-    assert len(graph["decision_nodes"]) == 164
-    assert len(graph["edges"]) == 679
+    assert len(graph["claims"]) == 399
+    assert len(graph["decision_nodes"]) == 165
+    assert len(graph["edges"]) == 689
     assert {claim_id: claims[claim_id]["status"] for claim_id in expected_proof} == {
-        expected_proof[0]: "PARTIAL",
-        expected_proof[1]: "PARTIAL",
-        **{claim_id: "VERIFIED" for claim_id in expected_proof[2:]},
+        expected_proof[0]: "SUPERSEDED",
+        expected_proof[1]: "SUPERSEDED",
+        **{claim_id: "VERIFIED" for claim_id in expected_proof[2:9]},
+        expected_proof[9]: "SUPERSEDED",
     }
     predecessors = {
         "GOV.AUTHORIZATION.CHRONOS_LOOP53.020": expected_proof[0],
@@ -1092,6 +1093,114 @@ def test_real_execution_bootstrap_closure_v1_authority_and_succession_are_exact(
     edges = [edge for edge in graph["edges"] if edge["to_decision_id"] == record["decision_id"]]
     assert [edge["edge_id"] for edge in edges] == [f"EDGE.{number}" for number in range(670, 680)]
     assert [edge["from_claim_id"] for edge in edges] == expected_proof
+
+    correction_proof = [
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.022",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.031",
+        "PORTABILITY.REAL_EXECUTION_BOOTSTRAP.WORKSPACE.WINDOWS_API_TYPING.V1.001",
+        "PORTABILITY.REAL_EXECUTION_BOOTSTRAP.NETWORK.WINDOWS_API_TYPING.V1.001",
+        "PORTABILITY.REAL_EXECUTION_BOOTSTRAP.WORKSPACE.WINDOWS_SYNC_REGISTRY.ABSENT_KEY.V1.001",
+        "DATA.REAL_EXECUTION_BOOTSTRAP.CLOSURE.DP6.REVIEW.V1.001",
+        "SECURITY.REAL_EXECUTION_BOOTSTRAP.CLOSURE.C4.REVIEW.V1.001",
+        "GOV.REAL_EXECUTION_BOOTSTRAP.CLOSURE.C2.REVIEW.V1.001",
+        "GOV.REAL_EXECUTION_BOOTSTRAP.CLOSURE.FINAL.REVIEW.V1.001",
+        "GOV.COUNCIL.REAL_EXECUTION_BOOTSTRAP.CLOSURE.EVIDENCE.SUCCESSION.LEDGER.V1.002",
+    ]
+    correction = next(item for item in ledger if item["decision_id"] == "RCV3-20260822-172")
+    assert correction["previous_hash"] == record["hash"]
+    assert correction["proof"] == correction_proof
+    assert correction["context"]["failed_exact_head_run"] == {
+        "run_id": 32576737145,
+        "attempt": 1,
+        "head_sha": "cb7d46e902c60c8bfab0d2f0337250be7cd54461",
+        "status": "completed",
+        "conclusion": "failure",
+        "root_cause_job_ids": [97040064697, 97040064712],
+        "failed_jobs": [
+            {
+                "job_id": 97040064697,
+                "name": "Bounded live canary - Windows",
+                "failed_step": "Compiler et tester la capacité bornée",
+                "classification": "ABSENT_SYNC_PROVIDER_REGISTRY_ROOT_MISCLASSIFIED_UNAVAILABLE",
+                "pytest_failed": 11,
+                "pytest_passed": 376,
+                "affected_file": "src/robin/capture/workspace_bootstrap.py",
+            },
+            {
+                "job_id": 97040064712,
+                "name": "Bounded live canary - Ubuntu",
+                "failed_step": "Vérifier le typage strict de la capacité bornée",
+                "classification": "LINUX_STUB_ONLY_WINDOWS_DYNAMIC_API_TYPING",
+                "mypy_error_count": 10,
+                "affected_files": [
+                    "src/robin/capture/provider_network.py",
+                    "src/robin/capture/workspace_bootstrap.py",
+                ],
+            },
+            {
+                "job_id": 97043362274,
+                "name": "tests",
+                "failed_step": "Refuser tout prerequis absent, annule ou en echec",
+                "classification": "FAIL_CLOSED_PREREQUISITE_PROPAGATION",
+                "independent_defect": False,
+                "root_cause_job_ids": [97040064697, 97040064712],
+            },
+        ],
+        "rerun_performed": False,
+    }
+    assert correction["context"]["defects"] == {
+        "open_p0": 0,
+        "open_p1": 0,
+        "open_p2": 0,
+        "open_critical_threads": 0,
+        "resolved_ci_defect_ids": [
+            "TASKD-CI-PORTABILITY-001",
+            "TASKD-CI-WINDOWS-SYNC-REGISTRY-002",
+        ],
+        "resolved_review_defect_ids": [
+            "C4-SYNC-ENUM-001",
+            "C4-SYNC-FNF-SCOPE-002",
+        ],
+    }
+    assert correction["context"]["delivery_authority"] == {
+        "first_directly_consequential_corrective_commit_authorized_now": True,
+        "first_directly_consequential_non_force_push_authorized_now": True,
+        "remaining_directly_consequential_corrective_pushes_after_this": 1,
+        "automatic_new_exact_head_ci_required": True,
+        "rerun_32576737145_authorized": False,
+        "merge_authorized_now": False,
+        "force_push_authorized": False,
+        "squash_merge_authorized": False,
+        "rebase_merge_authorized": False,
+        "admin_bypass_authorized": False,
+        "branch_deletion_authorized": False,
+    }
+    assert correction["context"]["external_effects"] == record["context"]["external_effects"]
+    assert {claim_id: claims[claim_id]["status"] for claim_id in correction_proof} == {
+        correction_proof[0]: "PARTIAL",
+        correction_proof[1]: "PARTIAL",
+        **{claim_id: "VERIFIED" for claim_id in correction_proof[2:]},
+    }
+    correction_successors = {
+        expected_proof[0]: correction_proof[0],
+        expected_proof[1]: correction_proof[1],
+        expected_proof[9]: correction_proof[9],
+    }
+    for predecessor, successor in correction_successors.items():
+        assert claims[predecessor]["status"] == "SUPERSEDED"
+        assert claims[predecessor]["superseded_by"] == successor
+
+    correction_node = next(
+        item for item in graph["decision_nodes"] if item["decision_id"] == correction["decision_id"]
+    )
+    assert correction_node["ledger_record_hash"] == correction["hash"]
+    correction_edges = [
+        edge for edge in graph["edges"] if edge["to_decision_id"] == correction["decision_id"]
+    ]
+    assert [edge["edge_id"] for edge in correction_edges] == [
+        f"EDGE.{number}" for number in range(680, 690)
+    ]
+    assert [edge["from_claim_id"] for edge in correction_edges] == correction_proof
 
 
 def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it() -> None:
