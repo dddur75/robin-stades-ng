@@ -1,0 +1,115 @@
+{
+  "agent_id": "C4",
+  "mission_id": "BOUNDED_MULTI_LEAGUE_LIVE_CANARY_CAPABILITY_SUCCESSOR_V2",
+  "facts_verified": [
+    {
+      "claim": "La mission de gouvernance et de livraison SUCCESSOR_V2 est explicitement distincte de la capacité technique V1 : V2 livre la succession, tandis que les contrats et l'autorisation live restent V1, DEFAULT_DENY et sans autorisation live implicite.",
+      "evidence_refs": [
+        "configs/execution/bounded-multi-league-live-canary-capability-v2.json:1-15",
+        "docs/data-sourcing/BOUNDED-MULTI-LEAGUE-LIVE-CANARY-CAPABILITY-V2.md:1-16",
+        "src/robin/capture/live_contracts.py:21-30",
+        "reports/data-sourcing/bounded-live-canary-capability-v1.json:11-16,31-33,55-74"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le secret fournisseur est lu par l'unique lecteur production, exactement une fois et seulement après permit durable, exact-main, TTL, autorité, plan, item et capture-root revalidés; une revalidation supplémentaire précède le marqueur dispatch-started, et aucun recovery ne relit le secret ni ne redispatche.",
+      "evidence_refs": [
+        "src/robin/capture/live_transport.py:116-136",
+        "src/robin/capture/live_executor.py:1218-1296",
+        "src/robin/capture/live_executor.py:1379-1669",
+        "tools/data-sourcing/run_bounded_live_canary_v1.py:202-229",
+        "tests/capture/test_live_canary_capability.py:1648-1800,1933-2416,2564-2600"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le transport effectue un seul GET TLS direct vers une IP globale-unicast canonique liée à l'autorisation, sans DNS, proxy, redirection, retry ni failover, avec peer exact, SNI/Host canoniques et deadline monotone absolue couvrant connexion, TLS, requête, status, headers et body.",
+      "evidence_refs": [
+        "src/robin/capture/live_contracts.py:51-64",
+        "src/robin/capture/live_transport.py:40-90,300-380,406-483,486-638",
+        "tests/capture/test_live_canary_transport.py:568-1075"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les identités dépôt, control-temp, capture-root et exécutable Git sont liées à l'autorisation et revalidées; Git s'exécute localement via un binaire absolu hash-pinné, sans shell, protocoles, lazy fetch, config globale ni environnement proxy ou secret hérité.",
+      "evidence_refs": [
+        "src/robin/capture/live_contracts.py:77-153",
+        "src/robin/capture/storage.py:415-493,856-943",
+        "src/robin/capture/live_executor.py:120-229,250-825",
+        "tools/data-sourcing/run_bounded_live_canary_v1.py:113-217",
+        "tests/capture/test_live_canary_transport.py:1144-1342"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "L'anti-replay et la tolérance aux crashs reposent sur locks interprocess, leases et marqueurs one-shot fsync en paires, événements budget content-addressed, tombstones permanents et recovery conservateur DISPATCH_OUTCOME_UNKNOWN; une fois l'effet potentiellement commencé, aucune reprise ne peut rouvrir un appel.",
+      "evidence_refs": [
+        "src/robin/capture/live_storage.py:126-396,398-858,1062-1283,1428-1643",
+        "src/robin/capture/live_executor.py:1052-1390",
+        "tests/capture/test_live_canary_capability.py:710-969,1933-2416"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les deux corrections Linux sont strictement test-only : elles acceptent seulement des codes explicites d'échec d'identité, maintiennent zéro secret et zéro transport avant secret, et interdisent toute écriture de payload dans les racines remplacée ou déplacée; aucun fichier runtime live ni CLI ne diffère du donor exact-head cd9269ba1d33a3165c2bb3344a4c50c66fae6e5f.",
+      "evidence_refs": [
+        "tests/capture/test_live_canary_capability.py:1844-1930",
+        "src/robin/capture/live_contracts.py:1-754",
+        "src/robin/capture/live_executor.py:1-1897",
+        "src/robin/capture/live_storage.py:1-1712",
+        "src/robin/capture/live_transport.py:1-638",
+        "tools/data-sourcing/run_bounded_live_canary_v1.py:1-247"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les gates CI bornés restent sans secret fournisseur et couvrent Ubuntu et Windows; le test Council global dépendant de l'historique Git est exclu du checkout shallow borné mais demeure couvert par le job repository-wide avec fetch-depth 0.",
+      "evidence_refs": [
+        ".github/workflows/ci.yml:97-317,319-400,651-703",
+        "tests/jalon10/test_workflows_and_guards.py:93-257",
+        "tests/portability/test_chronos_portable_ci_contract.py:83-175"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les artefacts synthétiques déclarent zéro appel fournisseur, zéro DNS fournisseur et zéro lecture de secret réel; network_calls est explicitement limité au fournisseur et à son DNS, les opérations Git/GitHub de livraison autorisées étant hors de ce compteur.",
+      "evidence_refs": [
+        "reports/data-sourcing/bounded-live-canary-capability-v1.json:55-74",
+        "tools/data-sourcing/build_bounded_live_canary_artifacts.py:163-207",
+        ".github/workflows/ci.yml:241-308"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "Le résultat exact-head des futurs jobs CI successor V2 n'est pas observé dans cette revue locale; C4 n'a relancé aucun test afin de rester strictement read-only.",
+    "Les ACL réelles, l'authenticité du pin OwnerAuthorization et l'absence effective de mutateur concurrent restent des propriétés externes non prouvées cryptographiquement par le runtime.",
+    "Le endpoint fournisseur réel, son certificat et le comportement réseau réel n'ont pas été exercés; aucun DNS, réseau fournisseur ni secret réel n'a été utilisé."
+  ],
+  "assumptions": [
+    "Le pin OwnerAuthorization séparé est authentifié par le propriétaire hors système.",
+    "La boundary OWNER_ATTESTED_EXCLUSIVE_OS_ACL_NO_CONCURRENT_MUTATOR couvre pendant toute l'opération le dépôt, le control-temp, la capture-root et l'exécutable Git.",
+    "L'OS rapporte fidèlement les identités filesystem, mount, socket-peer et le temps monotone."
+  ],
+  "main_objection": "Aucune objection P0/P1. Le seul résidu C4 est P2 : le deletion ledger hash-chaîné ne possède pas de tête externe ou d'objets d'événement content-addressed permettant de détecter le rollback d'un suffixe complet valide.",
+  "risks": [
+    {
+      "risk": "[P2] Une troncature du deletion ledger sur une frontière de ligne valide peut produire une nouvelle chaîne localement cohérente et masquer un suffixe d'audit, faute d'ancre de tête externe ou d'événements content-addressed équivalents à ceux du budget ledger.",
+      "severity": "MEDIUM",
+      "evidence_refs": [
+        "src/robin/capture/storage.py:1358-1425",
+        "reports/data-sourcing/capture-harness-internal-reviews-v1.json:20-25"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Avant ready/merge, exiger sur l'exact head les builders --check, les gates no-secret/schema, les suites bornées Ubuntu et Windows, puis la suite repository-wide Ubuntu avec fetch-depth 0; conserver les cas direct-IP/peer/deadline, root-swap Linux, reparse/hardlink Windows, multiprocess et crash. Aucun appel réel fournisseur n'est requis.",
+  "recommended_action": "ACCEPT pour livraison draft de la capacité uniquement (P0=0, P1=0, P2=1). Matérialiser ce rapport avec le mission_id governance SUCCESSOR_V2, mettre à jour l'agrégat, puis laisser l'exact-head CI décider ready/merge. Ne créer aucune autorisation ou activation live; traiter l'ancrage anti-rollback du deletion ledger dans une mission séparée.",
+  "scale_condition": "Nouvelle revue C4 avant toute activation réelle ou avant DNS, multi-IP, proxy, retry/failover, parallélisme accru, autre fournisseur, relâchement de l'exact-main ou abandon de la boundary ACL exclusive.",
+  "estimated_compute": "Faible : revue statique locale et comparaison de blobs; aucun test relancé et zéro appel fournisseur.",
+  "estimated_external_cost": "0",
+  "estimated_human_time": "Deux à quatre heures pour concevoir, tester et documenter une ancre anti-rollback du deletion ledger; hors exécution CI standard.",
+  "maintenance_impact": "Faible pour le successor V2 actuel, dont les corrections Linux sont test/workflow-only; modéré si une ancre durable de tête est ajoutée au deletion ledger.",
+  "confidence": 0.96
+}

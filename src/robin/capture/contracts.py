@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
+import types
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from enum import StrEnum
 from pathlib import PurePosixPath
-from typing import Any, Literal, Self, cast
+from typing import Any, Literal, Self, Union, cast, get_args, get_origin
 from urllib.parse import urlsplit
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
@@ -19,16 +21,9 @@ SECRET_ENV_NAME = "THE_ODDS_" + "API_KEY"
 ALLOWED_PROVIDER_HOST = "api.the-odds-api.com"
 ALLOWED_MARKETS = ("h2h", "totals")
 ALLOWED_REGIONS = ("eu",)
+MAX_SIGNED_64 = 2**63 - 1
 
-JsonValue = (
-    None
-    | bool
-    | int
-    | float
-    | str
-    | list["JsonValue"]
-    | dict[str, "JsonValue"]
-)
+JsonValue = None | bool | int | float | str | list["JsonValue"] | dict[str, "JsonValue"]
 
 
 class CaptureMode(StrEnum):
@@ -77,6 +72,70 @@ class CaptureContractError(ValueError):
         super().__init__(code)
 
 
+def strict_json_loads(payload: str | bytes) -> Any:
+    """Decode control-plane JSON without duplicate keys or non-finite numbers."""
+
+    def reject_duplicate_keys(pairs: list[tuple[str, object]]) -> dict[str, object]:
+        result: dict[str, object] = {}
+        for key, value in pairs:
+            if key in result:
+                raise CaptureContractError("CAPTURE_CONTROL_JSON_DUPLICATE_KEY")
+            result[key] = value
+        return result
+
+    def reject_constant(_value: str) -> None:
+        raise CaptureContractError("CAPTURE_CONTROL_JSON_NON_FINITE")
+
+    def parse_float(value: str) -> float:
+        parsed = float(value)
+        if not math.isfinite(parsed):
+            raise CaptureContractError("CAPTURE_CONTROL_JSON_NON_FINITE")
+        return parsed
+
+    def parse_int(value: str) -> int:
+        if len(value.removeprefix("-")) > 19:
+            raise CaptureContractError("CAPTURE_CONTROL_JSON_INTEGER_OUT_OF_RANGE")
+        parsed = int(value)
+        if not -(2**63) <= parsed < 2**63:
+            raise CaptureContractError("CAPTURE_CONTROL_JSON_INTEGER_OUT_OF_RANGE")
+        return parsed
+
+    try:
+        return json.loads(
+            payload,
+            object_pairs_hook=reject_duplicate_keys,
+            parse_constant=reject_constant,
+            parse_float=parse_float,
+            parse_int=parse_int,
+        )
+    except CaptureContractError:
+        raise
+    except (UnicodeDecodeError, json.JSONDecodeError, RecursionError, TypeError, ValueError):
+        raise CaptureContractError("CAPTURE_CONTROL_JSON_INVALID") from None
+
+
+def strict_json_object(payload: str | bytes) -> dict[str, Any]:
+    value = strict_json_loads(payload)
+    if not isinstance(value, dict) or any(not isinstance(key, str) for key in value):
+        raise CaptureContractError("CAPTURE_CONTROL_JSON_OBJECT_REQUIRED")
+    stack: list[object] = [value]
+    nodes = 0
+    while stack:
+        current = stack.pop()
+        nodes += 1
+        if nodes > 100_000:
+            raise CaptureContractError("CAPTURE_CONTROL_JSON_TOO_COMPLEX")
+        if isinstance(current, dict):
+            stack.extend(current.values())
+        elif isinstance(current, list):
+            stack.extend(current)
+        elif isinstance(current, str) and any(
+            0xD800 <= ord(character) <= 0xDFFF for character in current
+        ):
+            raise CaptureContractError("CAPTURE_CONTROL_JSON_SURROGATE_FORBIDDEN")
+    return value
+
+
 class FrozenContract(BaseModel):
     model_config = ConfigDict(
         frozen=True,
@@ -84,6 +143,52 @@ class FrozenContract(BaseModel):
         validate_default=True,
         hide_input_in_errors=True,
     )
+
+    @model_validator(mode="before")
+    @classmethod
+    def reject_coerced_integers(cls, value: Any) -> Any:
+        """Keep all persisted counters/ceilings integer-exact at every boundary."""
+
+        if not isinstance(value, dict):
+            return value
+
+        def integer_shape(annotation: Any) -> tuple[bool, set[object]]:
+            if annotation is int:
+                return True, set()
+            origin = get_origin(annotation)
+            if origin is Literal:
+                literals = set(get_args(annotation))
+                return any(type(item) is int for item in literals), {
+                    item for item in literals if type(item) is not int
+                }
+            if origin in {types.UnionType, Union}:
+                contains_integer = False
+                permitted: set[object] = set()
+                for member in get_args(annotation):
+                    if member is type(None):
+                        permitted.add(None)
+                        continue
+                    member_contains_integer, member_permitted = integer_shape(member)
+                    contains_integer = contains_integer or member_contains_integer
+                    permitted.update(member_permitted)
+                return contains_integer, permitted
+            return False, set()
+
+        for name, field in cls.model_fields.items():
+            if name not in value:
+                continue
+            contains_integer, permitted = integer_shape(field.annotation)
+            observed = value[name]
+            is_permitted_literal = any(
+                type(observed) is type(item) and observed == item for item in permitted
+            )
+            if (
+                contains_integer
+                and not is_permitted_literal
+                and (not isinstance(observed, int) or isinstance(observed, bool))
+            ):
+                raise CaptureContractError("CAPTURE_CONTRACT_INTEGER_TYPE_INVALID")
+        return value
 
     def __init__(self, **data: Any) -> None:
         try:
@@ -105,8 +210,10 @@ class FrozenContract(BaseModel):
         **kwargs: Any,
     ) -> Self:
         try:
-            return super().model_validate_json(json_data, **kwargs)
-        except ValidationError:
+            if isinstance(json_data, bytearray):
+                json_data = bytes(json_data)
+            return cls.model_validate(strict_json_object(json_data), **kwargs)
+        except (CaptureContractError, ValidationError):
             raise CaptureContractError("CAPTURE_CONTRACT_INVALID") from None
 
     @classmethod
@@ -194,24 +301,31 @@ class CaptureBudget(FrozenContract):
         return self
 
     def reserve(self, *, requests: int, credits: int) -> CaptureBudget:
-        if requests <= 0 or credits < 0:
+        if (
+            isinstance(requests, bool)
+            or not isinstance(requests, int)
+            or isinstance(credits, bool)
+            or not isinstance(credits, int)
+            or requests <= 0
+            or credits < 0
+        ):
             raise ValueError("CAPTURE_BUDGET_RESERVATION_INVALID")
         if self.used_requests + requests > self.maximum_requests:
             raise ValueError("CAPTURE_REQUEST_BUDGET_EXCEEDED")
         if self.used_credits + credits > self.maximum_credits:
             raise ValueError("CAPTURE_CREDIT_BUDGET_EXCEEDED")
-        return self.model_copy(
-            update={
-                "used_requests": self.used_requests + requests,
-                "used_credits": self.used_credits + credits,
-            }
+        return CaptureBudget(
+            maximum_requests=self.maximum_requests,
+            used_requests=self.used_requests + requests,
+            maximum_credits=self.maximum_credits,
+            used_credits=self.used_credits + credits,
         )
 
 
 class QuotaObservation(FrozenContract):
-    requests_remaining: int | None = Field(default=None, ge=0)
-    requests_used: int | None = Field(default=None, ge=0)
-    requests_last: int | None = Field(default=None, ge=0)
+    requests_remaining: int | None = Field(default=None, ge=0, le=MAX_SIGNED_64)
+    requests_used: int | None = Field(default=None, ge=0, le=MAX_SIGNED_64)
+    requests_last: int | None = Field(default=None, ge=0, le=MAX_SIGNED_64)
     observed_at: datetime
 
     @model_validator(mode="after")
@@ -234,9 +348,7 @@ class InternalRetentionPolicy(FrozenContract):
     raw_sha256_retained: Literal[True] = True
     derived_data_retained: Literal[True] = True
     automated_deletion_required: Literal[True] = True
-    legal_risk: Literal["NON_ZERO_BOUNDED_INTERNAL_DECISION"] = (
-        "NON_ZERO_BOUNDED_INTERNAL_DECISION"
-    )
+    legal_risk: Literal["NON_ZERO_BOUNDED_INTERNAL_DECISION"] = "NON_ZERO_BOUNDED_INTERNAL_DECISION"
     authorized_scope: Literal["bounded research pilot"] = "bounded research pilot"
     full_season_permanent_raw_archive_allowed: Literal[False] = False
     explicit_provider_retention_authorization_claimed: Literal[False] = False
@@ -381,9 +493,7 @@ class NormalizedMarketObservation(FrozenContract):
 
 
 class CaptureManifest(FrozenContract):
-    schema_version: Literal["robin-receipt-capture-harness-v1"] = (
-        "robin-receipt-capture-harness-v1"
-    )
+    schema_version: Literal["robin-receipt-capture-harness-v1"] = "robin-receipt-capture-harness-v1"
     manifest_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
     snapshot_id: str = Field(pattern=r"^[0-9a-f]{64}$")
     receipt_id: str = Field(pattern=r"^[0-9a-f]{64}$")
@@ -395,10 +505,10 @@ class CaptureManifest(FrozenContract):
     normalized_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
     normalized_storage_key: str
     captured_at: datetime
-    mode: Literal["VALIDATE_OFFLINE"] = "VALIDATE_OFFLINE"
-    network_calls: Literal[0] = 0
-    provider_calls: Literal[0] = 0
-    live_canary_authorized: Literal[False] = False
+    mode: Literal["VALIDATE_OFFLINE", "LIVE_CANARY"] = "VALIDATE_OFFLINE"
+    network_calls: Literal[0, 1] = 0
+    provider_calls: Literal[0, 1] = 0
+    live_canary_authorized: bool = False
     promoted: Literal[False] = False
     bet_calculated: Literal[False] = False
 
@@ -419,6 +529,14 @@ class CaptureManifest(FrozenContract):
     @model_validator(mode="after")
     def validate_manifest(self) -> Self:
         ensure_utc(self.captured_at, field="captured_at")
+        if self.mode == "VALIDATE_OFFLINE" and (
+            self.network_calls != 0 or self.provider_calls != 0 or self.live_canary_authorized
+        ):
+            raise ValueError("OFFLINE_MANIFEST_EFFECTS_INVALID")
+        if self.mode == "LIVE_CANARY" and (
+            self.network_calls != 1 or self.provider_calls != 1 or not self.live_canary_authorized
+        ):
+            raise ValueError("LIVE_MANIFEST_EFFECTS_INVALID")
         expected_key = f"normalized/{self.snapshot_id}.jsonl"
         if self.normalized_storage_key != expected_key:
             raise ValueError("NORMALIZED_STORAGE_KEY_INVALID")
@@ -438,6 +556,5 @@ class OfflineReplayResult(FrozenContract):
     raw_hash_verified_before_parse: Literal[True] = True
     network_calls: Literal[0] = 0
     provider_calls: Literal[0] = 0
-    verdict: Literal["ROBIN_OFFLINE_CAPTURE_REPLAY_PROVEN"] = (
-        "ROBIN_OFFLINE_CAPTURE_REPLAY_PROVEN"
-    )
+    secret_reads_count: Literal[0] = 0
+    verdict: Literal["ROBIN_OFFLINE_CAPTURE_REPLAY_PROVEN"] = "ROBIN_OFFLINE_CAPTURE_REPLAY_PROVEN"

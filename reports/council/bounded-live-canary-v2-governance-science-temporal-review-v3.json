@@ -1,0 +1,209 @@
+{
+  "agent_id": "C2",
+  "mission_id": "BOUNDED_MULTI_LEAGUE_LIVE_CANARY_CAPABILITY_SUCCESSOR_V2",
+  "facts_verified": [
+    {
+      "claim": "Le worktree successor est lié à la branche exacte codex/bounded-live-canary-capability-successor-v2 et au HEAD/base main exact 6c975dae257db73ca3ef61c5a6e1fb5b6c3f64dd, avec zéro commit au-dessus de cette base au moment de la revue.",
+      "evidence_refs": [
+        "git branch --show-current => codex/bounded-live-canary-capability-successor-v2",
+        "git rev-parse HEAD => 6c975dae257db73ca3ef61c5a6e1fb5b6c3f64dd",
+        "git rev-list --count 6c975dae257db73ca3ef61c5a6e1fb5b6c3f64dd..HEAD => 0"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les 37 chemins modifiés du gel fonctionnel sont tous inclus dans l'allowlist de 40 chemins relatifs, triés et uniques; aucun chemin hors allowlist n'a été détecté.",
+      "evidence_refs": [
+        "configs/agents/mission-activation-matrix-v3.json",
+        "allowed_paths canonical SHA-256 => 77598f8d0e90092c5a5bec6af7d04d99a07a35dd2879cd63f4d96a830b8fc170",
+        "allowed_paths duplicates => 0",
+        "changed_paths_outside_allowlist => 0",
+        "allowlisted-but-unchanged before append-only evidence: reports/council/decision-ledger.jsonl; reports/data-sourcing/internal-retention-policy-v1.json; reports/evidence/evidence-graph.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le manifeste successor contient exactement les huit champs Council requis, autorise uniquement E1, fixe compute_budget=5000 et time_budget=345600, et expire le 2026-08-26T02:00:00Z.",
+      "evidence_refs": [
+        "configs/execution/bounded-multi-league-live-canary-capability-v2.json",
+        "manifest LF SHA-256 => ab3f8160e521912f99c9f47eae007d33be1956f184899d279653b4b30fdcbc4f",
+        "mission_id => BOUNDED_MULTI_LEAGUE_LIVE_CANARY_CAPABILITY_SUCCESSOR_V2",
+        "authorized_stages => [E1]",
+        "maximum_stage => E1",
+        "review timestamp 2026-08-22T02:29:40Z => expiry future and bounded by the declared time budget"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le source_hash du manifeste correspond octet pour octet au brief propriétaire successor NIGHT LOOP, lequel autorise explicitement la branche, la PR et le merge V2 depuis JALON4_FIXED_MAIN_SHA.",
+      "evidence_refs": [
+        "C:/Users/ddura/.codex/attachments/47f34581-7755-4f5a-9e49-21f9ba288a14/pasted-text.txt",
+        "raw attachment bytes => 25948",
+        "raw attachment SHA-256 => 44afeb5095e34157cf13e9b7990b07ce6af80d7b99d3341c136f6707ccb5f00c",
+        "configs/execution/bounded-multi-league-live-canary-capability-v2.json source_hash => 44afeb5095e34157cf13e9b7990b07ce6af80d7b99d3341c136f6707ccb5f00c"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La matrice nomme C0 seul rédacteur, C2/C4/DP6 reviewers, limite l'autorité à E1 et à la livraison Git/GitHub bornée, et maintient toute activation réelle, tout appel fournisseur ou DNS fournisseur, toute lecture de secret réel, tout achat, promotion et pari à zéro.",
+      "evidence_refs": [
+        "configs/agents/mission-activation-matrix-v3.json",
+        "matrix LF SHA-256 => 4f52c8959aca34280354e070965c89c1f1fd6f7efefdd7a4ba44d61ee5762dba",
+        "real live authorization => NOT_AUTHORIZED",
+        "automatic activation => false",
+        "future real activation => separate owner authorization bound to final merged main SHA"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La frontière donor PR61 est read-only et historiquement bornée à base 780e224492ca9b689826857e9edf6aa9ab95d8f5 et head cd9269ba1d33a3165c2bb3344a4c50c66fae6e5f; rebase, merge, force-update et suppression de branche donor sont interdits, et commentaire ou fermeture ne sont permis qu'après fusion du successor.",
+      "evidence_refs": [
+        "configs/agents/mission-activation-matrix-v3.json bounded_live_canary_capability_successor_v2_donor",
+        "tests/council/test_bounded_live_canary_governance.py",
+        "mission governance test LF SHA-256 after V2 claim binding => ef1a176a993ee27962da3b1cd5164b5170a63e16370ed3e55765886edaed3b9b"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La CI successor ajoute deux gates read-only Ubuntu et Windows de douze minutes, refuse l'injection de THE_ODDS_API_KEY, checkout le SHA exact sans credentials persistants et fait dépendre le job repository-wide tests de leur succès et des gates historiques.",
+      "evidence_refs": [
+        ".github/workflows/ci.yml",
+        "workflow LF SHA-256 => 3d70c6197405f8510f4f2876e8100f59ec6e3a9159bf44a202c37ba0e650d1c0",
+        "bounded-live-canary-ubuntu timeout-minutes => 12",
+        "bounded-live-canary-windows timeout-minutes => 12",
+        "repository-wide tests timeout-minutes => 40",
+        "checkout persist-credentials => false",
+        "exact head-ref checks present"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La documentation distingue correctement les jobs d'infrastructure CI de douze minutes, le plafond de quarante minutes du seul job repository-wide tests et le workload E1 de cinq minutes; elle ne substitue pas la durée du DAG complet à celle du job requis et ne revendique pas WITHIN_1000_2000.",
+      "evidence_refs": [
+        "docs/data-sourcing/BOUNDED-MULTI-LEAGUE-LIVE-CANARY-CAPABILITY-V2.md",
+        "documentation LF SHA-256 => 383089c7afc745a36db1ee67124e3a8c90b1293945cbd635999462d657cd8ab4",
+        "required_repository_wide_tests_job_max_seconds => 2400",
+        "E1 workload duration => 300 seconds",
+        "full CI DAG duration is not used as a substitute for the tests job duration"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le rapport technique de capacité reste honnêtement versionné V1: il déclare une provenance entièrement synthétique, DEFAULT_DENY, aucune activation automatique et zéro appel fournisseur ou DNS fournisseur, lecture de secret réel, batch réel, capture réelle ou snapshot réel.",
+      "evidence_refs": [
+        "reports/data-sourcing/bounded-live-canary-capability-v1.json",
+        "capability report LF SHA-256 => ff35abbd7c0037610ee3f7d28877fc6085e97bb79a8f290b6e16b5725c5fbf08",
+        "network_calls_scope => PROVIDER_AND_PROVIDER_DNS_ONLY_AUTHORIZED_GIT_GITHUB_DELIVERY_EXCLUDED",
+        "golden pack provenance => ENTIRELY_SYNTHETIC_NO_PROVIDER_PAYLOAD_NO_REAL_AUTHORITY",
+        "real authorization status => NOT_CREATED",
+        "activation status => NOT_CREATED",
+        "batch status => NOT_EXECUTED",
+        "snapshot status => NOT_CREATED"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le namespace distingue correctement la capacité technique V1 du wrapper de gouvernance successor V2: les claims capability, non-execution et zero-effects restent V1, tandis que les rapports Council et la décision finale utilisent la mission SUCCESSOR_V2 et le claim GOV.BOUNDED_LIVE_CANARY.FINAL.REVIEW.V2.001.",
+      "evidence_refs": [
+        "technical claim => GOV.BOUNDED_LIVE_CANARY.CAPABILITY.REPORT.V1.001",
+        "technical claim => SCIENCE.BOUNDED_LIVE_CANARY.NON_EXECUTION.V1.001",
+        "technical claim => SECURITY.BOUNDED_LIVE_CANARY.ZERO_EFFECTS.V1.001",
+        "governance final claim => GOV.BOUNDED_LIVE_CANARY.FINAL.REVIEW.V2.001",
+        "configs/agents/agent-report-schema-v3.json successor mission enum",
+        "agent-report schema LF SHA-256 => ce0e8932bfee52d3aa20277e8619d18f261840210aba3d684312c79e7bdd5f55"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les correctifs de capture Linux restent fail-closed: un remplacement d'identité avant secret produit une erreur explicite avec zéro lecture de secret et zéro transport; un remplacement après réponse ne provoque ni retry fournisseur ni écriture des octets fournisseur dans la nouvelle racine ou la racine déplacée.",
+      "evidence_refs": [
+        "tests/capture/test_live_canary_capability.py",
+        "corrected test LF SHA-256 => e38cb8ca0c32832836be9dc36efc7c4d98de94d45693cf7a4be1bfef37cf77b6",
+        "pre-secret root swap => secret.reads=0 and transport.calls=0",
+        "after-response root swap => secret.reads=1 and transport.calls=1",
+        "CAPTURE_STORAGE_FILE_IDENTITY_UNAVAILABLE accepted only as an explicit fail-closed outcome",
+        "provider bytes absent from new and displaced roots"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les neuf fichiers runtime sous src/robin/capture sont byte-identiques au donor head cd9269ba1d33a3165c2bb3344a4c50c66fae6e5f; le successor corrige les preuves et les tests sans affaiblir le runtime reçu.",
+      "evidence_refs": [
+        "git hash-object comparison against donor head cd9269ba1d33a3165c2bb3344a4c50c66fae6e5f",
+        "src/robin/capture",
+        "runtime mismatches => 0"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le correctif temporel Jalon4 reste inchangé depuis le main corrigé: le test durable-shadow utilise l'horloge figée NOW et le kickoff de fixture fixe, sans réintroduire de dépendance au temps mural.",
+      "evidence_refs": [
+        "tests/jalon4/test_durable_shadow.py",
+        "byte-identical to corrected base 6c975dae257db73ca3ef61c5a6e1fb5b6c3f64dd",
+        "freeze_shadow_clock(monkeypatch, NOW)",
+        "expired mirror fixture uses FIXTURE_KICKOFF"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La validation locale C2 est déterministe et verte: manifeste, matrice incluant la frontière donor et enum de schéma passent; les deux builders sont propres; les scans secret et chemin absolu ne trouvent aucune fuite; git diff --check ne signale aucune erreur.",
+      "evidence_refs": [
+        "pytest governance selection => 3 passed in 0.10s",
+        "CAPTURE_HARNESS_REPORT_CHECK_PASS:5:1ee9f67e6c1504fe5f6c42bc5fe033e0a52a18bfb12fb2ae215e6ffe9c10d003",
+        "BOUNDED_LIVE_CANARY_ARTIFACT_CHECK_PASS:2:9ad9847c7394ff24f47a376a3682f2ac5cb5d5874731720c6ca124d1be748506",
+        "literal secret scan => PASS",
+        "tracked absolute-path scan => PASS",
+        "git diff --check => PASS"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le ledger et le graphe sont encore byte-identiques à la base avant matérialisation des rapports. Leur mise à jour, celle du test Council d'évidence et la matérialisation des quatre rapports V2 sont des obligations mécaniques append-only précommit, sans modification fonctionnelle autorisée.",
+      "evidence_refs": [
+        "reports/council/decision-ledger.jsonl",
+        "reports/evidence/evidence-graph.json",
+        "reports/council/bounded-live-canary-v2-data-receipt-replay-review-v3.json",
+        "reports/council/bounded-live-canary-v2-security-review-v3.json",
+        "reports/council/bounded-live-canary-v2-governance-science-temporal-review-v3.json",
+        "reports/council/bounded-live-canary-v2-final-review-v3.json",
+        "tests/council/test_bounded_live_canary_governance.py",
+        "append-only prefix preservation required"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "La CI exact-head successor, la mergeabilité de la PR et l'état distant des threads n'ont pas été observés par cette revue locale sans réseau; ils restent des gates prémerge obligatoires.",
+    "L'intention propriétaire sur la portée universelle ou limitée au control-plane des plafonds LOC de scale-policy-v3.json reste non spécifiée.",
+    "Les ACL exclusives et l'authenticité d'une éventuelle autorisation propriétaire live future sont des preuves externes absentes et ne sont pas présumées."
+  ],
+  "assumptions": [
+    "C0 matérialisera les rapports DP6, C4, C2 et l'agrégat avec mission_id=BOUNDED_MULTI_LEAGUE_LIVE_CANARY_CAPABILITY_SUCCESSOR_V2, sans modifier les claims techniques V1.",
+    "C0 mettra simultanément le test Council d'évidence et l'agrégat sur GOV.BOUNDED_LIVE_CANARY.FINAL.REVIEW.V2.001, puis préservera intégralement les préfixes du ledger et du graphe pendant leurs ajouts append-only.",
+    "Les hashes fonctionnels gelés, l'allowlist et les octets runtime revus resteront inchangés; toute modification fonctionnelle ultérieure exige une nouvelle revue ciblée.",
+    "Les checks distants prémerge confirmeront les deux workflows live 319598078 et 321915844 en état disabled_manually et le job repository-wide tests vert sur le SHA exact en au plus 2400 secondes."
+  ],
+  "main_objection": "Aucune objection P0 ou P1 sur le snapshot fonctionnel corrigé. Une ambiguïté P2 subsiste: scale-policy-v3.json ne définit pas explicitement si production_lines_max=1000 et test_lines_max=2000 sont universels ou limités au control-plane Council.",
+  "risks": [
+    {
+      "risk": "[P2] Le diff physique dépasse les plafonds 1000/2000 si ceux-ci sont interprétés universellement. La documentation refuse honnêtement de revendiquer WITHIN_1000_2000; une intention propriétaire universelle imposerait FAIL_AND_REDESIGN sans auto-waiver.",
+      "severity": "MEDIUM",
+      "evidence_refs": [
+        "configs/experiments/scale-policy-v3.json implementation_limits",
+        "docs/data-sourcing/BOUNDED-MULTI-LEAGUE-LIVE-CANARY-CAPABILITY-V2.md",
+        "src/robin/capture diff => +6273/-153, net +6120",
+        "tools/data-sourcing diff => +591/-14, net +577",
+        "tests diff => +4670/-91, net +4579",
+        "all 37 changed paths at functional freeze => +12917/-275, net +12642"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Matérialiser les quatre rapports schema-v3 avec la mission SUCCESSOR_V2, aligner l'agrégat et son assertion Council sur GOV.BOUNDED_LIVE_CANARY.FINAL.REVIEW.V2.001, ajouter ledger et graphe en préservant leurs préfixes, puis exécuter les builders --check, le test Council complet et la suite bornée. Avant merge, exiger les gates Ubuntu/Windows, le job repository-wide tests exact-head vert en au plus 2400 secondes, les workflows live 319598078/321915844 disabled_manually, une mergeabilité CLEAN et zéro thread critique ouvert.",
+  "recommended_action": "ACCEPT pour le gate C2: P0=0, P1=0, P2=1 et open_critical_threads=0 dans le périmètre de preuve C2. Les rapports, l'agrégat V2, le test Council d'évidence et les ajouts append-only ledger/graphe sont des obligations mécaniques précommit. Cet ACCEPT n'autorise ni activation réelle, ni fournisseur, ni DNS fournisseur, ni secret réel, ni batch, ni snapshot, ni pari, ni promotion, ni merge avant les gates distants exact-head.",
+  "scale_condition": "Aucune montée en charge live n'est autorisée. Toute activation future exige une autorisation propriétaire externe séparée, vérifiable et liée au SHA final fusionné de main. Si les plafonds LOC sont déclarés universels, le verdict devient FAIL_AND_REDESIGN sans dérogation implicite.",
+  "estimated_compute": "Relecture statique read-only, trois tests gouvernance en 0.10 seconde, deux builders déterministes et scans locaux en quelques secondes; aucun workload réel.",
+  "estimated_external_cost": "0; aucun réseau, fournisseur, DNS fournisseur, secret, achat, promotion, pari ou service externe utilisé.",
+  "estimated_human_time": "Environ 30 à 60 minutes pour matérialiser les rapports et effectuer les ajouts append-only et validations locales, hors attente de la CI distante.",
+  "maintenance_impact": "Faible après clarification de la portée LOC; potentiellement élevé si les plafonds doivent être universels, car un redécoupage substantiel serait alors requis.",
+  "confidence": 0.99
+}

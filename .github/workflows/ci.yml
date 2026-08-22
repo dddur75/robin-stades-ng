@@ -94,6 +94,310 @@ jobs:
       - name: Vérifier les dépendances
         run: python -m pip check
 
+  bounded-live-canary-ubuntu:
+    name: "Bounded live canary - Ubuntu"
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12.10"
+          cache: pip
+      - name: Installer les dépendances capture
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - name: Refuser tout secret fournisseur injecté
+        run: test -z "${THE_ODDS_API_KEY:-}"
+      - name: Vérifier les artifacts synthétiques bornés
+        run: |
+          python tools/data-sourcing/build_capture_harness_artifacts.py --check
+          python tools/data-sourcing/build_bounded_live_canary_artifacts.py --check
+      - name: Vérifier Ruff sur la capacité bornée
+        run: >-
+          python -m ruff check
+          src/robin/capture
+          tests/capture
+          tests/council/test_bounded_live_canary_governance.py
+          tests/jalon10/test_workflows_and_guards.py
+          tests/portability/test_chronos_portable_ci_contract.py
+          tools/data-sourcing/build_capture_harness_artifacts.py
+          tools/data-sourcing/build_bounded_live_canary_artifacts.py
+          tools/data-sourcing/run_bounded_live_canary_v1.py
+      - name: Vérifier le format Ruff de la capacité bornée
+        run: >-
+          python -m ruff format --check
+          src/robin/capture
+          tests/capture
+          tests/council/test_bounded_live_canary_governance.py
+          tools/data-sourcing/build_capture_harness_artifacts.py
+          tools/data-sourcing/build_bounded_live_canary_artifacts.py
+          tools/data-sourcing/run_bounded_live_canary_v1.py
+      - name: Vérifier le typage strict de la capacité bornée
+        run: >-
+          python -m mypy --strict
+          src/robin/capture
+          tools/data-sourcing/build_capture_harness_artifacts.py
+          tools/data-sourcing/build_bounded_live_canary_artifacts.py
+          tools/data-sourcing/run_bounded_live_canary_v1.py
+      - name: Auditer la sécurité statique de la capacité bornée
+        run: >-
+          python -m bandit -q -r
+          src/robin/capture
+          tools/data-sourcing/build_capture_harness_artifacts.py
+          tools/data-sourcing/build_bounded_live_canary_artifacts.py
+          tools/data-sourcing/run_bounded_live_canary_v1.py
+      - name: Refuser les secrets et chemins locaux suivis
+        run: |
+          python scripts/check_no_secrets.py
+          python scripts/check_no_tracked_absolute_paths.py
+      - name: Valider les JSON YAML et schémas bornés
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          import yaml
+          from jsonschema import Draft202012Validator
+
+          from robin.capture import (
+              ActivationEnvelopeV1,
+              FixtureMapping,
+              LiveAdmissionPermitV1,
+              LiveCaptureLineageV1,
+              LiveExecutionAttemptReceiptV1,
+              LiveExecutionReceiptV1,
+              LiveLeaseV1,
+              LivePlanItemV1,
+              LivePlanV1,
+              LiveResponseIntakeClaimV1,
+              OwnerAuthorizationV1,
+              ProviderRequestSpec,
+              PublicProviderRequestV1,
+          )
+          from robin.capture.contracts import canonical_sha256
+
+          json_paths = (
+              "configs/agents/agent-report-schema-v3.json",
+              "configs/agents/mission-activation-matrix-v3.json",
+              "configs/execution/bounded-multi-league-live-canary-capability-v2.json",
+              "reports/data-sourcing/bounded-live-canary-capability-v1.json",
+              "reports/data-sourcing/capture-harness-contract-v1.json",
+              "reports/data-sourcing/capture-threat-model-v1.json",
+              "reports/data-sourcing/internal-retention-policy-v1.json",
+              "reports/data-sourcing/live-canary-plan-v1.json",
+              "reports/data-sourcing/offline-replay-proof-v1.json",
+              "tests/capture/fixtures/bounded-live-canary-v1-golden-pack.json",
+          )
+          documents = {
+              path: json.loads(Path(path).read_text(encoding="utf-8"))
+              for path in json_paths
+          }
+          workflow = yaml.safe_load(
+              Path(".github/workflows/ci.yml").read_text(encoding="utf-8")
+          )
+          assert isinstance(workflow, dict) and isinstance(workflow.get("jobs"), dict)
+          Draft202012Validator.check_schema(
+              documents["configs/agents/agent-report-schema-v3.json"]
+          )
+
+          pack = documents[
+              "tests/capture/fixtures/bounded-live-canary-v1-golden-pack.json"
+          ]
+          OwnerAuthorizationV1.model_validate(pack["authorization"])
+          ActivationEnvelopeV1.model_validate(pack["activation"])
+          LivePlanV1.model_validate(pack["plan"])
+          ProviderRequestSpec.model_validate(pack["request"])
+          for mapping in pack["fixture_mappings"]:
+              FixtureMapping.model_validate(mapping)
+
+          contract_types = (
+              OwnerAuthorizationV1,
+              ActivationEnvelopeV1,
+              LivePlanV1,
+              LivePlanItemV1,
+              LiveAdmissionPermitV1,
+              LiveResponseIntakeClaimV1,
+              LiveCaptureLineageV1,
+              LiveExecutionAttemptReceiptV1,
+              LiveLeaseV1,
+              LiveExecutionReceiptV1,
+              PublicProviderRequestV1,
+          )
+          expected_schema_hashes = {
+              contract_type.__name__: canonical_sha256(contract_type.model_json_schema())
+              for contract_type in contract_types
+          }
+          report = documents["reports/data-sourcing/bounded-live-canary-capability-v1.json"]
+          assert report["contract_schemas"] == expected_schema_hashes
+          print("BOUNDED_LIVE_CANARY_JSON_YAML_SCHEMA_PASS")
+          PY
+      - name: Refuser toute donnée réelle dans les artifacts synthétiques
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          golden_path = Path(
+              "tests/capture/fixtures/bounded-live-canary-v1-golden-pack.json"
+          )
+          report_path = Path(
+              "reports/data-sourcing/bounded-live-canary-capability-v1.json"
+          )
+          pack = json.loads(golden_path.read_text(encoding="utf-8"))
+          report = json.loads(report_path.read_text(encoding="utf-8"))
+
+          assert pack["provenance"] == (
+              "ENTIRELY_SYNTHETIC_NO_PROVIDER_PAYLOAD_NO_REAL_AUTHORITY"
+          )
+          assert pack["repository_sha_is_synthetic"] is True
+          assert pack["capture_root_fingerprint_is_synthetic"] is True
+          assert set(pack["mission_effects"].values()) == {0}
+          for mapping in pack["fixture_mappings"]:
+              assert mapping["provider_event_id"].startswith("synthetic-")
+              assert mapping["fixture_id"].startswith("synthetic-")
+              assert all(
+                  candidate.startswith("synthetic-")
+                  for candidate in mapping["candidate_fixture_ids"]
+              )
+
+          forbidden_payload_keys = {
+              "away_team",
+              "bookmakers",
+              "commence_time",
+              "home_team",
+              "last_update",
+              "outcomes",
+              "price",
+          }
+
+          def assert_no_provider_payload(value: object) -> None:
+              if isinstance(value, dict):
+                  assert forbidden_payload_keys.isdisjoint(value)
+                  for child in value.values():
+                      assert_no_provider_payload(child)
+              elif isinstance(value, list):
+                  for child in value:
+                      assert_no_provider_payload(child)
+
+          assert_no_provider_payload(pack)
+          assert_no_provider_payload(report)
+          assert report["real_authorization_status"] == "NOT_CREATED"
+          assert report["real_activation_status"] == "NOT_CREATED"
+          assert report["real_batch_status"] == "NOT_EXECUTED"
+          assert report["real_snapshot_status"] == "NOT_CREATED"
+          for zero_field in (
+              "network_calls",
+              "real_capture_count",
+              "real_executable_experiment_count",
+              "real_provider_calls",
+              "real_provider_dns_calls",
+              "real_secret_reads",
+              "real_snapshot_count",
+              "purchases",
+              "promotions",
+              "bets",
+          ):
+              assert report[zero_field] == 0
+          print("BOUNDED_LIVE_CANARY_REAL_DATA_LEAK_SCAN_PASS")
+          PY
+      - name: Compiler et tester la capacité et ses gardes de livraison
+        run: |
+          python -m compileall -q src/robin/capture tools/data-sourcing tests/capture
+          python -m pytest -q \
+            tests/capture \
+            tests/council/test_bounded_live_canary_governance.py \
+            tests/jalon10/test_workflows_and_guards.py \
+            tests/portability/test_chronos_portable_ci_contract.py
+
+  bounded-live-canary-windows:
+    name: "Bounded live canary - Windows"
+    runs-on: windows-latest
+    timeout-minutes: 12
+    env:
+      ROBIN_REQUIRE_WINDOWS_STORAGE_LINKS: "1"
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12.10"
+          cache: pip
+      - name: Installer les dépendances capture
+        shell: pwsh
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install --no-deps -e .
+      - name: Refuser tout secret fournisseur injecté
+        shell: pwsh
+        run: |
+          if ($env:THE_ODDS_API_KEY) {
+            throw "REAL_PROVIDER_SECRET_FORBIDDEN"
+          }
+      - name: Vérifier les artifacts synthétiques bornés
+        shell: pwsh
+        run: |
+          python tools/data-sourcing/build_capture_harness_artifacts.py --check
+          python tools/data-sourcing/build_bounded_live_canary_artifacts.py --check
+      - name: Prouver les junctions et hardlinks Windows
+        shell: pwsh
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:RUNNER_TEMP)) {
+            throw "WINDOWS_RUNNER_TEMP_REQUIRED"
+          }
+          $runnerRoot = [IO.Path]::GetFullPath($env:RUNNER_TEMP).TrimEnd(
+            [IO.Path]::DirectorySeparatorChar,
+            [IO.Path]::AltDirectorySeparatorChar
+          )
+          $proofRoot = [IO.Path]::GetFullPath(
+            (Join-Path $runnerRoot "robin-bounded-live-canary-fs-${{ github.run_id }}-${{ github.run_attempt }}")
+          )
+          $requiredPrefix = $runnerRoot + [IO.Path]::DirectorySeparatorChar
+          if (-not $proofRoot.StartsWith($requiredPrefix, [StringComparison]::OrdinalIgnoreCase)) {
+            throw "WINDOWS_FS_PROOF_ROOT_OUTSIDE_RUNNER_TEMP"
+          }
+          if (Test-Path -LiteralPath $proofRoot) {
+            throw "WINDOWS_FS_PROOF_ROOT_ALREADY_EXISTS"
+          }
+
+          New-Item -ItemType Directory -Path $proofRoot | Out-Null
+          try {
+            $junctionTarget = Join-Path $proofRoot "junction-target"
+            $junctionPath = Join-Path $proofRoot "junction-link"
+            New-Item -ItemType Directory -Path $junctionTarget | Out-Null
+            New-Item -ItemType Junction -Path $junctionPath -Target $junctionTarget | Out-Null
+            $attributes = [IO.File]::GetAttributes($junctionPath)
+            if (($attributes -band [IO.FileAttributes]::ReparsePoint) -eq 0) {
+              throw "WINDOWS_JUNCTION_REPARSE_PROOF_FAILED"
+            }
+
+            $hardlinkSource = Join-Path $proofRoot "hardlink-source.txt"
+            $hardlinkPath = Join-Path $proofRoot "hardlink-link.txt"
+            [IO.File]::WriteAllText($hardlinkSource, "synthetic")
+            New-Item -ItemType HardLink -Path $hardlinkPath -Target $hardlinkSource | Out-Null
+            python -c "import pathlib,sys; a=pathlib.Path(sys.argv[1]).stat(); b=pathlib.Path(sys.argv[2]).stat(); assert a.st_ino == b.st_ino and a.st_nlink >= 2 and b.st_nlink >= 2" "$hardlinkSource" "$hardlinkPath"
+          }
+          finally {
+            if (Test-Path -LiteralPath $proofRoot) {
+              Remove-Item -LiteralPath $proofRoot -Recurse -Force
+            }
+          }
+      - name: Compiler et tester la capacité bornée
+        shell: pwsh
+        run: |
+          python -m compileall -q src/robin/capture tools/data-sourcing tests/capture
+          python -m pytest -q tests/capture
+
   frozen-evidence-windows:
     name: "Jalon 10 - entrees de preuve gelees"
     runs-on: windows-latest
@@ -347,6 +651,8 @@ jobs:
   tests:
     name: tests
     needs:
+      - bounded-live-canary-ubuntu
+      - bounded-live-canary-windows
       - frozen-evidence-windows
       - chronos-postgresql-profiles
       - chronos-end-to-end-live-path-replay
@@ -373,6 +679,8 @@ jobs:
     steps:
       - name: Refuser tout prerequis absent, annule ou en echec
         env:
+          BOUNDED_LIVE_CANARY_UBUNTU_RESULT: ${{ needs.bounded-live-canary-ubuntu.result }}
+          BOUNDED_LIVE_CANARY_WINDOWS_RESULT: ${{ needs.bounded-live-canary-windows.result }}
           FROZEN_EVIDENCE_RESULT: ${{ needs.frozen-evidence-windows.result }}
           CHRONOS_PROFILES_RESULT: ${{ needs.chronos-postgresql-profiles.result }}
           E2E_LIVE_PATH_RESULT: ${{ needs.chronos-end-to-end-live-path-replay.result }}
@@ -380,6 +688,8 @@ jobs:
           EXACT_WORKFLOW_ENTRYPOINT_RESULT: ${{ needs.chronos-exact-workflow-entrypoint.result }}
           HISTORICAL_AUTHORITY_BOUNDARY_RESULT: ${{ needs.historical-authority-workflows-disabled.result }}
         run: |
+          test "$BOUNDED_LIVE_CANARY_UBUNTU_RESULT" = "success"
+          test "$BOUNDED_LIVE_CANARY_WINDOWS_RESULT" = "success"
           test "$FROZEN_EVIDENCE_RESULT" = "success"
           test "$CHRONOS_PROFILES_RESULT" = "success"
           test "$E2E_LIVE_PATH_RESULT" = "success"

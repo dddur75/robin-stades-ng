@@ -1,0 +1,150 @@
+{
+  "activation": {
+    "activation_id": "synthetic-activation-golden-001",
+    "activation_nonce": "synthetic-activation-nonce-golden-001",
+    "activation_scope_sha256": "a8b9cc936fef4807b883d1de5d0ddf56a29c94f6ef7cce35b81cd757cdc78401",
+    "authorization_hash": "14627d1c525204a4a2e73e4bd1c7e24383ee4d56b805d05ed421db65ce5367be",
+    "authorization_id": "synthetic-owner-authorization-golden-001",
+    "canonical_activation_hash": "4e34ca52fcfa93aa15d4a26de42581a52d5b3f73267b86f6910a52b331cd7408",
+    "expires_at_utc": "2026-08-21T12:10:00Z",
+    "markets": [
+      "h2h",
+      "totals"
+    ],
+    "maximum_credits": 2,
+    "maximum_http_calls": 1,
+    "not_before_utc": "2026-08-21T12:00:00Z",
+    "plan_sha256": "4090d8094e4d9f176aea524aaec5cea369c036a26d83fceb2a884a3428e2b1ab",
+    "region": "eu",
+    "repository_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "schema_version": "robin-live-activation-envelope-v1",
+    "sport_key": "soccer_spain_la_liga"
+  },
+  "authorization": {
+    "allowed_market_sets": [
+      [
+        "h2h"
+      ],
+      [
+        "totals"
+      ],
+      [
+        "h2h",
+        "totals"
+      ]
+    ],
+    "allowed_region": "eu",
+    "allowed_sport_keys": [
+      "soccer_spain_la_liga",
+      "soccer_france_ligue_one",
+      "soccer_epl",
+      "soccer_italy_serie_a",
+      "soccer_germany_bundesliga"
+    ],
+    "approved_capture_root_fingerprint": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "approved_control_temp_root_fingerprint": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "approved_git_executable_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "approved_provider_ip_address": "1.1.1.1",
+    "approved_repository_root_fingerprint": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "authenticity_boundary": "EXTERNALLY_VERIFIED_NOT_CRYPTOGRAPHICALLY_PROVEN",
+    "authorization_id": "synthetic-owner-authorization-golden-001",
+    "authorization_nonce": "synthetic-owner-authorization-nonce-golden-001",
+    "authorized_main_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "canonical_authorization_hash": "14627d1c525204a4a2e73e4bd1c7e24383ee4d56b805d05ed421db65ce5367be",
+    "capability_version": "robin-bounded-multi-league-live-canary-v1",
+    "expires_at_utc": "2026-08-21T13:00:00Z",
+    "issued_at_utc": "2026-08-21T11:00:00Z",
+    "local_execution_boundary": "OWNER_ATTESTED_EXCLUSIVE_OS_ACL_NO_CONCURRENT_MUTATOR",
+    "maximum_credits": 2,
+    "maximum_http_calls": 1,
+    "maximum_plan_items": 1,
+    "mission_id": "BOUNDED_MULTI_LEAGUE_LIVE_CANARY_CAPABILITY_V1",
+    "not_before_utc": "2026-08-21T11:30:00Z",
+    "owner_identity": "dddur75",
+    "provenance": "EXTERNAL_IMMUTABLE_OWNER_ARTIFACT",
+    "repository_identity": "dddur75/robin-stades-ng",
+    "schema_version": "robin-owner-authorization-v1"
+  },
+  "capture_root_fingerprint_is_synthetic": true,
+  "expected": {
+    "activation_scope_sha256": "a8b9cc936fef4807b883d1de5d0ddf56a29c94f6ef7cce35b81cd757cdc78401",
+    "authorization_hash": "14627d1c525204a4a2e73e4bd1c7e24383ee4d56b805d05ed421db65ce5367be",
+    "item_hash": "57c044dd0d5b3cfaf02243b04883424457edb0bca698fe941cbfff41bda381a8",
+    "plan_hash": "4090d8094e4d9f176aea524aaec5cea369c036a26d83fceb2a884a3428e2b1ab",
+    "request_fingerprint_sha256": "e22bb476161cb8460a7c5989d48ccd6a5499ee13bf82531ce3432eef8c4409d6"
+  },
+  "fixture_mappings": [
+    {
+      "candidate_fixture_ids": [
+        "synthetic-live-fixture-001"
+      ],
+      "fixture_id": "synthetic-live-fixture-001",
+      "mapping_revision": "synthetic-live-mapping-v1",
+      "provider_event_id": "synthetic-live-event-001",
+      "status": "MAPPED"
+    }
+  ],
+  "mission_effects": {
+    "bets": 0,
+    "promotions": 0,
+    "provider_calls": 0,
+    "provider_dns_calls": 0,
+    "purchases": 0,
+    "real_secret_reads": 0
+  },
+  "plan": {
+    "activation_hash": "a8b9cc936fef4807b883d1de5d0ddf56a29c94f6ef7cce35b81cd757cdc78401",
+    "activation_id": "synthetic-activation-golden-001",
+    "canonical_plan_hash": "4090d8094e4d9f176aea524aaec5cea369c036a26d83fceb2a884a3428e2b1ab",
+    "created_at_utc": "2026-08-21T12:00:00Z",
+    "expires_at_utc": "2026-08-21T12:10:00Z",
+    "items": [
+      {
+        "canonical_item_hash": "57c044dd0d5b3cfaf02243b04883424457edb0bca698fe941cbfff41bda381a8",
+        "expires_at_utc": "2026-08-21T12:10:00Z",
+        "fixture_mappings_sha256": "279d7f734db13d50f2b19a484df69aebe75e7e733a499667e366ac51a086358b",
+        "item_id": "synthetic-live-item-golden-001",
+        "markets": [
+          "h2h",
+          "totals"
+        ],
+        "maximum_credits": 2,
+        "maximum_http_calls": 1,
+        "not_before_utc": "2026-08-21T12:00:00Z",
+        "plan_id": "synthetic-live-plan-golden-001",
+        "provider_request_fingerprint": "e22bb476161cb8460a7c5989d48ccd6a5499ee13bf82531ce3432eef8c4409d6",
+        "purpose": "ENTIRELY_SYNTHETIC_CAPABILITY_CONTRACT_PROOF",
+        "region": "eu",
+        "schema_version": "robin-live-plan-item-v1",
+        "sequence": 1,
+        "sport_key": "soccer_spain_la_liga",
+        "window_label": "SYNTHETIC_GOLDEN_WINDOW_001"
+      }
+    ],
+    "maximum_credits": 2,
+    "maximum_http_calls": 1,
+    "plan_id": "synthetic-live-plan-golden-001",
+    "repository_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "schema_version": "robin-live-plan-v1"
+  },
+  "provenance": "ENTIRELY_SYNTHETIC_NO_PROVIDER_PAYLOAD_NO_REAL_AUTHORITY",
+  "repository_sha_is_synthetic": true,
+  "request": {
+    "allow_redirects": false,
+    "date_format": "iso",
+    "endpoint": "/v4/sports/soccer_spain_la_liga/odds",
+    "host": "api.the-odds-api.com",
+    "markets": [
+      "h2h",
+      "totals"
+    ],
+    "odds_format": "decimal",
+    "provider": "the-odds-api-v4",
+    "region": "eu",
+    "retries": 0,
+    "scheme": "https",
+    "sport_key": "soccer_spain_la_liga",
+    "timeout_seconds": 10
+  },
+  "schema_version": "robin-bounded-live-canary-golden-pack-v1"
+}

@@ -37,10 +37,10 @@ def test_capture_reports_are_reproducible() -> None:
     generated = cast(dict[str, str], module.build_reports(ROOT))
     assert set(generated) == REQUIRED_REPORTS
     for name, content in generated.items():
-        assert (REPORTS / name).read_bytes() == content.encode("utf-8")
+        assert (REPORTS / name).read_text(encoding="utf-8") == content
 
 
-def test_all_eleven_contracts_are_inventory_bound() -> None:
+def test_all_capture_and_live_contracts_are_inventory_bound() -> None:
     report = _json("capture-harness-contract-v1.json")
     names = [item["name"] for item in report["contracts"]]
     assert names == [
@@ -55,12 +55,32 @@ def test_all_eleven_contracts_are_inventory_bound() -> None:
         "CaptureManifest",
         "InternalRetentionPolicy",
         "OfflineReplayResult",
+        "OwnerAuthorizationV1",
+        "ActivationEnvelopeV1",
+        "LivePlanV1",
+        "LivePlanItemV1",
+        "LiveLeaseV1",
+        "LiveAdmissionPermitV1",
+        "LiveResponseIntakeClaimV1",
+        "LiveCaptureLineageV1",
+        "LiveExecutionAttemptReceiptV1",
+        "LiveExecutionReceiptV1",
+        "PublicProviderRequestV1",
     ]
     assert report["default_mode"] == "VALIDATE_OFFLINE"
     assert report["modes"]["LIVE_CANARY"] == {
         "authorized": False,
-        "status": "DISABLED_NOT_AUTHORIZED",
+        "capability_available": True,
+        "status": "DEFAULT_DENY_EXTERNAL_OWNER_AUTHORIZATION_REQUIRED",
     }
+
+
+def test_capture_report_check_accepts_platform_line_endings(tmp_path: Path) -> None:
+    module = _load_module()
+    content = '{\n  "synthetic": true\n}\n'
+    (tmp_path / "synthetic-report.json").write_bytes(content.replace("\n", "\r\n").encode("utf-8"))
+
+    module.check_reports(tmp_path, {"synthetic-report.json": content})
 
 
 def test_retention_report_matches_executable_contract() -> None:
@@ -112,4 +132,4 @@ def test_offline_proof_and_live_lock_are_explicit() -> None:
 def test_threat_model_has_no_open_p0_or_p1() -> None:
     threat = _json("capture-threat-model-v1.json")
     assert threat["open_p0"] == threat["open_p1"] == 0
-    assert len(threat["threats"]) == 11
+    assert len(threat["threats"]) == 12
