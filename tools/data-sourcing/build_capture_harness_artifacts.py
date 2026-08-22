@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import tempfile
+from collections.abc import Mapping
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, cast
@@ -29,6 +30,19 @@ from robin.capture import (
     SecretCapability,
 )
 from robin.capture.contracts import MappingStatus, canonical_sha256
+from robin.capture.live_contracts import (
+    ActivationEnvelopeV1,
+    LiveAdmissionPermitV1,
+    LiveCaptureLineageV1,
+    LiveExecutionAttemptReceiptV1,
+    LiveExecutionReceiptV1,
+    LiveLeaseV1,
+    LivePlanItemV1,
+    LivePlanV1,
+    LiveResponseIntakeClaimV1,
+    OwnerAuthorizationV1,
+)
+from robin.capture.live_transport import PublicProviderRequestV1
 
 SCHEMA_VERSION = "robin-capture-harness-artifacts-v1"
 FIXTURE_PATH = Path("tests/capture/fixtures/synthetic-odds-responses-v1.json")
@@ -51,6 +65,17 @@ CONTRACT_TYPES = (
     CaptureManifest,
     InternalRetentionPolicy,
     OfflineReplayResult,
+    OwnerAuthorizationV1,
+    ActivationEnvelopeV1,
+    LivePlanV1,
+    LivePlanItemV1,
+    LiveLeaseV1,
+    LiveAdmissionPermitV1,
+    LiveResponseIntakeClaimV1,
+    LiveCaptureLineageV1,
+    LiveExecutionAttemptReceiptV1,
+    LiveExecutionReceiptV1,
+    PublicProviderRequestV1,
 )
 
 
@@ -162,7 +187,11 @@ def build_reports(repo: Path) -> dict[str, str]:
         "modes": {
             "VALIDATE_OFFLINE": {"network_calls": 0, "provider_calls": 0},
             "DRY_RUN": {"network_calls": 0, "provider_calls": 0},
-            "LIVE_CANARY": {"authorized": False, "status": "DISABLED_NOT_AUTHORIZED"},
+            "LIVE_CANARY": {
+                "authorized": False,
+                "capability_available": True,
+                "status": "DEFAULT_DENY_EXTERNAL_OWNER_AUTHORIZATION_REQUIRED",
+            },
         },
         "contracts": _contract_inventory(),
         "storage_layout": [
@@ -173,6 +202,14 @@ def build_reports(repo: Path) -> dict[str, str]:
             "quarantine/",
             "deletion-ledger.jsonl",
             "budget-ledger.jsonl",
+            "live/authority-bindings/",
+            "live/leases/",
+            "live/dispatch-armed/",
+            "live/capture-lineage/",
+            "live/execution-attempts/",
+            "live/execution-receipts/",
+            "live/terminal/",
+            "live-budget-ledger.jsonl",
         ],
         "properties": [
             "ATOMIC_CREATE_IF_ABSENT",
@@ -227,10 +264,11 @@ def build_reports(repo: Path) -> dict[str, str]:
         "schema_version": SCHEMA_VERSION,
         "artifact": "capture-threat-model-v1",
         "trust_boundaries": [
-            "future environment-only secret boundary",
+            "late environment-only secret boundary",
             "pre-network request guard boundary",
+            "authorization-bound provider IP with exact TLS identity boundary",
             "raw bytes before parser boundary",
-            "local non-synchronised storage boundary",
+            "owner-attested exclusive OS-ACL with pinned repository, control-temp, and capture-root identities",
             "normalized retained evidence boundary",
         ],
         "threats": [
@@ -243,8 +281,8 @@ def build_reports(repo: Path) -> dict[str, str]:
             {
                 "id": "T02",
                 "threat": "unauthorized network",
-                "control": "no transport implementation; LIVE_CANARY gate; socket and DNS test blockade",
-                "test": "tests/capture/conftest.py",
+                "control": "strict direct AF_INET/AF_INET6 socket to the exact authorization-bound global-unicast IP; exact peer, SNI and Host; absolute monotonic deadline across connect, TLS, request, status, headers and body; no DNS, proxy, redirect, retry or failover",
+                "test": "tests/capture/test_live_canary_transport.py",
             },
             {
                 "id": "T03",
@@ -297,11 +335,22 @@ def build_reports(repo: Path) -> dict[str, str]:
             {
                 "id": "T09",
                 "threat": "real raw payload enters Git or a synchronized root",
-                "control": "capture store requires an exact explicitly approved local root and rejects Git ancestors or known synchronized path markers; live remains blocked pending OS-backed sync-root verification",
-                "test": "tests/capture/test_capture_harness.py::test_retention_and_workspace_guards",
+                "control": "capture store requires an exact explicitly approved local root; rejects UNC, non-fixed Windows drives, non-allowlisted Linux mount types, Git ancestors, known synchronized path markers, and reparse components; revalidates the approved root identity at storage I/O boundaries",
+                "test": "tests/capture/test_live_canary_storage_security.py",
+            },
+            {
+                "id": "T12",
+                "threat": "repository or control-temp substitution before budget or secret admission",
+                "control": "repository, control-temp, Git executable and capture-root identities are hash-bound to external owner authorization and revalidated; resistance to a concurrent same-principal mutator is an explicit owner-attested exclusive OS-ACL boundary rather than a runtime cryptographic claim",
+                "test": "tests/capture/test_live_canary_transport.py",
             },
         ],
         "residual_risk": "NON_ZERO_BOUNDED_INTERNAL_DECISION",
+        "residual_assumptions": [
+            "the owner provisions the repository, control-temp and capture root under an exclusive OS principal that excludes concurrent rename or replacement; this attestation is hash-bound but externally authenticated",
+            "the operating system reports file, drive, mount, socket-peer and monotonic-clock identity faithfully; unsupported platforms fail closed unless separately attested",
+            "the owner selects one canonical global-unicast provider IP in a separate authorization; rotation requires a new authorization and the live transport performs no DNS resolution",
+        ],
         "open_p0": 0,
         "open_p1": 0,
     }
@@ -338,9 +387,10 @@ def build_reports(repo: Path) -> dict[str, str]:
         "artifact": "live-canary-plan-v1",
         "authorization": False,
         "status": [
-            "DISABLED",
-            "NOT_AUTHORIZED",
-            "ROBIN_LIVE_CANARY_DISABLED",
+            "CAPABILITY_AVAILABLE",
+            "DEFAULT_DENY",
+            "REAL_ACTIVATION_ABSENT",
+            "OWNER_AUTHORIZATION_HASH_PIN_REQUIRED",
             "NO_PROVIDER_CALL",
             "NO_PURCHASE",
             "NO_PROMOTION",
@@ -370,7 +420,7 @@ def build_reports(repo: Path) -> dict[str, str]:
         "future_prerequisites": [
             "SEPARATE_OWNER_AUTHORIZATION",
             "EXACT_CAPTURE_BUDGET",
-            "PERSISTENT_MULTI_PROCESS_BUDGET_CONCURRENCY_PROOF",
+            "SEPARATE_OWNER_HASH_PIN_OUTSIDE_AUTHORIZATION_BUNDLE",
             "INTERNAL_MARKET_DATA_RETENTION_POLICY_V1_ACTIVE",
             "EXPLICITLY_APPROVED_LOCAL_NON_SYNCHRONISED_WORKSPACE",
             "OS_BACKED_CLOUD_FILES_NETWORK_DRIVE_AND_SYNC_ROOT_VERIFICATION",
@@ -398,17 +448,17 @@ def build_reports(repo: Path) -> dict[str, str]:
     return {name: _json_text(value) for name, value in documents.items()}
 
 
-def write_reports(output: Path, reports: dict[str, str]) -> None:
+def write_reports(output: Path, reports: Mapping[str, str]) -> None:
     output.mkdir(parents=True, exist_ok=True)
     for name, content in reports.items():
         (output / name).write_text(content, encoding="utf-8", newline="\n")
 
 
-def check_reports(output: Path, reports: dict[str, str]) -> None:
+def check_reports(output: Path, reports: Mapping[str, str]) -> None:
     failures = [
         name
         for name, content in reports.items()
-        if not (output / name).is_file() or (output / name).read_bytes() != content.encode("utf-8")
+        if not (output / name).is_file() or (output / name).read_text(encoding="utf-8") != content
     ]
     if failures:
         raise SystemExit(f"CAPTURE_HARNESS_REPORT_CHECK_FAILED:{','.join(failures)}")

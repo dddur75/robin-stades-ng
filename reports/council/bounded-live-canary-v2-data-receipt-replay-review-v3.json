@@ -1,0 +1,184 @@
+{
+  "agent_id": "DP6",
+  "mission_id": "BOUNDED_MULTI_LEAGUE_LIVE_CANARY_CAPABILITY_SUCCESSOR_V2",
+  "facts_verified": [
+    {
+      "claim": "La mission de gouvernance SUCCESSOR_V2 livre sans le renommer le protocole technique V1 : contrats, builder et artefact restent explicitement V1, en DEFAULT_DENY, sans autorisation ni activation live réelle.",
+      "evidence_refs": [
+        "docs/data-sourcing/BOUNDED-MULTI-LEAGUE-LIVE-CANARY-CAPABILITY-V2.md:5-20",
+        "configs/execution/bounded-multi-league-live-canary-capability-v2.json:2-14",
+        "src/robin/capture/live_contracts.py:21-34",
+        "src/robin/capture/live_contracts.py:77-92",
+        "tests/council/test_bounded_live_canary_governance.py:18-49",
+        "tests/council/test_bounded_live_canary_governance.py:61-105"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le périmètre data est borné à cinq compétitions de football, la région eu et les ensembles de marchés h2h, totals ou h2h+totals ; ces valeurs sont liées aux contrats et contrôlées au replay.",
+      "evidence_refs": [
+        "src/robin/capture/live_contracts.py:24-34",
+        "src/robin/capture/live_contracts.py:77-156",
+        "src/robin/capture/storage.py:1293-1313",
+        "tests/capture/test_live_canary_capability.py::test_synthetic_live_flow_is_one_shot_receipt_backed_and_replayable"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "L'ingestion calcule le SHA-256, durable l'intake puis écrit le raw content-addressed avant tout décodage JSON ; le replay recharge et rehache également le raw avant parse et normalisation.",
+      "evidence_refs": [
+        "src/robin/capture/harness.py:403-471",
+        "src/robin/capture/storage.py:1262-1277",
+        "src/robin/capture/storage.py:1293-1314",
+        "tests/capture/test_capture_harness.py:493-507",
+        "tests/capture/test_live_canary_capability.py::test_synthetic_live_flow_is_one_shot_receipt_backed_and_replayable"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les compteurs quota sont bornés aux entiers signés 64 bits et une réponse fournisseur synthétique hors borne produit un terminal durable, relisible et sans seconde exécution.",
+      "evidence_refs": [
+        "src/robin/capture/contracts.py:325-329",
+        "src/robin/capture/harness.py:119-141",
+        "src/robin/capture/live_storage.py:1353-1379",
+        "tests/capture/test_live_canary_capability.py:2605-2650"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "store_terminal_receipt recroise le reçu terminal avec la lease, le permit, le dispatch, l'attempt, l'intake, le reçu de capture, le manifest et le replay avant toute création du terminal ; les reçus auto-cohérents sans lease ou rehashés contre un attempt durable sont refusés sans terminal.",
+      "evidence_refs": [
+        "src/robin/capture/live_storage.py:1447-1555",
+        "src/robin/capture/live_storage.py:1595-1615",
+        "tests/capture/test_live_canary_capability.py:2653-2691",
+        "tests/capture/test_live_canary_capability.py:2694-2794"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les dispositions terminales sont liées à l'état durable de réconciliation : SUCCESS, OFFLINE_REPLAY_FAILED et PAYLOAD_REJECTED avec quota exigent reconciled ; les autres dispositions l'interdisent sauf DISPATCH_OUTCOME_UNKNOWN, conservateur avant ou après réconciliation.",
+      "evidence_refs": [
+        "src/robin/capture/live_storage.py:1557-1593",
+        "src/robin/capture/storage.py:1203-1239",
+        "tests/capture/test_live_canary_capability.py:1279-1346",
+        "tests/capture/test_live_canary_capability.py::test_offline_replay_failure_still_produces_one_durable_terminal_receipt",
+        "tests/capture/test_live_canary_capability.py::test_abrupt_child_process_exit_burns_item_without_automatic_retry"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le replay public exige un reçu terminal complet et le replay live aboutit dans un processus frais avec zéro appel réseau, zéro appel fournisseur et zéro lecture de secret.",
+      "evidence_refs": [
+        "src/robin/capture/storage.py:1178-1260",
+        "src/robin/capture/storage.py:1279-1354",
+        "tests/capture/test_live_canary_capability.py:969-998"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les altérations de raw, receipts, manifest, normalized, lease, permit, attempt, terminal, marqueurs et budget échouent fermées ; les collisions content-addressed et la TTL générique conservent les invariants de reçu et de données normalisées.",
+      "evidence_refs": [
+        "tests/capture/test_live_canary_capability.py::test_live_replay_rejects_each_tampered_or_missing_durable_lineage_edge",
+        "tests/capture/test_live_canary_capability.py::test_live_replay_requires_canonical_bytes_for_every_control_edge",
+        "tests/capture/test_live_canary_capability.py::test_live_replay_cross_checks_rehashed_terminal_semantics_against_attempt",
+        "tests/capture/test_live_canary_capability.py::test_live_replay_binds_terminal_disposition_to_budget_reconciliation",
+        "tests/capture/test_capture_harness.py::test_storage_collision_fails_closed",
+        "tests/capture/test_capture_harness.py:547-599"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les deux corrections Linux élargissent uniquement les codes d'échec d'identité acceptés à CAPTURE_STORAGE_FILE_IDENTITY_UNAVAILABLE ; elles maintiennent zéro secret et zéro dispatch avant réponse, puis interdisent toute écriture des octets fournisseur dans la racine remplacée après réponse.",
+      "evidence_refs": [
+        "tests/capture/test_live_canary_capability.py:1844-1890",
+        "tests/capture/test_live_canary_capability.py:1893-1930",
+        "pytest ciblé des deux nodeids identity-swap: 2 passed in 6.30s",
+        ".github/workflows/ci.yml:97-121",
+        ".github/workflows/ci.yml:310-317"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le job Ubuntu borné n'appelle plus le test Council dépendant de l'historique dans son checkout superficiel ; le job repository-wide conserve fetch-depth 0 et dépend fail-closed des jobs canary Ubuntu et Windows.",
+      "evidence_refs": [
+        ".github/workflows/ci.yml:97-107",
+        ".github/workflows/ci.yml:310-317",
+        ".github/workflows/ci.yml:651-701",
+        "tests/jalon10/test_workflows_and_guards.py:93-111",
+        "tests/jalon10/test_workflows_and_guards.py:222-250",
+        "tests/portability/test_chronos_portable_ci_contract.py:62-76",
+        "tests/portability/test_chronos_portable_ci_contract.py:159-172"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les deux builders --check sont déterministes sur le snapshot gelé et Ruff passe sur le périmètre capture.",
+      "evidence_refs": [
+        "tools/data-sourcing/build_capture_harness_artifacts.py --check => CAPTURE_HARNESS_REPORT_CHECK_PASS:5:1ee9f67e6c1504fe5f6c42bc5fe033e0a52a18bfb12fb2ae215e6ffe9c10d003",
+        "tools/data-sourcing/build_bounded_live_canary_artifacts.py --check => BOUNDED_LIVE_CANARY_ARTIFACT_CHECK_PASS:2:9ad9847c7394ff24f47a376a3682f2ac5cb5d5874731720c6ca124d1be748506",
+        "ruff check src/robin/capture tests/capture tests/council/test_bounded_live_canary_governance.py tools/data-sourcing/build_capture_harness_artifacts.py tools/data-sourcing/build_bounded_live_canary_artifacts.py tools/data-sourcing/run_bounded_live_canary_v1.py => All checks passed"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La sélection locale correspondant au périmètre fonctionnel du job Ubuntu a produit 329 succès et 1 skip ; son unique échec est le placeholder DP6 encore étiqueté mission V1, que le présent rapport SUCCESSOR_V2 remplace, et non un échec DATA/RECEIPT/REPLAY.",
+      "evidence_refs": [
+        "pytest -q -p no:cacheprovider tests/capture tests/council/test_bounded_live_canary_governance.py tests/jalon10/test_workflows_and_guards.py tests/portability/test_chronos_portable_ci_contract.py => 1 failed, 329 passed, 1 skipped in 399.28s",
+        "unique failure: tests/council/test_bounded_live_canary_governance.py::test_three_independent_reports_are_schema_valid_and_aggregate_accepts",
+        "configs/agents/agent-report-schema-v3.json:15",
+        "tests/council/test_bounded_live_canary_governance.py:140-169"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les fichiers fonctionnels et de gouvernance déterminants ont été relus sur le snapshot gelé avec normalisation LF.",
+      "evidence_refs": [
+        ".github/workflows/ci.yml sha256=3d70c6197405f8510f4f2876e8100f59ec6e3a9159bf44a202c37ba0e650d1c0",
+        "configs/agents/mission-activation-matrix-v3.json sha256=4f52c8959aca34280354e070965c89c1f1fd6f7efefdd7a4ba44d61ee5762dba",
+        "src/robin/capture/contracts.py sha256=dee44991b29339cbbb80fe883d22a756bc9810ef547fdd53777107a23ff048a0",
+        "src/robin/capture/harness.py sha256=02a179fc236600f742aedbe156898331e75f57b30b3fac76be5158705f8925e7",
+        "src/robin/capture/storage.py sha256=d90f5450b062e08ff460e7078651116c44fcc397b21eefb72072b8869ec14dc2",
+        "src/robin/capture/live_storage.py sha256=ba5808944fad1fc234c2972714b61ee57cce3e9305f3bbd84fa7fd7e9987ae96",
+        "tests/capture/test_live_canary_capability.py sha256=e38cb8ca0c32832836be9dc36efc7c4d98de94d45693cf7a4be1bfef37cf77b6"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "Le run GitHub Actions exact-head Ubuntu post-correction n'a pas été exécuté ni consulté dans cette revue sans réseau ; la preuve Linux est une relecture du branchement os.name et des invariants, complétée par les tests locaux Windows.",
+    "Aucun payload fournisseur réel, secret réel, OwnerAuthorization réelle ni Activation réelle n'a été observé, conformément au mandat capability-only.",
+    "La suite repository-wide complète n'a pas été relancée par DP6 ; la sélection bornée définie par le job canary a été exécutée."
+  ],
+  "assumptions": [
+    "La convention Python underscore définit la frontière de l'API publique supportée ; les appels volontaires aux méthodes internes sont hors contrat.",
+    "La matérialisation de ce JSON remplace le placeholder DP6 V1 sans modifier les fichiers fonctionnels dont les hashes ont été gelés.",
+    "Toute exécution live réelle demeure interdite jusqu'à une OwnerAuthorization et une Activation externes séparées, liées au SHA final."
+  ],
+  "main_objection": "Aucun défaut P0/P1 DATA/RECEIPT/REPLAY n'est ouvert. Deux durcissements P2 restent : l'interface de replay préterminal interne demeure techniquement appelable et il manque un scénario TTL bout-en-bout spécifiquement live. Le seul test rouge observé est la dépendance de matérialisation du présent rapport V2.",
+  "risks": [
+    {
+      "risk": "[P2] CaptureStore._replay_preterminal_live et _replay(...allow_preterminal_live=True) restent techniquement appelables sur l'objet Python, même s'ils ne font plus partie de l'API publique supportée.",
+      "severity": "MEDIUM",
+      "evidence_refs": [
+        "src/robin/capture/storage.py:1279-1292",
+        "src/robin/capture/live_storage.py:1541-1555"
+      ]
+    },
+    {
+      "risk": "[P2] La TTL est fortement testée dans CaptureStore, mais aucun test n'enchaîne encore terminal live, suppression TTL, puis replay public local refusé sans lecture de secret ni réseau.",
+      "severity": "MEDIUM",
+      "evidence_refs": [
+        "tests/capture/test_capture_harness.py:547-599",
+        "tests/capture/test_live_canary_capability.py:969-998"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Matérialiser ce rapport SUCCESSOR_V2 puis exiger verts le test d'agrégation Council, les deux builders --check, les deux nodeids identity-swap Linux et le job canary exact-head Ubuntu/Windows ; conserver verts quota int64, terminaux forgés, permutations de réconciliation, crash post-réconciliation, tamper/collision et replay frais sans réseau/secret.",
+  "recommended_action": "ACCEPT pour le gate DP6 capability-only avec open_p0=0, open_p1=0 et open_critical_threads=0 ; matérialiser ce JSON et relancer le test d'agrégation avant le verdict global. Les deux P2 sont non bloquants à E1 mais doivent être traités avant tout élargissement.",
+  "scale_condition": "Ne pas dépasser E1 ni déclencher de live réel avant une autorisation propriétaire séparée liée au SHA final, une activation bornée distincte, CI exact-head verte et, idéalement, la fermeture des deux durcissements P2.",
+  "estimated_compute": "Validation locale : deux builders --check, 330 tests exécutés plus 1 skip en 399.28 secondes, deux identity-swap isolés en 6.30 secondes et Ruff ciblé ; aucun calcul externe.",
+  "estimated_external_cost": "0 ; aucun réseau fournisseur, DNS fournisseur, secret réel ou service externe utilisé.",
+  "estimated_human_time": "Environ 1 à 2 heures pour fermer les deux P2 ; quelques minutes pour matérialiser les rapports et relancer le test d'agrégation.",
+  "maintenance_impact": "Faible : les invariants critiques sont centralisés dans CaptureHarness, CaptureStore et LiveStateStore ; les P2 demandent surtout une séparation d'interface interne et un test E2E TTL live.",
+  "confidence": 0.96
+}

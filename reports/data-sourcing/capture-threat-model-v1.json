@@ -2,6 +2,11 @@
   "artifact": "capture-threat-model-v1",
   "open_p0": 0,
   "open_p1": 0,
+  "residual_assumptions": [
+    "the owner provisions the repository, control-temp and capture root under an exclusive OS principal that excludes concurrent rename or replacement; this attestation is hash-bound but externally authenticated",
+    "the operating system reports file, drive, mount, socket-peer and monotonic-clock identity faithfully; unsupported platforms fail closed unless separately attested",
+    "the owner selects one canonical global-unicast provider IP in a separate authorization; rotation requires a new authorization and the live transport performs no DNS resolution"
+  ],
   "residual_risk": "NON_ZERO_BOUNDED_INTERNAL_DECISION",
   "schema_version": "robin-capture-harness-artifacts-v1",
   "threats": [
@@ -12,9 +17,9 @@
       "threat": "secret disclosure"
     },
     {
-      "control": "no transport implementation; LIVE_CANARY gate; socket and DNS test blockade",
+      "control": "strict direct AF_INET/AF_INET6 socket to the exact authorization-bound global-unicast IP; exact peer, SNI and Host; absolute monotonic deadline across connect, TLS, request, status, headers and body; no DNS, proxy, redirect, retry or failover",
       "id": "T02",
-      "test": "tests/capture/conftest.py",
+      "test": "tests/capture/test_live_canary_transport.py",
       "threat": "unauthorized network"
     },
     {
@@ -66,17 +71,24 @@
       "threat": "backdated availability"
     },
     {
-      "control": "capture store requires an exact explicitly approved local root and rejects Git ancestors or known synchronized path markers; live remains blocked pending OS-backed sync-root verification",
+      "control": "capture store requires an exact explicitly approved local root; rejects UNC, non-fixed Windows drives, non-allowlisted Linux mount types, Git ancestors, known synchronized path markers, and reparse components; revalidates the approved root identity at storage I/O boundaries",
       "id": "T09",
-      "test": "tests/capture/test_capture_harness.py::test_retention_and_workspace_guards",
+      "test": "tests/capture/test_live_canary_storage_security.py",
       "threat": "real raw payload enters Git or a synchronized root"
+    },
+    {
+      "control": "repository, control-temp, Git executable and capture-root identities are hash-bound to external owner authorization and revalidated; resistance to a concurrent same-principal mutator is an explicit owner-attested exclusive OS-ACL boundary rather than a runtime cryptographic claim",
+      "id": "T12",
+      "test": "tests/capture/test_live_canary_transport.py",
+      "threat": "repository or control-temp substitution before budget or secret admission"
     }
   ],
   "trust_boundaries": [
-    "future environment-only secret boundary",
+    "late environment-only secret boundary",
     "pre-network request guard boundary",
+    "authorization-bound provider IP with exact TLS identity boundary",
     "raw bytes before parser boundary",
-    "local non-synchronised storage boundary",
+    "owner-attested exclusive OS-ACL with pinned repository, control-temp, and capture-root identities",
     "normalized retained evidence boundary"
   ]
 }

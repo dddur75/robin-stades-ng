@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import hashlib
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from threading import Lock
@@ -12,9 +12,11 @@ from typing import Literal
 from pydantic import Field
 
 from robin.capture.contracts import (
+    MAX_SIGNED_64,
     SECRET_ENV_NAME,
     AdmissionStatus,
     CaptureBudget,
+    CaptureContractError,
     CaptureManifest,
     CaptureMode,
     FixtureMapping,
@@ -28,6 +30,11 @@ from robin.capture.contracts import (
     SchemaFingerprint,
     canonical_json_bytes,
     ensure_utc,
+)
+from robin.capture.live_contracts import (
+    LiveAdmissionPermitV1,
+    LiveCaptureLineageV1,
+    LiveResponseIntakeClaimV1,
 )
 from robin.capture.normalization import (
     CaptureValidationError,
@@ -117,7 +124,7 @@ def _safe_integer_header(headers: Mapping[str, str], name: str) -> int | None:
     if not value.isascii() or not value.isdigit():
         raise CaptureValidationError("CAPTURE_QUOTA_HEADERS_INVALID")
     parsed = int(value)
-    if parsed < 0:
+    if parsed < 0 or parsed > MAX_SIGNED_64:
         raise CaptureValidationError("CAPTURE_QUOTA_HEADERS_INVALID")
     return parsed
 
@@ -234,9 +241,7 @@ class CaptureHarness:
             if consume_budget:
                 self._budget = reserved
         prepared_mode: Literal["VALIDATE_OFFLINE", "DRY_RUN"] = (
-            "DRY_RUN"
-            if validated_mode is CaptureMode.DRY_RUN
-            else "VALIDATE_OFFLINE"
+            "DRY_RUN" if validated_mode is CaptureMode.DRY_RUN else "VALIDATE_OFFLINE"
         )
         return CapturePreparation(
             mode=prepared_mode,
@@ -284,6 +289,110 @@ class CaptureHarness:
             mode=CaptureMode.VALIDATE_OFFLINE,
             consume_budget=True,
         )
+        return self._record_response_locked(
+            request,
+            fingerprint=preparation.fingerprint,
+            estimated_credits=preparation.estimated_credits,
+            payload=payload,
+            http_status=http_status,
+            response_headers=response_headers,
+            mappings=mappings,
+            first_observed_at=first_observed_at,
+            ingested_at=ingested_at,
+            manifest_mode="VALIDATE_OFFLINE",
+            network_calls=0,
+            provider_calls=0,
+            live_canary_authorized=False,
+        )
+
+    def record_live_response(
+        self,
+        request: ProviderRequestSpec,
+        *,
+        expected_request_fingerprint_sha256: str,
+        payload: bytes,
+        http_status: int,
+        response_headers: Mapping[str, str],
+        mappings: tuple[FixtureMapping, ...],
+        admission_permit: LiveAdmissionPermitV1,
+        first_observed_at: datetime,
+        ingested_at: datetime,
+        stage_observer: Callable[[str], None] | None = None,
+    ) -> CaptureManifest:
+        """Admit an already budgeted, single-dispatch live response."""
+
+        fingerprint = RequestFingerprint.create(request)
+        permit = LiveAdmissionPermitV1.model_validate(admission_permit.model_dump(mode="json"))
+        from robin.capture.live_storage import LiveStateStore
+
+        live_state = LiveStateStore(self.store)
+        permit = live_state.verify_admission_permit(
+            permit,
+            consume=False,
+        )
+        if fingerprint.request_sha256 != expected_request_fingerprint_sha256:
+            raise CaptureGuardError("LIVE_REQUEST_FINGERPRINT_MISMATCH")
+        if (
+            permit.capture_root_fingerprint != self.store.capture_root_fingerprint()
+            or permit.request_fingerprint_sha256 != fingerprint.request_sha256
+            or permit.reserved_credits != len(request.markets)
+        ):
+            raise CaptureGuardError("LIVE_ADMISSION_PERMIT_MISMATCH")
+        response_intake_claim = live_state.claim_live_response_intake(
+            permit,
+            payload_sha256=hashlib.sha256(payload).hexdigest(),
+            payload_byte_length=len(payload),
+            first_observed_at=first_observed_at,
+            ingested_at=ingested_at,
+        )
+        with self.store.capture_transaction():
+            return self._record_response_locked(
+                request,
+                fingerprint=fingerprint,
+                estimated_credits=len(request.markets),
+                payload=payload,
+                http_status=http_status,
+                response_headers=response_headers,
+                mappings=mappings,
+                first_observed_at=first_observed_at,
+                ingested_at=ingested_at,
+                manifest_mode="LIVE_CANARY",
+                network_calls=1,
+                provider_calls=1,
+                live_canary_authorized=True,
+                exact_response_markets=request.markets,
+                expected_response_sport_key=request.sport_key,
+                live_admission_permit=permit,
+                live_response_intake_claim=response_intake_claim,
+                stage_observer=stage_observer,
+            )
+
+    def _record_response_locked(
+        self,
+        request: ProviderRequestSpec,
+        *,
+        fingerprint: RequestFingerprint,
+        estimated_credits: int,
+        payload: bytes,
+        http_status: int,
+        response_headers: Mapping[str, str],
+        mappings: tuple[FixtureMapping, ...],
+        first_observed_at: datetime,
+        ingested_at: datetime,
+        manifest_mode: Literal["VALIDATE_OFFLINE", "LIVE_CANARY"],
+        network_calls: Literal[0, 1],
+        provider_calls: Literal[0, 1],
+        live_canary_authorized: bool,
+        exact_response_markets: tuple[str, ...] | None = None,
+        expected_response_sport_key: str | None = None,
+        live_admission_permit: LiveAdmissionPermitV1 | None = None,
+        live_response_intake_claim: LiveResponseIntakeClaimV1 | None = None,
+        stage_observer: Callable[[str], None] | None = None,
+    ) -> CaptureManifest:
+        def observe(stage: str) -> None:
+            if stage_observer is not None:
+                stage_observer(stage)
+
         observed = ensure_utc(first_observed_at, field="first_observed_at")
         ingested = ensure_utc(ingested_at, field="ingested_at")
         if ingested < observed:
@@ -294,10 +403,11 @@ class CaptureHarness:
         # A provisional TTL-governed receipt is durable before raw bytes are written.
         # The raw SHA-256 and content-addressed write still precede all parsing.
         payload_sha256 = hashlib.sha256(payload).hexdigest()
+        observe("RAW_SHA256_COMPUTED")
         if len(payload) > self.maximum_payload_bytes:
             oversized_material = _ReceiptMaterial(
                 intake_receipt_id=None,
-                request_fingerprint_sha256=preparation.fingerprint.request_sha256,
+                request_fingerprint_sha256=fingerprint.request_sha256,
                 payload_sha256=payload_sha256,
                 payload_byte_length=len(payload),
                 http_status=http_status,
@@ -310,18 +420,17 @@ class CaptureHarness:
             )
             oversized_receipt = _build_receipt(oversized_material, quota=None)
             self.store.store_receipt(oversized_receipt)
+            observe("FINAL_RECEIPT_DURABLE")
             self.store.store_quarantine(oversized_receipt)
             raise CaptureRejected(
                 "CAPTURE_PAYLOAD_TOO_LARGE",
                 receipt_id=oversized_receipt.receipt_id,
                 payload_sha256=payload_sha256,
             )
-        expected_raw_key = (
-            f"raw/sha256/{payload_sha256[:2]}/{payload_sha256}.bin"
-        )
+        expected_raw_key = f"raw/sha256/{payload_sha256[:2]}/{payload_sha256}.bin"
         intake_material = _ReceiptMaterial(
             intake_receipt_id=None,
-            request_fingerprint_sha256=preparation.fingerprint.request_sha256,
+            request_fingerprint_sha256=fingerprint.request_sha256,
             payload_sha256=payload_sha256,
             payload_byte_length=len(payload),
             http_status=http_status,
@@ -334,7 +443,9 @@ class CaptureHarness:
         )
         intake_receipt = _build_receipt(intake_material, quota=None)
         self.store.store_receipt(intake_receipt)
+        observe("INTAKE_RECEIPT_DURABLE")
         stored_sha256, raw_storage_key = self.store.store_raw(payload)
+        observe("RAW_CONTENT_ADDRESSED_DURABLE")
         if stored_sha256 != payload_sha256 or raw_storage_key != expected_raw_key:
             raise CaptureGuardError("CAPTURE_RAW_HASH_MISMATCH")
 
@@ -354,16 +465,18 @@ class CaptureHarness:
                 quota = _quota_observation(
                     response_headers,
                     observed_at=ingested,
-                    estimated_credits=preparation.estimated_credits,
+                    estimated_credits=estimated_credits,
                 )
+                observe("PARSE_STARTED")
                 decoded = decode_json_payload(payload)
                 schema = schema_fingerprint(decoded)
-            except CaptureValidationError as exc:
+                observe("SCHEMA_FINGERPRINT_COMPUTED")
+            except (CaptureValidationError, CaptureContractError) as exc:
                 rejection_code = exc.code
 
         admitted_material = _ReceiptMaterial(
             intake_receipt_id=intake_receipt.receipt_id,
-            request_fingerprint_sha256=preparation.fingerprint.request_sha256,
+            request_fingerprint_sha256=fingerprint.request_sha256,
             payload_sha256=payload_sha256,
             payload_byte_length=len(payload),
             http_status=http_status,
@@ -382,14 +495,17 @@ class CaptureHarness:
                     decoded,
                     receipt=admitted_receipt,
                     mappings=mappings,
+                    allowed_markets=exact_response_markets,
+                    expected_sport_key=expected_response_sport_key,
                 )
-            except CaptureValidationError as exc:
+                observe("NORMALIZATION_COMPLETED")
+            except (CaptureValidationError, CaptureContractError) as exc:
                 rejection_code = exc.code
 
         if rejection_code is not None:
             rejected_material = _ReceiptMaterial(
                 intake_receipt_id=intake_receipt.receipt_id,
-                request_fingerprint_sha256=preparation.fingerprint.request_sha256,
+                request_fingerprint_sha256=fingerprint.request_sha256,
                 payload_sha256=payload_sha256,
                 payload_byte_length=len(payload),
                 http_status=http_status,
@@ -402,6 +518,7 @@ class CaptureHarness:
             )
             rejected_receipt = _build_receipt(rejected_material, quota=quota)
             self.store.store_receipt(rejected_receipt)
+            observe("FINAL_RECEIPT_DURABLE")
             self.store.store_quarantine(rejected_receipt)
             raise CaptureRejected(
                 rejection_code,
@@ -430,7 +547,7 @@ class CaptureHarness:
         manifest = CaptureManifest.issue(
             snapshot_id=snapshot_id,
             receipt_id=admitted_receipt.receipt_id,
-            request_fingerprint_sha256=preparation.fingerprint.request_sha256,
+            request_fingerprint_sha256=fingerprint.request_sha256,
             raw_payload_sha256=payload_sha256,
             schema_fingerprint=schema,
             fixture_mappings=mappings,
@@ -438,9 +555,31 @@ class CaptureHarness:
             normalized_sha256=normalized_sha256,
             normalized_storage_key=normalized_key,
             captured_at=ingested,
+            mode=manifest_mode,
+            network_calls=network_calls,
+            provider_calls=provider_calls,
+            live_canary_authorized=live_canary_authorized,
         )
         self.store.store_receipt(admitted_receipt)
+        observe("FINAL_RECEIPT_DURABLE")
+        if live_admission_permit is not None:
+            if live_response_intake_claim is None:
+                raise CaptureGuardError("LIVE_RESPONSE_INTAKE_CLAIM_MISSING")
+            lineage = LiveCaptureLineageV1.issue(
+                manifest_id=manifest.snapshot_id,
+                manifest_hash=manifest.manifest_sha256,
+                request=request,
+                request_fingerprint_sha256=fingerprint.request_sha256,
+                expected_sport_key=request.sport_key,
+                expected_region=request.region,
+                expected_markets=request.markets,
+                admission_permit=live_admission_permit,
+                response_intake_claim=live_response_intake_claim,
+            )
+            self.store.store_live_capture_lineage(lineage)
+            observe("LIVE_CAPTURE_LINEAGE_DURABLE")
         self.store.store_manifest(manifest)
+        observe("MANIFEST_DURABLE")
         return manifest
 
     @staticmethod

@@ -29,6 +29,7 @@
     "raw_hash_verified_before_parse": true,
     "raw_payload_sha256": "98270fbef1d77646fdd345856eb73b9d6d976a4b555cc69f27f564317a647299",
     "receipt_id": "4b7589b9c827048a1eae298a6dd222d74b8e90ac5a3e71860fe4bbf85df31cc4",
+    "secret_reads_count": 0,
     "snapshot_id": "c5623c2510fb1db69d7ff1682453293fab16d2b18a7c3af204d62ba6b174a286",
     "verdict": "ROBIN_OFFLINE_CAPTURE_REPLAY_PROVEN"
   },

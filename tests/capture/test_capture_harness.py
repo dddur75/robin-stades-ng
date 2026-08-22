@@ -26,7 +26,7 @@ from robin.capture import (
     RequestFingerprint,
     SecretCapability,
 )
-from robin.capture.contracts import MappingStatus
+from robin.capture.contracts import MappingStatus, strict_json_object
 from robin.capture.normalization import CaptureValidationError
 from robin.capture.storage import CaptureStorageError
 
@@ -165,6 +165,32 @@ def test_request_guards_fail_closed(override: dict[str, object], code: str) -> N
         ProviderRequestSpec.model_validate(values)
 
 
+@pytest.mark.parametrize(
+    "payload",
+    (
+        b'{"maximum_requests":1,"maximum_requests":2}',
+        b'{"value":1e999}',
+        b'{"value":999999999999999999999999999999999999999}',
+        b'{"value":"\\ud800"}',
+        b"[]",
+    ),
+)
+def test_control_json_rejects_duplicates_nonfinite_unbounded_and_nonobjects(
+    payload: bytes,
+) -> None:
+    with pytest.raises(CaptureContractError):
+        strict_json_object(payload)
+
+
+def test_frozen_contract_json_loader_rejects_duplicate_shadow_fields() -> None:
+    with pytest.raises(CaptureContractError):
+        ProviderRequestSpec.model_validate_json(
+            b'{"endpoint":"/v4/sports/soccer_epl/odds",'
+            b'"sport_key":"soccer_epl","sport_key":"soccer_spain_la_liga",'
+            b'"region":"eu","markets":["h2h","totals"]}'
+        )
+
+
 def test_budget_is_required_and_cannot_be_exceeded(
     tmp_path: Path,
     synthetic_pack: dict[str, Any],
@@ -213,6 +239,38 @@ def test_budget_is_required_and_cannot_be_exceeded(
     budget_entries = bounded.store.budget_ledger.read_text("utf-8").splitlines()
     assert len(budget_entries) == 1
     assert "entry_sha256" in budget_entries[0]
+
+
+@pytest.mark.parametrize(("requests", "credits"), ((True, 1), (0.5, 1), (1, True)))
+def test_budget_runtime_boundary_rejects_non_integer_scalars_without_append(
+    tmp_path: Path,
+    requests: Any,
+    credits: Any,
+) -> None:
+    root = tmp_path / f"invalid-budget-{requests}-{credits}"
+    store = CaptureStore(root, InternalRetentionPolicy(), approved_local_root=root)
+    with pytest.raises(CaptureStorageError, match="CAPTURE_BUDGET_RESERVATION_INVALID"):
+        store.reserve_budget(
+            CaptureBudget(maximum_requests=2, maximum_credits=2),
+            requests=requests,
+            credits=credits,
+            consume=True,
+        )
+    assert not store.budget_ledger.exists()
+
+
+def test_budget_runtime_boundary_reparses_constructed_budget(tmp_path: Path) -> None:
+    root = tmp_path / "constructed-budget"
+    store = CaptureStore(root, InternalRetentionPolicy(), approved_local_root=root)
+    forged = CaptureBudget.model_construct(
+        maximum_requests=True,
+        used_requests=0,
+        maximum_credits=2,
+        used_credits=0,
+    )
+    with pytest.raises(CaptureStorageError, match="CAPTURE_BUDGET_INVALID"):
+        store.reserve_budget(forged, requests=1, credits=1, consume=True)
+    assert not store.budget_ledger.exists()
 
 
 def test_retention_and_workspace_guards(tmp_path: Path) -> None:
@@ -306,9 +364,7 @@ def test_invalid_request_exception_hides_secret_sentinel(
         lambda: ProviderRequestSpec(**unsafe),
         lambda: ProviderRequestSpec.model_validate(unsafe),
         lambda: ProviderRequestSpec.model_validate_json(json.dumps(unsafe)),
-        lambda: RequestFingerprint.model_validate(
-            {"request_sha256": "0" * 64, "request": unsafe}
-        ),
+        lambda: RequestFingerprint.model_validate({"request_sha256": "0" * 64, "request": unsafe}),
     )
     for factory in factories:
         with pytest.raises(CaptureContractError) as rejected:
@@ -509,6 +565,38 @@ def test_raw_ttl_deletion_preserves_receipt_and_normalized_data(
         instance.store.replay(manifest.snapshot_id)
 
 
+@pytest.mark.parametrize("receipt_loss", ("corrupt", "deleted"))
+def test_ttl_enforcer_deletes_orphan_raw_when_all_receipt_copies_are_lost(
+    tmp_path: Path,
+    synthetic_pack: dict[str, Any],
+    receipt_loss: str,
+) -> None:
+    instance = harness(tmp_path / receipt_loss)
+    manifest = record(instance, encoded(synthetic_pack, "h2h_plus_totals"))
+    final_receipt = instance.store.load_receipt(manifest.receipt_id)
+    assert final_receipt.intake_receipt_id is not None
+    assert final_receipt.raw_storage_key is not None
+    receipt_paths = (
+        instance.store.root / "receipts" / f"{manifest.receipt_id}.json",
+        instance.store.root / "receipts" / f"{final_receipt.intake_receipt_id}.json",
+    )
+    for receipt_path in receipt_paths:
+        if receipt_loss == "corrupt":
+            receipt_path.write_bytes(b"{}\n")
+        else:
+            receipt_path.unlink()
+
+    deleted = instance.store.enforce_raw_ttl(now=OBSERVED + timedelta(days=1))
+    raw_path = instance.store.root / final_receipt.raw_storage_key
+    assert deleted == (manifest.raw_payload_sha256,)
+    assert not raw_path.exists()
+    ledger = instance.store.deletion_ledger.read_text("utf-8")
+    assert "RAW_ORPHAN_DELETION_INTENT" in ledger
+    assert "RAW_ORPHAN_DELETION_COMMITTED" in ledger
+    if receipt_loss == "corrupt":
+        assert ledger.count("RECEIPT_CORRUPTION_DETECTED") == 2
+
+
 def test_storage_collision_fails_closed(
     tmp_path: Path,
     synthetic_pack: dict[str, Any],
@@ -530,11 +618,7 @@ def test_receipt_manifest_and_normalized_links_fail_closed_on_tamper(
 
     receipt_instance = harness(tmp_path / "receipt")
     receipt_manifest = record(receipt_instance, payload)
-    receipt_path = (
-        receipt_instance.store.root
-        / "receipts"
-        / f"{receipt_manifest.receipt_id}.json"
-    )
+    receipt_path = receipt_instance.store.root / "receipts" / f"{receipt_manifest.receipt_id}.json"
     receipt_data = json.loads(receipt_path.read_text("utf-8"))
     receipt_data["payload_byte_length"] += 1
     receipt_path.write_text(json.dumps(receipt_data), encoding="utf-8")
@@ -546,11 +630,7 @@ def test_receipt_manifest_and_normalized_links_fail_closed_on_tamper(
     manifest_path = manifest_instance.store.root / "manifests" / f"{manifest.snapshot_id}.json"
     manifest_data = json.loads(manifest_path.read_text("utf-8"))
     manifest_data["raw_payload_sha256"] = "0" * 64
-    identity = {
-        key: value
-        for key, value in manifest_data.items()
-        if key != "manifest_sha256"
-    }
+    identity = {key: value for key, value in manifest_data.items() if key != "manifest_sha256"}
     manifest_data["manifest_sha256"] = hashlib.sha256(
         json.dumps(
             identity,
@@ -566,9 +646,7 @@ def test_receipt_manifest_and_normalized_links_fail_closed_on_tamper(
     normalized_instance = harness(tmp_path / "normalized")
     normalized_manifest = record(normalized_instance, payload)
     normalized_path = (
-        normalized_instance.store.root
-        / "normalized"
-        / f"{normalized_manifest.snapshot_id}.jsonl"
+        normalized_instance.store.root / "normalized" / f"{normalized_manifest.snapshot_id}.jsonl"
     )
     normalized_path.write_bytes(normalized_path.read_bytes() + b"{}\n")
     with pytest.raises(CaptureStorageError, match="CAPTURE_NORMALIZED_HASH_MISMATCH"):
@@ -577,16 +655,12 @@ def test_receipt_manifest_and_normalized_links_fail_closed_on_tamper(
     temporal_instance = harness(tmp_path / "temporal")
     temporal_manifest = record(temporal_instance, payload)
     temporal_path = (
-        temporal_instance.store.root
-        / "manifests"
-        / f"{temporal_manifest.snapshot_id}.json"
+        temporal_instance.store.root / "manifests" / f"{temporal_manifest.snapshot_id}.json"
     )
     temporal_data = json.loads(temporal_path.read_text("utf-8"))
     temporal_data["captured_at"] = "2000-01-01T00:00:00Z"
     temporal_identity = {
-        key: value
-        for key, value in temporal_data.items()
-        if key != "manifest_sha256"
+        key: value for key, value in temporal_data.items() if key != "manifest_sha256"
     }
     temporal_data["manifest_sha256"] = hashlib.sha256(
         json.dumps(
@@ -605,9 +679,7 @@ def test_receipt_manifest_and_normalized_links_fail_closed_on_tamper(
     final_receipt = intake_instance.store.load_receipt(intake_manifest.receipt_id)
     assert final_receipt.intake_receipt_id is not None
     intake_path = (
-        intake_instance.store.root
-        / "receipts"
-        / f"{final_receipt.intake_receipt_id}.json"
+        intake_instance.store.root / "receipts" / f"{final_receipt.intake_receipt_id}.json"
     )
     intake_path.unlink()
     with pytest.raises(CaptureStorageError, match="CAPTURE_INTAKE_RECEIPT_MISSING"):
@@ -648,9 +720,71 @@ def test_budget_ledger_rejects_semantically_rehashed_reset(
     )
     with pytest.raises(
         CaptureStorageError,
-        match="CAPTURE_BUDGET_LEDGER_TRANSITION_INVALID",
+        match="CAPTURE_BUDGET_LEDGER_ROLLBACK_DETECTED",
     ):
         record(restarted, encoded(synthetic_pack, "h2h_plus_totals"))
+
+
+@pytest.mark.parametrize("rollback", ("last_line", "ledger_absent", "old_prefix"))
+def test_budget_immutable_events_restore_deleted_or_rolled_back_jsonl_view(
+    tmp_path: Path,
+    synthetic_pack: dict[str, Any],
+    rollback: str,
+) -> None:
+    maximum = CaptureBudget(maximum_requests=3, maximum_credits=6)
+    instance = harness(tmp_path / rollback, capture_budget=maximum)
+    payload = encoded(synthetic_pack, "h2h_plus_totals")
+    for _ in range(3):
+        record(instance, payload)
+    ledger_path = instance.store.budget_ledger
+    complete = ledger_path.read_bytes()
+    lines = complete.splitlines(keepends=True)
+    assert len(lines) == 3
+    assert len(tuple((instance.store.root / "budget-events").glob("*.json"))) == 3
+
+    if rollback == "ledger_absent":
+        ledger_path.unlink()
+    elif rollback == "last_line":
+        ledger_path.write_bytes(b"".join(lines[:-1]))
+    else:
+        ledger_path.write_bytes(lines[0])
+
+    restarted_store = CaptureStore(
+        instance.store.root,
+        InternalRetentionPolicy(),
+        approved_local_root=instance.store.root,
+    )
+    restarted = CaptureHarness(restarted_store, maximum)
+    with pytest.raises(CaptureGuardError, match="CAPTURE_REQUEST_BUDGET_EXCEEDED"):
+        record(restarted, payload)
+    assert ledger_path.read_bytes() == complete
+
+
+def test_budget_partial_jsonl_tail_is_audited_then_restored_from_event(
+    tmp_path: Path,
+    synthetic_pack: dict[str, Any],
+) -> None:
+    maximum = CaptureBudget(maximum_requests=2, maximum_credits=4)
+    instance = harness(tmp_path / "partial-tail", capture_budget=maximum)
+    payload = encoded(synthetic_pack, "h2h_plus_totals")
+    record(instance, payload)
+    record(instance, payload)
+    ledger_path = instance.store.budget_ledger
+    complete = ledger_path.read_bytes()
+    lines = complete.splitlines(keepends=True)
+    ledger_path.write_bytes(lines[0] + lines[1][: len(lines[1]) // 2])
+
+    restarted_store = CaptureStore(
+        instance.store.root,
+        InternalRetentionPolicy(),
+        approved_local_root=instance.store.root,
+    )
+    restarted = CaptureHarness(restarted_store, maximum)
+    with pytest.raises(CaptureGuardError, match="CAPTURE_REQUEST_BUDGET_EXCEEDED"):
+        record(restarted, payload)
+    assert ledger_path.read_bytes() == complete
+    recoveries = tuple((instance.store.root / "budget-ledger-recovery").glob("*.json"))
+    assert len(recoveries) == 1
 
 
 @pytest.mark.parametrize("tamper", ["revision", "extra"])
@@ -677,11 +811,7 @@ def test_mapping_lineage_is_bound_to_snapshot_identity(
             }
         )
         expected = "CAPTURE_FIXTURE_MAPPING_UNUSED"
-    identity = {
-        key: value
-        for key, value in manifest_data.items()
-        if key != "manifest_sha256"
-    }
+    identity = {key: value for key, value in manifest_data.items() if key != "manifest_sha256"}
     manifest_data["manifest_sha256"] = hashlib.sha256(
         json.dumps(
             identity,
@@ -755,9 +885,7 @@ def test_capture_and_ttl_are_serialized_for_the_same_raw_hash(
 
     def run_ttl() -> None:
         try:
-            first.store.enforce_raw_ttl(
-                now=OBSERVED + timedelta(days=30, seconds=1)
-            )
+            first.store.enforce_raw_ttl(now=OBSERVED + timedelta(days=30, seconds=1))
         except Exception as exc:  # pragma: no cover - asserted below
             thread_errors.append(exc)
 
@@ -825,9 +953,7 @@ def test_crash_after_raw_write_leaves_ttl_governed_intake_receipt(
     assert len(raw_files) == len(receipts) == 1
     raw_sha256 = hashlib.sha256(raw_files[0].read_bytes()).hexdigest()
     monkeypatch.setattr(instance.store, "store_raw", original_store_raw)
-    deleted = instance.store.enforce_raw_ttl(
-        now=OBSERVED + timedelta(days=30, seconds=1)
-    )
+    deleted = instance.store.enforce_raw_ttl(now=OBSERVED + timedelta(days=30, seconds=1))
     assert deleted == (raw_sha256,)
     assert not raw_files[0].exists()
 
@@ -836,9 +962,7 @@ def test_mapping_must_be_bijective_and_bookmakers_unique(
     tmp_path: Path,
     synthetic_pack: dict[str, Any],
 ) -> None:
-    duplicated_event_payload = copy.deepcopy(
-        synthetic_pack["responses"]["h2h_complete"]
-    )
+    duplicated_event_payload = copy.deepcopy(synthetic_pack["responses"]["h2h_complete"])
     second_event = copy.deepcopy(duplicated_event_payload[0])
     second_event["id"] = "synthetic-event-second"
     duplicated_event_payload.append(second_event)
@@ -856,9 +980,7 @@ def test_mapping_must_be_bijective_and_bookmakers_unique(
             mappings=(mapping(), duplicate_mapping),
         )
 
-    duplicated_bookmaker_payload = copy.deepcopy(
-        synthetic_pack["responses"]["h2h_complete"]
-    )
+    duplicated_bookmaker_payload = copy.deepcopy(synthetic_pack["responses"]["h2h_complete"])
     duplicated_bookmaker_payload[0]["bookmakers"].append(
         copy.deepcopy(duplicated_bookmaker_payload[0]["bookmakers"][0])
     )
