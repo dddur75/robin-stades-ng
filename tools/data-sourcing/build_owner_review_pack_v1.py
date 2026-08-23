@@ -60,6 +60,7 @@ def _parser() -> argparse.ArgumentParser:
 def main() -> int:
     arguments = _parser().parse_args()
     generated = datetime.now(UTC)
+    generated_text = generated.isoformat().replace("+00:00", "Z")
     try:
         workspace = RealCaptureWorkspaceReceiptV1.model_validate(_load(arguments.workspace_receipt))
         assert_real_capture_workspace_receipt_current_v1(workspace)
@@ -84,7 +85,7 @@ def main() -> int:
             "targets": targets.canonical_set_hash,
             "campaign_selection": campaign_selection.canonical_selection_hash,
             "request": canonical_sha256(request.fingerprint_material()),
-            "generated_at": generated,
+            "generated_at": generated_text,
         }
         nonce_hash = canonical_sha256(nonce_material)
         pack = build_owner_review_pack_v1(

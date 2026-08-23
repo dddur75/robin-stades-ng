@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import json
 import os
+import sys
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -1035,6 +1037,146 @@ def test_owner_review_pack_is_complete_unexecuted_and_statement_binds_every_gate
             pack,
             pack.provider_network_binding.expires_at_utc,
         )
+
+
+def test_owner_review_pack_cli_canonicalizes_generated_at_for_nonce(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    bundle = build_bundle(tmp_path)
+    campaign_selection = build_campaign_selection(bundle.workspace, bundle.mission_manifest)
+    selected = campaign_selection.selected_candidate()
+    resolution_claim = ProviderNetworkResolutionClaimV1.issue(
+        mission_manifest_sha256=bundle.mission_manifest.canonical_manifest_sha256(),
+        workspace_receipt_sha256=bundle.workspace.canonical_receipt_hash,
+        campaign_selection_sha256=campaign_selection.canonical_selection_hash,
+        fixture_target_set_sha256=selected.fixture_target_set.canonical_set_hash,
+        claimed_at_utc=BASE - timedelta(seconds=65),
+        mission_expires_at_utc=bundle.mission_manifest.expires_at,
+    )
+    network_binding = ProviderNetworkBindingV1.issue(
+        resolution_claim=resolution_claim,
+        resolver_identity="TEST_OS_STUB_RESOLVER",
+        observed_at_utc=BASE - timedelta(minutes=1),
+        expires_at_utc=BASE + timedelta(minutes=10),
+        binding_ttl_seconds=660,
+        resolved_ip_addresses=("8.8.8.8",),
+    )
+    repository = Path(bundle.workspace.runtime_repository_root)
+    manifest_path = repository / "configs/execution/real-execution-bootstrap-closure-v1.json"
+    inputs = tmp_path / "cli-inputs"
+    inputs.mkdir()
+    manifest_path.parent.mkdir(parents=True)
+    workspace_path = inputs / "workspace-receipt.json"
+    binding_path = inputs / "provider-network-binding.json"
+    selection_path = inputs / "campaign-selection.json"
+    for path, artifact in (
+        (workspace_path, bundle.workspace),
+        (manifest_path, bundle.mission_manifest),
+        (binding_path, network_binding),
+        (selection_path, campaign_selection),
+    ):
+        path.write_bytes(canonical_json_bytes(artifact.model_dump(mode="json")) + b"\n")
+    control_temp = Path(bundle.workspace.control_temp_root)
+    control_temp.mkdir()
+    output = control_temp / "owner-review-pack"
+
+    script_path = Path(__file__).parents[2] / "tools/data-sourcing/build_owner_review_pack_v1.py"
+    spec = importlib.util.spec_from_file_location("owner_review_pack_cli_under_test", script_path)
+    assert spec is not None and spec.loader is not None
+    cli = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(cli)
+
+    class FrozenDateTime(datetime):
+        @classmethod
+        def now(cls, tz: object = None) -> datetime:
+            assert tz is UTC
+            return BASE
+
+    serialization_errors: list[str] = []
+
+    def observed_sha256(value: object) -> str:
+        try:
+            return canonical_sha256(value)
+        except TypeError as error:
+            serialization_errors.append(str(error))
+            raise
+
+    monkeypatch.setattr(cli, "datetime", FrozenDateTime)
+    monkeypatch.setattr(cli, "canonical_sha256", observed_sha256)
+    monkeypatch.setattr(cli, "assert_real_capture_workspace_receipt_current_v1", lambda _: None)
+    monkeypatch.setattr(
+        cli,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            str(script_path),
+            "--workspace-receipt",
+            str(workspace_path),
+            "--mission-manifest",
+            str(manifest_path),
+            "--provider-network-binding",
+            str(binding_path),
+            "--campaign-selection",
+            str(selection_path),
+            "--output-directory",
+            str(output),
+        ],
+    )
+
+    exit_code = cli.main()
+    result = json.loads(capsys.readouterr().out)
+    assert exit_code == 0, serialization_errors
+    assert result["status"] == "OWNER_AUTHORIZATION_READY"
+    assert set(result["outputs"]) == {
+        "owner_review_pack",
+        "owner_authorization_candidate",
+        "activation_candidate",
+        "plan_candidate",
+        "plan_item_candidate",
+        "campaign_selection",
+        "fixture_target_set",
+        "provider_network_binding",
+        "mission_manifest",
+        "workspace_receipt",
+        "request",
+    }
+    assert all(Path(path).is_file() for path in result["outputs"].values())
+    assert all(
+        isinstance(json.loads(Path(path).read_text(encoding="utf-8")), dict)
+        for path in result["outputs"].values()
+    )
+
+    pack_payload = json.loads(
+        Path(result["outputs"]["owner_review_pack"]).read_text(encoding="utf-8")
+    )
+    pack = OwnerReviewPackV1.model_validate(pack_payload)
+    generated_text = pack_payload["generated_at_utc"]
+    assert isinstance(generated_text, str)
+    assert generated_text.endswith("Z")
+    assert datetime.fromisoformat(generated_text.replace("Z", "+00:00")).utcoffset() == timedelta(0)
+    assert pack.generated_at_utc == BASE
+    nonce_hash = canonical_sha256(
+        {
+            "workspace": pack.workspace_receipt.canonical_receipt_hash,
+            "binding": pack.provider_network_binding.canonical_binding_hash,
+            "targets": pack.fixture_target_set.canonical_set_hash,
+            "campaign_selection": pack.campaign_selection.canonical_selection_hash,
+            "request": canonical_sha256(pack.request.fingerprint_material()),
+            "generated_at": generated_text,
+        }
+    )
+    assert pack.owner_authorization_candidate.authorization_nonce == f"owner-{nonce_hash[:40]}"
+    assert pack.activation_candidate.activation_nonce == f"activation-{nonce_hash[24:64]}"
+    assert result["pack_sha256"] == pack.canonical_pack_hash
+    assert result["provider_http_calls"] == 0
+    assert result["real_secret_reads"] == 0
+    assert result["real_capture_calls"] == 0
 
 
 def test_owner_review_pack_rejects_network_claim_bound_to_another_campaign(
