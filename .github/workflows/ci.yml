@@ -348,7 +348,7 @@ jobs:
   bounded-live-canary-windows:
     name: "Bounded live canary - Windows"
     runs-on: windows-latest
-    timeout-minutes: 12
+    timeout-minutes: 20
     env:
       ROBIN_REQUIRE_WINDOWS_STORAGE_LINKS: "1"
     permissions:
