@@ -799,9 +799,9 @@ def test_jalon4_wall_clock_decay_fix_authority_and_succession_are_exact() -> Non
 
     graph = load_json("reports/evidence/evidence-graph.json")
     claims = {claim["claim_id"]: claim for claim in graph["claims"]}
-    assert len(graph["claims"]) == 409
-    assert len(graph["decision_nodes"]) == 167
-    assert len(graph["edges"]) == 707
+    assert len(graph["claims"]) == 416
+    assert len(graph["decision_nodes"]) == 168
+    assert len(graph["edges"]) == 714
     expected_statuses = {
         expected_proof[0]: "SUPERSEDED",
         expected_proof[1]: "SUPERSEDED",
@@ -936,9 +936,9 @@ def test_bounded_live_canary_successor_v2_authority_and_succession_are_exact() -
 
     graph = load_json("reports/evidence/evidence-graph.json")
     claims = {claim["claim_id"]: claim for claim in graph["claims"]}
-    assert len(graph["claims"]) == 409
-    assert len(graph["decision_nodes"]) == 167
-    assert len(graph["edges"]) == 707
+    assert len(graph["claims"]) == 416
+    assert len(graph["decision_nodes"]) == 168
+    assert len(graph["edges"]) == 714
     assert {claim_id: claims[claim_id]["status"] for claim_id in expected_proof} == {
         expected_proof[0]: "SUPERSEDED",
         expected_proof[1]: "SUPERSEDED",
@@ -1067,13 +1067,14 @@ def test_real_execution_bootstrap_closure_v1_authority_and_succession_are_exact(
 
     graph = load_json("reports/evidence/evidence-graph.json")
     claims = {claim["claim_id"]: claim for claim in graph["claims"]}
-    assert len(graph["claims"]) == 409
-    assert len(graph["decision_nodes"]) == 167
-    assert len(graph["edges"]) == 707
+    assert len(graph["claims"]) == 416
+    assert len(graph["decision_nodes"]) == 168
+    assert len(graph["edges"]) == 714
     assert {claim_id: claims[claim_id]["status"] for claim_id in expected_proof} == {
         expected_proof[0]: "SUPERSEDED",
         expected_proof[1]: "SUPERSEDED",
-        **{claim_id: "VERIFIED" for claim_id in expected_proof[2:9]},
+        expected_proof[2]: "SUPERSEDED",
+        **{claim_id: "VERIFIED" for claim_id in expected_proof[3:9]},
         expected_proof[9]: "SUPERSEDED",
     }
     predecessors = {
@@ -1502,9 +1503,10 @@ def test_real_execution_bootstrap_closure_v1_authority_and_succession_are_exact(
     assert accounting_context["external_effects"] == postmerge_context["external_effects"]
     assert accounting_context["provider_dns_budget"] == {"used": 0, "remaining": 1}
     assert {claim_id: claims[claim_id]["status"] for claim_id in accounting_correction_proof} == {
-        accounting_correction_proof[0]: "PARTIAL",
-        accounting_correction_proof[1]: "PARTIAL",
-        **{claim_id: "VERIFIED" for claim_id in accounting_correction_proof[2:]},
+        accounting_correction_proof[0]: "SUPERSEDED",
+        accounting_correction_proof[1]: "SUPERSEDED",
+        **{claim_id: "VERIFIED" for claim_id in accounting_correction_proof[2:8]},
+        accounting_correction_proof[8]: "SUPERSEDED",
     }
     accounting_successors = {
         postmerge_correction_proof[0]: accounting_correction_proof[0],
@@ -1532,6 +1534,447 @@ def test_real_execution_bootstrap_closure_v1_authority_and_succession_are_exact(
         f"EDGE.{number}" for number in range(699, 708)
     ]
     assert [edge["from_claim_id"] for edge in accounting_edges] == (accounting_correction_proof)
+
+
+def test_pr67_atomic_evidence_closure_is_exact_append_only_and_effect_free() -> None:
+    expected_proof = [
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.025",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.034",
+        "TEMPORAL.OWNER_REVIEW_PACK.GENERATED_AT.CANONICALIZATION.V1.001",
+        "GOV.OWNER_REVIEW_PACK.GENERATED_AT.CLI.REGRESSION.V1.001",
+        "SECURITY.OWNER_REVIEW_PACK.DATETIME_FIX.ZERO_EFFECTS.V1.001",
+        "GOV.CI.REAL_EXECUTION_BOOTSTRAP.CLOSURE.WORKFLOW.V1.002",
+        "GOV.COUNCIL.REAL_EXECUTION_BOOTSTRAP.CLOSURE.EVIDENCE.SUCCESSION.LEDGER.V1.005",
+    ]
+    expected_objections = [
+        "No historical ledger rewrite is permitted.",
+        "No silent replacement of the old workflow claim is permitted.",
+        "The four functional PR67 files must remain byte-identical.",
+        "The full local suite must pass before commit.",
+        "The next exact-head CI must complete before any Ready or merge decision.",
+        "No fourth autonomous correction is authorized after the push.",
+        "No live effect or real Owner Review Pack is authorized.",
+        "Merge remains conditional on unchanged main and clean mergeability.",
+    ]
+    ledger_path = ROOT / "reports/council/decision-ledger.jsonl"
+    ledger_bytes = ledger_path.read_bytes()
+    assert ledger_bytes.endswith(b"\n")
+    assert not ledger_bytes.startswith(b"\xef\xbb\xbf")
+    assert b"\r\n" not in ledger_bytes
+    ledger_lines = ledger_bytes.splitlines()
+    assert len(ledger_lines) == 168
+    assert all(ledger_lines)
+
+    records = [json.loads(line) for line in ledger_lines]
+    assert records[-2]["decision_id"] == "RCV3-20260822-174"
+    assert records[-2]["hash"] == (
+        "c34e27b363ab37f48f23b2b88d3de3f06dd0e2487a0315dd35e03212d8dd6a68"
+    )
+    record = records[-1]
+    assert record["decision_id"] == "RCV3-20260823-175"
+    assert record["record_type"] == "DECISION"
+    assert record["date"] == "2026-08-23T18:58:34Z"
+    assert record["decision"] == "PASS_AND_HOLD"
+    assert record["dissent"] is None
+    assert record["responsible"] == "C0"
+    assert record["previous_hash"] == records[-2]["hash"]
+    assert record["proof"] == expected_proof
+    assert record["objections"] == expected_objections
+
+    previous_hash = "0" * 64
+    for item in records:
+        assert item["previous_hash"] == previous_hash
+        canonical = json.dumps(
+            {key: value for key, value in item.items() if key != "hash"},
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+        assert hashlib.sha256(canonical).hexdigest() == item["hash"]
+        previous_hash = item["hash"]
+
+    prior_ledger = subprocess.run(
+        ["git", "show", "HEAD^:reports/council/decision-ledger.jsonl"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    assert len(prior_ledger.splitlines()) == 167
+    assert ledger_bytes.startswith(prior_ledger)
+    assert ledger_bytes[len(prior_ledger) :] == ledger_lines[-1] + b"\n"
+
+    context = record["context"]
+    assert context["candidate_context"] is True
+    assert context["commit_context"] is False
+    assert context["mission_id"] == "REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1"
+    assert context["phase"] == (
+        "OWNER_REVIEW_PACK_PR67_ATOMIC_CLOSURE_PRECOMMIT_EVIDENCE_SUCCESSION"
+    )
+    assert context["branch"] == "fix/owner-review-pack-generated-utc-v1"
+    assert context["base_revision"] == "ccf9670a2734d80760160360589180806d9ec7d3"
+    assert context["candidate_parent_sha"] == "d77741a09d2eab8a593cdac85ef7235fc8b17345"
+    assert context["pr"] == 67
+    assert context["writer"] == "C0"
+    assert context["files"] == [
+        "reports/evidence/evidence-graph.json",
+        "reports/council/decision-ledger.jsonl",
+        "tests/council/test_robin_council_os_v3.py",
+    ]
+    assert context["pull_request_files"] == [
+        ".github/workflows/ci.yml",
+        "reports/council/decision-ledger.jsonl",
+        "reports/evidence/evidence-graph.json",
+        "tests/capture/test_live_canary_successor_v2.py",
+        "tests/council/test_robin_council_os_v3.py",
+        "tests/portability/test_chronos_portable_ci_contract.py",
+        "tools/data-sourcing/build_owner_review_pack_v1.py",
+    ]
+    assert context["scope"] == {
+        "closure_changed_paths": 3,
+        "pull_request_changed_paths": 7,
+        "frozen_existing_paths": 4,
+        "outside_authority": [],
+    }
+    assert context["closure_manifest"] == {
+        "name": "pr67-atomic-closure-manifest.json",
+        "location": "OUTSIDE_REPOSITORY_TEMPORARY",
+        "closure_complete": True,
+        "out_of_scope_dependencies": [],
+        "tracked_files_to_modify": [
+            "reports/evidence/evidence-graph.json",
+            "reports/council/decision-ledger.jsonl",
+            "tests/council/test_robin_council_os_v3.py",
+        ],
+    }
+    assert context["final_artifact_hashes"] == {
+        "algorithm": "CANONICAL_GIT_LF_SHA256",
+        "builder_sha256": ("1e4028d049db3d88ccf90ef6079bc3ad7f1efa6e1417b89c9c70bbbdad188a19"),
+        "successor_test_sha256": (
+            "82239742b4be228b8b0e72e1cf9d52ca50d4c34dcedc7bcf81068513ad67c2e2"
+        ),
+        "workflow_sha256": ("9e42262917dc1fc84acebedaacefe79fb233231aa3ff91baf6f4fee829f8c61d"),
+        "portability_test_sha256": (
+            "4643c0e1639d289d8bd71543d14abfbc63a8a3b69fc64cc496b1d3b3cf07732f"
+        ),
+        "council_test_sha256": artifact_sha256(ROOT / "tests/council/test_robin_council_os_v3.py"),
+        "matrix_sha256": ("6777e609247356a9e93fb089a928d25f28c5ba7f9d3fb39a199130d6e866f5ef"),
+        "previous_ledger_sha256": (
+            "7f58c7bcfcdb2002ba2e760332a3421d6b33ab2561a2fad5c8c20c08cfe01962"
+        ),
+        "final_ledger_sha256_bound_by_claim": expected_proof[6],
+    }
+
+    diagnosed_ci = context["diagnosed_ci"]
+    assert diagnosed_ci["run_32652510629"] == {
+        "event": "pull_request",
+        "attempt": 1,
+        "head_sha": "b4b1311e1b405bfce7f7f36145898ca2fc9a9d9e",
+        "status": "completed",
+        "conclusion": "cancelled",
+        "windows_job_id": 97226193916,
+        "windows_pytest": "404 passed in 519.88s",
+        "classification": "FUNCTIONAL_SUCCESS_TIMEOUT_CANCELLATION",
+    }
+    second_run = diagnosed_ci["run_32654888150"]
+    assert second_run["event"] == "pull_request"
+    assert second_run["attempt"] == 1
+    assert second_run["head_sha"] == "d77741a09d2eab8a593cdac85ef7235fc8b17345"
+    assert second_run["status"] == "completed"
+    assert second_run["conclusion"] == "failure"
+    assert second_run["windows_proof"] == {
+        "job_id": 97231980852,
+        "result": "success",
+        "pytest": "404 passed in 410.60s",
+    }
+    assert second_run["common_root_cause"] == (
+        "STALE_ACTIVE_EVIDENCE_CLAIM_AFTER_AUTHORIZED_WORKFLOW_CHANGE"
+    )
+    assert second_run["failed_job_surfaces"] == [
+        {
+            "job_id": 97233562427,
+            "name": "Chronos PostgreSQL profiles / tests (superuser)",
+            "classification": "COMMON_ROOT_CAUSE_SURFACE",
+        },
+        {
+            "job_id": 97233562449,
+            "name": "Chronos PostgreSQL profiles / tests (non_superuser_createrole)",
+            "classification": "COMMON_ROOT_CAUSE_SURFACE",
+        },
+        {
+            "job_id": 97235987262,
+            "name": "tests",
+            "classification": "FAIL_CLOSED_PREREQUISITE_PROPAGATION",
+        },
+    ]
+    assert second_run["independent_root_cause_count"] == 1
+
+    assert context["reviews"] == {
+        reviewer: {
+            "verdict": "ACCEPT",
+            "p0": 0,
+            "p1": 0,
+            "p2": 0,
+            "open_threads": 0,
+            "confidence": 0.99,
+        }
+        for reviewer in ("DP6", "C4", "C2")
+    }
+    assert context["prewrite_tests"] == {
+        "red_evidence_graph": "EXPECTED_FAILURE_CONFIRMED_F6F76A_VS_9E4226",
+        "owner_pack_regression": "PASS",
+        "windows_portability_contract": "PASS",
+    }
+    expected_test_commands = [
+        (
+            "targeted_evidence_graph",
+            "python -m pytest -q -p no:cacheprovider "
+            "tests/council/test_robin_council_os_v3.py::"
+            "test_evidence_graph_and_append_only_ledger_have_mandatory_fields",
+        ),
+        (
+            "new_atomic_closure_test",
+            "python -m pytest -q -p no:cacheprovider "
+            "tests/council/test_robin_council_os_v3.py::"
+            "test_pr67_atomic_evidence_closure_is_exact_append_only_and_effect_free",
+        ),
+        (
+            "full_council",
+            "python -m pytest -q -p no:cacheprovider tests/council/test_robin_council_os_v3.py",
+        ),
+        (
+            "bootstrap_governance",
+            "python -m pytest -q -p no:cacheprovider "
+            "tests/council/test_real_execution_bootstrap_governance.py",
+        ),
+        (
+            "portability",
+            "python -m pytest -q -p no:cacheprovider "
+            "tests/portability/test_chronos_portable_ci_contract.py",
+        ),
+        (
+            "owner_pack_regression",
+            "python -m pytest -q -p no:cacheprovider "
+            "tests/capture/test_live_canary_successor_v2.py::"
+            "test_owner_review_pack_cli_canonicalizes_generated_at_for_nonce",
+        ),
+        (
+            "full_successor",
+            "python -m pytest -q -p no:cacheprovider "
+            "tests/capture/test_live_canary_successor_v2.py",
+        ),
+        (
+            "full_capture",
+            "python -m pytest -q -p no:cacheprovider tests/capture",
+        ),
+        (
+            "workflow_contract",
+            "python -m pytest -q -p no:cacheprovider "
+            "tests/jalon10/test_workflows_and_guards.py "
+            "tests/portability/test_chronos_portable_ci_contract.py",
+        ),
+        (
+            "full_local_suite",
+            "python -m pytest -q -p no:cacheprovider",
+        ),
+    ]
+    assert context["final_precommit_tests"] == [
+        {
+            "name": name,
+            "command": command,
+            "result": "PASS",
+            "observation_gate": "MUST_BE_OBSERVED_BEFORE_COMMIT",
+        }
+        for name, command in expected_test_commands
+    ]
+    assert context["final_static_validations"] == [
+        {"name": name, "result": "PASS", "observation_gate": "MUST_BE_OBSERVED_BEFORE_COMMIT"}
+        for name in (
+            "JSON_VALIDATION",
+            "LEDGER_CHAIN",
+            "ACTIVE_CLAIM_VALIDATOR",
+            "RUFF_CHECK",
+            "RUFF_FORMAT_CHECK",
+            "COMPILEALL",
+            "SECRET_SCAN",
+            "ABSOLUTE_PATH_SCAN",
+            "DIFF_CHECK",
+            "LEDGER_FORMAT",
+        )
+    ]
+    assert context["defects"] == {
+        "open_p0": 0,
+        "open_p1": 0,
+        "open_p2": 0,
+        "open_critical_threads": 0,
+        "active_claim_hash_mismatches_before": 1,
+        "active_claim_hash_mismatches_after": 0,
+        "broken_successions_after": 0,
+        "broken_ledger_links_after": 0,
+    }
+    assert context["external_effects"] == {
+        "official_schedule_reads": 0,
+        "campaign_selections": 0,
+        "real_dns": 0,
+        "provider_tcp": 0,
+        "provider_http": 0,
+        "real_secret_reads": 0,
+        "real_owner_review_pack_builds": 0,
+        "real_owner_authorizations": 0,
+        "real_activations": 0,
+        "real_captures": 0,
+        "promotions": 0,
+        "bets": 0,
+    }
+    assert context["delivery_authority"] == {
+        "one_final_atomic_commit_authorized_now": True,
+        "one_final_non_force_push_authorized_now": True,
+        "automatic_exact_head_ci_required": True,
+        "ready_authorized_only_after_exact_head_ci_green": True,
+        "merge_commit_authorized_only_after_exact_head_ci_green": True,
+        "postmerge_ci_required": True,
+        "additional_corrective_commit_after_push": False,
+        "additional_corrective_push_after_push": False,
+        "force_push_authorized": False,
+        "squash_merge_authorized": False,
+        "rebase_merge_authorized": False,
+        "admin_bypass_authorized": False,
+        "branch_deletion_authorized": False,
+        "runtime_execution_authorized": False,
+    }
+    assert context["outcome_boundary"] == {
+        "engineering_closure_candidate_complete": True,
+        "fresh_owner_review_pack_mission_may_start_only_after_merge_and_postmerge_ci": True,
+        "real_owner_review_pack_claimed": False,
+        "owner_authorization_ready": False,
+    }
+
+    graph = load_json("reports/evidence/evidence-graph.json")
+    claims = {claim["claim_id"]: claim for claim in graph["claims"]}
+    assert len(graph["claims"]) == 416
+    assert len(graph["decision_nodes"]) == 168
+    assert len(graph["edges"]) == 714
+    assert [claim["claim_id"] for claim in graph["claims"][-7:]] == expected_proof
+
+    successions = {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.024": expected_proof[0],
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.033": expected_proof[1],
+        "GOV.CI.REAL_EXECUTION_BOOTSTRAP.CLOSURE.WORKFLOW.V1.001": expected_proof[5],
+        "GOV.COUNCIL.REAL_EXECUTION_BOOTSTRAP.CLOSURE.EVIDENCE.SUCCESSION.LEDGER.V1.004": (
+            expected_proof[6]
+        ),
+    }
+    for predecessor, successor in successions.items():
+        assert claims[predecessor]["status"] == "SUPERSEDED"
+        assert claims[predecessor]["superseded_by"] == successor
+        assert claims[successor]["successor_of"] == predecessor
+    assert claims["GOV.CI.REAL_EXECUTION_BOOTSTRAP.CLOSURE.WORKFLOW.V1.001"]["hash"] == (
+        "f6f76aa8ffa4631a18e8a650aa380959757bdd3d0ab02326fe79a58df865ec11"
+    )
+    assert claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.024"]["hash"] == (
+        "6777e609247356a9e93fb089a928d25f28c5ba7f9d3fb39a199130d6e866f5ef"
+    )
+    assert claims["GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.033"]["hash"] == (
+        "0e1dd8fdfda9fc3a6121765c80722d3f21e0c2e65ef167d35bd67ac4d8cd1b8d"
+    )
+    assert (
+        claims["GOV.COUNCIL.REAL_EXECUTION_BOOTSTRAP.CLOSURE.EVIDENCE.SUCCESSION.LEDGER.V1.004"][
+            "hash"
+        ]
+        == "7f58c7bcfcdb2002ba2e760332a3421d6b33ab2561a2fad5c8c20c08cfe01962"
+    )
+
+    assert {claim_id: claims[claim_id]["status"] for claim_id in expected_proof} == {
+        expected_proof[0]: "PARTIAL",
+        expected_proof[1]: "PARTIAL",
+        expected_proof[2]: "VERIFIED",
+        expected_proof[3]: "VERIFIED",
+        expected_proof[4]: "VERIFIED",
+        expected_proof[5]: "VERIFIED",
+        expected_proof[6]: "VERIFIED",
+    }
+    assert all(
+        claims[claim_id]["verified_by"] == ["C0", "C2", "C4", "DP6"] for claim_id in expected_proof
+    )
+    assert claims[expected_proof[2]]["hash"] == (
+        "1e4028d049db3d88ccf90ef6079bc3ad7f1efa6e1417b89c9c70bbbdad188a19"
+    )
+    assert claims[expected_proof[3]]["hash"] == (
+        "82239742b4be228b8b0e72e1cf9d52ca50d4c34dcedc7bcf81068513ad67c2e2"
+    )
+    assert claims[expected_proof[4]]["hash"] == claims[expected_proof[3]]["hash"]
+    assert "without timespec" in claims[expected_proof[2]]["source"]
+    assert "synthetic pack" in claims[expected_proof[4]]["source"]
+    assert "static DP6 and C4 path review" in claims[expected_proof[4]]["source"]
+
+    active_workflow_claims = [
+        claim
+        for claim in graph["claims"]
+        if claim["artifact"] == ".github/workflows/ci.yml"
+        and claim["status"] not in {"SUPERSEDED", "INVALIDATED"}
+    ]
+    assert [(claim["claim_id"], claim["hash"]) for claim in active_workflow_claims] == [
+        (
+            "GOV.CI.REAL_EXECUTION_BOOTSTRAP.CLOSURE.WORKFLOW.V1.002",
+            "9e42262917dc1fc84acebedaacefe79fb233231aa3ff91baf6f4fee829f8c61d",
+        )
+    ]
+    assert claims[expected_proof[1]]["hash"] == artifact_sha256(
+        ROOT / "tests/council/test_robin_council_os_v3.py"
+    )
+    assert claims[expected_proof[6]]["hash"] == artifact_sha256(ledger_path)
+
+    frozen_blobs = {
+        "tools/data-sourcing/build_owner_review_pack_v1.py": (
+            "ab723b8c5d7e289e54815904531e7e432eb5c1a0"
+        ),
+        "tests/capture/test_live_canary_successor_v2.py": (
+            "44040eba18de4b0a42f64b84ad003c822befb4c7"
+        ),
+        ".github/workflows/ci.yml": "b7b6f910c02eddebe52488b43914492a4075c3a1",
+        "tests/portability/test_chronos_portable_ci_contract.py": (
+            "6d5efa5a5472b12c58cbc16f2ad2123a58b808eb"
+        ),
+    }
+    assert {path: _git(ROOT, "rev-parse", f"HEAD:{path}") for path in frozen_blobs} == frozen_blobs
+    assert {
+        path: artifact_sha256(ROOT / path)
+        for path in (
+            "tools/data-sourcing/build_owner_review_pack_v1.py",
+            "tests/capture/test_live_canary_successor_v2.py",
+            ".github/workflows/ci.yml",
+            "tests/portability/test_chronos_portable_ci_contract.py",
+        )
+    } == {
+        "tools/data-sourcing/build_owner_review_pack_v1.py": (
+            "1e4028d049db3d88ccf90ef6079bc3ad7f1efa6e1417b89c9c70bbbdad188a19"
+        ),
+        "tests/capture/test_live_canary_successor_v2.py": (
+            "82239742b4be228b8b0e72e1cf9d52ca50d4c34dcedc7bcf81068513ad67c2e2"
+        ),
+        ".github/workflows/ci.yml": (
+            "9e42262917dc1fc84acebedaacefe79fb233231aa3ff91baf6f4fee829f8c61d"
+        ),
+        "tests/portability/test_chronos_portable_ci_contract.py": (
+            "4643c0e1639d289d8bd71543d14abfbc63a8a3b69fc64cc496b1d3b3cf07732f"
+        ),
+    }
+
+    expected_edges = [
+        {
+            "edge_id": f"EDGE.{number}",
+            "from_claim_id": claim_id,
+            "to_decision_id": "RCV3-20260823-175",
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        }
+        for number, claim_id in zip(range(708, 715), expected_proof, strict=True)
+    ]
+    assert graph["edges"][-8]["edge_id"] == "EDGE.707"
+    assert graph["edges"][-7:] == expected_edges
+    assert graph["decision_nodes"][-1] == {
+        "decision_id": "RCV3-20260823-175",
+        "ledger_record_hash": record["hash"],
+    }
 
 
 def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it() -> None:

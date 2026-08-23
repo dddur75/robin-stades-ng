@@ -85,7 +85,7 @@ def test_bounded_live_canary_windows_job_proves_storage_link_semantics() -> None
     job = jobs["bounded-live-canary-windows"]  # type: ignore[index]
 
     assert job["runs-on"] == "windows-latest"
-    assert job["timeout-minutes"] == 12
+    assert job["timeout-minutes"] == 20
     assert job["permissions"] == {"contents": "read"}
     assert job["env"] == {"ROBIN_REQUIRE_WINDOWS_STORAGE_LINKS": "1"}
     assert all(
