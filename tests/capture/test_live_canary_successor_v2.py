@@ -743,6 +743,73 @@ def _campaign_selection_material(
     }
 
 
+def _build_rollover_selection(
+    workspace: RealCaptureWorkspaceReceiptV1,
+    manifest: RealExecutionMissionManifestV1,
+) -> CampaignWindowSelectionV1:
+    selected_at = BASE - timedelta(seconds=90)
+    observed_at = BASE - timedelta(seconds=170)
+    source_created_at = BASE - timedelta(seconds=160)
+    target_sets: list[FixtureTargetSetV1] = []
+    for league_index, sport_key in enumerate(LIVE_ALLOWED_SPORT_KEYS):
+        kickoffs = (
+            (
+                selected_at - timedelta(seconds=30),
+                BASE + timedelta(hours=2, minutes=10),
+                BASE + timedelta(hours=2, minutes=10),
+            )
+            if league_index == 0
+            else (BASE + timedelta(hours=5, minutes=league_index),)
+        )
+        targets = tuple(
+            OfficialFixtureTargetV1.issue(
+                internal_fixture_target_id=f"rollover-{league_index}-{target_index}",
+                competition=f"Rollover Competition {league_index}",
+                sport_key=sport_key,
+                official_home_team=f"Rollover Home {league_index} {target_index}",
+                official_away_team=f"Rollover Away {league_index} {target_index}",
+                official_kickoff_utc=kickoff,
+                official_source_authority="https://official.example/rollover",
+                source_observed_at_utc=observed_at,
+                source_evidence_sha256=f"{league_index + 1}" * 64,
+            )
+            for target_index, kickoff in enumerate(kickoffs)
+        )
+        target_sets.append(
+            FixtureTargetSetV1.issue(
+                target_set_id=f"rollover-source-{league_index}",
+                sport_key=sport_key,
+                workspace_receipt_sha256=workspace.canonical_receipt_hash,
+                created_at_utc=source_created_at,
+                official_schedule_horizon_not_before_utc=selected_at - timedelta(minutes=5),
+                official_schedule_horizon_expires_at_utc=BASE + timedelta(days=1),
+                official_schedule_fixture_count=len(targets),
+                official_schedule_completeness="OWNER_REVIEWED_COMPLETE_OFFICIAL_HORIZON",
+                targets=targets,
+            )
+        )
+    corpus = ScientificCorpusSnapshotV1.issue(
+        observed_at_utc=selected_at,
+        source_evidence_sha256="f" * 64,
+        league_counts=tuple(
+            CampaignLeagueCorpusCountV1(
+                sport_key=sport_key,
+                admitted_fixture_count=0,
+            )
+            for sport_key in LIVE_ALLOWED_SPORT_KEYS
+        ),
+    )
+    return CampaignWindowSelectionV1.issue(
+        selected_at_utc=selected_at,
+        workspace_receipt_sha256=workspace.canonical_receipt_hash,
+        workspace_prepared_at_utc=workspace.prepared_at_utc,
+        mission_manifest_sha256=manifest.canonical_manifest_sha256(),
+        mission_expires_at_utc=manifest.expires_at,
+        source_target_sets=tuple(target_sets),
+        corpus_snapshot=corpus,
+    )
+
+
 def test_campaign_selection_derives_complete_statuses_and_unique_ranked_winner(
     tmp_path: Path,
 ) -> None:
@@ -762,6 +829,127 @@ def test_campaign_selection_derives_complete_statuses_and_unique_ranked_winner(
     assert sum(item.status == "FUTURE_NOT_OPEN" for item in selection.candidates) == 0
     assert sum(item.status == "OPEN_SELECTABLE" for item in selection.candidates) == 5
     assert len(selection.candidates) == 15
+
+
+def test_campaign_selection_rolls_past_kickoff_without_backdating_or_candidate_loss(
+    tmp_path: Path,
+) -> None:
+    bundle = build_bundle(tmp_path)
+    selection = _build_rollover_selection(bundle.workspace, bundle.mission_manifest)
+    repeated = _build_rollover_selection(bundle.workspace, bundle.mission_manifest)
+    source_created_by_hash = {
+        source.canonical_set_hash: source.created_at_utc for source in selection.source_target_sets
+    }
+    past_candidates = tuple(
+        candidate for candidate in selection.candidates if "rollover-0-0" in candidate.target_ids
+    )
+    future_candidates = tuple(
+        candidate for candidate in selection.candidates if "rollover-0-1" in candidate.target_ids
+    )
+    assert past_candidates
+    assert all(candidate.status == "MISSED_NOT_BACKDATED" for candidate in past_candidates)
+    assert any(
+        candidate.status in {"OPEN_SELECTABLE", "FUTURE_NOT_OPEN"}
+        for candidate in future_candidates
+    )
+    assert selection.selected_candidate().status in {"OPEN_SELECTABLE", "FUTURE_NOT_OPEN"}
+    assert selection.canonical_selection_hash == repeated.canonical_selection_hash
+    assert all(
+        candidate.fixture_target_set.created_at_utc
+        == source_created_by_hash[candidate.source_target_set_sha256]
+        for candidate in selection.candidates
+    )
+    assert all(
+        candidate.fixture_target_set.created_at_utc < candidate.evaluated_at_utc
+        for candidate in selection.candidates
+    )
+
+
+def test_campaign_selector_cli_survives_rollover_with_zero_provider_effects(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    bundle = build_bundle(tmp_path)
+    expected = _build_rollover_selection(bundle.workspace, bundle.mission_manifest)
+    control_root = Path(bundle.workspace.control_temp_root)
+    control_root.mkdir()
+    workspace_path = control_root / "workspace.json"
+    manifest_path = control_root / "mission.json"
+    corpus_path = control_root / "corpus.json"
+    output_path = control_root / "selection.json"
+    workspace_path.write_bytes(
+        canonical_json_bytes(bundle.workspace.model_dump(mode="json")) + b"\n"
+    )
+    manifest_path.write_bytes(
+        canonical_json_bytes(bundle.mission_manifest.model_dump(mode="json")) + b"\n"
+    )
+    corpus_path.write_bytes(
+        canonical_json_bytes(
+            {
+                "schema_version": "robin-owner-observed-scientific-corpus-v1",
+                "observed_at_utc": expected.corpus_snapshot.observed_at_utc.isoformat().replace(
+                    "+00:00", "Z"
+                ),
+                "admitted_fixture_counts": {
+                    item.sport_key: item.admitted_fixture_count
+                    for item in expected.corpus_snapshot.league_counts
+                },
+            }
+        )
+        + b"\n"
+    )
+    target_paths: list[Path] = []
+    for index, target_set in enumerate(expected.source_target_sets):
+        path = control_root / f"target-set-{index}.json"
+        path.write_bytes(canonical_json_bytes(target_set.model_dump(mode="json")) + b"\n")
+        target_paths.append(path)
+
+    script_path = Path(__file__).parents[2] / "tools/data-sourcing/select_campaign_window_v1.py"
+    spec = importlib.util.spec_from_file_location("selector_rollover_cli_under_test", script_path)
+    assert spec is not None and spec.loader is not None
+    cli = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(cli)
+
+    class FrozenDateTime(datetime):
+        @classmethod
+        def now(cls, tz: object = None) -> datetime:
+            assert tz is UTC
+            return expected.selected_at_utc
+
+    monkeypatch.setattr(cli, "datetime", FrozenDateTime)
+    monkeypatch.setattr(cli, "assert_real_capture_workspace_receipt_current_v1", lambda _: None)
+    monkeypatch.setattr(
+        cli,
+        "load_tracked_real_execution_mission_manifest_v1",
+        lambda _root, _path: bundle.mission_manifest,
+    )
+    monkeypatch.setattr(
+        cli,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+    argv = [
+        str(script_path),
+        "--workspace-receipt",
+        str(workspace_path),
+        "--mission-manifest",
+        str(manifest_path),
+    ]
+    for path in target_paths:
+        argv.extend(("--fixture-target-set", str(path)))
+    argv.extend(("--corpus-evidence", str(corpus_path), "--output", str(output_path)))
+    monkeypatch.setattr(sys, "argv", argv)
+
+    exit_code = cli.main()
+    result = json.loads(capsys.readouterr().out)
+    observed = CampaignWindowSelectionV1.model_validate(json.loads(output_path.read_bytes()))
+    assert exit_code == 0
+    assert result["candidate_status_counts"]["MISSED_NOT_BACKDATED"] > 0
+    assert observed.selected_candidate().status in {"OPEN_SELECTABLE", "FUTURE_NOT_OPEN"}
+    assert result["provider_http_requests"] == 0
+    assert result["provider_tcp_connections"] == 0
+    assert result["provider_secret_reads"] == 0
 
 
 def test_campaign_selection_rejects_omitted_candidate_and_schedule_or_corpus_tamper(

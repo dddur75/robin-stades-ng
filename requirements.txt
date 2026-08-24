@@ -6,6 +6,7 @@ numpy>=1.26
 requests>=2.31
 scikit-learn==1.9.0
 PyYAML>=6.0
+pypdf>=6,<7
 pytest>=8.0
 pydantic>=2.9,<3
 SQLAlchemy>=2.0,<3

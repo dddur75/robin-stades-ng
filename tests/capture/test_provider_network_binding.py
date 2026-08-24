@@ -73,6 +73,25 @@ def binding(*addresses: str, ttl: int = 600) -> ProviderNetworkBindingV1:
     )
 
 
+def test_capture_network_guard_blocks_provider_hostname_before_os_network(
+    capture_network_guard: Any,
+) -> None:
+    with capture_network_guard.expect_forbidden():
+        with pytest.raises(AssertionError, match="^TEST_REAL_NETWORK_FORBIDDEN$"):
+            socket.getaddrinfo("api.the-odds-api.com", 443)
+    with capture_network_guard.expect_forbidden():
+        with pytest.raises(AssertionError, match="^TEST_REAL_NETWORK_FORBIDDEN$"):
+            socket.create_connection(("api.the-odds-api.com", 443))
+    guarded_socket = socket.socket()
+    with capture_network_guard.expect_forbidden():
+        with pytest.raises(AssertionError, match="^TEST_REAL_NETWORK_FORBIDDEN$"):
+            guarded_socket.connect(("api.the-odds-api.com", 443))
+    with capture_network_guard.expect_forbidden():
+        with pytest.raises(AssertionError, match="^TEST_REAL_NETWORK_FORBIDDEN$"):
+            guarded_socket.connect_ex(("api.the-odds-api.com", 443))
+    assert capture_network_guard.attempts == capture_network_guard.expected_attempts == 4
+
+
 def request(network_binding: ProviderNetworkBindingV1) -> PublicProviderRequestV2:
     spec = ProviderRequestSpec(
         sport_key="soccer_epl",

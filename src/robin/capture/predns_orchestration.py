@@ -1,0 +1,2563 @@
+"""Reversible PRE-DNS convergence and atomic one-shot DNS-to-pack execution."""
+
+from __future__ import annotations
+
+import ctypes
+import hashlib
+import json
+import os
+import stat
+import time
+from collections.abc import Callable, Iterable, Mapping
+from dataclasses import dataclass
+from datetime import UTC, datetime, timedelta
+from pathlib import Path
+from typing import Literal, Protocol, TypeAlias, cast
+from urllib.parse import urlparse
+from zoneinfo import ZoneInfo
+
+from pydantic import BaseModel
+
+from robin.capture.bootstrap_contracts import (
+    CampaignLeagueCorpusCountV1,
+    CampaignWindowSelectionV1,
+    FixtureTargetSetV1,
+    OfficialFixtureTargetV1,
+    OwnerReviewPackV1,
+    ProviderNetworkBindingV1,
+    ProviderNetworkResolutionClaimV1,
+    RealCaptureWorkspaceReceiptV1,
+    RealExecutionMissionManifestV1,
+    ScientificCorpusSnapshotV1,
+    canonical_team_name_v1,
+)
+from robin.capture.contracts import (
+    canonical_json_bytes,
+    canonical_sha256,
+    strict_json_loads,
+    strict_json_object,
+)
+from robin.capture.live_contracts import LIVE_ALLOWED_SPORT_KEYS
+from robin.capture.official_schedule_sources import (
+    LALIGA_PUBLIC_MATCHES_JSON_V1,
+    MAXIMUM_SOURCE_AGE,
+    OfficialFetchReceipt,
+    OfficialFetchResult,
+    OfficialScheduleEvidence,
+    OfficialScheduleFetcher,
+    OfficialScheduleSourceError,
+    OfficialSourcePlan,
+    OfficialSourceSpec,
+    PdfTextExtractor,
+    RedirectHop,
+    SupportingOfficialRead,
+    _extract_laliga_public_subscription,
+    build_official_schedule_evidence,
+    fetch_official_schedule_source,
+    load_official_source_plan_bytes,
+    reconcile_official_schedule_evidence,
+)
+from robin.capture.owner_review_pack import (
+    assert_owner_review_pack_completion_current_v1,
+    build_owner_review_pack_v1,
+    write_owner_review_pack_v1,
+)
+from robin.capture.provider_network import (
+    ResolverV1,
+    prepare_provider_network_binding_once_v1,
+)
+from robin.capture.storage import (
+    CaptureStorageError,
+    validate_exclusive_local_directory_identity,
+)
+from robin.capture.workspace_bootstrap import (
+    WindowsBoundaryInspector,
+    assert_real_capture_workspace_receipt_current_v1,
+)
+
+PRE_DNS_BUNDLE_SCHEMA = "robin-pre-dns-owner-pack-inputs-v1"
+PRE_DNS_ITERATION_LEDGER_SCHEMA = "robin-pre-dns-iteration-ledger-v1"
+ATOMIC_RUNNER_RECEIPT_SCHEMA = "robin-atomic-dns-owner-pack-runner-receipt-v1"
+MAXIMUM_BUNDLE_ARTIFACT_BYTES = 16_777_216
+MINIMUM_READY_MARGIN_SECONDS = 840
+SAFETY_CUTOFF_SECONDS = 300
+MAXIMUM_FREEZE_TO_SELECTOR_SECONDS = 30.0
+MAXIMUM_DNS_TO_PACK_START_SECONDS = 5.0
+MAXIMUM_DNS_TO_PACK_COMPLETION_SECONDS = 120.0
+OFFICIAL_SCHEDULE_HORIZON_DAYS = 8
+_CONTROL_MARKER_NAME = "provider-network-resolution-one-shot-v1.json"
+_GLOBAL_MARKER_ROOT_NAME = "RobinRealExecutionMissionClaimsV1"
+_REVIEW_NAMES = ("DP6", "C4", "C2", "A2")
+
+PreDnsStatusV1: TypeAlias = Literal[
+    "PRE_DNS_READY_NOW",
+    "PRE_DNS_FUTURE_WINDOW_PLANNED",
+    "PRE_DNS_CONVERGENCE_EXHAUSTED",
+]
+RunnerStatusV1: TypeAlias = Literal[
+    "PREFLIGHT_ACCEPT",
+    "PREFLIGHT_REJECTED",
+    "FUTURE_WINDOW_NOT_OPEN",
+    "OWNER_REVIEW_PACK_CREATED",
+    "POST_DNS_HARD_STOP",
+]
+
+
+class PreDnsOrchestrationError(RuntimeError):
+    def __init__(self, code: str) -> None:
+        self.code = code
+        super().__init__(code)
+
+
+class ClockV1(Protocol):
+    def __call__(self) -> datetime: ...
+
+
+class MonotonicV1(Protocol):
+    def __call__(self) -> float: ...
+
+
+class WorkspaceValidatorV1(Protocol):
+    def __call__(self, receipt: RealCaptureWorkspaceReceiptV1) -> None: ...
+
+
+class CorpusEvidenceReaderV1(Protocol):
+    def __call__(self) -> bytes: ...
+
+
+class MarkerInspectorV1(Protocol):
+    def __call__(
+        self,
+        workspace_receipt: RealCaptureWorkspaceReceiptV1,
+        mission_manifest: RealExecutionMissionManifestV1,
+    ) -> MarkerInspectionV1: ...
+
+
+class EvidenceBuilderV1(Protocol):
+    def __call__(
+        self,
+        source: OfficialSourceSpec,
+        fetch_result: OfficialFetchResult,
+        *,
+        horizon_not_before_utc: datetime,
+        horizon_expires_at_utc: datetime,
+        pdf_text_extractor: PdfTextExtractor | None = None,
+    ) -> OfficialScheduleEvidence: ...
+
+
+class BindingPreparerV1(Protocol):
+    def __call__(
+        self,
+        *,
+        workspace_receipt: RealCaptureWorkspaceReceiptV1,
+        mission_manifest: RealExecutionMissionManifestV1,
+        campaign_selection: CampaignWindowSelectionV1,
+        output_path: Path,
+        resolver: ResolverV1,
+        clock: Callable[[], datetime],
+        binding_ttl_seconds: int,
+    ) -> ProviderNetworkBindingV1: ...
+
+
+class PackBuilderV1(Protocol):
+    def __call__(
+        self,
+        *,
+        workspace_receipt: RealCaptureWorkspaceReceiptV1,
+        mission_manifest: RealExecutionMissionManifestV1,
+        provider_network_binding: ProviderNetworkBindingV1,
+        campaign_selection: CampaignWindowSelectionV1,
+        generated_at_utc: datetime,
+        authorization_nonce: str,
+        activation_nonce: str,
+    ) -> OwnerReviewPackV1: ...
+
+
+class PackWriterV1(Protocol):
+    def __call__(self, output_directory: Path, pack: OwnerReviewPackV1) -> dict[str, Path]: ...
+
+
+class RawEvidenceVerifierV1(Protocol):
+    def __call__(
+        self,
+        source: OfficialSourceSpec,
+        raw_payload: bytes,
+        receipt_payload: bytes,
+        evidence_payload: bytes,
+        target_set: FixtureTargetSetV1,
+        supporting_raw_payloads: tuple[bytes, ...],
+    ) -> None: ...
+
+
+@dataclass(frozen=True, slots=True)
+class PreDnsLimitsV1:
+    maximum_iterations: int = 4
+    maximum_official_reads: int = 20
+    maximum_corpus_snapshots: int = 4
+    maximum_target_set_freezes: int = 20
+    maximum_selector_invocations: int = 4
+
+    def __post_init__(self) -> None:
+        if (
+            not 1 <= self.maximum_iterations <= 4
+            or not 5 <= self.maximum_official_reads <= 20
+            or not 1 <= self.maximum_corpus_snapshots <= 4
+            or not 5 <= self.maximum_target_set_freezes <= 20
+            or not 1 <= self.maximum_selector_invocations <= 4
+        ):
+            raise ValueError("PRE_DNS_LIMITS_INVALID")
+
+
+@dataclass(frozen=True, slots=True)
+class PreDnsCountersV1:
+    iterations: int
+    official_reads: int
+    supporting_official_reads: int
+    corpus_snapshots: int
+    corpus_validations: int
+    target_set_freezes: int
+    selector_invocations: int
+
+
+@dataclass(frozen=True, slots=True)
+class HistoricalMarkerExpectationV1:
+    path: Path
+    authority_manifest_sha256: str
+    raw_sha256: str
+    acl_sha256: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class MarkerInspectionV1:
+    historical_marker_unchanged: bool
+    current_marker_present: bool
+    historical_raw_sha256: str | None
+    historical_acl_sha256: str | None
+    historical_marker_path: str
+    historical_authority_manifest_sha256: str
+    current_authority_manifest_sha256: str
+    current_local_marker: str
+    current_global_marker: str
+
+    def to_json(self) -> dict[str, object]:
+        return {
+            "schema_version": "robin-provider-marker-readonly-inspection-v1",
+            "historical_marker_unchanged": self.historical_marker_unchanged,
+            "current_marker_present": self.current_marker_present,
+            "historical_raw_sha256": self.historical_raw_sha256,
+            "historical_acl_sha256": self.historical_acl_sha256,
+            "historical_marker_path": self.historical_marker_path,
+            "historical_authority_manifest_sha256": (self.historical_authority_manifest_sha256),
+            "current_authority_manifest_sha256": self.current_authority_manifest_sha256,
+            "current_local_marker": self.current_local_marker,
+            "current_global_marker": self.current_global_marker,
+            "filesystem_writes": 0,
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class PreDnsResultV1:
+    status: PreDnsStatusV1
+    selection: CampaignWindowSelectionV1 | None
+    bundle_directory: Path | None
+    bundle_manifest_sha256: str | None
+    recommended_refresh_utc: datetime | None
+    recommended_refresh_europe_paris: str | None
+    counters: PreDnsCountersV1
+    iteration_codes: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class LoadedPreDnsBundleV1:
+    directory: Path
+    manifest: Mapping[str, object]
+    manifest_sha256: str
+    workspace_receipt: RealCaptureWorkspaceReceiptV1
+    mission_manifest: RealExecutionMissionManifestV1
+    source_plan: OfficialSourcePlan
+    campaign_selection: CampaignWindowSelectionV1
+    target_sets: tuple[FixtureTargetSetV1, ...]
+    marker_inspection: MarkerInspectionV1
+
+
+@dataclass(frozen=True, slots=True)
+class RunnerPreflightV1:
+    accepted: bool
+    status: RunnerStatusV1
+    errors: tuple[str, ...]
+    checked_at_utc: datetime
+    usable_margin_seconds: int
+    provider_dns: Literal[0] = 0
+    provider_tcp: Literal[0] = 0
+    provider_http: Literal[0] = 0
+    secret_reads: Literal[0] = 0
+
+
+@dataclass(frozen=True, slots=True)
+class AtomicRunnerResultV1:
+    status: RunnerStatusV1
+    preflight: RunnerPreflightV1
+    resolver_operations: int
+    pack_builds: int
+    binding_sha256: str | None
+    pack_sha256: str | None
+    receipt_path: Path | None
+    hard_stop_code: str | None
+
+
+def _utc(value: datetime, *, code: str) -> datetime:
+    if value.tzinfo is None or value.utcoffset() is None:
+        raise PreDnsOrchestrationError(code)
+    return value.astimezone(UTC)
+
+
+def _utc_text(value: datetime) -> str:
+    return _utc(value, code="PRE_DNS_DATETIME_INVALID").isoformat().replace("+00:00", "Z")
+
+
+def _json_bytes(value: object) -> bytes:
+    return (
+        json.dumps(
+            value,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+        + b"\n"
+    )
+
+
+def _sha256(payload: bytes) -> str:
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _assert_plain_directory(path: Path) -> Path:
+    absolute = path.absolute()
+    try:
+        facts = os.lstat(absolute)
+    except OSError:
+        raise PreDnsOrchestrationError("PRE_DNS_OUTPUT_PARENT_INVALID") from None
+    if not stat.S_ISDIR(facts.st_mode) or stat.S_ISLNK(facts.st_mode):
+        raise PreDnsOrchestrationError("PRE_DNS_OUTPUT_PARENT_INVALID")
+    try:
+        return validate_exclusive_local_directory_identity(absolute)
+    except CaptureStorageError:
+        raise PreDnsOrchestrationError("PRE_DNS_OUTPUT_PARENT_INVALID") from None
+
+
+def _safe_name(name: str) -> str:
+    if (
+        not name
+        or name in {".", ".."}
+        or "/" in name
+        or "\\" in name
+        or ":" in name
+        or Path(name).name != name
+    ):
+        raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_PATH_INVALID")
+    return name
+
+
+def _read_regular_bounded(path: Path, *, maximum_bytes: int) -> bytes:
+    try:
+        before = os.lstat(path)
+        if not stat.S_ISREG(before.st_mode) or stat.S_ISLNK(before.st_mode):
+            raise OSError
+        descriptor = os.open(
+            path,
+            os.O_RDONLY
+            | getattr(os, "O_BINARY", 0)
+            | getattr(os, "O_NOINHERIT", 0)
+            | getattr(os, "O_NOFOLLOW", 0),
+        )
+        try:
+            chunks: list[bytes] = []
+            total = 0
+            while True:
+                chunk = os.read(descriptor, min(65_536, maximum_bytes + 1 - total))
+                if not chunk:
+                    break
+                chunks.append(chunk)
+                total += len(chunk)
+                if total > maximum_bytes:
+                    raise OSError
+            after = os.fstat(descriptor)
+        finally:
+            os.close(descriptor)
+        if (before.st_dev, before.st_ino, before.st_size) != (
+            after.st_dev,
+            after.st_ino,
+            after.st_size,
+        ):
+            raise OSError
+        return b"".join(chunks)
+    except OSError:
+        raise PreDnsOrchestrationError("PRE_DNS_ARTIFACT_READ_FAILED") from None
+
+
+def _write_exclusive(path: Path, payload: bytes) -> None:
+    try:
+        descriptor = os.open(
+            path,
+            os.O_WRONLY
+            | os.O_CREAT
+            | os.O_EXCL
+            | getattr(os, "O_BINARY", 0)
+            | getattr(os, "O_NOINHERIT", 0)
+            | getattr(os, "O_NOFOLLOW", 0),
+            0o600,
+        )
+        try:
+            with os.fdopen(descriptor, "wb") as stream:
+                descriptor = -1
+                stream.write(payload)
+                stream.flush()
+                os.fsync(stream.fileno())
+        finally:
+            if descriptor >= 0:
+                os.close(descriptor)
+    except OSError:
+        raise PreDnsOrchestrationError("PRE_DNS_IMMUTABLE_WRITE_FAILED") from None
+
+
+def _model_bytes(model: BaseModel) -> bytes:
+    return canonical_json_bytes(model.model_dump(mode="json")) + b"\n"
+
+
+def _local_app_data_readonly() -> Path:
+    if os.name != "nt":
+        value = os.environ.get("LOCALAPPDATA")
+        if not value:
+            raise PreDnsOrchestrationError("LOCAL_APP_DATA_UNAVAILABLE")
+        return Path(value).absolute()
+    buffer = ctypes.create_unicode_buffer(32_768)
+    result = ctypes.windll.shell32.SHGetFolderPathW(None, 0x001C, None, 0, buffer)
+    if result != 0 or not buffer.value:
+        raise PreDnsOrchestrationError("LOCAL_APP_DATA_UNAVAILABLE")
+    return Path(buffer.value).absolute()
+
+
+def inspect_provider_markers_read_only_v1(
+    workspace_receipt: RealCaptureWorkspaceReceiptV1,
+    mission_manifest: RealExecutionMissionManifestV1,
+    *,
+    historical_marker: HistoricalMarkerExpectationV1,
+) -> MarkerInspectionV1:
+    """Inspect marker facts without calling the side-effecting registry helper."""
+
+    local_marker = Path(workspace_receipt.control_temp_root) / _CONTROL_MARKER_NAME
+    registry = _local_app_data_readonly() / _GLOBAL_MARKER_ROOT_NAME
+    current_manifest_sha256 = mission_manifest.canonical_manifest_sha256()
+    global_marker = registry / (
+        f"{mission_manifest.mission_id.casefold()}-{current_manifest_sha256}.json"
+    )
+    historical_global_marker = registry / (
+        f"{mission_manifest.mission_id.casefold()}-"
+        f"{historical_marker.authority_manifest_sha256}.json"
+    )
+    current_present = os.path.lexists(local_marker) or os.path.lexists(global_marker)
+    raw_hash: str | None = None
+    acl_hash: str | None = None
+    acl_exclusive = historical_marker.acl_sha256 is None
+    unchanged = False
+    try:
+        authority_hash = historical_marker.authority_manifest_sha256
+        if (
+            len(authority_hash) != 64
+            or authority_hash != authority_hash.casefold()
+            or any(character not in "0123456789abcdef" for character in authority_hash)
+            or os.path.normcase(os.path.abspath(historical_marker.path))
+            != os.path.normcase(os.path.abspath(historical_global_marker))
+        ):
+            raise PreDnsOrchestrationError("HISTORICAL_MARKER_AUTHORITY_INVALID")
+        payload = _read_regular_bounded(historical_marker.path.absolute(), maximum_bytes=1_048_576)
+        resolution_claim = ProviderNetworkResolutionClaimV1.model_validate_json(payload)
+        raw_hash = _sha256(payload)
+        if os.name == "nt" and historical_marker.acl_sha256 is not None:
+            acl_hash, acl_exclusive = WindowsBoundaryInspector()._security_facts(
+                historical_marker.path.absolute()
+            )
+        unchanged = (
+            resolution_claim.mission_manifest_sha256 == authority_hash
+            and raw_hash == historical_marker.raw_sha256
+            and (
+                historical_marker.acl_sha256 is None
+                or (acl_hash == historical_marker.acl_sha256 and acl_exclusive)
+            )
+        )
+    except (OSError, PreDnsOrchestrationError, ValueError):
+        unchanged = False
+    return MarkerInspectionV1(
+        historical_marker_unchanged=unchanged,
+        current_marker_present=current_present,
+        historical_raw_sha256=raw_hash,
+        historical_acl_sha256=acl_hash,
+        historical_marker_path=str(historical_marker.path.absolute()),
+        historical_authority_manifest_sha256=(historical_marker.authority_manifest_sha256),
+        current_authority_manifest_sha256=current_manifest_sha256,
+        current_local_marker=str(local_marker),
+        current_global_marker=str(global_marker),
+    )
+
+
+def load_scientific_corpus_evidence_v1(
+    payload: bytes,
+    *,
+    workspace_receipt: RealCaptureWorkspaceReceiptV1,
+    evaluated_at_utc: datetime,
+) -> ScientificCorpusSnapshotV1:
+    if len(payload) > 4_194_304:
+        raise PreDnsOrchestrationError("CAMPAIGN_CORPUS_EVIDENCE_INVALID")
+    try:
+        evidence = strict_json_object(payload)
+    except (TypeError, ValueError):
+        raise PreDnsOrchestrationError("CAMPAIGN_CORPUS_EVIDENCE_INVALID") from None
+    if (
+        set(evidence)
+        != {
+            "schema_version",
+            "observed_at_utc",
+            "admitted_fixture_counts",
+        }
+        or evidence.get("schema_version") != "robin-owner-observed-scientific-corpus-v1"
+    ):
+        raise PreDnsOrchestrationError("CAMPAIGN_CORPUS_EVIDENCE_INVALID")
+    raw_counts = evidence.get("admitted_fixture_counts")
+    raw_observed = evidence.get("observed_at_utc")
+    if not isinstance(raw_counts, dict) or set(raw_counts) != set(LIVE_ALLOWED_SPORT_KEYS):
+        raise PreDnsOrchestrationError("CAMPAIGN_CORPUS_COUNTS_INVALID")
+    if any(
+        isinstance(value, bool) or not isinstance(value, int) or value < 0
+        for value in raw_counts.values()
+    ):
+        raise PreDnsOrchestrationError("CAMPAIGN_CORPUS_COUNTS_INVALID")
+    if not isinstance(raw_observed, str):
+        raise PreDnsOrchestrationError("CAMPAIGN_CORPUS_OBSERVED_AT_INVALID")
+    try:
+        observed = datetime.fromisoformat(raw_observed.replace("Z", "+00:00"))
+    except ValueError:
+        raise PreDnsOrchestrationError("CAMPAIGN_CORPUS_OBSERVED_AT_INVALID") from None
+    evaluated = _utc(evaluated_at_utc, code="CAMPAIGN_CORPUS_OBSERVED_AT_INVALID")
+    observed = _utc(observed, code="CAMPAIGN_CORPUS_OBSERVED_AT_INVALID")
+    if (
+        observed < workspace_receipt.prepared_at_utc
+        or observed > evaluated
+        or evaluated - observed > MAXIMUM_SOURCE_AGE
+    ):
+        raise PreDnsOrchestrationError("CAMPAIGN_CORPUS_NOT_CURRENT")
+    return ScientificCorpusSnapshotV1.issue(
+        observed_at_utc=observed,
+        source_evidence_sha256=_sha256(payload),
+        league_counts=tuple(
+            CampaignLeagueCorpusCountV1(
+                sport_key=sport_key,
+                admitted_fixture_count=cast(int, raw_counts[sport_key]),
+            )
+            for sport_key in LIVE_ALLOWED_SPORT_KEYS
+        ),
+    )
+
+
+def freeze_official_schedule_evidence_v1(
+    evidence: OfficialScheduleEvidence,
+    *,
+    workspace_receipt: RealCaptureWorkspaceReceiptV1,
+    created_at_utc: datetime,
+) -> FixtureTargetSetV1:
+    created = _utc(created_at_utc, code="OFFICIAL_SCHEDULE_FREEZE_TIME_INVALID")
+    evidence_bytes = _json_bytes(evidence.to_json())
+    targets = tuple(
+        OfficialFixtureTargetV1.issue(
+            internal_fixture_target_id=cast(
+                str,
+                raw["internal_fixture_target_id"],
+            ),
+            competition=cast(str, raw["competition"]),
+            sport_key=evidence.sport_key,
+            official_home_team=cast(str, raw["official_home_team"]),
+            official_away_team=cast(str, raw["official_away_team"]),
+            official_kickoff_utc=datetime.fromisoformat(
+                cast(str, raw["official_kickoff_utc"]).replace("Z", "+00:00")
+            ),
+            official_source_authority=evidence.source_authority,
+            source_observed_at_utc=evidence.source_observed_at_utc,
+            source_evidence_sha256=_sha256(evidence_bytes),
+        )
+        for raw in cast(list[dict[str, object]], evidence.to_json()["fixtures"])
+    )
+    return FixtureTargetSetV1.issue(
+        target_set_id=cast(str, evidence.to_json()["target_set_id"]),
+        sport_key=evidence.sport_key,
+        workspace_receipt_sha256=workspace_receipt.canonical_receipt_hash,
+        created_at_utc=created,
+        official_schedule_horizon_not_before_utc=evidence.horizon_not_before_utc,
+        official_schedule_horizon_expires_at_utc=evidence.horizon_expires_at_utc,
+        official_schedule_fixture_count=len(targets),
+        official_schedule_completeness="OWNER_REVIEWED_COMPLETE_OFFICIAL_HORIZON",
+        targets=targets,
+    )
+
+
+def _marker_from_json(value: object) -> MarkerInspectionV1:
+    if not isinstance(value, dict):
+        raise PreDnsOrchestrationError("PRE_DNS_MARKER_INSPECTION_INVALID")
+    required = {
+        "historical_marker_unchanged",
+        "current_marker_present",
+        "historical_raw_sha256",
+        "historical_acl_sha256",
+        "historical_marker_path",
+        "historical_authority_manifest_sha256",
+        "current_authority_manifest_sha256",
+        "current_local_marker",
+        "current_global_marker",
+    }
+    if not required <= set(value):
+        raise PreDnsOrchestrationError("PRE_DNS_MARKER_INSPECTION_INVALID")
+    return MarkerInspectionV1(
+        historical_marker_unchanged=value["historical_marker_unchanged"] is True,
+        current_marker_present=value["current_marker_present"] is True,
+        historical_raw_sha256=(
+            value["historical_raw_sha256"]
+            if isinstance(value["historical_raw_sha256"], str)
+            else None
+        ),
+        historical_acl_sha256=(
+            value["historical_acl_sha256"]
+            if isinstance(value["historical_acl_sha256"], str)
+            else None
+        ),
+        historical_marker_path=cast(str, value["historical_marker_path"]),
+        historical_authority_manifest_sha256=cast(
+            str, value["historical_authority_manifest_sha256"]
+        ),
+        current_authority_manifest_sha256=cast(str, value["current_authority_manifest_sha256"]),
+        current_local_marker=cast(str, value["current_local_marker"]),
+        current_global_marker=cast(str, value["current_global_marker"]),
+    )
+
+
+def _validate_review_bytes(name: str, payload: bytes) -> Mapping[str, object]:
+    try:
+        review = strict_json_object(payload)
+    except (TypeError, ValueError):
+        raise PreDnsOrchestrationError("PRE_DNS_REVIEW_INVALID") from None
+    if (
+        review.get("reviewer") != name
+        or review.get("verdict") != "ACCEPT"
+        or review.get("p0") != 0
+        or review.get("p1") != 0
+        or review.get("p2") != 0
+        or review.get("open_threads") != 0
+    ):
+        raise PreDnsOrchestrationError("PRE_DNS_REVIEW_NOT_ACCEPTED")
+    return review
+
+
+def _parse_redirect_hops(value: object) -> tuple[RedirectHop, ...]:
+    if not isinstance(value, list):
+        raise PreDnsOrchestrationError("OFFICIAL_FETCH_RECEIPT_INVALID")
+    hops: list[RedirectHop] = []
+    for item in value:
+        if not isinstance(item, dict) or set(item) != {
+            "requested_url",
+            "status_code",
+            "location",
+        }:
+            raise PreDnsOrchestrationError("OFFICIAL_FETCH_RECEIPT_INVALID")
+        requested_url = item.get("requested_url")
+        status_code = item.get("status_code")
+        location = item.get("location")
+        if (
+            not isinstance(requested_url, str)
+            or isinstance(status_code, bool)
+            or not isinstance(status_code, int)
+            or not isinstance(location, str)
+        ):
+            raise PreDnsOrchestrationError("OFFICIAL_FETCH_RECEIPT_INVALID")
+        hops.append(RedirectHop(requested_url, status_code, location))
+    return tuple(hops)
+
+
+def _parse_fetch_receipt(payload: bytes) -> OfficialFetchReceipt:
+    try:
+        value = strict_json_object(payload)
+    except (TypeError, ValueError):
+        raise PreDnsOrchestrationError("OFFICIAL_FETCH_RECEIPT_INVALID") from None
+    required = {
+        "schema_version",
+        "sport_key",
+        "adapter_revision",
+        "requested_url",
+        "final_url",
+        "official_domain",
+        "observed_at_utc",
+        "http_status",
+        "content_type",
+        "byte_count",
+        "raw_sha256",
+        "redirect_chain",
+        "accepted",
+        "rejection_code",
+        "supporting_official_reads",
+    }
+    if set(value) != required or value.get("schema_version") != (
+        "robin-official-schedule-fetch-receipt-v1"
+    ):
+        raise PreDnsOrchestrationError("OFFICIAL_FETCH_RECEIPT_INVALID")
+    supporting_value = value.get("supporting_official_reads")
+    if not isinstance(supporting_value, list):
+        raise PreDnsOrchestrationError("OFFICIAL_FETCH_RECEIPT_INVALID")
+    supporting: list[SupportingOfficialRead] = []
+    for item in supporting_value:
+        if not isinstance(item, dict) or set(item) != {
+            "requested_url",
+            "final_url",
+            "official_domain",
+            "status_code",
+            "content_type",
+            "byte_count",
+            "raw_sha256",
+            "redirect_chain",
+        }:
+            raise PreDnsOrchestrationError("OFFICIAL_FETCH_RECEIPT_INVALID")
+        try:
+            supporting.append(
+                SupportingOfficialRead(
+                    requested_url=cast(str, item["requested_url"]),
+                    final_url=cast(str, item["final_url"]),
+                    official_domain=cast(str, item["official_domain"]),
+                    status_code=cast(int, item["status_code"]),
+                    content_type=cast(str, item["content_type"]),
+                    byte_count=cast(int, item["byte_count"]),
+                    raw_sha256=cast(str, item["raw_sha256"]),
+                    redirect_chain=_parse_redirect_hops(item["redirect_chain"]),
+                )
+            )
+        except (KeyError, TypeError, ValueError):
+            raise PreDnsOrchestrationError("OFFICIAL_FETCH_RECEIPT_INVALID") from None
+    try:
+        observed_raw = value["observed_at_utc"]
+        if not isinstance(observed_raw, str):
+            raise ValueError
+        return OfficialFetchReceipt(
+            sport_key=cast(str, value["sport_key"]),
+            adapter_revision=cast(str, value["adapter_revision"]),
+            requested_url=cast(str, value["requested_url"]),
+            final_url=cast(str, value["final_url"]),
+            official_domain=cast(str, value["official_domain"]),
+            observed_at_utc=datetime.fromisoformat(observed_raw.replace("Z", "+00:00")),
+            http_status=cast(int, value["http_status"]),
+            content_type=cast(str, value["content_type"]),
+            byte_count=cast(int, value["byte_count"]),
+            raw_sha256=cast(str, value["raw_sha256"]),
+            redirect_chain=_parse_redirect_hops(value["redirect_chain"]),
+            accepted=cast(bool, value["accepted"]),
+            rejection_code=cast(str | None, value["rejection_code"]),
+            supporting_official_reads=tuple(supporting),
+        )
+    except (KeyError, TypeError, ValueError):
+        raise PreDnsOrchestrationError("OFFICIAL_FETCH_RECEIPT_INVALID") from None
+
+
+def verify_raw_official_evidence_v1(
+    source: OfficialSourceSpec,
+    raw_payload: bytes,
+    receipt_payload: bytes,
+    evidence_payload: bytes,
+    target_set: FixtureTargetSetV1,
+    supporting_raw_payloads: tuple[bytes, ...],
+) -> None:
+    receipt = _parse_fetch_receipt(receipt_payload)
+    try:
+        if source.adapter == LALIGA_PUBLIC_MATCHES_JSON_V1:
+            if len(supporting_raw_payloads) != 1:
+                raise OfficialScheduleSourceError("OFFICIAL_SUPPORTING_READ_INVALID")
+            _extract_laliga_public_subscription(supporting_raw_payloads[0])
+        elif supporting_raw_payloads:
+            raise OfficialScheduleSourceError("OFFICIAL_SUPPORTING_READ_INVALID")
+    except OfficialScheduleSourceError as error:
+        raise PreDnsOrchestrationError(error.code) from None
+    starts = target_set.official_schedule_horizon_not_before_utc
+    expires = target_set.official_schedule_horizon_expires_at_utc
+    if starts is None or expires is None:
+        raise PreDnsOrchestrationError("OFFICIAL_SCHEDULE_HORIZON_INVALID")
+    try:
+        rebuilt = build_official_schedule_evidence(
+            source,
+            OfficialFetchResult(
+                raw_bytes=raw_payload,
+                receipt=receipt,
+                supporting_official_raw_bytes=supporting_raw_payloads,
+            ),
+            horizon_not_before_utc=starts,
+            horizon_expires_at_utc=expires,
+        )
+    except (OfficialScheduleSourceError, TypeError, ValueError) as error:
+        raise PreDnsOrchestrationError(
+            getattr(error, "code", "OFFICIAL_SCHEDULE_REPARSE_FAILED")
+        ) from None
+    if _json_bytes(rebuilt.to_json()) != evidence_payload:
+        raise PreDnsOrchestrationError("OFFICIAL_SCHEDULE_REPARSE_MISMATCH")
+
+
+def _validate_workspace_default(receipt: RealCaptureWorkspaceReceiptV1) -> None:
+    assert_real_capture_workspace_receipt_current_v1(receipt)
+
+
+def _publish_pre_dns_bundle_v1(
+    *,
+    output_parent: Path,
+    status: Literal["PRE_DNS_READY_NOW", "PRE_DNS_FUTURE_WINDOW_PLANNED"],
+    published_at_utc: datetime,
+    workspace_receipt_bytes: bytes,
+    mission_manifest_bytes: bytes,
+    source_plan_bytes: bytes,
+    source_plan: OfficialSourcePlan,
+    raw_results: Mapping[str, OfficialFetchResult],
+    evidences: tuple[OfficialScheduleEvidence, ...],
+    reconciliation: Mapping[str, object],
+    target_sets: tuple[FixtureTargetSetV1, ...],
+    corpus_evidence_bytes: bytes,
+    corpus_snapshot: ScientificCorpusSnapshotV1,
+    selection: CampaignWindowSelectionV1,
+    iteration_ledger: tuple[Mapping[str, object], ...],
+    reviews: Mapping[str, bytes],
+    marker_inspection: MarkerInspectionV1,
+    counters: PreDnsCountersV1,
+) -> tuple[Path, str]:
+    parent = _assert_plain_directory(output_parent)
+    stamp = _utc_text(published_at_utc).replace("-", "").replace(":", "").replace(".", "")
+    target = parent / f"pre-dns-owner-pack-inputs-{stamp}"
+    staging = parent / f".{target.name}.staging"
+    if os.path.lexists(target) or os.path.lexists(staging):
+        raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_OUTPUT_EXISTS")
+    try:
+        os.mkdir(staging, 0o700)
+    except OSError:
+        raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_STAGING_FAILED") from None
+    artifacts: dict[str, bytes] = {
+        "source-plan.json": source_plan_bytes,
+        "workspace-receipt.json": workspace_receipt_bytes,
+        "mission-manifest.json": mission_manifest_bytes,
+        "scientific-corpus-evidence.json": corpus_evidence_bytes,
+        "scientific-corpus-snapshot.json": _model_bytes(corpus_snapshot),
+        "campaign-selection.json": _model_bytes(selection),
+        "iteration-ledger.json": _json_bytes(
+            {
+                "schema_version": PRE_DNS_ITERATION_LEDGER_SCHEMA,
+                "iterations": list(iteration_ledger),
+                "counters": {
+                    "iterations": counters.iterations,
+                    "official_reads": counters.official_reads,
+                    "supporting_official_reads": counters.supporting_official_reads,
+                    "corpus_snapshots": counters.corpus_snapshots,
+                    "corpus_validations": counters.corpus_validations,
+                    "target_set_freezes": counters.target_set_freezes,
+                    "selector_invocations": counters.selector_invocations,
+                },
+            }
+        ),
+        "provider-marker-inspection.json": _json_bytes(marker_inspection.to_json()),
+        "official-schedule-reconciliation.json": _json_bytes(reconciliation),
+    }
+    for review_name in _REVIEW_NAMES:
+        artifacts[f"review-{review_name.casefold()}.json"] = reviews[review_name]
+    evidence_by_sport = {item.sport_key: item for item in evidences}
+    target_by_sport = {item.sport_key: item for item in target_sets}
+    for sport_key in LIVE_ALLOWED_SPORT_KEYS:
+        artifacts[f"raw-{sport_key}.bin"] = raw_results[sport_key].raw_bytes
+        artifacts[f"fetch-receipt-{sport_key}.json"] = _json_bytes(
+            raw_results[sport_key].receipt.to_json()
+        )
+        artifacts[f"evidence-{sport_key}.json"] = _json_bytes(
+            evidence_by_sport[sport_key].to_json()
+        )
+        artifacts[f"target-set-{sport_key}.json"] = _model_bytes(target_by_sport[sport_key])
+        for index, supporting_raw in enumerate(
+            raw_results[sport_key].supporting_official_raw_bytes,
+            start=1,
+        ):
+            artifacts[f"raw-supporting-{sport_key}-{index:02d}.bin"] = supporting_raw
+    lowered = [name.casefold() for name in artifacts]
+    if len(lowered) != len(set(lowered)):
+        raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_CASEFOLD_COLLISION")
+    entries: dict[str, dict[str, object]] = {}
+    for name, payload in sorted(artifacts.items()):
+        _safe_name(name)
+        _write_exclusive(staging / name, payload)
+        entries[name] = {"sha256": _sha256(payload), "byte_count": len(payload)}
+    selected = selection.selected_candidate()
+    workspace_from_bytes = RealCaptureWorkspaceReceiptV1.model_validate_json(
+        workspace_receipt_bytes
+    )
+    recommended_refresh = selected.window_not_before_utc - timedelta(seconds=SAFETY_CUTOFF_SECONDS)
+    manifest_without_hash: dict[str, object] = {
+        "schema_version": PRE_DNS_BUNDLE_SCHEMA,
+        "status": status,
+        "published_at_utc": _utc_text(published_at_utc),
+        "runtime_main_sha": workspace_from_bytes.authorized_main_sha,
+        "workspace_receipt_sha256": selection.workspace_receipt_sha256,
+        "mission_manifest_sha256": selection.mission_manifest_sha256,
+        "source_plan_sha256": source_plan.canonical_sha256,
+        "campaign_selection_sha256": selection.canonical_selection_hash,
+        "selected_candidate_id": selected.candidate_id,
+        "selected_candidate_sha256": selected.canonical_candidate_hash,
+        "selected_sport_key": selected.request.sport_key,
+        "selected_window_id": selected.window_id,
+        "selected_not_before_utc": _utc_text(selected.window_not_before_utc),
+        "selected_usable_expires_at_utc": _utc_text(selected.usable_expires_at_utc),
+        "selected_earliest_kickoff_utc": _utc_text(
+            min(item.official_kickoff_utc for item in selected.fixture_target_set.targets)
+        ),
+        "recommended_refresh_utc": _utc_text(recommended_refresh),
+        "recommended_refresh_europe_paris": recommended_refresh.astimezone(
+            ZoneInfo("Europe/Paris")
+        ).isoformat(),
+        "artifacts": entries,
+        "effects": {
+            "provider_dns": 0,
+            "provider_tcp": 0,
+            "provider_http": 0,
+            "secret_reads": 0,
+            "owner_review_pack_builds": 0,
+            "owner_authorizations": 0,
+            "activations": 0,
+            "captures": 0,
+            "promotions": 0,
+            "bets": 0,
+        },
+    }
+    canonical_manifest_hash = _sha256(_json_bytes(manifest_without_hash))
+    manifest = {
+        **manifest_without_hash,
+        "canonical_bundle_manifest_sha256": canonical_manifest_hash,
+    }
+    manifest_bytes = _json_bytes(manifest)
+    _write_exclusive(staging / "bundle-manifest.json", manifest_bytes)
+    try:
+        os.rename(staging, target)
+    except OSError:
+        raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_PUBLICATION_FAILED") from None
+    return target, _sha256(manifest_bytes)
+
+
+def _expected_bundle_artifact_names() -> set[str]:
+    names = {
+        "source-plan.json",
+        "workspace-receipt.json",
+        "mission-manifest.json",
+        "scientific-corpus-evidence.json",
+        "scientific-corpus-snapshot.json",
+        "campaign-selection.json",
+        "iteration-ledger.json",
+        "provider-marker-inspection.json",
+        "official-schedule-reconciliation.json",
+        "raw-supporting-soccer_spain_la_liga-01.bin",
+        *(f"review-{name.casefold()}.json" for name in _REVIEW_NAMES),
+    }
+    for sport_key in LIVE_ALLOWED_SPORT_KEYS:
+        names.update(
+            {
+                f"raw-{sport_key}.bin",
+                f"fetch-receipt-{sport_key}.json",
+                f"evidence-{sport_key}.json",
+                f"target-set-{sport_key}.json",
+            }
+        )
+    return names
+
+
+def load_pre_dns_bundle_v1(
+    directory: Path,
+    *,
+    raw_evidence_verifier: RawEvidenceVerifierV1 = verify_raw_official_evidence_v1,
+) -> LoadedPreDnsBundleV1:
+    root = _assert_plain_directory(directory)
+    manifest_bytes = _read_regular_bounded(
+        root / "bundle-manifest.json",
+        maximum_bytes=MAXIMUM_BUNDLE_ARTIFACT_BYTES,
+    )
+    try:
+        manifest = strict_json_object(manifest_bytes)
+    except (TypeError, ValueError):
+        raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_MANIFEST_INVALID") from None
+    required = {
+        "schema_version",
+        "status",
+        "published_at_utc",
+        "runtime_main_sha",
+        "workspace_receipt_sha256",
+        "mission_manifest_sha256",
+        "source_plan_sha256",
+        "campaign_selection_sha256",
+        "selected_candidate_id",
+        "selected_candidate_sha256",
+        "selected_sport_key",
+        "selected_window_id",
+        "selected_not_before_utc",
+        "selected_usable_expires_at_utc",
+        "selected_earliest_kickoff_utc",
+        "recommended_refresh_utc",
+        "recommended_refresh_europe_paris",
+        "artifacts",
+        "effects",
+        "canonical_bundle_manifest_sha256",
+    }
+    if (
+        set(manifest) != required
+        or manifest.get("schema_version") != PRE_DNS_BUNDLE_SCHEMA
+        or manifest.get("status") not in {"PRE_DNS_READY_NOW", "PRE_DNS_FUTURE_WINDOW_PLANNED"}
+    ):
+        raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_MANIFEST_INVALID")
+    canonical_hash = manifest.get("canonical_bundle_manifest_sha256")
+    without_hash = {
+        key: value for key, value in manifest.items() if key != "canonical_bundle_manifest_sha256"
+    }
+    if canonical_hash != _sha256(_json_bytes(without_hash)):
+        raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_MANIFEST_HASH_MISMATCH")
+    raw_entries = manifest.get("artifacts")
+    if not isinstance(raw_entries, dict) or set(raw_entries) != _expected_bundle_artifact_names():
+        raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_MANIFEST_INVALID")
+    expected_names = {"bundle-manifest.json", *raw_entries.keys()}
+    observed_names = {entry.name for entry in root.iterdir()}
+    if expected_names != observed_names or len({name.casefold() for name in expected_names}) != len(
+        expected_names
+    ):
+        raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_FILE_SET_INVALID")
+    payloads: dict[str, bytes] = {}
+    for raw_name, raw_facts in raw_entries.items():
+        if not isinstance(raw_name, str) or not isinstance(raw_facts, dict):
+            raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_MANIFEST_INVALID")
+        name = _safe_name(raw_name)
+        payload = _read_regular_bounded(
+            root / name,
+            maximum_bytes=MAXIMUM_BUNDLE_ARTIFACT_BYTES,
+        )
+        if raw_facts != {"sha256": _sha256(payload), "byte_count": len(payload)}:
+            raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_ARTIFACT_HASH_MISMATCH")
+        payloads[name] = payload
+    try:
+        workspace = RealCaptureWorkspaceReceiptV1.model_validate_json(
+            payloads["workspace-receipt.json"]
+        )
+        mission = RealExecutionMissionManifestV1.model_validate_json(
+            payloads["mission-manifest.json"]
+        )
+        source_plan = load_official_source_plan_bytes(payloads["source-plan.json"])
+        selection = CampaignWindowSelectionV1.model_validate_json(
+            payloads["campaign-selection.json"]
+        )
+        target_sets = tuple(
+            FixtureTargetSetV1.model_validate_json(payloads[f"target-set-{sport_key}.json"])
+            for sport_key in LIVE_ALLOWED_SPORT_KEYS
+        )
+        marker = _marker_from_json(strict_json_loads(payloads["provider-marker-inspection.json"]))
+        corpus = ScientificCorpusSnapshotV1.model_validate_json(
+            payloads["scientific-corpus-snapshot.json"]
+        )
+        iteration_ledger = strict_json_object(payloads["iteration-ledger.json"])
+        if (
+            set(iteration_ledger) != {"schema_version", "iterations", "counters"}
+            or iteration_ledger.get("schema_version") != PRE_DNS_ITERATION_LEDGER_SCHEMA
+        ):
+            raise ValueError
+        for review_name in _REVIEW_NAMES:
+            _validate_review_bytes(
+                review_name,
+                payloads[f"review-{review_name.casefold()}.json"],
+            )
+    except (KeyError, TypeError, ValueError, OfficialScheduleSourceError):
+        raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_CONTRACT_INVALID") from None
+    if (
+        root.parent != Path(workspace.control_temp_root).absolute()
+        or not root.name.startswith("pre-dns-owner-pack-inputs-")
+        or manifest["runtime_main_sha"] != workspace.authorized_main_sha
+        or manifest["workspace_receipt_sha256"] != workspace.canonical_receipt_hash
+        or manifest["mission_manifest_sha256"] != mission.canonical_manifest_sha256()
+        or manifest["source_plan_sha256"] != source_plan.canonical_sha256
+        or manifest["campaign_selection_sha256"] != selection.canonical_selection_hash
+        or selection.source_target_sets != target_sets
+        or corpus != selection.corpus_snapshot
+        or corpus.source_evidence_sha256 != _sha256(payloads["scientific-corpus-evidence.json"])
+    ):
+        raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_AUTHORITY_MISMATCH")
+    selected = selection.selected_candidate()
+    earliest_kickoff = min(
+        target.official_kickoff_utc for target in selected.fixture_target_set.targets
+    )
+    refresh = selected.window_not_before_utc - timedelta(seconds=SAFETY_CUTOFF_SECONDS)
+    expected_effects = {
+        "provider_dns": 0,
+        "provider_tcp": 0,
+        "provider_http": 0,
+        "secret_reads": 0,
+        "owner_review_pack_builds": 0,
+        "owner_authorizations": 0,
+        "activations": 0,
+        "captures": 0,
+        "promotions": 0,
+        "bets": 0,
+    }
+    expected_status = (
+        "PRE_DNS_READY_NOW"
+        if selected.status == "OPEN_SELECTABLE"
+        else "PRE_DNS_FUTURE_WINDOW_PLANNED"
+    )
+    if (
+        manifest["status"] != expected_status
+        or manifest["selected_candidate_id"] != selected.candidate_id
+        or manifest["selected_candidate_sha256"] != selected.canonical_candidate_hash
+        or manifest["selected_sport_key"] != selected.request.sport_key
+        or manifest["selected_window_id"] != selected.window_id
+        or manifest["selected_not_before_utc"] != _utc_text(selected.window_not_before_utc)
+        or manifest["selected_usable_expires_at_utc"] != _utc_text(selected.usable_expires_at_utc)
+        or manifest["selected_earliest_kickoff_utc"] != _utc_text(earliest_kickoff)
+        or manifest["recommended_refresh_utc"] != _utc_text(refresh)
+        or manifest["recommended_refresh_europe_paris"]
+        != refresh.astimezone(ZoneInfo("Europe/Paris")).isoformat()
+        or manifest["effects"] != expected_effects
+    ):
+        raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_AUTHORITY_MISMATCH")
+    raw_iterations = iteration_ledger.get("iterations")
+    raw_counters = iteration_ledger.get("counters")
+    counter_mapping = (
+        cast(dict[str, object], raw_counters) if isinstance(raw_counters, dict) else {}
+    )
+    counter_limits = {
+        "iterations": 4,
+        "official_reads": 20,
+        "supporting_official_reads": 4,
+        "corpus_snapshots": 4,
+        "corpus_validations": 4,
+        "target_set_freezes": 20,
+        "selector_invocations": 4,
+    }
+    counters_valid = (
+        isinstance(raw_counters, dict)
+        and set(counter_mapping) == set(counter_limits)
+        and all(
+            not isinstance(counter_mapping.get(name), bool)
+            and isinstance(counter_mapping.get(name), int)
+            and 0 <= cast(int, counter_mapping.get(name)) <= limit
+            for name, limit in counter_limits.items()
+        )
+    )
+    iteration_count = cast(int, counter_mapping.get("iterations")) if counters_valid else 0
+    official_count = cast(int, counter_mapping.get("official_reads")) if counters_valid else 0
+    supporting_count = (
+        cast(int, counter_mapping.get("supporting_official_reads")) if counters_valid else 0
+    )
+    corpus_count = cast(int, counter_mapping.get("corpus_snapshots")) if counters_valid else 0
+    corpus_validation_count = (
+        cast(int, counter_mapping.get("corpus_validations")) if counters_valid else 0
+    )
+    freeze_count = cast(int, counter_mapping.get("target_set_freezes")) if counters_valid else 0
+    selector_count = cast(int, counter_mapping.get("selector_invocations")) if counters_valid else 0
+    rows_valid = isinstance(raw_iterations, list) and all(
+        isinstance(item, dict) for item in raw_iterations
+    )
+    if rows_valid:
+        rows = cast(list[dict[str, object]], raw_iterations)
+        allowed_row_keys = {
+            "iteration",
+            "started_at_utc",
+            "result",
+            "code",
+            "provider_dns",
+            "official_reads_after",
+            "selection_sha256",
+            "usable_margin_seconds",
+        }
+        rows_valid = all(
+            {"iteration", "started_at_utc", "result", "code", "provider_dns"} <= set(row)
+            and set(row) <= allowed_row_keys
+            and row.get("iteration") == index
+            and isinstance(row.get("started_at_utc"), str)
+            and isinstance(row.get("code"), str)
+            and row.get("provider_dns") == 0
+            and (
+                row.get("result") == "ITERATION_INVALIDATED"
+                if index < len(rows)
+                else row.get("result") == expected_status
+            )
+            for index, row in enumerate(rows, start=1)
+        )
+        if rows_valid and rows:
+            rows_valid = rows[-1].get("selection_sha256") == selection.canonical_selection_hash
+    if (
+        not isinstance(raw_iterations, list)
+        or not raw_iterations
+        or not isinstance(raw_iterations[-1], dict)
+        or raw_iterations[-1].get("result") != expected_status
+        or not counters_valid
+        or not rows_valid
+        or len(raw_iterations) != iteration_count
+        or official_count + supporting_count > 20
+        or official_count < 5
+        or supporting_count < 1
+        or corpus_validation_count > corpus_count
+        or corpus_validation_count < 2
+        or corpus_count < 2
+        or freeze_count < 5
+        or selector_count < 1
+    ):
+        raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_ITERATION_LEDGER_INVALID")
+    try:
+        if (
+            load_scientific_corpus_evidence_v1(
+                payloads["scientific-corpus-evidence.json"],
+                workspace_receipt=workspace,
+                evaluated_at_utc=selection.selected_at_utc,
+            )
+            != corpus
+        ):
+            raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_AUTHORITY_MISMATCH")
+    except PreDnsOrchestrationError:
+        raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_AUTHORITY_MISMATCH") from None
+    for sport_key, target_set in zip(LIVE_ALLOWED_SPORT_KEYS, target_sets, strict=True):
+        try:
+            receipt = strict_json_object(payloads[f"fetch-receipt-{sport_key}.json"])
+            evidence = strict_json_object(payloads[f"evidence-{sport_key}.json"])
+            parsed_receipt = _parse_fetch_receipt(payloads[f"fetch-receipt-{sport_key}.json"])
+        except (TypeError, ValueError):
+            raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_CONTRACT_INVALID") from None
+        raw_payload = payloads[f"raw-{sport_key}.bin"]
+        source = source_plan.source(sport_key)
+        supporting_raw_payloads = (
+            (payloads["raw-supporting-soccer_spain_la_liga-01.bin"],)
+            if source.adapter == LALIGA_PUBLIC_MATCHES_JSON_V1
+            else ()
+        )
+        if len(parsed_receipt.supporting_official_reads) != len(supporting_raw_payloads) or any(
+            item.byte_count != len(raw) or item.raw_sha256 != _sha256(raw)
+            for item, raw in zip(
+                parsed_receipt.supporting_official_reads,
+                supporting_raw_payloads,
+                strict=True,
+            )
+        ):
+            raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_AUTHORITY_MISMATCH")
+        raw_fixtures = evidence.get("fixtures")
+        normalized_raw_fixtures: list[dict[str, object]] = []
+        if isinstance(raw_fixtures, list):
+            for raw_fixture in raw_fixtures:
+                if not isinstance(raw_fixture, dict):
+                    break
+                home = raw_fixture.get("official_home_team")
+                away = raw_fixture.get("official_away_team")
+                if not isinstance(home, str) or not isinstance(away, str):
+                    break
+                normalized_raw_fixtures.append(
+                    {
+                        **raw_fixture,
+                        "official_home_team": canonical_team_name_v1(home),
+                        "official_away_team": canonical_team_name_v1(away),
+                    }
+                )
+        target_fixture_material = [
+            {
+                "internal_fixture_target_id": target.internal_fixture_target_id,
+                "competition": target.competition,
+                "official_home_team": target.official_home_team,
+                "official_away_team": target.official_away_team,
+                "official_kickoff_utc": _utc_text(target.official_kickoff_utc),
+            }
+            for target in target_set.targets
+        ]
+        final_url = receipt.get("final_url")
+        final_host = (
+            (urlparse(final_url).hostname or "").rstrip(".").casefold()
+            if isinstance(final_url, str)
+            else ""
+        )
+        redirect_chain = receipt.get("redirect_chain")
+        redirect_valid = isinstance(redirect_chain, list)
+        expected_url = source.url
+        if isinstance(redirect_chain, list):
+            for raw_hop in redirect_chain:
+                if not isinstance(raw_hop, dict):
+                    redirect_valid = False
+                    break
+                location = raw_hop.get("location")
+                location_host = (
+                    (urlparse(location).hostname or "").rstrip(".").casefold()
+                    if isinstance(location, str)
+                    else ""
+                )
+                if (
+                    raw_hop.get("requested_url") != expected_url
+                    or raw_hop.get("status_code") not in {301, 302, 303, 307, 308}
+                    or not any(
+                        location_host == domain or location_host.endswith(f".{domain}")
+                        for domain in source.allowed_domains
+                    )
+                ):
+                    redirect_valid = False
+                    break
+                expected_url = cast(str, location)
+        if (
+            receipt.get("sport_key") != sport_key
+            or receipt.get("adapter_revision") != source.adapter
+            or receipt.get("requested_url") != source.url
+            or receipt.get("accepted") is not True
+            or receipt.get("rejection_code") is not None
+            or receipt.get("http_status") != 200
+            or receipt.get("raw_sha256") != _sha256(raw_payload)
+            or receipt.get("byte_count") != len(raw_payload)
+            or not isinstance(receipt.get("content_type"), str)
+            or not any(
+                final_host == domain or final_host.endswith(f".{domain}")
+                for domain in source.allowed_domains
+            )
+            or not redirect_valid
+            or final_url != expected_url
+            or evidence.get("sport_key") != sport_key
+            or evidence.get("adapter_revision") != source.adapter
+            or not isinstance(evidence.get("parser_metadata"), dict)
+            or evidence.get("target_set_id") != target_set.target_set_id
+            or evidence.get("official_source_authority") != final_url
+            or evidence.get("official_source_content_sha256") != _sha256(raw_payload)
+            or evidence.get("source_observed_at_utc") != receipt.get("observed_at_utc")
+            or evidence.get("selection_horizon_not_before_utc")
+            != _utc_text(cast(datetime, target_set.official_schedule_horizon_not_before_utc))
+            or evidence.get("selection_horizon_expires_at_utc")
+            != _utc_text(cast(datetime, target_set.official_schedule_horizon_expires_at_utc))
+            or evidence.get("official_schedule_completeness")
+            != "OWNER_REVIEWED_COMPLETE_OFFICIAL_HORIZON"
+            or evidence.get("official_schedule_fixture_count") != len(target_set.targets)
+            or normalized_raw_fixtures != target_fixture_material
+            or any(
+                target.source_evidence_sha256 != _sha256(payloads[f"evidence-{sport_key}.json"])
+                or _utc_text(target.source_observed_at_utc) != receipt.get("observed_at_utc")
+                or target.official_source_authority != final_url
+                for target in target_set.targets
+            )
+        ):
+            raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_AUTHORITY_MISMATCH")
+        raw_evidence_verifier(
+            source,
+            raw_payload,
+            payloads[f"fetch-receipt-{sport_key}.json"],
+            payloads[f"evidence-{sport_key}.json"],
+            target_set,
+            supporting_raw_payloads,
+        )
+    try:
+        reconciliation = strict_json_object(payloads["official-schedule-reconciliation.json"])
+        observed_raw = reconciliation.get("observed_at_utc")
+        if not isinstance(observed_raw, str):
+            raise ValueError
+        observed = _utc(
+            datetime.fromisoformat(observed_raw.replace("Z", "+00:00")),
+            code="OFFICIAL_RECONCILIATION_TIME_INVALID",
+        )
+        evidence_documents = {
+            sport_key: strict_json_object(payloads[f"evidence-{sport_key}.json"])
+            for sport_key in LIVE_ALLOWED_SPORT_KEYS
+        }
+        source_observed_values = []
+        horizons = set()
+        for evidence in evidence_documents.values():
+            source_observed_raw = evidence.get("source_observed_at_utc")
+            horizon_starts_raw = evidence.get("selection_horizon_not_before_utc")
+            horizon_expires_raw = evidence.get("selection_horizon_expires_at_utc")
+            if not all(
+                isinstance(value, str)
+                for value in (
+                    source_observed_raw,
+                    horizon_starts_raw,
+                    horizon_expires_raw,
+                )
+            ):
+                raise ValueError
+            source_observed_values.append(
+                _utc(
+                    datetime.fromisoformat(cast(str, source_observed_raw).replace("Z", "+00:00")),
+                    code="OFFICIAL_RECONCILIATION_SOURCE_INVALID",
+                )
+            )
+            horizons.add((horizon_starts_raw, horizon_expires_raw))
+        expected_reconciliation = {
+            "schema_version": "robin-official-schedule-reconciliation-v1",
+            "observed_at_utc": _utc_text(observed),
+            "sport_keys": list(LIVE_ALLOWED_SPORT_KEYS),
+            "fixture_counts": {
+                sport_key: evidence_documents[sport_key].get("official_schedule_fixture_count")
+                for sport_key in LIVE_ALLOWED_SPORT_KEYS
+            },
+            "source_sha256": {
+                sport_key: evidence_documents[sport_key].get("official_source_content_sha256")
+                for sport_key in LIVE_ALLOWED_SPORT_KEYS
+            },
+            "adapter_revisions": {
+                sport_key: evidence_documents[sport_key].get("adapter_revision")
+                for sport_key in LIVE_ALLOWED_SPORT_KEYS
+            },
+            "complete_official_horizon": True,
+            "provider_dns": 0,
+            "provider_tcp": 0,
+            "provider_http": 0,
+            "secret_reads": 0,
+        }
+        if (
+            len(horizons) != 1
+            or any(
+                source_observed > observed or observed - source_observed > MAXIMUM_SOURCE_AGE
+                for source_observed in source_observed_values
+            )
+            or any(
+                not isinstance(value, int) or isinstance(value, bool) or value <= 0
+                for value in cast(
+                    dict[str, object], expected_reconciliation["fixture_counts"]
+                ).values()
+            )
+            or _json_bytes(expected_reconciliation)
+            != payloads["official-schedule-reconciliation.json"]
+        ):
+            raise ValueError
+    except (KeyError, TypeError, ValueError, PreDnsOrchestrationError):
+        raise PreDnsOrchestrationError("OFFICIAL_RECONCILIATION_INVALID") from None
+    return LoadedPreDnsBundleV1(
+        directory=root,
+        manifest=manifest,
+        manifest_sha256=_sha256(manifest_bytes),
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        source_plan=source_plan,
+        campaign_selection=selection,
+        target_sets=target_sets,
+        marker_inspection=marker,
+    )
+
+
+def prepare_owner_review_pack_inputs_v1(
+    *,
+    workspace_receipt: RealCaptureWorkspaceReceiptV1,
+    workspace_receipt_bytes: bytes,
+    mission_manifest: RealExecutionMissionManifestV1,
+    mission_manifest_bytes: bytes,
+    source_plan_bytes: bytes,
+    corpus_evidence_reader: CorpusEvidenceReaderV1,
+    output_parent: Path,
+    reviews: Mapping[str, bytes],
+    fetcher: OfficialScheduleFetcher,
+    marker_inspector: MarkerInspectorV1,
+    clock: ClockV1 = lambda: datetime.now(UTC),
+    monotonic: MonotonicV1 = time.monotonic,
+    workspace_validator: WorkspaceValidatorV1 = _validate_workspace_default,
+    evidence_builder: EvidenceBuilderV1 = build_official_schedule_evidence,
+    pdf_text_extractor: PdfTextExtractor | None = None,
+    limits: PreDnsLimitsV1 = PreDnsLimitsV1(),
+) -> PreDnsResultV1:
+    """Converge only reversible evidence and publish one immutable PRE-DNS bundle."""
+
+    try:
+        if (
+            RealCaptureWorkspaceReceiptV1.model_validate_json(workspace_receipt_bytes)
+            != workspace_receipt
+        ):
+            raise PreDnsOrchestrationError("PRE_DNS_WORKSPACE_RECEIPT_MISMATCH")
+        if (
+            RealExecutionMissionManifestV1.model_validate_json(mission_manifest_bytes)
+            != mission_manifest
+        ):
+            raise PreDnsOrchestrationError("PRE_DNS_MISSION_MANIFEST_MISMATCH")
+        source_plan = load_official_source_plan_bytes(source_plan_bytes)
+    except (TypeError, ValueError, OfficialScheduleSourceError):
+        raise PreDnsOrchestrationError("PRE_DNS_INPUT_AUTHORITY_INVALID") from None
+    if (
+        set(reviews) != set(_REVIEW_NAMES)
+        or any(not reviews[name] for name in _REVIEW_NAMES)
+        or not workspace_receipt.authority_eligible_for_real_execution
+        or workspace_receipt.provider_http_requests != 0
+        or workspace_receipt.provider_tcp_connections != 0
+        or workspace_receipt.provider_secret_reads != 0
+    ):
+        raise PreDnsOrchestrationError("PRE_DNS_INPUT_AUTHORITY_INVALID")
+    for review_name in _REVIEW_NAMES:
+        _validate_review_bytes(review_name, reviews[review_name])
+    try:
+        control_parent = _assert_plain_directory(Path(workspace_receipt.control_temp_root))
+        requested_parent = _assert_plain_directory(output_parent)
+    except PreDnsOrchestrationError:
+        raise PreDnsOrchestrationError("PRE_DNS_OUTPUT_PARENT_INVALID") from None
+    if requested_parent != control_parent:
+        raise PreDnsOrchestrationError("PRE_DNS_OUTPUT_OUTSIDE_CONTROL_TEMP")
+
+    iterations = 0
+    official_reads = 0
+    supporting_reads = 0
+    corpus_snapshots = 0
+    corpus_validations = 0
+    freezes = 0
+    selector_invocations = 0
+    iteration_ledger: list[Mapping[str, object]] = []
+    iteration_codes: list[str] = []
+
+    def counters() -> PreDnsCountersV1:
+        return PreDnsCountersV1(
+            iterations=iterations,
+            official_reads=official_reads,
+            supporting_official_reads=supporting_reads,
+            corpus_snapshots=corpus_snapshots,
+            corpus_validations=corpus_validations,
+            target_set_freezes=freezes,
+            selector_invocations=selector_invocations,
+        )
+
+    for iteration in range(1, limits.maximum_iterations + 1):
+        iterations += 1
+        iteration_started = _utc(clock(), code="PRE_DNS_CLOCK_INVALID")
+        if iteration_started >= mission_manifest.expires_at:
+            raise PreDnsOrchestrationError("BOOTSTRAP_MISSION_EXPIRED")
+        try:
+            workspace_validator(workspace_receipt)
+        except Exception:
+            raise PreDnsOrchestrationError("PRE_DNS_WORKSPACE_DRIFT") from None
+        marker = marker_inspector(workspace_receipt, mission_manifest)
+        if not marker.historical_marker_unchanged:
+            raise PreDnsOrchestrationError("HISTORICAL_MARKER_CHANGED")
+        if marker.current_marker_present:
+            raise PreDnsOrchestrationError("CURRENT_V2_MARKER_PRESENT")
+        next_iteration_reads = len(LIVE_ALLOWED_SPORT_KEYS) + sum(
+            source.adapter == LALIGA_PUBLIC_MATCHES_JSON_V1 for source in source_plan.sources
+        )
+        if official_reads + supporting_reads + next_iteration_reads > limits.maximum_official_reads:
+            iteration_codes.append("MAXIMUM_OFFICIAL_READS_EXHAUSTED")
+            break
+        raw_results: dict[str, OfficialFetchResult] = {}
+        evidences: list[OfficialScheduleEvidence] = []
+        reconciliation: Mapping[str, object] | None = None
+        horizon_expires = iteration_started + timedelta(days=OFFICIAL_SCHEDULE_HORIZON_DAYS)
+        if horizon_expires <= iteration_started + timedelta(minutes=15):
+            iteration_codes.append("PRE_DNS_HORIZON_TOO_SHORT")
+            break
+        try:
+            for source in source_plan.sources:
+                anticipated_supporting_reads = int(source.adapter == LALIGA_PUBLIC_MATCHES_JSON_V1)
+                anticipated_reads = 1 + anticipated_supporting_reads
+                if (
+                    official_reads + supporting_reads + anticipated_reads
+                    > limits.maximum_official_reads
+                ):
+                    raise PreDnsOrchestrationError("MAXIMUM_OFFICIAL_READS_EXHAUSTED")
+                official_reads += 1
+                supporting_reads += anticipated_supporting_reads
+                result = fetch_official_schedule_source(
+                    source,
+                    fetcher=fetcher,
+                    observed_at_utc=None,
+                    clock=clock,
+                )
+                if (
+                    len(result.receipt.supporting_official_reads) != anticipated_supporting_reads
+                    or len(result.supporting_official_raw_bytes) != anticipated_supporting_reads
+                ):
+                    raise PreDnsOrchestrationError("OFFICIAL_SUPPORTING_READ_BUDGET_INVALID")
+                raw_results[source.sport_key] = result
+                evidences.append(
+                    evidence_builder(
+                        source,
+                        result,
+                        horizon_not_before_utc=iteration_started,
+                        horizon_expires_at_utc=horizon_expires,
+                        pdf_text_extractor=pdf_text_extractor,
+                    )
+                )
+            reconciliation_at = _utc(clock(), code="PRE_DNS_CLOCK_INVALID")
+            reconciliation = reconcile_official_schedule_evidence(
+                evidences,
+                observed_at_utc=reconciliation_at,
+            )
+        except (
+            OfficialScheduleSourceError,
+            PreDnsOrchestrationError,
+            TypeError,
+            ValueError,
+        ) as error:
+            code = getattr(error, "code", "OFFICIAL_SOURCE_ITERATION_REJECTED")
+            iteration_codes.append(code)
+            iteration_ledger.append(
+                {
+                    "iteration": iteration,
+                    "started_at_utc": _utc_text(iteration_started),
+                    "result": "ITERATION_INVALIDATED",
+                    "code": code,
+                    "official_reads_after": official_reads,
+                    "provider_dns": 0,
+                }
+            )
+            continue
+        if corpus_snapshots + 2 > limits.maximum_corpus_snapshots:
+            iteration_codes.append("MAXIMUM_CORPUS_SNAPSHOTS_EXHAUSTED")
+            break
+        corpus_snapshots += 2
+        corpus_at = _utc(clock(), code="PRE_DNS_CLOCK_INVALID")
+        try:
+            corpus_payload_a = corpus_evidence_reader()
+            corpus_a = load_scientific_corpus_evidence_v1(
+                corpus_payload_a,
+                workspace_receipt=workspace_receipt,
+                evaluated_at_utc=corpus_at,
+            )
+            corpus_validations += 1
+            corpus_payload_b = corpus_evidence_reader()
+            corpus_b = load_scientific_corpus_evidence_v1(
+                corpus_payload_b,
+                workspace_receipt=workspace_receipt,
+                evaluated_at_utc=corpus_at,
+            )
+            corpus_validations += 1
+            if corpus_payload_a != corpus_payload_b or corpus_a != corpus_b:
+                raise PreDnsOrchestrationError("CAMPAIGN_CORPUS_NONDETERMINISTIC")
+        except (PreDnsOrchestrationError, TypeError, ValueError) as error:
+            code = getattr(error, "code", "CAMPAIGN_CORPUS_ITERATION_REJECTED")
+            iteration_codes.append(code)
+            iteration_ledger.append(
+                {
+                    "iteration": iteration,
+                    "started_at_utc": _utc_text(iteration_started),
+                    "result": "ITERATION_INVALIDATED",
+                    "code": code,
+                    "provider_dns": 0,
+                }
+            )
+            continue
+        cutoff_at = _utc(clock(), code="PRE_DNS_CLOCK_INVALID") + timedelta(
+            seconds=SAFETY_CUTOFF_SECONDS
+        )
+        if any(
+            fixture.kickoff_utc < cutoff_at
+            for evidence in evidences
+            for fixture in evidence.fixtures
+        ):
+            code = "ANTI_ROLLOVER_SAFETY_CUTOFF"
+            iteration_codes.append(code)
+            iteration_ledger.append(
+                {
+                    "iteration": iteration,
+                    "started_at_utc": _utc_text(iteration_started),
+                    "result": "ITERATION_INVALIDATED",
+                    "code": code,
+                    "provider_dns": 0,
+                }
+            )
+            continue
+        if freezes + len(LIVE_ALLOWED_SPORT_KEYS) > limits.maximum_target_set_freezes:
+            iteration_codes.append("MAXIMUM_TARGET_SET_FREEZES_EXHAUSTED")
+            break
+        try:
+            frozen_at = _utc(clock(), code="PRE_DNS_CLOCK_INVALID")
+            frozen_sets: list[FixtureTargetSetV1] = []
+            for evidence in evidences:
+                freezes += 1
+                frozen_sets.append(
+                    freeze_official_schedule_evidence_v1(
+                        evidence,
+                        workspace_receipt=workspace_receipt,
+                        created_at_utc=frozen_at,
+                    )
+                )
+            target_sets = tuple(frozen_sets)
+        except (TypeError, ValueError, PreDnsOrchestrationError) as error:
+            code = getattr(error, "code", "OFFICIAL_TARGET_FREEZE_REJECTED")
+            iteration_codes.append(code)
+            iteration_ledger.append(
+                {
+                    "iteration": iteration,
+                    "started_at_utc": _utc_text(iteration_started),
+                    "result": "ITERATION_INVALIDATED",
+                    "code": code,
+                    "provider_dns": 0,
+                }
+            )
+            continue
+        freeze_completed_monotonic = monotonic()
+        selector_started_monotonic = monotonic()
+        selected_at = _utc(clock(), code="PRE_DNS_CLOCK_INVALID")
+        if (
+            selector_started_monotonic - freeze_completed_monotonic
+            > MAXIMUM_FREEZE_TO_SELECTOR_SECONDS
+            or any(
+                target.official_kickoff_utc < selected_at + timedelta(seconds=SAFETY_CUTOFF_SECONDS)
+                for target_set in target_sets
+                for target in target_set.targets
+            )
+        ):
+            code = "ITERATION_INVALIDATED"
+            iteration_codes.append(code)
+            iteration_ledger.append(
+                {
+                    "iteration": iteration,
+                    "started_at_utc": _utc_text(iteration_started),
+                    "result": "ITERATION_INVALIDATED",
+                    "code": code,
+                    "provider_dns": 0,
+                }
+            )
+            continue
+        if selector_invocations + 1 > limits.maximum_selector_invocations:
+            iteration_codes.append("MAXIMUM_SELECTOR_INVOCATIONS_EXHAUSTED")
+            break
+        selector_invocations += 1
+        try:
+            selection = CampaignWindowSelectionV1.issue(
+                selected_at_utc=selected_at,
+                workspace_receipt_sha256=workspace_receipt.canonical_receipt_hash,
+                workspace_prepared_at_utc=workspace_receipt.prepared_at_utc,
+                mission_manifest_sha256=mission_manifest.canonical_manifest_sha256(),
+                mission_expires_at_utc=mission_manifest.expires_at,
+                source_target_sets=target_sets,
+                corpus_snapshot=corpus_a,
+            )
+        except (TypeError, ValueError) as error:
+            code = "CAMPAIGN_SELECTION_ITERATION_REJECTED"
+            iteration_codes.append(code)
+            iteration_ledger.append(
+                {
+                    "iteration": iteration,
+                    "started_at_utc": _utc_text(iteration_started),
+                    "result": "ITERATION_INVALIDATED",
+                    "code": f"{code}:{error}",
+                    "provider_dns": 0,
+                }
+            )
+            continue
+        selected = selection.selected_candidate()
+        earliest_kickoff = min(
+            target.official_kickoff_utc for target in selected.fixture_target_set.targets
+        )
+        usable_ceiling = min(
+            mission_manifest.expires_at,
+            selected.usable_expires_at_utc,
+            earliest_kickoff - timedelta(seconds=SAFETY_CUTOFF_SECONDS),
+        )
+        ready_margin = int((usable_ceiling - selected_at).total_seconds())
+        if selected.status == "OPEN_SELECTABLE" and ready_margin < MINIMUM_READY_MARGIN_SECONDS:
+            code = "PRE_DNS_OPEN_MARGIN_INSUFFICIENT"
+            iteration_codes.append(code)
+            iteration_ledger.append(
+                {
+                    "iteration": iteration,
+                    "started_at_utc": _utc_text(iteration_started),
+                    "result": "ITERATION_INVALIDATED",
+                    "code": code,
+                    "usable_margin_seconds": ready_margin,
+                    "provider_dns": 0,
+                }
+            )
+            continue
+        status: Literal["PRE_DNS_READY_NOW", "PRE_DNS_FUTURE_WINDOW_PLANNED"] = (
+            "PRE_DNS_READY_NOW"
+            if selected.status == "OPEN_SELECTABLE"
+            else "PRE_DNS_FUTURE_WINDOW_PLANNED"
+        )
+        if selected.status not in {"OPEN_SELECTABLE", "FUTURE_NOT_OPEN"}:
+            code = "CAMPAIGN_SELECTION_NOT_ELIGIBLE"
+            iteration_codes.append(code)
+            iteration_ledger.append(
+                {
+                    "iteration": iteration,
+                    "started_at_utc": _utc_text(iteration_started),
+                    "result": "ITERATION_INVALIDATED",
+                    "code": code,
+                    "provider_dns": 0,
+                }
+            )
+            continue
+        if selector_invocations + 1 > limits.maximum_selector_invocations:
+            iteration_codes.append("MAXIMUM_SELECTOR_INVOCATIONS_EXHAUSTED")
+            break
+        published_at = _utc(clock(), code="PRE_DNS_CLOCK_INVALID")
+        selector_invocations += 1
+        try:
+            if published_at < selected_at:
+                raise ValueError("PRE_DNS_PUBLICATION_CLOCK_REGRESSED")
+            publication_selection = CampaignWindowSelectionV1.issue(
+                selected_at_utc=published_at,
+                workspace_receipt_sha256=workspace_receipt.canonical_receipt_hash,
+                workspace_prepared_at_utc=workspace_receipt.prepared_at_utc,
+                mission_manifest_sha256=mission_manifest.canonical_manifest_sha256(),
+                mission_expires_at_utc=mission_manifest.expires_at,
+                source_target_sets=target_sets,
+                corpus_snapshot=corpus_a,
+            )
+            publication_selected = publication_selection.selected_candidate()
+            publication_status: Literal["PRE_DNS_READY_NOW", "PRE_DNS_FUTURE_WINDOW_PLANNED"] = (
+                "PRE_DNS_READY_NOW"
+                if publication_selected.status == "OPEN_SELECTABLE"
+                else "PRE_DNS_FUTURE_WINDOW_PLANNED"
+            )
+            if (
+                publication_selected.status not in {"OPEN_SELECTABLE", "FUTURE_NOT_OPEN"}
+                or publication_selected.stable_group_hash != selected.stable_group_hash
+                or publication_status != status
+            ):
+                raise ValueError("PRE_DNS_PUBLICATION_SELECTION_CHANGED")
+            publication_earliest_kickoff = min(
+                target.official_kickoff_utc
+                for target in publication_selected.fixture_target_set.targets
+            )
+            publication_usable_ceiling = min(
+                mission_manifest.expires_at,
+                publication_selected.usable_expires_at_utc,
+                publication_earliest_kickoff - timedelta(seconds=SAFETY_CUTOFF_SECONDS),
+            )
+            ready_margin = int((publication_usable_ceiling - published_at).total_seconds())
+            refresh = publication_selected.window_not_before_utc - timedelta(
+                seconds=SAFETY_CUTOFF_SECONDS
+            )
+            if publication_status == "PRE_DNS_READY_NOW":
+                publication_selection.assert_selected_candidate_current(published_at)
+                if ready_margin < MINIMUM_READY_MARGIN_SECONDS:
+                    raise ValueError("PRE_DNS_OPEN_MARGIN_INSUFFICIENT")
+            elif published_at >= refresh:
+                raise ValueError("PRE_DNS_FUTURE_REFRESH_DUE")
+        except (TypeError, ValueError) as error:
+            code = str(error) or "PRE_DNS_PUBLICATION_REVALIDATION_FAILED"
+            iteration_codes.append(code)
+            iteration_ledger.append(
+                {
+                    "iteration": iteration,
+                    "started_at_utc": _utc_text(iteration_started),
+                    "result": "ITERATION_INVALIDATED",
+                    "code": code,
+                    "provider_dns": 0,
+                }
+            )
+            continue
+        selection = publication_selection
+        selected = publication_selected
+        status = publication_status
+        iteration_ledger.append(
+            {
+                "iteration": iteration,
+                "started_at_utc": _utc_text(iteration_started),
+                "result": status,
+                "code": status,
+                "selection_sha256": selection.canonical_selection_hash,
+                "usable_margin_seconds": ready_margin,
+                "provider_dns": 0,
+            }
+        )
+        if reconciliation is None:
+            raise PreDnsOrchestrationError("OFFICIAL_RECONCILIATION_MISSING")
+        bundle_directory, bundle_hash = _publish_pre_dns_bundle_v1(
+            output_parent=output_parent,
+            status=status,
+            published_at_utc=published_at,
+            workspace_receipt_bytes=workspace_receipt_bytes,
+            mission_manifest_bytes=mission_manifest_bytes,
+            source_plan_bytes=source_plan_bytes,
+            source_plan=source_plan,
+            raw_results=raw_results,
+            evidences=tuple(evidences),
+            reconciliation=reconciliation,
+            target_sets=target_sets,
+            corpus_evidence_bytes=corpus_payload_a,
+            corpus_snapshot=corpus_a,
+            selection=selection,
+            iteration_ledger=tuple(iteration_ledger),
+            reviews=reviews,
+            marker_inspection=marker,
+            counters=counters(),
+        )
+        return PreDnsResultV1(
+            status=status,
+            selection=selection,
+            bundle_directory=bundle_directory,
+            bundle_manifest_sha256=bundle_hash,
+            recommended_refresh_utc=refresh,
+            recommended_refresh_europe_paris=refresh.astimezone(
+                ZoneInfo("Europe/Paris")
+            ).isoformat(),
+            counters=counters(),
+            iteration_codes=tuple(iteration_codes),
+        )
+    return PreDnsResultV1(
+        status="PRE_DNS_CONVERGENCE_EXHAUSTED",
+        selection=None,
+        bundle_directory=None,
+        bundle_manifest_sha256=None,
+        recommended_refresh_utc=None,
+        recommended_refresh_europe_paris=None,
+        counters=counters(),
+        iteration_codes=tuple(iteration_codes),
+    )
+
+
+def _owner_pack_artifacts(pack: OwnerReviewPackV1) -> dict[str, tuple[BaseModel, str]]:
+    return {
+        "owner_review_pack": (pack, pack.canonical_pack_hash),
+        "owner_authorization_candidate": (
+            pack.owner_authorization_candidate,
+            pack.owner_authorization_candidate.canonical_authorization_hash,
+        ),
+        "activation_candidate": (
+            pack.activation_candidate,
+            pack.activation_candidate.canonical_activation_hash,
+        ),
+        "plan_candidate": (pack.plan_candidate, pack.plan_candidate.canonical_plan_hash),
+        "plan_item_candidate": (
+            pack.plan_item_candidate,
+            pack.plan_item_candidate.canonical_item_hash,
+        ),
+        "campaign_selection": (
+            pack.campaign_selection,
+            pack.campaign_selection.canonical_selection_hash,
+        ),
+        "fixture_target_set": (
+            pack.fixture_target_set,
+            pack.fixture_target_set.canonical_set_hash,
+        ),
+        "provider_network_binding": (
+            pack.provider_network_binding,
+            pack.provider_network_binding.canonical_binding_hash,
+        ),
+        "mission_manifest": (pack.mission_manifest, pack.mission_manifest_sha256),
+        "workspace_receipt": (
+            pack.workspace_receipt,
+            pack.workspace_receipt.canonical_receipt_hash,
+        ),
+        "request": (pack.request, pack.request_fingerprint_sha256),
+    }
+
+
+def verify_owner_review_pack_artifacts_v1(
+    directory: Path,
+    pack: OwnerReviewPackV1,
+    paths: Mapping[str, Path],
+) -> None:
+    root = _assert_plain_directory(directory)
+    artifacts = _owner_pack_artifacts(pack)
+    expected_names = {
+        f"{label.replace('_', '-')}-{digest}.json" for label, (_, digest) in artifacts.items()
+    }
+    if set(paths) != set(artifacts) or {entry.name for entry in root.iterdir()} != expected_names:
+        raise PreDnsOrchestrationError("OWNER_REVIEW_PACK_ARTIFACT_SET_INVALID")
+    for label, (artifact, digest) in artifacts.items():
+        expected = root / f"{label.replace('_', '-')}-{digest}.json"
+        if paths[label].absolute() != expected:
+            raise PreDnsOrchestrationError("OWNER_REVIEW_PACK_ARTIFACT_PATH_INVALID")
+        payload = _read_regular_bounded(expected, maximum_bytes=MAXIMUM_BUNDLE_ARTIFACT_BYTES)
+        if payload != _model_bytes(artifact):
+            raise PreDnsOrchestrationError("OWNER_REVIEW_PACK_ARTIFACT_CANONICAL_MISMATCH")
+    generated_text = _utc_text(pack.generated_at_utc)
+    nonce_hash = canonical_sha256(
+        {
+            "workspace": pack.workspace_receipt.canonical_receipt_hash,
+            "binding": pack.provider_network_binding.canonical_binding_hash,
+            "targets": pack.fixture_target_set.canonical_set_hash,
+            "campaign_selection": pack.campaign_selection.canonical_selection_hash,
+            "request": canonical_sha256(pack.request.fingerprint_material()),
+            "generated_at": generated_text,
+        }
+    )
+    if (
+        pack.owner_authorization_candidate.authorization_nonce != f"owner-{nonce_hash[:40]}"
+        or pack.activation_candidate.activation_nonce != f"activation-{nonce_hash[24:64]}"
+        or pack.expected_owner_authorization_sha256
+        != pack.owner_authorization_candidate.expected_promoted_authorization_hash()
+    ):
+        raise PreDnsOrchestrationError("OWNER_REVIEW_PACK_NONCE_RECOMPUTATION_FAILED")
+
+
+def preflight_owner_review_pack_once_v1(
+    *,
+    bundle_directory: Path,
+    workspace_receipt: RealCaptureWorkspaceReceiptV1,
+    mission_manifest: RealExecutionMissionManifestV1,
+    output_binding_path: Path,
+    output_pack_directory: Path,
+    marker_inspector: MarkerInspectorV1,
+    owner_present_for_review: bool,
+    execute: bool,
+    binding_ttl_seconds: int = 900,
+    clock: ClockV1 = lambda: datetime.now(UTC),
+    workspace_validator: WorkspaceValidatorV1 = _validate_workspace_default,
+    raw_evidence_verifier: RawEvidenceVerifierV1 = verify_raw_official_evidence_v1,
+) -> tuple[RunnerPreflightV1, LoadedPreDnsBundleV1 | None]:
+    checked = _utc(clock(), code="ATOMIC_RUNNER_CLOCK_INVALID")
+    errors: list[str] = []
+    loaded: LoadedPreDnsBundleV1 | None = None
+    observed_marker: MarkerInspectionV1 | None = None
+    try:
+        loaded = load_pre_dns_bundle_v1(
+            bundle_directory,
+            raw_evidence_verifier=raw_evidence_verifier,
+        )
+    except PreDnsOrchestrationError as error:
+        errors.append(error.code)
+    if checked >= mission_manifest.expires_at:
+        errors.append("BOOTSTRAP_MISSION_EXPIRED")
+    try:
+        workspace_validator(workspace_receipt)
+    except Exception:
+        errors.append("WORKSPACE_DRIFT")
+    try:
+        observed_marker = marker_inspector(workspace_receipt, mission_manifest)
+        if not observed_marker.historical_marker_unchanged:
+            errors.append("HISTORICAL_MARKER_CHANGED")
+        if observed_marker.current_marker_present:
+            errors.append("CURRENT_V2_MARKER_PRESENT")
+    except Exception:
+        errors.append("PROVIDER_MARKER_INSPECTION_FAILED")
+    if loaded is not None:
+        if observed_marker is None or observed_marker != loaded.marker_inspection:
+            errors.append("PROVIDER_MARKER_AUTHORITY_MISMATCH")
+        if loaded.workspace_receipt != workspace_receipt:
+            errors.append("WORKSPACE_RECEIPT_BUNDLE_MISMATCH")
+        if loaded.mission_manifest != mission_manifest:
+            errors.append("MISSION_MANIFEST_BUNDLE_MISMATCH")
+        selection = loaded.campaign_selection
+        try:
+            selection.assert_selected_candidate_current(checked)
+        except ValueError as error:
+            code = str(error)
+            errors.append(
+                "FUTURE_WINDOW_NOT_OPEN" if "NOT_OPEN" in code else "CAMPAIGN_SELECTION_NOT_CURRENT"
+            )
+        selected = selection.selected_candidate()
+        usable_margin = int((selected.usable_expires_at_utc - checked).total_seconds())
+        if usable_margin < MINIMUM_READY_MARGIN_SECONDS:
+            errors.append("OWNER_REVIEW_USABLE_MARGIN_INSUFFICIENT")
+    else:
+        usable_margin = 0
+    if os.path.lexists(output_binding_path):
+        errors.append("PROVIDER_NETWORK_BINDING_OUTPUT_EXISTS")
+    if os.path.lexists(output_pack_directory):
+        errors.append("OWNER_REVIEW_PACK_OUTPUT_EXISTS")
+    try:
+        binding_parent = _assert_plain_directory(output_binding_path.absolute().parent)
+        pack_parent = _assert_plain_directory(output_pack_directory.absolute().parent)
+        control_parent = _assert_plain_directory(Path(workspace_receipt.control_temp_root))
+        _safe_name(output_binding_path.name)
+        _safe_name(output_pack_directory.name)
+        if binding_parent != pack_parent or pack_parent != control_parent:
+            errors.append("ATOMIC_RUNNER_OUTPUT_PARENT_MISMATCH")
+        success_receipt = _runner_receipt_path(output_pack_directory, hard_stop=False)
+        hard_stop_receipt = _runner_receipt_path(output_pack_directory, hard_stop=True)
+        resolution_marker = Path(workspace_receipt.control_temp_root) / _CONTROL_MARKER_NAME
+        output_identities = {
+            os.path.normcase(os.path.abspath(path))
+            for path in (
+                output_binding_path,
+                output_pack_directory,
+                hard_stop_receipt,
+                resolution_marker,
+            )
+        }
+        staging_prefix = f".{output_pack_directory.name}.staging-".casefold()
+        if len(output_identities) != 4 or output_binding_path.name.casefold().startswith(
+            staging_prefix
+        ):
+            errors.append("ATOMIC_RUNNER_OUTPUT_ALIAS")
+        if os.path.lexists(success_receipt) or os.path.lexists(hard_stop_receipt):
+            errors.append("ATOMIC_RUNNER_RECEIPT_OUTPUT_EXISTS")
+        staging_prefixes = (
+            staging_prefix,
+            f".{output_pack_directory.name}.execution-receipt.staging-".casefold(),
+        )
+        if any(
+            entry.name.casefold().startswith(staging_prefixes) for entry in pack_parent.iterdir()
+        ):
+            errors.append("OWNER_REVIEW_PACK_STAGING_EXISTS")
+    except PreDnsOrchestrationError:
+        errors.append("ATOMIC_RUNNER_OUTPUT_BOUNDARY_INVALID")
+    if execute and not owner_present_for_review:
+        errors.append("OWNER_PRESENCE_REQUIRED")
+    if (
+        type(binding_ttl_seconds) is not int
+        or not MINIMUM_READY_MARGIN_SECONDS <= binding_ttl_seconds <= 900
+    ):
+        errors.append("PROVIDER_NETWORK_BINDING_TTL_INSUFFICIENT")
+    future = "FUTURE_WINDOW_NOT_OPEN" in errors
+    accepted = not errors
+    status: RunnerStatusV1 = (
+        "PREFLIGHT_ACCEPT"
+        if accepted
+        else "FUTURE_WINDOW_NOT_OPEN"
+        if future
+        else "PREFLIGHT_REJECTED"
+    )
+    return (
+        RunnerPreflightV1(
+            accepted=accepted,
+            status=status,
+            errors=tuple(dict.fromkeys(errors)),
+            checked_at_utc=checked,
+            usable_margin_seconds=usable_margin,
+        ),
+        loaded,
+    )
+
+
+def _runner_receipt_path(output_pack_directory: Path, *, hard_stop: bool) -> Path:
+    if not hard_stop:
+        return output_pack_directory / "execution-receipt.json"
+    return output_pack_directory.parent / f"{output_pack_directory.name}-hard-stop-receipt.json"
+
+
+def _final_execute_preflight_v1(
+    *,
+    loaded: LoadedPreDnsBundleV1,
+    workspace_receipt: RealCaptureWorkspaceReceiptV1,
+    mission_manifest: RealExecutionMissionManifestV1,
+    output_binding_path: Path,
+    output_pack_directory: Path,
+    marker_inspector: MarkerInspectorV1,
+    binding_ttl_seconds: int,
+    clock: ClockV1,
+    workspace_validator: WorkspaceValidatorV1,
+) -> RunnerPreflightV1:
+    """Resample every mutable pre-DNS gate immediately before resolver execution."""
+
+    errors: list[str] = []
+    observed_marker: MarkerInspectionV1 | None = None
+    try:
+        workspace_validator(workspace_receipt)
+    except Exception:
+        errors.append("WORKSPACE_DRIFT")
+    try:
+        observed_marker = marker_inspector(workspace_receipt, mission_manifest)
+        if not observed_marker.historical_marker_unchanged:
+            errors.append("HISTORICAL_MARKER_CHANGED")
+        if observed_marker.current_marker_present:
+            errors.append("CURRENT_V2_MARKER_PRESENT")
+    except Exception:
+        errors.append("PROVIDER_MARKER_INSPECTION_FAILED")
+    if observed_marker is None or observed_marker != loaded.marker_inspection:
+        errors.append("PROVIDER_MARKER_AUTHORITY_MISMATCH")
+    if os.path.lexists(output_binding_path):
+        errors.append("PROVIDER_NETWORK_BINDING_OUTPUT_EXISTS")
+    if os.path.lexists(output_pack_directory):
+        errors.append("OWNER_REVIEW_PACK_OUTPUT_EXISTS")
+    try:
+        binding_parent = _assert_plain_directory(output_binding_path.absolute().parent)
+        pack_parent = _assert_plain_directory(output_pack_directory.absolute().parent)
+        control_parent = _assert_plain_directory(Path(workspace_receipt.control_temp_root))
+        _safe_name(output_binding_path.name)
+        _safe_name(output_pack_directory.name)
+        if binding_parent != pack_parent or pack_parent != control_parent:
+            errors.append("ATOMIC_RUNNER_OUTPUT_PARENT_MISMATCH")
+        hard_stop_receipt = _runner_receipt_path(output_pack_directory, hard_stop=True)
+        resolution_marker = Path(workspace_receipt.control_temp_root) / _CONTROL_MARKER_NAME
+        output_identities = {
+            os.path.normcase(os.path.abspath(path))
+            for path in (
+                output_binding_path,
+                output_pack_directory,
+                hard_stop_receipt,
+                resolution_marker,
+            )
+        }
+        staging_prefix = f".{output_pack_directory.name}.staging-".casefold()
+        if len(output_identities) != 4 or output_binding_path.name.casefold().startswith(
+            staging_prefix
+        ):
+            errors.append("ATOMIC_RUNNER_OUTPUT_ALIAS")
+        if os.path.lexists(hard_stop_receipt):
+            errors.append("ATOMIC_RUNNER_RECEIPT_OUTPUT_EXISTS")
+        if any(entry.name.casefold().startswith(staging_prefix) for entry in pack_parent.iterdir()):
+            errors.append("OWNER_REVIEW_PACK_STAGING_EXISTS")
+    except PreDnsOrchestrationError:
+        errors.append("ATOMIC_RUNNER_OUTPUT_BOUNDARY_INVALID")
+    if (
+        type(binding_ttl_seconds) is not int
+        or not MINIMUM_READY_MARGIN_SECONDS <= binding_ttl_seconds <= 900
+    ):
+        errors.append("PROVIDER_NETWORK_BINDING_TTL_INSUFFICIENT")
+
+    checked = _utc(clock(), code="ATOMIC_RUNNER_CLOCK_INVALID")
+    if checked >= mission_manifest.expires_at:
+        errors.append("BOOTSTRAP_MISSION_EXPIRED")
+    selection = loaded.campaign_selection
+    try:
+        selection.assert_selected_candidate_current(checked)
+    except ValueError as error:
+        code = str(error)
+        errors.append(
+            "FUTURE_WINDOW_NOT_OPEN" if "NOT_OPEN" in code else "CAMPAIGN_SELECTION_NOT_CURRENT"
+        )
+    usable_margin = int(
+        (selection.selected_candidate().usable_expires_at_utc - checked).total_seconds()
+    )
+    if usable_margin < MINIMUM_READY_MARGIN_SECONDS:
+        errors.append("OWNER_REVIEW_USABLE_MARGIN_INSUFFICIENT")
+    future = "FUTURE_WINDOW_NOT_OPEN" in errors
+    accepted = not errors
+    status: RunnerStatusV1 = (
+        "PREFLIGHT_ACCEPT"
+        if accepted
+        else "FUTURE_WINDOW_NOT_OPEN"
+        if future
+        else "PREFLIGHT_REJECTED"
+    )
+    return RunnerPreflightV1(
+        accepted=accepted,
+        status=status,
+        errors=tuple(dict.fromkeys(errors)),
+        checked_at_utc=checked,
+        usable_margin_seconds=usable_margin,
+    )
+
+
+def _write_runner_receipt(
+    path: Path,
+    *,
+    status: str,
+    observed_at_utc: datetime,
+    bundle_sha256: str,
+    binding_sha256: str | None,
+    pack_sha256: str | None,
+    resolver_operations: int,
+    pack_builds: int,
+    code: str | None,
+    failure_phase: str | None,
+    resolver_completed: bool,
+    binding_persisted: bool,
+    pack_staged: bool,
+    publication_completed: bool,
+    expected_output_directory_name: str,
+) -> None:
+    _write_exclusive(
+        path,
+        _json_bytes(
+            {
+                "schema_version": ATOMIC_RUNNER_RECEIPT_SCHEMA,
+                "status": status,
+                "observed_at_utc": _utc_text(observed_at_utc),
+                "pre_dns_bundle_sha256": bundle_sha256,
+                "provider_network_binding_sha256": binding_sha256,
+                "owner_review_pack_sha256": pack_sha256,
+                "resolver_operations": resolver_operations,
+                "resolver_retries": 0,
+                "pack_builds": pack_builds,
+                "failure_phase": failure_phase,
+                "resolver_completed": resolver_completed,
+                "binding_persisted": binding_persisted,
+                "pack_staged": pack_staged,
+                "publication_completed": publication_completed,
+                "publication_authority": "EFFECTIVE_ONLY_AFTER_PARENT_DIRECTORY_RENAME",
+                "expected_output_directory_name": expected_output_directory_name,
+                "provider_tcp": 0,
+                "provider_http": 0,
+                "secret_reads": 0,
+                "owner_authorized_artifacts": 0,
+                "activations": 0,
+                "captures": 0,
+                "promotions": 0,
+                "bets": 0,
+                "hard_stop_code": code,
+            }
+        ),
+    )
+
+
+def run_owner_review_pack_once_v1(
+    *,
+    bundle_directory: Path,
+    workspace_receipt: RealCaptureWorkspaceReceiptV1,
+    mission_manifest: RealExecutionMissionManifestV1,
+    output_binding_path: Path,
+    output_pack_directory: Path,
+    resolver: ResolverV1,
+    marker_inspector: MarkerInspectorV1,
+    execute: bool = False,
+    owner_present_for_review: bool = False,
+    binding_ttl_seconds: int = 900,
+    clock: ClockV1 = lambda: datetime.now(UTC),
+    monotonic: MonotonicV1 = time.monotonic,
+    workspace_validator: WorkspaceValidatorV1 = _validate_workspace_default,
+    binding_preparer: BindingPreparerV1 = prepare_provider_network_binding_once_v1,
+    pack_builder: PackBuilderV1 = build_owner_review_pack_v1,
+    pack_writer: PackWriterV1 = write_owner_review_pack_v1,
+    raw_evidence_verifier: RawEvidenceVerifierV1 = verify_raw_official_evidence_v1,
+) -> AtomicRunnerResultV1:
+    """Default to read-only preflight; execute one non-retryable DNS-to-pack transaction."""
+
+    preflight, loaded = preflight_owner_review_pack_once_v1(
+        bundle_directory=bundle_directory,
+        workspace_receipt=workspace_receipt,
+        mission_manifest=mission_manifest,
+        output_binding_path=output_binding_path,
+        output_pack_directory=output_pack_directory,
+        marker_inspector=marker_inspector,
+        owner_present_for_review=owner_present_for_review,
+        execute=execute,
+        binding_ttl_seconds=binding_ttl_seconds,
+        clock=clock,
+        workspace_validator=workspace_validator,
+        raw_evidence_verifier=raw_evidence_verifier,
+    )
+    if not execute or not preflight.accepted or loaded is None:
+        return AtomicRunnerResultV1(
+            status=preflight.status,
+            preflight=preflight,
+            resolver_operations=0,
+            pack_builds=0,
+            binding_sha256=None,
+            pack_sha256=None,
+            receipt_path=None,
+            hard_stop_code=None,
+        )
+    preflight = _final_execute_preflight_v1(
+        loaded=loaded,
+        workspace_receipt=workspace_receipt,
+        mission_manifest=mission_manifest,
+        output_binding_path=output_binding_path,
+        output_pack_directory=output_pack_directory,
+        marker_inspector=marker_inspector,
+        binding_ttl_seconds=binding_ttl_seconds,
+        clock=clock,
+        workspace_validator=workspace_validator,
+    )
+    if not preflight.accepted:
+        return AtomicRunnerResultV1(
+            status=preflight.status,
+            preflight=preflight,
+            resolver_operations=0,
+            pack_builds=0,
+            binding_sha256=None,
+            pack_sha256=None,
+            receipt_path=None,
+            hard_stop_code=None,
+        )
+    selection = loaded.campaign_selection
+    selected = selection.selected_candidate()
+    earliest_kickoff = min(
+        target.official_kickoff_utc for target in selected.fixture_target_set.targets
+    )
+
+    def binding_clock() -> datetime:
+        current = _utc(clock(), code="ATOMIC_RUNNER_CLOCK_INVALID")
+        try:
+            selection.assert_selected_candidate_current(current)
+        except ValueError:
+            raise PreDnsOrchestrationError("CAMPAIGN_SELECTION_NOT_CURRENT") from None
+        usable_ceiling = min(
+            mission_manifest.expires_at,
+            selected.usable_expires_at_utc,
+            earliest_kickoff - timedelta(seconds=SAFETY_CUTOFF_SECONDS),
+        )
+        if int((usable_ceiling - current).total_seconds()) < MINIMUM_READY_MARGIN_SECONDS:
+            raise PreDnsOrchestrationError("OWNER_REVIEW_USABLE_MARGIN_INSUFFICIENT")
+        return current
+
+    try:
+        binding_clock()
+    except PreDnsOrchestrationError as error:
+        rejected = RunnerPreflightV1(
+            accepted=False,
+            status="PREFLIGHT_REJECTED",
+            errors=(error.code,),
+            checked_at_utc=preflight.checked_at_utc,
+            usable_margin_seconds=0,
+        )
+        return AtomicRunnerResultV1(
+            status=rejected.status,
+            preflight=rejected,
+            resolver_operations=0,
+            pack_builds=0,
+            binding_sha256=None,
+            pack_sha256=None,
+            receipt_path=None,
+            hard_stop_code=None,
+        )
+    resolver_operations = 0
+    pack_builds = 0
+    resolver_completed_monotonic: float | None = None
+    failure_phase: str | None = "BINDING_PREPARATION"
+    resolver_completed = False
+    binding_persisted = False
+    pack_staged = False
+    publication_completed = False
+
+    def counted_resolver(
+        host: str,
+        port: int,
+        family: int,
+        socket_type: int,
+        protocol: int,
+    ) -> Iterable[tuple[object, ...]]:
+        nonlocal failure_phase, resolver_completed, resolver_completed_monotonic
+        nonlocal resolver_operations
+        binding_clock()
+        resolver_operations += 1
+        if resolver_operations != 1:
+            raise PreDnsOrchestrationError("RESOLVER_OPERATION_LIMIT_EXCEEDED")
+        failure_phase = "RESOLVER"
+        result = tuple(
+            cast(
+                Iterable[tuple[object, ...]],
+                resolver(host, port, family, socket_type, protocol),
+            )
+        )
+        resolver_completed = True
+        resolver_completed_monotonic = monotonic()
+        failure_phase = "BINDING_VALIDATION"
+        return result
+
+    binding: ProviderNetworkBindingV1 | None = None
+    pack: OwnerReviewPackV1 | None = None
+    staging: Path | None = None
+    try:
+        binding = binding_preparer(
+            workspace_receipt=workspace_receipt,
+            mission_manifest=mission_manifest,
+            campaign_selection=loaded.campaign_selection,
+            output_path=output_binding_path,
+            resolver=counted_resolver,
+            clock=binding_clock,
+            binding_ttl_seconds=binding_ttl_seconds,
+        )
+        if (
+            resolver_operations != 1
+            or resolver_completed_monotonic is None
+            or binding.resolution_operations != 1
+        ):
+            raise PreDnsOrchestrationError("RESOLVER_OPERATION_COUNT_INVALID")
+        persisted_binding = ProviderNetworkBindingV1.model_validate_json(
+            _read_regular_bounded(
+                output_binding_path,
+                maximum_bytes=MAXIMUM_BUNDLE_ARTIFACT_BYTES,
+            )
+        )
+        if persisted_binding != binding or _read_regular_bounded(
+            output_binding_path,
+            maximum_bytes=MAXIMUM_BUNDLE_ARTIFACT_BYTES,
+        ) != _model_bytes(binding):
+            raise PreDnsOrchestrationError("PROVIDER_NETWORK_BINDING_PERSISTENCE_INVALID")
+        binding_persisted = True
+        failure_phase = "PACK_BUILD"
+        generated = _utc(clock(), code="ATOMIC_RUNNER_CLOCK_INVALID")
+        nonce_hash = canonical_sha256(
+            {
+                "workspace": workspace_receipt.canonical_receipt_hash,
+                "binding": binding.canonical_binding_hash,
+                "targets": selected.fixture_target_set.canonical_set_hash,
+                "campaign_selection": loaded.campaign_selection.canonical_selection_hash,
+                "request": canonical_sha256(selected.request.fingerprint_material()),
+                "generated_at": _utc_text(generated),
+            }
+        )
+        pack_started = monotonic()
+        if pack_started - resolver_completed_monotonic > MAXIMUM_DNS_TO_PACK_START_SECONDS:
+            raise PreDnsOrchestrationError("DNS_TO_PACK_START_BUDGET_EXCEEDED")
+        pack_builds += 1
+        pack = pack_builder(
+            workspace_receipt=workspace_receipt,
+            mission_manifest=mission_manifest,
+            provider_network_binding=binding,
+            campaign_selection=loaded.campaign_selection,
+            generated_at_utc=generated,
+            authorization_nonce=f"owner-{nonce_hash[:40]}",
+            activation_nonce=f"activation-{nonce_hash[24:64]}",
+        )
+        failure_phase = "PACK_STAGING"
+        staging = output_pack_directory.parent / (
+            f".{output_pack_directory.name}.staging-{binding.canonical_binding_hash[:16]}"
+        )
+        if os.path.lexists(staging):
+            raise PreDnsOrchestrationError("OWNER_REVIEW_PACK_STAGING_EXISTS")
+        os.mkdir(staging, 0o700)
+        paths = pack_writer(staging, pack)
+        verify_owner_review_pack_artifacts_v1(staging, pack, paths)
+        pack_staged = True
+        workspace_validator(workspace_receipt)
+        completed = _utc(clock(), code="ATOMIC_RUNNER_CLOCK_INVALID")
+        assert_owner_review_pack_completion_current_v1(pack, completed)
+        if monotonic() - resolver_completed_monotonic > MAXIMUM_DNS_TO_PACK_COMPLETION_SECONDS:
+            raise PreDnsOrchestrationError("DNS_TO_PACK_COMPLETION_BUDGET_EXCEEDED")
+        if os.path.lexists(output_pack_directory):
+            raise PreDnsOrchestrationError("OWNER_REVIEW_PACK_OUTPUT_EXISTS")
+        failure_phase = "PACK_PUBLICATION"
+        receipt = _runner_receipt_path(output_pack_directory, hard_stop=False)
+        if monotonic() - resolver_completed_monotonic > MAXIMUM_DNS_TO_PACK_COMPLETION_SECONDS:
+            raise PreDnsOrchestrationError("DNS_TO_PACK_COMPLETION_BUDGET_EXCEEDED")
+        os.rename(staging, output_pack_directory)
+        publication_completed = True
+        failure_phase = "RECEIPT_FINALIZATION"
+        _write_runner_receipt(
+            receipt,
+            status="OWNER_REVIEW_PACK_CREATED",
+            observed_at_utc=completed,
+            bundle_sha256=loaded.manifest_sha256,
+            binding_sha256=binding.canonical_binding_hash,
+            pack_sha256=pack.canonical_pack_hash,
+            resolver_operations=resolver_operations,
+            pack_builds=pack_builds,
+            code=None,
+            failure_phase=None,
+            resolver_completed=True,
+            binding_persisted=True,
+            pack_staged=True,
+            publication_completed=True,
+            expected_output_directory_name=output_pack_directory.name,
+        )
+        failure_phase = None
+        return AtomicRunnerResultV1(
+            status="OWNER_REVIEW_PACK_CREATED",
+            preflight=preflight,
+            resolver_operations=resolver_operations,
+            pack_builds=pack_builds,
+            binding_sha256=binding.canonical_binding_hash,
+            pack_sha256=pack.canonical_pack_hash,
+            receipt_path=receipt,
+            hard_stop_code=None,
+        )
+    except Exception as error:
+        code = getattr(error, "code", "POST_DNS_PACK_FAILURE")
+        receipt = _runner_receipt_path(output_pack_directory, hard_stop=True)
+        try:
+            _write_runner_receipt(
+                receipt,
+                status="POST_DNS_HARD_STOP",
+                observed_at_utc=_utc(clock(), code="ATOMIC_RUNNER_CLOCK_INVALID"),
+                bundle_sha256=loaded.manifest_sha256,
+                binding_sha256=(binding.canonical_binding_hash if binding is not None else None),
+                pack_sha256=(pack.canonical_pack_hash if pack is not None else None),
+                resolver_operations=resolver_operations,
+                pack_builds=pack_builds,
+                code=code,
+                failure_phase=failure_phase,
+                resolver_completed=resolver_completed,
+                binding_persisted=binding_persisted,
+                pack_staged=pack_staged,
+                publication_completed=publication_completed,
+                expected_output_directory_name=output_pack_directory.name,
+            )
+        except PreDnsOrchestrationError:
+            raise PreDnsOrchestrationError("POST_DNS_HARD_STOP_RECEIPT_WRITE_FAILED") from None
+        return AtomicRunnerResultV1(
+            status="POST_DNS_HARD_STOP",
+            preflight=preflight,
+            resolver_operations=resolver_operations,
+            pack_builds=pack_builds,
+            binding_sha256=(binding.canonical_binding_hash if binding is not None else None),
+            pack_sha256=(pack.canonical_pack_hash if pack is not None else None),
+            receipt_path=receipt,
+            hard_stop_code=code,
+        )
+
+
+__all__ = [
+    "AtomicRunnerResultV1",
+    "HistoricalMarkerExpectationV1",
+    "LoadedPreDnsBundleV1",
+    "MarkerInspectionV1",
+    "PreDnsCountersV1",
+    "PreDnsLimitsV1",
+    "PreDnsOrchestrationError",
+    "PreDnsResultV1",
+    "RunnerPreflightV1",
+    "freeze_official_schedule_evidence_v1",
+    "inspect_provider_markers_read_only_v1",
+    "load_pre_dns_bundle_v1",
+    "load_scientific_corpus_evidence_v1",
+    "preflight_owner_review_pack_once_v1",
+    "prepare_owner_review_pack_inputs_v1",
+    "run_owner_review_pack_once_v1",
+    "verify_owner_review_pack_artifacts_v1",
+]
