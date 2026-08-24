@@ -1452,7 +1452,7 @@ def reconcile_official_schedule_evidence(
         "provider_dns": 0,
         "provider_tcp": 0,
         "provider_http": 0,
-        "secret_reads": 0,
+        "secret_reads": 0,  # nosec B105 -- effect counter, not a credential
     }
 
 

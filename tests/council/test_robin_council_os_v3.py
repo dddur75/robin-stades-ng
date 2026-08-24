@@ -2477,17 +2477,13 @@ def test_first_c0_hardening_incident_closure_v2_is_append_only_and_effect_bounde
     assert context["commit_context"] is False
     assert context["mission_id"] == "FIRST_C0_HARDENING_INCIDENT_CLOSURE_V2"
     assert context["base_revision"] == start_main
-    graph_is_uncommitted = (
-        subprocess.run(
-            ["git", "diff", "--quiet", "--", "reports/evidence/evidence-graph.json"],
-            cwd=ROOT,
-            check=False,
-        ).returncode
-        != 0
-    )
-    expected_governance_parent = head if graph_is_uncommitted else _git(ROOT, "rev-parse", "HEAD^")
-    assert context["candidate_parent_sha"] == expected_governance_parent
-    assert context["head"] == expected_governance_parent
+    mission_commits = _git(
+        ROOT, "rev-list", "--reverse", "--no-merges", f"{start_main}..{head}"
+    ).splitlines()
+    assert 1 <= len(mission_commits) <= 3
+    expected_functional_commit = mission_commits[0]
+    assert context["candidate_parent_sha"] == expected_functional_commit
+    assert context["head"] == expected_functional_commit
     assert context["branch"] == "codex/first-c0-hardening-incident-closure-v2"
     assert context["pr"] == "DRAFT_PENDING"
     assert context["writer"] == "C0"

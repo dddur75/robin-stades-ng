@@ -12,7 +12,7 @@ from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Literal, Protocol, TypeAlias, cast
+from typing import Any, Literal, Protocol, TypeAlias, cast
 from urllib.parse import urlparse
 from zoneinfo import ZoneInfo
 
@@ -431,7 +431,8 @@ def _local_app_data_readonly() -> Path:
             raise PreDnsOrchestrationError("LOCAL_APP_DATA_UNAVAILABLE")
         return Path(value).absolute()
     buffer = ctypes.create_unicode_buffer(32_768)
-    result = ctypes.windll.shell32.SHGetFolderPathW(None, 0x001C, None, 0, buffer)
+    windows_api = cast(Any, ctypes).windll
+    result = windows_api.shell32.SHGetFolderPathW(None, 0x001C, None, 0, buffer)
     if result != 0 or not buffer.value:
         raise PreDnsOrchestrationError("LOCAL_APP_DATA_UNAVAILABLE")
     return Path(buffer.value).absolute()
@@ -919,7 +920,7 @@ def _publish_pre_dns_bundle_v1(
             "provider_dns": 0,
             "provider_tcp": 0,
             "provider_http": 0,
-            "secret_reads": 0,
+            "secret_reads": 0,  # nosec B105 -- effect counter, not a credential
             "owner_review_pack_builds": 0,
             "owner_authorizations": 0,
             "activations": 0,
@@ -1091,7 +1092,7 @@ def load_pre_dns_bundle_v1(
         "provider_dns": 0,
         "provider_tcp": 0,
         "provider_http": 0,
-        "secret_reads": 0,
+        "secret_reads": 0,  # nosec B105 -- effect counter, not a credential
         "owner_review_pack_builds": 0,
         "owner_authorizations": 0,
         "activations": 0,
@@ -1398,7 +1399,7 @@ def load_pre_dns_bundle_v1(
             "provider_dns": 0,
             "provider_tcp": 0,
             "provider_http": 0,
-            "secret_reads": 0,
+            "secret_reads": 0,  # nosec B105 -- effect counter, not a credential
         }
         if (
             len(horizons) != 1
@@ -2243,7 +2244,7 @@ def _write_runner_receipt(
                 "expected_output_directory_name": expected_output_directory_name,
                 "provider_tcp": 0,
                 "provider_http": 0,
-                "secret_reads": 0,
+                "secret_reads": 0,  # nosec B105 -- effect counter, not a credential
                 "owner_authorized_artifacts": 0,
                 "activations": 0,
                 "captures": 0,
