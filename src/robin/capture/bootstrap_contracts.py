@@ -57,8 +57,8 @@ CAMPAIGN_RANKING_POLICY: Final[
     "cross-league-desc;earliest-readiness-asc;stable-group-hash-asc"
 )
 MISSION_MANIFEST_SOURCE_HASH: Final[
-    Literal["0783d995e95c0a8a969f76ff3f468c3b96a697155a7ad01e0676963c6bab9f43"]
-] = "0783d995e95c0a8a969f76ff3f468c3b96a697155a7ad01e0676963c6bab9f43"
+    Literal["2451cd643c2d3ffcd3c5cc9fcd4a5f81f785978e0aa20429b4d182ceb9b1f22b"]
+] = "2451cd643c2d3ffcd3c5cc9fcd4a5f81f785978e0aa20429b4d182ceb9b1f22b"
 MISSION_EXTERNAL_EFFECTS: Final[tuple[str, ...]] = (
     "local_standalone_runtime_create_after_merge",
     "github_public_full_clone_after_merge",
@@ -197,7 +197,7 @@ class RealExecutionMissionManifestV1(FrozenContract):
     external_effects: tuple[str, ...]
     compute_budget: Literal[8000]
     time_budget: Literal[345600]
-    source_hash: Literal["0783d995e95c0a8a969f76ff3f468c3b96a697155a7ad01e0676963c6bab9f43"] = (
+    source_hash: Literal["2451cd643c2d3ffcd3c5cc9fcd4a5f81f785978e0aa20429b4d182ceb9b1f22b"] = (
         MISSION_MANIFEST_SOURCE_HASH
     )
     expires_at: datetime
