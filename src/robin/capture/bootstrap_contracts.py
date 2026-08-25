@@ -84,8 +84,8 @@ FIRST_C0_CANARY_COMPETITIONS: Final[dict[str, str]] = {
     "soccer_germany_bundesliga": "Bundesliga",
 }
 MISSION_MANIFEST_SOURCE_HASH: Final[
-    Literal["2451cd643c2d3ffcd3c5cc9fcd4a5f81f785978e0aa20429b4d182ceb9b1f22b"]
-] = "2451cd643c2d3ffcd3c5cc9fcd4a5f81f785978e0aa20429b4d182ceb9b1f22b"
+    Literal["0270bdd51d8d50b7d3c9f608e4f429b46b94b789d92d4b13055b81c9b72e6291"]
+] = "0270bdd51d8d50b7d3c9f608e4f429b46b94b789d92d4b13055b81c9b72e6291"
 MISSION_EXTERNAL_EFFECTS: Final[tuple[str, ...]] = (
     "local_standalone_runtime_create_after_merge",
     "github_public_full_clone_after_merge",
@@ -244,7 +244,7 @@ class RealExecutionMissionManifestV1(FrozenContract):
     external_effects: tuple[str, ...]
     compute_budget: Literal[8000]
     time_budget: Literal[345600]
-    source_hash: Literal["2451cd643c2d3ffcd3c5cc9fcd4a5f81f785978e0aa20429b4d182ceb9b1f22b"] = (
+    source_hash: Literal["0270bdd51d8d50b7d3c9f608e4f429b46b94b789d92d4b13055b81c9b72e6291"] = (
         MISSION_MANIFEST_SOURCE_HASH
     )
     expires_at: datetime

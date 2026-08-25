@@ -13,10 +13,10 @@ from robin.capture.live_contracts import LIVE_ALLOWED_SPORT_KEYS
 ROOT = Path(__file__).resolve().parents[2]
 MISSION_ID = "REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1"
 START_MAIN = "0591f01c580eb853890e9c1c304a78c21ba9de63"
-SOURCE_HASH = "2451cd643c2d3ffcd3c5cc9fcd4a5f81f785978e0aa20429b4d182ceb9b1f22b"
-OLD_SOURCE_HASH = "0783d995e95c0a8a969f76ff3f468c3b96a697155a7ad01e0676963c6bab9f43"
+SOURCE_HASH = "0270bdd51d8d50b7d3c9f608e4f429b46b94b789d92d4b13055b81c9b72e6291"
+OLD_SOURCE_HASH = "2451cd643c2d3ffcd3c5cc9fcd4a5f81f785978e0aa20429b4d182ceb9b1f22b"
 EXPECTED_CANONICAL_MANIFEST_SHA256 = (
-    "5f8d1db2586adbc397d1b4e814e85946c84327537872df6aeded0fbbbc5498c0"
+    "d895e0b2ddded2c9763d85a08efbd64dc0185d26f66bb2b73fbe52cc05411206"
 )
 
 
@@ -46,7 +46,7 @@ def test_mission_manifest_matches_the_exact_external_effect_boundary() -> None:
     assert all("provider_http" not in effect for effect in effects)
     validated = RealExecutionMissionManifestV1.issue(**manifest)
     assert validated.canonical_manifest_sha256() == EXPECTED_CANONICAL_MANIFEST_SHA256
-    assert validated.expires_at.isoformat().replace("+00:00", "Z") == ("2026-08-26T10:00:00Z")
+    assert validated.expires_at.isoformat().replace("+00:00", "Z") == ("2026-09-01T20:00:00Z")
     assert validated.external_effects == tuple(effects)
 
     historical = dict(manifest)

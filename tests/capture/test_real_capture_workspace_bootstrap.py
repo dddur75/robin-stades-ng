@@ -46,7 +46,7 @@ def _mission_manifest_payload(*, expires_at: str) -> dict[str, object]:
         ],
         "compute_budget": 8000,
         "time_budget": 345600,
-        "source_hash": "2451cd643c2d3ffcd3c5cc9fcd4a5f81f785978e0aa20429b4d182ceb9b1f22b",
+        "source_hash": "0270bdd51d8d50b7d3c9f608e4f429b46b94b789d92d4b13055b81c9b72e6291",
         "expires_at": expires_at,
     }
 
@@ -971,13 +971,13 @@ def test_only_exact_tracked_runtime_mission_manifest_is_loadable(tmp_path: Path)
     repository = tmp_path / "repository"
     manifest_path = repository / "configs/execution/real-execution-bootstrap-closure-v1.json"
     manifest_path.parent.mkdir(parents=True)
-    payload = _mission_manifest_payload(expires_at="2026-08-26T10:00:00Z")
+    payload = _mission_manifest_payload(expires_at="2026-09-01T20:00:00Z")
     manifest_path.write_text(json.dumps(payload), encoding="utf-8")
     loaded = load_tracked_real_execution_mission_manifest_v1(
         repository,
         manifest_path,
     )
-    assert loaded.expires_at == datetime(2026, 8, 26, 10, 0, tzinfo=UTC)
+    assert loaded.expires_at == datetime(2026, 9, 1, 20, 0, tzinfo=UTC)
 
     alternate = tmp_path / "later-expiry-manifest.json"
     alternate.write_text(
