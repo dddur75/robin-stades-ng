@@ -2342,16 +2342,16 @@ def test_first_c0_hardening_incident_closure_v2_is_append_only_and_effect_bounde
     } == start_blobs
 
     head = _git(ROOT, "rev-parse", "HEAD")
-    observed_paths = (
-        committed_changed_paths(ROOT, start_main, head) if head != start_main else set()
-    )
-    candidate_paths_raw = subprocess.run(
-        ["git", "ls-files", "--modified", "--others", "--exclude-standard", "-z"],
-        cwd=ROOT,
-        check=True,
-        capture_output=True,
-    ).stdout
-    observed_paths |= {item.decode("utf-8") for item in candidate_paths_raw.split(b"\0") if item}
+    if head != start_main:
+        observed_paths = committed_changed_paths(ROOT, start_main, head)
+    else:
+        candidate_paths_raw = subprocess.run(
+            ["git", "ls-files", "--modified", "--others", "--exclude-standard", "-z"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        ).stdout
+        observed_paths = {item.decode("utf-8") for item in candidate_paths_raw.split(b"\0") if item}
     assert observed_paths == set(final_paths)
 
     owner_directive = (
@@ -2449,12 +2449,12 @@ def test_first_c0_hardening_incident_closure_v2_is_append_only_and_effect_bounde
     ).stdout
     ledger_lines = ledger_bytes.splitlines()
     assert len(baseline_ledger.splitlines()) == 169
-    assert len(ledger_lines) == 170
+    assert len(ledger_lines) >= 170
     assert ledger_bytes.startswith(baseline_ledger)
-    assert ledger_bytes[len(baseline_ledger) :] == ledger_lines[-1] + b"\n"
+    assert ledger_bytes[len(baseline_ledger) :].startswith(ledger_lines[169] + b"\n")
     assert b"\r" not in ledger_bytes
     records = [json.loads(line) for line in ledger_lines]
-    record = records[-1]
+    record = records[169]
     assert record["decision_id"] == "RCV3-20260824-177"
     assert record["record_type"] == "DECISION"
     assert record["decision"] == "PASS_AND_HOLD"
@@ -2477,8 +2477,9 @@ def test_first_c0_hardening_incident_closure_v2_is_append_only_and_effect_bounde
     assert context["commit_context"] is False
     assert context["mission_id"] == "FIRST_C0_HARDENING_INCIDENT_CLOSURE_V2"
     assert context["base_revision"] == start_main
+    incident_closure_head = "9398ca95142eea7672bb1cff795379bc45ba96fe"
     mission_commits = _git(
-        ROOT, "rev-list", "--reverse", "--no-merges", f"{start_main}..{head}"
+        ROOT, "rev-list", "--reverse", "--no-merges", f"{start_main}..{incident_closure_head}"
     ).splitlines()
     assert 1 <= len(mission_commits) <= 3
     expected_functional_commit = mission_commits[0]
@@ -2561,9 +2562,9 @@ def test_first_c0_hardening_incident_closure_v2_is_append_only_and_effect_bounde
     assert len(baseline_graph["claims"]) == 424
     assert len(baseline_graph["decision_nodes"]) == 169
     assert len(baseline_graph["edges"]) == 722
-    assert len(graph["claims"]) == 436
-    assert len(graph["decision_nodes"]) == 170
-    assert len(graph["edges"]) == 734
+    assert len(graph["claims"]) >= 436
+    assert len(graph["decision_nodes"]) >= 170
+    assert len(graph["edges"]) >= 734
     claims = {claim["claim_id"]: claim for claim in graph["claims"]}
     baseline_claims = {claim["claim_id"]: claim for claim in baseline_graph["claims"]}
     expected_historical_claims = []
@@ -2580,10 +2581,19 @@ def test_first_c0_hardening_incident_closure_v2_is_append_only_and_effect_bounde
         claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.026"]
         == baseline_claims["GOV.AUTHORIZATION.CHRONOS_LOOP53.026"]
     )
-    assert [claim["claim_id"] for claim in graph["claims"][424:]] == expected_proof
-    assert claims[expected_proof[0]]["status"] == "PARTIAL"
-    assert claims[expected_proof[1]]["status"] == "PARTIAL"
-    assert all(claims[claim_id]["status"] == "VERIFIED" for claim_id in expected_proof[2:])
+    assert [claim["claim_id"] for claim in graph["claims"][424:436]] == expected_proof
+    later_successors = {
+        expected_proof[0]: "GOV.AUTHORIZATION.CHRONOS_LOOP53.028",
+        expected_proof[1]: "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.037",
+        expected_proof[11]: (
+            "GOV.COUNCIL.REAL_EXECUTION_BOOTSTRAP.CLOSURE.EVIDENCE.SUCCESSION.LEDGER.V1.008"
+        ),
+    }
+    assert all(claims[claim_id]["status"] == "SUPERSEDED" for claim_id in later_successors)
+    assert claims[expected_proof[0]]["superseded_by"] == later_successors[expected_proof[0]]
+    assert claims[expected_proof[1]]["superseded_by"] == later_successors[expected_proof[1]]
+    assert claims[expected_proof[11]]["superseded_by"] == later_successors[expected_proof[11]]
+    assert all(claims[claim_id]["status"] == "VERIFIED" for claim_id in expected_proof[2:11])
     for predecessor, successor in successors.items():
         assert claims[predecessor]["status"] == "SUPERSEDED"
         assert claims[predecessor]["superseded_by"] == successor
@@ -2607,16 +2617,17 @@ def test_first_c0_hardening_incident_closure_v2_is_append_only_and_effect_bounde
     }
     for claim_id, artifact in claim_artifacts.items():
         assert claims[claim_id]["artifact"] == artifact
-        assert claims[claim_id]["hash"] == artifact_sha256(ROOT / artifact)
+        if claim_id not in later_successors:
+            assert claims[claim_id]["hash"] == artifact_sha256(ROOT / artifact)
         assert claims[claim_id]["verified_by"] == ["C0", "C2", "C4", "DP6", "A2"]
 
-    assert graph["decision_nodes"][:-1] == baseline_graph["decision_nodes"]
-    assert graph["decision_nodes"][-1] == {
+    assert graph["decision_nodes"][:169] == baseline_graph["decision_nodes"]
+    assert graph["decision_nodes"][169] == {
         "decision_id": record["decision_id"],
         "ledger_record_hash": record["hash"],
     }
-    assert graph["edges"][:-12] == baseline_graph["edges"]
-    assert graph["edges"][-12:] == [
+    assert graph["edges"][:722] == baseline_graph["edges"]
+    assert graph["edges"][722:734] == [
         {
             "edge_id": f"EDGE.{number}",
             "from_claim_id": claim_id,
@@ -2633,6 +2644,274 @@ def test_first_c0_hardening_incident_closure_v2_is_append_only_and_effect_bounde
     serialized = json.dumps({"record": record, "incident": incident}, ensure_ascii=False)
     assert "C:\\Users\\" not in serialized
     assert "zero DNS for the failed mission" not in serialized
+
+
+def test_pr69_ci_artifact_scope_isolation_corrective_is_exact_and_append_only() -> None:
+    start_main = "2620f56c030c28e31128681d19f712f321079482"
+    candidate_parent = "9398ca95142eea7672bb1cff795379bc45ba96fe"
+    corrective_paths = [
+        "reports/council/decision-ledger.jsonl",
+        "reports/evidence/evidence-graph.json",
+        "tests/council/test_robin_council_os_v3.py",
+    ]
+    frozen_functional_blobs = {
+        "pyproject.toml": "81e36ca3c644e1294bb2b74cff1edb96ffda2272",
+        "requirements.txt": "fb75c5fa810479659a9b86e63e135f860bb9cbcf",
+        "src/robin/capture/bootstrap_contracts.py": ("016a531756607474cecf3b52bc522fd81460dc2f"),
+        "src/robin/capture/official_schedule_sources.py": (
+            "664605c3ef3a6ad77034491a6200737f25657395"
+        ),
+        "src/robin/capture/predns_orchestration.py": ("cb3fe33650c9d840e467df4e73e8986bae916ba4"),
+        "tools/data-sourcing/prepare_owner_review_pack_inputs_v1.py": (
+            "60bf594ed8032f1c0bd3ef466565acaca1d36b98"
+        ),
+        "tools/data-sourcing/run_owner_review_pack_once_v1.py": (
+            "d0c220fd9e59ef4d034bd69ded87cfe661400889"
+        ),
+        "tests/capture/conftest.py": "20747308ac9fd2220e3926fe7456558a49544ac8",
+        "tests/capture/test_live_canary_successor_v2.py": (
+            "ad8353f2e8f55bf358e0516988eff55bc8f44d6a"
+        ),
+        "tests/capture/test_provider_network_binding.py": (
+            "a4ff0d81d474c09380e80cd6d4a5f6561027252f"
+        ),
+        "tests/capture/test_official_schedule_sources_v1.py": (
+            "d545b5117511aefc75027b08b627940b8eae1fd4"
+        ),
+        "tests/capture/test_predns_orchestration_v1.py": (
+            "ada0aeb2938d3ddef1d758db07d641c1af5fbf35"
+        ),
+        "reports/council/first-c0-hardening-dns-incident-v1.json": (
+            "c9c3945f14d041b9754fa7913c499f4b747ba5ee"
+        ),
+    }
+    assert len(corrective_paths) == 3
+    assert len(frozen_functional_blobs) == 13
+    for revision in (candidate_parent, _git(ROOT, "rev-parse", "HEAD")):
+        assert {
+            path: _git(ROOT, "rev-parse", f"{revision}:{path}") for path in frozen_functional_blobs
+        } == frozen_functional_blobs
+
+    owner_directive = (
+        "ROBIN_OWNER_DIRECTIVE_PR69_CI_ARTIFACT_SCOPE_ISOLATION_V1|2026-08-25|"
+        "main=2620f56c030c28e31128681d19f712f321079482|pr=69|"
+        "head=9398ca95142eea7672bb1cff795379bc45ba96fe|failed_run=32791282056|"
+        "purpose=separate_committed_pr_scope_from_ci_worktree_artifacts|tracked_files=3|"
+        "additional_commits=1|non_force_pushes=1|new_prs=0|merge_commit_after_ci=1|"
+        "provider_dns=0|provider_tcp=0|provider_http=0|real_secret_reads=0|"
+        "owner_review_pack_builds=0|owner_authorization=not_created|activation=0|"
+        "real_captures=0|promotion=0|bet=0"
+    ).encode()
+    assert b"\r" not in owner_directive
+    assert b"\n" not in owner_directive
+    assert hashlib.sha256(owner_directive).hexdigest() == (
+        "4cd9e9065e4876962b99c23a2d3a363b681b411773bbfa5eded3de510f6c94ff"
+    )
+
+    ledger_path = ROOT / "reports/council/decision-ledger.jsonl"
+    ledger_bytes = ledger_path.read_bytes()
+    parent_ledger = subprocess.run(
+        ["git", "show", f"{candidate_parent}:reports/council/decision-ledger.jsonl"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    assert len(parent_ledger.splitlines()) == 170
+    assert len(ledger_bytes.splitlines()) == 171
+    assert ledger_bytes.startswith(parent_ledger)
+    assert ledger_bytes[len(parent_ledger) :] == ledger_bytes.splitlines()[-1] + b"\n"
+    assert b"\r" not in ledger_bytes
+
+    records = [json.loads(line) for line in ledger_bytes.splitlines()]
+    previous_record = records[-2]
+    record = records[-1]
+    expected_proof = [
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.028",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.037",
+        "GOV.FIRST_C0.PR69.CI.WORKTREE_SCOPE.ISOLATION.V1.001",
+        ("GOV.COUNCIL.REAL_EXECUTION_BOOTSTRAP.CLOSURE.EVIDENCE.SUCCESSION.LEDGER.V1.008"),
+    ]
+    assert previous_record["decision_id"] == "RCV3-20260824-177"
+    assert record["decision_id"] == "RCV3-20260825-178"
+    assert record["record_type"] == "DECISION"
+    assert record["decision"] == "PASS_AND_HOLD"
+    assert record["dissent"] is None
+    assert record["responsible"] == "C0"
+    assert record["previous_hash"] == previous_record["hash"]
+    assert record["proof"] == expected_proof
+    canonical_record = json.dumps(
+        {key: value for key, value in record.items() if key != "hash"},
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode()
+    assert hashlib.sha256(canonical_record).hexdigest() == record["hash"]
+
+    context = record["context"]
+    assert context["candidate_context"] is True
+    assert context["commit_context"] is False
+    assert context["mission_id"] == "PR69_CI_ARTIFACT_SCOPE_ISOLATION_V1"
+    assert context["phase"] == "PR69_FINAL_DIRECTLY_CONSEQUENTIAL_CORRECTIVE_PRECOMMIT"
+    assert context["base_revision"] == start_main
+    assert context["candidate_parent_sha"] == candidate_parent
+    assert context["branch"] == "codex/first-c0-hardening-incident-closure-v2"
+    assert context["pr"] == 69
+    assert context["writer"] == "C0"
+    assert context["corrective_scope"] == {
+        "changed_files": corrective_paths,
+        "tracked_file_count": 3,
+        "pr_total_changed_files": 16,
+        "functional_code_changed": False,
+        "workflow_changed": False,
+        "dependencies_changed": False,
+        "ambient_ci_artifact_whitelisted": False,
+        "ambient_ci_artifact_cleaned": False,
+    }
+    assert context["frozen_functional_blobs"] == frozen_functional_blobs
+    assert context["failed_exact_head_run"] == {
+        "run_id": 32791282056,
+        "job_id": 97639413227,
+        "head_sha": candidate_parent,
+        "status": "completed",
+        "conclusion": "failure",
+        "failing_test": (
+            "tests/council/test_robin_council_os_v3.py::"
+            "test_first_c0_hardening_incident_closure_v2_is_append_only_and_effect_bounded"
+        ),
+        "ambient_modified_path": "reports/pattern-research/campaign-summary.json",
+        "root_cause_classification": (
+            "COUNCIL_SCOPE_ASSERTION_CONFLATES_COMMITTED_PR_DIFF_WITH_CI_WORKTREE_STATE"
+        ),
+    }
+    evidence = context["evidence"]
+    assert evidence["red"] == {
+        "result": "FAIL_EXPECTED",
+        "exit_code": 1,
+        "expected_paths": 16,
+        "observed_paths": 17,
+        "extra_path": "reports/pattern-research/campaign-summary.json",
+        "semantic_json_equivalent": True,
+    }
+    assert evidence["green"] == {
+        "result": "PASS",
+        "exit_code": 0,
+        "committed_scope_count": 16,
+        "ambient_modified_path": "reports/pattern-research/campaign-summary.json",
+        "ambient_modified_path_expands_scope": False,
+    }
+    assert evidence["negative_committed_expansion"] == {
+        "result": "FAIL_EXPECTED",
+        "exit_code": 1,
+        "classification": "REAL_COMMITTED_SCOPE_EXPANSION_REJECTED",
+        "extra_path": "pr69-ci-scope-negative-17th.txt",
+    }
+    assert all(item["result"] == "PASS" for item in context["local_tests"])
+    assert all(item["result"] == "PASS" for item in context["static_validations"])
+    assert set(context["reviews"]) == {"C2", "C4", "DP6", "A2"}
+    assert all(review["verdict"] == "ACCEPT" for review in context["reviews"].values())
+    assert all(review["open_threads"] == 0 for review in context["reviews"].values())
+    assert context["defects"] == {
+        "active_claim_hash_mismatches": 0,
+        "broken_successions": 0,
+        "broken_ledger_links": 0,
+        "duplicate_ids": 0,
+        "edge_gaps": 0,
+        "open_p0": 0,
+        "open_p1": 0,
+        "open_p2": 0,
+        "open_critical_threads": 0,
+    }
+    assert all(value == 0 for value in context["external_effects"].values())
+    assert context["delivery_authority"] == {
+        "additional_commits": 1,
+        "additional_non_force_pushes": 1,
+        "new_pull_requests": 0,
+        "conditional_merge_commits": 1,
+        "merge_authorized_now": False,
+        "exact_head_ci_required": True,
+        "postmerge_ci_required": True,
+        "postmerge_predns_only_after_green": True,
+        "force_push_authorized": False,
+        "branch_deletion_authorized": False,
+        "provider_dns_authorized": False,
+        "owner_review_pack_authorized": False,
+    }
+
+    parent_graph = json.loads(
+        subprocess.run(
+            ["git", "show", f"{candidate_parent}:reports/evidence/evidence-graph.json"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        ).stdout
+    )
+    graph = load_json("reports/evidence/evidence-graph.json")
+    assert len(parent_graph["claims"]) == 436
+    assert len(parent_graph["decision_nodes"]) == 170
+    assert len(parent_graph["edges"]) == 734
+    assert len(graph["claims"]) == 440
+    assert len(graph["decision_nodes"]) == 171
+    assert len(graph["edges"]) == 738
+
+    successions = {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.027": expected_proof[0],
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.036": expected_proof[1],
+        (
+            "GOV.COUNCIL.REAL_EXECUTION_BOOTSTRAP.CLOSURE.EVIDENCE.SUCCESSION.LEDGER.V1.007"
+        ): expected_proof[3],
+    }
+    expected_parent_claims = []
+    for claim in parent_graph["claims"]:
+        if claim["claim_id"] in successions:
+            claim = {
+                **claim,
+                "status": "SUPERSEDED",
+                "superseded_by": successions[claim["claim_id"]],
+            }
+        expected_parent_claims.append(claim)
+    assert graph["claims"][:436] == expected_parent_claims
+    assert [claim["claim_id"] for claim in graph["claims"][436:]] == expected_proof
+
+    claims = {claim["claim_id"]: claim for claim in graph["claims"]}
+    for predecessor, successor in successions.items():
+        assert claims[predecessor]["status"] == "SUPERSEDED"
+        assert claims[predecessor]["superseded_by"] == successor
+        assert claims[successor]["successor_of"] == predecessor
+    assert "successor_of" not in claims[expected_proof[2]]
+    assert claims[expected_proof[0]]["status"] == "PARTIAL"
+    assert claims[expected_proof[1]]["status"] == "PARTIAL"
+    assert claims[expected_proof[2]]["status"] == "VERIFIED"
+    assert claims[expected_proof[3]]["status"] == "VERIFIED"
+    claim_artifacts = {
+        expected_proof[0]: "reports/council/first-c0-hardening-dns-incident-v1.json",
+        expected_proof[1]: "tests/council/test_robin_council_os_v3.py",
+        expected_proof[2]: "tests/council/test_robin_council_os_v3.py",
+        expected_proof[3]: "reports/council/decision-ledger.jsonl",
+    }
+    for claim_id, artifact in claim_artifacts.items():
+        assert claims[claim_id]["artifact"] == artifact
+        assert claims[claim_id]["hash"] == artifact_sha256(ROOT / artifact)
+        assert claims[claim_id]["verified_by"] == ["C0", "C2", "C4", "DP6", "A2"]
+
+    assert graph["decision_nodes"][:-1] == parent_graph["decision_nodes"]
+    assert graph["decision_nodes"][-1] == {
+        "decision_id": record["decision_id"],
+        "ledger_record_hash": record["hash"],
+    }
+    assert graph["edges"][:-4] == parent_graph["edges"]
+    assert graph["edges"][-4:] == [
+        {
+            "edge_id": f"EDGE.{number}",
+            "from_claim_id": claim_id,
+            "to_decision_id": record["decision_id"],
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        }
+        for number, claim_id in zip(range(735, 739), expected_proof, strict=True)
+    ]
+    assert [edge["edge_id"] for edge in graph["edges"]] == [
+        f"EDGE.{number:03d}" for number in range(1, 739)
+    ]
 
 
 def test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it() -> None:
