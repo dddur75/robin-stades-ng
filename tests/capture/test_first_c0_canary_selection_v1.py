@@ -110,7 +110,7 @@ def mission_manifest(
         ),
         compute_budget=8000,
         time_budget=345600,
-        source_hash="2451cd643c2d3ffcd3c5cc9fcd4a5f81f785978e0aa20429b4d182ceb9b1f22b",
+        source_hash="0270bdd51d8d50b7d3c9f608e4f429b46b94b789d92d4b13055b81c9b72e6291",
         expires_at=expires_at,
     )
 

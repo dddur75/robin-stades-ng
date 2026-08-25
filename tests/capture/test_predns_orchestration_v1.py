@@ -58,7 +58,7 @@ from robin.capture.storage import exclusive_local_directory_fingerprint
 
 BASE = datetime(2026, 8, 24, 18, 0, tzinfo=UTC)
 MAIN_SHA = "2" * 40
-MANIFEST_SOURCE_HASH = "2451cd643c2d3ffcd3c5cc9fcd4a5f81f785978e0aa20429b4d182ceb9b1f22b"
+MANIFEST_SOURCE_HASH = "0270bdd51d8d50b7d3c9f608e4f429b46b94b789d92d4b13055b81c9b72e6291"
 ADAPTERS = {
     "soccer_epl": PREMIER_LEAGUE_FULL_SEASON_HTML_V1,
     "soccer_spain_la_liga": LALIGA_PUBLIC_MATCHES_JSON_V1,
