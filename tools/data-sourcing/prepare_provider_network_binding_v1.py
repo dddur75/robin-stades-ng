@@ -6,12 +6,11 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-from typing import Any
 
 from robin.capture import (
-    CampaignWindowSelectionV1,
     RealCaptureWorkspaceReceiptV1,
 )
+from robin.capture.bootstrap_contracts import load_campaign_selection_authority_v1
 from robin.capture.contracts import strict_json_loads
 from robin.capture.provider_network import (
     ProviderNetworkPreparationError,
@@ -32,7 +31,7 @@ from robin.capture.workspace_bootstrap import (
 _MAXIMUM_ARTIFACT_BYTES = 1_048_576
 
 
-def _load(path: Path) -> Any:
+def _load(path: Path) -> object:
     validate_exclusive_local_directory_identity(path.absolute().parent)
     return strict_json_loads(
         _safe_read_bounded(path.absolute(), maximum_bytes=_MAXIMUM_ARTIFACT_BYTES)
@@ -59,9 +58,7 @@ def main() -> int:
             Path(workspace.runtime_repository_root),
             args.mission_manifest,
         )
-        campaign_selection = CampaignWindowSelectionV1.model_validate(
-            _load(args.campaign_selection)
-        )
+        campaign_selection = load_campaign_selection_authority_v1(_load(args.campaign_selection))
         binding = prepare_provider_network_binding_once_v1(
             workspace_receipt=workspace,
             mission_manifest=manifest,

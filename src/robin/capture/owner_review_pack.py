@@ -9,7 +9,8 @@ from pathlib import Path
 from robin.capture.bootstrap_contracts import (
     PRE_KICKOFF_SAFETY_MARGIN,
     ActivationEnvelopeV2,
-    CampaignWindowSelectionV1,
+    CampaignSelectionAuthorityV1,
+    FirstC0CanarySelectionV1,
     LivePlanItemV2,
     LivePlanV2,
     OwnerAuthorizationV2,
@@ -33,7 +34,7 @@ def build_owner_review_pack_v1(
     workspace_receipt: RealCaptureWorkspaceReceiptV1,
     mission_manifest: RealExecutionMissionManifestV1,
     provider_network_binding: ProviderNetworkBindingV1,
-    campaign_selection: CampaignWindowSelectionV1,
+    campaign_selection: CampaignSelectionAuthorityV1,
     generated_at_utc: datetime,
     authorization_nonce: str,
     activation_nonce: str,
@@ -321,6 +322,20 @@ def write_owner_review_pack_v1(
 def owner_authorization_statement_v1(pack: OwnerReviewPackV1) -> str:
     authorization = pack.owner_authorization_candidate
     item = pack.plan_item_candidate
+    selection = pack.campaign_selection
+    if isinstance(selection, FirstC0CanarySelectionV1):
+        canary_boundary = (
+            f"SELECTION_SCHEMA={selection.schema_version}; "
+            f"SELECTION_PURPOSE={selection.purpose}; "
+            f"SINGLE_SPORT_KEY={selection.sport_key}; "
+            f"SOURCE_TARGET_SET_COUNT={selection.source_target_set_count}; "
+            f"PRODUCTION_SELECTION_AUTHORITY={str(selection.production_selection_authority).lower()}; "
+            f"PROMOTION_AUTHORITY={str(selection.promotion_authority).lower()}; "
+            f"BATCH_AUTHORITY={str(selection.batch_authority).lower()}; "
+            f"SCIENTIFIC_EDGE_CLAIM={str(selection.scientific_edge_claim).lower()}; "
+        )
+    else:
+        canary_boundary = ""
     return (
         "I authorize exactly one future bounded live capture under "
         f"BOOTSTRAP_CLOSURE_MAIN_SHA={pack.owner_authorization_candidate.authorized_main_sha}; "
@@ -331,6 +346,7 @@ def owner_authorization_statement_v1(pack: OwnerReviewPackV1) -> str:
         f"ACTIVATION_CANDIDATE_HASH={pack.activation_candidate.canonical_activation_hash}; "
         f"OWNER_REVIEW_PACK_HASH={pack.canonical_pack_hash}; "
         f"MISSION_MANIFEST_HASH={pack.mission_manifest_sha256}; "
+        f"{canary_boundary}"
         f"CAMPAIGN_SELECTION_HASH={pack.campaign_selection_sha256}; "
         f"SELECTED_CAMPAIGN_CANDIDATE_HASH={pack.selected_campaign_candidate_sha256}; "
         f"CAMPAIGN_WINDOW={pack.selected_campaign_window_id}; "

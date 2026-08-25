@@ -13,14 +13,16 @@ from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any, Literal, Protocol, TypeAlias, cast
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 from zoneinfo import ZoneInfo
 
 from pydantic import BaseModel
 
 from robin.capture.bootstrap_contracts import (
     CampaignLeagueCorpusCountV1,
+    CampaignSelectionAuthorityV1,
     CampaignWindowSelectionV1,
+    FirstC0CanarySelectionV1,
     FixtureTargetSetV1,
     OfficialFixtureTargetV1,
     OwnerReviewPackV1,
@@ -30,8 +32,10 @@ from robin.capture.bootstrap_contracts import (
     RealExecutionMissionManifestV1,
     ScientificCorpusSnapshotV1,
     canonical_team_name_v1,
+    load_campaign_selection_authority_v1,
 )
 from robin.capture.contracts import (
+    CaptureContractError,
     canonical_json_bytes,
     canonical_sha256,
     strict_json_loads,
@@ -39,6 +43,7 @@ from robin.capture.contracts import (
 )
 from robin.capture.live_contracts import LIVE_ALLOWED_SPORT_KEYS
 from robin.capture.official_schedule_sources import (
+    DFB_DATACENTER_HTML_V1,
     LALIGA_PUBLIC_MATCHES_JSON_V1,
     MAXIMUM_SOURCE_AGE,
     OfficialFetchReceipt,
@@ -76,6 +81,8 @@ from robin.capture.workspace_bootstrap import (
 )
 
 PRE_DNS_BUNDLE_SCHEMA = "robin-pre-dns-owner-pack-inputs-v1"
+FIRST_C0_CANARY_BUNDLE_SCHEMA = "robin-first-c0-canary-bundle-v1"
+FIRST_C0_CANARY_SOURCE_PLAN_SCHEMA = "robin-first-c0-canary-source-plan-v1"
 PRE_DNS_ITERATION_LEDGER_SCHEMA = "robin-pre-dns-iteration-ledger-v1"
 ATOMIC_RUNNER_RECEIPT_SCHEMA = "robin-atomic-dns-owner-pack-runner-receipt-v1"
 MAXIMUM_BUNDLE_ARTIFACT_BYTES = 16_777_216
@@ -151,7 +158,7 @@ class BindingPreparerV1(Protocol):
         *,
         workspace_receipt: RealCaptureWorkspaceReceiptV1,
         mission_manifest: RealExecutionMissionManifestV1,
-        campaign_selection: CampaignWindowSelectionV1,
+        campaign_selection: CampaignSelectionAuthorityV1,
         output_path: Path,
         resolver: ResolverV1,
         clock: Callable[[], datetime],
@@ -166,7 +173,7 @@ class PackBuilderV1(Protocol):
         workspace_receipt: RealCaptureWorkspaceReceiptV1,
         mission_manifest: RealExecutionMissionManifestV1,
         provider_network_binding: ProviderNetworkBindingV1,
-        campaign_selection: CampaignWindowSelectionV1,
+        campaign_selection: CampaignSelectionAuthorityV1,
         generated_at_utc: datetime,
         authorization_nonce: str,
         activation_nonce: str,
@@ -256,6 +263,21 @@ class MarkerInspectionV1:
 
 
 @dataclass(frozen=True, slots=True)
+class FirstC0CanaryMarkerInspectionV1:
+    local_marker_path: str
+    global_marker_path: str
+    local_marker_present: Literal[False]
+    global_marker_present: Literal[False]
+    inspected_read_only: Literal[True]
+
+
+@dataclass(frozen=True, slots=True)
+class FirstC0CanarySourcePlanAuthorityV1:
+    source: OfficialSourceSpec
+    canonical_sha256: str
+
+
+@dataclass(frozen=True, slots=True)
 class PreDnsResultV1:
     status: PreDnsStatusV1
     selection: CampaignWindowSelectionV1 | None
@@ -274,10 +296,10 @@ class LoadedPreDnsBundleV1:
     manifest_sha256: str
     workspace_receipt: RealCaptureWorkspaceReceiptV1
     mission_manifest: RealExecutionMissionManifestV1
-    source_plan: OfficialSourcePlan
-    campaign_selection: CampaignWindowSelectionV1
+    source_plan: OfficialSourcePlan | FirstC0CanarySourcePlanAuthorityV1
+    campaign_selection: CampaignSelectionAuthorityV1
     target_sets: tuple[FixtureTargetSetV1, ...]
-    marker_inspection: MarkerInspectionV1
+    marker_inspection: MarkerInspectionV1 | FirstC0CanaryMarkerInspectionV1
 
 
 @dataclass(frozen=True, slots=True)
@@ -315,6 +337,18 @@ def _utc_text(value: datetime) -> str:
     return _utc(value, code="PRE_DNS_DATETIME_INVALID").isoformat().replace("+00:00", "Z")
 
 
+def _parse_exact_utc_text(value: object, *, code: str) -> datetime:
+    if not isinstance(value, str):
+        raise PreDnsOrchestrationError(code)
+    try:
+        parsed = _utc(datetime.fromisoformat(value.replace("Z", "+00:00")), code=code)
+    except (TypeError, ValueError):
+        raise PreDnsOrchestrationError(code) from None
+    if _utc_text(parsed) != value:
+        raise PreDnsOrchestrationError(code)
+    return parsed
+
+
 def _json_bytes(value: object) -> bytes:
     return (
         json.dumps(
@@ -329,6 +363,15 @@ def _json_bytes(value: object) -> bytes:
 
 def _sha256(payload: bytes) -> str:
     return hashlib.sha256(payload).hexdigest()
+
+
+def _is_sha256_text(value: object) -> bool:
+    return (
+        isinstance(value, str)
+        and len(value) == 64
+        and value == value.casefold()
+        and all(character in "0123456789abcdef" for character in value)
+    )
 
 
 def _assert_plain_directory(path: Path) -> Path:
@@ -969,6 +1012,817 @@ def _expected_bundle_artifact_names() -> set[str]:
     return names
 
 
+def _load_first_c0_canary_source_plan_v1(
+    payload: bytes,
+) -> FirstC0CanarySourcePlanAuthorityV1:
+    try:
+        value = strict_json_object(payload)
+    except (TypeError, ValueError):
+        raise PreDnsOrchestrationError("FIRST_C0_CANARY_SOURCE_PLAN_INVALID") from None
+    required = {"schema_version", "sport_key", "adapter", "url"}
+    if set(value) != required or value.get("schema_version") != (
+        FIRST_C0_CANARY_SOURCE_PLAN_SCHEMA
+    ):
+        raise PreDnsOrchestrationError("FIRST_C0_CANARY_SOURCE_PLAN_INVALID")
+    sport_key = value.get("sport_key")
+    adapter = value.get("adapter")
+    url = value.get("url")
+    expected_adapters = {
+        "soccer_spain_la_liga": LALIGA_PUBLIC_MATCHES_JSON_V1,
+        "soccer_germany_bundesliga": DFB_DATACENTER_HTML_V1,
+    }
+    if (
+        not isinstance(sport_key, str)
+        or not isinstance(adapter, str)
+        or not isinstance(url, str)
+        or expected_adapters.get(sport_key) != adapter
+    ):
+        raise PreDnsOrchestrationError("FIRST_C0_CANARY_SOURCE_PLAN_INVALID")
+    parsed = urlparse(url)
+    try:
+        port = parsed.port
+    except ValueError:
+        raise PreDnsOrchestrationError("FIRST_C0_CANARY_SOURCE_PLAN_INVALID") from None
+    host = (parsed.hostname or "").rstrip(".").casefold()
+    if (
+        parsed.scheme.casefold() != "https"
+        or parsed.username
+        or parsed.password
+        or port not in {None, 443}
+        or parsed.fragment
+    ):
+        raise PreDnsOrchestrationError("FIRST_C0_CANARY_SOURCE_PLAN_INVALID")
+    if sport_key == "soccer_spain_la_liga":
+        query = parse_qs(parsed.query, keep_blank_values=True)
+        if (
+            host != "apim.laliga.com"
+            or parsed.path != "/public-service/api/v1/matches"
+            or set(query) != {"subscription", "competition", "limit", "offset"}
+            or query.get("subscription") != ["laliga-easports-2026"]
+            or query.get("competition") != ["primera-division"]
+            or query.get("limit") != ["100"]
+            or query.get("offset") != ["300"]
+        ):
+            raise PreDnsOrchestrationError("FIRST_C0_CANARY_SOURCE_PLAN_INVALID")
+    elif (
+        host != "datencenter.dfb.de"
+        or parsed.path != "/competitions/12/seasons/current"
+        or parsed.query
+    ):
+        raise PreDnsOrchestrationError("FIRST_C0_CANARY_SOURCE_PLAN_INVALID")
+    canonical = {
+        "schema_version": FIRST_C0_CANARY_SOURCE_PLAN_SCHEMA,
+        "sport_key": sport_key,
+        "adapter": adapter,
+        "url": url,
+    }
+    return FirstC0CanarySourcePlanAuthorityV1(
+        source=OfficialSourceSpec(sport_key=sport_key, adapter=adapter, url=url),
+        canonical_sha256=_sha256(canonical_json_bytes(canonical)),
+    )
+
+
+def _first_c0_canary_source_plan_from_cycle_record_v1(
+    value: Mapping[str, object],
+) -> FirstC0CanarySourcePlanAuthorityV1:
+    return _load_first_c0_canary_source_plan_v1(
+        _json_bytes(
+            {
+                "schema_version": FIRST_C0_CANARY_SOURCE_PLAN_SCHEMA,
+                "sport_key": value.get("sport_key"),
+                "adapter": value.get("adapter"),
+                "url": value.get("url"),
+            }
+        )
+    )
+
+
+def _load_first_c0_canary_marker_inspection_v1(
+    payload: bytes,
+    *,
+    workspace: RealCaptureWorkspaceReceiptV1,
+    mission: RealExecutionMissionManifestV1,
+) -> FirstC0CanaryMarkerInspectionV1:
+    try:
+        value = strict_json_object(payload)
+    except (TypeError, ValueError):
+        raise PreDnsOrchestrationError("FIRST_C0_CANARY_MARKER_INSPECTION_INVALID") from None
+    required = {
+        "schema_version",
+        "local_marker_path",
+        "global_marker_path",
+        "local_marker_present",
+        "global_marker_present",
+        "inspected_read_only",
+    }
+    local = Path(workspace.control_temp_root) / _CONTROL_MARKER_NAME
+    global_marker = (
+        _local_app_data_readonly()
+        / _GLOBAL_MARKER_ROOT_NAME
+        / (f"{mission.mission_id.casefold()}-{mission.canonical_manifest_sha256()}.json")
+    )
+    if (
+        set(value) != required
+        or value.get("schema_version") != "robin-first-c0-canary-marker-inspection-v1"
+        or value.get("local_marker_present") is not False
+        or value.get("global_marker_present") is not False
+        or value.get("inspected_read_only") is not True
+        or not isinstance(value.get("local_marker_path"), str)
+        or not isinstance(value.get("global_marker_path"), str)
+        or os.path.normcase(os.path.abspath(cast(str, value["local_marker_path"])))
+        != os.path.normcase(os.path.abspath(local))
+        or os.path.normcase(os.path.abspath(cast(str, value["global_marker_path"])))
+        != os.path.normcase(os.path.abspath(global_marker))
+    ):
+        raise PreDnsOrchestrationError("FIRST_C0_CANARY_MARKER_INSPECTION_INVALID")
+    return FirstC0CanaryMarkerInspectionV1(
+        local_marker_path=cast(str, value["local_marker_path"]),
+        global_marker_path=cast(str, value["global_marker_path"]),
+        local_marker_present=False,
+        global_marker_present=False,
+        inspected_read_only=True,
+    )
+
+
+def _first_c0_canary_marker_authority_matches_v1(
+    observed: MarkerInspectionV1,
+    frozen: MarkerInspectionV1 | FirstC0CanaryMarkerInspectionV1,
+) -> bool:
+    if isinstance(frozen, MarkerInspectionV1):
+        return observed == frozen
+    return (
+        observed.historical_marker_unchanged
+        and not observed.current_marker_present
+        and os.path.normcase(os.path.abspath(observed.current_local_marker))
+        == os.path.normcase(os.path.abspath(frozen.local_marker_path))
+        and os.path.normcase(os.path.abspath(observed.current_global_marker))
+        == os.path.normcase(os.path.abspath(frozen.global_marker_path))
+    )
+
+
+def _load_first_c0_canary_bundle_v1(
+    root: Path,
+    manifest_bytes: bytes,
+    manifest: Mapping[str, object],
+    *,
+    raw_evidence_verifier: RawEvidenceVerifierV1,
+) -> LoadedPreDnsBundleV1:
+    required_manifest = {
+        "schema_version",
+        "status",
+        "preparation_cycle",
+        "cumulative_official_reads",
+        "preparation_cycles_maximum",
+        "official_physical_reads_maximum",
+        "published_at_utc",
+        "source_plan_sha256",
+        "sport_key",
+        "official_source",
+        "workspace_receipt_sha256",
+        "mission_manifest_sha256",
+        "selection_schema",
+        "selection_purpose",
+        "selection_sha256",
+        "fixture_target_set_sha256",
+        "selected_window_id",
+        "selected_not_before_utc",
+        "selected_usable_expires_at_utc",
+        "maximum_http_calls",
+        "maximum_credits",
+        "markets",
+        "region",
+        "production_selection_authority",
+        "promotion_authority",
+        "batch_authority",
+        "scientific_edge_claim",
+        "artifact_sha256",
+        "provider_dns",
+        "provider_tcp",
+        "provider_http",
+        "secret_reads",
+        "owner_review_pack_builds",
+    }
+    if (
+        set(manifest) != required_manifest
+        or manifest.get("schema_version") != FIRST_C0_CANARY_BUNDLE_SCHEMA
+        or manifest.get("status") not in {"CANARY_READY_NOW", "CANARY_FUTURE_WINDOW"}
+    ):
+        raise PreDnsOrchestrationError("FIRST_C0_CANARY_BUNDLE_MANIFEST_INVALID")
+    raw_hashes = manifest.get("artifact_sha256")
+    if not isinstance(raw_hashes, dict) or not 11 <= len(raw_hashes) <= 18:
+        raise PreDnsOrchestrationError("FIRST_C0_CANARY_BUNDLE_MANIFEST_INVALID")
+    expected_names = {"bundle-manifest.json", *raw_hashes}
+    observed_names = {entry.name for entry in root.iterdir()}
+    if expected_names != observed_names or len({name.casefold() for name in expected_names}) != len(
+        expected_names
+    ):
+        raise PreDnsOrchestrationError("FIRST_C0_CANARY_BUNDLE_FILE_SET_INVALID")
+    payloads: dict[str, bytes] = {}
+    for raw_name, raw_hash in raw_hashes.items():
+        if (
+            not isinstance(raw_name, str)
+            or not isinstance(raw_hash, str)
+            or len(raw_hash) != 64
+            or raw_hash != raw_hash.casefold()
+            or any(character not in "0123456789abcdef" for character in raw_hash)
+        ):
+            raise PreDnsOrchestrationError("FIRST_C0_CANARY_BUNDLE_MANIFEST_INVALID")
+        name = _safe_name(raw_name)
+        payload = _read_regular_bounded(
+            root / name,
+            maximum_bytes=MAXIMUM_BUNDLE_ARTIFACT_BYTES,
+        )
+        if _sha256(payload) != raw_hash:
+            raise PreDnsOrchestrationError("FIRST_C0_CANARY_BUNDLE_ARTIFACT_HASH_MISMATCH")
+        payloads[name] = payload
+    try:
+        workspace = RealCaptureWorkspaceReceiptV1.model_validate_json(
+            payloads["workspace-receipt.json"]
+        )
+        mission = RealExecutionMissionManifestV1.model_validate_json(
+            payloads["mission-manifest.json"]
+        )
+        source_plan = _load_first_c0_canary_source_plan_v1(payloads["source-plan.json"])
+        selection_payload = strict_json_loads(payloads["first-c0-canary-selection.json"])
+        selection = load_campaign_selection_authority_v1(selection_payload)
+        if not isinstance(selection, FirstC0CanarySelectionV1):
+            raise ValueError
+        target_set = FixtureTargetSetV1.model_validate_json(payloads["fixture-target-set.json"])
+        evidence = strict_json_object(payloads["official-schedule-evidence.json"])
+        receipt = strict_json_object(payloads["official-fetch-receipt.json"])
+        parsed_receipt = _parse_fetch_receipt(payloads["official-fetch-receipt.json"])
+        counters = strict_json_object(payloads["preparation-counters.json"])
+        marker = _load_first_c0_canary_marker_inspection_v1(
+            payloads["marker-inspection.json"],
+            workspace=workspace,
+            mission=mission,
+        )
+    except (
+        CaptureContractError,
+        KeyError,
+        PreDnsOrchestrationError,
+        TypeError,
+        ValueError,
+    ) as error:
+        if isinstance(error, PreDnsOrchestrationError):
+            raise
+        raise PreDnsOrchestrationError("FIRST_C0_CANARY_BUNDLE_CONTRACT_INVALID") from None
+    counter_fields = {
+        "official_reads",
+        "cumulative_official_reads",
+        "preparation_cycle",
+        "preparation_cycles_maximum",
+        "official_physical_reads_maximum",
+        "supporting_official_reads",
+        "target_set_freezes",
+        "selector_invocations",
+        "provider_dns",
+        "provider_tcp",
+        "provider_http",
+        "secret_reads",
+        "owner_review_pack_builds",
+    }
+    cycle = counters.get("preparation_cycle")
+    cumulative_reads = counters.get("cumulative_official_reads")
+    supporting_count = counters.get("supporting_official_reads")
+    expected_supporting_count = int(source_plan.source.adapter == LALIGA_PUBLIC_MATCHES_JSON_V1)
+    expected_cycle_names = (
+        {
+            *(f"prior-cycle-{index:02d}-read-reservation.json" for index in range(1, cycle)),
+            *(f"prior-cycle-{index:02d}-attempt-receipt.json" for index in range(1, cycle)),
+        }
+        if type(cycle) is int and 1 <= cycle <= 3
+        else set()
+    )
+    fixed_names = {
+        "workspace-receipt.json",
+        "mission-manifest.json",
+        "source-plan.json",
+        "official-source-raw.bin",
+        "official-fetch-receipt.json",
+        "official-schedule-evidence.json",
+        "fixture-target-set.json",
+        "first-c0-canary-selection.json",
+        "marker-inspection.json",
+        "preparation-counters.json",
+        "current-cycle-read-reservation.json",
+        *(
+            f"official-supporting-source-raw-{index}.bin"
+            for index in range(1, expected_supporting_count + 1)
+        ),
+        *expected_cycle_names,
+    }
+    zero_effects = {
+        "provider_dns": 0,
+        "provider_tcp": 0,
+        "provider_http": 0,
+        "secret_reads": 0,  # nosec B105
+        "owner_review_pack_builds": 0,
+    }
+    if (
+        set(counters) != counter_fields
+        or set(payloads) != fixed_names
+        or type(cycle) is not int
+        or not 1 <= cycle <= 3
+        or counters.get("preparation_cycles_maximum") != 3
+        or counters.get("official_physical_reads_maximum") != 12
+        or counters.get("official_reads") != 1 + expected_supporting_count
+        or type(cumulative_reads) is not int
+        or not cast(int, counters["official_reads"]) <= cumulative_reads <= 12
+        or supporting_count != expected_supporting_count
+        or counters.get("target_set_freezes") != 1
+        or counters.get("selector_invocations") != 1
+        or any(counters.get(name) != value for name, value in zero_effects.items())
+        or manifest.get("preparation_cycle") != cycle
+        or manifest.get("cumulative_official_reads") != cumulative_reads
+        or manifest.get("preparation_cycles_maximum") != 3
+        or manifest.get("official_physical_reads_maximum") != 12
+        or any(manifest.get(name) != value for name, value in zero_effects.items())
+    ):
+        raise PreDnsOrchestrationError("FIRST_C0_CANARY_BUNDLE_COUNTERS_INVALID")
+    reservation_fields = {
+        "schema_version",
+        "cycle_index",
+        "cycle_role",
+        "workspace_receipt_sha256",
+        "mission_manifest_sha256",
+        "source_plan_sha256",
+        "prior_cycle_receipt_sha256",
+        "sport_key",
+        "adapter",
+        "url",
+        "status",
+        "official_reads_reserved",
+        "cumulative_official_reads_reserved",
+        "provider_dns",
+        "provider_tcp",
+        "provider_http",
+        "secret_reads",
+        "owner_review_pack_builds",
+        "recorded_at_utc",
+    }
+    receipt_fields = {
+        "schema_version",
+        "cycle_index",
+        "cycle_role",
+        "workspace_receipt_sha256",
+        "mission_manifest_sha256",
+        "source_plan_sha256",
+        "prior_cycle_receipt_sha256",
+        "reservation_sha256",
+        "sport_key",
+        "adapter",
+        "url",
+        "status",
+        "code",
+        "fallback_category",
+        "failure_classification",
+        "http_status",
+        "official_reads",
+        "supporting_official_reads",
+        "cumulative_official_reads",
+        "recommended_refresh_utc",
+        "selected_not_before_utc",
+        "bundle_manifest_sha256",
+        "official_fetch_receipt",
+        "provider_dns",
+        "provider_tcp",
+        "provider_http",
+        "secret_reads",
+        "owner_review_pack_builds",
+        "recorded_at_utc",
+    }
+    prior_receipt_sha256: str | None = None
+    previous_cumulative = 0
+    previous_recorded_at: datetime | None = None
+    previous_attempt: Mapping[str, object] | None = None
+    previous_plan: FirstC0CanarySourcePlanAuthorityV1 | None = None
+    plan_attempt_counts: dict[str, int] = {}
+    for index in range(1, cycle):
+        try:
+            reservation_bytes = payloads[f"prior-cycle-{index:02d}-read-reservation.json"]
+            receipt_bytes = payloads[f"prior-cycle-{index:02d}-attempt-receipt.json"]
+            reservation = strict_json_object(reservation_bytes)
+            attempt = strict_json_object(receipt_bytes)
+            reservation_plan = _first_c0_canary_source_plan_from_cycle_record_v1(reservation)
+            attempt_plan = _first_c0_canary_source_plan_from_cycle_record_v1(attempt)
+            reserved_at = _parse_exact_utc_text(
+                reservation.get("recorded_at_utc"),
+                code="FIRST_C0_CANARY_BUNDLE_LINEAGE_INVALID",
+            )
+            attempted_at = _parse_exact_utc_text(
+                attempt.get("recorded_at_utc"),
+                code="FIRST_C0_CANARY_BUNDLE_LINEAGE_INVALID",
+            )
+        except (KeyError, PreDnsOrchestrationError, TypeError, ValueError):
+            raise PreDnsOrchestrationError("FIRST_C0_CANARY_BUNDLE_LINEAGE_INVALID") from None
+        read_count = reservation.get("official_reads_reserved")
+        cumulative = reservation.get("cumulative_official_reads_reserved")
+        expected_supporting = int(reservation_plan.source.adapter == LALIGA_PUBLIC_MATCHES_JSON_V1)
+        status = attempt.get("status")
+        success_semantics_valid = (
+            status == "SUCCEEDED"
+            and attempt.get("code") in {"CANARY_READY_NOW", "CANARY_FUTURE_WINDOW"}
+            and attempt.get("fallback_category") is None
+            and attempt.get("failure_classification") is None
+            and attempt.get("http_status") == 200
+            and isinstance(attempt.get("recommended_refresh_utc"), str)
+            and isinstance(attempt.get("selected_not_before_utc"), str)
+            and _is_sha256_text(attempt.get("bundle_manifest_sha256"))
+            and isinstance(attempt.get("official_fetch_receipt"), dict)
+        )
+        failure_semantics_valid = (
+            status in {"FAILED_BEFORE_DNS", "FAILED_NO_FALLBACK"}
+            and isinstance(attempt.get("code"), str)
+            and attempt.get("failure_classification") in {"TRANSIENT", "DETERMINISTIC"}
+            and type(attempt.get("http_status")) is int
+            and attempt.get("recommended_refresh_utc") is None
+            and attempt.get("selected_not_before_utc") is None
+            and attempt.get("bundle_manifest_sha256") is None
+            and (
+                attempt.get("official_fetch_receipt") is None
+                or isinstance(attempt.get("official_fetch_receipt"), dict)
+            )
+        )
+        transition_valid = True
+        if index == 1:
+            transition_valid = (
+                reservation_plan.source.sport_key == "soccer_spain_la_liga"
+                and reservation.get("cycle_role") == "PRIMARY_INITIAL"
+                and prior_receipt_sha256 is None
+            )
+        elif previous_attempt is None or previous_plan is None:
+            transition_valid = False
+        elif previous_attempt.get("status") == "SUCCEEDED":
+            refresh_at = _parse_exact_utc_text(
+                previous_attempt.get("recommended_refresh_utc"),
+                code="FIRST_C0_CANARY_BUNDLE_LINEAGE_INVALID",
+            )
+            transition_valid = (
+                previous_attempt.get("code") == "CANARY_FUTURE_WINDOW"
+                and reservation_plan == previous_plan
+                and reservation.get("cycle_role")
+                == (
+                    "PRIMARY_REFRESH"
+                    if reservation_plan.source.sport_key == "soccer_spain_la_liga"
+                    else "FALLBACK_REFRESH"
+                )
+                and reserved_at >= refresh_at
+            )
+        elif previous_plan.source.sport_key == "soccer_spain_la_liga":
+            if (
+                previous_attempt.get("status") == "FAILED_BEFORE_DNS"
+                and previous_attempt.get("failure_classification") == "TRANSIENT"
+                and plan_attempt_counts.get(previous_plan.canonical_sha256, 0) < 2
+            ):
+                transition_valid = (
+                    reservation_plan == previous_plan
+                    and reservation.get("cycle_role") == "PRIMARY_RETRY"
+                )
+            else:
+                transition_valid = (
+                    previous_attempt.get("status") == "FAILED_BEFORE_DNS"
+                    and previous_attempt.get("fallback_category")
+                    in {
+                        "SOURCE_UNAVAILABLE",
+                        "PARSER_FAIL_CLOSED",
+                        "NO_PROSPECTIVE_FIXTURE",
+                        "NO_H24_H2_WINDOW",
+                    }
+                    and reservation_plan.source.sport_key == "soccer_germany_bundesliga"
+                    and reservation.get("cycle_role") == "FALLBACK_INITIAL"
+                )
+        else:
+            transition_valid = (
+                previous_attempt.get("status") == "FAILED_BEFORE_DNS"
+                and previous_attempt.get("failure_classification") == "TRANSIENT"
+                and plan_attempt_counts.get(previous_plan.canonical_sha256, 0) < 2
+                and reservation_plan == previous_plan
+                and reservation.get("cycle_role") == "FALLBACK_RETRY"
+            )
+        if (
+            set(reservation) != reservation_fields
+            or set(attempt) != receipt_fields
+            or reservation.get("schema_version")
+            != "robin-first-c0-canary-official-read-reservation-v1"
+            or attempt.get("schema_version") != "robin-first-c0-canary-attempt-receipt-v1"
+            or reservation.get("cycle_index") != index
+            or attempt.get("cycle_index") != index
+            or reservation.get("cycle_role") != attempt.get("cycle_role")
+            or not isinstance(reservation.get("cycle_role"), str)
+            or reservation.get("prior_cycle_receipt_sha256") != prior_receipt_sha256
+            or attempt.get("prior_cycle_receipt_sha256") != prior_receipt_sha256
+            or attempt.get("reservation_sha256") != _sha256(reservation_bytes)
+            or reservation_plan != attempt_plan
+            or reservation.get("source_plan_sha256") != reservation_plan.canonical_sha256
+            or attempt.get("source_plan_sha256") != reservation_plan.canonical_sha256
+            or reservation.get("workspace_receipt_sha256") != workspace.canonical_receipt_hash
+            or attempt.get("workspace_receipt_sha256") != workspace.canonical_receipt_hash
+            or reservation.get("mission_manifest_sha256") != mission.canonical_manifest_sha256()
+            or attempt.get("mission_manifest_sha256") != mission.canonical_manifest_sha256()
+            or reservation.get("status") != "RESERVED_BEFORE_OFFICIAL_READ"
+            or not (success_semantics_valid or failure_semantics_valid)
+            or type(read_count) is not int
+            or read_count != 1 + expected_supporting
+            or type(cumulative) is not int
+            or cumulative != previous_cumulative + read_count
+            or attempt.get("official_reads") != read_count
+            or attempt.get("supporting_official_reads") != expected_supporting
+            or attempt.get("cumulative_official_reads") != cumulative
+            or cumulative > 12
+            or attempted_at < reserved_at
+            or (previous_recorded_at is not None and reserved_at < previous_recorded_at)
+            or not transition_valid
+            or any(reservation.get(name) != value for name, value in zero_effects.items())
+            or any(attempt.get(name) != value for name, value in zero_effects.items())
+        ):
+            raise PreDnsOrchestrationError("FIRST_C0_CANARY_BUNDLE_LINEAGE_INVALID")
+        prior_receipt_sha256 = _sha256(receipt_bytes)
+        previous_cumulative = cumulative
+        previous_recorded_at = attempted_at
+        previous_attempt = attempt
+        previous_plan = reservation_plan
+        plan_attempt_counts[reservation_plan.canonical_sha256] = (
+            plan_attempt_counts.get(reservation_plan.canonical_sha256, 0) + 1
+        )
+    try:
+        current_reservation = strict_json_object(payloads["current-cycle-read-reservation.json"])
+        current_reserved_at = _parse_exact_utc_text(
+            current_reservation.get("recorded_at_utc"),
+            code="FIRST_C0_CANARY_BUNDLE_LINEAGE_INVALID",
+        )
+        current_attempt_bytes = _read_regular_bounded(
+            Path(workspace.control_temp_root)
+            / f"first-c0-canary-cycle-{cycle:02d}-attempt-receipt-v1.json",
+            maximum_bytes=MAXIMUM_BUNDLE_ARTIFACT_BYTES,
+        )
+        current_attempt = strict_json_object(current_attempt_bytes)
+        current_attempted_at = _parse_exact_utc_text(
+            current_attempt.get("recorded_at_utc"),
+            code="FIRST_C0_CANARY_BUNDLE_LINEAGE_INVALID",
+        )
+    except (KeyError, OSError, PreDnsOrchestrationError, TypeError, ValueError):
+        raise PreDnsOrchestrationError("FIRST_C0_CANARY_BUNDLE_LINEAGE_INVALID") from None
+    if cycle == 1:
+        current_transition_valid = (
+            source_plan.source.sport_key == "soccer_spain_la_liga"
+            and current_reservation.get("cycle_role") == "PRIMARY_INITIAL"
+            and prior_receipt_sha256 is None
+        )
+    elif previous_attempt is None or previous_plan is None:
+        current_transition_valid = False
+    elif previous_attempt.get("status") == "SUCCEEDED":
+        refresh_at = _parse_exact_utc_text(
+            previous_attempt.get("recommended_refresh_utc"),
+            code="FIRST_C0_CANARY_BUNDLE_LINEAGE_INVALID",
+        )
+        current_transition_valid = (
+            previous_attempt.get("code") == "CANARY_FUTURE_WINDOW"
+            and source_plan == previous_plan
+            and current_reservation.get("cycle_role")
+            == (
+                "PRIMARY_REFRESH"
+                if source_plan.source.sport_key == "soccer_spain_la_liga"
+                else "FALLBACK_REFRESH"
+            )
+            and current_reserved_at >= refresh_at
+        )
+    elif previous_plan.source.sport_key == "soccer_spain_la_liga":
+        if (
+            previous_attempt.get("status") == "FAILED_BEFORE_DNS"
+            and previous_attempt.get("failure_classification") == "TRANSIENT"
+            and plan_attempt_counts.get(previous_plan.canonical_sha256, 0) < 2
+        ):
+            current_transition_valid = (
+                source_plan == previous_plan
+                and current_reservation.get("cycle_role") == "PRIMARY_RETRY"
+            )
+        else:
+            current_transition_valid = (
+                previous_attempt.get("status") == "FAILED_BEFORE_DNS"
+                and previous_attempt.get("fallback_category")
+                in {
+                    "SOURCE_UNAVAILABLE",
+                    "PARSER_FAIL_CLOSED",
+                    "NO_PROSPECTIVE_FIXTURE",
+                    "NO_H24_H2_WINDOW",
+                }
+                and source_plan.source.sport_key == "soccer_germany_bundesliga"
+                and current_reservation.get("cycle_role") == "FALLBACK_INITIAL"
+            )
+    else:
+        current_transition_valid = (
+            previous_attempt.get("status") == "FAILED_BEFORE_DNS"
+            and previous_attempt.get("failure_classification") == "TRANSIENT"
+            and plan_attempt_counts.get(previous_plan.canonical_sha256, 0) < 2
+            and source_plan == previous_plan
+            and current_reservation.get("cycle_role") == "FALLBACK_RETRY"
+        )
+    if (
+        set(current_reservation) != reservation_fields
+        or set(current_attempt) != receipt_fields
+        or current_reservation.get("schema_version")
+        != "robin-first-c0-canary-official-read-reservation-v1"
+        or current_attempt.get("schema_version") != "robin-first-c0-canary-attempt-receipt-v1"
+        or current_reservation.get("cycle_index") != cycle
+        or current_attempt.get("cycle_index") != cycle
+        or current_attempt.get("cycle_role") != current_reservation.get("cycle_role")
+        or current_reservation.get("prior_cycle_receipt_sha256") != prior_receipt_sha256
+        or current_attempt.get("prior_cycle_receipt_sha256") != prior_receipt_sha256
+        or current_attempt.get("reservation_sha256")
+        != _sha256(payloads["current-cycle-read-reservation.json"])
+        or current_reservation.get("workspace_receipt_sha256") != workspace.canonical_receipt_hash
+        or current_attempt.get("workspace_receipt_sha256") != workspace.canonical_receipt_hash
+        or current_reservation.get("mission_manifest_sha256") != mission.canonical_manifest_sha256()
+        or current_attempt.get("mission_manifest_sha256") != mission.canonical_manifest_sha256()
+        or current_reservation.get("source_plan_sha256") != source_plan.canonical_sha256
+        or current_attempt.get("source_plan_sha256") != source_plan.canonical_sha256
+        or current_reservation.get("sport_key") != source_plan.source.sport_key
+        or current_attempt.get("sport_key") != source_plan.source.sport_key
+        or current_reservation.get("adapter") != source_plan.source.adapter
+        or current_attempt.get("adapter") != source_plan.source.adapter
+        or current_reservation.get("url") != source_plan.source.url
+        or current_attempt.get("url") != source_plan.source.url
+        or current_reservation.get("status") != "RESERVED_BEFORE_OFFICIAL_READ"
+        or current_attempt.get("status") != "SUCCEEDED"
+        or current_attempt.get("code") != manifest.get("status")
+        or current_attempt.get("fallback_category") is not None
+        or current_attempt.get("failure_classification") is not None
+        or current_attempt.get("http_status") != 200
+        or current_reservation.get("official_reads_reserved") != counters["official_reads"]
+        or current_attempt.get("official_reads") != counters["official_reads"]
+        or current_attempt.get("supporting_official_reads") != expected_supporting_count
+        or current_reservation.get("cumulative_official_reads_reserved") != cumulative_reads
+        or current_attempt.get("cumulative_official_reads") != cumulative_reads
+        or current_attempt.get("selected_not_before_utc") != manifest.get("selected_not_before_utc")
+        or not isinstance(current_attempt.get("recommended_refresh_utc"), str)
+        or current_attempt.get("bundle_manifest_sha256") != _sha256(manifest_bytes)
+        or current_attempt.get("official_fetch_receipt") != receipt
+        or current_attempted_at
+        != _parse_exact_utc_text(
+            manifest.get("published_at_utc"),
+            code="FIRST_C0_CANARY_BUNDLE_LINEAGE_INVALID",
+        )
+        or current_attempted_at < current_reserved_at
+        or (previous_recorded_at is not None and current_reserved_at < previous_recorded_at)
+        or not current_transition_valid
+        or previous_cumulative + cast(int, counters["official_reads"]) != cumulative_reads
+        or any(current_reservation.get(name) != value for name, value in zero_effects.items())
+        or any(current_attempt.get(name) != value for name, value in zero_effects.items())
+    ):
+        raise PreDnsOrchestrationError("FIRST_C0_CANARY_BUNDLE_LINEAGE_INVALID")
+    selected = selection.selected_candidate()
+    expected_refresh = max(
+        selection.selected_at_utc,
+        selected.window_not_before_utc - timedelta(seconds=60),
+    )
+    if (
+        root.parent != Path(workspace.control_temp_root).absolute()
+        or manifest.get("workspace_receipt_sha256") != workspace.canonical_receipt_hash
+        or manifest.get("mission_manifest_sha256") != mission.canonical_manifest_sha256()
+        or manifest.get("source_plan_sha256") != source_plan.canonical_sha256
+        or manifest.get("sport_key") != source_plan.source.sport_key
+        or manifest.get("official_source") != source_plan.source.url
+        or selection.source_target_sets != (target_set,)
+        or selection.workspace_receipt_sha256 != workspace.canonical_receipt_hash
+        or selection.workspace_prepared_at_utc != workspace.prepared_at_utc
+        or selection.mission_manifest_sha256 != mission.canonical_manifest_sha256()
+        or selection.mission_expires_at_utc != mission.expires_at
+        or current_attempt.get("recommended_refresh_utc") != _utc_text(expected_refresh)
+        or _parse_exact_utc_text(
+            manifest.get("published_at_utc"),
+            code="FIRST_C0_CANARY_BUNDLE_AUTHORITY_MISMATCH",
+        )
+        < selection.selected_at_utc
+    ):
+        raise PreDnsOrchestrationError("FIRST_C0_CANARY_BUNDLE_AUTHORITY_MISMATCH")
+    expected_status = (
+        "CANARY_READY_NOW" if selected.status == "OPEN_SELECTABLE" else "CANARY_FUTURE_WINDOW"
+    )
+    if (
+        manifest.get("status") != expected_status
+        or manifest.get("selection_schema") != selection.schema_version
+        or manifest.get("selection_purpose") != selection.purpose
+        or manifest.get("selection_sha256") != selection.canonical_selection_hash
+        or manifest.get("fixture_target_set_sha256")
+        != selected.fixture_target_set.canonical_set_hash
+        or manifest.get("selected_window_id") != selected.window_id
+        or manifest.get("selected_not_before_utc") != _utc_text(selection.selected_not_before_utc)
+        or manifest.get("selected_usable_expires_at_utc")
+        != _utc_text(selected.usable_expires_at_utc)
+        or manifest.get("maximum_http_calls") != 1
+        or manifest.get("maximum_credits") != 1
+        or manifest.get("markets") != ["h2h"]
+        or manifest.get("region") != "eu"
+        or manifest.get("production_selection_authority") is not False
+        or manifest.get("promotion_authority") is not False
+        or manifest.get("batch_authority") is not False
+        or manifest.get("scientific_edge_claim") is not False
+    ):
+        raise PreDnsOrchestrationError("FIRST_C0_CANARY_BUNDLE_AUTHORITY_MISMATCH")
+    raw_payload = payloads["official-source-raw.bin"]
+    supporting_payloads = tuple(
+        payloads[f"official-supporting-source-raw-{index}.bin"]
+        for index in range(1, expected_supporting_count + 1)
+    )
+    final_url = receipt.get("final_url")
+    final_host = (
+        (urlparse(final_url).hostname or "").rstrip(".").casefold()
+        if isinstance(final_url, str)
+        else ""
+    )
+    raw_fixtures = evidence.get("fixtures")
+    normalized_fixtures: list[dict[str, object]] = []
+    if isinstance(raw_fixtures, list):
+        for raw_fixture in raw_fixtures:
+            if not isinstance(raw_fixture, dict):
+                break
+            home = raw_fixture.get("official_home_team")
+            away = raw_fixture.get("official_away_team")
+            if not isinstance(home, str) or not isinstance(away, str):
+                break
+            normalized_fixtures.append(
+                {
+                    **raw_fixture,
+                    "official_home_team": canonical_team_name_v1(home),
+                    "official_away_team": canonical_team_name_v1(away),
+                }
+            )
+    target_material = [
+        {
+            "internal_fixture_target_id": target.internal_fixture_target_id,
+            "competition": target.competition,
+            "official_home_team": target.official_home_team,
+            "official_away_team": target.official_away_team,
+            "official_kickoff_utc": _utc_text(target.official_kickoff_utc),
+        }
+        for target in target_set.targets
+    ]
+    if (
+        parsed_receipt.sport_key != source_plan.source.sport_key
+        or parsed_receipt.adapter_revision != source_plan.source.adapter
+        or parsed_receipt.requested_url != source_plan.source.url
+        or not parsed_receipt.accepted
+        or parsed_receipt.rejection_code is not None
+        or parsed_receipt.http_status != 200
+        or parsed_receipt.raw_sha256 != _sha256(raw_payload)
+        or parsed_receipt.byte_count != len(raw_payload)
+        or len(parsed_receipt.supporting_official_reads) != len(supporting_payloads)
+        or any(
+            item.byte_count != len(raw) or item.raw_sha256 != _sha256(raw)
+            for item, raw in zip(
+                parsed_receipt.supporting_official_reads,
+                supporting_payloads,
+                strict=True,
+            )
+        )
+        or not any(
+            final_host == domain or final_host.endswith(f".{domain}")
+            for domain in source_plan.source.allowed_domains
+        )
+        or evidence.get("sport_key") != source_plan.source.sport_key
+        or evidence.get("adapter_revision") != source_plan.source.adapter
+        or evidence.get("target_set_id") != target_set.target_set_id
+        or evidence.get("official_source_authority") != final_url
+        or evidence.get("official_source_content_sha256") != _sha256(raw_payload)
+        or evidence.get("source_observed_at_utc") != receipt.get("observed_at_utc")
+        or evidence.get("selection_horizon_not_before_utc")
+        != _utc_text(cast(datetime, target_set.official_schedule_horizon_not_before_utc))
+        or evidence.get("selection_horizon_expires_at_utc")
+        != _utc_text(cast(datetime, target_set.official_schedule_horizon_expires_at_utc))
+        or evidence.get("official_schedule_completeness")
+        != "OWNER_REVIEWED_COMPLETE_OFFICIAL_HORIZON"
+        or evidence.get("official_schedule_fixture_count") != len(target_set.targets)
+        or normalized_fixtures != target_material
+        or any(
+            target.source_evidence_sha256 != _sha256(payloads["official-schedule-evidence.json"])
+            or _utc_text(target.source_observed_at_utc) != receipt.get("observed_at_utc")
+            or target.official_source_authority != final_url
+            for target in target_set.targets
+        )
+    ):
+        raise PreDnsOrchestrationError("FIRST_C0_CANARY_BUNDLE_AUTHORITY_MISMATCH")
+    raw_evidence_verifier(
+        source_plan.source,
+        raw_payload,
+        payloads["official-fetch-receipt.json"],
+        payloads["official-schedule-evidence.json"],
+        target_set,
+        supporting_payloads,
+    )
+    return LoadedPreDnsBundleV1(
+        directory=root,
+        manifest=manifest,
+        manifest_sha256=_sha256(manifest_bytes),
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        source_plan=source_plan,
+        campaign_selection=selection,
+        target_sets=(target_set,),
+        marker_inspection=marker,
+    )
+
+
 def load_pre_dns_bundle_v1(
     directory: Path,
     *,
@@ -983,6 +1837,13 @@ def load_pre_dns_bundle_v1(
         manifest = strict_json_object(manifest_bytes)
     except (TypeError, ValueError):
         raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_MANIFEST_INVALID") from None
+    if manifest.get("schema_version") == FIRST_C0_CANARY_BUNDLE_SCHEMA:
+        return _load_first_c0_canary_bundle_v1(
+            root,
+            manifest_bytes,
+            manifest,
+            raw_evidence_verifier=raw_evidence_verifier,
+        )
     required = {
         "schema_version",
         "status",
@@ -2005,7 +2866,10 @@ def preflight_owner_review_pack_once_v1(
     except Exception:
         errors.append("PROVIDER_MARKER_INSPECTION_FAILED")
     if loaded is not None:
-        if observed_marker is None or observed_marker != loaded.marker_inspection:
+        if observed_marker is None or not _first_c0_canary_marker_authority_matches_v1(
+            observed_marker,
+            loaded.marker_inspection,
+        ):
             errors.append("PROVIDER_MARKER_AUTHORITY_MISMATCH")
         if loaded.workspace_receipt != workspace_receipt:
             errors.append("WORKSPACE_RECEIPT_BUNDLE_MISMATCH")
@@ -2128,7 +2992,10 @@ def _final_execute_preflight_v1(
             errors.append("CURRENT_V2_MARKER_PRESENT")
     except Exception:
         errors.append("PROVIDER_MARKER_INSPECTION_FAILED")
-    if observed_marker is None or observed_marker != loaded.marker_inspection:
+    if observed_marker is None or not _first_c0_canary_marker_authority_matches_v1(
+        observed_marker,
+        loaded.marker_inspection,
+    ):
         errors.append("PROVIDER_MARKER_AUTHORITY_MISMATCH")
     if os.path.lexists(output_binding_path):
         errors.append("PROVIDER_NETWORK_BINDING_OUTPUT_EXISTS")
@@ -2333,10 +3200,6 @@ def run_owner_review_pack_once_v1(
 
     def binding_clock() -> datetime:
         current = _utc(clock(), code="ATOMIC_RUNNER_CLOCK_INVALID")
-        try:
-            selection.assert_selected_candidate_current(current)
-        except ValueError:
-            raise PreDnsOrchestrationError("CAMPAIGN_SELECTION_NOT_CURRENT") from None
         usable_ceiling = min(
             mission_manifest.expires_at,
             selected.usable_expires_at_utc,
@@ -2344,6 +3207,10 @@ def run_owner_review_pack_once_v1(
         )
         if int((usable_ceiling - current).total_seconds()) < MINIMUM_READY_MARGIN_SECONDS:
             raise PreDnsOrchestrationError("OWNER_REVIEW_USABLE_MARGIN_INSUFFICIENT")
+        try:
+            selection.assert_selected_candidate_current(current)
+        except ValueError:
+            raise PreDnsOrchestrationError("CAMPAIGN_SELECTION_NOT_CURRENT") from None
         return current
 
     try:

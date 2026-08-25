@@ -8,14 +8,13 @@ import json
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 from robin.capture import (
-    CampaignWindowSelectionV1,
     CaptureContractError,
     ProviderNetworkBindingV1,
     RealCaptureWorkspaceReceiptV1,
 )
+from robin.capture.bootstrap_contracts import load_campaign_selection_authority_v1
 from robin.capture.contracts import canonical_sha256, strict_json_loads
 from robin.capture.owner_review_pack import (
     OwnerReviewPackError,
@@ -40,7 +39,7 @@ ZERO_EFFECT_COUNT = 0
 _MAXIMUM_ARTIFACT_BYTES = 1_048_576
 
 
-def _load(path: Path) -> Any:
+def _load(path: Path) -> object:
     validate_exclusive_local_directory_identity(path.absolute().parent)
     return strict_json_loads(
         _safe_read_bounded(path.absolute(), maximum_bytes=_MAXIMUM_ARTIFACT_BYTES)
@@ -73,7 +72,7 @@ def main() -> int:
             arguments.mission_manifest,
         )
         binding = ProviderNetworkBindingV1.model_validate(_load(arguments.provider_network_binding))
-        campaign_selection = CampaignWindowSelectionV1.model_validate(
+        campaign_selection = load_campaign_selection_authority_v1(
             _load(arguments.campaign_selection)
         )
         selected_campaign = campaign_selection.selected_candidate()
