@@ -10,13 +10,17 @@ from collections.abc import Callable, Iterable
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from types import ModuleType
 
 import pytest
 
 import robin.capture.predns_orchestration as predns_module
 import robin.capture.provider_network as provider_network_module
 from robin.capture.bootstrap_contracts import (
+    CampaignSelectionAuthorityV1,
     CampaignWindowSelectionV1,
+    FirstC0CanarySelectionV1,
+    OwnerReviewPackV1,
     ProviderNetworkBindingV1,
     ProviderNetworkResolutionClaimV1,
     RealCaptureWorkspaceReceiptV1,
@@ -79,6 +83,27 @@ CONTENT_TYPES = {
     "soccer_italy_serie_a": "application/pdf",
     "soccer_france_ligue_one": "text/html",
 }
+
+
+def _load_first_c0_canary_cli() -> ModuleType:
+    path = (
+        Path(__file__).resolve().parents[2]
+        / "tools"
+        / "data-sourcing"
+        / "prepare_first_c0_canary_selection_v1.py"
+    )
+    specification = importlib.util.spec_from_file_location(
+        "predns_first_c0_canary_cli_tests",
+        path,
+    )
+    assert specification is not None and specification.loader is not None
+    module = importlib.util.module_from_spec(specification)
+    sys.modules[specification.name] = module
+    specification.loader.exec_module(module)
+    return module
+
+
+FIRST_C0_CANARY_CLI = _load_first_c0_canary_cli()
 
 
 @dataclass
@@ -868,7 +893,7 @@ def fake_binding_preparer(
     *,
     workspace_receipt: RealCaptureWorkspaceReceiptV1,
     mission_manifest: RealExecutionMissionManifestV1,
-    campaign_selection: CampaignWindowSelectionV1,
+    campaign_selection: CampaignSelectionAuthorityV1,
     output_path: Path,
     resolver: Callable[[str, int, int, int, int], Iterable[tuple[object, ...]]],
     clock: Callable[[], datetime],
@@ -885,6 +910,9 @@ def fake_binding_preparer(
         claimed_at_utc=claimed,
         mission_expires_at_utc=mission_manifest.expires_at,
     )
+    (output_path.parent / "provider-network-resolution-one-shot-v1.json").write_bytes(
+        canonical_model_bytes(claim)
+    )
     tuple(resolver("api.the-odds-api.com", 443, socket.AF_UNSPEC, socket.SOCK_STREAM, 0))
     binding = ProviderNetworkBindingV1.issue(
         resolution_claim=claim,
@@ -895,9 +923,6 @@ def fake_binding_preparer(
         resolved_ip_addresses=("8.8.8.8",),
     )
     output_path.write_bytes(canonical_model_bytes(binding))
-    (output_path.parent / "provider-network-resolution-one-shot-v1.json").write_bytes(
-        canonical_model_bytes(claim)
-    )
     return binding
 
 
@@ -925,6 +950,540 @@ def build_ready_bundle(tmp_path: Path):
     )
     assert result.bundle_directory is not None
     return result.bundle_directory, workspace, manifest
+
+
+def _canary_round_robin_rounds(
+    clubs: list[str],
+    count: int,
+) -> list[list[tuple[str, str]]]:
+    rotating = list(clubs)
+    rounds: list[list[tuple[str, str]]] = []
+    for _ in range(count):
+        rounds.append(
+            [(rotating[index], rotating[-index - 1]) for index in range(len(rotating) // 2)]
+        )
+        rotating = [rotating[0], rotating[-1], *rotating[1:-1]]
+    return rounds
+
+
+def _canary_laliga_payload(earliest: datetime) -> bytes:
+    latest = earliest + timedelta(days=7)
+    clubs = [f"Canary Liga Club {index:02d}" for index in range(20)]
+    matches: list[dict[str, object]] = []
+    for week_index, games in enumerate(_canary_round_robin_rounds(clubs, 8), start=1):
+        for home, away in games:
+            matches.append(
+                {
+                    "id": f"canary-laliga-{len(matches):03d}",
+                    "competition": {"slug": "primera-division"},
+                    "date": (latest - timedelta(days=week_index - 1))
+                    .isoformat()
+                    .replace("+00:00", "Z"),
+                    "home_team": {"name": home},
+                    "away_team": {"name": away},
+                    "gameweek": {"week": week_index},
+                }
+            )
+    return json.dumps({"total": 380, "matches": matches}, sort_keys=True).encode()
+
+
+def build_ready_canary_bundle(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    refresh_cycle: bool = False,
+) -> tuple[
+    Path,
+    RealCaptureWorkspaceReceiptV1,
+    RealExecutionMissionManifestV1,
+    Callable[
+        [RealCaptureWorkspaceReceiptV1, RealExecutionMissionManifestV1],
+        MarkerInspectionV1,
+    ],
+    datetime,
+]:
+    workspace, manifest = build_authority(tmp_path)
+    control = Path(workspace.control_temp_root)
+    local_app_data = tmp_path / "local-app-data"
+    local_app_data.mkdir()
+    global_marker = (
+        local_app_data
+        / "RobinRealExecutionMissionClaimsV1"
+        / (f"{manifest.mission_id.casefold()}-{manifest.canonical_manifest_sha256()}.json")
+    )
+    local_marker = control / "provider-network-resolution-one-shot-v1.json"
+    monkeypatch.setattr(predns_module, "_local_app_data_readonly", lambda: local_app_data)
+    source_url = URLS["soccer_spain_la_liga"]
+    source_plan = json.dumps(
+        {
+            "schema_version": "robin-first-c0-canary-source-plan-v1",
+            "sport_key": "soccer_spain_la_liga",
+            "adapter": LALIGA_PUBLIC_MATCHES_JSON_V1,
+            "url": source_url,
+        },
+        sort_keys=True,
+    ).encode()
+    raw = _canary_laliga_payload(
+        BASE + timedelta(hours=3) if refresh_cycle else BASE + timedelta(minutes=135)
+    )
+    supporting_raw = (
+        b'<script id="__NEXT_DATA__">'
+        b'{"runtimeConfig":{"backendSubscription":"laliga-easports-2026"}}'
+        b"</script>"
+    )
+    supporting = SupportingOfficialRead(
+        requested_url="https://www.laliga.com/en-GB/laliga-easports/results",
+        final_url="https://www.laliga.com/en-GB/laliga-easports/results",
+        official_domain="www.laliga.com",
+        status_code=200,
+        content_type="text/html",
+        byte_count=len(supporting_raw),
+        raw_sha256=hashlib.sha256(supporting_raw).hexdigest(),
+        redirect_chain=(),
+    )
+
+    class CanaryFetcher:
+        def fetch(self, source: OfficialSourceSpec) -> OfficialHttpResponse:
+            assert source.url == source_url
+            return OfficialHttpResponse(
+                status_code=200,
+                final_url=source.url,
+                content_type="application/json",
+                body=raw,
+                supporting_official_reads=(supporting,),
+                supporting_official_raw_bytes=(supporting_raw,),
+            )
+
+    frozen_marker = {
+        "schema_version": "robin-first-c0-canary-marker-inspection-v1",
+        "local_marker_path": str(local_marker.absolute()),
+        "global_marker_path": str(global_marker.absolute()),
+        "local_marker_present": False,
+        "global_marker_present": False,
+        "inspected_read_only": True,
+    }
+    arguments = {
+        "workspace_receipt": workspace,
+        "workspace_receipt_bytes": canonical_model_bytes(workspace),
+        "mission_manifest": manifest,
+        "mission_manifest_bytes": canonical_model_bytes(manifest),
+        "source_plan_bytes": source_plan,
+        "fetcher": CanaryFetcher(),
+        "workspace_validator": lambda _: None,
+        "marker_inspector": lambda _workspace, _manifest: frozen_marker,
+    }
+    result = FIRST_C0_CANARY_CLI.prepare_first_c0_canary_selection_v1(
+        **arguments,
+        output_directory=control / "first-c0-canary-ready-bundle",
+        clock=FixedClock(BASE),
+    )
+    if refresh_cycle:
+        assert result.status == "CANARY_FUTURE_WINDOW"
+        result = FIRST_C0_CANARY_CLI.prepare_first_c0_canary_selection_v1(
+            **arguments,
+            output_directory=control / "first-c0-canary-refreshed-bundle",
+            clock=FixedClock(result.recommended_refresh_utc),
+        )
+    assert result.status in {"CANARY_READY_NOW", "CANARY_FUTURE_WINDOW"}
+    execution_at = result.selection.selected_not_before_utc
+
+    def current_marker_inspector(
+        _workspace: RealCaptureWorkspaceReceiptV1,
+        _manifest: RealExecutionMissionManifestV1,
+    ) -> MarkerInspectionV1:
+        return replace(
+            marker_ok(),
+            current_marker_present=local_marker.exists() or global_marker.exists(),
+            current_authority_manifest_sha256=manifest.canonical_manifest_sha256(),
+            current_local_marker=str(local_marker.absolute()),
+            current_global_marker=str(global_marker.absolute()),
+        )
+
+    return (
+        result.bundle_directory,
+        workspace,
+        manifest,
+        current_marker_inspector,
+        execution_at,
+    )
+
+
+def test_canary_refresh_cycle_bundle_has_closed_read_lineage(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle, _, _, _, _ = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        refresh_cycle=True,
+    )
+    loaded = load_pre_dns_bundle_v1(bundle)
+    assert isinstance(loaded.campaign_selection, FirstC0CanarySelectionV1)
+    assert loaded.manifest["preparation_cycle"] == 2
+    assert loaded.manifest["cumulative_official_reads"] == 4
+    names = {path.name for path in bundle.iterdir()}
+    assert "prior-cycle-01-read-reservation.json" in names
+    assert "prior-cycle-01-attempt-receipt.json" in names
+
+
+def _write_canonical_test_json(path: Path, payload: object) -> bytes:
+    encoded = canonical_json_bytes(payload) + b"\n"
+    path.write_bytes(encoded)
+    return encoded
+
+
+@pytest.mark.parametrize("schema_mode", ["missing", "unknown"])
+def test_canary_bundle_loader_rejects_missing_or_unknown_schema(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    schema_mode: str,
+) -> None:
+    bundle, _, _, _, _ = build_ready_canary_bundle(tmp_path, monkeypatch)
+    manifest_path = bundle / "bundle-manifest.json"
+    manifest = json.loads(manifest_path.read_bytes())
+    if schema_mode == "missing":
+        del manifest["schema_version"]
+    else:
+        manifest["schema_version"] = "robin-first-c0-canary-bundle-v999"
+    _write_canonical_test_json(manifest_path, manifest)
+
+    with pytest.raises(PreDnsOrchestrationError, match="PRE_DNS_BUNDLE_MANIFEST_INVALID"):
+        load_pre_dns_bundle_v1(
+            bundle,
+            raw_evidence_verifier=synthetic_raw_evidence_verifier,
+        )
+
+
+def test_canary_bundle_loader_rejects_artifact_hash_mismatch(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle, _, _, _, _ = build_ready_canary_bundle(tmp_path, monkeypatch)
+    raw_path = bundle / "official-source-raw.bin"
+    raw_path.write_bytes(raw_path.read_bytes() + b"tamper")
+
+    with pytest.raises(
+        PreDnsOrchestrationError,
+        match="FIRST_C0_CANARY_BUNDLE_ARTIFACT_HASH_MISMATCH",
+    ):
+        load_pre_dns_bundle_v1(
+            bundle,
+            raw_evidence_verifier=synthetic_raw_evidence_verifier,
+        )
+
+
+@pytest.mark.parametrize("receipt_mode", ["missing", "wrong-backlink"])
+def test_canary_bundle_loader_requires_current_receipt_and_manifest_backlink(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    receipt_mode: str,
+) -> None:
+    bundle, workspace, _, _, _ = build_ready_canary_bundle(tmp_path, monkeypatch)
+    receipt_path = (
+        Path(workspace.control_temp_root) / "first-c0-canary-cycle-01-attempt-receipt-v1.json"
+    )
+    if receipt_mode == "missing":
+        receipt_path.unlink()
+    else:
+        receipt = json.loads(receipt_path.read_bytes())
+        receipt["bundle_manifest_sha256"] = "0" * 64
+        _write_canonical_test_json(receipt_path, receipt)
+
+    with pytest.raises(
+        PreDnsOrchestrationError,
+        match="FIRST_C0_CANARY_BUNDLE_LINEAGE_INVALID",
+    ):
+        load_pre_dns_bundle_v1(
+            bundle,
+            raw_evidence_verifier=synthetic_raw_evidence_verifier,
+        )
+
+
+def test_canary_bundle_loader_rejects_rehashed_cycle_transition_tamper(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle, workspace, _, _, _ = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        refresh_cycle=True,
+    )
+    current_reservation_path = bundle / "current-cycle-read-reservation.json"
+    manifest_path = bundle / "bundle-manifest.json"
+    current_attempt_path = (
+        Path(workspace.control_temp_root) / "first-c0-canary-cycle-02-attempt-receipt-v1.json"
+    )
+
+    current_reservation = json.loads(current_reservation_path.read_bytes())
+    assert current_reservation["cycle_role"] == "PRIMARY_REFRESH"
+    current_reservation["cycle_role"] = "PRIMARY_RETRY"
+    current_reservation_bytes = _write_canonical_test_json(
+        current_reservation_path,
+        current_reservation,
+    )
+
+    manifest = json.loads(manifest_path.read_bytes())
+    manifest["artifact_sha256"][current_reservation_path.name] = hashlib.sha256(
+        current_reservation_bytes
+    ).hexdigest()
+    manifest_bytes = _write_canonical_test_json(manifest_path, manifest)
+
+    current_attempt = json.loads(current_attempt_path.read_bytes())
+    assert current_attempt["cycle_role"] == "PRIMARY_REFRESH"
+    current_attempt["cycle_role"] = "PRIMARY_RETRY"
+    current_attempt["reservation_sha256"] = hashlib.sha256(current_reservation_bytes).hexdigest()
+    current_attempt["bundle_manifest_sha256"] = hashlib.sha256(manifest_bytes).hexdigest()
+    _write_canonical_test_json(current_attempt_path, current_attempt)
+
+    with pytest.raises(
+        PreDnsOrchestrationError,
+        match="FIRST_C0_CANARY_BUNDLE_LINEAGE_INVALID",
+    ):
+        load_pre_dns_bundle_v1(
+            bundle,
+            raw_evidence_verifier=synthetic_raw_evidence_verifier,
+        )
+
+
+def test_canary_bundle_loader_rejects_rehashed_manifest_authority_tamper(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle, workspace, _, _, _ = build_ready_canary_bundle(tmp_path, monkeypatch)
+    manifest_path = bundle / "bundle-manifest.json"
+    manifest = json.loads(manifest_path.read_bytes())
+    manifest["fixture_target_set_sha256"] = "0" * 64
+    manifest_bytes = _write_canonical_test_json(manifest_path, manifest)
+
+    current_attempt_path = (
+        Path(workspace.control_temp_root) / "first-c0-canary-cycle-01-attempt-receipt-v1.json"
+    )
+    current_attempt = json.loads(current_attempt_path.read_bytes())
+    current_attempt["bundle_manifest_sha256"] = hashlib.sha256(manifest_bytes).hexdigest()
+    _write_canonical_test_json(current_attempt_path, current_attempt)
+
+    with pytest.raises(
+        PreDnsOrchestrationError,
+        match="FIRST_C0_CANARY_BUNDLE_AUTHORITY_MISMATCH",
+    ):
+        load_pre_dns_bundle_v1(
+            bundle,
+            raw_evidence_verifier=synthetic_raw_evidence_verifier,
+        )
+
+
+def test_canary_bundle_runs_through_atomic_runner_with_one_injected_resolver(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle, workspace, manifest, current_marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+    )
+    loaded = load_pre_dns_bundle_v1(bundle)
+    assert isinstance(loaded.campaign_selection, FirstC0CanarySelectionV1)
+    binding = Path(workspace.control_temp_root) / "canary-binding.json"
+    pack_directory = Path(workspace.control_temp_root) / "canary-owner-review-pack"
+    result = run_owner_review_pack_once_v1(
+        bundle_directory=bundle,
+        workspace_receipt=workspace,
+        mission_manifest=manifest,
+        output_binding_path=binding,
+        output_pack_directory=pack_directory,
+        resolver=synthetic_resolver,
+        marker_inspector=current_marker_inspector,
+        execute=True,
+        owner_present_for_review=True,
+        clock=FixedClock(execution_at),
+        monotonic=SequenceMonotonic(),
+        workspace_validator=lambda _: None,
+        binding_preparer=fake_binding_preparer,
+    )
+    assert result.status == "OWNER_REVIEW_PACK_CREATED", result.preflight.errors
+    assert result.resolver_operations == result.pack_builds == 1
+    artifacts = tuple(
+        path for path in pack_directory.iterdir() if path.name != "execution-receipt.json"
+    )
+    assert len(artifacts) == 11
+    pack_paths = tuple(pack_directory.glob("owner-review-pack-*.json"))
+    assert len(pack_paths) == 1
+    pack = OwnerReviewPackV1.model_validate_json(pack_paths[0].read_bytes())
+    assert isinstance(pack.campaign_selection, FirstC0CanarySelectionV1)
+    assert pack.campaign_selection == loaded.campaign_selection
+    assert pack.owner_authorization_candidate.maximum_http_calls == 1
+    assert pack.owner_authorization_candidate.maximum_credits == 1
+    assert pack.owner_authorization_candidate.authorization_status == "OWNER_REVIEW_CANDIDATE"
+    assert pack.owner_authorization_candidate.review_candidate_sha256 is None
+
+
+def test_canary_runner_forgotten_resolver_is_denied_and_marker_is_retained(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capture_network_guard: object,
+) -> None:
+    bundle, workspace, manifest, current_marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+    )
+
+    def forgotten_stub_resolver(
+        host: str,
+        port: int,
+        family: int,
+        socket_type: int,
+        protocol: int,
+    ) -> Iterable[tuple[object, ...]]:
+        return socket.getaddrinfo(host, port, family, socket_type, protocol)
+
+    binding = Path(workspace.control_temp_root) / "forgotten-stub-binding.json"
+    pack_directory = Path(workspace.control_temp_root) / "forgotten-stub-pack"
+    assert hasattr(capture_network_guard, "expect_forbidden")
+    with capture_network_guard.expect_forbidden():
+        result = run_owner_review_pack_once_v1(
+            bundle_directory=bundle,
+            workspace_receipt=workspace,
+            mission_manifest=manifest,
+            output_binding_path=binding,
+            output_pack_directory=pack_directory,
+            resolver=forgotten_stub_resolver,
+            marker_inspector=current_marker_inspector,
+            execute=True,
+            owner_present_for_review=True,
+            clock=FixedClock(execution_at),
+            workspace_validator=lambda _: None,
+            binding_preparer=fake_binding_preparer,
+            raw_evidence_verifier=synthetic_raw_evidence_verifier,
+        )
+    assert result.status == "POST_DNS_HARD_STOP"
+    assert result.hard_stop_code == "TEST_REAL_NETWORK_FORBIDDEN"
+    assert result.resolver_operations == 1
+    assert result.pack_builds == 0
+    assert getattr(capture_network_guard, "expected_attempts") == 1
+    assert not binding.exists() and not pack_directory.exists()
+    assert result.receipt_path is not None
+    receipt = json.loads(result.receipt_path.read_bytes())
+    assert receipt["failure_phase"] == "RESOLVER"
+    assert receipt["resolver_completed"] is False
+    assert receipt["binding_persisted"] is False
+    assert (
+        Path(workspace.control_temp_root) / "provider-network-resolution-one-shot-v1.json"
+    ).is_file()
+
+
+def test_canary_post_dns_pack_failure_is_one_shot_and_non_retryable(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle, workspace, manifest, current_marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+    )
+    resolver_calls = Counter()
+
+    def resolver(*args: object) -> Iterable[tuple[object, ...]]:
+        resolver_calls.value += 1
+        return synthetic_resolver(*args)  # type: ignore[arg-type]
+
+    def failing_pack_builder(**_kwargs: object) -> object:
+        raise PreDnsOrchestrationError("SYNTHETIC_CANARY_PACK_FAILURE")
+
+    binding = Path(workspace.control_temp_root) / "failed-pack-binding.json"
+    pack_directory = Path(workspace.control_temp_root) / "failed-canary-pack"
+    first = run_owner_review_pack_once_v1(
+        bundle_directory=bundle,
+        workspace_receipt=workspace,
+        mission_manifest=manifest,
+        output_binding_path=binding,
+        output_pack_directory=pack_directory,
+        resolver=resolver,
+        marker_inspector=current_marker_inspector,
+        execute=True,
+        owner_present_for_review=True,
+        clock=FixedClock(execution_at),
+        workspace_validator=lambda _: None,
+        binding_preparer=fake_binding_preparer,
+        pack_builder=failing_pack_builder,  # type: ignore[arg-type]
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    assert first.status == "POST_DNS_HARD_STOP"
+    assert first.hard_stop_code == "SYNTHETIC_CANARY_PACK_FAILURE"
+    assert first.resolver_operations == first.pack_builds == resolver_calls.value == 1
+    assert first.receipt_path is not None and first.receipt_path.is_file()
+    assert (
+        Path(workspace.control_temp_root) / "provider-network-resolution-one-shot-v1.json"
+    ).is_file()
+    second = run_owner_review_pack_once_v1(
+        bundle_directory=bundle,
+        workspace_receipt=workspace,
+        mission_manifest=manifest,
+        output_binding_path=binding,
+        output_pack_directory=pack_directory,
+        resolver=resolver,
+        marker_inspector=current_marker_inspector,
+        execute=True,
+        owner_present_for_review=True,
+        clock=FixedClock(execution_at),
+        workspace_validator=lambda _: None,
+        binding_preparer=fake_binding_preparer,
+        pack_builder=failing_pack_builder,  # type: ignore[arg-type]
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    assert second.status == "PREFLIGHT_REJECTED"
+    assert second.resolver_operations == second.pack_builds == 0
+    assert resolver_calls.value == 1
+
+
+def test_canary_runner_rechecks_840_second_margin_after_marker_before_resolver(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle, workspace, manifest, current_marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+    )
+    underlying_resolver_calls = Counter()
+
+    def forbidden_resolver(*_args: object) -> Iterable[tuple[object, ...]]:
+        underlying_resolver_calls.value += 1
+        raise AssertionError("resolver must not run below the canary margin")
+
+    loaded = load_pre_dns_bundle_v1(
+        bundle,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    usable_expires = loaded.campaign_selection.selected_candidate().usable_expires_at_utc
+    clock = SequenceClock(
+        (
+            execution_at,
+            execution_at,
+            execution_at,
+            usable_expires - timedelta(seconds=841),
+            usable_expires - timedelta(seconds=839),
+        )
+    )
+    binding = Path(workspace.control_temp_root) / "eroded-margin-binding.json"
+    pack_directory = Path(workspace.control_temp_root) / "eroded-margin-pack"
+    result = run_owner_review_pack_once_v1(
+        bundle_directory=bundle,
+        workspace_receipt=workspace,
+        mission_manifest=manifest,
+        output_binding_path=binding,
+        output_pack_directory=pack_directory,
+        resolver=forbidden_resolver,
+        marker_inspector=current_marker_inspector,
+        execute=True,
+        owner_present_for_review=True,
+        clock=clock,
+        workspace_validator=lambda _: None,
+        binding_preparer=fake_binding_preparer,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    assert result.status == "POST_DNS_HARD_STOP"
+    assert result.hard_stop_code == "OWNER_REVIEW_USABLE_MARGIN_INSUFFICIENT"
+    assert result.resolver_operations == underlying_resolver_calls.value == 0
+    assert (
+        Path(workspace.control_temp_root) / "provider-network-resolution-one-shot-v1.json"
+    ).is_file()
 
 
 def test_runner_preflight_invalid_and_owner_presence_gate_use_zero_dns(tmp_path: Path) -> None:

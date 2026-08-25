@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -7,6 +8,7 @@ import pytest
 from jsonschema import Draft202012Validator
 
 from robin.capture import RealExecutionMissionManifestV1
+from robin.capture.live_contracts import LIVE_ALLOWED_SPORT_KEYS
 
 ROOT = Path(__file__).resolve().parents[2]
 MISSION_ID = "REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1"
@@ -222,3 +224,125 @@ def test_dns_preparation_tool_has_no_secret_or_transport_capability() -> None:
     assert "socket.connect" not in source
     assert "HTTPSConnection" not in source
     assert "requests." not in source
+
+
+def test_first_c0_single_league_canary_authority_is_additive_and_fail_closed() -> None:
+    bootstrap = (ROOT / "src/robin/capture/bootstrap_contracts.py").read_text(encoding="utf-8")
+    provider = (ROOT / "src/robin/capture/provider_network.py").read_text(encoding="utf-8")
+    owner_pack = (ROOT / "src/robin/capture/owner_review_pack.py").read_text(encoding="utf-8")
+    canary_cli = (ROOT / "tools/data-sourcing/prepare_first_c0_canary_selection_v1.py").read_text(
+        encoding="utf-8"
+    )
+    dns_cli = (ROOT / "tools/data-sourcing/prepare_provider_network_binding_v1.py").read_text(
+        encoding="utf-8"
+    )
+    pack_cli = (ROOT / "tools/data-sourcing/build_owner_review_pack_v1.py").read_text(
+        encoding="utf-8"
+    )
+
+    assert "class FirstC0CanarySelectionV1(FrozenContract):" in bootstrap
+    assert '"robin-first-c0-canary-selection-v1"' in bootstrap
+    assert '"single-league-first-real-c0-canary-v1"' in bootstrap
+    assert 'Literal["FIRST_REAL_CAPTURE_CANARY_ONLY"]' in bootstrap
+    assert (
+        "CampaignSelectionAuthorityV1: TypeAlias = "
+        "CampaignWindowSelectionV1 | FirstC0CanarySelectionV1"
+    ) in bootstrap
+    assert "def load_campaign_selection_authority_v1(payload: object)" in bootstrap
+    assert 'Field(discriminator="schema_version")' in bootstrap
+    assert "CAMPAIGN_SELECTION_AUTHORITY_SCHEMA_UNSUPPORTED" in bootstrap
+    assert "CAMPAIGN_SELECTION_AUTHORITY_PAYLOAD_INVALID" in bootstrap
+    assert "CAMPAIGN_SELECTION_REVISION: Final[" in bootstrap
+    assert '"complete-five-league-interval-clique-ranking-v2"' in bootstrap
+    assert (
+        "CAMPAIGN_RANKING_POLICY: Final[" in bootstrap
+        and "cross-league-desc;earliest-readiness-asc;stable-group-hash-asc" in bootstrap
+    )
+    assert LIVE_ALLOWED_SPORT_KEYS == (
+        "soccer_spain_la_liga",
+        "soccer_france_ligue_one",
+        "soccer_epl",
+        "soccer_italy_serie_a",
+        "soccer_germany_bundesliga",
+    )
+
+    assert canary_cli.count("parser.add_argument(") == 4
+    for argument in (
+        "--workspace-receipt",
+        "--mission-manifest",
+        "--source-plan",
+        "--output-directory",
+    ):
+        assert f'parser.add_argument("{argument}"' in canary_cli
+    for forbidden_argument in (
+        "--skip-five-league",
+        "--unsafe-canary",
+        "--force",
+        "--test-mode",
+    ):
+        assert forbidden_argument not in canary_cli
+        assert forbidden_argument not in dns_cli
+        assert forbidden_argument not in pack_cli
+
+    assert 'host != "apim.laliga.com"' in canary_cli
+    assert 'parsed.path != "/public-service/api/v1/matches"' in canary_cli
+    assert 'query.get("competition") != ["primera-division"]' in canary_cli
+    assert 'query.get("limit") != ["100"]' in canary_cli
+    assert 'query.get("offset") != ["300"]' in canary_cli
+    assert 'host != "datencenter.dfb.de"' in canary_cli
+    assert 'parsed.path != "/competitions/12/seasons/current"' in canary_cli
+    assert canary_cli.index("workspace_validator(workspace_receipt)") < canary_cli.index(
+        "marker_inspection = marker_inspector"
+    )
+    assert canary_cli.index("marker_inspection = marker_inspector") < canary_cli.index(
+        "fetch_result = fetch_official_schedule_source("
+    )
+    assert canary_cli.index(
+        "mission_manifest = load_tracked_real_execution_mission_manifest_v1("
+    ) < canary_cli.index("result = prepare_first_c0_canary_selection_v1(")
+    assert '_PRIMARY_SPORT_KEY = "soccer_spain_la_liga"' in canary_cli
+    assert '_FALLBACK_SPORT_KEY = "soccer_germany_bundesliga"' in canary_cli
+    assert (
+        '_CYCLE_RESERVATION_NAME = "first-c0-canary-cycle-{cycle:02d}-read-reservation-v1.json"'
+        in canary_cli
+    )
+    assert (
+        '_CYCLE_RECEIPT_NAME = "first-c0-canary-cycle-{cycle:02d}-attempt-receipt-v1.json"'
+        in canary_cli
+    )
+    assert "_MAXIMUM_PREPARATION_CYCLES = 3" in canary_cli
+    assert "_MAXIMUM_OFFICIAL_PHYSICAL_READS = 12" in canary_cli
+    assert (
+        'receipt.get("status") not in {"SUCCEEDED", "FAILED_BEFORE_DNS", "FAILED_NO_FALLBACK"}'
+        in (canary_cli)
+    )
+    assert 'previous.get("status") == "SUCCEEDED"' in canary_cli
+    assert "plan.source.sport_key != _FALLBACK_SPORT_KEY" in canary_cli
+    assert "cumulative_official_reads > _MAXIMUM_OFFICIAL_PHYSICAL_READS" in canary_cli
+    assert "anticipated_reads > 2" in canary_cli
+    assert "EnvironmentSecretReader" not in canary_cli
+    assert "THE_ODDS_API_KEY" not in canary_cli
+    assert "socket.connect" not in canary_cli
+    assert "api.the-odds-api.com" not in canary_cli
+
+    for source in (dns_cli, pack_cli):
+        assert "load_campaign_selection_authority_v1" in source
+        assert "CampaignWindowSelectionV1.model_validate" not in source
+    assert '_RESOLUTION_CLAIM_NAME = "provider-network-resolution-one-shot-v1.json"' in (provider)
+    assert '_MISSION_GLOBAL_CLAIM_ROOT_NAME = "RobinRealExecutionMissionClaimsV1"' in (provider)
+    assert "_FIRST_C0_CANARY_MINIMUM_PRE_DNS_MARGIN = timedelta(seconds=840)" in provider
+    assert "write_owner_review_pack_v1(arguments.output_directory, pack)" in pack_cli
+    assert "assert_owner_review_pack_completion_current_v1(pack" in pack_cli
+    assert "SELECTION_SCHEMA={selection.schema_version}" in owner_pack
+    assert "SELECTION_PURPOSE={selection.purpose}" in owner_pack
+    assert "SOURCE_TARGET_SET_COUNT={selection.source_target_set_count}" in owner_pack
+    assert "SCIENTIFIC_EDGE_CLAIM={str(selection.scientific_edge_claim).lower()}" in owner_pack
+
+    matrix_payload = (
+        (ROOT / "configs/agents/mission-activation-matrix-v3.json")
+        .read_bytes()
+        .replace(b"\r\n", b"\n")
+    )
+    assert hashlib.sha256(matrix_payload).hexdigest() == (
+        "6777e609247356a9e93fb089a928d25f28c5ba7f9d3fb39a199130d6e866f5ef"
+    )

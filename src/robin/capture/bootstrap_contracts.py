@@ -11,11 +11,13 @@ import ipaddress
 import os
 import unicodedata
 from datetime import datetime, timedelta
-from typing import Any, Final, Literal, Self, cast
+from typing import Annotated, Any, Final, Literal, Self, TypeAlias, cast
+from urllib.parse import urlparse
 
 from pydantic import Field, model_validator
 
 from robin.capture.contracts import (
+    CaptureContractError,
     FrozenContract,
     JsonValue,
     ProviderRequestSpec,
@@ -56,6 +58,31 @@ CAMPAIGN_RANKING_POLICY: Final[
     "coverage-desc;protocol-role-desc;positive-margin-required;"
     "cross-league-desc;earliest-readiness-asc;stable-group-hash-asc"
 )
+FIRST_C0_CANARY_SELECTION_REVISION: Final[Literal["single-league-first-real-c0-canary-v1"]] = (
+    "single-league-first-real-c0-canary-v1"
+)
+FIRST_C0_CANARY_RANKING_POLICY: Final[
+    Literal[
+        "coverage-desc;protocol-role-desc;positive-margin-required;"
+        "earliest-readiness-asc;stable-group-hash-asc"
+    ]
+] = (
+    "coverage-desc;protocol-role-desc;positive-margin-required;"
+    "earliest-readiness-asc;stable-group-hash-asc"
+)
+FIRST_C0_CANARY_SPORT_KEYS: Final[tuple[str, ...]] = (
+    "soccer_spain_la_liga",
+    "soccer_germany_bundesliga",
+)
+FIRST_C0_CANARY_MINIMUM_READY_MARGIN_SECONDS: Final[int] = 840
+FIRST_C0_CANARY_OFFICIAL_DOMAINS: Final[dict[str, str]] = {
+    "soccer_spain_la_liga": "laliga.com",
+    "soccer_germany_bundesliga": "dfb.de",
+}
+FIRST_C0_CANARY_COMPETITIONS: Final[dict[str, str]] = {
+    "soccer_spain_la_liga": "LALIGA EA SPORTS",
+    "soccer_germany_bundesliga": "Bundesliga",
+}
 MISSION_MANIFEST_SOURCE_HASH: Final[
     Literal["2451cd643c2d3ffcd3c5cc9fcd4a5f81f785978e0aa20429b4d182ceb9b1f22b"]
 ] = "2451cd643c2d3ffcd3c5cc9fcd4a5f81f785978e0aa20429b4d182ceb9b1f22b"
@@ -147,6 +174,26 @@ def canonical_team_name_v1(value: str) -> str:
     if not collapsed or len(collapsed) > 160:
         raise ValueError("FIXTURE_TEAM_NAME_INVALID")
     return collapsed.casefold()
+
+
+def _first_c0_official_source_authority_valid(sport_key: str, value: str) -> bool:
+    try:
+        parsed = urlparse(value)
+        port = parsed.port
+    except ValueError:
+        return False
+    host = (parsed.hostname or "").rstrip(".").casefold()
+    expected_domain = FIRST_C0_CANARY_OFFICIAL_DOMAINS.get(sport_key)
+    return bool(
+        expected_domain
+        and parsed.scheme.casefold() == "https"
+        and host
+        and (host == expected_domain or host.endswith(f".{expected_domain}"))
+        and parsed.username is None
+        and parsed.password is None
+        and port in {None, 443}
+        and not parsed.fragment
+    )
 
 
 def validate_global_unicast_ip(value: str) -> str:
@@ -628,6 +675,16 @@ def campaign_window_definitions_v1() -> tuple[CampaignWindowDefinitionV1, ...]:
     )
 
 
+def first_c0_canary_window_definitions_v1() -> tuple[CampaignWindowDefinitionV1, ...]:
+    """Reuse the frozen H24/H2 definitions while excluding non-admitting H1."""
+
+    return tuple(
+        definition
+        for definition in campaign_window_definitions_v1()
+        if definition.window_id in {"H24", "H2"}
+    )
+
+
 class CampaignLeagueCorpusCountV1(FrozenContract):
     sport_key: str = Field(min_length=1, max_length=120)
     admitted_fixture_count: int = Field(ge=0)
@@ -859,6 +916,30 @@ def _candidate_rank_v1(
     )
 
 
+def _first_c0_canary_candidate_rank_v1(
+    candidate: CampaignWindowCandidateV1,
+) -> tuple[int, int, int, datetime, str]:
+    positive_margin = int(
+        candidate.timing_margin_seconds >= FIRST_C0_CANARY_MINIMUM_READY_MARGIN_SECONDS
+    )
+    return (
+        -candidate.fixture_coverage,
+        -candidate.protocol_role_value,
+        -positive_margin,
+        max(candidate.evaluated_at_utc, candidate.window_not_before_utc),
+        candidate.stable_group_hash,
+    )
+
+
+def _first_c0_canary_candidate_selectable_v1(
+    candidate: CampaignWindowCandidateV1,
+) -> bool:
+    return (
+        candidate.status in {"OPEN_SELECTABLE", "FUTURE_NOT_OPEN"}
+        and candidate.timing_margin_seconds >= FIRST_C0_CANARY_MINIMUM_READY_MARGIN_SECONDS
+    )
+
+
 def _interval_candidate_groups_v1(
     intervals: tuple[tuple[OfficialFixtureTargetV1, datetime, datetime], ...],
 ) -> tuple[tuple[tuple[OfficialFixtureTargetV1, ...], datetime, datetime], ...]:
@@ -890,20 +971,19 @@ def _interval_candidate_groups_v1(
     )
 
 
-def _derive_campaign_candidates_v1(
+def _derive_window_candidates_v1(
     *,
     source_target_sets: tuple[FixtureTargetSetV1, ...],
     window_definitions: tuple[CampaignWindowDefinitionV1, ...],
-    corpus_snapshot: ScientificCorpusSnapshotV1,
+    prior_admitted_counts: dict[str, int],
+    cross_league_corpus_values: dict[str, int],
     evaluated_at_utc: datetime,
     mission_expires_at_utc: datetime,
 ) -> tuple[CampaignWindowCandidateV1, ...]:
     candidates: list[CampaignWindowCandidateV1] = []
-    maximum_corpus_count = max(
-        item.admitted_fixture_count for item in corpus_snapshot.league_counts
-    )
     for source_set in source_target_sets:
-        prior_count = corpus_snapshot.admitted_count(source_set.sport_key)
+        prior_count = prior_admitted_counts[source_set.sport_key]
+        cross_league_value = cross_league_corpus_values[source_set.sport_key]
         for definition in window_definitions:
             intervals = tuple(
                 (
@@ -995,7 +1075,7 @@ def _derive_campaign_candidates_v1(
                             int((usable - max(evaluated_at_utc, opens)).total_seconds()),
                         ),
                         prior_admitted_fixture_count=prior_count,
-                        cross_league_corpus_value=maximum_corpus_count - prior_count,
+                        cross_league_corpus_value=cross_league_value,
                         status=status,
                         stable_group_hash=group_hash,
                     )
@@ -1010,6 +1090,52 @@ def _derive_campaign_candidates_v1(
                 candidate.canonical_candidate_hash,
             ),
         )
+    )
+
+
+def _derive_campaign_candidates_v1(
+    *,
+    source_target_sets: tuple[FixtureTargetSetV1, ...],
+    window_definitions: tuple[CampaignWindowDefinitionV1, ...],
+    corpus_snapshot: ScientificCorpusSnapshotV1,
+    evaluated_at_utc: datetime,
+    mission_expires_at_utc: datetime,
+) -> tuple[CampaignWindowCandidateV1, ...]:
+    maximum_corpus_count = max(
+        item.admitted_fixture_count for item in corpus_snapshot.league_counts
+    )
+    prior_counts = {
+        target_set.sport_key: corpus_snapshot.admitted_count(target_set.sport_key)
+        for target_set in source_target_sets
+    }
+    return _derive_window_candidates_v1(
+        source_target_sets=source_target_sets,
+        window_definitions=window_definitions,
+        prior_admitted_counts=prior_counts,
+        cross_league_corpus_values={
+            sport_key: maximum_corpus_count - prior_count
+            for sport_key, prior_count in prior_counts.items()
+        },
+        evaluated_at_utc=evaluated_at_utc,
+        mission_expires_at_utc=mission_expires_at_utc,
+    )
+
+
+def _derive_first_c0_canary_candidates_v1(
+    *,
+    source_target_sets: tuple[FixtureTargetSetV1, ...],
+    window_definitions: tuple[CampaignWindowDefinitionV1, ...],
+    evaluated_at_utc: datetime,
+    mission_expires_at_utc: datetime,
+) -> tuple[CampaignWindowCandidateV1, ...]:
+    sport_keys = {target_set.sport_key for target_set in source_target_sets}
+    return _derive_window_candidates_v1(
+        source_target_sets=source_target_sets,
+        window_definitions=window_definitions,
+        prior_admitted_counts={sport_key: 0 for sport_key in sport_keys},
+        cross_league_corpus_values={sport_key: 0 for sport_key in sport_keys},
+        evaluated_at_utc=evaluated_at_utc,
+        mission_expires_at_utc=mission_expires_at_utc,
     )
 
 
@@ -1218,6 +1344,272 @@ class CampaignWindowSelectionV1(FrozenContract):
             raise ValueError("CAMPAIGN_SELECTED_CANDIDATE_NO_LONGER_BEST")
         if selected.status != "OPEN_SELECTABLE":
             raise ValueError("CAMPAIGN_SELECTED_CANDIDATE_NOT_OPEN")
+
+
+class FirstC0CanarySelectionV1(FrozenContract):
+    """Additive single-league authority for only the first real C0 canary."""
+
+    schema_version: Literal["robin-first-c0-canary-selection-v1"] = (
+        "robin-first-c0-canary-selection-v1"
+    )
+    selection_revision: Literal["single-league-first-real-c0-canary-v1"] = (
+        FIRST_C0_CANARY_SELECTION_REVISION
+    )
+    purpose: Literal["FIRST_REAL_CAPTURE_CANARY_ONLY"] = "FIRST_REAL_CAPTURE_CANARY_ONLY"
+    ranking_policy: Literal[
+        "coverage-desc;protocol-role-desc;positive-margin-required;"
+        "earliest-readiness-asc;stable-group-hash-asc"
+    ] = FIRST_C0_CANARY_RANKING_POLICY
+    selected_at_utc: datetime
+    workspace_receipt_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    workspace_prepared_at_utc: datetime
+    mission_manifest_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    mission_expires_at_utc: datetime
+    source_target_set_count: Literal[1] = 1
+    sport_key_count: Literal[1] = 1
+    sport_key: Literal["soccer_spain_la_liga", "soccer_germany_bundesliga"]
+    source_target_sets: tuple[FixtureTargetSetV1, ...]
+    window_definitions: tuple[CampaignWindowDefinitionV1, ...]
+    candidates: tuple[CampaignWindowCandidateV1, ...]
+    selected_candidate_id: str = Field(min_length=1, max_length=160)
+    selected_candidate_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    selected_fixture_target_set_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    selected_not_before_utc: datetime
+    selected_ready_at_selection: bool
+    maximum_http_calls: Literal[1] = 1
+    maximum_credits: Literal[1] = 1
+    markets: tuple[Literal["h2h"], ...] = ("h2h",)
+    region: Literal["eu"] = "eu"
+    production_selection_authority: Literal[False] = False
+    promotion_authority: Literal[False] = False
+    batch_authority: Literal[False] = False
+    scientific_edge_claim: Literal[False] = False
+    canonical_selection_hash: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+
+    def identity_material(self) -> dict[str, JsonValue]:
+        return cast(
+            dict[str, JsonValue],
+            self.model_dump(mode="json", exclude={"canonical_selection_hash"}),
+        )
+
+    @classmethod
+    def issue(cls, **data: Any) -> Self:
+        normalized = _normalized_utc_data(
+            data,
+            "selected_at_utc",
+            "workspace_prepared_at_utc",
+            "mission_expires_at_utc",
+            "selected_not_before_utc",
+        )
+        source_sets = tuple(normalized.get("source_target_sets", ()))
+        if len(source_sets) != 1 or not isinstance(source_sets[0], FixtureTargetSetV1):
+            raise ValueError("FIRST_C0_CANARY_SOURCE_TARGET_SET_COUNT_INVALID")
+        definitions = tuple(
+            normalized.get("window_definitions", first_c0_canary_window_definitions_v1())
+        )
+        candidates = _derive_first_c0_canary_candidates_v1(
+            source_target_sets=source_sets,
+            window_definitions=definitions,
+            evaluated_at_utc=cast(datetime, normalized["selected_at_utc"]),
+            mission_expires_at_utc=cast(datetime, normalized["mission_expires_at_utc"]),
+        )
+        selectable = tuple(
+            candidate
+            for candidate in candidates
+            if _first_c0_canary_candidate_selectable_v1(candidate)
+        )
+        if not selectable:
+            raise ValueError("FIRST_C0_CANARY_NO_REMAINING_SELECTABLE_CANDIDATE")
+        selected = min(selectable, key=_first_c0_canary_candidate_rank_v1)
+        normalized.update(
+            sport_key=source_sets[0].sport_key,
+            source_target_sets=source_sets,
+            window_definitions=definitions,
+            candidates=candidates,
+            selected_candidate_id=selected.candidate_id,
+            selected_candidate_sha256=selected.canonical_candidate_hash,
+            selected_fixture_target_set_sha256=selected.fixture_target_set.canonical_set_hash,
+            selected_not_before_utc=max(
+                cast(datetime, normalized["selected_at_utc"]),
+                selected.window_not_before_utc,
+            ),
+            selected_ready_at_selection=(selected.status == "OPEN_SELECTABLE"),
+        )
+        provisional = cls.model_construct(canonical_selection_hash="0" * 64, **normalized)
+        return cls(
+            canonical_selection_hash=canonical_sha256(provisional.identity_material()),
+            **normalized,
+        )
+
+    @model_validator(mode="after")
+    def validate_selection(self) -> Self:
+        selected_at = ensure_utc(self.selected_at_utc, field="first_c0_canary_selected_at")
+        prepared_at = ensure_utc(
+            self.workspace_prepared_at_utc,
+            field="first_c0_canary_workspace_prepared_at",
+        )
+        mission_expires = ensure_utc(
+            self.mission_expires_at_utc,
+            field="first_c0_canary_mission_expires_at",
+        )
+        selected_not_before = ensure_utc(
+            self.selected_not_before_utc,
+            field="first_c0_canary_selected_not_before",
+        )
+        if (
+            selected_at < prepared_at
+            or selected_at >= mission_expires
+            or self.ranking_policy != FIRST_C0_CANARY_RANKING_POLICY
+            or self.window_definitions != first_c0_canary_window_definitions_v1()
+            or self.source_target_set_count != 1
+            or self.sport_key_count != 1
+            or len(self.source_target_sets) != 1
+            or self.sport_key not in FIRST_C0_CANARY_SPORT_KEYS
+            or self.source_target_sets[0].sport_key != self.sport_key
+            or self.maximum_http_calls != 1
+            or self.maximum_credits != 1
+            or self.markets != ("h2h",)
+            or self.region != "eu"
+            or self.production_selection_authority
+            or self.promotion_authority
+            or self.batch_authority
+            or self.scientific_edge_claim
+        ):
+            raise ValueError("FIRST_C0_CANARY_SELECTION_SCOPE_INVALID")
+        target_set = self.source_target_sets[0]
+        if (
+            target_set.workspace_receipt_sha256 != self.workspace_receipt_sha256
+            or target_set.created_at_utc < prepared_at
+            or target_set.created_at_utc > selected_at
+            or selected_at - target_set.created_at_utc > MAX_CAMPAIGN_SOURCE_AGE
+            or target_set.official_schedule_completeness
+            != "OWNER_REVIEWED_COMPLETE_OFFICIAL_HORIZON"
+            or target_set.official_schedule_fixture_count != len(target_set.targets)
+            or target_set.official_schedule_horizon_not_before_utc is None
+            or target_set.official_schedule_horizon_expires_at_utc is None
+            or not target_set.official_schedule_horizon_not_before_utc
+            <= selected_at
+            < target_set.official_schedule_horizon_expires_at_utc
+            or len({target.official_source_authority for target in target_set.targets}) != 1
+            or len({target.source_evidence_sha256 for target in target_set.targets}) != 1
+            or any(
+                target.sport_key != self.sport_key
+                or target.competition != FIRST_C0_CANARY_COMPETITIONS[self.sport_key]
+                or not _first_c0_official_source_authority_valid(
+                    self.sport_key,
+                    target.official_source_authority,
+                )
+                or target.source_observed_at_utc < prepared_at
+                or target.source_observed_at_utc > target_set.created_at_utc
+                or selected_at - target.source_observed_at_utc > MAX_CAMPAIGN_SOURCE_AGE
+                or target.official_kickoff_utc <= selected_at
+                for target in target_set.targets
+            )
+        ):
+            raise ValueError("FIRST_C0_CANARY_OFFICIAL_SOURCE_INVALID")
+        expected_candidates = _derive_first_c0_canary_candidates_v1(
+            source_target_sets=self.source_target_sets,
+            window_definitions=self.window_definitions,
+            evaluated_at_utc=selected_at,
+            mission_expires_at_utc=mission_expires,
+        )
+        if any(
+            candidate.window_id not in {"H24", "H2"}
+            or candidate.prior_admitted_fixture_count != 0
+            or candidate.cross_league_corpus_value != 0
+            for candidate in expected_candidates
+        ):
+            raise ValueError("FIRST_C0_CANARY_CANDIDATE_SCOPE_INVALID")
+        selectable = tuple(
+            candidate
+            for candidate in expected_candidates
+            if _first_c0_canary_candidate_selectable_v1(candidate)
+        )
+        if not selectable:
+            raise ValueError("FIRST_C0_CANARY_NO_REMAINING_SELECTABLE_CANDIDATE")
+        selected = min(selectable, key=_first_c0_canary_candidate_rank_v1)
+        if (
+            self.candidates != expected_candidates
+            or self.selected_candidate_id != selected.candidate_id
+            or self.selected_candidate_sha256 != selected.canonical_candidate_hash
+            or self.selected_fixture_target_set_sha256
+            != selected.fixture_target_set.canonical_set_hash
+            or selected_not_before != max(selected_at, selected.window_not_before_utc)
+            or self.selected_ready_at_selection != (selected.status == "OPEN_SELECTABLE")
+            or self.canonical_selection_hash != canonical_sha256(self.identity_material())
+        ):
+            raise ValueError("FIRST_C0_CANARY_SELECTION_DERIVATION_MISMATCH")
+        return self
+
+    def selected_candidate(self) -> CampaignWindowCandidateV1:
+        matches = tuple(
+            candidate
+            for candidate in self.candidates
+            if candidate.canonical_candidate_hash == self.selected_candidate_sha256
+            and candidate.candidate_id == self.selected_candidate_id
+        )
+        if len(matches) != 1:
+            raise ValueError("FIRST_C0_CANARY_SELECTED_CANDIDATE_MISSING")
+        return matches[0]
+
+    def assert_selected_candidate_current(self, now: datetime) -> None:
+        current = ensure_utc(now, field="first_c0_canary_current_at")
+        target_set = self.source_target_sets[0]
+        if current < self.selected_at_utc or current >= self.mission_expires_at_utc:
+            raise ValueError("FIRST_C0_CANARY_SELECTION_NOT_CURRENT")
+        if (
+            current - target_set.created_at_utc > MAX_CAMPAIGN_SOURCE_AGE
+            or target_set.official_schedule_horizon_not_before_utc is None
+            or target_set.official_schedule_horizon_expires_at_utc is None
+            or not target_set.official_schedule_horizon_not_before_utc
+            <= current
+            < target_set.official_schedule_horizon_expires_at_utc
+            or any(
+                current - target.source_observed_at_utc > MAX_CAMPAIGN_SOURCE_AGE
+                for target in target_set.targets
+            )
+        ):
+            raise ValueError("FIRST_C0_CANARY_SELECTION_SOURCE_STALE")
+        current_candidates = _derive_first_c0_canary_candidates_v1(
+            source_target_sets=self.source_target_sets,
+            window_definitions=self.window_definitions,
+            evaluated_at_utc=current,
+            mission_expires_at_utc=self.mission_expires_at_utc,
+        )
+        selectable = tuple(
+            candidate
+            for candidate in current_candidates
+            if _first_c0_canary_candidate_selectable_v1(candidate)
+        )
+        if not selectable:
+            raise ValueError("FIRST_C0_CANARY_NO_REMAINING_SELECTABLE_CANDIDATE")
+        selected = min(selectable, key=_first_c0_canary_candidate_rank_v1)
+        if selected.stable_group_hash != self.selected_candidate().stable_group_hash:
+            raise ValueError("FIRST_C0_CANARY_SELECTED_CANDIDATE_NO_LONGER_BEST")
+        if selected.status != "OPEN_SELECTABLE":
+            raise ValueError("FIRST_C0_CANARY_SELECTED_CANDIDATE_NOT_OPEN")
+
+
+CampaignSelectionAuthorityV1: TypeAlias = CampaignWindowSelectionV1 | FirstC0CanarySelectionV1
+
+
+def load_campaign_selection_authority_v1(payload: object) -> CampaignSelectionAuthorityV1:
+    """Load only the two explicitly admitted selection schemas."""
+
+    if not isinstance(payload, dict):
+        raise CaptureContractError("CAMPAIGN_SELECTION_AUTHORITY_PAYLOAD_INVALID")
+    schema_version = payload.get("schema_version")
+    if schema_version == "robin-campaign-window-selection-v1":
+        try:
+            return CampaignWindowSelectionV1.model_validate(payload)
+        except (TypeError, ValueError):
+            raise CaptureContractError("CAMPAIGN_WINDOW_SELECTION_AUTHORITY_INVALID") from None
+    if schema_version == "robin-first-c0-canary-selection-v1":
+        try:
+            return FirstC0CanarySelectionV1.model_validate(payload)
+        except (TypeError, ValueError):
+            raise CaptureContractError("FIRST_C0_CANARY_SELECTION_AUTHORITY_INVALID") from None
+    raise CaptureContractError("CAMPAIGN_SELECTION_AUTHORITY_SCHEMA_UNSUPPORTED")
 
 
 class OwnerAuthorizationV2(FrozenContract):
@@ -1718,7 +2110,10 @@ class OwnerReviewPackV1(FrozenContract):
     mission_manifest_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
     workspace_receipt: RealCaptureWorkspaceReceiptV1
     workspace_receipt_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
-    campaign_selection: CampaignWindowSelectionV1
+    campaign_selection: Annotated[
+        CampaignSelectionAuthorityV1,
+        Field(discriminator="schema_version"),
+    ]
     campaign_selection_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
     selected_campaign_candidate_id: str = Field(min_length=1, max_length=160)
     selected_campaign_candidate_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")

@@ -13,7 +13,8 @@ from robin.capture.bootstrap_contracts import (
     MIN_OWNER_REVIEW_WINDOW,
     PRE_KICKOFF_SAFETY_MARGIN,
     PROVIDER_CANONICAL_HOSTNAME,
-    CampaignWindowSelectionV1,
+    CampaignSelectionAuthorityV1,
+    FirstC0CanarySelectionV1,
     ProviderNetworkBindingV1,
     ProviderNetworkResolutionClaimV1,
     RealCaptureWorkspaceReceiptV1,
@@ -30,6 +31,7 @@ from robin.capture.storage import (
 
 _RESOLUTION_CLAIM_NAME = "provider-network-resolution-one-shot-v1.json"
 _MISSION_GLOBAL_CLAIM_ROOT_NAME = "RobinRealExecutionMissionClaimsV1"
+_FIRST_C0_CANARY_MINIMUM_PRE_DNS_MARGIN = timedelta(seconds=840)
 
 
 class ProviderNetworkPreparationError(RuntimeError):
@@ -47,6 +49,14 @@ class ResolverV1(Protocol):
         socket_type: int,
         protocol: int,
     ) -> Iterable[tuple[Any, ...]]: ...
+
+
+def _minimum_pre_dns_margin_v1(
+    campaign_selection: CampaignSelectionAuthorityV1,
+) -> timedelta:
+    if isinstance(campaign_selection, FirstC0CanarySelectionV1):
+        return _FIRST_C0_CANARY_MINIMUM_PRE_DNS_MARGIN
+    return MIN_OWNER_REVIEW_WINDOW
 
 
 def _system_getaddrinfo(
@@ -252,7 +262,7 @@ def reserve_provider_network_resolution_v1(
     *,
     workspace_receipt: RealCaptureWorkspaceReceiptV1,
     mission_manifest: RealExecutionMissionManifestV1,
-    campaign_selection: CampaignWindowSelectionV1,
+    campaign_selection: CampaignSelectionAuthorityV1,
     output_path: Path,
     clock: Callable[[], datetime] = lambda: datetime.now(UTC),
     binding_ttl_seconds: int = 900,
@@ -261,6 +271,9 @@ def reserve_provider_network_resolution_v1(
 
     if not 1 <= binding_ttl_seconds <= 900:
         raise ProviderNetworkPreparationError("PROVIDER_NETWORK_BINDING_TTL_INVALID")
+    minimum_pre_dns_margin = _minimum_pre_dns_margin_v1(campaign_selection)
+    if binding_ttl_seconds < int(minimum_pre_dns_margin.total_seconds()):
+        raise ProviderNetworkPreparationError("PROVIDER_NETWORK_OWNER_REVIEW_WINDOW_INSUFFICIENT")
     control_root, destination = _validated_control_destination(workspace_receipt, output_path)
     if not workspace_receipt.authority_eligible_for_real_execution:
         raise ProviderNetworkPreparationError("WORKSPACE_IN_CLONE_VERIFY_REQUIRED")
@@ -284,7 +297,7 @@ def reserve_provider_network_resolution_v1(
         earliest_kickoff - PRE_KICKOFF_SAFETY_MARGIN,
     )
     requested_expiry = claimed_at + timedelta(seconds=binding_ttl_seconds)
-    if min(requested_expiry, campaign_expiry_ceiling) - claimed_at < MIN_OWNER_REVIEW_WINDOW:
+    if min(requested_expiry, campaign_expiry_ceiling) - claimed_at < minimum_pre_dns_margin:
         raise ProviderNetworkPreparationError("PROVIDER_NETWORK_OWNER_REVIEW_WINDOW_INSUFFICIENT")
     if (
         campaign_selection.workspace_receipt_sha256 != workspace_receipt.canonical_receipt_hash
@@ -327,7 +340,7 @@ def prepare_provider_network_binding_once_v1(
     *,
     workspace_receipt: RealCaptureWorkspaceReceiptV1,
     mission_manifest: RealExecutionMissionManifestV1,
-    campaign_selection: CampaignWindowSelectionV1,
+    campaign_selection: CampaignSelectionAuthorityV1,
     output_path: Path,
     resolver: ResolverV1 = _system_getaddrinfo,
     clock: Callable[[], datetime] = lambda: datetime.now(UTC),
@@ -372,7 +385,9 @@ def prepare_provider_network_binding_once_v1(
         binding_ttl_seconds=binding_ttl_seconds,
         resolver_identity=resolver_identity,
         maximum_expires_at_utc=campaign_expiry_ceiling,
-        minimum_binding_ttl_seconds=int(MIN_OWNER_REVIEW_WINDOW.total_seconds()),
+        minimum_binding_ttl_seconds=int(
+            _minimum_pre_dns_margin_v1(campaign_selection).total_seconds()
+        ),
         observed_at_utc=observed_at,
     )
     write_immutable_network_binding_v1(binding, output_path)

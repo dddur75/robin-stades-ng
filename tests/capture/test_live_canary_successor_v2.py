@@ -36,7 +36,14 @@ from robin.capture import (
     RequestFingerprint,
     ScientificCorpusSnapshotV1,
 )
-from robin.capture.bootstrap_contracts import _interval_candidate_groups_v1
+from robin.capture.bootstrap_contracts import (
+    CAMPAIGN_RANKING_POLICY,
+    CAMPAIGN_SELECTION_REVISION,
+    _derive_campaign_candidates_v1,
+    _derive_window_candidates_v1,
+    _interval_candidate_groups_v1,
+    load_campaign_selection_authority_v1,
+)
 from robin.capture.contracts import canonical_json_bytes, canonical_sha256
 from robin.capture.live_contracts import LIVE_ALLOWED_SPORT_KEYS, LiveTerminalDisposition
 from robin.capture.live_executor import (
@@ -829,6 +836,60 @@ def test_campaign_selection_derives_complete_statuses_and_unique_ranked_winner(
     assert sum(item.status == "FUTURE_NOT_OPEN" for item in selection.candidates) == 0
     assert sum(item.status == "OPEN_SELECTABLE" for item in selection.candidates) == 5
     assert len(selection.candidates) == 15
+    loaded = load_campaign_selection_authority_v1(selection.model_dump(mode="json"))
+    assert isinstance(loaded, CampaignWindowSelectionV1)
+    assert loaded == selection
+    masquerading = selection.model_dump(mode="json")
+    masquerading["schema_version"] = "robin-first-c0-canary-selection-v1"
+    with pytest.raises(
+        CaptureContractError,
+        match="FIRST_C0_CANARY_SELECTION_AUTHORITY_INVALID",
+    ):
+        load_campaign_selection_authority_v1(masquerading)
+
+
+def test_five_league_selection_refactor_preserves_exact_historical_scoring(
+    tmp_path: Path,
+) -> None:
+    bundle = build_bundle(tmp_path)
+    selection = build_campaign_selection(bundle.workspace, bundle.mission_manifest)
+    maximum_corpus_count = max(
+        item.admitted_fixture_count for item in selection.corpus_snapshot.league_counts
+    )
+    prior_counts = {
+        target_set.sport_key: selection.corpus_snapshot.admitted_count(target_set.sport_key)
+        for target_set in selection.source_target_sets
+    }
+    explicit = _derive_window_candidates_v1(
+        source_target_sets=selection.source_target_sets,
+        window_definitions=selection.window_definitions,
+        prior_admitted_counts=prior_counts,
+        cross_league_corpus_values={
+            sport_key: maximum_corpus_count - prior_count
+            for sport_key, prior_count in prior_counts.items()
+        },
+        evaluated_at_utc=selection.selected_at_utc,
+        mission_expires_at_utc=selection.mission_expires_at_utc,
+    )
+    historical = _derive_campaign_candidates_v1(
+        source_target_sets=selection.source_target_sets,
+        window_definitions=selection.window_definitions,
+        corpus_snapshot=selection.corpus_snapshot,
+        evaluated_at_utc=selection.selected_at_utc,
+        mission_expires_at_utc=selection.mission_expires_at_utc,
+    )
+    assert selection.selection_revision == ("complete-five-league-interval-clique-ranking-v2")
+    assert selection.ranking_policy == (
+        "coverage-desc;protocol-role-desc;positive-margin-required;"
+        "cross-league-desc;earliest-readiness-asc;stable-group-hash-asc"
+    )
+    assert CAMPAIGN_SELECTION_REVISION == selection.selection_revision
+    assert CAMPAIGN_RANKING_POLICY == selection.ranking_policy
+    assert tuple(item.sport_key for item in selection.source_target_sets) == (
+        LIVE_ALLOWED_SPORT_KEYS
+    )
+    assert explicit == historical == selection.candidates
+    assert selection.canonical_selection_hash == canonical_sha256(selection.identity_material())
 
 
 def test_campaign_selection_rolls_past_kickoff_without_backdating_or_candidate_loss(
