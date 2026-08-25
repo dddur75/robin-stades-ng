@@ -817,7 +817,7 @@ class CampaignWindowCandidateV1(FrozenContract):
         if (
             not starts <= scheduled <= closes
             or usable > closes
-            or self.fixture_target_set.created_at_utc != evaluated
+            or self.fixture_target_set.created_at_utc > evaluated
             or self.fixture_coverage != len(target_ids)
             or self.target_ids != target_ids
             or self.target_hashes != target_hashes
@@ -939,7 +939,7 @@ def _derive_campaign_candidates_v1(
                     target_set_id=f"campaign-targets-{group_hash[:32]}",
                     sport_key=source_set.sport_key,
                     workspace_receipt_sha256=source_set.workspace_receipt_sha256,
-                    created_at_utc=evaluated_at_utc,
+                    created_at_utc=source_set.created_at_utc,
                     targets=targets,
                 )
                 if evaluated_at_utc >= usable or evaluated_at_utc >= closes:
@@ -1937,7 +1937,7 @@ class OwnerReviewPackV1(FrozenContract):
             or self.provider_network_binding.resolution_claim.fixture_target_set_sha256
             != self.fixture_target_set.canonical_set_hash
             or self.workspace_receipt.prepared_at_utc > self.fixture_target_set.created_at_utc
-            or self.campaign_selection.selected_at_utc != self.fixture_target_set.created_at_utc
+            or self.fixture_target_set.created_at_utc > self.campaign_selection.selected_at_utc
             or self.fixture_target_set.created_at_utc
             > self.provider_network_binding.resolution_claim.claimed_at_utc
             or self.provider_network_binding.resolution_claim.claimed_at_utc

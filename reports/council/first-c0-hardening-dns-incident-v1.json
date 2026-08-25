@@ -1,0 +1,81 @@
+{
+  "schema_version": "robin-first-c0-hardening-dns-incident-v1",
+  "incident_id": "FIRST-C0-HARDENING-TEST-DNS-001",
+  "incident_class": "UNINTENDED_REAL_SYSTEM_DNS_FROM_TEST_INTEGRATION",
+  "incident_classification": "ENGINEERING_TEST_DNS_ONLY_PRODUCTION_AUTHORITY_INTACT",
+  "observed_at_utc": "2026-08-24T18:00:00Z",
+  "forensic_receipt_last_write_at_utc": "2026-08-24T19:51:21.8207482Z",
+  "mission": "FIRST_C0_HARDENING_INCIDENT_CLOSURE_AND_SALVAGE_V2",
+  "root_cause": "The in-process production CLI regression forwarded the CLI system resolver into the atomic runner instead of replacing it with the deterministic synthetic resolver required by the test boundary.",
+  "exact_test": "tests/capture/test_predns_orchestration_v1.py::test_real_runner_cli_defaults_to_preflight_and_requires_explicit_execute_owner_gate",
+  "exact_call_path": [
+    "test_real_runner_cli_defaults_to_preflight_and_requires_explicit_execute_owner_gate",
+    "tools/data-sourcing/run_owner_review_pack_once_v1.py::main",
+    "src/robin/capture/predns_orchestration.py::run_owner_review_pack_once_v1",
+    "tests/capture/test_predns_orchestration_v1.py::fake_binding_preparer",
+    "src/robin/capture/predns_orchestration.py::counted_resolver",
+    "tools/data-sourcing/run_owner_review_pack_once_v1.py::_system_resolver",
+    "socket.getaddrinfo"
+  ],
+  "resolver_object_transmitted": "tools/data-sourcing/run_owner_review_pack_once_v1.py::_system_resolver",
+  "hostname": "api.the-odds-api.com",
+  "port": 443,
+  "resolver_operations": 1,
+  "acknowledged_engineering_dns_invocations": 1,
+  "technically_proven_resolver_wrapper_attempts": 1,
+  "os_dns_lookup_evidence_status": "OWNER_ACKNOWLEDGED_AS_ONE_ENGINEERING_DNS_INVOCATION; THE RETAINED RECEIPT PROVES ONE RESOLVER-WRAPPER ATTEMPT BUT DOES NOT INDEPENDENTLY PROVE THAT THE PYTEST SOCKET TRIPWIRE WAS BYPASSED",
+  "resolver_result": "NOT_PERSISTED",
+  "provider_tcp": 0,
+  "provider_http": 0,
+  "secret_reads": 0,
+  "pack_builds": 0,
+  "authorization_artifacts": 0,
+  "activation_artifacts": 0,
+  "capture_calls": 0,
+  "promotions": 0,
+  "bets": 0,
+  "production_marker_status": {
+    "v2_global_marker_present": false,
+    "v2_local_mirror_present": false,
+    "historical_marker_present": true,
+    "historical_marker_unchanged": true
+  },
+  "synthetic_marker_status": {
+    "synthetic_resolution_marker_present": false,
+    "synthetic_hard_stop_receipt_present": true,
+    "isolated_from_production_authority": true
+  },
+  "production_binding_status": {
+    "v2_binding_present": false,
+    "synthetic_binding_present": false
+  },
+  "production_v2_authority_intact_proven": true,
+  "production_v2_dns_budget_available": true,
+  "future_test_or_provider_dns_during_closure": 0,
+  "containment": [
+    "Stopped after the first counted resolver attempt and before provider TCP, HTTP, secret access, pack construction, authorization, activation, capture, promotion, or bet.",
+    "Preserved the synthetic hard-stop receipt metadata, byte count, SHA-256, deterministic field reconstruction, and the candidate diff in a reconstructible external snapshot; the raw pytest receipt is no longer present.",
+    "Verified that the V2 global marker, V2 local mirror, and V2 binding were absent without changing any historical or current marker."
+  ],
+  "remediation": [
+    "Install an autouse capture-test boundary that denies socket.getaddrinfo, socket.create_connection, socket.socket.connect, and socket.socket.connect_ex with TEST_REAL_NETWORK_FORBIDDEN.",
+    "Override the production CLI resolver explicitly inside the in-process integration test and retain a system-resolver tripwire asserted at zero calls.",
+    "Use a temporary control root and mission-global marker registry for the synthetic execute regression.",
+    "Bind historical marker inspection to its exact authority manifest hash and fail closed on marker substitution.",
+    "Persist phase-aware post-DNS hard-stop receipts and make receipt-write failure visible."
+  ],
+  "evidence_hashes": {
+    "owner_directive_sha256": "4035c0019cdc16dee43ca68024fae1c4683b6774dff3f5f04d0a95f3d917b8fd",
+    "synthetic_hard_stop_receipt_sha256": "516fa7cbeee34e9cc1027780dc2d208c641a34c922d7b994189c1ee8212a0444",
+    "incident_snapshot_sha256": "79b2e28e0f827c6c64632dd11326cdd413d65d1fe82559fbdaa8d5a2f3e500af",
+    "historical_marker_sha256": "22b0573e657b759cc848f8091aaa639f26a45f3c17fa43591983c4e9c59bc98e",
+    "production_v2_manifest_canonical_sha256": "5f8d1db2586adbc397d1b4e814e85946c84327537872df6aeded0fbbbc5498c0"
+  },
+  "failure_visibility": {
+    "hard_stop_code": "POST_DNS_PACK_FAILURE",
+    "receipt_binding_sha256": null,
+    "receipt_pack_sha256": null,
+    "receipt_resolver_operations": 1,
+    "receipt_pack_builds": 0
+  }
+}
