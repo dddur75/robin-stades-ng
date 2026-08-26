@@ -67,6 +67,8 @@ MAIN_SHA = "a" * 40
 REPOSITORY_FINGERPRINT = "d" * 64
 CONTROL_FINGERPRINT = "e" * 64
 SECRET = "synthetic-secret-sentinel-never-real"
+HISTORICAL_V3_SOURCE_HASH = "0270bdd51d8d50b7d3c9f608e4f429b46b94b789d92d4b13055b81c9b72e6291"
+HISTORICAL_V3_MANIFEST_SHA256 = "d895e0b2ddded2c9763d85a08efbd64dc0185d26f66bb2b73fbe52cc05411206"
 
 
 class TickingClock:
@@ -264,7 +266,7 @@ def build_bundle(
         ),
         compute_budget=8000,
         time_budget=345600,
-        source_hash="0270bdd51d8d50b7d3c9f608e4f429b46b94b789d92d4b13055b81c9b72e6291",
+        source_hash="3d3b43f68c0d339448e52de7ec66cce068646a4a006e267dfe063bffe2767f5e",
         expires_at=BASE + timedelta(days=4),
     )
     workspace = RealCaptureWorkspaceReceiptV1.issue(
@@ -1460,6 +1462,91 @@ def test_owner_review_pack_rejects_network_claim_bound_to_another_campaign(
             authorization_nonce="owner-pack-nonce-0000001",
             activation_nonce="activation-pack-nonce-001",
         )
+
+
+def test_owner_review_pack_rejects_v3_binding_and_serialized_v3_pack(
+    tmp_path: Path,
+) -> None:
+    bundle = build_bundle(tmp_path)
+    selection = build_campaign_selection(bundle.workspace, bundle.mission_manifest)
+    selected = selection.selected_candidate()
+    stale_claim = ProviderNetworkResolutionClaimV1.issue(
+        mission_manifest_sha256=HISTORICAL_V3_MANIFEST_SHA256,
+        workspace_receipt_sha256=bundle.workspace.canonical_receipt_hash,
+        campaign_selection_sha256=selection.canonical_selection_hash,
+        fixture_target_set_sha256=selected.fixture_target_set.canonical_set_hash,
+        claimed_at_utc=BASE - timedelta(seconds=65),
+        mission_expires_at_utc=bundle.mission_manifest.expires_at,
+    )
+    stale_binding = ProviderNetworkBindingV1.issue(
+        resolution_claim=stale_claim,
+        resolver_identity="TEST_OS_STUB_RESOLVER",
+        observed_at_utc=BASE - timedelta(minutes=1),
+        expires_at_utc=BASE + timedelta(minutes=10),
+        binding_ttl_seconds=660,
+        resolved_ip_addresses=("8.8.8.8",),
+    )
+    assert stale_claim.mission_manifest_sha256 == HISTORICAL_V3_MANIFEST_SHA256
+    assert stale_claim.mission_manifest_sha256 != (
+        bundle.mission_manifest.canonical_manifest_sha256()
+    )
+    pack_directory = tmp_path / "v3-owner-review-pack"
+    with pytest.raises(OwnerReviewPackError, match="OWNER_REVIEW_PACK_INPUT_SCOPE_INVALID"):
+        build_owner_review_pack_v1(
+            workspace_receipt=bundle.workspace,
+            mission_manifest=bundle.mission_manifest,
+            provider_network_binding=stale_binding,
+            campaign_selection=selection,
+            generated_at_utc=BASE,
+            authorization_nonce="owner-pack-nonce-0000001",
+            activation_nonce="activation-pack-nonce-001",
+        )
+    assert not pack_directory.exists()
+    assert stale_claim.provider_http_requests == 0
+    assert stale_claim.provider_tcp_connections == 0
+    assert stale_claim.provider_secret_reads == 0
+
+    v3_manifest_data = bundle.mission_manifest.model_dump(mode="python")
+    v3_manifest_data.update(
+        source_hash=HISTORICAL_V3_SOURCE_HASH,
+        expires_at=datetime(2026, 9, 1, 20, tzinfo=UTC),
+    )
+    v3_manifest = RealExecutionMissionManifestV1.model_construct(**v3_manifest_data)
+    assert v3_manifest.canonical_manifest_sha256() == HISTORICAL_V3_MANIFEST_SHA256
+    v3_selection = build_campaign_selection(bundle.workspace, v3_manifest)
+    v3_selected = v3_selection.selected_candidate()
+    v3_claim = ProviderNetworkResolutionClaimV1.issue(
+        mission_manifest_sha256=HISTORICAL_V3_MANIFEST_SHA256,
+        workspace_receipt_sha256=bundle.workspace.canonical_receipt_hash,
+        campaign_selection_sha256=v3_selection.canonical_selection_hash,
+        fixture_target_set_sha256=v3_selected.fixture_target_set.canonical_set_hash,
+        claimed_at_utc=BASE - timedelta(seconds=65),
+        mission_expires_at_utc=v3_manifest.expires_at,
+    )
+    v3_binding = ProviderNetworkBindingV1.issue(
+        resolution_claim=v3_claim,
+        resolver_identity="TEST_OS_STUB_RESOLVER",
+        observed_at_utc=BASE - timedelta(minutes=1),
+        expires_at_utc=BASE + timedelta(minutes=10),
+        binding_ttl_seconds=660,
+        resolved_ip_addresses=("8.8.8.8",),
+    )
+    stale_pack = build_owner_review_pack_v1(
+        workspace_receipt=bundle.workspace,
+        mission_manifest=v3_manifest,
+        provider_network_binding=v3_binding,
+        campaign_selection=v3_selection,
+        generated_at_utc=BASE,
+        authorization_nonce="owner-pack-nonce-0000001",
+        activation_nonce="activation-pack-nonce-001",
+    )
+    assert stale_pack.mission_manifest_sha256 == HISTORICAL_V3_MANIFEST_SHA256
+    assert stale_pack.provider_http_calls == 0
+    assert stale_pack.real_secret_reads == 0
+    assert stale_pack.real_capture_calls == 0
+    with pytest.raises(CaptureContractError, match="CAPTURE_CONTRACT_INVALID"):
+        OwnerReviewPackV1.model_validate_json(stale_pack.model_dump_json())
+    assert not pack_directory.exists()
 
 
 def test_owner_review_pack_reports_exact_expired_network_binding_code(

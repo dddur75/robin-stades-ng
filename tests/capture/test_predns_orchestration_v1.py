@@ -58,7 +58,15 @@ from robin.capture.storage import exclusive_local_directory_fingerprint
 
 BASE = datetime(2026, 8, 24, 18, 0, tzinfo=UTC)
 MAIN_SHA = "2" * 40
-MANIFEST_SOURCE_HASH = "0270bdd51d8d50b7d3c9f608e4f429b46b94b789d92d4b13055b81c9b72e6291"
+MANIFEST_SOURCE_HASH = "3d3b43f68c0d339448e52de7ec66cce068646a4a006e267dfe063bffe2767f5e"
+HISTORICAL_V3_MANIFEST_SHA256 = "d895e0b2ddded2c9763d85a08efbd64dc0185d26f66bb2b73fbe52cc05411206"
+HISTORICAL_V3_MARKER_RAW_SHA256 = "a1b7cbb95b5c7a221a7c50147e202d8d80649ec7049d0c132317803b0e51b28c"
+HISTORICAL_V3_GLOBAL_MARKER_ACL_SHA256 = (
+    "b032d14d479bbddd354c1a9a43250d4033f3029147a322f7177988fb4b15730a"
+)
+HISTORICAL_V3_RESOLUTION_CLAIM_SHA256 = (
+    "ed2185b98bf56c978261b30d3bc396099d1f2b698719f47dfff79f45eea664d7"
+)
 ADAPTERS = {
     "soccer_epl": PREMIER_LEAGUE_FULL_SEASON_HTML_V1,
     "soccer_spain_la_liga": LALIGA_PUBLIC_MATCHES_JSON_V1,
@@ -363,23 +371,53 @@ def test_historical_marker_is_bound_to_exact_authority_manifest_and_registry_pat
     local_app_data = tmp_path / "local-app-data"
     registry = local_app_data / "RobinRealExecutionMissionClaimsV1"
     registry.mkdir(parents=True)
-    historical_manifest_sha256 = "c" * 64
+    historical_manifest_sha256 = HISTORICAL_V3_MANIFEST_SHA256
     claim = ProviderNetworkResolutionClaimV1.issue(
         mission_manifest_sha256=historical_manifest_sha256,
-        workspace_receipt_sha256="1" * 64,
-        campaign_selection_sha256="2" * 64,
-        fixture_target_set_sha256="3" * 64,
-        claimed_at_utc=BASE - timedelta(days=1),
-        mission_expires_at_utc=BASE + timedelta(days=1),
+        workspace_receipt_sha256=(
+            "f12d4fc65cac3930c7df850ed0221fc9b9f7e0519b1d108f6b4ad417342f57c9"
+        ),
+        campaign_selection_sha256=(
+            "ae46d11a6c414fb721f49744672fce3c02724cd605453e5ec3f5d8c43ef6bfc1"
+        ),
+        fixture_target_set_sha256=(
+            "ea1d07b58f26f1bab1aa221c1a8cfd75103bb11139534b21f17b2638d400d2d4"
+        ),
+        claimed_at_utc=datetime(2026, 8, 26, 17, 51, 51, 776902, tzinfo=UTC),
+        mission_expires_at_utc=datetime(2026, 9, 1, 20, tzinfo=UTC),
     )
+    assert claim.canonical_claim_hash == HISTORICAL_V3_RESOLUTION_CLAIM_SHA256
     payload = canonical_model_bytes(claim)
+    assert hashlib.sha256(payload).hexdigest() == HISTORICAL_V3_MARKER_RAW_SHA256
     historical = registry / (f"{manifest.mission_id.casefold()}-{historical_manifest_sha256}.json")
     historical.write_bytes(payload)
     monkeypatch.setattr(predns_module, "_local_app_data_readonly", lambda: local_app_data)
+
+    class NtOsProxy:
+        name = "nt"
+
+        def __getattr__(self, attribute: str) -> object:
+            return getattr(os, attribute)
+
+    monkeypatch.setattr(predns_module, "os", NtOsProxy())
+    acl_result = [(HISTORICAL_V3_GLOBAL_MARKER_ACL_SHA256, True)]
+    acl_paths: list[Path] = []
+
+    class StubWindowsBoundaryInspector:
+        def _security_facts(self, path: Path) -> tuple[str, bool]:
+            acl_paths.append(path)
+            return acl_result[0]
+
+    monkeypatch.setattr(
+        predns_module,
+        "WindowsBoundaryInspector",
+        StubWindowsBoundaryInspector,
+    )
     expectation = HistoricalMarkerExpectationV1(
         path=historical,
         authority_manifest_sha256=historical_manifest_sha256,
-        raw_sha256=hashlib.sha256(payload).hexdigest(),
+        raw_sha256=HISTORICAL_V3_MARKER_RAW_SHA256,
+        acl_sha256=HISTORICAL_V3_GLOBAL_MARKER_ACL_SHA256,
     )
 
     inspection = inspect_provider_markers_read_only_v1(
@@ -388,8 +426,44 @@ def test_historical_marker_is_bound_to_exact_authority_manifest_and_registry_pat
         historical_marker=expectation,
     )
     assert inspection.historical_marker_unchanged is True
+    assert inspection.current_marker_present is False
+    assert inspection.historical_raw_sha256 == HISTORICAL_V3_MARKER_RAW_SHA256
+    assert inspection.historical_acl_sha256 == HISTORICAL_V3_GLOBAL_MARKER_ACL_SHA256
     assert inspection.historical_authority_manifest_sha256 == historical_manifest_sha256
     assert inspection.current_authority_manifest_sha256 == manifest.canonical_manifest_sha256()
+    assert inspection.current_authority_manifest_sha256 != historical_manifest_sha256
+    assert acl_paths == [historical.absolute()]
+    current_paths = (
+        Path(inspection.current_local_marker),
+        Path(inspection.current_global_marker),
+    )
+    assert all(not os.path.lexists(path) for path in current_paths)
+
+    wrong_raw = inspect_provider_markers_read_only_v1(
+        workspace,
+        manifest,
+        historical_marker=replace(expectation, raw_sha256="0" * 64),
+    )
+    assert wrong_raw.historical_marker_unchanged is False
+
+    acl_result[0] = ("0" * 64, True)
+    wrong_acl = inspect_provider_markers_read_only_v1(
+        workspace,
+        manifest,
+        historical_marker=expectation,
+    )
+    assert wrong_acl.historical_marker_unchanged is False
+    assert wrong_acl.historical_raw_sha256 == HISTORICAL_V3_MARKER_RAW_SHA256
+    assert wrong_acl.historical_acl_sha256 == "0" * 64
+
+    acl_result[0] = (HISTORICAL_V3_GLOBAL_MARKER_ACL_SHA256, False)
+    nonexclusive_acl = inspect_provider_markers_read_only_v1(
+        workspace,
+        manifest,
+        historical_marker=expectation,
+    )
+    assert nonexclusive_acl.historical_marker_unchanged is False
+    acl_result[0] = (HISTORICAL_V3_GLOBAL_MARKER_ACL_SHA256, True)
 
     substituted = tmp_path / "substituted-historical-marker.json"
     substituted.write_bytes(payload)
@@ -399,6 +473,25 @@ def test_historical_marker_is_bound_to_exact_authority_manifest_and_registry_pat
         historical_marker=replace(expectation, path=substituted),
     )
     assert substituted_inspection.historical_marker_unchanged is False
+
+    historical.write_bytes(payload[:-1] + b"\r\n")
+    tampered_inspection = inspect_provider_markers_read_only_v1(
+        workspace,
+        manifest,
+        historical_marker=expectation,
+    )
+    assert tampered_inspection.historical_marker_unchanged is False
+    assert tampered_inspection.historical_raw_sha256 != HISTORICAL_V3_MARKER_RAW_SHA256
+    assert tampered_inspection.historical_acl_sha256 == HISTORICAL_V3_GLOBAL_MARKER_ACL_SHA256
+    historical.unlink()
+    missing_inspection = inspect_provider_markers_read_only_v1(
+        workspace,
+        manifest,
+        historical_marker=expectation,
+    )
+    assert missing_inspection.historical_marker_unchanged is False
+    assert missing_inspection.historical_raw_sha256 is None
+    assert all(not os.path.lexists(path) for path in current_paths)
 
 
 def corpus_bytes(observed_at: datetime = BASE) -> bytes:

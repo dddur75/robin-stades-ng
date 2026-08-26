@@ -13,10 +13,11 @@ from robin.capture.live_contracts import LIVE_ALLOWED_SPORT_KEYS
 ROOT = Path(__file__).resolve().parents[2]
 MISSION_ID = "REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1"
 START_MAIN = "0591f01c580eb853890e9c1c304a78c21ba9de63"
-SOURCE_HASH = "0270bdd51d8d50b7d3c9f608e4f429b46b94b789d92d4b13055b81c9b72e6291"
-OLD_SOURCE_HASH = "2451cd643c2d3ffcd3c5cc9fcd4a5f81f785978e0aa20429b4d182ceb9b1f22b"
+SOURCE_HASH = "3d3b43f68c0d339448e52de7ec66cce068646a4a006e267dfe063bffe2767f5e"
+OLD_SOURCE_HASH = "0270bdd51d8d50b7d3c9f608e4f429b46b94b789d92d4b13055b81c9b72e6291"
+OLDER_SOURCE_HASH = "2451cd643c2d3ffcd3c5cc9fcd4a5f81f785978e0aa20429b4d182ceb9b1f22b"
 EXPECTED_CANONICAL_MANIFEST_SHA256 = (
-    "d895e0b2ddded2c9763d85a08efbd64dc0185d26f66bb2b73fbe52cc05411206"
+    "2e43edcb7aafd190161b81b9d251508e445a1dc85bcd7e4815e1a2f95fcf809f"
 )
 
 
@@ -49,10 +50,11 @@ def test_mission_manifest_matches_the_exact_external_effect_boundary() -> None:
     assert validated.expires_at.isoformat().replace("+00:00", "Z") == ("2026-09-01T20:00:00Z")
     assert validated.external_effects == tuple(effects)
 
-    historical = dict(manifest)
-    historical["source_hash"] = OLD_SOURCE_HASH
-    with pytest.raises(ValueError):
-        RealExecutionMissionManifestV1.issue(**historical)
+    for historical_source_hash in (OLD_SOURCE_HASH, OLDER_SOURCE_HASH):
+        historical = dict(manifest)
+        historical["source_hash"] = historical_source_hash
+        with pytest.raises(ValueError):
+            RealExecutionMissionManifestV1.issue(**historical)
 
     serialized_effects = json.dumps(effects).casefold()
     assert "provider_http" not in serialized_effects
