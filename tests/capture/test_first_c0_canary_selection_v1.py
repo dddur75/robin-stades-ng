@@ -1424,6 +1424,7 @@ def test_h2_prefetch_starts_at_t_minus_300_and_closes_reads_before_local_activat
     monkeypatch: pytest.MonkeyPatch,
     preparation_seconds: int,
 ) -> None:
+    monkeypatch.setenv("LOCALAPPDATA", str(tmp_path / "local-app-data"))
     control = tmp_path / "control"
     control.mkdir()
     workspace = workspace_receipt(tmp_path)
@@ -1543,6 +1544,7 @@ def test_prefetch_publication_crossing_window_open_is_terminal_before_dns(
     monkeypatch: pytest.MonkeyPatch,
     crossing_stage: str,
 ) -> None:
+    monkeypatch.setenv("LOCALAPPDATA", str(tmp_path / "local-app-data"))
     control = tmp_path / "control"
     control.mkdir()
     workspace = workspace_receipt(tmp_path)
