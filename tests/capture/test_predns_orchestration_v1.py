@@ -9,17 +9,23 @@ import sys
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime, timedelta
+from functools import partial
 from pathlib import Path
 from types import ModuleType
+from typing import cast
+from zoneinfo import ZoneInfo
 
 import pytest
 
 import robin.capture.predns_orchestration as predns_module
 import robin.capture.provider_network as provider_network_module
 from robin.capture.bootstrap_contracts import (
+    PRE_KICKOFF_SAFETY_MARGIN,
     CampaignSelectionAuthorityV1,
     CampaignWindowSelectionV1,
     FirstC0CanarySelectionV1,
+    FirstC0PrefetchedWindowHandoffV1,
+    FirstC0WindowOpenRevalidationV1,
     OwnerReviewPackV1,
     ProviderNetworkBindingV1,
     ProviderNetworkResolutionClaimV1,
@@ -44,21 +50,42 @@ from robin.capture.official_schedule_sources import (
     load_official_source_plan_bytes,
 )
 from robin.capture.predns_orchestration import (
+    AtomicRunnerResultV1,
     HistoricalMarkerExpectationV1,
+    LoadedPreDnsBundleV1,
     MarkerInspectionV1,
     PreDnsOrchestrationError,
+    RunnerPreflightV1,
     freeze_official_schedule_evidence_v1,
     inspect_provider_markers_read_only_v1,
+    load_first_c0_prefetch_handoff_v1,
+    load_first_c0_window_open_revalidation_v1,
     load_pre_dns_bundle_v1,
-    prepare_owner_review_pack_inputs_v1,
-    run_owner_review_pack_once_v1,
+    revalidate_prefetched_window_open_v1,
     verify_raw_official_evidence_v1,
+)
+from robin.capture.predns_orchestration import (
+    _prepare_owner_review_pack_inputs_v1 as prepare_owner_review_pack_inputs_v1,
+)
+from robin.capture.predns_orchestration import (
+    _run_first_c0_owner_review_pack_once_after_owner_gate_v1 as run_owner_review_pack_once_v1,
+)
+from robin.capture.predns_orchestration import (
+    prepare_owner_review_pack_inputs_v1 as public_prepare_owner_review_pack_inputs_v1,
+)
+from robin.capture.predns_orchestration import (
+    run_owner_review_pack_once_v1 as public_run_owner_review_pack_once_v1,
+)
+from robin.capture.provider_network import (
+    ProviderNetworkPreparationError,
+    prepare_provider_network_binding_once_v1,
+    reserve_provider_network_resolution_v1,
 )
 from robin.capture.storage import exclusive_local_directory_fingerprint
 
 BASE = datetime(2026, 8, 24, 18, 0, tzinfo=UTC)
 MAIN_SHA = "2" * 40
-MANIFEST_SOURCE_HASH = "3d3b43f68c0d339448e52de7ec66cce068646a4a006e267dfe063bffe2767f5e"
+MANIFEST_SOURCE_HASH = "204e4323d0b99fdfa8c655cdc3a08a8d2b3c82ac0a784f9a97982c90ab3a7312"
 HISTORICAL_V3_MANIFEST_SHA256 = "d895e0b2ddded2c9763d85a08efbd64dc0185d26f66bb2b73fbe52cc05411206"
 HISTORICAL_V3_MARKER_RAW_SHA256 = "a1b7cbb95b5c7a221a7c50147e202d8d80649ec7049d0c132317803b0e51b28c"
 HISTORICAL_V3_GLOBAL_MARKER_ACL_SHA256 = (
@@ -114,6 +141,63 @@ def _load_first_c0_canary_cli() -> ModuleType:
 FIRST_C0_CANARY_CLI = _load_first_c0_canary_cli()
 
 
+@pytest.fixture(autouse=True)
+def _isolated_mission_global_preparation_registry(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> Path:
+    registry = tmp_path / "mission-global-preparation-registry"
+    registry.mkdir()
+    monkeypatch.setattr(
+        FIRST_C0_CANARY_CLI.provider_network_module,
+        "_mission_global_claim_registry_root_v1",
+        lambda: registry,
+    )
+    return registry
+
+
+def _load_first_c0_owner_atomic_cli() -> ModuleType:
+    path = (
+        Path(__file__).resolve().parents[2]
+        / "tools"
+        / "data-sourcing"
+        / "run_first_c0_owner_pack_atomic_v1.py"
+    )
+    specification = importlib.util.spec_from_file_location(
+        "predns_first_c0_owner_atomic_cli_tests",
+        path,
+    )
+    assert specification is not None and specification.loader is not None
+    module = importlib.util.module_from_spec(specification)
+    sys.modules[specification.name] = module
+    specification.loader.exec_module(module)
+    return module
+
+
+FIRST_C0_OWNER_ATOMIC_CLI = _load_first_c0_owner_atomic_cli()
+
+
+def _load_legacy_predns_cli() -> ModuleType:
+    path = (
+        Path(__file__).resolve().parents[2]
+        / "tools"
+        / "data-sourcing"
+        / "prepare_owner_review_pack_inputs_v1.py"
+    )
+    specification = importlib.util.spec_from_file_location(
+        "predns_legacy_owner_inputs_cli_tests",
+        path,
+    )
+    assert specification is not None and specification.loader is not None
+    module = importlib.util.module_from_spec(specification)
+    sys.modules[specification.name] = module
+    specification.loader.exec_module(module)
+    return module
+
+
+LEGACY_PRE_DNS_CLI = _load_legacy_predns_cli()
+
+
 @dataclass
 class Counter:
     value: int = 0
@@ -145,6 +229,28 @@ class SequenceMonotonic:
     def __call__(self) -> float:
         self._last = next(self._values, self._last)
         return self._last
+
+
+class CoherentSequenceTimeline:
+    def __init__(
+        self,
+        values: Iterable[datetime],
+        *,
+        initial_wall: datetime = BASE,
+        initial_monotonic: float = 0.0,
+    ) -> None:
+        self._values = iter(values)
+        self.wall = initial_wall
+        self.monotonic_value = initial_monotonic
+
+    def clock(self) -> datetime:
+        observed = next(self._values, self.wall)
+        self.monotonic_value += (observed - self.wall).total_seconds()
+        self.wall = observed
+        return observed
+
+    def monotonic(self) -> float:
+        return self.monotonic_value
 
 
 class SyntheticFetcher:
@@ -281,6 +387,8 @@ def synthetic_raw_evidence_verifier(*args: object) -> None:
 
 def build_authority(
     tmp_path: Path,
+    *,
+    mission_expires_at: datetime | None = None,
 ) -> tuple[
     RealCaptureWorkspaceReceiptV1,
     RealExecutionMissionManifestV1,
@@ -344,7 +452,7 @@ def build_authority(
         compute_budget=8000,
         time_budget=345600,
         source_hash=MANIFEST_SOURCE_HASH,
-        expires_at=BASE + timedelta(days=1),
+        expires_at=mission_expires_at or BASE + timedelta(days=1),
     )
     return workspace, manifest
 
@@ -1085,6 +1193,9 @@ def build_ready_canary_bundle(
     monkeypatch: pytest.MonkeyPatch,
     *,
     refresh_cycle: bool = False,
+    ready_now: bool = False,
+    earliest: datetime | None = None,
+    mission_expires_at: datetime | None = None,
 ) -> tuple[
     Path,
     RealCaptureWorkspaceReceiptV1,
@@ -1095,7 +1206,10 @@ def build_ready_canary_bundle(
     ],
     datetime,
 ]:
-    workspace, manifest = build_authority(tmp_path)
+    workspace, manifest = build_authority(
+        tmp_path,
+        mission_expires_at=mission_expires_at,
+    )
     control = Path(workspace.control_temp_root)
     local_app_data = tmp_path / "local-app-data"
     local_app_data.mkdir()
@@ -1117,7 +1231,11 @@ def build_ready_canary_bundle(
         sort_keys=True,
     ).encode()
     raw = _canary_laliga_payload(
-        BASE + timedelta(hours=3) if refresh_cycle else BASE + timedelta(minutes=135)
+        earliest
+        if earliest is not None
+        else BASE + timedelta(hours=3)
+        if refresh_cycle
+        else BASE + timedelta(minutes=140)
     )
     supporting_raw = (
         b'<script id="__NEXT_DATA__">'
@@ -1165,19 +1283,31 @@ def build_ready_canary_bundle(
         "workspace_validator": lambda _: None,
         "marker_inspector": lambda _workspace, _manifest: frozen_marker,
     }
-    result = FIRST_C0_CANARY_CLI.prepare_first_c0_canary_selection_v1(
+    result = FIRST_C0_CANARY_CLI._prepare_first_c0_canary_selection_v1(
         **arguments,
         output_directory=control / "first-c0-canary-ready-bundle",
         clock=FixedClock(BASE),
     )
     if refresh_cycle:
         assert result.status == "CANARY_FUTURE_WINDOW"
-        result = FIRST_C0_CANARY_CLI.prepare_first_c0_canary_selection_v1(
+        result = FIRST_C0_CANARY_CLI._prepare_first_c0_canary_selection_v1(
             **arguments,
             output_directory=control / "first-c0-canary-refreshed-bundle",
             clock=FixedClock(result.recommended_refresh_utc),
         )
-    assert result.status in {"CANARY_READY_NOW", "CANARY_FUTURE_WINDOW"}
+    elif ready_now and result.status == "CANARY_FUTURE_WINDOW":
+        result = FIRST_C0_CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            **arguments,
+            output_directory=control / "first-c0-canary-open-bundle",
+            clock=FixedClock(result.selection.selected_not_before_utc),
+        )
+    if ready_now:
+        assert result.status == "CANARY_READY_NOW"
+    assert result.status in {
+        "CANARY_READY_NOW",
+        "CANARY_FUTURE_WINDOW",
+        "PREFETCHED_FUTURE_WINDOW",
+    }
     execution_at = result.selection.selected_not_before_utc
 
     def current_marker_inspector(
@@ -1201,6 +1331,32 @@ def build_ready_canary_bundle(
     )
 
 
+def activate_prefetched_canary_bundle(
+    bundle: Path,
+    execution_at: datetime,
+) -> tuple[LoadedPreDnsBundleV1, Path, Path]:
+    loaded = load_pre_dns_bundle_v1(
+        bundle,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    handoff_path = bundle.parent / "first-c0-prefetched-window-handoff-v1.json"
+    handoff = load_first_c0_prefetch_handoff_v1(handoff_path, loaded)
+    receipt_path = bundle.parent / "first-c0-window-open-revalidation-v1.json"
+    receipt = revalidate_prefetched_window_open_v1(
+        loaded=loaded,
+        handoff=handoff,
+        handoff_path=handoff_path,
+        output_path=receipt_path,
+        wait_started_at_utc=execution_at,
+        wait_started_monotonic=0.0,
+        clock=FixedClock(execution_at),
+        monotonic=SequenceMonotonic([0.0]),
+        workspace_validator=lambda _: None,
+    )
+    assert receipt.status == "READY_NOW"
+    return loaded, handoff_path, receipt_path
+
+
 def test_canary_refresh_cycle_bundle_has_closed_read_lineage(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -1212,11 +1368,1791 @@ def test_canary_refresh_cycle_bundle_has_closed_read_lineage(
     )
     loaded = load_pre_dns_bundle_v1(bundle)
     assert isinstance(loaded.campaign_selection, FirstC0CanarySelectionV1)
+    assert loaded.manifest["schema_version"] == "robin-first-c0-prefetched-window-bundle-v1"
+    assert loaded.manifest["status"] == "PREFETCHED_FUTURE_WINDOW"
     assert loaded.manifest["preparation_cycle"] == 2
     assert loaded.manifest["cumulative_official_reads"] == 4
     names = {path.name for path in bundle.iterdir()}
     assert "prior-cycle-01-read-reservation.json" in names
     assert "prior-cycle-01-attempt-receipt.json" in names
+    handoff_path = bundle.parent / "first-c0-prefetched-window-handoff-v1.json"
+    handoff = load_first_c0_prefetch_handoff_v1(handoff_path, loaded)
+    assert isinstance(handoff, FirstC0PrefetchedWindowHandoffV1)
+    assert handoff.additional_official_reads_authorized == 0
+    assert handoff.additional_preparation_cycles_authorized == 0
+    assert handoff.additional_selector_invocations_authorized == 0
+    assert handoff.additional_target_set_freezes_authorized == 0
+
+
+@pytest.mark.parametrize(
+    "source_hash",
+    (
+        MANIFEST_SOURCE_HASH,
+        "3d3b43f68c0d339448e52de7ec66cce068646a4a006e267dfe063bffe2767f5e",
+        "0270bdd51d8d50b7d3c9f608e4f429b46b94b789d92d4b13055b81c9b72e6291",
+    ),
+)
+def test_prefetch_rejects_legacy_api_and_cli_model_copy_before_reads(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    source_hash: str,
+) -> None:
+    bundle, workspace, manifest, _, _ = build_ready_canary_bundle(
+        tmp_path / "prefetch",
+        monkeypatch,
+        refresh_cycle=True,
+    )
+    public_manifest = manifest.model_copy(update={"source_hash": source_hash})
+    control = Path(workspace.control_temp_root)
+    names_before = {path.name for path in control.iterdir()}
+    fetch_calls = 0
+
+    class ForbiddenFetcher:
+        def fetch(self, _source: OfficialSourceSpec) -> OfficialHttpResponse:
+            nonlocal fetch_calls
+            fetch_calls += 1
+            raise AssertionError("legacy five-league path reached an official read")
+
+    with pytest.raises(
+        PreDnsOrchestrationError,
+        match="FIRST_C0_SINGLE_OWNER_ENTRYPOINT_REQUIRED",
+    ):
+        public_prepare_owner_review_pack_inputs_v1(
+            workspace_receipt=workspace,
+            workspace_receipt_bytes=canonical_model_bytes(workspace),
+            mission_manifest=public_manifest,
+            mission_manifest_bytes=canonical_model_bytes(public_manifest),
+            source_plan_bytes=b"must-not-be-parsed",
+            corpus_evidence_reader=lambda: b"must-not-be-read",
+            output_parent=control,
+            reviews={},
+            fetcher=ForbiddenFetcher(),
+            marker_inspector=lambda *_args, **_kwargs: (_ for _ in ()).throw(
+                AssertionError("legacy five-league path reached marker inspection")
+            ),
+        )
+    assert fetch_calls == 0
+    assert {path.name for path in control.iterdir()} == names_before
+    assert bundle.is_dir()
+
+    workspace_path = tmp_path / "workspace-receipt.json"
+    manifest_path = tmp_path / "mission-manifest.json"
+    source_plan_path = tmp_path / "legacy-source-plan.json"
+    corpus_path = tmp_path / "scientific-corpus.json"
+    historical_marker_path = tmp_path / "historical-marker.json"
+    review_paths = {name: tmp_path / f"review-{name.casefold()}.json" for name in reviews()}
+    read_payloads = {
+        workspace_path: canonical_model_bytes(workspace),
+        manifest_path: canonical_model_bytes(public_manifest),
+    }
+    monkeypatch.setattr(
+        LEGACY_PRE_DNS_CLI,
+        "_read",
+        lambda path, maximum_bytes=0: read_payloads.get(path, b"must-not-be-read"),
+    )
+    monkeypatch.setattr(
+        LEGACY_PRE_DNS_CLI,
+        "assert_real_capture_workspace_receipt_current_v1",
+        lambda _workspace: None,
+    )
+    monkeypatch.setattr(
+        LEGACY_PRE_DNS_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+    monkeypatch.setattr(
+        LEGACY_PRE_DNS_CLI,
+        "load_tracked_real_execution_mission_manifest_v1",
+        lambda _repository, _path: public_manifest,
+    )
+    forbidden_fetcher = ForbiddenFetcher()
+    monkeypatch.setattr(
+        LEGACY_PRE_DNS_CLI,
+        "BuiltinHttpsOfficialScheduleFetcher",
+        lambda: forbidden_fetcher,
+    )
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "prepare_owner_review_pack_inputs_v1.py",
+            "--workspace-receipt",
+            str(workspace_path),
+            "--mission-manifest",
+            str(manifest_path),
+            "--source-plan",
+            str(source_plan_path),
+            "--scientific-corpus-evidence",
+            str(corpus_path),
+            "--review-dp6",
+            str(review_paths["DP6"]),
+            "--review-c4",
+            str(review_paths["C4"]),
+            "--review-c2",
+            str(review_paths["C2"]),
+            "--review-a2",
+            str(review_paths["A2"]),
+            "--historical-marker",
+            str(historical_marker_path),
+            "--historical-marker-manifest-sha256",
+            "1" * 64,
+            "--historical-marker-sha256",
+            "2" * 64,
+            "--historical-marker-acl-sha256",
+            "3" * 64,
+            "--output-parent",
+            str(control),
+        ],
+    )
+    assert LEGACY_PRE_DNS_CLI.main() == 2
+    assert json.loads(capsys.readouterr().out) == {
+        "status": "FAILED",
+        "code": "FIRST_C0_SINGLE_OWNER_ENTRYPOINT_REQUIRED",
+    }
+    assert fetch_calls == 0
+    assert {path.name for path in control.iterdir()} == names_before
+
+
+@pytest.mark.parametrize(
+    ("preflight_seconds", "accepted"),
+    [(5, True), (30, True), (45, True), (46, False), (60, False), (61, False)],
+)
+def test_prefetched_h2_clock_only_activation_and_preflight_deadline_are_exact(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    preflight_seconds: int,
+    accepted: bool,
+) -> None:
+    bundle, workspace, mission, marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        earliest=BASE + timedelta(hours=3),
+        refresh_cycle=True,
+    )
+    loaded = load_pre_dns_bundle_v1(
+        bundle,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    handoff_path = bundle.parent / "first-c0-prefetched-window-handoff-v1.json"
+    handoff = load_first_c0_prefetch_handoff_v1(handoff_path, loaded)
+    receipt_path = bundle.parent / "first-c0-window-open-revalidation-v1.json"
+    before_hashes = dict(loaded.manifest["artifact_sha256"])
+    receipt = revalidate_prefetched_window_open_v1(
+        loaded=loaded,
+        handoff=handoff,
+        handoff_path=handoff_path,
+        output_path=receipt_path,
+        wait_started_at_utc=execution_at - timedelta(seconds=10),
+        wait_started_monotonic=90.0,
+        clock=FixedClock(execution_at),
+        monotonic=SequenceMonotonic([100.0]),
+        workspace_validator=lambda _: None,
+    )
+    assert isinstance(receipt, FirstC0WindowOpenRevalidationV1)
+    assert receipt.status == "READY_NOW"
+    assert receipt.usable_margin_seconds >= 840
+    assert receipt.official_reads_delta == 0
+    assert receipt.preparation_cycles_delta == 0
+    assert receipt.target_set_freezes_delta == 0
+    assert receipt.selector_invocations_delta == 0
+    assert receipt.provider_effects == 0
+    assert dict(load_pre_dns_bundle_v1(bundle).manifest["artifact_sha256"]) == before_hashes
+
+    result = run_owner_review_pack_once_v1(
+        bundle_directory=bundle,
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        output_binding_path=bundle.parent / "binding.json",
+        output_pack_directory=bundle.parent / "pack",
+        resolver=lambda *_: (),
+        marker_inspector=marker_inspector,
+        execute=False,
+        owner_present_for_review=False,
+        prefetch_handoff_path=handoff_path,
+        window_open_receipt_path=receipt_path,
+        clock=FixedClock(execution_at + timedelta(seconds=preflight_seconds)),
+        monotonic=SequenceMonotonic([100.0 + preflight_seconds]),
+        workspace_validator=lambda _: None,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    assert result.preflight.accepted is accepted
+    assert result.resolver_operations == 0
+    assert result.pack_builds == 0
+    if accepted:
+        assert result.preflight.usable_margin_seconds >= 840
+    else:
+        assert "FIRST_C0_OPEN_TO_PREFLIGHT_BUDGET_EXCEEDED" in result.preflight.errors
+
+
+@pytest.mark.parametrize(
+    ("execute", "owner_present"),
+    [
+        (False, False),
+        (True, False),
+        (False, True),
+        (1, True),
+        (True, 1),
+        ("true", True),
+        (True, "false"),
+    ],
+)
+def test_single_owner_entrypoint_requires_both_gates_before_any_observation(
+    tmp_path: Path,
+    execute: object,
+    owner_present: object,
+) -> None:
+    workspace, mission = build_authority(tmp_path)
+
+    def forbidden(*_args: object, **_kwargs: object) -> object:
+        raise AssertionError("OWNER_GATE_OBSERVED_EXTERNAL_STATE")
+
+    result = FIRST_C0_OWNER_ATOMIC_CLI._run_first_c0_owner_pack_atomic_v1(
+        bundle_directory=tmp_path / "absent-bundle",
+        prefetch_handoff_path=tmp_path / "absent-handoff.json",
+        window_open_receipt_path=tmp_path / "absent-window.json",
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        output_binding_path=tmp_path / "binding.json",
+        output_pack_directory=tmp_path / "pack",
+        resolver=forbidden,
+        marker_inspector=forbidden,
+        execute=execute,
+        owner_present_for_at_least_20_minutes=owner_present,
+        clock=forbidden,
+        monotonic=forbidden,
+        sleeper=forbidden,
+        workspace_validator=forbidden,
+        raw_evidence_verifier=forbidden,
+        atomic_runner=forbidden,
+    )
+    assert result.status == "OWNER_GATE_REJECTED"
+    assert result.atomic_result is None
+
+
+def test_h2_preparation_started_at_window_open_fails_without_publishing_bundle(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    with pytest.raises(
+        FIRST_C0_CANARY_CLI.FirstC0CanaryPreparationError,
+        match="^FIRST_C0_H2_PREFETCH_REQUIRED_BEFORE_WINDOW_OPEN$",
+    ):
+        build_ready_canary_bundle(
+            tmp_path,
+            monkeypatch,
+            earliest=BASE + timedelta(hours=3),
+            ready_now=True,
+        )
+    control = tmp_path / "control"
+    assert not (control / "first-c0-canary-open-bundle").exists()
+    assert not (control / "provider-network-resolution-one-shot-v1.json").exists()
+
+
+@pytest.mark.parametrize(("validation_seconds", "accepted"), [(45, True), (46, False)])
+def test_ready_h2_read_only_preflight_resamples_after_validation(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    validation_seconds: int,
+    accepted: bool,
+) -> None:
+    bundle, workspace, mission, marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        earliest=BASE + timedelta(hours=3),
+        refresh_cycle=True,
+    )
+    loaded = load_pre_dns_bundle_v1(
+        bundle,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    handoff_path = bundle.parent / "first-c0-prefetched-window-handoff-v1.json"
+    handoff = load_first_c0_prefetch_handoff_v1(handoff_path, loaded)
+    receipt_path = bundle.parent / "first-c0-window-open-revalidation-v1.json"
+    revalidate_prefetched_window_open_v1(
+        loaded=loaded,
+        handoff=handoff,
+        handoff_path=handoff_path,
+        output_path=receipt_path,
+        wait_started_at_utc=execution_at,
+        wait_started_monotonic=100.0,
+        clock=FixedClock(execution_at),
+        monotonic=SequenceMonotonic([100.0]),
+        workspace_validator=lambda _: None,
+    )
+    timeline = CoherentSequenceTimeline(
+        (execution_at, execution_at + timedelta(seconds=validation_seconds)),
+        initial_wall=execution_at,
+        initial_monotonic=100.0,
+    )
+
+    result = run_owner_review_pack_once_v1(
+        bundle_directory=bundle,
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        output_binding_path=bundle.parent / "binding.json",
+        output_pack_directory=bundle.parent / "pack",
+        resolver=lambda *_args: (),
+        marker_inspector=marker_inspector,
+        execute=False,
+        owner_present_for_review=False,
+        prefetch_handoff_path=handoff_path,
+        window_open_receipt_path=receipt_path,
+        clock=timeline.clock,
+        monotonic=timeline.monotonic,
+        workspace_validator=lambda _: None,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+
+    assert result.preflight.accepted is accepted
+    assert result.resolver_operations == result.pack_builds == 0
+    if not accepted:
+        assert "FIRST_C0_OPEN_TO_PREFLIGHT_BUDGET_EXCEEDED" in result.preflight.errors
+
+
+def test_legacy_h2_future_bundle_cannot_activate_without_window_receipt(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle, workspace, mission, marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        earliest=BASE + timedelta(hours=3),
+    )
+    resolver_calls = Counter()
+
+    def forbidden_resolver(*_args: object) -> Iterable[tuple[object, ...]]:
+        resolver_calls.value += 1
+        raise AssertionError("LEGACY_FUTURE_REACHED_DNS")
+
+    result = run_owner_review_pack_once_v1(
+        bundle_directory=bundle,
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        output_binding_path=bundle.parent / "binding.json",
+        output_pack_directory=bundle.parent / "pack",
+        resolver=forbidden_resolver,
+        marker_inspector=marker_inspector,
+        execute=True,
+        owner_present_for_review=True,
+        clock=FixedClock(execution_at),
+        workspace_validator=lambda _: None,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    assert result.status == "PREFLIGHT_REJECTED"
+    assert "FIRST_C0_WINDOW_RECEIPT_REQUIRED" in result.preflight.errors
+    assert result.resolver_operations == 0
+    assert result.pack_builds == 0
+    assert resolver_calls.value == 0
+
+
+@pytest.mark.parametrize("provider_operation", ["reserve", "bind_once"])
+def test_first_c0_provider_api_requires_atomic_preflight_before_claim_or_dns(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    provider_operation: str,
+) -> None:
+    bundle, workspace, mission, _, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        earliest=BASE + timedelta(hours=3),
+        refresh_cycle=True,
+    )
+    loaded = load_pre_dns_bundle_v1(
+        bundle,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    resolver_calls = Counter()
+
+    def forbidden_resolver(*_args: object) -> Iterable[tuple[object, ...]]:
+        resolver_calls.value += 1
+        raise AssertionError("FIRST_C0_PROVIDER_API_REACHED_DNS")
+
+    with pytest.raises(
+        ProviderNetworkPreparationError,
+        match="FIRST_C0_ATOMIC_PREFLIGHT_REQUIRED",
+    ):
+        if provider_operation == "reserve":
+            reserve_provider_network_resolution_v1(
+                workspace_receipt=workspace,
+                mission_manifest=mission,
+                campaign_selection=loaded.campaign_selection,
+                output_path=bundle.parent / "binding.json",
+                clock=FixedClock(execution_at),
+            )
+        else:
+            prepare_provider_network_binding_once_v1(
+                workspace_receipt=workspace,
+                mission_manifest=mission,
+                campaign_selection=loaded.campaign_selection,
+                output_path=bundle.parent / "binding.json",
+                resolver=forbidden_resolver,
+                clock=FixedClock(execution_at),
+            )
+
+    assert resolver_calls.value == 0
+    assert not (bundle.parent / "provider-network-resolution-one-shot-v1.json").exists()
+    assert not (bundle.parent / "binding.json").exists()
+
+
+@pytest.mark.parametrize(
+    ("observation", "expected_status", "expected_code"),
+    (
+        (
+            "window_open",
+            "STOP_TOO_LATE_BEFORE_DNS",
+            "FIRST_C0_PREFETCH_REQUIRED_BEFORE_WINDOW_OPEN",
+        ),
+        ("window_expired", "STOP_EXPIRED_BEFORE_DNS", "FIRST_C0_WINDOW_EXPIRED"),
+    ),
+)
+def test_legacy_future_entrypoint_never_reports_future_after_window_open(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    observation: str,
+    expected_status: str,
+    expected_code: str,
+) -> None:
+    bundle, workspace, mission, marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        earliest=BASE + timedelta(hours=3),
+    )
+    loaded = load_pre_dns_bundle_v1(
+        bundle,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    selected = loaded.campaign_selection.selected_candidate()
+    observed_at = execution_at if observation == "window_open" else selected.window_expires_at_utc
+    delegated = Counter()
+    resolver_calls = Counter()
+
+    def forbidden_atomic(**_kwargs: object) -> AtomicRunnerResultV1:
+        delegated.value += 1
+        raise AssertionError("LEGACY_ENTRYPOINT_DELEGATED")
+
+    def forbidden_resolver(*_args: object) -> Iterable[tuple[object, ...]]:
+        resolver_calls.value += 1
+        raise AssertionError("LEGACY_ENTRYPOINT_REACHED_DNS")
+
+    result = FIRST_C0_OWNER_ATOMIC_CLI._run_first_c0_owner_pack_atomic_v1(
+        bundle_directory=bundle,
+        prefetch_handoff_path=None,
+        window_open_receipt_path=bundle.parent / "unused-window-open-receipt.json",
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        output_binding_path=bundle.parent / "binding.json",
+        output_pack_directory=bundle.parent / "pack",
+        resolver=forbidden_resolver,
+        marker_inspector=marker_inspector,
+        execute=True,
+        owner_present_for_at_least_20_minutes=True,
+        clock=FixedClock(observed_at),
+        monotonic=SequenceMonotonic((100.0,)),
+        sleeper=lambda _seconds: None,
+        workspace_validator=lambda _: None,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+        atomic_runner=forbidden_atomic,
+    )
+
+    assert result.status == expected_status
+    assert result.code == expected_code
+    assert result.atomic_result is None
+    assert delegated.value == resolver_calls.value == 0
+
+
+def test_rehashed_prefetched_to_legacy_schema_downgrade_cannot_reach_dns(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle, workspace, mission, marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        refresh_cycle=True,
+    )
+    loaded = load_pre_dns_bundle_v1(
+        bundle,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    downgraded_manifest = dict(loaded.manifest)
+    downgraded_manifest["schema_version"] = "robin-first-c0-canary-bundle-v1"
+    downgraded_manifest["status"] = "CANARY_FUTURE_WINDOW"
+    for field in (
+        "h2_window_duration_seconds",
+        "h2_prefetch_lead_seconds",
+        "post_open_total_budget_seconds",
+        "post_open_safety_reserve_seconds",
+        "maximum_open_to_preflight_seconds",
+    ):
+        downgraded_manifest.pop(field)
+    downgraded = replace(loaded, manifest=downgraded_manifest)
+    monkeypatch.setattr(
+        predns_module, "load_pre_dns_bundle_v1", lambda *_args, **_kwargs: downgraded
+    )
+    result = run_owner_review_pack_once_v1(
+        bundle_directory=bundle,
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        output_binding_path=bundle.parent / "binding.json",
+        output_pack_directory=bundle.parent / "pack",
+        resolver=lambda *_: (_ for _ in ()).throw(AssertionError("DOWNGRADE_REACHED_DNS")),
+        marker_inspector=marker_inspector,
+        execute=True,
+        owner_present_for_review=True,
+        clock=FixedClock(execution_at),
+        workspace_validator=lambda _: None,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    assert result.status == "PREFLIGHT_REJECTED"
+    assert "FIRST_C0_WINDOW_RECEIPT_REQUIRED" in result.preflight.errors
+    assert result.resolver_operations == 0
+    assert result.pack_builds == 0
+
+
+@pytest.mark.parametrize(
+    ("seconds_until_open", "expected_code"),
+    [(900.0, "PREFETCH_REQUIRED_AT_RECOMMENDED_START"), (900.001, None)],
+)
+def test_single_owner_entrypoint_local_wait_planning_boundary_is_exact(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    seconds_until_open: float,
+    expected_code: str | None,
+) -> None:
+    bundle, workspace, mission, marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        earliest=BASE + timedelta(hours=3),
+    )
+    result = FIRST_C0_OWNER_ATOMIC_CLI._run_first_c0_owner_pack_atomic_v1(
+        bundle_directory=bundle,
+        prefetch_handoff_path=None,
+        window_open_receipt_path=bundle.parent / "unused-window-open-receipt.json",
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        output_binding_path=bundle.parent / "binding.json",
+        output_pack_directory=bundle.parent / "pack",
+        resolver=lambda *_: (),
+        marker_inspector=marker_inspector,
+        execute=True,
+        owner_present_for_at_least_20_minutes=True,
+        clock=FixedClock(execution_at - timedelta(seconds=seconds_until_open)),
+        workspace_validator=lambda _: None,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    assert result.status == "FUTURE_OWNER_SEQUENCE_PLANNED"
+    assert result.code == expected_code
+
+
+def test_h24_future_planning_and_ready_direct_behavior_are_unchanged(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    future_bundle, workspace, mission, marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        earliest=BASE + timedelta(hours=27),
+        mission_expires_at=BASE + timedelta(hours=4),
+    )
+    future = FIRST_C0_OWNER_ATOMIC_CLI._run_first_c0_owner_pack_atomic_v1(
+        bundle_directory=future_bundle,
+        prefetch_handoff_path=None,
+        window_open_receipt_path=future_bundle.parent / "unused-window-open-receipt.json",
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        output_binding_path=future_bundle.parent / "future-binding.json",
+        output_pack_directory=future_bundle.parent / "future-pack",
+        resolver=lambda *_: (),
+        marker_inspector=marker_inspector,
+        execute=True,
+        owner_present_for_at_least_20_minutes=True,
+        clock=FixedClock(BASE),
+        workspace_validator=lambda _: None,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    assert future.status == "FUTURE_OWNER_SEQUENCE_PLANNED"
+    assert future.recommended_owner_sequence_start_utc == execution_at - timedelta(seconds=60)
+
+    ready_registry = tmp_path / "ready-mission-global-preparation-registry"
+    ready_registry.mkdir()
+    monkeypatch.setattr(
+        FIRST_C0_CANARY_CLI.provider_network_module,
+        "_mission_global_claim_registry_root_v1",
+        lambda: ready_registry,
+    )
+    ready_bundle, workspace, mission, marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path / "ready",
+        monkeypatch,
+        ready_now=True,
+        earliest=BASE + timedelta(hours=27),
+        mission_expires_at=BASE + timedelta(hours=4),
+    )
+    resolver_calls = Counter()
+
+    def counted_resolver(*args: object) -> Iterable[tuple[object, ...]]:
+        resolver_calls.value += 1
+        return synthetic_resolver(*args)
+
+    ready = FIRST_C0_OWNER_ATOMIC_CLI._run_first_c0_owner_pack_atomic_v1(
+        bundle_directory=ready_bundle,
+        prefetch_handoff_path=None,
+        window_open_receipt_path=ready_bundle.parent / "unused-window-open-receipt.json",
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        output_binding_path=ready_bundle.parent / "binding.json",
+        output_pack_directory=ready_bundle.parent / "pack",
+        resolver=counted_resolver,
+        marker_inspector=marker_inspector,
+        execute=True,
+        owner_present_for_at_least_20_minutes=True,
+        clock=FixedClock(execution_at),
+        workspace_validator=lambda _: None,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+        atomic_runner=partial(
+            run_owner_review_pack_once_v1,
+            binding_preparer=fake_binding_preparer,
+        ),
+    )
+    assert ready.status == "OWNER_REVIEW_PACK_CREATED"
+    assert resolver_calls.value == 1
+
+
+def test_single_owner_future_plan_crosses_utc_date_without_timing_drift(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle, workspace, mission, marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        earliest=datetime(2026, 8, 25, 2, 17, tzinfo=UTC),
+    )
+    result = FIRST_C0_OWNER_ATOMIC_CLI._run_first_c0_owner_pack_atomic_v1(
+        bundle_directory=bundle,
+        prefetch_handoff_path=None,
+        window_open_receipt_path=bundle.parent / "unused-window-open-receipt.json",
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        output_binding_path=bundle.parent / "binding.json",
+        output_pack_directory=bundle.parent / "pack",
+        resolver=lambda *_: (),
+        marker_inspector=marker_inspector,
+        execute=True,
+        owner_present_for_at_least_20_minutes=True,
+        clock=FixedClock(BASE),
+        workspace_validator=lambda _: None,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    assert result.status == "FUTURE_OWNER_SEQUENCE_PLANNED"
+    assert execution_at == datetime(2026, 8, 25, 0, 2, tzinfo=UTC)
+    assert result.recommended_owner_sequence_start_utc == datetime(
+        2026,
+        8,
+        24,
+        23,
+        57,
+        tzinfo=UTC,
+    )
+
+
+def test_single_owner_paris_rendering_disambiguates_dst_fold() -> None:
+    first_fold = datetime(2026, 10, 25, 0, 30, tzinfo=UTC)
+    second_fold = datetime(2026, 10, 25, 1, 30, tzinfo=UTC)
+    assert FIRST_C0_OWNER_ATOMIC_CLI._europe_paris_text(first_fold) == ("2026-10-25T02:30:00+02:00")
+    assert FIRST_C0_OWNER_ATOMIC_CLI._europe_paris_text(second_fold) == (
+        "2026-10-25T02:30:00+01:00"
+    )
+    assert FIRST_C0_OWNER_ATOMIC_CLI._utc_text(first_fold) == "2026-10-25T00:30:00Z"
+    assert FIRST_C0_OWNER_ATOMIC_CLI._utc_text(second_fold) == "2026-10-25T01:30:00Z"
+
+
+def _first_c0_owner_cli_arguments(tmp_path: Path) -> list[str]:
+    return [
+        "run_first_c0_owner_pack_atomic_v1.py",
+        "--workspace-receipt",
+        str(tmp_path / "workspace.json"),
+        "--mission-manifest",
+        str(tmp_path / "mission.json"),
+        "--pre-dns-bundle",
+        str(tmp_path / "bundle"),
+        "--window-open-receipt",
+        str(tmp_path / "window-open.json"),
+        "--output-binding",
+        str(tmp_path / "binding.json"),
+        "--output-pack-directory",
+        str(tmp_path / "pack"),
+        "--historical-marker",
+        str(tmp_path / "historical-marker.json"),
+        "--historical-marker-manifest-sha256",
+        "c" * 64,
+        "--historical-marker-sha256",
+        "a" * 64,
+        "--historical-marker-acl-sha256",
+        "b" * 64,
+    ]
+
+
+def test_single_owner_cli_rejects_absent_gates_before_any_read(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    def forbidden_read(_path: Path) -> bytes:
+        raise AssertionError("OWNER_GATE_READ_EXTERNAL_STATE")
+
+    monkeypatch.setattr(FIRST_C0_OWNER_ATOMIC_CLI, "_read", forbidden_read)
+    monkeypatch.setattr(sys, "argv", _first_c0_owner_cli_arguments(tmp_path))
+    assert FIRST_C0_OWNER_ATOMIC_CLI.main() == 2
+    assert json.loads(capsys.readouterr().out) == {
+        "status": "OWNER_GATE_REJECTED",
+        "code": "EXECUTE_AND_OWNER_PRESENCE_REQUIRED",
+        "provider_dns": 0,
+        "provider_tcp": 0,
+        "provider_http": 0,
+        "secret_reads": 0,
+        "pack_builds": 0,
+        "owner_authorizations": 0,
+        "c0_calls": 0,
+        "effects_complete": True,
+    }
+
+
+def test_single_owner_cli_reports_effects_truthfully_after_resolver_exception(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    workspace, mission = build_authority(tmp_path)
+    control = Path(workspace.control_temp_root)
+    workspace_path = tmp_path / "workspace.json"
+    workspace_path.write_bytes(canonical_model_bytes(workspace))
+
+    class FailureAfterResolver(RuntimeError):
+        code = "SYNTHETIC_FAILURE_AFTER_RESOLVER"
+
+    def fail_after_resolver(**kwargs: object) -> object:
+        resolver = cast(Callable[..., Iterable[tuple[object, ...]]], kwargs["resolver"])
+        tuple(resolver("api.the-odds-api.com", 443, socket.AF_UNSPEC, socket.SOCK_STREAM, 0))
+        raise FailureAfterResolver
+
+    monkeypatch.setattr(
+        FIRST_C0_OWNER_ATOMIC_CLI,
+        "assert_real_capture_workspace_receipt_current_v1",
+        lambda _workspace: None,
+    )
+    monkeypatch.setattr(
+        FIRST_C0_OWNER_ATOMIC_CLI,
+        "load_tracked_real_execution_mission_manifest_v1",
+        lambda _root, _path: mission,
+    )
+    monkeypatch.setattr(
+        FIRST_C0_OWNER_ATOMIC_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+    monkeypatch.setattr(FIRST_C0_OWNER_ATOMIC_CLI, "_system_resolver", synthetic_resolver)
+    monkeypatch.setattr(
+        FIRST_C0_OWNER_ATOMIC_CLI,
+        "_run_first_c0_owner_pack_atomic_v1",
+        fail_after_resolver,
+    )
+    arguments = _first_c0_owner_cli_arguments(tmp_path)
+    arguments[2] = str(workspace_path)
+    arguments.extend(("--execute", "--owner-present-for-at-least-20-minutes"))
+    monkeypatch.setattr(sys, "argv", arguments)
+    assert FIRST_C0_OWNER_ATOMIC_CLI.main() == 2
+    assert json.loads(capsys.readouterr().out) == {
+        "status": "FAILED",
+        "code": "SYNTHETIC_FAILURE_AFTER_RESOLVER",
+        "provider_dns": 1,
+        "resolver_operations": 1,
+        "provider_tcp": 0,
+        "provider_http": 0,
+        "secret_reads": 0,
+        "pack_builds": None,
+        "owner_authorizations": 0,
+        "c0_calls": 0,
+        "effects_complete": False,
+    }
+    assert not (control / "provider-network-resolution-one-shot-v1.json").exists()
+
+
+class ResidentTimeline:
+    def __init__(self, wall: datetime, monotonic: float) -> None:
+        self.wall = wall
+        self.monotonic = monotonic
+
+    def clock(self) -> datetime:
+        return self.wall
+
+    def monotonic_clock(self) -> float:
+        return self.monotonic
+
+    def sleep(self, seconds: float) -> None:
+        self.wall += timedelta(seconds=seconds)
+        self.monotonic += seconds
+
+
+class OneStepAnomalousResidentTimeline(ResidentTimeline):
+    def __init__(
+        self,
+        wall: datetime,
+        monotonic: float,
+        *,
+        target_wall: datetime,
+        target_monotonic: float,
+    ) -> None:
+        super().__init__(wall, monotonic)
+        self.target_wall = target_wall
+        self.target_monotonic = target_monotonic
+
+    def sleep(self, _seconds: float) -> None:
+        self.wall = self.target_wall
+        self.monotonic = self.target_monotonic
+
+
+class PostLoopAdvanceResidentTimeline(ResidentTimeline):
+    def __init__(
+        self,
+        wall: datetime,
+        monotonic: float,
+        *,
+        activation_at: datetime,
+    ) -> None:
+        super().__init__(wall, monotonic)
+        self.activation_at = activation_at
+        self.clock_calls = 0
+
+    def clock(self) -> datetime:
+        self.clock_calls += 1
+        if self.clock_calls == 4:
+            delta = (self.activation_at - self.wall).total_seconds()
+            assert delta >= 0
+            self.wall = self.activation_at
+            self.monotonic += delta
+        return self.wall
+
+
+class InstantTimeline(ResidentTimeline):
+    def sleep(self, seconds: float) -> None:
+        zone = self.wall.tzinfo
+        assert zone is not None
+        self.wall = (self.wall.astimezone(UTC) + timedelta(seconds=seconds)).astimezone(zone)
+        self.monotonic += seconds
+
+
+@pytest.mark.parametrize("handoff_gap", ["coherent_ten_seconds", "wall_rollback"])
+def test_single_owner_resamples_a_coherent_pair_after_handoff_loading(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    handoff_gap: str,
+) -> None:
+    bundle, workspace, mission, marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        refresh_cycle=True,
+    )
+    timeline = ResidentTimeline(execution_at - timedelta(seconds=10), 100.0)
+    original_loader = FIRST_C0_OWNER_ATOMIC_CLI.load_first_c0_prefetch_handoff_v1
+    delegated = Counter()
+    resolver_calls = Counter()
+
+    def load_with_gap(
+        path: Path,
+        loaded: LoadedPreDnsBundleV1,
+    ) -> FirstC0PrefetchedWindowHandoffV1:
+        handoff = original_loader(path, loaded)
+        if handoff_gap == "coherent_ten_seconds":
+            timeline.sleep(10.0)
+        else:
+            timeline.wall -= timedelta(seconds=1)
+            timeline.monotonic += 1.0
+        return handoff
+
+    def atomic(**_kwargs: object) -> AtomicRunnerResultV1:
+        delegated.value += 1
+        return AtomicRunnerResultV1(
+            status="OWNER_REVIEW_PACK_CREATED",
+            preflight=RunnerPreflightV1(
+                accepted=True,
+                status="PREFLIGHT_ACCEPT",
+                errors=(),
+                checked_at_utc=execution_at,
+                usable_margin_seconds=900,
+            ),
+            resolver_operations=1,
+            pack_builds=1,
+            binding_sha256="a" * 64,
+            pack_sha256="b" * 64,
+            receipt_path=bundle.parent / "pack" / "execution-receipt.json",
+            hard_stop_code=None,
+        )
+
+    def forbidden_resolver(*_args: object) -> Iterable[tuple[object, ...]]:
+        resolver_calls.value += 1
+        raise AssertionError("HANDOFF_GAP_REACHED_REAL_RESOLVER")
+
+    monkeypatch.setattr(
+        FIRST_C0_OWNER_ATOMIC_CLI,
+        "load_first_c0_prefetch_handoff_v1",
+        load_with_gap,
+    )
+    result = FIRST_C0_OWNER_ATOMIC_CLI._run_first_c0_owner_pack_atomic_v1(
+        bundle_directory=bundle,
+        prefetch_handoff_path=bundle.parent / "first-c0-prefetched-window-handoff-v1.json",
+        window_open_receipt_path=bundle.parent / "first-c0-window-open-revalidation-v1.json",
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        output_binding_path=bundle.parent / "binding.json",
+        output_pack_directory=bundle.parent / "pack",
+        resolver=forbidden_resolver,
+        marker_inspector=marker_inspector,
+        execute=True,
+        owner_present_for_at_least_20_minutes=True,
+        clock=timeline.clock,
+        monotonic=timeline.monotonic_clock,
+        sleeper=timeline.sleep,
+        workspace_validator=lambda _: None,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+        atomic_runner=atomic,
+    )
+
+    assert resolver_calls.value == 0
+    if handoff_gap == "coherent_ten_seconds":
+        assert result.status == "OWNER_REVIEW_PACK_CREATED"
+        assert delegated.value == 1
+        assert result.window_open_receipt is not None
+        assert result.window_open_receipt.status == "READY_NOW"
+        assert result.window_open_receipt.wall_elapsed_seconds == 0
+    else:
+        assert result.status == "CLOCK_INVALID_BEFORE_DNS"
+        assert result.code == "FIRST_C0_PREFLIGHT_CLOCK_INVALID"
+        assert result.window_open_receipt is None
+        assert delegated.value == 0
+
+
+def test_prefetched_owner_sequence_propagates_atomic_hard_stop_code(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle, workspace, mission, marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        refresh_cycle=True,
+    )
+    timeline = ResidentTimeline(execution_at, 100.0)
+
+    def hard_stopped_atomic(**_kwargs: object) -> AtomicRunnerResultV1:
+        return AtomicRunnerResultV1(
+            status="POST_DNS_HARD_STOP",
+            preflight=RunnerPreflightV1(
+                accepted=True,
+                status="PREFLIGHT_ACCEPT",
+                errors=(),
+                checked_at_utc=execution_at,
+                usable_margin_seconds=900,
+            ),
+            resolver_operations=1,
+            pack_builds=0,
+            binding_sha256=None,
+            pack_sha256=None,
+            receipt_path=bundle.parent / "pack-hard-stop-receipt.json",
+            hard_stop_code="SYNTHETIC_POST_DNS_FAILURE",
+        )
+
+    result = FIRST_C0_OWNER_ATOMIC_CLI._run_first_c0_owner_pack_atomic_v1(
+        bundle_directory=bundle,
+        prefetch_handoff_path=bundle.parent / "first-c0-prefetched-window-handoff-v1.json",
+        window_open_receipt_path=bundle.parent / "first-c0-window-open-revalidation-v1.json",
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        output_binding_path=bundle.parent / "binding.json",
+        output_pack_directory=bundle.parent / "pack",
+        resolver=lambda *_args: (),
+        marker_inspector=marker_inspector,
+        execute=True,
+        owner_present_for_at_least_20_minutes=True,
+        clock=timeline.clock,
+        monotonic=timeline.monotonic_clock,
+        sleeper=timeline.sleep,
+        workspace_validator=lambda _: None,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+        atomic_runner=hard_stopped_atomic,
+    )
+
+    assert result.status == "POST_DNS_HARD_STOP"
+    assert result.code == "SYNTHETIC_POST_DNS_FAILURE"
+    assert result.atomic_result is not None
+    assert result.window_open_receipt is not None
+    assert result.window_open_receipt.status == "READY_NOW"
+
+
+@pytest.mark.parametrize(
+    "scenario",
+    [
+        "clock_rollback",
+        "clock_forward_jump",
+        "monotonic_divergence",
+    ],
+)
+def test_single_owner_resident_wait_rejects_temporal_anomalies_before_dns(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    scenario: str,
+) -> None:
+    bundle, workspace, mission, marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        refresh_cycle=True,
+        earliest=BASE + timedelta(hours=3),
+    )
+    handoff_path = bundle.parent / "first-c0-prefetched-window-handoff-v1.json"
+    wait_started = execution_at - timedelta(seconds=10)
+    target_wall_by_scenario = {
+        "clock_rollback": wait_started - timedelta(seconds=1),
+        "clock_forward_jump": wait_started + timedelta(seconds=60),
+        "monotonic_divergence": wait_started + timedelta(seconds=1),
+    }
+    target_wall = target_wall_by_scenario[scenario]
+    wall_elapsed = (target_wall - wait_started).total_seconds()
+    target_monotonic = (
+        110.0
+        if scenario == "monotonic_divergence"
+        else 101.0
+        if scenario == "clock_rollback"
+        else 100.0 + max(0.0, wall_elapsed)
+    )
+    timeline = OneStepAnomalousResidentTimeline(
+        wait_started,
+        100.0,
+        target_wall=target_wall,
+        target_monotonic=target_monotonic,
+    )
+    delegated = Counter()
+    resolver_calls = Counter()
+
+    def forbidden_atomic(**_kwargs: object) -> AtomicRunnerResultV1:
+        delegated.value += 1
+        raise AssertionError("TEMPORAL_ANOMALY_DELEGATED")
+
+    def forbidden_resolver(*_args: object) -> Iterable[tuple[object, ...]]:
+        resolver_calls.value += 1
+        raise AssertionError("TEMPORAL_ANOMALY_REACHED_DNS")
+
+    receipt_path = bundle.parent / "first-c0-window-open-revalidation-v1.json"
+    result = FIRST_C0_OWNER_ATOMIC_CLI._run_first_c0_owner_pack_atomic_v1(
+        bundle_directory=bundle,
+        prefetch_handoff_path=handoff_path,
+        window_open_receipt_path=receipt_path,
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        output_binding_path=bundle.parent / "binding.json",
+        output_pack_directory=bundle.parent / "pack",
+        resolver=forbidden_resolver,
+        marker_inspector=marker_inspector,
+        execute=True,
+        owner_present_for_at_least_20_minutes=True,
+        clock=timeline.clock,
+        monotonic=timeline.monotonic_clock,
+        sleeper=timeline.sleep,
+        workspace_validator=lambda _: None,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+        atomic_runner=forbidden_atomic,
+    )
+    assert result.status == "CLOCK_INVALID_BEFORE_DNS"
+    assert result.code == "FIRST_C0_WINDOW_CLOCK_INVALID"
+    assert result.atomic_result is None
+    assert delegated.value == resolver_calls.value == 0
+    assert result.window_open_receipt is not None
+    receipt = result.window_open_receipt
+    assert receipt.status == "CLOCK_INVALID"
+    assert receipt.clock_path_valid is False
+    assert receipt.provider_effects == 0
+    assert receipt_path.is_file()
+    if scenario == "clock_rollback":
+        assert receipt.wall_elapsed_seconds < 0
+    elif scenario == "clock_forward_jump":
+        assert receipt.wall_elapsed_seconds == 60
+    else:
+        assert receipt.clock_divergence_seconds > 2
+
+
+@pytest.mark.parametrize("terminal", ["mission_expiry", "window_closed"])
+def test_single_owner_resident_terminal_expiry_is_not_a_clock_failure(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    terminal: str,
+) -> None:
+    open_at = BASE + timedelta(minutes=45)
+    mission_expiry = open_at + timedelta(seconds=885) if terminal == "mission_expiry" else None
+    bundle, workspace, mission, marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        refresh_cycle=True,
+        earliest=BASE + timedelta(hours=3),
+        mission_expires_at=mission_expiry,
+    )
+    loaded = load_pre_dns_bundle_v1(
+        bundle,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    selected = loaded.campaign_selection.selected_candidate()
+    activation_at = (
+        mission.expires_at if terminal == "mission_expiry" else selected.window_expires_at_utc
+    )
+    timeline = PostLoopAdvanceResidentTimeline(
+        execution_at - timedelta(seconds=1),
+        100.0,
+        activation_at=activation_at,
+    )
+    delegated = Counter()
+    resolver_calls = Counter()
+
+    def forbidden_atomic(**_kwargs: object) -> AtomicRunnerResultV1:
+        delegated.value += 1
+        raise AssertionError("EXPIRED_RESIDENT_DELEGATED")
+
+    def forbidden_resolver(*_args: object) -> Iterable[tuple[object, ...]]:
+        resolver_calls.value += 1
+        raise AssertionError("EXPIRED_RESIDENT_REACHED_DNS")
+
+    handoff_path = bundle.parent / "first-c0-prefetched-window-handoff-v1.json"
+    receipt_path = bundle.parent / "first-c0-window-open-revalidation-v1.json"
+    result = FIRST_C0_OWNER_ATOMIC_CLI._run_first_c0_owner_pack_atomic_v1(
+        bundle_directory=bundle,
+        prefetch_handoff_path=handoff_path,
+        window_open_receipt_path=receipt_path,
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        output_binding_path=bundle.parent / "binding.json",
+        output_pack_directory=bundle.parent / "pack",
+        resolver=forbidden_resolver,
+        marker_inspector=marker_inspector,
+        execute=True,
+        owner_present_for_at_least_20_minutes=True,
+        clock=timeline.clock,
+        monotonic=timeline.monotonic_clock,
+        sleeper=timeline.sleep,
+        workspace_validator=lambda _: None,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+        atomic_runner=forbidden_atomic,
+    )
+    assert result.status == "STOP_EXPIRED_BEFORE_DNS"
+    assert result.code == "FIRST_C0_WINDOW_EXPIRED"
+    assert result.atomic_result is None
+    assert delegated.value == resolver_calls.value == 0
+    assert result.window_open_receipt is not None
+    receipt = result.window_open_receipt
+    assert receipt.status == "EXPIRED"
+    assert receipt.clock_path_valid is True
+    assert receipt.checked_at_utc == activation_at
+    if terminal == "mission_expiry":
+        assert receipt.checked_at_utc < receipt.window_expires_at_utc
+        assert receipt.mission_current is False
+    else:
+        assert receipt.checked_at_utc == receipt.window_expires_at_utc
+        assert receipt.mission_current is True
+
+
+@pytest.mark.parametrize("dominated_boundary", ["source_stale", "kickoff_safety_ceiling"])
+def test_single_owner_resident_dominated_boundaries_stop_before_dns(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    dominated_boundary: str,
+) -> None:
+    bundle, workspace, mission, marker_inspector, _ = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        refresh_cycle=True,
+    )
+    loaded = load_pre_dns_bundle_v1(
+        bundle,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    handoff_path = bundle.parent / "first-c0-prefetched-window-handoff-v1.json"
+    handoff = load_first_c0_prefetch_handoff_v1(handoff_path, loaded)
+    selected = loaded.campaign_selection.selected_candidate()
+    earliest_kickoff = min(
+        target.official_kickoff_utc for target in selected.fixture_target_set.targets
+    )
+    source_stale_after = handoff.source_observed_at_utc + timedelta(
+        seconds=handoff.maximum_source_age_seconds,
+        microseconds=1,
+    )
+    kickoff_ceiling = earliest_kickoff - PRE_KICKOFF_SAFETY_MARGIN
+    assert selected.window_expires_at_utc < source_stale_after
+    assert selected.window_expires_at_utc < kickoff_ceiling
+    checked_at = source_stale_after if dominated_boundary == "source_stale" else kickoff_ceiling
+    delegated = Counter()
+    resolver_calls = Counter()
+
+    def forbidden_atomic(**_kwargs: object) -> AtomicRunnerResultV1:
+        delegated.value += 1
+        raise AssertionError("DOMINATED_BOUNDARY_DELEGATED")
+
+    def forbidden_resolver(*_args: object) -> Iterable[tuple[object, ...]]:
+        resolver_calls.value += 1
+        raise AssertionError("DOMINATED_BOUNDARY_REACHED_DNS")
+
+    result = FIRST_C0_OWNER_ATOMIC_CLI._run_first_c0_owner_pack_atomic_v1(
+        bundle_directory=bundle,
+        prefetch_handoff_path=handoff_path,
+        window_open_receipt_path=bundle.parent / "first-c0-window-open-revalidation-v1.json",
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        output_binding_path=bundle.parent / "binding.json",
+        output_pack_directory=bundle.parent / "pack",
+        resolver=forbidden_resolver,
+        marker_inspector=marker_inspector,
+        execute=True,
+        owner_present_for_at_least_20_minutes=True,
+        clock=FixedClock(checked_at),
+        monotonic=SequenceMonotonic([100.0]),
+        sleeper=lambda _seconds: None,
+        workspace_validator=lambda _: None,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+        atomic_runner=forbidden_atomic,
+    )
+    assert result.status == "STOP_TOO_LATE_BEFORE_DNS"
+    assert result.code == "FIRST_C0_OWNER_SEQUENCE_STARTED_TOO_LATE"
+    assert result.atomic_result is None
+    assert result.window_open_receipt is None
+    assert delegated.value == resolver_calls.value == 0
+
+
+@pytest.mark.parametrize(
+    ("open_at", "zone_name"),
+    [
+        (datetime(2027, 3, 28, 1, 0, 5, tzinfo=UTC), "Europe/Paris"),
+        (datetime(2026, 10, 25, 1, 0, 5, tzinfo=UTC), "Europe/Paris"),
+        (datetime(2026, 8, 25, 0, 0, 5, tzinfo=UTC), "UTC"),
+    ],
+)
+def test_single_owner_resident_activation_is_portable_across_dst_and_utc_rollover(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    open_at: datetime,
+    zone_name: str,
+) -> None:
+    case_base = open_at - timedelta(minutes=45)
+    monkeypatch.setattr(sys.modules[__name__], "BASE", case_base)
+    bundle, workspace, mission, marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        refresh_cycle=True,
+        earliest=case_base + timedelta(hours=3),
+    )
+    assert execution_at == open_at
+    zone = ZoneInfo(zone_name)
+    wait_started = (open_at - timedelta(seconds=10)).astimezone(zone)
+    timeline = InstantTimeline(wait_started, 100.0)
+    delegated = Counter()
+
+    def accepting_atomic(**_kwargs: object) -> AtomicRunnerResultV1:
+        delegated.value += 1
+        return AtomicRunnerResultV1(
+            status="OWNER_REVIEW_PACK_CREATED",
+            preflight=RunnerPreflightV1(
+                accepted=True,
+                status="PREFLIGHT_ACCEPT",
+                errors=(),
+                checked_at_utc=open_at,
+                usable_margin_seconds=900,
+            ),
+            resolver_operations=1,
+            pack_builds=1,
+            binding_sha256="a" * 64,
+            pack_sha256="b" * 64,
+            receipt_path=bundle.parent / "pack" / "execution-receipt.json",
+            hard_stop_code=None,
+        )
+
+    result = FIRST_C0_OWNER_ATOMIC_CLI._run_first_c0_owner_pack_atomic_v1(
+        bundle_directory=bundle,
+        prefetch_handoff_path=bundle.parent / "first-c0-prefetched-window-handoff-v1.json",
+        window_open_receipt_path=bundle.parent / "first-c0-window-open-revalidation-v1.json",
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        output_binding_path=bundle.parent / "binding.json",
+        output_pack_directory=bundle.parent / "pack",
+        resolver=lambda *_: (),
+        marker_inspector=marker_inspector,
+        execute=True,
+        owner_present_for_at_least_20_minutes=True,
+        clock=timeline.clock,
+        monotonic=timeline.monotonic_clock,
+        sleeper=timeline.sleep,
+        workspace_validator=lambda _: None,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+        atomic_runner=accepting_atomic,
+    )
+    assert result.status == "OWNER_REVIEW_PACK_CREATED"
+    assert delegated.value == 1
+    assert result.window_open_receipt is not None
+    receipt = result.window_open_receipt
+    assert receipt.status == "READY_NOW"
+    assert receipt.checked_at_utc == open_at
+    assert receipt.wall_elapsed_seconds == receipt.monotonic_elapsed_seconds == 10
+    assert (
+        receipt.official_reads_delta
+        == receipt.preparation_cycles_delta
+        == receipt.selector_invocations_delta
+        == receipt.target_set_freezes_delta
+        == receipt.provider_effects
+        == 0
+    )
+    if zone_name == "Europe/Paris":
+        assert wait_started.utcoffset() != timeline.wall.utcoffset()
+    else:
+        assert wait_started.date() != timeline.wall.date()
+
+
+def test_single_owner_rejects_post_loop_clock_rollback_before_dns(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle, workspace, mission, marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        refresh_cycle=True,
+    )
+    handoff_path = bundle.parent / "first-c0-prefetched-window-handoff-v1.json"
+    receipt_path = bundle.parent / "first-c0-window-open-revalidation-v1.json"
+    wall_clock = SequenceClock(
+        (
+            execution_at - timedelta(seconds=1),
+            execution_at + timedelta(seconds=1),
+            execution_at + timedelta(milliseconds=500),
+        )
+    )
+    monotonic_clock = SequenceMonotonic((100.0, 101.0, 100.5))
+    delegated = Counter()
+    resolver_calls = Counter()
+
+    def forbidden_atomic(**_kwargs: object) -> AtomicRunnerResultV1:
+        delegated.value += 1
+        raise AssertionError("POST_LOOP_ROLLBACK_DELEGATED")
+
+    def forbidden_resolver(*_args: object) -> Iterable[tuple[object, ...]]:
+        resolver_calls.value += 1
+        raise AssertionError("POST_LOOP_ROLLBACK_REACHED_DNS")
+
+    result = FIRST_C0_OWNER_ATOMIC_CLI._run_first_c0_owner_pack_atomic_v1(
+        bundle_directory=bundle,
+        prefetch_handoff_path=handoff_path,
+        window_open_receipt_path=receipt_path,
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        output_binding_path=bundle.parent / "binding.json",
+        output_pack_directory=bundle.parent / "pack",
+        resolver=forbidden_resolver,
+        marker_inspector=marker_inspector,
+        execute=True,
+        owner_present_for_at_least_20_minutes=True,
+        clock=wall_clock,
+        monotonic=monotonic_clock,
+        sleeper=lambda _seconds: None,
+        workspace_validator=lambda _: None,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+        atomic_runner=forbidden_atomic,
+    )
+    assert result.status == "CLOCK_INVALID_BEFORE_DNS"
+    assert result.code == "FIRST_C0_WINDOW_CLOCK_INVALID"
+    assert result.atomic_result is None
+    assert delegated.value == resolver_calls.value == 0
+    assert result.window_open_receipt is not None
+    assert result.window_open_receipt.status == "CLOCK_INVALID"
+    assert result.window_open_receipt.clock_path_valid is False
+    assert result.window_open_receipt.checked_at_utc == execution_at + timedelta(milliseconds=500)
+    assert receipt_path.is_file()
+
+
+def test_single_owner_entrypoint_stays_resident_and_delegates_exactly_once(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle, workspace, mission, marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        refresh_cycle=True,
+    )
+    handoff_path = bundle.parent / "first-c0-prefetched-window-handoff-v1.json"
+    receipt_path = bundle.parent / "first-c0-window-open-revalidation-v1.json"
+    timeline = ResidentTimeline(execution_at - timedelta(seconds=10), 100.0)
+    delegated: list[dict[str, object]] = []
+
+    def atomic_runner(**kwargs: object) -> AtomicRunnerResultV1:
+        delegated.append(dict(kwargs))
+        assert Path(cast(Path, kwargs["window_open_receipt_path"])).is_file()
+        preflight = RunnerPreflightV1(
+            accepted=True,
+            status="PREFLIGHT_ACCEPT",
+            errors=(),
+            checked_at_utc=execution_at + timedelta(seconds=5),
+            usable_margin_seconds=895,
+        )
+        return AtomicRunnerResultV1(
+            status="OWNER_REVIEW_PACK_CREATED",
+            preflight=preflight,
+            resolver_operations=1,
+            pack_builds=1,
+            binding_sha256="a" * 64,
+            pack_sha256="b" * 64,
+            receipt_path=bundle.parent / "pack" / "execution-receipt.json",
+            hard_stop_code=None,
+        )
+
+    result = FIRST_C0_OWNER_ATOMIC_CLI._run_first_c0_owner_pack_atomic_v1(
+        bundle_directory=bundle,
+        prefetch_handoff_path=handoff_path,
+        window_open_receipt_path=receipt_path,
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        output_binding_path=bundle.parent / "binding.json",
+        output_pack_directory=bundle.parent / "pack",
+        resolver=lambda *_: (),
+        marker_inspector=marker_inspector,
+        execute=True,
+        owner_present_for_at_least_20_minutes=True,
+        clock=timeline.clock,
+        monotonic=timeline.monotonic_clock,
+        sleeper=timeline.sleep,
+        workspace_validator=lambda _: None,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+        atomic_runner=atomic_runner,
+    )
+    assert result.status == "OWNER_REVIEW_PACK_CREATED"
+    assert len(delegated) == 1
+    assert result.window_open_receipt is not None
+    assert result.window_open_receipt.status == "READY_NOW"
+    assert result.window_open_receipt.official_reads_delta == 0
+    assert result.window_open_receipt.preparation_cycles_delta == 0
+    assert result.window_open_receipt.selector_invocations_delta == 0
+    assert result.window_open_receipt.target_set_freezes_delta == 0
+
+
+def test_single_owner_entrypoint_stops_too_late_before_delegate_or_dns(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle, workspace, mission, marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        refresh_cycle=True,
+    )
+    delegated = Counter()
+
+    def forbidden_atomic(**_kwargs: object) -> AtomicRunnerResultV1:
+        delegated.value += 1
+        raise AssertionError("TOO_LATE_DELEGATED")
+
+    result = FIRST_C0_OWNER_ATOMIC_CLI._run_first_c0_owner_pack_atomic_v1(
+        bundle_directory=bundle,
+        prefetch_handoff_path=bundle.parent / "first-c0-prefetched-window-handoff-v1.json",
+        window_open_receipt_path=bundle.parent / "first-c0-window-open-revalidation-v1.json",
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        output_binding_path=bundle.parent / "binding.json",
+        output_pack_directory=bundle.parent / "pack",
+        resolver=lambda *_: (),
+        marker_inspector=marker_inspector,
+        execute=True,
+        owner_present_for_at_least_20_minutes=True,
+        clock=FixedClock(execution_at + timedelta(seconds=16)),
+        monotonic=SequenceMonotonic([100.0]),
+        sleeper=lambda _: None,
+        workspace_validator=lambda _: None,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+        atomic_runner=forbidden_atomic,
+    )
+    assert result.status == "STOP_TOO_LATE_BEFORE_DNS"
+    assert delegated.value == 0
+    assert result.atomic_result is None
+
+
+def test_prefetched_bundle_cannot_bypass_window_open_receipt_before_dns(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle, workspace, mission, marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        refresh_cycle=True,
+    )
+    result = run_owner_review_pack_once_v1(
+        bundle_directory=bundle,
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        output_binding_path=bundle.parent / "binding.json",
+        output_pack_directory=bundle.parent / "pack",
+        resolver=lambda *_: (_ for _ in ()).throw(AssertionError("DNS_BYPASS")),
+        marker_inspector=marker_inspector,
+        execute=True,
+        owner_present_for_review=True,
+        clock=FixedClock(execution_at),
+        workspace_validator=lambda _: None,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    assert result.status == "PREFLIGHT_REJECTED"
+    assert "FIRST_C0_WINDOW_RECEIPT_REQUIRED" in result.preflight.errors
+    assert result.resolver_operations == 0
+    assert result.pack_builds == 0
+
+
+@pytest.mark.parametrize(
+    ("checked_delta", "monotonic_delta", "clock_path_valid", "expected_status"),
+    [
+        (-11, 10.0, True, "CLOCK_INVALID"),
+        (0, 1.0, True, "CLOCK_INVALID"),
+        (0, 10.0, False, "CLOCK_INVALID"),
+        (46, 56.0, True, "HARD_STOP"),
+        (901, 911.0, True, "EXPIRED"),
+    ],
+)
+def test_window_open_revalidation_fails_closed_on_clock_and_window_boundaries(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    checked_delta: int,
+    monotonic_delta: float,
+    clock_path_valid: bool,
+    expected_status: str,
+) -> None:
+    bundle, _, _, _, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        refresh_cycle=True,
+    )
+    loaded = load_pre_dns_bundle_v1(
+        bundle,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    handoff_path = bundle.parent / "first-c0-prefetched-window-handoff-v1.json"
+    handoff = load_first_c0_prefetch_handoff_v1(handoff_path, loaded)
+    receipt = revalidate_prefetched_window_open_v1(
+        loaded=loaded,
+        handoff=handoff,
+        handoff_path=handoff_path,
+        output_path=bundle.parent / "first-c0-window-open-revalidation-v1.json",
+        wait_started_at_utc=execution_at - timedelta(seconds=10),
+        wait_started_monotonic=90.0,
+        clock_path_valid=clock_path_valid,
+        clock=FixedClock(execution_at + timedelta(seconds=checked_delta)),
+        monotonic=SequenceMonotonic([90.0 + monotonic_delta]),
+        workspace_validator=lambda _: None,
+    )
+    assert receipt.status == expected_status
+    assert receipt.provider_effects == 0
+
+
+@pytest.mark.parametrize(
+    ("source_age_seconds", "expected_status"),
+    [(1800.0, "READY_NOW"), (1800.001, "STALE")],
+)
+def test_window_open_source_freshness_fractional_boundary_is_exact(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    source_age_seconds: float,
+    expected_status: str,
+) -> None:
+    bundle, _, _, _, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        refresh_cycle=True,
+    )
+    loaded = load_pre_dns_bundle_v1(
+        bundle,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    handoff_path = bundle.parent / "first-c0-prefetched-window-handoff-v1.json"
+    original = load_first_c0_prefetch_handoff_v1(handoff_path, loaded)
+    handoff_data = original.model_dump(
+        mode="python",
+        exclude={"canonical_receipt_sha256"},
+    )
+    handoff_data["source_observed_at_utc"] = execution_at - timedelta(seconds=1800)
+    handoff_data["source_age_at_window_open_seconds"] = 1800
+    handoff = FirstC0PrefetchedWindowHandoffV1.issue(**handoff_data)
+    _write_canonical_test_json(handoff_path, handoff.model_dump(mode="json"))
+    receipt = revalidate_prefetched_window_open_v1(
+        loaded=loaded,
+        handoff=handoff,
+        handoff_path=handoff_path,
+        output_path=bundle.parent / "first-c0-window-open-revalidation-v1.json",
+        wait_started_at_utc=execution_at - timedelta(seconds=10),
+        wait_started_monotonic=90.0,
+        clock=FixedClock(execution_at + timedelta(seconds=source_age_seconds - 1800)),
+        monotonic=SequenceMonotonic([100.0 + source_age_seconds - 1800]),
+        workspace_validator=lambda _: None,
+    )
+    assert receipt.source_age_seconds == 1800
+    assert receipt.source_fresh is (expected_status == "READY_NOW")
+    assert receipt.status == expected_status
+    assert receipt.provider_effects == 0
+
+
+@pytest.mark.parametrize("nonfinite", [float("nan"), float("inf"), float("-inf")])
+def test_window_open_nonfinite_monotonic_is_recorded_as_clock_invalid(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    nonfinite: float,
+) -> None:
+    bundle, _, _, _, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        refresh_cycle=True,
+    )
+    loaded = load_pre_dns_bundle_v1(
+        bundle,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    handoff_path = bundle.parent / "first-c0-prefetched-window-handoff-v1.json"
+    handoff = load_first_c0_prefetch_handoff_v1(handoff_path, loaded)
+    receipt_path = bundle.parent / "first-c0-window-open-revalidation-v1.json"
+    receipt = revalidate_prefetched_window_open_v1(
+        loaded=loaded,
+        handoff=handoff,
+        handoff_path=handoff_path,
+        output_path=receipt_path,
+        wait_started_at_utc=execution_at - timedelta(seconds=10),
+        wait_started_monotonic=90.0,
+        clock=FixedClock(execution_at),
+        monotonic=SequenceMonotonic([nonfinite]),
+        workspace_validator=lambda _: None,
+    )
+    assert receipt.status == "CLOCK_INVALID"
+    assert receipt.clock_path_valid is False
+    assert receipt_path.is_file()
+    assert receipt.provider_effects == 0
+
+
+@pytest.mark.parametrize("nonfinite", [float("nan"), float("inf")])
+def test_nonfinite_monotonic_after_activation_rejects_before_dns(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    nonfinite: float,
+) -> None:
+    bundle, workspace, mission, marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        refresh_cycle=True,
+    )
+    loaded = load_pre_dns_bundle_v1(
+        bundle,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    handoff_path = bundle.parent / "first-c0-prefetched-window-handoff-v1.json"
+    handoff = load_first_c0_prefetch_handoff_v1(handoff_path, loaded)
+    receipt_path = bundle.parent / "first-c0-window-open-revalidation-v1.json"
+    revalidate_prefetched_window_open_v1(
+        loaded=loaded,
+        handoff=handoff,
+        handoff_path=handoff_path,
+        output_path=receipt_path,
+        wait_started_at_utc=execution_at - timedelta(seconds=10),
+        wait_started_monotonic=90.0,
+        clock=FixedClock(execution_at),
+        monotonic=SequenceMonotonic([100.0]),
+        workspace_validator=lambda _: None,
+    )
+    result = run_owner_review_pack_once_v1(
+        bundle_directory=bundle,
+        workspace_receipt=workspace,
+        mission_manifest=mission,
+        output_binding_path=bundle.parent / "binding.json",
+        output_pack_directory=bundle.parent / "pack",
+        resolver=lambda *_: (_ for _ in ()).throw(AssertionError("NONFINITE_REACHED_DNS")),
+        marker_inspector=marker_inspector,
+        execute=True,
+        owner_present_for_review=True,
+        prefetch_handoff_path=handoff_path,
+        window_open_receipt_path=receipt_path,
+        clock=FixedClock(execution_at + timedelta(seconds=5)),
+        monotonic=SequenceMonotonic([nonfinite]),
+        workspace_validator=lambda _: None,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    assert result.status == "PREFLIGHT_REJECTED"
+    assert "FIRST_C0_PREFLIGHT_CLOCK_INVALID" in result.preflight.errors
+    assert result.resolver_operations == 0
+    assert result.pack_builds == 0
+
+
+@pytest.mark.parametrize("tamper_target", ["bundle", "handoff"])
+def test_window_open_revalidation_detects_prefetch_tampering_during_local_wait(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    tamper_target: str,
+) -> None:
+    bundle, _, _, _, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        refresh_cycle=True,
+    )
+    loaded = load_pre_dns_bundle_v1(
+        bundle,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    handoff_path = bundle.parent / "first-c0-prefetched-window-handoff-v1.json"
+    handoff = load_first_c0_prefetch_handoff_v1(handoff_path, loaded)
+    if tamper_target == "bundle":
+        (bundle / "official-source-raw.bin").write_bytes(b"tampered")
+    else:
+        handoff_path.write_bytes(handoff_path.read_bytes() + b" ")
+    receipt = revalidate_prefetched_window_open_v1(
+        loaded=loaded,
+        handoff=handoff,
+        handoff_path=handoff_path,
+        output_path=bundle.parent / "first-c0-window-open-revalidation-v1.json",
+        wait_started_at_utc=execution_at - timedelta(seconds=10),
+        wait_started_monotonic=90.0,
+        clock=FixedClock(execution_at),
+        monotonic=SequenceMonotonic([100.0]),
+        workspace_validator=lambda _: None,
+    )
+    assert receipt.status == "HARD_STOP"
+    assert not receipt.bundle_current or not receipt.handoff_current
+    assert receipt.provider_effects == 0
+
+
+def test_handoff_and_window_receipt_canonical_hash_tampering_is_rejected(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle, _, _, _, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        refresh_cycle=True,
+    )
+    loaded = load_pre_dns_bundle_v1(
+        bundle,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    handoff_path = bundle.parent / "first-c0-prefetched-window-handoff-v1.json"
+    handoff = load_first_c0_prefetch_handoff_v1(handoff_path, loaded)
+    receipt_path = bundle.parent / "first-c0-window-open-revalidation-v1.json"
+    receipt = revalidate_prefetched_window_open_v1(
+        loaded=loaded,
+        handoff=handoff,
+        handoff_path=handoff_path,
+        output_path=receipt_path,
+        wait_started_at_utc=execution_at - timedelta(seconds=10),
+        wait_started_monotonic=90.0,
+        clock=FixedClock(execution_at),
+        monotonic=SequenceMonotonic([100.0]),
+        workspace_validator=lambda _: None,
+    )
+    receipt_payload = json.loads(receipt_path.read_bytes())
+    receipt_payload["usable_margin_seconds"] -= 1
+    _write_canonical_test_json(receipt_path, receipt_payload)
+    with pytest.raises(PreDnsOrchestrationError, match="FIRST_C0_WINDOW_RECEIPT_INVALID"):
+        load_first_c0_window_open_revalidation_v1(
+            receipt_path,
+            loaded,
+            handoff,
+            handoff_path=handoff_path,
+        )
+    assert receipt.canonical_receipt_sha256 != receipt_payload["canonical_receipt_sha256"] or (
+        receipt.usable_margin_seconds != receipt_payload["usable_margin_seconds"]
+    )
 
 
 def _write_canonical_test_json(path: Path, payload: object) -> bytes:
@@ -1372,11 +3308,38 @@ def test_canary_bundle_runs_through_atomic_runner_with_one_injected_resolver(
     bundle, workspace, manifest, current_marker_inspector, execution_at = build_ready_canary_bundle(
         tmp_path,
         monkeypatch,
+        refresh_cycle=True,
     )
-    loaded = load_pre_dns_bundle_v1(bundle)
+    loaded, handoff_path, receipt_path = activate_prefetched_canary_bundle(
+        bundle,
+        execution_at,
+    )
     assert isinstance(loaded.campaign_selection, FirstC0CanarySelectionV1)
     binding = Path(workspace.control_temp_root) / "canary-binding.json"
     pack_directory = Path(workspace.control_temp_root) / "canary-owner-review-pack"
+    preflight_authority_uses = Counter()
+
+    def gated_binding_preparer(
+        *,
+        workspace_receipt: RealCaptureWorkspaceReceiptV1,
+        mission_manifest: RealExecutionMissionManifestV1,
+        campaign_selection: CampaignSelectionAuthorityV1,
+        output_path: Path,
+        resolver: Callable[[str, int, int, int, int], Iterable[tuple[object, ...]]],
+        clock: Callable[[], datetime],
+        binding_ttl_seconds: int,
+    ) -> ProviderNetworkBindingV1:
+        preflight_authority_uses.value += 1
+        return fake_binding_preparer(
+            workspace_receipt=workspace_receipt,
+            mission_manifest=mission_manifest,
+            campaign_selection=campaign_selection,
+            output_path=output_path,
+            resolver=resolver,
+            clock=clock,
+            binding_ttl_seconds=binding_ttl_seconds,
+        )
+
     result = run_owner_review_pack_once_v1(
         bundle_directory=bundle,
         workspace_receipt=workspace,
@@ -1387,13 +3350,17 @@ def test_canary_bundle_runs_through_atomic_runner_with_one_injected_resolver(
         marker_inspector=current_marker_inspector,
         execute=True,
         owner_present_for_review=True,
+        prefetch_handoff_path=handoff_path,
+        window_open_receipt_path=receipt_path,
         clock=FixedClock(execution_at),
         monotonic=SequenceMonotonic(),
         workspace_validator=lambda _: None,
-        binding_preparer=fake_binding_preparer,
+        binding_preparer=gated_binding_preparer,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
     )
     assert result.status == "OWNER_REVIEW_PACK_CREATED", result.preflight.errors
     assert result.resolver_operations == result.pack_builds == 1
+    assert preflight_authority_uses.value == 1
     artifacts = tuple(
         path for path in pack_directory.iterdir() if path.name != "execution-receipt.json"
     )
@@ -1417,7 +3384,9 @@ def test_canary_runner_forgotten_resolver_is_denied_and_marker_is_retained(
     bundle, workspace, manifest, current_marker_inspector, execution_at = build_ready_canary_bundle(
         tmp_path,
         monkeypatch,
+        refresh_cycle=True,
     )
+    _, handoff_path, receipt_path = activate_prefetched_canary_bundle(bundle, execution_at)
 
     def forgotten_stub_resolver(
         host: str,
@@ -1442,7 +3411,10 @@ def test_canary_runner_forgotten_resolver_is_denied_and_marker_is_retained(
             marker_inspector=current_marker_inspector,
             execute=True,
             owner_present_for_review=True,
+            prefetch_handoff_path=handoff_path,
+            window_open_receipt_path=receipt_path,
             clock=FixedClock(execution_at),
+            monotonic=SequenceMonotonic(),
             workspace_validator=lambda _: None,
             binding_preparer=fake_binding_preparer,
             raw_evidence_verifier=synthetic_raw_evidence_verifier,
@@ -1470,7 +3442,9 @@ def test_canary_post_dns_pack_failure_is_one_shot_and_non_retryable(
     bundle, workspace, manifest, current_marker_inspector, execution_at = build_ready_canary_bundle(
         tmp_path,
         monkeypatch,
+        refresh_cycle=True,
     )
+    _, handoff_path, receipt_path = activate_prefetched_canary_bundle(bundle, execution_at)
     resolver_calls = Counter()
 
     def resolver(*args: object) -> Iterable[tuple[object, ...]]:
@@ -1492,7 +3466,10 @@ def test_canary_post_dns_pack_failure_is_one_shot_and_non_retryable(
         marker_inspector=current_marker_inspector,
         execute=True,
         owner_present_for_review=True,
+        prefetch_handoff_path=handoff_path,
+        window_open_receipt_path=receipt_path,
         clock=FixedClock(execution_at),
+        monotonic=SequenceMonotonic(),
         workspace_validator=lambda _: None,
         binding_preparer=fake_binding_preparer,
         pack_builder=failing_pack_builder,  # type: ignore[arg-type]
@@ -1515,7 +3492,10 @@ def test_canary_post_dns_pack_failure_is_one_shot_and_non_retryable(
         marker_inspector=current_marker_inspector,
         execute=True,
         owner_present_for_review=True,
+        prefetch_handoff_path=handoff_path,
+        window_open_receipt_path=receipt_path,
         clock=FixedClock(execution_at),
+        monotonic=SequenceMonotonic(),
         workspace_validator=lambda _: None,
         binding_preparer=fake_binding_preparer,
         pack_builder=failing_pack_builder,  # type: ignore[arg-type]
@@ -1533,6 +3513,9 @@ def test_canary_runner_rechecks_840_second_margin_after_marker_before_resolver(
     bundle, workspace, manifest, current_marker_inspector, execution_at = build_ready_canary_bundle(
         tmp_path,
         monkeypatch,
+        ready_now=True,
+        earliest=BASE + timedelta(hours=27),
+        mission_expires_at=BASE + timedelta(hours=1, minutes=15),
     )
     underlying_resolver_calls = Counter()
 
@@ -1545,14 +3528,15 @@ def test_canary_runner_rechecks_840_second_margin_after_marker_before_resolver(
         raw_evidence_verifier=synthetic_raw_evidence_verifier,
     )
     usable_expires = loaded.campaign_selection.selected_candidate().usable_expires_at_utc
-    clock = SequenceClock(
+    timeline = CoherentSequenceTimeline(
         (
             execution_at,
             execution_at,
             execution_at,
             usable_expires - timedelta(seconds=841),
             usable_expires - timedelta(seconds=839),
-        )
+        ),
+        initial_wall=execution_at,
     )
     binding = Path(workspace.control_temp_root) / "eroded-margin-binding.json"
     pack_directory = Path(workspace.control_temp_root) / "eroded-margin-pack"
@@ -1566,7 +3550,8 @@ def test_canary_runner_rechecks_840_second_margin_after_marker_before_resolver(
         marker_inspector=current_marker_inspector,
         execute=True,
         owner_present_for_review=True,
-        clock=clock,
+        clock=timeline.clock,
+        monotonic=timeline.monotonic,
         workspace_validator=lambda _: None,
         binding_preparer=fake_binding_preparer,
         raw_evidence_verifier=synthetic_raw_evidence_verifier,
@@ -1789,7 +3774,7 @@ def test_runner_enforces_inclusive_five_and_120_second_budgets(
         execute=True,
         owner_present_for_review=True,
         clock=FixedClock(BASE),
-        monotonic=SequenceMonotonic(monotonic_values),
+        duration_monotonic=SequenceMonotonic(monotonic_values),
         workspace_validator=lambda _: None,
         binding_preparer=fake_binding_preparer,
         raw_evidence_verifier=synthetic_raw_evidence_verifier,
@@ -1798,6 +3783,46 @@ def test_runner_enforces_inclusive_five_and_120_second_budgets(
     assert result.resolver_operations == 1
     assert result.pack_builds == expected_pack_builds
     assert pack.is_dir() is (expected_status == "OWNER_REVIEW_PACK_CREATED")
+
+
+@pytest.mark.parametrize(
+    "monotonic_values",
+    (
+        (float("nan"),),
+        (float("inf"),),
+        (10.0, 9.999),
+    ),
+)
+def test_runner_hard_stops_on_nonfinite_or_rollback_duration_clock(
+    tmp_path: Path,
+    monotonic_values: tuple[float, ...],
+) -> None:
+    bundle, workspace, manifest = build_ready_bundle(tmp_path)
+    binding = Path(workspace.control_temp_root) / "binding.json"
+    pack = Path(workspace.control_temp_root) / "pack"
+
+    result = run_owner_review_pack_once_v1(
+        bundle_directory=bundle,
+        workspace_receipt=workspace,
+        mission_manifest=manifest,
+        output_binding_path=binding,
+        output_pack_directory=pack,
+        resolver=synthetic_resolver,
+        marker_inspector=marker_inspector,
+        execute=True,
+        owner_present_for_review=True,
+        clock=FixedClock(BASE),
+        duration_monotonic=SequenceMonotonic(monotonic_values),
+        workspace_validator=lambda _: None,
+        binding_preparer=fake_binding_preparer,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+
+    assert result.status == "POST_DNS_HARD_STOP"
+    assert result.hard_stop_code == "DNS_TO_PACK_MONOTONIC_INVALID"
+    assert result.resolver_operations == 1
+    assert not pack.exists()
+    assert result.receipt_path is not None and result.receipt_path.is_file()
 
 
 def test_runner_publication_rename_failure_retains_staging_and_hard_stops(
@@ -1893,6 +3918,7 @@ def test_runner_success_receipt_failure_is_post_publication_and_hard_stops(
 def test_runner_resamples_currentness_immediately_before_dns(tmp_path: Path) -> None:
     bundle, workspace, manifest = build_ready_bundle(tmp_path)
     resolver_calls = Counter()
+    timeline = CoherentSequenceTimeline((BASE, BASE + timedelta(minutes=31)))
 
     def forbidden_resolver(*args: object) -> Iterable[tuple[object, ...]]:
         resolver_calls.value += 1
@@ -1908,7 +3934,8 @@ def test_runner_resamples_currentness_immediately_before_dns(tmp_path: Path) -> 
         marker_inspector=marker_inspector,
         execute=True,
         owner_present_for_review=True,
-        clock=SequenceClock((BASE, BASE + timedelta(minutes=31))),
+        clock=timeline.clock,
+        monotonic=timeline.monotonic,
         workspace_validator=lambda _: None,
         binding_preparer=fake_binding_preparer,
         raw_evidence_verifier=synthetic_raw_evidence_verifier,
@@ -2008,6 +4035,7 @@ def test_runner_rechecks_840_second_margin_at_binding_boundary(tmp_path: Path) -
         resolver_calls.value += 1
         raise AssertionError("resolver forbidden below 840-second margin")
 
+    timeline = CoherentSequenceTimeline((BASE, BASE, ceiling - timedelta(seconds=839)))
     result = run_owner_review_pack_once_v1(
         bundle_directory=bundle,
         workspace_receipt=workspace,
@@ -2018,7 +4046,8 @@ def test_runner_rechecks_840_second_margin_at_binding_boundary(tmp_path: Path) -
         marker_inspector=marker_inspector,
         execute=True,
         owner_present_for_review=True,
-        clock=SequenceClock((BASE, BASE, ceiling - timedelta(seconds=839))),
+        clock=timeline.clock,
+        monotonic=timeline.monotonic,
         workspace_validator=lambda _: None,
         binding_preparer=fake_binding_preparer,
         raw_evidence_verifier=synthetic_raw_evidence_verifier,
@@ -2073,6 +4102,9 @@ def test_runner_stops_after_reservation_if_margin_crosses_before_resolver(
         resolver_calls.value += 1
         raise AssertionError("underlying resolver forbidden below 840-second margin")
 
+    timeline = CoherentSequenceTimeline(
+        (BASE, BASE, boundary, boundary, boundary + timedelta(seconds=1))
+    )
     result = run_owner_review_pack_once_v1(
         bundle_directory=bundle,
         workspace_receipt=workspace,
@@ -2083,7 +4115,8 @@ def test_runner_stops_after_reservation_if_margin_crosses_before_resolver(
         marker_inspector=marker_inspector,
         execute=True,
         owner_present_for_review=True,
-        clock=SequenceClock((BASE, BASE, boundary, boundary, boundary + timedelta(seconds=1))),
+        clock=timeline.clock,
+        monotonic=timeline.monotonic,
         workspace_validator=lambda _: None,
         binding_preparer=reserving_preparer,
         raw_evidence_verifier=synthetic_raw_evidence_verifier,
@@ -2317,7 +4350,7 @@ def test_runner_future_selection_and_secret_sentinel_use_zero_dns(
     assert stale.resolver_operations == resolver_calls.value == secret_reads.value == 0
 
 
-def test_real_runner_cli_defaults_to_preflight_and_requires_explicit_execute_owner_gate(
+def test_legacy_runner_cli_preflights_but_rejects_v5_execute_and_type_substitution(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
@@ -2338,7 +4371,7 @@ def test_real_runner_cli_defaults_to_preflight_and_requires_explicit_execute_own
     assert spec is not None and spec.loader is not None
     cli = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(cli)
-    real_runner = run_owner_review_pack_once_v1
+    real_runner = public_run_owner_review_pack_once_v1
     synthetic_resolver_calls = Counter()
     cli_system_resolver_calls = Counter()
     registry = tmp_path / "mission-global-claim-registry"
@@ -2433,19 +4466,16 @@ def test_real_runner_cli_defaults_to_preflight_and_requires_explicit_execute_own
     assert not (control / "provider-network-resolution-one-shot-v1.json").exists()
 
     monkeypatch.setattr(sys, "argv", [*base_argv, "--execute", "--owner-present-for-review"])
-    assert cli.main() == 0
+    assert cli.main() == 2
     executed = json.loads(capsys.readouterr().out)
-    assert executed["status"] == "OWNER_REVIEW_PACK_CREATED"
-    assert executed["resolver_operations"] == executed["pack_builds"] == 1
-    assert synthetic_resolver_calls.value == 1
-    assert cli_system_resolver_calls.value == 0
-    assert binding.is_file() and pack.is_dir()
-    assert (control / "provider-network-resolution-one-shot-v1.json").is_file()
-    global_marker = registry / (
-        f"{manifest.mission_id.casefold()}-{manifest.canonical_manifest_sha256()}.json"
-    )
-    assert global_marker.is_file()
-    assert executed["owner_authorization_statement"]
+    assert executed["status"] == "PREFLIGHT_REJECTED"
+    assert "FIRST_C0_SINGLE_OWNER_ENTRYPOINT_REQUIRED" in executed["preflight_errors"]
+    assert executed["resolver_operations"] == executed["pack_builds"] == 0
+    assert synthetic_resolver_calls.value == cli_system_resolver_calls.value == 0
+    assert not binding.exists() and not pack.exists()
+    assert not (control / "provider-network-resolution-one-shot-v1.json").exists()
+    assert tuple(registry.iterdir()) == ()
+    assert executed["owner_authorization_statement"] is None
 
 
 def test_real_runner_cli_forgotten_stub_fails_before_system_resolver(

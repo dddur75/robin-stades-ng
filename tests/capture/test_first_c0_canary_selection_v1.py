@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+import inspect
 import json
 import os
 import socket
@@ -12,6 +13,8 @@ from types import ModuleType, SimpleNamespace
 
 import pytest
 
+import robin.capture.official_schedule_sources as official_sources_module
+import robin.capture.owner_review_pack as owner_review_pack_module
 from robin.capture.bootstrap_contracts import (
     FIRST_C0_CANARY_RANKING_POLICY,
     FIRST_C0_CANARY_SELECTION_REVISION,
@@ -29,20 +32,33 @@ from robin.capture.bootstrap_contracts import (
 )
 from robin.capture.contracts import CaptureContractError, canonical_sha256
 from robin.capture.official_schedule_sources import (
+    DFB_DATACENTER_HTML_V1,
     LALIGA_BOOTSTRAP_URL,
+    BuiltinHttpsOfficialScheduleFetcher,
     OfficialHttpResponse,
+    OfficialScheduleSourceError,
+    OfficialSourceSpec,
     SupportingOfficialRead,
 )
 from robin.capture.owner_review_pack import (
+    OwnerReviewPackError,
+    _build_first_c0_owner_review_pack_after_atomic_binding_v1,
     build_owner_review_pack_v1,
     owner_authorization_statement_v1,
-    write_owner_review_pack_v1,
+)
+from robin.capture.owner_review_pack import (
+    _write_first_c0_owner_review_pack_after_atomic_binding_v1 as write_owner_review_pack_v1,
+)
+from robin.capture.owner_review_pack import (
+    write_owner_review_pack_v1 as public_write_owner_review_pack_v1,
 )
 from robin.capture.provider_network import (
+    _PROVIDER_RESOLUTION_RESERVATION_AUTHORITY_V1,
     ProviderNetworkPreparationError,
-    prepare_provider_network_binding_v1,
-    reserve_provider_network_resolution_v1,
+    _prepare_provider_network_binding_after_reservation_v1,
+    _reserve_first_c0_provider_network_resolution_after_atomic_preflight_v1,
 )
+from robin.capture.workspace_bootstrap import WorkspaceBootstrapError
 
 BASE = datetime(2026, 8, 25, 12, 0, tzinfo=UTC)
 MAIN_SHA = "a" * 40
@@ -89,6 +105,253 @@ OWNER_PACK_CLI = _load_data_sourcing_cli(
     "build_owner_review_pack_v1.py",
     "first_c0_canary_owner_pack_cli_tests",
 )
+OWNER_ATOMIC_CLI = _load_data_sourcing_cli(
+    "run_first_c0_owner_pack_atomic_v1.py",
+    "first_c0_owner_atomic_cli_tests",
+)
+
+
+@pytest.fixture(autouse=True)
+def _isolated_mission_global_preparation_registry(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> Path:
+    registry = tmp_path / "mission-global-preparation-registry"
+    registry.mkdir()
+    monkeypatch.setattr(
+        CANARY_CLI.provider_network_module,
+        "_mission_global_claim_registry_root_v1",
+        lambda: registry,
+    )
+    return registry
+
+
+def test_public_selector_constructs_its_fetcher_and_exposes_no_injected_effect_adapter(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    public_selector = CANARY_CLI.prepare_first_c0_canary_selection_v1
+    assert tuple(inspect.signature(public_selector).parameters) == (
+        "workspace_receipt",
+        "workspace_receipt_bytes",
+        "mission_manifest_path",
+        "source_plan_bytes",
+        "output_directory",
+    )
+    assert not hasattr(OWNER_ATOMIC_CLI, "run_first_c0_owner_pack_atomic_v1")
+    workspace = workspace_receipt(tmp_path)
+    manifest = mission_manifest()
+    forged_manifests = (
+        mission_manifest(expires_at=manifest.expires_at - timedelta(hours=1)),
+        manifest.model_copy(
+            update={
+                "source_hash": ("3d3b43f68c0d339448e52de7ec66cce068646a4a006e267dfe063bffe2767f5e")
+            }
+        ),
+        manifest.model_copy(
+            update={
+                "source_hash": ("0270bdd51d8d50b7d3c9f608e4f429b46b94b789d92d4b13055b81c9b72e6291")
+            }
+        ),
+    )
+    repository = Path(workspace.runtime_repository_root)
+    manifest_path = repository / "configs/execution/real-execution-bootstrap-closure-v1.json"
+    manifest_path.parent.mkdir(parents=True)
+    manifest_path.write_text(manifest.model_dump_json(), encoding="utf-8")
+    forged_manifest_path = tmp_path / "forged-manifest.json"
+    forged_manifest_path.write_text(
+        forged_manifests[0].model_dump_json(),
+        encoding="utf-8",
+    )
+    tracked_fetcher = object()
+    constructor_calls = 0
+    constructor_arguments: list[dict[str, object]] = []
+    observed: dict[str, object] = {}
+    sentinel = object()
+
+    def construct_tracked_fetcher(**kwargs: object) -> object:
+        nonlocal constructor_calls
+        constructor_calls += 1
+        constructor_arguments.append(kwargs)
+        return tracked_fetcher
+
+    def observe_private_core(**kwargs: object) -> object:
+        observed.update(kwargs)
+        return sentinel
+
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "BuiltinHttpsOfficialScheduleFetcher",
+        construct_tracked_fetcher,
+    )
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "_prepare_first_c0_canary_selection_v1",
+        observe_private_core,
+    )
+    arguments = {
+        "workspace_receipt": workspace,
+        "workspace_receipt_bytes": workspace.model_dump_json().encode(),
+        "mission_manifest_path": manifest_path,
+        "source_plan_bytes": b"synthetic-not-consumed-by-observer",
+        "output_directory": tmp_path / "bundle",
+    }
+    with pytest.raises(TypeError, match="unexpected keyword argument 'fetcher'"):
+        public_selector(**arguments, fetcher=object())
+    assert constructor_calls == 0
+    for forged_manifest in forged_manifests:
+        with pytest.raises(
+            TypeError,
+            match="unexpected keyword argument 'mission_manifest'",
+        ):
+            public_selector(**arguments, mission_manifest=forged_manifest)
+    assert constructor_calls == 0
+    with pytest.raises(
+        WorkspaceBootstrapError,
+        match="^BOOTSTRAP_MISSION_MANIFEST_PATH_MISMATCH$",
+    ):
+        public_selector(**{**arguments, "mission_manifest_path": forged_manifest_path})
+    assert constructor_calls == 0
+    assert public_selector(**arguments) is sentinel
+    assert constructor_calls == 1
+    assert constructor_arguments == [{"maximum_redirects": 0}]
+    assert observed == {
+        "workspace_receipt": workspace,
+        "workspace_receipt_bytes": arguments["workspace_receipt_bytes"],
+        "mission_manifest": manifest,
+        "mission_manifest_bytes": manifest_path.read_bytes(),
+        "source_plan_bytes": arguments["source_plan_bytes"],
+        "output_directory": arguments["output_directory"],
+        "fetcher": tracked_fetcher,
+    }
+
+
+def test_first_c0_pinned_fetcher_rejects_redirect_after_one_physical_get(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    for invalid_limit in (-1, 6, True, 0.5):
+        with pytest.raises(ValueError, match="^OFFICIAL_FETCH_LIMIT_INVALID$"):
+            BuiltinHttpsOfficialScheduleFetcher(maximum_redirects=invalid_limit)  # type: ignore[arg-type]
+    physical_gets = 0
+
+    class RedirectResponse:
+        status = 302
+
+        @staticmethod
+        def getheader(name: str, default: str | None = None) -> str | None:
+            if name == "Location":
+                return BUNDESLIGA_SOURCE
+            return default
+
+    class RedirectConnection:
+        def __init__(self, *_args: object, **_kwargs: object) -> None:
+            pass
+
+        def request(self, *_args: object, **_kwargs: object) -> None:
+            nonlocal physical_gets
+            physical_gets += 1
+
+        @staticmethod
+        def getresponse() -> RedirectResponse:
+            return RedirectResponse()
+
+        @staticmethod
+        def close() -> None:
+            pass
+
+    monkeypatch.setattr(
+        official_sources_module.http.client,
+        "HTTPSConnection",
+        RedirectConnection,
+    )
+    fetcher = BuiltinHttpsOfficialScheduleFetcher(maximum_redirects=0)
+    source = OfficialSourceSpec(
+        sport_key="soccer_germany_bundesliga",
+        adapter=DFB_DATACENTER_HTML_V1,
+        url=BUNDESLIGA_SOURCE,
+    )
+    with pytest.raises(
+        OfficialScheduleSourceError,
+        match="^OFFICIAL_SOURCE_REDIRECT_LIMIT_EXCEEDED$",
+    ):
+        fetcher.fetch(source)
+    assert physical_gets == 1
+
+
+def test_preparation_reservation_is_mission_global_across_fresh_workspaces(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    _isolated_mission_global_preparation_registry: Path,
+) -> None:
+    first_workspace = workspace_receipt(tmp_path / "first-runtime")
+    second_workspace = workspace_receipt(tmp_path / "second-runtime")
+    Path(first_workspace.control_temp_root).mkdir(parents=True)
+    Path(second_workspace.control_temp_root).mkdir(parents=True)
+    manifest = mission_manifest(expires_at=BASE + timedelta(days=10))
+    plan_bytes = _source_plan_bytes(
+        "soccer_spain_la_liga",
+        "LALIGA_PUBLIC_MATCHES_JSON_V1",
+        LALIGA_SOURCE,
+    )
+    plan = CANARY_CLI.load_first_c0_canary_source_plan_v1(plan_bytes)
+    reservation_bytes = CANARY_CLI._write_official_read_reservation(
+        first_workspace,
+        manifest,
+        plan,
+        cycle_index=1,
+        cycle_role="PRIMARY_INITIAL",
+        prior_cycle_receipt_sha256=None,
+        official_reads_reserved=2,
+        cumulative_official_reads_reserved=2,
+        recorded_at_utc=BASE,
+    )
+    global_reservation = CANARY_CLI._mission_global_cycle_reservation_path(manifest, 1)
+    assert global_reservation.parent == _isolated_mission_global_preparation_registry
+    assert global_reservation.read_bytes() == reservation_bytes
+    assert json.loads(reservation_bytes)["workspace_receipt_sha256"] == (
+        first_workspace.canonical_receipt_hash
+    )
+
+    fetch_calls = 0
+
+    class ForbiddenFetcher:
+        def fetch(self, _source: object) -> object:
+            nonlocal fetch_calls
+            fetch_calls += 1
+            raise AssertionError("second runtime reached an official read")
+
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match="^FIRST_C0_CANARY_GLOBAL_PREPARATION_CYCLE_ALREADY_RESERVED$",
+    ):
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            workspace_receipt=second_workspace,
+            workspace_receipt_bytes=second_workspace.model_dump_json().encode(),
+            mission_manifest=manifest,
+            mission_manifest_bytes=manifest.model_dump_json().encode(),
+            source_plan_bytes=plan_bytes,
+            output_directory=Path(second_workspace.control_temp_root) / "bundle",
+            fetcher=ForbiddenFetcher(),
+            clock=lambda: BASE,
+            workspace_validator=lambda _workspace: None,
+            marker_inspector=lambda _workspace, _manifest: {
+                "local_marker_present": False,
+                "global_marker_present": False,
+                "inspected_read_only": True,
+            },
+        )
+    assert fetch_calls == 0
+    assert global_reservation.read_bytes() == reservation_bytes
+    assert not (
+        Path(second_workspace.control_temp_root)
+        / "first-c0-canary-cycle-01-read-reservation-v1.json"
+    ).exists()
+    assert not (Path(second_workspace.control_temp_root) / "bundle").exists()
 
 
 def mission_manifest(
@@ -110,7 +373,7 @@ def mission_manifest(
         ),
         compute_budget=8000,
         time_budget=345600,
-        source_hash="3d3b43f68c0d339448e52de7ec66cce068646a4a006e267dfe063bffe2767f5e",
+        source_hash="204e4323d0b99fdfa8c655cdc3a08a8d2b3c82ac0a784f9a97982c90ab3a7312",
         expires_at=expires_at,
     )
 
@@ -530,7 +793,7 @@ def test_discriminated_loader_accepts_only_exact_known_schema(tmp_path: Path) ->
         load_campaign_selection_authority_v1(five_league_masquerading_as_canary)
 
 
-def test_provider_binding_and_owner_pack_clis_accept_exact_canary_schema(
+def test_legacy_provider_and_owner_pack_clis_reject_v5_effects(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
@@ -570,12 +833,13 @@ def test_provider_binding_and_owner_pack_clis_accept_exact_canary_schema(
     }
 
     observed_provider_selection: list[FirstC0CanarySelectionV1] = []
+    original_provider_builder = PROVIDER_BINDING_CLI.prepare_provider_network_binding_once_v1
 
     def fake_prepare_binding(**kwargs: object) -> ProviderNetworkBindingV1:
         campaign_selection = kwargs["campaign_selection"]
         assert isinstance(campaign_selection, FirstC0CanarySelectionV1)
         observed_provider_selection.append(campaign_selection)
-        return binding
+        return original_provider_builder(**kwargs)
 
     monkeypatch.setattr(
         PROVIDER_BINDING_CLI,
@@ -621,11 +885,15 @@ def test_provider_binding_and_owner_pack_clis_accept_exact_canary_schema(
     assert not (control / "provider-network-resolution-one-shot-v1.json").exists()
 
     payloads[selection_path] = selection.model_dump(mode="json")
-    assert PROVIDER_BINDING_CLI.main() == 0
+    assert PROVIDER_BINDING_CLI.main() == 2
     provider_result = json.loads(capsys.readouterr().out)
-    assert provider_result["status"] == "BOUND"
+    assert provider_result == {
+        "code": "FIRST_C0_ATOMIC_PREFLIGHT_REQUIRED",
+        "status": "FAILED",
+    }
     assert observed_provider_selection == [selection]
-    assert provider_result["campaign_selection_sha256"] == selection.canonical_selection_hash
+    assert not provider_output.exists()
+    assert not (control / "provider-network-resolution-one-shot-v1.json").exists()
 
     class FrozenDateTime(datetime):
         @classmethod
@@ -668,23 +936,45 @@ def test_provider_binding_and_owner_pack_clis_accept_exact_canary_schema(
         "assert_owner_review_pack_completion_current_v1",
         lambda _pack, _observed_at: None,
     )
-    original_pack_builder = OWNER_PACK_CLI.build_owner_review_pack_v1
-    original_pack_writer = OWNER_PACK_CLI.write_owner_review_pack_v1
-    pack_build_calls = 0
-    pack_write_calls = 0
+    original_public_pack_builder = OWNER_PACK_CLI.build_owner_review_pack_v1
+    original_public_pack_writer = OWNER_PACK_CLI.write_owner_review_pack_v1
+    public_builder_invocations = 0
+    public_writer_invocations = 0
+    actual_pack_builds = 0
+    actual_pack_writes = 0
 
     def observed_pack_builder(**kwargs: object) -> OwnerReviewPackV1:
-        nonlocal pack_build_calls
-        pack_build_calls += 1
-        return original_pack_builder(**kwargs)
+        nonlocal public_builder_invocations
+        public_builder_invocations += 1
+        return original_public_pack_builder(**kwargs)
 
     def observed_pack_writer(output: Path, pack: OwnerReviewPackV1) -> object:
-        nonlocal pack_write_calls
-        pack_write_calls += 1
-        return original_pack_writer(output, pack)
+        nonlocal public_writer_invocations
+        public_writer_invocations += 1
+        return original_public_pack_writer(output, pack)
+
+    def forbidden_actual_pack_build(**_kwargs: object) -> OwnerReviewPackV1:
+        nonlocal actual_pack_builds
+        actual_pack_builds += 1
+        raise AssertionError("standalone public path reached the private pack builder")
+
+    def forbidden_actual_pack_write(_output: Path, _pack: OwnerReviewPackV1) -> object:
+        nonlocal actual_pack_writes
+        actual_pack_writes += 1
+        raise AssertionError("standalone public path reached the private pack writer")
 
     monkeypatch.setattr(OWNER_PACK_CLI, "build_owner_review_pack_v1", observed_pack_builder)
     monkeypatch.setattr(OWNER_PACK_CLI, "write_owner_review_pack_v1", observed_pack_writer)
+    monkeypatch.setattr(
+        owner_review_pack_module,
+        "_build_owner_review_pack_v1",
+        forbidden_actual_pack_build,
+    )
+    monkeypatch.setattr(
+        owner_review_pack_module,
+        "_write_owner_review_pack_v1",
+        forbidden_actual_pack_write,
+    )
     payloads[selection_path] = {}
     assert OWNER_PACK_CLI.main() == 2
     rejected_pack = json.loads(capsys.readouterr().out)
@@ -692,20 +982,21 @@ def test_provider_binding_and_owner_pack_clis_accept_exact_canary_schema(
         "code": "CAMPAIGN_SELECTION_AUTHORITY_SCHEMA_UNSUPPORTED",
         "status": "FAILED",
     }
-    assert pack_build_calls == pack_write_calls == 0
+    assert public_builder_invocations == public_writer_invocations == 0
+    assert actual_pack_builds == actual_pack_writes == 0
     assert not pack_output.exists()
 
     payloads[selection_path] = selection.model_dump(mode="json")
-    assert OWNER_PACK_CLI.main() == 0
+    assert OWNER_PACK_CLI.main() == 2
     pack_result = json.loads(capsys.readouterr().out)
-    assert pack_result["status"] == "OWNER_AUTHORIZATION_READY"
-    assert pack_result["campaign_selection_sha256"] == selection.canonical_selection_hash
-    pack = OwnerReviewPackV1.model_validate_json(
-        Path(pack_result["outputs"]["owner_review_pack"]).read_bytes()
-    )
-    assert isinstance(pack.campaign_selection, FirstC0CanarySelectionV1)
-    assert pack.campaign_selection == selection
-    assert pack_build_calls == pack_write_calls == 1
+    assert pack_result == {
+        "code": "FIRST_C0_SINGLE_OWNER_ENTRYPOINT_REQUIRED",
+        "status": "FAILED",
+    }
+    assert public_builder_invocations == 1
+    assert public_writer_invocations == 0
+    assert actual_pack_builds == actual_pack_writes == 0
+    assert not pack_output.exists()
 
 
 def test_injected_dns_is_once_exact_and_system_resolver_is_never_called(
@@ -746,12 +1037,13 @@ def test_injected_dns_is_once_exact_and_system_resolver_is_never_called(
             ),
         )
 
-    binding = prepare_provider_network_binding_v1(
+    binding = _prepare_provider_network_binding_after_reservation_v1(
         resolution_claim=claim,
         resolver=resolver,
         observed_at_utc=BASE - timedelta(minutes=1),
         binding_ttl_seconds=900,
         resolver_identity="SYNTHETIC_INJECTED_RESOLVER",
+        _reservation_authority=_PROVIDER_RESOLUTION_RESERVATION_AUTHORITY_V1,
     )
     assert len(resolver_calls) == 1
     assert system_calls == 0
@@ -766,7 +1058,7 @@ def test_injected_dns_is_once_exact_and_system_resolver_is_never_called(
     assert binding.provider_secret_reads == 0
 
 
-def test_canary_840_second_gate_rejects_before_marker_write(
+def test_canary_atomic_path_840_second_gate_rejects_before_marker_write(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -793,7 +1085,7 @@ def test_canary_840_second_gate_rejects_before_marker_write(
         ProviderNetworkPreparationError,
         match="PROVIDER_NETWORK_OWNER_REVIEW_WINDOW_INSUFFICIENT",
     ):
-        reserve_provider_network_resolution_v1(
+        _reserve_first_c0_provider_network_resolution_after_atomic_preflight_v1(
             workspace_receipt=workspace,
             mission_manifest=manifest,
             campaign_selection=selection,
@@ -819,7 +1111,7 @@ def test_synthetic_canary_pack_has_11_recomputable_artifacts_and_no_authority(
         claimed_at_utc=BASE - timedelta(seconds=65),
         mission_expires_at_utc=manifest.expires_at,
     )
-    binding = prepare_provider_network_binding_v1(
+    binding = _prepare_provider_network_binding_after_reservation_v1(
         resolution_claim=claim,
         resolver=lambda *_args: (
             (
@@ -833,6 +1125,7 @@ def test_synthetic_canary_pack_has_11_recomputable_artifacts_and_no_authority(
         observed_at_utc=BASE - timedelta(minutes=1),
         binding_ttl_seconds=900,
         resolver_identity="SYNTHETIC_INJECTED_RESOLVER",
+        _reservation_authority=_PROVIDER_RESOLUTION_RESERVATION_AUTHORITY_V1,
     )
     request_hash = canonical_sha256(selected.request.fingerprint_material())
     generated_text = BASE.isoformat().replace("+00:00", "Z")
@@ -848,7 +1141,7 @@ def test_synthetic_canary_pack_has_11_recomputable_artifacts_and_no_authority(
     )
     owner_nonce = f"owner-{nonce_hash[:40]}"
     activation_nonce = f"activation-{nonce_hash[24:64]}"
-    pack = build_owner_review_pack_v1(
+    pack = _build_first_c0_owner_review_pack_after_atomic_binding_v1(
         workspace_receipt=workspace,
         mission_manifest=manifest,
         provider_network_binding=binding,
@@ -857,6 +1150,33 @@ def test_synthetic_canary_pack_has_11_recomputable_artifacts_and_no_authority(
         authorization_nonce=owner_nonce,
         activation_nonce=activation_nonce,
     )
+    for source_hash in (
+        manifest.source_hash,
+        "3d3b43f68c0d339448e52de7ec66cce068646a4a006e267dfe063bffe2767f5e",
+        "0270bdd51d8d50b7d3c9f608e4f429b46b94b789d92d4b13055b81c9b72e6291",
+    ):
+        forged_manifest = manifest.model_copy(update={"source_hash": source_hash})
+        with pytest.raises(
+            OwnerReviewPackError,
+            match="^FIRST_C0_SINGLE_OWNER_ENTRYPOINT_REQUIRED$",
+        ):
+            build_owner_review_pack_v1(
+                workspace_receipt=workspace,
+                mission_manifest=forged_manifest,
+                provider_network_binding=binding,
+                campaign_selection=selection,
+                generated_at_utc=BASE,
+                authorization_nonce=owner_nonce,
+                activation_nonce=activation_nonce,
+            )
+        public_output = tmp_path / f"public-pack-{source_hash[:8]}"
+        forged_pack = pack.model_copy(update={"mission_manifest": forged_manifest})
+        with pytest.raises(
+            OwnerReviewPackError,
+            match="^FIRST_C0_SINGLE_OWNER_ENTRYPOINT_REQUIRED$",
+        ):
+            public_write_owner_review_pack_v1(public_output, forged_pack)
+        assert not public_output.exists()
     round_trip = OwnerReviewPackV1.model_validate(pack.model_dump(mode="json"))
     assert isinstance(round_trip.campaign_selection, FirstC0CanarySelectionV1)
     assert round_trip.campaign_selection == selection
@@ -929,9 +1249,10 @@ def _round_robin_rounds(clubs: list[str], count: int) -> list[list[tuple[str, st
     return rounds
 
 
-def _laliga_payload() -> bytes:
+def _laliga_payload(*, latest: datetime | None = None) -> bytes:
     matches: list[dict[str, object]] = []
-    latest = datetime(2026, 9, 7, 21, 0, tzinfo=UTC)
+    collapse_round_kickoffs = latest is not None
+    latest = latest or datetime(2026, 9, 7, 21, 0, tzinfo=UTC)
     clubs = [f"Liga Club {index:02d}" for index in range(20)]
     for week_index, games in enumerate(_round_robin_rounds(clubs, 8), start=1):
         for game_index, (home, away) in enumerate(games):
@@ -939,7 +1260,13 @@ def _laliga_payload() -> bytes:
                 {
                     "id": f"laliga-{len(matches):03d}",
                     "competition": {"slug": "primera-division"},
-                    "date": (latest - timedelta(days=week_index - 1, minutes=game_index))
+                    "date": (
+                        latest
+                        - timedelta(
+                            days=week_index - 1,
+                            minutes=0 if collapse_round_kickoffs else game_index,
+                        )
+                    )
                     .isoformat()
                     .replace("+00:00", "Z"),
                     "home_team": {"name": home},
@@ -1037,7 +1364,7 @@ def test_cli_pipeline_publishes_one_immutable_selection_bundle_before_dns(
         "assert_workspace_control_artifact_destination_v1",
         lambda _workspace, destination: destination,
     )
-    result = CANARY_CLI.prepare_first_c0_canary_selection_v1(
+    result = CANARY_CLI._prepare_first_c0_canary_selection_v1(
         workspace_receipt=workspace,
         workspace_receipt_bytes=workspace.model_dump_json().encode(),
         mission_manifest=manifest,
@@ -1091,9 +1418,11 @@ def test_cli_pipeline_publishes_one_immutable_selection_bundle_before_dns(
     assert (control / "first-c0-canary-cycle-01-attempt-receipt-v1.json").is_file()
 
 
-def test_laliga_future_window_refreshes_before_open_within_global_cycle_budget(
+@pytest.mark.parametrize("preparation_seconds", [60, 120, 180])
+def test_h2_prefetch_starts_at_t_minus_300_and_closes_reads_before_local_activation(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
+    preparation_seconds: int,
 ) -> None:
     control = tmp_path / "control"
     control.mkdir()
@@ -1104,7 +1433,7 @@ def test_laliga_future_window_refreshes_before_open_within_global_cycle_budget(
         "LALIGA_PUBLIC_MATCHES_JSON_V1",
         LALIGA_SOURCE,
     )
-    raw = _laliga_payload()
+    raw = _laliga_payload(latest=BASE + timedelta(hours=3))
     supporting_raw = b"<html>public LaLiga bootstrap</html>"
     supporting = SupportingOfficialRead(
         requested_url=LALIGA_BOOTSTRAP_URL,
@@ -1132,11 +1461,12 @@ def test_laliga_future_window_refreshes_before_open_within_global_cycle_budget(
             )
 
     tick = BASE
+    clock_step = timedelta(seconds=1)
 
     def clock() -> datetime:
-        nonlocal tick
+        nonlocal tick, clock_step
         observed = tick
-        tick += timedelta(seconds=1)
+        tick += clock_step
         return observed
 
     monkeypatch.setattr(
@@ -1153,28 +1483,51 @@ def test_laliga_future_window_refreshes_before_open_within_global_cycle_budget(
         "fetcher": SyntheticFetcher(),
         "clock": clock,
         "workspace_validator": lambda _workspace: None,
-        "marker_inspector": lambda _workspace, _manifest: {
-            "local_marker_present": False,
-            "global_marker_present": False,
-            "inspected_read_only": True,
-        },
+        "marker_inspector": CANARY_CLI.inspect_first_c0_canary_markers_read_only_v1,
     }
-    first = CANARY_CLI.prepare_first_c0_canary_selection_v1(
+    first = CANARY_CLI._prepare_first_c0_canary_selection_v1(
         **common,
         output_directory=control / "cycle-1-bundle",
     )
     assert first.status == "CANARY_FUTURE_WINDOW"
     assert first.cycle_index == 1
     assert first.cumulative_official_reads == 2
+    first_candidate = first.selection.selected_candidate()
+    assert first_candidate.window_id == "H2"
+    assert first.recommended_refresh_utc == (
+        first_candidate.window_not_before_utc - timedelta(seconds=300)
+    )
     tick = first.recommended_refresh_utc
-    second = CANARY_CLI.prepare_first_c0_canary_selection_v1(
+    prefetch_started_at = tick
+    clock_step = timedelta(seconds=preparation_seconds / 7)
+    second = CANARY_CLI._prepare_first_c0_canary_selection_v1(
         **common,
         output_directory=control / "cycle-2-bundle",
     )
-    assert second.status == "CANARY_FUTURE_WINDOW"
+    second_candidate = second.selection.selected_candidate()
+    assert second.status == "PREFETCHED_FUTURE_WINDOW", (
+        second.selection.selected_at_utc,
+        second_candidate.window_id,
+        second_candidate.status,
+        second_candidate.window_not_before_utc,
+        second_candidate.window_expires_at_utc,
+    )
     assert second.cycle_index == 2
     assert second.cumulative_official_reads == 4
     assert fetch_calls == 2
+    assert second.prefetch_handoff_path.is_file()
+    assert len(second.prefetch_handoff_sha256) == 64
+    handoff = json.loads(second.prefetch_handoff_path.read_bytes())
+    handoff_at = datetime.fromisoformat(handoff["prefetched_at_utc"].replace("Z", "+00:00"))
+    attempt = json.loads(
+        (control / "first-c0-canary-cycle-02-attempt-receipt-v1.json").read_bytes()
+    )
+    completion_at = datetime.fromisoformat(attempt["recorded_at_utc"].replace("Z", "+00:00"))
+    assert (completion_at - prefetch_started_at).total_seconds() == pytest.approx(
+        preparation_seconds,
+        abs=0.000_01,
+    )
+    assert handoff_at <= completion_at < second_candidate.window_not_before_utc
     names = {path.name for path in second.bundle_directory.iterdir()}
     assert "prior-cycle-01-read-reservation.json" in names
     assert "prior-cycle-01-attempt-receipt.json" in names
@@ -1182,6 +1535,258 @@ def test_laliga_future_window_refreshes_before_open_within_global_cycle_budget(
     tick = second.selection.selected_not_before_utc
     second.selection.assert_selected_candidate_current(tick)
     assert fetch_calls == 2
+
+
+@pytest.mark.parametrize("crossing_stage", ["published_at", "bundle", "handoff"])
+def test_prefetch_publication_crossing_window_open_is_terminal_before_dns(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    crossing_stage: str,
+) -> None:
+    control = tmp_path / "control"
+    control.mkdir()
+    workspace = workspace_receipt(tmp_path)
+    manifest = mission_manifest(expires_at=BASE + timedelta(days=10))
+    plan_bytes = _source_plan_bytes(
+        "soccer_spain_la_liga",
+        "LALIGA_PUBLIC_MATCHES_JSON_V1",
+        LALIGA_SOURCE,
+    )
+    raw = _laliga_payload(latest=BASE + timedelta(hours=3))
+    supporting_raw = b"<html>public LaLiga bootstrap</html>"
+    supporting = SupportingOfficialRead(
+        requested_url=LALIGA_BOOTSTRAP_URL,
+        final_url=LALIGA_BOOTSTRAP_URL,
+        official_domain="www.laliga.com",
+        status_code=200,
+        content_type="text/html",
+        byte_count=len(supporting_raw),
+        raw_sha256=hashlib.sha256(supporting_raw).hexdigest(),
+        redirect_chain=(),
+    )
+    fetch_calls = 0
+
+    class SyntheticFetcher:
+        def fetch(self, source: object) -> OfficialHttpResponse:
+            nonlocal fetch_calls
+            fetch_calls += 1
+            return OfficialHttpResponse(
+                status_code=200,
+                final_url=getattr(source, "url"),
+                content_type="application/json",
+                body=raw,
+                supporting_official_reads=(supporting,),
+                supporting_official_raw_bytes=(supporting_raw,),
+            )
+
+    tick = BASE
+    window_open = BASE
+    cross_during_publication_clock = False
+    second_cycle_clock_calls = 0
+
+    def clock() -> datetime:
+        nonlocal second_cycle_clock_calls
+        if cross_during_publication_clock:
+            second_cycle_clock_calls += 1
+            if second_cycle_clock_calls >= 5:
+                return window_open
+        return tick
+
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+    common = {
+        "workspace_receipt": workspace,
+        "workspace_receipt_bytes": workspace.model_dump_json().encode(),
+        "mission_manifest": manifest,
+        "mission_manifest_bytes": manifest.model_dump_json().encode(),
+        "source_plan_bytes": plan_bytes,
+        "fetcher": SyntheticFetcher(),
+        "clock": clock,
+        "workspace_validator": lambda _workspace: None,
+        "marker_inspector": CANARY_CLI.inspect_first_c0_canary_markers_read_only_v1,
+    }
+    first = CANARY_CLI._prepare_first_c0_canary_selection_v1(
+        **common,
+        output_directory=control / "cycle-1-bundle",
+    )
+    assert first.status == "CANARY_FUTURE_WINDOW"
+    tick = first.recommended_refresh_utc
+    window_open = first.selection.selected_candidate().window_not_before_utc
+    if crossing_stage == "published_at":
+        cross_during_publication_clock = True
+    else:
+        original_publish = (
+            CANARY_CLI._publish_bundle
+            if crossing_stage == "bundle"
+            else CANARY_CLI._publish_prefetch_handoff
+        )
+
+        def crossing_publish(**kwargs: object) -> object:
+            nonlocal tick
+            published = original_publish(**kwargs)
+            tick = window_open
+            return published
+
+        monkeypatch.setattr(
+            CANARY_CLI,
+            "_publish_bundle" if crossing_stage == "bundle" else "_publish_prefetch_handoff",
+            crossing_publish,
+        )
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match="FIRST_C0_PREFETCH_COMPLETION_TOO_LATE",
+    ):
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            **common,
+            output_directory=control / "cycle-2-bundle",
+        )
+    attempt = json.loads(
+        (control / "first-c0-canary-cycle-02-attempt-receipt-v1.json").read_bytes()
+    )
+    assert attempt["status"] == "FAILED_NO_FALLBACK"
+    assert attempt["code"] == "FIRST_C0_PREFETCH_COMPLETION_TOO_LATE"
+    assert attempt["selected_not_before_utc"] is None
+    assert attempt["bundle_manifest_sha256"] is None
+    assert all(
+        attempt[field] == 0
+        for field in (
+            "provider_dns",
+            "provider_tcp",
+            "provider_http",
+            "secret_reads",
+            "owner_review_pack_builds",
+        )
+    )
+    assert (control / "cycle-2-bundle").is_dir() is (crossing_stage != "published_at")
+    assert (control / "first-c0-prefetched-window-handoff-v1.json").exists() is (
+        crossing_stage == "handoff"
+    )
+    if crossing_stage == "handoff":
+        dns_calls = 0
+
+        def forbidden_resolver(*_args: object, **_kwargs: object) -> tuple[str, ...]:
+            nonlocal dns_calls
+            dns_calls += 1
+            raise AssertionError("late prefetch handoff reached DNS")
+
+        with pytest.raises(
+            OWNER_ATOMIC_CLI.PreDnsOrchestrationError,
+            match="FIRST_C0_CANARY_BUNDLE_LINEAGE_INVALID",
+        ):
+            OWNER_ATOMIC_CLI._run_first_c0_owner_pack_atomic_v1(
+                bundle_directory=control / "cycle-2-bundle",
+                prefetch_handoff_path=(control / "first-c0-prefetched-window-handoff-v1.json"),
+                window_open_receipt_path=control / "late-window-open-receipt.json",
+                workspace_receipt=workspace,
+                mission_manifest=manifest,
+                output_binding_path=control / "late-provider-network-binding.json",
+                output_pack_directory=control / "late-owner-review-pack",
+                resolver=forbidden_resolver,
+                marker_inspector=lambda *_args, **_kwargs: (_ for _ in ()).throw(
+                    AssertionError("late prefetch handoff reached marker inspection")
+                ),
+                execute=True,
+                owner_present_for_at_least_20_minutes=True,
+                clock=clock,
+                monotonic=lambda: 0.0,
+                workspace_validator=lambda _workspace: None,
+            )
+        assert dns_calls == 0
+        assert not (control / "late-window-open-receipt.json").exists()
+        assert not (control / "late-provider-network-binding.json").exists()
+        assert not (control / "late-owner-review-pack").exists()
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match="FIRST_C0_CANARY_FALLBACK_NOT_AUTHORIZED",
+    ):
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            **common,
+            output_directory=control / "cycle-3-bundle",
+        )
+    assert fetch_calls == 2
+
+
+def test_h24_h2_no_window_flow_is_explicit_and_effect_free(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    control = tmp_path / "control"
+    control.mkdir()
+    workspace = workspace_receipt(tmp_path)
+    manifest = mission_manifest(expires_at=BASE + timedelta(seconds=60))
+    plan_bytes = _source_plan_bytes(
+        "soccer_spain_la_liga",
+        "LALIGA_PUBLIC_MATCHES_JSON_V1",
+        LALIGA_SOURCE,
+    )
+    raw = _laliga_payload(latest=BASE + timedelta(hours=27))
+    supporting_raw = b"<html>public LaLiga bootstrap</html>"
+    supporting = SupportingOfficialRead(
+        requested_url=LALIGA_BOOTSTRAP_URL,
+        final_url=LALIGA_BOOTSTRAP_URL,
+        official_domain="www.laliga.com",
+        status_code=200,
+        content_type="text/html",
+        byte_count=len(supporting_raw),
+        raw_sha256=hashlib.sha256(supporting_raw).hexdigest(),
+        redirect_chain=(),
+    )
+
+    class SyntheticFetcher:
+        def fetch(self, source: object) -> OfficialHttpResponse:
+            return OfficialHttpResponse(
+                status_code=200,
+                final_url=getattr(source, "url"),
+                content_type="application/json",
+                body=raw,
+                supporting_official_reads=(supporting,),
+                supporting_official_raw_bytes=(supporting_raw,),
+            )
+
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match="FIRST_C0_CANARY_NO_REMAINING_SELECTABLE_CANDIDATE",
+    ):
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            workspace_receipt=workspace,
+            workspace_receipt_bytes=workspace.model_dump_json().encode(),
+            mission_manifest=manifest,
+            mission_manifest_bytes=manifest.model_dump_json().encode(),
+            source_plan_bytes=plan_bytes,
+            output_directory=control / "no-window-bundle",
+            fetcher=SyntheticFetcher(),
+            clock=lambda: BASE,
+            workspace_validator=lambda _workspace: None,
+            marker_inspector=lambda _workspace, _manifest: {
+                "local_marker_present": False,
+                "global_marker_present": False,
+                "inspected_read_only": True,
+            },
+        )
+    attempt = json.loads(
+        (control / "first-c0-canary-cycle-01-attempt-receipt-v1.json").read_bytes()
+    )
+    assert attempt["status"] == "FAILED_BEFORE_DNS"
+    assert attempt["fallback_category"] == "NO_H24_H2_WINDOW"
+    assert attempt["official_reads"] == 2
+    assert all(
+        attempt[field] == 0
+        for field in (
+            "provider_dns",
+            "provider_tcp",
+            "provider_http",
+            "secret_reads",
+            "owner_review_pack_builds",
+        )
+    )
 
 
 def test_single_source_plan_is_strict_and_bundesliga_requires_primary_receipt(
@@ -1243,7 +1848,7 @@ def test_single_source_plan_is_strict_and_bundesliga_requires_primary_receipt(
         CANARY_CLI.FirstC0CanaryPreparationError,
         match="FIRST_C0_CANARY_PRIMARY_SOURCE_REQUIRED_FIRST",
     ):
-        CANARY_CLI.prepare_first_c0_canary_selection_v1(
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
             workspace_receipt=workspace,
             workspace_receipt_bytes=workspace.model_dump_json().encode(),
             mission_manifest=manifest,
@@ -1251,6 +1856,7 @@ def test_single_source_plan_is_strict_and_bundesliga_requires_primary_receipt(
             source_plan_bytes=bundesliga_bytes,
             output_directory=tmp_path / "bundle",
             fetcher=ForbiddenFetcher(),
+            clock=lambda: BASE,
             workspace_validator=lambda _workspace: None,
             marker_inspector=lambda _workspace, _manifest: {
                 "local_marker_present": False,
@@ -1300,6 +1906,82 @@ def test_failed_no_fallback_receipt_cannot_authorize_a_bundesliga_read() -> None
     ):
         CANARY_CLI._next_cycle_authority(
             history,
+            bundesliga_plan,
+            started_at_utc=BASE,
+        )
+
+
+def test_transient_failure_allows_fallback_but_never_an_identical_retry() -> None:
+    laliga_plan = CANARY_CLI.load_first_c0_canary_source_plan_v1(
+        _source_plan_bytes(
+            "soccer_spain_la_liga",
+            "LALIGA_PUBLIC_MATCHES_JSON_V1",
+            LALIGA_SOURCE,
+        )
+    )
+    bundesliga_plan = CANARY_CLI.load_first_c0_canary_source_plan_v1(
+        _source_plan_bytes(
+            "soccer_germany_bundesliga",
+            "DFB_DATACENTER_HTML_V1",
+            BUNDESLIGA_SOURCE,
+        )
+    )
+    primary_history = (
+        CANARY_CLI.FirstC0CanaryCycleHistoryV1(
+            cycle_index=1,
+            reservation={},
+            receipt={
+                "sport_key": "soccer_spain_la_liga",
+                "source_plan_sha256": laliga_plan.canonical_sha256,
+                "cumulative_official_reads": 2,
+                "status": "FAILED_BEFORE_DNS",
+                "failure_classification": "TRANSIENT",
+                "fallback_category": "SOURCE_UNAVAILABLE",
+            },
+            reservation_bytes=b"reservation-1",
+            receipt_bytes=b"receipt-1",
+            receipt_sha256="1" * 64,
+        ),
+    )
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match="FIRST_C0_CANARY_IDENTICAL_RETRY_NOT_AUTHORIZED",
+    ):
+        CANARY_CLI._next_cycle_authority(
+            primary_history,
+            laliga_plan,
+            started_at_utc=BASE,
+        )
+    assert CANARY_CLI._next_cycle_authority(
+        primary_history,
+        bundesliga_plan,
+        started_at_utc=BASE,
+    ) == (2, "FALLBACK_INITIAL", 2, "1" * 64)
+
+    fallback_history = (
+        *primary_history,
+        CANARY_CLI.FirstC0CanaryCycleHistoryV1(
+            cycle_index=2,
+            reservation={},
+            receipt={
+                "sport_key": "soccer_germany_bundesliga",
+                "source_plan_sha256": bundesliga_plan.canonical_sha256,
+                "cumulative_official_reads": 3,
+                "status": "FAILED_BEFORE_DNS",
+                "failure_classification": "TRANSIENT",
+                "fallback_category": "SOURCE_UNAVAILABLE",
+            },
+            reservation_bytes=b"reservation-2",
+            receipt_bytes=b"receipt-2",
+            receipt_sha256="2" * 64,
+        ),
+    )
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match="FIRST_C0_CANARY_FALLBACK_SOURCE_EXHAUSTED",
+    ):
+        CANARY_CLI._next_cycle_authority(
+            fallback_history,
             bundesliga_plan,
             started_at_utc=BASE,
         )
@@ -1363,7 +2045,7 @@ def test_deterministic_primary_rejection_falls_back_and_refreshes_with_lineage(
         CANARY_CLI.FirstC0CanaryPreparationError,
         match="OFFICIAL_SOURCE_HTTP_STATUS_INVALID",
     ):
-        CANARY_CLI.prepare_first_c0_canary_selection_v1(
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
             **shared,
             source_plan_bytes=laliga_plan,
             output_directory=control / "cycle-1-rejected",
@@ -1387,7 +2069,7 @@ def test_deterministic_primary_rejection_falls_back_and_refreshes_with_lineage(
                 body=bundesliga_raw,
             )
 
-    fallback = CANARY_CLI.prepare_first_c0_canary_selection_v1(
+    fallback = CANARY_CLI._prepare_first_c0_canary_selection_v1(
         **shared,
         source_plan_bytes=bundesliga_plan,
         output_directory=control / "cycle-2-fallback",
@@ -1397,7 +2079,7 @@ def test_deterministic_primary_rejection_falls_back_and_refreshes_with_lineage(
     assert fallback.cycle_index == 2
     assert fallback.cumulative_official_reads == 3
     tick = fallback.recommended_refresh_utc
-    refreshed = CANARY_CLI.prepare_first_c0_canary_selection_v1(
+    refreshed = CANARY_CLI._prepare_first_c0_canary_selection_v1(
         **shared,
         source_plan_bytes=bundesliga_plan,
         output_directory=control / "cycle-3-fallback-refresh",
@@ -1448,6 +2130,7 @@ def test_official_read_reservation_is_durable_before_fetch_and_blocks_retry(
         "source_plan_bytes": plan_bytes,
         "output_directory": control / "bundle",
         "fetcher": InterruptedFetcher(),
+        "clock": lambda: BASE,
         "workspace_validator": lambda _workspace: None,
         "marker_inspector": lambda _workspace, _manifest: {
             "local_marker_present": False,
@@ -1456,7 +2139,7 @@ def test_official_read_reservation_is_durable_before_fetch_and_blocks_retry(
         },
     }
     with pytest.raises(RuntimeError, match="SYNTHETIC_PROCESS_INTERRUPTION"):
-        CANARY_CLI.prepare_first_c0_canary_selection_v1(**arguments)
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(**arguments)
     reservation = control / "first-c0-canary-cycle-01-read-reservation-v1.json"
     assert reservation.is_file()
     payload = json.loads(reservation.read_bytes())
@@ -1467,5 +2150,5 @@ def test_official_read_reservation_is_durable_before_fetch_and_blocks_retry(
         CANARY_CLI.FirstC0CanaryPreparationError,
         match="FIRST_C0_CANARY_PREVIOUS_CYCLE_INCOMPLETE",
     ):
-        CANARY_CLI.prepare_first_c0_canary_selection_v1(**arguments)
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(**arguments)
     assert fetch_calls == 1

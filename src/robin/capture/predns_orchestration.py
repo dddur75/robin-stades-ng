@@ -5,11 +5,12 @@ from __future__ import annotations
 import ctypes
 import hashlib
 import json
+import math
 import os
 import stat
 import time
 from collections.abc import Callable, Iterable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any, Literal, Protocol, TypeAlias, cast
@@ -19,10 +20,17 @@ from zoneinfo import ZoneInfo
 from pydantic import BaseModel
 
 from robin.capture.bootstrap_contracts import (
+    FIRST_C0_H2_PREFETCH_LEAD_SECONDS,
+    FIRST_C0_H2_WINDOW_DURATION_SECONDS,
+    FIRST_C0_MAXIMUM_OPEN_TO_PREFLIGHT_SECONDS,
+    FIRST_C0_POST_OPEN_SAFETY_RESERVE_SECONDS,
+    FIRST_C0_POST_OPEN_TOTAL_BUDGET_SECONDS,
     CampaignLeagueCorpusCountV1,
     CampaignSelectionAuthorityV1,
     CampaignWindowSelectionV1,
     FirstC0CanarySelectionV1,
+    FirstC0PrefetchedWindowHandoffV1,
+    FirstC0WindowOpenRevalidationV1,
     FixtureTargetSetV1,
     OfficialFixtureTargetV1,
     OwnerReviewPackV1,
@@ -63,13 +71,13 @@ from robin.capture.official_schedule_sources import (
     reconcile_official_schedule_evidence,
 )
 from robin.capture.owner_review_pack import (
+    _build_first_c0_owner_review_pack_after_atomic_binding_v1,
+    _write_first_c0_owner_review_pack_after_atomic_binding_v1,
     assert_owner_review_pack_completion_current_v1,
-    build_owner_review_pack_v1,
-    write_owner_review_pack_v1,
 )
 from robin.capture.provider_network import (
     ResolverV1,
-    prepare_provider_network_binding_once_v1,
+    _prepare_first_c0_provider_network_binding_once_after_atomic_preflight_v1,
 )
 from robin.capture.storage import (
     CaptureStorageError,
@@ -82,6 +90,7 @@ from robin.capture.workspace_bootstrap import (
 
 PRE_DNS_BUNDLE_SCHEMA = "robin-pre-dns-owner-pack-inputs-v1"
 FIRST_C0_CANARY_BUNDLE_SCHEMA = "robin-first-c0-canary-bundle-v1"
+FIRST_C0_PREFETCHED_WINDOW_BUNDLE_SCHEMA = "robin-first-c0-prefetched-window-bundle-v1"
 FIRST_C0_CANARY_SOURCE_PLAN_SCHEMA = "robin-first-c0-canary-source-plan-v1"
 PRE_DNS_ITERATION_LEDGER_SCHEMA = "robin-pre-dns-iteration-ledger-v1"
 ATOMIC_RUNNER_RECEIPT_SCHEMA = "robin-atomic-dns-owner-pack-runner-receipt-v1"
@@ -95,6 +104,8 @@ OFFICIAL_SCHEDULE_HORIZON_DAYS = 8
 _CONTROL_MARKER_NAME = "provider-network-resolution-one-shot-v1.json"
 _GLOBAL_MARKER_ROOT_NAME = "RobinRealExecutionMissionClaimsV1"
 _REVIEW_NAMES = ("DP6", "C4", "C2", "A2")
+_PREFETCH_HANDOFF_NAME = "first-c0-prefetched-window-handoff-v1.json"
+_WINDOW_OPEN_RECEIPT_NAME = "first-c0-window-open-revalidation-v1.json"
 
 PreDnsStatusV1: TypeAlias = Literal[
     "PRE_DNS_READY_NOW",
@@ -122,6 +133,60 @@ class ClockV1(Protocol):
 
 class MonotonicV1(Protocol):
     def __call__(self) -> float: ...
+
+
+class _GuardedClockPathV1:
+    def __init__(
+        self,
+        *,
+        clock: ClockV1,
+        monotonic: MonotonicV1,
+        anchor_wall_utc: datetime | None,
+        anchor_monotonic: float | None,
+    ) -> None:
+        if (anchor_wall_utc is None) != (anchor_monotonic is None):
+            raise PreDnsOrchestrationError("FIRST_C0_PREFLIGHT_CLOCK_INVALID")
+        self._clock = clock
+        self._monotonic = monotonic
+        self._previous_wall = (
+            _utc(anchor_wall_utc, code="FIRST_C0_PREFLIGHT_CLOCK_INVALID")
+            if anchor_wall_utc is not None
+            else None
+        )
+        self._last_observed_wall = self._previous_wall
+        self._previous_monotonic = float(anchor_monotonic) if anchor_monotonic is not None else None
+        if self._previous_monotonic is not None and not math.isfinite(self._previous_monotonic):
+            raise PreDnsOrchestrationError("FIRST_C0_PREFLIGHT_CLOCK_INVALID")
+
+    @property
+    def last_trusted_wall_utc(self) -> datetime | None:
+        return self._previous_wall
+
+    @property
+    def last_observed_wall_utc(self) -> datetime | None:
+        return self._last_observed_wall
+
+    def clock(self) -> datetime:
+        current_wall = _utc(self._clock(), code="FIRST_C0_PREFLIGHT_CLOCK_INVALID")
+        self._last_observed_wall = current_wall
+        current_monotonic = float(self._monotonic())
+        if not math.isfinite(current_monotonic):
+            raise PreDnsOrchestrationError("FIRST_C0_PREFLIGHT_CLOCK_INVALID")
+        if self._previous_wall is not None and self._previous_monotonic is not None:
+            wall_delta = (current_wall - self._previous_wall).total_seconds()
+            monotonic_delta = current_monotonic - self._previous_monotonic
+            if wall_delta < 0 or monotonic_delta < 0 or abs(wall_delta - monotonic_delta) > 2.0:
+                raise PreDnsOrchestrationError("FIRST_C0_PREFLIGHT_CLOCK_INVALID")
+        self._previous_wall = current_wall
+        self._previous_monotonic = current_monotonic
+        return current_wall
+
+    def paired_monotonic(self) -> float:
+        if self._previous_monotonic is None:
+            self.clock()
+        if self._previous_monotonic is None:
+            raise PreDnsOrchestrationError("FIRST_C0_PREFLIGHT_CLOCK_INVALID")
+        return self._previous_monotonic
 
 
 class WorkspaceValidatorV1(Protocol):
@@ -164,6 +229,27 @@ class BindingPreparerV1(Protocol):
         clock: Callable[[], datetime],
         binding_ttl_seconds: int,
     ) -> ProviderNetworkBindingV1: ...
+
+
+def _prepare_provider_network_binding_after_atomic_preflight_v1(
+    *,
+    workspace_receipt: RealCaptureWorkspaceReceiptV1,
+    mission_manifest: RealExecutionMissionManifestV1,
+    campaign_selection: CampaignSelectionAuthorityV1,
+    output_path: Path,
+    resolver: ResolverV1,
+    clock: Callable[[], datetime],
+    binding_ttl_seconds: int,
+) -> ProviderNetworkBindingV1:
+    return _prepare_first_c0_provider_network_binding_once_after_atomic_preflight_v1(
+        workspace_receipt=workspace_receipt,
+        mission_manifest=mission_manifest,
+        campaign_selection=campaign_selection,
+        output_path=output_path,
+        resolver=resolver,
+        clock=clock,
+        binding_ttl_seconds=binding_ttl_seconds,
+    )
 
 
 class PackBuilderV1(Protocol):
@@ -300,6 +386,10 @@ class LoadedPreDnsBundleV1:
     campaign_selection: CampaignSelectionAuthorityV1
     target_sets: tuple[FixtureTargetSetV1, ...]
     marker_inspection: MarkerInspectionV1 | FirstC0CanaryMarkerInspectionV1
+    prefetch_handoff: FirstC0PrefetchedWindowHandoffV1 | None = None
+    prefetch_handoff_path: Path | None = None
+    window_open_receipt: FirstC0WindowOpenRevalidationV1 | None = None
+    window_open_receipt_path: Path | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -1167,6 +1257,7 @@ def _load_first_c0_canary_bundle_v1(
     *,
     raw_evidence_verifier: RawEvidenceVerifierV1,
 ) -> LoadedPreDnsBundleV1:
+    prefetched_schema = manifest.get("schema_version") == FIRST_C0_PREFETCHED_WINDOW_BUNDLE_SCHEMA
     required_manifest = {
         "schema_version",
         "status",
@@ -1202,10 +1293,27 @@ def _load_first_c0_canary_bundle_v1(
         "secret_reads",
         "owner_review_pack_builds",
     }
+    if prefetched_schema:
+        required_manifest.update(
+            {
+                "h2_window_duration_seconds",
+                "h2_prefetch_lead_seconds",
+                "post_open_total_budget_seconds",
+                "post_open_safety_reserve_seconds",
+                "maximum_open_to_preflight_seconds",
+            }
+        )
     if (
         set(manifest) != required_manifest
-        or manifest.get("schema_version") != FIRST_C0_CANARY_BUNDLE_SCHEMA
-        or manifest.get("status") not in {"CANARY_READY_NOW", "CANARY_FUTURE_WINDOW"}
+        or manifest.get("schema_version")
+        not in {FIRST_C0_CANARY_BUNDLE_SCHEMA, FIRST_C0_PREFETCHED_WINDOW_BUNDLE_SCHEMA}
+        or manifest.get("status")
+        not in {
+            "CANARY_READY_NOW",
+            "CANARY_FUTURE_WINDOW",
+            "PREFETCHED_FUTURE_WINDOW",
+        }
+        or prefetched_schema != (manifest.get("status") == "PREFETCHED_FUTURE_WINDOW")
     ):
         raise PreDnsOrchestrationError("FIRST_C0_CANARY_BUNDLE_MANIFEST_INVALID")
     raw_hashes = manifest.get("artifact_sha256")
@@ -1397,7 +1505,6 @@ def _load_first_c0_canary_bundle_v1(
     previous_recorded_at: datetime | None = None
     previous_attempt: Mapping[str, object] | None = None
     previous_plan: FirstC0CanarySourcePlanAuthorityV1 | None = None
-    plan_attempt_counts: dict[str, int] = {}
     for index in range(1, cycle):
         try:
             reservation_bytes = payloads[f"prior-cycle-{index:02d}-read-reservation.json"]
@@ -1422,7 +1529,12 @@ def _load_first_c0_canary_bundle_v1(
         status = attempt.get("status")
         success_semantics_valid = (
             status == "SUCCEEDED"
-            and attempt.get("code") in {"CANARY_READY_NOW", "CANARY_FUTURE_WINDOW"}
+            and attempt.get("code")
+            in {
+                "CANARY_READY_NOW",
+                "CANARY_FUTURE_WINDOW",
+                "PREFETCHED_FUTURE_WINDOW",
+            }
             and attempt.get("fallback_category") is None
             and attempt.get("failure_classification") is None
             and attempt.get("http_status") == 200
@@ -1470,36 +1582,20 @@ def _load_first_c0_canary_bundle_v1(
                 and reserved_at >= refresh_at
             )
         elif previous_plan.source.sport_key == "soccer_spain_la_liga":
-            if (
-                previous_attempt.get("status") == "FAILED_BEFORE_DNS"
-                and previous_attempt.get("failure_classification") == "TRANSIENT"
-                and plan_attempt_counts.get(previous_plan.canonical_sha256, 0) < 2
-            ):
-                transition_valid = (
-                    reservation_plan == previous_plan
-                    and reservation.get("cycle_role") == "PRIMARY_RETRY"
-                )
-            else:
-                transition_valid = (
-                    previous_attempt.get("status") == "FAILED_BEFORE_DNS"
-                    and previous_attempt.get("fallback_category")
-                    in {
-                        "SOURCE_UNAVAILABLE",
-                        "PARSER_FAIL_CLOSED",
-                        "NO_PROSPECTIVE_FIXTURE",
-                        "NO_H24_H2_WINDOW",
-                    }
-                    and reservation_plan.source.sport_key == "soccer_germany_bundesliga"
-                    and reservation.get("cycle_role") == "FALLBACK_INITIAL"
-                )
-        else:
             transition_valid = (
                 previous_attempt.get("status") == "FAILED_BEFORE_DNS"
-                and previous_attempt.get("failure_classification") == "TRANSIENT"
-                and plan_attempt_counts.get(previous_plan.canonical_sha256, 0) < 2
-                and reservation_plan == previous_plan
-                and reservation.get("cycle_role") == "FALLBACK_RETRY"
+                and previous_attempt.get("fallback_category")
+                in {
+                    "SOURCE_UNAVAILABLE",
+                    "PARSER_FAIL_CLOSED",
+                    "NO_PROSPECTIVE_FIXTURE",
+                    "NO_H24_H2_WINDOW",
+                }
+                and reservation_plan.source.sport_key == "soccer_germany_bundesliga"
+                and reservation.get("cycle_role") == "FALLBACK_INITIAL"
             )
+        else:
+            transition_valid = False
         if (
             set(reservation) != reservation_fields
             or set(attempt) != receipt_fields
@@ -1542,9 +1638,6 @@ def _load_first_c0_canary_bundle_v1(
         previous_recorded_at = attempted_at
         previous_attempt = attempt
         previous_plan = reservation_plan
-        plan_attempt_counts[reservation_plan.canonical_sha256] = (
-            plan_attempt_counts.get(reservation_plan.canonical_sha256, 0) + 1
-        )
     try:
         current_reservation = strict_json_object(payloads["current-cycle-read-reservation.json"])
         current_reserved_at = _parse_exact_utc_text(
@@ -1588,36 +1681,20 @@ def _load_first_c0_canary_bundle_v1(
             and current_reserved_at >= refresh_at
         )
     elif previous_plan.source.sport_key == "soccer_spain_la_liga":
-        if (
-            previous_attempt.get("status") == "FAILED_BEFORE_DNS"
-            and previous_attempt.get("failure_classification") == "TRANSIENT"
-            and plan_attempt_counts.get(previous_plan.canonical_sha256, 0) < 2
-        ):
-            current_transition_valid = (
-                source_plan == previous_plan
-                and current_reservation.get("cycle_role") == "PRIMARY_RETRY"
-            )
-        else:
-            current_transition_valid = (
-                previous_attempt.get("status") == "FAILED_BEFORE_DNS"
-                and previous_attempt.get("fallback_category")
-                in {
-                    "SOURCE_UNAVAILABLE",
-                    "PARSER_FAIL_CLOSED",
-                    "NO_PROSPECTIVE_FIXTURE",
-                    "NO_H24_H2_WINDOW",
-                }
-                and source_plan.source.sport_key == "soccer_germany_bundesliga"
-                and current_reservation.get("cycle_role") == "FALLBACK_INITIAL"
-            )
-    else:
         current_transition_valid = (
             previous_attempt.get("status") == "FAILED_BEFORE_DNS"
-            and previous_attempt.get("failure_classification") == "TRANSIENT"
-            and plan_attempt_counts.get(previous_plan.canonical_sha256, 0) < 2
-            and source_plan == previous_plan
-            and current_reservation.get("cycle_role") == "FALLBACK_RETRY"
+            and previous_attempt.get("fallback_category")
+            in {
+                "SOURCE_UNAVAILABLE",
+                "PARSER_FAIL_CLOSED",
+                "NO_PROSPECTIVE_FIXTURE",
+                "NO_H24_H2_WINDOW",
+            }
+            and source_plan.source.sport_key == "soccer_germany_bundesliga"
+            and current_reservation.get("cycle_role") == "FALLBACK_INITIAL"
         )
+    else:
+        current_transition_valid = False
     if (
         set(current_reservation) != reservation_fields
         or set(current_attempt) != receipt_fields
@@ -1659,7 +1736,7 @@ def _load_first_c0_canary_bundle_v1(
         or current_attempt.get("bundle_manifest_sha256") != _sha256(manifest_bytes)
         or current_attempt.get("official_fetch_receipt") != receipt
         or current_attempted_at
-        != _parse_exact_utc_text(
+        < _parse_exact_utc_text(
             manifest.get("published_at_utc"),
             code="FIRST_C0_CANARY_BUNDLE_LINEAGE_INVALID",
         )
@@ -1674,7 +1751,10 @@ def _load_first_c0_canary_bundle_v1(
     selected = selection.selected_candidate()
     expected_refresh = max(
         selection.selected_at_utc,
-        selected.window_not_before_utc - timedelta(seconds=60),
+        selected.window_not_before_utc
+        - timedelta(
+            seconds=(FIRST_C0_H2_PREFETCH_LEAD_SECONDS if selected.window_id == "H2" else 60)
+        ),
     )
     if (
         root.parent != Path(workspace.control_temp_root).absolute()
@@ -1697,10 +1777,45 @@ def _load_first_c0_canary_bundle_v1(
     ):
         raise PreDnsOrchestrationError("FIRST_C0_CANARY_BUNDLE_AUTHORITY_MISMATCH")
     expected_status = (
-        "CANARY_READY_NOW" if selected.status == "OPEN_SELECTABLE" else "CANARY_FUTURE_WINDOW"
+        "CANARY_READY_NOW"
+        if selected.status == "OPEN_SELECTABLE"
+        else "PREFETCHED_FUTURE_WINDOW"
+        if prefetched_schema
+        else "CANARY_FUTURE_WINDOW"
     )
     if (
         manifest.get("status") != expected_status
+        or (
+            prefetched_schema
+            and (
+                selected.window_id != "H2"
+                or selected.status != "FUTURE_NOT_OPEN"
+                or current_reserved_at
+                < selected.window_not_before_utc
+                - timedelta(seconds=FIRST_C0_H2_PREFETCH_LEAD_SECONDS)
+                or current_attempted_at >= selected.window_not_before_utc
+                or manifest.get("h2_window_duration_seconds") != FIRST_C0_H2_WINDOW_DURATION_SECONDS
+                or manifest.get("h2_prefetch_lead_seconds") != FIRST_C0_H2_PREFETCH_LEAD_SECONDS
+                or manifest.get("post_open_total_budget_seconds")
+                != FIRST_C0_POST_OPEN_TOTAL_BUDGET_SECONDS
+                or manifest.get("post_open_safety_reserve_seconds")
+                != FIRST_C0_POST_OPEN_SAFETY_RESERVE_SECONDS
+                or manifest.get("maximum_open_to_preflight_seconds")
+                != FIRST_C0_MAXIMUM_OPEN_TO_PREFLIGHT_SECONDS
+                or int(
+                    (
+                        selected.window_expires_at_utc - selected.window_not_before_utc
+                    ).total_seconds()
+                )
+                != FIRST_C0_H2_WINDOW_DURATION_SECONDS
+                or int(
+                    (
+                        selected.usable_expires_at_utc - selected.window_not_before_utc
+                    ).total_seconds()
+                )
+                < MINIMUM_READY_MARGIN_SECONDS + FIRST_C0_MAXIMUM_OPEN_TO_PREFLIGHT_SECONDS
+            )
+        )
         or manifest.get("selection_schema") != selection.schema_version
         or manifest.get("selection_purpose") != selection.purpose
         or manifest.get("selection_sha256") != selection.canonical_selection_hash
@@ -1823,6 +1938,281 @@ def _load_first_c0_canary_bundle_v1(
     )
 
 
+def load_first_c0_prefetch_handoff_v1(
+    path: Path,
+    loaded: LoadedPreDnsBundleV1,
+) -> FirstC0PrefetchedWindowHandoffV1:
+    """Load the append-only backlink that closes a prefetched H2 bundle."""
+
+    if (
+        loaded.manifest.get("schema_version") != FIRST_C0_PREFETCHED_WINDOW_BUNDLE_SCHEMA
+        or loaded.manifest.get("status") != "PREFETCHED_FUTURE_WINDOW"
+        or path.name != _PREFETCH_HANDOFF_NAME
+        or path.absolute().parent != Path(loaded.workspace_receipt.control_temp_root).absolute()
+    ):
+        raise PreDnsOrchestrationError("FIRST_C0_PREFETCH_HANDOFF_BOUNDARY_INVALID")
+    payload = _read_regular_bounded(path, maximum_bytes=MAXIMUM_BUNDLE_ARTIFACT_BYTES)
+    try:
+        handoff = FirstC0PrefetchedWindowHandoffV1.model_validate_json(payload)
+    except (TypeError, ValueError):
+        raise PreDnsOrchestrationError("FIRST_C0_PREFETCH_HANDOFF_INVALID") from None
+    if payload != _model_bytes(handoff):
+        raise PreDnsOrchestrationError("FIRST_C0_PREFETCH_HANDOFF_BYTES_NONCANONICAL")
+    selection = loaded.campaign_selection
+    if not isinstance(selection, FirstC0CanarySelectionV1):
+        raise PreDnsOrchestrationError("FIRST_C0_PREFETCH_HANDOFF_AUTHORITY_INVALID")
+    selected = selection.selected_candidate()
+    artifacts = loaded.manifest.get("artifact_sha256")
+    source_plan_sha256 = getattr(loaded.source_plan, "canonical_sha256", None)
+    source_observed = {target.source_observed_at_utc for target in loaded.target_sets[0].targets}
+    try:
+        published_at = _parse_exact_utc_text(
+            loaded.manifest.get("published_at_utc"),
+            code="FIRST_C0_PREFETCH_HANDOFF_AUTHORITY_INVALID",
+        )
+    except PreDnsOrchestrationError:
+        raise PreDnsOrchestrationError("FIRST_C0_PREFETCH_HANDOFF_AUTHORITY_INVALID") from None
+    if (
+        not isinstance(artifacts, dict)
+        or handoff.workspace_receipt_sha256 != loaded.workspace_receipt.canonical_receipt_hash
+        or handoff.mission_manifest_sha256 != loaded.mission_manifest.canonical_manifest_sha256()
+        or handoff.source_plan_sha256 != source_plan_sha256
+        or handoff.official_fetch_receipt_sha256 != artifacts.get("official-fetch-receipt.json")
+        or handoff.official_raw_sha256 != artifacts.get("official-source-raw.bin")
+        or handoff.official_evidence_sha256 != artifacts.get("official-schedule-evidence.json")
+        or handoff.fixture_target_set_sha256 != selected.fixture_target_set.canonical_set_hash
+        or handoff.campaign_selection_sha256 != selection.canonical_selection_hash
+        or handoff.selected_candidate_sha256 != selected.canonical_candidate_hash
+        or handoff.bundle_manifest_sha256 != loaded.manifest_sha256
+        or handoff.selected_window_id != selected.window_id
+        or handoff.prefetched_at_utc < published_at
+        or handoff.prefetched_at_utc >= handoff.window_not_before_utc
+        or handoff.window_not_before_utc != selected.window_not_before_utc
+        or handoff.window_expires_at_utc != selected.window_expires_at_utc
+        or handoff.selected_usable_expires_at_utc != selected.usable_expires_at_utc
+        or handoff.preparation_cycle_number != loaded.manifest.get("preparation_cycle")
+        or handoff.official_physical_reads_cumulative
+        != loaded.manifest.get("cumulative_official_reads")
+        or source_observed != {handoff.source_observed_at_utc}
+    ):
+        raise PreDnsOrchestrationError("FIRST_C0_PREFETCH_HANDOFF_AUTHORITY_INVALID")
+    return handoff
+
+
+def load_first_c0_window_open_revalidation_v1(
+    path: Path,
+    loaded: LoadedPreDnsBundleV1,
+    handoff: FirstC0PrefetchedWindowHandoffV1,
+    *,
+    handoff_path: Path,
+) -> FirstC0WindowOpenRevalidationV1:
+    if (
+        path.name != _WINDOW_OPEN_RECEIPT_NAME
+        or path.absolute().parent != Path(loaded.workspace_receipt.control_temp_root).absolute()
+    ):
+        raise PreDnsOrchestrationError("FIRST_C0_WINDOW_RECEIPT_BOUNDARY_INVALID")
+    payload = _read_regular_bounded(path, maximum_bytes=MAXIMUM_BUNDLE_ARTIFACT_BYTES)
+    handoff_payload = _read_regular_bounded(
+        handoff_path,
+        maximum_bytes=MAXIMUM_BUNDLE_ARTIFACT_BYTES,
+    )
+    try:
+        receipt = FirstC0WindowOpenRevalidationV1.model_validate_json(payload)
+    except (TypeError, ValueError):
+        raise PreDnsOrchestrationError("FIRST_C0_WINDOW_RECEIPT_INVALID") from None
+    selected = loaded.campaign_selection.selected_candidate()
+    if (
+        payload != _model_bytes(receipt)
+        or handoff_payload != _model_bytes(handoff)
+        or receipt.prefetch_handoff_sha256 != _sha256(handoff_payload)
+        or receipt.workspace_receipt_sha256 != loaded.workspace_receipt.canonical_receipt_hash
+        or receipt.mission_manifest_sha256 != loaded.mission_manifest.canonical_manifest_sha256()
+        or receipt.bundle_manifest_sha256 != loaded.manifest_sha256
+        or receipt.campaign_selection_sha256 != loaded.campaign_selection.canonical_selection_hash
+        or receipt.selected_candidate_sha256 != selected.canonical_candidate_hash
+        or receipt.source_observed_at_utc != handoff.source_observed_at_utc
+        or receipt.mission_expires_at_utc != loaded.mission_manifest.expires_at
+        or receipt.selected_usable_expires_at_utc != selected.usable_expires_at_utc
+        or receipt.window_not_before_utc != handoff.window_not_before_utc
+        or receipt.window_expires_at_utc != handoff.window_expires_at_utc
+        or receipt.status != "READY_NOW"
+    ):
+        raise PreDnsOrchestrationError("FIRST_C0_WINDOW_RECEIPT_AUTHORITY_INVALID")
+    return receipt
+
+
+def _prefetched_bundle_bytes_current_v1(loaded: LoadedPreDnsBundleV1) -> bool:
+    try:
+        manifest_payload = _read_regular_bounded(
+            loaded.directory / "bundle-manifest.json",
+            maximum_bytes=MAXIMUM_BUNDLE_ARTIFACT_BYTES,
+        )
+        if _sha256(manifest_payload) != loaded.manifest_sha256:
+            return False
+        manifest = strict_json_object(manifest_payload)
+        if manifest != dict(loaded.manifest):
+            return False
+        artifact_hashes = manifest.get("artifact_sha256")
+        if not isinstance(artifact_hashes, dict):
+            return False
+        expected_names = {"bundle-manifest.json", *artifact_hashes}
+        if {entry.name for entry in loaded.directory.iterdir()} != expected_names:
+            return False
+        return all(
+            isinstance(name, str)
+            and isinstance(expected, str)
+            and _sha256(
+                _read_regular_bounded(
+                    loaded.directory / _safe_name(name),
+                    maximum_bytes=MAXIMUM_BUNDLE_ARTIFACT_BYTES,
+                )
+            )
+            == expected
+            for name, expected in artifact_hashes.items()
+        )
+    except (OSError, PreDnsOrchestrationError, TypeError, ValueError):
+        return False
+
+
+def revalidate_prefetched_window_open_v1(
+    *,
+    loaded: LoadedPreDnsBundleV1,
+    handoff: FirstC0PrefetchedWindowHandoffV1,
+    handoff_path: Path,
+    output_path: Path,
+    wait_started_at_utc: datetime,
+    wait_started_monotonic: float,
+    clock_path_valid: bool = True,
+    clock: ClockV1 = lambda: datetime.now(UTC),
+    monotonic: MonotonicV1 = time.monotonic,
+    workspace_validator: WorkspaceValidatorV1 = _validate_workspace_default,
+) -> FirstC0WindowOpenRevalidationV1:
+    """Activate one immutable future bundle using only local clocks and bytes."""
+
+    control_root = Path(loaded.workspace_receipt.control_temp_root).absolute()
+    if (
+        output_path.absolute().parent != control_root
+        or output_path.name != _WINDOW_OPEN_RECEIPT_NAME
+    ):
+        raise PreDnsOrchestrationError("FIRST_C0_WINDOW_RECEIPT_BOUNDARY_INVALID")
+    if (
+        handoff_path.absolute().parent != control_root
+        or handoff_path.name != _PREFETCH_HANDOFF_NAME
+    ):
+        raise PreDnsOrchestrationError("FIRST_C0_PREFETCH_HANDOFF_BOUNDARY_INVALID")
+    workspace_current = True
+    try:
+        workspace_validator(loaded.workspace_receipt)
+    except Exception:
+        workspace_current = False
+    bundle_current = _prefetched_bundle_bytes_current_v1(loaded)
+    try:
+        handoff_current = _read_regular_bounded(
+            handoff_path,
+            maximum_bytes=MAXIMUM_BUNDLE_ARTIFACT_BYTES,
+        ) == _model_bytes(handoff)
+    except PreDnsOrchestrationError:
+        handoff_current = False
+    checked = _utc(clock(), code="FIRST_C0_WINDOW_CLOCK_INVALID")
+    checked_monotonic = float(monotonic())
+    started_monotonic = float(wait_started_monotonic)
+    monotonic_elapsed = checked_monotonic - started_monotonic
+    started = _utc(wait_started_at_utc, code="FIRST_C0_WINDOW_CLOCK_INVALID")
+    wall_elapsed = (checked - started).total_seconds()
+    clock_divergence = abs(wall_elapsed - monotonic_elapsed)
+    monotonic_values_valid = (
+        math.isfinite(started_monotonic)
+        and started_monotonic >= 0
+        and math.isfinite(checked_monotonic)
+        and checked_monotonic >= 0
+        and math.isfinite(monotonic_elapsed)
+    )
+    receipt_started_monotonic = started_monotonic if monotonic_values_valid else 0.0
+    receipt_monotonic_elapsed = monotonic_elapsed if monotonic_values_valid else 0.0
+    receipt_checked_monotonic = receipt_started_monotonic + receipt_monotonic_elapsed
+    receipt_clock_divergence = abs(wall_elapsed - receipt_monotonic_elapsed)
+    receipt_clock_path_valid = clock_path_valid and monotonic_values_valid
+    selected = loaded.campaign_selection.selected_candidate()
+    source_delta = checked - handoff.source_observed_at_utc
+    source_age = int(source_delta.total_seconds())
+    source_fresh = (
+        timedelta(0) <= source_delta <= timedelta(seconds=handoff.maximum_source_age_seconds)
+    )
+    mission_current = checked < loaded.mission_manifest.expires_at
+    usable_ceiling = selected.usable_expires_at_utc
+    usable_margin = int((usable_ceiling - checked).total_seconds())
+    selection_current = True
+    try:
+        loaded.campaign_selection.assert_selected_candidate_current(checked)
+    except ValueError:
+        selection_current = False
+    if (
+        not receipt_clock_path_valid
+        or monotonic_elapsed < 0
+        or wall_elapsed < 0
+        or clock_divergence > 2.0
+    ):
+        status: Literal["READY_NOW", "EXPIRED", "CLOCK_INVALID", "STALE", "HARD_STOP"] = (
+            "CLOCK_INVALID"
+        )
+    elif checked >= handoff.window_expires_at_utc or not mission_current:
+        status = "EXPIRED"
+    elif not source_fresh:
+        status = "STALE"
+    elif (
+        not workspace_current
+        or not bundle_current
+        or not handoff_current
+        or not selection_current
+        or checked < handoff.window_not_before_utc
+        or checked - handoff.window_not_before_utc
+        > timedelta(seconds=FIRST_C0_MAXIMUM_OPEN_TO_PREFLIGHT_SECONDS)
+        or usable_margin < MINIMUM_READY_MARGIN_SECONDS
+    ):
+        status = "HARD_STOP"
+    else:
+        status = "READY_NOW"
+    try:
+        receipt = FirstC0WindowOpenRevalidationV1.issue(
+            prefetch_handoff_sha256=_sha256(_model_bytes(handoff)),
+            workspace_receipt_sha256=loaded.workspace_receipt.canonical_receipt_hash,
+            mission_manifest_sha256=loaded.mission_manifest.canonical_manifest_sha256(),
+            bundle_manifest_sha256=loaded.manifest_sha256,
+            campaign_selection_sha256=loaded.campaign_selection.canonical_selection_hash,
+            selected_candidate_sha256=selected.canonical_candidate_hash,
+            wait_started_at_utc=started,
+            checked_at_utc=checked,
+            source_observed_at_utc=handoff.source_observed_at_utc,
+            mission_expires_at_utc=loaded.mission_manifest.expires_at,
+            selected_usable_expires_at_utc=usable_ceiling,
+            wait_started_monotonic=receipt_started_monotonic,
+            window_open_monotonic=(
+                receipt_started_monotonic
+                + (handoff.window_not_before_utc - started).total_seconds()
+            ),
+            checked_monotonic=receipt_checked_monotonic,
+            monotonic_elapsed_seconds=receipt_monotonic_elapsed,
+            wall_elapsed_seconds=wall_elapsed,
+            clock_divergence_seconds=receipt_clock_divergence,
+            window_not_before_utc=handoff.window_not_before_utc,
+            window_expires_at_utc=handoff.window_expires_at_utc,
+            usable_margin_seconds=usable_margin,
+            source_age_seconds=source_age,
+            source_fresh=source_fresh,
+            mission_current=mission_current,
+            workspace_current=workspace_current,
+            bundle_current=bundle_current and handoff_current,
+            handoff_current=handoff_current,
+            selection_current=selection_current,
+            clock_path_valid=receipt_clock_path_valid,
+            status=status,
+        )
+    except (TypeError, ValueError):
+        raise PreDnsOrchestrationError("FIRST_C0_WINDOW_RECEIPT_BUILD_FAILED") from None
+    _write_exclusive(output_path, _model_bytes(receipt))
+    return receipt
+
+
 def load_pre_dns_bundle_v1(
     directory: Path,
     *,
@@ -1837,7 +2227,10 @@ def load_pre_dns_bundle_v1(
         manifest = strict_json_object(manifest_bytes)
     except (TypeError, ValueError):
         raise PreDnsOrchestrationError("PRE_DNS_BUNDLE_MANIFEST_INVALID") from None
-    if manifest.get("schema_version") == FIRST_C0_CANARY_BUNDLE_SCHEMA:
+    if manifest.get("schema_version") in {
+        FIRST_C0_CANARY_BUNDLE_SCHEMA,
+        FIRST_C0_PREFETCHED_WINDOW_BUNDLE_SCHEMA,
+    }:
         return _load_first_c0_canary_bundle_v1(
             root,
             manifest_bytes,
@@ -2293,7 +2686,7 @@ def load_pre_dns_bundle_v1(
     )
 
 
-def prepare_owner_review_pack_inputs_v1(
+def _prepare_owner_review_pack_inputs_v1(
     *,
     workspace_receipt: RealCaptureWorkspaceReceiptV1,
     workspace_receipt_bytes: bytes,
@@ -2749,6 +3142,30 @@ def prepare_owner_review_pack_inputs_v1(
     )
 
 
+def prepare_owner_review_pack_inputs_v1(
+    *,
+    workspace_receipt: RealCaptureWorkspaceReceiptV1,
+    workspace_receipt_bytes: bytes,
+    mission_manifest: RealExecutionMissionManifestV1,
+    mission_manifest_bytes: bytes,
+    source_plan_bytes: bytes,
+    corpus_evidence_reader: CorpusEvidenceReaderV1,
+    output_parent: Path,
+    reviews: Mapping[str, bytes],
+    fetcher: OfficialScheduleFetcher,
+    marker_inspector: MarkerInspectorV1,
+    clock: ClockV1 = lambda: datetime.now(UTC),
+    monotonic: MonotonicV1 = time.monotonic,
+    workspace_validator: WorkspaceValidatorV1 = _validate_workspace_default,
+    evidence_builder: EvidenceBuilderV1 = build_official_schedule_evidence,
+    pdf_text_extractor: PdfTextExtractor | None = None,
+    limits: PreDnsLimitsV1 = PreDnsLimitsV1(),
+) -> PreDnsResultV1:
+    """Run the historical five-league convergence outside current First-C0 V5."""
+
+    raise PreDnsOrchestrationError("FIRST_C0_SINGLE_OWNER_ENTRYPOINT_REQUIRED")
+
+
 def _owner_pack_artifacts(pack: OwnerReviewPackV1) -> dict[str, tuple[BaseModel, str]]:
     return {
         "owner_review_pack": (pack, pack.canonical_pack_hash),
@@ -2836,7 +3253,10 @@ def preflight_owner_review_pack_once_v1(
     owner_present_for_review: bool,
     execute: bool,
     binding_ttl_seconds: int = 900,
+    prefetch_handoff_path: Path | None = None,
+    window_open_receipt_path: Path | None = None,
     clock: ClockV1 = lambda: datetime.now(UTC),
+    monotonic: MonotonicV1 = time.monotonic,
     workspace_validator: WorkspaceValidatorV1 = _validate_workspace_default,
     raw_evidence_verifier: RawEvidenceVerifierV1 = verify_raw_official_evidence_v1,
 ) -> tuple[RunnerPreflightV1, LoadedPreDnsBundleV1 | None]:
@@ -2844,6 +3264,7 @@ def preflight_owner_review_pack_once_v1(
     errors: list[str] = []
     loaded: LoadedPreDnsBundleV1 | None = None
     observed_marker: MarkerInspectionV1 | None = None
+    prefetched_receipt: FirstC0WindowOpenRevalidationV1 | None = None
     try:
         loaded = load_pre_dns_bundle_v1(
             bundle_directory,
@@ -2866,6 +3287,33 @@ def preflight_owner_review_pack_once_v1(
     except Exception:
         errors.append("PROVIDER_MARKER_INSPECTION_FAILED")
     if loaded is not None:
+        prefetched = (
+            loaded.manifest.get("schema_version") == FIRST_C0_PREFETCHED_WINDOW_BUNDLE_SCHEMA
+        )
+        if prefetched:
+            if prefetch_handoff_path is None or window_open_receipt_path is None:
+                errors.append("FIRST_C0_WINDOW_RECEIPT_REQUIRED")
+            else:
+                try:
+                    prefetch_handoff = load_first_c0_prefetch_handoff_v1(
+                        prefetch_handoff_path,
+                        loaded,
+                    )
+                    prefetched_receipt = load_first_c0_window_open_revalidation_v1(
+                        window_open_receipt_path,
+                        loaded,
+                        prefetch_handoff,
+                        handoff_path=prefetch_handoff_path,
+                    )
+                    loaded = replace(
+                        loaded,
+                        prefetch_handoff=prefetch_handoff,
+                        prefetch_handoff_path=prefetch_handoff_path,
+                        window_open_receipt=prefetched_receipt,
+                        window_open_receipt_path=window_open_receipt_path,
+                    )
+                except PreDnsOrchestrationError as error:
+                    errors.append(error.code)
         if observed_marker is None or not _first_c0_canary_marker_authority_matches_v1(
             observed_marker,
             loaded.marker_inspection,
@@ -2876,6 +3324,20 @@ def preflight_owner_review_pack_once_v1(
         if loaded.mission_manifest != mission_manifest:
             errors.append("MISSION_MANIFEST_BUNDLE_MISMATCH")
         selection = loaded.campaign_selection
+        if (
+            isinstance(selection, FirstC0CanarySelectionV1)
+            and selection.selected_ready_at_selection is False
+            and not prefetched
+        ):
+            errors.append("FIRST_C0_WINDOW_RECEIPT_REQUIRED")
+        selected = selection.selected_candidate()
+        if (
+            isinstance(selection, FirstC0CanarySelectionV1)
+            and selected.window_id == "H2"
+            and not prefetched
+        ):
+            errors.append("FIRST_C0_WINDOW_RECEIPT_REQUIRED")
+            errors.append("FIRST_C0_H2_PREFETCH_REQUIRED_BEFORE_WINDOW_OPEN")
         try:
             selection.assert_selected_candidate_current(checked)
         except ValueError as error:
@@ -2883,7 +3345,6 @@ def preflight_owner_review_pack_once_v1(
             errors.append(
                 "FUTURE_WINDOW_NOT_OPEN" if "NOT_OPEN" in code else "CAMPAIGN_SELECTION_NOT_CURRENT"
             )
-        selected = selection.selected_candidate()
         usable_margin = int((selected.usable_expires_at_utc - checked).total_seconds())
         if usable_margin < MINIMUM_READY_MARGIN_SECONDS:
             errors.append("OWNER_REVIEW_USABLE_MARGIN_INSUFFICIENT")
@@ -2930,13 +3391,73 @@ def preflight_owner_review_pack_once_v1(
             errors.append("OWNER_REVIEW_PACK_STAGING_EXISTS")
     except PreDnsOrchestrationError:
         errors.append("ATOMIC_RUNNER_OUTPUT_BOUNDARY_INVALID")
-    if execute and not owner_present_for_review:
+    if type(execute) is not bool or type(owner_present_for_review) is not bool:
+        errors.append("OWNER_EXECUTION_GATE_INVALID")
+    if execute is True and owner_present_for_review is not True:
         errors.append("OWNER_PRESENCE_REQUIRED")
     if (
         type(binding_ttl_seconds) is not int
         or not MINIMUM_READY_MARGIN_SECONDS <= binding_ttl_seconds <= 900
     ):
         errors.append("PROVIDER_NETWORK_BINDING_TTL_INSUFFICIENT")
+    if prefetched_receipt is not None and loaded is not None:
+        checked = _utc(clock(), code="ATOMIC_RUNNER_CLOCK_INVALID")
+        checked_monotonic = float(monotonic())
+        wall_since_activation = (checked - prefetched_receipt.checked_at_utc).total_seconds()
+        monotonic_since_activation = checked_monotonic - prefetched_receipt.checked_monotonic
+        if (
+            not math.isfinite(checked_monotonic)
+            or not math.isfinite(monotonic_since_activation)
+            or wall_since_activation < 0
+            or monotonic_since_activation < 0
+            or abs(wall_since_activation - monotonic_since_activation) > 2.0
+        ):
+            errors.append("FIRST_C0_PREFLIGHT_CLOCK_INVALID")
+        if (
+            checked - prefetched_receipt.window_not_before_utc
+            > timedelta(seconds=FIRST_C0_MAXIMUM_OPEN_TO_PREFLIGHT_SECONDS)
+            or checked_monotonic - prefetched_receipt.window_open_monotonic
+            > FIRST_C0_MAXIMUM_OPEN_TO_PREFLIGHT_SECONDS
+        ):
+            errors.append("FIRST_C0_OPEN_TO_PREFLIGHT_BUDGET_EXCEEDED")
+        try:
+            loaded.campaign_selection.assert_selected_candidate_current(checked)
+        except ValueError:
+            errors.append("CAMPAIGN_SELECTION_NOT_CURRENT")
+        usable_margin = int(
+            (
+                loaded.campaign_selection.selected_candidate().usable_expires_at_utc - checked
+            ).total_seconds()
+        )
+        if usable_margin < MINIMUM_READY_MARGIN_SECONDS:
+            errors.append("OWNER_REVIEW_USABLE_MARGIN_INSUFFICIENT")
+    if loaded is not None:
+        selected = loaded.campaign_selection.selected_candidate()
+        if (
+            isinstance(loaded.campaign_selection, FirstC0CanarySelectionV1)
+            and selected.window_id == "H2"
+            and prefetched_receipt is None
+        ):
+            checked = _utc(clock(), code="ATOMIC_RUNNER_CLOCK_INVALID")
+            try:
+                loaded.campaign_selection.assert_selected_candidate_current(checked)
+            except ValueError as error:
+                code = str(error)
+                errors.append(
+                    "FUTURE_WINDOW_NOT_OPEN"
+                    if "NOT_OPEN" in code
+                    else "CAMPAIGN_SELECTION_NOT_CURRENT"
+                )
+            usable_margin = int((selected.usable_expires_at_utc - checked).total_seconds())
+            if usable_margin < MINIMUM_READY_MARGIN_SECONDS:
+                errors.append("OWNER_REVIEW_USABLE_MARGIN_INSUFFICIENT")
+        if (
+            isinstance(loaded.campaign_selection, FirstC0CanarySelectionV1)
+            and selected.window_id == "H2"
+            and checked - selected.window_not_before_utc
+            > timedelta(seconds=FIRST_C0_MAXIMUM_OPEN_TO_PREFLIGHT_SECONDS)
+        ):
+            errors.append("FIRST_C0_OPEN_TO_PREFLIGHT_BUDGET_EXCEEDED")
     future = "FUTURE_WINDOW_NOT_OPEN" in errors
     accepted = not errors
     status: RunnerStatusV1 = (
@@ -2974,6 +3495,7 @@ def _final_execute_preflight_v1(
     marker_inspector: MarkerInspectorV1,
     binding_ttl_seconds: int,
     clock: ClockV1,
+    monotonic: MonotonicV1,
     workspace_validator: WorkspaceValidatorV1,
 ) -> RunnerPreflightV1:
     """Resample every mutable pre-DNS gate immediately before resolver execution."""
@@ -3048,11 +3570,63 @@ def _final_execute_preflight_v1(
         errors.append(
             "FUTURE_WINDOW_NOT_OPEN" if "NOT_OPEN" in code else "CAMPAIGN_SELECTION_NOT_CURRENT"
         )
-    usable_margin = int(
-        (selection.selected_candidate().usable_expires_at_utc - checked).total_seconds()
-    )
+    selected = selection.selected_candidate()
+    usable_margin = int((selected.usable_expires_at_utc - checked).total_seconds())
     if usable_margin < MINIMUM_READY_MARGIN_SECONDS:
         errors.append("OWNER_REVIEW_USABLE_MARGIN_INSUFFICIENT")
+    if (
+        isinstance(selection, FirstC0CanarySelectionV1)
+        and selected.window_id == "H2"
+        and checked - selected.window_not_before_utc
+        > timedelta(seconds=FIRST_C0_MAXIMUM_OPEN_TO_PREFLIGHT_SECONDS)
+    ):
+        errors.append("FIRST_C0_OPEN_TO_PREFLIGHT_BUDGET_EXCEEDED")
+    receipt = loaded.window_open_receipt
+    if (
+        isinstance(selection, FirstC0CanarySelectionV1)
+        and selected.window_id == "H2"
+        and receipt is None
+    ):
+        errors.append("FIRST_C0_H2_PREFETCH_REQUIRED_BEFORE_WINDOW_OPEN")
+    if receipt is not None:
+        try:
+            if (
+                loaded.prefetch_handoff is None
+                or loaded.prefetch_handoff_path is None
+                or loaded.window_open_receipt_path is None
+                or _read_regular_bounded(
+                    loaded.prefetch_handoff_path,
+                    maximum_bytes=MAXIMUM_BUNDLE_ARTIFACT_BYTES,
+                )
+                != _model_bytes(loaded.prefetch_handoff)
+                or _read_regular_bounded(
+                    loaded.window_open_receipt_path,
+                    maximum_bytes=MAXIMUM_BUNDLE_ARTIFACT_BYTES,
+                )
+                != _model_bytes(receipt)
+                or not _prefetched_bundle_bytes_current_v1(loaded)
+            ):
+                errors.append("FIRST_C0_PREFETCH_AUTHORITY_DRIFT")
+        except PreDnsOrchestrationError:
+            errors.append("FIRST_C0_PREFETCH_AUTHORITY_DRIFT")
+        current_monotonic = float(monotonic())
+        wall_since_activation = (checked - receipt.checked_at_utc).total_seconds()
+        monotonic_since_activation = current_monotonic - receipt.checked_monotonic
+        if (
+            not math.isfinite(current_monotonic)
+            or not math.isfinite(monotonic_since_activation)
+            or wall_since_activation < 0
+            or monotonic_since_activation < 0
+            or abs(wall_since_activation - monotonic_since_activation) > 2.0
+        ):
+            errors.append("FIRST_C0_PREFLIGHT_CLOCK_INVALID")
+        if (
+            checked - receipt.window_not_before_utc
+            > timedelta(seconds=FIRST_C0_MAXIMUM_OPEN_TO_PREFLIGHT_SECONDS)
+            or current_monotonic - receipt.window_open_monotonic
+            > FIRST_C0_MAXIMUM_OPEN_TO_PREFLIGHT_SECONDS
+        ):
+            errors.append("FIRST_C0_OPEN_TO_PREFLIGHT_BUDGET_EXCEEDED")
     future = "FUTURE_WINDOW_NOT_OPEN" in errors
     accepted = not errors
     status: RunnerStatusV1 = (
@@ -3123,7 +3697,7 @@ def _write_runner_receipt(
     )
 
 
-def run_owner_review_pack_once_v1(
+def _run_owner_review_pack_once_v1(
     *,
     bundle_directory: Path,
     workspace_receipt: RealCaptureWorkspaceReceiptV1,
@@ -3135,30 +3709,80 @@ def run_owner_review_pack_once_v1(
     execute: bool = False,
     owner_present_for_review: bool = False,
     binding_ttl_seconds: int = 900,
+    prefetch_handoff_path: Path | None = None,
+    window_open_receipt_path: Path | None = None,
     clock: ClockV1 = lambda: datetime.now(UTC),
     monotonic: MonotonicV1 = time.monotonic,
+    duration_monotonic: MonotonicV1 | None = None,
+    clock_path_anchor_wall_utc: datetime | None = None,
+    clock_path_anchor_monotonic: float | None = None,
     workspace_validator: WorkspaceValidatorV1 = _validate_workspace_default,
-    binding_preparer: BindingPreparerV1 = prepare_provider_network_binding_once_v1,
-    pack_builder: PackBuilderV1 = build_owner_review_pack_v1,
-    pack_writer: PackWriterV1 = write_owner_review_pack_v1,
+    binding_preparer: BindingPreparerV1 = _prepare_provider_network_binding_after_atomic_preflight_v1,
+    pack_builder: PackBuilderV1 = _build_first_c0_owner_review_pack_after_atomic_binding_v1,
+    pack_writer: PackWriterV1 = _write_first_c0_owner_review_pack_after_atomic_binding_v1,
     raw_evidence_verifier: RawEvidenceVerifierV1 = verify_raw_official_evidence_v1,
+    v5_single_owner_entrypoint: bool,
 ) -> AtomicRunnerResultV1:
     """Default to read-only preflight; execute one non-retryable DNS-to-pack transaction."""
 
-    preflight, loaded = preflight_owner_review_pack_once_v1(
-        bundle_directory=bundle_directory,
-        workspace_receipt=workspace_receipt,
-        mission_manifest=mission_manifest,
-        output_binding_path=output_binding_path,
-        output_pack_directory=output_pack_directory,
-        marker_inspector=marker_inspector,
-        owner_present_for_review=owner_present_for_review,
-        execute=execute,
-        binding_ttl_seconds=binding_ttl_seconds,
+    raw_monotonic = monotonic
+    budget_monotonic = monotonic if duration_monotonic is None else duration_monotonic
+    guarded_clock_path = _GuardedClockPathV1(
         clock=clock,
-        workspace_validator=workspace_validator,
-        raw_evidence_verifier=raw_evidence_verifier,
+        monotonic=raw_monotonic,
+        anchor_wall_utc=clock_path_anchor_wall_utc,
+        anchor_monotonic=clock_path_anchor_monotonic,
     )
+    guarded_clock = guarded_clock_path.clock
+    paired_monotonic = guarded_clock_path.paired_monotonic
+
+    def sample_budget_monotonic() -> float:
+        sampled = float(budget_monotonic())
+        if not math.isfinite(sampled):
+            raise PreDnsOrchestrationError("DNS_TO_PACK_MONOTONIC_INVALID")
+        return sampled
+
+    try:
+        preflight, loaded = preflight_owner_review_pack_once_v1(
+            bundle_directory=bundle_directory,
+            workspace_receipt=workspace_receipt,
+            mission_manifest=mission_manifest,
+            output_binding_path=output_binding_path,
+            output_pack_directory=output_pack_directory,
+            marker_inspector=marker_inspector,
+            owner_present_for_review=owner_present_for_review,
+            execute=execute,
+            binding_ttl_seconds=binding_ttl_seconds,
+            prefetch_handoff_path=prefetch_handoff_path,
+            window_open_receipt_path=window_open_receipt_path,
+            clock=guarded_clock,
+            monotonic=paired_monotonic,
+            workspace_validator=workspace_validator,
+            raw_evidence_verifier=raw_evidence_verifier,
+        )
+    except PreDnsOrchestrationError as error:
+        if error.code != "FIRST_C0_PREFLIGHT_CLOCK_INVALID":
+            raise
+        preflight = RunnerPreflightV1(
+            accepted=False,
+            status="PREFLIGHT_REJECTED",
+            errors=(error.code,),
+            checked_at_utc=(
+                guarded_clock_path.last_observed_wall_utc or mission_manifest.expires_at
+            ),
+            usable_margin_seconds=0,
+        )
+        loaded = None
+    if execute is True and loaded is not None and v5_single_owner_entrypoint is not True:
+        preflight = RunnerPreflightV1(
+            accepted=False,
+            status="PREFLIGHT_REJECTED",
+            errors=tuple(
+                dict.fromkeys((*preflight.errors, "FIRST_C0_SINGLE_OWNER_ENTRYPOINT_REQUIRED"))
+            ),
+            checked_at_utc=preflight.checked_at_utc,
+            usable_margin_seconds=preflight.usable_margin_seconds,
+        )
     if not execute or not preflight.accepted or loaded is None:
         return AtomicRunnerResultV1(
             status=preflight.status,
@@ -3170,17 +3794,31 @@ def run_owner_review_pack_once_v1(
             receipt_path=None,
             hard_stop_code=None,
         )
-    preflight = _final_execute_preflight_v1(
-        loaded=loaded,
-        workspace_receipt=workspace_receipt,
-        mission_manifest=mission_manifest,
-        output_binding_path=output_binding_path,
-        output_pack_directory=output_pack_directory,
-        marker_inspector=marker_inspector,
-        binding_ttl_seconds=binding_ttl_seconds,
-        clock=clock,
-        workspace_validator=workspace_validator,
-    )
+    try:
+        preflight = _final_execute_preflight_v1(
+            loaded=loaded,
+            workspace_receipt=workspace_receipt,
+            mission_manifest=mission_manifest,
+            output_binding_path=output_binding_path,
+            output_pack_directory=output_pack_directory,
+            marker_inspector=marker_inspector,
+            binding_ttl_seconds=binding_ttl_seconds,
+            clock=guarded_clock,
+            monotonic=paired_monotonic,
+            workspace_validator=workspace_validator,
+        )
+    except PreDnsOrchestrationError as error:
+        if error.code != "FIRST_C0_PREFLIGHT_CLOCK_INVALID":
+            raise
+        preflight = RunnerPreflightV1(
+            accepted=False,
+            status="PREFLIGHT_REJECTED",
+            errors=(error.code,),
+            checked_at_utc=(
+                guarded_clock_path.last_observed_wall_utc or mission_manifest.expires_at
+            ),
+            usable_margin_seconds=0,
+        )
     if not preflight.accepted:
         return AtomicRunnerResultV1(
             status=preflight.status,
@@ -3199,7 +3837,7 @@ def run_owner_review_pack_once_v1(
     )
 
     def binding_clock() -> datetime:
-        current = _utc(clock(), code="ATOMIC_RUNNER_CLOCK_INVALID")
+        current = _utc(guarded_clock(), code="ATOMIC_RUNNER_CLOCK_INVALID")
         usable_ceiling = min(
             mission_manifest.expires_at,
             selected.usable_expires_at_utc,
@@ -3211,6 +3849,33 @@ def run_owner_review_pack_once_v1(
             selection.assert_selected_candidate_current(current)
         except ValueError:
             raise PreDnsOrchestrationError("CAMPAIGN_SELECTION_NOT_CURRENT") from None
+        if (
+            isinstance(selection, FirstC0CanarySelectionV1)
+            and selected.window_id == "H2"
+            and current - selected.window_not_before_utc
+            > timedelta(seconds=FIRST_C0_MAXIMUM_OPEN_TO_PREFLIGHT_SECONDS)
+        ):
+            raise PreDnsOrchestrationError("FIRST_C0_OPEN_TO_PREFLIGHT_BUDGET_EXCEEDED")
+        receipt = loaded.window_open_receipt
+        if receipt is not None:
+            current_monotonic = float(paired_monotonic())
+            wall_since_activation = (current - receipt.checked_at_utc).total_seconds()
+            monotonic_since_activation = current_monotonic - receipt.checked_monotonic
+            if (
+                not math.isfinite(current_monotonic)
+                or not math.isfinite(monotonic_since_activation)
+                or wall_since_activation < 0
+                or monotonic_since_activation < 0
+                or abs(wall_since_activation - monotonic_since_activation) > 2.0
+            ):
+                raise PreDnsOrchestrationError("FIRST_C0_PREFLIGHT_CLOCK_INVALID")
+            if (
+                current - receipt.window_not_before_utc
+                > timedelta(seconds=FIRST_C0_MAXIMUM_OPEN_TO_PREFLIGHT_SECONDS)
+                or current_monotonic - receipt.window_open_monotonic
+                > FIRST_C0_MAXIMUM_OPEN_TO_PREFLIGHT_SECONDS
+            ):
+                raise PreDnsOrchestrationError("FIRST_C0_OPEN_TO_PREFLIGHT_BUDGET_EXCEEDED")
         return current
 
     try:
@@ -3263,7 +3928,7 @@ def run_owner_review_pack_once_v1(
             )
         )
         resolver_completed = True
-        resolver_completed_monotonic = monotonic()
+        resolver_completed_monotonic = sample_budget_monotonic()
         failure_phase = "BINDING_VALIDATION"
         return result
 
@@ -3299,7 +3964,7 @@ def run_owner_review_pack_once_v1(
             raise PreDnsOrchestrationError("PROVIDER_NETWORK_BINDING_PERSISTENCE_INVALID")
         binding_persisted = True
         failure_phase = "PACK_BUILD"
-        generated = _utc(clock(), code="ATOMIC_RUNNER_CLOCK_INVALID")
+        generated = _utc(guarded_clock(), code="ATOMIC_RUNNER_CLOCK_INVALID")
         nonce_hash = canonical_sha256(
             {
                 "workspace": workspace_receipt.canonical_receipt_hash,
@@ -3310,8 +3975,11 @@ def run_owner_review_pack_once_v1(
                 "generated_at": _utc_text(generated),
             }
         )
-        pack_started = monotonic()
-        if pack_started - resolver_completed_monotonic > MAXIMUM_DNS_TO_PACK_START_SECONDS:
+        pack_started = sample_budget_monotonic()
+        pack_start_elapsed = pack_started - resolver_completed_monotonic
+        if pack_start_elapsed < 0:
+            raise PreDnsOrchestrationError("DNS_TO_PACK_MONOTONIC_INVALID")
+        if pack_start_elapsed > MAXIMUM_DNS_TO_PACK_START_SECONDS:
             raise PreDnsOrchestrationError("DNS_TO_PACK_START_BUDGET_EXCEEDED")
         pack_builds += 1
         pack = pack_builder(
@@ -3334,15 +4002,21 @@ def run_owner_review_pack_once_v1(
         verify_owner_review_pack_artifacts_v1(staging, pack, paths)
         pack_staged = True
         workspace_validator(workspace_receipt)
-        completed = _utc(clock(), code="ATOMIC_RUNNER_CLOCK_INVALID")
+        completed = _utc(guarded_clock(), code="ATOMIC_RUNNER_CLOCK_INVALID")
         assert_owner_review_pack_completion_current_v1(pack, completed)
-        if monotonic() - resolver_completed_monotonic > MAXIMUM_DNS_TO_PACK_COMPLETION_SECONDS:
+        completion_elapsed = sample_budget_monotonic() - resolver_completed_monotonic
+        if completion_elapsed < 0:
+            raise PreDnsOrchestrationError("DNS_TO_PACK_MONOTONIC_INVALID")
+        if completion_elapsed > MAXIMUM_DNS_TO_PACK_COMPLETION_SECONDS:
             raise PreDnsOrchestrationError("DNS_TO_PACK_COMPLETION_BUDGET_EXCEEDED")
         if os.path.lexists(output_pack_directory):
             raise PreDnsOrchestrationError("OWNER_REVIEW_PACK_OUTPUT_EXISTS")
         failure_phase = "PACK_PUBLICATION"
         receipt = _runner_receipt_path(output_pack_directory, hard_stop=False)
-        if monotonic() - resolver_completed_monotonic > MAXIMUM_DNS_TO_PACK_COMPLETION_SECONDS:
+        publication_elapsed = sample_budget_monotonic() - resolver_completed_monotonic
+        if publication_elapsed < 0:
+            raise PreDnsOrchestrationError("DNS_TO_PACK_MONOTONIC_INVALID")
+        if publication_elapsed > MAXIMUM_DNS_TO_PACK_COMPLETION_SECONDS:
             raise PreDnsOrchestrationError("DNS_TO_PACK_COMPLETION_BUDGET_EXCEEDED")
         os.rename(staging, output_pack_directory)
         publication_completed = True
@@ -3382,7 +4056,9 @@ def run_owner_review_pack_once_v1(
             _write_runner_receipt(
                 receipt,
                 status="POST_DNS_HARD_STOP",
-                observed_at_utc=_utc(clock(), code="ATOMIC_RUNNER_CLOCK_INVALID"),
+                observed_at_utc=(
+                    guarded_clock_path.last_trusted_wall_utc or preflight.checked_at_utc
+                ),
                 bundle_sha256=loaded.manifest_sha256,
                 binding_sha256=(binding.canonical_binding_hash if binding is not None else None),
                 pack_sha256=(pack.canonical_pack_hash if pack is not None else None),
@@ -3408,6 +4084,112 @@ def run_owner_review_pack_once_v1(
             receipt_path=receipt,
             hard_stop_code=code,
         )
+
+
+def run_owner_review_pack_once_v1(
+    *,
+    bundle_directory: Path,
+    workspace_receipt: RealCaptureWorkspaceReceiptV1,
+    mission_manifest: RealExecutionMissionManifestV1,
+    output_binding_path: Path,
+    output_pack_directory: Path,
+    resolver: ResolverV1,
+    marker_inspector: MarkerInspectorV1,
+    execute: bool = False,
+    owner_present_for_review: bool = False,
+    binding_ttl_seconds: int = 900,
+    prefetch_handoff_path: Path | None = None,
+    window_open_receipt_path: Path | None = None,
+    clock: ClockV1 = lambda: datetime.now(UTC),
+    monotonic: MonotonicV1 = time.monotonic,
+    duration_monotonic: MonotonicV1 | None = None,
+    clock_path_anchor_wall_utc: datetime | None = None,
+    clock_path_anchor_monotonic: float | None = None,
+    workspace_validator: WorkspaceValidatorV1 = _validate_workspace_default,
+    binding_preparer: BindingPreparerV1 = _prepare_provider_network_binding_after_atomic_preflight_v1,
+    pack_builder: PackBuilderV1 = _build_first_c0_owner_review_pack_after_atomic_binding_v1,
+    pack_writer: PackWriterV1 = _write_first_c0_owner_review_pack_after_atomic_binding_v1,
+    raw_evidence_verifier: RawEvidenceVerifierV1 = verify_raw_official_evidence_v1,
+) -> AtomicRunnerResultV1:
+    """Keep V5 execute effects behind the single owner-facing entrypoint."""
+
+    return _run_owner_review_pack_once_v1(
+        bundle_directory=bundle_directory,
+        workspace_receipt=workspace_receipt,
+        mission_manifest=mission_manifest,
+        output_binding_path=output_binding_path,
+        output_pack_directory=output_pack_directory,
+        resolver=resolver,
+        marker_inspector=marker_inspector,
+        execute=execute,
+        owner_present_for_review=owner_present_for_review,
+        binding_ttl_seconds=binding_ttl_seconds,
+        prefetch_handoff_path=prefetch_handoff_path,
+        window_open_receipt_path=window_open_receipt_path,
+        clock=clock,
+        monotonic=monotonic,
+        duration_monotonic=duration_monotonic,
+        clock_path_anchor_wall_utc=clock_path_anchor_wall_utc,
+        clock_path_anchor_monotonic=clock_path_anchor_monotonic,
+        workspace_validator=workspace_validator,
+        binding_preparer=binding_preparer,
+        pack_builder=pack_builder,
+        pack_writer=pack_writer,
+        raw_evidence_verifier=raw_evidence_verifier,
+        v5_single_owner_entrypoint=False,
+    )
+
+
+def _run_first_c0_owner_review_pack_once_after_owner_gate_v1(
+    *,
+    bundle_directory: Path,
+    workspace_receipt: RealCaptureWorkspaceReceiptV1,
+    mission_manifest: RealExecutionMissionManifestV1,
+    output_binding_path: Path,
+    output_pack_directory: Path,
+    resolver: ResolverV1,
+    marker_inspector: MarkerInspectorV1,
+    execute: bool = False,
+    owner_present_for_review: bool = False,
+    binding_ttl_seconds: int = 900,
+    prefetch_handoff_path: Path | None = None,
+    window_open_receipt_path: Path | None = None,
+    clock: ClockV1 = lambda: datetime.now(UTC),
+    monotonic: MonotonicV1 = time.monotonic,
+    duration_monotonic: MonotonicV1 | None = None,
+    clock_path_anchor_wall_utc: datetime | None = None,
+    clock_path_anchor_monotonic: float | None = None,
+    workspace_validator: WorkspaceValidatorV1 = _validate_workspace_default,
+    binding_preparer: BindingPreparerV1 = _prepare_provider_network_binding_after_atomic_preflight_v1,
+    pack_builder: PackBuilderV1 = _build_first_c0_owner_review_pack_after_atomic_binding_v1,
+    pack_writer: PackWriterV1 = _write_first_c0_owner_review_pack_after_atomic_binding_v1,
+    raw_evidence_verifier: RawEvidenceVerifierV1 = verify_raw_official_evidence_v1,
+) -> AtomicRunnerResultV1:
+    return _run_owner_review_pack_once_v1(
+        bundle_directory=bundle_directory,
+        workspace_receipt=workspace_receipt,
+        mission_manifest=mission_manifest,
+        output_binding_path=output_binding_path,
+        output_pack_directory=output_pack_directory,
+        resolver=resolver,
+        marker_inspector=marker_inspector,
+        execute=execute,
+        owner_present_for_review=owner_present_for_review,
+        binding_ttl_seconds=binding_ttl_seconds,
+        prefetch_handoff_path=prefetch_handoff_path,
+        window_open_receipt_path=window_open_receipt_path,
+        clock=clock,
+        monotonic=monotonic,
+        duration_monotonic=duration_monotonic,
+        clock_path_anchor_wall_utc=clock_path_anchor_wall_utc,
+        clock_path_anchor_monotonic=clock_path_anchor_monotonic,
+        workspace_validator=workspace_validator,
+        binding_preparer=binding_preparer,
+        pack_builder=pack_builder,
+        pack_writer=pack_writer,
+        raw_evidence_verifier=raw_evidence_verifier,
+        v5_single_owner_entrypoint=True,
+    )
 
 
 __all__ = [

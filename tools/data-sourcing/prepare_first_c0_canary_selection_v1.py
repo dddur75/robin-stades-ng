@@ -15,8 +15,15 @@ from pathlib import Path
 from typing import cast
 from urllib.parse import parse_qs, urlparse
 
+import robin.capture.provider_network as provider_network_module
 from robin.capture.bootstrap_contracts import (
+    FIRST_C0_H2_PREFETCH_LEAD_SECONDS,
+    FIRST_C0_H2_WINDOW_DURATION_SECONDS,
+    FIRST_C0_MAXIMUM_OPEN_TO_PREFLIGHT_SECONDS,
+    FIRST_C0_POST_OPEN_SAFETY_RESERVE_SECONDS,
+    FIRST_C0_POST_OPEN_TOTAL_BUDGET_SECONDS,
     FirstC0CanarySelectionV1,
+    FirstC0PrefetchedWindowHandoffV1,
     RealCaptureWorkspaceReceiptV1,
     RealExecutionMissionManifestV1,
 )
@@ -52,10 +59,15 @@ from robin.capture.workspace_bootstrap import (
 
 _SOURCE_PLAN_SCHEMA = "robin-first-c0-canary-source-plan-v1"
 _BUNDLE_SCHEMA = "robin-first-c0-canary-bundle-v1"
+_PREFETCHED_BUNDLE_SCHEMA = "robin-first-c0-prefetched-window-bundle-v1"
 _ATTEMPT_RECEIPT_SCHEMA = "robin-first-c0-canary-attempt-receipt-v1"
 _OFFICIAL_READ_RESERVATION_SCHEMA = "robin-first-c0-canary-official-read-reservation-v1"
 _CYCLE_RESERVATION_NAME = "first-c0-canary-cycle-{cycle:02d}-read-reservation-v1.json"
 _CYCLE_RECEIPT_NAME = "first-c0-canary-cycle-{cycle:02d}-attempt-receipt-v1.json"
+_MISSION_GLOBAL_CYCLE_RESERVATION_NAME = (
+    "first-c0-preparation-{manifest_sha256}-cycle-{cycle:02d}.json"
+)
+_PREFETCH_HANDOFF_NAME = "first-c0-prefetched-window-handoff-v1.json"
 _MAXIMUM_JSON_BYTES = 4_194_304
 _MAXIMUM_SOURCE_PLAN_BYTES = 1_048_576
 _MAXIMUM_PREPARATION_CYCLES = 3
@@ -152,6 +164,8 @@ class FirstC0CanaryPreparationResultV1:
     cumulative_official_reads: int
     supporting_official_reads: int
     marker_inspection: Mapping[str, object]
+    prefetch_handoff_path: Path | None = None
+    prefetch_handoff_sha256: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -329,6 +343,57 @@ def _cycle_receipt_path(
     return Path(workspace.control_temp_root) / _CYCLE_RECEIPT_NAME.format(cycle=cycle_index)
 
 
+def _mission_global_cycle_reservation_path(
+    mission_manifest: RealExecutionMissionManifestV1,
+    cycle_index: int,
+) -> Path:
+    try:
+        registry = provider_network_module._mission_global_claim_registry_root_v1()
+    except provider_network_module.ProviderNetworkPreparationError:
+        raise FirstC0CanaryPreparationError(
+            "FIRST_C0_CANARY_GLOBAL_PREPARATION_BOUNDARY_UNAVAILABLE"
+        ) from None
+    return registry / _MISSION_GLOBAL_CYCLE_RESERVATION_NAME.format(
+        manifest_sha256=mission_manifest.canonical_manifest_sha256(),
+        cycle=cycle_index,
+    )
+
+
+def _assert_mission_global_reservation_matches(
+    mission_manifest: RealExecutionMissionManifestV1,
+    cycle_index: int,
+    reservation_bytes: bytes,
+) -> None:
+    try:
+        global_bytes = _read(_mission_global_cycle_reservation_path(mission_manifest, cycle_index))
+    except (FirstC0CanaryPreparationError, OSError):
+        raise FirstC0CanaryPreparationError(
+            "FIRST_C0_CANARY_GLOBAL_PREPARATION_HISTORY_INVALID"
+        ) from None
+    if global_bytes != reservation_bytes:
+        raise FirstC0CanaryPreparationError("FIRST_C0_CANARY_GLOBAL_PREPARATION_HISTORY_INVALID")
+
+
+def _write_mission_global_reservation(
+    mission_manifest: RealExecutionMissionManifestV1,
+    cycle_index: int,
+    reservation_bytes: bytes,
+) -> None:
+    try:
+        _write_exclusive(
+            _mission_global_cycle_reservation_path(mission_manifest, cycle_index),
+            reservation_bytes,
+        )
+    except FirstC0CanaryPreparationError as error:
+        if error.code == "FIRST_C0_CANARY_ARTIFACT_EXISTS":
+            code = "FIRST_C0_CANARY_GLOBAL_PREPARATION_CYCLE_ALREADY_RESERVED"
+        elif error.code == "FIRST_C0_CANARY_GLOBAL_PREPARATION_BOUNDARY_UNAVAILABLE":
+            code = error.code
+        else:
+            code = "FIRST_C0_CANARY_GLOBAL_PREPARATION_RESERVATION_FAILED"
+        raise FirstC0CanaryPreparationError(code) from None
+
+
 def _parse_utc_text(value: object, *, code: str) -> datetime:
     if not isinstance(value, str):
         raise FirstC0CanaryPreparationError(code)
@@ -367,6 +432,11 @@ def _load_cycle_history(
         try:
             reservation_bytes = _read(reservation_path)
             receipt_bytes = _read(receipt_path)
+            _assert_mission_global_reservation_matches(
+                mission_manifest,
+                cycle_index,
+                reservation_bytes,
+            )
             reservation = strict_json_loads(reservation_bytes)
             receipt = strict_json_loads(receipt_bytes)
         except (OSError, TypeError, ValueError):
@@ -385,10 +455,8 @@ def _load_cycle_history(
             or reservation.get("cycle_role")
             not in {
                 "PRIMARY_INITIAL",
-                "PRIMARY_RETRY",
                 "PRIMARY_REFRESH",
                 "FALLBACK_INITIAL",
-                "FALLBACK_RETRY",
                 "FALLBACK_REFRESH",
             }
             or reservation.get("workspace_receipt_sha256") != workspace.canonical_receipt_hash
@@ -468,7 +536,12 @@ def _load_cycle_history(
             if (
                 receipt.get("failure_classification") is not None
                 or receipt.get("fallback_category") is not None
-                or receipt.get("code") not in {"CANARY_READY_NOW", "CANARY_FUTURE_WINDOW"}
+                or receipt.get("code")
+                not in {
+                    "CANARY_READY_NOW",
+                    "CANARY_FUTURE_WINDOW",
+                    "PREFETCHED_FUTURE_WINDOW",
+                }
                 or not isinstance(receipt.get("bundle_manifest_sha256"), str)
                 or len(cast(str, receipt.get("bundle_manifest_sha256"))) != 64
                 or not isinstance(receipt.get("official_fetch_receipt"), dict)
@@ -525,7 +598,7 @@ def _next_cycle_authority(
     previous_cumulative_reads = cast(int, previous["cumulative_official_reads"])
     previous_receipt_sha256 = history[-1].receipt_sha256
     if previous.get("status") == "SUCCEEDED":
-        if previous.get("code") == "CANARY_READY_NOW":
+        if previous.get("code") in {"CANARY_READY_NOW", "PREFETCHED_FUTURE_WINDOW"}:
             raise FirstC0CanaryPreparationError("FIRST_C0_CANARY_READY_SELECTION_ALREADY_PREPARED")
         refresh_at = _parse_utc_text(
             previous.get("recommended_refresh_utc"),
@@ -545,40 +618,11 @@ def _next_cycle_authority(
     if previous.get("status") != "FAILED_BEFORE_DNS":
         raise FirstC0CanaryPreparationError("FIRST_C0_CANARY_FALLBACK_NOT_AUTHORIZED")
 
-    failure_classification = previous.get("failure_classification")
     if previous_sport == _FALLBACK_SPORT_KEY:
-        same_signature_attempts = sum(
-            1 for item in history if item.receipt.get("source_plan_sha256") == previous_plan_hash
-        )
-        if (
-            failure_classification == "TRANSIENT"
-            and same_signature_attempts < 2
-            and plan.source.sport_key == _FALLBACK_SPORT_KEY
-            and plan.canonical_sha256 == previous_plan_hash
-        ):
-            return (
-                cycle_index,
-                "FALLBACK_RETRY",
-                previous_cumulative_reads,
-                previous_receipt_sha256,
-            )
         raise FirstC0CanaryPreparationError("FIRST_C0_CANARY_FALLBACK_SOURCE_EXHAUSTED")
 
-    same_signature_attempts = sum(
-        1 for item in history if item.receipt.get("source_plan_sha256") == previous_plan_hash
-    )
-    if failure_classification == "TRANSIENT" and same_signature_attempts < 2:
-        if (
-            plan.source.sport_key != _PRIMARY_SPORT_KEY
-            or plan.canonical_sha256 != previous_plan_hash
-        ):
-            raise FirstC0CanaryPreparationError("FIRST_C0_CANARY_TRANSIENT_PRIMARY_RETRY_REQUIRED")
-        return (
-            cycle_index,
-            "PRIMARY_RETRY",
-            previous_cumulative_reads,
-            previous_receipt_sha256,
-        )
+    if plan.canonical_sha256 == previous_plan_hash:
+        raise FirstC0CanaryPreparationError("FIRST_C0_CANARY_IDENTICAL_RETRY_NOT_AUTHORIZED")
     if plan.source.sport_key != _FALLBACK_SPORT_KEY:
         raise FirstC0CanaryPreparationError("FIRST_C0_CANARY_FALLBACK_SOURCE_REQUIRED")
     if previous.get("fallback_category") not in _FALLBACK_CATEGORIES:
@@ -625,6 +669,7 @@ def _write_official_read_reservation(
         "recorded_at_utc": _utc_text(recorded_at_utc),
     }
     serialized = _json_bytes(payload)
+    _write_mission_global_reservation(mission_manifest, cycle_index, serialized)
     _write_exclusive(_cycle_reservation_path(workspace, cycle_index), serialized)
     return serialized
 
@@ -766,7 +811,9 @@ def _publish_bundle(
     artifact_hashes = {name: _sha256(payload) for name, payload in sorted(artifacts.items())}
     selected = selection.selected_candidate()
     manifest = {
-        "schema_version": _BUNDLE_SCHEMA,
+        "schema_version": (
+            _PREFETCHED_BUNDLE_SCHEMA if status == "PREFETCHED_FUTURE_WINDOW" else _BUNDLE_SCHEMA
+        ),
         "status": status,
         "preparation_cycle": cycle_index,
         "cumulative_official_reads": cumulative_official_reads,
@@ -800,6 +847,16 @@ def _publish_bundle(
         "secret_reads": 0,  # nosec B105
         "owner_review_pack_builds": 0,
     }
+    if status == "PREFETCHED_FUTURE_WINDOW":
+        manifest.update(
+            {
+                "h2_window_duration_seconds": FIRST_C0_H2_WINDOW_DURATION_SECONDS,
+                "h2_prefetch_lead_seconds": FIRST_C0_H2_PREFETCH_LEAD_SECONDS,
+                "post_open_total_budget_seconds": FIRST_C0_POST_OPEN_TOTAL_BUDGET_SECONDS,
+                "post_open_safety_reserve_seconds": (FIRST_C0_POST_OPEN_SAFETY_RESERVE_SECONDS),
+                "maximum_open_to_preflight_seconds": (FIRST_C0_MAXIMUM_OPEN_TO_PREFLIGHT_SECONDS),
+            }
+        )
     for name, payload in artifacts.items():
         _write_exclusive(staging_root / name, payload)
     manifest_payload = _json_bytes(manifest)
@@ -812,6 +869,60 @@ def _publish_bundle(
             "FIRST_C0_CANARY_BUNDLE_ATOMIC_PUBLISH_FAILED"
         ) from None
     return root, _sha256(manifest_payload)
+
+
+def _publish_prefetch_handoff(
+    *,
+    workspace: RealCaptureWorkspaceReceiptV1,
+    mission: RealExecutionMissionManifestV1,
+    source_plan: FirstC0CanarySourcePlanV1,
+    fetch_receipt: object,
+    raw_bytes: bytes,
+    evidence: object,
+    selection: FirstC0CanarySelectionV1,
+    bundle_manifest_sha256: str,
+    prefetched_at_utc: datetime,
+    cycle_index: int,
+    cumulative_official_reads: int,
+) -> tuple[Path, str]:
+    selected = selection.selected_candidate()
+    if not isinstance(fetch_receipt, dict):
+        raise FirstC0CanaryPreparationError("FIRST_C0_PREFETCH_HANDOFF_INPUT_INVALID")
+    try:
+        source_observed_at = _parse_utc_text(
+            fetch_receipt.get("observed_at_utc"),
+            code="FIRST_C0_PREFETCH_HANDOFF_INPUT_INVALID",
+        )
+        handoff = FirstC0PrefetchedWindowHandoffV1.issue(
+            workspace_receipt_sha256=workspace.canonical_receipt_hash,
+            mission_manifest_sha256=mission.canonical_manifest_sha256(),
+            source_plan_sha256=source_plan.canonical_sha256,
+            official_fetch_receipt_sha256=_sha256(_json_bytes(fetch_receipt)),
+            official_raw_sha256=_sha256(raw_bytes),
+            official_evidence_sha256=_sha256(_json_bytes(evidence)),
+            fixture_target_set_sha256=selected.fixture_target_set.canonical_set_hash,
+            campaign_selection_sha256=selection.canonical_selection_hash,
+            selected_candidate_sha256=selected.canonical_candidate_hash,
+            bundle_manifest_sha256=bundle_manifest_sha256,
+            selected_window_id="H2",
+            source_observed_at_utc=source_observed_at,
+            prefetched_at_utc=prefetched_at_utc,
+            window_not_before_utc=selected.window_not_before_utc,
+            window_expires_at_utc=selected.window_expires_at_utc,
+            selected_usable_expires_at_utc=selected.usable_expires_at_utc,
+            recommended_owner_sequence_start_utc=(
+                selected.window_not_before_utc
+                - timedelta(seconds=FIRST_C0_H2_PREFETCH_LEAD_SECONDS)
+            ),
+            preparation_cycle_number=cycle_index,
+            official_physical_reads_cumulative=cumulative_official_reads,
+        )
+    except (TypeError, ValueError):
+        raise FirstC0CanaryPreparationError("FIRST_C0_PREFETCH_HANDOFF_INPUT_INVALID") from None
+    payload = _json_bytes(handoff.model_dump(mode="json"))
+    path = Path(workspace.control_temp_root) / _PREFETCH_HANDOFF_NAME
+    _write_exclusive(path, payload)
+    return path, _sha256(payload)
 
 
 def _fallback_category_for_source_error(code: str, *, stage: str) -> str:
@@ -835,7 +946,7 @@ def _source_failure_classification(
     raise FirstC0CanaryPreparationError("FIRST_C0_CANARY_SOURCE_FAILURE_UNCLASSIFIED")
 
 
-def prepare_first_c0_canary_selection_v1(
+def _prepare_first_c0_canary_selection_v1(
     *,
     workspace_receipt: RealCaptureWorkspaceReceiptV1,
     workspace_receipt_bytes: bytes,
@@ -1005,6 +1116,8 @@ def prepare_first_c0_canary_selection_v1(
             - timedelta(seconds=SAFETY_CUTOFF_SECONDS),
         )
         ready_margin = int((usable_ceiling - selected_at).total_seconds())
+        if selected.status == "OPEN_SELECTABLE" and selected.window_id == "H2":
+            raise FirstC0CanaryPreparationError("FIRST_C0_H2_PREFETCH_REQUIRED_BEFORE_WINDOW_OPEN")
         if selected.status == "OPEN_SELECTABLE" and ready_margin < MINIMUM_READY_MARGIN_SECONDS:
             raise FirstC0CanaryPreparationError("FIRST_C0_CANARY_OPEN_MARGIN_INSUFFICIENT")
         if selected.status not in {"OPEN_SELECTABLE", "FUTURE_NOT_OPEN"}:
@@ -1058,17 +1171,72 @@ def prepare_first_c0_canary_selection_v1(
         )
         raise failure
     selected = selection.selected_candidate()
-    status = "CANARY_READY_NOW" if selected.status == "OPEN_SELECTABLE" else "CANARY_FUTURE_WINDOW"
-    # Refresh official evidence shortly before the window opens.  The refreshed
-    # selection remains FUTURE until ``window_not_before_utc`` but can then be
-    # promoted to the atomic PRE-DNS path without spending another read cycle.
-    # Sixty seconds leaves the full 900-second H2 binding window available at
-    # open while bounding how early the final official observation can occur.
+    prefetch_start = selected.window_not_before_utc - timedelta(
+        seconds=FIRST_C0_H2_PREFETCH_LEAD_SECONDS
+    )
+    prefetch_intended = (
+        selected.status == "FUTURE_NOT_OPEN"
+        and selected.window_id == "H2"
+        and started_at >= prefetch_start
+        and selected.window_expires_at_utc - selected.window_not_before_utc
+        == timedelta(seconds=FIRST_C0_H2_WINDOW_DURATION_SECONDS)
+        and (
+            selected.usable_expires_at_utc - selected.window_not_before_utc
+            >= timedelta(
+                seconds=(MINIMUM_READY_MARGIN_SECONDS + FIRST_C0_MAXIMUM_OPEN_TO_PREFLIGHT_SECONDS)
+            )
+        )
+        and int(
+            (selected.window_not_before_utc - fetch_result.receipt.observed_at_utc).total_seconds()
+        )
+        <= 1800
+        and selected.window_not_before_utc - fetch_result.receipt.observed_at_utc
+        <= timedelta(seconds=1800)
+    )
+
+    def fail_prefetch_completion_too_late(recorded_at: datetime) -> None:
+        _write_attempt_receipt(
+            workspace_receipt,
+            mission_manifest,
+            source_plan,
+            cycle_index=cycle_index,
+            cycle_role=cycle_role,
+            prior_cycle_receipt_sha256=prior_cycle_receipt_sha256,
+            reservation_sha256=reservation_sha256,
+            status="FAILED_NO_FALLBACK",
+            code="FIRST_C0_PREFETCH_COMPLETION_TOO_LATE",
+            fallback_category=None,
+            failure_classification="DETERMINISTIC",
+            http_status=fetch_result.receipt.http_status,
+            official_reads=official_reads,
+            supporting_official_reads=len(fetch_result.receipt.supporting_official_reads),
+            cumulative_official_reads=cumulative_official_reads,
+            recommended_refresh_utc=None,
+            selected_not_before_utc=None,
+            bundle_manifest_sha256=None,
+            official_fetch_receipt=fetch_result.receipt.to_json(),
+            recorded_at_utc=recorded_at,
+        )
+        raise FirstC0CanaryPreparationError("FIRST_C0_PREFETCH_COMPLETION_TOO_LATE")
+
+    published_at = _utc(clock(), code="FIRST_C0_CANARY_CLOCK_INVALID")
+    if prefetch_intended and published_at >= selected.window_not_before_utc:
+        fail_prefetch_completion_too_late(published_at)
+    prefetched_h2 = prefetch_intended
+    status = (
+        "CANARY_READY_NOW"
+        if selected.status == "OPEN_SELECTABLE"
+        else "PREFETCHED_FUTURE_WINDOW"
+        if prefetched_h2
+        else "CANARY_FUTURE_WINDOW"
+    )
     refresh = max(
         selected_at,
-        selected.window_not_before_utc - timedelta(seconds=60),
+        selected.window_not_before_utc
+        - timedelta(
+            seconds=(FIRST_C0_H2_PREFETCH_LEAD_SECONDS if selected.window_id == "H2" else 60)
+        ),
     )
-    published_at = _utc(clock(), code="FIRST_C0_CANARY_CLOCK_INVALID")
     root, bundle_hash = _publish_bundle(
         output_directory=output_directory,
         status=status,
@@ -1090,6 +1258,36 @@ def prepare_first_c0_canary_selection_v1(
         history=history,
         current_reservation_bytes=reservation_bytes,
     )
+    bundle_completed_at = _utc(clock(), code="FIRST_C0_CANARY_CLOCK_INVALID")
+
+    if (
+        status == "PREFETCHED_FUTURE_WINDOW"
+        and bundle_completed_at >= selected.window_not_before_utc
+    ):
+        fail_prefetch_completion_too_late(bundle_completed_at)
+    prefetch_handoff_path: Path | None = None
+    prefetch_handoff_sha256: str | None = None
+    preparation_completed_at = bundle_completed_at
+    if status == "PREFETCHED_FUTURE_WINDOW":
+        handoff_ready_at = _utc(clock(), code="FIRST_C0_CANARY_CLOCK_INVALID")
+        if handoff_ready_at >= selected.window_not_before_utc:
+            fail_prefetch_completion_too_late(handoff_ready_at)
+        prefetch_handoff_path, prefetch_handoff_sha256 = _publish_prefetch_handoff(
+            workspace=workspace_receipt,
+            mission=mission_manifest,
+            source_plan=source_plan,
+            fetch_receipt=fetch_result.receipt.to_json(),
+            raw_bytes=fetch_result.raw_bytes,
+            evidence=evidence.to_json(),
+            selection=selection,
+            bundle_manifest_sha256=bundle_hash,
+            prefetched_at_utc=handoff_ready_at,
+            cycle_index=cycle_index,
+            cumulative_official_reads=cumulative_official_reads,
+        )
+        preparation_completed_at = _utc(clock(), code="FIRST_C0_CANARY_CLOCK_INVALID")
+        if preparation_completed_at >= selected.window_not_before_utc:
+            fail_prefetch_completion_too_late(preparation_completed_at)
     _write_attempt_receipt(
         workspace_receipt,
         mission_manifest,
@@ -1110,7 +1308,7 @@ def prepare_first_c0_canary_selection_v1(
         selected_not_before_utc=selection.selected_not_before_utc,
         bundle_manifest_sha256=bundle_hash,
         official_fetch_receipt=fetch_result.receipt.to_json(),
-        recorded_at_utc=published_at,
+        recorded_at_utc=preparation_completed_at,
     )
     return FirstC0CanaryPreparationResultV1(
         status=status,
@@ -1123,6 +1321,35 @@ def prepare_first_c0_canary_selection_v1(
         cumulative_official_reads=cumulative_official_reads,
         supporting_official_reads=anticipated_supporting_reads,
         marker_inspection=marker_inspection,
+        prefetch_handoff_path=prefetch_handoff_path,
+        prefetch_handoff_sha256=prefetch_handoff_sha256,
+    )
+
+
+def prepare_first_c0_canary_selection_v1(
+    *,
+    workspace_receipt: RealCaptureWorkspaceReceiptV1,
+    workspace_receipt_bytes: bytes,
+    mission_manifest_path: Path,
+    source_plan_bytes: bytes,
+    output_directory: Path,
+) -> FirstC0CanaryPreparationResultV1:
+    """Load tracked authority and prepare with a fresh zero-redirect fetcher."""
+
+    mission_manifest = load_tracked_real_execution_mission_manifest_v1(
+        Path(workspace_receipt.runtime_repository_root),
+        mission_manifest_path,
+    )
+    mission_manifest_bytes = _read(mission_manifest_path)
+
+    return _prepare_first_c0_canary_selection_v1(
+        workspace_receipt=workspace_receipt,
+        workspace_receipt_bytes=workspace_receipt_bytes,
+        mission_manifest=mission_manifest,
+        mission_manifest_bytes=mission_manifest_bytes,
+        source_plan_bytes=source_plan_bytes,
+        output_directory=output_directory,
+        fetcher=BuiltinHttpsOfficialScheduleFetcher(maximum_redirects=0),
     )
 
 
@@ -1141,22 +1368,15 @@ def main() -> int:
         workspace_bytes = _read(arguments.workspace_receipt)
         workspace = RealCaptureWorkspaceReceiptV1.model_validate_json(workspace_bytes)
         assert_real_capture_workspace_receipt_current_v1(workspace)
-        mission_manifest_bytes = _read(arguments.mission_manifest)
-        mission_manifest = load_tracked_real_execution_mission_manifest_v1(
-            Path(workspace.runtime_repository_root),
-            arguments.mission_manifest,
-        )
         result = prepare_first_c0_canary_selection_v1(
             workspace_receipt=workspace,
             workspace_receipt_bytes=workspace_bytes,
-            mission_manifest=mission_manifest,
-            mission_manifest_bytes=mission_manifest_bytes,
+            mission_manifest_path=arguments.mission_manifest,
             source_plan_bytes=_read(
                 arguments.source_plan,
                 maximum_bytes=_MAXIMUM_SOURCE_PLAN_BYTES,
             ),
             output_directory=arguments.output_directory,
-            fetcher=BuiltinHttpsOfficialScheduleFetcher(),
         )
     except Exception as error:
         code = getattr(error, "code", "FIRST_C0_CANARY_PREPARATION_FAILED")
@@ -1191,6 +1411,12 @@ def main() -> int:
                 "selected_not_before_utc": _utc_text(result.selection.selected_not_before_utc),
                 "selected_usable_expires_at_utc": _utc_text(selected.usable_expires_at_utc),
                 "recommended_refresh_utc": _utc_text(result.recommended_refresh_utc),
+                "prefetch_handoff_path": (
+                    str(result.prefetch_handoff_path)
+                    if result.prefetch_handoff_path is not None
+                    else None
+                ),
+                "prefetch_handoff_sha256": result.prefetch_handoff_sha256,
                 "preparation_cycle": result.cycle_index,
                 "official_reads": result.official_reads,
                 "cumulative_official_reads": result.cumulative_official_reads,

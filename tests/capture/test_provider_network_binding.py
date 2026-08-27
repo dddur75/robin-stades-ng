@@ -9,6 +9,7 @@ from typing import Any
 import pytest
 from pydantic import ValidationError
 
+import robin.capture as capture_api
 import robin.capture.provider_network as provider_network_module
 from robin.capture import (
     CampaignLeagueCorpusCountV1,
@@ -28,9 +29,12 @@ from robin.capture.contracts import ProviderRequestSpec
 from robin.capture.live_contracts import LIVE_ALLOWED_SPORT_KEYS
 from robin.capture.live_transport import LiveTransportError
 from robin.capture.provider_network import (
+    _PROVIDER_RESOLUTION_RESERVATION_AUTHORITY_V1,
     ProviderNetworkPreparationError,
-    prepare_provider_network_binding_once_v1,
-    prepare_provider_network_binding_v1,
+    _prepare_provider_network_binding_after_reservation_v1,
+)
+from robin.capture.provider_network import (
+    _prepare_first_c0_provider_network_binding_once_after_atomic_preflight_v1 as prepare_provider_network_binding_once_v1,
 )
 from robin.capture.storage import exclusive_local_directory_fingerprint
 
@@ -41,7 +45,7 @@ NOW = datetime(2026, 8, 22, 12, 0, tzinfo=UTC)
 def _isolated_mission_global_claim_registry(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
-) -> None:
+) -> Path:
     registry = tmp_path / "mission-global-claim-registry"
     registry.mkdir()
     monkeypatch.setattr(
@@ -49,6 +53,7 @@ def _isolated_mission_global_claim_registry(
         "_mission_global_claim_registry_root_v1",
         lambda: registry,
     )
+    return registry
 
 
 def resolution_claim() -> ProviderNetworkResolutionClaimV1:
@@ -121,12 +126,13 @@ def test_single_resolution_is_canonical_deduplicated_and_order_stable() -> None:
             (socket.AF_INET, socket.SOCK_STREAM, 6, "", ("8.8.4.4", 443)),
         ]
 
-    first = prepare_provider_network_binding_v1(
+    first = _prepare_provider_network_binding_after_reservation_v1(
         resolution_claim=resolution_claim(),
         resolver=resolver,
         clock=lambda: NOW,
         binding_ttl_seconds=600,
         resolver_identity="TEST_OS_STUB_RESOLVER",
+        _reservation_authority=_PROVIDER_RESOLUTION_RESERVATION_AUTHORITY_V1,
     )
     second = binding("2606:4700:4700::1111", "8.8.8.8", "8.8.4.4")
     assert calls == [
@@ -147,6 +153,29 @@ def test_single_resolution_is_canonical_deduplicated_and_order_stable() -> None:
     assert first.canonical_binding_hash == second.canonical_binding_hash
     assert first.provider_http_requests == first.provider_tcp_connections == 0
     assert first.provider_secret_reads == 0
+
+
+def test_low_level_resolver_requires_private_reservation_authority() -> None:
+    assert not hasattr(capture_api, "prepare_provider_network_binding_v1")
+    calls = 0
+
+    def resolver(*_arguments: object) -> tuple[tuple[object, ...], ...]:
+        nonlocal calls
+        calls += 1
+        return ()
+
+    for authority in (None, object()):
+        with pytest.raises(
+            ProviderNetworkPreparationError,
+            match="^PROVIDER_NETWORK_RESOLUTION_RESERVATION_REQUIRED$",
+        ):
+            _prepare_provider_network_binding_after_reservation_v1(
+                resolution_claim=resolution_claim(),
+                resolver=resolver,
+                clock=lambda: NOW,
+                _reservation_authority=authority,
+            )
+    assert calls == 0
 
 
 @pytest.mark.parametrize(
@@ -573,6 +602,68 @@ def test_durable_claim_prevents_second_resolution_even_with_different_output(
             clock=lambda: NOW,
         )
     assert calls == 1
+
+
+@pytest.mark.parametrize(
+    "source_hash",
+    (
+        "204e4323d0b99fdfa8c655cdc3a08a8d2b3c82ac0a784f9a97982c90ab3a7312",
+        "3d3b43f68c0d339448e52de7ec66cce068646a4a006e267dfe063bffe2767f5e",
+        "0270bdd51d8d50b7d3c9f608e4f429b46b94b789d92d4b13055b81c9b72e6291",
+    ),
+)
+def test_public_provider_paths_reject_model_copy_authority_before_claim_or_dns(
+    tmp_path: Path,
+    source_hash: str,
+    _isolated_mission_global_claim_registry: Path,
+) -> None:
+    workspace, control = _network_workspace(tmp_path)
+    manifest = _mission_manifest(NOW + timedelta(days=1)).model_copy(
+        update={"source_hash": source_hash}
+    )
+    selection = _campaign_selection(workspace, manifest)
+    registry_names_before = {
+        path.name for path in _isolated_mission_global_claim_registry.iterdir()
+    }
+    reserved_output = control / f"reserved-{source_hash[:8]}.json"
+    bound_output = control / f"bound-{source_hash[:8]}.json"
+    resolver_calls = 0
+
+    def resolver(*_arguments: object) -> list[tuple[object, ...]]:
+        nonlocal resolver_calls
+        resolver_calls += 1
+        return []
+
+    with pytest.raises(
+        ProviderNetworkPreparationError,
+        match="^FIRST_C0_ATOMIC_PREFLIGHT_REQUIRED$",
+    ):
+        provider_network_module.reserve_provider_network_resolution_v1(
+            workspace_receipt=workspace,
+            mission_manifest=manifest,
+            campaign_selection=selection,
+            output_path=reserved_output,
+            clock=lambda: NOW,
+        )
+    with pytest.raises(
+        ProviderNetworkPreparationError,
+        match="^FIRST_C0_ATOMIC_PREFLIGHT_REQUIRED$",
+    ):
+        provider_network_module.prepare_provider_network_binding_once_v1(
+            workspace_receipt=workspace,
+            mission_manifest=manifest,
+            campaign_selection=selection,
+            output_path=bound_output,
+            resolver=resolver,
+            clock=lambda: NOW,
+        )
+    assert resolver_calls == 0
+    assert not reserved_output.exists()
+    assert not bound_output.exists()
+    assert not (control / "provider-network-resolution-one-shot-v1.json").exists()
+    assert {
+        path.name for path in _isolated_mission_global_claim_registry.iterdir()
+    } == registry_names_before
 
 
 def test_mission_global_claim_blocks_a_second_verified_workspace_before_dns(

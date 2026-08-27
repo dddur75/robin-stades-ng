@@ -55,10 +55,12 @@ from robin.capture.live_executor import (
 from robin.capture.live_transport import LiveTransportResponse, PublicProviderRequestV2
 from robin.capture.owner_review_pack import (
     OwnerReviewPackError,
+    _build_first_c0_owner_review_pack_after_atomic_binding_v1,
     assert_owner_review_pack_completion_current_v1,
-    build_owner_review_pack_v1,
     owner_authorization_statement_v1,
-    write_owner_review_pack_v1,
+)
+from robin.capture.owner_review_pack import (
+    _write_first_c0_owner_review_pack_after_atomic_binding_v1 as write_owner_review_pack_v1,
 )
 from robin.capture.storage import CaptureStorageError
 
@@ -266,7 +268,7 @@ def build_bundle(
         ),
         compute_budget=8000,
         time_budget=345600,
-        source_hash="3d3b43f68c0d339448e52de7ec66cce068646a4a006e267dfe063bffe2767f5e",
+        source_hash="204e4323d0b99fdfa8c655cdc3a08a8d2b3c82ac0a784f9a97982c90ab3a7312",
         expires_at=BASE + timedelta(days=4),
     )
     workspace = RealCaptureWorkspaceReceiptV1.issue(
@@ -1179,7 +1181,7 @@ def test_owner_review_pack_is_complete_unexecuted_and_statement_binds_every_gate
         binding_ttl_seconds=660,
         resolved_ip_addresses=("8.8.8.8",),
     )
-    pack = build_owner_review_pack_v1(
+    pack = _build_first_c0_owner_review_pack_after_atomic_binding_v1(
         workspace_receipt=bundle.workspace,
         mission_manifest=bundle.mission_manifest,
         provider_network_binding=network_binding,
@@ -1290,7 +1292,7 @@ def test_owner_review_pack_is_complete_unexecuted_and_statement_binds_every_gate
         )
 
 
-def test_owner_review_pack_cli_canonicalizes_generated_at_for_nonce(
+def test_legacy_owner_review_pack_cli_rejects_current_v5_before_write(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
@@ -1382,52 +1384,13 @@ def test_owner_review_pack_cli_canonicalizes_generated_at_for_nonce(
 
     exit_code = cli.main()
     result = json.loads(capsys.readouterr().out)
-    assert exit_code == 0, serialization_errors
-    assert result["status"] == "OWNER_AUTHORIZATION_READY"
-    assert set(result["outputs"]) == {
-        "owner_review_pack",
-        "owner_authorization_candidate",
-        "activation_candidate",
-        "plan_candidate",
-        "plan_item_candidate",
-        "campaign_selection",
-        "fixture_target_set",
-        "provider_network_binding",
-        "mission_manifest",
-        "workspace_receipt",
-        "request",
+    assert exit_code == 2
+    assert result == {
+        "status": "FAILED",
+        "code": "FIRST_C0_SINGLE_OWNER_ENTRYPOINT_REQUIRED",
     }
-    assert all(Path(path).is_file() for path in result["outputs"].values())
-    assert all(
-        isinstance(json.loads(Path(path).read_text(encoding="utf-8")), dict)
-        for path in result["outputs"].values()
-    )
-
-    pack_payload = json.loads(
-        Path(result["outputs"]["owner_review_pack"]).read_text(encoding="utf-8")
-    )
-    pack = OwnerReviewPackV1.model_validate(pack_payload)
-    generated_text = pack_payload["generated_at_utc"]
-    assert isinstance(generated_text, str)
-    assert generated_text.endswith("Z")
-    assert datetime.fromisoformat(generated_text.replace("Z", "+00:00")).utcoffset() == timedelta(0)
-    assert pack.generated_at_utc == BASE
-    nonce_hash = canonical_sha256(
-        {
-            "workspace": pack.workspace_receipt.canonical_receipt_hash,
-            "binding": pack.provider_network_binding.canonical_binding_hash,
-            "targets": pack.fixture_target_set.canonical_set_hash,
-            "campaign_selection": pack.campaign_selection.canonical_selection_hash,
-            "request": canonical_sha256(pack.request.fingerprint_material()),
-            "generated_at": generated_text,
-        }
-    )
-    assert pack.owner_authorization_candidate.authorization_nonce == f"owner-{nonce_hash[:40]}"
-    assert pack.activation_candidate.activation_nonce == f"activation-{nonce_hash[24:64]}"
-    assert result["pack_sha256"] == pack.canonical_pack_hash
-    assert result["provider_http_calls"] == 0
-    assert result["real_secret_reads"] == 0
-    assert result["real_capture_calls"] == 0
+    assert serialization_errors == []
+    assert not output.exists()
 
 
 def test_owner_review_pack_rejects_network_claim_bound_to_another_campaign(
@@ -1453,7 +1416,7 @@ def test_owner_review_pack_rejects_network_claim_bound_to_another_campaign(
         resolved_ip_addresses=("8.8.8.8",),
     )
     with pytest.raises(OwnerReviewPackError, match="OWNER_REVIEW_PACK_INPUT_SCOPE_INVALID"):
-        build_owner_review_pack_v1(
+        _build_first_c0_owner_review_pack_after_atomic_binding_v1(
             workspace_receipt=bundle.workspace,
             mission_manifest=bundle.mission_manifest,
             provider_network_binding=wrong_binding,
@@ -1492,7 +1455,7 @@ def test_owner_review_pack_rejects_v3_binding_and_serialized_v3_pack(
     )
     pack_directory = tmp_path / "v3-owner-review-pack"
     with pytest.raises(OwnerReviewPackError, match="OWNER_REVIEW_PACK_INPUT_SCOPE_INVALID"):
-        build_owner_review_pack_v1(
+        _build_first_c0_owner_review_pack_after_atomic_binding_v1(
             workspace_receipt=bundle.workspace,
             mission_manifest=bundle.mission_manifest,
             provider_network_binding=stale_binding,
@@ -1531,7 +1494,7 @@ def test_owner_review_pack_rejects_v3_binding_and_serialized_v3_pack(
         binding_ttl_seconds=660,
         resolved_ip_addresses=("8.8.8.8",),
     )
-    stale_pack = build_owner_review_pack_v1(
+    stale_pack = _build_first_c0_owner_review_pack_after_atomic_binding_v1(
         workspace_receipt=bundle.workspace,
         mission_manifest=v3_manifest,
         provider_network_binding=v3_binding,
@@ -1572,7 +1535,7 @@ def test_owner_review_pack_reports_exact_expired_network_binding_code(
         resolved_ip_addresses=("8.8.8.8",),
     )
     with pytest.raises(OwnerReviewPackError, match="NETWORK_BINDING_EXPIRED"):
-        build_owner_review_pack_v1(
+        _build_first_c0_owner_review_pack_after_atomic_binding_v1(
             workspace_receipt=bundle.workspace,
             mission_manifest=bundle.mission_manifest,
             provider_network_binding=expired_binding,
@@ -1708,7 +1671,7 @@ def test_owner_review_pack_rejects_coherently_rehashed_scope_budget_and_id_tampe
         binding_ttl_seconds=660,
         resolved_ip_addresses=("8.8.8.8",),
     )
-    pack = build_owner_review_pack_v1(
+    pack = _build_first_c0_owner_review_pack_after_atomic_binding_v1(
         workspace_receipt=bundle.workspace,
         mission_manifest=bundle.mission_manifest,
         provider_network_binding=binding,
