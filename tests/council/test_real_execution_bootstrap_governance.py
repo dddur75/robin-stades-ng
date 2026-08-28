@@ -507,7 +507,10 @@ def test_global_claim_boundary_v2_evidence_is_exact_append_only_and_effect_free(
         ).stdout.splitlines()
     )
     closure_revision: str | None = None
-    if not dirty_paths:
+    # Ambient CI artifacts outside the governed 12-file scope must not replace
+    # the immutable base-tree-to-closure-tree proof. In-scope edits still use
+    # the precommit worktree path so pending governance changes are fail-closed.
+    if introducing_revisions and dirty_paths.isdisjoint(expected_files):
         first_parent_merges = subprocess.run(
             [
                 "git",
