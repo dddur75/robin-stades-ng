@@ -404,12 +404,76 @@ def test_first_c0_single_league_canary_authority_is_additive_and_fail_closed() -
 
 
 def test_global_claim_boundary_v2_evidence_is_exact_append_only_and_effect_free() -> None:
+    base_revision = "2e62496e5efffb564bc8ef8b4ae26e3a76675e44"
     record_token = '"decision_id":"RCV3-20260828-183"'
+    expected_files = [
+        "docs/data-sourcing/REAL-EXECUTION-BOOTSTRAP-CLOSURE-V1.md",
+        "reports/council/decision-ledger.jsonl",
+        "reports/evidence/evidence-graph.json",
+        "src/robin/capture/global_claim_boundary.py",
+        "src/robin/capture/predns_orchestration.py",
+        "src/robin/capture/provider_network.py",
+        "tests/capture/test_first_c0_canary_selection_v1.py",
+        "tests/capture/test_global_claim_boundary_v2.py",
+        "tests/capture/test_predns_orchestration_v1.py",
+        "tests/capture/test_provider_network_binding.py",
+        "tests/council/test_real_execution_bootstrap_governance.py",
+        "tools/data-sourcing/prepare_first_c0_canary_selection_v1.py",
+    ]
+    head_revision = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    base_revision_probe = subprocess.run(
+        ["git", "cat-file", "-e", f"{base_revision}^{{commit}}"],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+    )
+    if base_revision_probe.returncode != 0:
+        shallow_repository = subprocess.run(
+            ["git", "rev-parse", "--is-shallow-repository"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+        assert shallow_repository == "true"
+        subprocess.run(
+            [
+                "git",
+                "fetch",
+                "--no-tags",
+                "--no-write-fetch-head",
+                "--unshallow",
+                "origin",
+                head_revision,
+            ],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        )
+    subprocess.run(
+        ["git", "cat-file", "-e", f"{base_revision}^{{commit}}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    )
+    subprocess.run(
+        ["git", "merge-base", "--is-ancestor", base_revision, head_revision],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    )
     introducing_revisions = (
         subprocess.run(
             [
                 "git",
                 "log",
+                "--no-merges",
                 "HEAD",
                 "--format=%H",
                 f"-S{record_token}",
@@ -424,7 +488,133 @@ def test_global_claim_boundary_v2_evidence_is_exact_append_only_and_effect_free(
         .splitlines()
     )
     assert len(introducing_revisions) <= 1
-    closure_revision = introducing_revisions[0] if introducing_revisions else None
+    dirty_paths = set(
+        subprocess.run(
+            ["git", "diff", "--name-only", "HEAD", "--"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.splitlines()
+    )
+    dirty_paths.update(
+        subprocess.run(
+            ["git", "ls-files", "--others", "--exclude-standard"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.splitlines()
+    )
+    closure_revision: str | None = None
+    if not dirty_paths:
+        first_parent_merges = subprocess.run(
+            [
+                "git",
+                "rev-list",
+                "--first-parent",
+                "--reverse",
+                "--merges",
+                f"{base_revision}..{head_revision}",
+            ],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.splitlines()
+        introducing_merges: list[tuple[str, str, str]] = []
+        for merge_revision in first_parent_merges:
+            parent_fields = (
+                subprocess.run(
+                    ["git", "rev-list", "--parents", "-n", "1", merge_revision],
+                    cwd=ROOT,
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                )
+                .stdout.strip()
+                .split()
+            )
+            if len(parent_fields) != 3:
+                continue
+            _, first_parent, second_parent = parent_fields
+            merge_ledger = subprocess.run(
+                ["git", "show", f"{merge_revision}:reports/council/decision-ledger.jsonl"],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+            ).stdout
+            first_parent_ledger = subprocess.run(
+                ["git", "show", f"{first_parent}:reports/council/decision-ledger.jsonl"],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+            ).stdout
+            if (
+                record_token.encode() in merge_ledger
+                and record_token.encode() not in first_parent_ledger
+            ):
+                introducing_merges.append((merge_revision, first_parent, second_parent))
+        closure_search_head = head_revision
+        if introducing_merges:
+            assert len(introducing_merges) == 1
+            merge_revision, first_parent, closure_search_head = introducing_merges[0]
+            assert first_parent == base_revision
+            merge_tree = subprocess.run(
+                ["git", "rev-parse", f"{merge_revision}^{{tree}}"],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+            closure_tree = subprocess.run(
+                ["git", "rev-parse", f"{closure_search_head}^{{tree}}"],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+            assert merge_tree == closure_tree
+        candidate_revisions = subprocess.run(
+            [
+                "git",
+                "rev-list",
+                "--reverse",
+                "--no-merges",
+                f"{base_revision}..{closure_search_head}",
+            ],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.splitlines()
+        assert 1 <= len(candidate_revisions) <= 3
+        eligible_closure_revisions: list[str] = []
+        for revision in candidate_revisions:
+            candidate_ledger = subprocess.run(
+                ["git", "show", f"{revision}:reports/council/decision-ledger.jsonl"],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+            ).stdout
+            if record_token.encode() not in candidate_ledger:
+                continue
+            if len(candidate_ledger.splitlines()) != 176:
+                continue
+            candidate_paths = subprocess.run(
+                ["git", "diff", "--name-only", base_revision, revision],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.splitlines()
+            if candidate_paths != expected_files:
+                continue
+            eligible_closure_revisions.append(revision)
+        assert eligible_closure_revisions
+        closure_revision = eligible_closure_revisions[-1]
+        assert closure_revision == closure_search_head
+        assert len(introducing_revisions) == 1
 
     def snapshot_bytes(relative: str) -> bytes:
         if closure_revision is None:
@@ -497,20 +687,6 @@ def test_global_claim_boundary_v2_evidence_is_exact_append_only_and_effect_free(
         "product_or_scientific_change": False,
         "outside_closure": [],
     }
-    expected_files = [
-        "docs/data-sourcing/REAL-EXECUTION-BOOTSTRAP-CLOSURE-V1.md",
-        "reports/council/decision-ledger.jsonl",
-        "reports/evidence/evidence-graph.json",
-        "src/robin/capture/global_claim_boundary.py",
-        "src/robin/capture/predns_orchestration.py",
-        "src/robin/capture/provider_network.py",
-        "tests/capture/test_first_c0_canary_selection_v1.py",
-        "tests/capture/test_global_claim_boundary_v2.py",
-        "tests/capture/test_predns_orchestration_v1.py",
-        "tests/capture/test_provider_network_binding.py",
-        "tests/council/test_real_execution_bootstrap_governance.py",
-        "tools/data-sourcing/prepare_first_c0_canary_selection_v1.py",
-    ]
     assert context["files"] == expected_files
     if closure_revision is None:
         tracked_paths = (
