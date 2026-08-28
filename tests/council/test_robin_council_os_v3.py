@@ -995,7 +995,7 @@ def test_real_execution_bootstrap_closure_v1_authority_and_succession_are_exact(
         ],
         "compute_budget": 8000,
         "time_budget": 345600,
-        "source_hash": "3d3b43f68c0d339448e52de7ec66cce068646a4a006e267dfe063bffe2767f5e",
+        "source_hash": "204e4323d0b99fdfa8c655cdc3a08a8d2b3c82ac0a784f9a97982c90ab3a7312",
         "expires_at": "2026-09-01T20:00:00Z",
     }
 
@@ -4291,6 +4291,681 @@ def test_first_c0_authority_v4_recovery_is_exact_append_only_and_effect_free() -
     ]
     assert [edge["edge_id"] for edge in graph["edges"]] == [
         f"EDGE.{number:03d}" for number in range(1, 770)
+    ]
+
+
+def test_first_c0_h2_timing_closure_authority_v5_is_exact_append_only_and_effect_free() -> None:
+    base_revision = "9c35a57d198cc5c825f77d343b4ef2b044e60b89"
+    changed_files = [
+        "configs/execution/real-execution-bootstrap-closure-v1.json",
+        "src/robin/capture/__init__.py",
+        "src/robin/capture/bootstrap_contracts.py",
+        "src/robin/capture/official_schedule_sources.py",
+        "src/robin/capture/owner_review_pack.py",
+        "src/robin/capture/predns_orchestration.py",
+        "src/robin/capture/provider_network.py",
+        "tools/data-sourcing/prepare_first_c0_canary_selection_v1.py",
+        "tools/data-sourcing/run_first_c0_owner_pack_atomic_v1.py",
+        "tests/capture/test_first_c0_canary_selection_v1.py",
+        "tests/capture/test_predns_orchestration_v1.py",
+        "tests/capture/test_provider_network_binding.py",
+        "tests/capture/test_live_canary_successor_v2.py",
+        "tests/capture/test_real_capture_workspace_bootstrap.py",
+        "tests/council/test_real_execution_bootstrap_governance.py",
+        "tests/council/test_robin_council_os_v3.py",
+        "reports/evidence/evidence-graph.json",
+        "reports/council/decision-ledger.jsonl",
+    ]
+    expected_proof = [
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.032",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.041",
+        "GOV.AUTHORIZATION.REAL_EXECUTION_BOOTSTRAP.CLOSURE.MANIFEST.V1.005",
+        ("GOV.AUTHORIZATION.REAL_EXECUTION_BOOTSTRAP.CLOSURE.MANIFEST.SOURCE_HASH.CONTRACT.V1.006"),
+        "TEMPORAL.FIRST_C0.SELECTOR.ROLLOVER.V1.005",
+        "GOV.FIRST_C0.PRE_DNS.ORCHESTRATION.V1.003",
+        "PORTABILITY.REAL_EXECUTION_BOOTSTRAP.NETWORK.WINDOWS_API_TYPING.V1.003",
+        (
+            "PORTABILITY.REAL_EXECUTION_BOOTSTRAP.WORKSPACE.FULL_CLONE."
+            "JOB_ACCOUNTING.REGRESSION.V1.005"
+        ),
+        "GOV.OWNER_REVIEW_PACK.GENERATED_AT.CLI.REGRESSION.V1.007",
+        "SECURITY.OWNER_REVIEW_PACK.DATETIME_FIX.ZERO_EFFECTS.V1.007",
+        "GOV.FIRST_C0.PR69.CI.WORKTREE_SCOPE.ISOLATION.V1.005",
+        ("GOV.COUNCIL.REAL_EXECUTION_BOOTSTRAP.CLOSURE.EVIDENCE.SUCCESSION.LEDGER.V1.012"),
+    ]
+
+    head_revision = _git(ROOT, "rev-parse", "HEAD")
+    closure_revision: str | None = None
+    if head_revision == base_revision:
+        changed_scope = {
+            path for path in _git(ROOT, "diff", "--name-only", "HEAD", "--").splitlines() if path
+        }
+        changed_scope.update(
+            path
+            for path in _git(ROOT, "ls-files", "--others", "--exclude-standard").splitlines()
+            if path
+        )
+        ledger_bytes = (
+            (ROOT / "reports/council/decision-ledger.jsonl").read_bytes().replace(b"\r\n", b"\n")
+        )
+    else:
+        _git(ROOT, "merge-base", "--is-ancestor", base_revision, head_revision)
+
+        def committed_ledger(revision: str) -> bytes:
+            return subprocess.run(
+                ["git", "show", f"{revision}:reports/council/decision-ledger.jsonl"],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+            ).stdout
+
+        def tree_oid(revision: str) -> str:
+            return _git(ROOT, "rev-parse", f"{revision}^{{tree}}")
+
+        record_token = b'"decision_id":"RCV3-20260827-182"'
+        first_parent_merges = _git(
+            ROOT,
+            "rev-list",
+            "--first-parent",
+            "--reverse",
+            "--merges",
+            f"{base_revision}..{head_revision}",
+        ).splitlines()
+        introducing_merges: list[tuple[str, str, str]] = []
+        for merge_revision in first_parent_merges:
+            parent_fields = _git(
+                ROOT,
+                "rev-list",
+                "--parents",
+                "-n",
+                "1",
+                merge_revision,
+            ).split()
+            if len(parent_fields) != 3:
+                continue
+            _, first_parent, second_parent = parent_fields
+            if record_token in committed_ledger(
+                merge_revision
+            ) and record_token not in committed_ledger(first_parent):
+                introducing_merges.append((merge_revision, first_parent, second_parent))
+        if introducing_merges:
+            assert len(introducing_merges) == 1
+            merge_revision, first_parent, closure_revision = introducing_merges[0]
+            assert first_parent == base_revision
+            assert tree_oid(merge_revision) == tree_oid(closure_revision)
+            assert not _git(
+                ROOT,
+                "rev-list",
+                "--merges",
+                f"{base_revision}..{closure_revision}",
+            ).strip()
+            assert committed_ledger(merge_revision) == committed_ledger(closure_revision)
+        else:
+            closure_revision = head_revision
+            assert not _git(
+                ROOT,
+                "rev-list",
+                "--merges",
+                f"{base_revision}..{closure_revision}",
+            ).strip()
+        closure_commits = _git(
+            ROOT,
+            "rev-list",
+            "--reverse",
+            "--no-merges",
+            f"{base_revision}..{closure_revision}",
+        ).splitlines()
+        assert 1 <= len(closure_commits) <= 3
+        ledger_bytes = committed_ledger(closure_revision)
+        assert record_token in ledger_bytes
+        changed_scope = committed_changed_paths(ROOT, base_revision, closure_revision)
+    assert changed_scope == set(changed_files)
+    assert len(changed_scope) == 18
+
+    base_ledger = subprocess.run(
+        ["git", "show", f"{base_revision}:reports/council/decision-ledger.jsonl"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    assert len(base_ledger.splitlines()) == 174
+    assert len(ledger_bytes.splitlines()) == 175
+    assert ledger_bytes.startswith(base_ledger)
+    assert ledger_bytes[len(base_ledger) :] == ledger_bytes.splitlines()[-1] + b"\n"
+    assert b"\r" not in ledger_bytes
+
+    records = [json.loads(line) for line in ledger_bytes.splitlines()]
+    previous_record = records[173]
+    record = records[174]
+    assert previous_record["decision_id"] == "RCV3-20260826-181"
+    assert previous_record["hash"] == (
+        "8ebccf1b4cd9f0175382ea5f10301859073e812eee3cfd29cdb5dda98384b512"
+    )
+    assert record["decision_id"] == "RCV3-20260827-182"
+    assert record["record_type"] == "DECISION"
+    assert record["date"] == "2026-08-27T21:04:01Z"
+    assert record["proposal"] == (
+        "PASS_AND_HOLD the First C0 H2 timing closure and Authority V5 single-owner "
+        "entrypoint: reserve preparation mission-globally before each zero-redirect "
+        "official read, prefetch before H2, freeze one immutable future bundle, wait "
+        "locally with wall and monotonic clocks, activate by clock-only revalidation, "
+        "require immediate strict preflight, permit one atomic DNS-to-pack delegation "
+        "only behind both fresh owner gates, and stop at the Owner Review Pack before "
+        "OwnerAuthorization or C0."
+    )
+    assert record["objections"] == [
+        (
+            "The 900-second H2 window, 840-second minimum ready margin and 60-second "
+            "post-open total budget remain unchanged; the fix moves reversible official "
+            "preparation before open rather than weakening a gate."
+        ),
+        (
+            "After the prefetched handoff, the sealed owner sequence authorizes zero "
+            "additional official reads, preparation cycles, selector invocations and "
+            "target-set freezes; terminally late publication is unusable before marker "
+            "inspection or DNS."
+        ),
+        (
+            "The supported selector loads only the exact tracked runtime manifest path, "
+            "accepts no caller manifest object, bytes or effect adapter, constructs a fresh "
+            "zero-redirect HTTPS fetcher, and reserves each cycle in the ACL-verified "
+            "mission-global registry before the workspace reservation or official GET; a "
+            "second fresh runtime cannot multiply cycle or physical-read budgets."
+        ),
+        (
+            "Current V5 legacy five-league preparation, open-H2 bundle preparation, public "
+            "provider reserve/bind, standalone pack build/publication and legacy atomic "
+            "runner paths reject before their prohibited effects for current and forged "
+            "model-copy source identities; generic local artifact and live-transport "
+            "utilities remain outside the sealed FirstC0 owner sequence and cannot enter "
+            "its hashed lineage."
+        ),
+        (
+            "V3 and V4 runtimes, launch kits, markers, receipts, bundles, bytes and ACLs "
+            "remain immutable historical evidence; neither authority is accepted as current "
+            "or reusable."
+        ),
+        (
+            "No official read, provider DNS, TCP, HTTP, secret read, Owner Review Pack "
+            "build, OwnerAuthorization, activation, C0 call, capture, promotion or bet is "
+            "authorized during engineering validation by this decision."
+        ),
+    ]
+    assert record["decision"] == "PASS_AND_HOLD"
+    assert record["dissent"] is None
+    assert record["responsible"] == "C0"
+    assert record["previous_hash"] == previous_record["hash"]
+    assert record["proof"] == expected_proof
+    canonical_record = json.dumps(
+        {key: value for key, value in record.items() if key != "hash"},
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode()
+    assert record["hash_algorithm"] == "SHA-256"
+    assert hashlib.sha256(canonical_record).hexdigest() == record["hash"]
+
+    context = record["context"]
+    assert context["candidate_context"] is True
+    assert context["commit_context"] is False
+    assert context["mission_id"] == "REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1"
+    assert context["phase"] == (
+        "FIRST_C0_H2_TIMING_CLOSURE_AUTHORITY_V5_SINGLE_OWNER_ENTRYPOINT_V1_PRECOMMIT"
+    )
+    assert context["base_revision"] == base_revision
+    assert context["candidate_parent_sha"] == base_revision
+    assert context["head"] == base_revision
+    assert context["branch"] == "codex/first-c0-h2-timing-closure-authority-v5-v1"
+    assert context["pr"] == "PENDING"
+    assert context["writer"] == "C0"
+    assert context["files"] == changed_files
+    assert context["scope"] == {
+        "tracked_file_count": 18,
+        "tracked_files_maximum": 18,
+        "primary_expected_paths": 13,
+        "directly_consequential_extensions": [
+            "src/robin/capture/__init__.py",
+            "src/robin/capture/official_schedule_sources.py",
+            "src/robin/capture/owner_review_pack.py",
+            "src/robin/capture/provider_network.py",
+            "tests/capture/test_provider_network_binding.py",
+        ],
+        "outside_closure": [],
+    }
+    assert context["owner_directive"] == {
+        "utf8_bytes": 29126,
+        "sha256": "204e4323d0b99fdfa8c655cdc3a08a8d2b3c82ac0a784f9a97982c90ab3a7312",
+        "line_endings": "UTF8_LF_NO_BOM",
+        "timestamp_utc": "2026-08-27T17:19:08.7974694Z",
+        "locality": "LOCAL_FIXED_NTFS_OUTSIDE_REPOSITORY_AND_ONEDRIVE",
+        "read_only_attribute": True,
+        "acl_sddl_sha256": "f1cba44547f2210635f8b7e5d7114f9f1b2372bf970e2804260ac4d0c83945aa",
+    }
+    assert context["mission_manifest"] == {
+        "source_hash": "204e4323d0b99fdfa8c655cdc3a08a8d2b3c82ac0a784f9a97982c90ab3a7312",
+        "canonical_sha256": "d3d570be434b61c0875212061d92419d074b0d8357ba60e55c9f10cd79458e14",
+        "artifact_sha256": "05f37235a41331376854e301932d1aac2ddf4486911d0447e1ef5558db4653a4",
+        "expires_at_utc": "2026-09-01T20:00:00Z",
+        "mission_id": "REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1",
+        "authorized_stages": ["E1"],
+        "maximum_stage": "E1",
+        "compute_budget": 8000,
+        "time_budget": 345600,
+    }
+    assert context["authority_rotation"] == {
+        "old_v4_source_hash": ("3d3b43f68c0d339448e52de7ec66cce068646a4a006e267dfe063bffe2767f5e"),
+        "old_v4_canonical_manifest_sha256": (
+            "2e43edcb7aafd190161b81b9d251508e445a1dc85bcd7e4815e1a2f95fcf809f"
+        ),
+        "new_v5_source_hash": ("204e4323d0b99fdfa8c655cdc3a08a8d2b3c82ac0a784f9a97982c90ab3a7312"),
+        "v4_accepted_as_current": False,
+        "active_v4_fixture_count": 0,
+        "active_obsolete_claim_count": 0,
+        "broken_ledger_links": 0,
+        "broken_graph_links": 0,
+    }
+    assert context["historical_freeze"] == {
+        "v3_preserved": True,
+        "v4_preserved": True,
+        "bytes_unchanged": True,
+        "acl_unchanged": True,
+        "v3_bytes_unchanged": True,
+        "v3_acl_unchanged": True,
+        "v4_bytes_unchanged": True,
+        "v4_acl_unchanged": True,
+        "historical_mutation_detected": False,
+        "full_tree_snapshot_sha256": (
+            "da9442e2069c191e7934983c60ff6bf5dfbdf59505610336c249a9032e203d25"
+        ),
+        "v3_reference_report_sha256": (
+            "c9ca00104113b6fb750b3c0e48f92ab1bfec47691e3eddc66353370e7500e77c"
+        ),
+        "v4_launch_kit_manifest_sha256": (
+            "503fae916bcc170da5fa3983f7fd2f038490a0ff9579cde2e82bc90c68bbc3b7"
+        ),
+    }
+    assert context["v4_terminal"] == {
+        "result": "H2_TIMING_POLICY_DEFECT_REPRODUCED",
+        "preflight_status": "PREFLIGHT_REJECTED",
+        "usable_margin_reported_seconds": 807,
+        "preparation_cycles": 3,
+        "official_physical_reads": 6,
+        "provider_dns": 0,
+        "owner_review_pack_builds": 0,
+        "owner_authorizations": 0,
+        "c0_calls": 0,
+        "terminal_transcript_sha256": (
+            "92f6fd69dacf56c856f4a06cc434fdc3a5139d8b8c7101f8e3ff0934c37fe828"
+        ),
+    }
+    assert context["root_cause"] == {
+        "h2_window_duration_seconds": 900,
+        "minimum_ready_margin_seconds": 840,
+        "open_window_operational_budget_seconds": 60,
+        "v4_open_to_preflight_verdict_seconds": 93,
+        "v4_usable_margin_seconds": 807,
+        "v4_margin_deficit_seconds": 33,
+        "proven": True,
+    }
+    assert context["timing_contract"] == {
+        "h2_window_duration_seconds": 900,
+        "minimum_ready_margin_seconds": 840,
+        "h2_prefetch_lead_seconds": 300,
+        "post_open_total_budget_seconds": 60,
+        "post_open_safety_reserve_seconds": 15,
+        "maximum_open_to_preflight_seconds": 45,
+        "maximum_local_wait_seconds": 900,
+        "official_reads_after_prefetch": 0,
+        "preparation_cycles_after_prefetch": 0,
+        "selector_invocations_after_prefetch": 0,
+        "target_set_freezes_after_prefetch": 0,
+        "h24_behavior_unchanged": True,
+    }
+    assert context["single_owner_entrypoint"] == {
+        "tracked_capability_path": "tools/data-sourcing/run_first_c0_owner_pack_atomic_v1.py",
+        "owner_facing_launch_kit_path": "run-first-c0-owner-present-to-pack-v1.ps1",
+        "execute_gate_required": True,
+        "owner_presence_20_minutes_gate_required": True,
+        "local_clock_only_wait": True,
+        "exactly_one_atomic_pack_delegation": True,
+        "legacy_five_league_pre_dns_v5_rejected_before_official_read": True,
+        "legacy_open_h2_selection_v5_rejected_before_bundle": True,
+        "public_selector_manifest_loaded_from_exact_tracked_runtime_path": True,
+        "public_selector_injected_effect_adapter_exposed": False,
+        "public_canary_selector_constructs_fresh_nonredirecting_fetcher": True,
+        "mission_global_preparation_cycle_reservation": True,
+        "reservation_written_before_official_read": True,
+        "cross_workspace_duplicate_cycle_rejected_before_fetch": True,
+        "mission_global_preparation_reservation_precedes_local_reservation_and_official_read": True,
+        "preparation_history_bound_to_one_workspace_across_fresh_runtimes": True,
+        "public_provider_reservation_v5_rejected_before_claim_or_dns": True,
+        "public_provider_binding_v5_rejected_before_dns": True,
+        "public_owner_pack_builder_v5_rejected_before_build_or_write": True,
+        "public_owner_pack_writer_v5_rejected_before_copy_or_write": True,
+        "owner_pack_writer_package_exported": False,
+        "public_legacy_atomic_runner_v5_rejected_before_effects": True,
+        "public_legacy_runner_read_only_preflight_retained": True,
+        "legacy_selection_type_substitution_rejected": True,
+        "model_copy_source_identity_cannot_unlock_public_effects": True,
+        "private_atomic_delegates": True,
+        "injectable_owner_runner_public_api_exposed": False,
+        "public_owner_atomic_python_entrypoint_exported": False,
+        "tracked_owner_cli_pins_counted_system_resolver": True,
+        "module_private_test_cores_are_not_supported_entrypoints": True,
+        "low_level_provider_resolver_package_exported": False,
+        "generic_local_artifact_tools_outside_sealed_owner_sequence": True,
+        "owner_authorization": False,
+        "c0_execution": False,
+    }
+    assert context["external_effects"] == {
+        "official_schedule_reads": 0,
+        "real_preparation_cycles": 0,
+        "real_mission_global_reservation_writes": 0,
+        "provider_dns": 0,
+        "resolver_operations": 0,
+        "provider_tcp": 0,
+        "provider_http": 0,
+        "real_secret_reads": 0,
+        "owner_review_pack_builds": 0,
+        "owner_authorizations": 0,
+        "activations": 0,
+        "c0_calls": 0,
+        "captures": 0,
+        "promotions": 0,
+        "bets": 0,
+    }
+    assert context["delivery_authority"] == {
+        "pull_requests": 1,
+        "engineering_commits_maximum": 3,
+        "consolidated_ci_cycles_maximum": 3,
+        "planned_engineering_commits": 1,
+        "planned_non_force_pushes": 1,
+        "normal_merge_commit_required": True,
+        "exact_head_ci_required": True,
+        "postmerge_ci_required": True,
+        "force_push_authorized": False,
+        "rebase_authorized": False,
+        "squash_merge_authorized": False,
+    }
+    assert context["postmerge_runtime_boundary"] == {
+        "fresh_runtime_count": 1,
+        "real_preparation_cycles_maximum": 1,
+        "official_physical_reads_maximum": 2,
+        "minimum_preparation_cycles_remaining": 2,
+        "minimum_official_reads_remaining": 10,
+        "script_01_inspect_once": True,
+        "script_02_prepare_maximum_once": True,
+        "script_03_preflight_executed": False,
+        "script_04_execute_pack_executed": False,
+        "stop_before_provider_dns": True,
+        "provider_dns": 0,
+        "owner_review_pack_builds": 0,
+    }
+    assert context["worktree"] == ("ENGINEERING_CLONE:first-c0-h2-timing-closure-authority-v5-v1")
+    assert context["reused_evidence"] == [
+        {
+            "name": "BASELINE_LOCK_REPORT_V5.json",
+            "sha256": "2490af347a4d8b6dadb7dae9f0251e30cf0fe49e519ce55694eba354f5d3e935",
+        },
+        {
+            "name": "H2_TIMING_ROOT_CAUSE_REPORT_V1.json",
+            "sha256": "8f8d48c0a1118d77309f4482eb161c48938be09bdd8f62b9bcebb305859cebf8",
+        },
+        {
+            "name": "IMPACT_CLOSURE_V5.json",
+            "sha256": "8cee83ee080ee1228663a1c9050b771dabc38ad9200754194701e6c0e8551191",
+        },
+        {
+            "name": "HISTORICAL_FULL_TREE_BASELINE_V5.json",
+            "sha256": "da9442e2069c191e7934983c60ff6bf5dfbdf59505610336c249a9032e203d25",
+        },
+        {
+            "name": "RED_H2_TIMING_TESTS_V1.txt",
+            "sha256": "5ace447dfec6b9f19b12ffc213b0cf6536d80e2c56528da68a29b5e83490d1ba",
+        },
+        {
+            "name": "H2_TIMING_BENCHMARK_V1.json",
+            "sha256": "26aff523a94702dd7fdacff579950d3aecf37a1f6e25a610c525ac52aa19f546",
+        },
+    ]
+    assert context["performance_benchmark"] == {
+        "runs": 100,
+        "percentile_method": "nearest_rank",
+        "metric": "open_to_preflight_accept_duration_seconds",
+        "maximum_allowed_p95_seconds": 45,
+        "p50_seconds": 0.11968569998862222,
+        "p90_seconds": 0.13781479999306612,
+        "p95_seconds": 0.14033860000199638,
+        "p99_seconds": 0.1437267999863252,
+        "maximum_seconds": 0.14941969999927096,
+        "passed": True,
+    }
+    assert context["canary_invariants"] == {
+        "primary": "soccer_spain_la_liga",
+        "fallback": "soccer_germany_bundesliga",
+        "windows": ["H24", "H2"],
+        "h24_behavior_unchanged": True,
+        "maximum_preparation_cycles": 3,
+        "maximum_official_physical_reads": 12,
+        "preparation_budget_scope": "MISSION_GLOBAL_ACROSS_FRESH_RUNTIMES",
+        "maximum_redirects_per_first_c0_physical_read": 0,
+        "minimum_ready_margin_seconds": 840,
+        "provider_resolution_operations": 1,
+        "provider_resolution_retries": 0,
+        "identical_preparation_retries": 0,
+        "owner_review_pack_maximum": 1,
+    }
+    assert context["targeted_tests"] == [
+        {"name": "H2-timing-focused", "result": "PASS"},
+        {"name": "FirstC0-selection", "result": "PASS"},
+        {"name": "PRE-DNS", "result": "PASS"},
+        {"name": "provider-network", "result": "PASS"},
+        {"name": "Owner-Review-Pack", "result": "PASS"},
+        {"name": "live-successor", "result": "PASS"},
+        {"name": "workspace", "result": "PASS"},
+        {"name": "capture-complete", "result": "PASS"},
+        {"name": "Council-complete", "result": "PASS"},
+        {"name": "portability", "result": "PASS"},
+        {"name": "full-repository-suite", "result": "PASS"},
+    ]
+    assert context["static_validations"] == [
+        {"name": "RUFF_CHECK", "result": "PASS"},
+        {"name": "RUFF_FORMAT_CHECK", "result": "PASS"},
+        {"name": "MYPY_STRICT", "result": "PASS"},
+        {"name": "BANDIT", "result": "PASS"},
+        {"name": "COMPILEALL", "result": "PASS"},
+        {"name": "JSON_YAML_JSONL_VALIDATION", "result": "PASS"},
+        {"name": "LEDGER_ACTIVE_CLAIM_SUCCESSION_GRAPH_VALIDATION", "result": "PASS"},
+        {"name": "SECRET_SCAN", "result": "PASS"},
+        {"name": "TRACKED_ABSOLUTE_PATH_SCAN", "result": "PASS"},
+        {"name": "DEPENDENCY_SCAN", "result": "PASS"},
+        {"name": "GIT_DIFF_CHECK", "result": "PASS"},
+    ]
+    assert context["outcome_boundary"] == {
+        "authority_v5_engineered": True,
+        "fresh_runtime_pending_postmerge": True,
+        "launch_kit_v5_pending_postmerge": True,
+        "owner_sequence_pending_postmerge": True,
+        "provider_dns_executed": False,
+        "owner_pack_created": False,
+        "owner_authorized": False,
+        "c0_executed": False,
+        "c0_audited": False,
+        "prospective_started": False,
+    }
+    assert set(context["reviews"]) == {"QA Director", "DP6", "C4", "C2", "A2", "Red Team"}
+    assert all(review["verdict"] == "ACCEPT" for review in context["reviews"].values())
+    assert all(review["p0"] == 0 for review in context["reviews"].values())
+    assert all(review["p1"] == 0 for review in context["reviews"].values())
+    assert all(review["p2"] == 0 for review in context["reviews"].values())
+    assert all(review["open_threads"] == 0 for review in context["reviews"].values())
+    assert context["defects"] == {
+        "open_p0": 0,
+        "open_p1": 0,
+        "open_p2": 0,
+        "open_critical_threads": 0,
+        "active_claim_hash_mismatches": 0,
+        "broken_successions": 0,
+        "broken_ledger_links": 0,
+        "duplicate_ids": 0,
+        "edge_gaps": 0,
+    }
+    assert ":\\" not in ledger_bytes.splitlines()[-1].decode("utf-8")
+    assert "OneDrive" not in ledger_bytes.splitlines()[-1].decode("utf-8")
+
+    manifest = (
+        load_json("configs/execution/real-execution-bootstrap-closure-v1.json")
+        if closure_revision is None
+        else json.loads(
+            subprocess.run(
+                [
+                    "git",
+                    "show",
+                    f"{closure_revision}:configs/execution/real-execution-bootstrap-closure-v1.json",
+                ],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+            ).stdout
+        )
+    )
+    assert manifest["source_hash"] == context["mission_manifest"]["source_hash"]
+    assert manifest["expires_at"] == "2026-09-01T20:00:00Z"
+    canonical_manifest = json.dumps(
+        manifest,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode()
+    assert (
+        hashlib.sha256(canonical_manifest).hexdigest()
+        == context["mission_manifest"]["canonical_sha256"]
+    )
+
+    base_graph = json.loads(
+        subprocess.run(
+            ["git", "show", f"{base_revision}:reports/evidence/evidence-graph.json"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        ).stdout
+    )
+    graph = (
+        load_json("reports/evidence/evidence-graph.json")
+        if closure_revision is None
+        else json.loads(
+            subprocess.run(
+                ["git", "show", f"{closure_revision}:reports/evidence/evidence-graph.json"],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+            ).stdout
+        )
+    )
+    assert (
+        len(base_graph["claims"]),
+        len(base_graph["decision_nodes"]),
+        len(base_graph["edges"]),
+    ) == (471, 174, 769)
+    assert (
+        len(graph["claims"]),
+        len(graph["decision_nodes"]),
+        len(graph["edges"]),
+    ) == (483, 175, 781)
+    predecessors = {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.031": expected_proof[0],
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.040": expected_proof[1],
+        "GOV.AUTHORIZATION.REAL_EXECUTION_BOOTSTRAP.CLOSURE.MANIFEST.V1.004": expected_proof[2],
+        (
+            "GOV.AUTHORIZATION.REAL_EXECUTION_BOOTSTRAP.CLOSURE.MANIFEST."
+            "SOURCE_HASH.CONTRACT.V1.005"
+        ): expected_proof[3],
+        "TEMPORAL.FIRST_C0.SELECTOR.ROLLOVER.V1.004": expected_proof[4],
+        "GOV.FIRST_C0.PRE_DNS.ORCHESTRATION.V1.002": expected_proof[5],
+        ("PORTABILITY.REAL_EXECUTION_BOOTSTRAP.NETWORK.WINDOWS_API_TYPING.V1.002"): expected_proof[
+            6
+        ],
+        (
+            "PORTABILITY.REAL_EXECUTION_BOOTSTRAP.WORKSPACE.FULL_CLONE."
+            "JOB_ACCOUNTING.REGRESSION.V1.004"
+        ): expected_proof[7],
+        "GOV.OWNER_REVIEW_PACK.GENERATED_AT.CLI.REGRESSION.V1.006": expected_proof[8],
+        "SECURITY.OWNER_REVIEW_PACK.DATETIME_FIX.ZERO_EFFECTS.V1.006": expected_proof[9],
+        "GOV.FIRST_C0.PR69.CI.WORKTREE_SCOPE.ISOLATION.V1.004": expected_proof[10],
+        (
+            "GOV.COUNCIL.REAL_EXECUTION_BOOTSTRAP.CLOSURE.EVIDENCE.SUCCESSION.LEDGER.V1.011"
+        ): expected_proof[11],
+    }
+    fan_in_predecessors = {
+        "TEMPORAL.OWNER_REVIEW_PACK.GENERATED_AT.CANONICALIZATION.V1.002": expected_proof[9],
+        "DATA.FIRST_C0.OFFICIAL_SCHEDULE.ADAPTERS.V1.001": expected_proof[4],
+    }
+    expected_base_claims = []
+    for claim in base_graph["claims"]:
+        successor = predecessors.get(claim["claim_id"], fan_in_predecessors.get(claim["claim_id"]))
+        if successor is not None:
+            claim = {
+                **claim,
+                "status": "SUPERSEDED",
+                "superseded_by": successor,
+            }
+        expected_base_claims.append(claim)
+    assert graph["claims"][:471] == expected_base_claims
+    assert [claim["claim_id"] for claim in graph["claims"][471:483]] == expected_proof
+    claims = {claim["claim_id"]: claim for claim in graph["claims"]}
+    for predecessor, successor in predecessors.items():
+        assert claims[predecessor]["status"] == "SUPERSEDED"
+        assert claims[predecessor]["superseded_by"] == successor
+        assert claims[successor]["successor_of"] == predecessor
+    for predecessor, successor in fan_in_predecessors.items():
+        assert claims[predecessor]["status"] == "SUPERSEDED"
+        assert claims[predecessor]["superseded_by"] == successor
+    assert claims[expected_proof[0]]["status"] == "PARTIAL"
+    assert claims[expected_proof[1]]["status"] == "PARTIAL"
+    assert all(claims[claim_id]["status"] == "VERIFIED" for claim_id in expected_proof[2:])
+    claim_artifacts = {
+        expected_proof[0]: "tests/council/test_robin_council_os_v3.py",
+        expected_proof[1]: "tests/council/test_robin_council_os_v3.py",
+        expected_proof[2]: "configs/execution/real-execution-bootstrap-closure-v1.json",
+        expected_proof[3]: "src/robin/capture/bootstrap_contracts.py",
+        expected_proof[4]: "src/robin/capture/bootstrap_contracts.py",
+        expected_proof[5]: "src/robin/capture/predns_orchestration.py",
+        expected_proof[6]: "src/robin/capture/provider_network.py",
+        expected_proof[7]: "tests/capture/test_real_capture_workspace_bootstrap.py",
+        expected_proof[8]: "tests/capture/test_live_canary_successor_v2.py",
+        expected_proof[9]: "tests/capture/test_first_c0_canary_selection_v1.py",
+        expected_proof[10]: "tests/council/test_robin_council_os_v3.py",
+        expected_proof[11]: "reports/council/decision-ledger.jsonl",
+    }
+
+    def closure_artifact_hash(relative: str) -> str:
+        if closure_revision is None:
+            return artifact_sha256(ROOT / relative)
+        return committed_artifact_sha256(ROOT, closure_revision, relative)
+
+    for claim_id, artifact in claim_artifacts.items():
+        assert claims[claim_id]["artifact"] == artifact
+        assert claims[claim_id]["hash"] == closure_artifact_hash(artifact)
+        assert claims[claim_id]["verified_by"] == ["C0", "C2", "C4", "DP6", "A2"]
+        assert claims[claim_id]["code_revision"] == base_revision
+    assert graph["decision_nodes"][:174] == base_graph["decision_nodes"]
+    assert graph["decision_nodes"][174] == {
+        "decision_id": record["decision_id"],
+        "ledger_record_hash": record["hash"],
+    }
+    assert graph["edges"][:769] == base_graph["edges"]
+    assert graph["edges"][769:781] == [
+        {
+            "edge_id": f"EDGE.{number}",
+            "from_claim_id": claim_id,
+            "to_decision_id": record["decision_id"],
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        }
+        for number, claim_id in zip(range(770, 782), expected_proof, strict=True)
+    ]
+    assert [edge["edge_id"] for edge in graph["edges"]] == [
+        f"EDGE.{number:03d}" for number in range(1, 782)
     ]
 
 

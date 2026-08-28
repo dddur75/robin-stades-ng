@@ -46,7 +46,7 @@ def _mission_manifest_payload(*, expires_at: str) -> dict[str, object]:
         ],
         "compute_budget": 8000,
         "time_budget": 345600,
-        "source_hash": "3d3b43f68c0d339448e52de7ec66cce068646a4a006e267dfe063bffe2767f5e",
+        "source_hash": "204e4323d0b99fdfa8c655cdc3a08a8d2b3c82ac0a784f9a97982c90ab3a7312",
         "expires_at": expires_at,
     }
 

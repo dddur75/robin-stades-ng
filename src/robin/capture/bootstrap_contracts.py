@@ -75,6 +75,12 @@ FIRST_C0_CANARY_SPORT_KEYS: Final[tuple[str, ...]] = (
     "soccer_germany_bundesliga",
 )
 FIRST_C0_CANARY_MINIMUM_READY_MARGIN_SECONDS: Final[int] = 840
+FIRST_C0_H2_WINDOW_DURATION_SECONDS: Final[int] = 900
+FIRST_C0_H2_PREFETCH_LEAD_SECONDS: Final[int] = 300
+FIRST_C0_POST_OPEN_TOTAL_BUDGET_SECONDS: Final[int] = 60
+FIRST_C0_POST_OPEN_SAFETY_RESERVE_SECONDS: Final[int] = 15
+FIRST_C0_MAXIMUM_OPEN_TO_PREFLIGHT_SECONDS: Final[int] = 45
+FIRST_C0_MAXIMUM_LOCAL_WAIT_SECONDS: Final[int] = 900
 FIRST_C0_CANARY_OFFICIAL_DOMAINS: Final[dict[str, str]] = {
     "soccer_spain_la_liga": "laliga.com",
     "soccer_germany_bundesliga": "dfb.de",
@@ -84,8 +90,8 @@ FIRST_C0_CANARY_COMPETITIONS: Final[dict[str, str]] = {
     "soccer_germany_bundesliga": "Bundesliga",
 }
 MISSION_MANIFEST_SOURCE_HASH: Final[
-    Literal["3d3b43f68c0d339448e52de7ec66cce068646a4a006e267dfe063bffe2767f5e"]
-] = "3d3b43f68c0d339448e52de7ec66cce068646a4a006e267dfe063bffe2767f5e"
+    Literal["204e4323d0b99fdfa8c655cdc3a08a8d2b3c82ac0a784f9a97982c90ab3a7312"]
+] = "204e4323d0b99fdfa8c655cdc3a08a8d2b3c82ac0a784f9a97982c90ab3a7312"
 MISSION_EXTERNAL_EFFECTS: Final[tuple[str, ...]] = (
     "local_standalone_runtime_create_after_merge",
     "github_public_full_clone_after_merge",
@@ -244,7 +250,7 @@ class RealExecutionMissionManifestV1(FrozenContract):
     external_effects: tuple[str, ...]
     compute_budget: Literal[8000]
     time_budget: Literal[345600]
-    source_hash: Literal["3d3b43f68c0d339448e52de7ec66cce068646a4a006e267dfe063bffe2767f5e"] = (
+    source_hash: Literal["204e4323d0b99fdfa8c655cdc3a08a8d2b3c82ac0a784f9a97982c90ab3a7312"] = (
         MISSION_MANIFEST_SOURCE_HASH
     )
     expires_at: datetime
@@ -1588,6 +1594,305 @@ class FirstC0CanarySelectionV1(FrozenContract):
             raise ValueError("FIRST_C0_CANARY_SELECTED_CANDIDATE_NO_LONGER_BEST")
         if selected.status != "OPEN_SELECTABLE":
             raise ValueError("FIRST_C0_CANARY_SELECTED_CANDIDATE_NOT_OPEN")
+
+
+class FirstC0PrefetchedWindowHandoffV1(FrozenContract):
+    """Immutable authority for local, clock-only opening of one prefetched H2 bundle."""
+
+    schema_version: Literal["robin-first-c0-prefetched-window-handoff-v1"] = (
+        "robin-first-c0-prefetched-window-handoff-v1"
+    )
+    workspace_receipt_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    mission_manifest_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    source_plan_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    official_fetch_receipt_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    official_raw_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    official_evidence_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    fixture_target_set_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    campaign_selection_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    selected_candidate_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    bundle_manifest_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    selected_window_id: Literal["H2"] = "H2"
+    source_observed_at_utc: datetime
+    prefetched_at_utc: datetime
+    window_not_before_utc: datetime
+    window_expires_at_utc: datetime
+    selected_usable_expires_at_utc: datetime
+    recommended_owner_sequence_start_utc: datetime
+    source_age_at_window_open_seconds: int = Field(ge=0)
+    maximum_source_age_seconds: Literal[1800] = 1800
+    preparation_cycle_number: int = Field(ge=1, le=3)
+    official_physical_reads_cumulative: int = Field(ge=1, le=12)
+    local_activation_authorized: Literal[True] = True
+    additional_official_reads_authorized: Literal[0] = 0
+    additional_preparation_cycles_authorized: Literal[0] = 0
+    additional_selector_invocations_authorized: Literal[0] = 0
+    additional_target_set_freezes_authorized: Literal[0] = 0
+    canonical_receipt_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+
+    def identity_material(self) -> dict[str, JsonValue]:
+        return cast(
+            dict[str, JsonValue],
+            self.model_dump(mode="json", exclude={"canonical_receipt_sha256"}),
+        )
+
+    @classmethod
+    def issue(cls, **data: Any) -> Self:
+        normalized = _normalized_utc_data(
+            data,
+            "source_observed_at_utc",
+            "prefetched_at_utc",
+            "window_not_before_utc",
+            "window_expires_at_utc",
+            "selected_usable_expires_at_utc",
+            "recommended_owner_sequence_start_utc",
+        )
+        source_observed = cast(datetime, normalized["source_observed_at_utc"])
+        window_open = cast(datetime, normalized["window_not_before_utc"])
+        normalized["source_age_at_window_open_seconds"] = int(
+            (window_open - source_observed).total_seconds()
+        )
+        provisional = cls.model_construct(canonical_receipt_sha256="0" * 64, **normalized)
+        return cls(
+            canonical_receipt_sha256=canonical_sha256(provisional.identity_material()),
+            **normalized,
+        )
+
+    @model_validator(mode="after")
+    def validate_handoff(self) -> Self:
+        observed = ensure_utc(
+            self.source_observed_at_utc,
+            field="first_c0_prefetch_source_observed_at",
+        )
+        prefetched = ensure_utc(
+            self.prefetched_at_utc,
+            field="first_c0_prefetched_at",
+        )
+        window_open = ensure_utc(
+            self.window_not_before_utc,
+            field="first_c0_prefetch_window_not_before",
+        )
+        window_expires = ensure_utc(
+            self.window_expires_at_utc,
+            field="first_c0_prefetch_window_expires",
+        )
+        owner_start = ensure_utc(
+            self.recommended_owner_sequence_start_utc,
+            field="first_c0_owner_sequence_start",
+        )
+        usable_expires = ensure_utc(
+            self.selected_usable_expires_at_utc,
+            field="first_c0_prefetch_usable_expires_at",
+        )
+        if (
+            observed > prefetched
+            or prefetched >= window_open
+            or window_expires - window_open
+            != timedelta(seconds=FIRST_C0_H2_WINDOW_DURATION_SECONDS)
+            or usable_expires
+            < window_open
+            + timedelta(
+                seconds=(
+                    FIRST_C0_CANARY_MINIMUM_READY_MARGIN_SECONDS
+                    + FIRST_C0_MAXIMUM_OPEN_TO_PREFLIGHT_SECONDS
+                )
+            )
+            or usable_expires > window_expires
+            or owner_start != window_open - timedelta(seconds=FIRST_C0_H2_PREFETCH_LEAD_SECONDS)
+            or self.source_age_at_window_open_seconds
+            != int((window_open - observed).total_seconds())
+            or window_open - observed > timedelta(seconds=self.maximum_source_age_seconds)
+            or self.source_age_at_window_open_seconds > self.maximum_source_age_seconds
+            or self.additional_official_reads_authorized != 0
+            or self.additional_preparation_cycles_authorized != 0
+            or self.additional_selector_invocations_authorized != 0
+            or self.additional_target_set_freezes_authorized != 0
+            or not self.local_activation_authorized
+            or self.canonical_receipt_sha256 != canonical_sha256(self.identity_material())
+        ):
+            raise ValueError("FIRST_C0_PREFETCH_HANDOFF_INVALID")
+        return self
+
+
+class FirstC0WindowOpenRevalidationV1(FrozenContract):
+    """Append-only local receipt proving the prefetched candidate opened without effects."""
+
+    schema_version: Literal["robin-first-c0-window-open-revalidation-v1"] = (
+        "robin-first-c0-window-open-revalidation-v1"
+    )
+    prefetch_handoff_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    workspace_receipt_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    mission_manifest_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    bundle_manifest_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    campaign_selection_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    selected_candidate_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    wait_started_at_utc: datetime
+    checked_at_utc: datetime
+    source_observed_at_utc: datetime
+    mission_expires_at_utc: datetime
+    selected_usable_expires_at_utc: datetime
+    wait_started_monotonic: float = Field(ge=0.0)
+    window_open_monotonic: float = Field(ge=0.0)
+    checked_monotonic: float = Field(ge=0.0)
+    monotonic_elapsed_seconds: float = Field(ge=-86400.0, le=86400.0)
+    wall_elapsed_seconds: float = Field(ge=-86400.0, le=86400.0)
+    clock_divergence_seconds: float = Field(ge=0.0, le=86400.0)
+    window_not_before_utc: datetime
+    window_expires_at_utc: datetime
+    usable_margin_seconds: int
+    source_age_seconds: int
+    source_fresh: bool
+    mission_current: bool
+    workspace_current: bool
+    bundle_current: bool
+    handoff_current: bool
+    selection_current: bool
+    clock_path_valid: bool
+    official_reads_delta: Literal[0] = 0
+    preparation_cycles_delta: Literal[0] = 0
+    selector_invocations_delta: Literal[0] = 0
+    target_set_freezes_delta: Literal[0] = 0
+    provider_effects: Literal[0] = 0
+    status: Literal["READY_NOW", "EXPIRED", "CLOCK_INVALID", "STALE", "HARD_STOP"]
+    canonical_receipt_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+
+    def identity_material(self) -> dict[str, JsonValue]:
+        return cast(
+            dict[str, JsonValue],
+            self.model_dump(mode="json", exclude={"canonical_receipt_sha256"}),
+        )
+
+    @classmethod
+    def issue(cls, **data: Any) -> Self:
+        normalized = _normalized_utc_data(
+            data,
+            "wait_started_at_utc",
+            "checked_at_utc",
+            "source_observed_at_utc",
+            "mission_expires_at_utc",
+            "selected_usable_expires_at_utc",
+            "window_not_before_utc",
+            "window_expires_at_utc",
+        )
+        provisional = cls.model_construct(canonical_receipt_sha256="0" * 64, **normalized)
+        return cls(
+            canonical_receipt_sha256=canonical_sha256(provisional.identity_material()),
+            **normalized,
+        )
+
+    @model_validator(mode="after")
+    def validate_revalidation(self) -> Self:
+        started = ensure_utc(
+            self.wait_started_at_utc,
+            field="first_c0_window_wait_started_at",
+        )
+        checked = ensure_utc(
+            self.checked_at_utc,
+            field="first_c0_window_checked_at",
+        )
+        window_open = ensure_utc(
+            self.window_not_before_utc,
+            field="first_c0_window_not_before",
+        )
+        window_expires = ensure_utc(
+            self.window_expires_at_utc,
+            field="first_c0_window_expires",
+        )
+        observed = ensure_utc(
+            self.source_observed_at_utc,
+            field="first_c0_window_source_observed_at",
+        )
+        mission_expires = ensure_utc(
+            self.mission_expires_at_utc,
+            field="first_c0_window_mission_expires_at",
+        )
+        usable_expires = ensure_utc(
+            self.selected_usable_expires_at_utc,
+            field="first_c0_window_usable_expires_at",
+        )
+        expected_wall = (checked - started).total_seconds()
+        expected_margin = int((usable_expires - checked).total_seconds())
+        expected_source_age = int((checked - observed).total_seconds())
+        expected_source_fresh = timedelta(0) <= checked - observed <= MAX_CAMPAIGN_SOURCE_AGE
+        clock_invalid = (
+            not self.clock_path_valid
+            or self.monotonic_elapsed_seconds < 0
+            or self.wall_elapsed_seconds < 0
+            or self.clock_divergence_seconds > 2.0
+        )
+        expected_mission_current = checked < mission_expires
+        expired = checked >= window_expires or not self.mission_current
+        stale = not self.source_fresh
+        hard_stop = (
+            not self.workspace_current
+            or not self.bundle_current
+            or not self.handoff_current
+            or not self.selection_current
+            or checked < window_open
+            or checked - window_open > timedelta(seconds=FIRST_C0_MAXIMUM_OPEN_TO_PREFLIGHT_SECONDS)
+            or self.usable_margin_seconds < FIRST_C0_CANARY_MINIMUM_READY_MARGIN_SECONDS
+        )
+        expected_status = (
+            "CLOCK_INVALID"
+            if clock_invalid
+            else "EXPIRED"
+            if expired
+            else "STALE"
+            if stale
+            else "HARD_STOP"
+            if hard_stop
+            else "READY_NOW"
+        )
+        if (
+            window_expires - window_open != timedelta(seconds=FIRST_C0_H2_WINDOW_DURATION_SECONDS)
+            or usable_expires > window_expires
+            or abs(self.wall_elapsed_seconds - expected_wall) > 0.001
+            or abs(
+                self.monotonic_elapsed_seconds
+                - (self.checked_monotonic - self.wait_started_monotonic)
+            )
+            > 0.001
+            or abs(
+                self.window_open_monotonic
+                - (self.wait_started_monotonic + (window_open - started).total_seconds())
+            )
+            > 0.001
+            or abs(
+                self.clock_divergence_seconds
+                - abs(self.wall_elapsed_seconds - self.monotonic_elapsed_seconds)
+            )
+            > 0.001
+            or self.usable_margin_seconds != expected_margin
+            or self.source_age_seconds != expected_source_age
+            or self.source_fresh != expected_source_fresh
+            or self.mission_current != expected_mission_current
+            or self.status != expected_status
+            or self.canonical_receipt_sha256 != canonical_sha256(self.identity_material())
+        ):
+            raise ValueError("FIRST_C0_WINDOW_REVALIDATION_INVALID")
+        if self.status == "READY_NOW" and (
+            not window_open <= checked < window_expires
+            or checked - window_open > timedelta(seconds=FIRST_C0_MAXIMUM_OPEN_TO_PREFLIGHT_SECONDS)
+            or self.usable_margin_seconds < FIRST_C0_CANARY_MINIMUM_READY_MARGIN_SECONDS
+            or not all(
+                (
+                    self.source_fresh,
+                    self.mission_current,
+                    self.workspace_current,
+                    self.bundle_current,
+                    self.handoff_current,
+                    self.selection_current,
+                )
+            )
+            or self.clock_divergence_seconds > 2.0
+            or self.official_reads_delta != 0
+            or self.preparation_cycles_delta != 0
+            or self.selector_invocations_delta != 0
+            or self.target_set_freezes_delta != 0
+            or self.provider_effects != 0
+        ):
+            raise ValueError("FIRST_C0_WINDOW_READY_INVARIANT_INVALID")
+        return self
 
 
 CampaignSelectionAuthorityV1: TypeAlias = CampaignWindowSelectionV1 | FirstC0CanarySelectionV1

@@ -32,6 +32,7 @@ from robin.capture.storage import (
 _RESOLUTION_CLAIM_NAME = "provider-network-resolution-one-shot-v1.json"
 _MISSION_GLOBAL_CLAIM_ROOT_NAME = "RobinRealExecutionMissionClaimsV1"
 _FIRST_C0_CANARY_MINIMUM_PRE_DNS_MARGIN = timedelta(seconds=840)
+_PROVIDER_RESOLUTION_RESERVATION_AUTHORITY_V1 = object()
 
 
 class ProviderNetworkPreparationError(RuntimeError):
@@ -77,7 +78,7 @@ def system_resolver_identity_v1() -> str:
     return "PYTHON_SOCKET_SYSTEM_STUB_RESOLVER"
 
 
-def prepare_provider_network_binding_v1(
+def _prepare_provider_network_binding_after_reservation_v1(
     *,
     resolution_claim: ProviderNetworkResolutionClaimV1,
     resolver: ResolverV1 = _system_getaddrinfo,
@@ -87,9 +88,12 @@ def prepare_provider_network_binding_v1(
     maximum_expires_at_utc: datetime | None = None,
     minimum_binding_ttl_seconds: int = 1,
     observed_at_utc: datetime | None = None,
+    _reservation_authority: object | None = None,
 ) -> ProviderNetworkBindingV1:
-    """Resolve the one literal host once and perform no provider transport."""
+    """Resolve only after the durable reservation boundary has succeeded."""
 
+    if _reservation_authority is not _PROVIDER_RESOLUTION_RESERVATION_AUTHORITY_V1:
+        raise ProviderNetworkPreparationError("PROVIDER_NETWORK_RESOLUTION_RESERVATION_REQUIRED")
     if (
         not 1 <= binding_ttl_seconds <= 900
         or not 1 <= minimum_binding_ttl_seconds <= binding_ttl_seconds
@@ -258,7 +262,7 @@ def _write_resolution_claim_marker_v1(
         raise ProviderNetworkPreparationError(failure_code) from None
 
 
-def reserve_provider_network_resolution_v1(
+def _reserve_provider_network_resolution_v1(
     *,
     workspace_receipt: RealCaptureWorkspaceReceiptV1,
     mission_manifest: RealExecutionMissionManifestV1,
@@ -266,9 +270,12 @@ def reserve_provider_network_resolution_v1(
     output_path: Path,
     clock: Callable[[], datetime] = lambda: datetime.now(UTC),
     binding_ttl_seconds: int = 900,
+    first_c0_atomic_preflight_complete: bool,
 ) -> ProviderNetworkResolutionClaimV1:
     """Durably consume the sole DNS attempt before the resolver can run."""
 
+    if first_c0_atomic_preflight_complete is not True:
+        raise ProviderNetworkPreparationError("FIRST_C0_ATOMIC_PREFLIGHT_REQUIRED")
     if not 1 <= binding_ttl_seconds <= 900:
         raise ProviderNetworkPreparationError("PROVIDER_NETWORK_BINDING_TTL_INVALID")
     minimum_pre_dns_margin = _minimum_pre_dns_margin_v1(campaign_selection)
@@ -336,7 +343,41 @@ def reserve_provider_network_resolution_v1(
     return claim
 
 
-def prepare_provider_network_binding_once_v1(
+def reserve_provider_network_resolution_v1(
+    *,
+    workspace_receipt: RealCaptureWorkspaceReceiptV1,
+    mission_manifest: RealExecutionMissionManifestV1,
+    campaign_selection: CampaignSelectionAuthorityV1,
+    output_path: Path,
+    clock: Callable[[], datetime] = lambda: datetime.now(UTC),
+    binding_ttl_seconds: int = 900,
+) -> ProviderNetworkResolutionClaimV1:
+    """Reject direct reservation; the atomic owner path owns this effect."""
+
+    raise ProviderNetworkPreparationError("FIRST_C0_ATOMIC_PREFLIGHT_REQUIRED")
+
+
+def _reserve_first_c0_provider_network_resolution_after_atomic_preflight_v1(
+    *,
+    workspace_receipt: RealCaptureWorkspaceReceiptV1,
+    mission_manifest: RealExecutionMissionManifestV1,
+    campaign_selection: CampaignSelectionAuthorityV1,
+    output_path: Path,
+    clock: Callable[[], datetime] = lambda: datetime.now(UTC),
+    binding_ttl_seconds: int = 900,
+) -> ProviderNetworkResolutionClaimV1:
+    return _reserve_provider_network_resolution_v1(
+        workspace_receipt=workspace_receipt,
+        mission_manifest=mission_manifest,
+        campaign_selection=campaign_selection,
+        output_path=output_path,
+        clock=clock,
+        binding_ttl_seconds=binding_ttl_seconds,
+        first_c0_atomic_preflight_complete=True,
+    )
+
+
+def _prepare_provider_network_binding_once_v1(
     *,
     workspace_receipt: RealCaptureWorkspaceReceiptV1,
     mission_manifest: RealExecutionMissionManifestV1,
@@ -346,16 +387,20 @@ def prepare_provider_network_binding_once_v1(
     clock: Callable[[], datetime] = lambda: datetime.now(UTC),
     binding_ttl_seconds: int = 900,
     resolver_identity: str | None = None,
+    first_c0_atomic_preflight_complete: bool,
 ) -> ProviderNetworkBindingV1:
     """Reserve, resolve exactly once, and persist; any failure permanently forbids retry."""
 
-    claim = reserve_provider_network_resolution_v1(
+    if first_c0_atomic_preflight_complete is not True:
+        raise ProviderNetworkPreparationError("FIRST_C0_ATOMIC_PREFLIGHT_REQUIRED")
+    claim = _reserve_provider_network_resolution_v1(
         workspace_receipt=workspace_receipt,
         mission_manifest=mission_manifest,
         campaign_selection=campaign_selection,
         output_path=output_path,
         clock=clock,
         binding_ttl_seconds=binding_ttl_seconds,
+        first_c0_atomic_preflight_complete=first_c0_atomic_preflight_complete,
     )
     selected = campaign_selection.selected_candidate()
     earliest_kickoff = min(
@@ -378,7 +423,7 @@ def prepare_provider_network_binding_once_v1(
     except ValueError:
         raise ProviderNetworkPreparationError("CAMPAIGN_SELECTION_NOT_CURRENT") from None
     _validated_control_destination(workspace_receipt, output_path)
-    binding = prepare_provider_network_binding_v1(
+    binding = _prepare_provider_network_binding_after_reservation_v1(
         resolution_claim=claim,
         resolver=resolver,
         clock=clock,
@@ -389,9 +434,50 @@ def prepare_provider_network_binding_once_v1(
             _minimum_pre_dns_margin_v1(campaign_selection).total_seconds()
         ),
         observed_at_utc=observed_at,
+        _reservation_authority=_PROVIDER_RESOLUTION_RESERVATION_AUTHORITY_V1,
     )
     write_immutable_network_binding_v1(binding, output_path)
     return binding
+
+
+def prepare_provider_network_binding_once_v1(
+    *,
+    workspace_receipt: RealCaptureWorkspaceReceiptV1,
+    mission_manifest: RealExecutionMissionManifestV1,
+    campaign_selection: CampaignSelectionAuthorityV1,
+    output_path: Path,
+    resolver: ResolverV1 = _system_getaddrinfo,
+    clock: Callable[[], datetime] = lambda: datetime.now(UTC),
+    binding_ttl_seconds: int = 900,
+    resolver_identity: str | None = None,
+) -> ProviderNetworkBindingV1:
+    """Reject direct binding; the atomic owner path owns this effect."""
+
+    raise ProviderNetworkPreparationError("FIRST_C0_ATOMIC_PREFLIGHT_REQUIRED")
+
+
+def _prepare_first_c0_provider_network_binding_once_after_atomic_preflight_v1(
+    *,
+    workspace_receipt: RealCaptureWorkspaceReceiptV1,
+    mission_manifest: RealExecutionMissionManifestV1,
+    campaign_selection: CampaignSelectionAuthorityV1,
+    output_path: Path,
+    resolver: ResolverV1 = _system_getaddrinfo,
+    clock: Callable[[], datetime] = lambda: datetime.now(UTC),
+    binding_ttl_seconds: int = 900,
+    resolver_identity: str | None = None,
+) -> ProviderNetworkBindingV1:
+    return _prepare_provider_network_binding_once_v1(
+        workspace_receipt=workspace_receipt,
+        mission_manifest=mission_manifest,
+        campaign_selection=campaign_selection,
+        output_path=output_path,
+        resolver=resolver,
+        clock=clock,
+        binding_ttl_seconds=binding_ttl_seconds,
+        resolver_identity=resolver_identity,
+        first_c0_atomic_preflight_complete=True,
+    )
 
 
 def write_immutable_network_binding_v1(

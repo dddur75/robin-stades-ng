@@ -29,7 +29,7 @@ class OwnerReviewPackError(RuntimeError):
         super().__init__(code)
 
 
-def build_owner_review_pack_v1(
+def _build_owner_review_pack_v1(
     *,
     workspace_receipt: RealCaptureWorkspaceReceiptV1,
     mission_manifest: RealExecutionMissionManifestV1,
@@ -215,6 +215,42 @@ def build_owner_review_pack_v1(
     )
 
 
+def build_owner_review_pack_v1(
+    *,
+    workspace_receipt: RealCaptureWorkspaceReceiptV1,
+    mission_manifest: RealExecutionMissionManifestV1,
+    provider_network_binding: ProviderNetworkBindingV1,
+    campaign_selection: CampaignSelectionAuthorityV1,
+    generated_at_utc: datetime,
+    authorization_nonce: str,
+    activation_nonce: str,
+) -> OwnerReviewPackV1:
+    """Reject standalone builds; the atomic owner path owns the one pack."""
+
+    raise OwnerReviewPackError("FIRST_C0_SINGLE_OWNER_ENTRYPOINT_REQUIRED")
+
+
+def _build_first_c0_owner_review_pack_after_atomic_binding_v1(
+    *,
+    workspace_receipt: RealCaptureWorkspaceReceiptV1,
+    mission_manifest: RealExecutionMissionManifestV1,
+    provider_network_binding: ProviderNetworkBindingV1,
+    campaign_selection: CampaignSelectionAuthorityV1,
+    generated_at_utc: datetime,
+    authorization_nonce: str,
+    activation_nonce: str,
+) -> OwnerReviewPackV1:
+    return _build_owner_review_pack_v1(
+        workspace_receipt=workspace_receipt,
+        mission_manifest=mission_manifest,
+        provider_network_binding=provider_network_binding,
+        campaign_selection=campaign_selection,
+        generated_at_utc=generated_at_utc,
+        authorization_nonce=authorization_nonce,
+        activation_nonce=activation_nonce,
+    )
+
+
 def assert_owner_review_pack_completion_current_v1(
     pack: OwnerReviewPackV1,
     completed_at_utc: datetime,
@@ -248,7 +284,7 @@ def _write_immutable(path: Path, payload: bytes) -> None:
         raise OwnerReviewPackError("OWNER_REVIEW_PACK_WRITE_FAILED") from None
 
 
-def write_owner_review_pack_v1(
+def _write_owner_review_pack_v1(
     output_directory: Path,
     pack: OwnerReviewPackV1,
 ) -> dict[str, Path]:
@@ -317,6 +353,22 @@ def write_owner_review_pack_v1(
         )
         paths[label] = path
     return paths
+
+
+def write_owner_review_pack_v1(
+    output_directory: Path,
+    pack: OwnerReviewPackV1,
+) -> dict[str, Path]:
+    """Reject standalone publication of an Owner Review Pack."""
+
+    raise OwnerReviewPackError("FIRST_C0_SINGLE_OWNER_ENTRYPOINT_REQUIRED")
+
+
+def _write_first_c0_owner_review_pack_after_atomic_binding_v1(
+    output_directory: Path,
+    pack: OwnerReviewPackV1,
+) -> dict[str, Path]:
+    return _write_owner_review_pack_v1(output_directory, pack)
 
 
 def owner_authorization_statement_v1(pack: OwnerReviewPackV1) -> str:

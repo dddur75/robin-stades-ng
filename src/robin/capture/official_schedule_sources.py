@@ -440,11 +440,19 @@ class BuiltinHttpsOfficialScheduleFetcher:
         *,
         timeout_seconds: float = DEFAULT_TIMEOUT_SECONDS,
         maximum_bytes: int = MAXIMUM_SOURCE_BYTES,
+        maximum_redirects: int = MAXIMUM_REDIRECTS,
     ) -> None:
-        if timeout_seconds <= 0 or maximum_bytes <= 0:
+        if (
+            timeout_seconds <= 0
+            or maximum_bytes <= 0
+            or not isinstance(maximum_redirects, int)
+            or isinstance(maximum_redirects, bool)
+            or not 0 <= maximum_redirects <= MAXIMUM_REDIRECTS
+        ):
             raise ValueError("OFFICIAL_FETCH_LIMIT_INVALID")
         self._timeout_seconds = timeout_seconds
         self._maximum_bytes = maximum_bytes
+        self._maximum_redirects = maximum_redirects
 
     def _request(
         self,
@@ -455,7 +463,7 @@ class BuiltinHttpsOfficialScheduleFetcher:
     ) -> OfficialHttpResponse:
         current_url = requested_url
         redirects: list[RedirectHop] = []
-        for _ in range(MAXIMUM_REDIRECTS + 1):
+        for _ in range(self._maximum_redirects + 1):
             host = _validate_official_url(current_url, source)
             parsed = urlparse(current_url)
             target = parsed.path or "/"
