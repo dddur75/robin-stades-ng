@@ -118,10 +118,60 @@ def _isolated_mission_global_preparation_registry(
 ) -> Path:
     registry = tmp_path / "mission-global-preparation-registry"
     registry.mkdir()
+    legacy_registry = tmp_path / "legacy-global-preparation-registry"
     monkeypatch.setattr(
-        CANARY_CLI.provider_network_module,
-        "_mission_global_claim_registry_root_v1",
-        lambda: registry,
+        CANARY_CLI.global_claims,
+        "resolve_global_claim_root_candidate_v2",
+        lambda _workspace: registry,
+    )
+    monkeypatch.setattr(
+        CANARY_CLI.global_claims,
+        "ensure_global_claim_root_v2",
+        lambda _workspace, **_kwargs: registry,
+    )
+    monkeypatch.setattr(
+        CANARY_CLI.global_claims,
+        "inspect_global_claim_root_identity_v2",
+        lambda _workspace: ("synthetic-stable-global-root",),
+    )
+
+    def read_snapshot(_workspace: object) -> tuple[Path, tuple[object, ...]]:
+        selected = CANARY_CLI.global_claims.resolve_global_claim_root_candidate_v2(_workspace)
+        metadata = selected.lstat()
+        return selected, ("synthetic-global-root", metadata.st_dev, metadata.st_ino)
+
+    monkeypatch.setattr(
+        CANARY_CLI.global_claims,
+        "_global_claim_root_read_snapshot_v2",
+        read_snapshot,
+    )
+    monkeypatch.setattr(
+        CANARY_CLI.global_claims,
+        "inspect_global_claim_root_identity_v2",
+        lambda workspace: read_snapshot(workspace)[1],
+    )
+
+    def ensure_with_identity(
+        workspace: object,
+        *,
+        expected_read_identity: tuple[object, ...] | None = None,
+    ) -> object:
+        selected, identity = read_snapshot(workspace)
+        if expected_read_identity is not None and identity != expected_read_identity:
+            raise CANARY_CLI.global_claims.GlobalClaimBoundaryError(
+                "GLOBAL_CLAIM_ROOT_IDENTITY_CHANGED"
+            )
+        return CANARY_CLI.global_claims._EnsuredGlobalClaimRootV2(selected, identity)
+
+    monkeypatch.setattr(
+        CANARY_CLI.global_claims,
+        "_ensure_global_claim_root_with_identity_v2",
+        ensure_with_identity,
+    )
+    monkeypatch.setattr(
+        CANARY_CLI.global_claims,
+        "resolve_legacy_global_claim_root_read_only_v1",
+        lambda: legacy_registry,
     )
     return registry
 
@@ -294,7 +344,7 @@ def test_preparation_reservation_is_mission_global_across_fresh_workspaces(
         LALIGA_SOURCE,
     )
     plan = CANARY_CLI.load_first_c0_canary_source_plan_v1(plan_bytes)
-    reservation_bytes = CANARY_CLI._write_official_read_reservation(
+    reservation = CANARY_CLI._write_official_read_reservation(
         first_workspace,
         manifest,
         plan,
@@ -305,9 +355,17 @@ def test_preparation_reservation_is_mission_global_across_fresh_workspaces(
         cumulative_official_reads_reserved=2,
         recorded_at_utc=BASE,
     )
-    global_reservation = CANARY_CLI._mission_global_cycle_reservation_path(manifest, 1)
+    reservation_bytes = reservation.payload
+    global_reservation = CANARY_CLI._mission_global_cycle_reservation_path(
+        first_workspace, manifest, 1
+    )
     assert global_reservation.parent == _isolated_mission_global_preparation_registry
     assert global_reservation.read_bytes() == reservation_bytes
+    legacy_reservation = CANARY_CLI.global_claims.global_claim_marker_paths_v2(
+        first_workspace,
+        global_reservation.name,
+    ).legacy
+    assert not legacy_reservation.parent.exists()
     assert json.loads(reservation_bytes)["workspace_receipt_sha256"] == (
         first_workspace.canonical_receipt_hash
     )
@@ -341,7 +399,8 @@ def test_preparation_reservation_is_mission_global_across_fresh_workspaces(
             workspace_validator=lambda _workspace: None,
             marker_inspector=lambda _workspace, _manifest: {
                 "local_marker_present": False,
-                "global_marker_present": False,
+                "v2_global_marker_present": False,
+                "legacy_global_marker_present": False,
                 "inspected_read_only": True,
             },
         )
@@ -352,6 +411,1341 @@ def test_preparation_reservation_is_mission_global_across_fresh_workspaces(
         / "first-c0-canary-cycle-01-read-reservation-v1.json"
     ).exists()
     assert not (Path(second_workspace.control_temp_root) / "bundle").exists()
+
+
+@pytest.mark.parametrize(
+    ("global_state", "expected_code"),
+    (
+        ("legacy", "FIRST_C0_CANARY_GLOBAL_PREPARATION_CYCLE_ALREADY_RESERVED"),
+        ("v2", "FIRST_C0_CANARY_GLOBAL_PREPARATION_CYCLE_ALREADY_RESERVED"),
+        ("equal", "FIRST_C0_CANARY_GLOBAL_PREPARATION_CYCLE_ALREADY_RESERVED"),
+        ("conflict", "GLOBAL_CLAIM_LEGACY_CONFLICT"),
+        ("invalid", "GLOBAL_CLAIM_MARKER_INVALID"),
+    ),
+)
+def test_preparation_reservation_migration_states_fail_closed_before_fetch(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    global_state: str,
+    expected_code: str,
+) -> None:
+    first_workspace = workspace_receipt(tmp_path / "first-runtime")
+    second_workspace = workspace_receipt(tmp_path / "second-runtime")
+    Path(first_workspace.control_temp_root).mkdir(parents=True)
+    Path(second_workspace.control_temp_root).mkdir(parents=True)
+    manifest = mission_manifest(expires_at=BASE + timedelta(days=10))
+    plan_bytes = _source_plan_bytes(
+        "soccer_spain_la_liga",
+        "LALIGA_PUBLIC_MATCHES_JSON_V1",
+        LALIGA_SOURCE,
+    )
+    plan = CANARY_CLI.load_first_c0_canary_source_plan_v1(plan_bytes)
+    reservation = CANARY_CLI._write_official_read_reservation(
+        first_workspace,
+        manifest,
+        plan,
+        cycle_index=1,
+        cycle_role="PRIMARY_INITIAL",
+        prior_cycle_receipt_sha256=None,
+        official_reads_reserved=2,
+        cumulative_official_reads_reserved=2,
+        recorded_at_utc=BASE,
+    )
+    reservation_bytes = reservation.payload
+    marker_name = CANARY_CLI._mission_global_cycle_reservation_path(
+        first_workspace,
+        manifest,
+        1,
+    ).name
+    paths = CANARY_CLI.global_claims.global_claim_marker_paths_v2(
+        first_workspace,
+        marker_name,
+    )
+    paths.legacy.parent.mkdir()
+    if global_state == "legacy":
+        paths.legacy.write_bytes(reservation_bytes)
+        paths.v2.unlink()
+    elif global_state == "equal":
+        paths.legacy.write_bytes(reservation_bytes)
+    elif global_state == "conflict":
+        conflicting = json.loads(reservation_bytes)
+        conflicting["workspace_receipt_sha256"] = "f" * 64
+        paths.legacy.write_bytes(CANARY_CLI.canonical_json_bytes(conflicting) + b"\n")
+    elif global_state == "invalid":
+        paths.legacy.write_bytes(b"{}\n")
+        paths.v2.unlink()
+    else:
+        assert global_state == "v2"
+    before = {path: path.read_bytes() for path in (paths.v2, paths.legacy) if path.exists()}
+    fetch_calls = 0
+
+    class ForbiddenFetcher:
+        def fetch(self, _source: object) -> object:
+            nonlocal fetch_calls
+            fetch_calls += 1
+            raise AssertionError("migration state reached an official read")
+
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match=f"^{expected_code}$",
+    ):
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            workspace_receipt=second_workspace,
+            workspace_receipt_bytes=second_workspace.model_dump_json().encode(),
+            mission_manifest=manifest,
+            mission_manifest_bytes=manifest.model_dump_json().encode(),
+            source_plan_bytes=plan_bytes,
+            output_directory=Path(second_workspace.control_temp_root) / "bundle",
+            fetcher=ForbiddenFetcher(),
+            clock=lambda: BASE,
+            workspace_validator=lambda _workspace: None,
+            marker_inspector=lambda _workspace, _manifest: {
+                "local_marker_present": False,
+                "v2_global_marker_present": False,
+                "legacy_global_marker_present": False,
+                "inspected_read_only": True,
+            },
+        )
+    assert fetch_calls == 0
+    assert before == {path: path.read_bytes() for path in (paths.v2, paths.legacy) if path.exists()}
+    assert not (
+        Path(second_workspace.control_temp_root)
+        / "first-c0-canary-cycle-01-read-reservation-v1.json"
+    ).exists()
+    assert not (Path(second_workspace.control_temp_root) / "bundle").exists()
+
+
+@pytest.mark.parametrize(
+    ("late_legacy_payload", "expected_code"),
+    (
+        (b'{"race":"legacy-conflict"}\n', "GLOBAL_CLAIM_LEGACY_CONFLICT"),
+        (None, "GLOBAL_CLAIM_ALREADY_CONSUMED"),
+    ),
+)
+def test_legacy_marker_inserted_after_reservation_is_rechecked_before_fetch(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    late_legacy_payload: bytes | None,
+    expected_code: str,
+) -> None:
+    workspace = workspace_receipt(tmp_path)
+    control = Path(workspace.control_temp_root)
+    control.mkdir(parents=True)
+    manifest = mission_manifest(expires_at=BASE + timedelta(days=10))
+    real_reserve = CANARY_CLI.global_claims.reserve_global_claim_marker_v2
+    fetch_calls = 0
+
+    def reserve_then_inject_legacy_conflict(
+        receipt: RealCaptureWorkspaceReceiptV1,
+        marker_name: str,
+        payload: bytes,
+        *,
+        validator: object,
+        expected_v2_read_identity: tuple[object, ...] | None = None,
+        expected_legacy_root_identity: tuple[object, ...] | None = None,
+    ) -> CANARY_CLI.global_claims.GlobalClaimReservationV2:
+        written = real_reserve(
+            receipt,
+            marker_name,
+            payload,
+            validator=validator,
+            expected_v2_read_identity=expected_v2_read_identity,
+            expected_legacy_root_identity=expected_legacy_root_identity,
+        )
+        legacy = CANARY_CLI.global_claims.global_claim_marker_paths_v2(
+            receipt,
+            marker_name,
+        ).legacy
+        legacy.parent.mkdir()
+        legacy.write_bytes(payload if late_legacy_payload is None else late_legacy_payload)
+        return written
+
+    class ForbiddenFetcher:
+        def fetch(self, _source: object) -> object:
+            nonlocal fetch_calls
+            fetch_calls += 1
+            raise AssertionError("legacy race reached an official read")
+
+    monkeypatch.setattr(
+        CANARY_CLI.global_claims,
+        "reserve_global_claim_marker_v2",
+        reserve_then_inject_legacy_conflict,
+    )
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match=f"^{expected_code}$",
+    ):
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            workspace_receipt=workspace,
+            workspace_receipt_bytes=workspace.model_dump_json().encode(),
+            mission_manifest=manifest,
+            mission_manifest_bytes=manifest.model_dump_json().encode(),
+            source_plan_bytes=_source_plan_bytes(
+                "soccer_spain_la_liga",
+                "LALIGA_PUBLIC_MATCHES_JSON_V1",
+                LALIGA_SOURCE,
+            ),
+            output_directory=control / "bundle",
+            fetcher=ForbiddenFetcher(),
+            clock=lambda: BASE,
+            workspace_validator=lambda _workspace: None,
+            marker_inspector=lambda _workspace, _manifest: {
+                "local_marker_present": False,
+                "v2_global_marker_present": False,
+                "legacy_global_marker_present": False,
+                "inspected_read_only": True,
+            },
+        )
+
+    assert fetch_calls == 0
+    assert (control / "first-c0-canary-cycle-01-read-reservation-v1.json").is_file()
+    assert not (control / "bundle").exists()
+
+
+def test_global_root_replacement_after_reservation_stops_before_official_fetch(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    _isolated_mission_global_preparation_registry: Path,
+) -> None:
+    workspace = workspace_receipt(tmp_path)
+    control = Path(workspace.control_temp_root)
+    control.mkdir(parents=True)
+    manifest = mission_manifest(expires_at=BASE + timedelta(days=10))
+    registry = _isolated_mission_global_preparation_registry
+    displaced = registry.parent / "mission-global-preparation-registry-displaced"
+    real_reserve = CANARY_CLI.global_claims.reserve_global_claim_marker_v2
+    fetch_calls = 0
+    monkeypatch.setattr(
+        CANARY_CLI.global_claims,
+        "inspect_global_claim_root_identity_v2",
+        lambda _workspace: (
+            "synthetic-global-root",
+            registry.stat().st_dev,
+            registry.stat().st_ino,
+        ),
+    )
+
+    def reserve_then_replace_root(
+        receipt: RealCaptureWorkspaceReceiptV1,
+        marker_name: str,
+        payload: bytes,
+        *,
+        validator: object,
+        expected_v2_read_identity: tuple[object, ...] | None = None,
+        expected_legacy_root_identity: tuple[object, ...] | None = None,
+    ) -> CANARY_CLI.global_claims.GlobalClaimReservationV2:
+        reservation = real_reserve(
+            receipt,
+            marker_name,
+            payload,
+            validator=validator,
+            expected_v2_read_identity=expected_v2_read_identity,
+            expected_legacy_root_identity=expected_legacy_root_identity,
+        )
+        registry.rename(displaced)
+        registry.mkdir()
+        (registry / marker_name).write_bytes((displaced / marker_name).read_bytes())
+        return reservation
+
+    class ForbiddenFetcher:
+        def fetch(self, _source: object) -> object:
+            nonlocal fetch_calls
+            fetch_calls += 1
+            raise AssertionError("replacement root reached an official read")
+
+    monkeypatch.setattr(
+        CANARY_CLI.global_claims,
+        "reserve_global_claim_marker_v2",
+        reserve_then_replace_root,
+    )
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match="^GLOBAL_CLAIM_ROOT_IDENTITY_CHANGED$",
+    ):
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            workspace_receipt=workspace,
+            workspace_receipt_bytes=workspace.model_dump_json().encode(),
+            mission_manifest=manifest,
+            mission_manifest_bytes=manifest.model_dump_json().encode(),
+            source_plan_bytes=_source_plan_bytes(
+                "soccer_spain_la_liga",
+                "LALIGA_PUBLIC_MATCHES_JSON_V1",
+                LALIGA_SOURCE,
+            ),
+            output_directory=control / "bundle",
+            fetcher=ForbiddenFetcher(),
+            clock=lambda: BASE,
+            workspace_validator=lambda _workspace: None,
+            marker_inspector=lambda _workspace, _manifest: {
+                "local_marker_present": False,
+                "v2_global_marker_present": False,
+                "legacy_global_marker_present": False,
+                "inspected_read_only": True,
+            },
+        )
+
+    assert fetch_calls == 0
+    assert (control / "first-c0-canary-cycle-01-read-reservation-v1.json").is_file()
+    assert not (control / "bundle").exists()
+
+
+def test_workspace_replacement_during_global_assertion_stops_before_official_fetch(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    workspace = workspace_receipt(tmp_path)
+    control = Path(workspace.control_temp_root)
+    control.mkdir(parents=True)
+    original_identity = (control.stat().st_dev, control.stat().st_ino)
+    retired = tmp_path / "retired-control"
+    manifest = mission_manifest(expires_at=BASE + timedelta(days=10))
+    real_assert = CANARY_CLI._assert_new_mission_global_reservation_current
+    replaced = False
+    fetch_calls = 0
+
+    def assert_then_replace(*args: object, **kwargs: object) -> None:
+        nonlocal replaced
+        real_assert(*args, **kwargs)
+        if not replaced:
+            replaced = True
+            control.rename(retired)
+            control.mkdir()
+
+    def validate_workspace(_workspace: RealCaptureWorkspaceReceiptV1) -> None:
+        if (control.stat().st_dev, control.stat().st_ino) != original_identity:
+            raise CANARY_CLI.FirstC0CanaryPreparationError(
+                "FIRST_C0_CANARY_WORKSPACE_IDENTITY_CHANGED"
+            )
+
+    class ForbiddenFetcher:
+        def fetch(self, _source: object) -> object:
+            nonlocal fetch_calls
+            fetch_calls += 1
+            raise AssertionError("replacement workspace reached an official read")
+
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "_assert_new_mission_global_reservation_current",
+        assert_then_replace,
+    )
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match="^FIRST_C0_CANARY_WORKSPACE_IDENTITY_CHANGED$",
+    ):
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            workspace_receipt=workspace,
+            workspace_receipt_bytes=workspace.model_dump_json().encode(),
+            mission_manifest=manifest,
+            mission_manifest_bytes=manifest.model_dump_json().encode(),
+            source_plan_bytes=_source_plan_bytes(
+                "soccer_spain_la_liga",
+                "LALIGA_PUBLIC_MATCHES_JSON_V1",
+                LALIGA_SOURCE,
+            ),
+            output_directory=control / "bundle",
+            fetcher=ForbiddenFetcher(),
+            clock=lambda: BASE,
+            workspace_validator=validate_workspace,
+            marker_inspector=lambda _workspace, _manifest: {
+                "local_marker_present": False,
+                "v2_global_marker_present": False,
+                "legacy_global_marker_present": False,
+                "inspected_read_only": True,
+            },
+        )
+
+    assert fetch_calls == 0
+    assert (retired / "first-c0-canary-cycle-01-read-reservation-v1.json").is_file()
+    assert not (control / "bundle").exists()
+
+
+@pytest.mark.parametrize("mutation", ("delete", "replace"))
+def test_local_cycle_reservation_mutation_during_authority_sandwich_stops_before_fetch(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    mutation: str,
+) -> None:
+    workspace = workspace_receipt(tmp_path)
+    control = Path(workspace.control_temp_root)
+    control.mkdir(parents=True)
+    manifest = mission_manifest(expires_at=BASE + timedelta(days=10))
+    real_assert = CANARY_CLI._assert_new_mission_global_reservation_current
+    assertion_calls = 0
+    fetch_calls = 0
+
+    def assert_then_mutate(*args: object, **kwargs: object) -> None:
+        nonlocal assertion_calls
+        real_assert(*args, **kwargs)
+        assertion_calls += 1
+        if assertion_calls == 2:
+            marker = CANARY_CLI._cycle_reservation_path(workspace, 1)
+            if mutation == "delete":
+                marker.unlink()
+            else:
+                marker.write_bytes(b'{"mutated":true}\n')
+
+    class ForbiddenFetcher:
+        def fetch(self, _source: object) -> object:
+            nonlocal fetch_calls
+            fetch_calls += 1
+            raise AssertionError("mutated local reservation reached an official read")
+
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "_assert_new_mission_global_reservation_current",
+        assert_then_mutate,
+    )
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match="^FIRST_C0_CANARY_OFFICIAL_READ_RESERVATION_INVALID$",
+    ):
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            workspace_receipt=workspace,
+            workspace_receipt_bytes=workspace.model_dump_json().encode(),
+            mission_manifest=manifest,
+            mission_manifest_bytes=manifest.model_dump_json().encode(),
+            source_plan_bytes=_source_plan_bytes(
+                "soccer_spain_la_liga",
+                "LALIGA_PUBLIC_MATCHES_JSON_V1",
+                LALIGA_SOURCE,
+            ),
+            output_directory=control / "bundle",
+            fetcher=ForbiddenFetcher(),
+            clock=lambda: BASE,
+            workspace_validator=lambda _workspace: None,
+            marker_inspector=lambda _workspace, _manifest: {
+                "local_marker_present": False,
+                "v2_global_marker_present": False,
+                "legacy_global_marker_present": False,
+                "inspected_read_only": True,
+            },
+        )
+
+    assert fetch_calls == 0
+    assert not (control / "bundle").exists()
+
+
+def _seed_failed_primary_cycle(
+    workspace: RealCaptureWorkspaceReceiptV1,
+    manifest: RealExecutionMissionManifestV1,
+) -> None:
+    plan = CANARY_CLI.load_first_c0_canary_source_plan_v1(
+        _source_plan_bytes(
+            "soccer_spain_la_liga",
+            "LALIGA_PUBLIC_MATCHES_JSON_V1",
+            LALIGA_SOURCE,
+        )
+    )
+    reservation = CANARY_CLI._write_official_read_reservation(
+        workspace,
+        manifest,
+        plan,
+        cycle_index=1,
+        cycle_role="PRIMARY_INITIAL",
+        prior_cycle_receipt_sha256=None,
+        official_reads_reserved=2,
+        cumulative_official_reads_reserved=2,
+        recorded_at_utc=BASE,
+    )
+    CANARY_CLI._write_attempt_receipt(
+        workspace,
+        manifest,
+        plan,
+        cycle_index=1,
+        cycle_role="PRIMARY_INITIAL",
+        prior_cycle_receipt_sha256=None,
+        reservation_sha256=hashlib.sha256(reservation.payload).hexdigest(),
+        status="FAILED_BEFORE_DNS",
+        code="OFFICIAL_SOURCE_HTTP_STATUS_INVALID",
+        fallback_category="SOURCE_UNAVAILABLE",
+        failure_classification="DETERMINISTIC",
+        http_status=403,
+        official_reads=2,
+        supporting_official_reads=1,
+        cumulative_official_reads=2,
+        recommended_refresh_utc=None,
+        selected_not_before_utc=None,
+        bundle_manifest_sha256=None,
+        official_fetch_receipt={},
+        recorded_at_utc=BASE + timedelta(seconds=1),
+    )
+
+
+@pytest.mark.parametrize(
+    ("artifact", "expected_code"),
+    (
+        ("local-reservation-delete", "FIRST_C0_CANARY_PREPARATION_HISTORY_INVALID"),
+        ("local-receipt-mutate", "FIRST_C0_CANARY_ATTEMPT_RECEIPT_INVALID"),
+        ("global-v2-delete", "FIRST_C0_CANARY_GLOBAL_PREPARATION_HISTORY_INVALID"),
+        ("global-legacy-mutate", "GLOBAL_CLAIM_LEGACY_CONFLICT"),
+    ),
+)
+def test_previous_cycle_authority_mutation_after_replay_stops_before_fetch(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    artifact: str,
+    expected_code: str,
+) -> None:
+    workspace = workspace_receipt(tmp_path)
+    control = Path(workspace.control_temp_root)
+    control.mkdir(parents=True)
+    manifest = mission_manifest(expires_at=BASE + timedelta(days=10))
+    _seed_failed_primary_cycle(workspace, manifest)
+    marker_name = CANARY_CLI._mission_global_cycle_reservation_path(
+        workspace,
+        manifest,
+        1,
+    ).name
+    marker_paths = CANARY_CLI.global_claims.global_claim_marker_paths_v2(
+        workspace,
+        marker_name,
+    )
+    if artifact == "global-legacy-mutate":
+        marker_paths.legacy.parent.mkdir()
+        marker_paths.legacy.write_bytes(marker_paths.v2.read_bytes())
+    real_assert = CANARY_CLI._assert_new_mission_global_reservation_current
+    mutated = False
+    fetch_calls = 0
+
+    def assert_then_mutate(*args: object, **kwargs: object) -> None:
+        nonlocal mutated
+        real_assert(*args, **kwargs)
+        if mutated:
+            return
+        mutated = True
+        if artifact == "local-reservation-delete":
+            CANARY_CLI._cycle_reservation_path(workspace, 1).unlink()
+        elif artifact == "local-receipt-mutate":
+            CANARY_CLI._cycle_receipt_path(workspace, 1).write_bytes(b'{"mutated":true}\n')
+        elif artifact == "global-v2-delete":
+            marker_paths.v2.unlink()
+        else:
+            marker_paths.legacy.write_bytes(b'{"mutated":true}\n')
+
+    class ForbiddenFetcher:
+        def fetch(self, _source: object) -> object:
+            nonlocal fetch_calls
+            fetch_calls += 1
+            raise AssertionError("revoked history reached an official read")
+
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "_assert_new_mission_global_reservation_current",
+        assert_then_mutate,
+    )
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match=f"^{expected_code}$",
+    ):
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            workspace_receipt=workspace,
+            workspace_receipt_bytes=workspace.model_dump_json().encode(),
+            mission_manifest=manifest,
+            mission_manifest_bytes=manifest.model_dump_json().encode(),
+            source_plan_bytes=_source_plan_bytes(
+                "soccer_germany_bundesliga",
+                "DFB_DATACENTER_HTML_V1",
+                BUNDESLIGA_SOURCE,
+            ),
+            output_directory=control / "fallback-bundle",
+            fetcher=ForbiddenFetcher(),
+            clock=lambda: BASE + timedelta(seconds=2),
+            workspace_validator=lambda _workspace: None,
+            marker_inspector=lambda _workspace, _manifest: {
+                "local_marker_present": False,
+                "v2_global_marker_present": False,
+                "legacy_global_marker_present": False,
+                "inspected_read_only": True,
+            },
+        )
+
+    assert mutated
+    assert fetch_calls == 0
+    assert not (control / "fallback-bundle").exists()
+
+
+@pytest.mark.parametrize(
+    ("root", "expected_code"),
+    (
+        ("v2", "GLOBAL_CLAIM_ROOT_IDENTITY_CHANGED"),
+        ("legacy", "GLOBAL_CLAIM_LEGACY_CONFLICT"),
+    ),
+)
+def test_root_swap_between_history_replay_and_new_reservation_fails_closed(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    _isolated_mission_global_preparation_registry: Path,
+    root: str,
+    expected_code: str,
+) -> None:
+    workspace = workspace_receipt(tmp_path)
+    control = Path(workspace.control_temp_root)
+    control.mkdir(parents=True)
+    manifest = mission_manifest(expires_at=BASE + timedelta(days=10))
+    _seed_failed_primary_cycle(workspace, manifest)
+    real_write = CANARY_CLI._write_official_read_reservation
+    swapped = False
+    fetch_calls = 0
+
+    def swap_then_write(*args: object, **kwargs: object) -> object:
+        nonlocal swapped
+        if not swapped:
+            swapped = True
+            if root == "v2":
+                displaced = _isolated_mission_global_preparation_registry.with_name(
+                    "mission-global-preparation-registry-v2-displaced"
+                )
+                _isolated_mission_global_preparation_registry.rename(displaced)
+                _isolated_mission_global_preparation_registry.mkdir()
+            else:
+                legacy = CANARY_CLI.global_claims.resolve_legacy_global_claim_root_read_only_v1()
+                legacy.mkdir()
+        return real_write(*args, **kwargs)
+
+    class ForbiddenFetcher:
+        def fetch(self, _source: object) -> object:
+            nonlocal fetch_calls
+            fetch_calls += 1
+            raise AssertionError("split-root history reached an official read")
+
+    monkeypatch.setattr(CANARY_CLI, "_write_official_read_reservation", swap_then_write)
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match=f"^{expected_code}$",
+    ):
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            workspace_receipt=workspace,
+            workspace_receipt_bytes=workspace.model_dump_json().encode(),
+            mission_manifest=manifest,
+            mission_manifest_bytes=manifest.model_dump_json().encode(),
+            source_plan_bytes=_source_plan_bytes(
+                "soccer_germany_bundesliga",
+                "DFB_DATACENTER_HTML_V1",
+                BUNDESLIGA_SOURCE,
+            ),
+            output_directory=control / "fallback-bundle",
+            fetcher=ForbiddenFetcher(),
+            clock=lambda: BASE + timedelta(seconds=2),
+            workspace_validator=lambda _workspace: None,
+            marker_inspector=lambda _workspace, _manifest: {
+                "local_marker_present": False,
+                "v2_global_marker_present": False,
+                "legacy_global_marker_present": False,
+                "inspected_read_only": True,
+            },
+        )
+
+    cycle_2_marker = CANARY_CLI._mission_global_cycle_reservation_path(
+        workspace,
+        manifest,
+        2,
+    )
+    assert swapped
+    assert fetch_calls == 0
+    assert not CANARY_CLI._cycle_reservation_path(workspace, 2).exists()
+    assert not cycle_2_marker.exists()
+    assert not (control / "fallback-bundle").exists()
+
+
+def test_clock_mutation_before_final_fetch_barrier_stops_official_read(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    workspace = workspace_receipt(tmp_path)
+    control = Path(workspace.control_temp_root)
+    control.mkdir(parents=True)
+    manifest = mission_manifest(expires_at=BASE + timedelta(days=10))
+    clock_calls = 0
+    fetch_calls = 0
+
+    def mutating_clock() -> datetime:
+        nonlocal clock_calls
+        clock_calls += 1
+        if clock_calls == 2:
+            CANARY_CLI._cycle_reservation_path(workspace, 1).write_bytes(
+                b'{"mutated-by-clock":true}\n'
+            )
+        return BASE
+
+    class ForbiddenFetcher:
+        def fetch(self, _source: object) -> object:
+            nonlocal fetch_calls
+            fetch_calls += 1
+            raise AssertionError("clock-revoked authority reached an official read")
+
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match="^FIRST_C0_CANARY_OFFICIAL_READ_RESERVATION_INVALID$",
+    ):
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            workspace_receipt=workspace,
+            workspace_receipt_bytes=workspace.model_dump_json().encode(),
+            mission_manifest=manifest,
+            mission_manifest_bytes=manifest.model_dump_json().encode(),
+            source_plan_bytes=_source_plan_bytes(
+                "soccer_spain_la_liga",
+                "LALIGA_PUBLIC_MATCHES_JSON_V1",
+                LALIGA_SOURCE,
+            ),
+            output_directory=control / "bundle",
+            fetcher=ForbiddenFetcher(),
+            clock=mutating_clock,
+            workspace_validator=lambda _workspace: None,
+            marker_inspector=lambda _workspace, _manifest: {
+                "local_marker_present": False,
+                "v2_global_marker_present": False,
+                "legacy_global_marker_present": False,
+                "inspected_read_only": True,
+            },
+        )
+
+    assert clock_calls == 2
+    assert fetch_calls == 0
+    assert not (control / "bundle").exists()
+
+
+def test_failure_receipt_refuses_replaced_control_root_after_official_read(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    workspace = workspace_receipt(tmp_path)
+    control = Path(workspace.control_temp_root)
+    control.mkdir(parents=True)
+    original_identity = (control.stat().st_dev, control.stat().st_ino)
+    retired = tmp_path / "retired-control-after-fetch"
+    manifest = mission_manifest(expires_at=BASE + timedelta(days=10))
+    supporting_raw = b"<html>public LaLiga bootstrap unavailable</html>"
+    supporting = SupportingOfficialRead(
+        requested_url=LALIGA_BOOTSTRAP_URL,
+        final_url=LALIGA_BOOTSTRAP_URL,
+        official_domain="www.laliga.com",
+        status_code=200,
+        content_type="text/html",
+        byte_count=len(supporting_raw),
+        raw_sha256=hashlib.sha256(supporting_raw).hexdigest(),
+        redirect_chain=(),
+    )
+    fetch_calls = 0
+
+    class ReplacingRejectedFetcher:
+        def fetch(self, source: object) -> OfficialHttpResponse:
+            nonlocal fetch_calls
+            fetch_calls += 1
+            control.rename(retired)
+            control.mkdir()
+            return OfficialHttpResponse(
+                status_code=503,
+                final_url=getattr(source, "url"),
+                content_type="application/json",
+                body=b"unavailable",
+                supporting_official_reads=(supporting,),
+                supporting_official_raw_bytes=(supporting_raw,),
+            )
+
+    def validate_workspace(_workspace: RealCaptureWorkspaceReceiptV1) -> None:
+        if (control.stat().st_dev, control.stat().st_ino) != original_identity:
+            raise CANARY_CLI.FirstC0CanaryPreparationError(
+                "FIRST_C0_CANARY_WORKSPACE_IDENTITY_CHANGED"
+            )
+
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match="^FIRST_C0_CANARY_WORKSPACE_IDENTITY_CHANGED$",
+    ):
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            workspace_receipt=workspace,
+            workspace_receipt_bytes=workspace.model_dump_json().encode(),
+            mission_manifest=manifest,
+            mission_manifest_bytes=manifest.model_dump_json().encode(),
+            source_plan_bytes=_source_plan_bytes(
+                "soccer_spain_la_liga",
+                "LALIGA_PUBLIC_MATCHES_JSON_V1",
+                LALIGA_SOURCE,
+            ),
+            output_directory=control / "bundle",
+            fetcher=ReplacingRejectedFetcher(),
+            clock=lambda: BASE,
+            workspace_validator=validate_workspace,
+            marker_inspector=lambda _workspace, _manifest: {
+                "local_marker_present": False,
+                "v2_global_marker_present": False,
+                "legacy_global_marker_present": False,
+                "inspected_read_only": True,
+            },
+        )
+
+    assert fetch_calls == 1
+    assert not CANARY_CLI._cycle_receipt_path(workspace, 1).exists()
+    assert not (retired / "first-c0-canary-cycle-01-attempt-receipt-v1.json").exists()
+
+
+@pytest.mark.parametrize("location", ("v2", "legacy", "equal"))
+def test_later_cycle_inserted_during_current_assertion_stops_before_official_fetch(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    location: str,
+) -> None:
+    workspace = workspace_receipt(tmp_path)
+    control = Path(workspace.control_temp_root)
+    control.mkdir(parents=True)
+    manifest = mission_manifest(expires_at=BASE + timedelta(days=10))
+    real_assert = CANARY_CLI._assert_new_mission_global_reservation_current
+    injected = False
+    fetch_calls = 0
+
+    def assert_then_inject(*args: object, **kwargs: object) -> None:
+        nonlocal injected
+        real_assert(*args, **kwargs)
+        if injected:
+            return
+        injected = True
+        marker = CANARY_CLI._mission_global_cycle_reservation_path(
+            workspace,
+            manifest,
+            2,
+        )
+        paths = CANARY_CLI.global_claims.global_claim_marker_paths_v2(
+            workspace,
+            marker.name,
+        )
+        if location in {"v2", "equal"}:
+            paths.v2.write_bytes(b'{"orphan_cycle":2}\n')
+        if location in {"legacy", "equal"}:
+            paths.legacy.parent.mkdir()
+            paths.legacy.write_bytes(b'{"orphan_cycle":2}\n')
+
+    class ForbiddenFetcher:
+        def fetch(self, _source: object) -> object:
+            nonlocal fetch_calls
+            fetch_calls += 1
+            raise AssertionError("late cycle reached an official read")
+
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "_assert_new_mission_global_reservation_current",
+        assert_then_inject,
+    )
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match="^FIRST_C0_CANARY_PREPARATION_HISTORY_GAP$",
+    ):
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            workspace_receipt=workspace,
+            workspace_receipt_bytes=workspace.model_dump_json().encode(),
+            mission_manifest=manifest,
+            mission_manifest_bytes=manifest.model_dump_json().encode(),
+            source_plan_bytes=_source_plan_bytes(
+                "soccer_spain_la_liga",
+                "LALIGA_PUBLIC_MATCHES_JSON_V1",
+                LALIGA_SOURCE,
+            ),
+            output_directory=control / "bundle",
+            fetcher=ForbiddenFetcher(),
+            clock=lambda: BASE,
+            workspace_validator=lambda _workspace: None,
+            marker_inspector=lambda _workspace, _manifest: {
+                "local_marker_present": False,
+                "v2_global_marker_present": False,
+                "legacy_global_marker_present": False,
+                "inspected_read_only": True,
+            },
+        )
+
+    assert fetch_calls == 0
+    assert CANARY_CLI._cycle_reservation_path(workspace, 1).is_file()
+    assert not (control / "bundle").exists()
+
+
+@pytest.mark.parametrize("location", ("v2", "legacy", "equal"))
+def test_provider_marker_inserted_during_current_assertion_stops_before_official_fetch(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    location: str,
+) -> None:
+    workspace = workspace_receipt(tmp_path)
+    control = Path(workspace.control_temp_root)
+    control.mkdir(parents=True)
+    manifest = mission_manifest(expires_at=BASE + timedelta(days=10))
+    real_assert = CANARY_CLI._assert_new_mission_global_reservation_current
+    injected = False
+    fetch_calls = 0
+    provider_marker_name = (
+        f"{manifest.mission_id.casefold()}-{manifest.canonical_manifest_sha256()}.json"
+    )
+    provider_paths = CANARY_CLI.global_claims.global_claim_marker_paths_v2(
+        workspace,
+        provider_marker_name,
+    )
+    provider_claim = ProviderNetworkResolutionClaimV1.issue(
+        mission_manifest_sha256=manifest.canonical_manifest_sha256(),
+        workspace_receipt_sha256=workspace.canonical_receipt_hash,
+        campaign_selection_sha256="3" * 64,
+        fixture_target_set_sha256="4" * 64,
+        claimed_at_utc=BASE,
+        mission_expires_at_utc=manifest.expires_at,
+    )
+    provider_payload = (
+        CANARY_CLI.canonical_json_bytes(provider_claim.model_dump(mode="json")) + b"\n"
+    )
+
+    def assert_then_inject(*args: object, **kwargs: object) -> None:
+        nonlocal injected
+        real_assert(*args, **kwargs)
+        if injected:
+            return
+        injected = True
+        if location in {"v2", "equal"}:
+            provider_paths.v2.write_bytes(provider_payload)
+        if location in {"legacy", "equal"}:
+            provider_paths.legacy.parent.mkdir()
+            provider_paths.legacy.write_bytes(provider_payload)
+
+    class ForbiddenFetcher:
+        def fetch(self, _source: object) -> object:
+            nonlocal fetch_calls
+            fetch_calls += 1
+            raise AssertionError("provider marker reached an official read")
+
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "_assert_new_mission_global_reservation_current",
+        assert_then_inject,
+    )
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match="^FIRST_C0_CANARY_PROVIDER_MARKER_PRESENT$",
+    ):
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            workspace_receipt=workspace,
+            workspace_receipt_bytes=workspace.model_dump_json().encode(),
+            mission_manifest=manifest,
+            mission_manifest_bytes=manifest.model_dump_json().encode(),
+            source_plan_bytes=_source_plan_bytes(
+                "soccer_spain_la_liga",
+                "LALIGA_PUBLIC_MATCHES_JSON_V1",
+                LALIGA_SOURCE,
+            ),
+            output_directory=control / "bundle",
+            fetcher=ForbiddenFetcher(),
+            clock=lambda: BASE,
+            workspace_validator=lambda _workspace: None,
+            marker_inspector=CANARY_CLI.inspect_first_c0_canary_markers_read_only_v1,
+        )
+
+    assert fetch_calls == 0
+    assert CANARY_CLI._cycle_reservation_path(workspace, 1).is_file()
+    assert not (control / "bundle").exists()
+
+
+def test_provider_marker_inserted_after_later_cycle_scan_stops_before_official_fetch(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    workspace = workspace_receipt(tmp_path)
+    control = Path(workspace.control_temp_root)
+    control.mkdir(parents=True)
+    manifest = mission_manifest(expires_at=BASE + timedelta(days=10))
+    real_later_scan = CANARY_CLI._assert_no_later_cycle_artifacts
+    injected = False
+    fetch_calls = 0
+    provider_marker_name = (
+        f"{manifest.mission_id.casefold()}-{manifest.canonical_manifest_sha256()}.json"
+    )
+    provider_paths = CANARY_CLI.global_claims.global_claim_marker_paths_v2(
+        workspace,
+        provider_marker_name,
+    )
+    provider_claim = ProviderNetworkResolutionClaimV1.issue(
+        mission_manifest_sha256=manifest.canonical_manifest_sha256(),
+        workspace_receipt_sha256=workspace.canonical_receipt_hash,
+        campaign_selection_sha256="3" * 64,
+        fixture_target_set_sha256="4" * 64,
+        claimed_at_utc=BASE,
+        mission_expires_at_utc=manifest.expires_at,
+    )
+    provider_payload = (
+        CANARY_CLI.canonical_json_bytes(provider_claim.model_dump(mode="json")) + b"\n"
+    )
+
+    def scan_then_inject(
+        *args: object,
+        **kwargs: object,
+    ) -> tuple[tuple[object, ...], tuple[object, ...]]:
+        nonlocal injected
+        identities = real_later_scan(*args, **kwargs)
+        if not injected:
+            injected = True
+            provider_paths.v2.write_bytes(provider_payload)
+        return identities
+
+    class ForbiddenFetcher:
+        def fetch(self, _source: object) -> object:
+            nonlocal fetch_calls
+            fetch_calls += 1
+            raise AssertionError("late provider marker reached an official read")
+
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "_assert_no_later_cycle_artifacts",
+        scan_then_inject,
+    )
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match="^FIRST_C0_CANARY_PROVIDER_MARKER_PRESENT$",
+    ):
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            workspace_receipt=workspace,
+            workspace_receipt_bytes=workspace.model_dump_json().encode(),
+            mission_manifest=manifest,
+            mission_manifest_bytes=manifest.model_dump_json().encode(),
+            source_plan_bytes=_source_plan_bytes(
+                "soccer_spain_la_liga",
+                "LALIGA_PUBLIC_MATCHES_JSON_V1",
+                LALIGA_SOURCE,
+            ),
+            output_directory=control / "bundle",
+            fetcher=ForbiddenFetcher(),
+            clock=lambda: BASE,
+            workspace_validator=lambda _workspace: None,
+            marker_inspector=lambda _workspace, _manifest: {
+                "local_marker_present": False,
+                "v2_global_marker_present": False,
+                "legacy_global_marker_present": False,
+                "inspected_read_only": True,
+            },
+        )
+
+    assert fetch_calls == 0
+    assert not (control / "bundle").exists()
+
+
+@pytest.mark.parametrize("location", ("v2", "legacy", "equal"))
+def test_later_global_cycle_marker_blocks_backfill_before_official_fetch(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    location: str,
+) -> None:
+    workspace = workspace_receipt(tmp_path)
+    control = Path(workspace.control_temp_root)
+    control.mkdir(parents=True)
+    manifest = mission_manifest(expires_at=BASE + timedelta(days=10))
+    marker = CANARY_CLI._mission_global_cycle_reservation_path(workspace, manifest, 2)
+    paths = CANARY_CLI.global_claims.global_claim_marker_paths_v2(workspace, marker.name)
+    payload = b'{"orphan_cycle":2}\n'
+    if location in {"v2", "equal"}:
+        paths.v2.write_bytes(payload)
+    if location in {"legacy", "equal"}:
+        paths.legacy.parent.mkdir()
+        paths.legacy.write_bytes(payload)
+    observed = tuple(path for path in (paths.v2, paths.legacy) if path.exists())
+    before = {path: path.read_bytes() for path in observed}
+    fetch_calls = 0
+
+    class ForbiddenFetcher:
+        def fetch(self, _source: object) -> object:
+            nonlocal fetch_calls
+            fetch_calls += 1
+            raise AssertionError("global history gap reached an official read")
+
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match="^FIRST_C0_CANARY_PREPARATION_HISTORY_GAP$",
+    ):
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            workspace_receipt=workspace,
+            workspace_receipt_bytes=workspace.model_dump_json().encode(),
+            mission_manifest=manifest,
+            mission_manifest_bytes=manifest.model_dump_json().encode(),
+            source_plan_bytes=_source_plan_bytes(
+                "soccer_spain_la_liga",
+                "LALIGA_PUBLIC_MATCHES_JSON_V1",
+                LALIGA_SOURCE,
+            ),
+            output_directory=control / "bundle",
+            fetcher=ForbiddenFetcher(),
+            clock=lambda: BASE,
+            workspace_validator=lambda _workspace: None,
+            marker_inspector=lambda _workspace, _manifest: {
+                "local_marker_present": False,
+                "v2_global_marker_present": False,
+                "legacy_global_marker_present": False,
+                "inspected_read_only": True,
+            },
+        )
+
+    assert fetch_calls == 0
+    assert before == {path: path.read_bytes() for path in observed}
+    assert not CANARY_CLI._cycle_reservation_path(workspace, 1).exists()
+    assert not (control / "bundle").exists()
+
+
+def test_rehashed_primary_refresh_after_failed_primary_is_rejected_before_fetch(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    workspace = workspace_receipt(tmp_path)
+    control = Path(workspace.control_temp_root)
+    control.mkdir(parents=True)
+    manifest = mission_manifest(expires_at=BASE + timedelta(days=10))
+    plan_bytes = _source_plan_bytes(
+        "soccer_spain_la_liga",
+        "LALIGA_PUBLIC_MATCHES_JSON_V1",
+        LALIGA_SOURCE,
+    )
+    plan = CANARY_CLI.load_first_c0_canary_source_plan_v1(plan_bytes)
+
+    cycle_1 = CANARY_CLI._write_official_read_reservation(
+        workspace,
+        manifest,
+        plan,
+        cycle_index=1,
+        cycle_role="PRIMARY_INITIAL",
+        prior_cycle_receipt_sha256=None,
+        official_reads_reserved=2,
+        cumulative_official_reads_reserved=2,
+        recorded_at_utc=BASE,
+    )
+    CANARY_CLI._write_attempt_receipt(
+        workspace,
+        manifest,
+        plan,
+        cycle_index=1,
+        cycle_role="PRIMARY_INITIAL",
+        prior_cycle_receipt_sha256=None,
+        reservation_sha256=hashlib.sha256(cycle_1.payload).hexdigest(),
+        status="FAILED_BEFORE_DNS",
+        code="OFFICIAL_SOURCE_HTTP_STATUS_INVALID",
+        fallback_category="SOURCE_UNAVAILABLE",
+        failure_classification="TRANSIENT",
+        http_status=503,
+        official_reads=2,
+        supporting_official_reads=1,
+        cumulative_official_reads=2,
+        recommended_refresh_utc=None,
+        selected_not_before_utc=None,
+        bundle_manifest_sha256=None,
+        official_fetch_receipt={},
+        recorded_at_utc=BASE + timedelta(seconds=1),
+    )
+    cycle_1_receipt = CANARY_CLI._cycle_receipt_path(workspace, 1).read_bytes()
+    prior_hash = hashlib.sha256(cycle_1_receipt).hexdigest()
+
+    cycle_2 = CANARY_CLI._write_official_read_reservation(
+        workspace,
+        manifest,
+        plan,
+        cycle_index=2,
+        cycle_role="PRIMARY_REFRESH",
+        prior_cycle_receipt_sha256=prior_hash,
+        official_reads_reserved=2,
+        cumulative_official_reads_reserved=4,
+        recorded_at_utc=BASE + timedelta(seconds=2),
+    )
+    CANARY_CLI._write_attempt_receipt(
+        workspace,
+        manifest,
+        plan,
+        cycle_index=2,
+        cycle_role="PRIMARY_REFRESH",
+        prior_cycle_receipt_sha256=prior_hash,
+        reservation_sha256=hashlib.sha256(cycle_2.payload).hexdigest(),
+        status="FAILED_BEFORE_DNS",
+        code="OFFICIAL_SOURCE_HTTP_STATUS_INVALID",
+        fallback_category="SOURCE_UNAVAILABLE",
+        failure_classification="TRANSIENT",
+        http_status=503,
+        official_reads=2,
+        supporting_official_reads=1,
+        cumulative_official_reads=4,
+        recommended_refresh_utc=None,
+        selected_not_before_utc=None,
+        bundle_manifest_sha256=None,
+        official_fetch_receipt={},
+        recorded_at_utc=BASE + timedelta(seconds=3),
+    )
+    marker = CANARY_CLI._mission_global_cycle_reservation_path(workspace, manifest, 2)
+    pair = CANARY_CLI.global_claims.global_claim_marker_paths_v2(workspace, marker.name)
+    pair.legacy.parent.mkdir(parents=True)
+    pair.legacy.write_bytes(cycle_2.payload)
+    tracked = (
+        CANARY_CLI._cycle_reservation_path(workspace, 1),
+        CANARY_CLI._cycle_receipt_path(workspace, 1),
+        CANARY_CLI._cycle_reservation_path(workspace, 2),
+        CANARY_CLI._cycle_receipt_path(workspace, 2),
+        pair.v2,
+        pair.legacy,
+    )
+    before = {path: path.read_bytes() for path in tracked}
+    fetch_calls = 0
+
+    class ForbiddenFetcher:
+        def fetch(self, _source: object) -> object:
+            nonlocal fetch_calls
+            fetch_calls += 1
+            raise AssertionError("illegal persisted transition reached fetch")
+
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match="^FIRST_C0_CANARY_OFFICIAL_READ_RESERVATION_INVALID$",
+    ):
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            workspace_receipt=workspace,
+            workspace_receipt_bytes=workspace.model_dump_json().encode(),
+            mission_manifest=manifest,
+            mission_manifest_bytes=manifest.model_dump_json().encode(),
+            source_plan_bytes=plan_bytes,
+            output_directory=control / "illegal-transition-bundle",
+            fetcher=ForbiddenFetcher(),
+            clock=lambda: BASE + timedelta(seconds=4),
+            workspace_validator=lambda _workspace: None,
+            marker_inspector=lambda _workspace, _manifest: {
+                "local_marker_present": False,
+                "v2_global_marker_present": False,
+                "legacy_global_marker_present": False,
+                "inspected_read_only": True,
+            },
+        )
+
+    assert fetch_calls == 0
+    assert before == {path: path.read_bytes() for path in tracked}
+    assert not (control / "illegal-transition-bundle").exists()
+
+
+@pytest.mark.parametrize(
+    ("field", "invalid_value"),
+    (
+        ("workspace_receipt_sha256", "g" * 64),
+        ("source_plan_sha256", "f" * 64),
+        ("cycle_role", "ARBITRARY"),
+        ("official_reads_reserved", -1),
+        ("official_reads_reserved", 1),
+        ("cumulative_official_reads_reserved", 13),
+        ("recorded_at_utc", "not-a-datetime"),
+        ("url", "https://example.invalid/"),
+    ),
+)
+def test_global_preparation_marker_validator_rejects_noncontract_fields(
+    tmp_path: Path,
+    field: str,
+    invalid_value: object,
+) -> None:
+    workspace = workspace_receipt(tmp_path)
+    Path(workspace.control_temp_root).mkdir(parents=True)
+    manifest = mission_manifest(expires_at=BASE + timedelta(days=10))
+    plan = CANARY_CLI.load_first_c0_canary_source_plan_v1(
+        _source_plan_bytes(
+            "soccer_spain_la_liga",
+            "LALIGA_PUBLIC_MATCHES_JSON_V1",
+            LALIGA_SOURCE,
+        )
+    )
+    reservation = CANARY_CLI._write_official_read_reservation(
+        workspace,
+        manifest,
+        plan,
+        cycle_index=1,
+        cycle_role="PRIMARY_INITIAL",
+        prior_cycle_receipt_sha256=None,
+        official_reads_reserved=2,
+        cumulative_official_reads_reserved=2,
+        recorded_at_utc=BASE,
+    )
+    valid_bytes = reservation.payload
+    assert CANARY_CLI._valid_mission_global_reservation_v2(
+        valid_bytes,
+        manifest,
+        1,
+        expected_cycle_role="PRIMARY_INITIAL",
+        expected_prior_cycle_receipt_sha256=None,
+        expected_previous_cumulative_reads=0,
+    )
+    malformed = json.loads(valid_bytes)
+    malformed[field] = invalid_value
+
+    assert not CANARY_CLI._valid_mission_global_reservation_v2(
+        CANARY_CLI.canonical_json_bytes(malformed) + b"\n",
+        manifest,
+        1,
+        expected_cycle_role="PRIMARY_INITIAL",
+        expected_prior_cycle_receipt_sha256=None,
+        expected_previous_cumulative_reads=0,
+    )
 
 
 def mission_manifest(
@@ -1092,6 +2486,8 @@ def test_canary_atomic_path_840_second_gate_rejects_before_marker_write(
             output_path=output,
             clock=lambda: BASE,
             binding_ttl_seconds=839,
+            expected_global_v2_read_identity=("unused-before-margin-gate",),
+            expected_global_legacy_root_identity=("unused-before-margin-gate",),
         )
     assert writes == 0
 
@@ -1377,7 +2773,8 @@ def test_cli_pipeline_publishes_one_immutable_selection_bundle_before_dns(
         marker_inspector=lambda _workspace, _manifest: {
             "schema_version": "synthetic-marker-inspection-v1",
             "local_marker_present": False,
-            "global_marker_present": False,
+            "v2_global_marker_present": False,
+            "legacy_global_marker_present": False,
             "inspected_read_only": True,
         },
     )
@@ -1416,6 +2813,360 @@ def test_cli_pipeline_publishes_one_immutable_selection_bundle_before_dns(
     assert manifest_payload["secret_reads"] == 0
     assert (control / "first-c0-canary-cycle-01-read-reservation-v1.json").is_file()
     assert (control / "first-c0-canary-cycle-01-attempt-receipt-v1.json").is_file()
+
+
+def test_mission_expiry_between_reservation_and_official_read_stops_before_fetch(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    control = tmp_path / "control"
+    control.mkdir()
+    workspace = workspace_receipt(tmp_path)
+    manifest = mission_manifest(expires_at=BASE + timedelta(seconds=1))
+    fetch_calls = 0
+    clock_calls = 0
+
+    class ForbiddenFetcher:
+        def fetch(self, _source: object) -> object:
+            nonlocal fetch_calls
+            fetch_calls += 1
+            raise AssertionError("expired mission reached the official read")
+
+    def clock() -> datetime:
+        nonlocal clock_calls
+        clock_calls += 1
+        return BASE if clock_calls == 1 else manifest.expires_at
+
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match="BOOTSTRAP_MISSION_EXPIRED",
+    ):
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            workspace_receipt=workspace,
+            workspace_receipt_bytes=workspace.model_dump_json().encode(),
+            mission_manifest=manifest,
+            mission_manifest_bytes=manifest.model_dump_json().encode(),
+            source_plan_bytes=_source_plan_bytes(
+                "soccer_spain_la_liga",
+                "LALIGA_PUBLIC_MATCHES_JSON_V1",
+                LALIGA_SOURCE,
+            ),
+            output_directory=control / "canary-bundle",
+            fetcher=ForbiddenFetcher(),
+            clock=clock,
+            workspace_validator=lambda _workspace: None,
+            marker_inspector=lambda _workspace, _manifest: {
+                "local_marker_present": False,
+                "v2_global_marker_present": False,
+                "legacy_global_marker_present": False,
+                "inspected_read_only": True,
+            },
+        )
+    assert fetch_calls == 0
+    assert (control / "first-c0-canary-cycle-01-read-reservation-v1.json").is_file()
+    attempt = json.loads(
+        (control / "first-c0-canary-cycle-01-attempt-receipt-v1.json").read_bytes()
+    )
+    assert attempt["status"] == "FAILED_NO_FALLBACK"
+    assert attempt["code"] == "BOOTSTRAP_MISSION_EXPIRED"
+    assert attempt["fallback_category"] is None
+    assert attempt["http_status"] == 0
+    assert attempt["official_fetch_receipt"] is None
+    assert not (control / "canary-bundle").exists()
+
+
+def test_failed_official_read_observed_at_expiry_is_terminal_not_fallback(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    control = tmp_path / "control"
+    control.mkdir()
+    workspace = workspace_receipt(tmp_path)
+    manifest = mission_manifest(expires_at=BASE + timedelta(seconds=1))
+    supporting_raw = b"<html>public LaLiga bootstrap unavailable</html>"
+    supporting = SupportingOfficialRead(
+        requested_url=LALIGA_BOOTSTRAP_URL,
+        final_url=LALIGA_BOOTSTRAP_URL,
+        official_domain="www.laliga.com",
+        status_code=200,
+        content_type="text/html",
+        byte_count=len(supporting_raw),
+        raw_sha256=hashlib.sha256(supporting_raw).hexdigest(),
+        redirect_chain=(),
+    )
+    fetch_calls = 0
+    clock_calls = 0
+
+    class RejectedFetcher:
+        def fetch(self, source: object) -> OfficialHttpResponse:
+            nonlocal fetch_calls
+            fetch_calls += 1
+            return OfficialHttpResponse(
+                status_code=503,
+                final_url=getattr(source, "url"),
+                content_type="application/json",
+                body=b"unavailable",
+                supporting_official_reads=(supporting,),
+                supporting_official_raw_bytes=(supporting_raw,),
+            )
+
+    def clock() -> datetime:
+        nonlocal clock_calls
+        clock_calls += 1
+        return BASE if clock_calls <= 2 else manifest.expires_at
+
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match="BOOTSTRAP_MISSION_EXPIRED",
+    ):
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            workspace_receipt=workspace,
+            workspace_receipt_bytes=workspace.model_dump_json().encode(),
+            mission_manifest=manifest,
+            mission_manifest_bytes=manifest.model_dump_json().encode(),
+            source_plan_bytes=_source_plan_bytes(
+                "soccer_spain_la_liga",
+                "LALIGA_PUBLIC_MATCHES_JSON_V1",
+                LALIGA_SOURCE,
+            ),
+            output_directory=control / "canary-bundle",
+            fetcher=RejectedFetcher(),
+            clock=clock,
+            workspace_validator=lambda _workspace: None,
+            marker_inspector=lambda _workspace, _manifest: {
+                "local_marker_present": False,
+                "v2_global_marker_present": False,
+                "legacy_global_marker_present": False,
+                "inspected_read_only": True,
+            },
+        )
+    attempt = json.loads(
+        (control / "first-c0-canary-cycle-01-attempt-receipt-v1.json").read_bytes()
+    )
+    assert fetch_calls == 1
+    assert attempt["status"] == "FAILED_NO_FALLBACK"
+    assert attempt["code"] == "BOOTSTRAP_MISSION_EXPIRED"
+    assert attempt["fallback_category"] is None
+    assert attempt["http_status"] == 503
+    assert not (control / "canary-bundle").exists()
+
+
+def test_post_fetch_processing_failure_after_expiry_cannot_authorize_fallback(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    control = tmp_path / "control"
+    control.mkdir()
+    workspace = workspace_receipt(tmp_path)
+    manifest = mission_manifest(expires_at=BASE + timedelta(days=10))
+    raw = _laliga_payload()
+    supporting_raw = b"<html>public LaLiga bootstrap</html>"
+    supporting = SupportingOfficialRead(
+        requested_url=LALIGA_BOOTSTRAP_URL,
+        final_url=LALIGA_BOOTSTRAP_URL,
+        official_domain="www.laliga.com",
+        status_code=200,
+        content_type="text/html",
+        byte_count=len(supporting_raw),
+        raw_sha256=hashlib.sha256(supporting_raw).hexdigest(),
+        redirect_chain=(),
+    )
+    expired = False
+    fetch_calls = 0
+
+    class SyntheticFetcher:
+        def fetch(self, source: object) -> OfficialHttpResponse:
+            nonlocal fetch_calls
+            fetch_calls += 1
+            return OfficialHttpResponse(
+                status_code=200,
+                final_url=getattr(source, "url"),
+                content_type="application/json",
+                body=raw,
+                supporting_official_reads=(supporting,),
+                supporting_official_raw_bytes=(supporting_raw,),
+            )
+
+    def expire_during_parse(*_args: object, **_kwargs: object) -> object:
+        nonlocal expired
+        expired = True
+        raise OfficialScheduleSourceError("OFFICIAL_SCHEDULE_HORIZON_PARTIAL")
+
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+    monkeypatch.setattr(CANARY_CLI, "build_official_schedule_evidence", expire_during_parse)
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match="BOOTSTRAP_MISSION_EXPIRED",
+    ):
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            workspace_receipt=workspace,
+            workspace_receipt_bytes=workspace.model_dump_json().encode(),
+            mission_manifest=manifest,
+            mission_manifest_bytes=manifest.model_dump_json().encode(),
+            source_plan_bytes=_source_plan_bytes(
+                "soccer_spain_la_liga",
+                "LALIGA_PUBLIC_MATCHES_JSON_V1",
+                LALIGA_SOURCE,
+            ),
+            output_directory=control / "canary-bundle",
+            fetcher=SyntheticFetcher(),
+            clock=lambda: manifest.expires_at if expired else BASE,
+            workspace_validator=lambda _workspace: None,
+            marker_inspector=lambda _workspace, _manifest: {
+                "local_marker_present": False,
+                "v2_global_marker_present": False,
+                "legacy_global_marker_present": False,
+                "inspected_read_only": True,
+            },
+        )
+    attempt = json.loads(
+        (control / "first-c0-canary-cycle-01-attempt-receipt-v1.json").read_bytes()
+    )
+    assert fetch_calls == 1
+    assert attempt["status"] == "FAILED_NO_FALLBACK"
+    assert attempt["code"] == "BOOTSTRAP_MISSION_EXPIRED"
+    assert attempt["fallback_category"] is None
+    assert not (control / "canary-bundle").exists()
+
+
+@pytest.mark.parametrize("expiry_stage", ["pre_atomic_publish", "post_atomic_publish"])
+def test_mission_expiry_during_bundle_publication_never_records_success(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    expiry_stage: str,
+) -> None:
+    control = tmp_path / "control"
+    control.mkdir()
+    workspace = workspace_receipt(tmp_path)
+    manifest = mission_manifest(expires_at=BASE + timedelta(days=10))
+    raw = _laliga_payload()
+    supporting_raw = b"<html>public LaLiga bootstrap</html>"
+    supporting = SupportingOfficialRead(
+        requested_url=LALIGA_BOOTSTRAP_URL,
+        final_url=LALIGA_BOOTSTRAP_URL,
+        official_domain="www.laliga.com",
+        status_code=200,
+        content_type="text/html",
+        byte_count=len(supporting_raw),
+        raw_sha256=hashlib.sha256(supporting_raw).hexdigest(),
+        redirect_chain=(),
+    )
+    expired = False
+    fetch_calls = 0
+
+    class SyntheticFetcher:
+        def fetch(self, source: object) -> OfficialHttpResponse:
+            nonlocal fetch_calls
+            fetch_calls += 1
+            return OfficialHttpResponse(
+                status_code=200,
+                final_url=getattr(source, "url"),
+                content_type="application/json",
+                body=raw,
+                supporting_official_reads=(supporting,),
+                supporting_official_raw_bytes=(supporting_raw,),
+            )
+
+    def clock() -> datetime:
+        return manifest.expires_at if expired else BASE
+
+    original_write_exclusive = CANARY_CLI._write_exclusive
+
+    def write_exclusive(path: Path, payload: bytes) -> None:
+        nonlocal expired
+        original_write_exclusive(path, payload)
+        if expiry_stage == "pre_atomic_publish" and path.name == "bundle-manifest.json":
+            expired = True
+
+    original_rename = CANARY_CLI.os.rename
+
+    def rename(source: Path, destination: Path) -> None:
+        nonlocal expired
+        original_rename(source, destination)
+        if expiry_stage == "post_atomic_publish":
+            expired = True
+
+    monkeypatch.setattr(CANARY_CLI, "_write_exclusive", write_exclusive)
+    monkeypatch.setattr(CANARY_CLI.os, "rename", rename)
+    monkeypatch.setattr(
+        CANARY_CLI,
+        "assert_workspace_control_artifact_destination_v1",
+        lambda _workspace, destination: destination,
+    )
+    output = control / "canary-bundle"
+    plan_bytes = _source_plan_bytes(
+        "soccer_spain_la_liga",
+        "LALIGA_PUBLIC_MATCHES_JSON_V1",
+        LALIGA_SOURCE,
+    )
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match="BOOTSTRAP_MISSION_EXPIRED",
+    ):
+        CANARY_CLI._prepare_first_c0_canary_selection_v1(
+            workspace_receipt=workspace,
+            workspace_receipt_bytes=workspace.model_dump_json().encode(),
+            mission_manifest=manifest,
+            mission_manifest_bytes=manifest.model_dump_json().encode(),
+            source_plan_bytes=plan_bytes,
+            output_directory=output,
+            fetcher=SyntheticFetcher(),
+            clock=clock,
+            workspace_validator=lambda _workspace: None,
+            marker_inspector=lambda _workspace, _manifest: {
+                "local_marker_present": False,
+                "v2_global_marker_present": False,
+                "legacy_global_marker_present": False,
+                "inspected_read_only": True,
+            },
+        )
+    attempt = json.loads(
+        (control / "first-c0-canary-cycle-01-attempt-receipt-v1.json").read_bytes()
+    )
+    assert fetch_calls == 1
+    assert attempt["status"] == "FAILED_NO_FALLBACK"
+    assert attempt["code"] == "BOOTSTRAP_MISSION_EXPIRED"
+    assert attempt["bundle_manifest_sha256"] is None
+    assert output.exists() is (expiry_stage == "post_atomic_publish")
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match="FIRST_C0_CANARY_ATTEMPT_RECEIPT_INVALID",
+    ):
+        CANARY_CLI._load_cycle_history(
+            workspace,
+            manifest,
+            evaluated_at_utc=manifest.expires_at - timedelta(microseconds=1),
+        )
+    history = CANARY_CLI._load_cycle_history(
+        workspace,
+        manifest,
+        evaluated_at_utc=manifest.expires_at + timedelta(seconds=1),
+    )
+    assert len(history) == 1
+    assert history[0].receipt["code"] == "BOOTSTRAP_MISSION_EXPIRED"
+    with pytest.raises(
+        CANARY_CLI.FirstC0CanaryPreparationError,
+        match="FIRST_C0_CANARY_FALLBACK_NOT_AUTHORIZED",
+    ):
+        CANARY_CLI._next_cycle_authority(
+            history,
+            CANARY_CLI.load_first_c0_canary_source_plan_v1(plan_bytes),
+            started_at_utc=manifest.expires_at + timedelta(seconds=1),
+        )
 
 
 @pytest.mark.parametrize("preparation_seconds", [60, 120, 180])
@@ -1500,7 +3251,8 @@ def test_h2_prefetch_starts_at_t_minus_300_and_closes_reads_before_local_activat
     )
     tick = first.recommended_refresh_utc
     prefetch_started_at = tick
-    clock_step = timedelta(seconds=preparation_seconds / 7)
+    # Twelve explicit authority/time boundaries span the modeled preparation.
+    clock_step = timedelta(seconds=preparation_seconds / 12)
     second = CANARY_CLI._prepare_first_c0_canary_selection_v1(
         **common,
         output_directory=control / "cycle-2-bundle",
@@ -1590,7 +3342,7 @@ def test_prefetch_publication_crossing_window_open_is_terminal_before_dns(
         nonlocal second_cycle_clock_calls
         if cross_during_publication_clock:
             second_cycle_clock_calls += 1
-            if second_cycle_clock_calls >= 5:
+            if second_cycle_clock_calls >= 6:
                 return window_open
         return tick
 
@@ -1769,7 +3521,8 @@ def test_h24_h2_no_window_flow_is_explicit_and_effect_free(
             workspace_validator=lambda _workspace: None,
             marker_inspector=lambda _workspace, _manifest: {
                 "local_marker_present": False,
-                "global_marker_present": False,
+                "v2_global_marker_present": False,
+                "legacy_global_marker_present": False,
                 "inspected_read_only": True,
             },
         )
@@ -1862,7 +3615,8 @@ def test_single_source_plan_is_strict_and_bundesliga_requires_primary_receipt(
             workspace_validator=lambda _workspace: None,
             marker_inspector=lambda _workspace, _manifest: {
                 "local_marker_present": False,
-                "global_marker_present": False,
+                "v2_global_marker_present": False,
+                "legacy_global_marker_present": False,
                 "inspected_read_only": True,
             },
         )
@@ -2029,7 +3783,8 @@ def test_deterministic_primary_rejection_falls_back_and_refreshes_with_lineage(
         "workspace_validator": lambda _workspace: None,
         "marker_inspector": lambda _workspace, _manifest: {
             "local_marker_present": False,
-            "global_marker_present": False,
+            "v2_global_marker_present": False,
+            "legacy_global_marker_present": False,
             "inspected_read_only": True,
         },
     }
@@ -2136,7 +3891,8 @@ def test_official_read_reservation_is_durable_before_fetch_and_blocks_retry(
         "workspace_validator": lambda _workspace: None,
         "marker_inspector": lambda _workspace, _manifest: {
             "local_marker_present": False,
-            "global_marker_present": False,
+            "v2_global_marker_present": False,
+            "legacy_global_marker_present": False,
             "inspected_read_only": True,
         },
     }

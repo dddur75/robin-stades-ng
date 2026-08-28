@@ -5,10 +5,12 @@ from __future__ import annotations
 import os
 import socket
 from collections.abc import Callable, Iterable
+from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any, Protocol, cast
+from typing import Any, Protocol
 
+from robin.capture import global_claim_boundary as global_claims
 from robin.capture.bootstrap_contracts import (
     MIN_OWNER_REVIEW_WINDOW,
     PRE_KICKOFF_SAFETY_MARGIN,
@@ -25,12 +27,13 @@ from robin.capture.storage import (
     CaptureStorageError,
     _path_exists_no_follow,
     _reject_reparse_path,
+    _safe_read_bounded,
+    capture_root_fingerprint,
     exclusive_local_directory_fingerprint,
     validate_exclusive_local_directory_identity,
 )
 
 _RESOLUTION_CLAIM_NAME = "provider-network-resolution-one-shot-v1.json"
-_MISSION_GLOBAL_CLAIM_ROOT_NAME = "RobinRealExecutionMissionClaimsV1"
 _FIRST_C0_CANARY_MINIMUM_PRE_DNS_MARGIN = timedelta(seconds=840)
 _PROVIDER_RESOLUTION_RESERVATION_AUTHORITY_V1 = object()
 
@@ -39,6 +42,15 @@ class ProviderNetworkPreparationError(RuntimeError):
     def __init__(self, code: str) -> None:
         self.code = code
         super().__init__(code)
+
+
+@dataclass(frozen=True, slots=True)
+class _ProviderNetworkResolutionReservationV1:
+    claim: ProviderNetworkResolutionClaimV1
+    global_marker_name: str
+    payload: bytes
+    global_root_identity: tuple[object, ...]
+    global_legacy_root_identity: tuple[object, ...]
 
 
 class ResolverV1(Protocol):
@@ -185,47 +197,45 @@ def _validated_control_destination(
     return control_root, destination
 
 
-def _mission_global_claim_registry_root_v1() -> Path:
-    """Resolve one OS-known, fixed, ACL-verified registry shared by all workspaces."""
-
-    if os.name != "nt":
-        raise ProviderNetworkPreparationError("PROVIDER_NETWORK_GLOBAL_CLAIM_BOUNDARY_UNAVAILABLE")
+def _assert_workspace_root_identities_current(
+    workspace_receipt: RealCaptureWorkspaceReceiptV1,
+) -> None:
     try:
-        import ctypes
-
-        buffer = ctypes.create_unicode_buffer(32_768)
-        windows_api = cast(Any, ctypes).windll
-        result = windows_api.shell32.SHGetFolderPathW(
-            None,
-            0x001C,
-            None,
-            0,
-            buffer,
+        observed = (
+            exclusive_local_directory_fingerprint(Path(workspace_receipt.runtime_repository_root)),
+            exclusive_local_directory_fingerprint(Path(workspace_receipt.control_temp_root)),
+            capture_root_fingerprint(Path(workspace_receipt.capture_root)),
         )
-        if result != 0 or not buffer.value:
-            raise OSError
-        from robin.capture.workspace_bootstrap import (
-            WindowsBoundaryInspector,
-            _inspect_approved_root,
-        )
-
-        inspector = WindowsBoundaryInspector()
-        local_app_data = Path(buffer.value)
-        _inspect_approved_root(inspector, local_app_data)
-        registry = local_app_data / _MISSION_GLOBAL_CLAIM_ROOT_NAME
-        try:
-            registry.mkdir(mode=0o700, parents=False, exist_ok=False)
-        except FileExistsError:
-            pass
-        inspection = _inspect_approved_root(inspector, registry)
-        canonical = validate_exclusive_local_directory_identity(inspection.canonical_path)
-        if canonical != inspection.canonical_path:
-            raise OSError
-        return canonical
-    except (CaptureStorageError, OSError, TypeError, ValueError):
+    except (CaptureStorageError, OSError, ValueError):
         raise ProviderNetworkPreparationError(
-            "PROVIDER_NETWORK_GLOBAL_CLAIM_BOUNDARY_UNAVAILABLE"
+            "PROVIDER_NETWORK_WORKSPACE_IDENTITY_CHANGED"
         ) from None
+    expected = (
+        workspace_receipt.repository_root_fingerprint,
+        workspace_receipt.control_temp_fingerprint,
+        workspace_receipt.capture_root_fingerprint,
+    )
+    if observed != expected:
+        raise ProviderNetworkPreparationError("PROVIDER_NETWORK_WORKSPACE_IDENTITY_CHANGED")
+
+
+def _assert_local_resolution_claim_current(
+    workspace_receipt: RealCaptureWorkspaceReceiptV1,
+    expected_payload: bytes,
+) -> None:
+    marker = Path(workspace_receipt.control_temp_root) / _RESOLUTION_CLAIM_NAME
+    try:
+        _validated_control_destination(workspace_receipt, marker)
+        observed = _safe_read_bounded(
+            marker,
+            maximum_bytes=1_048_576,
+        )
+    except (CaptureStorageError, OSError, ValueError, ProviderNetworkPreparationError):
+        raise ProviderNetworkPreparationError(
+            "PROVIDER_NETWORK_RESOLUTION_CLAIM_NOT_CURRENT"
+        ) from None
+    if observed != expected_payload:
+        raise ProviderNetworkPreparationError("PROVIDER_NETWORK_RESOLUTION_CLAIM_NOT_CURRENT")
 
 
 def _write_resolution_claim_marker_v1(
@@ -262,6 +272,21 @@ def _write_resolution_claim_marker_v1(
         raise ProviderNetworkPreparationError(failure_code) from None
 
 
+def _valid_provider_resolution_claim_marker_v2(
+    payload: bytes,
+    mission_manifest: RealExecutionMissionManifestV1,
+) -> bool:
+    try:
+        parsed = ProviderNetworkResolutionClaimV1.model_validate_json(payload)
+    except ValueError:
+        return False
+    return (
+        canonical_json_bytes(parsed.model_dump(mode="json")) + b"\n" == payload
+        and parsed.mission_manifest_sha256 == mission_manifest.canonical_manifest_sha256()
+        and parsed.mission_expires_at_utc == mission_manifest.expires_at
+    )
+
+
 def _reserve_provider_network_resolution_v1(
     *,
     workspace_receipt: RealCaptureWorkspaceReceiptV1,
@@ -270,8 +295,10 @@ def _reserve_provider_network_resolution_v1(
     output_path: Path,
     clock: Callable[[], datetime] = lambda: datetime.now(UTC),
     binding_ttl_seconds: int = 900,
+    expected_global_v2_read_identity: tuple[object, ...],
+    expected_global_legacy_root_identity: tuple[object, ...],
     first_c0_atomic_preflight_complete: bool,
-) -> ProviderNetworkResolutionClaimV1:
+) -> _ProviderNetworkResolutionReservationV1:
     """Durably consume the sole DNS attempt before the resolver can run."""
 
     if first_c0_atomic_preflight_complete is not True:
@@ -325,22 +352,37 @@ def _reserve_provider_network_resolution_v1(
         mission_expires_at_utc=mission_manifest.expires_at,
     )
     payload = canonical_json_bytes(claim.model_dump(mode="json")) + b"\n"
-    registry = _mission_global_claim_registry_root_v1()
-    global_marker = registry / (
+    global_marker_name = (
         f"{mission_manifest.mission_id.casefold()}-"
         f"{mission_manifest.canonical_manifest_sha256()}.json"
     )
-    _write_resolution_claim_marker_v1(
-        global_marker,
-        payload,
-        failure_code="PROVIDER_NETWORK_GLOBAL_RESOLUTION_CLAIM_FAILED",
-    )
+
+    try:
+        global_reservation = global_claims.reserve_global_claim_marker_v2(
+            workspace_receipt,
+            global_marker_name,
+            payload,
+            validator=lambda existing: _valid_provider_resolution_claim_marker_v2(
+                existing,
+                mission_manifest,
+            ),
+            expected_v2_read_identity=expected_global_v2_read_identity,
+            expected_legacy_root_identity=expected_global_legacy_root_identity,
+        )
+    except global_claims.GlobalClaimBoundaryError as error:
+        raise ProviderNetworkPreparationError(error.code) from None
     _write_resolution_claim_marker_v1(
         marker,
         payload,
         failure_code="PROVIDER_NETWORK_RESOLUTION_CLAIM_FAILED",
     )
-    return claim
+    return _ProviderNetworkResolutionReservationV1(
+        claim=claim,
+        global_marker_name=global_marker_name,
+        payload=payload,
+        global_root_identity=global_reservation.root_identity,
+        global_legacy_root_identity=global_reservation.legacy_root_identity,
+    )
 
 
 def reserve_provider_network_resolution_v1(
@@ -365,6 +407,8 @@ def _reserve_first_c0_provider_network_resolution_after_atomic_preflight_v1(
     output_path: Path,
     clock: Callable[[], datetime] = lambda: datetime.now(UTC),
     binding_ttl_seconds: int = 900,
+    expected_global_v2_read_identity: tuple[object, ...],
+    expected_global_legacy_root_identity: tuple[object, ...],
 ) -> ProviderNetworkResolutionClaimV1:
     return _reserve_provider_network_resolution_v1(
         workspace_receipt=workspace_receipt,
@@ -373,8 +417,10 @@ def _reserve_first_c0_provider_network_resolution_after_atomic_preflight_v1(
         output_path=output_path,
         clock=clock,
         binding_ttl_seconds=binding_ttl_seconds,
+        expected_global_v2_read_identity=expected_global_v2_read_identity,
+        expected_global_legacy_root_identity=expected_global_legacy_root_identity,
         first_c0_atomic_preflight_complete=True,
-    )
+    ).claim
 
 
 def _prepare_provider_network_binding_once_v1(
@@ -387,21 +433,27 @@ def _prepare_provider_network_binding_once_v1(
     clock: Callable[[], datetime] = lambda: datetime.now(UTC),
     binding_ttl_seconds: int = 900,
     resolver_identity: str | None = None,
+    expected_global_v2_read_identity: tuple[object, ...],
+    expected_global_legacy_root_identity: tuple[object, ...],
+    final_pre_effect_assertion: Callable[[], None],
     first_c0_atomic_preflight_complete: bool,
 ) -> ProviderNetworkBindingV1:
     """Reserve, resolve exactly once, and persist; any failure permanently forbids retry."""
 
     if first_c0_atomic_preflight_complete is not True:
         raise ProviderNetworkPreparationError("FIRST_C0_ATOMIC_PREFLIGHT_REQUIRED")
-    claim = _reserve_provider_network_resolution_v1(
+    reservation = _reserve_provider_network_resolution_v1(
         workspace_receipt=workspace_receipt,
         mission_manifest=mission_manifest,
         campaign_selection=campaign_selection,
         output_path=output_path,
         clock=clock,
         binding_ttl_seconds=binding_ttl_seconds,
+        expected_global_v2_read_identity=expected_global_v2_read_identity,
+        expected_global_legacy_root_identity=expected_global_legacy_root_identity,
         first_c0_atomic_preflight_complete=first_c0_atomic_preflight_complete,
     )
+    claim = reservation.claim
     selected = campaign_selection.selected_candidate()
     earliest_kickoff = min(
         target.official_kickoff_utc for target in selected.fixture_target_set.targets
@@ -423,6 +475,63 @@ def _prepare_provider_network_binding_once_v1(
     except ValueError:
         raise ProviderNetworkPreparationError("CAMPAIGN_SELECTION_NOT_CURRENT") from None
     _validated_control_destination(workspace_receipt, output_path)
+    try:
+        global_claims.assert_global_claim_marker_current_v2(
+            workspace_receipt,
+            reservation.global_marker_name,
+            reservation.payload,
+            expected_root_identity=reservation.global_root_identity,
+            expected_legacy_root_identity=reservation.global_legacy_root_identity,
+            validator=lambda existing: _valid_provider_resolution_claim_marker_v2(
+                existing,
+                mission_manifest,
+            ),
+        )
+    except global_claims.GlobalClaimBoundaryError as error:
+        raise ProviderNetworkPreparationError(error.code) from None
+    _assert_workspace_root_identities_current(workspace_receipt)
+    _validated_control_destination(workspace_receipt, output_path)
+    _assert_local_resolution_claim_current(workspace_receipt, reservation.payload)
+    observed_at = ensure_utc(clock(), field="network_binding_observed_at")
+    if observed_at >= mission_manifest.expires_at:
+        raise ProviderNetworkPreparationError("BOOTSTRAP_MISSION_EXPIRED")
+    if observed_at < claim.claimed_at_utc or observed_at - claim.claimed_at_utc > timedelta(
+        minutes=1
+    ):
+        raise ProviderNetworkPreparationError("PROVIDER_NETWORK_RESOLUTION_CLAIM_NOT_CURRENT")
+    try:
+        campaign_selection.assert_selected_candidate_current(observed_at)
+    except ValueError:
+        raise ProviderNetworkPreparationError("CAMPAIGN_SELECTION_NOT_CURRENT") from None
+    try:
+        global_claims.assert_global_claim_marker_current_v2(
+            workspace_receipt,
+            reservation.global_marker_name,
+            reservation.payload,
+            expected_root_identity=reservation.global_root_identity,
+            expected_legacy_root_identity=reservation.global_legacy_root_identity,
+            validator=lambda existing: _valid_provider_resolution_claim_marker_v2(
+                existing,
+                mission_manifest,
+            ),
+        )
+    except global_claims.GlobalClaimBoundaryError as error:
+        raise ProviderNetworkPreparationError(error.code) from None
+    _assert_workspace_root_identities_current(workspace_receipt)
+    _validated_control_destination(workspace_receipt, output_path)
+    _assert_local_resolution_claim_current(workspace_receipt, reservation.payload)
+    try:
+        # This assertion is the last callback before the sole resolver operation.
+        # It binds historical evidence that the provider module cannot reconstruct
+        # itself without importing the higher-level pre-DNS orchestration layer.
+        final_pre_effect_assertion()
+    except ProviderNetworkPreparationError:
+        raise
+    except Exception as error:
+        code = getattr(error, "code", None)
+        if not isinstance(code, str) or not code:
+            code = "PROVIDER_NETWORK_FINAL_AUTHORITY_CHANGED"
+        raise ProviderNetworkPreparationError(code) from None
     binding = _prepare_provider_network_binding_after_reservation_v1(
         resolution_claim=claim,
         resolver=resolver,
@@ -466,6 +575,9 @@ def _prepare_first_c0_provider_network_binding_once_after_atomic_preflight_v1(
     clock: Callable[[], datetime] = lambda: datetime.now(UTC),
     binding_ttl_seconds: int = 900,
     resolver_identity: str | None = None,
+    expected_global_v2_read_identity: tuple[object, ...],
+    expected_global_legacy_root_identity: tuple[object, ...],
+    final_pre_effect_assertion: Callable[[], None],
 ) -> ProviderNetworkBindingV1:
     return _prepare_provider_network_binding_once_v1(
         workspace_receipt=workspace_receipt,
@@ -476,6 +588,9 @@ def _prepare_first_c0_provider_network_binding_once_after_atomic_preflight_v1(
         clock=clock,
         binding_ttl_seconds=binding_ttl_seconds,
         resolver_identity=resolver_identity,
+        expected_global_v2_read_identity=expected_global_v2_read_identity,
+        expected_global_legacy_root_identity=expected_global_legacy_root_identity,
+        final_pre_effect_assertion=final_pre_effect_assertion,
         first_c0_atomic_preflight_complete=True,
     )
 

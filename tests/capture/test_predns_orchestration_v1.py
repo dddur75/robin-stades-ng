@@ -146,12 +146,67 @@ def _isolated_mission_global_preparation_registry(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> Path:
-    registry = tmp_path / "mission-global-preparation-registry"
+    registry = tmp_path / "mission-global-preparation-registry-v2"
+    legacy_registry = tmp_path / "mission-global-preparation-registry-v1"
     registry.mkdir()
     monkeypatch.setattr(
-        FIRST_C0_CANARY_CLI.provider_network_module,
-        "_mission_global_claim_registry_root_v1",
-        lambda: registry,
+        FIRST_C0_CANARY_CLI.global_claims,
+        "resolve_global_claim_root_candidate_v2",
+        lambda _workspace: registry,
+    )
+    monkeypatch.setattr(
+        FIRST_C0_CANARY_CLI.global_claims,
+        "ensure_global_claim_root_v2",
+        lambda _workspace, **_kwargs: registry,
+    )
+    monkeypatch.setattr(
+        FIRST_C0_CANARY_CLI.global_claims,
+        "inspect_global_claim_root_identity_v2",
+        lambda _workspace: ("synthetic-stable-global-root",),
+    )
+
+    def read_snapshot(_workspace: object) -> tuple[Path, tuple[object, ...]]:
+        selected = FIRST_C0_CANARY_CLI.global_claims.resolve_global_claim_root_candidate_v2(
+            _workspace
+        )
+        metadata = selected.lstat()
+        return selected, ("synthetic-global-root", metadata.st_dev, metadata.st_ino)
+
+    monkeypatch.setattr(
+        FIRST_C0_CANARY_CLI.global_claims,
+        "_global_claim_root_read_snapshot_v2",
+        read_snapshot,
+    )
+    monkeypatch.setattr(
+        FIRST_C0_CANARY_CLI.global_claims,
+        "inspect_global_claim_root_identity_v2",
+        lambda workspace: read_snapshot(workspace)[1],
+    )
+
+    def ensure_with_identity(
+        workspace: object,
+        *,
+        expected_read_identity: tuple[object, ...] | None = None,
+    ) -> object:
+        selected, identity = read_snapshot(workspace)
+        if expected_read_identity is not None and identity != expected_read_identity:
+            raise FIRST_C0_CANARY_CLI.global_claims.GlobalClaimBoundaryError(
+                "GLOBAL_CLAIM_ROOT_IDENTITY_CHANGED"
+            )
+        return FIRST_C0_CANARY_CLI.global_claims._EnsuredGlobalClaimRootV2(
+            selected,
+            identity,
+        )
+
+    monkeypatch.setattr(
+        FIRST_C0_CANARY_CLI.global_claims,
+        "_ensure_global_claim_root_with_identity_v2",
+        ensure_with_identity,
+    )
+    monkeypatch.setattr(
+        FIRST_C0_CANARY_CLI.global_claims,
+        "resolve_legacy_global_claim_root_read_only_v1",
+        lambda: legacy_registry,
     )
     return registry
 
@@ -368,7 +423,8 @@ def marker_ok() -> MarkerInspectionV1:
         historical_authority_manifest_sha256="c" * 64,
         current_authority_manifest_sha256="d" * 64,
         current_local_marker="synthetic-local-marker",
-        current_global_marker="synthetic-global-marker",
+        current_v2_global_marker="synthetic-v2-global-marker",
+        current_legacy_global_marker="synthetic-legacy-global-marker",
     )
 
 
@@ -378,7 +434,25 @@ def marker_inspector(
 ) -> MarkerInspectionV1:
     assert workspace.authorized_main_sha == MAIN_SHA
     assert manifest.source_hash == MANIFEST_SOURCE_HASH
-    return marker_ok()
+    marker_name = f"{manifest.mission_id.casefold()}-{manifest.canonical_manifest_sha256()}.json"
+    marker_paths = predns_module.global_claims.global_claim_marker_paths_v2(
+        workspace,
+        marker_name,
+    )
+    marker_pair = predns_module.global_claims.read_global_claim_marker_pair_v2(
+        workspace,
+        marker_name,
+    )
+    return replace(
+        marker_ok(),
+        current_local_marker=str(
+            Path(workspace.control_temp_root) / "provider-network-resolution-one-shot-v1.json"
+        ),
+        current_v2_global_marker=str(marker_paths.v2),
+        current_legacy_global_marker=str(marker_paths.legacy),
+        current_v2_root_identity=marker_pair.v2_root_identity,
+        current_legacy_root_identity=marker_pair.legacy_root_identity,
+    )
 
 
 def synthetic_raw_evidence_verifier(*args: object) -> None:
@@ -471,14 +545,13 @@ def source_plan_bytes() -> bytes:
     ).encode()
 
 
+@pytest.mark.parametrize("historical_location", ("legacy", "v2"))
 def test_historical_marker_is_bound_to_exact_authority_manifest_and_registry_path(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
+    historical_location: str,
 ) -> None:
     workspace, manifest = build_authority(tmp_path / "authority")
-    local_app_data = tmp_path / "local-app-data"
-    registry = local_app_data / "RobinRealExecutionMissionClaimsV1"
-    registry.mkdir(parents=True)
     historical_manifest_sha256 = HISTORICAL_V3_MANIFEST_SHA256
     claim = ProviderNetworkResolutionClaimV1.issue(
         mission_manifest_sha256=historical_manifest_sha256,
@@ -497,9 +570,13 @@ def test_historical_marker_is_bound_to_exact_authority_manifest_and_registry_pat
     assert claim.canonical_claim_hash == HISTORICAL_V3_RESOLUTION_CLAIM_SHA256
     payload = canonical_model_bytes(claim)
     assert hashlib.sha256(payload).hexdigest() == HISTORICAL_V3_MARKER_RAW_SHA256
-    historical = registry / (f"{manifest.mission_id.casefold()}-{historical_manifest_sha256}.json")
+    historical_paths = predns_module.global_claims.global_claim_marker_paths_v2(
+        workspace,
+        f"{manifest.mission_id.casefold()}-{historical_manifest_sha256}.json",
+    )
+    historical = historical_paths.legacy if historical_location == "legacy" else historical_paths.v2
+    historical.parent.mkdir(parents=True, exist_ok=True)
     historical.write_bytes(payload)
-    monkeypatch.setattr(predns_module, "_local_app_data_readonly", lambda: local_app_data)
 
     class NtOsProxy:
         name = "nt"
@@ -543,7 +620,8 @@ def test_historical_marker_is_bound_to_exact_authority_manifest_and_registry_pat
     assert acl_paths == [historical.absolute()]
     current_paths = (
         Path(inspection.current_local_marker),
-        Path(inspection.current_global_marker),
+        Path(inspection.current_v2_global_marker),
+        Path(inspection.current_legacy_global_marker),
     )
     assert all(not os.path.lexists(path) for path in current_paths)
 
@@ -602,6 +680,55 @@ def test_historical_marker_is_bound_to_exact_authority_manifest_and_registry_pat
     assert all(not os.path.lexists(path) for path in current_paths)
 
 
+@pytest.mark.parametrize("current_state", ("v2", "legacy", "equal"))
+def test_current_provider_marker_presence_inspects_v2_and_legacy_read_only(
+    tmp_path: Path,
+    current_state: str,
+) -> None:
+    workspace, manifest = build_authority(tmp_path / "authority")
+    marker_name = f"{manifest.mission_id.casefold()}-{manifest.canonical_manifest_sha256()}.json"
+    paths = predns_module.global_claims.global_claim_marker_paths_v2(
+        workspace,
+        marker_name,
+    )
+    claim = ProviderNetworkResolutionClaimV1.issue(
+        mission_manifest_sha256=manifest.canonical_manifest_sha256(),
+        workspace_receipt_sha256=workspace.canonical_receipt_hash,
+        campaign_selection_sha256="a" * 64,
+        fixture_target_set_sha256="b" * 64,
+        claimed_at_utc=BASE,
+        mission_expires_at_utc=manifest.expires_at,
+    )
+    payload = canonical_model_bytes(claim)
+    paths.legacy.parent.mkdir()
+    if current_state in {"v2", "equal"}:
+        paths.v2.write_bytes(payload)
+    if current_state in {"legacy", "equal"}:
+        paths.legacy.write_bytes(payload)
+    before = {path: path.read_bytes() for path in (paths.v2, paths.legacy) if path.exists()}
+    historical_paths = predns_module.global_claims.global_claim_marker_paths_v2(
+        workspace,
+        f"{manifest.mission_id.casefold()}-{'e' * 64}.json",
+    )
+
+    inspection = inspect_provider_markers_read_only_v1(
+        workspace,
+        manifest,
+        historical_marker=HistoricalMarkerExpectationV1(
+            path=historical_paths.legacy,
+            authority_manifest_sha256="e" * 64,
+            raw_sha256="f" * 64,
+        ),
+    )
+
+    assert inspection.current_marker_present is True
+    assert Path(inspection.current_v2_global_marker) == paths.v2
+    assert Path(inspection.current_legacy_global_marker) == paths.legacy
+    assert before == {path: path.read_bytes() for path in (paths.v2, paths.legacy) if path.exists()}
+    assert not historical_paths.v2.exists()
+    assert not historical_paths.legacy.exists()
+
+
 def corpus_bytes(observed_at: datetime = BASE) -> bytes:
     return json.dumps(
         {
@@ -650,6 +777,28 @@ def rewrite_bundle_artifact(bundle: Path, name: str, payload: bytes) -> None:
         canonical_json_bytes(without_hash) + b"\n"
     ).hexdigest()
     manifest_path.write_bytes(canonical_json_bytes(manifest) + b"\n")
+
+
+def rewrite_canary_bundle_artifact(
+    bundle: Path,
+    workspace: RealCaptureWorkspaceReceiptV1,
+    name: str,
+    payload: bytes,
+) -> None:
+    (bundle / name).write_bytes(payload)
+    manifest_path = bundle / "bundle-manifest.json"
+    manifest = json.loads(manifest_path.read_bytes())
+    manifest["artifact_sha256"][name] = hashlib.sha256(payload).hexdigest()
+    manifest_bytes = canonical_json_bytes(manifest) + b"\n"
+    manifest_path.write_bytes(manifest_bytes)
+    cycle = manifest["preparation_cycle"]
+    receipt_path = (
+        Path(workspace.control_temp_root)
+        / f"first-c0-canary-cycle-{cycle:02d}-attempt-receipt-v1.json"
+    )
+    receipt = json.loads(receipt_path.read_bytes())
+    receipt["bundle_manifest_sha256"] = hashlib.sha256(manifest_bytes).hexdigest()
+    receipt_path.write_bytes(canonical_json_bytes(receipt) + b"\n")
 
 
 def run_predns(
@@ -707,6 +856,121 @@ def test_predns_immediate_success_has_exact_budgets_and_immutable_bundle(tmp_pat
         == result.selection.canonical_selection_hash
     )
     assert loaded.marker_inspection.current_marker_present is False
+
+
+def test_frozen_provider_v1_marker_bundle_replays_via_legacy_root(
+    tmp_path: Path,
+) -> None:
+    result, _, workspace, mission = run_predns(
+        tmp_path,
+        builder=SyntheticEvidenceBuilder((BASE + timedelta(minutes=135),)),
+    )
+    assert result.bundle_directory is not None
+    bundle = result.bundle_directory
+    marker_name = f"{mission.mission_id.casefold()}-{mission.canonical_manifest_sha256()}.json"
+    marker_paths = predns_module.global_claims.global_claim_marker_paths_v2(
+        workspace,
+        marker_name,
+    )
+    v2 = json.loads((bundle / "provider-marker-inspection.json").read_bytes())
+    frozen_v1 = {
+        "schema_version": "robin-provider-marker-readonly-inspection-v1",
+        "historical_marker_unchanged": v2["historical_marker_unchanged"],
+        "current_marker_present": v2["current_marker_present"],
+        "historical_raw_sha256": v2["historical_raw_sha256"],
+        "historical_acl_sha256": v2["historical_acl_sha256"],
+        "historical_marker_path": v2["historical_marker_path"],
+        "historical_authority_manifest_sha256": v2["historical_authority_manifest_sha256"],
+        "current_authority_manifest_sha256": v2["current_authority_manifest_sha256"],
+        "current_local_marker": str(
+            Path(workspace.control_temp_root) / "provider-network-resolution-one-shot-v1.json"
+        ),
+        "current_global_marker": str(marker_paths.legacy),
+        "filesystem_writes": 0,
+    }
+    rewrite_bundle_artifact(
+        bundle,
+        "provider-marker-inspection.json",
+        canonical_json_bytes(frozen_v1) + b"\n",
+    )
+
+    loaded = load_pre_dns_bundle_v1(
+        bundle,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    assert isinstance(loaded.marker_inspection, predns_module.LegacyMarkerInspectionV1)
+    observed = replace(
+        marker_ok(),
+        current_local_marker=frozen_v1["current_local_marker"],
+        current_v2_global_marker=str(marker_paths.v2),
+        current_legacy_global_marker=str(marker_paths.legacy),
+    )
+    assert predns_module._first_c0_canary_marker_authority_matches_v1(
+        observed,
+        loaded.marker_inspection,
+    )
+
+
+def test_frozen_provider_v1_marker_rejects_arbitrary_global_path(
+    tmp_path: Path,
+) -> None:
+    result, _, workspace, _ = run_predns(
+        tmp_path,
+        builder=SyntheticEvidenceBuilder((BASE + timedelta(minutes=135),)),
+    )
+    assert result.bundle_directory is not None
+    bundle = result.bundle_directory
+    v2 = json.loads((bundle / "provider-marker-inspection.json").read_bytes())
+    frozen_v1 = {
+        "schema_version": "robin-provider-marker-readonly-inspection-v1",
+        "historical_marker_unchanged": v2["historical_marker_unchanged"],
+        "current_marker_present": v2["current_marker_present"],
+        "historical_raw_sha256": v2["historical_raw_sha256"],
+        "historical_acl_sha256": v2["historical_acl_sha256"],
+        "historical_marker_path": v2["historical_marker_path"],
+        "historical_authority_manifest_sha256": v2["historical_authority_manifest_sha256"],
+        "current_authority_manifest_sha256": v2["current_authority_manifest_sha256"],
+        "current_local_marker": str(
+            Path(workspace.control_temp_root) / "provider-network-resolution-one-shot-v1.json"
+        ),
+        "current_global_marker": str(tmp_path / "arbitrary-global-root" / "claim.json"),
+        "filesystem_writes": 0,
+    }
+    rewrite_bundle_artifact(
+        bundle,
+        "provider-marker-inspection.json",
+        canonical_json_bytes(frozen_v1) + b"\n",
+    )
+
+    with pytest.raises(PreDnsOrchestrationError, match="PRE_DNS_MARKER_INSPECTION_INVALID"):
+        load_pre_dns_bundle_v1(
+            bundle,
+            raw_evidence_verifier=synthetic_raw_evidence_verifier,
+        )
+
+
+def test_provider_v2_marker_rejects_arbitrary_current_paths(
+    tmp_path: Path,
+) -> None:
+    result, _, _, _ = run_predns(
+        tmp_path,
+        builder=SyntheticEvidenceBuilder((BASE + timedelta(minutes=135),)),
+    )
+    assert result.bundle_directory is not None
+    bundle = result.bundle_directory
+    marker = json.loads((bundle / "provider-marker-inspection.json").read_bytes())
+    marker["current_v2_global_marker"] = str(tmp_path / "arbitrary-global-root" / "claim.json")
+    rewrite_bundle_artifact(
+        bundle,
+        "provider-marker-inspection.json",
+        canonical_json_bytes(marker) + b"\n",
+    )
+
+    with pytest.raises(PreDnsOrchestrationError, match="PRE_DNS_MARKER_INSPECTION_INVALID"):
+        load_pre_dns_bundle_v1(
+            bundle,
+            raw_evidence_verifier=synthetic_raw_evidence_verifier,
+        )
 
 
 def test_predns_bundle_recomposes_reconciliation_and_supporting_raw_bytes(
@@ -1099,7 +1363,12 @@ def fake_binding_preparer(
     resolver: Callable[[str, int, int, int, int], Iterable[tuple[object, ...]]],
     clock: Callable[[], datetime],
     binding_ttl_seconds: int,
+    expected_global_v2_read_identity: tuple[object, ...],
+    expected_global_legacy_root_identity: tuple[object, ...],
+    final_pre_effect_assertion: Callable[[], None],
 ) -> ProviderNetworkBindingV1:
+    assert expected_global_v2_read_identity
+    assert expected_global_legacy_root_identity
     claimed = clock()
     claim = ProviderNetworkResolutionClaimV1.issue(
         mission_manifest_sha256=mission_manifest.canonical_manifest_sha256(),
@@ -1114,6 +1383,7 @@ def fake_binding_preparer(
     (output_path.parent / "provider-network-resolution-one-shot-v1.json").write_bytes(
         canonical_model_bytes(claim)
     )
+    final_pre_effect_assertion()
     tuple(resolver("api.the-odds-api.com", 443, socket.AF_UNSPEC, socket.SOCK_STREAM, 0))
     binding = ProviderNetworkBindingV1.issue(
         resolution_claim=claim,
@@ -1211,15 +1481,11 @@ def build_ready_canary_bundle(
         mission_expires_at=mission_expires_at,
     )
     control = Path(workspace.control_temp_root)
-    local_app_data = tmp_path / "local-app-data"
-    local_app_data.mkdir()
-    global_marker = (
-        local_app_data
-        / "RobinRealExecutionMissionClaimsV1"
-        / (f"{manifest.mission_id.casefold()}-{manifest.canonical_manifest_sha256()}.json")
+    global_markers = predns_module.global_claims.global_claim_marker_paths_v2(
+        workspace,
+        f"{manifest.mission_id.casefold()}-{manifest.canonical_manifest_sha256()}.json",
     )
     local_marker = control / "provider-network-resolution-one-shot-v1.json"
-    monkeypatch.setattr(predns_module, "_local_app_data_readonly", lambda: local_app_data)
     source_url = URLS["soccer_spain_la_liga"]
     source_plan = json.dumps(
         {
@@ -1266,11 +1532,13 @@ def build_ready_canary_bundle(
             )
 
     frozen_marker = {
-        "schema_version": "robin-first-c0-canary-marker-inspection-v1",
+        "schema_version": "robin-first-c0-canary-marker-inspection-v2",
         "local_marker_path": str(local_marker.absolute()),
-        "global_marker_path": str(global_marker.absolute()),
+        "v2_global_marker_path": str(global_markers.v2),
+        "legacy_global_marker_path": str(global_markers.legacy),
         "local_marker_present": False,
-        "global_marker_present": False,
+        "v2_global_marker_present": False,
+        "legacy_global_marker_present": False,
         "inspected_read_only": True,
     }
     arguments = {
@@ -1314,12 +1582,23 @@ def build_ready_canary_bundle(
         _workspace: RealCaptureWorkspaceReceiptV1,
         _manifest: RealExecutionMissionManifestV1,
     ) -> MarkerInspectionV1:
+        marker_pair = predns_module.global_claims.read_global_claim_marker_pair_v2(
+            workspace,
+            global_markers.v2.name,
+        )
         return replace(
             marker_ok(),
-            current_marker_present=local_marker.exists() or global_marker.exists(),
+            current_marker_present=(
+                local_marker.exists()
+                or marker_pair.v2_payload is not None
+                or marker_pair.legacy_payload is not None
+            ),
             current_authority_manifest_sha256=manifest.canonical_manifest_sha256(),
             current_local_marker=str(local_marker.absolute()),
-            current_global_marker=str(global_marker.absolute()),
+            current_v2_global_marker=str(global_markers.v2),
+            current_legacy_global_marker=str(global_markers.legacy),
+            current_v2_root_identity=marker_pair.v2_root_identity,
+            current_legacy_root_identity=marker_pair.legacy_root_identity,
         )
 
     return (
@@ -1382,6 +1661,80 @@ def test_canary_refresh_cycle_bundle_has_closed_read_lineage(
     assert handoff.additional_preparation_cycles_authorized == 0
     assert handoff.additional_selector_invocations_authorized == 0
     assert handoff.additional_target_set_freezes_authorized == 0
+
+
+def test_frozen_first_c0_v1_marker_bundle_replays_via_legacy_root(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle, workspace, mission, current_marker_inspector, _ = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+    )
+    marker_name = f"{mission.mission_id.casefold()}-{mission.canonical_manifest_sha256()}.json"
+    marker_paths = predns_module.global_claims.global_claim_marker_paths_v2(
+        workspace,
+        marker_name,
+    )
+    v2 = json.loads((bundle / "marker-inspection.json").read_bytes())
+    frozen_v1 = {
+        "schema_version": "robin-first-c0-canary-marker-inspection-v1",
+        "local_marker_path": v2["local_marker_path"],
+        "global_marker_path": str(marker_paths.legacy),
+        "local_marker_present": False,
+        "global_marker_present": False,
+        "inspected_read_only": True,
+    }
+    rewrite_canary_bundle_artifact(
+        bundle,
+        workspace,
+        "marker-inspection.json",
+        canonical_json_bytes(frozen_v1) + b"\n",
+    )
+
+    loaded = load_pre_dns_bundle_v1(
+        bundle,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    assert isinstance(
+        loaded.marker_inspection,
+        predns_module.LegacyFirstC0CanaryMarkerInspectionV1,
+    )
+    assert predns_module._first_c0_canary_marker_authority_matches_v1(
+        current_marker_inspector(workspace, mission),
+        loaded.marker_inspection,
+    )
+
+
+def test_frozen_first_c0_v1_marker_rejects_arbitrary_global_path(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle, workspace, _, _, _ = build_ready_canary_bundle(tmp_path, monkeypatch)
+    v2 = json.loads((bundle / "marker-inspection.json").read_bytes())
+    frozen_v1 = {
+        "schema_version": "robin-first-c0-canary-marker-inspection-v1",
+        "local_marker_path": v2["local_marker_path"],
+        "global_marker_path": str(tmp_path / "arbitrary-global-root" / "claim.json"),
+        "local_marker_present": False,
+        "global_marker_present": False,
+        "inspected_read_only": True,
+    }
+    rewrite_canary_bundle_artifact(
+        bundle,
+        workspace,
+        "marker-inspection.json",
+        canonical_json_bytes(frozen_v1) + b"\n",
+    )
+
+    with pytest.raises(
+        PreDnsOrchestrationError,
+        match="FIRST_C0_CANARY_MARKER_INSPECTION_INVALID",
+    ):
+        load_pre_dns_bundle_v1(
+            bundle,
+            raw_evidence_verifier=synthetic_raw_evidence_verifier,
+        )
 
 
 @pytest.mark.parametrize(
@@ -1976,9 +2329,14 @@ def test_h24_future_planning_and_ready_direct_behavior_are_unchanged(
     ready_registry = tmp_path / "ready-mission-global-preparation-registry"
     ready_registry.mkdir()
     monkeypatch.setattr(
-        FIRST_C0_CANARY_CLI.provider_network_module,
-        "_mission_global_claim_registry_root_v1",
-        lambda: ready_registry,
+        FIRST_C0_CANARY_CLI.global_claims,
+        "resolve_global_claim_root_candidate_v2",
+        lambda _workspace: ready_registry,
+    )
+    monkeypatch.setattr(
+        FIRST_C0_CANARY_CLI.global_claims,
+        "ensure_global_claim_root_v2",
+        lambda _workspace, **_kwargs: ready_registry,
     )
     ready_bundle, workspace, mission, marker_inspector, execution_at = build_ready_canary_bundle(
         tmp_path / "ready",
@@ -3328,6 +3686,9 @@ def test_canary_bundle_runs_through_atomic_runner_with_one_injected_resolver(
         resolver: Callable[[str, int, int, int, int], Iterable[tuple[object, ...]]],
         clock: Callable[[], datetime],
         binding_ttl_seconds: int,
+        expected_global_v2_read_identity: tuple[object, ...],
+        expected_global_legacy_root_identity: tuple[object, ...],
+        final_pre_effect_assertion: Callable[[], None],
     ) -> ProviderNetworkBindingV1:
         preflight_authority_uses.value += 1
         return fake_binding_preparer(
@@ -3338,6 +3699,9 @@ def test_canary_bundle_runs_through_atomic_runner_with_one_injected_resolver(
             resolver=resolver,
             clock=clock,
             binding_ttl_seconds=binding_ttl_seconds,
+            expected_global_v2_read_identity=expected_global_v2_read_identity,
+            expected_global_legacy_root_identity=expected_global_legacy_root_identity,
+            final_pre_effect_assertion=final_pre_effect_assertion,
         )
 
     result = run_owner_review_pack_once_v1(
@@ -3374,6 +3738,213 @@ def test_canary_bundle_runs_through_atomic_runner_with_one_injected_resolver(
     assert pack.owner_authorization_candidate.maximum_credits == 1
     assert pack.owner_authorization_candidate.authorization_status == "OWNER_REVIEW_CANDIDATE"
     assert pack.owner_authorization_candidate.review_candidate_sha256 is None
+
+
+@pytest.mark.parametrize(
+    ("root", "expected_code"),
+    (
+        ("v2", "GLOBAL_CLAIM_ROOT_IDENTITY_CHANGED"),
+        ("legacy", "GLOBAL_CLAIM_LEGACY_CONFLICT"),
+    ),
+)
+def test_global_root_swap_after_final_preflight_stops_before_real_resolver(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    _isolated_mission_global_preparation_registry: Path,
+    root: str,
+    expected_code: str,
+) -> None:
+    bundle, workspace, manifest, current_marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        refresh_cycle=True,
+    )
+    _, handoff_path, receipt_path = activate_prefetched_canary_bundle(bundle, execution_at)
+    binding = Path(workspace.control_temp_root) / "swap-binding.json"
+    pack_directory = Path(workspace.control_temp_root) / "swap-pack"
+    real_preparer = predns_module._prepare_provider_network_binding_after_atomic_preflight_v1
+    swapped = False
+    resolver_calls = Counter()
+
+    def swap_then_prepare(**kwargs: object) -> ProviderNetworkBindingV1:
+        nonlocal swapped
+        if not swapped:
+            swapped = True
+            if root == "v2":
+                displaced = _isolated_mission_global_preparation_registry.with_name(
+                    "mission-global-preparation-registry-v2-before-dns"
+                )
+                _isolated_mission_global_preparation_registry.rename(displaced)
+                _isolated_mission_global_preparation_registry.mkdir()
+            else:
+                legacy = predns_module.global_claims.resolve_legacy_global_claim_root_read_only_v1()
+                legacy.mkdir()
+        return real_preparer(**kwargs)  # type: ignore[arg-type]
+
+    def forbidden_resolver(*_args: object) -> Iterable[tuple[object, ...]]:
+        resolver_calls.value += 1
+        raise AssertionError("split-root preflight reached the real resolver")
+
+    result = run_owner_review_pack_once_v1(
+        bundle_directory=bundle,
+        workspace_receipt=workspace,
+        mission_manifest=manifest,
+        output_binding_path=binding,
+        output_pack_directory=pack_directory,
+        resolver=forbidden_resolver,
+        marker_inspector=current_marker_inspector,
+        execute=True,
+        owner_present_for_review=True,
+        prefetch_handoff_path=handoff_path,
+        window_open_receipt_path=receipt_path,
+        clock=FixedClock(execution_at),
+        monotonic=SequenceMonotonic(),
+        workspace_validator=lambda _: None,
+        binding_preparer=swap_then_prepare,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+
+    assert swapped
+    assert result.status == "POST_DNS_HARD_STOP"
+    assert result.hard_stop_code == expected_code
+    assert result.resolver_operations == resolver_calls.value == 0
+    assert not binding.exists()
+    assert not (
+        Path(workspace.control_temp_root) / "provider-network-resolution-one-shot-v1.json"
+    ).exists()
+
+
+def test_historical_marker_mutation_on_provider_clock_stops_before_real_resolver(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle, workspace, manifest, current_marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        refresh_cycle=True,
+    )
+    _, handoff_path, receipt_path = activate_prefetched_canary_bundle(bundle, execution_at)
+    binding = Path(workspace.control_temp_root) / "historical-mutation-binding.json"
+    pack_directory = Path(workspace.control_temp_root) / "historical-mutation-pack"
+    monkeypatch.setattr(
+        provider_network_module,
+        "_assert_workspace_root_identities_current",
+        lambda _workspace: None,
+    )
+    real_preparer = predns_module._prepare_provider_network_binding_after_atomic_preflight_v1
+    historical_marker_mutated = False
+    provider_clock_calls = Counter()
+    marker_inspections = Counter()
+    resolver_calls = Counter()
+
+    def stateful_marker_inspector(
+        observed_workspace: RealCaptureWorkspaceReceiptV1,
+        observed_manifest: RealExecutionMissionManifestV1,
+    ) -> MarkerInspectionV1:
+        marker_inspections.value += 1
+        observed = current_marker_inspector(observed_workspace, observed_manifest)
+        if not historical_marker_mutated:
+            return observed
+        return replace(
+            observed,
+            historical_marker_unchanged=False,
+            historical_raw_sha256="e" * 64,
+        )
+
+    def mutate_on_provider_clock(**kwargs: object) -> ProviderNetworkBindingV1:
+        original_clock = cast(Callable[[], datetime], kwargs["clock"])
+
+        def mutating_clock() -> datetime:
+            nonlocal historical_marker_mutated
+            provider_clock_calls.value += 1
+            observed = original_clock()
+            historical_marker_mutated = True
+            return observed
+
+        kwargs["clock"] = mutating_clock
+        return real_preparer(**kwargs)  # type: ignore[arg-type]
+
+    def forbidden_resolver(*_args: object) -> Iterable[tuple[object, ...]]:
+        resolver_calls.value += 1
+        raise AssertionError("mutated historical evidence reached the real resolver")
+
+    result = run_owner_review_pack_once_v1(
+        bundle_directory=bundle,
+        workspace_receipt=workspace,
+        mission_manifest=manifest,
+        output_binding_path=binding,
+        output_pack_directory=pack_directory,
+        resolver=forbidden_resolver,
+        marker_inspector=stateful_marker_inspector,
+        execute=True,
+        owner_present_for_review=True,
+        prefetch_handoff_path=handoff_path,
+        window_open_receipt_path=receipt_path,
+        clock=FixedClock(execution_at),
+        monotonic=SequenceMonotonic(),
+        workspace_validator=lambda _: None,
+        binding_preparer=mutate_on_provider_clock,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+
+    assert historical_marker_mutated
+    assert result.status == "POST_DNS_HARD_STOP"
+    assert result.hard_stop_code == "HISTORICAL_MARKER_CHANGED"
+    assert provider_clock_calls.value >= 1
+    assert marker_inspections.value >= 3
+    assert result.resolver_operations == resolver_calls.value == 0
+    assert not binding.exists()
+
+
+def test_counted_resolver_adds_no_clock_callback_after_provider_final_sample(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle, workspace, manifest, current_marker_inspector, execution_at = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        refresh_cycle=True,
+    )
+    _, handoff_path, receipt_path = activate_prefetched_canary_bundle(bundle, execution_at)
+    clock_calls = Counter()
+    preparer_entry_calls = -1
+    resolver_clock_calls: list[int] = []
+
+    def counting_clock() -> datetime:
+        clock_calls.value += 1
+        return execution_at
+
+    def observing_resolver(*args: object) -> Iterable[tuple[object, ...]]:
+        resolver_clock_calls.append(clock_calls.value)
+        return synthetic_resolver(*args)
+
+    def sampled_binding_preparer(**kwargs: object) -> ProviderNetworkBindingV1:
+        nonlocal preparer_entry_calls
+        preparer_entry_calls = clock_calls.value
+        return fake_binding_preparer(**kwargs)  # type: ignore[arg-type]
+
+    result = run_owner_review_pack_once_v1(
+        bundle_directory=bundle,
+        workspace_receipt=workspace,
+        mission_manifest=manifest,
+        output_binding_path=Path(workspace.control_temp_root) / "clock-binding.json",
+        output_pack_directory=Path(workspace.control_temp_root) / "clock-pack",
+        resolver=observing_resolver,
+        marker_inspector=current_marker_inspector,
+        execute=True,
+        owner_present_for_review=True,
+        prefetch_handoff_path=handoff_path,
+        window_open_receipt_path=receipt_path,
+        clock=counting_clock,
+        monotonic=SequenceMonotonic(),
+        workspace_validator=lambda _: None,
+        binding_preparer=sampled_binding_preparer,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+
+    assert result.status == "OWNER_REVIEW_PACK_CREATED", result.preflight.errors
+    assert resolver_clock_calls == [preparer_entry_calls + 1]
+    assert result.resolver_operations == 1
 
 
 def test_canary_runner_forgotten_resolver_is_denied_and_marker_is_retained(
@@ -3518,10 +4089,35 @@ def test_canary_runner_rechecks_840_second_margin_after_marker_before_resolver(
         mission_expires_at=BASE + timedelta(hours=1, minutes=15),
     )
     underlying_resolver_calls = Counter()
+    claim_marker = (
+        Path(workspace.control_temp_root) / "provider-network-resolution-one-shot-v1.json"
+    )
 
     def forbidden_resolver(*_args: object) -> Iterable[tuple[object, ...]]:
         underlying_resolver_calls.value += 1
         raise AssertionError("resolver must not run below the canary margin")
+
+    def rechecking_binding_preparer(
+        *,
+        workspace_receipt: RealCaptureWorkspaceReceiptV1,
+        mission_manifest: RealExecutionMissionManifestV1,
+        campaign_selection: CampaignSelectionAuthorityV1,
+        output_path: Path,
+        resolver: Callable[[str, int, int, int, int], Iterable[tuple[object, ...]]],
+        clock: Callable[[], datetime],
+        binding_ttl_seconds: int,
+        expected_global_v2_read_identity: tuple[object, ...],
+        expected_global_legacy_root_identity: tuple[object, ...],
+        final_pre_effect_assertion: Callable[[], None],
+    ) -> ProviderNetworkBindingV1:
+        del workspace_receipt, mission_manifest, campaign_selection, output_path
+        del resolver, binding_ttl_seconds, expected_global_v2_read_identity
+        del expected_global_legacy_root_identity
+        del final_pre_effect_assertion
+        clock()
+        claim_marker.write_bytes(b"reserved-before-final-time-sample")
+        clock()
+        raise AssertionError("eroded margin passed the final provider sample")
 
     loaded = load_pre_dns_bundle_v1(
         bundle,
@@ -3553,15 +4149,13 @@ def test_canary_runner_rechecks_840_second_margin_after_marker_before_resolver(
         clock=timeline.clock,
         monotonic=timeline.monotonic,
         workspace_validator=lambda _: None,
-        binding_preparer=fake_binding_preparer,
+        binding_preparer=rechecking_binding_preparer,
         raw_evidence_verifier=synthetic_raw_evidence_verifier,
     )
     assert result.status == "POST_DNS_HARD_STOP"
     assert result.hard_stop_code == "OWNER_REVIEW_USABLE_MARGIN_INSUFFICIENT"
     assert result.resolver_operations == underlying_resolver_calls.value == 0
-    assert (
-        Path(workspace.control_temp_root) / "provider-network-resolution-one-shot-v1.json"
-    ).is_file()
+    assert (claim_marker).is_file()
 
 
 def test_runner_preflight_invalid_and_owner_presence_gate_use_zero_dns(tmp_path: Path) -> None:
@@ -4092,11 +4686,17 @@ def test_runner_stops_after_reservation_if_margin_crosses_before_resolver(
         resolver: Callable[[str, int, int, int, int], Iterable[tuple[object, ...]]],
         clock: Callable[[], datetime],
         binding_ttl_seconds: int,
+        expected_global_v2_read_identity: tuple[object, ...],
+        expected_global_legacy_root_identity: tuple[object, ...],
+        final_pre_effect_assertion: Callable[[], None],
     ) -> ProviderNetworkBindingV1:
         del workspace_receipt, mission_manifest, campaign_selection, output_path
-        del binding_ttl_seconds
+        del binding_ttl_seconds, expected_global_v2_read_identity
+        del expected_global_legacy_root_identity
+        del final_pre_effect_assertion
         clock()
         marker.write_bytes(b"reserved-before-resolver")
+        clock()
         tuple(resolver("api.the-odds-api.com", 443, socket.AF_UNSPEC, socket.SOCK_STREAM, 0))
         raise AssertionError("resolver boundary must stop before a binding is returned")
 
@@ -4376,8 +4976,12 @@ def test_legacy_runner_cli_preflights_but_rejects_v5_execute_and_type_substituti
     real_runner = public_run_owner_review_pack_once_v1
     synthetic_resolver_calls = Counter()
     cli_system_resolver_calls = Counter()
-    registry = tmp_path / "mission-global-claim-registry"
-    registry.mkdir()
+    marker_name = f"{manifest.mission_id.casefold()}-{manifest.canonical_manifest_sha256()}.json"
+    registry = predns_module.global_claims.global_claim_marker_paths_v2(
+        workspace,
+        marker_name,
+    ).v2.parent
+    registry.mkdir(parents=True, exist_ok=True)
 
     def forbidden_cli_system_resolver(
         *args: object,
@@ -4416,9 +5020,14 @@ def test_legacy_runner_cli_preflights_but_rejects_v5_execute_and_type_substituti
     )
     monkeypatch.setattr(cli, "_system_resolver", forbidden_cli_system_resolver)
     monkeypatch.setattr(
-        provider_network_module,
-        "_mission_global_claim_registry_root_v1",
-        lambda: registry,
+        provider_network_module.global_claims,
+        "resolve_global_claim_root_candidate_v2",
+        lambda _workspace: registry,
+    )
+    monkeypatch.setattr(
+        provider_network_module.global_claims,
+        "ensure_global_claim_root_v2",
+        lambda _workspace, **_kwargs: registry,
     )
 
     def injected_runner(**kwargs: object):
