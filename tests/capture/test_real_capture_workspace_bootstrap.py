@@ -4,7 +4,6 @@ import hashlib
 import inspect
 import json
 import os
-import subprocess
 import sys
 import time
 from datetime import UTC, datetime
@@ -1008,18 +1007,12 @@ class PowerShellAclFixtureRunner:
         )
         child_environment = dict(environment)
         child_environment["ROBIN_TEST_ACL_FIXTURE"] = self.fixture
-        completed = subprocess.run(
+        return SubprocessCommandRunner().run(
             (*arguments[:-1], fixture_script + probe),
-            cwd=os.fspath(cwd) if cwd is not None else None,
-            env=child_environment,
-            capture_output=True,
-            text=True,
-            timeout=timeout_seconds,
-            check=False,
+            cwd=cwd,
+            environment=child_environment,
+            timeout_seconds=timeout_seconds,
         )
-        if completed.returncode != 0:
-            raise WorkspaceBootstrapError("ACL_FIXTURE_REJECTED")
-        return completed.stdout
 
 
 def _fixture_security_facts(
