@@ -177,8 +177,8 @@ def test_neon_platform_edge_is_exact_optional_and_recursively_closed() -> None:
 def test_ci_executes_the_complete_readonly_preflight_ledger_before_role_mutation() -> None:
     source = RUNNER.read_text(encoding="utf-8")
     main_source = source[source.index("def main() -> None:") :]
-    superuser_proof = "superuser_readonly_preflight_catalog_contract = ("
-    lifecycle_proof = "lifecycle_admin_readonly_preflight_catalog_contract = ("
+    superuser_proof = "superuser_readonly_preflight_catalog_contract ="
+    lifecycle_proof = "lifecycle_admin_readonly_preflight_catalog_contract ="
     first_role_mutation = "provision_permanent_bootstrap_authority(admin)"
     assert "for ordinal, statement in enumerate(statements)" in source
     assert 'if len(statements) != 18' in source
