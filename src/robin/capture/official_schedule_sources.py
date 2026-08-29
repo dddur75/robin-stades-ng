@@ -10,6 +10,7 @@ import io
 import json
 import re
 import ssl
+import time
 from collections import Counter
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
@@ -28,33 +29,38 @@ MAXIMUM_REDIRECTS = 5
 MAXIMUM_SOURCE_AGE = timedelta(minutes=30)
 DEFAULT_TIMEOUT_SECONDS = 45.0
 LALIGA_BOOTSTRAP_URL = "https://www.laliga.com/en-GB/laliga-easports/results"
+LIGUE1_CALENDAR_URL = "https://ma-api.ligue1.fr/championship-calendar/1?season=2026"
+LIGUE1_GAMEWEEK_URL_TEMPLATE = (
+    "https://ma-api.ligue1.fr/championship-matches/championship/1/game-week/{gameweek}?season=2026"
+)
+LIGUE1_MAXIMUM_GAMEWEEK_READS = 5
 
 PREMIER_LEAGUE_FULL_SEASON_HTML_V1 = "PREMIER_LEAGUE_FULL_SEASON_HTML_V1"
 LALIGA_PUBLIC_MATCHES_JSON_V1 = "LALIGA_PUBLIC_MATCHES_JSON_V1"
 DFB_DATACENTER_HTML_V1 = "DFB_DATACENTER_HTML_V1"
 LEGA_SERIE_A_CALENDAR_PDF_V1 = "LEGA_SERIE_A_CALENDAR_PDF_V1"
-LIGUE1_PROGRAMMATION_HTML_V1 = "LIGUE1_PROGRAMMATION_HTML_V1"
+LIGUE1_CALENDAR_JSON_V1 = "LIGUE1_CALENDAR_JSON_V1"
 
 _ADAPTER_BY_SPORT = {
     "soccer_epl": PREMIER_LEAGUE_FULL_SEASON_HTML_V1,
     "soccer_spain_la_liga": LALIGA_PUBLIC_MATCHES_JSON_V1,
     "soccer_germany_bundesliga": DFB_DATACENTER_HTML_V1,
     "soccer_italy_serie_a": LEGA_SERIE_A_CALENDAR_PDF_V1,
-    "soccer_france_ligue_one": LIGUE1_PROGRAMMATION_HTML_V1,
+    "soccer_france_ligue_one": LIGUE1_CALENDAR_JSON_V1,
 }
 _OFFICIAL_DOMAINS_BY_ADAPTER = {
     PREMIER_LEAGUE_FULL_SEASON_HTML_V1: ("premierleague.com",),
     LALIGA_PUBLIC_MATCHES_JSON_V1: ("laliga.com",),
     DFB_DATACENTER_HTML_V1: ("dfb.de",),
     LEGA_SERIE_A_CALENDAR_PDF_V1: ("legaseriea.it",),
-    LIGUE1_PROGRAMMATION_HTML_V1: ("ligue1.com",),
+    LIGUE1_CALENDAR_JSON_V1: ("ma-api.ligue1.fr",),
 }
 _CONTENT_TYPES_BY_ADAPTER = {
     PREMIER_LEAGUE_FULL_SEASON_HTML_V1: ("text/html", "application/xhtml+xml"),
     LALIGA_PUBLIC_MATCHES_JSON_V1: ("application/json",),
     DFB_DATACENTER_HTML_V1: ("text/html", "application/xhtml+xml"),
     LEGA_SERIE_A_CALENDAR_PDF_V1: ("application/pdf",),
-    LIGUE1_PROGRAMMATION_HTML_V1: ("text/html", "application/xhtml+xml"),
+    LIGUE1_CALENDAR_JSON_V1: ("application/json",),
 }
 _COMPETITION_BY_SPORT = {
     "soccer_epl": "Premier League",
@@ -139,6 +145,18 @@ class OfficialHttpResponse:
 
 
 @dataclass(frozen=True, slots=True)
+class OfficialPhysicalResponse:
+    """Exact bytes and timing for each physical official HTTP response."""
+
+    requested_url: str
+    status_code: int
+    content_type: str
+    response_headers: Mapping[str, str]
+    body: bytes
+    observed_at_utc: datetime
+
+
+@dataclass(frozen=True, slots=True)
 class SupportingOfficialRead:
     requested_url: str
     final_url: str
@@ -220,6 +238,12 @@ class OfficialFixture:
     official_id: str
     kickoff_confirmed: bool = True
     round_number: int | None = None
+    source_authority: str | None = None
+    source_content_sha256: str | None = None
+    source_pointer: str | None = None
+    source_record_ordinal: int | None = None
+    home_official_id: str | None = None
+    away_official_id: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -255,6 +279,18 @@ class OfficialScheduleEvidence:
                     "official_home_team": item.home,
                     "official_away_team": item.away,
                     "official_kickoff_utc": _utc_text(item.kickoff_utc),
+                    "source_authority": item.source_authority or self.source_authority,
+                    "source_content_sha256": (
+                        item.source_content_sha256 or self.source_content_sha256
+                    ),
+                    "source_pointer": (
+                        item.source_pointer or f"adapter_projection.fixtures[{len(fixtures)}]"
+                    ),
+                    "source_record_ordinal": (
+                        item.source_record_ordinal
+                        if item.source_record_ordinal is not None
+                        else len(fixtures)
+                    ),
                 }
             )
         return {
@@ -408,6 +444,17 @@ def load_official_source_plan_bytes(payload: bytes) -> OfficialSourcePlan:
                 or query.get("offset") != ["300"]
             ):
                 raise OfficialScheduleSourceError("LALIGA_PAGINATION_AUTHORITY_INVALID")
+        if adapter == LIGUE1_CALENDAR_JSON_V1:
+            parsed_url = urlparse(url)
+            query = parse_qs(parsed_url.query, keep_blank_values=True)
+            if (
+                (parsed_url.hostname or "").casefold() != "ma-api.ligue1.fr"
+                or parsed_url.path != "/championship-calendar/1"
+                or set(query) != {"season"}
+                or query.get("season") != ["2026"]
+                or url != LIGUE1_CALENDAR_URL
+            ):
+                raise OfficialScheduleSourceError("LIGUE1_CALENDAR_AUTHORITY_INVALID")
         parsed_sources.append(source)
     canonical = {
         "schema_version": SOURCE_PLAN_SCHEMA,
@@ -441,6 +488,13 @@ class BuiltinHttpsOfficialScheduleFetcher:
         timeout_seconds: float = DEFAULT_TIMEOUT_SECONDS,
         maximum_bytes: int = MAXIMUM_SOURCE_BYTES,
         maximum_redirects: int = MAXIMUM_REDIRECTS,
+        clock: Callable[[], datetime] = lambda: datetime.now(UTC),
+        monotonic: Callable[[], float] = time.monotonic,
+        on_dispatch: Callable[[str], None] | None = None,
+        on_response: Callable[[OfficialPhysicalResponse], None] | None = None,
+        on_partial_response: Callable[[OfficialPhysicalResponse], None] | None = None,
+        horizon_not_before_utc: datetime | None = None,
+        horizon_expires_at_utc: datetime | None = None,
     ) -> None:
         if (
             timeout_seconds <= 0
@@ -453,6 +507,13 @@ class BuiltinHttpsOfficialScheduleFetcher:
         self._timeout_seconds = timeout_seconds
         self._maximum_bytes = maximum_bytes
         self._maximum_redirects = maximum_redirects
+        self._clock = clock
+        self._monotonic = monotonic
+        self._on_dispatch = on_dispatch
+        self._on_response = on_response
+        self._on_partial_response = on_partial_response
+        self._horizon_not_before_utc = horizon_not_before_utc
+        self._horizon_expires_at_utc = horizon_expires_at_utc
 
     def _request(
         self,
@@ -460,10 +521,14 @@ class BuiltinHttpsOfficialScheduleFetcher:
         requested_url: str,
         *,
         extra_headers: Mapping[str, str] | None = None,
+        maximum_redirects: int | None = None,
     ) -> OfficialHttpResponse:
         current_url = requested_url
         redirects: list[RedirectHop] = []
-        for _ in range(self._maximum_redirects + 1):
+        redirect_limit = self._maximum_redirects if maximum_redirects is None else maximum_redirects
+        if not 0 <= redirect_limit <= self._maximum_redirects:
+            raise OfficialScheduleSourceError("OFFICIAL_SOURCE_REDIRECT_LIMIT_INVALID")
+        for _ in range(redirect_limit + 1):
             host = _validate_official_url(current_url, source)
             parsed = urlparse(current_url)
             target = parsed.path or "/"
@@ -483,6 +548,9 @@ class BuiltinHttpsOfficialScheduleFetcher:
                     "User-Agent": "RobinOfficialScheduleBoundary/1",
                 }
                 headers.update(extra_headers or {})
+                dispatch_started = self._monotonic()
+                if self._on_dispatch is not None:
+                    self._on_dispatch(current_url)
                 connection.request(
                     "GET",
                     target,
@@ -491,19 +559,114 @@ class BuiltinHttpsOfficialScheduleFetcher:
                 response = connection.getresponse()
                 status = response.status
                 content_type = response.getheader("Content-Type", "")
+                location = response.getheader("Location")
+                length_header = response.getheader("Content-Length")
+                raw_headers = response.getheaders()
+                safe_headers = {
+                    name.casefold(): value.strip()
+                    for name, value in raw_headers
+                    if name.casefold()
+                    in {
+                        "content-type",
+                        "content-length",
+                        "etag",
+                        "last-modified",
+                        "date",
+                    }
+                    and value.isascii()
+                    and len(value) <= 512
+                    and not any(character in value for character in "\r\n\x00")
+                }
+
+                def physical_response(payload: bytes) -> OfficialPhysicalResponse:
+                    return OfficialPhysicalResponse(
+                        requested_url=current_url,
+                        status_code=status,
+                        content_type=content_type,
+                        response_headers=safe_headers,
+                        body=payload,
+                        observed_at_utc=_utc(
+                            self._clock(),
+                            code="OFFICIAL_FETCH_TIME_INVALID",
+                        ),
+                    )
+
+                chunks: list[bytes] = []
+                total = 0
+
+                def tighten_body_deadline() -> None:
+                    remaining = self._timeout_seconds - (self._monotonic() - dispatch_started)
+                    if remaining <= 0:
+                        raise TimeoutError("OFFICIAL_SOURCE_TOTAL_DEADLINE_EXCEEDED")
+                    network_socket = getattr(connection, "sock", None)
+                    setter = getattr(network_socket, "settimeout", None)
+                    if callable(setter):
+                        setter(remaining)
+
+                try:
+                    read1 = getattr(response, "read1", None)
+                    if callable(read1):
+                        while total <= self._maximum_bytes:
+                            tighten_body_deadline()
+                            chunk = read1(min(65_536, self._maximum_bytes + 1 - total))
+                            if not isinstance(chunk, bytes):
+                                raise http.client.HTTPException("OFFICIAL_SOURCE_BODY_INVALID")
+                            if chunk:
+                                chunks.append(chunk)
+                                total += len(chunk)
+                            # A socket timeout bounds an individual operation;
+                            # the monotonic check after it bounds the full read,
+                            # including a slow final chunk or slow EOF.
+                            tighten_body_deadline()
+                            if not chunk:
+                                break
+                    else:
+                        tighten_body_deadline()
+                        chunk = response.read(self._maximum_bytes + 1)
+                        if not isinstance(chunk, bytes):
+                            raise http.client.HTTPException("OFFICIAL_SOURCE_BODY_INVALID")
+                        chunks.append(chunk)
+                        tighten_body_deadline()
+                except http.client.IncompleteRead as error:
+                    partial_body = (b"".join(chunks) + bytes(error.partial))[
+                        : self._maximum_bytes + 1
+                    ]
+                    if self._on_partial_response is not None:
+                        self._on_partial_response(physical_response(partial_body))
+                    raise OfficialScheduleSourceError("OFFICIAL_SOURCE_NETWORK_FAILED") from error
+                except (OSError, ssl.SSLError, http.client.HTTPException) as error:
+                    partial_body = b"".join(chunks)[: self._maximum_bytes + 1]
+                    if self._on_partial_response is not None:
+                        self._on_partial_response(physical_response(partial_body))
+                    raise OfficialScheduleSourceError("OFFICIAL_SOURCE_NETWORK_FAILED") from error
+                body = b"".join(chunks)
+                physical = physical_response(body)
+                declared_length: int | None = None
+                length_invalid = False
+                if length_header is not None:
+                    if not length_header.isascii() or not length_header.isdigit():
+                        length_invalid = True
+                    else:
+                        declared_length = int(length_header)
+                length_mismatch = declared_length is not None and len(body) != declared_length
+                body_complete = (
+                    len(body) <= self._maximum_bytes and not length_invalid and not length_mismatch
+                )
+                if body_complete and self._on_response is not None:
+                    self._on_response(physical)
+                elif not body_complete and self._on_partial_response is not None:
+                    self._on_partial_response(physical)
                 content_encoding = (response.getheader("Content-Encoding") or "").strip().casefold()
                 if content_encoding not in {"", "identity"}:
                     raise OfficialScheduleSourceError("OFFICIAL_SOURCE_CONTENT_ENCODING_INVALID")
-                location = response.getheader("Location")
-                length_header = response.getheader("Content-Length")
-                if length_header is not None:
-                    try:
-                        if int(length_header) > self._maximum_bytes:
-                            raise OfficialScheduleSourceError("OFFICIAL_SOURCE_RESPONSE_TOO_LARGE")
-                    except ValueError:
-                        raise OfficialScheduleSourceError(
-                            "OFFICIAL_SOURCE_CONTENT_LENGTH_INVALID"
-                        ) from None
+                if length_invalid:
+                    raise OfficialScheduleSourceError("OFFICIAL_SOURCE_CONTENT_LENGTH_INVALID")
+                if declared_length is not None and declared_length > self._maximum_bytes:
+                    raise OfficialScheduleSourceError("OFFICIAL_SOURCE_RESPONSE_TOO_LARGE")
+                if length_mismatch:
+                    raise OfficialScheduleSourceError("OFFICIAL_SOURCE_CONTENT_LENGTH_MISMATCH")
+                if len(body) > self._maximum_bytes:
+                    raise OfficialScheduleSourceError("OFFICIAL_SOURCE_RESPONSE_TOO_LARGE")
                 if status in {301, 302, 303, 307, 308}:
                     if not location:
                         raise OfficialScheduleSourceError("OFFICIAL_SOURCE_REDIRECT_INVALID")
@@ -518,9 +681,6 @@ class BuiltinHttpsOfficialScheduleFetcher:
                     )
                     current_url = next_url
                     continue
-                body = response.read(self._maximum_bytes + 1)
-                if len(body) > self._maximum_bytes:
-                    raise OfficialScheduleSourceError("OFFICIAL_SOURCE_RESPONSE_TOO_LARGE")
                 return OfficialHttpResponse(
                     status_code=status,
                     final_url=current_url,
@@ -535,6 +695,58 @@ class BuiltinHttpsOfficialScheduleFetcher:
         raise OfficialScheduleSourceError("OFFICIAL_SOURCE_REDIRECT_LIMIT_EXCEEDED")
 
     def fetch(self, source: OfficialSourceSpec) -> OfficialHttpResponse:
+        if source.adapter == LIGUE1_CALENDAR_JSON_V1:
+            if self._horizon_not_before_utc is None or self._horizon_expires_at_utc is None:
+                raise OfficialScheduleSourceError("LIGUE1_HORIZON_REQUIRED")
+            calendar = self._request(source, source.url, maximum_redirects=0)
+            calendar_type = calendar.content_type.split(";", 1)[0].strip().casefold()
+            if (
+                calendar.status_code != 200
+                or calendar_type != "application/json"
+                or not calendar.body
+            ):
+                raise OfficialScheduleSourceError("LIGUE1_CALENDAR_AUTHORITY_INVALID")
+            references = _parse_ligue1_calendar_refs(
+                calendar.body,
+                horizon_starts=self._horizon_not_before_utc,
+                horizon_expires=self._horizon_expires_at_utc,
+            )
+            supporting_reads: list[SupportingOfficialRead] = []
+            supporting_raw: list[bytes] = []
+            for reference in references:
+                requested_url = LIGUE1_GAMEWEEK_URL_TEMPLATE.format(gameweek=reference.number)
+                response = self._request(source, requested_url, maximum_redirects=0)
+                normalized_type = response.content_type.split(";", 1)[0].strip().casefold()
+                if (
+                    response.status_code != 200
+                    or normalized_type != "application/json"
+                    or not response.body
+                    or response.redirect_chain
+                    or response.final_url != requested_url
+                ):
+                    raise OfficialScheduleSourceError("LIGUE1_GAMEWEEK_AUTHORITY_INVALID")
+                supporting_reads.append(
+                    SupportingOfficialRead(
+                        requested_url=requested_url,
+                        final_url=response.final_url,
+                        official_domain=(urlparse(response.final_url).hostname or "").casefold(),
+                        status_code=response.status_code,
+                        content_type=response.content_type,
+                        byte_count=len(response.body),
+                        raw_sha256=hashlib.sha256(response.body).hexdigest(),
+                        redirect_chain=response.redirect_chain,
+                    )
+                )
+                supporting_raw.append(response.body)
+            return OfficialHttpResponse(
+                status_code=calendar.status_code,
+                final_url=calendar.final_url,
+                content_type=calendar.content_type,
+                body=calendar.body,
+                redirect_chain=calendar.redirect_chain,
+                supporting_official_reads=tuple(supporting_reads),
+                supporting_official_raw_bytes=tuple(supporting_raw),
+            )
         if source.adapter != LALIGA_PUBLIC_MATCHES_JSON_V1:
             return self._request(source, source.url)
         if (urlparse(source.url).hostname or "").casefold() != "apim.laliga.com":
@@ -1198,109 +1410,284 @@ def _parse_serie_a(
     }
 
 
-def _visible_lines(payload: bytes) -> list[str]:
+@dataclass(frozen=True, slots=True)
+class _Ligue1GameWeekRef:
+    number: int
+    match_ids: tuple[str, ...]
+    starts_at_utc: datetime
+    ends_at_utc: datetime
+
+
+def _parse_ligue1_json(payload: bytes, *, code: str) -> dict[str, object]:
+    def reject_constant(_value: str) -> None:
+        raise ValueError(code)
+
     try:
-        source = payload.decode("utf-8")
-    except UnicodeDecodeError:
-        raise OfficialScheduleSourceError("LIGUE1_SOURCE_ENCODING_INVALID") from None
-    source = re.sub(
-        r"</?(?:p|h[1-6]|li|article|section|div|br)(?:\s[^>]*)?/?>",
-        "\n",
-        source,
-        flags=re.IGNORECASE,
-    )
-    source = re.sub(r"<script\b.*?</script>", "", source, flags=re.DOTALL | re.IGNORECASE)
-    source = re.sub(r"<style\b.*?</style>", "", source, flags=re.DOTALL | re.IGNORECASE)
-    source = re.sub(r"<[^>]+>", "", source)
-    return [" ".join(html.unescape(line).split()) for line in source.splitlines() if line.strip()]
+        document = json.loads(
+            payload,
+            object_pairs_hook=_reject_duplicate_json_keys,
+            parse_constant=reject_constant,
+        )
+    except (UnicodeDecodeError, json.JSONDecodeError, ValueError):
+        raise OfficialScheduleSourceError(code) from None
+    if not isinstance(document, dict):
+        raise OfficialScheduleSourceError(code)
+    return cast(dict[str, object], document)
 
 
-def _parse_ligue1(
+def _ligue1_identifier(value: object, *, code: str) -> str:
+    if isinstance(value, bool) or not isinstance(value, (int, str)):
+        raise OfficialScheduleSourceError(code)
+    normalized = str(value).strip()
+    if not normalized or len(normalized) > 128 or "\x00" in normalized:
+        raise OfficialScheduleSourceError(code)
+    return normalized
+
+
+def _parse_ligue1_calendar_refs(
     payload: bytes,
-) -> tuple[tuple[OfficialFixture, ...], Mapping[str, object]]:
-    lines = _visible_lines(payload)
-    joined = "\n".join(lines)
-    if not (
-        "2026/27" in joined
-        and "Ligue 1 McDonald" in joined
-        and re.search(r"\b2(?:e|ème)\s+journée\b", joined, flags=re.IGNORECASE)
-    ):
-        raise OfficialScheduleSourceError("LIGUE1_FORWARD_HORIZON_AUTHORITY_INVALID")
-    months = {"août": 8, "aout": 8, "august": 8, "septembre": 9, "september": 9}
-    weekdays = {
-        "lundi": 0,
-        "monday": 0,
-        "mardi": 1,
-        "tuesday": 1,
-        "mercredi": 2,
-        "wednesday": 2,
-        "jeudi": 3,
-        "thursday": 3,
-        "vendredi": 4,
-        "friday": 4,
-        "samedi": 5,
-        "saturday": 5,
-        "dimanche": 6,
-        "sunday": 6,
-    }
-    heading = re.compile(
-        r"^(Lundi|Mardi|Mercredi|Jeudi|Vendredi|Samedi|Dimanche|Monday|Tuesday|"
-        r"Wednesday|Thursday|Friday|Saturday|Sunday)\s+(\d{1,2})\s+([A-Za-zÀ-ÿ]+)"
-        r"(?:\s+(2026))?\s+(?:à|at)\s+(\d{1,2})(?:h|:)(\d{2})(?:\s+sur\b.*)?$",
-        flags=re.IGNORECASE,
+    *,
+    horizon_starts: datetime,
+    horizon_expires: datetime,
+) -> tuple[_Ligue1GameWeekRef, ...]:
+    starts = _utc(horizon_starts, code="LIGUE1_HORIZON_INVALID")
+    expires = _utc(horizon_expires, code="LIGUE1_HORIZON_INVALID")
+    if starts >= expires:
+        raise OfficialScheduleSourceError("LIGUE1_HORIZON_INVALID")
+    document = _parse_ligue1_json(payload, code="LIGUE1_CALENDAR_JSON_INVALID")
+    raw_gameweeks = document.get("gameWeeks")
+    if not isinstance(raw_gameweeks, list) or not raw_gameweeks:
+        raise OfficialScheduleSourceError("LIGUE1_CALENDAR_AUTHORITY_INVALID")
+    references: list[_Ligue1GameWeekRef] = []
+    seen_numbers: set[int] = set()
+    seen_match_ids: set[str] = set()
+    for raw_gameweek in raw_gameweeks:
+        if not isinstance(raw_gameweek, dict):
+            raise OfficialScheduleSourceError("LIGUE1_CALENDAR_AUTHORITY_INVALID")
+        number = raw_gameweek.get("gameWeekNumber")
+        raw_match_ids = raw_gameweek.get("matchesIds")
+        if (
+            isinstance(number, bool)
+            or not isinstance(number, int)
+            or not 1 <= number <= 34
+            or number in seen_numbers
+            or not isinstance(raw_match_ids, list)
+            or len(raw_match_ids) != 9
+        ):
+            raise OfficialScheduleSourceError("LIGUE1_CALENDAR_AUTHORITY_INVALID")
+        match_ids = tuple(
+            _ligue1_identifier(value, code="LIGUE1_CALENDAR_AUTHORITY_INVALID")
+            for value in raw_match_ids
+        )
+        if len(set(match_ids)) != 9 or seen_match_ids.intersection(match_ids):
+            raise OfficialScheduleSourceError("LIGUE1_CALENDAR_AUTHORITY_INVALID")
+        boundaries: list[datetime] = []
+        for field in ("endDate", "displayEndDate", "lastRegularMatchDate"):
+            value = raw_gameweek.get(field)
+            if not isinstance(value, str):
+                raise OfficialScheduleSourceError("LIGUE1_CALENDAR_AUTHORITY_INVALID")
+            boundaries.append(_parse_iso_aware(value, code="LIGUE1_CALENDAR_AUTHORITY_INVALID"))
+        start_value = raw_gameweek.get("startDate")
+        if not isinstance(start_value, str):
+            raise OfficialScheduleSourceError("LIGUE1_CALENDAR_AUTHORITY_INVALID")
+        reference = _Ligue1GameWeekRef(
+            number=number,
+            match_ids=match_ids,
+            starts_at_utc=_parse_iso_aware(
+                start_value,
+                code="LIGUE1_CALENDAR_AUTHORITY_INVALID",
+            ),
+            ends_at_utc=max(boundaries),
+        )
+        if reference.starts_at_utc > reference.ends_at_utc:
+            raise OfficialScheduleSourceError("LIGUE1_CALENDAR_AUTHORITY_INVALID")
+        references.append(reference)
+        seen_numbers.add(number)
+        seen_match_ids.update(match_ids)
+    if len(references) != 34 or seen_numbers != set(range(1, 35)) or len(seen_match_ids) != 306:
+        raise OfficialScheduleSourceError("LIGUE1_CALENDAR_COMPLETENESS_INVALID")
+    selected = tuple(
+        sorted(
+            (
+                item
+                for item in references
+                if item.starts_at_utc < expires and item.ends_at_utc >= starts
+            ),
+            key=lambda item: item.number,
+        )
     )
-    paris = ZoneInfo("Europe/Paris")
-    current_kickoff: datetime | None = None
+    if not selected:
+        raise OfficialScheduleSourceError("LIGUE1_CALENDAR_HORIZON_EMPTY")
+    if len(selected) > LIGUE1_MAXIMUM_GAMEWEEK_READS:
+        raise OfficialScheduleSourceError("LIGUE1_GAMEWEEK_READ_LIMIT_EXCEEDED")
+    return selected
+
+
+def _ligue1_club(
+    value: object,
+    *,
+    code: str,
+) -> tuple[str, str]:
+    if not isinstance(value, dict):
+        raise OfficialScheduleSourceError(code)
+    club_id = _ligue1_identifier(value.get("clubId"), code=code)
+    identity = value.get("clubIdentity")
+    if not isinstance(identity, dict):
+        raise OfficialScheduleSourceError(code)
+    if _ligue1_identifier(identity.get("id"), code=code) != club_id:
+        raise OfficialScheduleSourceError(code)
+    name = identity.get("name")
+    if not isinstance(name, str):
+        raise OfficialScheduleSourceError(code)
+    normalized_name = " ".join(name.split())
+    if not normalized_name or normalized_name != name.strip() or len(normalized_name) > 128:
+        raise OfficialScheduleSourceError(code)
+    return club_id, normalized_name
+
+
+def _parse_ligue1_gameweek(
+    payload: bytes,
+    *,
+    reference: _Ligue1GameWeekRef,
+    source_read: SupportingOfficialRead,
+) -> tuple[OfficialFixture, ...]:
+    code = "LIGUE1_GAMEWEEK_AUTHORITY_INVALID"
+    document = _parse_ligue1_json(payload, code="LIGUE1_GAMEWEEK_JSON_INVALID")
+    raw_matches = document.get("matches")
+    expected_url = LIGUE1_GAMEWEEK_URL_TEMPLATE.format(gameweek=reference.number)
+    if (
+        not isinstance(raw_matches, list)
+        or len(raw_matches) != 9
+        or source_read.requested_url != expected_url
+        or source_read.final_url != expected_url
+        or source_read.redirect_chain
+        or source_read.status_code != 200
+        or source_read.content_type.split(";", 1)[0].strip().casefold() != "application/json"
+        or source_read.byte_count != len(payload)
+        or source_read.raw_sha256 != hashlib.sha256(payload).hexdigest()
+    ):
+        raise OfficialScheduleSourceError(code)
     fixtures: list[OfficialFixture] = []
-    for line in lines:
-        match = heading.fullmatch(line)
-        if match is not None:
-            weekday, day, month_name, explicit_year, hour, minute = match.groups()
-            month = months.get(month_name.casefold())
-            if month is None:
-                current_kickoff = None
-                continue
-            local = datetime(
-                int(explicit_year or "2026"),
-                month,
-                int(day),
-                int(hour),
-                int(minute),
-                tzinfo=paris,
-            )
-            if local.weekday() != weekdays[weekday.casefold()]:
-                raise OfficialScheduleSourceError("LIGUE1_WEEKDAY_MISMATCH")
-            current_kickoff = local.astimezone(UTC)
-            continue
-        if current_kickoff is None or "–" not in line or line.count("–") != 1:
-            continue
-        home, away = (value.strip() for value in line.split("–", 1))
-        if not home or not away or len(home) > 80 or len(away) > 80:
-            continue
+    match_ids: list[str] = []
+    club_ids: list[str] = []
+    identities: set[tuple[str, str, datetime]] = set()
+    for match_index, raw_match in enumerate(raw_matches):
+        if not isinstance(raw_match, dict):
+            raise OfficialScheduleSourceError(code)
+        match_id = _ligue1_identifier(raw_match.get("matchId"), code=code)
+        gameweek = raw_match.get("gameWeekNumber")
+        championship = raw_match.get("championshipId")
+        date_value = raw_match.get("date")
+        if (
+            raw_match.get("unknownMatch") is not False
+            or isinstance(gameweek, bool)
+            or gameweek != reference.number
+            or isinstance(championship, bool)
+            or championship != 1
+            or not isinstance(date_value, str)
+        ):
+            raise OfficialScheduleSourceError(code)
+        kickoff = _parse_iso_aware(date_value, code=code)
+        if not reference.starts_at_utc <= kickoff <= reference.ends_at_utc:
+            raise OfficialScheduleSourceError(code)
+        home_id, home = _ligue1_club(raw_match.get("home"), code=code)
+        away_id, away = _ligue1_club(raw_match.get("away"), code=code)
+        identity = (home_id, away_id, kickoff)
+        if home_id == away_id or home == away or identity in identities:
+            raise OfficialScheduleSourceError(code)
+        identities.add(identity)
+        match_ids.append(match_id)
+        club_ids.extend((home_id, away_id))
         fixtures.append(
             OfficialFixture(
                 home=home,
                 away=away,
-                kickoff_utc=current_kickoff,
-                official_id=f"ligue1-j2-{len(fixtures) + 1:02d}",
+                kickoff_utc=kickoff,
+                official_id=match_id,
+                round_number=reference.number,
+                source_authority=source_read.final_url,
+                source_content_sha256=source_read.raw_sha256,
+                source_pointer=f"/matches/{match_index}",
+                source_record_ordinal=match_index,
+                home_official_id=home_id,
+                away_official_id=away_id,
             )
         )
-    unique = {(item.home, item.away, item.kickoff_utc) for item in fixtures}
-    clubs = {team for item in fixtures for team in (item.home, item.away)}
-    days = Counter(item.kickoff_utc.astimezone(paris).date().isoformat() for item in fixtures)
     if (
-        len(fixtures) != 9
-        or len(unique) != 9
-        or len(clubs) != 18
-        or days != Counter({"2026-08-28": 1, "2026-08-29": 5, "2026-08-30": 3})
+        set(match_ids) != set(reference.match_ids)
+        or len(match_ids) != len(set(match_ids))
+        or len(club_ids) != 18
+        or len(set(club_ids)) != 18
     ):
-        raise OfficialScheduleSourceError("LIGUE1_FORWARD_HORIZON_INCOMPLETE")
-    return tuple(sorted(fixtures, key=lambda item: (item.kickoff_utc, item.home, item.away))), {
-        "matchday": 2,
-        "forward_horizon_fixture_count": 9,
-        "fixture_counts_by_local_date": dict(sorted(days.items())),
-        "completeness_rule": "ALL_FIXTURES_IN_FORWARD_HORIZON_NOT_ALL_ROUNDS_IN_ARTICLE_TITLE",
-        "timezone": "Europe/Paris",
+        raise OfficialScheduleSourceError(code)
+    return tuple(fixtures)
+
+
+def _parse_ligue1_calendar_bundle(
+    fetch_result: OfficialFetchResult,
+    *,
+    horizon_starts: datetime,
+    horizon_expires: datetime,
+) -> tuple[tuple[OfficialFixture, ...], Mapping[str, object]]:
+    references = _parse_ligue1_calendar_refs(
+        fetch_result.raw_bytes,
+        horizon_starts=horizon_starts,
+        horizon_expires=horizon_expires,
+    )
+    reads = fetch_result.receipt.supporting_official_reads
+    payloads = fetch_result.supporting_official_raw_bytes
+    if len(reads) != len(references) or len(payloads) != len(references):
+        raise OfficialScheduleSourceError("LIGUE1_GAMEWEEK_BUNDLE_INCOMPLETE")
+    fixtures: list[OfficialFixture] = []
+    expected_ids = 0
+    club_names_by_id: dict[str, str] = {}
+    club_ids_by_name: dict[str, str] = {}
+    for reference, source_read, payload in zip(references, reads, payloads, strict=True):
+        expected_url = LIGUE1_GAMEWEEK_URL_TEMPLATE.format(gameweek=reference.number)
+        if source_read.requested_url != expected_url:
+            raise OfficialScheduleSourceError("LIGUE1_GAMEWEEK_BUNDLE_INCOMPLETE")
+        expected_ids += len(reference.match_ids)
+        gameweek_fixtures = _parse_ligue1_gameweek(
+            payload,
+            reference=reference,
+            source_read=source_read,
+        )
+        for fixture in gameweek_fixtures:
+            for club_id, club_name in (
+                (fixture.home_official_id, fixture.home),
+                (fixture.away_official_id, fixture.away),
+            ):
+                if club_id is None:
+                    raise OfficialScheduleSourceError("LIGUE1_CLUB_IDENTITY_INCONSISTENT")
+                if club_names_by_id.get(club_id, club_name) != club_name:
+                    raise OfficialScheduleSourceError("LIGUE1_CLUB_IDENTITY_INCONSISTENT")
+                if club_ids_by_name.get(club_name, club_id) != club_id:
+                    raise OfficialScheduleSourceError("LIGUE1_CLUB_IDENTITY_INCONSISTENT")
+                club_names_by_id[club_id] = club_name
+                club_ids_by_name[club_name] = club_id
+        fixtures.extend(gameweek_fixtures)
+    accounted_ids = len({item.official_id for item in fixtures})
+    complete = expected_ids == accounted_ids == len(fixtures)
+    if not complete or len(club_names_by_id) != 18:
+        raise OfficialScheduleSourceError("LIGUE1_GAMEWEEK_BUNDLE_INCOMPLETE")
+    club_identity_material = dict(sorted(club_names_by_id.items()))
+    return tuple(fixtures), {
+        "covered_not_before": _utc_text(horizon_starts),
+        "covered_expires": _utc_text(horizon_expires),
+        "gameweeks_fetched": [item.number for item in references],
+        "calendar_ids_expected": expected_ids,
+        "calendar_ids_accounted": accounted_ids,
+        "calendar_gameweeks_total": 34,
+        "calendar_match_ids_total": 306,
+        "calendar_club_identities_total": len(club_identity_material),
+        "calendar_club_identities_sha256": hashlib.sha256(
+            _canonical_bytes(club_identity_material)
+        ).hexdigest(),
+        "calendar_match_ids_by_gameweek": {
+            str(item.number): list(item.match_ids) for item in references
+        },
+        "complete_official_horizon": complete,
+        "timezone": "UTC",
     }
 
 
@@ -1346,6 +1733,15 @@ def build_official_schedule_evidence(
             fetch_result.receipt.final_url,
             fetch_result.receipt.redirect_chain,
             source,
+        )
+        or (
+            source.adapter == LIGUE1_CALENDAR_JSON_V1
+            and (
+                fetch_result.receipt.redirect_chain
+                or any(
+                    item.redirect_chain for item in fetch_result.receipt.supporting_official_reads
+                )
+            )
         )
         or any(
             item.status_code != 200
@@ -1394,8 +1790,12 @@ def build_official_schedule_evidence(
             horizon_expires=horizon_expires,
             pdf_text_extractor=pdf_text_extractor or default_pdf_text_extractor,
         )
-    elif source.adapter == LIGUE1_PROGRAMMATION_HTML_V1:
-        fixtures, metadata = _parse_ligue1(fetch_result.raw_bytes)
+    elif source.adapter == LIGUE1_CALENDAR_JSON_V1:
+        fixtures, metadata = _parse_ligue1_calendar_bundle(
+            fetch_result,
+            horizon_starts=horizon_starts,
+            horizon_expires=horizon_expires,
+        )
     else:
         raise OfficialScheduleSourceError("OFFICIAL_SOURCE_ADAPTER_INVALID")
     selected = tuple(
@@ -1417,6 +1817,36 @@ def build_official_schedule_evidence(
         or any(item.kickoff_utc.tzinfo is None for item in selected)
     ):
         raise OfficialScheduleSourceError("OFFICIAL_SCHEDULE_FIXTURE_INVALID")
+    if any(
+        any(
+            value is not None
+            for value in (
+                item.source_authority,
+                item.source_content_sha256,
+                item.source_pointer,
+                item.source_record_ordinal,
+            )
+        )
+        and any(
+            value is None
+            for value in (
+                item.source_authority,
+                item.source_content_sha256,
+                item.source_pointer,
+                item.source_record_ordinal,
+            )
+        )
+        for item in selected
+    ):
+        raise OfficialScheduleSourceError("OFFICIAL_SCHEDULE_FIXTURE_PROVENANCE_INVALID")
+    if source.adapter == LIGUE1_CALENDAR_JSON_V1 and any(
+        item.source_authority is None for item in selected
+    ):
+        raise OfficialScheduleSourceError("LIGUE1_FIXTURE_PROVENANCE_INVALID")
+    metadata_document = dict(metadata)
+    metadata_document.setdefault("covered_not_before", _utc_text(horizon_starts))
+    metadata_document.setdefault("covered_expires", _utc_text(horizon_expires))
+    metadata_document.setdefault("complete_official_horizon", True)
     return OfficialScheduleEvidence(
         sport_key=source.sport_key,
         source_authority=fetch_result.receipt.final_url,
@@ -1426,7 +1856,7 @@ def build_official_schedule_evidence(
         horizon_expires_at_utc=horizon_expires,
         fixtures=selected,
         adapter_revision=source.adapter,
-        parser_metadata=metadata,
+        parser_metadata=metadata_document,
     )
 
 
@@ -1446,6 +1876,44 @@ def reconcile_official_schedule_evidence(
         for item in evidences
     ):
         raise OfficialScheduleSourceError("OFFICIAL_RECONCILIATION_SOURCE_INVALID")
+    for item in evidences:
+        metadata = item.parser_metadata
+        if item.adapter_revision != LIGUE1_CALENDAR_JSON_V1:
+            # Legacy evidence builders predate explicit horizon-coverage metadata.
+            # Their adapter contracts remain bounded by the parsed fixture set; only
+            # the rolling Ligue 1 adapter needs the calendar/page closure proof below.
+            if metadata.get("complete_official_horizon") is False:
+                raise OfficialScheduleSourceError("OFFICIAL_RECONCILIATION_COMPLETENESS_INVALID")
+            continue
+        covered_not_before = metadata.get("covered_not_before")
+        covered_expires = metadata.get("covered_expires")
+        if (
+            metadata.get("complete_official_horizon") is not True
+            or not isinstance(covered_not_before, str)
+            or not isinstance(covered_expires, str)
+            or _parse_iso_aware(
+                covered_not_before,
+                code="OFFICIAL_RECONCILIATION_COMPLETENESS_INVALID",
+            )
+            > item.horizon_not_before_utc
+            or _parse_iso_aware(
+                covered_expires,
+                code="OFFICIAL_RECONCILIATION_COMPLETENESS_INVALID",
+            )
+            < item.horizon_expires_at_utc
+            or metadata.get("calendar_gameweeks_total") != 34
+            or metadata.get("calendar_match_ids_total") != 306
+            or metadata.get("calendar_club_identities_total") != 18
+            or not isinstance(metadata.get("calendar_club_identities_sha256"), str)
+            or re.fullmatch(
+                r"[0-9a-f]{64}",
+                cast(str, metadata.get("calendar_club_identities_sha256")),
+            )
+            is None
+            or metadata.get("calendar_ids_expected") != metadata.get("calendar_ids_accounted")
+            or not metadata.get("gameweeks_fetched")
+        ):
+            raise OfficialScheduleSourceError("OFFICIAL_RECONCILIATION_COMPLETENESS_INVALID")
     horizons = {(item.horizon_not_before_utc, item.horizon_expires_at_utc) for item in evidences}
     if len(horizons) != 1:
         raise OfficialScheduleSourceError("OFFICIAL_RECONCILIATION_HORIZON_MISMATCH")
@@ -1470,7 +1938,10 @@ __all__ = [
     "EVIDENCE_SCHEMA",
     "LEGA_SERIE_A_CALENDAR_PDF_V1",
     "LALIGA_PUBLIC_MATCHES_JSON_V1",
-    "LIGUE1_PROGRAMMATION_HTML_V1",
+    "LIGUE1_CALENDAR_JSON_V1",
+    "LIGUE1_CALENDAR_URL",
+    "LIGUE1_GAMEWEEK_URL_TEMPLATE",
+    "LIGUE1_MAXIMUM_GAMEWEEK_READS",
     "MAXIMUM_SOURCE_AGE",
     "MAXIMUM_SOURCE_BYTES",
     "PREMIER_LEAGUE_FULL_SEASON_HTML_V1",
@@ -1479,6 +1950,7 @@ __all__ = [
     "OfficialFetchResult",
     "OfficialFixture",
     "OfficialHttpResponse",
+    "OfficialPhysicalResponse",
     "OfficialScheduleEvidence",
     "OfficialScheduleFetcher",
     "OfficialScheduleSourceError",

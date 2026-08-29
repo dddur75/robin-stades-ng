@@ -106,12 +106,12 @@ jobs:
         run: >-
           python -m pytest -q
           tests/chronos/test_chronos_postgresql_v2.py::test_non_superuser_createrole_receives_unrevokable_admin_edge
-      - name: Valider le lifecycle dual-principal et le cycle 0014
+      - name: Valider le lifecycle dual-principal et le cycle 0015
         env:
           ROBIN_TEST_POSTGRES_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
           CHRONOS_CI_ADMIN_PROFILE: ${{ matrix.admin-profile }}
         run: python -m scripts.run_chronos_dual_principal_ci_v2
-      - name: Valider les huit contrats PostgreSQL 16
+      - name: Valider les contrats PostgreSQL 16
         env:
           ROBIN_TEST_POSTGRES_URL: postgresql+psycopg://robin:robin_ci@localhost:5432/robin_ci
           ROBIN_TEST_CHRONOS_MIGRATOR_ROLE: robin_ci_migrator
@@ -130,13 +130,16 @@ jobs:
             tests/chronos/test_chronos_postgresql_v2.py::test_tables_are_append_only_even_for_owner \
             tests/chronos/test_chronos_postgresql_v2.py::test_roles_have_only_the_reviewed_capabilities \
             tests/chronos/test_chronos_postgresql_v2.py::test_scoped_login_connections_enforce_allows_and_denials \
-            tests/chronos/test_chronos_postgresql_v2.py::test_non_superuser_migrator_is_nocreaterole_and_has_no_runtime_edge
+            tests/chronos/test_chronos_postgresql_v2.py::test_non_superuser_migrator_is_nocreaterole_and_has_no_runtime_edge \
+            tests/data_torrent/test_postgresql_v1.py
       - name: Valider la revision reader
         env:
           ROBIN_DATABASE_URL: postgresql+psycopg://chronos_reader_login:chronos_reader_ci@localhost:5432/robin_ci
-        run: python scripts/check_database_revision.py --expected 0014_chronos_control_plane_v2
+        run: python scripts/check_database_revision.py --expected 0015_data_torrent_opportunity
       - run: python -m pytest -q
-      - run: python -m ruff check src/robin scripts tests/chronos tests/activation migrations
+      - run: >-
+          python -m ruff check src/robin scripts tests/chronos tests/activation
+          tests/data_torrent migrations
       - run: >-
           python -m mypy --strict --explicit-package-bases
           src/robin/chronos_production.py
@@ -144,7 +147,12 @@ jobs:
           scripts/chronos_production_bootstrap_v3.py
           scripts/run_chronos_dual_principal_ci_v2.py
           scripts/check_chronos_github_hold_v3.py
+          scripts/github_release_attestation_v1.py
+          scripts/install_chronos_runtime_bindings_v1.py
           scripts/run_chronos_provider_free_canary_v3.py
+          scripts/run_data_torrent_v1.py
+          src/robin/data_torrent
+          tests/data_torrent
           scripts/chronos_neon_pure_readonly_preflight_v4.py
       - run: >-
           python -m bandit -q -r
@@ -152,7 +160,11 @@ jobs:
           scripts/chronos_production_bootstrap_v3.py
           scripts/run_chronos_dual_principal_ci_v2.py
           scripts/check_chronos_github_hold_v3.py
+          scripts/github_release_attestation_v1.py
+          scripts/install_chronos_runtime_bindings_v1.py
           scripts/run_chronos_provider_free_canary_v3.py
+          scripts/run_data_torrent_v1.py
+          migrations/versions/0015_data_torrent_opportunity.py
           scripts/chronos_neon_pure_readonly_preflight_v4.py
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:

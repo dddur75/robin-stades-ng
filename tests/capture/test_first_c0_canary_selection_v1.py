@@ -293,6 +293,14 @@ def test_first_c0_pinned_fetcher_rejects_redirect_after_one_physical_get(
                 return BUNDESLIGA_SOURCE
             return default
 
+        @staticmethod
+        def getheaders() -> list[tuple[str, str]]:
+            return []
+
+        @staticmethod
+        def read(_maximum_bytes: int) -> bytes:
+            return b""
+
     class RedirectConnection:
         def __init__(self, *_args: object, **_kwargs: object) -> None:
             pass

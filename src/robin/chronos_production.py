@@ -18,33 +18,48 @@ from psycopg import Connection
 EXPECTED_REPOSITORY = "dddur75/robin-stades-ng"
 EXPECTED_REF = "refs/heads/main"
 EXPECTED_BEFORE_REVISION = "0013_historical_evidence_index"
-EXPECTED_AFTER_REVISION = "0014_chronos_control_plane_v2"
+EXPECTED_BEFORE_REVISIONS = (
+    EXPECTED_BEFORE_REVISION,
+    "0014_chronos_control_plane_v2",
+)
+EXPECTED_AFTER_REVISION = "0015_data_torrent_opportunity"
 EXPECTED_ENVIRONMENT = "chronos-control-plane-production"
 MIGRATION_TARGET = EXPECTED_AFTER_REVISION
 SCOPED_LOGINS = (
     (
         "chronos_authority_runtime_login",
         "chronos_authority_executor",
-        "CHRONOS_BOOTSTRAP_AUTHORITY_PASSWORD",
+        "CHRONOS_AUTHORITY_DATABASE_URL",
     ),
     (
         "chronos_effect_runtime_login",
         "chronos_runtime_writer",
-        "CHRONOS_BOOTSTRAP_RUNTIME_PASSWORD",
+        "CHRONOS_RUNTIME_DATABASE_URL",
     ),
     (
         "chronos_reader_login",
         "chronos_reader",
-        "CHRONOS_BOOTSTRAP_READER_PASSWORD",
+        "CHRONOS_READER_DATABASE_URL",
     ),
 )
+PRODUCTION_SAFETY_LOCKS = {
+    "STORAGE_PAUSED": "true",
+    "P3_P4_PAUSED": "true",
+    "PRODUCTION_LOCKED": "true",
+    "REAL_BETS": "false",
+    "NO_BET_DEFAULT": "true",
+    "PROMOTION_LOCKED": "true",
+    "SOCIAL_PUBLISHING_ENABLED": "false",
+    "DEMO_MODE_ENABLED": "false",
+    "POSTGRESQL_PRODUCTION_DESTRUCTIVE_WRITES": "false",
+    "THE_ODDS_API_HISTORICAL_CREDITS": "false",
+    "API_FOOTBALL_CALLS_ALLOWED": "0",
+}
 
 _HEX_40 = re.compile(r"^[0-9a-f]{40}$")
 _HEX_64 = re.compile(r"^[0-9a-f]{64}$")
 _SAFE_IDENTIFIER = re.compile(r"^[a-z][a-z0-9_]{0,62}$")
-_SAFE_NEON_HOST = re.compile(
-    r"^[a-z0-9-]+(?:\.[a-z0-9-]+)*\.neon\.tech$"
-)
+_SAFE_NEON_HOST = re.compile(r"^[a-z0-9-]+(?:\.[a-z0-9-]+)*\.neon\.tech$")
 _INVALID_PERCENT_ESCAPE = re.compile(r"%(?![0-9a-fA-F]{2})")
 _SAFE_SSL_MODES = frozenset({"require", "verify-ca", "verify-full"})
 _SAFE_QUERY_KEYS = frozenset({"sslmode", "channel_binding"})
@@ -100,6 +115,16 @@ def connect_direct_postgres(
 
 class ChronosProductionError(RuntimeError):
     """A sanitized fail-closed production contract error."""
+
+
+def assert_production_safety_locks(environment: Mapping[str, str]) -> None:
+    invalid = [
+        name
+        for name, expected in PRODUCTION_SAFETY_LOCKS.items()
+        if environment.get(name, "").strip().lower() != expected
+    ]
+    if invalid:
+        raise ChronosProductionError(f"CHRONOS_PRODUCTION_SAFETY_LOCK_MISMATCH:{','.join(invalid)}")
 
 
 def require_sha(value: str, *, field: str) -> str:
@@ -211,9 +236,7 @@ def validate_direct_postgres_url(value: str) -> DirectPostgresTarget:
         raise ChronosProductionError("CHRONOS_DATABASE_URL_PARAMETERS_FORBIDDEN")
     for key, item in query_items:
         if key not in _SAFE_QUERY_KEYS or not item or key in query:
-            raise ChronosProductionError(
-                "CHRONOS_DATABASE_URL_PARAMETERS_FORBIDDEN"
-            )
+            raise ChronosProductionError("CHRONOS_DATABASE_URL_PARAMETERS_FORBIDDEN")
         query[key] = item
     if set(query) != _SAFE_QUERY_KEYS:
         raise ChronosProductionError("CHRONOS_DATABASE_URL_PARAMETERS_FORBIDDEN")
@@ -347,9 +370,7 @@ def assert_exact_preflight_binding(
     }
     for field, value in expected.items():
         if document.get(field) != value:
-            raise ChronosProductionError(
-                f"CHRONOS_PREFLIGHT_{field.upper()}_MISMATCH"
-            )
+            raise ChronosProductionError(f"CHRONOS_PREFLIGHT_{field.upper()}_MISMATCH")
     supplied_hash = document.get("preflight_hash")
     if not isinstance(supplied_hash, str) or supplied_hash != preflight_hash(document):
         raise ChronosProductionError("CHRONOS_PREFLIGHT_HASH_MISMATCH")
@@ -360,14 +381,17 @@ def assert_exact_preflight_binding(
 __all__ = [
     "EXPECTED_AFTER_REVISION",
     "EXPECTED_BEFORE_REVISION",
+    "EXPECTED_BEFORE_REVISIONS",
     "EXPECTED_ENVIRONMENT",
     "EXPECTED_REF",
     "EXPECTED_REPOSITORY",
     "MIGRATION_TARGET",
     "SCOPED_LOGINS",
+    "PRODUCTION_SAFETY_LOCKS",
     "ChronosProductionError",
     "DirectPostgresTarget",
     "assert_exact_preflight_binding",
+    "assert_production_safety_locks",
     "build_scoped_database_url",
     "canonical_json_bytes",
     "connect_direct_postgres",

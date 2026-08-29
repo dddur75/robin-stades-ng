@@ -1,4 +1,4 @@
-"""Protected manual bootstrap for Neon Chronos revision 0014.
+"""Protected manual bootstrap for Neon Chronos revision 0015.
 
 The CLI prints only stable status codes. Secret-bearing failures are reduced to
 sanitized codes and never include response bodies, SQL parameters, or URLs.
@@ -18,6 +18,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any, cast
+from urllib.parse import unquote, urlparse
 
 import psycopg
 import requests
@@ -26,7 +27,7 @@ from psycopg import Connection
 from robin.chronos_alembic import run_fenced_alembic
 from robin.chronos_production import (
     EXPECTED_AFTER_REVISION,
-    EXPECTED_BEFORE_REVISION,
+    EXPECTED_BEFORE_REVISIONS,
     EXPECTED_REF,
     EXPECTED_REPOSITORY,
     MIGRATION_TARGET,
@@ -34,10 +35,12 @@ from robin.chronos_production import (
     ChronosProductionError,
     DirectPostgresTarget,
     assert_exact_preflight_binding,
+    assert_production_safety_locks,
     build_scoped_database_url,
     connect_direct_postgres,
     generation_hash,
     preflight_hash,
+    require_hash,
     require_sha,
     sign_document,
     validate_direct_postgres_url,
@@ -71,8 +74,23 @@ from robin.chronos_role_lifecycle import (
 )
 
 NEON_API = "https://console.neon.tech/api/v2"
-EXPECTED_TABLES = ("chronos_effect_authorities", "chronos_effect_events")
+RECOVERY_BRANCH_PREFIX = "chronos-pre-0015-recovery-"
+MAX_RECOVERY_BRANCHES = 2
+EXPECTED_TABLES = (
+    "chronos_effect_authorities",
+    "chronos_effect_events",
+    "chronos_opportunity_claims",
+    "chronos_torrent_external_effect_permits",
+    "chronos_torrent_external_effect_events",
+    "chronos_torrent_batches",
+)
 EXPECTED_GROUPS = GROUP_ROLES
+EXPECTED_VIEWS = (
+    "chronos_effect_accounting",
+    "chronos_opportunity_claim_audit",
+    "chronos_torrent_batch_audit",
+    "chronos_torrent_external_effect_audit",
+)
 EXPECTED_FUNCTIONS = (
     "chronos_append_effect_event",
     "chronos_claim_effect_authority",
@@ -81,13 +99,25 @@ EXPECTED_FUNCTIONS = (
     "chronos_get_effect_state",
     "chronos_issue_effect_authority",
     "chronos_reject_mutation",
+    "chronos_claim_opportunity",
+    "chronos_reserve_torrent_external_effect",
+    "chronos_append_torrent_external_effect",
+    "chronos_record_torrent_batch",
+    "chronos_reject_torrent_mutation",
 )
 EXPECTED_TRIGGERS = (
     "trg_chronos_authorities_append_only",
     "trg_chronos_authorities_no_truncate",
-    "trg_chronos_effect_events_fsm",
     "trg_chronos_events_append_only",
     "trg_chronos_events_no_truncate",
+    "trg_chronos_opportunity_claims_append_only",
+    "trg_chronos_opportunity_claims_no_truncate",
+    "trg_chronos_torrent_batches_append_only",
+    "trg_chronos_torrent_batches_no_truncate",
+    "trg_chronos_torrent_external_effect_permits_append_only",
+    "trg_chronos_torrent_external_effect_permits_no_truncate",
+    "trg_chronos_torrent_external_effect_events_append_only",
+    "trg_chronos_torrent_external_effect_events_no_truncate",
 )
 
 
@@ -95,6 +125,8 @@ def _connect_direct(database_url: str) -> Connection[Any]:
     """Seal every production connection against ambient libpq overrides."""
 
     return connect_direct_postgres(database_url, connector=psycopg.connect)
+
+
 NO_VALUES_OBSERVED = False
 _NEON_ALLOWED_ROUTES = (
     re.compile(r"^GET /projects\?limit=100$"),
@@ -145,8 +177,7 @@ def _json_value(value: object) -> object:
 def _write_json(path: Path, document: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
-        json.dumps(_json_value(document), ensure_ascii=False, indent=2, sort_keys=True)
-        + "\n",
+        json.dumps(_json_value(document), ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
 
@@ -208,9 +239,7 @@ class NeonClient:
         except requests.RequestException:
             raise ChronosProductionError("CHRONOS_NEON_API_UNAVAILABLE") from None
         if not 200 <= response.status_code < 300:
-            raise ChronosProductionError(
-                f"CHRONOS_NEON_API_HTTP_{response.status_code}"
-            )
+            raise ChronosProductionError(f"CHRONOS_NEON_API_HTTP_{response.status_code}")
         try:
             document = response.json()
         except ValueError:
@@ -236,9 +265,9 @@ class NeonClient:
     def branches(self, project_id: str) -> list[dict[str, Any]]:
         document = self.request("GET", f"/projects/{project_id}/branches?limit=100")
         branches = document.get("branches", [])
-        if not isinstance(branches, list):
+        if not isinstance(branches, list) or any(not isinstance(item, dict) for item in branches):
             raise ChronosProductionError("CHRONOS_NEON_BRANCH_LIST_INVALID")
-        return [cast(dict[str, Any], item) for item in branches if isinstance(item, dict)]
+        return [cast(dict[str, Any], item) for item in branches]
 
     def endpoints(self, project_id: str) -> list[dict[str, Any]]:
         document = self.request("GET", f"/projects/{project_id}/endpoints")
@@ -299,9 +328,7 @@ def resolve_neon_identity(
             branch = branches.get(branch_id)
             if branch is None:
                 continue
-            branch_state = str(
-                branch.get("current_state", branch.get("state", "ready"))
-            ).lower()
+            branch_state = str(branch.get("current_state", branch.get("state", "ready"))).lower()
             endpoint_state = str(endpoint.get("current_state", "active")).lower()
             if branch_state not in {"ready", "active"}:
                 continue
@@ -315,9 +342,7 @@ def resolve_neon_identity(
                     production_branch_name=str(branch.get("name", "")),
                     endpoint_id=str(endpoint.get("id", "")),
                     endpoint_host=host,
-                    region=str(
-                        endpoint.get("region_id", project.get("region_id", ""))
-                    ),
+                    region=str(endpoint.get("region_id", project.get("region_id", ""))),
                     database_name=target.database,
                 )
             )
@@ -332,9 +357,22 @@ def resolve_neon_identity(
 def create_recovery_point(
     client: NeonClient,
     identity: NeonIdentity,
+    *,
+    receipt_path: Path | None = None,
 ) -> dict[str, Any]:
+    branch_inventory = client.branches(identity.project_id)
+    recovery_branches = [
+        branch
+        for branch in branch_inventory
+        if str(branch.get("name", "")).startswith(RECOVERY_BRANCH_PREFIX)
+    ]
+    if len(recovery_branches) >= MAX_RECOVERY_BRANCHES:
+        raise ChronosProductionError("CHRONOS_RECOVERY_BRANCH_LIMIT_REACHED")
+    if len(branch_inventory) >= 100:
+        raise ChronosProductionError("CHRONOS_RECOVERY_BRANCH_INVENTORY_INCOMPLETE")
+
     compact = _utc_now().strftime("%Y%m%dT%H%M%SZ")
-    name = f"chronos-pre-0014-recovery-{compact}"
+    name = f"{RECOVERY_BRANCH_PREFIX}{compact}"
     branch = client.create_recovery_branch(
         project_id=identity.project_id,
         parent_branch_id=identity.production_branch_id,
@@ -343,6 +381,30 @@ def create_recovery_point(
     branch_id = str(branch.get("id", ""))
     if not branch_id:
         raise ChronosProductionError("CHRONOS_RECOVERY_BRANCH_ID_MISSING")
+    known_branch_ids = {str(item.get("id", "")) for item in branch_inventory if item.get("id")}
+    if branch_id == identity.production_branch_id or branch_id in known_branch_ids:
+        raise ChronosProductionError("CHRONOS_RECOVERY_BRANCH_ID_INVALID")
+    receipt = {
+        "schema_version": "chronos-neon-recovery-point-v3",
+        "verdict": "NEON_RECOVERY_POINT_CREATED_PENDING_VERIFICATION",
+        "project_id": identity.project_id,
+        "production_branch_id": identity.production_branch_id,
+        "recovery_branch_name": name,
+        "recovery_branch_id": branch_id,
+        "parent_branch_id": str(branch.get("parent_id", identity.production_branch_id)),
+        "created_at": branch.get("created_at"),
+        "source_timestamp_or_lsn_if_available": branch.get(
+            "parent_lsn", branch.get("parent_timestamp")
+        ),
+        "recovery_branch_limit": MAX_RECOVERY_BRANCHES,
+        "recovery_branch_count_before": len(recovery_branches),
+        "recovery_branch_count_after": len(recovery_branches) + 1,
+        "endpoint_created": False,
+        "readiness_verified": False,
+        "purchases": 0,
+    }
+    if receipt_path is not None:
+        _write_json(receipt_path, receipt)
     observed = branch
     for _ in range(12):
         state = str(observed.get("current_state", observed.get("state", "ready"))).lower()
@@ -356,19 +418,19 @@ def create_recovery_point(
         raise ChronosProductionError("CHRONOS_RECOVERY_PARENT_MISMATCH")
     if str(observed.get("name", name)) != name:
         raise ChronosProductionError("CHRONOS_RECOVERY_NAME_MISMATCH")
-    return {
-        "schema_version": "chronos-neon-recovery-point-v3",
+    receipt = {
+        **receipt,
         "verdict": "NEON_RECOVERY_POINT_READY",
-        "recovery_branch_name": name,
-        "recovery_branch_id": branch_id,
         "parent_branch_id": identity.production_branch_id,
         "created_at": observed.get("created_at"),
         "source_timestamp_or_lsn_if_available": observed.get(
             "parent_lsn", observed.get("parent_timestamp")
         ),
-        "endpoint_created": False,
-        "purchases": 0,
+        "readiness_verified": True,
     }
+    if receipt_path is not None:
+        _write_json(receipt_path, receipt)
+    return receipt
 
 
 def inspect_database(database_url: str) -> dict[str, Any]:
@@ -383,6 +445,12 @@ def inspect_database(database_url: str) -> dict[str, Any]:
             "SELECT tablename FROM pg_catalog.pg_tables "
             "WHERE schemaname='public' AND tablename LIKE 'chronos_%' "
             "ORDER BY tablename",
+        )
+        views = _rows(
+            connection,
+            "SELECT viewname FROM pg_catalog.pg_views "
+            "WHERE schemaname='public' AND viewname LIKE 'chronos_%' "
+            "ORDER BY viewname",
         )
         functions = _rows(
             connection,
@@ -432,15 +500,14 @@ def inspect_database(database_url: str) -> dict[str, Any]:
             "postgresql_version": str(_scalar(connection, "SHOW server_version")),
             "current_user": str(_scalar(connection, "SELECT current_user")),
             "current_revision": None if revision is None else str(revision),
-            "server_epoch": _scalar(
-                connection, "SELECT pg_catalog.pg_postmaster_start_time()"
-            ),
+            "server_epoch": _scalar(connection, "SELECT pg_catalog.pg_postmaster_start_time()"),
             "database_size_bytes": int(
                 cast(int, _scalar(connection, "SELECT pg_database_size(current_database())"))
             ),
             "roles": roles,
             "memberships": memberships,
             "tables": tables,
+            "views": views,
             "functions": functions,
             "triggers": triggers,
             "sessions": sessions,
@@ -453,15 +520,14 @@ def _assert_post_migration(report: Mapping[str, Any]) -> None:
         raise ChronosProductionError("CHRONOS_MIGRATION_REVISION_MISMATCH")
     tables = {str(row["tablename"]) for row in cast(list[dict[str, Any]], report["tables"])}
     functions = {
-        str(row["function_name"])
-        for row in cast(list[dict[str, Any]], report["functions"])
+        str(row["function_name"]) for row in cast(list[dict[str, Any]], report["functions"])
     }
-    triggers = {
-        str(row["trigger_name"])
-        for row in cast(list[dict[str, Any]], report["triggers"])
-    }
+    views = {str(row["viewname"]) for row in cast(list[dict[str, Any]], report["views"])}
+    triggers = {str(row["trigger_name"]) for row in cast(list[dict[str, Any]], report["triggers"])}
     if tables != set(EXPECTED_TABLES):
         raise ChronosProductionError("CHRONOS_MIGRATION_TABLES_MISMATCH")
+    if views != set(EXPECTED_VIEWS):
+        raise ChronosProductionError("CHRONOS_MIGRATION_VIEWS_MISMATCH")
     if functions != set(EXPECTED_FUNCTIONS):
         raise ChronosProductionError("CHRONOS_MIGRATION_FUNCTIONS_MISMATCH")
     if triggers != set(EXPECTED_TRIGGERS):
@@ -497,13 +563,38 @@ def _assert_hold() -> dict[str, Any]:
     return cast(dict[str, Any], document)
 
 
+def _assert_post_merge_ci_binding(hold: Mapping[str, Any], *, main_sha: str) -> dict[str, Any]:
+    expected_sha = require_sha(
+        _required_public("CHRONOS_POST_MERGE_CI_SHA"),
+        field="post_merge_ci_sha",
+    )
+    if expected_sha != main_sha:
+        raise ChronosProductionError("CHRONOS_POST_MERGE_CI_SHA_MISMATCH")
+    proof = hold.get("post_merge_ci")
+    if (
+        not isinstance(proof, dict)
+        or proof.get("workflow_path") != ".github/workflows/ci.yml"
+        or type(proof.get("run_id")) is not int
+        or proof.get("run_attempt") != 1
+        or proof.get("head_sha") != main_sha
+        or proof.get("head_branch") != "main"
+        or proof.get("event") != "push"
+        or proof.get("status") != "completed"
+        or proof.get("conclusion") != "success"
+    ):
+        raise ChronosProductionError("CHRONOS_POST_MERGE_CI_NOT_PROVEN")
+    return cast(dict[str, Any], proof)
+
+
 def run_preflight(report_dir: Path) -> dict[str, Any]:
+    assert_production_safety_locks(os.environ)
+    if _required_public("GITHUB_RUN_ATTEMPT") != "1":
+        raise ChronosProductionError("CHRONOS_RERUN_FORBIDDEN")
+    report_dir.mkdir(parents=True, exist_ok=True)
     api_key = _required("NEON_API_KEY")
     database_url = _required("NEON_BOOTSTRAP_DATABASE_URL")
     main_sha = require_sha(_required_public("GITHUB_SHA"), field="main_sha")
-    workflow_sha = require_sha(
-        _required_public("GITHUB_WORKFLOW_SHA"), field="workflow_sha"
-    )
+    workflow_sha = require_sha(_required_public("GITHUB_WORKFLOW_SHA"), field="workflow_sha")
     if _required_public("GITHUB_REPOSITORY") != EXPECTED_REPOSITORY:
         raise ChronosProductionError("CHRONOS_REPOSITORY_MISMATCH")
     if _required_public("GITHUB_REF") != EXPECTED_REF:
@@ -514,18 +605,23 @@ def run_preflight(report_dir: Path) -> dict[str, Any]:
     if main_sha != expected_main:
         raise ChronosProductionError("CHRONOS_MAIN_SHA_MISMATCH")
     hold = _assert_hold()
+    post_merge_ci = _assert_post_merge_ci_binding(hold, main_sha=main_sha)
     target = validate_direct_postgres_url(database_url)
     client = NeonClient(api_key)
     identity = resolve_neon_identity(client, target)
     with _connect_direct(database_url) as capability_connection:
         assert_privileged_catalog_visibility(capability_connection)
-    recovery = create_recovery_point(client, identity)
+    recovery_report = create_recovery_point(
+        client,
+        identity,
+        receipt_path=report_dir / "chronos-neon-recovery-point-v3.json",
+    )
     database = inspect_database(database_url)
     with _connect_direct(database_url) as connection:
         preflight_role_inventory_hash = role_inventory_hash(connection)
         preflight_role_inventory = role_inventory_snapshot(connection)
     if database["current_revision"] not in {
-        EXPECTED_BEFORE_REVISION,
+        *EXPECTED_BEFORE_REVISIONS,
         EXPECTED_AFTER_REVISION,
     }:
         raise ChronosProductionError("UNEXPECTED_DATABASE_REVISION")
@@ -544,16 +640,10 @@ def run_preflight(report_dir: Path) -> dict[str, Any]:
         Path(__file__).resolve().parents[1]
         / "migrations"
         / "versions"
-        / "0014_chronos_control_plane_v2.py"
+        / "0015_data_torrent_opportunity.py"
     )
     if not migration_file.is_file():
         raise ChronosProductionError("CHRONOS_MIGRATION_TARGET_MISSING")
-    recovery_report = {
-        **recovery,
-        "project_id": identity.project_id,
-        "production_branch_id": identity.production_branch_id,
-    }
-    _write_json(report_dir / "chronos-neon-recovery-point-v3.json", recovery_report)
     preflight_report = {
         "schema_version": "chronos-neon-preflight-v3",
         "observed_at": _timestamp(_utc_now()),
@@ -567,10 +657,7 @@ def run_preflight(report_dir: Path) -> dict[str, Any]:
         "region": identity.region,
         "database": database,
         "role_inventory_hash": preflight_role_inventory_hash,
-        "role_inventory": {
-            name: list(values)
-            for name, values in preflight_role_inventory.items()
-        },
+        "role_inventory": {name: list(values) for name, values in preflight_role_inventory.items()},
         "recovery": recovery_report,
         "workflow_hold": {
             "verdict": hold.get("verdict"),
@@ -579,6 +666,7 @@ def run_preflight(report_dir: Path) -> dict[str, Any]:
             "queued_after": hold.get("queued_after"),
             "in_progress_after": hold.get("in_progress_after"),
         },
+        "post_merge_ci": post_merge_ci,
         "secret_values_observed": NO_VALUES_OBSERVED,
         "provider_calls": 0,
         "r2_operations": 0,
@@ -594,20 +682,19 @@ def run_preflight(report_dir: Path) -> dict[str, Any]:
         "production_branch_id": identity.production_branch_id,
         "current_revision": database["current_revision"],
         "role_inventory_hash": preflight_role_inventory_hash,
-        "role_inventory": {
-            name: list(values)
-            for name, values in preflight_role_inventory.items()
-        },
-        "recovery_branch_id": recovery["recovery_branch_id"],
+        "role_inventory": {name: list(values) for name, values in preflight_role_inventory.items()},
+        "recovery_branch_id": recovery_report["recovery_branch_id"],
         "golden_gate": "CHRONOS_MIGRATION_READY",
         "database_host": target.host,
         "database_port": target.port,
         "database_name": target.database,
         "sslmode": target.sslmode,
+        "channel_binding": target.channel_binding,
         "created_at": _timestamp(artifact_created_at),
         "expires_at": _timestamp(artifact_created_at + timedelta(hours=1)),
         "preflight_run_id": _required_public("GITHUB_RUN_ID"),
         "preflight_run_attempt": _required_public("GITHUB_RUN_ATTEMPT"),
+        "post_merge_ci_sha": post_merge_ci["head_sha"],
     }
     artifact["preflight_hash"] = preflight_hash(artifact)
     signed = sign_document(artifact, api_key)
@@ -628,11 +715,32 @@ def _preflight_expiry(artifact: Mapping[str, Any]) -> datetime:
     return expiry
 
 
-def _runtime_accounts() -> list[tuple[str, str, str]]:
-    return [
-        (login, group, _required(secret_name))
-        for login, group, secret_name in SCOPED_LOGINS
-    ]
+def _runtime_accounts(*, expected_target: DirectPostgresTarget) -> list[tuple[str, str, str]]:
+    accounts: list[tuple[str, str, str]] = []
+    for login, group, secret_name in SCOPED_LOGINS:
+        database_url = _required(secret_name)
+        target = validate_direct_postgres_url(database_url)
+        if target.username != login:
+            raise ChronosProductionError("CHRONOS_SCOPED_USER_MISMATCH")
+        if (
+            target.host,
+            target.port,
+            target.database,
+            target.sslmode,
+            target.channel_binding,
+        ) != (
+            expected_target.host,
+            expected_target.port,
+            expected_target.database,
+            expected_target.sslmode,
+            expected_target.channel_binding,
+        ):
+            raise ChronosProductionError("CHRONOS_SCOPED_DATABASE_TARGET_MISMATCH")
+        password = unquote(urlparse(database_url).password or "")
+        if len(password) < 32:
+            raise ChronosProductionError("CHRONOS_SCOPED_PASSWORD_INVALID")
+        accounts.append((login, group, password))
+    return accounts
 
 
 def _assert_resume_role_inventory(
@@ -664,13 +772,9 @@ def _assert_resume_role_inventory(
             raise ChronosProductionError("CHRONOS_PREFLIGHT_ROLE_INVENTORY_MISMATCH")
 
 
-def _assert_migrator_disabled(
-    database_url: str, role: str, bootstrap_owner: str
-) -> None:
+def _assert_migrator_disabled(database_url: str, role: str, bootstrap_owner: str) -> None:
     with _connect_direct(database_url) as connection:
-        assert_migrator_disabled(
-            connection, role=role, bootstrap_owner=bootstrap_owner
-        )
+        assert_migrator_disabled(connection, role=role, bootstrap_owner=bootstrap_owner)
 
 
 def _attempt_cleanup_steps(steps: Sequence[Callable[[], None]]) -> None:
@@ -685,21 +789,39 @@ def _attempt_cleanup_steps(steps: Sequence[Callable[[], None]]) -> None:
 
 
 def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
+    assert_production_safety_locks(os.environ)
     api_key = _required("NEON_API_KEY")
     database_url = _required("NEON_BOOTSTRAP_DATABASE_URL")
     target = validate_direct_postgres_url(database_url)
-    main_sha = require_sha(_required_public("GITHUB_SHA"), field="main_sha")
-    workflow_sha = require_sha(
-        _required_public("GITHUB_WORKFLOW_SHA"), field="workflow_sha"
+    runtime_accounts = _runtime_accounts(expected_target=target)
+    nonce = require_hash(
+        _required("CHRONOS_CONTROL_PLANE_GENERATION_NONCE"),
+        field="generation_nonce",
     )
+    main_sha = require_sha(_required_public("GITHUB_SHA"), field="main_sha")
+    workflow_sha = require_sha(_required_public("GITHUB_WORKFLOW_SHA"), field="workflow_sha")
     if _required_public("GITHUB_REPOSITORY") != EXPECTED_REPOSITORY:
         raise ChronosProductionError("CHRONOS_REPOSITORY_MISMATCH")
     if _required_public("GITHUB_REF") != EXPECTED_REF:
         raise ChronosProductionError("CHRONOS_REF_MISMATCH")
+    if _required_public("GITHUB_RUN_ATTEMPT") != "1":
+        raise ChronosProductionError("CHRONOS_RERUN_FORBIDDEN")
+    migration_run_id = _required_public("GITHUB_RUN_ID")
+    if not migration_run_id.isascii() or not migration_run_id.isdigit() or migration_run_id == "0":
+        raise ChronosProductionError("CHRONOS_MIGRATION_RUN_ID_INVALID")
+    hold = _assert_hold()
+    post_merge_ci = _assert_post_merge_ci_binding(hold, main_sha=main_sha)
     raw_artifact = json.loads(preflight_path.read_text(encoding="utf-8"))
     if not isinstance(raw_artifact, dict):
         raise ChronosProductionError("CHRONOS_PREFLIGHT_ARTIFACT_INVALID")
     artifact = verify_signed_document(cast(dict[str, Any], raw_artifact), api_key)
+    expected_preflight_run_id = _required_public("CHRONOS_EXPECTED_PREFLIGHT_RUN_ID")
+    if (
+        artifact.get("preflight_run_id") != expected_preflight_run_id
+        or artifact.get("preflight_run_attempt") != "1"
+        or artifact.get("post_merge_ci_sha") != post_merge_ci["head_sha"]
+    ):
+        raise ChronosProductionError("CHRONOS_PREFLIGHT_CAUSAL_BINDING_MISMATCH")
     preflight_expiry = _preflight_expiry(artifact)
     client = NeonClient(api_key)
     identity = resolve_neon_identity(client, target)
@@ -719,7 +841,7 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
     prelock_observation = inspect_database(database_url)
     migrator_role = stable_migrator_role(identity.production_branch_id)
     if prelock_observation["current_revision"] not in {
-        EXPECTED_BEFORE_REVISION,
+        *EXPECTED_BEFORE_REVISIONS,
         EXPECTED_AFTER_REVISION,
     }:
         raise ChronosProductionError("UNEXPECTED_DATABASE_REVISION")
@@ -757,12 +879,12 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
                 migrator_role=migrator_role,
             )
         if before["current_revision"] not in {
-            EXPECTED_BEFORE_REVISION,
+            *EXPECTED_BEFORE_REVISIONS,
             EXPECTED_AFTER_REVISION,
         }:
             raise ChronosProductionError("UNEXPECTED_DATABASE_REVISION")
         revision_advanced_during_attempt = (
-            artifact.get("current_revision") == EXPECTED_BEFORE_REVISION
+            artifact.get("current_revision") in EXPECTED_BEFORE_REVISIONS
             and before["current_revision"] == EXPECTED_AFTER_REVISION
         )
         if (
@@ -796,7 +918,7 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
             )
             role_exists = cursor.fetchone()
         migrator_exists = bool(role_exists and role_exists[0])
-        if before["current_revision"] == EXPECTED_BEFORE_REVISION:
+        if before["current_revision"] in EXPECTED_BEFORE_REVISIONS:
             provisioned_groups = provision_chronos_group_roles(
                 authority_connection, migrator_role=migrator_role
             )
@@ -840,7 +962,7 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
                 dispatch_revision_row = cursor.fetchone()
             if (
                 dispatch_revision_row is None
-                or str(dispatch_revision_row[0]) != EXPECTED_BEFORE_REVISION
+                or str(dispatch_revision_row[0]) != before["current_revision"]
             ):
                 raise ChronosProductionError("CHRONOS_LOCKED_REVISION_CHANGED")
             dispatches = 1
@@ -855,7 +977,7 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
             try:
                 _assert_post_migration(after)
             except ChronosProductionError:
-                if after.get("current_revision") == EXPECTED_BEFORE_REVISION:
+                if after.get("current_revision") == before["current_revision"]:
                     outcome = "MIGRATION_NOT_APPLIED"
             else:
                 outcome = "MIGRATION_CONFIRMED"
@@ -871,8 +993,7 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
             existing_runtime = {
                 str(row["rolname"])
                 for row in cast(list[dict[str, Any]], before["roles"])
-                if str(row["rolname"])
-                in {login for login, _, _ in SCOPED_LOGINS}
+                if str(row["rolname"]) in {login for login, _, _ in SCOPED_LOGINS}
             }
             resume_phase = (
                 "final"
@@ -903,12 +1024,9 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
             role=migrator_role,
             bootstrap_owner=bootstrap_owner,
         )
-        pinned_grantor = str(
-            (migrator_audit or {}).get("bootstrap_system_grantor", "")
-        )
+        pinned_grantor = str((migrator_audit or {}).get("bootstrap_system_grantor", ""))
         if not pinned_grantor:
             raise ChronosProductionError("CHRONOS_BOOTSTRAP_GRANTOR_MISSING")
-        runtime_accounts = _runtime_accounts()
         provisioned_runtime = provision_runtime_logins(
             authority_connection,
             accounts=runtime_accounts,
@@ -967,24 +1085,17 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
                 ],
                 "edges": terminal_audit["edges"],
                 "edge_count": terminal_audit["edge_count"],
-                "forbidden_edge_count": terminal_audit[
-                    "forbidden_edge_count"
-                ],
+                "forbidden_edge_count": terminal_audit["forbidden_edge_count"],
                 "runtime_effective_bootstrap_edge_count": terminal_audit[
                     "runtime_effective_bootstrap_edge_count"
                 ],
-                "migrator_runtime_edge_count": terminal_audit[
-                    "migrator_runtime_edge_count"
-                ],
+                "migrator_runtime_edge_count": terminal_audit["migrator_runtime_edge_count"],
             },
         )
     except Exception:
         cleanup_steps: list[Callable[[], None]] = []
-        if (
-            authority_connection is not None
-            and migrator_exists
-            and not migrator_disabled
-        ):
+        if authority_connection is not None and migrator_exists and not migrator_disabled:
+
             def cleanup_migrator() -> None:
                 if authority_connection is not None:
                     disable_migrator(authority_connection, role=migrator_role)
@@ -993,6 +1104,7 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
         if authority_connection is not None:
             cleanup_steps.append(authority_connection.close)
         if lease is not None:
+
             def cleanup_executor() -> None:
                 cleanup_bootstrap_executor(
                     admin,
@@ -1008,13 +1120,13 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
         cleanup_steps.append(admin.close)
         _attempt_cleanup_steps(cleanup_steps)
         raise
-    nonce = _required("CHRONOS_CONTROL_PLANE_GENERATION_NONCE")
     output: dict[str, Any] = {
         "schema_version": "chronos-bootstrap-output-v3",
         "database_host": target.host,
         "database_port": target.port,
         "database_name": target.database,
         "sslmode": target.sslmode,
+        "channel_binding": target.channel_binding,
         "authority_username": SCOPED_LOGINS[0][0],
         "runtime_username": SCOPED_LOGINS[1][0],
         "reader_username": SCOPED_LOGINS[2][0],
@@ -1029,12 +1141,16 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
         "recovery_branch_id": recovery_branch_id,
         "main_sha": main_sha,
         "workflow_sha": workflow_sha,
+        "post_merge_ci_sha": post_merge_ci["head_sha"],
+        "preflight_run_id": expected_preflight_run_id,
+        "migration_run_id": migration_run_id,
+        "migration_run_attempt": "1",
     }
     signed_output = sign_document(output, nonce)
     _write_json(report_dir / "chronos-bootstrap-output-v3.json", signed_output)
     report = {
         "schema_version": "chronos-neon-migration-v3",
-        "verdict": "NEON_CHRONOS_0014_MIGRATED",
+        "verdict": "NEON_CHRONOS_0015_MIGRATED",
         "scoped_identities": "CHRONOS_SCOPED_IDENTITIES_READY",
         "migration_outcome": outcome,
         "migration_dispatches": dispatches,
@@ -1044,6 +1160,7 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
         "revision_after": after.get("current_revision"),
         "server_epoch": final.get("server_epoch"),
         "tables": final.get("tables"),
+        "views": final.get("views"),
         "functions": final.get("functions"),
         "triggers": final.get("triggers"),
         "roles": final.get("roles"),
@@ -1063,7 +1180,46 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
     return report
 
 
-def run_verify(report_dir: Path) -> dict[str, Any]:
+def run_verify(report_dir: Path, migration_path: Path) -> dict[str, Any]:
+    assert_production_safety_locks(os.environ)
+    nonce = require_hash(
+        _required("CHRONOS_CONTROL_PLANE_GENERATION_NONCE"),
+        field="generation_nonce",
+    )
+    main_sha = require_sha(_required_public("GITHUB_SHA"), field="main_sha")
+    workflow_sha = require_sha(_required_public("GITHUB_WORKFLOW_SHA"), field="workflow_sha")
+    if _required_public("GITHUB_REPOSITORY") != EXPECTED_REPOSITORY:
+        raise ChronosProductionError("CHRONOS_REPOSITORY_MISMATCH")
+    if _required_public("GITHUB_REF") != EXPECTED_REF:
+        raise ChronosProductionError("CHRONOS_REF_MISMATCH")
+    if _required_public("GITHUB_RUN_ATTEMPT") != "1":
+        raise ChronosProductionError("CHRONOS_RERUN_FORBIDDEN")
+    verify_run_id = _required_public("GITHUB_RUN_ID")
+    expected_migration_run_id = _required_public("CHRONOS_EXPECTED_MIGRATION_RUN_ID")
+    for run_id in (verify_run_id, expected_migration_run_id):
+        if not run_id.isascii() or not run_id.isdigit() or run_id == "0":
+            raise ChronosProductionError("CHRONOS_VERIFY_RUN_ID_INVALID")
+    hold = _assert_hold()
+    post_merge_ci = _assert_post_merge_ci_binding(hold, main_sha=main_sha)
+    try:
+        raw_migration = json.loads(migration_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        raise ChronosProductionError("CHRONOS_MIGRATION_ARTIFACT_INVALID") from None
+    if not isinstance(raw_migration, dict):
+        raise ChronosProductionError("CHRONOS_MIGRATION_ARTIFACT_INVALID")
+    migration = verify_signed_document(cast(dict[str, Any], raw_migration), nonce)
+    if (
+        migration.get("schema_version") != "chronos-bootstrap-output-v3"
+        or migration.get("main_sha") != main_sha
+        or migration.get("workflow_sha") != workflow_sha
+        or migration.get("post_merge_ci_sha") != post_merge_ci["head_sha"]
+        or migration.get("migration_run_id") != expected_migration_run_id
+        or migration.get("migration_run_attempt") != "1"
+        or migration.get("revision") != EXPECTED_AFTER_REVISION
+        or migration.get("generation_hash") != generation_hash(nonce)
+        or not isinstance(migration.get("preflight_run_id"), str)
+    ):
+        raise ChronosProductionError("CHRONOS_MIGRATION_CAUSAL_BINDING_MISMATCH")
     urls = {
         "authority": _required("CHRONOS_AUTHORITY_DATABASE_URL"),
         "runtime": _required("CHRONOS_RUNTIME_DATABASE_URL"),
@@ -1072,6 +1228,14 @@ def run_verify(report_dir: Path) -> dict[str, Any]:
     reports: dict[str, Any] = {}
     for role, database_url in urls.items():
         target = validate_direct_postgres_url(database_url)
+        if (
+            target.host != migration.get("database_host")
+            or target.port != migration.get("database_port")
+            or target.database != migration.get("database_name")
+            or target.sslmode != migration.get("sslmode")
+            or target.channel_binding != migration.get("channel_binding")
+        ):
+            raise ChronosProductionError("CHRONOS_VERIFY_DATABASE_TARGET_MISMATCH")
         with _connect_direct(database_url) as connection:
             current_user = str(_scalar(connection, "SELECT current_user"))
             revision = (
@@ -1084,9 +1248,7 @@ def run_verify(report_dir: Path) -> dict[str, Any]:
                 if role == "reader"
                 else None
             )
-            epoch = _scalar(
-                connection, "SELECT pg_catalog.pg_postmaster_start_time()"
-            )
+            epoch = _scalar(connection, "SELECT pg_catalog.pg_postmaster_start_time()")
             memberships = _rows(
                 connection,
                 "SELECT granted.rolname AS granted_role "
@@ -1100,6 +1262,7 @@ def run_verify(report_dir: Path) -> dict[str, Any]:
             "database_port": target.port,
             "database_name": target.database,
             "sslmode": target.sslmode,
+            "channel_binding": target.channel_binding,
             "current_user": current_user,
             "revision": revision,
             "server_epoch": epoch,
@@ -1119,9 +1282,7 @@ def run_verify(report_dir: Path) -> dict[str, Any]:
         if reports[role]["current_user"] != username:
             raise ChronosProductionError("CHRONOS_VERIFY_SCOPED_USER_MISMATCH")
         memberships = cast(list[dict[str, Any]], reports[role]["memberships"])
-        expected_group = next(
-            group for login, group, _ in SCOPED_LOGINS if login == username
-        )
+        expected_group = next(group for login, group, _ in SCOPED_LOGINS if login == username)
         if memberships != [{"granted_role": expected_group}]:
             raise ChronosProductionError("CHRONOS_VERIFY_MEMBERSHIP_MISMATCH")
     if len({str(report["server_epoch"]) for report in reports.values()}) != 1:
@@ -1166,12 +1327,8 @@ def run_verify(report_dir: Path) -> dict[str, Any]:
         executor_count = int(executor_row[0])
         executor_memberships = int(membership_row[0])
         runtime_authority_paths = int(runtime_path_row[0])
-        authority_rows = [
-            row for row in lifecycle_roles if str(row[0]) == BOOTSTRAP_AUTHORITY
-        ]
-        migrator_rows = [
-            row for row in lifecycle_roles if str(row[0]) != BOOTSTRAP_AUTHORITY
-        ]
+        authority_rows = [row for row in lifecycle_roles if str(row[0]) == BOOTSTRAP_AUTHORITY]
+        migrator_rows = [row for row in lifecycle_roles if str(row[0]) != BOOTSTRAP_AUTHORITY]
         if (
             len(authority_rows) != 1
             or bool(authority_rows[0][1])
@@ -1207,9 +1364,21 @@ def run_verify(report_dir: Path) -> dict[str, Any]:
         "runtime_effective_bootstrap_edge": runtime_authority_paths,
         "provider_calls": 0,
         "r2_operations": 0,
+        "main_sha": main_sha,
+        "workflow_sha": workflow_sha,
+        "post_merge_ci_sha": post_merge_ci["head_sha"],
+        "generation_hash": generation_hash(nonce),
+        "preflight_run_id": migration["preflight_run_id"],
+        "migration_run_id": expected_migration_run_id,
+        "migration_run_attempt": "1",
+        "verify_run_id": verify_run_id,
+        "verify_run_attempt": "1",
+        "migration_output_signature_algorithm": "HMAC-SHA256",
     }
-    _write_json(report_dir / "chronos-production-verify-v3.json", result)
-    return result
+    normalized_result = cast(dict[str, Any], _json_value(result))
+    signed_result = sign_document(normalized_result, nonce)
+    _write_json(report_dir / "chronos-production-verify-v3.json", signed_result)
+    return signed_result
 
 
 def _safe_failure(mode: str, error: Exception) -> dict[str, Any]:
@@ -1235,6 +1404,7 @@ def main() -> None:
     parser.add_argument("--mode", choices=("PREFLIGHT", "MIGRATE", "VERIFY"), required=True)
     parser.add_argument("--report-dir", type=Path, required=True)
     parser.add_argument("--preflight-artifact", type=Path)
+    parser.add_argument("--migration-artifact", type=Path)
     args = parser.parse_args()
     try:
         if args.mode == "PREFLIGHT":
@@ -1244,7 +1414,9 @@ def main() -> None:
                 raise ChronosProductionError("CHRONOS_PREFLIGHT_ARTIFACT_REQUIRED")
             result = run_migrate(args.report_dir, args.preflight_artifact)
         else:
-            result = run_verify(args.report_dir)
+            if args.migration_artifact is None:
+                raise ChronosProductionError("CHRONOS_MIGRATION_ARTIFACT_REQUIRED")
+            result = run_verify(args.report_dir, args.migration_artifact)
     except Exception as error:
         failure = _safe_failure(args.mode, error)
         _write_json(args.report_dir / "chronos-bootstrap-failure-v3.json", failure)

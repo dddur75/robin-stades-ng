@@ -57,6 +57,7 @@ OBSERVER_ROLE = "robin_ci_terminal_observer"
 MIGRATOR_ROLE = "robin_ci_migrator"
 REVISION_0013 = "0013_historical_evidence_index"
 REVISION_0014 = "0014_chronos_control_plane_v2"
+REVISION_0015 = "0015_data_torrent_opportunity"
 RUNTIME_ACCOUNTS = (
     (
         "chronos_authority_runtime_login",
@@ -158,12 +159,8 @@ def _assert_readonly_preflight_catalog_contract(
 
     if len(rows_by_ordinal) != 15:
         raise RuntimeError("CHRONOS_CI_READONLY_SQL_READ_COUNT_INVALID")
-    before_rows = rows_by_ordinal[
-        readonly_preflight.SQL_TARGET_CLASSIFICATION_BEFORE_LOCK
-    ]
-    after_rows = rows_by_ordinal[
-        readonly_preflight.SQL_TARGET_CLASSIFICATION_AFTER_LOCK
-    ]
+    before_rows = rows_by_ordinal[readonly_preflight.SQL_TARGET_CLASSIFICATION_BEFORE_LOCK]
+    after_rows = rows_by_ordinal[readonly_preflight.SQL_TARGET_CLASSIFICATION_AFTER_LOCK]
     if len(before_rows) != 1 or before_rows != after_rows:
         raise RuntimeError("CHRONOS_CI_READONLY_TARGET_RECLASSIFICATION_FAILED")
     classification = before_rows[0]
@@ -198,9 +195,7 @@ def _assert_readonly_preflight_catalog_contract(
         or identity.get("current_user") != expected_user
     ):
         raise RuntimeError("CHRONOS_CI_READONLY_IDENTITY_CONTRACT_FAILED")
-    if rows_by_ordinal[readonly_preflight.SQL_SEARCH_PATH] != [
-        {"search_path": "pg_catalog"}
-    ]:
+    if rows_by_ordinal[readonly_preflight.SQL_SEARCH_PATH] != [{"search_path": "pg_catalog"}]:
         raise RuntimeError("CHRONOS_CI_READONLY_SEARCH_PATH_CONTRACT_FAILED")
     privileged_catalog = rows_by_ordinal[readonly_preflight.SQL_PRIVILEGED_CATALOG]
     if privileged_catalog != [{"visible": True}]:
@@ -240,9 +235,7 @@ def _install_neon_platform_acl_fixture(
 
     with psycopg.connect(_psycopg_url(superuser_url), connect_timeout=10) as connection:
         with ClientCursor(connection) as cursor:
-            cursor.execute(
-                "SELECT 1 FROM pg_catalog.pg_roles WHERE rolname='neon_superuser'"
-            )
+            cursor.execute("SELECT 1 FROM pg_catalog.pg_roles WHERE rolname='neon_superuser'")
             if cursor.fetchone() is None:
                 cursor.execute("CREATE ROLE neon_superuser NOLOGIN")
             cursor.execute(
@@ -259,9 +252,7 @@ def _install_neon_platform_acl_fixture(
                     )
                 )
             cursor.execute(
-                sql.SQL("GRANT neon_superuser TO {}").format(
-                    sql.Identifier(member_role)
-                )
+                sql.SQL("GRANT neon_superuser TO {}").format(sql.Identifier(member_role))
             )
             cursor.execute(
                 "GRANT ALL PRIVILEGES ON TABLE public.alembic_version "
@@ -281,15 +272,11 @@ def _assert_neon_platform_acl_shared_member_rejected(
     with psycopg.connect(_psycopg_url(superuser_url), connect_timeout=10) as connection:
         with ClientCursor(connection) as cursor:
             cursor.execute(
-                sql.SQL("CREATE ROLE {} LOGIN INHERIT").format(
-                    sql.Identifier(peer_role)
-                )
+                sql.SQL("CREATE ROLE {} LOGIN INHERIT").format(sql.Identifier(peer_role))
             )
     try:
         for protected_role in ("neon_superuser", actor_role):
-            with psycopg.connect(
-                _psycopg_url(superuser_url), connect_timeout=10
-            ) as connection:
+            with psycopg.connect(_psycopg_url(superuser_url), connect_timeout=10) as connection:
                 with ClientCursor(connection) as cursor:
                     cursor.execute(
                         sql.SQL("GRANT {} TO {}").format(
@@ -311,16 +298,9 @@ def _assert_neon_platform_acl_shared_member_rejected(
                         ]
                     )
                     row = cursor.fetchone()
-            if (
-                row is None
-                or row.get("alembic_version_is_plain_permanent_table") is not False
-            ):
-                raise RuntimeError(
-                    "CHRONOS_CI_SHARED_PLATFORM_AUTHORITY_NOT_REJECTED"
-                )
-            with psycopg.connect(
-                _psycopg_url(superuser_url), connect_timeout=10
-            ) as connection:
+            if row is None or row.get("alembic_version_is_plain_permanent_table") is not False:
+                raise RuntimeError("CHRONOS_CI_SHARED_PLATFORM_AUTHORITY_NOT_REJECTED")
+            with psycopg.connect(_psycopg_url(superuser_url), connect_timeout=10) as connection:
                 with ClientCursor(connection) as cursor:
                     cursor.execute(
                         sql.SQL("REVOKE {} FROM {}").format(
@@ -338,9 +318,7 @@ def _assert_neon_platform_acl_shared_member_rejected(
                             sql.Identifier(peer_role),
                         )
                     )
-                cursor.execute(
-                    sql.SQL("DROP ROLE {}").format(sql.Identifier(peer_role))
-                )
+                cursor.execute(sql.SQL("DROP ROLE {}").format(sql.Identifier(peer_role)))
 
 
 def _assert_neon_platform_lifecycle_audit_rejects_descendants(
@@ -355,10 +333,9 @@ def _assert_neon_platform_lifecycle_audit_rejects_descendants(
     with psycopg.connect(_psycopg_url(superuser_url), connect_timeout=10) as connection:
         with ClientCursor(connection) as cursor:
             cursor.execute(
-                sql.SQL("CREATE ROLE {} LOGIN INHERIT").format(
-                    sql.Identifier(peer_role)
-                )
+                sql.SQL("CREATE ROLE {} LOGIN INHERIT").format(sql.Identifier(peer_role))
             )
+
     def run_audit() -> RoleEdgeAudit:
         return audit_role_edges(
             audited_connection,
@@ -372,9 +349,7 @@ def _assert_neon_platform_lifecycle_audit_rejects_descendants(
 
     try:
         for protected_role in ("neon_superuser", baseline.lifecycle_admin):
-            with psycopg.connect(
-                _psycopg_url(superuser_url), connect_timeout=10
-            ) as connection:
+            with psycopg.connect(_psycopg_url(superuser_url), connect_timeout=10) as connection:
                 with ClientCursor(connection) as cursor:
                     cursor.execute(
                         sql.SQL("GRANT {} TO {}").format(
@@ -388,13 +363,9 @@ def _assert_neon_platform_lifecycle_audit_rejects_descendants(
                 if str(error) != "CHRONOS_ROLE_EDGE_AUDIT_FAILED":
                     raise
             else:
-                raise RuntimeError(
-                    "CHRONOS_CI_NEON_PLATFORM_HOSTILE_DESCENDANT_ACCEPTED"
-                )
+                raise RuntimeError("CHRONOS_CI_NEON_PLATFORM_HOSTILE_DESCENDANT_ACCEPTED")
             finally:
-                with psycopg.connect(
-                    _psycopg_url(superuser_url), connect_timeout=10
-                ) as connection:
+                with psycopg.connect(_psycopg_url(superuser_url), connect_timeout=10) as connection:
                     with ClientCursor(connection) as cursor:
                         cursor.execute(
                             sql.SQL("REVOKE {} FROM {}").format(
@@ -412,14 +383,9 @@ def _assert_neon_platform_lifecycle_audit_rejects_descendants(
                             sql.Identifier(peer_role),
                         )
                     )
-                cursor.execute(
-                    sql.SQL("DROP ROLE {}").format(sql.Identifier(peer_role))
-                )
+                cursor.execute(sql.SQL("DROP ROLE {}").format(sql.Identifier(peer_role)))
     recovered = run_audit()
-    if (
-        recovered.neon_platform_edge_count != 1
-        or recovered.neon_platform_descendant_count != 1
-    ):
+    if recovered.neon_platform_edge_count != 1 or recovered.neon_platform_descendant_count != 1:
         raise RuntimeError("CHRONOS_CI_NEON_PLATFORM_AUDIT_DID_NOT_RECOVER")
 
 
@@ -447,20 +413,14 @@ def _assert_neon_platform_lifecycle_audit_rejects_orphans(
     with psycopg.connect(_psycopg_url(superuser_url), connect_timeout=10) as connection:
         with ClientCursor(connection) as cursor:
             cursor.execute(
-                sql.SQL("CREATE ROLE {} LOGIN INHERIT").format(
-                    sql.Identifier(peer_role)
-                )
+                sql.SQL("CREATE ROLE {} LOGIN INHERIT").format(sql.Identifier(peer_role))
             )
             cursor.execute(
                 sql.SQL("REVOKE neon_superuser FROM {}").format(
                     sql.Identifier(baseline.lifecycle_admin)
                 )
             )
-            cursor.execute(
-                sql.SQL("GRANT neon_superuser TO {}").format(
-                    sql.Identifier(peer_role)
-                )
-            )
+            cursor.execute(sql.SQL("GRANT neon_superuser TO {}").format(sql.Identifier(peer_role)))
     try:
         try:
             run_audit()
@@ -473,23 +433,16 @@ def _assert_neon_platform_lifecycle_audit_rejects_orphans(
         with psycopg.connect(_psycopg_url(superuser_url), connect_timeout=10) as connection:
             with ClientCursor(connection) as cursor:
                 cursor.execute(
-                    sql.SQL("REVOKE neon_superuser FROM {}").format(
-                        sql.Identifier(peer_role)
-                    )
+                    sql.SQL("REVOKE neon_superuser FROM {}").format(sql.Identifier(peer_role))
                 )
                 cursor.execute(
                     sql.SQL("GRANT neon_superuser TO {}").format(
                         sql.Identifier(baseline.lifecycle_admin)
                     )
                 )
-                cursor.execute(
-                    sql.SQL("DROP ROLE {}").format(sql.Identifier(peer_role))
-                )
+                cursor.execute(sql.SQL("DROP ROLE {}").format(sql.Identifier(peer_role)))
     recovered = run_audit()
-    if (
-        recovered.neon_platform_edge_count != 1
-        or recovered.neon_platform_descendant_count != 1
-    ):
+    if recovered.neon_platform_edge_count != 1 or recovered.neon_platform_descendant_count != 1:
         raise RuntimeError("CHRONOS_CI_NEON_PLATFORM_AUDIT_DID_NOT_RECOVER")
 
 
@@ -504,14 +457,10 @@ def _assert_global_writer_rejected(
     with psycopg.connect(_psycopg_url(superuser_url), connect_timeout=10) as connection:
         with ClientCursor(connection) as cursor:
             cursor.execute(
-                sql.SQL("CREATE ROLE {} LOGIN INHERIT").format(
-                    sql.Identifier(peer_role)
-                )
+                sql.SQL("CREATE ROLE {} LOGIN INHERIT").format(sql.Identifier(peer_role))
             )
             cursor.execute(
-                sql.SQL("GRANT pg_write_all_data TO {}").format(
-                    sql.Identifier(peer_role)
-                )
+                sql.SQL("GRANT pg_write_all_data TO {}").format(sql.Identifier(peer_role))
             )
     try:
         with psycopg.connect(
@@ -528,22 +477,15 @@ def _assert_global_writer_rejected(
                     ]
                 )
                 row = cursor.fetchone()
-        if (
-            row is None
-            or row.get("alembic_version_is_plain_permanent_table") is not False
-        ):
+        if row is None or row.get("alembic_version_is_plain_permanent_table") is not False:
             raise RuntimeError("CHRONOS_CI_GLOBAL_WRITER_NOT_REJECTED")
     finally:
         with psycopg.connect(_psycopg_url(superuser_url), connect_timeout=10) as connection:
             with ClientCursor(connection) as cursor:
                 cursor.execute(
-                    sql.SQL("REVOKE pg_write_all_data FROM {}").format(
-                        sql.Identifier(peer_role)
-                    )
+                    sql.SQL("REVOKE pg_write_all_data FROM {}").format(sql.Identifier(peer_role))
                 )
-                cursor.execute(
-                    sql.SQL("DROP ROLE {}").format(sql.Identifier(peer_role))
-                )
+                cursor.execute(sql.SQL("DROP ROLE {}").format(sql.Identifier(peer_role)))
 
 
 def _assert_database_owner_descendant_rejected(
@@ -557,15 +499,9 @@ def _assert_database_owner_descendant_rejected(
     peer_role = "chronos_ci_hostile_database_owner_peer_" + uuid.uuid4().hex[:10]
     with psycopg.connect(_psycopg_url(superuser_url), connect_timeout=10) as connection:
         with ClientCursor(connection) as cursor:
+            cursor.execute(sql.SQL("CREATE ROLE {} NOLOGIN").format(sql.Identifier(database_owner)))
             cursor.execute(
-                sql.SQL("CREATE ROLE {} NOLOGIN").format(
-                    sql.Identifier(database_owner)
-                )
-            )
-            cursor.execute(
-                sql.SQL("CREATE ROLE {} LOGIN INHERIT").format(
-                    sql.Identifier(peer_role)
-                )
+                sql.SQL("CREATE ROLE {} LOGIN INHERIT").format(sql.Identifier(peer_role))
             )
             cursor.execute(
                 sql.SQL("GRANT {} TO {}").format(
@@ -595,14 +531,10 @@ def _assert_database_owner_descendant_rejected(
                 row = cursor.fetchone()
         if row is None or row.get("authority_role_memberships_clean") is not False:
             raise RuntimeError("CHRONOS_CI_DATABASE_OWNER_DESCENDANT_NOT_REJECTED")
-        with psycopg.connect(
-            _psycopg_url(superuser_url), connect_timeout=10
-        ) as connection:
+        with psycopg.connect(_psycopg_url(superuser_url), connect_timeout=10) as connection:
             with ClientCursor(connection) as cursor:
                 cursor.execute("ALTER SCHEMA public OWNER TO robin")
-                cursor.execute(
-                    "ALTER TABLE public.alembic_version OWNER TO pg_database_owner"
-                )
+                cursor.execute("ALTER TABLE public.alembic_version OWNER TO pg_database_owner")
         with psycopg.connect(
             _psycopg_url(database_url),
             autocommit=True,
@@ -621,9 +553,7 @@ def _assert_database_owner_descendant_rejected(
             table_owner_row is None
             or table_owner_row.get("authority_role_memberships_clean") is not False
         ):
-            raise RuntimeError(
-                "CHRONOS_CI_DATABASE_TABLE_OWNER_DESCENDANT_NOT_REJECTED"
-            )
+            raise RuntimeError("CHRONOS_CI_DATABASE_TABLE_OWNER_DESCENDANT_NOT_REJECTED")
     finally:
         with psycopg.connect(_psycopg_url(superuser_url), connect_timeout=10) as connection:
             with ClientCursor(connection) as cursor:
@@ -636,12 +566,8 @@ def _assert_database_owner_descendant_rejected(
                         sql.Identifier(peer_role),
                     )
                 )
-                cursor.execute(
-                    sql.SQL("DROP ROLE {}").format(sql.Identifier(peer_role))
-                )
-                cursor.execute(
-                    sql.SQL("DROP ROLE {}").format(sql.Identifier(database_owner))
-                )
+                cursor.execute(sql.SQL("DROP ROLE {}").format(sql.Identifier(peer_role)))
+                cursor.execute(sql.SQL("DROP ROLE {}").format(sql.Identifier(database_owner)))
 
 
 def _assert_column_only_pg_authid_rejected(
@@ -660,9 +586,9 @@ def _assert_column_only_pg_authid_rejected(
                 )
             )
             cursor.execute(
-                sql.SQL(
-                    "GRANT SELECT (rolname) ON TABLE pg_catalog.pg_authid TO {}"
-                ).format(sql.Identifier(actor_role))
+                sql.SQL("GRANT SELECT (rolname) ON TABLE pg_catalog.pg_authid TO {}").format(
+                    sql.Identifier(actor_role)
+                )
             )
     try:
         with psycopg.connect(
@@ -675,23 +601,19 @@ def _assert_column_only_pg_authid_rejected(
             with connection.cursor() as cursor:
                 try:
                     cursor.execute(
-                        readonly_preflight.SQL_STATEMENTS[
-                            readonly_preflight.SQL_PRIVILEGED_CATALOG
-                        ]
+                        readonly_preflight.SQL_STATEMENTS[readonly_preflight.SQL_PRIVILEGED_CATALOG]
                     )
                 except psycopg.errors.InsufficientPrivilege:
                     pass
                 else:
-                    raise RuntimeError(
-                        "CHRONOS_CI_COLUMN_ONLY_PG_AUTHID_VISIBILITY_ACCEPTED"
-                    )
+                    raise RuntimeError("CHRONOS_CI_COLUMN_ONLY_PG_AUTHID_VISIBILITY_ACCEPTED")
     finally:
         with psycopg.connect(_psycopg_url(superuser_url), connect_timeout=10) as connection:
             with ClientCursor(connection) as cursor:
                 cursor.execute(
-                    sql.SQL(
-                        "REVOKE SELECT (rolname) ON TABLE pg_catalog.pg_authid FROM {}"
-                    ).format(sql.Identifier(actor_role))
+                    sql.SQL("REVOKE SELECT (rolname) ON TABLE pg_catalog.pg_authid FROM {}").format(
+                        sql.Identifier(actor_role)
+                    )
                 )
                 cursor.execute(
                     sql.SQL("GRANT SELECT ON TABLE pg_catalog.pg_authid TO {}").format(
@@ -711,30 +633,21 @@ def _assert_noncanonical_alembic_catalog_rejected(
     ] = (
         (
             "column_storage_plain",
-            (
-                "ALTER TABLE public.alembic_version "
-                "ALTER COLUMN version_num SET STORAGE PLAIN",
-            ),
+            ("ALTER TABLE public.alembic_version ALTER COLUMN version_num SET STORAGE PLAIN",),
             "SELECT attstorage='p' AS mutated FROM pg_catalog.pg_attribute "
             "WHERE attrelid='public.alembic_version'::pg_catalog.regclass "
             "AND attname='version_num' AND NOT attisdropped",
         ),
         (
             "column_statistics_zero",
-            (
-                "ALTER TABLE public.alembic_version "
-                "ALTER COLUMN version_num SET STATISTICS 0",
-            ),
+            ("ALTER TABLE public.alembic_version ALTER COLUMN version_num SET STATISTICS 0",),
             "SELECT attstattarget=0 AS mutated FROM pg_catalog.pg_attribute "
             "WHERE attrelid='public.alembic_version'::pg_catalog.regclass "
             "AND attname='version_num' AND NOT attisdropped",
         ),
         (
             "column_statistics_options",
-            (
-                "ALTER TABLE public.alembic_version "
-                "ALTER COLUMN version_num SET (n_distinct=-0.5)",
-            ),
+            ("ALTER TABLE public.alembic_version ALTER COLUMN version_num SET (n_distinct=-0.5)",),
             "SELECT attoptions=ARRAY['n_distinct=-0.5']::text[] AS mutated "
             "FROM pg_catalog.pg_attribute "
             "WHERE attrelid='public.alembic_version'::pg_catalog.regclass "
@@ -742,10 +655,7 @@ def _assert_noncanonical_alembic_catalog_rejected(
         ),
         (
             "column_compression_pglz",
-            (
-                "ALTER TABLE public.alembic_version "
-                "ALTER COLUMN version_num SET COMPRESSION pglz",
-            ),
+            ("ALTER TABLE public.alembic_version ALTER COLUMN version_num SET COMPRESSION pglz",),
             "SELECT attcompression='p' AS mutated FROM pg_catalog.pg_attribute "
             "WHERE attrelid='public.alembic_version'::pg_catalog.regclass "
             "AND attname='version_num' AND NOT attisdropped",
@@ -758,8 +668,7 @@ def _assert_noncanonical_alembic_catalog_rejected(
                 "INSERT INTO public.alembic_version DEFAULT VALUES",
                 "ALTER TABLE public.alembic_version ADD COLUMN version_num "
                 "VARCHAR(32) DEFAULT '0013_historical_evidence_index' NOT NULL",
-                "ALTER TABLE public.alembic_version "
-                "ALTER COLUMN version_num DROP DEFAULT",
+                "ALTER TABLE public.alembic_version ALTER COLUMN version_num DROP DEFAULT",
                 "ALTER TABLE public.alembic_version ADD CONSTRAINT "
                 "alembic_version_pkc PRIMARY KEY (version_num)",
             ),
@@ -781,10 +690,8 @@ def _assert_noncanonical_alembic_catalog_rejected(
         (
             "dropped_column_topology",
             (
-                "ALTER TABLE public.alembic_version "
-                "ADD COLUMN chronos_ci_hostile_dropped integer",
-                "ALTER TABLE public.alembic_version "
-                "DROP COLUMN chronos_ci_hostile_dropped",
+                "ALTER TABLE public.alembic_version ADD COLUMN chronos_ci_hostile_dropped integer",
+                "ALTER TABLE public.alembic_version DROP COLUMN chronos_ci_hostile_dropped",
             ),
             "SELECT c.relnatts=2 AND pg_catalog.count(a.*) FILTER "
             "(WHERE a.attnum>0 AND a.attisdropped)=1 AS mutated "
@@ -795,9 +702,7 @@ def _assert_noncanonical_alembic_catalog_rejected(
         ),
         (
             "extension_membership",
-            (
-                "ALTER EXTENSION plpgsql ADD TABLE public.alembic_version",
-            ),
+            ("ALTER EXTENSION plpgsql ADD TABLE public.alembic_version",),
             "SELECT pg_catalog.count(*)=1 AS mutated FROM pg_catalog.pg_depend d "
             "WHERE d.classid='pg_catalog.pg_class'::pg_catalog.regclass "
             "AND d.objid='public.alembic_version'::pg_catalog.regclass "
@@ -807,9 +712,7 @@ def _assert_noncanonical_alembic_catalog_rejected(
         ),
         (
             "schema_extension_membership",
-            (
-                "ALTER EXTENSION plpgsql ADD SCHEMA public",
-            ),
+            ("ALTER EXTENSION plpgsql ADD SCHEMA public",),
             "SELECT pg_catalog.count(*)=1 AS mutated FROM pg_catalog.pg_depend d "
             "JOIN pg_catalog.pg_namespace n ON n.nspname='public' "
             "WHERE d.classid='pg_catalog.pg_namespace'::pg_catalog.regclass "
@@ -819,9 +722,7 @@ def _assert_noncanonical_alembic_catalog_rejected(
         ),
         (
             "row_type_extension_membership",
-            (
-                "ALTER EXTENSION plpgsql ADD TYPE public.alembic_version",
-            ),
+            ("ALTER EXTENSION plpgsql ADD TYPE public.alembic_version",),
             "SELECT pg_catalog.count(*)=1 AS mutated FROM pg_catalog.pg_depend d "
             "JOIN pg_catalog.pg_class c "
             "ON c.oid='public.alembic_version'::pg_catalog.regclass "
@@ -832,9 +733,7 @@ def _assert_noncanonical_alembic_catalog_rejected(
         ),
         (
             "array_type_extension_membership",
-            (
-                "ALTER EXTENSION plpgsql ADD TYPE public._alembic_version",
-            ),
+            ("ALTER EXTENSION plpgsql ADD TYPE public._alembic_version",),
             "SELECT pg_catalog.count(*)=1 AS mutated FROM pg_catalog.pg_depend d "
             "JOIN pg_catalog.pg_class c "
             "ON c.oid='public.alembic_version'::pg_catalog.regclass "
@@ -846,10 +745,7 @@ def _assert_noncanonical_alembic_catalog_rejected(
         ),
         (
             "primary_index_auto_extension_dependency",
-            (
-                "ALTER INDEX public.alembic_version_pkc "
-                "DEPENDS ON EXTENSION plpgsql",
-            ),
+            ("ALTER INDEX public.alembic_version_pkc DEPENDS ON EXTENSION plpgsql",),
             "SELECT pg_catalog.count(*)=1 AS mutated FROM pg_catalog.pg_depend d "
             "WHERE d.classid='pg_catalog.pg_class'::pg_catalog.regclass "
             "AND d.objid='public.alembic_version_pkc'::pg_catalog.regclass "
@@ -885,8 +781,7 @@ def _assert_noncanonical_alembic_catalog_rejected(
         (
             "stale_inheritance_flag",
             (
-                "CREATE TABLE public.chronos_ci_hostile_child () "
-                "INHERITS (public.alembic_version)",
+                "CREATE TABLE public.chronos_ci_hostile_child () INHERITS (public.alembic_version)",
                 "DROP TABLE public.chronos_ci_hostile_child",
             ),
             "SELECT relhassubclass AS mutated FROM pg_catalog.pg_class "
@@ -910,21 +805,14 @@ def _assert_noncanonical_alembic_catalog_rejected(
                 cursor.execute(mutation_proof)
                 proof = cursor.fetchone()
                 if proof is None or proof.get("mutated") is not True:
-                    raise RuntimeError(
-                        f"CHRONOS_CI_NONCANONICAL_MUTATION_NOT_PROVEN:{label}"
-                    )
+                    raise RuntimeError(f"CHRONOS_CI_NONCANONICAL_MUTATION_NOT_PROVEN:{label}")
                 cursor.execute(classifier)
                 classification = cursor.fetchone()
                 if (
                     classification is None
-                    or classification.get(
-                        "alembic_version_is_plain_permanent_table"
-                    )
-                    is not False
+                    or classification.get("alembic_version_is_plain_permanent_table") is not False
                 ):
-                    raise RuntimeError(
-                        f"CHRONOS_CI_NONCANONICAL_CATALOG_ACCEPTED:{label}"
-                    )
+                    raise RuntimeError(f"CHRONOS_CI_NONCANONICAL_CATALOG_ACCEPTED:{label}")
                 rejected.append(label)
         finally:
             connection.rollback()
@@ -1055,7 +943,7 @@ def _simulate_killed_migration_window(
     environment["ROBIN_DATABASE_URL"] = migrator_url
     environment["PGOPTIONS"] = ALEMBIC_PGOPTIONS
     process = subprocess.Popen(  # nosec B603
-        [sys.executable, "-m", "alembic", "upgrade", REVISION_0014],
+        [sys.executable, "-m", "alembic", "upgrade", REVISION_0015],
         env=environment,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
@@ -1637,6 +1525,7 @@ def _write_evidence(
         "migrations/env.py",
         "migrations/versions/0013_historical_evidence_index.py",
         "migrations/versions/0014_chronos_control_plane_v2.py",
+        "migrations/versions/0015_data_torrent_opportunity.py",
         "scripts/chronos_neon_pure_readonly_preflight_v4.py",
         "scripts/chronos_production_bootstrap_v3.py",
         "scripts/run_chronos_dual_principal_ci_v2.py",
@@ -1701,7 +1590,7 @@ def _write_evidence(
         "authority_oid": authority_oid,
         "migrator_oid": migrator_oid,
         "migration_dispatches": 1,
-        "migration_cycle": "0013->0014->0013->0014:PASS",
+        "migration_cycle": "0013->0015->0013->0015:PASS",
         "stable_cycle": before_cycle == after_cycle,
         "password_state": {
             "authority": "PG_AUTHID_NULL_PROVEN",
@@ -1760,14 +1649,12 @@ def main() -> None:
         superuser_url,
         database_url=superuser_url,
     )
-    noncanonical_catalog_mutations_rejected = (
-        _assert_noncanonical_alembic_catalog_rejected(superuser_url)
+    noncanonical_catalog_mutations_rejected = _assert_noncanonical_alembic_catalog_rejected(
+        superuser_url
     )
-    superuser_readonly_preflight_catalog_contract = (
-        _assert_readonly_preflight_catalog_contract(
-            superuser_url,
-            expected_user="robin",
-        )
+    superuser_readonly_preflight_catalog_contract = _assert_readonly_preflight_catalog_contract(
+        superuser_url,
+        expected_user="robin",
     )
     admin_url, observer_url, _admin_password = _prepare_admin_profile(superuser_url, profile)
     if profile == PROFILE_NON_SUPERUSER:
@@ -1792,20 +1679,14 @@ def main() -> None:
     lifecycle_admin_readonly_preflight_catalog_contract = (
         _assert_readonly_preflight_catalog_contract(
             admin_url,
-            expected_user=(
-                ADMIN_ROLE if profile == PROFILE_NON_SUPERUSER else "robin"
-            ),
+            expected_user=(ADMIN_ROLE if profile == PROFILE_NON_SUPERUSER else "robin"),
         )
     )
     readonly_preflight_catalog_contract: dict[str, object] = {
         "verdict": "PASS",
-        "noncanonical_catalog_mutations_rejected": (
-            noncanonical_catalog_mutations_rejected
-        ),
+        "noncanonical_catalog_mutations_rejected": (noncanonical_catalog_mutations_rejected),
         "superuser": superuser_readonly_preflight_catalog_contract,
-        "lifecycle_admin_profile": (
-            lifecycle_admin_readonly_preflight_catalog_contract
-        ),
+        "lifecycle_admin_profile": (lifecycle_admin_readonly_preflight_catalog_contract),
     }
     executor_passwords: list[str] = []
     crash_records: list[str] = []
@@ -1918,20 +1799,20 @@ def main() -> None:
         if resumed_oid_row is None or int(resumed_oid_row[0]) != migrator_oid:
             raise RuntimeError("CHRONOS_CI_MIGRATOR_OID_CHANGED_AFTER_CRASH")
     migrator_url = _scoped_url(superuser_url, MIGRATOR_ROLE, migrator_password)
-    run_fenced_alembic(migrator_url, REVISION_0014)
+    run_fenced_alembic(migrator_url, REVISION_0015)
     disable_migrator(executor, role=MIGRATOR_ROLE)
     assert_post_migration_role_state(
         executor,
         migrator_role=MIGRATOR_ROLE,
         bootstrap_owner=BOOTSTRAP_AUTHORITY,
     )
-    if _revision(executor) != REVISION_0014:
-        raise RuntimeError("CHRONOS_CI_0014_NOT_PROVEN")
+    if _revision(executor) != REVISION_0015:
+        raise RuntimeError("CHRONOS_CI_0015_NOT_PROVEN")
     executor.close()
     admin.close()
     crash_records.append("migrator_disabled")
 
-    # Resume 0014: zero second dispatch, then runtime provisioning and full cycle.
+    # Resume 0015: zero second dispatch, then runtime provisioning and full cycle.
     admin = psycopg.connect(admin_url, connect_timeout=10)
     lease, executor_url = _lease(admin, passwords=executor_passwords)
     executor = psycopg.connect(executor_url, connect_timeout=10)
@@ -1967,7 +1848,7 @@ def main() -> None:
     )
     migrator_url = _scoped_url(superuser_url, MIGRATOR_ROLE, migrator_password)
     _alembic(migrator_url, "downgrade", REVISION_0013)
-    _alembic(migrator_url, "upgrade", REVISION_0014)
+    _alembic(migrator_url, "upgrade", REVISION_0015)
     disable_migrator(executor, role=MIGRATOR_ROLE)
     after_cycle_audit = audit_role_edges(
         executor,
@@ -1985,7 +1866,7 @@ def main() -> None:
     admin.close()
     crash_records.append("before_executor_deleted")
 
-    # Final retry proves no Alembic dispatch at 0014 and deletes its fresh executor.
+    # Final retry proves no Alembic dispatch at 0015 and deletes its fresh executor.
     admin = psycopg.connect(admin_url, connect_timeout=10)
     lease, executor_url = _lease(admin, passwords=executor_passwords)
     executor = psycopg.connect(executor_url, connect_timeout=10)

@@ -1,4 +1,4 @@
-"""Provider-free PostgreSQL 16 role lifecycle for Chronos revision 0014."""
+"""Provider-free PostgreSQL 16 role lifecycle for Chronos through revision 0015."""
 
 from __future__ import annotations
 
@@ -33,7 +33,7 @@ MIGRATOR_MARKER = "managed-by:chronos-dual-principal-authority-e1-v2:migrator"
 AUTHORITY_MARKER = "managed-by:chronos-dual-principal-authority-e1-v2:authority"
 EXECUTOR_MARKER = "managed-by:chronos-dual-principal-authority-e1-v2:executor"
 LIFECYCLE_LOCK_KEYS = (0x4348524F, 0x4E4F5332)
-CHRONOS_FUNCTION_SIGNATURES = {
+CHRONOS_BASE_FUNCTION_SIGNATURES = {
     "chronos_framed_sha256": "text[]",
     "chronos_effect_event_hash": (
         "bigint, text, text, text, text, text, text, timestamp with time zone, "
@@ -52,6 +52,47 @@ CHRONOS_FUNCTION_SIGNATURES = {
     ),
     "chronos_get_effect_state": "text",
 }
+CHRONOS_TORRENT_FUNCTION_SIGNATURES = {
+    "chronos_claim_opportunity": (
+        "text, text, bigint, integer, text, text, text, text, text, bytea, text, text, text, text"
+    ),
+    "chronos_reserve_torrent_external_effect": (
+        "text, text, integer, text, integer, integer, integer, bigint, integer, text, bytea"
+    ),
+    "chronos_append_torrent_external_effect": (
+        "text, text, integer, integer, integer, bigint, integer, text, bytea"
+    ),
+    "chronos_record_torrent_batch": (
+        "text, text, text, text, text, text, text, text, jsonb, jsonb, jsonb, "
+        "jsonb, jsonb, integer, integer, integer, integer, bigint, bigint, "
+        "bigint, bigint, bigint, bigint, integer, bigint, double precision, "
+        "double precision, double precision, double precision, bigint, "
+        "double precision, double precision, double precision, boolean, "
+        "integer, integer, integer, integer, integer, integer, integer, "
+        "integer, integer, integer, integer, integer, integer, integer, "
+        "boolean, bigint, integer, text, bytea"
+    ),
+    "chronos_reject_torrent_mutation": "",
+}
+CHRONOS_FUNCTION_SIGNATURES = {
+    **CHRONOS_BASE_FUNCTION_SIGNATURES,
+    **CHRONOS_TORRENT_FUNCTION_SIGNATURES,
+}
+CHRONOS_BASE_RELATIONS = (
+    "chronos_effect_authorities",
+    "chronos_effect_events",
+    "chronos_effect_accounting",
+)
+CHRONOS_TORRENT_RELATIONS = (
+    "chronos_opportunity_claims",
+    "chronos_torrent_external_effect_permits",
+    "chronos_torrent_external_effect_events",
+    "chronos_torrent_batches",
+    "chronos_opportunity_claim_audit",
+    "chronos_torrent_batch_audit",
+    "chronos_torrent_external_effect_audit",
+)
+CHRONOS_RELATIONS = CHRONOS_BASE_RELATIONS + CHRONOS_TORRENT_RELATIONS
 
 
 def role_inventory_snapshot(
@@ -86,10 +127,9 @@ def assert_role_inventory_delta(
     expected_new_roles: Sequence[str],
 ) -> None:
     current = role_inventory_snapshot(connection)
-    if (
-        any(current.get(name) != state for name, state in baseline.items())
-        or set(current).difference(baseline) != set(expected_new_roles)
-    ):
+    if any(current.get(name) != state for name, state in baseline.items()) or set(
+        current
+    ).difference(baseline) != set(expected_new_roles):
         raise ChronosProductionError("CHRONOS_ROLE_INVENTORY_DELTA_UNSAFE")
 
 
@@ -129,20 +169,14 @@ class RoleEdgeAudit:
             "edge_count": len(self.edges),
             "forbidden_edge_count": self.forbidden_edge_count,
             "hidden_edge_count": self.forbidden_edge_count,
-            "runtime_effective_bootstrap_edge_count": (
-                self.runtime_effective_bootstrap_edge_count
-            ),
+            "runtime_effective_bootstrap_edge_count": (self.runtime_effective_bootstrap_edge_count),
             "migrator_runtime_edge_count": self.migrator_runtime_edge_count,
             "runtime_to_authority_path_count": self.runtime_to_authority_path_count,
-            "runtime_to_lifecycle_admin_path_count": (
-                self.runtime_to_lifecycle_admin_path_count
-            ),
+            "runtime_to_lifecycle_admin_path_count": (self.runtime_to_lifecycle_admin_path_count),
             "executor_role_count": self.executor_role_count,
             "executor_membership_count": self.executor_membership_count,
             "neon_platform_edge_count": self.neon_platform_edge_count,
-            "neon_platform_descendant_count": (
-                self.neon_platform_descendant_count
-            ),
+            "neon_platform_descendant_count": (self.neon_platform_descendant_count),
         }
 
 
@@ -246,14 +280,11 @@ def assert_privileged_catalog_visibility(connection: Connection[Any]) -> None:
     try:
         with connection.cursor() as cursor:
             cursor.execute(
-                "SELECT rolpassword IS NULL FROM pg_catalog.pg_authid "
-                "WHERE rolname=current_user"
+                "SELECT rolpassword IS NULL FROM pg_catalog.pg_authid WHERE rolname=current_user"
             )
             row = cursor.fetchone()
     except InsufficientPrivilege:
-        raise ChronosProductionError(
-            "CHRONOS_PG_AUTHID_VISIBILITY_REQUIRED"
-        ) from None
+        raise ChronosProductionError("CHRONOS_PG_AUTHID_VISIBILITY_REQUIRED") from None
     if row is None:
         raise ChronosProductionError("CHRONOS_PG_AUTHID_VISIBILITY_REQUIRED")
 
@@ -348,8 +379,10 @@ def _assert_authority_memberships_safe(
         options = (bool(edge[4]), bool(edge[5]), bool(edge[6]))
         granted_marker = str(edge[7])
         member_marker = str(edge[8])
-        creator_target = granted in GROUP_ROLES or granted in RUNTIME_ROLE_GROUPS or (
-            granted_marker == MIGRATOR_MARKER
+        creator_target = (
+            granted in GROUP_ROLES
+            or granted in RUNTIME_ROLE_GROUPS
+            or (granted_marker == MIGRATOR_MARKER)
         )
         is_creator_edge = (
             member == authority
@@ -409,9 +442,7 @@ def provision_permanent_bootstrap_authority(
             )
             with _client_cursor(connection) as client_cursor:
                 client_cursor.execute(
-                    sql.SQL("COMMENT ON ROLE {} IS %s").format(
-                        sql.Identifier(authority)
-                    ),
+                    sql.SQL("COMMENT ON ROLE {} IS %s").format(sql.Identifier(authority)),
                     (AUTHORITY_MARKER,),
                 )
         cursor.execute(
@@ -438,9 +469,7 @@ def provision_permanent_bootstrap_authority(
                 "public.alembic_version TO {} WITH GRANT OPTION"
             ).format(sql.Identifier(authority))
         )
-    authority_oid = _assert_permanent_authority_catalog(
-        connection, authority=authority
-    )
+    authority_oid = _assert_permanent_authority_catalog(connection, authority=authority)
     assert_authority_password_null(connection, authority=authority)
     _assert_authority_memberships_safe(
         connection,
@@ -470,17 +499,13 @@ def _grant_bootstrap_authority_schema(
 ) -> None:
     """Grant schema ACLs without masking a failed GRANT with RESET ROLE."""
 
-    switched_to_schema_owner = (
-        schema_owner_name != lifecycle_admin and can_set_schema_owner
-    )
+    switched_to_schema_owner = schema_owner_name != lifecycle_admin and can_set_schema_owner
     if switched_to_schema_owner:
-        cursor.execute(
-            sql.SQL("SET LOCAL ROLE {}").format(sql.Identifier(schema_owner_name))
-        )
+        cursor.execute(sql.SQL("SET LOCAL ROLE {}").format(sql.Identifier(schema_owner_name)))
     cursor.execute(
-        sql.SQL(
-            "GRANT USAGE, CREATE ON SCHEMA public TO {} WITH GRANT OPTION"
-        ).format(sql.Identifier(authority))
+        sql.SQL("GRANT USAGE, CREATE ON SCHEMA public TO {} WITH GRANT OPTION").format(
+            sql.Identifier(authority)
+        )
     )
     if switched_to_schema_owner:
         cursor.execute("RESET ROLE")
@@ -489,8 +514,7 @@ def _grant_bootstrap_authority_schema(
 def _executor_names(connection: Connection[Any]) -> list[str]:
     with connection.cursor() as cursor:
         cursor.execute(
-            "SELECT rolname FROM pg_catalog.pg_roles WHERE rolname LIKE %s "
-            "ORDER BY rolname",
+            "SELECT rolname FROM pg_catalog.pg_roles WHERE rolname LIKE %s ORDER BY rolname",
             (BOOTSTRAP_EXECUTOR_PREFIX + "%",),
         )
         return [str(row[0]) for row in cursor.fetchall()]
@@ -703,13 +727,9 @@ def cleanup_bootstrap_executor(
             )
         with _client_cursor(connection) as client_cursor:
             client_cursor.execute(
-                sql.SQL("ALTER ROLE {} NOLOGIN PASSWORD NULL").format(
-                    sql.Identifier(executor_role)
-                )
+                sql.SQL("ALTER ROLE {} NOLOGIN PASSWORD NULL").format(sql.Identifier(executor_role))
             )
-        cursor.execute(
-            sql.SQL("DROP ROLE {}").format(sql.Identifier(executor_role))
-        )
+        cursor.execute(sql.SQL("DROP ROLE {}").format(sql.Identifier(executor_role)))
     if _executor_names(connection):
         raise ChronosProductionError("CHRONOS_BOOTSTRAP_EXECUTOR_TERMINAL_UNSAFE")
     connection.commit()
@@ -727,9 +747,7 @@ def provision_bootstrap_executor(
 ) -> BootstrapExecutorLease:
     """Create a fresh bounded executor and its single SET-only delegation."""
 
-    if not re.fullmatch(
-        re.escape(BOOTSTRAP_EXECUTOR_PREFIX) + r"[a-z0-9]{8,24}", executor_role
-    ):
+    if not re.fullmatch(re.escape(BOOTSTRAP_EXECUTOR_PREFIX) + r"[a-z0-9]{8,24}", executor_role):
         raise ChronosProductionError("CHRONOS_BOOTSTRAP_EXECUTOR_NAME_INVALID")
     require_identifier(executor_role, field="bootstrap_executor")
     if not password:
@@ -775,26 +793,22 @@ def provision_bootstrap_executor(
                 (password,),
             )
             cursor.execute(
-                sql.SQL("COMMENT ON ROLE {} IS %s").format(
-                    sql.Identifier(executor_role)
-                ),
+                sql.SQL("COMMENT ON ROLE {} IS %s").format(sql.Identifier(executor_role)),
                 (EXECUTOR_MARKER,),
             )
     except Exception:
         connection.rollback()
         raise ChronosProductionError("CHRONOS_BOOTSTRAP_EXECUTOR_CREATE_FAILED") from None
-    _assert_executor_catalog(
-        connection, role=executor_role, require_live_window=True
-    )
+    _assert_executor_catalog(connection, role=executor_role, require_live_window=True)
     connection.commit()
     if checkpoint is not None:
         checkpoint("executor_created")
     _configure_transaction(connection)
     with connection.cursor() as cursor:
         cursor.execute(
-            sql.SQL(
-                "GRANT {} TO {} WITH SET TRUE, INHERIT FALSE, ADMIN FALSE"
-            ).format(sql.Identifier(authority), sql.Identifier(executor_role))
+            sql.SQL("GRANT {} TO {} WITH SET TRUE, INHERIT FALSE, ADMIN FALSE").format(
+                sql.Identifier(authority), sql.Identifier(executor_role)
+            )
         )
     connection.commit()
     if checkpoint is not None:
@@ -852,15 +866,9 @@ def assert_executor_before_set_role(
     executor_role = str(principals[0])
     if not executor_role.startswith(BOOTSTRAP_EXECUTOR_PREFIX):
         raise ChronosProductionError("CHRONOS_EXECUTOR_PRE_SET_IDENTITY_UNSAFE")
-    _assert_executor_catalog(
-        connection, role=executor_role, require_live_window=True
-    )
+    _assert_executor_catalog(connection, role=executor_role, require_live_window=True)
     memberships = _executor_memberships(connection, executor_role=executor_role)
-    temporary = [
-        edge
-        for edge in memberships
-        if edge[0] == authority and edge[1] == executor_role
-    ]
+    temporary = [edge for edge in memberships if edge[0] == authority and edge[1] == executor_role]
     if len(temporary) != 1:
         raise ChronosProductionError("CHRONOS_EXECUTOR_PRE_SET_PRIVILEGE_UNSAFE")
     lifecycle_admin = str(temporary[0][2])
@@ -906,15 +914,11 @@ def assert_executor_before_set_role(
         or not bool(state[3])
     ):
         raise ChronosProductionError("CHRONOS_EXECUTOR_PRE_SET_PRIVILEGE_UNSAFE")
-    _assert_executor_has_no_functional_privileges(
-        connection, executor_role=executor_role
-    )
+    _assert_executor_has_no_functional_privileges(connection, executor_role=executor_role)
     return executor_role, lifecycle_admin
 
 
-def assert_executor_cannot_create_role(
-    connection: Connection[Any], *, probe_role: str
-) -> None:
+def assert_executor_cannot_create_role(connection: Connection[Any], *, probe_role: str) -> None:
     """Execute the decisive negative control without leaving a catalog residue."""
 
     require_identifier(probe_role, field="executor_probe_role")
@@ -922,26 +926,16 @@ def assert_executor_cannot_create_role(
     with connection.cursor() as cursor:
         cursor.execute("SAVEPOINT chronos_executor_pre_set_probe")
         try:
-            cursor.execute(
-                sql.SQL("CREATE ROLE {} NOLOGIN").format(
-                    sql.Identifier(probe_role)
-                )
-            )
+            cursor.execute(sql.SQL("CREATE ROLE {} NOLOGIN").format(sql.Identifier(probe_role)))
         except InsufficientPrivilege as error:
             if error.sqlstate != "42501":
-                raise ChronosProductionError(
-                    "CHRONOS_EXECUTOR_PRE_SET_SQLSTATE_UNSAFE"
-                ) from None
+                raise ChronosProductionError("CHRONOS_EXECUTOR_PRE_SET_SQLSTATE_UNSAFE") from None
             cursor.execute("ROLLBACK TO SAVEPOINT chronos_executor_pre_set_probe")
             cursor.execute("RELEASE SAVEPOINT chronos_executor_pre_set_probe")
         else:
-            cursor.execute(
-                sql.SQL("DROP ROLE {}").format(sql.Identifier(probe_role))
-            )
+            cursor.execute(sql.SQL("DROP ROLE {}").format(sql.Identifier(probe_role)))
             cursor.execute("RELEASE SAVEPOINT chronos_executor_pre_set_probe")
-            raise ChronosProductionError(
-                "CHRONOS_EXECUTOR_PRE_SET_CREATE_ROLE_SUCCEEDED"
-            )
+            raise ChronosProductionError("CHRONOS_EXECUTOR_PRE_SET_CREATE_ROLE_SUCCEEDED")
 
 
 def set_permanent_bootstrap_authority(
@@ -951,9 +945,7 @@ def set_permanent_bootstrap_authority(
         connection, authority=authority
     )
     with connection.cursor() as cursor:
-        cursor.execute(
-            sql.SQL("SET ROLE {}").format(sql.Identifier(authority))
-        )
+        cursor.execute(sql.SQL("SET ROLE {}").format(sql.Identifier(authority)))
     assert_permanent_bootstrap_authority(connection, authority=authority)
     return executor_role, lifecycle_admin
 
@@ -972,9 +964,7 @@ def assert_permanent_bootstrap_authority(
 ) -> str:
     """Pure assertion: the permanent authority has always been NOLOGIN."""
 
-    executor_role, _lifecycle_admin = _bootstrap_context(
-        connection, authority=authority
-    )
+    executor_role, _lifecycle_admin = _bootstrap_context(connection, authority=authority)
     _assert_permanent_authority_catalog(connection, authority=authority)
     with connection.cursor() as cursor:
         cursor.execute(
@@ -1028,9 +1018,7 @@ def _assert_role_state(
         raise ChronosProductionError("CHRONOS_ROLE_STATE_UNSAFE")
 
 
-def _assert_role_has_no_smuggled_state(
-    connection: Connection[Any], role: str
-) -> None:
+def _assert_role_has_no_smuggled_state(connection: Connection[Any], role: str) -> None:
     with connection.cursor() as cursor:
         cursor.execute(
             "SELECT EXISTS ("
@@ -1068,9 +1056,7 @@ def _assert_role_has_no_smuggled_state(
         raise ChronosProductionError("CHRONOS_GROUP_ROLE_SMUGGLED_PRIVILEGE")
 
 
-def _assert_role_has_no_ownership_or_settings(
-    connection: Connection[Any], role: str
-) -> None:
+def _assert_role_has_no_ownership_or_settings(connection: Connection[Any], role: str) -> None:
     with connection.cursor() as cursor:
         cursor.execute(
             "SELECT EXISTS ("
@@ -1155,10 +1141,7 @@ def _direct_acl_rows(
             (role,) * 7,
         )
         rows = cursor.fetchall()
-    return {
-        (str(row[0]), str(row[1]), str(row[2]), str(row[3]), bool(row[4]))
-        for row in rows
-    }
+    return {(str(row[0]), str(row[1]), str(row[2]), str(row[3]), bool(row[4])) for row in rows}
 
 
 def _assert_authority_bootstrap_acl(
@@ -1188,8 +1171,7 @@ def _assert_authority_bootstrap_acl(
         },
     }
     if (
-        {(kind, name, privilege) for kind, name, privilege, _, _ in observed}
-        != expected_shape
+        {(kind, name, privilege) for kind, name, privilege, _, _ in observed} != expected_shape
         or any(not grantable for *_, grantable in observed)
         or any(
             (kind == "schema" and grantor not in schema_grantors)
@@ -1222,8 +1204,7 @@ def _chronos_object_acl_rows(
             "pg_catalog.aclexplode(c.relacl) a LEFT JOIN pg_catalog.pg_roles r "
             "ON r.oid=a.grantee JOIN pg_catalog.pg_roles g ON g.oid=a.grantor "
             "WHERE n.nspname='public' AND ("
-            "c.relname IN ('chronos_effect_authorities','chronos_effect_events',"
-            "'chronos_effect_accounting') AND a.grantee<>c.relowner OR "
+            "c.relname=ANY(%s) AND a.grantee<>c.relowner OR "
             "c.relname='alembic_version' AND (r.rolname=ANY(%s) OR g.rolname=%s)) "
             "UNION ALL SELECT 'function',n.nspname||'.'||p.proname||'('||"
             "pg_catalog.oidvectortypes(p.proargtypes)||')',"
@@ -1263,27 +1244,12 @@ def _chronos_object_acl_rows(
             (
                 groups,
                 migrator_role,
+                list(CHRONOS_RELATIONS),
                 groups,
                 migrator_role,
-                [
-                    "chronos_framed_sha256",
-                    "chronos_effect_event_hash",
-                    "chronos_reject_mutation",
-                    "chronos_issue_effect_authority",
-                    "chronos_claim_effect_authority",
-                    "chronos_append_effect_event",
-                    "chronos_get_effect_state",
-                ],
-                [
-                    "chronos_effect_authorities",
-                    "chronos_effect_events",
-                    "chronos_effect_accounting",
-                ],
-                [
-                    "chronos_effect_authorities",
-                    "chronos_effect_events",
-                    "chronos_effect_accounting",
-                ],
+                list(CHRONOS_FUNCTION_SIGNATURES),
+                list(CHRONOS_RELATIONS),
+                list(CHRONOS_RELATIONS),
                 groups,
                 migrator_role,
             ),
@@ -1329,18 +1295,23 @@ def _assert_migrator_acl(
         },
     }
     observed = _direct_acl_rows(connection, role)
-    if (dormant and observed != base) or (
-        not dormant and complete and observed != base | active
-    ) or (
-        not dormant and not complete and not observed <= base | active
+    if (
+        (dormant and observed != base)
+        or (not dormant and complete and observed != base | active)
+        or (not dormant and not complete and not observed <= base | active)
     ):
         raise ChronosProductionError("CHRONOS_MIGRATOR_ACL_UNSAFE")
 
 
-def _assert_migrator_ownership(
-    connection: Connection[Any], *, role: str, revision: str
-) -> None:
+def _assert_migrator_ownership(connection: Connection[Any], *, role: str, revision: str) -> None:
     with connection.cursor() as cursor:
+        allowed_relations = (
+            CHRONOS_RELATIONS
+            if revision == "0015_data_torrent_opportunity"
+            else CHRONOS_BASE_RELATIONS
+            if revision == "0014_chronos_control_plane_v2"
+            else ()
+        )
         cursor.execute(
             "SELECT EXISTS ("
             "SELECT 1 FROM pg_catalog.pg_db_role_setting s JOIN pg_catalog.pg_roles r "
@@ -1370,11 +1341,7 @@ def _assert_migrator_ownership(
             "(c.oid IN (SELECT oid FROM allowed) AND c.relowner<>"
             "(SELECT oid FROM pg_catalog.pg_roles WHERE rolname=%s))",
             (
-                [
-                    "chronos_effect_authorities",
-                    "chronos_effect_events",
-                    "chronos_effect_accounting",
-                ],
+                list(allowed_relations),
                 role,
                 role,
             ),
@@ -1388,9 +1355,7 @@ def _assert_migrator_ownership(
             "ON r.oid=p.proowner WHERE r.rolname=%s ORDER BY 1,2,3",
             (role,),
         )
-        owned_functions = {
-            (str(row[0]), str(row[1]), str(row[2])) for row in cursor.fetchall()
-        }
+        owned_functions = {(str(row[0]), str(row[1]), str(row[2])) for row in cursor.fetchall()}
         cursor.execute(
             "WITH base AS (SELECT c.oid FROM pg_catalog.pg_class c "
             "JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace "
@@ -1408,28 +1373,28 @@ def _assert_migrator_ownership(
             "(t.oid IN (SELECT oid FROM allowed_types) AND t.typowner<>"
             "(SELECT oid FROM pg_catalog.pg_roles WHERE rolname=%s))",
             (
-                [
-                    "chronos_effect_authorities",
-                    "chronos_effect_events",
-                    "chronos_effect_accounting",
-                ],
+                list(allowed_relations),
                 role,
                 role,
             ),
         )
         unexpected_types = cursor.fetchall()
+    expected_signatures = (
+        CHRONOS_FUNCTION_SIGNATURES
+        if revision == "0015_data_torrent_opportunity"
+        else CHRONOS_BASE_FUNCTION_SIGNATURES
+        if revision == "0014_chronos_control_plane_v2"
+        else {}
+    )
     expected_functions = {
-        ("public", name, signature)
-        for name, signature in CHRONOS_FUNCTION_SIGNATURES.items()
+        ("public", name, signature) for name, signature in expected_signatures.items()
     }
-    allow_objects = revision == "0014_chronos_control_plane_v2"
     if (
         base_unsafe is None
         or bool(base_unsafe[0])
         or unexpected_classes
         or unexpected_types
-        or (allow_objects and owned_functions != expected_functions)
-        or (not allow_objects and owned_functions)
+        or owned_functions != expected_functions
     ):
         raise ChronosProductionError("CHRONOS_MIGRATOR_OWNERSHIP_UNSAFE")
 
@@ -1440,7 +1405,7 @@ def assert_post_migration_role_state(
     migrator_role: str,
     bootstrap_owner: str | None = None,
 ) -> None:
-    """Require the exact 0014 role attributes, ownership and object ACLs."""
+    """Require the exact 0015 role attributes, ownership and object ACLs."""
 
     migrator_state = _role_state(connection, migrator_role)
     if migrator_state is None:
@@ -1461,22 +1426,16 @@ def assert_post_migration_role_state(
                 (migrator_role,),
             )
             window = cursor.fetchone()
-        if (
-            window is None or not bool(window[0]) or not bool(window[1])
-        ):
+        if window is None or not bool(window[0]) or not bool(window[1]):
             raise ChronosProductionError("CHRONOS_MIGRATOR_WINDOW_UNSAFE")
     for role in GROUP_ROLES:
-        _assert_role_state(
-            connection, role, can_login=False, inherit=True, marker=ROLE_MARKER
-        )
+        _assert_role_state(connection, role, can_login=False, inherit=True, marker=ROLE_MARKER)
         _assert_role_has_no_ownership_or_settings(connection, role)
     observed_acl: set[tuple[str, str, str, str, bool]] = set()
     for role in GROUP_ROLES:
         observed_acl.update(_direct_acl_rows(connection, role))
     # Include the grantee in the comparison by checking each role independently.
-    per_role = {
-        role: _direct_acl_rows(connection, role) for role in GROUP_ROLES
-    }
+    per_role = {role: _direct_acl_rows(connection, role) for role in GROUP_ROLES}
     exact = {
         "chronos_authority_executor": {
             ("schema", "public", "USAGE", migrator_role, False),
@@ -1504,6 +1463,10 @@ def assert_post_migration_role_state(
                     "chronos_claim_effect_authority",
                     "chronos_append_effect_event",
                     "chronos_get_effect_state",
+                    "chronos_claim_opportunity",
+                    "chronos_reserve_torrent_external_effect",
+                    "chronos_append_torrent_external_effect",
+                    "chronos_record_torrent_batch",
                 )
             },
         },
@@ -1532,6 +1495,20 @@ def assert_post_migration_role_state(
                 migrator_role,
                 False,
             ),
+            *{
+                (
+                    "relation",
+                    f"public.{name}",
+                    "SELECT",
+                    migrator_role,
+                    False,
+                )
+                for name in (
+                    "chronos_opportunity_claim_audit",
+                    "chronos_torrent_batch_audit",
+                    "chronos_torrent_external_effect_audit",
+                )
+            },
         },
         "chronos_test_writer": set(),
     }
@@ -1549,9 +1526,7 @@ def assert_post_migration_role_state(
         for grantee, grants in exact.items()
         for object_kind, object_name, privilege, _grantor, _grantable in grants
     }
-    if _chronos_object_acl_rows(
-        connection, migrator_role=migrator_role
-    ) != expected_global:
+    if _chronos_object_acl_rows(connection, migrator_role=migrator_role) != expected_global:
         raise ChronosProductionError("CHRONOS_GLOBAL_OBJECT_ACL_UNSAFE")
     _assert_migrator_acl(
         connection,
@@ -1562,7 +1537,7 @@ def assert_post_migration_role_state(
     _assert_migrator_ownership(
         connection,
         role=migrator_role,
-        revision="0014_chronos_control_plane_v2",
+        revision="0015_data_torrent_opportunity",
     )
 
 
@@ -1576,10 +1551,14 @@ def _role_inventory(
     migrator_role: str | None,
     active_runtime: set[str],
 ) -> tuple[dict[str, Any], ...]:
-    expected = set(GROUP_ROLES) | active_runtime | {
-        bootstrap_owner,
-        lifecycle_admin,
-    }
+    expected = (
+        set(GROUP_ROLES)
+        | active_runtime
+        | {
+            bootstrap_owner,
+            lifecycle_admin,
+        }
+    )
     if executor_role is not None:
         expected.add(executor_role)
     if migrator_role is not None:
@@ -1622,9 +1601,8 @@ def _role_inventory(
             if is_migrator
             else ROLE_MARKER
         )
-        unsafe_managed = (
-            not is_lifecycle_admin
-            and any(bool(value) for value in (row[4], row[5], row[7], row[8]))
+        unsafe_managed = not is_lifecycle_admin and any(
+            bool(value) for value in (row[4], row[5], row[7], row[8])
         )
         if (
             unsafe_managed
@@ -1637,13 +1615,7 @@ def _role_inventory(
             or (is_owner and bool(row[3]))
             or (is_owner and bool(row[2]))
             or (is_executor and (not bool(row[2]) or bool(row[3]) or int(row[9]) != 1))
-            or (
-                is_lifecycle_admin
-                and (
-                    not bool(row[2])
-                    or not (bool(row[4]) or bool(row[6]))
-                )
-            )
+            or (is_lifecycle_admin and (not bool(row[2]) or not (bool(row[4]) or bool(row[6]))))
         ):
             raise ChronosProductionError("CHRONOS_ROLE_INVENTORY_UNSAFE")
         inventory.append(
@@ -1721,8 +1693,7 @@ def _is_expected_neon_platform_edge(
         and row["inherit_option"] is lifecycle_admin_inherit
         and row["set_option"]
         and row["runtime_set"]
-        and row["runtime_usage"]
-        is (lifecycle_admin_superuser or lifecycle_admin_inherit)
+        and row["runtime_usage"] is (lifecycle_admin_superuser or lifecycle_admin_inherit)
         and row["member_inherit"] is lifecycle_admin_inherit
     )
 
@@ -1773,13 +1744,10 @@ def audit_role_edges(
         lifecycle_admin=lifecycle_admin,
     )
     if executor_role is not None:
-        _assert_executor_catalog(
-            connection, role=executor_role, require_live_window=True
-        )
+        _assert_executor_catalog(connection, role=executor_role, require_live_window=True)
     with connection.cursor() as cursor:
         cursor.execute(
-            "SELECT rolsuper,rolinherit,rolcanlogin FROM pg_catalog.pg_roles "
-            "WHERE rolname=%s",
+            "SELECT rolsuper,rolinherit,rolcanlogin FROM pg_catalog.pg_roles WHERE rolname=%s",
             (lifecycle_admin,),
         )
         lifecycle_state = cursor.fetchone()
@@ -1810,14 +1778,12 @@ def audit_role_edges(
         row["grantor_role"]
         for row in rows
         if (
-            (
-                row["member_role"] == bootstrap_owner
-                and row["granted_role"] in expected_admin_roles
-            )
+            (row["member_role"] == bootstrap_owner and row["granted_role"] in expected_admin_roles)
             or (
                 not lifecycle_admin_superuser
                 and row["member_role"] == lifecycle_admin
-                and row["granted_role"] in {
+                and row["granted_role"]
+                in {
                     bootstrap_owner,
                     *({executor_role} if executor_role is not None else set()),
                 }
@@ -1843,8 +1809,7 @@ def audit_role_edges(
         reason = "edge is outside the exact lifecycle allowlist"
         is_functional = (
             phase in {"final", "terminal", "runtime_partial"}
-            and RUNTIME_ROLE_GROUPS.get(row["member_role"])
-            == row["granted_role"]
+            and RUNTIME_ROLE_GROUPS.get(row["member_role"]) == row["granted_role"]
             and row["grantor_role"] == bootstrap_owner
             and not row["grantor_superuser"]
             and not row["admin_option"]
@@ -1934,10 +1899,7 @@ def audit_role_edges(
             runtime_effective_bootstrap += 1
         if migrator_role is not None and (
             (row["granted_role"] == migrator_role and row["member_role"] in active_runtime)
-            or (
-                row["member_role"] == migrator_role
-                and row["granted_role"] in active_runtime
-            )
+            or (row["member_role"] == migrator_role and row["granted_role"] in active_runtime)
         ):
             migrator_runtime += 1
         classified.append(
@@ -1952,10 +1914,7 @@ def audit_role_edges(
                     row["admin_option"]
                     and (
                         row["member_authenticatable"]
-                        or (
-                            executor_role is not None
-                            and row["member_role"] == bootstrap_owner
-                        )
+                        or (executor_role is not None and row["member_role"] == bootstrap_owner)
                     )
                 ),
                 "reason": reason,
@@ -1963,8 +1922,7 @@ def audit_role_edges(
         )
 
     actual_neon_platform = sum(
-        edge["classification"] == "EXPECTED_NEON_PLATFORM_EDGE"
-        for edge in classified
+        edge["classification"] == "EXPECTED_NEON_PLATFORM_EDGE" for edge in classified
     )
     expected_neon_platform = 1 if actual_neon_platform == 1 else 0
     expected_count = (
@@ -1972,27 +1930,20 @@ def audit_role_edges(
         + len(active_migrator)
         + 2 * len(active_runtime)
         + (0 if lifecycle_admin_superuser else 1)
-        + (
-            0
-            if executor_role is None
-            else 1 + (0 if lifecycle_admin_superuser else 1)
-        )
+        + (0 if executor_role is None else 1 + (0 if lifecycle_admin_superuser else 1))
         + expected_neon_platform
     )
     expected_functional = len(active_runtime)
     actual_functional = sum(
-        edge["classification"] == "EXPECTED_RUNTIME_GROUP_EDGE"
-        for edge in classified
+        edge["classification"] == "EXPECTED_RUNTIME_GROUP_EDGE" for edge in classified
     )
     expected_external = 0 if lifecycle_admin_superuser else 1
     actual_external = sum(
-        edge["classification"] == "EXPECTED_LIFECYCLE_ADMIN_AUTHORITY_EDGE"
-        for edge in classified
+        edge["classification"] == "EXPECTED_LIFECYCLE_ADMIN_AUTHORITY_EDGE" for edge in classified
     )
     expected_executor = 0 if executor_role is None else 1
     actual_executor = sum(
-        edge["classification"] == "EXPECTED_EXECUTOR_SET_EDGE"
-        for edge in classified
+        edge["classification"] == "EXPECTED_EXECUTOR_SET_EDGE" for edge in classified
     )
     with connection.cursor() as cursor:
         cursor.execute(
@@ -2041,9 +1992,7 @@ def audit_role_edges(
     runtime_to_authority = 0 if path_counts is None else int(path_counts[0])
     runtime_to_lifecycle = 0 if path_counts is None else int(path_counts[1])
     executor_role_count = 0 if executor_roles is None else int(executor_roles[0])
-    executor_membership_count = (
-        0 if executor_memberships is None else int(executor_memberships[0])
-    )
+    executor_membership_count = 0 if executor_memberships is None else int(executor_memberships[0])
     neon_platform_descendant_count = (
         0 if platform_descendants is None else int(platform_descendants[0])
     )
@@ -2111,9 +2060,7 @@ def provision_chronos_group_roles(
                 )
                 with _client_cursor(connection) as client_cursor:
                     client_cursor.execute(
-                        sql.SQL("COMMENT ON ROLE {} IS %s").format(
-                            sql.Identifier(role)
-                        ),
+                        sql.SQL("COMMENT ON ROLE {} IS %s").format(sql.Identifier(role)),
                         (ROLE_MARKER,),
                     )
             _assert_role_state(
@@ -2194,9 +2141,7 @@ def provision_migrator(
                         (password,),
                     )
                     client_cursor.execute(
-                        sql.SQL("COMMENT ON ROLE {} IS %s").format(
-                            sql.Identifier(role)
-                        ),
+                        sql.SQL("COMMENT ON ROLE {} IS %s").format(sql.Identifier(role)),
                         (MIGRATOR_MARKER,),
                     )
             except Exception:
@@ -2217,15 +2162,11 @@ def provision_migrator(
             if revision_row is None:
                 raise ChronosProductionError("CHRONOS_MIGRATOR_REVISION_MISSING")
             _assert_migrator_acl(connection, role=role, complete=False)
-            _assert_migrator_ownership(
-                connection, role=role, revision=str(revision_row[0])
-            )
+            _assert_migrator_ownership(connection, role=role, revision=str(revision_row[0]))
             try:
                 with _client_cursor(connection) as client_cursor:
                     client_cursor.execute(
-                        sql.SQL(
-                            "ALTER ROLE {} LOGIN PASSWORD %s VALID UNTIL {}"
-                        ).format(
+                        sql.SQL("ALTER ROLE {} LOGIN PASSWORD %s VALID UNTIL {}").format(
                             sql.Identifier(role),
                             sql.Literal(valid_until.isoformat()),
                         ),
@@ -2233,29 +2174,22 @@ def provision_migrator(
                     )
             except Exception:
                 connection.rollback()
-                raise ChronosProductionError(
-                    "CHRONOS_MIGRATOR_REACTIVATION_FAILED"
-                ) from None
+                raise ChronosProductionError("CHRONOS_MIGRATOR_REACTIVATION_FAILED") from None
         cursor.execute(
             sql.SQL("GRANT USAGE ON SCHEMA public TO {} WITH GRANT OPTION").format(
                 sql.Identifier(role)
             )
         )
+        cursor.execute(sql.SQL("GRANT CREATE ON SCHEMA public TO {}").format(sql.Identifier(role)))
         cursor.execute(
-            sql.SQL("GRANT CREATE ON SCHEMA public TO {}").format(
+            sql.SQL("GRANT SELECT ON TABLE public.alembic_version TO {} WITH GRANT OPTION").format(
                 sql.Identifier(role)
             )
         )
         cursor.execute(
-            sql.SQL(
-                "GRANT SELECT ON TABLE public.alembic_version TO {} "
-                "WITH GRANT OPTION"
-            ).format(sql.Identifier(role))
-        )
-        cursor.execute(
-            sql.SQL(
-                "GRANT INSERT, UPDATE, DELETE ON TABLE public.alembic_version TO {}"
-            ).format(sql.Identifier(role))
+            sql.SQL("GRANT INSERT, UPDATE, DELETE ON TABLE public.alembic_version TO {}").format(
+                sql.Identifier(role)
+            )
         )
         cursor.execute(
             "SELECT rolcreaterole FROM pg_catalog.pg_roles WHERE rolname=%s",
@@ -2277,9 +2211,7 @@ def provision_migrator(
     return audit
 
 
-def _assert_no_role_sessions(
-    connection: Connection[Any], *, role: str, error_code: str
-) -> None:
+def _assert_no_role_sessions(connection: Connection[Any], *, role: str, error_code: str) -> None:
     with connection.cursor() as cursor:
         cursor.execute("SELECT pg_catalog.pg_stat_clear_snapshot()")
         cursor.execute(
@@ -2319,37 +2251,25 @@ def disable_migrator(connection: Connection[Any], *, role: str) -> None:
             (role,),
         )
         window = cursor.fetchone()
-        if (
-            bool(state[1])
-            and (
-                window is None or not bool(window[0]) or not bool(window[1])
-            )
-        ):
+        if bool(state[1]) and (window is None or not bool(window[0]) or not bool(window[1])):
             raise ChronosProductionError("CHRONOS_MIGRATOR_WINDOW_UNSAFE")
         cursor.execute("SELECT version_num FROM public.alembic_version")
         revision = cursor.fetchone()
         if revision is None:
             raise ChronosProductionError("CHRONOS_MIGRATOR_REVISION_MISSING")
         _assert_migrator_acl(connection, role=role, complete=False)
-        _assert_migrator_ownership(
-            connection, role=role, revision=str(revision[0])
+        _assert_migrator_ownership(connection, role=role, revision=str(revision[0]))
+        cursor.execute(
+            sql.SQL("REVOKE CREATE ON SCHEMA public FROM {}").format(sql.Identifier(role))
         )
         cursor.execute(
-            sql.SQL("REVOKE CREATE ON SCHEMA public FROM {}").format(
+            sql.SQL("REVOKE INSERT, UPDATE, DELETE ON TABLE public.alembic_version FROM {}").format(
                 sql.Identifier(role)
             )
         )
-        cursor.execute(
-            sql.SQL(
-                "REVOKE INSERT, UPDATE, DELETE ON TABLE "
-                "public.alembic_version FROM {}"
-            ).format(sql.Identifier(role))
-        )
         with _client_cursor(connection) as client_cursor:
             client_cursor.execute(
-                sql.SQL(
-                    "ALTER ROLE {} NOLOGIN PASSWORD NULL"
-                ).format(sql.Identifier(role))
+                sql.SQL("ALTER ROLE {} NOLOGIN PASSWORD NULL").format(sql.Identifier(role))
             )
     connection.commit()
     assert_migrator_disabled(connection, role=role, bootstrap_owner=bootstrap_owner)
@@ -2391,9 +2311,7 @@ def assert_migrator_disabled(
         dormant=True,
         grantor=bootstrap_owner,
     )
-    _assert_migrator_ownership(
-        connection, role=role, revision=str(revision[0])
-    )
+    _assert_migrator_ownership(connection, role=role, revision=str(revision[0]))
 
 
 def provision_runtime_logins(
@@ -2432,9 +2350,7 @@ def provision_runtime_logins(
                         (password,),
                     )
                     client_cursor.execute(
-                        sql.SQL("COMMENT ON ROLE {} IS %s").format(
-                            sql.Identifier(login)
-                        ),
+                        sql.SQL("COMMENT ON ROLE {} IS %s").format(sql.Identifier(login)),
                         (ROLE_MARKER,),
                     )
             else:
@@ -2458,21 +2374,17 @@ def provision_runtime_logins(
                 )
                 edge = cursor.fetchone()
                 if edge is None or int(edge[0]) != 1:
-                    raise ChronosProductionError(
-                        "CHRONOS_RUNTIME_PROVIDER_IDENTITY_FORBIDDEN"
-                    )
+                    raise ChronosProductionError("CHRONOS_RUNTIME_PROVIDER_IDENTITY_FORBIDDEN")
                 with _client_cursor(connection) as client_cursor:
                     client_cursor.execute(
-                        sql.SQL("ALTER ROLE {} PASSWORD %s").format(
-                            sql.Identifier(login)
-                        ),
+                        sql.SQL("ALTER ROLE {} PASSWORD %s").format(sql.Identifier(login)),
                         (password,),
                     )
             _assert_role_has_no_smuggled_state(connection, login)
             cursor.execute(
-                sql.SQL(
-                    "GRANT {} TO {} WITH ADMIN FALSE, INHERIT TRUE, SET FALSE"
-                ).format(sql.Identifier(group), sql.Identifier(login))
+                sql.SQL("GRANT {} TO {} WITH ADMIN FALSE, INHERIT TRUE, SET FALSE").format(
+                    sql.Identifier(group), sql.Identifier(login)
+                )
             )
     active_runtime = {
         role for role in RUNTIME_ROLE_GROUPS if _role_state(connection, role) is not None
@@ -2546,9 +2458,7 @@ def audit_terminal_lifecycle(
         or int(executor_roles[0]) != 0
     ):
         raise ChronosProductionError("CHRONOS_LIFECYCLE_TERMINAL_STATE_UNSAFE")
-    assert_migrator_disabled(
-        connection, role=migrator_role, bootstrap_owner=bootstrap_owner
-    )
+    assert_migrator_disabled(connection, role=migrator_role, bootstrap_owner=bootstrap_owner)
     assert_post_migration_role_state(
         connection,
         migrator_role=migrator_role,

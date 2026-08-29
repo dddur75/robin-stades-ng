@@ -9,13 +9,17 @@ from datetime import UTC, datetime, timedelta
 import pytest
 from pypdf import PdfWriter
 
+import robin.capture.official_schedule_sources as official_sources_module
 from robin.capture.official_schedule_sources import (
     DFB_DATACENTER_HTML_V1,
     LALIGA_PUBLIC_MATCHES_JSON_V1,
     LEGA_SERIE_A_CALENDAR_PDF_V1,
-    LIGUE1_PROGRAMMATION_HTML_V1,
+    LIGUE1_CALENDAR_JSON_V1,
+    LIGUE1_CALENDAR_URL,
+    LIGUE1_GAMEWEEK_URL_TEMPLATE,
     MAXIMUM_SOURCE_BYTES,
     PREMIER_LEAGUE_FULL_SEASON_HTML_V1,
+    BuiltinHttpsOfficialScheduleFetcher,
     OfficialFetchResult,
     OfficialHttpResponse,
     OfficialScheduleSourceError,
@@ -38,21 +42,21 @@ URLS = {
     ),
     "soccer_germany_bundesliga": "https://datencenter.dfb.de/competitions/12/seasons/current",
     "soccer_italy_serie_a": "https://images.legaseriea.it/calendar.pdf",
-    "soccer_france_ligue_one": "https://ligue1.com/fr/articles/j2",
+    "soccer_france_ligue_one": LIGUE1_CALENDAR_URL,
 }
 ADAPTERS = {
     "soccer_epl": PREMIER_LEAGUE_FULL_SEASON_HTML_V1,
     "soccer_spain_la_liga": LALIGA_PUBLIC_MATCHES_JSON_V1,
     "soccer_germany_bundesliga": DFB_DATACENTER_HTML_V1,
     "soccer_italy_serie_a": LEGA_SERIE_A_CALENDAR_PDF_V1,
-    "soccer_france_ligue_one": LIGUE1_PROGRAMMATION_HTML_V1,
+    "soccer_france_ligue_one": LIGUE1_CALENDAR_JSON_V1,
 }
 CONTENT_TYPES = {
     "soccer_epl": "text/html; charset=utf-8",
     "soccer_spain_la_liga": "application/json",
     "soccer_germany_bundesliga": "text/html",
     "soccer_italy_serie_a": "application/pdf",
-    "soccer_france_ligue_one": "text/html",
+    "soccer_france_ligue_one": "application/json",
 }
 
 
@@ -79,14 +83,20 @@ def source(sport_key: str) -> OfficialSourceSpec:
     )
 
 
-def accepted_result(sport_key: str, payload: bytes) -> OfficialFetchResult:
+def accepted_result(
+    sport_key: str,
+    payload: bytes,
+    *,
+    supporting_payloads: tuple[bytes, ...] = (),
+    supporting_gameweeks: tuple[int, ...] | None = None,
+) -> OfficialFetchResult:
     selected = source(sport_key)
     supporting_raw = (
         b'<script id="__NEXT_DATA__">'
         b'{"runtimeConfig":{"backendSubscription":"public-test-subscription"}}'
         b"</script>"
     )
-    supporting = (
+    supporting: tuple[SupportingOfficialRead, ...] = (
         (
             SupportingOfficialRead(
                 requested_url="https://www.laliga.com/en-GB/laliga-easports/results",
@@ -102,6 +112,29 @@ def accepted_result(sport_key: str, payload: bytes) -> OfficialFetchResult:
         if sport_key == "soccer_spain_la_liga"
         else ()
     )
+    if sport_key == "soccer_france_ligue_one":
+        selected_gameweeks = (
+            tuple(json.loads(raw)["matches"][0]["gameWeekNumber"] for raw in supporting_payloads)
+            if supporting_gameweeks is None
+            else supporting_gameweeks
+        )
+        supporting = tuple(
+            SupportingOfficialRead(
+                requested_url=LIGUE1_GAMEWEEK_URL_TEMPLATE.format(gameweek=gameweek),
+                final_url=LIGUE1_GAMEWEEK_URL_TEMPLATE.format(gameweek=gameweek),
+                official_domain="ma-api.ligue1.fr",
+                status_code=200,
+                content_type="application/json",
+                byte_count=len(raw),
+                raw_sha256=hashlib.sha256(raw).hexdigest(),
+                redirect_chain=(),
+            )
+            for raw, gameweek in zip(
+                supporting_payloads,
+                selected_gameweeks,
+                strict=True,
+            )
+        )
     fetcher = FakeFetcher(
         OfficialHttpResponse(
             status_code=200,
@@ -109,7 +142,11 @@ def accepted_result(sport_key: str, payload: bytes) -> OfficialFetchResult:
             content_type=CONTENT_TYPES[sport_key],
             body=payload,
             supporting_official_reads=supporting,
-            supporting_official_raw_bytes=(supporting_raw,) if supporting else (),
+            supporting_official_raw_bytes=(
+                supporting_payloads
+                if sport_key == "soccer_france_ligue_one"
+                else ((supporting_raw,) if supporting else ())
+            ),
         )
     )
     return fetch_official_schedule_source(selected, fetcher=fetcher, observed_at_utc=NOW)
@@ -276,34 +313,77 @@ def serie_a_text(
     return "\n".join(lines)
 
 
-def ligue1_payload(*, identical: bool = False, extra: bool = False) -> bytes:
-    games = [
-        ("Vendredi 28 août à 20h45 sur Ligue 1+", [("LOSC", "Paris SG")]),
-        ("Samedi 29 août à 17h15 sur Ligue 1+", [("Strasbourg", "Lens")]),
-        (
-            "Samedi 29 août à 20h45 sur Ligue 1+",
-            [
-                ("Lyon", "Le Havre"),
-                ("Lorient", "Troyes"),
-                ("Brest", "Toulouse"),
-                ("Auxerre", "Angers"),
-            ],
-        ),
-        ("Dimanche 30 août à 15h00 sur Ligue 1+", [("Paris FC", "Nice")]),
-        ("Dimanche 30 août à 17h15 sur Ligue 1+", [("Rennes", "Le Mans")]),
-        ("Dimanche 30 août 2026 à 20h45 sur Ligue 1+", [("Monaco", "Marseille")]),
-    ]
-    if identical:
-        games[0] = (games[0][0], [("LOSC", "LOSC")])
-    if extra:
-        games[-1][1].append(("Extra FC", "Drift FC"))
-    paragraphs = "".join(
-        f"<p>{heading}<br>{'<br>'.join(f'{home} – {away}' for home, away in fixtures)}</p>"
-        for heading, fixtures in games
-    )
+def ligue1_bundle(
+    *,
+    identical: bool = False,
+    extra: bool = False,
+    missing_id: bool = False,
+    wrong_gameweek: bool = False,
+    naive_date: bool = False,
+    conflicting_club_name: bool = False,
+) -> tuple[bytes, tuple[bytes, ...]]:
+    season_start = datetime(2026, 8, 21, 18, 45, tzinfo=UTC)
+    calendar_rows: list[dict[str, object]] = []
+    gameweek_payloads: list[bytes] = []
+    for gameweek in range(1, 35):
+        first_kickoff = season_start + timedelta(days=7 * (gameweek - 1))
+        match_ids = [gameweek * 100 + index for index in range(9)]
+        calendar_rows.append(
+            {
+                "gameWeekNumber": gameweek,
+                "matchesIds": match_ids,
+                "startDate": (first_kickoff - timedelta(hours=2)).isoformat(),
+                "endDate": (first_kickoff + timedelta(days=2, hours=5)).isoformat(),
+                "displayEndDate": (first_kickoff + timedelta(days=2, hours=5)).isoformat(),
+                "lastRegularMatchDate": (first_kickoff + timedelta(days=2, hours=5)).isoformat(),
+            }
+        )
+        if gameweek not in {2, 3, 4}:
+            continue
+        matches: list[dict[str, object]] = []
+        for index, match_id in enumerate(match_ids):
+            home_id = index + 1
+            away_id = index + 10
+            if identical and gameweek == 2 and index == 0:
+                away_id = home_id
+            kickoff = first_kickoff + timedelta(hours=6 * index)
+            home_name = f"Ligue Club {home_id:02d}"
+            if conflicting_club_name and gameweek == 3 and index == 0:
+                home_name = "Conflicting Ligue Club"
+            matches.append(
+                {
+                    "unknownMatch": False,
+                    "matchId": match_id,
+                    "championshipId": 1,
+                    "gameWeekNumber": (
+                        gameweek + 1
+                        if wrong_gameweek and gameweek == 2 and index == 0
+                        else gameweek
+                    ),
+                    "date": (
+                        kickoff.replace(tzinfo=None).isoformat()
+                        if naive_date and gameweek == 2 and index == 0
+                        else kickoff.isoformat()
+                    ),
+                    "home": {
+                        "clubId": home_id,
+                        "clubIdentity": {"id": home_id, "name": home_name},
+                    },
+                    "away": {
+                        "clubId": away_id,
+                        "clubIdentity": {"id": away_id, "name": f"Ligue Club {away_id:02d}"},
+                    },
+                }
+            )
+        if missing_id and gameweek == 2:
+            matches[0]["matchId"] = 999999
+        if extra and gameweek == 2:
+            matches.append(dict(matches[-1]))
+        gameweek_payloads.append(json.dumps({"matches": matches}, sort_keys=True).encode())
     return (
-        f"<html><title>2e journée 2026/27 Ligue 1 McDonald's</title>{paragraphs}</html>"
-    ).encode()
+        json.dumps({"gameWeeks": calendar_rows}, sort_keys=True).encode(),
+        tuple(gameweek_payloads),
+    )
 
 
 def test_source_plan_accepts_exact_five_league_adapters_and_offset_300() -> None:
@@ -311,6 +391,7 @@ def test_source_plan_accepts_exact_five_league_adapters_and_offset_300() -> None
     assert len(plan.sources) == 5
     assert len(plan.canonical_sha256) == 64
     assert plan.source("soccer_spain_la_liga").url.endswith("offset=300")
+    assert plan.source("soccer_france_ligue_one").url == LIGUE1_CALENDAR_URL
     with pytest.raises(OfficialScheduleSourceError, match="OFFICIAL_SOURCE_PLAN_INVALID"):
         load_official_source_plan_bytes(plan_payload().replace(b"2026-2027", b"2025-2026"))
     with pytest.raises(OfficialScheduleSourceError, match="OFFICIAL_SOURCE_PLAN_INVALID"):
@@ -325,6 +406,13 @@ def test_source_plan_accepts_exact_five_league_adapters_and_offset_300() -> None
             load_official_source_plan_bytes(
                 plan_payload().replace(URLS["soccer_epl"].encode(), unsafe_url)
             )
+    with pytest.raises(OfficialScheduleSourceError, match="LIGUE1_CALENDAR_AUTHORITY_INVALID"):
+        load_official_source_plan_bytes(
+            plan_payload().replace(
+                LIGUE1_CALENDAR_URL.encode(),
+                b"https://ma-api.ligue1.fr/championship-calendar/1?season=2025",
+            )
+        )
 
 
 def test_source_plan_rejects_laliga_wrong_page_and_provider_hostname_before_connection() -> None:
@@ -555,28 +643,389 @@ def test_serie_a_default_pdf_extractor_is_available_in_project_runtime() -> None
     assert default_pdf_text_extractor(stream.getvalue()) == ""
 
 
-def test_ligue1_forward_horizon_excludes_past_fixture_without_requiring_past_day() -> None:
+def test_ligue1_calendar_bundle_is_complete_and_each_fixture_has_gameweek_provenance() -> None:
     selected = source("soccer_france_ligue_one")
-    result = accepted_result("soccer_france_ligue_one", ligue1_payload())
+    calendar, gameweeks = ligue1_bundle()
+    result = accepted_result(
+        "soccer_france_ligue_one",
+        calendar,
+        supporting_payloads=gameweeks[:2],
+    )
     evidence = build_official_schedule_evidence(
         selected,
         result,
         horizon_not_before_utc=datetime(2026, 8, 29, tzinfo=UTC),
         horizon_expires_at_utc=HORIZON_END,
     )
-    assert len(evidence.fixtures) == 8
+    assert len(evidence.fixtures) == 17
     assert all(item.kickoff_utc >= datetime(2026, 8, 29, tzinfo=UTC) for item in evidence.fixtures)
-    with pytest.raises(OfficialScheduleSourceError):
+    assert evidence.parser_metadata["gameweeks_fetched"] == [2, 3]
+    assert evidence.parser_metadata["calendar_ids_expected"] == 18
+    assert evidence.parser_metadata["calendar_ids_accounted"] == 18
+    assert evidence.parser_metadata["calendar_gameweeks_total"] == 34
+    assert evidence.parser_metadata["calendar_match_ids_total"] == 306
+    assert evidence.parser_metadata["calendar_club_identities_total"] == 18
+    assert len(str(evidence.parser_metadata["calendar_club_identities_sha256"])) == 64
+    assert evidence.parser_metadata["complete_official_horizon"] is True
+    assert all(item.source_pointer is not None for item in evidence.fixtures)
+    assert {item.source_authority for item in evidence.fixtures} == {
+        LIGUE1_GAMEWEEK_URL_TEMPLATE.format(gameweek=2),
+        LIGUE1_GAMEWEEK_URL_TEMPLATE.format(gameweek=3),
+    }
+
+    invalid_bundles = (
+        (ligue1_bundle(identical=True), "LIGUE1_GAMEWEEK_AUTHORITY_INVALID"),
+        (ligue1_bundle(extra=True), "LIGUE1_GAMEWEEK_AUTHORITY_INVALID"),
+        (ligue1_bundle(missing_id=True), "LIGUE1_GAMEWEEK_AUTHORITY_INVALID"),
+        (ligue1_bundle(wrong_gameweek=True), "LIGUE1_GAMEWEEK_AUTHORITY_INVALID"),
+        (ligue1_bundle(naive_date=True), "LIGUE1_GAMEWEEK_AUTHORITY_INVALID"),
+        (
+            ligue1_bundle(conflicting_club_name=True),
+            "LIGUE1_CLUB_IDENTITY_INCONSISTENT",
+        ),
+    )
+    for (invalid_calendar, invalid_gameweeks), code in invalid_bundles:
+        with pytest.raises(OfficialScheduleSourceError, match=code):
+            build_official_schedule_evidence(
+                selected,
+                accepted_result(
+                    "soccer_france_ligue_one",
+                    invalid_calendar,
+                    supporting_payloads=invalid_gameweeks[:2],
+                    supporting_gameweeks=(2, 3),
+                ),
+                horizon_not_before_utc=datetime(2026, 8, 29, tzinfo=UTC),
+                horizon_expires_at_utc=HORIZON_END,
+            )
+
+    with pytest.raises(OfficialScheduleSourceError, match="LIGUE1_GAMEWEEK_BUNDLE_INCOMPLETE"):
         build_official_schedule_evidence(
             selected,
-            accepted_result("soccer_france_ligue_one", ligue1_payload(identical=True)),
-            horizon_not_before_utc=NOW,
+            accepted_result(
+                "soccer_france_ligue_one",
+                calendar,
+                supporting_payloads=gameweeks[:1],
+            ),
+            horizon_not_before_utc=datetime(2026, 8, 29, tzinfo=UTC),
             horizon_expires_at_utc=HORIZON_END,
         )
-    with pytest.raises(OfficialScheduleSourceError, match="LIGUE1_FORWARD_HORIZON_INCOMPLETE"):
+
+    truncated = json.loads(calendar)
+    truncated["gameWeeks"] = [
+        item for item in truncated["gameWeeks"] if item["gameWeekNumber"] != 4
+    ]
+    with pytest.raises(
+        OfficialScheduleSourceError,
+        match="LIGUE1_CALENDAR_COMPLETENESS_INVALID",
+    ):
         build_official_schedule_evidence(
             selected,
-            accepted_result("soccer_france_ligue_one", ligue1_payload(extra=True)),
-            horizon_not_before_utc=NOW,
-            horizon_expires_at_utc=HORIZON_END,
+            accepted_result(
+                "soccer_france_ligue_one",
+                json.dumps(truncated, sort_keys=True).encode(),
+                supporting_payloads=(gameweeks[1],),
+                supporting_gameweeks=(3,),
+            ),
+            horizon_not_before_utc=datetime(2026, 9, 1, tzinfo=UTC),
+            horizon_expires_at_utc=datetime(2026, 9, 15, tzinfo=UTC),
         )
+
+
+def test_ligue1_fetcher_reads_calendar_first_then_bounded_gameweeks_without_redirects(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    calendar, gameweeks = ligue1_bundle()
+    selected = source("soccer_france_ligue_one")
+    payload_by_url = {
+        selected.url: calendar,
+        **{
+            LIGUE1_GAMEWEEK_URL_TEMPLATE.format(gameweek=gameweek): payload
+            for gameweek, payload in zip((2, 3, 4), gameweeks, strict=True)
+        },
+    }
+    calls: list[tuple[str, int | None]] = []
+    fetcher = BuiltinHttpsOfficialScheduleFetcher(
+        horizon_not_before_utc=datetime(2026, 8, 29, tzinfo=UTC),
+        horizon_expires_at_utc=datetime(2026, 9, 12, tzinfo=UTC),
+    )
+
+    def fake_request(
+        requested_source: OfficialSourceSpec,
+        requested_url: str,
+        *,
+        extra_headers: dict[str, str] | None = None,
+        maximum_redirects: int | None = None,
+    ) -> OfficialHttpResponse:
+        assert requested_source == selected
+        assert extra_headers is None
+        calls.append((requested_url, maximum_redirects))
+        return OfficialHttpResponse(
+            200,
+            requested_url,
+            "application/json",
+            payload_by_url[requested_url],
+        )
+
+    monkeypatch.setattr(fetcher, "_request", fake_request)
+    response = fetcher.fetch(selected)
+    assert calls == [
+        (selected.url, 0),
+        (LIGUE1_GAMEWEEK_URL_TEMPLATE.format(gameweek=2), 0),
+        (LIGUE1_GAMEWEEK_URL_TEMPLATE.format(gameweek=3), 0),
+        (LIGUE1_GAMEWEEK_URL_TEMPLATE.format(gameweek=4), 0),
+    ]
+    assert response.body == calendar
+    assert response.supporting_official_raw_bytes == gameweeks
+
+    start = datetime(2026, 8, 29, tzinfo=UTC)
+    rows = []
+    for gameweek in range(1, 35):
+        boundary = (
+            start + timedelta(days=gameweek - 1)
+            if gameweek <= 6
+            else start + timedelta(days=30 + 7 * (gameweek - 7))
+        )
+        rows.append(
+            {
+                "gameWeekNumber": gameweek,
+                "matchesIds": [gameweek * 100 + index for index in range(9)],
+                "startDate": boundary.isoformat(),
+                "endDate": (boundary + timedelta(hours=12)).isoformat(),
+                "displayEndDate": (boundary + timedelta(hours=12)).isoformat(),
+                "lastRegularMatchDate": (boundary + timedelta(hours=12)).isoformat(),
+            }
+        )
+    oversized_calendar = json.dumps({"gameWeeks": rows}, sort_keys=True).encode()
+    limit_calls: list[str] = []
+    limited = BuiltinHttpsOfficialScheduleFetcher(
+        horizon_not_before_utc=start,
+        horizon_expires_at_utc=start + timedelta(days=14),
+    )
+
+    def calendar_only(
+        _requested_source: OfficialSourceSpec,
+        requested_url: str,
+        *,
+        extra_headers: dict[str, str] | None = None,
+        maximum_redirects: int | None = None,
+    ) -> OfficialHttpResponse:
+        assert extra_headers is None
+        assert maximum_redirects == 0
+        limit_calls.append(requested_url)
+        return OfficialHttpResponse(200, requested_url, "application/json", oversized_calendar)
+
+    monkeypatch.setattr(limited, "_request", calendar_only)
+    with pytest.raises(OfficialScheduleSourceError, match="LIGUE1_GAMEWEEK_READ_LIMIT_EXCEEDED"):
+        limited.fetch(selected)
+    assert limit_calls == [selected.url]
+
+
+def test_physical_dispatch_callback_precedes_network_outcome(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    observed: list[str] = []
+
+    class FailingConnection:
+        def __init__(self, *_args: object, **_kwargs: object) -> None:
+            pass
+
+        @staticmethod
+        def request(*_args: object, **_kwargs: object) -> None:
+            assert observed == [URLS["soccer_germany_bundesliga"]]
+            raise OSError("synthetic timeout after dispatch")
+
+        @staticmethod
+        def close() -> None:
+            pass
+
+    monkeypatch.setattr(
+        official_sources_module.http.client,
+        "HTTPSConnection",
+        FailingConnection,
+    )
+    fetcher = BuiltinHttpsOfficialScheduleFetcher(on_dispatch=observed.append)
+    with pytest.raises(OfficialScheduleSourceError, match="OFFICIAL_SOURCE_NETWORK_FAILED"):
+        fetcher.fetch(source("soccer_germany_bundesliga"))
+    assert observed == [URLS["soccer_germany_bundesliga"]]
+
+
+def test_official_body_is_observed_before_oversize_rejection(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    body = b"x" * 11
+
+    class Response:
+        status = 200
+
+        @staticmethod
+        def getheader(name: str, default: str | None = None) -> str | None:
+            return "text/html" if name == "Content-Type" else default
+
+        @staticmethod
+        def getheaders() -> list[tuple[str, str]]:
+            return [("Content-Type", "text/html")]
+
+        @staticmethod
+        def read(_amount: int) -> bytes:
+            return body
+
+    class Connection:
+        def __init__(self, *_args: object, **_kwargs: object) -> None:
+            pass
+
+        @staticmethod
+        def request(*_args: object, **_kwargs: object) -> None:
+            pass
+
+        @staticmethod
+        def getresponse() -> Response:
+            return Response()
+
+        @staticmethod
+        def close() -> None:
+            pass
+
+    observed: list[bytes] = []
+    partial: list[bytes] = []
+    monkeypatch.setattr(official_sources_module.http.client, "HTTPSConnection", Connection)
+    fetcher = BuiltinHttpsOfficialScheduleFetcher(
+        maximum_bytes=10,
+        on_response=lambda response: observed.append(response.body),
+        on_partial_response=lambda response: partial.append(response.body),
+    )
+    with pytest.raises(OfficialScheduleSourceError, match="OFFICIAL_SOURCE_RESPONSE_TOO_LARGE"):
+        fetcher.fetch(source("soccer_epl"))
+    assert observed == []
+    assert partial == [body]
+
+
+def test_official_incomplete_body_is_sent_to_partial_journal(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    partial = b"partial-body"
+
+    class Response:
+        status = 200
+
+        @staticmethod
+        def getheader(name: str, default: str | None = None) -> str | None:
+            return "text/html" if name == "Content-Type" else default
+
+        @staticmethod
+        def getheaders() -> list[tuple[str, str]]:
+            return [("Content-Type", "text/html")]
+
+        @staticmethod
+        def read(_amount: int) -> bytes:
+            raise official_sources_module.http.client.IncompleteRead(partial, 100)
+
+    class Connection:
+        def __init__(self, *_args: object, **_kwargs: object) -> None:
+            pass
+
+        @staticmethod
+        def request(*_args: object, **_kwargs: object) -> None:
+            pass
+
+        @staticmethod
+        def getresponse() -> Response:
+            return Response()
+
+        @staticmethod
+        def close() -> None:
+            pass
+
+    observed: list[bytes] = []
+    monkeypatch.setattr(official_sources_module.http.client, "HTTPSConnection", Connection)
+    fetcher = BuiltinHttpsOfficialScheduleFetcher(
+        on_partial_response=lambda response: observed.append(response.body),
+    )
+    with pytest.raises(OfficialScheduleSourceError, match="OFFICIAL_SOURCE_NETWORK_FAILED"):
+        fetcher.fetch(source("soccer_epl"))
+    assert observed == [partial]
+
+
+def test_official_slow_final_read_is_sent_to_partial_journal(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    tick = [0.0]
+
+    class Response:
+        status = 200
+
+        @staticmethod
+        def getheader(name: str, default: str | None = None) -> str | None:
+            return "text/html" if name == "Content-Type" else default
+
+        @staticmethod
+        def getheaders() -> list[tuple[str, str]]:
+            return [("Content-Type", "text/html")]
+
+        @staticmethod
+        def read(_amount: int) -> bytes:
+            tick[0] = 99.0
+            return b"observed-before-deadline"
+
+    class Connection:
+        sock = None
+
+        def __init__(self, *_args: object, **_kwargs: object) -> None:
+            pass
+
+        @staticmethod
+        def request(*_args: object, **_kwargs: object) -> None:
+            pass
+
+        @staticmethod
+        def getresponse() -> Response:
+            return Response()
+
+        @staticmethod
+        def close() -> None:
+            pass
+
+    partial: list[bytes] = []
+    monkeypatch.setattr(official_sources_module.http.client, "HTTPSConnection", Connection)
+    fetcher = BuiltinHttpsOfficialScheduleFetcher(
+        timeout_seconds=1,
+        monotonic=lambda: tick[0],
+        on_partial_response=lambda response: partial.append(response.body),
+    )
+
+    with pytest.raises(OfficialScheduleSourceError, match="OFFICIAL_SOURCE_NETWORK_FAILED"):
+        fetcher.fetch(source("soccer_epl"))
+
+    assert partial == [b"observed-before-deadline"]
+
+
+@pytest.mark.parametrize(
+    ("anchor", "supporting_slice", "gameweeks"),
+    (
+        (datetime(2026, 8, 29, tzinfo=UTC), slice(None), (2, 3, 4)),
+        (datetime(2026, 8, 31, tzinfo=UTC), slice(1, None), (3, 4)),
+        (datetime(2026, 9, 1, 23, 59, 59, tzinfo=UTC), slice(1, None), (3, 4)),
+    ),
+)
+def test_ligue1_rolling_fourteen_day_horizon_remains_complete_after_matchday_two(
+    anchor: datetime,
+    supporting_slice: slice,
+    gameweeks: tuple[int, ...],
+) -> None:
+    calendar, all_gameweeks = ligue1_bundle()
+    expires = anchor + timedelta(days=14)
+    evidence = build_official_schedule_evidence(
+        source("soccer_france_ligue_one"),
+        accepted_result(
+            "soccer_france_ligue_one",
+            calendar,
+            supporting_payloads=all_gameweeks[supporting_slice],
+            supporting_gameweeks=gameweeks,
+        ),
+        horizon_not_before_utc=anchor,
+        horizon_expires_at_utc=expires,
+    )
+    assert evidence.fixtures
+    assert evidence.parser_metadata["gameweeks_fetched"] == list(gameweeks)
+    assert evidence.parser_metadata["complete_official_horizon"] is True
+    assert all(anchor <= item.kickoff_utc < expires for item in evidence.fixtures)
+    assert any(item.round_number == 4 for item in evidence.fixtures)

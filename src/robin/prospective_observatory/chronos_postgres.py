@@ -26,14 +26,33 @@ _SAFE_DATABASE_ERROR_CODES = frozenset(
         "CHRONOS_DISPATCH_PERMIT_ALREADY_EXISTS",
         "CHRONOS_EFFECT_NOT_RESERVED",
         "CHRONOS_EFFECT_TRANSITION_FORBIDDEN",
+        "CHRONOS_EXTERNAL_EFFECT_ACCOUNTING_INVALID",
+        "CHRONOS_EXTERNAL_EFFECT_BUDGET_EXCEEDED",
+        "CHRONOS_EXTERNAL_EFFECT_BUDGET_INVALID",
+        "CHRONOS_EXTERNAL_EFFECT_EVENT_CONFLICT",
+        "CHRONOS_EXTERNAL_EFFECT_INPUT_INVALID",
+        "CHRONOS_EXTERNAL_EFFECT_PERMIT_CONFLICT",
+        "CHRONOS_EXTERNAL_EFFECT_PERMIT_NOT_FOUND",
+        "CHRONOS_EXTERNAL_EFFECT_TRANSITION_FORBIDDEN",
+        "CHRONOS_EXTERNAL_EFFECTS_UNACCOUNTED",
         "CHRONOS_EVENT_AUTHORITY_MISMATCH",
         "CHRONOS_GENERATION_NONCE_INVALID",
         "CHRONOS_GITHUB_RUN_IDENTITY_INVALID",
         "CHRONOS_GITHUB_RUN_IDENTITY_MISMATCH",
         "CHRONOS_OPERATION_ID_MISMATCH",
+        "CHRONOS_OPPORTUNITY_ID_COLLISION",
+        "CHRONOS_OPPORTUNITY_ID_MISMATCH",
+        "CHRONOS_OPPORTUNITY_INPUT_INVALID",
+        "CHRONOS_OPPORTUNITY_NOT_FOUND",
+        "CHRONOS_OPPORTUNITY_WINNER_REQUIRED",
         "CHRONOS_R2_GET_PERMIT_ALREADY_EXISTS",
         "CHRONOS_RUNTIME_WRITER_REQUIRED",
         "CHRONOS_SERVER_EPOCH_MISMATCH",
+        "CHRONOS_TORRENT_ACCEPTANCE_FAILED",
+        "CHRONOS_TORRENT_ARTIFACT_CONTRACT_INVALID",
+        "CHRONOS_TORRENT_BATCH_CONFLICT",
+        "CHRONOS_TORRENT_BATCH_INPUT_INVALID",
+        "CHRONOS_TORRENT_DURABILITY_NOT_PROVEN",
     }
 )
 
@@ -64,10 +83,14 @@ class SQLAlchemyPostgresFunctionClient:
     ) -> Mapping[str, object]:
         try:
             with self._engine.begin() as connection:
-                row = connection.exec_driver_sql(
-                    statement,
-                    tuple(parameters),
-                ).mappings().one_or_none()
+                row = (
+                    connection.exec_driver_sql(
+                        statement,
+                        tuple(parameters),
+                    )
+                    .mappings()
+                    .one_or_none()
+                )
                 result = {} if row is None else dict(row)
         except DBAPIError as error:
             safe_error_code = _safe_database_error_code(error)

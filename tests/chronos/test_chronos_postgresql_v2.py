@@ -95,13 +95,14 @@ def claim(
     *,
     generation: bytes | None = GENERATION,
     run_id: int | None = RUN_ID,
+    resource_key: str = RESOURCE_KEY,
 ) -> sa.RowMapping:
     operation_id = derive_operation_id(
         mission_id=MISSION,
         github_run_id=RUN_ID,
         github_run_attempt=RUN_ATTEMPT,
         resource_kind=RESOURCE_KIND,
-        canonical_key=RESOURCE_KEY,
+        canonical_key=resource_key,
         canonical_payload_hash=PAYLOAD_HASH,
     )
     return connection.execute(
@@ -124,7 +125,7 @@ def claim(
             "generation": generation,
             "operation_id": operation_id,
             "resource_kind": RESOURCE_KIND,
-            "resource_key": RESOURCE_KEY,
+            "resource_key": resource_key,
             "payload_hash": PAYLOAD_HASH,
             "code_revision": SHA,
         },
@@ -313,8 +314,10 @@ def test_server_clock_claim_is_atomic_and_hashes_match_python(engine: Engine) ->
             )
             events = connection.execute(
                 sa.text(
-                    "SELECT * FROM public.chronos_effect_events ORDER BY event_seq"
-                )
+                    "SELECT * FROM public.chronos_effect_events "
+                    "WHERE authority_id=:authority_id ORDER BY event_seq"
+                ),
+                {"authority_id": authority_id},
             ).mappings().all()
             assert [(row["event_type"], row["event_seq"]) for row in events] == [
                 ("AUTHORITY_GRANTED", 0),
@@ -671,7 +674,13 @@ def test_roles_have_only_the_reviewed_capabilities(engine: Engine) -> None:
                 "pg_catalog.pg_roles r ON r.oid=acl.grantee "
                 "WHERE n.nspname='public' AND c.relname IN "
                 "('chronos_effect_authorities','chronos_effect_events',"
-                "'chronos_effect_accounting') AND acl.grantee<>c.relowner "
+                "'chronos_effect_accounting','chronos_opportunity_claims',"
+                "'chronos_torrent_external_effect_permits',"
+                "'chronos_torrent_external_effect_events',"
+                "'chronos_torrent_batches','chronos_opportunity_claim_audit',"
+                "'chronos_torrent_batch_audit',"
+                "'chronos_torrent_external_effect_audit') "
+                "AND acl.grantee<>c.relowner "
                 "UNION ALL SELECT 'function',p.proname,"
                 "coalesce(r.rolname,'PUBLIC'),acl.privilege_type "
                 "FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n "
@@ -683,7 +692,12 @@ def test_roles_have_only_the_reviewed_capabilities(engine: Engine) -> None:
                 "('chronos_framed_sha256','chronos_effect_event_hash',"
                 "'chronos_reject_mutation','chronos_issue_effect_authority',"
                 "'chronos_claim_effect_authority',"
-                "'chronos_append_effect_event','chronos_get_effect_state') "
+                "'chronos_append_effect_event','chronos_get_effect_state',"
+                "'chronos_claim_opportunity',"
+                "'chronos_reserve_torrent_external_effect',"
+                "'chronos_append_torrent_external_effect',"
+                "'chronos_record_torrent_batch',"
+                "'chronos_reject_torrent_mutation') "
                 "AND acl.grantee<>p.proowner"
             )
         ).all()
@@ -724,6 +738,48 @@ def test_roles_have_only_the_reviewed_capabilities(engine: Engine) -> None:
                 "chronos_runtime_writer",
                 "EXECUTE",
             ),
+            (
+                "relation",
+                "chronos_opportunity_claim_audit",
+                "chronos_reader",
+                "SELECT",
+            ),
+            (
+                "relation",
+                "chronos_torrent_batch_audit",
+                "chronos_reader",
+                "SELECT",
+            ),
+            (
+                "relation",
+                "chronos_torrent_external_effect_audit",
+                "chronos_reader",
+                "SELECT",
+            ),
+            (
+                "function",
+                "chronos_claim_opportunity",
+                "chronos_runtime_writer",
+                "EXECUTE",
+            ),
+            (
+                "function",
+                "chronos_reserve_torrent_external_effect",
+                "chronos_runtime_writer",
+                "EXECUTE",
+            ),
+            (
+                "function",
+                "chronos_append_torrent_external_effect",
+                "chronos_runtime_writer",
+                "EXECUTE",
+            ),
+            (
+                "function",
+                "chronos_record_torrent_batch",
+                "chronos_runtime_writer",
+                "EXECUTE",
+            ),
         }
 
 
@@ -757,13 +813,14 @@ def test_scoped_login_connections_enforce_allows_and_denials() -> None:
             assert connection.scalar(sa.text("SELECT current_user")) == (
                 "chronos_effect_runtime_login"
             )
-            claim(connection, authority_id)
+            resource_key = f"{RESOURCE_KEY}/{authority_id}"
+            claim(connection, authority_id, resource_key=resource_key)
             operation_id = derive_operation_id(
                 mission_id=MISSION,
                 github_run_id=RUN_ID,
                 github_run_attempt=RUN_ATTEMPT,
                 resource_kind=RESOURCE_KIND,
-                canonical_key=RESOURCE_KEY,
+                canonical_key=resource_key,
                 canonical_payload_hash=PAYLOAD_HASH,
             )
         with runtime_engine.connect() as connection:
@@ -777,7 +834,7 @@ def test_scoped_login_connections_enforce_allows_and_denials() -> None:
             )
             assert connection.scalar(
                 sa.text("SELECT version_num FROM public.alembic_version")
-            ) == "0014_chronos_control_plane_v2"
+            ) == "0015_data_torrent_opportunity"
             state = connection.execute(
                 sa.text("SELECT * FROM public.chronos_get_effect_state(:operation_id)"),
                 {"operation_id": operation_id},

@@ -11,6 +11,7 @@ from alembic.script import ScriptDirectory
 from sqlalchemy.exc import IntegrityError
 
 REVISION = "0014_chronos_control_plane_v2"
+HEAD_REVISION = "0015_data_torrent_opportunity"
 DOWN_REVISION = "0013_historical_evidence_index"
 TABLES = {"chronos_effect_authorities", "chronos_effect_events"}
 
@@ -82,7 +83,7 @@ def event_row(
 
 def test_revision_is_the_single_head_and_is_neon_compatible() -> None:
     scripts = ScriptDirectory.from_config(config("sqlite+pysqlite:///:memory:"))
-    assert scripts.get_heads() == [REVISION]
+    assert scripts.get_heads() == [HEAD_REVISION]
     script = scripts.get_revision(REVISION)
     assert script is not None
     assert script.down_revision == DOWN_REVISION
@@ -277,8 +278,8 @@ def test_ci_runs_dual_principal_lifecycle_and_complete_migration_cycle() -> None
     assert "provision_migrator" in runner
     assert "provision_runtime_logins" in runner
     assert '_alembic(migrator_url, "downgrade", REVISION_0013)' in runner
-    assert runner.count('_alembic(migrator_url, "upgrade", REVISION_0014)') == 1
-    assert "run_fenced_alembic(migrator_url, REVISION_0014)" in runner
+    assert runner.count('_alembic(migrator_url, "upgrade", REVISION_0015)') == 1
+    assert "run_fenced_alembic(migrator_url, REVISION_0015)" in runner
     assert scoped_contract in workflow
     assert "CREATEROLE PASSWORD 'chronos_ci'" not in workflow
     assert "FROM CURRENT_USER" not in workflow
