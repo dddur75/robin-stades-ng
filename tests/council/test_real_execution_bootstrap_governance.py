@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -230,7 +231,11 @@ def test_dns_preparation_tool_has_no_secret_or_transport_capability() -> None:
 
 def test_first_c0_single_league_canary_authority_is_additive_and_fail_closed() -> None:
     bootstrap = (ROOT / "src/robin/capture/bootstrap_contracts.py").read_text(encoding="utf-8")
+    global_claims = (ROOT / "src/robin/capture/global_claim_boundary.py").read_text(
+        encoding="utf-8"
+    )
     provider = (ROOT / "src/robin/capture/provider_network.py").read_text(encoding="utf-8")
+    predns = (ROOT / "src/robin/capture/predns_orchestration.py").read_text(encoding="utf-8")
     owner_pack = (ROOT / "src/robin/capture/owner_review_pack.py").read_text(encoding="utf-8")
     canary_cli = (ROOT / "tools/data-sourcing/prepare_first_c0_canary_selection_v1.py").read_text(
         encoding="utf-8"
@@ -293,12 +298,26 @@ def test_first_c0_single_league_canary_authority_is_additive_and_fail_closed() -
     assert 'query.get("offset") != ["300"]' in canary_cli
     assert 'host != "datencenter.dfb.de"' in canary_cli
     assert 'parsed.path != "/competitions/12/seasons/current"' in canary_cli
-    assert canary_cli.index("workspace_validator(workspace_receipt)") < canary_cli.index(
-        "marker_inspection = marker_inspector"
+    initial_marker_inspection = canary_cli.index(
+        "marker_inspection = inspect_markers_absent_current()"
     )
-    assert canary_cli.index("marker_inspection = marker_inspector") < canary_cli.index(
-        "fetch_result = fetch_official_schedule_source("
+    first_composite_barrier = canary_cli.index(
+        "marker_inspection = inspect_current_pre_dns_authority(output_directory)"
     )
+    final_composite_barrier = canary_cli.rindex(
+        "marker_inspection = inspect_current_pre_dns_authority(output_directory)"
+    )
+    final_clock_sample = canary_cli.index("before_fetch_at = _utc(clock()")
+    official_fetch = canary_cli.index("fetch_result = fetch_official_schedule_source(")
+    assert (
+        canary_cli.index("workspace_validator(workspace_receipt)")
+        < initial_marker_inspection
+        < first_composite_barrier
+        < final_clock_sample
+        < final_composite_barrier
+        < official_fetch
+    )
+    assert canary_cli.count("_assert_cycle_history_current(") == 3
     assert canary_cli.index(
         "mission_manifest = load_tracked_real_execution_mission_manifest_v1("
     ) < canary_cli.index("result = prepare_first_c0_canary_selection_v1(")
@@ -331,7 +350,41 @@ def test_first_c0_single_league_canary_authority_is_additive_and_fail_closed() -
         assert "load_campaign_selection_authority_v1" in source
         assert "CampaignWindowSelectionV1.model_validate" not in source
     assert '_RESOLUTION_CLAIM_NAME = "provider-network-resolution-one-shot-v1.json"' in (provider)
-    assert '_MISSION_GLOBAL_CLAIM_ROOT_NAME = "RobinRealExecutionMissionClaimsV1"' in (provider)
+    assert 'GLOBAL_CLAIM_ROOT_V2_NAME: Final = "RobinGlobalClaimsV2"' in global_claims
+    assert (
+        'LEGACY_GLOBAL_CLAIM_ROOT_V1_NAME: Final = "RobinRealExecutionMissionClaimsV1"'
+        in global_claims
+    )
+    for operation in (
+        "resolve_owner_execution_boundary_v2",
+        "resolve_global_claim_root_candidate_v2",
+        "ensure_global_claim_root_v2",
+    ):
+        assert f"def {operation}(" in global_claims
+    for failure_code in (
+        "GLOBAL_CLAIM_OWNER_BOUNDARY_UNAVAILABLE",
+        "GLOBAL_CLAIM_OWNER_BOUNDARY_MISMATCH",
+        "GLOBAL_CLAIM_OWNER_BOUNDARY_UNSAFE",
+        "GLOBAL_CLAIM_ROOT_COLLISION",
+        "GLOBAL_CLAIM_ROOT_REPARSE_FORBIDDEN",
+        "GLOBAL_CLAIM_ROOT_ACL_REQUIRED",
+        "GLOBAL_CLAIM_ROOT_IDENTITY_CHANGED",
+        "GLOBAL_CLAIM_LEGACY_CONFLICT",
+        "GLOBAL_CLAIM_ALREADY_CONSUMED",
+    ):
+        assert failure_code in global_claims
+    for current_consumer in (provider, predns, canary_cli):
+        assert (
+            "from robin.capture import global_claim_boundary as global_claims" in current_consumer
+        )
+        assert "LOCALAPPDATA" not in current_consumer
+        assert "CSIDL_LOCAL_APPDATA" not in current_consumer
+        assert "_MISSION_GLOBAL_CLAIM_ROOT_NAME" not in current_consumer
+    assert "reserve_global_claim_marker_v2(" in provider
+    assert "reserve_global_claim_marker_v2(" in canary_cli
+    assert "assert_global_claim_marker_current_v2(" in provider
+    assert "assert_global_claim_marker_current_v2(" in canary_cli
+    assert "read_global_claim_marker_pair_v2(" in predns
     assert "_FIRST_C0_CANARY_MINIMUM_PRE_DNS_MARGIN = timedelta(seconds=840)" in provider
     assert "write_owner_review_pack_v1(arguments.output_directory, pack)" in pack_cli
     assert "assert_owner_review_pack_completion_current_v1(pack" in pack_cli
@@ -348,3 +401,516 @@ def test_first_c0_single_league_canary_authority_is_additive_and_fail_closed() -
     assert hashlib.sha256(matrix_payload).hexdigest() == (
         "6777e609247356a9e93fb089a928d25f28c5ba7f9d3fb39a199130d6e866f5ef"
     )
+
+
+def test_global_claim_boundary_v2_evidence_is_exact_append_only_and_effect_free() -> None:
+    base_revision = "2e62496e5efffb564bc8ef8b4ae26e3a76675e44"
+    record_token = '"decision_id":"RCV3-20260828-183"'
+    expected_files = [
+        "docs/data-sourcing/REAL-EXECUTION-BOOTSTRAP-CLOSURE-V1.md",
+        "reports/council/decision-ledger.jsonl",
+        "reports/evidence/evidence-graph.json",
+        "src/robin/capture/global_claim_boundary.py",
+        "src/robin/capture/predns_orchestration.py",
+        "src/robin/capture/provider_network.py",
+        "tests/capture/test_first_c0_canary_selection_v1.py",
+        "tests/capture/test_global_claim_boundary_v2.py",
+        "tests/capture/test_predns_orchestration_v1.py",
+        "tests/capture/test_provider_network_binding.py",
+        "tests/council/test_real_execution_bootstrap_governance.py",
+        "tools/data-sourcing/prepare_first_c0_canary_selection_v1.py",
+    ]
+    head_revision = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    base_revision_probe = subprocess.run(
+        ["git", "cat-file", "-e", f"{base_revision}^{{commit}}"],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+    )
+    if base_revision_probe.returncode != 0:
+        shallow_repository = subprocess.run(
+            ["git", "rev-parse", "--is-shallow-repository"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+        assert shallow_repository == "true"
+        subprocess.run(
+            [
+                "git",
+                "fetch",
+                "--no-tags",
+                "--no-write-fetch-head",
+                "--unshallow",
+                "origin",
+                head_revision,
+            ],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        )
+    subprocess.run(
+        ["git", "cat-file", "-e", f"{base_revision}^{{commit}}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    )
+    subprocess.run(
+        ["git", "merge-base", "--is-ancestor", base_revision, head_revision],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    )
+    introducing_revisions = (
+        subprocess.run(
+            [
+                "git",
+                "log",
+                "--no-merges",
+                "HEAD",
+                "--format=%H",
+                f"-S{record_token}",
+                "--",
+                "reports/council/decision-ledger.jsonl",
+            ],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        )
+        .stdout.decode()
+        .splitlines()
+    )
+    assert len(introducing_revisions) <= 1
+    dirty_paths = set(
+        subprocess.run(
+            ["git", "diff", "--name-only", "HEAD", "--"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.splitlines()
+    )
+    dirty_paths.update(
+        subprocess.run(
+            ["git", "ls-files", "--others", "--exclude-standard"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.splitlines()
+    )
+    closure_revision: str | None = None
+    # Ambient CI artifacts outside the governed 12-file scope must not replace
+    # the immutable base-tree-to-closure-tree proof. In-scope edits still use
+    # the precommit worktree path so pending governance changes are fail-closed.
+    if introducing_revisions and dirty_paths.isdisjoint(expected_files):
+        first_parent_merges = subprocess.run(
+            [
+                "git",
+                "rev-list",
+                "--first-parent",
+                "--reverse",
+                "--merges",
+                f"{base_revision}..{head_revision}",
+            ],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.splitlines()
+        introducing_merges: list[tuple[str, str, str]] = []
+        for merge_revision in first_parent_merges:
+            parent_fields = (
+                subprocess.run(
+                    ["git", "rev-list", "--parents", "-n", "1", merge_revision],
+                    cwd=ROOT,
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                )
+                .stdout.strip()
+                .split()
+            )
+            if len(parent_fields) != 3:
+                continue
+            _, first_parent, second_parent = parent_fields
+            merge_ledger = subprocess.run(
+                ["git", "show", f"{merge_revision}:reports/council/decision-ledger.jsonl"],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+            ).stdout
+            first_parent_ledger = subprocess.run(
+                ["git", "show", f"{first_parent}:reports/council/decision-ledger.jsonl"],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+            ).stdout
+            if (
+                record_token.encode() in merge_ledger
+                and record_token.encode() not in first_parent_ledger
+            ):
+                introducing_merges.append((merge_revision, first_parent, second_parent))
+        closure_search_head = head_revision
+        if introducing_merges:
+            assert len(introducing_merges) == 1
+            merge_revision, first_parent, closure_search_head = introducing_merges[0]
+            assert first_parent == base_revision
+            merge_tree = subprocess.run(
+                ["git", "rev-parse", f"{merge_revision}^{{tree}}"],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+            closure_tree = subprocess.run(
+                ["git", "rev-parse", f"{closure_search_head}^{{tree}}"],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+            assert merge_tree == closure_tree
+        candidate_revisions = subprocess.run(
+            [
+                "git",
+                "rev-list",
+                "--reverse",
+                "--no-merges",
+                f"{base_revision}..{closure_search_head}",
+            ],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.splitlines()
+        assert 1 <= len(candidate_revisions) <= 3
+        eligible_closure_revisions: list[str] = []
+        for revision in candidate_revisions:
+            candidate_ledger = subprocess.run(
+                ["git", "show", f"{revision}:reports/council/decision-ledger.jsonl"],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+            ).stdout
+            if record_token.encode() not in candidate_ledger:
+                continue
+            if len(candidate_ledger.splitlines()) != 176:
+                continue
+            candidate_paths = subprocess.run(
+                ["git", "diff", "--name-only", base_revision, revision],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.splitlines()
+            if candidate_paths != expected_files:
+                continue
+            eligible_closure_revisions.append(revision)
+        assert eligible_closure_revisions
+        closure_revision = eligible_closure_revisions[-1]
+        assert closure_revision == closure_search_head
+        assert len(introducing_revisions) == 1
+
+    def snapshot_bytes(relative: str) -> bytes:
+        if closure_revision is None:
+            return (ROOT / relative).read_bytes().replace(b"\r\n", b"\n")
+        payload = subprocess.run(
+            ["git", "show", f"{closure_revision}:{relative}"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        ).stdout
+        return payload.replace(b"\r\n", b"\n")
+
+    ledger_bytes = snapshot_bytes("reports/council/decision-ledger.jsonl")
+    ledger_lines = ledger_bytes.splitlines()
+    records = [json.loads(line) for line in ledger_lines]
+    assert len(records) == 176
+    assert hashlib.sha256(b"\n".join(ledger_lines[:175]) + b"\n").hexdigest() == (
+        "6142e12482b97568d0765c491a8e1b7887720e48d36b43b7e54fa3019c7c53b0"
+    )
+    assert ledger_bytes == b"\n".join(ledger_lines) + b"\n"
+
+    expected_proof = [
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.033",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.042",
+        "GOV.AUTHORIZATION.REAL_EXECUTION_BOOTSTRAP.CLOSURE.MANIFEST.V1.005",
+        "SECURITY.REAL_EXECUTION_BOOTSTRAP.GLOBAL_CLAIM.OWNER_BOUNDARY.V2.001",
+        "PORTABILITY.REAL_EXECUTION_BOOTSTRAP.NETWORK.WINDOWS_API_TYPING.V1.004",
+        "GOV.FIRST_C0.PRE_DNS.ORCHESTRATION.V1.004",
+        "SECURITY.OWNER_REVIEW_PACK.DATETIME_FIX.ZERO_EFFECTS.V1.008",
+        "SECURITY.REAL_EXECUTION_BOOTSTRAP.GLOBAL_CLAIM.DUAL_ROOT.ZERO_EFFECTS.V2.001",
+        "GOV.COUNCIL.REAL_EXECUTION_BOOTSTRAP.CLOSURE.EVIDENCE.SUCCESSION.LEDGER.V1.013",
+    ]
+    previous_record = records[-2]
+    record = records[-1]
+    assert previous_record["decision_id"] == "RCV3-20260827-182"
+    assert previous_record["hash"] == (
+        "9f75f23b27396584b67cf34b65e5225b885f829e2ba21ef70914f584e26702de"
+    )
+    assert record["decision_id"] == "RCV3-20260828-183"
+    assert record["record_type"] == "DECISION"
+    assert record["date"] == "2026-08-28T20:23:05Z"
+    assert "RobinGlobalClaimsV2" in record["proposal"]
+    assert "one fresh S2/W2 runtime" in record["proposal"]
+    assert len(record["objections"]) == 7
+    assert record["decision"] == "PASS_AND_HOLD"
+    assert record["dissent"] is None
+    assert record["responsible"] == "C0"
+    assert record["previous_hash"] == previous_record["hash"]
+    assert record["proof"] == expected_proof
+    canonical_record = json.dumps(
+        {key: value for key, value in record.items() if key != "hash"},
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode()
+    assert record["hash_algorithm"] == "SHA-256"
+    assert hashlib.sha256(canonical_record).hexdigest() == record["hash"]
+
+    context = record["context"]
+    assert context["candidate_context"] is True
+    assert context["commit_context"] is False
+    assert context["mission_id"] == MISSION_ID
+    assert context["phase"] == "GLOBAL_CLAIM_BOUNDARY_V2_PRECOMMIT"
+    assert context["base_revision"] == "2e62496e5efffb564bc8ef8b4ae26e3a76675e44"
+    assert context["branch"] == "codex/global-claim-boundary-v2"
+    assert context["writer_count"] == 1
+    assert context["scope"] == {
+        "tracked_file_count": 12,
+        "tracked_files_maximum": 12,
+        "product_or_scientific_change": False,
+        "outside_closure": [],
+    }
+    assert context["files"] == expected_files
+    if closure_revision is None:
+        tracked_paths = (
+            subprocess.run(
+                ["git", "diff", "--name-only", context["base_revision"]],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+            )
+            .stdout.decode()
+            .splitlines()
+        )
+        untracked_paths = (
+            subprocess.run(
+                ["git", "ls-files", "--others", "--exclude-standard"],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+            )
+            .stdout.decode()
+            .splitlines()
+        )
+        changed_paths = sorted(set(tracked_paths + untracked_paths))
+    else:
+        changed_paths = (
+            subprocess.run(
+                [
+                    "git",
+                    "diff",
+                    "--name-only",
+                    context["base_revision"],
+                    closure_revision,
+                ],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+            )
+            .stdout.decode()
+            .splitlines()
+        )
+    assert changed_paths == expected_files
+    assert context["owner_directive"] == {
+        "utf8_bytes": 23127,
+        "sha256": "2d30511e1ae2ab9e49ba97fcd0e57d48a93212c96ab5f75b2cf3b8386c09e368",
+        "line_endings": "UTF8_LF_NO_BOM",
+    }
+    assert context["mission_manifest"] == {
+        "source_hash": SOURCE_HASH,
+        "canonical_sha256": EXPECTED_CANONICAL_MANIFEST_SHA256,
+        "artifact_sha256": "05f37235a41331376854e301932d1aac2ddf4486911d0447e1ef5558db4653a4",
+        "expires_at_utc": "2026-09-01T20:00:00Z",
+        "authorized_stages": ["E1"],
+        "maximum_stage": "E1",
+    }
+    manifest_payload = snapshot_bytes("configs/execution/real-execution-bootstrap-closure-v1.json")
+    assert (
+        hashlib.sha256(manifest_payload).hexdigest()
+        == context["mission_manifest"]["artifact_sha256"]
+    )
+    manifest = json.loads(manifest_payload)
+    assert manifest["source_hash"] == context["mission_manifest"]["source_hash"]
+    assert manifest["expires_at"] == context["mission_manifest"]["expires_at_utc"]
+    canonical_manifest = json.dumps(
+        manifest,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode()
+    assert (
+        hashlib.sha256(canonical_manifest).hexdigest()
+        == context["mission_manifest"]["canonical_sha256"]
+    )
+    assert context["global_claim_boundary_v2"] == {
+        "owner_boundary": "<Windows Profile>\\RDS",
+        "registry_child": "RobinGlobalClaimsV2",
+        "legacy_root": "%LOCALAPPDATA%\\RobinRealExecutionMissionClaimsV1",
+        "legacy_write_policy": "FORBIDDEN",
+        "legacy_read_compatibility": True,
+        "workspace_bound_to_one_physical_registry": True,
+        "exclusive_acl_required": True,
+        "reparse_forbidden": True,
+        "sync_root_forbidden": True,
+    }
+    assert context["authority_relation"] == {
+        "owner_delivery_directive_supersedes_older_matrix_allowlist_for_exact_scope": True,
+        "exact_scope_path_count": 12,
+        "runtime_manifest_v5_unchanged": True,
+        "runtime_authority_expanded": False,
+        "provider_dns_authorized_by_this_decision": False,
+    }
+    assert context["postmerge_runtime_boundary"]["source_stage_preferred"] == (
+        "<Windows Profile>\\RDS\\S2"
+    )
+    assert context["postmerge_runtime_boundary"]["new_runtime_root_preferred"] == (
+        "<Windows Profile>\\RDS\\W2"
+    )
+    effects = context["external_effects"]
+    assert effects == {
+        "official_schedule_reads": 0,
+        "real_preparation_cycles": 0,
+        "global_v2_reservation_writes": 0,
+        "legacy_reservation_writes": 0,
+        "provider_dns": 0,
+        "provider_tcp": 0,
+        "provider_http": 0,
+        "real_secret_reads": 0,
+        "owner_review_pack_builds": 0,
+        "owner_authorizations": 0,
+        "c0_calls": 0,
+        "captures": 0,
+        "promotions": 0,
+        "bets": 0,
+    }
+
+    graph = json.loads(snapshot_bytes("reports/evidence/evidence-graph.json"))
+    assert (
+        len(graph["claims"]),
+        len(graph["decision_nodes"]),
+        len(graph["edges"]),
+    ) == (491, 176, 790)
+    claims = {claim["claim_id"]: claim for claim in graph["claims"]}
+    base_graph = json.loads(
+        subprocess.run(
+            [
+                "git",
+                "show",
+                f"{context['base_revision']}:reports/evidence/evidence-graph.json",
+            ],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        ).stdout
+    )
+    assert (
+        len(base_graph["claims"]),
+        len(base_graph["decision_nodes"]),
+        len(base_graph["edges"]),
+    ) == (483, 175, 781)
+    assert [claim["claim_id"] for claim in graph["claims"][-8:]] == [
+        claim_id for claim_id in expected_proof if claim_id != expected_proof[2]
+    ]
+    successions = {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.032": expected_proof[0],
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.041": expected_proof[1],
+        "PORTABILITY.REAL_EXECUTION_BOOTSTRAP.NETWORK.WINDOWS_API_TYPING.V1.003": (
+            expected_proof[4]
+        ),
+        "GOV.FIRST_C0.PRE_DNS.ORCHESTRATION.V1.003": expected_proof[5],
+        "SECURITY.OWNER_REVIEW_PACK.DATETIME_FIX.ZERO_EFFECTS.V1.007": (expected_proof[6]),
+        "GOV.COUNCIL.REAL_EXECUTION_BOOTSTRAP.CLOSURE.EVIDENCE.SUCCESSION.LEDGER.V1.012": (
+            expected_proof[8]
+        ),
+    }
+    for predecessor, successor in successions.items():
+        assert claims[predecessor]["status"] == "SUPERSEDED"
+        assert claims[predecessor]["superseded_by"] == successor
+        assert claims[successor]["successor_of"] == predecessor
+    expected_historical_claims = json.loads(json.dumps(base_graph["claims"]))
+    expected_historical_by_id = {claim["claim_id"]: claim for claim in expected_historical_claims}
+    for predecessor, successor in successions.items():
+        expected_historical_by_id[predecessor]["status"] = "SUPERSEDED"
+        expected_historical_by_id[predecessor]["superseded_by"] = successor
+    assert graph["claims"][:483] == expected_historical_claims
+    assert graph["decision_nodes"][:175] == base_graph["decision_nodes"]
+    assert graph["edges"][:781] == base_graph["edges"]
+    assert claims[expected_proof[2]]["status"] == "VERIFIED"
+    new_claim_ids = [claim_id for claim_id in expected_proof if claim_id != expected_proof[2]]
+    assert {claim_id: claims[claim_id]["status"] for claim_id in new_claim_ids} == {
+        expected_proof[0]: "PARTIAL",
+        expected_proof[1]: "PARTIAL",
+        expected_proof[3]: "VERIFIED",
+        expected_proof[4]: "VERIFIED",
+        expected_proof[5]: "VERIFIED",
+        expected_proof[6]: "VERIFIED",
+        expected_proof[7]: "VERIFIED",
+        expected_proof[8]: "VERIFIED",
+    }
+    for claim_id in new_claim_ids:
+        assert claims[claim_id]["verified_by"] == ["C0", "C2", "C4", "DP6", "A2"]
+
+    claim_artifacts = {
+        expected_proof[0]: "tests/council/test_real_execution_bootstrap_governance.py",
+        expected_proof[1]: "tests/council/test_real_execution_bootstrap_governance.py",
+        expected_proof[3]: "src/robin/capture/global_claim_boundary.py",
+        expected_proof[4]: "src/robin/capture/provider_network.py",
+        expected_proof[5]: "src/robin/capture/predns_orchestration.py",
+        expected_proof[6]: "tests/capture/test_first_c0_canary_selection_v1.py",
+        expected_proof[7]: "tests/capture/test_global_claim_boundary_v2.py",
+        expected_proof[8]: "reports/council/decision-ledger.jsonl",
+    }
+    for claim_id, relative in claim_artifacts.items():
+        payload = snapshot_bytes(relative)
+        assert claims[claim_id]["artifact"] == relative
+        assert claims[claim_id]["hash"] == hashlib.sha256(payload).hexdigest()
+        assert claims[claim_id]["code_revision"] == context["base_revision"]
+
+    assert graph["decision_nodes"][-1] == {
+        "decision_id": record["decision_id"],
+        "ledger_record_hash": record["hash"],
+    }
+    expected_edges = [
+        {
+            "edge_id": f"EDGE.{number}",
+            "from_claim_id": claim_id,
+            "to_decision_id": record["decision_id"],
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        }
+        for number, claim_id in zip(range(782, 791), expected_proof, strict=True)
+    ]
+    assert graph["edges"][-9:] == expected_edges
+    assert [edge["edge_id"] for edge in graph["edges"]] == [
+        f"EDGE.{number:03d}" for number in range(1, 791)
+    ]
+    assert context["reviews_observed"] == {
+        "qa_director": "ACCEPT",
+        "architecture": "ACCEPT",
+        "c4": "ACCEPT",
+        "a2": "ACCEPT",
+        "red_team": "ACCEPT",
+        "dp6_final": "PENDING_AFTER_STATIC",
+        "c2_final": "PENDING_AFTER_STATIC",
+    }
+    assert set(context["defects"].values()) == {0}

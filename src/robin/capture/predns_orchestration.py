@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import ctypes
 import hashlib
 import json
 import math
@@ -13,12 +12,13 @@ from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any, Literal, Protocol, TypeAlias, cast
+from typing import Literal, Protocol, TypeAlias, cast
 from urllib.parse import parse_qs, urlparse
 from zoneinfo import ZoneInfo
 
 from pydantic import BaseModel
 
+from robin.capture import global_claim_boundary as global_claims
 from robin.capture.bootstrap_contracts import (
     FIRST_C0_H2_PREFETCH_LEAD_SECONDS,
     FIRST_C0_H2_WINDOW_DURATION_SECONDS,
@@ -78,6 +78,7 @@ from robin.capture.owner_review_pack import (
 from robin.capture.provider_network import (
     ResolverV1,
     _prepare_first_c0_provider_network_binding_once_after_atomic_preflight_v1,
+    _valid_provider_resolution_claim_marker_v2,
 )
 from robin.capture.storage import (
     CaptureStorageError,
@@ -102,7 +103,6 @@ MAXIMUM_DNS_TO_PACK_START_SECONDS = 5.0
 MAXIMUM_DNS_TO_PACK_COMPLETION_SECONDS = 120.0
 OFFICIAL_SCHEDULE_HORIZON_DAYS = 8
 _CONTROL_MARKER_NAME = "provider-network-resolution-one-shot-v1.json"
-_GLOBAL_MARKER_ROOT_NAME = "RobinRealExecutionMissionClaimsV1"
 _REVIEW_NAMES = ("DP6", "C4", "C2", "A2")
 _PREFETCH_HANDOFF_NAME = "first-c0-prefetched-window-handoff-v1.json"
 _WINDOW_OPEN_RECEIPT_NAME = "first-c0-window-open-revalidation-v1.json"
@@ -228,6 +228,9 @@ class BindingPreparerV1(Protocol):
         resolver: ResolverV1,
         clock: Callable[[], datetime],
         binding_ttl_seconds: int,
+        expected_global_v2_read_identity: tuple[object, ...],
+        expected_global_legacy_root_identity: tuple[object, ...],
+        final_pre_effect_assertion: Callable[[], None],
     ) -> ProviderNetworkBindingV1: ...
 
 
@@ -240,6 +243,9 @@ def _prepare_provider_network_binding_after_atomic_preflight_v1(
     resolver: ResolverV1,
     clock: Callable[[], datetime],
     binding_ttl_seconds: int,
+    expected_global_v2_read_identity: tuple[object, ...],
+    expected_global_legacy_root_identity: tuple[object, ...],
+    final_pre_effect_assertion: Callable[[], None],
 ) -> ProviderNetworkBindingV1:
     return _prepare_first_c0_provider_network_binding_once_after_atomic_preflight_v1(
         workspace_receipt=workspace_receipt,
@@ -249,6 +255,9 @@ def _prepare_provider_network_binding_after_atomic_preflight_v1(
         resolver=resolver,
         clock=clock,
         binding_ttl_seconds=binding_ttl_seconds,
+        expected_global_v2_read_identity=expected_global_v2_read_identity,
+        expected_global_legacy_root_identity=expected_global_legacy_root_identity,
+        final_pre_effect_assertion=final_pre_effect_assertion,
     )
 
 
@@ -330,11 +339,14 @@ class MarkerInspectionV1:
     historical_authority_manifest_sha256: str
     current_authority_manifest_sha256: str
     current_local_marker: str
-    current_global_marker: str
+    current_v2_global_marker: str
+    current_legacy_global_marker: str
+    current_v2_root_identity: tuple[object, ...] | None = None
+    current_legacy_root_identity: tuple[object, ...] | None = None
 
     def to_json(self) -> dict[str, object]:
         return {
-            "schema_version": "robin-provider-marker-readonly-inspection-v1",
+            "schema_version": "robin-provider-marker-readonly-inspection-v2",
             "historical_marker_unchanged": self.historical_marker_unchanged,
             "current_marker_present": self.current_marker_present,
             "historical_raw_sha256": self.historical_raw_sha256,
@@ -343,13 +355,38 @@ class MarkerInspectionV1:
             "historical_authority_manifest_sha256": (self.historical_authority_manifest_sha256),
             "current_authority_manifest_sha256": self.current_authority_manifest_sha256,
             "current_local_marker": self.current_local_marker,
-            "current_global_marker": self.current_global_marker,
+            "current_v2_global_marker": self.current_v2_global_marker,
+            "current_legacy_global_marker": self.current_legacy_global_marker,
             "filesystem_writes": 0,
         }
 
 
 @dataclass(frozen=True, slots=True)
+class LegacyMarkerInspectionV1:
+    historical_marker_unchanged: bool
+    current_marker_present: bool
+    historical_raw_sha256: str | None
+    historical_acl_sha256: str | None
+    historical_marker_path: str
+    historical_authority_manifest_sha256: str
+    current_authority_manifest_sha256: str
+    current_local_marker: str
+    current_global_marker: str
+
+
+@dataclass(frozen=True, slots=True)
 class FirstC0CanaryMarkerInspectionV1:
+    local_marker_path: str
+    v2_global_marker_path: str
+    legacy_global_marker_path: str
+    local_marker_present: Literal[False]
+    v2_global_marker_present: Literal[False]
+    legacy_global_marker_present: Literal[False]
+    inspected_read_only: Literal[True]
+
+
+@dataclass(frozen=True, slots=True)
+class LegacyFirstC0CanaryMarkerInspectionV1:
     local_marker_path: str
     global_marker_path: str
     local_marker_present: Literal[False]
@@ -385,7 +422,12 @@ class LoadedPreDnsBundleV1:
     source_plan: OfficialSourcePlan | FirstC0CanarySourcePlanAuthorityV1
     campaign_selection: CampaignSelectionAuthorityV1
     target_sets: tuple[FixtureTargetSetV1, ...]
-    marker_inspection: MarkerInspectionV1 | FirstC0CanaryMarkerInspectionV1
+    marker_inspection: (
+        MarkerInspectionV1
+        | LegacyMarkerInspectionV1
+        | FirstC0CanaryMarkerInspectionV1
+        | LegacyFirstC0CanaryMarkerInspectionV1
+    )
     prefetch_handoff: FirstC0PrefetchedWindowHandoffV1 | None = None
     prefetch_handoff_path: Path | None = None
     window_open_receipt: FirstC0WindowOpenRevalidationV1 | None = None
@@ -403,6 +445,9 @@ class RunnerPreflightV1:
     provider_tcp: Literal[0] = 0
     provider_http: Literal[0] = 0
     secret_reads: Literal[0] = 0
+    global_v2_read_identity: tuple[object, ...] | None = None
+    global_legacy_root_identity: tuple[object, ...] | None = None
+    historical_marker_binding: MarkerInspectionV1 | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -557,54 +602,71 @@ def _model_bytes(model: BaseModel) -> bytes:
     return canonical_json_bytes(model.model_dump(mode="json")) + b"\n"
 
 
-def _local_app_data_readonly() -> Path:
-    if os.name != "nt":
-        value = os.environ.get("LOCALAPPDATA")
-        if not value:
-            raise PreDnsOrchestrationError("LOCAL_APP_DATA_UNAVAILABLE")
-        return Path(value).absolute()
-    buffer = ctypes.create_unicode_buffer(32_768)
-    windows_api = cast(Any, ctypes).windll
-    result = windows_api.shell32.SHGetFolderPathW(None, 0x001C, None, 0, buffer)
-    if result != 0 or not buffer.value:
-        raise PreDnsOrchestrationError("LOCAL_APP_DATA_UNAVAILABLE")
-    return Path(buffer.value).absolute()
-
-
 def inspect_provider_markers_read_only_v1(
     workspace_receipt: RealCaptureWorkspaceReceiptV1,
     mission_manifest: RealExecutionMissionManifestV1,
     *,
     historical_marker: HistoricalMarkerExpectationV1,
 ) -> MarkerInspectionV1:
-    """Inspect marker facts without calling the side-effecting registry helper."""
+    """Inspect V2 and legacy marker facts without creating either registry."""
 
     local_marker = Path(workspace_receipt.control_temp_root) / _CONTROL_MARKER_NAME
-    registry = _local_app_data_readonly() / _GLOBAL_MARKER_ROOT_NAME
     current_manifest_sha256 = mission_manifest.canonical_manifest_sha256()
-    global_marker = registry / (
-        f"{mission_manifest.mission_id.casefold()}-{current_manifest_sha256}.json"
-    )
-    historical_global_marker = registry / (
+    current_marker_name = f"{mission_manifest.mission_id.casefold()}-{current_manifest_sha256}.json"
+    historical_marker_name = (
         f"{mission_manifest.mission_id.casefold()}-"
         f"{historical_marker.authority_manifest_sha256}.json"
     )
-    current_present = os.path.lexists(local_marker) or os.path.lexists(global_marker)
+    try:
+        current_pair = global_claims.read_global_claim_marker_pair_v2(
+            workspace_receipt,
+            current_marker_name,
+        )
+        historical_pair = global_claims.read_global_claim_marker_pair_v2(
+            workspace_receipt,
+            historical_marker_name,
+        )
+    except global_claims.GlobalClaimBoundaryError as error:
+        raise PreDnsOrchestrationError(error.code) from None
+    if current_pair.v2_root_identity != historical_pair.v2_root_identity:
+        raise PreDnsOrchestrationError("GLOBAL_CLAIM_ROOT_IDENTITY_CHANGED")
+    if current_pair.legacy_root_identity != historical_pair.legacy_root_identity:
+        raise PreDnsOrchestrationError("GLOBAL_CLAIM_LEGACY_CONFLICT")
+    current_payloads = tuple(
+        payload
+        for payload in (current_pair.v2_payload, current_pair.legacy_payload)
+        if payload is not None
+    )
+    if current_payloads and not all(
+        _valid_provider_resolution_claim_marker_v2(payload, mission_manifest)
+        for payload in current_payloads
+    ):
+        raise PreDnsOrchestrationError("GLOBAL_CLAIM_MARKER_INVALID")
+    current_present = os.path.lexists(local_marker) or bool(current_payloads)
     raw_hash: str | None = None
     acl_hash: str | None = None
     acl_exclusive = historical_marker.acl_sha256 is None
     unchanged = False
     try:
         authority_hash = historical_marker.authority_manifest_sha256
+        expected_path = Path(os.path.normcase(os.path.abspath(historical_marker.path)))
+        v2_historical_path = Path(os.path.normcase(os.path.abspath(historical_pair.paths.v2)))
+        legacy_historical_path = Path(
+            os.path.normcase(os.path.abspath(historical_pair.paths.legacy))
+        )
+        if expected_path == v2_historical_path:
+            payload = historical_pair.v2_payload
+        elif expected_path == legacy_historical_path:
+            payload = historical_pair.legacy_payload
+        else:
+            payload = None
         if (
             len(authority_hash) != 64
             or authority_hash != authority_hash.casefold()
             or any(character not in "0123456789abcdef" for character in authority_hash)
-            or os.path.normcase(os.path.abspath(historical_marker.path))
-            != os.path.normcase(os.path.abspath(historical_global_marker))
+            or payload is None
         ):
             raise PreDnsOrchestrationError("HISTORICAL_MARKER_AUTHORITY_INVALID")
-        payload = _read_regular_bounded(historical_marker.path.absolute(), maximum_bytes=1_048_576)
         resolution_claim = ProviderNetworkResolutionClaimV1.model_validate_json(payload)
         raw_hash = _sha256(payload)
         if os.name == "nt" and historical_marker.acl_sha256 is not None:
@@ -613,6 +675,7 @@ def inspect_provider_markers_read_only_v1(
             )
         unchanged = (
             resolution_claim.mission_manifest_sha256 == authority_hash
+            and canonical_json_bytes(resolution_claim.model_dump(mode="json")) + b"\n" == payload
             and raw_hash == historical_marker.raw_sha256
             and (
                 historical_marker.acl_sha256 is None
@@ -630,7 +693,10 @@ def inspect_provider_markers_read_only_v1(
         historical_authority_manifest_sha256=(historical_marker.authority_manifest_sha256),
         current_authority_manifest_sha256=current_manifest_sha256,
         current_local_marker=str(local_marker),
-        current_global_marker=str(global_marker),
+        current_v2_global_marker=str(current_pair.paths.v2),
+        current_legacy_global_marker=str(current_pair.paths.legacy),
+        current_v2_root_identity=current_pair.v2_root_identity,
+        current_legacy_root_identity=current_pair.legacy_root_identity,
     )
 
 
@@ -732,10 +798,16 @@ def freeze_official_schedule_evidence_v1(
     )
 
 
-def _marker_from_json(value: object) -> MarkerInspectionV1:
+def _marker_from_json(
+    value: object,
+    *,
+    workspace: RealCaptureWorkspaceReceiptV1,
+    mission: RealExecutionMissionManifestV1,
+) -> MarkerInspectionV1 | LegacyMarkerInspectionV1:
     if not isinstance(value, dict):
         raise PreDnsOrchestrationError("PRE_DNS_MARKER_INSPECTION_INVALID")
-    required = {
+    common = {
+        "schema_version",
         "historical_marker_unchanged",
         "current_marker_present",
         "historical_raw_sha256",
@@ -744,31 +816,88 @@ def _marker_from_json(value: object) -> MarkerInspectionV1:
         "historical_authority_manifest_sha256",
         "current_authority_manifest_sha256",
         "current_local_marker",
-        "current_global_marker",
+        "filesystem_writes",
     }
-    if not required <= set(value):
-        raise PreDnsOrchestrationError("PRE_DNS_MARKER_INSPECTION_INVALID")
-    return MarkerInspectionV1(
-        historical_marker_unchanged=value["historical_marker_unchanged"] is True,
-        current_marker_present=value["current_marker_present"] is True,
-        historical_raw_sha256=(
-            value["historical_raw_sha256"]
-            if isinstance(value["historical_raw_sha256"], str)
-            else None
-        ),
-        historical_acl_sha256=(
-            value["historical_acl_sha256"]
-            if isinstance(value["historical_acl_sha256"], str)
-            else None
-        ),
-        historical_marker_path=cast(str, value["historical_marker_path"]),
-        historical_authority_manifest_sha256=cast(
-            str, value["historical_authority_manifest_sha256"]
-        ),
-        current_authority_manifest_sha256=cast(str, value["current_authority_manifest_sha256"]),
-        current_local_marker=cast(str, value["current_local_marker"]),
-        current_global_marker=cast(str, value["current_global_marker"]),
-    )
+    required_v2 = {
+        *common,
+        "current_v2_global_marker",
+        "current_legacy_global_marker",
+    }
+    required_v1 = {*common, "current_global_marker"}
+    marker_name = f"{mission.mission_id.casefold()}-{mission.canonical_manifest_sha256()}.json"
+    try:
+        marker_paths = global_claims.global_claim_marker_paths_v2(workspace, marker_name)
+    except global_claims.GlobalClaimBoundaryError as error:
+        raise PreDnsOrchestrationError(error.code) from None
+    local_marker = Path(workspace.control_temp_root) / _CONTROL_MARKER_NAME
+
+    def same_path(left: object, right: Path) -> bool:
+        return isinstance(left, str) and os.path.normcase(os.path.abspath(left)) == (
+            os.path.normcase(os.path.abspath(right))
+        )
+
+    schema = value.get("schema_version")
+    if schema == "robin-provider-marker-readonly-inspection-v2":
+        if (
+            set(value) != required_v2
+            or value.get("filesystem_writes") != 0
+            or not same_path(value.get("current_local_marker"), local_marker)
+            or not same_path(value.get("current_v2_global_marker"), marker_paths.v2)
+            or not same_path(value.get("current_legacy_global_marker"), marker_paths.legacy)
+        ):
+            raise PreDnsOrchestrationError("PRE_DNS_MARKER_INSPECTION_INVALID")
+        return MarkerInspectionV1(
+            historical_marker_unchanged=value["historical_marker_unchanged"] is True,
+            current_marker_present=value["current_marker_present"] is True,
+            historical_raw_sha256=(
+                value["historical_raw_sha256"]
+                if isinstance(value["historical_raw_sha256"], str)
+                else None
+            ),
+            historical_acl_sha256=(
+                value["historical_acl_sha256"]
+                if isinstance(value["historical_acl_sha256"], str)
+                else None
+            ),
+            historical_marker_path=cast(str, value["historical_marker_path"]),
+            historical_authority_manifest_sha256=cast(
+                str, value["historical_authority_manifest_sha256"]
+            ),
+            current_authority_manifest_sha256=cast(str, value["current_authority_manifest_sha256"]),
+            current_local_marker=cast(str, value["current_local_marker"]),
+            current_v2_global_marker=cast(str, value["current_v2_global_marker"]),
+            current_legacy_global_marker=cast(str, value["current_legacy_global_marker"]),
+        )
+    if schema == "robin-provider-marker-readonly-inspection-v1":
+        if (
+            set(value) != required_v1
+            or value.get("filesystem_writes") != 0
+            or not same_path(value.get("current_local_marker"), local_marker)
+            or not same_path(value.get("current_global_marker"), marker_paths.legacy)
+        ):
+            raise PreDnsOrchestrationError("PRE_DNS_MARKER_INSPECTION_INVALID")
+        return LegacyMarkerInspectionV1(
+            historical_marker_unchanged=value["historical_marker_unchanged"] is True,
+            current_marker_present=value["current_marker_present"] is True,
+            historical_raw_sha256=(
+                value["historical_raw_sha256"]
+                if isinstance(value["historical_raw_sha256"], str)
+                else None
+            ),
+            historical_acl_sha256=(
+                value["historical_acl_sha256"]
+                if isinstance(value["historical_acl_sha256"], str)
+                else None
+            ),
+            historical_marker_path=cast(str, value["historical_marker_path"]),
+            historical_authority_manifest_sha256=cast(
+                str, value["historical_authority_manifest_sha256"]
+            ),
+            current_authority_manifest_sha256=cast(str, value["current_authority_manifest_sha256"]),
+            current_local_marker=cast(str, value["current_local_marker"]),
+            current_global_marker=cast(str, value["current_global_marker"]),
+        )
+    raise PreDnsOrchestrationError("PRE_DNS_MARKER_INSPECTION_INVALID")
 
 
 def _validate_review_bytes(name: str, payload: bytes) -> Mapping[str, object]:
@@ -1192,12 +1321,22 @@ def _load_first_c0_canary_marker_inspection_v1(
     *,
     workspace: RealCaptureWorkspaceReceiptV1,
     mission: RealExecutionMissionManifestV1,
-) -> FirstC0CanaryMarkerInspectionV1:
+) -> FirstC0CanaryMarkerInspectionV1 | LegacyFirstC0CanaryMarkerInspectionV1:
     try:
         value = strict_json_object(payload)
     except (TypeError, ValueError):
         raise PreDnsOrchestrationError("FIRST_C0_CANARY_MARKER_INSPECTION_INVALID") from None
-    required = {
+    required_v2 = {
+        "schema_version",
+        "local_marker_path",
+        "v2_global_marker_path",
+        "legacy_global_marker_path",
+        "local_marker_present",
+        "v2_global_marker_present",
+        "legacy_global_marker_present",
+        "inspected_read_only",
+    }
+    required_v1 = {
         "schema_version",
         "local_marker_path",
         "global_marker_path",
@@ -1206,47 +1345,133 @@ def _load_first_c0_canary_marker_inspection_v1(
         "inspected_read_only",
     }
     local = Path(workspace.control_temp_root) / _CONTROL_MARKER_NAME
-    global_marker = (
-        _local_app_data_readonly()
-        / _GLOBAL_MARKER_ROOT_NAME
-        / (f"{mission.mission_id.casefold()}-{mission.canonical_manifest_sha256()}.json")
+    marker_name = f"{mission.mission_id.casefold()}-{mission.canonical_manifest_sha256()}.json"
+    try:
+        global_marker_paths = global_claims.global_claim_marker_paths_v2(
+            workspace,
+            marker_name,
+        )
+    except global_claims.GlobalClaimBoundaryError as error:
+        raise PreDnsOrchestrationError(error.code) from None
+    schema = value.get("schema_version")
+    local_matches = isinstance(value.get("local_marker_path"), str) and (
+        os.path.normcase(os.path.abspath(cast(str, value["local_marker_path"])))
+        == os.path.normcase(os.path.abspath(local))
     )
-    if (
-        set(value) != required
-        or value.get("schema_version") != "robin-first-c0-canary-marker-inspection-v1"
-        or value.get("local_marker_present") is not False
-        or value.get("global_marker_present") is not False
-        or value.get("inspected_read_only") is not True
-        or not isinstance(value.get("local_marker_path"), str)
-        or not isinstance(value.get("global_marker_path"), str)
-        or os.path.normcase(os.path.abspath(cast(str, value["local_marker_path"])))
-        != os.path.normcase(os.path.abspath(local))
-        or os.path.normcase(os.path.abspath(cast(str, value["global_marker_path"])))
-        != os.path.normcase(os.path.abspath(global_marker))
-    ):
-        raise PreDnsOrchestrationError("FIRST_C0_CANARY_MARKER_INSPECTION_INVALID")
-    return FirstC0CanaryMarkerInspectionV1(
-        local_marker_path=cast(str, value["local_marker_path"]),
-        global_marker_path=cast(str, value["global_marker_path"]),
-        local_marker_present=False,
-        global_marker_present=False,
-        inspected_read_only=True,
-    )
+    if schema == "robin-first-c0-canary-marker-inspection-v2":
+        if (
+            set(value) != required_v2
+            or value.get("local_marker_present") is not False
+            or value.get("v2_global_marker_present") is not False
+            or value.get("legacy_global_marker_present") is not False
+            or value.get("inspected_read_only") is not True
+            or not local_matches
+            or not isinstance(value.get("v2_global_marker_path"), str)
+            or not isinstance(value.get("legacy_global_marker_path"), str)
+            or os.path.normcase(os.path.abspath(cast(str, value["v2_global_marker_path"])))
+            != os.path.normcase(os.path.abspath(global_marker_paths.v2))
+            or os.path.normcase(os.path.abspath(cast(str, value["legacy_global_marker_path"])))
+            != os.path.normcase(os.path.abspath(global_marker_paths.legacy))
+        ):
+            raise PreDnsOrchestrationError("FIRST_C0_CANARY_MARKER_INSPECTION_INVALID")
+        return FirstC0CanaryMarkerInspectionV1(
+            local_marker_path=cast(str, value["local_marker_path"]),
+            v2_global_marker_path=cast(str, value["v2_global_marker_path"]),
+            legacy_global_marker_path=cast(str, value["legacy_global_marker_path"]),
+            local_marker_present=False,
+            v2_global_marker_present=False,
+            legacy_global_marker_present=False,
+            inspected_read_only=True,
+        )
+    if schema == "robin-first-c0-canary-marker-inspection-v1":
+        if (
+            set(value) != required_v1
+            or value.get("local_marker_present") is not False
+            or value.get("global_marker_present") is not False
+            or value.get("inspected_read_only") is not True
+            or not local_matches
+            or not isinstance(value.get("global_marker_path"), str)
+            or os.path.normcase(os.path.abspath(cast(str, value["global_marker_path"])))
+            != os.path.normcase(os.path.abspath(global_marker_paths.legacy))
+        ):
+            raise PreDnsOrchestrationError("FIRST_C0_CANARY_MARKER_INSPECTION_INVALID")
+        return LegacyFirstC0CanaryMarkerInspectionV1(
+            local_marker_path=cast(str, value["local_marker_path"]),
+            global_marker_path=cast(str, value["global_marker_path"]),
+            local_marker_present=False,
+            global_marker_present=False,
+            inspected_read_only=True,
+        )
+    raise PreDnsOrchestrationError("FIRST_C0_CANARY_MARKER_INSPECTION_INVALID")
 
 
 def _first_c0_canary_marker_authority_matches_v1(
     observed: MarkerInspectionV1,
-    frozen: MarkerInspectionV1 | FirstC0CanaryMarkerInspectionV1,
+    frozen: (
+        MarkerInspectionV1
+        | LegacyMarkerInspectionV1
+        | FirstC0CanaryMarkerInspectionV1
+        | LegacyFirstC0CanaryMarkerInspectionV1
+    ),
 ) -> bool:
     if isinstance(frozen, MarkerInspectionV1):
-        return observed == frozen
+        return observed.to_json() == frozen.to_json()
+    if isinstance(frozen, LegacyMarkerInspectionV1):
+        return (
+            observed.historical_marker_unchanged == frozen.historical_marker_unchanged
+            and observed.current_marker_present == frozen.current_marker_present
+            and observed.historical_raw_sha256 == frozen.historical_raw_sha256
+            and observed.historical_acl_sha256 == frozen.historical_acl_sha256
+            and observed.historical_marker_path == frozen.historical_marker_path
+            and observed.historical_authority_manifest_sha256
+            == frozen.historical_authority_manifest_sha256
+            and observed.current_authority_manifest_sha256
+            == frozen.current_authority_manifest_sha256
+            and os.path.normcase(os.path.abspath(observed.current_local_marker))
+            == os.path.normcase(os.path.abspath(frozen.current_local_marker))
+            and os.path.normcase(os.path.abspath(observed.current_legacy_global_marker))
+            == os.path.normcase(os.path.abspath(frozen.current_global_marker))
+        )
+    if isinstance(frozen, LegacyFirstC0CanaryMarkerInspectionV1):
+        return (
+            observed.historical_marker_unchanged
+            and not observed.current_marker_present
+            and os.path.normcase(os.path.abspath(observed.current_local_marker))
+            == os.path.normcase(os.path.abspath(frozen.local_marker_path))
+            and os.path.normcase(os.path.abspath(observed.current_legacy_global_marker))
+            == os.path.normcase(os.path.abspath(frozen.global_marker_path))
+        )
     return (
         observed.historical_marker_unchanged
         and not observed.current_marker_present
         and os.path.normcase(os.path.abspath(observed.current_local_marker))
         == os.path.normcase(os.path.abspath(frozen.local_marker_path))
-        and os.path.normcase(os.path.abspath(observed.current_global_marker))
-        == os.path.normcase(os.path.abspath(frozen.global_marker_path))
+        and os.path.normcase(os.path.abspath(observed.current_v2_global_marker))
+        == os.path.normcase(os.path.abspath(frozen.v2_global_marker_path))
+        and os.path.normcase(os.path.abspath(observed.current_legacy_global_marker))
+        == os.path.normcase(os.path.abspath(frozen.legacy_global_marker_path))
+    )
+
+
+def _historical_marker_binding_matches_v1(
+    observed: MarkerInspectionV1,
+    expected: MarkerInspectionV1,
+    *,
+    expected_v2_root_identity: tuple[object, ...],
+    expected_legacy_root_identity: tuple[object, ...],
+) -> bool:
+    return (
+        expected.historical_marker_unchanged
+        and observed.historical_marker_unchanged
+        and expected.historical_raw_sha256 is not None
+        and observed.historical_raw_sha256 == expected.historical_raw_sha256
+        and observed.historical_acl_sha256 == expected.historical_acl_sha256
+        and os.path.normcase(os.path.abspath(observed.historical_marker_path))
+        == os.path.normcase(os.path.abspath(expected.historical_marker_path))
+        and observed.historical_authority_manifest_sha256
+        == expected.historical_authority_manifest_sha256
+        and observed.current_v2_root_identity == expected_v2_root_identity
+        and observed.current_legacy_root_identity == expected_legacy_root_identity
     )
 
 
@@ -2307,7 +2532,11 @@ def load_pre_dns_bundle_v1(
             FixtureTargetSetV1.model_validate_json(payloads[f"target-set-{sport_key}.json"])
             for sport_key in LIVE_ALLOWED_SPORT_KEYS
         )
-        marker = _marker_from_json(strict_json_loads(payloads["provider-marker-inspection.json"]))
+        marker = _marker_from_json(
+            strict_json_loads(payloads["provider-marker-inspection.json"]),
+            workspace=workspace,
+            mission=mission,
+        )
         corpus = ScientificCorpusSnapshotV1.model_validate_json(
             payloads["scientific-corpus-snapshot.json"]
         )
@@ -3642,6 +3871,13 @@ def _final_execute_preflight_v1(
         errors=tuple(dict.fromkeys(errors)),
         checked_at_utc=checked,
         usable_margin_seconds=usable_margin,
+        global_v2_read_identity=(
+            observed_marker.current_v2_root_identity if observed_marker is not None else None
+        ),
+        global_legacy_root_identity=(
+            observed_marker.current_legacy_root_identity if observed_marker is not None else None
+        ),
+        historical_marker_binding=observed_marker,
     )
 
 
@@ -3830,6 +4066,32 @@ def _run_owner_review_pack_once_v1(
             receipt_path=None,
             hard_stop_code=None,
         )
+    expected_v2_root_identity = preflight.global_v2_read_identity
+    expected_legacy_root_identity = preflight.global_legacy_root_identity
+    expected_historical_marker = preflight.historical_marker_binding
+    if (
+        expected_v2_root_identity is None
+        or expected_legacy_root_identity is None
+        or expected_historical_marker is None
+        or expected_historical_marker.historical_raw_sha256 is None
+    ):
+        rejected = RunnerPreflightV1(
+            accepted=False,
+            status="PREFLIGHT_REJECTED",
+            errors=("GLOBAL_CLAIM_PREFLIGHT_IDENTITY_UNAVAILABLE",),
+            checked_at_utc=preflight.checked_at_utc,
+            usable_margin_seconds=0,
+        )
+        return AtomicRunnerResultV1(
+            status=rejected.status,
+            preflight=rejected,
+            resolver_operations=0,
+            pack_builds=0,
+            binding_sha256=None,
+            pack_sha256=None,
+            receipt_path=None,
+            hard_stop_code=None,
+        )
     selection = loaded.campaign_selection
     selected = selection.selected_candidate()
     earliest_kickoff = min(
@@ -3916,7 +4178,9 @@ def _run_owner_review_pack_once_v1(
     ) -> Iterable[tuple[object, ...]]:
         nonlocal failure_phase, resolver_completed, resolver_completed_monotonic
         nonlocal resolver_operations
-        binding_clock()
+        # The provider path samples this clock before its final composite
+        # authority barrier.  Sampling again here would reopen a mutation
+        # window between that barrier and the real resolver operation.
         resolver_operations += 1
         if resolver_operations != 1:
             raise PreDnsOrchestrationError("RESOLVER_OPERATION_LIMIT_EXCEEDED")
@@ -3932,6 +4196,19 @@ def _run_owner_review_pack_once_v1(
         failure_phase = "BINDING_VALIDATION"
         return result
 
+    def assert_final_pre_effect_authority() -> None:
+        try:
+            observed = marker_inspector(workspace_receipt, mission_manifest)
+        except Exception:
+            raise PreDnsOrchestrationError("PROVIDER_MARKER_INSPECTION_FAILED") from None
+        if not _historical_marker_binding_matches_v1(
+            observed,
+            expected_historical_marker,
+            expected_v2_root_identity=expected_v2_root_identity,
+            expected_legacy_root_identity=expected_legacy_root_identity,
+        ):
+            raise PreDnsOrchestrationError("HISTORICAL_MARKER_CHANGED")
+
     binding: ProviderNetworkBindingV1 | None = None
     pack: OwnerReviewPackV1 | None = None
     staging: Path | None = None
@@ -3944,6 +4221,9 @@ def _run_owner_review_pack_once_v1(
             resolver=counted_resolver,
             clock=binding_clock,
             binding_ttl_seconds=binding_ttl_seconds,
+            expected_global_v2_read_identity=expected_v2_root_identity,
+            expected_global_legacy_root_identity=expected_legacy_root_identity,
+            final_pre_effect_assertion=assert_final_pre_effect_authority,
         )
         if (
             resolver_operations != 1

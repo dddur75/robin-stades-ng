@@ -10,6 +10,7 @@ import pytest
 from pydantic import ValidationError
 
 import robin.capture as capture_api
+import robin.capture.global_claim_boundary as global_claim_boundary_module
 import robin.capture.provider_network as provider_network_module
 from robin.capture import (
     CampaignLeagueCorpusCountV1,
@@ -25,20 +26,40 @@ from robin.capture import (
     ScientificCorpusSnapshotV1,
     StrictHttpsTransportV2,
 )
-from robin.capture.contracts import ProviderRequestSpec
+from robin.capture.contracts import ProviderRequestSpec, canonical_json_bytes
 from robin.capture.live_contracts import LIVE_ALLOWED_SPORT_KEYS
 from robin.capture.live_transport import LiveTransportError
 from robin.capture.provider_network import (
     _PROVIDER_RESOLUTION_RESERVATION_AUTHORITY_V1,
     ProviderNetworkPreparationError,
+    _prepare_first_c0_provider_network_binding_once_after_atomic_preflight_v1,
     _prepare_provider_network_binding_after_reservation_v1,
 )
-from robin.capture.provider_network import (
-    _prepare_first_c0_provider_network_binding_once_after_atomic_preflight_v1 as prepare_provider_network_binding_once_v1,
+from robin.capture.storage import (
+    capture_root_fingerprint,
+    exclusive_local_directory_fingerprint,
 )
-from robin.capture.storage import exclusive_local_directory_fingerprint
 
 NOW = datetime(2026, 8, 22, 12, 0, tzinfo=UTC)
+
+
+def prepare_provider_network_binding_once_v1(**kwargs: Any) -> ProviderNetworkBindingV1:
+    workspace = kwargs["workspace_receipt"]
+    mission = kwargs["mission_manifest"]
+    marker_name = f"{mission.mission_id.casefold()}-{mission.canonical_manifest_sha256()}.json"
+    try:
+        observed = global_claim_boundary_module.read_global_claim_marker_pair_v2(
+            workspace,
+            marker_name,
+        )
+    except global_claim_boundary_module.GlobalClaimBoundaryError as error:
+        raise ProviderNetworkPreparationError(error.code) from None
+    kwargs.setdefault("final_pre_effect_assertion", lambda: None)
+    return _prepare_first_c0_provider_network_binding_once_after_atomic_preflight_v1(
+        **kwargs,
+        expected_global_v2_read_identity=observed.v2_root_identity,
+        expected_global_legacy_root_identity=observed.legacy_root_identity,
+    )
 
 
 @pytest.fixture(autouse=True)
@@ -48,10 +69,60 @@ def _isolated_mission_global_claim_registry(
 ) -> Path:
     registry = tmp_path / "mission-global-claim-registry"
     registry.mkdir()
+    legacy_registry = tmp_path / "legacy-global-claim-registry"
     monkeypatch.setattr(
-        provider_network_module,
-        "_mission_global_claim_registry_root_v1",
-        lambda: registry,
+        global_claim_boundary_module,
+        "resolve_global_claim_root_candidate_v2",
+        lambda _workspace: registry,
+    )
+    monkeypatch.setattr(
+        global_claim_boundary_module,
+        "ensure_global_claim_root_v2",
+        lambda _workspace, **_kwargs: registry,
+    )
+    monkeypatch.setattr(
+        global_claim_boundary_module,
+        "inspect_global_claim_root_identity_v2",
+        lambda _workspace: ("synthetic-stable-global-root",),
+    )
+
+    def read_snapshot(_workspace: object) -> tuple[Path, tuple[object, ...]]:
+        selected = global_claim_boundary_module.resolve_global_claim_root_candidate_v2(_workspace)
+        metadata = selected.lstat()
+        return selected, ("synthetic-global-root", metadata.st_dev, metadata.st_ino)
+
+    monkeypatch.setattr(
+        global_claim_boundary_module,
+        "_global_claim_root_read_snapshot_v2",
+        read_snapshot,
+    )
+    monkeypatch.setattr(
+        global_claim_boundary_module,
+        "inspect_global_claim_root_identity_v2",
+        lambda workspace: read_snapshot(workspace)[1],
+    )
+
+    def ensure_with_identity(
+        workspace: object,
+        *,
+        expected_read_identity: tuple[object, ...] | None = None,
+    ) -> object:
+        selected, identity = read_snapshot(workspace)
+        if expected_read_identity is not None and identity != expected_read_identity:
+            raise global_claim_boundary_module.GlobalClaimBoundaryError(
+                "GLOBAL_CLAIM_ROOT_IDENTITY_CHANGED"
+            )
+        return global_claim_boundary_module._EnsuredGlobalClaimRootV2(selected, identity)
+
+    monkeypatch.setattr(
+        global_claim_boundary_module,
+        "_ensure_global_claim_root_with_identity_v2",
+        ensure_with_identity,
+    )
+    monkeypatch.setattr(
+        global_claim_boundary_module,
+        "resolve_legacy_global_claim_root_read_only_v1",
+        lambda: legacy_registry,
     )
     return registry
 
@@ -363,13 +434,13 @@ def _network_workspace(tmp_path: Path) -> tuple[RealCaptureWorkspaceReceiptV1, P
             authority_eligible_for_real_execution=True,
             prepared_at_utc=NOW - timedelta(minutes=3),
             runtime_repository_root=str(repository.absolute()),
-            repository_root_fingerprint="3" * 64,
+            repository_root_fingerprint=exclusive_local_directory_fingerprint(repository),
             repository_security_descriptor_sha256="7" * 64,
             control_temp_root=str(control.absolute()),
             control_temp_fingerprint=exclusive_local_directory_fingerprint(control),
             control_temp_security_descriptor_sha256="8" * 64,
             capture_root=str(capture.absolute()),
-            capture_root_fingerprint="5" * 64,
+            capture_root_fingerprint=capture_root_fingerprint(capture),
             capture_security_descriptor_sha256="9" * 64,
             git_executable_path=str(git.absolute()),
             git_executable_sha256="6" * 64,
@@ -533,13 +604,13 @@ def test_durable_claim_prevents_second_resolution_even_with_different_output(
         authority_eligible_for_real_execution=True,
         prepared_at_utc=NOW - timedelta(minutes=3),
         runtime_repository_root=str(repository.absolute()),
-        repository_root_fingerprint="3" * 64,
+        repository_root_fingerprint=exclusive_local_directory_fingerprint(repository),
         repository_security_descriptor_sha256="7" * 64,
         control_temp_root=str(control.absolute()),
         control_temp_fingerprint=exclusive_local_directory_fingerprint(control),
         control_temp_security_descriptor_sha256="8" * 64,
         capture_root=str(capture.absolute()),
-        capture_root_fingerprint="5" * 64,
+        capture_root_fingerprint=capture_root_fingerprint(capture),
         capture_security_descriptor_sha256="9" * 64,
         git_executable_path=str(git.absolute()),
         git_executable_sha256="6" * 64,
@@ -591,7 +662,7 @@ def test_durable_claim_prevents_second_resolution_even_with_different_output(
     )
     with pytest.raises(
         ProviderNetworkPreparationError,
-        match="PROVIDER_NETWORK_RESOLUTION_ALREADY_CONSUMED",
+        match="GLOBAL_CLAIM_ALREADY_CONSUMED",
     ):
         prepare_provider_network_binding_once_v1(
             workspace_receipt=workspace,
@@ -693,7 +764,7 @@ def test_mission_global_claim_blocks_a_second_verified_workspace_before_dns(
     )
     with pytest.raises(
         ProviderNetworkPreparationError,
-        match="PROVIDER_NETWORK_RESOLUTION_ALREADY_CONSUMED",
+        match="GLOBAL_CLAIM_ALREADY_CONSUMED",
     ):
         prepare_provider_network_binding_once_v1(
             workspace_receipt=second_workspace,
@@ -705,6 +776,278 @@ def test_mission_global_claim_blocks_a_second_verified_workspace_before_dns(
         )
     assert resolver_calls == 1
     assert not (second_control / "provider-network-resolution-one-shot-v1.json").exists()
+    assert not (tmp_path / "legacy-global-claim-registry").exists()
+
+
+@pytest.mark.parametrize(
+    ("state", "expected_code"),
+    (
+        ("legacy", "GLOBAL_CLAIM_ALREADY_CONSUMED"),
+        ("v2", "GLOBAL_CLAIM_ALREADY_CONSUMED"),
+        ("equal", "GLOBAL_CLAIM_ALREADY_CONSUMED"),
+        ("conflict", "GLOBAL_CLAIM_LEGACY_CONFLICT"),
+        ("invalid-legacy", "GLOBAL_CLAIM_MARKER_INVALID"),
+    ),
+)
+def test_legacy_and_v2_claim_states_stop_before_dns(
+    tmp_path: Path,
+    _isolated_mission_global_claim_registry: Path,
+    state: str,
+    expected_code: str,
+) -> None:
+    workspace, control = _network_workspace(tmp_path)
+    manifest = _mission_manifest(NOW + timedelta(days=1))
+    selection = _campaign_selection(workspace, manifest)
+    selected = selection.selected_candidate()
+    prior = ProviderNetworkResolutionClaimV1.issue(
+        mission_manifest_sha256=manifest.canonical_manifest_sha256(),
+        workspace_receipt_sha256=workspace.canonical_receipt_hash,
+        campaign_selection_sha256=selection.canonical_selection_hash,
+        fixture_target_set_sha256=selected.fixture_target_set.canonical_set_hash,
+        claimed_at_utc=NOW - timedelta(seconds=1),
+        mission_expires_at_utc=manifest.expires_at,
+    )
+    prior_payload = canonical_json_bytes(prior.model_dump(mode="json")) + b"\n"
+    alternate = prior.model_copy(
+        update={
+            "workspace_receipt_sha256": "f" * 64,
+            "canonical_claim_hash": "0" * 64,
+        }
+    )
+    alternate = ProviderNetworkResolutionClaimV1.issue(
+        **alternate.model_dump(mode="python", exclude={"canonical_claim_hash"})
+    )
+    alternate_payload = canonical_json_bytes(alternate.model_dump(mode="json")) + b"\n"
+    marker_name = f"{manifest.mission_id.casefold()}-{manifest.canonical_manifest_sha256()}.json"
+    legacy_root = tmp_path / "legacy-global-claim-registry"
+    if state in {"legacy", "equal", "conflict", "invalid-legacy"}:
+        legacy_root.mkdir()
+        (legacy_root / marker_name).write_bytes(
+            b"invalid" if state == "invalid-legacy" else prior_payload
+        )
+    if state in {"v2", "equal", "conflict"}:
+        (_isolated_mission_global_claim_registry / marker_name).write_bytes(
+            alternate_payload if state == "conflict" else prior_payload
+        )
+    legacy_before = (
+        (legacy_root / marker_name).read_bytes() if (legacy_root / marker_name).exists() else None
+    )
+    resolver_calls = 0
+
+    def resolver(*_arguments: object) -> list[tuple[object, ...]]:
+        nonlocal resolver_calls
+        resolver_calls += 1
+        return []
+
+    with pytest.raises(ProviderNetworkPreparationError, match=f"^{expected_code}$"):
+        prepare_provider_network_binding_once_v1(
+            workspace_receipt=workspace,
+            mission_manifest=manifest,
+            campaign_selection=selection,
+            output_path=control / "binding.json",
+            resolver=resolver,
+            clock=lambda: NOW,
+        )
+
+    assert resolver_calls == 0
+    assert not (control / "provider-network-resolution-one-shot-v1.json").exists()
+    assert not (control / "binding.json").exists()
+    assert (
+        (legacy_root / marker_name).read_bytes() if (legacy_root / marker_name).exists() else None
+    ) == legacy_before
+
+
+@pytest.mark.parametrize(
+    "boundary_code",
+    (
+        "GLOBAL_CLAIM_OWNER_BOUNDARY_UNAVAILABLE",
+        "GLOBAL_CLAIM_OWNER_BOUNDARY_MISMATCH",
+        "GLOBAL_CLAIM_OWNER_BOUNDARY_UNSAFE",
+        "GLOBAL_CLAIM_ROOT_COLLISION",
+        "GLOBAL_CLAIM_ROOT_REPARSE_FORBIDDEN",
+        "GLOBAL_CLAIM_ROOT_ACL_REQUIRED",
+        "GLOBAL_CLAIM_ROOT_IDENTITY_CHANGED",
+        "GLOBAL_CLAIM_LEGACY_CONFLICT",
+        "GLOBAL_CLAIM_ALREADY_CONSUMED",
+    ),
+)
+def test_every_global_claim_boundary_failure_class_stops_before_dns(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    boundary_code: str,
+) -> None:
+    workspace, control = _network_workspace(tmp_path)
+    manifest = _mission_manifest(NOW + timedelta(days=1))
+    resolver_calls = 0
+
+    def failed_reservation(*_args: object, **_kwargs: object) -> Path:
+        raise global_claim_boundary_module.GlobalClaimBoundaryError(boundary_code)
+
+    def resolver(*_arguments: object) -> list[tuple[object, ...]]:
+        nonlocal resolver_calls
+        resolver_calls += 1
+        return []
+
+    monkeypatch.setattr(
+        global_claim_boundary_module,
+        "reserve_global_claim_marker_v2",
+        failed_reservation,
+    )
+    with pytest.raises(ProviderNetworkPreparationError, match=f"^{boundary_code}$"):
+        prepare_provider_network_binding_once_v1(
+            workspace_receipt=workspace,
+            mission_manifest=manifest,
+            campaign_selection=_campaign_selection(workspace, manifest),
+            output_path=control / "binding.json",
+            resolver=resolver,
+            clock=lambda: NOW,
+        )
+
+    assert resolver_calls == 0
+    assert not (control / "provider-network-resolution-one-shot-v1.json").exists()
+    assert not (control / "binding.json").exists()
+
+
+@pytest.mark.parametrize(
+    ("late_legacy_payload", "expected_code"),
+    (
+        (b'{"race":"legacy-conflict"}\n', "GLOBAL_CLAIM_LEGACY_CONFLICT"),
+        (None, "GLOBAL_CLAIM_ALREADY_CONSUMED"),
+    ),
+)
+def test_legacy_marker_inserted_after_reservation_is_rechecked_before_dns(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    late_legacy_payload: bytes | None,
+    expected_code: str,
+) -> None:
+    workspace, control = _network_workspace(tmp_path)
+    manifest = _mission_manifest(NOW + timedelta(days=1))
+    real_reserve = global_claim_boundary_module.reserve_global_claim_marker_v2
+    resolver_calls = 0
+
+    def reserve_then_inject_legacy_conflict(
+        receipt: RealCaptureWorkspaceReceiptV1,
+        marker_name: str,
+        payload: bytes,
+        *,
+        validator: Any,
+        expected_v2_read_identity: tuple[object, ...] | None = None,
+        expected_legacy_root_identity: tuple[object, ...] | None = None,
+    ) -> global_claim_boundary_module.GlobalClaimReservationV2:
+        written = real_reserve(
+            receipt,
+            marker_name,
+            payload,
+            validator=validator,
+            expected_v2_read_identity=expected_v2_read_identity,
+            expected_legacy_root_identity=expected_legacy_root_identity,
+        )
+        legacy = global_claim_boundary_module.global_claim_marker_paths_v2(
+            receipt,
+            marker_name,
+        ).legacy
+        legacy.parent.mkdir()
+        legacy.write_bytes(payload if late_legacy_payload is None else late_legacy_payload)
+        return written
+
+    def resolver(*_arguments: object) -> list[tuple[object, ...]]:
+        nonlocal resolver_calls
+        resolver_calls += 1
+        return []
+
+    monkeypatch.setattr(
+        global_claim_boundary_module,
+        "reserve_global_claim_marker_v2",
+        reserve_then_inject_legacy_conflict,
+    )
+    with pytest.raises(
+        ProviderNetworkPreparationError,
+        match=f"^{expected_code}$",
+    ):
+        prepare_provider_network_binding_once_v1(
+            workspace_receipt=workspace,
+            mission_manifest=manifest,
+            campaign_selection=_campaign_selection(workspace, manifest),
+            output_path=control / "binding.json",
+            resolver=resolver,
+            clock=lambda: NOW,
+        )
+
+    assert resolver_calls == 0
+    assert (control / "provider-network-resolution-one-shot-v1.json").is_file()
+    assert not (control / "binding.json").exists()
+
+
+def test_global_root_replacement_after_reservation_stops_before_dns(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    _isolated_mission_global_claim_registry: Path,
+) -> None:
+    workspace, control = _network_workspace(tmp_path)
+    manifest = _mission_manifest(NOW + timedelta(days=1))
+    registry = _isolated_mission_global_claim_registry
+    displaced = registry.parent / "mission-global-claim-registry-displaced"
+    real_reserve = global_claim_boundary_module.reserve_global_claim_marker_v2
+    resolver_calls = 0
+    monkeypatch.setattr(
+        global_claim_boundary_module,
+        "inspect_global_claim_root_identity_v2",
+        lambda _workspace: (
+            "synthetic-global-root",
+            registry.stat().st_dev,
+            registry.stat().st_ino,
+        ),
+    )
+
+    def reserve_then_replace_root(
+        receipt: RealCaptureWorkspaceReceiptV1,
+        marker_name: str,
+        payload: bytes,
+        *,
+        validator: Any,
+        expected_v2_read_identity: tuple[object, ...] | None = None,
+        expected_legacy_root_identity: tuple[object, ...] | None = None,
+    ) -> global_claim_boundary_module.GlobalClaimReservationV2:
+        reservation = real_reserve(
+            receipt,
+            marker_name,
+            payload,
+            validator=validator,
+            expected_v2_read_identity=expected_v2_read_identity,
+            expected_legacy_root_identity=expected_legacy_root_identity,
+        )
+        registry.rename(displaced)
+        registry.mkdir()
+        (registry / marker_name).write_bytes((displaced / marker_name).read_bytes())
+        return reservation
+
+    def resolver(*_arguments: object) -> list[tuple[object, ...]]:
+        nonlocal resolver_calls
+        resolver_calls += 1
+        return []
+
+    monkeypatch.setattr(
+        global_claim_boundary_module,
+        "reserve_global_claim_marker_v2",
+        reserve_then_replace_root,
+    )
+    with pytest.raises(
+        ProviderNetworkPreparationError,
+        match="^GLOBAL_CLAIM_ROOT_IDENTITY_CHANGED$",
+    ):
+        prepare_provider_network_binding_once_v1(
+            workspace_receipt=workspace,
+            mission_manifest=manifest,
+            campaign_selection=_campaign_selection(workspace, manifest),
+            output_path=control / "binding.json",
+            resolver=resolver,
+            clock=lambda: NOW,
+        )
+
+    assert resolver_calls == 0
+    assert (control / "provider-network-resolution-one-shot-v1.json").is_file()
+    assert not (control / "binding.json").exists()
 
 
 def test_one_shot_binding_is_clamped_to_campaign_activation_ceiling(
@@ -815,6 +1158,36 @@ def test_resolution_rechecks_claim_age_before_the_only_dns_operation(tmp_path: P
     assert (control / "provider-network-resolution-one-shot-v1.json").is_file()
 
 
+def test_resolution_rechecks_claim_age_after_global_marker_validation(
+    tmp_path: Path,
+) -> None:
+    workspace, control = _network_workspace(tmp_path)
+    manifest = _mission_manifest(NOW + timedelta(days=1))
+    times = iter((NOW, NOW, NOW + timedelta(minutes=1, microseconds=1)))
+    resolver_calls = 0
+
+    def resolver(*_arguments: object) -> list[tuple[object, ...]]:
+        nonlocal resolver_calls
+        resolver_calls += 1
+        return [(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("8.8.8.8", 443))]
+
+    with pytest.raises(
+        ProviderNetworkPreparationError,
+        match="PROVIDER_NETWORK_RESOLUTION_CLAIM_NOT_CURRENT",
+    ):
+        prepare_provider_network_binding_once_v1(
+            workspace_receipt=workspace,
+            mission_manifest=manifest,
+            campaign_selection=_campaign_selection(workspace, manifest),
+            output_path=control / "binding.json",
+            resolver=resolver,
+            clock=lambda: next(times),
+        )
+    assert resolver_calls == 0
+    assert (control / "provider-network-resolution-one-shot-v1.json").is_file()
+    assert not (control / "binding.json").exists()
+
+
 def test_control_root_replacement_after_claim_stops_before_dns(tmp_path: Path) -> None:
     workspace, control = _network_workspace(tmp_path)
     manifest = _mission_manifest(NOW + timedelta(days=1))
@@ -850,6 +1223,155 @@ def test_control_root_replacement_after_claim_stops_before_dns(tmp_path: Path) -
     assert resolver_calls == 0
     assert (retired / "provider-network-resolution-one-shot-v1.json").is_file()
     assert not (control / "provider-network-resolution-one-shot-v1.json").exists()
+
+
+@pytest.mark.parametrize(
+    "root_field",
+    ("runtime_repository_root", "control_temp_root", "capture_root"),
+)
+def test_workspace_root_replacement_during_global_assertion_stops_before_dns(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    root_field: str,
+) -> None:
+    workspace, control = _network_workspace(tmp_path)
+    manifest = _mission_manifest(NOW + timedelta(days=1))
+    selected_root = Path(getattr(workspace, root_field))
+    retired = tmp_path / f"retired-{selected_root.name}"
+    real_assert = global_claim_boundary_module.assert_global_claim_marker_current_v2
+    resolver_calls = 0
+    assertion_calls = 0
+
+    def assert_then_replace(*args: object, **kwargs: object) -> Path:
+        nonlocal assertion_calls
+        marker = real_assert(*args, **kwargs)
+        assertion_calls += 1
+        if assertion_calls == 2:
+            selected_root.rename(retired)
+            selected_root.mkdir()
+        return marker
+
+    def resolver(*_arguments: object) -> list[tuple[object, ...]]:
+        nonlocal resolver_calls
+        resolver_calls += 1
+        return [(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("8.8.8.8", 443))]
+
+    monkeypatch.setattr(
+        global_claim_boundary_module,
+        "assert_global_claim_marker_current_v2",
+        assert_then_replace,
+    )
+
+    with pytest.raises(
+        ProviderNetworkPreparationError,
+        match="^PROVIDER_NETWORK_WORKSPACE_IDENTITY_CHANGED$",
+    ):
+        prepare_provider_network_binding_once_v1(
+            workspace_receipt=workspace,
+            mission_manifest=manifest,
+            campaign_selection=_campaign_selection(workspace, manifest),
+            output_path=control / "binding.json",
+            resolver=resolver,
+            clock=lambda: NOW,
+        )
+
+    assert resolver_calls == 0
+    assert not (control / "binding.json").exists()
+    if root_field == "control_temp_root":
+        assert (retired / "provider-network-resolution-one-shot-v1.json").is_file()
+    else:
+        assert (control / "provider-network-resolution-one-shot-v1.json").is_file()
+
+
+@pytest.mark.parametrize("mutation", ("delete", "replace"))
+def test_local_resolution_claim_mutation_after_global_assertion_stops_before_dns(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    mutation: str,
+) -> None:
+    workspace, control = _network_workspace(tmp_path)
+    manifest = _mission_manifest(NOW + timedelta(days=1))
+    marker = control / "provider-network-resolution-one-shot-v1.json"
+    real_assert = global_claim_boundary_module.assert_global_claim_marker_current_v2
+    assertion_calls = 0
+    resolver_calls = 0
+
+    def assert_then_mutate(*args: object, **kwargs: object) -> Path:
+        nonlocal assertion_calls
+        result = real_assert(*args, **kwargs)
+        assertion_calls += 1
+        if assertion_calls == 2:
+            if mutation == "delete":
+                marker.unlink()
+            else:
+                marker.write_bytes(b'{"mutated":true}\n')
+        return result
+
+    def resolver(*_arguments: object) -> list[tuple[object, ...]]:
+        nonlocal resolver_calls
+        resolver_calls += 1
+        return [(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("8.8.8.8", 443))]
+
+    monkeypatch.setattr(
+        global_claim_boundary_module,
+        "assert_global_claim_marker_current_v2",
+        assert_then_mutate,
+    )
+
+    with pytest.raises(
+        ProviderNetworkPreparationError,
+        match="^PROVIDER_NETWORK_RESOLUTION_CLAIM_NOT_CURRENT$",
+    ):
+        prepare_provider_network_binding_once_v1(
+            workspace_receipt=workspace,
+            mission_manifest=manifest,
+            campaign_selection=_campaign_selection(workspace, manifest),
+            output_path=control / "binding.json",
+            resolver=resolver,
+            clock=lambda: NOW,
+        )
+
+    assert resolver_calls == 0
+    assert not (control / "binding.json").exists()
+
+
+def test_local_claim_mutation_during_final_clock_sample_stops_before_dns(
+    tmp_path: Path,
+) -> None:
+    workspace, control = _network_workspace(tmp_path)
+    manifest = _mission_manifest(NOW + timedelta(days=1))
+    marker = control / "provider-network-resolution-one-shot-v1.json"
+    clock_calls = 0
+    resolver_calls = 0
+
+    def clock() -> datetime:
+        nonlocal clock_calls
+        clock_calls += 1
+        if clock_calls == 3:
+            marker.write_bytes(b'{"mutated_during_clock":true}\n')
+        return NOW
+
+    def resolver(*_arguments: object) -> list[tuple[object, ...]]:
+        nonlocal resolver_calls
+        resolver_calls += 1
+        return [(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("8.8.8.8", 443))]
+
+    with pytest.raises(
+        ProviderNetworkPreparationError,
+        match="^PROVIDER_NETWORK_RESOLUTION_CLAIM_NOT_CURRENT$",
+    ):
+        prepare_provider_network_binding_once_v1(
+            workspace_receipt=workspace,
+            mission_manifest=manifest,
+            campaign_selection=_campaign_selection(workspace, manifest),
+            output_path=control / "binding.json",
+            resolver=resolver,
+            clock=clock,
+        )
+
+    assert clock_calls == 3
+    assert resolver_calls == 0
+    assert not (control / "binding.json").exists()
 
 
 def test_workspace_identity_replacement_stops_before_resolution(tmp_path: Path) -> None:

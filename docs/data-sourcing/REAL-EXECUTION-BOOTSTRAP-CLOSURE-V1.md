@@ -59,8 +59,8 @@ remaining set, orders IPv4 before IPv6 by packed bytes, and selects the first
 address. There is no retry, random choice, or failover.
 
 Before calling the resolver, the tool atomically creates a deterministic
-mission-global claim in the OS-known, fixed, non-synchronized, ACL-verified local
-application-data registry and then mirrors the
+mission-global claim in the receipt-bound owner execution registry at
+`<Windows Profile>\RDS\RobinGlobalClaimsV2` and then mirrors the
 `ProviderNetworkResolutionClaimV1` into the fingerprint-verified control-temp
 root. The global marker is keyed by the exact tracked mission-manifest hash, so a
 second independently verified runtime workspace cannot reset the budget. It
@@ -70,6 +70,34 @@ or output filename, stops before resolution. The claim binds the verified
 workspace, tracked mission manifest, complete campaign-selection hash, and exact
 winning target-set hash. Mission expiry, workspace identity, and the still-current
 unique campaign winner are checked again before the observed resolver boundary.
+After the final clock sample, the no-callback composite barrier also re-reads the
+historical marker and binds its exact path, authority-manifest hash, raw bytes,
+ACL expectation, and V2/legacy root identities alongside the current global and
+local claims; no mutation callback runs between that assertion and the sole
+resolver operation.
+The resolver derives one common runtime parent from the receipt's repository,
+control-temp, and capture roots, then proves its physical parent is the current
+Windows profile's `RDS` boundary using canonical path, volume, device/file ID,
+filesystem, synchronization, reparse, cloud, and ACL facts. It verifies the
+parent before creating only the versioned child and re-inspects the exact child
+before use. `%LOCALAPPDATA%\RobinRealExecutionMissionClaimsV1` is retained solely
+as a read-only compatibility source: both roots are inspected before a new claim,
+equal dual markers are accepted as already consumed, unequal markers fail closed,
+and no legacy directory, ACL, or marker is created, repaired, moved, or deleted.
+The rejected LocalAppData boundary had real non-exclusive ACL authority
+(`ACL_REAL_NON_EXCLUSIVITY=TRUE`, `ACL_POLICY_FALSE_POSITIVE=FALSE`); this design
+therefore preserves the security policy and changes neither LocalAppData nor RDS
+ACLs.
+
+The 23,127-byte owner delivery directive dated 2026-08-28 (SHA-256
+`2d30511e1ae2ab9e49ba97fcd0e57d48a93212c96ab5f75b2cf3b8386c09e368`) is a
+new, exact one-time delivery authority for this twelve-path correction. It
+supersedes the older mission-matrix path allowlist only for those twelve named
+paths; it does not replace or expand the unchanged V5 runtime manifest whose
+source hash is `204e4323d0b99fdfa8c655cdc3a08a8d2b3c82ac0a784f9a97982c90ab3a7312`.
+The directive is strictly narrower at runtime: it permits the post-merge
+official pre-DNS preparation but requires provider DNS, transport, secret access,
+Owner Review Pack creation, OwnerAuthorization, and C0 to remain at zero.
 
 The recorded expiry is explicitly a local binding-policy TTL (maximum fifteen
 minutes). In the one-shot campaign path it is shortened to the earliest of the
@@ -115,11 +143,17 @@ Git executable before proceeding. The receipt also binds and rechecks each root'
 ACL security-descriptor hash. All review artifacts (schedule, selection, the
 control-root DNS-claim mirror, network binding, and owner pack) are confined to
 the receipt-bound control-temp root, so preparation cannot dirty the verified
-repository. The sole exception is the sanitized mission-global DNS reservation
-marker described above. It is intentionally untracked and stored in the
-OS-known, fixed, ACL-verified local application-data registry so separately
-verified workspaces cannot each spend a DNS attempt. Its machine-local path is
-neither committed nor exposed as a final execution artifact.
+repository. The sole exception is the sanitized mission-global reservation
+marker described above. Provider resolution claims and First-C0 preparation-cycle
+reservations share the same untracked, deterministic V2 registry beneath the
+verified owner execution boundary, so separately verified workspaces cannot each
+spend the same mission opportunity. Read-only inspection never creates the V2 or
+legacy directory. New writes target V2 exclusively and use create-exclusive
+semantics after a final dual-root consumption check; the legacy root is never a
+write target. Machine-local paths are not committed as execution artifacts.
+Cross-workspace, dual-root, and exact failure-class regressions use injected
+resolver and fetch counters and prove that every rejected boundary reaches zero
+provider DNS, TCP, HTTP, secret, Owner Review Pack, and C0 effects.
 
 Owner authorization binds both the canonical Git executable path and its freshly
 computed SHA-256. V2 repository inspection checks both around local Git use; the
@@ -176,23 +210,48 @@ rejected.
 
 ## Required operational order
 
-1. Merge this capability with a merge commit after exact-head CI and DP6/C4/C2
-   acceptance.
-2. Reverify the new main SHA.
-3. Run `CREATE` from the merged source to provision the standalone clone; its
-   receipt is non-authoritative.
-4. Load the tool from that exact standalone clone and run `VERIFY`; use only this
-   authority-eligible receipt downstream.
-5. Refresh all five official schedules, freeze their target sets, and derive the
-   complete current campaign universe and unique best remaining winner. If it is
-   future, wait until its not-before time and refresh all official/corpus evidence
-   before consuming DNS.
-6. Perform the separately authorized single public DNS resolution, binding its
-   durable claim to that selection and winner.
-7. Build the unexecuted owner-review pack before both campaign and DNS binding
-   windows expire.
-8. Stop before `EnvironmentSecretReader` or any provider transport is invoked.
+1. Merge this capability with a merge commit only after exact-head CI and the
+   required read-only reviews accept it; then require post-merge `main` CI to be
+   green at that exact merge SHA.
+2. Create a clean source stage at the exact merge SHA. From that source, invoke
+   workspace `CREATE` at most once to provision a new standalone runtime; its
+   receipt remains non-authoritative.
+3. Load the bootstrap tool and package from that exact standalone clone and
+   invoke `VERIFY` at most once. Only the resulting authority-eligible receipt
+   may be used downstream. Never reuse, repair, clean, or advance an older
+   runtime for this sequence.
+4. Before consuming a preparation cycle, derive the owner boundary from the
+   three verified receipt roots, prove it is the same physical
+   `<Windows Profile>\RDS` object, inspect the V2 child and legacy root read-only,
+   and write an untracked `global-claim-boundary-v2-receipt.json` in control-temp.
+   This inspection must create no claim or cycle and must record canonical paths,
+   volume/device/file identities, ACL hashes, the workspace-receipt hash, the
+   merge SHA, the legacy `FORBIDDEN` write policy, and a canonical receipt hash.
+5. From the verified runtime, enter only the First-C0 preparation path. Reserve
+   the mission-global V2 cycle before its local reservation and before any
+   official public schedule read. Start with La Liga; refresh or use the
+   Bundesliga fallback only when the preceding immutable receipt authorizes that
+   exact transition. Never backfill a gap or repeat an identical source. Stop at
+   three cycles or twelve physical official reads.
+6. Freeze the resulting official evidence and produce the immutable pre-DNS
+   bundle. A governed `CANARY_READY_NOW`, `PREFETCHED_FUTURE_WINDOW`, or
+   `CANARY_FUTURE_WINDOW` is a successful preparation outcome; source failure,
+   no valid window, or mission expiry is a governed stop and never authorizes an
+   invented fallback.
+7. If a governed bundle exists, build untracked
+   `first-c0-owner-launch-kit-v2.json` and `.md` in control-temp from the actual
+   receipt, manifest, boundary receipt, bundle, optional prefetch handoff,
+   selected candidate/window, historical marker hashes, and exact file paths.
+   Include the recommended owner start in UTC and Europe/Paris and display the
+   exact future `run_first_c0_owner_pack_atomic_v1.py` command with both
+   `--execute` and `--owner-present-for-at-least-20-minutes` gates.
+8. Stop after publishing that launch kit. The displayed command belongs to a
+   later explicit owner authorization and is not executed by this preparation
+   sequence. Provider `getaddrinfo`, provider DNS/TCP/HTTP, the DNS claim,
+   network binding, secret access, Owner Review Pack creation, owner
+   authorization, and C0 all remain exactly zero.
 
-If any ordering, freshness, path, hash, target, or evidence gate fails, stop. Do
-not backdate, guess an IP, invent a provider fixture ID, silently re-resolve, or
-reuse an expired binding.
+If any ordering, freshness, path, hash, target, identity, or evidence gate fails,
+stop. Do not alter `%LOCALAPPDATA%` or RDS ACLs, write the legacy root, backdate,
+guess an IP, invent a provider fixture ID, silently retry, or reuse an expired or
+consumed artifact.
