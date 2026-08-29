@@ -978,11 +978,10 @@ class PowerShellAclFixtureRunner:
         fixture_script = (
             "$fixture=ConvertFrom-Json $env:ROBIN_TEST_ACL_FIXTURE;"
             "$current=[System.Security.Principal.WindowsIdentity]::GetCurrent();"
-            "$owner=if($fixture.owner -eq 'CURRENT'){$current.Name}"
+            "$owner=if($fixture.owner -eq 'CURRENT'){"
+            "$env:ROBIN_TEST_CURRENT_ACCOUNT}"
             "elseif($fixture.owner.StartsWith('SID:')){"
-            "[System.Security.Principal.SecurityIdentifier]::new("
-            "$fixture.owner.Substring(4)).Translate("
-            "[System.Security.Principal.NTAccount]).Value}"
+            "$env:ROBIN_TEST_MISMATCH_ACCOUNT}"
             "else{$fixture.owner};"
             "$access=@($fixture.entries|ForEach-Object {"
             "$sid=if($_.sid -eq 'CURRENT'){$current.User}else{"
@@ -1007,6 +1006,10 @@ class PowerShellAclFixtureRunner:
         )
         child_environment = dict(environment)
         child_environment["ROBIN_TEST_ACL_FIXTURE"] = self.fixture
+        child_environment["ROBIN_TEST_CURRENT_ACCOUNT"] = (
+            f"{os.environ['USERDOMAIN']}\\{os.environ['USERNAME']}"
+        )
+        child_environment["ROBIN_TEST_MISMATCH_ACCOUNT"] = "NT AUTHORITY\\SYSTEM"
         return SubprocessCommandRunner().run(
             (*arguments[:-1], fixture_script + probe),
             cwd=cwd,
