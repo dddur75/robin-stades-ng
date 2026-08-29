@@ -14,9 +14,12 @@ from psycopg.conninfo import conninfo_to_dict
 
 import scripts.chronos_production_bootstrap_v3 as bootstrap_module
 from robin.chronos_production import (
+    PRODUCTION_SAFETY_LOCKS,
+    SCOPED_LOGINS,
     ChronosProductionError,
     DirectPostgresTarget,
     assert_exact_preflight_binding,
+    assert_production_safety_locks,
     build_scoped_database_url,
     preflight_hash,
     sign_document,
@@ -36,7 +39,9 @@ from robin.prospective_observatory.chronos_control_plane import (
 )
 from scripts.chronos_production_bootstrap_v3 import (
     NeonClient,
+    NeonIdentity,
     _attempt_cleanup_steps,
+    create_recovery_point,
     inspect_database,
 )
 
@@ -70,8 +75,145 @@ def test_production_workflows_are_manual_only_and_environment_protected() -> Non
         assert "repository_dispatch:" not in content
 
 
-def test_mutating_production_bootstrap_workflow_is_intentionally_absent() -> None:
-    assert not (WORKFLOWS / "chronos-production-bootstrap-v3.yml").exists()
+def test_mutating_production_bootstrap_workflow_is_manual_exact_and_protected() -> None:
+    path = WORKFLOWS / "chronos-production-bootstrap-v3.yml"
+    document = yaml.safe_load(path.read_text(encoding="utf-8"))
+    assert set(_on(document)) == {"workflow_dispatch"}
+    assert document["permissions"] == {"actions": "read", "contents": "read"}
+    assert set(document["jobs"]) == {"validate", "preflight", "migrate", "verify"}
+    assert set(_on(document)["workflow_dispatch"]["inputs"]) == {
+        "mode",
+        "expected_main_sha",
+        "post_merge_ci_sha",
+        "preflight_run_id",
+        "migration_run_id",
+    }
+    assert document["env"] == {
+        "STORAGE_PAUSED": "true",
+        "P3_P4_PAUSED": "true",
+        "PRODUCTION_LOCKED": "true",
+        "REAL_BETS": "false",
+        "NO_BET_DEFAULT": "true",
+        "PROMOTION_LOCKED": "true",
+        "SOCIAL_PUBLISHING_ENABLED": "false",
+        "DEMO_MODE_ENABLED": "false",
+        "POSTGRESQL_PRODUCTION_DESTRUCTIVE_WRITES": "false",
+        "THE_ODDS_API_HISTORICAL_CREDITS": "false",
+        "API_FOOTBALL_CALLS_ALLOWED": "0",
+    }
+    validation_source = document["jobs"]["validate"]["steps"][0]["run"]
+    assert "GITHUB_RUN_ATTEMPT" in validation_source
+    assert "git/ref/heads/main" in validation_source
+    for name, job in document["jobs"].items():
+        if name == "validate":
+            continue
+        assert job["environment"] == "chronos-control-plane-production"
+        assert job["env"]["PYTHONPATH"] == "${{ github.workspace }}/src"
+        setup = next(
+            step for step in job["steps"] if "actions/setup-python@" in step.get("uses", "")
+        )
+        assert setup["with"]["python-version"] == "3.12.10"
+        assert job["needs"] == "validate"
+        assert job["if"] == f"inputs.mode == '{name.upper()}'"
+    content = path.read_text(encoding="utf-8")
+    assert "PREFLIGHT_RUN_ID: ${{ inputs.preflight_run_id }}" in content
+    assert '[[ "$PREFLIGHT_RUN_ID" =~ ^[1-9][0-9]*$ ]]' in content
+    assert 'test -n "${{ inputs.preflight_run_id }}"' not in content
+    assert content.count("--required-successful-ci-sha") == 3
+    assert content.count("github_release_attestation_v1.py") == 2
+    assert "--migration-artifact .chronos/migration/chronos-bootstrap-output-v3.json" in content
+    for name in ("preflight", "migrate", "verify"):
+        upload = next(
+            step
+            for step in document["jobs"][name]["steps"]
+            if "actions/upload-artifact@" in step.get("uses", "")
+        )
+        assert upload["if"] == "always()"
+
+
+def test_recovery_receipt_is_written_immediately_after_branch_creation() -> None:
+    source = (ROOT / "scripts" / "chronos_production_bootstrap_v3.py").read_text(encoding="utf-8")
+    preflight = source[source.index("def run_preflight") : source.index("def _preflight_expiry")]
+    created = preflight.index("recovery_report = create_recovery_point")
+    receipt = preflight.index('"chronos-neon-recovery-point-v3.json"')
+    database_inspection = preflight.index("database = inspect_database")
+    assert created < receipt < database_inspection
+
+
+def test_preflight_refuses_rerun_before_any_external_effect(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    for name, value in PRODUCTION_SAFETY_LOCKS.items():
+        monkeypatch.setenv(name, value)
+    monkeypatch.setenv("GITHUB_RUN_ATTEMPT", "2")
+    external_calls = 0
+
+    def forbidden(*_args: object, **_kwargs: object) -> None:
+        nonlocal external_calls
+        external_calls += 1
+        raise AssertionError("external boundary must remain unreachable")
+
+    monkeypatch.setattr(bootstrap_module, "NeonClient", forbidden)
+    monkeypatch.setattr(bootstrap_module, "_connect_direct", forbidden)
+    monkeypatch.setattr(bootstrap_module, "create_recovery_point", forbidden)
+    report_dir = tmp_path / "reports"
+
+    with pytest.raises(ChronosProductionError, match="CHRONOS_RERUN_FORBIDDEN"):
+        bootstrap_module.run_preflight(report_dir)
+
+    assert external_calls == 0
+    assert not report_dir.exists()
+
+
+def test_production_safety_locks_are_exact_and_fail_closed() -> None:
+    assert_production_safety_locks(PRODUCTION_SAFETY_LOCKS)
+    for name in PRODUCTION_SAFETY_LOCKS:
+        invalid = dict(PRODUCTION_SAFETY_LOCKS)
+        invalid[name] = "unsafe"
+        with pytest.raises(
+            ChronosProductionError,
+            match=f"CHRONOS_PRODUCTION_SAFETY_LOCK_MISMATCH:{name}",
+        ):
+            assert_production_safety_locks(invalid)
+
+
+def test_runtime_bindings_are_validated_against_bootstrap_target_before_migration(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    target = DirectPostgresTarget(
+        host="ep-production.eu-central-1.aws.neon.tech",
+        port=5432,
+        database="neondb",
+        username="bootstrap",
+        sslmode="require",
+        channel_binding="require",
+    )
+    for login, _group, secret_name in SCOPED_LOGINS:
+        monkeypatch.setenv(
+            secret_name,
+            build_scoped_database_url(target, username=login, password="p" * 64),
+        )
+    accounts = bootstrap_module._runtime_accounts(expected_target=target)
+    assert [(login, group) for login, group, _password in accounts] == [
+        (login, group) for login, group, _secret_name in SCOPED_LOGINS
+    ]
+    login, _group, secret_name = SCOPED_LOGINS[1]
+    mismatched = replace(target, host="ep-other.eu-central-1.aws.neon.tech")
+    monkeypatch.setenv(
+        secret_name,
+        build_scoped_database_url(mismatched, username=login, password="q" * 64),
+    )
+    with pytest.raises(
+        ChronosProductionError,
+        match="CHRONOS_SCOPED_DATABASE_TARGET_MISMATCH",
+    ):
+        bootstrap_module._runtime_accounts(expected_target=target)
+    source = (ROOT / "scripts" / "chronos_production_bootstrap_v3.py").read_text(encoding="utf-8")
+    migrate_source = source[source.index("def run_migrate") : source.index("def run_verify")]
+    assert migrate_source.index("runtime_accounts = _runtime_accounts") < migrate_source.index(
+        "client = NeonClient(api_key)"
+    )
 
 
 def test_dual_principal_provisions_roles_and_migrator_is_nocreaterole() -> None:
@@ -86,16 +228,21 @@ def test_dual_principal_provisions_roles_and_migrator_is_nocreaterole() -> None:
     assert "provision_migrator" in bootstrap
     assert "provision_runtime_logins" in bootstrap
     assert "run_chronos_dual_principal_ci_v2.py" in ci
-    migration = (ROOT / "migrations" / "versions" / "0014_chronos_control_plane_v2.py").read_text(
-        encoding="utf-8"
+    migrations = tuple(
+        (ROOT / "migrations" / "versions" / name).read_text(encoding="utf-8")
+        for name in (
+            "0014_chronos_control_plane_v2.py",
+            "0015_data_torrent_opportunity.py",
+        )
     )
     postgresql_test = (ROOT / "tests" / "chronos" / "test_chronos_postgresql_v2.py").read_text(
         encoding="utf-8"
     )
-    assert "CHRONOS_GROUP_ROLE_MISSING" in migration
-    assert "CREATE ROLE" not in migration
-    assert "DROP ROLE" not in migration
-    assert "ALTER ROLE" not in migration
+    assert "CHRONOS_GROUP_ROLE_MISSING" in migrations[0]
+    for migration in migrations:
+        assert "CREATE ROLE" not in migration
+        assert "DROP ROLE" not in migration
+        assert "ALTER ROLE" not in migration
     assert "grantor.rolsuper" in postgresql_test
     assert "grantor='10'" not in postgresql_test
 
@@ -119,6 +266,163 @@ def test_neon_identity_routes_are_rejected_before_network() -> None:
     ):
         with pytest.raises(ChronosProductionError, match="CHRONOS_NEON_ROUTE_FORBIDDEN"):
             client.request(method, path)
+
+
+class FakeRecoveryClient(NeonClient):
+    def __init__(
+        self,
+        inventory: list[dict[str, object]],
+        *,
+        created_branch_id: str = "branch-recovery-new",
+    ) -> None:
+        self.inventory = inventory
+        self.created_branch_id = created_branch_id
+        self.create_calls = 0
+
+    def branches(self, project_id: str) -> list[dict[str, object]]:  # type: ignore[override]
+        assert project_id == "project-robin"
+        return self.inventory
+
+    def create_recovery_branch(
+        self,
+        *,
+        project_id: str,
+        parent_branch_id: str,
+        branch_name: str,
+    ) -> dict[str, object]:  # type: ignore[override]
+        assert project_id == "project-robin"
+        assert parent_branch_id == "branch-production"
+        assert branch_name.startswith("chronos-pre-0015-recovery-")
+        self.create_calls += 1
+        return {
+            "id": self.created_branch_id,
+            "name": branch_name,
+            "parent_id": parent_branch_id,
+            "current_state": "ready",
+            "created_at": "2026-08-29T12:00:00Z",
+        }
+
+
+def _neon_identity() -> NeonIdentity:
+    return NeonIdentity(
+        project_id="project-robin",
+        project_name="Robin production",
+        production_branch_id="branch-production",
+        production_branch_name="production",
+        endpoint_id="endpoint-production",
+        endpoint_host="ep-production.eu-central-1.aws.neon.tech",
+        region="aws-eu-central-1",
+        database_name="neondb",
+    )
+
+
+def test_recovery_point_allows_only_the_second_cross_run_branch(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(bootstrap_module, "_utc_now", lambda: NOW)
+    client = FakeRecoveryClient(
+        [
+            {"id": "branch-production", "name": "production"},
+            {
+                "id": "branch-recovery-old",
+                "name": "chronos-pre-0015-recovery-20260828T120000Z",
+            },
+        ]
+    )
+
+    receipt = create_recovery_point(client, _neon_identity())
+
+    assert client.create_calls == 1
+    assert receipt["recovery_branch_id"] == "branch-recovery-new"
+    assert receipt["recovery_branch_limit"] == 2
+    assert receipt["recovery_branch_count_before"] == 1
+    assert receipt["recovery_branch_count_after"] == 2
+
+
+def test_recovery_point_receipt_survives_readiness_failure(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client = FakeRecoveryClient([])
+
+    def create_pending(**values: str) -> dict[str, object]:
+        client.create_calls += 1
+        return {
+            "id": "branch-recovery-pending",
+            "name": values["branch_name"],
+            "parent_id": values["parent_branch_id"],
+            "current_state": "creating",
+            "created_at": "2026-08-29T12:00:00Z",
+        }
+
+    def readiness_failed(_project_id: str, _branch_id: str) -> dict[str, object]:
+        raise ChronosProductionError("NEON_RECOVERY_READBACK_FAILED")
+
+    monkeypatch.setattr(client, "create_recovery_branch", create_pending)
+    monkeypatch.setattr(client, "branch", readiness_failed)
+    monkeypatch.setattr(bootstrap_module.time, "sleep", lambda _seconds: None)
+    receipt_path = tmp_path / "chronos-neon-recovery-point-v3.json"
+    with pytest.raises(ChronosProductionError, match="NEON_RECOVERY_READBACK_FAILED"):
+        create_recovery_point(
+            client,
+            _neon_identity(),
+            receipt_path=receipt_path,
+        )
+    receipt = json.loads(receipt_path.read_bytes())
+    assert receipt["recovery_branch_id"] == "branch-recovery-pending"
+    assert receipt["verdict"] == "NEON_RECOVERY_POINT_CREATED_PENDING_VERIFICATION"
+    assert receipt["readiness_verified"] is False
+
+
+def test_recovery_point_refuses_a_third_cross_run_branch_before_post() -> None:
+    client = FakeRecoveryClient(
+        [
+            {
+                "id": f"branch-recovery-{index}",
+                "name": f"chronos-pre-0015-recovery-2026082{index}T120000Z",
+            }
+            for index in (7, 8)
+        ]
+    )
+
+    with pytest.raises(
+        ChronosProductionError,
+        match="CHRONOS_RECOVERY_BRANCH_LIMIT_REACHED",
+    ):
+        create_recovery_point(client, _neon_identity())
+    assert client.create_calls == 0
+
+
+def test_recovery_point_refuses_an_unbounded_branch_inventory_before_post() -> None:
+    client = FakeRecoveryClient(
+        [{"id": f"branch-{index}", "name": f"unrelated-{index}"} for index in range(100)]
+    )
+
+    with pytest.raises(
+        ChronosProductionError,
+        match="CHRONOS_RECOVERY_BRANCH_INVENTORY_INCOMPLETE",
+    ):
+        create_recovery_point(client, _neon_identity())
+    assert client.create_calls == 0
+
+
+def test_recovery_point_refuses_a_reused_branch_id() -> None:
+    client = FakeRecoveryClient(
+        [
+            {
+                "id": "branch-recovery-old",
+                "name": "chronos-pre-0015-recovery-20260828T120000Z",
+            }
+        ],
+        created_branch_id="branch-recovery-old",
+    )
+
+    with pytest.raises(
+        ChronosProductionError,
+        match="CHRONOS_RECOVERY_BRANCH_ID_INVALID",
+    ):
+        create_recovery_point(client, _neon_identity())
+    assert client.create_calls == 1
 
 
 def test_alembic_runs_in_the_fenced_process_with_an_injected_connection() -> None:
@@ -400,9 +704,10 @@ def test_scoped_urls_encode_credentials_and_keep_tls() -> None:
     assert int(libpq.get("port", "5432")) == target.port
     assert libpq["dbname"] == target.database
     assert libpq["user"] == "chronos_reader_login"
-    assert hashlib.sha256(libpq["password"].encode()).digest() == hashlib.sha256(
-        scoped_password.encode()
-    ).digest()
+    assert (
+        hashlib.sha256(libpq["password"].encode()).digest()
+        == hashlib.sha256(scoped_password.encode()).digest()
+    )
     assert libpq["sslmode"] == target.sslmode
     assert libpq["channel_binding"] == "require"
 

@@ -750,6 +750,12 @@ jobs:
         with:
           python-version: "3.12.10"
           cache: pip
+      - name: Valider le lock data torrent Linux avant tout effet reel
+        run: |
+          python -m pip install --only-binary=:all: --require-hashes \
+            -r requirements-data-torrent.lock
+          PYTHONPATH=src python -c \
+            "import boto3, psycopg, pypdf, requests, robin.data_torrent.runtime, sqlalchemy"
       - name: Installer les dependances
         run: |
           python -m pip install -r requirements.txt
@@ -779,7 +785,7 @@ jobs:
         run: >-
           python -m ruff check
           src/robin tests/jalon1 tests/jalon2 tests/jalon3 tests/jalon4 tests/jalon5 tests/jalon6 tests/jalon7 tests/jalon8 tests/jalon9 tests/jalon10 tests/jalon11 tests/jalon12 tests/jalon13 tests/jalon14
-          tests/hypothesis_intelligence tests/hypothesis_evidence tests/chronos
+          tests/hypothesis_intelligence tests/hypothesis_evidence tests/chronos tests/data_torrent
           scripts migrations
       - name: Typage strict
         run: |
@@ -795,8 +801,13 @@ jobs:
           scripts/build_hypothesis_evidence.py
           scripts/build_hypothesis_evidence_site_pages.py
           scripts/chronos_neon_pure_readonly_preflight_v4.py
+          scripts/chronos_production_bootstrap_v3.py
+          scripts/github_release_attestation_v1.py
+          scripts/install_chronos_runtime_bindings_v1.py
+          scripts/run_data_torrent_v1.py
           migrations/versions/0013_historical_evidence_index.py
           migrations/versions/0014_chronos_control_plane_v2.py
+          migrations/versions/0015_data_torrent_opportunity.py
       - name: Verification des secrets
         run: python scripts/check_no_secrets.py
       - name: Cohérence des dépendances
@@ -825,9 +836,10 @@ jobs:
             tests/chronos/test_chronos_postgresql_v2.py::test_tables_are_append_only_even_for_owner \
             tests/chronos/test_chronos_postgresql_v2.py::test_roles_have_only_the_reviewed_capabilities \
             tests/chronos/test_chronos_postgresql_v2.py::test_scoped_login_connections_enforce_allows_and_denials \
-            tests/chronos/test_chronos_postgresql_v2.py::test_non_superuser_migrator_is_nocreaterole_and_has_no_runtime_edge
-          python scripts/check_database_revision.py --expected 0014_chronos_control_plane_v2
-          python -c "from sqlalchemy import inspect; from robin.storage.database import build_engine; import os; names=set(inspect(build_engine(os.environ['ROBIN_DATABASE_URL'])).get_table_names()); assert {'pattern_definitions','experiment_registry','chronos_effect_authorities','chronos_effect_events'} <= names"
+            tests/chronos/test_chronos_postgresql_v2.py::test_non_superuser_migrator_is_nocreaterole_and_has_no_runtime_edge \
+            tests/data_torrent/test_postgresql_v1.py
+          python scripts/check_database_revision.py --expected 0015_data_torrent_opportunity
+          python -c "from sqlalchemy import inspect; from robin.storage.database import build_engine; import os; names=set(inspect(build_engine(os.environ['ROBIN_DATABASE_URL'])).get_table_names()); assert {'pattern_definitions','experiment_registry','chronos_effect_authorities','chronos_effect_events','chronos_opportunity_claims','chronos_torrent_external_effect_permits','chronos_torrent_external_effect_events','chronos_torrent_batches'} <= names"
       - name: Publier la matrice d'edges CI
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:

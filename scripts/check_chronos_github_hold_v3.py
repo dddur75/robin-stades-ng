@@ -10,13 +10,19 @@ from typing import Any, cast
 
 import requests
 
-from robin.chronos_production import EXPECTED_REPOSITORY, ChronosProductionError
+from robin.chronos_production import (
+    EXPECTED_REPOSITORY,
+    ChronosProductionError,
+    require_sha,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 AUTHORIZED_PROTECTED_WORKFLOWS = frozenset(
     {
+        ".github/workflows/ci.yml",
         ".github/workflows/chronos-production-bootstrap-v3.yml",
         ".github/workflows/chronos-provider-free-canary-v3.yml",
+        ".github/workflows/data-torrent-live-v1.yml",
     }
 )
 RISK_MARKERS = (
@@ -51,9 +57,7 @@ def _github_get(path: str, token: str) -> dict[str, Any]:
     except requests.RequestException:
         raise ChronosProductionError("CHRONOS_GITHUB_HOLD_API_UNAVAILABLE") from None
     if not 200 <= response.status_code < 300:
-        raise ChronosProductionError(
-            f"CHRONOS_GITHUB_HOLD_API_HTTP_{response.status_code}"
-        )
+        raise ChronosProductionError(f"CHRONOS_GITHUB_HOLD_API_HTTP_{response.status_code}")
     try:
         document = response.json()
     except ValueError:
@@ -63,15 +67,13 @@ def _github_get(path: str, token: str) -> dict[str, Any]:
     return cast(dict[str, Any], document)
 
 
-def verify_hold() -> dict[str, Any]:
+def verify_hold(*, required_successful_ci_sha: str | None = None) -> dict[str, Any]:
     repository = _required("GITHUB_REPOSITORY")
     if repository != EXPECTED_REPOSITORY:
         raise ChronosProductionError("CHRONOS_REPOSITORY_MISMATCH")
     token = _required("GITHUB_TOKEN")
     run_id = int(_required("GITHUB_RUN_ID"))
-    workflows_document = _github_get(
-        f"/repos/{repository}/actions/workflows?per_page=100", token
-    )
+    workflows_document = _github_get(f"/repos/{repository}/actions/workflows?per_page=100", token)
     raw_workflows = workflows_document.get("workflows", [])
     if not isinstance(raw_workflows, list):
         raise ChronosProductionError("CHRONOS_GITHUB_WORKFLOWS_INVALID")
@@ -90,9 +92,7 @@ def verify_hold() -> dict[str, Any]:
         content = local.read_text(encoding="utf-8")
         markers = [marker for marker in RISK_MARKERS if marker in content]
         if markers:
-            unauthorized.append(
-                {"path": path, "risk_markers": markers, "state": "active"}
-            )
+            unauthorized.append({"path": path, "risk_markers": markers, "state": "active"})
     active_runs: list[dict[str, Any]] = []
     for status in ("queued", "in_progress"):
         runs_document = _github_get(
@@ -115,6 +115,43 @@ def verify_hold() -> dict[str, Any]:
         raise ChronosProductionError("CHRONOS_UNAUTHORIZED_ACTIVE_WORKFLOW")
     if active_runs:
         raise ChronosProductionError("CHRONOS_CONCURRENT_RUN_PRESENT")
+    post_merge_ci: dict[str, Any] | None = None
+    if required_successful_ci_sha is not None:
+        expected_ci_sha = require_sha(
+            required_successful_ci_sha,
+            field="required_successful_ci_sha",
+        )
+        ci_runs_document = _github_get(
+            f"/repos/{repository}/actions/workflows/ci.yml/runs"
+            "?branch=main&status=completed&per_page=100",
+            token,
+        )
+        raw_ci_runs = ci_runs_document.get("workflow_runs", [])
+        if not isinstance(raw_ci_runs, list):
+            raise ChronosProductionError("CHRONOS_POST_MERGE_CI_INVALID")
+        successful = [
+            item
+            for item in raw_ci_runs
+            if isinstance(item, dict)
+            and item.get("head_sha") == expected_ci_sha
+            and item.get("head_branch") == "main"
+            and item.get("event") == "push"
+            and item.get("status") == "completed"
+            and item.get("conclusion") == "success"
+        ]
+        if not successful:
+            raise ChronosProductionError("CHRONOS_POST_MERGE_CI_NOT_PROVEN")
+        selected = max(successful, key=lambda item: int(item.get("id", 0)))
+        post_merge_ci = {
+            "workflow_path": ".github/workflows/ci.yml",
+            "run_id": int(selected.get("id", 0)),
+            "run_attempt": int(selected.get("run_attempt", 0)),
+            "head_sha": expected_ci_sha,
+            "head_branch": "main",
+            "event": "push",
+            "status": "completed",
+            "conclusion": "success",
+        }
     return {
         "schema_version": "chronos-production-workflow-hold-live-v3",
         "verdict": "WORKFLOW_HOLD_ESTABLISHED",
@@ -124,6 +161,7 @@ def verify_hold() -> dict[str, Any]:
         "in_progress_after": 0,
         "current_run_excluded": run_id,
         "unauthorized_active_workflows": [],
+        "post_merge_ci": post_merge_ci,
         "provider_calls": 0,
         "r2_operations": 0,
     }
@@ -132,12 +170,17 @@ def verify_hold() -> dict[str, Any]:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--report", type=Path, required=True)
+    parser.add_argument("--required-successful-ci-sha")
     args = parser.parse_args()
     try:
-        result = verify_hold()
+        result = verify_hold(
+            required_successful_ci_sha=args.required_successful_ci_sha,
+        )
     except Exception as error:
-        code = str(error) if isinstance(error, ChronosProductionError) else (
-            "CHRONOS_GITHUB_HOLD_FAILED"
+        code = (
+            str(error)
+            if isinstance(error, ChronosProductionError)
+            else ("CHRONOS_GITHUB_HOLD_FAILED")
         )
         print(f"CHRONOS_GITHUB_HOLD_FAILED:{code}")
         raise SystemExit(1) from None

@@ -38,7 +38,8 @@ from robin.capture.official_schedule_sources import (
     DFB_DATACENTER_HTML_V1,
     LALIGA_PUBLIC_MATCHES_JSON_V1,
     LEGA_SERIE_A_CALENDAR_PDF_V1,
-    LIGUE1_PROGRAMMATION_HTML_V1,
+    LIGUE1_CALENDAR_JSON_V1,
+    LIGUE1_CALENDAR_URL,
     PREMIER_LEAGUE_FULL_SEASON_HTML_V1,
     OfficialHttpResponse,
     OfficialScheduleEvidence,
@@ -99,7 +100,7 @@ ADAPTERS = {
     "soccer_spain_la_liga": LALIGA_PUBLIC_MATCHES_JSON_V1,
     "soccer_germany_bundesliga": DFB_DATACENTER_HTML_V1,
     "soccer_italy_serie_a": LEGA_SERIE_A_CALENDAR_PDF_V1,
-    "soccer_france_ligue_one": LIGUE1_PROGRAMMATION_HTML_V1,
+    "soccer_france_ligue_one": LIGUE1_CALENDAR_JSON_V1,
 }
 URLS = {
     "soccer_epl": "https://www.premierleague.com/en/news/season",
@@ -109,14 +110,14 @@ URLS = {
     ),
     "soccer_germany_bundesliga": "https://datencenter.dfb.de/competitions/12/seasons/current",
     "soccer_italy_serie_a": "https://images.legaseriea.it/calendar.pdf",
-    "soccer_france_ligue_one": "https://ligue1.com/fr/articles/j2",
+    "soccer_france_ligue_one": LIGUE1_CALENDAR_URL,
 }
 CONTENT_TYPES = {
     "soccer_epl": "text/html",
     "soccer_spain_la_liga": "application/json",
     "soccer_germany_bundesliga": "text/html",
     "soccer_italy_serie_a": "application/pdf",
-    "soccer_france_ligue_one": "text/html",
+    "soccer_france_ligue_one": "application/json",
 }
 
 
@@ -393,6 +394,23 @@ class SyntheticEvidenceBuilder:
         observed = fetch_result.receipt.observed_at_utc
         if self.stale:
             observed -= timedelta(minutes=31)
+        parser_metadata: dict[str, object] = {"synthetic": True}
+        if source.adapter == LIGUE1_CALENDAR_JSON_V1:
+            synthetic_id = f"fixture-{iteration}-{league_index}"
+            parser_metadata.update(
+                {
+                    "covered_not_before": horizon_not_before_utc.isoformat().replace("+00:00", "Z"),
+                    "covered_expires": horizon_expires_at_utc.isoformat().replace("+00:00", "Z"),
+                    "complete_official_horizon": True,
+                    "calendar_gameweeks_total": 34,
+                    "calendar_match_ids_total": 306,
+                    "calendar_club_identities_total": 18,
+                    "calendar_club_identities_sha256": "0" * 64,
+                    "calendar_ids_expected": [synthetic_id],
+                    "calendar_ids_accounted": [synthetic_id],
+                    "gameweeks_fetched": [1],
+                }
+            )
         return OfficialScheduleEvidence(
             sport_key=source.sport_key,
             source_authority=source.url,
@@ -409,7 +427,7 @@ class SyntheticEvidenceBuilder:
                 ),
             ),
             adapter_revision=source.adapter,
-            parser_metadata={"synthetic": True},
+            parser_metadata=parser_metadata,
         )
 
 

@@ -2083,9 +2083,11 @@ def _load_first_c0_canary_bundle_v1(
                 break
             normalized_fixtures.append(
                 {
-                    **raw_fixture,
+                    "internal_fixture_target_id": raw_fixture.get("internal_fixture_target_id"),
+                    "competition": raw_fixture.get("competition"),
                     "official_home_team": canonical_team_name_v1(home),
                     "official_away_team": canonical_team_name_v1(away),
+                    "official_kickoff_utc": raw_fixture.get("official_kickoff_utc"),
                 }
             )
     target_material = [
@@ -2734,9 +2736,11 @@ def load_pre_dns_bundle_v1(
                     break
                 normalized_raw_fixtures.append(
                     {
-                        **raw_fixture,
+                        "internal_fixture_target_id": raw_fixture.get("internal_fixture_target_id"),
+                        "competition": raw_fixture.get("competition"),
                         "official_home_team": canonical_team_name_v1(home),
                         "official_away_team": canonical_team_name_v1(away),
+                        "official_kickoff_utc": raw_fixture.get("official_kickoff_utc"),
                     }
                 )
         target_fixture_material = [

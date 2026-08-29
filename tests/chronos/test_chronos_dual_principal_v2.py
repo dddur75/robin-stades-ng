@@ -14,7 +14,10 @@ ROOT = Path(__file__).resolve().parents[2]
 LIFECYCLE = ROOT / "src" / "robin" / "chronos_role_lifecycle.py"
 RUNNER = ROOT / "scripts" / "run_chronos_dual_principal_ci_v2.py"
 PRODUCTION = ROOT / "scripts" / "chronos_production_bootstrap_v3.py"
-MIGRATION = ROOT / "migrations" / "versions" / "0014_chronos_control_plane_v2.py"
+MIGRATIONS = (
+    ROOT / "migrations" / "versions" / "0014_chronos_control_plane_v2.py",
+    ROOT / "migrations" / "versions" / "0015_data_torrent_opportunity.py",
+)
 WORKFLOW = ROOT / ".github" / "workflows" / "chronos-bootstrap-ci-v3.yml"
 
 
@@ -83,13 +86,14 @@ def test_failed_schema_grant_is_not_masked_by_reset_role() -> None:
     assert len(cursor.statements) == 2
 
 
-def test_migration_0014_contains_objects_and_acls_only() -> None:
-    source = MIGRATION.read_text(encoding="utf-8")
-    for forbidden in ("CREATE ROLE", "ALTER ROLE", "DROP ROLE"):
-        assert forbidden not in source
-    assert "pg_auth_members" not in source
-    assert "GRANT role membership" not in source
-    assert "REVOKE role membership" not in source
+def test_migrations_0014_and_0015_contain_objects_and_acls_only() -> None:
+    for migration in MIGRATIONS:
+        source = migration.read_text(encoding="utf-8")
+        for forbidden in ("CREATE ROLE", "ALTER ROLE", "DROP ROLE"):
+            assert forbidden not in source
+        assert "pg_auth_members" not in source
+        assert "GRANT role membership" not in source
+        assert "REVOKE role membership" not in source
 
 
 def test_executor_password_is_memory_only_and_evidence_is_scanned() -> None:
@@ -173,8 +177,8 @@ def test_neon_platform_edge_is_exact_optional_and_recursively_closed() -> None:
 def test_ci_executes_the_complete_readonly_preflight_ledger_before_role_mutation() -> None:
     source = RUNNER.read_text(encoding="utf-8")
     main_source = source[source.index("def main() -> None:") :]
-    superuser_proof = "superuser_readonly_preflight_catalog_contract = ("
-    lifecycle_proof = "lifecycle_admin_readonly_preflight_catalog_contract = ("
+    superuser_proof = "superuser_readonly_preflight_catalog_contract ="
+    lifecycle_proof = "lifecycle_admin_readonly_preflight_catalog_contract ="
     first_role_mutation = "provision_permanent_bootstrap_authority(admin)"
     assert "for ordinal, statement in enumerate(statements)" in source
     assert 'if len(statements) != 18' in source
@@ -262,7 +266,7 @@ def test_recovery_fences_executor_and_migrator_identity_reuse() -> None:
 
 def test_crash_checkpoint_uses_a_real_blocked_alembic_backend() -> None:
     source = RUNNER.read_text(encoding="utf-8")
-    assert '"-m", "alembic", "upgrade", REVISION_0014' in source
+    assert '"-m", "alembic", "upgrade", REVISION_0015' in source
     assert "LOCK TABLE public.alembic_version IN ACCESS EXCLUSIVE MODE" in source
     assert "pg_stat_activity WHERE usename=%s" in source
     assert "l.relation='public.alembic_version'::regclass" in source
@@ -277,7 +281,7 @@ def test_production_revalidates_under_lock_and_runs_alembic_in_process() -> None
     lock_index = source.index("acquire_lifecycle_lock(admin)")
     locked_revision_index = source.index("before = inspect_database", lock_index)
     branch_index = source.index(
-        'if before["current_revision"] == EXPECTED_BEFORE_REVISION',
+        'if before["current_revision"] in EXPECTED_BEFORE_REVISIONS',
         locked_revision_index,
     )
     dispatch_revision_index = source.index(

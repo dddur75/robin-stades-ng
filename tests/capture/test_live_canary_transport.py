@@ -979,6 +979,80 @@ def test_transport_rejects_header_echo_compression_and_ambiguous_quota(
 
 
 @pytest.mark.parametrize(
+    "control_header",
+    ("X-Requests-Last", "X-Requests-Used", "X-Requests-Remaining"),
+)
+def test_transport_redacts_significant_secret_prefixes_from_control_headers(
+    control_header: str,
+) -> None:
+    secret_prefix = SECRET[:15]
+    connection = FakeConnection(
+        FakeResponse(payload=b"[]", headers=[(control_header, secret_prefix)])
+    )
+    observed: list[tuple[bytes, bool, dict[str, str]]] = []
+    transport = StrictHttpsTransport(
+        clock=lambda: BASE,
+        connection_factory=lambda *_args: connection,
+        on_response=lambda response, complete: observed.append(
+            (response.payload, complete, dict(response.headers))
+        ),
+    )
+    public_request = request()
+    transport.preflight(public_request)
+
+    with pytest.raises(LiveTransportError, match="LIVE_PROVIDER_SECRET_ECHO_REJECTED"):
+        transport.dispatch(public_request, api_key=SECRET)
+
+    assert observed == [
+        (
+            b"",
+            False,
+            {
+                "x-robin-redacted-body-bytes": "2",
+                "x-robin-redacted-body-sha256": hashlib.sha256(b"[]").hexdigest(),
+                "x-robin-redaction-reason": "LIVE_PROVIDER_SECRET_ECHO_REJECTED",
+            },
+        )
+    ]
+    assert secret_prefix not in repr(observed)
+    assert connection.close_calls == 1
+
+
+@pytest.mark.parametrize(
+    ("headers", "expected"),
+    (
+        ([("Content-Length", "100")], "LIVE_TRANSPORT_CONTENT_LENGTH_MISMATCH"),
+        ([("Content-Length", "1025")], "LIVE_TRANSPORT_RESPONSE_TOO_LARGE"),
+        (
+            [("Content-Length", "2"), ("content-length", "2")],
+            "LIVE_TRANSPORT_CONTENT_LENGTH_INVALID",
+        ),
+    ),
+)
+def test_transport_journals_short_or_ambiguous_content_length_as_incomplete(
+    headers: list[tuple[str, str]],
+    expected: str,
+) -> None:
+    connection = FakeConnection(FakeResponse(payload=b"[]", headers=headers))
+    observed: list[tuple[bytes, bool, dict[str, str]]] = []
+    transport = StrictHttpsTransport(
+        clock=lambda: BASE,
+        connection_factory=lambda *_args: connection,
+        on_response=lambda response, complete: observed.append(
+            (response.payload, complete, dict(response.headers))
+        ),
+    )
+    public_request = request()
+    transport.preflight(public_request)
+
+    with pytest.raises(LiveTransportError, match=expected):
+        transport.dispatch(public_request, api_key=SECRET)
+
+    assert observed == [(b"[]", False, {})]
+    assert connection.close_calls == 1
+
+
+@pytest.mark.parametrize(
     ("payload", "headers"),
     (
         (
@@ -1034,16 +1108,101 @@ def test_transport_enforces_a_total_body_deadline() -> None:
 
     ticks = iter((0.0, 0.0, 0.0, 0.0, 11.0))
     connection = FakeConnection(SlowResponse())
+    observed: list[tuple[bytes, bool]] = []
     transport = StrictHttpsTransport(
         clock=lambda: BASE,
         connection_factory=lambda *_args: connection,
         monotonic=lambda: next(ticks),
+        on_response=lambda response, complete: observed.append((response.payload, complete)),
     )
     public_request = request()
     transport.preflight(public_request)
     with pytest.raises(LiveTransportError, match="LIVE_TRANSPORT_TOTAL_DEADLINE_EXCEEDED"):
         transport.dispatch(public_request, api_key=SECRET)
     assert connection.close_calls == 1
+    assert observed == [(b"[", False)]
+
+
+def test_transport_journals_fallback_body_when_final_read_exceeds_deadline() -> None:
+    tick = [0.0]
+
+    class SlowFallbackResponse(FakeResponse):
+        def read(self, amount: int | None = None) -> bytes:
+            self.read_amounts.append(amount)
+            tick[0] = 11.0
+            return self.payload[:amount]
+
+    connection = FakeConnection(SlowFallbackResponse())
+    observed: list[tuple[bytes, bool]] = []
+    transport = StrictHttpsTransport(
+        clock=lambda: BASE,
+        connection_factory=lambda *_args: connection,
+        monotonic=lambda: tick[0],
+        on_response=lambda response, complete: observed.append((response.payload, complete)),
+    )
+    public_request = request()
+    transport.preflight(public_request)
+
+    with pytest.raises(
+        LiveTransportError,
+        match="LIVE_TRANSPORT_TOTAL_DEADLINE_EXCEEDED",
+    ):
+        transport.dispatch(public_request, api_key=SECRET)
+
+    assert observed == [(b"[]", False)]
+    assert connection.close_calls == 1
+
+
+def test_transport_journals_incomplete_read_tail_from_chunked_response() -> None:
+    class IncompleteResponse(FakeResponse):
+        def __init__(self) -> None:
+            super().__init__()
+            self.calls = 0
+
+        def read1(self, amount: int | None = None) -> bytes:
+            self.read_amounts.append(amount)
+            self.calls += 1
+            if self.calls == 1:
+                return b"head-"
+            raise http.client.IncompleteRead(b"tail", 99)
+
+    connection = FakeConnection(IncompleteResponse())
+    observed: list[tuple[bytes, bool]] = []
+    transport = StrictHttpsTransport(
+        clock=lambda: BASE,
+        connection_factory=lambda *_args: connection,
+        on_response=lambda response, complete: observed.append((response.payload, complete)),
+    )
+    public_request = request()
+    transport.preflight(public_request)
+
+    with pytest.raises(LiveTransportError, match="LIVE_TRANSPORT_DISPATCH_FAILED"):
+        transport.dispatch(public_request, api_key=SECRET)
+
+    assert observed == [(b"head-tail", False)]
+    assert connection.close_calls == 1
+
+
+def test_complete_body_is_observed_before_duplicate_control_header_rejection() -> None:
+    connection = FakeConnection(
+        FakeResponse(
+            payload=b"[]",
+            headers=[("X-Requests-Last", "2"), ("x-requests-last", "3")],
+        )
+    )
+    observed: list[tuple[bytes, bool, dict[str, str]]] = []
+    transport = StrictHttpsTransport(
+        clock=lambda: BASE,
+        connection_factory=lambda *_args: connection,
+        on_response=lambda response, complete: observed.append(
+            (response.payload, complete, dict(response.headers))
+        ),
+    )
+    public_request = request()
+    transport.preflight(public_request)
+    with pytest.raises(LiveTransportError, match="LIVE_TRANSPORT_DUPLICATE_CONTROL_HEADER"):
+        transport.dispatch(public_request, api_key=SECRET)
+    assert observed == [(b"[]", True, {})]
 
 
 def test_transport_tightens_socket_timeout_across_headers_and_body_chunks() -> None:

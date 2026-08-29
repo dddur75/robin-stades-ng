@@ -1,0 +1,27 @@
+{
+  "mission_id": "data-torrent-ready-v1",
+  "authorized_stages": [
+    "E1",
+    "E2",
+    "E3A",
+    "E3B",
+    "E4"
+  ],
+  "maximum_stage": "E4",
+  "external_effects": [
+    "git_remote_write_non_force",
+    "github_pull_request_write_up_to_4",
+    "github_merge_commit",
+    "github_actions_exact_head_observe_and_dispatch",
+    "github_environment_exact_required_secret_update",
+    "neon_control_plane_read_and_scoped_credential_rotation",
+    "postgresql_additive_production_migration_up_to_3",
+    "official_schedule_public_reads_up_to_50",
+    "odds_provider_requests_up_to_5_and_credits_up_to_1000",
+    "r2_immutable_put_up_to_20_get_up_to_20_list_up_to_2_delete_0"
+  ],
+  "compute_budget": 1000000,
+  "time_budget": 86400,
+  "source_hash": "c03e218ca8f69d30f3fe998f7534d3edb11e2ba71bdd3ca022ada7ee08a2295d",
+  "expires_at": "2026-09-01T23:59:59Z"
+}

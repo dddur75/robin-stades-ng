@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import base64
+import hashlib
 import http.client
 import io
 import ipaddress
@@ -36,6 +37,13 @@ class LiveTransportError(RuntimeError):
     def __init__(self, code: str) -> None:
         self.code = code
         super().__init__(code)
+
+
+class _PartialResponseReadError(RuntimeError):
+    def __init__(self, payload: bytes, *, code: str) -> None:
+        self.payload = payload
+        self.code = code
+        super().__init__("LIVE_TRANSPORT_PARTIAL_RESPONSE_READ")
 
 
 class PublicProviderRequestV1(FrozenContract):
@@ -241,17 +249,49 @@ def reject_secret_echo(payload: bytes, secret: str) -> None:
         normalized = json_decoded
 
 
-def reject_unsafe_response(
+def reject_partial_secret_echo(payload: bytes, secret: str) -> None:
+    """Reject significant credential prefixes in an incomplete response body."""
+
+    secret_bytes = secret.encode("ascii")
+    encoded_secrets = {
+        secret_bytes,
+        secret_bytes.hex().encode("ascii"),
+        secret_bytes.hex().upper().encode("ascii"),
+        base64.b64encode(secret_bytes),
+        base64.urlsafe_b64encode(secret_bytes),
+        base64.b64encode(secret_bytes).rstrip(b"="),
+        base64.urlsafe_b64encode(secret_bytes).rstrip(b"="),
+        secret.encode("utf-16-be"),
+        secret.encode("utf-16-le"),
+    }
+    normalized = payload
+    for _ in range(3):
+        percent_decoded = unquote_to_bytes(normalized)
+        json_decoded = re.sub(
+            rb"\\u00([0-9a-fA-F]{2})",
+            lambda match: bytes((int(match.group(1), 16),)),
+            percent_decoded,
+        )
+        if any(
+            encoded[:prefix_length] in json_decoded
+            for encoded in encoded_secrets
+            for prefix_length in range(min(12, len(encoded)), len(encoded) + 1)
+            if encoded
+        ):
+            raise LiveTransportError("LIVE_PROVIDER_SECRET_ECHO_REJECTED")
+        if json_decoded == normalized:
+            return
+        normalized = json_decoded
+
+
+def _reject_response_secret_material(
     payload: bytes,
     headers: Mapping[str, str] | list[tuple[str, str]],
     secret: str,
+    *,
+    body_complete: bool,
 ) -> None:
     pairs = list(headers.items()) if isinstance(headers, Mapping) else list(headers)
-    content_encoding = tuple(
-        value.strip().casefold() for name, value in pairs if name.casefold() == "content-encoding"
-    )
-    if content_encoding and content_encoding != ("identity",):
-        raise LiveTransportError("LIVE_TRANSPORT_CONTENT_ENCODING_FORBIDDEN")
     header_values = "\n".join(str(value) for _name, value in pairs).encode(
         "utf-8",
         errors="replace",
@@ -259,7 +299,33 @@ def reject_unsafe_response(
     if len(header_values) > 65_536:
         raise LiveTransportError("LIVE_TRANSPORT_HEADERS_TOO_LARGE")
     reject_secret_echo(payload, secret)
+    if not body_complete:
+        reject_partial_secret_echo(payload, secret)
     reject_secret_echo(header_values, secret)
+    # Control headers are durable evidence too.  A long credential prefix in a
+    # header is just as sensitive as the same prefix in a truncated body, even
+    # when the HTTP body itself was read completely.
+    reject_partial_secret_echo(header_values, secret)
+
+
+def _reject_unsafe_response_framing(
+    headers: Mapping[str, str] | list[tuple[str, str]],
+) -> None:
+    pairs = list(headers.items()) if isinstance(headers, Mapping) else list(headers)
+    content_encoding = tuple(
+        value.strip().casefold() for name, value in pairs if name.casefold() == "content-encoding"
+    )
+    if content_encoding and content_encoding != ("identity",):
+        raise LiveTransportError("LIVE_TRANSPORT_CONTENT_ENCODING_FORBIDDEN")
+
+
+def reject_unsafe_response(
+    payload: bytes,
+    headers: Mapping[str, str] | list[tuple[str, str]],
+    secret: str,
+) -> None:
+    _reject_response_secret_material(payload, headers, secret, body_complete=True)
+    _reject_unsafe_response_framing(headers)
 
 
 class _HttpResponse(Protocol):
@@ -518,6 +584,28 @@ def _sanitized_headers(headers: list[tuple[str, str]]) -> dict[str, str]:
     return result
 
 
+def _best_effort_sanitized_headers(headers: list[tuple[str, str]]) -> dict[str, str]:
+    try:
+        return _sanitized_headers(headers)
+    except LiveTransportError:
+        return {}
+
+
+def _validated_content_length(headers: list[tuple[str, str]]) -> int | None:
+    values = [value.strip() for name, value in headers if name.casefold() == "content-length"]
+    if not values:
+        return None
+    if len(values) != 1:
+        raise LiveTransportError("LIVE_TRANSPORT_CONTENT_LENGTH_INVALID")
+    value = values[0]
+    if not value or len(value) > 20 or not value.isascii() or not value.isdecimal():
+        raise LiveTransportError("LIVE_TRANSPORT_CONTENT_LENGTH_INVALID")
+    declared = int(value)
+    if declared > 2**63 - 1:
+        raise LiveTransportError("LIVE_TRANSPORT_CONTENT_LENGTH_INVALID")
+    return declared
+
+
 def _read_response_with_deadline(
     response: _HttpResponse,
     *,
@@ -538,30 +626,55 @@ def _read_response_with_deadline(
                 monotonic=monotonic,
             )
         )
-        payload = response.read(maximum_bytes + 1)
+        try:
+            payload = response.read(maximum_bytes + 1)
+        except http.client.IncompleteRead as error:
+            partial = bytes(error.partial)[: maximum_bytes + 1]
+            raise _PartialResponseReadError(
+                partial,
+                code="LIVE_TRANSPORT_DISPATCH_FAILED",
+            ) from error
+        if not isinstance(payload, bytes):
+            raise LiveTransportError("LIVE_TRANSPORT_BODY_INVALID")
         if monotonic() - started > timeout_seconds:
-            raise LiveTransportError("LIVE_TRANSPORT_TOTAL_DEADLINE_EXCEEDED")
+            raise _PartialResponseReadError(
+                payload[: maximum_bytes + 1],
+                code="LIVE_TRANSPORT_TOTAL_DEADLINE_EXCEEDED",
+            )
         return payload
 
     chunks: list[bytes] = []
     total = 0
-    while total <= maximum_bytes:
-        tighten_timeout(
-            _remaining_dispatch_seconds(
-                started=started,
-                timeout_seconds=timeout_seconds,
-                monotonic=monotonic,
+    try:
+        while total <= maximum_bytes:
+            tighten_timeout(
+                _remaining_dispatch_seconds(
+                    started=started,
+                    timeout_seconds=timeout_seconds,
+                    monotonic=monotonic,
+                )
             )
-        )
-        chunk = read1(min(65_536, maximum_bytes + 1 - total))
-        if not isinstance(chunk, bytes):
-            raise LiveTransportError("LIVE_TRANSPORT_BODY_INVALID")
-        if not chunk:
-            break
-        chunks.append(chunk)
-        total += len(chunk)
-        if monotonic() - started > timeout_seconds:
-            raise LiveTransportError("LIVE_TRANSPORT_TOTAL_DEADLINE_EXCEEDED")
+            chunk = read1(min(65_536, maximum_bytes + 1 - total))
+            if not isinstance(chunk, bytes):
+                raise LiveTransportError("LIVE_TRANSPORT_BODY_INVALID")
+            if not chunk:
+                break
+            chunks.append(chunk)
+            total += len(chunk)
+            if monotonic() - started > timeout_seconds:
+                raise LiveTransportError("LIVE_TRANSPORT_TOTAL_DEADLINE_EXCEEDED")
+    except BaseException as error:
+        partial = b"".join(chunks)
+        if isinstance(error, http.client.IncompleteRead):
+            partial = (partial + bytes(error.partial))[: maximum_bytes + 1]
+        raise _PartialResponseReadError(
+            partial,
+            code=(
+                error.code
+                if isinstance(error, LiveTransportError)
+                else "LIVE_TRANSPORT_DISPATCH_FAILED"
+            ),
+        ) from error
     return b"".join(chunks)
 
 
@@ -608,11 +721,15 @@ class StrictHttpsTransport:
         connection_factory: ConnectionFactory = _default_connection_factory,
         ssl_context_factory: Callable[[], ssl.SSLContext] = ssl.create_default_context,
         monotonic: Callable[[], float] = time.monotonic,
+        on_dispatch: Callable[[], None] | None = None,
+        on_response: Callable[[LiveTransportResponse, bool], None] | None = None,
     ) -> None:
         self._clock = clock
         self._connection_factory = connection_factory
         self._ssl_context_factory = ssl_context_factory
         self._monotonic = monotonic
+        self._on_dispatch = on_dispatch
+        self._on_response = on_response
         self._prepared: tuple[PublicProviderRequestV1, ssl.SSLContext] | None = None
 
     @staticmethod
@@ -692,6 +809,8 @@ class StrictHttpsTransport:
                     }
                 )
             }"
+            if self._on_dispatch is not None:
+                self._on_dispatch()
             connection.request(
                 "GET",
                 target,
@@ -716,20 +835,115 @@ class StrictHttpsTransport:
             )
             _tighten_connection_timeout(connection, remaining)
             observed = ensure_utc(self._clock(), field="transport_first_observed_at")
-            payload = _read_response_with_deadline(
-                response,
-                maximum_bytes=request.maximum_response_bytes,
-                timeout_seconds=timeout_seconds,
-                monotonic=self._monotonic,
-                started=started,
-                tighten_timeout=lambda remaining: _tighten_connection_timeout(
-                    connection,
-                    remaining,
-                ),
-            )
             status = response.status
             raw_headers = response.getheaders()
-            reject_unsafe_response(payload, raw_headers, api_key)
+            declared_length: int | None = None
+            content_length_error: str | None = None
+            try:
+                declared_length = _validated_content_length(raw_headers)
+            except LiveTransportError as error:
+                # The bytes are still read and journaled as incomplete evidence
+                # before the framing error becomes terminal.
+                content_length_error = error.code
+            observed_status = (
+                status
+                if isinstance(status, int) and not isinstance(status, bool) and 100 <= status <= 599
+                else 599
+            )
+
+            def notify_redacted(payload: bytes, reason: str) -> None:
+                if self._on_response is None:
+                    return
+                # Once response material is classified as unsafe, retain only
+                # derived metadata.  In particular, never pass supplier header
+                # values to the durable response journal on this path.
+                redacted_headers = {
+                    "x-robin-redacted-body-bytes": str(len(payload)),
+                    "x-robin-redacted-body-sha256": hashlib.sha256(payload).hexdigest(),
+                    "x-robin-redaction-reason": reason,
+                }
+                self._on_response(
+                    LiveTransportResponse(
+                        http_status=observed_status,
+                        headers=redacted_headers,
+                        payload=b"",
+                        first_observed_at_utc=observed,
+                    ),
+                    False,
+                )
+
+            try:
+                payload = _read_response_with_deadline(
+                    response,
+                    maximum_bytes=request.maximum_response_bytes,
+                    timeout_seconds=timeout_seconds,
+                    monotonic=self._monotonic,
+                    started=started,
+                    tighten_timeout=lambda remaining: _tighten_connection_timeout(
+                        connection,
+                        remaining,
+                    ),
+                )
+            except _PartialResponseReadError as error:
+                try:
+                    _reject_response_secret_material(
+                        error.payload,
+                        raw_headers,
+                        api_key,
+                        body_complete=False,
+                    )
+                    _reject_unsafe_response_framing(raw_headers)
+                except LiveTransportError as safety_error:
+                    notify_redacted(error.payload, safety_error.code)
+                    raise
+                if self._on_response is not None:
+                    self._on_response(
+                        LiveTransportResponse(
+                            http_status=observed_status,
+                            headers=_best_effort_sanitized_headers(raw_headers),
+                            payload=error.payload,
+                            first_observed_at_utc=observed,
+                        ),
+                        False,
+                    )
+                raise LiveTransportError(error.code) from error
+            declared_too_large = (
+                declared_length is not None and declared_length > request.maximum_response_bytes
+            )
+            length_mismatch = declared_length is not None and declared_length != len(payload)
+            body_complete = (
+                len(payload) <= request.maximum_response_bytes
+                and content_length_error is None
+                and not declared_too_large
+                and not length_mismatch
+            )
+            try:
+                _reject_response_secret_material(
+                    payload,
+                    raw_headers,
+                    api_key,
+                    body_complete=body_complete,
+                )
+                _reject_unsafe_response_framing(raw_headers)
+            except LiveTransportError as safety_error:
+                notify_redacted(payload, safety_error.code)
+                raise
+            if self._on_response is not None:
+                self._on_response(
+                    LiveTransportResponse(
+                        http_status=observed_status,
+                        headers=_best_effort_sanitized_headers(raw_headers),
+                        payload=payload,
+                        first_observed_at_utc=observed,
+                    ),
+                    body_complete,
+                )
+            if not body_complete:
+                if content_length_error is not None:
+                    raise LiveTransportError(content_length_error)
+                if declared_too_large or len(payload) > request.maximum_response_bytes:
+                    raise LiveTransportError("LIVE_TRANSPORT_RESPONSE_TOO_LARGE")
+                raise LiveTransportError("LIVE_TRANSPORT_CONTENT_LENGTH_MISMATCH")
             headers = _sanitized_headers(raw_headers)
         except LiveTransportError:
             raise

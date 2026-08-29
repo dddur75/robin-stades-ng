@@ -1,0 +1,61 @@
+{
+  "schema_version": "robin-data-torrent-live-config-v1",
+  "opportunity_kind": "FOOTBALL_OFFICIAL_AND_ODDS_BREADTH",
+  "season": "2026-2027",
+  "region": "eu",
+  "markets": [
+    "h2h",
+    "totals"
+  ],
+  "leagues": [
+    {
+      "sport_key": "soccer_spain_la_liga",
+      "name": "La Liga",
+      "official_adapter": "LALIGA_PUBLIC_MATCHES_JSON_V1",
+      "official_url": "https://apim.laliga.com/public-service/api/v1/matches?subscription=laliga-easports-2026&competition=primera-division&limit=100&offset=300"
+    },
+    {
+      "sport_key": "soccer_france_ligue_one",
+      "name": "Ligue 1",
+      "official_adapter": "LIGUE1_CALENDAR_JSON_V1",
+      "official_url": "https://ma-api.ligue1.fr/championship-calendar/1?season=2026"
+    },
+    {
+      "sport_key": "soccer_epl",
+      "name": "Premier League",
+      "official_adapter": "PREMIER_LEAGUE_FULL_SEASON_HTML_V1",
+      "official_url": "https://www.premierleague.com/en/news/4675097/all-380-fixtures-for-202627-premier-league-season"
+    },
+    {
+      "sport_key": "soccer_italy_serie_a",
+      "name": "Serie A",
+      "official_adapter": "LEGA_SERIE_A_CALENDAR_PDF_V1",
+      "official_url": "https://images.legaseriea.it/image/private/fl_attachment/prd/czailts3apyt3kuxjran.pdf"
+    },
+    {
+      "sport_key": "soccer_germany_bundesliga",
+      "name": "Bundesliga",
+      "official_adapter": "DFB_DATACENTER_HTML_V1",
+      "official_url": "https://datencenter.dfb.de/competitions/12/seasons/current"
+    }
+  ],
+  "horizon": {
+    "primary_days": 7,
+    "fallback_days": 14,
+    "fallback_if_fixtures_below": 20
+  },
+  "budgets": {
+    "official_physical_reads_max": 50,
+    "odds_provider_requests_max": 5,
+    "odds_credits_max": 1000,
+    "automatic_retries": 0,
+    "r2_puts_max": 20,
+    "r2_gets_max": 20,
+    "r2_lists_max": 2,
+    "r2_deletes_max": 0
+  },
+  "replay": {
+    "multiplier": 100,
+    "minimum_throughput_ratio": 5.0
+  }
+}
