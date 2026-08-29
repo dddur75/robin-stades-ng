@@ -503,7 +503,11 @@ def test_tables_are_append_only_even_for_owner(engine: Engine) -> None:
             connection.execute(
                 sa.text(
                     "TRUNCATE public.chronos_effect_authorities, "
-                    "public.chronos_effect_events"
+                    "public.chronos_effect_events, "
+                    "public.chronos_opportunity_claims, "
+                    "public.chronos_torrent_batches, "
+                    "public.chronos_torrent_external_effect_permits, "
+                    "public.chronos_torrent_external_effect_events"
                 )
             )
         with pytest.raises(

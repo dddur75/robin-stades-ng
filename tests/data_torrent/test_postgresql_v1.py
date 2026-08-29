@@ -545,7 +545,7 @@ def test_terminal_batch_function_executes_all_53_parameters_on_postgresql() -> N
                 mission_id=f"{mission_id}-{mission_suffix}",
                 identity=identity,
                 resource_kind="R2_OBJECT",
-                canonical_key=f"data-torrent/test/{opportunity_id}/{role}.tar.gz",
+                canonical_key=f"data-torrent/v1/{opportunity_id}/{role}.tar.gz",
                 canonical_payload_hash=payload_hash,
                 code_revision=CODE_SHA,
             )
