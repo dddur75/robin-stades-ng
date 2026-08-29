@@ -4,6 +4,7 @@ import hashlib
 import inspect
 import json
 import os
+import subprocess
 import sys
 import time
 from datetime import UTC, datetime
@@ -926,12 +927,342 @@ def test_dirty_clone_or_git_binary_mutation_fails_closed(
         )
 
 
-def test_acl_probe_uses_locale_independent_well_known_sids() -> None:
+_OBSERVED_OWNER_RIGHTS_SDDL = (
+    "O:S-1-5-21-247581674-517489618-2716653085-1001"
+    "G:S-1-5-21-247581674-517489618-2716653085-1001"
+    "D:P(A;OICI;FA;;;OW)(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)"
+)
+
+
+def _acl_fixture_entry(
+    sid: str,
+    *,
+    access_type: str = "Allow",
+    inherited: bool = False,
+    propagation_flags: str = "None",
+    rights: str = "FullControl",
+) -> dict[str, object]:
+    return {
+        "sid": sid,
+        "access_type": access_type,
+        "rights": rights,
+        "inheritance_flags": "ContainerInherit, ObjectInherit",
+        "propagation_flags": propagation_flags,
+        "inherited": inherited,
+    }
+
+
+class PowerShellAclFixtureRunner:
+    """Run the production probe against an in-memory ACL without writing one."""
+
+    def __init__(
+        self,
+        *,
+        owner: str = "CURRENT",
+        entries: tuple[dict[str, object], ...],
+        sddl: str = _OBSERVED_OWNER_RIGHTS_SDDL,
+    ) -> None:
+        self.fixture = json.dumps(
+            {"owner": owner, "entries": entries, "sddl": sddl},
+            separators=(",", ":"),
+        )
+
+    def run(
+        self,
+        arguments: Sequence[str],
+        *,
+        cwd: Path | None,
+        environment: Mapping[str, str],
+        timeout_seconds: int,
+    ) -> str:
+        probe = arguments[-1]
+        fixture_script = (
+            "$fixture=ConvertFrom-Json $env:ROBIN_TEST_ACL_FIXTURE;"
+            "$current=[System.Security.Principal.WindowsIdentity]::GetCurrent();"
+            "$owner=if($fixture.owner -eq 'CURRENT'){$current.Name}"
+            "elseif($fixture.owner.StartsWith('SID:')){"
+            "[System.Security.Principal.SecurityIdentifier]::new("
+            "$fixture.owner.Substring(4)).Translate("
+            "[System.Security.Principal.NTAccount]).Value}"
+            "else{$fixture.owner};"
+            "$access=@($fixture.entries|ForEach-Object {"
+            "$sid=if($_.sid -eq 'CURRENT'){$current.User}else{"
+            "[System.Security.Principal.SecurityIdentifier]::new([string]$_.sid)};"
+            "[pscustomobject]@{"
+            "IdentityReference=$sid;"
+            "AccessControlType=[System.Enum]::Parse("
+            "[System.Security.AccessControl.AccessControlType],[string]$_.access_type);"
+            "FileSystemRights=[System.Enum]::Parse("
+            "[System.Security.AccessControl.FileSystemRights],[string]$_.rights);"
+            "InheritanceFlags=[System.Enum]::Parse("
+            "[System.Security.AccessControl.InheritanceFlags],"
+            "[string]$_.inheritance_flags);"
+            "PropagationFlags=[System.Enum]::Parse("
+            "[System.Security.AccessControl.PropagationFlags],"
+            "[string]$_.propagation_flags);"
+            "IsInherited=[bool]$_.inherited"
+            "}});"
+            "$sddl=([string]$fixture.sddl).Replace('{CURRENT_SID}',$current.User.Value);"
+            "$script:aclFixture=[pscustomobject]@{Owner=$owner;Access=$access;Sddl=$sddl};"
+            "function Get-Acl {$script:aclFixture};"
+        )
+        child_environment = dict(environment)
+        child_environment["ROBIN_TEST_ACL_FIXTURE"] = self.fixture
+        completed = subprocess.run(
+            (*arguments[:-1], fixture_script + probe),
+            cwd=os.fspath(cwd) if cwd is not None else None,
+            env=child_environment,
+            capture_output=True,
+            text=True,
+            timeout=timeout_seconds,
+            check=False,
+        )
+        if completed.returncode != 0:
+            raise WorkspaceBootstrapError("ACL_FIXTURE_REJECTED")
+        return completed.stdout
+
+
+def _fixture_security_facts(
+    *entries: dict[str, object],
+    owner: str = "CURRENT",
+    sddl: str = _OBSERVED_OWNER_RIGHTS_SDDL,
+) -> tuple[str, bool]:
+    inspector = workspace_bootstrap.WindowsBoundaryInspector(
+        command_runner=PowerShellAclFixtureRunner(
+            owner=owner,
+            entries=entries,
+            sddl=sddl,
+        ),
+        sync_roots=(),
+    )
+    return inspector._security_facts(Path("acl-fixture"))
+
+
+def _safe_owner_rights_entries() -> tuple[dict[str, object], ...]:
+    return tuple(_acl_fixture_entry(sid) for sid in ("S-1-3-4", "S-1-5-18", "S-1-5-32-544"))
+
+
+def test_acl_probe_uses_locale_independent_well_known_sids_and_owner_binding() -> None:
     script = _acl_security_probe_script_v1()
+    owner_check = "if($ownerSid -ne $currentSid){exit 8}"
+    allowlist = "$allowed=@($ownerSid,'S-1-3-4','S-1-5-18','S-1-5-32-544')"
+    assert owner_check in script
+    assert allowlist in script
+    assert script.index(owner_check) < script.index(allowlist)
+    assert "0x50000000" in script
+    assert "$rights -band $writeMask" in script
+    assert "FileSystemRights.ToString()" not in script
+    assert "S-1-3-4" in script
     assert "S-1-5-18" in script
     assert "S-1-5-32-544" in script
+    assert "S-1-3-0" not in script
+    assert "S-1-1-0" not in script
+    assert "S-1-5-11" not in script
+    assert "S-1-5-32-545" not in script
+    assert "S-1-15-3-" not in script
+    assert "CodexSandboxUsers" not in script
     assert "NT AUTHORITY" not in script
     assert "Administrators" not in script
+    assert "Set-Acl" not in script
+    assert "icacls" not in script.casefold()
+    assert "SetAccessControl" not in script
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows ACL probe regression")
+def test_acl_probe_accepts_owner_rights_for_current_owner() -> None:
+    descriptor_hash, acl_exclusive = _fixture_security_facts(*_safe_owner_rights_entries())
+
+    assert (
+        descriptor_hash == hashlib.sha256(_OBSERVED_OWNER_RIGHTS_SDDL.encode("utf-8")).hexdigest()
+    )
+    assert descriptor_hash != "0" * 64
+    assert acl_exclusive is True
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows ACL probe regression")
+def test_acl_probe_still_accepts_concrete_current_owner() -> None:
+    sddl = (
+        "O:{CURRENT_SID}G:{CURRENT_SID}D:P"
+        "(A;OICI;FA;;;{CURRENT_SID})(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)"
+    )
+    descriptor_hash, acl_exclusive = _fixture_security_facts(
+        _acl_fixture_entry("CURRENT"),
+        _acl_fixture_entry("S-1-5-18"),
+        _acl_fixture_entry("S-1-5-32-544"),
+        sddl=sddl,
+    )
+
+    assert descriptor_hash != "0" * 64
+    assert acl_exclusive is True
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows ACL probe regression")
+def test_owner_rights_is_rejected_when_object_owner_is_not_current_user() -> None:
+    assert _fixture_security_facts(
+        *_safe_owner_rights_entries(),
+        owner="SID:S-1-5-18",
+    ) == ("0" * 64, False)
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows ACL probe regression")
+@pytest.mark.parametrize(
+    "third_party_sid",
+    (
+        "S-1-5-21-424242-434343-444444-1001",
+        "S-1-5-11",
+        "S-1-5-32-545",
+        "S-1-15-3-1",
+        "S-1-5-21-247581674-517489618-2716653085-1002",
+    ),
+    ids=(
+        "arbitrary-user",
+        "authenticated-users",
+        "builtin-users",
+        "capability",
+        "codex-sandbox-users",
+    ),
+)
+def test_owner_rights_does_not_mask_write_capable_third_party(
+    third_party_sid: str,
+) -> None:
+    assert _fixture_security_facts(
+        *_safe_owner_rights_entries(),
+        _acl_fixture_entry(third_party_sid),
+    ) == ("0" * 64, False)
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows ACL probe regression")
+@pytest.mark.parametrize(
+    "write_capable_rights",
+    (
+        "CreateFiles",
+        "CreateDirectories",
+        "WriteExtendedAttributes",
+        "DeleteSubdirectoriesAndFiles",
+        "WriteAttributes",
+        "Delete",
+        "ChangePermissions",
+        "TakeOwnership",
+        "Write",
+        "Modify",
+        "FullControl",
+        "1073741824",
+        "268435456",
+        "1073741825",
+    ),
+    ids=(
+        "create-files",
+        "create-directories",
+        "write-extended-attributes",
+        "delete-children",
+        "write-attributes",
+        "delete",
+        "change-permissions",
+        "take-ownership",
+        "write",
+        "modify",
+        "full-control",
+        "generic-write",
+        "generic-all",
+        "generic-write-plus-read",
+    ),
+)
+def test_owner_rights_rejects_every_write_capable_rights_bit(
+    write_capable_rights: str,
+) -> None:
+    assert _fixture_security_facts(
+        *_safe_owner_rights_entries(),
+        _acl_fixture_entry(
+            "S-1-5-11",
+            rights=write_capable_rights,
+        ),
+    ) == ("0" * 64, False)
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows ACL probe regression")
+@pytest.mark.parametrize(
+    "read_only_rights",
+    ("ReadData", "ReadExtendedAttributes", "ReadAttributes", "ReadPermissions", "ReadAndExecute"),
+    ids=("read-data", "read-extended-attributes", "read-attributes", "read-permissions", "read"),
+)
+def test_owner_rights_allows_third_party_read_without_write_capability(
+    read_only_rights: str,
+) -> None:
+    descriptor_hash, acl_exclusive = _fixture_security_facts(
+        *_safe_owner_rights_entries(),
+        _acl_fixture_entry("S-1-5-11", rights=read_only_rights),
+    )
+    assert descriptor_hash != "0" * 64
+    assert acl_exclusive is True
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows ACL probe regression")
+def test_creator_owner_remains_rejected() -> None:
+    assert _fixture_security_facts(
+        *_safe_owner_rights_entries(),
+        _acl_fixture_entry("S-1-3-0"),
+    ) == ("0" * 64, False)
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows ACL probe regression")
+@pytest.mark.parametrize(
+    "extra_entry",
+    (
+        _acl_fixture_entry(
+            "S-1-5-21-424242-434343-444444-1002",
+            inherited=True,
+        ),
+        _acl_fixture_entry(
+            "S-1-5-21-424242-434343-444444-1003",
+            propagation_flags="InheritOnly",
+        ),
+    ),
+    ids=("inherited-object-applicable", "inherit-only"),
+)
+def test_owner_rights_rejects_inherited_or_inherit_only_third_party_allow(
+    extra_entry: dict[str, object],
+) -> None:
+    assert _fixture_security_facts(
+        *_safe_owner_rights_entries(),
+        extra_entry,
+    ) == ("0" * 64, False)
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows ACL probe regression")
+def test_third_party_deny_does_not_expand_access_but_matching_allow_is_rejected() -> None:
+    third_party = "S-1-5-21-424242-434343-444444-1004"
+    deny = _acl_fixture_entry(third_party, access_type="Deny")
+    descriptor_hash, acl_exclusive = _fixture_security_facts(
+        deny,
+        *_safe_owner_rights_entries(),
+    )
+    assert descriptor_hash != "0" * 64
+    assert acl_exclusive is True
+
+    assert _fixture_security_facts(
+        deny,
+        *_safe_owner_rights_entries(),
+        _acl_fixture_entry(third_party),
+    ) == ("0" * 64, False)
+
+
+@pytest.mark.skipif(
+    os.name != "nt" or sys.version_info < (3, 12, 4),
+    reason="Windows mkdir(0o700) ACL semantics require Python 3.12.4+",
+)
+def test_windows_mkdir_0700_acl_is_accepted_by_real_inspector(tmp_path: Path) -> None:
+    parent = tmp_path / "owner-only-parent"
+    child = parent / "owner-only-child"
+    parent.mkdir(mode=0o700)
+    child.mkdir(mode=0o700)
+
+    inspector = workspace_bootstrap.WindowsBoundaryInspector(sync_roots=())
+    for path in (parent, child):
+        inspection = inspector.inspect(path)
+        assert inspection.acl_exclusive is True
+        assert inspection.security_descriptor_sha256 != "0" * 64
+        assert inspection.fixed_local_filesystem is True
+        assert inspection.synchronized is False
 
 
 def test_receipt_output_canonical_escape_is_rejected(tmp_path: Path) -> None:

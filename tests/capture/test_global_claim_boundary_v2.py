@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import os
 from collections.abc import Callable
 from datetime import UTC, datetime
@@ -17,6 +18,7 @@ from robin.capture.global_claim_boundary import (
     GlobalClaimBoundaryError,
     ensure_global_claim_root_v2,
     global_claim_marker_paths_v2,
+    inspect_global_claim_root_identity_v2,
     read_global_claim_marker_pair_v2,
     reserve_global_claim_marker_v2,
     resolve_global_claim_root_candidate_v2,
@@ -26,6 +28,14 @@ from robin.capture.storage import CaptureStorageError
 from robin.capture.workspace_bootstrap import LocalBoundaryInspection, WorkspaceBootstrapError
 
 _CLAIM_NAME = "real_execution_bootstrap_closure_v1-" + "a" * 64 + ".json"
+_OBSERVED_OWNER_RIGHTS_SDDL = (
+    "O:S-1-5-21-247581674-517489618-2716653085-1001"
+    "G:S-1-5-21-247581674-517489618-2716653085-1001"
+    "D:P(A;OICI;FA;;;OW)(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)"
+)
+_OBSERVED_OWNER_RIGHTS_SDDL_SHA256 = (
+    "b60c34520c2307630e80071587188617004f245013cbfb0ffb75100157edeebd"
+)
 
 
 def _normalized(path: Path) -> Path:
@@ -524,6 +534,95 @@ def test_existing_safe_child_is_accepted(tmp_path: Path, monkeypatch: pytest.Mon
     )
 
     assert ensure_global_claim_root_v2(receipt) == _normalized(child)
+
+
+def test_existing_observed_owner_rights_child_is_accepted_without_mutation(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    assert (
+        hashlib.sha256(_OBSERVED_OWNER_RIGHTS_SDDL.encode("utf-8")).hexdigest()
+        == _OBSERVED_OWNER_RIGHTS_SDDL_SHA256
+    )
+
+    profile = tmp_path / "profile"
+    boundary = profile / "RDS"
+    boundary.mkdir(parents=True)
+    receipt = _workspace(boundary)
+    child = boundary / GLOBAL_CLAIM_ROOT_V2_NAME
+    child.mkdir()
+    inspector = RecordingInspector()
+    inspector.override(
+        child,
+        acl_exclusive=True,
+        security_descriptor_sha256=_OBSERVED_OWNER_RIGHTS_SDDL_SHA256,
+    )
+    _install_contract(
+        monkeypatch,
+        profile=profile,
+        local_app_data=tmp_path / "local-app-data",
+        inspector=inspector,
+    )
+    read_identity = inspect_global_claim_root_identity_v2(receipt)
+    child_inspections_before_ensure = sum(call == _normalized(child) for call in inspector.calls)
+    before = child.stat()
+    before_entries = tuple(child.iterdir())
+
+    def forbid_mkdir(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError("existing owner-rights child must not be recreated")
+
+    monkeypatch.setattr(Path, "mkdir", forbid_mkdir)
+    resolved = ensure_global_claim_root_v2(receipt, expected_read_identity=read_identity)
+    after = child.stat()
+
+    assert resolved == _normalized(child)
+    assert (after.st_dev, after.st_ino) == (before.st_dev, before.st_ino)
+    assert tuple(child.iterdir()) == before_entries == ()
+    assert sum(call == _normalized(child) for call in inspector.calls) > (
+        child_inspections_before_ensure
+    )
+    assert all(
+        call_existing
+        for call, call_existing in zip(inspector.calls, inspector.call_existing, strict=True)
+        if call == _normalized(child)
+    )
+
+
+@pytest.mark.parametrize(
+    "unsafe_override",
+    (
+        {"synchronized": True},
+        {"volume_identity": "2" * 64},
+        {"device": -1},
+    ),
+    ids=("synchronized", "different-volume", "different-device"),
+)
+def test_existing_owner_rights_child_keeps_non_acl_boundary_guards(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    unsafe_override: dict[str, object],
+) -> None:
+    profile = tmp_path / "profile"
+    boundary = profile / "RDS"
+    boundary.mkdir(parents=True)
+    receipt = _workspace(boundary)
+    child = boundary / GLOBAL_CLAIM_ROOT_V2_NAME
+    child.mkdir()
+    inspector = RecordingInspector()
+    inspector.override(
+        child,
+        acl_exclusive=True,
+        security_descriptor_sha256=_OBSERVED_OWNER_RIGHTS_SDDL_SHA256,
+        **unsafe_override,
+    )
+    _install_contract(
+        monkeypatch,
+        profile=profile,
+        local_app_data=tmp_path / "local-app-data",
+        inspector=inspector,
+    )
+
+    assert _error_code(lambda: ensure_global_claim_root_v2(receipt)) == ("GLOBAL_CLAIM_ROOT_UNSAFE")
 
 
 def test_existing_file_collision_is_rejected(
