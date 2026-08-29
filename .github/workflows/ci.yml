@@ -348,7 +348,7 @@ jobs:
   bounded-live-canary-windows:
     name: "Bounded live canary - Windows"
     runs-on: windows-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     env:
       ROBIN_REQUIRE_WINDOWS_STORAGE_LINKS: "1"
     permissions:
@@ -422,6 +422,14 @@ jobs:
               Remove-Item -LiteralPath $proofRoot -Recurse -Force
             }
           }
+      - name: Vérifier le chemin positif OWNER RIGHTS sous Windows
+        shell: pwsh
+        run: |
+          python -m pytest -vv --tb=long --maxfail=0 `
+            tests/capture/test_real_capture_workspace_bootstrap.py::test_acl_probe_accepts_owner_rights_for_current_owner `
+            tests/capture/test_real_capture_workspace_bootstrap.py::test_acl_probe_still_accepts_concrete_current_owner `
+            tests/capture/test_real_capture_workspace_bootstrap.py::test_owner_rights_allows_third_party_read_without_write_capability `
+            tests/capture/test_real_capture_workspace_bootstrap.py::test_windows_mkdir_0700_acl_is_accepted_by_real_inspector
       - name: Compiler et tester la capacité bornée
         shell: pwsh
         run: |

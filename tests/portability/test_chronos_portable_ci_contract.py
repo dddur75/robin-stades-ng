@@ -85,7 +85,7 @@ def test_bounded_live_canary_windows_job_proves_storage_link_semantics() -> None
     job = jobs["bounded-live-canary-windows"]  # type: ignore[index]
 
     assert job["runs-on"] == "windows-latest"
-    assert job["timeout-minutes"] == 20
+    assert job["timeout-minutes"] == 25
     assert job["permissions"] == {"contents": "read"}
     assert job["env"] == {"ROBIN_REQUIRE_WINDOWS_STORAGE_LINKS": "1"}
     assert all(
@@ -109,6 +109,51 @@ def test_bounded_live_canary_windows_job_proves_storage_link_semantics() -> None
         for step in job["steps"]
         if "name" in step  # type: ignore[index]
     }
+    targeted_name = "Vérifier le chemin positif OWNER RIGHTS sous Windows"
+    targeted_steps = [
+        step
+        for step in job["steps"]  # type: ignore[index]
+        if step.get("name") == targeted_name
+    ]
+    assert len(targeted_steps) == 1
+    targeted = targeted_steps[0]
+    assert targeted["shell"] == "pwsh"
+    assert "continue-on-error" not in targeted
+    assert "if" not in targeted
+
+    targeted_run = str(targeted["run"])
+    assert "python -m pytest -vv --tb=long --maxfail=0" in targeted_run
+    for expected_node in (
+        (
+            "tests/capture/test_real_capture_workspace_bootstrap.py::"
+            "test_acl_probe_accepts_owner_rights_for_current_owner"
+        ),
+        (
+            "tests/capture/test_real_capture_workspace_bootstrap.py::"
+            "test_acl_probe_still_accepts_concrete_current_owner"
+        ),
+        (
+            "tests/capture/test_real_capture_workspace_bootstrap.py::"
+            "test_owner_rights_allows_third_party_read_without_write_capability"
+        ),
+        (
+            "tests/capture/test_real_capture_workspace_bootstrap.py::"
+            "test_windows_mkdir_0700_acl_is_accepted_by_real_inspector"
+        ),
+    ):
+        assert targeted_run.count(expected_node) == 1
+
+    full_capture_command = "python -m pytest -q tests/capture"
+    full_capture_step_indexes = [
+        index
+        for index, step in enumerate(job["steps"])  # type: ignore[index]
+        if any(
+            line.strip() == full_capture_command for line in str(step.get("run", "")).splitlines()
+        )
+    ]
+    assert len(full_capture_step_indexes) == 1
+    assert job["steps"].index(targeted) < full_capture_step_indexes[0]  # type: ignore[index]
+
     assert steps["Vérifier les artifacts synthétiques bornés"]["run"].splitlines() == [
         "python tools/data-sourcing/build_capture_harness_artifacts.py --check",
         "python tools/data-sourcing/build_bounded_live_canary_artifacts.py --check",

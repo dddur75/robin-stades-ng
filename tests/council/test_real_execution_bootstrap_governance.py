@@ -922,6 +922,16 @@ def test_global_claim_boundary_v2_evidence_is_exact_append_only_and_effect_free(
 
 def test_owner_rights_acl_compatibility_evidence_is_append_only_and_effect_free() -> None:
     base_revision = "c40f3809d76f7acab54295cf45b685dc8c4190ac"
+    start_revision = "5100d6352a10b84b0e4c136d85d17efe03d64dd9"
+
+    def start_bytes(relative: str) -> bytes:
+        return subprocess.run(
+            ["git", "show", f"{start_revision}:{relative}"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        ).stdout
+
     expected_files = [
         "reports/council/decision-ledger.jsonl",
         "reports/evidence/evidence-graph.json",
@@ -956,9 +966,7 @@ def test_owner_rights_acl_compatibility_evidence_is_append_only_and_effect_free(
         "LEDGER.V1.013": expected_proof[7],
     }
 
-    ledger_bytes = (
-        (ROOT / "reports/council/decision-ledger.jsonl").read_bytes().replace(b"\r\n", b"\n")
-    )
+    ledger_bytes = start_bytes("reports/council/decision-ledger.jsonl").replace(b"\r\n", b"\n")
     ledger_lines = ledger_bytes.splitlines()
     records = [json.loads(line) for line in ledger_lines]
     assert len(records) == 177
@@ -1145,7 +1153,7 @@ def test_owner_rights_acl_compatibility_evidence_is_append_only_and_effect_free(
 
     changed_paths = (
         subprocess.run(
-            ["git", "diff", "--name-only", base_revision, "--"],
+            ["git", "diff", "--name-only", base_revision, start_revision, "--"],
             cwd=ROOT,
             check=True,
             capture_output=True,
@@ -1164,7 +1172,7 @@ def test_owner_rights_acl_compatibility_evidence_is_append_only_and_effect_free(
             capture_output=True,
         ).stdout
     )
-    graph = load("reports/evidence/evidence-graph.json")
+    graph = json.loads(start_bytes("reports/evidence/evidence-graph.json"))
     assert len(base_graph["claims"]) == 491
     assert len(base_graph["decision_nodes"]) == 176
     assert len(base_graph["edges"]) == 790
@@ -1197,7 +1205,7 @@ def test_owner_rights_acl_compatibility_evidence_is_append_only_and_effect_free(
         expected_proof[7]: "reports/council/decision-ledger.jsonl",
     }
     for claim_id, relative in claim_artifacts.items():
-        payload = (ROOT / relative).read_bytes().replace(b"\r\n", b"\n")
+        payload = start_bytes(relative).replace(b"\r\n", b"\n")
         assert claims[claim_id]["artifact"] == relative
         assert claims[claim_id]["hash"] == hashlib.sha256(payload).hexdigest()
         assert claims[claim_id]["code_revision"] == base_revision
@@ -1226,4 +1234,336 @@ def test_owner_rights_acl_compatibility_evidence_is_append_only_and_effect_free(
     assert graph["edges"][-8:] == expected_edges
     assert [edge["edge_id"] for edge in graph["edges"]] == [
         f"EDGE.{number:03d}" for number in range(1, 799)
+    ]
+
+
+def test_pr75_final_windows_fixture_closure_evidence_is_append_only_and_effect_free() -> None:
+    base_revision = "c40f3809d76f7acab54295cf45b685dc8c4190ac"
+    start_revision = "5100d6352a10b84b0e4c136d85d17efe03d64dd9"
+    incremental_files = [
+        ".github/workflows/ci.yml",
+        "reports/council/decision-ledger.jsonl",
+        "reports/evidence/evidence-graph.json",
+        "tests/capture/test_real_capture_workspace_bootstrap.py",
+        "tests/council/test_real_execution_bootstrap_governance.py",
+        "tests/portability/test_chronos_portable_ci_contract.py",
+    ]
+    pull_request_files = [
+        ".github/workflows/ci.yml",
+        "reports/council/decision-ledger.jsonl",
+        "reports/evidence/evidence-graph.json",
+        "src/robin/capture/workspace_bootstrap.py",
+        "tests/capture/test_global_claim_boundary_v2.py",
+        "tests/capture/test_real_capture_workspace_bootstrap.py",
+        "tests/council/test_real_execution_bootstrap_governance.py",
+        "tests/portability/test_chronos_portable_ci_contract.py",
+    ]
+    frozen_existing_paths = [
+        "src/robin/capture/workspace_bootstrap.py",
+        "tests/capture/test_global_claim_boundary_v2.py",
+    ]
+    expected_proof = [
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.035",
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.044",
+        "GOV.AUTHORIZATION.REAL_EXECUTION_BOOTSTRAP.CLOSURE.MANIFEST.V1.005",
+        "SECURITY.REAL_EXECUTION_BOOTSTRAP.GLOBAL_CLAIM.OWNER_BOUNDARY.V2.001",
+        "PORTABILITY.REAL_EXECUTION_BOOTSTRAP.WORKSPACE.FULL_CLONE."
+        "JOB_ACCOUNTING.SETTLEMENT.V1.002",
+        "PORTABILITY.REAL_EXECUTION_BOOTSTRAP.WORKSPACE.FULL_CLONE."
+        "JOB_ACCOUNTING.REGRESSION.V1.007",
+        "GOV.CI.REAL_EXECUTION_BOOTSTRAP.CLOSURE.WORKFLOW.V1.003",
+        "PORTABILITY.REAL_EXECUTION_BOOTSTRAP.CI.WINDOWS.OWNER_RIGHTS.CONTRACT.V1.001",
+        "SECURITY.REAL_EXECUTION_BOOTSTRAP.GLOBAL_CLAIM.DUAL_ROOT.ZERO_EFFECTS.V2.002",
+        "GOV.COUNCIL.REAL_EXECUTION_BOOTSTRAP.CLOSURE.EVIDENCE.SUCCESSION.LEDGER.V1.015",
+    ]
+    supersessions = {
+        "GOV.AUTHORIZATION.CHRONOS_LOOP53.034": expected_proof[0],
+        "GOV.EVIDENCE.REVISION_POLICY.CHRONOS_LOOP53.043": expected_proof[1],
+        "PORTABILITY.REAL_EXECUTION_BOOTSTRAP.WORKSPACE.FULL_CLONE."
+        "JOB_ACCOUNTING.REGRESSION.V1.006": expected_proof[5],
+        "GOV.CI.REAL_EXECUTION_BOOTSTRAP.CLOSURE.WORKFLOW.V1.002": expected_proof[6],
+        "GOV.COUNCIL.REAL_EXECUTION_BOOTSTRAP.CLOSURE.EVIDENCE.SUCCESSION."
+        "LEDGER.V1.014": expected_proof[9],
+    }
+
+    def revision_bytes(revision: str, relative: str) -> bytes:
+        return subprocess.run(
+            ["git", "show", f"{revision}:{relative}"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        ).stdout
+
+    def artifact_sha256(relative: str) -> str:
+        payload = (ROOT / relative).read_bytes().replace(b"\r\n", b"\n")
+        return hashlib.sha256(payload).hexdigest()
+
+    start_ledger = revision_bytes(start_revision, "reports/council/decision-ledger.jsonl").replace(
+        b"\r\n", b"\n"
+    )
+    ledger_bytes = (
+        (ROOT / "reports/council/decision-ledger.jsonl").read_bytes().replace(b"\r\n", b"\n")
+    )
+    ledger_lines = ledger_bytes.splitlines()
+    records = [json.loads(line) for line in ledger_lines]
+    assert len(records) == 178
+    assert b"\n".join(ledger_lines[:177]) + b"\n" == start_ledger
+    assert hashlib.sha256(start_ledger).hexdigest() == (
+        "fa9f5dcdd435df1528ad3a8ea7e06bc5dcff723465c7a541677f7a12700c5735"
+    )
+    assert ledger_bytes == b"\n".join(ledger_lines) + b"\n"
+    previous_record, record = records[-2:]
+    assert previous_record["decision_id"] == "RCV3-20260829-184"
+    assert previous_record["hash"] == (
+        "4ac091a327b731d6c5182227e82fe2e30e785298326a121397c81a82327a9f0d"
+    )
+    assert record["decision_id"] == "RCV3-20260829-185"
+    assert record["previous_hash"] == previous_record["hash"]
+    assert record["proof"] == expected_proof
+    canonical_record = json.dumps(
+        {key: value for key, value in record.items() if key != "hash"},
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode()
+    assert hashlib.sha256(canonical_record).hexdigest() == record["hash"]
+
+    context = record["context"]
+    assert context["mission_id"] == "PR75_WINDOWS_FIXTURE_CLOSURE_V2"
+    assert context["phase"] == "PR75_WINDOWS_FIXTURE_CLOSURE_V2_PRECOMMIT"
+    assert context["base_revision"] == base_revision
+    assert context["start_pr_head_sha"] == start_revision
+    assert context["candidate_parent_sha"] == start_revision
+    assert context["branch"] == "codex/owner-rights-acl-compatibility-v1"
+    assert context["pr"] == 75
+    assert context["writer"] == "ONE_CODEX_DELIVERY_AGENT"
+    assert context["writer_count"] == 1
+    assert context["files"] == incremental_files
+    assert context["pull_request_files"] == pull_request_files
+    assert context["scope"] == {
+        "closure_changed_paths": 6,
+        "frozen_existing_paths": 2,
+        "pull_request_changed_paths": 8,
+        "tracked_paths_maximum": 8,
+        "outside_allowlist": [],
+        "product_or_scientific_change": False,
+    }
+    assert context["owner_directive"] == {
+        "raw_bytes": 21813,
+        "raw_sha256": "071e9ba887c1ac00d695804124d549345f3257330327a8786c4dfa6d8cbc9679",
+        "normalized_utf8_lf_bytes": 21813,
+        "normalized_utf8_lf_sha256": (
+            "071e9ba887c1ac00d695804124d549345f3257330327a8786c4dfa6d8cbc9679"
+        ),
+    }
+    assert context["causal_evidence"] == {
+        "decision": "ACCEPTED_AS_SUFFICIENT_FOR_FIXTURE_ONLY_PATCH",
+        "root_cause": "TEST_FIXTURE_CURRENT_OWNER_ACCOUNT_REPRESENTATION_DEFECT",
+        "confidence": "HIGH",
+        "exact_github_child_return_code": "UNKNOWN_NOT_CLAIMED",
+        "production_code_defect_indicated": False,
+    }
+    assert context["fixture_contract"] == {
+        "current_identity": "CHILD_WINDOWS_TOKEN_SID_TO_NTACCOUNT",
+        "mismatch_identity": "CHILD_SUPPLIED_SID_TO_NTACCOUNT",
+        "positive_round_trip": "TOKEN_SID_TO_NTACCOUNT_TO_PRODUCTION_SID",
+        "positive_sanity_diagnostic": "ACL_FIXTURE_INFRASTRUCTURE_FAILED",
+        "positive_sanity_precedes_negative_conclusions": True,
+        "in_memory": True,
+        "subprocess_command_runner_contained": True,
+        "acl_writes": 0,
+        "provider_access": 0,
+    }
+    assert context["ci_contract"] == {
+        "job": "bounded-live-canary-windows",
+        "timeout_minutes": 25,
+        "targeted_step": "Vérifier le chemin positif OWNER RIGHTS sous Windows",
+        "targeted_shell": "pwsh",
+        "targeted_collected_cases": 8,
+        "targeted_precedes_full_capture": True,
+        "targeted_continue_on_error": False,
+        "full_capture_command": "python -m pytest -q tests/capture",
+        "full_capture_invocations": 1,
+        "permissions": {"contents": "read"},
+        "require_windows_storage_links": "1",
+        "github_secret_expressions": 0,
+    }
+    assert context["frozen_paths"] == {
+        "src/robin/capture/workspace_bootstrap.py": {
+            "start_blob": "451e0701e01375df2661f095e3944278f82cbef6",
+            "delta_bytes": 0,
+        },
+        "tests/capture/test_global_claim_boundary_v2.py": {
+            "start_blob": "0e896aa68ab1ae3c2e02c8ae5163feb13a38307f",
+            "delta_bytes": 0,
+        },
+    }
+    artifact_paths = (
+        ".github/workflows/ci.yml",
+        "tests/capture/test_real_capture_workspace_bootstrap.py",
+        "tests/council/test_real_execution_bootstrap_governance.py",
+        "tests/portability/test_chronos_portable_ci_contract.py",
+    )
+    assert context["candidate_artifact_hashes"] == {
+        relative: artifact_sha256(relative) for relative in artifact_paths
+    }
+    assert context["delivery_authority"] == {
+        "additional_engineering_commits_maximum": 1,
+        "total_pr75_engineering_commits_maximum": 4,
+        "additional_non_force_pushes_maximum": 1,
+        "additional_exact_head_ci_cycles_maximum": 1,
+        "automatic_rerun_authorized": False,
+        "force_push_authorized": False,
+        "new_pull_request_authorized": False,
+        "normal_merge_commit_required": True,
+        "merge_with_red_ci_authorized": False,
+    }
+    assert context["validation_contract"] == {
+        "ordered_local_gates": [
+            "POSITIVE_FIXTURE_SANITY",
+            "EXACT_SEVEN",
+            "ACL_MATRIX",
+            "WINDOWS_MKDIR_0700",
+            "PRINCIPAL_FIXTURE_FILE",
+            "GLOBAL_CLAIM_BOUNDARY_V2",
+            "PORTABILITY_CONTRACT",
+            "CAPTURE_DOMAIN",
+            "COUNCIL",
+            "FULL_REPOSITORY_ONCE",
+            "STATIC_SECURITY_MATRIX",
+        ],
+        "full_repository_suite_invocations_maximum": 1,
+        "precommit_status": "ALL_GATES_REQUIRED",
+    }
+    assert context["external_effects"] == {
+        "preparation_cli_invocations": 0,
+        "preparation_cycles": 0,
+        "official_physical_reads": 0,
+        "global_v2_reservation_writes": 0,
+        "legacy_reservation_writes": 0,
+        "local_reservation_writes": 0,
+        "provider_dns": 0,
+        "provider_tcp": 0,
+        "provider_http": 0,
+        "secret_reads": 0,
+        "owner_pack_builds": 0,
+        "owner_authorizations": 0,
+        "c0_calls": 0,
+        "acl_writes": 0,
+    }
+    assert context["runtime_preservation"] == {
+        "rds_untouched": True,
+        "w_untouched": True,
+        "w2_untouched": True,
+        "v2_root_untouched": True,
+        "legacy_root_untouched": True,
+        "s3_w3_pending_postmerge_green_ci": True,
+        "stop_before_provider_dns": True,
+    }
+    assert context["reviews_observed"] == {
+        "c4": "ACCEPT",
+        "architecture_a2": "ACCEPT",
+        "red_team": "ACCEPT",
+        "ci_portability": "ACCEPT",
+        "c2_final": "PENDING_AFTER_LOCAL_GATES",
+        "dp6_final": "PENDING_AFTER_LOCAL_GATES",
+        "qa_director": "PENDING_AFTER_LOCAL_GATES",
+    }
+    assert set(context["defects"].values()) == {0}
+
+    incremental_changed_paths = (
+        subprocess.run(
+            ["git", "diff", "--name-only", start_revision, "--"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        .stdout.strip()
+        .splitlines()
+    )
+    assert incremental_changed_paths == incremental_files
+    pull_request_changed_paths = (
+        subprocess.run(
+            ["git", "diff", "--name-only", base_revision, "--"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        .stdout.strip()
+        .splitlines()
+    )
+    assert pull_request_changed_paths == pull_request_files
+    for relative in frozen_existing_paths:
+        assert (ROOT / relative).read_bytes().replace(b"\r\n", b"\n") == revision_bytes(
+            start_revision, relative
+        ).replace(b"\r\n", b"\n")
+
+    start_graph = json.loads(revision_bytes(start_revision, "reports/evidence/evidence-graph.json"))
+    graph = load("reports/evidence/evidence-graph.json")
+    assert len(start_graph["claims"]) == 497
+    assert len(start_graph["decision_nodes"]) == 177
+    assert len(start_graph["edges"]) == 798
+    assert len(graph["claims"]) == 503
+    assert len(graph["decision_nodes"]) == 178
+    assert len(graph["edges"]) == 808
+    for before, after in zip(start_graph["claims"], graph["claims"][:497], strict=True):
+        if before["claim_id"] not in supersessions:
+            assert after == before
+            continue
+        expected_successor = supersessions[before["claim_id"]]
+        assert after == {
+            **before,
+            "status": "SUPERSEDED",
+            "superseded_by": expected_successor,
+        }
+    assert graph["decision_nodes"][:177] == start_graph["decision_nodes"]
+    assert graph["edges"][:798] == start_graph["edges"]
+
+    claims = {claim["claim_id"]: claim for claim in graph["claims"]}
+    appended_claim_ids = [expected_proof[index] for index in (0, 1, 5, 6, 7, 9)]
+    assert [claim["claim_id"] for claim in graph["claims"][-6:]] == appended_claim_ids
+    claim_artifacts = {
+        expected_proof[0]: "tests/council/test_real_execution_bootstrap_governance.py",
+        expected_proof[1]: "tests/council/test_real_execution_bootstrap_governance.py",
+        expected_proof[5]: "tests/capture/test_real_capture_workspace_bootstrap.py",
+        expected_proof[6]: ".github/workflows/ci.yml",
+        expected_proof[7]: "tests/portability/test_chronos_portable_ci_contract.py",
+        expected_proof[9]: "reports/council/decision-ledger.jsonl",
+    }
+    for claim_id, relative in claim_artifacts.items():
+        assert claims[claim_id]["artifact"] == relative
+        assert claims[claim_id]["hash"] == artifact_sha256(relative)
+        assert claims[claim_id]["code_revision"] == start_revision
+        assert claims[claim_id]["status"] == (
+            "PARTIAL" if claim_id in expected_proof[:2] else "VERIFIED"
+        )
+        if claim_id in supersessions.values():
+            assert claims[claim_id]["successor_of"] == next(
+                predecessor
+                for predecessor, successor in supersessions.items()
+                if successor == claim_id
+            )
+        else:
+            assert "successor_of" not in claims[claim_id]
+        assert claims[claim_id]["verified_by"] == ["C0", "C2", "C4", "DP6", "A2"]
+
+    assert graph["decision_nodes"][-1] == {
+        "decision_id": record["decision_id"],
+        "ledger_record_hash": record["hash"],
+    }
+    expected_edges = [
+        {
+            "edge_id": f"EDGE.{number}",
+            "from_claim_id": claim_id,
+            "to_decision_id": record["decision_id"],
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        }
+        for number, claim_id in zip(range(799, 809), expected_proof, strict=True)
+    ]
+    assert graph["edges"][-10:] == expected_edges
+    assert [edge["edge_id"] for edge in graph["edges"]] == [
+        f"EDGE.{number:03d}" for number in range(1, 809)
     ]

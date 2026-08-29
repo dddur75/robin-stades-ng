@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import functools
 import hashlib
 import inspect
 import json
@@ -954,6 +955,41 @@ def _acl_fixture_entry(
 class PowerShellAclFixtureRunner:
     """Run the production probe against an in-memory ACL without writing one."""
 
+    _infrastructure_failure_marker = "ACL_FIXTURE_INFRASTRUCTURE_FAILED"
+
+    @staticmethod
+    @functools.cache
+    def _assert_positive_identity_round_trip(
+        arguments_prefix: tuple[str, ...],
+        cwd: Path | None,
+        environment_items: tuple[tuple[str, str], ...],
+        timeout_seconds: int,
+    ) -> None:
+        sanity_script = (
+            "$ErrorActionPreference='Stop';"
+            "$sidType=[System.Security.Principal.SecurityIdentifier];"
+            "$current=[System.Security.Principal.WindowsIdentity]::GetCurrent();"
+            "$currentSid=$current.User.Value;"
+            "$currentAccount=$current.User.Translate("
+            "[System.Security.Principal.NTAccount]).Value;"
+            "$productionOwnerSid=(New-Object System.Security.Principal.NTAccount "
+            "-ArgumentList $currentAccount).Translate($sidType).Value;"
+            "if($productionOwnerSid -ne $currentSid){"
+            "throw 'ACL_FIXTURE_INFRASTRUCTURE_FAILED'};"
+            "[Console]::Out.Write('ACL_FIXTURE_POSITIVE_IDENTITY_PASS')"
+        )
+        try:
+            sanity_result = SubprocessCommandRunner().run(
+                (*arguments_prefix, sanity_script),
+                cwd=cwd,
+                environment=dict(environment_items),
+                timeout_seconds=timeout_seconds,
+            )
+        except WorkspaceBootstrapError:
+            raise AssertionError("ACL_FIXTURE_INFRASTRUCTURE_FAILED") from None
+        if sanity_result != "ACL_FIXTURE_POSITIVE_IDENTITY_PASS":
+            raise AssertionError("ACL_FIXTURE_INFRASTRUCTURE_FAILED")
+
     def __init__(
         self,
         *,
@@ -975,13 +1011,26 @@ class PowerShellAclFixtureRunner:
         timeout_seconds: int,
     ) -> str:
         probe = arguments[-1]
+        self._assert_positive_identity_round_trip(
+            tuple(arguments[:-1]),
+            cwd,
+            tuple(sorted(environment.items())),
+            timeout_seconds,
+        )
+
         fixture_script = (
+            "$ErrorActionPreference='Stop';"
+            "try{"
             "$fixture=ConvertFrom-Json $env:ROBIN_TEST_ACL_FIXTURE;"
             "$current=[System.Security.Principal.WindowsIdentity]::GetCurrent();"
+            "$currentAccount=$current.User.Translate("
+            "[System.Security.Principal.NTAccount]).Value;"
             "$owner=if($fixture.owner -eq 'CURRENT'){"
-            "$env:ROBIN_TEST_CURRENT_ACCOUNT}"
+            "$currentAccount}"
             "elseif($fixture.owner.StartsWith('SID:')){"
-            "$env:ROBIN_TEST_MISMATCH_ACCOUNT}"
+            "[System.Security.Principal.SecurityIdentifier]::new("
+            "$fixture.owner.Substring(4)).Translate("
+            "[System.Security.Principal.NTAccount]).Value}"
             "else{$fixture.owner};"
             "$access=@($fixture.entries|ForEach-Object {"
             "$sid=if($_.sid -eq 'CURRENT'){$current.User}else{"
@@ -1003,19 +1052,20 @@ class PowerShellAclFixtureRunner:
             "$sddl=([string]$fixture.sddl).Replace('{CURRENT_SID}',$current.User.Value);"
             "$script:aclFixture=[pscustomobject]@{Owner=$owner;Access=$access;Sddl=$sddl};"
             "function Get-Acl {$script:aclFixture};"
+            "}catch{"
+            "[Console]::Out.Write('ACL_FIXTURE_INFRASTRUCTURE_FAILED');return};"
         )
         child_environment = dict(environment)
         child_environment["ROBIN_TEST_ACL_FIXTURE"] = self.fixture
-        child_environment["ROBIN_TEST_CURRENT_ACCOUNT"] = (
-            f"{os.environ['USERDOMAIN']}\\{os.environ['USERNAME']}"
-        )
-        child_environment["ROBIN_TEST_MISMATCH_ACCOUNT"] = "NT AUTHORITY\\SYSTEM"
-        return SubprocessCommandRunner().run(
+        result = SubprocessCommandRunner().run(
             (*arguments[:-1], fixture_script + probe),
             cwd=cwd,
             environment=child_environment,
             timeout_seconds=timeout_seconds,
         )
+        if result == self._infrastructure_failure_marker:
+            raise AssertionError(self._infrastructure_failure_marker)
+        return result
 
 
 def _fixture_security_facts(
@@ -1036,6 +1086,50 @@ def _fixture_security_facts(
 
 def _safe_owner_rights_entries() -> tuple[dict[str, object], ...]:
     return tuple(_acl_fixture_entry(sid) for sid in ("S-1-3-4", "S-1-5-18", "S-1-5-32-544"))
+
+
+def test_acl_fixture_derives_owner_accounts_inside_the_child_process() -> None:
+    source = inspect.getsource(PowerShellAclFixtureRunner)
+
+    assert "WindowsIdentity" in source
+    assert "SecurityIdentifier" in source
+    assert "NTAccount" in source
+    assert "Translate" in source
+    assert "$currentAccount=$current.User.Translate(" in source
+    assert "$fixture.owner.Substring(4)).Translate(" in source
+    assert "$productionOwnerSid=(New-Object System.Security.Principal.NTAccount " in source
+    assert "ACL_FIXTURE_INFRASTRUCTURE_FAILED" in source
+    for forbidden in (
+        "USERDOMAIN",
+        "USERNAME",
+        "ROBIN_TEST_CURRENT_ACCOUNT",
+        "ROBIN_TEST_MISMATCH_ACCOUNT",
+        "NT AUTHORITY",
+    ):
+        assert forbidden not in source
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows ACL fixture identity failure")
+def test_acl_fixture_infrastructure_failure_cannot_satisfy_a_negative_case() -> None:
+    PowerShellAclFixtureRunner._assert_positive_identity_round_trip.cache_clear()
+    with pytest.raises(AssertionError, match="^ACL_FIXTURE_INFRASTRUCTURE_FAILED$"):
+        _fixture_security_facts(
+            *_safe_owner_rights_entries(),
+            owner="SID:not-a-sid",
+        )
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows ACL fixture identity sanity")
+def test_acl_fixture_positive_identity_round_trip_sanity() -> None:
+    PowerShellAclFixtureRunner._assert_positive_identity_round_trip.cache_clear()
+
+    descriptor_hash, acl_exclusive = _fixture_security_facts(*_safe_owner_rights_entries())
+
+    sanity_cache = PowerShellAclFixtureRunner._assert_positive_identity_round_trip.cache_info()
+    assert sanity_cache.misses == 1
+    assert sanity_cache.currsize == 1
+    assert descriptor_hash != "0" * 64
+    assert acl_exclusive is True
 
 
 def test_acl_probe_uses_locale_independent_well_known_sids_and_owner_binding() -> None:
