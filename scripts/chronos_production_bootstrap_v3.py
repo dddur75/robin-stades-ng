@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import re
 import secrets
@@ -72,6 +73,12 @@ from robin.chronos_role_lifecycle import (
     set_permanent_bootstrap_authority,
     stable_migrator_role,
 )
+from scripts.chronos_neon_pure_readonly_preflight_v4 import (
+    NeonObservation,
+    PreflightNoGo,
+    require_neon_recovery_feasibility,
+    resolve_neon_identity_readonly,
+)
 
 NEON_API = "https://console.neon.tech/api/v2"
 RECOVERY_BRANCH_PREFIX = "chronos-pre-0015-recovery-"
@@ -128,11 +135,17 @@ def _connect_direct(database_url: str) -> Connection[Any]:
 
 
 NO_VALUES_OBSERVED = False
+MAX_NEON_RESPONSE_BYTES = 1_000_000
+_NEON_SAFE_IDENTIFIER = re.compile(r"^[a-z0-9-]{1,60}$")
+_RECOVERY_BRANCH_NAME = re.compile(
+    rf"^{re.escape(RECOVERY_BRANCH_PREFIX)}[0-9]{{8}}T[0-9]{{6}}Z$"
+)
 _NEON_ALLOWED_ROUTES = (
     re.compile(r"^GET /projects\?limit=100$"),
     re.compile(r"^GET /projects/[^/?]+$"),
     re.compile(r"^GET /projects/[^/?]+/branches\?limit=100$"),
     re.compile(r"^GET /projects/[^/?]+/branches/[^/?]+$"),
+    re.compile(r"^GET /projects/[^/?]+/branches/[^/?]+/endpoints$"),
     re.compile(r"^GET /projects/[^/?]+/endpoints$"),
     re.compile(r"^POST /projects/[^/?]+/branches$"),
 )
@@ -208,16 +221,64 @@ class NeonIdentity:
     database_name: str
 
 
+class _DuplicateJsonKey(ValueError):
+    """Raised when a Neon response contains an ambiguous JSON object."""
+
+
+def _unique_json_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    document: dict[str, object] = {}
+    for key, value in pairs:
+        if key in document:
+            raise _DuplicateJsonKey(key)
+        document[key] = value
+    return document
+
+
+def _finite_json(value: object) -> bool:
+    if isinstance(value, float):
+        return math.isfinite(value)
+    if isinstance(value, dict):
+        return all(
+            isinstance(key, str) and _finite_json(nested)
+            for key, nested in value.items()
+        )
+    if isinstance(value, list):
+        return all(_finite_json(item) for item in value)
+    return value is None or isinstance(value, (bool, int, str))
+
+
+def _bounded_neon_response_bytes(response: requests.Response) -> bytes:
+    content_length = response.headers.get("Content-Length")
+    if content_length is not None:
+        if (
+            not content_length.isascii()
+            or not content_length.isdigit()
+            or int(content_length) > MAX_NEON_RESPONSE_BYTES
+        ):
+            raise ChronosProductionError("CHRONOS_NEON_API_RESPONSE_INVALID")
+    payload = bytearray()
+    for chunk in response.iter_content(chunk_size=64 * 1024):
+        if not isinstance(chunk, bytes):
+            raise ChronosProductionError("CHRONOS_NEON_API_RESPONSE_INVALID")
+        if not chunk:
+            continue
+        if len(payload) + len(chunk) > MAX_NEON_RESPONSE_BYTES:
+            raise ChronosProductionError("CHRONOS_NEON_API_RESPONSE_INVALID")
+        payload.extend(chunk)
+    if not payload:
+        raise ChronosProductionError("CHRONOS_NEON_API_RESPONSE_INVALID")
+    return bytes(payload)
+
+
 class NeonClient:
     """Small Neon API client whose exceptions never include response bodies."""
 
     def __init__(self, api_key: str) -> None:
         if not api_key:
             raise ChronosProductionError("CHRONOS_NEON_API_KEY_MISSING")
+        self._api_key = api_key
         self._session = requests.Session()
-        self._session.headers.update(
-            {"Authorization": f"Bearer {api_key}", "Accept": "application/json"}
-        )
+        self._session.trust_env = False
 
     def request(
         self,
@@ -233,18 +294,38 @@ class NeonClient:
             response = self._session.request(
                 method.upper(),
                 NEON_API + path,
+                headers={
+                    "Authorization": f"Bearer {self._api_key}",
+                    "Accept": "application/json",
+                },
                 json=payload,
                 timeout=30,
+                allow_redirects=False,
+                stream=True,
             )
         except requests.RequestException:
             raise ChronosProductionError("CHRONOS_NEON_API_UNAVAILABLE") from None
-        if not 200 <= response.status_code < 300:
-            raise ChronosProductionError(f"CHRONOS_NEON_API_HTTP_{response.status_code}")
         try:
-            document = response.json()
-        except ValueError:
+            if not 200 <= response.status_code < 300:
+                raise ChronosProductionError(
+                    f"CHRONOS_NEON_API_HTTP_{response.status_code}"
+                )
+            raw_document = _bounded_neon_response_bytes(response)
+        except requests.RequestException:
+            raise ChronosProductionError("CHRONOS_NEON_API_UNAVAILABLE") from None
+        finally:
+            try:
+                response.close()
+            except requests.RequestException:
+                pass
+        try:
+            document = json.loads(
+                raw_document.decode("utf-8"),
+                object_pairs_hook=_unique_json_object,
+            )
+        except (RecursionError, UnicodeDecodeError, ValueError):
             raise ChronosProductionError("CHRONOS_NEON_API_RESPONSE_INVALID") from None
-        if not isinstance(document, dict):
+        if not isinstance(document, dict) or not _finite_json(document):
             raise ChronosProductionError("CHRONOS_NEON_API_RESPONSE_INVALID")
         return cast(dict[str, Any], document)
 
@@ -271,10 +352,28 @@ class NeonClient:
 
     def endpoints(self, project_id: str) -> list[dict[str, Any]]:
         document = self.request("GET", f"/projects/{project_id}/endpoints")
-        endpoints = document.get("endpoints", [])
-        if not isinstance(endpoints, list):
+        endpoints = document.get("endpoints")
+        if not isinstance(endpoints, list) or any(
+            not isinstance(item, dict) for item in endpoints
+        ):
             raise ChronosProductionError("CHRONOS_NEON_ENDPOINT_LIST_INVALID")
-        return [cast(dict[str, Any], item) for item in endpoints if isinstance(item, dict)]
+        return [cast(dict[str, Any], item) for item in endpoints]
+
+    def branch_endpoints(
+        self,
+        project_id: str,
+        branch_id: str,
+    ) -> list[dict[str, Any]]:
+        document = self.request(
+            "GET",
+            f"/projects/{project_id}/branches/{branch_id}/endpoints",
+        )
+        endpoints = document.get("endpoints")
+        if not isinstance(endpoints, list) or any(
+            not isinstance(item, dict) for item in endpoints
+        ):
+            raise ChronosProductionError("CHRONOS_NEON_ENDPOINT_LIST_INVALID")
+        return [cast(dict[str, Any], item) for item in endpoints]
 
     def create_recovery_branch(
         self,
@@ -283,20 +382,17 @@ class NeonClient:
         parent_branch_id: str,
         branch_name: str,
     ) -> dict[str, Any]:
-        document = self.request(
+        return self.request(
             "POST",
             f"/projects/{project_id}/branches",
             payload={
+                "endpoints": [],
                 "branch": {
                     "name": branch_name,
                     "parent_id": parent_branch_id,
                 }
             },
         )
-        branch = document.get("branch")
-        if not isinstance(branch, dict):
-            raise ChronosProductionError("CHRONOS_RECOVERY_BRANCH_RESPONSE_INVALID")
-        return cast(dict[str, Any], branch)
 
     def branch(self, project_id: str, branch_id: str) -> dict[str, Any]:
         document = self.request("GET", f"/projects/{project_id}/branches/{branch_id}")
@@ -307,60 +403,114 @@ class NeonClient:
 
 
 def resolve_neon_identity(
-    client: NeonClient,
+    api_key: str,
     target: DirectPostgresTarget,
-) -> NeonIdentity:
-    configured = os.getenv("NEON_PROJECT_ID", "")
-    candidates = [client.project(configured)] if configured else client.projects()
-    matches: list[NeonIdentity] = []
-    for project in candidates:
-        project_id = str(project.get("id", ""))
-        if not project_id:
-            continue
-        branches = {str(item.get("id")): item for item in client.branches(project_id)}
-        for endpoint in client.endpoints(project_id):
-            host = str(endpoint.get("host", "")).lower()
-            if host != target.host:
-                continue
-            if "pooler" in host:
-                raise ChronosProductionError("CHRONOS_POOLED_ENDPOINT_FORBIDDEN")
-            branch_id = str(endpoint.get("branch_id", ""))
-            branch = branches.get(branch_id)
-            if branch is None:
-                continue
-            branch_state = str(branch.get("current_state", branch.get("state", "ready"))).lower()
-            endpoint_state = str(endpoint.get("current_state", "active")).lower()
-            if branch_state not in {"ready", "active"}:
-                continue
-            if endpoint_state not in {"active", "idle"}:
-                continue
-            matches.append(
-                NeonIdentity(
-                    project_id=project_id,
-                    project_name=str(project.get("name", "")),
-                    production_branch_id=branch_id,
-                    production_branch_name=str(branch.get("name", "")),
-                    endpoint_id=str(endpoint.get("id", "")),
-                    endpoint_host=host,
-                    region=str(endpoint.get("region_id", project.get("region_id", ""))),
-                    database_name=target.database,
-                )
-            )
-    if len(matches) != 1:
-        raise ChronosProductionError("NEON_PROJECT_IDENTITY_AMBIGUOUS")
-    identity = matches[0]
-    if configured and identity.project_id != configured:
-        raise ChronosProductionError("NEON_PROJECT_IDENTITY_AMBIGUOUS")
-    return identity
+) -> tuple[NeonIdentity, NeonObservation]:
+    try:
+        observed = resolve_neon_identity_readonly(
+            api_key,
+            target,
+            allow_idle=True,
+        )
+    except PreflightNoGo as error:
+        raise ChronosProductionError(f"{error.reason}:{error.gate}") from None
+    return (
+        NeonIdentity(
+            project_id=observed.project_id,
+            project_name=observed.project_name,
+            production_branch_id=observed.branch_id,
+            production_branch_name=observed.branch_name,
+            endpoint_id=observed.endpoint_id,
+            endpoint_host=observed.endpoint_host,
+            region=observed.region,
+            database_name=target.database,
+        ),
+        observed,
+    )
+
+
+def _assert_recovery_branch_observation(
+    branch: Mapping[str, Any],
+    identity: NeonIdentity,
+    *,
+    recovery_branch_id: str,
+    expected_name: str | None,
+    allow_transition: bool = False,
+) -> None:
+    name = branch.get("name")
+    state = branch.get("current_state")
+    pending_state = branch.get("pending_state")
+    name_matches = (
+        name == expected_name
+        if expected_name is not None
+        else isinstance(name, str) and name.startswith(RECOVERY_BRANCH_PREFIX)
+    )
+    state_matches = state == "ready" or (
+        allow_transition and state in {"creating", "init"}
+    )
+    pending_state_matches = pending_state is None or (
+        allow_transition
+        and state != "ready"
+        and isinstance(pending_state, str)
+        and bool(pending_state)
+    )
+    if not (
+        _NEON_SAFE_IDENTIFIER.fullmatch(recovery_branch_id) is not None
+        and branch.get("id") == recovery_branch_id
+        and branch.get("project_id") == identity.project_id
+        and branch.get("parent_id") == identity.production_branch_id
+        and name_matches
+        and branch.get("default") is False
+        and state_matches
+        and pending_state_matches
+    ):
+        raise ChronosProductionError("CHRONOS_RECOVERY_BRANCH_OBSERVATION_INVALID")
 
 
 def create_recovery_point(
     client: NeonClient,
     identity: NeonIdentity,
     *,
+    expected_branch_count: int,
     receipt_path: Path | None = None,
 ) -> dict[str, Any]:
+    if expected_branch_count < 1:
+        raise ChronosProductionError("CHRONOS_RECOVERY_BRANCH_COUNT_PROOF_INVALID")
     branch_inventory = client.branches(identity.project_id)
+    branch_ids = [str(branch.get("id", "")) for branch in branch_inventory]
+    structurally_valid = all(
+        isinstance(branch.get("id"), str)
+        and _NEON_SAFE_IDENTIFIER.fullmatch(str(branch["id"])) is not None
+        and branch.get("project_id") == identity.project_id
+        and isinstance(branch.get("name"), str)
+        and bool(branch["name"])
+        and isinstance(branch.get("default"), bool)
+        and isinstance(branch.get("current_state"), str)
+        and bool(branch["current_state"])
+        and branch.get("pending_state") is None
+        for branch in branch_inventory
+    )
+    default_ids = [
+        str(branch.get("id", ""))
+        for branch in branch_inventory
+        if branch.get("default") is True
+    ]
+    production_ready = sum(
+        branch.get("id") == identity.production_branch_id
+        and branch.get("current_state") == "ready"
+        for branch in branch_inventory
+    ) == 1
+    if (
+        not structurally_valid
+        or len(branch_inventory) != expected_branch_count
+        or len(set(branch_ids)) != len(branch_ids)
+        or branch_ids.count(identity.production_branch_id) != 1
+        or default_ids != [identity.production_branch_id]
+        or not production_ready
+    ):
+        raise ChronosProductionError(
+            "CHRONOS_RECOVERY_BRANCH_INVENTORY_INCOMPLETE"
+        )
     recovery_branches = [
         branch
         for branch in branch_inventory
@@ -373,51 +523,137 @@ def create_recovery_point(
 
     compact = _utc_now().strftime("%Y%m%dT%H%M%SZ")
     name = f"{RECOVERY_BRANCH_PREFIX}{compact}"
-    branch = client.create_recovery_branch(
+    receipt: dict[str, Any] = {
+        "schema_version": "chronos-neon-recovery-point-v3",
+        "verdict": "NEON_RECOVERY_POINT_CREATE_OUTCOME_INDETERMINATE",
+        "project_id": None,
+        "requested_project_id": identity.project_id,
+        "production_branch_id": identity.production_branch_id,
+        "recovery_branch_name": None,
+        "requested_recovery_branch_name": name,
+        "recovery_branch_id": None,
+        "parent_branch_id": None,
+        "created_at": None,
+        "source_timestamp_or_lsn_if_available": None,
+        "recovery_branch_limit": MAX_RECOVERY_BRANCHES,
+        "recovery_branch_count_before": len(recovery_branches),
+        "recovery_branch_count_after": None,
+        "create_request_dispatched": True,
+        "create_response_observed": False,
+        "create_outcome": "INDETERMINATE",
+        "requested_endpoint_count": 0,
+        "endpoint_count_in_create_response": None,
+        "endpoint_count_after_readiness": None,
+        "endpoint_created": None,
+        "endpoint_absence_verified": False,
+        "response_contract_verified": False,
+        "readiness_verified": False,
+        "purchases": 0,
+    }
+    if receipt_path is not None:
+        _write_json(receipt_path, receipt)
+    creation = client.create_recovery_branch(
         project_id=identity.project_id,
         parent_branch_id=identity.production_branch_id,
         branch_name=name,
     )
+    branch_value = creation.get("branch")
+    endpoints_value = creation.get("endpoints")
+    branch = branch_value if isinstance(branch_value, dict) else {}
+    endpoint_count = len(endpoints_value) if isinstance(endpoints_value, list) else None
+    receipt.update(
+        {
+            "project_id": branch.get("project_id"),
+            "recovery_branch_name": branch.get("name"),
+            "recovery_branch_id": branch.get("id"),
+            "parent_branch_id": branch.get("parent_id"),
+            "created_at": branch.get("created_at"),
+            "source_timestamp_or_lsn_if_available": branch.get(
+                "parent_lsn", branch.get("parent_timestamp")
+            ),
+            "create_response_observed": True,
+            "endpoint_count_in_create_response": endpoint_count,
+            "endpoint_created": (
+                bool(endpoint_count) if endpoint_count is not None else None
+            ),
+        }
+    )
+    if receipt_path is not None:
+        _write_json(receipt_path, receipt)
+    if not isinstance(branch_value, dict):
+        raise ChronosProductionError("CHRONOS_RECOVERY_BRANCH_RESPONSE_INVALID")
+    if not isinstance(endpoints_value, list) or any(
+        not isinstance(item, dict) for item in endpoints_value
+    ):
+        raise ChronosProductionError("CHRONOS_RECOVERY_ENDPOINT_RESPONSE_INVALID")
+    if endpoints_value:
+        receipt.update(
+            {
+                "verdict": "NEON_RECOVERY_POINT_UNEXPECTED_ENDPOINT_CREATED",
+                "create_outcome": "CREATED_WITH_UNEXPECTED_ENDPOINT",
+            }
+        )
+        if receipt_path is not None:
+            _write_json(receipt_path, receipt)
+        raise ChronosProductionError("CHRONOS_RECOVERY_ENDPOINT_CREATED_UNEXPECTEDLY")
     branch_id = str(branch.get("id", ""))
     if not branch_id:
         raise ChronosProductionError("CHRONOS_RECOVERY_BRANCH_ID_MISSING")
     known_branch_ids = {str(item.get("id", "")) for item in branch_inventory if item.get("id")}
     if branch_id == identity.production_branch_id or branch_id in known_branch_ids:
         raise ChronosProductionError("CHRONOS_RECOVERY_BRANCH_ID_INVALID")
-    receipt = {
-        "schema_version": "chronos-neon-recovery-point-v3",
-        "verdict": "NEON_RECOVERY_POINT_CREATED_PENDING_VERIFICATION",
-        "project_id": identity.project_id,
-        "production_branch_id": identity.production_branch_id,
-        "recovery_branch_name": name,
-        "recovery_branch_id": branch_id,
-        "parent_branch_id": str(branch.get("parent_id", identity.production_branch_id)),
-        "created_at": branch.get("created_at"),
-        "source_timestamp_or_lsn_if_available": branch.get(
-            "parent_lsn", branch.get("parent_timestamp")
-        ),
-        "recovery_branch_limit": MAX_RECOVERY_BRANCHES,
-        "recovery_branch_count_before": len(recovery_branches),
-        "recovery_branch_count_after": len(recovery_branches) + 1,
-        "endpoint_created": False,
-        "readiness_verified": False,
-        "purchases": 0,
-    }
+    _assert_recovery_branch_observation(
+        branch,
+        identity,
+        recovery_branch_id=branch_id,
+        expected_name=name,
+        allow_transition=True,
+    )
+    receipt.update(
+        {
+            "verdict": "NEON_RECOVERY_POINT_CREATED_PENDING_VERIFICATION",
+            "recovery_branch_id": branch_id,
+            "recovery_branch_count_after": len(recovery_branches) + 1,
+            "create_outcome": "CREATED",
+            "response_contract_verified": True,
+        }
+    )
     if receipt_path is not None:
         _write_json(receipt_path, receipt)
-    observed = branch
-    for _ in range(12):
-        state = str(observed.get("current_state", observed.get("state", "ready"))).lower()
-        if state in {"ready", "active"}:
-            break
-        time.sleep(5)
+    observed: dict[str, Any] = {}
+    for attempt in range(12):
         observed = client.branch(identity.project_id, branch_id)
+        _assert_recovery_branch_observation(
+            observed,
+            identity,
+            recovery_branch_id=branch_id,
+            expected_name=name,
+            allow_transition=True,
+        )
+        if observed.get("current_state") == "ready":
+            break
+        if attempt < 11:
+            time.sleep(5)
     else:
         raise ChronosProductionError("NEON_RECOVERY_POINT_BLOCKED")
-    if str(observed.get("parent_id", "")) != identity.production_branch_id:
-        raise ChronosProductionError("CHRONOS_RECOVERY_PARENT_MISMATCH")
-    if str(observed.get("name", name)) != name:
-        raise ChronosProductionError("CHRONOS_RECOVERY_NAME_MISMATCH")
+    _assert_recovery_branch_observation(
+        observed,
+        identity,
+        recovery_branch_id=branch_id,
+        expected_name=name,
+    )
+    branch_endpoints = client.branch_endpoints(identity.project_id, branch_id)
+    receipt.update(
+        {
+            "endpoint_count_after_readiness": len(branch_endpoints),
+            "endpoint_created": bool(branch_endpoints),
+        }
+    )
+    if branch_endpoints:
+        receipt["verdict"] = "NEON_RECOVERY_POINT_UNEXPECTED_ENDPOINT_OBSERVED"
+        if receipt_path is not None:
+            _write_json(receipt_path, receipt)
+        raise ChronosProductionError("CHRONOS_RECOVERY_ENDPOINT_CREATED_UNEXPECTEDLY")
     receipt = {
         **receipt,
         "verdict": "NEON_RECOVERY_POINT_READY",
@@ -426,6 +662,7 @@ def create_recovery_point(
         "source_timestamp_or_lsn_if_available": observed.get(
             "parent_lsn", observed.get("parent_timestamp")
         ),
+        "endpoint_absence_verified": True,
         "readiness_verified": True,
     }
     if receipt_path is not None:
@@ -607,13 +844,18 @@ def run_preflight(report_dir: Path) -> dict[str, Any]:
     hold = _assert_hold()
     post_merge_ci = _assert_post_merge_ci_binding(hold, main_sha=main_sha)
     target = validate_direct_postgres_url(database_url)
+    identity, neon_observation = resolve_neon_identity(api_key, target)
+    try:
+        require_neon_recovery_feasibility(neon_observation)
+    except PreflightNoGo as error:
+        raise ChronosProductionError(f"{error.reason}:{error.gate}") from None
     client = NeonClient(api_key)
-    identity = resolve_neon_identity(client, target)
     with _connect_direct(database_url) as capability_connection:
         assert_privileged_catalog_visibility(capability_connection)
     recovery_report = create_recovery_point(
         client,
         identity,
+        expected_branch_count=neon_observation.target_project_branch_count,
         receipt_path=report_dir / "chronos-neon-recovery-point-v3.json",
     )
     database = inspect_database(database_url)
@@ -684,6 +926,7 @@ def run_preflight(report_dir: Path) -> dict[str, Any]:
         "role_inventory_hash": preflight_role_inventory_hash,
         "role_inventory": {name: list(values) for name, values in preflight_role_inventory.items()},
         "recovery_branch_id": recovery_report["recovery_branch_id"],
+        "recovery_branch_name": recovery_report["recovery_branch_name"],
         "golden_gate": "CHRONOS_MIGRATION_READY",
         "database_host": target.host,
         "database_port": target.port,
@@ -823,12 +1066,16 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
     ):
         raise ChronosProductionError("CHRONOS_PREFLIGHT_CAUSAL_BINDING_MISMATCH")
     preflight_expiry = _preflight_expiry(artifact)
-    client = NeonClient(api_key)
-    identity = resolve_neon_identity(client, target)
+    identity, _neon_observation = resolve_neon_identity(api_key, target)
     recovery_branch_id = str(artifact.get("recovery_branch_id", ""))
-    recovery = client.branch(identity.project_id, recovery_branch_id)
-    if str(recovery.get("parent_id", "")) != identity.production_branch_id:
-        raise ChronosProductionError("CHRONOS_RECOVERY_PARENT_MISMATCH")
+    if _NEON_SAFE_IDENTIFIER.fullmatch(recovery_branch_id) is None:
+        raise ChronosProductionError("CHRONOS_RECOVERY_BRANCH_ID_INVALID")
+    recovery_branch_name = artifact.get("recovery_branch_name")
+    if (
+        not isinstance(recovery_branch_name, str)
+        or _RECOVERY_BRANCH_NAME.fullmatch(recovery_branch_name) is None
+    ):
+        raise ChronosProductionError("CHRONOS_RECOVERY_BRANCH_NAME_INVALID")
     assert_exact_preflight_binding(
         artifact,
         main_sha=main_sha,
@@ -837,6 +1084,14 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
         production_branch_id=identity.production_branch_id,
         recovery_branch_id=recovery_branch_id,
         current_revision=str(artifact.get("current_revision", "")),
+    )
+    client = NeonClient(api_key)
+    recovery = client.branch(identity.project_id, recovery_branch_id)
+    _assert_recovery_branch_observation(
+        recovery,
+        identity,
+        recovery_branch_id=recovery_branch_id,
+        expected_name=recovery_branch_name,
     )
     prelock_observation = inspect_database(database_url)
     migrator_role = stable_migrator_role(identity.production_branch_id)

@@ -19,6 +19,7 @@ PREFLIGHT_RUN_ID = "123456789"
 PROJECT_ID = "project-robin"
 PRODUCTION_BRANCH_ID = "branch-production"
 RECOVERY_BRANCH_ID = "branch-recovery"
+RECOVERY_BRANCH_NAME = "chronos-pre-0015-recovery-20260830T000000Z"
 SIGNATURE_VALUE = "f" * 64
 REAL_ATTEST_PREFLIGHT = installer._attest_preflight_artifact
 
@@ -66,6 +67,7 @@ def _write_preflight(
         "role_inventory_hash": "a" * 64,
         "role_inventory": {"chronos_reader_login": [False, True]},
         "recovery_branch_id": RECOVERY_BRANCH_ID,
+        "recovery_branch_name": RECOVERY_BRANCH_NAME,
         "golden_gate": "CHRONOS_MIGRATION_READY",
         "database_host": "ep-test.eu-central-1.aws.neon.tech",
         "database_port": 5432,
@@ -148,6 +150,7 @@ def test_installer_sets_only_four_exact_bindings_and_emits_sanitized_report(
     assert report["project_id"] == PROJECT_ID
     assert report["production_branch_id"] == PRODUCTION_BRANCH_ID
     assert report["recovery_branch_id"] == RECOVERY_BRANCH_ID
+    assert report["recovery_branch_name"] == RECOVERY_BRANCH_NAME
     assert report["preflight_signature_algorithm"] == "HMAC-SHA256"
     assert report["preflight_artifact_attestation"]["run_id"] == int(PREFLIGHT_RUN_ID)
     persisted = json.loads(report_path.read_bytes())
@@ -190,6 +193,11 @@ def test_installer_refuses_expired_preflight_before_any_secret_write(
         ({"project_id": ""}, PREFLIGHT_RUN_ID, "IDENTITY_INVALID"),
         (
             {"recovery_branch_id": PRODUCTION_BRANCH_ID},
+            PREFLIGHT_RUN_ID,
+            "IDENTITY_INVALID",
+        ),
+        (
+            {"recovery_branch_name": "recovery-branch-unbound"},
             PREFLIGHT_RUN_ID,
             "IDENTITY_INVALID",
         ),
@@ -243,7 +251,10 @@ def test_installer_rejects_untrusted_provenance_before_any_secret_write(
     assert calls == 0
 
 
-@pytest.mark.parametrize("remove", ("project_id", "signature"))
+@pytest.mark.parametrize(
+    "remove",
+    ("project_id", "recovery_branch_name", "signature"),
+)
 def test_installer_requires_the_exact_preflight_schema(
     tmp_path: Path,
     remove: str,

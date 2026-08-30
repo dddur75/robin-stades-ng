@@ -6,12 +6,14 @@ from collections.abc import Callable, Mapping
 from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from types import SimpleNamespace
 from urllib.parse import parse_qsl, urlparse
 
 import pytest
 import yaml
 from psycopg.conninfo import conninfo_to_dict
 
+import scripts.chronos_neon_pure_readonly_preflight_v4 as readonly_preflight
 import scripts.chronos_production_bootstrap_v3 as bootstrap_module
 from robin.chronos_production import (
     PRODUCTION_SAFETY_LOCKS,
@@ -121,6 +123,9 @@ def test_mutating_production_bootstrap_workflow_is_manual_exact_and_protected() 
     assert 'test -n "${{ inputs.preflight_run_id }}"' not in content
     assert content.count("--required-successful-ci-sha") == 3
     assert content.count("github_release_attestation_v1.py") == 2
+    assert content.count("python -m scripts.chronos_production_bootstrap_v3") == 3
+    assert "python scripts/chronos_production_bootstrap_v3.py" not in content
+    assert content.count("NEON_ORG_ID: ${{ vars.NEON_ORG_ID }}") == 2
     assert "--migration-artifact .chronos/migration/chronos-bootstrap-output-v3.json" in content
     for name in ("preflight", "migrate", "verify"):
         upload = next(
@@ -134,9 +139,13 @@ def test_mutating_production_bootstrap_workflow_is_manual_exact_and_protected() 
 def test_recovery_receipt_is_written_immediately_after_branch_creation() -> None:
     source = (ROOT / "scripts" / "chronos_production_bootstrap_v3.py").read_text(encoding="utf-8")
     preflight = source[source.index("def run_preflight") : source.index("def _preflight_expiry")]
+    identity = preflight.index("identity, neon_observation = resolve_neon_identity")
+    feasibility = preflight.index("require_neon_recovery_feasibility")
+    mutating_client = preflight.index("client = NeonClient(api_key)")
     created = preflight.index("recovery_report = create_recovery_point")
     receipt = preflight.index('"chronos-neon-recovery-point-v3.json"')
     database_inspection = preflight.index("database = inspect_database")
+    assert identity < feasibility < mutating_client < created
     assert created < receipt < database_inspection
 
 
@@ -214,6 +223,12 @@ def test_runtime_bindings_are_validated_against_bootstrap_target_before_migratio
     assert migrate_source.index("runtime_accounts = _runtime_accounts") < migrate_source.index(
         "client = NeonClient(api_key)"
     )
+    assert migrate_source.index("assert_exact_preflight_binding") < migrate_source.index(
+        "client = NeonClient(api_key)"
+    )
+    assert migrate_source.index("recovery = client.branch") < migrate_source.index(
+        "_assert_recovery_branch_observation"
+    ) < migrate_source.index("prelock_observation = inspect_database")
 
 
 def test_dual_principal_provisions_roles_and_migrator_is_nocreaterole() -> None:
@@ -268,6 +283,282 @@ def test_neon_identity_routes_are_rejected_before_network() -> None:
             client.request(method, path)
 
 
+class _MutatingNeonResponse:
+    def __init__(
+        self,
+        *,
+        status_code: int,
+        content: bytes,
+        headers: dict[str, str] | None = None,
+        chunks: list[bytes] | None = None,
+    ) -> None:
+        self.status_code = status_code
+        self.headers = headers or {}
+        self.chunks = chunks if chunks is not None else [content]
+        self.chunks_read = 0
+        self.closed = False
+
+    def iter_content(self, *, chunk_size: int) -> object:
+        assert chunk_size == 64 * 1024
+        for chunk in self.chunks:
+            self.chunks_read += 1
+            yield chunk
+
+    def close(self) -> None:
+        self.closed = True
+
+
+class _MutatingNeonSession:
+    def __init__(self, response: _MutatingNeonResponse) -> None:
+        self.response = response
+        self.trust_env = True
+        self.headers: dict[str, str] = {}
+        self.calls: list[dict[str, object]] = []
+
+    def request(self, method: str, url: str, **kwargs: object) -> _MutatingNeonResponse:
+        self.calls.append({"method": method, "url": url, **kwargs})
+        return self.response
+
+
+def test_mutating_neon_client_isolates_proxy_redirect_and_authorization_state(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    session = _MutatingNeonSession(
+        _MutatingNeonResponse(status_code=200, content=b'{"projects":[]}')
+    )
+    monkeypatch.setenv("HTTPS_PROXY", "https://proxy.invalid")
+    monkeypatch.setattr(bootstrap_module.requests, "Session", lambda: session)
+
+    client = NeonClient("synthetic-neon-key")
+    assert client.projects() == []
+
+    assert session.trust_env is False
+    assert "Authorization" not in session.headers
+    assert len(session.calls) == 1
+    call = session.calls[0]
+    assert call["allow_redirects"] is False
+    assert call["stream"] is True
+    assert call["headers"] == {
+        "Authorization": "Bearer synthetic-neon-key",
+        "Accept": "application/json",
+    }
+
+
+def test_mutating_neon_client_does_not_follow_redirects(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    response = _MutatingNeonResponse(status_code=307, content=b"")
+    session = _MutatingNeonSession(response)
+    monkeypatch.setattr(bootstrap_module.requests, "Session", lambda: session)
+
+    client = NeonClient("synthetic-neon-key")
+    with pytest.raises(ChronosProductionError, match="CHRONOS_NEON_API_HTTP_307"):
+        client.projects()
+
+    assert len(session.calls) == 1
+    assert session.calls[0]["allow_redirects"] is False
+    assert response.closed is True
+
+
+@pytest.mark.parametrize(
+    "content",
+    [
+        b'{"projects":[],"projects":[]}',
+        b'{"value":NaN}',
+        b"{}" + (b" " * bootstrap_module.MAX_NEON_RESPONSE_BYTES),
+    ],
+    ids=("duplicate-keys", "non-finite", "oversized"),
+)
+def test_mutating_neon_client_rejects_ambiguous_or_unbounded_json(
+    content: bytes,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    session = _MutatingNeonSession(
+        _MutatingNeonResponse(status_code=200, content=content)
+    )
+    monkeypatch.setattr(bootstrap_module.requests, "Session", lambda: session)
+
+    client = NeonClient("synthetic-neon-key")
+    with pytest.raises(
+        ChronosProductionError,
+        match="CHRONOS_NEON_API_RESPONSE_INVALID",
+    ):
+        client.projects()
+
+
+def test_mutating_neon_client_stops_stream_at_the_response_limit(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    response = _MutatingNeonResponse(
+        status_code=200,
+        content=b"",
+        chunks=[
+            b"x" * bootstrap_module.MAX_NEON_RESPONSE_BYTES,
+            b"x",
+            b"must-not-be-read",
+        ],
+    )
+    session = _MutatingNeonSession(response)
+    monkeypatch.setattr(bootstrap_module.requests, "Session", lambda: session)
+
+    client = NeonClient("synthetic-neon-key")
+    with pytest.raises(
+        ChronosProductionError,
+        match="CHRONOS_NEON_API_RESPONSE_INVALID",
+    ):
+        client.projects()
+
+    assert response.chunks_read == 2
+    assert response.closed is True
+
+
+def test_recovery_branch_request_explicitly_forbids_compute_creation(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    response = {
+        "branch": {"id": "branch-recovery-new"},
+        "endpoints": [],
+    }
+    session = _MutatingNeonSession(
+        _MutatingNeonResponse(
+            status_code=201,
+            content=json.dumps(response).encode("utf-8"),
+        )
+    )
+    monkeypatch.setattr(bootstrap_module.requests, "Session", lambda: session)
+
+    client = NeonClient("synthetic-neon-key")
+    assert client.create_recovery_branch(
+        project_id="project-robin",
+        parent_branch_id="branch-production",
+        branch_name="chronos-pre-0015-recovery-20260830T000000Z",
+    ) == response
+
+    assert session.calls[0]["json"] == {
+        "endpoints": [],
+        "branch": {
+            "name": "chronos-pre-0015-recovery-20260830T000000Z",
+            "parent_id": "branch-production",
+        },
+    }
+
+
+def test_bootstrap_identity_reuses_bounded_get_only_resolver(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    target = DirectPostgresTarget(
+        host="ep-production.eu-central-1.aws.neon.tech",
+        port=5432,
+        database="neondb",
+        username="bootstrap",
+        sslmode="require",
+        channel_binding="require",
+    )
+    readonly_client = object()
+    calls: list[tuple[object, DirectPostgresTarget, bool]] = []
+
+    def client_factory(api_key: str) -> object:
+        assert api_key == "synthetic-neon-key"
+        return readonly_client
+
+    def resolver(
+        client: object,
+        observed_target: DirectPostgresTarget,
+        *,
+        allow_idle: bool,
+    ) -> SimpleNamespace:
+        calls.append((client, observed_target, allow_idle))
+        return SimpleNamespace(
+            project_id="project-production",
+            project_name="Robin production",
+            branch_id="branch-production",
+            branch_name="production",
+            endpoint_id="endpoint-production",
+            endpoint_host=target.host,
+            region="aws-eu-central-1",
+        )
+
+    monkeypatch.setattr(readonly_preflight, "NeonReadOnlyClient", client_factory)
+    monkeypatch.setattr(readonly_preflight, "_resolve_neon_identity", resolver)
+
+    identity, observation = bootstrap_module.resolve_neon_identity(
+        "synthetic-neon-key",
+        target,
+    )
+
+    assert calls == [(readonly_client, target, True)]
+    assert observation.project_id == "project-production"
+    assert identity == NeonIdentity(
+        project_id="project-production",
+        project_name="Robin production",
+        production_branch_id="branch-production",
+        production_branch_name="production",
+        endpoint_id="endpoint-production",
+        endpoint_host=target.host,
+        region="aws-eu-central-1",
+        database_name="neondb",
+    )
+
+
+def test_bootstrap_identity_preserves_only_sanitized_failure_codes(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    target = DirectPostgresTarget(
+        host="ep-production.eu-central-1.aws.neon.tech",
+        port=5432,
+        database="neondb",
+        username="bootstrap",
+        sslmode="require",
+        channel_binding="require",
+    )
+
+    def fail(*_args: object, **_kwargs: object) -> None:
+        raise readonly_preflight.PreflightNoGo(
+            "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+            "project_cursor_cycle",
+            sanitized_evidence={"project_id_sha256": "raw-value-must-not-escape"},
+        )
+
+    monkeypatch.setattr(bootstrap_module, "resolve_neon_identity_readonly", fail)
+
+    with pytest.raises(ChronosProductionError) as caught:
+        bootstrap_module.resolve_neon_identity("synthetic-neon-key", target)
+
+    assert str(caught.value) == "NEON_PROJECT_IDENTITY_AMBIGUOUS:project_cursor_cycle"
+    assert "raw-value-must-not-escape" not in str(caught.value)
+
+
+@pytest.mark.parametrize(
+    ("updates", "expected"),
+    [
+        ({"branch_capacity_proven": False}, "branch_capacity_ambiguous"),
+        ({"owner_branch_count": 5, "branch_limit": 5}, "branch_capacity_exhausted"),
+        ({"bill_free_branch_capacity_proven": False}, "purchase_required"),
+        ({"history_retention_seconds": 0}, "recovery_branch_not_feasible"),
+    ],
+)
+def test_recovery_feasibility_refuses_before_mutating_client(
+    updates: dict[str, object],
+    expected: str,
+) -> None:
+    values: dict[str, object] = {
+        "branch_capacity_proven": True,
+        "owner_branch_count": 1,
+        "branch_limit": 10,
+        "bill_free_branch_capacity_proven": True,
+        "history_retention_seconds": 86_400,
+        "branch_id": "branch-production",
+        "branch_state": "ready",
+    }
+    values.update(updates)
+    observation = SimpleNamespace(**values)
+
+    with pytest.raises(readonly_preflight.PreflightNoGo) as caught:
+        readonly_preflight.require_neon_recovery_feasibility(observation)  # type: ignore[arg-type]
+
+    assert caught.value.gate == expected
+
+
 class FakeRecoveryClient(NeonClient):
     def __init__(
         self,
@@ -277,7 +568,11 @@ class FakeRecoveryClient(NeonClient):
     ) -> None:
         self.inventory = inventory
         self.created_branch_id = created_branch_id
+        self.created_branch_name = ""
+        self.created_parent_branch_id = ""
         self.create_calls = 0
+        self.branch_read_calls = 0
+        self.branch_endpoint_calls = 0
 
     def branches(self, project_id: str) -> list[dict[str, object]]:  # type: ignore[override]
         assert project_id == "project-robin"
@@ -294,13 +589,50 @@ class FakeRecoveryClient(NeonClient):
         assert parent_branch_id == "branch-production"
         assert branch_name.startswith("chronos-pre-0015-recovery-")
         self.create_calls += 1
+        self.created_branch_name = branch_name
+        self.created_parent_branch_id = parent_branch_id
+        return {
+            "branch": {
+                "id": self.created_branch_id,
+                "project_id": project_id,
+                "name": branch_name,
+                "parent_id": parent_branch_id,
+                "default": False,
+                "current_state": "ready",
+                "pending_state": None,
+                "created_at": "2026-08-29T12:00:00Z",
+            },
+            "endpoints": [],
+        }
+
+    def branch(
+        self,
+        project_id: str,
+        branch_id: str,
+    ) -> dict[str, object]:  # type: ignore[override]
+        assert project_id == "project-robin"
+        assert branch_id == self.created_branch_id
+        self.branch_read_calls += 1
         return {
             "id": self.created_branch_id,
-            "name": branch_name,
-            "parent_id": parent_branch_id,
+            "project_id": project_id,
+            "name": self.created_branch_name,
+            "parent_id": self.created_parent_branch_id,
+            "default": False,
             "current_state": "ready",
+            "pending_state": None,
             "created_at": "2026-08-29T12:00:00Z",
         }
+
+    def branch_endpoints(
+        self,
+        project_id: str,
+        branch_id: str,
+    ) -> list[dict[str, object]]:  # type: ignore[override]
+        assert project_id == "project-robin"
+        assert branch_id == self.created_branch_id
+        self.branch_endpoint_calls += 1
+        return []
 
 
 def _neon_identity() -> NeonIdentity:
@@ -316,43 +648,158 @@ def _neon_identity() -> NeonIdentity:
     )
 
 
+def _branch_fixture(
+    branch_id: str,
+    name: str,
+    *,
+    default: bool = False,
+    state: str = "ready",
+    parent_id: str | None = None,
+) -> dict[str, object]:
+    return {
+        "id": branch_id,
+        "project_id": "project-robin",
+        "name": name,
+        "parent_id": parent_id,
+        "default": default,
+        "current_state": state,
+        "pending_state": None,
+    }
+
+
 def test_recovery_point_allows_only_the_second_cross_run_branch(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(bootstrap_module, "_utc_now", lambda: NOW)
     client = FakeRecoveryClient(
         [
-            {"id": "branch-production", "name": "production"},
-            {
-                "id": "branch-recovery-old",
-                "name": "chronos-pre-0015-recovery-20260828T120000Z",
-            },
+            _branch_fixture("branch-production", "production", default=True),
+            _branch_fixture(
+                "branch-recovery-old",
+                "chronos-pre-0015-recovery-20260828T120000Z",
+                parent_id="branch-production",
+            ),
         ]
     )
 
-    receipt = create_recovery_point(client, _neon_identity())
+    receipt = create_recovery_point(
+        client,
+        _neon_identity(),
+        expected_branch_count=2,
+    )
 
     assert client.create_calls == 1
     assert receipt["recovery_branch_id"] == "branch-recovery-new"
     assert receipt["recovery_branch_limit"] == 2
     assert receipt["recovery_branch_count_before"] == 1
     assert receipt["recovery_branch_count_after"] == 2
+    assert receipt["endpoint_count_in_create_response"] == 0
+    assert receipt["endpoint_count_after_readiness"] == 0
+    assert receipt["endpoint_created"] is False
+    assert receipt["endpoint_absence_verified"] is True
+    assert client.branch_read_calls == 1
+    assert client.branch_endpoint_calls == 1
+
+
+def test_recovery_point_accepts_readiness_on_the_twelfth_get(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client = FakeRecoveryClient(
+        [_branch_fixture("branch-production", "production", default=True)]
+    )
+    observations = 0
+
+    def delayed_branch(project_id: str, branch_id: str) -> dict[str, object]:
+        nonlocal observations
+        observations += 1
+        client.branch_read_calls += 1
+        return {
+            "id": branch_id,
+            "project_id": project_id,
+            "name": client.created_branch_name,
+            "parent_id": client.created_parent_branch_id,
+            "default": False,
+            "current_state": "ready" if observations == 12 else "creating",
+            "pending_state": None if observations == 12 else "ready",
+            "created_at": "2026-08-29T12:00:00Z",
+        }
+
+    monkeypatch.setattr(client, "branch", delayed_branch)
+    monkeypatch.setattr(bootstrap_module.time, "sleep", lambda _seconds: None)
+
+    receipt = create_recovery_point(
+        client,
+        _neon_identity(),
+        expected_branch_count=1,
+    )
+
+    assert receipt["readiness_verified"] is True
+    assert observations == 12
+    assert client.branch_endpoint_calls == 1
+
+
+def test_recovery_point_requires_get_branch_to_match_ready_post(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client = FakeRecoveryClient(
+        [_branch_fixture("branch-production", "production", default=True)]
+    )
+
+    def divergent_branch(project_id: str, branch_id: str) -> dict[str, object]:
+        client.branch_read_calls += 1
+        return {
+            "id": branch_id,
+            "project_id": project_id,
+            "name": client.created_branch_name,
+            "parent_id": "branch-foreign",
+            "default": False,
+            "current_state": "ready",
+            "pending_state": None,
+        }
+
+    monkeypatch.setattr(client, "branch", divergent_branch)
+    receipt_path = tmp_path / "chronos-neon-recovery-point-v3.json"
+
+    with pytest.raises(
+        ChronosProductionError,
+        match="CHRONOS_RECOVERY_BRANCH_OBSERVATION_INVALID",
+    ):
+        create_recovery_point(
+            client,
+            _neon_identity(),
+            expected_branch_count=1,
+            receipt_path=receipt_path,
+        )
+
+    receipt = json.loads(receipt_path.read_bytes())
+    assert client.branch_read_calls == 1
+    assert receipt["response_contract_verified"] is True
+    assert receipt["readiness_verified"] is False
 
 
 def test_recovery_point_receipt_survives_readiness_failure(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    client = FakeRecoveryClient([])
+    client = FakeRecoveryClient(
+        [_branch_fixture("branch-production", "production", default=True)]
+    )
 
     def create_pending(**values: str) -> dict[str, object]:
         client.create_calls += 1
         return {
-            "id": "branch-recovery-pending",
-            "name": values["branch_name"],
-            "parent_id": values["parent_branch_id"],
-            "current_state": "creating",
-            "created_at": "2026-08-29T12:00:00Z",
+            "branch": {
+                "id": "branch-recovery-pending",
+                "project_id": "project-robin",
+                "name": values["branch_name"],
+                "parent_id": values["parent_branch_id"],
+                "default": False,
+                "current_state": "creating",
+                "pending_state": "ready",
+                "created_at": "2026-08-29T12:00:00Z",
+            },
+            "endpoints": [],
         }
 
     def readiness_failed(_project_id: str, _branch_id: str) -> dict[str, object]:
@@ -366,6 +813,7 @@ def test_recovery_point_receipt_survives_readiness_failure(
         create_recovery_point(
             client,
             _neon_identity(),
+            expected_branch_count=1,
             receipt_path=receipt_path,
         )
     receipt = json.loads(receipt_path.read_bytes())
@@ -374,14 +822,312 @@ def test_recovery_point_receipt_survives_readiness_failure(
     assert receipt["readiness_verified"] is False
 
 
+def test_recovery_intent_receipt_survives_indeterminate_create_failure(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client = FakeRecoveryClient(
+        [_branch_fixture("branch-production", "production", default=True)]
+    )
+
+    def indeterminate_create(**_values: str) -> dict[str, object]:
+        client.create_calls += 1
+        raise ChronosProductionError("CHRONOS_NEON_API_UNAVAILABLE")
+
+    monkeypatch.setattr(client, "create_recovery_branch", indeterminate_create)
+    receipt_path = tmp_path / "chronos-neon-recovery-point-v3.json"
+
+    with pytest.raises(ChronosProductionError, match="CHRONOS_NEON_API_UNAVAILABLE"):
+        create_recovery_point(
+            client,
+            _neon_identity(),
+            expected_branch_count=1,
+            receipt_path=receipt_path,
+        )
+
+    receipt = json.loads(receipt_path.read_bytes())
+    assert receipt["verdict"] == "NEON_RECOVERY_POINT_CREATE_OUTCOME_INDETERMINATE"
+    assert receipt["create_request_dispatched"] is True
+    assert receipt["create_response_observed"] is False
+    assert receipt["create_outcome"] == "INDETERMINATE"
+    assert receipt["endpoint_count_in_create_response"] is None
+    assert receipt["endpoint_created"] is None
+    assert receipt["readiness_verified"] is False
+
+
+def test_recovery_intent_receipt_survives_missing_id_response(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client = FakeRecoveryClient(
+        [_branch_fixture("branch-production", "production", default=True)]
+    )
+
+    def missing_id(**values: str) -> dict[str, object]:
+        client.create_calls += 1
+        return {
+            "branch": {
+                "project_id": "project-robin",
+                "name": values["branch_name"],
+                "parent_id": values["parent_branch_id"],
+                "default": False,
+                "current_state": "creating",
+                "pending_state": "ready",
+            },
+            "endpoints": [],
+        }
+
+    monkeypatch.setattr(client, "create_recovery_branch", missing_id)
+    receipt_path = tmp_path / "chronos-neon-recovery-point-v3.json"
+
+    with pytest.raises(ChronosProductionError, match="CHRONOS_RECOVERY_BRANCH_ID_MISSING"):
+        create_recovery_point(
+            client,
+            _neon_identity(),
+            expected_branch_count=1,
+            receipt_path=receipt_path,
+        )
+
+    receipt = json.loads(receipt_path.read_bytes())
+    assert receipt["create_request_dispatched"] is True
+    assert receipt["create_response_observed"] is True
+    assert receipt["recovery_branch_id"] is None
+    assert receipt["endpoint_count_in_create_response"] == 0
+    assert receipt["endpoint_created"] is False
+    assert receipt["readiness_verified"] is False
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("project_id", "project-foreign"),
+        ("parent_id", "branch-foreign"),
+        ("name", "wrong-name"),
+        ("default", True),
+        ("current_state", "active"),
+        ("pending_state", "deleting"),
+    ],
+)
+def test_recovery_point_rejects_invalid_creation_response_after_post(
+    field: str,
+    value: object,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client = FakeRecoveryClient(
+        [_branch_fixture("branch-production", "production", default=True)]
+    )
+    original_create = client.create_recovery_branch
+
+    def invalid_create(**values: str) -> dict[str, object]:
+        document = original_create(**values)
+        branch = document["branch"]
+        assert isinstance(branch, dict)
+        branch[field] = value
+        return document
+
+    monkeypatch.setattr(client, "create_recovery_branch", invalid_create)
+    receipt_path = tmp_path / "chronos-neon-recovery-point-v3.json"
+
+    with pytest.raises(
+        ChronosProductionError,
+        match="CHRONOS_RECOVERY_BRANCH_OBSERVATION_INVALID",
+    ):
+        create_recovery_point(
+            client,
+            _neon_identity(),
+            expected_branch_count=1,
+            receipt_path=receipt_path,
+        )
+
+    assert client.create_calls == 1
+    receipt = json.loads(receipt_path.read_bytes())
+    assert receipt["verdict"] == "NEON_RECOVERY_POINT_CREATE_OUTCOME_INDETERMINATE"
+    assert receipt["create_response_observed"] is True
+    assert receipt["response_contract_verified"] is False
+    assert receipt["readiness_verified"] is False
+
+
+def test_recovery_point_records_and_rejects_endpoint_in_create_response(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client = FakeRecoveryClient(
+        [_branch_fixture("branch-production", "production", default=True)]
+    )
+    original_create = client.create_recovery_branch
+
+    def create_with_endpoint(**values: str) -> dict[str, object]:
+        document = original_create(**values)
+        document["endpoints"] = [
+            {
+                "id": "endpoint-unexpected",
+                "project_id": "project-robin",
+                "branch_id": "branch-recovery-new",
+                "type": "read_write",
+            }
+        ]
+        return document
+
+    monkeypatch.setattr(client, "create_recovery_branch", create_with_endpoint)
+    receipt_path = tmp_path / "chronos-neon-recovery-point-v3.json"
+
+    with pytest.raises(
+        ChronosProductionError,
+        match="CHRONOS_RECOVERY_ENDPOINT_CREATED_UNEXPECTEDLY",
+    ):
+        create_recovery_point(
+            client,
+            _neon_identity(),
+            expected_branch_count=1,
+            receipt_path=receipt_path,
+        )
+
+    receipt = json.loads(receipt_path.read_bytes())
+    assert receipt["verdict"] == "NEON_RECOVERY_POINT_UNEXPECTED_ENDPOINT_CREATED"
+    assert receipt["create_outcome"] == "CREATED_WITH_UNEXPECTED_ENDPOINT"
+    assert receipt["endpoint_count_in_create_response"] == 1
+    assert receipt["endpoint_created"] is True
+    assert receipt["endpoint_absence_verified"] is False
+    assert receipt["response_contract_verified"] is False
+    assert receipt["readiness_verified"] is False
+    assert client.branch_endpoint_calls == 0
+
+
+def test_recovery_point_preserves_unknown_endpoint_state_for_invalid_response(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client = FakeRecoveryClient(
+        [_branch_fixture("branch-production", "production", default=True)]
+    )
+    original_create = client.create_recovery_branch
+
+    def create_without_endpoint_contract(**values: str) -> dict[str, object]:
+        document = original_create(**values)
+        del document["endpoints"]
+        return document
+
+    monkeypatch.setattr(
+        client,
+        "create_recovery_branch",
+        create_without_endpoint_contract,
+    )
+    receipt_path = tmp_path / "chronos-neon-recovery-point-v3.json"
+
+    with pytest.raises(
+        ChronosProductionError,
+        match="CHRONOS_RECOVERY_ENDPOINT_RESPONSE_INVALID",
+    ):
+        create_recovery_point(
+            client,
+            _neon_identity(),
+            expected_branch_count=1,
+            receipt_path=receipt_path,
+        )
+
+    receipt = json.loads(receipt_path.read_bytes())
+    assert receipt["endpoint_count_in_create_response"] is None
+    assert receipt["endpoint_created"] is None
+    assert receipt["endpoint_absence_verified"] is False
+    assert receipt["response_contract_verified"] is False
+    assert receipt["readiness_verified"] is False
+
+
+def test_recovery_point_rechecks_branch_endpoints_after_readiness(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client = FakeRecoveryClient(
+        [_branch_fixture("branch-production", "production", default=True)]
+    )
+
+    def unexpected_branch_endpoints(
+        _project_id: str,
+        _branch_id: str,
+    ) -> list[dict[str, object]]:
+        client.branch_endpoint_calls += 1
+        return [
+            {
+                "id": "endpoint-unexpected",
+                "project_id": "project-robin",
+                "branch_id": "branch-recovery-new",
+                "type": "read_write",
+            }
+        ]
+
+    monkeypatch.setattr(client, "branch_endpoints", unexpected_branch_endpoints)
+    receipt_path = tmp_path / "chronos-neon-recovery-point-v3.json"
+
+    with pytest.raises(
+        ChronosProductionError,
+        match="CHRONOS_RECOVERY_ENDPOINT_CREATED_UNEXPECTEDLY",
+    ):
+        create_recovery_point(
+            client,
+            _neon_identity(),
+            expected_branch_count=1,
+            receipt_path=receipt_path,
+        )
+
+    receipt = json.loads(receipt_path.read_bytes())
+    assert receipt["verdict"] == "NEON_RECOVERY_POINT_UNEXPECTED_ENDPOINT_OBSERVED"
+    assert receipt["endpoint_count_in_create_response"] == 0
+    assert receipt["endpoint_count_after_readiness"] == 1
+    assert receipt["endpoint_created"] is True
+    assert receipt["endpoint_absence_verified"] is False
+    assert receipt["response_contract_verified"] is True
+    assert receipt["readiness_verified"] is False
+    assert client.branch_endpoint_calls == 1
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("id", "branch-other"),
+        ("project_id", "project-other"),
+        ("parent_id", "branch-other"),
+        ("name", "unrelated-branch"),
+        ("default", True),
+        ("current_state", "deleting"),
+        ("pending_state", "deleting"),
+    ],
+)
+def test_ready_recovery_observation_is_exactly_bound(
+    field: str,
+    value: object,
+) -> None:
+    branch = _branch_fixture(
+        "branch-recovery-new",
+        "chronos-pre-0015-recovery-20260829T120000Z",
+        parent_id="branch-production",
+    )
+    branch[field] = value
+
+    with pytest.raises(
+        ChronosProductionError,
+        match="CHRONOS_RECOVERY_BRANCH_OBSERVATION_INVALID",
+    ):
+        bootstrap_module._assert_recovery_branch_observation(
+            branch,
+            _neon_identity(),
+            recovery_branch_id="branch-recovery-new",
+            expected_name=None,
+        )
+
+
 def test_recovery_point_refuses_a_third_cross_run_branch_before_post() -> None:
     client = FakeRecoveryClient(
         [
-            {
-                "id": f"branch-recovery-{index}",
-                "name": f"chronos-pre-0015-recovery-2026082{index}T120000Z",
-            }
-            for index in (7, 8)
+            _branch_fixture("branch-production", "production", default=True),
+            *[
+                _branch_fixture(
+                    f"branch-recovery-{index}",
+                    f"chronos-pre-0015-recovery-2026082{index}T120000Z",
+                    parent_id="branch-production",
+                )
+                for index in (7, 8)
+            ],
         ]
     )
 
@@ -389,30 +1135,150 @@ def test_recovery_point_refuses_a_third_cross_run_branch_before_post() -> None:
         ChronosProductionError,
         match="CHRONOS_RECOVERY_BRANCH_LIMIT_REACHED",
     ):
-        create_recovery_point(client, _neon_identity())
+        create_recovery_point(
+            client,
+            _neon_identity(),
+            expected_branch_count=3,
+        )
     assert client.create_calls == 0
 
 
 def test_recovery_point_refuses_an_unbounded_branch_inventory_before_post() -> None:
     client = FakeRecoveryClient(
-        [{"id": f"branch-{index}", "name": f"unrelated-{index}"} for index in range(100)]
+        [
+            _branch_fixture("branch-production", "production", default=True),
+            *[
+                _branch_fixture(f"branch-{index}", f"unrelated-{index}")
+                for index in range(1, 100)
+            ],
+        ]
     )
 
     with pytest.raises(
         ChronosProductionError,
         match="CHRONOS_RECOVERY_BRANCH_INVENTORY_INCOMPLETE",
     ):
-        create_recovery_point(client, _neon_identity())
+        create_recovery_point(
+            client,
+            _neon_identity(),
+            expected_branch_count=100,
+        )
+    assert client.create_calls == 0
+
+
+def test_recovery_point_reconciles_the_proven_branch_count_before_post() -> None:
+    client = FakeRecoveryClient(
+        [
+            {
+                "id": "branch-production",
+                "project_id": "project-robin",
+                "name": "production",
+                "default": True,
+                "current_state": "ready",
+                "pending_state": None,
+            }
+        ]
+    )
+
+    with pytest.raises(
+        ChronosProductionError,
+        match="CHRONOS_RECOVERY_BRANCH_INVENTORY_INCOMPLETE",
+    ):
+        create_recovery_point(
+            client,
+            _neon_identity(),
+            expected_branch_count=2,
+        )
+
+    assert client.create_calls == 0
+
+
+@pytest.mark.parametrize(
+    "invalid_branch",
+    [
+        {
+            "project_id": "project-robin",
+            "name": "missing-id",
+            "default": False,
+            "current_state": "ready",
+            "pending_state": None,
+        },
+        {
+            "id": "branch-foreign",
+            "project_id": "project-foreign",
+            "name": "foreign",
+            "default": False,
+            "current_state": "ready",
+            "pending_state": None,
+        },
+    ],
+)
+def test_recovery_point_refuses_malformed_inventory_before_post(
+    invalid_branch: dict[str, object],
+) -> None:
+    client = FakeRecoveryClient(
+        [
+            {
+                "id": "branch-production",
+                "project_id": "project-robin",
+                "name": "production",
+                "default": True,
+                "current_state": "ready",
+                "pending_state": None,
+            },
+            invalid_branch,
+        ]
+    )
+
+    with pytest.raises(
+        ChronosProductionError,
+        match="CHRONOS_RECOVERY_BRANCH_INVENTORY_INCOMPLETE",
+    ):
+        create_recovery_point(
+            client,
+            _neon_identity(),
+            expected_branch_count=2,
+        )
+
+    assert client.create_calls == 0
+
+
+def test_recovery_point_revalidates_ready_production_branch_before_post() -> None:
+    client = FakeRecoveryClient(
+        [
+            {
+                "id": "branch-production",
+                "project_id": "project-robin",
+                "name": "production",
+                "default": True,
+                "current_state": "deleting",
+                "pending_state": None,
+            }
+        ]
+    )
+
+    with pytest.raises(
+        ChronosProductionError,
+        match="CHRONOS_RECOVERY_BRANCH_INVENTORY_INCOMPLETE",
+    ):
+        create_recovery_point(
+            client,
+            _neon_identity(),
+            expected_branch_count=1,
+        )
+
     assert client.create_calls == 0
 
 
 def test_recovery_point_refuses_a_reused_branch_id() -> None:
     client = FakeRecoveryClient(
         [
-            {
-                "id": "branch-recovery-old",
-                "name": "chronos-pre-0015-recovery-20260828T120000Z",
-            }
+            _branch_fixture("branch-production", "production", default=True),
+            _branch_fixture(
+                "branch-recovery-old",
+                "chronos-pre-0015-recovery-20260828T120000Z",
+                parent_id="branch-production",
+            ),
         ],
         created_branch_id="branch-recovery-old",
     )
@@ -421,7 +1287,11 @@ def test_recovery_point_refuses_a_reused_branch_id() -> None:
         ChronosProductionError,
         match="CHRONOS_RECOVERY_BRANCH_ID_INVALID",
     ):
-        create_recovery_point(client, _neon_identity())
+        create_recovery_point(
+            client,
+            _neon_identity(),
+            expected_branch_count=2,
+        )
     assert client.create_calls == 1
 
 

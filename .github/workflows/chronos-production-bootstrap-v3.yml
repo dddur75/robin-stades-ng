@@ -133,8 +133,9 @@ jobs:
           NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
           NEON_BOOTSTRAP_DATABASE_URL: ${{ secrets.NEON_BOOTSTRAP_DATABASE_URL }}
           NEON_PROJECT_ID: ${{ vars.NEON_PROJECT_ID }}
+          NEON_ORG_ID: ${{ vars.NEON_ORG_ID }}
         run: >-
-          python scripts/chronos_production_bootstrap_v3.py
+          python -m scripts.chronos_production_bootstrap_v3
           --mode PREFLIGHT --report-dir .chronos/reports
       - name: Publier seulement les preuves sanitisees signees
         if: always()
@@ -210,8 +211,9 @@ jobs:
           NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
           NEON_BOOTSTRAP_DATABASE_URL: ${{ secrets.NEON_BOOTSTRAP_DATABASE_URL }}
           NEON_PROJECT_ID: ${{ vars.NEON_PROJECT_ID }}
+          NEON_ORG_ID: ${{ vars.NEON_ORG_ID }}
         run: >-
-          python scripts/chronos_production_bootstrap_v3.py
+          python -m scripts.chronos_production_bootstrap_v3
           --mode MIGRATE --report-dir .chronos/reports
           --preflight-artifact .chronos/preflight/chronos-preflight-artifact-v3.json
       - name: Publier la sortie sanitisee du bootstrap
@@ -286,7 +288,7 @@ jobs:
           CHRONOS_READER_DATABASE_URL: ${{ secrets.CHRONOS_READER_DATABASE_URL }}
           CHRONOS_RUNTIME_DATABASE_URL: ${{ secrets.CHRONOS_RUNTIME_DATABASE_URL }}
         run: >-
-          python scripts/chronos_production_bootstrap_v3.py
+          python -m scripts.chronos_production_bootstrap_v3
           --mode VERIFY --report-dir .chronos/reports
           --migration-artifact .chronos/migration/chronos-bootstrap-output-v3.json
       - name: Publier la verification sanitisee
