@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-30T07:58:00Z",
+  "generated_at":"2026-08-30T08:52:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -8723,9 +8723,10 @@
       "execution_id":"data-torrent-ready-v1-final-controlled-go-conditional-release-frozen-20260830",
       "scientific_lineage_id":"DATA_TORRENT_READY_V1",
       "dataset_lineage_id":"no-dataset-controlled-go-durable-conditional-release",
-      "status":"VERIFIED",
+      "status":"SUPERSEDED",
       "verified_by":["C0","C2","C4","DP6","A2"],
-      "successor_of":"GOV.PRODUCTION.DATA_TORRENT_READY.PREFLIGHT.NEON.V4.ENDPOINT_STATE.NON_ACTIVE.NO_GO.V1.001"
+      "successor_of":"GOV.PRODUCTION.DATA_TORRENT_READY.PREFLIGHT.NEON.V4.ENDPOINT_STATE.NON_ACTIVE.NO_GO.V1.001",
+      "superseded_by":"GOV.PRODUCTION.DATA_TORRENT_READY.CONTROLLED_GO.DURABLE_SEAL.CONDITIONAL.RELEASE.V1.002"
     },
     {
       "claim_id":"GOV.COUNCIL.DATA_TORRENT_READY.EVIDENCE.SUCCESSION.LEDGER.V1.008",
@@ -8740,9 +8741,44 @@
       "execution_id":"council-record:RCV3-20260830-191",
       "scientific_lineage_id":"DATA_TORRENT_READY_V1",
       "dataset_lineage_id":"data-torrent-ledger-tip-1b323179278a18ec",
+      "status":"SUPERSEDED",
+      "verified_by":["C0","C2","C4","DP6","A2"],
+      "successor_of":"GOV.COUNCIL.DATA_TORRENT_READY.EVIDENCE.SUCCESSION.LEDGER.V1.007",
+      "superseded_by":"GOV.COUNCIL.DATA_TORRENT_READY.EVIDENCE.SUCCESSION.LEDGER.V1.009"
+    },
+    {
+      "claim_id":"GOV.PRODUCTION.DATA_TORRENT_READY.CONTROLLED_GO.DURABLE_SEAL.CONDITIONAL.RELEASE.V1.002",
+      "claim":"The corrected final DATA TORRENT READY V1 release preserves the complete dormant production effect contract and changes only the secret-free CI type-check invocation plus its regression. SAFE V2 and the permanently disabled legacy definition use explicit package bases symmetrically; exact-head run 33301054721 remains immutable failed evidence, and only a fresh corrected SHA may establish the required CI gate.",
+      "scope":"DATA_TORRENT_READY_V1_SAFE_V2_MYPY_EXPLICIT_PACKAGE_BASES_CORRECTED_CONDITIONAL_RELEASE",
+      "source":"Failed exact-head SAFE V2 run 33301054721 on ba0a237bb6fe0c92c929204a5acfa7f2e1b74438; SAFE V2 Git-LF SHA-256 3e093b3889bc9d855ae925ca2a0c8f93b7fa7602ae8fe7d3b4c27747dea8e98f; disabled legacy definition 1bf99681ff5f885c9d30778236492c263f1c29a10e42119ff586cc53dc9a00d2; lock regression 336d6a9dec9f70e8950d6697fa034252ac565edcf32a919d1c167a3f4c8c72fc; append-aware release regression a98b0de4d20281ed934e890ed8fe9f1e471228e5cf41d9a96d8af24755d50736; corrected exact Mypy command PASS on four source files; governance regression bundle 42 passed",
+      "grain":"ONE_CI_ONLY_CORRECTION_TO_ONE_UNCHANGED_DORMANT_PRODUCTION_RELEASE",
+      "temporal_class":"CODE_LOCAL_AS_OF",
+      "artifact":"configs/execution/data-torrent-ready-v1-controlled-go-effect-contract.json",
+      "hash":"9a9d44db699bfb39c5f8006b90ce6273a9de643be49c6e179487d4703fd09785",
+      "code_revision":"ba0a237bb6fe0c92c929204a5acfa7f2e1b74438",
+      "execution_id":"data-torrent-ready-v1-safe-v2-mypy-correction-release-20260830T085200Z",
+      "scientific_lineage_id":"DATA_TORRENT_READY_V1",
+      "dataset_lineage_id":"no-dataset-safe-v2-ci-only-correction",
       "status":"VERIFIED",
       "verified_by":["C0","C2","C4","DP6","A2"],
-      "successor_of":"GOV.COUNCIL.DATA_TORRENT_READY.EVIDENCE.SUCCESSION.LEDGER.V1.007"
+      "successor_of":"GOV.PRODUCTION.DATA_TORRENT_READY.CONTROLLED_GO.DURABLE_SEAL.CONDITIONAL.RELEASE.V1.001"
+    },
+    {
+      "claim_id":"GOV.COUNCIL.DATA_TORRENT_READY.EVIDENCE.SUCCESSION.LEDGER.V1.009",
+      "claim":"Council record RCV3-20260830-192 preserves the complete 184-record prefix byte-for-byte, records exact-head SAFE V2 run 33301054721 as an immutable attempt-1 pre-full-suite failure with zero production effect, and authorizes only the symmetric explicit-package-bases correction, one new commit, one non-force push and corrected exact-head CI cycle 2 while every production stage remains dormant.",
+      "scope":"DATA_TORRENT_READY_V1_SAFE_V2_CI_CORRECTION_COUNCIL_APPEND_ONLY_SUCCESSION",
+      "source":"Previous tip 1b323179278a18ec12e23e9bbb7472c4d46569483db69f0c4494ce21ada82071; record hash d3d1fc64ff5d8cfc47f23198fa08bcb50d880bdb5a61a7821bcdc2a746e1eeb8; ledger SHA-256 0e6f3e97d70d91bf3bbaa9b3b0abd3cf5616107b2c9d234f3aa12f1a9926a59c",
+      "grain":"ONE_APPEND_ONLY_COUNCIL_CI_CORRECTION_RECORD",
+      "temporal_class":"DECISION_AS_OF",
+      "artifact":"reports/council/decision-ledger.jsonl",
+      "hash":"0e6f3e97d70d91bf3bbaa9b3b0abd3cf5616107b2c9d234f3aa12f1a9926a59c",
+      "code_revision":"ba0a237bb6fe0c92c929204a5acfa7f2e1b74438",
+      "execution_id":"council-record:RCV3-20260830-192",
+      "scientific_lineage_id":"DATA_TORRENT_READY_V1",
+      "dataset_lineage_id":"data-torrent-ledger-tip-d3d1fc64ff5d8cfc",
+      "status":"VERIFIED",
+      "verified_by":["C0","C2","C4","DP6","A2"],
+      "successor_of":"GOV.COUNCIL.DATA_TORRENT_READY.EVIDENCE.SUCCESSION.LEDGER.V1.008"
     }
   ],
   "decision_nodes":[
@@ -8929,7 +8965,8 @@
     {"decision_id":"RCV3-20260830-188","ledger_record_hash":"25a03a0722112a303df6d72eb56133563d5591d012239335c0c1a9bb083f8c86"},
     {"decision_id":"RCV3-20260830-189","ledger_record_hash":"79a8c90a9efae32bdb3db7b80d18a7d016f4126fd82ab2fe9610fb30d8be601b"},
     {"decision_id":"RCV3-20260830-190","ledger_record_hash":"3019dd359593168e78bead1b1955c002d9e74376c61e21f37bd503b02e7b5818"},
-    {"decision_id":"RCV3-20260830-191","ledger_record_hash":"1b323179278a18ec12e23e9bbb7472c4d46569483db69f0c4494ce21ada82071"}
+    {"decision_id":"RCV3-20260830-191","ledger_record_hash":"1b323179278a18ec12e23e9bbb7472c4d46569483db69f0c4494ce21ada82071"},
+    {"decision_id":"RCV3-20260830-192","ledger_record_hash":"d3d1fc64ff5d8cfc47f23198fa08bcb50d880bdb5a61a7821bcdc2a746e1eeb8"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -9740,6 +9777,8 @@
     {"edge_id":"EDGE.806","from_claim_id":"GOV.COUNCIL.DATA_TORRENT_READY.EVIDENCE.SUCCESSION.LEDGER.V1.006","to_decision_id":"RCV3-20260830-190","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.807","from_claim_id":"GOV.PRODUCTION.DATA_TORRENT_READY.PREFLIGHT.NEON.V4.ENDPOINT_STATE.NON_ACTIVE.NO_GO.V1.001","to_decision_id":"RCV3-20260830-190","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.808","from_claim_id":"GOV.PRODUCTION.DATA_TORRENT_READY.CONTROLLED_GO.DURABLE_SEAL.CONDITIONAL.RELEASE.V1.001","to_decision_id":"RCV3-20260830-191","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.809","from_claim_id":"GOV.COUNCIL.DATA_TORRENT_READY.EVIDENCE.SUCCESSION.LEDGER.V1.008","to_decision_id":"RCV3-20260830-191","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.809","from_claim_id":"GOV.COUNCIL.DATA_TORRENT_READY.EVIDENCE.SUCCESSION.LEDGER.V1.008","to_decision_id":"RCV3-20260830-191","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.810","from_claim_id":"GOV.PRODUCTION.DATA_TORRENT_READY.CONTROLLED_GO.DURABLE_SEAL.CONDITIONAL.RELEASE.V1.002","to_decision_id":"RCV3-20260830-192","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.811","from_claim_id":"GOV.COUNCIL.DATA_TORRENT_READY.EVIDENCE.SUCCESSION.LEDGER.V1.009","to_decision_id":"RCV3-20260830-192","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }

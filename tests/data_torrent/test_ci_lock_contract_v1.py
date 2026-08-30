@@ -42,3 +42,13 @@ def test_safe_ci_is_a_secret_free_copy_of_the_quarantined_legacy_definition() ->
     assert safe["name"] == "00 - Qualite continue SAFE V2"
     legacy["name"] = safe["name"]
     assert safe == legacy
+    typing_step = next(
+        step
+        for step in safe["jobs"]["tests"]["steps"]
+        if step.get("name") == "Typage strict"
+    )
+    typing_command = " ".join(typing_step["run"].split())
+    assert (
+        "python -m mypy --strict --explicit-package-bases "
+        "scripts/build_hypothesis_evidence.py" in typing_command
+    )

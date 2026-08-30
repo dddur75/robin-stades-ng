@@ -510,7 +510,10 @@ def test_council_release_is_explicitly_superseding_and_dormant() -> None:
     records = [
         json.loads(line) for line in ledger_path.read_text(encoding="utf-8").splitlines() if line
     ]
-    failure, release = records[-2:]
+    records_by_id = {record["decision_id"]: record for record in records}
+    failure = records_by_id["RCV3-20260830-190"]
+    release = records_by_id["RCV3-20260830-191"]
+    correction = records_by_id["RCV3-20260830-192"]
     assert failure["decision_id"] == "RCV3-20260830-190"
     assert failure["decision"] == "BLOCKED_EXTERNAL_ACTION"
     assert failure["context"]["v4_observation"]["idle_proved"] is False
@@ -556,6 +559,13 @@ def test_council_release_is_explicitly_superseding_and_dormant() -> None:
     assert limits["odds_provider_requests"] == 5
     assert limits["odds_credits"] == 1000
     assert limits["automatic_retries"] == 0
+    assert correction["decision"] == "PASS_AND_HOLD"
+    failed_ci = correction["context"]["failed_exact_head_ci"]
+    assert failed_ci["run_id"] == 33301054721
+    assert failed_ci["head_sha"] == "ba0a237bb6fe0c92c929204a5acfa7f2e1b74438"
+    assert failed_ci["run_attempt"] == 1
+    assert failed_ci["rerun_in_place"] is False
+    assert failed_ci["external_production_effects"] == 0
 
     graph = json.loads(
         (ROOT / "reports" / "evidence" / "evidence-graph.json").read_text(encoding="utf-8")
@@ -564,22 +574,30 @@ def test_council_release_is_explicitly_superseding_and_dormant() -> None:
     observation_id = (
         "GOV.PRODUCTION.DATA_TORRENT_READY.PREFLIGHT.NEON.V4.ENDPOINT_STATE.NON_ACTIVE.NO_GO.V1.001"
     )
-    release_id = (
+    initial_release_id = (
         "GOV.PRODUCTION.DATA_TORRENT_READY.CONTROLLED_GO.DURABLE_SEAL.CONDITIONAL.RELEASE.V1.001"
     )
+    corrected_release_id = (
+        "GOV.PRODUCTION.DATA_TORRENT_READY.CONTROLLED_GO.DURABLE_SEAL.CONDITIONAL.RELEASE.V1.002"
+    )
     assert claims[observation_id]["status"] == "SUPERSEDED"
-    assert claims[observation_id]["superseded_by"] == release_id
-    assert claims[release_id]["status"] == "VERIFIED"
-    assert claims[release_id]["successor_of"] == observation_id
-    assert [edge["edge_id"] for edge in graph["edges"][-4:]] == [
+    assert claims[observation_id]["superseded_by"] == initial_release_id
+    assert claims[initial_release_id]["status"] == "SUPERSEDED"
+    assert claims[initial_release_id]["successor_of"] == observation_id
+    assert claims[initial_release_id]["superseded_by"] == corrected_release_id
+    assert claims[corrected_release_id]["status"] == "VERIFIED"
+    assert claims[corrected_release_id]["successor_of"] == initial_release_id
+    assert [edge["edge_id"] for edge in graph["edges"][-6:]] == [
         "EDGE.806",
         "EDGE.807",
         "EDGE.808",
         "EDGE.809",
+        "EDGE.810",
+        "EDGE.811",
     ]
 
-    previous_hash = records[-3]["hash"]
-    for record in (failure, release):
+    previous_hash = records_by_id["RCV3-20260830-189"]["hash"]
+    for record in (failure, release, correction):
         assert record["previous_hash"] == previous_hash
         canonical = json.dumps(
             {key: value for key, value in record.items() if key != "hash"},

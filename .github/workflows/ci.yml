@@ -786,7 +786,7 @@ jobs:
           python -m mypy --explicit-package-bases scripts/run_five_league_expansion.py
           python -m mypy --explicit-package-bases scripts/run_prequential_learning_factory.py
           python -m mypy --explicit-package-bases scripts/build_hypothesis_intelligence.py
-          python -m mypy --strict scripts/build_hypothesis_evidence.py scripts/build_hypothesis_evidence_site_pages.py scripts/chronos_neon_pure_readonly_preflight_v4.py scripts/seal_chronos_controlled_go_v1.py
+          python -m mypy --strict --explicit-package-bases scripts/build_hypothesis_evidence.py scripts/build_hypothesis_evidence_site_pages.py scripts/chronos_neon_pure_readonly_preflight_v4.py scripts/seal_chronos_controlled_go_v1.py
       - name: Securite basique
         run: >-
           python -m bandit -q -r
