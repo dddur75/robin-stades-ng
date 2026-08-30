@@ -44,6 +44,9 @@ BINDINGS = (
 )
 _HEX_64 = re.compile(r"^[0-9a-f]{64}$")
 _RUN_ID = re.compile(r"^[1-9][0-9]*$")
+_RECOVERY_BRANCH_NAME = re.compile(
+    r"^chronos-pre-0015-recovery-[0-9]{8}T[0-9]{6}Z$"
+)
 _PREFLIGHT_FIELDS = frozenset(
     {
         "schema_version",
@@ -55,6 +58,7 @@ _PREFLIGHT_FIELDS = frozenset(
         "role_inventory_hash",
         "role_inventory",
         "recovery_branch_id",
+        "recovery_branch_name",
         "golden_gate",
         "database_host",
         "database_port",
@@ -154,6 +158,12 @@ def _artifact_bytes(
     if any(
         not isinstance(value, str) or not value or value != value.strip() for value in identities
     ) or len(set(identities)) != len(identities):
+        raise BindingInstallerError("CHRONOS_BINDING_PREFLIGHT_IDENTITY_INVALID")
+    recovery_branch_name = artifact.get("recovery_branch_name")
+    if (
+        not isinstance(recovery_branch_name, str)
+        or _RECOVERY_BRANCH_NAME.fullmatch(recovery_branch_name) is None
+    ):
         raise BindingInstallerError("CHRONOS_BINDING_PREFLIGHT_IDENTITY_INVALID")
 
     signature = artifact.get("signature")
@@ -281,6 +291,7 @@ def install(
         "project_id": artifact["project_id"],
         "production_branch_id": artifact["production_branch_id"],
         "recovery_branch_id": artifact["recovery_branch_id"],
+        "recovery_branch_name": artifact["recovery_branch_name"],
         "preflight_signature_algorithm": "HMAC-SHA256",
         "preflight_artifact_attestation": attestation,
         "database_host": target.host,

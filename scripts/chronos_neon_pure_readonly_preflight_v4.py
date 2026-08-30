@@ -2544,6 +2544,47 @@ def _finalize_neon_identity(
     )
 
 
+def resolve_neon_identity_readonly(
+    api_key: str,
+    target: DirectPostgresTarget,
+    *,
+    allow_idle: bool = False,
+) -> NeonObservation:
+    """Resolve a Neon identity through the bounded, GET-only proof path."""
+
+    return _resolve_neon_identity(
+        NeonReadOnlyClient(api_key),
+        target,
+        allow_idle=allow_idle,
+    )
+
+
+def require_neon_recovery_feasibility(neon: NeonObservation) -> None:
+    """Fail closed unless one recovery branch is proven feasible without purchase."""
+
+    if not neon.branch_capacity_proven:
+        raise PreflightNoGo(
+            "RECOVERY_BRANCH_NOT_FEASIBLE",
+            "branch_capacity_ambiguous",
+        )
+    if neon.owner_branch_count + 1 > neon.branch_limit:
+        raise PreflightNoGo(
+            "RECOVERY_BRANCH_NOT_FEASIBLE",
+            "branch_capacity_exhausted",
+        )
+    if not neon.bill_free_branch_capacity_proven:
+        raise PreflightNoGo("PURCHASE_REQUIRED", "purchase_required")
+    if (
+        neon.history_retention_seconds <= 0
+        or neon.branch_id == ""
+        or neon.branch_state != "ready"
+    ):
+        raise PreflightNoGo(
+            "RECOVERY_BRANCH_NOT_FEASIBLE",
+            "recovery_branch_not_feasible",
+        )
+
+
 def _milliseconds(value: object) -> int:
     text = str(value).strip().lower()
     units = (("ms", 1), ("s", 1_000), ("min", 60_000))
@@ -3569,26 +3610,9 @@ def run_preflight() -> dict[str, object]:
         client = NeonReadOnlyClient(api_key)
         neon = _resolve_neon_identity(client, target)
         try:
-            if not neon.branch_capacity_proven:
-                raise PreflightNoGo(
-                    "RECOVERY_BRANCH_NOT_FEASIBLE", "branch_capacity_ambiguous"
-                )
-            if neon.owner_branch_count + 1 > neon.branch_limit:
-                raise PreflightNoGo(
-                    "RECOVERY_BRANCH_NOT_FEASIBLE", "branch_capacity_exhausted"
-                )
-            purchase_required = not neon.bill_free_branch_capacity_proven
-            if purchase_required:
-                raise PreflightNoGo("PURCHASE_REQUIRED", "purchase_required")
-            recovery_feasible = (
-                neon.history_retention_seconds > 0
-                and neon.branch_id != ""
-                and neon.branch_state == "ready"
-            )
-            if not recovery_feasible:
-                raise PreflightNoGo(
-                    "RECOVERY_BRANCH_NOT_FEASIBLE", "recovery_branch_not_feasible"
-                )
+            require_neon_recovery_feasibility(neon)
+            purchase_required = False
+            recovery_feasible = True
             database = _inspect_database(
                 database_url,
                 expected_postgresql_major=neon.postgresql_major,
