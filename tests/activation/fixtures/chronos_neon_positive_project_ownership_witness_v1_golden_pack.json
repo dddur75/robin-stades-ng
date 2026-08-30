@@ -5,6 +5,8 @@
     {"case_id": "FIRST_PAGE_MULTIPLE_PROJECTS_ONE_EXACT_MATCH", "expected_gate": null},
     {"case_id": "FIRST_PAGE_NO_MATCH_CURSOR_CONTINUES", "expected_gate": null},
     {"case_id": "FIRST_PAGE_MATCH_CURSOR_FOLLOWED", "expected_gate": null},
+    {"case_id": "MATCH_THEN_TERMINAL_EMPTY_CURSOR_ECHO", "expected_gate": null},
+    {"case_id": "MATCH_THEN_NONEMPTY_CURSOR_CYCLE", "expected_gate": "project_cursor_cycle"},
     {"case_id": "FIRST_PAGE_MULTIPLE_EXACT_MATCHES", "expected_gate": "positive_endpoint_match_not_unique"},
     {"case_id": "ENDPOINT_DETAIL_PROJECT_MISMATCH", "expected_gate": "endpoint_detail_project_mismatch"},
     {"case_id": "ENDPOINT_DETAIL_BRANCH_MISMATCH", "expected_gate": "endpoint_detail_branch_mismatch"},

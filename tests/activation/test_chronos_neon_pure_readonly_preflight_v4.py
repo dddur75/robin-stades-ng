@@ -726,6 +726,25 @@ def _project_pagination_scenario(case_id: str) -> tuple[list[dict[str, Any]], in
             _project_page(["project-b"], cursor="cursor-two"),
             _project_page(["project-c"]),
         ], 0
+    if case_id == "PROJECTS_TERMINAL_EMPTY_REPEATED_CURSOR":
+        return [
+            _project_page(["project-a"], cursor="cursor-terminal"),
+            _project_page([], cursor="cursor-terminal"),
+        ], 0
+    if case_id == "PROJECTS_TERMINAL_EMPTY_UNAVAILABLE":
+        return [
+            _project_page(["project-a"], cursor="cursor-terminal"),
+            _project_page(
+                [], cursor="cursor-terminal", unavailable=["project-missing"]
+            ),
+        ], 0
+    if case_id == "PROJECTS_TERMINAL_EMPTY_MALFORMED_PAGINATION":
+        terminal = _project_page([])
+        terminal["pagination"] = {}
+        return [
+            _project_page(["project-a"], cursor="cursor-terminal"),
+            terminal,
+        ], 0
     if case_id == "PROJECTS_CURSOR_REPEATED":
         return [
             _project_page(["project-a"], cursor="cursor-one"),
@@ -768,6 +787,9 @@ def _project_pagination_scenario(case_id: str) -> tuple[list[dict[str, Any]], in
         "PROJECTS_ONE_PAGE",
         "PROJECTS_TWO_PAGES",
         "PROJECTS_THREE_PAGES",
+        "PROJECTS_TERMINAL_EMPTY_REPEATED_CURSOR",
+        "PROJECTS_TERMINAL_EMPTY_UNAVAILABLE",
+        "PROJECTS_TERMINAL_EMPTY_MALFORMED_PAGINATION",
         "PROJECTS_CURSOR_CYCLE",
         "PROJECTS_CURSOR_REPEATED",
         "PROJECTS_DUPLICATE_ID_ACROSS_PAGES",
@@ -787,8 +809,9 @@ def test_project_pagination_golden_pack(case_id: str) -> None:
     audit = preflight_module.IdentityAudit("BOUNDED_DISCOVERY")
     if case["expected_gate"] is None:
         projects = _list_projects_bounded(client, audit)
-        assert len(projects) == len(pages)
+        assert len(projects) == sum(len(page["projects"]) for page in pages)
         assert audit.project_pages_read == len(pages)
+        assert audit.project_inventory_exhaustive is True
     else:
         with pytest.raises(preflight_module.PreflightNoGo) as caught:
             _list_projects_bounded(client, audit)
@@ -1025,6 +1048,17 @@ def _positive_witness_session(case_id: str) -> _ScriptedNeonSession:
             _project_page(["project-a"], cursor="cursor-followed"),
             _project_page(["project-b"]),
         ]
+    elif case_id == "MATCH_THEN_TERMINAL_EMPTY_CURSOR_ECHO":
+        pages = [
+            _project_page(["project-a"], cursor="cursor-terminal"),
+            _project_page([], cursor="cursor-terminal"),
+        ]
+    elif case_id == "MATCH_THEN_NONEMPTY_CURSOR_CYCLE":
+        project_ids = ["project-a", "project-b"]
+        pages = [
+            _project_page(["project-a"], cursor="cursor-cycle"),
+            _project_page(["project-b"], cursor="cursor-cycle"),
+        ]
     elif case_id == "FIRST_PAGE_MULTIPLE_EXACT_MATCHES":
         project_ids = ["project-a", "project-b"]
         pages = [_project_page(project_ids)]
@@ -1136,6 +1170,14 @@ def test_positive_project_ownership_witness_golden_pack(
     if case_id == "FIRST_PAGE_MATCH_CURSOR_FOLLOWED":
         assert session.project_page_index == 2
         assert any("cursor=" in url for url in session.urls)
+    if case_id == "MATCH_THEN_TERMINAL_EMPTY_CURSOR_ECHO":
+        assert session.project_page_index == 2
+        assert observed.cursor_continuation_requested is True
+        assert observed.cursor_cycle_encountered is False
+    if case_id == "MATCH_THEN_NONEMPTY_CURSOR_CYCLE":
+        assert session.project_page_index == 2
+        assert caught.value.sanitized_evidence["cursor_continuation_requested"] is True
+        assert caught.value.sanitized_evidence["cursor_cycle_encountered"] is True
     if case_id == "FIRST_PAGE_ONE_PROJECT_EXACT_ENDPOINT_MATCH":
         assert session.paths[2:4] == [
             "/projects",
