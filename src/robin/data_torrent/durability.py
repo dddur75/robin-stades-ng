@@ -7,6 +7,7 @@ from collections.abc import Mapping
 from dataclasses import asdict, dataclass
 from typing import Any
 
+from robin.chronos_production import validate_data_torrent_authority
 from robin.data_torrent.contracts import TorrentBudgets, utc_text
 from robin.prospective_observatory.chronos_control_plane import (
     AttributableR2EffectExecutor,
@@ -60,6 +61,7 @@ class CountingR2Store:
         metadata: Mapping[str, str],
         on_dispatch: Any,
     ) -> ConditionalPutResult:
+        validate_data_torrent_authority()
         if self.puts >= self._budgets.r2_puts_max:
             raise RuntimeError("DATA_TORRENT_R2_PUT_BUDGET_EXCEEDED")
         self.puts += 1
@@ -73,6 +75,7 @@ class CountingR2Store:
         return result
 
     def get_object(self, key: str) -> Any:
+        validate_data_torrent_authority()
         if self.gets >= self._budgets.r2_gets_max:
             raise RuntimeError("DATA_TORRENT_R2_GET_BUDGET_EXCEEDED")
         self.gets += 1

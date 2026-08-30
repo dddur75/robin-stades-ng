@@ -149,6 +149,7 @@ jobs:
           scripts/check_chronos_github_hold_v3.py
           scripts/github_release_attestation_v1.py
           scripts/install_chronos_runtime_bindings_v1.py
+          scripts/seal_chronos_controlled_go_v1.py
           scripts/run_chronos_provider_free_canary_v3.py
           scripts/run_data_torrent_v1.py
           src/robin/data_torrent
@@ -162,6 +163,7 @@ jobs:
           scripts/check_chronos_github_hold_v3.py
           scripts/github_release_attestation_v1.py
           scripts/install_chronos_runtime_bindings_v1.py
+          scripts/seal_chronos_controlled_go_v1.py
           scripts/run_chronos_provider_free_canary_v3.py
           scripts/run_data_torrent_v1.py
           migrations/versions/0015_data_torrent_opportunity.py

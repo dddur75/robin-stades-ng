@@ -7,6 +7,7 @@ from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from types import SimpleNamespace
+from typing import Any
 from urllib.parse import parse_qsl, urlparse
 
 import pytest
@@ -22,9 +23,11 @@ from robin.chronos_production import (
     DirectPostgresTarget,
     assert_exact_preflight_binding,
     assert_production_safety_locks,
+    build_generation_bound_password,
     build_scoped_database_url,
     preflight_hash,
     sign_document,
+    validate_data_torrent_authority,
     validate_direct_postgres_url,
     verify_signed_document,
 )
@@ -45,6 +48,9 @@ from scripts.chronos_production_bootstrap_v3 import (
     _attempt_cleanup_steps,
     create_recovery_point,
     inspect_database,
+)
+from tests.activation.test_chronos_neon_controlled_idle_wake_readonly_v1 import (
+    _run_synthetic as _run_controlled_synthetic,
 )
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -87,6 +93,8 @@ def test_mutating_production_bootstrap_workflow_is_manual_exact_and_protected() 
         "mode",
         "expected_main_sha",
         "post_merge_ci_sha",
+        "controlled_run_id",
+        "controlled_seal_run_id",
         "preflight_run_id",
         "migration_run_id",
     }
@@ -119,14 +127,30 @@ def test_mutating_production_bootstrap_workflow_is_manual_exact_and_protected() 
         assert job["if"] == f"inputs.mode == '{name.upper()}'"
     content = path.read_text(encoding="utf-8")
     assert "PREFLIGHT_RUN_ID: ${{ inputs.preflight_run_id }}" in content
+    assert "CONTROLLED_RUN_ID: ${{ inputs.controlled_run_id }}" in content
+    assert '[[ "$CONTROLLED_RUN_ID" =~ ^[1-9][0-9]*$ ]]' in content
+    assert '[[ "$CONTROLLED_SEAL_RUN_ID" =~ ^[1-9][0-9]*$ ]]' in content
     assert '[[ "$PREFLIGHT_RUN_ID" =~ ^[1-9][0-9]*$ ]]' in content
     assert 'test -n "${{ inputs.preflight_run_id }}"' not in content
     assert content.count("--required-successful-ci-sha") == 3
-    assert content.count("github_release_attestation_v1.py") == 2
+    assert content.count("github_release_attestation_v1.py") == 4
     assert content.count("python -m scripts.chronos_production_bootstrap_v3") == 3
     assert "python scripts/chronos_production_bootstrap_v3.py" not in content
     assert content.count("NEON_ORG_ID: ${{ vars.NEON_ORG_ID }}") == 2
     assert "--migration-artifact .chronos/migration/chronos-bootstrap-output-v3.json" in content
+    assert (
+        "--workflow-path .github/workflows/chronos-neon-controlled-idle-wake-readonly-v1.yml"
+    ) in content
+    assert (
+        "--controlled-readonly-artifact\n"
+        "          .chronos/controlled/"
+        "chronos-neon-controlled-idle-wake-readonly-v1.json"
+    ) in content
+    assert (
+        "--controlled-seal-artifact\n"
+        "          .chronos/controlled/"
+        "chronos-controlled-go-durable-seal-v1.json"
+    ) in content
     for name in ("preflight", "migrate", "verify"):
         upload = next(
             step
@@ -139,14 +163,79 @@ def test_mutating_production_bootstrap_workflow_is_manual_exact_and_protected() 
 def test_recovery_receipt_is_written_immediately_after_branch_creation() -> None:
     source = (ROOT / "scripts" / "chronos_production_bootstrap_v3.py").read_text(encoding="utf-8")
     preflight = source[source.index("def run_preflight") : source.index("def _preflight_expiry")]
+    controlled = preflight.index("controlled_readonly = _controlled_readonly_go")
+    durable = preflight.index("controlled_go = _controlled_go_durable_binding")
     identity = preflight.index("identity, neon_observation = resolve_neon_identity")
     feasibility = preflight.index("require_neon_recovery_feasibility")
-    mutating_client = preflight.index("client = NeonClient(api_key)")
+    mutating_client = preflight.index("client = NeonClient(api_key, effects=effect_counts)")
     created = preflight.index("recovery_report = create_recovery_point")
     receipt = preflight.index('"chronos-neon-recovery-point-v3.json"')
     database_inspection = preflight.index("database = inspect_database")
-    assert identity < feasibility < mutating_client < created
+    assert controlled < durable < identity < feasibility < mutating_client < created
     assert created < receipt < database_inspection
+
+
+def test_controlled_readonly_go_is_exact_and_causally_bound(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    report = _run_controlled_synthetic(monkeypatch)
+    path = tmp_path / "controlled.json"
+    path.write_text(json.dumps(report), encoding="utf-8")
+
+    receipt = bootstrap_module._controlled_readonly_go(
+        path,
+        expected_main_sha="a" * 40,
+        expected_run_id="1234",
+    )
+
+    assert receipt["run_id"] == "1234"
+    assert receipt["main_sha"] == "a" * 40
+    assert receipt["compute_wake_events"] == 1
+    assert receipt["postgresql_connection_attempts"] == 1
+    assert receipt["production_sql_writes"] == 0
+    assert len(receipt["artifact_sha256"]) == 64
+
+
+@pytest.mark.parametrize(
+    ("path", "value"),
+    [
+        (("verdict",), "CHRONOS_NEON_MIGRATION_NOT_AUTHORIZED"),
+        (("source", "run_id"), "4321"),
+        (("source", "main_sha"), "b" * 40),
+        (("checks", "project_identity_verified"), False),
+        (("neon", "project_inventory_exhaustive"), False),
+        (("neon", "cursor_cycle_encountered"), True),
+        (("lifecycle", "effective_suspend_timeout_seconds"), 299),
+        (("postgresql", "current_revision"), "0015_data_torrent_opportunity"),
+        (("postgresql", "transaction_read_only"), False),
+        (("effects", "neon_mutations"), 1),
+        (("effects", "sql_write_count"), 1),
+    ],
+)
+def test_controlled_readonly_gate_rejects_non_go_or_unbound_artifact(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    path: tuple[str, ...],
+    value: object,
+) -> None:
+    report = _run_controlled_synthetic(monkeypatch)
+    target: dict[str, Any] = report
+    for key in path[:-1]:
+        target = target[key]
+    target[path[-1]] = value
+    artifact = tmp_path / "controlled.json"
+    artifact.write_text(json.dumps(report), encoding="utf-8")
+
+    with pytest.raises(
+        ChronosProductionError,
+        match="CHRONOS_CONTROLLED_READONLY_GO_NOT_PROVEN",
+    ):
+        bootstrap_module._controlled_readonly_go(
+            artifact,
+            expected_main_sha="a" * 40,
+            expected_run_id="1234",
+        )
 
 
 def test_preflight_refuses_rerun_before_any_external_effect(
@@ -187,6 +276,177 @@ def test_production_safety_locks_are_exact_and_fail_closed() -> None:
             assert_production_safety_locks(invalid)
 
 
+def test_data_torrent_authority_is_exact_bound_and_time_limited() -> None:
+    expiry = validate_data_torrent_authority(
+        now=datetime(2026, 8, 31, 12, 0, tzinfo=UTC),
+    )
+    assert expiry == datetime(2026, 9, 1, 23, 59, 59, tzinfo=UTC)
+    validate_data_torrent_authority(
+        now=datetime(2026, 9, 1, 21, 59, 59, tzinfo=UTC),
+    )
+    with pytest.raises(
+        ChronosProductionError,
+        match="CHRONOS_MISSION_EFFECT_ADMISSION_CLOSED",
+    ):
+        validate_data_torrent_authority(
+            now=datetime(2026, 9, 1, 22, 0, 0, tzinfo=UTC),
+        )
+    with pytest.raises(ChronosProductionError, match="CHRONOS_MISSION_AUTHORITY_EXPIRED"):
+        validate_data_torrent_authority(
+            now=datetime(2026, 9, 1, 23, 59, 59, tzinfo=UTC),
+        )
+    with pytest.raises(
+        ChronosProductionError,
+        match="CHRONOS_MISSION_AUTHORITY_NOT_YET_ACTIVE",
+    ):
+        validate_data_torrent_authority(
+            now=datetime(2026, 8, 30, 6, 35, 59, tzinfo=UTC),
+        )
+
+
+def test_all_authorized_effect_jobs_fit_inside_the_bound_runtime() -> None:
+    effect_workflows = (
+        "chronos-neon-controlled-idle-wake-readonly-v1.yml",
+        "chronos-controlled-go-durable-seal-v1.yml",
+        "chronos-production-bootstrap-v3.yml",
+        "data-torrent-live-v1.yml",
+    )
+    for name in effect_workflows:
+        workflow = yaml.safe_load((WORKFLOWS / name).read_text(encoding="utf-8"))
+        for job in workflow["jobs"].values():
+            assert 1 <= int(job["timeout-minutes"]) <= 60
+
+
+def test_data_torrent_authority_rejects_any_local_byte_drift(tmp_path: Path) -> None:
+    execution = tmp_path / "configs" / "execution"
+    execution.mkdir(parents=True)
+    for name in (
+        "data-torrent-ready-v1.json",
+        "data-torrent-ready-v1-controlled-go-effect-contract.json",
+    ):
+        source = ROOT / "configs" / "execution" / name
+        (execution / name).write_bytes(source.read_bytes())
+    (execution / "data-torrent-ready-v1.json").write_bytes(
+        (execution / "data-torrent-ready-v1.json").read_bytes() + b" "
+    )
+    with pytest.raises(
+        ChronosProductionError,
+        match="CHRONOS_MISSION_AUTHORITY_HASH_MISMATCH",
+    ):
+        validate_data_torrent_authority(
+            now=datetime(2026, 8, 31, 12, 0, tzinfo=UTC),
+            repository_root=tmp_path,
+        )
+
+
+def test_bootstrap_failure_receipt_preserves_all_external_effect_bounds() -> None:
+    effects = bootstrap_module.BootstrapEffects(
+        r2_operations=1,
+        r2_operations_exact=False,
+        neon_gets=7,
+        neon_gets_exact=False,
+        neon_posts=1,
+        neon_posts_exact=True,
+        postgresql_connection_attempts=3,
+        postgresql_connection_attempts_exact=False,
+        recovery_branch_creations_upper_bound=1,
+        recovery_branch_creations_exact=False,
+        migration_dispatches=1,
+        migration_dispatches_exact=True,
+    )
+    effects.mark_sql_upper_bound(statements=2_048, writes=1_024)
+    failure = bootstrap_module._safe_failure(
+        "MIGRATE",
+        ChronosProductionError("INJECTED_FAILURE"),
+        effects,
+    )
+    observed = failure["effects"]
+    assert observed["effect_counter_certainty"] == "CONSERVATIVE_UPPER_BOUNDS"
+    assert observed["r2_gets"] == 1
+    assert observed["r2_gets_exact"] is False
+    assert observed["neon_gets"] == 7
+    assert observed["neon_posts"] == 1
+    assert observed["postgresql_connection_attempts"] == 3
+    assert observed["recovery_branch_creations_upper_bound"] == 1
+    assert observed["migration_dispatches"] == 1
+    assert observed["sql_statements_upper_bound"] == 2_048
+    assert observed["sql_write_statements_upper_bound"] == 1_024
+
+
+def test_identity_failure_carries_neon_get_accounting(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    effects = bootstrap_module.BootstrapEffects()
+
+    def fail(*_args: object, **_kwargs: object) -> None:
+        raise readonly_preflight.PreflightNoGo(
+            "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+            "synthetic",
+            effect_counts={"neon_get_count": 7},
+        )
+
+    monkeypatch.setattr(bootstrap_module, "resolve_neon_identity_readonly", fail)
+    with pytest.raises(ChronosProductionError, match="NEON_PROJECT_IDENTITY_AMBIGUOUS"):
+        bootstrap_module.resolve_neon_identity(
+            "synthetic-api-key",
+            DirectPostgresTarget(
+                host="ep-synthetic.neon.tech",
+                port=5432,
+                database="neondb",
+                username="owner",
+                sslmode="require",
+                channel_binding="require",
+            ),
+            effects=effects,
+        )
+    assert effects.neon_gets == 7
+    assert effects.neon_gets_exact is False
+
+
+@pytest.mark.parametrize(
+    ("mode", "dispatches"),
+    [("PREFLIGHT", 1), ("MIGRATE", 2), ("VERIFY", 3)],
+)
+def test_bootstrap_dispatch_history_has_exact_stage_ordinal(
+    monkeypatch: pytest.MonkeyPatch,
+    mode: str,
+    dispatches: int,
+) -> None:
+    monkeypatch.setenv("GITHUB_RUN_ID", "9876")
+    calls: list[tuple[str, int, str, str]] = []
+
+    def history(
+        repository: str,
+        run_id: int,
+        main_sha: str,
+        *,
+        workflow_file: str,
+    ) -> tuple[int, int, int]:
+        calls.append((repository, run_id, main_sha, workflow_file))
+        return 0, 0, dispatches
+
+    monkeypatch.setattr(bootstrap_module.readonly_gate, "_github_actions_state", history)
+    bootstrap_module._assert_bootstrap_dispatch_ordinal(mode=mode, main_sha=SHA)
+    assert calls == [
+        (
+            "dddur75/robin-stades-ng",
+            9876,
+            SHA,
+            "chronos-production-bootstrap-v3.yml",
+        )
+    ]
+    monkeypatch.setattr(
+        bootstrap_module.readonly_gate,
+        "_github_actions_state",
+        lambda *_args, **_kwargs: (0, 0, dispatches + 1),
+    )
+    with pytest.raises(
+        ChronosProductionError,
+        match="CHRONOS_BOOTSTRAP_DISPATCH_ORDINAL_MISMATCH",
+    ):
+        bootstrap_module._assert_bootstrap_dispatch_ordinal(mode=mode, main_sha=SHA)
+
+
 def test_runtime_bindings_are_validated_against_bootstrap_target_before_migration(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -199,11 +459,18 @@ def test_runtime_bindings_are_validated_against_bootstrap_target_before_migratio
         channel_binding="require",
     )
     for login, _group, secret_name in SCOPED_LOGINS:
+        password = build_generation_bound_password(
+            nonce_hex=GENERATION,
+            entropy="p" * 64,
+        )
         monkeypatch.setenv(
             secret_name,
-            build_scoped_database_url(target, username=login, password="p" * 64),
+            build_scoped_database_url(target, username=login, password=password),
         )
-    accounts = bootstrap_module._runtime_accounts(expected_target=target)
+    accounts = bootstrap_module._runtime_accounts(
+        expected_target=target,
+        generation_nonce=GENERATION,
+    )
     assert [(login, group) for login, group, _password in accounts] == [
         (login, group) for login, group, _secret_name in SCOPED_LOGINS
     ]
@@ -211,24 +478,69 @@ def test_runtime_bindings_are_validated_against_bootstrap_target_before_migratio
     mismatched = replace(target, host="ep-other.eu-central-1.aws.neon.tech")
     monkeypatch.setenv(
         secret_name,
-        build_scoped_database_url(mismatched, username=login, password="q" * 64),
+        build_scoped_database_url(
+            mismatched,
+            username=login,
+            password=build_generation_bound_password(
+                nonce_hex=GENERATION,
+                entropy="q" * 64,
+            ),
+        ),
     )
     with pytest.raises(
         ChronosProductionError,
         match="CHRONOS_SCOPED_DATABASE_TARGET_MISMATCH",
     ):
-        bootstrap_module._runtime_accounts(expected_target=target)
+        bootstrap_module._runtime_accounts(
+            expected_target=target,
+            generation_nonce=GENERATION,
+        )
+    monkeypatch.setenv(
+        secret_name,
+        build_scoped_database_url(
+            target,
+            username=login,
+            password=build_generation_bound_password(
+                nonce_hex="cd" * 32,
+                entropy="q" * 64,
+            ),
+        ),
+    )
+    with pytest.raises(
+        ChronosProductionError,
+        match="CHRONOS_SCOPED_PASSWORD_GENERATION_MISMATCH",
+    ):
+        bootstrap_module._runtime_accounts(
+            expected_target=target,
+            generation_nonce=GENERATION,
+        )
     source = (ROOT / "scripts" / "chronos_production_bootstrap_v3.py").read_text(encoding="utf-8")
     migrate_source = source[source.index("def run_migrate") : source.index("def run_verify")]
     assert migrate_source.index("runtime_accounts = _runtime_accounts") < migrate_source.index(
-        "client = NeonClient(api_key)"
+        "client = NeonClient(api_key, effects=effect_counts)"
     )
     assert migrate_source.index("assert_exact_preflight_binding") < migrate_source.index(
-        "client = NeonClient(api_key)"
+        "client = NeonClient(api_key, effects=effect_counts)"
     )
-    assert migrate_source.index("recovery = client.branch") < migrate_source.index(
-        "_assert_recovery_branch_observation"
-    ) < migrate_source.index("prelock_observation = inspect_database")
+    assert (
+        migrate_source.index("recovery = client.branch")
+        < migrate_source.index("_assert_recovery_branch_observation")
+        < migrate_source.index("prelock_observation = inspect_database")
+    )
+
+
+def test_controlled_go_is_validated_and_copied_through_signed_migrate_and_verify() -> None:
+    source = (ROOT / "scripts" / "chronos_production_bootstrap_v3.py").read_text(encoding="utf-8")
+    migrate = source[source.index("def run_migrate") : source.index("def run_verify")]
+    verify = source[source.index("def run_verify") : source.index("def _safe_failure")]
+    assert migrate.index("controlled_go = validate_controlled_go_binding") < migrate.index(
+        "identity, _neon_observation = resolve_neon_identity"
+    )
+    assert migrate.count('"controlled_go": controlled_go') == 2
+    assert '"preflight_hash": artifact["preflight_hash"]' in migrate
+    assert verify.index("controlled_go = validate_controlled_go_binding") < verify.index("urls = {")
+    assert verify.count('"controlled_go": controlled_go') == 1
+    assert '"preflight_hash": preflight_chain_hash' in verify
 
 
 def test_dual_principal_provisions_roles_and_migrator_is_nocreaterole() -> None:
@@ -373,9 +685,7 @@ def test_mutating_neon_client_rejects_ambiguous_or_unbounded_json(
     content: bytes,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    session = _MutatingNeonSession(
-        _MutatingNeonResponse(status_code=200, content=content)
-    )
+    session = _MutatingNeonSession(_MutatingNeonResponse(status_code=200, content=content))
     monkeypatch.setattr(bootstrap_module.requests, "Session", lambda: session)
 
     client = NeonClient("synthetic-neon-key")
@@ -428,11 +738,14 @@ def test_recovery_branch_request_explicitly_forbids_compute_creation(
     monkeypatch.setattr(bootstrap_module.requests, "Session", lambda: session)
 
     client = NeonClient("synthetic-neon-key")
-    assert client.create_recovery_branch(
-        project_id="project-robin",
-        parent_branch_id="branch-production",
-        branch_name="chronos-pre-0015-recovery-20260830T000000Z",
-    ) == response
+    assert (
+        client.create_recovery_branch(
+            project_id="project-robin",
+            parent_branch_id="branch-production",
+            branch_name="chronos-pre-0015-recovery-20260830T000000Z",
+        )
+        == response
+    )
 
     assert session.calls[0]["json"] == {
         "endpoints": [],
@@ -704,9 +1017,7 @@ def test_recovery_point_allows_only_the_second_cross_run_branch(
 def test_recovery_point_accepts_readiness_on_the_twelfth_get(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    client = FakeRecoveryClient(
-        [_branch_fixture("branch-production", "production", default=True)]
-    )
+    client = FakeRecoveryClient([_branch_fixture("branch-production", "production", default=True)])
     observations = 0
 
     def delayed_branch(project_id: str, branch_id: str) -> dict[str, object]:
@@ -742,9 +1053,7 @@ def test_recovery_point_requires_get_branch_to_match_ready_post(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    client = FakeRecoveryClient(
-        [_branch_fixture("branch-production", "production", default=True)]
-    )
+    client = FakeRecoveryClient([_branch_fixture("branch-production", "production", default=True)])
 
     def divergent_branch(project_id: str, branch_id: str) -> dict[str, object]:
         client.branch_read_calls += 1
@@ -782,9 +1091,7 @@ def test_recovery_point_receipt_survives_readiness_failure(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    client = FakeRecoveryClient(
-        [_branch_fixture("branch-production", "production", default=True)]
-    )
+    client = FakeRecoveryClient([_branch_fixture("branch-production", "production", default=True)])
 
     def create_pending(**values: str) -> dict[str, object]:
         client.create_calls += 1
@@ -826,9 +1133,7 @@ def test_recovery_intent_receipt_survives_indeterminate_create_failure(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    client = FakeRecoveryClient(
-        [_branch_fixture("branch-production", "production", default=True)]
-    )
+    client = FakeRecoveryClient([_branch_fixture("branch-production", "production", default=True)])
 
     def indeterminate_create(**_values: str) -> dict[str, object]:
         client.create_calls += 1
@@ -859,9 +1164,7 @@ def test_recovery_intent_receipt_survives_missing_id_response(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    client = FakeRecoveryClient(
-        [_branch_fixture("branch-production", "production", default=True)]
-    )
+    client = FakeRecoveryClient([_branch_fixture("branch-production", "production", default=True)])
 
     def missing_id(**values: str) -> dict[str, object]:
         client.create_calls += 1
@@ -914,9 +1217,7 @@ def test_recovery_point_rejects_invalid_creation_response_after_post(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    client = FakeRecoveryClient(
-        [_branch_fixture("branch-production", "production", default=True)]
-    )
+    client = FakeRecoveryClient([_branch_fixture("branch-production", "production", default=True)])
     original_create = client.create_recovery_branch
 
     def invalid_create(**values: str) -> dict[str, object]:
@@ -952,9 +1253,7 @@ def test_recovery_point_records_and_rejects_endpoint_in_create_response(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    client = FakeRecoveryClient(
-        [_branch_fixture("branch-production", "production", default=True)]
-    )
+    client = FakeRecoveryClient([_branch_fixture("branch-production", "production", default=True)])
     original_create = client.create_recovery_branch
 
     def create_with_endpoint(**values: str) -> dict[str, object]:
@@ -998,9 +1297,7 @@ def test_recovery_point_preserves_unknown_endpoint_state_for_invalid_response(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    client = FakeRecoveryClient(
-        [_branch_fixture("branch-production", "production", default=True)]
-    )
+    client = FakeRecoveryClient([_branch_fixture("branch-production", "production", default=True)])
     original_create = client.create_recovery_branch
 
     def create_without_endpoint_contract(**values: str) -> dict[str, object]:
@@ -1038,9 +1335,7 @@ def test_recovery_point_rechecks_branch_endpoints_after_readiness(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    client = FakeRecoveryClient(
-        [_branch_fixture("branch-production", "production", default=True)]
-    )
+    client = FakeRecoveryClient([_branch_fixture("branch-production", "production", default=True)])
 
     def unexpected_branch_endpoints(
         _project_id: str,
@@ -1147,10 +1442,7 @@ def test_recovery_point_refuses_an_unbounded_branch_inventory_before_post() -> N
     client = FakeRecoveryClient(
         [
             _branch_fixture("branch-production", "production", default=True),
-            *[
-                _branch_fixture(f"branch-{index}", f"unrelated-{index}")
-                for index in range(1, 100)
-            ],
+            *[_branch_fixture(f"branch-{index}", f"unrelated-{index}") for index in range(1, 100)],
         ]
     )
 

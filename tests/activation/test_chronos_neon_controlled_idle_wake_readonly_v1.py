@@ -19,12 +19,7 @@ from robin.chronos_production import DirectPostgresTarget
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "scripts" / "chronos_neon_controlled_idle_wake_readonly_v1.py"
 BASE_SCRIPT = ROOT / "scripts" / "chronos_neon_pure_readonly_preflight_v4.py"
-WORKFLOW = (
-    ROOT
-    / ".github"
-    / "workflows"
-    / "chronos-neon-controlled-idle-wake-readonly-v1.yml"
-)
+WORKFLOW = ROOT / ".github" / "workflows" / "chronos-neon-controlled-idle-wake-readonly-v1.yml"
 GOLDEN = (
     ROOT
     / "tests"
@@ -70,9 +65,7 @@ class _IdleIdentitySession:
     def _endpoint(self) -> dict[str, Any]:
         endpoint: dict[str, Any] = {
             "id": "endpoint-production",
-            "project_id": (
-                "project-other" if self.project_id_mismatch else "project-production"
-            ),
+            "project_id": ("project-other" if self.project_id_mismatch else "project-production"),
             "branch_id": "branch-production",
             "host": "ep-synthetic.neon.tech",
             "type": "read_write",
@@ -93,13 +86,9 @@ class _IdleIdentitySession:
         query = parse_qs(parsed.query)
         self.paths.append(path)
         if path == "/auth":
-            return _Response(
-                {"account_id": "owner-production", "auth_method": "api_key_org"}
-            )
+            return _Response({"account_id": "owner-production", "auth_method": "api_key_org"})
         if path == "/organizations/owner-production":
-            return _Response(
-                {"id": "owner-production", "plan": self.billing_plan}
-            )
+            return _Response({"id": "owner-production", "plan": self.billing_plan})
         if path == "/projects":
             assert query["limit"] == [str(base.PROJECT_PAGE_LIMIT)]
             return _Response(
@@ -142,11 +131,7 @@ class _IdleIdentitySession:
                 {
                     "branches": [
                         {
-                            "id": (
-                                "branch-production"
-                                if index == 0
-                                else f"branch-{index}"
-                            ),
+                            "id": ("branch-production" if index == 0 else f"branch-{index}"),
                             "project_id": "project-production",
                             "name": "production" if index == 0 else f"branch-{index}",
                             "current_state": "ready",
@@ -159,9 +144,7 @@ class _IdleIdentitySession:
             )
         if path == "/projects/project-production/branches/count":
             return _Response({"count": self.branch_count})
-        if path == (
-            "/projects/project-production/branches/branch-production/endpoints"
-        ):
+        if path == ("/projects/project-production/branches/branch-production/endpoints"):
             endpoint = self._endpoint()
             endpoint["project_id"] = "project-production"
             return _Response({"endpoints": [endpoint]})
@@ -305,6 +288,11 @@ def _run_synthetic(
     monkeypatch.delenv("NEON_PROJECT_ID", raising=False)
     monkeypatch.delenv("NEON_ORG_ID", raising=False)
     monkeypatch.setattr(base, "_github_actions_state", lambda *_a, **_k: (0, 0, 1))
+    monkeypatch.setattr(
+        base,
+        "_github_authority_window_dispatch_count",
+        lambda *_a, **_k: 1,
+    )
     monkeypatch.setattr(base, "_validated_psycopg_url", lambda _dsn: (_dsn, _target()))
     monkeypatch.setattr(base, "NeonReadOnlyClient", lambda _key: object())
 
@@ -319,6 +307,7 @@ def _run_synthetic(
         _dsn: str,
         *,
         expected_postgresql_major: int,
+        expected_revisions: tuple[str, ...],
         before_connect: Any = None,
         after_connect: Any = None,
         inspection_audit: Any = None,
@@ -327,6 +316,10 @@ def _run_synthetic(
         calls += 1
         assert calls == 1
         assert expected_postgresql_major == (neon or _neon()).postgresql_major
+        assert expected_revisions == (
+            "0013_historical_evidence_index",
+            "0014_chronos_control_plane_v2",
+        )
         before_connect()
         if connection_error:
             raise base.PreflightNoGo(
@@ -341,23 +334,86 @@ def _run_synthetic(
     return controlled.run_preflight()
 
 
+def test_authority_window_counts_only_new_mission_dispatches(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    runs: list[dict[str, Any]] = [
+        {
+            "id": 11,
+            "event": "workflow_dispatch",
+            "head_branch": "main",
+            "head_sha": "b" * 40,
+            "run_attempt": 1,
+            "created_at": "2026-08-13T10:09:27Z",
+        },
+        {
+            "id": 1234,
+            "event": "workflow_dispatch",
+            "head_branch": "main",
+            "head_sha": "a" * 40,
+            "run_attempt": 1,
+            "created_at": "2026-08-30T07:00:00Z",
+        },
+    ]
+
+    def github_get(_path: str) -> dict[str, Any]:
+        return {"total_count": len(runs), "workflow_runs": list(runs)}
+
+    monkeypatch.setattr(base, "_github_get", github_get)
+    count = base._github_authority_window_dispatch_count(
+        base.EXPECTED_REPOSITORY,
+        1234,
+        "a" * 40,
+        workflow_file="chronos-neon-controlled-idle-wake-readonly-v1.yml",
+        not_before="2026-08-30T06:36:00Z",
+    )
+    assert count == 1
+    runs.append(
+        {
+            "id": 1235,
+            "event": "workflow_dispatch",
+            "head_branch": "main",
+            "head_sha": "c" * 40,
+            "run_attempt": 1,
+            "created_at": "2026-08-30T07:01:00Z",
+        }
+    )
+    assert (
+        base._github_authority_window_dispatch_count(
+            base.EXPECTED_REPOSITORY,
+            1234,
+            "a" * 40,
+            workflow_file="chronos-neon-controlled-idle-wake-readonly-v1.yml",
+            not_before="2026-08-30T06:36:00Z",
+        )
+        == 2
+    )
+
+
 def test_workflow_is_one_shot_bounded_and_environment_protected() -> None:
     document = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
     on = document.get("on", document.get(True))
     assert set(on) == {"workflow_dispatch"}
+    assert set(on["workflow_dispatch"]["inputs"]) == {"expected_main_sha"}
     assert document["permissions"] == {"actions": "read", "contents": "read"}
-    assert document["concurrency"]["cancel-in-progress"] is False
+    assert document["concurrency"] == {
+        "group": "chronos-data-torrent-production-global-v1",
+        "cancel-in-progress": False,
+    }
     job = document["jobs"]["preflight"]
     assert job["environment"] == "chronos-control-plane-production"
     live = next(step for step in job["steps"] if "run" in step and "timeout" in step["run"])
     assert "timeout --signal=TERM --kill-after=5s 120s" in live["run"]
-    module_entrypoint = (
-        "python -m scripts.chronos_neon_controlled_idle_wake_readonly_v1"
-    )
-    file_entrypoint = (
-        "python scripts/chronos_neon_controlled_idle_wake_readonly_v1.py"
-    )
+    module_entrypoint = "python -m scripts.chronos_neon_controlled_idle_wake_readonly_v1"
+    file_entrypoint = "python scripts/chronos_neon_controlled_idle_wake_readonly_v1.py"
     workflow_source = WORKFLOW.read_text(encoding="utf-8")
+    assert "scripts/check_chronos_github_hold_v3.py" in workflow_source
+    assert '--required-successful-ci-sha "$EXPECTED_MAIN_SHA"' in workflow_source
+    assert workflow_source.index("scripts/check_chronos_github_hold_v3.py") < (
+        workflow_source.index(module_entrypoint)
+    )
+    assert "ref: ${{ inputs.expected_main_sha }}" in workflow_source
+    assert "git/ref/heads/main" in workflow_source
     assert workflow_source.count(module_entrypoint) == 1
     assert file_entrypoint not in workflow_source
     assert live["working-directory"] == "${{ github.workspace }}"
@@ -365,23 +421,27 @@ def test_workflow_is_one_shot_bounded_and_environment_protected() -> None:
     assert live["env"]["GITHUB_TOKEN"] == "${{ github.token }}"
     assert "NEON_PROJECT_ID" not in live["env"]
     assert "NEON_ORG_ID" in live["env"]
-    guard = next(
-        step
-        for step in job["steps"]
-        if "chronos_live_path_artifact_guard_v1" in step.get("run", "")
+    secret_guard = next(step for step in job["steps"] if step.get("id") == "artifact_guard")
+    no_secret_guard = next(
+        step for step in job["steps"] if step.get("id") == "artifact_guard_no_secrets"
     )
     upload = next(step for step in job["steps"] if "upload-artifact@" in step.get("uses", ""))
-    assert guard["if"] == "always()"
-    assert guard["id"] == "artifact_guard"
-    assert set(guard["env"]) == {
+    assert secret_guard["if"] == ("${{ always() && steps.pre_effect_gate.outcome == 'success' }}")
+    assert set(secret_guard["env"]) == {
         "GITHUB_TOKEN",
         "NEON_API_KEY",
         "NEON_BOOTSTRAP_DATABASE_URL",
         "NEON_PROJECT_ID",
         "NEON_ORG_ID",
     }
-    assert 'steps.live_preflight.outcome' in guard["run"]
-    assert upload["if"] == "${{ always() && steps.artifact_guard.outcome == 'success' }}"
+    assert no_secret_guard["if"] == (
+        "${{ always() && steps.pre_effect_gate.outcome != 'success' }}"
+    )
+    assert "env" not in no_secret_guard
+    assert "steps.live_preflight.outcome" in secret_guard["run"]
+    assert "steps.live_preflight.outcome" in no_secret_guard["run"]
+    assert "steps.artifact_guard.outcome == 'success'" in upload["if"]
+    assert "steps.artifact_guard_no_secrets.outcome == 'success'" in upload["if"]
 
 
 def test_linux_module_entrypoint_smoke_runs_exact_command_from_repo_root() -> None:
@@ -493,9 +553,7 @@ def test_idle_connection_is_attempted_once_and_counted_as_one_wake(
     assert report["connection_attempt_count"] == 1
     assert report["compute_wake_events"] == 1
     assert report["lifecycle"]["identity_complete_before_wake"] is True
-    assert report["lifecycle"]["wake_verdict"] == (
-        "CONTROLLED_NEON_READONLY_WAKE_EXECUTED_ONCE"
-    )
+    assert report["lifecycle"]["wake_verdict"] == ("CONTROLLED_NEON_READONLY_WAKE_EXECUTED_ONCE")
 
 
 def test_active_endpoint_requires_no_wake(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -538,9 +596,8 @@ def test_active_connection_failure_uses_conservative_wake_upper_bound(
 @pytest.mark.parametrize(
     ("timeout", "classification", "effective"),
     [
-        (60, "FINITE_SCALE_TO_ZERO", 60),
-        (119, "FINITE_SCALE_TO_ZERO", 119),
         (300, "FINITE_SCALE_TO_ZERO", 300),
+        (604_800, "FINITE_SCALE_TO_ZERO", 604_800),
         (0, "DEFAULT_SCALE_TO_ZERO", 300),
     ],
 )
@@ -549,13 +606,14 @@ def test_scale_to_zero_finite_and_default_contracts(
     classification: str,
     effective: int,
 ) -> None:
-    assert controlled._scale_to_zero_contract(
-        _neon(suspend_timeout_seconds=timeout)
-    ) == (classification, effective)
+    assert controlled._scale_to_zero_contract(_neon(suspend_timeout_seconds=timeout)) == (
+        classification,
+        effective,
+    )
 
 
-@pytest.mark.parametrize("timeout", [-1])
-def test_scale_to_zero_refuses_always_active(timeout: int) -> None:
+@pytest.mark.parametrize("timeout", [-1, 60, 119, 299, 604_801])
+def test_scale_to_zero_refuses_unsafe_or_unbounded_timeout(timeout: int) -> None:
     with pytest.raises(base.PreflightNoGo) as caught:
         controlled._scale_to_zero_contract(_neon(suspend_timeout_seconds=timeout))
     assert caught.value.reason == "COMPUTE_RETURN_TO_IDLE_NOT_PROVEN"
@@ -598,7 +656,7 @@ def test_readonly_startup_options_and_first_sql_are_hard_contracts() -> None:
     [
         (_database(transaction_read_only=False), "direct_endpoint_not_proven"),
         (_database(ssl=False), "ssl_not_proven"),
-        (_database(revision="0014_chronos_control_plane_v2"), "unexpected_database_revision"),
+        (_database(revision="0015_data_torrent_opportunity"), "unexpected_database_revision"),
         (_database(revision="NOT_SINGLETON", revision_count=2), "unexpected_database_revision"),
         (_database(authority=False), "bootstrap_authority_insufficient"),
     ],
@@ -617,12 +675,22 @@ def test_database_no_go_gates_are_exact(
 def test_recovery_and_purchase_verdicts(monkeypatch: pytest.MonkeyPatch) -> None:
     ready = _run_synthetic(monkeypatch)
     assert ready["verdict"] == base.GO_VERDICT
-    assert ready["bootstrap_authority_verdict"] == (
-        "BOOTSTRAP_AUTHORITY_CAPABILITIES_PROVEN"
-    )
+    assert ready["bootstrap_authority_verdict"] == ("BOOTSTRAP_AUTHORITY_CAPABILITIES_PROVEN")
     assert ready["recovery_verdict"] == "NEON_RECOVERY_BRANCH_CREATION_FEASIBLE"
     assert ready["postgresql"]["current_revision"] == base.EXPECTED_REVISION
     assert ready["postgresql"]["revision_count"] == 1
+
+
+def test_controlled_go_accepts_both_bootstrap_predecessor_revisions(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    for revision in (
+        "0013_historical_evidence_index",
+        "0014_chronos_control_plane_v2",
+    ):
+        report = _run_synthetic(monkeypatch, database=_database(revision=revision))
+        assert report["verdict"] == base.GO_VERDICT
+        assert report["postgresql"]["current_revision"] == revision
 
 
 def test_hard_branch_capacity_exhaustion_is_not_misreported_as_purchase(
@@ -712,7 +780,7 @@ def test_golden_pack_has_all_required_scenarios() -> None:
         "TRANSACTION_READ_ONLY_FALSE",
         "SSL_FALSE",
         "EXPECTED_REVISION_0013",
-        "UNEXPECTED_REVISION_0014",
+        "EXPECTED_REVISION_0014",
         "MULTIPLE_ALEMBIC_REVISIONS",
         "BOOTSTRAP_AUTHORITY_SUFFICIENT",
         "BOOTSTRAP_AUTHORITY_INSUFFICIENT",

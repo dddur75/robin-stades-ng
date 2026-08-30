@@ -1,0 +1,32 @@
+{
+  "schema_version": "data-torrent-ready-v1-controlled-go-effect-contract-v1",
+  "mission_id": "data-torrent-ready-v1",
+  "parent_manifest_sha256": "22e64bb33bd54aeeb528a416c7f6d0ca1c0719a27677302b8065249923ca96e7",
+  "owner_directive_source_sha256": "c03e218ca8f69d30f3fe998f7534d3edb11e2ba71bdd3ca022ada7ee08a2295d",
+  "authority_relationship": "BOUNDED_EXECUTION_CONTRACT_WITHIN_PARENT_OWNER_AUTHORITY",
+  "expands_parent_authority": false,
+  "activation_requirement": "APPEND_ONLY_COUNCIL_RELEASE_AND_EXACT_GREEN_FINAL_SHA",
+  "classification": "DISTINCT_ENDPOINT_EXECUTION_STATE_REDESIGN",
+  "one_shot_not_before": "2026-08-30T06:36:00Z",
+  "latest_effect_admission_at": "2026-09-01T22:00:00Z",
+  "maximum_effect_runtime_seconds": 3600,
+  "maximum_effect_allocation": {
+    "controlled_workflow_dispatches": 1,
+    "controlled_workflow_run_attempt": 1,
+    "neon_control_plane_gets": 25,
+    "neon_control_plane_mutations": 0,
+    "neon_compute_wake_events": 1,
+    "postgresql_read_only_connection_attempts": 1,
+    "postgresql_connection_retries": 0,
+    "sql_statements": 25,
+    "sql_writes": 0,
+    "controlled_go_r2_immutable_puts": 1,
+    "controlled_go_r2_readback_gets": 2,
+    "controlled_go_r2_lists": 0,
+    "controlled_go_r2_deletes": 0,
+    "controlled_go_r2_overwrites": 0
+  },
+  "one_shot_policy": "NO_RERUN_AFTER_ANY_CONTROLLED_CONNECTION_OR_SEAL_PUT_ATTEMPT",
+  "downstream_authority": "INACTIVE_PENDING_EXACT_CONTROLLED_GO_AND_DURABLE_R2_SEAL",
+  "expires_at": "2026-09-01T23:59:59Z"
+}

@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 def test_linux_ci_proves_the_exact_runtime_lock_before_the_full_suite() -> None:
     workflow = yaml.safe_load(
-        (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+        (ROOT / ".github" / "workflows" / "ci-safe-v2.yml").read_text(encoding="utf-8")
     )
     steps = workflow["jobs"]["tests"]["steps"]
     lock_index = next(
@@ -29,3 +29,16 @@ def test_linux_ci_proves_the_exact_runtime_lock_before_the_full_suite() -> None:
     assert (
         "import boto3, psycopg, pypdf, requests, robin.data_torrent.runtime, sqlalchemy" in command
     )
+
+
+def test_safe_ci_is_a_secret_free_copy_of_the_quarantined_legacy_definition() -> None:
+    workflow_root = ROOT / ".github" / "workflows"
+    legacy_text = (workflow_root / "ci.yml").read_text(encoding="utf-8")
+    safe_text = (workflow_root / "ci-safe-v2.yml").read_text(encoding="utf-8")
+    assert "${{ secrets." not in legacy_text
+    assert "${{ secrets." not in safe_text
+    legacy = yaml.safe_load(legacy_text)
+    safe = yaml.safe_load(safe_text)
+    assert safe["name"] == "00 - Qualite continue SAFE V2"
+    legacy["name"] = safe["name"]
+    assert safe == legacy

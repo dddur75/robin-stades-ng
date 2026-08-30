@@ -26,6 +26,7 @@ from robin.capture.official_schedule_sources import (
     OfficialScheduleSourceError,
     fetch_official_schedule_source,
 )
+from robin.chronos_production import validate_data_torrent_authority
 from robin.data_torrent.claims import (
     ExternalEffectEventReceipt,
     ExternalEffectPermitReceipt,
@@ -370,6 +371,7 @@ def capture_official_sources(
 
         def observe_official_dispatch(_url: str) -> None:
             nonlocal attempted_reads
+            validate_data_torrent_authority()
             attempted_reads += 1
             counters.official_physical_reads += 1
 
@@ -765,6 +767,7 @@ def capture_odds_sources(
 
         def observe_provider_dispatch() -> None:
             nonlocal provider_dispatched
+            validate_data_torrent_authority()
             if provider_dispatched:
                 raise RuntimeError("DATA_TORRENT_PROVIDER_DUPLICATE_DISPATCH")
             counters.odds_provider_dispatches += 1
