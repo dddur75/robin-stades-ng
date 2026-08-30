@@ -10,9 +10,13 @@ authorize migration `0014`.
 The implementation is grounded in the current official Neon API reference and
 OpenAPI specification:
 
-- `GET /projects` lists projects and returns the next project cursor as
-  `pagination.cursor`:
-  <https://api-docs.neon.tech/reference/listprojects>.
+- `GET /projects` lists projects and returns `pagination.cursor`, which the
+  OpenAPI schema defines as the cursor marking the last item in the response:
+  <https://neon.com/api_spec/release/v2.json>.
+- Neon's official SDK stops project pagination when the response cursor is
+  absent or the returned project list is empty. This makes a validated empty
+  project page terminal even when the API echoes the preceding cursor:
+  <https://github.com/neondatabase/neon-pkgs/blob/dab454091225f3d55806b25e7ebd39bb8eecff60/packages/sdk/src/neon/paginate.ts>.
 - `GET /projects/{project_id}` returns scoped project details, including the
   project ID and owner information:
   <https://api-docs.neon.tech/reference/getproject>.
@@ -40,10 +44,11 @@ so the code makes no such claim.
 
 ## Candidate-first proof
 
-For each validated project page, the preflight validates the project IDs,
-owner IDs, duplicate prohibition, empty `unavailable_project_ids`, and project
-pagination structure. It then lists the endpoint inventory for every project on
-that page, in response order, before considering the next project cursor.
+For each project response, the preflight validates the project list, owner IDs,
+duplicate prohibition, empty `unavailable_project_ids`, and pagination
+structure. A validated empty project list terminates the walk before cursor
+cycle detection. For each nonempty page, it lists the endpoint inventory for
+every project in response order before considering the next project cursor.
 
 An endpoint becomes a candidate only when its case-normalized host equals the
 already validated DSN host exactly and its project, endpoint, and branch IDs are
@@ -51,11 +56,13 @@ valid and concordant. It must be `read_write`, disabled must be false, and the
 inventory must describe a non-pooled endpoint. Names, timestamps, regions,
 partial hosts, and list position are never selection signals.
 
-Zero matches permit cursor continuation. A repeated cursor still fails with
-`project_cursor_cycle`. More than one exact candidate on the current page fails
-with `positive_endpoint_match_not_unique`. If exactly one candidate exists, no
-later project page is requested; the preflight instead requires all of these
-positive witnesses:
+Zero matches permit cursor continuation. A repeated cursor on a nonempty page
+still fails with `project_cursor_cycle`; an empty terminal page may echo the
+preceding cursor. More than one exact candidate across the complete inventory
+fails with `positive_endpoint_match_not_unique`. One candidate is retained
+while later pages are read so that account-wide uniqueness and inventory
+exhaustiveness are proved. After terminal pagination, the preflight requires
+all of these positive witnesses:
 
 1. endpoint detail under the same project, with matching endpoint, project,
    branch, and host, and an active, enabled, non-pooled read-write state;
@@ -71,10 +78,10 @@ Only that complete chain yields
 
 ## Honest completeness and budgets
 
-A successful early witness reports
-`project_inventory_exhaustive=false` and
-`identity_proof_mode=POSITIVE_OWNERSHIP`. The report never labels an unrequested
-continuation as exhausted.
+A successful witness reports `project_inventory_exhaustive=true` and
+`identity_proof_mode=POSITIVE_OWNERSHIP`. Every continuation advertised by a
+nonempty page is requested; a validated empty terminal page is exhaustive even
+when its cursor echoes the preceding last-item marker.
 
 `MAX_NEON_GETS` remains 25 and automatic retry remains disabled. The worst-case
 reserved positive suffix is 6 GETs: one endpoint detail, one project detail, up
@@ -95,12 +102,13 @@ uniqueness.
 
 C4 verifies that page position, partial hosts, mismatched endpoint/project/
 branch fields, missing default status, and branch-endpoint disagreement all
-fail closed; a no-match cursor cycle cannot be ignored; incomplete project
-pagination is reported honestly; and reports contain only SHA-256 identity
-fingerprints. P0 and P1 are zero.
+fail closed; a nonempty cursor cycle cannot be ignored; unavailable projects
+and malformed pagination remain terminal; and reports contain only SHA-256
+identity fingerprints. P0 and P1 are zero.
 
 Before merge, Neon GET, Neon mutation, production SQL, R2, provider, purchase,
 secret update, variable update, and migration counters must all remain zero.
 After merge and green quiescent `main`, the manual read-only preflight may be
-dispatched exactly once for the exact new main SHA. Even a GO verdict only
-authorizes a later, separate migration decision.
+dispatched exactly once for the exact new main SHA only when separately
+authorized by an append-only C0 decision. Even a GO verdict only authorizes a
+later, separate migration decision.

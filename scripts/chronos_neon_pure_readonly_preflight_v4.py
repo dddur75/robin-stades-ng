@@ -1308,6 +1308,12 @@ def _list_projects_bounded(
                 gate="project_inventory_incomplete",
             )
             page_ids.append(project_id)
+        next_cursor = _project_page_cursor(document)
+        # Neon cursors identify the last returned item; the API can echo the
+        # previous cursor on the empty terminal page.  The official SDK also
+        # terminates on an empty item set even when a cursor remains present.
+        if not page_ids:
+            break
         page_fingerprint = _fingerprint("\x00".join(page_ids))
         if page_fingerprint in seen_pages:
             raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "project_pagination_invalid")
@@ -1327,7 +1333,6 @@ def _list_projects_bounded(
                 "NEON_PROJECT_IDENTITY_AMBIGUOUS",
                 "project_identity_discovery_budget_exceeded",
             )
-        next_cursor = _project_page_cursor(document)
         if next_cursor is None:
             break
         cursor_fingerprint = _fingerprint(next_cursor)
@@ -1917,6 +1922,22 @@ def _progressive_positive_candidate(
                 "project_identity_discovery_budget_exceeded",
             )
         next_cursor = _project_page_cursor(document)
+        # A successful empty page is the authoritative end of the walk even
+        # when Neon echoes the cursor that marked the preceding last item.
+        # Nonempty cursor repetition remains a fail-closed cycle below.
+        if not page_ids:
+            audit.project_inventory_exhaustive = True
+            client.require_get_budget(
+                len(audit.project_ids) + POSITIVE_WITNESS_GET_RESERVE,
+                "project_identity_discovery_budget_exceeded",
+            )
+            _count_owner_branches(client, audit)
+            if match is not None:
+                return match
+            raise PreflightNoGo(
+                "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+                "dsn_endpoint_match_missing",
+            )
         for index, (project, project_id) in enumerate(owned_on_page):
             remaining_on_page = len(owned_on_page) - index
             client.require_get_budget(

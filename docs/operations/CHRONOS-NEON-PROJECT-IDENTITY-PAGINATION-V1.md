@@ -4,7 +4,8 @@
 > The no-variable discovery ordering was superseded by
 > `CHRONOS-NEON-POSITIVE-PROJECT-OWNERSHIP-WITNESS-V1.md`: endpoint inventories
 > are now inspected for every project on the current page before a continuation
-> cursor is requested. The configured-project path is unchanged.
+> cursor is requested, and one candidate is retained until the complete project
+> inventory proves uniqueness. The configured-project path is unchanged.
 
 Project identity has two explicit, non-fallback paths.
 
@@ -14,9 +15,9 @@ Project identity has two explicit, non-fallback paths.
   enabled, non-pooled `read_write` endpoint whose host equals the already
   validated DSN target. The global `/projects` inventory is not called.
 - Without `NEON_PROJECT_ID`, use the superseding positive-ownership contract.
-  Global inventory completeness is no longer claimed or required after a
-  complete project-scoped positive witness. If no candidate is found on the
-  current page, the same bounded `pagination.cursor` guard applies unchanged.
+  Global inventory completeness is required before a retained project-scoped
+  positive witness may succeed. The bounded `pagination.cursor` guard applies
+  to every nonempty page.
 
 The official project page maximum is 400. The implementation keeps the global
 25-GET ceiling and reserves the complete remaining proof before each targeted
@@ -27,8 +28,12 @@ encoding, retained only as SHA-256 fingerprints for audit, and never written to
 the sanitized report. Project and branch pagination use separate parsers.
 
 `search` is not used as identity proof: Neon documents it as a partial project
-name-or-ID filter. A discovery inventory is complete only when continuation is
-absent and `unavailable_project_ids` is a valid empty list.
+name-or-ID filter. A discovery inventory is complete when
+`unavailable_project_ids` is a valid empty list and either continuation is
+absent or the validated project list is empty. Neon defines the project cursor
+as the marker for the last returned item, and its official SDK terminates on an
+empty item set even if the response still carries that cursor. A repeated
+cursor on a nonempty page remains `project_cursor_cycle`.
 
 The workflow remains manual-only. It performs no secret or variable update,
 has no mutating Neon method, issues no SQL write, and never runs migration
