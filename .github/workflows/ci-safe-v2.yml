@@ -1,4 +1,4 @@
-name: "00 - Qualite continue"
+name: "00 - Qualite continue SAFE V2"
 
 on:
   workflow_dispatch:

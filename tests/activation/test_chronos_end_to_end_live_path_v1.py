@@ -46,11 +46,7 @@ from tests.activation.test_chronos_neon_pure_readonly_preflight_v4 import (
 
 ROOT = Path(__file__).resolve().parents[2]
 LIVE_STRUCTURES = (
-    ROOT
-    / "tests"
-    / "activation"
-    / "fixtures"
-    / "chronos_neon_live_contract_structures_v1.json"
+    ROOT / "tests" / "activation" / "fixtures" / "chronos_neon_live_contract_structures_v1.json"
 )
 DSN = (
     "postgresql://synthetic_user:synthetic_password@"
@@ -63,10 +59,7 @@ _REAL_NEON_READONLY_CLIENT = base.NeonReadOnlyClient
 def test_loop53_mission_governance_is_exact_and_triple_keyed() -> None:
     manifest = json.loads(
         (
-            ROOT
-            / "configs"
-            / "execution"
-            / "chronos-residual-defect-extermination-v1.json"
+            ROOT / "configs" / "execution" / "chronos-residual-defect-extermination-v1.json"
         ).read_text(encoding="utf-8")
     )
     assert set(manifest) == {
@@ -104,13 +97,11 @@ def test_loop53_mission_governance_is_exact_and_triple_keyed() -> None:
     assert "CHRONOS_NEON_CONTROLLED_IDLE_WAKE_READONLY_V1" in dispatch_authority
     assert "GREEN_MERGED_MAIN_PAGES_QUIESCENCE" in dispatch_authority
     assert "FORBID_RERUN_31587004959" in dispatch_authority
+    assert "FORBID_SECOND_DISPATCH_6140e09cb38b5fecee5da85882aa8a879dbce780" in dispatch_authority
     assert (
-        "FORBID_SECOND_DISPATCH_6140e09cb38b5fecee5da85882aa8a879dbce780"
-        in dispatch_authority
+        "CHRONOS_LOOP53_MAXIMUM_25_NEON_GETS_ZERO_MUTATIONS"
+        in matrix["authorization"]["provider_calls"]
     )
-    assert "CHRONOS_LOOP53_MAXIMUM_25_NEON_GETS_ZERO_MUTATIONS" in matrix[
-        "authorization"
-    ]["provider_calls"]
     delivery_authority = matrix["authorization"]["chronos_loop53_delivery"]
     assert "CHRONOS_RESIDUAL_DEFECT_EXTERMINATION_V1" in delivery_authority
     assert "DP5_DP6_C4_P0_ZERO_P1_ZERO_SCORE_AT_LEAST_95" in delivery_authority
@@ -118,34 +109,24 @@ def test_loop53_mission_governance_is_exact_and_triple_keyed() -> None:
     assert "FORBID_SQUASH_REBASE_FORCE_PUSH_AND_BRANCH_DELETE" in delivery_authority
 
     schema = json.loads(
-        (ROOT / "configs" / "agents" / "agent-report-schema-v3.json").read_text(
-            encoding="utf-8"
-        )
+        (ROOT / "configs" / "agents" / "agent-report-schema-v3.json").read_text(encoding="utf-8")
     )
     assert "CHRONOS_LOOP53" in schema["properties"]["mission_id"]["enum"]
 
     inventory = json.loads(
-        (
-            ROOT
-            / "reports"
-            / "activation"
-            / "chronos-residual-defect-inventory-v1.json"
-        ).read_text(encoding="utf-8")
+        (ROOT / "reports" / "activation" / "chronos-residual-defect-inventory-v1.json").read_text(
+            encoding="utf-8"
+        )
     )
     defects = inventory["defects"]
     assert inventory["counts"]["discovered"] == len(defects)
-    assert inventory["counts"]["fixed"] == sum(
-        defect["status"] == "FIXED" for defect in defects
-    )
+    assert inventory["counts"]["fixed"] == sum(defect["status"] == "FIXED" for defect in defects)
     assert inventory["counts"]["known_live_reachable_defects"] == 0
     assert inventory["counts"]["known_untested_live_path_stages"] == 0
 
     certification = json.loads(
         (
-            ROOT
-            / "reports"
-            / "activation"
-            / "chronos-end-to-end-live-path-certification-v1.json"
+            ROOT / "reports" / "activation" / "chronos-end-to-end-live-path-certification-v1.json"
         ).read_text(encoding="utf-8")
     )
     assert certification["claim_id"] != inventory["claim_id"]
@@ -173,11 +154,7 @@ def test_sanitized_live_contract_fixture_never_claims_unobserved_raw_shape() -> 
             "raw_project_branch_endpoint_ids",
         )
     )
-    live = next(
-        item
-        for item in fixture["fixtures"]
-        if item["classification"] == "LIVE_SANITIZED"
-    )
+    live = next(item for item in fixture["fixtures"] if item["classification"] == "LIVE_SANITIZED")
     assert live["source_run"] == 31587004959
     assert live["unknown_raw_envelope_preserved"] is False
     assert "pagination_shape" not in live
@@ -244,9 +221,7 @@ def test_branch_pagination_cycle_is_recorded_without_cursor_exposure() -> None:
 
 def test_project_pagination_is_forward_compatible_but_semantically_strict() -> None:
     assert (
-        base._project_page_cursor(
-            {"pagination": {"cursor": "opaque", "request_id": "benign"}}
-        )
+        base._project_page_cursor({"pagination": {"cursor": "opaque", "request_id": "benign"}})
         == "opaque"
     )
 
@@ -291,10 +266,7 @@ def test_nested_unknown_continuation_semantics_fail_closed(
 
 def test_nested_unknown_metadata_without_continuation_semantics_is_accepted() -> None:
     assert (
-        base._project_page_cursor(
-            {"projects": [], "metadata": {"request_id": "synthetic"}}
-        )
-        is None
+        base._project_page_cursor({"projects": [], "metadata": {"request_id": "synthetic"}}) is None
     )
     for pagination in (
         {},
@@ -344,21 +316,27 @@ def test_branch_pagination_casing_cannot_hide_continuation(
 def test_documented_resource_maps_do_not_turn_identity_names_into_pagination() -> None:
     project_id = "next-generation-12345678"
     branch_id = "br-blinking-sun-12345678"
-    assert base._project_page_cursor(
-        {
-            "projects": [],
-            "unavailable_project_ids": [],
-            "applications": {project_id: ["vercel"]},
-            "integrations": {project_id: []},
-        }
-    ) is None
-    assert base._branch_page_cursor(
-        {
-            "branches": [],
-            "annotations": {branch_id: {}},
-        },
-        base.IdentityAudit("POSITIVE_ENDPOINT_WITNESS"),
-    ) is None
+    assert (
+        base._project_page_cursor(
+            {
+                "projects": [],
+                "unavailable_project_ids": [],
+                "applications": {project_id: ["vercel"]},
+                "integrations": {project_id: []},
+            }
+        )
+        is None
+    )
+    assert (
+        base._branch_page_cursor(
+            {
+                "branches": [],
+                "annotations": {branch_id: {}},
+            },
+            base.IdentityAudit("POSITIVE_ENDPOINT_WITNESS"),
+        )
+        is None
+    )
 
 
 def test_endpoint_inventory_rejects_duplicates_and_undocumented_pagination() -> None:
@@ -394,7 +372,13 @@ def test_branch_endpoint_inventory_rejects_any_foreign_branch_member() -> None:
         [_branch(project_id="project-a"), _branch(branch_id="branch-two", project_id="project-a")],
         [_branch(project_id="project-other")],
         [{**_branch(project_id="project-a"), "default": "false"}],
-        [{key: value for key, value in _branch(project_id="project-a").items() if key != "current_state"}],
+        [
+            {
+                key: value
+                for key, value in _branch(project_id="project-a").items()
+                if key != "current_state"
+            }
+        ],
     ],
 )
 def test_branch_inventory_rejects_identity_and_type_contradictions(
@@ -488,9 +472,7 @@ def _capacity_boundary_session(
     *,
     personal_admin: bool,
 ) -> _ScriptedNeonSession:
-    project_ids = ["project-a"] + [
-        f"project-{index}" for index in range(2, project_count + 1)
-    ]
+    project_ids = ["project-a"] + [f"project-{index}" for index in range(2, project_count + 1)]
     details = {project_id: _detail(project_id) for project_id in project_ids}
     branches = {
         project_id: [
@@ -584,9 +566,7 @@ def test_production_branch_with_a_parent_fails_before_connection(
 ) -> None:
     monkeypatch.delenv("NEON_PROJECT_ID", raising=False)
     session = _positive_witness_session("DISCOVERY_UNIQUE_ENDPOINT_MATCH")
-    session.branches["project-a"][0]["branches"][0]["parent_id"] = (
-        "unexpected-parent"
-    )
+    session.branches["project-a"][0]["branches"][0]["parent_id"] = "unexpected-parent"
     with pytest.raises(base.PreflightNoGo) as caught:
         base._resolve_neon_identity(_client(session), _synthetic_target())
     assert caught.value.reason == "NEON_PRODUCTION_BRANCH_AMBIGUOUS"
@@ -663,9 +643,7 @@ def test_positive_witness_rejects_project_owner_org_contradiction(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.delenv("NEON_PROJECT_ID", raising=False)
-    session = _positive_witness_session(
-        "FIRST_PAGE_ONE_PROJECT_EXACT_ENDPOINT_MATCH"
-    )
+    session = _positive_witness_session("FIRST_PAGE_ONE_PROJECT_EXACT_ENDPOINT_MATCH")
     session.project_pages[0]["projects"][0]["org_id"] = "owner-other"
     with pytest.raises(base.PreflightNoGo) as caught:
         base._resolve_neon_identity(_client(session), _synthetic_target())
@@ -851,6 +829,20 @@ def test_scale_to_zero_is_independent_of_finite_maximum_compute(
     assert timeout == 300
 
 
+def test_controlled_guard_accepts_each_bootstrap_predecessor_revision(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    for revision in (
+        "0013_historical_evidence_index",
+        "0014_chronos_control_plane_v2",
+    ):
+        report = _run_synthetic(
+            monkeypatch,
+            database=_database(revision=revision),
+        )
+        assert _valid_report(report) is True
+
+
 def _github_documents(run_id: int, sha: str) -> list[dict[str, object]]:
     return [
         {
@@ -867,6 +859,19 @@ def _github_documents(run_id: int, sha: str) -> list[dict[str, object]]:
                     "head_branch": "main",
                     "event": "workflow_dispatch",
                     "run_attempt": 1,
+                }
+            ],
+        },
+        {
+            "total_count": 1,
+            "workflow_runs": [
+                {
+                    "id": run_id,
+                    "head_sha": sha,
+                    "head_branch": "main",
+                    "event": "workflow_dispatch",
+                    "run_attempt": 1,
+                    "created_at": "2026-08-30T06:36:01Z",
                 }
             ],
         },
@@ -976,11 +981,7 @@ def test_github_state_rejects_malformed_authoritative_main_ref(
     monkeypatch.setattr(
         base,
         "_github_get",
-        lambda path: (
-            main_ref
-            if path.endswith("/git/ref/heads/main")
-            else next(documents)
-        ),
+        lambda path: main_ref if path.endswith("/git/ref/heads/main") else next(documents),
     )
     with pytest.raises(base.PreflightNoGo) as caught:
         base._github_actions_state("owner/repo", 42, "a" * 40)
@@ -1057,9 +1058,7 @@ def test_external_http_clients_disable_ambient_requests_configuration(
 def test_github_json_duplicate_keys_are_rejected(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    session = _RawJsonSession(
-        '{"total_count":1,"workflow_runs":[],"workflow_runs":[{"id":1}]}'
-    )
+    session = _RawJsonSession('{"total_count":1,"workflow_runs":[],"workflow_runs":[{"id":1}]}')
     monkeypatch.setenv("GITHUB_TOKEN", "synthetic-github-token")
     monkeypatch.setattr(base.requests, "Session", lambda: session)
     with pytest.raises(base.PreflightNoGo) as caught:
@@ -1195,12 +1194,8 @@ class _FakeCursor:
             base.SQL_STATEMENTS[base.SQL_DEFAULT_TRANSACTION_READ_ONLY]: [
                 {"default_transaction_read_only": "on"}
             ],
-            base.SQL_STATEMENTS[base.SQL_TRANSACTION_READ_ONLY]: [
-                {"transaction_read_only": "on"}
-            ],
-            base.SQL_STATEMENTS[base.SQL_STATEMENT_TIMEOUT]: [
-                {"statement_timeout": "15s"}
-            ],
+            base.SQL_STATEMENTS[base.SQL_TRANSACTION_READ_ONLY]: [{"transaction_read_only": "on"}],
+            base.SQL_STATEMENTS[base.SQL_STATEMENT_TIMEOUT]: [{"statement_timeout": "15s"}],
             base.SQL_STATEMENTS[base.SQL_LOCK_TIMEOUT]: [{"lock_timeout": "3s"}],
             base.SQL_STATEMENTS[base.SQL_SEARCH_PATH]: [{"search_path": "pg_catalog"}],
             base.SQL_STATEMENTS[base.SQL_IDENTITY]: [self.identity],
@@ -1235,9 +1230,7 @@ class _FakeCursor:
                     "authority_role_memberships_clean": True,
                 }
             ],
-            base.SQL_STATEMENTS[base.SQL_REVISION]: [
-                {"version_num": base.EXPECTED_REVISION}
-            ],
+            base.SQL_STATEMENTS[base.SQL_REVISION]: [{"version_num": base.EXPECTED_REVISION}],
             base.SQL_STATEMENTS[base.SQL_LIFECYCLE_ADMIN]: [
                 {
                     "rolcanlogin": True,
@@ -1361,10 +1354,7 @@ def test_catalog_proof_excludes_noncanonical_storage_replication_and_ddl_hooks()
         assert "pg_catalog.pg_statistic_ext" in statement
         assert "auto_dep.deptype='x'" in statement
         assert "auto_idx.indrelid=c.oid" in statement
-        assert (
-            "dep.refclassid='pg_catalog.pg_extension'::pg_catalog.regclass"
-            in statement
-        )
+        assert "dep.refclassid='pg_catalog.pg_extension'::pg_catalog.regclass" in statement
         assert "dep.classid='pg_catalog.pg_type'::pg_catalog.regclass" in statement
         assert "dep.classid='pg_catalog.pg_namespace'::pg_catalog.regclass" in statement
         assert "row_type.typarray" in statement
@@ -1531,9 +1521,7 @@ def test_pg_authid_column_only_visibility_is_an_authority_gate(
     def deny_password_column(statement: str) -> None:
         if statement == base.SQL_STATEMENTS[base.SQL_PRIVILEGED_CATALOG]:
             cursor.statements.append(statement)
-            raise base.psycopg.errors.InsufficientPrivilege(
-                "synthetic rolpassword denial"
-            )
+            raise base.psycopg.errors.InsufficientPrivilege("synthetic rolpassword denial")
         execute(statement)
 
     monkeypatch.setattr(cursor, "execute", deny_password_column)
@@ -1542,9 +1530,7 @@ def test_pg_authid_column_only_visibility_is_an_authority_gate(
     assert caught.value.reason == "BOOTSTRAP_AUTHORITY_INSUFFICIENT"
     assert caught.value.gate == "privileged_catalog_not_visible"
     assert caught.value.sanitized_postgresql_evidence is not None
-    assert caught.value.sanitized_postgresql_evidence[
-        "privileged_catalog_visible"
-    ] is False
+    assert caught.value.sanitized_postgresql_evidence["privileged_catalog_visible"] is False
     assert caught.value.effect_counts["sql_statement_count"] == 15
     assert caught.value.effect_counts["sql_statement_completed_count"] == 14
     report = controlled._controlled_no_go_report(
@@ -1552,9 +1538,7 @@ def test_pg_authid_column_only_visibility_is_an_authority_gate(
             caught.value.reason,
             caught.value.gate,
             sanitized_evidence=base._sanitized_neon(_neon()),
-            sanitized_postgresql_evidence=(
-                caught.value.sanitized_postgresql_evidence
-            ),
+            sanitized_postgresql_evidence=(caught.value.sanitized_postgresql_evidence),
             effect_counts=caught.value.effect_counts,
         ),
         controlled.ConnectionWakeAudit(
@@ -1603,12 +1587,7 @@ def test_primary_postgresql_gate_preserves_secondary_close_failure_evidence(
 
     assert caught.value.gate == "postgresql_target_identity_mismatch"
     assert caught.value.sanitized_postgresql_evidence is not None
-    assert (
-        caught.value.sanitized_postgresql_evidence[
-            "connection_close_completed"
-        ]
-        is False
-    )
+    assert caught.value.sanitized_postgresql_evidence["connection_close_completed"] is False
 
 
 def _run_boundary_integrated_main(
@@ -1711,7 +1690,7 @@ def test_full_live_path_replay_only_mocks_external_boundaries(
     [
         ("branch_ambiguity", "endpoint_detail_project_mismatch", None),
         ("ssl_false", "ssl_not_proven", base.SQL_TARGET_CLASSIFICATION_BEFORE_LOCK),
-        ("revision_0014", "unexpected_database_revision", base.SQL_LIFECYCLE_ADMIN),
+        ("revision_0015", "unexpected_database_revision", base.SQL_LIFECYCLE_ADMIN),
         (
             "bootstrap_insufficient",
             "bootstrap_authority_capabilities_insufficient",
@@ -1734,9 +1713,9 @@ def test_full_no_go_replays_stop_at_the_correct_gate(
         session = _IdleIdentitySession(project_id_mismatch=True)
     elif scenario == "ssl_false":
         overrides[base.SQL_STATEMENTS[base.SQL_SSL]] = [{"ssl": False}]
-    elif scenario == "revision_0014":
+    elif scenario == "revision_0015":
         overrides[base.SQL_STATEMENTS[base.SQL_REVISION]] = [
-            {"version_num": "0014_chronos_control_plane_v2"}
+            {"version_num": "0015_data_torrent_opportunity"}
         ]
     elif scenario == "bootstrap_insufficient":
         overrides[base.SQL_STATEMENTS[base.SQL_LIFECYCLE_ADMIN]] = [
@@ -1806,20 +1785,15 @@ def test_full_no_go_replays_stop_at_the_correct_gate(
             impossible_version["postgresql"]["postgresql_version_num"] = 999_999
             impossible_version["postgresql"]["postgresql_major_verified"] = True
             assert _valid_report(impossible_version) is False
-        elif scenario == "revision_0014":
+        elif scenario == "revision_0015":
             assert postgresql["ssl_verified"] is True
             assert postgresql["alembic_target_safe"] is True
-            assert postgresql["revision_class"] == (
-                "0014_chronos_control_plane_v2"
-            )
+            assert postgresql["revision_class"] == ("OTHER_OR_NON_SINGLETON")
             assert postgresql["revision_count"] == 1
         else:
             assert postgresql["revision_class"] == base.EXPECTED_REVISION
             assert postgresql["revision_count"] == 1
-            assert (
-                postgresql["bootstrap_authority_capabilities_proven"]
-                is False
-            )
+            assert postgresql["bootstrap_authority_capabilities_proven"] is False
 
 
 @pytest.mark.parametrize("ordinal", range(len(base.SQL_STATEMENTS)))
@@ -1839,18 +1813,16 @@ def test_every_sql_ordinal_failure_is_sanitized_counted_and_never_retried(
     assert effects["rollback_attempted"] == (0 if ordinal == 0 else 1)
     assert len(calls) == 1
     assert caught.value.sanitized_postgresql_evidence is not None
-    assert (
-        caught.value.sanitized_postgresql_evidence["inspection_failure_class"]
-        in {"SQL_EXECUTION_EXCEPTION", "ROLLBACK_EXCEPTION"}
-    )
+    assert caught.value.sanitized_postgresql_evidence["inspection_failure_class"] in {
+        "SQL_EXECUTION_EXCEPTION",
+        "ROLLBACK_EXCEPTION",
+    }
     report = controlled._controlled_no_go_report(
         base.PreflightNoGo(
             caught.value.reason,
             caught.value.gate,
             sanitized_evidence=base._sanitized_neon(_neon()),
-            sanitized_postgresql_evidence=(
-                caught.value.sanitized_postgresql_evidence
-            ),
+            sanitized_postgresql_evidence=(caught.value.sanitized_postgresql_evidence),
             effect_counts=caught.value.effect_counts,
         ),
         controlled.ConnectionWakeAudit(
@@ -1890,9 +1862,7 @@ def test_primary_sql_failure_survives_a_secondary_rollback_failure(
             caught.value.reason,
             caught.value.gate,
             sanitized_evidence=base._sanitized_neon(_neon()),
-            sanitized_postgresql_evidence=(
-                caught.value.sanitized_postgresql_evidence
-            ),
+            sanitized_postgresql_evidence=(caught.value.sanitized_postgresql_evidence),
             effect_counts=caught.value.effect_counts,
         ),
         controlled.ConnectionWakeAudit(
@@ -2095,9 +2065,7 @@ def test_wrong_cwd_and_wrong_python_modes_are_detected_offline(tmp_path: Path) -
         assert guard.returncode == 0, guard.stdout + guard.stderr
         recovered = json.loads(report.read_text(encoding="utf-8"))
         assert recovered["verdict"] == NO_GO_VERDICT
-        assert recovered["effects"]["postgresql_connection_attempts"] == (
-            expected_attempts
-        )
+        assert recovered["effects"]["postgresql_connection_attempts"] == (expected_attempts)
         assert recovered["effects"]["sql_statement_count"] == expected_sql
 
 
@@ -2156,11 +2124,7 @@ def test_exact_gnu_timeout_kills_a_term_resistant_child_within_bound() -> None:
             "1s",
             sys.executable,
             "-c",
-            (
-                "import signal,time; "
-                "signal.signal(signal.SIGTERM, signal.SIG_IGN); "
-                "time.sleep(30)"
-            ),
+            ("import signal,time; signal.signal(signal.SIGTERM, signal.SIG_IGN); time.sleep(30)"),
         ],
         cwd=ROOT,
         capture_output=True,
@@ -2173,31 +2137,27 @@ def test_exact_gnu_timeout_kills_a_term_resistant_child_within_bound() -> None:
 
 def test_live_guard_and_upload_use_one_exact_file_path() -> None:
     workflow_paths = (
-        ROOT
-        / ".github"
-        / "workflows"
-        / "chronos-neon-controlled-idle-wake-readonly-v1.yml",
-        ROOT
-        / ".github"
-        / "workflows"
-        / "chronos-neon-pure-readonly-preflight-v4.yml",
+        ROOT / ".github" / "workflows" / "chronos-neon-controlled-idle-wake-readonly-v1.yml",
+        ROOT / ".github" / "workflows" / "chronos-neon-pure-readonly-preflight-v4.yml",
     )
     for workflow_path in workflow_paths:
         workflow = yaml.safe_load(workflow_path.read_text(encoding="utf-8"))
         job = workflow["jobs"]["preflight"]
         steps = job["steps"]
         assert job["if"] == "${{ github.run_attempt == 1 }}"
-        assert steps[0]["name"] == "Refuser toute relance"
-        assert 'test "$GITHUB_RUN_ATTEMPT" = "1"' in steps[0]["run"]
-        setup = next(
-            step for step in steps if "actions/setup-python@" in step.get("uses", "")
+        assert steps[0]["name"].startswith("Refuser toute")
+        assert any(
+            check in steps[0]["run"]
+            for check in (
+                'test "$GITHUB_RUN_ATTEMPT" = "1"',
+                '[[ "$GITHUB_RUN_ATTEMPT" == "1" ]]',
+            )
         )
+        setup = next(step for step in steps if "actions/setup-python@" in step.get("uses", ""))
         assert "cache" not in setup["with"]
         live = next(step for step in steps if step.get("id") == "live_preflight")
         guard = next(step for step in steps if step.get("id") == "artifact_guard")
-        upload = next(
-            step for step in steps if "upload-artifact@" in step.get("uses", "")
-        )
+        upload = next(step for step in steps if "upload-artifact@" in step.get("uses", ""))
         live_path = live["run"].split("--report ", 1)[1].split()[0]
         guard_path = guard["run"].split("--report ", 1)[1].split()[0]
         assert live_path == guard_path == upload["with"]["path"]
@@ -2217,9 +2177,7 @@ def test_postgresql_profile_replay_checks_out_the_exact_pr_head() -> None:
     )
 
     reusable = yaml.safe_load(
-        (
-            ROOT / ".github" / "workflows" / "chronos-bootstrap-ci-v3.yml"
-        ).read_text(encoding="utf-8")
+        (ROOT / ".github" / "workflows" / "chronos-bootstrap-ci-v3.yml").read_text(encoding="utf-8")
     )
     triggers = reusable.get("on", reusable.get(True))
     assert triggers["workflow_call"]["inputs"]["checkout_ref"]["required"] is True
@@ -2231,21 +2189,14 @@ def test_postgresql_profile_replay_checks_out_the_exact_pr_head() -> None:
     ]
     assert len(checkouts) == 4
     assert all(
-        step["with"]["ref"] == "${{ inputs.checkout_ref || github.sha }}"
-        for step in checkouts
+        step["with"]["ref"] == "${{ inputs.checkout_ref || github.sha }}" for step in checkouts
     )
 
 
 def test_secret_mask_workflow_commands_escape_percent_cr_and_lf() -> None:
     for workflow_path in (
-        ROOT
-        / ".github"
-        / "workflows"
-        / "chronos-neon-controlled-idle-wake-readonly-v1.yml",
-        ROOT
-        / ".github"
-        / "workflows"
-        / "chronos-neon-pure-readonly-preflight-v4.yml",
+        ROOT / ".github" / "workflows" / "chronos-neon-controlled-idle-wake-readonly-v1.yml",
+        ROOT / ".github" / "workflows" / "chronos-neon-pure-readonly-preflight-v4.yml",
     ):
         workflow = yaml.safe_load(workflow_path.read_text(encoding="utf-8"))
         mask_step = next(
@@ -2282,7 +2233,7 @@ def test_artifact_guard_recovers_missing_invalid_and_secret_bearing_reports(
     path.write_bytes(b" " * (_MAX_REPORT_BYTES + 1))
     assert ensure_artifact(path) is False
     assert json.loads(path.read_text(encoding="utf-8"))["verdict"] == NO_GO_VERDICT
-    path.write_text("{\"oversized_integer\":" + "9" * 5_000 + "}", encoding="utf-8")
+    path.write_text('{"oversized_integer":' + "9" * 5_000 + "}", encoding="utf-8")
     assert ensure_artifact(path) is False
     assert json.loads(path.read_text(encoding="utf-8"))["verdict"] == NO_GO_VERDICT
     for field, malformed in (
@@ -2314,9 +2265,7 @@ def test_artifact_guard_recovers_missing_invalid_and_secret_bearing_reports(
 
 
 def test_controlled_technical_fallback_bounds_all_neon_gets() -> None:
-    report = controlled._conservative_technical_failure_report(
-        "unexpected_sanitized_failure"
-    )
+    report = controlled._conservative_technical_failure_report("unexpected_sanitized_failure")
     assert report["effect_counter_certainty"] == "CONSERVATIVE_UPPER_BOUNDS_ONLY"
     assert report["effects"]["neon_get_count"] == base.MAX_NEON_GETS
     assert _valid_report(report) is True
@@ -2405,10 +2354,7 @@ def test_artifact_guard_accepts_only_a_complete_synthetic_go(
         ),
         (
             '"project_id_sha256":',
-            (
-                '"project_id_sha256": "P0_DUPLICATE_KEY_SECRET_7x9", '
-                '"project_id_sha256":'
-            ),
+            ('"project_id_sha256": "P0_DUPLICATE_KEY_SECRET_7x9", "project_id_sha256":'),
         ),
     ],
 )
@@ -2478,9 +2424,7 @@ def test_guard_scans_normalized_configured_identifiers(
     monkeypatch.setenv(environment_name, padded)
     if environment_name == "NEON_ORG_ID":
         report["neon"]["owner_id_sha256"] = base._fingerprint(normalized)
-    report["neon"]["project_name_sha256"] = (
-        normalized + ("0" * 64)
-    )[:64]
+    report["neon"]["project_name_sha256"] = (normalized + ("0" * 64))[:64]
     assert _valid_report(report) is False
 
 
@@ -2603,9 +2547,7 @@ def test_pure_guard_accepts_configured_identity_and_all_secure_ssl_modes(
         github_in_progress_empty=True,
         github_dispatch_unique=True,
     )
-    profile = base._target_dsn_security_profile(
-        replace(_synthetic_target(), sslmode=sslmode)
-    )
+    profile = base._target_dsn_security_profile(replace(_synthetic_target(), sslmode=sslmode))
     monkeypatch.setenv(
         "NEON_BOOTSTRAP_DATABASE_URL",
         DSN.replace("sslmode=require", f"sslmode={sslmode}"),
@@ -2781,10 +2723,7 @@ def test_short_password_substrings_are_never_accepted_in_external_reports(
         report["neon"] = {field.split(".", 1)[1]: value}
     else:
         report[field] = value
-    assert (
-        _valid_report(report, report_schema=base.REPORT_SCHEMA)
-        is False
-    )
+    assert _valid_report(report, report_schema=base.REPORT_SCHEMA) is False
 
 
 @pytest.mark.parametrize(
@@ -2916,9 +2855,7 @@ def test_pure_guard_requires_active_endpoint_and_configured_identity_binding(
         queue_count=0,
         in_progress_count=0,
         dispatch_count=1,
-        dsn_security_profile=base._target_dsn_security_profile(
-            _synthetic_target()
-        ),
+        dsn_security_profile=base._target_dsn_security_profile(_synthetic_target()),
     )
     assert _valid_report(report, report_schema=base.REPORT_SCHEMA)
     report["neon"]["endpoint_state"] = "idle"
@@ -2967,16 +2904,22 @@ def test_artifact_guard_rejects_unlisted_no_go_gates(
 
 def test_artifact_guard_classifies_defensive_budget_gates() -> None:
     for controlled_schema in (False, True):
-        assert guard._no_go_phase(
-            "DIRECT_ENDPOINT_NOT_PROVEN",
-            "sql_budget_exhausted",
-            controlled=controlled_schema,
-        ) == "POSTGRESQL"
-    assert guard._no_go_phase(
-        "COMPUTE_WAKE_OR_CONNECTION_ATTEMPT_INDETERMINATE",
-        "production_postgresql_connection_attempt_not_unique",
-        controlled=True,
-    ) == "POSTGRESQL"
+        assert (
+            guard._no_go_phase(
+                "DIRECT_ENDPOINT_NOT_PROVEN",
+                "sql_budget_exhausted",
+                controlled=controlled_schema,
+            )
+            == "POSTGRESQL"
+        )
+    assert (
+        guard._no_go_phase(
+            "COMPUTE_WAKE_OR_CONNECTION_ATTEMPT_INDETERMINATE",
+            "production_postgresql_connection_attempt_not_unique",
+            controlled=True,
+        )
+        == "POSTGRESQL"
+    )
     assert (
         guard._no_go_phase(
             "COMPUTE_WAKE_OR_CONNECTION_ATTEMPT_INDETERMINATE",
@@ -3047,9 +2990,7 @@ def test_artifact_guard_binds_no_go_reason_gate_phase_and_exact_ledger(
         base.PreflightNoGo(
             "COMPUTE_RETURN_TO_IDLE_NOT_PROVEN",
             "compute_return_to_idle_not_proven",
-            sanitized_evidence=base._sanitized_neon(
-                replace(_neon(), suspend_timeout_seconds=-1)
-            ),
+            sanitized_evidence=base._sanitized_neon(replace(_neon(), suspend_timeout_seconds=-1)),
         ),
         controlled.ConnectionWakeAudit(),
     )
@@ -3115,10 +3056,13 @@ def test_artifact_guard_binds_no_go_reason_gate_phase_and_exact_ledger(
         "NEON_PROJECT_IDENTITY_AMBIGUOUS",
         "configured_project_invalid",
     )
-    assert _valid_report(
-        pre_get_project,
-        report_schema=base.REPORT_SCHEMA,
-    ) is True
+    assert (
+        _valid_report(
+            pre_get_project,
+            report_schema=base.REPORT_SCHEMA,
+        )
+        is True
+    )
     pre_get_organization = controlled._controlled_no_go_report(
         base.PreflightNoGo(
             "NEON_PROJECT_IDENTITY_AMBIGUOUS",
@@ -3146,9 +3090,9 @@ def test_artifact_guard_rejects_generic_postgresql_gate_over_specific_failure(
     assert report["failed_gate"] == "ssl_not_proven"
     assert _valid_report(report) is True
     partial_identity = deepcopy(report)
-    partial_identity["neon"] = base.IdentityAudit(
-        identity_path="BOUNDED_DISCOVERY"
-    ).sanitized(api_get_count=report["effects"]["neon_get_count"])
+    partial_identity["neon"] = base.IdentityAudit(identity_path="BOUNDED_DISCOVERY").sanitized(
+        api_get_count=report["effects"]["neon_get_count"]
+    )
     assert _valid_report(partial_identity) is False
     disguised = deepcopy(report)
     disguised["failed_gate"] = "postgresql_readonly_inspection_failed"
@@ -3168,9 +3112,7 @@ def test_artifact_guard_rejects_generic_postgresql_gate_over_specific_failure(
         monkeypatch,
         tmp_path / "terminal-passed",
         response_overrides={
-            base.SQL_STATEMENTS[base.SQL_DEFAULT_TRANSACTION_READ_ONLY]: [
-                {"unexpected": "on"}
-            ]
+            base.SQL_STATEMENTS[base.SQL_DEFAULT_TRANSACTION_READ_ONLY]: [{"unexpected": "on"}]
         },
     )
     assert terminal_passed["failed_gate"] == "postgresql_readonly_inspection_failed"
@@ -3202,9 +3144,7 @@ def test_artifact_guard_binds_row_missing_timeout_and_revision_unavailable(
         monkeypatch,
         tmp_path / "timeout",
         response_overrides={
-            base.SQL_STATEMENTS[base.SQL_STATEMENT_TIMEOUT]: [
-                {"statement_timeout": "garbage"}
-            ]
+            base.SQL_STATEMENTS[base.SQL_STATEMENT_TIMEOUT]: [{"statement_timeout": "garbage"}]
         },
     )
     assert timeout_invalid["failed_gate"] == "timeout_setting_invalid"

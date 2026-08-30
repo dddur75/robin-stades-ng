@@ -7,6 +7,7 @@ sanitized codes and never include response bodies, SQL parameters, or URLs.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import os
@@ -25,6 +26,7 @@ import psycopg
 import requests
 from psycopg import Connection
 
+import scripts.chronos_neon_pure_readonly_preflight_v4 as readonly_gate
 from robin.chronos_alembic import run_fenced_alembic
 from robin.chronos_production import (
     EXPECTED_AFTER_REVISION,
@@ -41,9 +43,12 @@ from robin.chronos_production import (
     connect_direct_postgres,
     generation_hash,
     preflight_hash,
+    require_generation_bound_password,
     require_hash,
     require_sha,
     sign_document,
+    validate_controlled_go_binding,
+    validate_data_torrent_authority,
     validate_direct_postgres_url,
     verify_signed_document,
 )
@@ -73,6 +78,7 @@ from robin.chronos_role_lifecycle import (
     set_permanent_bootstrap_authority,
     stable_migrator_role,
 )
+from robin.prospective_observatory.chronos_r2 import ChronosR2ConditionalStore
 from scripts.chronos_neon_pure_readonly_preflight_v4 import (
     NeonObservation,
     PreflightNoGo,
@@ -128,18 +134,96 @@ EXPECTED_TRIGGERS = (
 )
 
 
-def _connect_direct(database_url: str) -> Connection[Any]:
+def _connect_direct(
+    database_url: str,
+    *,
+    effects: BootstrapEffects | None = None,
+) -> Connection[Any]:
     """Seal every production connection against ambient libpq overrides."""
 
+    validate_data_torrent_authority()
+    if effects is not None:
+        effects.postgresql_connection_attempts += 1
     return connect_direct_postgres(database_url, connector=psycopg.connect)
 
 
 NO_VALUES_OBSERVED = False
 MAX_NEON_RESPONSE_BYTES = 1_000_000
+MAX_CONTROLLED_READONLY_ARTIFACT_BYTES = 1_048_576
+CONTROLLED_SEAL_WORKFLOW_PATH = ".github/workflows/chronos-controlled-go-durable-seal-v1.yml"
+CONTROLLED_GO_OBJECT_PREFIX = "data-torrent-ready-v1/control-plane/controlled-go"
+
+
+@dataclass(slots=True)
+class BootstrapEffects:
+    """External dispatch counters preserved on both success and failure."""
+
+    r2_operations: int = 0
+    r2_operations_exact: bool = True
+    neon_gets: int = 0
+    neon_gets_exact: bool = True
+    neon_posts: int = 0
+    neon_posts_exact: bool = True
+    postgresql_connection_attempts: int = 0
+    postgresql_connection_attempts_exact: bool = True
+    recovery_branch_creations_upper_bound: int = 0
+    recovery_branch_creations_exact: bool = True
+    migration_dispatches: int = 0
+    migration_dispatches_exact: bool = True
+    sql_statements_upper_bound: int = 0
+    sql_statements_exact: bool = True
+    sql_write_statements_upper_bound: int = 0
+    sql_write_statements_exact: bool = True
+
+    def mark_sql_upper_bound(self, *, statements: int, writes: int) -> None:
+        self.sql_statements_upper_bound = statements
+        self.sql_statements_exact = False
+        self.sql_write_statements_upper_bound = writes
+        self.sql_write_statements_exact = writes == 0
+
+    def snapshot(self) -> dict[str, object]:
+        exact = all(
+            (
+                self.r2_operations_exact,
+                self.neon_gets_exact,
+                self.neon_posts_exact,
+                self.postgresql_connection_attempts_exact,
+                self.recovery_branch_creations_exact,
+                self.migration_dispatches_exact,
+                self.sql_statements_exact,
+                self.sql_write_statements_exact,
+            )
+        )
+        return {
+            "effect_counter_certainty": (
+                "EXACT_DISPATCH_ACCOUNTING" if exact else "CONSERVATIVE_UPPER_BOUNDS"
+            ),
+            "r2_gets": self.r2_operations,
+            "r2_gets_exact": self.r2_operations_exact,
+            "r2_puts": 0,
+            "neon_gets": self.neon_gets,
+            "neon_gets_exact": self.neon_gets_exact,
+            "neon_posts": self.neon_posts,
+            "neon_posts_exact": self.neon_posts_exact,
+            "postgresql_connection_attempts": self.postgresql_connection_attempts,
+            "postgresql_connection_attempts_exact": (self.postgresql_connection_attempts_exact),
+            "recovery_branch_creations_upper_bound": (self.recovery_branch_creations_upper_bound),
+            "recovery_branch_creations_exact": self.recovery_branch_creations_exact,
+            "migration_dispatches": self.migration_dispatches,
+            "migration_dispatches_exact": self.migration_dispatches_exact,
+            "sql_statements_upper_bound": self.sql_statements_upper_bound,
+            "sql_statements_exact": self.sql_statements_exact,
+            "sql_write_statements_upper_bound": self.sql_write_statements_upper_bound,
+            "sql_write_statements_exact": self.sql_write_statements_exact,
+            "automatic_retries": 0,
+            "provider_calls": 0,
+            "purchases": 0,
+            "secret_values_observed": False,  # nosec B105 - boolean audit field.
+        }
+
+
 _NEON_SAFE_IDENTIFIER = re.compile(r"^[a-z0-9-]{1,60}$")
-_RECOVERY_BRANCH_NAME = re.compile(
-    rf"^{re.escape(RECOVERY_BRANCH_PREFIX)}[0-9]{{8}}T[0-9]{{6}}Z$"
-)
+_RECOVERY_BRANCH_NAME = re.compile(rf"^{re.escape(RECOVERY_BRANCH_PREFIX)}[0-9]{{8}}T[0-9]{{6}}Z$")
 _NEON_ALLOWED_ROUTES = (
     re.compile(r"^GET /projects\?limit=100$"),
     re.compile(r"^GET /projects/[^/?]+$"),
@@ -163,6 +247,28 @@ def _required_public(name: str) -> str:
     if not value:
         raise ChronosProductionError(f"CHRONOS_MISSING_CONTEXT:{name}")
     return value
+
+
+def _assert_bootstrap_dispatch_ordinal(*, mode: str, main_sha: str) -> None:
+    expected = {"PREFLIGHT": 1, "MIGRATE": 2, "VERIFY": 3}
+    if mode not in expected:
+        raise ChronosProductionError("CHRONOS_BOOTSTRAP_MODE_INVALID")
+    raw_run_id = _required_public("GITHUB_RUN_ID")
+    if not raw_run_id.isascii() or not raw_run_id.isdigit() or raw_run_id == "0":
+        raise ChronosProductionError("CHRONOS_BOOTSTRAP_RUN_ID_INVALID")
+    try:
+        queued, in_progress, dispatches = readonly_gate._github_actions_state(
+            EXPECTED_REPOSITORY,
+            int(raw_run_id),
+            main_sha,
+            workflow_file="chronos-production-bootstrap-v3.yml",
+        )
+    except Exception:
+        raise ChronosProductionError("CHRONOS_BOOTSTRAP_DISPATCH_HISTORY_INVALID") from None
+    if queued != 0 or in_progress != 0:
+        raise ChronosProductionError("CHRONOS_CONCURRENT_RUN_PRESENT")
+    if dispatches != expected[mode]:
+        raise ChronosProductionError("CHRONOS_BOOTSTRAP_DISPATCH_ORDINAL_MISMATCH")
 
 
 def _utc_now() -> datetime:
@@ -196,6 +302,7 @@ def _write_json(path: Path, document: dict[str, Any]) -> None:
 
 
 def _rows(connection: Connection[Any], statement: str) -> list[dict[str, Any]]:
+    validate_data_torrent_authority()
     with connection.cursor() as cursor:
         cursor.execute(statement)
         names = [column.name for column in cursor.description or ()]
@@ -203,6 +310,7 @@ def _rows(connection: Connection[Any], statement: str) -> list[dict[str, Any]]:
 
 
 def _scalar(connection: Connection[Any], statement: str) -> object:
+    validate_data_torrent_authority()
     with connection.cursor() as cursor:
         cursor.execute(statement)
         row = cursor.fetchone()
@@ -238,10 +346,7 @@ def _finite_json(value: object) -> bool:
     if isinstance(value, float):
         return math.isfinite(value)
     if isinstance(value, dict):
-        return all(
-            isinstance(key, str) and _finite_json(nested)
-            for key, nested in value.items()
-        )
+        return all(isinstance(key, str) and _finite_json(nested) for key, nested in value.items())
     if isinstance(value, list):
         return all(_finite_json(item) for item in value)
     return value is None or isinstance(value, (bool, int, str))
@@ -273,10 +378,11 @@ def _bounded_neon_response_bytes(response: requests.Response) -> bytes:
 class NeonClient:
     """Small Neon API client whose exceptions never include response bodies."""
 
-    def __init__(self, api_key: str) -> None:
+    def __init__(self, api_key: str, *, effects: BootstrapEffects | None = None) -> None:
         if not api_key:
             raise ChronosProductionError("CHRONOS_NEON_API_KEY_MISSING")
         self._api_key = api_key
+        self._effects = effects
         self._session = requests.Session()
         self._session.trust_env = False
 
@@ -290,6 +396,14 @@ class NeonClient:
         route = f"{method.upper()} {path}"
         if not any(pattern.fullmatch(route) for pattern in _NEON_ALLOWED_ROUTES):
             raise ChronosProductionError("CHRONOS_NEON_ROUTE_FORBIDDEN")
+        validate_data_torrent_authority()
+        if self._effects is not None:
+            if method.upper() == "GET":
+                self._effects.neon_gets += 1
+            elif method.upper() == "POST":
+                self._effects.neon_posts += 1
+                self._effects.recovery_branch_creations_upper_bound = 1
+                self._effects.recovery_branch_creations_exact = False
         try:
             response = self._session.request(
                 method.upper(),
@@ -307,9 +421,7 @@ class NeonClient:
             raise ChronosProductionError("CHRONOS_NEON_API_UNAVAILABLE") from None
         try:
             if not 200 <= response.status_code < 300:
-                raise ChronosProductionError(
-                    f"CHRONOS_NEON_API_HTTP_{response.status_code}"
-                )
+                raise ChronosProductionError(f"CHRONOS_NEON_API_HTTP_{response.status_code}")
             raw_document = _bounded_neon_response_bytes(response)
         except requests.RequestException:
             raise ChronosProductionError("CHRONOS_NEON_API_UNAVAILABLE") from None
@@ -353,9 +465,7 @@ class NeonClient:
     def endpoints(self, project_id: str) -> list[dict[str, Any]]:
         document = self.request("GET", f"/projects/{project_id}/endpoints")
         endpoints = document.get("endpoints")
-        if not isinstance(endpoints, list) or any(
-            not isinstance(item, dict) for item in endpoints
-        ):
+        if not isinstance(endpoints, list) or any(not isinstance(item, dict) for item in endpoints):
             raise ChronosProductionError("CHRONOS_NEON_ENDPOINT_LIST_INVALID")
         return [cast(dict[str, Any], item) for item in endpoints]
 
@@ -369,9 +479,7 @@ class NeonClient:
             f"/projects/{project_id}/branches/{branch_id}/endpoints",
         )
         endpoints = document.get("endpoints")
-        if not isinstance(endpoints, list) or any(
-            not isinstance(item, dict) for item in endpoints
-        ):
+        if not isinstance(endpoints, list) or any(not isinstance(item, dict) for item in endpoints):
             raise ChronosProductionError("CHRONOS_NEON_ENDPOINT_LIST_INVALID")
         return [cast(dict[str, Any], item) for item in endpoints]
 
@@ -390,7 +498,7 @@ class NeonClient:
                 "branch": {
                     "name": branch_name,
                     "parent_id": parent_branch_id,
-                }
+                },
             },
         )
 
@@ -405,7 +513,13 @@ class NeonClient:
 def resolve_neon_identity(
     api_key: str,
     target: DirectPostgresTarget,
+    *,
+    effects: BootstrapEffects | None = None,
 ) -> tuple[NeonIdentity, NeonObservation]:
+    previous_gets = 0 if effects is None else effects.neon_gets
+    if effects is not None:
+        effects.neon_gets = previous_gets + 25
+        effects.neon_gets_exact = False
     try:
         observed = resolve_neon_identity_readonly(
             api_key,
@@ -413,7 +527,14 @@ def resolve_neon_identity(
             allow_idle=True,
         )
     except PreflightNoGo as error:
+        if effects is not None:
+            observed_gets = error.effect_counts.get("neon_get_count")
+            if type(observed_gets) is int and 0 <= observed_gets <= 25:
+                effects.neon_gets = previous_gets + observed_gets
         raise ChronosProductionError(f"{error.reason}:{error.gate}") from None
+    if effects is not None:
+        effects.neon_gets = previous_gets + observed.api_get_count
+        effects.neon_gets_exact = True
     return (
         NeonIdentity(
             project_id=observed.project_id,
@@ -445,9 +566,7 @@ def _assert_recovery_branch_observation(
         if expected_name is not None
         else isinstance(name, str) and name.startswith(RECOVERY_BRANCH_PREFIX)
     )
-    state_matches = state == "ready" or (
-        allow_transition and state in {"creating", "init"}
-    )
+    state_matches = state == "ready" or (allow_transition and state in {"creating", "init"})
     pending_state_matches = pending_state is None or (
         allow_transition
         and state != "ready"
@@ -491,15 +610,16 @@ def create_recovery_point(
         for branch in branch_inventory
     )
     default_ids = [
-        str(branch.get("id", ""))
-        for branch in branch_inventory
-        if branch.get("default") is True
+        str(branch.get("id", "")) for branch in branch_inventory if branch.get("default") is True
     ]
-    production_ready = sum(
-        branch.get("id") == identity.production_branch_id
-        and branch.get("current_state") == "ready"
-        for branch in branch_inventory
-    ) == 1
+    production_ready = (
+        sum(
+            branch.get("id") == identity.production_branch_id
+            and branch.get("current_state") == "ready"
+            for branch in branch_inventory
+        )
+        == 1
+    )
     if (
         not structurally_valid
         or len(branch_inventory) != expected_branch_count
@@ -508,9 +628,7 @@ def create_recovery_point(
         or default_ids != [identity.production_branch_id]
         or not production_ready
     ):
-        raise ChronosProductionError(
-            "CHRONOS_RECOVERY_BRANCH_INVENTORY_INCOMPLETE"
-        )
+        raise ChronosProductionError("CHRONOS_RECOVERY_BRANCH_INVENTORY_INCOMPLETE")
     recovery_branches = [
         branch
         for branch in branch_inventory
@@ -573,9 +691,7 @@ def create_recovery_point(
             ),
             "create_response_observed": True,
             "endpoint_count_in_create_response": endpoint_count,
-            "endpoint_created": (
-                bool(endpoint_count) if endpoint_count is not None else None
-            ),
+            "endpoint_created": (bool(endpoint_count) if endpoint_count is not None else None),
         }
     )
     if receipt_path is not None:
@@ -609,6 +725,10 @@ def create_recovery_point(
         expected_name=name,
         allow_transition=True,
     )
+    client_effects = getattr(client, "_effects", None)
+    if isinstance(client_effects, BootstrapEffects):
+        client_effects.recovery_branch_creations_upper_bound = 1
+        client_effects.recovery_branch_creations_exact = True
     receipt.update(
         {
             "verdict": "NEON_RECOVERY_POINT_CREATED_PENDING_VERIFICATION",
@@ -670,9 +790,13 @@ def create_recovery_point(
     return receipt
 
 
-def inspect_database(database_url: str) -> dict[str, Any]:
+def inspect_database(
+    database_url: str,
+    *,
+    effects: BootstrapEffects | None = None,
+) -> dict[str, Any]:
     target = validate_direct_postgres_url(database_url)
-    with _connect_direct(database_url) as connection:
+    with _connect_direct(database_url, effects=effects) as connection:
         revision = _scalar(
             connection,
             "SELECT version_num FROM public.alembic_version",
@@ -810,7 +934,7 @@ def _assert_post_merge_ci_binding(hold: Mapping[str, Any], *, main_sha: str) -> 
     proof = hold.get("post_merge_ci")
     if (
         not isinstance(proof, dict)
-        or proof.get("workflow_path") != ".github/workflows/ci.yml"
+        or proof.get("workflow_path") != ".github/workflows/ci-safe-v2.yml"
         or type(proof.get("run_id")) is not int
         or proof.get("run_attempt") != 1
         or proof.get("head_sha") != main_sha
@@ -818,24 +942,414 @@ def _assert_post_merge_ci_binding(hold: Mapping[str, Any], *, main_sha: str) -> 
         or proof.get("event") != "push"
         or proof.get("status") != "completed"
         or proof.get("conclusion") != "success"
+        or hold.get("legacy_secret_branch_sha") != main_sha
+        or hold.get("legacy_ci_workflow_quarantine")
+        != {
+            "workflow_id": 319500816,
+            "workflow_path": ".github/workflows/ci.yml",
+            "state": "disabled_manually",
+        }
+        or hold.get("production_environment_policy")
+        != {
+            "environment": "chronos-control-plane-production",
+            "can_admins_bypass": False,
+            "protected_branches": False,
+            "custom_branch_policies": True,
+            "allowed_branches": ["main"],
+        }
     ):
         raise ChronosProductionError("CHRONOS_POST_MERGE_CI_NOT_PROVEN")
     return cast(dict[str, Any], proof)
 
 
-def run_preflight(report_dir: Path) -> dict[str, Any]:
+def _controlled_readonly_go(
+    path: Path,
+    *,
+    expected_main_sha: str,
+    expected_run_id: str,
+) -> dict[str, Any]:
+    """Require the exact controlled read-only GO before any mutable boundary."""
+
+    if not expected_run_id.isascii() or not expected_run_id.isdigit() or expected_run_id == "0":
+        raise ChronosProductionError("CHRONOS_CONTROLLED_READONLY_RUN_ID_INVALID")
+    try:
+        payload = path.read_bytes()
+    except OSError:
+        raise ChronosProductionError("CHRONOS_CONTROLLED_READONLY_ARTIFACT_INVALID") from None
+    if not payload or len(payload) > MAX_CONTROLLED_READONLY_ARTIFACT_BYTES or path.is_symlink():
+        raise ChronosProductionError("CHRONOS_CONTROLLED_READONLY_ARTIFACT_INVALID")
+    try:
+        raw = json.loads(
+            payload.decode("utf-8"),
+            object_pairs_hook=_unique_json_object,
+        )
+    except (RecursionError, UnicodeDecodeError, ValueError):
+        raise ChronosProductionError("CHRONOS_CONTROLLED_READONLY_ARTIFACT_INVALID") from None
+    if not isinstance(raw, dict) or not _finite_json(raw):
+        raise ChronosProductionError("CHRONOS_CONTROLLED_READONLY_ARTIFACT_INVALID")
+    report = cast(dict[str, Any], raw)
+    source = report.get("source")
+    checks = report.get("checks")
+    github = report.get("github_actions")
+    neon = report.get("neon")
+    postgresql = report.get("postgresql")
+    lifecycle = report.get("lifecycle")
+    effects = report.get("effects")
+    mappings = (source, checks, github, neon, postgresql, lifecycle, effects)
+    if any(not isinstance(value, dict) for value in mappings):
+        raise ChronosProductionError("CHRONOS_CONTROLLED_READONLY_GO_NOT_PROVEN")
+    source = cast(dict[str, Any], source)
+    checks = cast(dict[str, Any], checks)
+    github = cast(dict[str, Any], github)
+    neon = cast(dict[str, Any], neon)
+    postgresql = cast(dict[str, Any], postgresql)
+    lifecycle = cast(dict[str, Any], lifecycle)
+    effects = cast(dict[str, Any], effects)
+
+    expected_checks = {
+        "secrets_present": True,
+        "project_identity_verified": True,
+        "production_branch_verified": True,
+        "direct_endpoint_verified": True,
+        "ssl_verified": True,
+        "expected_revision_verified": True,
+        "bootstrap_authority_plausible": True,
+        "recovery_branch_feasible": True,
+        "purchase_required": False,
+        "github_queue_empty": True,
+        "github_in_progress_empty": True,
+        "github_dispatch_unique": True,
+    }
+    expected_zero_effects = {
+        "neon_mutations",
+        "production_sql_writes",
+        "recovery_branch_creations",
+        "role_creations",
+        "migration_0014",
+        "r2_operations",
+        "provider_calls",
+        "purchases",
+        "sensitive_values_exposed",
+        "postgresql_retries",
+        "sql_write_count",
+    }
+    source_valid = source == {
+        "repository": EXPECTED_REPOSITORY,
+        "ref": EXPECTED_REF,
+        "main_sha": expected_main_sha,
+        "run_id": expected_run_id,
+        "run_attempt": "1",
+    }
+    neon_get_count = neon.get("api_get_count")
+    statement_count = postgresql.get("sql_statement_count")
+    sql_read_count = postgresql.get("sql_read_count")
+    configured_timeout = lifecycle.get("configured_suspend_timeout_seconds")
+    effective_timeout = lifecycle.get("effective_suspend_timeout_seconds")
+    endpoint_state = neon.get("endpoint_state")
+    lifecycle_timeout_valid = (
+        type(effective_timeout) is int
+        and 300 <= effective_timeout <= 604_800
+        and (
+            (
+                configured_timeout == 0
+                and lifecycle.get("scale_to_zero_classification") == "DEFAULT_SCALE_TO_ZERO"
+                and effective_timeout == 300
+            )
+            or (
+                type(configured_timeout) is int
+                and 300 <= configured_timeout <= 604_800
+                and lifecycle.get("scale_to_zero_classification") == "FINITE_SCALE_TO_ZERO"
+                and effective_timeout == configured_timeout
+            )
+        )
+    )
+    postgresql_valid = (
+        postgresql.get("current_revision") in EXPECTED_BEFORE_REVISIONS
+        and postgresql.get("revision_count") == 1
+        and postgresql.get("database_target_verified") is True
+        and postgresql.get("principal_target_verified") is True
+        and postgresql.get("ssl_verified") is True
+        and postgresql.get("default_transaction_read_only") is True
+        and postgresql.get("transaction_read_only") is True
+        and postgresql.get("statement_timeout_ms") == 15_000
+        and postgresql.get("lock_timeout_ms") == 3_000
+        and postgresql.get("bootstrap_authority_plausible") is True
+        and postgresql.get("bootstrap_targets_valid") is True
+        and postgresql.get("chronos_inventory_classification") == "ABSENT"
+        and postgresql.get("existing_chronos_roles") == []
+        and postgresql.get("existing_chronos_memberships") == []
+        and postgresql.get("existing_chronos_objects") == []
+        and postgresql.get("connection_attempt_count") == 1
+        and type(statement_count) is int
+        and 1 <= statement_count <= 25
+        and postgresql.get("sql_statement_completed_count") == statement_count
+        and type(sql_read_count) is int
+        and 1 <= sql_read_count <= statement_count
+        and postgresql.get("sql_read_attempt_count") == sql_read_count
+        and postgresql.get("sql_write_count") == 0
+        and postgresql.get("begin_read_only_attempted") == 1
+        and postgresql.get("begin_read_only_completed") == 1
+        and postgresql.get("rollback_attempted") == 1
+        and postgresql.get("rollback_completed") == 1
+    )
+    lifecycle_valid = (
+        endpoint_state in {"active", "idle"}
+        and lifecycle.get("endpoint_pre_wake_state") == endpoint_state
+        and lifecycle_timeout_valid
+        and lifecycle.get("identity_complete_before_wake") is True
+        and lifecycle.get("connection_attempt_count") == 1
+        and lifecycle.get("connection_succeeded") is True
+        and lifecycle.get("compute_wake_events") == 1
+        and lifecycle.get("maximum_preflight_wall_clock_seconds") == 120
+        and lifecycle.get("post_preflight_endpoint_state") == "NOT_POLLED"
+        and lifecycle.get("automatic_return_to_idle") == "CONFIGURATION_PROVEN_NOT_WAITED_FOR"
+    )
+    effects_valid = (
+        all(effects.get(key) == 0 for key in expected_zero_effects)
+        and type(neon_get_count) is int
+        and 1 <= neon_get_count <= 25
+        and effects.get("neon_get_count") == neon_get_count
+        and effects.get("postgresql_connection_attempts") == 1
+        and effects.get("postgresql_connection_successes") == 1
+        and effects.get("compute_wake_events") == 1
+        and effects.get("sql_statement_count") == statement_count
+        and effects.get("sql_statement_completed_count") == statement_count
+        and effects.get("sql_read_count") == sql_read_count
+        and effects.get("sql_read_attempt_count") == sql_read_count
+        and effects.get("begin_read_only_attempted") == 1
+        and effects.get("begin_read_only_completed") == 1
+        and effects.get("rollback_attempted") == 1
+        and effects.get("rollback_completed") == 1
+    )
+    if not (
+        source_valid
+        and report.get("schema_version") == "chronos-neon-controlled-idle-wake-readonly-v1"
+        and report.get("verdict") == "CHRONOS_NEON_MIGRATION_READY_FOR_SEPARATE_AUTHORIZATION"
+        and report.get("reason") is None
+        and report.get("failed_gate") is None
+        and report.get("architecture_verdict") == "NEON_IDENTITY_AND_ENDPOINT_STATE_DECOUPLED"
+        and report.get("database_verdict") == "CHRONOS_NEON_DATABASE_READONLY_PREFLIGHT_PROVEN"
+        and report.get("global_verdict")
+        == "CHRONOS_NEON_CONTROLLED_WAKE_AND_READONLY_PREFLIGHT_CLOSED"
+        and report.get("dsn_contract_verdict")
+        == "NEON_BOOTSTRAP_DSN_MATCHES_CURRENT_SECURE_CONTRACT"
+        and report.get("effect_counter_certainty") == "OBSERVED"
+        and report.get("control_plane_start_api_used") is False
+        and report.get("purchase_required") is False
+        and report.get("recovery_verdict") == "NEON_RECOVERY_BRANCH_CREATION_FEASIBLE"
+        and checks == expected_checks
+        and github.get("queued") == 0
+        and github.get("in_progress") == 0
+        and github.get("exact_main_dispatch_count") == 1
+        and github.get("authority_window_dispatch_count") == 1
+        and github.get("current_run_excluded") == int(expected_run_id)
+        and neon.get("project_identity_verdict") == "POSITIVE_PROJECT_OWNERSHIP_WITNESS_PROVEN"
+        and neon.get("neon_project_identity_verdict") == "NEON_PROJECT_IDENTITY_PROVEN"
+        and neon.get("project_inventory_exhaustive") is True
+        and neon.get("cursor_cycle_encountered") is False
+        and neon.get("production_branch_default") is True
+        and neon.get("branch_state") == "ready"
+        and neon.get("branch_capacity_proven") is True
+        and neon.get("bill_free_branch_capacity_proven") is True
+        and neon.get("api_post_count") == 0
+        and neon.get("api_put_count") == 0
+        and neon.get("api_patch_count") == 0
+        and neon.get("api_delete_count") == 0
+        and postgresql_valid
+        and lifecycle_valid
+        and effects_valid
+    ):
+        raise ChronosProductionError("CHRONOS_CONTROLLED_READONLY_GO_NOT_PROVEN")
+    return {
+        "schema_version": str(report["schema_version"]),
+        "run_id": expected_run_id,
+        "run_attempt": "1",
+        "main_sha": expected_main_sha,
+        "artifact_sha256": hashlib.sha256(payload).hexdigest(),
+        "endpoint_pre_wake_state": str(endpoint_state),
+        "compute_wake_events": 1,
+        "postgresql_connection_attempts": 1,
+        "production_sql_writes": 0,
+        "neon_mutations": 0,
+    }
+
+
+def _controlled_go_durable_binding(
+    seal_path: Path,
+    controlled_path: Path,
+    controlled: Mapping[str, Any],
+    *,
+    expected_main_sha: str,
+    expected_controlled_run_id: str,
+    expected_seal_run_id: str,
+    store: ChronosR2ConditionalStore | None = None,
+    effects: BootstrapEffects | None = None,
+) -> dict[str, Any]:
+    """Require an immutable seal receipt and re-read its exact R2 object."""
+
+    if (
+        not expected_seal_run_id.isascii()
+        or not expected_seal_run_id.isdigit()
+        or expected_seal_run_id == "0"
+    ):
+        raise ChronosProductionError("CHRONOS_CONTROLLED_SEAL_RUN_ID_INVALID")
+    try:
+        payload = seal_path.read_bytes()
+        controlled_bytes = controlled_path.read_bytes()
+    except OSError:
+        raise ChronosProductionError("CHRONOS_CONTROLLED_SEAL_ARTIFACT_INVALID") from None
+    if (
+        not payload
+        or len(payload) > MAX_CONTROLLED_READONLY_ARTIFACT_BYTES
+        or seal_path.is_symlink()
+    ):
+        raise ChronosProductionError("CHRONOS_CONTROLLED_SEAL_ARTIFACT_INVALID")
+    try:
+        raw = json.loads(
+            payload.decode("utf-8"),
+            object_pairs_hook=_unique_json_object,
+        )
+    except (RecursionError, UnicodeDecodeError, ValueError):
+        raise ChronosProductionError("CHRONOS_CONTROLLED_SEAL_ARTIFACT_INVALID") from None
+    if not isinstance(raw, dict) or not _finite_json(raw):
+        raise ChronosProductionError("CHRONOS_CONTROLLED_SEAL_ARTIFACT_INVALID")
+    receipt = cast(dict[str, Any], raw)
+    source = receipt.get("source")
+    binding = receipt.get("controlled_go")
+    github = receipt.get("github_actions")
+    receipt_effects = receipt.get("effects")
+    if not all(isinstance(value, dict) for value in (source, binding, github, receipt_effects)):
+        raise ChronosProductionError("CHRONOS_CONTROLLED_GO_DURABILITY_NOT_PROVEN")
+    source = cast(dict[str, Any], source)
+    binding = cast(dict[str, Any], binding)
+    github = cast(dict[str, Any], github)
+    receipt_effects = cast(dict[str, Any], receipt_effects)
+    report_sha256 = hashlib.sha256(controlled_bytes).hexdigest()
+    expected_key = (
+        f"{CONTROLLED_GO_OBJECT_PREFIX}/main_sha={expected_main_sha}/"
+        f"run_id={expected_controlled_run_id}/report-{report_sha256}.json"
+    )
+    expected_binding = {
+        "schema_version": "chronos-controlled-go-binding-v1",
+        "workflow_path": (".github/workflows/chronos-neon-controlled-idle-wake-readonly-v1.yml"),
+        "run_id": expected_controlled_run_id,
+        "run_attempt": "1",
+        "main_sha": expected_main_sha,
+        "report_schema": "chronos-neon-controlled-idle-wake-readonly-v1",
+        "report_sha256": report_sha256,
+        "durable_store": "R2_IMMUTABLE",
+        "conditional_put_outcome": "CREATED",
+        "durable_object_key": expected_key,
+        "durable_readback_sha256": report_sha256,
+    }
+    expected_effects = {
+        "r2_puts": 1,
+        "r2_gets": 1,
+        "r2_objects_created": 1,
+        "r2_lists": 0,
+        "r2_deletes": 0,
+        "r2_overwrites": 0,
+        "automatic_retries": 0,
+        "neon_gets": 0,
+        "neon_mutations": 0,
+        "postgresql_connections": 0,
+        "sql_statements": 0,
+        "provider_calls": 0,
+        "purchases": 0,
+        "sensitive_values_exposed": 0,
+    }
+    if not (
+        receipt.get("schema_version") == "chronos-controlled-go-durable-seal-v1"
+        and receipt.get("verdict") == "CHRONOS_CONTROLLED_GO_DURABLY_SEALED"
+        and source
+        == {
+            "repository": EXPECTED_REPOSITORY,
+            "ref": EXPECTED_REF,
+            "main_sha": expected_main_sha,
+            "run_id": expected_seal_run_id,
+            "run_attempt": "1",
+        }
+        and binding == expected_binding
+        and github
+        == {
+            "queued": 0,
+            "in_progress": 0,
+            "exact_main_dispatch_count": 1,
+            "authority_window_dispatch_count": 1,
+        }
+        and receipt_effects == expected_effects
+        and controlled.get("artifact_sha256") == report_sha256
+    ):
+        raise ChronosProductionError("CHRONOS_CONTROLLED_GO_DURABILITY_NOT_PROVEN")
+    metadata = {
+        "schema": "chronos-controlled-go-v1",
+        "sha256": report_sha256,
+        "main_sha": expected_main_sha,
+        "controlled_run_id": expected_controlled_run_id,
+    }
+    durable_store = store or ChronosR2ConditionalStore.from_environment(os.environ)
+    effect_counts = effects if effects is not None else BootstrapEffects()
+    if effect_counts.r2_operations != 0:
+        raise ChronosProductionError("CHRONOS_CONTROLLED_GO_SECOND_R2_READ_FORBIDDEN")
+    effect_counts.r2_operations = 1
+    effect_counts.r2_operations_exact = False
+    try:
+        validate_data_torrent_authority()
+        observed = durable_store.get_object(expected_key)
+    except Exception:
+        raise ChronosProductionError("CHRONOS_CONTROLLED_GO_R2_READBACK_FAILED") from None
+    effect_counts.r2_operations_exact = True
+    if (
+        observed is None
+        or observed.data != controlled_bytes
+        or observed.metadata != metadata
+        or hashlib.sha256(observed.data).hexdigest() != report_sha256
+    ):
+        raise ChronosProductionError("CHRONOS_CONTROLLED_GO_R2_READBACK_MISMATCH")
+    release_binding = {
+        **expected_binding,
+        "endpoint_pre_wake_state": controlled["endpoint_pre_wake_state"],
+        "compute_wake_events": controlled["compute_wake_events"],
+        "postgresql_connection_attempts": controlled["postgresql_connection_attempts"],
+        "production_sql_writes": controlled["production_sql_writes"],
+        "neon_mutations": controlled["neon_mutations"],
+        "seal_workflow_path": CONTROLLED_SEAL_WORKFLOW_PATH,
+        "seal_run_id": expected_seal_run_id,
+        "seal_run_attempt": "1",
+        "seal_receipt_sha256": hashlib.sha256(payload).hexdigest(),
+        "seal_r2_puts": 1,
+        "seal_r2_gets": 1,
+        "seal_r2_objects_created": 1,
+        "preflight_readback_sha256": report_sha256,
+        "preflight_r2_gets": 1,
+    }
+    return validate_controlled_go_binding(
+        release_binding,
+        main_sha=expected_main_sha,
+    )
+
+
+def run_preflight(
+    report_dir: Path,
+    controlled_readonly_path: Path | None = None,
+    controlled_seal_path: Path | None = None,
+    *,
+    controlled_go_store: ChronosR2ConditionalStore | None = None,
+    effects: BootstrapEffects | None = None,
+) -> dict[str, Any]:
+    validate_data_torrent_authority()
     assert_production_safety_locks(os.environ)
+    effect_counts = effects if effects is not None else BootstrapEffects()
     if _required_public("GITHUB_RUN_ATTEMPT") != "1":
         raise ChronosProductionError("CHRONOS_RERUN_FORBIDDEN")
     report_dir.mkdir(parents=True, exist_ok=True)
-    api_key = _required("NEON_API_KEY")
-    database_url = _required("NEON_BOOTSTRAP_DATABASE_URL")
     main_sha = require_sha(_required_public("GITHUB_SHA"), field="main_sha")
     workflow_sha = require_sha(_required_public("GITHUB_WORKFLOW_SHA"), field="workflow_sha")
     if _required_public("GITHUB_REPOSITORY") != EXPECTED_REPOSITORY:
         raise ChronosProductionError("CHRONOS_REPOSITORY_MISMATCH")
     if _required_public("GITHUB_REF") != EXPECTED_REF:
         raise ChronosProductionError("CHRONOS_REF_MISMATCH")
+    _assert_bootstrap_dispatch_ordinal(mode="PREFLIGHT", main_sha=main_sha)
     expected_main = require_sha(
         _required_public("CHRONOS_EXPECTED_MAIN_SHA"), field="expected_main_sha"
     )
@@ -843,14 +1357,40 @@ def run_preflight(report_dir: Path) -> dict[str, Any]:
         raise ChronosProductionError("CHRONOS_MAIN_SHA_MISMATCH")
     hold = _assert_hold()
     post_merge_ci = _assert_post_merge_ci_binding(hold, main_sha=main_sha)
+    if controlled_readonly_path is None:
+        raise ChronosProductionError("CHRONOS_CONTROLLED_READONLY_ARTIFACT_REQUIRED")
+    controlled_readonly = _controlled_readonly_go(
+        controlled_readonly_path,
+        expected_main_sha=main_sha,
+        expected_run_id=_required_public("CHRONOS_EXPECTED_CONTROLLED_RUN_ID"),
+    )
+    if controlled_seal_path is None:
+        raise ChronosProductionError("CHRONOS_CONTROLLED_SEAL_ARTIFACT_REQUIRED")
+    controlled_go = _controlled_go_durable_binding(
+        controlled_seal_path,
+        controlled_readonly_path,
+        controlled_readonly,
+        expected_main_sha=main_sha,
+        expected_controlled_run_id=_required_public("CHRONOS_EXPECTED_CONTROLLED_RUN_ID"),
+        expected_seal_run_id=_required_public("CHRONOS_EXPECTED_CONTROLLED_SEAL_RUN_ID"),
+        store=controlled_go_store,
+        effects=effect_counts,
+    )
+    api_key = _required("NEON_API_KEY")
+    database_url = _required("NEON_BOOTSTRAP_DATABASE_URL")
     target = validate_direct_postgres_url(database_url)
-    identity, neon_observation = resolve_neon_identity(api_key, target)
+    identity, neon_observation = resolve_neon_identity(
+        api_key,
+        target,
+        effects=effect_counts,
+    )
     try:
         require_neon_recovery_feasibility(neon_observation)
     except PreflightNoGo as error:
         raise ChronosProductionError(f"{error.reason}:{error.gate}") from None
-    client = NeonClient(api_key)
-    with _connect_direct(database_url) as capability_connection:
+    client = NeonClient(api_key, effects=effect_counts)
+    effect_counts.mark_sql_upper_bound(statements=128, writes=0)
+    with _connect_direct(database_url, effects=effect_counts) as capability_connection:
         assert_privileged_catalog_visibility(capability_connection)
     recovery_report = create_recovery_point(
         client,
@@ -858,8 +1398,8 @@ def run_preflight(report_dir: Path) -> dict[str, Any]:
         expected_branch_count=neon_observation.target_project_branch_count,
         receipt_path=report_dir / "chronos-neon-recovery-point-v3.json",
     )
-    database = inspect_database(database_url)
-    with _connect_direct(database_url) as connection:
+    database = inspect_database(database_url, effects=effect_counts)
+    with _connect_direct(database_url, effects=effect_counts) as connection:
         preflight_role_inventory_hash = role_inventory_hash(connection)
         preflight_role_inventory = role_inventory_snapshot(connection)
     if database["current_revision"] not in {
@@ -870,7 +1410,7 @@ def run_preflight(report_dir: Path) -> dict[str, Any]:
     if database["current_revision"] == EXPECTED_AFTER_REVISION:
         _assert_post_migration(database)
         migrator_role = stable_migrator_role(identity.production_branch_id)
-        with _connect_direct(database_url) as connection:
+        with _connect_direct(database_url, effects=effect_counts) as connection:
             lifecycle_admin = str(_scalar(connection, "SELECT current_user"))
             audit_terminal_lifecycle(
                 connection,
@@ -909,9 +1449,11 @@ def run_preflight(report_dir: Path) -> dict[str, Any]:
             "in_progress_after": hold.get("in_progress_after"),
         },
         "post_merge_ci": post_merge_ci,
+        "controlled_go": controlled_go,
         "secret_values_observed": NO_VALUES_OBSERVED,
         "provider_calls": 0,
-        "r2_operations": 0,
+        "r2_operations": effect_counts.r2_operations,
+        "effects": effect_counts.snapshot(),
         "purchases": 0,
     }
     _write_json(report_dir / "chronos-neon-preflight-v3.json", preflight_report)
@@ -938,6 +1480,7 @@ def run_preflight(report_dir: Path) -> dict[str, Any]:
         "preflight_run_id": _required_public("GITHUB_RUN_ID"),
         "preflight_run_attempt": _required_public("GITHUB_RUN_ATTEMPT"),
         "post_merge_ci_sha": post_merge_ci["head_sha"],
+        "controlled_go": controlled_go,
     }
     artifact["preflight_hash"] = preflight_hash(artifact)
     signed = sign_document(artifact, api_key)
@@ -958,7 +1501,11 @@ def _preflight_expiry(artifact: Mapping[str, Any]) -> datetime:
     return expiry
 
 
-def _runtime_accounts(*, expected_target: DirectPostgresTarget) -> list[tuple[str, str, str]]:
+def _runtime_accounts(
+    *,
+    expected_target: DirectPostgresTarget,
+    generation_nonce: str,
+) -> list[tuple[str, str, str]]:
     accounts: list[tuple[str, str, str]] = []
     for login, group, secret_name in SCOPED_LOGINS:
         database_url = _required(secret_name)
@@ -982,6 +1529,7 @@ def _runtime_accounts(*, expected_target: DirectPostgresTarget) -> list[tuple[st
         password = unquote(urlparse(database_url).password or "")
         if len(password) < 32:
             raise ChronosProductionError("CHRONOS_SCOPED_PASSWORD_INVALID")
+        require_generation_bound_password(password=password, nonce_hex=generation_nonce)
         accounts.append((login, group, password))
     return accounts
 
@@ -1031,16 +1579,15 @@ def _attempt_cleanup_steps(steps: Sequence[Callable[[], None]]) -> None:
         raise ChronosProductionError("CHRONOS_LIFECYCLE_CLEANUP_FAILED") from errors[0]
 
 
-def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
+def run_migrate(
+    report_dir: Path,
+    preflight_path: Path,
+    *,
+    effects: BootstrapEffects | None = None,
+) -> dict[str, Any]:
+    validate_data_torrent_authority()
     assert_production_safety_locks(os.environ)
-    api_key = _required("NEON_API_KEY")
-    database_url = _required("NEON_BOOTSTRAP_DATABASE_URL")
-    target = validate_direct_postgres_url(database_url)
-    runtime_accounts = _runtime_accounts(expected_target=target)
-    nonce = require_hash(
-        _required("CHRONOS_CONTROL_PLANE_GENERATION_NONCE"),
-        field="generation_nonce",
-    )
+    effect_counts = effects if effects is not None else BootstrapEffects()
     main_sha = require_sha(_required_public("GITHUB_SHA"), field="main_sha")
     workflow_sha = require_sha(_required_public("GITHUB_WORKFLOW_SHA"), field="workflow_sha")
     if _required_public("GITHUB_REPOSITORY") != EXPECTED_REPOSITORY:
@@ -1052,8 +1599,20 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
     migration_run_id = _required_public("GITHUB_RUN_ID")
     if not migration_run_id.isascii() or not migration_run_id.isdigit() or migration_run_id == "0":
         raise ChronosProductionError("CHRONOS_MIGRATION_RUN_ID_INVALID")
+    _assert_bootstrap_dispatch_ordinal(mode="MIGRATE", main_sha=main_sha)
     hold = _assert_hold()
     post_merge_ci = _assert_post_merge_ci_binding(hold, main_sha=main_sha)
+    api_key = _required("NEON_API_KEY")
+    database_url = _required("NEON_BOOTSTRAP_DATABASE_URL")
+    target = validate_direct_postgres_url(database_url)
+    nonce = require_hash(
+        _required("CHRONOS_CONTROL_PLANE_GENERATION_NONCE"),
+        field="generation_nonce",
+    )
+    runtime_accounts = _runtime_accounts(
+        expected_target=target,
+        generation_nonce=nonce,
+    )
     raw_artifact = json.loads(preflight_path.read_text(encoding="utf-8"))
     if not isinstance(raw_artifact, dict):
         raise ChronosProductionError("CHRONOS_PREFLIGHT_ARTIFACT_INVALID")
@@ -1065,8 +1624,16 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
         or artifact.get("post_merge_ci_sha") != post_merge_ci["head_sha"]
     ):
         raise ChronosProductionError("CHRONOS_PREFLIGHT_CAUSAL_BINDING_MISMATCH")
+    controlled_go = validate_controlled_go_binding(
+        artifact.get("controlled_go"),
+        main_sha=main_sha,
+    )
     preflight_expiry = _preflight_expiry(artifact)
-    identity, _neon_observation = resolve_neon_identity(api_key, target)
+    identity, _neon_observation = resolve_neon_identity(
+        api_key,
+        target,
+        effects=effect_counts,
+    )
     recovery_branch_id = str(artifact.get("recovery_branch_id", ""))
     if _NEON_SAFE_IDENTIFIER.fullmatch(recovery_branch_id) is None:
         raise ChronosProductionError("CHRONOS_RECOVERY_BRANCH_ID_INVALID")
@@ -1085,7 +1652,7 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
         recovery_branch_id=recovery_branch_id,
         current_revision=str(artifact.get("current_revision", "")),
     )
-    client = NeonClient(api_key)
+    client = NeonClient(api_key, effects=effect_counts)
     recovery = client.branch(identity.project_id, recovery_branch_id)
     _assert_recovery_branch_observation(
         recovery,
@@ -1093,7 +1660,8 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
         recovery_branch_id=recovery_branch_id,
         expected_name=recovery_branch_name,
     )
-    prelock_observation = inspect_database(database_url)
+    effect_counts.mark_sql_upper_bound(statements=2_048, writes=1_024)
+    prelock_observation = inspect_database(database_url, effects=effect_counts)
     migrator_role = stable_migrator_role(identity.production_branch_id)
     if prelock_observation["current_revision"] not in {
         *EXPECTED_BEFORE_REVISIONS,
@@ -1107,7 +1675,7 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
         preflight_expiry,
         _utc_now() + timedelta(minutes=9),
     )
-    admin = _connect_direct(database_url)
+    admin = _connect_direct(database_url, effects=effect_counts)
     lock_held = False
     lease = None
     authority_connection: Connection[Any] | None = None
@@ -1125,7 +1693,7 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
         assert_privileged_catalog_visibility(admin)
         acquire_lifecycle_lock(admin)
         lock_held = True
-        before = inspect_database(database_url)
+        before = inspect_database(database_url, effects=effect_counts)
         migrate_role_inventory_hash = role_inventory_hash(admin)
         if artifact.get("role_inventory_hash") != migrate_role_inventory_hash:
             _assert_resume_role_inventory(
@@ -1159,7 +1727,7 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
             username=lease.executor_role,
             password=executor_password,
         )
-        authority_connection = _connect_direct(executor_url)
+        authority_connection = _connect_direct(executor_url, effects=effect_counts)
         assert_executor_cannot_create_role(
             authority_connection,
             probe_role="chronos_executor_pre_set_probe",
@@ -1222,12 +1790,19 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
                 raise ChronosProductionError("CHRONOS_LOCKED_REVISION_CHANGED")
             dispatches = 1
             try:
+                effect_counts.migration_dispatches = 1
+                # Alembic owns its internal connection lifecycle. Reserve a
+                # conservative bound before dispatch so an exception cannot
+                # under-report production connection attempts.
+                effect_counts.postgresql_connection_attempts += 4
+                effect_counts.postgresql_connection_attempts_exact = False
+                validate_data_torrent_authority()
                 run_fenced_alembic(migrator_url, MIGRATION_TARGET)
                 return_code = 0
             finally:
                 disable_migrator(authority_connection, role=migrator_role)
                 migrator_disabled = True
-            after = inspect_database(database_url)
+            after = inspect_database(database_url, effects=effect_counts)
             outcome = "MIGRATION_OUTCOME_AMBIGUOUS"
             try:
                 _assert_post_migration(after)
@@ -1289,7 +1864,7 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
             pinned_system_grantor=pinned_grantor,
         )
         final_audit = provisioned_runtime.report()
-        final = inspect_database(database_url)
+        final = inspect_database(database_url, effects=effect_counts)
         _assert_post_migration(final)
         assert_migrator_disabled(
             authority_connection,
@@ -1398,8 +1973,11 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
         "workflow_sha": workflow_sha,
         "post_merge_ci_sha": post_merge_ci["head_sha"],
         "preflight_run_id": expected_preflight_run_id,
+        "preflight_hash": artifact["preflight_hash"],
         "migration_run_id": migration_run_id,
         "migration_run_attempt": "1",
+        "controlled_go": controlled_go,
+        "effects": effect_counts.snapshot(),
     }
     signed_output = sign_document(output, nonce)
     _write_json(report_dir / "chronos-bootstrap-output-v3.json", signed_output)
@@ -1427,20 +2005,26 @@ def run_migrate(report_dir: Path, preflight_path: Path) -> dict[str, Any]:
         "forbidden_membership": 0,
         "migrator_runtime_membership": 0,
         "runtime_effective_bootstrap_edge": 0,
+        "controlled_go": controlled_go,
+        "preflight_hash": artifact["preflight_hash"],
         "provider_calls": 0,
         "r2_operations": 0,
         "destructive_sql": 0,
+        "effects": effect_counts.snapshot(),
     }
     _write_json(report_dir / "chronos-neon-migration-v3.json", report)
     return report
 
 
-def run_verify(report_dir: Path, migration_path: Path) -> dict[str, Any]:
+def run_verify(
+    report_dir: Path,
+    migration_path: Path,
+    *,
+    effects: BootstrapEffects | None = None,
+) -> dict[str, Any]:
+    validate_data_torrent_authority()
     assert_production_safety_locks(os.environ)
-    nonce = require_hash(
-        _required("CHRONOS_CONTROL_PLANE_GENERATION_NONCE"),
-        field="generation_nonce",
-    )
+    effect_counts = effects if effects is not None else BootstrapEffects()
     main_sha = require_sha(_required_public("GITHUB_SHA"), field="main_sha")
     workflow_sha = require_sha(_required_public("GITHUB_WORKFLOW_SHA"), field="workflow_sha")
     if _required_public("GITHUB_REPOSITORY") != EXPECTED_REPOSITORY:
@@ -1454,8 +2038,13 @@ def run_verify(report_dir: Path, migration_path: Path) -> dict[str, Any]:
     for run_id in (verify_run_id, expected_migration_run_id):
         if not run_id.isascii() or not run_id.isdigit() or run_id == "0":
             raise ChronosProductionError("CHRONOS_VERIFY_RUN_ID_INVALID")
+    _assert_bootstrap_dispatch_ordinal(mode="VERIFY", main_sha=main_sha)
     hold = _assert_hold()
     post_merge_ci = _assert_post_merge_ci_binding(hold, main_sha=main_sha)
+    nonce = require_hash(
+        _required("CHRONOS_CONTROL_PLANE_GENERATION_NONCE"),
+        field="generation_nonce",
+    )
     try:
         raw_migration = json.loads(migration_path.read_text(encoding="utf-8"))
     except (OSError, UnicodeDecodeError, json.JSONDecodeError):
@@ -1463,6 +2052,10 @@ def run_verify(report_dir: Path, migration_path: Path) -> dict[str, Any]:
     if not isinstance(raw_migration, dict):
         raise ChronosProductionError("CHRONOS_MIGRATION_ARTIFACT_INVALID")
     migration = verify_signed_document(cast(dict[str, Any], raw_migration), nonce)
+    preflight_chain_hash = require_hash(
+        str(migration.get("preflight_hash", "")),
+        field="preflight_hash",
+    )
     if (
         migration.get("schema_version") != "chronos-bootstrap-output-v3"
         or migration.get("main_sha") != main_sha
@@ -1475,14 +2068,21 @@ def run_verify(report_dir: Path, migration_path: Path) -> dict[str, Any]:
         or not isinstance(migration.get("preflight_run_id"), str)
     ):
         raise ChronosProductionError("CHRONOS_MIGRATION_CAUSAL_BINDING_MISMATCH")
+    controlled_go = validate_controlled_go_binding(
+        migration.get("controlled_go"),
+        main_sha=main_sha,
+    )
     urls = {
         "authority": _required("CHRONOS_AUTHORITY_DATABASE_URL"),
         "runtime": _required("CHRONOS_RUNTIME_DATABASE_URL"),
         "reader": _required("CHRONOS_READER_DATABASE_URL"),
     }
+    effect_counts.mark_sql_upper_bound(statements=128, writes=0)
     reports: dict[str, Any] = {}
     for role, database_url in urls.items():
         target = validate_direct_postgres_url(database_url)
+        password = unquote(urlparse(database_url).password or "")
+        require_generation_bound_password(password=password, nonce_hex=nonce)
         if (
             target.host != migration.get("database_host")
             or target.port != migration.get("database_port")
@@ -1491,7 +2091,7 @@ def run_verify(report_dir: Path, migration_path: Path) -> dict[str, Any]:
             or target.channel_binding != migration.get("channel_binding")
         ):
             raise ChronosProductionError("CHRONOS_VERIFY_DATABASE_TARGET_MISMATCH")
-        with _connect_direct(database_url) as connection:
+        with _connect_direct(database_url, effects=effect_counts) as connection:
             current_user = str(_scalar(connection, "SELECT current_user"))
             revision = (
                 str(
@@ -1542,7 +2142,7 @@ def run_verify(report_dir: Path, migration_path: Path) -> dict[str, Any]:
             raise ChronosProductionError("CHRONOS_VERIFY_MEMBERSHIP_MISMATCH")
     if len({str(report["server_epoch"]) for report in reports.values()}) != 1:
         raise ChronosProductionError("CHRONOS_VERIFY_SERVER_EPOCH_MISMATCH")
-    with _connect_direct(urls["reader"]) as connection:
+    with _connect_direct(urls["reader"], effects=effect_counts) as connection:
         with connection.cursor() as cursor:
             cursor.execute(
                 "SELECT rolname,rolcanlogin,rolcreaterole FROM pg_catalog.pg_roles "
@@ -1624,11 +2224,14 @@ def run_verify(report_dir: Path, migration_path: Path) -> dict[str, Any]:
         "post_merge_ci_sha": post_merge_ci["head_sha"],
         "generation_hash": generation_hash(nonce),
         "preflight_run_id": migration["preflight_run_id"],
+        "preflight_hash": preflight_chain_hash,
         "migration_run_id": expected_migration_run_id,
         "migration_run_attempt": "1",
         "verify_run_id": verify_run_id,
         "verify_run_attempt": "1",
         "migration_output_signature_algorithm": "HMAC-SHA256",
+        "controlled_go": controlled_go,
+        "effects": effect_counts.snapshot(),
     }
     normalized_result = cast(dict[str, Any], _json_value(result))
     signed_result = sign_document(normalized_result, nonce)
@@ -1636,7 +2239,11 @@ def run_verify(report_dir: Path, migration_path: Path) -> dict[str, Any]:
     return signed_result
 
 
-def _safe_failure(mode: str, error: Exception) -> dict[str, Any]:
+def _safe_failure(
+    mode: str,
+    error: Exception,
+    effects: BootstrapEffects | None = None,
+) -> dict[str, Any]:
     if isinstance(error, ChronosProductionError):
         code = str(error)
     else:
@@ -1649,7 +2256,8 @@ def _safe_failure(mode: str, error: Exception) -> dict[str, Any]:
         "secret_values_observed": NO_VALUES_OBSERVED,
         "provider_calls": 0,
         "odds_credits": 0,
-        "r2_operations": 0,
+        "r2_operations": 0 if effects is None else effects.r2_operations,
+        "effects": BootstrapEffects().snapshot() if effects is None else effects.snapshot(),
         "purchases": 0,
     }
 
@@ -1660,20 +2268,36 @@ def main() -> None:
     parser.add_argument("--report-dir", type=Path, required=True)
     parser.add_argument("--preflight-artifact", type=Path)
     parser.add_argument("--migration-artifact", type=Path)
+    parser.add_argument("--controlled-readonly-artifact", type=Path)
+    parser.add_argument("--controlled-seal-artifact", type=Path)
     args = parser.parse_args()
+    effects = BootstrapEffects()
     try:
         if args.mode == "PREFLIGHT":
-            result = run_preflight(args.report_dir)
+            result = run_preflight(
+                args.report_dir,
+                args.controlled_readonly_artifact,
+                args.controlled_seal_artifact,
+                effects=effects,
+            )
         elif args.mode == "MIGRATE":
             if args.preflight_artifact is None:
                 raise ChronosProductionError("CHRONOS_PREFLIGHT_ARTIFACT_REQUIRED")
-            result = run_migrate(args.report_dir, args.preflight_artifact)
+            result = run_migrate(
+                args.report_dir,
+                args.preflight_artifact,
+                effects=effects,
+            )
         else:
             if args.migration_artifact is None:
                 raise ChronosProductionError("CHRONOS_MIGRATION_ARTIFACT_REQUIRED")
-            result = run_verify(args.report_dir, args.migration_artifact)
+            result = run_verify(
+                args.report_dir,
+                args.migration_artifact,
+                effects=effects,
+            )
     except Exception as error:
-        failure = _safe_failure(args.mode, error)
+        failure = _safe_failure(args.mode, error, effects)
         _write_json(args.report_dir / "chronos-bootstrap-failure-v3.json", failure)
         print(f"CHRONOS_BOOTSTRAP_{args.mode}_FAILED:{failure['error_code']}")
         raise SystemExit(1) from None

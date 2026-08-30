@@ -1300,7 +1300,7 @@ def test_immutable_mission_manifest_expires_fail_closed() -> None:
 
 def test_runtime_binds_sanitized_github_ci_receipt_before_claim(tmp_path: Path) -> None:
     workflow = tmp_path / ".github" / "workflows" / "data-torrent-live-v1.yml"
-    ci_workflow = tmp_path / ".github" / "workflows" / "ci.yml"
+    ci_workflow = tmp_path / ".github" / "workflows" / "ci-safe-v2.yml"
     workflow.parent.mkdir(parents=True)
     workflow.write_bytes(b"name: exact-workflow\n")
     ci_workflow.write_bytes(b"run: pytest tests/data_torrent/test_postgresql_v1.py\n")
@@ -1338,8 +1338,21 @@ def test_runtime_binds_sanitized_github_ci_receipt_before_claim(tmp_path: Path) 
         "unauthorized_active_workflows": [],
         "provider_calls": 0,
         "r2_operations": 0,
-        "post_merge_ci": {
+        "legacy_secret_branch_sha": main_sha,
+        "legacy_ci_workflow_quarantine": {
+            "workflow_id": 319500816,
             "workflow_path": ".github/workflows/ci.yml",
+            "state": "disabled_manually",
+        },
+        "production_environment_policy": {
+            "environment": "chronos-control-plane-production",
+            "can_admins_bypass": False,
+            "protected_branches": False,
+            "custom_branch_policies": True,
+            "allowed_branches": ["main"],
+        },
+        "post_merge_ci": {
+            "workflow_path": ".github/workflows/ci-safe-v2.yml",
             "run_id": 456,
             "run_attempt": 1,
             "head_sha": main_sha,
@@ -1359,6 +1372,18 @@ def test_runtime_binds_sanitized_github_ci_receipt_before_claim(tmp_path: Path) 
     assert proof["head_sha"] == main_sha
     assert proof["conclusion"] == "success"
     assert proof["receipt_sha256"] == hashlib.sha256(hold_path.read_bytes()).hexdigest()
+    hold["post_merge_ci"]["run_attempt"] = 2
+    hold_path.write_text(json.dumps(hold), encoding="utf-8")
+    with pytest.raises(
+        DataTorrentRuntimeError,
+        match="DATA_TORRENT_POST_MERGE_CI_PROOF_INVALID",
+    ):
+        _validated_hold_report(
+            repository_root=tmp_path,
+            environment=environment,
+            identity=identity,
+        )
+    hold["post_merge_ci"]["run_attempt"] = 1
     hold["post_merge_ci"]["conclusion"] = "failure"
     hold_path.write_text(json.dumps(hold), encoding="utf-8")
     with pytest.raises(
@@ -1401,6 +1426,38 @@ def test_runtime_binds_signed_chronos_verify_chain_before_claim(tmp_path: Path) 
         environment=environment,
         system_platform="linux",
     )
+    controlled_report_sha = "b" * 64
+    controlled_go = {
+        "schema_version": "chronos-controlled-go-binding-v1",
+        "workflow_path": (".github/workflows/chronos-neon-controlled-idle-wake-readonly-v1.yml"),
+        "run_id": "111",
+        "run_attempt": "1",
+        "main_sha": main_sha,
+        "report_schema": "chronos-neon-controlled-idle-wake-readonly-v1",
+        "report_sha256": controlled_report_sha,
+        "endpoint_pre_wake_state": "idle",
+        "compute_wake_events": 1,
+        "postgresql_connection_attempts": 1,
+        "production_sql_writes": 0,
+        "neon_mutations": 0,
+        "durable_store": "R2_IMMUTABLE",
+        "conditional_put_outcome": "CREATED",
+        "durable_object_key": (
+            "data-torrent-ready-v1/control-plane/controlled-go/"
+            f"main_sha={main_sha}/run_id=111/"
+            f"report-{controlled_report_sha}.json"
+        ),
+        "durable_readback_sha256": controlled_report_sha,
+        "seal_workflow_path": (".github/workflows/chronos-controlled-go-durable-seal-v1.yml"),
+        "seal_run_id": "222",
+        "seal_run_attempt": "1",
+        "seal_receipt_sha256": "c" * 64,
+        "seal_r2_puts": 1,
+        "seal_r2_gets": 1,
+        "seal_r2_objects_created": 1,
+        "preflight_readback_sha256": controlled_report_sha,
+        "preflight_r2_gets": 1,
+    }
     artifact = sign_document(
         {
             "schema_version": "chronos-production-verify-v3",
@@ -1411,6 +1468,7 @@ def test_runtime_binds_signed_chronos_verify_chain_before_claim(tmp_path: Path) 
             "post_merge_ci_sha": main_sha,
             "generation_hash": generation_hash(nonce),
             "preflight_run_id": "456",
+            "preflight_hash": "d" * 64,
             "migration_run_id": "654",
             "migration_run_attempt": "1",
             "verify_run_id": "789",
@@ -1421,6 +1479,7 @@ def test_runtime_binds_signed_chronos_verify_chain_before_claim(tmp_path: Path) 
             "runtime_effective_bootstrap_edge": 0,
             "provider_calls": 0,
             "r2_operations": 0,
+            "controlled_go": controlled_go,
             "identities": {
                 role: {
                     "database_host": "ep-test.eu-central-1.aws.neon.tech",
@@ -1458,7 +1517,9 @@ def test_runtime_binds_signed_chronos_verify_chain_before_claim(tmp_path: Path) 
     )
     assert proof["verify_run_id"] == "789"
     assert proof["migration_run_id"] == "654"
+    assert proof["preflight_hash"] == "d" * 64
     assert proof["generation_hash"] == generation_hash(nonce)
+    assert proof["controlled_go"] == controlled_go
     exact_targets = [
         DirectPostgresTarget(
             host="ep-test.eu-central-1.aws.neon.tech",
@@ -1491,6 +1552,24 @@ def test_runtime_binds_signed_chronos_verify_chain_before_claim(tmp_path: Path) 
         match="DATA_TORRENT_VERIFY_DATABASE_TARGET_MISMATCH",
     ):
         _assert_chronos_verify_database_targets(proof=proof, targets=drifted)
+    controlled_tamper = json.loads(json.dumps(artifact))
+    controlled_tamper.pop("signature")
+    controlled_tamper["controlled_go"]["seal_r2_puts"] = 2
+    artifact_path.write_text(
+        json.dumps(sign_document(controlled_tamper, nonce)),
+        encoding="utf-8",
+    )
+    with pytest.raises(
+        DataTorrentRuntimeError,
+        match="DATA_TORRENT_VERIFY_CONTROLLED_GO_INVALID",
+    ):
+        _validated_chronos_verify_artifact(
+            repository_root=tmp_path,
+            environment=environment,
+            identity=identity,
+            generation_token=nonce,
+            expected_generation_hash=generation_hash(nonce),
+        )
     artifact["main_sha"] = "2" * 40
     artifact_path.write_text(json.dumps(artifact), encoding="utf-8")
     with pytest.raises(
@@ -1522,7 +1601,7 @@ def test_real_data_workflow_and_lock_are_frozen_for_one_shot_linux() -> None:
     }
     assert document["permissions"] == {"actions": "read", "contents": "read"}
     assert document["concurrency"] == {
-        "group": "data-torrent-live-v1",
+        "group": "chronos-data-torrent-production-global-v1",
         "cancel-in-progress": False,
     }
     assert set(document["jobs"]) == {"validate", "torrent"}

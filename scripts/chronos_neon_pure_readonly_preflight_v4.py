@@ -31,6 +31,7 @@ from robin.chronos_production import (
     ChronosProductionError,
     DirectPostgresTarget,
     libpq_environment_variable_names,
+    validate_data_torrent_authority,
     validate_direct_postgres_url,
 )
 
@@ -48,10 +49,7 @@ MAX_BRANCH_PAGE = 10_000
 POSITIVE_WITNESS_GET_RESERVE = 1 + 1 + MAX_BRANCH_PAGES + 1
 OWNER_SCOPE_GET_RESERVE = 2
 MAX_PROJECTS_FOR_ENDPOINT_DISCOVERY = (
-    MAX_NEON_GETS
-    - MAX_PROJECT_PAGES
-    - POSITIVE_WITNESS_GET_RESERVE
-    - OWNER_SCOPE_GET_RESERVE
+    MAX_NEON_GETS - MAX_PROJECT_PAGES - POSITIVE_WITNESS_GET_RESERVE - OWNER_SCOPE_GET_RESERVE
 ) // 2
 MAX_PROJECT_ITEMS = MAX_PROJECTS_FOR_ENDPOINT_DISCOVERY
 MAX_BRANCH_ITEMS = MAX_BRANCH_PAGE * MAX_BRANCH_PAGES
@@ -1077,10 +1075,7 @@ def _finite_json(value: object) -> bool:
     if isinstance(value, float):
         return math.isfinite(value)
     if isinstance(value, dict):
-        return all(
-            isinstance(key, str) and _finite_json(nested)
-            for key, nested in value.items()
-        )
+        return all(isinstance(key, str) and _finite_json(nested) for key, nested in value.items())
     if isinstance(value, list):
         return all(_finite_json(item) for item in value)
     return value is None or isinstance(value, (bool, int, str))
@@ -1132,15 +1127,18 @@ class NeonReadOnlyClient:
             or path == "/users/me"
             or path == "/users/me/organizations"
             or re.fullmatch(r"/organizations/[a-z0-9-]{1,60}", path) is not None
-            or re.fullmatch(
-                r"/organizations/[a-z0-9-]{1,60}/members", path
-            )
-            is not None
+            or re.fullmatch(r"/organizations/[a-z0-9-]{1,60}/members", path) is not None
         )
         if not route_allowed or ".." in path or "?" in path or "#" in path:
             raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "neon_route_forbidden")
         if self.get_count >= MAX_NEON_GETS:
             raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "neon_get_budget_exhausted")
+        try:
+            validate_data_torrent_authority()
+        except ChronosProductionError:
+            raise PreflightNoGo(
+                "RECOVERY_BRANCH_NOT_FEASIBLE", "mission_authority_inactive"
+            ) from None
         self.get_count += 1
         request_url = NEON_API + path
         if query:
@@ -1202,10 +1200,7 @@ def _project_owner_identity(
             not isinstance(org_id, str)
             or not org_id
             or _SAFE_ID.fullmatch(org_id) is None
-            or (
-                expected_organization_id is not None
-                and org_id != expected_organization_id
-            )
+            or (expected_organization_id is not None and org_id != expected_organization_id)
         ):
             raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", gate)
     elif expected_organization_id is not None and owner_id != expected_organization_id:
@@ -1219,9 +1214,7 @@ def _project_owner_identity(
 def _branch_state(branch: Mapping[str, Any]) -> str:
     state = branch.get("current_state")
     if not isinstance(state, str) or not state:
-        raise PreflightNoGo(
-            "NEON_PRODUCTION_BRANCH_AMBIGUOUS", "production_branch_state_missing"
-        )
+        raise PreflightNoGo("NEON_PRODUCTION_BRANCH_AMBIGUOUS", "production_branch_state_missing")
     if branch.get("pending_state") is not None:
         raise PreflightNoGo(
             "NEON_PRODUCTION_BRANCH_AMBIGUOUS",
@@ -1378,9 +1371,7 @@ def _branch_page_cursor(
         raise PreflightNoGo("NEON_PRODUCTION_BRANCH_AMBIGUOUS", "branch_inventory_truncated")
     previous = pagination.get("previous")
     if previous is not None:
-        raise PreflightNoGo(
-            "NEON_PRODUCTION_BRANCH_AMBIGUOUS", "branch_inventory_truncated"
-        )
+        raise PreflightNoGo("NEON_PRODUCTION_BRANCH_AMBIGUOUS", "branch_inventory_truncated")
     if "next" not in pagination or pagination["next"] is None:
         return None
     cursor = pagination["next"]
@@ -1486,9 +1477,8 @@ def _validated_project_detail(
         gate=gate,
     )
     owner = project.get("owner")
-    if (
-        not isinstance(owner, dict)
-        or (expected_owner_id is not None and owner_id != expected_owner_id)
+    if not isinstance(owner, dict) or (
+        expected_owner_id is not None and owner_id != expected_owner_id
     ):
         raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", gate)
     return project
@@ -1613,18 +1603,11 @@ def _prove_owner_scope(client: NeonReadOnlyClient, audit: IdentityAudit) -> None
     method = auth.get("auth_method")
     account_id_value = auth.get("account_id")
     if not isinstance(account_id_value, str) or not account_id_value:
-        raise PreflightNoGo(
-            "NEON_PROJECT_IDENTITY_AMBIGUOUS", "neon_auth_scope_invalid"
-        )
+        raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "neon_auth_scope_invalid")
     account_id = account_id_value
     if method == "api_key_org":
-        organization_id = _safe_identifier(
-            account_id, gate="neon_auth_scope_invalid"
-        )
-        if (
-            configured_organization_id is not None
-            and configured_organization_id != organization_id
-        ):
+        organization_id = _safe_identifier(account_id, gate="neon_auth_scope_invalid")
+        if configured_organization_id is not None and configured_organization_id != organization_id:
             raise PreflightNoGo(
                 "NEON_PROJECT_IDENTITY_AMBIGUOUS",
                 "configured_organization_scope_mismatch",
@@ -1752,17 +1735,16 @@ def _prove_owner_scope(client: NeonReadOnlyClient, audit: IdentityAudit) -> None
                 reason="RECOVERY_BRANCH_NOT_FEASIBLE",
                 gate="personal_api_key_owner_capacity_unproven",
             )
-            if pagination.get("sort_by", "role") != "role" or pagination.get(
-                "sort_order", "asc"
-            ) != "asc":
+            if (
+                pagination.get("sort_by", "role") != "role"
+                or pagination.get("sort_order", "asc") != "asc"
+            ):
                 raise PreflightNoGo(
                     "RECOVERY_BRANCH_NOT_FEASIBLE",
                     "personal_api_key_owner_capacity_unproven",
                 )
             next_cursor = pagination.get("next")
-            if next_cursor is not None and (
-                not isinstance(next_cursor, str) or not next_cursor
-            ):
+            if next_cursor is not None and (not isinstance(next_cursor, str) or not next_cursor):
                 raise PreflightNoGo(
                     "RECOVERY_BRANCH_NOT_FEASIBLE",
                     "personal_api_key_owner_capacity_unproven",
@@ -1857,11 +1839,14 @@ def _progressive_positive_candidate(
     seen_ids: set[str] = set()
     seen_pages: set[str] = set()
     cursor: str | None = None
-    match: tuple[
-        dict[str, Any],
-        dict[str, Any],
-        list[dict[str, Any]],
-    ] | None = None
+    match: (
+        tuple[
+            dict[str, Any],
+            dict[str, Any],
+            list[dict[str, Any]],
+        ]
+        | None
+    ) = None
     while True:
         if audit.project_pages_read >= MAX_PROJECT_PAGES:
             raise PreflightNoGo(
@@ -1895,9 +1880,7 @@ def _progressive_positive_candidate(
         page_ids: list[str] = []
         page_seen_ids: set[str] = set()
         for project in page:
-            project_id = _safe_identifier(
-                project.get("id", ""), gate="project_pagination_invalid"
-            )
+            project_id = _safe_identifier(project.get("id", ""), gate="project_pagination_invalid")
             _project_owner_identity(
                 project,
                 expected_organization_id=cast(str, audit.owner_id),
@@ -1941,9 +1924,7 @@ def _progressive_positive_candidate(
         for index, (project, project_id) in enumerate(owned_on_page):
             remaining_on_page = len(owned_on_page) - index
             client.require_get_budget(
-                remaining_on_page
-                + len(audit.project_ids)
-                + POSITIVE_WITNESS_GET_RESERVE,
+                remaining_on_page + len(audit.project_ids) + POSITIVE_WITNESS_GET_RESERVE,
                 "project_identity_discovery_budget_exceeded",
             )
             endpoints = _project_endpoints(
@@ -2027,9 +2008,7 @@ def _endpoint_detail(
     accepted_states = {"active", "idle"} if allow_idle else {"active"}
     raw_current_state = detailed.get("current_state")
     if not isinstance(raw_current_state, str):
-        raise PreflightNoGo(
-            "NEON_PROJECT_IDENTITY_AMBIGUOUS", "endpoint_detail_state_invalid"
-        )
+        raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "endpoint_detail_state_invalid")
     current_state = raw_current_state
     pending_state = detailed.get("pending_state")
     if allow_idle and current_state not in accepted_states:
@@ -2075,9 +2054,7 @@ def _positive_ownership_witness(
     *,
     allow_idle: bool = False,
 ) -> tuple[dict[str, Any], list[dict[str, Any]], dict[str, Any]]:
-    project_id = _safe_identifier(
-        project_summary.get("id", ""), gate="project_pagination_invalid"
-    )
+    project_id = _safe_identifier(project_summary.get("id", ""), gate="project_pagination_invalid")
     endpoint_id = _safe_identifier(
         candidate.get("id", ""), gate="positive_endpoint_candidate_invalid"
     )
@@ -2125,9 +2102,7 @@ def _positive_ownership_witness(
     branch = branch_matches[0]
     default_branches = [item for item in branches if item.get("default") is True]
     if len(default_branches) != 1 or default_branches[0].get("id") != branch_id:
-        raise PreflightNoGo(
-            "NEON_PRODUCTION_BRANCH_AMBIGUOUS", "default_branch_not_unique"
-        )
+        raise PreflightNoGo("NEON_PRODUCTION_BRANCH_AMBIGUOUS", "default_branch_not_unique")
     if str(branch.get("project_id", "")) != project_id:
         raise PreflightNoGo(
             "NEON_PROJECT_IDENTITY_AMBIGUOUS",
@@ -2145,9 +2120,7 @@ def _positive_ownership_witness(
         )
     audit.positive_witness_checks.append("DEFAULT_BRANCH_RELATIONSHIP_CONCORDANT")
 
-    branch_endpoint_document = client.get(
-        f"/projects/{project_id}/branches/{branch_id}/endpoints"
-    )
+    branch_endpoint_document = client.get(f"/projects/{project_id}/branches/{branch_id}/endpoints")
     audit.branch_endpoint_reads += 1
     branch_endpoints = _project_endpoints(
         branch_endpoint_document,
@@ -2208,9 +2181,7 @@ def _resolve_neon_identity(
     )
     try:
         configured_project_id = (
-            _safe_identifier(configured, gate="configured_project_invalid")
-            if configured
-            else None
+            _safe_identifier(configured, gate="configured_project_invalid") if configured else None
         )
         _prove_owner_scope(client, audit)
         if configured_project_id is not None:
@@ -2347,9 +2318,7 @@ def _finalize_neon_identity(
     branch_name = str(branch.get("name", ""))
     branch_default_value = branch.get("default")
     if not isinstance(branch_default_value, bool):
-        raise PreflightNoGo(
-            "NEON_PRODUCTION_BRANCH_AMBIGUOUS", "branch_default_contract_invalid"
-        )
+        raise PreflightNoGo("NEON_PRODUCTION_BRANCH_AMBIGUOUS", "branch_default_contract_invalid")
     branch_default = branch_default_value
     project_name = str(detailed.get("name", ""))
     endpoint_state_value = endpoint.get("current_state")
@@ -2434,13 +2403,9 @@ def _finalize_neon_identity(
         )
     target_project_branch_count = counted_target_branches
     bill_free_branch_capacity_proven = (
-        target_project_branch_count + 1
-        <= free_branch_allowances[billing_plan]
+        target_project_branch_count + 1 <= free_branch_allowances[billing_plan]
     )
-    if (
-        audit.account_branch_limit is not None
-        and audit.account_branch_limit != branch_limit
-    ):
+    if audit.account_branch_limit is not None and audit.account_branch_limit != branch_limit:
         raise PreflightNoGo(
             "RECOVERY_BRANCH_NOT_FEASIBLE",
             "account_branch_limit_contradiction",
@@ -2595,11 +2560,7 @@ def require_neon_recovery_feasibility(neon: NeonObservation) -> None:
         )
     if not neon.bill_free_branch_capacity_proven:
         raise PreflightNoGo("PURCHASE_REQUIRED", "purchase_required")
-    if (
-        neon.history_retention_seconds <= 0
-        or neon.branch_id == ""
-        or neon.branch_state != "ready"
-    ):
+    if neon.history_retention_seconds <= 0 or neon.branch_id == "" or neon.branch_state != "ready":
         raise PreflightNoGo(
             "RECOVERY_BRANCH_NOT_FEASIBLE",
             "recovery_branch_not_feasible",
@@ -2732,6 +2693,7 @@ def _execute_readonly(
 ) -> None:
     audit.before_execute(statement)
     try:
+        validate_data_torrent_authority()
         cursor.execute(statement)
     except Exception:
         audit.inspection_failure_class = (
@@ -2807,6 +2769,7 @@ def _inspect_database(
     database_url: str,
     *,
     expected_postgresql_major: int,
+    expected_revisions: tuple[str, ...] = (EXPECTED_REVISION,),
     before_connect: Callable[[], None] | None = None,
     after_connect: Callable[[], None] | None = None,
     inspection_audit: DatabaseInspectionAudit | None = None,
@@ -2846,6 +2809,12 @@ def _inspect_database(
         _reject_libpq_environment()
         if before_connect is not None:
             before_connect()
+        try:
+            validate_data_torrent_authority()
+        except ChronosProductionError:
+            raise PreflightNoGo(
+                "RECOVERY_BRANCH_NOT_FEASIBLE", "mission_authority_inactive"
+            ) from None
         audit.connection_attempt_count += 1
         connection = psycopg.connect(
             safe_database_url,
@@ -2867,9 +2836,7 @@ def _inspect_database(
             inspection_error: Exception | None = None
             try:
                 _execute_readonly(cursor, SQL_STATEMENTS[SQL_BEGIN_READ_ONLY], audit)
-                _execute_readonly(
-                    cursor, SQL_STATEMENTS[SQL_DEFAULT_TRANSACTION_READ_ONLY], audit
-                )
+                _execute_readonly(cursor, SQL_STATEMENTS[SQL_DEFAULT_TRANSACTION_READ_ONLY], audit)
                 default_read_only = str(_one(cursor)["default_transaction_read_only"])
                 audit.default_transaction_read_only = default_read_only == "on"
                 if default_read_only != "on":
@@ -2877,9 +2844,7 @@ def _inspect_database(
                         "DIRECT_ENDPOINT_NOT_PROVEN",
                         "default_transaction_read_only_not_enforced",
                     )
-                _execute_readonly(
-                    cursor, SQL_STATEMENTS[SQL_TRANSACTION_READ_ONLY], audit
-                )
+                _execute_readonly(cursor, SQL_STATEMENTS[SQL_TRANSACTION_READ_ONLY], audit)
                 transaction_read_only = str(_one(cursor)["transaction_read_only"])
                 audit.transaction_read_only = transaction_read_only == "on"
                 if transaction_read_only != "on":
@@ -2944,13 +2909,8 @@ def _inspect_database(
                     session_user == target.username and current_user == session_user
                 )
                 audit.postgresql_version_num = version_num
-                audit.postgresql_major_verified = (
-                    version_num // 10000 == expected_postgresql_major
-                )
-                if (
-                    not audit.database_target_verified
-                    or not audit.principal_target_verified
-                ):
+                audit.postgresql_major_verified = version_num // 10000 == expected_postgresql_major
+                if not audit.database_target_verified or not audit.principal_target_verified:
                     raise PreflightNoGo(
                         "DIRECT_ENDPOINT_NOT_PROVEN",
                         "postgresql_target_identity_mismatch",
@@ -2983,10 +2943,7 @@ def _inspect_database(
                 capabilities = _one(cursor)
                 targets_valid = (
                     capabilities.get("public_schema_exists") is True
-                    and capabilities.get(
-                        "alembic_version_is_plain_permanent_table"
-                    )
-                    is True
+                    and capabilities.get("alembic_version_is_plain_permanent_table") is True
                 )
                 audit.alembic_target_safe = targets_valid
                 if not targets_valid:
@@ -2995,9 +2952,7 @@ def _inspect_database(
                         "alembic_target_not_plain_permanent_table",
                     )
 
-                _execute_readonly(
-                    cursor, SQL_STATEMENTS[SQL_LOCK_ALEMBIC_VERSION], audit
-                )
+                _execute_readonly(cursor, SQL_STATEMENTS[SQL_LOCK_ALEMBIC_VERSION], audit)
                 _execute_readonly(
                     cursor,
                     SQL_STATEMENTS[SQL_TARGET_CLASSIFICATION_AFTER_LOCK],
@@ -3014,15 +2969,13 @@ def _inspect_database(
                 revisions = _read_revisions(cursor, audit)
                 audit.revision_count = len(revisions)
                 audit.revision = revisions[0] if len(revisions) == 1 else None
-                if len(revisions) != 1 or revisions[0] != EXPECTED_REVISION:
+                if len(revisions) != 1 or revisions[0] not in expected_revisions:
                     raise PreflightNoGo(
                         "UNEXPECTED_DATABASE_REVISION",
                         "unexpected_database_revision",
                     )
 
-                _execute_readonly(
-                    cursor, SQL_STATEMENTS[SQL_LIFECYCLE_ADMIN], audit
-                )
+                _execute_readonly(cursor, SQL_STATEMENTS[SQL_LIFECYCLE_ADMIN], audit)
                 lifecycle_admin = _one(cursor)
                 authority_capabilities_proven = not (
                     lifecycle_admin.get("rolcanlogin") is not True
@@ -3032,9 +2985,7 @@ def _inspect_database(
                     )
                     or any(capabilities.get(name) is not True for name in capability_names)
                 )
-                audit.bootstrap_authority_capabilities_proven = (
-                    authority_capabilities_proven
-                )
+                audit.bootstrap_authority_capabilities_proven = authority_capabilities_proven
                 if not authority_capabilities_proven:
                     raise PreflightNoGo(
                         "BOOTSTRAP_AUTHORITY_INSUFFICIENT",
@@ -3042,9 +2993,7 @@ def _inspect_database(
                     )
 
                 try:
-                    _execute_readonly(
-                        cursor, SQL_STATEMENTS[SQL_PRIVILEGED_CATALOG], audit
-                    )
+                    _execute_readonly(cursor, SQL_STATEMENTS[SQL_PRIVILEGED_CATALOG], audit)
                     catalog = _one(cursor)
                 except psycopg.errors.InsufficientPrivilege:
                     audit.privileged_catalog_visible = False
@@ -3066,12 +3015,8 @@ def _inspect_database(
                         "BOOTSTRAP_AUTHORITY_INSUFFICIENT",
                         "existing_chronos_roles_unsafe",
                     )
-                _execute_readonly(
-                    cursor, SQL_STATEMENTS[SQL_CHRONOS_MEMBERSHIPS], audit
-                )
-                memberships = tuple(
-                    cast(dict[str, object], row) for row in cursor.fetchall()
-                )
+                _execute_readonly(cursor, SQL_STATEMENTS[SQL_CHRONOS_MEMBERSHIPS], audit)
+                memberships = tuple(cast(dict[str, object], row) for row in cursor.fetchall())
                 audit.chronos_memberships_clean = not memberships
                 if memberships:
                     raise PreflightNoGo(
@@ -3191,6 +3136,10 @@ def _inspect_database(
 
 def _github_get(path: str) -> dict[str, Any]:
     token = _required_sensitive_context("GITHUB_TOKEN")
+    try:
+        validate_data_torrent_authority()
+    except ChronosProductionError:
+        raise PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", "mission_authority_inactive") from None
     session = requests.Session()
     session.trust_env = False
     try:
@@ -3254,7 +3203,11 @@ def _github_actions_state(
         seen_run_ids: set[int] = set()
         for run in typed:
             run_identifier = run.get("id")
-            if isinstance(run_identifier, bool) or not isinstance(run_identifier, int) or run_identifier < 1:
+            if (
+                isinstance(run_identifier, bool)
+                or not isinstance(run_identifier, int)
+                or run_identifier < 1
+            ):
                 raise PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", gate)
             if run_identifier in seen_run_ids:
                 raise PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", gate)
@@ -3266,9 +3219,7 @@ def _github_actions_state(
     counts: dict[str, int] = {}
     for status in ("queued", "in_progress"):
         document = _github_get(f"/repos/{repository}/actions/runs?status={status}&per_page=100")
-        runs = validated_runs(
-            document, "github_actions_runs_invalid", expected_status=status
-        )
+        runs = validated_runs(document, "github_actions_runs_invalid", expected_status=status)
         counts[status] = sum(1 for run in runs if run["id"] != run_id)
     dispatches = _github_get(
         f"/repos/{repository}/actions/workflows/"
@@ -3284,12 +3235,8 @@ def _github_actions_state(
         or run.get("run_attempt") != 1
         for run in runs
     ):
-        raise PreflightNoGo(
-            "RECOVERY_BRANCH_NOT_FEASIBLE", "github_dispatch_history_invalid"
-        )
-    exact_dispatches = [
-        run for run in runs if run.get("head_sha") == main_sha
-    ]
+        raise PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", "github_dispatch_history_invalid")
+    exact_dispatches = [run for run in runs if run.get("head_sha") == main_sha]
     if len(exact_dispatches) != len(runs):
         raise PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", "github_dispatch_history_invalid")
     if not any(run["id"] == run_id for run in exact_dispatches):
@@ -3305,14 +3252,97 @@ def _github_actions_state(
         or not isinstance(ref_object.get("sha"), str)
         or _HEX_SHA.fullmatch(cast(str, ref_object.get("sha"))) is None
     ):
-        raise PreflightNoGo(
-            "RECOVERY_BRANCH_NOT_FEASIBLE", "github_main_ref_invalid"
-        )
+        raise PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", "github_main_ref_invalid")
     if cast(str, ref_object["sha"]) != main_sha:
-        raise PreflightNoGo(
-            "NEON_PROJECT_IDENTITY_AMBIGUOUS", "github_main_ref_mismatch"
-        )
+        raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "github_main_ref_mismatch")
     return counts["queued"], counts["in_progress"], len(exact_dispatches)
+
+
+def _github_authority_window_dispatch_count(
+    repository: str,
+    run_id: int,
+    main_sha: str,
+    *,
+    workflow_file: str,
+    not_before: str,
+) -> int:
+    """Count every dispatch in one immutable authority window, across all SHAs."""
+
+    try:
+        cutoff = datetime.fromisoformat(not_before.replace("Z", "+00:00"))
+    except ValueError:
+        raise PreflightNoGo(
+            "RECOVERY_BRANCH_NOT_FEASIBLE", "github_authority_window_invalid"
+        ) from None
+    if (
+        not not_before.endswith("Z")
+        or cutoff.tzinfo is None
+        or cutoff.utcoffset() != UTC.utcoffset(cutoff)
+    ):
+        raise PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", "github_authority_window_invalid")
+    document = _github_get(
+        f"/repos/{repository}/actions/workflows/{workflow_file}/runs"
+        "?event=workflow_dispatch&per_page=100"
+    )
+    runs = document.get("workflow_runs")
+    total_count = document.get("total_count")
+    if (
+        not isinstance(runs, list)
+        or not all(isinstance(run, dict) for run in runs)
+        or isinstance(total_count, bool)
+        or not isinstance(total_count, int)
+        or total_count != len(runs)
+        or total_count > 100
+    ):
+        raise PreflightNoGo(
+            "RECOVERY_BRANCH_NOT_FEASIBLE", "github_authority_dispatch_history_invalid"
+        )
+    seen: set[int] = set()
+    authority_runs: list[dict[str, Any]] = []
+    for raw_run in runs:
+        run = cast(dict[str, Any], raw_run)
+        identifier = run.get("id")
+        created_at = run.get("created_at")
+        if (
+            isinstance(identifier, bool)
+            or not isinstance(identifier, int)
+            or identifier < 1
+            or identifier in seen
+            or run.get("event") != "workflow_dispatch"
+            or not isinstance(created_at, str)
+            or not created_at.endswith("Z")
+        ):
+            raise PreflightNoGo(
+                "RECOVERY_BRANCH_NOT_FEASIBLE",
+                "github_authority_dispatch_history_invalid",
+            )
+        seen.add(identifier)
+        try:
+            created = datetime.fromisoformat(created_at.replace("Z", "+00:00"))
+        except ValueError:
+            raise PreflightNoGo(
+                "RECOVERY_BRANCH_NOT_FEASIBLE",
+                "github_authority_dispatch_history_invalid",
+            ) from None
+        if created.tzinfo is None or created.utcoffset() != UTC.utcoffset(created):
+            raise PreflightNoGo(
+                "RECOVERY_BRANCH_NOT_FEASIBLE",
+                "github_authority_dispatch_history_invalid",
+            )
+        if created >= cutoff:
+            authority_runs.append(run)
+    current = [run for run in authority_runs if run.get("id") == run_id]
+    if (
+        len(current) != 1
+        or current[0].get("head_branch") != "main"
+        or current[0].get("head_sha") != main_sha
+        or isinstance(current[0].get("run_attempt"), bool)
+        or current[0].get("run_attempt") != 1
+    ):
+        raise PreflightNoGo(
+            "RECOVERY_BRANCH_NOT_FEASIBLE", "current_authority_dispatch_not_observed"
+        )
+    return len(authority_runs)
 
 
 def _bootstrap_authority_plausible(database: DatabaseObservation) -> bool:
@@ -3329,9 +3359,7 @@ def _bootstrap_authority_plausible(database: DatabaseObservation) -> bool:
         "table_delete_grantable",
         "authority_role_memberships_clean",
     }
-    capabilities_proven = (
-        set(database.bootstrap_grantable_capabilities) == required_capabilities
-    )
+    capabilities_proven = set(database.bootstrap_grantable_capabilities) == required_capabilities
     inventory_clean = (
         not database.chronos_roles
         and not database.chronos_memberships
@@ -3466,9 +3494,7 @@ def _report(
             "lifecycle_admin_sha256": _fingerprint(database.current_user),
             "bootstrap_authority_plausible": _bootstrap_authority_plausible(database),
             "bootstrap_targets_valid": database.bootstrap_targets_valid,
-            "bootstrap_grantable_capabilities": list(
-                database.bootstrap_grantable_capabilities
-            ),
+            "bootstrap_grantable_capabilities": list(database.bootstrap_grantable_capabilities),
             "chronos_inventory_classification": (
                 "ABSENT"
                 if not database.chronos_roles
@@ -3486,9 +3512,7 @@ def _report(
             ),
             "existing_chronos_objects": _sanitize_rows(
                 database.chronos_objects,
-                identity_keys=frozenset(
-                    {"schema_name", "object_name", "owner_role"}
-                ),
+                identity_keys=frozenset({"schema_name", "object_name", "owner_role"}),
             ),
             "sql_statement_count": database.sql_statement_count,
             "sql_statement_completed_count": database.sql_statement_completed_count,
@@ -3642,11 +3666,8 @@ def run_preflight() -> dict[str, object]:
             raise PreflightNoGo(
                 error.reason,
                 error.gate,
-                sanitized_evidence=error.sanitized_evidence
-                or _sanitized_neon(neon),
-                sanitized_postgresql_evidence=(
-                    error.sanitized_postgresql_evidence
-                ),
+                sanitized_evidence=error.sanitized_evidence or _sanitized_neon(neon),
+                sanitized_postgresql_evidence=(error.sanitized_postgresql_evidence),
                 effect_counts=error.effect_counts,
             ) from None
         sql_safety = (
@@ -3747,15 +3768,11 @@ def main() -> None:
             effect_counts=error.effect_counts,
         )
     except Exception:
-        report = _conservative_technical_no_go_report(
-            "unexpected_sanitized_failure"
-        )
+        report = _conservative_technical_no_go_report("unexpected_sanitized_failure")
     try:
         _write_report(args.report, report)
     except Exception:
-        report = _conservative_technical_no_go_report(
-            "report_serialization_or_write_failure"
-        )
+        report = _conservative_technical_no_go_report("report_serialization_or_write_failure")
         _write_report(args.report, report)
     print(str(report["verdict"]))
 

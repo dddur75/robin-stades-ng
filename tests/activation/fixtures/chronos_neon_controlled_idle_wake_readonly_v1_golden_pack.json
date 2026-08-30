@@ -14,7 +14,7 @@
     {"case_id": "TRANSACTION_READ_ONLY_FALSE", "expected_gate": "direct_endpoint_not_proven"},
     {"case_id": "SSL_FALSE", "expected_gate": "ssl_not_proven"},
     {"case_id": "EXPECTED_REVISION_0013", "expected": "CHRONOS_NEON_MIGRATION_READY_FOR_SEPARATE_AUTHORIZATION"},
-    {"case_id": "UNEXPECTED_REVISION_0014", "expected_gate": "unexpected_database_revision"},
+    {"case_id": "EXPECTED_REVISION_0014", "expected": "CHRONOS_NEON_MIGRATION_READY_FOR_SEPARATE_AUTHORIZATION"},
     {"case_id": "MULTIPLE_ALEMBIC_REVISIONS", "expected_gate": "unexpected_database_revision"},
     {"case_id": "BOOTSTRAP_AUTHORITY_SUFFICIENT", "expected": "BOOTSTRAP_AUTHORITY_CAPABILITIES_PROVEN"},
     {"case_id": "BOOTSTRAP_AUTHORITY_INSUFFICIENT", "expected_gate": "bootstrap_authority_insufficient"},

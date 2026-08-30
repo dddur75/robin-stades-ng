@@ -23,10 +23,13 @@ from robin.chronos_production import (
     EXPECTED_ENVIRONMENT,
     EXPECTED_REPOSITORY,
     DirectPostgresTarget,
+    build_generation_bound_password,
     build_scoped_database_url,
     generation_hash,
     preflight_hash,
     require_sha,
+    validate_controlled_go_binding,
+    validate_data_torrent_authority,
 )
 
 if __package__ in {None, ""}:
@@ -44,9 +47,7 @@ BINDINGS = (
 )
 _HEX_64 = re.compile(r"^[0-9a-f]{64}$")
 _RUN_ID = re.compile(r"^[1-9][0-9]*$")
-_RECOVERY_BRANCH_NAME = re.compile(
-    r"^chronos-pre-0015-recovery-[0-9]{8}T[0-9]{6}Z$"
-)
+_RECOVERY_BRANCH_NAME = re.compile(r"^chronos-pre-0015-recovery-[0-9]{8}T[0-9]{6}Z$")
 _PREFLIGHT_FIELDS = frozenset(
     {
         "schema_version",
@@ -70,6 +71,7 @@ _PREFLIGHT_FIELDS = frozenset(
         "preflight_run_id",
         "preflight_run_attempt",
         "post_merge_ci_sha",
+        "controlled_go",
         "preflight_hash",
         "signature",
     }
@@ -193,6 +195,14 @@ def _artifact_bytes(
         or artifact.get("preflight_hash") != preflight_hash(artifact)
     ):
         raise BindingInstallerError("CHRONOS_BINDING_PREFLIGHT_MISMATCH")
+    try:
+        controlled_go = validate_controlled_go_binding(
+            artifact.get("controlled_go"),
+            main_sha=expected_sha,
+        )
+    except Exception:
+        raise BindingInstallerError("CHRONOS_BINDING_CONTROLLED_GO_INVALID") from None
+    artifact["controlled_go"] = controlled_go
     created_at = _timestamp(artifact.get("created_at"))
     expiry = _timestamp(artifact.get("expires_at"))
     if created_at >= expiry:
@@ -203,6 +213,10 @@ def _artifact_bytes(
 
 
 def _set_secret(*, name: str, value: str, repository: str, environment: str) -> None:
+    try:
+        validate_data_torrent_authority()
+    except Exception:
+        raise BindingInstallerError("CHRONOS_BINDING_MISSION_AUTHORITY_INACTIVE") from None
     try:
         subprocess.run(  # nosec B603 B607 - fixed CLI and validated secret target.
             [
@@ -236,6 +250,10 @@ def install(
 ) -> dict[str, Any]:
     if repository != EXPECTED_REPOSITORY or environment != EXPECTED_ENVIRONMENT:
         raise BindingInstallerError("CHRONOS_BINDING_TARGET_FORBIDDEN")
+    try:
+        validate_data_torrent_authority()
+    except Exception:
+        raise BindingInstallerError("CHRONOS_BINDING_MISSION_AUTHORITY_INACTIVE") from None
     attestation, attested_bytes = _attest_preflight_artifact(
         preflight_artifact,
         expected_main_sha=expected_main_sha,
@@ -258,26 +276,80 @@ def install(
         repository=repository,
         main_sha=expected_main_sha,
     )
-    installed: list[str] = []
+    nonce = secrets.token_hex(32)
+    nonce_hash = generation_hash(nonce)
+    pending: list[tuple[str, str]] = []
     for secret_name, login in BINDINGS:
-        password = secrets.token_urlsafe(48)
-        value = build_scoped_database_url(target, username=login, password=password)
+        password = build_generation_bound_password(
+            nonce_hex=nonce,
+            entropy=secrets.token_urlsafe(48),
+        )
+        pending.append(
+            (
+                secret_name,
+                build_scoped_database_url(target, username=login, password=password),
+            )
+        )
+        del password
+    installed: list[str] = []
+    attempted: list[str] = []
+    try:
+        for secret_name, value in pending:
+            attempted.append(secret_name)
+            _set_secret(
+                name=secret_name,
+                value=value,
+                repository=repository,
+                environment=environment,
+            )
+            installed.append(secret_name)
+        # Commit marker last: an interrupted earlier write can only leave the
+        # previous generation active, while an ambiguous final write sees all
+        # three generation-bound URLs already installed.
+        attempted.append("CHRONOS_CONTROL_PLANE_GENERATION_NONCE")
         _set_secret(
-            name=secret_name,
-            value=value,
+            name="CHRONOS_CONTROL_PLANE_GENERATION_NONCE",
+            value=nonce,
             repository=repository,
             environment=environment,
         )
-        installed.append(secret_name)
-        del password, value
-    nonce = secrets.token_hex(32)
-    _set_secret(
-        name="CHRONOS_CONTROL_PLANE_GENERATION_NONCE",
-        value=nonce,
-        repository=repository,
-        environment=environment,
-    )
-    installed.append("CHRONOS_CONTROL_PLANE_GENERATION_NONCE")
+        installed.append("CHRONOS_CONTROL_PLANE_GENERATION_NONCE")
+    except BindingInstallerError as error:
+        failure = {
+            "schema_version": "chronos-runtime-binding-install-failure-v1",
+            "status": "FAILED",
+            "error_code": str(error),
+            "repository": repository,
+            "environment": environment,
+            "expected_main_sha": artifact["main_sha"],
+            "preflight_hash": artifact["preflight_hash"],
+            "preflight_run_id": artifact["preflight_run_id"],
+            "secret_updates_attempted": attempted,
+            "secrets_updated_confirmed": installed,
+            "secret_updates_possible": [name for name in attempted if name not in installed],
+            "activation_secret_update_confirmed": False,
+            "activation_secret_update_possible": (
+                "CHRONOS_CONTROL_PLANE_GENERATION_NONCE" in attempted
+            ),
+            "partial_generation_can_be_active": False,
+            "activation_state_certainty": (
+                "UNKNOWN_PREVIOUS_OR_COMPLETE_NEW_GENERATION"
+                if "CHRONOS_CONTROL_PLANE_GENERATION_NONCE" in attempted
+                else "NEW_GENERATION_NOT_ACTIVATED_BY_THIS_ATTEMPT"
+            ),
+            "generation_hash": nonce_hash,
+            "recovery": "REINSTALL_ALL_URLS_THEN_COMMIT_MARKER_WITH_FRESH_GENERATION",
+            "secret_values_observed": False,  # nosec B105
+        }
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report_path.write_text(
+            json.dumps(failure, sort_keys=True, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        raise
+    finally:
+        for index in range(len(pending)):
+            pending[index] = (pending[index][0], "")
     report = {
         "schema_version": "chronos-runtime-binding-install-v1",
         "status": "INSTALLED",
@@ -294,12 +366,13 @@ def install(
         "recovery_branch_name": artifact["recovery_branch_name"],
         "preflight_signature_algorithm": "HMAC-SHA256",
         "preflight_artifact_attestation": attestation,
+        "controlled_go": artifact["controlled_go"],
         "database_host": target.host,
         "database_port": target.port,
         "database_name": target.database,
         "usernames": [login for _name, login in BINDINGS],
         "secrets_updated": installed,
-        "generation_hash": generation_hash(nonce),
+        "generation_hash": nonce_hash,
         "installed_at_utc": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
         "secret_values_observed": False,  # nosec B105 - boolean audit field.
     }

@@ -17,16 +17,23 @@ from robin.chronos_production import (
 )
 
 ROOT = Path(__file__).resolve().parents[1]
+LEGACY_PROVIDER_BRANCH = "codex/jalon-12-prospective-deep-data-observatory"
+LEGACY_CI_WORKFLOW_PATH = ".github/workflows/ci.yml"
+SAFE_CI_WORKFLOW_PATH = ".github/workflows/ci-safe-v2.yml"
+PRODUCTION_ENVIRONMENT = "chronos-control-plane-production"
 AUTHORIZED_PROTECTED_WORKFLOWS = frozenset(
     {
-        ".github/workflows/ci.yml",
+        SAFE_CI_WORKFLOW_PATH,
+        ".github/workflows/chronos-neon-controlled-idle-wake-readonly-v1.yml",
+        ".github/workflows/chronos-controlled-go-durable-seal-v1.yml",
         ".github/workflows/chronos-production-bootstrap-v3.yml",
-        ".github/workflows/chronos-provider-free-canary-v3.yml",
         ".github/workflows/data-torrent-live-v1.yml",
     }
 )
 RISK_MARKERS = (
     "secrets.DATABASE_URL",
+    "secrets.NEON_",
+    "secrets.CHRONOS_",
     "secrets.R2_",
     "secrets.API_FOOTBALL_KEY",
     "secrets.ODDS_API_KEY",
@@ -78,6 +85,39 @@ def verify_hold(*, required_successful_ci_sha: str | None = None) -> dict[str, A
     if not isinstance(raw_workflows, list):
         raise ChronosProductionError("CHRONOS_GITHUB_WORKFLOWS_INVALID")
     workflows = [item for item in raw_workflows if isinstance(item, dict)]
+    legacy_ci_workflow = _github_get(
+        f"/repos/{repository}/actions/workflows/ci.yml",
+        token,
+    )
+    if (
+        str(legacy_ci_workflow.get("path", "")).removeprefix("/") != LEGACY_CI_WORKFLOW_PATH
+        or legacy_ci_workflow.get("state") != "disabled_manually"
+        or type(legacy_ci_workflow.get("id")) is not int
+        or int(legacy_ci_workflow["id"]) <= 0
+    ):
+        raise ChronosProductionError("CHRONOS_LEGACY_CI_NOT_QUARANTINED")
+    environment = _github_get(
+        f"/repos/{repository}/environments/{PRODUCTION_ENVIRONMENT}",
+        token,
+    )
+    deployment_policy = environment.get("deployment_branch_policy")
+    environment_policies = _github_get(
+        f"/repos/{repository}/environments/{PRODUCTION_ENVIRONMENT}/deployment-branch-policies",
+        token,
+    )
+    branch_policies = environment_policies.get("branch_policies")
+    if (
+        environment.get("name") != PRODUCTION_ENVIRONMENT
+        or environment.get("can_admins_bypass") is not False
+        or deployment_policy != {"protected_branches": False, "custom_branch_policies": True}
+        or environment_policies.get("total_count") != 1
+        or not isinstance(branch_policies, list)
+        or len(branch_policies) != 1
+        or not isinstance(branch_policies[0], dict)
+        or branch_policies[0].get("name") != "main"
+        or branch_policies[0].get("type") != "branch"
+    ):
+        raise ChronosProductionError("CHRONOS_PRODUCTION_ENVIRONMENT_POLICY_INVALID")
     active = [item for item in workflows if item.get("state") == "active"]
     disabled = [item for item in workflows if item.get("state") != "active"]
     unauthorized: list[dict[str, Any]] = []
@@ -116,13 +156,14 @@ def verify_hold(*, required_successful_ci_sha: str | None = None) -> dict[str, A
     if active_runs:
         raise ChronosProductionError("CHRONOS_CONCURRENT_RUN_PRESENT")
     post_merge_ci: dict[str, Any] | None = None
+    legacy_secret_branch_sha: str | None = None
     if required_successful_ci_sha is not None:
         expected_ci_sha = require_sha(
             required_successful_ci_sha,
             field="required_successful_ci_sha",
         )
         ci_runs_document = _github_get(
-            f"/repos/{repository}/actions/workflows/ci.yml/runs"
+            f"/repos/{repository}/actions/workflows/ci-safe-v2.yml/runs"
             "?branch=main&status=completed&per_page=100",
             token,
         )
@@ -138,12 +179,14 @@ def verify_hold(*, required_successful_ci_sha: str | None = None) -> dict[str, A
             and item.get("event") == "push"
             and item.get("status") == "completed"
             and item.get("conclusion") == "success"
+            and type(item.get("run_attempt")) is int
+            and item.get("run_attempt") == 1
         ]
         if not successful:
             raise ChronosProductionError("CHRONOS_POST_MERGE_CI_NOT_PROVEN")
         selected = max(successful, key=lambda item: int(item.get("id", 0)))
         post_merge_ci = {
-            "workflow_path": ".github/workflows/ci.yml",
+            "workflow_path": SAFE_CI_WORKFLOW_PATH,
             "run_id": int(selected.get("id", 0)),
             "run_attempt": int(selected.get("run_attempt", 0)),
             "head_sha": expected_ci_sha,
@@ -152,6 +195,19 @@ def verify_hold(*, required_successful_ci_sha: str | None = None) -> dict[str, A
             "status": "completed",
             "conclusion": "success",
         }
+        legacy_ref = _github_get(
+            f"/repos/{repository}/git/ref/heads/{LEGACY_PROVIDER_BRANCH}",
+            token,
+        )
+        legacy_object = legacy_ref.get("object")
+        if (
+            legacy_ref.get("ref") != f"refs/heads/{LEGACY_PROVIDER_BRANCH}"
+            or not isinstance(legacy_object, dict)
+            or legacy_object.get("type") != "commit"
+            or legacy_object.get("sha") != expected_ci_sha
+        ):
+            raise ChronosProductionError("CHRONOS_LEGACY_SECRET_BRANCH_NOT_NEUTRALIZED")
+        legacy_secret_branch_sha = expected_ci_sha
     return {
         "schema_version": "chronos-production-workflow-hold-live-v3",
         "verdict": "WORKFLOW_HOLD_ESTABLISHED",
@@ -162,6 +218,19 @@ def verify_hold(*, required_successful_ci_sha: str | None = None) -> dict[str, A
         "current_run_excluded": run_id,
         "unauthorized_active_workflows": [],
         "post_merge_ci": post_merge_ci,
+        "legacy_secret_branch_sha": legacy_secret_branch_sha,
+        "legacy_ci_workflow_quarantine": {
+            "workflow_id": int(legacy_ci_workflow["id"]),
+            "workflow_path": LEGACY_CI_WORKFLOW_PATH,
+            "state": "disabled_manually",
+        },
+        "production_environment_policy": {
+            "environment": PRODUCTION_ENVIRONMENT,
+            "can_admins_bypass": False,
+            "protected_branches": False,
+            "custom_branch_policies": True,
+            "allowed_branches": ["main"],
+        },
         "provider_calls": 0,
         "r2_operations": 0,
     }

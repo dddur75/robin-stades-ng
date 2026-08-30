@@ -9,6 +9,8 @@ import os
 import re
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
+from datetime import UTC, datetime, timedelta
+from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qsl, quote, unquote, urlencode, urlparse, urlunparse
 
@@ -24,6 +26,19 @@ EXPECTED_BEFORE_REVISIONS = (
 )
 EXPECTED_AFTER_REVISION = "0015_data_torrent_opportunity"
 EXPECTED_ENVIRONMENT = "chronos-control-plane-production"
+DATA_TORRENT_MISSION_ID = "data-torrent-ready-v1"
+DATA_TORRENT_OWNER_DIRECTIVE_SHA256 = (
+    "c03e218ca8f69d30f3fe998f7534d3edb11e2ba71bdd3ca022ada7ee08a2295d"
+)
+DATA_TORRENT_MISSION_MANIFEST_SHA256 = (
+    "22e64bb33bd54aeeb528a416c7f6d0ca1c0719a27677302b8065249923ca96e7"
+)
+DATA_TORRENT_CONTROLLED_EFFECT_CONTRACT_SHA256 = (
+    "9a9d44db699bfb39c5f8006b90ce6273a9de643be49c6e179487d4703fd09785"
+)
+DATA_TORRENT_ONE_SHOT_NOT_BEFORE = "2026-08-30T06:36:00Z"
+DATA_TORRENT_LATEST_EFFECT_ADMISSION_AT = "2026-09-01T22:00:00Z"
+DATA_TORRENT_MAXIMUM_EFFECT_RUNTIME_SECONDS = 3600
 MIGRATION_TARGET = EXPECTED_AFTER_REVISION
 SCOPED_LOGINS = (
     (
@@ -58,9 +73,11 @@ PRODUCTION_SAFETY_LOCKS = {
 
 _HEX_40 = re.compile(r"^[0-9a-f]{40}$")
 _HEX_64 = re.compile(r"^[0-9a-f]{64}$")
+_RUN_ID = re.compile(r"^[1-9][0-9]*$")
 _SAFE_IDENTIFIER = re.compile(r"^[a-z][a-z0-9_]{0,62}$")
 _SAFE_NEON_HOST = re.compile(r"^[a-z0-9-]+(?:\.[a-z0-9-]+)*\.neon\.tech$")
 _INVALID_PERCENT_ESCAPE = re.compile(r"%(?![0-9a-fA-F]{2})")
+_GENERATION_PASSWORD_ENTROPY = re.compile(r"^[A-Za-z0-9_-]{32,128}$")
 _SAFE_SSL_MODES = frozenset({"require", "verify-ca", "verify-full"})
 _SAFE_QUERY_KEYS = frozenset({"sslmode", "channel_binding"})
 _LIBPQ_ENVIRONMENT = re.compile(r"^PG[A-Z0-9_]+$")
@@ -115,6 +132,109 @@ def connect_direct_postgres(
 
 class ChronosProductionError(RuntimeError):
     """A sanitized fail-closed production contract error."""
+
+
+def _authority_timestamp(value: object, *, field: str) -> datetime:
+    if not isinstance(value, str) or not value.endswith("Z"):
+        raise ChronosProductionError(f"CHRONOS_MISSION_AUTHORITY_{field.upper()}_INVALID")
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        raise ChronosProductionError(f"CHRONOS_MISSION_AUTHORITY_{field.upper()}_INVALID") from None
+    if parsed.tzinfo is None or parsed.utcoffset() != UTC.utcoffset(parsed):
+        raise ChronosProductionError(f"CHRONOS_MISSION_AUTHORITY_{field.upper()}_INVALID")
+    return parsed.astimezone(UTC)
+
+
+def validate_data_torrent_authority(
+    *,
+    now: datetime | None = None,
+    repository_root: Path | None = None,
+) -> datetime:
+    """Verify the immutable owner authority and its unexpired execution window."""
+
+    root = Path(__file__).resolve().parents[2] if repository_root is None else repository_root
+    manifest_path = root / "configs" / "execution" / "data-torrent-ready-v1.json"
+    effect_path = (
+        root / "configs" / "execution" / "data-torrent-ready-v1-controlled-go-effect-contract.json"
+    )
+    documents: list[dict[str, Any]] = []
+    for path, expected_hash in (
+        (manifest_path, DATA_TORRENT_MISSION_MANIFEST_SHA256),
+        (effect_path, DATA_TORRENT_CONTROLLED_EFFECT_CONTRACT_SHA256),
+    ):
+        try:
+            payload = path.read_bytes()
+        except OSError:
+            raise ChronosProductionError("CHRONOS_MISSION_AUTHORITY_MISSING") from None
+        if (
+            not payload
+            or len(payload) > 65_536
+            or path.is_symlink()
+            or not hmac.compare_digest(hashlib.sha256(payload).hexdigest(), expected_hash)
+        ):
+            raise ChronosProductionError("CHRONOS_MISSION_AUTHORITY_HASH_MISMATCH")
+        try:
+            document = json.loads(payload)
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            raise ChronosProductionError("CHRONOS_MISSION_AUTHORITY_INVALID") from None
+        if not isinstance(document, dict):
+            raise ChronosProductionError("CHRONOS_MISSION_AUTHORITY_INVALID")
+        documents.append(document)
+
+    manifest, effect_contract = documents
+    if set(manifest) != {
+        "mission_id",
+        "authorized_stages",
+        "maximum_stage",
+        "external_effects",
+        "compute_budget",
+        "time_budget",
+        "source_hash",
+        "expires_at",
+    }:
+        raise ChronosProductionError("CHRONOS_MISSION_AUTHORITY_INVALID")
+    if (
+        manifest.get("mission_id") != DATA_TORRENT_MISSION_ID
+        or effect_contract.get("mission_id") != DATA_TORRENT_MISSION_ID
+        or manifest.get("source_hash") != DATA_TORRENT_OWNER_DIRECTIVE_SHA256
+        or effect_contract.get("owner_directive_source_sha256")
+        != DATA_TORRENT_OWNER_DIRECTIVE_SHA256
+        or effect_contract.get("parent_manifest_sha256") != DATA_TORRENT_MISSION_MANIFEST_SHA256
+        or effect_contract.get("expands_parent_authority") is not False
+        or effect_contract.get("expires_at") != manifest.get("expires_at")
+        or effect_contract.get("one_shot_not_before") != DATA_TORRENT_ONE_SHOT_NOT_BEFORE
+        or effect_contract.get("latest_effect_admission_at")
+        != DATA_TORRENT_LATEST_EFFECT_ADMISSION_AT
+        or effect_contract.get("maximum_effect_runtime_seconds")
+        != DATA_TORRENT_MAXIMUM_EFFECT_RUNTIME_SECONDS
+    ):
+        raise ChronosProductionError("CHRONOS_MISSION_AUTHORITY_BINDING_MISMATCH")
+    expiry = _authority_timestamp(manifest.get("expires_at"), field="expiry")
+    not_before = _authority_timestamp(
+        effect_contract.get("one_shot_not_before"), field="not_before"
+    )
+    admission_close = _authority_timestamp(
+        effect_contract.get("latest_effect_admission_at"),
+        field="effect_admission",
+    )
+    observed_now = datetime.now(UTC) if now is None else now
+    if observed_now.tzinfo is None:
+        raise ChronosProductionError("CHRONOS_MISSION_AUTHORITY_NOW_INVALID")
+    observed_now = observed_now.astimezone(UTC)
+    if (
+        not_before >= admission_close
+        or admission_close >= expiry
+        or expiry - admission_close < timedelta(seconds=DATA_TORRENT_MAXIMUM_EFFECT_RUNTIME_SECONDS)
+    ):
+        raise ChronosProductionError("CHRONOS_MISSION_AUTHORITY_WINDOW_INVALID")
+    if observed_now < not_before:
+        raise ChronosProductionError("CHRONOS_MISSION_AUTHORITY_NOT_YET_ACTIVE")
+    if observed_now >= expiry:
+        raise ChronosProductionError("CHRONOS_MISSION_AUTHORITY_EXPIRED")
+    if observed_now >= admission_close:
+        raise ChronosProductionError("CHRONOS_MISSION_EFFECT_ADMISSION_CLOSED")
+    return expiry
 
 
 def assert_production_safety_locks(environment: Mapping[str, str]) -> None:
@@ -348,6 +468,121 @@ def generation_hash(nonce_hex: str) -> str:
     return hashlib.sha256(bytes.fromhex(nonce_hex)).hexdigest()
 
 
+def build_generation_bound_password(*, nonce_hex: str, entropy: str) -> str:
+    """Bind a scoped credential to the nonce that activates its generation."""
+
+    digest = generation_hash(nonce_hex)
+    if _GENERATION_PASSWORD_ENTROPY.fullmatch(entropy) is None:
+        raise ChronosProductionError("CHRONOS_SCOPED_PASSWORD_ENTROPY_INVALID")
+    return f"g1_{digest}_{entropy}"
+
+
+def require_generation_bound_password(*, password: str, nonce_hex: str) -> str:
+    """Reject a partial or mixed GitHub secret rotation before any DB effect."""
+
+    parts = password.split("_", 2)
+    if (
+        len(parts) != 3
+        or parts[0] != "g1"
+        or _HEX_64.fullmatch(parts[1]) is None
+        or _GENERATION_PASSWORD_ENTROPY.fullmatch(parts[2]) is None
+        or not hmac.compare_digest(parts[1], generation_hash(nonce_hex))
+    ):
+        raise ChronosProductionError("CHRONOS_SCOPED_PASSWORD_GENERATION_MISMATCH")
+    return password
+
+
+def validate_controlled_go_binding(
+    value: object,
+    *,
+    main_sha: str,
+) -> dict[str, Any]:
+    """Validate the exact immutable controlled-wake release-chain binding."""
+
+    expected_main_sha = require_sha(main_sha, field="main_sha")
+    fields = {
+        "schema_version",
+        "workflow_path",
+        "run_id",
+        "run_attempt",
+        "main_sha",
+        "report_schema",
+        "report_sha256",
+        "endpoint_pre_wake_state",
+        "compute_wake_events",
+        "postgresql_connection_attempts",
+        "production_sql_writes",
+        "neon_mutations",
+        "durable_store",
+        "conditional_put_outcome",
+        "durable_object_key",
+        "durable_readback_sha256",
+        "seal_workflow_path",
+        "seal_run_id",
+        "seal_run_attempt",
+        "seal_receipt_sha256",
+        "seal_r2_puts",
+        "seal_r2_gets",
+        "seal_r2_objects_created",
+        "preflight_readback_sha256",
+        "preflight_r2_gets",
+    }
+    if not isinstance(value, dict) or set(value) != fields:
+        raise ChronosProductionError("CHRONOS_CONTROLLED_GO_BINDING_INVALID")
+    binding = dict(value)
+    controlled_run_id = binding.get("run_id")
+    seal_run_id = binding.get("seal_run_id")
+    report_sha256 = binding.get("report_sha256")
+    if (
+        binding.get("schema_version") != "chronos-controlled-go-binding-v1"
+        or binding.get("workflow_path")
+        != ".github/workflows/chronos-neon-controlled-idle-wake-readonly-v1.yml"
+        or not isinstance(controlled_run_id, str)
+        or _RUN_ID.fullmatch(controlled_run_id) is None
+        or binding.get("run_attempt") != "1"
+        or binding.get("main_sha") != expected_main_sha
+        or binding.get("report_schema") != "chronos-neon-controlled-idle-wake-readonly-v1"
+        or not isinstance(report_sha256, str)
+        or _HEX_64.fullmatch(report_sha256) is None
+        or binding.get("endpoint_pre_wake_state") not in {"active", "idle"}
+        or type(binding.get("compute_wake_events")) is not int
+        or binding.get("compute_wake_events") != 1
+        or type(binding.get("postgresql_connection_attempts")) is not int
+        or binding.get("postgresql_connection_attempts") != 1
+        or type(binding.get("production_sql_writes")) is not int
+        or binding.get("production_sql_writes") != 0
+        or type(binding.get("neon_mutations")) is not int
+        or binding.get("neon_mutations") != 0
+        or binding.get("durable_store") != "R2_IMMUTABLE"
+        or binding.get("conditional_put_outcome") != "CREATED"
+        or binding.get("durable_object_key")
+        != (
+            "data-torrent-ready-v1/control-plane/controlled-go/"
+            f"main_sha={expected_main_sha}/run_id={controlled_run_id}/"
+            f"report-{report_sha256}.json"
+        )
+        or binding.get("durable_readback_sha256") != report_sha256
+        or binding.get("seal_workflow_path")
+        != ".github/workflows/chronos-controlled-go-durable-seal-v1.yml"
+        or not isinstance(seal_run_id, str)
+        or _RUN_ID.fullmatch(seal_run_id) is None
+        or binding.get("seal_run_attempt") != "1"
+        or not isinstance(binding.get("seal_receipt_sha256"), str)
+        or _HEX_64.fullmatch(str(binding.get("seal_receipt_sha256"))) is None
+        or type(binding.get("seal_r2_puts")) is not int
+        or binding.get("seal_r2_puts") != 1
+        or type(binding.get("seal_r2_gets")) is not int
+        or binding.get("seal_r2_gets") != 1
+        or type(binding.get("seal_r2_objects_created")) is not int
+        or binding.get("seal_r2_objects_created") != 1
+        or binding.get("preflight_readback_sha256") != report_sha256
+        or type(binding.get("preflight_r2_gets")) is not int
+        or binding.get("preflight_r2_gets") != 1
+    ):
+        raise ChronosProductionError("CHRONOS_CONTROLLED_GO_BINDING_INVALID")
+    return binding
+
+
 def assert_exact_preflight_binding(
     document: dict[str, Any],
     *,
@@ -379,6 +614,13 @@ def assert_exact_preflight_binding(
 
 
 __all__ = [
+    "DATA_TORRENT_CONTROLLED_EFFECT_CONTRACT_SHA256",
+    "DATA_TORRENT_LATEST_EFFECT_ADMISSION_AT",
+    "DATA_TORRENT_MAXIMUM_EFFECT_RUNTIME_SECONDS",
+    "DATA_TORRENT_MISSION_ID",
+    "DATA_TORRENT_MISSION_MANIFEST_SHA256",
+    "DATA_TORRENT_ONE_SHOT_NOT_BEFORE",
+    "DATA_TORRENT_OWNER_DIRECTIVE_SHA256",
     "EXPECTED_AFTER_REVISION",
     "EXPECTED_BEFORE_REVISION",
     "EXPECTED_BEFORE_REVISIONS",
@@ -393,15 +635,19 @@ __all__ = [
     "assert_exact_preflight_binding",
     "assert_production_safety_locks",
     "build_scoped_database_url",
+    "build_generation_bound_password",
     "canonical_json_bytes",
     "connect_direct_postgres",
     "generation_hash",
     "preflight_hash",
     "require_hash",
+    "require_generation_bound_password",
     "require_identifier",
     "require_sha",
     "sign_document",
     "validate_direct_postgres_url",
+    "validate_data_torrent_authority",
+    "validate_controlled_go_binding",
     "libpq_environment_variable_names",
     "require_libpq_environment_clean",
     "verify_signed_document",

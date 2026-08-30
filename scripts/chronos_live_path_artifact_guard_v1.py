@@ -32,6 +32,7 @@ _LIBPQ_ENVIRONMENT = re.compile(r"^PG[A-Z0-9_]+$")
 _SAFE_SSL_MODES = frozenset({"require", "verify-ca", "verify-full"})
 _SAFE_QUERY_KEYS = frozenset({"sslmode", "channel_binding"})
 _MAX_REPORT_BYTES = 1_048_576
+_MINIMUM_CONTROLLED_SUSPEND_TIMEOUT_SECONDS = 300
 _ZERO_EFFECTS = (
     "neon_mutations",
     "production_sql_writes",
@@ -153,6 +154,8 @@ def _unique_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
             raise _DuplicateJsonKey(key)
         document[key] = value
     return document
+
+
 _EFFECT_MAXIMUMS = {
     "neon_get_count": 25,
     "postgresql_connection_attempts": 1,
@@ -257,6 +260,7 @@ _CONTROLLED_NO_GO_KEYS = _NO_GO_BASE_KEYS | frozenset(
         "compute_wake_certainty",
         "recovery_verdict",
         "purchase_required",
+        "github_actions",
     }
 )
 _CONTROLLED_FALLBACK_KEYS = _NO_GO_BASE_KEYS | frozenset(
@@ -267,9 +271,7 @@ _CONTROLLED_FALLBACK_KEYS = _NO_GO_BASE_KEYS | frozenset(
         "compute_wake_certainty",
     }
 )
-_SOURCE_KEYS = frozenset(
-    {"repository", "ref", "main_sha", "run_id", "run_attempt"}
-)
+_SOURCE_KEYS = frozenset({"repository", "ref", "main_sha", "run_id", "run_attempt"})
 _CHECK_KEYS = frozenset(
     {
         "secrets_present",
@@ -392,6 +394,7 @@ _NO_GO_GATE_VALUES = frozenset(
         "endpoint_state_contract_invalid",
         "endpoint_state_unsupported",
         "exact_main_dispatch_not_unique",
+        "authority_window_dispatch_not_unique",
         "existing_chronos_memberships_unsafe",
         "existing_chronos_objects_unsafe",
         "existing_chronos_roles_unsafe",
@@ -403,15 +406,19 @@ _NO_GO_GATE_VALUES = frozenset(
         "github_actions_state_invalid",
         "github_actions_state_unavailable",
         "github_dispatch_history_invalid",
+        "github_authority_dispatch_history_invalid",
+        "github_authority_window_invalid",
         "github_main_sha_invalid",
         "github_main_ref_invalid",
         "github_main_ref_mismatch",
         "github_source_not_exact_main",
+        "current_authority_dispatch_not_observed",
         "history_retention_contract_invalid",
         "identity_incomplete_before_connection",
         "libpq_environment_forbidden",
         "lifecycle_admin_role_forbidden",
         "lock_timeout_not_enforced",
+        "mission_authority_inactive",
         "neon_api_credential_scope_unsupported",
         "neon_api_invalid_document",
         "neon_api_invalid_json",
@@ -867,7 +874,13 @@ _POSTGRESQL_NO_GO_KEYS = frozenset(
     }
 )
 _GITHUB_KEYS = frozenset(
-    {"queued", "in_progress", "current_run_excluded", "exact_main_dispatch_count"}
+    {
+        "queued",
+        "in_progress",
+        "current_run_excluded",
+        "exact_main_dispatch_count",
+        "authority_window_dispatch_count",
+    }
 )
 _LIFECYCLE_KEYS = frozenset(
     {
@@ -914,12 +927,7 @@ def _validated_environment_target() -> _DirectPostgresTarget | None:
     api_key = os.getenv("NEON_API_KEY", "")
     github_token = os.getenv("GITHUB_TOKEN", "")
     database_url = os.getenv("NEON_BOOTSTRAP_DATABASE_URL", "")
-    if (
-        not api_key
-        or not github_token
-        or not database_url
-        or _libpq_environment_variable_names()
-    ):
+    if not api_key or not github_token or not database_url or _libpq_environment_variable_names():
         return None
     return _validated_direct_postgres_url(database_url)
 
@@ -978,10 +986,10 @@ def _contains_raw_identity(
         normalized = key.lower()
         if not normalized.endswith("_sha256") and normalized in _RAW_IDENTITY_KEYS:
             return True
-        if (
-            ("secret" in normalized or "password" in normalized)
-            and normalized not in {"secrets_present", "sensitive_values_exposed"}
-        ):
+        if ("secret" in normalized or "password" in normalized) and normalized not in {
+            "secrets_present",
+            "sensitive_values_exposed",
+        }:
             return True
         if "cursor" in normalized and normalized not in {
             "cursor_continuation_requested",
@@ -1018,20 +1026,20 @@ def _contains_raw_identity(
             "postgresql://" in value.lower()
             or "postgresql+psycopg://" in value.lower()
             or _NEON_HOST.search(value) is not None
-            or (
-                secret_scannable_field
-                and any(secret in value for secret in secrets)
-            )
+            or (secret_scannable_field and any(secret in value for secret in secrets))
         )
     return False
 
 
 def _expected_source() -> dict[str, str]:
+    run_id = os.getenv("GITHUB_RUN_ID", "UNKNOWN")
+    if not run_id.isascii() or not run_id.isdigit() or int(run_id) < 1:
+        run_id = "UNKNOWN"
     return {
         "repository": os.getenv("GITHUB_REPOSITORY", "UNKNOWN"),
         "ref": os.getenv("GITHUB_REF", "UNKNOWN"),
         "main_sha": os.getenv("GITHUB_SHA", "UNKNOWN"),
-        "run_id": os.getenv("GITHUB_RUN_ID", "UNKNOWN"),
+        "run_id": run_id,
         "run_attempt": os.getenv("GITHUB_RUN_ATTEMPT", "UNKNOWN"),
     }
 
@@ -1099,8 +1107,7 @@ def _valid_dsn_profile(value: object, *, go: bool) -> bool:
                 "unexpected_parameter_count",
                 "unexpected_parameter_name_hashes",
             }
-            and profile["contract_verdict"]
-            == "NEON_BOOTSTRAP_DSN_MATCHES_CURRENT_SECURE_CONTRACT"
+            and profile["contract_verdict"] == "NEON_BOOTSTRAP_DSN_MATCHES_CURRENT_SECURE_CONTRACT"
             and profile["query_keys"] == ["channel_binding", "sslmode"]
             and profile["sslmode"] in {"require", "verify-ca", "verify-full"}
             and profile["channel_binding"] == "require"
@@ -1144,10 +1151,7 @@ def _valid_neon_evidence(value: object) -> bool:
         "api_patch_count",
         "api_delete_count",
     )
-    if any(
-        key in evidence and not _exact_int(evidence[key], 0)
-        for key in mutation_count_keys
-    ):
+    if any(key in evidence and not _exact_int(evidence[key], 0) for key in mutation_count_keys):
         return False
     boolean_keys = {
         "project_inventory_exhaustive",
@@ -1272,8 +1276,7 @@ def _valid_neon_phase_evidence(value: object, *, allow_zero_get: bool) -> bool:
     return (
         _nonnegative_int(api_get_count, maximum=25)
         and (allow_zero_get or cast(int, api_get_count) > 0)
-        and evidence["project_identity_verdict"]
-        == "NEON_PROJECT_IDENTITY_NOT_PROVEN"
+        and evidence["project_identity_verdict"] == "NEON_PROJECT_IDENTITY_NOT_PROVEN"
         and evidence["identity_path"]
         in {
             "POSITIVE_ENDPOINT_WITNESS",
@@ -1327,11 +1330,7 @@ def _valid_neon_terminal(gate: str, evidence: Mapping[str, object]) -> bool:
         return evidence.get("history_retention_seconds") == 0
     if gate == "compute_return_to_idle_not_proven":
         timeout = evidence.get("suspend_timeout_seconds")
-        return (
-            isinstance(timeout, int)
-            and not isinstance(timeout, bool)
-            and timeout == -1
-        )
+        return isinstance(timeout, int) and not isinstance(timeout, bool) and timeout == -1
     return True
 
 
@@ -1369,16 +1368,14 @@ def _valid_neon_go(value: object, *, controlled: bool) -> bool:
     positive_identity = (
         neon["identity_path"] == "POSITIVE_ENDPOINT_WITNESS"
         and neon["identity_proof_mode"] == "POSITIVE_OWNERSHIP"
-        and neon["project_identity_verdict"]
-        == "POSITIVE_PROJECT_OWNERSHIP_WITNESS_PROVEN"
+        and neon["project_identity_verdict"] == "POSITIVE_PROJECT_OWNERSHIP_WITNESS_PROVEN"
         and neon["positive_witness_checks"] == list(_POSITIVE_WITNESSES)
     )
     configured_identity = (
         not controlled
         and neon["identity_path"] == "CONFIGURED_PROJECT_ID"
         and neon["identity_proof_mode"] == "CONFIGURED_PROJECT_ID"
-        and neon["project_identity_verdict"]
-        == "CONFIGURED_PROJECT_IDENTITY_PROVEN"
+        and neon["project_identity_verdict"] == "CONFIGURED_PROJECT_IDENTITY_PROVEN"
         and neon["positive_witness_checks"] == list(_POSITIVE_WITNESSES)
     )
     configured_project_id = os.getenv("NEON_PROJECT_ID", "").strip()
@@ -1396,12 +1393,9 @@ def _valid_neon_go(value: object, *, controlled: bool) -> bool:
         else (configured_binding if configured_project_id else positive_identity)
     )
     configured_organization_id = os.getenv("NEON_ORG_ID", "").strip()
-    organization_binding = (
-        not configured_organization_id
-        or hmac.compare_digest(
-            cast(str, neon["owner_id_sha256"]),
-            _fingerprint(configured_organization_id),
-        )
+    organization_binding = not configured_organization_id or hmac.compare_digest(
+        cast(str, neon["owner_id_sha256"]),
+        _fingerprint(configured_organization_id),
     )
     allowances = {"free": 10, "launch": 10, "scale": 25}
     subscription_plan = {
@@ -1438,8 +1432,7 @@ def _valid_neon_go(value: object, *, controlled: bool) -> bool:
         and neon["neon_project_identity_verdict"] == "NEON_PROJECT_IDENTITY_PROVEN"
         and neon["project_inventory_exhaustive"] is True
         and neon["production_branch_default"] is True
-        and neon["recovery_parent_id_sha256"]
-        == neon["production_branch_id_sha256"]
+        and neon["recovery_parent_id_sha256"] == neon["production_branch_id_sha256"]
         and neon["branch_state"] == "ready"
         and (
             neon["endpoint_state"] in {"active", "idle"}
@@ -1455,26 +1448,20 @@ def _valid_neon_go(value: object, *, controlled: bool) -> bool:
         }
         and neon["cursor_cycle_encountered"] is False
         and neon["cursor_continuation_requested"]
-        is (
-            cast(int, neon["project_pages_read"]) > 1
-            or cast(int, neon["branch_pages_read"]) > 1
-        )
+        is (cast(int, neon["project_pages_read"]) > 1 or cast(int, neon["branch_pages_read"]) > 1)
         and _nonnegative_int(neon["projects_observed"])
         and cast(int, neon["projects_observed"]) > 0
         and _nonnegative_int(neon["project_pages_read"])
         and 0 < cast(int, neon["project_pages_read"]) <= 3
-        and cast(int, neon["projects_observed"])
-        <= cast(int, neon["project_pages_read"]) * 400
+        and cast(int, neon["projects_observed"]) <= cast(int, neon["project_pages_read"]) * 400
         and _nonnegative_int(neon["endpoint_projects_inspected"])
         and cast(int, neon["endpoint_projects_inspected"]) > 0
         and (
-            cast(int, neon["endpoint_projects_inspected"])
-            == cast(int, neon["projects_observed"])
+            cast(int, neon["endpoint_projects_inspected"]) == cast(int, neon["projects_observed"])
             if positive_identity
             else _exact_int(neon["endpoint_projects_inspected"], 1)
         )
-        and neon["endpoint_inventory_reads"]
-        == neon["endpoint_projects_inspected"]
+        and neon["endpoint_inventory_reads"] == neon["endpoint_projects_inspected"]
         and _exact_int(neon["project_detail_reads"], 1)
         and _nonnegative_int(neon["branch_pages_read"])
         and 0 < cast(int, neon["branch_pages_read"]) <= 3
@@ -1488,26 +1475,24 @@ def _valid_neon_go(value: object, *, controlled: bool) -> bool:
         )
         and _nonnegative_int(neon["api_get_count"], maximum=25)
         and owner_scope_get_count_valid
-        and all(_exact_int(neon[key], 0) for key in (
-            "api_post_count",
-            "api_put_count",
-            "api_patch_count",
-            "api_delete_count",
-        ))
+        and all(
+            _exact_int(neon[key], 0)
+            for key in (
+                "api_post_count",
+                "api_put_count",
+                "api_patch_count",
+                "api_delete_count",
+            )
+        )
         and _nonnegative_int(neon["owner_branch_count"])
         and _nonnegative_int(neon["target_project_branch_count"])
         and cast(int, neon["target_project_branch_count"]) > 0
-        and cast(int, neon["owner_branch_count"])
-        >= cast(int, neon["target_project_branch_count"])
+        and cast(int, neon["owner_branch_count"]) >= cast(int, neon["target_project_branch_count"])
         and billing_plan in allowances
-        and (
-            subscription == "UNKNOWN"
-            or subscription_plan.get(subscription) == billing_plan
-        )
+        and (subscription == "UNKNOWN" or subscription_plan.get(subscription) == billing_plan)
         and _nonnegative_int(neon["branch_limit"])
         and cast(int, neon["branch_limit"]) > cast(int, neon["owner_branch_count"])
-        and cast(int, neon["target_project_branch_count"]) + 1
-        <= allowances[billing_plan]
+        and cast(int, neon["target_project_branch_count"]) + 1 <= allowances[billing_plan]
         and _nonnegative_int(neon["history_retention_seconds"])
         and cast(int, neon["history_retention_seconds"]) > 0
         and neon["postgresql_major"] == 16
@@ -1534,13 +1519,20 @@ def _valid_postgresql_go(value: object, *, controlled: bool) -> bool:
         _valid_fingerprint(pg["database_name_sha256"])
         and _valid_fingerprint(pg["lifecycle_admin_sha256"])
         and isinstance(pg["postgresql_version"], str)
-        and _POSTGRESQL_VERSION.fullmatch(pg["postgresql_version"])
-        is not None
+        and _POSTGRESQL_VERSION.fullmatch(pg["postgresql_version"]) is not None
         and _nonnegative_int(pg["postgresql_version_num"])
         and 160_000 <= cast(int, pg["postgresql_version_num"]) < 170_000
         and pg["database_target_verified"] is True
         and pg["principal_target_verified"] is True
-        and pg["current_revision"] == "0013_historical_evidence_index"
+        and pg["current_revision"]
+        in (
+            {
+                "0013_historical_evidence_index",
+                "0014_chronos_control_plane_v2",
+            }
+            if controlled
+            else {"0013_historical_evidence_index"}
+        )
         and _exact_int(pg["revision_count"], 1)
         and pg["ssl_verified"] is True
         and pg["default_transaction_read_only"] is True
@@ -1559,12 +1551,15 @@ def _valid_postgresql_go(value: object, *, controlled: bool) -> bool:
         and _exact_int(pg["sql_read_attempt_count"], 15)
         and _exact_int(pg["sql_read_count"], 15)
         and _exact_int(pg["sql_write_count"], 0)
-        and all(_exact_int(pg[key], 1) for key in (
-            "begin_read_only_attempted",
-            "begin_read_only_completed",
-            "rollback_attempted",
-            "rollback_completed",
-        ))
+        and all(
+            _exact_int(pg[key], 1)
+            for key in (
+                "begin_read_only_attempted",
+                "begin_read_only_completed",
+                "rollback_attempted",
+                "rollback_completed",
+            )
+        )
         and (not controlled or _exact_int(pg["connection_attempt_count"], 1))
     )
 
@@ -1622,19 +1617,27 @@ def _valid_postgresql_no_go(value: object) -> bool:
         }
         and (
             (pg["revision_count"] is None and pg["revision_class"] == "NOT_OBSERVED")
-            or (
-                pg["revision_count"] is not None
-                and pg["revision_class"] != "NOT_OBSERVED"
-            )
+            or (pg["revision_count"] is not None and pg["revision_class"] != "NOT_OBSERVED")
         )
     )
-def _valid_github(value: object, source: Mapping[str, object]) -> bool:
+
+
+def _valid_github(
+    value: object,
+    source: Mapping[str, object],
+    *,
+    controlled: bool,
+) -> bool:
+    expected_keys = (
+        _GITHUB_KEYS if controlled else _GITHUB_KEYS - {"authority_window_dispatch_count"}
+    )
     return (
         isinstance(value, dict)
-        and set(value) == _GITHUB_KEYS
+        and set(value) == expected_keys
         and _exact_int(value.get("queued"), 0)
         and _exact_int(value.get("in_progress"), 0)
         and _exact_int(value.get("exact_main_dispatch_count"), 1)
+        and (not controlled or _exact_int(value.get("authority_window_dispatch_count"), 1))
         and _exact_int(value.get("current_run_excluded"), int(str(source["run_id"])))
     )
 
@@ -1664,8 +1667,7 @@ def _valid_lifecycle(value: object) -> bool:
         and lifecycle["wake_verdict"] == expected_wake
         and _exact_int(lifecycle["maximum_preflight_wall_clock_seconds"], 120)
         and lifecycle["post_preflight_endpoint_state"] == "NOT_POLLED"
-        and lifecycle["automatic_return_to_idle"]
-        == "CONFIGURATION_PROVEN_NOT_WAITED_FOR"
+        and lifecycle["automatic_return_to_idle"] == "CONFIGURATION_PROVEN_NOT_WAITED_FOR"
     )
 
 
@@ -1684,17 +1686,15 @@ def _valid_controlled_lifecycle_bindings(
         return False
     if configured == 0:
         timeout_bound = (
-            lifecycle.get("scale_to_zero_classification")
-            == "DEFAULT_SCALE_TO_ZERO"
+            lifecycle.get("scale_to_zero_classification") == "DEFAULT_SCALE_TO_ZERO"
             and lifecycle.get("effective_suspend_timeout_seconds") == 300
         )
     else:
         timeout_bound = (
             isinstance(configured, int)
             and not isinstance(configured, bool)
-            and 60 <= configured <= 604_800
-            and lifecycle.get("scale_to_zero_classification")
-            == "FINITE_SCALE_TO_ZERO"
+            and _MINIMUM_CONTROLLED_SUSPEND_TIMEOUT_SECONDS <= configured <= 604_800
+            and lifecycle.get("scale_to_zero_classification") == "FINITE_SCALE_TO_ZERO"
             and lifecycle.get("effective_suspend_timeout_seconds") == configured
         )
     expected_certainty = (
@@ -1716,8 +1716,10 @@ def _valid_environment_bindings(
     profile = report.get("dsn_security_profile")
     neon = report.get("neon")
     postgresql = report.get("postgresql")
-    if not isinstance(profile, dict) or not isinstance(neon, dict) or not isinstance(
-        postgresql, dict
+    if (
+        not isinstance(profile, dict)
+        or not isinstance(neon, dict)
+        or not isinstance(postgresql, dict)
     ):
         return False
     bindings = (
@@ -1742,8 +1744,7 @@ def _valid_environment_bindings(
     )
     return (
         all(
-            isinstance(observed, str)
-            and hmac.compare_digest(observed, expected)
+            isinstance(observed, str) and hmac.compare_digest(observed, expected)
             for observed, expected in bindings
         )
         and profile.get("sslmode") == target.sslmode
@@ -1768,9 +1769,7 @@ def _valid_no_go_lifecycle(value: object) -> bool:
             lifecycle["configured_suspend_timeout_seconds"] is None
             or (
                 isinstance(lifecycle["configured_suspend_timeout_seconds"], int)
-                and not isinstance(
-                    lifecycle["configured_suspend_timeout_seconds"], bool
-                )
+                and not isinstance(lifecycle["configured_suspend_timeout_seconds"], bool)
                 and lifecycle["configured_suspend_timeout_seconds"] >= -1
             )
         )
@@ -1804,13 +1803,21 @@ def _valid_no_go_lifecycle(value: object) -> bool:
 
 
 def _valid_no_go_github(value: object, source: Mapping[str, object]) -> bool:
+    source_run_id = str(source["run_id"])
+    if source_run_id == "UNKNOWN":
+        expected_excluded_run_id = 0
+    elif source_run_id.isascii() and source_run_id.isdigit():
+        expected_excluded_run_id = int(source_run_id)
+    else:
+        return False
     return (
         isinstance(value, dict)
         and set(value) == _GITHUB_KEYS
         and _nonnegative_int(value.get("queued"), maximum=100)
         and _nonnegative_int(value.get("in_progress"), maximum=100)
         and _nonnegative_int(value.get("exact_main_dispatch_count"), maximum=100)
-        and _exact_int(value.get("current_run_excluded"), int(str(source["run_id"])))
+        and _nonnegative_int(value.get("authority_window_dispatch_count"), maximum=100)
+        and _exact_int(value.get("current_run_excluded"), expected_excluded_run_id)
     )
 
 
@@ -1829,8 +1836,7 @@ def _valid_effects(value: object, *, controlled: bool = True) -> bool:
         return False
     return (
         cast(int, effects["neon_get_count"]) <= 25
-        and
-        cast(int, effects["postgresql_connection_successes"])
+        and cast(int, effects["postgresql_connection_successes"])
         <= cast(int, effects["postgresql_connection_attempts"])
         and cast(int, effects["sql_statement_completed_count"])
         <= cast(int, effects["sql_statement_count"])
@@ -1839,38 +1845,35 @@ def _valid_effects(value: object, *, controlled: bool = True) -> bool:
         <= cast(int, effects["sql_statement_count"])
         and cast(int, effects["begin_read_only_completed"])
         <= cast(int, effects["begin_read_only_attempted"])
-        and cast(int, effects["rollback_completed"])
-        <= cast(int, effects["rollback_attempted"])
+        and cast(int, effects["rollback_completed"]) <= cast(int, effects["rollback_attempted"])
     )
 
 
 def _no_go_phase(reason: str, gate: str, *, controlled: bool) -> str | None:
     if gate in _TECHNICAL_FAILURE_GATES:
-        return (
-            _PHASE_TECHNICAL
-            if reason == "NEON_PROJECT_IDENTITY_AMBIGUOUS"
-            else None
-        )
+        return _PHASE_TECHNICAL if reason == "NEON_PROJECT_IDENTITY_AMBIGUOUS" else None
     if reason == "SECRET_MISSING" and _MISSING_GATE.fullmatch(gate) is not None:
         return _PHASE_ALL_ZERO
     if reason == "RECOVERY_BRANCH_NOT_FEASIBLE" and gate == "invalid:GITHUB_RUN_ID":
         return _PHASE_ALL_ZERO
-    if reason == "RECOVERY_BRANCH_NOT_FEASIBLE" and gate.startswith(
-        "github_actions_http_"
-    ) and _HTTP_GATE.fullmatch(gate) is not None:
+    if (
+        reason == "RECOVERY_BRANCH_NOT_FEASIBLE"
+        and gate.startswith("github_actions_http_")
+        and _HTTP_GATE.fullmatch(gate) is not None
+    ):
         return _PHASE_ALL_ZERO
-    if reason == "NEON_PROJECT_IDENTITY_AMBIGUOUS" and gate.startswith(
-        "neon_api_http_"
-    ) and _HTTP_GATE.fullmatch(gate) is not None:
+    if (
+        reason == "NEON_PROJECT_IDENTITY_AMBIGUOUS"
+        and gate.startswith("neon_api_http_")
+        and _HTTP_GATE.fullmatch(gate) is not None
+    ):
         return _PHASE_NEON
     if _INVALID_NEON_RESPONSE_GATE.fullmatch(gate) is not None:
         if reason == "NEON_PROJECT_IDENTITY_AMBIGUOUS" and gate != (
             "invalid_neon_response:members"
         ):
             return _PHASE_NEON
-        if reason == "RECOVERY_BRANCH_NOT_FEASIBLE" and gate == (
-            "invalid_neon_response:members"
-        ):
+        if reason == "RECOVERY_BRANCH_NOT_FEASIBLE" and gate == ("invalid_neon_response:members"):
             return _PHASE_NEON
         return None
     if gate in _ALL_ZERO_GATES_BY_REASON.get(reason, frozenset()):
@@ -1878,12 +1881,16 @@ def _no_go_phase(reason: str, gate: str, *, controlled: bool) -> str | None:
             return None
         return _PHASE_ALL_ZERO
     if gate in _NEON_GATES_BY_REASON.get(reason, frozenset()):
-        if gate in {
-            "identity_incomplete_before_connection",
-            "startup_options_required",
-            "first_sql_not_begin_read_only",
-            "compute_return_to_idle_not_proven",
-        } and not controlled:
+        if (
+            gate
+            in {
+                "identity_incomplete_before_connection",
+                "startup_options_required",
+                "first_sql_not_begin_read_only",
+                "compute_return_to_idle_not_proven",
+            }
+            and not controlled
+        ):
             return None
         return _PHASE_NEON
     if gate in _POSTGRESQL_GATES_BY_REASON.get(reason, frozenset()):
@@ -1975,9 +1982,8 @@ def _valid_sql_ledger_prefix(effects: Mapping[str, object]) -> tuple[int, int] |
     expected_read_completed = sum(
         ordinal in _READONLY_READ_ORDINALS for ordinal in range(main_completed)
     )
-    if (
-        not _exact_int(effects["sql_read_attempt_count"], expected_read_attempts)
-        or not _exact_int(effects["sql_read_count"], expected_read_completed)
+    if not _exact_int(effects["sql_read_attempt_count"], expected_read_attempts) or not _exact_int(
+        effects["sql_read_count"], expected_read_completed
     ):
         return None
     return main_attempted, main_completed
@@ -1985,6 +1991,8 @@ def _valid_sql_ledger_prefix(effects: Mapping[str, object]) -> tuple[int, int] |
 
 def _postgresql_evidence_groups(
     partial_pg: Mapping[str, object],
+    *,
+    controlled: bool,
 ) -> tuple[tuple[int, tuple[str, ...], bool], ...]:
     version_num = partial_pg["postgresql_version_num"]
     identity_passed = (
@@ -1995,12 +2003,23 @@ def _postgresql_evidence_groups(
         and 160_000 <= version_num < 170_000
         and partial_pg["postgresql_major_verified"] is True
     )
-    revision_passed = (
-        partial_pg["revision_class"] == "0013_historical_evidence_index"
-        and _exact_int(partial_pg["revision_count"], 1)
+    accepted_revisions = (
+        {
+            "0013_historical_evidence_index",
+            "0014_chronos_control_plane_v2",
+        }
+        if controlled
+        else {"0013_historical_evidence_index"}
+    )
+    revision_passed = partial_pg["revision_class"] in accepted_revisions and _exact_int(
+        partial_pg["revision_count"], 1
     )
     return (
-        (1, ("default_transaction_read_only",), partial_pg["default_transaction_read_only"] is True),
+        (
+            1,
+            ("default_transaction_read_only",),
+            partial_pg["default_transaction_read_only"] is True,
+        ),
         (2, ("transaction_read_only",), partial_pg["transaction_read_only"] is True),
         (3, ("statement_timeout_ms",), _exact_int(partial_pg["statement_timeout_ms"], 15_000)),
         (4, ("lock_timeout_ms",), _exact_int(partial_pg["lock_timeout_ms"], 3_000)),
@@ -2036,9 +2055,13 @@ def _valid_postgresql_prefix_evidence(
     gate: str,
     main_attempted: int,
     main_completed: int,
+    controlled: bool,
 ) -> bool:
     last_completed_ordinal = main_completed - 1
-    for ordinal, keys, passed in _postgresql_evidence_groups(partial_pg):
+    for ordinal, keys, passed in _postgresql_evidence_groups(
+        partial_pg,
+        controlled=controlled,
+    ):
         observed = (
             partial_pg["revision_count"] is not None
             if ordinal == 11
@@ -2072,6 +2095,7 @@ def _valid_postgresql_terminal(
     *,
     main_attempted: int,
     main_completed: int,
+    controlled: bool,
 ) -> bool:
     if gate == "single_connection_attempt_did_not_complete":
         return (
@@ -2106,71 +2130,65 @@ def _valid_postgresql_terminal(
                         and all(
                             passed
                             for _ordinal, _keys, passed in _postgresql_evidence_groups(
-                                partial_pg
+                                partial_pg,
+                                controlled=controlled,
                             )
                         )
                     )
                 )
             )
-            or (
-                failure_class == "SQL_EXECUTION_EXCEPTION"
-                and main_attempted == main_completed + 1
-            )
+            or (failure_class == "SQL_EXECUTION_EXCEPTION" and main_attempted == main_completed + 1)
             or (
                 failure_class == "RESULT_PROCESSING_EXCEPTION"
                 and main_attempted == main_completed
                 and main_completed > 1
                 and (
-                    (
-                        main_completed == 11
-                        and partial_pg["alembic_target_safe"] is True
-                    )
+                    (main_completed == 11 and partial_pg["alembic_target_safe"] is True)
                     or any(
                         ordinal == main_completed - 1
                         and all(partial_pg[key] is None for key in keys)
                         for ordinal, keys, _passed in _postgresql_evidence_groups(
-                            partial_pg
+                            partial_pg,
+                            controlled=controlled,
                         )
                     )
                 )
             )
             or (
                 failure_class == "ROLLBACK_EXCEPTION"
-                and
-                main_attempted == 17
+                and main_attempted == 17
                 and main_completed == 17
                 and effects["rollback_attempted"] == 1
                 and effects["rollback_completed"] == 0
                 and all(
                     passed
                     for _ordinal, _keys, passed in _postgresql_evidence_groups(
-                        partial_pg
+                        partial_pg,
+                        controlled=controlled,
                     )
                 )
             )
         )
     if gate == "postgresql_row_missing":
         terminal_group_unobserved = main_completed == 11 or any(
-            ordinal == main_completed - 1
-            and all(partial_pg[key] is None for key in keys)
-            for ordinal, keys, _passed in _postgresql_evidence_groups(partial_pg)
+            ordinal == main_completed - 1 and all(partial_pg[key] is None for key in keys)
+            for ordinal, keys, _passed in _postgresql_evidence_groups(
+                partial_pg,
+                controlled=controlled,
+            )
         )
         return (
             partial_pg["inspection_failure_class"] == "NOT_OBSERVED"
-            and
-            main_attempted == main_completed
+            and main_attempted == main_completed
             and main_completed > 1
             and main_completed - 1 in {1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 13}
             and terminal_group_unobserved
         )
     if gate == "timeout_setting_invalid":
-        timeout_key = (
-            "statement_timeout_ms" if main_completed == 4 else "lock_timeout_ms"
-        )
+        timeout_key = "statement_timeout_ms" if main_completed == 4 else "lock_timeout_ms"
         return (
             partial_pg["inspection_failure_class"] == "NOT_OBSERVED"
-            and
-            main_attempted == main_completed
+            and main_attempted == main_completed
             and main_completed in {4, 5}
             and partial_pg[timeout_key] is None
         )
@@ -2200,8 +2218,7 @@ def _valid_postgresql_terminal(
         return (
             partial_pg["inspection_failure_class"]
             in {"NOT_OBSERVED", "SQL_EXECUTION_EXCEPTION", "RESULT_PROCESSING_EXCEPTION"}
-            and
-            main_attempted == 12
+            and main_attempted == 12
             and main_completed in {11, 12}
             and partial_pg["revision_count"] is None
             and partial_pg["revision_class"] == "NOT_OBSERVED"
@@ -2209,12 +2226,17 @@ def _valid_postgresql_terminal(
     if gate == "postgresql_connection_close_failed":
         return (
             partial_pg["inspection_failure_class"] == "CLOSE_EXCEPTION"
-            and
-            main_attempted == 17
+            and main_attempted == 17
             and main_completed == 17
             and effects["rollback_completed"] == 1
             and partial_pg["connection_close_completed"] is False
-            and all(passed for _ordinal, _keys, passed in _postgresql_evidence_groups(partial_pg))
+            and all(
+                passed
+                for _ordinal, _keys, passed in _postgresql_evidence_groups(
+                    partial_pg,
+                    controlled=controlled,
+                )
+            )
         )
     terminal = exact_terminal.get(gate)
     expected_completed = (
@@ -2236,7 +2258,8 @@ def _valid_postgresql_terminal(
     if partial_pg["inspection_failure_class"] != expected_failure_class:
         return False
     terminal_checks: dict[str, bool] = {
-        "default_transaction_read_only_not_enforced": partial_pg["default_transaction_read_only"] is False,
+        "default_transaction_read_only_not_enforced": partial_pg["default_transaction_read_only"]
+        is False,
         "transaction_read_only_not_enforced": partial_pg["transaction_read_only"] is False,
         "statement_timeout_not_enforced": partial_pg["statement_timeout_ms"] not in {None, 15_000},
         "lock_timeout_not_enforced": partial_pg["lock_timeout_ms"] not in {None, 3_000},
@@ -2257,10 +2280,21 @@ def _valid_postgresql_terminal(
         "alembic_target_not_plain_permanent_table": partial_pg["alembic_target_safe"] is False,
         "alembic_target_changed_before_lock": partial_pg["alembic_target_safe"] is True,
         "unexpected_database_revision": not (
-            partial_pg["revision_class"] == "0013_historical_evidence_index"
+            partial_pg["revision_class"]
+            in (
+                {
+                    "0013_historical_evidence_index",
+                    "0014_chronos_control_plane_v2",
+                }
+                if controlled
+                else {"0013_historical_evidence_index"}
+            )
             and _exact_int(partial_pg["revision_count"], 1)
         ),
-        "bootstrap_authority_capabilities_insufficient": partial_pg["bootstrap_authority_capabilities_proven"] is False,
+        "bootstrap_authority_capabilities_insufficient": partial_pg[
+            "bootstrap_authority_capabilities_proven"
+        ]
+        is False,
         "privileged_catalog_not_visible": partial_pg["privileged_catalog_visible"] is False,
         "existing_chronos_roles_unsafe": partial_pg["chronos_roles_clean"] is False,
         "existing_chronos_memberships_unsafe": partial_pg["chronos_memberships_clean"] is False,
@@ -2409,35 +2443,37 @@ def _valid_no_go_report_shape(
             return False
         partial_pg = cast(dict[str, object], postgresql)
         connection_established = cast(bool, partial_pg["connection_established"])
-        if (
-            effects["postgresql_connection_attempts"] != 1
-            or effects["postgresql_connection_successes"]
-            != (1 if connection_established else 0)
-        ):
+        if effects["postgresql_connection_attempts"] != 1 or effects[
+            "postgresql_connection_successes"
+        ] != (1 if connection_established else 0):
             return False
         if not connection_established:
-            if any(
-                effects[key] != 0
-                for key in (
-                    "sql_statement_count",
-                    "sql_statement_completed_count",
-                    "sql_read_attempt_count",
-                    "sql_read_count",
-                    "begin_read_only_attempted",
-                    "begin_read_only_completed",
-                    "rollback_attempted",
-                    "rollback_completed",
+            if (
+                any(
+                    effects[key] != 0
+                    for key in (
+                        "sql_statement_count",
+                        "sql_statement_completed_count",
+                        "sql_read_attempt_count",
+                        "sql_read_count",
+                        "begin_read_only_attempted",
+                        "begin_read_only_completed",
+                        "rollback_attempted",
+                        "rollback_completed",
+                    )
                 )
-            ) or any(
-                partial_pg[key] is not None
-                for key in _POSTGRESQL_NO_GO_KEYS
-                - {
-                    "connection_established",
-                    "connection_close_completed",
-                    "revision_class",
-                    "inspection_failure_class",
-                }
-            ) or partial_pg["connection_close_completed"] is not None:
+                or any(
+                    partial_pg[key] is not None
+                    for key in _POSTGRESQL_NO_GO_KEYS
+                    - {
+                        "connection_established",
+                        "connection_close_completed",
+                        "revision_class",
+                        "inspection_failure_class",
+                    }
+                )
+                or partial_pg["connection_close_completed"] is not None
+            ):
                 return False
         else:
             if not isinstance(partial_pg["connection_close_completed"], bool):
@@ -2457,6 +2493,7 @@ def _valid_no_go_report_shape(
             gate=gate,
             main_attempted=main_attempted,
             main_completed=main_completed,
+            controlled=controlled,
         ) or not _valid_postgresql_terminal(
             reason,
             gate,
@@ -2464,15 +2501,20 @@ def _valid_no_go_report_shape(
             effects,
             main_attempted=main_attempted,
             main_completed=main_completed,
+            controlled=controlled,
         ):
             return False
     if not controlled:
         return True
+    if "lifecycle" in report:
+        source = report.get("source")
+        if not isinstance(source, dict) or not _valid_no_go_github(
+            report.get("github_actions"), source
+        ):
+            return False
     if (
-        report.get("global_verdict")
-        != "CHRONOS_NEON_CONTROLLED_WAKE_OR_PREFLIGHT_PARTIAL"
-        or report.get("connection_attempt_count")
-        != effects["postgresql_connection_attempts"]
+        report.get("global_verdict") != "CHRONOS_NEON_CONTROLLED_WAKE_OR_PREFLIGHT_PARTIAL"
+        or report.get("connection_attempt_count") != effects["postgresql_connection_attempts"]
         or report.get("compute_wake_events") != effects["compute_wake_events"]
         or report.get("compute_wake_certainty")
         not in {
@@ -2496,12 +2538,10 @@ def _valid_no_go_report_shape(
     ):
         return False
     if phase == _PHASE_POSTGRESQL and (
-        typed_lifecycle["connection_attempt_count"]
-        != effects["postgresql_connection_attempts"]
+        typed_lifecycle["connection_attempt_count"] != effects["postgresql_connection_attempts"]
         or typed_lifecycle["connection_succeeded"]
         is not (effects["postgresql_connection_successes"] == 1)
-        or typed_lifecycle["compute_wake_events"]
-        != effects["compute_wake_events"]
+        or typed_lifecycle["compute_wake_events"] != effects["compute_wake_events"]
     ):
         return False
     if phase == _PHASE_TECHNICAL and (
@@ -2511,12 +2551,10 @@ def _valid_no_go_report_shape(
     ):
         return False
     return (
-        report.get("architecture_verdict")
-        == "NEON_IDENTITY_AND_ENDPOINT_STATE_DECOUPLED"
+        report.get("architecture_verdict") == "NEON_IDENTITY_AND_ENDPOINT_STATE_DECOUPLED"
         and report.get("wake_model") == "CONNECTION_TRIGGERED_READONLY_WAKE"
         and report.get("control_plane_start_api_used") is False
-        and report.get("database_verdict")
-        == "CHRONOS_NEON_DATABASE_READONLY_PREFLIGHT_NOT_PROVEN"
+        and report.get("database_verdict") == "CHRONOS_NEON_DATABASE_READONLY_PREFLIGHT_NOT_PROVEN"
         and report.get("recovery_verdict")
         in {
             "PURCHASE_REQUIRED",
@@ -2561,13 +2599,19 @@ def _valid_report(
     if not _valid_effects(effects, controlled=controlled):
         return False
     typed_effects = cast(dict[str, object], effects)
-    if controlled and "connection_attempt_count" in report and (
-        report.get("connection_attempt_count")
-        != typed_effects["postgresql_connection_attempts"]
+    if (
+        controlled
+        and "connection_attempt_count" in report
+        and (
+            report.get("connection_attempt_count")
+            != typed_effects["postgresql_connection_attempts"]
+        )
     ):
         return False
-    if controlled and "compute_wake_events" in report and (
-        report.get("compute_wake_events") != typed_effects["compute_wake_events"]
+    if (
+        controlled
+        and "compute_wake_events" in report
+        and (report.get("compute_wake_events") != typed_effects["compute_wake_events"])
     ):
         return False
     if not go:
@@ -2584,10 +2628,7 @@ def _valid_report(
         checks = report["checks"]
         if not isinstance(checks, dict) or set(checks) != _CHECK_KEYS:
             return False
-        if any(
-            value is not (key != "purchase_required")
-            for key, value in checks.items()
-        ):
+        if any(value is not (key != "purchase_required") for key, value in checks.items()):
             return False
         postgresql = report["postgresql"]
         neon = report["neon"]
@@ -2600,7 +2641,7 @@ def _valid_report(
         if not _valid_environment_bindings(report, controlled=controlled):
             return False
         source = cast(dict[str, object], report["source"])
-        if not _valid_github(github, source):
+        if not _valid_github(github, source, controlled=controlled):
             return False
         if controlled and (
             not _valid_lifecycle(lifecycle)
@@ -2627,7 +2668,9 @@ def _valid_report(
         }
         if controlled:
             expected_effects["compute_wake_events"] = 1
-        if any(not _exact_int(typed_effects[key], value) for key, value in expected_effects.items()):
+        if any(
+            not _exact_int(typed_effects[key], value) for key, value in expected_effects.items()
+        ):
             return False
         if any(not _exact_int(typed_effects[key], 0) for key in _ZERO_EFFECTS):
             return False
@@ -2648,18 +2691,15 @@ def _valid_report(
             return False
         if controlled and not (
             report.get("purchase_required") is False
-            and report.get("architecture_verdict")
-            == "NEON_IDENTITY_AND_ENDPOINT_STATE_DECOUPLED"
+            and report.get("architecture_verdict") == "NEON_IDENTITY_AND_ENDPOINT_STATE_DECOUPLED"
             and report.get("wake_model") == "CONNECTION_TRIGGERED_READONLY_WAKE"
             and report.get("control_plane_start_api_used") is False
-            and report.get("database_verdict")
-            == "CHRONOS_NEON_DATABASE_READONLY_PREFLIGHT_PROVEN"
+            and report.get("database_verdict") == "CHRONOS_NEON_DATABASE_READONLY_PREFLIGHT_PROVEN"
             and report.get("global_verdict")
             == "CHRONOS_NEON_CONTROLLED_WAKE_AND_READONLY_PREFLIGHT_CLOSED"
             and report.get("bootstrap_authority_verdict")
             == "BOOTSTRAP_AUTHORITY_CAPABILITIES_PROVEN"
-            and report.get("recovery_verdict")
-            == "NEON_RECOVERY_BRANCH_CREATION_FEASIBLE"
+            and report.get("recovery_verdict") == "NEON_RECOVERY_BRANCH_CREATION_FEASIBLE"
             and _exact_int(report.get("connection_attempt_count"), 1)
             and _exact_int(report.get("compute_wake_events"), 1)
             and report.get("compute_wake_certainty")
@@ -2687,11 +2727,7 @@ def _fallback_report(
     skipped = live_outcome == "skipped"
     upper = 0 if skipped else 1
     sql_upper = 0 if skipped else 25
-    certainty = (
-        "OBSERVED_ZERO_LIVE_STEP_SKIPPED"
-        if skipped
-        else "CONSERVATIVE_UPPER_BOUNDS_ONLY"
-    )
+    certainty = "OBSERVED_ZERO_LIVE_STEP_SKIPPED" if skipped else "CONSERVATIVE_UPPER_BOUNDS_ONLY"
     effects: dict[str, object] = {
         "neon_get_count": 0 if skipped else 25,
         "neon_mutations": 0,
@@ -2794,9 +2830,7 @@ def ensure_artifact(
         scan_sensitive_values=False,
     ):
         raise RuntimeError("CHRONOS_ARTIFACT_FALLBACK_INVALID")
-    payload = json.dumps(
-        fallback, ensure_ascii=False, indent=2, sort_keys=True
-    ) + "\n"
+    payload = json.dumps(fallback, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
     temporary_name: str | None = None
     try:
         with tempfile.NamedTemporaryFile(

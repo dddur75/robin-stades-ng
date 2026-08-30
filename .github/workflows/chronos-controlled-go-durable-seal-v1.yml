@@ -1,0 +1,127 @@
+name: "Chronos Controlled GO Durable Seal V1"
+
+on:
+  workflow_dispatch:
+    inputs:
+      expected_main_sha:
+        description: "SHA main exact autorise"
+        required: true
+        type: string
+      controlled_run_id:
+        description: "Run controlled read-only GO exact"
+        required: true
+        type: string
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: chronos-data-torrent-production-global-v1
+  cancel-in-progress: false
+
+jobs:
+  seal:
+    if: ${{ github.run_attempt == 1 }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: chronos-control-plane-production
+    env:
+      PYTHONPATH: ${{ github.workspace }}/src
+    steps:
+      - name: Refuser toute source stale ou relance
+        shell: bash
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          CONTROLLED_RUN_ID: ${{ inputs.controlled_run_id }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_REF" == "refs/heads/main" ]]
+          [[ "$GITHUB_SHA" == "$EXPECTED_MAIN_SHA" ]]
+          [[ "$GITHUB_RUN_ATTEMPT" == "1" ]]
+          [[ "$CONTROLLED_RUN_ID" =~ ^[1-9][0-9]*$ ]]
+          CURRENT_MAIN_SHA="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)"
+          [[ "$CURRENT_MAIN_SHA" == "$EXPECTED_MAIN_SHA" ]]
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+          ref: ${{ inputs.expected_main_sha }}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12.10"
+      - name: Installer le runtime borne
+        run: >-
+          python -m pip install --only-binary=:all: --require-hashes
+          -r requirements-chronos-canary.lock
+      - name: Valider localement l autorite de mission non expiree
+        run: >-
+          python -c
+          "from robin.chronos_production import validate_data_torrent_authority;
+          validate_data_torrent_authority()"
+      - name: Attester et telecharger le GO controlled exact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CONTROLLED_RUN_ID: ${{ inputs.controlled_run_id }}
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: >-
+          python scripts/github_release_attestation_v1.py
+          --workflow-path .github/workflows/chronos-neon-controlled-idle-wake-readonly-v1.yml
+          --run-id "$CONTROLLED_RUN_ID" --main-sha "$EXPECTED_MAIN_SHA"
+          --artifact-name "chronos-neon-controlled-idle-wake-readonly-v1-$CONTROLLED_RUN_ID"
+          --artifact-filename chronos-neon-controlled-idle-wake-readonly-v1.json
+          --output .chronos/controlled/chronos-neon-controlled-idle-wake-readonly-v1.json
+          --report .chronos/reports/github-controlled-readonly-artifact-attestation-v1.json
+      - name: Revalider hold global CI et main avant liberation des secrets R2
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: |
+          set -euo pipefail
+          python scripts/check_chronos_github_hold_v3.py \
+            --report .chronos/reports/chronos-controlled-go-seal-hold-v1.json \
+            --required-successful-ci-sha "$EXPECTED_MAIN_SHA"
+          CURRENT_MAIN_SHA="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)"
+          [[ "$CURRENT_MAIN_SHA" == "$EXPECTED_MAIN_SHA" ]]
+      - name: Masquer les secrets R2 requis
+        shell: bash
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: |
+          set -euo pipefail
+          for name in R2_ACCOUNT_ID R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_BUCKET_NAME; do
+            value="${!name:-}"
+            [[ -n "$value" ]]
+            value="${value//'%'/'%25'}"
+            value="${value//$'\r'/'%0D'}"
+            value="${value//$'\n'/'%0A'}"
+            printf '%s\n' "::add-mask::$value"
+          done
+      - name: Sceller une fois puis relire les octets exacts
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: >-
+          python -m scripts.seal_chronos_controlled_go_v1
+          --controlled-report
+          .chronos/controlled/chronos-neon-controlled-idle-wake-readonly-v1.json
+          --expected-main-sha "${{ inputs.expected_main_sha }}"
+          --controlled-run-id "${{ inputs.controlled_run_id }}"
+          --report .chronos/reports/chronos-controlled-go-durable-seal-v1.json
+      - name: Publier seulement le receipt sanitise
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: chronos-controlled-go-durable-seal-v1-${{ github.run_id }}
+          path: .chronos/reports/chronos-controlled-go-durable-seal-v1.json
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 14

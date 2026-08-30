@@ -29,7 +29,6 @@ from robin.data_torrent.runtime import (
     _assert_source_effect_lineage,
     _durabilize_partial_capture,
     _partial_raw_put_authorized,
-    execute_data_torrent,
 )
 from robin.data_torrent.sources import (
     ExternalEffectTrace,
@@ -49,7 +48,7 @@ NOW = datetime(2026, 8, 29, 12, tzinfo=UTC)
 
 
 def test_official_adapter_validation_precedes_provider_and_raw_put() -> None:
-    source = inspect.getsource(execute_data_torrent)
+    source = inspect.getsource(runtime_module._execute_data_torrent)
     parse_at = source.index("evidences, horizon = _select_evidence(")
     alias_validation_at = source.index("validate_official_team_aliases(")
     odds_at = source.index("odds = capture_odds_sources(")

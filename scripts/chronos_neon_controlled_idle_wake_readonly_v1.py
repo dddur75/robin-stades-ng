@@ -18,15 +18,20 @@ from typing import Mapping
 
 import scripts.chronos_neon_pure_readonly_preflight_v4 as base
 from robin.chronos_production import (
+    DATA_TORRENT_ONE_SHOT_NOT_BEFORE,
+    EXPECTED_BEFORE_REVISIONS,
     EXPECTED_REF,
     EXPECTED_REPOSITORY,
+    ChronosProductionError,
     DirectPostgresTarget,
+    validate_data_torrent_authority,
 )
 
 REPORT_SCHEMA = "chronos-neon-controlled-idle-wake-readonly-v1"
 WORKFLOW_FILE = "chronos-neon-controlled-idle-wake-readonly-v1.yml"
 MAXIMUM_PREFLIGHT_WALL_CLOCK_SECONDS = 120
 DEFAULT_SUSPEND_TIMEOUT_SECONDS = 300
+MINIMUM_SUSPEND_TIMEOUT_SECONDS = 300
 
 
 @dataclass(slots=True)
@@ -79,7 +84,7 @@ def _scale_to_zero_contract(neon: base.NeonObservation) -> tuple[str, int]:
     if timeout == 0:
         classification = "DEFAULT_SCALE_TO_ZERO"
         effective_timeout = DEFAULT_SUSPEND_TIMEOUT_SECONDS
-    elif 60 <= timeout <= 604_800:
+    elif MINIMUM_SUSPEND_TIMEOUT_SECONDS <= timeout <= 604_800:
         classification = "FINITE_SCALE_TO_ZERO"
         effective_timeout = timeout
     else:
@@ -129,17 +134,14 @@ def _validate_readonly_connection_contract(
 def _bootstrap_authority_verdict(database: base.DatabaseObservation) -> str:
     if base._bootstrap_authority_plausible(database):
         return "BOOTSTRAP_AUTHORITY_CAPABILITIES_PROVEN"
-    if (
-        database.lifecycle_admin_can_login
-        and (database.lifecycle_admin_superuser or database.lifecycle_admin_createrole)
+    if database.lifecycle_admin_can_login and (
+        database.lifecycle_admin_superuser or database.lifecycle_admin_createrole
     ):
         return "BOOTSTRAP_AUTHORITY_CAPABILITIES_PARTIAL"
     return "BOOTSTRAP_AUTHORITY_INSUFFICIENT"
 
 
-def _recovery_verdict(
-    *, purchase_required: bool, recovery_feasible: bool
-) -> str:
+def _recovery_verdict(*, purchase_required: bool, recovery_feasible: bool) -> str:
     if purchase_required:
         return "PURCHASE_REQUIRED"
     if recovery_feasible:
@@ -168,9 +170,7 @@ def _lifecycle_payload(audit: ConnectionWakeAudit) -> dict[str, object]:
     payload = asdict(audit)
     payload.update(
         {
-            "maximum_preflight_wall_clock_seconds": (
-                MAXIMUM_PREFLIGHT_WALL_CLOCK_SECONDS
-            ),
+            "maximum_preflight_wall_clock_seconds": (MAXIMUM_PREFLIGHT_WALL_CLOCK_SECONDS),
             "post_preflight_endpoint_state": "NOT_POLLED",
             "automatic_return_to_idle": (
                 "CONFIGURATION_PROVEN_NOT_WAITED_FOR"
@@ -186,14 +186,17 @@ def _lifecycle_payload(audit: ConnectionWakeAudit) -> dict[str, object]:
 def _controlled_no_go_report(
     error: base.PreflightNoGo,
     audit: ConnectionWakeAudit,
+    *,
+    authority_window_dispatch_count: int = 0,
+    queue_count: int = 100,
+    in_progress_count: int = 100,
+    dispatch_count: int = 100,
 ) -> dict[str, object]:
     wake_events = audit.compute_wake_events
     wake_certainty = "OBSERVED"
     reason = error.reason
     gate = error.gate
-    incomplete_attempt = (
-        audit.connection_attempt_count == 1 and not audit.connection_succeeded
-    )
+    incomplete_attempt = audit.connection_attempt_count == 1 and not audit.connection_succeeded
     if incomplete_attempt:
         wake_events = 1
         wake_certainty = "CONSERVATIVE_UPPER_BOUND_AFTER_SINGLE_CONNECTION_ATTEMPT"
@@ -238,6 +241,19 @@ def _controlled_no_go_report(
     effects["postgresql_retries"] = 0
     for key, value in error.effect_counts.items():
         effects[key] = value
+    raw_run_id = os.getenv("GITHUB_RUN_ID", "0")
+    current_run = int(raw_run_id) if raw_run_id.isascii() and raw_run_id.isdigit() else 0
+    if current_run == 0:
+        source = report.get("source")
+        if isinstance(source, dict):
+            source["run_id"] = "UNKNOWN"
+    report["github_actions"] = {
+        "queued": queue_count,
+        "in_progress": in_progress_count,
+        "current_run_excluded": current_run,
+        "exact_main_dispatch_count": dispatch_count,
+        "authority_window_dispatch_count": authority_window_dispatch_count,
+    }
     return report
 
 
@@ -250,6 +266,7 @@ def _controlled_success_report(
     queue_count: int,
     in_progress_count: int,
     dispatch_count: int,
+    authority_window_dispatch_count: int,
     dsn_security_profile: Mapping[str, object],
     audit: ConnectionWakeAudit,
     purchase_required: bool,
@@ -309,6 +326,10 @@ def _controlled_success_report(
     effects["compute_wake_events"] = audit.compute_wake_events
     effects["postgresql_connection_attempts"] = audit.connection_attempt_count
     effects["postgresql_retries"] = 0
+    github = report["github_actions"]
+    if not isinstance(github, dict):
+        raise RuntimeError("INVALID_GITHUB_REPORT")
+    github["authority_window_dispatch_count"] = authority_window_dispatch_count
     return report
 
 
@@ -343,9 +364,7 @@ def _conservative_technical_failure_report(gate: str) -> dict[str, object]:
         audit,
     )
     report["effect_counter_certainty"] = "CONSERVATIVE_UPPER_BOUNDS_ONLY"
-    report["compute_wake_certainty"] = (
-        "CONSERVATIVE_UPPER_BOUND_AFTER_UNOBSERVED_EXIT"
-    )
+    report["compute_wake_certainty"] = "CONSERVATIVE_UPPER_BOUND_AFTER_UNOBSERVED_EXIT"
     lifecycle = report["lifecycle"]
     if isinstance(lifecycle, dict):
         lifecycle["wake_verdict"] = "COMPUTE_WAKE_OR_CONNECTION_ATTEMPT_INDETERMINATE"
@@ -354,23 +373,27 @@ def _conservative_technical_failure_report(gate: str) -> dict[str, object]:
 
 def run_preflight() -> dict[str, object]:
     audit = ConnectionWakeAudit()
+    authority_window_dispatch_count = 0
+    queue_count = 100
+    in_progress_count = 100
+    dispatch_count = 100
+    try:
+        validate_data_torrent_authority()
+    except ChronosProductionError:
+        raise base.PreflightNoGo(
+            "RECOVERY_BRANCH_NOT_FEASIBLE", "mission_authority_inactive"
+        ) from None
     repository = base._required_context("GITHUB_REPOSITORY")
     git_ref = base._required_context("GITHUB_REF")
     main_sha = base._required_context("GITHUB_SHA")
     run_attempt = base._required_context("GITHUB_RUN_ATTEMPT")
     run_id = base._positive_integer_context("GITHUB_RUN_ID")
     if repository != EXPECTED_REPOSITORY or git_ref != EXPECTED_REF:
-        raise base.PreflightNoGo(
-            "NEON_PROJECT_IDENTITY_AMBIGUOUS", "github_source_not_exact_main"
-        )
+        raise base.PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "github_source_not_exact_main")
     if base._HEX_SHA.fullmatch(main_sha) is None:
-        raise base.PreflightNoGo(
-            "NEON_PROJECT_IDENTITY_AMBIGUOUS", "github_main_sha_invalid"
-        )
+        raise base.PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "github_main_sha_invalid")
     if run_attempt != "1":
-        raise base.PreflightNoGo(
-            "RECOVERY_BRANCH_NOT_FEASIBLE", "workflow_rerun_forbidden"
-        )
+        raise base.PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", "workflow_rerun_forbidden")
     queue_count, in_progress_count, dispatch_count = base._github_actions_state(
         repository,
         run_id,
@@ -378,12 +401,19 @@ def run_preflight() -> dict[str, object]:
         workflow_file=WORKFLOW_FILE,
     )
     if dispatch_count != 1:
-        raise base.PreflightNoGo(
-            "RECOVERY_BRANCH_NOT_FEASIBLE", "exact_main_dispatch_not_unique"
-        )
+        raise base.PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", "exact_main_dispatch_not_unique")
     if queue_count != 0 or in_progress_count != 0:
+        raise base.PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", "github_actions_not_quiescent")
+    authority_window_dispatch_count = base._github_authority_window_dispatch_count(
+        repository,
+        run_id,
+        main_sha,
+        workflow_file=WORKFLOW_FILE,
+        not_before=DATA_TORRENT_ONE_SHOT_NOT_BEFORE,
+    )
+    if authority_window_dispatch_count != 1:
         raise base.PreflightNoGo(
-            "RECOVERY_BRANCH_NOT_FEASIBLE", "github_actions_not_quiescent"
+            "RECOVERY_BRANCH_NOT_FEASIBLE", "authority_window_dispatch_not_unique"
         )
     if os.getenv("NEON_PROJECT_ID", "").strip():
         raise base.PreflightNoGo(
@@ -442,11 +472,8 @@ def run_preflight() -> dict[str, object]:
                 error.reason,
                 error.gate,
                 dsn_security_profile=dsn_security_profile,
-                sanitized_evidence=error.sanitized_evidence
-                or base._sanitized_neon(neon),
-                sanitized_postgresql_evidence=(
-                    error.sanitized_postgresql_evidence
-                ),
+                sanitized_evidence=error.sanitized_evidence or base._sanitized_neon(neon),
+                sanitized_postgresql_evidence=(error.sanitized_postgresql_evidence),
                 effect_counts=error.effect_counts,
             ) from None
         inspection_audit = base.DatabaseInspectionAudit()
@@ -454,6 +481,7 @@ def run_preflight() -> dict[str, object]:
             database = base._inspect_database(
                 database_url,
                 expected_postgresql_major=neon.postgresql_major,
+                expected_revisions=EXPECTED_BEFORE_REVISIONS,
                 before_connect=audit.before_connect,
                 after_connect=audit.after_connect,
                 inspection_audit=inspection_audit,
@@ -465,9 +493,7 @@ def run_preflight() -> dict[str, object]:
                 error.gate,
                 dsn_security_profile=dsn_security_profile,
                 sanitized_evidence=evidence,
-                sanitized_postgresql_evidence=(
-                    error.sanitized_postgresql_evidence
-                ),
+                sanitized_postgresql_evidence=(error.sanitized_postgresql_evidence),
                 effect_counts=error.effect_counts,
             ) from None
         sql_safety = (
@@ -489,8 +515,7 @@ def run_preflight() -> dict[str, object]:
             direct_endpoint_verified=sql_safety,
             ssl_verified=database.ssl,
             expected_revision_verified=(
-                database.revision_count == 1
-                and database.revision == base.EXPECTED_REVISION
+                database.revision_count == 1 and database.revision in EXPECTED_BEFORE_REVISIONS
             ),
             bootstrap_authority_plausible=base._bootstrap_authority_plausible(database),
             recovery_branch_feasible=recovery_feasible,
@@ -508,6 +533,7 @@ def run_preflight() -> dict[str, object]:
             queue_count=queue_count,
             in_progress_count=in_progress_count,
             dispatch_count=dispatch_count,
+            authority_window_dispatch_count=authority_window_dispatch_count,
             dsn_security_profile=dsn_security_profile,
             audit=audit,
             purchase_required=purchase_required,
@@ -520,12 +546,17 @@ def run_preflight() -> dict[str, object]:
                 error.gate,
                 dsn_security_profile=dsn_security_profile,
                 sanitized_evidence=error.sanitized_evidence,
-                sanitized_postgresql_evidence=(
-                    error.sanitized_postgresql_evidence
-                ),
+                sanitized_postgresql_evidence=(error.sanitized_postgresql_evidence),
                 effect_counts=error.effect_counts,
             )
-        return _controlled_no_go_report(error, audit)
+        return _controlled_no_go_report(
+            error,
+            audit,
+            authority_window_dispatch_count=authority_window_dispatch_count,
+            queue_count=queue_count,
+            in_progress_count=in_progress_count,
+            dispatch_count=dispatch_count,
+        )
 
 
 def main() -> None:
@@ -537,15 +568,11 @@ def main() -> None:
     except base.PreflightNoGo as error:
         report = _controlled_no_go_report(error, ConnectionWakeAudit())
     except Exception:
-        report = _conservative_technical_failure_report(
-            "unexpected_sanitized_failure"
-        )
+        report = _conservative_technical_failure_report("unexpected_sanitized_failure")
     try:
         base._write_report(args.report, report)
     except Exception:
-        fallback = _conservative_technical_failure_report(
-            "report_serialization_or_write_failure"
-        )
+        fallback = _conservative_technical_failure_report("report_serialization_or_write_failure")
         base._write_report(args.report, fallback)
         report = fallback
     print(str(report["verdict"]))

@@ -19,6 +19,14 @@ on:
         description: "SHA main exact dont le CI post-merge est vert"
         required: true
         type: string
+      controlled_run_id:
+        description: "Run controlled read-only GO atteste, requis seulement pour PREFLIGHT"
+        required: false
+        type: string
+      controlled_seal_run_id:
+        description: "Run de scellement R2 du GO, requis seulement pour PREFLIGHT"
+        required: false
+        type: string
       preflight_run_id:
         description: "Run PREFLIGHT atteste, requis seulement pour MIGRATE"
         required: false
@@ -29,7 +37,7 @@ on:
         type: string
 
 concurrency:
-  group: chronos-production-bootstrap-v3
+  group: chronos-data-torrent-production-global-v1
   cancel-in-progress: false
 
 permissions:
@@ -52,7 +60,9 @@ env:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
+    env:
+      PYTHONPATH: ${{ github.workspace }}/src
     steps:
       - name: Refuser tout dispatch ambigu, stale ou relance
         shell: bash
@@ -61,6 +71,8 @@ jobs:
           MODE: ${{ inputs.mode }}
           EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
           POST_MERGE_CI_SHA: ${{ inputs.post_merge_ci_sha }}
+          CONTROLLED_RUN_ID: ${{ inputs.controlled_run_id }}
+          CONTROLLED_SEAL_RUN_ID: ${{ inputs.controlled_seal_run_id }}
           PREFLIGHT_RUN_ID: ${{ inputs.preflight_run_id }}
           MIGRATION_RUN_ID: ${{ inputs.migration_run_id }}
         run: |
@@ -71,13 +83,19 @@ jobs:
           [[ "$POST_MERGE_CI_SHA" == "$EXPECTED_MAIN_SHA" ]]
           case "$MODE" in
             PREFLIGHT)
+              [[ "$CONTROLLED_RUN_ID" =~ ^[1-9][0-9]*$ ]]
+              [[ "$CONTROLLED_SEAL_RUN_ID" =~ ^[1-9][0-9]*$ ]]
               [[ -z "$PREFLIGHT_RUN_ID" && -z "$MIGRATION_RUN_ID" ]]
               ;;
             MIGRATE)
+              [[ -z "$CONTROLLED_RUN_ID" ]]
+              [[ -z "$CONTROLLED_SEAL_RUN_ID" ]]
               [[ "$PREFLIGHT_RUN_ID" =~ ^[1-9][0-9]*$ ]]
               [[ -z "$MIGRATION_RUN_ID" ]]
               ;;
             VERIFY)
+              [[ -z "$CONTROLLED_RUN_ID" ]]
+              [[ -z "$CONTROLLED_SEAL_RUN_ID" ]]
               [[ -z "$PREFLIGHT_RUN_ID" ]]
               [[ "$MIGRATION_RUN_ID" =~ ^[1-9][0-9]*$ ]]
               ;;
@@ -85,6 +103,32 @@ jobs:
           esac
           CURRENT_MAIN_SHA="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)"
           [[ "$CURRENT_MAIN_SHA" == "$EXPECTED_MAIN_SHA" ]]
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+          ref: ${{ inputs.expected_main_sha }}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12.10"
+          cache: pip
+      - name: Installer le runtime borne de validation
+        run: >-
+          python -m pip install --only-binary=:all: --require-hashes
+          -r requirements-chronos-canary.lock
+      - name: Verifier autorite et ordinal avant environnement production
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          MODE: ${{ inputs.mode }}
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: >-
+          python -c
+          "import os;
+          from robin.chronos_production import validate_data_torrent_authority;
+          from scripts.chronos_production_bootstrap_v3 import _assert_bootstrap_dispatch_ordinal;
+          validate_data_torrent_authority();
+          _assert_bootstrap_dispatch_ordinal(mode=os.environ['MODE'],
+          main_sha=os.environ['EXPECTED_MAIN_SHA'])"
 
   preflight:
     needs: validate
@@ -108,6 +152,32 @@ jobs:
         run: >-
           python -m pip install --only-binary=:all: --require-hashes
           -r requirements-chronos-canary.lock
+      - name: Attester et telecharger le GO controlled read-only exact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CONTROLLED_RUN_ID: ${{ inputs.controlled_run_id }}
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: >-
+          python scripts/github_release_attestation_v1.py
+          --workflow-path .github/workflows/chronos-neon-controlled-idle-wake-readonly-v1.yml
+          --run-id "$CONTROLLED_RUN_ID" --main-sha "$EXPECTED_MAIN_SHA"
+          --artifact-name "chronos-neon-controlled-idle-wake-readonly-v1-$CONTROLLED_RUN_ID"
+          --artifact-filename chronos-neon-controlled-idle-wake-readonly-v1.json
+          --output .chronos/controlled/chronos-neon-controlled-idle-wake-readonly-v1.json
+          --report .chronos/reports/github-controlled-readonly-artifact-attestation-v1.json
+      - name: Attester et telecharger le scellement durable exact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CONTROLLED_SEAL_RUN_ID: ${{ inputs.controlled_seal_run_id }}
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: >-
+          python scripts/github_release_attestation_v1.py
+          --workflow-path .github/workflows/chronos-controlled-go-durable-seal-v1.yml
+          --run-id "$CONTROLLED_SEAL_RUN_ID" --main-sha "$EXPECTED_MAIN_SHA"
+          --artifact-name "chronos-controlled-go-durable-seal-v1-$CONTROLLED_SEAL_RUN_ID"
+          --artifact-filename chronos-controlled-go-durable-seal-v1.json
+          --output .chronos/controlled/chronos-controlled-go-durable-seal-v1.json
+          --report .chronos/reports/github-controlled-seal-artifact-attestation-v1.json
       - name: Revalider le hold GitHub et le CI post-merge en direct
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -127,16 +197,27 @@ jobs:
           [[ "$CURRENT_MAIN_SHA" == "$EXPECTED_MAIN_SHA" ]]
       - name: Executer PREFLIGHT et creer le point de recuperation
         env:
+          GITHUB_TOKEN: ${{ github.token }}
           CHRONOS_EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          CHRONOS_EXPECTED_CONTROLLED_RUN_ID: ${{ inputs.controlled_run_id }}
+          CHRONOS_EXPECTED_CONTROLLED_SEAL_RUN_ID: ${{ inputs.controlled_seal_run_id }}
           CHRONOS_POST_MERGE_CI_SHA: ${{ inputs.post_merge_ci_sha }}
           CHRONOS_HOLD_REPORT: .chronos/reports/chronos-production-workflow-hold-live-v3.json
           NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
           NEON_BOOTSTRAP_DATABASE_URL: ${{ secrets.NEON_BOOTSTRAP_DATABASE_URL }}
           NEON_PROJECT_ID: ${{ vars.NEON_PROJECT_ID }}
           NEON_ORG_ID: ${{ vars.NEON_ORG_ID }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
         run: >-
           python -m scripts.chronos_production_bootstrap_v3
           --mode PREFLIGHT --report-dir .chronos/reports
+          --controlled-readonly-artifact
+          .chronos/controlled/chronos-neon-controlled-idle-wake-readonly-v1.json
+          --controlled-seal-artifact
+          .chronos/controlled/chronos-controlled-go-durable-seal-v1.json
       - name: Publier seulement les preuves sanitisees signees
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -201,6 +282,7 @@ jobs:
           [[ "$CURRENT_MAIN_SHA" == "$EXPECTED_MAIN_SHA" ]]
       - name: Migrer exactement vers 0015 et creer les identites scoped
         env:
+          GITHUB_TOKEN: ${{ github.token }}
           CHRONOS_AUTHORITY_DATABASE_URL: ${{ secrets.CHRONOS_AUTHORITY_DATABASE_URL }}
           CHRONOS_CONTROL_PLANE_GENERATION_NONCE: ${{ secrets.CHRONOS_CONTROL_PLANE_GENERATION_NONCE }}
           CHRONOS_EXPECTED_PREFLIGHT_RUN_ID: ${{ inputs.preflight_run_id }}
@@ -280,6 +362,7 @@ jobs:
           [[ "$CURRENT_MAIN_SHA" == "$EXPECTED_MAIN_SHA" ]]
       - name: Verifier sans modifier de donnee metier
         env:
+          GITHUB_TOKEN: ${{ github.token }}
           CHRONOS_AUTHORITY_DATABASE_URL: ${{ secrets.CHRONOS_AUTHORITY_DATABASE_URL }}
           CHRONOS_CONTROL_PLANE_GENERATION_NONCE: ${{ secrets.CHRONOS_CONTROL_PLANE_GENERATION_NONCE }}
           CHRONOS_EXPECTED_MIGRATION_RUN_ID: ${{ inputs.migration_run_id }}

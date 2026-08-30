@@ -14,6 +14,7 @@ import time
 import tracemalloc
 from collections import Counter
 from collections.abc import Callable, Mapping
+from contextvars import ContextVar
 from dataclasses import asdict, dataclass, replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -40,8 +41,11 @@ from robin.chronos_production import (
     DirectPostgresTarget,
     assert_production_safety_locks,
     generation_hash,
+    require_generation_bound_password,
     require_hash,
     require_sha,
+    validate_controlled_go_binding,
+    validate_data_torrent_authority,
     validate_direct_postgres_url,
     verify_signed_document,
 )
@@ -137,7 +141,8 @@ EXPECTED_REVISION = "0015_data_torrent_opportunity"
 WORKFLOW_PATH = ".github/workflows/data-torrent-live-v1.yml"
 HOLD_REPORT_PATH = ".torrent/hold/chronos-production-workflow-hold-live-v3.json"
 VERIFY_ARTIFACT_PATH = ".torrent/release/chronos-production-verify-v3.json"
-CI_WORKFLOW_PATH = ".github/workflows/ci.yml"
+CI_WORKFLOW_PATH = ".github/workflows/ci-safe-v2.yml"
+LEGACY_CI_WORKFLOW_ID = 319500816
 TEAM_ALIASES_PATH = "config/alias_equipes.yaml"
 MINIMUM_FIXTURE_COVERAGE_PERCENTAGE = 100.0
 CROSS_RUN_CONTRACT = (
@@ -246,6 +251,151 @@ _EXPECTED_CHRONOS_OBJECT_ACL = frozenset(
 
 class DataTorrentRuntimeError(RuntimeError):
     """Sanitized fail-closed runtime error."""
+
+    effect_receipt: dict[str, Any]
+
+
+@dataclass(slots=True)
+class LiveRuntimeEffects:
+    """Conservative process-local accounting for every live runtime boundary."""
+
+    postgresql_read_transactions_attempted: int = 0
+    postgresql_function_reads_attempted: int = 0
+    postgresql_mutating_function_calls_attempted: int = 0
+    postgresql_mutating_function_calls_completed: int = 0
+    postgresql_mutating_function_outcomes_ambiguous: int = 0
+    source_counters: SourceEffectCounters | None = None
+    r2_store: CountingR2Store | None = None
+
+    def begin_read_transaction(self) -> None:
+        self.postgresql_read_transactions_attempted += 1
+
+    def begin_function_call(self, *, mutating: bool) -> None:
+        if mutating:
+            self.postgresql_mutating_function_calls_attempted += 1
+        else:
+            self.postgresql_function_reads_attempted += 1
+
+    def complete_function_call(self, *, mutating: bool) -> None:
+        if mutating:
+            self.postgresql_mutating_function_calls_completed += 1
+
+    def fail_function_call(self, *, mutating: bool) -> None:
+        if mutating:
+            # A disconnect can happen after the server commit but before the result
+            # reaches the runner. Treat every failed mutating call as ambiguous.
+            self.postgresql_mutating_function_outcomes_ambiguous += 1
+
+    def snapshot(self) -> dict[str, Any]:
+        sources = (
+            self.source_counters.snapshot()
+            if self.source_counters is not None
+            else {
+                "official_reads": 0,
+                "odds_dns_resolutions": 0,
+                "odds_provider_dispatches": 0,
+                "odds_credits": 0,
+            }
+        )
+        r2 = (
+            self.r2_store.counters()
+            if self.r2_store is not None
+            else {
+                "puts": 0,
+                "gets": 0,
+                "lists": 0,
+                "deletes": 0,
+            }
+        )
+        return {
+            "schema_version": "robin-data-torrent-live-runtime-effects-v1",
+            "accounting_status": "COMPLETE_CONSERVATIVE",
+            "postgresql": {
+                "read_transactions_attempted": self.postgresql_read_transactions_attempted,
+                "function_reads_attempted": self.postgresql_function_reads_attempted,
+                "mutating_function_calls_attempted": (
+                    self.postgresql_mutating_function_calls_attempted
+                ),
+                "mutating_function_calls_completed": (
+                    self.postgresql_mutating_function_calls_completed
+                ),
+                "mutating_function_outcomes_ambiguous": (
+                    self.postgresql_mutating_function_outcomes_ambiguous
+                ),
+                "possible_durable_mutations_upper_bound": (
+                    self.postgresql_mutating_function_calls_attempted
+                ),
+                "connection_attempts_upper_bound": (
+                    self.postgresql_read_transactions_attempted
+                    + self.postgresql_function_reads_attempted
+                    + self.postgresql_mutating_function_calls_attempted
+                ),
+                "automatic_retries": 0,
+            },
+            "official": {
+                "physical_reads_attempted": sources["official_reads"],
+                "automatic_retries": 0,
+            },
+            "odds": {
+                "dns_resolutions_attempted": sources["odds_dns_resolutions"],
+                "provider_requests_attempted": sources["odds_provider_dispatches"],
+                "credits_used_upper_bound": sources["odds_credits"],
+                "automatic_retries": 0,
+            },
+            "r2": {
+                "puts_attempted": r2["puts"],
+                "gets_attempted": r2["gets"],
+                "lists_attempted": r2["lists"],
+                "deletes_attempted": r2["deletes"],
+                "put_outcomes_ambiguous_upper_bound": max(
+                    0,
+                    r2["puts"] - len(self.r2_store.results),
+                )
+                if self.r2_store is not None
+                else 0,
+                "automatic_retries": 0,
+            },
+        }
+
+
+_LIVE_RUNTIME_EFFECTS: ContextVar[LiveRuntimeEffects | None] = ContextVar(
+    "data_torrent_live_runtime_effects",
+    default=None,
+)
+
+
+def _current_live_runtime_effects() -> LiveRuntimeEffects:
+    effects = _LIVE_RUNTIME_EFFECTS.get()
+    if effects is None:
+        raise DataTorrentRuntimeError("DATA_TORRENT_EFFECT_ACCOUNTING_NOT_ACTIVE")
+    return effects
+
+
+class _AccountingPostgresFunctionClient(SQLAlchemyPostgresFunctionClient):
+    """Classify PostgreSQL function calls before their first network boundary."""
+
+    def __init__(self, engine: Any, *, effects: LiveRuntimeEffects) -> None:
+        super().__init__(engine)
+        self._runtime_effects = effects
+
+    def fetch_one(
+        self,
+        statement: str,
+        parameters: Any,
+    ) -> Mapping[str, object]:
+        mutating = "chronos_get_effect_state" not in statement
+        try:
+            validate_data_torrent_authority()
+        except ChronosProductionError as error:
+            raise DataTorrentRuntimeError(str(error)) from None
+        self._runtime_effects.begin_function_call(mutating=mutating)
+        try:
+            result = super().fetch_one(statement, parameters)
+        except Exception:
+            self._runtime_effects.fail_function_call(mutating=mutating)
+            raise
+        self._runtime_effects.complete_function_call(mutating=mutating)
+        return result
 
 
 def _required(environment: Mapping[str, str], name: str) -> str:
@@ -480,6 +630,8 @@ def _validated_hold_report(
     if not isinstance(ci, dict):
         raise DataTorrentRuntimeError("DATA_TORRENT_POST_MERGE_CI_PROOF_MISSING")
     proof = cast(dict[str, Any], ci)
+    legacy_ci = hold.get("legacy_ci_workflow_quarantine")
+    environment_policy = hold.get("production_environment_policy")
     if (
         hold.get("schema_version") != "chronos-production-workflow-hold-live-v3"
         or hold.get("verdict") != "WORKFLOW_HOLD_ESTABLISHED"
@@ -489,11 +641,24 @@ def _validated_hold_report(
         or hold.get("unauthorized_active_workflows") != []
         or hold.get("provider_calls") != 0
         or hold.get("r2_operations") != 0
+        or hold.get("legacy_secret_branch_sha") != identity.github.github_sha
+        or not isinstance(legacy_ci, dict)
+        or legacy_ci.get("workflow_id") != LEGACY_CI_WORKFLOW_ID
+        or legacy_ci.get("workflow_path") != ".github/workflows/ci.yml"
+        or legacy_ci.get("state") != "disabled_manually"
+        or environment_policy
+        != {
+            "environment": "chronos-control-plane-production",
+            "can_admins_bypass": False,
+            "protected_branches": False,
+            "custom_branch_policies": True,
+            "allowed_branches": ["main"],
+        }
         or proof.get("workflow_path") != CI_WORKFLOW_PATH
         or type(proof.get("run_id")) is not int
         or int(proof["run_id"]) <= 0
         or type(proof.get("run_attempt")) is not int
-        or int(proof["run_attempt"]) <= 0
+        or proof.get("run_attempt") != 1
         or proof.get("head_sha") != identity.github.github_sha
         or proof.get("head_branch") != "main"
         or proof.get("event") != "push"
@@ -562,6 +727,13 @@ def _validated_chronos_verify_artifact(
         raise DataTorrentRuntimeError("DATA_TORRENT_VERIFY_ARTIFACT_SIGNATURE_INVALID") from None
     migration_run_id = artifact.get("migration_run_id")
     preflight_run_id = artifact.get("preflight_run_id")
+    try:
+        preflight_artifact_hash = require_hash(
+            str(artifact.get("preflight_hash", "")),
+            field="preflight_hash",
+        )
+    except ChronosProductionError:
+        raise DataTorrentRuntimeError("DATA_TORRENT_VERIFY_PREFLIGHT_HASH_INVALID") from None
     identities = artifact.get("identities")
     if (
         artifact.get("schema_version") != "chronos-production-verify-v3"
@@ -594,6 +766,13 @@ def _validated_chronos_verify_artifact(
         or signature.get("algorithm") != "HMAC-SHA256"
     ):
         raise DataTorrentRuntimeError("DATA_TORRENT_VERIFY_ARTIFACT_MISMATCH")
+    try:
+        controlled_go = validate_controlled_go_binding(
+            artifact.get("controlled_go"),
+            main_sha=identity.github.github_sha,
+        )
+    except ChronosProductionError:
+        raise DataTorrentRuntimeError("DATA_TORRENT_VERIFY_CONTROLLED_GO_INVALID") from None
     expected_accounts = {
         role: (login, group)
         for role, (login, group, _secret_name) in zip(
@@ -652,10 +831,12 @@ def _validated_chronos_verify_artifact(
         "post_merge_ci_sha": str(artifact["post_merge_ci_sha"]),
         "generation_hash": str(artifact["generation_hash"]),
         "preflight_run_id": preflight_run_id,
+        "preflight_hash": preflight_artifact_hash,
         "migration_run_id": migration_run_id,
         "verify_run_id": expected_run_id,
         "verify_run_attempt": 1,
         "signature_algorithm": "HMAC-SHA256",
+        "controlled_go": controlled_go,
         "database_target": {
             "host": database_target[0],
             "port": database_target[1],
@@ -664,6 +845,27 @@ def _validated_chronos_verify_artifact(
             "channel_binding": database_target[4],
             "server_epoch": next(iter(server_epochs)),
         },
+    }
+
+
+def _mission_r2_counters(
+    *,
+    proof: Mapping[str, Any],
+    live_counters: Mapping[str, int],
+    live_objects: int,
+) -> dict[str, int]:
+    binding = cast(dict[str, Any], proof["controlled_go"])
+    return {
+        "puts": int(binding["seal_r2_puts"]) + int(live_counters["puts"]),
+        "gets": (
+            int(binding["seal_r2_gets"])
+            + int(binding["preflight_r2_gets"])
+            + int(live_counters["gets"])
+        ),
+        "lists": int(live_counters["lists"]),
+        "deletes": int(live_counters["deletes"]),
+        "objects": int(binding["seal_r2_objects_created"]) + live_objects,
+        "overwrites": 0,
     }
 
 
@@ -777,6 +979,7 @@ def _assert_scoped_database_identities(
     *,
     targets: list[Any],
     engines: list[Any],
+    effects: LiveRuntimeEffects | None = None,
 ) -> None:
     for target, engine, (expected_login, expected_group, _secret_name) in zip(
         targets,
@@ -786,6 +989,8 @@ def _assert_scoped_database_identities(
     ):
         if target.username != expected_login:
             raise DataTorrentRuntimeError("DATA_TORRENT_SCOPED_DATABASE_USER_MISMATCH")
+        if effects is not None:
+            effects.begin_read_transaction()
         with engine.connect() as connection:
             _assert_chronos_object_acl(connection)
             identity_row = connection.execute(
@@ -2312,6 +2517,7 @@ def _verify_terminal_artifact_semantics(
     expected_chronos_verify_proof: Mapping[str, Any],
     expected_revision: str,
     reader_engine: Any,
+    runtime_effects: LiveRuntimeEffects | None = None,
     run_identity: str,
     claim_identity: str,
     anchor: datetime,
@@ -2500,6 +2706,8 @@ def _verify_terminal_artifact_semantics(
             raise DataTorrentRuntimeError(error_code)
         official_effects = [item for item in source_documents if item.get("family") == "OFFICIAL"]
         odds_effects = [item for item in source_documents if item.get("family") == "ODDS"]
+        if runtime_effects is not None:
+            runtime_effects.begin_read_transaction()
         with reader_engine.connect() as connection:
             database_claim_row = (
                 connection.execute(
@@ -2756,6 +2964,12 @@ def _verify_terminal_artifact_semantics(
             "all_embedded_r2_terminal": True,
             "final_r2_terminal_requires_append_only_resolution": True,
         }
+        expected_r2 = {"puts": 2, "gets": 0, "lists": 0, "deletes": 0}
+        expected_mission_r2 = _mission_r2_counters(
+            proof=expected_chronos_verify_proof,
+            live_counters=expected_r2,
+            live_objects=2,
+        )
         expected_inventory = {
             "schema_version": "robin-data-torrent-r2-inventory-v1",
             "objects": [
@@ -2771,6 +2985,8 @@ def _verify_terminal_artifact_semantics(
                 "overwrites": 0,
                 "validity": "CONDITIONAL_APPEND_ONLY_BINDING",
             },
+            "control_plane_release": expected_chronos_verify_proof["controlled_go"],
+            "mission_counters": expected_mission_r2,
             "limits": {
                 "puts": config.budgets.r2_puts_max,
                 "gets": config.budgets.r2_gets_max,
@@ -2966,8 +3182,8 @@ def _verify_terminal_artifact_semantics(
             for item in source_events
         )
         actual_r2 = dict(r2_counters)
-        expected_r2 = {"puts": 2, "gets": 0, "lists": 0, "deletes": 0}
         inventory_counters = cast(dict[str, Any], inventory.get("counters", {}))
+        inventory_mission_counters = cast(dict[str, Any], inventory.get("mission_counters", {}))
         manifest_actual = cast(
             dict[str, Any], cast(dict[str, Any], manifest.get("effect_summary", {})).get("actual")
         )
@@ -2976,7 +3192,7 @@ def _verify_terminal_artifact_semantics(
             "odds_dns_resolutions": len(config.leagues),
             "odds_provider_requests": odds_requests,
             "odds_credits_used": odds_credits,
-            **expected_r2,
+            **expected_mission_r2,
         }
         source_limits = cast(
             dict[str, Any], cast(dict[str, Any], manifest.get("effect_summary", {})).get("limits")
@@ -3319,8 +3535,19 @@ def _verify_terminal_artifact_semantics(
                 "odds_provider_operations": len(config.leagues),
                 "odds_dns_resolutions": len(config.leagues),
                 "odds_provider_requests": odds_requests,
-                "r2_object_operations": 2,
-                "accounted": (official_reads + len(config.leagues) + odds_requests + 2),
+                "r2_live_operations": sum(expected_r2.values()),
+                "r2_control_plane_operations": 3,
+                "r2_mission_operations": (
+                    expected_mission_r2["puts"] + expected_mission_r2["gets"]
+                ),
+                "r2_objects": expected_mission_r2["objects"],
+                "accounted": (
+                    official_reads
+                    + len(config.leagues)
+                    + odds_requests
+                    + expected_mission_r2["puts"]
+                    + expected_mission_r2["gets"]
+                ),
                 "unaccounted": 0,
             },
             "gates": expected_quality_gates,
@@ -3519,6 +3746,12 @@ def _verify_terminal_artifact_semantics(
                     "overwrites": 0,
                     "validity": "CONDITIONAL_APPEND_ONLY_BINDING",
                 }
+                and inventory_mission_counters == expected_mission_r2
+                and inventory.get("control_plane_release") == expected_chronos["controlled_go"]
+                and expected_mission_r2["puts"] <= config.budgets.r2_puts_max
+                and expected_mission_r2["gets"] <= config.budgets.r2_gets_max
+                and expected_mission_r2["lists"] <= config.budgets.r2_lists_max
+                and expected_mission_r2["deletes"] <= config.budgets.r2_deletes_max
                 and official_reads <= config.budgets.official_physical_reads_max
                 and odds_requests == len(config.leagues)
                 and 0 < odds_credits <= config.budgets.odds_credits_max
@@ -3669,7 +3902,8 @@ def _verify_terminal_artifact_semantics(
         "canonical_dataset_sha256": rebuilt.canonical_dataset_sha256,
         "qa_acceptance_percent": 100,
         "gates_verified": len(derived) + 1,
-        "external_effects": dict(r2_counters),
+        "external_effects": expected_mission_r2,
+        "live_r2_effects": dict(r2_counters),
         "independent_replay": {
             "multiplier": config.replay_multiplier,
             "canonical_equality": independent_hashes == {rebuilt.canonical_dataset_sha256},
@@ -3685,6 +3919,7 @@ def _verify_terminal_artifact_semantics(
 def _assert_recorded_batch_binding(
     *,
     reader_engine: Any,
+    runtime_effects: LiveRuntimeEffects | None = None,
     opportunity_id: str,
     raw_object: DurableObjectReceipt,
     normalized_object: DurableObjectReceipt,
@@ -3693,6 +3928,8 @@ def _assert_recorded_batch_binding(
     identity: RuntimeIdentity,
     expected_counts: Mapping[str, int],
 ) -> None:
+    if runtime_effects is not None:
+        runtime_effects.begin_read_transaction()
     with reader_engine.connect() as connection:
         row = (
             connection.execute(
@@ -3741,7 +3978,7 @@ def _assert_recorded_batch_binding(
         raise DataTorrentRuntimeError("DATA_TORRENT_BATCH_READBACK_MISMATCH")
 
 
-def execute_data_torrent(
+def _execute_data_torrent(
     *,
     repository_root: Path,
     config_path: Path,
@@ -3749,9 +3986,14 @@ def execute_data_torrent(
     environment: Mapping[str, str] | None = None,
     system_platform: str = sys.platform,
 ) -> dict[str, Any]:
+    runtime_effects = _current_live_runtime_effects()
     env = os.environ if environment is None else environment
     try:
         assert_production_safety_locks(env)
+    except ChronosProductionError as error:
+        raise DataTorrentRuntimeError(str(error)) from None
+    try:
+        validate_data_torrent_authority(repository_root=repository_root)
     except ChronosProductionError as error:
         raise DataTorrentRuntimeError(str(error)) from None
     mission_manifest = _validated_mission_manifest(
@@ -3795,36 +4037,55 @@ def execute_data_torrent(
     if output_dir.exists():
         raise DataTorrentRuntimeError("DATA_TORRENT_OUTPUT_ALREADY_EXISTS")
     output_dir.parent.mkdir(parents=True, exist_ok=True)
-    base_r2_store = ChronosR2ConditionalStore.from_environment(env)
     authority_url = _required(env, "CHRONOS_AUTHORITY_DATABASE_URL")
     runtime_url = _required(env, "CHRONOS_RUNTIME_DATABASE_URL")
     reader_url = _required(env, "CHRONOS_READER_DATABASE_URL")
     targets = [
         validate_direct_postgres_url(value) for value in (authority_url, runtime_url, reader_url)
     ]
+    for value in (authority_url, runtime_url, reader_url):
+        require_generation_bound_password(
+            password=unquote(urlsplit(value).password or ""),
+            nonce_hex=generation_token,
+        )
     if len({(item.host, item.port, item.database) for item in targets}) != 1:
         raise DataTorrentRuntimeError("DATA_TORRENT_SCOPED_DATABASE_MISMATCH")
     _assert_chronos_verify_database_targets(
         proof=chronos_verify_proof,
         targets=targets,
     )
+    try:
+        validate_data_torrent_authority(repository_root=repository_root)
+    except ChronosProductionError as error:
+        raise DataTorrentRuntimeError(str(error)) from None
     authority_engine = build_engine(authority_url)
     runtime_engine = build_engine(runtime_url)
     reader_engine = build_engine(reader_url)
-    r2_store = CountingR2Store(base_r2_store, config.budgets)
     try:
         _assert_scoped_database_identities(
             targets=targets,
             engines=[authority_engine, runtime_engine, reader_engine],
+            effects=runtime_effects,
         )
+        try:
+            validate_data_torrent_authority(repository_root=repository_root)
+        except ChronosProductionError as error:
+            raise DataTorrentRuntimeError(str(error)) from None
+        runtime_effects.begin_read_transaction()
         with reader_engine.connect() as connection:
             revision = str(
                 connection.scalar(sa.text("SELECT version_num FROM public.alembic_version"))
             )
         if revision != EXPECTED_REVISION:
             raise DataTorrentRuntimeError("DATA_TORRENT_DATABASE_REVISION_MISMATCH")
-        authority_client = SQLAlchemyPostgresFunctionClient(authority_engine)
-        runtime_client = SQLAlchemyPostgresFunctionClient(runtime_engine)
+        authority_client = _AccountingPostgresFunctionClient(
+            authority_engine,
+            effects=runtime_effects,
+        )
+        runtime_client = _AccountingPostgresFunctionClient(
+            runtime_engine,
+            effects=runtime_effects,
+        )
         issuer = PostgresAuthorityIssuer(authority_client)
         effect_ledger = PostgresEffectLedger(runtime_client)
         external_ledger = PostgresExternalEffectLedger(runtime_client)
@@ -3868,9 +4129,17 @@ def execute_data_torrent(
                 output_dir,
                 {"torrent-opportunity-claim-receipt-v1.json": json_artifact(loser)},
             )
-            return {"status": "LOSER_ZERO_EFFECTS", **loser["loser_effect_counters"]}
+            return {
+                "status": "LOSER_ZERO_EFFECTS",
+                **loser["loser_effect_counters"],
+                "runtime_effects": runtime_effects.snapshot(),
+            }
 
+        base_r2_store = ChronosR2ConditionalStore.from_environment(env)
+        r2_store = CountingR2Store(base_r2_store, config.budgets)
         source_effect_counters = SourceEffectCounters()
+        runtime_effects.r2_store = r2_store
+        runtime_effects.source_counters = source_effect_counters
         source_progress = SourceCaptureProgress(
             spool_directory=(output_dir.parent / f".raw-spool-{claim.opportunity_id}")
         )
@@ -4263,6 +4532,22 @@ def execute_data_torrent(
             rejects=normalized.rejects,
         )
         reject_counts = Counter(str(item["reason"]) for item in normalized.rejects)
+        normalized_object_key = f"data-torrent/v1/{claim.opportunity_id}/normalized-evidence.tar.gz"
+        normalized_binding = _normalized_evidence_binding(
+            opportunity_id=claim.opportunity_id,
+            object_key=normalized_object_key,
+        )
+        expected_live_r2_counters = {
+            "puts": 2,
+            "gets": 0,
+            "lists": 0,
+            "deletes": 0,
+        }
+        mission_r2_counters = _mission_r2_counters(
+            proof=chronos_verify_proof,
+            live_counters=expected_live_r2_counters,
+            live_objects=2,
+        )
         quality_core = {
             "schema_version": "robin-data-torrent-quality-report-v1",
             "mission_id": MISSION_ID,
@@ -4319,20 +4604,24 @@ def execute_data_torrent(
                 "odds_provider_operations": len(odds.effects),
                 "odds_dns_resolutions": odds.dns_resolutions,
                 "odds_provider_requests": odds.provider_requests,
-                "r2_object_operations": 2,
+                "r2_live_operations": sum(expected_live_r2_counters.values()),
+                "r2_control_plane_operations": 3,
+                "r2_mission_operations": (
+                    mission_r2_counters["puts"] + mission_r2_counters["gets"]
+                ),
+                "r2_objects": mission_r2_counters["objects"],
                 "accounted": (
-                    official.physical_reads + odds.dns_resolutions + odds.provider_requests + 2
+                    official.physical_reads
+                    + odds.dns_resolutions
+                    + odds.provider_requests
+                    + mission_r2_counters["puts"]
+                    + mission_r2_counters["gets"]
                 ),
                 "unaccounted": source_counter_mismatches,
             },
             "gates": [],
             "quality_status": "PASS",
         }
-        normalized_object_key = f"data-torrent/v1/{claim.opportunity_id}/normalized-evidence.tar.gz"
-        normalized_binding = _normalized_evidence_binding(
-            opportunity_id=claim.opportunity_id,
-            object_key=normalized_object_key,
-        )
         first_permit_at = min(
             item.permit.db_permitted_at for item in (*official.effects, *odds.effects)
         )
@@ -4457,6 +4746,8 @@ def execute_data_torrent(
                 "overwrites": 0,
                 "validity": "CONDITIONAL_APPEND_ONLY_BINDING",
             },
+            "control_plane_release": chronos_verify_proof["controlled_go"],
+            "mission_counters": mission_r2_counters,
             "limits": {
                 "puts": config.budgets.r2_puts_max,
                 "gets": config.budgets.r2_gets_max,
@@ -4744,10 +5035,7 @@ def execute_data_torrent(
                     "odds_dns_resolutions": odds.dns_resolutions,
                     "odds_provider_requests": odds.provider_requests,
                     "odds_credits_used": odds.credits_used,
-                    "puts": 2,
-                    "gets": 0,
-                    "lists": 0,
-                    "deletes": 0,
+                    **mission_r2_counters,
                 },
                 "unaccounted_external_effects": 0,
             },
@@ -4815,6 +5103,7 @@ def execute_data_torrent(
             expected_chronos_verify_proof=chronos_verify_proof,
             expected_revision=revision,
             reader_engine=reader_engine,
+            runtime_effects=runtime_effects,
             run_identity=run_text,
             claim_identity=claim.opportunity_id,
             anchor=anchor,
@@ -4884,6 +5173,7 @@ def execute_data_torrent(
             raise DataTorrentRuntimeError("DATA_TORRENT_BATCH_REPLAY_FORBIDDEN")
         _assert_recorded_batch_binding(
             reader_engine=reader_engine,
+            runtime_effects=runtime_effects,
             opportunity_id=claim.opportunity_id,
             raw_object=raw_object,
             normalized_object=normalized_object,
@@ -4932,8 +5222,10 @@ def execute_data_torrent(
             "replay_records_per_second": replay_metrics["records_per_second"],
             "replay_p95_latency_ms": replay_metrics["p95_latency_ms"],
             "replay_peak_memory_bytes": replay_metrics["peak_memory_bytes"],
-            "r2": r2_store.counters(),
+            "r2": mission_r2_counters,
+            "live_r2": r2_store.counters(),
             "terminal_semantic_qa": terminal_qa,
+            "runtime_effects": runtime_effects.snapshot(),
             "artifacts": sorted(artifacts),
         }
     finally:
@@ -4942,9 +5234,37 @@ def execute_data_torrent(
         reader_engine.dispose()
 
 
+def execute_data_torrent(
+    *,
+    repository_root: Path,
+    config_path: Path,
+    output_dir: Path,
+    environment: Mapping[str, str] | None = None,
+    system_platform: str = sys.platform,
+) -> dict[str, Any]:
+    """Attach a complete conservative effect receipt to every terminal failure."""
+
+    runtime_effects = LiveRuntimeEffects()
+    token = _LIVE_RUNTIME_EFFECTS.set(runtime_effects)
+    try:
+        return _execute_data_torrent(
+            repository_root=repository_root,
+            config_path=config_path,
+            output_dir=output_dir,
+            environment=environment,
+            system_platform=system_platform,
+        )
+    except Exception as error:
+        error.effect_receipt = runtime_effects.snapshot()  # type: ignore[attr-defined]
+        raise
+    finally:
+        _LIVE_RUNTIME_EFFECTS.reset(token)
+
+
 __all__ = [
     "DataTorrentRuntimeError",
     "EXPECTED_REVISION",
+    "LiveRuntimeEffects",
     "MISSION_ID",
     "RuntimeIdentity",
     "execute_data_torrent",

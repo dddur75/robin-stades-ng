@@ -90,12 +90,13 @@ def test_revision_guard_rejects_sqlite_without_creating_a_database(
 
 
 def test_ordinary_workflows_and_composite_actions_cannot_migrate() -> None:
-    ci = (WORKFLOW_ROOT / "ci.yml").read_text(encoding="utf-8")
+    ci_paths = (WORKFLOW_ROOT / "ci.yml", WORKFLOW_ROOT / "ci-safe-v2.yml")
     ordinary_workflows = [
         path
         for pattern in ("*.yml", "*.yaml")
         for path in WORKFLOW_ROOT.glob(pattern)
-        if path.name not in {"ci.yml", "chronos-bootstrap-ci-v3.yml"}
+        if path.name
+        not in {"ci.yml", "ci-safe-v2.yml", "chronos-bootstrap-ci-v3.yml"}
     ]
     composite_actions = list((ROOT / ".github" / "actions").glob("*/action.yml"))
     for path in ordinary_workflows + composite_actions:
@@ -104,10 +105,14 @@ def test_ordinary_workflows_and_composite_actions_cannot_migrate() -> None:
         assert "alembic downgrade" not in content, path
         assert "neon_bootstrap.py" not in content, path
         assert "MIGRATOR_DATABASE_URL" not in content, path
-    assert "alembic upgrade head" not in ci
-    assert ci.count("python -m scripts.run_chronos_dual_principal_ci_v2") == 1
-    assert "postgresql+psycopg://robin:robin_ci@localhost" in ci
-    assert GUARD in ci
+    for ci_path in ci_paths:
+        ci = ci_path.read_text(encoding="utf-8")
+        assert "alembic upgrade head" not in ci
+        assert ci.count("python -m scripts.run_chronos_dual_principal_ci_v2") == 1
+        assert "postgresql+psycopg://robin:robin_ci@localhost" in ci
+        assert GUARD not in ci
+        assert "${{ secrets." not in ci
+        assert "jalon12-pilot:" not in ci
     bootstrap_ci = (WORKFLOW_ROOT / "chronos-bootstrap-ci-v3.yml").read_text(
         encoding="utf-8"
     )
