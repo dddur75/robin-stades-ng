@@ -150,18 +150,18 @@ récursif non ancré n’est autorisé.
 
 Le scope guard compare toujours la base immuable au HEAD exact avec renames
 désactivés. Il lie l’allowlist gelée par l’empreinte
-`616804d298ae0c1e48717c02a0ca023c5cf6b94d4b054b9d288d94d71c119244`
+`9a0358ef0f4b4161385efe4785a9f5653ececc71dc42d179c4d116bf12a6c9fd`
 et la portée PR-A par
-`40a705e765430aaba6e16530e219fe21d2c63305f657e063bc96acef92eeffb4` ;
+`20f13358feb1f2cfb1e48617f178dc6925f43a765105b9f7ee039fd4cc28a2e1` ;
 modifier la matrice ne peut donc pas élargir la portée du même candidat.
 
 Après le SAFE V2 post-merge et avant R1, une invocation E1 réserve exclusivement
 `.torrent/release/recovery-v2-postmerge-quarantine.json`, accepte seulement les
 états initiaux `active` ou `disabled_manually` des quatre nouveaux workflows,
 puis tente exactement une fois chaque `DISABLE` nécessaire, dans l’ordre gelé.
-Avant même de créer ce reçu, le contrôleur exige le record Council 200, les
-preuves locales post-196 et post-198 corrigées, les quatre vagues de revues
-intactes et tout suffixe Council positif. Le token GitHub non vide et borné est
+Avant même de créer ce reçu, le contrôleur exige la release Council 204, les
+preuves locales post-196, post-198, exact-head et post-202 corrigées, les six
+vagues de revues intactes et tout suffixe Council positif. Le token GitHub non vide et borné est
 également validé avant la réservation one-shot.
 Elle borne ses lectures GitHub à 25 et ses PUT de désactivation à quatre ; aucun
 `ENABLE`, dispatch ou retry n’est permis. Un post-hold live doit ensuite prouver
@@ -183,10 +183,11 @@ chaque opération reçoivent exactement la même échéance ; aucun chemin ne pe
 porter à 1 200 secondes.
 
 Le gel de revue et le gel runtime sont deux projections distinctes. La première
-exclut le ledger, le graphe de preuves et les vingt rapports détenus par les
+exclut le ledger, le graphe de preuves et les trente rapports détenus par les
 reviewers : la vague initiale, la vague de correction CI, la correction locale
-post-196 et la correction statique/runtime post-198, chacune composée de quatre
-rapports indépendants et d’une synthèse finale. La seconde inclut les vingt
+post-196, la correction statique/runtime post-198, la correction exact-head 202
+et la correction B101 post-202, chacune composée de quatre rapports indépendants
+et d’une synthèse finale. La seconde inclut les trente
 rapports mais exclut les deux surfaces
 append-only, ledger et graphe de preuves.
 Cette séparation évite que le hash du record Council dépende d’un graphe qui
@@ -209,8 +210,21 @@ La revue pré-commit postérieure au record 198 a ensuite fermé, dans une seule
 correction E1 sans effet externe, neuf faux positifs Bandit B105 et huit défauts
 d’opérabilité/livraison bornés : cache et handoff R3→R4→R5, admission temporelle
 R4, deux délais E1, deux préconditions locales vérifiées trop tard et merge sans
-CAS du head exact. Le record 200 et sa quatrième vague de revues remplacent le
-record 198 comme release active sans réutiliser PR-B.
+CAS du head exact. Le record 200 et sa quatrième vague de revues ont remplacé le
+record 198 sans réutiliser PR-B.
+
+Le record 201 conserve ensuite l’échec terminal du cycle exact-head SAFE V2 1,
+run `33420499802`, tentative 1, sur le head
+`a0a043f3222e467e6d904c90878be5718cac8ace`. Les cinq jobs racines rouges se
+réduisent à trois causes locales et le job `tests` est seulement dépendant de ces
+pré-requis. Le record 202 et sa cinquième vague de revues ont libéré leur correction
+cohérente, puis sont restés gelés byte-à-byte. Le preflight local postérieur a
+identifié un B101 distinct des faux positifs B105 du record 199 : l’assertion du
+rollback POSIX pouvait être supprimée sous optimisation Python. Le record 203
+conserve cet échec sans effet externe et le record 204, lié à une sixième vague de
+revues, active uniquement le garde explicite fail-closed et le cycle 2 sur un nouveau
+SHA. PR-B reste inutilisé, et merge, postmerge ainsi que tout effet de production
+restent tenus.
 
 R4 est une invocation locale unique avec quatre écritures de secret dans l’ordre
 gelé. `gh 2.96.0` ne sert qu’à lire la clé publique et chiffrer localement sans

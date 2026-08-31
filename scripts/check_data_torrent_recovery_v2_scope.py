@@ -20,10 +20,10 @@ from robin.chronos_production import (
 
 START_SHA = "fcbf2a4fedd413251ee9da94ec2a444c6b917e63"
 MISSION = "DATA_TORRENT_RECOVERY_V2"
-EXPECTED_ALLOWED_PATHS_SHA256 = "616804d298ae0c1e48717c02a0ca023c5cf6b94d4b054b9d288d94d71c119244"
+EXPECTED_ALLOWED_PATHS_SHA256 = "9a0358ef0f4b4161385efe4785a9f5653ececc71dc42d179c4d116bf12a6c9fd"
 EXPECTED_PHASE_ALLOWED_PATHS_SHA256 = {
-    "PR_A": "40a705e765430aaba6e16530e219fe21d2c63305f657e063bc96acef92eeffb4",
-    "PR_B": "19d6f91f756273ddb35eaa0815537d652df565fc8168f28d112fb2d6e9084d8b",
+    "PR_A": "20f13358feb1f2cfb1e48617f178dc6925f43a765105b9f7ee039fd4cc28a2e1",
+    "PR_B": "2ecb01d91b1ee2e2a13d27bff9665025866a149e221f0e79fec06c01bcb5a4d2",
     "PR_C": "51fca9760fd1a209877ec32ce60adeac791296e377e1fccd88b850e1056ef14b",
 }
 EXPECTED_TERMINAL_EVIDENCE_PATH_COUNT = 43
@@ -59,6 +59,24 @@ _STATIC_CORRECTION_REVIEW_PATHS = frozenset(
         "reports/council/data-torrent-recovery-v2-post-198-static-correction-c4-review-v3.json",
         "reports/council/data-torrent-recovery-v2-post-198-static-correction-dp6-review-v3.json",
         "reports/council/data-torrent-recovery-v2-post-198-static-correction-final-review-v3.json",
+    }
+)
+_EXACT_HEAD_CI_CORRECTION_REVIEW_PATHS = frozenset(
+    {
+        "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-1-a2-review-v3.json",
+        "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-1-c2-review-v3.json",
+        "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-1-c4-review-v3.json",
+        "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-1-dp6-review-v3.json",
+        "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-1-final-review-v3.json",
+    }
+)
+_POST_202_B101_CORRECTION_REVIEW_PATHS = frozenset(
+    {
+        "reports/council/data-torrent-recovery-v2-post-202-b101-correction-a2-review-v3.json",
+        "reports/council/data-torrent-recovery-v2-post-202-b101-correction-c2-review-v3.json",
+        "reports/council/data-torrent-recovery-v2-post-202-b101-correction-c4-review-v3.json",
+        "reports/council/data-torrent-recovery-v2-post-202-b101-correction-dp6-review-v3.json",
+        "reports/council/data-torrent-recovery-v2-post-202-b101-correction-final-review-v3.json",
     }
 )
 _PR_B_REVIEW_PATHS = frozenset(
@@ -272,6 +290,8 @@ def _phase_allowed_paths(allowed: list[str], *, phase: str) -> list[str]:
             _CORRECTION_REVIEW_PATHS
             | _LOCAL_CORRECTION_REVIEW_PATHS
             | _STATIC_CORRECTION_REVIEW_PATHS
+            | _EXACT_HEAD_CI_CORRECTION_REVIEW_PATHS
+            | _POST_202_B101_CORRECTION_REVIEW_PATHS
             | _PR_B_REVIEW_PATHS
             | _INITIAL_REVIEW_PATHS
         ).issubset(allowed_set)
@@ -288,6 +308,8 @@ def _phase_allowed_paths(allowed: list[str], *, phase: str) -> list[str]:
             - set(_CORRECTION_REVIEW_PATHS)
             - set(_LOCAL_CORRECTION_REVIEW_PATHS)
             - set(_STATIC_CORRECTION_REVIEW_PATHS)
+            - set(_EXACT_HEAD_CI_CORRECTION_REVIEW_PATHS)
+            - set(_POST_202_B101_CORRECTION_REVIEW_PATHS)
             - {_OWNER_MANIFEST_PATH}
         )
     else:

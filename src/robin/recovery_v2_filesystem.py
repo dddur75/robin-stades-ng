@@ -39,6 +39,16 @@ def _regular(metadata: os.stat_result) -> bool:
     )
 
 
+def _require_rollback_metadata(
+    metadata: os.stat_result | None,
+) -> os.stat_result:
+    """Keep the rollback identity guard active under optimized Python."""
+
+    if metadata is None:
+        raise RecoveryV2FilesystemError("RECOVERY_V2_FILESYSTEM_ROLLBACK_FAILED")
+    return metadata
+
+
 def _directory(metadata: os.stat_result) -> bool:
     reparse = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
     return stat.S_ISDIR(metadata.st_mode) and not bool(
@@ -1105,7 +1115,7 @@ def publish_exclusive_bytes(path: Path, payload: bytes, *, repository_root: Path
                     repository_root=repository_root,
                 )
             except OSError:
-                assert metadata is not None
+                metadata = _require_rollback_metadata(metadata)
                 rollback_failed = False
                 try:
                     _posix_unlink_if_identity(

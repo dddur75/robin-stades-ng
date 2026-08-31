@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
 import re
 import subprocess
 from dataclasses import dataclass
@@ -27,6 +29,22 @@ LEGACY_FIXTURE_FRAGMENTS = {
     "tests/council/test_robin_council_os_v3.py": "C:" + "/Users/",
     "tests/jalon5/test_deep_data_factory.py": "/" + "home/runner/work/repository/",
 }
+_IMMUTABLE_LEDGER_PATH = "reports/council/decision-ledger.jsonl"
+_IMMUTABLE_LEDGER_DECISION_ID = "RCV3-20260830-194"
+_IMMUTABLE_LEDGER_RECORD_HASH = (
+    "e0a497c717222220ab7e2e1a8dc17529a08acf96000682465da9f4d659d77ffe"
+)
+_IMMUTABLE_LEDGER_WORKTREE = "".join(
+    (
+        "C:",
+        "/Users/",
+        "ddura/",
+        "One" + "Drive/",
+        "Documents/",
+        "Robin des stades V2 Worktrees/",
+        "data-torrent-recovery-v2",
+    )
+)
 
 
 @dataclass(frozen=True)
@@ -45,6 +63,43 @@ def _mask_allowed(text: str) -> str:
     return "".join(masked)
 
 
+def _mask_immutable_ledger_worktree(text: str, *, path: str) -> str:
+    """Mask one already-sealed local locator without permitting future ones."""
+
+    if path.replace("\\", "/") != _IMMUTABLE_LEDGER_PATH:
+        return text
+    try:
+        record = json.loads(text)
+    except (json.JSONDecodeError, TypeError):
+        return text
+    if not isinstance(record, dict):
+        return text
+    context = record.get("context")
+    record_hash = record.get("hash")
+    if (
+        record.get("decision_id") != _IMMUTABLE_LEDGER_DECISION_ID
+        or record_hash != _IMMUTABLE_LEDGER_RECORD_HASH
+        or not isinstance(context, dict)
+        or context.get("worktree") != _IMMUTABLE_LEDGER_WORKTREE
+        or text.count(_IMMUTABLE_LEDGER_WORKTREE) != 1
+    ):
+        return text
+    unsigned = {key: value for key, value in record.items() if key != "hash"}
+    canonical = json.dumps(
+        unsigned,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    if hashlib.sha256(canonical).hexdigest() != record_hash:
+        return text
+    return text.replace(
+        _IMMUTABLE_LEDGER_WORKTREE,
+        " " * len(_IMMUTABLE_LEDGER_WORKTREE),
+        1,
+    )
+
+
 def find_forbidden_absolute_paths(
     text: str,
     *,
@@ -59,7 +114,9 @@ def find_forbidden_absolute_paths(
         legacy_fixture = LEGACY_FIXTURE_FRAGMENTS.get(normalized_path)
         if legacy_fixture is not None and legacy_fixture in raw_line:
             continue
-        line = _mask_allowed(raw_line)
+        line = _mask_allowed(
+            _mask_immutable_ledger_worktree(raw_line, path=normalized_path)
+        )
         for category, pattern in (
             ("WINDOWS_ABSOLUTE_PATH", WINDOWS_RE),
             ("UNIX_LOCAL_ABSOLUTE_PATH", UNIX_LOCAL_RE),

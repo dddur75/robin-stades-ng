@@ -143,4 +143,23 @@ def test_safe_ci_is_a_secret_free_copy_of_the_quarantined_legacy_definition() ->
         ) in scope_condition
     assert "startsWith" not in scope_condition
     assert scope_job["permissions"] == {"contents": "read"}
+    assert scope_job["env"] == {"PYTHONPATH": "src"}
+    scope_steps = scope_job["steps"]
+    scope_install_index = next(
+        index
+        for index, step in enumerate(scope_steps)
+        if step.get("name")
+        == "Installer les dependances verrouillees du scope Recovery V2"
+    )
+    scope_proof_index = next(
+        index
+        for index, step in enumerate(scope_steps)
+        if step.get("name") == "Prouver le scope Recovery V2 depuis START_SHA"
+    )
+    assert scope_install_index < scope_proof_index
+    scope_install_command = " ".join(scope_steps[scope_install_index]["run"].split())
+    assert scope_install_command == (
+        "python -m pip install --only-binary=:all: --require-hashes "
+        "-r requirements-data-torrent.lock"
+    )
     assert final_witness_job["permissions"] == {}

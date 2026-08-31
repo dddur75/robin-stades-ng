@@ -10,7 +10,7 @@ import math
 import os
 import re
 import stat
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path, PurePosixPath
@@ -158,6 +158,41 @@ DATA_TORRENT_RECOVERY_V2_LOCAL_CORRECTION_RELEASE_HASH = (
 DATA_TORRENT_RECOVERY_V2_LEDGER_PREFIX_THROUGH_198_SHA256 = (
     "6256c10acb2c1acc3fdb9a90ec8bb1561b8a557620e04c02d9465c158bf0d625"
 )
+DATA_TORRENT_RECOVERY_V2_LEDGER_PREFIX_THROUGH_200_SHA256 = (
+    "aea44608a6f247ae4660d915ad425d412bd8644941e14561bfdf5e232ca03f44"
+)
+DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_RELEASE_ID = "RCV3-20260831-202"
+DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_RELEASE_HASH = (
+    "ecd424775b924de525b846a2fe512126ffd64ef9d89b7be39b20149d2752b2e9"
+)
+DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_REVIEWED_SNAPSHOT_SHA256 = (
+    "66c3f26bce167666ab8d7af746b855ed2a00725b0fd7bcab272ec3e32c2f80b8"
+)
+DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_RUNTIME_SHA256 = (
+    "28499766869ed7d2f24bc6b3257316610be0bff1f63ece5afea9c7f3bf072c47"
+)
+DATA_TORRENT_RECOVERY_V2_LEDGER_PREFIX_THROUGH_202_SHA256 = (
+    "7709dce886d01c83570190863bc36b589d572af25574b75d6eae339872a86408"
+)
+DATA_TORRENT_RECOVERY_V2_GRAPH_CLAIMS_PREFIX_SHA256 = (
+    "fda614b79d6fc7f31d3b7b2bd0db476ece9a2eb28d21f98bb5d9f4c1bdc78294"
+)
+DATA_TORRENT_RECOVERY_V2_GRAPH_NODES_PREFIX_SHA256 = (
+    "06edb055c2fc5d6f557a0d371f8cd17a2eab9089b3249993ef8268b045dce3d0"
+)
+DATA_TORRENT_RECOVERY_V2_GRAPH_EDGES_PREFIX_SHA256 = (
+    "ac100fdeb1bb1b073a6e48b43071aae2f544979b457bb525b46f55dfd44a6c0c"
+)
+DATA_TORRENT_RECOVERY_V2_STATIC_CORRECTION_REVIEWED_SNAPSHOT_SHA256 = (
+    "7f9b63e9344c55d538a0a0ee4e12966ba004feabebdc814685ea138850b448cc"
+)
+DATA_TORRENT_RECOVERY_V2_STATIC_CORRECTION_RUNTIME_SHA256 = (
+    "50e10c6e3640aaf3292cc66ccd6e7f2aea0dd975787832d7a1b4b8a046faa994"
+)
+DATA_TORRENT_RECOVERY_V2_PR_A_CYCLE_1_HEAD = (
+    "a0a043f3222e467e6d904c90878be5718cac8ace"
+)
+DATA_TORRENT_RECOVERY_V2_PR_A_CYCLE_1_RUN_ID = 33420499802
 DATA_TORRENT_RECOVERY_V2_LOCAL_CORRECTION_REVIEWED_SNAPSHOT_SHA256 = (
     "a1b409e7c2cb2c558df38e559eb4e0c8431ececc9b290de53025813925651421"
 )
@@ -205,6 +240,24 @@ DATA_TORRENT_RECOVERY_V2_STATIC_CORRECTION_REVIEW_PATHS = {
 }
 DATA_TORRENT_RECOVERY_V2_STATIC_CORRECTION_FINAL_REVIEW_PATH = (
     "reports/council/data-torrent-recovery-v2-post-198-static-correction-final-review-v3.json"
+)
+DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_REVIEW_PATHS = {
+    "A2": "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-1-a2-review-v3.json",
+    "C2": "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-1-c2-review-v3.json",
+    "C4": "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-1-c4-review-v3.json",
+    "DP6": "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-1-dp6-review-v3.json",
+}
+DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_FINAL_REVIEW_PATH = (
+    "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-1-final-review-v3.json"
+)
+DATA_TORRENT_RECOVERY_V2_POST_202_B101_REVIEW_PATHS = {
+    "A2": "reports/council/data-torrent-recovery-v2-post-202-b101-correction-a2-review-v3.json",
+    "C2": "reports/council/data-torrent-recovery-v2-post-202-b101-correction-c2-review-v3.json",
+    "C4": "reports/council/data-torrent-recovery-v2-post-202-b101-correction-c4-review-v3.json",
+    "DP6": "reports/council/data-torrent-recovery-v2-post-202-b101-correction-dp6-review-v3.json",
+}
+DATA_TORRENT_RECOVERY_V2_POST_202_B101_FINAL_REVIEW_PATH = (
+    "reports/council/data-torrent-recovery-v2-post-202-b101-correction-final-review-v3.json"
 )
 DATA_TORRENT_RECOVERY_V2_PR_B_REVIEW_PATHS = {
     "A2": "reports/council/data-torrent-recovery-v2-pr-b-a2-review-v3.json",
@@ -440,6 +493,21 @@ _RECOVERY_V2_STATIC_CORRECTION_RELEASE_CLAIM = (
     "GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION."
     "PRECOMMIT_STATIC_RUNTIME_CORRECTION.RELEASE.001"
 )
+_RECOVERY_V2_EXACT_HEAD_CI_FAILURE_CLAIM = (
+    "GOV.DATA_TORRENT_RECOVERY.V2.E1.EXACT_HEAD_SAFE_V2.CYCLE_1.FAILURE.001"
+)
+_RECOVERY_V2_EXACT_HEAD_CI_CORRECTION_RELEASE_CLAIM = (
+    "GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION."
+    "EXACT_HEAD_SAFE_V2.CYCLE_1.CORRECTION.RELEASE.001"
+)
+_RECOVERY_V2_POST_202_B101_FAILURE_CLAIM = (
+    "GOV.DATA_TORRENT_RECOVERY.V2.E1.PRECOMMIT."
+    "BANDIT_SRC_ROBIN.B101.FAILURE.001"
+)
+_RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM = (
+    "GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.POSIX_ROLLBACK."
+    "FAIL_CLOSED.CORRECTION.RELEASE.001"
+)
 _RECOVERY_V2_PR_B_RELEASE_CLAIM = (
     "GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.RELEASE.003"
 )
@@ -648,6 +716,11 @@ DATA_TORRENT_RECOVERY_V2_RELEASE_PATHS = (
     "reports/council/data-torrent-recovery-v2-ci-correction-dp6-review-v3.json",
     "reports/council/data-torrent-recovery-v2-ci-correction-final-review-v3.json",
     "reports/council/data-torrent-recovery-v2-dp6-review-v3.json",
+    "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-1-a2-review-v3.json",
+    "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-1-c2-review-v3.json",
+    "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-1-c4-review-v3.json",
+    "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-1-dp6-review-v3.json",
+    "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-1-final-review-v3.json",
     "reports/council/data-torrent-recovery-v2-final-review-v3.json",
     "reports/council/data-torrent-recovery-v2-post-196-correction-a2-review-v3.json",
     "reports/council/data-torrent-recovery-v2-post-196-correction-c2-review-v3.json",
@@ -659,6 +732,11 @@ DATA_TORRENT_RECOVERY_V2_RELEASE_PATHS = (
     "reports/council/data-torrent-recovery-v2-post-198-static-correction-c4-review-v3.json",
     "reports/council/data-torrent-recovery-v2-post-198-static-correction-dp6-review-v3.json",
     "reports/council/data-torrent-recovery-v2-post-198-static-correction-final-review-v3.json",
+    "reports/council/data-torrent-recovery-v2-post-202-b101-correction-a2-review-v3.json",
+    "reports/council/data-torrent-recovery-v2-post-202-b101-correction-c2-review-v3.json",
+    "reports/council/data-torrent-recovery-v2-post-202-b101-correction-c4-review-v3.json",
+    "reports/council/data-torrent-recovery-v2-post-202-b101-correction-dp6-review-v3.json",
+    "reports/council/data-torrent-recovery-v2-post-202-b101-correction-final-review-v3.json",
     "reports/evidence/evidence-graph.json",
     "requirements-chronos-canary.lock",
     "requirements-chronos-neon-readonly-v4.lock",
@@ -666,6 +744,7 @@ DATA_TORRENT_RECOVERY_V2_RELEASE_PATHS = (
     "scripts/build_data_torrent_live_call_graph_v2.py",
     "scripts/check_chronos_github_hold_v3.py",
     "scripts/check_data_torrent_recovery_v2_scope.py",
+    "scripts/check_no_tracked_absolute_paths.py",
     "scripts/chronos_live_path_artifact_guard_v2.py",
     "scripts/chronos_neon_branch_identity_v2.py",
     "scripts/chronos_neon_pure_readonly_preflight_v4.py",
@@ -678,6 +757,7 @@ DATA_TORRENT_RECOVERY_V2_RELEASE_PATHS = (
     "scripts/materialize_data_torrent_recovery_v2_delivery_evidence.py",
     "scripts/materialize_data_torrent_recovery_v2_terminal_evidence.py",
     "scripts/recovery_v2_supervision.py",
+    "scripts/run_chronos_dual_principal_ci_v2.py",
     "scripts/run_data_torrent_v2.py",
     "scripts/seal_chronos_identity_go_v2.py",
     "scripts/validate_data_torrent_recovery_v2_dispatch_envelope.py",
@@ -765,6 +845,7 @@ DATA_TORRENT_RECOVERY_V2_RELEASE_PATHS = (
     "tests/data_torrent/test_postgresql_v1.py",
     "tests/data_torrent/test_source_effect_lineage_v1.py",
     "tests/jalon12/test_pilot_bridge_security.py",
+    "tests/portability/test_no_tracked_absolute_paths.py",
 )
 
 
@@ -7319,6 +7400,10 @@ def data_torrent_recovery_v2_reviewed_candidate_projection(
             *DATA_TORRENT_RECOVERY_V2_LOCAL_CORRECTION_REVIEW_PATHS.values(),
             DATA_TORRENT_RECOVERY_V2_STATIC_CORRECTION_FINAL_REVIEW_PATH,
             *DATA_TORRENT_RECOVERY_V2_STATIC_CORRECTION_REVIEW_PATHS.values(),
+            DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_FINAL_REVIEW_PATH,
+            *DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_REVIEW_PATHS.values(),
+            DATA_TORRENT_RECOVERY_V2_POST_202_B101_FINAL_REVIEW_PATH,
+            *DATA_TORRENT_RECOVERY_V2_POST_202_B101_REVIEW_PATHS.values(),
         }
     )
     paths = tuple(path for path in DATA_TORRENT_RECOVERY_V2_RELEASE_PATHS if path not in excluded)
@@ -7347,6 +7432,10 @@ def data_torrent_recovery_v2_pr_b_reviewed_candidate_projection(
             *DATA_TORRENT_RECOVERY_V2_LOCAL_CORRECTION_REVIEW_PATHS.values(),
             DATA_TORRENT_RECOVERY_V2_STATIC_CORRECTION_FINAL_REVIEW_PATH,
             *DATA_TORRENT_RECOVERY_V2_STATIC_CORRECTION_REVIEW_PATHS.values(),
+            DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_FINAL_REVIEW_PATH,
+            *DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_REVIEW_PATHS.values(),
+            DATA_TORRENT_RECOVERY_V2_POST_202_B101_FINAL_REVIEW_PATH,
+            *DATA_TORRENT_RECOVERY_V2_POST_202_B101_REVIEW_PATHS.values(),
             DATA_TORRENT_RECOVERY_V2_PR_B_FINAL_REVIEW_PATH,
             *DATA_TORRENT_RECOVERY_V2_PR_B_REVIEW_PATHS.values(),
         }
@@ -7423,8 +7512,13 @@ def _validate_recovery_v2_agent_reports(
     bindings: object,
     reviewed_snapshot_sha256: str,
     review_paths: Mapping[str, str] = DATA_TORRENT_RECOVERY_V2_REVIEW_PATHS,
+    expected_facts: Mapping[str, list[dict[str, object]]] | None = None,
 ) -> None:
-    if not isinstance(bindings, dict) or set(bindings) != set(review_paths):
+    if (
+        not isinstance(bindings, dict)
+        or set(bindings) != set(review_paths)
+        or (expected_facts is not None and set(expected_facts) != set(review_paths))
+    ):
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
     snapshot_ref = f"REVIEWED_SNAPSHOT_SHA256:{reviewed_snapshot_sha256}"
     for agent_id, relative in review_paths.items():
@@ -7500,6 +7594,10 @@ def _validate_recovery_v2_agent_reports(
                 or snapshot_ref not in fact["evidence_refs"]
                 for fact in facts
             )
+            or (
+                expected_facts is not None
+                and not _json_exact_equal(facts, expected_facts[agent_id])
+            )
         ):
             raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
 
@@ -7515,6 +7613,9 @@ def _validate_recovery_v2_final_review(
     reviewed_file_count: int,
     reviewed_at_not_after: datetime,
     reviewed_at_not_before: datetime | None = None,
+    reviewed_at_must_precede: bool = False,
+    expected_external_effects: Mapping[str, int] | None = None,
+    expected_delivery_effects: Mapping[str, int] | None = None,
 ) -> None:
     payload, report = _recovery_v2_strict_json(
         root / relative,
@@ -7537,6 +7638,25 @@ def _validate_recovery_v2_final_review(
         "release_boundary",
         "release_conditions",
     }
+    if expected_delivery_effects is not None:
+        expected_fields.add("delivery_effects_observed")
+    expected_external = (
+        dict(expected_external_effects)
+        if expected_external_effects is not None
+        else {
+            "git_remote_writes": 0,
+            "github_writes": 0,
+            "neon_gets": 0,
+            "neon_mutations": 0,
+            "postgresql_production_connections": 0,
+            "postgresql_production_writes": 0,
+            "r2_gets": 0,
+            "r2_puts": 0,
+            "official_reads": 0,
+            "provider_requests": 0,
+            "secret_writes": 0,  # nosec B105 - effect counter, not a credential.
+        }
+    )
     try:
         reviewed_at = _authority_timestamp(report.get("reviewed_at"), field="final_reviewed_at")
     except ChronosProductionError:
@@ -7556,6 +7676,7 @@ def _validate_recovery_v2_final_review(
         or report.get("reviewed_snapshot_sha256") != reviewed_snapshot_sha256
         or report.get("reviewed_file_count") != reviewed_file_count
         or reviewed_at > reviewed_at_not_after
+        or (reviewed_at_must_precede and reviewed_at == reviewed_at_not_after)
         or (
             reviewed_at_not_before is not None
             and reviewed_at <= reviewed_at_not_before
@@ -7591,19 +7712,21 @@ def _validate_recovery_v2_final_review(
         )
         or not _json_exact_equal(
             report.get("external_effects_observed"),
-            {
-            "git_remote_writes": 0,
-            "github_writes": 0,
-            "neon_gets": 0,
-            "neon_mutations": 0,
-            "postgresql_production_connections": 0,
-            "postgresql_production_writes": 0,
-            "r2_gets": 0,
-            "r2_puts": 0,
-            "official_reads": 0,
-            "provider_requests": 0,
-            "secret_writes": 0,  # nosec B105 - effect counter, not a credential.
-            },
+            expected_external,
+        )
+        or (
+            expected_delivery_effects is not None
+            and (
+                not isinstance(report.get("delivery_effects_observed"), dict)
+                or not _exact_integer_fields(
+                    cast(dict[str, object], report["delivery_effects_observed"]),
+                    set(expected_delivery_effects),
+                )
+                or not _json_exact_equal(
+                    report.get("delivery_effects_observed"),
+                    dict(expected_delivery_effects),
+                )
+            )
         )
         or not _json_exact_equal(
             report.get("release_boundary"),
@@ -8908,8 +9031,26 @@ def _validate_recovery_v2_static_correction_pair(
     ):
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
 
-    reviewed_candidate = data_torrent_recovery_v2_reviewed_candidate_projection(root)
-    runtime_release = data_torrent_recovery_v2_release_projection(root)
+    release_context = release.get("context")
+    if not isinstance(release_context, dict):
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+    reviewed_candidate = release_context.get("reviewed_candidate")
+    runtime_release = release_context.get("runtime_release")
+    _validate_recovery_v2_frozen_projection(reviewed_candidate)
+    _validate_recovery_v2_frozen_projection(runtime_release)
+    if (
+        not isinstance(reviewed_candidate, dict)
+        or not isinstance(runtime_release, dict)
+        or reviewed_candidate.get("projection_sha256")
+        != DATA_TORRENT_RECOVERY_V2_STATIC_CORRECTION_REVIEWED_SNAPSHOT_SHA256
+        or runtime_release.get("projection_sha256")
+        != DATA_TORRENT_RECOVERY_V2_STATIC_CORRECTION_RUNTIME_SHA256
+        or not isinstance(reviewed_candidate.get("files"), list)
+        or len(cast(list[object], reviewed_candidate["files"])) != 135
+        or not isinstance(runtime_release.get("files"), list)
+        or len(cast(list[object], runtime_release["files"])) != 155
+    ):
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
     reviews: dict[str, dict[str, object]] = {}
     for agent_id, relative in DATA_TORRENT_RECOVERY_V2_STATIC_CORRECTION_REVIEW_PATHS.items():
         payload = _recovery_v2_read_bytes(
@@ -9066,6 +9207,763 @@ def _validate_recovery_v2_static_correction_pair(
         reviewed_file_count=len(cast(list[object], reviewed_candidate["files"])),
         reviewed_at_not_after=release_date,
         reviewed_at_not_before=failure_date,
+    )
+    return release_date
+
+
+def _validate_recovery_v2_exact_head_ci_correction_pair(
+    failure: dict[str, Any],
+    release: dict[str, Any],
+    *,
+    root: Path,
+    base_release: dict[str, Any],
+    base_release_date: datetime,
+    observed_now: datetime,
+    expected_manifest: Mapping[str, str],
+    expected_effect: Mapping[str, str],
+    expected_call_graph: Mapping[str, str],
+) -> datetime:
+    """Validate SAFE V2 cycle-one failure evidence and its one coherent correction."""
+
+    try:
+        failure_date = _authority_timestamp(
+            failure.get("date"), field="exact_head_ci_cycle_one_failure_date"
+        )
+        release_date = _authority_timestamp(
+            release.get("date"), field="exact_head_ci_cycle_one_correction_date"
+        )
+    except ChronosProductionError:
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID") from None
+    expires_at = _authority_timestamp(
+        DATA_TORRENT_RECOVERY_V2_EXPIRES_AT,
+        field="recovery_v2_expiry",
+    )
+    production_zero = {
+        "neon_gets": 0,
+        "neon_mutations": 0,
+        "postgresql_production_connections": 0,
+        "postgresql_production_writes": 0,
+        "r2_gets": 0,
+        "r2_puts": 0,
+        "official_reads": 0,
+        "provider_requests": 0,
+        "secret_writes": 0,  # nosec B105 - effect counter, not a credential.
+        "production_workflow_dispatches": 0,
+    }
+    delivery_effects = {
+        "git_remote_writes": 1,
+        "github_pull_request_writes": 1,
+        "github_merge_commits": 0,
+        "github_safe_v2_runs": 1,
+        "failed_run_reruns": 0,
+    }
+    pr_binding = {
+        "number": 80,
+        "url": "https://github.com/dddur75/robin-stades-ng/pull/80",
+        "head_ref": "codex/data-torrent-recovery-v2",
+        "base_ref": "main",
+    }
+    ci_evidence = {
+        "workflow": "00 - Qualite continue SAFE V2",
+        "run_id": DATA_TORRENT_RECOVERY_V2_PR_A_CYCLE_1_RUN_ID,
+        "run_attempt": 1,
+        "event": "pull_request",
+        "head_sha": DATA_TORRENT_RECOVERY_V2_PR_A_CYCLE_1_HEAD,
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-08-31T17:36:38Z",
+        "completed_at": "2026-08-31T17:50:55Z",
+        "url": (
+            "https://github.com/dddur75/robin-stades-ng/actions/runs/33420499802"
+        ),
+        "successful_job_ids": [
+            99581397701,
+            99581397931,
+            99581397982,
+            99581398096,
+            99581398160,
+            99581398210,
+            99581398234,
+            99583580343,
+        ],
+        "root_failure_jobs": [
+            {
+                "job_id": 99581398120,
+                "name": "Recovery V2 — scope guard exact",
+                "step": "Prouver le scope Recovery V2 depuis START_SHA",
+                "failure": "MODULE_NOT_FOUND_ROBIN_BEFORE_SCOPE_PROOF",
+            },
+            {
+                "job_id": 99581398246,
+                "name": "Bounded live canary - Ubuntu",
+                "step": "Refuser les secrets et chemins locaux suivis",
+                "failure": "IMMUTABLE_LEDGER_LOCAL_PATH_FALSE_POSITIVE",
+            },
+            {
+                "job_id": 99583580309,
+                "name": "Chronos PostgreSQL profiles / tests (superuser)",
+                "step": "Valider le lifecycle dual-principal et le cycle 0015",
+                "failure": "CHRONOS_CI_MIGRATOR_ALTER_ROLE_NONMINIMAL",
+            },
+            {
+                "job_id": 99583580313,
+                "name": (
+                    "Chronos PostgreSQL profiles / tests "
+                    "(non_superuser_createrole)"
+                ),
+                "step": "Valider le lifecycle dual-principal et le cycle 0015",
+                "failure": "CHRONOS_CI_MIGRATOR_ALTER_ROLE_NONMINIMAL",
+            },
+            {
+                "job_id": 99583580492,
+                "name": "Chronos PostgreSQL profiles / Chronos static contracts",
+                "step": "Run python scripts/check_no_tracked_absolute_paths.py",
+                "failure": "IMMUTABLE_LEDGER_LOCAL_PATH_FALSE_POSITIVE",
+            },
+        ],
+        "dependent_failure_jobs": [
+            {
+                "job_id": 99585553638,
+                "name": "tests",
+                "step": "Refuser tout prerequis absent, annule ou en echec",
+                "failure": "PREREQUISITE_FAILURE_ONLY",
+            }
+        ],
+        "all_terminal_jobs_collected": True,
+        "failed_run_rerun": False,
+    }
+    ci_evidence_sha256 = hashlib.sha256(
+        json.dumps(
+            ci_evidence,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    ).hexdigest()
+    ci_created_at = _authority_timestamp(
+        ci_evidence["created_at"], field="exact_head_safe_v2_created_at"
+    )
+    ci_completed_at = _authority_timestamp(
+        ci_evidence["completed_at"], field="exact_head_safe_v2_completed_at"
+    )
+    root_causes = [
+        {
+            "root_cause": "SCOPE_GUARD_CLEAN_RUNNER_IMPORTS_NOT_BOOTSTRAPPED",
+            "affected_job_ids": [99581398120],
+            "correction_paths": [
+                ".github/workflows/ci-safe-v2.yml",
+                "tests/data_torrent/test_ci_lock_contract_v1.py",
+            ],
+        },
+        {
+            "root_cause": "IMMUTABLE_RECORD_194_LOCAL_PATH_REJECTED_BY_GLOBAL_SCANNER",
+            "affected_job_ids": [99581398246, 99583580492],
+            "correction_paths": [
+                "scripts/check_no_tracked_absolute_paths.py",
+                "tests/portability/test_no_tracked_absolute_paths.py",
+            ],
+        },
+        {
+            "root_cause": "MIGRATOR_ASSERTION_SCANNED_UNRELATED_EXECUTOR_SOURCE",
+            "affected_job_ids": [99583580309, 99583580313],
+            "correction_paths": [
+                "scripts/run_chronos_dual_principal_ci_v2.py",
+                "tests/chronos/test_chronos_dual_principal_v2.py",
+            ],
+        },
+    ]
+    expected_failure_context = {
+        "mission_id": "DATA_TORRENT_RECOVERY_V2",
+        "phase": "PR_A_EXACT_HEAD_SAFE_V2_CYCLE_1_FAILURE",
+        "program_start_sha": DATA_TORRENT_RECOVERY_V2_START_SHA,
+        "release_decision_id": base_release.get("decision_id"),
+        "release_record_hash": base_release.get("hash"),
+        "active_release_claim_id": _RECOVERY_V2_STATIC_CORRECTION_RELEASE_CLAIM,
+        "writer": "C0",
+        "worktree": "ENGINEERING_WORKTREE:data-torrent-recovery-v2",
+        "branch": "codex/data-torrent-recovery-v2",
+        "head": DATA_TORRENT_RECOVERY_V2_PR_A_CYCLE_1_HEAD,
+        "pr": pr_binding,
+        "exact_head_safe_v2": ci_evidence,
+        "exact_head_safe_v2_sha256": ci_evidence_sha256,
+        "root_causes": root_causes,
+        "correction_authority": (
+            "FIRST_EXACT_HEAD_CI_FAILURE_ONE_COHERENT_CORRECTION_NEW_SHA_CYCLE_2"
+        ),
+        "ci_cycle_budget": {
+            "maximum": 3,
+            "consumed": 1,
+            "remaining": 2,
+            "next_cycle": 2,
+            "failed_run_rerun": False,
+            "new_head_required": True,
+        },
+        "observed_delivery_effects": delivery_effects,
+        "observed_production_effects": production_zero,
+        "full_suite_rerun": False,
+        "data_torrent_ready": False,
+    }
+    if (
+        failure.get("decision_id") != "RCV3-20260831-201"
+        or failure.get("decision_id")
+        != _recovery_v2_next_decision_id(
+            cast(str, base_release.get("decision_id")), failure_date
+        )
+        or failure.get("record_type") != "FAILURE"
+        or failure.get("decision") != "PASS_AND_HOLD"
+        or failure.get("responsible") != "C0"
+        or failure.get("dissent") is not None
+        or failure.get("proposal")
+        != (
+            "Record exact-head SAFE V2 cycle 1 as a terminal failed attempt, hold "
+            "merge and every production effect, and authorize only one coherent "
+            "three-root-cause correction on a new SHA for cycle 2."
+        )
+        or failure.get("objections")
+        != [
+            "The failed run is immutable and must never be rerun.",
+            "Five root-failure jobs reduce to three local causes; the tests job failed only on prerequisites.",
+            "The successful jobs are retained as evidence but cannot override the failed exact-head gate.",
+            "PR-B, merge, production workflows, secrets, Neon, PostgreSQL, R2, official reads and provider calls remain unused.",
+        ]
+        or failure.get("proof") != [_RECOVERY_V2_EXACT_HEAD_CI_FAILURE_CLAIM]
+        or failure.get("previous_hash") != base_release.get("hash")
+        or not _json_exact_equal(failure.get("context"), expected_failure_context)
+        or ci_created_at > ci_completed_at
+        or ci_completed_at >= failure_date
+        or failure_date <= base_release_date
+        or failure_date > observed_now
+        or failure_date > expires_at
+    ):
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+
+    release_context = release.get("context")
+    if (
+        release.get("decision_id") != DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_RELEASE_ID
+        or release.get("decision_id")
+        != _recovery_v2_next_decision_id(
+            cast(str, failure.get("decision_id")), release_date
+        )
+        or release.get("record_type") != "DECISION"
+        or release.get("decision") != "PASS_AND_HOLD"
+        or release.get("responsible") != "C0"
+        or release.get("dissent") is not None
+        or release.get("proposal")
+        != (
+            "Release the independently reviewed three-root-cause correction to one "
+            "new exact-head SAFE V2 cycle while merge, production and every one-shot "
+            "effect remain held."
+        )
+        or release.get("objections")
+        != [
+            "Cycle 1 remains a terminal failed attempt and is never rerun.",
+            "The scope guard now bootstraps only the hash-locked Recovery dependency set before proof.",
+            "The immutable ledger exception is record-, hash-, value- and cardinality-bound, and the migrator check is function-scoped.",
+            "The sole full suite was not rerun; cycle 2 on a new SHA remains the required complete gate.",
+            "Every production and one-shot effect remains dormant until its exact predecessor gate.",
+        ]
+        or release.get("proof")
+        != [_RECOVERY_V2_EXACT_HEAD_CI_CORRECTION_RELEASE_CLAIM]
+        or release.get("previous_hash") != failure.get("hash")
+        or release.get("hash") != DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_RELEASE_HASH
+        or not isinstance(release_context, dict)
+        or release_date <= failure_date
+        or release_date > observed_now
+        or release_date > expires_at
+    ):
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+    reviewed_candidate = cast(dict[str, Any], release_context.get("reviewed_candidate"))
+    runtime_release = cast(dict[str, Any], release_context.get("runtime_release"))
+    _validate_recovery_v2_frozen_projection(reviewed_candidate)
+    _validate_recovery_v2_frozen_projection(runtime_release)
+    if (
+        release_context.get("reviewed_snapshot_sha256")
+        != DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_REVIEWED_SNAPSHOT_SHA256
+        or reviewed_candidate.get("projection_sha256")
+        != DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_REVIEWED_SNAPSHOT_SHA256
+        or runtime_release.get("projection_sha256")
+        != DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_RUNTIME_SHA256
+    ):
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+    reviewed_snapshot = DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_REVIEWED_SNAPSHOT_SHA256
+    _validate_recovery_v2_agent_reports(
+        root,
+        bindings=release_context.get("independent_reviews"),
+        reviewed_snapshot_sha256=reviewed_snapshot,
+        review_paths=DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_REVIEW_PATHS,
+    )
+    _validate_recovery_v2_final_review(
+        root,
+        binding=release_context.get("final_review"),
+        relative=DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_FINAL_REVIEW_PATH,
+        reviewed_snapshot_sha256=reviewed_snapshot,
+        schema_version="data-torrent-recovery-v2-exact-head-ci-cycle-1-final-review-v3",
+        review_paths=DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_REVIEW_PATHS,
+        reviewed_file_count=len(cast(list[object], reviewed_candidate["files"])),
+        reviewed_at_not_after=release_date,
+        reviewed_at_not_before=failure_date,
+    )
+    return release_date
+
+
+def _validate_recovery_v2_post_202_b101_correction_pair(
+    failure: dict[str, Any],
+    release: dict[str, Any],
+    *,
+    root: Path,
+    base_release: dict[str, Any],
+    base_release_date: datetime,
+    observed_now: datetime,
+    expected_manifest: Mapping[str, str],
+    expected_effect: Mapping[str, str],
+    expected_call_graph: Mapping[str, str],
+) -> datetime:
+    """Validate the append-only post-202 Bandit finding and fail-closed closure."""
+
+    try:
+        failure_date = _authority_timestamp(
+            failure.get("date"), field="post_202_b101_failure_date"
+        )
+        release_date = _authority_timestamp(
+            release.get("date"), field="post_202_b101_correction_date"
+        )
+    except ChronosProductionError:
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID") from None
+    expires_at = _authority_timestamp(
+        DATA_TORRENT_RECOVERY_V2_EXPIRES_AT,
+        field="recovery_v2_expiry",
+    )
+    production_zero = {
+        "neon_gets": 0,
+        "neon_mutations": 0,
+        "postgresql_production_connections": 0,
+        "postgresql_production_writes": 0,
+        "r2_gets": 0,
+        "r2_puts": 0,
+        "official_reads": 0,
+        "provider_requests": 0,
+        "secret_writes": 0,  # nosec B105 - effect counter, not a credential.
+        "production_workflow_dispatches": 0,
+    }
+    delivery_effects = {
+        "git_remote_writes": 1,
+        "github_pull_request_writes": 1,
+        "github_merge_commits": 0,
+        "github_safe_v2_runs": 1,
+        "failed_run_reruns": 0,
+    }
+    pr_binding = {
+        "number": 80,
+        "url": "https://github.com/dddur75/robin-stades-ng/pull/80",
+        "head_ref": "codex/data-torrent-recovery-v2",
+        "base_ref": "main",
+    }
+    finding = {
+        "tool": "bandit -q -r src/robin",
+        "rule": "B101",
+        "path": "src/robin/recovery_v2_filesystem.py",
+        "symbol": "publish_exclusive_bytes",
+        "vulnerable_lf_sha256": (
+            "d770f9fbcac097161b4be909a289e5dddd7884d2ac9015ce3185acbf6e4ace60"
+        ),
+        "risk": "PYTHON_OPTIMIZATION_REMOVES_POSIX_ROLLBACK_ASSERTION",
+    }
+    correction = {
+        "path": "src/robin/recovery_v2_filesystem.py",
+        "test_path": "tests/activation/test_recovery_v2_atomic_evidence.py",
+        "implementation": "EXPLICIT_FAIL_CLOSED_METADATA_GUARD",
+    }
+    expected_failure_context = {
+        "mission_id": "DATA_TORRENT_RECOVERY_V2",
+        "phase": "POST_202_PRE_CYCLE_2_BANDIT_B101_FAILURE",
+        "program_start_sha": DATA_TORRENT_RECOVERY_V2_START_SHA,
+        "release_decision_id": base_release.get("decision_id"),
+        "release_record_hash": base_release.get("hash"),
+        "active_release_claim_id": _RECOVERY_V2_EXACT_HEAD_CI_CORRECTION_RELEASE_CLAIM,
+        "writer": "C0",
+        "writer_count": 1,
+        "worktree": "ENGINEERING_WORKTREE:data-torrent-recovery-v2",
+        "branch": "codex/data-torrent-recovery-v2",
+        "head": DATA_TORRENT_RECOVERY_V2_PR_A_CYCLE_1_HEAD,
+        "pr": pr_binding,
+        "finding": finding,
+        "authorized_correction": correction,
+        "correction_policy": "FIRST_SIMILAR_FAILURE_SMALLEST_CORRECTION_SAME_LEVEL",
+        "failure_class_distinct_from_record_199": {
+            "record_id": "RCV3-20260831-199",
+            "record_hash": (
+                "25eb2b9c2fbc10fb54525bb646d35c6cf0003e14e4445cf40248125b55befb75"
+            ),
+            "prior_class": "BANDIT_B105_FALSE_POSITIVES_AND_OPERABILITY_FINDINGS",
+            "current_class": "BANDIT_B101_OPTIMIZATION_REMOVABLE_ROLLBACK_ASSERTION",
+            "same_failure_class": False,
+            "current_class_attempt": 1,
+        },
+        "ci_cycle_contract": {
+            "maximum": 3,
+            "consumed": 1,
+            "remaining": 2,
+            "next_cycle": 2,
+            "failed_run_rerun": False,
+            "new_head_required": True,
+        },
+        "observed_delivery_effects": delivery_effects,
+        "observed_production_effects": production_zero,
+        "full_suite_rerun": False,
+        "external_effects_authorized_now": False,
+        "data_torrent_ready": False,
+    }
+    if (
+        failure.get("decision_id") != "RCV3-20260831-203"
+        or failure.get("decision_id")
+        != _recovery_v2_next_decision_id(
+            cast(str, base_release.get("decision_id")), failure_date
+        )
+        or failure.get("record_type") != "FAILURE"
+        or failure.get("decision") != "PASS_AND_HOLD"
+        or failure.get("responsible") != "C0"
+        or failure.get("dissent") is not None
+        or failure.get("proposal")
+        != (
+            "Record the first post-202 Bandit B101 failure of a class distinct from "
+            "record 199, preserve release 202 byte-for-byte, hold cycle 2 and every "
+            "production effect, and authorize only the explicit fail-closed POSIX "
+            "rollback metadata correction with fresh independent QA."
+        )
+        or failure.get("objections")
+        != [
+            "Release 202 remains immutable but cannot authorize cycle 2 after the later B101 finding.",
+            "Python optimization could remove the rollback assertion on the POSIX exclusive-publication path.",
+            "Cycle 2, merge and every production or one-shot effect remain held.",
+            "The smallest correction is one explicit metadata guard plus its focused regression and governance closure.",
+        ]
+        or failure.get("proof") != [_RECOVERY_V2_POST_202_B101_FAILURE_CLAIM]
+        or failure.get("previous_hash") != base_release.get("hash")
+        or not _json_exact_equal(failure.get("context"), expected_failure_context)
+        or failure_date <= base_release_date
+        or failure_date > observed_now
+        or failure_date > expires_at
+    ):
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+
+    reviewed_candidate = data_torrent_recovery_v2_reviewed_candidate_projection(root)
+    runtime_release = data_torrent_recovery_v2_release_projection(root)
+    reviews: dict[str, dict[str, object]] = {}
+    for agent_id, relative in DATA_TORRENT_RECOVERY_V2_POST_202_B101_REVIEW_PATHS.items():
+        payload = _recovery_v2_read_bytes(
+            root / relative,
+            repository_root=root,
+            maximum_bytes=262_144,
+        )
+        reviews[agent_id] = {
+            "path": relative,
+            "raw_sha256": hashlib.sha256(payload).hexdigest(),
+            "field_count": 15,
+            "reviewed_snapshot_sha256": reviewed_candidate["projection_sha256"],
+            "recommended_action": "PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+            "p0": 0,
+            "p1": 0,
+            "p2": 0,
+            "open_threads": 0,
+        }
+    final_path = DATA_TORRENT_RECOVERY_V2_POST_202_B101_FINAL_REVIEW_PATH
+    final_payload = _recovery_v2_read_bytes(
+        root / final_path,
+        repository_root=root,
+        maximum_bytes=262_144,
+    )
+    final_binding = {
+        "path": final_path,
+        "raw_sha256": hashlib.sha256(final_payload).hexdigest(),
+    }
+    expected_files = sorted(
+        {
+            ".github/workflows/ci-safe-v2.yml",
+            "configs/agents/mission-activation-matrix-v3.json",
+            "docs/operations/DATA-TORRENT-RECOVERY-V2.md",
+            *DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_REVIEW_PATHS.values(),
+            DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_FINAL_REVIEW_PATH,
+            *DATA_TORRENT_RECOVERY_V2_POST_202_B101_REVIEW_PATHS.values(),
+            final_path,
+            "reports/council/decision-ledger.jsonl",
+            "reports/evidence/evidence-graph.json",
+            "scripts/check_data_torrent_recovery_v2_scope.py",
+            "scripts/check_no_tracked_absolute_paths.py",
+            "scripts/materialize_data_torrent_recovery_v2_delivery_evidence.py",
+            "scripts/run_chronos_dual_principal_ci_v2.py",
+            "src/robin/chronos_production.py",
+            "src/robin/recovery_v2_filesystem.py",
+            "tests/activation/test_recovery_v2_atomic_evidence.py",
+            "tests/chronos/test_chronos_dual_principal_v2.py",
+            "tests/council/test_data_torrent_recovery_v2_governance.py",
+            "tests/data_torrent/test_ci_lock_contract_v1.py",
+            "tests/portability/test_no_tracked_absolute_paths.py",
+        }
+    )
+    expected_release_context = {
+        "mission_id": "DATA_TORRENT_RECOVERY_V2",
+        "phase": "POST_202_B101_CORRECTION_RELEASE_AFTER_INDEPENDENT_QA",
+        "program_start_sha": DATA_TORRENT_RECOVERY_V2_START_SHA,
+        "writer": "C0",
+        "writer_count": 1,
+        "worktree": "ENGINEERING_WORKTREE:data-torrent-recovery-v2",
+        "branch": "codex/data-torrent-recovery-v2",
+        "head": DATA_TORRENT_RECOVERY_V2_PR_A_CYCLE_1_HEAD,
+        "candidate_parent": DATA_TORRENT_RECOVERY_V2_PR_A_CYCLE_1_HEAD,
+        "pr": pr_binding,
+        "files": expected_files,
+        "supersedes_release_claim_id": _RECOVERY_V2_EXACT_HEAD_CI_CORRECTION_RELEASE_CLAIM,
+        "supersedes_release_decision_id": base_release.get("decision_id"),
+        "supersedes_release_record_hash": base_release.get("hash"),
+        "failure_record_id": failure.get("decision_id"),
+        "failure_record_hash": failure.get("hash"),
+        "manifest": dict(expected_manifest),
+        "effect_contract": dict(expected_effect),
+        "postgresql_call_graph": dict(expected_call_graph),
+        "reviewed_candidate": reviewed_candidate,
+        "reviewed_snapshot_sha256": reviewed_candidate["projection_sha256"],
+        "runtime_release": runtime_release,
+        "preflight_correction": correction,
+        "defects": {"open_p0": 0, "open_p1": 0, "open_p2": 0, "open_threads": 0},
+        "release_conditions": {
+            "production_effects_authorized_now": False,
+            "exact_head_safe_v2_cycle_2_required": True,
+            "normal_merge_required": True,
+            "postmerge_safe_v2_required": True,
+            "immediate_predecessor_required_for_each_stage": True,
+        },
+        "progression_contract": {
+            "council_role": "CONTROL_AND_RECORD_ONLY",
+            "progression_mode": "AUTOMATIC_WITHIN_AUTHORIZED_MANIFEST",
+            "controller_path": "scripts/dispatch_data_torrent_recovery_v2_stage.py",
+            "stage_mapping_bound_to_effect_contract": True,
+            "predecessor_attestation_and_semantic_validation_before_effect": True,
+            "pr_c_phase_one_stage_finished_record_required": True,
+            "pr_c_terminal_decision_record_required": True,
+        },
+        "ci_cycle_contract": {
+            "maximum": 3,
+            "consumed": 1,
+            "remaining": 2,
+            "next_cycle": 2,
+            "failed_run_rerun": False,
+            "new_head_required": True,
+        },
+        "observed_delivery_effects": delivery_effects,
+        "observed_production_effects": production_zero,
+        "independent_reviews": reviews,
+        "final_review": final_binding,
+        "targeted_tests": {
+            "b101_regression": "PASS",
+            "ci_root_cause_regressions": "PASS",
+            "governance_release": "PASS",
+            "recovery_domain": "PASS",
+            "ruff_changed_python": "PASS",
+            "mypy_recovery_v2_strict": "PASS",
+            "bandit_recovery_v2": "PASS",
+            "compileall": "PASS",
+            "pip_check": "PASS",
+            "json_yaml": "PASS",
+            "secret_and_local_path_scan": "PASS",  # nosec B105 - QA verdict.
+            "full_suite_rerun": "FALSE",
+            "unapproved_network_attempts": "0",
+        },
+        "proofs_reused": [
+            f"superseded-release-record:{base_release.get('hash')}",
+            f"post-202-b101-failure-record:{failure.get('hash')}",
+            f"vulnerable-source-lf:{finding['vulnerable_lf_sha256']}",
+            f"manifest-raw:{DATA_TORRENT_RECOVERY_V2_MANIFEST_SHA256}",
+            f"effect-contract-raw:{DATA_TORRENT_RECOVERY_V2_EFFECT_CONTRACT_SHA256}",
+        ],
+        "external_effects_authorized_now": False,
+        "data_torrent_ready": False,
+    }
+    if (
+        release.get("decision_id") != "RCV3-20260831-204"
+        or release.get("decision_id")
+        != _recovery_v2_next_decision_id(
+            cast(str, failure.get("decision_id")), release_date
+        )
+        or release.get("record_type") != "DECISION"
+        or release.get("decision") != "PASS_AND_HOLD"
+        or release.get("responsible") != "C0"
+        or release.get("dissent") is not None
+        or release.get("proposal")
+        != (
+            "Release the independently reviewed post-202 B101 fail-closed correction "
+            "to one new exact-head SAFE V2 cycle while merge, production and every "
+            "one-shot effect remain held."
+        )
+        or release.get("objections")
+        != [
+            "Release 202 remains byte-for-byte preserved and is superseded only by this append-only decision.",
+            "The POSIX rollback assertion is replaced by an explicit fail-closed metadata guard with a focused regression.",
+            "The sole full suite was not rerun; cycle 2 on a new SHA remains the required complete gate.",
+            "Every production and one-shot effect remains dormant until its exact predecessor gate.",
+        ]
+        or release.get("proof")
+        != [_RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM]
+        or release.get("previous_hash") != failure.get("hash")
+        or not _json_exact_equal(release.get("context"), expected_release_context)
+        or release_date <= failure_date
+        or release_date > observed_now
+        or release_date > expires_at
+    ):
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+    reviewed_snapshot = cast(str, reviewed_candidate["projection_sha256"])
+    snapshot_ref = f"REVIEWED_SNAPSHOT_SHA256:{reviewed_snapshot}"
+    failure_ref = f"COUNCIL_FAILURE_RECORD_SHA256:{failure.get('hash')}"
+    expected_role_facts: dict[str, list[dict[str, object]]] = {
+        "C2": [
+            {
+                "claim": (
+                    "The ledger prefix through record 202 is byte-for-byte preserved, "
+                    "and records 203 and 204 are its sole contiguous B101 failure and "
+                    "reviewed-correction successors."
+                ),
+                "evidence_refs": [
+                    snapshot_ref,
+                    (
+                        "LEDGER_PREFIX_THROUGH_202_SHA256:"
+                        f"{DATA_TORRENT_RECOVERY_V2_LEDGER_PREFIX_THROUGH_202_SHA256}"
+                    ),
+                    failure_ref,
+                ],
+                "status": "VERIFIED",
+            },
+            {
+                "claim": (
+                    "Record 204 supersedes release 202 without rewriting its decision, "
+                    "review reports, or frozen projection bindings."
+                ),
+                "evidence_refs": [
+                    snapshot_ref,
+                    (
+                        "RECORD_202_SHA256:"
+                        f"{DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_RELEASE_HASH}"
+                    ),
+                    (
+                        "src/robin/chronos_production.py:"
+                        "_validate_recovery_v2_post_202_b101_correction_pair"
+                    ),
+                ],
+                "status": "VERIFIED",
+            },
+        ],
+        "C4": [
+            {
+                "claim": (
+                    "The POSIX publication rollback path calls an explicit metadata "
+                    "guard that remains fail-closed under optimized Python."
+                ),
+                "evidence_refs": [
+                    snapshot_ref,
+                    "src/robin/recovery_v2_filesystem.py:publish_exclusive_bytes",
+                    (
+                        "tests/activation/test_recovery_v2_atomic_evidence.py:"
+                        "test_posix_atomic_publish_uses_an_explicit_fail_closed_metadata_guard"
+                    ),
+                ],
+                "status": "VERIFIED",
+            },
+            {
+                "claim": (
+                    "The Recovery V2 scope guard binds the expanded 162-path global "
+                    "allowlist and 107-path PR-A projection to exact hashes."
+                ),
+                "evidence_refs": [
+                    snapshot_ref,
+                    "ALLOWED_PATHS_SHA256:9a0358ef0f4b4161385efe4785a9f5653ececc71dc42d179c4d116bf12a6c9fd",
+                    "PR_A_PATHS_SHA256:20f13358feb1f2cfb1e48617f178dc6925f43a765105b9f7ee039fd4cc28a2e1",
+                ],
+                "status": "VERIFIED",
+            },
+        ],
+        "DP6": [
+            {
+                "claim": (
+                    "Delivery effects remain exactly one branch push, one PR write, "
+                    "and one SAFE V2 run while all production-effect counters remain zero."
+                ),
+                "evidence_refs": [
+                    snapshot_ref,
+                    "GITHUB_PR:https://github.com/dddur75/robin-stades-ng/pull/80",
+                    "SAFE_V2_RUN:https://github.com/dddur75/robin-stades-ng/actions/runs/33420499802",
+                ],
+                "status": "VERIFIED",
+            },
+            {
+                "claim": (
+                    "The immutable record-194 portability exception and dual-principal "
+                    "migrator scan remain narrowly value- and function-scoped."
+                ),
+                "evidence_refs": [
+                    snapshot_ref,
+                    "scripts/check_no_tracked_absolute_paths.py:LEDGER_EXCEPTION",
+                    "scripts/run_chronos_dual_principal_ci_v2.py:provision_migrator",
+                ],
+                "status": "VERIFIED",
+            },
+        ],
+        "A2": [
+            {
+                "claim": (
+                    "SAFE V2 cycle 1 is terminal and never rerun; only cycle 2 on a "
+                    "new exact head is released by record 204."
+                ),
+                "evidence_refs": [
+                    snapshot_ref,
+                    "SAFE_V2_RUN_ID:33420499802",
+                    failure_ref,
+                ],
+                "status": "VERIFIED",
+            },
+            {
+                "claim": (
+                    "The exact-head CI budget remains maximum three, consumed one, "
+                    "remaining two, and merge plus every production stage stay held."
+                ),
+                "evidence_refs": [
+                    snapshot_ref,
+                    "CI_CYCLE_BUDGET:MAXIMUM=3;CONSUMED=1;REMAINING=2;NEXT=2",
+                    "PRODUCTION_EFFECTS_OBSERVED:0",
+                ],
+                "status": "VERIFIED",
+            },
+        ],
+    }
+    _validate_recovery_v2_agent_reports(
+        root,
+        bindings=reviews,
+        reviewed_snapshot_sha256=reviewed_snapshot,
+        review_paths=DATA_TORRENT_RECOVERY_V2_POST_202_B101_REVIEW_PATHS,
+        expected_facts=expected_role_facts,
+    )
+    _validate_recovery_v2_final_review(
+        root,
+        binding=final_binding,
+        relative=final_path,
+        reviewed_snapshot_sha256=reviewed_snapshot,
+        schema_version="data-torrent-recovery-v2-post-202-b101-correction-final-review-v3",
+        review_paths=DATA_TORRENT_RECOVERY_V2_POST_202_B101_REVIEW_PATHS,
+        reviewed_file_count=len(cast(list[object], reviewed_candidate["files"])),
+        reviewed_at_not_after=release_date,
+        reviewed_at_not_before=failure_date,
+        reviewed_at_must_precede=True,
+        expected_external_effects={
+            "git_remote_writes": 1,
+            "github_writes": 1,
+            "neon_gets": 0,
+            "neon_mutations": 0,
+            "postgresql_production_connections": 0,
+            "postgresql_production_writes": 0,
+            "r2_gets": 0,
+            "r2_puts": 0,
+            "official_reads": 0,
+            "provider_requests": 0,
+            "secret_writes": 0,  # nosec B105 - effect counter, not a credential.
+        },
+        expected_delivery_effects=delivery_effects,
     )
     return release_date
 
@@ -9589,10 +10487,17 @@ def _validate_recovery_v2_release_graph(
     local_correction_release: Mapping[str, object],
     static_qa_failure: Mapping[str, object],
     static_correction_release: Mapping[str, object],
+    exact_head_ci_failure: Mapping[str, object],
+    exact_head_ci_correction_release: Mapping[str, object],
+    post_202_b101_failure: Mapping[str, object],
+    post_202_b101_correction_release: Mapping[str, object],
     active_release: Mapping[str, object],
     active_release_claim: str,
-    downstream_allowed: bool,
+    successors: Sequence[Mapping[str, object]],
 ) -> None:
+    if len(successors) > 3:
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+    downstream_allowed = bool(successors)
     _payload, graph = _recovery_v2_strict_json(
         root / "reports" / "evidence" / "evidence-graph.json",
         maximum_bytes=16 * 1024 * 1024,
@@ -9611,16 +10516,59 @@ def _validate_recovery_v2_release_graph(
     typed_claims = cast(list[dict[str, object]], claims)
     typed_nodes = cast(list[dict[str, object]], nodes)
     typed_edges = cast(list[dict[str, object]], edges)
+
+    def canonical_sequence_sha256(rows: list[dict[str, object]]) -> str:
+        return hashlib.sha256(
+            json.dumps(
+                rows,
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            ).encode("utf-8")
+        ).hexdigest()
+
+    if (
+        set(graph)
+        != {
+            "schema_version",
+            "generated_at",
+            "lineage_policy",
+            "claims",
+            "decision_nodes",
+            "edges",
+        }
+        or graph.get("schema_version") != "robin-evidence-graph-v1"
+        or graph.get("generated_at") != "2026-08-30T19:22:00Z"
+        or graph.get("lineage_policy")
+        != "execution_id, scientific_lineage_id and dataset_lineage_id are independent"
+        or canonical_sequence_sha256(typed_claims[:520])
+        != DATA_TORRENT_RECOVERY_V2_GRAPH_CLAIMS_PREFIX_SHA256
+        or canonical_sequence_sha256(typed_nodes[:194])
+        != DATA_TORRENT_RECOVERY_V2_GRAPH_NODES_PREFIX_SHA256
+        or canonical_sequence_sha256(typed_edges[:822])
+        != DATA_TORRENT_RECOVERY_V2_GRAPH_EDGES_PREFIX_SHA256
+    ):
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
     claim_ids = [row.get("claim_id") for row in typed_claims]
     decision_ids = [row.get("decision_id") for row in typed_nodes]
     edge_ids = [row.get("edge_id") for row in typed_edges]
     if (
         any(not isinstance(value, str) or not value for value in claim_ids)
         or any(not isinstance(value, str) or not value for value in decision_ids)
-        or any(not isinstance(value, str) or not value for value in edge_ids)
+        or any(
+            not isinstance(value, str)
+            or re.fullmatch(r"EDGE\.[0-9]+", value) is None
+            for value in edge_ids
+        )
         or len(claim_ids) != len(set(claim_ids))
         or len(decision_ids) != len(set(decision_ids))
         or len(edge_ids) != len(set(edge_ids))
+    ):
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+    edge_numbers = [int(cast(str, value).split(".", 1)[1]) for value in edge_ids]
+    if (
+        any(number <= 0 for number in edge_numbers)
+        or any(left >= right for left, right in zip(edge_numbers, edge_numbers[1:]))
     ):
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
     claim_by_id = {cast(str, row["claim_id"]): row for row in typed_claims}
@@ -9631,17 +10579,90 @@ def _validate_recovery_v2_release_graph(
     local_claim = claim_by_id.get(_RECOVERY_V2_LOCAL_CORRECTION_RELEASE_CLAIM)
     static_failure_claim = claim_by_id.get(_RECOVERY_V2_STATIC_QA_FAILURE_CLAIM)
     static_release_claim = claim_by_id.get(_RECOVERY_V2_STATIC_CORRECTION_RELEASE_CLAIM)
+    exact_head_failure_claim = claim_by_id.get(_RECOVERY_V2_EXACT_HEAD_CI_FAILURE_CLAIM)
+    exact_head_release_claim = claim_by_id.get(
+        _RECOVERY_V2_EXACT_HEAD_CI_CORRECTION_RELEASE_CLAIM
+    )
+    post_202_b101_failure_claim = claim_by_id.get(
+        _RECOVERY_V2_POST_202_B101_FAILURE_CLAIM
+    )
+    post_202_b101_release_claim = claim_by_id.get(
+        _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM
+    )
     pr_b_claim = claim_by_id.get(_RECOVERY_V2_PR_B_RELEASE_CLAIM)
+    if active_release_claim not in {
+        _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
+        _RECOVERY_V2_PR_B_RELEASE_CLAIM,
+    }:
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+    expected_claim_suffix = [
+        _RECOVERY_V2_EXACT_HEAD_CI_CORRECTION_RELEASE_CLAIM,
+        _RECOVERY_V2_POST_202_B101_FAILURE_CLAIM,
+        _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
+    ]
+    expected_node_suffix = [
+        DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_RELEASE_ID,
+        "RCV3-20260831-203",
+        "RCV3-20260831-204",
+    ]
+    expected_edge_suffix = [
+        "EDGE.824",
+        "EDGE.825",
+    ]
+    if active_release_claim == _RECOVERY_V2_PR_B_RELEASE_CLAIM:
+        if not isinstance(active_release.get("decision_id"), str):
+            raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+        expected_claim_suffix.append(_RECOVERY_V2_PR_B_RELEASE_CLAIM)
+        expected_node_suffix.append(cast(str, active_release["decision_id"]))
+        expected_edge_suffix.append("EDGE.826")
+    expected_claim_suffix.extend(
+        [
+            _RECOVERY_V2_RESERVATION_CLAIM,
+            _RECOVERY_V2_PHASE_ONE_CLAIM,
+            _RECOVERY_V2_TERMINAL_CLAIM,
+        ][: len(successors)]
+    )
+    successor_ids = [record.get("decision_id") for record in successors]
+    if any(not isinstance(decision_id, str) for decision_id in successor_ids):
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+    expected_node_suffix.extend(cast(list[str], successor_ids))
+    next_runtime_edge = 827 if active_release_claim == _RECOVERY_V2_PR_B_RELEASE_CLAIM else 826
+    for proof_count in range(2, 2 + len(successors)):
+        expected_edge_suffix.extend(
+            f"EDGE.{number}"
+            for number in range(next_runtime_edge, next_runtime_edge + proof_count)
+        )
+        next_runtime_edge += proof_count
+    claim_end = 520 + len(expected_claim_suffix)
+    node_end = 194 + len(expected_node_suffix)
+    edge_end = 822 + len(expected_edge_suffix)
+    if (
+        claim_ids[520:claim_end] != expected_claim_suffix
+        or decision_ids[194:node_end] != expected_node_suffix
+        or edge_ids[822:edge_end] != expected_edge_suffix
+        or claim_end != len(claim_ids)
+        or node_end != len(decision_ids)
+        or edge_end != len(edge_ids)
+    ):
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
     initial_context = initial_release.get("context")
     base_context = base_release.get("context")
     local_context = local_correction_release.get("context")
     static_context = static_correction_release.get("context")
+    exact_head_context = exact_head_ci_correction_release.get("context")
+    exact_head_failure_context = exact_head_ci_failure.get("context")
+    post_202_b101_context = post_202_b101_correction_release.get("context")
+    post_202_b101_failure_context = post_202_b101_failure.get("context")
     active_context = active_release.get("context")
     if (
         not isinstance(initial_context, dict)
         or not isinstance(base_context, dict)
         or not isinstance(local_context, dict)
         or not isinstance(static_context, dict)
+        or not isinstance(exact_head_context, dict)
+        or not isinstance(exact_head_failure_context, dict)
+        or not isinstance(post_202_b101_context, dict)
+        or not isinstance(post_202_b101_failure_context, dict)
         or not isinstance(active_context, dict)
     ):
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
@@ -9649,12 +10670,18 @@ def _validate_recovery_v2_release_graph(
     base_review = cast(dict[str, object], base_context).get("final_review")
     local_review = cast(dict[str, object], local_context).get("final_review")
     static_review = cast(dict[str, object], static_context).get("final_review")
+    exact_head_review = cast(dict[str, object], exact_head_context).get("final_review")
+    post_202_b101_review = cast(dict[str, object], post_202_b101_context).get(
+        "final_review"
+    )
     active_review = cast(dict[str, object], active_context).get("final_review")
     if (
         not isinstance(initial_review, dict)
         or not isinstance(base_review, dict)
         or not isinstance(local_review, dict)
         or not isinstance(static_review, dict)
+        or not isinstance(exact_head_review, dict)
+        or not isinstance(post_202_b101_review, dict)
         or not isinstance(active_review, dict)
     ):
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
@@ -9832,34 +10859,110 @@ def _validate_recovery_v2_release_graph(
     }
     if static_failure_claim != expected_static_failure_claim:
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
-    static_status = (
-        "VERIFIED"
-        if active_release_claim == _RECOVERY_V2_STATIC_CORRECTION_RELEASE_CLAIM
-        else "SUPERSEDED"
-    )
     if not release_claim_valid(
         static_release_claim,
         claim_id=_RECOVERY_V2_STATIC_CORRECTION_RELEASE_CLAIM,
         decision=static_correction_release,
         review=cast(dict[str, object], static_review),
         successor_of=_RECOVERY_V2_STATIC_QA_FAILURE_CLAIM,
-        status=static_status,
+        status="SUPERSEDED",
+        superseded_by=_RECOVERY_V2_EXACT_HEAD_CI_CORRECTION_RELEASE_CLAIM,
+    ):
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+    expected_exact_head_failure_claim = {
+        "claim_id": _RECOVERY_V2_EXACT_HEAD_CI_FAILURE_CLAIM,
+        "claim": (
+            "Exact-head SAFE V2 cycle 1 failed in five root jobs that reduce to three "
+            "local causes; its dependent tests failure adds no fourth cause and every "
+            "production effect remained zero"
+        ),
+        "scope": "DATA_TORRENT_RECOVERY_V2_PR_A_EXACT_HEAD_SAFE_V2_CYCLE_1_FAILURE",
+        "source": (
+            "GitHub Actions run 33420499802; attempt 1; head "
+            "a0a043f3222e467e6d904c90878be5718cac8ace; completed "
+            "2026-08-31T17:50:55Z; conclusion failure"
+        ),
+        "grain": "ONE_TERMINAL_EXACT_HEAD_CI_ATTEMPT_TO_THREE_ROOT_CAUSES",
+        "temporal_class": "DECISION_AS_OF",
+        "artifact": (
+            "https://github.com/dddur75/robin-stades-ng/actions/runs/33420499802"
+        ),
+        "hash": exact_head_failure_context.get("exact_head_safe_v2_sha256"),
+        "code_revision": DATA_TORRENT_RECOVERY_V2_PR_A_CYCLE_1_HEAD,
+        "execution_id": f"council-record:{exact_head_ci_failure.get('decision_id')}",
+        "scientific_lineage_id": "DATA_TORRENT_RECOVERY_V2",
+        "dataset_lineage_id": "NO_DATASET_EXACT_HEAD_SAFE_V2_CYCLE_1_FAILURE",
+        "status": "VERIFIED",
+        "verified_by": ["C0", "CI_SAFE_V2", "C2", "C4", "DP6", "A2"],
+        "successor_of": _RECOVERY_V2_STATIC_CORRECTION_RELEASE_CLAIM,
+    }
+    if exact_head_failure_claim != expected_exact_head_failure_claim:
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+    if not release_claim_valid(
+        exact_head_release_claim,
+        claim_id=_RECOVERY_V2_EXACT_HEAD_CI_CORRECTION_RELEASE_CLAIM,
+        decision=exact_head_ci_correction_release,
+        review=cast(dict[str, object], exact_head_review),
+        successor_of=_RECOVERY_V2_EXACT_HEAD_CI_FAILURE_CLAIM,
+        status="SUPERSEDED",
+        superseded_by=_RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
+    ):
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+    expected_post_202_b101_failure_claim = {
+        "claim_id": _RECOVERY_V2_POST_202_B101_FAILURE_CLAIM,
+        "claim": (
+            "A post-202 whole-src Bandit preflight found one B101 assertion in the "
+            "POSIX exclusive-publication rollback path, a failure class distinct from "
+            "record 199; cycle 2 and every production effect remained held"
+        ),
+        "scope": "DATA_TORRENT_RECOVERY_V2_POST_202_PRE_CYCLE_2_B101_FAILURE",
+        "source": (
+            "bandit -q -r src/robin; B101; vulnerable LF SHA-256 "
+            "d770f9fbcac097161b4be909a289e5dddd7884d2ac9015ce3185acbf6e4ace60; "
+            "record 199 hash 25eb2b9c2fbc10fb54525bb646d35c6cf0003e14e4445cf40248125b55befb75"
+        ),
+        "grain": "ONE_POST_202_STATIC_PREFLIGHT_FINDING_TO_ONE_FAIL_CLOSED_CORRECTION",
+        "temporal_class": "DECISION_AS_OF",
+        "artifact": "src/robin/recovery_v2_filesystem.py",
+        "hash": "d770f9fbcac097161b4be909a289e5dddd7884d2ac9015ce3185acbf6e4ace60",
+        "code_revision": DATA_TORRENT_RECOVERY_V2_PR_A_CYCLE_1_HEAD,
+        "execution_id": f"council-record:{post_202_b101_failure.get('decision_id')}",
+        "scientific_lineage_id": "DATA_TORRENT_RECOVERY_V2",
+        "dataset_lineage_id": "NO_DATASET_POST_202_B101_PREFLIGHT_FAILURE",
+        "status": "VERIFIED",
+        "verified_by": ["C0", "C4", "A2"],
+        "successor_of": _RECOVERY_V2_EXACT_HEAD_CI_CORRECTION_RELEASE_CLAIM,
+    }
+    if post_202_b101_failure_claim != expected_post_202_b101_failure_claim:
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+    post_202_b101_status = (
+        "VERIFIED"
+        if active_release_claim == _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM
+        else "SUPERSEDED"
+    )
+    if not release_claim_valid(
+        post_202_b101_release_claim,
+        claim_id=_RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
+        decision=post_202_b101_correction_release,
+        review=cast(dict[str, object], post_202_b101_review),
+        successor_of=_RECOVERY_V2_POST_202_B101_FAILURE_CLAIM,
+        status=post_202_b101_status,
         superseded_by=(
             None
-            if active_release_claim == _RECOVERY_V2_STATIC_CORRECTION_RELEASE_CLAIM
+            if active_release_claim == _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM
             else _RECOVERY_V2_PR_B_RELEASE_CLAIM
         ),
     ):
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
-    if active_release_claim == _RECOVERY_V2_STATIC_CORRECTION_RELEASE_CLAIM:
+    if active_release_claim == _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM:
         if pr_b_claim is not None:
             raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
-    elif not release_claim_valid(
+    elif active_release_claim != _RECOVERY_V2_PR_B_RELEASE_CLAIM or not release_claim_valid(
         pr_b_claim,
         claim_id=_RECOVERY_V2_PR_B_RELEASE_CLAIM,
         decision=active_release,
         review=cast(dict[str, object], active_review),
-        successor_of=_RECOVERY_V2_STATIC_CORRECTION_RELEASE_CLAIM,
+        successor_of=_RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
         status="VERIFIED",
         superseded_by=None,
     ):
@@ -9895,6 +10998,22 @@ def _validate_recovery_v2_release_graph(
             "RCV3-20260831-200",
             _RECOVERY_V2_STATIC_CORRECTION_RELEASE_CLAIM,
         ): "EDGE.821",
+        (
+            "RCV3-20260831-201",
+            _RECOVERY_V2_EXACT_HEAD_CI_FAILURE_CLAIM,
+        ): "EDGE.822",
+        (
+            "RCV3-20260831-202",
+            _RECOVERY_V2_EXACT_HEAD_CI_CORRECTION_RELEASE_CLAIM,
+        ): "EDGE.823",
+        (
+            "RCV3-20260831-203",
+            _RECOVERY_V2_POST_202_B101_FAILURE_CLAIM,
+        ): "EDGE.824",
+        (
+            "RCV3-20260831-204",
+            _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
+        ): "EDGE.825",
     }
     if active_release_claim == _RECOVERY_V2_PR_B_RELEASE_CLAIM:
         fixed_edge_ids[
@@ -9902,7 +11021,7 @@ def _validate_recovery_v2_release_graph(
                 cast(str, active_release.get("decision_id")),
                 _RECOVERY_V2_PR_B_RELEASE_CLAIM,
             )
-        ] = "EDGE.822"
+        ] = "EDGE.826"
     for (decision_id, claim_id), edge_id in fixed_edge_ids.items():
         if [
             edge
@@ -9926,6 +11045,10 @@ def _validate_recovery_v2_release_graph(
         local_correction_release,
         static_qa_failure,
         static_correction_release,
+        exact_head_ci_failure,
+        exact_head_ci_correction_release,
+        post_202_b101_failure,
+        post_202_b101_correction_release,
     ]
     release_proofs = [
         initial_claim_id,
@@ -9934,6 +11057,10 @@ def _validate_recovery_v2_release_graph(
         _RECOVERY_V2_LOCAL_CORRECTION_RELEASE_CLAIM,
         _RECOVERY_V2_STATIC_QA_FAILURE_CLAIM,
         _RECOVERY_V2_STATIC_CORRECTION_RELEASE_CLAIM,
+        _RECOVERY_V2_EXACT_HEAD_CI_FAILURE_CLAIM,
+        _RECOVERY_V2_EXACT_HEAD_CI_CORRECTION_RELEASE_CLAIM,
+        _RECOVERY_V2_POST_202_B101_FAILURE_CLAIM,
+        _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
     ]
     if active_release_claim == _RECOVERY_V2_PR_B_RELEASE_CLAIM:
         release_decisions.append(active_release)
@@ -9970,6 +11097,10 @@ def _validate_recovery_v2_release_graph(
         local_correction_release.get("decision_id"),
         static_qa_failure.get("decision_id"),
         static_correction_release.get("decision_id"),
+        exact_head_ci_failure.get("decision_id"),
+        exact_head_ci_correction_release.get("decision_id"),
+        post_202_b101_failure.get("decision_id"),
+        post_202_b101_correction_release.get("decision_id"),
     }
     correction_proofs = [
         _RECOVERY_V2_BASE_RELEASE_CLAIM,
@@ -9977,6 +11108,10 @@ def _validate_recovery_v2_release_graph(
         _RECOVERY_V2_LOCAL_CORRECTION_RELEASE_CLAIM,
         _RECOVERY_V2_STATIC_QA_FAILURE_CLAIM,
         _RECOVERY_V2_STATIC_CORRECTION_RELEASE_CLAIM,
+        _RECOVERY_V2_EXACT_HEAD_CI_FAILURE_CLAIM,
+        _RECOVERY_V2_EXACT_HEAD_CI_CORRECTION_RELEASE_CLAIM,
+        _RECOVERY_V2_POST_202_B101_FAILURE_CLAIM,
+        _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
     ]
     if active_release_claim == _RECOVERY_V2_PR_B_RELEASE_CLAIM:
         correction_decision_ids.add(active_release.get("decision_id"))
@@ -11671,13 +12806,17 @@ def _validate_data_torrent_recovery_v2_council_release(
     if not isinstance(reviewed_snapshot, str) or _HEX_64.fullmatch(reviewed_snapshot) is None:
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
     suffix = records[anchor_index + 4 :]
-    if len(suffix) < 4:
+    if len(suffix) < 8:
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
     local_qa_failure = suffix[0]
     local_correction_release = suffix[1]
     static_qa_failure = suffix[2]
     static_correction_release = suffix[3]
-    release_suffix = suffix[4:]
+    exact_head_ci_failure = suffix[4]
+    exact_head_ci_correction_release = suffix[5]
+    post_202_b101_failure = suffix[6]
+    post_202_b101_correction_release = suffix[7]
+    release_suffix = suffix[8:]
     ledger_prefix_through_local_correction = (
         b"\n".join(raw_lines[: anchor_index + 6]) + b"\n"
     )
@@ -11694,6 +12833,22 @@ def _validate_data_torrent_recovery_v2_council_release(
             hashlib.sha256(ledger_prefix_through_local_correction).hexdigest(),
             DATA_TORRENT_RECOVERY_V2_LEDGER_PREFIX_THROUGH_198_SHA256,
         )
+    ):
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+    ledger_prefix_through_static_correction = (
+        b"\n".join(raw_lines[: anchor_index + 8]) + b"\n"
+    )
+    if not hmac.compare_digest(
+        hashlib.sha256(ledger_prefix_through_static_correction).hexdigest(),
+        DATA_TORRENT_RECOVERY_V2_LEDGER_PREFIX_THROUGH_200_SHA256,
+    ):
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+    ledger_prefix_through_exact_head_correction = (
+        b"\n".join(raw_lines[: anchor_index + 10]) + b"\n"
+    )
+    if not hmac.compare_digest(
+        hashlib.sha256(ledger_prefix_through_exact_head_correction).hexdigest(),
+        DATA_TORRENT_RECOVERY_V2_LEDGER_PREFIX_THROUGH_202_SHA256,
     ):
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
     pr_b_release = (
@@ -11952,15 +13107,37 @@ def _validate_data_torrent_recovery_v2_council_release(
         expected_effect=expected_effect,
         expected_call_graph=expected_call_graph,
     )
-    active_release = static_correction_release
-    active_release_claim = _RECOVERY_V2_STATIC_CORRECTION_RELEASE_CLAIM
+    active_release_date = _validate_recovery_v2_exact_head_ci_correction_pair(
+        exact_head_ci_failure,
+        exact_head_ci_correction_release,
+        root=root,
+        base_release=static_correction_release,
+        base_release_date=active_release_date,
+        observed_now=observed_now,
+        expected_manifest=expected_manifest,
+        expected_effect=expected_effect,
+        expected_call_graph=expected_call_graph,
+    )
+    active_release_date = _validate_recovery_v2_post_202_b101_correction_pair(
+        post_202_b101_failure,
+        post_202_b101_correction_release,
+        root=root,
+        base_release=exact_head_ci_correction_release,
+        base_release_date=active_release_date,
+        observed_now=observed_now,
+        expected_manifest=expected_manifest,
+        expected_effect=expected_effect,
+        expected_call_graph=expected_call_graph,
+    )
+    active_release = post_202_b101_correction_release
+    active_release_claim = _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM
     active_successors = release_suffix
     if pr_b_release is not None:
         active_release_date = _validate_recovery_v2_pr_b_release(
             pr_b_release,
             root=root,
-            base_release=static_correction_release,
-            base_release_claim=_RECOVERY_V2_STATIC_CORRECTION_RELEASE_CLAIM,
+            base_release=post_202_b101_correction_release,
+            base_release_claim=_RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
             base_release_date=active_release_date,
             observed_now=observed_now,
             expected_manifest=expected_manifest,
@@ -11978,9 +13155,13 @@ def _validate_data_torrent_recovery_v2_council_release(
         local_correction_release=local_correction_release,
         static_qa_failure=static_qa_failure,
         static_correction_release=static_correction_release,
+        exact_head_ci_failure=exact_head_ci_failure,
+        exact_head_ci_correction_release=exact_head_ci_correction_release,
+        post_202_b101_failure=post_202_b101_failure,
+        post_202_b101_correction_release=post_202_b101_correction_release,
         active_release=active_release,
         active_release_claim=active_release_claim,
-        downstream_allowed=bool(active_successors),
+        successors=active_successors,
     )
     return str(
         _validate_recovery_v2_council_successors(

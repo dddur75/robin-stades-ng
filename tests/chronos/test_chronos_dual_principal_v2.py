@@ -53,6 +53,14 @@ def test_migrator_alter_role_statements_are_minimal() -> None:
     assert "ALTER ROLE {} NOLOGIN NOINHERIT" not in source
 
 
+def test_ci_migrator_guard_ignores_unrelated_executor_terminalization() -> None:
+    source = RUNNER.read_text(encoding="utf-8")
+    assert "inspect.getsource(provision_migrator)" in source
+    assert "inspect.getsource(" in source
+    assert "disable_migrator" in source
+    assert "lifecycle_source =" not in source
+
+
 def test_acl_default_object_type_is_explicitly_text_in_both_audits() -> None:
     source = LIFECYCLE.read_text(encoding="utf-8")
     assert source.count("defaclobjtype::text") == 2

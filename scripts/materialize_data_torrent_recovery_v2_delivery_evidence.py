@@ -95,10 +95,36 @@ _TERMINAL_CONCLUSIONS = frozenset(
         "skipped",
     }
 )
+_EXACT_HEAD_CORRECTION_RELEASE_CLAIM = (
+    "GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION."
+    "EXACT_HEAD_SAFE_V2.CYCLE_1.CORRECTION.RELEASE.001"
+)
+_POST_202_B101_CORRECTION_RELEASE_CLAIM = (
+    "GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.POSIX_ROLLBACK."
+    "FAIL_CLOSED.CORRECTION.RELEASE.001"
+)
+_PR_B_RELEASE_CLAIM = "GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.RELEASE.003"
 
 
 class DeliveryEvidenceV2Error(RuntimeError):
     """Sanitized fail-closed delivery observation error."""
+
+
+def _release_claim_matches_engineering_chain(
+    active_release_claim: object,
+    *,
+    pr_b_number: int | None,
+) -> bool:
+    """Admit only the exact active release matching the observed PR topology."""
+
+    return (
+        active_release_claim == _POST_202_B101_CORRECTION_RELEASE_CLAIM
+        and pr_b_number is None
+    ) or (
+        active_release_claim == _PR_B_RELEASE_CLAIM
+        and type(pr_b_number) is int
+        and pr_b_number > 0
+    )
 
 
 def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -2118,19 +2144,9 @@ def materialize_delivery_evidence(
         active_release_claim = last_record["proof"][0]
     except (IndexError, KeyError, TypeError, UnicodeDecodeError, json.JSONDecodeError):
         raise DeliveryEvidenceV2Error("RECOVERY_V2_DELIVERY_COUNCIL_INVALID") from None
-    pr_b_release_active = (
-        active_release_claim == "GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.RELEASE.003"
-    )
-    if (
-        active_release_claim
-        not in {
-            (
-                "GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION."
-                "PRECOMMIT_STATIC_RUNTIME_CORRECTION.RELEASE.001"
-            ),
-            "GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.RELEASE.003",
-        }
-        or pr_b_release_active != (pr_b_number is not None)
+    if not _release_claim_matches_engineering_chain(
+        active_release_claim,
+        pr_b_number=pr_b_number,
     ):
         raise DeliveryEvidenceV2Error("RECOVERY_V2_DELIVERY_COUNCIL_INVALID")
     token_values = [

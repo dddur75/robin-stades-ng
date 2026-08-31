@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import ast
 import hashlib
 import inspect
 import json
 import os
 import subprocess
 import sys
+import textwrap
 from pathlib import Path
 from types import ModuleType
 from typing import Any
@@ -41,6 +43,106 @@ def _repository(root: Path) -> str:
     _git(root, "add", "tracked.txt")
     _git(root, "commit", "-m", "synthetic base")
     return _git(root, "rev-parse", "HEAD")
+
+
+@pytest.mark.parametrize(
+    ("claim", "pr_b_number", "expected"),
+    (
+        (delivery._POST_202_B101_CORRECTION_RELEASE_CLAIM, None, True),
+        (delivery._PR_B_RELEASE_CLAIM, 81, True),
+        (delivery._EXACT_HEAD_CORRECTION_RELEASE_CLAIM, None, False),
+        (delivery._POST_202_B101_CORRECTION_RELEASE_CLAIM, 81, False),
+        (delivery._EXACT_HEAD_CORRECTION_RELEASE_CLAIM, 81, False),
+        (delivery._PR_B_RELEASE_CLAIM, None, False),
+        (
+            "GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION."
+            "PRECOMMIT_STATIC_RUNTIME_CORRECTION.RELEASE.001",
+            None,
+            False,
+        ),
+        (production._RECOVERY_V2_EXACT_HEAD_CI_FAILURE_CLAIM, None, False),
+        ("GOV.DATA_TORRENT_RECOVERY.V2.UNKNOWN", None, False),
+    ),
+)
+def test_delivery_release_claim_matches_exact_engineering_chain(
+    claim: str,
+    pr_b_number: int | None,
+    expected: bool,
+) -> None:
+    assert (
+        delivery._release_claim_matches_engineering_chain(
+            claim,
+            pr_b_number=pr_b_number,
+        )
+        is expected
+    )
+
+
+def test_posix_atomic_publish_uses_an_explicit_fail_closed_metadata_guard() -> None:
+    source = inspect.getsource(filesystem.publish_exclusive_bytes)
+    guard_source = inspect.getsource(filesystem._require_rollback_metadata)
+    assert "assert metadata is not None" not in source
+    assert "metadata = _require_rollback_metadata(metadata)" in source
+    assert "if metadata is None:" in guard_source
+
+    tree = ast.parse(textwrap.dedent(source))
+    rollback_handlers = [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.ExceptHandler)
+        and any(
+            isinstance(child, ast.Constant)
+            and child.value == "RECOVERY_V2_FILESYSTEM_DIRECTORY_DETACHED"
+            for child in ast.walk(node)
+        )
+    ]
+    assert len(rollback_handlers) == 1
+    first_statement = rollback_handlers[0].body[0]
+    assert isinstance(first_statement, ast.Assign)
+    assert [target.id for target in first_statement.targets if isinstance(target, ast.Name)] == [
+        "metadata"
+    ]
+    assert isinstance(first_statement.value, ast.Call)
+    assert isinstance(first_statement.value.func, ast.Name)
+    assert first_statement.value.func.id == "_require_rollback_metadata"
+    guarded_unlinks = [
+        node
+        for node in ast.walk(rollback_handlers[0])
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.func.id == "_posix_unlink_if_identity"
+        and any(
+            keyword.arg == "expected"
+            and isinstance(keyword.value, ast.Name)
+            and keyword.value.id == "metadata"
+            for keyword in node.keywords
+        )
+    ]
+    assert len(guarded_unlinks) == 2
+
+    root = Path(__file__).resolve().parents[2]
+    optimized = subprocess.run(
+        (
+            sys.executable,
+            "-O",
+            "-c",
+            (
+                "from robin.recovery_v2_filesystem import "
+                "RecoveryV2FilesystemError, _require_rollback_metadata; "
+                "\ntry: _require_rollback_metadata(None)"
+                "\nexcept RecoveryV2FilesystemError as exc: print(str(exc))"
+                "\nelse: raise SystemExit(9)"
+            ),
+        ),
+        cwd=root,
+        env={**os.environ, "PYTHONPATH": str(root / "src")},
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    assert optimized.returncode == 0, optimized.stderr
+    assert optimized.stdout.strip() == "RECOVERY_V2_FILESYSTEM_ROLLBACK_FAILED"
 
 
 @pytest.mark.parametrize("index_flag", ("--assume-unchanged", "--skip-worktree"))

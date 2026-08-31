@@ -1,0 +1,36 @@
+{
+  "agent_id": "DP6",
+  "mission_id": "DATA_TORRENT_RECOVERY_V2",
+  "facts_verified": [
+    {
+      "claim": "The record-194 portability exception is bound to one ledger path, decision ID, record hash, exact value, cardinality and canonical self-hash.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:66c3f26bce167666ab8d7af746b855ed2a00725b0fd7bcab272ec3e32c2f80b8",
+        "scripts/check_no_tracked_absolute_paths.py:_mask_immutable_ledger_worktree",
+        "tests/portability/test_no_tracked_absolute_paths.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "No source replay, provider request, Neon mutation, PostgreSQL production connection, R2 mutation or production workflow dispatch occurred.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:66c3f26bce167666ab8d7af746b855ed2a00725b0fd7bcab272ec3e32c2f80b8",
+        "CI_EVIDENCE_SHA256:f8a870d362e284b4eac874562f85efa768eec101ae08d93aa8280876617501dd",
+        "reports/council/decision-ledger.jsonl:RCV3-20260831-201"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [],
+  "assumptions": [],
+  "main_objection": "P0=0; P1=0; P2=0; OPEN_THREADS=0; VERDICT=PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "risks": [],
+  "minimum_decisive_test": "VALIDATE_EXACT_201_202_CHAIN_GRAPH_PROJECTIONS_AND_THREE_ROOT_CAUSE_REGRESSIONS",
+  "recommended_action": "PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "scale_condition": "EXACT_HEAD_SAFE_V2_GREEN_NORMAL_MERGE_POSTMERGE_SAFE_V2_GREEN",
+  "estimated_compute": "TARGETED_REGRESSION_GOVERNANCE_AND_STATIC_VALIDATION_ONLY",
+  "estimated_external_cost": "ZERO_DURING_REVIEW; ONE_ALREADY_CONSUMED_SAFE_V2_CYCLE_RECORDED",
+  "estimated_human_time": "ONE_EXACT_HEAD_CYCLE_FAILURE_CORRECTION_REVIEW",
+  "maintenance_impact": "LOW; EXCEPTIONS_AND_SOURCE_BOUNDARIES_ARE_MACHINE_ENFORCED",
+  "confidence": 0.99
+}

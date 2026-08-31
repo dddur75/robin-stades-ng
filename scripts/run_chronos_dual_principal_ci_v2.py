@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import inspect
 import json
 import os
 import secrets
@@ -1466,14 +1467,14 @@ def _run_negative_matrix(
     executor.close()
     _cleanup_lease(admin, lease)
     admin.close()
-    lifecycle_source = (
-        Path(__file__).resolve().parents[1] / "src" / "robin" / "chronos_role_lifecycle.py"
-    ).read_text(encoding="utf-8")
+    migrator_source = inspect.getsource(provision_migrator) + inspect.getsource(
+        disable_migrator
+    )
     if (
-        '"ALTER ROLE {} LOGIN PASSWORD %s VALID UNTIL {}"' not in lifecycle_source
-        or '"ALTER ROLE {} NOLOGIN PASSWORD NULL"' not in lifecycle_source
-        or "ALTER ROLE {} LOGIN NOINHERIT" in lifecycle_source
-        or "ALTER ROLE {} NOLOGIN NOINHERIT" in lifecycle_source
+        '"ALTER ROLE {} LOGIN PASSWORD %s VALID UNTIL {}"' not in migrator_source
+        or '"ALTER ROLE {} NOLOGIN PASSWORD NULL"' not in migrator_source
+        or "ALTER ROLE {} LOGIN NOINHERIT" in migrator_source
+        or "ALTER ROLE {} NOLOGIN NOINHERIT" in migrator_source
     ):
         raise RuntimeError("CHRONOS_CI_MIGRATOR_ALTER_ROLE_NONMINIMAL")
     return {

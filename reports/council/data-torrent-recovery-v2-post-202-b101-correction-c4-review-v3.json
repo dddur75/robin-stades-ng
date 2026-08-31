@@ -1,0 +1,36 @@
+{
+  "agent_id": "C4",
+  "mission_id": "DATA_TORRENT_RECOVERY_V2",
+  "facts_verified": [
+    {
+      "claim": "The POSIX publication rollback path calls an explicit metadata guard that remains fail-closed under optimized Python.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:15536e727660a602eeb3d70a0efa6ddfdb77ab92b4a8155937cc9b36243988ca",
+        "src/robin/recovery_v2_filesystem.py:publish_exclusive_bytes",
+        "tests/activation/test_recovery_v2_atomic_evidence.py:test_posix_atomic_publish_uses_an_explicit_fail_closed_metadata_guard"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The Recovery V2 scope guard binds the expanded 162-path global allowlist and 107-path PR-A projection to exact hashes.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:15536e727660a602eeb3d70a0efa6ddfdb77ab92b4a8155937cc9b36243988ca",
+        "ALLOWED_PATHS_SHA256:9a0358ef0f4b4161385efe4785a9f5653ececc71dc42d179c4d116bf12a6c9fd",
+        "PR_A_PATHS_SHA256:20f13358feb1f2cfb1e48617f178dc6925f43a765105b9f7ee039fd4cc28a2e1"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [],
+  "assumptions": [],
+  "main_objection": "P0=0; P1=0; P2=0; OPEN_THREADS=0; VERDICT=PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "risks": [],
+  "minimum_decisive_test": "Run the focused rollback guard regression under optimized Python and Bandit B101.",
+  "recommended_action": "PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "scale_condition": "EXACT_HEAD_SAFE_V2_GREEN_NORMAL_MERGE_POSTMERGE_SAFE_V2_GREEN",
+  "estimated_compute": "BOUNDED_TARGETED_QA_ONLY",
+  "estimated_external_cost": "ZERO_ADDITIONAL_PRODUCTION_EFFECTS",
+  "estimated_human_time": "BOUNDED_INDEPENDENT_REVIEW",
+  "maintenance_impact": "APPEND_ONLY_SUCCESSOR_AND_EXPLICIT_FAIL_CLOSED_GUARD",
+  "confidence": 1.0
+}

@@ -3110,6 +3110,25 @@ def test_scope_guard_accepts_only_exact_start_to_head_allowlist(
         )
 
 
+def test_recovery_v2_scope_allowlist_hashes_and_cardinalities() -> None:
+    matrix = json.loads(
+        Path("configs/agents/mission-activation-matrix-v3.json").read_bytes()
+    )
+    mission = matrix["missions"]["DATA_TORRENT_RECOVERY_V2"]
+    allowed_paths = sorted(mission["allowed_paths"])
+    pr_a_paths = scope_guard._phase_allowed_paths(allowed_paths, phase="PR_A")
+    assert len(allowed_paths) == len(set(allowed_paths)) == 162
+    assert len(pr_a_paths) == len(set(pr_a_paths)) == 107
+    assert (
+        scope_guard._paths_sha256(allowed_paths)
+        == scope_guard.EXPECTED_ALLOWED_PATHS_SHA256
+    )
+    assert (
+        scope_guard._paths_sha256(pr_a_paths)
+        == scope_guard.EXPECTED_PHASE_ALLOWED_PATHS_SHA256["PR_A"]
+    )
+
+
 def test_scope_guard_rejects_one_outside_path_without_merge_base_substitution(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -4287,9 +4306,39 @@ def test_owner_authorization_and_implementation_release_are_independently_verifi
     assert static_release["artifact"] == (
         chronos_production.DATA_TORRENT_RECOVERY_V2_STATIC_CORRECTION_FINAL_REVIEW_PATH
     )
-    assert static_release["status"] == "VERIFIED"
+    assert static_release["status"] == "SUPERSEDED"
+    assert static_release["superseded_by"] == (
+        chronos_production._RECOVERY_V2_EXACT_HEAD_CI_CORRECTION_RELEASE_CLAIM
+    )
     assert static_release["successor_of"] == static_failure["claim_id"]
     assert static_release["verified_by"] == ["C0", "C2", "C4", "DP6", "A2"]
+    exact_head_failure = claims[chronos_production._RECOVERY_V2_EXACT_HEAD_CI_FAILURE_CLAIM]
+    assert exact_head_failure["status"] == "VERIFIED"
+    assert exact_head_failure["successor_of"] == static_release["claim_id"]
+    exact_head_release = claims[
+        chronos_production._RECOVERY_V2_EXACT_HEAD_CI_CORRECTION_RELEASE_CLAIM
+    ]
+    assert exact_head_release["artifact"] == (
+        chronos_production.DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_FINAL_REVIEW_PATH
+    )
+    assert exact_head_release["status"] == "SUPERSEDED"
+    assert exact_head_release["superseded_by"] == (
+        chronos_production._RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM
+    )
+    assert exact_head_release["successor_of"] == exact_head_failure["claim_id"]
+    assert exact_head_release["verified_by"] == ["C0", "C2", "C4", "DP6", "A2"]
+    b101_failure = claims[chronos_production._RECOVERY_V2_POST_202_B101_FAILURE_CLAIM]
+    assert b101_failure["status"] == "VERIFIED"
+    assert b101_failure["successor_of"] == exact_head_release["claim_id"]
+    b101_release = claims[
+        chronos_production._RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM
+    ]
+    assert b101_release["artifact"] == (
+        chronos_production.DATA_TORRENT_RECOVERY_V2_POST_202_B101_FINAL_REVIEW_PATH
+    )
+    assert b101_release["status"] == "VERIFIED"
+    assert b101_release["successor_of"] == b101_failure["claim_id"]
+    assert b101_release["verified_by"] == ["C0", "C2", "C4", "DP6", "A2"]
     superseded = {
         "GOV.FIRST_C0.PR69.CI.WORKTREE_SCOPE.ISOLATION.V1.005",
         "GOV.CI.DATA_TORRENT_READY.FULL_SUITE.CORRECTION.V1.001",
@@ -4382,7 +4431,7 @@ def test_frozen_council_release_guard_accepts_exact_current_bytes() -> None:
         if line
     ]
     expected = next(
-        record["hash"] for record in records if record["decision_id"] == "RCV3-20260831-200"
+        record["hash"] for record in records if record["decision_id"] == "RCV3-20260831-204"
     )
     assert (
         validate_data_torrent_recovery_v2_council_release(
@@ -4410,6 +4459,10 @@ def test_frozen_council_release_guard_accepts_exact_current_bytes() -> None:
         chronos_production.DATA_TORRENT_RECOVERY_V2_LOCAL_CORRECTION_FINAL_REVIEW_PATH,
         *chronos_production.DATA_TORRENT_RECOVERY_V2_STATIC_CORRECTION_REVIEW_PATHS.values(),
         chronos_production.DATA_TORRENT_RECOVERY_V2_STATIC_CORRECTION_FINAL_REVIEW_PATH,
+        *chronos_production.DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_REVIEW_PATHS.values(),
+        chronos_production.DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_FINAL_REVIEW_PATH,
+        *chronos_production.DATA_TORRENT_RECOVERY_V2_POST_202_B101_REVIEW_PATHS.values(),
+        chronos_production.DATA_TORRENT_RECOVERY_V2_POST_202_B101_FINAL_REVIEW_PATH,
     } <= {item["path"] for item in projection["files"]}
     assert all(set(item) == {"path", "lf_sha256"} for item in projection["files"])
 
@@ -4466,6 +4519,18 @@ def test_record_200_rejects_each_sensitive_correction_path_omission(
         ("RCV3-20260831-200", "equal_predecessor_timestamp"),
         ("RCV3-20260831-199", "boolean_zero_counter"),
         ("RCV3-20260831-200", "boolean_writer_count"),
+        ("RCV3-20260831-201", "extra_top_level"),
+        ("RCV3-20260831-202", "extra_top_level"),
+        ("RCV3-20260831-201", "fractional_timestamp"),
+        ("RCV3-20260831-202", "equal_predecessor_timestamp"),
+        ("RCV3-20260831-201", "boolean_zero_counter"),
+        ("RCV3-20260831-202", "boolean_writer_count"),
+        ("RCV3-20260831-203", "extra_top_level"),
+        ("RCV3-20260831-204", "extra_top_level"),
+        ("RCV3-20260831-203", "fractional_timestamp"),
+        ("RCV3-20260831-204", "equal_predecessor_timestamp"),
+        ("RCV3-20260831-203", "boolean_zero_counter"),
+        ("RCV3-20260831-204", "boolean_writer_count"),
     ),
 )
 def test_local_correction_pair_rejects_fully_rehashed_shape_type_and_time_mutants(
@@ -4488,7 +4553,11 @@ def test_local_correction_pair_rejects_fully_rehashed_shape_type_and_time_mutant
             record["date"] = records[index - 1]["date"]
         elif mutation == "boolean_zero_counter":
             context = cast(dict[str, object], record["context"])
-            effects = cast(dict[str, object], context["observed_external_effects"])
+            effects = cast(
+                dict[str, object],
+                context.get("observed_external_effects")
+                or context["observed_delivery_effects"],
+            )
             effects["git_remote_writes"] = False
         elif mutation == "boolean_writer_count":
             cast(dict[str, object], record["context"])["writer_count"] = True
@@ -4514,6 +4583,10 @@ def test_local_correction_pair_rejects_fully_rehashed_shape_type_and_time_mutant
         "RCV3-20260831-198",
         "RCV3-20260831-199",
         "RCV3-20260831-200",
+        "RCV3-20260831-201",
+        "RCV3-20260831-202",
+        "RCV3-20260831-203",
+        "RCV3-20260831-204",
     ),
 )
 def test_local_correction_pair_rejects_noncanonical_raw_record_lines(
@@ -4535,7 +4608,15 @@ def test_local_correction_pair_rejects_noncanonical_raw_record_lines(
         )
 
 
-@pytest.mark.parametrize("failure_id", ("RCV3-20260831-197", "RCV3-20260831-199"))
+@pytest.mark.parametrize(
+    "failure_id",
+    (
+        "RCV3-20260831-197",
+        "RCV3-20260831-199",
+        "RCV3-20260831-201",
+        "RCV3-20260831-203",
+    ),
+)
 @pytest.mark.parametrize("mutation", ("partial", "inverted", "intercalated"))
 def test_local_correction_pair_is_mandatory_ordered_and_contiguous(
     tmp_path: Path,
@@ -4619,6 +4700,8 @@ def test_frozen_council_release_guard_rejects_candidate_byte_drift(tmp_path: Pat
         chronos_production.DATA_TORRENT_RECOVERY_V2_REVIEW_PATHS["C4"],
         chronos_production.DATA_TORRENT_RECOVERY_V2_LOCAL_CORRECTION_REVIEW_PATHS["C4"],
         chronos_production.DATA_TORRENT_RECOVERY_V2_STATIC_CORRECTION_REVIEW_PATHS["C4"],
+        chronos_production.DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_REVIEW_PATHS["C4"],
+        chronos_production.DATA_TORRENT_RECOVERY_V2_POST_202_B101_REVIEW_PATHS["C4"],
     ),
 )
 def test_frozen_council_release_guard_rejects_initial_or_correction_review_drift(
@@ -4729,6 +4812,31 @@ def test_frozen_council_release_guard_rejects_rehashed_extra_authority_field(
         (
             chronos_production._RECOVERY_V2_STATIC_CORRECTION_RELEASE_CLAIM,
             "status",
+            "VERIFIED",
+        ),
+        (
+            chronos_production._RECOVERY_V2_STATIC_CORRECTION_RELEASE_CLAIM,
+            "superseded_by",
+            chronos_production._RECOVERY_V2_PR_B_RELEASE_CLAIM,
+        ),
+        (
+            chronos_production._RECOVERY_V2_EXACT_HEAD_CI_FAILURE_CLAIM,
+            "successor_of",
+            chronos_production._RECOVERY_V2_LOCAL_CORRECTION_RELEASE_CLAIM,
+        ),
+        (
+            chronos_production._RECOVERY_V2_EXACT_HEAD_CI_CORRECTION_RELEASE_CLAIM,
+            "status",
+            "VERIFIED",
+        ),
+        (
+            chronos_production._RECOVERY_V2_POST_202_B101_FAILURE_CLAIM,
+            "successor_of",
+            chronos_production._RECOVERY_V2_STATIC_CORRECTION_RELEASE_CLAIM,
+        ),
+        (
+            chronos_production._RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
+            "status",
             "SUPERSEDED",
         ),
     ),
@@ -4763,7 +4871,15 @@ def test_frozen_council_release_guard_rejects_release_claim_lineage_drift(
     "mutation",
     ("failure_edge_id", "failure_edge_source", "foreign_edge_before_failure"),
 )
-@pytest.mark.parametrize("failure_id", ("RCV3-20260831-197", "RCV3-20260831-199"))
+@pytest.mark.parametrize(
+    "failure_id",
+    (
+        "RCV3-20260831-197",
+        "RCV3-20260831-199",
+        "RCV3-20260831-201",
+        "RCV3-20260831-203",
+    ),
+)
 def test_local_correction_release_graph_rejects_edge_identity_and_boundary_mutants(
     tmp_path: Path,
     failure_id: str,
@@ -4807,6 +4923,63 @@ def test_local_correction_release_graph_rejects_edge_identity_and_boundary_mutan
         )
 
 
+@pytest.mark.parametrize(
+    "mutation",
+    (
+        "claim_at_boundary",
+        "claim_at_tail",
+        "node_at_boundary",
+        "node_at_tail",
+        "nonnumeric_edge_at_boundary",
+        "numeric_edge_at_tail",
+    ),
+)
+def test_recovery_v2_release_graph_rejects_foreign_rows(
+    tmp_path: Path,
+    mutation: str,
+) -> None:
+    root = _copy_frozen_council_release(tmp_path)
+    graph_path = root / "reports/evidence/evidence-graph.json"
+    graph = json.loads(graph_path.read_bytes())
+    foreign_claim = {"claim_id": "GOV.DATA_TORRENT_RECOVERY.V2.FOREIGN"}
+    foreign_node = {
+        "decision_id": "RCV3-20260831-999",
+        "ledger_record_hash": "0" * 64,
+    }
+    foreign_edge = {
+        "edge_id": "EDGE.FOREIGN",
+        "from_claim_id": "GOV.DATA_TORRENT_RECOVERY.V2.FOREIGN",
+        "to_decision_id": "RCV3-20260831-999",
+        "relation": "SUPPORTS",
+        "status": "RECORDED",
+    }
+    if mutation == "claim_at_boundary":
+        graph["claims"].insert(520, foreign_claim)
+    elif mutation == "claim_at_tail":
+        graph["claims"].append(foreign_claim)
+    elif mutation == "node_at_boundary":
+        graph["decision_nodes"].insert(194, foreign_node)
+    elif mutation == "node_at_tail":
+        graph["decision_nodes"].append(foreign_node)
+    elif mutation == "nonnumeric_edge_at_boundary":
+        graph["edges"].insert(822, foreign_edge)
+    elif mutation == "numeric_edge_at_tail":
+        foreign_edge["edge_id"] = "EDGE.999"
+        graph["edges"].append(foreign_edge)
+    else:
+        raise AssertionError(mutation)
+    graph_path.write_text(
+        json.dumps(graph, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    with pytest.raises(ChronosProductionError, match="COUNCIL_RELEASE_INVALID"):
+        validate_data_torrent_recovery_v2_council_release(
+            repository_root=root,
+            now=_RECOVERY_V2_TEST_NOW,
+        )
+
+
 def _append_test_council_successor(
     root: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -4830,6 +5003,8 @@ def _append_test_council_successor(
         chronos_production._RECOVERY_V2_BASE_RELEASE_CLAIM,
         chronos_production._RECOVERY_V2_LOCAL_CORRECTION_RELEASE_CLAIM,
         chronos_production._RECOVERY_V2_STATIC_CORRECTION_RELEASE_CLAIM,
+        chronos_production._RECOVERY_V2_EXACT_HEAD_CI_CORRECTION_RELEASE_CLAIM,
+        chronos_production._RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
         chronos_production._RECOVERY_V2_PR_B_RELEASE_CLAIM,
     }
     release = next(
@@ -6340,6 +6515,8 @@ def test_frozen_council_release_guard_rejects_invalid_append_only_successor(
                     chronos_production._RECOVERY_V2_BASE_RELEASE_CLAIM,
                     chronos_production._RECOVERY_V2_LOCAL_CORRECTION_RELEASE_CLAIM,
                     chronos_production._RECOVERY_V2_STATIC_CORRECTION_RELEASE_CLAIM,
+                    chronos_production._RECOVERY_V2_EXACT_HEAD_CI_CORRECTION_RELEASE_CLAIM,
+                    chronos_production._RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
                     chronos_production._RECOVERY_V2_PR_B_RELEASE_CLAIM,
                 }
             )

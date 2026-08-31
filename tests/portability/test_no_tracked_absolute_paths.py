@@ -1,6 +1,11 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from scripts.check_no_tracked_absolute_paths import find_forbidden_absolute_paths
+
+ROOT = Path(__file__).resolve().parents[2]
+LEDGER = ROOT / "reports" / "council" / "decision-ledger.jsonl"
 
 
 def violations(value: str) -> list[str]:
@@ -43,3 +48,22 @@ def test_url_is_accepted() -> None:
 
 def test_placeholder_is_accepted() -> None:
     assert violations("<repo_root>/reports/closure/audit.json") == []
+
+
+def test_only_the_exact_hash_bound_append_only_worktree_is_accepted() -> None:
+    record = next(
+        line
+        for line in LEDGER.read_text(encoding="utf-8").splitlines()
+        if '"decision_id":"RCV3-20260830-194"' in line
+    )
+    ledger_path = "reports/council/decision-ledger.jsonl"
+    assert find_forbidden_absolute_paths(record, path=ledger_path) == []
+
+    mutated = record.replace('"worktree":"C:', '"worktree":"D:', 1)
+    assert find_forbidden_absolute_paths(mutated, path=ledger_path)
+
+    signed_field_mutation = record.replace('"writer":"C0"', '"writer":"C1"', 1)
+    assert find_forbidden_absolute_paths(signed_field_mutation, path=ledger_path)
+
+    appended = record + " " + ("C:" + "/Users/other/repository")  # PORTABILITY_TEST_FIXTURE
+    assert find_forbidden_absolute_paths(appended, path=ledger_path)
