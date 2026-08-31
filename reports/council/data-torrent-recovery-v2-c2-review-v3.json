@@ -1,0 +1,84 @@
+{
+  "agent_id": "C2",
+  "mission_id": "DATA_TORRENT_RECOVERY_V2",
+  "facts_verified": [
+    {
+      "claim": "La projection candidate de 122 fichiers a été recalculée deux fois et correspond exactement au snapshot imposé.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b",
+        "src/robin/chronos_production.py:490"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le P0 d’auto-référence est fermé : la projection runtime exclut le ledger et le graphe de preuves, inclut les quatre rapports indépendants et la revue finale, tandis que les decision_nodes du graphe lient séparément chaque record à son hash canonique.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b",
+        "src/robin/chronos_production.py:101",
+        "src/robin/chronos_production.py:475",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:1891",
+        "tests/council/test_robin_council_os_v3.py:6626"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le manifeste propriétaire possède exactement les huit champs requis; ses hashes brut et canonique concordent avec les constantes, et mission, directive, manifeste et contrat V2 sont distincts de V1. L’autorité refuse toute dérive d’octets ou sémantique et tout réemploi V1.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b",
+        "configs/execution/data-torrent-recovery-v2.json:1",
+        "configs/execution/data-torrent-recovery-v2-effect-contract.json:1",
+        "src/robin/chronos_production.py:42",
+        "src/robin/chronos_production.py:837",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:85"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les budgets sont bornés et non fongibles : GitHub 224+257+408+25=914, téléchargements séparés 26, Neon 25/39/26 pour un total 90, R2 exactement 3 PUT, 3 GET et 3 objets; retries ambigus, achats, paris, promotions, publications, DELETE, overwrite et DROP restent à zéro.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b",
+        "configs/execution/data-torrent-recovery-v2-effect-contract.json:88",
+        "configs/execution/data-torrent-recovery-v2-effect-contract.json:134",
+        "configs/execution/data-torrent-recovery-v2-effect-contract.json:406",
+        "configs/execution/data-torrent-recovery-v2-effect-contract.json:503",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:228"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La chaîne Council existante est canonique jusqu’au record d’autorisation 193, dont le hash, le manifeste, la directive propriétaire et l’état V1 FAIL_AND_STOP sans effet concordent; le guard de release exige ensuite le record 194 directement après 193, les quatre rapports exacts, la revue finale, zéro défaut et zéro effet observé.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b",
+        "reports/council/decision-ledger.jsonl:186",
+        "src/robin/chronos_production.py:512",
+        "src/robin/chronos_production.py:600",
+        "src/robin/chronos_production.py:647"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les tests imposent séparément le claim propriétaire exact lié au record 193, le claim de release lié à la revue finale, la supersession du claim V1 terminal par l’autorité V2, et les trois supersessions historiques exigées par le claim de release.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:1818",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:1828",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:1831",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:1835",
+        "tests/council/test_robin_council_os_v3.py:6657"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [],
+  "assumptions": [],
+  "main_objection": "P0=0; P1=0; P2=0; OPEN_THREADS=0; VERDICT=PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "risks": [],
+  "minimum_decisive_test": "Après insertion des quatre rapports, de la revue finale, du graphe et du record 194, exécuter sur le HEAD exact les tests Council ciblés, incluant validation canonique ledger-graphe, projection runtime et mutants de dérive.",
+  "recommended_action": "PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "scale_condition": "EXACT_HEAD_SAFE_V2_GREEN_NORMAL_MERGE_POSTMERGE_SAFE_V2_GREEN",
+  "estimated_compute": "Recalcul SHA-256 et revue statique locale uniquement; aucun test exécuté.",
+  "estimated_external_cost": "0",
+  "estimated_human_time": "Environ 15 minutes de revue indépendante.",
+  "maintenance_impact": "Faible; la séparation explicite des deux surfaces append-only rend la dépendance de release acyclique et testable.",
+  "confidence": 0.99
+}

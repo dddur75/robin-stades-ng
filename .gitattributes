@@ -1,0 +1,9 @@
+configs/execution/data-torrent-live-v2-postgresql-call-graph.json text eol=lf
+configs/execution/data-torrent-recovery-v2-effect-contract.json text eol=lf
+configs/execution/data-torrent-recovery-v2.json text eol=lf
+reports/council/decision-ledger.jsonl text eol=lf
+reports/council/data-torrent-recovery-v2*.json text eol=lf
+reports/council/data-torrent-recovery-v2-terminal-evidence/** text eol=lf
+reports/council/data-torrent-recovery-v2-terminal-intents/** text eol=lf
+reports/evidence/evidence-graph.json text eol=lf
+scripts/verify_data_torrent_recovery_v2_postmerge_gate.py text eol=lf

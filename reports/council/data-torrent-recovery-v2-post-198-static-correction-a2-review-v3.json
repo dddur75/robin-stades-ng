@@ -1,0 +1,45 @@
+{
+  "agent_id": "A2",
+  "mission_id": "DATA_TORRENT_RECOVERY_V2",
+  "facts_verified": [
+    {
+      "claim": "The runbook gives an ordered executable PR-A, post-merge, R1 through R8, three-commit PR-C and finalizer sequence while keeping all input JSON outside the worktree and the generation nonce in memory.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:7f9b63e9344c55d538a0a0ee4e12966ba004feabebdc814685ea138850b448cc",
+        "docs/operations/DATA-TORRENT-RECOVERY-V2.md:Séquence opérateur exécutable",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:test_recovery_v2_runbook_orders_every_effectful_entrypoint_and_cas_gate"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Each merge command is preceded by an exact PR head reread and uses match-head-commit, so a post-SAFE head change is refused before the merge write.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:7f9b63e9344c55d538a0a0ee4e12966ba004feabebdc814685ea138850b448cc",
+        "docs/operations/DATA-TORRENT-RECOVERY-V2.md:PR-A, SAFE V2 et merge CAS",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:test_recovery_v2_runbook_orders_every_effectful_entrypoint_and_cas_gate"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The conservative critical path is stated as 1059 minutes without PR-B and 1349 minutes with PR-B, with no authority inferred from timing margin.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:7f9b63e9344c55d538a0a0ee4e12966ba004feabebdc814685ea138850b448cc",
+        "docs/operations/DATA-TORRENT-RECOVERY-V2.md:Chemin critique conservateur",
+        "configs/execution/data-torrent-recovery-v2-effect-contract.json"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [],
+  "assumptions": [],
+  "main_objection": "P0=0; P1=0; P2=0; OPEN_THREADS=0; VERDICT=PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "risks": [],
+  "minimum_decisive_test": "PARSE_RUNBOOK_ENTRYPOINT_ORDER_MUTATE_PR_HEAD_AFTER_SAFE_AND_RECOMPUTE_CRITICAL_PATH",
+  "recommended_action": "PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "scale_condition": "EXACT_HEAD_SAFE_V2_GREEN_NORMAL_MERGE_POSTMERGE_SAFE_V2_GREEN",
+  "estimated_compute": "READ_ONLY_DELIVERY_PROTOCOL_AND_TIMING_REVIEW_ONLY",
+  "estimated_external_cost": "ZERO; NO_NETWORK_OR_EXTERNAL_EFFECTS",
+  "estimated_human_time": "ONE_POST_198_OPERATIONS_REVIEW",
+  "maintenance_impact": "LOW; EFFECTFUL COMMAND ORDER AND CAS BOUNDARY ARE TESTED",
+  "confidence": 0.99
+}

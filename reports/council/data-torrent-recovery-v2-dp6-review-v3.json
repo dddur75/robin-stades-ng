@@ -1,0 +1,119 @@
+{
+  "agent_id": "DP6",
+  "mission_id": "DATA_TORRENT_RECOVERY_V2",
+  "facts_verified": [
+    {
+      "claim": "La projection de revue recomputée couvre exactement 122 fichiers et vaut f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b",
+        "src/robin/chronos_production.py:411",
+        "src/robin/chronos_production.py:490",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:57"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La correction Council est acyclique : la projection runtime inclut les quatre rapports indépendants et le rapport final, exclut ledger et graphe, puis l’égalité exacte entre chaque nœud de décision du graphe et chaque record du ledger est imposée séparément.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b",
+        "src/robin/chronos_production.py:101",
+        "src/robin/chronos_production.py:475",
+        "src/robin/chronos_production.py:687",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:1873",
+        "tests/council/test_robin_council_os_v3.py:6580",
+        "tests/council/test_robin_council_os_v3.py:6659",
+        "docs/operations/DATA-TORRENT-RECOVERY-V2.md:114"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le manifeste matérialise exactement les huit champs propriétaires et ses empreintes RAW/canonique sont liées au contrat V2; les budgets GitHub 224+257+408+25=914, téléchargements 26 séparés, Neon 25/39/26=90 non fongibles et R2 3 PUT/3 GET/3 objets sont cohérents et fail-closed.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b",
+        "configs/execution/data-torrent-recovery-v2.json:1",
+        "configs/execution/data-torrent-recovery-v2-effect-contract.json:1",
+        "configs/execution/data-torrent-recovery-v2-effect-contract.json:134",
+        "configs/execution/data-torrent-recovery-v2-effect-contract.json:406",
+        "configs/execution/data-torrent-recovery-v2-effect-contract.json:413",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:85",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:259"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le chemin données impose le seal GET unique avant PostgreSQL et fournisseurs, exige RAW puis NORMALIZED en CREATED_CONFIRMED, conserve les cinq membres normalisés incluant rejets et lineage, et exécute exactement 100 redécodages/reparses avec empreinte complète de batch et delta d’effets externes nul.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b",
+        "src/robin/data_torrent/runtime.py:1180",
+        "src/robin/data_torrent/runtime.py:2196",
+        "src/robin/data_torrent/runtime.py:2273",
+        "src/robin/data_torrent/runtime.py:2324",
+        "src/robin/data_torrent/runtime.py:5758",
+        "src/robin/data_torrent/runtime.py:6117",
+        "src/robin/data_torrent/runtime.py:6220",
+        "src/robin/data_torrent/runtime.py:6263",
+        "tests/data_torrent/test_live_seal_provenance_v2.py:123",
+        "tests/data_torrent/test_live_seal_provenance_v2.py:323",
+        "tests/data_torrent/test_live_seal_provenance_v2.py:382"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La clôture terminale exige exactement 19 artefacts et 22 gates, lie les 18 artefacts non-self par taille et SHA-256 dans le manifeste et refuse toute preuve QA sans fichier ou pointeur résolvable.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b",
+        "configs/execution/data-torrent-recovery-v2-effect-contract.json:458",
+        "configs/execution/data-torrent-recovery-v2-effect-contract.json:482",
+        "src/robin/data_torrent/runtime.py:184",
+        "src/robin/data_torrent/runtime.py:2905",
+        "src/robin/data_torrent/runtime.py:6721",
+        "tests/data_torrent/test_data_torrent_replay_v2.py:421",
+        "tests/data_torrent/test_data_torrent_replay_v2.py:467"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La migration 0015 discrimine explicitement V1/V2 et impose pour V2 replay=100, deux terminaux CREATED_CONFIRMED liés aux events PostgreSQL, inventaire de 18 artefacts, archive normalisée de cinq membres, dix opérations source et couverture complète; VERIFY lie en plus la définition SQL exacte et détecte les privilèges colonne SELECT/INSERT/UPDATE/REFERENCES sur chronos_% et alembic_version.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b",
+        "migrations/versions/0015_data_torrent_opportunity.py:804",
+        "migrations/versions/0015_data_torrent_opportunity.py:828",
+        "migrations/versions/0015_data_torrent_opportunity.py:1064",
+        "migrations/versions/0015_data_torrent_opportunity.py:1237",
+        "migrations/versions/0015_data_torrent_opportunity.py:1332",
+        "migrations/versions/0015_data_torrent_opportunity.py:1393",
+        "migrations/versions/0015_data_torrent_opportunity.py:1546",
+        "scripts/chronos_production_bootstrap_v3.py:2451",
+        "tests/data_torrent/test_postgresql_v1.py:314",
+        "tests/activation/test_chronos_migrate_verify_v2.py:1087"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les contrôles GitHub utilisent des transports sans retry ni redirection automatique, des enfants privés bornés pour les mutations, une revalidation d’autorité avant mutation et les plafonds non fongibles déclarés; aucun défaut P0, P1, P2 ni thread ouvert n’est identifié sur le snapshot.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b",
+        "configs/execution/data-torrent-recovery-v2-effect-contract.json:24",
+        "configs/execution/data-torrent-recovery-v2-effect-contract.json:115",
+        "scripts/install_chronos_runtime_bindings_v2.py:405",
+        "scripts/dispatch_data_torrent_recovery_v2_stage.py:1216",
+        "scripts/dispatch_data_torrent_recovery_v2_stage.py:1566",
+        "scripts/github_release_attestation_v2.py:115",
+        "tests/activation/test_github_release_attestation_v2.py:229"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [],
+  "assumptions": [],
+  "main_objection": "P0=0; P1=0; P2=0; OPEN_THREADS=0; VERDICT=PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "risks": [],
+  "minimum_decisive_test": "EXACT_HEAD_SAFE_V2_GREEN_NORMAL_MERGE_POSTMERGE_SAFE_V2_GREEN",
+  "recommended_action": "PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "scale_condition": "EXACT_HEAD_SAFE_V2_GREEN_NORMAL_MERGE_POSTMERGE_SAFE_V2_GREEN",
+  "estimated_compute": "READ_ONLY_STATIC_AND_STRUCTURAL_REVIEW_COMPLETED; PRODUCTION_COMPUTE_USED=0",
+  "estimated_external_cost": "0",
+  "estimated_human_time": "FINAL_DP6_REVIEW_COMPLETED",
+  "maintenance_impact": "LOW; DUAL_PROJECTIONS_REMOVE_CRYPTOGRAPHIC_SELF_REFERENCE_AND_KEEP_GRAPH_LEDGER_EQUALITY_EXPLICIT",
+  "confidence": 0.98
+}

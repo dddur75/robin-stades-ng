@@ -13,6 +13,7 @@ import json
 import math
 import os
 import re
+import time
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
@@ -41,6 +42,7 @@ REPORT_SCHEMA = "chronos-neon-pure-readonly-preflight-v4"
 GO_VERDICT = "CHRONOS_NEON_MIGRATION_READY_FOR_SEPARATE_AUTHORIZATION"
 NO_GO_VERDICT = "CHRONOS_NEON_MIGRATION_NOT_AUTHORIZED"
 MAX_NEON_GETS = 25
+MAX_EXTERNAL_JSON_BYTES = 1_000_000
 PROJECT_PAGE_LIMIT = 400
 MAX_PROJECT_PAGES = 3
 MAX_BRANCH_PAGES = 3
@@ -614,7 +616,68 @@ class JsonGetSession(Protocol):
         headers: Mapping[str, str],
         timeout: int,
         allow_redirects: bool,
+        stream: bool,
     ) -> requests.Response: ...
+
+
+def _external_content_lengths(response: object) -> list[str]:
+    raw = getattr(response, "raw", None)
+    raw_headers = getattr(raw, "headers", None)
+    getlist = getattr(raw_headers, "getlist", None)
+    if callable(getlist):
+        values = getlist("Content-Length")
+        if values:
+            return [str(value) for value in values]
+    headers = getattr(response, "headers", None)
+    if isinstance(headers, Mapping):
+        value = headers.get("Content-Length") or headers.get("content-length")
+        return [] if value is None else [str(value)]
+    return []
+
+
+def _bounded_external_json(response: object, *, gate: str) -> dict[str, Any]:
+    lengths = _external_content_lengths(response)
+    if (
+        len(lengths) > 1
+        or (
+            lengths
+            and (
+                not lengths[0].isascii()
+                or not lengths[0].isdigit()
+                or int(lengths[0]) > MAX_EXTERNAL_JSON_BYTES
+            )
+        )
+    ):
+        raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", gate)
+    iterator = getattr(response, "iter_content", None)
+    if not callable(iterator):
+        raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", gate)
+    payload = bytearray()
+    try:
+        for chunk in iterator(chunk_size=64 * 1024):
+            if not isinstance(chunk, bytes):
+                raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", gate)
+            if not chunk:
+                continue
+            if len(payload) + len(chunk) > MAX_EXTERNAL_JSON_BYTES:
+                raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", gate)
+            payload.extend(chunk)
+    except PreflightNoGo:
+        raise
+    except Exception:
+        raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", gate) from None
+    if lengths and int(lengths[0]) != len(payload):
+        raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", gate)
+    try:
+        document = json.loads(
+            bytes(payload),
+            object_pairs_hook=_unique_json_object,
+        )
+    except (UnicodeDecodeError, TypeError, ValueError):
+        raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", gate) from None
+    if not isinstance(document, dict) or not _finite_json(document):
+        raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", gate)
+    return cast(dict[str, Any], document)
 
 
 @dataclass(frozen=True, slots=True)
@@ -993,7 +1056,7 @@ def _required_sensitive_context(name: str) -> str:
 
 def _positive_integer_context(name: str) -> int:
     value = _required_context(name)
-    if not value.isdecimal():
+    if not value.isascii() or not value.isdecimal() or len(value) > 18:
         raise PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", f"invalid:{name}")
     parsed = int(value)
     if parsed < 1:
@@ -1096,10 +1159,18 @@ class NeonReadOnlyClient:
         api_key: str,
         *,
         session: JsonGetSession | None = None,
+        authority_validator: Callable[[], object] | None = None,
+        maximum_gets: int = MAX_NEON_GETS,
     ) -> None:
         if not api_key:
             raise PreflightNoGo("SECRET_MISSING", "missing:NEON_API_KEY")
+        if maximum_gets < 1 or maximum_gets > MAX_NEON_GETS:
+            raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "neon_get_budget_invalid")
         self._api_key = api_key
+        self._authority_validator = (
+            validate_data_torrent_authority if authority_validator is None else authority_validator
+        )
+        self.maximum_gets = maximum_gets
         self._session: JsonGetSession
         if session is None:
             isolated_session = requests.Session()
@@ -1112,7 +1183,7 @@ class NeonReadOnlyClient:
     def require_get_budget(self, required: int, gate: str) -> None:
         """Prove that a complete planned suffix still fits before a GET."""
 
-        if required < 1 or self.get_count + required > MAX_NEON_GETS:
+        if required < 1 or self.get_count + required > self.maximum_gets:
             raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", gate)
 
     def get(
@@ -1131,10 +1202,10 @@ class NeonReadOnlyClient:
         )
         if not route_allowed or ".." in path or "?" in path or "#" in path:
             raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "neon_route_forbidden")
-        if self.get_count >= MAX_NEON_GETS:
+        if self.get_count >= self.maximum_gets:
             raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "neon_get_budget_exhausted")
         try:
-            validate_data_torrent_authority()
+            self._authority_validator()
         except ChronosProductionError:
             raise PreflightNoGo(
                 "RECOVERY_BRANCH_NOT_FEASIBLE", "mission_authority_inactive"
@@ -1152,28 +1223,19 @@ class NeonReadOnlyClient:
                 },
                 timeout=30,
                 allow_redirects=False,
+                stream=True,
             )
         except requests.RequestException:
             raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "neon_api_unavailable") from None
-        if not 200 <= response.status_code < 300:
-            raise PreflightNoGo(
-                "NEON_PROJECT_IDENTITY_AMBIGUOUS",
-                f"neon_api_http_{response.status_code}",
-            )
         try:
-            document = response.json(object_pairs_hook=_unique_json_object)
-        except (TypeError, ValueError):
-            raise PreflightNoGo(
-                "NEON_PROJECT_IDENTITY_AMBIGUOUS", "neon_api_invalid_json"
-            ) from None
-        if not isinstance(document, dict):
-            raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "neon_api_invalid_document")
-        if not _finite_json(document):
-            raise PreflightNoGo(
-                "NEON_PROJECT_IDENTITY_AMBIGUOUS",
-                "neon_api_non_finite_or_non_json_value",
-            )
-        return cast(dict[str, Any], document)
+            if not 200 <= response.status_code < 300:
+                raise PreflightNoGo(
+                    "NEON_PROJECT_IDENTITY_AMBIGUOUS",
+                    f"neon_api_http_{response.status_code}",
+                )
+            return _bounded_external_json(response, gate="neon_api_invalid_json")
+        finally:
+            response.close()
 
 
 def _project_details(document: Mapping[str, Any]) -> dict[str, Any]:
@@ -1262,6 +1324,8 @@ def _project_page_cursor(document: Mapping[str, Any]) -> str | None:
 def _list_projects_bounded(
     client: NeonReadOnlyClient,
     audit: IdentityAudit,
+    *,
+    witness_get_reserve: int = POSITIVE_WITNESS_GET_RESERVE,
 ) -> list[dict[str, Any]]:
     """Enumerate a complete project inventory without partial endpoint scans."""
 
@@ -1274,7 +1338,12 @@ def _list_projects_bounded(
         if audit.project_pages_read >= MAX_PROJECT_PAGES:
             raise PreflightNoGo("NEON_PROJECT_IDENTITY_AMBIGUOUS", "project_pagination_invalid")
         client.require_get_budget(
-            1 + len(owned_project_ids) + 1 + MAX_BRANCH_PAGES,
+            1
+            + len(owned_project_ids)
+            + 1
+            + MAX_BRANCH_PAGES
+            + witness_get_reserve
+            - POSITIVE_WITNESS_GET_RESERVE,
             "project_identity_discovery_budget_exceeded",
         )
         query: dict[str, object] = {"limit": PROJECT_PAGE_LIMIT}
@@ -1336,7 +1405,11 @@ def _list_projects_bounded(
     audit.project_ids.extend(owned_project_ids)
     audit.project_inventory_exhaustive = True
     client.require_get_budget(
-        len(owned_project_ids) + 1 + MAX_BRANCH_PAGES,
+        len(owned_project_ids)
+        + 1
+        + MAX_BRANCH_PAGES
+        + witness_get_reserve
+        - POSITIVE_WITNESS_GET_RESERVE,
         "project_identity_discovery_budget_exceeded",
     )
     return projects
@@ -1833,6 +1906,8 @@ def _progressive_positive_candidate(
     client: NeonReadOnlyClient,
     target: DirectPostgresTarget,
     audit: IdentityAudit,
+    *,
+    witness_get_reserve: int = POSITIVE_WITNESS_GET_RESERVE,
 ) -> tuple[dict[str, Any], dict[str, Any], list[dict[str, Any]]]:
     """Inspect each page's project endpoints before requesting another page."""
 
@@ -1856,7 +1931,7 @@ def _progressive_positive_candidate(
         item_limit = _owner_project_item_limit(audit)
         remaining_capacity = item_limit - len(audit.project_ids)
         client.require_get_budget(
-            1 + (2 * remaining_capacity) + POSITIVE_WITNESS_GET_RESERVE,
+            1 + (2 * remaining_capacity) + witness_get_reserve,
             "project_identity_discovery_budget_exceeded",
         )
         query: dict[str, object] = {"limit": PROJECT_PAGE_LIMIT}
@@ -1911,7 +1986,7 @@ def _progressive_positive_candidate(
         if not page_ids:
             audit.project_inventory_exhaustive = True
             client.require_get_budget(
-                len(audit.project_ids) + POSITIVE_WITNESS_GET_RESERVE,
+                len(audit.project_ids) + witness_get_reserve,
                 "project_identity_discovery_budget_exceeded",
             )
             _count_owner_branches(client, audit)
@@ -1924,7 +1999,7 @@ def _progressive_positive_candidate(
         for index, (project, project_id) in enumerate(owned_on_page):
             remaining_on_page = len(owned_on_page) - index
             client.require_get_budget(
-                remaining_on_page + len(audit.project_ids) + POSITIVE_WITNESS_GET_RESERVE,
+                remaining_on_page + len(audit.project_ids) + witness_get_reserve,
                 "project_identity_discovery_budget_exceeded",
             )
             endpoints = _project_endpoints(
@@ -1954,7 +2029,7 @@ def _progressive_positive_candidate(
             seen_pages.add(page_fingerprint)
             audit.project_inventory_exhaustive = True
             client.require_get_budget(
-                len(audit.project_ids) + POSITIVE_WITNESS_GET_RESERVE,
+                len(audit.project_ids) + witness_get_reserve,
                 "project_identity_discovery_budget_exceeded",
             )
             _count_owner_branches(client, audit)
@@ -2053,6 +2128,8 @@ def _positive_ownership_witness(
     candidate: Mapping[str, Any],
     *,
     allow_idle: bool = False,
+    branch_inventory: Callable[..., list[dict[str, Any]]] | None = None,
+    witness_get_reserve: int = POSITIVE_WITNESS_GET_RESERVE,
 ) -> tuple[dict[str, Any], list[dict[str, Any]], dict[str, Any]]:
     project_id = _safe_identifier(project_summary.get("id", ""), gate="project_pagination_invalid")
     endpoint_id = _safe_identifier(
@@ -2062,7 +2139,7 @@ def _positive_ownership_witness(
         candidate.get("branch_id", ""), gate="positive_endpoint_candidate_invalid"
     )
     client.require_get_budget(
-        POSITIVE_WITNESS_GET_RESERVE,
+        witness_get_reserve,
         "project_identity_discovery_budget_exceeded",
     )
     endpoint_document = client.get(f"/projects/{project_id}/endpoints/{endpoint_id}")
@@ -2087,11 +2164,10 @@ def _positive_ownership_witness(
     )
     audit.positive_witness_checks.append("PROJECT_DETAIL_CONCORDANT")
 
-    branches = _list_branches_bounded(
-        client,
-        project_id,
-        audit,
-        reserve_after=1,
+    branches = (
+        _list_branches_bounded(client, project_id, audit, reserve_after=1)
+        if branch_inventory is None
+        else branch_inventory(client, project_id, audit, 1, branch_id, branch_id)
     )
     branch_matches = [branch for branch in branches if branch.get("id") == branch_id]
     if len(branch_matches) != 1:
@@ -2169,6 +2245,8 @@ def _resolve_neon_identity(
     target: DirectPostgresTarget,
     *,
     allow_idle: bool = False,
+    branch_inventory: Callable[..., list[dict[str, Any]]] | None = None,
+    witness_get_reserve: int = POSITIVE_WITNESS_GET_RESERVE,
 ) -> NeonObservation:
     configured = os.getenv("NEON_PROJECT_ID", "").strip()
     if configured and len(configured) < 8:
@@ -2187,7 +2265,11 @@ def _resolve_neon_identity(
         if configured_project_id is not None:
             project_id = configured_project_id
             audit.project_id = project_id
-            projects = _list_projects_bounded(client, audit)
+            projects = _list_projects_bounded(
+                client,
+                audit,
+                witness_get_reserve=witness_get_reserve,
+            )
             configured_summaries = [
                 project for project in projects if project.get("id") == project_id
             ]
@@ -2197,7 +2279,7 @@ def _resolve_neon_identity(
                     "configured_project_not_accessible",
                 )
             client.require_get_budget(
-                1 + len(audit.project_ids) + POSITIVE_WITNESS_GET_RESERVE,
+                1 + len(audit.project_ids) + witness_get_reserve,
                 "neon_get_budget_exhausted",
             )
             endpoints = _project_endpoints(
@@ -2234,13 +2316,18 @@ def _resolve_neon_identity(
                 configured_summaries[0],
                 endpoint,
                 allow_idle=allow_idle,
+                branch_inventory=branch_inventory,
+                witness_get_reserve=witness_get_reserve,
             )
             _assert_project_endpoint_branches(endpoints, branches)
             identity_verdict = "CONFIGURED_PROJECT_IDENTITY_PROVEN"
         else:
             audit.identity_path = "POSITIVE_ENDPOINT_WITNESS"
             project, candidate, project_endpoints = _progressive_positive_candidate(
-                client, target, audit
+                client,
+                target,
+                audit,
+                witness_get_reserve=witness_get_reserve,
             )
             audit.project_id = _safe_identifier(project.get("id", ""))
             audit.endpoint_id = _safe_identifier(candidate.get("id", ""))
@@ -2258,6 +2345,8 @@ def _resolve_neon_identity(
                 project,
                 candidate,
                 allow_idle=allow_idle,
+                branch_inventory=branch_inventory,
+                witness_get_reserve=witness_get_reserve,
             )
             _assert_project_endpoint_branches(project_endpoints, branches)
             identity_verdict = "POSITIVE_PROJECT_OWNERSHIP_WITNESS_PROVEN"
@@ -2535,11 +2624,17 @@ def resolve_neon_identity_readonly(
     target: DirectPostgresTarget,
     *,
     allow_idle: bool = False,
+    authority_validator: Callable[[], None] | None = None,
+    maximum_gets: int = MAX_NEON_GETS,
 ) -> NeonObservation:
     """Resolve a Neon identity through the bounded, GET-only proof path."""
 
     return _resolve_neon_identity(
-        NeonReadOnlyClient(api_key),
+        NeonReadOnlyClient(
+            api_key,
+            authority_validator=authority_validator,
+            maximum_gets=maximum_gets,
+        ),
         target,
         allow_idle=allow_idle,
     )
@@ -3134,15 +3229,38 @@ def _inspect_database(
     )
 
 
-def _github_get(path: str) -> dict[str, Any]:
+def _github_get(
+    path: str,
+    *,
+    authority_validator: Callable[[], object] = validate_data_torrent_authority,
+) -> dict[str, Any]:
     token = _required_sensitive_context("GITHUB_TOKEN")
+    raw_deadline = os.getenv("RECOVERY_V2_EFFECT_DEADLINE_EPOCH")
+    deadline: float | None = None
     try:
-        validate_data_torrent_authority()
+        authority_deadline = authority_validator()
+        if raw_deadline is not None:
+            deadline = float(raw_deadline)
+            if (
+                not math.isfinite(deadline)
+                or not isinstance(authority_deadline, datetime)
+                or authority_deadline.tzinfo is None
+                or deadline > authority_deadline.astimezone(UTC).timestamp()
+                or deadline <= time.time()
+            ):
+                raise ChronosProductionError("RECOVERY_V2_EFFECT_DEADLINE_INVALID")
     except ChronosProductionError:
+        raise PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", "mission_authority_inactive") from None
+    except (TypeError, ValueError):
         raise PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", "mission_authority_inactive") from None
     session = requests.Session()
     session.trust_env = False
     try:
+        timeout = 30.0 if deadline is None else min(30.0, deadline - time.time())
+        if timeout <= 0:
+            raise PreflightNoGo(
+                "RECOVERY_BRANCH_NOT_FEASIBLE", "mission_authority_inactive"
+            )
         response = session.get(
             "https://api.github.com" + path,
             headers={
@@ -3150,29 +3268,27 @@ def _github_get(path: str) -> dict[str, Any]:
                 "Authorization": f"Bearer {token}",
                 "X-GitHub-Api-Version": "2022-11-28",
             },
-            timeout=30,
+            timeout=timeout,
             allow_redirects=False,
+            stream=True,
         )
     except requests.RequestException:
         raise PreflightNoGo(
             "RECOVERY_BRANCH_NOT_FEASIBLE", "github_actions_state_unavailable"
         ) from None
-    finally:
-        session.close()
-    if not 200 <= response.status_code < 300:
-        raise PreflightNoGo(
-            "RECOVERY_BRANCH_NOT_FEASIBLE",
-            f"github_actions_http_{response.status_code}",
-        )
     try:
-        document = response.json(object_pairs_hook=_unique_json_object)
-    except (TypeError, ValueError):
-        raise PreflightNoGo(
-            "RECOVERY_BRANCH_NOT_FEASIBLE", "github_actions_state_invalid"
-        ) from None
-    if not isinstance(document, dict):
-        raise PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", "github_actions_state_invalid")
-    return cast(dict[str, Any], document)
+        if not 200 <= response.status_code < 300:
+            raise PreflightNoGo(
+                "RECOVERY_BRANCH_NOT_FEASIBLE",
+                f"github_actions_http_{response.status_code}",
+            )
+        try:
+            return _bounded_external_json(response, gate="github_actions_state_invalid")
+        except PreflightNoGo as error:
+            raise PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", error.gate) from None
+    finally:
+        response.close()
+        session.close()
 
 
 def _github_actions_state(
@@ -3181,6 +3297,7 @@ def _github_actions_state(
     main_sha: str,
     *,
     workflow_file: str = "chronos-neon-pure-readonly-preflight-v4.yml",
+    authority_validator: Callable[[], object] = validate_data_torrent_authority,
 ) -> tuple[int, int, int]:
     def validated_runs(
         document: Mapping[str, Any],
@@ -3217,14 +3334,23 @@ def _github_actions_state(
         return typed
 
     counts: dict[str, int] = {}
-    for status in ("queued", "in_progress"):
-        document = _github_get(f"/repos/{repository}/actions/runs?status={status}&per_page=100")
+    for status in ("requested", "waiting", "pending", "queued", "in_progress"):
+        document = _github_get(
+            f"/repos/{repository}/actions/runs?status={status}&per_page=100",
+            authority_validator=authority_validator,
+        )
         runs = validated_runs(document, "github_actions_runs_invalid", expected_status=status)
         counts[status] = sum(1 for run in runs if run["id"] != run_id)
+    if any(counts[status] != 0 for status in ("requested", "waiting", "pending")):
+        raise PreflightNoGo(
+            "RECOVERY_BRANCH_NOT_FEASIBLE",
+            "github_nonterminal_run_present",
+        )
     dispatches = _github_get(
         f"/repos/{repository}/actions/workflows/"
         f"{workflow_file}/runs"
-        f"?event=workflow_dispatch&head_sha={main_sha}&per_page=100"
+        f"?event=workflow_dispatch&head_sha={main_sha}&per_page=100",
+        authority_validator=authority_validator,
     )
     runs = validated_runs(dispatches, "github_dispatch_history_invalid")
     if any(
@@ -3242,8 +3368,11 @@ def _github_actions_state(
     if not any(run["id"] == run_id for run in exact_dispatches):
         raise PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", "current_dispatch_not_observed")
     # Bind the source last, immediately before returning authorization state, so
-    # a main advance during the three Actions inventory reads fails closed.
-    main_ref = _github_get(f"/repos/{repository}/git/ref/heads/main")
+    # a main advance during the seven Actions inventory reads fails closed.
+    main_ref = _github_get(
+        f"/repos/{repository}/git/ref/heads/main",
+        authority_validator=authority_validator,
+    )
     ref_object = main_ref.get("object")
     if (
         main_ref.get("ref") != "refs/heads/main"
@@ -3265,6 +3394,7 @@ def _github_authority_window_dispatch_count(
     *,
     workflow_file: str,
     not_before: str,
+    authority_validator: Callable[[], object] = validate_data_torrent_authority,
 ) -> int:
     """Count every dispatch in one immutable authority window, across all SHAs."""
 
@@ -3282,7 +3412,8 @@ def _github_authority_window_dispatch_count(
         raise PreflightNoGo("RECOVERY_BRANCH_NOT_FEASIBLE", "github_authority_window_invalid")
     document = _github_get(
         f"/repos/{repository}/actions/workflows/{workflow_file}/runs"
-        "?event=workflow_dispatch&per_page=100"
+        "?event=workflow_dispatch&per_page=100",
+        authority_validator=authority_validator,
     )
     runs = document.get("workflow_runs")
     total_count = document.get("total_count")

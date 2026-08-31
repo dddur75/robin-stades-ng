@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import hashlib
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from dataclasses import asdict, dataclass
 from typing import Any
 
@@ -44,9 +44,16 @@ class DurableObjectUploadError(RuntimeError):
 class CountingR2Store:
     """Expose no LIST/HEAD/DELETE and enforce the mission-wide physical caps."""
 
-    def __init__(self, store: ChronosR2ConditionalStore, budgets: TorrentBudgets) -> None:
+    def __init__(
+        self,
+        store: ChronosR2ConditionalStore,
+        budgets: TorrentBudgets,
+        *,
+        authority_validator: Callable[[], object] = validate_data_torrent_authority,
+    ) -> None:
         self._store = store
         self._budgets = budgets
+        self._authority_validator = authority_validator
         self.puts = 0
         self.gets = 0
         self.lists = 0
@@ -61,7 +68,7 @@ class CountingR2Store:
         metadata: Mapping[str, str],
         on_dispatch: Any,
     ) -> ConditionalPutResult:
-        validate_data_torrent_authority()
+        self._authority_validator()
         if self.puts >= self._budgets.r2_puts_max:
             raise RuntimeError("DATA_TORRENT_R2_PUT_BUDGET_EXCEEDED")
         self.puts += 1
@@ -75,7 +82,7 @@ class CountingR2Store:
         return result
 
     def get_object(self, key: str) -> Any:
-        validate_data_torrent_authority()
+        self._authority_validator()
         if self.gets >= self._budgets.r2_gets_max:
             raise RuntimeError("DATA_TORRENT_R2_GET_BUDGET_EXCEEDED")
         self.gets += 1
@@ -164,6 +171,7 @@ def upload_immutable_object(
     issuer: PostgresAuthorityIssuer,
     base_ledger: PostgresEffectLedger,
     store: CountingR2Store,
+    require_created: bool = False,
 ) -> DurableObjectReceipt:
     operation = EffectOperation(
         mission_id=mission_id,
@@ -190,7 +198,11 @@ def upload_immutable_object(
     if reserved is None:
         raise RuntimeError("DATA_TORRENT_R2_RESERVATION_MISSING")
     recorder.events.append(reserved)
-    executor = AttributableR2EffectExecutor(ledger=recorder, store=store)
+    executor = AttributableR2EffectExecutor(
+        ledger=recorder,
+        store=store,
+        resolve_precondition_with_get=not require_created,
+    )
     result = executor.dispatch_reserved(
         authority_id=authority_id,
         authority_receipt_hash=authority.authority_receipt_hash,
@@ -198,7 +210,8 @@ def upload_immutable_object(
         generation_token=generation_token,
         payload=payload,
     )
-    if result.event.event_type not in _TERMINAL:
+    terminal = frozenset({EffectEventType.CREATED_CONFIRMED}) if require_created else _TERMINAL
+    if result.event.event_type not in terminal:
         raise DurableObjectUploadError(
             "DATA_TORRENT_R2_DURABILITY_AMBIGUOUS",
             put_permit_consumed=result.put_permit_consumed,

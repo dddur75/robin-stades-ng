@@ -16,6 +16,7 @@ import secrets
 import time
 import uuid
 from collections.abc import Callable, Mapping, Sequence
+from contextvars import ContextVar
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -29,6 +30,7 @@ from psycopg import Connection
 import scripts.chronos_neon_pure_readonly_preflight_v4 as readonly_gate
 from robin.chronos_alembic import run_fenced_alembic
 from robin.chronos_production import (
+    DATA_TORRENT_RECOVERY_V2_NOT_BEFORE,
     EXPECTED_AFTER_REVISION,
     EXPECTED_BEFORE_REVISIONS,
     EXPECTED_REF,
@@ -38,9 +40,11 @@ from robin.chronos_production import (
     ChronosProductionError,
     DirectPostgresTarget,
     assert_exact_preflight_binding,
+    assert_exact_preflight_target,
     assert_production_safety_locks,
     build_scoped_database_url,
     connect_direct_postgres,
+    data_torrent_recovery_v2_sql_contract_marker,
     generation_hash,
     preflight_hash,
     require_generation_bound_password,
@@ -49,12 +53,15 @@ from robin.chronos_production import (
     sign_document,
     validate_controlled_go_binding,
     validate_data_torrent_authority,
+    validate_data_torrent_recovery_v2_authority,
     validate_direct_postgres_url,
     verify_signed_document,
 )
 from robin.chronos_role_lifecycle import (
     BOOTSTRAP_AUTHORITY,
     BOOTSTRAP_EXECUTOR_PREFIX,
+    CHRONOS_FUNCTION_SIGNATURES,
+    EXECUTOR_TOMBSTONE_MARKER,
     GROUP_ROLES,
     MIGRATOR_MARKER,
     acquire_lifecycle_lock,
@@ -67,6 +74,7 @@ from robin.chronos_role_lifecycle import (
     audit_terminal_lifecycle,
     cleanup_bootstrap_executor,
     disable_migrator,
+    neutralize_bootstrap_executor,
     provision_bootstrap_executor,
     provision_chronos_group_roles,
     provision_migrator,
@@ -88,6 +96,70 @@ from scripts.chronos_neon_pure_readonly_preflight_v4 import (
 
 NEON_API = "https://console.neon.tech/api/v2"
 RECOVERY_BRANCH_PREFIX = "chronos-pre-0015-recovery-"
+RECOVERY_V2_EXECUTOR_ROLE = BOOTSTRAP_EXECUTOR_PREFIX + "recoveryv2"
+_RECOVERY_V2_AUTHORITY_STAGE: ContextVar[str | None] = ContextVar(
+    "chronos_recovery_v2_authority_stage",
+    default=None,
+)
+
+
+def _recovery_v2_executor_terminal_proof() -> dict[str, Any]:
+    return {
+        "schema_version": "chronos-bootstrap-executor-terminal-v2",
+        "executor_role": RECOVERY_V2_EXECUTOR_ROLE,
+        "state": "NEUTRALIZED",
+        "marker": EXECUTOR_TOMBSTONE_MARKER,
+        "can_login": False,
+        "inherit": False,
+        "password_null": True,  # nosec B105
+        "valid_until_epoch": True,
+        "connection_limit": 0,
+        "membership_count": 0,
+        "session_count": 0,
+        "effective_chronos_privilege_count": 0,
+    }
+
+
+def _assert_recovery_v2_executor_terminal_observation(
+    *,
+    executor_rows: list[tuple[Any, ...]],
+    membership_count: int,
+    session_count: int,
+    effective_chronos_privilege_count: int,
+    migration_proof: object,
+) -> None:
+    expected_row = (
+        RECOVERY_V2_EXECUTOR_ROLE,
+        False,
+        False,
+        False,
+        False,
+        False,
+        False,
+        False,
+        0,
+        None,
+        True,
+        EXECUTOR_TOMBSTONE_MARKER,
+    )
+    if (
+        executor_rows != [expected_row]
+        or membership_count != 0
+        or session_count != 0
+        or effective_chronos_privilege_count != 0
+        or migration_proof != _recovery_v2_executor_terminal_proof()
+    ):
+        raise ChronosProductionError("CHRONOS_VERIFY_ROLE_LIFECYCLE_UNSAFE")
+
+
+def _validate_bootstrap_authority() -> None:
+    stage = _RECOVERY_V2_AUTHORITY_STAGE.get()
+    if stage is None:
+        validate_data_torrent_authority()
+    else:
+        validate_data_torrent_recovery_v2_authority(scale_stage=stage)
+
+
 MAX_RECOVERY_BRANCHES = 2
 EXPECTED_TABLES = (
     "chronos_effect_authorities",
@@ -141,9 +213,9 @@ def _connect_direct(
 ) -> Connection[Any]:
     """Seal every production connection against ambient libpq overrides."""
 
-    validate_data_torrent_authority()
+    _validate_bootstrap_authority()
     if effects is not None:
-        effects.postgresql_connection_attempts += 1
+        effects.reserve_postgresql_connections(1, exact=True)
     return connect_direct_postgres(database_url, connector=psycopg.connect)
 
 
@@ -166,6 +238,7 @@ class BootstrapEffects:
     neon_posts_exact: bool = True
     postgresql_connection_attempts: int = 0
     postgresql_connection_attempts_exact: bool = True
+    postgresql_connection_attempts_maximum: int | None = None
     recovery_branch_creations_upper_bound: int = 0
     recovery_branch_creations_exact: bool = True
     migration_dispatches: int = 0
@@ -174,6 +247,19 @@ class BootstrapEffects:
     sql_statements_exact: bool = True
     sql_write_statements_upper_bound: int = 0
     sql_write_statements_exact: bool = True
+
+    def reserve_postgresql_connections(self, count: int, *, exact: bool) -> None:
+        if count < 1:
+            raise ChronosProductionError("CHRONOS_POSTGRESQL_CONNECTION_RESERVATION_INVALID")
+        if (
+            self.postgresql_connection_attempts_maximum is not None
+            and self.postgresql_connection_attempts + count
+            > self.postgresql_connection_attempts_maximum
+        ):
+            raise ChronosProductionError("CHRONOS_POSTGRESQL_CONNECTION_BUDGET_EXHAUSTED")
+        self.postgresql_connection_attempts += count
+        if not exact:
+            self.postgresql_connection_attempts_exact = False
 
     def mark_sql_upper_bound(self, *, statements: int, writes: int) -> None:
         self.sql_statements_upper_bound = statements
@@ -249,25 +335,59 @@ def _required_public(name: str) -> str:
     return value
 
 
-def _assert_bootstrap_dispatch_ordinal(*, mode: str, main_sha: str) -> None:
+def _assert_bootstrap_dispatch_ordinal(
+    *,
+    mode: str,
+    main_sha: str,
+    workflow_file: str = "chronos-production-bootstrap-v3.yml",
+    recovery_v2_stage: str | None = None,
+) -> None:
     expected = {"PREFLIGHT": 1, "MIGRATE": 2, "VERIFY": 3}
     if mode not in expected:
         raise ChronosProductionError("CHRONOS_BOOTSTRAP_MODE_INVALID")
     raw_run_id = _required_public("GITHUB_RUN_ID")
-    if not raw_run_id.isascii() or not raw_run_id.isdigit() or raw_run_id == "0":
+    if (
+        not raw_run_id.isascii()
+        or not raw_run_id.isdigit()
+        or raw_run_id == "0"
+        or len(raw_run_id) > 18
+    ):
         raise ChronosProductionError("CHRONOS_BOOTSTRAP_RUN_ID_INVALID")
+    active_v2_stage = recovery_v2_stage or _RECOVERY_V2_AUTHORITY_STAGE.get()
+
+    def authority_validator() -> None:
+        if active_v2_stage is None:
+            validate_data_torrent_authority()
+        else:
+            validate_data_torrent_recovery_v2_authority(scale_stage=active_v2_stage)
+
     try:
+        authority_dispatches = (
+            readonly_gate._github_authority_window_dispatch_count(
+                EXPECTED_REPOSITORY,
+                int(raw_run_id),
+                main_sha,
+                workflow_file=workflow_file,
+                not_before=DATA_TORRENT_RECOVERY_V2_NOT_BEFORE,
+                authority_validator=authority_validator,
+            )
+            if active_v2_stage is not None
+            else None
+        )
         queued, in_progress, dispatches = readonly_gate._github_actions_state(
             EXPECTED_REPOSITORY,
             int(raw_run_id),
             main_sha,
-            workflow_file="chronos-production-bootstrap-v3.yml",
+            workflow_file=workflow_file,
+            authority_validator=authority_validator,
         )
+        if authority_dispatches is None:
+            authority_dispatches = dispatches
     except Exception:
         raise ChronosProductionError("CHRONOS_BOOTSTRAP_DISPATCH_HISTORY_INVALID") from None
     if queued != 0 or in_progress != 0:
         raise ChronosProductionError("CHRONOS_CONCURRENT_RUN_PRESENT")
-    if dispatches != expected[mode]:
+    if dispatches != expected[mode] or authority_dispatches != expected[mode]:
         raise ChronosProductionError("CHRONOS_BOOTSTRAP_DISPATCH_ORDINAL_MISMATCH")
 
 
@@ -302,7 +422,7 @@ def _write_json(path: Path, document: dict[str, Any]) -> None:
 
 
 def _rows(connection: Connection[Any], statement: str) -> list[dict[str, Any]]:
-    validate_data_torrent_authority()
+    _validate_bootstrap_authority()
     with connection.cursor() as cursor:
         cursor.execute(statement)
         names = [column.name for column in cursor.description or ()]
@@ -310,7 +430,7 @@ def _rows(connection: Connection[Any], statement: str) -> list[dict[str, Any]]:
 
 
 def _scalar(connection: Connection[Any], statement: str) -> object:
-    validate_data_torrent_authority()
+    _validate_bootstrap_authority()
     with connection.cursor() as cursor:
         cursor.execute(statement)
         row = cursor.fetchone()
@@ -378,11 +498,20 @@ def _bounded_neon_response_bytes(response: requests.Response) -> bytes:
 class NeonClient:
     """Small Neon API client whose exceptions never include response bodies."""
 
-    def __init__(self, api_key: str, *, effects: BootstrapEffects | None = None) -> None:
+    def __init__(
+        self,
+        api_key: str,
+        *,
+        effects: BootstrapEffects | None = None,
+        maximum_gets: int | None = None,
+        maximum_posts: int | None = None,
+    ) -> None:
         if not api_key:
             raise ChronosProductionError("CHRONOS_NEON_API_KEY_MISSING")
         self._api_key = api_key
         self._effects = effects
+        self._maximum_gets = maximum_gets
+        self._maximum_posts = maximum_posts
         self._session = requests.Session()
         self._session.trust_env = False
 
@@ -396,11 +525,18 @@ class NeonClient:
         route = f"{method.upper()} {path}"
         if not any(pattern.fullmatch(route) for pattern in _NEON_ALLOWED_ROUTES):
             raise ChronosProductionError("CHRONOS_NEON_ROUTE_FORBIDDEN")
-        validate_data_torrent_authority()
+        _validate_bootstrap_authority()
         if self._effects is not None:
             if method.upper() == "GET":
+                if self._maximum_gets is not None and self._effects.neon_gets >= self._maximum_gets:
+                    raise ChronosProductionError("CHRONOS_NEON_GET_BUDGET_EXHAUSTED")
                 self._effects.neon_gets += 1
             elif method.upper() == "POST":
+                if (
+                    self._maximum_posts is not None
+                    and self._effects.neon_posts >= self._maximum_posts
+                ):
+                    raise ChronosProductionError("CHRONOS_NEON_POST_BUDGET_EXHAUSTED")
                 self._effects.neon_posts += 1
                 self._effects.recovery_branch_creations_upper_bound = 1
                 self._effects.recovery_branch_creations_exact = False
@@ -525,6 +661,7 @@ def resolve_neon_identity(
             api_key,
             target,
             allow_idle=True,
+            authority_validator=_validate_bootstrap_authority,
         )
     except PreflightNoGo as error:
         if effects is not None:
@@ -970,7 +1107,12 @@ def _controlled_readonly_go(
 ) -> dict[str, Any]:
     """Require the exact controlled read-only GO before any mutable boundary."""
 
-    if not expected_run_id.isascii() or not expected_run_id.isdigit() or expected_run_id == "0":
+    if (
+        not expected_run_id.isascii()
+        or not expected_run_id.isdigit()
+        or expected_run_id == "0"
+        or len(expected_run_id) > 18
+    ):
         raise ChronosProductionError("CHRONOS_CONTROLLED_READONLY_RUN_ID_INVALID")
     try:
         payload = path.read_bytes()
@@ -1191,6 +1333,7 @@ def _controlled_go_durable_binding(
         not expected_seal_run_id.isascii()
         or not expected_seal_run_id.isdigit()
         or expected_seal_run_id == "0"
+        or len(expected_seal_run_id) > 18
     ):
         raise ChronosProductionError("CHRONOS_CONTROLLED_SEAL_RUN_ID_INVALID")
     try:
@@ -1584,8 +1727,13 @@ def run_migrate(
     preflight_path: Path,
     *,
     effects: BootstrapEffects | None = None,
+    recovery_v2: bool = False,
+    preflight_chain_validator: Callable[
+        [dict[str, Any], str], tuple[dict[str, Any], dict[str, Any]]
+    ]
+    | None = None,
 ) -> dict[str, Any]:
-    validate_data_torrent_authority()
+    _validate_bootstrap_authority()
     assert_production_safety_locks(os.environ)
     effect_counts = effects if effects is not None else BootstrapEffects()
     main_sha = require_sha(_required_public("GITHUB_SHA"), field="main_sha")
@@ -1597,9 +1745,22 @@ def run_migrate(
     if _required_public("GITHUB_RUN_ATTEMPT") != "1":
         raise ChronosProductionError("CHRONOS_RERUN_FORBIDDEN")
     migration_run_id = _required_public("GITHUB_RUN_ID")
-    if not migration_run_id.isascii() or not migration_run_id.isdigit() or migration_run_id == "0":
+    if (
+        not migration_run_id.isascii()
+        or not migration_run_id.isdigit()
+        or migration_run_id == "0"
+        or len(migration_run_id) > 18
+    ):
         raise ChronosProductionError("CHRONOS_MIGRATION_RUN_ID_INVALID")
-    _assert_bootstrap_dispatch_ordinal(mode="MIGRATE", main_sha=main_sha)
+    _assert_bootstrap_dispatch_ordinal(
+        mode="MIGRATE",
+        main_sha=main_sha,
+        workflow_file=(
+            "chronos-production-bootstrap-v4.yml"
+            if recovery_v2
+            else "chronos-production-bootstrap-v3.yml"
+        ),
+    )
     hold = _assert_hold()
     post_merge_ci = _assert_post_merge_ci_binding(hold, main_sha=main_sha)
     api_key = _required("NEON_API_KEY")
@@ -1624,10 +1785,17 @@ def run_migrate(
         or artifact.get("post_merge_ci_sha") != post_merge_ci["head_sha"]
     ):
         raise ChronosProductionError("CHRONOS_PREFLIGHT_CAUSAL_BINDING_MISMATCH")
-    controlled_go = validate_controlled_go_binding(
-        artifact.get("controlled_go"),
-        main_sha=main_sha,
-    )
+    runtime_bindings: dict[str, Any] | None = None
+    if recovery_v2:
+        if preflight_chain_validator is None:
+            raise ChronosProductionError("CHRONOS_PREFLIGHT_V2_VALIDATOR_MISSING")
+        release_binding, runtime_bindings = preflight_chain_validator(artifact, main_sha)
+    else:
+        release_binding = validate_controlled_go_binding(
+            artifact.get("controlled_go"),
+            main_sha=main_sha,
+        )
+    assert_exact_preflight_target(artifact, expected_target=target)
     preflight_expiry = _preflight_expiry(artifact)
     identity, _neon_observation = resolve_neon_identity(
         api_key,
@@ -1652,7 +1820,12 @@ def run_migrate(
         recovery_branch_id=recovery_branch_id,
         current_revision=str(artifact.get("current_revision", "")),
     )
-    client = NeonClient(api_key, effects=effect_counts)
+    client = NeonClient(
+        api_key,
+        effects=effect_counts,
+        maximum_gets=26 if recovery_v2 else None,
+        maximum_posts=0 if recovery_v2 else None,
+    )
     recovery = client.branch(identity.project_id, recovery_branch_id)
     _assert_recovery_branch_observation(
         recovery,
@@ -1670,7 +1843,11 @@ def run_migrate(
         raise ChronosProductionError("UNEXPECTED_DATABASE_REVISION")
     migrator_password = secrets.token_urlsafe(48)
     executor_password = secrets.token_urlsafe(48)
-    executor_role = BOOTSTRAP_EXECUTOR_PREFIX + uuid.uuid4().hex[:16]
+    executor_role = (
+        RECOVERY_V2_EXECUTOR_ROLE
+        if recovery_v2
+        else BOOTSTRAP_EXECUTOR_PREFIX + uuid.uuid4().hex[:16]
+    )
     executor_valid_until = min(
         preflight_expiry,
         _utc_now() + timedelta(minutes=9),
@@ -1683,6 +1860,7 @@ def run_migrate(
     group_audit: dict[str, Any] | None = None
     migrator_audit: dict[str, Any] | None = None
     final_audit: dict[str, Any] | None = None
+    executor_terminal_state: dict[str, Any] | None = None
     dispatches = 0
     return_code: int | None = 0
     outcome = "MIGRATION_RESUMED"
@@ -1721,6 +1899,8 @@ def run_migrate(
             password=executor_password,
             valid_until=executor_valid_until,
             lifecycle_lock_held=True,
+            allow_stale_cleanup=not recovery_v2,
+            neutralize_on_failure=recovery_v2,
         )
         executor_url = build_scoped_database_url(
             target,
@@ -1794,9 +1974,8 @@ def run_migrate(
                 # Alembic owns its internal connection lifecycle. Reserve a
                 # conservative bound before dispatch so an exception cannot
                 # under-report production connection attempts.
-                effect_counts.postgresql_connection_attempts += 4
-                effect_counts.postgresql_connection_attempts_exact = False
-                validate_data_torrent_authority()
+                effect_counts.reserve_postgresql_connections(4, exact=False)
+                _validate_bootstrap_authority()
                 run_fenced_alembic(migrator_url, MIGRATION_TARGET)
                 return_code = 0
             finally:
@@ -1874,19 +2053,33 @@ def run_migrate(
         reset_permanent_bootstrap_authority(authority_connection)
         authority_connection.close()
         authority_connection = None
-        cleanup_bootstrap_executor(
-            admin,
-            executor_role=lease.executor_role,
-            authority=lease.authority,
-            lifecycle_admin=lease.lifecycle_admin,
-            lifecycle_admin_superuser=lease.lifecycle_admin_superuser,
-        )
+        if recovery_v2:
+            neutralize_bootstrap_executor(
+                admin,
+                executor_role=lease.executor_role,
+                authority=lease.authority,
+                lifecycle_admin=lease.lifecycle_admin,
+                lifecycle_admin_superuser=lease.lifecycle_admin_superuser,
+            )
+        else:
+            cleanup_bootstrap_executor(
+                admin,
+                executor_role=lease.executor_role,
+                authority=lease.authority,
+                lifecycle_admin=lease.lifecycle_admin,
+                lifecycle_admin_superuser=lease.lifecycle_admin_superuser,
+            )
         terminal_audit = audit_terminal_lifecycle(
             admin,
             bootstrap_owner=bootstrap_owner,
             lifecycle_admin=lease.lifecycle_admin,
             migrator_role=migrator_role,
+            retained_executor_role=lease.executor_role if recovery_v2 else None,
         ).report()
+        if recovery_v2:
+            if terminal_audit["executor_membership_count"] != 0:
+                raise ChronosProductionError("CHRONOS_BOOTSTRAP_EXECUTOR_TERMINAL_PROOF_INVALID")
+            executor_terminal_state = _recovery_v2_executor_terminal_proof()
         release_lifecycle_lock(admin)
         lock_held = False
         admin.close()
@@ -1899,7 +2092,11 @@ def run_migrate(
                 "migration_cycle": "NOT_RUN_IN_PRODUCTION_ACTIVATION",
                 "password_state": {
                     "bootstrap_authority": "NEVER_LOGIN_PASSWORD_NULL",
-                    "bootstrap_executor": "DELETED_BY_EXTERNAL_ADMIN",
+                    "bootstrap_executor": (
+                        "RETAINED_NOLOGIN_PASSWORD_NULL_NO_MEMBERSHIPS_NO_CHRONOS_FUNCTIONAL_PRIVILEGES"
+                        if recovery_v2
+                        else "DELETED_BY_EXTERNAL_ADMIN"
+                    ),
                     "migrator": "CLEARED_BY_COMMITTED_ALTER_ROLE",
                     "catalog_visibility": "PG_AUTHID_ROLPASSWORD_SELECT_PROVEN",
                 },
@@ -1936,13 +2133,22 @@ def run_migrate(
         if lease is not None:
 
             def cleanup_executor() -> None:
-                cleanup_bootstrap_executor(
-                    admin,
-                    executor_role=lease.executor_role,
-                    authority=lease.authority,
-                    lifecycle_admin=lease.lifecycle_admin,
-                    lifecycle_admin_superuser=lease.lifecycle_admin_superuser,
-                )
+                if recovery_v2:
+                    neutralize_bootstrap_executor(
+                        admin,
+                        executor_role=lease.executor_role,
+                        authority=lease.authority,
+                        lifecycle_admin=lease.lifecycle_admin,
+                        lifecycle_admin_superuser=lease.lifecycle_admin_superuser,
+                    )
+                else:
+                    cleanup_bootstrap_executor(
+                        admin,
+                        executor_role=lease.executor_role,
+                        authority=lease.authority,
+                        lifecycle_admin=lease.lifecycle_admin,
+                        lifecycle_admin_superuser=lease.lifecycle_admin_superuser,
+                    )
 
             cleanup_steps.append(cleanup_executor)
         if lock_held:
@@ -1951,7 +2157,9 @@ def run_migrate(
         _attempt_cleanup_steps(cleanup_steps)
         raise
     output: dict[str, Any] = {
-        "schema_version": "chronos-bootstrap-output-v3",
+        "schema_version": (
+            "chronos-production-migrate-v2" if recovery_v2 else "chronos-bootstrap-output-v3"
+        ),
         "database_host": target.host,
         "database_port": target.port,
         "database_name": target.database,
@@ -1976,14 +2184,28 @@ def run_migrate(
         "preflight_hash": artifact["preflight_hash"],
         "migration_run_id": migration_run_id,
         "migration_run_attempt": "1",
-        "controlled_go": controlled_go,
         "effects": effect_counts.snapshot(),
     }
+    if recovery_v2:
+        if executor_terminal_state is None:
+            raise ChronosProductionError("CHRONOS_BOOTSTRAP_EXECUTOR_TERMINAL_PROOF_MISSING")
+        output.update(
+            identity_seal=release_binding,
+            runtime_bindings=runtime_bindings,
+            bootstrap_executor_terminal=executor_terminal_state,
+        )
+    else:
+        output["controlled_go"] = release_binding
     signed_output = sign_document(output, nonce)
-    _write_json(report_dir / "chronos-bootstrap-output-v3.json", signed_output)
+    migration_filename = (
+        "chronos-production-migrate-v2.json" if recovery_v2 else "chronos-bootstrap-output-v3.json"
+    )
+    _write_json(report_dir / migration_filename, signed_output)
     report = {
-        "schema_version": "chronos-neon-migration-v3",
-        "verdict": "NEON_CHRONOS_0015_MIGRATED",
+        "schema_version": (
+            "chronos-neon-migration-v2" if recovery_v2 else "chronos-neon-migration-v3"
+        ),
+        "verdict": ("MIGRATE_0015_COMPLETE_V2" if recovery_v2 else "NEON_CHRONOS_0015_MIGRATED"),
         "scoped_identities": "CHRONOS_SCOPED_IDENTITIES_READY",
         "migration_outcome": outcome,
         "migration_dispatches": dispatches,
@@ -2005,14 +2227,25 @@ def run_migrate(
         "forbidden_membership": 0,
         "migrator_runtime_membership": 0,
         "runtime_effective_bootstrap_edge": 0,
-        "controlled_go": controlled_go,
         "preflight_hash": artifact["preflight_hash"],
         "provider_calls": 0,
         "r2_operations": 0,
         "destructive_sql": 0,
         "effects": effect_counts.snapshot(),
     }
-    _write_json(report_dir / "chronos-neon-migration-v3.json", report)
+    if recovery_v2:
+        report.update(
+            identity_seal=release_binding,
+            runtime_bindings=runtime_bindings,
+            bootstrap_executor_terminal=executor_terminal_state,
+        )
+    else:
+        report["controlled_go"] = release_binding
+    _write_json(
+        report_dir
+        / ("chronos-neon-migration-v2.json" if recovery_v2 else "chronos-neon-migration-v3.json"),
+        report,
+    )
     return report
 
 
@@ -2021,8 +2254,13 @@ def run_verify(
     migration_path: Path,
     *,
     effects: BootstrapEffects | None = None,
+    recovery_v2: bool = False,
+    migration_chain_validator: Callable[
+        [dict[str, Any], str], tuple[dict[str, Any], dict[str, Any]]
+    ]
+    | None = None,
 ) -> dict[str, Any]:
-    validate_data_torrent_authority()
+    _validate_bootstrap_authority()
     assert_production_safety_locks(os.environ)
     effect_counts = effects if effects is not None else BootstrapEffects()
     main_sha = require_sha(_required_public("GITHUB_SHA"), field="main_sha")
@@ -2036,9 +2274,22 @@ def run_verify(
     verify_run_id = _required_public("GITHUB_RUN_ID")
     expected_migration_run_id = _required_public("CHRONOS_EXPECTED_MIGRATION_RUN_ID")
     for run_id in (verify_run_id, expected_migration_run_id):
-        if not run_id.isascii() or not run_id.isdigit() or run_id == "0":
+        if (
+            not run_id.isascii()
+            or not run_id.isdigit()
+            or run_id == "0"
+            or len(run_id) > 18
+        ):
             raise ChronosProductionError("CHRONOS_VERIFY_RUN_ID_INVALID")
-    _assert_bootstrap_dispatch_ordinal(mode="VERIFY", main_sha=main_sha)
+    _assert_bootstrap_dispatch_ordinal(
+        mode="VERIFY",
+        main_sha=main_sha,
+        workflow_file=(
+            "chronos-production-bootstrap-v4.yml"
+            if recovery_v2
+            else "chronos-production-bootstrap-v3.yml"
+        ),
+    )
     hold = _assert_hold()
     post_merge_ci = _assert_post_merge_ci_binding(hold, main_sha=main_sha)
     nonce = require_hash(
@@ -2057,7 +2308,8 @@ def run_verify(
         field="preflight_hash",
     )
     if (
-        migration.get("schema_version") != "chronos-bootstrap-output-v3"
+        migration.get("schema_version")
+        != ("chronos-production-migrate-v2" if recovery_v2 else "chronos-bootstrap-output-v3")
         or migration.get("main_sha") != main_sha
         or migration.get("workflow_sha") != workflow_sha
         or migration.get("post_merge_ci_sha") != post_merge_ci["head_sha"]
@@ -2066,12 +2318,23 @@ def run_verify(
         or migration.get("revision") != EXPECTED_AFTER_REVISION
         or migration.get("generation_hash") != generation_hash(nonce)
         or not isinstance(migration.get("preflight_run_id"), str)
+        or (
+            recovery_v2
+            and migration.get("bootstrap_executor_terminal")
+            != _recovery_v2_executor_terminal_proof()
+        )
     ):
         raise ChronosProductionError("CHRONOS_MIGRATION_CAUSAL_BINDING_MISMATCH")
-    controlled_go = validate_controlled_go_binding(
-        migration.get("controlled_go"),
-        main_sha=main_sha,
-    )
+    runtime_bindings: dict[str, Any] | None = None
+    if recovery_v2:
+        if migration_chain_validator is None:
+            raise ChronosProductionError("CHRONOS_MIGRATION_V2_VALIDATOR_MISSING")
+        release_binding, runtime_bindings = migration_chain_validator(migration, main_sha)
+    else:
+        release_binding = validate_controlled_go_binding(
+            migration.get("controlled_go"),
+            main_sha=main_sha,
+        )
     urls = {
         "authority": _required("CHRONOS_AUTHORITY_DATABASE_URL"),
         "runtime": _required("CHRONOS_RUNTIME_DATABASE_URL"),
@@ -2153,10 +2416,14 @@ def run_verify(
             )
             lifecycle_roles = cursor.fetchall()
             cursor.execute(
-                "SELECT count(*) FROM pg_catalog.pg_roles WHERE rolname LIKE %s",
+                "SELECT rolname,rolcanlogin,rolinherit,rolsuper,rolcreatedb,rolcreaterole,"
+                "rolreplication,rolbypassrls,rolconnlimit,rolconfig,"
+                "rolvaliduntil=to_timestamp(0),"
+                "pg_catalog.shobj_description(oid,'pg_authid') "
+                "FROM pg_catalog.pg_roles WHERE rolname LIKE %s ORDER BY rolname",
                 (BOOTSTRAP_EXECUTOR_PREFIX + "%",),
             )
-            executor_row = cursor.fetchone()
+            executor_rows = cursor.fetchall()
             cursor.execute(
                 "SELECT count(*) FROM pg_catalog.pg_auth_members m "
                 "JOIN pg_catalog.pg_roles granted ON granted.oid=m.roleid "
@@ -2165,6 +2432,52 @@ def run_verify(
                 (BOOTSTRAP_EXECUTOR_PREFIX + "%", BOOTSTRAP_EXECUTOR_PREFIX + "%"),
             )
             membership_row = cursor.fetchone()
+            cursor.execute(
+                "SELECT count(*) FROM pg_catalog.pg_stat_activity WHERE usename LIKE %s",
+                (BOOTSTRAP_EXECUTOR_PREFIX + "%",),
+            )
+            executor_session_row = cursor.fetchone()
+            if recovery_v2:
+                cursor.execute(
+                    "SELECT "
+                    "(pg_catalog.has_schema_privilege(%s,'public','CREATE'))::int + "
+                    "(SELECT count(*) FROM pg_catalog.pg_class c "
+                    "JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace "
+                    "CROSS JOIN unnest(ARRAY['SELECT','INSERT','UPDATE','DELETE','TRUNCATE',"
+                    "'REFERENCES','TRIGGER']) privilege "
+                    "WHERE n.nspname='public' AND (c.relname LIKE 'chronos\\_%%' ESCAPE '\\' "
+                    "OR c.relname='alembic_version') AND c.relkind IN ('r','p','v','m','f') "
+                    "AND pg_catalog.has_table_privilege(%s,c.oid,privilege)) + "
+                    "(SELECT count(*) FROM pg_catalog.pg_attribute a "
+                    "JOIN pg_catalog.pg_class c ON c.oid=a.attrelid "
+                    "JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace "
+                    "CROSS JOIN unnest(ARRAY['SELECT','INSERT','UPDATE','REFERENCES']) privilege "
+                    "WHERE n.nspname='public' AND (c.relname LIKE 'chronos\\_%%' ESCAPE '\\' "
+                    "OR c.relname='alembic_version') AND c.relkind IN ('r','p','v','m','f') "
+                    "AND a.attnum>0 AND NOT a.attisdropped "
+                    "AND pg_catalog.has_column_privilege(%s,c.oid,a.attnum,privilege)) + "
+                    "(SELECT count(*) FROM pg_catalog.pg_class c "
+                    "JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace "
+                    "CROSS JOIN unnest(ARRAY['SELECT','USAGE','UPDATE']) privilege "
+                    "WHERE n.nspname='public' AND c.relname LIKE 'chronos\\_%%' ESCAPE '\\' "
+                    "AND c.relkind='S' "
+                    "AND pg_catalog.has_sequence_privilege(%s,c.oid,privilege)) + "
+                    "(SELECT count(*) FROM pg_catalog.pg_proc p "
+                    "JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace "
+                    "WHERE n.nspname='public' AND p.proname=ANY(%s) "
+                    "AND pg_catalog.has_function_privilege(%s,p.oid,'EXECUTE'))",
+                    (
+                        RECOVERY_V2_EXECUTOR_ROLE,
+                        RECOVERY_V2_EXECUTOR_ROLE,
+                        RECOVERY_V2_EXECUTOR_ROLE,
+                        RECOVERY_V2_EXECUTOR_ROLE,
+                        list(CHRONOS_FUNCTION_SIGNATURES),
+                        RECOVERY_V2_EXECUTOR_ROLE,
+                    ),
+                )
+                executor_privilege_row = cursor.fetchone()
+            else:
+                executor_privilege_row = (0,)
             cursor.execute(
                 "SELECT count(*) FROM pg_catalog.pg_roles r "
                 "WHERE r.rolname=ANY(%s) AND "
@@ -2177,13 +2490,69 @@ def run_verify(
                 ),
             )
             runtime_path_row = cursor.fetchone()
-        if executor_row is None or membership_row is None or runtime_path_row is None:
+            if recovery_v2:
+                cursor.execute(
+                    "SELECT pg_catalog.to_regprocedure(%s) IS NOT NULL",
+                    (
+                        "public.chronos_claim_opportunity("
+                        + CHRONOS_FUNCTION_SIGNATURES["chronos_claim_opportunity"]
+                        + ")",
+                    ),
+                )
+                opportunity_claim_row = cursor.fetchone()
+                cursor.execute(
+                    "SELECT pg_catalog.obj_description(p.oid,'pg_proc'),"
+                    "pg_catalog.pg_get_functiondef(p.oid) "
+                    "FROM pg_catalog.pg_proc p WHERE p.oid=pg_catalog.to_regprocedure(%s)",
+                    (
+                        "public.chronos_record_torrent_batch("
+                        + CHRONOS_FUNCTION_SIGNATURES["chronos_record_torrent_batch"]
+                        + ")",
+                    ),
+                )
+                torrent_contract_row = cursor.fetchone()
+            else:
+                opportunity_claim_row = (True,)
+                torrent_contract_row = ("", "")
+        if (
+            membership_row is None
+            or executor_session_row is None
+            or executor_privilege_row is None
+            or runtime_path_row is None
+            or opportunity_claim_row is None
+            or torrent_contract_row is None
+        ):
             raise ChronosProductionError("CHRONOS_VERIFY_ROLE_LIFECYCLE_MISSING")
-        executor_count = int(executor_row[0])
+        executor_count = len(executor_rows)
         executor_memberships = int(membership_row[0])
+        executor_sessions = int(executor_session_row[0])
+        executor_effective_chronos_privileges = int(executor_privilege_row[0])
         runtime_authority_paths = int(runtime_path_row[0])
+        opportunity_claim_active = bool(opportunity_claim_row[0])
+        torrent_contract_definition = str(torrent_contract_row[1])
+        torrent_recovery_v2_contract_active = torrent_contract_row[
+            0
+        ] == data_torrent_recovery_v2_sql_contract_marker(torrent_contract_definition) and all(
+            marker in torrent_contract_definition
+            for marker in (
+                "data-torrent-recovery-v2",
+                "DIRECT_CREATED_DURABLE_BINDING_V2",
+                "robin-data-torrent-normalized-evidence-binding-v2",
+                "DIRECT_CREATED_CONFIRMED_BEFORE_REPLAY_V2",
+                "GITHUB_RUN_ARTIFACT_AFTER_REPLAY_AND_TERMINAL_QA",
+            )
+        )
         authority_rows = [row for row in lifecycle_roles if str(row[0]) == BOOTSTRAP_AUTHORITY]
         migrator_rows = [row for row in lifecycle_roles if str(row[0]) != BOOTSTRAP_AUTHORITY]
+        expected_executor_count = 1 if recovery_v2 else 0
+        if recovery_v2:
+            _assert_recovery_v2_executor_terminal_observation(
+                executor_rows=executor_rows,
+                membership_count=executor_memberships,
+                session_count=executor_sessions,
+                effective_chronos_privilege_count=executor_effective_chronos_privileges,
+                migration_proof=migration.get("bootstrap_executor_terminal"),
+            )
         if (
             len(authority_rows) != 1
             or bool(authority_rows[0][1])
@@ -2191,9 +2560,13 @@ def run_verify(
             or len(migrator_rows) != 1
             or bool(migrator_rows[0][1])
             or bool(migrator_rows[0][2])
-            or executor_count
+            or executor_count != expected_executor_count
             or executor_memberships
+            or executor_sessions
+            or executor_effective_chronos_privileges
             or runtime_authority_paths
+            or not opportunity_claim_active
+            or (recovery_v2 and not torrent_recovery_v2_contract_active)
         ):
             raise ChronosProductionError("CHRONOS_VERIFY_ROLE_LIFECYCLE_UNSAFE")
     _write_json(
@@ -2205,12 +2578,18 @@ def run_verify(
             "migrator_role": str(migrator_rows[0][0]),
             "executor_role_count": executor_count,
             "executor_membership_count": executor_memberships,
+            "executor_session_count": executor_sessions,
+            "executor_effective_chronos_privilege_count": (executor_effective_chronos_privileges),
             "runtime_to_authority_path_count": runtime_authority_paths,
         },
     )
     result = {
-        "schema_version": "chronos-production-verify-v3",
-        "verdict": "CHRONOS_SCOPED_IDENTITIES_READY",
+        "schema_version": (
+            "chronos-production-verify-v2" if recovery_v2 else "chronos-production-verify-v3"
+        ),
+        "verdict": (
+            "VERIFY_0015_COMPLETE_V2" if recovery_v2 else "CHRONOS_SCOPED_IDENTITIES_READY"
+        ),
         "revision": EXPECTED_AFTER_REVISION,
         "identities": reports,
         "business_data_modified": False,
@@ -2230,12 +2609,30 @@ def run_verify(
         "verify_run_id": verify_run_id,
         "verify_run_attempt": "1",
         "migration_output_signature_algorithm": "HMAC-SHA256",
-        "controlled_go": controlled_go,
         "effects": effect_counts.snapshot(),
     }
+    if recovery_v2:
+        result.update(
+            identity_seal=release_binding,
+            runtime_bindings=runtime_bindings,
+            production_database_revision_verified=True,
+            chronos_opportunity_claim_active=opportunity_claim_active,
+            torrent_recovery_v2_contract_active=torrent_recovery_v2_contract_active,
+            runtime_bindings_present=4,
+        )
+    else:
+        result["controlled_go"] = release_binding
     normalized_result = cast(dict[str, Any], _json_value(result))
     signed_result = sign_document(normalized_result, nonce)
-    _write_json(report_dir / "chronos-production-verify-v3.json", signed_result)
+    _write_json(
+        report_dir
+        / (
+            "chronos-production-verify-v2.json"
+            if recovery_v2
+            else "chronos-production-verify-v3.json"
+        ),
+        signed_result,
+    )
     return signed_result
 
 

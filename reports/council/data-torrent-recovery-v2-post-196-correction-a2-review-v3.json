@@ -1,0 +1,44 @@
+{
+  "agent_id": "A2",
+  "mission_id": "DATA_TORRENT_RECOVERY_V2",
+  "facts_verified": [
+    {
+      "claim": "The independently recomputed reviewed-candidate projection contains exactly 135 sorted paths and hashes to the frozen post-196 correction snapshot while excluding all review-owned artifacts, ledger and evidence graph.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:a1b409e7c2cb2c558df38e559eb4e0c8431ececc9b290de53025813925651421",
+        "src/robin/chronos_production.py:data_torrent_recovery_v2_reviewed_candidate_projection"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The terminal contract accepts exactly three ordered runtime successors after the active release and rejects zero, one, two or four successors at the inappropriate closure boundary.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:a1b409e7c2cb2c558df38e559eb4e0c8431ececc9b290de53025813925651421",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:test_terminal_council_closure_requires_exactly_three_ordered_successors",
+        "src/robin/chronos_production.py:_validate_recovery_v2_council_successors"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The Windows LF policy covers manifests, Council JSON, ledger, evidence graph and recursive terminal evidence so checkout materialization cannot silently change authenticated bytes.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:a1b409e7c2cb2c558df38e559eb4e0c8431ececc9b290de53025813925651421",
+        ".gitattributes",
+        "scripts/check_data_torrent_recovery_v2_scope.py"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [],
+  "assumptions": [],
+  "main_objection": "P0=0; P1=0; P2=0; OPEN_THREADS=0; VERDICT=PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "risks": [],
+  "minimum_decisive_test": "RECOMPUTE_135_PATH_PROJECTION_VALIDATE_THREE_SUCCESSORS_AND_VERIFY_LF_MATERIALIZATION_RULES",
+  "recommended_action": "PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "scale_condition": "EXACT_HEAD_SAFE_V2_GREEN_NORMAL_MERGE_POSTMERGE_SAFE_V2_GREEN",
+  "estimated_compute": "READ_ONLY_PLATFORM_REVIEW_HASH_RECOMPUTATION_AND_TARGETED_MUTANTS_ONLY",
+  "estimated_external_cost": "ZERO; NO_NETWORK_OR_EXTERNAL_EFFECTS",
+  "estimated_human_time": "ONE_POST_196_PLATFORM_REVIEW",
+  "maintenance_impact": "LOW; PROJECTION_SUCCESSOR_AND_BYTE_MATERIALIZATION_CONTRACTS_ARE_MACHINE_CHECKED",
+  "confidence": 0.99
+}

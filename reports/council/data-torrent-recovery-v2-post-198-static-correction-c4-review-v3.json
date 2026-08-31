@@ -1,0 +1,45 @@
+{
+  "agent_id": "C4",
+  "mission_id": "DATA_TORRENT_RECOVERY_V2",
+  "facts_verified": [
+    {
+      "claim": "R4 consumes only the canonical R3 predecessor cache, validates the final R3 controller success and its exact receipt SHA, and performs no replacement attestation request.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:7f9b63e9344c55d538a0a0ee4e12966ba004feabebdc814685ea138850b448cc",
+        "scripts/install_chronos_runtime_bindings_v2.py:install",
+        "tests/activation/test_chronos_runtime_bindings_v2.py:test_install_consumes_the_canonical_r3_predecessor_cache_without_raw_copy"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The complete 439-second R4 effect schedule is admitted strictly before reservation against PREFLIGHT TTL, outer deadline and effect window, and expiry during the final hold prevents a success receipt after four PUTs.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:7f9b63e9344c55d538a0a0ee4e12966ba004feabebdc814685ea138850b448cc",
+        "tests/activation/test_chronos_runtime_bindings_v2.py:test_full_effect_schedule_must_fit_preflight_ttl_before_reservation",
+        "tests/activation/test_chronos_runtime_bindings_v2.py:test_preflight_expiring_during_final_hold_refuses_success_after_four_puts"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Provider neutralization and workflow quarantine use distinct exact 300-second deadlines and validate tokens and local prerequisites before one-shot reservation.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:7f9b63e9344c55d538a0a0ee4e12966ba004feabebdc814685ea138850b448cc",
+        "scripts/dispatch_data_torrent_recovery_v2_stage.py:run_legacy_provider_branch_neutralization",
+        "scripts/dispatch_data_torrent_recovery_v2_stage.py:run_postmerge_quarantine"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [],
+  "assumptions": [],
+  "main_objection": "P0=0; P1=0; P2=0; OPEN_THREADS=0; VERDICT=PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "risks": [],
+  "minimum_decisive_test": "MUTATE_CANONICAL_CACHE_CONTROLLER_RECEIPT_TTL_FINAL_HOLD_TOKEN_ORDER_AND_E1_DEADLINES_BEFORE_ANY_EFFECT",
+  "recommended_action": "PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "scale_condition": "EXACT_HEAD_SAFE_V2_GREEN_NORMAL_MERGE_POSTMERGE_SAFE_V2_GREEN",
+  "estimated_compute": "TARGETED_RUNTIME_EFFECT_BOUNDARY_TESTS_ONLY",
+  "estimated_external_cost": "ZERO; NO_NETWORK_OR_EXTERNAL_EFFECTS",
+  "estimated_human_time": "ONE_POST_198_EFFECT_CONTRACT_REVIEW",
+  "maintenance_impact": "LOW; DEADLINES PROVENANCE AND ONE_SHOT ORDERING ARE EXPLICIT",
+  "confidence": 0.99
+}

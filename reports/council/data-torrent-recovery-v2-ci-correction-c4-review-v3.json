@@ -1,0 +1,48 @@
+{
+  "agent_id": "C4",
+  "mission_id": "DATA_TORRENT_RECOVERY_V2",
+  "facts_verified": [
+    {
+      "claim": "Windows targets are held behind a Job Object assignment gate, enforce output caps immediately, distinguish stale accounting from listed live PIDs, terminate residual descendants once, and confirm quiescence under the original cleanup deadline.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:104b3e9b0fbfc08f3211b37d4f61c224947f084dda711a3baac1d836d34c6ccc",
+        "src/robin/capture/workspace_bootstrap.py:_WindowsJobObject",
+        "scripts/recovery_v2_supervision.py:_run_captured_windows_child_once",
+        "tests/activation/test_recovery_v2_supervision.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Linux Recovery targets execute as non-root PID-namespace PID 1 children after setgroups, setgid, setuid and no_new_privs, receive capabilities only through SCM_RIGHTS, and are killed through a pre-release pidfd plus the outer process group on anomaly.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:104b3e9b0fbfc08f3211b37d4f61c224947f084dda711a3baac1d836d34c6ccc",
+        "scripts/recovery_v2_supervision.py:_POSIX_NAMESPACE_GATE_SOURCE",
+        "scripts/recovery_v2_supervision.py:_start_posix_namespace_gate",
+        "tests/activation/test_recovery_v2_supervision.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Sensitive environment values and capability descriptors are not placed in command arguments or repository artifacts, production secret values remain unobserved locally, and every external effect remains default-deny before release gates.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:104b3e9b0fbfc08f3211b37d4f61c224947f084dda711a3baac1d836d34c6ccc",
+        "scripts/install_chronos_runtime_bindings_v2.py",
+        "scripts/github_release_attestation_v2.py",
+        "configs/execution/data-torrent-recovery-v2-effect-contract.json"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [],
+  "assumptions": [],
+  "main_objection": "P0=0; P1=0; P2=0; OPEN_THREADS=0; VERDICT=PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "risks": [],
+  "minimum_decisive_test": "MUTATE_TIMEOUT_OUTPUT_ACCOUNTING_PID_NAMESPACE_CAPABILITY_AND_RESERVATION_BOUNDARIES_AND_REQUIRE_FAIL_CLOSED_ZERO_RELEASE",
+  "recommended_action": "PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "scale_condition": "EXACT_HEAD_SAFE_V2_GREEN_NORMAL_MERGE_POSTMERGE_SAFE_V2_GREEN",
+  "estimated_compute": "READ_ONLY_SECURITY_REVIEW_TARGETED_PROCESS_TREE_MUTANTS_RUFF_MYPY_AND_BANDIT_ONLY",
+  "estimated_external_cost": "ZERO; NO_NETWORK_OR_EXTERNAL_EFFECTS",
+  "estimated_human_time": "ONE_FINAL_SECURITY_RELEASE_REVIEW",
+  "maintenance_impact": "LOW; SECURITY_BOUNDARIES_ARE_CENTRALIZED_FAIL_CLOSED_AND_COVERED_BY_ADVERSARIAL_TESTS",
+  "confidence": 0.99
+}

@@ -183,19 +183,20 @@ def dispatch(mode: str, *, observed: bytes | None = None) -> tuple[Any, FakeStor
 
 
 def test_operation_id_golden_and_run_attempt_binding() -> None:
-    assert derive_operation_id(
-        mission_id="mission-e1",
-        github_run_id=123456,
-        github_run_attempt=2,
-        resource_kind="R2_OBJECT",
-        canonical_key="chronos/test.json",
-        canonical_payload_hash="ab" * 32,
-    ) == "88f560d254938d04a563b12aec9d6b428910a0a064056a0ff33092afd7739b3e"
+    assert (
+        derive_operation_id(
+            mission_id="mission-e1",
+            github_run_id=123456,
+            github_run_attempt=2,
+            resource_kind="R2_OBJECT",
+            canonical_key="chronos/test.json",
+            canonical_payload_hash="ab" * 32,
+        )
+        == "88f560d254938d04a563b12aec9d6b428910a0a064056a0ff33092afd7739b3e"
+    )
     first = operation()
     assert first.operation_id == operation().operation_id
-    assert first.operation_id != operation(
-        run=identity(github_run_attempt=3)
-    ).operation_id
+    assert first.operation_id != operation(run=identity(github_run_attempt=3)).operation_id
 
 
 @pytest.mark.parametrize(
@@ -271,11 +272,14 @@ def test_half_open_expiry_blocks_claim_and_dispatch_without_put() -> None:
 
     clock, ledger, authority_id, item, receipt_hash = reserved(ttl_seconds=1)
     clock.value += timedelta(seconds=1)
-    assert ledger.claim_effect_authority(
-        authority_id=authority_id,
-        operation=item,
-        generation_token=GENERATION,
-    ).authority_receipt_hash == receipt_hash
+    assert (
+        ledger.claim_effect_authority(
+            authority_id=authority_id,
+            operation=item,
+            generation_token=GENERATION,
+        ).authority_receipt_hash
+        == receipt_hash
+    )
     store = FakeStore("created")
     result = AttributableR2EffectExecutor(ledger=ledger, store=store).dispatch_reserved(
         authority_id=authority_id,
@@ -299,12 +303,15 @@ def test_finalization_after_expiry_is_allowed_but_epoch_is_not() -> None:
         event_type=EffectEventType.PUT_DISPATCHED,
     )
     clock.value += timedelta(seconds=2)
-    assert ledger.append_event(
-        authority_id=authority_id,
-        operation=item,
-        generation_token=GENERATION,
-        event_type=EffectEventType.CREATED_CONFIRMED,
-    ).event_type is EffectEventType.CREATED_CONFIRMED
+    assert (
+        ledger.append_event(
+            authority_id=authority_id,
+            operation=item,
+            generation_token=GENERATION,
+            event_type=EffectEventType.CREATED_CONFIRMED,
+        ).event_type
+        is EffectEventType.CREATED_CONFIRMED
+    )
 
     _, ledger, authority_id, item, _ = reserved()
     ledger.append_event(
@@ -450,13 +457,16 @@ def test_restore_fence_is_checked_before_recovery_get() -> None:
     _, ledger, authority_id, item, receipt_hash = reserved()
     store = FakeStore("ambiguous")
     executor = AttributableR2EffectExecutor(ledger=ledger, store=store)
-    assert executor.dispatch_reserved(
-        authority_id=authority_id,
-        authority_receipt_hash=receipt_hash,
-        operation=item,
-        generation_token=GENERATION,
-        payload=PAYLOAD,
-    ).event.event_type is EffectEventType.PUT_COMMITTED_ACTUAL_PENDING
+    assert (
+        executor.dispatch_reserved(
+            authority_id=authority_id,
+            authority_receipt_hash=receipt_hash,
+            operation=item,
+            generation_token=GENERATION,
+            payload=PAYLOAD,
+        ).event.event_type
+        is EffectEventType.PUT_COMMITTED_ACTUAL_PENDING
+    )
     ledger.restart_server_for_test(EPOCH + timedelta(hours=1))
     with pytest.raises(ChronosControlPlaneError, match="CHRONOS_SERVER_EPOCH_MISMATCH"):
         executor.observe_pending(
@@ -505,6 +515,27 @@ def test_immediate_412_get_consumes_the_only_read_permit() -> None:
         EffectEventType.R2_GET_DISPATCHED,
         EffectEventType.PUT_COMMITTED_ACTUAL_PENDING,
     ]
+
+
+def test_recovery_v2_precondition_fails_closed_without_get() -> None:
+    _, ledger, authority_id, item, receipt_hash = reserved()
+    store = FakeStore("preexisting", observed=PAYLOAD)
+    result = AttributableR2EffectExecutor(
+        ledger=ledger,
+        store=store,
+        resolve_precondition_with_get=False,
+    ).dispatch_reserved(
+        authority_id=authority_id,
+        authority_receipt_hash=receipt_hash,
+        operation=item,
+        generation_token=GENERATION,
+        payload=PAYLOAD,
+    )
+    assert result.event.event_type is EffectEventType.FAILED_AFTER_DISPATCH
+    assert result.put_permit_consumed is True
+    assert store.put_calls == 1
+    assert store.get_calls == 0
+    assert ledger.accounting().r2_get_requests_dispatched == 0
 
 
 def test_payload_and_receipt_hashes_are_checked_before_network() -> None:
@@ -730,12 +761,15 @@ def test_preexisting_and_conflict_require_a_durable_get_permit() -> None:
         generation_token=GENERATION,
         event_type=EffectEventType.R2_GET_DISPATCHED,
     )
-    assert ledger.append_event(
-        authority_id=authority_id,
-        operation=item,
-        generation_token=GENERATION,
-        event_type=EffectEventType.PREEXISTING_CONFIRMED,
-    ).event_type is EffectEventType.PREEXISTING_CONFIRMED
+    assert (
+        ledger.append_event(
+            authority_id=authority_id,
+            operation=item,
+            generation_token=GENERATION,
+            event_type=EffectEventType.PREEXISTING_CONFIRMED,
+        ).event_type
+        is EffectEventType.PREEXISTING_CONFIRMED
+    )
 
 
 def test_no_ambiguous_physical_write_counter_exists() -> None:

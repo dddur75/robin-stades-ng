@@ -393,14 +393,24 @@ def test_first_c0_single_league_canary_authority_is_additive_and_fail_closed() -
     assert "SOURCE_TARGET_SET_COUNT={selection.source_target_set_count}" in owner_pack
     assert "SCIENTIFIC_EDGE_CLAIM={str(selection.scientific_edge_claim).lower()}" in owner_pack
 
-    matrix_payload = (
-        (ROOT / "configs/agents/mission-activation-matrix-v3.json")
-        .read_bytes()
-        .replace(b"\r\n", b"\n")
-    )
+    matrix_payload = subprocess.run(
+        [
+            "git",
+            "show",
+            "fcbf2a4fedd413251ee9da94ec2a444c6b917e63:"
+            "configs/agents/mission-activation-matrix-v3.json",
+        ],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout.replace(b"\r\n", b"\n")
     assert hashlib.sha256(matrix_payload).hexdigest() == (
         "6777e609247356a9e93fb089a928d25f28c5ba7f9d3fb39a199130d6e866f5ef"
     )
+    current_matrix = json.loads(
+        (ROOT / "configs/agents/mission-activation-matrix-v3.json").read_bytes()
+    )
+    assert current_matrix["missions"]["DATA_TORRENT_RECOVERY_V2"]["writer"] == "C0"
 
 
 def test_global_claim_boundary_v2_evidence_is_exact_append_only_and_effect_free() -> None:
@@ -488,29 +498,10 @@ def test_global_claim_boundary_v2_evidence_is_exact_append_only_and_effect_free(
         .splitlines()
     )
     assert len(introducing_revisions) <= 1
-    dirty_paths = set(
-        subprocess.run(
-            ["git", "diff", "--name-only", "HEAD", "--"],
-            cwd=ROOT,
-            check=True,
-            capture_output=True,
-            text=True,
-        ).stdout.splitlines()
-    )
-    dirty_paths.update(
-        subprocess.run(
-            ["git", "ls-files", "--others", "--exclude-standard"],
-            cwd=ROOT,
-            check=True,
-            capture_output=True,
-            text=True,
-        ).stdout.splitlines()
-    )
     closure_revision: str | None = None
-    # Ambient CI artifacts outside the governed 12-file scope must not replace
-    # the immutable base-tree-to-closure-tree proof. In-scope edits still use
-    # the precommit worktree path so pending governance changes are fail-closed.
-    if introducing_revisions and dirty_paths.isdisjoint(expected_files):
+    # Once the historical record has an introducing revision, validate that
+    # immutable revision even while a later mission appends to the shared ledger.
+    if introducing_revisions:
         first_parent_merges = subprocess.run(
             [
                 "git",

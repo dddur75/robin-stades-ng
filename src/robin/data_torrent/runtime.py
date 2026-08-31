@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import importlib
 import io
+import json
 import math
 import os
 import statistics
@@ -22,6 +23,7 @@ from typing import Any, cast
 from urllib.parse import quote, unquote, urlsplit
 
 import sqlalchemy as sa
+from sqlalchemy.pool import NullPool
 
 from robin.capture.official_schedule_sources import (
     OfficialFetchReceipt,
@@ -33,6 +35,12 @@ from robin.capture.official_schedule_sources import (
     reconcile_official_schedule_evidence,
 )
 from robin.chronos_production import (
+    DATA_TORRENT_LIVE_V2_POSTGRESQL_CALL_GRAPH_CANONICAL_SHA256,
+    DATA_TORRENT_LIVE_V2_POSTGRESQL_CALL_GRAPH_SHA256,
+    DATA_TORRENT_RECOVERY_V2_EXTERNAL_EFFECTS,
+    DATA_TORRENT_RECOVERY_V2_MANIFEST_SHA256,
+    DATA_TORRENT_RECOVERY_V2_MISSION_ID,
+    DATA_TORRENT_RECOVERY_V2_OWNER_DIRECTIVE_SHA256,
     EXPECTED_REF,
     EXPECTED_REPOSITORY,
     PRODUCTION_SAFETY_LOCKS,
@@ -46,7 +54,11 @@ from robin.chronos_production import (
     require_sha,
     validate_controlled_go_binding,
     validate_data_torrent_authority,
+    validate_data_torrent_recovery_v2_authority,
     validate_direct_postgres_url,
+    validate_identity_seal_v2,
+    validate_neon_branch_identity_go_v2,
+    validate_runtime_bindings_v2,
     verify_signed_document,
 )
 from robin.chronos_role_lifecycle import (
@@ -83,6 +95,15 @@ from robin.data_torrent.durability import (
     DurableObjectUploadError,
     upload_immutable_object,
 )
+from robin.data_torrent.live_call_graph import (
+    LIVE_POSTGRESQL_CONNECTION_ATTEMPTS_NOMINAL_V2,
+    LIVE_POSTGRESQL_CONNECTION_ATTEMPTS_UPPER_BOUND_V2,
+    LIVE_POSTGRESQL_DIRECT_READS_V2,
+    LIVE_POSTGRESQL_FUNCTION_READS_FALLBACK_MAXIMUM_V2,
+    LIVE_POSTGRESQL_FUNCTION_READS_NOMINAL_V2,
+    LIVE_POSTGRESQL_MUTATING_FUNCTIONS_V2,
+    validate_live_postgresql_call_graph_v2,
+)
 from robin.data_torrent.normalization import (
     NormalizedBatch,
     load_team_aliases,
@@ -110,6 +131,7 @@ from robin.data_torrent.sources import (
     capture_official_sources,
 )
 from robin.prospective_observatory.chronos_control_plane import (
+    ConditionalPutOutcome,
     GitHubRunIdentity,
     PostgresAuthorityIssuer,
     PostgresEffectLedger,
@@ -118,7 +140,7 @@ from robin.prospective_observatory.chronos_postgres import (
     SQLAlchemyPostgresFunctionClient,
 )
 from robin.prospective_observatory.chronos_r2 import ChronosR2ConditionalStore
-from robin.storage.database import build_engine
+from robin.storage.database import build_engine, database_url_object
 
 MISSION_ID = "data-torrent-ready-v1"
 MISSION_MANIFEST_PATH = "configs/execution/data-torrent-ready-v1.json"
@@ -141,8 +163,21 @@ EXPECTED_REVISION = "0015_data_torrent_opportunity"
 WORKFLOW_PATH = ".github/workflows/data-torrent-live-v1.yml"
 HOLD_REPORT_PATH = ".torrent/hold/chronos-production-workflow-hold-live-v3.json"
 VERIFY_ARTIFACT_PATH = ".torrent/release/chronos-production-verify-v3.json"
+RECOVERY_V2_IDENTITY_ARTIFACT_PATH = ".torrent/release/neon-branch-identity-go-v2.json"
 CI_WORKFLOW_PATH = ".github/workflows/ci-safe-v2.yml"
 LEGACY_CI_WORKFLOW_ID = 319500816
+RECOVERY_V2_REQUIRED_DISABLED_WORKFLOWS = frozenset(
+    {
+        ".github/workflows/chronos-neon-controlled-idle-wake-readonly-v1.yml",
+        ".github/workflows/chronos-controlled-go-durable-seal-v1.yml",
+        ".github/workflows/chronos-production-bootstrap-v3.yml",
+        ".github/workflows/data-torrent-live-v1.yml",
+        ".github/workflows/chronos-neon-branch-identity-v2.yml",
+        ".github/workflows/chronos-identity-seal-v2.yml",
+        ".github/workflows/chronos-production-bootstrap-v4.yml",
+        ".github/workflows/data-torrent-live-v2.yml",
+    }
+)
 TEAM_ALIASES_PATH = "config/alias_equipes.yaml"
 MINIMUM_FIXTURE_COVERAGE_PERCENTAGE = 100.0
 CROSS_RUN_CONTRACT = (
@@ -186,6 +221,130 @@ NORMALIZED_CORE_MEMBER_NAMES = frozenset(
         "operations/recovery-pack-v1.md",
     }
 )
+RECOVERY_V2_DURABLE_NORMALIZED_MEMBER_NAMES = frozenset(
+    {
+        "config/team-alias-registry-v1.json",
+        "data/normalized-records.jsonl",
+        "data/rejected-records.jsonl",
+        "lineage/raw-to-normalized-v1.json",
+        "reports/coverage-v1.csv",
+    }
+)
+
+
+@dataclass(frozen=True, slots=True)
+class _RuntimeContract:
+    recovery_v2: bool
+    mission_id: str
+    manifest_path: str
+    manifest_sha256: str
+    source_sha256: str
+    external_effects: tuple[str, ...]
+    compute_budget: int
+    time_budget: int
+    expires_at: str
+    workflow_path: str
+    verify_artifact_path: str
+    verify_schema: str
+    verify_verdict: str
+    r2_puts_max: int
+    r2_gets_max: int
+    r2_lists_max: int
+
+    @property
+    def require_created(self) -> bool:
+        return self.recovery_v2
+
+
+_V1_RUNTIME_CONTRACT = _RuntimeContract(
+    recovery_v2=False,
+    mission_id=MISSION_ID,
+    manifest_path=MISSION_MANIFEST_PATH,
+    manifest_sha256=MISSION_MANIFEST_SHA256,
+    source_sha256=MISSION_SOURCE_SHA256,
+    external_effects=MISSION_EXTERNAL_EFFECTS,
+    compute_budget=1_000_000,
+    time_budget=86_400,
+    expires_at="2026-09-01T23:59:59Z",
+    workflow_path=WORKFLOW_PATH,
+    verify_artifact_path=VERIFY_ARTIFACT_PATH,
+    verify_schema="chronos-production-verify-v3",
+    verify_verdict="CHRONOS_SCOPED_IDENTITIES_READY",
+    r2_puts_max=20,
+    r2_gets_max=20,
+    r2_lists_max=2,
+)
+_V2_RUNTIME_CONTRACT = _RuntimeContract(
+    recovery_v2=True,
+    mission_id=DATA_TORRENT_RECOVERY_V2_MISSION_ID,
+    manifest_path="configs/execution/data-torrent-recovery-v2.json",
+    manifest_sha256=DATA_TORRENT_RECOVERY_V2_MANIFEST_SHA256,
+    source_sha256=DATA_TORRENT_RECOVERY_V2_OWNER_DIRECTIVE_SHA256,
+    external_effects=DATA_TORRENT_RECOVERY_V2_EXTERNAL_EFFECTS,
+    compute_budget=10_000_000,
+    time_budget=604_800,
+    expires_at="2026-09-13T23:59:59Z",
+    workflow_path=".github/workflows/data-torrent-live-v2.yml",
+    verify_artifact_path=".torrent/release/chronos-production-verify-v2.json",
+    verify_schema="chronos-production-verify-v2",
+    verify_verdict="VERIFY_0015_COMPLETE_V2",
+    r2_puts_max=2,
+    r2_gets_max=1,
+    r2_lists_max=0,
+)
+_RUNTIME_CONTRACT: ContextVar[_RuntimeContract] = ContextVar(
+    "data_torrent_runtime_contract",
+    default=_V1_RUNTIME_CONTRACT,
+)
+
+
+def _contract() -> _RuntimeContract:
+    return _RUNTIME_CONTRACT.get()
+
+
+def _live_r2_expected_counters() -> dict[str, int]:
+    return {
+        "puts": 2,
+        "gets": 1 if _contract().recovery_v2 else 0,
+        "lists": 0,
+        "deletes": 0,
+    }
+
+
+def _r2_inventory_limits(config: TorrentConfig) -> dict[str, dict[str, int]]:
+    live_limits = {
+        "puts": config.budgets.r2_puts_max,
+        "gets": config.budgets.r2_gets_max,
+        "lists": config.budgets.r2_lists_max,
+        "deletes": config.budgets.r2_deletes_max,
+    }
+    if not _contract().recovery_v2:
+        return {"limits": live_limits}
+    return {
+        # Keep the long-standing QA evidence pointer concrete while separating
+        # the non-fungible LIVE and whole-mission Recovery V2 ceilings.
+        "limits": dict(live_limits),
+        "live_limits": live_limits,
+        "mission_limits": {
+            "puts": 3,
+            "gets": 3,
+            "objects": 3,
+            "lists": 0,
+            "deletes": 0,
+        },
+    }
+
+
+def _immutable_terminal(terminal_event: str) -> bool:
+    return terminal_event == "CREATED_CONFIRMED" or (
+        not _contract().recovery_v2 and terminal_event == "PREEXISTING_CONFIRMED"
+    )
+
+
+def _control_plane_release(proof: Mapping[str, Any]) -> object:
+    return proof["identity_seal" if _contract().recovery_v2 else "controlled_go"]
+
+
 _CHRONOS_VIEW_RELATIONS = frozenset(
     {
         "chronos_effect_accounting",
@@ -266,11 +425,26 @@ class LiveRuntimeEffects:
     postgresql_mutating_function_outcomes_ambiguous: int = 0
     source_counters: SourceEffectCounters | None = None
     r2_store: CountingR2Store | None = None
+    postgresql_connection_attempts_maximum: int | None = None
+
+    def _reserve_postgresql_boundary(self) -> None:
+        observed = (
+            self.postgresql_read_transactions_attempted
+            + self.postgresql_function_reads_attempted
+            + self.postgresql_mutating_function_calls_attempted
+        )
+        if (
+            self.postgresql_connection_attempts_maximum is not None
+            and observed >= self.postgresql_connection_attempts_maximum
+        ):
+            raise DataTorrentRuntimeError("DATA_TORRENT_POSTGRESQL_CONNECTION_BUDGET_EXCEEDED")
 
     def begin_read_transaction(self) -> None:
+        self._reserve_postgresql_boundary()
         self.postgresql_read_transactions_attempted += 1
 
     def begin_function_call(self, *, mutating: bool) -> None:
+        self._reserve_postgresql_boundary()
         if mutating:
             self.postgresql_mutating_function_calls_attempted += 1
         else:
@@ -330,6 +504,11 @@ class LiveRuntimeEffects:
                     + self.postgresql_function_reads_attempted
                     + self.postgresql_mutating_function_calls_attempted
                 ),
+                **(
+                    {"connection_attempts_maximum": (self.postgresql_connection_attempts_maximum)}
+                    if self.postgresql_connection_attempts_maximum is not None
+                    else {}
+                ),
                 "automatic_retries": 0,
             },
             "official": {
@@ -351,11 +530,33 @@ class LiveRuntimeEffects:
                     0,
                     r2["puts"] - len(self.r2_store.results),
                 )
+                + sum(
+                    result.outcome is ConditionalPutOutcome.AMBIGUOUS
+                    for result in self.r2_store.results
+                )
                 if self.r2_store is not None
                 else 0,
                 "automatic_retries": 0,
             },
         }
+
+
+def _terminal_live_effects_projection(
+    observed: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Project the three fixed terminal PostgreSQL boundaries on a successful path."""
+
+    try:
+        projection = json.loads(json.dumps(dict(observed), allow_nan=False))
+        postgresql = cast(dict[str, Any], projection["postgresql"])
+        postgresql["read_transactions_attempted"] += 2
+        postgresql["mutating_function_calls_attempted"] += 1
+        postgresql["mutating_function_calls_completed"] += 1
+        postgresql["possible_durable_mutations_upper_bound"] += 1
+        postgresql["connection_attempts_upper_bound"] += 3
+    except (KeyError, TypeError, ValueError):
+        raise DataTorrentRuntimeError("DATA_TORRENT_LIVE_EFFECT_PROJECTION_INVALID") from None
+    return cast(dict[str, Any], projection)
 
 
 _LIVE_RUNTIME_EFFECTS: ContextVar[LiveRuntimeEffects | None] = ContextVar(
@@ -369,6 +570,19 @@ def _current_live_runtime_effects() -> LiveRuntimeEffects:
     if effects is None:
         raise DataTorrentRuntimeError("DATA_TORRENT_EFFECT_ACCOUNTING_NOT_ACTIVE")
     return effects
+
+
+def _validate_runtime_authority(repository_root: Path | None = None) -> None:
+    if _contract().recovery_v2:
+        validate_data_torrent_recovery_v2_authority(
+            scale_stage="E4",
+            repository_root=repository_root,
+        )
+    else:
+        if repository_root is None:
+            validate_data_torrent_authority()
+        else:
+            validate_data_torrent_authority(repository_root=repository_root)
 
 
 class _AccountingPostgresFunctionClient(SQLAlchemyPostgresFunctionClient):
@@ -385,7 +599,7 @@ class _AccountingPostgresFunctionClient(SQLAlchemyPostgresFunctionClient):
     ) -> Mapping[str, object]:
         mutating = "chronos_get_effect_state" not in statement
         try:
-            validate_data_torrent_authority()
+            _validate_runtime_authority()
         except ChronosProductionError as error:
             raise DataTorrentRuntimeError(str(error)) from None
         self._runtime_effects.begin_function_call(mutating=mutating)
@@ -396,6 +610,20 @@ class _AccountingPostgresFunctionClient(SQLAlchemyPostgresFunctionClient):
             raise
         self._runtime_effects.complete_function_call(mutating=mutating)
         return result
+
+
+def _build_live_database_engine(database_url: str) -> Any:
+    """Build a counted V2 checkout with no hidden pool ping or reconnect loop."""
+
+    if not _contract().recovery_v2:
+        return build_engine(database_url)
+    return sa.create_engine(
+        database_url_object(database_url),
+        future=True,
+        hide_parameters=True,
+        connect_args={"connect_timeout": 10},
+        poolclass=NullPool,
+    )
 
 
 def _required(environment: Mapping[str, str], name: str) -> str:
@@ -453,15 +681,16 @@ def _validated_mission_manifest(
 ) -> dict[str, Any]:
     """Validate the immutable user authorization before constructing any live client."""
 
-    if _context(environment, "DATA_TORRENT_MISSION_MANIFEST") != MISSION_MANIFEST_PATH:
+    contract = _contract()
+    if _context(environment, "DATA_TORRENT_MISSION_MANIFEST") != contract.manifest_path:
         raise DataTorrentRuntimeError("DATA_TORRENT_MISSION_MANIFEST_PATH_MISMATCH")
     expected_hash = require_hash(
         _context(environment, "DATA_TORRENT_EXPECTED_MISSION_MANIFEST_SHA256"),
         field="expected_mission_manifest_sha256",
     )
-    if expected_hash != MISSION_MANIFEST_SHA256:
+    if expected_hash != contract.manifest_sha256:
         raise DataTorrentRuntimeError("DATA_TORRENT_MISSION_MANIFEST_HASH_MISMATCH")
-    path = repository_root / MISSION_MANIFEST_PATH
+    path = repository_root / contract.manifest_path
     try:
         if path.is_symlink():
             raise OSError
@@ -495,15 +724,15 @@ def _validated_mission_manifest(
         raise DataTorrentRuntimeError("DATA_TORRENT_MISSION_MANIFEST_SCHEMA_MISMATCH")
     manifest = cast(dict[str, Any], document)
     if (
-        manifest.get("mission_id") != MISSION_ID
+        manifest.get("mission_id") != contract.mission_id
         or manifest.get("authorized_stages") != list(MISSION_AUTHORIZED_STAGES)
         or manifest.get("maximum_stage") != "E4"
-        or manifest.get("external_effects") != list(MISSION_EXTERNAL_EFFECTS)
+        or manifest.get("external_effects") != list(contract.external_effects)
         or type(manifest.get("compute_budget")) is not int
-        or manifest.get("compute_budget") != 1_000_000
+        or manifest.get("compute_budget") != contract.compute_budget
         or type(manifest.get("time_budget")) is not int
-        or manifest.get("time_budget") != 86_400
-        or manifest.get("source_hash") != MISSION_SOURCE_SHA256
+        or manifest.get("time_budget") != contract.time_budget
+        or manifest.get("source_hash") != contract.source_sha256
         or not isinstance(manifest.get("expires_at"), str)
     ):
         raise DataTorrentRuntimeError("DATA_TORRENT_MISSION_MANIFEST_MISMATCH")
@@ -514,25 +743,28 @@ def _validated_mission_manifest(
     now = datetime.now(UTC) if observed_at_utc is None else observed_at_utc
     if (
         expiry.tzinfo is None
-        or cast(str, manifest["expires_at"]) != "2026-09-01T23:59:59Z"
+        or cast(str, manifest["expires_at"]) != contract.expires_at
         or now.astimezone(UTC) >= expiry.astimezone(UTC)
     ):
         raise DataTorrentRuntimeError("DATA_TORRENT_MISSION_MANIFEST_EXPIRED")
     return {
         **manifest,
-        "manifest_path": MISSION_MANIFEST_PATH,
+        "manifest_path": contract.manifest_path,
         "manifest_sha256": payload_hash,
     }
 
 
 def _assert_config_within_mission_authority(config: TorrentConfig) -> None:
+    contract = _contract()
     if (
-        config.budgets.official_physical_reads_max > 50
+        config.schema_version
+        != f"robin-data-torrent-live-config-v{2 if contract.recovery_v2 else 1}"
+        or config.budgets.official_physical_reads_max > 50
         or config.budgets.odds_provider_requests_max > 5
         or config.budgets.odds_credits_max > 1_000
-        or config.budgets.r2_puts_max > 20
-        or config.budgets.r2_gets_max > 20
-        or config.budgets.r2_lists_max > 2
+        or config.budgets.r2_puts_max != contract.r2_puts_max
+        or config.budgets.r2_gets_max != contract.r2_gets_max
+        or config.budgets.r2_lists_max != contract.r2_lists_max
         or config.budgets.r2_deletes_max != 0
         or config.budgets.automatic_retries != 0
     ):
@@ -545,6 +777,7 @@ def _runtime_identity(
     environment: Mapping[str, str],
     system_platform: str,
 ) -> RuntimeIdentity:
+    contract = _contract()
     if system_platform != "linux" or _context(environment, "RUNNER_OS") != "Linux":
         raise DataTorrentRuntimeError("DATA_TORRENT_UBUNTU_REQUIRED")
     if _context(environment, "RUNNER_ARCH") != "X64":
@@ -574,10 +807,10 @@ def _runtime_identity(
     if post_merge_ci_sha != github_sha:
         raise DataTorrentRuntimeError("DATA_TORRENT_POST_MERGE_CI_MISMATCH")
     workflow_ref = _context(environment, "GITHUB_WORKFLOW_REF")
-    expected_workflow_ref = f"{EXPECTED_REPOSITORY}/{WORKFLOW_PATH}@{EXPECTED_REF}"
+    expected_workflow_ref = f"{EXPECTED_REPOSITORY}/{contract.workflow_path}@{EXPECTED_REF}"
     if workflow_ref != expected_workflow_ref:
         raise DataTorrentRuntimeError("DATA_TORRENT_WORKFLOW_REF_MISMATCH")
-    workflow_file = repository_root / WORKFLOW_PATH
+    workflow_file = repository_root / contract.workflow_path
     workflow_hash = hashlib.sha256(workflow_file.read_bytes()).hexdigest()
     expected_workflow_hash = require_hash(
         _context(environment, "DATA_TORRENT_EXPECTED_WORKFLOW_SHA256"),
@@ -595,7 +828,7 @@ def _runtime_identity(
             github_repository=EXPECTED_REPOSITORY,
             github_ref=EXPECTED_REF,
         ),
-        workflow_path=WORKFLOW_PATH,
+        workflow_path=contract.workflow_path,
         workflow_file_sha256=workflow_hash,
         runner_os="Linux",
         runner_arch=_context(environment, "RUNNER_ARCH"),
@@ -631,13 +864,35 @@ def _validated_hold_report(
         raise DataTorrentRuntimeError("DATA_TORRENT_POST_MERGE_CI_PROOF_MISSING")
     proof = cast(dict[str, Any], ci)
     legacy_ci = hold.get("legacy_ci_workflow_quarantine")
+    recovery_v2_quarantine = hold.get("recovery_v2_production_workflow_quarantine")
     environment_policy = hold.get("production_environment_policy")
+    recovery_v2_quarantine_valid = True
+    if _contract().recovery_v2:
+        recovery_v2_quarantine_valid = (
+            isinstance(recovery_v2_quarantine, list)
+            and len(recovery_v2_quarantine) == len(RECOVERY_V2_REQUIRED_DISABLED_WORKFLOWS)
+            and all(isinstance(item, dict) for item in recovery_v2_quarantine)
+            and {
+                cast(dict[str, Any], item).get("workflow_path")
+                for item in recovery_v2_quarantine
+            }
+            == RECOVERY_V2_REQUIRED_DISABLED_WORKFLOWS
+            and all(
+                set(cast(dict[str, Any], item)) == {"workflow_id", "workflow_path", "state"}
+                and type(cast(dict[str, Any], item).get("workflow_id")) is int
+                and cast(dict[str, Any], item).get("workflow_id", 0) > 0
+                and cast(dict[str, Any], item).get("state") == "disabled_manually"
+                for item in recovery_v2_quarantine
+            )
+        )
     if (
         hold.get("schema_version") != "chronos-production-workflow-hold-live-v3"
         or hold.get("verdict") != "WORKFLOW_HOLD_ESTABLISHED"
         or hold.get("current_run_excluded") != identity.github.github_run_id
         or hold.get("queued_after") != 0
         or hold.get("in_progress_after") != 0
+        or hold.get("nonterminal_run_counts")
+        != {"requested": 0, "waiting": 0, "pending": 0, "queued": 0, "in_progress": 0}
         or hold.get("unauthorized_active_workflows") != []
         or hold.get("provider_calls") != 0
         or hold.get("r2_operations") != 0
@@ -646,6 +901,7 @@ def _validated_hold_report(
         or legacy_ci.get("workflow_id") != LEGACY_CI_WORKFLOW_ID
         or legacy_ci.get("workflow_path") != ".github/workflows/ci.yml"
         or legacy_ci.get("state") != "disabled_manually"
+        or not recovery_v2_quarantine_valid
         or environment_policy
         != {
             "environment": "chronos-control-plane-production",
@@ -695,17 +951,19 @@ def _validated_chronos_verify_artifact(
     generation_token: str,
     expected_generation_hash: str,
 ) -> dict[str, Any]:
-    if _context(environment, "DATA_TORRENT_VERIFY_ARTIFACT") != VERIFY_ARTIFACT_PATH:
+    contract = _contract()
+    if _context(environment, "DATA_TORRENT_VERIFY_ARTIFACT") != contract.verify_artifact_path:
         raise DataTorrentRuntimeError("DATA_TORRENT_VERIFY_ARTIFACT_PATH_MISMATCH")
     expected_run_id = _context(environment, "DATA_TORRENT_EXPECTED_VERIFY_RUN_ID")
     if (
         not expected_run_id.isascii()
         or not expected_run_id.isdigit()
         or expected_run_id == "0"
+        or len(expected_run_id) > 18
         or str(int(expected_run_id)) != expected_run_id
     ):
         raise DataTorrentRuntimeError("DATA_TORRENT_VERIFY_RUN_ID_INVALID")
-    path = repository_root / VERIFY_ARTIFACT_PATH
+    path = repository_root / contract.verify_artifact_path
     try:
         artifact_bytes = path.read_bytes()
         raw = strict_json_loads(
@@ -736,8 +994,8 @@ def _validated_chronos_verify_artifact(
         raise DataTorrentRuntimeError("DATA_TORRENT_VERIFY_PREFLIGHT_HASH_INVALID") from None
     identities = artifact.get("identities")
     if (
-        artifact.get("schema_version") != "chronos-production-verify-v3"
-        or artifact.get("verdict") != "CHRONOS_SCOPED_IDENTITIES_READY"
+        artifact.get("schema_version") != contract.verify_schema
+        or artifact.get("verdict") != contract.verify_verdict
         or artifact.get("revision") != EXPECTED_REVISION
         or artifact.get("main_sha") != identity.github.github_sha
         or artifact.get("workflow_sha") != identity.github.github_sha
@@ -750,10 +1008,12 @@ def _validated_chronos_verify_artifact(
         or not migration_run_id.isascii()
         or not migration_run_id.isdigit()
         or migration_run_id == "0"
+        or len(migration_run_id) > 18
         or not isinstance(preflight_run_id, str)
         or not preflight_run_id.isascii()
         or not preflight_run_id.isdigit()
         or preflight_run_id == "0"
+        or len(preflight_run_id) > 18
         or artifact.get("business_data_modified") is not False
         or artifact.get("forbidden_membership") != 0
         or artifact.get("migrator_runtime_membership") != 0
@@ -766,13 +1026,63 @@ def _validated_chronos_verify_artifact(
         or signature.get("algorithm") != "HMAC-SHA256"
     ):
         raise DataTorrentRuntimeError("DATA_TORRENT_VERIFY_ARTIFACT_MISMATCH")
+    controlled_go: dict[str, Any] | None = None
+    identity_seal: dict[str, Any] | None = None
+    runtime_bindings: dict[str, Any] | None = None
     try:
-        controlled_go = validate_controlled_go_binding(
-            artifact.get("controlled_go"),
-            main_sha=identity.github.github_sha,
-        )
+        if contract.recovery_v2:
+            raw_seal = artifact.get("identity_seal")
+            raw_identity = raw_seal.get("identity_go") if isinstance(raw_seal, dict) else None
+            identity_run_id = raw_identity.get("run_id") if isinstance(raw_identity, dict) else None
+            if not isinstance(identity_run_id, str):
+                raise ChronosProductionError("CHRONOS_IDENTITY_SEAL_V2_INVALID")
+            identity_seal = validate_identity_seal_v2(
+                raw_seal,
+                main_sha=identity.github.github_sha,
+                expected_identity_run_id=identity_run_id,
+            )
+            runtime_bindings = validate_runtime_bindings_v2(
+                artifact.get("runtime_bindings"),
+                main_sha=identity.github.github_sha,
+                preflight_run_id=preflight_run_id,
+                preflight_artifact_hash=preflight_artifact_hash,
+                generation_nonce=generation_token,
+            )
+            effects = artifact.get("effects")
+            if (
+                artifact.get("production_database_revision_verified") is not True
+                or artifact.get("chronos_opportunity_claim_active") is not True
+                or artifact.get("torrent_recovery_v2_contract_active") is not True
+                or artifact.get("runtime_bindings_present") != 4
+                or runtime_bindings.get("generation_hash") != expected_generation_hash
+                or not isinstance(effects, dict)
+                or effects.get("r2_gets") != 0
+                or effects.get("r2_puts") != 0
+                or effects.get("neon_gets") != 0
+                or effects.get("neon_posts") != 0
+                or effects.get("postgresql_connection_attempts") != 4
+                or effects.get("postgresql_connection_attempts_exact") is not True
+                or effects.get("migration_dispatches") != 0
+                or effects.get("sql_statements_upper_bound") != 128
+                or effects.get("sql_write_statements_upper_bound") != 0
+                or effects.get("automatic_retries") != 0
+                or effects.get("provider_calls") != 0
+                or effects.get("purchases") != 0
+                or effects.get("secret_values_observed") is not False
+            ):
+                raise ChronosProductionError("CHRONOS_VERIFY_V2_EFFECTS_INVALID")
+        else:
+            controlled_go = validate_controlled_go_binding(
+                artifact.get("controlled_go"),
+                main_sha=identity.github.github_sha,
+            )
     except ChronosProductionError:
-        raise DataTorrentRuntimeError("DATA_TORRENT_VERIFY_CONTROLLED_GO_INVALID") from None
+        code = (
+            "DATA_TORRENT_VERIFY_RELEASE_CHAIN_INVALID"
+            if contract.recovery_v2
+            else "DATA_TORRENT_VERIFY_CONTROLLED_GO_INVALID"
+        )
+        raise DataTorrentRuntimeError(code) from None
     expected_accounts = {
         role: (login, group)
         for role, (login, group, _secret_name) in zip(
@@ -822,7 +1132,7 @@ def _validated_chronos_verify_artifact(
     if len(target_values) != 1 or len(server_epochs) != 1:
         raise DataTorrentRuntimeError("DATA_TORRENT_VERIFY_IDENTITIES_MISMATCH")
     database_target = next(iter(target_values))
-    return {
+    proof = {
         "receipt_sha256": hashlib.sha256(artifact_bytes).hexdigest(),
         "schema_version": str(artifact["schema_version"]),
         "verdict": str(artifact["verdict"]),
@@ -836,7 +1146,6 @@ def _validated_chronos_verify_artifact(
         "verify_run_id": expected_run_id,
         "verify_run_attempt": 1,
         "signature_algorithm": "HMAC-SHA256",
-        "controlled_go": controlled_go,
         "database_target": {
             "host": database_target[0],
             "port": database_target[1],
@@ -846,6 +1155,15 @@ def _validated_chronos_verify_artifact(
             "server_epoch": next(iter(server_epochs)),
         },
     }
+    if contract.recovery_v2:
+        proof.update(
+            identity_seal=identity_seal,
+            runtime_bindings=runtime_bindings,
+            torrent_recovery_v2_contract_active=True,
+        )
+    else:
+        proof["controlled_go"] = controlled_go
+    return proof
 
 
 def _mission_r2_counters(
@@ -854,6 +1172,19 @@ def _mission_r2_counters(
     live_counters: Mapping[str, int],
     live_objects: int,
 ) -> dict[str, int]:
+    if _contract().recovery_v2:
+        seal = proof.get("identity_seal")
+        effects = seal.get("effects") if isinstance(seal, dict) else None
+        if not isinstance(effects, dict):
+            raise DataTorrentRuntimeError("DATA_TORRENT_R2_MISSION_CHAIN_INVALID")
+        return {
+            "puts": int(effects["r2_puts"]) + int(live_counters["puts"]),
+            "gets": int(effects["r2_gets"]) + 1 + int(live_counters["gets"]),
+            "lists": int(live_counters["lists"]),
+            "deletes": int(live_counters["deletes"]),
+            "objects": int(effects["r2_objects_created"]) + live_objects,
+            "overwrites": 0,
+        }
     binding = cast(dict[str, Any], proof["controlled_go"])
     return {
         "puts": int(binding["seal_r2_puts"]) + int(live_counters["puts"]),
@@ -867,6 +1198,88 @@ def _mission_r2_counters(
         "objects": int(binding["seal_r2_objects_created"]) + live_objects,
         "overwrites": 0,
     }
+
+
+def _validate_live_identity_seal_readback_v2(
+    *,
+    repository_root: Path,
+    environment: Mapping[str, str],
+    proof: Mapping[str, Any],
+    r2_store: CountingR2Store,
+) -> dict[str, Any]:
+    """Consume the sole LIVE GET on the exact injected R2 store before PostgreSQL."""
+
+    if _context(environment, "DATA_TORRENT_IDENTITY_ARTIFACT") != (
+        RECOVERY_V2_IDENTITY_ARTIFACT_PATH
+    ):
+        raise DataTorrentRuntimeError("DATA_TORRENT_IDENTITY_ARTIFACT_PATH_MISMATCH")
+    path = repository_root / RECOVERY_V2_IDENTITY_ARTIFACT_PATH
+    try:
+        if path.is_symlink():
+            raise OSError
+        identity_bytes = path.read_bytes()
+        identity_document = strict_json_loads(
+            identity_bytes,
+            duplicate_code="DATA_TORRENT_IDENTITY_ARTIFACT_DUPLICATE_KEY",
+            non_finite_code="DATA_TORRENT_IDENTITY_ARTIFACT_NON_FINITE",
+        )
+    except OSError:
+        raise DataTorrentRuntimeError("DATA_TORRENT_IDENTITY_ARTIFACT_MISSING") from None
+    except ValueError:
+        raise DataTorrentRuntimeError("DATA_TORRENT_IDENTITY_ARTIFACT_INVALID") from None
+    if (
+        not identity_bytes
+        or len(identity_bytes) > 65_536
+        or not isinstance(identity_document, dict)
+    ):
+        raise DataTorrentRuntimeError("DATA_TORRENT_IDENTITY_ARTIFACT_INVALID")
+    seal = proof.get("identity_seal")
+    binding = seal.get("identity_go") if isinstance(seal, dict) else None
+    identity_run_id = binding.get("run_id") if isinstance(binding, dict) else None
+    if not isinstance(identity_run_id, str):
+        raise DataTorrentRuntimeError("DATA_TORRENT_IDENTITY_SEAL_V2_INVALID")
+    try:
+        validated_identity = validate_neon_branch_identity_go_v2(
+            identity_document,
+            main_sha=cast(str, proof["main_sha"]),
+        )
+        validated_seal = validate_identity_seal_v2(
+            seal,
+            main_sha=cast(str, proof["main_sha"]),
+            expected_identity_run_id=identity_run_id,
+        )
+    except ChronosProductionError:
+        raise DataTorrentRuntimeError("DATA_TORRENT_IDENTITY_SEAL_V2_INVALID") from None
+    identity_source = validated_identity.get("source")
+    binding = cast(dict[str, Any], validated_seal["identity_go"])
+    store_identity_sha256 = hashlib.sha256(
+        (
+            _required(environment, "R2_ACCOUNT_ID")
+            + "\x00"
+            + _required(environment, "R2_BUCKET_NAME")
+        ).encode("utf-8")
+    ).hexdigest()
+    if (
+        not isinstance(identity_source, dict)
+        or identity_source.get("run_id") != identity_run_id
+        or hashlib.sha256(identity_bytes).hexdigest() != binding.get("payload_sha256")
+        or binding.get("store_identity_sha256") != store_identity_sha256
+        or r2_store.gets != 0
+    ):
+        raise DataTorrentRuntimeError("DATA_TORRENT_IDENTITY_SEAL_V2_MISMATCH")
+    try:
+        observed = r2_store.get_object(cast(str, binding["durable_object_key"]))
+    except Exception:
+        raise DataTorrentRuntimeError("DATA_TORRENT_LIVE_SEAL_GET_AMBIGUOUS") from None
+    if (
+        r2_store.gets != 1
+        or observed is None
+        or observed.data != identity_bytes
+        or observed.metadata != binding.get("durable_metadata")
+        or hashlib.sha256(observed.data).hexdigest() != binding.get("payload_sha256")
+    ):
+        raise DataTorrentRuntimeError("DATA_TORRENT_LIVE_SEAL_READBACK_MISMATCH")
+    return validated_seal
 
 
 def _assert_chronos_verify_database_targets(
@@ -1135,6 +1548,7 @@ def _claim_json(
 ) -> dict[str, Any]:
     return {
         "schema_version": "robin-data-torrent-opportunity-claim-receipt-v1",
+        "mission_id": _contract().mission_id,
         "run_identity": identity.to_json(),
         "opportunity_id": receipt.opportunity_id,
         "opportunity_kind": opportunity.opportunity_kind,
@@ -1266,14 +1680,24 @@ def _effect_counter_snapshot(
     *,
     sources: SourceEffectCounters,
     r2_store: CountingR2Store,
+    runtime_effects: LiveRuntimeEffects | None = None,
 ) -> dict[str, int]:
-    return {
+    snapshot = {
         **sources.snapshot(),
         "r2_puts": r2_store.puts,
         "r2_gets": r2_store.gets,
         "r2_lists": r2_store.lists,
         "r2_deletes": r2_store.deletes,
     }
+    if runtime_effects is not None:
+        snapshot.update(
+            postgresql_read_transactions=(runtime_effects.postgresql_read_transactions_attempted),
+            postgresql_function_reads=runtime_effects.postgresql_function_reads_attempted,
+            postgresql_mutating_function_calls=(
+                runtime_effects.postgresql_mutating_function_calls_attempted
+            ),
+        )
+    return snapshot
 
 
 def _replay_timestamp(value: object) -> datetime:
@@ -1413,7 +1837,7 @@ def _decode_replay_archive(
         not isinstance(raw_index_value, dict)
         or set(raw_index_value) != index_fields
         or raw_index_value.get("schema_version") != "robin-data-torrent-real-batch-raw-index-v1"
-        or raw_index_value.get("mission_id") != MISSION_ID
+        or raw_index_value.get("mission_id") != _contract().mission_id
         or raw_index_value.get("claim_identity") != expected_claim_identity
         or type(raw_index_value.get("generated_at_utc")) is not str
         or type(raw_index_value.get("run_identity")) is not dict
@@ -1847,6 +2271,7 @@ def _measure_replay(
     capture_started: datetime,
     capture_ended: datetime,
     counter_snapshot: Callable[[], dict[str, int]],
+    normalized_durable_binding: Mapping[str, Any] | None = None,
 ) -> ReplayMeasurement:
     if (
         capture_started.tzinfo is None
@@ -1856,8 +2281,12 @@ def _measure_replay(
         or capture_ended <= capture_started
     ):
         raise DataTorrentRuntimeError("DATA_TORRENT_CAPTURE_WINDOW_INVALID")
+    if _contract().recovery_v2 and normalized_durable_binding is None:
+        raise DataTorrentRuntimeError("DATA_TORRENT_REPLAY_DURABLE_INPUT_MISSING")
     latencies: list[float] = []
     hashes: set[str] = set()
+    batch_fingerprints: set[str] = set()
+    original_batch_fingerprint = _normalized_batch_fingerprint(original)
     final_batch = original
     external_before = counter_snapshot()
     raw_bytes_per_iteration: int | None = None
@@ -1884,6 +2313,11 @@ def _measure_replay(
             raise DataTorrentRuntimeError("DATA_TORRENT_REPLAY_RAW_BYTES_UNSTABLE")
         total_bytes += iteration_raw_bytes
         hashes.add(final_batch.canonical_dataset_sha256)
+        iteration_fingerprint = _normalized_batch_fingerprint(final_batch)
+        batch_fingerprints.add(iteration_fingerprint)
+        if iteration_fingerprint != original_batch_fingerprint:
+            tracemalloc.stop()
+            raise DataTorrentRuntimeError("DATA_TORRENT_REPLAY_BATCH_DRIFT")
         latencies.append((time.perf_counter() - iteration_started) * 1000.0)
     elapsed = time.perf_counter() - started
     _current_memory, traced_peak = tracemalloc.get_traced_memory()
@@ -1907,7 +2341,10 @@ def _measure_replay(
     records_ratio = replay_rps / required_rps
     bytes_ratio = replay_bps / required_bps
     minimum_ratio = min(records_ratio, bytes_ratio)
-    equality = hashes == {original.canonical_dataset_sha256}
+    equality = (
+        hashes == {original.canonical_dataset_sha256}
+        and batch_fingerprints == {original_batch_fingerprint}
+    )
     external_after = counter_snapshot()
     if set(external_before) != set(external_after):
         raise DataTorrentRuntimeError("DATA_TORRENT_REPLAY_COUNTER_SHAPE_INVALID")
@@ -1926,17 +2363,27 @@ def _measure_replay(
     }
     report = {
         "schema_version": "robin-data-torrent-load-replay-report-v1",
-        "mission_id": MISSION_ID,
+        "mission_id": _contract().mission_id,
         "generated_at_utc": utc_text(datetime.now(UTC)),
         "input": {
             "raw_archive_sha256": raw_archive_sha256,
-            "replay_source": "CONFIRMED_IMMUTABLE_RAW_ARCHIVE_BYTES",
+            "replay_source": (
+                "LOCALLY_RETAINED_RAW_ARCHIVE_BYTES_AFTER_RAW_AND_NORMALIZED_CREATED_CONFIRMED"
+                if _contract().recovery_v2
+                else "CONFIRMED_IMMUTABLE_RAW_ARCHIVE_BYTES"
+            ),
             "raw_archive_decode_count": config.replay_multiplier,
             "raw_payload_parse_iterations": config.replay_multiplier,
             "raw_bytes_per_iteration": raw_bytes_per_iteration,
             "canonical_dataset_sha256": original.canonical_dataset_sha256,
+            "normalized_batch_fingerprint": original_batch_fingerprint,
             "normalized_records_per_iteration": records_per_iteration,
             "rejected_records_per_iteration": len(original.rejects),
+            **(
+                {"normalized_durable_binding": dict(normalized_durable_binding)}
+                if normalized_durable_binding is not None
+                else {}
+            ),
         },
         "normal_required_throughput": {
             "basis": "REAL_BATCH_CAPTURE_WINDOW",
@@ -1968,6 +2415,7 @@ def _measure_replay(
             "duplicates": final_batch.logical_duplicates,
             "silent_losses": final_batch.silent_drops,
             "unique_canonical_hashes": sorted(hashes),
+            "unique_normalized_batch_fingerprints": sorted(batch_fingerprints),
         },
         "throughput": {
             "records_ratio": records_ratio,
@@ -1980,6 +2428,24 @@ def _measure_replay(
         "status": "PASS" if all(acceptance.values()) else "FAIL",
     }
     return ReplayMeasurement(report=report, final_batch=final_batch)
+
+
+def _normalized_batch_fingerprint(batch: NormalizedBatch) -> str:
+    proof = {
+        "canonical_dataset_bytes_sha256": hashlib.sha256(batch.canonical_dataset_bytes).hexdigest(),
+        "canonical_dataset_sha256": batch.canonical_dataset_sha256,
+        "rejects_bytes_sha256": hashlib.sha256(batch.rejects_bytes).hexdigest(),
+        "coverage_csv_sha256": hashlib.sha256(coverage_csv(batch.coverage)).hexdigest(),
+        "record_count": len(batch.records),
+        "reject_count": len(batch.rejects),
+        "coverage": list(batch.coverage),
+        "raw_events_observed": batch.raw_events_observed,
+        "raw_events_accounted": batch.raw_events_accounted,
+        "silent_drops": batch.silent_drops,
+        "logical_duplicates": batch.logical_duplicates,
+        "temporal_leakage": batch.temporal_leakage,
+    }
+    return hashlib.sha256(canonical_json_bytes(proof)).hexdigest()
 
 
 def _lineage(
@@ -2087,17 +2553,20 @@ def _safe_events(
         "summary": {
             "official_effects": len(official.effects),
             "odds_effects": len(odds.effects),
-            "r2_operations": len(objects) + int(normalized_evidence_binding is not None),
+            "r2_operations": (
+                len(objects)
+                if _contract().recovery_v2
+                else len(objects) + int(normalized_evidence_binding is not None)
+            ),
             "all_external_sources_confirmed": all(
                 item.terminal.event_type == "CONFIRMED"
                 for item in (*official.effects, *odds.effects)
             ),
             "all_embedded_r2_terminal": all(
-                item.terminal_event in {"CREATED_CONFIRMED", "PREEXISTING_CONFIRMED"}
-                for item in objects
+                _immutable_terminal(item.terminal_event) for item in objects
             ),
             "final_r2_terminal_requires_append_only_resolution": (
-                normalized_evidence_binding is not None
+                normalized_evidence_binding is not None and not _contract().recovery_v2
             ),
         },
     }
@@ -2271,16 +2740,18 @@ def _durabilize_partial_capture(
     if not allow_r2_upload:
         return None
     archive = deterministic_tar_gz(members)
+    object_prefix = "data-torrent/recovery-v2" if _contract().recovery_v2 else "data-torrent/v1"
     receipt = upload_immutable_object(
         role="PARTIAL_RAW",
-        object_key=f"data-torrent/v1/{opportunity_id}/partial-raw.tar.gz",
+        object_key=f"{object_prefix}/{opportunity_id}/partial-raw.tar.gz",
         payload=archive,
-        mission_id=f"{MISSION_ID}-partial-raw-r2",
+        mission_id=f"{_contract().mission_id}-partial-raw-r2",
         identity=identity.github,
         generation_token=generation_token,
         issuer=issuer,
         base_ledger=effect_ledger,
         store=r2_store,
+        require_created=_contract().require_created,
     )
     evidence = {
         **failure,
@@ -2393,6 +2864,34 @@ def _normalized_evidence_binding(
     }
 
 
+def _normalized_durable_binding_v2(
+    *,
+    receipt: DurableObjectReceipt,
+    members: Mapping[str, bytes],
+    canonical_dataset_sha256: str,
+) -> dict[str, Any]:
+    if (
+        set(members) != RECOVERY_V2_DURABLE_NORMALIZED_MEMBER_NAMES
+        or receipt.role != "NORMALIZED_EVIDENCE"
+        or receipt.terminal_event != "CREATED_CONFIRMED"
+    ):
+        raise DataTorrentRuntimeError("DATA_TORRENT_NORMALIZED_V2_DURABILITY_INVALID")
+    return {
+        "schema_version": "robin-data-torrent-normalized-evidence-binding-v2",
+        "role": receipt.role,
+        "object_key": receipt.object_key,
+        "object_bytes": receipt.object_bytes,
+        "object_sha256": receipt.object_sha256,
+        "operation_id": receipt.operation_id,
+        "terminal_event": receipt.terminal_event,
+        "terminal_event_hash": receipt.terminal_event_hash,
+        "archive_format": "DETERMINISTIC_USTAR_GZIP_V1",
+        "members": artifact_index(members),
+        "canonical_dataset_sha256": canonical_dataset_sha256,
+        "terminal_artifacts_location": "GITHUB_RUN_ARTIFACT_AFTER_REPLAY_AND_TERMINAL_QA",
+    }
+
+
 def _json_artifact_document(payload: bytes) -> dict[str, Any]:
     try:
         document = strict_json_loads(
@@ -2499,6 +2998,1204 @@ def _normalized_evidence_archive(
     return deterministic_tar_gz(combined)
 
 
+def _verify_replay_arithmetic_v2(
+    *,
+    replay: Mapping[str, Any],
+    config: TorrentConfig,
+    raw_archive_sha256: str,
+    raw_bytes_per_iteration: int,
+    normalized_binding: Mapping[str, Any],
+    canonical_dataset_sha256: str,
+    normalized_batch_fingerprint: str,
+    normalized_records_per_iteration: int,
+    rejected_records_per_iteration: int,
+    logical_duplicates: int,
+    silent_losses: int,
+    capture_started: datetime,
+    capture_ended: datetime,
+) -> dict[str, float]:
+    """Recalculate every measured replay predicate without running iteration 101."""
+
+    error_code = "DATA_TORRENT_TERMINAL_SEMANTIC_QA_FAILED"
+
+    def finite_number(value: object) -> bool:
+        return type(value) in {int, float} and math.isfinite(float(cast(int | float, value)))
+
+    def exact_float(actual: object, expected: float) -> bool:
+        return finite_number(actual) and math.isclose(
+            float(cast(int | float, actual)),
+            expected,
+            rel_tol=1e-12,
+            abs_tol=1e-12,
+        )
+
+    expected_top_fields = {
+        "schema_version",
+        "mission_id",
+        "generated_at_utc",
+        "input",
+        "normal_required_throughput",
+        "replay",
+        "measurement",
+        "throughput",
+        "external_effects_delta",
+        "acceptance",
+        "status",
+        "cross_run_loser_contract_proof",
+        "chronos_release_chain_proof",
+    }
+    input_fields = {
+        "raw_archive_sha256",
+        "replay_source",
+        "raw_archive_decode_count",
+        "raw_payload_parse_iterations",
+        "raw_bytes_per_iteration",
+        "canonical_dataset_sha256",
+        "normalized_batch_fingerprint",
+        "normalized_records_per_iteration",
+        "rejected_records_per_iteration",
+        "normalized_durable_binding",
+    }
+    required_fields = {
+        "basis",
+        "window_started_at_utc",
+        "window_ended_at_utc",
+        "elapsed_seconds",
+        "records_per_second",
+        "bytes_per_second",
+    }
+    run_fields = {
+        "multiplier",
+        "equivalent_normalized_records",
+        "iterations_completed",
+        "total_records_processed",
+        "total_bytes_processed",
+    }
+    measurement_fields = {
+        "wall_clock_seconds",
+        "records_per_second",
+        "bytes_per_second",
+        "latency_sample_unit",
+        "latency_sample_count",
+        "p50_latency_ms",
+        "p95_latency_ms",
+        "baseline_rss_bytes",
+        "peak_memory_bytes",
+        "incremental_peak_memory_bytes",
+        "rejects",
+        "duplicates",
+        "silent_losses",
+        "unique_canonical_hashes",
+        "unique_normalized_batch_fingerprints",
+    }
+    throughput_fields = {
+        "records_ratio",
+        "bytes_ratio",
+        "minimum_ratio",
+        "required_minimum_ratio",
+    }
+    external_fields = {
+        "official_reads",
+        "odds_dns_resolutions",
+        "odds_provider_dispatches",
+        "odds_credits",
+        "r2_puts",
+        "r2_gets",
+        "r2_lists",
+        "r2_deletes",
+        "postgresql_read_transactions",
+        "postgresql_function_reads",
+        "postgresql_mutating_function_calls",
+    }
+    acceptance_fields = {
+        "raw_archive_binding_pass",
+        "volume_pass",
+        "throughput_pass",
+        "canonical_equality_pass",
+        "idempotence_pass",
+        "no_external_effect_pass",
+    }
+    replay_input = replay.get("input")
+    replay_required = replay.get("normal_required_throughput")
+    replay_run = replay.get("replay")
+    measurement = replay.get("measurement")
+    throughput = replay.get("throughput")
+    external_delta = replay.get("external_effects_delta")
+    acceptance = replay.get("acceptance")
+    mappings = (
+        replay_input,
+        replay_required,
+        replay_run,
+        measurement,
+        throughput,
+        external_delta,
+        acceptance,
+    )
+    if set(replay) != expected_top_fields or any(not isinstance(item, dict) for item in mappings):
+        raise DataTorrentRuntimeError(error_code)
+    replay_input = cast(dict[str, Any], replay_input)
+    replay_required = cast(dict[str, Any], replay_required)
+    replay_run = cast(dict[str, Any], replay_run)
+    measurement = cast(dict[str, Any], measurement)
+    throughput = cast(dict[str, Any], throughput)
+    external_delta = cast(dict[str, Any], external_delta)
+    acceptance = cast(dict[str, Any], acceptance)
+    if (
+        set(replay_input) != input_fields
+        or set(replay_required) != required_fields
+        or set(replay_run) != run_fields
+        or set(measurement) != measurement_fields
+        or set(throughput) != throughput_fields
+        or set(external_delta) != external_fields
+        or set(acceptance) != acceptance_fields
+    ):
+        raise DataTorrentRuntimeError(error_code)
+    if (
+        capture_started.tzinfo is None
+        or capture_started.utcoffset() is None
+        or capture_ended.tzinfo is None
+        or capture_ended.utcoffset() is None
+        or capture_ended <= capture_started
+    ):
+        raise DataTorrentRuntimeError(error_code)
+    capture_seconds = (capture_ended - capture_started).total_seconds()
+    equivalent_records = normalized_records_per_iteration * config.replay_multiplier
+    total_bytes = raw_bytes_per_iteration * config.replay_multiplier
+    required_rps = normalized_records_per_iteration / capture_seconds
+    required_bps = raw_bytes_per_iteration / capture_seconds
+    wall_value = measurement.get("wall_clock_seconds")
+    wall = float(cast(int | float, wall_value)) if finite_number(wall_value) else -1.0
+    measured_rps = equivalent_records / wall if wall > 0 else -1.0
+    measured_bps = total_bytes / wall if wall > 0 else -1.0
+    records_ratio = measured_rps / required_rps if required_rps > 0 else -1.0
+    bytes_ratio = measured_bps / required_bps if required_bps > 0 else -1.0
+    minimum_ratio = min(records_ratio, bytes_ratio)
+    p50_value = measurement.get("p50_latency_ms")
+    p95_value = measurement.get("p95_latency_ms")
+    p50 = float(cast(int | float, p50_value)) if finite_number(p50_value) else -1.0
+    p95 = float(cast(int | float, p95_value)) if finite_number(p95_value) else -1.0
+    expected_acceptance = {
+        "raw_archive_binding_pass": True,  # nosec B105 - boolean acceptance field.
+        "volume_pass": config.replay_multiplier >= 100 or equivalent_records >= 100_000,
+        "throughput_pass": minimum_ratio >= config.minimum_throughput_ratio,
+        "canonical_equality_pass": True,  # nosec B105 - boolean acceptance field.
+        "idempotence_pass": True,  # nosec B105 - boolean acceptance field.
+        "no_external_effect_pass": True,  # nosec B105 - boolean acceptance field.
+    }
+    expected_input = {
+        "raw_archive_sha256": raw_archive_sha256,
+        "replay_source": (
+            "LOCALLY_RETAINED_RAW_ARCHIVE_BYTES_AFTER_RAW_AND_NORMALIZED_CREATED_CONFIRMED"
+        ),
+        "raw_archive_decode_count": config.replay_multiplier,
+        "raw_payload_parse_iterations": config.replay_multiplier,
+        "raw_bytes_per_iteration": raw_bytes_per_iteration,
+        "canonical_dataset_sha256": canonical_dataset_sha256,
+        "normalized_batch_fingerprint": normalized_batch_fingerprint,
+        "normalized_records_per_iteration": normalized_records_per_iteration,
+        "rejected_records_per_iteration": rejected_records_per_iteration,
+        "normalized_durable_binding": dict(normalized_binding),
+    }
+    expected_run = {
+        "multiplier": config.replay_multiplier,
+        "equivalent_normalized_records": equivalent_records,
+        "iterations_completed": config.replay_multiplier,
+        "total_records_processed": equivalent_records,
+        "total_bytes_processed": total_bytes,
+    }
+    try:
+        generated_at = _replay_timestamp(replay.get("generated_at_utc"))
+        window_started = _replay_timestamp(replay_required.get("window_started_at_utc"))
+        window_ended = _replay_timestamp(replay_required.get("window_ended_at_utc"))
+    except DataTorrentRuntimeError:
+        raise DataTorrentRuntimeError(error_code) from None
+    if (
+        generated_at.tzinfo is None
+        or replay.get("schema_version") != "robin-data-torrent-load-replay-report-v1"
+        or replay.get("mission_id") != _contract().mission_id
+        or canonical_json_bytes(replay_input) != canonical_json_bytes(expected_input)
+        or canonical_json_bytes(replay_run) != canonical_json_bytes(expected_run)
+        or replay_required.get("basis") != "REAL_BATCH_CAPTURE_WINDOW"
+        or window_started != capture_started.astimezone(UTC)
+        or window_ended != capture_ended.astimezone(UTC)
+        or not exact_float(replay_required.get("elapsed_seconds"), capture_seconds)
+        or not exact_float(replay_required.get("records_per_second"), required_rps)
+        or not exact_float(replay_required.get("bytes_per_second"), required_bps)
+        or wall <= 0
+        or not exact_float(measurement.get("records_per_second"), measured_rps)
+        or not exact_float(measurement.get("bytes_per_second"), measured_bps)
+        or measurement.get("latency_sample_unit") != "BATCH_REPLAY_ITERATION"
+        or measurement.get("latency_sample_count") != config.replay_multiplier
+        or not finite_number(p50_value)
+        or not finite_number(p95_value)
+        or not 0 <= p50 <= p95 <= wall * 1000.0
+        or type(measurement.get("baseline_rss_bytes")) is not int
+        or type(measurement.get("peak_memory_bytes")) is not int
+        or type(measurement.get("incremental_peak_memory_bytes")) is not int
+        or cast(int, measurement["baseline_rss_bytes"]) < 0
+        or cast(int, measurement["peak_memory_bytes"])
+        < cast(int, measurement["baseline_rss_bytes"])
+        or cast(int, measurement["incremental_peak_memory_bytes"]) < 0
+        or measurement.get("rejects")
+        != rejected_records_per_iteration * config.replay_multiplier
+        or measurement.get("duplicates") != logical_duplicates
+        or measurement.get("silent_losses") != silent_losses
+        or measurement.get("unique_canonical_hashes") != [canonical_dataset_sha256]
+        or measurement.get("unique_normalized_batch_fingerprints")
+        != [normalized_batch_fingerprint]
+        or not exact_float(throughput.get("records_ratio"), records_ratio)
+        or not exact_float(throughput.get("bytes_ratio"), bytes_ratio)
+        or not exact_float(throughput.get("minimum_ratio"), minimum_ratio)
+        or throughput.get("required_minimum_ratio") != config.minimum_throughput_ratio
+        or any(type(value) is not int or value != 0 for value in external_delta.values())
+        or any(type(value) is not bool for value in acceptance.values())
+        or canonical_json_bytes(acceptance) != canonical_json_bytes(expected_acceptance)
+        or minimum_ratio < config.minimum_throughput_ratio
+        or replay.get("status") != "PASS"
+    ):
+        raise DataTorrentRuntimeError(error_code)
+    return {
+        "required_records_per_second": required_rps,
+        "required_bytes_per_second": required_bps,
+        "measured_records_per_second": measured_rps,
+        "measured_bytes_per_second": measured_bps,
+        "minimum_ratio": minimum_ratio,
+    }
+
+
+def _verify_terminal_artifact_semantics_v2(
+    *,
+    config: TorrentConfig,
+    raw_archive: bytes,
+    raw_object: DurableObjectReceipt,
+    normalized_archive: bytes,
+    normalized_object: DurableObjectReceipt,
+    normalized_members: Mapping[str, bytes],
+    artifacts: Mapping[str, bytes],
+    normalized_binding: Mapping[str, Any],
+    measured_replay_report_bytes: bytes,
+    league_names: dict[str, str],
+    team_aliases: Mapping[str, str],
+    identity: RuntimeIdentity,
+    expected_post_merge_ci_proof: Mapping[str, Any],
+    expected_chronos_verify_proof: Mapping[str, Any],
+    reader_engine: Any,
+    runtime_effects: LiveRuntimeEffects | None,
+    run_identity: str,
+    claim_identity: str,
+    anchor: datetime,
+    reconciliation_observed_at: datetime,
+    capture_started: datetime,
+    capture_ended: datetime,
+    r2_counters: Mapping[str, int],
+) -> dict[str, Any]:
+    """Verify V2 terminal evidence without performing a second replay loop."""
+
+    error_code = "DATA_TORRENT_TERMINAL_SEMANTIC_QA_FAILED"
+    try:
+        expected_source_run_identity = (
+            f"github:{identity.github.github_repository}:"
+            f"{identity.github.github_run_id}:{identity.github.github_run_attempt}:"
+            f"{identity.github.github_sha}"
+        )
+        _assert_final_artifact_closure(
+            artifacts=artifacts,
+            normalized_binding=normalized_binding,
+        )
+        if (
+            config.replay_multiplier != 100
+            or run_identity != expected_source_run_identity
+            or raw_object.terminal_event != "CREATED_CONFIRMED"
+            or normalized_object.terminal_event != "CREATED_CONFIRMED"
+            or raw_object.object_sha256 != hashlib.sha256(raw_archive).hexdigest()
+            or raw_object.object_bytes != len(raw_archive)
+            or normalized_object.object_sha256 != hashlib.sha256(normalized_archive).hexdigest()
+            or normalized_object.object_bytes != len(normalized_archive)
+            or dict(r2_counters) != _live_r2_expected_counters()
+        ):
+            raise DataTorrentRuntimeError(error_code)
+        archived_official, archived_responses, decoded_raw_bytes = _decode_replay_archive(
+            config=config,
+            raw_archive=raw_archive,
+            expected_archive_sha256=raw_object.object_sha256,
+            expected_run_identity=run_identity,
+            expected_claim_identity=claim_identity,
+        )
+        replay_evidences, replay_horizon = _select_evidence(
+            config=config,
+            official=archived_official,
+            anchor=anchor,
+            observed_at_utc=reconciliation_observed_at,
+        )
+        validate_official_team_aliases(replay_evidences, team_aliases=team_aliases)
+        rebuilt = normalize_batch(
+            evidences=replay_evidences,
+            raw_responses=archived_responses,
+            league_names=league_names,
+            requested_markets=config.markets,
+            run_identity=run_identity,
+            claim_identity=claim_identity,
+            team_aliases=team_aliases,
+        )
+        _assert_meaningful_breadth(
+            config=config,
+            evidences=replay_evidences,
+            batch=rebuilt,
+        )
+        rebuilt_lineage = _lineage(raw_responses=archived_responses, batch=rebuilt)
+        durable_members = _read_replay_archive(normalized_archive)
+        if set(durable_members) != RECOVERY_V2_DURABLE_NORMALIZED_MEMBER_NAMES or any(
+            durable_members[name] != normalized_members[name]
+            for name in RECOVERY_V2_DURABLE_NORMALIZED_MEMBER_NAMES
+        ):
+            raise DataTorrentRuntimeError(error_code)
+        canonical_sha = hashlib.sha256(durable_members["data/normalized-records.jsonl"]).hexdigest()
+        expected_binding = _normalized_durable_binding_v2(
+            receipt=normalized_object,
+            members=durable_members,
+            canonical_dataset_sha256=canonical_sha,
+        )
+        if canonical_json_bytes(expected_binding) != canonical_json_bytes(normalized_binding):
+            raise DataTorrentRuntimeError(error_code)
+        replay = _json_artifact_document(measured_replay_report_bytes)
+        replay_input = replay.get("input")
+        replay_run = replay.get("replay")
+        measurement = replay.get("measurement")
+        acceptance = replay.get("acceptance")
+        external_delta = replay.get("external_effects_delta")
+        if not all(
+            isinstance(value, dict)
+            for value in (replay_input, replay_run, measurement, acceptance, external_delta)
+        ):
+            raise DataTorrentRuntimeError(error_code)
+        replay_input = cast(dict[str, Any], replay_input)
+        replay_run = cast(dict[str, Any], replay_run)
+        measurement = cast(dict[str, Any], measurement)
+        acceptance = cast(dict[str, Any], acceptance)
+        external_delta = cast(dict[str, Any], external_delta)
+        canonical_payload = durable_members["data/normalized-records.jsonl"]
+        canonical_lines = canonical_payload.splitlines()
+        if not canonical_lines:
+            raise DataTorrentRuntimeError(error_code)
+        for line in canonical_lines:
+            record = strict_json_loads(
+                line,
+                duplicate_code="DATA_TORRENT_TERMINAL_RECORD_DUPLICATE_KEY",
+                non_finite_code="DATA_TORRENT_TERMINAL_RECORD_NON_FINITE",
+            )
+            if not isinstance(record, dict):
+                raise DataTorrentRuntimeError(error_code)
+        normalized_record_count = len(canonical_lines)
+        raw_bytes = decoded_raw_bytes
+        if raw_bytes <= 0:
+            raise DataTorrentRuntimeError(error_code)
+        expected_external_keys = {
+            "official_reads",
+            "odds_dns_resolutions",
+            "odds_provider_dispatches",
+            "odds_credits",
+            "r2_puts",
+            "r2_gets",
+            "r2_lists",
+            "r2_deletes",
+            "postgresql_read_transactions",
+            "postgresql_function_reads",
+            "postgresql_mutating_function_calls",
+        }
+        mission_r2 = _mission_r2_counters(
+            proof=expected_chronos_verify_proof,
+            live_counters=r2_counters,
+            live_objects=2,
+        )
+        qa = _json_artifact_document(artifacts["torrent-qa-acceptance-matrix-v1.json"])
+        verify_qa_matrix(qa)
+        quality = _json_artifact_document(artifacts["torrent-real-batch-quality-report-v1.json"])
+        inventory = _json_artifact_document(artifacts["torrent-r2-inventory-v1.json"])
+        manifest = _json_artifact_document(artifacts["torrent-real-batch-manifest-v1.json"])
+        raw_index = _json_artifact_document(artifacts["torrent-real-batch-raw-index-v1.json"])
+        normalized_index = _json_artifact_document(
+            artifacts["torrent-real-batch-normalized-index-v1.json"]
+        )
+        lineage = _json_artifact_document(artifacts["torrent-raw-to-normalized-lineage-v1.json"])
+        canonical_report = _json_artifact_document(
+            artifacts["torrent-canonical-dataset-hash-v1.json"]
+        )
+        official_receipts = _json_artifact_document(
+            artifacts["torrent-official-read-receipts-v1.json"]
+        )
+        provider_receipt = _json_artifact_document(
+            artifacts["torrent-provider-credit-receipt-v1.json"]
+        )
+        zero_hypothesis_receipt = hypothesis_backlog(
+            canonical_dataset_sha256=canonical_sha,
+            coverage=(),
+            records=(),
+            rejects=(),
+            recovery_v2=True,
+        ).encode("utf-8")
+        quality_counts = cast(dict[str, Any], quality.get("lineage", {}))
+        quality_source_units = cast(dict[str, Any], quality.get("source_unit_accounting", {}))
+        quality_temporal = cast(dict[str, Any], quality.get("temporal", {}))
+        quality_coverage = cast(dict[str, Any], quality.get("coverage", {}))
+        lineage_summary = cast(dict[str, Any], lineage.get("summary", {}))
+        manifest_counts = cast(dict[str, Any], manifest.get("counts", {}))
+        manifest_effects = cast(
+            dict[str, Any],
+            cast(dict[str, Any], manifest.get("effect_summary", {})).get("actual", {}),
+        )
+        records = [
+            strict_json_loads(
+                line,
+                duplicate_code="DATA_TORRENT_TERMINAL_RECORD_DUPLICATE_KEY",
+                non_finite_code="DATA_TORRENT_TERMINAL_RECORD_NON_FINITE",
+            )
+            for line in canonical_lines
+        ]
+        reject_lines = durable_members["data/rejected-records.jsonl"].splitlines()
+        rejects = [
+            strict_json_loads(
+                line,
+                duplicate_code="DATA_TORRENT_TERMINAL_REJECT_DUPLICATE_KEY",
+                non_finite_code="DATA_TORRENT_TERMINAL_REJECT_NON_FINITE",
+            )
+            for line in reject_lines
+        ]
+        record_ids: list[str] = []
+        for item in records:
+            if isinstance(item, dict):
+                record_id = item.get("record_id")
+                if isinstance(record_id, str):
+                    record_ids.append(record_id)
+        rejection_reasons = [item.get("reason") for item in rejects if isinstance(item, dict)]
+        coverage_rows = normalized_index.get("league_market_counts")
+        if not isinstance(coverage_rows, list) or any(
+            not isinstance(item, dict) for item in coverage_rows
+        ):
+            raise DataTorrentRuntimeError(error_code)
+        if (
+            durable_members["config/team-alias-registry-v1.json"]
+            != json_artifact(team_alias_registry_document(team_aliases))
+            or durable_members["data/normalized-records.jsonl"]
+            != rebuilt.canonical_dataset_bytes
+            or durable_members["data/rejected-records.jsonl"] != rebuilt.rejects_bytes
+            or durable_members["lineage/raw-to-normalized-v1.json"]
+            != json_artifact(rebuilt_lineage)
+            or durable_members["reports/coverage-v1.csv"] != coverage_csv(rebuilt.coverage)
+        ):
+            raise DataTorrentRuntimeError(error_code)
+        terminal_batch_fingerprint = _normalized_batch_fingerprint(
+            NormalizedBatch(
+                records=tuple(cast(list[dict[str, Any]], records)),
+                rejects=tuple(cast(list[dict[str, Any]], rejects)),
+                coverage=tuple(cast(list[dict[str, Any]], coverage_rows)),
+                raw_events_observed=int(quality_source_units.get("observed", -1)),
+                raw_events_accounted=int(quality_source_units.get("accounted", -1)),
+                silent_drops=int(quality_source_units.get("silent", -1)),
+                logical_duplicates=int(quality.get("logical_duplicates", -1)),
+                temporal_leakage=int(quality_temporal.get("leakage_total", -1)),
+                canonical_dataset_sha256=canonical_sha,
+                canonical_dataset_bytes=durable_members["data/normalized-records.jsonl"],
+                rejects_bytes=durable_members["data/rejected-records.jsonl"],
+            )
+        )
+        if terminal_batch_fingerprint != _normalized_batch_fingerprint(rebuilt):
+            raise DataTorrentRuntimeError(error_code)
+        _replay_arithmetic = _verify_replay_arithmetic_v2(
+            replay=replay,
+            config=config,
+            raw_archive_sha256=raw_object.object_sha256,
+            raw_bytes_per_iteration=raw_bytes,
+            normalized_binding=normalized_binding,
+            canonical_dataset_sha256=canonical_sha,
+            normalized_batch_fingerprint=terminal_batch_fingerprint,
+            normalized_records_per_iteration=normalized_record_count,
+            rejected_records_per_iteration=len(rejects),
+            logical_duplicates=rebuilt.logical_duplicates,
+            silent_losses=rebuilt.silent_drops,
+            capture_started=capture_started,
+            capture_ended=capture_ended,
+        )
+        quality_gates = quality.get("gates")
+        claim = _json_artifact_document(artifacts["torrent-opportunity-claim-receipt-v1.json"])
+        chain = _json_artifact_document(artifacts["torrent-control-plane-event-chain-v1.json"])
+        source_events = cast(dict[str, Any], chain.get("events", {})).get("external_sources")
+        if not isinstance(source_events, list) or len(source_events) != 10:
+            raise DataTorrentRuntimeError(error_code)
+        source_documents = [item for item in source_events if isinstance(item, dict)]
+        try:
+            expected_operations = {
+                cast(dict[str, Any], item["permit"])["operation_id"] for item in source_documents
+            }
+        except (KeyError, TypeError):
+            raise DataTorrentRuntimeError(error_code) from None
+        if len(source_documents) != 10 or len(expected_operations) != 10:
+            raise DataTorrentRuntimeError(error_code)
+        if runtime_effects is None:
+            raise DataTorrentRuntimeError(error_code)
+        runtime_effects.begin_read_transaction()
+        with reader_engine.connect() as connection:
+            database_claim_row = (
+                connection.execute(
+                    sa.text(
+                        "SELECT * FROM public.chronos_opportunity_claim_audit "
+                        "WHERE opportunity_id=:opportunity_id"
+                    ),
+                    {"opportunity_id": claim_identity},
+                )
+                .mappings()
+                .one_or_none()
+            )
+            database_effect_rows = (
+                connection.execute(
+                    sa.text(
+                        "SELECT * FROM public.chronos_torrent_external_effect_audit "
+                        "WHERE opportunity_id=:opportunity_id "
+                        "ORDER BY effect_family,effect_sequence,event_seq"
+                    ),
+                    {"opportunity_id": claim_identity},
+                )
+                .mappings()
+                .all()
+            )
+        rows_by_operation: dict[str, list[Mapping[str, Any]]] = {}
+        for row in database_effect_rows:
+            rows_by_operation.setdefault(str(row["operation_id"]), []).append(row)
+        if (
+            database_claim_row is None
+            or len(database_effect_rows) != 20
+            or set(rows_by_operation) != expected_operations
+            or any(len(rows) != 2 for rows in rows_by_operation.values())
+            or database_claim_row.get("opportunity_id") != claim_identity
+            or database_claim_row.get("mission_id") != _contract().mission_id
+            or database_claim_row.get("github_run_id") != identity.github.github_run_id
+            or database_claim_row.get("github_run_attempt") != identity.github.github_run_attempt
+            or database_claim_row.get("github_sha") != identity.github.github_sha
+            or claim.get("claim_receipt_hash") != database_claim_row.get("claim_hash")
+            or any(
+                [row.get("event_seq") for row in rows] != [1, 2]
+                or [row.get("event_type") for row in rows] != ["DISPATCHED", "CONFIRMED"]
+                for rows in rows_by_operation.values()
+            )
+        ):
+            raise DataTorrentRuntimeError(error_code)
+        try:
+            database_first_permit_at = min(
+                cast(datetime, row["db_permitted_at"]) for row in database_effect_rows
+            )
+            expected_claim_database = {
+                "opportunity_id": claim_identity,
+                "opportunity_kind": claim["opportunity_kind"],
+                "canonical_key": claim["canonical_key"],
+                "mission_id": _contract().mission_id,
+                "authority_id": claim["winner_authority_id"],
+                "github_run_id": identity.github.github_run_id,
+                "github_run_attempt": identity.github.github_run_attempt,
+                "github_sha": identity.github.github_sha,
+                "github_workflow_ref": identity.github.github_workflow_ref,
+                "github_workflow_sha": identity.github.github_workflow_sha,
+                "github_repository": identity.github.github_repository,
+                "github_ref": identity.github.github_ref,
+                "code_revision": identity.github.github_sha,
+                "db_claimed_at": _replay_timestamp(claim["db_claimed_at_utc"]),
+                "postgres_server_epoch": _replay_timestamp(claim["postgres_server_epoch_utc"]),
+                "claim_hash": claim["claim_receipt_hash"],
+            }
+            if any(
+                database_claim_row.get(name) != value
+                if isinstance(value, datetime)
+                else canonical_json_bytes(database_claim_row.get(name))
+                != canonical_json_bytes(value)
+                for name, value in expected_claim_database.items()
+            ) or _replay_timestamp(claim["first_external_permit_at_utc"]) != (
+                database_first_permit_at
+            ):
+                raise DataTorrentRuntimeError(error_code)
+            official_documents = [
+                item for item in source_documents if item.get("family") == "OFFICIAL"
+            ]
+            odds_documents = [item for item in source_documents if item.get("family") == "ODDS"]
+            expected_sports = [item.sport_key for item in config.leagues]
+            if (
+                len(official_documents) != len(expected_sports)
+                or len(odds_documents) != len(expected_sports)
+                or sorted(
+                    (
+                        cast(dict[str, Any], item["permit"])["effect_sequence"],
+                        item.get("sport_key"),
+                    )
+                    for item in official_documents
+                )
+                != list(enumerate(expected_sports, start=1))
+                or sorted(
+                    (
+                        cast(dict[str, Any], item["permit"])["effect_sequence"],
+                        item.get("sport_key"),
+                    )
+                    for item in odds_documents
+                )
+                != list(enumerate(expected_sports, start=1))
+            ):
+                raise DataTorrentRuntimeError(error_code)
+            for source_document in source_documents:
+                if set(source_document) != {
+                    "family",
+                    "sport_key",
+                    "request_contract",
+                    "permit",
+                    "dispatched",
+                    "terminal",
+                }:
+                    raise DataTorrentRuntimeError(error_code)
+                family = source_document["family"]
+                request_contract = cast(dict[str, Any], source_document["request_contract"])
+                permit = cast(dict[str, Any], source_document["permit"])
+                dispatched = cast(dict[str, Any], source_document["dispatched"])
+                terminal = cast(dict[str, Any], source_document["terminal"])
+                operation_id = cast(str, permit["operation_id"])
+                effect_sequence = permit["effect_sequence"]
+                sport_key = source_document["sport_key"]
+                rows = rows_by_operation[operation_id]
+                operation_responses = [
+                    item for item in archived_responses if item.external_operation_id == operation_id
+                ]
+                database_permit = rows[0]
+                expected_permit = {
+                    "operation_id": database_permit["operation_id"],
+                    "effect_family": database_permit["effect_family"],
+                    "effect_sequence": database_permit["effect_sequence"],
+                    "request_hash": database_permit["request_hash"],
+                    "max_official_reads": database_permit["max_official_reads"],
+                    "max_odds_requests": database_permit["max_odds_requests"],
+                    "max_odds_credits": database_permit["max_odds_credits"],
+                    "created_now": True,
+                    "db_permitted_at": utc_text(cast(datetime, database_permit["db_permitted_at"])),
+                    "postgres_server_epoch": utc_text(
+                        cast(datetime, database_permit["postgres_server_epoch"])
+                    ),
+                    "permit_hash": database_permit["permit_hash"],
+                }
+                if (
+                    family not in {"OFFICIAL", "ODDS"}
+                    or type(effect_sequence) is not int
+                    or not 1 <= effect_sequence <= len(expected_sports)
+                    or sport_key != expected_sports[effect_sequence - 1]
+                    or request_contract.get("sport_key") != sport_key
+                    or permit["effect_family"] != family
+                    or permit["request_hash"]
+                    != hashlib.sha256(canonical_json_bytes(request_contract)).hexdigest()
+                    or canonical_json_bytes(permit) != canonical_json_bytes(expected_permit)
+                    or database_permit["github_run_id"] != identity.github.github_run_id
+                    or database_permit["github_run_attempt"] != identity.github.github_run_attempt
+                    or database_permit["code_revision"] != identity.github.github_sha
+                    or not operation_responses
+                    or any(
+                        response.sport_key != sport_key
+                        or response.external_effect_sequence != effect_sequence
+                        or response.permit_hash != permit["permit_hash"]
+                        or response.dispatch_event_hash != dispatched["event_hash"]
+                        or response.confirmation_event_hash != terminal["event_hash"]
+                        or response.family
+                        not in (
+                            {"OFFICIAL", "OFFICIAL_SUPPORTING"}
+                            if family == "OFFICIAL"
+                            else {"ODDS"}
+                        )
+                        for response in operation_responses
+                    )
+                    or sum(item.physical_reads for item in operation_responses)
+                    != terminal["actual_official_reads"] + terminal["actual_odds_requests"]
+                    or sum(item.provider_requests for item in operation_responses)
+                    != terminal["actual_odds_requests"]
+                    or sum(item.provider_credits for item in operation_responses)
+                    != terminal["actual_odds_credits"]
+                ):
+                    raise DataTorrentRuntimeError(error_code)
+                for event_document, database_row in zip((dispatched, terminal), rows, strict=True):
+                    expected_event = {
+                        "operation_id": database_row["operation_id"],
+                        "event_seq": database_row["event_seq"],
+                        "event_type": database_row["event_type"],
+                        "actual_official_reads": database_row["actual_official_reads"],
+                        "actual_odds_requests": database_row["actual_odds_requests"],
+                        "actual_odds_credits": database_row["actual_odds_credits"],
+                        "db_recorded_at": utc_text(cast(datetime, database_row["db_recorded_at"])),
+                        "postgres_server_epoch": utc_text(
+                            cast(datetime, database_row["event_postgres_server_epoch"])
+                        ),
+                        "previous_event_hash": database_row["previous_event_hash"],
+                        "event_hash": database_row["event_hash"],
+                    }
+                    if canonical_json_bytes(event_document) != canonical_json_bytes(expected_event):
+                        raise DataTorrentRuntimeError(error_code)
+        except (KeyError, TypeError, ValueError):
+            raise DataTorrentRuntimeError(error_code) from None
+        official_reads = sum(
+            int(cast(dict[str, Any], item["terminal"])["actual_official_reads"])
+            for item in official_documents
+        )
+        odds_requests = sum(
+            int(cast(dict[str, Any], item["terminal"])["actual_odds_requests"])
+            for item in odds_documents
+        )
+        odds_credits = sum(
+            int(cast(dict[str, Any], item["terminal"])["actual_odds_credits"])
+            for item in odds_documents
+        )
+        chain_events = cast(dict[str, Any], chain.get("events", {}))
+        expected_chain_summary = {
+            "official_effects": 5,
+            "odds_effects": 5,
+            "r2_operations": 2,
+            "all_external_sources_confirmed": True,
+            "all_embedded_r2_terminal": True,
+            "final_r2_terminal_requires_append_only_resolution": False,
+        }
+        if (
+            chain_events.get("r2") != [*raw_object.events, *normalized_object.events]
+            or chain_events.get("normalized_evidence_terminal_resolver") != normalized_binding
+            or chain.get("summary") != expected_chain_summary
+            or inventory.get("objects") != [raw_object.to_json(), normalized_binding]
+            or inventory.get("counters")
+            != {
+                "puts": 2,
+                "gets": 1,
+                "lists": 0,
+                "deletes": 0,
+                "objects": 2,
+                "overwrites": 0,
+                "validity": "DIRECT_CREATED_RECEIPT_V2",
+            }
+            or inventory.get("mission_counters") != mission_r2
+        ):
+            raise DataTorrentRuntimeError(error_code)
+        raw_members = _read_replay_archive(raw_archive)
+        raw_core = _json_artifact_document(raw_members["indexes/raw-index-core-v1.json"])
+        raw_core_without_totals = {key: value for key, value in raw_core.items() if key != "totals"}
+        raw_index_without_extension = {
+            key: value for key, value in raw_index.items() if key not in {"totals", "archive_object"}
+        }
+        raw_core_totals = cast(dict[str, Any], raw_core.get("totals", {}))
+        raw_index_totals = cast(dict[str, Any], raw_index.get("totals", {}))
+        expected_raw_core_totals = {
+            **{
+                key: value
+                for key, value in raw_index_totals.items()
+                if key not in {"accounted_responses", "silent_responses"}
+            },
+            "accounting_status": "PENDING_NORMALIZATION",
+        }
+        expected_raw_archive_object = {
+            "object_key": raw_object.object_key,
+            "bytes": raw_object.object_bytes,
+            "sha256": raw_object.object_sha256,
+            "media_type": "application/gzip",
+            "format": "DETERMINISTIC_USTAR_GZIP_V1",
+        }
+        alias_document = team_alias_registry_document(team_aliases)
+        alias_bytes = json_artifact(alias_document)
+        expected_alias_binding = {
+            "artifact": TEAM_ALIASES_PATH,
+            "archive_member": "config/team-alias-registry-v1.json",
+            "entries": len(team_aliases),
+            "mapping_sha256": alias_document["mapping_sha256"],
+            "registry_artifact_sha256": hashlib.sha256(alias_bytes).hexdigest(),
+            "matching_mode": "ONE_HOP_EXACT_ONLY",
+        }
+        expected_record_type_counts = [
+            {"record_type": name, "records": count}
+            for name, count in sorted(
+                Counter(str(item["record_type"]) for item in rebuilt.records).items()
+            )
+        ]
+        expected_normalized_totals = {
+            "normalized_records": len(rebuilt.records),
+            "rejected_records": len(rebuilt.rejects),
+            "logical_duplicates": rebuilt.logical_duplicates,
+            "canonical_bytes": len(rebuilt.canonical_dataset_bytes),
+        }
+        expected_identity = identity.to_json()
+        expected_manifest_scope = {
+            "season": config.season,
+            "region": config.region,
+            "leagues_enabled": [
+                {"sport_key": item.sport_key, "name": item.name} for item in config.leagues
+            ],
+            "markets_enabled": list(config.markets),
+            "minimum_fixture_coverage_percentage": MINIMUM_FIXTURE_COVERAGE_PERCENTAGE,
+            "team_aliases": expected_alias_binding,
+        }
+        expected_effect_limits = {
+            **asdict(config.budgets),
+            "odds_dns_resolutions_max": len(config.leagues),
+        }
+        expected_effect_actual = {
+            "official_physical_reads": official_reads,
+            "odds_dns_resolutions": len(config.leagues),
+            "odds_provider_requests": odds_requests,
+            "odds_credits_used": odds_credits,
+            **mission_r2,
+        }
+        expected_official_artifact = {
+            "schema_version": "robin-data-torrent-official-read-receipts-v1",
+            "reads": [
+                item
+                for item in cast(list[dict[str, Any]], raw_index["responses"])
+                if item["family"] != "ODDS"
+            ],
+            "total_physical_reads": official_reads,
+            "maximum_physical_reads": config.budgets.official_physical_reads_max,
+            "automatic_retries": 0,
+        }
+        expected_credit_transitions: list[dict[str, int | str]] = []
+        expected_credit_total = 0
+        for league in config.leagues:
+            league_odds_responses = [
+                item
+                for item in archived_responses
+                if item.family == "ODDS" and item.sport_key == league.sport_key
+            ]
+            if len(league_odds_responses) != 1:
+                raise DataTorrentRuntimeError(error_code)
+            headers = league_odds_responses[0].response_headers
+
+            def exact_credit_header(name: str, *, maximum: int) -> int:
+                value = headers.get(name)
+                if type(value) is not str or not value.isascii() or not value.isdigit():
+                    raise DataTorrentRuntimeError(error_code)
+                parsed = int(value)
+                if not 0 <= parsed <= maximum:
+                    raise DataTorrentRuntimeError(error_code)
+                return parsed
+
+            credits_used = exact_credit_header("x-requests-last", maximum=200)
+            used_after = exact_credit_header("x-requests-used", maximum=2**63 - 1)
+            remaining_after = exact_credit_header("x-requests-remaining", maximum=2**63 - 1)
+            if (
+                used_after < credits_used
+                or league_odds_responses[0].provider_credits != credits_used
+            ):
+                raise DataTorrentRuntimeError(error_code)
+            expected_credit_transitions.append(
+                {
+                    "sport_key": league.sport_key,
+                    "used_before": used_after - credits_used,
+                    "used_after": used_after,
+                    "remaining_after": remaining_after,
+                    "credits_used": credits_used,
+                }
+            )
+            expected_credit_total += credits_used
+        expected_provider_artifact = {
+            "schema_version": "robin-data-torrent-provider-credit-receipt-v1",
+            "selection_mode": "FULL",
+            "contracts_requested": [item.sport_key for item in config.leagues],
+            "markets": list(config.markets),
+            "credit_transitions": expected_credit_transitions,
+            "credit_accounting": "EXACT",
+            "credit_anomalies": [],
+            "automatic_retries": 0,
+            "identical_snapshot_attempts": 1,
+            "provider_requests": odds_requests,
+            "credits_used": odds_credits,
+            "dns_resolutions": len(config.leagues),
+            "maximum_dns_resolutions": len(config.leagues),
+            "maximum_credits": config.budgets.odds_credits_max,
+            "errors": [],
+        }
+        if (
+            artifacts["torrent-load-replay-report-v1.json"] != measured_replay_report_bytes
+            or normalized_members["reports/load-replay-v1.json"] != measured_replay_report_bytes
+            or replay.get("schema_version") != "robin-data-torrent-load-replay-report-v1"
+            or replay.get("mission_id") != _contract().mission_id
+            or canonical_json_bytes(replay.get("cross_run_loser_contract_proof"))
+            != canonical_json_bytes(expected_post_merge_ci_proof)
+            or canonical_json_bytes(replay.get("chronos_release_chain_proof"))
+            != canonical_json_bytes(expected_chronos_verify_proof)
+            or replay.get("status") != "PASS"
+            or replay_input.get("replay_source")
+            != "LOCALLY_RETAINED_RAW_ARCHIVE_BYTES_AFTER_RAW_AND_NORMALIZED_CREATED_CONFIRMED"
+            or replay_input.get("raw_archive_sha256") != raw_object.object_sha256
+            or canonical_json_bytes(replay_input.get("normalized_durable_binding"))
+            != canonical_json_bytes(normalized_binding)
+            or replay_input.get("raw_archive_decode_count") != 100
+            or replay_input.get("raw_payload_parse_iterations") != 100
+            or replay_input.get("raw_bytes_per_iteration") != raw_bytes
+            or replay_input.get("canonical_dataset_sha256") != canonical_sha
+            or replay_input.get("normalized_batch_fingerprint")
+            != terminal_batch_fingerprint
+            or replay_input.get("normalized_records_per_iteration") != normalized_record_count
+            or replay_run.get("multiplier") != 100
+            or replay_run.get("iterations_completed") != 100
+            or replay_run.get("equivalent_normalized_records") != normalized_record_count * 100
+            or replay_run.get("total_records_processed") != normalized_record_count * 100
+            or replay_run.get("total_bytes_processed") != raw_bytes * 100
+            or measurement.get("latency_sample_count") != 100
+            or measurement.get("unique_canonical_hashes") != [canonical_sha]
+            or measurement.get("unique_normalized_batch_fingerprints")
+            != [terminal_batch_fingerprint]
+            or measurement.get("duplicates") != 0
+            or measurement.get("silent_losses") != 0
+            or set(external_delta) != expected_external_keys
+            or any(value != 0 for value in external_delta.values())
+            or set(acceptance.values()) != {True}
+            or replay.get("throughput", {}).get("minimum_ratio") < config.minimum_throughput_ratio
+            or mission_r2
+            != {"puts": 3, "gets": 3, "lists": 0, "deletes": 0, "objects": 3, "overwrites": 0}
+            or qa.get("summary")
+            != {
+                "passed": 22,
+                "total": 22,
+                "qa_acceptance_percent": 100,
+                "p0": 0,
+                "p1": 0,
+                "p2": 0,
+                "open_threads": 0,
+            }
+            or quality.get("durability", {}).get("normalized_verified")
+            != "DIRECT_CREATED_CONFIRMED_BEFORE_REPLAY_V2"
+            or inventory.get("live_limits") != {"puts": 2, "gets": 1, "lists": 0, "deletes": 0}
+            or inventory.get("mission_limits")
+            != {"puts": 3, "gets": 3, "objects": 3, "lists": 0, "deletes": 0}
+            or artifacts["robin-data-torrent-operations-pack-v1.md"]
+            != operations_pack(recovery_v2=True).encode("utf-8")
+            or artifacts["robin-data-torrent-recovery-pack-v1.md"]
+            != recovery_pack(recovery_v2=True).encode("utf-8")
+            or normalized_members["operations/operations-pack-v1.md"]
+            != artifacts["robin-data-torrent-operations-pack-v1.md"]
+            or normalized_members["operations/recovery-pack-v1.md"]
+            != artifacts["robin-data-torrent-recovery-pack-v1.md"]
+            or artifacts["torrent-real-batch-coverage-matrix-v1.csv"]
+            != durable_members["reports/coverage-v1.csv"]
+            or artifacts["torrent-raw-to-normalized-lineage-v1.json"]
+            != durable_members["lineage/raw-to-normalized-v1.json"]
+            or canonical_json_bytes(lineage) != canonical_json_bytes(rebuilt_lineage)
+            or artifacts["hypothesis-backlog-from-real-data-v1.md"]
+            != zero_hypothesis_receipt
+            or normalized_members["science/hypothesis-backlog-v1.md"]
+            != zero_hypothesis_receipt
+            or len(records) != normalized_record_count
+            or len(record_ids) != normalized_record_count
+            or len(set(record_ids)) != normalized_record_count
+            or record_ids != sorted(record_ids)
+            or len(rejection_reasons) != len(rejects)
+            or any(type(reason) is not str or not reason for reason in rejection_reasons)
+            or lineage_summary.get("normalized_records") != normalized_record_count
+            or lineage_summary.get("rejected_units") != len(rejects)
+            or lineage_summary.get("silent_responses") != 0
+            or lineage_summary.get("raw_responses_observed")
+            != lineage_summary.get("raw_responses_accounted")
+            or quality.get("quality_status") != "PASS"
+            or quality.get("mission_id") != _contract().mission_id
+            or quality.get("claim_identity") != claim_identity
+            or canonical_json_bytes(quality.get("run_identity"))
+            != canonical_json_bytes(expected_identity)
+            or quality.get("logical_duplicates") != 0
+            or quality_temporal.get("leakage_total") != 0
+            or quality_temporal.get("backfill") != 0
+            or quality_temporal.get("future_information") != 0
+            or quality_temporal.get("post_event_as_pre_event") != 0
+            or quality_temporal.get("missed_windows") != "MISSED_NOT_BACKDATED"
+            or quality_coverage.get("expected_cells")
+            != len(config.leagues) * len(config.markets)
+            or quality_coverage.get("emitted_cells") != len(rebuilt.coverage)
+            or quality_coverage.get("incomplete_cells") != 0
+            or quality_counts.get("normalized_records_covered") != normalized_record_count
+            or quality_counts.get("rejected_units_covered") != len(rejects)
+            or not isinstance(quality_gates, list)
+            or len(quality_gates) != 6
+            or any(
+                not isinstance(gate, dict) or gate.get("status") != "PASS"
+                for gate in quality_gates
+            )
+            or canonical_report.get("record_count") != normalized_record_count
+            or canonical_report.get("original_sha256") != canonical_sha
+            or canonical_report.get("replay_sha256") != canonical_sha
+            or canonical_report.get("equality") is not True
+            or normalized_index.get("archive_object") != normalized_binding
+            or normalized_index.get("members") != normalized_binding.get("members")
+            or normalized_index.get("canonical_dataset_sha256") != canonical_sha
+            or normalized_index.get("schema_version")
+            != "robin-data-torrent-normalized-index-v1"
+            or normalized_index.get("mission_id") != _contract().mission_id
+            or normalized_index.get("claim_identity") != claim_identity
+            or canonical_json_bytes(normalized_index.get("run_identity"))
+            != canonical_json_bytes(expected_identity)
+            or normalized_index.get("canonicalization")
+            != {
+                "version": "ROBIN_CANONICAL_JSON_LINES_V1",
+                "sort_key": "record_id",
+                "encoding": "UTF-8",
+                "line_ending": "LF",
+            }
+            or canonical_json_bytes(normalized_index.get("team_aliases"))
+            != canonical_json_bytes(expected_alias_binding)
+            or canonical_json_bytes(normalized_index.get("record_type_counts"))
+            != canonical_json_bytes(expected_record_type_counts)
+            or canonical_json_bytes(normalized_index.get("league_market_counts"))
+            != canonical_json_bytes(list(rebuilt.coverage))
+            or canonical_json_bytes(normalized_index.get("totals"))
+            != canonical_json_bytes(expected_normalized_totals)
+            or raw_index.get("claim_identity") != claim_identity
+            or raw_index.get("schema_version")
+            != "robin-data-torrent-real-batch-raw-index-v1"
+            or raw_index.get("mission_id") != _contract().mission_id
+            or canonical_json_bytes(raw_index.get("run_identity"))
+            != canonical_json_bytes(expected_identity)
+            or canonical_json_bytes(raw_core_without_totals)
+            != canonical_json_bytes(raw_index_without_extension)
+            or canonical_json_bytes(raw_core_totals)
+            != canonical_json_bytes(expected_raw_core_totals)
+            or raw_index_totals.get("accounting_status") != "COMPLETE"
+            or raw_index_totals.get("accounted_responses") != len(archived_responses)
+            or raw_index_totals.get("silent_responses") != 0
+            or canonical_json_bytes(raw_index.get("archive_object"))
+            != canonical_json_bytes(expected_raw_archive_object)
+            or manifest.get("mission_id") != _contract().mission_id
+            or manifest.get("config_sha256") != config.canonical_sha256
+            or canonical_json_bytes(manifest.get("run_identity"))
+            != canonical_json_bytes(expected_identity)
+            or canonical_json_bytes(manifest.get("post_merge_ci_proof"))
+            != canonical_json_bytes(expected_post_merge_ci_proof)
+            or canonical_json_bytes(manifest.get("chronos_release_chain_proof"))
+            != canonical_json_bytes(expected_chronos_verify_proof)
+            or canonical_json_bytes(manifest.get("claim_identity"))
+            != canonical_json_bytes(claim)
+            or claim.get("schema_version")
+            != "robin-data-torrent-opportunity-claim-receipt-v1"
+            or claim.get("opportunity_id") != claim_identity
+            or claim.get("mission_id") != _contract().mission_id
+            or claim.get("mission_manifest_sha256") != _contract().manifest_sha256
+            or claim.get("mission_source_sha256") != _contract().source_sha256
+            or claim.get("torrent_config_sha256") != config.canonical_sha256
+            or claim.get("acquired_now") is not True
+            or claim.get("claim_before_first_external_effect") is not True
+            or canonical_json_bytes(claim.get("run_identity"))
+            != canonical_json_bytes(expected_identity)
+            or canonical_json_bytes(claim.get("cross_run_contract_proof"))
+            != canonical_json_bytes(expected_post_merge_ci_proof)
+            or canonical_json_bytes(claim.get("chronos_release_chain_proof"))
+            != canonical_json_bytes(expected_chronos_verify_proof)
+            or canonical_json_bytes(manifest.get("scope"))
+            != canonical_json_bytes(expected_manifest_scope)
+            or canonical_json_bytes(manifest.get("horizon"))
+            != canonical_json_bytes(replay_horizon)
+            or cast(dict[str, Any], manifest.get("horizon", {})).get("no_backfill") is not True
+            or cast(dict[str, Any], manifest.get("horizon", {})).get("selected_days")
+            not in {config.primary_horizon_days, config.fallback_horizon_days}
+            or cast(dict[str, Any], manifest.get("horizon", {})).get(
+                "selected_fixture_count", 0
+            )
+            <= 0
+            or canonical_json_bytes(
+                cast(dict[str, Any], manifest.get("durability", {})).get("raw_object")
+            )
+            != canonical_json_bytes(raw_object.to_json())
+            or canonical_json_bytes(
+                cast(dict[str, Any], manifest.get("durability", {})).get(
+                    "normalized_evidence_binding"
+                )
+            )
+            != canonical_json_bytes(normalized_binding)
+            or cast(dict[str, Any], manifest.get("durability", {})).get(
+                "verification_status"
+            )
+            != "CREATED_CONFIRMED_BEFORE_REPLAY"
+            or manifest.get("production")
+            != {
+                "database_revision": EXPECTED_REVISION,
+                "runtime_bindings_present": [
+                    "CHRONOS_AUTHORITY_DATABASE_URL",
+                    "CHRONOS_RUNTIME_DATABASE_URL",
+                    "CHRONOS_READER_DATABASE_URL",
+                    "CHRONOS_CONTROL_PLANE_GENERATION_NONCE",
+                ],
+                "cloud_runtime": "ubuntu-latest",
+            }
+            or manifest.get("execution")
+            != {
+                "official_batch_status": "SUCCESS",
+                "odds_snapshot_status": "SUCCESS",
+                "odds_selection_mode": "FULL",
+                "automatic_retries": 0,
+                "identical_snapshot_attempts": 1,
+                "safety_locks": dict(PRODUCTION_SAFETY_LOCKS),
+            }
+            or canonical_json_bytes(
+                cast(dict[str, Any], manifest.get("effect_summary", {})).get("limits")
+            )
+            != canonical_json_bytes(expected_effect_limits)
+            or canonical_json_bytes(manifest_effects)
+            != canonical_json_bytes(expected_effect_actual)
+            or cast(dict[str, Any], manifest.get("effect_summary", {})).get(
+                "unaccounted_external_effects"
+            )
+            != 0
+            or manifest.get("status") != "SUCCESS"
+            or manifest.get("data_torrent_ready") is not True
+            or manifest.get("canonical_dataset_sha256") != canonical_sha
+            or manifest.get("hypotheses_generated") != 0
+            or manifest.get("edge_promotions") != 0
+            or manifest.get("bet_calls") != 0
+            or manifest.get("purchases") != 0
+            or manifest.get("missed_windows") != "MISSED_NOT_BACKDATED"
+            or manifest_counts.get("leagues_enabled") != 5
+            or manifest_counts.get("leagues_with_real_data") != 5
+            or manifest_counts.get("markets_requested") != 2
+            or manifest_counts.get("markets_returned") != 2
+            or manifest_counts.get("raw_responses", 0) <= 0
+            or manifest_counts.get("raw_bytes", 0) <= 0
+            or manifest_counts.get("normalized_records") != normalized_record_count
+            or manifest_counts.get("rejected_records") != len(rejects)
+            or any(
+                manifest_counts.get(name) != 0
+                for name in ("silent_drops", "logical_duplicates", "temporal_leakage")
+            )
+            or official_receipts.get("total_physical_reads") != official_reads
+            or canonical_json_bytes(official_receipts)
+            != canonical_json_bytes(expected_official_artifact)
+            or raw_members["receipts/official-v1.json"]
+            != json_artifact(
+                {
+                    "reads": [
+                        archived_official.results[item.sport_key].receipt.to_json()
+                        for item in config.leagues
+                    ]
+                }
+            )
+            or not 0 < official_reads <= config.budgets.official_physical_reads_max
+            or provider_receipt.get("provider_requests") != odds_requests
+            or odds_requests != len(config.leagues)
+            or provider_receipt.get("dns_resolutions") != len(config.leagues)
+            or provider_receipt.get("credits_used") != odds_credits
+            or expected_credit_total != odds_credits
+            or canonical_json_bytes(provider_receipt)
+            != canonical_json_bytes(expected_provider_artifact)
+            or raw_members["receipts/provider-credit-v1.json"]
+            != artifacts["torrent-provider-credit-receipt-v1.json"]
+            or not 0 < odds_credits <= config.budgets.odds_credits_max
+            or provider_receipt.get("automatic_retries") != 0
+            or provider_receipt.get("errors") != []
+        ):
+            raise DataTorrentRuntimeError(error_code)
+    except DataTorrentRuntimeError:
+        raise
+    except (KeyError, TypeError, ValueError, UnicodeDecodeError):
+        raise DataTorrentRuntimeError(error_code) from None
+    return {
+        "schema_version": "robin-data-torrent-terminal-semantic-qa-v2",
+        "status": "PASS",
+        "raw_archive_sha256": raw_object.object_sha256,
+        "normalized_archive_sha256": normalized_object.object_sha256,
+        "canonical_dataset_sha256": canonical_sha,
+        "qa_acceptance_percent": 100,
+        "gates_verified": 22,
+        "replay_iterations_verified": 100,
+        "replay_verifier_additional_iterations": 0,
+        "external_effects": mission_r2,
+        "live_r2_effects": dict(r2_counters),
+    }
+
+
 def _verify_terminal_artifact_semantics(
     *,
     config: TorrentConfig,
@@ -2528,6 +4225,33 @@ def _verify_terminal_artifact_semantics(
     environment: Mapping[str, str],
 ) -> dict[str, Any]:
     """Independently derive every terminal QA predicate from immutable bytes."""
+
+    if _contract().recovery_v2:
+        return _verify_terminal_artifact_semantics_v2(
+            config=config,
+            raw_archive=raw_archive,
+            raw_object=raw_object,
+            normalized_archive=normalized_archive,
+            normalized_object=normalized_object,
+            normalized_members=normalized_members,
+            artifacts=artifacts,
+            normalized_binding=normalized_binding,
+            measured_replay_report_bytes=measured_replay_report_bytes,
+            league_names=league_names,
+            team_aliases=team_aliases,
+            identity=identity,
+            expected_post_merge_ci_proof=expected_post_merge_ci_proof,
+            expected_chronos_verify_proof=expected_chronos_verify_proof,
+            reader_engine=reader_engine,
+            runtime_effects=runtime_effects,
+            run_identity=run_identity,
+            claim_identity=claim_identity,
+            anchor=anchor,
+            reconciliation_observed_at=reconciliation_observed_at,
+            capture_started=capture_started,
+            capture_ended=capture_ended,
+            r2_counters=r2_counters,
+        )
 
     error_code = "DATA_TORRENT_TERMINAL_SEMANTIC_QA_FAILED"
     try:
@@ -2748,7 +4472,7 @@ def _verify_terminal_artifact_semantics(
             "opportunity_id": claim_identity,
             "opportunity_kind": claim.get("opportunity_kind"),
             "canonical_key": claim.get("canonical_key"),
-            "mission_id": MISSION_ID,
+            "mission_id": _contract().mission_id,
             "authority_id": claim.get("winner_authority_id"),
             "github_run_id": identity.github.github_run_id,
             "github_run_attempt": identity.github.github_run_attempt,
@@ -3239,7 +4963,7 @@ def _verify_terminal_artifact_semantics(
         )
         if (
             manifest.get("schema_version") != "robin-data-torrent-real-batch-manifest-v1"
-            or manifest.get("mission_id") != MISSION_ID
+            or manifest.get("mission_id") != _contract().mission_id
             or manifest.get("config_sha256") != config.canonical_sha256
             or canonical_json_bytes(manifest_identity) != canonical_json_bytes(expected_identity)
             or canonical_json_bytes(post_merge) != canonical_json_bytes(expected_post_merge)
@@ -3259,14 +4983,14 @@ def _verify_terminal_artifact_semantics(
             or canonical_json_bytes(quality.get("run_identity"))
             != canonical_json_bytes(expected_identity)
             or normalized_index.get("schema_version") != "robin-data-torrent-normalized-index-v1"
-            or normalized_index.get("mission_id") != MISSION_ID
+            or normalized_index.get("mission_id") != _contract().mission_id
             or normalized_index.get("claim_identity") != claim_identity
             or replay.get("schema_version") != "robin-data-torrent-load-replay-report-v1"
-            or replay.get("mission_id") != MISSION_ID
+            or replay.get("mission_id") != _contract().mission_id
             or claim.get("schema_version") != "robin-data-torrent-opportunity-claim-receipt-v1"
             or claim.get("torrent_config_sha256") != config.canonical_sha256
-            or claim.get("mission_manifest_sha256") != MISSION_MANIFEST_SHA256
-            or claim.get("mission_source_sha256") != MISSION_SOURCE_SHA256
+            or claim.get("mission_manifest_sha256") != _contract().manifest_sha256
+            or claim.get("mission_source_sha256") != _contract().source_sha256
             or canonical_json_bytes(replay.get("cross_run_loser_contract_proof"))
             != canonical_json_bytes(expected_post_merge)
             or canonical_json_bytes(replay.get("chronos_release_chain_proof"))
@@ -3481,7 +5205,7 @@ def _verify_terminal_artifact_semantics(
         ]
         expected_quality_projection = {
             "schema_version": "robin-data-torrent-quality-report-v1",
-            "mission_id": MISSION_ID,
+            "mission_id": _contract().mission_id,
             "run_identity": expected_identity,
             "claim_identity": claim_identity,
             "response_accounting": {
@@ -3516,7 +5240,11 @@ def _verify_terminal_artifact_semantics(
             },
             "durability": {
                 "raw_verified": True,
-                "normalized_verified": "CONDITIONAL_APPEND_ONLY_BINDING",
+                "normalized_verified": (
+                    "CREATED_CONFIRMED_BEFORE_REPLAY"
+                    if _contract().recovery_v2
+                    else "CONDITIONAL_APPEND_ONLY_BINDING"
+                ),
                 "normalized_evidence_binding": normalized_binding,
             },
             "lineage": {
@@ -3614,7 +5342,7 @@ def _verify_terminal_artifact_semantics(
         }
         expected_manifest_projection = {
             "schema_version": "robin-data-torrent-real-batch-manifest-v1",
-            "mission_id": MISSION_ID,
+            "mission_id": _contract().mission_id,
             "status": "SUCCESS",
             "evidence_validity": {
                 "mode": "CONDITIONAL_APPEND_ONLY_EXTERNAL_BINDING_V1",
@@ -3993,13 +5721,18 @@ def _execute_data_torrent(
     except ChronosProductionError as error:
         raise DataTorrentRuntimeError(str(error)) from None
     try:
-        validate_data_torrent_authority(repository_root=repository_root)
+        _validate_runtime_authority(repository_root)
     except ChronosProductionError as error:
         raise DataTorrentRuntimeError(str(error)) from None
     mission_manifest = _validated_mission_manifest(
         repository_root=repository_root,
         environment=env,
     )
+    if _contract().recovery_v2:
+        try:
+            validate_live_postgresql_call_graph_v2(repository_root)
+        except ValueError as error:
+            raise DataTorrentRuntimeError(str(error)) from None
     identity = _runtime_identity(
         repository_root=repository_root,
         environment=env,
@@ -4037,6 +5770,21 @@ def _execute_data_torrent(
     if output_dir.exists():
         raise DataTorrentRuntimeError("DATA_TORRENT_OUTPUT_ALREADY_EXISTS")
     output_dir.parent.mkdir(parents=True, exist_ok=True)
+    r2_store: CountingR2Store | None = None
+    if _contract().recovery_v2:
+        base_r2_store = ChronosR2ConditionalStore.from_environment(env)
+        r2_store = CountingR2Store(
+            base_r2_store,
+            config.budgets,
+            authority_validator=lambda: _validate_runtime_authority(repository_root),
+        )
+        runtime_effects.r2_store = r2_store
+        _validate_live_identity_seal_readback_v2(
+            repository_root=repository_root,
+            environment=env,
+            proof=chronos_verify_proof,
+            r2_store=r2_store,
+        )
     authority_url = _required(env, "CHRONOS_AUTHORITY_DATABASE_URL")
     runtime_url = _required(env, "CHRONOS_RUNTIME_DATABASE_URL")
     reader_url = _required(env, "CHRONOS_READER_DATABASE_URL")
@@ -4055,12 +5803,12 @@ def _execute_data_torrent(
         targets=targets,
     )
     try:
-        validate_data_torrent_authority(repository_root=repository_root)
+        _validate_runtime_authority(repository_root)
     except ChronosProductionError as error:
         raise DataTorrentRuntimeError(str(error)) from None
-    authority_engine = build_engine(authority_url)
-    runtime_engine = build_engine(runtime_url)
-    reader_engine = build_engine(reader_url)
+    authority_engine = _build_live_database_engine(authority_url)
+    runtime_engine = _build_live_database_engine(runtime_url)
+    reader_engine = _build_live_database_engine(reader_url)
     try:
         _assert_scoped_database_identities(
             targets=targets,
@@ -4068,7 +5816,7 @@ def _execute_data_torrent(
             effects=runtime_effects,
         )
         try:
-            validate_data_torrent_authority(repository_root=repository_root)
+            _validate_runtime_authority(repository_root)
         except ChronosProductionError as error:
             raise DataTorrentRuntimeError(str(error)) from None
         runtime_effects.begin_read_transaction()
@@ -4091,7 +5839,7 @@ def _execute_data_torrent(
         external_ledger = PostgresExternalEffectLedger(runtime_client)
         opportunity = _opportunity(mission_manifest)
         claim_authority_id = issuer.issue_authority(
-            mission_id=MISSION_ID,
+            mission_id=_contract().mission_id,
             identity=identity.github,
             generation_token=generation_token,
             ttl_seconds=1200,
@@ -4099,7 +5847,7 @@ def _execute_data_torrent(
         )
         claim = PostgresOpportunityClaimer(runtime_client).claim(
             authority_id=claim_authority_id,
-            mission_id=MISSION_ID,
+            mission_id=_contract().mission_id,
             identity=identity.github,
             generation_token=generation_token,
             opportunity=opportunity,
@@ -4119,9 +5867,10 @@ def _execute_data_torrent(
                 "odds_provider_requests": 0,
                 "odds_credits_used": 0,
                 "r2_puts": 0,
-                "r2_gets": 0,
+                "r2_gets": 1 if _contract().recovery_v2 else 0,
                 "r2_lists": 0,
                 "r2_deletes": 0,
+                **({"post_claim_external_effects": 0} if _contract().recovery_v2 else {}),
             }
             loser["post_merge_ci_proof"] = post_merge_ci_proof
             loser["chronos_verify_proof"] = chronos_verify_proof
@@ -4130,13 +5879,18 @@ def _execute_data_torrent(
                 {"torrent-opportunity-claim-receipt-v1.json": json_artifact(loser)},
             )
             return {
-                "status": "LOSER_ZERO_EFFECTS",
+                "status": (
+                    "LOSER_ZERO_POST_CLAIM_EFFECTS"
+                    if _contract().recovery_v2
+                    else "LOSER_ZERO_EFFECTS"
+                ),
                 **loser["loser_effect_counters"],
                 "runtime_effects": runtime_effects.snapshot(),
             }
 
-        base_r2_store = ChronosR2ConditionalStore.from_environment(env)
-        r2_store = CountingR2Store(base_r2_store, config.budgets)
+        if r2_store is None:
+            base_r2_store = ChronosR2ConditionalStore.from_environment(env)
+            r2_store = CountingR2Store(base_r2_store, config.budgets)
         source_effect_counters = SourceEffectCounters()
         runtime_effects.r2_store = r2_store
         runtime_effects.source_counters = source_effect_counters
@@ -4155,6 +5909,7 @@ def _execute_data_torrent(
                 counters=source_effect_counters,
                 anchor=anchor,
                 progress=source_progress,
+                authority_validator=lambda: _validate_runtime_authority(repository_root),
             )
         except Exception as error:
             _durabilize_partial_capture(
@@ -4252,6 +6007,7 @@ def _execute_data_torrent(
                 response_sequence_start=len(official.raw_responses),
                 counters=source_effect_counters,
                 progress=source_progress,
+                authority_validator=lambda: _validate_runtime_authority(repository_root),
             )
         except Exception as error:
             _durabilize_partial_capture(
@@ -4372,7 +6128,7 @@ def _execute_data_torrent(
             }
             raw_index_core = {
                 "schema_version": "robin-data-torrent-real-batch-raw-index-v1",
-                "mission_id": MISSION_ID,
+                "mission_id": _contract().mission_id,
                 "generated_at_utc": utc_text(datetime.now(UTC)),
                 "run_identity": identity.to_json(),
                 "claim_identity": claim.opportunity_id,
@@ -4407,16 +6163,20 @@ def _execute_data_torrent(
             )
             raise DataTorrentRuntimeError("DATA_TORRENT_RAW_ARCHIVE_CONSTRUCTION_FAILED") from error
         try:
+            object_prefix = (
+                "data-torrent/recovery-v2" if _contract().recovery_v2 else "data-torrent/v1"
+            )
             raw_object = upload_immutable_object(
                 role="RAW",
-                object_key=f"data-torrent/v1/{claim.opportunity_id}/raw.tar.gz",
+                object_key=f"{object_prefix}/{claim.opportunity_id}/raw.tar.gz",
                 payload=raw_archive,
-                mission_id=f"{MISSION_ID}-raw-r2",
+                mission_id=f"{_contract().mission_id}-raw-r2",
                 identity=identity.github,
                 generation_token=generation_token,
                 issuer=issuer,
                 base_ledger=effect_ledger,
                 store=r2_store,
+                require_created=_contract().require_created,
             )
         except Exception as error:
             safe_partial_put = _partial_raw_put_authorized(
@@ -4478,6 +6238,52 @@ def _execute_data_torrent(
             batch=normalized,
         )
         capture_ended = datetime.now(UTC)
+        normalized_object: DurableObjectReceipt | None = None
+        normalized_archive: bytes | None = None
+        normalized_binding: dict[str, Any] | None = None
+        if _contract().recovery_v2:
+            if (
+                not _immutable_terminal(raw_object.terminal_event)
+                or raw_object.object_bytes != len(raw_archive)
+                or raw_object.object_sha256 != hashlib.sha256(raw_archive).hexdigest()
+            ):
+                raise DataTorrentRuntimeError("DATA_TORRENT_RAW_V2_DURABILITY_INVALID")
+            durable_lineage = _lineage(raw_responses=raw_responses, batch=normalized)
+            durable_normalized_members = {
+                "config/team-alias-registry-v1.json": team_alias_registry_bytes,
+                "data/normalized-records.jsonl": normalized.canonical_dataset_bytes,
+                "data/rejected-records.jsonl": normalized.rejects_bytes,
+                "lineage/raw-to-normalized-v1.json": json_artifact(durable_lineage),
+                "reports/coverage-v1.csv": coverage_csv(normalized.coverage),
+            }
+            if set(durable_normalized_members) != RECOVERY_V2_DURABLE_NORMALIZED_MEMBER_NAMES:
+                raise DataTorrentRuntimeError("DATA_TORRENT_NORMALIZED_V2_MEMBER_SET_INVALID")
+            _secret_scan(artifacts=durable_normalized_members, environment=env)
+            normalized_archive = deterministic_tar_gz(durable_normalized_members)
+            normalized_object = upload_immutable_object(
+                role="NORMALIZED_EVIDENCE",
+                object_key=(f"{object_prefix}/{claim.opportunity_id}/normalized-evidence.tar.gz"),
+                payload=normalized_archive,
+                mission_id=f"{_contract().mission_id}-normalized-evidence-r2",
+                identity=identity.github,
+                generation_token=generation_token,
+                issuer=issuer,
+                base_ledger=effect_ledger,
+                store=r2_store,
+                require_created=True,
+            )
+            if (
+                normalized_object.object_sha256 != hashlib.sha256(normalized_archive).hexdigest()
+                or normalized_object.object_bytes != len(normalized_archive)
+                or normalized_object.terminal_event != "CREATED_CONFIRMED"
+                or r2_store.counters() != _live_r2_expected_counters()
+            ):
+                raise DataTorrentRuntimeError("DATA_TORRENT_NORMALIZED_V2_DURABILITY_INVALID")
+            normalized_binding = _normalized_durable_binding_v2(
+                receipt=normalized_object,
+                members=durable_normalized_members,
+                canonical_dataset_sha256=normalized.canonical_dataset_sha256,
+            )
         replay = _measure_replay(
             config=config,
             raw_archive=raw_archive,
@@ -4494,7 +6300,9 @@ def _execute_data_torrent(
             counter_snapshot=lambda: _effect_counter_snapshot(
                 sources=source_effect_counters,
                 r2_store=r2_store,
+                runtime_effects=runtime_effects,
             ),
+            normalized_durable_binding=normalized_binding,
         )
         if replay.report["status"] != "PASS":
             raise DataTorrentRuntimeError("DATA_TORRENT_LOAD_REPLAY_FAILED")
@@ -4520,7 +6328,7 @@ def _execute_data_torrent(
         )
         coverage_bytes = coverage_csv(normalized.coverage)
         field_dict = field_dictionary(
-            mission_id=MISSION_ID,
+            mission_id=_contract().mission_id,
             generated_at=datetime.now(UTC),
             canonical_dataset_sha256=normalized.canonical_dataset_sha256,
             records=normalized.records,
@@ -4530,19 +6338,19 @@ def _execute_data_torrent(
             coverage=normalized.coverage,
             records=normalized.records,
             rejects=normalized.rejects,
+            recovery_v2=_contract().recovery_v2,
         )
         reject_counts = Counter(str(item["reason"]) for item in normalized.rejects)
-        normalized_object_key = f"data-torrent/v1/{claim.opportunity_id}/normalized-evidence.tar.gz"
-        normalized_binding = _normalized_evidence_binding(
-            opportunity_id=claim.opportunity_id,
-            object_key=normalized_object_key,
-        )
-        expected_live_r2_counters = {
-            "puts": 2,
-            "gets": 0,
-            "lists": 0,
-            "deletes": 0,
-        }
+        normalized_object_key = f"{object_prefix}/{claim.opportunity_id}/normalized-evidence.tar.gz"
+        if _contract().recovery_v2:
+            if normalized_binding is None or normalized_object is None:
+                raise DataTorrentRuntimeError("DATA_TORRENT_NORMALIZED_V2_DURABILITY_MISSING")
+        else:
+            normalized_binding = _normalized_evidence_binding(
+                opportunity_id=claim.opportunity_id,
+                object_key=normalized_object_key,
+            )
+        expected_live_r2_counters = _live_r2_expected_counters()
         mission_r2_counters = _mission_r2_counters(
             proof=chronos_verify_proof,
             live_counters=expected_live_r2_counters,
@@ -4550,7 +6358,7 @@ def _execute_data_torrent(
         )
         quality_core = {
             "schema_version": "robin-data-torrent-quality-report-v1",
-            "mission_id": MISSION_ID,
+            "mission_id": _contract().mission_id,
             "generated_at_utc": utc_text(datetime.now(UTC)),
             "run_identity": identity.to_json(),
             "claim_identity": claim.opportunity_id,
@@ -4575,6 +6383,11 @@ def _execute_data_torrent(
                 "future_information": 0,
                 "post_event_as_pre_event": 0,
                 "leakage_total": normalized.temporal_leakage,
+                **(
+                    {"missed_windows": "MISSED_NOT_BACKDATED"}
+                    if _contract().recovery_v2
+                    else {}
+                ),
             },
             "coverage": {
                 "expected_cells": 10,
@@ -4642,7 +6455,11 @@ def _execute_data_torrent(
             **quality_core,
             "durability": {
                 "raw_verified": True,
-                "normalized_verified": "CONDITIONAL_APPEND_ONLY_BINDING",
+                "normalized_verified": (
+                    "DIRECT_CREATED_CONFIRMED_BEFORE_REPLAY_V2"
+                    if _contract().recovery_v2
+                    else "CONDITIONAL_APPEND_ONLY_BINDING"
+                ),
                 "normalized_evidence_binding": normalized_binding,
             },
             "gates": [
@@ -4692,19 +6509,27 @@ def _execute_data_torrent(
             "reports/load-replay-v1.json": measured_replay_report_bytes,
             "science/field-dictionary-v1.json": json_artifact(field_dict),
             "science/hypothesis-backlog-v1.md": hypotheses.encode("utf-8"),
-            "operations/operations-pack-v1.md": operations_pack().encode("utf-8"),
-            "operations/recovery-pack-v1.md": recovery_pack().encode("utf-8"),
+            "operations/operations-pack-v1.md": operations_pack(
+                recovery_v2=_contract().recovery_v2
+            ).encode("utf-8"),
+            "operations/recovery-pack-v1.md": recovery_pack(
+                recovery_v2=_contract().recovery_v2
+            ).encode("utf-8"),
         }
         if set(normalized_members) != NORMALIZED_CORE_MEMBER_NAMES:
             raise DataTorrentRuntimeError("DATA_TORRENT_NORMALIZED_MEMBER_SET_INVALID")
         normalized_index = {
             "schema_version": "robin-data-torrent-normalized-index-v1",
-            "mission_id": MISSION_ID,
+            "mission_id": _contract().mission_id,
             "generated_at_utc": utc_text(datetime.now(UTC)),
             "run_identity": identity.to_json(),
             "claim_identity": claim.opportunity_id,
             "archive_object": normalized_binding,
-            "members": artifact_index(normalized_members),
+            "members": (
+                normalized_binding["members"]
+                if _contract().recovery_v2
+                else artifact_index(normalized_members)
+            ),
             "canonicalization": {
                 "version": "ROBIN_CANONICAL_JSON_LINES_V1",
                 "sort_key": "record_id",
@@ -4739,26 +6564,29 @@ def _execute_data_torrent(
             "objects": [raw_object.to_json(), normalized_binding],
             "counters": {
                 "puts": 2,
-                "gets": 0,
+                "gets": expected_live_r2_counters["gets"],
                 "lists": 0,
                 "deletes": 0,
                 "objects": 2,
                 "overwrites": 0,
-                "validity": "CONDITIONAL_APPEND_ONLY_BINDING",
+                "validity": (
+                    "DIRECT_CREATED_RECEIPT_V2"
+                    if _contract().recovery_v2
+                    else "CONDITIONAL_APPEND_ONLY_BINDING"
+                ),
             },
-            "control_plane_release": chronos_verify_proof["controlled_go"],
+            "control_plane_release": _control_plane_release(chronos_verify_proof),
             "mission_counters": mission_r2_counters,
-            "limits": {
-                "puts": config.budgets.r2_puts_max,
-                "gets": config.budgets.r2_gets_max,
-                "lists": config.budgets.r2_lists_max,
-                "deletes": config.budgets.r2_deletes_max,
-            },
+            **_r2_inventory_limits(config),
         }
         control_chain = _safe_events(
             official,
             odds,
-            (raw_object,),
+            (
+                (raw_object, normalized_object)
+                if _contract().recovery_v2 and normalized_object is not None
+                else (raw_object,)
+            ),
             normalized_evidence_binding=normalized_binding,
         )
         canonical_hash = {
@@ -4793,8 +6621,12 @@ def _execute_data_torrent(
             "torrent-r2-inventory-v1.json": json_artifact(r2_inventory),
             "torrent-raw-to-normalized-lineage-v1.json": json_artifact(lineage),
             "torrent-canonical-dataset-hash-v1.json": json_artifact(canonical_hash),
-            "robin-data-torrent-operations-pack-v1.md": operations_pack().encode("utf-8"),
-            "robin-data-torrent-recovery-pack-v1.md": recovery_pack().encode("utf-8"),
+            "robin-data-torrent-operations-pack-v1.md": operations_pack(
+                recovery_v2=_contract().recovery_v2
+            ).encode("utf-8"),
+            "robin-data-torrent-recovery-pack-v1.md": recovery_pack(
+                recovery_v2=_contract().recovery_v2
+            ).encode("utf-8"),
             "hypothesis-ready-field-dictionary-v1.json": json_artifact(field_dict),
             "hypothesis-backlog-from-real-data-v1.md": hypotheses.encode("utf-8"),
         }
@@ -4803,10 +6635,7 @@ def _execute_data_torrent(
         all_source_effects_confirmed = all(
             item.terminal.event_type == "CONFIRMED" for item in source_effects
         )
-        raw_r2_terminal = raw_object.terminal_event in {
-            "CREATED_CONFIRMED",
-            "PREEXISTING_CONFIRMED",
-        }
+        raw_r2_terminal = _immutable_terminal(raw_object.terminal_event)
         first_permit_after_claim = all(
             item.permit.db_permitted_at >= claim.db_claimed_at for item in source_effects
         )
@@ -4848,9 +6677,9 @@ def _execute_data_torrent(
                 and odds.credits_used <= config.budgets.odds_credits_max
                 and odds.dns_resolutions == len(config.leagues)
                 and source_counter_mismatches == 0
-                and r2_store.puts == 1
+                and r2_store.puts == (2 if _contract().recovery_v2 else 1)
                 and config.budgets.r2_puts_max >= 2
-                and r2_store.gets == 0
+                and r2_store.gets == expected_live_r2_counters["gets"]
                 and r2_store.lists == 0
                 and r2_store.deletes == 0
             ),
@@ -4922,8 +6751,13 @@ def _execute_data_torrent(
                 == FINAL_ARTIFACT_NAMES
             ),
             "ops_recovery_science": (
-                "## HYP-010" in hypotheses
-                and "Edge promotion: NO" in hypotheses
+                (
+                    "HYPOTHESES_GENERATED = 0" in hypotheses
+                    and "EDGE_PROMOTIONS = 0" in hypotheses
+                    and "## HYP-" not in hypotheses
+                    if _contract().recovery_v2
+                    else "## HYP-010" in hypotheses and "Edge promotion: NO" in hypotheses
+                )
                 and bool(field_dict["fields"])
             ),
             "ci_merge_postmerge": (
@@ -4953,13 +6787,21 @@ def _execute_data_torrent(
             for item in normalized.records
             if item["record_type"] == "ODDS_OUTCOME"
         }
+        live_effects_before_terminal_receipts = runtime_effects.snapshot()
+        live_effects_final_projection = _terminal_live_effects_projection(
+            live_effects_before_terminal_receipts
+        )
         manifest = {
             "schema_version": "robin-data-torrent-real-batch-manifest-v1",
-            "mission_id": MISSION_ID,
+            "mission_id": _contract().mission_id,
             "generated_at_utc": utc_text(datetime.now(UTC)),
             "status": "SUCCESS",
             "evidence_validity": {
-                "mode": "CONDITIONAL_APPEND_ONLY_EXTERNAL_BINDING_V1",
+                "mode": (
+                    "DIRECT_CREATED_DURABLE_BINDING_V2"
+                    if _contract().recovery_v2
+                    else "CONDITIONAL_APPEND_ONLY_EXTERNAL_BINDING_V1"
+                ),
                 "binding": normalized_binding,
                 "unbound_status": "INVALID",
             },
@@ -5037,12 +6879,38 @@ def _execute_data_torrent(
                     "odds_credits_used": odds.credits_used,
                     **mission_r2_counters,
                 },
+                "live_runtime_effects_before_terminal_database_receipts": (
+                    live_effects_before_terminal_receipts
+                ),
+                "live_runtime_effects": live_effects_final_projection,
+                "live_runtime_effects_projection_proof": {
+                    "certainty": "EXACT_SUCCESSFUL_PATH_POSTCONDITION",
+                    "remaining_postgresql_read_transactions": 2,
+                    "remaining_postgresql_mutating_function_calls": 1,
+                    "remaining_postgresql_connection_attempts": 3,
+                    "postgresql_call_graph_raw_sha256": (
+                        DATA_TORRENT_LIVE_V2_POSTGRESQL_CALL_GRAPH_SHA256
+                    ),
+                    "postgresql_call_graph_canonical_sha256": (
+                        DATA_TORRENT_LIVE_V2_POSTGRESQL_CALL_GRAPH_CANONICAL_SHA256
+                    ),
+                    "observed_before_projection_sha256": hashlib.sha256(
+                        canonical_json_bytes(live_effects_before_terminal_receipts)
+                    ).hexdigest(),
+                    "final_projection_sha256": hashlib.sha256(
+                        canonical_json_bytes(live_effects_final_projection)
+                    ).hexdigest(),
+                },
                 "unaccounted_external_effects": 0,
             },
             "durability": {
                 "raw_object": raw_object.to_json(),
                 "normalized_evidence_binding": normalized_binding,
-                "verification_status": "VALID_ONLY_WITH_APPEND_ONLY_BINDING",
+                "verification_status": (
+                    "CREATED_CONFIRMED_BEFORE_REPLAY"
+                    if _contract().recovery_v2
+                    else "VALID_ONLY_WITH_APPEND_ONLY_BINDING"
+                ),
             },
             "integrity": {
                 "raw_response_accounting": "COMPLETE",
@@ -5054,36 +6922,52 @@ def _execute_data_torrent(
             "artifacts": artifact_index(artifacts),
             "canonical_dataset_sha256": normalized.canonical_dataset_sha256,
             "data_torrent_ready": True,
+            **(
+                {
+                    "hypotheses_generated": 0,
+                    "purchases": 0,
+                    "missed_windows": "MISSED_NOT_BACKDATED",
+                }
+                if _contract().recovery_v2
+                else {}
+            ),
             "edge_promotions": 0,
             "bet_calls": 0,
         }
         artifacts["torrent-real-batch-manifest-v1.json"] = json_artifact(manifest)
         _secret_scan(artifacts=artifacts, environment=env)
         _secret_scan(artifacts=normalized_members, environment=env)
-        normalized_archive = _normalized_evidence_archive(
-            normalized_members=normalized_members,
-            artifacts=artifacts,
-            normalized_binding=normalized_binding,
-        )
-        normalized_object = upload_immutable_object(
-            role="NORMALIZED_EVIDENCE",
-            object_key=normalized_object_key,
-            payload=normalized_archive,
-            mission_id=f"{MISSION_ID}-normalized-evidence-r2",
-            identity=identity.github,
-            generation_token=generation_token,
-            issuer=issuer,
-            base_ledger=effect_ledger,
-            store=r2_store,
-        )
+        if _contract().recovery_v2:
+            _assert_final_artifact_closure(
+                artifacts=artifacts,
+                normalized_binding=normalized_binding,
+            )
+            if normalized_archive is None or normalized_object is None:
+                raise DataTorrentRuntimeError("DATA_TORRENT_NORMALIZED_V2_DURABILITY_MISSING")
+        else:
+            normalized_archive = _normalized_evidence_archive(
+                normalized_members=normalized_members,
+                artifacts=artifacts,
+                normalized_binding=normalized_binding,
+            )
+            normalized_object = upload_immutable_object(
+                role="NORMALIZED_EVIDENCE",
+                object_key=normalized_object_key,
+                payload=normalized_archive,
+                mission_id=f"{_contract().mission_id}-normalized-evidence-r2",
+                identity=identity.github,
+                generation_token=generation_token,
+                issuer=issuer,
+                base_ledger=effect_ledger,
+                store=r2_store,
+            )
         if (
             normalized_object.role != "NORMALIZED_EVIDENCE"
             or normalized_object.object_key != normalized_object_key
             or normalized_object.object_sha256 != hashlib.sha256(normalized_archive).hexdigest()
-            or normalized_object.terminal_event
-            not in {"CREATED_CONFIRMED", "PREEXISTING_CONFIRMED"}
+            or not _immutable_terminal(normalized_object.terminal_event)
             or raw_object.object_key == normalized_object.object_key
-            or r2_store.counters() != {"puts": 2, "gets": 0, "lists": 0, "deletes": 0}
+            or r2_store.counters() != expected_live_r2_counters
         ):
             raise DataTorrentRuntimeError("DATA_TORRENT_NORMALIZED_EVIDENCE_BINDING_FAILED")
         terminal_qa = _verify_terminal_artifact_semantics(
@@ -5204,6 +7088,32 @@ def _execute_data_torrent(
                 "unaccounted_external_effects": 0,
             },
         )
+        postgresql_attempts = (
+            runtime_effects.postgresql_read_transactions_attempted
+            + runtime_effects.postgresql_function_reads_attempted
+            + runtime_effects.postgresql_mutating_function_calls_attempted
+        )
+        if _contract().recovery_v2:
+            if (
+                runtime_effects.postgresql_read_transactions_attempted
+                != LIVE_POSTGRESQL_DIRECT_READS_V2
+                or runtime_effects.postgresql_mutating_function_calls_attempted
+                != LIVE_POSTGRESQL_MUTATING_FUNCTIONS_V2
+                or not (
+                    LIVE_POSTGRESQL_FUNCTION_READS_NOMINAL_V2
+                    <= runtime_effects.postgresql_function_reads_attempted
+                    <= LIVE_POSTGRESQL_FUNCTION_READS_NOMINAL_V2
+                    + LIVE_POSTGRESQL_FUNCTION_READS_FALLBACK_MAXIMUM_V2
+                )
+                or not (
+                    LIVE_POSTGRESQL_CONNECTION_ATTEMPTS_NOMINAL_V2
+                    <= postgresql_attempts
+                    <= LIVE_POSTGRESQL_CONNECTION_ATTEMPTS_UPPER_BOUND_V2
+                )
+                or canonical_json_bytes(runtime_effects.snapshot())
+                != canonical_json_bytes(live_effects_final_projection)
+            ):
+                raise DataTorrentRuntimeError("DATA_TORRENT_POSTGRESQL_CALL_GRAPH_DRIFT")
         write_artifacts(output_dir, artifacts)
         return {
             "status": "DATA_TORRENT_READY",
@@ -5224,6 +7134,11 @@ def _execute_data_torrent(
             "replay_peak_memory_bytes": replay_metrics["peak_memory_bytes"],
             "r2": mission_r2_counters,
             "live_r2": r2_store.counters(),
+            "hypotheses_generated": 0,
+            "edge_promotions": 0,
+            "bet_calls": 0,
+            "purchases": 0,
+            "missed_windows": "MISSED_NOT_BACKDATED",
             "terminal_semantic_qa": terminal_qa,
             "runtime_effects": runtime_effects.snapshot(),
             "artifacts": sorted(artifacts),
@@ -5234,18 +7149,22 @@ def _execute_data_torrent(
         reader_engine.dispose()
 
 
-def execute_data_torrent(
+def _execute_with_contract(
     *,
+    contract: _RuntimeContract,
     repository_root: Path,
     config_path: Path,
     output_dir: Path,
     environment: Mapping[str, str] | None = None,
     system_platform: str = sys.platform,
 ) -> dict[str, Any]:
-    """Attach a complete conservative effect receipt to every terminal failure."""
-
-    runtime_effects = LiveRuntimeEffects()
-    token = _LIVE_RUNTIME_EFFECTS.set(runtime_effects)
+    runtime_effects = LiveRuntimeEffects(
+        postgresql_connection_attempts_maximum=(
+            LIVE_POSTGRESQL_CONNECTION_ATTEMPTS_UPPER_BOUND_V2 if contract.recovery_v2 else None
+        )
+    )
+    contract_token = _RUNTIME_CONTRACT.set(contract)
+    effects_token = _LIVE_RUNTIME_EFFECTS.set(runtime_effects)
     try:
         return _execute_data_torrent(
             repository_root=repository_root,
@@ -5258,7 +7177,48 @@ def execute_data_torrent(
         error.effect_receipt = runtime_effects.snapshot()  # type: ignore[attr-defined]
         raise
     finally:
-        _LIVE_RUNTIME_EFFECTS.reset(token)
+        _LIVE_RUNTIME_EFFECTS.reset(effects_token)
+        _RUNTIME_CONTRACT.reset(contract_token)
+
+
+def execute_data_torrent(
+    *,
+    repository_root: Path,
+    config_path: Path,
+    output_dir: Path,
+    environment: Mapping[str, str] | None = None,
+    system_platform: str = sys.platform,
+) -> dict[str, Any]:
+    """Run the immutable V1 contract without inheriting Recovery V2 authority."""
+
+    return _execute_with_contract(
+        contract=_V1_RUNTIME_CONTRACT,
+        repository_root=repository_root,
+        config_path=config_path,
+        output_dir=output_dir,
+        environment=environment,
+        system_platform=system_platform,
+    )
+
+
+def execute_data_torrent_v2(
+    *,
+    repository_root: Path,
+    config_path: Path,
+    output_dir: Path,
+    environment: Mapping[str, str] | None = None,
+    system_platform: str = sys.platform,
+) -> dict[str, Any]:
+    """Run the explicit Recovery V2 E4 LIVE and in-process R8 contract."""
+
+    return _execute_with_contract(
+        contract=_V2_RUNTIME_CONTRACT,
+        repository_root=repository_root,
+        config_path=config_path,
+        output_dir=output_dir,
+        environment=environment,
+        system_platform=system_platform,
+    )
 
 
 __all__ = [
@@ -5268,4 +7228,5 @@ __all__ = [
     "MISSION_ID",
     "RuntimeIdentity",
     "execute_data_torrent",
+    "execute_data_torrent_v2",
 ]

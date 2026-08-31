@@ -692,6 +692,7 @@ def test_ambiguous_provider_dispatch_is_counted_as_one_external_request(
         response_sequence_start=5,
         counters=counters,
         clock=lambda: NOW,
+        authority_validator=lambda: None,
     )
     assert capture.provider_requests == 1
     assert capture.effects[0].terminal.event_type == "AMBIGUOUS"
@@ -800,6 +801,7 @@ def test_dns_attempt_is_dispatched_and_counted_before_resolution(
         response_sequence_start=5,
         counters=counters,
         clock=lambda: NOW,
+        authority_validator=lambda: None,
     )
     assert events == ["DISPATCHED", "AMBIGUOUS"]
     assert capture.provider_requests == 0
@@ -808,6 +810,81 @@ def test_dns_attempt_is_dispatched_and_counted_before_resolution(
     assert counters.snapshot() == {
         "official_reads": 0,
         "odds_dns_resolutions": 1,
+        "odds_provider_dispatches": 0,
+        "odds_credits": 0,
+    }
+
+
+def test_expired_authority_refuses_dns_before_external_resolution(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    events: list[str] = []
+    resolver_calls = 0
+
+    class Ledger:
+        def reserve(self, **values: object) -> ExternalEffectPermitReceipt:
+            return ExternalEffectPermitReceipt(
+                operation_id=_hex(720),
+                effect_family="ODDS",
+                effect_sequence=cast(int, values["effect_sequence"]),
+                request_hash=str(values["request_hash"]),
+                max_official_reads=0,
+                max_odds_requests=1,
+                max_odds_credits=200,
+                created_now=True,
+                db_permitted_at=NOW,
+                postgres_server_epoch=NOW,
+                permit_hash=_hex(721),
+            )
+
+        def append(self, **values: object) -> ExternalEffectEventReceipt:
+            events.append(str(values["event_type"]))
+            return ExternalEffectEventReceipt(
+                operation_id=str(values["operation_id"]),
+                event_seq=1,
+                event_type=str(values["event_type"]),
+                actual_official_reads=0,
+                actual_odds_requests=0,
+                actual_odds_credits=0,
+                db_recorded_at=NOW,
+                postgres_server_epoch=NOW,
+                previous_event_hash="0" * 64,
+                event_hash=_hex(722),
+            )
+
+    def resolver() -> str:
+        nonlocal resolver_calls
+        resolver_calls += 1
+        return "93.184.216.34"
+
+    monkeypatch.setattr("robin.data_torrent.sources._resolve_provider_address", resolver)
+    counters = SourceEffectCounters()
+    with pytest.raises(RuntimeError, match="AUTHORITY_EXPIRED"):
+        capture_odds_sources(
+            config=load_torrent_config(CONFIG),
+            ledger=Ledger(),  # type: ignore[arg-type]
+            opportunity_id="2" * 64,
+            identity=GitHubRunIdentity(
+                github_run_id=99,
+                github_run_attempt=1,
+                github_sha="1" * 40,
+                github_workflow_ref="owner/repo/.github/workflows/data.yml@refs/heads/main",
+                github_workflow_sha="1" * 40,
+                github_repository="owner/repo",
+                github_ref="refs/heads/main",
+            ),
+            generation_token="3" * 64,
+            environment={"THE_ODDS_API_KEY": "provider_token_123456"},
+            response_sequence_start=5,
+            counters=counters,
+            clock=lambda: NOW,
+            authority_validator=lambda: (_ for _ in ()).throw(RuntimeError("AUTHORITY_EXPIRED")),
+        )
+    assert events == ["DISPATCHED"]
+    assert resolver_calls == 0
+    assert counters.snapshot() == {
+        "official_reads": 0,
+        "odds_dns_resolutions": 0,
         "odds_provider_dispatches": 0,
         "odds_credits": 0,
     }
@@ -904,6 +981,7 @@ def test_reported_provider_credit_survives_later_ambiguous_header(
         response_sequence_start=5,
         counters=counters,
         clock=lambda: NOW,
+        authority_validator=lambda: None,
     )
     assert capture.effects[0].terminal.event_type == "AMBIGUOUS"
     assert capture.effects[0].terminal.actual_odds_credits == 7
@@ -1013,6 +1091,7 @@ def test_unknown_provider_credit_is_conservatively_accounted_at_cap(
         response_sequence_start=5,
         counters=counters,
         clock=lambda: NOW,
+        authority_validator=lambda: None,
     )
     terminal = capture.effects[0].terminal
     assert terminal.event_type == "AMBIGUOUS"

@@ -6,6 +6,7 @@ import hashlib
 import ipaddress
 import os
 import socket
+from collections.abc import Callable
 from dataclasses import asdict, dataclass
 from dataclasses import field as dataclass_field
 from datetime import UTC, datetime, timedelta
@@ -308,6 +309,7 @@ def capture_official_sources(
     anchor: datetime,
     progress: SourceCaptureProgress | None = None,
     clock: Any = lambda: datetime.now(UTC),
+    authority_validator: Callable[[], None] | None = None,
 ) -> OfficialCapture:
     if anchor.tzinfo is None or anchor.utcoffset() is None:
         raise ValueError("DATA_TORRENT_OFFICIAL_ANCHOR_INVALID")
@@ -320,6 +322,7 @@ def capture_official_sources(
     errors: list[dict[str, str]] = []
     global_response_sequence = 0
     run_text = _run_identity_text(identity)
+    validate_authority = authority_validator or validate_data_torrent_authority
     for logical_sequence, league in enumerate(config.leagues, start=1):
         maximum_reads = 12 if league.sport_key == "soccer_spain_la_liga" else 6
         maximum_redirects = 0 if league.official_source.adapter == LIGUE1_CALENDAR_JSON_V1 else 5
@@ -371,7 +374,7 @@ def capture_official_sources(
 
         def observe_official_dispatch(_url: str) -> None:
             nonlocal attempted_reads
-            validate_data_torrent_authority()
+            validate_authority()
             attempted_reads += 1
             counters.official_physical_reads += 1
 
@@ -623,8 +626,10 @@ def capture_odds_sources(
     counters: SourceEffectCounters,
     progress: SourceCaptureProgress | None = None,
     clock: Any = lambda: datetime.now(UTC),
+    authority_validator: Callable[[], None] | None = None,
 ) -> OddsCapture:
     run_text = _run_identity_text(identity)
+    validate_authority = authority_validator or validate_data_torrent_authority
     secret = EnvironmentSecretReader(environment).read()
     requests: list[dict[str, Any]] = []
     for league in config.leagues:
@@ -690,7 +695,9 @@ def capture_odds_sources(
                 dispatched=dispatched,
             )
         # DNS is itself an external observation. Record the logical dispatch
-        # durably first and count the attempt before entering the resolver.
+        # durably first, then revalidate authority immediately before the
+        # resolver boundary and count the attempt before entering it.
+        validate_authority()
         dns_resolutions += 1
         counters.odds_dns_resolutions += 1
 
@@ -767,7 +774,7 @@ def capture_odds_sources(
 
         def observe_provider_dispatch() -> None:
             nonlocal provider_dispatched
-            validate_data_torrent_authority()
+            validate_authority()
             if provider_dispatched:
                 raise RuntimeError("DATA_TORRENT_PROVIDER_DUPLICATE_DISPATCH")
             counters.odds_provider_dispatches += 1

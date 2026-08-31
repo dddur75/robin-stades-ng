@@ -1,0 +1,620 @@
+name: "Chronos Production Bootstrap V4"
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Exact Recovery V2 stage"
+        required: true
+        type: choice
+        options: [PREFLIGHT, MIGRATE, VERIFY]
+      expected_main_sha:
+        description: "Exact merged main SHA"
+        required: true
+        type: string
+      post_merge_ci_sha:
+        description: "Exact post-merge SAFE V2 SHA"
+        required: true
+        type: string
+      identity_run_id:
+        description: "R1 run; PREFLIGHT only"
+        required: false
+        type: string
+      seal_run_id:
+        description: "R2 run; PREFLIGHT only"
+        required: false
+        type: string
+      preflight_run_id:
+        description: "R3 run; MIGRATE only"
+        required: false
+        type: string
+      runtime_bindings_receipt_b64:
+        description: "Sanitized exact R4 receipt; MIGRATE only"
+        required: false
+        type: string
+      migration_run_id:
+        description: "R5 run; VERIFY only"
+        required: false
+        type: string
+      recovery_v2_effect_deadline_epoch:
+        description: "Controller-bound absolute effect deadline"
+        required: true
+        type: string
+      recovery_v2_dispatch_nonce:
+        description: "Controller-bound one-shot dispatch nonce"
+        required: true
+        type: string
+
+concurrency:
+  group: chronos-data-torrent-production-global-v1
+  cancel-in-progress: false
+
+permissions:
+  actions: read
+  contents: read
+
+env:
+  STORAGE_PAUSED: "true"
+  P3_P4_PAUSED: "true"
+  PRODUCTION_LOCKED: "true"
+  REAL_BETS: "false"
+  NO_BET_DEFAULT: "true"
+  PROMOTION_LOCKED: "true"
+  SOCIAL_PUBLISHING_ENABLED: "false"
+  DEMO_MODE_ENABLED: "false"
+  POSTGRESQL_PRODUCTION_DESTRUCTIVE_WRITES: "false"
+  THE_ODDS_API_HISTORICAL_CREDITS: "false"
+  API_FOOTBALL_CALLS_ALLOWED: "0"
+  RECOVERY_V2_EFFECT_DEADLINE_EPOCH: ${{ inputs.recovery_v2_effect_deadline_epoch }}
+  RECOVERY_V2_DISPATCH_NONCE: ${{ inputs.recovery_v2_dispatch_nonce }}
+  RECOVERY_V2_PREFLIGHT_FALLBACK_B64: eyJlZmZlY3RfY291bnRlcl9jZXJ0YWludHkiOiJVTktOT1dOX09SX1VQUEVSX0JPVU5EIiwiZWZmZWN0cyI6eyJhdXRvbWF0aWNfcmV0cmllcyI6MCwiZWZmZWN0X2NvdW50ZXJfY2VydGFpbnR5IjoiQ09OU0VSVkFUSVZFX1VQUEVSX0JPVU5EUyIsIm1pZ3JhdGlvbl9kaXNwYXRjaGVzIjowLCJtaWdyYXRpb25fZGlzcGF0Y2hlc19leGFjdCI6dHJ1ZSwibmVvbl9nZXRzIjozOSwibmVvbl9nZXRzX2V4YWN0IjpmYWxzZSwibmVvbl9wb3N0cyI6MSwibmVvbl9wb3N0c19leGFjdCI6ZmFsc2UsInBvc3RncmVzcWxfY29ubmVjdGlvbl9hdHRlbXB0cyI6NCwicG9zdGdyZXNxbF9jb25uZWN0aW9uX2F0dGVtcHRzX2V4YWN0IjpmYWxzZSwicHJvdmlkZXJfY2FsbHMiOjAsInB1cmNoYXNlcyI6MCwicjJfZ2V0cyI6MSwicjJfZ2V0c19leGFjdCI6ZmFsc2UsInIyX3B1dHMiOjAsInJlY292ZXJ5X2JyYW5jaF9jcmVhdGlvbnNfZXhhY3QiOmZhbHNlLCJyZWNvdmVyeV9icmFuY2hfY3JlYXRpb25zX3VwcGVyX2JvdW5kIjoxLCJzZWNyZXRfdmFsdWVzX29ic2VydmVkIjpmYWxzZSwic3FsX3N0YXRlbWVudHNfZXhhY3QiOmZhbHNlLCJzcWxfc3RhdGVtZW50c191cHBlcl9ib3VuZCI6MTI4LCJzcWxfd3JpdGVfc3RhdGVtZW50c19leGFjdCI6dHJ1ZSwic3FsX3dyaXRlX3N0YXRlbWVudHNfdXBwZXJfYm91bmQiOjB9LCJlcnJvcl9jb2RlIjoiQ0hST05PU19SRUNPVkVSWV9WMl9TVVBFUlZJU09SX0FNQklHVU9VUyIsImZhaWx1cmVfY2xhc3MiOiJUUkFOU1BPUlRfQU1CSUdVT1VTIiwibW9kZSI6IlBSRUZMSUdIVCIsIm9kZHNfY3JlZGl0cyI6MCwicHJvdmlkZXJfY2FsbHMiOjAsInB1cmNoYXNlcyI6MCwicjJfb3BlcmF0aW9ucyI6MSwic2NoZW1hX3ZlcnNpb24iOiJjaHJvbm9zLXByb2R1Y3Rpb24tcmVjb3Zlcnktc3VwZXJ2aXNvci1mYWlsdXJlLXYyIiwic2VjcmV0X3ZhbHVlc19vYnNlcnZlZCI6ZmFsc2UsInN0YXR1cyI6IkZBSUxFRCJ9Cg==
+  RECOVERY_V2_MIGRATE_FALLBACK_B64: eyJlZmZlY3RfY291bnRlcl9jZXJ0YWludHkiOiJVTktOT1dOX09SX1VQUEVSX0JPVU5EIiwiZWZmZWN0cyI6eyJhdXRvbWF0aWNfcmV0cmllcyI6MCwiZWZmZWN0X2NvdW50ZXJfY2VydGFpbnR5IjoiQ09OU0VSVkFUSVZFX1VQUEVSX0JPVU5EUyIsIm1pZ3JhdGlvbl9kaXNwYXRjaGVzIjoxLCJtaWdyYXRpb25fZGlzcGF0Y2hlc19leGFjdCI6ZmFsc2UsIm5lb25fZ2V0cyI6MjYsIm5lb25fZ2V0c19leGFjdCI6ZmFsc2UsIm5lb25fcG9zdHMiOjAsIm5lb25fcG9zdHNfZXhhY3QiOnRydWUsInBvc3RncmVzcWxfY29ubmVjdGlvbl9hdHRlbXB0cyI6MTAsInBvc3RncmVzcWxfY29ubmVjdGlvbl9hdHRlbXB0c19leGFjdCI6ZmFsc2UsInByb3ZpZGVyX2NhbGxzIjowLCJwdXJjaGFzZXMiOjAsInIyX2dldHMiOjAsInIyX2dldHNfZXhhY3QiOnRydWUsInIyX3B1dHMiOjAsInJlY292ZXJ5X2JyYW5jaF9jcmVhdGlvbnNfZXhhY3QiOnRydWUsInJlY292ZXJ5X2JyYW5jaF9jcmVhdGlvbnNfdXBwZXJfYm91bmQiOjAsInNlY3JldF92YWx1ZXNfb2JzZXJ2ZWQiOmZhbHNlLCJzcWxfc3RhdGVtZW50c19leGFjdCI6ZmFsc2UsInNxbF9zdGF0ZW1lbnRzX3VwcGVyX2JvdW5kIjoyMDQ4LCJzcWxfd3JpdGVfc3RhdGVtZW50c19leGFjdCI6ZmFsc2UsInNxbF93cml0ZV9zdGF0ZW1lbnRzX3VwcGVyX2JvdW5kIjoxMDI0fSwiZXJyb3JfY29kZSI6IkNIUk9OT1NfUkVDT1ZFUllfVjJfU1VQRVJWSVNPUl9BTUJJR1VPVVMiLCJmYWlsdXJlX2NsYXNzIjoiVFJBTlNQT1JUX0FNQklHVU9VUyIsIm1vZGUiOiJNSUdSQVRFIiwib2Rkc19jcmVkaXRzIjowLCJwcm92aWRlcl9jYWxscyI6MCwicHVyY2hhc2VzIjowLCJyMl9vcGVyYXRpb25zIjowLCJzY2hlbWFfdmVyc2lvbiI6ImNocm9ub3MtcHJvZHVjdGlvbi1yZWNvdmVyeS1zdXBlcnZpc29yLWZhaWx1cmUtdjIiLCJzZWNyZXRfdmFsdWVzX29ic2VydmVkIjpmYWxzZSwic3RhdHVzIjoiRkFJTEVEIn0K
+  RECOVERY_V2_VERIFY_FALLBACK_B64: eyJlZmZlY3RfY291bnRlcl9jZXJ0YWludHkiOiJVTktOT1dOX09SX1VQUEVSX0JPVU5EIiwiZWZmZWN0cyI6eyJhdXRvbWF0aWNfcmV0cmllcyI6MCwiZWZmZWN0X2NvdW50ZXJfY2VydGFpbnR5IjoiQ09OU0VSVkFUSVZFX1VQUEVSX0JPVU5EUyIsIm1pZ3JhdGlvbl9kaXNwYXRjaGVzIjowLCJtaWdyYXRpb25fZGlzcGF0Y2hlc19leGFjdCI6dHJ1ZSwibmVvbl9nZXRzIjowLCJuZW9uX2dldHNfZXhhY3QiOnRydWUsIm5lb25fcG9zdHMiOjAsIm5lb25fcG9zdHNfZXhhY3QiOnRydWUsInBvc3RncmVzcWxfY29ubmVjdGlvbl9hdHRlbXB0cyI6NCwicG9zdGdyZXNxbF9jb25uZWN0aW9uX2F0dGVtcHRzX2V4YWN0IjpmYWxzZSwicHJvdmlkZXJfY2FsbHMiOjAsInB1cmNoYXNlcyI6MCwicjJfZ2V0cyI6MCwicjJfZ2V0c19leGFjdCI6dHJ1ZSwicjJfcHV0cyI6MCwicmVjb3ZlcnlfYnJhbmNoX2NyZWF0aW9uc19leGFjdCI6dHJ1ZSwicmVjb3ZlcnlfYnJhbmNoX2NyZWF0aW9uc191cHBlcl9ib3VuZCI6MCwic2VjcmV0X3ZhbHVlc19vYnNlcnZlZCI6ZmFsc2UsInNxbF9zdGF0ZW1lbnRzX2V4YWN0IjpmYWxzZSwic3FsX3N0YXRlbWVudHNfdXBwZXJfYm91bmQiOjEyOCwic3FsX3dyaXRlX3N0YXRlbWVudHNfZXhhY3QiOnRydWUsInNxbF93cml0ZV9zdGF0ZW1lbnRzX3VwcGVyX2JvdW5kIjowfSwiZXJyb3JfY29kZSI6IkNIUk9OT1NfUkVDT1ZFUllfVjJfU1VQRVJWSVNPUl9BTUJJR1VPVVMiLCJmYWlsdXJlX2NsYXNzIjoiVFJBTlNQT1JUX0FNQklHVU9VUyIsIm1vZGUiOiJWRVJJRlkiLCJvZGRzX2NyZWRpdHMiOjAsInByb3ZpZGVyX2NhbGxzIjowLCJwdXJjaGFzZXMiOjAsInIyX29wZXJhdGlvbnMiOjAsInNjaGVtYV92ZXJzaW9uIjoiY2hyb25vcy1wcm9kdWN0aW9uLXJlY292ZXJ5LXN1cGVydmlzb3ItZmFpbHVyZS12MiIsInNlY3JldF92YWx1ZXNfb2JzZXJ2ZWQiOmZhbHNlLCJzdGF0dXMiOiJGQUlMRUQifQo=
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PYTHONPATH: ${{ github.workspace }}/src
+    steps:
+      - name: Refuse stale malformed or repeated dispatch
+        shell: bash
+        env:
+          MODE: ${{ inputs.mode }}
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          POST_MERGE_CI_SHA: ${{ inputs.post_merge_ci_sha }}
+          IDENTITY_RUN_ID: ${{ inputs.identity_run_id }}
+          SEAL_RUN_ID: ${{ inputs.seal_run_id }}
+          PREFLIGHT_RUN_ID: ${{ inputs.preflight_run_id }}
+          BINDING_RECEIPT: ${{ inputs.runtime_bindings_receipt_b64 }}
+          MIGRATION_RUN_ID: ${{ inputs.migration_run_id }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = "refs/heads/main"
+          test "$GITHUB_SHA" = "$EXPECTED_MAIN_SHA"
+          test "$POST_MERGE_CI_SHA" = "$EXPECTED_MAIN_SHA"
+          test "$GITHUB_RUN_ATTEMPT" = "1"
+          case "$MODE" in
+            PREFLIGHT) [[ "$IDENTITY_RUN_ID" =~ ^[1-9][0-9]{0,17}$ && "$SEAL_RUN_ID" =~ ^[1-9][0-9]{0,17}$ && -z "$PREFLIGHT_RUN_ID$BINDING_RECEIPT$MIGRATION_RUN_ID" ]] ;;
+            MIGRATE) [[ "$PREFLIGHT_RUN_ID" =~ ^[1-9][0-9]{0,17}$ && -n "$BINDING_RECEIPT" && -z "$IDENTITY_RUN_ID$SEAL_RUN_ID$MIGRATION_RUN_ID" ]] ;;
+            VERIFY) [[ "$MIGRATION_RUN_ID" =~ ^[1-9][0-9]{0,17}$ && -z "$IDENTITY_RUN_ID$SEAL_RUN_ID$PREFLIGHT_RUN_ID$BINDING_RECEIPT" ]] ;;
+            *) exit 1 ;;
+          esac
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          ref: ${{ inputs.expected_main_sha }}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12.10"
+      - name: Install bounded bootstrap runtime
+        run: >-
+          python -m pip install --only-binary=:all: --require-hashes
+          -r requirements-chronos-canary.lock
+      - name: Validate the controller-bound absolute dispatch envelope
+        shell: bash
+        env:
+          MODE: ${{ inputs.mode }}
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: |
+          set -euo pipefail
+          SCALE_STAGE=E3B
+          if test "$MODE" = PREFLIGHT; then SCALE_STAGE=E3A; fi
+          python scripts/validate_data_torrent_recovery_v2_dispatch_envelope.py \
+            --scale-stage "$SCALE_STAGE" --expected-main-sha "$EXPECTED_MAIN_SHA"
+      - name: Revalidate main with one bounded direct no-retry GET
+        shell: bash
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          CURRENT_MAIN_SHA="$(python scripts/github_release_attestation_v2.py --exact-main-sha)"
+          test "$CURRENT_MAIN_SHA" = "$EXPECTED_MAIN_SHA"
+      - name: Validate exact stage authority and ordinal
+        env:
+          MODE: ${{ inputs.mode }}
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          python -c
+          "import os;
+          from robin.chronos_production import validate_data_torrent_recovery_v2_authority;
+          from scripts.chronos_production_bootstrap_v3 import _assert_bootstrap_dispatch_ordinal;
+          stage='E3A' if os.environ['MODE']=='PREFLIGHT' else 'E3B';
+          validate_data_torrent_recovery_v2_authority(scale_stage=stage);
+          _assert_bootstrap_dispatch_ordinal(mode=os.environ['MODE'],main_sha=os.environ['EXPECTED_MAIN_SHA'],workflow_file='chronos-production-bootstrap-v4.yml',recovery_v2_stage=stage)"
+
+  preflight:
+    needs: validate
+    if: ${{ always() && inputs.mode == 'PREFLIGHT' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: chronos-control-plane-production
+    env:
+      PYTHONPATH: ${{ github.workspace }}/src
+    steps:
+      - name: Precreate the conservative one-shot receipt and deadline
+        shell: bash
+        env:
+          FALLBACK_B64: ${{ env.RECOVERY_V2_PREFLIGHT_FALLBACK_B64 }}
+          RECEIPT_PATH: ${{ runner.temp }}/recovery-v2/production-preflight-v2.json
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import base64, hashlib, os, stat
+          from pathlib import Path
+          path = Path(os.environ["RECEIPT_PATH"])
+          path.parent.mkdir(parents=True, exist_ok=True)
+          assert stat.S_ISDIR(path.parent.lstat().st_mode) and not path.parent.is_symlink()
+          descriptor = os.open(path.parent.parent, os.O_RDONLY | os.O_DIRECTORY)
+          try: os.fsync(descriptor)
+          finally: os.close(descriptor)
+          payload = base64.b64decode(os.environ["FALLBACK_B64"], validate=True)
+          candidate = path.with_name(f".{path.name}.recovery-v2-create")
+          with os.fdopen(os.open(candidate, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), "wb") as stream:
+              stream.write(payload); stream.flush(); os.fsync(stream.fileno())
+          os.link(candidate, path, follow_symlinks=False)
+          descriptor = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+          try: os.fsync(descriptor)
+          finally: os.close(descriptor)
+          candidate.unlink()
+          template = path.with_name(f".{path.name}.fallback-template")
+          with os.fdopen(os.open(template, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), "wb") as stream:
+              stream.write(payload); stream.flush(); os.fsync(stream.fileno())
+          descriptor = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+          try: os.fsync(descriptor)
+          finally: os.close(descriptor)
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8", newline="\n") as stream:
+              stream.write(f"RECOVERY_V2_RECEIPT_PATH={path}\n")
+              stream.write(f"RECOVERY_V2_RECEIPT_DIR={path.parent}\n")
+              stream.write(f"RECOVERY_V2_FALLBACK_SHA256={hashlib.sha256(payload).hexdigest()}\n")
+              stream.write(f"RECOVERY_V2_FALLBACK_TEMPLATE_PATH={template}\n")
+          PY
+      - name: Require the validation job before any stage preparation
+        run: test "${{ needs.validate.result }}" = "success"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with: {persist-credentials: false, ref: "${{ inputs.expected_main_sha }}"}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with: {python-version: "3.12.10"}
+      - run: >-
+          python -m pip install --only-binary=:all: --require-hashes
+          -r requirements-chronos-canary.lock
+      - name: Revalidate the absolute E3A dispatch envelope in this job
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: >-
+          python scripts/validate_data_torrent_recovery_v2_dispatch_envelope.py
+          --scale-stage E3A --expected-main-sha "$EXPECTED_MAIN_SHA"
+      - name: Download exact R1 identity and R2 seal
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MAIN_SHA: ${{ inputs.expected_main_sha }}
+          IDENTITY_RUN_ID: ${{ inputs.identity_run_id }}
+          SEAL_RUN_ID: ${{ inputs.seal_run_id }}
+        run: |
+          python scripts/github_release_attestation_v2.py --workflow-path .github/workflows/chronos-neon-branch-identity-v2.yml --run-id "$IDENTITY_RUN_ID" --main-sha "$MAIN_SHA" --artifact-name "neon-branch-identity-go-v2-$IDENTITY_RUN_ID" --artifact-filename neon-branch-identity-go-v2.json --output .chronos/input/neon-branch-identity-go-v2.json --report .chronos/input/identity-attestation-v2.json
+          python scripts/github_release_attestation_v2.py --workflow-path .github/workflows/chronos-identity-seal-v2.yml --run-id "$SEAL_RUN_ID" --main-sha "$MAIN_SHA" --artifact-name "durable-identity-seal-v2-$SEAL_RUN_ID" --artifact-filename durable-identity-seal-v2.json --output .chronos/input/durable-identity-seal-v2.json --report .chronos/input/seal-attestation-v2.json
+      - name: Revalidate hold before any production secret
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          POST_MERGE_CI_SHA: ${{ inputs.post_merge_ci_sha }}
+        run: python scripts/check_chronos_github_hold_v3.py --recovery-v2 --report .chronos/reports/preflight-v2-hold.json --required-successful-ci-sha "$POST_MERGE_CI_SHA"
+      - name: Revalidate main immediately before preflight effects
+        shell: bash
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          CURRENT_MAIN_SHA="$(python scripts/github_release_attestation_v2.py --exact-main-sha)"
+          test "$CURRENT_MAIN_SHA" = "$EXPECTED_MAIN_SHA"
+      - name: Execute R2 GET then PostgreSQL proof then Neon recovery
+        id: recovery_stage
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CHRONOS_EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          CHRONOS_EXPECTED_IDENTITY_RUN_ID: ${{ inputs.identity_run_id }}
+          CHRONOS_EXPECTED_IDENTITY_SEAL_RUN_ID: ${{ inputs.seal_run_id }}
+          CHRONOS_POST_MERGE_CI_SHA: ${{ inputs.post_merge_ci_sha }}
+          CHRONOS_HOLD_REPORT: .chronos/reports/preflight-v2-hold.json
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          NEON_BOOTSTRAP_DATABASE_URL: ${{ secrets.NEON_BOOTSTRAP_DATABASE_URL }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: >-
+          python -m scripts.chronos_production_recovery_v2 --supervise --mode PREFLIGHT
+          --report-dir "$RECOVERY_V2_RECEIPT_DIR"
+          --identity-artifact .chronos/input/neon-branch-identity-go-v2.json
+          --seal-artifact .chronos/input/durable-identity-seal-v2.json
+      - name: Guard the untouched pre-checkout fallback
+        id: early_fallback_guard
+        if: ${{ always() && steps.recovery_stage.outcome != 'success' }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib, os, stat
+          from pathlib import Path
+          path = Path(os.environ["RECOVERY_V2_RECEIPT_PATH"])
+          metadata = path.lstat()
+          assert stat.S_ISREG(metadata.st_mode) and not path.is_symlink()
+          assert hashlib.sha256(path.read_bytes()).hexdigest() == os.environ["RECOVERY_V2_FALLBACK_SHA256"]
+          PY
+      - name: Guard the sanitized stage receipt
+        id: recovery_receipt_guard
+        if: ${{ always() && steps.recovery_stage.outcome != 'skipped' }}
+        shell: bash
+        env:
+          RECOVERY_V2_STAGE_MODE: PREFLIGHT
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from scripts.chronos_production_recovery_v2 import _load_supervised_export
+          _load_supervised_export(
+              Path(os.environ["RECOVERY_V2_RECEIPT_PATH"]),
+              mode=os.environ["RECOVERY_V2_STAGE_MODE"],
+          )
+          PY
+      - name: Restore conservative fallback after a failed output guard
+        id: guard_failure_fallback
+        if: ${{ always() && steps.recovery_receipt_guard.outcome != 'success' && steps.early_fallback_guard.outcome != 'success' }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from scripts.recovery_v2_supervision import restore_fallback_template
+          restore_fallback_template(
+              Path(os.environ["RECOVERY_V2_FALLBACK_TEMPLATE_PATH"]),
+              Path(os.environ["RECOVERY_V2_RECEIPT_PATH"]),
+              expected_sha256=os.environ["RECOVERY_V2_FALLBACK_SHA256"],
+          )
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: ${{ always() && (steps.recovery_receipt_guard.outcome == 'success' || steps.early_fallback_guard.outcome == 'success' || steps.guard_failure_fallback.outcome == 'success') }}
+        with:
+          name: production-preflight-v2-${{ github.run_id }}
+          path: ${{ runner.temp }}/recovery-v2/production-preflight-v2.json
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 14
+      - name: Refuse a failed PREFLIGHT after publishing its sanitized receipt
+        if: ${{ always() }}
+        run: test "${{ steps.recovery_stage.outcome }}" = "success"
+
+  migrate:
+    needs: validate
+    if: ${{ always() && inputs.mode == 'MIGRATE' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: chronos-control-plane-production
+    env:
+      PYTHONPATH: ${{ github.workspace }}/src
+    steps:
+      - name: Precreate the conservative one-shot receipt and deadline
+        shell: bash
+        env:
+          FALLBACK_B64: ${{ env.RECOVERY_V2_MIGRATE_FALLBACK_B64 }}
+          RECEIPT_PATH: ${{ runner.temp }}/recovery-v2/chronos-production-migrate-v2.json
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import base64, hashlib, os, stat
+          from pathlib import Path
+          path = Path(os.environ["RECEIPT_PATH"])
+          path.parent.mkdir(parents=True, exist_ok=True)
+          assert stat.S_ISDIR(path.parent.lstat().st_mode) and not path.parent.is_symlink()
+          descriptor = os.open(path.parent.parent, os.O_RDONLY | os.O_DIRECTORY)
+          try: os.fsync(descriptor)
+          finally: os.close(descriptor)
+          payload = base64.b64decode(os.environ["FALLBACK_B64"], validate=True)
+          candidate = path.with_name(f".{path.name}.recovery-v2-create")
+          with os.fdopen(os.open(candidate, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), "wb") as stream:
+              stream.write(payload); stream.flush(); os.fsync(stream.fileno())
+          os.link(candidate, path, follow_symlinks=False)
+          descriptor = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+          try: os.fsync(descriptor)
+          finally: os.close(descriptor)
+          candidate.unlink()
+          template = path.with_name(f".{path.name}.fallback-template")
+          with os.fdopen(os.open(template, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), "wb") as stream:
+              stream.write(payload); stream.flush(); os.fsync(stream.fileno())
+          descriptor = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+          try: os.fsync(descriptor)
+          finally: os.close(descriptor)
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8", newline="\n") as stream:
+              stream.write(f"RECOVERY_V2_RECEIPT_PATH={path}\n")
+              stream.write(f"RECOVERY_V2_RECEIPT_DIR={path.parent}\n")
+              stream.write(f"RECOVERY_V2_FALLBACK_SHA256={hashlib.sha256(payload).hexdigest()}\n")
+              stream.write(f"RECOVERY_V2_FALLBACK_TEMPLATE_PATH={template}\n")
+          PY
+      - name: Require the validation job before any stage preparation
+        run: test "${{ needs.validate.result }}" = "success"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with: {persist-credentials: false, ref: "${{ inputs.expected_main_sha }}"}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with: {python-version: "3.12.10"}
+      - run: >-
+          python -m pip install --only-binary=:all: --require-hashes
+          -r requirements-chronos-canary.lock
+      - name: Revalidate the absolute E3B dispatch envelope in this migration job
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: >-
+          python scripts/validate_data_torrent_recovery_v2_dispatch_envelope.py
+          --scale-stage E3B --expected-main-sha "$EXPECTED_MAIN_SHA"
+      - name: Download exact R3 artifact and materialize sanitized R4 receipt
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREFLIGHT_RUN_ID: ${{ inputs.preflight_run_id }}
+          MAIN_SHA: ${{ inputs.expected_main_sha }}
+          BINDING_RECEIPT: ${{ inputs.runtime_bindings_receipt_b64 }}
+        run: |
+          python scripts/github_release_attestation_v2.py --workflow-path .github/workflows/chronos-production-bootstrap-v4.yml --run-id "$PREFLIGHT_RUN_ID" --main-sha "$MAIN_SHA" --artifact-name "production-preflight-v2-$PREFLIGHT_RUN_ID" --artifact-filename production-preflight-v2.json --output .chronos/input/production-preflight-v2.json --report .chronos/input/preflight-attestation-v2.json
+          python -c "import base64,os,pathlib; data=base64.b64decode(os.environ['BINDING_RECEIPT'],validate=True); assert 0<len(data)<=65536; p=pathlib.Path('.chronos/input/runtime-bindings-v2.json'); p.parent.mkdir(parents=True,exist_ok=True); p.write_bytes(data)"
+      - name: Revalidate hold before migration
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          POST_MERGE_CI_SHA: ${{ inputs.post_merge_ci_sha }}
+        run: python scripts/check_chronos_github_hold_v3.py --recovery-v2 --report .chronos/reports/migrate-v2-hold.json --required-successful-ci-sha "$POST_MERGE_CI_SHA"
+      - name: Revalidate main immediately before migration effects
+        shell: bash
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          CURRENT_MAIN_SHA="$(python scripts/github_release_attestation_v2.py --exact-main-sha)"
+          test "$CURRENT_MAIN_SHA" = "$EXPECTED_MAIN_SHA"
+      - name: Run only additive 0015 under fenced authority
+        id: recovery_stage
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CHRONOS_EXPECTED_PREFLIGHT_RUN_ID: ${{ inputs.preflight_run_id }}
+          CHRONOS_POST_MERGE_CI_SHA: ${{ inputs.post_merge_ci_sha }}
+          CHRONOS_HOLD_REPORT: .chronos/reports/migrate-v2-hold.json
+          CHRONOS_AUTHORITY_DATABASE_URL: ${{ secrets.CHRONOS_AUTHORITY_DATABASE_URL }}
+          CHRONOS_RUNTIME_DATABASE_URL: ${{ secrets.CHRONOS_RUNTIME_DATABASE_URL }}
+          CHRONOS_READER_DATABASE_URL: ${{ secrets.CHRONOS_READER_DATABASE_URL }}
+          CHRONOS_CONTROL_PLANE_GENERATION_NONCE: ${{ secrets.CHRONOS_CONTROL_PLANE_GENERATION_NONCE }}
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          NEON_BOOTSTRAP_DATABASE_URL: ${{ secrets.NEON_BOOTSTRAP_DATABASE_URL }}
+        run: >-
+          python -m scripts.chronos_production_recovery_v2 --supervise --mode MIGRATE
+          --report-dir "$RECOVERY_V2_RECEIPT_DIR"
+          --preflight-artifact .chronos/input/production-preflight-v2.json
+          --bindings-receipt .chronos/input/runtime-bindings-v2.json
+      - name: Guard the untouched pre-checkout fallback
+        id: early_fallback_guard
+        if: ${{ always() && steps.recovery_stage.outcome != 'success' }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib, os, stat
+          from pathlib import Path
+          path = Path(os.environ["RECOVERY_V2_RECEIPT_PATH"])
+          metadata = path.lstat()
+          assert stat.S_ISREG(metadata.st_mode) and not path.is_symlink()
+          assert hashlib.sha256(path.read_bytes()).hexdigest() == os.environ["RECOVERY_V2_FALLBACK_SHA256"]
+          PY
+      - name: Guard the sanitized stage receipt
+        id: recovery_receipt_guard
+        if: ${{ always() && steps.recovery_stage.outcome != 'skipped' }}
+        shell: bash
+        env:
+          RECOVERY_V2_STAGE_MODE: MIGRATE
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from scripts.chronos_production_recovery_v2 import _load_supervised_export
+          _load_supervised_export(
+              Path(os.environ["RECOVERY_V2_RECEIPT_PATH"]),
+              mode=os.environ["RECOVERY_V2_STAGE_MODE"],
+          )
+          PY
+      - name: Restore conservative fallback after a failed output guard
+        id: guard_failure_fallback
+        if: ${{ always() && steps.recovery_receipt_guard.outcome != 'success' && steps.early_fallback_guard.outcome != 'success' }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from scripts.recovery_v2_supervision import restore_fallback_template
+          restore_fallback_template(
+              Path(os.environ["RECOVERY_V2_FALLBACK_TEMPLATE_PATH"]),
+              Path(os.environ["RECOVERY_V2_RECEIPT_PATH"]),
+              expected_sha256=os.environ["RECOVERY_V2_FALLBACK_SHA256"],
+          )
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: ${{ always() && (steps.recovery_receipt_guard.outcome == 'success' || steps.early_fallback_guard.outcome == 'success' || steps.guard_failure_fallback.outcome == 'success') }}
+        with:
+          name: chronos-production-migrate-v2-${{ github.run_id }}
+          path: ${{ runner.temp }}/recovery-v2/chronos-production-migrate-v2.json
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 14
+      - name: Refuse a failed MIGRATE after publishing its sanitized receipt
+        if: ${{ always() }}
+        run: test "${{ steps.recovery_stage.outcome }}" = "success"
+
+  verify:
+    needs: validate
+    if: ${{ always() && inputs.mode == 'VERIFY' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: chronos-control-plane-production
+    env:
+      PYTHONPATH: ${{ github.workspace }}/src
+    steps:
+      - name: Precreate the conservative one-shot receipt and deadline
+        shell: bash
+        env:
+          FALLBACK_B64: ${{ env.RECOVERY_V2_VERIFY_FALLBACK_B64 }}
+          RECEIPT_PATH: ${{ runner.temp }}/recovery-v2/chronos-production-verify-v2.json
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import base64, hashlib, os, stat
+          from pathlib import Path
+          path = Path(os.environ["RECEIPT_PATH"])
+          path.parent.mkdir(parents=True, exist_ok=True)
+          assert stat.S_ISDIR(path.parent.lstat().st_mode) and not path.parent.is_symlink()
+          descriptor = os.open(path.parent.parent, os.O_RDONLY | os.O_DIRECTORY)
+          try: os.fsync(descriptor)
+          finally: os.close(descriptor)
+          payload = base64.b64decode(os.environ["FALLBACK_B64"], validate=True)
+          candidate = path.with_name(f".{path.name}.recovery-v2-create")
+          with os.fdopen(os.open(candidate, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), "wb") as stream:
+              stream.write(payload); stream.flush(); os.fsync(stream.fileno())
+          os.link(candidate, path, follow_symlinks=False)
+          descriptor = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+          try: os.fsync(descriptor)
+          finally: os.close(descriptor)
+          candidate.unlink()
+          template = path.with_name(f".{path.name}.fallback-template")
+          with os.fdopen(os.open(template, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), "wb") as stream:
+              stream.write(payload); stream.flush(); os.fsync(stream.fileno())
+          descriptor = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+          try: os.fsync(descriptor)
+          finally: os.close(descriptor)
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8", newline="\n") as stream:
+              stream.write(f"RECOVERY_V2_RECEIPT_PATH={path}\n")
+              stream.write(f"RECOVERY_V2_RECEIPT_DIR={path.parent}\n")
+              stream.write(f"RECOVERY_V2_FALLBACK_SHA256={hashlib.sha256(payload).hexdigest()}\n")
+              stream.write(f"RECOVERY_V2_FALLBACK_TEMPLATE_PATH={template}\n")
+          PY
+      - name: Require the validation job before any stage preparation
+        run: test "${{ needs.validate.result }}" = "success"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with: {persist-credentials: false, ref: "${{ inputs.expected_main_sha }}"}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with: {python-version: "3.12.10"}
+      - run: >-
+          python -m pip install --only-binary=:all: --require-hashes
+          -r requirements-chronos-canary.lock
+      - name: Revalidate the absolute E3B dispatch envelope in this verification job
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: >-
+          python scripts/validate_data_torrent_recovery_v2_dispatch_envelope.py
+          --scale-stage E3B --expected-main-sha "$EXPECTED_MAIN_SHA"
+      - name: Download exact R5 migration artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MIGRATION_RUN_ID: ${{ inputs.migration_run_id }}
+          MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: python scripts/github_release_attestation_v2.py --workflow-path .github/workflows/chronos-production-bootstrap-v4.yml --run-id "$MIGRATION_RUN_ID" --main-sha "$MAIN_SHA" --artifact-name "chronos-production-migrate-v2-$MIGRATION_RUN_ID" --artifact-filename chronos-production-migrate-v2.json --output .chronos/input/chronos-production-migrate-v2.json --report .chronos/input/migration-attestation-v2.json
+      - name: Revalidate hold before four read-only connections
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          POST_MERGE_CI_SHA: ${{ inputs.post_merge_ci_sha }}
+        run: python scripts/check_chronos_github_hold_v3.py --recovery-v2 --report .chronos/reports/verify-v2-hold.json --required-successful-ci-sha "$POST_MERGE_CI_SHA"
+      - name: Revalidate main immediately before verification reads
+        shell: bash
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          CURRENT_MAIN_SHA="$(python scripts/github_release_attestation_v2.py --exact-main-sha)"
+          test "$CURRENT_MAIN_SHA" = "$EXPECTED_MAIN_SHA"
+      - name: Verify revision capability and four bindings
+        id: recovery_stage
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CHRONOS_EXPECTED_MIGRATION_RUN_ID: ${{ inputs.migration_run_id }}
+          CHRONOS_POST_MERGE_CI_SHA: ${{ inputs.post_merge_ci_sha }}
+          CHRONOS_HOLD_REPORT: .chronos/reports/verify-v2-hold.json
+          CHRONOS_AUTHORITY_DATABASE_URL: ${{ secrets.CHRONOS_AUTHORITY_DATABASE_URL }}
+          CHRONOS_RUNTIME_DATABASE_URL: ${{ secrets.CHRONOS_RUNTIME_DATABASE_URL }}
+          CHRONOS_READER_DATABASE_URL: ${{ secrets.CHRONOS_READER_DATABASE_URL }}
+          CHRONOS_CONTROL_PLANE_GENERATION_NONCE: ${{ secrets.CHRONOS_CONTROL_PLANE_GENERATION_NONCE }}
+        run: >-
+          python -m scripts.chronos_production_recovery_v2 --supervise --mode VERIFY
+          --report-dir "$RECOVERY_V2_RECEIPT_DIR"
+          --migration-artifact .chronos/input/chronos-production-migrate-v2.json
+      - name: Guard the untouched pre-checkout fallback
+        id: early_fallback_guard
+        if: ${{ always() && steps.recovery_stage.outcome != 'success' }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib, os, stat
+          from pathlib import Path
+          path = Path(os.environ["RECOVERY_V2_RECEIPT_PATH"])
+          metadata = path.lstat()
+          assert stat.S_ISREG(metadata.st_mode) and not path.is_symlink()
+          assert hashlib.sha256(path.read_bytes()).hexdigest() == os.environ["RECOVERY_V2_FALLBACK_SHA256"]
+          PY
+      - name: Guard the sanitized stage receipt
+        id: recovery_receipt_guard
+        if: ${{ always() && steps.recovery_stage.outcome != 'skipped' }}
+        shell: bash
+        env:
+          RECOVERY_V2_STAGE_MODE: VERIFY
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from scripts.chronos_production_recovery_v2 import _load_supervised_export
+          _load_supervised_export(
+              Path(os.environ["RECOVERY_V2_RECEIPT_PATH"]),
+              mode=os.environ["RECOVERY_V2_STAGE_MODE"],
+          )
+          PY
+      - name: Restore conservative fallback after a failed output guard
+        id: guard_failure_fallback
+        if: ${{ always() && steps.recovery_receipt_guard.outcome != 'success' && steps.early_fallback_guard.outcome != 'success' }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from scripts.recovery_v2_supervision import restore_fallback_template
+          restore_fallback_template(
+              Path(os.environ["RECOVERY_V2_FALLBACK_TEMPLATE_PATH"]),
+              Path(os.environ["RECOVERY_V2_RECEIPT_PATH"]),
+              expected_sha256=os.environ["RECOVERY_V2_FALLBACK_SHA256"],
+          )
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: ${{ always() && (steps.recovery_receipt_guard.outcome == 'success' || steps.early_fallback_guard.outcome == 'success' || steps.guard_failure_fallback.outcome == 'success') }}
+        with:
+          name: chronos-production-verify-v2-${{ github.run_id }}
+          path: ${{ runner.temp }}/recovery-v2/chronos-production-verify-v2.json
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 14
+      - name: Refuse a failed VERIFY after publishing its sanitized receipt
+        if: ${{ always() }}
+        run: test "${{ steps.recovery_stage.outcome }}" = "success"

@@ -1,0 +1,392 @@
+name: "Data Torrent Live V2"
+
+on:
+  workflow_dispatch:
+    inputs:
+      expected_main_sha:
+        description: "Exact merged main SHA authorized for Recovery V2"
+        required: true
+        type: string
+      expected_workflow_sha256:
+        description: "SHA-256 of this exact workflow blob"
+        required: true
+        type: string
+      expected_mission_manifest_sha256:
+        description: "Raw SHA-256 of the immutable eight-field V2 manifest"
+        required: true
+        type: string
+      expected_generation_hash:
+        description: "Non-secret hash of the active Chronos generation"
+        required: true
+        type: string
+      post_merge_ci_sha:
+        description: "Exact main SHA whose post-merge SAFE V2 is green"
+        required: true
+        type: string
+      identity_run_id:
+        description: "Exact successful Recovery Identity V2 run"
+        required: true
+        type: string
+      verify_run_id:
+        description: "Exact successful Recovery VERIFY V2 run"
+        required: true
+        type: string
+      recovery_v2_effect_deadline_epoch:
+        description: "Controller-bound absolute effect deadline"
+        required: true
+        type: string
+      recovery_v2_dispatch_nonce:
+        description: "Controller-bound one-shot dispatch nonce"
+        required: true
+        type: string
+
+concurrency:
+  group: chronos-data-torrent-production-global-v1
+  cancel-in-progress: false
+
+permissions:
+  actions: read
+  contents: read
+
+env:
+  STORAGE_PAUSED: "true"
+  P3_P4_PAUSED: "true"
+  PRODUCTION_LOCKED: "true"
+  REAL_BETS: "false"
+  NO_BET_DEFAULT: "true"
+  PROMOTION_LOCKED: "true"
+  SOCIAL_PUBLISHING_ENABLED: "false"
+  DEMO_MODE_ENABLED: "false"
+  POSTGRESQL_PRODUCTION_DESTRUCTIVE_WRITES: "false"
+  THE_ODDS_API_HISTORICAL_CREDITS: "false"
+  API_FOOTBALL_CALLS_ALLOWED: "0"
+  RECOVERY_V2_EFFECT_DEADLINE_EPOCH: ${{ inputs.recovery_v2_effect_deadline_epoch }}
+  RECOVERY_V2_DISPATCH_NONCE: ${{ inputs.recovery_v2_dispatch_nonce }}
+  RECOVERY_V2_LIVE_FALLBACK_B64: eyJlZmZlY3RfY291bnRlcl9jZXJ0YWludHkiOiJVTktOT1dOX09SX1VQUEVSX0JPVU5EIiwiZWZmZWN0cyI6eyJhY2NvdW50aW5nX3N0YXR1cyI6IlVOS05PV05fT1JfVVBQRVJfQk9VTkQiLCJvZGRzIjp7ImF1dG9tYXRpY19yZXRyaWVzIjowLCJjcmVkaXRzX3VzZWRfdXBwZXJfYm91bmQiOjEwMDAsImRuc19yZXNvbHV0aW9uc19hdHRlbXB0ZWQiOjUsInByb3ZpZGVyX3JlcXVlc3RzX2F0dGVtcHRlZCI6NX0sIm9mZmljaWFsIjp7ImF1dG9tYXRpY19yZXRyaWVzIjowLCJwaHlzaWNhbF9yZWFkc19hdHRlbXB0ZWQiOjUwfSwicG9zdGdyZXNxbCI6eyJhdXRvbWF0aWNfcmV0cmllcyI6MCwiY29ubmVjdGlvbl9hdHRlbXB0c19tYXhpbXVtIjo1MywiY29ubmVjdGlvbl9hdHRlbXB0c191cHBlcl9ib3VuZCI6NTMsImZ1bmN0aW9uX3JlYWRzX2F0dGVtcHRlZCI6NiwibXV0YXRpbmdfZnVuY3Rpb25fY2FsbHNfYXR0ZW1wdGVkIjo0MSwibXV0YXRpbmdfZnVuY3Rpb25fY2FsbHNfY29tcGxldGVkIjowLCJtdXRhdGluZ19mdW5jdGlvbl9vdXRjb21lc19hbWJpZ3VvdXMiOjQxLCJwb3NzaWJsZV9kdXJhYmxlX211dGF0aW9uc191cHBlcl9ib3VuZCI6NDEsInJlYWRfdHJhbnNhY3Rpb25zX2F0dGVtcHRlZCI6Nn0sInIyIjp7ImF1dG9tYXRpY19yZXRyaWVzIjowLCJkZWxldGVzX2F0dGVtcHRlZCI6MCwiZ2V0c19hdHRlbXB0ZWQiOjEsImxpc3RzX2F0dGVtcHRlZCI6MCwicHV0X291dGNvbWVzX2FtYmlndW91c191cHBlcl9ib3VuZCI6MiwicHV0c19hdHRlbXB0ZWQiOjJ9LCJzY2hlbWFfdmVyc2lvbiI6InJvYmluLWRhdGEtdG9ycmVudC1saXZlLXJ1bnRpbWUtZWZmZWN0cy12MSJ9LCJlcnJvcl9jb2RlIjoiREFUQV9UT1JSRU5UX1NVUEVSVklTT1JfQU1CSUdVT1VTIiwiZmFpbHVyZV9jbGFzcyI6IlRSQU5TUE9SVF9BTUJJR1VPVVMiLCJtaXNzaW9uX2lkIjoiZGF0YS10b3JyZW50LXJlY292ZXJ5LXYyIiwic2NoZW1hX3ZlcnNpb24iOiJyb2Jpbi1kYXRhLXRvcnJlbnQtcnVuLXN1cGVydmlzb3ItZmFpbHVyZS12MiIsInNlY3JldF92YWx1ZXNfb2JzZXJ2ZWQiOmZhbHNlLCJzdGF0dXMiOiJGQUlMRUQifQo=
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PYTHONPATH: ${{ github.workspace }}/src
+    steps:
+      - name: Refuse stale malformed concurrent or repeated dispatch
+        shell: bash
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          EXPECTED_WORKFLOW_SHA256: ${{ inputs.expected_workflow_sha256 }}
+          EXPECTED_MISSION_MANIFEST_SHA256: ${{ inputs.expected_mission_manifest_sha256 }}
+          EXPECTED_GENERATION_HASH: ${{ inputs.expected_generation_hash }}
+          POST_MERGE_CI_SHA: ${{ inputs.post_merge_ci_sha }}
+          IDENTITY_RUN_ID: ${{ inputs.identity_run_id }}
+          VERIFY_RUN_ID: ${{ inputs.verify_run_id }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = "refs/heads/main"
+          test "$GITHUB_SHA" = "$EXPECTED_MAIN_SHA"
+          test "$GITHUB_RUN_ATTEMPT" = "1"
+          test "$POST_MERGE_CI_SHA" = "$EXPECTED_MAIN_SHA"
+          [[ "$EXPECTED_MAIN_SHA" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$EXPECTED_WORKFLOW_SHA256" =~ ^[0-9a-f]{64}$ ]]
+          [[ "$EXPECTED_MISSION_MANIFEST_SHA256" = "ced1b867faa3ae57911d169f5c1edbd0db02a891ac46ccc080de7397076d349f" ]]
+          [[ "$EXPECTED_GENERATION_HASH" =~ ^[0-9a-f]{64}$ ]]
+          [[ "$IDENTITY_RUN_ID" =~ ^[1-9][0-9]{0,17}$ ]]
+          [[ "$VERIFY_RUN_ID" =~ ^[1-9][0-9]{0,17}$ ]]
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+          ref: ${{ inputs.expected_main_sha }}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12.10"
+      - name: Install bounded validation runtime
+        run: >-
+          python -m pip install --only-binary=:all: --require-hashes
+          -r requirements-data-torrent.lock
+      - name: Validate the absolute E4 dispatch envelope before the first API GET
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: >-
+          python scripts/validate_data_torrent_recovery_v2_dispatch_envelope.py
+          --scale-stage E4 --expected-main-sha "$EXPECTED_MAIN_SHA"
+      - name: Revalidate main with one bounded direct no-retry GET
+        shell: bash
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          CURRENT_MAIN_SHA="$(python scripts/github_release_attestation_v2.py --exact-main-sha)"
+          test "$CURRENT_MAIN_SHA" = "$EXPECTED_MAIN_SHA"
+      - name: Validate V2 E4 authority exact-head and authority-window ordinal
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: >-
+          python -c
+          "import os;
+          from robin.chronos_production import DATA_TORRENT_RECOVERY_V2_NOT_BEFORE,
+          validate_data_torrent_recovery_v2_authority;
+          from scripts.chronos_neon_pure_readonly_preflight_v4 import
+          _github_actions_state,_github_authority_window_dispatch_count;
+          authority=lambda:validate_data_torrent_recovery_v2_authority(scale_stage='E4');
+          authority();
+          state=_github_actions_state(os.environ['GITHUB_REPOSITORY'],int(os.environ['GITHUB_RUN_ID']),os.environ['EXPECTED_MAIN_SHA'],workflow_file='data-torrent-live-v2.yml',authority_validator=authority);
+          window=_github_authority_window_dispatch_count(os.environ['GITHUB_REPOSITORY'],int(os.environ['GITHUB_RUN_ID']),os.environ['EXPECTED_MAIN_SHA'],workflow_file='data-torrent-live-v2.yml',not_before=DATA_TORRENT_RECOVERY_V2_NOT_BEFORE,authority_validator=authority);
+          assert state==(0,0,1) and window==1"
+
+  torrent:
+    needs: validate
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: chronos-control-plane-production
+    env:
+      PYTHONPATH: ${{ github.workspace }}/src
+    steps:
+      - name: Precreate the conservative one-shot receipt and deadline
+        shell: bash
+        env:
+          FALLBACK_B64: ${{ env.RECOVERY_V2_LIVE_FALLBACK_B64 }}
+          RECEIPT_PATH: ${{ runner.temp }}/recovery-v2/torrent-run-failure-v2.json
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import base64, hashlib, os, stat
+          from pathlib import Path
+          path = Path(os.environ["RECEIPT_PATH"])
+          path.parent.mkdir(parents=True, exist_ok=True)
+          assert stat.S_ISDIR(path.parent.lstat().st_mode) and not path.parent.is_symlink()
+          descriptor = os.open(path.parent.parent, os.O_RDONLY | os.O_DIRECTORY)
+          try: os.fsync(descriptor)
+          finally: os.close(descriptor)
+          payload = base64.b64decode(os.environ["FALLBACK_B64"], validate=True)
+          candidate = path.with_name(f".{path.name}.recovery-v2-create")
+          with os.fdopen(os.open(candidate, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), "wb") as stream:
+              stream.write(payload); stream.flush(); os.fsync(stream.fileno())
+          os.link(candidate, path, follow_symlinks=False)
+          descriptor = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+          try: os.fsync(descriptor)
+          finally: os.close(descriptor)
+          candidate.unlink()
+          template = path.with_name(f".{path.name}.fallback-template")
+          with os.fdopen(os.open(template, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), "wb") as stream:
+              stream.write(payload); stream.flush(); os.fsync(stream.fileno())
+          descriptor = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+          try: os.fsync(descriptor)
+          finally: os.close(descriptor)
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8", newline="\n") as stream:
+              stream.write(f"RECOVERY_V2_RECEIPT_PATH={path}\n")
+              stream.write(f"RECOVERY_V2_FALLBACK_SHA256={hashlib.sha256(payload).hexdigest()}\n")
+              stream.write(f"RECOVERY_V2_FALLBACK_TEMPLATE_PATH={template}\n")
+          PY
+      - name: Require the validation job before any stage preparation
+        run: test "${{ needs.validate.result }}" = "success"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+          ref: ${{ inputs.expected_main_sha }}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12.10"
+      - name: Install the exact bounded LIVE runtime
+        run: >-
+          python -m pip install --only-binary=:all: --require-hashes
+          -r requirements-data-torrent.lock
+      - name: Revalidate the absolute E4 dispatch envelope in the effect job
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: >-
+          python scripts/validate_data_torrent_recovery_v2_dispatch_envelope.py
+          --scale-stage E4 --expected-main-sha "$EXPECTED_MAIN_SHA"
+      - name: Verify installed dependency closure and call graph
+        run: |
+          python -m pip check
+          python scripts/build_data_torrent_live_call_graph_v2.py --check
+          python - <<'PY'
+          import alembic, boto3, psycopg, pydantic, pypdf, requests, sqlalchemy
+          import robin.data_torrent.runtime
+          assert all((alembic, boto3, psycopg, pydantic, pypdf, requests, sqlalchemy))
+          PY
+      - name: Attest download and guard exact R1 identity
+        env:
+          GH_TOKEN: ${{ github.token }}
+          IDENTITY_RUN_ID: ${{ inputs.identity_run_id }}
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: |
+          python scripts/github_release_attestation_v2.py \
+            --workflow-path .github/workflows/chronos-neon-branch-identity-v2.yml \
+            --run-id "$IDENTITY_RUN_ID" --main-sha "$EXPECTED_MAIN_SHA" \
+            --artifact-name "neon-branch-identity-go-v2-$IDENTITY_RUN_ID" \
+            --artifact-filename neon-branch-identity-go-v2.json \
+            --output .torrent/release/neon-branch-identity-go-v2.json \
+            --report .torrent/release/github-identity-artifact-attestation-v2.json
+          python -m scripts.chronos_live_path_artifact_guard_v2 \
+            --report .torrent/release/neon-branch-identity-go-v2.json \
+            --expected-main-sha "$EXPECTED_MAIN_SHA" --require-go
+      - name: Attest and download exact R6 VERIFY
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERIFY_RUN_ID: ${{ inputs.verify_run_id }}
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: >-
+          python scripts/github_release_attestation_v2.py
+          --workflow-path .github/workflows/chronos-production-bootstrap-v4.yml
+          --run-id "$VERIFY_RUN_ID" --main-sha "$EXPECTED_MAIN_SHA"
+          --artifact-name "chronos-production-verify-v2-$VERIFY_RUN_ID"
+          --artifact-filename chronos-production-verify-v2.json
+          --output .torrent/release/chronos-production-verify-v2.json
+          --report .torrent/release/github-verify-artifact-attestation-v2.json
+      - name: Revalidate protected hold after workflow was disabled
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          POST_MERGE_CI_SHA: ${{ inputs.post_merge_ci_sha }}
+        run: >-
+          python scripts/check_chronos_github_hold_v3.py
+          --recovery-v2
+          --report .torrent/hold/chronos-production-workflow-hold-live-v3.json
+          --required-successful-ci-sha "$POST_MERGE_CI_SHA"
+      - name: Revalidate current main immediately before effects
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: |
+          set -euo pipefail
+          CURRENT_MAIN_SHA="$(python scripts/github_release_attestation_v2.py --exact-main-sha)"
+          test "$CURRENT_MAIN_SHA" = "$EXPECTED_MAIN_SHA"
+      - name: Execute one LIVE and its in-process replay
+        id: live_effect
+        continue-on-error: true
+        env:
+          CHRONOS_AUTHORITY_DATABASE_URL: ${{ secrets.CHRONOS_AUTHORITY_DATABASE_URL }}
+          CHRONOS_RUNTIME_DATABASE_URL: ${{ secrets.CHRONOS_RUNTIME_DATABASE_URL }}
+          CHRONOS_READER_DATABASE_URL: ${{ secrets.CHRONOS_READER_DATABASE_URL }}
+          CHRONOS_CONTROL_PLANE_GENERATION_NONCE: ${{ secrets.CHRONOS_CONTROL_PLANE_GENERATION_NONCE }}
+          DATA_TORRENT_EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          DATA_TORRENT_EXPECTED_WORKFLOW_SHA256: ${{ inputs.expected_workflow_sha256 }}
+          DATA_TORRENT_MISSION_MANIFEST: configs/execution/data-torrent-recovery-v2.json
+          DATA_TORRENT_EXPECTED_MISSION_MANIFEST_SHA256: ${{ inputs.expected_mission_manifest_sha256 }}
+          DATA_TORRENT_EXPECTED_GENERATION_HASH: ${{ inputs.expected_generation_hash }}
+          DATA_TORRENT_POST_MERGE_CI_SHA: ${{ inputs.post_merge_ci_sha }}
+          DATA_TORRENT_EXPECTED_VERIFY_RUN_ID: ${{ inputs.verify_run_id }}
+          DATA_TORRENT_VERIFY_ARTIFACT: .torrent/release/chronos-production-verify-v2.json
+          DATA_TORRENT_IDENTITY_ARTIFACT: .torrent/release/neon-branch-identity-go-v2.json
+          DATA_TORRENT_HOLD_REPORT: .torrent/hold/chronos-production-workflow-hold-live-v3.json
+          THE_ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: >-
+          python scripts/run_data_torrent_v2.py --supervise
+          --output-dir .torrent/artifacts
+          --failure-report "$RECOVERY_V2_RECEIPT_PATH"
+      - name: Require exactly the nineteen terminal artifacts
+        id: live_artifact_guard
+        if: ${{ always() && steps.live_effect.outcome == 'success' }}
+        continue-on-error: true
+        shell: bash
+        run: |
+          python - <<'PY'
+          import stat
+          from pathlib import Path
+          from robin.data_torrent.runtime import FINAL_ARTIFACT_NAMES
+
+          root = Path(".torrent/artifacts")
+          entries = list(root.iterdir())
+          assert tuple(sorted(item.name for item in entries)) == tuple(
+              sorted(FINAL_ARTIFACT_NAMES)
+          )
+          reparse = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
+          for item in entries:
+              metadata = item.lstat()
+              assert stat.S_ISREG(metadata.st_mode)
+              assert not item.is_symlink()
+              assert not (getattr(metadata, "st_file_attributes", 0) & reparse)
+          PY
+      - name: Publish validated success evidence only
+        if: ${{ always() && steps.live_effect.outcome == 'success' && steps.live_artifact_guard.outcome == 'success' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: data-torrent-live-v2-${{ github.run_id }}
+          path: |
+            .torrent/artifacts/torrent-opportunity-claim-receipt-v1.json
+            .torrent/artifacts/torrent-real-batch-quality-report-v1.json
+            .torrent/artifacts/hypothesis-backlog-from-real-data-v1.md
+            .torrent/artifacts/torrent-real-batch-normalized-index-v1.json
+            .torrent/artifacts/torrent-r2-inventory-v1.json
+            .torrent/artifacts/torrent-load-replay-report-v1.json
+            .torrent/artifacts/robin-data-torrent-recovery-pack-v1.md
+            .torrent/artifacts/torrent-provider-credit-receipt-v1.json
+            .torrent/artifacts/robin-data-torrent-operations-pack-v1.md
+            .torrent/artifacts/torrent-real-batch-coverage-matrix-v1.csv
+            .torrent/artifacts/torrent-raw-to-normalized-lineage-v1.json
+            .torrent/artifacts/torrent-real-batch-raw-index-v1.json
+            .torrent/artifacts/torrent-load-replay-report-v1.md
+            .torrent/artifacts/torrent-real-batch-manifest-v1.json
+            .torrent/artifacts/torrent-canonical-dataset-hash-v1.json
+            .torrent/artifacts/hypothesis-ready-field-dictionary-v1.json
+            .torrent/artifacts/torrent-qa-acceptance-matrix-v1.json
+            .torrent/artifacts/torrent-control-plane-event-chain-v1.json
+            .torrent/artifacts/torrent-official-read-receipts-v1.json
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 30
+      - name: Guard the conservative terminal failure receipt
+        id: live_failure_guard
+        if: ${{ always() && (steps.live_effect.outcome != 'success' || steps.live_artifact_guard.outcome != 'success') && steps.live_effect.outcome != 'skipped' }}
+        run: >-
+          python -m scripts.run_data_torrent_v2
+          --validate-failure-report "$RECOVERY_V2_RECEIPT_PATH"
+      - name: Guard the untouched pre-checkout fallback
+        id: early_fallback_guard
+        if: ${{ always() && (steps.live_effect.outcome != 'success' || steps.live_artifact_guard.outcome != 'success') && steps.live_failure_guard.outcome != 'success' }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib, os, stat
+          from pathlib import Path
+          path = Path(os.environ["RECOVERY_V2_RECEIPT_PATH"])
+          template = Path(os.environ["RECOVERY_V2_FALLBACK_TEMPLATE_PATH"])
+          expected = os.environ["RECOVERY_V2_FALLBACK_SHA256"]
+          valid = False
+          try:
+              metadata = path.lstat()
+              valid = (
+                  stat.S_ISREG(metadata.st_mode)
+                  and not path.is_symlink()
+                  and hashlib.sha256(path.read_bytes()).hexdigest() == expected
+              )
+          except OSError:
+              pass
+          if not valid:
+              metadata = template.lstat()
+              payload = template.read_bytes()
+              assert stat.S_ISREG(metadata.st_mode) and not template.is_symlink()
+              assert hashlib.sha256(payload).hexdigest() == expected
+              candidate = path.with_name(f".{path.name}.recovery-v2-restore")
+              with candidate.open("xb") as stream:
+                  stream.write(payload)
+                  stream.flush()
+                  os.fsync(stream.fileno())
+              os.replace(candidate, path)
+              assert hashlib.sha256(path.read_bytes()).hexdigest() == expected
+          PY
+      - name: Publish only the validated terminal failure receipt
+        if: ${{ always() && (steps.live_effect.outcome != 'success' || steps.live_artifact_guard.outcome != 'success') && (steps.live_failure_guard.outcome == 'success' || steps.early_fallback_guard.outcome == 'success') }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: data-torrent-live-v2-${{ github.run_id }}
+          path: ${{ runner.temp }}/recovery-v2/torrent-run-failure-v2.json
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 30
+      - name: Refuse a failed LIVE after publishing its sanitized receipt
+        if: ${{ always() }}
+        run: |
+          test "${{ steps.live_effect.outcome }}" = "success"
+          test "${{ steps.live_artifact_guard.outcome }}" = "success"

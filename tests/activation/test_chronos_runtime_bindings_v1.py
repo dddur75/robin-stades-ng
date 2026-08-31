@@ -624,7 +624,7 @@ def test_hold_requires_real_successful_main_push_ci_at_exact_sha(
         },
     ]
 
-    def github_get(path: str, _token: str) -> dict[str, object]:
+    def github_get(path: str, _token: str, **_kwargs: object) -> dict[str, object]:
         if path.endswith("/actions/workflows?per_page=100"):
             return {"workflows": active_workflows}
         if path.endswith("/actions/workflows/ci.yml"):
@@ -650,7 +650,7 @@ def test_hold_requires_real_successful_main_push_ci_at_exact_sha(
                 "branch_policies": [{"name": "main", "type": "branch"}],
             }
         if "actions/runs?status=" in path:
-            return {"workflow_runs": []}
+            return {"total_count": 0, "workflow_runs": []}
         if "actions/workflows/ci-safe-v2.yml/runs" in path:
             return {
                 "workflow_runs": [
@@ -705,8 +705,10 @@ def test_hold_requires_real_successful_main_push_ci_at_exact_sha(
     active_run = 2
     original_get = hold_module._github_get
 
-    def rerun_github_get(path: str, token: str) -> dict[str, object]:
-        document = original_get(path, token)
+    def rerun_github_get(
+        path: str, token: str, **kwargs: object
+    ) -> dict[str, object]:
+        document = original_get(path, token, **kwargs)
         if "actions/workflows/ci-safe-v2.yml/runs" in path:
             runs = document["workflow_runs"]
             assert isinstance(runs, list)

@@ -12,9 +12,7 @@ from threading import RLock
 from typing import Protocol, cast, runtime_checkable
 
 _HEX = frozenset("0123456789abcdef")
-_FORBIDDEN_CLOCK_ARGUMENTS = frozenset(
-    {"now", "--now", "injected_clock", "test_now", "fake_now"}
-)
+_FORBIDDEN_CLOCK_ARGUMENTS = frozenset({"now", "--now", "injected_clock", "test_now", "fake_now"})
 _EVENT_HASH_VERSION = "chronos-effect-event-v1"
 
 
@@ -45,9 +43,7 @@ class ConditionalPutOutcome(StrEnum):
 
 
 _ALLOWED_TRANSITIONS: Mapping[EffectEventType, frozenset[EffectEventType]] = {
-    EffectEventType.AUTHORITY_GRANTED: frozenset(
-        {EffectEventType.EFFECT_RESERVED}
-    ),
+    EffectEventType.AUTHORITY_GRANTED: frozenset({EffectEventType.EFFECT_RESERVED}),
     EffectEventType.EFFECT_RESERVED: frozenset(
         {
             EffectEventType.FAILED_BEFORE_DISPATCH,
@@ -62,9 +58,7 @@ _ALLOWED_TRANSITIONS: Mapping[EffectEventType, frozenset[EffectEventType]] = {
             EffectEventType.FAILED_AFTER_DISPATCH,
         }
     ),
-    EffectEventType.PUT_COMMITTED_ACTUAL_PENDING: frozenset(
-        {EffectEventType.R2_GET_DISPATCHED}
-    ),
+    EffectEventType.PUT_COMMITTED_ACTUAL_PENDING: frozenset({EffectEventType.R2_GET_DISPATCHED}),
     EffectEventType.R2_GET_DISPATCHED: frozenset(
         {
             EffectEventType.PREEXISTING_CONFIRMED,
@@ -95,9 +89,7 @@ def _utc(value: datetime, *, field: str) -> datetime:
 
 
 def _timestamp(value: datetime) -> str:
-    return _utc(value, field="timestamp").isoformat(
-        timespec="microseconds"
-    ).replace("+00:00", "Z")
+    return _utc(value, field="timestamp").isoformat(timespec="microseconds").replace("+00:00", "Z")
 
 
 def _lp(value: object) -> bytes:
@@ -417,9 +409,7 @@ class MemoryChronosControlPlane:
             if not 1 <= ttl_seconds <= 1200:
                 raise ChronosControlPlaneError("CHRONOS_AUTHORITY_TTL_INVALID")
             if max_r2_put_requests != 1:
-                raise ChronosControlPlaneError(
-                    "CHRONOS_AUTHORITY_EFFECT_LIMIT_INVALID"
-                )
+                raise ChronosControlPlaneError("CHRONOS_AUTHORITY_EFFECT_LIMIT_INVALID")
             if code_revision != identity.github_sha:
                 raise ChronosControlPlaneError("CHRONOS_CODE_REVISION_MISMATCH")
             issued_at = _utc(self._clock.now(), field="test_clock")
@@ -456,9 +446,7 @@ class MemoryChronosControlPlane:
         try:
             ticket = self._authorities[authority_id]
         except KeyError as error:
-            raise ChronosControlPlaneError(
-                "CHRONOS_AUTHORITY_NOT_FOUND"
-            ) from error
+            raise ChronosControlPlaneError("CHRONOS_AUTHORITY_NOT_FOUND") from error
         db_now = _utc(self._clock.now(), field="test_clock")
         if require_active and not ticket.planned_at <= db_now < ticket.expires_at:
             raise ChronosControlPlaneError("CHRONOS_AUTHORITY_NOT_ACTIVE")
@@ -468,13 +456,9 @@ class MemoryChronosControlPlane:
             ticket.control_plane_generation_hash,
             _generation_hash(generation_token),
         ):
-            raise ChronosControlPlaneError(
-                "CHRONOS_CONTROL_PLANE_GENERATION_MISMATCH"
-            )
+            raise ChronosControlPlaneError("CHRONOS_CONTROL_PLANE_GENERATION_MISMATCH")
         if ticket.identity != operation.identity:
-            raise ChronosControlPlaneError(
-                "CHRONOS_GITHUB_RUN_IDENTITY_MISMATCH"
-            )
+            raise ChronosControlPlaneError("CHRONOS_GITHUB_RUN_IDENTITY_MISMATCH")
         if (
             ticket.mission_id != operation.mission_id
             or ticket.code_revision != operation.code_revision
@@ -645,13 +629,9 @@ class MemoryChronosControlPlane:
         )
         if existing is not None:
             if event_type is EffectEventType.PUT_DISPATCHED:
-                raise ChronosControlPlaneError(
-                    "CHRONOS_DISPATCH_PERMIT_ALREADY_EXISTS"
-                )
+                raise ChronosControlPlaneError("CHRONOS_DISPATCH_PERMIT_ALREADY_EXISTS")
             if event_type is EffectEventType.R2_GET_DISPATCHED:
-                raise ChronosControlPlaneError(
-                    "CHRONOS_R2_GET_PERMIT_ALREADY_EXISTS"
-                )
+                raise ChronosControlPlaneError("CHRONOS_R2_GET_PERMIT_ALREADY_EXISTS")
             return existing
         previous = self.latest_event(operation.operation_id)
         if previous is None or event_type not in _ALLOWED_TRANSITIONS.get(
@@ -687,9 +667,7 @@ class MemoryChronosControlPlane:
     def accounting(self) -> EffectCounters:
         with self._lock:
             events = tuple(
-                event
-                for operation_events in self._events.values()
-                for event in operation_events
+                event for operation_events in self._events.values() for event in operation_events
             )
             latest = tuple(
                 operation_events[-1]
@@ -704,31 +682,23 @@ class MemoryChronosControlPlane:
         }
         return EffectCounters(
             r2_write_units_reserved=sum(
-                event.event_type is EffectEventType.EFFECT_RESERVED
-                for event in events
+                event.event_type is EffectEventType.EFFECT_RESERVED for event in events
             ),
             r2_put_requests_dispatched=sum(
-                event.event_type is EffectEventType.PUT_DISPATCHED
-                for event in events
+                event.event_type is EffectEventType.PUT_DISPATCHED for event in events
             ),
             r2_get_requests_dispatched=sum(
-                event.event_type is EffectEventType.R2_GET_DISPATCHED
-                for event in events
+                event.event_type is EffectEventType.R2_GET_DISPATCHED for event in events
             ),
             r2_objects_created_confirmed=sum(
-                event.event_type is EffectEventType.CREATED_CONFIRMED
-                for event in events
+                event.event_type is EffectEventType.CREATED_CONFIRMED for event in events
             ),
             r2_objects_preexisting_confirmed=sum(
-                event.event_type is EffectEventType.PREEXISTING_CONFIRMED
-                for event in events
+                event.event_type is EffectEventType.PREEXISTING_CONFIRMED for event in events
             ),
-            r2_write_outcomes_pending=sum(
-                event.event_type in pending for event in latest
-            ),
+            r2_write_outcomes_pending=sum(event.event_type in pending for event in latest),
             r2_integrity_conflicts=sum(
-                event.event_type is EffectEventType.INTEGRITY_CONFLICT
-                for event in events
+                event.event_type is EffectEventType.INTEGRITY_CONFLICT for event in events
             ),
         )
 
@@ -739,9 +709,7 @@ class MemoryChronosControlPlane:
 
 def _reject_production_clock_options(options: Mapping[str, object]) -> None:
     if _FORBIDDEN_CLOCK_ARGUMENTS.intersection(options):
-        raise ChronosControlPlaneError(
-            "CHRONOS_PRODUCTION_CLOCK_INJECTION_FORBIDDEN"
-        )
+        raise ChronosControlPlaneError("CHRONOS_PRODUCTION_CLOCK_INJECTION_FORBIDDEN")
     if options:
         raise TypeError(f"unexpected PostgreSQL options: {sorted(options)}")
 
@@ -875,8 +843,7 @@ class PostgresEffectLedger:
     ) -> EffectEvent:
         identity = operation.identity
         row = self._client.fetch_one(
-            "SELECT * FROM public.chronos_append_effect_event("
-            "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+            "SELECT * FROM public.chronos_append_effect_event(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
             (
                 authority_id,
                 operation.operation_id,
@@ -931,9 +898,11 @@ class AttributableR2EffectExecutor:
         *,
         ledger: EffectLedger,
         store: ConditionalObjectStore,
+        resolve_precondition_with_get: bool = True,
     ) -> None:
         self._ledger = ledger
         self._store = store
+        self._resolve_precondition_with_get = resolve_precondition_with_get
 
     def _append(
         self,
@@ -1119,18 +1088,22 @@ class AttributableR2EffectExecutor:
             return DispatchResult(event=failed, put_permit_consumed=False)
 
         unambiguous_single_attempt = (
-            result.transport_attempts == 1
-            and not result.automatic_retry_possible
+            result.transport_attempts == 1 and not result.automatic_retry_possible
         )
-        if (
-            result.outcome is ConditionalPutOutcome.CREATED
-            and unambiguous_single_attempt
-        ):
+        if result.outcome is ConditionalPutOutcome.CREATED and unambiguous_single_attempt:
             event_type = EffectEventType.CREATED_CONFIRMED
         elif (
             result.outcome is ConditionalPutOutcome.PRECONDITION_FAILED
             and unambiguous_single_attempt
         ):
+            if not self._resolve_precondition_with_get:
+                event = self._append_outcome(
+                    authority_id=authority_id,
+                    operation=operation,
+                    generation_token=generation_token,
+                    event_type=EffectEventType.FAILED_AFTER_DISPATCH,
+                )
+                return DispatchResult(event=event, put_permit_consumed=True)
             event = self._observe_with_one_get(
                 authority_id=authority_id,
                 operation=operation,
@@ -1140,8 +1113,7 @@ class AttributableR2EffectExecutor:
             )
             return DispatchResult(event=event, put_permit_consumed=True)
         elif (
-            result.outcome is ConditionalPutOutcome.DEFINITE_FAILURE
-            and unambiguous_single_attempt
+            result.outcome is ConditionalPutOutcome.DEFINITE_FAILURE and unambiguous_single_attempt
         ):
             event_type = EffectEventType.FAILED_AFTER_DISPATCH
         else:
@@ -1187,11 +1159,24 @@ class AttributableR2EffectExecutor:
 
 
 __all__ = [
-    "AttributableR2EffectExecutor", "AuthorityReceipt",
-    "ChronosControlPlaneError", "ConditionalObjectStore",
-    "ConditionalPutOutcome", "ConditionalPutResult", "DispatchResult",
-    "EffectCounters", "EffectEvent", "EffectEventType", "EffectOperation",
-    "GitHubRunIdentity", "MemoryChronosControlPlane", "ObservedObject",
-    "PostgresAuthorityIssuer", "PostgresEffectLedger", "PostgresFunctionClient",
-    "TestClock", "derive_event_hash", "derive_operation_id",
+    "AttributableR2EffectExecutor",
+    "AuthorityReceipt",
+    "ChronosControlPlaneError",
+    "ConditionalObjectStore",
+    "ConditionalPutOutcome",
+    "ConditionalPutResult",
+    "DispatchResult",
+    "EffectCounters",
+    "EffectEvent",
+    "EffectEventType",
+    "EffectOperation",
+    "GitHubRunIdentity",
+    "MemoryChronosControlPlane",
+    "ObservedObject",
+    "PostgresAuthorityIssuer",
+    "PostgresEffectLedger",
+    "PostgresFunctionClient",
+    "TestClock",
+    "derive_event_hash",
+    "derive_operation_id",
 ]

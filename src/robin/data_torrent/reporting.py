@@ -117,7 +117,19 @@ def hypothesis_backlog(
     coverage: tuple[dict[str, Any], ...],
     records: tuple[dict[str, Any], ...],
     rejects: tuple[dict[str, Any], ...],
+    recovery_v2: bool = False,
 ) -> str:
+    if recovery_v2:
+        return (
+            "# Hypothesis backlog from real data — Recovery V2\n\n"
+            f"Dataset SHA-256: `{canonical_dataset_sha256}`\n\n"
+            "This artifact is an explicit scientific-boundary receipt. Recovery V2 "
+            "generated no hypothesis and promoted no edge.\n\n"
+            "```text\n"
+            "HYPOTHESES_GENERATED = 0\n"
+            "EDGE_PROMOTIONS = 0\n"
+            "```\n"
+        )
     sections = [
         "# Hypothesis backlog from real data V1",
         "",
@@ -499,6 +511,11 @@ _QA_GATE_SPECS: tuple[tuple[str, str, tuple[tuple[str, str, str], ...]], ...] = 
         "P1",
         (
             (
+                "torrent-r2-inventory-v1.json",
+                "/objects/1",
+                "NORMALIZED_OBJECT_TERMINAL_RECEIPT_OR_BINDING",
+            ),
+            (
                 "torrent-raw-to-normalized-lineage-v1.json",
                 "/summary",
                 "RAW_RESPONSE_LINEAGE_CLOSURE",
@@ -507,6 +524,11 @@ _QA_GATE_SPECS: tuple[tuple[str, str, tuple[tuple[str, str, str], ...]], ...] = 
                 "torrent-real-batch-quality-report-v1.json",
                 "/source_unit_accounting",
                 "SOURCE_UNIT_ACCOUNTING_CLOSURE",
+            ),
+            (
+                "torrent-real-batch-quality-report-v1.json",
+                "/durability/normalized_evidence_binding",
+                "NORMALIZED_DURABILITY_LINEAGE_BINDING",
             ),
         ),
     ),
@@ -581,7 +603,7 @@ _QA_GATE_SPECS: tuple[tuple[str, str, tuple[tuple[str, str, str], ...]], ...] = 
             (
                 "hypothesis-backlog-from-real-data-v1.md",
                 "",
-                "FACTUAL_HYPOTHESIS_BACKLOG",
+                "SCIENTIFIC_BOUNDARY_RECEIPT",
             ),
             (
                 "robin-data-torrent-operations-pack-v1.md",
@@ -797,7 +819,41 @@ def qa_matrix(
     return document
 
 
-def operations_pack() -> str:
+def operations_pack(*, recovery_v2: bool = False) -> str:
+    if recovery_v2:
+        return """# Robin data torrent operations pack Recovery V2
+
+## Identity
+Run only the exact merged main SHA and exact Recovery V2 workflow at attempt 1.
+
+## Preconditions
+Require SAFE V2 post-merge, Identity GO V2, durable identity seal, PREFLIGHT V2,
+four runtime bindings, migration 0015 and VERIFY V2 on the same main SHA.
+
+## Secret bindings
+Read values only in the secret-bearing runtime step; never emit values or connection URLs.
+
+## Budgets
+LIVE: Official <=50 reads; Odds exactly 5 requests and <=1000 credits; R2 P2/G1/L0/D0.
+Mission: R2 P3/G3/objects3/L0/D0/overwrites0/retries0. PostgreSQL is 51 nominal,
+53 maximum, with the 54th connection refused before network and no hidden pool retry.
+
+## Ordering
+Read back the exact identity seal from the injected R2 store before PostgreSQL or providers.
+Then acquire the stable PostgreSQL opportunity before official/Odds reads and the two R2 PUTs.
+A claim loser has the one prerequisite seal GET and zero post-claim source, PUT or replay effect.
+
+## Durability and replay
+Require CREATED_CONFIRMED raw and normalized core objects before exactly 100 local replay
+iterations. Replay consumes retained bytes bound to both durable receipts and has zero effects.
+
+## Artifacts
+R2 is authoritative for raw and normalized core archives; GitHub receives the 19 sanitized,
+hashed terminal artifacts after replay and terminal QA.
+
+## Abort
+Stop without retry on ambiguity, budget drift, hash drift, generation mismatch or stale authority.
+"""
     return """# Robin data torrent operations pack V1
 
 ## Identity
@@ -830,7 +886,36 @@ Stop on ambiguity, budget risk, generation mismatch or any non-additive producti
 """
 
 
-def recovery_pack() -> str:
+def recovery_pack(*, recovery_v2: bool = False) -> str:
+    if recovery_v2:
+        return """# Robin data torrent recovery pack Recovery V2
+
+## State classification
+Classify only from predecessor artifacts, PostgreSQL permits/events and exact R2 receipts.
+
+## Claim loser
+The prerequisite seal GET remains counted. Perform zero official/Odds reads, R2 PUTs,
+business SQL mutations or replay after a lost claim; do not call the run zero-effect.
+
+## Source ambiguity
+Do not retry an official or Odds boundary. Preserve attributed bytes and stop with counters.
+
+## R2 ambiguity
+The seal uses one exact-key GET before SQL/provider. LIVE raw and normalized objects require
+CREATED_CONFIRMED; never resolve preconditions with GET, LIST, overwrite or DELETE.
+
+## Replay recovery
+Replay exactly 100 times in process from retained bytes bound to CREATED_CONFIRMED raw and
+normalized objects. Replay has no PostgreSQL, GitHub, Neon, R2, Official or Odds effect.
+
+## Branch and migration limits
+PREFLIGHT may create only the one deterministic recovery branch authorized by V2.
+MIGRATE may apply only additive 0015_data_torrent_opportunity; no downgrade or destructive SQL.
+
+## Owner-only hard stop
+Escalate only a material missing authority/secret, paid capacity, consumed ambiguous effect,
+destructive-only recovery, scientific scope change or exhausted external budget.
+"""
     return """# Robin data torrent recovery pack V1
 
 ## State classification

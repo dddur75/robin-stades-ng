@@ -1,0 +1,108 @@
+{
+  "agent_id": "C4",
+  "mission_id": "DATA_TORRENT_RECOVERY_V2",
+  "facts_verified": [
+    {
+      "claim": "The reviewed 122-path candidate projection independently recomputes to the exact frozen SHA-256.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b",
+        "src/robin/chronos_production.py:data_torrent_recovery_v2_reviewed_candidate_projection"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The corrected implementation-release projection excludes exactly decision-ledger.jsonl and evidence-graph.json while including all four independent reports and the final review.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b",
+        "src/robin/chronos_production.py:101",
+        "src/robin/chronos_production.py:475",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:1893"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The former record-194/evidence-graph SHA-256 self-reference is removed: record 194 binds only the acyclic release projection, after which the graph can bind the resulting ledger hash.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b",
+        "src/robin/chronos_production.py:475",
+        "src/robin/chronos_production.py:691",
+        "docs/operations/DATA-TORRENT-RECOVERY-V2.md:114"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The generic Council invariant still requires every evidence-graph decision node to match the corresponding append-only ledger record hash exactly.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b",
+        "tests/council/test_robin_council_os_v3.py:6659"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Council regression coverage locks the exact exclusion and report-inclusion boundary and rejects mutations of included candidate or review bytes.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:1893",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:test_frozen_council_release_guard_rejects_candidate_byte_drift",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:test_frozen_council_release_guard_rejects_review_or_ledger_drift"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The immutable manifest remains an exact eight-field LF UTF-8 document with separately verified raw, canonical, and owner-source hashes.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b",
+        "configs/execution/data-torrent-recovery-v2.json",
+        "RAW_MANIFEST_SHA256:ced1b867faa3ae57911d169f5c1edbd0db02a891ac46ccc080de7397076d349f",
+        "CANONICAL_MANIFEST_SHA256:e6ae2bcc2ea6a8cbd8a552321235f384b6776e935c259a0516ce1405ac2871b2",
+        "OWNER_SOURCE_SHA256:ff2e45ff7c6490919aa86900669c306e1d25c710f15db27f7c70861f1246bf31"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "All four production workflows remain manual-dispatch only with read-only GitHub permissions, common non-cancelling concurrency, immutable safety locks, and no direct workflow input interpolation inside shell bodies.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b",
+        ".github/workflows/chronos-neon-branch-identity-v2.yml",
+        ".github/workflows/chronos-identity-seal-v2.yml",
+        ".github/workflows/chronos-production-bootstrap-v4.yml",
+        ".github/workflows/data-torrent-live-v2.yml",
+        "tests/data_torrent/test_ci_lock_contract_v1.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "GitHub, provider, R2, Neon, and PostgreSQL transports remain bounded, fail-closed, proxy-restricted, redirect-restricted, and application-retry-free under their non-fungible stage ceilings.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b",
+        "configs/execution/data-torrent-recovery-v2-effect-contract.json",
+        "scripts/github_release_attestation_v2.py",
+        "scripts/install_chronos_runtime_bindings_v2.py",
+        "scripts/dispatch_data_torrent_recovery_v2_stage.py",
+        "src/robin/capture/live_transport.py",
+        "src/robin/prospective_observatory/chronos_r2.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The repository-wide static credential scan reports no literal secret in tracked, untracked, or generated evidence surfaces.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b",
+        "scripts/check_no_secrets.py"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [],
+  "assumptions": [],
+  "main_objection": "P0=0; P1=0; P2=0; OPEN_THREADS=0; VERDICT=PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "risks": [],
+  "minimum_decisive_test": "RECOMPUTE_BOTH_FROZEN_PROJECTIONS_AND_REQUIRE_EXACT_EXCLUSIONS_REPORT_INCLUSIONS_MUTANT_REJECTION_AND_LEDGER_GRAPH_HASH_EQUALITY",
+  "recommended_action": "PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "scale_condition": "EXACT_HEAD_SAFE_V2_GREEN_NORMAL_MERGE_POSTMERGE_SAFE_V2_GREEN",
+  "estimated_compute": "READ_ONLY_STATIC_REVIEW_ONLY; NO_PRODUCTION_COMPUTE",
+  "estimated_external_cost": "ZERO; NO_NETWORK_OR_EXTERNAL_EFFECTS",
+  "estimated_human_time": "ONE_FINAL_MECHANICAL_RELEASE_REVIEW",
+  "maintenance_impact": "LOW; ACYCLIC_RELEASE_BOUNDARY_IS_EXPLICITLY_DOCUMENTED_AND_REGRESSION_LOCKED",
+  "confidence": 0.99
+}

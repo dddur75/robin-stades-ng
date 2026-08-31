@@ -755,6 +755,7 @@ def _create_postgresql_objects() -> None:
           v_official_reads integer; v_odds_requests integer;
           v_odds_credits integer;
           v_r2_puts integer; v_r2_gets integer;
+          v_recovery_v2 boolean;
         BEGIN
           IF NOT pg_catalog.pg_has_role(
             session_user, 'chronos_runtime_writer', 'USAGE')
@@ -800,7 +801,18 @@ def _create_postgresql_objects() -> None:
           IF p_raw_operation_id=p_normalized_operation_id
              OR p_raw_object_key=p_normalized_object_key THEN
             RAISE EXCEPTION 'CHRONOS_TORRENT_BATCH_INPUT_INVALID'; END IF;
-          IF pg_catalog.jsonb_typeof(p_manifest) IS DISTINCT FROM 'object'
+          v_recovery_v2 := p_manifest->>'mission_id' =
+            'data-torrent-recovery-v2';
+          IF p_manifest->>'mission_id' IS NULL
+             OR p_manifest->>'mission_id' NOT IN
+                ('data-torrent-ready-v1','data-torrent-recovery-v2')
+             OR p_raw_index->>'mission_id' IS DISTINCT FROM
+                p_manifest->>'mission_id'
+             OR p_normalized_index->>'mission_id' IS DISTINCT FROM
+                p_manifest->>'mission_id'
+             OR p_quality_report->>'mission_id' IS DISTINCT FROM
+                p_manifest->>'mission_id'
+             OR pg_catalog.jsonb_typeof(p_manifest) IS DISTINCT FROM 'object'
              OR pg_catalog.jsonb_typeof(p_raw_index) IS DISTINCT FROM 'object'
              OR pg_catalog.jsonb_typeof(p_normalized_index) IS DISTINCT FROM 'object'
              OR pg_catalog.jsonb_typeof(p_quality_report) IS DISTINCT FROM 'object'
@@ -851,15 +863,65 @@ def _create_postgresql_objects() -> None:
                   OR pg_catalog.jsonb_typeof(artifact->'bytes')
                      IS DISTINCT FROM 'number'
                   OR (artifact->>'bytes')::bigint <= 0)
-             OR p_normalized_object_key IS DISTINCT FROM
-                'data-torrent/v1/' || p_opportunity_id ||
-                '/normalized-evidence.tar.gz'
-             OR p_manifest#>>'{evidence_validity,mode}' IS DISTINCT FROM
-                'CONDITIONAL_APPEND_ONLY_EXTERNAL_BINDING_V1'
+             OR (
+               v_recovery_v2 AND (
+                 p_raw_object_key IS DISTINCT FROM
+                   'data-torrent/recovery-v2/' || p_opportunity_id || '/raw.tar.gz'
+                 OR p_normalized_object_key IS DISTINCT FROM
+                   'data-torrent/recovery-v2/' || p_opportunity_id ||
+                   '/normalized-evidence.tar.gz'
+                 OR p_manifest#>>'{evidence_validity,mode}' IS DISTINCT FROM
+                   'DIRECT_CREATED_DURABLE_BINDING_V2'
+                 OR p_manifest#>>'{durability,verification_status}'
+                   IS DISTINCT FROM 'CREATED_CONFIRMED_BEFORE_REPLAY'
+                  OR p_manifest->>'hypotheses_generated' IS DISTINCT FROM '0'
+                  OR p_manifest->>'purchases' IS DISTINCT FROM '0'
+                  OR p_manifest->>'missed_windows' IS DISTINCT FROM
+                    'MISSED_NOT_BACKDATED'
+                  OR p_raw_index#>>'{archive_object,object_key}' IS DISTINCT FROM
+                    p_raw_object_key
+                  OR p_raw_index#>>'{archive_object,sha256}' IS DISTINCT FROM
+                    p_raw_object_sha256
+                  OR p_raw_index#>>'{archive_object,media_type}' IS DISTINCT FROM
+                    'application/gzip'
+                  OR p_raw_index#>>'{archive_object,format}' IS DISTINCT FROM
+                    'DETERMINISTIC_USTAR_GZIP_V1'
+                  OR pg_catalog.jsonb_typeof(
+                    p_raw_index#>'{archive_object,bytes}') IS DISTINCT FROM 'number'
+                  OR (p_raw_index#>>'{archive_object,bytes}')::bigint <= 0
+                  OR p_manifest#>>'{durability,raw_object,role}' IS DISTINCT FROM
+                    'RAW'
+                  OR p_manifest#>>'{durability,raw_object,object_key}'
+                    IS DISTINCT FROM p_raw_object_key
+                  OR p_manifest#>>'{durability,raw_object,object_sha256}'
+                    IS DISTINCT FROM p_raw_object_sha256
+                  OR p_manifest#>>'{durability,raw_object,operation_id}'
+                    IS DISTINCT FROM p_raw_operation_id
+                  OR p_manifest#>>'{durability,raw_object,terminal_event}'
+                    IS DISTINCT FROM 'CREATED_CONFIRMED'
+                  OR p_manifest#>>'{durability,raw_object,terminal_event_hash}'
+                    !~ '^[0-9a-f]{64}$'
+                  OR pg_catalog.jsonb_typeof(
+                    p_manifest#>'{durability,raw_object,object_bytes}')
+                    IS DISTINCT FROM 'number'
+                  OR (p_manifest#>>'{durability,raw_object,object_bytes}')::bigint <= 0
+                  OR p_manifest#>>'{durability,raw_object,object_bytes}'
+                    IS DISTINCT FROM p_raw_index#>>'{archive_object,bytes}'
+               ))
+             OR (
+               NOT v_recovery_v2 AND (
+                 p_raw_object_key IS DISTINCT FROM
+                   'data-torrent/v1/' || p_opportunity_id || '/raw.tar.gz'
+                 OR p_normalized_object_key IS DISTINCT FROM
+                   'data-torrent/v1/' || p_opportunity_id ||
+                   '/normalized-evidence.tar.gz'
+                 OR p_manifest#>>'{evidence_validity,mode}' IS DISTINCT FROM
+                   'CONDITIONAL_APPEND_ONLY_EXTERNAL_BINDING_V1'
+                 OR p_manifest#>>'{durability,verification_status}'
+                   IS DISTINCT FROM 'VALID_ONLY_WITH_APPEND_ONLY_BINDING'
+               ))
              OR p_manifest#>>'{evidence_validity,unbound_status}'
                 IS DISTINCT FROM 'INVALID'
-             OR p_manifest#>>'{durability,verification_status}'
-                IS DISTINCT FROM 'VALID_ONLY_WITH_APPEND_ONLY_BINDING'
              OR p_manifest#>'{evidence_validity,binding}' IS DISTINCT FROM
                 p_normalized_index->'archive_object'
              OR p_manifest#>'{durability,normalized_evidence_binding}'
@@ -919,103 +981,176 @@ def _create_postgresql_objects() -> None:
                 'COMPLETE'
              OR p_normalized_index->>'schema_version' IS DISTINCT FROM
                 'robin-data-torrent-normalized-index-v1'
-             OR p_normalized_index#>>'{archive_object,schema_version}'
-                IS DISTINCT FROM
-                'robin-data-torrent-normalized-evidence-binding-v1'
              OR p_normalized_index#>>'{archive_object,role}' IS DISTINCT FROM
                 'NORMALIZED_EVIDENCE'
              OR p_normalized_index#>>'{archive_object,object_key}'
                 IS DISTINCT FROM p_normalized_object_key
              OR p_normalized_index#>>'{archive_object,archive_format}'
                 IS DISTINCT FROM 'DETERMINISTIC_USTAR_GZIP_V1'
-             OR p_normalized_index#>>'{archive_object,evidence_member_prefix}'
-                IS DISTINCT FROM 'evidence/'
-             OR p_normalized_index#>>'{archive_object,manifest_self_witness,member}'
-                IS DISTINCT FROM
-                'evidence/torrent-real-batch-manifest-v1.json'
-             OR p_normalized_index#>>'{archive_object,manifest_self_witness,rule}'
-                IS DISTINCT FROM 'PRESENT_WITHOUT_SELF_HASH'
-             OR p_normalized_index#>>'{archive_object,resolver,relation}'
-                IS DISTINCT FROM 'public.chronos_torrent_batch_audit'
-             OR p_normalized_index#>>'{archive_object,resolver,lookup,opportunity_id}'
-                IS DISTINCT FROM p_opportunity_id
-             OR p_normalized_index#>>'{archive_object,resolver,unbound_bundle_validity}'
-                IS DISTINCT FROM 'INVALID'
-             OR p_normalized_index#>>'{archive_object,resolver,required_columns,object_key}'
-                IS DISTINCT FROM 'normalized_object_key'
-             OR p_normalized_index#>>'{archive_object,resolver,required_columns,object_sha256}'
-                IS DISTINCT FROM 'normalized_object_sha256'
-             OR p_normalized_index#>>'{archive_object,resolver,required_columns,operation_id}'
-                IS DISTINCT FROM 'normalized_operation_id'
-             OR p_normalized_index#>>'{archive_object,resolver,required_columns,terminal_event}'
-                IS DISTINCT FROM 'normalized_terminal_event_type'
-             OR p_normalized_index#>>'{archive_object,resolver,required_columns,terminal_event_hash}'
-                IS DISTINCT FROM 'normalized_terminal_event_hash'
-             OR p_normalized_index#>'{archive_object,resolver,required_terminal_events}'
-                IS DISTINCT FROM
-                '["CREATED_CONFIRMED","PREEXISTING_CONFIRMED"]'::jsonb
              OR (
-               SELECT pg_catalog.array_agg(value ORDER BY value)
-               FROM pg_catalog.jsonb_array_elements_text(
-                 p_normalized_index#>'{archive_object,evidence_members}') value
-             ) IS DISTINCT FROM ARRAY[
-               'hypothesis-backlog-from-real-data-v1.md',
-               'hypothesis-ready-field-dictionary-v1.json',
-               'robin-data-torrent-operations-pack-v1.md',
-               'robin-data-torrent-recovery-pack-v1.md',
-               'torrent-canonical-dataset-hash-v1.json',
-               'torrent-control-plane-event-chain-v1.json',
-               'torrent-load-replay-report-v1.json',
-               'torrent-load-replay-report-v1.md',
-               'torrent-official-read-receipts-v1.json',
-               'torrent-opportunity-claim-receipt-v1.json',
-               'torrent-provider-credit-receipt-v1.json',
-               'torrent-qa-acceptance-matrix-v1.json',
-               'torrent-r2-inventory-v1.json',
-               'torrent-raw-to-normalized-lineage-v1.json',
-               'torrent-real-batch-coverage-matrix-v1.csv',
-               'torrent-real-batch-manifest-v1.json',
-               'torrent-real-batch-normalized-index-v1.json',
-               'torrent-real-batch-quality-report-v1.json',
-               'torrent-real-batch-raw-index-v1.json'
-             ]::text[]
+               NOT v_recovery_v2 AND (
+                 p_normalized_index#>>'{archive_object,schema_version}'
+                   IS DISTINCT FROM
+                   'robin-data-torrent-normalized-evidence-binding-v1'
+                 OR p_normalized_index#>>'{archive_object,evidence_member_prefix}'
+                   IS DISTINCT FROM 'evidence/'
+                 OR p_normalized_index#>>'{archive_object,manifest_self_witness,member}'
+                   IS DISTINCT FROM
+                   'evidence/torrent-real-batch-manifest-v1.json'
+                 OR p_normalized_index#>>'{archive_object,manifest_self_witness,rule}'
+                   IS DISTINCT FROM 'PRESENT_WITHOUT_SELF_HASH'
+                 OR p_normalized_index#>>'{archive_object,resolver,relation}'
+                   IS DISTINCT FROM 'public.chronos_torrent_batch_audit'
+                 OR p_normalized_index#>>'{archive_object,resolver,lookup,opportunity_id}'
+                   IS DISTINCT FROM p_opportunity_id
+                 OR p_normalized_index#>>'{archive_object,resolver,unbound_bundle_validity}'
+                   IS DISTINCT FROM 'INVALID'
+                 OR p_normalized_index#>>'{archive_object,resolver,required_columns,object_key}'
+                   IS DISTINCT FROM 'normalized_object_key'
+                 OR p_normalized_index#>>'{archive_object,resolver,required_columns,object_sha256}'
+                   IS DISTINCT FROM 'normalized_object_sha256'
+                 OR p_normalized_index#>>'{archive_object,resolver,required_columns,operation_id}'
+                   IS DISTINCT FROM 'normalized_operation_id'
+                 OR p_normalized_index#>>'{archive_object,resolver,required_columns,terminal_event}'
+                   IS DISTINCT FROM 'normalized_terminal_event_type'
+                 OR p_normalized_index#>>'{archive_object,resolver,required_columns,terminal_event_hash}'
+                   IS DISTINCT FROM 'normalized_terminal_event_hash'
+                 OR p_normalized_index#>'{archive_object,resolver,required_terminal_events}'
+                   IS DISTINCT FROM
+                   '["CREATED_CONFIRMED","PREEXISTING_CONFIRMED"]'::jsonb
+                 OR (
+                   SELECT pg_catalog.array_agg(value ORDER BY value)
+                   FROM pg_catalog.jsonb_array_elements_text(
+                     p_normalized_index#>'{archive_object,evidence_members}') value
+                 ) IS DISTINCT FROM ARRAY[
+                   'hypothesis-backlog-from-real-data-v1.md',
+                   'hypothesis-ready-field-dictionary-v1.json',
+                   'robin-data-torrent-operations-pack-v1.md',
+                   'robin-data-torrent-recovery-pack-v1.md',
+                   'torrent-canonical-dataset-hash-v1.json',
+                   'torrent-control-plane-event-chain-v1.json',
+                   'torrent-load-replay-report-v1.json',
+                   'torrent-load-replay-report-v1.md',
+                   'torrent-official-read-receipts-v1.json',
+                   'torrent-opportunity-claim-receipt-v1.json',
+                   'torrent-provider-credit-receipt-v1.json',
+                   'torrent-qa-acceptance-matrix-v1.json',
+                   'torrent-r2-inventory-v1.json',
+                   'torrent-raw-to-normalized-lineage-v1.json',
+                   'torrent-real-batch-coverage-matrix-v1.csv',
+                   'torrent-real-batch-manifest-v1.json',
+                   'torrent-real-batch-normalized-index-v1.json',
+                   'torrent-real-batch-quality-report-v1.json',
+                   'torrent-real-batch-raw-index-v1.json'
+                 ]::text[]
+                 OR (
+                   SELECT pg_catalog.array_agg(value ORDER BY value)
+                   FROM pg_catalog.jsonb_array_elements_text(
+                     p_normalized_index#>'{archive_object,normalized_core_members}') value
+                 ) IS DISTINCT FROM ARRAY[
+                   'config/team-alias-registry-v1.json',
+                   'data/normalized-records.jsonl',
+                   'data/rejected-records.jsonl',
+                   'lineage/raw-to-normalized-v1.json',
+                   'operations/operations-pack-v1.md',
+                   'operations/recovery-pack-v1.md',
+                   'reports/coverage-v1.csv',
+                   'reports/load-replay-v1.json',
+                   'science/field-dictionary-v1.json',
+                   'science/hypothesis-backlog-v1.md'
+                 ]::text[]
+               ))
              OR (
-               SELECT pg_catalog.array_agg(value ORDER BY value)
-               FROM pg_catalog.jsonb_array_elements_text(
-                 p_normalized_index#>'{archive_object,normalized_core_members}') value
-             ) IS DISTINCT FROM ARRAY[
-               'config/team-alias-registry-v1.json',
-               'data/normalized-records.jsonl',
-               'data/rejected-records.jsonl',
-               'lineage/raw-to-normalized-v1.json',
-               'operations/operations-pack-v1.md',
-               'operations/recovery-pack-v1.md',
-               'reports/coverage-v1.csv',
-               'reports/load-replay-v1.json',
-               'science/field-dictionary-v1.json',
-               'science/hypothesis-backlog-v1.md'
-             ]::text[]
+               v_recovery_v2 AND (
+                 (
+                   SELECT pg_catalog.array_agg(key ORDER BY key)
+                   FROM pg_catalog.jsonb_object_keys(
+                     p_normalized_index->'archive_object') key
+                 ) IS DISTINCT FROM ARRAY[
+                   'archive_format','canonical_dataset_sha256','members',
+                   'object_bytes','object_key','object_sha256','operation_id',
+                   'role','schema_version','terminal_artifacts_location',
+                   'terminal_event','terminal_event_hash'
+                 ]::text[]
+                 OR p_normalized_index#>>'{archive_object,schema_version}'
+                   IS DISTINCT FROM
+                   'robin-data-torrent-normalized-evidence-binding-v2'
+                 OR p_normalized_index#>>'{archive_object,object_sha256}'
+                   IS DISTINCT FROM p_normalized_object_sha256
+                 OR p_normalized_index#>>'{archive_object,operation_id}'
+                   IS DISTINCT FROM p_normalized_operation_id
+                 OR p_normalized_index#>>'{archive_object,terminal_event}'
+                   IS DISTINCT FROM 'CREATED_CONFIRMED'
+                 OR p_normalized_index#>>'{archive_object,terminal_artifacts_location}'
+                   IS DISTINCT FROM
+                   'GITHUB_RUN_ARTIFACT_AFTER_REPLAY_AND_TERMINAL_QA'
+                 OR p_normalized_index#>>'{archive_object,canonical_dataset_sha256}'
+                   IS DISTINCT FROM p_canonical_dataset_sha256
+                 OR pg_catalog.jsonb_typeof(
+                   p_normalized_index#>'{archive_object,object_bytes}')
+                   IS DISTINCT FROM 'number'
+                 OR (p_normalized_index#>>'{archive_object,object_bytes}')::bigint <= 0
+                 OR pg_catalog.jsonb_typeof(
+                   p_normalized_index#>'{archive_object,members}')
+                   IS DISTINCT FROM 'array'
+                 OR pg_catalog.jsonb_array_length(
+                   p_normalized_index#>'{archive_object,members}') <> 5
+                 OR EXISTS (
+                   SELECT 1 FROM pg_catalog.jsonb_array_elements(
+                     p_normalized_index#>'{archive_object,members}') member
+                   WHERE pg_catalog.jsonb_typeof(member) IS DISTINCT FROM 'object'
+                     OR (
+                       SELECT pg_catalog.array_agg(key ORDER BY key)
+                       FROM pg_catalog.jsonb_object_keys(member) key
+                     ) IS DISTINCT FROM ARRAY['bytes','name','sha256']::text[]
+                     OR member->>'sha256' !~ '^[0-9a-f]{64}$'
+                     OR pg_catalog.jsonb_typeof(member->'bytes')
+                       IS DISTINCT FROM 'number'
+                     OR (member->>'bytes')::bigint <= 0)
+                 OR (
+                   SELECT pg_catalog.array_agg(member->>'name' ORDER BY member->>'name')
+                   FROM pg_catalog.jsonb_array_elements(
+                     p_normalized_index#>'{archive_object,members}') member
+                 ) IS DISTINCT FROM ARRAY[
+                   'config/team-alias-registry-v1.json',
+                   'data/normalized-records.jsonl',
+                   'data/rejected-records.jsonl',
+                   'lineage/raw-to-normalized-v1.json',
+                   'reports/coverage-v1.csv'
+                 ]::text[]
+                 OR (
+                   SELECT member->>'sha256'
+                   FROM pg_catalog.jsonb_array_elements(
+                     p_normalized_index#>'{archive_object,members}') member
+                   WHERE member->>'name'='data/normalized-records.jsonl'
+                 ) IS DISTINCT FROM p_canonical_dataset_sha256
+                 OR p_normalized_index->'members' IS DISTINCT FROM
+                   p_normalized_index#>'{archive_object,members}'
+               ))
              OR p_normalized_index->>'canonical_dataset_sha256'
                 IS DISTINCT FROM p_canonical_dataset_sha256
-             OR pg_catalog.jsonb_typeof(p_normalized_index->'members')
-                IS DISTINCT FROM 'array'
-             OR pg_catalog.jsonb_array_length(p_normalized_index->'members') <> 10
              OR (
-               SELECT pg_catalog.array_agg(member->>'name' ORDER BY member->>'name')
-               FROM pg_catalog.jsonb_array_elements(
-                 p_normalized_index->'members') member
-             ) IS DISTINCT FROM ARRAY[
-               'config/team-alias-registry-v1.json',
-               'data/normalized-records.jsonl',
-               'data/rejected-records.jsonl',
-               'lineage/raw-to-normalized-v1.json',
-               'operations/operations-pack-v1.md',
-               'operations/recovery-pack-v1.md',
-               'reports/coverage-v1.csv',
-               'reports/load-replay-v1.json',
-               'science/field-dictionary-v1.json',
-               'science/hypothesis-backlog-v1.md'
-             ]::text[]
+               NOT v_recovery_v2 AND (
+                 pg_catalog.jsonb_typeof(p_normalized_index->'members')
+                   IS DISTINCT FROM 'array'
+                 OR pg_catalog.jsonb_array_length(p_normalized_index->'members') <> 10
+                 OR (
+                   SELECT pg_catalog.array_agg(member->>'name' ORDER BY member->>'name')
+                   FROM pg_catalog.jsonb_array_elements(
+                     p_normalized_index->'members') member
+                 ) IS DISTINCT FROM ARRAY[
+                   'config/team-alias-registry-v1.json',
+                   'data/normalized-records.jsonl',
+                   'data/rejected-records.jsonl',
+                   'lineage/raw-to-normalized-v1.json',
+                   'operations/operations-pack-v1.md',
+                   'operations/recovery-pack-v1.md',
+                   'reports/coverage-v1.csv',
+                   'reports/load-replay-v1.json',
+                   'science/field-dictionary-v1.json',
+                   'science/hypothesis-backlog-v1.md'
+                 ]::text[]
+               ))
              OR pg_catalog.jsonb_typeof(
                 p_normalized_index->'record_type_counts') IS DISTINCT FROM 'array'
              OR pg_catalog.jsonb_array_length(
@@ -1039,13 +1174,23 @@ def _create_postgresql_objects() -> None:
                 IS DISTINCT FROM '0'
              OR p_quality_report->>'logical_duplicates' IS DISTINCT FROM
                 p_logical_duplicates::text
-             OR p_quality_report#>>'{temporal,leakage_total}' IS DISTINCT FROM
-                p_temporal_leakage::text
+              OR p_quality_report#>>'{temporal,leakage_total}' IS DISTINCT FROM
+                 p_temporal_leakage::text
+              OR (
+                v_recovery_v2 AND
+                p_quality_report#>>'{temporal,missed_windows}' IS DISTINCT FROM
+                  'MISSED_NOT_BACKDATED')
              OR p_quality_report#>>'{coverage,emitted_cells}' IS DISTINCT FROM '10'
              OR p_quality_report#>>'{coverage,incomplete_cells}' IS DISTINCT FROM '0'
              OR p_quality_report#>>'{durability,raw_verified}' IS DISTINCT FROM 'true'
-             OR p_quality_report#>>'{durability,normalized_verified}'
-                IS DISTINCT FROM 'CONDITIONAL_APPEND_ONLY_BINDING'
+             OR (
+               v_recovery_v2 AND
+               p_quality_report#>>'{durability,normalized_verified}'
+                 IS DISTINCT FROM 'DIRECT_CREATED_CONFIRMED_BEFORE_REPLAY_V2')
+             OR (
+               NOT v_recovery_v2 AND
+               p_quality_report#>>'{durability,normalized_verified}'
+                 IS DISTINCT FROM 'CONDITIONAL_APPEND_ONLY_BINDING')
              OR p_quality_report#>'{durability,normalized_evidence_binding}'
                 IS DISTINCT FROM p_normalized_index->'archive_object'
              OR p_quality_report#>>'{external_effects,unaccounted}'
@@ -1072,7 +1217,8 @@ def _create_postgresql_objects() -> None:
           IF NOT FOUND THEN RAISE EXCEPTION 'CHRONOS_OPPORTUNITY_NOT_FOUND'; END IF;
           v_now := pg_catalog.clock_timestamp();
           v_epoch := pg_catalog.pg_postmaster_start_time();
-          IF c.github_run_id IS DISTINCT FROM p_github_run_id
+          IF c.mission_id IS DISTINCT FROM p_manifest->>'mission_id'
+             OR c.github_run_id IS DISTINCT FROM p_github_run_id
              OR c.github_run_attempt IS DISTINCT FROM p_github_run_attempt
              OR c.code_revision IS DISTINCT FROM p_code_revision THEN
             RAISE EXCEPTION 'CHRONOS_OPPORTUNITY_WINNER_REQUIRED'; END IF;
@@ -1096,8 +1242,10 @@ def _create_postgresql_objects() -> None:
           ORDER BY event_seq DESC LIMIT 1;
           IF raw_event.operation_id IS NULL
              OR normalized_event.operation_id IS NULL
-             OR raw_event.event_type NOT IN
-                ('CREATED_CONFIRMED','PREEXISTING_CONFIRMED')
+             OR (v_recovery_v2 AND raw_event.event_type IS DISTINCT FROM
+                'CREATED_CONFIRMED')
+             OR (NOT v_recovery_v2 AND raw_event.event_type NOT IN
+                ('CREATED_CONFIRMED','PREEXISTING_CONFIRMED'))
              OR raw_event.resource_key IS DISTINCT FROM p_raw_object_key
              OR raw_event.payload_hash IS DISTINCT FROM p_raw_object_sha256
              OR raw_event.github_run_id IS DISTINCT FROM p_github_run_id
@@ -1105,8 +1253,10 @@ def _create_postgresql_objects() -> None:
                 p_github_run_attempt
              OR raw_event.code_revision IS DISTINCT FROM p_code_revision
              OR raw_event.recorded_server_epoch IS DISTINCT FROM v_epoch
-             OR normalized_event.event_type NOT IN
-                ('CREATED_CONFIRMED','PREEXISTING_CONFIRMED')
+             OR (v_recovery_v2 AND normalized_event.event_type IS DISTINCT FROM
+                'CREATED_CONFIRMED')
+             OR (NOT v_recovery_v2 AND normalized_event.event_type NOT IN
+                ('CREATED_CONFIRMED','PREEXISTING_CONFIRMED'))
              OR normalized_event.resource_key IS DISTINCT FROM p_normalized_object_key
              OR normalized_event.payload_hash IS DISTINCT FROM p_normalized_object_sha256
              OR normalized_event.github_run_id IS DISTINCT FROM p_github_run_id
@@ -1114,6 +1264,12 @@ def _create_postgresql_objects() -> None:
                 p_github_run_attempt
              OR normalized_event.code_revision IS DISTINCT FROM p_code_revision
              OR normalized_event.recorded_server_epoch IS DISTINCT FROM v_epoch
+              OR (v_recovery_v2 AND
+                p_normalized_index#>>'{archive_object,terminal_event_hash}'
+                  IS DISTINCT FROM normalized_event.event_hash)
+              OR (v_recovery_v2 AND
+                p_manifest#>>'{durability,raw_object,terminal_event_hash}'
+                  IS DISTINCT FROM raw_event.event_hash)
              OR NOT EXISTS (
                SELECT 1 FROM public.chronos_effect_authorities a
                WHERE a.authority_id=raw_event.authority_id
@@ -1233,7 +1389,9 @@ def _create_postgresql_objects() -> None:
                  (cell->>'records_normalized')::bigint) <= 0
              )
              OR p_silent_drops <> 0 OR p_logical_duplicates <> 0
-             OR p_temporal_leakage <> 0 OR p_replay_multiplier < 100
+              OR p_temporal_leakage <> 0
+              OR (v_recovery_v2 AND p_replay_multiplier <> 100)
+              OR (NOT v_recovery_v2 AND p_replay_multiplier < 100)
              OR p_replay_equivalent_records < 0
              OR p_replay_equivalent_records <>
                 p_normalized_records * p_replay_multiplier
@@ -1263,11 +1421,17 @@ def _create_postgresql_objects() -> None:
                 ('NaN','Infinity','-Infinity')
              OR p_throughput_ratio::text IN
                 ('NaN','Infinity','-Infinity')
-             OR p_r2_puts <> 2
-             OR p_r2_gets NOT BETWEEN 0 AND 2
-             OR p_r2_puts IS DISTINCT FROM v_r2_puts
-             OR p_r2_gets IS DISTINCT FROM v_r2_gets
-             OR p_r2_lists NOT BETWEEN 0 AND 2 OR p_r2_deletes <> 0
+              OR p_r2_puts <> 2
+              OR p_r2_puts IS DISTINCT FROM v_r2_puts
+              OR (
+                v_recovery_v2 AND (
+                  v_r2_gets <> 0 OR p_r2_gets <> 1 OR p_r2_lists <> 0))
+              OR (
+                NOT v_recovery_v2 AND (
+                  p_r2_gets NOT BETWEEN 0 AND 2
+                  OR p_r2_gets <> v_r2_gets
+                  OR p_r2_lists NOT BETWEEN 0 AND 2))
+              OR p_r2_deletes <> 0
              OR p_r2_objects <> 2 OR p_automatic_retries <> 0
              OR p_unaccounted_external_effects <> 0
              OR p_idempotent_replay IS DISTINCT FROM true
@@ -1357,6 +1521,36 @@ def _create_postgresql_objects() -> None:
             b.db_recorded_at, b.postgres_server_epoch, b.record_hash::text;
         END;
         $fn$;
+
+        DO $contract$
+        DECLARE
+          v_signature text :=
+            'public.chronos_record_torrent_batch(' ||
+            'text,text,text,text,text,text,text,text,jsonb,jsonb,jsonb,jsonb,jsonb,' ||
+            'integer,integer,integer,integer,bigint,bigint,bigint,bigint,bigint,' ||
+            'bigint,integer,bigint,double precision,double precision,' ||
+            'double precision,double precision,bigint,double precision,' ||
+            'double precision,double precision,boolean,' ||
+            'integer,integer,integer,integer,integer,integer,integer,integer,' ||
+            'integer,integer,integer,integer,integer,integer,' ||
+            'boolean,bigint,integer,text,bytea)';
+          v_function oid;
+          v_definition text;
+          v_marker text;
+        BEGIN
+          v_function := pg_catalog.to_regprocedure(v_signature);
+          IF v_function IS NULL THEN
+            RAISE EXCEPTION 'CHRONOS_TORRENT_SQL_CONTRACT_FUNCTION_MISSING';
+          END IF;
+          v_definition := pg_catalog.pg_get_functiondef(v_function);
+          v_marker := 'DATA_TORRENT_RECOVERY_V2_SQL_CONTRACT_V1:' ||
+            pg_catalog.encode(
+              pg_catalog.sha256(pg_catalog.convert_to(v_definition, 'UTF8')),
+              'hex');
+          EXECUTE pg_catalog.format(
+            'COMMENT ON FUNCTION %s IS %L', v_signature, v_marker);
+        END;
+        $contract$;
 
         CREATE FUNCTION public.chronos_reject_torrent_mutation()
         RETURNS trigger LANGUAGE plpgsql SET search_path = pg_catalog AS $fn$

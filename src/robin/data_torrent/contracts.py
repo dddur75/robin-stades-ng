@@ -63,6 +63,54 @@ def utc_text(value: datetime) -> str:
     return value.astimezone(UTC).isoformat().replace("+00:00", "Z")
 
 
+def validate_request_contract_safety(request_contract: object) -> None:
+    """Reject non-canonical or secret-bearing persisted request metadata."""
+
+    if not isinstance(request_contract, dict):
+        raise ValueError("DATA_TORRENT_REQUEST_CONTRACT_INVALID")
+    try:
+        request_bytes = canonical_json_bytes(request_contract)
+    except (TypeError, ValueError):
+        raise ValueError("DATA_TORRENT_REQUEST_CONTRACT_INVALID") from None
+    lowered = request_bytes.lower()
+    if len(lowered) > 65_536 or any(
+        token.encode("ascii") in lowered for token in _FORBIDDEN_CONTROL_TEXT
+    ):
+        raise ValueError("DATA_TORRENT_REQUEST_CONTRACT_SECRET_FORBIDDEN")
+
+
+def validate_response_metadata_safety(
+    *,
+    source: object,
+    response_headers: object,
+) -> None:
+    """Apply the producer's persisted-source and response-header safety contract."""
+
+    if (
+        type(source) is not str
+        or not source
+        or source.strip() != source
+        or any(ord(character) < 0x20 or ord(character) == 0x7F for character in source)
+        or len(source) > 2_048
+    ):
+        raise ValueError("DATA_TORRENT_RAW_RESPONSE_INVALID")
+    if type(response_headers) is not dict:
+        raise ValueError("DATA_TORRENT_RESPONSE_HEADER_INVALID")
+    headers = cast(dict[object, object], response_headers)
+    if set(headers) - _ALLOWED_RESPONSE_HEADERS:
+        raise ValueError("DATA_TORRENT_RESPONSE_HEADER_FORBIDDEN")
+    if any(
+        type(name) is not str
+        or type(value) is not str
+        or name != name.casefold()
+        or not value.isascii()
+        or len(value) > 512
+        or any(character in value for character in "\r\n\x00")
+        for name, value in headers.items()
+    ):
+        raise ValueError("DATA_TORRENT_RESPONSE_HEADER_INVALID")
+
+
 @dataclass(frozen=True, slots=True)
 class LeagueConfig:
     sport_key: str
@@ -84,6 +132,7 @@ class TorrentBudgets:
 
 @dataclass(frozen=True, slots=True)
 class TorrentConfig:
+    schema_version: str
     opportunity_kind: str
     season: str
     region: str
@@ -198,25 +247,11 @@ class RawResponseEnvelope:
             (self.disposition == "ACCEPTED") != (self.rejection_reason is None)
         ):
             raise ValueError("DATA_TORRENT_DISPOSITION_INVALID")
-        try:
-            request_bytes = canonical_json_bytes(self.request_contract)
-        except (TypeError, ValueError):
-            raise ValueError("DATA_TORRENT_REQUEST_CONTRACT_INVALID") from None
-        lowered = request_bytes.lower()
-        if len(lowered) > 65_536 or any(
-            token.encode("ascii") in lowered for token in _FORBIDDEN_CONTROL_TEXT
-        ):
-            raise ValueError("DATA_TORRENT_REQUEST_CONTRACT_SECRET_FORBIDDEN")
-        if set(self.response_headers) - _ALLOWED_RESPONSE_HEADERS:
-            raise ValueError("DATA_TORRENT_RESPONSE_HEADER_FORBIDDEN")
-        if any(
-            name != name.casefold()
-            or not value.isascii()
-            or len(value) > 512
-            or any(character in value for character in "\r\n\x00")
-            for name, value in self.response_headers.items()
-        ):
-            raise ValueError("DATA_TORRENT_RESPONSE_HEADER_INVALID")
+        validate_request_contract_safety(self.request_contract)
+        validate_response_metadata_safety(
+            source=self.source,
+            response_headers=self.response_headers,
+        )
 
     @property
     def sha256(self) -> str:
@@ -322,8 +357,10 @@ def load_torrent_config(path: Path) -> TorrentConfig:
         code="DATA_TORRENT_CONFIG_INVALID",
     )
     raw_markets = document["markets"]
+    schema_version = document["schema_version"]
     if (
-        document["schema_version"] != "robin-data-torrent-live-config-v1"
+        schema_version
+        not in {"robin-data-torrent-live-config-v1", "robin-data-torrent-live-config-v2"}
         or document["season"] != "2026-2027"
         or document["region"] != LIVE_ALLOWED_REGION
         or not isinstance(raw_markets, list)
@@ -407,6 +444,7 @@ def load_torrent_config(path: Path) -> TorrentConfig:
             for key, value in budgets_raw.items()
         }
     )
+    recovery_v2 = schema_version == "robin-data-torrent-live-config-v2"
     primary_days = _exact_int(horizon["primary_days"], code="DATA_TORRENT_CONFIG_HORIZON_INVALID")
     fallback_days = _exact_int(horizon["fallback_days"], code="DATA_TORRENT_CONFIG_HORIZON_INVALID")
     fallback_threshold = _exact_int(
@@ -429,11 +467,12 @@ def load_torrent_config(path: Path) -> TorrentConfig:
         or budgets.odds_provider_requests_max != 5
         or budgets.odds_credits_max != 1000
         or budgets.automatic_retries != 0
-        or budgets.r2_puts_max != 20
-        or budgets.r2_gets_max != 20
-        or budgets.r2_lists_max != 2
+        or budgets.r2_puts_max != (2 if recovery_v2 else 20)
+        or budgets.r2_gets_max != (1 if recovery_v2 else 20)
+        or budgets.r2_lists_max != (0 if recovery_v2 else 2)
         or budgets.r2_deletes_max != 0
-        or replay_multiplier < 100
+        or (recovery_v2 and replay_multiplier != 100)
+        or (not recovery_v2 and replay_multiplier < 100)
         or not math.isfinite(minimum_ratio)
         or minimum_ratio < 5.0
     ):
@@ -444,6 +483,7 @@ def load_torrent_config(path: Path) -> TorrentConfig:
     opportunity_kind = opportunity_kind_raw
     canonical = canonical_json_bytes(document)
     return TorrentConfig(
+        schema_version=cast(str, schema_version),
         opportunity_kind=opportunity_kind,
         season=cast(str, document["season"]),
         region=cast(str, document["region"]),

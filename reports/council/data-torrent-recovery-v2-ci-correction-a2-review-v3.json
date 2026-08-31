@@ -1,0 +1,46 @@
+{
+  "agent_id": "A2",
+  "mission_id": "DATA_TORRENT_RECOVERY_V2",
+  "facts_verified": [
+    {
+      "claim": "The independently reconstructed 135-path reviewed-candidate projection matches the exact frozen SHA-256 and excludes every review-owned artifact plus the append-only ledger and evidence graph.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:104b3e9b0fbfc08f3211b37d4f61c224947f084dda711a3baac1d836d34c6ccc",
+        "src/robin/chronos_production.py:data_torrent_recovery_v2_reviewed_candidate_projection"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Recovery commands are bounded by one operation-wide wall and monotonic deadline, captured output caps, one-shot reservations, and platform-specific process-tree containment before any target is released.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:104b3e9b0fbfc08f3211b37d4f61c224947f084dda711a3baac1d836d34c6ccc",
+        "scripts/recovery_v2_supervision.py",
+        "scripts/dispatch_data_torrent_recovery_v2_stage.py",
+        "tests/activation/test_recovery_v2_supervision.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "SAFE V2 remains the mandatory exact-head and post-merge cross-platform gate, while the protected entry checkout is outside the writer worktree and legacy provider workflows remain quarantined until their exact predecessor is proved.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:104b3e9b0fbfc08f3211b37d4f61c224947f084dda711a3baac1d836d34c6ccc",
+        ".github/workflows/ci-safe-v2.yml",
+        "scripts/check_data_torrent_recovery_v2_scope.py",
+        "scripts/dispatch_data_torrent_recovery_v2_stage.py"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [],
+  "assumptions": [],
+  "main_objection": "P0=0; P1=0; P2=0; OPEN_THREADS=0; VERDICT=PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "risks": [],
+  "minimum_decisive_test": "RECOMPUTE_THE_135_PATH_PROJECTION_RUN_WINDOWS_SUPERVISION_MUTANTS_AND_REQUIRE_EXACT_HEAD_PLUS_POSTMERGE_SAFE_V2",
+  "recommended_action": "PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "scale_condition": "EXACT_HEAD_SAFE_V2_GREEN_NORMAL_MERGE_POSTMERGE_SAFE_V2_GREEN",
+  "estimated_compute": "READ_ONLY_PLATFORM_REVIEW_TARGETED_WINDOWS_MUTANTS_AND_LOCAL_HASH_RECOMPUTATION_ONLY",
+  "estimated_external_cost": "ZERO; NO_NETWORK_OR_EXTERNAL_EFFECTS",
+  "estimated_human_time": "ONE_FINAL_PLATFORM_RELEASE_REVIEW",
+  "maintenance_impact": "LOW; DEADLINES_CONTAINMENT_AND_RELEASE_PREDECESSORS_ARE_CENTRALIZED_AND_MUTANT_GUARDED",
+  "confidence": 0.99
+}

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import inspect
 import subprocess
 from pathlib import Path
 
@@ -8,6 +9,8 @@ import pytest
 from robin.chronos_role_lifecycle import (
     _grant_bootstrap_authority_schema,
     _is_expected_neon_platform_edge,
+    disable_migrator,
+    provision_migrator,
 )
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -43,7 +46,7 @@ def test_no_self_terminalization_path_exists() -> None:
 
 
 def test_migrator_alter_role_statements_are_minimal() -> None:
-    source = LIFECYCLE.read_text(encoding="utf-8")
+    source = inspect.getsource(provision_migrator) + inspect.getsource(disable_migrator)
     assert '"ALTER ROLE {} LOGIN PASSWORD %s VALID UNTIL {}"' in source
     assert '"ALTER ROLE {} NOLOGIN PASSWORD NULL"' in source
     assert "ALTER ROLE {} LOGIN NOINHERIT" not in source

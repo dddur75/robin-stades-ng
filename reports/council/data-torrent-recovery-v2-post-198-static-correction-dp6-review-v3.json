@@ -1,0 +1,45 @@
+{
+  "agent_id": "DP6",
+  "mission_id": "DATA_TORRENT_RECOVERY_V2",
+  "facts_verified": [
+    {
+      "claim": "The exact R3 controller receipt SHA is carried into the signed R4 receipt, compared constant-time before R5 reservation, revalidated during terminal MIGRATE validation and checked again by terminal evidence.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:7f9b63e9344c55d538a0a0ee4e12966ba004feabebdc814685ea138850b448cc",
+        "scripts/dispatch_data_torrent_recovery_v2_stage.py:_validate_local_runtime_bindings",
+        "tests/activation/test_chronos_migrate_verify_v2.py:test_migrate_admission_binds_runtime_receipt_to_exact_r3_controller_bytes",
+        "src/robin/chronos_production.py:validate_data_torrent_recovery_v2_terminal_evidence"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Every ambiguous or expired R4 path preserves a fail-closed receipt with conservative attempted and confirmed counters and authorizes no retry or rollback.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:7f9b63e9344c55d538a0a0ee4e12966ba004feabebdc814685ea138850b448cc",
+        "tests/activation/test_chronos_runtime_bindings_v2.py:test_ambiguous_secret_write_stops_without_retry_or_rollback",
+        "scripts/install_chronos_runtime_bindings_v2.py:install"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The nine Bandit B105 reports are field-local audit counters annotated without weakening secret handling or changing runtime values.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:7f9b63e9344c55d538a0a0ee4e12966ba004feabebdc814685ea138850b448cc",
+        "src/robin/chronos_production.py:_validate_recovery_v2_static_correction_pair"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [],
+  "assumptions": [],
+  "main_objection": "P0=0; P1=0; P2=0; OPEN_THREADS=0; VERDICT=PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "risks": [],
+  "minimum_decisive_test": "RESIGN_R4_PROVENANCE_MUTANT_EXPIRE_FINAL_HOLD_AND_FORCE_AMBIGUOUS_PUT_WITH_ZERO_RETRY",
+  "recommended_action": "PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "scale_condition": "EXACT_HEAD_SAFE_V2_GREEN_NORMAL_MERGE_POSTMERGE_SAFE_V2_GREEN",
+  "estimated_compute": "TARGETED_FAILURE_INJECTION_AND_SECURITY_SCAN_ONLY",
+  "estimated_external_cost": "ZERO; NO_NETWORK_OR EXTERNAL_EFFECTS",
+  "estimated_human_time": "ONE_POST_198_FAILURE_MODE_REVIEW",
+  "maintenance_impact": "LOW; FAILURE RECEIPTS AND PROVENANCE CHECKS ARE LOCAL AND DETERMINISTIC",
+  "confidence": 0.99
+}

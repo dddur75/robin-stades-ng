@@ -1,6 +1,6 @@
 {
   "schema_version":"robin-evidence-graph-v1",
-  "generated_at":"2026-08-30T08:52:00Z",
+  "generated_at":"2026-08-30T19:22:00Z",
   "lineage_policy":"execution_id, scientific_lineage_id and dataset_lineage_id are independent",
   "claims":[
     {
@@ -8250,12 +8250,13 @@
       "artifact":"tests/council/test_robin_council_os_v3.py",
       "hash":"74d00ef99547caba648e3776e800d3903665f9a1148d608f58993b7b24770b75",
       "dataset_lineage_id":"records177-182-v2-v3-v4-authority-append-stability",
-      "status":"VERIFIED",
+      "status":"SUPERSEDED",
       "successor_of":"GOV.FIRST_C0.PR69.CI.WORKTREE_SCOPE.ISOLATION.V1.004",
       "code_revision":"9c35a57d198cc5c825f77d343b4ef2b044e60b89",
       "execution_id":"first-c0-h2-timing-closure-authority-v5-v1-precommit-20260827",
       "scientific_lineage_id":"REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1",
-      "verified_by":["C0","C2","C4","DP6","A2"]
+      "verified_by":["C0","C2","C4","DP6","A2"],
+      "superseded_by":"GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.RELEASE.001"
     },
     {
       "claim_id":"GOV.COUNCIL.REAL_EXECUTION_BOOTSTRAP.CLOSURE.EVIDENCE.SUCCESSION.LEDGER.V1.012",
@@ -8512,8 +8513,9 @@
       "execution_id":"data-torrent-ready-v1-full-suite-correction-precommit-20260829",
       "scientific_lineage_id":"DATA_TORRENT_READY_V1",
       "dataset_lineage_id":"full-suite-e64d376-two-causes-zero-network",
-      "status":"VERIFIED",
-      "verified_by":["C0","C2","C4","DP6","A2"]
+      "status":"SUPERSEDED",
+      "verified_by":["C0","C2","C4","DP6","A2"],
+      "superseded_by":"GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.RELEASE.001"
     },
     {
       "claim_id":"GOV.COUNCIL.DATA_TORRENT_READY.EVIDENCE.SUCCESSION.LEDGER.V1.002",
@@ -8546,8 +8548,9 @@
       "execution_id":"github-actions:33274988944:postgresql-correction-precommit",
       "scientific_lineage_id":"DATA_TORRENT_READY_V1",
       "dataset_lineage_id":"no-dataset-exact-head-postgresql-fixture-correction",
-      "status":"VERIFIED",
-      "verified_by":["C0","C2","C4","DP6","A2"]
+      "status":"SUPERSEDED",
+      "verified_by":["C0","C2","C4","DP6","A2"],
+      "superseded_by":"GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.RELEASE.001"
     },
     {
       "claim_id":"GOV.COUNCIL.DATA_TORRENT_READY.EVIDENCE.SUCCESSION.LEDGER.V1.003",
@@ -8776,9 +8779,154 @@
       "execution_id":"council-record:RCV3-20260830-192",
       "scientific_lineage_id":"DATA_TORRENT_READY_V1",
       "dataset_lineage_id":"data-torrent-ledger-tip-d3d1fc64ff5d8cfc",
+      "status":"SUPERSEDED",
+      "verified_by":["C0","C2","C4","DP6","A2"],
+      "successor_of":"GOV.COUNCIL.DATA_TORRENT_READY.EVIDENCE.SUCCESSION.LEDGER.V1.008",
+      "superseded_by":"GOV.AUTHORIZATION.DATA_TORRENT_RECOVERY.V2.MANIFEST.001"
+    },
+    {
+      "claim_id":"GOV.AUTHORIZATION.DATA_TORRENT_RECOVERY.V2.MANIFEST.001",
+      "claim":"The DATA TORRENT RECOVERY V2 owner authority is materialized as exactly eight immutable manifest fields and a non-expanding successor effect contract. The authorization begins at the exact append-only Council timestamp, preserves the consumed V1 semantic NO-GO and its report fingerprint as historical evidence only, maps E1 through E4 to the ordered Recovery stages, and holds all production one-shots dormant until exact predecessor proof.",
+      "scope":"DATA_TORRENT_RECOVERY_V2_IMMUTABLE_MISSION_AUTHORIZATION",
+      "source":"Owner Recovery V2 directive SHA-256 ff2e45ff7c6490919aa86900669c306e1d25c710f15db27f7c70861f1246bf31; manifest raw SHA-256 ced1b867faa3ae57911d169f5c1edbd0db02a891ac46ccc080de7397076d349f and canonical SHA-256 e6ae2bcc2ea6a8cbd8a552321235f384b6776e935c259a0516ce1405ac2871b2; activation effect-contract raw SHA-256 7043cb6e502e825e8b2344dd1f2b9981daab0abfd5190eea603681affddc60bd preserved by Council record 193; implementation-release effect-contract raw SHA-256 c986e04f807d6550574dc10b5aa9b351bdc1daa0746be4c48f71c165006d3caa and canonical SHA-256 7dbf6fd159f7fc74ba28829df6c39e189ddad61f55aa83316b4c189bf68b053a; V1 terminal report SHA-256 60070f1534fd0e0472b776213e124941df60b8a185b7a65d7cc891c4293ec589 and archive digest 82d4d9803c3f3e06451b18f98846c1182b3aff86b53f5e3a62ee493ef2873f61",
+      "grain":"ONE_IMMUTABLE_OWNER_MANIFEST_TO_ONE_BOUNDED_SUCCESSOR_EFFECT_CONTRACT",
+      "temporal_class":"DECISION_AS_OF",
+      "artifact":"configs/execution/data-torrent-recovery-v2.json",
+      "hash":"ced1b867faa3ae57911d169f5c1edbd0db02a891ac46ccc080de7397076d349f",
+      "code_revision":"fcbf2a4fedd413251ee9da94ec2a444c6b917e63",
+      "execution_id":"council-record:RCV3-20260830-193",
+      "scientific_lineage_id":"DATA_TORRENT_RECOVERY_V2",
+      "dataset_lineage_id":"NO_DATASET_IMMUTABLE_MISSION_AUTHORITY",
       "status":"VERIFIED",
       "verified_by":["C0","C2","C4","DP6","A2"],
-      "successor_of":"GOV.COUNCIL.DATA_TORRENT_READY.EVIDENCE.SUCCESSION.LEDGER.V1.008"
+      "successor_of":"GOV.COUNCIL.DATA_TORRENT_READY.EVIDENCE.SUCCESSION.LEDGER.V1.009"
+    },
+    {
+      "claim_id":"GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.RELEASE.001",
+      "claim":"Four independent reviews bind the exact 122-file DATA TORRENT RECOVERY V2 candidate, close the record-to-graph self-reference with an acyclic runtime projection, verify the immutable owner manifest and non-fungible effect ceilings, and release only the implementation to exact-head SAFE V2 while every production effect remains dormant.",
+      "scope":"DATA_TORRENT_RECOVERY_V2_E1_IMPLEMENTATION_RELEASE_AFTER_INDEPENDENT_QA",
+      "source":"Reviewed candidate SHA-256 f66dfd42504975079f5e1cb2fbbac28eafe3e755b952dddf4eba643e647a000b; C2 report SHA-256 0b61bee53da54699f4ef226a252e7ab0d99bfa5923c370244cab5d89b27e35c9; C4 report SHA-256 3c9b5bfa934cb6965b175286283c42393ad0fb17a8fb0b330311078a2572e90e; DP6 report SHA-256 eee0fb95499b0939c9c11fff7c3b47a10c4aa0a542587313b60e4cb403a1c458; A2 report SHA-256 ea3f42cd9d60965800f307841c1ec732e767e4e12ae7a268f1550b27a17d6809; final review SHA-256 2df9e19b22e7b4aacd763ebc322a4bd0599340b5a79932d0a80090929d8b59fe",
+      "grain":"ONE_FROZEN_IMPLEMENTATION_CANDIDATE_TO_FOUR_INDEPENDENT_REVIEWS_AND_ONE_RELEASE_DECISION",
+      "temporal_class":"DECISION_AS_OF",
+      "artifact":"reports/council/data-torrent-recovery-v2-final-review-v3.json",
+      "hash":"2df9e19b22e7b4aacd763ebc322a4bd0599340b5a79932d0a80090929d8b59fe",
+      "code_revision":"fcbf2a4fedd413251ee9da94ec2a444c6b917e63",
+      "execution_id":"council-record:RCV3-20260830-194",
+      "scientific_lineage_id":"DATA_TORRENT_RECOVERY_V2",
+      "dataset_lineage_id":"NO_DATASET_IMPLEMENTATION_RELEASE",
+      "status":"SUPERSEDED",
+      "verified_by":["C0","C2","C4","DP6","A2"],
+      "successor_of":"GOV.AUTHORIZATION.DATA_TORRENT_RECOVERY.V2.MANIFEST.001",
+      "superseded_by":"GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.RELEASE.002"
+    },
+    {
+      "claim_id":"GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.RELEASE.002",
+      "claim":"Four independent reviews bind the exact 135-file DATA TORRENT RECOVERY V2 candidate, close the record-to-graph self-reference with an acyclic runtime projection, verify the immutable owner manifest and non-fungible effect ceilings, and release only the implementation to exact-head SAFE V2 while every production effect remains dormant.",
+      "scope":"DATA_TORRENT_RECOVERY_V2_E1_IMPLEMENTATION_RELEASE_AFTER_INDEPENDENT_QA",
+      "source":"Reviewed candidate SHA-256 104b3e9b0fbfc08f3211b37d4f61c224947f084dda711a3baac1d836d34c6ccc; C2 report SHA-256 aae4858205409165fb9547b723e49ff8bf80294ad5e4b1608b007899c2a831d9; C4 report SHA-256 5bda5fe73142c61a26cacba893d2ec13a20c27e17e8ef48ab5f3e4f21dd8e5d7; DP6 report SHA-256 ac0a31123e52de55a33b1f9edd5f6eccd24d54cf653873da90f35e0441c37ca6; A2 report SHA-256 b2dd48b3e5c4e0c213ae20a85e684be626c5faf370fd1f86d0da80aab833e0a2; final review SHA-256 7a520c623013865893d57cc8ec934086c593b85e324865db0d1ff65a232017c8",
+      "grain":"ONE_FROZEN_IMPLEMENTATION_CANDIDATE_TO_FOUR_INDEPENDENT_REVIEWS_AND_ONE_RELEASE_DECISION",
+      "temporal_class":"DECISION_AS_OF",
+      "artifact":"reports/council/data-torrent-recovery-v2-ci-correction-final-review-v3.json",
+      "hash":"7a520c623013865893d57cc8ec934086c593b85e324865db0d1ff65a232017c8",
+      "code_revision":"fcbf2a4fedd413251ee9da94ec2a444c6b917e63",
+      "execution_id":"council-record:RCV3-20260830-196",
+      "scientific_lineage_id":"DATA_TORRENT_RECOVERY_V2",
+      "dataset_lineage_id":"NO_DATASET_IMPLEMENTATION_RELEASE",
+      "status":"SUPERSEDED",
+      "superseded_by":"GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.LOCAL_PRE_CI_CORRECTION.RELEASE.001",
+      "verified_by":["C0","C2","C4","DP6","A2"],
+      "successor_of":"GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.RELEASE.001"
+    },
+    {
+      "claim_id":"GOV.DATA_TORRENT_RECOVERY.V2.E1.LOCAL_QA.FAILURE.001",
+      "claim":"The post-196 targeted governance run failed in one stale terminal-helper fan-out affecting 29 tests; all external effects remained zero",
+      "scope":"DATA_TORRENT_RECOVERY_V2_POST_196_LOCAL_QA_FAILURE",
+      "source":"pytest -q tests/council/test_data_torrent_recovery_v2_governance.py: 29 failed, 130 passed in 20.15s",
+      "grain":"ONE_STALE_HELPER_ROOT_CAUSE_TO_29_TARGETED_TEST_FAILURES",
+      "temporal_class":"DECISION_AS_OF",
+      "artifact":"tests/council/test_data_torrent_recovery_v2_governance.py",
+      "hash":"d8de152fd92a64eec2cf92a876d4f2292fe60bc4d006a8eb7d9c20bb8b5371bb",
+      "code_revision":"fcbf2a4fedd413251ee9da94ec2a444c6b917e63",
+      "execution_id":"council-record:RCV3-20260831-197",
+      "scientific_lineage_id":"DATA_TORRENT_RECOVERY_V2",
+      "dataset_lineage_id":"NO_DATASET_LOCAL_QA_FAILURE",
+      "status":"VERIFIED",
+      "verified_by":[
+        "C0",
+        "C2",
+        "C4"
+      ],
+      "successor_of":"GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.RELEASE.002"
+    },
+    {
+      "claim_id":"GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.LOCAL_PRE_CI_CORRECTION.RELEASE.001",
+      "claim":"Four independent reviews bind the exact 135-file DATA TORRENT RECOVERY V2 candidate, close the record-to-graph self-reference with an acyclic runtime projection, verify the immutable owner manifest and non-fungible effect ceilings, and release only the implementation to exact-head SAFE V2 while every production effect remains dormant.",
+      "scope":"DATA_TORRENT_RECOVERY_V2_E1_IMPLEMENTATION_RELEASE_AFTER_INDEPENDENT_QA",
+      "source":"Reviewed candidate SHA-256 a1b409e7c2cb2c558df38e559eb4e0c8431ececc9b290de53025813925651421; C2 report SHA-256 3936ef5073befc8ffcda7a8824a67ae3691b23f030e75eb6c7997c20a74bf96b; C4 report SHA-256 45d06b7f31e208a69c00ea221ba696fe733b5733b528ea1f6358699a307240ac; DP6 report SHA-256 aa9ca557dc2999473ac4aafb9443f4e6aa55342542b68c7b1c504ab562dc68cd; A2 report SHA-256 08a48d276e0bb58875f3f55ae33461f471bbeb4bd6a8c79aa0fb73ff21c53d48; final review SHA-256 d13f0c9af5f1603d3417adbfffdc0140a4ded043b1399afdb274bfe4d18e8802",
+      "grain":"ONE_FROZEN_IMPLEMENTATION_CANDIDATE_TO_FOUR_INDEPENDENT_REVIEWS_AND_ONE_RELEASE_DECISION",
+      "temporal_class":"DECISION_AS_OF",
+      "artifact":"reports/council/data-torrent-recovery-v2-post-196-correction-final-review-v3.json",
+      "hash":"d13f0c9af5f1603d3417adbfffdc0140a4ded043b1399afdb274bfe4d18e8802",
+      "code_revision":"fcbf2a4fedd413251ee9da94ec2a444c6b917e63",
+      "execution_id":"council-record:RCV3-20260831-198",
+      "scientific_lineage_id":"DATA_TORRENT_RECOVERY_V2",
+      "dataset_lineage_id":"NO_DATASET_IMPLEMENTATION_RELEASE",
+      "status":"SUPERSEDED",
+      "superseded_by":"GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.PRECOMMIT_STATIC_RUNTIME_CORRECTION.RELEASE.001",
+      "verified_by":[
+        "C0",
+        "C2",
+        "C4",
+        "DP6",
+        "A2"
+      ],
+      "successor_of":"GOV.DATA_TORRENT_RECOVERY.V2.E1.LOCAL_QA.FAILURE.001"
+    },
+    {
+      "claim_id":"GOV.DATA_TORRENT_RECOVERY.V2.E1.PRECOMMIT.STATIC_RUNTIME_QA.FAILURE.001",
+      "claim":"The post-198 pre-commit review found nine Bandit B105 false positives and eight bounded operability and delivery defects across R3-to-R5, R4, E1, and merge CAS; all external effects remained zero",
+      "scope":"DATA_TORRENT_RECOVERY_V2_POST_198_PRECOMMIT_STATIC_RUNTIME_QA_FAILURE",
+      "source":"Bandit Recovery V2 scope: 9 low-severity B105 findings; independent operability and delivery review: R3-to-R5 handoff=2, R4 schedule=1, E1 deadlines=2, local prerequisite ordering=2, merge CAS=1",
+      "grain":"ONE_POST_198_REVIEW_TO_SEVENTEEN_STATIC_RUNTIME_AND_DELIVERY_FINDINGS",
+      "temporal_class":"DECISION_AS_OF",
+      "artifact":"scripts/install_chronos_runtime_bindings_v2.py",
+      "hash":"db54cfa8b188d667abe0b642b499babe11efe3b345ab5515fc6880d577684b48",
+      "code_revision":"fcbf2a4fedd413251ee9da94ec2a444c6b917e63",
+      "execution_id":"council-record:RCV3-20260831-199",
+      "scientific_lineage_id":"DATA_TORRENT_RECOVERY_V2",
+      "dataset_lineage_id":"NO_DATASET_LOCAL_STATIC_RUNTIME_QA_FAILURE",
+      "status":"VERIFIED",
+      "verified_by":[
+        "C0",
+        "C2",
+        "C4",
+        "DP6",
+        "A2"
+      ],
+      "successor_of":"GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.LOCAL_PRE_CI_CORRECTION.RELEASE.001"
+    },
+    {
+      "claim_id":"GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.PRECOMMIT_STATIC_RUNTIME_CORRECTION.RELEASE.001",
+      "claim":"Four independent reviews bind the exact 135-file DATA TORRENT RECOVERY V2 candidate, close the record-to-graph self-reference with an acyclic runtime projection, verify the immutable owner manifest and non-fungible effect ceilings, and release only the implementation to exact-head SAFE V2 while every production effect remains dormant.",
+      "scope":"DATA_TORRENT_RECOVERY_V2_E1_IMPLEMENTATION_RELEASE_AFTER_INDEPENDENT_QA",
+      "source":"Reviewed candidate SHA-256 7f9b63e9344c55d538a0a0ee4e12966ba004feabebdc814685ea138850b448cc; C2 report SHA-256 a5d316a50523427cd24b8dcc28d98de25fea54f140eefca4607a81d604f8d502; C4 report SHA-256 0417f77e06fcdea76bd68da465359145357c5c49cd4de946e87e31018487028b; DP6 report SHA-256 07b48c35561edfc1ea062b30948d3018d1ee877b9bb2f0b66ca59d2514258e01; A2 report SHA-256 85edf0b6fe1431b12626e1f1368bfc7331a805c72e33af35ceb22a2b5b675cb4; final review SHA-256 a714ffb01c4772e65bb3ea9969253445f4a0bf4d163dddaa4d3fa737a6d8c3a2",
+      "grain":"ONE_FROZEN_IMPLEMENTATION_CANDIDATE_TO_FOUR_INDEPENDENT_REVIEWS_AND_ONE_RELEASE_DECISION",
+      "temporal_class":"DECISION_AS_OF",
+      "artifact":"reports/council/data-torrent-recovery-v2-post-198-static-correction-final-review-v3.json",
+      "hash":"a714ffb01c4772e65bb3ea9969253445f4a0bf4d163dddaa4d3fa737a6d8c3a2",
+      "code_revision":"fcbf2a4fedd413251ee9da94ec2a444c6b917e63",
+      "execution_id":"council-record:RCV3-20260831-200",
+      "scientific_lineage_id":"DATA_TORRENT_RECOVERY_V2",
+      "dataset_lineage_id":"NO_DATASET_IMPLEMENTATION_RELEASE",
+      "status":"VERIFIED",
+      "verified_by":[
+        "C0",
+        "C2",
+        "C4",
+        "DP6",
+        "A2"
+      ],
+      "successor_of":"GOV.DATA_TORRENT_RECOVERY.V2.E1.PRECOMMIT.STATIC_RUNTIME_QA.FAILURE.001"
     }
   ],
   "decision_nodes":[
@@ -8966,7 +9114,27 @@
     {"decision_id":"RCV3-20260830-189","ledger_record_hash":"79a8c90a9efae32bdb3db7b80d18a7d016f4126fd82ab2fe9610fb30d8be601b"},
     {"decision_id":"RCV3-20260830-190","ledger_record_hash":"3019dd359593168e78bead1b1955c002d9e74376c61e21f37bd503b02e7b5818"},
     {"decision_id":"RCV3-20260830-191","ledger_record_hash":"1b323179278a18ec12e23e9bbb7472c4d46569483db69f0c4494ce21ada82071"},
-    {"decision_id":"RCV3-20260830-192","ledger_record_hash":"d3d1fc64ff5d8cfc47f23198fa08bcb50d880bdb5a61a7821bcdc2a746e1eeb8"}
+    {"decision_id":"RCV3-20260830-192","ledger_record_hash":"d3d1fc64ff5d8cfc47f23198fa08bcb50d880bdb5a61a7821bcdc2a746e1eeb8"},
+    {"decision_id":"RCV3-20260830-193","ledger_record_hash":"b7a3710d36025506af70355026b9033b3da9650a5c60dd6509a6b3121f1ec9dc"},
+    {"decision_id":"RCV3-20260830-194","ledger_record_hash":"e0a497c717222220ab7e2e1a8dc17529a08acf96000682465da9f4d659d77ffe"},
+    {"decision_id":"RCV3-20260830-195","ledger_record_hash":"be7d2db84891d723dfa82872bf9fd1e10ae3f26da3af4b977a5fac50ae8ed1ee"},
+    {"decision_id":"RCV3-20260830-196","ledger_record_hash":"71ee104830f589b2f0a07d8b0488a2277067285c76d4886b1d0ca69cf3d27573"},
+    {
+      "decision_id":"RCV3-20260831-197",
+      "ledger_record_hash":"c27f8627e6842f4f761b04340a4de20cba48738bed0a877dff7c07328434e013"
+    },
+    {
+      "decision_id":"RCV3-20260831-198",
+      "ledger_record_hash":"7fa669ba7cfd483ac83882c53cc89717810ae654197b95afd53bbb1052c30949"
+    },
+    {
+      "decision_id":"RCV3-20260831-199",
+      "ledger_record_hash":"25eb2b9c2fbc10fb54525bb646d35c6cf0003e14e4445cf40248125b55befb75"
+    },
+    {
+      "decision_id":"RCV3-20260831-200",
+      "ledger_record_hash":"93983f79ad8c6d090ad1d2472b5103c7e57b88cdb100040371acffca170db15e"
+    }
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -9779,6 +9947,39 @@
     {"edge_id":"EDGE.808","from_claim_id":"GOV.PRODUCTION.DATA_TORRENT_READY.CONTROLLED_GO.DURABLE_SEAL.CONDITIONAL.RELEASE.V1.001","to_decision_id":"RCV3-20260830-191","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.809","from_claim_id":"GOV.COUNCIL.DATA_TORRENT_READY.EVIDENCE.SUCCESSION.LEDGER.V1.008","to_decision_id":"RCV3-20260830-191","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.810","from_claim_id":"GOV.PRODUCTION.DATA_TORRENT_READY.CONTROLLED_GO.DURABLE_SEAL.CONDITIONAL.RELEASE.V1.002","to_decision_id":"RCV3-20260830-192","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.811","from_claim_id":"GOV.COUNCIL.DATA_TORRENT_READY.EVIDENCE.SUCCESSION.LEDGER.V1.009","to_decision_id":"RCV3-20260830-192","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.811","from_claim_id":"GOV.COUNCIL.DATA_TORRENT_READY.EVIDENCE.SUCCESSION.LEDGER.V1.009","to_decision_id":"RCV3-20260830-192","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.812","from_claim_id":"GOV.AUTHORIZATION.DATA_TORRENT_RECOVERY.V2.MANIFEST.001","to_decision_id":"RCV3-20260830-193","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.813","from_claim_id":"GOV.COUNCIL.DATA_TORRENT_READY.EVIDENCE.SUCCESSION.LEDGER.V1.009","to_decision_id":"RCV3-20260830-193","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.814","from_claim_id":"GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.RELEASE.001","to_decision_id":"RCV3-20260830-194","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.816","from_claim_id":"GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.RELEASE.001","to_decision_id":"RCV3-20260830-195","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.817","from_claim_id":"GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.RELEASE.002","to_decision_id":"RCV3-20260830-196","relation":"SUPPORTS","status":"RECORDED"},
+    {
+      "edge_id":"EDGE.818",
+      "from_claim_id":"GOV.DATA_TORRENT_RECOVERY.V2.E1.LOCAL_QA.FAILURE.001",
+      "to_decision_id":"RCV3-20260831-197",
+      "relation":"SUPPORTS",
+      "status":"RECORDED"
+    },
+    {
+      "edge_id":"EDGE.819",
+      "from_claim_id":"GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.LOCAL_PRE_CI_CORRECTION.RELEASE.001",
+      "to_decision_id":"RCV3-20260831-198",
+      "relation":"SUPPORTS",
+      "status":"RECORDED"
+    },
+    {
+      "edge_id":"EDGE.820",
+      "from_claim_id":"GOV.DATA_TORRENT_RECOVERY.V2.E1.PRECOMMIT.STATIC_RUNTIME_QA.FAILURE.001",
+      "to_decision_id":"RCV3-20260831-199",
+      "relation":"SUPPORTS",
+      "status":"RECORDED"
+    },
+    {
+      "edge_id":"EDGE.821",
+      "from_claim_id":"GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.PRECOMMIT_STATIC_RUNTIME_CORRECTION.RELEASE.001",
+      "to_decision_id":"RCV3-20260831-200",
+      "relation":"SUPPORTS",
+      "status":"RECORDED"
+    }
   ]
 }

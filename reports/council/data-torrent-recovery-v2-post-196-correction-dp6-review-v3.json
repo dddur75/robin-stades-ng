@@ -1,0 +1,46 @@
+{
+  "agent_id": "DP6",
+  "mission_id": "DATA_TORRENT_RECOVERY_V2",
+  "facts_verified": [
+    {
+      "claim": "The corrected local release keeps the immutable owner manifest, non-fungible Neon ceilings, PostgreSQL call graph and exact R2 operation contract unchanged.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:a1b409e7c2cb2c558df38e559eb4e0c8431ececc9b290de53025813925651421",
+        "configs/execution/data-torrent-recovery-v2.json",
+        "configs/execution/data-torrent-recovery-v2-effect-contract.json",
+        "configs/execution/data-torrent-live-v2-postgresql-call-graph.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The release-to-reservation, reservation-to-phase-one and phase-one-to-terminal transitions require exact immediate-predecessor claims and causal runtime timestamps before any later stage can validate.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:a1b409e7c2cb2c558df38e559eb4e0c8431ececc9b290de53025813925651421",
+        "src/robin/chronos_production.py:_validate_recovery_v2_council_successors",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:test_terminal_council_closure_requires_exactly_three_ordered_successors"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The delivery materializer accepts only the active local correction release or a later valid PR-B release and cannot revive the superseded record-196 claim.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:a1b409e7c2cb2c558df38e559eb4e0c8431ececc9b290de53025813925651421",
+        "scripts/materialize_data_torrent_recovery_v2_delivery_evidence.py",
+        "src/robin/chronos_production.py:_validate_recovery_v2_release_graph"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [],
+  "assumptions": [],
+  "main_objection": "P0=0; P1=0; P2=0; OPEN_THREADS=0; VERDICT=PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "risks": [],
+  "minimum_decisive_test": "VALIDATE_NON_FUNGIBLE_EFFECTS_IMMEDIATE_PREDECESSORS_AND_ACTIVE_RELEASE_ONLY_DELIVERY",
+  "recommended_action": "PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "scale_condition": "EXACT_HEAD_SAFE_V2_GREEN_NORMAL_MERGE_POSTMERGE_SAFE_V2_GREEN",
+  "estimated_compute": "READ_ONLY_DATA_AND_RUNTIME_LINEAGE_REVIEW_ONLY",
+  "estimated_external_cost": "ZERO; NO_NETWORK_OR_EXTERNAL_EFFECTS",
+  "estimated_human_time": "ONE_POST_196_DATA_RELEASE_REVIEW",
+  "maintenance_impact": "LOW; DATA_AND_EFFECT_LINEAGE_REMAINS_EXPLICIT_AND_DORMANT",
+  "confidence": 0.99
+}

@@ -1,0 +1,49 @@
+{
+  "agent_id": "DP6",
+  "mission_id": "DATA_TORRENT_RECOVERY_V2",
+  "facts_verified": [
+    {
+      "claim": "The PostgreSQL call graph binds the additive 0015 migration, bounded preflight, verification and live ingest paths without destructive SQL or hidden mutation authority.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:104b3e9b0fbfc08f3211b37d4f61c224947f084dda711a3baac1d836d34c6ccc",
+        "configs/execution/data-torrent-live-v2-postgresql-call-graph.json",
+        "migrations/versions/0015_data_torrent_opportunity.py",
+        "tests/data_torrent/test_postgresql_v1.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Live source, archive, durability and reporting contracts bind immutable payload provenance to structured PostgreSQL ingestion while preserving exact R2 keys and forbidding list, delete, overwrite and retry behavior.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:104b3e9b0fbfc08f3211b37d4f61c224947f084dda711a3baac1d836d34c6ccc",
+        "src/robin/data_torrent/archive.py",
+        "src/robin/data_torrent/durability.py",
+        "src/robin/data_torrent/runtime.py",
+        "tests/data_torrent/test_live_seal_provenance_v2.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The x100 deterministic replay validates idempotent structure and hashes from retained artifacts without replaying the provider corpus or consuming any provider, official-source, R2 or PostgreSQL production effect.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:104b3e9b0fbfc08f3211b37d4f61c224947f084dda711a3baac1d836d34c6ccc",
+        "scripts/run_data_torrent_v2.py",
+        "tests/data_torrent/test_data_torrent_replay_v2.py",
+        "tests/data_torrent/test_source_effect_lineage_v1.py"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [],
+  "assumptions": [],
+  "main_objection": "P0=0; P1=0; P2=0; OPEN_THREADS=0; VERDICT=PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "risks": [],
+  "minimum_decisive_test": "VALIDATE_CALL_GRAPH_ADDITIVE_MIGRATION_EXACT_KEY_DURABILITY_LIVE_LINEAGE_AND_DETERMINISTIC_REPLAY_100_CONTRACTS",
+  "recommended_action": "PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "scale_condition": "EXACT_HEAD_SAFE_V2_GREEN_NORMAL_MERGE_POSTMERGE_SAFE_V2_GREEN",
+  "estimated_compute": "READ_ONLY_DATA_LINEAGE_REVIEW_AND_TARGETED_DOMAIN_TESTS_ONLY",
+  "estimated_external_cost": "ZERO; NO_NETWORK_OR_EXTERNAL_EFFECTS",
+  "estimated_human_time": "ONE_FINAL_DATA_RELEASE_REVIEW",
+  "maintenance_impact": "LOW; DATA_LINEAGE_CALL_GRAPH_DURABILITY_AND_REPLAY_CONTRACTS_ARE_EXPLICIT_AND_TESTED",
+  "confidence": 0.99
+}

@@ -1,0 +1,46 @@
+{
+  "agent_id": "C4",
+  "mission_id": "DATA_TORRENT_RECOVERY_V2",
+  "facts_verified": [
+    {
+      "claim": "Every post-196 Council record is constrained to the exact 13-field shape, canonical compact UTF-8 JSON, LF framing, canonical second-resolution UTC timestamps and strict predecessor chronology.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:a1b409e7c2cb2c558df38e559eb4e0c8431ececc9b290de53025813925651421",
+        "src/robin/chronos_production.py:_validate_data_torrent_recovery_v2_council_release",
+        "tests/council/test_data_torrent_recovery_v2_governance.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Nested effect ceilings and counters use type-exact JSON comparison so booleans cannot satisfy integer budgets, and all ten stage budget type signatures reject added or substituted fields.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:a1b409e7c2cb2c558df38e559eb4e0c8431ececc9b290de53025813925651421",
+        "src/robin/chronos_production.py:_json_exact_equal",
+        "configs/execution/data-torrent-recovery-v2-effect-contract.json",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:test_recovery_v2_effect_contract_rejects_rehashed_semantic_drift"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The evidence graph requires absolute edge IDs 817, 818 and 819 with physical contiguity and rejects swapped, intercalated or trailing foreign support edges before any runtime successor is accepted.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:a1b409e7c2cb2c558df38e559eb4e0c8431ececc9b290de53025813925651421",
+        "src/robin/chronos_production.py:_validate_recovery_v2_release_graph",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:test_local_correction_graph_rejects_noncanonical_edges"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [],
+  "assumptions": [],
+  "main_objection": "P0=0; P1=0; P2=0; OPEN_THREADS=0; VERDICT=PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "risks": [],
+  "minimum_decisive_test": "MUTATE_CANONICALITY_CHRONOLOGY_JSON_TYPES_AND_GRAPH_EDGE_ORDER_AND_REQUIRE_FAIL_CLOSED",
+  "recommended_action": "PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "scale_condition": "EXACT_HEAD_SAFE_V2_GREEN_NORMAL_MERGE_POSTMERGE_SAFE_V2_GREEN",
+  "estimated_compute": "READ_ONLY_SECURITY_REVIEW_AND_ADVERSARIAL_TARGETED_MUTANTS_ONLY",
+  "estimated_external_cost": "ZERO; NO_NETWORK_OR_EXTERNAL_EFFECTS",
+  "estimated_human_time": "ONE_POST_196_SECURITY_REVIEW",
+  "maintenance_impact": "LOW; CANONICALITY_TYPE_AND_GRAPH_BOUNDARIES_ARE_EXPLICIT",
+  "confidence": 0.99
+}

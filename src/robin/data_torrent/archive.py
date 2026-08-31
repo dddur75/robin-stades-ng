@@ -78,7 +78,12 @@ def coverage_csv(rows: Sequence[Mapping[str, object]]) -> bytes:
         "absence_reason",
     )
     output = io.StringIO(newline="")
-    writer = csv.DictWriter(output, fieldnames=fields, extrasaction="raise")
+    writer = csv.DictWriter(
+        output,
+        fieldnames=fields,
+        extrasaction="raise",
+        lineterminator="\n",
+    )
     writer.writeheader()
     for row in rows:
         writer.writerow(dict(row))

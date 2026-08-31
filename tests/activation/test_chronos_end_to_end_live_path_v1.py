@@ -845,6 +845,9 @@ def test_controlled_guard_accepts_each_bootstrap_predecessor_revision(
 
 def _github_documents(run_id: int, sha: str) -> list[dict[str, object]]:
     return [
+        {"total_count": 0, "workflow_runs": []},
+        {"total_count": 0, "workflow_runs": []},
+        {"total_count": 0, "workflow_runs": []},
         {
             "total_count": 1,
             "workflow_runs": [{"id": run_id, "status": "queued"}],
@@ -885,7 +888,7 @@ def test_github_state_proves_exact_sha_uniqueness_with_authoritative_counts(
     documents = iter(_github_documents(42, sha))
     paths: list[str] = []
 
-    def get(path: str) -> dict[str, Any]:
+    def get(path: str, **_kwargs: object) -> dict[str, Any]:
         paths.append(path)
         if path.endswith("/git/ref/heads/main"):
             return {
@@ -900,7 +903,23 @@ def test_github_state_proves_exact_sha_uniqueness_with_authoritative_counts(
     assert paths[-1].endswith("/git/ref/heads/main")
 
 
-@pytest.mark.parametrize("document_index", [0, 1, 2])
+def test_github_state_refuses_foreign_waiting_run(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    sha = "a" * 40
+    documents = _github_documents(42, sha)
+    documents[1] = {
+        "total_count": 1,
+        "workflow_runs": [{"id": 99, "status": "waiting"}],
+    }
+    responses = iter(documents)
+    monkeypatch.setattr(base, "_github_get", lambda _path, **_kwargs: next(responses))
+    with pytest.raises(base.PreflightNoGo) as caught:
+        base._github_actions_state("owner/repo", 42, sha)
+    assert caught.value.gate == "github_nonterminal_run_present"
+
+
+@pytest.mark.parametrize("document_index", [0, 1, 2, 3, 4, 5])
 def test_github_state_rejects_duplicate_run_identities(
     monkeypatch: pytest.MonkeyPatch,
     document_index: int,
@@ -908,12 +927,15 @@ def test_github_state_rejects_duplicate_run_identities(
     sha = "a" * 40
     documents = _github_documents(42, sha)
     duplicate: dict[str, object]
-    if document_index == 2:
+    if document_index == 5:
         duplicate = deepcopy(documents[document_index]["workflow_runs"])[0]  # type: ignore[index]
     else:
+        status = ("requested", "waiting", "pending", "queued", "in_progress")[
+            document_index
+        ]
         duplicate = {
             "id": 42,
-            "status": "queued" if document_index == 0 else "in_progress",
+            "status": status,
         }
     documents[document_index]["workflow_runs"] = [duplicate, deepcopy(duplicate)]
     documents[document_index]["total_count"] = 2
@@ -921,7 +943,7 @@ def test_github_state_rejects_duplicate_run_identities(
     monkeypatch.setattr(
         base,
         "_github_get",
-        lambda path: (
+        lambda path, **_kwargs: (
             {
                 "ref": "refs/heads/main",
                 "object": {"type": "commit", "sha": sha},
@@ -940,6 +962,29 @@ def test_github_state_rejects_duplicate_run_identities(
     }
 
 
+def test_github_state_rejects_run_transitioning_requested_to_queued(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    sha = "a" * 40
+    state = "requested"
+    calls = 0
+
+    def get(path: str, **_kwargs: object) -> dict[str, Any]:
+        nonlocal calls, state
+        status = path.split("status=", 1)[1].split("&", 1)[0]
+        runs = [{"id": 99, "status": state}] if status == state else []
+        if calls == 0:
+            state = "queued"
+        calls += 1
+        return {"total_count": len(runs), "workflow_runs": runs}
+
+    monkeypatch.setattr(base, "_github_get", get)
+    with pytest.raises(base.PreflightNoGo) as caught:
+        base._github_actions_state("owner/repo", 42, sha)
+    assert caught.value.gate == "github_nonterminal_run_present"
+    assert calls == 5
+
+
 def test_github_state_rejects_dispatch_of_sha_that_is_no_longer_main(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -949,7 +994,7 @@ def test_github_state_rejects_dispatch_of_sha_that_is_no_longer_main(
     monkeypatch.setattr(
         base,
         "_github_get",
-        lambda path: (
+        lambda path, **_kwargs: (
             {
                 "ref": "refs/heads/main",
                 "object": {"type": "commit", "sha": current_main_sha},
@@ -981,7 +1026,9 @@ def test_github_state_rejects_malformed_authoritative_main_ref(
     monkeypatch.setattr(
         base,
         "_github_get",
-        lambda path: main_ref if path.endswith("/git/ref/heads/main") else next(documents),
+        lambda path, **_kwargs: (
+            main_ref if path.endswith("/git/ref/heads/main") else next(documents)
+        ),
     )
     with pytest.raises(base.PreflightNoGo) as caught:
         base._github_actions_state("owner/repo", 42, "a" * 40)
@@ -994,9 +1041,15 @@ class _RawJsonResponse:
 
     def __init__(self, raw: str) -> None:
         self.raw = raw
+        self.headers: dict[str, str] = {}
+        self.closed = False
 
-    def json(self, **kwargs: object) -> object:
-        return json.loads(self.raw, **kwargs)
+    def iter_content(self, *, chunk_size: int) -> list[bytes]:
+        assert chunk_size == 64 * 1024
+        return [self.raw.encode("utf-8")]
+
+    def close(self) -> None:
+        self.closed = True
 
 
 class _RawJsonSession:
@@ -1005,11 +1058,13 @@ class _RawJsonSession:
         self.trust_env = True
         self.headers: dict[str, str] | None = None
         self.allow_redirects: bool | None = None
+        self.stream: bool | None = None
         self.closed = False
 
     def get(self, _url: str, **kwargs: object) -> _RawJsonResponse:
         self.headers = kwargs.get("headers")  # type: ignore[assignment]
         self.allow_redirects = kwargs.get("allow_redirects")  # type: ignore[assignment]
+        self.stream = kwargs.get("stream")  # type: ignore[assignment]
         return _RawJsonResponse(self.raw)
 
     def close(self) -> None:
@@ -1052,6 +1107,7 @@ def test_external_http_clients_disable_ambient_requests_configuration(
     assert github_session.headers is not None
     assert github_session.headers["Authorization"] == "Bearer synthetic-github-token"
     assert github_session.allow_redirects is False
+    assert github_session.stream is True
     assert github_session.closed is True
 
 
@@ -1062,8 +1118,102 @@ def test_github_json_duplicate_keys_are_rejected(
     monkeypatch.setenv("GITHUB_TOKEN", "synthetic-github-token")
     monkeypatch.setattr(base.requests, "Session", lambda: session)
     with pytest.raises(base.PreflightNoGo) as caught:
-        base._github_get("/synthetic")
+        base._github_get("/synthetic", authority_validator=lambda: None)
     assert caught.value.gate == "github_actions_state_invalid"
+
+
+class _HeaderList:
+    def __init__(self, values: list[str]) -> None:
+        self.values = values
+
+    def getlist(self, _name: str) -> list[str]:
+        return list(self.values)
+
+
+class _BoundedJsonResponse:
+    status_code = 200
+    headers: dict[str, str] = {}
+
+    def __init__(self, chunks: list[bytes], *, lengths: list[str] | None = None) -> None:
+        self.chunks = chunks
+        self.raw = type("Raw", (), {"headers": _HeaderList(lengths or [])})()
+        self.closed = False
+        self.yielded = 0
+
+    def iter_content(self, *, chunk_size: int) -> object:
+        assert chunk_size == 64 * 1024
+        for chunk in self.chunks:
+            self.yielded += 1
+            yield chunk
+
+    def close(self) -> None:
+        self.closed = True
+
+
+class _BoundedJsonSession:
+    def __init__(self, response: _BoundedJsonResponse) -> None:
+        self.response = response
+        self.trust_env = True
+        self.closed = False
+        self.stream: object = None
+
+    def get(self, _url: str, **kwargs: object) -> _BoundedJsonResponse:
+        self.stream = kwargs.get("stream")
+        return self.response
+
+    def close(self) -> None:
+        self.closed = True
+
+
+@pytest.mark.parametrize(
+    "lengths",
+    [["1000001"], ["invalid"], ["2", "2"]],
+)
+def test_neon_transport_rejects_invalid_or_duplicate_content_length(
+    lengths: list[str],
+) -> None:
+    response = _BoundedJsonResponse([b"{}"], lengths=lengths)
+    session = _BoundedJsonSession(response)
+    client = base.NeonReadOnlyClient(
+        "synthetic-api-key",
+        session=session,  # type: ignore[arg-type]
+        authority_validator=lambda: None,
+    )
+    with pytest.raises(base.PreflightNoGo) as caught:
+        client.get("/projects")
+    assert caught.value.gate == "neon_api_invalid_json"
+    assert session.stream is True
+    assert response.closed is True
+
+
+def test_neon_transport_stops_at_one_megabyte_without_reading_sentinel() -> None:
+    response = _BoundedJsonResponse(
+        [b" " * base.MAX_EXTERNAL_JSON_BYTES, b"x", b"sentinel"],
+    )
+    client = base.NeonReadOnlyClient(
+        "synthetic-api-key",
+        session=_BoundedJsonSession(response),  # type: ignore[arg-type]
+        authority_validator=lambda: None,
+    )
+    with pytest.raises(base.PreflightNoGo) as caught:
+        client.get("/projects")
+    assert caught.value.gate == "neon_api_invalid_json"
+    assert response.yielded == 2
+    assert response.closed is True
+
+
+def test_github_transport_rejects_declared_length_mismatch_and_closes(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    response = _BoundedJsonResponse([b"{}"], lengths=["3"])
+    session = _BoundedJsonSession(response)
+    monkeypatch.setenv("GITHUB_TOKEN", "synthetic-github-token")
+    monkeypatch.setattr(base.requests, "Session", lambda: session)
+    with pytest.raises(base.PreflightNoGo) as caught:
+        base._github_get("/synthetic", authority_validator=lambda: None)
+    assert caught.value.gate == "github_actions_state_invalid"
+    assert session.stream is True
+    assert response.closed is session.closed is True
 
 
 @pytest.mark.parametrize(
@@ -1079,7 +1229,7 @@ def test_github_state_never_infers_quiescence_from_malformed_or_truncated_data(
     monkeypatch: pytest.MonkeyPatch,
     bad_document: dict[str, object],
 ) -> None:
-    monkeypatch.setattr(base, "_github_get", lambda _path: bad_document)
+    monkeypatch.setattr(base, "_github_get", lambda _path, **_kwargs: bad_document)
     with pytest.raises(base.PreflightNoGo):
         base._github_actions_state("owner/repo", 1, "a" * 40)
 
@@ -1618,7 +1768,7 @@ def _run_boundary_integrated_main(
     monkeypatch.setattr(
         base,
         "_github_get",
-        lambda path: (
+        lambda path, **_kwargs: (
             {
                 "ref": "refs/heads/main",
                 "object": {"type": "commit", "sha": sha},

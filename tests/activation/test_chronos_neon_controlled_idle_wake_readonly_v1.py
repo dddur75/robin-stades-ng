@@ -34,9 +34,14 @@ class _Response:
 
     def __init__(self, document: dict[str, Any]) -> None:
         self._document = deepcopy(document)
+        self.headers: dict[str, str] = {}
 
-    def json(self, **_kwargs: object) -> dict[str, Any]:
-        return deepcopy(self._document)
+    def iter_content(self, *, chunk_size: int) -> list[bytes]:
+        assert chunk_size == 64 * 1024
+        return [json.dumps(self._document).encode("utf-8")]
+
+    def close(self) -> None:
+        return None
 
 
 class _IdleIdentitySession:
@@ -356,7 +361,12 @@ def test_authority_window_counts_only_new_mission_dispatches(
         },
     ]
 
-    def github_get(_path: str) -> dict[str, Any]:
+    def github_get(
+        _path: str,
+        *,
+        authority_validator: object | None = None,
+    ) -> dict[str, Any]:
+        assert authority_validator is not None
         return {"total_count": len(runs), "workflow_runs": list(runs)}
 
     monkeypatch.setattr(base, "_github_get", github_get)

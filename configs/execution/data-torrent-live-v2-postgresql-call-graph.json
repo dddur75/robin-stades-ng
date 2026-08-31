@@ -1,0 +1,115 @@
+{
+  "schema_version": "robin-data-torrent-live-postgresql-call-graph-v2",
+  "mission_id": "data-torrent-recovery-v2",
+  "workflow_path": ".github/workflows/data-torrent-live-v2.yml",
+  "successful_path": {
+    "direct_read_connections": [
+      {
+        "boundary": "scoped_role_identity_and_acl",
+        "cardinality": 3,
+        "connections_per_item": 1,
+        "connections": 3
+      },
+      {
+        "boundary": "database_revision",
+        "cardinality": 1,
+        "connections_per_item": 1,
+        "connections": 1
+      },
+      {
+        "boundary": "terminal_source_audit",
+        "cardinality": 1,
+        "connections_per_item": 1,
+        "connections": 1
+      },
+      {
+        "boundary": "terminal_batch_readback",
+        "cardinality": 1,
+        "connections_per_item": 1,
+        "connections": 1
+      }
+    ],
+    "function_read_connections": [
+      {
+        "boundary": "raw_r2_effect_state",
+        "cardinality": 1,
+        "connections_per_item": 2,
+        "connections": 2
+      },
+      {
+        "boundary": "normalized_r2_effect_state",
+        "cardinality": 1,
+        "connections_per_item": 2,
+        "connections": 2
+      }
+    ],
+    "function_read_transition_fallback_connections": [
+      {
+        "boundary": "raw_r2_transition_forbidden_readback",
+        "cardinality": 1,
+        "connections_per_item": 1,
+        "connections": 1
+      },
+      {
+        "boundary": "normalized_r2_transition_forbidden_readback",
+        "cardinality": 1,
+        "connections_per_item": 1,
+        "connections": 1
+      }
+    ],
+    "mutating_function_connections": [
+      {
+        "boundary": "initial_claim_authority",
+        "cardinality": 1,
+        "connections_per_item": 1,
+        "connections": 1
+      },
+      {
+        "boundary": "logical_opportunity_claim",
+        "cardinality": 1,
+        "connections_per_item": 1,
+        "connections": 1
+      },
+      {
+        "boundary": "official_effect_reserve_dispatch_reconcile",
+        "cardinality": 5,
+        "connections_per_item": 3,
+        "connections": 15
+      },
+      {
+        "boundary": "odds_effect_reserve_dispatch_reconcile",
+        "cardinality": 5,
+        "connections_per_item": 3,
+        "connections": 15
+      },
+      {
+        "boundary": "raw_r2_authority_claim_dispatch_confirm",
+        "cardinality": 1,
+        "connections_per_item": 4,
+        "connections": 4
+      },
+      {
+        "boundary": "normalized_r2_authority_claim_dispatch_confirm",
+        "cardinality": 1,
+        "connections_per_item": 4,
+        "connections": 4
+      },
+      {
+        "boundary": "terminal_batch_record",
+        "cardinality": 1,
+        "connections_per_item": 1,
+        "connections": 1
+      }
+    ]
+  },
+  "derived": {
+    "direct_read_connections": 6,
+    "function_read_connections_nominal": 4,
+    "function_read_transition_fallback_connections_maximum": 2,
+    "mutating_function_connections": 41,
+    "postgresql_connection_attempts_nominal": 51,
+    "postgresql_connection_attempts_maximum": 53,
+    "first_refused_attempt": 54,
+    "automatic_retries": 0
+  }
+}

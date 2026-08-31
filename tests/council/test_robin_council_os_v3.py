@@ -241,6 +241,7 @@ def test_activation_is_on_demand_bounded_and_references_known_agents() -> None:
         "JALON4_WALL_CLOCK_DECAY_FIX_V1",
         "BOUNDED_MULTI_LEAGUE_LIVE_CANARY_CAPABILITY_SUCCESSOR_V2",
         "REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1",
+        "DATA_TORRENT_RECOVERY_V2",
         "COVERAGE_P0",
         "HYPERGRAPH",
         "COCKPIT",
@@ -325,6 +326,7 @@ def test_agent_report_schema_requires_the_mission_contract() -> None:
         "JALON4_WALL_CLOCK_DECAY_FIX_V1",
         "BOUNDED_MULTI_LEAGUE_LIVE_CANARY_CAPABILITY_SUCCESSOR_V2",
         "REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1",
+        "DATA_TORRENT_RECOVERY_V2",
         "COVERAGE_P0",
         "HYPERGRAPH",
         "COCKPIT",
@@ -6605,7 +6607,9 @@ def test_evidence_graph_and_append_only_ledger_have_mandatory_fields() -> None:
         for claim in graph["claims"]
     )
     assert all(
-        len(claim["verified_by"]) >= 2 for claim in graph["claims"] if claim["status"] == "VERIFIED"
+        len(claim["verified_by"]) >= 2
+        for claim in graph["claims"]
+        if claim["status"] == "VERIFIED"
     )
     for claim in graph["claims"]:
         if claim["status"] == "SUPERSEDED":

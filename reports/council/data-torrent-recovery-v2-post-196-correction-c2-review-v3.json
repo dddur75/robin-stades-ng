@@ -1,0 +1,45 @@
+{
+  "agent_id": "C2",
+  "mission_id": "DATA_TORRENT_RECOVERY_V2",
+  "facts_verified": [
+    {
+      "claim": "The immutable record 196 remains byte-for-byte pinned while the mandatory correction is modeled only as the contiguous append-only FAILURE 197 then DECISION 198 suffix.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:a1b409e7c2cb2c558df38e559eb4e0c8431ececc9b290de53025813925651421",
+        "src/robin/chronos_production.py:_validate_recovery_v2_local_correction_pair",
+        "tests/council/test_data_torrent_recovery_v2_governance.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The local failure binds the exact two stale candidate file hashes from record 196, records 29 failures as one helper fan-out, and preserves zero external effects plus the unused conditional PR-B authority.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:a1b409e7c2cb2c558df38e559eb4e0c8431ececc9b290de53025813925651421",
+        "reports/council/decision-ledger.jsonl:RCV3-20260830-196",
+        "src/robin/chronos_production.py:_validate_recovery_v2_local_correction_pair"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The release parser rejects partial, inverted, intercalated, noncanonical, nonmonotonic, mistyped or rehashed semantic variants of the 197/198 correction pair.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:a1b409e7c2cb2c558df38e559eb4e0c8431ececc9b290de53025813925651421",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:test_local_correction_pair_is_mandatory_contiguous_and_ordered",
+        "tests/council/test_data_torrent_recovery_v2_governance.py:test_local_correction_pair_rejects_rehashed_semantic_mutants"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [],
+  "assumptions": [],
+  "main_objection": "P0=0; P1=0; P2=0; OPEN_THREADS=0; VERDICT=PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "risks": [],
+  "minimum_decisive_test": "VALIDATE_IMMUTABLE_196_CONTIGUOUS_197_198_CANONICAL_HASH_CHAIN_AND_ZERO_EFFECT_CONTEXT",
+  "recommended_action": "PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "scale_condition": "EXACT_HEAD_SAFE_V2_GREEN_NORMAL_MERGE_POSTMERGE_SAFE_V2_GREEN",
+  "estimated_compute": "READ_ONLY_GOVERNANCE_REVIEW_AND_TARGETED_MUTANTS_ONLY",
+  "estimated_external_cost": "ZERO; NO_NETWORK_OR_EXTERNAL_EFFECTS",
+  "estimated_human_time": "ONE_POST_196_GOVERNANCE_REVIEW",
+  "maintenance_impact": "LOW; THE CORRECTION LINEAGE_IS_APPEND_ONLY_AND_MACHINE_VALIDATED",
+  "confidence": 0.99
+}

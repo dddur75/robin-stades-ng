@@ -1,0 +1,46 @@
+{
+  "agent_id": "C2",
+  "mission_id": "DATA_TORRENT_RECOVERY_V2",
+  "facts_verified": [
+    {
+      "claim": "The exact eight-field owner manifest, its raw and canonical SHA-256 values, and the distinct owner-directive source hash remain bound without field expansion or authority reuse.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:104b3e9b0fbfc08f3211b37d4f61c224947f084dda711a3baac1d836d34c6ccc",
+        "configs/execution/data-torrent-recovery-v2.json",
+        "src/robin/chronos_production.py:validate_data_torrent_recovery_v2_authority"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The Recovery V2 effect contract preserves non-fungible Neon phase ceilings, exact R2 operations, zero automatic retries, dormant production effects at E1, and immediate-predecessor validation for every authorized stage.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:104b3e9b0fbfc08f3211b37d4f61c224947f084dda711a3baac1d836d34c6ccc",
+        "configs/execution/data-torrent-recovery-v2-effect-contract.json",
+        "configs/agents/mission-activation-matrix-v3.json",
+        "scripts/dispatch_data_torrent_recovery_v2_stage.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The sole full-suite execution is preserved as record 195, its 26 CRLF materialization false reds and three stale compatibility guards are corrected without a second full-suite run, and record 196 is required to bind fresh independent QA.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:104b3e9b0fbfc08f3211b37d4f61c224947f084dda711a3baac1d836d34c6ccc",
+        "reports/council/decision-ledger.jsonl:RCV3-20260830-195",
+        "tests/council/test_data_torrent_recovery_v2_governance.py"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [],
+  "assumptions": [],
+  "main_objection": "P0=0; P1=0; P2=0; OPEN_THREADS=0; VERDICT=PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "risks": [],
+  "minimum_decisive_test": "VALIDATE_EXACT_MANIFEST_EFFECT_CONTRACT_LEDGER_PREFIX_FRESH_REVIEW_BINDINGS_AND_ACYCLIC_LEDGER_GRAPH_RELEASE",
+  "recommended_action": "PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "scale_condition": "EXACT_HEAD_SAFE_V2_GREEN_NORMAL_MERGE_POSTMERGE_SAFE_V2_GREEN",
+  "estimated_compute": "READ_ONLY_GOVERNANCE_REVIEW_AND_TARGETED_CONTRACT_TESTS_ONLY",
+  "estimated_external_cost": "ZERO; NO_NETWORK_OR_EXTERNAL_EFFECTS",
+  "estimated_human_time": "ONE_FINAL_GOVERNANCE_RELEASE_REVIEW",
+  "maintenance_impact": "LOW; AUTHORITY_EFFECT_CEILINGS_AND_APPEND_ONLY_SUCCESSION_ARE_MACHINE_VALIDATED",
+  "confidence": 0.99
+}

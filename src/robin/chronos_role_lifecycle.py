@@ -32,6 +32,9 @@ ROLE_MARKER = "managed-by:chronos-dual-principal-authority-e1-v2"
 MIGRATOR_MARKER = "managed-by:chronos-dual-principal-authority-e1-v2:migrator"
 AUTHORITY_MARKER = "managed-by:chronos-dual-principal-authority-e1-v2:authority"
 EXECUTOR_MARKER = "managed-by:chronos-dual-principal-authority-e1-v2:executor"
+EXECUTOR_TOMBSTONE_MARKER = (
+    "managed-by:chronos-dual-principal-authority-e1-v2:executor-tombstone-recovery-v2"
+)
 LIFECYCLE_LOCK_KEYS = (0x4348524F, 0x4E4F5332)
 CHRONOS_BASE_FUNCTION_SIGNATURES = {
     "chronos_framed_sha256": "text[]",
@@ -735,6 +738,139 @@ def cleanup_bootstrap_executor(
     connection.commit()
 
 
+def assert_neutralized_bootstrap_executor(
+    connection: Connection[Any], *, executor_role: str
+) -> None:
+    """Prove one retained Recovery V2 executor is inert and unauthenticatable."""
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT rolcanlogin,rolinherit,rolsuper,rolcreatedb,rolcreaterole,"
+            "rolreplication,rolbypassrls,rolconnlimit,rolconfig,"
+            "rolvaliduntil=to_timestamp(0),"
+            "pg_catalog.shobj_description(oid,'pg_authid') "
+            "FROM pg_catalog.pg_roles WHERE rolname=%s",
+            (executor_role,),
+        )
+        state = cursor.fetchone()
+        cursor.execute("SELECT pg_catalog.pg_stat_clear_snapshot()")
+        cursor.execute(
+            "SELECT count(*) FROM pg_catalog.pg_stat_activity WHERE usename=%s",
+            (executor_role,),
+        )
+        sessions = cursor.fetchone()
+        cursor.execute(
+            "SELECT rolpassword IS NULL FROM pg_catalog.pg_authid WHERE rolname=%s",
+            (executor_role,),
+        )
+        password_null = cursor.fetchone()
+    if (
+        state is None
+        or bool(state[0])
+        or bool(state[1])
+        or any(bool(value) for value in state[2:7])
+        or int(state[7]) != 0
+        or state[8] is not None
+        or not bool(state[9])
+        or str(state[10]) != EXECUTOR_TOMBSTONE_MARKER
+        or sessions is None
+        or int(sessions[0]) != 0
+        or password_null is None
+        or not bool(password_null[0])
+        or _executor_memberships(connection, executor_role=executor_role)
+    ):
+        raise ChronosProductionError("CHRONOS_BOOTSTRAP_EXECUTOR_NEUTRALIZATION_UNSAFE")
+    _assert_role_has_no_smuggled_state(connection, executor_role)
+    _assert_executor_has_no_functional_privileges(connection, executor_role=executor_role)
+
+
+def neutralize_bootstrap_executor(
+    connection: Connection[Any],
+    *,
+    executor_role: str,
+    authority: str,
+    lifecycle_admin: str,
+    lifecycle_admin_superuser: bool,
+) -> None:
+    """Revoke and retain one inert executor without any destructive role statement."""
+
+    _assert_executor_catalog(
+        connection,
+        role=executor_role,
+        require_live_window=False,
+        expected_login=None,
+    )
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT pg_catalog.pg_stat_clear_snapshot()")
+        cursor.execute(
+            "SELECT count(*) FROM pg_catalog.pg_stat_activity WHERE usename=%s",
+            (executor_role,),
+        )
+        sessions = cursor.fetchone()
+    if sessions is None or int(sessions[0]) != 0:
+        raise ChronosProductionError("CHRONOS_BOOTSTRAP_EXECUTOR_SESSION_ACTIVE")
+    memberships = _executor_memberships(connection, executor_role=executor_role)
+    temporary = (
+        authority,
+        executor_role,
+        lifecycle_admin,
+        lifecycle_admin_superuser,
+        False,
+        False,
+        True,
+    )
+    creator = (
+        executor_role,
+        lifecycle_admin,
+        "",
+        True,
+        True,
+        False,
+        False,
+    )
+    for edge in memberships:
+        if edge == temporary:
+            continue
+        if (
+            not lifecycle_admin_superuser
+            and edge[0] == creator[0]
+            and edge[1] == creator[1]
+            and edge[3:] == creator[3:]
+        ):
+            continue
+        raise ChronosProductionError("CHRONOS_BOOTSTRAP_EXECUTOR_MEMBERSHIP_UNSAFE")
+    with connection.cursor() as cursor:
+        if temporary in memberships:
+            cursor.execute(
+                sql.SQL("REVOKE {} FROM {}").format(
+                    sql.Identifier(authority), sql.Identifier(executor_role)
+                )
+            )
+        if not lifecycle_admin_superuser and any(
+            edge[0] == creator[0] and edge[1] == creator[1] and edge[3:] == creator[3:]
+            for edge in memberships
+        ):
+            cursor.execute(
+                sql.SQL("REVOKE {} FROM {}").format(
+                    sql.Identifier(executor_role), sql.Identifier(lifecycle_admin)
+                )
+            )
+        with _client_cursor(connection) as client_cursor:
+            client_cursor.execute(
+                sql.SQL(
+                    "ALTER ROLE {} NOLOGIN NOINHERIT NOSUPERUSER NOCREATEDB "
+                    "NOCREATEROLE NOREPLICATION NOBYPASSRLS CONNECTION LIMIT 0 "
+                    "PASSWORD NULL VALID UNTIL 'epoch'"
+                ).format(sql.Identifier(executor_role))
+            )
+            client_cursor.execute(
+                sql.SQL("COMMENT ON ROLE {} IS %s").format(sql.Identifier(executor_role)),
+                (EXECUTOR_TOMBSTONE_MARKER,),
+            )
+    connection.commit()
+    assert_neutralized_bootstrap_executor(connection, executor_role=executor_role)
+
+
 def provision_bootstrap_executor(
     connection: Connection[Any],
     *,
@@ -744,6 +880,8 @@ def provision_bootstrap_executor(
     authority: str = BOOTSTRAP_AUTHORITY,
     checkpoint: Callable[[str], None] | None = None,
     lifecycle_lock_held: bool = False,
+    allow_stale_cleanup: bool = True,
+    neutralize_on_failure: bool = False,
 ) -> BootstrapExecutorLease:
     """Create a fresh bounded executor and its single SET-only delegation."""
 
@@ -765,11 +903,19 @@ def provision_bootstrap_executor(
         authority=authority,
         lifecycle_lock_held=lifecycle_lock_held,
     )
+    lease = BootstrapExecutorLease(
+        authority=authority,
+        authority_oid=authority_oid,
+        executor_role=executor_role,
+        lifecycle_admin=lifecycle_admin,
+        lifecycle_admin_superuser=lifecycle_admin_superuser,
+        valid_until=valid_until,
+    )
     stale = _executor_names(connection)
     if len(stale) > 1:
         raise ChronosProductionError("CHRONOS_MULTIPLE_BOOTSTRAP_EXECUTORS")
     if stale:
-        if stale[0] == executor_role:
+        if stale[0] == executor_role or not allow_stale_cleanup:
             raise ChronosProductionError("CHRONOS_BOOTSTRAP_EXECUTOR_NAME_REUSE")
         cleanup_bootstrap_executor(
             connection,
@@ -779,48 +925,65 @@ def provision_bootstrap_executor(
             lifecycle_admin_superuser=lifecycle_admin_superuser,
         )
         _configure_transaction(connection)
+    executor_may_exist = False
     try:
-        with _client_cursor(connection) as cursor:
+        try:
+            with _client_cursor(connection) as cursor:
+                cursor.execute(
+                    sql.SQL(
+                        "CREATE ROLE {} LOGIN NOINHERIT NOSUPERUSER NOCREATEDB "
+                        "NOCREATEROLE NOREPLICATION NOBYPASSRLS CONNECTION LIMIT 1 "
+                        "PASSWORD %s VALID UNTIL {}"
+                    ).format(
+                        sql.Identifier(executor_role),
+                        sql.Literal(valid_until.isoformat()),
+                    ),
+                    (password,),
+                )
+                cursor.execute(
+                    sql.SQL("COMMENT ON ROLE {} IS %s").format(sql.Identifier(executor_role)),
+                    (EXECUTOR_MARKER,),
+                )
+        except Exception:
+            connection.rollback()
+            raise ChronosProductionError("CHRONOS_BOOTSTRAP_EXECUTOR_CREATE_FAILED") from None
+        executor_may_exist = True
+        _assert_executor_catalog(connection, role=executor_role, require_live_window=True)
+        connection.commit()
+        if checkpoint is not None:
+            checkpoint("executor_created")
+        _configure_transaction(connection)
+        with connection.cursor() as cursor:
             cursor.execute(
-                sql.SQL(
-                    "CREATE ROLE {} LOGIN NOINHERIT NOSUPERUSER NOCREATEDB "
-                    "NOCREATEROLE NOREPLICATION NOBYPASSRLS CONNECTION LIMIT 1 "
-                    "PASSWORD %s VALID UNTIL {}"
-                ).format(
-                    sql.Identifier(executor_role),
-                    sql.Literal(valid_until.isoformat()),
-                ),
-                (password,),
+                sql.SQL("GRANT {} TO {} WITH SET TRUE, INHERIT FALSE, ADMIN FALSE").format(
+                    sql.Identifier(authority), sql.Identifier(executor_role)
+                )
             )
-            cursor.execute(
-                sql.SQL("COMMENT ON ROLE {} IS %s").format(sql.Identifier(executor_role)),
-                (EXECUTOR_MARKER,),
-            )
-    except Exception:
-        connection.rollback()
-        raise ChronosProductionError("CHRONOS_BOOTSTRAP_EXECUTOR_CREATE_FAILED") from None
-    _assert_executor_catalog(connection, role=executor_role, require_live_window=True)
-    connection.commit()
-    if checkpoint is not None:
-        checkpoint("executor_created")
-    _configure_transaction(connection)
-    with connection.cursor() as cursor:
-        cursor.execute(
-            sql.SQL("GRANT {} TO {} WITH SET TRUE, INHERIT FALSE, ADMIN FALSE").format(
-                sql.Identifier(authority), sql.Identifier(executor_role)
-            )
-        )
-    connection.commit()
-    if checkpoint is not None:
-        checkpoint("executor_granted")
-    return BootstrapExecutorLease(
-        authority=authority,
-        authority_oid=authority_oid,
-        executor_role=executor_role,
-        lifecycle_admin=lifecycle_admin,
-        lifecycle_admin_superuser=lifecycle_admin_superuser,
-        valid_until=valid_until,
-    )
+        connection.commit()
+        if checkpoint is not None:
+            checkpoint("executor_granted")
+    except Exception as error:
+        cleanup_error: Exception | None = None
+        try:
+            connection.rollback()
+            if neutralize_on_failure and executor_may_exist:
+                _configure_transaction(connection)
+                if executor_role in _executor_names(connection):
+                    neutralize_bootstrap_executor(
+                        connection,
+                        executor_role=lease.executor_role,
+                        authority=lease.authority,
+                        lifecycle_admin=lease.lifecycle_admin,
+                        lifecycle_admin_superuser=lease.lifecycle_admin_superuser,
+                    )
+        except Exception as failure:
+            cleanup_error = failure
+        if cleanup_error is not None:
+            raise ChronosProductionError(
+                "CHRONOS_BOOTSTRAP_EXECUTOR_NEUTRALIZATION_FAILED"
+            ) from cleanup_error
+        raise error
+    return lease
 
 
 def _bootstrap_context(
@@ -925,16 +1088,26 @@ def assert_executor_cannot_create_role(connection: Connection[Any], *, probe_rol
     assert_executor_before_set_role(connection)
     with connection.cursor() as cursor:
         cursor.execute("SAVEPOINT chronos_executor_pre_set_probe")
+        create_succeeded = False
         try:
             cursor.execute(sql.SQL("CREATE ROLE {} NOLOGIN").format(sql.Identifier(probe_role)))
         except InsufficientPrivilege as error:
             if error.sqlstate != "42501":
+                cursor.execute("ROLLBACK TO SAVEPOINT chronos_executor_pre_set_probe")
+                cursor.execute("RELEASE SAVEPOINT chronos_executor_pre_set_probe")
                 raise ChronosProductionError("CHRONOS_EXECUTOR_PRE_SET_SQLSTATE_UNSAFE") from None
-            cursor.execute("ROLLBACK TO SAVEPOINT chronos_executor_pre_set_probe")
-            cursor.execute("RELEASE SAVEPOINT chronos_executor_pre_set_probe")
         else:
-            cursor.execute(sql.SQL("DROP ROLE {}").format(sql.Identifier(probe_role)))
-            cursor.execute("RELEASE SAVEPOINT chronos_executor_pre_set_probe")
+            create_succeeded = True
+        cursor.execute("ROLLBACK TO SAVEPOINT chronos_executor_pre_set_probe")
+        cursor.execute("RELEASE SAVEPOINT chronos_executor_pre_set_probe")
+        cursor.execute(
+            "SELECT EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname=%s)",
+            (probe_role,),
+        )
+        residue = cursor.fetchone()
+        if residue is None or bool(residue[0]):
+            raise ChronosProductionError("CHRONOS_EXECUTOR_PRE_SET_PROBE_RESIDUE")
+        if create_succeeded:
             raise ChronosProductionError("CHRONOS_EXECUTOR_PRE_SET_CREATE_ROLE_SUCCEEDED")
 
 
@@ -1567,14 +1740,20 @@ def _role_inventory(
         cursor.execute(
             "SELECT oid,rolname,rolcanlogin,rolinherit,rolsuper,rolcreatedb,"
             "rolcreaterole,rolreplication,rolbypassrls,rolconnlimit,rolconfig,"
-            "rolvaliduntil::text,"
+            "rolvaliduntil=to_timestamp(0),"
             "pg_catalog.shobj_description(oid,'pg_authid') "
             "FROM pg_catalog.pg_roles WHERE rolname=ANY(%s) OR "
             "pg_catalog.shobj_description(oid,'pg_authid')=ANY(%s) "
             "ORDER BY rolname",
             (
                 sorted(expected),
-                [ROLE_MARKER, MIGRATOR_MARKER, AUTHORITY_MARKER, EXECUTOR_MARKER],
+                [
+                    ROLE_MARKER,
+                    MIGRATOR_MARKER,
+                    AUTHORITY_MARKER,
+                    EXECUTOR_MARKER,
+                    EXECUTOR_TOMBSTONE_MARKER,
+                ],
             ),
         )
         rows = cursor.fetchall()
@@ -1593,6 +1772,8 @@ def _role_inventory(
         expected_marker = (
             AUTHORITY_MARKER
             if is_owner
+            else EXECUTOR_TOMBSTONE_MARKER
+            if is_executor and phase == "terminal"
             else EXECUTOR_MARKER
             if is_executor
             else None
@@ -1614,7 +1795,15 @@ def _role_inventory(
             or (is_migrator and bool(row[3]))
             or (is_owner and bool(row[3]))
             or (is_owner and bool(row[2]))
-            or (is_executor and (not bool(row[2]) or bool(row[3]) or int(row[9]) != 1))
+            or (
+                is_executor
+                and (
+                    bool(row[2]) is not (phase != "terminal")
+                    or bool(row[3])
+                    or int(row[9]) != (0 if phase == "terminal" else 1)
+                    or (phase == "terminal" and not bool(row[11]))
+                )
+            )
             or (is_lifecycle_admin and (not bool(row[2]) or not (bool(row[4]) or bool(row[6]))))
         ):
             raise ChronosProductionError("CHRONOS_ROLE_INVENTORY_UNSAFE")
@@ -1626,7 +1815,7 @@ def _role_inventory(
                 "inherit": bool(row[3]),
                 "createrole": bool(row[6]),
                 "superuser": bool(row[4]),
-                "valid_until": row[11],
+                "valid_until_is_epoch": bool(row[11]),
                 "marker": marker,
             }
         )
@@ -1744,7 +1933,15 @@ def audit_role_edges(
         lifecycle_admin=lifecycle_admin,
     )
     if executor_role is not None:
-        _assert_executor_catalog(connection, role=executor_role, require_live_window=True)
+        if phase == "terminal":
+            assert_neutralized_bootstrap_executor(connection, executor_role=executor_role)
+        else:
+            _assert_executor_catalog(
+                connection,
+                role=executor_role,
+                require_live_window=True,
+                expected_login=True,
+            )
     with connection.cursor() as cursor:
         cursor.execute(
             "SELECT rolsuper,rolinherit,rolcanlogin FROM pg_catalog.pg_roles WHERE rolname=%s",
@@ -1930,7 +2127,11 @@ def audit_role_edges(
         + len(active_migrator)
         + 2 * len(active_runtime)
         + (0 if lifecycle_admin_superuser else 1)
-        + (0 if executor_role is None else 1 + (0 if lifecycle_admin_superuser else 1))
+        + (
+            0
+            if executor_role is None or phase == "terminal"
+            else 1 + (0 if lifecycle_admin_superuser else 1)
+        )
         + expected_neon_platform
     )
     expected_functional = len(active_runtime)
@@ -1941,7 +2142,7 @@ def audit_role_edges(
     actual_external = sum(
         edge["classification"] == "EXPECTED_LIFECYCLE_ADMIN_AUTHORITY_EDGE" for edge in classified
     )
-    expected_executor = 0 if executor_role is None else 1
+    expected_executor = 0 if executor_role is None or phase == "terminal" else 1
     actual_executor = sum(
         edge["classification"] == "EXPECTED_EXECUTOR_SET_EDGE" for edge in classified
     )
@@ -2014,7 +2215,11 @@ def audit_role_edges(
         or runtime_to_lifecycle
         or executor_role_count != (0 if executor_role is None else 1)
         or executor_membership_count
-        != (0 if executor_role is None else 1 + (0 if lifecycle_admin_superuser else 1))
+        != (
+            0
+            if executor_role is None or phase == "terminal"
+            else 1 + (0 if lifecycle_admin_superuser else 1)
+        )
     ):
         raise ChronosProductionError("CHRONOS_ROLE_EDGE_AUDIT_FAILED")
     return RoleEdgeAudit(
@@ -2409,8 +2614,9 @@ def audit_terminal_lifecycle(
     bootstrap_owner: str,
     lifecycle_admin: str,
     migrator_role: str,
+    retained_executor_role: str | None = None,
 ) -> RoleEdgeAudit:
-    """Prove the authority is permanent, the migrator dormant and executor gone."""
+    """Prove the authority/migrator terminal state and exact executor disposition."""
 
     _assert_permanent_authority_catalog(connection, authority=bootstrap_owner)
     assert_authority_password_null(connection, authority=bootstrap_owner)
@@ -2455,9 +2661,17 @@ def audit_terminal_lifecycle(
         or sessions is None
         or int(sessions[0]) != 0
         or executor_roles is None
-        or int(executor_roles[0]) != 0
+        or int(executor_roles[0]) != (0 if retained_executor_role is None else 1)
     ):
         raise ChronosProductionError("CHRONOS_LIFECYCLE_TERMINAL_STATE_UNSAFE")
+    if retained_executor_role is not None:
+        names = _executor_names(connection)
+        if names != [retained_executor_role]:
+            raise ChronosProductionError("CHRONOS_LIFECYCLE_TERMINAL_STATE_UNSAFE")
+        assert_neutralized_bootstrap_executor(
+            connection,
+            executor_role=retained_executor_role,
+        )
     assert_migrator_disabled(connection, role=migrator_role, bootstrap_owner=bootstrap_owner)
     assert_post_migration_role_state(
         connection,
@@ -2469,7 +2683,7 @@ def audit_terminal_lifecycle(
         phase="terminal",
         bootstrap_owner=bootstrap_owner,
         lifecycle_admin=lifecycle_admin,
-        executor_role=None,
+        executor_role=retained_executor_role,
         migrator_role=migrator_role,
     )
 
@@ -2479,6 +2693,7 @@ __all__ = [
     "BOOTSTRAP_AUTHORITY",
     "BOOTSTRAP_EXECUTOR_PREFIX",
     "EXECUTOR_MARKER",
+    "EXECUTOR_TOMBSTONE_MARKER",
     "GROUP_ROLES",
     "MIGRATOR_MARKER",
     "ROLE_MARKER",
@@ -2487,6 +2702,7 @@ __all__ = [
     "RoleEdgeAudit",
     "acquire_lifecycle_lock",
     "assert_authority_password_null",
+    "assert_neutralized_bootstrap_executor",
     "assert_executor_before_set_role",
     "assert_executor_cannot_create_role",
     "assert_lifecycle_admin",
@@ -2498,6 +2714,7 @@ __all__ = [
     "audit_terminal_lifecycle",
     "audit_role_edges",
     "cleanup_bootstrap_executor",
+    "neutralize_bootstrap_executor",
     "disable_migrator",
     "provision_chronos_group_roles",
     "provision_bootstrap_executor",

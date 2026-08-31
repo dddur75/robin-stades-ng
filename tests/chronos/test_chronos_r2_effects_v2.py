@@ -6,12 +6,19 @@ from io import BytesIO
 from typing import Any
 
 import pytest
-from botocore.exceptions import ClientError  # type: ignore[import-untyped]
+from botocore.awsrequest import AWSResponse  # type: ignore[import-untyped]
+from botocore.exceptions import (  # type: ignore[import-untyped]
+    ClientError,
+    EndpointConnectionError,
+)
 
 from robin.prospective_observatory.chronos_control_plane import ConditionalPutOutcome
 from robin.prospective_observatory.chronos_r2 import (
+    MAX_R2_OBJECT_BYTES,
     ChronosR2ConditionalStore,
     ChronosR2Error,
+    _deny_s3_head_bucket,
+    _never_retry_s3,
     create_single_attempt_r2_client,
 )
 
@@ -45,6 +52,7 @@ class FakeClient:
         self.put_error = put_error
         self.get_response = get_response or {
             "Body": BytesIO(b"payload"),
+            "ContentLength": len(b"payload"),
             "Metadata": {"operation_id": "abc"},
         }
         self.get_error = get_error
@@ -151,9 +159,65 @@ def test_get_missing_is_none_and_invalid_body_fails_closed() -> None:
         ChronosR2ConditionalStore(invalid, "bucket").get_object("key")
 
 
+class _TrackedBody:
+    def __init__(self, payload: bytes, *, fail_read: bool = False) -> None:
+        self.payload = payload
+        self.fail_read = fail_read
+        self.read_sizes: list[int] = []
+        self.closed = False
+
+    def read(self, size: int) -> bytes:
+        self.read_sizes.append(size)
+        if self.fail_read:
+            raise OSError("synthetic read failure")
+        return self.payload[:size]
+
+    def close(self) -> None:
+        self.closed = True
+
+
+@pytest.mark.parametrize("content_length", [True, -1, MAX_R2_OBJECT_BYTES + 1, "7", None])
+def test_get_rejects_invalid_declared_length(content_length: object) -> None:
+    body = _TrackedBody(b"payload")
+    client = FakeClient(
+        get_response={"Body": body, "ContentLength": content_length, "Metadata": {}}
+    )
+    with pytest.raises(ChronosR2Error, match="CHRONOS_R2_BODY_INVALID"):
+        ChronosR2ConditionalStore(client, "bucket").get_object("key")
+    assert body.read_sizes == []
+    assert body.closed is True
+
+
+def test_get_is_bounded_closes_body_and_rejects_length_mismatch() -> None:
+    body = _TrackedBody(b"payload-extra")
+    client = FakeClient(get_response={"Body": body, "ContentLength": 7, "Metadata": {}})
+    with pytest.raises(ChronosR2Error, match="CHRONOS_R2_BODY_INVALID"):
+        ChronosR2ConditionalStore(client, "bucket").get_object("key")
+    assert body.read_sizes == [MAX_R2_OBJECT_BYTES + 1]
+    assert body.closed is True
+
+
+def test_get_closes_body_when_bounded_read_fails() -> None:
+    body = _TrackedBody(b"payload", fail_read=True)
+    client = FakeClient(get_response={"Body": body, "ContentLength": 7, "Metadata": {}})
+    with pytest.raises(ChronosR2Error, match="CHRONOS_R2_BODY_READ_FAILED"):
+        ChronosR2ConditionalStore(client, "bucket").get_object("key")
+    assert body.closed is True
+
+
 def test_factory_disables_all_sdk_write_retries(monkeypatch: pytest.MonkeyPatch) -> None:
     captured: dict[str, object] = {}
     client = FakeClient()
+    registrations: list[tuple[object, ...]] = []
+
+    class Events:
+        def register_first(self, *args: object, **kwargs: object) -> None:
+            registrations.append((*args, kwargs))
+
+    class Meta:
+        events = Events()
+
+    client.meta = Meta()  # type: ignore[attr-defined]
 
     class FakeBoto:
         @staticmethod
@@ -169,7 +233,7 @@ def test_factory_disables_all_sdk_write_retries(monkeypatch: pytest.MonkeyPatch)
     )
     created, bucket = create_single_attempt_r2_client(
         {
-            "R2_ACCOUNT_ID": "account",
+            "R2_ACCOUNT_ID": "a" * 32,
             "R2_ACCESS_KEY_ID": "access",
             "R2_SECRET_ACCESS_KEY": "secret",
             "R2_BUCKET_NAME": "bucket",
@@ -182,7 +246,158 @@ def test_factory_disables_all_sdk_write_retries(monkeypatch: pytest.MonkeyPatch)
         "total_max_attempts": 1,
         "mode": "standard",
     }
+    assert getattr(config, "proxies") == {}
+    assert registrations == [
+        (
+            "needs-retry.s3.PutObject",
+            _never_retry_s3,
+            {"unique_id": "chronos-r2-no-retry-putobject"},
+        ),
+        (
+            "needs-retry.s3.GetObject",
+            _never_retry_s3,
+            {"unique_id": "chronos-r2-no-retry-getobject"},
+        ),
+        (
+            "before-call.s3.HeadBucket",
+            _deny_s3_head_bucket,
+            {"unique_id": "chronos-r2-no-head-bucket"},
+        ),
+    ]
     assert captured["name"] == "s3"
+    assert captured["endpoint_url"] == f"https://{'a' * 32}.r2.cloudflarestorage.com"
+
+
+class _RawAwsBody:
+    def __init__(self, payload: bytes) -> None:
+        self.payload = payload
+
+    def stream(self, _amt: int | None = None, decode_content: bool = False) -> list[bytes]:
+        assert decode_content is False
+        return [self.payload]
+
+
+def _real_r2_client() -> Any:
+    client, _bucket = create_single_attempt_r2_client(
+        {
+            "R2_ACCOUNT_ID": "a" * 32,
+            "R2_ACCESS_KEY_ID": "access",
+            "R2_SECRET_ACCESS_KEY": "secret",
+            "R2_BUCKET_NAME": "bucket",
+        }
+    )
+    return client
+
+
+@pytest.mark.parametrize(
+    ("status", "code"),
+    [
+        (301, "PermanentRedirect"),
+        (307, "TemporaryRedirect"),
+        (400, "AuthorizationHeaderMalformed"),
+    ],
+)
+def test_real_botocore_s3_redirect_errors_never_retry_transport(
+    monkeypatch: pytest.MonkeyPatch,
+    status: int,
+    code: str,
+) -> None:
+    client = _real_r2_client()
+    calls: list[str] = []
+    payload = (
+        f"<Error><Code>{code}</Code><Region>us-east-1</Region><Message>redirect</Message></Error>"
+    ).encode()
+
+    def send(request: object) -> AWSResponse:
+        url = str(getattr(request, "url"))
+        calls.append(url)
+        return AWSResponse(
+            url,
+            status,
+            {
+                "content-type": "application/xml",
+                "content-length": str(len(payload)),
+                "x-amz-bucket-region": "us-east-1",
+            },
+            _RawAwsBody(payload),
+        )
+
+    monkeypatch.setattr(client._endpoint.http_session, "send", send)
+    with pytest.raises(Exception):
+        client.put_object(Bucket="bucket", Key="key", Body=b"value", IfNoneMatch="*")
+    assert len(calls) == 1
+
+
+def test_real_botocore_transport_exception_never_retries(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client = _real_r2_client()
+    calls: list[str] = []
+
+    def send(request: object) -> AWSResponse:
+        url = str(getattr(request, "url"))
+        calls.append(url)
+        raise EndpointConnectionError(endpoint_url=url)
+
+    monkeypatch.setattr(client._endpoint.http_session, "send", send)
+    with pytest.raises(EndpointConnectionError):
+        client.get_object(Bucket="bucket", Key="key")
+    assert len(calls) == 1
+
+
+def test_real_botocore_region_probe_is_locally_denied_without_second_transport(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client = _real_r2_client()
+    sends: list[str] = []
+    payload = b"<Error><Code>PermanentRedirect</Code><Message>redirect</Message></Error>"
+
+    def send(request: object) -> AWSResponse:
+        url = str(getattr(request, "url"))
+        sends.append(url)
+        return AWSResponse(
+            url,
+            301,
+            {"content-type": "application/xml", "content-length": str(len(payload))},
+            _RawAwsBody(payload),
+        )
+
+    monkeypatch.setattr(client._endpoint.http_session, "send", send)
+    with pytest.raises(ChronosR2Error, match="CHRONOS_R2_HEAD_FORBIDDEN"):
+        client.put_object(Bucket="bucket", Key="key", Body=b"value", IfNoneMatch="*")
+    assert len(sends) == 1
+
+
+@pytest.mark.parametrize(
+    ("name", "value", "code"),
+    [
+        ("R2_ACCOUNT_ID", "account", "CHRONOS_R2_ACCOUNT_ID_INVALID"),
+        ("R2_ACCOUNT_ID", "a" * 31 + ".", "CHRONOS_R2_ACCOUNT_ID_INVALID"),
+        ("R2_BUCKET_NAME", "UPPER", "CHRONOS_R2_BUCKET_INVALID"),
+        ("R2_BUCKET_NAME", "bad..bucket", "CHRONOS_R2_BUCKET_INVALID"),
+        ("R2_BUCKET_NAME", "127.0.0.1", "CHRONOS_R2_BUCKET_INVALID"),
+    ],
+)
+def test_factory_rejects_endpoint_injection_before_import(
+    monkeypatch: pytest.MonkeyPatch,
+    name: str,
+    value: str,
+    code: str,
+) -> None:
+    monkeypatch.setattr(
+        importlib,
+        "import_module",
+        lambda _name: pytest.fail("boto import reached"),
+    )
+    environment = {
+        "R2_ACCOUNT_ID": "a" * 32,
+        "R2_ACCESS_KEY_ID": "access",
+        "R2_SECRET_ACCESS_KEY": "secret",
+        "R2_BUCKET_NAME": "bucket",
+    }
+    environment[name] = value
+    with pytest.raises(ChronosR2Error, match=code):
+        create_single_attempt_r2_client(environment)
 
 
 def test_factory_requires_all_secrets_without_calling_boto(

@@ -289,9 +289,14 @@ def test_neon_client_rejects_non_project_route_before_network() -> None:
 
 class _SyntheticResponse:
     status_code = 200
+    headers: dict[str, str] = {}
 
-    def json(self, **_kwargs: object) -> dict[str, object]:
-        return {}
+    def iter_content(self, *, chunk_size: int) -> list[bytes]:
+        assert chunk_size == 64 * 1024
+        return [b"{}"]
+
+    def close(self) -> None:
+        return None
 
 
 class _CountingSession:
@@ -431,9 +436,14 @@ class _ApiResponse:
     def __init__(self, document: dict[str, Any], status_code: int = 200) -> None:
         self._document = deepcopy(document)
         self.status_code = status_code
+        self.headers: dict[str, str] = {}
 
-    def json(self, **_kwargs: object) -> dict[str, Any]:
-        return deepcopy(self._document)
+    def iter_content(self, *, chunk_size: int) -> list[bytes]:
+        assert chunk_size == 64 * 1024
+        return [json.dumps(self._document).encode("utf-8")]
+
+    def close(self) -> None:
+        return None
 
 
 class _ScriptedNeonSession:

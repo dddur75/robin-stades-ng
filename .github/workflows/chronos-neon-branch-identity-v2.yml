@@ -1,0 +1,234 @@
+name: "Chronos Neon Branch Identity V2"
+
+on:
+  workflow_dispatch:
+    inputs:
+      expected_main_sha:
+        description: "SHA main exact autorise"
+        required: true
+        type: string
+      recovery_v2_effect_deadline_epoch:
+        description: "Controller-bound absolute effect deadline"
+        required: true
+        type: string
+      recovery_v2_dispatch_nonce:
+        description: "Controller-bound one-shot dispatch nonce"
+        required: true
+        type: string
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: chronos-data-torrent-production-global-v1
+  cancel-in-progress: false
+
+jobs:
+  identity:
+    name: "Recovery V2 stable branch identity"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: chronos-control-plane-production
+    env:
+      PYTHONPATH: ${{ github.workspace }}/src
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      PROMOTION_LOCKED: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+      POSTGRESQL_PRODUCTION_DESTRUCTIVE_WRITES: "false"
+      THE_ODDS_API_HISTORICAL_CREDITS: "false"
+      API_FOOTBALL_CALLS_ALLOWED: "0"
+      RECOVERY_V2_EFFECT_DEADLINE_EPOCH: ${{ inputs.recovery_v2_effect_deadline_epoch }}
+      RECOVERY_V2_DISPATCH_NONCE: ${{ inputs.recovery_v2_dispatch_nonce }}
+    steps:
+      - name: Precreate the conservative one-shot receipt and deadline
+        shell: bash
+        env:
+          FALLBACK_TEMPLATE_B64: eyJicmFuY2hfaW52ZW50b3J5X2ZhaWx1cmVfY2xhc3MiOiJUUkFOU1BPUlRfQU1CSUdVT1VTIiwiZWZmZWN0X2NvdW50ZXJfY2VydGFpbnR5IjoiVU5LTk9XTl9PUl9VUFBFUl9CT1VORCIsImVmZmVjdHMiOnsiY29tcHV0ZV93YWtlcyI6MCwiaHR0cF9yZXRyaWVzIjowLCJuZW9uX2RlbGV0ZSI6MCwibmVvbl9nZXRzIjoyNSwibmVvbl9nZXRzX2V4YWN0IjpmYWxzZSwibmVvbl9wYXRjaCI6MCwibmVvbl9wb3N0IjowLCJvZGRzX3JlcXVlc3RzIjowLCJvZmZpY2lhbF9yZWFkcyI6MCwicG9zdGdyZXNxbF9jb25uZWN0aW9ucyI6MCwicHVyY2hhc2VzIjowLCJyMl9vcGVyYXRpb25zIjowLCJyZWRpcmVjdHNfZm9sbG93ZWQiOjAsInNlY3JldF93cml0ZXMiOjAsInNxbF9zdGF0ZW1lbnRzIjowfSwiZ2l0aHViX2FjdGlvbnMiOnt9LCJuZW9uIjp7ImJyYW5jaF9jb3VudF9hZnRlciI6bnVsbCwiYnJhbmNoX2NvdW50X2JlZm9yZSI6bnVsbCwiYnJhbmNoX2NvdW50X3JlYWRzIjowLCJicmFuY2hfZW5kcG9pbnRfY29uY29yZGFudCI6ZmFsc2UsImJyYW5jaF9pbnZlbnRvcnlfZmFpbHVyZV9jbGFzcyI6IlRSQU5TUE9SVF9BTUJJR1VPVVMiLCJicmFuY2hfcGFnZXNfcmVhZCI6MCwiYnJhbmNoZXNfb2JzZXJ2ZWQiOjAsImNvbnRpbnVhdGlvbl9mb2xsb3dlZF9jb3VudCI6MCwiY29udGludWF0aW9uX3JlcXVpcmVkIjpmYWxzZSwiZGVmYXVsdF9icmFuY2hfY291bnQiOjAsImRzbl9icmFuY2hfbWF0Y2hlc19kZWZhdWx0IjpmYWxzZSwiaWRlbnRpdHlfaW50ZXJzZWN0aW9uX3NpemUiOjAsImludmVudG9yeV9leGhhdXN0aXZlIjpmYWxzZSwidGVybWluYWxfYnlfY2FyZGluYWxpdHkiOmZhbHNlLCJ0ZXJtaW5hbF9wYWdpbmF0aW9uX21ldGFkYXRhX3ByZXNlbnQiOmZhbHNlfSwib2JzZXJ2ZWRfYXQiOiIiLCJzY2hlbWFfdmVyc2lvbiI6Im5lb24tYnJhbmNoLWlkZW50aXR5LWdvLXYyIiwic2VjcmV0X3ZhbHVlc19vYnNlcnZlZCI6ZmFsc2UsInNvdXJjZSI6e30sInZlcmRpY3QiOiJORU9OX0JSQU5DSF9JREVOVElUWV9OT19HT19WMiJ9Cg==
+          RECEIPT_PATH: ${{ runner.temp }}/recovery-v2/neon-branch-identity-go-v2.json
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import base64, hashlib, json, os, stat
+          from datetime import UTC, datetime
+          from pathlib import Path
+          path = Path(os.environ["RECEIPT_PATH"])
+          path.parent.mkdir(parents=True, exist_ok=True)
+          assert stat.S_ISDIR(path.parent.lstat().st_mode) and not path.parent.is_symlink()
+          descriptor = os.open(path.parent.parent, os.O_RDONLY | os.O_DIRECTORY)
+          try: os.fsync(descriptor)
+          finally: os.close(descriptor)
+          document = json.loads(base64.b64decode(os.environ["FALLBACK_TEMPLATE_B64"], validate=True))
+          observed_at = datetime.now(UTC).isoformat(timespec="seconds").replace("+00:00", "Z")
+          document["observed_at"] = observed_at
+          payload = (json.dumps(document, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n").encode()
+          candidate = path.with_name(f".{path.name}.recovery-v2-create")
+          with os.fdopen(os.open(candidate, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), "wb") as stream:
+              stream.write(payload); stream.flush(); os.fsync(stream.fileno())
+          os.link(candidate, path, follow_symlinks=False)
+          descriptor = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+          try: os.fsync(descriptor)
+          finally: os.close(descriptor)
+          candidate.unlink()
+          template = path.with_name(f".{path.name}.fallback-template")
+          with os.fdopen(os.open(template, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), "wb") as stream:
+              stream.write(payload); stream.flush(); os.fsync(stream.fileno())
+          descriptor = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+          try: os.fsync(descriptor)
+          finally: os.close(descriptor)
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8", newline="\n") as stream:
+              stream.write(f"RECOVERY_V2_RECEIPT_PATH={path}\n")
+              stream.write(f"RECOVERY_V2_FALLBACK_SHA256={hashlib.sha256(payload).hexdigest()}\n")
+              stream.write(f"RECOVERY_V2_FALLBACK_TEMPLATE_PATH={template}\n")
+              stream.write(f"RECOVERY_V2_FALLBACK_OBSERVED_AT={observed_at}\n")
+          PY
+      - name: Refuser toute source stale ou relance
+        shell: bash
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = "refs/heads/main"
+          test "$GITHUB_SHA" = "$EXPECTED_MAIN_SHA"
+          test "$GITHUB_RUN_ATTEMPT" = "1"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          ref: ${{ inputs.expected_main_sha }}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12.10"
+      - name: Installer le runtime borne sans cache
+        run: >-
+          python -m pip install
+          --only-binary=:all:
+          --require-hashes
+          -r requirements-chronos-neon-readonly-v4.lock
+      - name: Valider l enveloppe absolue et l autorite Recovery V2 E2
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: >-
+          python scripts/validate_data_torrent_recovery_v2_dispatch_envelope.py
+          --scale-stage E2 --expected-main-sha "$EXPECTED_MAIN_SHA"
+      - name: Revalider main par un GET direct borne sans retry
+        shell: bash
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          CURRENT_MAIN_SHA="$(python scripts/github_release_attestation_v2.py --exact-main-sha)"
+          test "$CURRENT_MAIN_SHA" = "$EXPECTED_MAIN_SHA"
+      - name: Verifier le Golden Pack et dix mille partitions
+        run: >-
+          python -m pytest -q
+          tests/activation/test_chronos_neon_branch_identity_v2.py
+          tests/council/test_data_torrent_recovery_v2_governance.py
+      - name: Exiger le hold global et la CI post-merge exacte
+        id: pre_effect_gate
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: >-
+          python scripts/check_chronos_github_hold_v3.py
+          --recovery-v2
+          --report .chronos/reports/chronos-identity-v2-hold.json
+          --required-successful-ci-sha "$EXPECTED_MAIN_SHA"
+      - name: Revalider main immediatement apres le hold final
+        shell: bash
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          CURRENT_MAIN_SHA="$(python scripts/github_release_attestation_v2.py --exact-main-sha)"
+          test "$CURRENT_MAIN_SHA" = "$EXPECTED_MAIN_SHA"
+      - name: Masquer et verifier les deux secrets requis
+        shell: bash
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          NEON_BOOTSTRAP_DATABASE_URL: ${{ secrets.NEON_BOOTSTRAP_DATABASE_URL }}
+        run: |
+          set -euo pipefail
+          for name in NEON_API_KEY NEON_BOOTSTRAP_DATABASE_URL; do
+            test -n "${!name:-}"
+            value="${!name}"
+            value="${value//'%'/'%25'}"
+            value="${value//$'\r'/'%0D'}"
+            value="${value//$'\n'/'%0A'}"
+            printf '%s\n' "::add-mask::$value"
+          done
+      - name: Observer uniquement l identite Neon V2
+        id: identity_observation
+        continue-on-error: true
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          NEON_BOOTSTRAP_DATABASE_URL: ${{ secrets.NEON_BOOTSTRAP_DATABASE_URL }}
+          NEON_ORG_ID: ${{ vars.NEON_ORG_ID }}
+        run: >-
+          python -m scripts.chronos_neon_branch_identity_v2
+          --supervise
+          --output "$RECOVERY_V2_RECEIPT_PATH"
+      - name: Guard the untouched pre-checkout fallback
+        id: early_fallback_guard
+        if: ${{ always() && steps.identity_observation.outcome != 'success' }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib, os, stat
+          from pathlib import Path
+          path = Path(os.environ["RECOVERY_V2_RECEIPT_PATH"])
+          metadata = path.lstat()
+          assert stat.S_ISREG(metadata.st_mode) and not path.is_symlink()
+          assert hashlib.sha256(path.read_bytes()).hexdigest() == os.environ["RECOVERY_V2_FALLBACK_SHA256"]
+          PY
+      - name: Garantir un artefact assaini V2
+        id: artifact_guard
+        if: ${{ always() && steps.identity_observation.outcome != 'skipped' }}
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: >-
+          python -m scripts.chronos_live_path_artifact_guard_v2
+          --report "$RECOVERY_V2_RECEIPT_PATH"
+          --expected-main-sha "$EXPECTED_MAIN_SHA"
+      - name: Restore conservative fallback after a failed output guard
+        id: guard_failure_fallback
+        if: ${{ always() && steps.artifact_guard.outcome != 'success' && steps.early_fallback_guard.outcome != 'success' }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from scripts.recovery_v2_supervision import restore_fallback_template
+          restore_fallback_template(
+              Path(os.environ["RECOVERY_V2_FALLBACK_TEMPLATE_PATH"]),
+              Path(os.environ["RECOVERY_V2_RECEIPT_PATH"]),
+              expected_sha256=os.environ["RECOVERY_V2_FALLBACK_SHA256"],
+          )
+          PY
+      - name: Publier uniquement l artefact assaini
+        if: ${{ always() && (steps.artifact_guard.outcome == 'success' || steps.early_fallback_guard.outcome == 'success' || steps.guard_failure_fallback.outcome == 'success') }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: neon-branch-identity-go-v2-${{ github.run_id }}
+          path: ${{ runner.temp }}/recovery-v2/neon-branch-identity-go-v2.json
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 14
+      - name: Exiger le GO semantique apres publication
+        if: ${{ always() && steps.artifact_guard.outcome == 'success' }}
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: >-
+          python -m scripts.chronos_live_path_artifact_guard_v2
+          --report "$RECOVERY_V2_RECEIPT_PATH"
+          --expected-main-sha "$EXPECTED_MAIN_SHA"
+          --require-go

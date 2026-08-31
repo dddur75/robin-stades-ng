@@ -1,0 +1,28 @@
+{
+  "mission_id": "data-torrent-recovery-v2",
+  "authorized_stages": ["E1", "E2", "E3A", "E3B", "E4"],
+  "maximum_stage": "E4",
+  "external_effects": [
+    "git_remote_write_non_force_within_successor_pr_budget",
+    "github_pull_request_write_up_to_3",
+    "github_merge_commit_up_to_3",
+    "github_actions_safe_v2_exact_head_and_postmerge_within_ci_budget",
+    "github_api_read_and_artifact_download_bounded",
+    "github_actions_production_workflow_enable_dispatch_disable_once_per_authorized_stage",
+    "github_environment_secret_write_up_to_4",
+    "neon_recovery_identity_get_up_to_25_mutations_0",
+    "r2_identity_seal_put_up_to_1_get_up_to_1_object_up_to_1",
+    "r2_preflight_exact_key_get_up_to_1",
+    "neon_production_preflight_get_up_to_39_post_up_to_1_patch_0_delete_0",
+    "neon_migrate_authority_validation_get_up_to_26_mutations_0",
+    "neon_compute_wake_only_via_authorized_postgresql_stage",
+    "postgresql_stage_bounded_preflight_verify_additive_migration_0015_and_live_ingest",
+    "official_schedule_public_reads_up_to_50",
+    "odds_provider_requests_up_to_5_and_credits_up_to_1000",
+    "r2_live_exact_key_get_up_to_1_immutable_put_up_to_2_objects_up_to_2_list_0_delete_0_overwrite_0"
+  ],
+  "compute_budget": 10000000,
+  "time_budget": 604800,
+  "source_hash": "ff2e45ff7c6490919aa86900669c306e1d25c710f15db27f7c70861f1246bf31",
+  "expires_at": "2026-09-13T23:59:59Z"
+}

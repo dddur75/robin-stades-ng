@@ -15,6 +15,100 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  data-torrent-recovery-v2-scope-guard:
+    name: "Recovery V2 — scope guard exact"
+    if: >-
+      (github.event_name == 'pull_request' &&
+      (github.head_ref == 'codex/data-torrent-recovery-v2' ||
+      github.event.pull_request.title == '[DATA_TORRENT_RECOVERY_V2] PR-A' ||
+      github.event.pull_request.title == '[DATA_TORRENT_RECOVERY_V2] PR-B' ||
+      github.event.pull_request.title == '[DATA_TORRENT_RECOVERY_V2] PR-C')) ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/main' &&
+      (github.event.head_commit.message == '[DATA_TORRENT_RECOVERY_V2] PR-A' ||
+      github.event.head_commit.message == '[DATA_TORRENT_RECOVERY_V2] PR-B' ||
+      github.event.head_commit.message == '[DATA_TORRENT_RECOVERY_V2] PR-C'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      phase: ${{ steps.scope.outputs.phase }}
+      terminal_candidate_complete: ${{ steps.scope.outputs.terminal_candidate_complete }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12.10"
+      - name: Prouver le scope Recovery V2 depuis START_SHA
+        id: scope
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          EXPECTED_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          EXPECTED_FIRST_PARENT: ${{ github.event.before }}
+          RECOVERY_EVENT_LABEL: ${{ github.event.pull_request.title || github.event.head_commit.message }}
+          RECOVERY_HEAD_REF: ${{ github.head_ref }}
+          RECOVERY_BASE_REF: ${{ github.base_ref }}
+          RECOVERY_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+        run: |
+          case "$RECOVERY_EVENT_LABEL" in
+            '[DATA_TORRENT_RECOVERY_V2] PR-A') RECOVERY_PHASE=PR_A ;;
+            '[DATA_TORRENT_RECOVERY_V2] PR-B') RECOVERY_PHASE=PR_B ;;
+            '[DATA_TORRENT_RECOVERY_V2] PR-C') RECOVERY_PHASE=PR_C ;;
+            *) exit 1 ;;
+          esac
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            test "$RECOVERY_HEAD_REF" = "codex/data-torrent-recovery-v2"
+            test "$RECOVERY_BASE_REF" = "main"
+            test "$RECOVERY_HEAD_REPOSITORY" = "dddur75/robin-stades-ng"
+          fi
+          SCOPE_GUARD=scripts/check_data_torrent_recovery_v2_scope.py
+          if [ "$RECOVERY_PHASE" != "PR_A" ]; then
+            SCOPE_GUARD="$RUNNER_TEMP/check_data_torrent_recovery_v2_scope.py"
+            git show "$EXPECTED_BASE:scripts/check_data_torrent_recovery_v2_scope.py" > "$SCOPE_GUARD"
+          fi
+          if [ "$GITHUB_EVENT_NAME" = "push" ]; then
+            python "$SCOPE_GUARD" \
+              --expected-head "$EXPECTED_HEAD" \
+              --expected-base "$EXPECTED_BASE" \
+              --expected-first-parent "$EXPECTED_FIRST_PARENT" \
+              --phase "$RECOVERY_PHASE" \
+              --event-label "$RECOVERY_EVENT_LABEL" \
+              --output .ci/data-torrent-recovery-v2-scope-guard.json
+          else
+            python "$SCOPE_GUARD" \
+              --expected-head "$EXPECTED_HEAD" \
+              --expected-base "$EXPECTED_BASE" \
+              --phase "$RECOVERY_PHASE" \
+              --event-label "$RECOVERY_EVENT_LABEL" \
+              --output .ci/data-torrent-recovery-v2-scope-guard.json
+          fi
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          receipt = json.loads(
+              Path(".ci/data-torrent-recovery-v2-scope-guard.json").read_text(encoding="utf-8")
+          )
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8", newline="\n") as output:
+              output.write(f"phase={receipt['phase']}\n")
+              output.write(
+                  "terminal_candidate_complete="
+                  f"{str(receipt['terminal_candidate_complete']).lower()}\n"
+              )
+          PY
+      - name: Publier la preuve de scope exacte
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: data-torrent-recovery-v2-scope-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .ci/data-torrent-recovery-v2-scope-guard.json
+          if-no-files-found: error
+          include-hidden-files: true
+
   historical-deep-quality:
     name: "Historical Deep — contrat cache-only"
     runs-on: ubuntu-latest
@@ -674,6 +768,7 @@ jobs:
   tests:
     name: tests
     needs:
+      - data-torrent-recovery-v2-scope-guard
       - bounded-live-canary-ubuntu
       - bounded-live-canary-windows
       - frozen-evidence-windows
@@ -682,7 +777,7 @@ jobs:
       - chronos-residual-fault-matrix
       - chronos-exact-workflow-entrypoint
       - historical-authority-workflows-disabled
-    if: ${{ always() }}
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 40
     services:
@@ -710,6 +805,7 @@ jobs:
           RESIDUAL_FAULT_MATRIX_RESULT: ${{ needs.chronos-residual-fault-matrix.result }}
           EXACT_WORKFLOW_ENTRYPOINT_RESULT: ${{ needs.chronos-exact-workflow-entrypoint.result }}
           HISTORICAL_AUTHORITY_BOUNDARY_RESULT: ${{ needs.historical-authority-workflows-disabled.result }}
+          DATA_TORRENT_RECOVERY_V2_SCOPE_RESULT: ${{ needs.data-torrent-recovery-v2-scope-guard.result }}
         run: |
           test "$BOUNDED_LIVE_CANARY_UBUNTU_RESULT" = "success"
           test "$BOUNDED_LIVE_CANARY_WINDOWS_RESULT" = "success"
@@ -719,6 +815,27 @@ jobs:
           test "$RESIDUAL_FAULT_MATRIX_RESULT" = "success"
           test "$EXACT_WORKFLOW_ENTRYPOINT_RESULT" = "success"
           test "$HISTORICAL_AUTHORITY_BOUNDARY_RESULT" = "success"
+          test "$DATA_TORRENT_RECOVERY_V2_SCOPE_RESULT" = "success" || test "$DATA_TORRENT_RECOVERY_V2_SCOPE_RESULT" = "skipped"
+      - name: Exiger le scope guard sur chaque run Recovery V2
+        if: >-
+          (github.event_name == 'pull_request' &&
+          (github.head_ref == 'codex/data-torrent-recovery-v2' ||
+          github.event.pull_request.title == '[DATA_TORRENT_RECOVERY_V2] PR-A' ||
+          github.event.pull_request.title == '[DATA_TORRENT_RECOVERY_V2] PR-B' ||
+          github.event.pull_request.title == '[DATA_TORRENT_RECOVERY_V2] PR-C')) ||
+          (github.event_name == 'push' && github.ref == 'refs/heads/main' &&
+          (github.event.head_commit.message == '[DATA_TORRENT_RECOVERY_V2] PR-A' ||
+          github.event.head_commit.message == '[DATA_TORRENT_RECOVERY_V2] PR-B' ||
+          github.event.head_commit.message == '[DATA_TORRENT_RECOVERY_V2] PR-C'))
+        env:
+          DATA_TORRENT_RECOVERY_V2_SCOPE_RESULT: ${{ needs.data-torrent-recovery-v2-scope-guard.result }}
+          DATA_TORRENT_RECOVERY_V2_PHASE: ${{ needs.data-torrent-recovery-v2-scope-guard.outputs.phase }}
+          DATA_TORRENT_RECOVERY_V2_TERMINAL_CANDIDATE_COMPLETE: ${{ needs.data-torrent-recovery-v2-scope-guard.outputs.terminal_candidate_complete }}
+        run: |
+          test "$DATA_TORRENT_RECOVERY_V2_SCOPE_RESULT" = "success"
+          if [ "$DATA_TORRENT_RECOVERY_V2_PHASE" = "PR_C" ]; then
+            test "$DATA_TORRENT_RECOVERY_V2_TERMINAL_CANDIDATE_COMPLETE" = "true"
+          fi
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
@@ -802,6 +919,10 @@ jobs:
           migrations/versions/0013_historical_evidence_index.py
           migrations/versions/0014_chronos_control_plane_v2.py
           migrations/versions/0015_data_torrent_opportunity.py
+      - name: Valider statiquement Recovery V2
+        run: |
+          python -m mypy --strict --explicit-package-bases scripts/build_data_torrent_live_call_graph_v2.py scripts/check_data_torrent_recovery_v2_scope.py scripts/chronos_live_path_artifact_guard_v2.py scripts/chronos_neon_branch_identity_v2.py scripts/chronos_production_recovery_v2.py scripts/dispatch_data_torrent_recovery_v2_stage.py scripts/github_release_attestation_v2.py scripts/install_chronos_runtime_bindings_v2.py scripts/materialize_data_torrent_recovery_v2_delivery_evidence.py scripts/materialize_data_torrent_recovery_v2_terminal_evidence.py scripts/recovery_v2_supervision.py scripts/run_data_torrent_v2.py scripts/seal_chronos_identity_go_v2.py scripts/validate_data_torrent_recovery_v2_dispatch_envelope.py scripts/verify_data_torrent_recovery_v2_postmerge_gate.py
+          python -m bandit -q -r scripts/build_data_torrent_live_call_graph_v2.py scripts/check_data_torrent_recovery_v2_scope.py scripts/chronos_live_path_artifact_guard_v2.py scripts/chronos_neon_branch_identity_v2.py scripts/chronos_production_recovery_v2.py scripts/dispatch_data_torrent_recovery_v2_stage.py scripts/github_release_attestation_v2.py scripts/install_chronos_runtime_bindings_v2.py scripts/materialize_data_torrent_recovery_v2_delivery_evidence.py scripts/materialize_data_torrent_recovery_v2_terminal_evidence.py scripts/recovery_v2_supervision.py scripts/run_data_torrent_v2.py scripts/seal_chronos_identity_go_v2.py scripts/validate_data_torrent_recovery_v2_dispatch_envelope.py scripts/verify_data_torrent_recovery_v2_postmerge_gate.py
       - name: Verification des secrets
         run: python scripts/check_no_secrets.py
       - name: Cohérence des dépendances
@@ -960,6 +1081,127 @@ jobs:
             artifacts/hypothesis-evidence/run-metrics.json
             artifacts/hypothesis-evidence-site-pages/manifest.json
             .ci/hypothesis-j10/replay.json
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 30
+
+  data-torrent-recovery-v2-final-gate-witness:
+    name: "Recovery V2 — final gate witness"
+    needs:
+      - data-torrent-recovery-v2-scope-guard
+      - historical-deep-quality
+      - bounded-live-canary-ubuntu
+      - bounded-live-canary-windows
+      - frozen-evidence-windows
+      - chronos-postgresql-profiles
+      - chronos-end-to-end-live-path-replay
+      - chronos-residual-fault-matrix
+      - chronos-exact-workflow-entrypoint
+      - historical-authority-workflows-disabled
+      - tests
+      - visual-regression
+    if: >-
+      ${{ always() &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.event.head_commit.message == '[DATA_TORRENT_RECOVERY_V2] PR-C' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: Materialiser le temoin non circulaire
+        env:
+          RECOVERY_NEEDS_JSON: ${{ toJSON(needs) }}
+          RECOVERY_REPOSITORY: ${{ github.repository }}
+          RECOVERY_HEAD_SHA: ${{ github.sha }}
+          RECOVERY_RUN_ID: ${{ github.run_id }}
+          RECOVERY_RUN_ATTEMPT: ${{ github.run_attempt }}
+          RECOVERY_EVENT: ${{ github.event_name }}
+          RECOVERY_REF: ${{ github.ref }}
+          RECOVERY_MERGE_SUBJECT: ${{ github.event.head_commit.message }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          expected = {
+              "data-torrent-recovery-v2-scope-guard",
+              "historical-deep-quality",
+              "bounded-live-canary-ubuntu",
+              "bounded-live-canary-windows",
+              "frozen-evidence-windows",
+              "chronos-postgresql-profiles",
+              "chronos-end-to-end-live-path-replay",
+              "chronos-residual-fault-matrix",
+              "chronos-exact-workflow-entrypoint",
+              "historical-authority-workflows-disabled",
+              "tests",
+              "visual-regression",
+          }
+          needs = json.loads(os.environ["RECOVERY_NEEDS_JSON"])
+          if set(needs) != expected:
+              raise SystemExit("RECOVERY_V2_FINAL_WITNESS_NEEDS_INVALID")
+          if any(not isinstance(value, dict) for value in needs.values()):
+              raise SystemExit("RECOVERY_V2_FINAL_WITNESS_NEEDS_INVALID")
+          results = {name: value.get("result") for name, value in needs.items()}
+          if any(result != "success" for result in results.values()):
+              raise SystemExit("RECOVERY_V2_FINAL_WITNESS_PREREQUISITE_FAILED")
+          scope_outputs = needs["data-torrent-recovery-v2-scope-guard"].get("outputs")
+          if scope_outputs != {
+              "phase": "PR_C",
+              "terminal_candidate_complete": "true",
+          }:
+              raise SystemExit("RECOVERY_V2_FINAL_WITNESS_SCOPE_INVALID")
+          run_id = os.environ["RECOVERY_RUN_ID"]
+          run_attempt = os.environ["RECOVERY_RUN_ATTEMPT"]
+          if not run_id.isdecimal() or run_id.startswith("0") or run_attempt != "1":
+              raise SystemExit("RECOVERY_V2_FINAL_WITNESS_RUN_INVALID")
+          document = {
+              "artifact_uploads_planned": 1,
+              "current_run_completion_claimed": False,
+              "data_torrent_ready_claimed": False,
+              "event": os.environ["RECOVERY_EVENT"],
+              "github_api_gets": 0,
+              "global_quiescence_claimed": False,
+              "head_branch": "main",
+              "head_sha": os.environ["RECOVERY_HEAD_SHA"],
+              "merge_subject": os.environ["RECOVERY_MERGE_SUBJECT"],
+              "phase": "PR_C",
+              "prerequisite_results": dict(sorted(results.items())),
+              "ref": os.environ["RECOVERY_REF"],
+              "repository": os.environ["RECOVERY_REPOSITORY"],
+              "run_attempt": 1,
+              "run_id": int(run_id),
+              "schema_version": "data-torrent-recovery-v2-final-gate-witness-v1",
+              "scope_guard_outputs": scope_outputs,
+              "verdict": "PR_C_POSTMERGE_PREREQUISITES_COMPLETE",
+              "workflow_path": ".github/workflows/ci-safe-v2.yml",
+          }
+          if (
+              document["repository"] != "dddur75/robin-stades-ng"
+              or document["event"] != "push"
+              or document["ref"] != "refs/heads/main"
+              or document["merge_subject"] != "[DATA_TORRENT_RECOVERY_V2] PR-C"
+              or len(document["head_sha"]) != 40
+              or any(character not in "0123456789abcdef" for character in document["head_sha"])
+          ):
+              raise SystemExit("RECOVERY_V2_FINAL_WITNESS_CONTEXT_INVALID")
+          output = Path(os.environ["RUNNER_TEMP"]) / (
+              "data-torrent-recovery-v2-final-gate-witness-v1.json"
+          )
+          output.write_text(
+              json.dumps(document, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+              + "\n",
+              encoding="utf-8",
+              newline="\n",
+          )
+          PY
+      - name: Publier le temoin final
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: data-torrent-recovery-v2-final-gate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/data-torrent-recovery-v2-final-gate-witness-v1.json
           if-no-files-found: error
           include-hidden-files: true
           retention-days: 30

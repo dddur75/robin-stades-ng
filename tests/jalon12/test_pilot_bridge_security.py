@@ -44,7 +44,45 @@ def test_safe_ci_is_equivalent_to_the_sanitized_legacy_copy() -> None:
     legacy = yaml.safe_load(_text(LEGACY_CI))
     safe = yaml.safe_load(_text(SAFE_CI))
     legacy["name"] = safe["name"]
+    scope_job = safe["jobs"].pop("data-torrent-recovery-v2-scope-guard")
+    tests_job = safe["jobs"]["tests"]
+    assert tests_job["if"] == "${{ !cancelled() }}"
+    assert tests_job["needs"][0] == "data-torrent-recovery-v2-scope-guard"
+    tests_job["needs"].remove("data-torrent-recovery-v2-scope-guard")
+    tests_job["if"] = legacy["jobs"]["tests"]["if"]
+    prerequisite_step = tests_job["steps"][0]
+    scope_result = prerequisite_step["env"].pop("DATA_TORRENT_RECOVERY_V2_SCOPE_RESULT")
+    assert scope_result == "${{ needs.data-torrent-recovery-v2-scope-guard.result }}"
+    skipped_gate = (
+        'test "$DATA_TORRENT_RECOVERY_V2_SCOPE_RESULT" = "success" || '
+        'test "$DATA_TORRENT_RECOVERY_V2_SCOPE_RESULT" = "skipped"'
+    )
+    assert prerequisite_step["run"].splitlines()[-1] == skipped_gate
+    prerequisite_step["run"] = "\n".join(prerequisite_step["run"].splitlines()[:-1]) + "\n"
+    recovery_scope_step = next(
+        step
+        for step in tests_job["steps"]
+        if step.get("name") == "Exiger le scope guard sur chaque run Recovery V2"
+    )
+    assert recovery_scope_step["run"] == (
+        'test "$DATA_TORRENT_RECOVERY_V2_SCOPE_RESULT" = "success"\n'
+        'if [ "$DATA_TORRENT_RECOVERY_V2_PHASE" = "PR_C" ]; then\n'
+        '  test "$DATA_TORRENT_RECOVERY_V2_TERMINAL_CANDIDATE_COMPLETE" = "true"\n'
+        "fi\n"
+    )
+    tests_job["steps"].remove(recovery_scope_step)
+    recovery_step = next(
+        step
+        for step in tests_job["steps"]
+        if step.get("name") == "Valider statiquement Recovery V2"
+    )
+    tests_job["steps"].remove(recovery_step)
+    final_witness_job = safe["jobs"].pop(
+        "data-torrent-recovery-v2-final-gate-witness"
+    )
     assert safe == legacy
+    assert scope_job["permissions"] == {"contents": "read"}
+    assert final_witness_job["permissions"] == {}
 
 
 def test_safe_ci_has_no_secret_or_production_environment_surface() -> None:

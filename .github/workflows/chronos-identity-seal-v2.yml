@@ -1,0 +1,256 @@
+name: "Chronos Identity Seal V2"
+
+on:
+  workflow_dispatch:
+    inputs:
+      expected_main_sha:
+        description: "Exact merged main SHA"
+        required: true
+        type: string
+      identity_run_id:
+        description: "Exact successful Recovery Identity V2 run"
+        required: true
+        type: string
+      recovery_v2_effect_deadline_epoch:
+        description: "Controller-bound absolute effect deadline"
+        required: true
+        type: string
+      recovery_v2_dispatch_nonce:
+        description: "Controller-bound one-shot dispatch nonce"
+        required: true
+        type: string
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: chronos-data-torrent-production-global-v1
+  cancel-in-progress: false
+
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: chronos-control-plane-production
+    env:
+      PYTHONPATH: ${{ github.workspace }}/src
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      PROMOTION_LOCKED: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+      POSTGRESQL_PRODUCTION_DESTRUCTIVE_WRITES: "false"
+      THE_ODDS_API_HISTORICAL_CREDITS: "false"
+      API_FOOTBALL_CALLS_ALLOWED: "0"
+      RECOVERY_V2_EFFECT_DEADLINE_EPOCH: ${{ inputs.recovery_v2_effect_deadline_epoch }}
+      RECOVERY_V2_DISPATCH_NONCE: ${{ inputs.recovery_v2_dispatch_nonce }}
+    steps:
+      - name: Precreate the conservative one-shot receipt and deadline
+        shell: bash
+        env:
+          FALLBACK_B64: eyJlZmZlY3RfY291bnRlcl9jZXJ0YWludHkiOiJVTktOT1dOX09SX1VQUEVSX0JPVU5EIiwiZWZmZWN0cyI6eyJhdXRvbWF0aWNfcmV0cmllcyI6MCwicjJfZ2V0cyI6MSwicjJfb2JqZWN0c19jcmVhdGVkIjoxLCJyMl9vYmplY3RzX2NyZWF0ZWRfZXhhY3QiOmZhbHNlLCJyMl9wdXRzIjoxfSwiZmFpbHVyZV9jbGFzcyI6IlRSQU5TUE9SVF9BTUJJR1VPVVMiLCJzY2hlbWFfdmVyc2lvbiI6ImR1cmFibGUtaWRlbnRpdHktc2VhbC1zdXBlcnZpc29yLWZhaWx1cmUtdjIiLCJzZWNyZXRfdmFsdWVzX29ic2VydmVkIjpmYWxzZSwidmVyZGljdCI6IkRVUkFCTEVfSURFTlRJVFlfU0VBTF9GQUlMRURfVjIifQo=
+          RECEIPT_PATH: ${{ runner.temp }}/recovery-v2/durable-identity-seal-v2.json
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import base64, hashlib, os, stat
+          from pathlib import Path
+          path = Path(os.environ["RECEIPT_PATH"])
+          path.parent.mkdir(parents=True, exist_ok=True)
+          assert stat.S_ISDIR(path.parent.lstat().st_mode) and not path.parent.is_symlink()
+          descriptor = os.open(path.parent.parent, os.O_RDONLY | os.O_DIRECTORY)
+          try: os.fsync(descriptor)
+          finally: os.close(descriptor)
+          payload = base64.b64decode(os.environ["FALLBACK_B64"], validate=True)
+          candidate = path.with_name(f".{path.name}.recovery-v2-create")
+          with os.fdopen(os.open(candidate, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), "wb") as stream:
+              stream.write(payload); stream.flush(); os.fsync(stream.fileno())
+          os.link(candidate, path, follow_symlinks=False)
+          descriptor = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+          try: os.fsync(descriptor)
+          finally: os.close(descriptor)
+          candidate.unlink()
+          template = path.with_name(f".{path.name}.fallback-template")
+          with os.fdopen(os.open(template, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), "wb") as stream:
+              stream.write(payload); stream.flush(); os.fsync(stream.fileno())
+          descriptor = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+          try: os.fsync(descriptor)
+          finally: os.close(descriptor)
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8", newline="\n") as stream:
+              stream.write(f"RECOVERY_V2_RECEIPT_PATH={path}\n")
+              stream.write(f"RECOVERY_V2_FALLBACK_SHA256={hashlib.sha256(payload).hexdigest()}\n")
+              stream.write(f"RECOVERY_V2_FALLBACK_TEMPLATE_PATH={template}\n")
+          PY
+      - name: Refuse stale source rerun or malformed predecessor
+        shell: bash
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          IDENTITY_RUN_ID: ${{ inputs.identity_run_id }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = "refs/heads/main"
+          test "$GITHUB_SHA" = "$EXPECTED_MAIN_SHA"
+          test "$GITHUB_RUN_ATTEMPT" = "1"
+          [[ "$IDENTITY_RUN_ID" =~ ^[1-9][0-9]{0,17}$ ]]
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          ref: ${{ inputs.expected_main_sha }}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12.10"
+      - name: Install bounded single-attempt runtime
+        run: >-
+          python -m pip install --only-binary=:all: --require-hashes
+          -r requirements-chronos-canary.lock
+      - name: Validate the absolute dispatch envelope and Recovery V2 E2 authority
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: >-
+          python scripts/validate_data_torrent_recovery_v2_dispatch_envelope.py
+          --scale-stage E2 --expected-main-sha "$EXPECTED_MAIN_SHA"
+      - name: Revalidate main with one bounded direct no-retry GET
+        shell: bash
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          CURRENT_MAIN_SHA="$(python scripts/github_release_attestation_v2.py --exact-main-sha)"
+          test "$CURRENT_MAIN_SHA" = "$EXPECTED_MAIN_SHA"
+      - name: Attest and download exact identity artifact
+        env:
+          IDENTITY_RUN_ID: ${{ inputs.identity_run_id }}
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python scripts/github_release_attestation_v2.py
+          --workflow-path .github/workflows/chronos-neon-branch-identity-v2.yml
+          --run-id "$IDENTITY_RUN_ID" --main-sha "$EXPECTED_MAIN_SHA"
+          --artifact-name "neon-branch-identity-go-v2-$IDENTITY_RUN_ID"
+          --artifact-filename neon-branch-identity-go-v2.json
+          --output .chronos/identity/neon-branch-identity-go-v2.json
+          --report .chronos/identity/github-artifact-attestation-v2.json
+      - name: Require exact semantic identity GO
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: >-
+          python -m scripts.chronos_live_path_artifact_guard_v2
+          --report .chronos/identity/neon-branch-identity-go-v2.json
+          --expected-main-sha "$EXPECTED_MAIN_SHA" --require-go
+      - name: Revalidate global hold before R2 secrets
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+        run: >-
+          python scripts/check_chronos_github_hold_v3.py
+          --recovery-v2
+          --report .chronos/identity/chronos-identity-seal-v2-hold.json
+          --required-successful-ci-sha "$EXPECTED_MAIN_SHA"
+      - name: Revalidate main immediately after the final hold
+        shell: bash
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          CURRENT_MAIN_SHA="$(python scripts/github_release_attestation_v2.py --exact-main-sha)"
+          test "$CURRENT_MAIN_SHA" = "$EXPECTED_MAIN_SHA"
+      - name: Mask exact R2 secrets
+        shell: bash
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: |
+          set -euo pipefail
+          for name in R2_ACCOUNT_ID R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_BUCKET_NAME; do
+            value="${!name:-}"
+            test -n "$value"
+            value="${value//'%'/'%25'}"
+            value="${value//$'\r'/'%0D'}"
+            value="${value//$'\n'/'%0A'}"
+            printf '%s\n' "::add-mask::$value"
+          done
+      - name: Create once and read back exact bytes
+        id: seal_effect
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          IDENTITY_RUN_ID: ${{ inputs.identity_run_id }}
+        run: >-
+          python -m scripts.seal_chronos_identity_go_v2
+          --supervise
+          --identity-report .chronos/identity/neon-branch-identity-go-v2.json
+          --attestation .chronos/identity/github-artifact-attestation-v2.json
+          --expected-main-sha "$EXPECTED_MAIN_SHA"
+          --identity-run-id "$IDENTITY_RUN_ID"
+          --report "$RECOVERY_V2_RECEIPT_PATH"
+      - name: Guard the untouched pre-checkout fallback
+        id: early_fallback_guard
+        if: ${{ always() && steps.seal_effect.outcome != 'success' }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib, os, stat
+          from pathlib import Path
+          path = Path(os.environ["RECOVERY_V2_RECEIPT_PATH"])
+          metadata = path.lstat()
+          assert stat.S_ISREG(metadata.st_mode) and not path.is_symlink()
+          assert hashlib.sha256(path.read_bytes()).hexdigest() == os.environ["RECOVERY_V2_FALLBACK_SHA256"]
+          PY
+      - name: Guard sanitized seal receipt
+        id: seal_guard
+        if: ${{ always() && steps.seal_effect.outcome != 'skipped' }}
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          IDENTITY_RUN_ID: ${{ inputs.identity_run_id }}
+        run: >-
+          python -m scripts.chronos_live_path_artifact_guard_v2
+          --kind seal --report "$RECOVERY_V2_RECEIPT_PATH"
+          --expected-main-sha "$EXPECTED_MAIN_SHA"
+          --expected-identity-run-id "$IDENTITY_RUN_ID"
+      - name: Restore conservative fallback after a failed output guard
+        id: guard_failure_fallback
+        if: ${{ always() && steps.seal_guard.outcome != 'success' && steps.early_fallback_guard.outcome != 'success' }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from scripts.recovery_v2_supervision import restore_fallback_template
+          restore_fallback_template(
+              Path(os.environ["RECOVERY_V2_FALLBACK_TEMPLATE_PATH"]),
+              Path(os.environ["RECOVERY_V2_RECEIPT_PATH"]),
+              expected_sha256=os.environ["RECOVERY_V2_FALLBACK_SHA256"],
+          )
+          PY
+      - name: Publish only sanitized seal receipt
+        if: ${{ always() && (steps.seal_guard.outcome == 'success' || steps.early_fallback_guard.outcome == 'success' || steps.guard_failure_fallback.outcome == 'success') }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: durable-identity-seal-v2-${{ github.run_id }}
+          path: ${{ runner.temp }}/recovery-v2/durable-identity-seal-v2.json
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 14
+      - name: Require semantic durable seal after publication
+        if: ${{ always() && steps.seal_guard.outcome == 'success' }}
+        env:
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          IDENTITY_RUN_ID: ${{ inputs.identity_run_id }}
+        run: >-
+          python -m scripts.chronos_live_path_artifact_guard_v2
+          --kind seal --report "$RECOVERY_V2_RECEIPT_PATH"
+          --expected-main-sha "$EXPECTED_MAIN_SHA"
+          --expected-identity-run-id "$IDENTITY_RUN_ID" --require-go

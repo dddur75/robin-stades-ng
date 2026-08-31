@@ -421,6 +421,7 @@ def test_bootstrap_dispatch_history_has_exact_stage_ordinal(
         main_sha: str,
         *,
         workflow_file: str,
+        **_kwargs: object,
     ) -> tuple[int, int, int]:
         calls.append((repository, run_id, main_sha, workflow_file))
         return 0, 0, dispatches
@@ -445,6 +446,43 @@ def test_bootstrap_dispatch_history_has_exact_stage_ordinal(
         match="CHRONOS_BOOTSTRAP_DISPATCH_ORDINAL_MISMATCH",
     ):
         bootstrap_module._assert_bootstrap_dispatch_ordinal(mode=mode, main_sha=SHA)
+
+
+def test_recovery_bootstrap_rechecks_exact_main_after_authority_window(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("GITHUB_RUN_ID", "9876")
+    events: list[str] = []
+
+    def authority_window(*_args: object, **_kwargs: object) -> int:
+        events.append("AUTHORITY_WINDOW")
+        return 1
+
+    def terminal_main(*_args: object, **_kwargs: object) -> tuple[int, int, int]:
+        events.append("EXACT_MAIN")
+        raise ChronosProductionError("SYNTHETIC_MAIN_DRIFT")
+
+    monkeypatch.setattr(
+        bootstrap_module.readonly_gate,
+        "_github_authority_window_dispatch_count",
+        authority_window,
+    )
+    monkeypatch.setattr(
+        bootstrap_module.readonly_gate,
+        "_github_actions_state",
+        terminal_main,
+    )
+
+    with pytest.raises(
+        ChronosProductionError,
+        match="CHRONOS_BOOTSTRAP_DISPATCH_HISTORY_INVALID",
+    ):
+        bootstrap_module._assert_bootstrap_dispatch_ordinal(
+            mode="PREFLIGHT",
+            main_sha=SHA,
+            recovery_v2_stage="E3A",
+        )
+    assert events == ["AUTHORITY_WINDOW", "EXACT_MAIN"]
 
 
 def test_runtime_bindings_are_validated_against_bootstrap_target_before_migration(
@@ -517,10 +555,10 @@ def test_runtime_bindings_are_validated_against_bootstrap_target_before_migratio
     source = (ROOT / "scripts" / "chronos_production_bootstrap_v3.py").read_text(encoding="utf-8")
     migrate_source = source[source.index("def run_migrate") : source.index("def run_verify")]
     assert migrate_source.index("runtime_accounts = _runtime_accounts") < migrate_source.index(
-        "client = NeonClient(api_key, effects=effect_counts)"
+        "client = NeonClient("
     )
     assert migrate_source.index("assert_exact_preflight_binding") < migrate_source.index(
-        "client = NeonClient(api_key, effects=effect_counts)"
+        "client = NeonClient("
     )
     assert (
         migrate_source.index("recovery = client.branch")
@@ -533,13 +571,13 @@ def test_controlled_go_is_validated_and_copied_through_signed_migrate_and_verify
     source = (ROOT / "scripts" / "chronos_production_bootstrap_v3.py").read_text(encoding="utf-8")
     migrate = source[source.index("def run_migrate") : source.index("def run_verify")]
     verify = source[source.index("def run_verify") : source.index("def _safe_failure")]
-    assert migrate.index("controlled_go = validate_controlled_go_binding") < migrate.index(
+    assert migrate.index("release_binding = validate_controlled_go_binding") < migrate.index(
         "identity, _neon_observation = resolve_neon_identity"
     )
-    assert migrate.count('"controlled_go": controlled_go') == 2
+    assert migrate.count('["controlled_go"] = release_binding') == 2
     assert '"preflight_hash": artifact["preflight_hash"]' in migrate
-    assert verify.index("controlled_go = validate_controlled_go_binding") < verify.index("urls = {")
-    assert verify.count('"controlled_go": controlled_go') == 1
+    assert verify.index("release_binding = validate_controlled_go_binding") < verify.index("urls = {")
+    assert verify.count('["controlled_go"] = release_binding') == 1
     assert '"preflight_hash": preflight_chain_hash' in verify
 
 
@@ -770,7 +808,7 @@ def test_bootstrap_identity_reuses_bounded_get_only_resolver(
     readonly_client = object()
     calls: list[tuple[object, DirectPostgresTarget, bool]] = []
 
-    def client_factory(api_key: str) -> object:
+    def client_factory(api_key: str, **_kwargs: object) -> object:
         assert api_key == "synthetic-neon-key"
         return readonly_client
 

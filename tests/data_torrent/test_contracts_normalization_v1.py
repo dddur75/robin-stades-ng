@@ -938,6 +938,35 @@ def test_raw_envelope_rejects_secret_shaped_request_contract() -> None:
         replace(base, request_contract={"api_key": "forbidden"})
 
 
+def test_raw_envelope_rejects_non_allowlisted_or_malformed_response_headers() -> None:
+    base = _envelope(
+        sequence=1,
+        family="OFFICIAL",
+        sport_key="soccer_epl",
+        source="https://official.example/epl",
+        observed_at=ANCHOR,
+        body=b"payload",
+    )
+    with pytest.raises(ValueError, match="DATA_TORRENT_RESPONSE_HEADER_FORBIDDEN"):
+        replace(base, response_headers={"authorization": "Bearer redacted"})
+    with pytest.raises(ValueError, match="DATA_TORRENT_RESPONSE_HEADER_INVALID"):
+        replace(base, response_headers={"content-type": "application/json\r\nleak"})
+
+
+@pytest.mark.parametrize("control", ("\r", "\n", "\t", "\x00", "\x1f", "\x7f"))
+def test_raw_envelope_rejects_control_characters_in_source(control: str) -> None:
+    base = _envelope(
+        sequence=1,
+        family="OFFICIAL",
+        sport_key="soccer_epl",
+        source="https://official.example/epl",
+        observed_at=ANCHOR,
+        body=b"payload",
+    )
+    with pytest.raises(ValueError, match="DATA_TORRENT_RAW_RESPONSE_INVALID"):
+        replace(base, source=f"https://official.example/epl{control}injected")
+
+
 def test_incomplete_market_is_removed_and_explicitly_accounted() -> None:
     evidences, responses, league_names = _synthetic_batch()
     first_odds = responses[5]
@@ -1334,6 +1363,13 @@ def test_runtime_binds_sanitized_github_ci_receipt_before_claim(tmp_path: Path) 
         "verdict": "WORKFLOW_HOLD_ESTABLISHED",
         "queued_after": 0,
         "in_progress_after": 0,
+        "nonterminal_run_counts": {
+            "requested": 0,
+            "waiting": 0,
+            "pending": 0,
+            "queued": 0,
+            "in_progress": 0,
+        },
         "current_run_excluded": 123,
         "unauthorized_active_workflows": [],
         "provider_calls": 0,
