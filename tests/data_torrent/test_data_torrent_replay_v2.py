@@ -1,23 +1,32 @@
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import re
 from collections.abc import Callable
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pytest
-import yaml
+import sqlalchemy as sa
+import yaml  # type: ignore[import-untyped]
+from sqlalchemy.pool import NullPool
 
 import scripts.run_data_torrent_v2 as live_runner
 from robin.chronos_production import ChronosProductionError
 from robin.data_torrent import reporting, runtime
+from robin.data_torrent.archive import artifact_index, json_artifact
+from robin.data_torrent.contracts import load_torrent_config
 from robin.data_torrent.live_call_graph import (
     LIVE_POSTGRESQL_CONNECTION_ATTEMPTS_NOMINAL_V2,
     LIVE_POSTGRESQL_CONNECTION_ATTEMPTS_UPPER_BOUND_V2,
     validate_live_postgresql_call_graph_v2,
+)
+from scripts.recovery_v2_supervision import (
+    SUPERVISOR_EXPORT_EXIT,
+    SUPERVISOR_TIMEOUT_EXIT,
 )
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -41,7 +50,7 @@ def _load_yaml(path: Path) -> dict[str, Any]:
 
 
 def _trigger(document: dict[str, Any]) -> dict[str, Any]:
-    trigger = document.get("on", document.get(True))
+    trigger = document.get("on", cast(dict[Any, Any], document).get(True))
     assert isinstance(trigger, dict)
     return trigger
 
@@ -255,7 +264,7 @@ def test_live_runner_never_serializes_untrusted_value_error_text(
         lambda output_dir, **_kwargs: output_dir,
     )
     monkeypatch.setattr(
-        live_runner.argparse.ArgumentParser,
+        argparse.ArgumentParser,
         "parse_args",
         lambda _self: type(
             "Args",
@@ -298,7 +307,7 @@ def test_live_runner_preserves_valid_nonzero_effects_from_any_counted_exception(
         lambda output_dir, **_kwargs: output_dir,
     )
     monkeypatch.setattr(
-        live_runner.argparse.ArgumentParser,
+        argparse.ArgumentParser,
         "parse_args",
         lambda _self: type(
             "Args",
@@ -345,7 +354,7 @@ def test_live_runner_rejects_malformed_exception_effect_receipt_without_leak(
         lambda output_dir, **_kwargs: output_dir,
     )
     monkeypatch.setattr(
-        live_runner.argparse.ArgumentParser,
+        argparse.ArgumentParser,
         "parse_args",
         lambda _self: type(
             "Args",
@@ -382,7 +391,7 @@ def test_live_runner_rejects_malformed_loser_effect_receipt_without_leak(
         lambda output_dir, **_kwargs: output_dir,
     )
     monkeypatch.setattr(
-        live_runner.argparse.ArgumentParser,
+        argparse.ArgumentParser,
         "parse_args",
         lambda _self: type(
             "Args",
@@ -409,7 +418,7 @@ def test_live_supervisor_timeout_leaves_one_valid_maximum_failure_export(
     monkeypatch.setattr(
         live_runner,
         "run_child_once",
-        lambda *_args, **_kwargs: live_runner.SUPERVISOR_TIMEOUT_EXIT,
+        lambda *_args, **_kwargs: SUPERVISOR_TIMEOUT_EXIT,
     )
     output_dir = tmp_path / "artifacts"
     failure = tmp_path / "reports" / "torrent-run-failure-v2.json"
@@ -420,7 +429,7 @@ def test_live_supervisor_timeout_leaves_one_valid_maximum_failure_export(
             output_dir=output_dir,
             failure_report=failure,
         )
-        == live_runner.SUPERVISOR_TIMEOUT_EXIT
+        == SUPERVISOR_TIMEOUT_EXIT
     )
     document = live_runner._load_guarded_failure(failure)
     assert document["effects"] == live_runner._supervisor_effects()
@@ -452,7 +461,7 @@ def test_live_supervisor_uses_absent_candidate_leaf_and_rejects_trivial_nineteen
         config=tmp_path / "config.json",
         output_dir=output_dir,
         failure_report=failure,
-    ) == live_runner.SUPERVISOR_EXPORT_EXIT
+    ) == SUPERVISOR_EXPORT_EXIT
     assert not output_dir.exists()
     assert live_runner._load_guarded_failure(failure)["status"] == "FAILED"
 
@@ -571,7 +580,7 @@ def test_v2_database_engine_uses_null_pool_without_hidden_pre_ping(monkeypatch: 
         return object()
 
     monkeypatch.setattr(runtime, "database_url_object", lambda _value: "validated-url")
-    monkeypatch.setattr(runtime.sa, "create_engine", fake_create_engine)
+    monkeypatch.setattr(sa, "create_engine", fake_create_engine)
     token = runtime._RUNTIME_CONTRACT.set(runtime._V2_RUNTIME_CONTRACT)
     try:
         runtime._build_live_database_engine("not-observed")
@@ -583,12 +592,12 @@ def test_v2_database_engine_uses_null_pool_without_hidden_pre_ping(monkeypatch: 
         "future": True,
         "hide_parameters": True,
         "connect_args": {"connect_timeout": 10},
-        "poolclass": runtime.NullPool,
+        "poolclass": NullPool,
     }
 
 
 def test_v2_inventory_closes_every_qa_evidence_pointer() -> None:
-    config = runtime.load_torrent_config(ROOT / "configs" / "data" / "torrent-live-v2.json")
+    config = load_torrent_config(ROOT / "configs" / "data" / "torrent-live-v2.json")
     token = runtime._RUNTIME_CONTRACT.set(runtime._V2_RUNTIME_CONTRACT)
     try:
         inventory_limits = runtime._r2_inventory_limits(config)
@@ -659,16 +668,16 @@ def test_v2_inventory_closes_every_qa_evidence_pointer() -> None:
     manifest["evidence_validity"] = {"binding": binding}
     artifacts = {
         name: (
-            runtime.json_artifact(qa)
+            json_artifact(qa)
             if name == "torrent-qa-acceptance-matrix-v1.json"
-            else runtime.json_artifact(documents[name])
+            else json_artifact(documents[name])
             if name.endswith(".json") and name != "torrent-real-batch-manifest-v1.json"
             else b"synthetic-evidence\n"
         )
         for name in runtime.FINAL_ARTIFACT_NAMES
         if name != "torrent-real-batch-manifest-v1.json"
     }
-    manifest["artifacts"] = runtime.artifact_index(artifacts)
-    artifacts["torrent-real-batch-manifest-v1.json"] = runtime.json_artifact(manifest)
+    manifest["artifacts"] = artifact_index(artifacts)
+    artifacts["torrent-real-batch-manifest-v1.json"] = json_artifact(manifest)
 
     runtime._assert_final_artifact_closure(artifacts=artifacts, normalized_binding=binding)

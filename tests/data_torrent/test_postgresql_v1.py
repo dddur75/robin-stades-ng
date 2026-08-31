@@ -1338,16 +1338,15 @@ def test_recovery_v2_batch_contract_accepts_exact_created_binding_and_rejects_mu
         mutants.append((member_drift, "CHRONOS_TORRENT_ARTIFACT_CONTRACT_INVALID"))
 
         for mutant, expected_error in mutants:
-            with pytest.raises(sa.exc.DBAPIError) as rejected:
+            with pytest.raises(ChronosControlPlaneError, match=f"^{expected_error}$"):
                 record_call(**mutant)
-            assert cast(Any, rejected.value.orig).diag.message_primary == expected_error
         conflict = copy.deepcopy(arguments)
         conflict["quality_report"]["variant"] = "post-insert-conflict"
-        with pytest.raises(sa.exc.DBAPIError) as rejected:
+        with pytest.raises(
+            ChronosControlPlaneError,
+            match="^CHRONOS_TORRENT_BATCH_CONFLICT$",
+        ):
             record_call(**conflict)
-        assert cast(Any, rejected.value.orig).diag.message_primary == (
-            "CHRONOS_TORRENT_BATCH_CONFLICT"
-        )
     finally:
         authority_engine.dispose()
         runtime_engine.dispose()

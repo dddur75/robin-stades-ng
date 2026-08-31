@@ -475,7 +475,10 @@ def _windows_open_relative(
     if status != 0:
         ctypes.set_last_error(int(_RTL_NT_STATUS_TO_DOS_ERROR(status)))
         raise _windows_error(Path(name))
-    return int(handle.value)
+    handle_value = handle.value
+    if handle_value is None:
+        raise RecoveryV2FilesystemError("RECOVERY_V2_FILESYSTEM_HANDLE_INVALID")
+    return handle_value
 
 
 def _windows_create_directory(*, parent_handle: int, name: str) -> int:
@@ -1686,7 +1689,7 @@ def publish_directory_noreplace(
                         "RECOVERY_V2_FILESYSTEM_DIRECTORY_INVALID"
                     )
                 names = sorted(os.listdir(source_descriptor))
-                snapshots: dict[
+                posix_snapshots: dict[
                     str,
                     tuple[int, int, int, int, int, bytes],
                 ] = {}
@@ -1744,7 +1747,7 @@ def publish_directory_noreplace(
                             "RECOVERY_V2_FILESYSTEM_SIZE_INVALID"
                         )
                     os.fsync(file_descriptor)
-                    snapshots[name] = (
+                    posix_snapshots[name] = (
                         metadata.st_dev,
                         metadata.st_ino,
                         metadata.st_size,
@@ -1759,7 +1762,7 @@ def publish_directory_noreplace(
                     or any(
                         type(expected_files[name]) is not str
                         or len(expected_files[name]) != 64
-                        or hashlib.sha256(snapshots[name][-1]).hexdigest()
+                        or hashlib.sha256(posix_snapshots[name][-1]).hexdigest()
                         != expected_files[name]
                         for name in names
                     )
@@ -1817,7 +1820,7 @@ def publish_directory_noreplace(
                                 after.st_mtime_ns,
                                 after.st_ctime_ns,
                             )
-                            or snapshot != snapshots[name]
+                            or snapshot != posix_snapshots[name]
                         ):
                             raise RecoveryV2FilesystemError(
                                 "RECOVERY_V2_FILESYSTEM_DIRECTORY_CHANGED"

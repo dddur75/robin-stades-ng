@@ -48,9 +48,11 @@ def _repository(root: Path) -> str:
 @pytest.mark.parametrize(
     ("claim", "pr_b_number", "expected"),
     (
-        (delivery._POST_202_B101_CORRECTION_RELEASE_CLAIM, None, True),
+        (delivery._CYCLE_2_CORRECTION_RELEASE_CLAIM, None, True),
         (delivery._PR_B_RELEASE_CLAIM, 81, True),
         (delivery._EXACT_HEAD_CORRECTION_RELEASE_CLAIM, None, False),
+        (delivery._POST_202_B101_CORRECTION_RELEASE_CLAIM, None, False),
+        (delivery._CYCLE_2_CORRECTION_RELEASE_CLAIM, 81, False),
         (delivery._POST_202_B101_CORRECTION_RELEASE_CLAIM, 81, False),
         (delivery._EXACT_HEAD_CORRECTION_RELEASE_CLAIM, 81, False),
         (delivery._PR_B_RELEASE_CLAIM, None, False),

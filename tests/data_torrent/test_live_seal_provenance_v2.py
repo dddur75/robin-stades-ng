@@ -7,12 +7,16 @@ import json
 from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pytest
 
 import robin.data_torrent.runtime as runtime
-from robin.data_torrent.contracts import TorrentBudgets, load_torrent_config
+from robin.data_torrent.contracts import (
+    TorrentBudgets,
+    canonical_json_bytes,
+    load_torrent_config,
+)
 from robin.data_torrent.durability import CountingR2Store
 from robin.data_torrent.live_call_graph import (
     LIVE_POSTGRESQL_CONNECTION_ATTEMPTS_NOMINAL_V2,
@@ -26,6 +30,7 @@ from robin.prospective_observatory.chronos_control_plane import (
     ConditionalPutResult,
     ObservedObject,
 )
+from robin.prospective_observatory.chronos_r2 import ChronosR2ConditionalStore
 
 MAIN_SHA = "a" * 40
 IDENTITY_RUN_ID = "123"
@@ -113,8 +118,8 @@ def _fixture(
 
 
 def _counting(store: _Store) -> CountingR2Store:
-    return CountingR2Store(  # type: ignore[arg-type]
-        store,
+    return CountingR2Store(
+        cast(ChronosR2ConditionalStore, store),
         _budgets(),
         authority_validator=lambda: None,
     )
@@ -242,10 +247,10 @@ def test_v2_r2_totals_and_postgresql_bound_are_exactly_materialized() -> None:
         runtime._RUNTIME_CONTRACT.reset(token)
     effects = runtime.LiveRuntimeEffects(
         postgresql_connection_attempts_maximum=(
-            runtime.LIVE_POSTGRESQL_CONNECTION_ATTEMPTS_UPPER_BOUND_V2
+            LIVE_POSTGRESQL_CONNECTION_ATTEMPTS_UPPER_BOUND_V2
         )
     )
-    for _ in range(runtime.LIVE_POSTGRESQL_CONNECTION_ATTEMPTS_UPPER_BOUND_V2):
+    for _ in range(LIVE_POSTGRESQL_CONNECTION_ATTEMPTS_UPPER_BOUND_V2):
         effects.begin_function_call(mutating=False)
     with pytest.raises(runtime.DataTorrentRuntimeError, match="CONNECTION_BUDGET_EXCEEDED"):
         effects.begin_read_transaction()
@@ -265,8 +270,8 @@ def test_live_failure_effect_receipt_counts_returned_ambiguous_r2_put() -> None:
             on_dispatch()
             return ConditionalPutResult(ConditionalPutOutcome.AMBIGUOUS)
 
-    store = CountingR2Store(  # type: ignore[arg-type]
-        AmbiguousStore(),
+    store = CountingR2Store(
+        cast(ChronosR2ConditionalStore, AmbiguousStore()),
         _budgets(),
         authority_validator=lambda: None,
     )
@@ -400,7 +405,7 @@ def test_v2_replay_rejects_reject_reason_drift_with_unchanged_records(
     drifted = replace(
         batch,
         rejects=(reject,),
-        rejects_bytes=runtime.canonical_json_bytes(reject) + b"\n",
+        rejects_bytes=canonical_json_bytes(reject) + b"\n",
     )
     calls = 0
 

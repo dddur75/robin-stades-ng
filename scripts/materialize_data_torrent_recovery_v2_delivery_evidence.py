@@ -103,6 +103,10 @@ _POST_202_B101_CORRECTION_RELEASE_CLAIM = (
     "GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.POSIX_ROLLBACK."
     "FAIL_CLOSED.CORRECTION.RELEASE.001"
 )
+_CYCLE_2_CORRECTION_RELEASE_CLAIM = (
+    "GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION."
+    "EXACT_HEAD_SAFE_V2.CYCLE_2.CORRECTION.RELEASE.001"
+)
 _PR_B_RELEASE_CLAIM = "GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.RELEASE.003"
 
 
@@ -118,7 +122,7 @@ def _release_claim_matches_engineering_chain(
     """Admit only the exact active release matching the observed PR topology."""
 
     return (
-        active_release_claim == _POST_202_B101_CORRECTION_RELEASE_CLAIM
+        active_release_claim == _CYCLE_2_CORRECTION_RELEASE_CLAIM
         and pr_b_number is None
     ) or (
         active_release_claim == _PR_B_RELEASE_CLAIM

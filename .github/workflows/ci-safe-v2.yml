@@ -195,6 +195,7 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
+          fetch-depth: 0
           persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
@@ -905,7 +906,7 @@ jobs:
           scripts migrations
       - name: Typage strict
         run: |
-          python -m mypy src/robin scripts/run_prospective_observatory.py
+          python -m mypy --explicit-package-bases src/robin scripts/run_prospective_observatory.py
           python -m mypy --explicit-package-bases scripts/run_five_league_expansion.py
           python -m mypy --explicit-package-bases scripts/run_prequential_learning_factory.py
           python -m mypy --explicit-package-bases scripts/build_hypothesis_intelligence.py

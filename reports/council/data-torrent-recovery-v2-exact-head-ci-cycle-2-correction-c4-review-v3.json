@@ -1,0 +1,49 @@
+{
+  "agent_id": "C4",
+  "mission_id": "DATA_TORRENT_RECOVERY_V2",
+  "facts_verified": [
+    {
+      "claim": "The Ubuntu bounded-live-canary checkout now fetches complete history so START_SHA is available to its provenance assertion.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:cc864289effab1a10062da28c1b72ed229c60c9e2721b98f6c28935b8bd0de79",
+        ".github/workflows/ci-safe-v2.yml:bounded-live-canary-ubuntu",
+        "tests/data_torrent/test_ci_lock_contract_v1.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The PostgreSQL batch-contract regression now asserts the sanitized fail-closed ChronosControlPlaneError; production exception wrapping is unchanged.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:cc864289effab1a10062da28c1b72ed229c60c9e2721b98f6c28935b8bd0de79",
+        "src/robin/prospective_observatory/chronos_postgres.py:SQLAlchemyPostgresFunctionClient.fetch_one",
+        "tests/data_torrent/test_postgresql_v1.py:test_recovery_v2_batch_contract_accepts_exact_created_binding_and_rejects_mutants"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The exact Mypy 2.3 CI commands now accept 216 global sources, 29 PostgreSQL-profile sources and fifteen strict Recovery scripts after type-only corrections.",
+      "evidence_refs": [
+        "REVIEWED_SNAPSHOT_SHA256:cc864289effab1a10062da28c1b72ed229c60c9e2721b98f6c28935b8bd0de79",
+        "src/robin/chronos_production.py",
+        "src/robin/recovery_v2_filesystem.py",
+        ".github/workflows/ci-safe-v2.yml:Typage strict",
+        "tests/data_torrent/test_data_torrent_replay_v2.py",
+        "tests/data_torrent/test_live_seal_provenance_v2.py",
+        "MYPY_GLOBAL_SOURCES:216;MYPY_POSTGRESQL_PROFILE_SOURCES:29;MYPY_RECOVERY_V2_STRICT_SCRIPTS:15"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [],
+  "assumptions": [],
+  "main_objection": "P0=0; P1=0; P2=0; OPEN_THREADS=0; VERDICT=PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "risks": [],
+  "minimum_decisive_test": "Run the Ubuntu provenance regression, both PostgreSQL profiles, the global Mypy 2.3 gate and the strict Recovery gate in cycle 3.",
+  "recommended_action": "PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "scale_condition": "EXACT_HEAD_SAFE_V2_GREEN_NORMAL_MERGE_POSTMERGE_SAFE_V2_GREEN",
+  "estimated_compute": "BOUNDED_TARGETED_QA_ONLY",
+  "estimated_external_cost": "ZERO_ADDITIONAL_PRODUCTION_EFFECTS",
+  "estimated_human_time": "BOUNDED_INDEPENDENT_REVIEW",
+  "maintenance_impact": "TWO_MINIMAL_FUNCTIONAL_CORRECTIONS_AND_TYPE_ONLY_QA_CLOSURE",
+  "confidence": 1.0
+}

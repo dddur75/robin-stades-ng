@@ -174,6 +174,21 @@ DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_RUNTIME_SHA256 = (
 DATA_TORRENT_RECOVERY_V2_LEDGER_PREFIX_THROUGH_202_SHA256 = (
     "7709dce886d01c83570190863bc36b589d572af25574b75d6eae339872a86408"
 )
+DATA_TORRENT_RECOVERY_V2_POST_202_B101_FAILURE_HASH = (
+    "ef8d75dd0303da10953dbb45e021b8ecba94fc60628433441afabd0f8dccf86f"
+)
+DATA_TORRENT_RECOVERY_V2_POST_202_B101_RELEASE_HASH = (
+    "7a4c866dcd7666320e20640d47313d1d75c0e6fb58fe3bb2c67ee5775b861873"
+)
+DATA_TORRENT_RECOVERY_V2_POST_202_B101_REVIEWED_SNAPSHOT_SHA256 = (
+    "15536e727660a602eeb3d70a0efa6ddfdb77ab92b4a8155937cc9b36243988ca"
+)
+DATA_TORRENT_RECOVERY_V2_POST_202_B101_RUNTIME_SHA256 = (
+    "e45665fadd90259254ee5add998aff0bb332cd6828e26de74a19ef38784b0bd3"
+)
+DATA_TORRENT_RECOVERY_V2_LEDGER_PREFIX_THROUGH_204_SHA256 = (
+    "f98bea40d1088140f69dbe1e57bb6b69582c506020ce889cb38054c7e94d9322"
+)
 DATA_TORRENT_RECOVERY_V2_GRAPH_CLAIMS_PREFIX_SHA256 = (
     "fda614b79d6fc7f31d3b7b2bd0db476ece9a2eb28d21f98bb5d9f4c1bdc78294"
 )
@@ -193,6 +208,10 @@ DATA_TORRENT_RECOVERY_V2_PR_A_CYCLE_1_HEAD = (
     "a0a043f3222e467e6d904c90878be5718cac8ace"
 )
 DATA_TORRENT_RECOVERY_V2_PR_A_CYCLE_1_RUN_ID = 33420499802
+DATA_TORRENT_RECOVERY_V2_PR_A_CYCLE_2_HEAD = (
+    "21d6a928c5998cca86cebbb0dc078aba4cd20cb5"
+)
+DATA_TORRENT_RECOVERY_V2_PR_A_CYCLE_2_RUN_ID = 33433893502
 DATA_TORRENT_RECOVERY_V2_LOCAL_CORRECTION_REVIEWED_SNAPSHOT_SHA256 = (
     "a1b409e7c2cb2c558df38e559eb4e0c8431ececc9b290de53025813925651421"
 )
@@ -258,6 +277,15 @@ DATA_TORRENT_RECOVERY_V2_POST_202_B101_REVIEW_PATHS = {
 }
 DATA_TORRENT_RECOVERY_V2_POST_202_B101_FINAL_REVIEW_PATH = (
     "reports/council/data-torrent-recovery-v2-post-202-b101-correction-final-review-v3.json"
+)
+DATA_TORRENT_RECOVERY_V2_CYCLE_2_CORRECTION_REVIEW_PATHS = {
+    "A2": "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-2-correction-a2-review-v3.json",
+    "C2": "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-2-correction-c2-review-v3.json",
+    "C4": "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-2-correction-c4-review-v3.json",
+    "DP6": "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-2-correction-dp6-review-v3.json",
+}
+DATA_TORRENT_RECOVERY_V2_CYCLE_2_CORRECTION_FINAL_REVIEW_PATH = (
+    "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-2-correction-final-review-v3.json"
 )
 DATA_TORRENT_RECOVERY_V2_PR_B_REVIEW_PATHS = {
     "A2": "reports/council/data-torrent-recovery-v2-pr-b-a2-review-v3.json",
@@ -508,6 +536,13 @@ _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM = (
     "GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.POSIX_ROLLBACK."
     "FAIL_CLOSED.CORRECTION.RELEASE.001"
 )
+_RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_FAILURE_CLAIM = (
+    "GOV.DATA_TORRENT_RECOVERY.V2.E1.EXACT_HEAD_SAFE_V2.CYCLE_2.FAILURE.001"
+)
+_RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_CORRECTION_RELEASE_CLAIM = (
+    "GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION."
+    "EXACT_HEAD_SAFE_V2.CYCLE_2.CORRECTION.RELEASE.001"
+)
 _RECOVERY_V2_PR_B_RELEASE_CLAIM = (
     "GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.RELEASE.003"
 )
@@ -721,6 +756,11 @@ DATA_TORRENT_RECOVERY_V2_RELEASE_PATHS = (
     "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-1-c4-review-v3.json",
     "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-1-dp6-review-v3.json",
     "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-1-final-review-v3.json",
+    "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-2-correction-a2-review-v3.json",
+    "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-2-correction-c2-review-v3.json",
+    "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-2-correction-c4-review-v3.json",
+    "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-2-correction-dp6-review-v3.json",
+    "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-2-correction-final-review-v3.json",
     "reports/council/data-torrent-recovery-v2-final-review-v3.json",
     "reports/council/data-torrent-recovery-v2-post-196-correction-a2-review-v3.json",
     "reports/council/data-torrent-recovery-v2-post-196-correction-c2-review-v3.json",
@@ -1562,7 +1602,7 @@ def _recovery_v2_terminal_stage_effects(value: object) -> dict[str, int]:
     if (
         not isinstance(value, dict)
         or set(value) != _RECOVERY_V2_STAGE_EFFECT_FIELDS
-        or any(type(item) is not int or cast(int, item) < 0 for item in value.values())
+        or any(type(item) is not int or item < 0 for item in value.values())
     ):
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
     return cast(dict[str, int], value)
@@ -1782,7 +1822,7 @@ def _recovery_v2_terminal_live_bundle(
         or attestation.get("conclusion") != "success"
         or not isinstance(attestation.get("run_completed_observed_at"), str)
         or type(artifact_id) is not int
-        or cast(int, artifact_id) <= 0
+        or artifact_id <= 0
         or attestation.get("artifact_name") != f"data-torrent-live-v2-{run_id}"
         or not isinstance(attestation.get("archive_sha256"), str)
         or _HEX_64.fullmatch(cast(str, attestation["archive_sha256"])) is None
@@ -2471,7 +2511,9 @@ def _recovery_v2_terminal_live_semantics(
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID") from None
 
     canonical_sha = manifest.get("canonical_dataset_sha256")
-    returned_markets = sorted({row.get("market") for row in coverage_rows})
+    returned_markets = sorted(
+        {cast(str, row.get("market")) for row in coverage_rows}
+    )
     league_keys = [row.get("sport_key") for row in leagues]
     expected_coverage_cells = {
         (sport_key, market) for sport_key in league_keys for market in markets
@@ -2833,18 +2875,18 @@ def _recovery_v2_terminal_live_semantics(
             raise ValueError
         member_index: dict[str, dict[str, Any]] = {}
         for member in normalized_members:
-            name = member.get("name")
+            member_name = member.get("name")
             if (
                 set(member) != {"name", "bytes", "sha256"}
-                or not isinstance(name, str)
-                or name in member_index
+                or not isinstance(member_name, str)
+                or member_name in member_index
                 or type(member.get("bytes")) is not int
                 or cast(int, member["bytes"]) < 0
                 or not isinstance(member.get("sha256"), str)
                 or _HEX_64.fullmatch(cast(str, member["sha256"])) is None
             ):
                 raise ValueError
-            member_index[name] = member
+            member_index[member_name] = member
         if (
             set(member_index) != expected_member_names
             or [cast(str, row["name"]) for row in normalized_members]
@@ -3058,9 +3100,9 @@ def _recovery_v2_terminal_live_semantics(
             or manifest_horizon.get("fallback_threshold")
             != config.fallback_if_fixtures_below
             or type(primary_count) is not int
-            or cast(int, primary_count) < 0
+            or primary_count < 0
             or type(fallback) is not bool
-            or fallback != (cast(int, primary_count) < config.fallback_if_fixtures_below)
+            or fallback != (primary_count < config.fallback_if_fixtures_below)
             or selected_days
             != (config.fallback_horizon_days if fallback else config.primary_horizon_days)
             or type(selected_fixtures) is not int
@@ -3138,7 +3180,7 @@ def _recovery_v2_terminal_live_semantics(
         or type(counts.get("raw_bytes")) is not int
         or cast(int, counts["raw_bytes"]) <= 0
         or type(rejected_records) is not int
-        or cast(int, rejected_records) < 0
+        or rejected_records < 0
     ):
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
     replay_wall = (
@@ -3486,13 +3528,13 @@ def _recovery_v2_terminal_live_semantics(
             for field in ("raw_responses", "raw_bytes", "normalized_records")
         )
         or type(rejected_records) is not int
-        or cast(int, rejected_records) < 0
+        or rejected_records < 0
         or counts.get("normalized_records") != normalized_totals.get("normalized_records")
         or counts.get("rejected_records") != rejected_records
         or counts.get("logical_duplicates") != normalized_totals.get("logical_duplicates")
         or any(counts.get(field) != 0 for field in ("silent_drops", "logical_duplicates", "temporal_leakage"))
         or not isinstance(canonical_sha, str)
-        or _HEX_64.fullmatch(cast(str, canonical_sha)) is None
+        or _HEX_64.fullmatch(canonical_sha) is None
         or normalized.get("canonical_dataset_sha256") != canonical_sha
         or set(canonical)
         != {
@@ -3647,7 +3689,7 @@ def _recovery_v2_terminal_live_semantics(
         < cast(int, replay_measurement["baseline_rss_bytes"])
         or type(replay_measurement.get("incremental_peak_memory_bytes")) is not int
         or cast(int, replay_measurement["incremental_peak_memory_bytes"]) < 0
-        or replay_measurement.get("rejects") != cast(int, rejected_records) * 100
+        or replay_measurement.get("rejects") != rejected_records * 100
         or set(replay_external) != expected_replay_external_fields
         or any(type(value) is not int or value != 0 for value in replay_external.values())
         or replay_acceptance != expected_replay_acceptance
@@ -3984,7 +4026,7 @@ def _recovery_v2_terminal_live_semantics(
         or live_runtime.get("schema_version") != "robin-data-torrent-live-runtime-effects-v1"
         or live_runtime.get("accounting_status") != "COMPLETE_CONSERVATIVE"
         or type(connection_attempts) is not int
-        or not 51 <= cast(int, connection_attempts) <= 53
+        or not 51 <= connection_attempts <= 53
         or postgresql.get("read_transactions_attempted") != 6
         or not 4 <= cast(int, postgresql.get("function_reads_attempted", -1)) <= 6
         or type(mutating_attempts) is not int
@@ -3992,7 +4034,7 @@ def _recovery_v2_terminal_live_semantics(
         or connection_attempts
         != cast(int, postgresql["read_transactions_attempted"])
         + cast(int, postgresql["function_reads_attempted"])
-        + cast(int, mutating_attempts)
+        + mutating_attempts
         or postgresql_before.get("read_transactions_attempted") != 4
         or not 4
         <= cast(int, postgresql_before.get("function_reads_attempted", -1))
@@ -4067,7 +4109,7 @@ def _recovery_v2_terminal_live_semantics(
         code_revision = manifest_identity.get("code_revision")
         if (
             type(winner_run_id) is not int
-            or cast(int, winner_run_id) <= 0
+            or winner_run_id <= 0
             or type(winner_run_attempt) is not int
             or winner_run_attempt != 1
             or not isinstance(winner_authority_id, str)
@@ -4131,14 +4173,14 @@ def _recovery_v2_terminal_live_semantics(
             }:
                 raise ValueError
             family = source_event.get("family")
-            sport_key = source_event.get("sport_key")
+            source_sport_key = source_event.get("sport_key")
             request_contract = source_event.get("request_contract")
             permit = source_event.get("permit")
             dispatched = source_event.get("dispatched")
             terminal = source_event.get("terminal")
             if (
                 family not in family_sequences
-                or not isinstance(sport_key, str)
+                or not isinstance(source_sport_key, str)
                 or not isinstance(request_contract, dict)
                 or not isinstance(permit, dict)
                 or not isinstance(dispatched, dict)
@@ -4166,9 +4208,9 @@ def _recovery_v2_terminal_live_semantics(
                 or _HEX_64.fullmatch(operation_id) is None
                 or operation_id in operation_ids
                 or type(effect_sequence) is not int
-                or not 1 <= cast(int, effect_sequence) <= 5
-                or sport_key != expected_sports[cast(int, effect_sequence) - 1]
-                or request_contract.get("sport_key") != sport_key
+                or not 1 <= effect_sequence <= 5
+                or source_sport_key != expected_sports[effect_sequence - 1]
+                or request_contract.get("sport_key") != source_sport_key
                 or permit.get("effect_family") != family
                 or permit.get("request_hash")
                 != hashlib.sha256(canonical_json_bytes(request_contract)).hexdigest()
@@ -4179,7 +4221,7 @@ def _recovery_v2_terminal_live_semantics(
                 raise ValueError
             if request_contract != _recovery_v2_terminal_expected_source_request_contract(
                 family=cast(str, family),
-                sport_key=sport_key,
+                sport_key=source_sport_key,
                 config=config,
                 capture_started=capture_started,
             ):
@@ -4191,7 +4233,7 @@ def _recovery_v2_terminal_live_semantics(
                 permit.get("postgres_server_epoch"), field="live_effect_server_epoch"
             )
             expected_maxima = (
-                (12 if sport_key == "soccer_spain_la_liga" else 6, 0, 0)
+                (12 if source_sport_key == "soccer_spain_la_liga" else 6, 0, 0)
                 if family == "OFFICIAL"
                 else (0, 1, 200)
             )
@@ -4239,7 +4281,7 @@ def _recovery_v2_terminal_live_semantics(
             permit_times.append(permit_time)
             operation_ids.add(operation_id)
             source_by_operation[operation_id] = source_event
-            family_sequences[cast(str, family)].append((cast(int, effect_sequence), sport_key))
+            family_sequences[cast(str, family)].append((effect_sequence, source_sport_key))
             expected_event_fields = {
                 "operation_id",
                 "event_seq",
@@ -4415,7 +4457,7 @@ def _recovery_v2_terminal_live_semantics(
             operation_id = (
                 accounting.get("effect_id") if isinstance(accounting, dict) else None
             )
-            source_event = source_by_operation.get(cast(str, operation_id))
+            matched_source_event = source_by_operation.get(cast(str, operation_id))
             if (
                 set(response) != response_fields
                 or not isinstance(accounting, dict)
@@ -4455,15 +4497,15 @@ def _recovery_v2_terminal_live_semantics(
                     response.get("rejection_reason") is not None
                     and not isinstance(response.get("rejection_reason"), str)
                 )
-                or source_event is None
+                or matched_source_event is None
                 or accounting.get("permit_hash")
-                != cast(dict[str, Any], source_event["permit"])["permit_hash"]
+                != cast(dict[str, Any], matched_source_event["permit"])["permit_hash"]
                 or accounting.get("dispatch_event_hash")
-                != cast(dict[str, Any], source_event["dispatched"])["event_hash"]
+                != cast(dict[str, Any], matched_source_event["dispatched"])["event_hash"]
                 or accounting.get("confirmation_event_hash")
-                != cast(dict[str, Any], source_event["terminal"])["event_hash"]
+                != cast(dict[str, Any], matched_source_event["terminal"])["event_hash"]
                 or accounting.get("sequence")
-                != cast(dict[str, Any], source_event["permit"])["effect_sequence"]
+                != cast(dict[str, Any], matched_source_event["permit"])["effect_sequence"]
                 or any(
                     type(accounting.get(field)) is not int
                     for field in (
@@ -4982,14 +5024,14 @@ def _recovery_v2_terminal_live_semantics(
     live_effects = {field: 0 for field in _RECOVERY_V2_STAGE_EFFECT_FIELDS}
     live_effects.update(
         {
-            "postgresql_connection_attempts_upper_bound": cast(int, connection_attempts),
+            "postgresql_connection_attempts_upper_bound": connection_attempts,
             "postgresql_read_transactions_attempted": cast(
                 int, postgresql["read_transactions_attempted"]
             ),
             "postgresql_function_reads_attempted": cast(
                 int, postgresql["function_reads_attempted"]
             ),
-            "postgresql_mutating_function_calls_attempted": cast(int, mutating_attempts),
+            "postgresql_mutating_function_calls_attempted": mutating_attempts,
             "postgresql_mutating_function_calls_completed": cast(
                 int, postgresql["mutating_function_calls_completed"]
             ),
@@ -5159,7 +5201,7 @@ def _recovery_v2_terminal_stage_evidence(
             or attestation.get("run_attempt") != "1"
             or attestation.get("head_sha") != runtime_main_sha
             or type(artifact_id) is not int
-            or cast(int, artifact_id) <= 0
+            or artifact_id <= 0
             or attestation.get("artifact_name")
             != _RECOVERY_V2_TERMINAL_ARTIFACT_PREFIXES[stage] + run_id
             or attestation.get("payload_sha256") != hashlib.sha256(payload).hexdigest()
@@ -5178,10 +5220,10 @@ def _recovery_v2_terminal_stage_evidence(
             }
         )
         evidence_archive_hashes.add(cast(str, attestation["archive_sha256"]))
-        if int(run_id) in evidence_run_ids or cast(int, artifact_id) in evidence_artifact_ids:
+        if int(run_id) in evidence_run_ids or artifact_id in evidence_artifact_ids:
             raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
         evidence_run_ids.add(int(run_id))
-        evidence_artifact_ids.add(cast(int, artifact_id))
+        evidence_artifact_ids.add(artifact_id)
 
     bindings_payload, bindings_document = _recovery_v2_strict_json(
         root / DATA_TORRENT_RECOVERY_V2_BINDINGS_EVIDENCE_PATH,
@@ -5646,7 +5688,7 @@ def _recovery_v2_terminal_stage_evidence(
         or type(migration_dispatches) is not int
         or migration_dispatches not in {0, 1}
         or migration.get("migration_outcome")
-        != {0: "MIGRATION_RESUMED", 1: "MIGRATION_CONFIRMED"}[cast(int, migration_dispatches)]
+        != {0: "MIGRATION_RESUMED", 1: "MIGRATION_CONFIRMED"}[migration_dispatches]
         or not isinstance(migration_effects, dict)
         or set(migration_effects) != _RECOVERY_V2_BOOTSTRAP_EFFECT_FIELDS
         or not _exact_integer_fields(
@@ -5663,7 +5705,7 @@ def _recovery_v2_terminal_stage_evidence(
         or migration_effects.get("r2_gets_exact") is not True
         or migration_effects.get("r2_puts") != 0
         or migration_effects.get("postgresql_connection_attempts")
-        != {0: 5, 1: 10}[cast(int, migration_dispatches)]
+        != {0: 5, 1: 10}[migration_dispatches]
         or migration_effects.get("postgresql_connection_attempts_exact")
         is not (migration_dispatches == 0)
         or migration_effects.get("recovery_branch_creations_upper_bound") != 0
@@ -6020,7 +6062,7 @@ def _recovery_v2_terminal_stage_evidence(
     controller_postmerge_run_ids: set[int] = set()
     for stage, controller in controller_documents.items():
         proof = controller.get("pre_effect_proof")
-        attestation = stage_attestations[stage]
+        controller_attestation = stage_attestations[stage]
         terminal_evidence = controller.get("terminal_evidence")
         terminalization_reservation = controller.get("terminalization_effect_reservation")
         stage_inputs = proof.get("stage_inputs") if isinstance(proof, dict) else None
@@ -6028,7 +6070,7 @@ def _recovery_v2_terminal_stage_evidence(
             expected_terminalization_reservation = (
                 _recovery_v2_terminalization_effect_reservation(
                     stage=stage,
-                    workflow_run_id=int(cast(str, attestation["run_id"])),
+                    workflow_run_id=int(cast(str, controller_attestation["run_id"])),
                     stage_inputs=(
                         cast(dict[str, object], stage_inputs)
                         if isinstance(stage_inputs, dict)
@@ -6101,7 +6143,8 @@ def _recovery_v2_terminal_stage_evidence(
             or controller.get("workflow_path")
             != _RECOVERY_V2_TERMINAL_WORKFLOW_STAGES[stage][0]
             or type(controller.get("workflow_run_id")) is not int
-            or controller.get("workflow_run_id") != int(cast(str, attestation["run_id"]))
+            or controller.get("workflow_run_id")
+            != int(cast(str, controller_attestation["run_id"]))
             or not isinstance(terminalization_reservation, dict)
             or not _exact_integer_fields(
                 terminalization_reservation,
@@ -6128,7 +6171,9 @@ def _recovery_v2_terminal_stage_evidence(
             or controller.get("pre_effect_proof_sha256")
             != hashlib.sha256(canonical_json_bytes(proof)).hexdigest()
             or controller.get("inputs_sha256")
-            != hashlib.sha256(canonical_json_bytes(proof.get("stage_inputs"))).hexdigest()
+            != hashlib.sha256(
+                canonical_json_bytes(cast(dict[str, Any], proof.get("stage_inputs")))
+            ).hexdigest()
             or proof.get("authority_window_not_before") != DATA_TORRENT_RECOVERY_V2_NOT_BEFORE
             or proof.get("expected_prior_dispatches") != len(expected_prior_runs[stage])
             or proof.get("observed_prior_dispatches") != len(expected_prior_runs[stage])
@@ -6167,7 +6212,12 @@ def _recovery_v2_terminal_stage_evidence(
             != cast(list[object], proof["live_postmerge_holds"])[1]
             or proof.get("live_postmerge_hold_sha256")
             != hashlib.sha256(
-                canonical_json_bytes(cast(list[object], proof["live_postmerge_holds"])[0])
+                canonical_json_bytes(
+                    cast(
+                        dict[str, Any],
+                        cast(list[object], proof["live_postmerge_holds"])[0],
+                    )
+                )
             ).hexdigest()
         ):
             raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
@@ -6187,7 +6237,8 @@ def _recovery_v2_terminal_stage_evidence(
             or not 1
             <= cast(int, cast(dict[str, Any], terminal_evidence)["run_observations"])
             <= 3
-            or cast(dict[str, Any], terminal_evidence).get("attestation") != attestation
+            or cast(dict[str, Any], terminal_evidence).get("attestation")
+            != controller_attestation
             or cast(dict[str, Any], terminal_evidence).get("semantic_verdict")
             != _RECOVERY_V2_TERMINAL_WORKFLOW_STAGES[stage][1]
             or not isinstance(terminal_run, dict)
@@ -6204,7 +6255,8 @@ def _recovery_v2_terminal_stage_evidence(
                 "updated_at",
             }
             or type(terminal_run.get("run_id")) is not int
-            or terminal_run.get("run_id") != int(cast(str, attestation["run_id"]))
+            or terminal_run.get("run_id")
+            != int(cast(str, controller_attestation["run_id"]))
             or type(terminal_run.get("run_attempt")) is not int
             or terminal_run.get("run_attempt") != 1
             or terminal_run.get("workflow_path")
@@ -6355,20 +6407,20 @@ def _recovery_v2_terminal_stage_evidence(
 
     stage_proofs: dict[str, Any] = {}
     for stage in _RECOVERY_V2_CONTROLLER_ORDER:
-        attestation = stage_attestations[stage]
+        stage_attestation = stage_attestations[stage]
         if stage == "LIVE_ONCE":
             payload = live_artifact_payloads["torrent-real-batch-manifest-v1.json"]
         else:
             payload = singleton_payloads[stage]
         stage_proofs[stage] = {
-            "run_id": int(cast(str, attestation["run_id"])),
+            "run_id": int(cast(str, stage_attestation["run_id"])),
             "run_attempt": 1,
             "workflow_path": _RECOVERY_V2_TERMINAL_WORKFLOW_STAGES[stage][0],
             "head_sha": runtime_main_sha,
-            "artifact_id": attestation["artifact_id"],
+            "artifact_id": stage_attestation["artifact_id"],
             "payload_sha256": hashlib.sha256(payload).hexdigest(),
             "payload_filename": _RECOVERY_V2_TERMINAL_WORKFLOW_STAGES[stage][2],
-            "archive_sha256": attestation["archive_sha256"],
+            "archive_sha256": stage_attestation["archive_sha256"],
             "semantic_verdict": _RECOVERY_V2_TERMINAL_WORKFLOW_STAGES[stage][1],
             "effect_counters": derived_effects[stage],
         }
@@ -6537,7 +6589,7 @@ def _recovery_v2_terminal_intents(
     if (
         not isinstance(engineering_numbers, list)
         or len(engineering_numbers) not in {1, 2}
-        or any(type(number) is not int or cast(int, number) <= 0 for number in engineering_numbers)
+        or any(type(number) is not int or number <= 0 for number in engineering_numbers)
         or len(set(cast(list[int], engineering_numbers))) != len(engineering_numbers)
         or not _json_exact_equal(terminal, expected_terminal)
         or not _json_exact_equal(delivery, expected_delivery)
@@ -6891,7 +6943,7 @@ def _recovery_v2_terminal_delivery(
         or engineering_numbers != validated_engineering_numbers
         or not isinstance(engineering_numbers, list)
         or len(engineering_numbers) not in {1, 2}
-        or any(type(number) is not int or cast(int, number) <= 0 for number in engineering_numbers)
+        or any(type(number) is not int or number <= 0 for number in engineering_numbers)
         or len(set(cast(list[int], engineering_numbers))) != len(engineering_numbers)
         or not _json_exact_equal(
             reservation.get("github_gets_upper_bound"), expected_get_counters
@@ -6957,10 +7009,7 @@ def _recovery_v2_terminal_delivery(
             str,
         )
         or _HEX_40.fullmatch(
-            cast(
-                str,
-                reservation_commit_sha,
-            )
+            reservation_commit_sha
         )
         is None
         or not isinstance(engineering, list)
@@ -7091,12 +7140,12 @@ def _recovery_v2_terminal_delivery(
             or value.get("role") != role
             or value.get("pull_request_number") != engineering_row.get("number")
             or type(cycles_observed) is not int
-            or not 1 <= cast(int, cycles_observed) <= 3
+            or not 1 <= cycles_observed <= 3
             or not isinstance(run_ids, list)
             or len(run_ids) != cycles_observed
             or run_ids != sorted(run_ids)
             or len(set(cast(list[object], run_ids))) != len(run_ids)
-            or any(type(run_id) is not int or cast(int, run_id) <= 0 for run_id in run_ids)
+            or any(type(run_id) is not int or run_id <= 0 for run_id in run_ids)
             or not isinstance(exact_head, dict)
             or set(exact_head)
             != {
@@ -7149,7 +7198,7 @@ def _recovery_v2_terminal_delivery(
         engineering_index = expected_roles.index(role)
         if exact_completed > merge_times[engineering_index] or scope_completed > exact_completed:
             raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
-        observed_cycle_total += cast(int, cycles_observed)
+        observed_cycle_total += cycles_observed
         exact_heads.append(cast(dict[str, Any], exact_head))
     if (
         not _json_exact_equal(
@@ -7404,6 +7453,8 @@ def data_torrent_recovery_v2_reviewed_candidate_projection(
             *DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_REVIEW_PATHS.values(),
             DATA_TORRENT_RECOVERY_V2_POST_202_B101_FINAL_REVIEW_PATH,
             *DATA_TORRENT_RECOVERY_V2_POST_202_B101_REVIEW_PATHS.values(),
+            DATA_TORRENT_RECOVERY_V2_CYCLE_2_CORRECTION_FINAL_REVIEW_PATH,
+            *DATA_TORRENT_RECOVERY_V2_CYCLE_2_CORRECTION_REVIEW_PATHS.values(),
         }
     )
     paths = tuple(path for path in DATA_TORRENT_RECOVERY_V2_RELEASE_PATHS if path not in excluded)
@@ -7436,6 +7487,8 @@ def data_torrent_recovery_v2_pr_b_reviewed_candidate_projection(
             *DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_REVIEW_PATHS.values(),
             DATA_TORRENT_RECOVERY_V2_POST_202_B101_FINAL_REVIEW_PATH,
             *DATA_TORRENT_RECOVERY_V2_POST_202_B101_REVIEW_PATHS.values(),
+            DATA_TORRENT_RECOVERY_V2_CYCLE_2_CORRECTION_FINAL_REVIEW_PATH,
+            *DATA_TORRENT_RECOVERY_V2_CYCLE_2_CORRECTION_REVIEW_PATHS.values(),
             DATA_TORRENT_RECOVERY_V2_PR_B_FINAL_REVIEW_PATH,
             *DATA_TORRENT_RECOVERY_V2_PR_B_REVIEW_PATHS.values(),
         }
@@ -9646,8 +9699,24 @@ def _validate_recovery_v2_post_202_b101_correction_pair(
     ):
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
 
-    reviewed_candidate = data_torrent_recovery_v2_reviewed_candidate_projection(root)
-    runtime_release = data_torrent_recovery_v2_release_projection(root)
+    release_context = release.get("context")
+    if not isinstance(release_context, dict):
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+    reviewed_candidate = release_context.get("reviewed_candidate")
+    runtime_release = release_context.get("runtime_release")
+    _validate_recovery_v2_frozen_projection(reviewed_candidate)
+    _validate_recovery_v2_frozen_projection(runtime_release)
+    if (
+        not isinstance(reviewed_candidate, dict)
+        or not isinstance(runtime_release, dict)
+        or reviewed_candidate.get("projection_sha256")
+        != DATA_TORRENT_RECOVERY_V2_POST_202_B101_REVIEWED_SNAPSHOT_SHA256
+        or runtime_release.get("projection_sha256")
+        != DATA_TORRENT_RECOVERY_V2_POST_202_B101_RUNTIME_SHA256
+    ):
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+    reviewed_candidate = cast(dict[str, Any], reviewed_candidate)
+    runtime_release = cast(dict[str, Any], runtime_release)
     reviews: dict[str, dict[str, object]] = {}
     for agent_id, relative in DATA_TORRENT_RECOVERY_V2_POST_202_B101_REVIEW_PATHS.items():
         payload = _recovery_v2_read_bytes(
@@ -9804,6 +9873,8 @@ def _validate_recovery_v2_post_202_b101_correction_pair(
         or release.get("proof")
         != [_RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM]
         or release.get("previous_hash") != failure.get("hash")
+        or failure.get("hash") != DATA_TORRENT_RECOVERY_V2_POST_202_B101_FAILURE_HASH
+        or release.get("hash") != DATA_TORRENT_RECOVERY_V2_POST_202_B101_RELEASE_HASH
         or not _json_exact_equal(release.get("context"), expected_release_context)
         or release_date <= failure_date
         or release_date > observed_now
@@ -9968,6 +10039,637 @@ def _validate_recovery_v2_post_202_b101_correction_pair(
     return release_date
 
 
+def _recovery_v2_cycle_2_expected_role_facts(
+    reviewed_snapshot: str,
+    failure_hash: object,
+) -> dict[str, list[dict[str, object]]]:
+    snapshot_ref = f"REVIEWED_SNAPSHOT_SHA256:{reviewed_snapshot}"
+    failure_ref = f"COUNCIL_FAILURE_RECORD_SHA256:{failure_hash}"
+    return {
+        "C2": [
+            {
+                "claim": (
+                    "The ledger prefix through record 204 is byte-for-byte preserved, "
+                    "and records 205 and 206 are its sole contiguous cycle-2 failure "
+                    "and independently reviewed E1-redesign successors."
+                ),
+                "evidence_refs": [
+                    snapshot_ref,
+                    (
+                        "LEDGER_PREFIX_THROUGH_204_SHA256:"
+                        f"{DATA_TORRENT_RECOVERY_V2_LEDGER_PREFIX_THROUGH_204_SHA256}"
+                    ),
+                    failure_ref,
+                ],
+                "status": "VERIFIED",
+            },
+            {
+                "claim": (
+                    "The frozen graph prefixes remain byte-identical and the append-only "
+                    "suffix binds claims, nodes and edges for records 205 and 206."
+                ),
+                "evidence_refs": [
+                    snapshot_ref,
+                    f"CLAIMS_PREFIX_SHA256:{DATA_TORRENT_RECOVERY_V2_GRAPH_CLAIMS_PREFIX_SHA256}",
+                    f"NODES_PREFIX_SHA256:{DATA_TORRENT_RECOVERY_V2_GRAPH_NODES_PREFIX_SHA256}",
+                    f"EDGES_PREFIX_SHA256:{DATA_TORRENT_RECOVERY_V2_GRAPH_EDGES_PREFIX_SHA256}",
+                ],
+                "status": "VERIFIED",
+            },
+        ],
+        "C4": [
+            {
+                "claim": (
+                    "The Ubuntu bounded-live-canary checkout now fetches complete history "
+                    "so START_SHA is available to its provenance assertion."
+                ),
+                "evidence_refs": [
+                    snapshot_ref,
+                    ".github/workflows/ci-safe-v2.yml:bounded-live-canary-ubuntu",
+                    "tests/data_torrent/test_ci_lock_contract_v1.py",
+                ],
+                "status": "VERIFIED",
+            },
+            {
+                "claim": (
+                    "The PostgreSQL batch-contract regression now asserts the sanitized "
+                    "fail-closed ChronosControlPlaneError; production exception wrapping is unchanged."
+                ),
+                "evidence_refs": [
+                    snapshot_ref,
+                    (
+                        "src/robin/prospective_observatory/chronos_postgres.py:"
+                        "SQLAlchemyPostgresFunctionClient.fetch_one"
+                    ),
+                    (
+                        "tests/data_torrent/test_postgresql_v1.py:"
+                        "test_recovery_v2_batch_contract_accepts_exact_created_binding_and_rejects_mutants"
+                    ),
+                ],
+                "status": "VERIFIED",
+            },
+            {
+                "claim": (
+                    "The exact Mypy 2.3 CI commands now accept 216 global sources, "
+                    "29 PostgreSQL-profile sources and fifteen strict Recovery scripts "
+                    "after type-only corrections."
+                ),
+                "evidence_refs": [
+                    snapshot_ref,
+                    "src/robin/chronos_production.py",
+                    "src/robin/recovery_v2_filesystem.py",
+                    ".github/workflows/ci-safe-v2.yml:Typage strict",
+                    "tests/data_torrent/test_data_torrent_replay_v2.py",
+                    "tests/data_torrent/test_live_seal_provenance_v2.py",
+                    "MYPY_GLOBAL_SOURCES:216;MYPY_POSTGRESQL_PROFILE_SOURCES:29;MYPY_RECOVERY_V2_STRICT_SCRIPTS:15",
+                ],
+                "status": "VERIFIED",
+            },
+        ],
+        "DP6": [
+            {
+                "claim": (
+                    "Delivery effects are exactly two non-force branch pushes, one PR "
+                    "write and two SAFE V2 runs; every production-effect counter remains zero."
+                ),
+                "evidence_refs": [
+                    snapshot_ref,
+                    "GITHUB_PR:https://github.com/dddur75/robin-stades-ng/pull/80",
+                    "SAFE_V2_RUN:https://github.com/dddur75/robin-stades-ng/actions/runs/33420499802",
+                    "SAFE_V2_RUN:https://github.com/dddur75/robin-stades-ng/actions/runs/33433893502",
+                ],
+                "status": "VERIFIED",
+            },
+            {
+                "claim": (
+                    "Cycle 2 contains 17 terminal jobs partitioned into ten successes, "
+                    "three root failures, one dependent failure and three skipped jobs, "
+                    "with exactly two root causes."
+                ),
+                "evidence_refs": [
+                    snapshot_ref,
+                    "GITHUB_ACTIONS_RUN:33433893502",
+                    "ROOT_FAILURE_JOB_IDS:99625571187,99627665582,99627665711",
+                ],
+                "status": "VERIFIED",
+            },
+        ],
+        "A2": [
+            {
+                "claim": (
+                    "SAFE V2 cycles 1 and 2 are terminal and never rerun; only cycle 3 "
+                    "on a new SHA remains within the maximum-three budget."
+                ),
+                "evidence_refs": [
+                    snapshot_ref,
+                    "SAFE_V2_RUN_ID:33420499802",
+                    "SAFE_V2_RUN_ID:33433893502",
+                    "CI_CYCLE_BUDGET:MAXIMUM=3;CONSUMED=2;REMAINING=1;NEXT=3",
+                ],
+                "status": "VERIFIED",
+            },
+            {
+                "claim": (
+                    "The second similar exact-head failure is recorded as "
+                    "FAIL_AND_REDESIGN with an explicit return to E1 before the final cycle."
+                ),
+                "evidence_refs": [snapshot_ref, failure_ref, "REDESIGN_RETURN_STAGE:E1"],
+                "status": "VERIFIED",
+            },
+        ],
+    }
+
+
+def _validate_recovery_v2_exact_head_ci_cycle_2_correction_pair(
+    failure: dict[str, Any],
+    release: dict[str, Any],
+    *,
+    root: Path,
+    base_release: dict[str, Any],
+    base_release_date: datetime,
+    observed_now: datetime,
+    expected_manifest: Mapping[str, str],
+    expected_effect: Mapping[str, str],
+    expected_call_graph: Mapping[str, str],
+) -> datetime:
+    """Validate cycle-2 evidence and the sole release to a fresh cycle-3 head."""
+
+    try:
+        failure_date = _authority_timestamp(
+            failure.get("date"), field="exact_head_ci_cycle_2_failure_date"
+        )
+        release_date = _authority_timestamp(
+            release.get("date"), field="exact_head_ci_cycle_2_correction_date"
+        )
+    except ChronosProductionError:
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID") from None
+    expires_at = _authority_timestamp(
+        DATA_TORRENT_RECOVERY_V2_EXPIRES_AT,
+        field="recovery_v2_expiry",
+    )
+    production_zero = {
+        "neon_gets": 0,
+        "neon_mutations": 0,
+        "postgresql_production_connections": 0,
+        "postgresql_production_writes": 0,
+        "r2_gets": 0,
+        "r2_puts": 0,
+        "official_reads": 0,
+        "provider_requests": 0,
+        "secret_writes": 0,  # nosec B105 - effect counter, not a credential.
+        "production_workflow_dispatches": 0,
+    }
+    delivery_effects = {
+        "git_remote_writes": 2,
+        "github_pull_request_writes": 1,
+        "github_merge_commits": 0,
+        "github_safe_v2_runs": 2,
+        "failed_run_reruns": 0,
+    }
+    pr_binding = {
+        "number": 80,
+        "url": "https://github.com/dddur75/robin-stades-ng/pull/80",
+        "head_ref": "codex/data-torrent-recovery-v2",
+        "base_ref": "main",
+    }
+    exact_head_safe_v2 = {
+        "workflow": "00 - Qualite continue SAFE V2",
+        "run_id": DATA_TORRENT_RECOVERY_V2_PR_A_CYCLE_2_RUN_ID,
+        "run_attempt": 1,
+        "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/33433893502",
+        "head_sha": DATA_TORRENT_RECOVERY_V2_PR_A_CYCLE_2_HEAD,
+        "event": "pull_request",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-08-31T20:03:07Z",
+        "completed_at": "2026-08-31T20:16:10Z",
+        "job_partition": {
+            "total": 17,
+            "success": 10,
+            "root_failure": 3,
+            "dependent_failure": 1,
+            "skipped": 3,
+        },
+        "successful_job_ids": [
+            99625570557,
+            99625570766,
+            99625570925,
+            99625570974,
+            99625570980,
+            99625571068,
+            99625571101,
+            99625571158,
+            99627665678,
+            99627665727,
+        ],
+        "skipped_job_ids": [99628437177, 99629477488, 99629478331],
+        "all_terminal_jobs_collected": True,
+        "failed_run_rerun": False,
+        "root_failure_jobs": [
+            {
+                "job_id": 99625571187,
+                "name": "Bounded live canary - Ubuntu",
+                "status": "completed",
+                "conclusion": "failure",
+                "started_at": "2026-08-31T20:03:12Z",
+                "completed_at": "2026-08-31T20:07:06Z",
+                "cause_id": "SAFE_V2_UBUNTU_START_SHA_ABSENT_AFTER_SHALLOW_CHECKOUT",
+            },
+            {
+                "job_id": 99627665582,
+                "name": "Chronos PostgreSQL profiles / tests (non_superuser_createrole)",
+                "status": "completed",
+                "conclusion": "failure",
+                "started_at": "2026-08-31T20:10:12Z",
+                "completed_at": "2026-08-31T20:12:40Z",
+                "cause_id": "RECOVERY_V2_POSTGRES_SANITIZED_EXCEPTION_EXPECTATION_MISMATCH",
+            },
+            {
+                "job_id": 99627665711,
+                "name": "Chronos PostgreSQL profiles / tests (superuser)",
+                "status": "completed",
+                "conclusion": "failure",
+                "started_at": "2026-08-31T20:10:12Z",
+                "completed_at": "2026-08-31T20:12:20Z",
+                "cause_id": "RECOVERY_V2_POSTGRES_SANITIZED_EXCEPTION_EXPECTATION_MISMATCH",
+            },
+        ],
+        "dependent_failure_jobs": [
+            {
+                "job_id": 99629340727,
+                "name": "tests",
+                "status": "completed",
+                "conclusion": "failure",
+                "started_at": "2026-08-31T20:15:45Z",
+                "completed_at": "2026-08-31T20:16:09Z",
+                "cause_id": "PREREQUISITE_FAILURE_ONLY",
+            }
+        ],
+    }
+    exact_head_safe_v2_sha256 = hashlib.sha256(
+        json.dumps(
+            exact_head_safe_v2,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    ).hexdigest()
+    root_causes = [
+        {
+            "cause_id": "SAFE_V2_UBUNTU_START_SHA_ABSENT_AFTER_SHALLOW_CHECKOUT",
+            "job_ids": [99625571187],
+            "diagnosis": (
+                "The Ubuntu canary used a depth-one checkout, so git show of the "
+                "immutable START_SHA failed before that governance assertion could complete."
+            ),
+        },
+        {
+            "cause_id": "RECOVERY_V2_POSTGRES_SANITIZED_EXCEPTION_EXPECTATION_MISMATCH",
+            "job_ids": [99627665582, 99627665711],
+            "diagnosis": (
+                "The database correctly rejected Recovery V2 mutants, while the test "
+                "asserted the raw DBAPI exception instead of the client's sanitized "
+                "ChronosControlPlaneError contract."
+            ),
+        },
+    ]
+    corrections = [
+        {
+            "cause_id": "SAFE_V2_UBUNTU_START_SHA_ABSENT_AFTER_SHALLOW_CHECKOUT",
+            "paths": [
+                ".github/workflows/ci-safe-v2.yml",
+                "tests/data_torrent/test_ci_lock_contract_v1.py",
+            ],
+            "implementation": "FETCH_FULL_HISTORY_FOR_UBUNTU_IMMUTABLE_START_SHA_CHECK",
+        },
+        {
+            "cause_id": "RECOVERY_V2_POSTGRES_SANITIZED_EXCEPTION_EXPECTATION_MISMATCH",
+            "paths": ["tests/data_torrent/test_postgresql_v1.py"],
+            "implementation": "ASSERT_SANITIZED_PUBLIC_CONTROL_PLANE_ERROR_CONTRACT",
+        },
+    ]
+    cycle_contract = {
+        "maximum": 3,
+        "consumed": 2,
+        "remaining": 1,
+        "next_cycle": 3,
+        "failed_run_rerun": False,
+        "new_head_required": True,
+    }
+    expected_failure_context = {
+        "mission_id": "DATA_TORRENT_RECOVERY_V2",
+        "phase": "PR_A_EXACT_HEAD_SAFE_V2_CYCLE_2_FAILURE",
+        "program_start_sha": DATA_TORRENT_RECOVERY_V2_START_SHA,
+        "release_decision_id": base_release.get("decision_id"),
+        "release_record_hash": base_release.get("hash"),
+        "active_release_claim_id": _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
+        "writer": "C0",
+        "writer_count": 1,
+        "worktree": "ENGINEERING_WORKTREE:data-torrent-recovery-v2",
+        "branch": "codex/data-torrent-recovery-v2",
+        "head": DATA_TORRENT_RECOVERY_V2_PR_A_CYCLE_2_HEAD,
+        "pr": pr_binding,
+        "exact_head_safe_v2": exact_head_safe_v2,
+        "exact_head_safe_v2_sha256": exact_head_safe_v2_sha256,
+        "root_causes": root_causes,
+        "authorized_corrections": corrections,
+        "correction_policy": "SECOND_SIMILAR_FAILURE_FAIL_AND_REDESIGN_RETURN_TO_E1",
+        "similar_failure_predecessor": {
+            "record_id": "RCV3-20260831-201",
+            "record_hash": "be424917364ab1f68919a7b43e30ee45114ca2347229ce7ef01fcb5166536ff2",
+            "failure_class": "EXACT_HEAD_SAFE_V2_FAILURE",
+            "current_class_attempt": 2,
+        },
+        "redesign": {
+            "return_stage": "E1",
+            "design_revision": 2,
+            "unchanged_third_attempt_forbidden": True,
+            "cycle_3_requires_fresh_head": True,
+        },
+        "ci_cycle_contract": cycle_contract,
+        "observed_delivery_effects": delivery_effects,
+        "observed_production_effects": production_zero,
+        "full_suite_rerun": False,
+        "external_effects_authorized_now": False,
+        "data_torrent_ready": False,
+    }
+    if (
+        failure.get("decision_id") != "RCV3-20260831-205"
+        or failure.get("decision_id")
+        != _recovery_v2_next_decision_id(
+            cast(str, base_release.get("decision_id")), failure_date
+        )
+        or failure.get("record_type") != "FAILURE"
+        or failure.get("decision") != "FAIL_AND_REDESIGN"
+        or failure.get("responsible") != "C0"
+        or failure.get("dissent") is not None
+        or failure.get("proposal")
+        != (
+            "Record the second terminal exact-head SAFE V2 failure, return to E1 "
+            "for the smallest redesign of its two root causes, forbid every rerun "
+            "of cycle 2 and every unchanged third attempt, and keep all effects held."
+        )
+        or failure.get("objections")
+        != [
+            "Cycle 2 is terminal failure and consumes the second of three exact-head CI cycles.",
+            "A second similar exact-head failure requires FAIL_AND_REDESIGN and a return to E1.",
+            "The Ubuntu shallow checkout could not read immutable START_SHA history.",
+            "Both PostgreSQL profiles exposed one stale raw-exception test expectation; the client remained fail-closed and sanitized.",
+            "The tests gate failure is dependent only and no production or one-shot effect occurred.",
+        ]
+        or failure.get("proof") != [_RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_FAILURE_CLAIM]
+        or failure.get("previous_hash") != base_release.get("hash")
+        or not _json_exact_equal(failure.get("context"), expected_failure_context)
+        or failure_date
+        <= _authority_timestamp(
+            cast(str, exact_head_safe_v2["completed_at"]),
+            field="exact_head_ci_cycle_2_completed_at",
+        )
+        or failure_date <= base_release_date
+        or failure_date > observed_now
+        or failure_date > expires_at
+    ):
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+
+    reviewed_candidate = data_torrent_recovery_v2_reviewed_candidate_projection(root)
+    runtime_release = data_torrent_recovery_v2_release_projection(root)
+    reviews: dict[str, dict[str, object]] = {}
+    for agent_id, relative in DATA_TORRENT_RECOVERY_V2_CYCLE_2_CORRECTION_REVIEW_PATHS.items():
+        payload = _recovery_v2_read_bytes(
+            root / relative,
+            repository_root=root,
+            maximum_bytes=262_144,
+        )
+        reviews[agent_id] = {
+            "path": relative,
+            "raw_sha256": hashlib.sha256(payload).hexdigest(),
+            "field_count": 15,
+            "reviewed_snapshot_sha256": reviewed_candidate["projection_sha256"],
+            "recommended_action": "PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+            "p0": 0,
+            "p1": 0,
+            "p2": 0,
+            "open_threads": 0,
+        }
+    final_path = DATA_TORRENT_RECOVERY_V2_CYCLE_2_CORRECTION_FINAL_REVIEW_PATH
+    final_payload = _recovery_v2_read_bytes(
+        root / final_path,
+        repository_root=root,
+        maximum_bytes=262_144,
+    )
+    final_binding = {
+        "path": final_path,
+        "raw_sha256": hashlib.sha256(final_payload).hexdigest(),
+    }
+    expected_files = sorted(
+        {
+            ".github/workflows/ci-safe-v2.yml",
+            "configs/agents/mission-activation-matrix-v3.json",
+            "docs/operations/DATA-TORRENT-RECOVERY-V2.md",
+            *DATA_TORRENT_RECOVERY_V2_CYCLE_2_CORRECTION_REVIEW_PATHS.values(),
+            final_path,
+            "reports/council/decision-ledger.jsonl",
+            "reports/evidence/evidence-graph.json",
+            "scripts/check_data_torrent_recovery_v2_scope.py",
+            "scripts/materialize_data_torrent_recovery_v2_delivery_evidence.py",
+            "src/robin/chronos_production.py",
+            "src/robin/recovery_v2_filesystem.py",
+            "tests/activation/test_recovery_v2_atomic_evidence.py",
+            "tests/council/test_data_torrent_recovery_v2_governance.py",
+            "tests/data_torrent/test_ci_lock_contract_v1.py",
+            "tests/data_torrent/test_data_torrent_replay_v2.py",
+            "tests/data_torrent/test_live_seal_provenance_v2.py",
+            "tests/data_torrent/test_postgresql_v1.py",
+        }
+    )
+    expected_release_context = {
+        "mission_id": "DATA_TORRENT_RECOVERY_V2",
+        "phase": "PR_A_EXACT_HEAD_SAFE_V2_CYCLE_2_CORRECTION_RELEASE_AFTER_INDEPENDENT_QA",
+        "program_start_sha": DATA_TORRENT_RECOVERY_V2_START_SHA,
+        "writer": "C0",
+        "writer_count": 1,
+        "worktree": "ENGINEERING_WORKTREE:data-torrent-recovery-v2",
+        "branch": "codex/data-torrent-recovery-v2",
+        "head": DATA_TORRENT_RECOVERY_V2_PR_A_CYCLE_2_HEAD,
+        "candidate_parent": DATA_TORRENT_RECOVERY_V2_PR_A_CYCLE_2_HEAD,
+        "pr": pr_binding,
+        "files": expected_files,
+        "supersedes_release_claim_id": _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
+        "supersedes_release_decision_id": base_release.get("decision_id"),
+        "supersedes_release_record_hash": base_release.get("hash"),
+        "failure_record_id": failure.get("decision_id"),
+        "failure_record_hash": failure.get("hash"),
+        "manifest": dict(expected_manifest),
+        "effect_contract": dict(expected_effect),
+        "postgresql_call_graph": dict(expected_call_graph),
+        "reviewed_candidate": reviewed_candidate,
+        "reviewed_snapshot_sha256": reviewed_candidate["projection_sha256"],
+        "runtime_release": runtime_release,
+        "failed_cycle": {
+            "run_id": DATA_TORRENT_RECOVERY_V2_PR_A_CYCLE_2_RUN_ID,
+            "head_sha": DATA_TORRENT_RECOVERY_V2_PR_A_CYCLE_2_HEAD,
+            "evidence_sha256": exact_head_safe_v2_sha256,
+            "rerun_authorized": False,
+        },
+        "redesign_closure": {
+            "failure_decision": "FAIL_AND_REDESIGN",
+            "return_stage": "E1",
+            "design_revision": 2,
+            "root_causes_closed": [
+                "SAFE_V2_UBUNTU_START_SHA_ABSENT_AFTER_SHALLOW_CHECKOUT",
+                "RECOVERY_V2_POSTGRES_SANITIZED_EXCEPTION_EXPECTATION_MISMATCH",
+            ],
+            "unchanged_third_attempt_authorized": False,
+        },
+        "corrections": corrections,
+        "pre_cycle_3_qa_correction": {
+            "mypy_version_family": "2.3",
+            "findings": [
+                {
+                    "finding_id": "RECOVERY_V2_MYPY_TRANSITIVE_SOURCE_ERRORS",
+                    "diagnostics_before": 51,
+                    "paths": [
+                        "src/robin/chronos_production.py",
+                        "src/robin/recovery_v2_filesystem.py",
+                    ],
+                },
+                {
+                    "finding_id": "RECOVERY_V2_MYPY_MODULE_IDENTITY_COLLISION",
+                    "diagnostics_before": 1,
+                    "paths": [".github/workflows/ci-safe-v2.yml"],
+                },
+                {
+                    "finding_id": "RECOVERY_V2_MYPY_TEST_EXPORT_ERRORS",
+                    "diagnostics_before": 23,
+                    "paths": [
+                        "tests/data_torrent/test_data_torrent_replay_v2.py",
+                        "tests/data_torrent/test_live_seal_provenance_v2.py",
+                    ],
+                },
+            ],
+            "resolution": "TYPE_NARROWING_AND_EXPLICIT_MODULE_BOUNDARIES_WITHOUT_RUNTIME_EFFECT_PATH_CHANGE",
+        },
+        "defects": {"open_p0": 0, "open_p1": 0, "open_p2": 0, "open_threads": 0},
+        "release_conditions": {
+            "production_effects_authorized_now": False,
+            "exact_head_safe_v2_cycle_3_required": True,
+            "normal_merge_required": True,
+            "postmerge_safe_v2_required": True,
+            "immediate_predecessor_required_for_each_stage": True,
+        },
+        "progression_contract": {
+            "council_role": "CONTROL_AND_RECORD_ONLY",
+            "progression_mode": "AUTOMATIC_WITHIN_AUTHORIZED_MANIFEST",
+            "controller_path": "scripts/dispatch_data_torrent_recovery_v2_stage.py",
+            "stage_mapping_bound_to_effect_contract": True,
+            "predecessor_attestation_and_semantic_validation_before_effect": True,
+            "pr_c_phase_one_stage_finished_record_required": True,
+            "pr_c_terminal_decision_record_required": True,
+        },
+        "ci_cycle_contract": cycle_contract,
+        "observed_delivery_effects": delivery_effects,
+        "observed_production_effects": production_zero,
+        "independent_reviews": reviews,
+        "final_review": final_binding,
+        "targeted_tests": {
+            "ci_lock_contract": "PASS",
+            "chronos_postgres_client": "PASS",
+            "postgresql_recovery_v2_exact_test": "REQUIRED_IN_CYCLE_3_BOTH_PROFILES",
+            "governance_release": "PASS",
+            "mypy_2_3_ci_global_216_sources": "PASS",
+            "mypy_2_3_postgresql_profile_29_sources": "PASS",
+            "mypy_2_3_recovery_v2_strict_15_scripts": "PASS",
+            "prior_consolidated_recovery_suite": "331 passed, 4 skipped",
+            "ruff_changed_python": "PASS",
+            "json_yaml": "PASS",
+            "secret_and_local_path_scan": "PASS",
+            "full_suite_rerun": "FALSE",
+            "unapproved_network_attempts": "0",
+        },
+        "proofs_reused": [
+            f"superseded-release-record:{base_release.get('hash')}",
+            f"cycle-2-failure-record:{failure.get('hash')}",
+            f"cycle-2-evidence:{exact_head_safe_v2_sha256}",
+            f"manifest-raw:{DATA_TORRENT_RECOVERY_V2_MANIFEST_SHA256}",
+            f"effect-contract-raw:{DATA_TORRENT_RECOVERY_V2_EFFECT_CONTRACT_SHA256}",
+        ],
+        "external_effects_authorized_now": False,
+        "data_torrent_ready": False,
+    }
+    if (
+        release.get("decision_id") != "RCV3-20260831-206"
+        or release.get("decision_id")
+        != _recovery_v2_next_decision_id(
+            cast(str, failure.get("decision_id")), release_date
+        )
+        or release.get("record_type") != "DECISION"
+        or release.get("decision") != "PASS_AND_HOLD"
+        or release.get("responsible") != "C0"
+        or release.get("dissent") is not None
+        or release.get("proposal")
+        != (
+            "Release the independently reviewed E1 redesign for both cycle-2 root "
+            "causes to the third and last exact-head SAFE V2 cycle on one new SHA "
+            "while merge, production and every one-shot effect remain held."
+        )
+        or release.get("objections")
+        != [
+            "Record 204 remains byte-for-byte preserved and is superseded only by this append-only decision.",
+            "Record 205 returns the second similar exact-head failure to E1 before this redesign release.",
+            "Cycle 2 is terminal and must never be rerun; cycle 3 requires a distinct exact head.",
+            "The Ubuntu history binding and PostgreSQL sanitized-exception contract each have focused regressions.",
+            "Pre-cycle-3 QA closed 51 source diagnostics, one module-identity collision and 23 test-export diagnostics under Mypy 2.3 without changing an effect path.",
+            "Cycle 3 is the final permitted exact-head CI cycle; every production effect remains dormant.",
+        ]
+        or release.get("proof")
+        != [_RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_CORRECTION_RELEASE_CLAIM]
+        or release.get("previous_hash") != failure.get("hash")
+        or not _json_exact_equal(release.get("context"), expected_release_context)
+        or release_date <= failure_date
+        or release_date > observed_now
+        or release_date > expires_at
+    ):
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+    reviewed_snapshot = cast(str, reviewed_candidate["projection_sha256"])
+    _validate_recovery_v2_agent_reports(
+        root,
+        bindings=reviews,
+        reviewed_snapshot_sha256=reviewed_snapshot,
+        review_paths=DATA_TORRENT_RECOVERY_V2_CYCLE_2_CORRECTION_REVIEW_PATHS,
+        expected_facts=_recovery_v2_cycle_2_expected_role_facts(
+            reviewed_snapshot,
+            failure.get("hash"),
+        ),
+    )
+    _validate_recovery_v2_final_review(
+        root,
+        binding=final_binding,
+        relative=final_path,
+        reviewed_snapshot_sha256=reviewed_snapshot,
+        schema_version="data-torrent-recovery-v2-exact-head-ci-cycle-2-correction-final-review-v3",
+        review_paths=DATA_TORRENT_RECOVERY_V2_CYCLE_2_CORRECTION_REVIEW_PATHS,
+        reviewed_file_count=len(cast(list[object], reviewed_candidate["files"])),
+        reviewed_at_not_after=release_date,
+        reviewed_at_not_before=failure_date,
+        reviewed_at_must_precede=True,
+        expected_external_effects={
+            "git_remote_writes": 2,
+            "github_writes": 1,
+            "neon_gets": 0,
+            "neon_mutations": 0,
+            "postgresql_production_connections": 0,
+            "postgresql_production_writes": 0,
+            "r2_gets": 0,
+            "r2_puts": 0,
+            "official_reads": 0,
+            "provider_requests": 0,
+            "secret_writes": 0,
+        },
+        expected_delivery_effects=delivery_effects,
+    )
+    return release_date
+
+
 def _validate_recovery_v2_pr_b_release(
     record: dict[str, Any],
     *,
@@ -10124,9 +10826,9 @@ def _validate_recovery_v2_pr_b_release(
         or pr_a_scope_guard.get("base_sha") != DATA_TORRENT_RECOVERY_V2_START_SHA
         or pr_a_scope_guard.get("head_sha") != pr_a_runtime_main_sha
         or pr_a_scope_guard.get("allowed_paths_sha256")
-        != "1e7b86d88285097ad990f3c0669966612765b5606a970960d1deb21f4bcfd63a"
+        != "47e703278d4ef33bc8fd236d970063dc0832749dcc3ea3b15e58ee9cb532a460"
         or pr_a_scope_guard.get("phase_allowed_paths_sha256")
-        != "e4621e8a57627bf464e2e0db3ad136a5d65c1f12d8c71b659382960fc0b05dbc"
+        != "482652675444b1c84c3ccbf608da1cbf4bebe8bcd05b9dfb584cc371a278d0eb"
         or any(
             not isinstance(pr_a_scope_guard.get(field), str)
             or _HEX_64.fullmatch(cast(str, pr_a_scope_guard[field])) is None
@@ -10283,7 +10985,7 @@ def _validate_recovery_v2_pr_b_release(
         "github_safe_v2_runs": {
             "pr_a_exact_head_cycles": safe_v2_cycles,
             "pr_a_postmerge_runs": 1,
-            "total": cast(int, safe_v2_cycles) + 1
+            "total": safe_v2_cycles + 1
             if type(safe_v2_cycles) is int
             else -1,
             "run_attempts_above_one": 0,
@@ -10416,7 +11118,7 @@ def _validate_recovery_v2_pr_b_release(
             },
         )
         or type(safe_v2_cycles) is not int
-        or not 1 <= cast(int, safe_v2_cycles) <= 3
+        or not 1 <= safe_v2_cycles <= 3
         or not isinstance(observed_external_effects, dict)
         or not _exact_integer_fields(
             cast(dict[str, object], observed_external_effects),
@@ -10491,6 +11193,8 @@ def _validate_recovery_v2_release_graph(
     exact_head_ci_correction_release: Mapping[str, object],
     post_202_b101_failure: Mapping[str, object],
     post_202_b101_correction_release: Mapping[str, object],
+    exact_head_ci_cycle_2_failure: Mapping[str, object],
+    exact_head_ci_cycle_2_correction_release: Mapping[str, object],
     active_release: Mapping[str, object],
     active_release_claim: str,
     successors: Sequence[Mapping[str, object]],
@@ -10589,9 +11293,15 @@ def _validate_recovery_v2_release_graph(
     post_202_b101_release_claim = claim_by_id.get(
         _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM
     )
+    exact_head_cycle_2_failure_claim = claim_by_id.get(
+        _RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_FAILURE_CLAIM
+    )
+    exact_head_cycle_2_release_claim = claim_by_id.get(
+        _RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_CORRECTION_RELEASE_CLAIM
+    )
     pr_b_claim = claim_by_id.get(_RECOVERY_V2_PR_B_RELEASE_CLAIM)
     if active_release_claim not in {
-        _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
+        _RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_CORRECTION_RELEASE_CLAIM,
         _RECOVERY_V2_PR_B_RELEASE_CLAIM,
     }:
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
@@ -10599,22 +11309,28 @@ def _validate_recovery_v2_release_graph(
         _RECOVERY_V2_EXACT_HEAD_CI_CORRECTION_RELEASE_CLAIM,
         _RECOVERY_V2_POST_202_B101_FAILURE_CLAIM,
         _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
+        _RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_FAILURE_CLAIM,
+        _RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_CORRECTION_RELEASE_CLAIM,
     ]
     expected_node_suffix = [
         DATA_TORRENT_RECOVERY_V2_EXACT_HEAD_CI_RELEASE_ID,
         "RCV3-20260831-203",
         "RCV3-20260831-204",
+        "RCV3-20260831-205",
+        "RCV3-20260831-206",
     ]
     expected_edge_suffix = [
         "EDGE.824",
         "EDGE.825",
+        "EDGE.826",
+        "EDGE.827",
     ]
     if active_release_claim == _RECOVERY_V2_PR_B_RELEASE_CLAIM:
         if not isinstance(active_release.get("decision_id"), str):
             raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
         expected_claim_suffix.append(_RECOVERY_V2_PR_B_RELEASE_CLAIM)
         expected_node_suffix.append(cast(str, active_release["decision_id"]))
-        expected_edge_suffix.append("EDGE.826")
+        expected_edge_suffix.append("EDGE.828")
     expected_claim_suffix.extend(
         [
             _RECOVERY_V2_RESERVATION_CLAIM,
@@ -10626,7 +11342,7 @@ def _validate_recovery_v2_release_graph(
     if any(not isinstance(decision_id, str) for decision_id in successor_ids):
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
     expected_node_suffix.extend(cast(list[str], successor_ids))
-    next_runtime_edge = 827 if active_release_claim == _RECOVERY_V2_PR_B_RELEASE_CLAIM else 826
+    next_runtime_edge = 829 if active_release_claim == _RECOVERY_V2_PR_B_RELEASE_CLAIM else 828
     for proof_count in range(2, 2 + len(successors)):
         expected_edge_suffix.extend(
             f"EDGE.{number}"
@@ -10653,6 +11369,8 @@ def _validate_recovery_v2_release_graph(
     exact_head_failure_context = exact_head_ci_failure.get("context")
     post_202_b101_context = post_202_b101_correction_release.get("context")
     post_202_b101_failure_context = post_202_b101_failure.get("context")
+    exact_head_cycle_2_context = exact_head_ci_cycle_2_correction_release.get("context")
+    exact_head_cycle_2_failure_context = exact_head_ci_cycle_2_failure.get("context")
     active_context = active_release.get("context")
     if (
         not isinstance(initial_context, dict)
@@ -10663,6 +11381,8 @@ def _validate_recovery_v2_release_graph(
         or not isinstance(exact_head_failure_context, dict)
         or not isinstance(post_202_b101_context, dict)
         or not isinstance(post_202_b101_failure_context, dict)
+        or not isinstance(exact_head_cycle_2_context, dict)
+        or not isinstance(exact_head_cycle_2_failure_context, dict)
         or not isinstance(active_context, dict)
     ):
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
@@ -10674,6 +11394,9 @@ def _validate_recovery_v2_release_graph(
     post_202_b101_review = cast(dict[str, object], post_202_b101_context).get(
         "final_review"
     )
+    exact_head_cycle_2_review = cast(dict[str, object], exact_head_cycle_2_context).get(
+        "final_review"
+    )
     active_review = cast(dict[str, object], active_context).get("final_review")
     if (
         not isinstance(initial_review, dict)
@@ -10682,6 +11405,7 @@ def _validate_recovery_v2_release_graph(
         or not isinstance(static_review, dict)
         or not isinstance(exact_head_review, dict)
         or not isinstance(post_202_b101_review, dict)
+        or not isinstance(exact_head_cycle_2_review, dict)
         or not isinstance(active_review, dict)
     ):
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
@@ -10935,26 +11659,65 @@ def _validate_recovery_v2_release_graph(
     }
     if post_202_b101_failure_claim != expected_post_202_b101_failure_claim:
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
-    post_202_b101_status = (
-        "VERIFIED"
-        if active_release_claim == _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM
-        else "SUPERSEDED"
-    )
     if not release_claim_valid(
         post_202_b101_release_claim,
         claim_id=_RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
         decision=post_202_b101_correction_release,
         review=cast(dict[str, object], post_202_b101_review),
         successor_of=_RECOVERY_V2_POST_202_B101_FAILURE_CLAIM,
-        status=post_202_b101_status,
+        status="SUPERSEDED",
+        superseded_by=_RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_CORRECTION_RELEASE_CLAIM,
+    ):
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+    expected_exact_head_cycle_2_failure_claim = {
+        "claim_id": _RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_FAILURE_CLAIM,
+        "claim": (
+            "Exact-head SAFE V2 cycle 2 failed in three root jobs that reduce to two "
+            "local causes; its dependent tests failure adds no third cause and every "
+            "production effect remained zero"
+        ),
+        "scope": "DATA_TORRENT_RECOVERY_V2_PR_A_EXACT_HEAD_SAFE_V2_CYCLE_2_FAILURE",
+        "source": (
+            "GitHub Actions run 33433893502; attempt 1; head "
+            "21d6a928c5998cca86cebbb0dc078aba4cd20cb5; completed "
+            "2026-08-31T20:16:10Z; conclusion failure"
+        ),
+        "grain": "ONE_TERMINAL_EXACT_HEAD_CI_ATTEMPT_TO_TWO_ROOT_CAUSES",
+        "temporal_class": "DECISION_AS_OF",
+        "artifact": "https://github.com/dddur75/robin-stades-ng/actions/runs/33433893502",
+        "hash": exact_head_cycle_2_failure_context.get("exact_head_safe_v2_sha256"),
+        "code_revision": DATA_TORRENT_RECOVERY_V2_PR_A_CYCLE_2_HEAD,
+        "execution_id": f"council-record:{exact_head_ci_cycle_2_failure.get('decision_id')}",
+        "scientific_lineage_id": "DATA_TORRENT_RECOVERY_V2",
+        "dataset_lineage_id": "NO_DATASET_EXACT_HEAD_SAFE_V2_CYCLE_2_FAILURE",
+        "status": "VERIFIED",
+        "verified_by": ["C0", "CI_SAFE_V2", "C2", "C4", "DP6", "A2"],
+        "successor_of": _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
+    }
+    if exact_head_cycle_2_failure_claim != expected_exact_head_cycle_2_failure_claim:
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+    cycle_2_release_status = (
+        "VERIFIED"
+        if active_release_claim
+        == _RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_CORRECTION_RELEASE_CLAIM
+        else "SUPERSEDED"
+    )
+    if not release_claim_valid(
+        exact_head_cycle_2_release_claim,
+        claim_id=_RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_CORRECTION_RELEASE_CLAIM,
+        decision=exact_head_ci_cycle_2_correction_release,
+        review=cast(dict[str, object], exact_head_cycle_2_review),
+        successor_of=_RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_FAILURE_CLAIM,
+        status=cycle_2_release_status,
         superseded_by=(
             None
-            if active_release_claim == _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM
+            if active_release_claim
+            == _RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_CORRECTION_RELEASE_CLAIM
             else _RECOVERY_V2_PR_B_RELEASE_CLAIM
         ),
     ):
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
-    if active_release_claim == _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM:
+    if active_release_claim == _RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_CORRECTION_RELEASE_CLAIM:
         if pr_b_claim is not None:
             raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
     elif active_release_claim != _RECOVERY_V2_PR_B_RELEASE_CLAIM or not release_claim_valid(
@@ -10962,7 +11725,7 @@ def _validate_recovery_v2_release_graph(
         claim_id=_RECOVERY_V2_PR_B_RELEASE_CLAIM,
         decision=active_release,
         review=cast(dict[str, object], active_review),
-        successor_of=_RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
+        successor_of=_RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_CORRECTION_RELEASE_CLAIM,
         status="VERIFIED",
         superseded_by=None,
     ):
@@ -11014,6 +11777,14 @@ def _validate_recovery_v2_release_graph(
             "RCV3-20260831-204",
             _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
         ): "EDGE.825",
+        (
+            "RCV3-20260831-205",
+            _RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_FAILURE_CLAIM,
+        ): "EDGE.826",
+        (
+            "RCV3-20260831-206",
+            _RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_CORRECTION_RELEASE_CLAIM,
+        ): "EDGE.827",
     }
     if active_release_claim == _RECOVERY_V2_PR_B_RELEASE_CLAIM:
         fixed_edge_ids[
@@ -11021,7 +11792,7 @@ def _validate_recovery_v2_release_graph(
                 cast(str, active_release.get("decision_id")),
                 _RECOVERY_V2_PR_B_RELEASE_CLAIM,
             )
-        ] = "EDGE.826"
+        ] = "EDGE.828"
     for (decision_id, claim_id), edge_id in fixed_edge_ids.items():
         if [
             edge
@@ -11049,6 +11820,8 @@ def _validate_recovery_v2_release_graph(
         exact_head_ci_correction_release,
         post_202_b101_failure,
         post_202_b101_correction_release,
+        exact_head_ci_cycle_2_failure,
+        exact_head_ci_cycle_2_correction_release,
     ]
     release_proofs = [
         initial_claim_id,
@@ -11061,6 +11834,8 @@ def _validate_recovery_v2_release_graph(
         _RECOVERY_V2_EXACT_HEAD_CI_CORRECTION_RELEASE_CLAIM,
         _RECOVERY_V2_POST_202_B101_FAILURE_CLAIM,
         _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
+        _RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_FAILURE_CLAIM,
+        _RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_CORRECTION_RELEASE_CLAIM,
     ]
     if active_release_claim == _RECOVERY_V2_PR_B_RELEASE_CLAIM:
         release_decisions.append(active_release)
@@ -11101,6 +11876,8 @@ def _validate_recovery_v2_release_graph(
         exact_head_ci_correction_release.get("decision_id"),
         post_202_b101_failure.get("decision_id"),
         post_202_b101_correction_release.get("decision_id"),
+        exact_head_ci_cycle_2_failure.get("decision_id"),
+        exact_head_ci_cycle_2_correction_release.get("decision_id"),
     }
     correction_proofs = [
         _RECOVERY_V2_BASE_RELEASE_CLAIM,
@@ -11112,6 +11889,8 @@ def _validate_recovery_v2_release_graph(
         _RECOVERY_V2_EXACT_HEAD_CI_CORRECTION_RELEASE_CLAIM,
         _RECOVERY_V2_POST_202_B101_FAILURE_CLAIM,
         _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
+        _RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_FAILURE_CLAIM,
+        _RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_CORRECTION_RELEASE_CLAIM,
     ]
     if active_release_claim == _RECOVERY_V2_PR_B_RELEASE_CLAIM:
         correction_decision_ids.add(active_release.get("decision_id"))
@@ -11525,7 +12304,7 @@ def _validate_recovery_v2_council_successors(
         or pr_a_proof is None
         or (pr_b != "NOT_OPENED" and pr_b_proof is None)
         or type(pr_c) is not int
-        or cast(int, pr_c) <= 0
+        or pr_c <= 0
         or len(
             {
                 cast(int, pr_a_proof["number"]),
@@ -11534,7 +12313,7 @@ def _validate_recovery_v2_council_successors(
                     if pr_b_proof is not None
                     else []
                 ),
-                cast(int, pr_c),
+                pr_c,
             }
         )
         != (3 if pr_b_proof is not None else 2)
@@ -11705,14 +12484,14 @@ def _validate_recovery_v2_council_successors(
         if (
             set(proof) != workflow_proof_fields
             or type(run_id) is not int
-            or cast(int, run_id) <= 0
+            or run_id <= 0
             or type(proof.get("run_attempt")) is not int
             or proof.get("run_attempt") != 1
             or proof.get("workflow_path") != workflow_path
             or proof.get("payload_filename") != payload_filename
             or proof.get("head_sha") != runtime_main_sha
             or type(artifact_id) is not int
-            or cast(int, artifact_id) <= 0
+            or artifact_id <= 0
             or proof.get("semantic_verdict") != semantic_verdict
             or not isinstance(proof.get("payload_sha256"), str)
             or _HEX_64.fullmatch(cast(str, proof["payload_sha256"])) is None
@@ -11722,8 +12501,8 @@ def _validate_recovery_v2_council_successors(
         ):
             raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
         stage_effects[stage] = _recovery_v2_terminal_stage_effects(proof["effect_counters"])
-        observed_run_ids.append(cast(int, run_id))
-        observed_artifact_ids.append(cast(int, artifact_id))
+        observed_run_ids.append(run_id)
+        observed_artifact_ids.append(artifact_id)
     if len(observed_run_ids) != len(set(observed_run_ids)) or len(observed_artifact_ids) != len(
         set(observed_artifact_ids)
     ):
@@ -11744,7 +12523,7 @@ def _validate_recovery_v2_council_successors(
         or bindings.get("artifact_relation")
         != "EXACT_RECEIPT_BOUND_BY_MIGRATE_CONTROLLER_INPUT_AND_SIGNED_OBJECT"
         or bindings.get("carrier_payload_sha256")
-        != runtime_stages["MIGRATE_0015"]["payload_sha256"]
+        != cast(dict[str, Any], runtime_stages["MIGRATE_0015"])["payload_sha256"]
         or bindings.get("runtime_bindings_receipt_path")
         != DATA_TORRENT_RECOVERY_V2_BINDINGS_EVIDENCE_PATH
         or bindings.get("semantic_verdict") != "FOUR_RUNTIME_BINDINGS_INSTALLED_V2"
@@ -11972,7 +12751,7 @@ def _validate_recovery_v2_council_successors(
     expected_all_payload_sha256 = sorted(
         {
             *(
-                cast(str, runtime_stages[stage]["payload_sha256"])
+                cast(str, cast(dict[str, Any], runtime_stages[stage])["payload_sha256"])
                 for stage in _RECOVERY_V2_TERMINAL_WORKFLOW_STAGES
             ),
             *(cast(str, item["payload_sha256"]) for item in artifact_documents),
@@ -11990,7 +12769,7 @@ def _validate_recovery_v2_council_successors(
     expected_all_archive_sha256 = sorted(
         {
             *(
-                cast(str, runtime_stages[stage]["archive_sha256"])
+                cast(str, cast(dict[str, Any], runtime_stages[stage])["archive_sha256"])
                 for stage in _RECOVERY_V2_TERMINAL_WORKFLOW_STAGES
             ),
             *(cast(str, item["archive_sha256"]) for item in artifact_documents),
@@ -12063,7 +12842,7 @@ def _validate_recovery_v2_council_successors(
     }
     if (
         set(effect_counters) != expected_effect_fields
-        or any(type(value) is not int or cast(int, value) < 0 for value in effect_counters.values())
+        or any(type(value) is not int or value < 0 for value in effect_counters.values())
         or cast(int, effect_counters["neon_identity_gets"]) > 25
         or cast(int, effect_counters["neon_preflight_gets"]) > 39
         or cast(int, effect_counters["neon_migrate_validation_gets"]) > 26
@@ -12806,7 +13585,7 @@ def _validate_data_torrent_recovery_v2_council_release(
     if not isinstance(reviewed_snapshot, str) or _HEX_64.fullmatch(reviewed_snapshot) is None:
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
     suffix = records[anchor_index + 4 :]
-    if len(suffix) < 8:
+    if len(suffix) < 10:
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
     local_qa_failure = suffix[0]
     local_correction_release = suffix[1]
@@ -12816,7 +13595,9 @@ def _validate_data_torrent_recovery_v2_council_release(
     exact_head_ci_correction_release = suffix[5]
     post_202_b101_failure = suffix[6]
     post_202_b101_correction_release = suffix[7]
-    release_suffix = suffix[8:]
+    exact_head_ci_cycle_2_failure = suffix[8]
+    exact_head_ci_cycle_2_correction_release = suffix[9]
+    release_suffix = suffix[10:]
     ledger_prefix_through_local_correction = (
         b"\n".join(raw_lines[: anchor_index + 6]) + b"\n"
     )
@@ -12849,6 +13630,14 @@ def _validate_data_torrent_recovery_v2_council_release(
     if not hmac.compare_digest(
         hashlib.sha256(ledger_prefix_through_exact_head_correction).hexdigest(),
         DATA_TORRENT_RECOVERY_V2_LEDGER_PREFIX_THROUGH_202_SHA256,
+    ):
+        raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
+    ledger_prefix_through_post_202_b101_correction = (
+        b"\n".join(raw_lines[: anchor_index + 12]) + b"\n"
+    )
+    if not hmac.compare_digest(
+        hashlib.sha256(ledger_prefix_through_post_202_b101_correction).hexdigest(),
+        DATA_TORRENT_RECOVERY_V2_LEDGER_PREFIX_THROUGH_204_SHA256,
     ):
         raise ChronosProductionError("CHRONOS_RECOVERY_V2_COUNCIL_RELEASE_INVALID")
     pr_b_release = (
@@ -13129,15 +13918,26 @@ def _validate_data_torrent_recovery_v2_council_release(
         expected_effect=expected_effect,
         expected_call_graph=expected_call_graph,
     )
-    active_release = post_202_b101_correction_release
-    active_release_claim = _RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM
+    active_release_date = _validate_recovery_v2_exact_head_ci_cycle_2_correction_pair(
+        exact_head_ci_cycle_2_failure,
+        exact_head_ci_cycle_2_correction_release,
+        root=root,
+        base_release=post_202_b101_correction_release,
+        base_release_date=active_release_date,
+        observed_now=observed_now,
+        expected_manifest=expected_manifest,
+        expected_effect=expected_effect,
+        expected_call_graph=expected_call_graph,
+    )
+    active_release = exact_head_ci_cycle_2_correction_release
+    active_release_claim = _RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_CORRECTION_RELEASE_CLAIM
     active_successors = release_suffix
     if pr_b_release is not None:
         active_release_date = _validate_recovery_v2_pr_b_release(
             pr_b_release,
             root=root,
-            base_release=post_202_b101_correction_release,
-            base_release_claim=_RECOVERY_V2_POST_202_B101_CORRECTION_RELEASE_CLAIM,
+            base_release=exact_head_ci_cycle_2_correction_release,
+            base_release_claim=_RECOVERY_V2_EXACT_HEAD_CI_CYCLE_2_CORRECTION_RELEASE_CLAIM,
             base_release_date=active_release_date,
             observed_now=observed_now,
             expected_manifest=expected_manifest,
@@ -13159,6 +13959,8 @@ def _validate_data_torrent_recovery_v2_council_release(
         exact_head_ci_correction_release=exact_head_ci_correction_release,
         post_202_b101_failure=post_202_b101_failure,
         post_202_b101_correction_release=post_202_b101_correction_release,
+        exact_head_ci_cycle_2_failure=exact_head_ci_cycle_2_failure,
+        exact_head_ci_cycle_2_correction_release=exact_head_ci_cycle_2_correction_release,
         active_release=active_release,
         active_release_claim=active_release_claim,
         successors=active_successors,

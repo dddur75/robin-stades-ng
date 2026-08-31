@@ -72,6 +72,8 @@ def test_safe_ci_is_a_secret_free_copy_of_the_quarantined_legacy_definition() ->
     assert safe["name"] == "00 - Qualite continue SAFE V2"
     legacy["name"] = safe["name"]
     scope_job = safe["jobs"].pop("data-torrent-recovery-v2-scope-guard")
+    ubuntu_checkout = safe["jobs"]["bounded-live-canary-ubuntu"]["steps"][0]
+    assert ubuntu_checkout["with"].pop("fetch-depth") == 0
     tests_job = safe["jobs"]["tests"]
     assert tests_job["if"] == "${{ !cancelled() }}"
     assert tests_job["needs"][0] == "data-torrent-recovery-v2-scope-guard"
@@ -104,14 +106,24 @@ def test_safe_ci_is_a_secret_free_copy_of_the_quarantined_legacy_definition() ->
         if step.get("name") == "Valider statiquement Recovery V2"
     )
     tests_job["steps"].remove(recovery_step)
+    typing_step = next(
+        step for step in tests_job["steps"] if step.get("name") == "Typage strict"
+    )
+    typing_command = " ".join(typing_step["run"].split())
+    explicit_global_command = (
+        "python -m mypy --explicit-package-bases "
+        "src/robin scripts/run_prospective_observatory.py"
+    )
+    assert explicit_global_command in typing_command
+    typing_step["run"] = typing_step["run"].replace(
+        explicit_global_command,
+        "python -m mypy src/robin scripts/run_prospective_observatory.py",
+        1,
+    )
     final_witness_job = safe["jobs"].pop(
         "data-torrent-recovery-v2-final-gate-witness"
     )
     assert safe == legacy
-    typing_step = next(
-        step for step in safe["jobs"]["tests"]["steps"] if step.get("name") == "Typage strict"
-    )
-    typing_command = " ".join(typing_step["run"].split())
     assert (
         "python -m mypy --strict --explicit-package-bases "
         "scripts/build_hypothesis_evidence.py" in typing_command

@@ -11323,6 +11323,54 @@
       "execution_id": "council-record:RCV3-20260831-204",
       "scientific_lineage_id": "DATA_TORRENT_RECOVERY_V2",
       "dataset_lineage_id": "NO_DATASET_IMPLEMENTATION_RELEASE",
+      "status": "SUPERSEDED",
+      "verified_by": [
+        "C0",
+        "C2",
+        "C4",
+        "DP6",
+        "A2"
+      ],
+      "successor_of": "GOV.DATA_TORRENT_RECOVERY.V2.E1.PRECOMMIT.BANDIT_SRC_ROBIN.B101.FAILURE.001",
+      "superseded_by": "GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.EXACT_HEAD_SAFE_V2.CYCLE_2.CORRECTION.RELEASE.001"
+    },
+    {
+      "claim_id": "GOV.DATA_TORRENT_RECOVERY.V2.E1.EXACT_HEAD_SAFE_V2.CYCLE_2.FAILURE.001",
+      "claim": "Exact-head SAFE V2 cycle 2 failed in three root jobs that reduce to two local causes; its dependent tests failure adds no third cause and every production effect remained zero",
+      "scope": "DATA_TORRENT_RECOVERY_V2_PR_A_EXACT_HEAD_SAFE_V2_CYCLE_2_FAILURE",
+      "source": "GitHub Actions run 33433893502; attempt 1; head 21d6a928c5998cca86cebbb0dc078aba4cd20cb5; completed 2026-08-31T20:16:10Z; conclusion failure",
+      "grain": "ONE_TERMINAL_EXACT_HEAD_CI_ATTEMPT_TO_TWO_ROOT_CAUSES",
+      "temporal_class": "DECISION_AS_OF",
+      "artifact": "https://github.com/dddur75/robin-stades-ng/actions/runs/33433893502",
+      "hash": "86b309fca24bf0c38e3a9898eeb19e3ef7caca3b11406d294a4f72a637074620",
+      "code_revision": "21d6a928c5998cca86cebbb0dc078aba4cd20cb5",
+      "execution_id": "council-record:RCV3-20260831-205",
+      "scientific_lineage_id": "DATA_TORRENT_RECOVERY_V2",
+      "dataset_lineage_id": "NO_DATASET_EXACT_HEAD_SAFE_V2_CYCLE_2_FAILURE",
+      "status": "VERIFIED",
+      "verified_by": [
+        "C0",
+        "CI_SAFE_V2",
+        "C2",
+        "C4",
+        "DP6",
+        "A2"
+      ],
+      "successor_of": "GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.POSIX_ROLLBACK.FAIL_CLOSED.CORRECTION.RELEASE.001"
+    },
+    {
+      "claim_id": "GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.EXACT_HEAD_SAFE_V2.CYCLE_2.CORRECTION.RELEASE.001",
+      "claim": "Four independent reviews bind the exact 138-file DATA TORRENT RECOVERY V2 candidate, close the record-to-graph self-reference with an acyclic runtime projection, verify the immutable owner manifest and non-fungible effect ceilings, and release only the implementation to exact-head SAFE V2 while every production effect remains dormant.",
+      "scope": "DATA_TORRENT_RECOVERY_V2_E1_IMPLEMENTATION_RELEASE_AFTER_INDEPENDENT_QA",
+      "source": "Reviewed candidate SHA-256 cc864289effab1a10062da28c1b72ed229c60c9e2721b98f6c28935b8bd0de79; C2 report SHA-256 df5de8be0d5b369f2a5db3c1fcd2a688a901f1c9138132abb8e4950852dc9f36; C4 report SHA-256 83697b4d297dcd87baa7403beaa50506a83bbb096a9e133d4ff40573a75266d0; DP6 report SHA-256 93eba86b8e5e6d2912982bcc612b89acd76283fd17057a0b351261b830e0ce17; A2 report SHA-256 7a1dc769e6a8f0cd33f509aa36c439ad331f61bbcd4fc490e4d9c2f4e5abd714; final review SHA-256 497fe614a3ee10712169c03f25b43d5835167708edcd2b2a75bbf5b7483b48c5",
+      "grain": "ONE_FROZEN_IMPLEMENTATION_CANDIDATE_TO_FOUR_INDEPENDENT_REVIEWS_AND_ONE_RELEASE_DECISION",
+      "temporal_class": "DECISION_AS_OF",
+      "artifact": "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-2-correction-final-review-v3.json",
+      "hash": "497fe614a3ee10712169c03f25b43d5835167708edcd2b2a75bbf5b7483b48c5",
+      "code_revision": "21d6a928c5998cca86cebbb0dc078aba4cd20cb5",
+      "execution_id": "council-record:RCV3-20260831-206",
+      "scientific_lineage_id": "DATA_TORRENT_RECOVERY_V2",
+      "dataset_lineage_id": "NO_DATASET_IMPLEMENTATION_RELEASE",
       "status": "VERIFIED",
       "verified_by": [
         "C0",
@@ -11331,7 +11379,7 @@
         "DP6",
         "A2"
       ],
-      "successor_of": "GOV.DATA_TORRENT_RECOVERY.V2.E1.PRECOMMIT.BANDIT_SRC_ROBIN.B101.FAILURE.001"
+      "successor_of": "GOV.DATA_TORRENT_RECOVERY.V2.E1.EXACT_HEAD_SAFE_V2.CYCLE_2.FAILURE.001"
     }
   ],
   "decision_nodes": [
@@ -12122,6 +12170,14 @@
     {
       "decision_id": "RCV3-20260831-204",
       "ledger_record_hash": "7a4c866dcd7666320e20640d47313d1d75c0e6fb58fe3bb2c67ee5775b861873"
+    },
+    {
+      "decision_id": "RCV3-20260831-205",
+      "ledger_record_hash": "28d91a5d62a4ced24c764b082aa4c4987b12dedf8025e9a7484932e06893f6bc"
+    },
+    {
+      "decision_id": "RCV3-20260831-206",
+      "ledger_record_hash": "7b2e01fdb6f5dbaf084c6adbc7ec1b3d91035daf2c7df9ce2680c8ae6df0d930"
     }
   ],
   "edges": [
@@ -17890,6 +17946,20 @@
       "edge_id": "EDGE.825",
       "from_claim_id": "GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.POSIX_ROLLBACK.FAIL_CLOSED.CORRECTION.RELEASE.001",
       "to_decision_id": "RCV3-20260831-204",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.826",
+      "from_claim_id": "GOV.DATA_TORRENT_RECOVERY.V2.E1.EXACT_HEAD_SAFE_V2.CYCLE_2.FAILURE.001",
+      "to_decision_id": "RCV3-20260831-205",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.827",
+      "from_claim_id": "GOV.DATA_TORRENT_RECOVERY.V2.E1.IMPLEMENTATION.EXACT_HEAD_SAFE_V2.CYCLE_2.CORRECTION.RELEASE.001",
+      "to_decision_id": "RCV3-20260831-206",
       "relation": "SUPPORTS",
       "status": "RECORDED"
     }

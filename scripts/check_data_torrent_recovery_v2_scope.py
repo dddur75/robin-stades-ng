@@ -20,9 +20,9 @@ from robin.chronos_production import (
 
 START_SHA = "fcbf2a4fedd413251ee9da94ec2a444c6b917e63"
 MISSION = "DATA_TORRENT_RECOVERY_V2"
-EXPECTED_ALLOWED_PATHS_SHA256 = "9a0358ef0f4b4161385efe4785a9f5653ececc71dc42d179c4d116bf12a6c9fd"
+EXPECTED_ALLOWED_PATHS_SHA256 = "47e703278d4ef33bc8fd236d970063dc0832749dcc3ea3b15e58ee9cb532a460"
 EXPECTED_PHASE_ALLOWED_PATHS_SHA256 = {
-    "PR_A": "20f13358feb1f2cfb1e48617f178dc6925f43a765105b9f7ee039fd4cc28a2e1",
+    "PR_A": "482652675444b1c84c3ccbf608da1cbf4bebe8bcd05b9dfb584cc371a278d0eb",
     "PR_B": "2ecb01d91b1ee2e2a13d27bff9665025866a149e221f0e79fec06c01bcb5a4d2",
     "PR_C": "51fca9760fd1a209877ec32ce60adeac791296e377e1fccd88b850e1056ef14b",
 }
@@ -77,6 +77,15 @@ _POST_202_B101_CORRECTION_REVIEW_PATHS = frozenset(
         "reports/council/data-torrent-recovery-v2-post-202-b101-correction-c4-review-v3.json",
         "reports/council/data-torrent-recovery-v2-post-202-b101-correction-dp6-review-v3.json",
         "reports/council/data-torrent-recovery-v2-post-202-b101-correction-final-review-v3.json",
+    }
+)
+_CYCLE_2_CORRECTION_REVIEW_PATHS = frozenset(
+    {
+        "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-2-correction-a2-review-v3.json",
+        "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-2-correction-c2-review-v3.json",
+        "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-2-correction-c4-review-v3.json",
+        "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-2-correction-dp6-review-v3.json",
+        "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-2-correction-final-review-v3.json",
     }
 )
 _PR_B_REVIEW_PATHS = frozenset(
@@ -292,6 +301,7 @@ def _phase_allowed_paths(allowed: list[str], *, phase: str) -> list[str]:
             | _STATIC_CORRECTION_REVIEW_PATHS
             | _EXACT_HEAD_CI_CORRECTION_REVIEW_PATHS
             | _POST_202_B101_CORRECTION_REVIEW_PATHS
+            | _CYCLE_2_CORRECTION_REVIEW_PATHS
             | _PR_B_REVIEW_PATHS
             | _INITIAL_REVIEW_PATHS
         ).issubset(allowed_set)
@@ -310,6 +320,7 @@ def _phase_allowed_paths(allowed: list[str], *, phase: str) -> list[str]:
             - set(_STATIC_CORRECTION_REVIEW_PATHS)
             - set(_EXACT_HEAD_CI_CORRECTION_REVIEW_PATHS)
             - set(_POST_202_B101_CORRECTION_REVIEW_PATHS)
+            - set(_CYCLE_2_CORRECTION_REVIEW_PATHS)
             - {_OWNER_MANIFEST_PATH}
         )
     else:

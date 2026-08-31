@@ -150,17 +150,17 @@ récursif non ancré n’est autorisé.
 
 Le scope guard compare toujours la base immuable au HEAD exact avec renames
 désactivés. Il lie l’allowlist gelée par l’empreinte
-`9a0358ef0f4b4161385efe4785a9f5653ececc71dc42d179c4d116bf12a6c9fd`
+`47e703278d4ef33bc8fd236d970063dc0832749dcc3ea3b15e58ee9cb532a460`
 et la portée PR-A par
-`20f13358feb1f2cfb1e48617f178dc6925f43a765105b9f7ee039fd4cc28a2e1` ;
+`482652675444b1c84c3ccbf608da1cbf4bebe8bcd05b9dfb584cc371a278d0eb` ;
 modifier la matrice ne peut donc pas élargir la portée du même candidat.
 
 Après le SAFE V2 post-merge et avant R1, une invocation E1 réserve exclusivement
 `.torrent/release/recovery-v2-postmerge-quarantine.json`, accepte seulement les
 états initiaux `active` ou `disabled_manually` des quatre nouveaux workflows,
 puis tente exactement une fois chaque `DISABLE` nécessaire, dans l’ordre gelé.
-Avant même de créer ce reçu, le contrôleur exige la release Council 204, les
-preuves locales post-196, post-198, exact-head et post-202 corrigées, les six
+Avant même de créer ce reçu, le contrôleur exige la release Council 206, les
+preuves locales post-196, post-198, exact-head, post-202 et cycle-2 corrigées, les sept
 vagues de revues intactes et tout suffixe Council positif. Le token GitHub non vide et borné est
 également validé avant la réservation one-shot.
 Elle borne ses lectures GitHub à 25 et ses PUT de désactivation à quatre ; aucun
@@ -183,11 +183,11 @@ chaque opération reçoivent exactement la même échéance ; aucun chemin ne pe
 porter à 1 200 secondes.
 
 Le gel de revue et le gel runtime sont deux projections distinctes. La première
-exclut le ledger, le graphe de preuves et les trente rapports détenus par les
+exclut le ledger, le graphe de preuves et les trente-cinq rapports détenus par les
 reviewers : la vague initiale, la vague de correction CI, la correction locale
-post-196, la correction statique/runtime post-198, la correction exact-head 202
-et la correction B101 post-202, chacune composée de quatre rapports indépendants
-et d’une synthèse finale. La seconde inclut les trente
+post-196, la correction statique/runtime post-198, la correction exact-head 202,
+la correction B101 post-202 et le redesign exact-head cycle 2, chacune composée
+de quatre rapports indépendants et d’une synthèse finale. La seconde inclut les trente-cinq
 rapports mais exclut les deux surfaces
 append-only, ledger et graphe de preuves.
 Cette séparation évite que le hash du record Council dépende d’un graphe qui
@@ -223,8 +223,21 @@ identifié un B101 distinct des faux positifs B105 du record 199 : l’assertion
 rollback POSIX pouvait être supprimée sous optimisation Python. Le record 203
 conserve cet échec sans effet externe et le record 204, lié à une sixième vague de
 revues, active uniquement le garde explicite fail-closed et le cycle 2 sur un nouveau
-SHA. PR-B reste inutilisé, et merge, postmerge ainsi que tout effet de production
-restent tenus.
+SHA. Le cycle 2, run `33433893502`, tentative 1, sur le head
+`21d6a928c5998cca86cebbb0dc078aba4cd20cb5`, est lui aussi terminal en échec et
+n’est jamais rejoué. Ses trois jobs racines rouges se réduisent à deux causes :
+le checkout superficiel du canari Ubuntu empêchait l’assertion de provenance sur
+`START_SHA`, et les deux profils PostgreSQL attendaient l’exception DBAPI brute au
+lieu du contrat public `ChronosControlPlaneError` assaini. Le job `tests` est un
+échec dérivé de prérequis uniquement ; dix autres jobs ont réussi et trois ont été
+skippés. Le record 205 applique donc `FAIL_AND_REDESIGN` et revient explicitement
+à E1. Le record 206 et sa septième vague de revues ferment les deux causes au plus
+petit périmètre. La QA pré-cycle 3 ferme aussi 51 diagnostics source Mypy 2.3,
+une collision d’identité de module et 23 diagnostics d’exports de tests, sans
+modifier un chemin d’effet ; les commandes CI exactes passent sur 216 sources
+globales, 29 sources du profil PostgreSQL et quinze scripts Recovery stricts.
+Le record 206 n’autorise que le cycle 3 final sur un nouveau SHA. PR-B reste inutilisé,
+et merge, postmerge ainsi que tout effet de production restent tenus.
 
 R4 est une invocation locale unique avec quatre écritures de secret dans l’ordre
 gelé. `gh 2.96.0` ne sert qu’à lire la clé publique et chiffrer localement sans

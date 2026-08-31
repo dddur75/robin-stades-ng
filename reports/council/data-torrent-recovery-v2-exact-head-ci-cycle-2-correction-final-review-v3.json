@@ -1,0 +1,60 @@
+{
+  "schema_version": "data-torrent-recovery-v2-exact-head-ci-cycle-2-correction-final-review-v3",
+  "mission_id": "DATA_TORRENT_RECOVERY_V2",
+  "reviewed_at": "2026-08-31T20:29:00Z",
+  "program_start_sha": "fcbf2a4fedd413251ee9da94ec2a444c6b917e63",
+  "reviewed_snapshot_sha256": "cc864289effab1a10062da28c1b72ed229c60c9e2721b98f6c28935b8bd0de79",
+  "reviewed_file_count": 138,
+  "agents": [
+    "C2",
+    "C4",
+    "DP6",
+    "A2"
+  ],
+  "reviewer_reports": {
+    "A2": "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-2-correction-a2-review-v3.json",
+    "C2": "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-2-correction-c2-review-v3.json",
+    "C4": "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-2-correction-c4-review-v3.json",
+    "DP6": "reports/council/data-torrent-recovery-v2-exact-head-ci-cycle-2-correction-dp6-review-v3.json"
+  },
+  "verdict": "PASS_AND_HOLD_IMPLEMENTATION_RELEASE",
+  "defects": {
+    "open_p0": 0,
+    "open_p1": 0,
+    "open_p2": 0,
+    "open_threads": 0
+  },
+  "production_effects_observed": 0,
+  "external_effects_observed": {
+    "git_remote_writes": 2,
+    "github_writes": 1,
+    "neon_gets": 0,
+    "neon_mutations": 0,
+    "postgresql_production_connections": 0,
+    "postgresql_production_writes": 0,
+    "r2_gets": 0,
+    "r2_puts": 0,
+    "official_reads": 0,
+    "provider_requests": 0,
+    "secret_writes": 0
+  },
+  "delivery_effects_observed": {
+    "git_remote_writes": 2,
+    "github_pull_request_writes": 1,
+    "github_merge_commits": 0,
+    "github_safe_v2_runs": 2,
+    "failed_run_reruns": 0
+  },
+  "release_boundary": {
+    "runtime_projection_includes_all_review_reports": true,
+    "runtime_projection_excludes_append_only_ledger": true,
+    "runtime_projection_excludes_evidence_graph": true,
+    "ledger_graph_exact_hash_equality_required_separately": true
+  },
+  "release_conditions": [
+    "EXACT_HEAD_SAFE_V2_GREEN",
+    "NORMAL_MERGE_COMMIT",
+    "POSTMERGE_SAFE_V2_GREEN",
+    "EXACT_IMMEDIATE_PREDECESSOR_BEFORE_EACH_STAGE"
+  ]
+}
