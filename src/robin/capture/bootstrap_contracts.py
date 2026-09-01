@@ -10,7 +10,7 @@ from __future__ import annotations
 import ipaddress
 import os
 import unicodedata
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from typing import Annotated, Any, Final, Literal, Self, TypeAlias, cast
 from urllib.parse import urlparse
 
@@ -40,6 +40,11 @@ BOOTSTRAP_CAPABILITY_VERSION: Final[Literal["robin-real-execution-bootstrap-clos
 BOOTSTRAP_MISSION_ID: Final[Literal["REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1"]] = (
     "REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1"
 )
+FIRST_C0_VERTICAL_MISSION_ID: Final[Literal["FIRST_C0_VERTICAL_V1"]] = "FIRST_C0_VERTICAL_V1"
+MissionIdV1: TypeAlias = Literal[
+    "REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1",
+    "FIRST_C0_VERTICAL_V1",
+]
 PROVIDER_CANONICAL_HOSTNAME: Final[Literal["api.the-odds-api.com"]] = "api.the-odds-api.com"
 MAX_NETWORK_BINDING_TTL = timedelta(minutes=15)
 MIN_OWNER_REVIEW_WINDOW = timedelta(minutes=2)
@@ -92,6 +97,9 @@ FIRST_C0_CANARY_COMPETITIONS: Final[dict[str, str]] = {
 MISSION_MANIFEST_SOURCE_HASH: Final[
     Literal["204e4323d0b99fdfa8c655cdc3a08a8d2b3c82ac0a784f9a97982c90ab3a7312"]
 ] = "204e4323d0b99fdfa8c655cdc3a08a8d2b3c82ac0a784f9a97982c90ab3a7312"
+REAL_EXECUTION_BOOTSTRAP_MANIFEST_SHA256: Final[
+    Literal["d3d570be434b61c0875212061d92419d074b0d8357ba60e55c9f10cd79458e14"]
+] = "d3d570be434b61c0875212061d92419d074b0d8357ba60e55c9f10cd79458e14"
 MISSION_EXTERNAL_EFFECTS: Final[tuple[str, ...]] = (
     "local_standalone_runtime_create_after_merge",
     "github_public_full_clone_after_merge",
@@ -101,6 +109,31 @@ MISSION_EXTERNAL_EFFECTS: Final[tuple[str, ...]] = (
     "github_pull_request_write",
     "github_merge_commit",
     "github_actions_observe",
+)
+FIRST_C0_VERTICAL_MANIFEST_SOURCE_HASH: Final[
+    Literal["9015d1cd535893614917d1697d0ad5ce059bf1aed42b99140134781351744ff6"]
+] = "9015d1cd535893614917d1697d0ad5ce059bf1aed42b99140134781351744ff6"
+FIRST_C0_VERTICAL_MANIFEST_SHA256: Final[
+    Literal["0a2fa273481921a6207a30b27f50a1e293bfbf6d3e19f78596b1308628072ce4"]
+] = "0a2fa273481921a6207a30b27f50a1e293bfbf6d3e19f78596b1308628072ce4"
+FIRST_C0_VERTICAL_MANIFEST_EXPIRES_AT: Final = datetime(2026, 9, 4, 8, 8, 40, tzinfo=UTC)
+FIRST_C0_VERTICAL_EXTERNAL_EFFECTS: Final[tuple[str, ...]] = (
+    "git_remote_write_non_force",
+    "github_pull_request_write",
+    "github_merge_commit",
+    "github_actions_observe",
+    "local_standalone_runtime_create_after_merge",
+    "github_public_full_clone_after_merge",
+    "official_schedule_public_read_max_2_after_merge",
+    "provider_public_dns_resolution_exactly_once_after_merge",
+    "owner_review_pack_create_exactly_once_after_dns_binding",
+    "owner_authorization_promote_exactly_once_after_explicit_pack_specific_owner_decision",
+    "provider_secret_read_exactly_once_after_pack_specific_owner_authorization",
+    "provider_tcp_tls_connection_exactly_once_after_pack_specific_owner_authorization",
+    "provider_https_get_exactly_once_after_pack_specific_owner_authorization",
+    "provider_credit_consume_exactly_once_after_pack_specific_owner_authorization",
+    "local_immutable_live_capture_artifact_writes",
+    "offline_replay_from_captured_bytes",
 )
 TEAM_NORMALIZATION_REVISION: Final[
     Literal["unicode-nfkc-casefold-collapse-unicode-whitespace-v1"]
@@ -244,15 +277,16 @@ def canonical_provider_ip_set(addresses: tuple[str, ...]) -> tuple[str, ...]:
 class RealExecutionMissionManifestV1(FrozenContract):
     """Semantic, hashable view of the tracked mission authority manifest."""
 
-    mission_id: Literal["REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1"] = BOOTSTRAP_MISSION_ID
+    mission_id: MissionIdV1 = BOOTSTRAP_MISSION_ID
     authorized_stages: tuple[Literal["E1"], ...]
     maximum_stage: Literal["E1"]
     external_effects: tuple[str, ...]
-    compute_budget: Literal[8000]
-    time_budget: Literal[345600]
-    source_hash: Literal["204e4323d0b99fdfa8c655cdc3a08a8d2b3c82ac0a784f9a97982c90ab3a7312"] = (
-        MISSION_MANIFEST_SOURCE_HASH
-    )
+    compute_budget: Literal[8000, 4000]
+    time_budget: Literal[345600, 259200]
+    source_hash: Literal[
+        "204e4323d0b99fdfa8c655cdc3a08a8d2b3c82ac0a784f9a97982c90ab3a7312",
+        "9015d1cd535893614917d1697d0ad5ce059bf1aed42b99140134781351744ff6",
+    ] = MISSION_MANIFEST_SOURCE_HASH
     expires_at: datetime
 
     @classmethod
@@ -261,10 +295,40 @@ class RealExecutionMissionManifestV1(FrozenContract):
 
     @model_validator(mode="after")
     def validate_manifest(self) -> Self:
-        ensure_utc(self.expires_at, field="mission_manifest_expires_at")
-        if self.authorized_stages != ("E1",) or self.external_effects != MISSION_EXTERNAL_EFFECTS:
+        expires_at = ensure_utc(self.expires_at, field="mission_manifest_expires_at")
+        if self.authorized_stages != ("E1",):
             raise ValueError("BOOTSTRAP_MISSION_MANIFEST_SCOPE_INVALID")
+        if self.mission_id == BOOTSTRAP_MISSION_ID:
+            if (
+                self.external_effects != MISSION_EXTERNAL_EFFECTS
+                or self.compute_budget != 8000
+                or self.time_budget != 345600
+                or self.source_hash != MISSION_MANIFEST_SOURCE_HASH
+            ):
+                raise ValueError("BOOTSTRAP_MISSION_MANIFEST_SCOPE_INVALID")
+        elif (
+            self.external_effects != FIRST_C0_VERTICAL_EXTERNAL_EFFECTS
+            or self.compute_budget != 4000
+            or self.time_budget != 259200
+            or self.source_hash != FIRST_C0_VERTICAL_MANIFEST_SOURCE_HASH
+            or expires_at != FIRST_C0_VERTICAL_MANIFEST_EXPIRES_AT
+        ):
+            raise ValueError("FIRST_C0_VERTICAL_MISSION_MANIFEST_SCOPE_INVALID")
         return self
+
+    def assert_first_c0_live_effect_ceiling(self) -> None:
+        """Reject historical, substituted, expanded, or reordered live authority."""
+
+        if (
+            self.mission_id != FIRST_C0_VERTICAL_MISSION_ID
+            or self.external_effects != FIRST_C0_VERTICAL_EXTERNAL_EFFECTS
+            or self.compute_budget != 4000
+            or self.time_budget != 259200
+            or self.source_hash != FIRST_C0_VERTICAL_MANIFEST_SOURCE_HASH
+            or self.expires_at != FIRST_C0_VERTICAL_MANIFEST_EXPIRES_AT
+            or self.canonical_manifest_sha256() != FIRST_C0_VERTICAL_MANIFEST_SHA256
+        ):
+            raise ValueError("FIRST_C0_VERTICAL_LIVE_EFFECT_CEILING_INVALID")
 
     def canonical_manifest_sha256(self) -> Sha256:
         return canonical_sha256(cast(dict[str, JsonValue], self.model_dump(mode="json")))
@@ -276,7 +340,7 @@ class ProviderNetworkResolutionClaimV1(FrozenContract):
     schema_version: Literal["robin-provider-network-resolution-claim-v1"] = (
         "robin-provider-network-resolution-claim-v1"
     )
-    mission_id: Literal["REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1"] = BOOTSTRAP_MISSION_ID
+    mission_id: MissionIdV1 = BOOTSTRAP_MISSION_ID
     mission_manifest_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
     workspace_receipt_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
     campaign_selection_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
@@ -1362,6 +1426,7 @@ class FirstC0CanarySelectionV1(FrozenContract):
         FIRST_C0_CANARY_SELECTION_REVISION
     )
     purpose: Literal["FIRST_REAL_CAPTURE_CANARY_ONLY"] = "FIRST_REAL_CAPTURE_CANARY_ONLY"
+    mission_id: MissionIdV1
     ranking_policy: Literal[
         "coverage-desc;protocol-role-desc;positive-margin-required;"
         "earliest-readiness-asc;stable-group-hash-asc"
@@ -1927,7 +1992,7 @@ class OwnerAuthorizationV2(FrozenContract):
         default=None,
         pattern=r"^[0-9a-f]{64}$",
     )
-    mission_id: Literal["REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1"] = BOOTSTRAP_MISSION_ID
+    mission_id: MissionIdV1 = BOOTSTRAP_MISSION_ID
     capability_version: Literal["robin-real-execution-bootstrap-closure-v1"] = (
         BOOTSTRAP_CAPABILITY_VERSION
     )
@@ -2065,6 +2130,9 @@ class ActivationEnvelopeV2(FrozenContract):
         "robin-live-activation-envelope-v2"
     )
     activation_id: str = Field(min_length=1, max_length=120)
+    mission_id: MissionIdV1
+    mission_manifest_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    mission_expires_at_utc: datetime
     authorization_id: str = Field(min_length=1, max_length=120)
     authorization_hash: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
     repository_sha: Sha256 = Field(pattern=r"^[0-9a-f]{40}$")
@@ -2099,7 +2167,12 @@ class ActivationEnvelopeV2(FrozenContract):
 
     @classmethod
     def issue(cls, **data: Any) -> Self:
-        normalized = _normalized_utc_data(data, "not_before_utc", "expires_at_utc")
+        normalized = _normalized_utc_data(
+            data,
+            "mission_expires_at_utc",
+            "not_before_utc",
+            "expires_at_utc",
+        )
         provisional = cls.model_construct(
             activation_scope_sha256="0" * 64,
             canonical_activation_hash="0" * 64,
@@ -2121,7 +2194,11 @@ class ActivationEnvelopeV2(FrozenContract):
     def validate_activation(self) -> Self:
         starts = ensure_utc(self.not_before_utc, field="activation_not_before")
         expires = ensure_utc(self.expires_at_utc, field="activation_expires_at")
-        if starts >= expires or expires - starts > MAX_ACTIVATION_TTL:
+        mission_expires = ensure_utc(
+            self.mission_expires_at_utc,
+            field="activation_mission_expires_at",
+        )
+        if starts >= expires or expires - starts > MAX_ACTIVATION_TTL or expires > mission_expires:
             raise ValueError("LIVE_ACTIVATION_INTERVAL_INVALID")
         if self.sport_key not in LIVE_ALLOWED_SPORT_KEYS or not _canonical_market_set(self.markets):
             raise ValueError("LIVE_ACTIVATION_SCOPE_INVALID")
@@ -2135,6 +2212,9 @@ class ActivationEnvelopeV2(FrozenContract):
 class LivePlanItemV2(FrozenContract):
     schema_version: Literal["robin-live-plan-item-v2"] = "robin-live-plan-item-v2"
     item_id: str = Field(min_length=1, max_length=120)
+    mission_id: MissionIdV1
+    mission_manifest_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    mission_expires_at_utc: datetime
     plan_id: str = Field(min_length=1, max_length=120)
     sequence: int = Field(gt=0)
     sport_key: str = Field(min_length=1, max_length=120)
@@ -2159,7 +2239,12 @@ class LivePlanItemV2(FrozenContract):
 
     @classmethod
     def issue(cls, **data: Any) -> Self:
-        normalized = _normalized_utc_data(data, "not_before_utc", "expires_at_utc")
+        normalized = _normalized_utc_data(
+            data,
+            "mission_expires_at_utc",
+            "not_before_utc",
+            "expires_at_utc",
+        )
         provisional = cls.model_construct(canonical_item_hash="0" * 64, **normalized)
         return cls(
             canonical_item_hash=canonical_sha256(provisional.identity_material()),
@@ -2170,7 +2255,11 @@ class LivePlanItemV2(FrozenContract):
     def validate_item(self) -> Self:
         starts = ensure_utc(self.not_before_utc, field="item_not_before")
         expires = ensure_utc(self.expires_at_utc, field="item_expires_at")
-        if starts >= expires:
+        mission_expires = ensure_utc(
+            self.mission_expires_at_utc,
+            field="item_mission_expires_at",
+        )
+        if starts >= expires or expires > mission_expires:
             raise ValueError("LIVE_PLAN_ITEM_INTERVAL_INVALID")
         if self.sport_key not in LIVE_ALLOWED_SPORT_KEYS or not _canonical_market_set(self.markets):
             raise ValueError("LIVE_PLAN_ITEM_SCOPE_INVALID")
@@ -2184,6 +2273,9 @@ class LivePlanItemV2(FrozenContract):
 class LivePlanV2(FrozenContract):
     schema_version: Literal["robin-live-plan-v2"] = "robin-live-plan-v2"
     plan_id: str = Field(min_length=1, max_length=120)
+    mission_id: MissionIdV1
+    mission_manifest_sha256: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
+    mission_expires_at_utc: datetime
     activation_id: str = Field(min_length=1, max_length=120)
     activation_hash: Sha256 = Field(pattern=r"^[0-9a-f]{64}$")
     repository_sha: Sha256 = Field(pattern=r"^[0-9a-f]{40}$")
@@ -2204,7 +2296,12 @@ class LivePlanV2(FrozenContract):
 
     @classmethod
     def issue(cls, **data: Any) -> Self:
-        normalized = _normalized_utc_data(data, "created_at_utc", "expires_at_utc")
+        normalized = _normalized_utc_data(
+            data,
+            "mission_expires_at_utc",
+            "created_at_utc",
+            "expires_at_utc",
+        )
         provisional = cls.model_construct(canonical_plan_hash="0" * 64, **normalized)
         return cls(
             canonical_plan_hash=canonical_sha256(provisional.identity_material()),
@@ -2215,7 +2312,11 @@ class LivePlanV2(FrozenContract):
     def validate_plan(self) -> Self:
         created = ensure_utc(self.created_at_utc, field="plan_created_at")
         expires = ensure_utc(self.expires_at_utc, field="plan_expires_at")
-        if created >= expires or not self.items:
+        mission_expires = ensure_utc(
+            self.mission_expires_at_utc,
+            field="plan_mission_expires_at",
+        )
+        if created >= expires or expires > mission_expires or not self.items:
             raise ValueError("LIVE_PLAN_INTERVAL_OR_ITEMS_INVALID")
         if len(self.items) > self.maximum_http_calls:
             raise ValueError("LIVE_PLAN_CALL_LIMIT_EXCEEDED")
@@ -2227,6 +2328,9 @@ class LivePlanV2(FrozenContract):
             raise ValueError("LIVE_PLAN_ITEM_ID_DUPLICATED")
         if any(
             item.plan_id != self.plan_id
+            or item.mission_id != self.mission_id
+            or item.mission_manifest_sha256 != self.mission_manifest_sha256
+            or item.mission_expires_at_utc != self.mission_expires_at_utc
             or item.fixture_target_set_sha256 != self.fixture_target_set_sha256
             or item.provider_network_binding_sha256 != self.provider_network_binding_sha256
             or item.not_before_utc < created
@@ -2536,6 +2640,10 @@ class OwnerReviewPackV1(FrozenContract):
             or self.campaign_selection.workspace_prepared_at_utc
             != self.workspace_receipt.prepared_at_utc
             or self.campaign_selection.mission_manifest_sha256 != self.mission_manifest_sha256
+            or (
+                isinstance(self.campaign_selection, FirstC0CanarySelectionV1)
+                and self.campaign_selection.mission_id != self.mission_manifest.mission_id
+            )
             or self.campaign_selection.mission_expires_at_utc != self.mission_manifest.expires_at
             or self.selected_campaign_candidate_id != selected_campaign.candidate_id
             or self.selected_campaign_candidate_sha256 != selected_campaign.canonical_candidate_hash
@@ -2548,6 +2656,7 @@ class OwnerReviewPackV1(FrozenContract):
             or self.request != selected_campaign.request
             or self.request_fingerprint_sha256 != fingerprint
             or authorization.authorization_status != "OWNER_REVIEW_CANDIDATE"
+            or authorization.mission_id != self.mission_manifest.mission_id
             or authorization.review_candidate_sha256 is not None
             or authorization.authorization_id != expected_authorization_id
             or authorization.authorized_main_sha != self.workspace_receipt.authorized_main_sha
@@ -2582,6 +2691,9 @@ class OwnerReviewPackV1(FrozenContract):
             or self.expected_owner_authorization_sha256
             != authorization.expected_promoted_authorization_hash()
             or activation.activation_id != expected_activation_id
+            or activation.mission_id != self.mission_manifest.mission_id
+            or activation.mission_manifest_sha256 != self.mission_manifest_sha256
+            or activation.mission_expires_at_utc != self.mission_manifest.expires_at
             or activation.authorization_id != authorization.authorization_id
             or activation.authorization_hash != self.expected_owner_authorization_sha256
             or activation.repository_sha != self.workspace_receipt.authorized_main_sha
@@ -2596,6 +2708,9 @@ class OwnerReviewPackV1(FrozenContract):
             or activation.maximum_http_calls != 1
             or activation.maximum_credits != len(self.request.markets)
             or plan.canonical_plan_hash != activation.plan_sha256
+            or plan.mission_id != self.mission_manifest.mission_id
+            or plan.mission_manifest_sha256 != self.mission_manifest_sha256
+            or plan.mission_expires_at_utc != self.mission_manifest.expires_at
             or plan.plan_id != expected_plan_id
             or plan.activation_id != activation.activation_id
             or plan.activation_hash != activation.activation_scope_sha256
@@ -2609,6 +2724,9 @@ class OwnerReviewPackV1(FrozenContract):
             or plan.maximum_credits != len(self.request.markets)
             or plan.items != (item,)
             or item.item_id != expected_item_id
+            or item.mission_id != self.mission_manifest.mission_id
+            or item.mission_manifest_sha256 != self.mission_manifest_sha256
+            or item.mission_expires_at_utc != self.mission_manifest.expires_at
             or item.plan_id != plan.plan_id
             or item.sequence != 1
             or item.sport_key != self.request.sport_key
@@ -2630,6 +2748,8 @@ class OwnerReviewPackV1(FrozenContract):
             != self.workspace_receipt_sha256
             or self.provider_network_binding.resolution_claim.mission_manifest_sha256
             != self.mission_manifest_sha256
+            or self.provider_network_binding.resolution_claim.mission_id
+            != self.mission_manifest.mission_id
             or self.provider_network_binding.resolution_claim.mission_expires_at_utc
             != self.mission_manifest.expires_at
             or self.provider_network_binding.resolution_claim.campaign_selection_sha256

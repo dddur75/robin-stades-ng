@@ -79,6 +79,10 @@ from robin.capture.storage import (
     exclusive_local_directory_fingerprint,
     validate_exclusive_local_directory_identity,
 )
+from robin.capture.workspace_bootstrap import (
+    WorkspaceBootstrapError,
+    load_tracked_real_execution_mission_manifest_v1,
+)
 
 
 class LiveGuardError(RuntimeError):
@@ -1055,7 +1059,10 @@ class BoundedLiveCanaryExecutor:
             except (CaptureContractError, TypeError, ValueError):
                 raise LiveGuardError("LIVE_PROVIDER_NETWORK_BINDING_EXPIRED") from None
             if (
-                activation.provider_network_binding_sha256
+                activation.mission_id != authorization.mission_id
+                or activation.mission_manifest_sha256 != authorization.mission_manifest_sha256
+                or activation.mission_expires_at_utc != authorization.mission_expires_at_utc
+                or activation.provider_network_binding_sha256
                 != authorization.provider_network_binding_sha256
                 or activation.fixture_target_set_sha256 != authorization.fixture_target_set_sha256
                 or network_binding.canonical_binding_hash
@@ -1115,7 +1122,14 @@ class BoundedLiveCanaryExecutor:
             ):
                 raise LiveGuardError("LIVE_CONTRACT_VERSION_MISMATCH")
             if (
-                plan.provider_network_binding_sha256 != activation.provider_network_binding_sha256
+                plan.mission_id != authorization.mission_id
+                or plan.mission_id != activation.mission_id
+                or plan.mission_manifest_sha256 != authorization.mission_manifest_sha256
+                or plan.mission_manifest_sha256 != activation.mission_manifest_sha256
+                or plan.mission_expires_at_utc != authorization.mission_expires_at_utc
+                or plan.mission_expires_at_utc != activation.mission_expires_at_utc
+                or plan.provider_network_binding_sha256
+                != activation.provider_network_binding_sha256
                 or plan.fixture_target_set_sha256 != activation.fixture_target_set_sha256
                 or plan.expires_at_utc > authorization.expires_at_utc
             ):
@@ -1160,6 +1174,12 @@ class BoundedLiveCanaryExecutor:
                 or fixture_target_set is None
                 or network_binding is None
                 or mappings
+                or item.mission_id != activation.mission_id
+                or item.mission_id != plan.mission_id
+                or item.mission_manifest_sha256 != activation.mission_manifest_sha256
+                or item.mission_manifest_sha256 != plan.mission_manifest_sha256
+                or item.mission_expires_at_utc != activation.mission_expires_at_utc
+                or item.mission_expires_at_utc != plan.mission_expires_at_utc
                 or item.fixture_target_set_sha256 != fixture_target_set.canonical_set_hash
                 or item.provider_network_binding_sha256 != network_binding.canonical_binding_hash
                 or item.fixture_target_set_sha256 != plan.fixture_target_set_sha256
@@ -1625,6 +1645,8 @@ class BoundedLiveCanaryExecutor:
         fixture_target_set: FixtureTargetSetV1,
         provider_network_binding: ProviderNetworkBindingV1,
         mission_manifest: RealExecutionMissionManifestV1,
+        mission_manifest_repository_root: Path,
+        mission_manifest_path: Path,
         review_candidate: OwnerAuthorizationV2,
     ) -> LiveExecutionReceiptV1:
         """Execute one successor item without any pre-dispatch provider fixture IDs."""
@@ -1659,6 +1681,23 @@ class BoundedLiveCanaryExecutor:
             )
         except (AttributeError, CaptureContractError, TypeError, ValueError):
             raise LiveGuardError("LIVE_INPUT_CONTRACT_INVALID") from None
+        try:
+            manifest_repository_fingerprint = exclusive_local_directory_fingerprint(
+                mission_manifest_repository_root
+            )
+        except CaptureStorageError:
+            raise LiveGuardError("LIVE_FIRST_C0_MANIFEST_REPOSITORY_INVALID") from None
+        if (
+            manifest_repository_fingerprint
+            != lock_authorization.approved_repository_root_fingerprint
+        ):
+            raise LiveGuardError("LIVE_FIRST_C0_MANIFEST_REPOSITORY_MISMATCH")
+        boundary_manifest = self._reload_first_c0_manifest_at_boundary(
+            repository_root=mission_manifest_repository_root,
+            manifest_path=mission_manifest_path,
+            expected_sha256=lock_manifest.canonical_manifest_sha256(),
+            expected_expires_at_utc=lock_manifest.expires_at,
+        )
         if lock_authorization.authorization_status != "OWNER_AUTHORIZED":
             raise LiveGuardError("LIVE_OWNER_AUTHORIZATION_CANDIDATE_NOT_EXECUTABLE")
         preflight_now = ensure_utc(self.clock(), field="live_successor_preflight_at")
@@ -1668,9 +1707,21 @@ class BoundedLiveCanaryExecutor:
             or lock_authorization.review_candidate_sha256
             != lock_review_candidate.canonical_authorization_hash
             or lock_authorization.mission_manifest_sha256
-            != lock_manifest.canonical_manifest_sha256()
-            or lock_authorization.mission_expires_at_utc != lock_manifest.expires_at
-            or preflight_now >= lock_manifest.expires_at
+            != boundary_manifest.canonical_manifest_sha256()
+            or lock_authorization.mission_expires_at_utc != boundary_manifest.expires_at
+            or preflight_now >= boundary_manifest.expires_at
+            or lock_authorization.mission_id != boundary_manifest.mission_id
+            or lock_review_candidate.mission_id != boundary_manifest.mission_id
+            or lock_activation.mission_id != boundary_manifest.mission_id
+            or lock_activation.mission_manifest_sha256
+            != boundary_manifest.canonical_manifest_sha256()
+            or lock_activation.mission_expires_at_utc != boundary_manifest.expires_at
+            or lock_plan.mission_id != boundary_manifest.mission_id
+            or lock_plan.mission_manifest_sha256 != boundary_manifest.canonical_manifest_sha256()
+            or lock_plan.mission_expires_at_utc != boundary_manifest.expires_at
+            or lock_item.mission_id != boundary_manifest.mission_id
+            or lock_item.mission_manifest_sha256 != boundary_manifest.canonical_manifest_sha256()
+            or lock_item.mission_expires_at_utc != boundary_manifest.expires_at
             or lock_authorization.fixture_target_set_sha256 != lock_targets.canonical_set_hash
             or lock_authorization.provider_network_binding_sha256
             != lock_binding.canonical_binding_hash
@@ -1678,6 +1729,7 @@ class BoundedLiveCanaryExecutor:
             or lock_targets.workspace_receipt_sha256 != lock_authorization.workspace_receipt_sha256
             or lock_binding.resolution_claim.workspace_receipt_sha256
             != lock_authorization.workspace_receipt_sha256
+            or lock_binding.resolution_claim.mission_id != boundary_manifest.mission_id
             or lock_binding.resolution_claim.mission_manifest_sha256
             != lock_authorization.mission_manifest_sha256
             or lock_binding.resolution_claim.mission_expires_at_utc
@@ -1709,7 +1761,38 @@ class BoundedLiveCanaryExecutor:
                 mappings=(),
                 fixture_target_set=lock_targets,
                 network_binding=lock_binding,
+                mission_manifest_repository_root=mission_manifest_repository_root,
+                mission_manifest_path=mission_manifest_path,
+                expected_mission_manifest_sha256=boundary_manifest.canonical_manifest_sha256(),
+                expected_mission_expires_at_utc=boundary_manifest.expires_at,
             )
+
+    def _reload_first_c0_manifest_at_boundary(
+        self,
+        *,
+        repository_root: Path,
+        manifest_path: Path,
+        expected_sha256: str,
+        expected_expires_at_utc: datetime,
+    ) -> RealExecutionMissionManifestV1:
+        """Reload exact tracked authority before each irreversible provider effect."""
+
+        try:
+            manifest = load_tracked_real_execution_mission_manifest_v1(
+                repository_root,
+                manifest_path,
+            )
+            manifest.assert_first_c0_live_effect_ceiling()
+        except (WorkspaceBootstrapError, TypeError, ValueError):
+            raise LiveGuardError("LIVE_FIRST_C0_MANIFEST_INVALID") from None
+        checked_at = ensure_utc(self.clock(), field="live_manifest_boundary_checked_at")
+        if (
+            manifest.canonical_manifest_sha256() != expected_sha256
+            or manifest.expires_at != expected_expires_at_utc
+            or checked_at >= manifest.expires_at
+        ):
+            raise LiveGuardError("LIVE_FIRST_C0_MANIFEST_CHANGED_OR_EXPIRED")
+        return manifest
 
     def _execute_once_locked(
         self,
@@ -1723,6 +1806,10 @@ class BoundedLiveCanaryExecutor:
         mappings: tuple[FixtureMapping, ...],
         fixture_target_set: FixtureTargetSetV1 | None = None,
         network_binding: ProviderNetworkBindingV1 | None = None,
+        mission_manifest_repository_root: Path | None = None,
+        mission_manifest_path: Path | None = None,
+        expected_mission_manifest_sha256: str | None = None,
+        expected_mission_expires_at_utc: datetime | None = None,
     ) -> LiveExecutionReceiptV1:
         try:
             if isinstance(authorization, OwnerAuthorizationV2):
@@ -1732,7 +1819,14 @@ class BoundedLiveCanaryExecutor:
                 activation = ActivationEnvelopeV2.model_validate(activation.model_dump(mode="json"))
                 plan = LivePlanV2.model_validate(plan.model_dump(mode="json"))
                 item = LivePlanItemV2.model_validate(item.model_dump(mode="json"))
-                if fixture_target_set is None or network_binding is None:
+                if (
+                    fixture_target_set is None
+                    or network_binding is None
+                    or mission_manifest_repository_root is None
+                    or mission_manifest_path is None
+                    or expected_mission_manifest_sha256 is None
+                    or expected_mission_expires_at_utc is None
+                ):
                     raise ValueError("LIVE_SUCCESSOR_EVIDENCE_MISSING")
                 fixture_target_set = FixtureTargetSetV1.model_validate(
                     fixture_target_set.model_dump(mode="json")
@@ -1747,7 +1841,14 @@ class BoundedLiveCanaryExecutor:
                 activation = ActivationEnvelopeV1.model_validate(activation.model_dump(mode="json"))
                 plan = LivePlanV1.model_validate(plan.model_dump(mode="json"))
                 item = LivePlanItemV1.model_validate(item.model_dump(mode="json"))
-                if fixture_target_set is not None or network_binding is not None:
+                if (
+                    fixture_target_set is not None
+                    or network_binding is not None
+                    or mission_manifest_repository_root is not None
+                    or mission_manifest_path is not None
+                    or expected_mission_manifest_sha256 is not None
+                    or expected_mission_expires_at_utc is not None
+                ):
                     raise ValueError("LIVE_CONTRACT_VERSION_MISMATCH")
             request = ProviderRequestSpec.model_validate(request.model_dump(mode="json"))
             mappings = tuple(
@@ -1950,11 +2051,35 @@ class BoundedLiveCanaryExecutor:
         self._emit("12C_ADMISSION_PERMIT_CONSUMED")
         self._crash_point("AFTER_ADMISSION_CONSUMED")
 
-        secret_reads = 1
+        secret_reads = 0
         api_key = ""
+        raw_api_key = ""
         try:
             try:
-                api_key = validate_provider_secret(self.secret_reader.read())
+                if isinstance(authorization, OwnerAuthorizationV2):
+                    self._reload_first_c0_manifest_at_boundary(
+                        repository_root=cast(Path, mission_manifest_repository_root),
+                        manifest_path=cast(Path, mission_manifest_path),
+                        expected_sha256=cast(str, expected_mission_manifest_sha256),
+                        expected_expires_at_utc=cast(
+                            datetime,
+                            expected_mission_expires_at_utc,
+                        ),
+                    )
+                secret_reads = 1
+                raw_api_key = self.secret_reader.read()
+                if isinstance(authorization, OwnerAuthorizationV2):
+                    self._reload_first_c0_manifest_at_boundary(
+                        repository_root=cast(Path, mission_manifest_repository_root),
+                        manifest_path=cast(Path, mission_manifest_path),
+                        expected_sha256=cast(str, expected_mission_manifest_sha256),
+                        expected_expires_at_utc=cast(
+                            datetime,
+                            expected_mission_expires_at_utc,
+                        ),
+                    )
+                api_key = validate_provider_secret(raw_api_key)
+                raw_api_key = ""
             except Exception:
                 return self._terminal_receipt(
                     authorization=authorization,
@@ -2019,6 +2144,16 @@ class BoundedLiveCanaryExecutor:
                     fixture_target_set=fixture_target_set,
                     network_binding=network_binding,
                 )
+                if isinstance(authorization, OwnerAuthorizationV2):
+                    self._reload_first_c0_manifest_at_boundary(
+                        repository_root=cast(Path, mission_manifest_repository_root),
+                        manifest_path=cast(Path, mission_manifest_path),
+                        expected_sha256=cast(str, expected_mission_manifest_sha256),
+                        expected_expires_at_utc=cast(
+                            datetime,
+                            expected_mission_expires_at_utc,
+                        ),
+                    )
                 self.live_store.mark_dispatch_started(
                     admission_permit,
                     dispatch_started_at=dispatch_started,
@@ -2066,6 +2201,7 @@ class BoundedLiveCanaryExecutor:
                 )
         finally:
             api_key = ""
+            raw_api_key = ""
         self._emit("15_HTTPS_GET_ONCE")
         if (
             isinstance(response.http_status, bool)

@@ -45,7 +45,11 @@ from robin.capture.bootstrap_contracts import (
     load_campaign_selection_authority_v1,
 )
 from robin.capture.contracts import canonical_json_bytes, canonical_sha256
-from robin.capture.live_contracts import LIVE_ALLOWED_SPORT_KEYS, LiveTerminalDisposition
+from robin.capture.live_contracts import (
+    LIVE_ALLOWED_SPORT_KEYS,
+    LiveExecutionReceiptV1,
+    LiveTerminalDisposition,
+)
 from robin.capture.live_executor import (
     LiveGuardError,
     RepositoryStateV1,
@@ -62,7 +66,7 @@ from robin.capture.owner_review_pack import (
 from robin.capture.owner_review_pack import (
     _write_first_c0_owner_review_pack_after_atomic_binding_v1 as write_owner_review_pack_v1,
 )
-from robin.capture.storage import CaptureStorageError
+from robin.capture.storage import CaptureStorageError, exclusive_local_directory_fingerprint
 
 BASE = datetime(2026, 8, 22, 10, 0, tzinfo=UTC)
 MAIN_SHA = "a" * 40
@@ -71,6 +75,28 @@ CONTROL_FINGERPRINT = "e" * 64
 SECRET = "synthetic-secret-sentinel-never-real"
 HISTORICAL_V3_SOURCE_HASH = "0270bdd51d8d50b7d3c9f608e4f429b46b94b789d92d4b13055b81c9b72e6291"
 HISTORICAL_V3_MANIFEST_SHA256 = "d895e0b2ddded2c9763d85a08efbd64dc0185d26f66bb2b73fbe52cc05411206"
+
+
+def historical_bootstrap_manifest(*, expires_at: datetime) -> RealExecutionMissionManifestV1:
+    return RealExecutionMissionManifestV1.issue(
+        mission_id="REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1",
+        authorized_stages=("E1",),
+        maximum_stage="E1",
+        external_effects=(
+            "local_standalone_runtime_create_after_merge",
+            "github_public_full_clone_after_merge",
+            "provider_public_dns_resolution_exactly_once_after_merge",
+            "official_schedule_public_read_after_merge",
+            "git_remote_write_non_force",
+            "github_pull_request_write",
+            "github_merge_commit",
+            "github_actions_observe",
+        ),
+        compute_budget=8000,
+        time_budget=345600,
+        source_hash="204e4323d0b99fdfa8c655cdc3a08a8d2b3c82ac0a784f9a97982c90ab3a7312",
+        expires_at=expires_at,
+    )
 
 
 class TickingClock:
@@ -84,9 +110,17 @@ class TickingClock:
 
 
 class V2RepositoryReader:
-    def __init__(self, git_path: str, git_sha256: str, *, returned_path: str | None = None) -> None:
+    def __init__(
+        self,
+        git_path: str,
+        git_sha256: str,
+        *,
+        repository_fingerprint: str = REPOSITORY_FINGERPRINT,
+        returned_path: str | None = None,
+    ) -> None:
         self.git_path = git_path
         self.git_sha256 = git_sha256
+        self.repository_fingerprint = repository_fingerprint
         self.returned_path = returned_path or git_path
         self.reads = 0
 
@@ -106,7 +140,7 @@ class V2RepositoryReader:
             head_sha=MAIN_SHA,
             main_sha=MAIN_SHA,
             worktree_clean=True,
-            repository_root_fingerprint=REPOSITORY_FINGERPRINT,
+            repository_root_fingerprint=self.repository_fingerprint,
             control_temp_root_fingerprint=CONTROL_FINGERPRINT,
             git_executable_canonical_path=self.returned_path,
             git_executable_sha256=self.git_sha256,
@@ -160,6 +194,9 @@ class V2Transport:
 class V2Bundle:
     store: CaptureStore
     mission_manifest: RealExecutionMissionManifestV1
+    mission_manifest_repository_root: Path
+    mission_manifest_path: Path
+    repository_fingerprint: str
     workspace: RealCaptureWorkspaceReceiptV1
     review_candidate: OwnerAuthorizationV2
     authorization: OwnerAuthorizationV2
@@ -241,6 +278,7 @@ def build_bundle(
     *,
     authorized: bool = True,
     extra_unmatched_target: bool = False,
+    historical_profile: bool = False,
 ) -> V2Bundle:
     capture_root = tmp_path / "capture"
     store = CaptureStore(
@@ -252,36 +290,31 @@ def build_bundle(
     git_file.write_bytes(b"synthetic-git")
     git_path = os.path.normcase(os.path.abspath(git_file))
     git_sha256 = hashlib.sha256(b"synthetic-git").hexdigest()
-    mission_manifest = RealExecutionMissionManifestV1.issue(
-        mission_id="REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1",
-        authorized_stages=("E1",),
-        maximum_stage="E1",
-        external_effects=(
-            "local_standalone_runtime_create_after_merge",
-            "github_public_full_clone_after_merge",
-            "provider_public_dns_resolution_exactly_once_after_merge",
-            "official_schedule_public_read_after_merge",
-            "git_remote_write_non_force",
-            "github_pull_request_write",
-            "github_merge_commit",
-            "github_actions_observe",
-        ),
-        compute_budget=8000,
-        time_budget=345600,
-        source_hash="204e4323d0b99fdfa8c655cdc3a08a8d2b3c82ac0a784f9a97982c90ab3a7312",
-        expires_at=BASE + timedelta(days=4),
+    repository_root = tmp_path / "repository"
+    tracked_manifest_name = (
+        "real-execution-bootstrap-closure-v1.json"
+        if historical_profile
+        else "first-c0-vertical-v1.json"
     )
+    mission_manifest_path = repository_root / "configs/execution" / tracked_manifest_name
+    mission_manifest_path.parent.mkdir(parents=True)
+    tracked_manifest = (
+        Path(__file__).parents[2] / "configs/execution" / tracked_manifest_name
+    ).read_bytes()
+    mission_manifest_path.write_bytes(tracked_manifest)
+    mission_manifest = RealExecutionMissionManifestV1.model_validate_json(tracked_manifest)
+    repository_fingerprint = exclusive_local_directory_fingerprint(repository_root)
     workspace = RealCaptureWorkspaceReceiptV1.issue(
         authorized_main_sha=MAIN_SHA,
         bootstrap_mode="VERIFY",
-        bootstrap_tool_source_repository_root=os.path.abspath(tmp_path / "repository"),
+        bootstrap_tool_source_repository_root=os.path.abspath(repository_root),
         bootstrap_tool_loaded_from_runtime_repository=True,
-        bootstrap_package_source_repository_root=os.path.abspath(tmp_path / "repository"),
+        bootstrap_package_source_repository_root=os.path.abspath(repository_root),
         bootstrap_package_loaded_from_runtime_repository=True,
         authority_eligible_for_real_execution=True,
         prepared_at_utc=BASE - timedelta(minutes=3),
-        runtime_repository_root=os.path.abspath(tmp_path / "repository"),
-        repository_root_fingerprint=REPOSITORY_FINGERPRINT,
+        runtime_repository_root=os.path.abspath(repository_root),
+        repository_root_fingerprint=repository_fingerprint,
         repository_security_descriptor_sha256="1" * 64,
         control_temp_root=os.path.abspath(tmp_path / "control-temp"),
         control_temp_fingerprint=CONTROL_FINGERPRINT,
@@ -339,6 +372,7 @@ def build_bundle(
         targets=tuple(target_items),
     )
     resolution_claim = ProviderNetworkResolutionClaimV1.issue(
+        mission_id=mission_manifest.mission_id,
         mission_manifest_sha256=mission_manifest.canonical_manifest_sha256(),
         workspace_receipt_sha256=workspace.canonical_receipt_hash,
         campaign_selection_sha256="1" * 64,
@@ -364,6 +398,7 @@ def build_bundle(
     fingerprint = RequestFingerprint.create(request)
     authorization_data = dict(
         authorization_id="owner-v2-001",
+        mission_id=mission_manifest.mission_id,
         authorized_main_sha=MAIN_SHA,
         mission_manifest_sha256=mission_manifest.canonical_manifest_sha256(),
         mission_expires_at_utc=mission_manifest.expires_at,
@@ -377,7 +412,7 @@ def build_bundle(
         maximum_credits=1,
         maximum_plan_items=1,
         approved_capture_root_fingerprint=store.capture_root_fingerprint(),
-        approved_repository_root_fingerprint=REPOSITORY_FINGERPRINT,
+        approved_repository_root_fingerprint=repository_fingerprint,
         approved_control_temp_root_fingerprint=CONTROL_FINGERPRINT,
         approved_git_executable_path=git_path,
         approved_git_executable_sha256=git_sha256,
@@ -402,6 +437,9 @@ def build_bundle(
     )
     activation_seed = ActivationEnvelopeV2.issue(
         activation_id="activation-v2-001",
+        mission_id=mission_manifest.mission_id,
+        mission_manifest_sha256=mission_manifest.canonical_manifest_sha256(),
+        mission_expires_at_utc=mission_manifest.expires_at,
         authorization_id=authorization.authorization_id,
         authorization_hash=authorization.canonical_authorization_hash,
         repository_sha=MAIN_SHA,
@@ -419,6 +457,9 @@ def build_bundle(
     )
     item = LivePlanItemV2.issue(
         item_id="item-v2-001",
+        mission_id=mission_manifest.mission_id,
+        mission_manifest_sha256=mission_manifest.canonical_manifest_sha256(),
+        mission_expires_at_utc=mission_manifest.expires_at,
         plan_id="plan-v2-001",
         sequence=1,
         sport_key="soccer_epl",
@@ -435,6 +476,9 @@ def build_bundle(
     )
     plan = LivePlanV2.issue(
         plan_id="plan-v2-001",
+        mission_id=mission_manifest.mission_id,
+        mission_manifest_sha256=mission_manifest.canonical_manifest_sha256(),
+        mission_expires_at_utc=mission_manifest.expires_at,
         activation_id=activation_seed.activation_id,
         activation_hash=activation_seed.activation_scope_sha256,
         repository_sha=MAIN_SHA,
@@ -491,6 +535,9 @@ def build_bundle(
     return V2Bundle(
         store=store,
         mission_manifest=mission_manifest,
+        mission_manifest_repository_root=repository_root,
+        mission_manifest_path=mission_manifest_path,
+        repository_fingerprint=repository_fingerprint,
         workspace=workspace,
         review_candidate=review_candidate,
         authorization=authorization,
@@ -519,6 +566,7 @@ def executor(
         repository_state_reader=V2RepositoryReader(
             bundle.git_path,
             bundle.git_sha256,
+            repository_fingerprint=bundle.repository_fingerprint,
             returned_path=returned_git_path,
         ),
         owner_authorization_verifier=PinnedOwnerAuthorizationVerifier(
@@ -528,6 +576,39 @@ def executor(
         transport=transport,
         clock=clock,
     )
+
+
+def _execute_successor(
+    live_executor: BoundedLiveCanaryExecutor,
+    bundle: V2Bundle,
+    *,
+    mission_manifest_repository_root: Path | None = None,
+    mission_manifest_path: Path | None = None,
+    authorization: OwnerAuthorizationV2 | None = None,
+    review_candidate: OwnerAuthorizationV2 | None = None,
+) -> LiveExecutionReceiptV1:
+    return live_executor.execute_v2(
+        mode=CaptureMode.LIVE_CANARY,
+        authorization=authorization or bundle.authorization,
+        activation=bundle.activation,
+        plan=bundle.plan,
+        item=bundle.item,
+        request=bundle.request,
+        fixture_target_set=bundle.targets,
+        provider_network_binding=bundle.network_binding,
+        mission_manifest=bundle.mission_manifest,
+        mission_manifest_repository_root=(
+            mission_manifest_repository_root or bundle.mission_manifest_repository_root
+        ),
+        mission_manifest_path=mission_manifest_path or bundle.mission_manifest_path,
+        review_candidate=review_candidate or bundle.review_candidate,
+    )
+
+
+def _expand_tracked_manifest(path: Path) -> None:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload["external_effects"].append("multi_league_scale")
+    path.write_text(json.dumps(payload), encoding="utf-8")
 
 
 def test_successor_predispatch_contracts_contain_no_provider_ids_or_mapping_hash(
@@ -568,6 +649,8 @@ def test_review_candidate_cannot_reach_repository_secret_or_transport(tmp_path: 
             fixture_target_set=bundle.targets,
             provider_network_binding=bundle.network_binding,
             mission_manifest=bundle.mission_manifest,
+            mission_manifest_repository_root=bundle.mission_manifest_repository_root,
+            mission_manifest_path=bundle.mission_manifest_path,
             review_candidate=bundle.review_candidate,
         )
     assert secret.reads == transport.preflights == transport.calls == 0
@@ -596,6 +679,8 @@ def test_git_path_mismatch_stops_before_secret(tmp_path: Path) -> None:
             fixture_target_set=bundle.targets,
             provider_network_binding=bundle.network_binding,
             mission_manifest=bundle.mission_manifest,
+            mission_manifest_repository_root=bundle.mission_manifest_repository_root,
+            mission_manifest_path=bundle.mission_manifest_path,
             review_candidate=bundle.review_candidate,
         )
     assert secret.reads == transport.preflights == transport.calls == 0
@@ -626,6 +711,8 @@ def test_runtime_requires_exact_reviewed_candidate_artifact(tmp_path: Path) -> N
             fixture_target_set=bundle.targets,
             provider_network_binding=bundle.network_binding,
             mission_manifest=bundle.mission_manifest,
+            mission_manifest_repository_root=bundle.mission_manifest_repository_root,
+            mission_manifest_path=bundle.mission_manifest_path,
             review_candidate=wrong_candidate,
         )
     assert secret.reads == transport.preflights == transport.calls == 0
@@ -641,7 +728,11 @@ def test_successor_full_flow_maps_only_after_durable_raw_and_replays_offline(
     stages: list[str] = []
     live_executor = BoundedLiveCanaryExecutor(
         capture_store=bundle.store,
-        repository_state_reader=V2RepositoryReader(bundle.git_path, bundle.git_sha256),
+        repository_state_reader=V2RepositoryReader(
+            bundle.git_path,
+            bundle.git_sha256,
+            repository_fingerprint=bundle.repository_fingerprint,
+        ),
         owner_authorization_verifier=PinnedOwnerAuthorizationVerifier(
             bundle.authorization.canonical_authorization_hash
         ),
@@ -660,6 +751,8 @@ def test_successor_full_flow_maps_only_after_durable_raw_and_replays_offline(
         fixture_target_set=bundle.targets,
         provider_network_binding=bundle.network_binding,
         mission_manifest=bundle.mission_manifest,
+        mission_manifest_repository_root=bundle.mission_manifest_repository_root,
+        mission_manifest_path=bundle.mission_manifest_path,
         review_candidate=bundle.review_candidate,
     )
     assert receipt.terminal_disposition is LiveTerminalDisposition.SUCCESS
@@ -684,6 +777,201 @@ def test_successor_full_flow_maps_only_after_durable_raw_and_replays_offline(
     replay = bundle.store.replay(receipt.manifest_id)
     assert replay.deterministic is True
     assert replay.secret_reads_count == 0
+
+
+@pytest.mark.parametrize("failure", ("old", "missing", "substituted", "expanded", "expired"))
+def test_live_successor_rejects_non_exact_manifest_before_secret(
+    tmp_path: Path,
+    failure: str,
+) -> None:
+    bundle = build_bundle(tmp_path)
+    secret = SpySecretReader()
+    clock = TickingClock()
+    transport = V2Transport(bundle.payload, clock)
+    requested_path = bundle.mission_manifest_path
+    if failure == "old":
+        bundle.mission_manifest_path.write_text(
+            historical_bootstrap_manifest(expires_at=BASE + timedelta(days=4)).model_dump_json(),
+            encoding="utf-8",
+        )
+    elif failure == "missing":
+        bundle.mission_manifest_path.unlink()
+    elif failure == "substituted":
+        requested_path = tmp_path / "substituted-manifest.json"
+        requested_path.write_bytes(bundle.mission_manifest_path.read_bytes())
+    elif failure == "expanded":
+        _expand_tracked_manifest(bundle.mission_manifest_path)
+    else:
+        clock.value = bundle.mission_manifest.expires_at
+    with pytest.raises(
+        LiveGuardError,
+        match="LIVE_FIRST_C0_MANIFEST_(INVALID|CHANGED_OR_EXPIRED)",
+    ):
+        _execute_successor(
+            executor(bundle, secret, transport, clock),
+            bundle,
+            mission_manifest_path=requested_path,
+        )
+    assert secret.reads == transport.preflights == transport.calls == 0
+
+
+def test_live_successor_rejects_coherent_historical_chain_at_live_effect_ceiling(
+    tmp_path: Path,
+) -> None:
+    bundle = build_bundle(tmp_path, historical_profile=True)
+    secret = SpySecretReader()
+    clock = TickingClock()
+    transport = V2Transport(bundle.payload, clock)
+    assert bundle.mission_manifest.mission_id == "REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1"
+    assert bundle.mission_manifest_path.name == "real-execution-bootstrap-closure-v1.json"
+
+    with pytest.raises(LiveGuardError, match="LIVE_FIRST_C0_MANIFEST_INVALID"):
+        _execute_successor(executor(bundle, secret, transport, clock), bundle)
+
+    assert secret.reads == transport.preflights == transport.calls == 0
+
+
+def test_live_successor_rejects_exact_manifest_from_decoy_repository_root(
+    tmp_path: Path,
+) -> None:
+    bundle = build_bundle(tmp_path)
+    decoy_root = tmp_path / "decoy-repository"
+    decoy_manifest_path = decoy_root / "configs/execution/first-c0-vertical-v1.json"
+    decoy_manifest_path.parent.mkdir(parents=True)
+    decoy_manifest_path.write_bytes(bundle.mission_manifest_path.read_bytes())
+    secret = SpySecretReader()
+    clock = TickingClock()
+    transport = V2Transport(bundle.payload, clock)
+
+    with pytest.raises(
+        LiveGuardError,
+        match="LIVE_FIRST_C0_MANIFEST_REPOSITORY_MISMATCH",
+    ):
+        _execute_successor(
+            executor(bundle, secret, transport, clock),
+            bundle,
+            mission_manifest_repository_root=decoy_root,
+            mission_manifest_path=decoy_manifest_path,
+        )
+
+    assert secret.reads == transport.preflights == transport.calls == 0
+
+
+@pytest.mark.parametrize(
+    "mutation_stage",
+    ("12_PUBLIC_REQUEST_FINALIZED", "12B_PRE_SECRET_STATE_REVALIDATED"),
+)
+def test_manifest_expansion_before_secret_is_rejected_with_zero_secret_and_dispatch(
+    tmp_path: Path,
+    mutation_stage: str,
+) -> None:
+    bundle = build_bundle(tmp_path)
+    secret = SpySecretReader()
+    clock = TickingClock()
+    transport = V2Transport(bundle.payload, clock)
+
+    def observe(stage: str) -> None:
+        if stage == mutation_stage:
+            _expand_tracked_manifest(bundle.mission_manifest_path)
+
+    live_executor = executor(bundle, secret, transport, clock)
+    live_executor.stage_observer = observe
+    receipt = _execute_successor(live_executor, bundle)
+    assert receipt.terminal_disposition is LiveTerminalDisposition.PRE_DISPATCH_REJECTED
+    assert receipt.secret_reads_count == secret.reads == 0
+    assert transport.calls == 0
+
+
+def test_manifest_expansion_during_secret_read_is_rejected_before_dispatch(
+    tmp_path: Path,
+) -> None:
+    bundle = build_bundle(tmp_path)
+    clock = TickingClock()
+    transport = V2Transport(bundle.payload, clock)
+
+    class MutatingSecretReader(SpySecretReader):
+        def read(self) -> str:
+            value = super().read()
+            _expand_tracked_manifest(bundle.mission_manifest_path)
+            return value
+
+    secret = MutatingSecretReader()
+    receipt = _execute_successor(executor(bundle, secret, transport, clock), bundle)
+    assert receipt.terminal_disposition is LiveTerminalDisposition.PRE_DISPATCH_REJECTED
+    assert receipt.secret_reads_count == secret.reads == 1
+    assert transport.calls == 0
+
+
+def test_manifest_expansion_immediately_before_dispatch_started_is_rejected(
+    tmp_path: Path,
+) -> None:
+    bundle = build_bundle(tmp_path)
+    secret = SpySecretReader()
+    clock = TickingClock()
+    transport = V2Transport(bundle.payload, clock)
+
+    def observe(stage: str) -> None:
+        if stage == "13_PROVIDER_SECRET_READ_ONCE":
+            _expand_tracked_manifest(bundle.mission_manifest_path)
+
+    live_executor = executor(bundle, secret, transport, clock)
+    live_executor.stage_observer = observe
+    receipt = _execute_successor(live_executor, bundle)
+    assert receipt.terminal_disposition is LiveTerminalDisposition.PRE_DISPATCH_REJECTED
+    assert receipt.secret_reads_count == secret.reads == 1
+    assert transport.calls == 0
+
+
+def test_candidate_promoted_under_another_manifest_hash_is_rejected(
+    tmp_path: Path,
+) -> None:
+    bundle = build_bundle(tmp_path)
+    wrong_candidate = OwnerAuthorizationV2.issue(
+        **{
+            **bundle.review_candidate.model_dump(
+                mode="python",
+                exclude={"canonical_authorization_hash", "mission_manifest_sha256"},
+            ),
+            "mission_manifest_sha256": "f" * 64,
+        }
+    )
+    wrong_authorization = OwnerAuthorizationV2.issue(
+        **{
+            **wrong_candidate.model_dump(
+                mode="python",
+                exclude={
+                    "authorization_status",
+                    "canonical_authorization_hash",
+                    "review_candidate_sha256",
+                },
+            ),
+            "authorization_status": "OWNER_AUTHORIZED",
+            "review_candidate_sha256": wrong_candidate.canonical_authorization_hash,
+        }
+    )
+    secret = SpySecretReader()
+    clock = TickingClock()
+    transport = V2Transport(bundle.payload, clock)
+    live_executor = BoundedLiveCanaryExecutor(
+        capture_store=bundle.store,
+        repository_state_reader=V2RepositoryReader(
+            bundle.git_path,
+            bundle.git_sha256,
+            repository_fingerprint=bundle.repository_fingerprint,
+        ),
+        owner_authorization_verifier=ReviewedOwnerAuthorizationVerifierV2(wrong_candidate),
+        secret_reader=secret,
+        transport=transport,
+        clock=clock,
+    )
+    with pytest.raises(LiveGuardError, match="LIVE_SUCCESSOR_AUTHORITY_BINDING_MISMATCH"):
+        _execute_successor(
+            live_executor,
+            bundle,
+            authorization=wrong_authorization,
+            review_candidate=wrong_candidate,
+        )
+    assert secret.reads == transport.preflights == transport.calls == 0
 
 
 @pytest.mark.parametrize(
@@ -722,6 +1010,8 @@ def test_successor_capture_success_is_distinct_from_partial_or_zero_scientific_a
         fixture_target_set=bundle.targets,
         provider_network_binding=bundle.network_binding,
         mission_manifest=bundle.mission_manifest,
+        mission_manifest_repository_root=bundle.mission_manifest_repository_root,
+        mission_manifest_path=bundle.mission_manifest_path,
         review_candidate=bundle.review_candidate,
     )
     assert receipt.terminal_disposition is LiveTerminalDisposition.SUCCESS
@@ -1166,6 +1456,7 @@ def test_owner_review_pack_is_complete_unexecuted_and_statement_binds_every_gate
     )
     selected = campaign_selection.selected_candidate()
     resolution_claim = ProviderNetworkResolutionClaimV1.issue(
+        mission_id=bundle.mission_manifest.mission_id,
         mission_manifest_sha256=bundle.mission_manifest.canonical_manifest_sha256(),
         workspace_receipt_sha256=bundle.workspace.canonical_receipt_hash,
         campaign_selection_sha256=campaign_selection.canonical_selection_hash,
@@ -1192,6 +1483,19 @@ def test_owner_review_pack_is_complete_unexecuted_and_statement_binds_every_gate
     )
     assert pack.owner_authorization_ready is True
     assert pack.owner_authorization_candidate.authorization_status == "OWNER_REVIEW_CANDIDATE"
+    manifest_sha256 = bundle.mission_manifest.canonical_manifest_sha256()
+    assert resolution_claim.mission_id == bundle.mission_manifest.mission_id
+    assert all(
+        artifact.mission_id == bundle.mission_manifest.mission_id
+        and artifact.mission_manifest_sha256 == manifest_sha256
+        and artifact.mission_expires_at_utc == bundle.mission_manifest.expires_at
+        for artifact in (
+            pack.owner_authorization_candidate,
+            pack.activation_candidate,
+            pack.plan_candidate,
+            pack.plan_item_candidate,
+        )
+    )
     assert pack.activation_candidate.authorization_hash == (
         pack.expected_owner_authorization_sha256
     )
@@ -1262,7 +1566,11 @@ def test_owner_review_pack_is_complete_unexecuted_and_statement_binds_every_gate
     transport = V2Transport(bundle.payload, clock)
     receipt = BoundedLiveCanaryExecutor(
         capture_store=bundle.store,
-        repository_state_reader=V2RepositoryReader(bundle.git_path, bundle.git_sha256),
+        repository_state_reader=V2RepositoryReader(
+            bundle.git_path,
+            bundle.git_sha256,
+            repository_fingerprint=bundle.repository_fingerprint,
+        ),
         owner_authorization_verifier=ReviewedOwnerAuthorizationVerifierV2(candidate),
         secret_reader=secret,
         transport=transport,
@@ -1277,6 +1585,8 @@ def test_owner_review_pack_is_complete_unexecuted_and_statement_binds_every_gate
         fixture_target_set=pack.fixture_target_set,
         provider_network_binding=pack.provider_network_binding,
         mission_manifest=pack.mission_manifest,
+        mission_manifest_repository_root=bundle.mission_manifest_repository_root,
+        mission_manifest_path=bundle.mission_manifest_path,
         review_candidate=candidate,
     )
     assert receipt.terminal_disposition is LiveTerminalDisposition.SUCCESS
@@ -1301,6 +1611,7 @@ def test_legacy_owner_review_pack_cli_rejects_current_v5_before_write(
     campaign_selection = build_campaign_selection(bundle.workspace, bundle.mission_manifest)
     selected = campaign_selection.selected_candidate()
     resolution_claim = ProviderNetworkResolutionClaimV1.issue(
+        mission_id=bundle.mission_manifest.mission_id,
         mission_manifest_sha256=bundle.mission_manifest.canonical_manifest_sha256(),
         workspace_receipt_sha256=bundle.workspace.canonical_receipt_hash,
         campaign_selection_sha256=campaign_selection.canonical_selection_hash,
@@ -1316,11 +1627,10 @@ def test_legacy_owner_review_pack_cli_rejects_current_v5_before_write(
         binding_ttl_seconds=660,
         resolved_ip_addresses=("8.8.8.8",),
     )
-    repository = Path(bundle.workspace.runtime_repository_root)
-    manifest_path = repository / "configs/execution/real-execution-bootstrap-closure-v1.json"
+    manifest_path = bundle.mission_manifest_path
     inputs = tmp_path / "cli-inputs"
     inputs.mkdir()
-    manifest_path.parent.mkdir(parents=True)
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
     workspace_path = inputs / "workspace-receipt.json"
     binding_path = inputs / "provider-network-binding.json"
     selection_path = inputs / "campaign-selection.json"
@@ -1400,6 +1710,7 @@ def test_owner_review_pack_rejects_network_claim_bound_to_another_campaign(
     selection = build_campaign_selection(bundle.workspace, bundle.mission_manifest)
     selected = selection.selected_candidate()
     wrong_claim = ProviderNetworkResolutionClaimV1.issue(
+        mission_id=bundle.mission_manifest.mission_id,
         mission_manifest_sha256=bundle.mission_manifest.canonical_manifest_sha256(),
         workspace_receipt_sha256=bundle.workspace.canonical_receipt_hash,
         campaign_selection_sha256="9" * 64,
@@ -1434,6 +1745,7 @@ def test_owner_review_pack_rejects_v3_binding_and_serialized_v3_pack(
     selection = build_campaign_selection(bundle.workspace, bundle.mission_manifest)
     selected = selection.selected_candidate()
     stale_claim = ProviderNetworkResolutionClaimV1.issue(
+        mission_id=bundle.mission_manifest.mission_id,
         mission_manifest_sha256=HISTORICAL_V3_MANIFEST_SHA256,
         workspace_receipt_sha256=bundle.workspace.canonical_receipt_hash,
         campaign_selection_sha256=selection.canonical_selection_hash,
@@ -1469,7 +1781,9 @@ def test_owner_review_pack_rejects_v3_binding_and_serialized_v3_pack(
     assert stale_claim.provider_tcp_connections == 0
     assert stale_claim.provider_secret_reads == 0
 
-    v3_manifest_data = bundle.mission_manifest.model_dump(mode="python")
+    v3_manifest_data = historical_bootstrap_manifest(
+        expires_at=bundle.mission_manifest.expires_at
+    ).model_dump(mode="python")
     v3_manifest_data.update(
         source_hash=HISTORICAL_V3_SOURCE_HASH,
         expires_at=datetime(2026, 9, 1, 20, tzinfo=UTC),
@@ -1479,6 +1793,7 @@ def test_owner_review_pack_rejects_v3_binding_and_serialized_v3_pack(
     v3_selection = build_campaign_selection(bundle.workspace, v3_manifest)
     v3_selected = v3_selection.selected_candidate()
     v3_claim = ProviderNetworkResolutionClaimV1.issue(
+        mission_id=v3_manifest.mission_id,
         mission_manifest_sha256=HISTORICAL_V3_MANIFEST_SHA256,
         workspace_receipt_sha256=bundle.workspace.canonical_receipt_hash,
         campaign_selection_sha256=v3_selection.canonical_selection_hash,
@@ -1494,21 +1809,16 @@ def test_owner_review_pack_rejects_v3_binding_and_serialized_v3_pack(
         binding_ttl_seconds=660,
         resolved_ip_addresses=("8.8.8.8",),
     )
-    stale_pack = _build_first_c0_owner_review_pack_after_atomic_binding_v1(
-        workspace_receipt=bundle.workspace,
-        mission_manifest=v3_manifest,
-        provider_network_binding=v3_binding,
-        campaign_selection=v3_selection,
-        generated_at_utc=BASE,
-        authorization_nonce="owner-pack-nonce-0000001",
-        activation_nonce="activation-pack-nonce-001",
-    )
-    assert stale_pack.mission_manifest_sha256 == HISTORICAL_V3_MANIFEST_SHA256
-    assert stale_pack.provider_http_calls == 0
-    assert stale_pack.real_secret_reads == 0
-    assert stale_pack.real_capture_calls == 0
     with pytest.raises(CaptureContractError, match="CAPTURE_CONTRACT_INVALID"):
-        OwnerReviewPackV1.model_validate_json(stale_pack.model_dump_json())
+        _build_first_c0_owner_review_pack_after_atomic_binding_v1(
+            workspace_receipt=bundle.workspace,
+            mission_manifest=v3_manifest,
+            provider_network_binding=v3_binding,
+            campaign_selection=v3_selection,
+            generated_at_utc=BASE,
+            authorization_nonce="owner-pack-nonce-0000001",
+            activation_nonce="activation-pack-nonce-001",
+        )
     assert not pack_directory.exists()
 
 
@@ -1519,6 +1829,7 @@ def test_owner_review_pack_reports_exact_expired_network_binding_code(
     selection = build_campaign_selection(bundle.workspace, bundle.mission_manifest)
     selected = selection.selected_candidate()
     expired_claim = ProviderNetworkResolutionClaimV1.issue(
+        mission_id=bundle.mission_manifest.mission_id,
         mission_manifest_sha256=bundle.mission_manifest.canonical_manifest_sha256(),
         workspace_receipt_sha256=bundle.workspace.canonical_receipt_hash,
         campaign_selection_sha256=selection.canonical_selection_hash,
@@ -1656,6 +1967,7 @@ def test_owner_review_pack_rejects_coherently_rehashed_scope_budget_and_id_tampe
     selection = build_campaign_selection(bundle.workspace, bundle.mission_manifest)
     selected = selection.selected_candidate()
     claim = ProviderNetworkResolutionClaimV1.issue(
+        mission_id=bundle.mission_manifest.mission_id,
         mission_manifest_sha256=bundle.mission_manifest.canonical_manifest_sha256(),
         workspace_receipt_sha256=bundle.workspace.canonical_receipt_hash,
         campaign_selection_sha256=selection.canonical_selection_hash,
@@ -1750,6 +2062,8 @@ def test_v2_lineage_counts_are_rederived_from_mapping_on_store_and_load(
         fixture_target_set=bundle.targets,
         provider_network_binding=bundle.network_binding,
         mission_manifest=bundle.mission_manifest,
+        mission_manifest_repository_root=bundle.mission_manifest_repository_root,
+        mission_manifest_path=bundle.mission_manifest_path,
         review_candidate=bundle.review_candidate,
     )
     assert receipt.manifest_id is not None

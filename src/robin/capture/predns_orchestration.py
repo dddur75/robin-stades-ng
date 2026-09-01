@@ -1619,6 +1619,7 @@ def _load_first_c0_canary_bundle_v1(
     cumulative_reads = counters.get("cumulative_official_reads")
     supporting_count = counters.get("supporting_official_reads")
     expected_supporting_count = int(source_plan.source.adapter == LALIGA_PUBLIC_MATCHES_JSON_V1)
+    official_read_ceiling = 2 if mission.mission_id == "FIRST_C0_VERTICAL_V1" else 12
     expected_cycle_names = (
         {
             *(f"prior-cycle-{index:02d}-read-reservation.json" for index in range(1, cycle)),
@@ -1658,10 +1659,10 @@ def _load_first_c0_canary_bundle_v1(
         or type(cycle) is not int
         or not 1 <= cycle <= 3
         or counters.get("preparation_cycles_maximum") != 3
-        or counters.get("official_physical_reads_maximum") != 12
+        or counters.get("official_physical_reads_maximum") != official_read_ceiling
         or counters.get("official_reads") != 1 + expected_supporting_count
         or type(cumulative_reads) is not int
-        or not cast(int, counters["official_reads"]) <= cumulative_reads <= 12
+        or not cast(int, counters["official_reads"]) <= cumulative_reads <= official_read_ceiling
         or supporting_count != expected_supporting_count
         or counters.get("target_set_freezes") != 1
         or counters.get("selector_invocations") != 1
@@ -1669,7 +1670,7 @@ def _load_first_c0_canary_bundle_v1(
         or manifest.get("preparation_cycle") != cycle
         or manifest.get("cumulative_official_reads") != cumulative_reads
         or manifest.get("preparation_cycles_maximum") != 3
-        or manifest.get("official_physical_reads_maximum") != 12
+        or manifest.get("official_physical_reads_maximum") != official_read_ceiling
         or any(manifest.get(name) != value for name, value in zero_effects.items())
     ):
         raise PreDnsOrchestrationError("FIRST_C0_CANARY_BUNDLE_COUNTERS_INVALID")
@@ -1850,7 +1851,7 @@ def _load_first_c0_canary_bundle_v1(
             or attempt.get("official_reads") != read_count
             or attempt.get("supporting_official_reads") != expected_supporting
             or attempt.get("cumulative_official_reads") != cumulative
-            or cumulative > 12
+            or cumulative > official_read_ceiling
             or attempted_at < reserved_at
             or (previous_recorded_at is not None and reserved_at < previous_recorded_at)
             or not transition_valid
@@ -1991,6 +1992,7 @@ def _load_first_c0_canary_bundle_v1(
         or selection.source_target_sets != (target_set,)
         or selection.workspace_receipt_sha256 != workspace.canonical_receipt_hash
         or selection.workspace_prepared_at_utc != workspace.prepared_at_utc
+        or selection.mission_id != mission.mission_id
         or selection.mission_manifest_sha256 != mission.canonical_manifest_sha256()
         or selection.mission_expires_at_utc != mission.expires_at
         or current_attempt.get("recommended_refresh_utc") != _utc_text(expected_refresh)

@@ -222,6 +222,8 @@ def main() -> int:
             fixture_target_set=targets,
             provider_network_binding=network_binding,
             mission_manifest=mission_manifest,
+            mission_manifest_repository_root=repository_root,
+            mission_manifest_path=arguments.mission_manifest,
             review_candidate=review_candidate,
         )
     except (

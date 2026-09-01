@@ -190,9 +190,9 @@ def test_public_selector_constructs_its_fetcher_and_exposes_no_injected_effect_a
     )
     assert not hasattr(OWNER_ATOMIC_CLI, "run_first_c0_owner_pack_atomic_v1")
     workspace = workspace_receipt(tmp_path)
-    manifest = mission_manifest()
+    manifest = first_c0_vertical_manifest()
     forged_manifests = (
-        mission_manifest(expires_at=manifest.expires_at - timedelta(hours=1)),
+        manifest.model_copy(update={"expires_at": manifest.expires_at - timedelta(hours=1)}),
         manifest.model_copy(
             update={
                 "source_hash": ("3d3b43f68c0d339448e52de7ec66cce068646a4a006e267dfe063bffe2767f5e")
@@ -205,7 +205,7 @@ def test_public_selector_constructs_its_fetcher_and_exposes_no_injected_effect_a
         ),
     )
     repository = Path(workspace.runtime_repository_root)
-    manifest_path = repository / "configs/execution/real-execution-bootstrap-closure-v1.json"
+    manifest_path = repository / "configs/execution/first-c0-vertical-v1.json"
     manifest_path.parent.mkdir(parents=True)
     manifest_path.write_text(manifest.model_dump_json(), encoding="utf-8")
     forged_manifest_path = tmp_path / "forged-manifest.json"
@@ -1780,6 +1780,12 @@ def mission_manifest(
     )
 
 
+def first_c0_vertical_manifest() -> RealExecutionMissionManifestV1:
+    return RealExecutionMissionManifestV1.model_validate_json(
+        (Path(__file__).parents[2] / "configs/execution/first-c0-vertical-v1.json").read_bytes()
+    )
+
+
 def workspace_receipt(tmp_path: Path) -> RealCaptureWorkspaceReceiptV1:
     repository = os.path.abspath(tmp_path / "repository")
     control = os.path.abspath(tmp_path / "control")
@@ -1873,6 +1879,7 @@ def canary_selection(
     selected_at: datetime = BASE,
 ) -> FirstC0CanarySelectionV1:
     return FirstC0CanarySelectionV1.issue(
+        mission_id=manifest.mission_id,
         selected_at_utc=selected_at,
         workspace_receipt_sha256=workspace.canonical_receipt_hash,
         workspace_prepared_at_utc=workspace.prepared_at_utc,
@@ -1884,10 +1891,12 @@ def canary_selection(
 
 def test_nominal_single_laliga_h2_contract_is_one_call_one_credit(tmp_path: Path) -> None:
     workspace = workspace_receipt(tmp_path)
-    selection = canary_selection(workspace, mission_manifest())
+    manifest = mission_manifest()
+    selection = canary_selection(workspace, manifest)
     selected = selection.selected_candidate()
 
     assert selection.schema_version == "robin-first-c0-canary-selection-v1"
+    assert selection.mission_id == manifest.mission_id
     assert selection.selection_revision == FIRST_C0_CANARY_SELECTION_REVISION
     assert selection.purpose == "FIRST_REAL_CAPTURE_CANARY_ONLY"
     assert selection.ranking_policy == FIRST_C0_CANARY_RANKING_POLICY

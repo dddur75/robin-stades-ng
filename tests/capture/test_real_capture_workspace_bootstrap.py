@@ -969,23 +969,66 @@ def test_receipt_output_canonical_escape_is_rejected(tmp_path: Path) -> None:
 
 def test_only_exact_tracked_runtime_mission_manifest_is_loadable(tmp_path: Path) -> None:
     repository = tmp_path / "repository"
-    manifest_path = repository / "configs/execution/real-execution-bootstrap-closure-v1.json"
+    manifest_path = repository / "configs/execution/first-c0-vertical-v1.json"
     manifest_path.parent.mkdir(parents=True)
-    payload = _mission_manifest_payload(expires_at="2026-09-01T20:00:00Z")
-    manifest_path.write_text(json.dumps(payload), encoding="utf-8")
+    tracked = (
+        Path(__file__).parents[2] / "configs/execution/first-c0-vertical-v1.json"
+    ).read_bytes()
+    manifest_path.write_bytes(tracked)
     loaded = load_tracked_real_execution_mission_manifest_v1(
         repository,
         manifest_path,
     )
-    assert loaded.expires_at == datetime(2026, 9, 1, 20, 0, tzinfo=UTC)
-
-    alternate = tmp_path / "later-expiry-manifest.json"
-    alternate.write_text(
-        json.dumps(_mission_manifest_payload(expires_at="2026-09-26T10:00:00Z")),
-        encoding="utf-8",
+    assert loaded.mission_id == "FIRST_C0_VERTICAL_V1"
+    assert loaded.expires_at == datetime(2026, 9, 4, 8, 8, 40, tzinfo=UTC)
+    assert (
+        loaded.canonical_manifest_sha256()
+        == "0a2fa273481921a6207a30b27f50a1e293bfbf6d3e19f78596b1308628072ce4"
     )
+
+    alternate = tmp_path / "substituted-first-c0-manifest.json"
+    alternate.write_bytes(tracked)
     with pytest.raises(
         WorkspaceBootstrapError,
         match="BOOTSTRAP_MISSION_MANIFEST_PATH_MISMATCH",
     ):
         load_tracked_real_execution_mission_manifest_v1(repository, alternate)
+
+    old_path = repository / "configs/execution/real-execution-bootstrap-closure-v1.json"
+    old_path.write_text(
+        json.dumps(_mission_manifest_payload(expires_at="2026-09-01T20:00:00Z")),
+        encoding="utf-8",
+    )
+    historical = load_tracked_real_execution_mission_manifest_v1(repository, old_path)
+    assert historical.mission_id == "REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1"
+    assert (
+        historical.canonical_manifest_sha256()
+        == "d3d570be434b61c0875212061d92419d074b0d8357ba60e55c9f10cd79458e14"
+    )
+
+
+@pytest.mark.parametrize("mutation", ("expired", "altered", "effect-expanded"))
+def test_tracked_first_c0_manifest_rejects_any_profile_change(
+    tmp_path: Path,
+    mutation: str,
+) -> None:
+    repository = tmp_path / "repository"
+    manifest_path = repository / "configs/execution/first-c0-vertical-v1.json"
+    manifest_path.parent.mkdir(parents=True)
+    payload = json.loads(
+        (Path(__file__).parents[2] / "configs/execution/first-c0-vertical-v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    if mutation == "expired":
+        payload["expires_at"] = "2026-09-04T08:08:39Z"
+    elif mutation == "altered":
+        payload["compute_budget"] = 3999
+    else:
+        payload["external_effects"].append("multi_league_scale")
+    manifest_path.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(
+        WorkspaceBootstrapError,
+        match="BOOTSTRAP_MISSION_MANIFEST_INVALID",
+    ):
+        load_tracked_real_execution_mission_manifest_v1(repository, manifest_path)

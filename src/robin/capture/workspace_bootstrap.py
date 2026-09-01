@@ -19,6 +19,8 @@ from pathlib import Path
 from typing import Any, Literal, Protocol, cast
 
 from robin.capture.bootstrap_contracts import (
+    FIRST_C0_VERTICAL_MANIFEST_SHA256,
+    REAL_EXECUTION_BOOTSTRAP_MANIFEST_SHA256,
     RealCaptureWorkspaceReceiptV1,
     RealExecutionMissionManifestV1,
 )
@@ -36,6 +38,7 @@ EXPECTED_ORIGIN = "https://github.com/dddur75/robin-stades-ng.git"
 TRACKED_REAL_EXECUTION_MISSION_MANIFEST = Path(
     "configs/execution/real-execution-bootstrap-closure-v1.json"
 )
+TRACKED_FIRST_C0_VERTICAL_MISSION_MANIFEST = Path("configs/execution/first-c0-vertical-v1.json")
 BootstrapMode = Literal["CREATE", "VERIFY", "INSPECT"]
 
 _MAXIMUM_MISSION_MANIFEST_BYTES = 1_048_576
@@ -1285,15 +1288,38 @@ def load_tracked_real_execution_mission_manifest_v1(
     """Load only the exact pristine mission authority tracked by the runtime clone."""
 
     repository = _canonical_path(repository_root)
-    expected = _canonical_path(repository / TRACKED_REAL_EXECUTION_MISSION_MANIFEST)
     requested = _canonical_path(requested_path)
-    if requested != expected:
+
+    def expected_path(relative: Path) -> Path:
+        return Path(os.path.normcase(os.path.abspath(os.fspath(repository / relative))))
+
+    expected_profiles = {
+        expected_path(TRACKED_REAL_EXECUTION_MISSION_MANIFEST): (
+            "REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1",
+            REAL_EXECUTION_BOOTSTRAP_MANIFEST_SHA256,
+        ),
+        expected_path(TRACKED_FIRST_C0_VERTICAL_MISSION_MANIFEST): (
+            "FIRST_C0_VERTICAL_V1",
+            FIRST_C0_VERTICAL_MANIFEST_SHA256,
+        ),
+    }
+    expected_profile = expected_profiles.get(requested)
+    if expected_profile is None:
         raise WorkspaceBootstrapError("BOOTSTRAP_MISSION_MANIFEST_PATH_MISMATCH")
     try:
         payload = strict_json_object(
-            _safe_read_bounded(expected, maximum_bytes=_MAXIMUM_MISSION_MANIFEST_BYTES)
+            _safe_read_bounded(requested, maximum_bytes=_MAXIMUM_MISSION_MANIFEST_BYTES)
         )
-        return RealExecutionMissionManifestV1.issue(**payload)
+        manifest = RealExecutionMissionManifestV1.issue(**payload)
+        expected_mission_id, expected_sha256 = expected_profile
+        if (
+            manifest.mission_id != expected_mission_id
+            or manifest.canonical_manifest_sha256() != expected_sha256
+        ):
+            raise ValueError("TRACKED_MISSION_MANIFEST_PROFILE_MISMATCH")
+        if manifest.mission_id == "FIRST_C0_VERTICAL_V1":
+            manifest.assert_first_c0_live_effect_ceiling()
+        return manifest
     except (CaptureStorageError, OSError, TypeError, ValueError):
         raise WorkspaceBootstrapError("BOOTSTRAP_MISSION_MANIFEST_INVALID") from None
 

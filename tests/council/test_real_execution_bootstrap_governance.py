@@ -63,6 +63,43 @@ def test_mission_manifest_matches_the_exact_external_effect_boundary() -> None:
     assert "secret" not in serialized_effects
 
 
+def test_first_c0_vertical_manifest_is_exact_and_historical_manifest_is_unchanged() -> None:
+    historical_path = ROOT / "configs/execution/real-execution-bootstrap-closure-v1.json"
+    historical_bytes = historical_path.read_bytes()
+    assert b"\r" not in historical_bytes.replace(b"\r\n", b"")
+    assert hashlib.sha256(historical_bytes.replace(b"\r\n", b"\n")).hexdigest() == (
+        "05f37235a41331376854e301932d1aac2ddf4486911d0447e1ef5558db4653a4"
+    )
+    manifest_path = ROOT / "configs/execution/first-c0-vertical-v1.json"
+    manifest_bytes = manifest_path.read_bytes()
+    assert b"\r" not in manifest_bytes.replace(b"\r\n", b"")
+    manifest_bytes = manifest_bytes.replace(b"\r\n", b"\n")
+    assert hashlib.sha256(manifest_bytes).hexdigest() == (
+        "9ea0122081ac8cb90836029c1862dd0071ff5a02c49686116afc0953193ee1da"
+    )
+    payload = json.loads(manifest_bytes)
+    assert list(payload) == [
+        "mission_id",
+        "authorized_stages",
+        "maximum_stage",
+        "external_effects",
+        "compute_budget",
+        "time_budget",
+        "source_hash",
+        "expires_at",
+    ]
+    validated = RealExecutionMissionManifestV1.issue(**payload)
+    validated.assert_first_c0_live_effect_ceiling()
+    assert validated.canonical_manifest_sha256() == (
+        "0a2fa273481921a6207a30b27f50a1e293bfbf6d3e19f78596b1308628072ce4"
+    )
+    serialized_effects = json.dumps(payload["external_effects"]).casefold()
+    assert "multi_league" not in serialized_effects
+    assert "postgresql" not in serialized_effects
+    assert "neon" not in serialized_effects
+    assert "r2" not in serialized_effects
+
+
 def test_production_bootstrap_clis_do_not_accept_backdated_timestamps_or_self_pins() -> None:
     forbidden = {
         "tools/data-sourcing/prepare_real_capture_workspace_v1.py": "--prepared-at-utc",
@@ -333,13 +370,14 @@ def test_first_c0_single_league_canary_authority_is_additive_and_fail_closed() -
     )
     assert "_MAXIMUM_PREPARATION_CYCLES = 3" in canary_cli
     assert "_MAXIMUM_OFFICIAL_PHYSICAL_READS = 12" in canary_cli
+    assert "_FIRST_C0_VERTICAL_MAXIMUM_OFFICIAL_PHYSICAL_READS = 2" in canary_cli
     assert (
         'receipt.get("status") not in {"SUCCEEDED", "FAILED_BEFORE_DNS", "FAILED_NO_FALLBACK"}'
         in (canary_cli)
     )
     assert 'previous.get("status") == "SUCCEEDED"' in canary_cli
     assert "plan.source.sport_key != _FALLBACK_SPORT_KEY" in canary_cli
-    assert "cumulative_official_reads > _MAXIMUM_OFFICIAL_PHYSICAL_READS" in canary_cli
+    assert "_maximum_official_physical_reads(mission_manifest.mission_id)" in canary_cli
     assert "anticipated_reads > 2" in canary_cli
     assert "EnvironmentSecretReader" not in canary_cli
     assert "THE_ODDS_API_KEY" not in canary_cli
@@ -399,7 +437,7 @@ def test_first_c0_single_league_canary_authority_is_additive_and_fail_closed() -
         .replace(b"\r\n", b"\n")
     )
     assert hashlib.sha256(matrix_payload).hexdigest() == (
-        "6777e609247356a9e93fb089a928d25f28c5ba7f9d3fb39a199130d6e866f5ef"
+        "973c06701e179f047b467167d5d0987bdf0b6e783b95a7b7d640e946e2c57756"
     )
 
 
@@ -510,7 +548,7 @@ def test_global_claim_boundary_v2_evidence_is_exact_append_only_and_effect_free(
     # Ambient CI artifacts outside the governed 12-file scope must not replace
     # the immutable base-tree-to-closure-tree proof. In-scope edits still use
     # the precommit worktree path so pending governance changes are fail-closed.
-    if introducing_revisions and dirty_paths.isdisjoint(expected_files):
+    if introducing_revisions:
         first_parent_merges = subprocess.run(
             [
                 "git",

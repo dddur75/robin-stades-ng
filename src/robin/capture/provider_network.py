@@ -12,6 +12,8 @@ from typing import Any, Protocol
 
 from robin.capture import global_claim_boundary as global_claims
 from robin.capture.bootstrap_contracts import (
+    BOOTSTRAP_MISSION_ID,
+    FIRST_C0_VERTICAL_MISSION_ID,
     MIN_OWNER_REVIEW_WINDOW,
     PRE_KICKOFF_SAFETY_MARGIN,
     PROVIDER_CANONICAL_HOSTNAME,
@@ -282,6 +284,7 @@ def _valid_provider_resolution_claim_marker_v2(
         return False
     return (
         canonical_json_bytes(parsed.model_dump(mode="json")) + b"\n" == payload
+        and parsed.mission_id == mission_manifest.mission_id
         and parsed.mission_manifest_sha256 == mission_manifest.canonical_manifest_sha256()
         and parsed.mission_expires_at_utc == mission_manifest.expires_at
     )
@@ -303,6 +306,14 @@ def _reserve_provider_network_resolution_v1(
 
     if first_c0_atomic_preflight_complete is not True:
         raise ProviderNetworkPreparationError("FIRST_C0_ATOMIC_PREFLIGHT_REQUIRED")
+    selection_mission_id = getattr(campaign_selection, "mission_id", BOOTSTRAP_MISSION_ID)
+    if selection_mission_id == FIRST_C0_VERTICAL_MISSION_ID:
+        try:
+            mission_manifest.assert_first_c0_live_effect_ceiling()
+        except ValueError:
+            raise ProviderNetworkPreparationError(
+                "FIRST_C0_VERTICAL_LIVE_EFFECT_CEILING_INVALID"
+            ) from None
     if not 1 <= binding_ttl_seconds <= 900:
         raise ProviderNetworkPreparationError("PROVIDER_NETWORK_BINDING_TTL_INVALID")
     minimum_pre_dns_margin = _minimum_pre_dns_margin_v1(campaign_selection)
@@ -338,12 +349,17 @@ def _reserve_provider_network_resolution_v1(
         or campaign_selection.workspace_prepared_at_utc != workspace_receipt.prepared_at_utc
         or campaign_selection.mission_manifest_sha256
         != mission_manifest.canonical_manifest_sha256()
+        or (
+            isinstance(campaign_selection, FirstC0CanarySelectionV1)
+            and selection_mission_id != mission_manifest.mission_id
+        )
         or campaign_selection.mission_expires_at_utc != mission_manifest.expires_at
         or campaign_selection.selected_fixture_target_set_sha256
         != selected.fixture_target_set.canonical_set_hash
     ):
         raise ProviderNetworkPreparationError("CAMPAIGN_SELECTION_AUTHORITY_MISMATCH")
     claim = ProviderNetworkResolutionClaimV1.issue(
+        mission_id=mission_manifest.mission_id,
         mission_manifest_sha256=mission_manifest.canonical_manifest_sha256(),
         workspace_receipt_sha256=workspace_receipt.canonical_receipt_hash,
         campaign_selection_sha256=campaign_selection.canonical_selection_hash,

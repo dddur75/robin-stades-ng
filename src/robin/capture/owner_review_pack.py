@@ -72,6 +72,7 @@ def _build_owner_review_pack_v1(
         != workspace_receipt.canonical_receipt_hash
         or provider_network_binding.resolution_claim.mission_manifest_sha256
         != mission_manifest.canonical_manifest_sha256()
+        or provider_network_binding.resolution_claim.mission_id != mission_manifest.mission_id
         or provider_network_binding.resolution_claim.campaign_selection_sha256
         != campaign_selection.canonical_selection_hash
         or provider_network_binding.resolution_claim.fixture_target_set_sha256
@@ -80,6 +81,10 @@ def _build_owner_review_pack_v1(
         or campaign_selection.workspace_prepared_at_utc != workspace_receipt.prepared_at_utc
         or campaign_selection.mission_manifest_sha256
         != mission_manifest.canonical_manifest_sha256()
+        or (
+            isinstance(campaign_selection, FirstC0CanarySelectionV1)
+            and campaign_selection.mission_id != mission_manifest.mission_id
+        )
         or campaign_selection.mission_expires_at_utc != mission_manifest.expires_at
         or campaign_selection.selected_fixture_target_set_sha256
         != fixture_target_set.canonical_set_hash
@@ -92,6 +97,7 @@ def _build_owner_review_pack_v1(
     authorization = OwnerAuthorizationV2.issue(
         authorization_id=f"owner-review-{fingerprint.request_sha256[:20]}",
         authorization_status="OWNER_REVIEW_CANDIDATE",
+        mission_id=mission_manifest.mission_id,
         authorized_main_sha=workspace_receipt.authorized_main_sha,
         mission_manifest_sha256=mission_manifest.canonical_manifest_sha256(),
         mission_expires_at_utc=mission_manifest.expires_at,
@@ -119,6 +125,9 @@ def _build_owner_review_pack_v1(
     expected_authorization_sha256 = authorization.expected_promoted_authorization_hash()
     activation_seed = ActivationEnvelopeV2.issue(
         activation_id=f"activation-review-{fingerprint.request_sha256[:20]}",
+        mission_id=mission_manifest.mission_id,
+        mission_manifest_sha256=mission_manifest.canonical_manifest_sha256(),
+        mission_expires_at_utc=mission_manifest.expires_at,
         authorization_id=authorization.authorization_id,
         authorization_hash=expected_authorization_sha256,
         repository_sha=workspace_receipt.authorized_main_sha,
@@ -137,6 +146,9 @@ def _build_owner_review_pack_v1(
     plan_id = f"plan-review-{fingerprint.request_sha256[:20]}"
     item = LivePlanItemV2.issue(
         item_id=f"item-review-{fingerprint.request_sha256[:20]}",
+        mission_id=mission_manifest.mission_id,
+        mission_manifest_sha256=mission_manifest.canonical_manifest_sha256(),
+        mission_expires_at_utc=mission_manifest.expires_at,
         plan_id=plan_id,
         sequence=1,
         sport_key=request.sport_key,
@@ -156,6 +168,9 @@ def _build_owner_review_pack_v1(
     )
     plan = LivePlanV2.issue(
         plan_id=plan_id,
+        mission_id=mission_manifest.mission_id,
+        mission_manifest_sha256=mission_manifest.canonical_manifest_sha256(),
+        mission_expires_at_utc=mission_manifest.expires_at,
         activation_id=activation_seed.activation_id,
         activation_hash=activation_seed.activation_scope_sha256,
         repository_sha=workspace_receipt.authorized_main_sha,
