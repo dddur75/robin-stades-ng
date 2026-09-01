@@ -73,6 +73,7 @@ _MAXIMUM_JSON_BYTES = 4_194_304
 _MAXIMUM_SOURCE_PLAN_BYTES = 1_048_576
 _MAXIMUM_PREPARATION_CYCLES = 3
 _MAXIMUM_OFFICIAL_PHYSICAL_READS = 12
+_FIRST_C0_VERTICAL_MAXIMUM_OFFICIAL_PHYSICAL_READS = 2
 _PRIMARY_SPORT_KEY = "soccer_spain_la_liga"
 _FALLBACK_SPORT_KEY = "soccer_germany_bundesliga"
 _ADAPTER_BY_SPORT = {
@@ -85,6 +86,16 @@ _FALLBACK_CATEGORIES = {
     "NO_PROSPECTIVE_FIXTURE",
     "NO_H24_H2_WINDOW",
 }
+
+
+def _maximum_official_physical_reads(mission_id: str) -> int:
+    return (
+        _FIRST_C0_VERTICAL_MAXIMUM_OFFICIAL_PHYSICAL_READS
+        if mission_id == "FIRST_C0_VERTICAL_V1"
+        else _MAXIMUM_OFFICIAL_PHYSICAL_READS
+    )
+
+
 _OFFICIAL_READ_RESERVATION_FIELDS = {
     "schema_version",
     "cycle_index",
@@ -464,7 +475,9 @@ def _valid_mission_global_reservation_v2(
         and prior_hash == expected_prior_cycle_receipt_sha256
         and isinstance(expected_previous_cumulative_reads, int)
         and not isinstance(expected_previous_cumulative_reads, bool)
-        and 0 <= expected_previous_cumulative_reads < _MAXIMUM_OFFICIAL_PHYSICAL_READS
+        and 0
+        <= expected_previous_cumulative_reads
+        < _maximum_official_physical_reads(mission_manifest.mission_id)
         and value.get("status") == "RESERVED_BEFORE_OFFICIAL_READ"
         and isinstance(official_reads, int)
         and not isinstance(official_reads, bool)
@@ -472,7 +485,7 @@ def _valid_mission_global_reservation_v2(
         and isinstance(cumulative_reads, int)
         and not isinstance(cumulative_reads, bool)
         and cumulative_reads == expected_previous_cumulative_reads + official_reads
-        and cumulative_reads <= _MAXIMUM_OFFICIAL_PHYSICAL_READS
+        and cumulative_reads <= _maximum_official_physical_reads(mission_manifest.mission_id)
         and all(
             value.get(field) == 0
             for field in (
@@ -790,7 +803,7 @@ def _load_cycle_history_with_authority(
             or not isinstance(cumulative_reads, int)
             or isinstance(cumulative_reads, bool)
             or cumulative_reads != previous_cumulative_reads + official_reads
-            or cumulative_reads > _MAXIMUM_OFFICIAL_PHYSICAL_READS
+            or cumulative_reads > _maximum_official_physical_reads(mission_manifest.mission_id)
             or any(
                 reservation.get(field) != 0
                 for field in (
@@ -1223,7 +1236,9 @@ def _publish_bundle(
                 "cumulative_official_reads": cumulative_official_reads,
                 "preparation_cycle": cycle_index,
                 "preparation_cycles_maximum": _MAXIMUM_PREPARATION_CYCLES,
-                "official_physical_reads_maximum": _MAXIMUM_OFFICIAL_PHYSICAL_READS,
+                "official_physical_reads_maximum": _maximum_official_physical_reads(
+                    selection.mission_id
+                ),
                 "supporting_official_reads": len(supporting_raw_bytes),
                 "target_set_freezes": 1,
                 "selector_invocations": 1,
@@ -1253,7 +1268,7 @@ def _publish_bundle(
         "preparation_cycle": cycle_index,
         "cumulative_official_reads": cumulative_official_reads,
         "preparation_cycles_maximum": _MAXIMUM_PREPARATION_CYCLES,
-        "official_physical_reads_maximum": _MAXIMUM_OFFICIAL_PHYSICAL_READS,
+        "official_physical_reads_maximum": _maximum_official_physical_reads(selection.mission_id),
         "published_at_utc": _utc_text(published_at_utc),
         "source_plan_sha256": source_plan.canonical_sha256,
         "sport_key": source_plan.source.sport_key,
@@ -1470,7 +1485,9 @@ def _prepare_first_c0_canary_selection_v1(
     anticipated_supporting_reads = int(source_plan.source.adapter == LALIGA_PUBLIC_MATCHES_JSON_V1)
     anticipated_reads = 1 + anticipated_supporting_reads
     cumulative_official_reads = previous_reads + anticipated_reads
-    if anticipated_reads > 2 or cumulative_official_reads > _MAXIMUM_OFFICIAL_PHYSICAL_READS:
+    if anticipated_reads > 2 or cumulative_official_reads > _maximum_official_physical_reads(
+        mission_manifest.mission_id
+    ):
         raise FirstC0CanaryPreparationError("FIRST_C0_CANARY_OFFICIAL_READ_BUDGET_EXHAUSTED")
     official_reads = anticipated_reads
     reservation = _write_official_read_reservation(
@@ -1759,6 +1776,7 @@ def _prepare_first_c0_canary_selection_v1(
         stage = "SELECT"
         selected_at = _utc(clock(), code="FIRST_C0_CANARY_CLOCK_INVALID")
         selection = FirstC0CanarySelectionV1.issue(
+            mission_id=mission_manifest.mission_id,
             selected_at_utc=selected_at,
             workspace_receipt_sha256=workspace_receipt.canonical_receipt_hash,
             workspace_prepared_at_utc=workspace_receipt.prepared_at_utc,
@@ -2127,7 +2145,9 @@ def main() -> int:
                 "official_reads": result.official_reads,
                 "cumulative_official_reads": result.cumulative_official_reads,
                 "preparation_cycles_maximum": _MAXIMUM_PREPARATION_CYCLES,
-                "official_physical_reads_maximum": _MAXIMUM_OFFICIAL_PHYSICAL_READS,
+                "official_physical_reads_maximum": _maximum_official_physical_reads(
+                    result.selection.mission_id
+                ),
                 "supporting_official_reads": result.supporting_official_reads,
                 "provider_dns": 0,
                 "provider_tcp": 0,

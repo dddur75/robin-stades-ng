@@ -20,6 +20,9 @@ import pytest
 import robin.capture.predns_orchestration as predns_module
 import robin.capture.provider_network as provider_network_module
 from robin.capture.bootstrap_contracts import (
+    FIRST_C0_VERTICAL_EXTERNAL_EFFECTS,
+    FIRST_C0_VERTICAL_MANIFEST_EXPIRES_AT,
+    FIRST_C0_VERTICAL_MANIFEST_SOURCE_HASH,
     PRE_KICKOFF_SAFETY_MARGIN,
     CampaignSelectionAuthorityV1,
     CampaignWindowSelectionV1,
@@ -481,6 +484,7 @@ def build_authority(
     tmp_path: Path,
     *,
     mission_expires_at: datetime | None = None,
+    first_c0_vertical: bool = False,
 ) -> tuple[
     RealCaptureWorkspaceReceiptV1,
     RealExecutionMissionManifestV1,
@@ -527,25 +531,37 @@ def build_authority(
         local_fixed_filesystem_verified=True,
         acl_exclusivity_verified=True,
     )
-    manifest = RealExecutionMissionManifestV1.issue(
-        mission_id="REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1",
-        authorized_stages=("E1",),
-        maximum_stage="E1",
-        external_effects=(
-            "local_standalone_runtime_create_after_merge",
-            "github_public_full_clone_after_merge",
-            "provider_public_dns_resolution_exactly_once_after_merge",
-            "official_schedule_public_read_after_merge",
-            "git_remote_write_non_force",
-            "github_pull_request_write",
-            "github_merge_commit",
-            "github_actions_observe",
-        ),
-        compute_budget=8000,
-        time_budget=345600,
-        source_hash=MANIFEST_SOURCE_HASH,
-        expires_at=mission_expires_at or BASE + timedelta(days=1),
-    )
+    if first_c0_vertical:
+        manifest = RealExecutionMissionManifestV1.issue(
+            mission_id="FIRST_C0_VERTICAL_V1",
+            authorized_stages=("E1",),
+            maximum_stage="E1",
+            external_effects=FIRST_C0_VERTICAL_EXTERNAL_EFFECTS,
+            compute_budget=4000,
+            time_budget=259200,
+            source_hash=FIRST_C0_VERTICAL_MANIFEST_SOURCE_HASH,
+            expires_at=FIRST_C0_VERTICAL_MANIFEST_EXPIRES_AT,
+        )
+    else:
+        manifest = RealExecutionMissionManifestV1.issue(
+            mission_id="REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1",
+            authorized_stages=("E1",),
+            maximum_stage="E1",
+            external_effects=(
+                "local_standalone_runtime_create_after_merge",
+                "github_public_full_clone_after_merge",
+                "provider_public_dns_resolution_exactly_once_after_merge",
+                "official_schedule_public_read_after_merge",
+                "git_remote_write_non_force",
+                "github_pull_request_write",
+                "github_merge_commit",
+                "github_actions_observe",
+            ),
+            compute_budget=8000,
+            time_budget=345600,
+            source_hash=MANIFEST_SOURCE_HASH,
+            expires_at=mission_expires_at or BASE + timedelta(days=1),
+        )
     return workspace, manifest
 
 
@@ -1484,6 +1500,7 @@ def build_ready_canary_bundle(
     ready_now: bool = False,
     earliest: datetime | None = None,
     mission_expires_at: datetime | None = None,
+    first_c0_vertical: bool = False,
 ) -> tuple[
     Path,
     RealCaptureWorkspaceReceiptV1,
@@ -1497,6 +1514,7 @@ def build_ready_canary_bundle(
     workspace, manifest = build_authority(
         tmp_path,
         mission_expires_at=mission_expires_at,
+        first_c0_vertical=first_c0_vertical,
     )
     control = Path(workspace.control_temp_root)
     global_markers = predns_module.global_claims.global_claim_marker_paths_v2(
@@ -3553,6 +3571,55 @@ def test_canary_bundle_loader_rejects_missing_or_unknown_schema(
     _write_canonical_test_json(manifest_path, manifest)
 
     with pytest.raises(PreDnsOrchestrationError, match="PRE_DNS_BUNDLE_MANIFEST_INVALID"):
+        load_pre_dns_bundle_v1(
+            bundle,
+            raw_evidence_verifier=synthetic_raw_evidence_verifier,
+        )
+
+
+def test_first_c0_vertical_bundle_enforces_two_read_ceiling_end_to_end(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle, workspace, manifest, _, _ = build_ready_canary_bundle(
+        tmp_path,
+        monkeypatch,
+        first_c0_vertical=True,
+    )
+    loaded = load_pre_dns_bundle_v1(
+        bundle,
+        raw_evidence_verifier=synthetic_raw_evidence_verifier,
+    )
+    counters_path = bundle / "preparation-counters.json"
+    counters = json.loads(counters_path.read_bytes())
+    assert manifest.mission_id == "FIRST_C0_VERTICAL_V1"
+    assert loaded.mission_manifest == manifest
+    assert loaded.manifest["official_physical_reads_maximum"] == 2
+    assert counters["official_physical_reads_maximum"] == 2
+    assert counters["cumulative_official_reads"] == 2
+
+    counters["official_physical_reads_maximum"] = 12
+    counters_bytes = _write_canonical_test_json(counters_path, counters)
+    bundle_manifest_path = bundle / "bundle-manifest.json"
+    bundle_manifest = json.loads(bundle_manifest_path.read_bytes())
+    bundle_manifest["artifact_sha256"][counters_path.name] = hashlib.sha256(
+        counters_bytes
+    ).hexdigest()
+    bundle_manifest_bytes = _write_canonical_test_json(
+        bundle_manifest_path,
+        bundle_manifest,
+    )
+    current_attempt_path = (
+        Path(workspace.control_temp_root) / "first-c0-canary-cycle-01-attempt-receipt-v1.json"
+    )
+    current_attempt = json.loads(current_attempt_path.read_bytes())
+    current_attempt["bundle_manifest_sha256"] = hashlib.sha256(bundle_manifest_bytes).hexdigest()
+    _write_canonical_test_json(current_attempt_path, current_attempt)
+
+    with pytest.raises(
+        PreDnsOrchestrationError,
+        match="FIRST_C0_CANARY_BUNDLE_COUNTERS_INVALID",
+    ):
         load_pre_dns_bundle_v1(
             bundle,
             raw_evidence_verifier=synthetic_raw_evidence_verifier,

@@ -241,6 +241,7 @@ def test_activation_is_on_demand_bounded_and_references_known_agents() -> None:
         "JALON4_WALL_CLOCK_DECAY_FIX_V1",
         "BOUNDED_MULTI_LEAGUE_LIVE_CANARY_CAPABILITY_SUCCESSOR_V2",
         "REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1",
+        "FIRST_C0_VERTICAL_V1",
         "COVERAGE_P0",
         "HYPERGRAPH",
         "COCKPIT",
@@ -325,12 +326,145 @@ def test_agent_report_schema_requires_the_mission_contract() -> None:
         "JALON4_WALL_CLOCK_DECAY_FIX_V1",
         "BOUNDED_MULTI_LEAGUE_LIVE_CANARY_CAPABILITY_SUCCESSOR_V2",
         "REAL_EXECUTION_BOOTSTRAP_CLOSURE_V1",
+        "FIRST_C0_VERTICAL_V1",
         "COVERAGE_P0",
         "HYPERGRAPH",
         "COCKPIT",
     ]
     assert schema["$defs"]["fact"]["additionalProperties"] is False
     assert schema["$defs"]["risk"]["additionalProperties"] is False
+
+
+def test_first_c0_vertical_authority_is_exactly_bounded() -> None:
+    matrix = load_json("configs/agents/mission-activation-matrix-v3.json")
+    mission = matrix["missions"]["FIRST_C0_VERTICAL_V1"]
+    assert mission == {
+        "agents": ["C0", "C2", "C4", "DP6", "A2"],
+        "writer": "C0",
+        "allowed_paths": [
+            "configs/execution/first-c0-vertical-v1.json",
+            "configs/agents/mission-activation-matrix-v3.json",
+            "configs/agents/agent-report-schema-v3.json",
+            "src/robin/capture/bootstrap_contracts.py",
+            "src/robin/capture/workspace_bootstrap.py",
+            "src/robin/capture/live_executor.py",
+            "src/robin/capture/predns_orchestration.py",
+            "src/robin/capture/provider_network.py",
+            "src/robin/capture/owner_review_pack.py",
+            "src/robin/capture/__init__.py",
+            "tools/data-sourcing/prepare_real_capture_workspace_v1.py",
+            "tools/data-sourcing/prepare_first_c0_canary_selection_v1.py",
+            "tools/data-sourcing/run_first_c0_owner_pack_atomic_v1.py",
+            "tools/data-sourcing/build_owner_review_pack_v1.py",
+            "tools/data-sourcing/run_bounded_live_canary_v2.py",
+            "tests/capture/test_real_capture_workspace_bootstrap.py",
+            "tests/capture/test_first_c0_canary_selection_v1.py",
+            "tests/capture/test_predns_orchestration_v1.py",
+            "tests/capture/test_provider_network_binding.py",
+            "tests/capture/test_live_canary_successor_v2.py",
+            "tests/council/test_real_execution_bootstrap_governance.py",
+            "tests/council/test_robin_council_os_v3.py",
+            "reports/council/first-c0-vertical-v1-final-review-v3.json",
+            "reports/council/decision-ledger.jsonl",
+            "reports/evidence/evidence-graph.json",
+        ],
+        "scale_ceiling": "E1",
+        "delivery_keys": {
+            "data": ["DP6"],
+            "security": ["C4"],
+            "governance": ["C2"],
+            "platform": ["A2"],
+        },
+    }
+    authorization = matrix["authorization"]
+    for delivery_budget in (
+        "MAX_ACTUALLY_CHANGED_TRACKED_PATHS_22",
+        "NEW_BRANCHES_MAX_1",
+        "ENGINEERING_COMMITS_MAX_2",
+        "NON_FORCE_PUSHES_MAX_2",
+        "PULL_REQUESTS_MAX_1",
+        "EXACT_HEAD_CI_CYCLES_MAX_2",
+        "FAILED_RUN_RERUNS_0",
+        "MERGE_COMMITS_MAX_1",
+        "POST_MERGE_CI_CYCLES_MAX_1",
+        "PR80_CLOSE_WRITES_MAX_2",
+    ):
+        assert delivery_budget in authorization["first_c0_vertical_v1_delivery"]
+    assert (
+        "POST_MERGE_STANDALONE_RUNTIME_CREATES_EXACTLY_1"
+        in (authorization["first_c0_vertical_v1_effect_budget"])
+    )
+    assert (
+        "POST_MERGE_GITHUB_PUBLIC_FULL_CLONES_EXACTLY_1"
+        in (authorization["first_c0_vertical_v1_effect_budget"])
+    )
+    assert (
+        "POST_MERGE_OFFICIAL_PHYSICAL_READS_MAX_2"
+        in (authorization["first_c0_vertical_v1_effect_budget"])
+    )
+    assert (
+        "PROVIDER_DNS_RESOLUTION_EXACTLY_1" in (authorization["first_c0_vertical_v1_effect_budget"])
+    )
+    assert "PROVIDER_SECRET_READS_0" in authorization["first_c0_vertical_v1_effect_budget"]
+    assert "STOP_FOR_DAVID" in authorization["first_c0_vertical_v1_ordering"]
+    assert (
+        "SEPARATE_PACK_SPECIFIC_EXPLICIT_OWNER_DECISION"
+        in (authorization["first_c0_vertical_v1_live_boundary"])
+    )
+
+
+def test_first_c0_vertical_governance_is_an_exact_append_only_successor() -> None:
+    base_revision = "fcbf2a4fedd413251ee9da94ec2a444c6b917e63"
+    ledger_relative = "reports/council/decision-ledger.jsonl"
+    base_ledger = subprocess.run(
+        ["git", "show", f"{base_revision}:{ledger_relative}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout.replace(b"\r\n", b"\n")
+    current_ledger = (ROOT / ledger_relative).read_bytes().replace(b"\r\n", b"\n")
+    assert len(base_ledger.splitlines()) == 185
+    assert current_ledger.startswith(base_ledger)
+    assert current_ledger[len(base_ledger) :]
+    assert current_ledger[len(base_ledger) :].endswith(b"\n")
+
+    base_graph = json.loads(
+        subprocess.run(
+            [
+                "git",
+                "show",
+                f"{base_revision}:reports/evidence/evidence-graph.json",
+            ],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        ).stdout
+    )
+    current_graph = load_json("reports/evidence/evidence-graph.json")
+    for collection in ("claims", "decision_nodes"):
+        baseline = base_graph[collection]
+        current = current_graph[collection]
+        assert current[: len(baseline)] == baseline
+        assert len(current) > len(baseline)
+    assert current_graph["edges"] == base_graph["edges"]
+
+    appended_claim_ids = [
+        claim["claim_id"] for claim in current_graph["claims"][len(base_graph["claims"]) :]
+    ]
+    assert appended_claim_ids[0] == "GOV.AUTHORIZATION.FIRST_C0_VERTICAL.V1.001"
+    assert len(appended_claim_ids) == len(set(appended_claim_ids))
+    appended_node_ids = [
+        node["decision_id"]
+        for node in current_graph["decision_nodes"][len(base_graph["decision_nodes"]) :]
+    ]
+    assert appended_node_ids[0] == "RCV3-20260901-193"
+    assert len(appended_node_ids) == len(set(appended_node_ids))
+    appended_edge_ids = [
+        edge["edge_id"] for edge in current_graph["edges"][len(base_graph["edges"]) :]
+    ]
+    assert appended_edge_ids == [
+        f"EDGE.{edge_number:03d}" for edge_number in range(812, 812 + len(appended_edge_ids))
+    ]
 
 
 def test_scientific_truth_kernel_authority_is_offline_bounded_and_exact() -> None:
@@ -6607,6 +6741,29 @@ def test_evidence_graph_and_append_only_ledger_have_mandatory_fields() -> None:
     assert all(
         len(claim["verified_by"]) >= 2 for claim in graph["claims"] if claim["status"] == "VERIFIED"
     )
+    superseding_claims: dict[str, list[dict[str, Any]]] = {}
+    for successor in graph["claims"]:
+        for superseded_claim_id in successor.get("supersedes", []):
+            superseding_claims.setdefault(superseded_claim_id, []).append(successor)
+        artifact_hashes = successor.get("artifact_hashes")
+        if artifact_hashes is not None:
+            assert successor.get("artifact_hash_algorithm") == "SHA-256"
+            assert successor.get("artifact_hash_normalization") == "LF_NORMALIZED_TEXT_BYTES"
+            assert successor.get("artifact_path_count") == len(artifact_hashes)
+            projection_sha256 = hashlib.sha256(
+                json.dumps(
+                    artifact_hashes,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                ).encode()
+            ).hexdigest()
+            assert successor.get("engineering_projection_sha256") == projection_sha256
+            assert successor["code_revision"] == f"precommit-projection:{projection_sha256}"
+            if successor["status"] == "VERIFIED":
+                assert artifact_hashes == {
+                    relative: artifact_sha256(ROOT / relative)
+                    for relative in sorted(artifact_hashes)
+                }
     for claim in graph["claims"]:
         if claim["status"] == "SUPERSEDED":
             assert claim.get("superseded_by") in set(claim_ids)
@@ -6617,7 +6774,26 @@ def test_evidence_graph_and_append_only_ledger_have_mandatory_fields() -> None:
         artifact = ROOT / claim["artifact"]
         assert artifact.is_file()
         if len(claim["hash"]) == 64:
-            assert artifact_sha256(artifact) == claim["hash"]
+            if artifact == ROOT / "reports/council/decision-ledger.jsonl":
+                payload = artifact.read_bytes().replace(b"\r\n", b"\n")
+                prefix = b""
+                prefix_hashes: set[str] = set()
+                for line in payload.splitlines(keepends=True):
+                    prefix += line
+                    prefix_hashes.add(hashlib.sha256(prefix).hexdigest())
+                assert claim["hash"] in prefix_hashes
+            else:
+                current_hash = artifact_sha256(artifact)
+                if current_hash != claim["hash"]:
+                    successors = superseding_claims.get(claim["claim_id"], [])
+                    assert any(
+                        successor["status"] == "VERIFIED"
+                        and successor.get("artifact_hashes", {}).get(claim["artifact"])
+                        == current_hash
+                        for successor in successors
+                    )
+                else:
+                    assert current_hash == claim["hash"]
 
     decision_nodes = {
         node["decision_id"]: node["ledger_record_hash"] for node in graph["decision_nodes"]

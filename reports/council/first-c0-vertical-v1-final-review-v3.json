@@ -1,0 +1,195 @@
+{
+  "schema_version": "robin-first-c0-vertical-final-review-v3",
+  "mission_id": "FIRST_C0_VERTICAL_V1",
+  "reviewed_projection_sha256": "ce861402941bd3d29183d784ff67bbdbacb5ce5405ec48b48c260d456e0547b0",
+  "reviewed_projection_path_count": 17,
+  "review_order": ["DP6", "C4", "C2", "A2"],
+  "summary": {
+    "verdict": "ACCEPT",
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "open_critical_threads": 0,
+    "merge_condition": "EXACT_HEAD_CI_GREEN_AND_MERGEABLE_CLEAN"
+  },
+  "reports": [
+    {
+      "agent_id": "DP6",
+      "mission_id": "FIRST_C0_VERTICAL_V1",
+      "facts_verified": [
+        {
+          "claim": "The exact 17-path LF-normalized engineering projection recomputes to ce861402941bd3d29183d784ff67bbdbacb5ce5405ec48b48c260d456e0547b0 and the owner package, tracked manifest, historical-manifest separation, test evidence, and zero-live-effect receipts are internally consistent.",
+          "evidence_refs": [
+            "reports/evidence/evidence-graph.json",
+            "configs/execution/first-c0-vertical-v1.json",
+            "reports/council/decision-ledger.jsonl"
+          ],
+          "status": "VERIFIED"
+        },
+        {
+          "claim": "DP6 verdict is ACCEPT with P0=0, P1=0, P2=0, and open critical threads=0 for the frozen projection.",
+          "evidence_refs": ["reports/evidence/evidence-graph.json"],
+          "status": "VERIFIED"
+        }
+      ],
+      "unknowns": [],
+      "assumptions": [
+        "Any byte change to one of the 17 projected paths invalidates this review and requires a fresh projection and independent review."
+      ],
+      "main_objection": "None for the frozen projection; merge remains held until exact-head CI is green and the pull request is mergeable clean.",
+      "risks": [],
+      "minimum_decisive_test": "Recompute the exact 17-path projection at the committed head and require exact-head CI success without projection drift.",
+      "recommended_action": "ACCEPT the frozen engineering projection and proceed to exact-head CI under PASS_AND_HOLD.",
+      "scale_condition": "No scale beyond E1; require unchanged projection, exact-head CI success, mergeable clean, and all four independent keys.",
+      "estimated_compute": "Read-only local hashes, contract tracing, and review of targeted, domain, Council, full-suite, and static-check receipts.",
+      "estimated_external_cost": "0; no provider, storage, promotion, publication, or betting effect.",
+      "estimated_human_time": "Independent bounded review completed within the mission time budget.",
+      "maintenance_impact": "Bounded to the explicit manifest profile, lineage propagation, and fail-closed boundary checks.",
+      "confidence": 0.99
+    },
+    {
+      "agent_id": "C4",
+      "mission_id": "FIRST_C0_VERTICAL_V1",
+      "facts_verified": [
+        {
+          "claim": "The exact manifest enforces the ordered 16-effect ceiling, at-most-two official reads, one-league h2h-only binding, one durable DNS reservation, exactly one candidate-only pack, repeated authority reloads, and repository-root binding.",
+          "evidence_refs": [
+            "configs/execution/first-c0-vertical-v1.json",
+            "src/robin/capture/bootstrap_contracts.py",
+            "src/robin/capture/live_executor.py",
+            "src/robin/capture/predns_orchestration.py",
+            "src/robin/capture/provider_network.py",
+            "src/robin/capture/owner_review_pack.py"
+          ],
+          "status": "VERIFIED"
+        },
+        {
+          "claim": "C4 verdict is PASS_AND_HOLD and accepts projection ce861402941bd3d29183d784ff67bbdbacb5ce5405ec48b48c260d456e0547b0 with P0=0, P1=0, P2=0, and open critical threads=0.",
+          "evidence_refs": ["reports/evidence/evidence-graph.json"],
+          "status": "VERIFIED"
+        }
+      ],
+      "unknowns": [],
+      "assumptions": [
+        "The separate future owner decision is trustworthy only when it is bound to the exact candidate authorization hash produced by the verified pack."
+      ],
+      "main_objection": "None within the engineering and candidate-pack authority boundary.",
+      "risks": [
+        {
+          "risk": "A future owner decision could be malformed or bound to the wrong candidate; the live boundary therefore remains fail-closed until exact candidate-hash verification succeeds.",
+          "severity": "LOW",
+          "evidence_refs": [
+            "src/robin/capture/bootstrap_contracts.py",
+            "src/robin/capture/owner_review_pack.py"
+          ]
+        }
+      ],
+      "minimum_decisive_test": "Require exact-head CI and confirm the committed projection still equals ce861402941bd3d29183d784ff67bbdbacb5ce5405ec48b48c260d456e0547b0.",
+      "recommended_action": "PASS_AND_HOLD through exact-head CI, merge, post-merge CI, and candidate-pack creation; do not create OWNER_AUTHORIZED or access provider transport.",
+      "scale_condition": "Proceed only through the E1 candidate-pack ceiling with all forbidden live effects held at zero.",
+      "estimated_compute": "Read-only security and effect-chain inspection plus existing negative-boundary test evidence.",
+      "estimated_external_cost": "0 during engineering review.",
+      "estimated_human_time": "Independent bounded security review completed within the mission time budget.",
+      "maintenance_impact": "The explicit one-shot reservations and authority lineage must remain synchronized in future successor manifests.",
+      "confidence": 0.98
+    },
+    {
+      "agent_id": "C2",
+      "mission_id": "FIRST_C0_VERTICAL_V1",
+      "facts_verified": [
+        {
+          "claim": "All 19 pre-report changed paths are within the immutable 25-path allowlist and below the 22-path cap; C0 is the sole writer; ledger records 193 and 194 form a valid append-only chain with matching graph nodes and preserved historical edges.",
+          "evidence_refs": [
+            "configs/agents/mission-activation-matrix-v3.json",
+            "reports/council/decision-ledger.jsonl",
+            "reports/evidence/evidence-graph.json"
+          ],
+          "status": "VERIFIED"
+        },
+        {
+          "claim": "PR 80 is closed unmerged, its remote branch remains preserved at 53a42811a5b0c055ecfd6886fa037bb02380cf86, and no PR 80 code was imported.",
+          "evidence_refs": ["reports/council/decision-ledger.jsonl"],
+          "status": "VERIFIED"
+        },
+        {
+          "claim": "C2 verdict is ACCEPT with P0=0, P1=0, P2=0, and open critical threads=0 for the frozen projection.",
+          "evidence_refs": ["reports/evidence/evidence-graph.json"],
+          "status": "VERIFIED"
+        }
+      ],
+      "unknowns": [],
+      "assumptions": [
+        "The committed projection and exact-head CI must remain identical to the independently reviewed bytes."
+      ],
+      "main_objection": "None; delivery remains held until exact-head CI and mergeability are proven.",
+      "risks": [
+        {
+          "risk": "Any projection drift or exact-head CI failure invalidates the reviewed candidate and must fail closed under the exhausted consolidated-correction budget.",
+          "severity": "LOW",
+          "evidence_refs": [
+            "reports/council/decision-ledger.jsonl",
+            "reports/evidence/evidence-graph.json"
+          ]
+        }
+      ],
+      "minimum_decisive_test": "Validate the final append-only record, recompute the committed projection, and require exact-head CI green on that exact SHA.",
+      "recommended_action": "ACCEPT the frozen projection for one commit, one non-force push, one pull request, and exact-head CI.",
+      "scale_condition": "Merge only with all four keys, P0/P1/open critical threads at zero, exact-head CI green, and mergeable clean.",
+      "estimated_compute": "Read-only governance, scope, PR disposition, hash-chain, and test-receipt inspection.",
+      "estimated_external_cost": "0; PR 80 administrative disposition is already complete and preserved.",
+      "estimated_human_time": "Independent bounded governance review completed within the mission time budget.",
+      "maintenance_impact": "Append-only records and immutable evidence succession remain the governing maintenance model.",
+      "confidence": 0.99
+    },
+    {
+      "agent_id": "A2",
+      "mission_id": "FIRST_C0_VERTICAL_V1",
+      "facts_verified": [
+        {
+          "claim": "Independent LF-normalized recomputation of the exact sorted 17-path map produced ce861402941bd3d29183d784ff67bbdbacb5ce5405ec48b48c260d456e0547b0.",
+          "evidence_refs": [
+            "reports/evidence/evidence-graph.json",
+            "configs/execution/first-c0-vertical-v1.json"
+          ],
+          "status": "VERIFIED"
+        },
+        {
+          "claim": "Decoy-root, substituted-manifest, historical-live-chain, and three manifest-mutation attack classes fail before secret access or transport; pack generation remains candidate-only and exactly-once.",
+          "evidence_refs": [
+            "src/robin/capture/live_executor.py",
+            "src/robin/capture/workspace_bootstrap.py",
+            "src/robin/capture/predns_orchestration.py",
+            "src/robin/capture/provider_network.py",
+            "src/robin/capture/owner_review_pack.py",
+            "tests/capture/test_live_canary_successor_v2.py",
+            "tests/capture/test_real_capture_workspace_bootstrap.py"
+          ],
+          "status": "VERIFIED"
+        },
+        {
+          "claim": "A2 verdict is ACCEPT with P0=0, P1=0, P2=0, and open critical threads=0.",
+          "evidence_refs": [
+            "reports/evidence/evidence-graph.json",
+            "reports/council/decision-ledger.jsonl"
+          ],
+          "status": "VERIFIED"
+        }
+      ],
+      "unknowns": [],
+      "assumptions": [
+        "At runtime, the owner-attested exclusive OS ACL and no-concurrent-mutator boundary remains true.",
+        "Any byte change to one of the 17 projected paths invalidates this acceptance."
+      ],
+      "main_objection": "None for the frozen projection within the declared authority and local-ACL threat boundary.",
+      "risks": [],
+      "minimum_decisive_test": "Before merge, require exact-head CI and recompute the sorted LF-normalized 17-path map; accept only if it remains ce861402941bd3d29183d784ff67bbdbacb5ce5405ec48b48c260d456e0547b0.",
+      "recommended_action": "ACCEPT the frozen projection; after merge use only the owner-facing atomic entrypoint and keep provider effects blocked until a separate exact-candidate OWNER_AUTHORIZED artifact exists.",
+      "scale_condition": "Proceed only with all required Council keys, exact-head CI, unchanged projection digest, active unexpired authority, exclusive runtime roots, one durable DNS reservation, and one candidate-only pack.",
+      "estimated_compute": "Read-only local hashing, diff inspection, contract tracing, and existing test evidence review; no suite rerun and no network computation.",
+      "estimated_external_cost": "0; no network, provider, storage, promotion, or betting effect was performed.",
+      "estimated_human_time": "Approximately 35 minutes for the independent adversarial pass.",
+      "maintenance_impact": "Moderate but bounded: exact manifest profiles, root fingerprints, repeated reloads, durable one-shot markers, and candidate lineage must be updated together for a successor mission.",
+      "confidence": 0.99
+    }
+  ]
+}
