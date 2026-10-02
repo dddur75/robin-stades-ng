@@ -7,6 +7,7 @@ import sys
 import time
 from copy import deepcopy
 from dataclasses import replace
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -27,6 +28,9 @@ from scripts.chronos_live_path_artifact_guard_v1 import (
 from scripts.chronos_live_path_artifact_guard_v1 import (
     _validated_direct_postgres_url as guard_validated_direct_postgres_url,
 )
+from tests.activation.historical_data_torrent_authority import (
+    bind_historical_data_torrent_authority,
+)
 from tests.activation.test_chronos_neon_controlled_idle_wake_readonly_v1 import (
     _database,
     _IdleIdentitySession,
@@ -45,6 +49,7 @@ from tests.activation.test_chronos_neon_pure_readonly_preflight_v4 import (
 )
 
 ROOT = Path(__file__).resolve().parents[2]
+HISTORICAL_AUTHORITY_AT = datetime(2026, 8, 31, 12, 0, tzinfo=UTC)
 LIVE_STRUCTURES = (
     ROOT / "tests" / "activation" / "fixtures" / "chronos_neon_live_contract_structures_v1.json"
 )
@@ -383,13 +388,18 @@ def test_branch_endpoint_inventory_rejects_any_foreign_branch_member() -> None:
 )
 def test_branch_inventory_rejects_identity_and_type_contradictions(
     branches: list[dict[str, Any]],
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     session = _ScriptedNeonSession(
         branches={"project-a": [{"branches": branches, "pagination": {}}]}
     )
     with pytest.raises(base.PreflightNoGo):
         base._list_branches_bounded(
-            _client(session),
+            _client(
+                monkeypatch,
+                session,
+                authority_now=HISTORICAL_AUTHORITY_AT,
+            ),
             "project-a",
             base.IdentityAudit("POSITIVE_ENDPOINT_WITNESS"),
             reserve_after=0,
@@ -429,7 +439,9 @@ def test_deprecated_pooler_flag_does_not_override_canonical_direct_hostname() ->
     assert not base._is_pooler_host("ep-pooler-word-but-direct.eu.neon.tech")
 
 
-def test_first_page_match_does_not_hide_later_duplicate_target() -> None:
+def test_first_page_match_does_not_hide_later_duplicate_target(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     session = _ScriptedNeonSession(
         project_pages=[
             _project_page(["project-a"], cursor="follow-me"),
@@ -446,7 +458,15 @@ def test_first_page_match_does_not_hide_later_duplicate_target() -> None:
         owner_scope_proven=True,
     )
     with pytest.raises(base.PreflightNoGo) as caught:
-        base._progressive_positive_candidate(_client(session), _synthetic_target(), audit)
+        base._progressive_positive_candidate(
+            _client(
+                monkeypatch,
+                session,
+                authority_now=HISTORICAL_AUTHORITY_AT,
+            ),
+            _synthetic_target(),
+            audit,
+        )
     assert caught.value.gate == "positive_endpoint_match_not_unique"
     assert session.project_page_index == 2
 
@@ -456,12 +476,20 @@ def test_multiple_projects_prove_owner_wide_recovery_capacity(
 ) -> None:
     monkeypatch.delenv("NEON_PROJECT_ID", raising=False)
     neon = base._resolve_neon_identity(
-        _client(_positive_witness_session("FIRST_PAGE_MULTIPLE_PROJECTS_ONE_EXACT_MATCH")),
+        _client(
+            monkeypatch,
+            _positive_witness_session("FIRST_PAGE_MULTIPLE_PROJECTS_ONE_EXACT_MATCH"),
+            authority_now=HISTORICAL_AUTHORITY_AT,
+        ),
         _synthetic_target(),
     )
     assert neon.project_inventory_exhaustive is True
     assert neon.branch_capacity_proven is True
-    report = _run_synthetic(monkeypatch, neon=neon)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+        neon=neon,
+    )
     assert report["verdict"] == base.GO_VERDICT
     assert report["connection_attempt_count"] == 1
     assert report["compute_wake_events"] == 1
@@ -533,7 +561,11 @@ def test_project_discovery_budget_boundaries_never_exceed_twenty_five_gets(
         personal_admin=personal_admin,
     )
     observation = base._resolve_neon_identity(
-        _client(accepted_session),
+        _client(
+            monkeypatch,
+            accepted_session,
+            authority_now=HISTORICAL_AUTHORITY_AT,
+        ),
         _synthetic_target(),
     )
     assert observation.api_get_count == 21
@@ -543,7 +575,11 @@ def test_project_discovery_budget_boundaries_never_exceed_twenty_five_gets(
         rejected_projects,
         personal_admin=personal_admin,
     )
-    client = _client(rejected_session)
+    client = _client(
+        monkeypatch,
+        rejected_session,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     with pytest.raises(base.PreflightNoGo) as caught:
         base._resolve_neon_identity(client, _synthetic_target())
     assert caught.value.gate == "project_identity_discovery_budget_exceeded"
@@ -557,7 +593,14 @@ def test_authoritative_branch_count_must_match_exhaustive_target_inventory(
     session = _positive_witness_session("DISCOVERY_UNIQUE_ENDPOINT_MATCH")
     session.branch_count_overrides["project-a"] = 2
     with pytest.raises(base.PreflightNoGo) as caught:
-        base._resolve_neon_identity(_client(session), _synthetic_target())
+        base._resolve_neon_identity(
+            _client(
+                monkeypatch,
+                session,
+                authority_now=HISTORICAL_AUTHORITY_AT,
+            ),
+            _synthetic_target(),
+        )
     assert caught.value.gate == "branch_count_inventory_contradiction"
 
 
@@ -568,7 +611,14 @@ def test_production_branch_with_a_parent_fails_before_connection(
     session = _positive_witness_session("DISCOVERY_UNIQUE_ENDPOINT_MATCH")
     session.branches["project-a"][0]["branches"][0]["parent_id"] = "unexpected-parent"
     with pytest.raises(base.PreflightNoGo) as caught:
-        base._resolve_neon_identity(_client(session), _synthetic_target())
+        base._resolve_neon_identity(
+            _client(
+                monkeypatch,
+                session,
+                authority_now=HISTORICAL_AUTHORITY_AT,
+            ),
+            _synthetic_target(),
+        )
     assert caught.value.reason == "NEON_PRODUCTION_BRANCH_AMBIGUOUS"
     assert caught.value.gate == "production_branch_parent_unexpected"
 
@@ -591,7 +641,14 @@ def test_personal_admin_scope_proves_selected_organization_capacity(
         )
     session.details["project-b"]["project"]["org_id"] = "org-personal"
     session.details["project-b"]["project"]["owner_id"] = "org-personal"
-    observed = base._resolve_neon_identity(_client(session), _synthetic_target())
+    observed = base._resolve_neon_identity(
+        _client(
+            monkeypatch,
+            session,
+            authority_now=HISTORICAL_AUTHORITY_AT,
+        ),
+        _synthetic_target(),
+    )
     assert observed.owner_scope_verdict == "PERSONAL_ADMIN_ORGANIZATION_PROVEN"
     assert observed.branch_capacity_proven is True
     assert observed.projects_observed == 3
@@ -610,7 +667,14 @@ def test_personal_multi_organization_key_requires_and_binds_explicit_scope(
     session.user_organization_ids = ["owner-shared", "owner-other"]
 
     with pytest.raises(base.PreflightNoGo) as ambiguous:
-        base._resolve_neon_identity(_client(session), _synthetic_target())
+        base._resolve_neon_identity(
+            _client(
+                monkeypatch,
+                session,
+                authority_now=HISTORICAL_AUTHORITY_AT,
+            ),
+            _synthetic_target(),
+        )
     assert ambiguous.value.gate == "user_organization_scope_ambiguous"
 
     session = _positive_witness_session("DISCOVERY_UNIQUE_ENDPOINT_MATCH")
@@ -618,7 +682,14 @@ def test_personal_multi_organization_key_requires_and_binds_explicit_scope(
     session.user_organization_count = 2
     session.user_organization_ids = ["owner-shared", "owner-other"]
     monkeypatch.setenv("NEON_ORG_ID", "owner-shared")
-    observed = base._resolve_neon_identity(_client(session), _synthetic_target())
+    observed = base._resolve_neon_identity(
+        _client(
+            monkeypatch,
+            session,
+            authority_now=HISTORICAL_AUTHORITY_AT,
+        ),
+        _synthetic_target(),
+    )
     assert observed.owner_id == "owner-shared"
     assert observed.owner_scope_verdict == "PERSONAL_ADMIN_ORGANIZATION_PROVEN"
     assert any("org_id=owner-shared" in url for url in session.urls)
@@ -634,7 +705,14 @@ def test_explicit_organization_scope_mismatch_fails_before_project_inventory(
     session.user_organization_count = 2
     session.user_organization_ids = ["owner-shared", "owner-other"]
     with pytest.raises(base.PreflightNoGo) as caught:
-        base._resolve_neon_identity(_client(session), _synthetic_target())
+        base._resolve_neon_identity(
+            _client(
+                monkeypatch,
+                session,
+                authority_now=HISTORICAL_AUTHORITY_AT,
+            ),
+            _synthetic_target(),
+        )
     assert caught.value.gate == "configured_organization_scope_mismatch"
     assert not any("/projects?" in url for url in session.urls)
 
@@ -646,7 +724,14 @@ def test_positive_witness_rejects_project_owner_org_contradiction(
     session = _positive_witness_session("FIRST_PAGE_ONE_PROJECT_EXACT_ENDPOINT_MATCH")
     session.project_pages[0]["projects"][0]["org_id"] = "owner-other"
     with pytest.raises(base.PreflightNoGo) as caught:
-        base._resolve_neon_identity(_client(session), _synthetic_target())
+        base._resolve_neon_identity(
+            _client(
+                monkeypatch,
+                session,
+                authority_now=HISTORICAL_AUTHORITY_AT,
+            ),
+            _synthetic_target(),
+        )
     assert caught.value.gate == "project_inventory_incomplete"
     assert session.paths == ["/auth", "/organizations/owner-shared", "/projects"]
 
@@ -661,7 +746,14 @@ def test_personal_non_admin_scope_never_claims_owner_wide_capacity(
     session.auth_method = "api_key_user"
     session.user_organization_role = role
     with pytest.raises(base.PreflightNoGo) as caught:
-        base._resolve_neon_identity(_client(session), _synthetic_target())
+        base._resolve_neon_identity(
+            _client(
+                monkeypatch,
+                session,
+                authority_now=HISTORICAL_AUTHORITY_AT,
+            ),
+            _synthetic_target(),
+        )
     assert caught.value.gate == "personal_api_key_owner_capacity_unproven"
     assert not any("/projects?" in url for url in session.urls)
 
@@ -674,7 +766,14 @@ def test_personal_admin_membership_witness_need_not_exhaust_unrelated_members(
     session = _positive_witness_session("DISCOVERY_UNIQUE_ENDPOINT_MATCH")
     session.auth_method = "api_key_user"
     session.member_pagination_next = "more-unrelated-members"
-    observed = base._resolve_neon_identity(_client(session), _synthetic_target())
+    observed = base._resolve_neon_identity(
+        _client(
+            monkeypatch,
+            session,
+            authority_now=HISTORICAL_AUTHORITY_AT,
+        ),
+        _synthetic_target(),
+    )
     assert observed.owner_scope_verdict == "PERSONAL_ADMIN_ORGANIZATION_PROVEN"
     assert sum("/members?" in url for url in session.urls) == 1
 
@@ -683,7 +782,14 @@ def test_personal_admin_membership_witness_need_not_exhaust_unrelated_members(
     missing.member_pagination_next = "more-unrelated-members"
     missing.member_contains_self = False
     with pytest.raises(base.PreflightNoGo) as caught:
-        base._resolve_neon_identity(_client(missing), _synthetic_target())
+        base._resolve_neon_identity(
+            _client(
+                monkeypatch,
+                missing,
+                authority_now=HISTORICAL_AUTHORITY_AT,
+            ),
+            _synthetic_target(),
+        )
     assert caught.value.gate == "personal_api_key_owner_capacity_unproven"
 
 
@@ -697,11 +803,27 @@ def test_personal_admin_membership_witness_follows_a_bounded_cursor(
     session.member_contains_self = False
     session.member_pagination_next = "second-member-page"
     session.member_second_page_contains_self = True
-    observed = base._resolve_neon_identity(_client(session), _synthetic_target())
+    observed = base._resolve_neon_identity(
+        _client(
+            monkeypatch,
+            session,
+            authority_now=HISTORICAL_AUTHORITY_AT,
+        ),
+        _synthetic_target(),
+    )
     assert observed.owner_scope_verdict == "PERSONAL_ADMIN_ORGANIZATION_PROVEN"
     assert sum("/members?" in url for url in session.urls) == 2
     assert observed.api_get_count <= base.MAX_NEON_GETS
-    assert _valid_report(_run_synthetic(monkeypatch, neon=observed)) is True
+    assert (
+        _valid_report(
+            _run_synthetic(
+                monkeypatch,
+                authority_now=HISTORICAL_AUTHORITY_AT,
+                neon=observed,
+            )
+        )
+        is True
+    )
 
 
 def test_project_scoped_organization_key_cannot_prove_recovery_capacity(
@@ -711,7 +833,14 @@ def test_project_scoped_organization_key_cannot_prove_recovery_capacity(
     session = _positive_witness_session("DISCOVERY_UNIQUE_ENDPOINT_MATCH")
     session.organization_status = 403
     with pytest.raises(base.PreflightNoGo) as caught:
-        base._resolve_neon_identity(_client(session), _synthetic_target())
+        base._resolve_neon_identity(
+            _client(
+                monkeypatch,
+                session,
+                authority_now=HISTORICAL_AUTHORITY_AT,
+            ),
+            _synthetic_target(),
+        )
     assert caught.value.gate == "project_scoped_api_key_owner_capacity_unproven"
     assert not any("/projects?" in url for url in session.urls)
 
@@ -725,7 +854,14 @@ def test_neon_postgresql_major_without_chronos_certification_fails_closed(
     session = _positive_witness_session("DISCOVERY_UNIQUE_ENDPOINT_MATCH")
     session.details["project-a"]["project"]["pg_version"] = postgresql_major
     with pytest.raises(base.PreflightNoGo) as caught:
-        base._resolve_neon_identity(_client(session), _synthetic_target())
+        base._resolve_neon_identity(
+            _client(
+                monkeypatch,
+                session,
+                authority_now=HISTORICAL_AUTHORITY_AT,
+            ),
+            _synthetic_target(),
+        )
     assert caught.value.gate == "chronos_postgresql_version_not_certified"
 
 
@@ -742,11 +878,22 @@ def test_launch_branch_allowance_blocks_purchase_before_connection(
         )
         for index in range(10)
     ]
-    neon = base._resolve_neon_identity(_client(session), _synthetic_target())
+    neon = base._resolve_neon_identity(
+        _client(
+            monkeypatch,
+            session,
+            authority_now=HISTORICAL_AUTHORITY_AT,
+        ),
+        _synthetic_target(),
+    )
     assert neon.target_project_branch_count == 10
     assert neon.branch_capacity_proven is True
     assert neon.bill_free_branch_capacity_proven is False
-    report = _run_synthetic(monkeypatch, neon=neon)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+        neon=neon,
+    )
     assert report["verdict"] == base.NO_GO_VERDICT
     assert report["failed_gate"] == "purchase_required"
     assert report["purchase_required"] is True
@@ -786,7 +933,14 @@ def test_authoritative_billing_plan_proves_branch_allowance_boundaries(
         )
         for index in range(branch_count)
     ]
-    observed = base._resolve_neon_identity(_client(session), _synthetic_target())
+    observed = base._resolve_neon_identity(
+        _client(
+            monkeypatch,
+            session,
+            authority_now=HISTORICAL_AUTHORITY_AT,
+        ),
+        _synthetic_target(),
+    )
     assert observed.billing_plan == billing_plan
     assert observed.subscription_type == subscription_type
     assert observed.target_project_branch_count == branch_count
@@ -801,7 +955,14 @@ def test_billing_plan_and_subscription_contradiction_fails_closed(
     session.account_plan = "free"
     session.details["project-a"]["project"]["owner"]["subscription_type"] = "scale"
     with pytest.raises(base.PreflightNoGo) as caught:
-        base._resolve_neon_identity(_client(session), _synthetic_target())
+        base._resolve_neon_identity(
+            _client(
+                monkeypatch,
+                session,
+                authority_now=HISTORICAL_AUTHORITY_AT,
+            ),
+            _synthetic_target(),
+        )
     assert caught.value.gate == "billing_plan_subscription_contradiction"
 
 
@@ -814,7 +975,14 @@ def test_unknown_billing_plan_never_claims_purchase_free_capacity(
     session = _positive_witness_session("DISCOVERY_UNIQUE_ENDPOINT_MATCH")
     session.account_plan = billing_plan
     with pytest.raises(base.PreflightNoGo) as caught:
-        base._resolve_neon_identity(_client(session), _synthetic_target())
+        base._resolve_neon_identity(
+            _client(
+                monkeypatch,
+                session,
+                authority_now=HISTORICAL_AUTHORITY_AT,
+            ),
+            _synthetic_target(),
+        )
     assert caught.value.gate == "purchase_requirement_ambiguous"
 
 
@@ -838,6 +1006,7 @@ def test_controlled_guard_accepts_each_bootstrap_predecessor_revision(
     ):
         report = _run_synthetic(
             monkeypatch,
+            authority_now=HISTORICAL_AUTHORITY_AT,
             database=_database(revision=revision),
         )
         assert _valid_report(report) is True
@@ -1025,7 +1194,13 @@ class _RawJsonSession:
 )
 def test_neon_json_duplicate_keys_are_rejected_at_the_transport_boundary(
     raw: str,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    bind_historical_data_torrent_authority(
+        monkeypatch,
+        base,
+        now=HISTORICAL_AUTHORITY_AT,
+    )
     client = base.NeonReadOnlyClient(
         "synthetic-api-key",
         session=_RawJsonSession(raw),  # type: ignore[arg-type]
@@ -1038,6 +1213,11 @@ def test_neon_json_duplicate_keys_are_rejected_at_the_transport_boundary(
 def test_external_http_clients_disable_ambient_requests_configuration(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    bind_historical_data_torrent_authority(
+        monkeypatch,
+        base,
+        now=HISTORICAL_AUTHORITY_AT,
+    )
     neon = base.NeonReadOnlyClient("synthetic-api-key")
     assert neon._session.trust_env is False  # noqa: SLF001
 
@@ -1058,6 +1238,11 @@ def test_external_http_clients_disable_ambient_requests_configuration(
 def test_github_json_duplicate_keys_are_rejected(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    bind_historical_data_torrent_authority(
+        monkeypatch,
+        base,
+        now=HISTORICAL_AUTHORITY_AT,
+    )
     session = _RawJsonSession('{"total_count":1,"workflow_runs":[],"workflow_runs":[{"id":1}]}')
     monkeypatch.setenv("GITHUB_TOKEN", "synthetic-github-token")
     monkeypatch.setattr(base.requests, "Session", lambda: session)
@@ -1278,12 +1463,18 @@ class _FakeConnection:
 def _install_fake_database(
     monkeypatch: pytest.MonkeyPatch,
     *,
+    authority_now: datetime,
     identity: dict[str, object] | None = None,
     fail_at: int | None = None,
     rollback_raises: bool = False,
     response_overrides: dict[str, list[dict[str, object]]] | None = None,
     close_raises: bool = False,
 ) -> tuple[_FakeCursor, list[dict[str, object]]]:
+    bind_historical_data_torrent_authority(
+        monkeypatch,
+        base,
+        now=authority_now,
+    )
     cursor = _FakeCursor(
         identity=identity,
         fail_at=fail_at,
@@ -1303,7 +1494,10 @@ def _install_fake_database(
 def test_database_happy_path_binds_target_and_preserves_exact_effect_counters(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    cursor, calls = _install_fake_database(monkeypatch)
+    cursor, calls = _install_fake_database(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     observation = base._inspect_database(DSN, expected_postgresql_major=16)
     assert cursor.statements == list(base.SQL_STATEMENTS)
     assert observation.database_name == "synthetic_database"
@@ -1459,7 +1653,11 @@ def test_database_identity_mismatch_stops_before_ssl_and_revision(
     monkeypatch: pytest.MonkeyPatch,
     identity: dict[str, object],
 ) -> None:
-    cursor, _calls = _install_fake_database(monkeypatch, identity=identity)
+    cursor, _calls = _install_fake_database(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+        identity=identity,
+    )
     with pytest.raises(base.PreflightNoGo) as caught:
         base._inspect_database(DSN, expected_postgresql_major=16)
     assert caught.value.gate == "postgresql_target_identity_mismatch"
@@ -1502,6 +1700,7 @@ def test_database_rejects_members_of_the_lifecycle_or_owner_authority(
     }
     cursor, _calls = _install_fake_database(
         monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
         response_overrides=overrides,
     )
 
@@ -1515,7 +1714,10 @@ def test_database_rejects_members_of_the_lifecycle_or_owner_authority(
 def test_pg_authid_column_only_visibility_is_an_authority_gate(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    cursor, _calls = _install_fake_database(monkeypatch)
+    cursor, _calls = _install_fake_database(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     execute = cursor.execute
 
     def deny_password_column(statement: str) -> None:
@@ -1560,7 +1762,11 @@ def test_postgresql_major_mismatch_is_a_target_gate(
     identity = deepcopy(_FakeCursor().identity)
     identity["postgresql_version"] = "17.5"
     identity["postgresql_version_num"] = "170005"
-    cursor, _calls = _install_fake_database(monkeypatch, identity=identity)
+    cursor, _calls = _install_fake_database(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+        identity=identity,
+    )
     with pytest.raises(base.PreflightNoGo) as caught:
         base._inspect_database(DSN, expected_postgresql_major=16)
     assert caught.value.gate == "postgresql_major_version_mismatch"
@@ -1572,6 +1778,7 @@ def test_primary_postgresql_gate_preserves_secondary_close_failure_evidence(
 ) -> None:
     _cursor, _calls = _install_fake_database(
         monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
         identity={
             "current_database": "wrong_database",
             "session_user": "synthetic_user",
@@ -1594,10 +1801,17 @@ def _run_boundary_integrated_main(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
     *,
+    authority_now: datetime,
     session: _IdleIdentitySession | None = None,
     response_overrides: dict[str, list[dict[str, object]]] | None = None,
     close_raises: bool = False,
 ) -> tuple[dict[str, Any], _FakeCursor, list[dict[str, object]], Path]:
+    bind_historical_data_torrent_authority(
+        monkeypatch,
+        controlled,
+        base,
+        now=authority_now,
+    )
     sha = "b" * 40
     for name, value in {
         "GITHUB_REPOSITORY": base.EXPECTED_REPOSITORY,
@@ -1635,6 +1849,7 @@ def _run_boundary_integrated_main(
     )
     cursor, calls = _install_fake_database(
         monkeypatch,
+        authority_now=authority_now,
         response_overrides=response_overrides,
         close_raises=close_raises,
     )
@@ -1660,6 +1875,7 @@ def test_full_live_path_replay_only_mocks_external_boundaries(
     report, cursor, calls, _path = _run_boundary_integrated_main(
         monkeypatch,
         tmp_path,
+        authority_now=HISTORICAL_AUTHORITY_AT,
         session=session,
     )
     assert report["verdict"] == base.GO_VERDICT
@@ -1735,6 +1951,7 @@ def test_full_no_go_replays_stop_at_the_correct_gate(
     report, cursor, calls, _path = _run_boundary_integrated_main(
         monkeypatch,
         tmp_path,
+        authority_now=HISTORICAL_AUTHORITY_AT,
         session=session,
         response_overrides=overrides,
     )
@@ -1801,7 +2018,11 @@ def test_every_sql_ordinal_failure_is_sanitized_counted_and_never_retried(
     monkeypatch: pytest.MonkeyPatch,
     ordinal: int,
 ) -> None:
-    _cursor, calls = _install_fake_database(monkeypatch, fail_at=ordinal)
+    _cursor, calls = _install_fake_database(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+        fail_at=ordinal,
+    )
     with pytest.raises(base.PreflightNoGo) as caught:
         base._inspect_database(DSN, expected_postgresql_major=16)
     effects = caught.value.effect_counts
@@ -1843,6 +2064,7 @@ def test_primary_sql_failure_survives_a_secondary_rollback_failure(
 ) -> None:
     _cursor, calls = _install_fake_database(
         monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
         fail_at=base.SQL_SSL,
         rollback_raises=True,
     )
@@ -1948,7 +2170,13 @@ def test_existing_object_owner_is_fingerprinted_in_report(
             },
         ),
     )
-    serialized = json.dumps(_run_synthetic(monkeypatch, database=database))
+    serialized = json.dumps(
+        _run_synthetic(
+            monkeypatch,
+            authority_now=HISTORICAL_AUTHORITY_AT,
+            database=database,
+        )
+    )
     assert owner not in serialized
     assert "owner_role_sha256" in serialized
 
@@ -1957,6 +2185,14 @@ def test_exact_module_command_with_malformed_run_id_still_writes_report(
     tmp_path: Path,
 ) -> None:
     report = tmp_path / "report.json"
+    (tmp_path / "sitecustomize.py").write_text(
+        "from datetime import UTC, datetime\n"
+        "from tests.activation.historical_data_torrent_authority import "
+        "install_subprocess_historical_data_torrent_authority\n"
+        "install_subprocess_historical_data_torrent_authority("
+        "now=datetime(2026, 8, 31, 12, 0, tzinfo=UTC))\n",
+        encoding="utf-8",
+    )
     environment = os.environ.copy()
     environment.update(
         {
@@ -1967,6 +2203,10 @@ def test_exact_module_command_with_malformed_run_id_still_writes_report(
             "GITHUB_RUN_ID": "not-an-integer",
         }
     )
+    historical_environment = dict(environment)
+    historical_environment["PYTHONPATH"] = os.pathsep.join(
+        (str(tmp_path), str(ROOT / "src"), str(ROOT))
+    )
     completed = subprocess.run(
         [
             sys.executable,
@@ -1976,7 +2216,7 @@ def test_exact_module_command_with_malformed_run_id_still_writes_report(
             str(report),
         ],
         cwd=ROOT,
-        env=environment,
+        env=historical_environment,
         capture_output=True,
         text=True,
         check=False,
@@ -2245,7 +2485,10 @@ def test_artifact_guard_recovers_missing_invalid_and_secret_bearing_reports(
         path.write_text(json.dumps(document), encoding="utf-8")
         assert ensure_artifact(path) is False
         assert json.loads(path.read_text(encoding="utf-8"))["verdict"] == NO_GO_VERDICT
-    go_document = _run_synthetic(monkeypatch)
+    go_document = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     for field, malformed in (
         ("project_identity_verdict", []),
         ("autoscaling_limit_max_cu", 10**1_000),
@@ -2340,7 +2583,10 @@ def test_artifact_guard_preserves_a_valid_sanitized_no_go(tmp_path: Path) -> Non
 def test_artifact_guard_accepts_only_a_complete_synthetic_go(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    report = _run_synthetic(monkeypatch)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     assert report["verdict"] == base.GO_VERDICT
     assert _valid_report(report) is True
 
@@ -2364,7 +2610,10 @@ def test_artifact_guard_replaces_json_with_duplicate_keys_before_upload(
     needle: str,
     injection: str,
 ) -> None:
-    report = _run_synthetic(monkeypatch)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     secret = "P0_DUPLICATE_KEY_SECRET_7x9"
     monkeypatch.setenv("NEON_API_KEY", secret)
     raw = json.dumps(report)
@@ -2394,7 +2643,10 @@ def test_artifact_guard_rejects_a_secret_embedded_inside_a_fingerprint(
     environment_name: str,
     environment_value: str,
 ) -> None:
-    report = _run_synthetic(monkeypatch)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     secret = environment_value
     if environment_name == "NEON_BOOTSTRAP_DATABASE_URL":
         monkeypatch.setenv(
@@ -2420,7 +2672,10 @@ def test_guard_scans_normalized_configured_identifiers(
     padded: str,
     normalized: str,
 ) -> None:
-    report = _run_synthetic(monkeypatch)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     monkeypatch.setenv(environment_name, padded)
     if environment_name == "NEON_ORG_ID":
         report["neon"]["owner_id_sha256"] = base._fingerprint(normalized)
@@ -2441,7 +2696,10 @@ def test_fixed_vocabulary_collision_does_not_make_a_valid_go_look_secret_bearing
     environment_name: str,
     environment_value: str,
 ) -> None:
-    report = _run_synthetic(monkeypatch)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     if environment_name == "NEON_BOOTSTRAP_DATABASE_URL":
         monkeypatch.setenv(
             environment_name,
@@ -2460,7 +2718,10 @@ def test_secret_collision_with_a_dynamic_timestamp_fails_closed(
     monkeypatch: pytest.MonkeyPatch,
     environment_name: str,
 ) -> None:
-    report = _run_synthetic(monkeypatch)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     timestamp = report["observed_at"]
     assert isinstance(timestamp, str)
     if environment_name == "NEON_BOOTSTRAP_DATABASE_URL":
@@ -2482,7 +2743,10 @@ def test_artifact_guard_requires_every_critical_go_field(
     monkeypatch: pytest.MonkeyPatch,
     field: str,
 ) -> None:
-    report = _run_synthetic(monkeypatch)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     del report[field]
     assert _valid_report(report) is False
 
@@ -2514,7 +2778,10 @@ def test_artifact_guard_never_preserves_a_go_after_non_successful_live_step(
     monkeypatch: pytest.MonkeyPatch,
     live_outcome: str,
 ) -> None:
-    report = _run_synthetic(monkeypatch)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     assert _valid_report(report, live_outcome=live_outcome) is False
 
 
@@ -2523,7 +2790,10 @@ def test_pure_guard_accepts_configured_identity_and_all_secure_ssl_modes(
     monkeypatch: pytest.MonkeyPatch,
     sslmode: str,
 ) -> None:
-    _run_synthetic(monkeypatch)
+    _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     monkeypatch.setenv("NEON_PROJECT_ID", "project-production")
     neon = replace(
         _neon(state="active"),
@@ -2576,7 +2846,10 @@ def test_artifact_guard_requires_live_secrets_for_go(
     monkeypatch: pytest.MonkeyPatch,
     field: str,
 ) -> None:
-    report = _run_synthetic(monkeypatch)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     monkeypatch.delenv(field)
     assert _valid_report(report) is False
 
@@ -2594,7 +2867,10 @@ def test_artifact_guard_rejects_go_with_ambient_libpq_override(
     name: str,
     value: str,
 ) -> None:
-    report = _run_synthetic(monkeypatch)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     monkeypatch.setenv(name, value)
     assert _valid_report(report) is False
 
@@ -2616,7 +2892,10 @@ def test_artifact_guard_binds_go_to_the_canonical_environment_dsn(
     monkeypatch: pytest.MonkeyPatch,
     database_url: str,
 ) -> None:
-    report = _run_synthetic(monkeypatch)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     monkeypatch.setenv("NEON_BOOTSTRAP_DATABASE_URL", database_url)
     assert _valid_report(report) is False
 
@@ -2661,7 +2940,10 @@ def test_valid_go_accepts_noncolliding_artifact_safe_credentials(
     api_key: str,
     password: str,
 ) -> None:
-    report = _run_synthetic(monkeypatch)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     monkeypatch.setenv("NEON_API_KEY", api_key)
     monkeypatch.setenv(
         "NEON_BOOTSTRAP_DATABASE_URL",
@@ -2689,7 +2971,10 @@ def test_guard_fails_closed_when_sensitive_values_are_too_short_to_scan(
     environment_name: str,
     value: str,
 ) -> None:
-    report = _run_synthetic(monkeypatch)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     if environment_name == "NEON_BOOTSTRAP_DATABASE_URL":
         monkeypatch.setenv(environment_name, DSN.replace("synthetic_password", value))
     else:
@@ -2758,7 +3043,10 @@ def test_artifact_guard_rejects_contradictory_or_identity_bearing_go_fields(
     path: tuple[str, ...],
     value: object,
 ) -> None:
-    report = _run_synthetic(monkeypatch)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     target: dict[str, Any] = report
     for key in path[:-1]:
         target = target[key]
@@ -2769,7 +3057,10 @@ def test_artifact_guard_rejects_contradictory_or_identity_bearing_go_fields(
 def test_artifact_guard_rejects_a_self_parented_production_branch(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    report = _run_synthetic(monkeypatch)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     report["neon"]["production_branch_parent_id_sha256"] = report["neon"][
         "production_branch_id_sha256"
     ]
@@ -2779,7 +3070,10 @@ def test_artifact_guard_rejects_a_self_parented_production_branch(
 def test_controlled_guard_treats_project_variable_as_sanitization_only(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    report = _run_synthetic(monkeypatch)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     monkeypatch.setenv("NEON_PROJECT_ID", "different-authoritative-project")
     assert _valid_report(report) is True
 
@@ -2787,7 +3081,10 @@ def test_controlled_guard_treats_project_variable_as_sanitization_only(
 def test_artifact_guard_binds_go_to_explicit_organization_scope(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    report = _run_synthetic(monkeypatch)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     monkeypatch.setenv("NEON_ORG_ID", "owner-shared")
     assert _valid_report(report) is True
     monkeypatch.setenv("NEON_ORG_ID", "owner-other")
@@ -2812,7 +3109,10 @@ def test_artifact_guard_binds_controlled_lifecycle_to_neon_observation(
     path: tuple[str, ...],
     value: object,
 ) -> None:
-    report = _run_synthetic(monkeypatch)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     target: dict[str, Any] = report
     for key in path[:-1]:
         target = target[key]
@@ -2823,7 +3123,10 @@ def test_artifact_guard_binds_controlled_lifecycle_to_neon_observation(
 def test_pure_guard_requires_active_endpoint_and_configured_identity_binding(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    _run_synthetic(monkeypatch)
+    _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     monkeypatch.setenv("NEON_PROJECT_ID", "project-production")
     neon = replace(
         _neon(state="active"),
@@ -3083,6 +3386,7 @@ def test_artifact_guard_rejects_generic_postgresql_gate_over_specific_failure(
     report, _cursor, _calls, _path = _run_boundary_integrated_main(
         monkeypatch,
         tmp_path,
+        authority_now=HISTORICAL_AUTHORITY_AT,
         response_overrides={
             base.SQL_STATEMENTS[base.SQL_SSL]: [{"ssl": False}],
         },
@@ -3101,6 +3405,7 @@ def test_artifact_guard_rejects_generic_postgresql_gate_over_specific_failure(
     close_failed, _cursor, _calls, _path = _run_boundary_integrated_main(
         monkeypatch,
         tmp_path / "close",
+        authority_now=HISTORICAL_AUTHORITY_AT,
         close_raises=True,
     )
     assert close_failed["failed_gate"] == "postgresql_connection_close_failed"
@@ -3111,6 +3416,7 @@ def test_artifact_guard_rejects_generic_postgresql_gate_over_specific_failure(
     terminal_passed, _cursor, _calls, _path = _run_boundary_integrated_main(
         monkeypatch,
         tmp_path / "terminal-passed",
+        authority_now=HISTORICAL_AUTHORITY_AT,
         response_overrides={
             base.SQL_STATEMENTS[base.SQL_DEFAULT_TRANSACTION_READ_ONLY]: [{"unexpected": "on"}]
         },
@@ -3128,6 +3434,7 @@ def test_artifact_guard_binds_row_missing_timeout_and_revision_unavailable(
     row_missing, _cursor, _calls, _path = _run_boundary_integrated_main(
         monkeypatch,
         tmp_path,
+        authority_now=HISTORICAL_AUTHORITY_AT,
         response_overrides={base.SQL_STATEMENTS[base.SQL_SSL]: []},
     )
     assert row_missing["failed_gate"] == "postgresql_row_missing"
@@ -3143,6 +3450,7 @@ def test_artifact_guard_binds_row_missing_timeout_and_revision_unavailable(
     timeout_invalid, _cursor, _calls, _path = _run_boundary_integrated_main(
         monkeypatch,
         tmp_path / "timeout",
+        authority_now=HISTORICAL_AUTHORITY_AT,
         response_overrides={
             base.SQL_STATEMENTS[base.SQL_STATEMENT_TIMEOUT]: [{"statement_timeout": "garbage"}]
         },
@@ -3158,6 +3466,7 @@ def test_artifact_guard_binds_row_missing_timeout_and_revision_unavailable(
     unavailable, _cursor, _calls, _path = _run_boundary_integrated_main(
         monkeypatch,
         tmp_path / "revision",
+        authority_now=HISTORICAL_AUTHORITY_AT,
         response_overrides={base.SQL_STATEMENTS[base.SQL_REVISION]: [{}]},
     )
     assert unavailable["failed_gate"] == "alembic_revision_unavailable"

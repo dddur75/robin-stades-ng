@@ -1,0 +1,57 @@
+{
+  "agent_id": "C2",
+  "mission_id": "ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V1",
+  "facts_verified": [
+    {
+      "claim": "The continuation manifest contains exactly the eight required fields, is bound to owner-source hash 7896c7a87b9d686571d8c15cec2f62fefa63a7a7e2c3dca4fc093c7c455b6c42, expires no later than the parent at 2026-10-03T18:27:48Z and has raw SHA-256 c79855b5953d94ea042438a8137d4b95e4dcb01e3441bdafa5cd2a740a471289.",
+      "evidence_refs": [
+        "configs/execution/reprise-collecte-20261002-continuation-v1.json",
+        "reports/council/decision-ledger.jsonl#RCV3-20261002-198"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The continuation is non-runtime: the byte-identical parent manifest hash 815788fb8ba61b21782797cd32d36a4b49a8b6d072610a59ba3295136750fdb2 remains the exclusive runtime mission in the signed 39-file attestation, workflow, CLI import and provider-call authorization; continuation runtime-effect increment is zero.",
+      "evidence_refs": [
+        "configs/execution/reprise-collecte-20261002.json",
+        "configs/execution/reprise-collecte-code-attestation.json",
+        ".github/workflows/90-reprise-collecte-pilot.yml",
+        "tests/council/test_reprise_collecte_governance_v1.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The mission matrix names C0 as the sole writer and authorizes exactly 34 continuation paths, including the seven activation-test paths and the two affected Data Torrent test modules; the family baseline remains zero and the cumulative ceiling remains one dispatch, two provider calls and four credits with no purchase or real bet.",
+      "evidence_refs": [
+        "configs/agents/mission-activation-matrix-v3.json",
+        "configs/execution/reprise-collecte-20261002-continuation-v1.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Authorization record RCV3-20261002-198 is append-only and correctly hash-chained; the evidence graph retains EDGE.001 through EDGE.811 unchanged, preserves both prior projections as superseded history and verifies the 39-path successor digest e369fffca09132b68c95771e88a150e6b77e47ec59cd18b76a7291794c4d9848.",
+      "evidence_refs": [
+        "reports/council/decision-ledger.jsonl",
+        "reports/evidence/evidence-graph.json",
+        "tests/council/test_reprise_collecte_governance_v1.py"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "Exact-head GitHub required-check results and mergeability remain unknown until the committed candidate is pushed."
+  ],
+  "assumptions": [
+    "No byte in the 39-path reviewed projection changes after this review without a fresh digest and review."
+  ],
+  "main_objection": "VERDICT ON THE GOVERNANCE AXIS: PASS_AND_HOLD with P0=0, P1=0, P2=0 and zero governance-axis candidate-blocking critical threads. The separate C4 report retains a pre-existing repository-wide secret trust-boundary risk; merge remains held for the completed full-suite diagnostic, exact-head required checks and clean mergeability.",
+  "risks": [],
+  "minimum_decisive_test": "Recompute the exact 39-path LF-normalized projection, validate the complete Council domain and require exact-head CI green on the committed SHA.",
+  "recommended_action": "Accept the non-runtime continuation projection and proceed to the pre-commit record, one non-force push, one pull request and required checks without expanding runtime authority.",
+  "scale_condition": "No scale beyond E1; the first provider call remains under the parent authority and the second remains conditional on a PASS audit of the first.",
+  "estimated_compute": "Read-only manifest, matrix, attestation, ledger, evidence-graph and projection audit plus targeted governance tests.",
+  "estimated_external_cost": "0; no provider, secret, storage, purchase, betting, promotion or publication effect.",
+  "estimated_human_time": "Independent bounded governance review completed within the continuation budget.",
+  "maintenance_impact": "Low: one non-runtime successor manifest, one explicit mission entry and append-only evidence succession; no new mechanism.",
+  "confidence": 0.99
+}

@@ -1,0 +1,92 @@
+{
+  "agent_id": "A2",
+  "mission_id": "ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V1",
+  "facts_verified": [
+    {
+      "claim": "The workflow accepts only the exact execute token and expected main SHA, verifies current origin/main, owner actor and triggering actor, and globally rejects a previous owner dispatch before secrets are exposed.",
+      "evidence_refs": [
+        ".github/workflows/90-reprise-collecte-pilot.yml",
+        "tests/capture/test_reprise_collecte_workflow.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "A signed 39-file LF-normalized attestation is verified before runtime construction; the runtime imports only copied attested source and all five workflow Python invocations use isolated mode.",
+      "evidence_refs": [
+        ".github/workflows/90-reprise-collecte-pilot.yml",
+        "configs/execution/reprise-collecte-code-attestation.json",
+        "configs/execution/reprise-collecte-code-attestation.sig",
+        "tests/capture/test_reprise_collecte_workflow.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The workflow performs an OpenSSL CMS preflight before the secret-bearing capture step, scopes provider and R2 secrets to that step, uses restrictive filesystem permissions, deletes plaintext staging on exit, and uploads only sanitized public evidence plus encrypted private delivery.",
+      "evidence_refs": [
+        ".github/workflows/90-reprise-collecte-pilot.yml",
+        "tests/capture/test_reprise_collecte_workflow.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Success, partial failure after a dispatched call, and zero-valid-capture cases all produce a public receipt and encrypted private bundle while the sentinel job prevents a misleading green workflow on PARTIAL.",
+      "evidence_refs": [
+        ".github/workflows/90-reprise-collecte-pilot.yml",
+        "scripts/run_reprise_collecte.py",
+        "tests/capture/test_run_reprise_collecte_cli.py",
+        "tests/capture/test_reprise_collecte_workflow.py"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "GitHub runner availability, provider reachability, and R2 availability can only be observed during the single authorized post-merge dispatch."
+  ],
+  "assumptions": [
+    "The existing repository secrets retain the values and permissions required by the reviewed workflow.",
+    "The local recipient private key remains available until delivery verification finishes."
+  ],
+  "main_objection": "No P0 or P1 platform defect blocks the frozen candidate. The continuation grants zero runtime-effect increment; merge and the parent-authorized dispatch remain conditional on exact-head CI, unchanged signed runtime bytes, the certificate validity window and the owner-side delivery verification described below.",
+  "risks": [
+    {
+      "risk": "The short-lived recipient certificate expires on 2026-10-04, so delayed execution would fail closed before secrets rather than produce a private delivery.",
+      "severity": "MEDIUM",
+      "evidence_refs": [
+        "configs/execution/reprise-collecte-recipient-cert.pem",
+        ".github/workflows/90-reprise-collecte-pilot.yml"
+      ]
+    },
+    {
+      "risk": "GitHub artifact retention is not the durable raw-data store; delivery must be downloaded and verified while R2 remains the immutable source of raw evidence.",
+      "severity": "LOW",
+      "evidence_refs": [
+        ".github/workflows/90-reprise-collecte-pilot.yml",
+        "src/robin/capture/reprise_collecte.py"
+      ]
+    },
+    {
+      "risk": "The private report status describes capture validation, whereas public-receipt.json describes end-to-end delivery status after the final R2 report readback. If they differ on a failure path, the public receipt is authoritative and the run remains PARTIEL.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "src/robin/capture/reprise_collecte.py",
+        ".github/workflows/90-reprise-collecte-pilot.yml"
+      ]
+    },
+    {
+      "risk": "Post-download integrity and cross-format row equivalence are owner-side acceptance steps rather than workflow assertions. They are mandatory before the decrypted table can be reported as verified.",
+      "severity": "LOW",
+      "evidence_refs": [
+        ".github/workflows/90-reprise-collecte-pilot.yml",
+        "src/robin/capture/reprise_collecte.py"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Require all four exact-head required checks, verify the certificate and signed attestation again, then permit one and only one workflow dispatch from merged main.",
+  "recommended_action": "PASS_AND_HOLD for exact-head CI and normal merge, followed by the single authorized dispatch before certificate expiry.",
+  "scale_condition": "No rerun and no additional dispatch; any runner, certificate, secret, provider, or storage ambiguity produces PARTIAL or FAIL_AND_STOP.",
+  "estimated_compute": "Read-only workflow, signature, import-closure, and failure-path inspection plus focused tests and static checks.",
+  "estimated_external_cost": "0 during review; no cloud write, secret read, provider request, or purchase was performed.",
+  "estimated_human_time": "Independent bounded platform review completed within the mission budget.",
+  "maintenance_impact": "Moderate but bounded: attested hashes and certificate material must be regenerated together after any runtime-byte change.",
+  "confidence": 0.98
+}

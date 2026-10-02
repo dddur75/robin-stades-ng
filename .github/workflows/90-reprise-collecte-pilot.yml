@@ -1,0 +1,325 @@
+name: "90 - Robin reprise collecte 2026-10-02"
+
+on:
+  workflow_dispatch:
+    inputs:
+      execute:
+        description: "Exact mission execution token"
+        required: true
+        type: string
+      expected_main_sha:
+        description: "Exact reviewed and merged main SHA authorized by the owner"
+        required: true
+        type: string
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: robin-reprise-collecte-20261002-global
+  cancel-in-progress: false
+
+env:
+  STORAGE_PAUSED: "true"
+  P3_P4_PAUSED: "true"
+  PRODUCTION_LOCKED: "true"
+  REAL_BETS: "false"
+  NO_BET_DEFAULT: "true"
+  PROMOTION_LOCKED: "true"
+  SOCIAL_PUBLISHING_ENABLED: "false"
+  DEMO_MODE_ENABLED: "false"
+  API_FOOTBALL_CALLS_ALLOWED: "0"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+
+jobs:
+  capture:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.actor == 'dddur75' &&
+      github.triggering_actor == 'dddur75' &&
+      inputs.execute == 'ROBIN_REPRISE_COLLECTE_20261002'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+          ref: ${{ inputs.expected_main_sha }}
+
+      - name: Refuse stale, duplicate, unauthenticated, or unattested dispatches
+        id: gate
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+          EXPECTED_CERTIFICATE_SHA256: "97259bc1513f8bfaebaa08cf2d5ecfbc86c9de8471b9e33dd5891349e9900943"
+        run: |
+          set -euo pipefail
+          umask 077
+          [[ "$GITHUB_REPOSITORY" == "dddur75/robin-stades-ng" ]]
+          [[ "$GITHUB_REF" == "refs/heads/main" ]]
+          [[ "$GITHUB_RUN_ATTEMPT" == "1" ]]
+          [[ "$GITHUB_ACTOR" == "dddur75" ]]
+          [[ "$GITHUB_TRIGGERING_ACTOR" == "dddur75" ]]
+          [[ "$EXPECTED_MAIN_SHA" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$GITHUB_SHA" == "$EXPECTED_MAIN_SHA" ]]
+          [[ "$(git rev-parse HEAD)" == "$EXPECTED_MAIN_SHA" ]]
+          [[ -z "$(git status --porcelain)" ]]
+          current_main_sha="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)"
+          [[ "$current_main_sha" == "$EXPECTED_MAIN_SHA" ]]
+          runs_file="$RUNNER_TEMP/reprise-dispatch-run-ids.txt"
+          gh api --paginate \
+            "repos/$GITHUB_REPOSITORY/actions/workflows/90-reprise-collecte-pilot.yml/runs?event=workflow_dispatch&per_page=100" \
+            --jq '.workflow_runs[] | select(.actor.login == "dddur75" and .triggering_actor.login == "dddur75") | .id' > "$runs_file"
+          dispatch_count="$(awk 'NF { count += 1 } END { print count + 0 }' "$runs_file")"
+          [[ "$dispatch_count" == "1" ]]
+          [[ "$(grep -Fxc "$GITHUB_RUN_ID" "$runs_file")" == "1" ]]
+
+          certificate='configs/execution/reprise-collecte-recipient-cert.pem'
+          attestation='configs/execution/reprise-collecte-code-attestation.json'
+          signature='configs/execution/reprise-collecte-code-attestation.sig'
+          gate_dir="$RUNNER_TEMP/reprise-gate"
+          install -d -m 700 "$gate_dir"
+          openssl x509 -in "$certificate" -noout -checkend 1800
+          openssl x509 -in "$certificate" -noout -text | grep -Eq 'Public-Key: \(4096 bit\)'
+          openssl x509 -in "$certificate" -outform DER -out "$gate_dir/recipient.der"
+          [[ "$(sha256sum "$gate_dir/recipient.der" | cut -d' ' -f1)" == "$EXPECTED_CERTIFICATE_SHA256" ]]
+          openssl x509 -in "$certificate" -pubkey -noout > "$gate_dir/recipient-public-key.pem"
+          base64 --decode "$signature" > "$gate_dir/attestation.sig.bin"
+          openssl dgst -sha256 -verify "$gate_dir/recipient-public-key.pem" \
+            -signature "$gate_dir/attestation.sig.bin" "$attestation"
+          python -I - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          path = Path("configs/execution/reprise-collecte-code-attestation.json")
+          attestation = json.loads(path.read_text(encoding="utf-8"))
+          expected_fields = {
+              "schema_version", "mission_id", "certificate_der_sha256",
+              "hash_algorithm", "normalization", "artifact_hashes",
+          }
+          assert set(attestation) == expected_fields
+          assert attestation["schema_version"] == "robin-reprise-collecte-code-attestation-v1"
+          assert attestation["mission_id"] == "ROBIN_REPRISE_COLLECTE_20261002"
+          assert attestation["certificate_der_sha256"] == (
+              "97259bc1513f8bfaebaa08cf2d5ecfbc86c9de8471b9e33dd5891349e9900943"
+          )
+          assert attestation["hash_algorithm"] == "SHA-256"
+          assert attestation["normalization"] == "LF_NORMALIZED_TEXT_BYTES"
+          hashes = attestation["artifact_hashes"]
+          assert isinstance(hashes, dict) and len(hashes) >= 12
+          for filename, expected in hashes.items():
+              candidate = Path(filename)
+              assert candidate.is_file() and not candidate.is_symlink()
+              normalized = candidate.read_bytes().replace(b"\r\n", b"\n")
+              assert hashlib.sha256(normalized).hexdigest() == expected
+          runtime_relative_paths = sorted(
+              filename
+              for filename in hashes
+              if filename == "scripts/run_reprise_collecte.py" or filename.startswith("src/")
+          )
+          assert "scripts/run_reprise_collecte.py" in runtime_relative_paths
+          assert "src/sitecustomize.py" not in runtime_relative_paths
+          assert "src/usercustomize.py" not in runtime_relative_paths
+          runtime_dir = Path(os.environ["RUNNER_TEMP"]) / "reprise-runtime"
+          for filename in runtime_relative_paths:
+              source = Path(filename)
+              destination = runtime_dir / filename
+              destination.parent.mkdir(parents=True, exist_ok=True)
+              destination.write_bytes(source.read_bytes())
+          PY
+          printf '%s' 'robin-cms-preflight-20261002' > "$gate_dir/cms-preflight.txt"
+          openssl cms -encrypt -binary -aes-256-cbc \
+            -in "$gate_dir/cms-preflight.txt" \
+            -outform DER \
+            -out "$gate_dir/cms-preflight.p7m" \
+            "$certificate"
+          openssl cms -inform DER -cmsout -print \
+            -in "$gate_dir/cms-preflight.p7m" > /dev/null
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12.10"
+
+      - name: Install the exact existing bounded runtime
+        id: install
+        run: >-
+          python -I -m pip install --only-binary=:all: --require-hashes -r requirements-data-torrent.lock
+
+      - name: Prepare private runtime directories
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          install -d -m 700 "$RUNNER_TEMP/reprise-private"
+          install -d -m 700 "$RUNNER_TEMP/reprise-upload"
+
+      - name: Execute exactly two gated capture attempts
+        id: capture
+        continue-on-error: true
+        shell: bash
+        env:
+          THE_ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/reprise-runtime"
+          python -I scripts/run_reprise_collecte.py \
+            --execute ROBIN_REPRISE_COLLECTE_20261002 \
+            --manifest "$GITHUB_WORKSPACE/configs/execution/reprise-collecte-20261002.json" \
+            --output-directory "$RUNNER_TEMP/reprise-private" \
+            --interval-seconds 120
+
+      - name: Validate, package, and encrypt the available private delivery
+        id: encrypt
+        if: ${{ always() && !cancelled() }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          private_dir="$RUNNER_TEMP/reprise-private"
+          upload_dir="$RUNNER_TEMP/reprise-upload"
+          certificate='configs/execution/reprise-collecte-recipient-cert.pem'
+          plaintext_archive="$private_dir/reprise-private.tar.gz"
+          trap 'rm -f -- "$plaintext_archive"' EXIT
+          python -I - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          root = Path(os.environ["RUNNER_TEMP"]) / "reprise-private"
+          receipt = json.loads((root / "public-receipt.json").read_text(encoding="utf-8"))
+          expected = {
+              "schema_version", "mission_id", "status", "repository_sha", "github_run_id",
+              "claim_ids", "capture_count", "validated_capture_count", "provider_requests",
+              "provider_dispatch_attempts", "credits_consumed",
+              "credits_consumed_confirmed_minimum",
+              "credits_consumed_authorized_upper_bound", "credit_accounting_status",
+              "partial_reason_code", "failure_stage", "row_count", "match_count",
+              "bookmaker_count", "capture_times_utc", "source_timestamp_min_utc",
+              "source_timestamp_max_utc", "r2_put_requests", "r2_get_requests",
+              "dns_resolutions", "secret_reads", "automatic_retries", "purchases",
+              "real_bets", "raw_capture_object_sha256", "private_report_r2_status",
+              "private_report_r2_sha256", "private_json_sha256", "csv_sha256",
+              "html_sha256", "recurrence_status", "edge_status",
+          }
+          assert set(receipt) == expected
+          assert receipt["mission_id"] == "ROBIN_REPRISE_COLLECTE_20261002"
+          assert receipt["repository_sha"] == os.environ["GITHUB_SHA"]
+          assert receipt["github_run_id"] == os.environ["GITHUB_RUN_ID"]
+          assert receipt["capture_count"] == receipt["validated_capture_count"]
+          assert receipt["provider_requests"] == receipt["provider_dispatch_attempts"]
+          assert 0 <= receipt["validated_capture_count"] <= 2
+          assert 1 <= receipt["provider_dispatch_attempts"] <= 2
+          assert 0 <= receipt["credits_consumed_confirmed_minimum"] <= 4
+          assert receipt["credits_consumed_authorized_upper_bound"] == 4
+          assert receipt["automatic_retries"] == 0
+          assert receipt["purchases"] == receipt["real_bets"] == 0
+          assert receipt["recurrence_status"] == "COLLECTE_RECURRENTE_NON_ENCORE_DEMONTREE"
+          assert receipt["edge_status"] == "AUCUN_EDGE_VALIDE_PAR_CE_PILOTE"
+          if receipt["status"] == "COLLECTE_REELLE_VERIFIEE":
+              assert receipt["validated_capture_count"] == 2
+              assert receipt["provider_dispatch_attempts"] == 2
+              assert receipt["credit_accounting_status"] == "EXACT"
+              assert 0 < receipt["credits_consumed"] <= 4
+              assert receipt["partial_reason_code"] is None
+              assert receipt["failure_stage"] is None
+              assert receipt["private_report_r2_status"] == "VERIFIED"
+          else:
+              assert receipt["status"] == "PARTIEL"
+              assert isinstance(receipt["partial_reason_code"], str)
+              assert isinstance(receipt["failure_stage"], str)
+              if receipt["validated_capture_count"] == 0:
+                  assert receipt["row_count"] == 0
+                  assert receipt["capture_times_utc"] == []
+                  assert receipt["source_timestamp_min_utc"] is None
+                  assert receipt["source_timestamp_max_utc"] is None
+                  assert receipt["credits_consumed"] is None
+                  assert receipt["credit_accounting_status"] == "BOUNDED_UNKNOWN"
+          assert len(receipt["capture_times_utc"]) == receipt["validated_capture_count"]
+          expected_files = {
+              "public-receipt.json", "reprise-collecte-private.json",
+              "reprise-collecte.csv", "reprise-collecte.html",
+          }
+          assert {path.name for path in root.iterdir() if path.is_file()} == expected_files
+          PY
+          tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner \
+            -C "$private_dir" -czf "$plaintext_archive" \
+            reprise-collecte-private.json reprise-collecte.csv reprise-collecte.html
+          openssl cms -encrypt -binary -aes-256-cbc \
+            -in "$plaintext_archive" \
+            -outform DER \
+            -out "$upload_dir/reprise-collecte-private.p7m" \
+            "$certificate"
+          openssl cms -inform DER -cmsout -print \
+            -in "$upload_dir/reprise-collecte-private.p7m" > /dev/null
+          cp "$private_dir/public-receipt.json" "$upload_dir/public-receipt.json"
+          export CERTIFICATE_SHA256="$(openssl x509 -in "$certificate" \
+            -outform DER | sha256sum | cut -d' ' -f1)"
+          export ARCHIVE_SHA256="$(sha256sum "$plaintext_archive" | cut -d' ' -f1)"
+          export ENCRYPTED_SHA256="$(sha256sum "$upload_dir/reprise-collecte-private.p7m" | cut -d' ' -f1)"
+          python -I - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          upload = Path(os.environ["RUNNER_TEMP"]) / "reprise-upload"
+          metadata = {
+              "schema_version": "robin-reprise-collecte-encryption-v1",
+              "format": "CMS_ENVELOPED_DATA_DER",
+              "content_cipher": "AES-256-CBC",
+              "certificate_sha256": os.environ["CERTIFICATE_SHA256"],
+              "plaintext_archive_sha256": os.environ["ARCHIVE_SHA256"],
+              "encrypted_artifact_sha256": os.environ["ENCRYPTED_SHA256"],
+          }
+          (upload / "encryption-metadata.json").write_text(
+              json.dumps(metadata, sort_keys=True, separators=(",", ":")), encoding="utf-8"
+          )
+          assert {path.name for path in upload.iterdir() if path.is_file()} == {
+              "reprise-collecte-private.p7m", "public-receipt.json", "encryption-metadata.json"
+          }
+          PY
+
+      - name: Upload encrypted delivery and sanitized receipt only
+        id: upload
+        if: ${{ always() && !cancelled() && steps.encrypt.outcome == 'success' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: robin-reprise-collecte-${{ github.run_id }}
+          path: ${{ runner.temp }}/reprise-upload
+          if-no-files-found: error
+          include-hidden-files: false
+          retention-days: 7
+
+      - name: Preserve the exact terminal outcome
+        id: terminal
+        if: ${{ always() }}
+        shell: bash
+        env:
+          CAPTURE_OUTCOME: ${{ steps.capture.outcome }}
+          ENCRYPT_OUTCOME: ${{ steps.encrypt.outcome }}
+          UPLOAD_OUTCOME: ${{ steps.upload.outcome }}
+        run: |
+          set -euo pipefail
+          if [[ "$CAPTURE_OUTCOME" == "success" \
+             && "$ENCRYPT_OUTCOME" == "success" \
+             && "$UPLOAD_OUTCOME" == "success" ]]; then
+            exit 0
+          fi
+          if [[ "$CAPTURE_OUTCOME" == "failure" \
+             && "$ENCRYPT_OUTCOME" == "success" \
+             && "$UPLOAD_OUTCOME" == "success" ]]; then
+            echo "REPRISE_PARTIAL_DELIVERY_UPLOADED" >&2
+          else
+            echo "REPRISE_DELIVERY_INCOMPLETE" >&2
+          fi
+          exit 1

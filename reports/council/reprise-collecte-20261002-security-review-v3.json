@@ -1,0 +1,95 @@
+{
+  "agent_id": "C4",
+  "mission_id": "ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V1",
+  "facts_verified": [
+    {
+      "claim": "The new capture path preserves every immutable safety lock and contains no purchase, betting, promotion, social-publication, retry, redirect-following, destructive R2, or database-write capability.",
+      "evidence_refs": [
+        "configs/execution/reprise-collecte-20261002.json",
+        "src/robin/capture/reprise_collecte.py",
+        ".github/workflows/90-reprise-collecte-pilot.yml"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Provider and R2 effects are fail-closed behind mission, branch, main-SHA, actor, uniqueness, signature, certificate, and budget gates, with durable global reservations preceding provider calls.",
+      "evidence_refs": [
+        ".github/workflows/90-reprise-collecte-pilot.yml",
+        "src/robin/capture/reprise_collecte.py",
+        "tests/capture/test_reprise_collecte.py",
+        "tests/capture/test_reprise_collecte_workflow.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Raw provider payloads and detailed match and odds rows are excluded from Git, public logs, and plaintext public artifacts; private views are encrypted to the pinned recipient certificate.",
+      "evidence_refs": [
+        ".github/workflows/90-reprise-collecte-pilot.yml",
+        "src/robin/capture/reprise_collecte.py",
+        "configs/execution/reprise-collecte-recipient-cert.pem",
+        "tests/capture/test_reprise_collecte_workflow.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Independent signature, 39-of-39 attested-file, isolated-import, CMS round-trip, and focused 32-test checks found no P0 or P1 blocker in the new path. The bounded plaintext-runner lifetime and mandatory post-decryption digest comparison remain documented P2 delivery controls.",
+      "evidence_refs": [
+        "configs/execution/reprise-collecte-code-attestation.json",
+        "configs/execution/reprise-collecte-code-attestation.sig",
+        "tests/capture/test_reprise_collecte_workflow.py",
+        "tests/council/test_reprise_collecte_governance_v1.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The historical-scenario repair is test-only: it requires explicit local instants, confines child-process injection to a temporary sitecustomize, preserves current-date expiry rejection, and leaves the Chronos runtime plus the signed collection runtime unchanged.",
+      "evidence_refs": [
+        "tests/activation/historical_data_torrent_authority.py",
+        "tests/activation/test_chronos_production_bootstrap_v3.py",
+        "tests/activation/test_chronos_end_to_end_live_path_v1.py",
+        "C4 activation review: 573 passed, 1 skipped"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "Repository-wide future workflow governance is outside this bounded pilot and cannot be proven by the new workflow alone."
+  ],
+  "assumptions": [
+    "GitHub branch protection continues to prevent unreviewed workflow changes from reaching main before the one-shot dispatch."
+  ],
+  "main_objection": "No P0 or P1 objection exists in the new capture path. The P2 delivery controls below are mandatory during receipt verification; a pre-existing repository-level secret-governance risk is explicitly separate and is not represented as fixed by this pilot.",
+  "risks": [
+    {
+      "risk": "Any separately merged workflow with repository-secret access could read the same provider or R2 secrets; this is a pre-existing repository-level trust boundary, not a capability introduced or repaired by the bounded pilot.",
+      "severity": "CRITICAL",
+      "evidence_refs": [
+        ".github/workflows/90-reprise-collecte-pilot.yml",
+        "configs/agents/mission-activation-matrix-v3.json"
+      ]
+    },
+    {
+      "risk": "The plaintext private report and archive remain in a permission-restricted runner temporary directory until ephemeral runner teardown after encryption. This bounded lifetime is accepted for the existing one-shot mechanism but must not be represented as immediate cryptographic erasure.",
+      "severity": "LOW",
+      "evidence_refs": [
+        ".github/workflows/90-reprise-collecte-pilot.yml"
+      ]
+    },
+    {
+      "risk": "The workflow verifies that CMS encryption is decryptable but does not itself recalculate each JSON, CSV, and HTML digest after owner-side decryption. Final acceptance therefore requires the already-planned local digest and row-equivalence audit against public-receipt.json.",
+      "severity": "LOW",
+      "evidence_refs": [
+        ".github/workflows/90-reprise-collecte-pilot.yml",
+        "src/robin/capture/reprise_collecte.py"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Require protected exact-head CI, clean mergeability, unchanged signed hashes, owner-only dispatch, and a second pre-secret uniqueness check at runtime.",
+  "recommended_action": "PASS_AND_HOLD this bounded path without claiming repository-wide secret isolation; proceed only through normal protected merge and one owner dispatch.",
+  "scale_condition": "No recurrent collection or broader secret authority is granted; any attestation, identity, uniqueness, quota, storage, replay, or encryption doubt stops execution.",
+  "estimated_compute": "Read-only threat review, signature and import-closure checks, focused tests, activation-domain verification and static analysis.",
+  "estimated_external_cost": "0 during security review; no secret read, provider request, cloud mutation, purchase, or bet occurred.",
+  "estimated_human_time": "Independent bounded security review completed within the mission budget.",
+  "maintenance_impact": "The signed allowlist, runtime copy boundary, and public/private evidence split must remain synchronized after any future change.",
+  "confidence": 0.97
+}

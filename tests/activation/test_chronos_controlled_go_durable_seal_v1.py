@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -17,6 +18,9 @@ from robin.prospective_observatory.chronos_control_plane import (
     ConditionalPutResult,
     ObservedObject,
 )
+from tests.activation.historical_data_torrent_authority import (
+    bind_historical_data_torrent_authority,
+)
 from tests.activation.test_chronos_neon_controlled_idle_wake_readonly_v1 import (
     _run_synthetic,
 )
@@ -29,6 +33,7 @@ EFFECT_CONTRACT = (
 MAIN_SHA = "a" * 40
 CONTROLLED_RUN_ID = "1234"
 SEAL_RUN_ID = "5678"
+HISTORICAL_AUTHORITY_AT = datetime(2026, 8, 31, 12, 0, tzinfo=UTC)
 
 
 class _Store:
@@ -115,8 +120,20 @@ class _WrongReadbackStore(_Store):
 def _controlled_file(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
+    *,
+    authority_now: datetime,
 ) -> tuple[Path, dict[str, Any]]:
-    report = _run_synthetic(monkeypatch)
+    bind_historical_data_torrent_authority(
+        monkeypatch,
+        seal,
+        bootstrap,
+        readonly,
+        now=authority_now,
+    )
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=authority_now,
+    )
     path = tmp_path / "controlled.json"
     path.write_text(json.dumps(report), encoding="utf-8")
     return path, report
@@ -152,7 +169,11 @@ def test_seal_is_one_conditional_put_and_one_exact_readback(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    controlled_path, _report = _controlled_file(tmp_path, monkeypatch)
+    controlled_path, _report = _controlled_file(
+        tmp_path,
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     _seal_environment(monkeypatch)
     store = _Store()
 
@@ -193,7 +214,11 @@ def test_non_go_is_rejected_before_any_r2_effect(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    controlled_path, report = _controlled_file(tmp_path, monkeypatch)
+    controlled_path, report = _controlled_file(
+        tmp_path,
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     report["verdict"] = readonly.NO_GO_VERDICT
     controlled_path.write_text(json.dumps(report), encoding="utf-8")
     _seal_environment(monkeypatch)
@@ -215,7 +240,11 @@ def test_failed_seal_receipt_conservatively_counts_dispatched_r2_put(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    controlled_path, _report = _controlled_file(tmp_path, monkeypatch)
+    controlled_path, _report = _controlled_file(
+        tmp_path,
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     _seal_environment(monkeypatch)
     store = _RejectedPutStore()
     effects = seal.SealEffects()
@@ -241,7 +270,11 @@ def test_ambiguous_seal_put_never_reports_zero_created_objects(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    controlled_path, _report = _controlled_file(tmp_path, monkeypatch)
+    controlled_path, _report = _controlled_file(
+        tmp_path,
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     _seal_environment(monkeypatch)
     store = _AmbiguousPutStore()
     effects = seal.SealEffects()
@@ -270,7 +303,11 @@ def test_failed_seal_readback_counts_created_object_and_get(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    controlled_path, _report = _controlled_file(tmp_path, monkeypatch)
+    controlled_path, _report = _controlled_file(
+        tmp_path,
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     _seal_environment(monkeypatch)
     store = _WrongReadbackStore()
     effects = seal.SealEffects()
@@ -298,7 +335,11 @@ def test_seal_rechecks_authority_before_readback_effect(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    controlled_path, _report = _controlled_file(tmp_path, monkeypatch)
+    controlled_path, _report = _controlled_file(
+        tmp_path,
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     _seal_environment(monkeypatch)
     store = _Store()
     validations = 0
@@ -330,7 +371,11 @@ def test_bootstrap_revalidates_exact_seal_and_r2_bytes(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    controlled_path, _report = _controlled_file(tmp_path, monkeypatch)
+    controlled_path, _report = _controlled_file(
+        tmp_path,
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     _seal_environment(monkeypatch)
     store = _Store()
     seal_receipt = seal.seal_controlled_go(
@@ -371,7 +416,11 @@ def test_bootstrap_rejects_tampered_seal_before_r2_read(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    controlled_path, _report = _controlled_file(tmp_path, monkeypatch)
+    controlled_path, _report = _controlled_file(
+        tmp_path,
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     _seal_environment(monkeypatch)
     seal_store = _Store()
     seal_receipt = seal.seal_controlled_go(
@@ -411,7 +460,11 @@ def test_bootstrap_wrong_r2_readback_is_counted_in_failure_receipt(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    controlled_path, _report = _controlled_file(tmp_path, monkeypatch)
+    controlled_path, _report = _controlled_file(
+        tmp_path,
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     _seal_environment(monkeypatch)
     seal_store = _Store()
     seal_receipt = seal.seal_controlled_go(

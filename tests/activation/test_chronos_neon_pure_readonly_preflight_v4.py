@@ -4,6 +4,7 @@ import ast
 import json
 import re
 from copy import deepcopy
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, cast
 from urllib.parse import parse_qs, urlparse
@@ -36,8 +37,12 @@ from scripts.chronos_neon_pure_readonly_preflight_v4 import (
     evaluate_checks,
     run_preflight,
 )
+from tests.activation.historical_data_torrent_authority import (
+    bind_historical_data_torrent_authority,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
+HISTORICAL_AUTHORITY_AT = datetime(2026, 8, 31, 12, 0, tzinfo=UTC)
 WORKFLOW = ROOT / ".github" / "workflows" / "chronos-neon-pure-readonly-preflight-v4.yml"
 SCRIPT = ROOT / "scripts" / "chronos_neon_pure_readonly_preflight_v4.py"
 LOCK = ROOT / "requirements-chronos-neon-readonly-v4.lock"
@@ -69,6 +74,8 @@ POSITIVE_WITNESS_GOLDEN = (
     / "fixtures"
     / "chronos_neon_positive_project_ownership_witness_v1_golden_pack.json"
 )
+
+
 FORBIDDEN_SQL = frozenset(
     {
         "CREATE",
@@ -150,9 +157,7 @@ def test_workflow_actions_are_sha_pinned_and_artifact_is_sanitized_only() -> Non
     assert "GITHUB_TOKEN" in serialized
     live = next(step for step in steps if step.get("id") == "live_preflight")
     guard = next(step for step in steps if step.get("id") == "artifact_guard")
-    upload = next(
-        step for step in steps if "actions/upload-artifact@" in step.get("uses", "")
-    )
+    upload = next(step for step in steps if "actions/upload-artifact@" in step.get("uses", ""))
     assert live["working-directory"] == "${{ github.workspace }}"
     assert live["env"]["GITHUB_TOKEN"] == "${{ github.token }}"
     assert "timeout --signal=TERM --kill-after=5s 120s" in live["run"]
@@ -160,7 +165,7 @@ def test_workflow_actions_are_sha_pinned_and_artifact_is_sanitized_only() -> Non
     assert guard["if"] == "always()"
     assert guard["working-directory"] == "${{ github.workspace }}"
     assert "--schema chronos-neon-pure-readonly-preflight-v4" in guard["run"]
-    assert 'steps.live_preflight.outcome' in guard["run"]
+    assert "steps.live_preflight.outcome" in guard["run"]
     assert set(guard["env"]) == {
         "GITHUB_TOKEN",
         "NEON_API_KEY",
@@ -168,9 +173,7 @@ def test_workflow_actions_are_sha_pinned_and_artifact_is_sanitized_only() -> Non
         "NEON_PROJECT_ID",
         "NEON_ORG_ID",
     }
-    assert upload["if"] == (
-        "${{ always() && steps.artifact_guard.outcome == 'success' }}"
-    )
+    assert upload["if"] == ("${{ always() && steps.artifact_guard.outcome == 'success' }}")
     test_step = next(
         step
         for step in steps
@@ -225,14 +228,13 @@ def test_sql_is_bounded_and_has_no_mutating_statement() -> None:
     assert "statement_timeout=15000" in source
     assert "lock_timeout=3000" in source
     assert 'sql_write_count": 0' in source
-    assert "pg_catalog.pg_class" in SQL_STATEMENTS[
-        preflight_module.SQL_TARGET_CLASSIFICATION_BEFORE_LOCK
-    ]
+    assert (
+        "pg_catalog.pg_class"
+        in SQL_STATEMENTS[preflight_module.SQL_TARGET_CLASSIFICATION_BEFORE_LOCK]
+    )
     assert "IN SHARE MODE" in SQL_STATEMENTS[preflight_module.SQL_LOCK_ALEMBIC_VERSION]
     assert "ORDER BY version_num" in SQL_STATEMENTS[preflight_module.SQL_REVISION]
-    assert "FROM ONLY public.alembic_version" in SQL_STATEMENTS[
-        preflight_module.SQL_REVISION
-    ]
+    assert "FROM ONLY public.alembic_version" in SQL_STATEMENTS[preflight_module.SQL_REVISION]
     for ordinal in (
         preflight_module.SQL_TARGET_CLASSIFICATION_BEFORE_LOCK,
         preflight_module.SQL_TARGET_CLASSIFICATION_AFTER_LOCK,
@@ -281,8 +283,14 @@ class _NeverCalledSession:
         raise AssertionError("network must not be reached")
 
 
-def test_neon_client_rejects_non_project_route_before_network() -> None:
-    client = NeonReadOnlyClient("synthetic-only", session=_NeverCalledSession())
+def test_neon_client_rejects_non_project_route_before_network(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client = _client(
+        monkeypatch,
+        _NeverCalledSession(),  # type: ignore[arg-type]
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     with pytest.raises(RuntimeError, match="NEON_PROJECT_IDENTITY_AMBIGUOUS"):
         client.get("/organizations")
 
@@ -303,9 +311,15 @@ class _CountingSession:
         return _SyntheticResponse()
 
 
-def test_neon_get_budget_fails_before_call_26() -> None:
+def test_neon_get_budget_fails_before_call_26(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     session = _CountingSession()
-    client = NeonReadOnlyClient("synthetic-only", session=session)  # type: ignore[arg-type]
+    client = _client(
+        monkeypatch,
+        session,  # type: ignore[arg-type]
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     for _ in range(MAX_NEON_GETS):
         assert client.get("/projects") == {}
     with pytest.raises(RuntimeError, match="NEON_PROJECT_IDENTITY_AMBIGUOUS"):
@@ -481,8 +495,7 @@ class _ScriptedNeonSession:
         self.user_organization_id = user_organization_id
         self.user_organization_count = user_organization_count
         self.user_organization_ids = [user_organization_id] + [
-            f"{user_organization_id}-{index}"
-            for index in range(2, user_organization_count + 1)
+            f"{user_organization_id}-{index}" for index in range(2, user_organization_count + 1)
         ]
         self.user_organization_role = user_organization_role
         self.member_pagination_next = member_pagination_next
@@ -502,9 +515,7 @@ class _ScriptedNeonSession:
         query = parse_qs(parsed.query, keep_blank_values=True)
         self.paths.append(path)
         if path == "/auth":
-            return _ApiResponse(
-                {"account_id": self.account_id, "auth_method": self.auth_method}
-            )
+            return _ApiResponse({"account_id": self.account_id, "auth_method": self.auth_method})
         if path == f"/organizations/{self.account_id}":
             return _ApiResponse(
                 {"id": self.account_id, "plan": self.account_plan},
@@ -543,33 +554,28 @@ class _ScriptedNeonSession:
                 expected_member_query["cursor"] = [self.member_pagination_next]
             assert query == expected_member_query
             contains_self = self.member_contains_self or (
-                self.member_page_index == 1
-                and self.member_second_page_contains_self
+                self.member_page_index == 1 and self.member_second_page_contains_self
             )
-            next_cursor = (
-                self.member_pagination_next
-                if self.member_page_index == 0
-                else None
-            )
+            next_cursor = self.member_pagination_next if self.member_page_index == 0 else None
             self.member_page_index += 1
             return _ApiResponse(
                 {
-                    "members": ([
-                        {
-                            "member": {
-                                "id": "00000000-0000-0000-0000-000000000001",
-                                "user_id": self.account_id,
-                                "org_id": organization_id,
-                                "role": self.user_organization_role,
-                            },
-                            "user": {},
-                        }
-                    ] if contains_self else []),
-                    "pagination": (
-                        {"next": next_cursor}
-                        if next_cursor is not None
-                        else {}
+                    "members": (
+                        [
+                            {
+                                "member": {
+                                    "id": "00000000-0000-0000-0000-000000000001",
+                                    "user_id": self.account_id,
+                                    "org_id": organization_id,
+                                    "role": self.user_organization_role,
+                                },
+                                "user": {},
+                            }
+                        ]
+                        if contains_self
+                        else []
                     ),
+                    "pagination": ({"next": next_cursor} if next_cursor is not None else {}),
                 }
             )
         if path == "/projects":
@@ -610,13 +616,9 @@ class _ScriptedNeonSession:
             return _ApiResponse(pages[index])
         if suffix == "/branches/count":
             if project_id in self.branch_count_overrides:
-                return _ApiResponse(
-                    {"count": self.branch_count_overrides[project_id]}
-                )
+                return _ApiResponse({"count": self.branch_count_overrides[project_id]})
             pages = self.branches.get(project_id, [])
-            return _ApiResponse(
-                {"count": sum(len(page.get("branches", [])) for page in pages)}
-            )
+            return _ApiResponse({"count": sum(len(page.get("branches", [])) for page in pages)})
         if re.fullmatch(
             r"/branches/[a-z0-9-]{1,60}/endpoints",
             suffix,
@@ -702,7 +704,17 @@ def _endpoint(
     }
 
 
-def _client(session: _ScriptedNeonSession) -> NeonReadOnlyClient:
+def _client(
+    monkeypatch: pytest.MonkeyPatch,
+    session: _ScriptedNeonSession,
+    *,
+    authority_now: datetime,
+) -> NeonReadOnlyClient:
+    bind_historical_data_torrent_authority(
+        monkeypatch,
+        preflight_module,
+        now=authority_now,
+    )
     return NeonReadOnlyClient("synthetic-only", session=session)  # type: ignore[arg-type]
 
 
@@ -734,9 +746,7 @@ def _project_pagination_scenario(case_id: str) -> tuple[list[dict[str, Any]], in
     if case_id == "PROJECTS_TERMINAL_EMPTY_UNAVAILABLE":
         return [
             _project_page(["project-a"], cursor="cursor-terminal"),
-            _project_page(
-                [], cursor="cursor-terminal", unavailable=["project-missing"]
-            ),
+            _project_page([], cursor="cursor-terminal", unavailable=["project-missing"]),
         ], 0
     if case_id == "PROJECTS_TERMINAL_EMPTY_MALFORMED_PAGINATION":
         terminal = _project_page([])
@@ -800,11 +810,18 @@ def _project_pagination_scenario(case_id: str) -> tuple[list[dict[str, Any]], in
         "PROJECTS_GET_BUDGET_EXHAUSTED",
     ],
 )
-def test_project_pagination_golden_pack(case_id: str) -> None:
+def test_project_pagination_golden_pack(
+    case_id: str,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     case = _identity_golden_cases()[case_id]
     pages, initial_get_count = _project_pagination_scenario(case_id)
     session = _ScriptedNeonSession(project_pages=pages)
-    client = _client(session)
+    client = _client(
+        monkeypatch,
+        session,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     client.get_count = initial_get_count
     audit = preflight_module.IdentityAudit("BOUNDED_DISCOVERY")
     if case["expected_gate"] is None:
@@ -863,7 +880,11 @@ def test_configured_project_identity_golden_pack(
     configured = "invalid/project" if case_id == "CONFIGURED_ID_INVALID" else "synthetic-project"
     monkeypatch.setenv("NEON_PROJECT_ID", configured)
     session = _configured_session(case_id)
-    client = _client(session)
+    client = _client(
+        monkeypatch,
+        session,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     if case["expected_gate"] is None:
         observed = _resolve_neon_identity(client, _synthetic_target())
         assert observed.identity_verdict == case["expected_identity_verdict"]
@@ -899,7 +920,14 @@ def test_configured_project_owner_and_org_identity_must_agree(
     else:
         session.details["synthetic-project"]["project"]["org_id"] = "owner-other"
     with pytest.raises(preflight_module.PreflightNoGo) as caught:
-        _resolve_neon_identity(_client(session), _synthetic_target())
+        _resolve_neon_identity(
+            _client(
+                monkeypatch,
+                session,
+                authority_now=HISTORICAL_AUTHORITY_AT,
+            ),
+            _synthetic_target(),
+        )
     assert caught.value.gate == expected_gate
 
 
@@ -910,7 +938,14 @@ def test_legacy_project_owner_without_org_id_remains_semantically_unambiguous(
     session = _configured_session("CONFIGURED_ID_VALID_EXACT_ENDPOINT")
     session.project_pages[0]["projects"][0].pop("org_id")
     session.details["synthetic-project"]["project"].pop("org_id")
-    observed = _resolve_neon_identity(_client(session), _synthetic_target())
+    observed = _resolve_neon_identity(
+        _client(
+            monkeypatch,
+            session,
+            authority_now=HISTORICAL_AUTHORITY_AT,
+        ),
+        _synthetic_target(),
+    )
     assert observed.identity_verdict == "CONFIGURED_PROJECT_IDENTITY_PROVEN"
 
 
@@ -934,7 +969,14 @@ def test_project_without_org_id_binds_legacy_owner_to_selected_organization(
     detail.pop("org_id")
     (summary if location == "summary" else detail)["owner_id"] = "owner-other"
     with pytest.raises(preflight_module.PreflightNoGo) as caught:
-        _resolve_neon_identity(_client(session), _synthetic_target())
+        _resolve_neon_identity(
+            _client(
+                monkeypatch,
+                session,
+                authority_now=HISTORICAL_AUTHORITY_AT,
+            ),
+            _synthetic_target(),
+        )
     assert caught.value.gate == expected_gate
 
 
@@ -955,9 +997,7 @@ def _discovery_session(case_id: str) -> _ScriptedNeonSession:
         pages = [_project_page(project_ids)]
     details = {project_id: _detail(project_id) for project_id in project_ids}
     branches = {
-        project_id: [
-            {"branches": [_branch(project_id=project_id)], "pagination": {}}
-        ]
+        project_id: [{"branches": [_branch(project_id=project_id)], "pagination": {}}]
         for project_id in project_ids
     }
     endpoints: dict[str, dict[str, Any]] = {}
@@ -995,7 +1035,11 @@ def test_bounded_discovery_golden_pack(
     monkeypatch.delenv("NEON_PROJECT_ID", raising=False)
     case = _identity_golden_cases()[case_id]
     session = _discovery_session(case_id)
-    client = _client(session)
+    client = _client(
+        monkeypatch,
+        session,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     if case["expected_gate"] is None:
         observed = _resolve_neon_identity(client, _synthetic_target())
         assert observed.identity_verdict == case["expected_identity_verdict"]
@@ -1072,9 +1116,7 @@ def _positive_witness_session(case_id: str) -> _ScriptedNeonSession:
 
     details = {project_id: _detail(project_id) for project_id in project_ids}
     branches = {
-        project_id: [
-            {"branches": [_branch(project_id=project_id)], "pagination": {}}
-        ]
+        project_id: [{"branches": [_branch(project_id=project_id)], "pagination": {}}]
         for project_id in project_ids
     }
     endpoints: dict[str, dict[str, Any]] = {}
@@ -1087,9 +1129,7 @@ def _positive_witness_session(case_id: str) -> _ScriptedNeonSession:
                 _endpoint(
                     project_id,
                     host=(
-                        "ep-synthetic.neon.tech"
-                        if exact
-                        else f"ep-other-{project_id}.neon.tech"
+                        "ep-synthetic.neon.tech" if exact else f"ep-other-{project_id}.neon.tech"
                     ),
                 )
             ]
@@ -1111,9 +1151,7 @@ def _positive_witness_session(case_id: str) -> _ScriptedNeonSession:
     elif case_id == "BRANCH_RELATIONSHIP_MISSING":
         branches[matching_project] = [
             {
-                "branches": [
-                    _branch(branch_id="branch-other", project_id=matching_project)
-                ],
+                "branches": [_branch(branch_id="branch-other", project_id=matching_project)],
                 "pagination": {},
             }
         ]
@@ -1125,9 +1163,7 @@ def _positive_witness_session(case_id: str) -> _ScriptedNeonSession:
             }
         ]
     elif case_id == "BRANCH_ENDPOINT_CONFIRMATION_MISMATCH":
-        branch_endpoints[matching_project]["endpoints"][0]["host"] = (
-            "ep-other.neon.tech"
-        )
+        branch_endpoints[matching_project]["endpoints"][0]["host"] = "ep-other.neon.tech"
     return _ScriptedNeonSession(
         project_pages=pages,
         details=details,
@@ -1147,13 +1183,15 @@ def test_positive_project_ownership_witness_golden_pack(
     monkeypatch.delenv("NEON_PROJECT_ID", raising=False)
     case = _positive_witness_cases()[case_id]
     session = _positive_witness_session(case_id)
-    client = _client(session)
+    client = _client(
+        monkeypatch,
+        session,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     if case["expected_gate"] is None:
         observed = _resolve_neon_identity(client, _synthetic_target())
         assert observed.identity_path == "POSITIVE_ENDPOINT_WITNESS"
-        assert observed.identity_verdict == (
-            "POSITIVE_PROJECT_OWNERSHIP_WITNESS_PROVEN"
-        )
+        assert observed.identity_verdict == ("POSITIVE_PROJECT_OWNERSHIP_WITNESS_PROVEN")
         assert observed.project_inventory_exhaustive is True
         assert observed.endpoint_detail_reads == 1
         assert observed.project_detail_reads == 1
@@ -1200,9 +1238,7 @@ def test_project_endpoint_inventory_rejects_dangling_branch_membership(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.delenv("NEON_PROJECT_ID", raising=False)
-    session = _positive_witness_session(
-        "FIRST_PAGE_ONE_PROJECT_EXACT_ENDPOINT_MATCH"
-    )
+    session = _positive_witness_session("FIRST_PAGE_ONE_PROJECT_EXACT_ENDPOINT_MATCH")
     dangling = deepcopy(session.endpoints["project-a"]["endpoints"][0])
     dangling["id"] = "endpoint-dangling"
     dangling["branch_id"] = "branch-does-not-exist"
@@ -1210,7 +1246,14 @@ def test_project_endpoint_inventory_rejects_dangling_branch_membership(
     session.endpoints["project-a"]["endpoints"].append(dangling)
 
     with pytest.raises(preflight_module.PreflightNoGo) as caught:
-        _resolve_neon_identity(_client(session), _synthetic_target())
+        _resolve_neon_identity(
+            _client(
+                monkeypatch,
+                session,
+                authority_now=HISTORICAL_AUTHORITY_AT,
+            ),
+            _synthetic_target(),
+        )
 
     assert caught.value.gate == "branch_endpoint_confirmation_mismatch"
 
@@ -1221,9 +1264,7 @@ def test_external_lifecycle_enums_are_case_sensitive(
     surface: str,
 ) -> None:
     monkeypatch.delenv("NEON_PROJECT_ID", raising=False)
-    session = _positive_witness_session(
-        "FIRST_PAGE_ONE_PROJECT_EXACT_ENDPOINT_MATCH"
-    )
+    session = _positive_witness_session("FIRST_PAGE_ONE_PROJECT_EXACT_ENDPOINT_MATCH")
     if surface == "endpoint":
         session.endpoints["project-a"]["endpoints"][0]["current_state"] = "ACTIVE"
         session.endpoint_details["project-a"]["endpoint"]["current_state"] = "ACTIVE"
@@ -1231,7 +1272,14 @@ def test_external_lifecycle_enums_are_case_sensitive(
         session.branches["project-a"][0]["branches"][0]["current_state"] = "READY"
 
     with pytest.raises(preflight_module.PreflightNoGo):
-        _resolve_neon_identity(_client(session), _synthetic_target())
+        _resolve_neon_identity(
+            _client(
+                monkeypatch,
+                session,
+                authority_now=HISTORICAL_AUTHORITY_AT,
+            ),
+            _synthetic_target(),
+        )
 
 
 @pytest.mark.parametrize("contradiction", ["endpoint_detail", "branch_endpoint"])
@@ -1245,13 +1293,18 @@ def test_configured_identity_requires_endpoint_and_branch_corroboration(
         session.endpoint_details["synthetic-project"]["endpoint"]["disabled"] = True
         expected_gate = "endpoint_detail_disabled"
     else:
-        session.branch_endpoints["synthetic-project"]["endpoints"][0][
-            "branch_id"
-        ] = "branch-other"
+        session.branch_endpoints["synthetic-project"]["endpoints"][0]["branch_id"] = "branch-other"
         expected_gate = "branch_endpoint_confirmation_mismatch"
 
     with pytest.raises(preflight_module.PreflightNoGo) as caught:
-        _resolve_neon_identity(_client(session), _synthetic_target())
+        _resolve_neon_identity(
+            _client(
+                monkeypatch,
+                session,
+                authority_now=HISTORICAL_AUTHORITY_AT,
+            ),
+            _synthetic_target(),
+        )
 
     assert caught.value.gate == expected_gate
 
@@ -1266,11 +1319,16 @@ def test_positive_witness_is_order_independent_and_never_selects_by_position(
         ["project-c", "project-a", "project-b"],
         ["project-b", "project-c", "project-a"],
     ):
-        session = _positive_witness_session(
-            "FIRST_PAGE_MULTIPLE_PROJECTS_ONE_EXACT_MATCH"
-        )
+        session = _positive_witness_session("FIRST_PAGE_MULTIPLE_PROJECTS_ONE_EXACT_MATCH")
         session.project_pages = [_project_page(order)]
-        observed = _resolve_neon_identity(_client(session), _synthetic_target())
+        observed = _resolve_neon_identity(
+            _client(
+                monkeypatch,
+                session,
+                authority_now=HISTORICAL_AUTHORITY_AT,
+            ),
+            _synthetic_target(),
+        )
         fingerprints.add(_sanitized_neon(observed)["project_id_sha256"])
     assert len(fingerprints) == 1
 
@@ -1280,7 +1338,11 @@ def test_positive_witness_sanitization_rejects_raw_identity_and_cursor(
 ) -> None:
     monkeypatch.delenv("NEON_PROJECT_ID", raising=False)
     success = _resolve_neon_identity(
-        _client(_positive_witness_session("FIRST_PAGE_ONE_PROJECT_EXACT_ENDPOINT_MATCH")),
+        _client(
+            monkeypatch,
+            _positive_witness_session("FIRST_PAGE_ONE_PROJECT_EXACT_ENDPOINT_MATCH"),
+            authority_now=HISTORICAL_AUTHORITY_AT,
+        ),
         _synthetic_target(),
     )
     serialized = json.dumps(_sanitized_neon(success), sort_keys=True)
@@ -1292,7 +1354,11 @@ def test_positive_witness_sanitization_rejects_raw_identity_and_cursor(
     ):
         assert forbidden not in serialized
 
-    cycle_client = _client(_positive_witness_session("NO_MATCH_THEN_CURSOR_CYCLE"))
+    cycle_client = _client(
+        monkeypatch,
+        _positive_witness_session("NO_MATCH_THEN_CURSOR_CYCLE"),
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     with pytest.raises(preflight_module.PreflightNoGo) as caught:
         _resolve_neon_identity(cycle_client, _synthetic_target())
     refusal = json.dumps(caught.value.sanitized_evidence, sort_keys=True)
@@ -1301,10 +1367,16 @@ def test_positive_witness_sanitization_rejects_raw_identity_and_cursor(
     assert "project-b" not in refusal
 
 
-def test_projects_and_branches_use_distinct_pagination_parsers() -> None:
+def test_projects_and_branches_use_distinct_pagination_parsers(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     project_page = _project_page(["project-a"])
     project_page["pagination"] = {"next": "branch-style"}
-    project_client = _client(_ScriptedNeonSession(project_pages=[project_page]))
+    project_client = _client(
+        monkeypatch,
+        _ScriptedNeonSession(project_pages=[project_page]),
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     with pytest.raises(preflight_module.PreflightNoGo) as project_error:
         _list_projects_bounded(
             project_client,
@@ -1343,16 +1415,19 @@ def test_branch_cursor_is_followed_encoded_and_never_reported_raw(
                         "sort_order": "asc",
                     },
                 },
-                {
-                    "branches": [
-                        _branch(branch_id="branch-secondary", default=False)
-                    ]
-                },
+                {"branches": [_branch(branch_id="branch-secondary", default=False)]},
             ]
         },
         endpoints={"synthetic-project": {"endpoints": [_endpoint("synthetic-project")]}},
     )
-    observed = _resolve_neon_identity(_client(session), _synthetic_target())
+    observed = _resolve_neon_identity(
+        _client(
+            monkeypatch,
+            session,
+            authority_now=HISTORICAL_AUTHORITY_AT,
+        ),
+        _synthetic_target(),
+    )
     assert observed.api_get_count == 10
     cursor_url = next(url for url in session.urls if "cursor=" in url)
     assert raw_cursor not in cursor_url

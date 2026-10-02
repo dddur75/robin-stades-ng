@@ -11,6 +11,7 @@ from typing import cast
 import pytest
 
 import robin.data_torrent.runtime as runtime_module
+import robin.data_torrent.sources as sources_module
 from robin.capture.live_transport import LiveTransportResponse
 from robin.data_torrent.claims import (
     ExternalEffectEventReceipt,
@@ -41,10 +42,14 @@ from robin.prospective_observatory.chronos_control_plane import (
     EffectEventType,
     GitHubRunIdentity,
 )
+from tests.activation.historical_data_torrent_authority import (
+    bind_historical_data_torrent_authority,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG = ROOT / "configs" / "data" / "torrent-live-v1.json"
 NOW = datetime(2026, 8, 29, 12, tzinfo=UTC)
+HISTORICAL_AUTHORITY_NOW = datetime(2026, 8, 31, 12, tzinfo=UTC)
 
 
 def test_official_adapter_validation_precedes_provider_and_raw_put() -> None:
@@ -617,6 +622,12 @@ def test_batch_reader_readback_binds_both_r2_terminals() -> None:
 def test_ambiguous_provider_dispatch_is_counted_as_one_external_request(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    bind_historical_data_torrent_authority(
+        monkeypatch,
+        sources_module,
+        now=HISTORICAL_AUTHORITY_NOW,
+    )
+
     class Ledger:
         def __init__(self) -> None:
             self.dispatch_hash = _hex(700)
@@ -816,6 +827,12 @@ def test_dns_attempt_is_dispatched_and_counted_before_resolution(
 def test_reported_provider_credit_survives_later_ambiguous_header(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    bind_historical_data_torrent_authority(
+        monkeypatch,
+        sources_module,
+        now=HISTORICAL_AUTHORITY_NOW,
+    )
+
     class Ledger:
         def __init__(self) -> None:
             self.dispatch_hash = _hex(800)
@@ -928,6 +945,12 @@ def test_unknown_provider_credit_is_conservatively_accounted_at_cap(
     last_header: str,
     expected_state: str,
 ) -> None:
+    bind_historical_data_torrent_authority(
+        monkeypatch,
+        sources_module,
+        now=HISTORICAL_AUTHORITY_NOW,
+    )
+
     class Ledger:
         def reserve(self, **values: object) -> ExternalEffectPermitReceipt:
             return ExternalEffectPermitReceipt(
