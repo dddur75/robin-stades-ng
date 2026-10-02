@@ -6,8 +6,8 @@
       "claim": "origin/main resolves exactly to 9b207cd1efd7f51ead29ff5b8c2709b6062fa763; the clean-main comparison worktree and the continuation candidate started from that same revision and were exercised with the same Python interpreter, explicit worktree PYTHONPATH, no pytest cache and no bytecode writes.",
       "evidence_refs": [
         "git ls-remote origin refs/heads/main",
-        "C:/Users/ddura/.codex/worktrees/reprise-clean-main/Robin des stades V2",
-        "C:/Users/ddura/.codex/worktrees/reprise-collecte-20261002-v1/Robin des stades V2"
+        "clean-main comparison worktree at base revision",
+        "continuation candidate worktree at base revision"
       ],
       "status": "VERIFIED"
     },

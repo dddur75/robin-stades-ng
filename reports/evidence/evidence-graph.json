@@ -9319,8 +9319,27 @@
       "execution_id":"reprise-collecte-historical-clock-correction-20261002",
       "scientific_lineage_id":"ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V1",
       "dataset_lineage_id":"no-dataset-test-correction",
+      "status":"SUPERSEDED",
+      "verified_by":["DP6","C4","C2","A2"],
+      "superseded_by":"TEMPORAL.ROBIN_REPRISE_COLLECTE.HISTORICAL.AUTHORITY.REGRESSION.V1.002"
+    },
+    {
+      "claim_id":"TEMPORAL.ROBIN_REPRISE_COLLECTE.HISTORICAL.AUTHORITY.REGRESSION.V1.002",
+      "claim":"Historical activation and Data Torrent test scenarios bind an explicit UTC instant local to each scenario while retaining the real authority validator, honoring any explicit caller-supplied now, and preserving direct current-date expiry rejection; the supporting baseline report contains only repository-relative or abstract worktree evidence labels and passes the tracked-local-path guard.",
+      "scope":"ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V1_HISTORICAL_TEST_CLOCK_CORRECTION",
+      "source":"Directly consequential correction after exact-head run 37076824730 rejected two local Windows worktree paths in the supporting baseline report; no projection, runtime, authority, test result or scientific statement changed.",
+      "grain":"ONE_TEST_ONLY_EXPLICIT_HISTORICAL_AUTHORITY_REGRESSION",
+      "temporal_class":"EXECUTION_AS_OF",
+      "artifact":"reports/council/reprise-collecte-20261002-ci-baseline-review-v3.json",
+      "hash":"844ffe0161a4823ad0d6d43287358a937259c873bc46f80d8b5dc0eaecc56aa3",
+      "code_revision":"precommit-projection:e369fffca09132b68c95771e88a150e6b77e47ec59cd18b76a7291794c4d9848",
+      "execution_id":"reprise-collecte-historical-clock-report-path-correction-20261002",
+      "scientific_lineage_id":"ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V1",
+      "dataset_lineage_id":"no-dataset-test-correction",
       "status":"VERIFIED",
-      "verified_by":["DP6","C4","C2","A2"]
+      "verified_by":["C2","C0"],
+      "successor_of":"TEMPORAL.ROBIN_REPRISE_COLLECTE.HISTORICAL.AUTHORITY.REGRESSION.V1.001",
+      "supersedes":["TEMPORAL.ROBIN_REPRISE_COLLECTE.HISTORICAL.AUTHORITY.REGRESSION.V1.001"]
     },
     {
       "claim_id":"GOV.REVIEW.ROBIN_REPRISE_COLLECTE.FINAL.V1.001",
@@ -9538,7 +9557,8 @@
     {"decision_id":"RCV3-20260901-196","ledger_record_hash":"e5dda8a90aa6daf8bf4ec6b1b2b30336a1980deb12eb4a601d34cbb7c5aa0e33"},
     {"decision_id":"RCV3-20261002-197","ledger_record_hash":"8e14bbcc241d899f0197e751f93a7bfd7f2e3b8e2247657fbbc769bca302eb56"},
     {"decision_id":"RCV3-20261002-198","ledger_record_hash":"7052204b69fb68631f8fff69bd0561f95535ed786312199feefce7984f3c2c24"},
-    {"decision_id":"RCV3-20261002-199","ledger_record_hash":"651b45150e66070eba73af214a5df9d44554d33ee6a4c92d944c036a9d2c68fd"}
+    {"decision_id":"RCV3-20261002-199","ledger_record_hash":"651b45150e66070eba73af214a5df9d44554d33ee6a4c92d944c036a9d2c68fd"},
+    {"decision_id":"RCV3-20261002-200","ledger_record_hash":"c1cc1779ee9c2a39350661e72f4dd69bd495660c59dee2523cd7b2f170e3a776"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
