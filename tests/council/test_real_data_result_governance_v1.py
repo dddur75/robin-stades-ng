@@ -44,6 +44,11 @@ PROVIDER_RESPONSE_CLOSE_COMPATIBILITY_CLAIM_ID = (
 )
 LATEST_PROJECTION_CLAIM_ID = "GOV.ENGINEERING.ROBIN_REAL_DATA_RESULT.PROJECTION.V1.004"
 LATEST_FINAL_REVIEW_CLAIM_ID = "GOV.REVIEW.ROBIN_REAL_DATA_RESULT.FINAL.V1.004"
+WORKFLOW_HASH_COMPATIBILITY_CLAIM_ID = (
+    "GOV.CI.ROBIN_REAL_DATA_RESULT.WORKFLOW.MANIFEST.HASH.LF.COMPATIBILITY.V1.001"
+)
+SUCCESSOR_PROJECTION_CLAIM_ID = "GOV.ENGINEERING.ROBIN_REAL_DATA_RESULT.PROJECTION.V1.005"
+SUCCESSOR_FINAL_REVIEW_CLAIM_ID = "GOV.REVIEW.ROBIN_REAL_DATA_RESULT.FINAL.V1.005"
 HISTORICAL_ASSERTION_FAILURE_DECISION_ID = "RCV3-20261003-211"
 HISTORICAL_FINAL_DECISION_ID = "RCV3-20261003-212"
 REPRESENTATION_FAILURE_DECISION_ID = "RCV3-20261003-213"
@@ -52,6 +57,8 @@ TRANSPORT_CLOSE_FAILURE_DECISION_ID = "RCV3-20261003-215"
 ACTIVE_FINAL_DECISION_ID = "RCV3-20261003-216"
 PROVIDER_RESPONSE_CLOSE_FAILURE_DECISION_ID = "RCV3-20261003-217"
 LATEST_FINAL_DECISION_ID = "RCV3-20261003-218"
+WORKFLOW_HASH_FAILURE_DECISION_ID = "RCV3-20261003-219"
+SUCCESSOR_FINAL_DECISION_ID = "RCV3-20261003-220"
 DATA_CLAIM_IDS = {
     "DATA.ROBIN.REAL.RESULT.CAPTURES.V1.001",
     "DATA.ROBIN.REAL.RESULT.VIEW.V1.001",
@@ -93,6 +100,7 @@ EXPECTED_ACTIVE_PROJECTION_PATHS = EXPECTED_HISTORICAL_PROJECTION_PATHS | {
 EXPECTED_LATEST_PROJECTION_PATHS = EXPECTED_ACTIVE_PROJECTION_PATHS | {
     "tests/capture/test_provider_network_binding.py",
 }
+EXPECTED_SUCCESSOR_PROJECTION_PATHS = EXPECTED_LATEST_PROJECTION_PATHS
 REVIEW_ARTIFACTS = {
     "data": "reports/council/robin-real-data-result-data-review-v1.json",
     "security": "reports/council/robin-real-data-result-security-review-v1.json",
@@ -120,6 +128,13 @@ LATEST_REVIEW_ARTIFACTS = {
     "governance": "reports/council/robin-real-data-result-governance-review-v4.json",
     "platform": "reports/council/robin-real-data-result-platform-review-v3.json",
     "final": "reports/council/robin-real-data-result-final-review-v4.json",
+}
+SUCCESSOR_REVIEW_ARTIFACTS = {
+    "data": "reports/council/robin-real-data-result-data-review-v2.json",
+    "security": "reports/council/robin-real-data-result-security-review-v2.json",
+    "governance": "reports/council/robin-real-data-result-governance-review-v5.json",
+    "platform": "reports/council/robin-real-data-result-platform-review-v3.json",
+    "final": "reports/council/robin-real-data-result-final-review-v5.json",
 }
 
 
@@ -495,16 +510,14 @@ def test_provider_response_close_compatibility_has_exact_active_successor() -> N
     projection = claims[LATEST_PROJECTION_CLAIM_ID]
     assert predecessor["status"] == "SUPERSEDED"
     assert predecessor["superseded_by"] == LATEST_PROJECTION_CLAIM_ID
-    assert projection["status"] == "VERIFIED"
+    assert projection["status"] == "SUPERSEDED"
+    assert projection["superseded_by"] == SUCCESSOR_PROJECTION_CLAIM_ID
     assert projection["successor_of"] == ACTIVE_PROJECTION_CLAIM_ID
     assert ACTIVE_PROJECTION_CLAIM_ID in projection["supersedes"]
     assert set(projection["artifact_hashes"]) == EXPECTED_LATEST_PROJECTION_PATHS
-    recalculated = {
-        path: hashlib.sha256((ROOT / path).read_bytes().replace(b"\r\n", b"\n")).hexdigest()
-        for path in sorted(EXPECTED_LATEST_PROJECTION_PATHS)
-    }
-    assert projection["artifact_hashes"] == recalculated
-    canonical = json.dumps(recalculated, sort_keys=True, separators=(",", ":")).encode()
+    canonical = json.dumps(
+        projection["artifact_hashes"], sort_keys=True, separators=(",", ":")
+    ).encode()
     assert projection["engineering_projection_sha256"] == hashlib.sha256(canonical).hexdigest()
     compatibility = claims[PROVIDER_RESPONSE_CLOSE_COMPATIBILITY_CLAIM_ID]
     assert compatibility["status"] == "VERIFIED"
@@ -512,7 +525,8 @@ def test_provider_response_close_compatibility_has_exact_active_successor() -> N
     review = claims[LATEST_FINAL_REVIEW_CLAIM_ID]
     assert predecessor_review["status"] == "SUPERSEDED"
     assert predecessor_review["superseded_by"] == LATEST_FINAL_REVIEW_CLAIM_ID
-    assert review["status"] == "VERIFIED"
+    assert review["status"] == "SUPERSEDED"
+    assert review["superseded_by"] == SUCCESSOR_FINAL_REVIEW_CLAIM_ID
     assert review["successor_of"] == ACTIVE_FINAL_REVIEW_CLAIM_ID
     assert review["engineering_projection_sha256"] == projection["engineering_projection_sha256"]
 
@@ -574,8 +588,12 @@ def test_provider_response_close_compatibility_has_exact_active_successor() -> N
     }
     matrix = _load("configs/agents/mission-activation-matrix-v3.json")
     allowed_paths = matrix["missions"][MISSION_ID]["allowed_paths"]
-    assert len(allowed_paths) == 45
-    assert set(decision["context"]["files"]) == set(allowed_paths)
+    v1005_reports = {
+        "reports/council/robin-real-data-result-final-review-v5.json",
+        "reports/council/robin-real-data-result-governance-review-v5.json",
+    }
+    assert len(decision["context"]["files"]) == 45
+    assert set(decision["context"]["files"]) == set(allowed_paths) - v1005_reports
     assert set(decision["proof"]) == {
         PROVIDER_RESPONSE_CLOSE_COMPATIBILITY_CLAIM_ID,
         LATEST_PROJECTION_CLAIM_ID,
@@ -607,6 +625,185 @@ def test_provider_response_close_compatibility_has_exact_active_successor() -> N
             "edge_id": "EDGE.840",
             "from_claim_id": LATEST_FINAL_REVIEW_CLAIM_ID,
             "to_decision_id": LATEST_FINAL_DECISION_ID,
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        },
+    ]
+    edge_start = next(i for i, edge in enumerate(graph["edges"]) if edge["edge_id"] == "EDGE.837")
+    assert graph["edges"][edge_start : edge_start + len(expected_edges)] == expected_edges
+    for candidate in (failure, decision):
+        canonical_record = json.dumps(
+            {key: value for key, value in candidate.items() if key != "hash"},
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+        assert hashlib.sha256(canonical_record).hexdigest() == candidate["hash"]
+
+
+def test_workflow_hash_compatibility_has_exact_active_successor() -> None:
+    required_report_fields = {
+        "agent_id",
+        "mission_id",
+        "facts_verified",
+        "unknowns",
+        "assumptions",
+        "main_objection",
+        "risks",
+        "minimum_decisive_test",
+        "recommended_action",
+        "scale_condition",
+        "estimated_compute",
+        "estimated_external_cost",
+        "estimated_human_time",
+        "maintenance_impact",
+        "confidence",
+    }
+    reports = {key: _load(path) for key, path in SUCCESSOR_REVIEW_ARTIFACTS.items()}
+    assert all(set(report) == required_report_fields for report in reports.values())
+    assert all(report["mission_id"] == MISSION_ID for report in reports.values())
+    assert {key: report["agent_id"] for key, report in reports.items()} == {
+        "data": "DP6",
+        "security": "C4",
+        "governance": "C2",
+        "platform": "A2",
+        "final": "C0",
+    }
+
+    graph = _load("reports/evidence/evidence-graph.json")
+    claims = {claim["claim_id"]: claim for claim in graph["claims"]}
+    predecessor = claims[LATEST_PROJECTION_CLAIM_ID]
+    projection = claims[SUCCESSOR_PROJECTION_CLAIM_ID]
+    assert predecessor["status"] == "SUPERSEDED"
+    assert predecessor["superseded_by"] == SUCCESSOR_PROJECTION_CLAIM_ID
+    assert projection["status"] == "VERIFIED"
+    assert projection["successor_of"] == LATEST_PROJECTION_CLAIM_ID
+    assert LATEST_PROJECTION_CLAIM_ID in projection["supersedes"]
+    assert set(projection["artifact_hashes"]) == EXPECTED_SUCCESSOR_PROJECTION_PATHS
+    recalculated = {
+        path: hashlib.sha256((ROOT / path).read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+        for path in sorted(EXPECTED_SUCCESSOR_PROJECTION_PATHS)
+    }
+    assert projection["artifact_hashes"] == recalculated
+    canonical = json.dumps(recalculated, sort_keys=True, separators=(",", ":")).encode()
+    assert projection["engineering_projection_sha256"] == hashlib.sha256(canonical).hexdigest()
+    compatibility = claims[WORKFLOW_HASH_COMPATIBILITY_CLAIM_ID]
+    assert compatibility["status"] == "VERIFIED"
+    assert compatibility["windows_capture_result"] == "1_FAILED_790_PASSED"
+    assert compatibility["targeted_after_result"] == "1_PASSED"
+    assert compatibility["runtime_changed"] is False
+    assert compatibility["workflow_changed"] is False
+    assert compatibility["assertions_removed"] == 0
+    predecessor_review = claims[LATEST_FINAL_REVIEW_CLAIM_ID]
+    review = claims[SUCCESSOR_FINAL_REVIEW_CLAIM_ID]
+    assert predecessor_review["status"] == "SUPERSEDED"
+    assert predecessor_review["superseded_by"] == SUCCESSOR_FINAL_REVIEW_CLAIM_ID
+    assert review["status"] == "VERIFIED"
+    assert review["successor_of"] == LATEST_FINAL_REVIEW_CLAIM_ID
+    assert review["engineering_projection_sha256"] == projection["engineering_projection_sha256"]
+
+    records = _records()
+    failure_index = next(
+        i
+        for i, record in enumerate(records)
+        if record["decision_id"] == WORKFLOW_HASH_FAILURE_DECISION_ID
+    )
+    decision_index = next(
+        i
+        for i, record in enumerate(records)
+        if record["decision_id"] == SUCCESSOR_FINAL_DECISION_ID
+    )
+    failure = records[failure_index]
+    decision = records[decision_index]
+    latest_index = next(
+        i for i, record in enumerate(records) if record["decision_id"] == LATEST_FINAL_DECISION_ID
+    )
+    assert failure_index == latest_index + 1
+    assert decision_index == failure_index + 1
+    assert failure["record_type"] == "FAILURE"
+    assert failure["previous_hash"] == records[failure_index - 1]["hash"]
+    assert failure["proof"] == [WORKFLOW_HASH_COMPATIBILITY_CLAIM_ID]
+    assert failure["context"]["reproduction"] == {
+        "pr83_windows_capture": "1_FAILED_790_PASSED",
+        "exact_node": (
+            "tests/capture/test_real_data_result_workflow.py::"
+            "test_successor_workflow_pins_actions_dependencies_manifest_and_source"
+        ),
+        "manifest_raw_crlf_sha256": (
+            "e6ed3910873fcf6c2e6d6f708c44134cd587ac8975090bc4c17b4723c1fbd992"
+        ),
+        "manifest_canonical_lf_sha256": (
+            "4d91084d8446d794083b3729c34ac32e438c72c28b9db180979c4c5f2af74aa2"
+        ),
+        "source_forced_crlf_sha256": (
+            "4ed36fb362a06318c08559f31dfb188cc7959e7ae416ef77bb18e1661b6e46d3"
+        ),
+        "source_canonical_lf_sha256": (
+            "f01be9dddc7d7a098caec9fc3bf623ab2b53803ce03b6202f5b3fcdcad0ad25b"
+        ),
+        "targeted_after": "1_PASSED",
+        "unapproved_network_attempts": 0,
+    }
+    assert failure["context"]["correction_boundary"] == {
+        "test_only": True,
+        "runtime_changed": False,
+        "workflow_changed": False,
+        "expected_hash_changed": False,
+        "assertions_removed": 0,
+        "lf_normalized_text_bytes": True,
+        "external_effects": 0,
+    }
+    assert decision["record_type"] == "DECISION"
+    assert decision["decision"] == "PASS_AND_HOLD"
+    assert decision["previous_hash"] == failure["hash"]
+    assert decision["context"]["writer"] == "C0"
+    assert decision["context"]["writer_count"] == 1
+    assert decision["context"]["pr"] == "83"
+    assert decision["context"]["reviewed_projection"] == {
+        "sha256": projection["engineering_projection_sha256"],
+        "path_count": projection["artifact_path_count"],
+        "normalization": "LF_NORMALIZED_TEXT_BYTES",
+        "byte_frozen": True,
+    }
+    assert decision["context"]["review_hashes"] == {
+        key: hashlib.sha256((ROOT / path).read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+        for key, path in SUCCESSOR_REVIEW_ARTIFACTS.items()
+    }
+    matrix = _load("configs/agents/mission-activation-matrix-v3.json")
+    allowed_paths = matrix["missions"][MISSION_ID]["allowed_paths"]
+    assert len(allowed_paths) == 47
+    assert set(decision["context"]["files"]) == set(allowed_paths)
+    assert set(decision["proof"]) == {
+        WORKFLOW_HASH_COMPATIBILITY_CLAIM_ID,
+        SUCCESSOR_PROJECTION_CLAIM_ID,
+        SUCCESSOR_FINAL_REVIEW_CLAIM_ID,
+    }
+    expected_edges = [
+        {
+            "edge_id": "EDGE.841",
+            "from_claim_id": WORKFLOW_HASH_COMPATIBILITY_CLAIM_ID,
+            "to_decision_id": WORKFLOW_HASH_FAILURE_DECISION_ID,
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        },
+        {
+            "edge_id": "EDGE.842",
+            "from_claim_id": WORKFLOW_HASH_COMPATIBILITY_CLAIM_ID,
+            "to_decision_id": SUCCESSOR_FINAL_DECISION_ID,
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        },
+        {
+            "edge_id": "EDGE.843",
+            "from_claim_id": SUCCESSOR_PROJECTION_CLAIM_ID,
+            "to_decision_id": SUCCESSOR_FINAL_DECISION_ID,
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        },
+        {
+            "edge_id": "EDGE.844",
+            "from_claim_id": SUCCESSOR_FINAL_REVIEW_CLAIM_ID,
+            "to_decision_id": SUCCESSOR_FINAL_DECISION_ID,
             "relation": "SUPPORTS",
             "status": "RECORDED",
         },

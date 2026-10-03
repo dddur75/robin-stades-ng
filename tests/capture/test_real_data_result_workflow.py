@@ -15,6 +15,10 @@ def _workflow() -> dict[str, object]:
     return loaded
 
 
+def _lf_sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+
+
 def test_successor_workflow_is_exact_main_bounded_and_has_no_recurring_trigger() -> None:
     workflow = _workflow()
     trigger = workflow.get("on", workflow.get(True))
@@ -96,7 +100,5 @@ def test_successor_workflow_pins_actions_dependencies_manifest_and_source() -> N
     gate = next(step for step in steps if step.get("id") == "gate")
     manifest = ROOT / "configs/execution/robin-real-data-result-20261003.json"
     source = ROOT / "docs/data-sourcing/ROBIN-REAL-DATA-RESULT-2026-10-03.md"
-    assert (
-        gate["env"]["EXPECTED_MANIFEST_SHA256"] == hashlib.sha256(manifest.read_bytes()).hexdigest()
-    )
-    assert gate["env"]["EXPECTED_SOURCE_SHA256"] == hashlib.sha256(source.read_bytes()).hexdigest()
+    assert gate["env"]["EXPECTED_MANIFEST_SHA256"] == _lf_sha256(manifest)
+    assert gate["env"]["EXPECTED_SOURCE_SHA256"] == _lf_sha256(source)
