@@ -1,0 +1,68 @@
+{
+  "agent_id": "C4",
+  "mission_id": "ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V2",
+  "facts_verified": [
+    {
+      "claim": "P0=0, P1=0 and P2=0 on the candidate delta: no runtime, workflow, dependency, secret, certificate or attestation file changed from 5eacc412ba70cc0b8e20dc136a812db83d8e7518.",
+      "evidence_refs": [
+        "git diff --name-status 5eacc412ba70cc0b8e20dc136a812db83d8e7518",
+        "configs/execution/reprise-collecte-code-attestation.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "All 39 LF-normalized runtime paths remain byte-identical to the signed attestation; the attestation and signature are unchanged. V2 is outside this boundary and receives no runtime-effect increment.",
+      "evidence_refs": [
+        "configs/execution/reprise-collecte-code-attestation.json",
+        "configs/execution/reprise-collecte-code-attestation.sig",
+        "configs/execution/reprise-collecte-20261002-continuation-v2.json",
+        "configs/agents/mission-activation-matrix-v3.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Records 201 and 202 have valid canonical SHA-256 hashes and predecessor linkage, and their evidence nodes agree. The family compute ceiling remains 4000 and all provider ceilings remain cumulative.",
+      "evidence_refs": [
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-201",
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-202",
+        "reports/evidence/evidence-graph.json#GOV.AUTHORIZATION.ROBIN_REPRISE_COLLECTE.CONTINUATION.V2.001"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The SQLite test replaces textual representation equality with driver, database and successful SELECT 1 assertions, preserving the functional guarantee authorized by the owner without a skip, clock freeze or runtime change.",
+      "evidence_refs": [
+        "tests/jalon4/test_database_urls.py:34",
+        "reports/evidence/evidence-graph.json#GOV.CI.ROBIN_REPRISE_COLLECTE.SQLITE.URL.TEXTUAL.CONTRACT.FAILURE.V1.001"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The directly consequential Council correction changes only the expected matrix SHA-256 from the predecessor value to the exact authorized V2 value d6cc1167...; strict equality remains, the targeted test passes, and no runtime, workflow, dependency, attestation or provider-call authority changes.",
+      "evidence_refs": [
+        "tests/council/test_real_execution_bootstrap_governance.py",
+        "configs/agents/mission-activation-matrix-v3.json",
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-204"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "The corrected successor record 207, final 41-path V2.003 projection, frozen review hashes and exact-head CI remain delivery gates after immutable records 203 through 206.",
+    "Provider data and counters remain unobserved until the single authorized parent-runtime workflow execution."
+  ],
+  "assumptions": [
+    "Working-tree CRLF materialization does not change the LF-normalized signed runtime contents.",
+    "The parent runtime authority remains subject to its original expiry of 2026-10-03T18:27:48Z; V2 does not extend it."
+  ],
+  "main_objection": "No C4 P0, P1 or P2 objection applies to the test-only compatibility and evidence-guard corrections. Record 207, the frozen V2.003 projection and exact-head CI remain mandatory mechanical gates.",
+  "risks": [],
+  "minimum_decisive_test": "Verify records 203 through 207 and their canonical hashes, all 41 V2.003 projected path hashes, the independent frozen reviews, and exact-head CI on the corrective commit without rerunning either failed historical run.",
+  "recommended_action": "Accept the test-only correction in this scope and keep runtime effects closed until every delivery gate passes and the parent authority is freshly revalidated.",
+  "scale_condition": "E1 only, with no runtime-effect budget increment and no extension of parent authority.",
+  "estimated_compute": "Targeted review and reuse of unchanged signature, attestation and test evidence.",
+  "estimated_external_cost": "0 for this review; all cumulative external-effect counters remain at baseline.",
+  "estimated_human_time": "C4 review completed within the shared V2 active-time allowance.",
+  "maintenance_impact": "Limited to the SQLite compatibility test and non-runtime V2 governance evidence.",
+  "confidence": 0.93
+}

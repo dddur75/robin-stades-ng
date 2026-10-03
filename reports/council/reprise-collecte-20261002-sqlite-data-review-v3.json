@@ -1,0 +1,118 @@
+{
+  "agent_id": "DP6",
+  "mission_id": "ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V2",
+  "facts_verified": [
+    {
+      "claim": "Records RCV3-20261003-201 and RCV3-20261003-202 are append-only, canonically hash-valid, correctly linked to the preceding record, and projected by matching evidence claims and decision nodes. Record 201 preserves failed run 37077584541 without rerun or a pre-existing shortcut; record 202 authorizes only the non-runtime SQLite successor.",
+      "evidence_refs": [
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-201",
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-202",
+        "reports/evidence/evidence-graph.json#GOV.CI.ROBIN_REPRISE_COLLECTE.SQLITE.URL.TEXTUAL.CONTRACT.FAILURE.V1.001",
+        "reports/evidence/evidence-graph.json#GOV.AUTHORIZATION.ROBIN_REPRISE_COLLECTE.CONTINUATION.V2.001",
+        "fresh targeted governance run: 7 passed in 0.10s"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The V2 manifest contains exactly the eight mission fields, declares E1 only, and reuses a shared parent-family compute ceiling of 4000 rather than adding another 4000. Both record 202 and its evidence claim state compute_budget_increment=0, and every successor runtime-effect increment is zero.",
+      "evidence_refs": [
+        "configs/execution/reprise-collecte-20261002-continuation-v2.json",
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-202.context.compute_budget_family_total_max=4000",
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-202.context.compute_budget_increment=0",
+        "reports/evidence/evidence-graph.json#GOV.AUTHORIZATION.ROBIN_REPRISE_COLLECTE.CONTINUATION.V2.001",
+        "fresh budget probe: parent, V1 and V2 each declare 4000; family total max=4000; increment=0"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The current 41-path LF-normalized V2.003 projection preserves the V2.002 path set while strengthening only the mission-specific evidence-binding guard. Rehashing every current path and hashing the canonical sorted compact JSON map produces 44f452bf781778db13806c61cf018e2bc57e24732b14a4d707b175e813940b7d.",
+      "evidence_refs": [
+        "reports/evidence/evidence-graph.json#GOV.ENGINEERING.ROBIN_REPRISE_COLLECTE.PROJECTION.V2.002",
+        "configs/execution/reprise-collecte-20261002-continuation-v2.json",
+        "tests/jalon4/test_database_urls.py",
+        "tests/council/test_real_execution_bootstrap_governance.py",
+        "tests/council/test_reprise_collecte_governance_v1.py",
+        "fresh projection probe: path_count=41; digest=44f452bf781778db13806c61cf018e2bc57e24732b14a4d707b175e813940b7d; expected_match=True"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The post-203 Council failure was a stale exact matrix SHA pin introduced by the authorized V2 matrix change, not a runtime or pre-existing failure. Clean main passed its own exact lock, the V2 candidate failed before correction, and changing only 216c30ef... to the authorized d6cc1167... value preserved strict equality and made the targeted node pass.",
+      "evidence_refs": [
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-204",
+        "tests/council/test_real_execution_bootstrap_governance.py",
+        "DP6 read-only targeted result: 1 passed; assertion weakened=false"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The SQLite correction preserves functional semantics across dependency versions: after normalization and reparsing the driver is sqlite+pysqlite, the database is :memory:, the engine is constructed from the normalized value itself, and SELECT 1 returns 1. The complete database URL module passes 10 of 10 tests under SQLAlchemy 2.0.51 and 10 of 10 under 2.1.3.",
+      "evidence_refs": [
+        "tests/jalon4/test_database_urls.py:32",
+        "tests/jalon4/test_database_urls.py:34",
+        "tests/jalon4/test_database_urls.py:36",
+        "tests/jalon4/test_database_urls.py:37",
+        "tests/jalon4/test_database_urls.py:38",
+        "tests/jalon4/test_database_urls.py:39",
+        "fresh dual-version runs: SQLAlchemy 2.0.51 10 passed in 0.44s; SQLAlchemy 2.1.3 10 passed in 0.44s"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The successor changes no runtime implementation, workflow, dependency, signed code attestation, recipient certificate, old authorization date, or mandatory check. The representation-only test now consumes the normalized URL and adds driver and database assertions; it introduces no skip, xfail, clock freeze, monkeypatch, or false green.",
+      "evidence_refs": [
+        "git status --short: changes are confined to the V2 manifest, governance configuration/evidence/tests, reviews, and tests/jalon4/test_database_urls.py",
+        "git diff HEAD -- tests/jalon4/test_database_urls.py",
+        "tests/council/test_reprise_collecte_governance_v1.py::test_successor_does_not_enter_the_signed_runtime_boundary",
+        "fresh targeted governance run: 7 passed in 0.10s"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Because runtime bytes are unchanged, the accepted V1 DP6 data-path review remains applicable. No new DP6 P0, P1, or P2 finding is introduced; the two existing non-blocking P2 delivery-audit limitations remain explicit and must still be checked on the real encrypted delivery.",
+      "evidence_refs": [
+        "reports/council/reprise-collecte-20261002-data-review-v3.json",
+        "src/robin/capture/reprise_collecte.py",
+        ".github/workflows/90-reprise-collecte-pilot.yml",
+        "git status --short: no runtime or workflow modification"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "The 41-path candidate has not yet been committed or exercised by a new protected exact-head GitHub Actions run.",
+    "Actual provider rows, capture timestamps, quota headers, and credit consumption remain unknown until the single authorized parent-runtime workflow execution."
+  ],
+  "assumptions": [
+    "The Odds API continues to expose the cost and remaining-quota headers required by the unchanged fail-closed parser."
+  ],
+  "main_objection": "DP6 verdict: PASS_AND_HOLD on the data axis with P0=0, P1=0, P2_new=0 and P2_retained=2; zero candidate-blocking DP6 critical threads. The SQLite correction and V2 governance add no runtime authority. Commit, corrective non-force push and merge remain gated by complete four-key materialization, the exact 41-path projection, protected exact-head CI and clean mergeability.",
+  "risks": [
+    {
+      "risk": "P2 retained: the two captures are validated independently, but final assembly has no separate cross-capture event-id consistency assertion; the delivery audit must compare event identities across both capture receipts.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "reports/council/reprise-collecte-20261002-data-review-v3.json",
+        "src/robin/capture/reprise_collecte.py",
+        "tests/capture/test_reprise_collecte.py"
+      ]
+    },
+    {
+      "risk": "P2 retained: a private report can carry COLLECTE_REELLE_VERIFIEE before a later R2 report readback makes the public receipt PARTIEL; the public receipt must remain authoritative for final acceptance.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "reports/council/reprise-collecte-20261002-data-review-v3.json",
+        "src/robin/capture/reprise_collecte.py",
+        ".github/workflows/90-reprise-collecte-pilot.yml"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Preserve the fresh dual-version 10/10 database URL runs, the exact matrix-hash node, the V2 authority and runtime-boundary checks, and the independently recomputed 41-path LF digest 44f452bf781778db13806c61cf018e2bc57e24732b14a4d707b175e813940b7d; after materialization and commit, require every protected exact-head check to pass without rerunning either failed historical run.",
+  "recommended_action": "Accept DP6 materialization for the V2 data review, projection and final four-key aggregate. C0 may use the single remaining corrective commit and non-force push; merge remains held for exact-head green checks and clean mergeability, and provider transport remains held for merged-main identity, active parent authority and fresh family counters.",
+  "scale_condition": "No scale beyond E1. V2 contributes zero runtime-effect budget; the parent remains the sole runtime authority and retains the cumulative ceilings of one workflow dispatch, two provider HTTPS GETs and four existing credits, with the second call allowed only after the first-capture audit passes.",
+  "estimated_compute": "Read-only static review, one seven-test governance pack, two ten-test SQLAlchemy compatibility runs, and one 41-path LF projection recomputation; no second full-suite run.",
+  "estimated_external_cost": "0; no provider request, DNS resolution, secret read, credit use, R2 effect, purchase, real capture, bet, push, merge, or workflow dispatch.",
+  "estimated_human_time": "Approximately 15 minutes of independent DP6 review; within the shared V2 active-time allowance.",
+  "maintenance_impact": "Low. The only functional change is a semantic historical test compatible with SQLAlchemy 2.0.51 and 2.1.3; runtime behavior and the signed runtime boundary remain unchanged.",
+  "confidence": 0.99
+}

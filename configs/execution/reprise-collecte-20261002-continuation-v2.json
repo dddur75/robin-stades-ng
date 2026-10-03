@@ -1,0 +1,33 @@
+{
+  "mission_id": "ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V2",
+  "authorized_stages": [
+    "E1"
+  ],
+  "maximum_stage": "E1",
+  "external_effects": [
+    "git_remote_write_non_force",
+    "github_pull_request_write",
+    "github_merge_commit",
+    "github_actions_observe",
+    "local_test_only_sqlalchemy_representation_compatibility_correction",
+    "successor_runtime_effect_budget_increment_0",
+    "reuse_parent_runtime_authority_sha256_815788fb8ba61b21782797cd32d36a4b49a8b6d072610a59ba3295136750fdb2_without_expansion",
+    "parent_runtime_authority_not_reactivated_after_expiry",
+    "corrective_push_family_budget_not_reset_one_remaining_after_rcv3_20261002_200",
+    "parent_and_continuations_compute_budget_total_max_4000_not_reset",
+    "parent_and_continuations_workflow_dispatch_total_max_1_parent_baseline_0",
+    "parent_and_continuations_provider_public_dns_resolution_total_max_1_parent_baseline_0",
+    "parent_and_continuations_provider_secret_read_total_max_1_parent_baseline_0",
+    "parent_and_continuations_provider_tcp_tls_connection_total_max_2_parent_baseline_0",
+    "parent_and_continuations_provider_https_get_total_max_2_parent_baseline_0",
+    "parent_and_continuations_provider_credit_consume_total_max_4_parent_baseline_0",
+    "parent_and_continuations_r2_conditional_put_total_max_5_parent_baseline_0",
+    "parent_and_continuations_r2_exact_key_get_total_max_3_parent_baseline_0",
+    "local_private_delivery_artifact_writes_under_parent_runtime_authority",
+    "offline_replay_from_parent_authorized_captured_bytes"
+  ],
+  "compute_budget": 4000,
+  "time_budget": 7200,
+  "source_hash": "cb3d52256d483142e8f299b7839673eff3b8fd4c92008b7cde2eddd12047b387",
+  "expires_at": "2026-10-04T08:00:00Z"
+}

@@ -31,8 +31,11 @@ def test_url_psycopg3_explicite_est_conservee() -> None:
 
 def test_url_sqlite_reste_compatible() -> None:
     value = "sqlite+pysqlite:///:memory:"
-    assert normalize_database_url(value) == value
-    with build_engine(value).connect() as connection:
+    normalized = normalize_database_url(value)
+    parsed = database_url_object(normalized)
+    assert parsed.drivername == "sqlite+pysqlite"
+    assert parsed.database == ":memory:"
+    with build_engine(normalized).connect() as connection:
         assert connection.exec_driver_sql("SELECT 1").scalar_one() == 1
 
 

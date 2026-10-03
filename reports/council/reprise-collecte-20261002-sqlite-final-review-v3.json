@@ -1,0 +1,141 @@
+{
+  "agent_id": "C0",
+  "mission_id": "ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V2",
+  "facts_verified": [
+    {
+      "claim": "Origin main and PR 82 still share base 9b207cd1efd7f51ead29ff5b8c2709b6062fa763, while the uncommitted V2 correction starts from predecessor head 5eacc412ba70cc0b8e20dc136a812db83d8e7518. C0 remains the sole Git writer and DP6, C4, C2 and A2 remained read-only.",
+      "evidence_refs": [
+        "git ls-remote origin refs/heads/main",
+        "gh pr view 82",
+        "configs/agents/mission-activation-matrix-v3.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The attached parent mandate and the explicit SQLite successor directive are distinct and correctly content-addressed. The exact eight-field V2 manifest is non-runtime, contributes 7200 active seconds but zero compute or runtime-effect increment, and leaves the parent as the sole runtime authority with cumulative ceilings of one dispatch, two GETs and four credits.",
+      "evidence_refs": [
+        "configs/execution/reprise-collecte-20261002.json",
+        "configs/execution/reprise-collecte-20261002-continuation-v2.json",
+        "reports/council/reprise-collecte-20261002-sqlite-governance-review-v3.json",
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-202"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The exact-head SQLAlchemy 2.1.3 failure was reproduced on clean main and predecessor candidate in the same environment rather than labeled automatically pre-existing. The semantic test-only correction verifies sqlite+pysqlite, :memory: and an executed SELECT 1, and the database URL module passes 10 of 10 tests under both SQLAlchemy 2.0.51 and 2.1.3.",
+      "evidence_refs": [
+        "reports/evidence/evidence-graph.json#GOV.CI.ROBIN_REPRISE_COLLECTE.SQLITE.URL.TEXTUAL.CONTRACT.FAILURE.V1.001",
+        "tests/jalon4/test_database_urls.py",
+        "reports/council/reprise-collecte-20261002-sqlite-data-review-v3.json",
+        "reports/council/reprise-collecte-20261002-sqlite-platform-review-v3.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The post-203 Council failure was separately diagnosed as an exact matrix-hash pin made stale by the authorized V2 matrix itself. Clean main passed its own lock, the V2 candidate failed before correction, and replacing only 216c30ef... with d6cc1167... preserved strict full-file equality and passed the targeted node; records 203 and 204 remain immutable history.",
+      "evidence_refs": [
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-204",
+        "tests/council/test_real_execution_bootstrap_governance.py",
+        "reports/council/reprise-collecte-20261002-sqlite-security-review-v3.json",
+        "reports/council/reprise-collecte-20261002-sqlite-governance-review-v3.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The final 41-path LF-normalized V2.003 engineering projection independently recomputes to 44f452bf781778db13806c61cf018e2bc57e24732b14a4d707b175e813940b7d and succeeds V2.002 only for the exact evidence-binding guard. Records 205 and 206 remain immutable history; no runtime, workflow, dependency, certificate, old authorization or mandatory check changed, and all 39 signed runtime hashes still match.",
+      "evidence_refs": [
+        "reports/evidence/evidence-graph.json#GOV.ENGINEERING.ROBIN_REPRISE_COLLECTE.PROJECTION.V2.002",
+        "configs/execution/reprise-collecte-code-attestation.json",
+        "reports/council/reprise-collecte-20261002-sqlite-security-review-v3.json",
+        "reports/council/reprise-collecte-20261002-sqlite-governance-review-v3.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The four independent V2 delivery keys validate against the agent report schema and find P0_new=0, P1_new=0, P2_new=0 and zero candidate-blocking critical threads. The four previously accepted P2 delivery controls and the external pre-existing repository-secret trust-boundary risk remain explicit and are not represented as fixed.",
+      "evidence_refs": [
+        "reports/council/reprise-collecte-20261002-sqlite-data-review-v3.json",
+        "reports/council/reprise-collecte-20261002-sqlite-security-review-v3.json",
+        "reports/council/reprise-collecte-20261002-sqlite-governance-review-v3.json",
+        "reports/council/reprise-collecte-20261002-sqlite-platform-review-v3.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "No provider request, provider credit, secret read, DNS resolution, R2 operation, purchase, real capture, bet, merge or workflow dispatch has occurred in V2 engineering. Real collection remains unexecuted and may be reported only after the encrypted delivery is received, preserved, decrypted and independently verified.",
+      "evidence_refs": [
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-202",
+        "reports/evidence/evidence-graph.json#DATA.REPRISE.COLLECTE.CAPTURES.V1.001",
+        "reports/evidence/evidence-graph.json#GOV.REPRISE.COLLECTE.CONSUMPTION.V1.001"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "Fresh exact-head required-check results and CLEAN mergeability remain unknown until the single corrective commit is pushed.",
+    "Actual provider matches, odds, capture timestamps, quota headers and consumed credits remain unknown until the single post-merge pilot.",
+    "Runner, provider and R2 availability can only be observed during the non-rerunnable pilot."
+  ],
+  "assumptions": [
+    "The frozen review artifacts and 41-path projection remain byte-identical through commit.",
+    "The parent runtime authority remains active through dispatch; otherwise the pilot fails closed.",
+    "Existing GitHub secrets and the recipient private key remain available without purchase or renewal through delivery verification."
+  ],
+  "main_objection": "VERDICT: PASS_AND_HOLD with P0_new=0, P1_new=0, P2_new=0 and zero candidate-blocking critical threads. Four retained P2 delivery controls and one external pre-existing CRITICAL repository-secret trust-boundary risk remain explicit. One corrective commit and non-force push are admissible; merge remains held for exact-head green checks and CLEAN mergeability, and dispatch remains held for merged-main identity, active parent authority and fresh zero family counters.",
+  "risks": [
+    {
+      "risk": "Any separately merged workflow with repository-secret access could read the same provider or R2 secrets. This is a pre-existing repository-wide trust boundary, not a capability introduced or repaired by V2.",
+      "severity": "CRITICAL",
+      "evidence_refs": [
+        "reports/council/reprise-collecte-20261002-security-review-v3.json",
+        "reports/council/reprise-collecte-20261002-sqlite-governance-review-v3.json"
+      ]
+    },
+    {
+      "risk": "V2 does not extend the parent runtime authority. If protected delivery does not reach dispatch before 2026-10-03T18:27:48Z, the pilot must stop without a provider call.",
+      "severity": "HIGH",
+      "evidence_refs": [
+        "configs/execution/reprise-collecte-20261002.json",
+        "configs/execution/reprise-collecte-20261002-continuation-v2.json"
+      ]
+    },
+    {
+      "risk": "Retained P2: owner-side delivery validation must compare event identities across both capture receipts.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "reports/council/reprise-collecte-20261002-sqlite-data-review-v3.json"
+      ]
+    },
+    {
+      "risk": "Retained P2: public-receipt.json is authoritative over any earlier private capture-level status if a late R2 readback fails.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "reports/council/reprise-collecte-20261002-sqlite-data-review-v3.json"
+      ]
+    },
+    {
+      "risk": "Retained P2: plaintext delivery files persist in a permission-restricted temporary runner directory until ephemeral teardown and are not immediately cryptographically erased.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "reports/council/reprise-collecte-20261002-security-review-v3.json",
+        ".github/workflows/90-reprise-collecte-pilot.yml"
+      ]
+    },
+    {
+      "risk": "Retained P2: final owner-side acceptance must verify decrypted JSON, CSV and HTML digests and row equivalence against public-receipt.json before real collection is claimed.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "reports/council/reprise-collecte-20261002-platform-review-v3.json",
+        ".github/workflows/90-reprise-collecte-pilot.yml"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Bind the refreshed frozen reviews and 41-path V2.003 projection in canonical record 207, validate the complete Council domain and dual-version SQLite packs, then require all fresh exact-head protected checks and CLEAN mergeability without rerunning prior failed runs.",
+  "recommended_action": "PASS_AND_HOLD for one corrective commit and one non-force push to PR 82. After exact-head green checks and normal merge, reverify merged-main identity, signed runtime bytes, active parent authority and zero family counters, then execute exactly one pilot and accept it only after the compensating delivery audit passes.",
+  "scale_condition": "No scale beyond E1 and no rerun. The second provider request is allowed only after PASS of the first capture audit, within cumulative ceilings of two GETs and four credits; any ambiguity produces PARTIAL or FAIL_AND_STOP.",
+  "estimated_compute": "One prior repository-wide suite is reused; V2 adds only targeted governance, dual-version SQLite, schema, projection, signature and static checks plus one fresh exact-head CI suite.",
+  "estimated_external_cost": "0 before dispatch; the future single pilot is capped at four existing credits with purchases, renewals and bets forbidden.",
+  "estimated_human_time": "Active V2 work remains inside the owner-authorized two-hour allowance, with passive CI wait excluded.",
+  "maintenance_impact": "Low and bounded to one semantic historical test plus non-runtime append-only governance evidence; no new runner, encryption, attestation, storage or governance mechanism.",
+  "confidence": 0.99
+}

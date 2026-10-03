@@ -1,0 +1,136 @@
+{
+  "agent_id": "A2",
+  "mission_id": "ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V2",
+  "facts_verified": [
+    {
+      "claim": "The V2 manifest has exactly the eight contract fields, authorizes only E1, carries 7200 seconds of active time, keeps the shared compute ceiling at 4000 without reset, adds zero runtime-effect budget, and preserves the cumulative ceilings of two provider requests and four credits.",
+      "evidence_refs": [
+        "configs/execution/reprise-collecte-20261002-continuation-v2.json",
+        "configs/agents/mission-activation-matrix-v3.json",
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-202"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The schema and activation matrix changes are limited to the V2 non-runtime continuation: C0 remains the sole writer, DP6/C4/C2/A2 remain the four delivery keys, one corrective non-force push remains, and runtime changes, required-check changes, retries, purchases and bets are forbidden.",
+      "evidence_refs": [
+        "configs/agents/agent-report-schema-v3.json",
+        "configs/agents/mission-activation-matrix-v3.json",
+        "tests/council/test_reprise_collecte_governance_v1.py",
+        "tests/council/test_robin_council_os_v3.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The SQLite correction is test-only and replaces a third-party string-rendering equality with stronger semantic checks for driver and database plus a real SELECT 1; it does not weaken the intended compatibility assertion.",
+      "evidence_refs": [
+        "tests/jalon4/test_database_urls.py",
+        "src/robin/storage/database.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Under SQLAlchemy 2.0.51 the normalized URL remains sqlite+pysqlite:///:memory:; under 2.1.3 it renders sqlite+pysqlite:///%3Amemory%3A. In both versions the parsed driver is sqlite+pysqlite, the parsed database is :memory:, SELECT 1 returns 1, and the corrected node passes.",
+      "evidence_refs": [
+        "local read-only probes: SQLAlchemy 2.0.51 and cached SQLAlchemy 2.1.3 wheel",
+        "tests/jalon4/test_database_urls.py::test_url_sqlite_reste_compatible"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The authorized V2 matrix changed its LF SHA-256 from the predecessor value 216c30ef... to d6cc1167..., while one historical Council test still pinned 216c30ef.... Clean main passed its own lock, the V2 candidate failed before correction, and the one-value refresh retained strict full-file hash equality and passed the targeted node without changing a platform or runtime surface.",
+      "evidence_refs": [
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-204",
+        "tests/council/test_real_execution_bootstrap_governance.py",
+        "A2 read-only targeted result: 1 passed; Ruff check and format PASS"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Exact-head run 37077584541 installed SQLAlchemy 2.1.3 and both PostgreSQL profiles failed only the old SQLite textual assertion after 3548 passes and 42 skips; this supports representation drift as the bounded root cause rather than a runtime SQLite failure.",
+      "evidence_refs": [
+        "GitHub Actions run 37077584541",
+        "GitHub jobs 111072949289 and 111072949356",
+        "reports/evidence/evidence-graph.json#GOV.CI.ROBIN_REPRISE_COLLECTE.SQLITE.URL.TEXTUAL.CONTRACT.FAILURE.V1.001"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Workflow, runtime, dependency inputs, parent/V1 manifests, certificate and signed attestation are byte-unchanged from 5eacc412; all 39 LF-normalized attestation hashes still recompute exactly and V2 is outside the signed runtime boundary.",
+      "evidence_refs": [
+        ".github/workflows/90-reprise-collecte-pilot.yml",
+        "scripts/run_reprise_collecte.py",
+        "src/robin/capture/reprise_collecte.py",
+        "configs/execution/reprise-collecte-code-attestation.json",
+        "configs/execution/reprise-collecte-code-attestation.sig",
+        "git diff 5eacc412 protected-path check"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Records 201 through 206 form a valid append-only SHA-256 chain; the current 41-path LF-normalized V2.003 successor projection independently recomputes to 44f452bf781778db13806c61cf018e2bc57e24732b14a4d707b175e813940b7d.",
+      "evidence_refs": [
+        "reports/council/decision-ledger.jsonl",
+        "reports/evidence/evidence-graph.json",
+        "tests/council/test_reprise_collecte_governance_v1.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The focused V2/Council/SQLite pack passes 7 tests; Ruff check, Ruff format check and git diff --check pass on the current candidate.",
+      "evidence_refs": [
+        "focused pytest run: 7 passed in 0.48s",
+        "ruff check and ruff format --check on the four changed Python test files",
+        "git diff --check 5eacc412ba70cc0b8e20dc136a812db83d8e7518"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "Projection claim V2.003, aggregate final review V2.003 and decision RCV3-20261003-207 remain precommit gates after preserved records 203 through 206.",
+    "The new exact-head required checks and PR 82 mergeability have not yet been observed on the final corrective commit.",
+    "Provider counters, parent runtime-authority liveness, secrets, network reachability and capture delivery remain unobserved until the post-merge pre-transport gate."
+  ],
+  "assumptions": [
+    "C2 independently verifies the exact owner-source bytes bound to cb3d52256d483142e8f299b7839673eff3b8fd4c92008b7cde2eddd12047b387.",
+    "C0 materializes only the refreshed reviews, aggregate review, exact 41-path V2.003 projection and record 207 before the single corrective commit, without changing protected runtime bytes.",
+    "No family counter or external effect has occurred since record 202; all counters are re-read before transport."
+  ],
+  "main_objection": "PASS_AND_HOLD. Candidate findings after the exact matrix-hash and evidence-binding refresh are P0=0, P1=0 and P2=0. The exact-head hold, the four-key V2.003 aggregate/projection/record 207, and the parent-authority/counter recheck are mandatory process gates, not defects in this V2 candidate.",
+  "risks": [
+    {
+      "risk": "V2 expires later than the parent but does not extend or reactivate parent runtime authority. If exact-head CI or merge completes after the parent expires at 2026-10-03T18:27:48Z, workflow dispatch and provider transport must fail closed.",
+      "severity": "HIGH",
+      "evidence_refs": [
+        "configs/execution/reprise-collecte-20261002-continuation-v2.json",
+        "configs/execution/reprise-collecte-20261002.json",
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-202"
+      ]
+    },
+    {
+      "risk": "Creating record 207 or the V2.003 projection before all four reports are byte-final would stale their hashes and invalidate the corrected successor precommit binding.",
+      "severity": "MEDIUM",
+      "evidence_refs": [
+        "tests/council/test_reprise_collecte_governance_v1.py::test_sqlite_precommit_decision_binds_projection_reviews_and_zero_effects",
+        "tests/council/test_reprise_collecte_governance_v1.py::test_continuation_projection_supersedes_the_stale_predecessor"
+      ]
+    },
+    {
+      "risk": "The open SQLAlchemy >=2.0,<3 requirement permits future textual URL-rendering changes; the semantic and execution assertions are intentionally the stable compatibility boundary.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "requirements.txt",
+        "pyproject.toml",
+        "tests/jalon4/test_database_urls.py"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "After the four reports are byte-final, materialize the 41-path V2.003 projection and record 207, validate every report against agent-report-schema-v3, run the complete Council domain plus both corrected compatibility nodes, and require one fresh exact-head required-check suite with mergeability CLEAN and no rerun.",
+  "recommended_action": "Keep PASS_AND_HOLD; let C0 add the aggregate review, projection V2.003 and record 207, then make the single authorized corrective commit and non-force push. Merge only on all exact-head checks green and CLEAN mergeability; immediately before any pilot dispatch, reverify parent authority is still active and all cumulative counters remain at baseline.",
+  "scale_condition": "No scaling is authorized. After merge, permit at most the one parent-authorized dispatch; perform the first provider call, require the targeted operational audit to PASS, and permit the second call only within the unchanged total ceiling of two requests and four credits. Any expiry, counter ambiguity, new defect, rerun need or runtime-byte drift is FAIL_AND_STOP/PARTIAL.",
+  "estimated_compute": "Read-only diff, manifest, hash-chain, attestation and CI-log review; two local SQLAlchemy probes; one 7-node focused test pack; Ruff and diff checks. No corpus replay or full-suite rerun.",
+  "estimated_external_cost": "EUR 0; GitHub reads only. No workflow dispatch, secret read, provider request, credit, R2 operation, purchase or bet was performed by A2.",
+  "estimated_human_time": "Approximately 35 minutes of active independent platform review; passive CI time excluded.",
+  "maintenance_impact": "Low: one semantic compatibility test and bounded Council metadata. Runtime, workflow, dependency, attestation and storage maintenance surfaces are unchanged.",
+  "confidence": 0.99
+}
