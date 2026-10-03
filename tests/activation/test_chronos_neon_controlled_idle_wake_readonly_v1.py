@@ -5,6 +5,7 @@ import json
 import subprocess
 import sys
 from copy import deepcopy
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, NoReturn
 from urllib.parse import parse_qs, urlparse
@@ -15,6 +16,9 @@ import yaml
 import scripts.chronos_neon_controlled_idle_wake_readonly_v1 as controlled
 import scripts.chronos_neon_pure_readonly_preflight_v4 as base
 from robin.chronos_production import DirectPostgresTarget
+from tests.activation.historical_data_torrent_authority import (
+    bind_historical_data_torrent_authority,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "scripts" / "chronos_neon_controlled_idle_wake_readonly_v1.py"
@@ -27,6 +31,7 @@ GOLDEN = (
     / "fixtures"
     / "chronos_neon_controlled_idle_wake_readonly_v1_golden_pack.json"
 )
+HISTORICAL_AUTHORITY_AT = datetime(2026, 8, 31, 12, 0, tzinfo=UTC)
 
 
 class _Response:
@@ -265,11 +270,18 @@ def _database(
 def _run_synthetic(
     monkeypatch: pytest.MonkeyPatch,
     *,
+    authority_now: datetime,
     neon: base.NeonObservation | None = None,
     database: base.DatabaseObservation | None = None,
     identity_error: base.PreflightNoGo | None = None,
     connection_error: bool = False,
 ) -> dict[str, Any]:
+    bind_historical_data_torrent_authority(
+        monkeypatch,
+        controlled,
+        base,
+        now=authority_now,
+    )
     for name, value in {
         "GITHUB_REPOSITORY": base.EXPECTED_REPOSITORY,
         "GITHUB_REF": base.EXPECTED_REF,
@@ -512,6 +524,11 @@ def test_application_no_go_main_writes_sanitized_json_report(
 def test_idle_endpoint_completes_identity_before_any_connection(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    bind_historical_data_torrent_authority(
+        monkeypatch,
+        base,
+        now=HISTORICAL_AUTHORITY_AT,
+    )
     monkeypatch.delenv("NEON_PROJECT_ID", raising=False)
     session = _IdleIdentitySession()
     client = base.NeonReadOnlyClient("synthetic", session=session)  # type: ignore[arg-type]
@@ -537,6 +554,7 @@ def test_identity_failure_prevents_connection_and_wake(
 ) -> None:
     report = _run_synthetic(
         monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
         identity_error=base.PreflightNoGo(
             "NEON_PROJECT_IDENTITY_AMBIGUOUS", "project_detail_id_or_owner_mismatch"
         ),
@@ -549,7 +567,10 @@ def test_identity_failure_prevents_connection_and_wake(
 def test_idle_connection_is_attempted_once_and_counted_as_one_wake(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    report = _run_synthetic(monkeypatch)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     assert report["connection_attempt_count"] == 1
     assert report["compute_wake_events"] == 1
     assert report["lifecycle"]["identity_complete_before_wake"] is True
@@ -557,7 +578,11 @@ def test_idle_connection_is_attempted_once_and_counted_as_one_wake(
 
 
 def test_active_endpoint_requires_no_wake(monkeypatch: pytest.MonkeyPatch) -> None:
-    report = _run_synthetic(monkeypatch, neon=_neon(state="active"))
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+        neon=_neon(state="active"),
+    )
     assert report["connection_attempt_count"] == 1
     assert report["compute_wake_events"] == 1
     assert report["lifecycle"]["wake_verdict"] == (
@@ -568,7 +593,11 @@ def test_active_endpoint_requires_no_wake(monkeypatch: pytest.MonkeyPatch) -> No
 def test_connection_failure_is_not_retried_and_wake_is_conservatively_counted(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    report = _run_synthetic(monkeypatch, connection_error=True)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+        connection_error=True,
+    )
     assert report["connection_attempt_count"] == 1
     assert report["compute_wake_events"] == 1
     assert report["lifecycle"]["compute_wake_events"] == 1
@@ -584,6 +613,7 @@ def test_active_connection_failure_uses_conservative_wake_upper_bound(
 ) -> None:
     report = _run_synthetic(
         monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
         neon=_neon(state="active"),
         connection_error=True,
     )
@@ -622,6 +652,11 @@ def test_scale_to_zero_refuses_unsafe_or_unbounded_timeout(timeout: int) -> None
 def test_unknown_endpoint_state_and_missing_suspend_contract_fail_closed(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    bind_historical_data_torrent_authority(
+        monkeypatch,
+        base,
+        now=HISTORICAL_AUTHORITY_AT,
+    )
     monkeypatch.delenv("NEON_PROJECT_ID", raising=False)
     for session, expected in (
         (_IdleIdentitySession(state="init"), "endpoint_state_unsupported"),
@@ -666,14 +701,21 @@ def test_database_no_go_gates_are_exact(
     database: base.DatabaseObservation,
     expected_gate: str,
 ) -> None:
-    report = _run_synthetic(monkeypatch, database=database)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+        database=database,
+    )
     assert report["verdict"] == base.NO_GO_VERDICT
     assert report["failed_gate"] == expected_gate
     assert report["effects"]["production_sql_writes"] == 0
 
 
 def test_recovery_and_purchase_verdicts(monkeypatch: pytest.MonkeyPatch) -> None:
-    ready = _run_synthetic(monkeypatch)
+    ready = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     assert ready["verdict"] == base.GO_VERDICT
     assert ready["bootstrap_authority_verdict"] == ("BOOTSTRAP_AUTHORITY_CAPABILITIES_PROVEN")
     assert ready["recovery_verdict"] == "NEON_RECOVERY_BRANCH_CREATION_FEASIBLE"
@@ -688,7 +730,11 @@ def test_controlled_go_accepts_both_bootstrap_predecessor_revisions(
         "0013_historical_evidence_index",
         "0014_chronos_control_plane_v2",
     ):
-        report = _run_synthetic(monkeypatch, database=_database(revision=revision))
+        report = _run_synthetic(
+            monkeypatch,
+            authority_now=HISTORICAL_AUTHORITY_AT,
+            database=_database(revision=revision),
+        )
         assert report["verdict"] == base.GO_VERDICT
         assert report["postgresql"]["current_revision"] == revision
 
@@ -698,6 +744,7 @@ def test_hard_branch_capacity_exhaustion_is_not_misreported_as_purchase(
 ) -> None:
     report = _run_synthetic(
         monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
         neon=_neon(owner_branch_count=5, branch_limit=5),
     )
     assert report["failed_gate"] == "branch_capacity_exhausted"
@@ -730,7 +777,10 @@ def test_neon_client_and_controlled_script_have_no_mutating_api_call() -> None:
 def test_report_retains_nine_zero_effects_plus_wake(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    report = _run_synthetic(monkeypatch)
+    report = _run_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     effects = report["effects"]
     assert {
         "neon_mutations",

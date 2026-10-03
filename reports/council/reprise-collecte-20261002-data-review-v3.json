@@ -1,0 +1,83 @@
+{
+  "agent_id": "DP6",
+  "mission_id": "ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V1",
+  "facts_verified": [
+    {
+      "claim": "The implementation enforces at most two provider attempts, at most four credits, one h2h market for soccer_epl in region eu, zero automatic retry, and a hard stop before the second request unless first-capture quota, persistence, readback, and offline replay evidence are valid.",
+      "evidence_refs": [
+        "configs/execution/reprise-collecte-20261002.json",
+        "src/robin/capture/reprise_collecte.py",
+        "tests/capture/test_reprise_collecte.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "An event with bookmakers: [] is retained in immutable raw evidence but contributes no structured odds row while other valid events remain usable; an all-empty structured result fails closed. Source timestamps up to five minutes ahead are accepted only as bounded provider clock skew, while timestamps beyond that tolerance, older than fifteen minutes, or at/after kickoff are rejected.",
+      "evidence_refs": [
+        "src/robin/capture/reprise_collecte.py",
+        "tests/capture/test_reprise_collecte.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Both first- and second-attempt failure paths preserve private raw-response evidence, expose only sanitized hashes publicly, account credits conservatively, and emit a valid zero-row private table when no capture can be accepted.",
+      "evidence_refs": [
+        "src/robin/capture/reprise_collecte.py",
+        "tests/capture/test_reprise_collecte.py",
+        "tests/capture/test_run_reprise_collecte_cli.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The final focused data, workflow, CLI, and governance pack passed 32 tests with zero unapproved network attempts; the two affected Data Torrent modules passed 24 tests, including all six repaired historical-authority scenarios; the 39-path LF-normalized projection recomputes to e369fffca09132b68c95771e88a150e6b77e47ec59cd18b76a7291794c4d9848.",
+      "evidence_refs": [
+        "tests/capture/test_reprise_collecte.py",
+        "tests/capture/test_reprise_collecte_workflow.py",
+        "tests/capture/test_run_reprise_collecte_cli.py",
+        "tests/council/test_reprise_collecte_governance_v1.py"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "Actual provider rows, timestamps, quota headers, and credit consumption remain unknown until the single authorized post-merge workflow execution."
+  ],
+  "assumptions": [
+    "The Odds API continues to report request cost and remaining quota through the headers bound by the reviewed parser."
+  ],
+  "main_objection": "No P0 or P1 data-path objection blocks the frozen engineering candidate. Two P2 audit limitations are documented below; actual capture claims must remain PARTIAL until the decrypted runtime files are cross-checked against the public receipt.",
+  "risks": [
+    {
+      "risk": "A provider-side header or payload contract change can stop the pilot before two captures; fail-closed partial delivery preserves the evidence without spending a second request.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "src/robin/capture/reprise_collecte.py",
+        "tests/capture/test_reprise_collecte.py"
+      ]
+    },
+    {
+      "risk": "The first and second captures are validated independently, but the final assembly does not add a separate cross-capture event-id consistency assertion. The delivery audit must therefore compare the event identities represented in both capture receipts before treating the table as fully verified.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "src/robin/capture/reprise_collecte.py",
+        "tests/capture/test_reprise_collecte.py"
+      ]
+    },
+    {
+      "risk": "A private report can already carry the capture-level status COLLECTE_REELLE_VERIFIEE when a later R2 report readback fails and the public receipt becomes PARTIEL. The public receipt is the authoritative delivery status and must control final acceptance.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "src/robin/capture/reprise_collecte.py",
+        ".github/workflows/90-reprise-collecte-pilot.yml"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "At the committed head, retain the green 32-test focused pack and 24-test Data Torrent pair, recompute every signed code-attestation and 39-path engineering-projection hash, then require exact-head CI before allowing merge.",
+  "recommended_action": "PASS_AND_HOLD for exact-head CI, merge, and exactly one post-merge dispatch under the existing two-call and four-credit ceiling.",
+  "scale_condition": "No scale beyond E1; two verified captures, bounded consumption, immutable readback, offline replay, and encrypted delivery must be proven before any successor mission.",
+  "estimated_compute": "Read-only contract inspection plus one focused 32-test local run and content-addressed projection verification.",
+  "estimated_external_cost": "0 during engineering review; the later authorized pilot is capped at four existing credits and forbids purchase.",
+  "estimated_human_time": "Bounded independent review completed within the two-hour mission budget.",
+  "maintenance_impact": "Low and isolated to the one-shot capture module, signed workflow, and its tests.",
+  "confidence": 0.98
+}

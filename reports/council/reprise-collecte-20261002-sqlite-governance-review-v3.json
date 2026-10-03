@@ -1,0 +1,173 @@
+{
+  "agent_id": "C2",
+  "mission_id": "ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V2",
+  "facts_verified": [
+    {
+      "claim": "The exact owner SQLite successor directive reconstructs to 1547 UTF-8 bytes with LF and no terminal newline, producing SHA-256 cb3d52256d483142e8f299b7839673eff3b8fd4c92008b7cde2eddd12047b387. The attached ROBIN_REPRISE_COLLECTE_2026-10-02.md is a distinct 9746-byte parent mandate whose SHA-256 is 0a48756520b7f77f6c2d66d27e3b423d5f62d0468bd8b8607aa1cebf5f391d22, matching the parent manifest. Record 202 and the V2 evidence claim correctly identify the successor source as the owner SQLite directive rather than the parent attachment.",
+      "evidence_refs": [
+        "owner SQLite compatibility directive received 2026-10-03: independent exact-byte reconstruction",
+        "ROBIN_REPRISE_COLLECTE_2026-10-02.md: raw SHA-256 0a48756520b7f77f6c2d66d27e3b423d5f62d0468bd8b8607aa1cebf5f391d22",
+        "configs/execution/reprise-collecte-20261002.json",
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-202",
+        "reports/evidence/evidence-graph.json#GOV.AUTHORIZATION.ROBIN_REPRISE_COLLECTE.CONTINUATION.V2.001"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The V2 manifest has exactly the eight required fields and raw SHA-256 58d8e910c150d4394ef9b987a25c12811a93be86c11c78df9fb5e988a552ddec. It authorizes E1 only for 7200 active seconds, treats compute_budget=4000 as the unchanged parent-family ceiling with increment zero, grants no runtime-effect increment, and preserves cumulative maxima of one dispatch, two provider GETs and four credits with no purchase or bet.",
+      "evidence_refs": [
+        "configs/execution/reprise-collecte-20261002-continuation-v2.json",
+        "configs/agents/mission-activation-matrix-v3.json",
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-202.context.compute_budget_family_total_max=4000",
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-202.context.compute_budget_increment=0"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The complete 199-record append-only ledger prefix through RCV3-20261003-206 is canonically valid. Records 201 through 206 have correct SHA-256 hashes and predecessor links, and their decision nodes and evidence claims agree with the failed exact-head run, same-environment reproduction, source hash, zero runtime increment, cumulative budgets and final evidence-binding audit.",
+      "evidence_refs": [
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-201",
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-202",
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-203",
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-204",
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-205",
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-206",
+        "reports/evidence/evidence-graph.json#GOV.CI.ROBIN_REPRISE_COLLECTE.SQLITE.URL.TEXTUAL.CONTRACT.FAILURE.V1.001",
+        "reports/evidence/evidence-graph.json#GOV.AUTHORIZATION.ROBIN_REPRISE_COLLECTE.CONTINUATION.V2.001",
+        "independent canonical verification: 199 records through RCV3-20261003-206, complete chain valid"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The independently recomputed 41-path LF-normalized V2.003 projection preserves the V2.002 path set and binds semantic SQLite compatibility, the exact authorized matrix-hash refresh and the strengthened evidence-binding guard. Its canonical compact sorted-map digest is 44f452bf781778db13806c61cf018e2bc57e24732b14a4d707b175e813940b7d.",
+      "evidence_refs": [
+        "reports/evidence/evidence-graph.json#GOV.ENGINEERING.ROBIN_REPRISE_COLLECTE.PROJECTION.V2.002",
+        "configs/execution/reprise-collecte-20261002-continuation-v2.json",
+        "tests/jalon4/test_database_urls.py",
+        "tests/council/test_real_execution_bootstrap_governance.py",
+        "tests/council/test_reprise_collecte_governance_v1.py",
+        "independent projection verification: path_count=41; digest=44f452bf781778db13806c61cf018e2bc57e24732b14a4d707b175e813940b7d"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The matrix-hash pin failure was introduced by the V2 candidate, not automatically pre-existing: clean main passed its own lock, predecessor 5eacc bound both matrix and test to 216c30ef..., and only the V2 candidate combined authorized matrix d6cc1167... with the stale predecessor pin. Updating that single expected value preserves exact equality, passes the targeted node and stays within the V2 allowlist.",
+      "evidence_refs": [
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-204",
+        "tests/council/test_real_execution_bootstrap_governance.py",
+        "C2 read-only clean-main and candidate comparison"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The SQLite correction is strictly test-only and preserves the functional contract: the normalized URL reparses as driver sqlite+pysqlite and database :memory:, the engine is constructed from that normalized URL, and SELECT 1 returns 1. The complete database URL module passes 10 of 10 tests under SQLAlchemy 2.0.51 and 10 of 10 under SQLAlchemy 2.1.3.",
+      "evidence_refs": [
+        "tests/jalon4/test_database_urls.py",
+        "independent SQLAlchemy 2.0.51 run: 10 passed in 0.49s",
+        "independent SQLAlchemy 2.1.3 run: 10 passed in 0.43s",
+        "independent V2 governance pack: 6 passed in 0.09s"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "No runtime implementation, workflow, dependency, certificate, signed attestation, old authorization date or required check changes in the V2 delta. All 39 LF-normalized attested runtime paths still match exactly; parent, V1, attestation and signature hashes remain unchanged.",
+      "evidence_refs": [
+        "git diff --name-status 5eacc412ba70cc0b8e20dc136a812db83d8e7518",
+        "configs/execution/reprise-collecte-code-attestation.json: 39 paths, zero mismatches",
+        "configs/execution/reprise-collecte-code-attestation.sig",
+        "configs/execution/reprise-collecte-20261002.json",
+        "configs/execution/reprise-collecte-20261002-continuation-v1.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The refreshed DP6, C4 and A2 SQLite reviews validate against agent-report-schema-v3.json at LF-normalized SHA-256 1ab829547904066acbbf0dc5ff140dc83d83624a9737f0e1b18ae621db41ea10, 93ff0cbabe710653a308761cf4570801f48c182b83f03c38f071df6ef229a8f9 and ae9a311b8d2ee09977dc7232fd0b7bac4f6da151d9221041c9eb61d5eb03e659 respectively. They report no new P0, P1 or P2 finding and retain the applicable delivery-audit limitations.",
+      "evidence_refs": [
+        "reports/council/reprise-collecte-20261002-sqlite-data-review-v3.json",
+        "reports/council/reprise-collecte-20261002-sqlite-security-review-v3.json",
+        "reports/council/reprise-collecte-20261002-sqlite-platform-review-v3.json",
+        "configs/agents/agent-report-schema-v3.json",
+        "independent Draft 2020-12 schema validation: three reports valid"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "Decision RCV3-20261003-207, projection claim V2.003 and final aggregate review V2.003 remain precommit gates after immutable records 203 through 206.",
+    "The final corrective commit has not yet received fresh exact-head required checks or a CLEAN mergeability result.",
+    "Provider rows, capture timestamps, quota headers, credit consumption and durable readback remain unknown until the single parent-authorized post-merge pilot."
+  ],
+  "assumptions": [
+    "The owner conversation transcript remains the authoritative source for reconstructing the exact 1547-byte V2 directive; the parent attachment remains separately bound to its own 0a487565 source hash.",
+    "C0 freezes all refreshed review files before computing the final V2.003 projection, aggregate review and record 207.",
+    "No family counter changes before transport, and parent authority liveness is freshly revalidated immediately before dispatch."
+  ],
+  "main_objection": "C2 VERDICT: PASS_AND_HOLD. After the exact matrix-hash and evidence-binding refresh, new candidate findings are P0_new=0, P1_new=0 and P2_new=0, with zero candidate-blocking critical threads. Four previously accepted P2 delivery-audit limitations remain applicable, and the pre-existing repository-wide secret trust boundary remains explicitly external to this candidate. Record 207, the final V2.003 aggregate/projection, exact-head green checks and CLEAN mergeability remain mandatory gates, not defects.",
+  "risks": [
+    {
+      "risk": "Retained external risk: another independently merged workflow with repository-secret access could read the same provider or R2 secrets. This pre-existing repository-wide trust boundary is not introduced or repaired by V2 and is not counted as a new candidate finding.",
+      "severity": "CRITICAL",
+      "evidence_refs": [
+        "reports/council/reprise-collecte-20261002-security-review-v3.json",
+        "configs/agents/mission-activation-matrix-v3.json"
+      ]
+    },
+    {
+      "risk": "The V2 engineering window does not extend or reactivate the parent runtime authority. If merge or pre-transport validation finishes after 2026-10-03T18:27:48Z, dispatch and provider transport must fail closed.",
+      "severity": "HIGH",
+      "evidence_refs": [
+        "configs/execution/reprise-collecte-20261002.json",
+        "configs/execution/reprise-collecte-20261002-continuation-v2.json",
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-202"
+      ]
+    },
+    {
+      "risk": "Materializing record 207 or the V2.003 projection before all refreshed review files are byte-final would stale their hashes and invalidate the corrected successor precommit binding.",
+      "severity": "MEDIUM",
+      "evidence_refs": [
+        "tests/council/test_reprise_collecte_governance_v1.py::test_sqlite_precommit_decision_binds_projection_reviews_and_zero_effects",
+        "tests/council/test_reprise_collecte_governance_v1.py::test_continuation_projection_supersedes_the_stale_predecessor"
+      ]
+    },
+    {
+      "risk": "Retained P2: the delivery audit must compare event identities across the two independently validated capture receipts.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "reports/council/reprise-collecte-20261002-sqlite-data-review-v3.json",
+        "reports/council/reprise-collecte-20261002-data-review-v3.json"
+      ]
+    },
+    {
+      "risk": "Retained P2: public-receipt.json must remain authoritative if a late R2 readback failure conflicts with an earlier private capture-level status.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "reports/council/reprise-collecte-20261002-sqlite-data-review-v3.json",
+        "reports/council/reprise-collecte-20261002-data-review-v3.json"
+      ]
+    },
+    {
+      "risk": "Retained P2: plaintext delivery files persist in a permission-restricted runner temporary directory until ephemeral teardown and must not be represented as immediately erased.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "reports/council/reprise-collecte-20261002-security-review-v3.json",
+        ".github/workflows/90-reprise-collecte-pilot.yml"
+      ]
+    },
+    {
+      "risk": "Retained P2: owner-side acceptance must independently verify decrypted JSON, CSV and HTML digests and row equivalence against public-receipt.json.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "reports/council/reprise-collecte-20261002-security-review-v3.json",
+        "reports/council/reprise-collecte-20261002-platform-review-v3.json"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Freeze and schema-validate all four reviews, materialize the exact 41-path V2.003 projection and canonically linked record 207, run the complete Council domain and dual-version SQLite checks, then require one fresh exact-head required-check suite and CLEAN mergeability without rerunning either failed historical run.",
+  "recommended_action": "Accept the refreshed C2 governance key as PASS_AND_HOLD. C0 may materialize the aggregate review, projection V2.003 and record 207, then use the single remaining corrective commit and non-force push. Merge remains held for exact-head green checks and CLEAN mergeability; provider transport remains held for merged-main identity, active parent authority and fresh zero family counters.",
+  "scale_condition": "No scale beyond E1. V2 contributes zero runtime-effect budget. After merge, permit at most the one parent-authorized dispatch, audit the first provider call before allowing the second, and preserve the cumulative limits of two GETs, four existing credits, zero purchase and zero bet.",
+  "estimated_compute": "Read-only source, manifest, ledger, evidence, report-schema, attestation and 41-path projection audit; six focused governance tests and two ten-test SQLAlchemy runs; no full-suite replay.",
+  "estimated_external_cost": "0; no provider request, DNS resolution, secret read, credit, R2 effect, Git write, push, merge, workflow dispatch, purchase or bet.",
+  "estimated_human_time": "Approximately 20 minutes of active independent C2 review within the shared V2 allowance; passive CI time excluded.",
+  "maintenance_impact": "Low. The candidate adds one semantic SQLite compatibility test and bounded non-runtime governance evidence while leaving runtime, workflow, dependency, attestation, storage and mandatory checks unchanged.",
+  "confidence": 0.99
+}

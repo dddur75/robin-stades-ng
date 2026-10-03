@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -18,8 +19,12 @@ from robin.prospective_observatory.chronos_postgres import (
     SQLAlchemyPostgresFunctionClient,
 )
 from scripts.run_data_torrent_v1 import _write_failure
+from tests.activation.historical_data_torrent_authority import (
+    bind_historical_data_torrent_authority,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
+HISTORICAL_AUTHORITY_NOW = datetime(2026, 8, 31, 12, tzinfo=UTC)
 
 
 def test_pre_database_failure_carries_complete_zero_effect_receipt(tmp_path: Path) -> None:
@@ -51,6 +56,11 @@ def test_pre_database_failure_carries_complete_zero_effect_receipt(tmp_path: Pat
 def test_mutating_postgresql_disconnect_is_conservatively_ambiguous(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    bind_historical_data_torrent_authority(
+        monkeypatch,
+        runtime_module,
+        now=HISTORICAL_AUTHORITY_NOW,
+    )
     effects = LiveRuntimeEffects()
     client = object.__new__(_AccountingPostgresFunctionClient)
     client._runtime_effects = effects
@@ -76,6 +86,11 @@ def test_mutating_postgresql_disconnect_is_conservatively_ambiguous(
 def test_read_only_postgresql_function_is_not_counted_as_possible_mutation(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    bind_historical_data_torrent_authority(
+        monkeypatch,
+        runtime_module,
+        now=HISTORICAL_AUTHORITY_NOW,
+    )
     effects = LiveRuntimeEffects()
     client = object.__new__(_AccountingPostgresFunctionClient)
     client._runtime_effects = effects

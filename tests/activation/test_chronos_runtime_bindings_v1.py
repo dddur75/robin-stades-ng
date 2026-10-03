@@ -17,6 +17,9 @@ from robin.chronos_production import (
     preflight_hash,
     require_generation_bound_password,
 )
+from tests.activation.historical_data_torrent_authority import (
+    bind_historical_data_torrent_authority,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 MAIN_SHA = "1" * 40
@@ -27,6 +30,21 @@ RECOVERY_BRANCH_ID = "branch-recovery"
 RECOVERY_BRANCH_NAME = "chronos-pre-0015-recovery-20260830T000000Z"
 SIGNATURE_VALUE = "f" * 64
 REAL_ATTEST_PREFLIGHT = installer._attest_preflight_artifact
+HISTORICAL_AUTHORITY_AT = datetime(2026, 8, 31, 12, 0, tzinfo=UTC)
+
+
+def _install_at(
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    authority_now: datetime,
+    **kwargs: object,
+) -> dict[str, object]:
+    bind_historical_data_torrent_authority(
+        monkeypatch,
+        installer,
+        now=authority_now,
+    )
+    return installer.install(**kwargs)  # type: ignore[arg-type]
 
 
 def _controlled_go() -> dict[str, object]:
@@ -154,7 +172,9 @@ def test_installer_sets_only_four_exact_bindings_and_emits_sanitized_report(
         installed.append((name, value, repository, environment))
 
     monkeypatch.setattr(installer, "_set_secret", capture_secret)
-    report = installer.install(
+    report = _install_at(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
         preflight_artifact=preflight,
         expected_main_sha=MAIN_SHA,
         expected_preflight_run_id=PREFLIGHT_RUN_ID,
@@ -257,7 +277,9 @@ def test_installer_partial_write_is_fail_closed_and_emits_recovery_receipt(
 
     monkeypatch.setattr(installer, "_set_secret", fail_second)
     with pytest.raises(installer.BindingInstallerError, match="CHRONOS_BINDING_INSTALL_FAILED"):
-        installer.install(
+        _install_at(
+            monkeypatch,
+            authority_now=HISTORICAL_AUTHORITY_AT,
             preflight_artifact=preflight,
             expected_main_sha=MAIN_SHA,
             expected_preflight_run_id=PREFLIGHT_RUN_ID,
@@ -306,7 +328,9 @@ def test_installer_ambiguous_commit_marker_reports_possible_complete_generation(
 
     monkeypatch.setattr(installer, "_set_secret", ambiguous_marker)
     with pytest.raises(installer.BindingInstallerError, match="CHRONOS_BINDING_INSTALL_FAILED"):
-        installer.install(
+        _install_at(
+            monkeypatch,
+            authority_now=HISTORICAL_AUTHORITY_AT,
             preflight_artifact=preflight,
             expected_main_sha=MAIN_SHA,
             expected_preflight_run_id=PREFLIGHT_RUN_ID,
@@ -344,7 +368,9 @@ def test_installer_refuses_expired_preflight_before_any_secret_write(
 
     monkeypatch.setattr(installer, "_set_secret", capture_secret)
     with pytest.raises(installer.BindingInstallerError, match="CHRONOS_BINDING_PREFLIGHT_EXPIRED"):
-        installer.install(
+        _install_at(
+            monkeypatch,
+            authority_now=HISTORICAL_AUTHORITY_AT,
             preflight_artifact=preflight,
             expected_main_sha=MAIN_SHA,
             expected_preflight_run_id=PREFLIGHT_RUN_ID,
@@ -410,7 +436,9 @@ def test_installer_rejects_untrusted_provenance_before_any_secret_write(
 
     monkeypatch.setattr(installer, "_set_secret", capture_secret)
     with pytest.raises(installer.BindingInstallerError, match=f"CHRONOS_BINDING_PREFLIGHT_{error}"):
-        installer.install(
+        _install_at(
+            monkeypatch,
+            authority_now=HISTORICAL_AUTHORITY_AT,
             preflight_artifact=preflight,
             expected_main_sha=MAIN_SHA,
             expected_preflight_run_id=expected_run_id,
@@ -426,6 +454,7 @@ def test_installer_rejects_untrusted_provenance_before_any_secret_write(
 def test_installer_requires_the_exact_preflight_schema(
     tmp_path: Path,
     remove: str,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     preflight = tmp_path / "preflight.json"
     _write_preflight(
@@ -437,7 +466,9 @@ def test_installer_requires_the_exact_preflight_schema(
         installer.BindingInstallerError,
         match="CHRONOS_BINDING_PREFLIGHT_SCHEMA_MISMATCH",
     ):
-        installer.install(
+        _install_at(
+            monkeypatch,
+            authority_now=HISTORICAL_AUTHORITY_AT,
             preflight_artifact=preflight,
             expected_main_sha=MAIN_SHA,
             expected_preflight_run_id=PREFLIGHT_RUN_ID,
@@ -468,7 +499,9 @@ def test_installer_rejects_tampered_controlled_go_before_any_secret_write(
         installer.BindingInstallerError,
         match="CHRONOS_BINDING_CONTROLLED_GO_INVALID",
     ):
-        installer.install(
+        _install_at(
+            monkeypatch,
+            authority_now=HISTORICAL_AUTHORITY_AT,
             preflight_artifact=preflight,
             expected_main_sha=MAIN_SHA,
             expected_preflight_run_id=PREFLIGHT_RUN_ID,
@@ -479,6 +512,7 @@ def test_installer_rejects_tampered_controlled_go_before_any_secret_write(
 
 def test_installer_rejects_noncanonical_expected_run_id(
     tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     preflight = tmp_path / "preflight.json"
     _write_preflight(preflight, expires_at=datetime.now(UTC) + timedelta(minutes=15))
@@ -486,7 +520,9 @@ def test_installer_rejects_noncanonical_expected_run_id(
         installer.BindingInstallerError,
         match="CHRONOS_BINDING_PREFLIGHT_RUN_INVALID",
     ):
-        installer.install(
+        _install_at(
+            monkeypatch,
+            authority_now=HISTORICAL_AUTHORITY_AT,
             preflight_artifact=preflight,
             expected_main_sha=MAIN_SHA,
             expected_preflight_run_id="0123456789",
@@ -574,7 +610,9 @@ def test_installer_parses_only_attested_bytes_without_path_toctou(
         "_set_secret",
         lambda **values: installed.append((str(values["name"]), str(values["value"]))),
     )
-    installer.install(
+    _install_at(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
         preflight_artifact=preflight,
         expected_main_sha=MAIN_SHA,
         expected_preflight_run_id=PREFLIGHT_RUN_ID,

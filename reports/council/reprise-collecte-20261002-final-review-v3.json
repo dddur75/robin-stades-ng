@@ -1,0 +1,123 @@
+{
+  "agent_id": "C0",
+  "mission_id": "ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V1",
+  "facts_verified": [
+    {
+      "claim": "The continuation candidate and clean comparator both start at origin/main 9b207cd1efd7f51ead29ff5b8c2709b6062fa763, freshly confirmed by fetch and ls-remote; C0 is the sole Git writer and every other reviewer remained read-only.",
+      "evidence_refs": [
+        "git ls-remote origin refs/heads/main",
+        "configs/agents/mission-activation-matrix-v3.json",
+        "reports/council/reprise-collecte-20261002-ci-baseline-review-v3.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The successor is a non-runtime continuation with an exact eight-field manifest and zero runtime-effect increment. The byte-identical parent manifest remains the exclusive live authority, and the cumulative family ceiling remains one dispatch, two provider GETs, four existing credits, no purchase and no real bet.",
+      "evidence_refs": [
+        "configs/execution/reprise-collecte-20261002-continuation-v1.json",
+        "configs/execution/reprise-collecte-20261002.json",
+        "reports/council/decision-ledger.jsonl#RCV3-20261002-198",
+        "reports/council/reprise-collecte-20261002-governance-review-v3.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Historical activation and Data Torrent scenarios now supply explicit, scenario-local instants while all current-date expiry guards retain the real fail-closed validation. The candidate reports 573 passed and 1 Linux-only skip for activation, 24 passed for the two affected Data Torrent modules, and 191 passed for the fresh combined temporal regression pack.",
+      "evidence_refs": [
+        "tests/activation/historical_data_torrent_authority.py",
+        "reports/council/reprise-collecte-20261002-ci-baseline-review-v3.json",
+        "pytest temporal regression pack: 191 passed"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The one permitted repository-wide diagnostic suite reported 3526 passed, 33 skipped and 32 failed. Six residual temporal failures were corrected; the other 26 were reproduced on clean main and candidate as Windows CRLF representations of canonical LF Git blobs, with 25 hypothesis nodes passing under read-only LF emulation and all eight convergence reports matching their generator after LF normalization.",
+      "evidence_refs": [
+        "reports/council/reprise-collecte-20261002-ci-baseline-review-v3.json",
+        "read-only hypothesis LF emulation: 25 passed",
+        "tests/data-sourcing/test_convergence_contracts.py::test_generator_reproduces_exact_repository_reports"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The final 39-path LF-normalized engineering projection recomputes to e369fffca09132b68c95771e88a150e6b77e47ec59cd18b76a7291794c4d9848. Focused capture/workflow/CLI/governance tests report 32 passed with zero unapproved network attempts; Council tests report 39 passed; Ruff, Ruff format, strict targeted mypy, compileall and targeted Bandit pass.",
+      "evidence_refs": [
+        "reports/evidence/evidence-graph.json#GOV.ENGINEERING.ROBIN_REPRISE_COLLECTE.PROJECTION.V1.003",
+        "reports/council/reprise-collecte-20261002-data-review-v3.json",
+        "reports/council/reprise-collecte-20261002-security-review-v3.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The four independent delivery keys DP6, C4, C2 and A2 find P0=0, P1=0 and zero candidate-blocking critical threads. P2 limitations are explicitly retained for cross-capture identity review, delivery-status precedence, plaintext runner lifetime and post-decryption digest/row-equivalence verification; the pre-existing repository-wide secret trust boundary remains explicitly outside the candidate and is not represented as fixed.",
+      "evidence_refs": [
+        "reports/council/reprise-collecte-20261002-data-review-v3.json",
+        "reports/council/reprise-collecte-20261002-security-review-v3.json",
+        "reports/council/reprise-collecte-20261002-governance-review-v3.json",
+        "reports/council/reprise-collecte-20261002-platform-review-v3.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "No provider request, provider credit, secret read, DNS resolution, R2 effect, purchase or bet has occurred during engineering and review. Real capture data remains PARTIAL until exact-head CI, merge, the one authorized dispatch and owner-side decryption verification complete.",
+      "evidence_refs": [
+        "reports/evidence/evidence-graph.json#DATA.REPRISE.COLLECTE.CAPTURES.V1.001",
+        "reports/evidence/evidence-graph.json#DATA.REPRISE.COLLECTE.VIEW.V1.001",
+        "reports/evidence/evidence-graph.json#GOV.REPRISE.COLLECTE.CONSUMPTION.V1.001",
+        "reports/council/decision-ledger.jsonl"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "The exact-head required checks and mergeability remain unknown until the committed candidate is pushed.",
+    "Actual provider rows, capture timestamps and credit headers remain unknown until the single post-merge pilot executes.",
+    "Runner, provider and R2 availability can only be observed during that non-rerunnable pilot."
+  ],
+  "assumptions": [
+    "GitHub Actions checks out the canonical LF Git blobs on ubuntu-latest.",
+    "The existing repository secrets and recipient private key remain available without renewal or purchase through delivery verification."
+  ],
+  "main_objection": "VERDICT: PASS_AND_HOLD with P0=0, P1=0 and zero candidate-blocking critical threads. One pre-existing repository-wide secret trust-boundary risk remains CRITICAL but is external to this unchanged bounded candidate. Commit, non-force push and one pull request are admissible; merge remains held for exact-head required checks and clean mergeability, and dispatch remains held for merged-main identity plus fresh zero counters.",
+  "risks": [
+    {
+      "risk": "Any separately merged workflow with repository-secret access could read the same provider or R2 secrets. This is a pre-existing repository-wide trust boundary, not a capability introduced or repaired by the bounded candidate, and exact-head protected merge remains mandatory.",
+      "severity": "CRITICAL",
+      "evidence_refs": [
+        "reports/council/reprise-collecte-20261002-security-review-v3.json",
+        "configs/agents/mission-activation-matrix-v3.json"
+      ]
+    },
+    {
+      "risk": "Windows core.autocrlf checkouts continue to produce 26 known false negatives in raw-byte or byte-size assertions outside this mission; exact-head Ubuntu CI is the decisive control and no portability refactor is authorized here.",
+      "severity": "MEDIUM",
+      "evidence_refs": [
+        "reports/council/reprise-collecte-20261002-ci-baseline-review-v3.json"
+      ]
+    },
+    {
+      "risk": "The final delivery must use public-receipt.json as the end-to-end status authority and independently verify decrypted JSON, CSV and HTML digests plus row equivalence before acceptance.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "reports/council/reprise-collecte-20261002-data-review-v3.json",
+        "reports/council/reprise-collecte-20261002-platform-review-v3.json"
+      ]
+    },
+    {
+      "risk": "Any exact-head CI failure, changed signed byte, nonzero pre-existing counter, expired authority or certificate, uncertain quota, failed first-capture audit or storage readback stops the pilot without rerun.",
+      "severity": "HIGH",
+      "evidence_refs": [
+        ".github/workflows/90-reprise-collecte-pilot.yml",
+        "configs/execution/reprise-collecte-20261002.json"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Commit the frozen projection, require all four exact-head protected checks and clean mergeability, then reverify merged-main identity, signature, certificate, CMS recovery and zero family counters before the one dispatch.",
+  "recommended_action": "PASS_AND_HOLD for one commit, one non-force push and one pull request. After exact-head green checks, merge normally and execute exactly one parent-authorized pilot; accept delivery only after the first-call audit gates the second call and all decrypted outputs pass the compensating integrity audit.",
+  "scale_condition": "No scale beyond E1 and no rerun. The second request is permitted only after PASS of the first capture's quota, immutable persistence, readback and offline replay audit; any ambiguity produces PARTIEL or FAIL_AND_STOP.",
+  "estimated_compute": "One repository-wide diagnostic suite already consumed, followed only by targeted domain, static, signature, schema and projection checks; no corpus replay.",
+  "estimated_external_cost": "0 before dispatch; the future single pilot is capped at four existing credits with purchases and renewals forbidden.",
+  "estimated_human_time": "Active continuation work remains bounded by the authorized two-hour budget, with CI wait excluded.",
+  "maintenance_impact": "Low and bounded to test-local historical instants, one non-runtime continuation authority and append-only evidence; no new runner, storage, encryption, attestation or governance mechanism.",
+  "confidence": 0.98
+}

@@ -49,6 +49,9 @@ from scripts.chronos_production_bootstrap_v3 import (
     create_recovery_point,
     inspect_database,
 )
+from tests.activation.historical_data_torrent_authority import (
+    bind_historical_data_torrent_authority,
+)
 from tests.activation.test_chronos_neon_controlled_idle_wake_readonly_v1 import (
     _run_synthetic as _run_controlled_synthetic,
 )
@@ -62,6 +65,7 @@ PAYLOAD = b'{"synthetic":true}'
 PAYLOAD_HASH = hashlib.sha256(PAYLOAD).hexdigest()
 NOW = datetime(2026, 8, 10, 0, 0, tzinfo=UTC)
 EPOCH = datetime(2026, 8, 9, 20, 0, tzinfo=UTC)
+HISTORICAL_AUTHORITY_AT = datetime(2026, 8, 31, 12, 0, tzinfo=UTC)
 
 
 def _on(document: dict[object, object]) -> object:
@@ -179,7 +183,10 @@ def test_controlled_readonly_go_is_exact_and_causally_bound(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    report = _run_controlled_synthetic(monkeypatch)
+    report = _run_controlled_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     path = tmp_path / "controlled.json"
     path.write_text(json.dumps(report), encoding="utf-8")
 
@@ -219,7 +226,10 @@ def test_controlled_readonly_gate_rejects_non_go_or_unbound_artifact(
     path: tuple[str, ...],
     value: object,
 ) -> None:
-    report = _run_controlled_synthetic(monkeypatch)
+    report = _run_controlled_synthetic(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     target: dict[str, Any] = report
     for key in path[:-1]:
         target = target[key]
@@ -242,6 +252,11 @@ def test_preflight_refuses_rerun_before_any_external_effect(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    bind_historical_data_torrent_authority(
+        monkeypatch,
+        bootstrap_module,
+        now=HISTORICAL_AUTHORITY_AT,
+    )
     for name, value in PRODUCTION_SAFETY_LOCKS.items():
         monkeypatch.setenv(name, value)
     monkeypatch.setenv("GITHUB_RUN_ATTEMPT", "2")
@@ -301,6 +316,13 @@ def test_data_torrent_authority_is_exact_bound_and_time_limited() -> None:
     ):
         validate_data_torrent_authority(
             now=datetime(2026, 8, 30, 6, 35, 59, tzinfo=UTC),
+        )
+
+
+def test_data_torrent_authority_is_expired_on_current_mandate_date() -> None:
+    with pytest.raises(ChronosProductionError, match="CHRONOS_MISSION_AUTHORITY_EXPIRED"):
+        validate_data_torrent_authority(
+            now=datetime(2026, 10, 2, 0, 0, tzinfo=UTC),
         )
 
 
@@ -632,6 +654,19 @@ class _MutatingNeonSession:
         return self.response
 
 
+def _bootstrap_client(
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    authority_now: datetime,
+) -> NeonClient:
+    bind_historical_data_torrent_authority(
+        monkeypatch,
+        bootstrap_module,
+        now=authority_now,
+    )
+    return NeonClient("synthetic-neon-key")
+
+
 def test_mutating_neon_client_isolates_proxy_redirect_and_authorization_state(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -641,7 +676,10 @@ def test_mutating_neon_client_isolates_proxy_redirect_and_authorization_state(
     monkeypatch.setenv("HTTPS_PROXY", "https://proxy.invalid")
     monkeypatch.setattr(bootstrap_module.requests, "Session", lambda: session)
 
-    client = NeonClient("synthetic-neon-key")
+    client = _bootstrap_client(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     assert client.projects() == []
 
     assert session.trust_env is False
@@ -663,7 +701,10 @@ def test_mutating_neon_client_does_not_follow_redirects(
     session = _MutatingNeonSession(response)
     monkeypatch.setattr(bootstrap_module.requests, "Session", lambda: session)
 
-    client = NeonClient("synthetic-neon-key")
+    client = _bootstrap_client(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     with pytest.raises(ChronosProductionError, match="CHRONOS_NEON_API_HTTP_307"):
         client.projects()
 
@@ -688,7 +729,10 @@ def test_mutating_neon_client_rejects_ambiguous_or_unbounded_json(
     session = _MutatingNeonSession(_MutatingNeonResponse(status_code=200, content=content))
     monkeypatch.setattr(bootstrap_module.requests, "Session", lambda: session)
 
-    client = NeonClient("synthetic-neon-key")
+    client = _bootstrap_client(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     with pytest.raises(
         ChronosProductionError,
         match="CHRONOS_NEON_API_RESPONSE_INVALID",
@@ -711,7 +755,10 @@ def test_mutating_neon_client_stops_stream_at_the_response_limit(
     session = _MutatingNeonSession(response)
     monkeypatch.setattr(bootstrap_module.requests, "Session", lambda: session)
 
-    client = NeonClient("synthetic-neon-key")
+    client = _bootstrap_client(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     with pytest.raises(
         ChronosProductionError,
         match="CHRONOS_NEON_API_RESPONSE_INVALID",
@@ -737,7 +784,10 @@ def test_recovery_branch_request_explicitly_forbids_compute_creation(
     )
     monkeypatch.setattr(bootstrap_module.requests, "Session", lambda: session)
 
-    client = NeonClient("synthetic-neon-key")
+    client = _bootstrap_client(
+        monkeypatch,
+        authority_now=HISTORICAL_AUTHORITY_AT,
+    )
     assert (
         client.create_recovery_branch(
             project_id="project-robin",
@@ -759,6 +809,12 @@ def test_recovery_branch_request_explicitly_forbids_compute_creation(
 def test_bootstrap_identity_reuses_bounded_get_only_resolver(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    bind_historical_data_torrent_authority(
+        monkeypatch,
+        bootstrap_module,
+        readonly_preflight,
+        now=HISTORICAL_AUTHORITY_AT,
+    )
     target = DirectPostgresTarget(
         host="ep-production.eu-central-1.aws.neon.tech",
         port=5432,
@@ -816,6 +872,12 @@ def test_bootstrap_identity_reuses_bounded_get_only_resolver(
 def test_bootstrap_identity_preserves_only_sanitized_failure_codes(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    bind_historical_data_torrent_authority(
+        monkeypatch,
+        bootstrap_module,
+        readonly_preflight,
+        now=HISTORICAL_AUTHORITY_AT,
+    )
     target = DirectPostgresTarget(
         host="ep-production.eu-central-1.aws.neon.tech",
         port=5432,

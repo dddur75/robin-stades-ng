@@ -436,8 +436,9 @@ def test_first_c0_single_league_canary_authority_is_additive_and_fail_closed() -
         .read_bytes()
         .replace(b"\r\n", b"\n")
     )
-    assert hashlib.sha256(matrix_payload).hexdigest() == (
-        "973c06701e179f047b467167d5d0987bdf0b6e783b95a7b7d640e946e2c57756"
+    assert (
+        hashlib.sha256(matrix_payload).hexdigest()
+        == "d6cc116789e4571eaa3ee7a082a988db31e65e9880991ce90a54e121f97489e0"
     )
 
 

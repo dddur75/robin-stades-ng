@@ -1,0 +1,98 @@
+{
+  "agent_id": "A2",
+  "mission_id": "ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V1",
+  "facts_verified": [
+    {
+      "claim": "origin/main resolves exactly to 9b207cd1efd7f51ead29ff5b8c2709b6062fa763; the clean-main comparison worktree and the continuation candidate started from that same revision and were exercised with the same Python interpreter, explicit worktree PYTHONPATH, no pytest cache and no bytecode writes.",
+      "evidence_refs": [
+        "git ls-remote origin refs/heads/main",
+        "clean-main comparison worktree at base revision",
+        "continuation candidate worktree at base revision"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Before the repair, the complete tests/activation comparison was identical: clean main and candidate each reported 260 failed, 312 passed and 1 skipped; both sorted failure-node sets hashed to b1e8555981da76fc37a00d3557574f9610042923e03f56e5b2c33a3968ddf2f8 with zero node unique to either checkout.",
+      "evidence_refs": [
+        "python -m pytest -p no:cacheprovider -q --tb=no tests/activation on clean main",
+        "python -m pytest -p no:cacheprovider -q --tb=no tests/activation on the pre-repair candidate"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The reproduced mechanism is date dependence in historical scenario setup: canonical LF authority bytes pass at the explicit scenario instant 2026-08-31T12:00:00Z and current-time validation rejects the same immutable authority as expired; Windows CRLF checkout bytes were separately identified as a hash-mismatch precursor and were not hidden by the repair.",
+      "evidence_refs": [
+        "configs/execution/data-torrent-ready-v1.json",
+        "configs/execution/data-torrent-ready-v1-controlled-go-effect-contract.json",
+        "src/robin/chronos_production.py",
+        "tests/activation/historical_data_torrent_authority.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "After the test-only repair, the candidate reports 573 passed and 1 Linux-only skip in tests/activation, while the clean main checkout still reports 260 failed, 312 passed and 1 skipped under the same environment. A subsequent repository-wide diagnostic reported 3526 passed, 33 skipped and 32 failed, so the earlier 296 failures were not classified wholesale as pre-existing.",
+      "evidence_refs": [
+        "tests/activation",
+        "candidate pytest result: 573 passed, 1 skipped",
+        "clean-main pytest result: 260 failed, 312 passed, 1 skipped"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Six of the 32 residual failures were independently reproduced against canonical LF authority bytes as current-date expiry in historical Data Torrent scenarios. The explicit local-time bindings make all six pass; both affected modules now report 24 passed, and four direct current-expiry/fail-closed guards remain green.",
+      "evidence_refs": [
+        "tests/data_torrent/test_live_runtime_effect_accounting_v1.py",
+        "tests/data_torrent/test_source_effect_lineage_v1.py",
+        "tests/activation/historical_data_torrent_authority.py",
+        "candidate targeted result: 24 passed"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The remaining 26 diagnostic failures were reproduced on both clean main and candidate as Windows checkout EOL effects rather than temporal failures: 25 hypothesis-intelligence nodes pass under read-only LF blob emulation, and the convergence generator matches all eight reports after CRLF-to-LF normalization on both checkouts. No repository artifact was rewritten to obtain that evidence.",
+      "evidence_refs": [
+        "25-node hypothesis comparison: candidate and clean main identical",
+        "read-only LF emulation result: 25 passed",
+        "tests/data-sourcing/test_convergence_contracts.py::test_generator_reproduces_exact_repository_reports",
+        "read-only convergence comparison: 8 of 8 LF-normalized reports exact"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Historical clocks are explicit and local to each scenario, including the isolated child-process environment; no global clock freeze, collective skip, autouse fixture or runtime edit was added, and the current-date expiry, temporal-boundary, preflight-expiry and pre-secret refusal guards remain green.",
+      "evidence_refs": [
+        "tests/activation/historical_data_torrent_authority.py",
+        "tests/activation/test_chronos_end_to_end_live_path_v1.py",
+        "tests/activation/test_chronos_production_bootstrap_v3.py",
+        "tests/activation/test_chronos_runtime_bindings_v1.py",
+        "C4 targeted review: five guards passed"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "The Linux-only GNU timeout node and the complete exact-head required-check matrix remain to be observed in GitHub Actions after push."
+  ],
+  "assumptions": [
+    "GitHub Actions will evaluate the committed LF Git blobs rather than a Windows CRLF working-tree representation."
+  ],
+  "main_objection": "No P0 or P1 baseline objection remains after the explicit-time repair. The earlier 296 failures were not labeled wholesale as pre-existing: 260 activation failures were reproduced and corrected, and after the separately tracked governance corrections the unique diagnostic rerun left 32 failures. Those 32 are fully classified by evidence as six corrected Data Torrent temporal failures plus 26 cross-platform EOL failures reproduced without source mutation. Exact-head Ubuntu CI remains the decisive full-suite control.",
+  "risks": [
+    {
+      "risk": "A later broad fixture or process-wide clock override could mask fail-closed expiry behavior; the continuation tests forbid that pattern and must remain unchanged through merge.",
+      "severity": "HIGH",
+      "evidence_refs": [
+        "tests/activation/historical_data_torrent_authority.py",
+        "tests/activation/test_chronos_production_bootstrap_v3.py"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Run the exact-head required checks on Ubuntu, including the Linux-only node and full suite, while retaining the 573-pass activation-domain result, the 24-pass affected Data Torrent pair and every direct expiry guard.",
+  "recommended_action": "PASS_AND_HOLD for final local controls and exact-head CI. Do not rotate authority dates or alter runtime validation.",
+  "scale_condition": "Merge only after the unique full pre-merge suite and exact-head required checks are green; no runtime effect is authorized by this diagnostic report.",
+  "estimated_compute": "Two complete activation-domain comparisons plus bounded causal probes and the repaired activation-domain verification; no corpus replay.",
+  "estimated_external_cost": "0; no network request, secret read, provider credit, storage write, purchase or bet was performed.",
+  "estimated_human_time": "Bounded within the two-hour active continuation budget.",
+  "maintenance_impact": "Low: one test-only helper and explicit required timestamps local to the affected historical scenarios.",
+  "confidence": 0.99
+}
