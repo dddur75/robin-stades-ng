@@ -13,7 +13,11 @@ from pathlib import Path
 _RUNTIME_SOURCE = Path(__file__).resolve().parents[1] / "src"
 sys.path.insert(0, str(_RUNTIME_SOURCE))
 
-from robin.capture.live_transport import EnvironmentSecretReader, StrictHttpsTransport  # noqa: E402
+from robin.capture.live_transport import (  # noqa: E402
+    EnvironmentSecretReader,
+    LiveTransportError,
+    StrictHttpsTransport,
+)
 from robin.capture.real_data_result import (  # noqa: E402
     MISSION_ID,
     ResultConfig,
@@ -41,6 +45,65 @@ def _required(environment: dict[str, str], name: str) -> str:
     if not value:
         raise ResultError("RESULT_GITHUB_CONTEXT_MISSING")
     return value
+
+
+def _failure_stage(code: str) -> str:
+    if code.startswith("RESULT_DNS_"):
+        return "DNS_RESOLUTION"
+    if code.startswith("RESULT_R2_"):
+        return "R2_CONFIGURATION"
+    if code.startswith("RESULT_PROVIDER_SECRET_"):
+        return "PROVIDER_SECRET"
+    if code.startswith("RESULT_GITHUB_"):
+        return "GITHUB_CONTEXT"
+    if code.startswith("RESULT_MANIFEST_") or code == "RESULT_MISSION_EXPIRED":
+        return "MISSION_AUTHORITY"
+    return "RESULT_RUNTIME"
+
+
+def _emit_failure_diagnostic(code: str, error: BaseException) -> None:
+    transport_diagnostic = error.diagnostic if isinstance(error, LiveTransportError) else None
+    result_diagnostic = error.diagnostic if isinstance(error, ResultError) else None
+    error_number = getattr(error, "errno", None)
+    if not isinstance(error_number, int) or isinstance(error_number, bool):
+        error_number = None
+    stage = _failure_stage(code)
+    exception_class = type(error).__name__
+    http_status: int | None = None
+    if transport_diagnostic is not None:
+        stage = transport_diagnostic.stage
+        exception_class = transport_diagnostic.exception_class
+        error_number = transport_diagnostic.errno
+        http_status = transport_diagnostic.http_status
+    elif result_diagnostic is not None:
+        diagnostic_stage = result_diagnostic.get("stage")
+        diagnostic_class = result_diagnostic.get("exception_class")
+        diagnostic_errno = result_diagnostic.get("errno")
+        diagnostic_status = result_diagnostic.get("http_status")
+        if isinstance(diagnostic_stage, str):
+            stage = diagnostic_stage
+        if isinstance(diagnostic_class, str):
+            exception_class = diagnostic_class
+        if isinstance(diagnostic_errno, int) and not isinstance(diagnostic_errno, bool):
+            error_number = diagnostic_errno
+        if isinstance(diagnostic_status, int) and not isinstance(diagnostic_status, bool):
+            http_status = diagnostic_status
+    print(code, file=sys.stderr)
+    print(
+        json.dumps(
+            {
+                "stage": stage,
+                "code": code,
+                "exception_class": exception_class,
+                "errno": error_number,
+                "http_status": http_status,
+            },
+            ensure_ascii=True,
+            sort_keys=True,
+            separators=(",", ":"),
+        ),
+        file=sys.stderr,
+    )
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -77,16 +140,15 @@ def main(argv: list[str] | None = None) -> int:
             resolver=lambda: resolve_provider_once(clock=clock),
             clock=clock,
         )
-    except ChronosR2Error:
-        print("RESULT_R2_CONFIGURATION_INVALID", file=sys.stderr)
+    except ChronosR2Error as error:
+        _emit_failure_diagnostic("RESULT_R2_CONFIGURATION_INVALID", error)
         return 2
-    except (ResultError, ValueError):
-        error = sys.exc_info()[1]
+    except (ResultError, ValueError) as error:
         code = error.code if isinstance(error, ResultError) else "RESULT_CONFIGURATION_INVALID"
-        print(code, file=sys.stderr)
+        _emit_failure_diagnostic(code, error)
         return 2
-    except Exception:
-        print("RESULT_UNEXPECTED_FAILURE", file=sys.stderr)
+    except Exception as error:
+        _emit_failure_diagnostic("RESULT_UNEXPECTED_FAILURE", error)
         return 3
     print(json.dumps(receipt, ensure_ascii=True, sort_keys=True, separators=(",", ":")))
     return (

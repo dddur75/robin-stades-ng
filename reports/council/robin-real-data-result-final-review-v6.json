@@ -1,0 +1,99 @@
+{
+  "agent_id": "C0",
+  "mission_id": "ROBIN_REAL_DATA_RESULT_20261003",
+  "facts_verified": [
+    {
+      "claim": "V1.006 réutilise la revue données DP6 v2 inchangée et consolide des revues fraîches C4 sécurité v3, C2 gouvernance v6 et A2 plateforme v4 sur le correctif DNS, les diagnostics et le workflow.",
+      "evidence_refs": [
+        "reports/council/robin-real-data-result-data-review-v2.json",
+        "reports/council/robin-real-data-result-security-review-v3.json",
+        "reports/council/robin-real-data-result-governance-review-v6.json",
+        "reports/council/robin-real-data-result-platform-review-v4.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le run 37145228162 a échoué sur RESULT_DNS_RESOLUTION_EXPIRED avant secret et fournisseur: un dispatch consommé, une résolution DNS, zéro nouvelle requête fournisseur, zéro nouveau crédit, zéro capture et zéro artifact.",
+      "evidence_refs": [
+        "https://github.com/dddur75/robin-stades-ng/actions/runs/37145228162",
+        "reports/council/robin-real-data-result-governance-review-v6.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le correctif reprend l'horloge autorisée après le resolver, conserve le refus d'une résolution réellement expirée avant secret et HTTP, et n'ajoute aucun retry automatique.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py",
+        "tests/capture/test_real_data_result.py",
+        "reports/council/robin-real-data-result-platform-review-v4.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les diagnostics persistables sont limités à stage, code, exception_class, errno et http_status; les messages, URL, clés, headers et payloads sont exclus, y compris pour les erreurs R2.",
+      "evidence_refs": [
+        "scripts/run_real_data_result.py",
+        "src/robin/capture/real_data_result.py",
+        "reports/council/robin-real-data-result-security-review-v3.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les 36 tests résultat/workflow/CLI et les 65 tests transport passent hors réseau, avec zéro tentative réseau non approuvée; Ruff, mypy ciblé et diff-check passent également.",
+      "evidence_refs": [
+        "pytest targeted result/workflow/CLI: 36 passed",
+        "pytest targeted transport: 65 passed",
+        "ruff changed Python scope: All checks passed",
+        "mypy strict runtime and CLI: Success",
+        "git diff --check: exit 0"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Aucune nouvelle donnée réelle n'a encore été reçue par ce correctif; les trois claims capture, vue et consommation restent PARTIAL jusqu'à un artifact post-fusion reçu, conservé, relu et vérifié.",
+      "evidence_refs": [
+        "reports/evidence/evidence-graph.json#DATA.ROBIN.REAL.RESULT.CAPTURES.V1.001",
+        "reports/evidence/evidence-graph.json#DATA.ROBIN.REAL.RESULT.VIEW.V1.001",
+        "reports/evidence/evidence-graph.json#GOV.ROBIN.REAL.RESULT.CONSUMPTION.V1.001"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "Le SHA final du commit et les contrôles CI exact-head ne sont pas encore établis.",
+    "Le quota courant, la disponibilité fournisseur/R2 et la couverture réelle restent inconnus avant le prochain dispatch borné.",
+    "Les données, captures et lignes réelles restent absentes avant l'exécution post-fusion."
+  ],
+  "assumptions": [
+    "Le commit final conserve sans modification substantielle les six fichiers fonctionnels revus.",
+    "Les secrets existants restent configurés sans achat, recharge ni renouvellement.",
+    "Le prochain dispatch est distinct et n'est pas un rerun du run échoué."
+  ],
+  "main_objection": "C0 V1.006 VERDICT: PASS_AND_HOLD, P0=0, P1=0, P2_new=0, quatre risques historiques faibles conservés et zéro thread critique bloquant le candidat.",
+  "risks": [
+    {
+      "risk": "Un défaut propre au runner, au DNS, à R2, aux secrets ou au fournisseur peut encore apparaître pendant l'exécution réelle; il doit rester isolé et diagnostiqué sans dépasser les plafonds.",
+      "severity": "MEDIUM",
+      "evidence_refs": [
+        "reports/council/robin-real-data-result-platform-review-v4.json",
+        "reports/council/robin-real-data-result-governance-review-v6.json"
+      ]
+    },
+    {
+      "risk": "Les quatre risques historiques faibles de précision diagnostique et de consultation publique temporaire restent applicables.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "reports/council/robin-real-data-result-final-review-v5.json",
+        "reports/council/robin-real-data-result-security-review-v3.json"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Valider les hashes V1.006, le ledger et le graphe, obtenir tous les contrôles exact-head au vert, fusionner normalement, puis lancer un dispatch distinct et exiger conservation/relecture R2, trois cycles, comptabilité bornée et artifact HTML/CSV validé.",
+  "recommended_action": "GO conditionnel: committer avec C0, pousser, obtenir la CI obligatoire, fusionner normalement puis exécuter le nouveau pilote; ne déclarer la livraison qu'après réception et vérification des données réelles.",
+  "scale_condition": "Rester E1/PASS_AND_HOLD; poursuivre le prochain parcours seulement avec SHA main exact, dispatch admissible, première capture durablement relue, en-têtes de quota valides et bornes cumulées au plus quarante requêtes et soixante crédits.",
+  "estimated_compute": "Vérifications locales ciblées puis un workflow borné à trente minutes et trois cycles espacés de cent vingt secondes.",
+  "estimated_external_cost": "Revue et correction: zéro nouvelle requête fournisseur et zéro crédit. Prochain parcours complet: au plus quinze requêtes et trente crédits, borne cumulative conservatrice de seize requêtes et trente-quatre crédits.",
+  "estimated_human_time": "Dans la fenêtre de huit heures actives autorisée, hors attente passive de CI et des cycles.",
+  "maintenance_impact": "Faible: correction locale de l'ordre temporel, diagnostics typés et validation d'artifact; aucun nouveau fournisseur, stockage, runner ou mécanisme de gouvernance.",
+  "confidence": 0.98
+}

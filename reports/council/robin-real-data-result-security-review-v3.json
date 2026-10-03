@@ -1,0 +1,103 @@
+{
+  "agent_id": "C4",
+  "mission_id": "ROBIN_REAL_DATA_RESULT_20261003",
+  "facts_verified": [
+    {
+      "claim": "Les secrets fournisseur et R2 restent limités à l'étape capture; aucune nouvelle valeur secrète, URL signée ou clé réelle n'apparaît dans le diff.",
+      "evidence_refs": [
+        ".github/workflows/91-robin-real-data-result.yml:112-144",
+        "tests/capture/test_real_data_result_workflow.py:48-87",
+        "git diff secret/URL scan"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les diagnostics runtime n'émettent que l'étape, le code stable, la classe d'exception, errno et le statut HTTP; les messages d'exception et URL ne sont jamais sérialisés.",
+      "evidence_refs": [
+        "scripts/run_real_data_result.py:50-105",
+        "src/robin/capture/real_data_result.py:728-777",
+        "tests/capture/test_run_real_data_result_cli.py:95-191"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les erreurs R2 de lecture et d'écriture sont converties en diagnostics expurgés; errno exclut bool/non-entier et le statut HTTP est borné à 100-599 par _diagnostic.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py:587-671",
+        "src/robin/capture/real_data_result.py:728-777",
+        "tests/capture/test_real_data_result.py:435-483"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "L'artefact reste limité aux quatre livrables normalisés attendus; les fichiers inattendus bloquent la validation sans divulgation de leur nom et aucun payload brut n'est téléversé.",
+      "evidence_refs": [
+        ".github/workflows/91-robin-real-data-result.yml:154-238",
+        "tests/capture/test_real_data_result_workflow.py:71-86",
+        "src/robin/capture/real_data_result.py:2194-2200"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les verrous achat, pari, promotion, backfill et production restent fail-closed et aucun nouvel effet externe n'est ajouté par ce correctif.",
+      "evidence_refs": [
+        ".github/workflows/91-robin-real-data-result.yml:22-32",
+        "src/robin/capture/real_data_result.py:92-121",
+        "src/robin/capture/real_data_result.py:1755-1765",
+        "git diff origin/main"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La vérification de fraîcheur DNS est désormais effectuée après le retour effectif du résolveur, avant lecture du secret et avant émission fournisseur; une résolution expirée arrête la branche sans requête.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py:1839-1862",
+        "tests/capture/test_real_data_result.py:361-434"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les tests ciblés sécurité, workflow et livraison passent sans tentative réseau non approuvée.",
+      "evidence_refs": [
+        "pytest targeted: 36 passed; UNAPPROVED_NETWORK_ATTEMPTS = 0",
+        "git diff --check: exit 0"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "La forme exacte des erreurs R2 et réseau du prochain runner réel ne peut être confirmée par cette revue hors réseau.",
+    "Cette revue ne démontre ni la disponibilité actuelle du fournisseur, ni les données reçues, ni la consommation réelle du prochain cycle."
+  ],
+  "assumptions": [
+    "Le candidat relu est le diff non committé de codex/robin-real-data-delivery-fix-v1 contre origin/main 5b2383bec5a539336bd89bcab3f84cc219c09989.",
+    "Les futurs producteurs de ResultError.diagnostic continueront d'utiliser _diagnostic ou _exception_diagnostic pour les valeurs issues d'exceptions."
+  ],
+  "main_objection": "GO — P0=0, P1=0, P2=0. Aucune objection sécurité bloquante sur le candidat relu.",
+  "risks": [
+    {
+      "risk": "Une future construction manuelle de ResultError.diagnostic avec des chaînes externes contournerait le point de normalisation actuel; aucun chemin de production présent ne le fait.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "scripts/run_real_data_result.py:65-88",
+        "src/robin/capture/real_data_result.py:728-777"
+      ]
+    },
+    {
+      "risk": "L'accès à l'artefact normalisé suit la visibilité du dépôt public; cela est explicitement autorisé mais rend les cotes normalisées consultables pendant la rétention.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "configs/execution/robin-real-data-result-20261003.json:16",
+        ".github/workflows/91-robin-real-data-result.yml:229-238"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Après commit exact, rejouer les 36 tests ciblés avec UNAPPROVED_NETWORK_ATTEMPTS=0, puis exiger les contrôles obligatoires verts avant tout dispatch sur le SHA fusionné.",
+  "recommended_action": "Consolider ce rapport C4 dans les preuves, committer le candidat avec C0, pousser la PR et poursuivre la CI; n'exécuter le pilote qu'après préflight des compteurs et vérification du SHA main exact.",
+  "scale_condition": "SHA fusionné exact, contrôles obligatoires verts, secrets existants présents sans exposition, plafond dispatch/requêtes/crédits disponible et artefact limité aux quatre fichiers normalisés.",
+  "estimated_compute": "Revue statique de 7 fichiers modifiés et 36 tests ciblés hors réseau.",
+  "estimated_external_cost": "0 requête fournisseur, 0 crédit, 0 écriture R2 et 0 effet Git distant.",
+  "estimated_human_time": "Environ 20 minutes de revue indépendante.",
+  "maintenance_impact": "Faible: diagnostics centralisés et typés, meilleure observabilité de validation, aucune nouvelle dépendance ni infrastructure.",
+  "confidence": 0.96
+}

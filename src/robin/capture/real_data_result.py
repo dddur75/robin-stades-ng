@@ -130,8 +130,14 @@ _OUTPUT_FILENAMES = (
 class ResultError(RuntimeError):
     """Stable failure code; exception text never includes provider material."""
 
-    def __init__(self, code: str) -> None:
+    def __init__(
+        self,
+        code: str,
+        *,
+        diagnostic: dict[str, object] | None = None,
+    ) -> None:
         self.code = code
+        self.diagnostic = diagnostic
         super().__init__(code)
 
 
@@ -591,8 +597,15 @@ def _put_immutable(
         )
     except ResultError:
         raise
-    except Exception:
-        raise ResultError("RESULT_R2_PUT_FAILED") from None
+    except Exception as error:
+        raise ResultError(
+            "RESULT_R2_PUT_FAILED",
+            diagnostic=_exception_diagnostic(
+                stage="R2_WRITE",
+                code="RESULT_R2_PUT_FAILED",
+                error=error,
+            ),
+        ) from None
     if callbacks != 1 or result.transport_attempts != 1 or result.automatic_retry_possible:
         raise ResultError("RESULT_R2_PUT_ACCOUNTING_INVALID")
     if result.outcome is ConditionalPutOutcome.CREATED:
@@ -614,8 +627,15 @@ def _get_observed(
     effects.r2_gets += 1
     try:
         observed = store.get_object(key)
-    except Exception:
-        raise ResultError("RESULT_R2_READBACK_FAILED") from None
+    except Exception as error:
+        raise ResultError(
+            "RESULT_R2_READBACK_FAILED",
+            diagnostic=_exception_diagnostic(
+                stage="R2_READBACK",
+                code="RESULT_R2_READBACK_FAILED",
+                error=error,
+            ),
+        ) from None
     if observed is None:
         raise ResultError(missing_code)
     digest = hashlib.sha256(observed.data).hexdigest()
@@ -635,8 +655,15 @@ def _get_optional(
     effects.r2_gets += 1
     try:
         observed = store.get_object(key)
-    except Exception:
-        raise ResultError("RESULT_R2_READBACK_FAILED") from None
+    except Exception as error:
+        raise ResultError(
+            "RESULT_R2_READBACK_FAILED",
+            diagnostic=_exception_diagnostic(
+                stage="R2_READBACK",
+                code="RESULT_R2_READBACK_FAILED",
+                error=error,
+            ),
+        ) from None
     if observed is None:
         return None
     digest = hashlib.sha256(observed.data).hexdigest()
@@ -720,6 +747,34 @@ def _diagnostic(
         "errno": safe_errno,
         "http_status": safe_status,
     }
+
+
+def _exception_diagnostic(
+    *,
+    stage: str,
+    code: str,
+    error: BaseException,
+) -> dict[str, object]:
+    error_number = getattr(error, "errno", None)
+    response = getattr(error, "response", None)
+    http_status: int | None = None
+    if isinstance(response, Mapping):
+        metadata = response.get("ResponseMetadata")
+        if isinstance(metadata, Mapping):
+            candidate_status = metadata.get("HTTPStatusCode")
+            if isinstance(candidate_status, int) and not isinstance(candidate_status, bool):
+                http_status = candidate_status
+    return _diagnostic(
+        stage=stage,
+        code=code,
+        exception_class=type(error).__name__,
+        errno=(
+            error_number
+            if isinstance(error_number, int) and not isinstance(error_number, bool)
+            else None
+        ),
+        http_status=http_status,
+    )
 
 
 def _transport_diagnostic(error: LiveTransportError) -> dict[str, object]:
@@ -1781,7 +1836,7 @@ def run_real_data_result(
     resolution: NetworkResolution | None = None
     api_key: str | None = None
 
-    def provider_access(now: datetime) -> tuple[NetworkResolution, str]:
+    def provider_access() -> tuple[NetworkResolution, str]:
         nonlocal resolution, api_key
         if resolution is None:
             effects.dns_resolutions += 1
@@ -1791,7 +1846,13 @@ def run_real_data_result(
                 raise ResultError("RESULT_DNS_RESOLUTION_FAILED") from None
             if resolution.resolution_operations != 1:
                 raise ResultError("RESULT_DNS_RESOLUTION_INVALID")
-        _assert_resolution_current(resolution, now)
+        resolution_check_time = _assert_authority(
+            manifest,
+            clock=clock,
+            monotonic=monotonic,
+            started_monotonic=started_monotonic,
+        )
+        _assert_resolution_current(resolution, resolution_check_time)
         if api_key is None:
             effects.secret_reads += 1
             try:
@@ -1934,7 +1995,7 @@ def run_real_data_result(
                     rows = ()
                     observed_quota = None
                 else:
-                    active_resolution, active_api_key = provider_access(effect_time)
+                    active_resolution, active_api_key = provider_access()
                     branch, rows, observed_quota = _run_branch(
                         config=config,
                         cycle_index=cycle_index,

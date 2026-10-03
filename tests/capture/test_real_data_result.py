@@ -358,6 +358,128 @@ def test_three_cycles_flow_through_reservation_r2_replay_and_table(tmp_path: Pat
     assert report["retention"]["raw_payloads"] == "R2_IMMUTABLE_PRIVATE_ONLY"
 
 
+def test_dns_resolution_is_checked_against_time_after_the_resolver_returns(
+    tmp_path: Path,
+) -> None:
+    events: list[str] = []
+    clock = ManualClock()
+    store = FakeStore(events)
+    transport = FakeTransportFactory(events, clock)
+
+    def delayed_resolution() -> NetworkResolution:
+        clock.current += timedelta(seconds=4)
+        clock.monotonic_value += 4
+        observed = clock()
+        return NetworkResolution(
+            selected_ip_address="1.1.1.1",
+            resolved_ip_addresses=("1.1.1.1",),
+            observed_at_utc=observed,
+            expires_at_utc=observed + timedelta(minutes=15),
+            resolver_identity="synthetic-delayed-system-resolver",
+        )
+
+    receipt = run_real_data_result(
+        _config(tmp_path),
+        store=store,
+        transport_factory=transport,
+        secret_reader=FakeSecretReader(events),
+        resolver=delayed_resolution,
+        clock=clock,
+        monotonic=clock.monotonic,
+        sleeper=clock.sleep,
+    )
+
+    assert receipt["status"] == "REAL_DATA_COMPLETE"
+    assert receipt["validated_capture_count"] == 15
+    assert receipt["effect_accounting"]["dns_resolutions"] == 1
+    assert len(transport.requests) == 15
+
+
+def test_expired_dns_resolution_still_stops_before_secret_or_provider(
+    tmp_path: Path,
+) -> None:
+    events: list[str] = []
+    clock = ManualClock()
+    store = FakeStore(events)
+    transport = FakeTransportFactory(events, clock)
+    secret_reader = FakeSecretReader(events)
+
+    def expired_resolution() -> NetworkResolution:
+        return NetworkResolution(
+            selected_ip_address="1.1.1.1",
+            resolved_ip_addresses=("1.1.1.1",),
+            observed_at_utc=START - timedelta(minutes=16),
+            expires_at_utc=START - timedelta(minutes=1),
+            resolver_identity="synthetic-expired-system-resolver",
+        )
+
+    try:
+        run_real_data_result(
+            _config(tmp_path),
+            store=store,
+            transport_factory=transport,
+            secret_reader=secret_reader,
+            resolver=expired_resolution,
+            clock=clock,
+            monotonic=clock.monotonic,
+            sleeper=clock.sleep,
+        )
+    except ResultError as error:
+        assert error.code == "RESULT_DNS_RESOLUTION_EXPIRED"
+    else:  # pragma: no cover - explicit fail-closed assertion
+        raise AssertionError("expired provider DNS resolution was accepted")
+
+    assert secret_reader.reads == 0
+    assert transport.requests == []
+
+
+def test_r2_read_failure_preserves_only_typed_sanitized_diagnostic(
+    tmp_path: Path,
+) -> None:
+    events: list[str] = []
+    clock = ManualClock()
+    secret_reader = FakeSecretReader(events)
+    transport = FakeTransportFactory(events, clock)
+    forbidden_detail = "https://storage.invalid/object?secret=forbidden-value"
+
+    class SyntheticR2Error(OSError):
+        def __init__(self) -> None:
+            super().__init__(9, forbidden_detail)
+            self.response = {"ResponseMetadata": {"HTTPStatusCode": 403}}
+
+    class FailingReadStore(FakeStore):
+        def get_object(self, key: str) -> ObservedObject | None:
+            self.gets.append(key)
+            raise SyntheticR2Error
+
+    try:
+        run_real_data_result(
+            _config(tmp_path),
+            store=FailingReadStore(events),
+            transport_factory=transport,
+            secret_reader=secret_reader,
+            resolver=_resolution,
+            clock=clock,
+            monotonic=clock.monotonic,
+            sleeper=clock.sleep,
+        )
+    except ResultError as error:
+        assert error.code == "RESULT_R2_READBACK_FAILED"
+        assert error.diagnostic == {
+            "stage": "R2_READBACK",
+            "code": "RESULT_R2_READBACK_FAILED",
+            "exception_class": "SyntheticR2Error",
+            "errno": 9,
+            "http_status": 403,
+        }
+        assert forbidden_detail not in json.dumps(error.diagnostic)
+    else:  # pragma: no cover - explicit fail-closed assertion
+        raise AssertionError("R2 read failure was accepted")
+
+    assert secret_reader.reads == 0
+    assert transport.requests == []
+
+
 def test_first_capture_must_be_read_back_before_any_later_provider_request(
     tmp_path: Path,
 ) -> None:

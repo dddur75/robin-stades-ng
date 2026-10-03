@@ -168,10 +168,18 @@ jobs:
 
           root = Path(os.environ["RUNNER_TEMP"]) / "real-data-result"
           expected = {
-              "public-receipt.json", "robin-real-data.json",
-              "robin-real-data.csv", "robin-real-data.html",
+            "public-receipt.json", "robin-real-data.json",
+            "robin-real-data.csv", "robin-real-data.html",
           }
-          assert {path.name for path in root.iterdir() if path.is_file()} == expected
+          observed = {path.name for path in root.iterdir() if path.is_file()}
+          missing = sorted(expected - observed)
+          unexpected_count = len(observed - expected)
+          if missing or unexpected_count:
+              raise RuntimeError(
+                  "RESULT_NORMALIZED_FILE_SET_INVALID "
+                  f"missing={','.join(missing) or 'none'} "
+                  f"unexpected_count={unexpected_count}"
+              )
           receipt = json.loads((root / "public-receipt.json").read_text(encoding="utf-8"))
           report = json.loads((root / "robin-real-data.json").read_text(encoding="utf-8"))
           assert receipt["mission_id"] == "ROBIN_REAL_DATA_RESULT_20261003"
