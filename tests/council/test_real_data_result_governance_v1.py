@@ -57,6 +57,18 @@ DNS_CLOCK_REGRESSION_CLAIM_ID = (
 )
 DELIVERY_PROJECTION_CLAIM_ID = "GOV.ENGINEERING.ROBIN_REAL_DATA_RESULT.PROJECTION.V1.006"
 DELIVERY_FINAL_REVIEW_CLAIM_ID = "GOV.REVIEW.ROBIN_REAL_DATA_RESULT.FINAL.V1.006"
+EVIDENCE_COVERAGE_FAILURE_CLAIM_ID = (
+    "GOV.CI.ROBIN_REAL_DATA_RESULT.EVIDENCE.SUCCESSOR.COVERAGE.FAILURE.V1.001"
+)
+EVIDENCE_COVERAGE_REGRESSION_CLAIM_ID = (
+    "GOV.CI.ROBIN_REAL_DATA_RESULT.EVIDENCE.SUCCESSOR.COVERAGE.REGRESSION.V1.001"
+)
+EVIDENCE_COVERAGE_PROJECTION_CLAIM_ID = (
+    "GOV.ENGINEERING.ROBIN_REAL_DATA_RESULT.PROJECTION.V1.007"
+)
+EVIDENCE_COVERAGE_FINAL_REVIEW_CLAIM_ID = (
+    "GOV.REVIEW.ROBIN_REAL_DATA_RESULT.FINAL.V1.007"
+)
 HISTORICAL_ASSERTION_FAILURE_DECISION_ID = "RCV3-20261003-211"
 HISTORICAL_FINAL_DECISION_ID = "RCV3-20261003-212"
 REPRESENTATION_FAILURE_DECISION_ID = "RCV3-20261003-213"
@@ -69,6 +81,8 @@ WORKFLOW_HASH_FAILURE_DECISION_ID = "RCV3-20261003-219"
 SUCCESSOR_FINAL_DECISION_ID = "RCV3-20261003-220"
 DNS_CLOCK_FAILURE_DECISION_ID = "RCV3-20261003-221"
 DELIVERY_FINAL_DECISION_ID = "RCV3-20261003-222"
+EVIDENCE_COVERAGE_FAILURE_DECISION_ID = "RCV3-20261003-223"
+EVIDENCE_COVERAGE_FINAL_DECISION_ID = "RCV3-20261003-224"
 DATA_CLAIM_IDS = {
     "DATA.ROBIN.REAL.RESULT.CAPTURES.V1.001",
     "DATA.ROBIN.REAL.RESULT.VIEW.V1.001",
@@ -912,23 +926,21 @@ def test_dns_clock_delivery_fix_has_exact_active_projection_and_review() -> None
     projection = claims[DELIVERY_PROJECTION_CLAIM_ID]
     assert predecessor["status"] == "SUPERSEDED"
     assert predecessor["superseded_by"] == DELIVERY_PROJECTION_CLAIM_ID
-    assert projection["status"] == "VERIFIED"
+    assert projection["status"] == "SUPERSEDED"
+    assert projection["superseded_by"] == EVIDENCE_COVERAGE_PROJECTION_CLAIM_ID
     assert projection["successor_of"] == SUCCESSOR_PROJECTION_CLAIM_ID
     assert SUCCESSOR_PROJECTION_CLAIM_ID in projection["supersedes"]
     assert set(projection["artifact_hashes"]) == EXPECTED_SUCCESSOR_PROJECTION_PATHS
-    recalculated = {
-        path: hashlib.sha256((ROOT / path).read_bytes().replace(b"\r\n", b"\n")).hexdigest()
-        for path in sorted(EXPECTED_SUCCESSOR_PROJECTION_PATHS)
-    }
-    assert projection["artifact_hashes"] == recalculated
-    canonical = json.dumps(recalculated, sort_keys=True, separators=(",", ":")).encode()
+    frozen = projection["artifact_hashes"]
+    canonical = json.dumps(frozen, sort_keys=True, separators=(",", ":")).encode()
     assert projection["engineering_projection_sha256"] == hashlib.sha256(canonical).hexdigest()
 
     predecessor_review = claims[SUCCESSOR_FINAL_REVIEW_CLAIM_ID]
     review = claims[DELIVERY_FINAL_REVIEW_CLAIM_ID]
     assert predecessor_review["status"] == "SUPERSEDED"
     assert predecessor_review["superseded_by"] == DELIVERY_FINAL_REVIEW_CLAIM_ID
-    assert review["status"] == "VERIFIED"
+    assert review["status"] == "SUPERSEDED"
+    assert review["superseded_by"] == EVIDENCE_COVERAGE_FINAL_REVIEW_CLAIM_ID
     assert review["successor_of"] == SUCCESSOR_FINAL_REVIEW_CLAIM_ID
     assert review["engineering_projection_sha256"] == projection["engineering_projection_sha256"]
     assert review["p0"] == review["p1"] == review["p2_new"] == 0
@@ -1022,6 +1034,158 @@ def test_dns_clock_delivery_fix_has_exact_active_projection_and_review() -> None
             "edge_id": "EDGE.849",
             "from_claim_id": DELIVERY_FINAL_REVIEW_CLAIM_ID,
             "to_decision_id": DELIVERY_FINAL_DECISION_ID,
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        },
+    ]
+    edge_start = next(i for i, edge in enumerate(graph["edges"]) if edge["edge_id"] == "EDGE.845")
+    assert graph["edges"][edge_start : edge_start + len(expected_edges)] == expected_edges
+    for candidate in (failure_record, decision):
+        canonical_record = json.dumps(
+            {key: value for key, value in candidate.items() if key != "hash"},
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+        assert hashlib.sha256(canonical_record).hexdigest() == candidate["hash"]
+
+
+def test_evidence_successor_coverage_has_exact_active_projection_and_review() -> None:
+    graph = _load("reports/evidence/evidence-graph.json")
+    claims = {claim["claim_id"]: claim for claim in graph["claims"]}
+    failure = claims[EVIDENCE_COVERAGE_FAILURE_CLAIM_ID]
+    assert failure["status"] == "VERIFIED"
+    assert failure["run_id"] == 37147292328
+    assert failure["head_sha"] == "a9b132cb4da130b6f386fe348d55d050fb6bf852"
+    assert failure["failed_profiles"] == ["non_superuser_createrole", "superuser"]
+    assert failure["exact_node"] == (
+        "tests/council/test_robin_council_os_v3.py::"
+        "test_evidence_graph_and_append_only_ledger_have_mandatory_fields"
+    )
+    assert failure["profile_result"] == "1_FAILED_3607_PASSED_42_SKIPPED"
+    assert failure["provider_http_requests"] == 0
+    assert failure["provider_credits"] == 0
+
+    regression = claims[EVIDENCE_COVERAGE_REGRESSION_CLAIM_ID]
+    assert regression["status"] == "VERIFIED"
+    assert len(regression["covered_claim_ids"]) == 8
+    assert regression["runtime_changed"] is False
+    assert regression["assertions_removed"] == 0
+    assert regression["targeted_after"] == "10_PASSED"
+    assert regression["unapproved_network_attempts"] == 0
+
+    predecessor = claims[DELIVERY_PROJECTION_CLAIM_ID]
+    projection = claims[EVIDENCE_COVERAGE_PROJECTION_CLAIM_ID]
+    assert predecessor["status"] == "SUPERSEDED"
+    assert predecessor["superseded_by"] == EVIDENCE_COVERAGE_PROJECTION_CLAIM_ID
+    assert projection["status"] == "VERIFIED"
+    assert projection["successor_of"] == DELIVERY_PROJECTION_CLAIM_ID
+    assert DELIVERY_PROJECTION_CLAIM_ID in projection["supersedes"]
+    assert set(projection["artifact_hashes"]) == EXPECTED_SUCCESSOR_PROJECTION_PATHS
+    recalculated = {
+        path: hashlib.sha256((ROOT / path).read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+        for path in sorted(EXPECTED_SUCCESSOR_PROJECTION_PATHS)
+    }
+    assert projection["artifact_hashes"] == recalculated
+    canonical = json.dumps(recalculated, sort_keys=True, separators=(",", ":")).encode()
+    assert projection["engineering_projection_sha256"] == hashlib.sha256(canonical).hexdigest()
+
+    predecessor_review = claims[DELIVERY_FINAL_REVIEW_CLAIM_ID]
+    review = claims[EVIDENCE_COVERAGE_FINAL_REVIEW_CLAIM_ID]
+    assert predecessor_review["status"] == "SUPERSEDED"
+    assert predecessor_review["superseded_by"] == EVIDENCE_COVERAGE_FINAL_REVIEW_CLAIM_ID
+    assert review["status"] == "VERIFIED"
+    assert review["successor_of"] == DELIVERY_FINAL_REVIEW_CLAIM_ID
+    assert review["engineering_projection_sha256"] == projection["engineering_projection_sha256"]
+    assert review["p0"] == review["p1"] == review["p2_new"] == 0
+
+    records = _records()
+    prior_index = next(
+        i for i, record in enumerate(records) if record["decision_id"] == DELIVERY_FINAL_DECISION_ID
+    )
+    failure_index = next(
+        i
+        for i, record in enumerate(records)
+        if record["decision_id"] == EVIDENCE_COVERAGE_FAILURE_DECISION_ID
+    )
+    decision_index = next(
+        i
+        for i, record in enumerate(records)
+        if record["decision_id"] == EVIDENCE_COVERAGE_FINAL_DECISION_ID
+    )
+    failure_record = records[failure_index]
+    decision = records[decision_index]
+    assert failure_index == prior_index + 1
+    assert decision_index == failure_index + 1
+    assert failure_record["record_type"] == "FAILURE"
+    assert failure_record["previous_hash"] == records[prior_index]["hash"]
+    assert failure_record["proof"] == [EVIDENCE_COVERAGE_FAILURE_CLAIM_ID]
+    assert failure_record["context"]["external_effects"] == {
+        "provider_http_requests": 0,
+        "provider_credits": 0,
+        "r2_reads": 0,
+        "r2_writes": 0,
+    }
+    assert decision["record_type"] == "DECISION"
+    assert decision["decision"] == "PASS_AND_HOLD"
+    assert decision["previous_hash"] == failure_record["hash"]
+    assert decision["context"]["writer"] == "C0"
+    assert decision["context"]["writer_count"] == 1
+    assert decision["context"]["pr"] == "84"
+    assert decision["context"]["reviewed_projection"] == {
+        "sha256": projection["engineering_projection_sha256"],
+        "path_count": projection["artifact_path_count"],
+        "normalization": "LF_NORMALIZED_TEXT_BYTES",
+        "byte_frozen": True,
+    }
+    matrix = _load("configs/agents/mission-activation-matrix-v3.json")
+    allowed_paths = matrix["missions"][MISSION_ID]["allowed_paths"]
+    assert len(allowed_paths) == 51
+    assert set(decision["context"]["files"]) == set(allowed_paths)
+    assert set(decision["context"]["changed_files"]) == {
+        "reports/council/decision-ledger.jsonl",
+        "reports/evidence/evidence-graph.json",
+        "tests/council/test_real_data_result_governance_v1.py",
+    }
+    assert set(decision["proof"]) == {
+        EVIDENCE_COVERAGE_FAILURE_CLAIM_ID,
+        EVIDENCE_COVERAGE_REGRESSION_CLAIM_ID,
+        EVIDENCE_COVERAGE_PROJECTION_CLAIM_ID,
+        EVIDENCE_COVERAGE_FINAL_REVIEW_CLAIM_ID,
+    }
+    expected_edges = [
+        {
+            "edge_id": "EDGE.850",
+            "from_claim_id": EVIDENCE_COVERAGE_FAILURE_CLAIM_ID,
+            "to_decision_id": EVIDENCE_COVERAGE_FAILURE_DECISION_ID,
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        },
+        {
+            "edge_id": "EDGE.851",
+            "from_claim_id": EVIDENCE_COVERAGE_FAILURE_CLAIM_ID,
+            "to_decision_id": EVIDENCE_COVERAGE_FINAL_DECISION_ID,
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        },
+        {
+            "edge_id": "EDGE.852",
+            "from_claim_id": EVIDENCE_COVERAGE_REGRESSION_CLAIM_ID,
+            "to_decision_id": EVIDENCE_COVERAGE_FINAL_DECISION_ID,
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        },
+        {
+            "edge_id": "EDGE.853",
+            "from_claim_id": EVIDENCE_COVERAGE_PROJECTION_CLAIM_ID,
+            "to_decision_id": EVIDENCE_COVERAGE_FINAL_DECISION_ID,
+            "relation": "SUPPORTS",
+            "status": "RECORDED",
+        },
+        {
+            "edge_id": "EDGE.854",
+            "from_claim_id": EVIDENCE_COVERAGE_FINAL_REVIEW_CLAIM_ID,
+            "to_decision_id": EVIDENCE_COVERAGE_FINAL_DECISION_ID,
             "relation": "SUPPORTS",
             "status": "RECORDED",
         },
