@@ -1,0 +1,96 @@
+{
+  "agent_id": "C4",
+  "mission_id": "ROBIN_REAL_DATA_RESULT_20261003",
+  "facts_verified": [
+    {
+      "claim": "The Connection: close socket lifetime defect is repaired with response-reader leases while TLS, absolute deadlines, approved-address pinning and final close remain active; the real http.client regression reads all 20000 bytes.",
+      "evidence_refs": [
+        "src/robin/capture/live_transport.py",
+        "tests/capture/test_live_canary_transport.py::test_connection_close_keeps_socket_alive_until_http_response_reader_closes",
+        "tests/capture/test_live_canary_transport.py::test_socket_adapter_defers_final_close_until_every_file_lease_is_released"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Persisted transport diagnostics are allowlisted to stage, stable code, exception class, errno and HTTP status; exception messages, request targets, key-bearing URLs, headers and payloads are excluded.",
+      "evidence_refs": [
+        "src/robin/capture/live_transport.py::LiveTransportDiagnostic",
+        "tests/capture/test_live_canary_transport.py::test_transport_exposes_only_allowlisted_body_read_diagnostic",
+        "Bandit -ll: PASS"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Provider slots are reserved durably before dispatch, fixed across authorized runs, and bounded to 15 successor requests. Runtime R2 guards match the full path at 34 PUT and 19 GET per dispatch.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py",
+        "configs/agents/mission-activation-matrix-v3.json#robin_real_data_result_20261003_effect_budget",
+        "tests/capture/test_real_data_result.py::test_second_run_replays_fixed_slots_without_another_provider_request"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Missing or invalid cost/quota information stops globally; an anomaly on the final response cannot be labeled complete and is visible as FAIL_CLOSED with a stable code in JSON, receipt and HTML.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py::_report",
+        "tests/capture/test_real_data_result.py::test_last_response_quota_sequence_anomaly_can_never_report_complete",
+        "tests/capture/test_run_real_data_result_cli.py::test_cli_fails_closed_for_partial_data_with_a_terminal_safety_stop"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Raw payloads remain private in R2. The public artifact includes only a public receipt and normalized JSON, CSV and HTML, with escaped HTML and formula-safe CSV values.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py",
+        ".github/workflows/91-robin-real-data-result.yml",
+        "tests/capture/test_real_data_result.py::test_csv_neutralizes_provider_formula_prefixes_without_changing_rows"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The final affected C4 verification passed 21 result/CLI/workflow tests with zero unapproved network attempts; Ruff, strict mypy, Bandit, secret heuristics and diff checks passed.",
+      "evidence_refs": [
+        "C4 final affected pack: 21 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "C4 Ruff/mypy/Bandit/diff/secret checks: PASS"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "Effective provider, R2, secret and quota availability at post-merge execution time.",
+    "Real content and coverage until immutable persistence, exact readback and replay complete.",
+    "Exact-head CI and final merged main SHA before delivery."
+  ],
+  "assumptions": [
+    "The existing R2 bucket remains private and its external policy is unchanged.",
+    "E3B is only an authority ceiling and is not scientific evidence of E2, E3A or E3B.",
+    "C0 will recheck exact merged main and counters before dispatch."
+  ],
+  "main_objection": "C4 VERDICT: PASS_AND_HOLD with no open CRITICAL or HIGH security finding. Hold only for append-only evidence, the one full suite, exact-head required checks and clean mergeability.",
+  "risks": [
+    {
+      "risk": "Normalized odds are intentionally visible in an artifact of a public repository for fourteen days; raw payloads and secrets must remain excluded.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "configs/agents/mission-activation-matrix-v3.json#robin_real_data_result_20261003_source_boundary",
+        ".github/workflows/91-robin-real-data-result.yml"
+      ]
+    },
+    {
+      "risk": "Offline controls cannot prove future external availability or quota.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "UNAPPROVED_NETWORK_ATTEMPTS=0",
+        ".github/workflows/91-robin-real-data-result.yml"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Validate append-only records and review hashes, run the full suite once, require exact-head checks, then after merge accept only a terminal PASS receipt whose first and subsequent captures prove R2 PUT/GET/hash/replay.",
+  "recommended_action": "PASS_AND_HOLD for C0 to finish evidence, commit and normal delivery; dispatch only after merged-main and cumulative-counter checks.",
+  "scale_condition": "No scientific promotion. E3B remains only the operational authority ceiling for five endpoints and fifteen fixed slots.",
+  "estimated_compute": "Targeted offline tests plus Ruff, strict mypy, Bandit, Git and secret checks; no full suite rerun by C4.",
+  "estimated_external_cost": "0 provider call, 0 credit, 0 R2 operation and 0 secret read during review.",
+  "estimated_human_time": "Approximately 30 minutes of active review, excluding CI waits.",
+  "maintenance_impact": "Existing TLS transport and conditional R2 storage are reused; no new infrastructure, attestation, encryption or governance subsystem.",
+  "confidence": 0.97
+}

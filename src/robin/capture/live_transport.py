@@ -33,17 +33,85 @@ from robin.capture.contracts import (
 from robin.capture.live_contracts import LIVE_ALLOWED_SPORT_KEYS, validate_provider_ip_address
 
 
+@dataclass(frozen=True, slots=True)
+class LiveTransportDiagnostic:
+    """Allowlisted transport failure metadata safe for durable reporting."""
+
+    stage: str
+    code: str
+    exception_class: str
+    errno: int | None
+    http_status: int | None
+
+
 class LiveTransportError(RuntimeError):
-    def __init__(self, code: str) -> None:
+    def __init__(
+        self,
+        code: str,
+        *,
+        diagnostic: LiveTransportDiagnostic | None = None,
+    ) -> None:
         self.code = code
+        self.diagnostic = diagnostic
         super().__init__(code)
 
 
 class _PartialResponseReadError(RuntimeError):
-    def __init__(self, payload: bytes, *, code: str) -> None:
+    def __init__(
+        self,
+        payload: bytes,
+        *,
+        code: str,
+        exception_class: str,
+        errno: int | None,
+    ) -> None:
         self.payload = payload
         self.code = code
+        self.exception_class = exception_class
+        self.errno = errno
         super().__init__("LIVE_TRANSPORT_PARTIAL_RESPONSE_READ")
+
+
+def _safe_exception_class(error: BaseException) -> str:
+    name = type(error).__name__
+    if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]{0,63}", name) is None:
+        return "BaseException"
+    return name
+
+
+def _safe_errno(error: BaseException) -> int | None:
+    value = getattr(error, "errno", None)
+    if isinstance(value, bool) or not isinstance(value, int):
+        return None
+    return value
+
+
+def _safe_http_status(value: object) -> int | None:
+    if isinstance(value, int) and not isinstance(value, bool) and 100 <= value <= 599:
+        return value
+    return None
+
+
+def _redacted_diagnostic(
+    *,
+    stage: str,
+    code: str,
+    error: BaseException,
+    http_status: object,
+) -> LiveTransportDiagnostic:
+    if isinstance(error, _PartialResponseReadError):
+        exception_class = error.exception_class
+        error_number = error.errno
+    else:
+        exception_class = _safe_exception_class(error)
+        error_number = _safe_errno(error)
+    return LiveTransportDiagnostic(
+        stage=stage,
+        code=code,
+        exception_class=exception_class,
+        errno=error_number,
+        http_status=_safe_http_status(http_status),
+    )
 
 
 class PublicProviderRequestV1(FrozenContract):
@@ -380,6 +448,34 @@ ConnectionFactoryV2 = Callable[
 ]
 
 
+def _close_resource_with_retry(resource: object) -> BaseException | None:
+    close = getattr(resource, "close", None)
+    if not callable(close):
+        return RuntimeError("LIVE_TRANSPORT_CLOSE_UNAVAILABLE")
+    last_error: BaseException | None = None
+    for _attempt in range(2):
+        try:
+            close()
+            return None
+        except BaseException as error:
+            last_error = error
+    return last_error
+
+
+def _close_transport_resources(
+    response: _HttpResponse | None,
+    connection: _HttpsConnection | None,
+) -> BaseException | None:
+    last_error: BaseException | None = None
+    if response is not None:
+        last_error = _close_resource_with_retry(response)
+    if connection is not None:
+        connection_error = _close_resource_with_retry(connection)
+        if connection_error is not None:
+            last_error = connection_error
+    return last_error
+
+
 class _DeadlineSocketRaw(io.RawIOBase):
     """Raw reader that reapplies one absolute deadline before every recv."""
 
@@ -387,10 +483,13 @@ class _DeadlineSocketRaw(io.RawIOBase):
         self,
         network_socket: Any,
         remaining: Callable[[], float],
+        release_file_lease: Callable[[], None],
     ) -> None:
         super().__init__()
         self._network_socket = network_socket
         self._remaining = remaining
+        self._release_file_lease = release_file_lease
+        self._file_lease_released = False
 
     def readable(self) -> bool:
         return True
@@ -401,6 +500,15 @@ class _DeadlineSocketRaw(io.RawIOBase):
         if isinstance(received, bool) or not isinstance(received, int) or received < 0:
             raise LiveTransportError("LIVE_TRANSPORT_BODY_INVALID")
         return received
+
+    def close(self) -> None:
+        if self._file_lease_released:
+            return
+        try:
+            super().close()
+        finally:
+            self._file_lease_released = True
+            self._release_file_lease()
 
 
 class _DeadlineSocketAdapter:
@@ -413,6 +521,24 @@ class _DeadlineSocketAdapter:
     ) -> None:
         self._network_socket = network_socket
         self._remaining = remaining
+        self._open_file_leases = 0
+        self._owner_close_requested = False
+        self._network_closed = False
+
+    def _close_network_socket_once(self) -> None:
+        if self._network_closed:
+            return
+        close_error = _close_resource_with_retry(self._network_socket)
+        if close_error is not None:
+            raise close_error
+        self._network_closed = True
+
+    def _release_file_lease(self) -> None:
+        if self._open_file_leases <= 0:
+            return
+        self._open_file_leases -= 1
+        if self._owner_close_requested and self._open_file_leases == 0:
+            self._close_network_socket_once()
 
     def sendall(self, data: Any, flags: int = 0) -> None:
         self._network_socket.settimeout(self._remaining())
@@ -431,10 +557,17 @@ class _DeadlineSocketAdapter:
         if mode != "rb" or buffering == 0:
             raise LiveTransportError("LIVE_TRANSPORT_SOCKET_FILE_MODE_FORBIDDEN")
         buffer_size = io.DEFAULT_BUFFER_SIZE if buffering is None or buffering < 0 else buffering
-        return io.BufferedReader(
-            _DeadlineSocketRaw(self._network_socket, self._remaining),
-            buffer_size=buffer_size,
+        self._open_file_leases += 1
+        raw = _DeadlineSocketRaw(
+            self._network_socket,
+            self._remaining,
+            self._release_file_lease,
         )
+        try:
+            return io.BufferedReader(raw, buffer_size=buffer_size)
+        except BaseException:
+            raw.close()
+            raise
 
     def settimeout(self, value: float) -> None:
         self._network_socket.settimeout(value)
@@ -443,7 +576,9 @@ class _DeadlineSocketAdapter:
         return self._network_socket.getpeername()
 
     def close(self) -> None:
-        self._network_socket.close()
+        self._owner_close_requested = True
+        if self._open_file_leases == 0:
+            self._close_network_socket_once()
 
     def __getattr__(self, name: str) -> Any:
         return getattr(self._network_socket, name)
@@ -492,6 +627,7 @@ class _PinnedAddressHttpsConnection(http.client.HTTPSConnection):
             else (str(address), self.port)
         )
         raw_socket = socket.socket(family, socket.SOCK_STREAM, socket.IPPROTO_TCP)
+        wrapped: Any | None = None
         try:
             raw_socket.settimeout(self._remaining())
             raw_socket.connect(endpoint)
@@ -506,10 +642,19 @@ class _PinnedAddressHttpsConnection(http.client.HTTPSConnection):
                 raise LiveTransportError("LIVE_TRANSPORT_PEER_IP_MISMATCH")
             self.sock = cast(Any, _DeadlineSocketAdapter(wrapped, self._remaining))
         except BaseException:
-            try:
-                raw_socket.close()
-            finally:
-                self.sock = None
+            cleanup_target = wrapped if wrapped is not None else raw_socket
+            close_error = _close_resource_with_retry(cleanup_target)
+            self.sock = None
+            if close_error is not None:
+                raise LiveTransportError(
+                    "LIVE_TRANSPORT_CONNECTION_CLOSE_FAILED",
+                    diagnostic=_redacted_diagnostic(
+                        stage="CONNECTION_CLOSE",
+                        code="LIVE_TRANSPORT_CONNECTION_CLOSE_FAILED",
+                        error=close_error,
+                        http_status=None,
+                    ),
+                ) from None
             raise
 
 
@@ -633,14 +778,18 @@ def _read_response_with_deadline(
             raise _PartialResponseReadError(
                 partial,
                 code="LIVE_TRANSPORT_DISPATCH_FAILED",
-            ) from error
+                exception_class=_safe_exception_class(error),
+                errno=_safe_errno(error),
+            ) from None
         if not isinstance(payload, bytes):
             raise LiveTransportError("LIVE_TRANSPORT_BODY_INVALID")
         if monotonic() - started > timeout_seconds:
             raise _PartialResponseReadError(
                 payload[: maximum_bytes + 1],
                 code="LIVE_TRANSPORT_TOTAL_DEADLINE_EXCEEDED",
-            )
+                exception_class="LiveTransportError",
+                errno=None,
+            ) from None
         return payload
 
     chunks: list[bytes] = []
@@ -674,7 +823,9 @@ def _read_response_with_deadline(
                 if isinstance(error, LiveTransportError)
                 else "LIVE_TRANSPORT_DISPATCH_FAILED"
             ),
-        ) from error
+            exception_class=_safe_exception_class(error),
+            errno=_safe_errno(error),
+        ) from None
     return b"".join(chunks)
 
 
@@ -771,7 +922,11 @@ class StrictHttpsTransport:
         api_key: str,
     ) -> LiveTransportResponse:
         connection: Any | None = None
+        response: _HttpResponse | None = None
+        status: object = None
         target = ""
+        stage = "REQUEST_VALIDATION"
+        dispatch_completed = False
         try:
             request = self._validated_request(request)
             if request.host != ALLOWED_PROVIDER_HOST:
@@ -784,6 +939,7 @@ class StrictHttpsTransport:
             self._validate_tls_context(context)
             timeout_seconds = float(request.timeout_seconds)
             started = self._monotonic()
+            stage = "CONNECT"
             connection = self._connection_factory(
                 request.host,
                 request.approved_provider_ip_address,
@@ -811,6 +967,7 @@ class StrictHttpsTransport:
             }"
             if self._on_dispatch is not None:
                 self._on_dispatch()
+            stage = "REQUEST_SEND"
             connection.request(
                 "GET",
                 target,
@@ -827,6 +984,7 @@ class StrictHttpsTransport:
                 monotonic=self._monotonic,
             )
             _tighten_connection_timeout(connection, remaining)
+            stage = "RESPONSE_HEADERS"
             response = connection.getresponse()
             remaining = _remaining_dispatch_seconds(
                 started=started,
@@ -837,6 +995,7 @@ class StrictHttpsTransport:
             observed = ensure_utc(self._clock(), field="transport_first_observed_at")
             status = response.status
             raw_headers = response.getheaders()
+            stage = "BODY_READ"
             declared_length: int | None = None
             content_length_error: str | None = None
             try:
@@ -906,7 +1065,16 @@ class StrictHttpsTransport:
                         ),
                         False,
                     )
-                raise LiveTransportError(error.code) from error
+                raise LiveTransportError(
+                    error.code,
+                    diagnostic=_redacted_diagnostic(
+                        stage="BODY_READ",
+                        code=error.code,
+                        error=error,
+                        http_status=status,
+                    ),
+                ) from None
+            stage = "RESPONSE_VALIDATE"
             declared_too_large = (
                 declared_length is not None and declared_length > request.maximum_response_bytes
             )
@@ -945,18 +1113,43 @@ class StrictHttpsTransport:
                     raise LiveTransportError("LIVE_TRANSPORT_RESPONSE_TOO_LARGE")
                 raise LiveTransportError("LIVE_TRANSPORT_CONTENT_LENGTH_MISMATCH")
             headers = _sanitized_headers(raw_headers)
-        except LiveTransportError:
-            raise
-        except BaseException:
-            raise LiveTransportError("LIVE_TRANSPORT_DISPATCH_FAILED") from None
+            dispatch_completed = True
+        except LiveTransportError as error:
+            if error.diagnostic is not None:
+                raise
+            raise LiveTransportError(
+                error.code,
+                diagnostic=_redacted_diagnostic(
+                    stage=stage,
+                    code=error.code,
+                    error=error,
+                    http_status=status,
+                ),
+            ) from None
+        except BaseException as error:
+            raise LiveTransportError(
+                "LIVE_TRANSPORT_DISPATCH_FAILED",
+                diagnostic=_redacted_diagnostic(
+                    stage=stage,
+                    code="LIVE_TRANSPORT_DISPATCH_FAILED",
+                    error=error,
+                    http_status=status,
+                ),
+            ) from None
         finally:
             target = ""
             api_key = ""
-            if connection is not None:
-                try:
-                    connection.close()
-                except BaseException:
-                    pass
+            close_error = _close_transport_resources(response, connection)
+            if close_error is not None and dispatch_completed:
+                raise LiveTransportError(
+                    "LIVE_TRANSPORT_CONNECTION_CLOSE_FAILED",
+                    diagnostic=_redacted_diagnostic(
+                        stage="CONNECTION_CLOSE",
+                        code="LIVE_TRANSPORT_CONNECTION_CLOSE_FAILED",
+                        error=close_error,
+                        http_status=status,
+                    ),
+                ) from None
         if not isinstance(status, int) or isinstance(status, bool) or not 100 <= status <= 599:
             raise LiveTransportError("LIVE_TRANSPORT_STATUS_INVALID")
         return LiveTransportResponse(
@@ -1026,7 +1219,11 @@ class StrictHttpsTransportV2:
         api_key: str,
     ) -> LiveTransportResponse:
         connection: Any | None = None
+        response: _HttpResponse | None = None
+        status: object = None
         target = ""
+        stage = "REQUEST_VALIDATION"
+        dispatch_completed = False
         try:
             request = self._validated_request(request)
             if request.host != ALLOWED_PROVIDER_HOST:
@@ -1046,6 +1243,7 @@ class StrictHttpsTransportV2:
                 self._assert_binding_current(request)
 
             self._assert_binding_current(request)
+            stage = "CONNECT"
             connection = self._connection_factory(
                 request.host,
                 request.approved_provider_ip_address,
@@ -1073,6 +1271,7 @@ class StrictHttpsTransportV2:
                 )
             }"
             self._assert_binding_current(request)
+            stage = "REQUEST_SEND"
             connection.request(
                 "GET",
                 target,
@@ -1089,6 +1288,7 @@ class StrictHttpsTransportV2:
                 monotonic=self._monotonic,
             )
             _tighten_connection_timeout(connection, remaining)
+            stage = "RESPONSE_HEADERS"
             response = connection.getresponse()
             remaining = _remaining_dispatch_seconds(
                 started=started,
@@ -1097,6 +1297,9 @@ class StrictHttpsTransportV2:
             )
             _tighten_connection_timeout(connection, remaining)
             observed = ensure_utc(self._clock(), field="transport_first_observed_at")
+            status = response.status
+            raw_headers = response.getheaders()
+            stage = "BODY_READ"
             payload = _read_response_with_deadline(
                 response,
                 maximum_bytes=request.maximum_response_bytes,
@@ -1108,22 +1311,51 @@ class StrictHttpsTransportV2:
                     remaining,
                 ),
             )
-            status = response.status
-            raw_headers = response.getheaders()
+            stage = "RESPONSE_VALIDATE"
             reject_unsafe_response(payload, raw_headers, api_key)
             headers = _sanitized_headers(raw_headers)
-        except LiveTransportError:
-            raise
-        except BaseException:
-            raise LiveTransportError("LIVE_TRANSPORT_DISPATCH_FAILED") from None
+            dispatch_completed = True
+        except LiveTransportError as error:
+            if error.diagnostic is not None:
+                raise
+            raise LiveTransportError(
+                error.code,
+                diagnostic=_redacted_diagnostic(
+                    stage=stage,
+                    code=error.code,
+                    error=error,
+                    http_status=status,
+                ),
+            ) from None
+        except BaseException as error:
+            code = (
+                error.code
+                if isinstance(error, _PartialResponseReadError)
+                else "LIVE_TRANSPORT_DISPATCH_FAILED"
+            )
+            raise LiveTransportError(
+                code,
+                diagnostic=_redacted_diagnostic(
+                    stage=stage,
+                    code=code,
+                    error=error,
+                    http_status=status,
+                ),
+            ) from None
         finally:
             target = ""
             api_key = ""
-            if connection is not None:
-                try:
-                    connection.close()
-                except BaseException:
-                    pass
+            close_error = _close_transport_resources(response, connection)
+            if close_error is not None and dispatch_completed:
+                raise LiveTransportError(
+                    "LIVE_TRANSPORT_CONNECTION_CLOSE_FAILED",
+                    diagnostic=_redacted_diagnostic(
+                        stage="CONNECTION_CLOSE",
+                        code="LIVE_TRANSPORT_CONNECTION_CLOSE_FAILED",
+                        error=close_error,
+                        http_status=status,
+                    ),
+                ) from None
         if not isinstance(status, int) or isinstance(status, bool) or not 100 <= status <= 599:
             raise LiveTransportError("LIVE_TRANSPORT_STATUS_INVALID")
         return LiveTransportResponse(

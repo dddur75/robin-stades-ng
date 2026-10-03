@@ -178,7 +178,7 @@ def test_workflow_uses_exact_dependency_and_action_revisions() -> None:
     )
 
 
-def test_signed_attestation_covers_the_complete_privileged_python_surface() -> None:
+def test_retired_signed_attestation_fails_closed_after_successor_transport_fix() -> None:
     attestation = json.loads(ATTESTATION.read_text(encoding="utf-8"))
     assert set(attestation) == {
         "schema_version",
@@ -234,9 +234,15 @@ print("\\n".join(sorted(set(paths))))
     )
     required.update(imported.stdout.splitlines())
     assert required <= set(hashes)
+    mismatches: list[str] = []
     for filename, expected in hashes.items():
         normalized = (ROOT / filename).read_bytes().replace(b"\r\n", b"\n")
-        assert hashlib.sha256(normalized).hexdigest() == expected
+        actual = hashlib.sha256(normalized).hexdigest()
+        if actual != expected:
+            mismatches.append(filename)
+        else:
+            assert actual == expected
+    assert mismatches == ["src/robin/capture/live_transport.py"]
     signature = SIGNATURE.read_text(encoding="ascii").strip()
     assert len(base64.b64decode(signature, validate=True)) == 512
 

@@ -13,6 +13,19 @@ ROOT = Path(__file__).resolve().parents[2]
 REPORT_ROOT = ROOT / "reports/hypothesis-research/v2"
 
 
+def test_repository_transport_bytes_normalizes_text_but_not_gzip(
+    tmp_path: Path,
+) -> None:
+    text_path = tmp_path / "result.json"
+    binary_path = tmp_path / "result.json.gz"
+    text_path.write_bytes(b'{"value":1}\r\n')
+    binary_payload = b"gzip-like-binary\r\nbytes"
+    binary_path.write_bytes(binary_payload)
+
+    assert campaign.repository_transport_bytes(text_path) == b'{"value":1}\n'
+    assert campaign.repository_transport_bytes(binary_path) == binary_payload
+
+
 def read_json(path: Path) -> dict[str, object]:
     value = json.loads(path.read_text(encoding="utf-8"))
     assert isinstance(value, dict)

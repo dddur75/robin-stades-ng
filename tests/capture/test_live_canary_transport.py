@@ -490,6 +490,7 @@ class FakeResponse:
         self.payload = payload
         self.headers = headers or []
         self.read_amounts: list[int | None] = []
+        self.close_calls = 0
 
     def read(self, amount: int | None = None) -> bytes:
         self.read_amounts.append(amount)
@@ -497,6 +498,9 @@ class FakeResponse:
 
     def getheaders(self) -> list[tuple[str, str]]:
         return self.headers
+
+    def close(self) -> None:
+        self.close_calls += 1
 
 
 class FakeSocket:
@@ -681,6 +685,112 @@ def test_http_status_and_headers_share_one_absolute_recv_deadline() -> None:
     assert slow_socket.timeouts == pytest.approx([1.0, 0.6, 0.2])
 
 
+def test_connection_close_keeps_socket_alive_until_http_response_reader_closes() -> None:
+    body = b"x" * 20_000
+
+    class SegmentedSocket:
+        def __init__(self) -> None:
+            response = (
+                b"HTTP/1.1 200 OK\r\n"
+                b"Connection: close\r\n"
+                + f"Content-Length: {len(body)}\r\n\r\n".encode("ascii")
+                + body
+            )
+            self.response = memoryview(response)
+            self.offset = 0
+            self.closed = False
+            self.close_calls = 0
+            self.timeouts: list[float] = []
+
+        def settimeout(self, value: float) -> None:
+            self.timeouts.append(value)
+
+        def sendall(self, _data: bytes, _flags: int = 0) -> None:
+            if self.closed:
+                raise OSError(9, "synthetic closed socket")
+
+        def recv_into(self, buffer: Any) -> int:
+            if self.closed:
+                raise OSError(9, "synthetic closed socket")
+            if self.offset == len(self.response):
+                return 0
+            amount = min(len(buffer), 8_192, len(self.response) - self.offset)
+            buffer[:amount] = self.response[self.offset : self.offset + amount]
+            self.offset += amount
+            return amount
+
+        def close(self) -> None:
+            self.close_calls += 1
+            self.closed = True
+
+    network_socket = SegmentedSocket()
+    adapter = _DeadlineSocketAdapter(network_socket, lambda: 10.0)
+    connection = http.client.HTTPConnection("api.the-odds-api.com")
+    connection.sock = adapter
+    connection.request("GET", "/v4/sports/soccer_epl/odds")
+
+    response = connection.getresponse()
+
+    assert response.status == 200
+    assert response.will_close is True
+    assert connection.sock is None
+    assert network_socket.closed is False
+    assert response.read() == body
+    response.close()
+    assert network_socket.close_calls == 1
+
+
+def test_socket_adapter_defers_final_close_until_every_file_lease_is_released() -> None:
+    class LeaseSocket:
+        def __init__(self) -> None:
+            self.close_calls = 0
+
+        def settimeout(self, _value: float) -> None:
+            pass
+
+        def recv_into(self, _buffer: Any) -> int:
+            return 0
+
+        def close(self) -> None:
+            self.close_calls += 1
+
+    network_socket = LeaseSocket()
+    adapter = _DeadlineSocketAdapter(network_socket, lambda: 10.0)
+    first = adapter.makefile("rb")
+    second = adapter.makefile("rb")
+
+    adapter.close()
+    assert network_socket.close_calls == 0
+    first.close()
+    first.close()
+    assert network_socket.close_calls == 0
+    second.close()
+    adapter.close()
+    assert network_socket.close_calls == 1
+
+
+def test_socket_adapter_retries_a_transient_final_close_before_confirming() -> None:
+    class FlakyCloseSocket:
+        def __init__(self) -> None:
+            self.close_calls = 0
+            self.closed = False
+
+        def close(self) -> None:
+            self.close_calls += 1
+            if self.close_calls == 1:
+                raise OSError(9, "synthetic transient close failure")
+            self.closed = True
+
+    network_socket = FlakyCloseSocket()
+    adapter = _DeadlineSocketAdapter(network_socket, lambda: 10.0)
+
+    adapter.close()
+
+    assert network_socket.close_calls == 2
+    assert network_socket.closed is True
+    assert adapter._network_closed is True
+
+
 @pytest.mark.parametrize(
     ("raw_peer", "wrapped_peer"),
     (
@@ -746,7 +856,12 @@ def test_pinned_connection_rejects_raw_or_tls_peer_ip_mismatch(
     with pytest.raises(LiveTransportError, match="LIVE_TRANSPORT_PEER_IP_MISMATCH"):
         connection.connect()
 
-    assert raw_socket.close_calls == 1
+    if raw_peer != "1.1.1.1":
+        assert raw_socket.close_calls == 1
+        assert wrapped_socket.close_calls == 0
+    else:
+        assert raw_socket.close_calls == 0
+        assert wrapped_socket.close_calls == 1
     assert connection.sock is None
 
 
@@ -1181,6 +1296,100 @@ def test_transport_journals_incomplete_read_tail_from_chunked_response() -> None
 
     assert observed == [(b"head-tail", False)]
     assert connection.close_calls == 1
+
+
+def test_transport_exposes_only_allowlisted_body_read_diagnostic() -> None:
+    class BrokenResponse(FakeResponse):
+        def read1(self, _amount: int | None = None) -> bytes:
+            raise OSError(
+                9,
+                f"forbidden https://api.the-odds-api.com/path?apiKey={SECRET}",
+            )
+
+    response = BrokenResponse(status=200)
+    connection = FakeConnection(response)
+    transport = StrictHttpsTransport(
+        clock=lambda: BASE,
+        connection_factory=lambda *_args: connection,
+    )
+    public_request = request()
+    transport.preflight(public_request)
+
+    with pytest.raises(LiveTransportError) as raised:
+        transport.dispatch(public_request, api_key=SECRET)
+
+    diagnostic = raised.value.diagnostic
+    assert diagnostic is not None
+    assert diagnostic.stage == "BODY_READ"
+    assert diagnostic.code == "LIVE_TRANSPORT_DISPATCH_FAILED"
+    assert diagnostic.exception_class == "OSError"
+    assert diagnostic.errno == 9
+    assert diagnostic.http_status == 200
+    assert str(raised.value) == "LIVE_TRANSPORT_DISPATCH_FAILED"
+    assert SECRET not in str(raised.value)
+    assert "apiKey" not in str(raised.value)
+    assert response.close_calls == 1
+    assert connection.close_calls == 1
+
+
+def test_transport_retries_transient_cleanup_and_returns_only_after_close() -> None:
+    class FlakyCloseConnection(FakeConnection):
+        def close(self) -> None:
+            self.close_calls += 1
+            if self.close_calls == 1:
+                raise OSError(9, "synthetic transient connection close failure")
+
+    response = FakeResponse(status=200, payload=b"[]")
+    connection = FlakyCloseConnection(response)
+    transport = StrictHttpsTransport(
+        clock=lambda: BASE,
+        connection_factory=lambda *_args: connection,
+    )
+    public_request = request()
+    transport.preflight(public_request)
+
+    result = transport.dispatch(public_request, api_key=SECRET)
+
+    assert result.http_status == 200
+    assert response.close_calls == 1
+    assert connection.close_calls == 2
+
+
+def test_transport_fails_closed_when_final_cleanup_cannot_be_confirmed() -> None:
+    class FailingCloseResponse(FakeResponse):
+        def close(self) -> None:
+            self.close_calls += 1
+            raise OSError(9, "forbidden close detail")
+
+    class FailingCloseConnection(FakeConnection):
+        def close(self) -> None:
+            self.close_calls += 1
+            raise OSError(9, "forbidden close detail")
+
+    response = FailingCloseResponse(status=200, payload=b"[]")
+    connection = FailingCloseConnection(response)
+    transport = StrictHttpsTransport(
+        clock=lambda: BASE,
+        connection_factory=lambda *_args: connection,
+    )
+    public_request = request()
+    transport.preflight(public_request)
+
+    with pytest.raises(LiveTransportError) as raised:
+        transport.dispatch(public_request, api_key=SECRET)
+
+    diagnostic = raised.value.diagnostic
+    assert raised.value.code == "LIVE_TRANSPORT_CONNECTION_CLOSE_FAILED"
+    assert diagnostic is not None
+    assert diagnostic.stage == "CONNECTION_CLOSE"
+    assert diagnostic.code == "LIVE_TRANSPORT_CONNECTION_CLOSE_FAILED"
+    assert diagnostic.exception_class == "OSError"
+    assert diagnostic.errno == 9
+    assert diagnostic.http_status == 200
+    assert response.close_calls == 2
+    assert connection.close_calls == 2
+    assert "forbidden" not in str(raised.value)
+    assert SECRET not in str(raised.value)
 
 
 def test_complete_body_is_observed_before_duplicate_control_header_rejection() -> None:

@@ -37,6 +37,10 @@ def sha256(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
 
 
+def repository_text_bytes(path: Path) -> bytes:
+    return path.read_bytes().replace(b"\r\n", b"\n")
+
+
 def read_json(path: Path) -> dict[str, Any]:
     value = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
@@ -388,7 +392,7 @@ def export(source_root: Path, output_root: Path) -> dict[str, Any]:
             )
         )
     manifest = {
-        "schema_version": "phase-c-v2-source-evidence-manifest", "source_lock_sha256": sha256(LOCK.read_bytes()),
+        "schema_version": "phase-c-v2-source-evidence-manifest", "source_lock_sha256": sha256(repository_text_bytes(LOCK)),
         "source_run_id": lock["source_run_id"], "source_run_attempt": lock["source_run_attempt"],
         "source_head_sha": lock["source_head_sha"], "point_in_time_source_provenance": False,
         "availability_proxy": "PRIOR_FIXTURE_KICKOFF_PLUS_PT6H", "targets_physically_separate": True,
@@ -451,7 +455,7 @@ def verify(output_root: Path) -> dict[str, Any]:
     manifest_without_hash.pop("manifest_hash", None)
     if declared_manifest_hash != v1.object_hash(manifest_without_hash):
         raise RuntimeError("V2_SOURCE_MANIFEST_HASH_MISMATCH")
-    if manifest.get("source_lock_sha256") != sha256(LOCK.read_bytes()):
+    if manifest.get("source_lock_sha256") != sha256(repository_text_bytes(LOCK)):
         raise RuntimeError("V2_SOURCE_LOCK_HASH_MISMATCH")
     if any(
         manifest.get(field) != lock[field]

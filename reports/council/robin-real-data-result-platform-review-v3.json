@@ -1,0 +1,86 @@
+{
+  "agent_id": "A2",
+  "mission_id": "ROBIN_REAL_DATA_RESULT_20261003",
+  "facts_verified": [
+    {
+      "claim": "The runtime now performs a two-phase fifteen-slot R2 inventory before provider DNS or secret access, replays durable captures despite later local failures, and invokes provider access lazily only for an eligible missing slot.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py::run_real_data_result",
+        "tests/capture/test_real_data_result.py::test_complete_r2_replay_does_not_require_provider_dns_or_secret",
+        "tests/capture/test_real_data_result.py::test_preflight_failure_still_replays_and_accounts_for_durable_prior_slots"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Quota and failure continuity are conservative across dispatches: verified quota survives invalid-payload replay, replay quota is not treated as a current live sequence, low quota stops before any new call, and two proven identical durable failures forbid a third attempt while ambiguous reservations do not.",
+      "evidence_refs": [
+        "tests/capture/test_real_data_result.py::test_inventory_uses_verified_quota_even_when_prior_payload_replay_fails",
+        "tests/capture/test_real_data_result.py::test_durable_repeated_failures_forbid_a_third_attempt_across_dispatches",
+        "tests/capture/test_real_data_result.py::test_two_ambiguous_prior_reservations_leave_third_sport_slot_available"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The R2 bound is derived from the concrete path: fifteen reservation GETs, at most fifteen raw/recheck GETs, three cycle receipts and one terminal report, for a maximum of 34 exact reads per dispatch and 102 across the three authorized dispatches.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py",
+        "configs/agents/mission-activation-matrix-v3.json",
+        ".github/workflows/91-robin-real-data-result.yml"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The workflow remains an exact-merged-main manual gate, reuses existing provider and R2 secrets, provides a 30-minute operational timeout for three cycles separated by 120 seconds, and publishes only normalized artifacts for fourteen days.",
+      "evidence_refs": [
+        ".github/workflows/91-robin-real-data-result.yml",
+        "tests/capture/test_real_data_result_workflow.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Independent adversarial review reports P0=0 and P1=0 after 101 capture tests, 65 transport tests, focused inventory/workflow/CLI tests, Ruff and strict mypy, all with zero unapproved network attempts.",
+      "evidence_refs": [
+        "independent final runtime audit: GO code freeze; P0=0; P1=0",
+        "final capture pack: 101 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "transport pack: 65 passed",
+        "Ruff and strict mypy: PASS"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "The one final full repository suite, exact-head CI and clean mergeability remain to be observed.",
+    "Remote provider, secret and R2 validity remain future execution conditions."
+  ],
+  "assumptions": [
+    "The existing GitHub-hosted runner and secrets remain available; no new runner or storage mechanism is required.",
+    "Thirty minutes is within the explicit eight-hour mission compute budget and accommodates the required programmed spacing.",
+    "The successor projection remains content-frozen after append-only binding."
+  ],
+  "main_objection": "A2 VERDICT: PASS_AND_HOLD with P0=0 and P1=0. The operational path is bounded and recoverable; only normal full-suite, exact-head and external-availability gates remain.",
+  "risks": [
+    {
+      "risk": "Generic unexpected local preflight or dispatch exceptions retain a stable generic class and null errno, so their diagnostics are less specific than typed transport failures.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py"
+      ]
+    },
+    {
+      "risk": "The directly consultable HTML artifact expires after fourteen days even though the raw envelopes and normalized JSON report remain durable in R2.",
+      "severity": "LOW",
+      "evidence_refs": [
+        ".github/workflows/91-robin-real-data-result.yml",
+        "src/robin/capture/real_data_result.py"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Run the exact mission and Council controls, static/security validation and the one full suite, then require strict exact-head GitHub checks before merge and inspect every live artifact after dispatch.",
+  "recommended_action": "Freeze the 27-path projection, append exact evidence, then proceed through normal PR, CI, merge and bounded workflow execution.",
+  "scale_condition": "No additional scale authority; fifteen fixed slots are the maximum successor provider path and unavailable branches remain explicit.",
+  "estimated_compute": "Independent read-only adversarial runtime review plus targeted local tests and static checks; no large replay.",
+  "estimated_external_cost": "0 provider call, 0 credit, 0 R2 operation and 0 external mutation during A2 review.",
+  "estimated_human_time": "Approximately 45 minutes of independent platform review.",
+  "maintenance_impact": "The patch reuses the existing transport, R2 client, secrets and GitHub workflow model; complexity is contained in the mission-specific result module.",
+  "confidence": 0.99
+}

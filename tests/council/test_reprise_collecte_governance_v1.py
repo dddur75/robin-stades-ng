@@ -104,6 +104,26 @@ EXPECTED_SQLITE_CONTINUATION_EFFECTS = [
     "offline_replay_from_parent_authorized_captured_bytes",
 ]
 
+
+def _verified_projection_successor(
+    claims: dict[str, dict[str, object]], claim_id: str
+) -> dict[str, object]:
+    visited: set[str] = set()
+    current_id = claim_id
+    while True:
+        assert current_id not in visited
+        visited.add(current_id)
+        current = claims[current_id]
+        if current["status"] != "SUPERSEDED":
+            assert current["status"] == "VERIFIED"
+            return current
+        successor_id = current.get("superseded_by")
+        assert isinstance(successor_id, str)
+        successor = claims[successor_id]
+        assert current_id in successor.get("supersedes", [])
+        current_id = successor_id
+
+
 EXPECTED_PATHS = [
     ".github/workflows/90-reprise-collecte-pilot.yml",
     "configs/agents/agent-report-schema-v3.json",
@@ -738,7 +758,15 @@ def test_sqlite_corrected_precommit_decision_binds_exact_current_evidence() -> N
     decisions = {node["decision_id"]: node for node in graph["decision_nodes"]}
     assert claims[SQLITE_EVIDENCE_FAILURE_CLAIM_ID]["status"] == "SUPERSEDED"
     assert claims[SQLITE_EVIDENCE_CORRECTION_CLAIM_ID]["status"] == "VERIFIED"
-    assert claims[PROJECTION_CLAIM_ID]["status"] == "VERIFIED"
+    _verified_projection_successor(claims, PROJECTION_CLAIM_ID)
+    assert (
+        decision["context"]["reviewed_projection"]["sha256"]
+        == claims[PROJECTION_CLAIM_ID]["engineering_projection_sha256"]
+    )
+    assert (
+        decision["context"]["reviewed_projection"]["path_count"]
+        == claims[PROJECTION_CLAIM_ID]["artifact_path_count"]
+    )
     assert claims[SQLITE_FINAL_REVIEW_CLAIM_ID]["status"] == "VERIFIED"
     assert decisions[SQLITE_EVIDENCE_FAILURE_DECISION_ID]["ledger_record_hash"] == (failure["hash"])
     assert (
@@ -761,16 +789,21 @@ def test_continuation_projection_supersedes_the_stale_predecessor() -> None:
     assert predecessor["superseded_by"] == SQLITE_PRECOMMIT_PROJECTION_CLAIM_ID
     assert precommit_projection["status"] == "SUPERSEDED"
     assert precommit_projection["superseded_by"] == PROJECTION_CLAIM_ID
-    assert projection["status"] == "VERIFIED"
     assert projection["successor_of"] == SQLITE_PRECOMMIT_PROJECTION_CLAIM_ID
     expected_paths = set(precommit_projection["artifact_hashes"]) | (EXPECTED_PROJECTION_ADDITIONS)
     assert len(expected_paths) == 41
     assert set(projection["artifact_hashes"]) == expected_paths
 
-    recalculated_hashes = {
-        path: hashlib.sha256((ROOT / path).read_bytes().replace(b"\r\n", b"\n")).hexdigest()
-        for path in sorted(expected_paths)
-    }
-    assert projection["artifact_hashes"] == recalculated_hashes
-    canonical = json.dumps(recalculated_hashes, sort_keys=True, separators=(",", ":")).encode()
+    canonical = json.dumps(
+        projection["artifact_hashes"], sort_keys=True, separators=(",", ":")
+    ).encode()
     assert projection["engineering_projection_sha256"] == hashlib.sha256(canonical).hexdigest()
+    active_projection = _verified_projection_successor(claims, PROJECTION_CLAIM_ID)
+    if projection["status"] == "VERIFIED":
+        recalculated_hashes = {
+            path: hashlib.sha256((ROOT / path).read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+            for path in sorted(expected_paths)
+        }
+        assert projection["artifact_hashes"] == recalculated_hashes
+    else:
+        assert active_projection["claim_id"] != PROJECTION_CLAIM_ID

@@ -1,0 +1,98 @@
+{
+  "agent_id": "C4",
+  "mission_id": "ROBIN_REAL_DATA_RESULT_20261003",
+  "facts_verified": [
+    {
+      "claim": "The Connection: close lifetime repair lets real http.client read all 20000 bytes while preserving TLS verification, SNI, approved-address pinning, absolute deadlines and final resource closure.",
+      "evidence_refs": [
+        "src/robin/capture/live_transport.py",
+        "tests/capture/test_live_canary_transport.py::test_connection_close_keeps_socket_alive_until_http_response_reader_closes",
+        "tests/capture/test_live_canary_transport.py::test_socket_adapter_defers_final_close_until_every_file_lease_is_released"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Final cleanup is fail-closed: each resource receives at most two close attempts, a successful response cannot hide persistent cleanup failure, and post-TLS failures close the wrapped TLS owner instead of reusing the raw socket.",
+      "evidence_refs": [
+        "src/robin/capture/live_transport.py",
+        "tests/capture/test_live_canary_transport.py::test_socket_adapter_retries_a_transient_final_close_before_confirming",
+        "tests/capture/test_live_canary_transport.py::test_transport_fails_closed_when_final_cleanup_cannot_be_confirmed",
+        "tests/capture/test_live_canary_transport.py::test_pinned_connection_rejects_raw_or_tls_peer_ip_mismatch"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Persisted diagnostics are allowlisted to stage, stable code, exception class, errno and HTTP status; messages, request targets, URLs, headers, payloads and secrets are excluded.",
+      "evidence_refs": [
+        "src/robin/capture/live_transport.py::LiveTransportDiagnostic",
+        "tests/capture/test_live_canary_transport.py::test_transport_exposes_only_allowlisted_body_read_diagnostic",
+        "Bandit -ll: PASS"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "All durable reservations and raw envelopes are inventoried before provider access. Proven repeated failures stop their sport across dispatches, ambiguous reservations are never counted as a proven failure, and full replay uses zero provider DNS or secret reads.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py::run_real_data_result",
+        "tests/capture/test_real_data_result.py::test_durable_repeated_failures_forbid_a_third_attempt_across_dispatches",
+        "tests/capture/test_real_data_result.py::test_two_ambiguous_prior_reservations_leave_third_sport_slot_available",
+        "tests/capture/test_real_data_result.py::test_complete_r2_replay_does_not_require_provider_dns_or_secret"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Effect guards bound each dispatch to 15 provider slots, 34 R2 exact-read GETs and 34 immutable PUTs; cumulative mission accounting retains one historical request and four reserved credits, uses zero automatic provider retry and stops before a new call on insufficient verified quota.",
+      "evidence_refs": [
+        "configs/agents/mission-activation-matrix-v3.json#robin_real_data_result_20261003_effect_budget",
+        "src/robin/capture/real_data_result.py",
+        "tests/capture/test_real_data_result.py::test_full_inventory_finds_later_replayed_low_quota_before_any_new_call"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The final consolidated capture pack passed 101 tests with zero unapproved network attempts; Ruff and strict mypy passed on the final runtime diff.",
+      "evidence_refs": [
+        "final capture pack: 101 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "Ruff final changed scope: PASS",
+        "mypy strict on three runtime sources: PASS"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "Effective provider, R2, secret and quota availability at post-merge execution time.",
+    "Real content and coverage until immutable persistence, exact readback and replay complete.",
+    "Exact-head CI and final merged main SHA before delivery."
+  ],
+  "assumptions": [
+    "The existing R2 bucket remains private and its external policy is unchanged.",
+    "E3B remains an authority ceiling rather than scientific evidence.",
+    "C0 will recheck merged main, durable slots and cumulative counters before dispatch."
+  ],
+  "main_objection": "C4 VERDICT: PASS_AND_HOLD with P0=0 and P1=0. No open CRITICAL or HIGH security finding remains; merge and live execution retain exact-head, quota and durable-readback gates.",
+  "risks": [
+    {
+      "risk": "A TCP or TLS failure reached lazily from request() can be classified REQUEST_SEND instead of CONNECT, while still preserving stable class, errno and redaction.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "src/robin/capture/live_transport.py"
+      ]
+    },
+    {
+      "risk": "A persistent close failure triggered by real http.client at EOF can surface as BODY_READ instead of CONNECTION_CLOSE; it remains fail-closed and cannot produce a false success.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "src/robin/capture/live_transport.py",
+        "tests/capture/test_live_canary_transport.py"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Validate append-only records and review hashes, run the one full suite, require exact-head checks, then accept the live result only when immutable PUT/GET/hash/replay and the terminal receipt all pass.",
+  "recommended_action": "PASS_AND_HOLD for C0 to complete evidence, normal PR and CI; dispatch only after merged-main, authority and cumulative-counter checks.",
+  "scale_condition": "No scientific promotion. E3B remains only the operational authority ceiling for five endpoints and fifteen fixed slots.",
+  "estimated_compute": "Targeted offline tests plus Ruff, strict mypy, Bandit, Git and secret checks; no provider call or corpus replay.",
+  "estimated_external_cost": "0 provider call, 0 credit, 0 R2 operation, 0 secret read, 0 purchase and 0 bet during C4 review.",
+  "estimated_human_time": "Approximately 40 minutes of active review, excluding CI waits.",
+  "maintenance_impact": "Existing TLS transport, secrets, conditional R2 storage and workflow are reused; no new runner, encryption, attestation or governance subsystem.",
+  "confidence": 0.99
+}

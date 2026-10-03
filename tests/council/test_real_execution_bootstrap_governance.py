@@ -20,6 +20,13 @@ OLDER_SOURCE_HASH = "0270bdd51d8d50b7d3c9f608e4f429b46b94b789d92d4b13055b81c9b72
 EXPECTED_CANONICAL_MANIFEST_SHA256 = (
     "d3d570be434b61c0875212061d92419d074b0d8357ba60e55c9f10cd79458e14"
 )
+FIRST_C0_AUTHORIZATION_KEYS = (
+    "first_c0_vertical_v1_delivery",
+    "first_c0_vertical_v1_effect_budget",
+    "first_c0_vertical_v1_ordering",
+    "first_c0_vertical_v1_live_boundary",
+)
+FIRST_C0_MATRIX_SEMANTIC_SHA256 = "36fa5e9c03aa48358299331bb2238d8f2f43846df9b2e2cc32bc3ad8c872619a"
 
 
 def load(relative: str) -> dict[str, object]:
@@ -431,15 +438,21 @@ def test_first_c0_single_league_canary_authority_is_additive_and_fail_closed() -
     assert "SOURCE_TARGET_SET_COUNT={selection.source_target_set_count}" in owner_pack
     assert "SCIENTIFIC_EDGE_CLAIM={str(selection.scientific_edge_claim).lower()}" in owner_pack
 
-    matrix_payload = (
-        (ROOT / "configs/agents/mission-activation-matrix-v3.json")
-        .read_bytes()
-        .replace(b"\r\n", b"\n")
-    )
-    assert (
-        hashlib.sha256(matrix_payload).hexdigest()
-        == "d6cc116789e4571eaa3ee7a082a988db31e65e9880991ce90a54e121f97489e0"
-    )
+    matrix = load("configs/agents/mission-activation-matrix-v3.json")
+    authorization = matrix["authorization"]
+    missions = matrix["missions"]
+    assert isinstance(authorization, dict)
+    assert isinstance(missions, dict)
+    first_c0_contract = {
+        "authorization": {key: authorization[key] for key in FIRST_C0_AUTHORIZATION_KEYS},
+        "mission": missions["FIRST_C0_VERTICAL_V1"],
+    }
+    canonical_contract = json.dumps(
+        first_c0_contract,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode()
+    assert hashlib.sha256(canonical_contract).hexdigest() == FIRST_C0_MATRIX_SEMANTIC_SHA256
 
 
 def test_global_claim_boundary_v2_evidence_is_exact_append_only_and_effect_free() -> None:

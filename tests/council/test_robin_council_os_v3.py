@@ -245,6 +245,7 @@ def test_activation_is_on_demand_bounded_and_references_known_agents() -> None:
         "ROBIN_REPRISE_COLLECTE_20261002",
         "ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V1",
         "ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V2",
+        "ROBIN_REAL_DATA_RESULT_20261003",
         "COVERAGE_P0",
         "HYPERGRAPH",
         "COCKPIT",
@@ -333,6 +334,7 @@ def test_agent_report_schema_requires_the_mission_contract() -> None:
         "ROBIN_REPRISE_COLLECTE_20261002",
         "ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V1",
         "ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V2",
+        "ROBIN_REAL_DATA_RESULT_20261003",
         "COVERAGE_P0",
         "HYPERGRAPH",
         "COCKPIT",
@@ -452,7 +454,7 @@ def test_first_c0_vertical_governance_is_an_exact_append_only_successor() -> Non
         current = current_graph[collection]
         assert current[: len(baseline)] == baseline
         assert len(current) > len(baseline)
-    assert current_graph["edges"] == base_graph["edges"]
+    assert current_graph["edges"][: len(base_graph["edges"])] == base_graph["edges"]
 
     appended_claim_ids = [
         claim["claim_id"] for claim in current_graph["claims"][len(base_graph["claims"]) :]
@@ -471,6 +473,15 @@ def test_first_c0_vertical_governance_is_an_exact_append_only_successor() -> Non
     assert appended_edge_ids == [
         f"EDGE.{edge_number:03d}" for edge_number in range(812, 812 + len(appended_edge_ids))
     ]
+    appended_claim_id_set = set(appended_claim_ids)
+    appended_node_id_set = set(appended_node_ids)
+    assert all(
+        edge["from_claim_id"] in appended_claim_id_set
+        and edge["to_decision_id"] in appended_node_id_set
+        and edge["relation"] == "SUPPORTS"
+        and edge["status"] == "RECORDED"
+        for edge in current_graph["edges"][len(base_graph["edges"]) :]
+    )
 
 
 def test_scientific_truth_kernel_authority_is_offline_bounded_and_exact() -> None:

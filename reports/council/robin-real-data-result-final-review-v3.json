@@ -1,0 +1,97 @@
+{
+  "agent_id": "C0",
+  "mission_id": "ROBIN_REAL_DATA_RESULT_20261003",
+  "facts_verified": [
+    {
+      "claim": "The refreshed DP6, C4, C2 and A2 keys independently cover the frozen 27-path successor, with P0=0, P1=0 and no candidate-blocking critical thread after the socket, preflight, durable-recovery, quota and representation corrections.",
+      "evidence_refs": [
+        "reports/council/robin-real-data-result-data-review-v2.json",
+        "reports/council/robin-real-data-result-security-review-v2.json",
+        "reports/council/robin-real-data-result-governance-review-v3.json",
+        "reports/council/robin-real-data-result-platform-review-v3.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The final runtime path reads a full 20000-byte real-http.client Connection: close body, fails closed on persistent cleanup failure, inventories all fifteen durable slots before provider access, preserves verified quota and forbids a third proven identical branch failure across dispatches.",
+      "evidence_refs": [
+        "src/robin/capture/live_transport.py",
+        "src/robin/capture/real_data_result.py",
+        "tests/capture/test_live_canary_transport.py",
+        "tests/capture/test_real_data_result.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The final capture pack passed 101 tests with zero unapproved network attempts, while Ruff and strict mypy passed; the single full repository suite remains the final local pre-merge gate rather than being repeated after each small fix.",
+      "evidence_refs": [
+        "final capture pack: 101 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "independent final runtime audit: GO code freeze; P0=0; P1=0",
+        "Ruff final changed scope: PASS",
+        "mypy strict on three runtime sources: PASS"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Records 210 and 212, prior projection hashes and failure history remain immutable. The active projection is an append-only V1.003 successor and creates no new runner, encryption, attestation, storage or governance system.",
+      "evidence_refs": [
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-210",
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-212",
+        "tests/council/test_real_data_result_governance_v1.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "No real provider row, new capture or successor credit consumption has been observed during engineering. The real capture, consultable view and consumption claims remain PARTIAL until post-merge durable storage and replay are inspected.",
+      "evidence_refs": [
+        "reports/evidence/evidence-graph.json#DATA.ROBIN.REAL.RESULT.CAPTURES.V1.001",
+        "reports/evidence/evidence-graph.json#DATA.ROBIN.REAL.RESULT.VIEW.V1.001",
+        "reports/evidence/evidence-graph.json#GOV.ROBIN.REAL.RESULT.CONSUMPTION.V1.001"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "The final full suite, exact-head CI, clean mergeability and merged main SHA remain future delivery gates.",
+    "Provider quota, secret validity, R2 availability and real odds coverage remain unknown until bounded execution."
+  ],
+  "assumptions": [
+    "C0 appends records 213 through 216 and makes no later projected mutation without a new exact successor.",
+    "Existing provider and R2 credentials remain available without purchase or subscription change.",
+    "Every real-data statement will be derived only from downloaded artifacts and durable R2 replay evidence."
+  ],
+  "main_objection": "C0 FINAL VERDICT: PASS_AND_HOLD, P0=0, P1=0, P2=4, zero candidate-blocking critical threads. The retained P2 items are diagnostic stage precision, EOF cleanup classification, generic local exception detail and fourteen-day HTML consultation; none permits a false success.",
+  "risks": [
+    {
+      "risk": "Some lazy connect and EOF cleanup failures can use REQUEST_SEND or BODY_READ stages rather than the more specific CONNECT or CONNECTION_CLOSE stage, while still remaining redacted and fail-closed.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "reports/council/robin-real-data-result-security-review-v2.json",
+        "src/robin/capture/live_transport.py"
+      ]
+    },
+    {
+      "risk": "Generic unexpected local exceptions expose less diagnostic specificity than typed transport errors.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "reports/council/robin-real-data-result-platform-review-v3.json",
+        "src/robin/capture/real_data_result.py"
+      ]
+    },
+    {
+      "risk": "The HTML artifact is directly consultable for fourteen days; durable R2 remains the source of raw and normalized replay evidence.",
+      "severity": "LOW",
+      "evidence_refs": [
+        ".github/workflows/91-robin-real-data-result.yml"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Validate active reports, canonical ledger and graph, pass the complete Council domain and the one full repository suite, then require green strict exact-head checks and CLEAN mergeability before normal merge.",
+  "recommended_action": "Accept the V1.003 successor for one C0 commit, non-force push and PR; after green required checks and merge, recheck counters and dispatch the bounded real-data workflow.",
+  "scale_condition": "Remain E1/PASS_AND_HOLD; E3B is an authority ceiling only and no scientific transition is authorized.",
+  "estimated_compute": "Refreshed four-key review, targeted reproductions and final static verification; one full suite remains before commit.",
+  "estimated_external_cost": "0 provider call, 0 credit, 0 R2 effect, 0 purchase and 0 bet during engineering and review.",
+  "estimated_human_time": "Within the authorized eight-hour active-work window, excluding passive CI wait.",
+  "maintenance_impact": "The candidate is mission-specific and reuses existing components; simplification is deferred until real flow proof so data and failure guarantees are not destabilized.",
+  "confidence": 0.99
+}

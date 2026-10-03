@@ -1,0 +1,73 @@
+{
+  "agent_id": "A2",
+  "mission_id": "ROBIN_REAL_DATA_RESULT_20261003",
+  "facts_verified": [
+    {
+      "claim": "No runtime, dependency, workflow, provider, storage or normalization behavior changed in the consequential correction; only three Council tests and their append-only evidence successor changed.",
+      "evidence_refs": [
+        "git diff -- tests/council/test_real_execution_bootstrap_governance.py tests/council/test_reprise_collecte_governance_v1.py tests/council/test_robin_council_os_v3.py",
+        "GOV.ENGINEERING.ROBIN_REAL_DATA_RESULT.PROJECTION.V1.002"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The corrected edge invariant preserves all 811 base edges byte-for-object exactly and validates the appended contiguous suffix against appended claims and decisions.",
+      "evidence_refs": [
+        "tests/council/test_robin_council_os_v3.py::test_first_c0_vertical_governance_is_an_exact_append_only_successor",
+        "independent A2 read-only edge audit"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The corrected historical projection invariant rejects cycles, requires explicit supersedes links and terminates only at VERIFIED, while record 207 still binds the immutable V2.003 SHA and forty-one paths.",
+      "evidence_refs": [
+        "tests/council/test_reprise_collecte_governance_v1.py::_verified_projection_successor",
+        "tests/council/test_reprise_collecte_governance_v1.py::test_continuation_projection_supersedes_the_stale_predecessor"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The four formerly failing nodes pass after correction and Ruff check/format accepts the changed Council tests.",
+      "evidence_refs": [
+        "candidate targeted correction run: 4 passed in 0.89s",
+        "Ruff check and format on affected Council tests: PASS"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The historical-artifact bridge now distinguishes eight byte-identical V2.003 artifacts from the two current tests independently covered by the nineteen-path successor projection.",
+      "evidence_refs": [
+        "reports/evidence/evidence-graph.json#GOV.ENGINEERING.ROBIN_REAL_DATA_RESULT.HISTORICAL_ARTIFACT_BRIDGE.V1.001",
+        "reports/evidence/evidence-graph.json#GOV.ENGINEERING.ROBIN_REAL_DATA_RESULT.PROJECTION.V1.002"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "The complete Council rerun and one full repository suite on the frozen successor remain to be observed.",
+    "Remote exact-head CI and live service availability remain future gates."
+  ],
+  "assumptions": [
+    "The successor projection remains byte-frozen after record 212.",
+    "The unchanged DP6 and C4 reviews remain valid for the unchanged runtime and security boundaries."
+  ],
+  "main_objection": "A2 VERDICT: PASS_AND_HOLD with P0=0 and P1=0. The previous bridge-attribution P1 is resolved; only normal verification and delivery gates remain.",
+  "risks": [
+    {
+      "risk": "The evidence graph uses mutable lifecycle status to represent supersession; every new projection must therefore keep a verified, cycle-free successor chain and exact current hashes.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "tests/council/test_robin_council_os_v3.py::test_evidence_graph_and_append_only_ledger_have_mandatory_fields",
+        "tests/council/test_reprise_collecte_governance_v1.py::_verified_projection_successor"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Validate record hashes and projection hashes, run the affected four nodes plus mission/generic governance, then run the complete Council domain.",
+  "recommended_action": "Freeze and append the successor records, run final local gates, then continue to exact-head CI and the post-merge fixed-slot workflow.",
+  "scale_condition": "No new scale or effect authority is created by this test-only correction.",
+  "estimated_compute": "Targeted read-only diff and invariant review; no live or large-data execution.",
+  "estimated_external_cost": "0 external effect.",
+  "estimated_human_time": "Approximately 15 minutes of independent platform review.",
+  "maintenance_impact": "Positive: historical tests now permit additive mission evidence while retaining strict semantic and prefix guarantees.",
+  "confidence": 0.99
+}

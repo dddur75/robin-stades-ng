@@ -1,0 +1,90 @@
+{
+  "agent_id": "DP6",
+  "mission_id": "ROBIN_REAL_DATA_RESULT_20261003",
+  "facts_verified": [
+    {
+      "claim": "The bounded result path deterministically normalizes three cycles across five football league endpoints and the supported h2h/totals markets, preserving provider capture time separately from market-source time and retaining unavailable branches explicitly.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py",
+        "tests/capture/test_real_data_result.py::test_three_cycles_flow_through_reservation_r2_replay_and_table",
+        "tests/capture/test_real_data_result.py::test_unavailable_branch_is_explicit_and_does_not_stop_other_branches"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "All fifteen fixed slots are inventoried before provider access. Existing raw envelopes are exact-read and replayed, independently verified quota is preserved even when payload replay fails, and a fully durable replay needs neither provider DNS nor provider-secret access.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py::run_real_data_result",
+        "tests/capture/test_real_data_result.py::test_complete_r2_replay_does_not_require_provider_dns_or_secret",
+        "tests/capture/test_real_data_result.py::test_inventory_uses_verified_quota_even_when_prior_payload_replay_fails"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Repository-text compatibility now normalizes only text line endings at the scenario boundary while retaining exact gzip byte identity; the same-environment affected pack moved from 26 failed and 10 passed on clean main and the candidate to 36 passed on the candidate.",
+      "evidence_refs": [
+        "scripts/export_phase_c_v2_source_bundle.py",
+        "scripts/run_phase_c_v2_campaign.py",
+        "tests/hypothesis_intelligence/test_phase_c_v2_source_bundle.py",
+        "same-environment affected pack: clean main 26 failed, 10 passed; candidate before 26 failed, 10 passed; candidate after 36 passed"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The public JSON, CSV and HTML expose normalized matches, odds, capture/source times, branch coverage, limitations and consumption without raw provider payloads; HTML escaping and CSV formula neutralization remain active.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py::_render_csv",
+        "src/robin/capture/real_data_result.py::_render_html",
+        "tests/capture/test_real_data_result.py::test_csv_neutralizes_provider_formula_prefixes_without_changing_rows",
+        ".github/workflows/91-robin-real-data-result.yml"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "No real match, odd, capture timestamp, provider cost or coverage was received during this offline review; the three real-data claim identifiers remain PARTIAL until post-merge immutable storage and verified replay are inspected.",
+      "evidence_refs": [
+        "reports/evidence/evidence-graph.json#DATA.ROBIN.REAL.RESULT.CAPTURES.V1.001",
+        "reports/evidence/evidence-graph.json#DATA.ROBIN.REAL.RESULT.VIEW.V1.001",
+        "reports/evidence/evidence-graph.json#GOV.ROBIN.REAL.RESULT.CONSUMPTION.V1.001"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "Actual provider rows, timestamps, bookmaker coverage and incomplete branches remain unknown until the post-merge workflow receives and replays real data.",
+    "The future provider quota cannot reconstruct the exact cost of historical pilot 37118924677 by itself.",
+    "R2 and provider availability remain external until execution."
+  ],
+  "assumptions": [
+    "The existing provider continues to return its documented odds payload and quota headers.",
+    "The existing private R2 bucket continues to support conditional immutable writes and exact-key reads.",
+    "C0 will retain PARTIAL data claims until received rows are stored, read back and replayed."
+  ],
+  "main_objection": "DP6 VERDICT: PASS_AND_HOLD with P0=0 and P1=0. The offline data contract is coherent, but no real-data completeness claim is admissible before post-merge receipt, exact R2 readback and artifact inspection.",
+  "risks": [
+    {
+      "risk": "A provider branch can legitimately be unavailable or lack a supported market; it must remain explicit instead of becoming a synthetic complete row.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py::_normalize_payload",
+        "tests/capture/test_real_data_result.py::test_unavailable_branch_is_explicit_and_does_not_stop_other_branches"
+      ]
+    },
+    {
+      "risk": "The normalized GitHub artifact is directly consultable for fourteen days; raw payloads and the normalized report remain durable in private R2, but the HTML link is not a long-term public archive.",
+      "severity": "LOW",
+      "evidence_refs": [
+        ".github/workflows/91-robin-real-data-result.yml",
+        "src/robin/capture/real_data_result.py"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "After merge, accept the first branch only after immutable PUT, exact GET, envelope hash and deterministic replay; then inspect the terminal receipt and JSON/CSV/HTML across all fifteen fixed slots.",
+  "recommended_action": "Accept the data key in PASS_AND_HOLD, complete exact-head delivery gates, then execute the bounded workflow and update claims only from received and replay-verified artifacts.",
+  "scale_condition": "Operational E1/PASS_AND_HOLD only; five endpoints and three cycles do not prove a season or authorize scientific promotion.",
+  "estimated_compute": "Read-only contract review and targeted offline normalization, replay, representation and rendering tests; no corpus replay.",
+  "estimated_external_cost": "0 provider request, 0 credit, 0 R2 operation, 0 purchase and 0 bet during DP6 review.",
+  "estimated_human_time": "Approximately 35 minutes of active review, excluding C0 work and CI waits.",
+  "maintenance_impact": "Moderate because the result module is large; simplify only after the live path works and without changing stored data, failure history or scientific safeguards.",
+  "confidence": 0.99
+}

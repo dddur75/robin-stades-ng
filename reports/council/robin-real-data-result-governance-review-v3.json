@@ -1,0 +1,88 @@
+{
+  "agent_id": "C2",
+  "mission_id": "ROBIN_REAL_DATA_RESULT_20261003",
+  "facts_verified": [
+    {
+      "claim": "Repository-text failures were reproduced on clean main and the candidate in the same Python 3.12 environment: both began at 26 failed and 10 passed, and explicit scenario-local LF normalization produced 36 passed without weakening exact gzip byte identity.",
+      "evidence_refs": [
+        "same-environment repository-text reproduction: clean main 26 failed, 10 passed; candidate before 26 failed, 10 passed; candidate after 36 passed",
+        "scripts/export_phase_c_v2_source_bundle.py",
+        "scripts/run_phase_c_v2_campaign.py",
+        "tests/hypothesis_intelligence/test_phase_c_v2_source_bundle.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The Chronos append-only edge assertion passed on clean main, failed on the candidate before correction and passed after an exact edge-slice correction; historical dates, authorization expiry behavior, runtime checks and required CI checks remain unchanged.",
+      "evidence_refs": [
+        "tests/activation/test_chronos_controlled_go_durable_seal_v1.py",
+        "same-environment Chronos reproduction: clean main 1 passed; candidate before 1 failed; candidate after 1 passed"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Runtime recovery defects were captured before correction: local preflight could consume a slot, durable captures could be discarded by a later local failure, stale quota could be compared as live sequence, provider access could precede full inventory, and two durable identical failures could permit a third cross-dispatch attempt.",
+      "evidence_refs": [
+        "tests/capture/test_real_data_result.py",
+        "RUNTIME.ROBIN.REAL.RESULT.PREFLIGHT.RESERVATION.ORDERING.FAILURE.V1.001",
+        "RUNTIME.ROBIN.REAL.RESULT.PREFLIGHT.RESERVATION.RECOVERY.V1.001"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The corrected path inventories all fifteen slots before provider access, preserves independently verified quota, separates live-dispatch quota monotonicity from replay, counts only proven durable failures across dispatches and bounds exact R2 reads to 34 per dispatch.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py::run_real_data_result",
+        "tests/capture/test_real_data_result.py::test_durable_repeated_failures_forbid_a_third_attempt_across_dispatches",
+        "tests/capture/test_real_data_result.py::test_complete_r2_replay_does_not_require_provider_dns_or_secret",
+        "configs/agents/mission-activation-matrix-v3.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Historical decisions 210 and 212 remain immutable and bound to their original projection hashes. The active 27-path projection is a new successor rather than a rewrite, and all new ledger records must extend hash d6a531bc95014cd62d7d9b4eb0c50ba5d3f075cbe81a0a3d6d6b5d8167700a7d.",
+      "evidence_refs": [
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-210",
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-212",
+        "tests/council/test_real_data_result_governance_v1.py"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "Exact-head CI, clean mergeability, merged main SHA and post-merge service availability remain future delivery gates.",
+    "Real provider rows and successor consumption remain unknown until execution."
+  ],
+  "assumptions": [
+    "C0 will append records 213 through 216 canonically and will not rewrite records 208 through 212.",
+    "The active 27-path projection remains frozen after its hash is recorded.",
+    "All five active reports will be validated against the Draft 2020-12 schema before their hashes are bound."
+  ],
+  "main_objection": "C2 VERDICT: PASS_AND_HOLD with P0=0 and P1=0. The historical and runtime failure evidence is explicit, predecessor bindings remain immutable, and the successor creates no authority beyond the owner mandate.",
+  "risks": [
+    {
+      "risk": "Future tests can again freeze platform-dependent text representation unless each historical scenario owns its explicit instant and line-ending boundary.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "scripts/export_phase_c_v2_source_bundle.py",
+        "tests/activation/test_chronos_controlled_go_durable_seal_v1.py"
+      ]
+    },
+    {
+      "risk": "The result module is large under an historically ambiguous LOC policy; reducing it before live proof would add delivery risk and is not required by the current scientific contract.",
+      "severity": "MEDIUM",
+      "evidence_refs": [
+        "configs/experiments/scale-policy-v3.json",
+        "src/robin/capture/real_data_result.py"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Validate the five active reports, projection hashes, canonical ledger chain, graph successors and appended edges, then run the complete Council domain and the one full repository suite.",
+  "recommended_action": "Append the exact failure and successor records, run final local gates, then continue normal PR, exact-head CI, merge and bounded live execution.",
+  "scale_condition": "No scale transition; current stage remains E1 and E3B remains only the operational authority ceiling.",
+  "estimated_compute": "Same-environment targeted reproductions, append-only audit and focused Council verification; no provider or corpus replay.",
+  "estimated_external_cost": "0 provider request, 0 credit, 0 R2 operation, 0 purchase and 0 bet.",
+  "estimated_human_time": "Approximately 45 minutes of targeted independent review.",
+  "maintenance_impact": "Positive: historical tests are local to their scenario and durable recovery policy is explicit without a new governance mechanism.",
+  "confidence": 0.99
+}

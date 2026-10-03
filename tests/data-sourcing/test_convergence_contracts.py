@@ -45,7 +45,8 @@ def generated() -> dict[str, str]:
 def test_generator_reproduces_exact_repository_reports(generated: dict[str, str]) -> None:
     assert set(generated) == GENERATED_REPORTS
     for name, content in generated.items():
-        assert (REPORTS / name).read_bytes() == content.encode("utf-8")
+        repository_bytes = (REPORTS / name).read_bytes().replace(b"\r\n", b"\n")
+        assert repository_bytes == content.encode("utf-8")
 
 
 def test_all_25_protocol_rows_are_complete_and_blocked() -> None:
