@@ -1,0 +1,104 @@
+{
+  "agent_id": "C2",
+  "mission_id": "ROBIN_REAL_DATA_RESULT_20261003",
+  "facts_verified": [
+    {
+      "claim": "Le run 37145228162 échoue avec RESULT_DNS_RESOLUTION_EXPIRED avant toute lecture du secret fournisseur et avant tout appel fournisseur.",
+      "evidence_refs": [
+        "https://github.com/dddur75/robin-stades-ng/actions/runs/37145228162",
+        "run 37145228162 log: RESULT_DNS_RESOLUTION_EXPIRED at 2026-10-03T18:43:18.9696052Z",
+        "src/robin/capture/real_data_result.py:1839-1862",
+        "src/robin/capture/real_data_result.py:1998-2009"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La cause est l'ordre temporel antérieur: effect_time était obtenu avant la résolution, puis utilisé pour vérifier une résolution observée ultérieurement. Le correctif reprend une horloge autorisée après retour du resolver.",
+      "evidence_refs": [
+        "git diff origin/main -- src/robin/capture/real_data_result.py",
+        "src/robin/capture/real_data_result.py:1839-1855",
+        "tests/capture/test_real_data_result.py:361-395"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le correctif ne relâche ni le TTL DNS ni l'autorité: _assert_authority est exécuté après résolution, puis assert_current; une résolution réellement expirée est toujours refusée avant secret et fournisseur.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py:1849-1861",
+        "src/robin/capture/reprise_collecte.py:153-156",
+        "tests/capture/test_real_data_result.py:398-433"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les diagnostics CLI exposent uniquement étape, code stable, classe, errno et statut HTTP; les messages d'exception et URL sensibles ne sont pas sérialisés.",
+      "evidence_refs": [
+        "scripts/run_real_data_result.py:50-106",
+        "src/robin/capture/real_data_result.py:600-608",
+        "src/robin/capture/real_data_result.py:628-672",
+        "src/robin/capture/real_data_result.py:752-777",
+        "tests/capture/test_real_data_result.py:436-480",
+        "tests/capture/test_run_real_data_result_cli.py:95-190"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le workflow valide toujours les quatre seuls fichiers normalisés, n'affiche pas le nom des fichiers inattendus, téléverse un résultat validé même si la capture termine fail-closed, puis conserve un statut terminal en échec.",
+      "evidence_refs": [
+        ".github/workflows/91-robin-real-data-result.yml:156-182",
+        ".github/workflows/91-robin-real-data-result.yml:248-275",
+        "tests/capture/test_real_data_result_workflow.py:48-87"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les plafonds fournisseur, la réserve historique, les cinq ligues, les marchés h2h/totals et les verrous sans pari/achat restent inchangés.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py:45-67",
+        ".github/workflows/91-robin-real-data-result.yml:23-45",
+        ".github/workflows/91-robin-real-data-result.yml:185-210"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La vérification locale fraîche passe sans tentative réseau: 36 tests ciblés réussis, Ruff et mypy réussissent, et git diff --check sort à zéro.",
+      "evidence_refs": [
+        "pytest tests/capture/test_real_data_result.py tests/capture/test_run_real_data_result_cli.py tests/capture/test_real_data_result_workflow.py: 36 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "ruff check changed Python scope: All checks passed",
+        "mypy --strict runtime and CLI: Success",
+        "git diff --check origin/main: exit 0"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "Le candidat était encore non committé lors de la revue; son SHA final reste à établir.",
+    "Les contrôles CI obligatoires du futur SHA exact ne sont pas encore exécutés.",
+    "Aucune nouvelle capture réelle, relecture R2 ou donnée fournisseur n'est encore obtenue par ce correctif.",
+    "Le quota fournisseur courant ne sera observable qu'avec les en-têtes d'une réponse réelle."
+  ],
+  "assumptions": [
+    "Le commit final conservera les six fichiers fonctionnels revus sans modification substantielle.",
+    "Les secrets existants restent configurés; aucune valeur n'a été consultée.",
+    "Les lectures R2 effectuées avant l'échec passé ne constituent pas des requêtes fournisseur."
+  ],
+  "main_objection": "Aucune objection de code P0/P1/P2; la poursuite reste conditionnée au SHA exact, à la CI requise et à une exécution réelle vérifiée.",
+  "risks": [
+    {
+      "risk": "Un défaut environnemental non reproductible hors ligne peut encore apparaître lors du prochain parcours GitHub Actions vers R2 ou le fournisseur.",
+      "severity": "MEDIUM",
+      "evidence_refs": [
+        "https://github.com/dddur75/robin-stades-ng/actions/runs/37145228162",
+        "Aucune nouvelle exécution live réalisée pendant cette revue"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Committer le diff exact, obtenir tous les checks requis au vert, fusionner normalement, puis lancer une seule nouvelle exécution depuis le SHA main exact et exiger artifact normalisé, relecture R2 vérifiée, trois cycles et comptabilité fournisseur bornée.",
+  "recommended_action": "GO conditionnel: ajouter les preuves append-only requises, committer et pousser ce candidat, faire passer la CI obligatoire, fusionner, puis exécuter le pilote réel sans rerun du run échoué.",
+  "scale_condition": "Ne poursuivre au-delà du prochain dispatch que si les en-têtes de quota sont valides, les plafonds cumulés restent sous 40 requêtes et 60 crédits, et la première capture est durablement relue.",
+  "estimated_compute": "Vérification locale inférieure à deux secondes; pilote borné par le timeout workflow de 30 minutes.",
+  "estimated_external_cost": "Revue: 0 requête fournisseur et 0 crédit. Prochain parcours complet: au plus 15 requêtes et 30 crédits; borne cumulative prévue au plus 16 requêtes et 34 crédits avec la réserve historique.",
+  "estimated_human_time": "Environ 20 à 30 minutes de travail actif supplémentaire, hors attente CI et cycles programmés.",
+  "maintenance_impact": "Faible: correction locale de l'ordre temporel, diagnostic structuré et message de validation; aucun nouveau composant, fournisseur ou mécanisme de gouvernance.",
+  "confidence": 0.97
+}

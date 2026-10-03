@@ -72,6 +72,9 @@ def test_successor_workflow_scopes_secrets_and_uploads_only_normalized_delivery(
     assert upload["uses"] == "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
     assert upload["with"]["path"] == "${{ runner.temp }}/real-data-result"
     validate = next(step for step in steps if step.get("id") == "validate")
+    assert validate["if"] == "${{ always() && !cancelled() }}"
+    assert "RESULT_NORMALIZED_FILE_SET_INVALID" in validate["run"]
+    assert "unexpected_count" in validate["run"]
     assert "robin-real-data.html" in validate["run"]
     assert "robin-real-data.csv" in validate["run"]
     assert "raw_payload_base64" in validate["run"]

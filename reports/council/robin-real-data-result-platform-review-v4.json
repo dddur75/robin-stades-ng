@@ -1,0 +1,114 @@
+{
+  "agent_id": "A2",
+  "mission_id": "ROBIN_REAL_DATA_RESULT_20261003",
+  "facts_verified": [
+    {
+      "claim": "Le worktree fonctionnel revu part de origin/main 5b2383bec5a539336bd89bcab3f84cc219c09989 et conserve C0 comme unique writer; cette revue A2 n'a produit aucune mutation.",
+      "evidence_refs": [
+        "git rev-parse HEAD: 5b2383bec5a539336bd89bcab3f84cc219c09989",
+        "git rev-parse origin/main: 5b2383bec5a539336bd89bcab3f84cc219c09989",
+        "configs/agents/mission-activation-matrix-v3.json:641-644"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le défaut temporel DNS est corrigé au bon niveau: l'autorité et la fraîcheur sont réévaluées avec une horloge postérieure au retour du resolver; le contrôle TTL reste actif avant lecture du secret et émission fournisseur.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py:1839-1862",
+        "src/robin/capture/real_data_result.py:1924-2009",
+        "src/robin/capture/reprise_collecte.py:153-156",
+        "tests/capture/test_real_data_result.py:361-433"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les plafonds statiques restent fail-closed: cinq ligues, marchés h2h/totals, quinze slots au maximum, réserve historique d'une requête et quatre crédits, plafonds cumulés de quarante requêtes et soixante crédits, sans retry automatique.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py:45-67",
+        "src/robin/capture/real_data_result.py:1067-1079",
+        "src/robin/capture/real_data_result.py:1195-1395",
+        ".github/workflows/91-robin-real-data-result.yml:51-120",
+        ".github/workflows/91-robin-real-data-result.yml:185-210"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le parcours R2 réserve chaque slot avant l'appel fournisseur, écrit le payload brut immuable, exige sa relecture exacte avant replay et borne un parcours complet à trente-quatre PUT et trente-quatre GET.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py:1156-1192",
+        "src/robin/capture/real_data_result.py:1278-1395",
+        "src/robin/capture/real_data_result.py:2057-2131",
+        ".github/workflows/91-robin-real-data-result.yml:209-213"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les diagnostics ajoutés n'émettent pas les messages d'exception ni les URL: ils se limitent à l'étape, au code stable, à la classe, à errno et au statut HTTP disponible.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py:573-672",
+        "scripts/run_real_data_result.py:50-106",
+        "tests/capture/test_real_data_result.py:436-480",
+        "tests/capture/test_run_real_data_result_cli.py:95-190"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le workflow exécute la validation même après une capture fail-closed, contrôle les quatre fichiers normalisés de premier niveau sans divulguer les noms inattendus, téléverse seulement après validation réussie et conserve ensuite l'échec terminal si la capture n'a pas réussi.",
+      "evidence_refs": [
+        ".github/workflows/91-robin-real-data-result.yml:131-182",
+        ".github/workflows/91-robin-real-data-result.yml:248-275",
+        "tests/capture/test_real_data_result_workflow.py:48-87"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les vérifications locales A2 passent sans réseau: les trente-six tests résultat/workflow/CLI et les soixante-cinq tests du transport réussissent, chacun avec UNAPPROVED_NETWORK_ATTEMPTS égal à zéro.",
+      "evidence_refs": [
+        "pytest result/workflow/CLI: 36 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "pytest tests/capture/test_live_canary_transport.py: 65 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "tests/capture/test_live_canary_transport.py:671-727"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "Le SHA du commit candidat final et les résultats CI obligatoires associés ne sont pas encore établis.",
+    "Le nombre courant de dispatchs admissibles doit être relu par le gate GitHub au moment de l'exécution; cette revue sans effet externe ne l'a pas interrogé.",
+    "La disponibilité effective des secrets, de R2, du DNS public, du fournisseur et des en-têtes de quota reste à vérifier dans le prochain run réel.",
+    "Aucune capture réelle, relecture R2 réelle, ligne de cote réelle ni artifact consultable n'a été obtenu pendant cette revue."
+  ],
+  "assumptions": [
+    "Le commit final conservera sans modification substantielle les changements runtime, workflow et tests examinés.",
+    "Le run 37145228162 n'a consommé aucun appel fournisseur supplémentaire, conformément aux preuves opérationnelles déjà établies.",
+    "Les quatre fichiers normalisés sont produits dans le répertoire temporaire neuf créé par le workflow."
+  ],
+  "main_objection": "Aucune objection de code P0, P1 ou P2 identifiée. Le GO reste conditionnel au SHA exact, aux contrôles obligatoires verts et à la preuve live R2/fournisseur; aucune capture réelle n'est revendiquée.",
+  "risks": [
+    {
+      "risk": "Un défaut propre à l'environnement GitHub Actions, au DNS, à R2, aux secrets ou aux en-têtes du fournisseur peut encore interrompre le parcours malgré les tests hors réseau.",
+      "severity": "MEDIUM",
+      "evidence_refs": [
+        "Aucune exécution externe réalisée par A2",
+        "scripts/run_real_data_result.py:125-151",
+        ".github/workflows/91-robin-real-data-result.yml:138-158"
+      ]
+    },
+    {
+      "risk": "Une erreur fatale antérieure à la production des quatre fichiers restera consultable dans les logs structurés mais ne produira pas d'artifact normalisé.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "scripts/run_real_data_result.py:143-152",
+        ".github/workflows/91-robin-real-data-result.yml:156-182",
+        ".github/workflows/91-robin-real-data-result.yml:248-275"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Sur le SHA main exact après CI et fusion normale, lancer un nouveau workflow_dispatch distinct, vérifier que la première requête est précédée de sa réservation R2, que sa réponse est écrite puis relue exactement avant toute poursuite, et exiger trois cycles, une comptabilité bornée et un artifact HTML/CSV validé.",
+  "recommended_action": "GO conditionnel — P0=0, P1=0, P2=0. Finaliser les preuves append-only, committer et pousser le diff exact, obtenir les contrôles requis, fusionner normalement, puis lancer un nouveau dispatch sans rerun de l'échec précédent et auditer immédiatement la première capture avant de considérer la livraison acquise.",
+  "scale_condition": "Poursuivre automatiquement seulement si le gate confirme un SHA main exact et un dispatch admissible, si la première capture est conservée et relue depuis R2, si les en-têtes de quota sont valides et si les bornes cumulées restent inférieures ou égales à quarante requêtes et soixante crédits; une branche indisponible doit rester explicitement incomplète sans arrêter les autres.",
+  "estimated_compute": "Revue locale: trente-six plus soixante-cinq tests en environ cinq secondes cumulées; prochain workflow borné à trente minutes et trois cycles espacés de cent vingt secondes.",
+  "estimated_external_cost": "Revue A2: zéro requête fournisseur, zéro crédit et aucun effet R2. Prochain parcours complet: au plus quinze nouvelles requêtes fournisseur et trente crédits, soit une borne cumulative conservatrice de seize requêtes et trente-quatre crédits; au plus trente-quatre PUT et trente-quatre GET R2.",
+  "estimated_human_time": "Environ quinze à trente minutes de travail actif restant, hors attente passive de CI et des cycles programmés.",
+  "maintenance_impact": "Faible et positif: correction locale de l'ordre temporel DNS, diagnostics structurés et conservation du résultat fail-closed; aucun nouveau fournisseur, runner, stockage ou mécanisme de gouvernance.",
+  "confidence": 0.98
+}
