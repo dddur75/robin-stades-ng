@@ -1,0 +1,77 @@
+{
+  "agent_id": "C2",
+  "mission_id": "ROBIN_REAL_DATA_RESULT_20261003",
+  "facts_verified": [
+    {
+      "claim": "The four historical Council nodes passed on clean main 150c14f76c5f51f0efa6211f4742ea2291a9234c and failed on the candidate in the same Python 3.12 environment before correction, so the failures were candidate-consequential rather than automatically classified as pre-existing.",
+      "evidence_refs": [
+        "clean-main targeted run: 4 passed in 1.23s",
+        "candidate Council run before correction: 4 failed, 68 passed",
+        "tests/council/test_real_execution_bootstrap_governance.py",
+        "tests/council/test_reprise_collecte_governance_v1.py",
+        "tests/council/test_robin_council_os_v3.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The First C0 historical guarantee is still frozen exactly, but now by the canonical semantic hash of its four authorization entries and mission object rather than by the textual hash of the entire additive matrix. The semantic hash is identical on clean main and the candidate.",
+      "evidence_refs": [
+        "tests/council/test_real_execution_bootstrap_governance.py::test_first_c0_single_league_canary_authority_is_additive_and_fail_closed",
+        "FIRST_C0_MATRIX_SEMANTIC_SHA256=36fa5e9c03aa48358299331bb2238d8f2f43846df9b2e2cc32bc3ad8c872619a"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The historical V2.003 projection remains bound to record 207 by its immutable projection SHA and path count, while its status may advance only through a cycle-free superseded_by chain ending in a VERIFIED projection that explicitly supersedes its predecessor.",
+      "evidence_refs": [
+        "tests/council/test_reprise_collecte_governance_v1.py::_verified_projection_successor",
+        "tests/council/test_reprise_collecte_governance_v1.py::test_sqlite_corrected_precommit_decision_binds_exact_current_evidence",
+        "RCV3-20261003-207 reviewed projection 44f452bf781778db13806c61cf018e2bc57e24732b14a4d707b175e813940b7d"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The historical graph prefix remains exact and newly appended edges must have contiguous identifiers, reference only appended claims and decisions, and remain SUPPORTS/RECORDED.",
+      "evidence_refs": [
+        "tests/council/test_robin_council_os_v3.py::test_first_c0_vertical_governance_is_an_exact_append_only_successor",
+        "independent read-only edge audit: historical 811-edge prefix exact; EDGE.812 through EDGE.822 valid"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The corrected nineteen-path projection 5053ca50893277af22e656ab92c5e9bfd2c1252ee57693839b483caf84b58833 contains the unchanged runtime candidate plus all three directly consequential historical-test corrections.",
+      "evidence_refs": [
+        "reports/evidence/evidence-graph.json#GOV.ENGINEERING.ROBIN_REAL_DATA_RESULT.PROJECTION.V1.002",
+        "tests/council/test_real_data_result_governance_v1.py::test_historical_assertion_correction_has_exact_active_projection_and_review"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "The one full suite, exact-head CI, clean mergeability and merged main SHA remain future delivery gates.",
+    "Real provider data and consumption remain unknown until post-merge execution."
+  ],
+  "assumptions": [
+    "DP6 and C4 reviews remain applicable because the consequential delta changes tests and evidence only, not runtime, workflow, data semantics or security boundaries.",
+    "C0 will freeze projection 5053ca50893277af22e656ab92c5e9bfd2c1252ee57693839b483caf84b58833 and append records 211 and 212 before commit."
+  ],
+  "main_objection": "C2 VERDICT: PASS_AND_HOLD with P0=0, P1=0. The former bridge wording P1 is closed by distinguishing eight unchanged V2.003 paths from two current tests covered by the successor review. Merge and live execution retain their existing gates.",
+  "risks": [
+    {
+      "risk": "Historical tests can accidentally freeze unrelated additive representations again; future assertions should remain scoped to the contract they protect and preserve an exact append-only prefix.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "tests/council/test_real_execution_bootstrap_governance.py",
+        "tests/council/test_robin_council_os_v3.py"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Pass the four corrected historical nodes, the successor governance test, the generic artifact-successor validator and the complete Council domain before the single full repository suite.",
+  "recommended_action": "Accept the test-only correction, append the exact successor evidence, then continue normal PR, CI, merge and bounded live execution.",
+  "scale_condition": "No scale transition; current stage remains E1 and E3B remains only the operational authority ceiling.",
+  "estimated_compute": "Read-only clean-main/candidate reproduction plus targeted Council tests; no provider or corpus replay.",
+  "estimated_external_cost": "0 provider request, credit, R2 operation, purchase or bet.",
+  "estimated_human_time": "Approximately 20 minutes of targeted independent review.",
+  "maintenance_impact": "Low and test-only; assertions now bind functional properties and append-only succession instead of unrelated whole-file representation.",
+  "confidence": 0.99
+}

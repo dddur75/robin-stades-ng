@@ -1,0 +1,79 @@
+{
+  "agent_id": "C2",
+  "mission_id": "ROBIN_REAL_DATA_RESULT_20261003",
+  "facts_verified": [
+    {
+      "claim": "The first frozen-candidate full suite completed with exactly one failure, 3607 passes and 33 skips: the historical V2 network-binding test returned HTTP 200 through a response double without close(), so the new fail-closed final cleanup correctly rejected the apparent success.",
+      "evidence_refs": [
+        "full repository suite: 1 failed, 3607 passed, 33 skipped in 1605.44 seconds",
+        "tests/capture/test_provider_network_binding.py::test_v2_transport_uses_one_selected_ip_and_rechecks_inside_connect",
+        "RUNTIME.TRANSPORT.DEADLINE_SOCKET.FINAL_CLOSE.FAILURE.V1.001"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The exact node passed on clean main 150c14f76c5f51f0efa6211f4742ea2291a9234c, failed on the candidate before correction with LIVE_TRANSPORT_CONNECTION_CLOSE_FAILED, and passed on the candidate after the response double implemented the existing close protocol.",
+      "evidence_refs": [
+        "same-environment clean main: 1 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "same-environment candidate before: 1 failed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "same-environment candidate after: 1 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "tests/capture/test_provider_network_binding.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The correction adds only _Response.close() -> None to the historical test double. It changes no runtime, connection factory, selected IP, expiry guard, assertion, workflow, provider budget or required check.",
+      "evidence_refs": [
+        "git diff -- tests/capture/test_provider_network_binding.py",
+        "independent test-only compatibility audit: P0=0, P1=0, P2=0"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The complete provider-network-binding plus live-transport pack passes 130 tests with zero unapproved network attempts, retaining the dedicated transient close, persistent cleanup failure and TLS-wrapper ownership assertions.",
+      "evidence_refs": [
+        "tests/capture/test_provider_network_binding.py",
+        "tests/capture/test_live_canary_transport.py",
+        "independent combined pack: 130 passed in 6.19 seconds; UNAPPROVED_NETWORK_ATTEMPTS=0"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Records 213 through 216 and projection V1.003 remain immutable historical evidence. This directly consequential compatibility correction requires a new projection and decision suffix rather than rewriting those records.",
+      "evidence_refs": [
+        "reports/council/decision-ledger.jsonl#RCV3-20261003-216",
+        "reports/evidence/evidence-graph.json#GOV.ENGINEERING.ROBIN_REAL_DATA_RESULT.PROJECTION.V1.003",
+        "tests/council/test_real_data_result_governance_v1.py"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "The final post-correction full repository suite and exact-head CI remain delivery gates.",
+    "Real provider, R2 and quota availability remain unknown before bounded post-merge execution."
+  ],
+  "assumptions": [
+    "C0 will append a new failure record and V1.004 successor decision without changing records 208 through 216.",
+    "The clean-main and candidate reproductions used the same Python 3.12 virtual environment.",
+    "The refreshed projection remains content-frozen after its append-only binding."
+  ],
+  "main_objection": "C2 V1.004 VERDICT: PASS_AND_HOLD with P0=0, P1=0 and P2=0 for the new correction. The test double now satisfies the stricter cleanup protocol without weakening the behavior under test.",
+  "risks": [
+    {
+      "risk": "A future historical transport double can again omit a method required by the production protocol; focused protocol-compatible doubles should be preferred over relaxing runtime cleanup.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "tests/capture/test_provider_network_binding.py",
+        "src/robin/capture/live_transport.py::_close_transport_resources"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Pass the exact clean-main/candidate reproduction, the combined 130-test transport and binding pack, the successor governance controls and the final full repository suite before merge.",
+  "recommended_action": "Append the V1.004 successor, rerun the final full suite once, then continue normal PR, exact-head CI, merge and bounded live execution.",
+  "scale_condition": "No new scale or effect authority; current stage remains E1 and the provider ceiling is unchanged.",
+  "estimated_compute": "One completed full suite, exact targeted reproduction and focused 130-test compatibility pack; no provider or corpus effect.",
+  "estimated_external_cost": "0 provider request, 0 credit, 0 R2 operation, 0 purchase and 0 bet.",
+  "estimated_human_time": "Approximately 20 minutes of active diagnosis and independent review, excluding the completed full-suite wait.",
+  "maintenance_impact": "Minimal and test-only: one protocol method on one historical response double plus append-only evidence.",
+  "confidence": 0.99
+}

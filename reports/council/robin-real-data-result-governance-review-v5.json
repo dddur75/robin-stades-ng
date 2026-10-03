@@ -1,0 +1,58 @@
+{
+  "agent_id": "C2",
+  "mission_id": "ROBIN_REAL_DATA_RESULT_20261003",
+  "facts_verified": [
+    {
+      "claim": "PR 83 Windows ran 791 capture tests and isolated one checkout-representation failure: the manifest raw CRLF SHA-256 was e6ed3910873fcf6c2e6d6f708c44134cd587ac8975090bc4c17b4723c1fbd992 while the workflow contract binds the LF-normalized SHA-256 4d91084d8446d794083b3729c34ac32e438c72c28b9db180979c4c5f2af74aa2.",
+      "evidence_refs": [
+        "PR 83 run 37139419529 job 111250580296: 1 failed, 790 passed",
+        "tests/capture/test_real_data_result_workflow.py::test_successor_workflow_pins_actions_dependencies_manifest_and_source",
+        "configs/execution/robin-real-data-result-20261003.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The correction canonicalizes CRLF to LF before hashing the manifest and source in the test, preserving the exact expected hashes, both assertions, the workflow gate and every runtime byte.",
+      "evidence_refs": [
+        "tests/capture/test_real_data_result_workflow.py::_lf_sha256",
+        "targeted corrected node: 1 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "Ruff check and format check: PASS"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The already completed local repository suite remains applicable to runtime and all unchanged tests: 3609 passed, 33 skipped and zero unapproved network attempts. Only the checkout-representation assertion changed after that run.",
+      "evidence_refs": [
+        "local full repository suite: 3609 passed, 33 skipped in 1670.79 seconds",
+        "git diff -- tests/capture/test_real_data_result_workflow.py"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "The refreshed exact-head Windows capture job and remaining required checks are future merge gates.",
+    "Provider quota, secret validity, R2 availability and real odds coverage remain unknown before bounded post-merge execution."
+  ],
+  "assumptions": [
+    "Git checkouts may materialize repository text as LF or CRLF while the evidence contract remains LF_NORMALIZED_TEXT_BYTES.",
+    "C0 will append V1.005 without rewriting records 208 through 218."
+  ],
+  "main_objection": "C2 V1.005 VERDICT: PASS_AND_HOLD with P0=0, P1=0 and P2_new=0. Canonical LF hashing removes a platform representation dependency without weakening the pinned-hash guarantee.",
+  "risks": [
+    {
+      "risk": "A future test can accidentally compare raw checkout bytes against a canonical text hash; the local LF helper keeps this contract explicit.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "tests/capture/test_real_data_result_workflow.py::_lf_sha256"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Pass the exact workflow hash node locally, prove the forced CRLF and LF digests, validate the V1.005 successor, then require the refreshed exact-head Windows job and all required checks.",
+  "recommended_action": "Append V1.005, commit the test-only normalization as C0, push without force and wait for exact-head CI before normal merge.",
+  "scale_condition": "No new scale or effect authority; current stage remains E1 and all provider ceilings are unchanged.",
+  "estimated_compute": "One targeted local node, static checks and refreshed exact-head CI; no replay or provider effect.",
+  "estimated_external_cost": "0 provider request, 0 credit, 0 R2 operation, 0 purchase and 0 bet.",
+  "estimated_human_time": "Approximately 15 minutes of active diagnosis and review, excluding passive CI.",
+  "maintenance_impact": "Minimal and test-only: one LF-normalized hash helper used by two existing assertions plus append-only evidence.",
+  "confidence": 0.99
+}

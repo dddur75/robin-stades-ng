@@ -14,6 +14,22 @@ ROOT = Path(__file__).resolve().parents[2]
 BUNDLE = ROOT / "reports/closure/phase-c-v2-source-evidence"
 
 
+def test_repository_text_bytes_normalizes_only_crlf(tmp_path: Path) -> None:
+    lf_path = tmp_path / "lf.json"
+    crlf_path = tmp_path / "crlf.json"
+    changed_path = tmp_path / "changed.json"
+    lf_path.write_bytes(b'{"value":1}\n')
+    crlf_path.write_bytes(b'{"value":1}\r\n')
+    changed_path.write_bytes(b'{"value":2}\r\n')
+
+    assert source.repository_text_bytes(lf_path) == source.repository_text_bytes(
+        crlf_path
+    )
+    assert source.repository_text_bytes(changed_path) != source.repository_text_bytes(
+        lf_path
+    )
+
+
 def load_json(path: Path) -> dict[str, object]:
     value = json.loads(path.read_text(encoding="utf-8"))
     assert isinstance(value, dict)

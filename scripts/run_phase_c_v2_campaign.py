@@ -57,6 +57,11 @@ def read_json(path: Path) -> dict[str, Any]:
     return value
 
 
+def repository_transport_bytes(path: Path) -> bytes:
+    payload = path.read_bytes()
+    return payload if path.suffix == ".gz" else payload.replace(b"\r\n", b"\n")
+
+
 def write_json(path: Path, value: object, *, compact: bool = False) -> dict[str, Any]:
     payload = (
         v2.canonical_bytes(value)
@@ -1702,7 +1707,7 @@ def verify_results(output_base: Path = ROOT) -> dict[str, Any]:
         if not isinstance(descriptor, Mapping):
             raise TypeError("PHASE_C_V2_RESULT_DESCRIPTOR_REQUIRED")
         path = descriptor_path(output_base, descriptor)
-        payload = path.read_bytes()
+        payload = repository_transport_bytes(path)
         if (
             len(payload) != int(descriptor["bytes"])
             or hashlib.sha256(payload).hexdigest() != descriptor["sha256"]
@@ -1846,7 +1851,7 @@ def result_file_hashes(output_base: Path) -> dict[str, dict[str, Any]]:
     result: dict[str, dict[str, Any]] = {}
     for relative_path in sorted(paths):
         path = output_base / relative_path
-        payload = path.read_bytes()
+        payload = repository_transport_bytes(path)
         row: dict[str, Any] = {
             "bytes": len(payload),
             "sha256": hashlib.sha256(payload).hexdigest(),
@@ -2060,14 +2065,16 @@ def verify_replay_manifest() -> dict[str, Any]:
     declared_source_files = source_replay.get("files")
     if not isinstance(declared_source_files, list):
         raise TypeError("PHASE_C_V2_SOURCE_REPLAY_FILES_REQUIRED")
-    actual_source_files = [
-        {
-            "path": name,
-            "bytes": (SOURCE_BUNDLE / name).stat().st_size,
-            "sha256": hashlib.sha256((SOURCE_BUNDLE / name).read_bytes()).hexdigest(),
-        }
-        for name in source_files
-    ]
+    actual_source_files = []
+    for name in source_files:
+        payload = repository_transport_bytes(SOURCE_BUNDLE / name)
+        actual_source_files.append(
+            {
+                "path": name,
+                "bytes": len(payload),
+                "sha256": hashlib.sha256(payload).hexdigest(),
+            }
+        )
     if (
         source_replay.get("manifest_hash") != source_manifest["manifest_hash"]
         or source_replay.get("replay_runs") != 2

@@ -1,0 +1,78 @@
+{
+  "agent_id": "C0",
+  "mission_id": "ROBIN_REAL_DATA_RESULT_20261003",
+  "facts_verified": [
+    {
+      "claim": "The successor review reuses unchanged DP6 data and C4 security keys and refreshes C2 governance plus A2 platform review for the exact nineteen-path projection 5053ca50893277af22e656ab92c5e9bfd2c1252ee57693839b483caf84b58833; P0=0, P1=0 and no blocking critical thread remains.",
+      "evidence_refs": [
+        "reports/council/robin-real-data-result-data-review-v1.json",
+        "reports/council/robin-real-data-result-security-review-v1.json",
+        "reports/council/robin-real-data-result-governance-review-v2.json",
+        "reports/council/robin-real-data-result-platform-review-v2.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Clean main and candidate were compared in the same environment before correction: clean main passed all four historical nodes and the candidate failed exactly the four candidate-consequential representation and append-only assertions.",
+      "evidence_refs": [
+        "clean-main 150c14f targeted result: 4 passed",
+        "candidate pre-correction Council result: 4 failed, 68 passed",
+        "candidate post-correction targeted result: 4 passed"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The correction does not weaken guarantees: First C0 remains bound by an exact semantic hash, V2.003 remains bound to record 207, successor chains must end VERIFIED without cycles, and graph additions preserve the historical edge prefix with valid contiguous references.",
+      "evidence_refs": [
+        "tests/council/test_real_execution_bootstrap_governance.py",
+        "tests/council/test_reprise_collecte_governance_v1.py",
+        "tests/council/test_robin_council_os_v3.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Runtime, provider budgets, R2 durability, diagnostics, workflow gates and the three PARTIAL real-data claims are unchanged from the accepted V1 review.",
+      "evidence_refs": [
+        "reports/council/robin-real-data-result-final-review-v1.json",
+        "reports/evidence/evidence-graph.json#DATA.ROBIN.REAL.RESULT.CAPTURES.V1.001",
+        "reports/evidence/evidence-graph.json#DATA.ROBIN.REAL.RESULT.VIEW.V1.001",
+        "reports/evidence/evidence-graph.json#GOV.ROBIN.REAL.RESULT.CONSUMPTION.V1.001"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "The final complete Council run, one repository-wide suite, exact-head CI, clean mergeability and merged main SHA remain future gates.",
+    "No real match, odds row, capture or new consumption is known before post-merge execution."
+  ],
+  "assumptions": [
+    "C0 appends records 211 and 212 and makes no later projected mutation without another exact successor.",
+    "Existing provider and R2 credentials remain available without purchase or subscription change."
+  ],
+  "main_objection": "C0 SUCCESSOR VERDICT: PASS_AND_HOLD, P0=0, P1=0, P2=2, zero blocking critical threads. The two retained P2 items are the historical LOC-scope ambiguity and short-lived public normalized artifact; neither was changed by this correction.",
+  "risks": [
+    {
+      "risk": "The result module remains large under an historically ambiguous LOC policy; simplify only after real flow proof and without changing data, failure history or scientific safeguards.",
+      "severity": "MEDIUM",
+      "evidence_refs": [
+        "configs/experiments/scale-policy-v3.json",
+        "reports/council/robin-real-data-result-final-review-v1.json"
+      ]
+    },
+    {
+      "risk": "The normalized GitHub artifact expires after fourteen days while raw immutable payloads remain in private R2.",
+      "severity": "LOW",
+      "evidence_refs": [
+        ".github/workflows/91-robin-real-data-result.yml"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Pass mission-specific and generic governance, the complete Council domain, static checks and the one full repository suite; then require green exact-head checks and CLEAN mergeability before normal merge.",
+  "recommended_action": "Accept projection V1.002 for commit and normal PR delivery, preserving all live gates and refusing any real-data claim until immutable readback and replay succeed.",
+  "scale_condition": "Remain E1/PASS_AND_HOLD; E3B is an authority ceiling only and no scientific transition is authorized.",
+  "estimated_compute": "Reused unchanged data/security review plus targeted governance/platform reproduction and correction review.",
+  "estimated_external_cost": "0 provider call, credit, R2 effect, purchase or bet during the correction.",
+  "estimated_human_time": "Within the authorized active-work window, excluding passive CI wait.",
+  "maintenance_impact": "Low test-only successor layered over the unchanged runtime delivery.",
+  "confidence": 0.99
+}

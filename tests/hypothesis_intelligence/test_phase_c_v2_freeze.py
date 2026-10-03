@@ -45,7 +45,8 @@ def test_exact_70_cartesian_ids_unique_sorted_six_segments() -> None:
 
 def test_v1_registry_bytes_and_80_definition_hashes_unchanged() -> None:
     v1_path = ROOT / "configs/hypothesis-tags/canonical-tag-registry-v1.json"
-    assert hashlib.sha256(v1_path.read_bytes()).hexdigest() == (
+    repository_bytes = v1_path.read_bytes().replace(b"\r\n", b"\n")
+    assert hashlib.sha256(repository_bytes).hexdigest() == (
         "a6b6385a7838fe2c79532b62501a5437a00e53be48cb684a1b14da9b0604e628"
     )
     v1 = load("configs/hypothesis-tags/canonical-tag-registry-v1.json")

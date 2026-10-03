@@ -640,7 +640,7 @@ def test_council_release_is_explicitly_superseding_and_dormant() -> None:
     assert claims[initial_release_id]["superseded_by"] == corrected_release_id
     assert claims[corrected_release_id]["status"] == "VERIFIED"
     assert claims[corrected_release_id]["successor_of"] == initial_release_id
-    assert [edge["edge_id"] for edge in graph["edges"][-6:]] == [
+    expected_edge_ids = [
         "EDGE.806",
         "EDGE.807",
         "EDGE.808",
@@ -648,6 +648,15 @@ def test_council_release_is_explicitly_superseding_and_dormant() -> None:
         "EDGE.810",
         "EDGE.811",
     ]
+    first_edge_index = next(
+        index
+        for index, edge in enumerate(graph["edges"])
+        if edge["edge_id"] == expected_edge_ids[0]
+    )
+    assert [
+        edge["edge_id"]
+        for edge in graph["edges"][first_edge_index : first_edge_index + 6]
+    ] == expected_edge_ids
 
     previous_hash = records_by_id["RCV3-20260830-189"]["hash"]
     for record in (failure, release, correction):

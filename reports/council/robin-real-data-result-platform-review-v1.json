@@ -1,0 +1,97 @@
+{
+  "agent_id": "A2",
+  "mission_id": "ROBIN_REAL_DATA_RESULT_20261003",
+  "facts_verified": [
+    {
+      "claim": "The transport keeps the TLS socket alive while the HTTP response reader owns a lease and closes it exactly once after response finalization, preserving deadlines, SNI, certificate verification and IP pinning.",
+      "evidence_refs": [
+        "src/robin/capture/live_transport.py",
+        "tests/capture/test_live_canary_transport.py::test_connection_close_keeps_socket_alive_until_http_response_reader_closes",
+        "tests/capture/test_live_canary_transport.py::test_socket_adapter_defers_final_close_until_every_file_lease_is_released"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The runtime implements three cycles over five leagues and h2h/totals with reservation before request, immutable raw R2 persistence, exact readback, deterministic replay and normalized delivery.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py",
+        "tests/capture/test_real_data_result.py::test_three_cycles_flow_through_reservation_r2_replay_and_table",
+        "tests/capture/test_real_data_result.py::test_second_run_replays_fixed_slots_without_another_provider_request"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "A low replayed quota prevents every new provider request, two similar failures stop only the affected sport, and global quota uncertainty stops all later requests.",
+      "evidence_refs": [
+        "tests/capture/test_real_data_result.py::test_replayed_low_quota_stops_before_any_new_provider_request",
+        "tests/capture/test_real_data_result.py::test_repeated_transport_failure_stops_only_the_affected_sport_branch",
+        "tests/capture/test_real_data_result.py::test_unverified_or_unexpected_quota_stops_before_a_second_request"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The final delta prevents a terminal global stop from reporting complete, exposes terminal status/code in receipt and HTML, and stops after exactly one request when the first raw readback is missing.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_result.py::_report",
+        "tests/capture/test_real_data_result.py::test_last_response_quota_sequence_anomaly_can_never_report_complete",
+        "tests/capture/test_real_data_result.py::test_first_capture_must_be_read_back_before_any_later_provider_request"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The public artifact contains only normalized deliverables, formula-safe CSV and escaped HTML; raw envelopes stay in R2.",
+      "evidence_refs": [
+        ".github/workflows/91-robin-real-data-result.yml",
+        "src/robin/capture/real_data_result.py",
+        "tests/capture/test_real_data_result.py::test_csv_neutralizes_provider_formula_prefixes_without_changing_rows"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "A2 observed the broader offline collection pack green before the final delta and revalidated the final affected delta as 21 of 21 tests green with zero unapproved network attempts; Ruff and strict mypy remained green.",
+      "evidence_refs": [
+        "A2 broad pack: 85 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "A2 final delta: 21 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "A2 Ruff and mypy strict: PASS"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "Provider and R2 availability plus existing secret validity before live dispatch.",
+    "The one full suite and exact-head required checks on the final commit.",
+    "Any real data or artifact before post-merge execution."
+  ],
+  "assumptions": [
+    "C0 materializes and freezes review/evidence artifacts after peer reports.",
+    "The workflow executes only on the exact merged main SHA while authority remains active.",
+    "Existing secrets remain available without purchase or subscription change."
+  ],
+  "main_objection": "A2 VERDICT: PASS_AND_HOLD with P0=0 and P1=0. Delivery is held only for append-only evidence, the full suite, exact-head checks, clean mergeability and real post-merge verification.",
+  "risks": [
+    {
+      "risk": "The normalized artifact expires after fourteen days; deliver its run link promptly while treating R2 as durable raw storage.",
+      "severity": "LOW",
+      "evidence_refs": [
+        ".github/workflows/91-robin-real-data-result.yml",
+        "src/robin/capture/real_data_result.py"
+      ]
+    },
+    {
+      "risk": "The fifteen-minute job timeout has finite margin if all provider and R2 operations approach their deadlines; fixed slots permit safe authorized recovery without duplicate provider requests.",
+      "severity": "LOW",
+      "evidence_refs": [
+        ".github/workflows/91-robin-real-data-result.yml",
+        "src/robin/capture/real_data_result.py"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Validate frozen review/evidence hashes, run the full suite and exact-head checks, merge cleanly, then require first-capture readback/replay and inspect the final artifact plus R2-backed receipt.",
+  "recommended_action": "Allow C0 to finish append-only evidence and normal PR delivery; after merge, execute the fixed-slot workflow and accept only actually received and verified data.",
+  "scale_condition": "Continue automatically after the first verified real capture within the fifteen fixed slots; no new league, market, provider or scientific scale claim.",
+  "estimated_compute": "Offline code review, targeted tests, Ruff, strict mypy, Bandit and diff checks; one full suite remains for C0.",
+  "estimated_external_cost": "0 provider call, credit, R2 operation, purchase or bet during A2 review.",
+  "estimated_human_time": "Approximately one hour of independent review plus a short final-delta check.",
+  "maintenance_impact": "Moderate specialized runner; simplify only after live proof while preserving fixed keys, receipts, diagnostics and scientific safeguards.",
+  "confidence": 0.98
+}

@@ -349,6 +349,9 @@ class _Response:
     def read(self, _amount: int | None = None) -> bytes:
         return b"[]"
 
+    def close(self) -> None:
+        return None
+
 
 class _Connection:
     debuglevel = 0

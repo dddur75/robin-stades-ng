@@ -25,6 +25,10 @@ def canonical_hash(value: object) -> str:
     return hashlib.sha256(payload).hexdigest()
 
 
+def repository_text_bytes(path: Path) -> bytes:
+    return path.read_bytes().replace(b"\r\n", b"\n")
+
+
 def test_phase_c_v1_detailed_evidence_is_durable_and_sanitized(
     tmp_path: Path,
 ) -> None:
@@ -302,9 +306,9 @@ def test_atomic_and_pair_denominators_are_frozen_and_bounded() -> None:
                 }
             )
 
-    assert (ROOT / "reports/hypothesis-genome/e3-property-reconciliation-v1.json").stat().st_size <= 300_000
-    assert (ROOT / "reports/hypothesis-research/atomic-results-v1.json").stat().st_size <= 300_000
-    assert (ROOT / "reports/hypothesis-research/pair-results-v1.json").stat().st_size <= 300_000
+    assert len(repository_text_bytes(ROOT / "reports/hypothesis-genome/e3-property-reconciliation-v1.json")) <= 300_000
+    assert len(repository_text_bytes(ROOT / "reports/hypothesis-research/atomic-results-v1.json")) <= 300_000
+    assert len(repository_text_bytes(ROOT / "reports/hypothesis-research/pair-results-v1.json")) <= 300_000
 
 
 def test_negative_controls_and_triple_lock() -> None:
@@ -400,10 +404,10 @@ def test_phase_c_workflows_are_manual_distinct_dormant_and_read_only() -> None:
     }
     assert activation["activation_authority"] == "TRUSTED_DEFAULT_BRANCH_ONLY_NEVER_CANDIDATE_CHECKOUT"
     assert activation["generator_sha256"] == hashlib.sha256(
-        (ROOT / "scripts/run_hypothesis_tag_mask_pair_factory.py").read_bytes()
+        repository_text_bytes(ROOT / "scripts/run_hypothesis_tag_mask_pair_factory.py")
     ).hexdigest()
     assert activation["preflight_sha256"] == hashlib.sha256(
-        (ROOT / "scripts/validate_phase_c_workflow_contract.py").read_bytes()
+        repository_text_bytes(ROOT / "scripts/validate_phase_c_workflow_contract.py")
     ).hexdigest()
     assert activation["source_lock_sha256"] == hashlib.sha256(
         (ROOT / "configs/execution/p0-e3-artifact-lock-v1.json")
@@ -411,7 +415,7 @@ def test_phase_c_workflows_are_manual_distinct_dormant_and_read_only() -> None:
         .replace(b"\r\n", b"\n")
     ).hexdigest()
     assert activation["workflow_sha256"] == {
-        path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+        path.name: hashlib.sha256(repository_text_bytes(path)).hexdigest()
         for path in workflow_paths
     }
     activation_without_hash = dict(activation)
@@ -513,7 +517,7 @@ def test_checkpoint_cursor_17_receipt_is_sanitized_and_code_bound() -> None:
     without_hash = dict(receipt)
     assert without_hash.pop("proof_hash") == canonical_hash(without_hash)
     assert receipt["candidate_generator_sha256"] == hashlib.sha256(
-        (ROOT / "scripts/run_hypothesis_tag_mask_pair_factory.py").read_bytes()
+        repository_text_bytes(ROOT / "scripts/run_hypothesis_tag_mask_pair_factory.py")
     ).hexdigest()
     assert receipt["source_lock_sha256"] == factory.repository_text_sha256(
         ROOT / "configs/execution/p0-e3-artifact-lock-v1.json"

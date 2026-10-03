@@ -1,0 +1,110 @@
+{
+  "agent_id": "C0",
+  "mission_id": "ROBIN_REAL_DATA_RESULT_20261003",
+  "facts_verified": [
+    {
+      "claim": "The four independent delivery keys DP6, C4, C2 and A2 accept the frozen 17-path engineering projection 70003fdb199d64f5686f3b1047a4c01e42b1aabd4fdf1e6553d86e0013762158 with P0=0, P1=0 and no blocking critical thread.",
+      "evidence_refs": [
+        "reports/council/robin-real-data-result-data-review-v1.json#bd9577890f24bec5c019805da2846359bcc9234c3bb2dc17811ec1d0b87b26dd",
+        "reports/council/robin-real-data-result-security-review-v1.json#9f8b9755a6fc3260c5083936f501b5e4b769e63f9d7bc2ff1d30e3ca558ba380",
+        "reports/council/robin-real-data-result-governance-review-v1.json#4636015197cbf22ecd91ef57fecc15858ef4e52bd686c72ab7a7e9107e74493a",
+        "reports/council/robin-real-data-result-platform-review-v1.json#e12fdb391a2737e1d4d685b83f76c20796832b9eb13dff2ca6b24f4929de67c0"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The true http.client regression proves the socket lifetime repair for HTTP 200, Connection: close and 20000 bytes while preserving TLS, deadline refresh, pinned addressing and final close-once behavior.",
+      "evidence_refs": [
+        "src/robin/capture/live_transport.py",
+        "tests/capture/test_live_canary_transport.py",
+        "reports/evidence/evidence-graph.json#RUNTIME.TRANSPORT.DEADLINE_SOCKET.CONNECTION_CLOSE.LIFETIME.REGRESSION.V1.001"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The operational path is fail-closed and bounded: fifteen fixed provider slots, thirty successor credits, prior reserve four, cumulative ceilings forty requests and sixty credits, thirty-four R2 PUT and nineteen GET per full dispatch, and zero automatic provider retry.",
+      "evidence_refs": [
+        "configs/agents/mission-activation-matrix-v3.json",
+        "configs/execution/robin-real-data-result-20261003.json",
+        "src/robin/capture/real_data_result.py",
+        ".github/workflows/91-robin-real-data-result.yml"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The first provider response cannot release later requests until immutable R2 PUT, exact GET, envelope integrity and deterministic replay pass; an absent first readback stops after one request and no delivery artifact.",
+      "evidence_refs": [
+        "tests/capture/test_real_data_result.py::test_first_capture_must_be_read_back_before_any_later_provider_request",
+        "src/robin/capture/real_data_result.py::_run_branch"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Branch-local unavailability remains explicit while other leagues continue; a global quota or authority fault cannot report complete and causes a nonzero terminal workflow outcome after preserving any auditable partial artifact.",
+      "evidence_refs": [
+        "tests/capture/test_real_data_result.py::test_unavailable_branch_is_explicit_and_does_not_stop_other_branches",
+        "tests/capture/test_real_data_result.py::test_last_response_quota_sequence_anomaly_can_never_report_complete",
+        "tests/capture/test_run_real_data_result_cli.py",
+        ".github/workflows/91-robin-real-data-result.yml"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Authority is capped at E3B solely for the five endpoints; current stage is E1 with PASS_AND_HOLD, no E1-to-E2/E3 transition and no season, 100-fixture or scientific-promotion claim.",
+      "evidence_refs": [
+        "configs/agents/mission-activation-matrix-v3.json#robin_real_data_result_20261003_delivery",
+        "docs/superpowers/specs/2026-10-03-robin-real-data-result-design.md",
+        "reports/council/robin-real-data-result-governance-review-v1.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "No real-data result is claimed premerge. Captures, consultable view and consumption claims remain PARTIAL until the merged workflow returns received, durably stored and replay-verified data.",
+      "evidence_refs": [
+        "reports/evidence/evidence-graph.json#DATA.ROBIN.REAL.RESULT.CAPTURES.V1.001",
+        "reports/evidence/evidence-graph.json#DATA.ROBIN.REAL.RESULT.VIEW.V1.001",
+        "reports/evidence/evidence-graph.json#GOV.ROBIN.REAL.RESULT.CONSUMPTION.V1.001"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "The one full suite, exact-head required checks and clean mergeability are not yet observed on the final commit.",
+    "The final merged main SHA and post-merge workflow run ID do not yet exist.",
+    "Real provider quota, matches, odds, capture/source timestamps, coverage, limitations and new consumption remain unknown until execution."
+  ],
+  "assumptions": [
+    "C0 performs no further functional mutation after this frozen projection without targeted re-review.",
+    "Existing provider and R2 secrets remain valid without purchase, recharge or subscription change.",
+    "The workflow is dispatched only from exact merged main while the manifest retains at least its fifteen-minute job margin."
+  ],
+  "main_objection": "C0 AGGREGATE VERDICT: PASS_AND_HOLD, P0=0, P1=0, P2=2, zero blocking critical threads. Commit and PR are admissible; merge is held for the full suite, exact-head checks and CLEAN mergeability, and real-data claims are held for verified post-merge execution.",
+  "risks": [
+    {
+      "risk": "The universal scope of production_lines_max=1000 is historically ambiguous. The specialized production delta exceeds it if interpreted universally, so this delivery explicitly does not claim WITHIN_1000_2000; a future universal interpretation requires FAIL_AND_REDESIGN and consolidation.",
+      "severity": "MEDIUM",
+      "evidence_refs": [
+        "configs/experiments/scale-policy-v3.json",
+        "docs/data-sourcing/BOUNDED-MULTI-LEAGUE-LIVE-CANARY-CAPABILITY-V2.md",
+        "reports/council/robin-real-data-result-governance-review-v1.json",
+        "reports/council/robin-real-data-result-platform-review-v1.json"
+      ]
+    },
+    {
+      "risk": "The normalized public artifact is intentionally plaintext and expires after fourteen days; deliver the link promptly and retain raw payloads only in private R2.",
+      "severity": "LOW",
+      "evidence_refs": [
+        ".github/workflows/91-robin-real-data-result.yml",
+        "configs/agents/mission-activation-matrix-v3.json"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Pass mission-specific and generic Council validation, the one full repository suite and every exact-head required check; merge normally; then verify counters and accept only a terminal PASS workflow receipt whose real captures have immutable R2 readback and replay and whose artifact hashes match the delivered JSON/CSV/HTML.",
+  "recommended_action": "Commit and non-force push the frozen projection, open one PR, require green exact-head controls and CLEAN mergeability, merge normally, then execute the bounded fixed-slot workflow and inspect its real artifact and R2 evidence.",
+  "scale_condition": "Remain E1/PASS_AND_HOLD. Continue within the fifteen fixed slots only after the first real readback/replay passes; no additional provider, league, market, slot, credit or scientific claim.",
+  "estimated_compute": "Targeted independent verification complete; one proportional full suite and exact-head CI remain. No corpus rebuild.",
+  "estimated_external_cost": "Engineering and reviews used 0 provider call and 0 credit. Future mission ceiling remains fifteen successor requests and thirty successor credits, with cumulative ceilings forty and sixty and four prior credits reserved.",
+  "estimated_human_time": "Within the authorized eight active hours, excluding passive CI wait, subject to the 72-hour expiry.",
+  "maintenance_impact": "Moderate. After live proof, consolidate duplicate normalization, envelope and rendering helpers without rewriting data or failure history.",
+  "confidence": 0.98
+}

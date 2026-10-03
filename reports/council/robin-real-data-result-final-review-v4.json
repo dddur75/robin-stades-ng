@@ -1,0 +1,79 @@
+{
+  "agent_id": "C0",
+  "mission_id": "ROBIN_REAL_DATA_RESULT_20261003",
+  "facts_verified": [
+    {
+      "claim": "The V1.004 successor reuses the unchanged DP6 data, C4 security and A2 platform reviews and refreshes C2 governance for the one directly consequential historical response-double compatibility correction.",
+      "evidence_refs": [
+        "reports/council/robin-real-data-result-data-review-v2.json",
+        "reports/council/robin-real-data-result-security-review-v2.json",
+        "reports/council/robin-real-data-result-governance-review-v4.json",
+        "reports/council/robin-real-data-result-platform-review-v3.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The first full suite found one candidate-consequential incompatibility after 3607 passes; clean main passed the node, the candidate failed before correction, and the candidate passed after adding only close() to the historical response double.",
+      "evidence_refs": [
+        "full repository suite: 1 failed, 3607 passed, 33 skipped",
+        "tests/capture/test_provider_network_binding.py::test_v2_transport_uses_one_selected_ip_and_rechecks_inside_connect",
+        "reports/council/robin-real-data-result-governance-review-v4.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Independent review confirms P0=0, P1=0 and P2=0 for the new test-only correction; the combined provider-binding and live-transport pack passes 130 tests with zero unapproved network attempts, and Ruff plus diff-check pass.",
+      "evidence_refs": [
+        "independent V1.004 compatibility audit: GO; P0=0; P1=0; P2=0",
+        "combined targeted pack: 130 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "Ruff and git diff --check: PASS"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Runtime cleanup remains fail-closed and unchanged: response and connection resources are still closed, persistent cleanup failure still withholds HTTP success, and dedicated TLS/deadline/ownership assertions remain active.",
+      "evidence_refs": [
+        "src/robin/capture/live_transport.py",
+        "tests/capture/test_live_canary_transport.py",
+        "reports/council/robin-real-data-result-security-review-v2.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "No real provider row, new capture or successor credit consumption has been observed during engineering. The real capture, view and consumption claims remain PARTIAL until post-merge storage and replay are verified.",
+      "evidence_refs": [
+        "reports/evidence/evidence-graph.json#DATA.ROBIN.REAL.RESULT.CAPTURES.V1.001",
+        "reports/evidence/evidence-graph.json#DATA.ROBIN.REAL.RESULT.VIEW.V1.001",
+        "reports/evidence/evidence-graph.json#GOV.ROBIN.REAL.RESULT.CONSUMPTION.V1.001"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "The final post-correction full suite, exact-head CI, clean mergeability and merged main SHA remain future gates.",
+    "Provider quota, secret validity, R2 availability and real odds coverage remain unknown until bounded execution."
+  ],
+  "assumptions": [
+    "C0 will append the V1.004 records and make no later projected mutation without another exact successor.",
+    "Existing provider and R2 credentials remain available without purchase or subscription change.",
+    "Real-data claims will be updated only from downloaded artifacts and durable replay evidence."
+  ],
+  "main_objection": "C0 V1.004 VERDICT: PASS_AND_HOLD, P0=0, P1=0, four retained P2 from V1.003, and zero candidate-blocking critical threads. The new compatibility correction adds no P2 and cannot mask cleanup failure.",
+  "risks": [
+    {
+      "risk": "The four retained P2 items remain diagnostic stage precision, EOF cleanup classification, generic local exception detail and fourteen-day HTML consultation.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "reports/council/robin-real-data-result-final-review-v3.json"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Validate the V1.004 report hashes, projection, canonical ledger and graph, pass the final full suite, then require all strict exact-head checks and CLEAN mergeability before normal merge.",
+  "recommended_action": "Accept V1.004 for the single C0 commit, non-force push and PR; after green local and remote gates, merge normally and execute the bounded workflow.",
+  "scale_condition": "Remain E1/PASS_AND_HOLD; E3B is only an authority ceiling and no scientific transition is authorized.",
+  "estimated_compute": "Reused three unchanged review keys, refreshed governance review, one completed diagnostic full suite and one final full-suite gate.",
+  "estimated_external_cost": "0 provider call, 0 credit, 0 R2 effect, 0 purchase and 0 bet during correction and review.",
+  "estimated_human_time": "Within the authorized eight-hour active-work window, excluding passive CI and suite waits.",
+  "maintenance_impact": "Minimal test-only successor; runtime, workflows, dependencies, data contracts and external-effect bounds are unchanged.",
+  "confidence": 0.99
+}

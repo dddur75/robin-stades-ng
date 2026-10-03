@@ -1,0 +1,68 @@
+{
+  "agent_id": "C0",
+  "mission_id": "ROBIN_REAL_DATA_RESULT_20261003",
+  "facts_verified": [
+    {
+      "claim": "V1.005 reuses unchanged DP6 data, C4 security and A2 platform reviews and refreshes C2 governance only for the PR 83 Windows checkout-representation correction.",
+      "evidence_refs": [
+        "reports/council/robin-real-data-result-data-review-v2.json",
+        "reports/council/robin-real-data-result-security-review-v2.json",
+        "reports/council/robin-real-data-result-governance-review-v5.json",
+        "reports/council/robin-real-data-result-platform-review-v3.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The Windows failure is reproduced exactly by converting the manifest LF bytes to CRLF: raw SHA-256 e6ed3910873fcf6c2e6d6f708c44134cd587ac8975090bc4c17b4723c1fbd992 versus canonical LF SHA-256 4d91084d8446d794083b3729c34ac32e438c72c28b9db180979c4c5f2af74aa2.",
+      "evidence_refs": [
+        "PR 83 run 37139419529 job 111250580296",
+        "same-candidate local hash reproduction"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "The correction changes no runtime, workflow, manifest, expected digest, provider budget or assertion set; the targeted node passes with zero unapproved network attempts.",
+      "evidence_refs": [
+        "tests/capture/test_real_data_result_workflow.py",
+        "targeted node: 1 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "independent V1.005 review: GO"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "No real provider row, capture or successor credit consumption occurred during the correction. Real-data delivery claims remain PARTIAL until post-merge storage and replay evidence is downloaded and verified.",
+      "evidence_refs": [
+        "reports/evidence/evidence-graph.json#DATA.ROBIN.REAL.RESULT.CAPTURES.V1.001",
+        "reports/evidence/evidence-graph.json#DATA.ROBIN.REAL.RESULT.VIEW.V1.001",
+        "reports/evidence/evidence-graph.json#GOV.ROBIN.REAL.RESULT.CONSUMPTION.V1.001"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "Refreshed exact-head CI and clean mergeability remain future gates.",
+    "Provider quota, secret validity, R2 availability and real odds coverage remain unknown until bounded execution."
+  ],
+  "assumptions": [
+    "Git text checkout representation can differ by runner while canonical LF content remains stable.",
+    "Existing credentials remain available without purchase or subscription change."
+  ],
+  "main_objection": "C0 V1.005 VERDICT: PASS_AND_HOLD, P0=0, P1=0, P2_new=0, four retained P2 and zero candidate-blocking critical threads after the scoped correction.",
+  "risks": [
+    {
+      "risk": "The four retained P2 items remain diagnostic stage precision, EOF cleanup classification, generic local exception detail and fourteen-day HTML consultation.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "reports/council/robin-real-data-result-final-review-v4.json"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Validate V1.005 hashes, canonical ledger and graph, then require the refreshed Windows capture job and every strict required check before merge.",
+  "recommended_action": "Accept the C0 follow-up commit and non-force push; merge normally only after the refreshed exact-head checks are green, then execute the bounded workflow.",
+  "scale_condition": "Remain E1/PASS_AND_HOLD; E3B is only an authority ceiling and no scientific transition is authorized.",
+  "estimated_compute": "Reused three unchanged review keys, refreshed governance review, one targeted test and exact-head CI.",
+  "estimated_external_cost": "0 provider call, 0 credit, 0 R2 effect, 0 purchase and 0 bet during correction and review.",
+  "estimated_human_time": "Within the authorized eight-hour active-work window, excluding passive CI waits.",
+  "maintenance_impact": "Minimal test-only successor; runtime, workflows, dependencies, data contracts and external-effect bounds are unchanged.",
+  "confidence": 0.99
+}
