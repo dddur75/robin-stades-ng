@@ -46,20 +46,24 @@ class FakeClient:
         self.get_response = get_response or {
             "Body": BytesIO(b"payload"),
             "Metadata": {"operation_id": "abc"},
+            "ETag": '"etag"',
         }
         self.get_error = get_error
         self.permit_committed = False
         self.put_kwargs: dict[str, object] = {}
+        self.put_calls = 0
+        self.get_kwargs: dict[str, object] = {}
 
     def put_object(self, **kwargs: object) -> Mapping[str, object]:
         assert self.permit_committed
+        self.put_calls += 1
         self.put_kwargs = kwargs
         if self.put_error is not None:
             raise self.put_error
         return self.put_response
 
     def get_object(self, **kwargs: object) -> Mapping[str, object]:
-        del kwargs
+        self.get_kwargs = kwargs
         if self.get_error is not None:
             raise self.get_error
         return self.get_response
@@ -131,6 +135,26 @@ def test_409_412_and_ambiguous_responses_are_distinct(
     assert result.request_id == "request-1"
 
 
+def test_non_client_conditional_write_exception_is_classified_ambiguous() -> None:
+    class BrokenClient(FakeClient):
+        def put_object(self, **kwargs: object) -> Mapping[str, object]:
+            assert self.permit_committed
+            del kwargs
+            raise RuntimeError("forbidden https://r2.invalid/?secret=secret-value")
+
+    client = BrokenClient()
+    client.permit_committed = True
+    result = ChronosR2ConditionalStore(client, "bucket").put_if_absent(
+        "key",
+        b"payload",
+        metadata={},
+        on_dispatch=lambda: None,
+    )
+    assert result.outcome is ConditionalPutOutcome.AMBIGUOUS
+    assert result.transport_attempts == 1
+    assert result.automatic_retry_possible is False
+
+
 def test_get_returns_exact_bytes_and_metadata_without_head_or_list() -> None:
     client = FakeClient()
     store = ChronosR2ConditionalStore(client, "bucket")
@@ -149,6 +173,118 @@ def test_get_missing_is_none_and_invalid_body_fails_closed() -> None:
     invalid = FakeClient(get_response={"Body": "not-readable", "Metadata": {}})
     with pytest.raises(ChronosR2Error, match="CHRONOS_R2_BODY_INVALID"):
         ChronosR2ConditionalStore(invalid, "bucket").get_object("key")
+
+
+def test_latest_projection_first_write_is_conditional_and_read_back_exactly() -> None:
+    client = FakeClient()
+    store = ChronosR2ConditionalStore(client, "bucket")
+
+    def permit() -> None:
+        client.permit_committed = True
+
+    result = store.put_latest_projection(
+        "latest.json",
+        b"payload",
+        metadata={"operation_id": "abc"},
+        expected_etag=None,
+        on_dispatch=permit,
+    )
+
+    assert result.outcome is ConditionalPutOutcome.CREATED
+    assert result.etag == '"etag"'
+    assert client.put_calls == 1
+    assert client.put_kwargs == {
+        "Bucket": "bucket",
+        "Key": "latest.json",
+        "Body": b"payload",
+        "IfNoneMatch": "*",
+        "Metadata": {"operation_id": "abc"},
+    }
+    assert client.get_kwargs == {"Bucket": "bucket", "Key": "latest.json"}
+
+
+def test_latest_projection_successor_uses_etag_compare_and_swap() -> None:
+    client = FakeClient(
+        put_response={
+            "ETag": '"etag-next"',
+            "ResponseMetadata": {"RequestId": "updated-1"},
+        },
+        get_response={
+            "Body": BytesIO(b"next"),
+            "Metadata": {"node": "2"},
+            "ETag": '"etag-next"',
+        },
+    )
+    store = ChronosR2ConditionalStore(client, "bucket")
+    client.permit_committed = True
+
+    result = store.put_latest_projection(
+        "head.json",
+        b"next",
+        metadata={"node": "2"},
+        expected_etag='"etag-prior"',
+        on_dispatch=lambda: None,
+    )
+
+    assert result.outcome is ConditionalPutOutcome.CREATED
+    assert client.put_calls == 1
+    assert client.put_kwargs["IfMatch"] == '"etag-prior"'
+    assert "IfNoneMatch" not in client.put_kwargs
+
+
+def test_latest_projection_conflict_is_returned_without_hidden_retry_or_readback() -> None:
+    client = FakeClient(put_error=client_error("PreconditionFailed", 412))
+    client.permit_committed = True
+
+    result = ChronosR2ConditionalStore(client, "bucket").put_latest_projection(
+        "head.json",
+        b"next",
+        metadata={},
+        expected_etag='"stale"',
+        on_dispatch=lambda: None,
+    )
+
+    assert result.outcome is ConditionalPutOutcome.PRECONDITION_FAILED
+    assert result.transport_attempts == 1
+    assert result.automatic_retry_possible is False
+    assert client.put_calls == 1
+    assert client.get_kwargs == {}
+
+
+def test_latest_projection_read_requires_etag_and_redacts_dependency_failure() -> None:
+    missing_etag = FakeClient(get_response={"Body": BytesIO(b"payload"), "Metadata": {}})
+    with pytest.raises(ChronosR2Error, match="CHRONOS_R2_LATEST_ETAG_INVALID"):
+        ChronosR2ConditionalStore(missing_etag, "bucket").get_latest_projection("latest.json")
+
+    class LeakyClient(FakeClient):
+        def get_object(self, **kwargs: object) -> Mapping[str, object]:
+            del kwargs
+            raise RuntimeError("https://provider.invalid/?apiKey=secret")
+
+    with pytest.raises(ChronosR2Error) as captured:
+        ChronosR2ConditionalStore(LeakyClient(), "bucket").get_latest_projection("latest.json")
+    assert "secret" not in str(captured.value)
+    assert "http" not in str(captured.value).lower()
+
+
+def test_latest_projection_exact_readback_mismatch_fails_closed() -> None:
+    client = FakeClient(
+        get_response={
+            "Body": BytesIO(b"different"),
+            "Metadata": {"operation_id": "abc"},
+            "ETag": '"etag"',
+        }
+    )
+    client.permit_committed = True
+    with pytest.raises(ChronosR2Error, match="CHRONOS_R2_LATEST_READBACK_MISMATCH"):
+        ChronosR2ConditionalStore(client, "bucket").put_latest_projection(
+            "latest.json",
+            b"payload",
+            metadata={"operation_id": "abc"},
+            expected_etag=None,
+            on_dispatch=lambda: None,
+        )
+    assert client.put_calls == 1
 
 
 def test_factory_disables_all_sdk_write_retries(monkeypatch: pytest.MonkeyPatch) -> None:

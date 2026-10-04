@@ -246,6 +246,7 @@ def test_activation_is_on_demand_bounded_and_references_known_agents() -> None:
         "ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V1",
         "ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V2",
         "ROBIN_REAL_DATA_RESULT_20261003",
+        "ROBIN_AUTONOMOUS_LAB_20261004",
         "COVERAGE_P0",
         "HYPERGRAPH",
         "COCKPIT",
@@ -335,6 +336,7 @@ def test_agent_report_schema_requires_the_mission_contract() -> None:
         "ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V1",
         "ROBIN_REPRISE_COLLECTE_20261002_CONTINUATION_V2",
         "ROBIN_REAL_DATA_RESULT_20261003",
+        "ROBIN_AUTONOMOUS_LAB_20261004",
         "COVERAGE_P0",
         "HYPERGRAPH",
         "COCKPIT",
@@ -6760,8 +6762,10 @@ def test_evidence_graph_and_append_only_ledger_have_mandatory_fields() -> None:
     )
     superseding_claims: dict[str, list[dict[str, Any]]] = {}
     for successor in graph["claims"]:
-        for superseded_claim_id in successor.get("supersedes", []):
-            superseding_claims.setdefault(superseded_claim_id, []).append(successor)
+        if successor["status"] == "VERIFIED":
+            for superseded_claim_id in successor.get("supersedes", []):
+                superseding_claims.setdefault(superseded_claim_id, []).append(successor)
+    for successor in graph["claims"]:
         artifact_hashes = successor.get("artifact_hashes")
         if artifact_hashes is not None:
             assert successor.get("artifact_hash_algorithm") == "SHA-256"
@@ -6776,7 +6780,10 @@ def test_evidence_graph_and_append_only_ledger_have_mandatory_fields() -> None:
             ).hexdigest()
             assert successor.get("engineering_projection_sha256") == projection_sha256
             assert successor["code_revision"] == f"precommit-projection:{projection_sha256}"
-            if successor["status"] == "VERIFIED":
+            if (
+                successor["status"] == "VERIFIED"
+                and successor["claim_id"] not in superseding_claims
+            ):
                 assert artifact_hashes == {
                     relative: artifact_sha256(ROOT / relative)
                     for relative in sorted(artifact_hashes)

@@ -387,8 +387,10 @@ def _normalize_payload(
         decoded = strict_json_loads(payload)
     except CaptureContractError:
         raise ResultError("RESULT_PROVIDER_JSON_INVALID") from None
-    if not isinstance(decoded, list) or not decoded or len(decoded) > 500:
+    if not isinstance(decoded, list) or len(decoded) > 500:
         raise ResultError("RESULT_PROVIDER_PAYLOAD_SHAPE_INVALID")
+    if not decoded:
+        return (), ()
     rows: list[dict[str, object]] = []
     limitations: list[dict[str, object]] = []
     identities: set[tuple[str, str, str, float | None, str]] = set()
@@ -456,10 +458,20 @@ def _normalize_payload(
                     by_key[key].append(market)
             for market_key in MARKETS:
                 selected = by_key[market_key]
-                if len(selected) != 1:
+                if not selected:
                     limitations.append(
                         _limitation(
-                            "RESULT_MARKET_MISSING_OR_DUPLICATED",
+                            "RESULT_MARKET_MISSING",
+                            event_id=event_id,
+                            bookmaker_key=bookmaker_key,
+                            market_key=market_key,
+                        )
+                    )
+                    continue
+                if len(selected) > 1:
+                    limitations.append(
+                        _limitation(
+                            "RESULT_MARKET_DUPLICATED",
                             event_id=event_id,
                             bookmaker_key=bookmaker_key,
                             market_key=market_key,
