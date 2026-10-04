@@ -45,9 +45,9 @@ def test_workflow_gates_exact_main_authority_and_retired_provider_routes() -> No
     command = gate["run"]
     assert "current_main_sha" in command
     assert '[[ "$GITHUB_SHA" == "$current_main_sha" ]]' in command
-    assert 'GITHUB_WORKFLOW_REF' in command
-    assert 'prospective-deep-scheduler.yml@refs/heads/main' in command
-    assert '321915839' in command
+    assert "GITHUB_WORKFLOW_REF" in command
+    assert "prospective-deep-scheduler.yml@refs/heads/main" in command
+    assert "321915839" in command
     assert '"state"] == "active"' in command
     for workflow_id, path in {
         308531686: "03_archive.yml",
@@ -79,19 +79,14 @@ def test_workflow_gates_exact_main_authority_and_retired_provider_routes() -> No
         ROOT / "configs/execution/robin-autonomous-lab-established-scheduler-20261004.json"
     )
     established_source = (
-        ROOT
-        / "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-ESTABLISHED-SCHEDULER-2026-10-04.md"
+        ROOT / "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-ESTABLISHED-SCHEDULER-2026-10-04.md"
     )
     assert gate["env"]["EXPECTED_MANIFEST_SHA256"] == _lf_sha256(manifest)
     assert gate["env"]["EXPECTED_SOURCE_SHA256"] == _lf_sha256(source)
     assert gate["env"]["EXPECTED_SCHEDULE_MANIFEST_SHA256"] == _lf_sha256(schedule_manifest)
     assert gate["env"]["EXPECTED_SCHEDULE_SOURCE_SHA256"] == _lf_sha256(schedule_source)
-    assert gate["env"]["EXPECTED_ESTABLISHED_MANIFEST_SHA256"] == _lf_sha256(
-        established_manifest
-    )
-    assert gate["env"]["EXPECTED_ESTABLISHED_SOURCE_SHA256"] == _lf_sha256(
-        established_source
-    )
+    assert gate["env"]["EXPECTED_ESTABLISHED_MANIFEST_SHA256"] == _lf_sha256(established_manifest)
+    assert gate["env"]["EXPECTED_ESTABLISHED_SOURCE_SHA256"] == _lf_sha256(established_source)
     assert "set(schedule_manifest) == set(manifest)" in command
     assert "EXPECTED_SCHEDULE_MANIFEST_SHA256" in command
     assert "EXPECTED_SCHEDULE_SOURCE_SHA256" in command

@@ -72,6 +72,24 @@
         "revue A2: 34 tests ciblés et 2 compilations, P0=0, P1=0"
       ],
       "status": "VERIFIED"
+    },
+    {
+      "claim": "La CI exact-head 37228983739 a reproduit un unique écart de format Ruff dans le test de workflow; le même contrôle passe sur main et le formatage mécanique du seul fichier conserve toutes les assertions.",
+      "evidence_refs": [
+        "GitHub Actions job 111514447832",
+        "ruff format --check via stdin sur origin/main: succès",
+        "ruff format --check sur le candidat avant correction: un fichier non formaté"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le contrôle pré-commit a détecté que l'assertion de succession ajoutée avec V1.008 sautait le record initial 234; l'assertion corrigée vérifie désormais chaque maillon 232 à 238 sans modifier le ledger append-only.",
+      "evidence_refs": [
+        "test ciblé avant correction: 1 échec et 72 succès",
+        "test_established_scheduler_records_second_failure_redesign_and_release après correction: succès",
+        "RCV3-20261004-234 à RCV3-20261004-238"
+      ],
+      "status": "VERIFIED"
     }
   ],
   "unknowns": [
@@ -102,7 +120,7 @@
     }
   ],
   "minimum_decisive_test": "CI exact-head verte, désactivation de 374470410, fusion normale, vérification puis activation unique de 321915839, suivies de trois runs schedule naturels établissant capture, replay du même créneau avec provider_requests_new=0, puis capture du créneau suivant.",
-  "recommended_action": "PASS_AND_HOLD la projection V1.007 pour un commit C0, une PR, les contrôles requis et une fusion normale; effectuer ensuite la bascule ordonnée et attendre passivement les preuves naturelles.",
+  "recommended_action": "PASS_AND_HOLD la projection corrective V1.009 pour un second commit C0 sur la PR 87, les contrôles exact-head requis et une fusion normale; effectuer ensuite la bascule ordonnée et attendre passivement les preuves naturelles.",
   "scale_condition": "Deux créneaux réels distincts conservés et relus, encadrant au moins un replay naturel sans nouvelle requête fournisseur, avec artifacts vérifiés et compteurs sous plafond.",
   "estimated_compute": "92 tests de domaine ciblés par C0, 64 tests de gouvernance par C2, 34 tests et deux compilations par A2; une seule suite complète reste réservée aux contrôles exact-head.",
   "estimated_external_cost": "Préparation et revue: zéro requête fournisseur, zéro crédit, zéro effet R2 et zéro dispatch. Chaque nouveau créneau reste borné à cinq requêtes et dix crédits réservés; un replay fermé en ajoute zéro.",

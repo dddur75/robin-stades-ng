@@ -39,28 +39,28 @@ SCHEDULE_FAILURE_DECISION_ID = "RCV3-20261004-229"
 SCHEDULE_REDESIGN_DECISION_ID = "RCV3-20261004-230"
 SCHEDULE_RELEASE_DECISION_ID = "RCV3-20261004-231"
 ESTABLISHED_MISSION_ID = "ROBIN_AUTONOMOUS_LAB_ESTABLISHED_SCHEDULER_20261004"
-ESTABLISHED_SOURCE = (
-    "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-ESTABLISHED-SCHEDULER-2026-10-04.md"
-)
-ESTABLISHED_MANIFEST = (
-    "configs/execution/robin-autonomous-lab-established-scheduler-20261004.json"
-)
+ESTABLISHED_SOURCE = "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-ESTABLISHED-SCHEDULER-2026-10-04.md"
+ESTABLISHED_MANIFEST = "configs/execution/robin-autonomous-lab-established-scheduler-20261004.json"
 ESTABLISHED_SECOND_FAILURE_CLAIM_ID = (
     "GOV.SCHEDULER.ROBIN_AUTONOMOUS_LAB.NON_MATERIALIZATION.V1.002"
 )
-ESTABLISHED_HISTORY_CLAIM_ID = (
-    "GOV.SCHEDULER.ROBIN_AUTONOMOUS_LAB.ESTABLISHED_ROUTE_HISTORY.V1.001"
-)
+ESTABLISHED_HISTORY_CLAIM_ID = "GOV.SCHEDULER.ROBIN_AUTONOMOUS_LAB.ESTABLISHED_ROUTE_HISTORY.V1.001"
 ESTABLISHED_AUTHORIZATION_CLAIM_ID = (
     "GOV.AUTHORIZATION.ROBIN_AUTONOMOUS_LAB.ESTABLISHED_SCHEDULER.V1.001"
 )
-ESTABLISHED_PROJECTION_CLAIM_ID = (
-    "GOV.ENGINEERING.ROBIN_AUTONOMOUS_LAB.PROJECTION.V1.007"
+ESTABLISHED_FORMAT_FAILURE_CLAIM_ID = (
+    "GOV.CI.ROBIN_AUTONOMOUS_LAB.ESTABLISHED_SCHEDULER.RUFF.FORMAT.FAILURE.V1.001"
 )
-ESTABLISHED_REVIEW_CLAIM_ID = "GOV.REVIEW.ROBIN_AUTONOMOUS_LAB.FINAL.V1.007"
+ESTABLISHED_LEDGER_ASSERTION_FAILURE_CLAIM_ID = (
+    "GOV.CI.ROBIN_AUTONOMOUS_LAB.ESTABLISHED_SCHEDULER.LEDGER.SUCCESSION.ASSERTION.FAILURE.V1.001"
+)
+ESTABLISHED_PROJECTION_CLAIM_ID = "GOV.ENGINEERING.ROBIN_AUTONOMOUS_LAB.PROJECTION.V1.009"
+ESTABLISHED_REVIEW_CLAIM_ID = "GOV.REVIEW.ROBIN_AUTONOMOUS_LAB.FINAL.V1.009"
 ESTABLISHED_FAILURE_DECISION_ID = "RCV3-20261004-232"
 ESTABLISHED_REDESIGN_DECISION_ID = "RCV3-20261004-233"
-ESTABLISHED_RELEASE_DECISION_ID = "RCV3-20261004-234"
+ESTABLISHED_FORMAT_FAILURE_DECISION_ID = "RCV3-20261004-235"
+ESTABLISHED_LEDGER_ASSERTION_FAILURE_DECISION_ID = "RCV3-20261004-237"
+ESTABLISHED_RELEASE_DECISION_ID = "RCV3-20261004-238"
 SCHEDULE_PROJECTION_PATHS = {
     ".github/workflows/92-robin-autonomous-lab.yml",
     "configs/agents/agent-report-schema-v3.json",
@@ -389,13 +389,33 @@ def test_established_scheduler_failure_history_and_authority_are_exact() -> None
     assert authority["provider_http_budget_increment"] == 0
     assert authority["provider_credit_budget_increment"] == 0
 
+    format_failure = claims[ESTABLISHED_FORMAT_FAILURE_CLAIM_ID]
+    assert format_failure["status"] == "VERIFIED"
+    assert format_failure["github_run_id"] == 37_228_983_739
+    assert format_failure["github_job_id"] == 111_514_447_832
+    assert format_failure["affected_files"] == [
+        "tests/capture/test_recurring_real_data_workflow.py"
+    ]
+    assert format_failure["provider_http_requests_new"] == 0
+    assert format_failure["provider_credits_new"] == 0
+
+    ledger_assertion_failure = claims[ESTABLISHED_LEDGER_ASSERTION_FAILURE_CLAIM_ID]
+    assert ledger_assertion_failure["status"] == "VERIFIED"
+    assert ledger_assertion_failure["failed_tests"] == 1
+    assert ledger_assertion_failure["passed_tests"] == 72
+    assert ledger_assertion_failure["affected_files"] == [
+        "tests/council/test_robin_autonomous_lab_governance.py"
+    ]
+    assert ledger_assertion_failure["provider_http_requests_new"] == 0
+    assert ledger_assertion_failure["provider_credits_new"] == 0
+
 
 def test_established_scheduler_projection_and_independent_review_are_bound() -> None:
     graph = _load("reports/evidence/evidence-graph.json")
     claims = {claim["claim_id"]: claim for claim in graph["claims"]}
     projection = claims[ESTABLISHED_PROJECTION_CLAIM_ID]
     assert projection["status"] == "VERIFIED"
-    assert projection["successor_of"] == SCHEDULE_PROJECTION_CLAIM_ID
+    assert projection["successor_of"] == ("GOV.ENGINEERING.ROBIN_AUTONOMOUS_LAB.PROJECTION.V1.008")
     recalculated = {path: _lf_sha256(path) for path in sorted(ESTABLISHED_PROJECTION_PATHS)}
     assert projection["artifact_hashes"] == recalculated
     canonical = json.dumps(
@@ -406,12 +426,13 @@ def test_established_scheduler_projection_and_independent_review_are_bound() -> 
     review = claims[ESTABLISHED_REVIEW_CLAIM_ID]
     report_path = "reports/council/robin-autonomous-lab-established-scheduler-final-review-v1.json"
     assert review["status"] == "VERIFIED"
-    assert review["candidate_engineering_projection_sha256"] == (
-        projection["engineering_projection_sha256"]
+    assert (
+        review["candidate_engineering_projection_sha256"]
+        == (projection["engineering_projection_sha256"])
     )
     assert review["p0_findings"] == review["p1_findings"] == 0
     assert review["hash"] == _lf_sha256(report_path)
-    assert review["successor_of"] == SCHEDULE_REVIEW_CLAIM_ID
+    assert review["successor_of"] == "GOV.REVIEW.ROBIN_AUTONOMOUS_LAB.FINAL.V1.008"
     report = _load(report_path)
     assert report["mission_id"] == ESTABLISHED_MISSION_ID
 
@@ -421,6 +442,10 @@ def test_established_scheduler_records_second_failure_redesign_and_release() -> 
     by_id = {record["decision_id"]: record for record in records}
     failure = by_id[ESTABLISHED_FAILURE_DECISION_ID]
     redesign = by_id[ESTABLISHED_REDESIGN_DECISION_ID]
+    initial_release = by_id["RCV3-20261004-234"]
+    format_failure = by_id[ESTABLISHED_FORMAT_FAILURE_DECISION_ID]
+    format_release = by_id["RCV3-20261004-236"]
+    ledger_assertion_failure = by_id[ESTABLISHED_LEDGER_ASSERTION_FAILURE_DECISION_ID]
     release = by_id[ESTABLISHED_RELEASE_DECISION_ID]
     assert failure["record_type"] == "FAILURE"
     assert failure["decision"] == "FAIL_AND_REDESIGN"
@@ -428,16 +453,34 @@ def test_established_scheduler_records_second_failure_redesign_and_release() -> 
     assert failure["context"]["current_stage"] == "E1"
     assert redesign["record_type"] == "REDESIGN"
     assert redesign["decision"] == "PASS_AND_HOLD"
+    assert format_failure["record_type"] == "FAILURE"
+    assert format_failure["decision"] == "PASS_AND_HOLD"
+    assert format_release["record_type"] == "DECISION"
+    assert format_release["decision"] == "PASS_AND_HOLD"
+    assert ledger_assertion_failure["record_type"] == "FAILURE"
+    assert ledger_assertion_failure["decision"] == "PASS_AND_HOLD"
     assert release["record_type"] == "DECISION"
     assert release["decision"] == "PASS_AND_HOLD"
     assert redesign["previous_hash"] == failure["hash"]
-    assert release["previous_hash"] == redesign["hash"]
+    assert initial_release["previous_hash"] == redesign["hash"]
+    assert format_failure["previous_hash"] == initial_release["hash"]
+    assert format_release["previous_hash"] == format_failure["hash"]
+    assert ledger_assertion_failure["previous_hash"] == format_release["hash"]
+    assert release["previous_hash"] == ledger_assertion_failure["hash"]
     assert release["context"]["writer"] == "C0"
     assert release["context"]["writer_count"] == 1
     assert release["context"]["branch"] == "codex/robin-established-scheduler-v1"
-    assert release["context"]["head"] == "2c8cfdd00461b35058dda573e4c64a3cb36711ee"
-    assert release["context"]["pr"] == "PENDING"
-    for record in (failure, redesign, release):
+    assert release["context"]["head"] == "4249a2ceda4d927dbafbe8b54ebd83b8245c3b4a"
+    assert release["context"]["pr"] == "87"
+    for record in (
+        failure,
+        redesign,
+        initial_release,
+        format_failure,
+        format_release,
+        ledger_assertion_failure,
+        release,
+    ):
         canonical = json.dumps(
             {key: value for key, value in record.items() if key != "hash"},
             ensure_ascii=False,
@@ -452,6 +495,14 @@ def test_established_scheduler_records_second_failure_redesign_and_release() -> 
     }
     assert decisions[ESTABLISHED_FAILURE_DECISION_ID]["ledger_record_hash"] == failure["hash"]
     assert decisions[ESTABLISHED_REDESIGN_DECISION_ID]["ledger_record_hash"] == redesign["hash"]
+    assert (
+        decisions[ESTABLISHED_FORMAT_FAILURE_DECISION_ID]["ledger_record_hash"]
+        == (format_failure["hash"])
+    )
+    assert (
+        decisions[ESTABLISHED_LEDGER_ASSERTION_FAILURE_DECISION_ID]["ledger_record_hash"]
+        == ledger_assertion_failure["hash"]
+    )
     assert decisions[ESTABLISHED_RELEASE_DECISION_ID]["ledger_record_hash"] == release["hash"]
 
 
