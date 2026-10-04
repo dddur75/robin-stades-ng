@@ -1450,7 +1450,8 @@ def _normalize_raw_branch(
             observed_remaining=observed_remaining,
             credit_bound_valid=credit_bound_valid,
         )
-    assert quota is not None
+    if quota is None:
+        raise RecurringError("RECURRING_QUOTA_INVALID")
     try:
         normalized_rows, limitations = _normalize_payload(
             payload,
@@ -2309,7 +2310,7 @@ def run_recurring_real_data(
     resolution_error: str | None = None
     api_key: str | None = None
     secret_attempted = False
-    secret_error: str | None = None
+    provider_access_error_code: str | None = None
 
     def provider_resolution() -> NetworkResolution:
         nonlocal resolution, resolution_attempted, resolution_error
@@ -2323,10 +2324,15 @@ def run_recurring_real_data(
             except Exception:
                 resolution_error = "RECURRING_DNS_RESOLUTION_FAILED"
                 raise RecurringError(resolution_error) from None
+            if resolution is None:
+                resolution_error = "RECURRING_DNS_RESOLUTION_INVALID"
+                raise RecurringError(resolution_error)
             if resolution.resolution_operations != 1:
                 resolution_error = "RECURRING_DNS_RESOLUTION_INVALID"
                 raise RecurringError(resolution_error)
-        assert resolution is not None
+        if resolution is None:
+            resolution_error = "RECURRING_DNS_RESOLUTION_INVALID"
+            raise RecurringError(resolution_error)
         try:
             resolution.assert_current(now)
         except Exception:
@@ -2335,17 +2341,19 @@ def run_recurring_real_data(
         return resolution
 
     def provider_secret() -> str:
-        nonlocal api_key, secret_attempted, secret_error
-        if secret_error is not None:
-            raise RecurringError(secret_error)
+        nonlocal api_key, secret_attempted, provider_access_error_code
+        if provider_access_error_code is not None:
+            raise RecurringError(provider_access_error_code)
         if not secret_attempted:
             secret_attempted = True
             try:
                 api_key = validate_provider_secret(secret_reader.read())
             except Exception:
-                secret_error = "RECURRING_PROVIDER_SECRET_INVALID"
-                raise RecurringError(secret_error) from None
-        assert api_key is not None
+                provider_access_error_code = "RECURRING_PROVIDER_SECRET_INVALID"
+                raise RecurringError(provider_access_error_code) from None
+        if api_key is None:
+            provider_access_error_code = "RECURRING_PROVIDER_SECRET_INVALID"
+            raise RecurringError(provider_access_error_code)
         return api_key
 
     branches: list[dict[str, object]] = []

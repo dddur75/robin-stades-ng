@@ -5,6 +5,7 @@ import json
 from collections.abc import Callable, Mapping
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import cast
 
 import pytest
 
@@ -907,6 +908,33 @@ def test_dns_failure_is_cached_and_resolution_runs_once(tmp_path: Path) -> None:
     assert len([key for key in store.put_keys if key.endswith("attempt-reservation.json")]) == 5
 
 
+def test_none_dns_resolution_is_a_stable_cached_failure(tmp_path: Path) -> None:
+    store = FakeStore()
+    secret = FakeSecretReader()
+    transport = FakeTransportFactory(lambda: START)
+
+    receipt = run_recurring_real_data(
+        _config(tmp_path),
+        store=store,
+        transport_factory=transport,
+        secret_reader=secret,
+        resolver=lambda: cast(NetworkResolution, None),
+        clock=lambda: START,
+    )
+
+    report = json.loads(store.objects[receipt["private_report_r2_key"]].data)
+    assert receipt["status"] == "REAL_DATA_FAILED"
+    assert secret.reads == 0
+    assert transport.requests == []
+    assert {branch["diagnostic"]["stage"] for branch in report["branches"]} == {"DNS_RESOLUTION"}
+    assert {branch["diagnostic"]["code"] for branch in report["branches"]} == {
+        "RECURRING_DNS_RESOLUTION_INVALID"
+    }
+    assert {branch["diagnostic"]["exception_class"] for branch in report["branches"]} == {
+        "RecurringError"
+    }
+
+
 def test_sport_reservation_precedes_secret_and_secret_failure_is_cached(
     tmp_path: Path,
 ) -> None:
@@ -935,6 +963,41 @@ def test_sport_reservation_precedes_secret_and_secret_failure_is_cached(
     assert receipt["status"] == "REAL_DATA_FAILED"
     assert secret.reads == 1
     assert transport.requests == []
+
+
+def test_none_validated_provider_key_is_a_stable_cached_failure(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    store = FakeStore()
+    secret = FakeSecretReader()
+    transport = FakeTransportFactory(lambda: START)
+    monkeypatch.setattr(
+        recurring,
+        "validate_provider_secret",
+        lambda _value: cast(str, None),
+    )
+
+    receipt = run_recurring_real_data(
+        _config(tmp_path),
+        store=store,
+        transport_factory=transport,
+        secret_reader=secret,
+        resolver=lambda: _resolution(START),
+        clock=lambda: START,
+    )
+
+    report = json.loads(store.objects[receipt["private_report_r2_key"]].data)
+    assert receipt["status"] == "REAL_DATA_FAILED"
+    assert secret.reads == 1
+    assert transport.requests == []
+    assert {branch["diagnostic"]["stage"] for branch in report["branches"]} == {"PROVIDER_SECRET"}
+    assert {branch["diagnostic"]["code"] for branch in report["branches"]} == {
+        "RECURRING_PROVIDER_SECRET_INVALID"
+    }
+    assert {branch["diagnostic"]["exception_class"] for branch in report["branches"]} == {
+        "RecurringError"
+    }
 
 
 def test_branch_storage_exception_is_redacted_and_siblings_continue(
