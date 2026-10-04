@@ -578,10 +578,12 @@ Politique temporelle active : `prospective-capture-window-v2`, Option B.
 fixtures, 441 fenêtres v2 sont actives ; les 531 fenêtres v1 du pilote restent
 append-only mais inactives.
 
-Ordre d’exploitation :
+Ordre historique de l’Observatoire prospectif (désactivé) :
 
 1. `prospective-fixture-registry.yml` enregistre les fixtures officielles ;
-2. `prospective-deep-scheduler.yml` publie les fenêtres dues et le budget ;
+2. l’ancien rôle de `prospective-deep-scheduler.yml` publiait les fenêtres dues
+   et le budget ; depuis le 2026-10-04, ce chemin héberge uniquement le
+   planificateur établi du laboratoire Robin et ne lance plus ce parcours ;
 3. les workflows player, lineup et odds capturent uniquement les fenêtres dues ;
 4. player et lineup vérifient une fois le kickoff et `status.short=NS` de
    chaque fixture due ;

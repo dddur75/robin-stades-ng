@@ -6,7 +6,7 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
-WORKFLOW = ROOT / ".github/workflows/92-robin-autonomous-lab.yml"
+WORKFLOW = ROOT / ".github/workflows/prospective-deep-scheduler.yml"
 
 
 def _workflow() -> dict[str, object]:
@@ -22,7 +22,7 @@ def _lf_sha256(path: Path) -> str:
 def test_workflow_is_schedule_only_on_main_and_serialized_globally() -> None:
     workflow = _workflow()
     trigger = workflow.get("on", workflow.get(True))
-    assert trigger == {"schedule": [{"cron": "37 * * * *"}]}
+    assert trigger == {"schedule": [{"cron": "13 * * * *"}]}
     assert workflow["permissions"] == {"actions": "read", "contents": "read"}
     assert workflow["concurrency"] == {
         "group": "robin-autonomous-lab-20261004-global",
@@ -34,6 +34,9 @@ def test_workflow_is_schedule_only_on_main_and_serialized_globally() -> None:
     assert "github.ref == 'refs/heads/main'" in job["if"]
     assert "github.run_attempt == 1" in job["if"]
     assert "workflow_dispatch" not in WORKFLOW.read_text(encoding="utf-8")
+    assert "API_FOOTBALL_KEY" not in WORKFLOW.read_text(encoding="utf-8")
+    assert "DATABASE_URL" not in WORKFLOW.read_text(encoding="utf-8")
+    assert "run_prospective_observatory" not in WORKFLOW.read_text(encoding="utf-8")
 
 
 def test_workflow_gates_exact_main_authority_and_retired_provider_routes() -> None:
@@ -42,6 +45,10 @@ def test_workflow_gates_exact_main_authority_and_retired_provider_routes() -> No
     command = gate["run"]
     assert "current_main_sha" in command
     assert '[[ "$GITHUB_SHA" == "$current_main_sha" ]]' in command
+    assert "GITHUB_WORKFLOW_REF" in command
+    assert "prospective-deep-scheduler.yml@refs/heads/main" in command
+    assert "321915839" in command
+    assert '"state"] == "active"' in command
     for workflow_id, path in {
         308531686: "03_archive.yml",
         319598077: "collect-fixtures.yml",
@@ -54,6 +61,7 @@ def test_workflow_gates_exact_main_authority_and_retired_provider_routes() -> No
         345580923: "data-torrent-live-v1.yml",
         373855898: "90-reprise-collecte-pilot.yml",
         374107131: "91-robin-real-data-result.yml",
+        374470410: "92-robin-autonomous-lab.yml",
     }.items():
         assert str(workflow_id) in command
         assert path in command
@@ -67,13 +75,23 @@ def test_workflow_gates_exact_main_authority_and_retired_provider_routes() -> No
     schedule_source = (
         ROOT / "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-SCHEDULE-RELIABILITY-2026-10-04.md"
     )
+    established_manifest = (
+        ROOT / "configs/execution/robin-autonomous-lab-established-scheduler-20261004.json"
+    )
+    established_source = (
+        ROOT / "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-ESTABLISHED-SCHEDULER-2026-10-04.md"
+    )
     assert gate["env"]["EXPECTED_MANIFEST_SHA256"] == _lf_sha256(manifest)
     assert gate["env"]["EXPECTED_SOURCE_SHA256"] == _lf_sha256(source)
     assert gate["env"]["EXPECTED_SCHEDULE_MANIFEST_SHA256"] == _lf_sha256(schedule_manifest)
     assert gate["env"]["EXPECTED_SCHEDULE_SOURCE_SHA256"] == _lf_sha256(schedule_source)
+    assert gate["env"]["EXPECTED_ESTABLISHED_MANIFEST_SHA256"] == _lf_sha256(established_manifest)
+    assert gate["env"]["EXPECTED_ESTABLISHED_SOURCE_SHA256"] == _lf_sha256(established_source)
     assert "set(schedule_manifest) == set(manifest)" in command
     assert "EXPECTED_SCHEDULE_MANIFEST_SHA256" in command
     assert "EXPECTED_SCHEDULE_SOURCE_SHA256" in command
+    assert "EXPECTED_ESTABLISHED_MANIFEST_SHA256" in command
+    assert "EXPECTED_ESTABLISHED_SOURCE_SHA256" in command
 
 
 def test_gate_inventories_every_existing_provider_secret_route() -> None:
@@ -90,6 +108,7 @@ def test_gate_inventories_every_existing_provider_secret_route() -> None:
         "90-reprise-collecte-pilot.yml",
         "91-robin-real-data-result.yml",
         "92-robin-autonomous-lab.yml",
+        "prospective-deep-scheduler.yml",
     }
     observed = {
         path.name

@@ -8,7 +8,6 @@ ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW_ROOT = ROOT / ".github" / "workflows"
 WORKFLOWS = (
     "prospective-fixture-registry.yml",
-    "prospective-deep-scheduler.yml",
     "prospective-player-capture.yml",
     "prospective-lineup-capture.yml",
     "prospective-odds-capture.yml",
