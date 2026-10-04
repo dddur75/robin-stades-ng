@@ -178,7 +178,7 @@ def test_workflow_uses_exact_dependency_and_action_revisions() -> None:
     )
 
 
-def test_retired_signed_attestation_fails_closed_after_successor_transport_fix() -> None:
+def test_retired_signed_attestation_fails_closed_after_successor_runtime_fixes() -> None:
     attestation = json.loads(ATTESTATION.read_text(encoding="utf-8"))
     assert set(attestation) == {
         "schema_version",
@@ -242,7 +242,10 @@ print("\\n".join(sorted(set(paths))))
             mismatches.append(filename)
         else:
             assert actual == expected
-    assert mismatches == ["src/robin/capture/live_transport.py"]
+    assert sorted(mismatches) == [
+        "src/robin/capture/live_transport.py",
+        "src/robin/prospective_observatory/chronos_r2.py",
+    ]
     signature = SIGNATURE.read_text(encoding="ascii").strip()
     assert len(base64.b64decode(signature, validate=True)) == 512
 

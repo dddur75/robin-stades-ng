@@ -1,0 +1,161 @@
+{
+  "agent_id": "C0",
+  "mission_id": "ROBIN_AUTONOMOUS_LAB_20261004",
+  "facts_verified": [
+    {
+      "claim": "La revue consolidée initiale a été exécutée dans l’ordre DP6, C4, C2 puis A2; après une objection adversariale tardive, C4, C2 puis A2 ont revu le delta corrigé et concluent P0=0 et P1=0, sans écriture par un agent autre que C0.",
+      "evidence_refs": [
+        "DP6 final: provenance, seed et analyse descriptive",
+        "C4 final: sécurité, frontière publique et claims",
+        "C2 final: autorité, projection et chaîne append-only",
+        "A2 final post-C2: plateforme, workflow et R2",
+        "C4 delta: 25 passed; UNAPPROVED_NETWORK_ATTEMPTS=0; P0=0; P1=0",
+        "C2 projection V1.003: 7 passed; P0=0; P1=0",
+        "A2 workflow final: 25 passed; embedded Python compiled; P0=0; P1=0",
+        "C4 Bandit delta final: 37 domain tests plus exact Bandit, Ruff format/check and mypy strict passed; P0=0; P1=0"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Une objection tardive a établi que le résumé GitHub affichait des métriques sans claim_id et ne contrôlait pas l’égalité de provenance reçu/snapshot; un test rouge a reproduit le défaut, puis le workflow a été limité aux ensembles ordonnés RECURRING ou RECURRING+SEED, avec égalité obligatoire et claim IDs visibles dans le résumé.",
+      "evidence_refs": [
+        ".github/workflows/92-robin-autonomous-lab.yml",
+        "tests/capture/test_recurring_real_data_workflow.py",
+        "red: 1 failed, 4 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "green: 25 passed; UNAPPROVED_NETWORK_ATTEMPTS=0"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La suite complète locale a reproduit deux incompatibilités historiques après 3 686 succès et 33 skips: origin/main restait vert pour les deux nœuds dans le même environnement, tandis que le candidat exposait le second runtime modifié et la nouvelle succession de projection. Les corrections conservent des égalités exactes, ancrent les arêtes historiques et exigent un successeur VERIFIED actif pour chaque hash divergent.",
+      "evidence_refs": [
+        "full local suite: 2 failed, 3686 passed, 33 skipped; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "clean origin/main reproduction: 2 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "affected full files after correction: 21 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "tests/capture/test_reprise_collecte_workflow.py",
+        "tests/council/test_real_data_result_governance_v1.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le premier run CI exact-head de la PR 85 a isolé quatre constats Bandit de faible sévérité dans le nouveau runtime: trois assertions supprimables sous optimisation et un faux positif B105 sur un code diagnostic. Deux tests rouges ont reproduit les pertes de diagnostic; le correctif remplace les assertions par des refus explicites, conserve le code expurgé et passe le domaine, Ruff, mypy strict et la commande Bandit exacte.",
+      "evidence_refs": [
+        "GitHub run 37184677337 / job 111384030582: Bandit failure at exact head 945483ab6dc89eceaabcc2038daeb3f6c51ef4d7",
+        "red: 2 failed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "green: 2 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "affected recurring domain: 62 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "Ruff capture: passed; mypy --strict capture: passed",
+        "exact bounded-capture Bandit command: exit 0",
+        "C4 independent final review: P0=0; P1=0; no provider, R2 or secret effects"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le second run CI exact-head a dépassé Bandit puis isolé un faux positif de portabilité: la représentation littérale d’une balise HTML échappée dans un test était interprétée comme un chemin UNC. La même chaîne attendue est désormais assemblée en fragments; le comportement testé reste identique, le détecteur n’est pas affaibli et le contrôle complet des chemins suivis passe.",
+      "evidence_refs": [
+        "GitHub run 37186054312 / job 111388070166: absolute-path step failure after Bandit success",
+        "local reproduction: tests/capture/test_real_data_dashboard.py:335 WINDOWS_ABSOLUTE_PATH",
+        "scripts/check_no_tracked_absolute_paths.py: TRACKED_ABSOLUTE_PATHS_PASS",
+        "dashboard tests: 9 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "Ruff check and format: passed"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les quinze captures réelles historiques sont préservées comme seed vérifié: 21 759 lignes, 96 matchs, 25 bookmakers, cinq ligues et les marchés h2h/totals, sans relabellisation en donnée fraîche.",
+      "evidence_refs": [
+        "reports/evidence/robin-real-data-result-run-37153158456-public-receipt.json",
+        "canonical receipt SHA-256 72b0ba67363658f7503968e43c831e5485d2c6ea9f1f1a2a8b73a0cb5ac38e37",
+        "private report SHA-256 b0f0151d92d5ce4a90980b3521bb8acf49a34f00c58b85d558fec7eea610762e",
+        "DP6 real-seed profile: 0 duplicate grain rows, 0 invalid prices, 0 temporal violations"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le candidat prépare un créneau idempotent toutes les deux heures: réservation comptable CAS avant transport, cinq requêtes maximum et dix crédits réservés, reprise hors réseau, zéro retry et zéro rattrapage de créneau manqué.",
+      "evidence_refs": [
+        "src/robin/capture/recurring_real_data.py",
+        "src/robin/prospective_observatory/chronos_r2.py",
+        ".github/workflows/92-robin-autonomous-lab.yml",
+        "tests/capture/test_recurring_real_data.py",
+        "tests/chronos/test_chronos_r2_effects_v2.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La provenance des métriques traverse rapport privé, reçu, snapshot JSON, CSV et HTML; le créneau précédent est inclus lorsqu’il alimente un mouvement ou un carry-forward, et les claims récurrents restent PARTIAL avant preuve schedule.",
+      "evidence_refs": [
+        "src/robin/capture/recurring_real_data.py",
+        "src/robin/capture/real_data_dashboard.py",
+        "scripts/run_recurring_real_data.py",
+        "reports/evidence/evidence-graph.json#DATA.ROBIN.AUTONOMOUS_LAB.RECURRING_CAPTURES.V1.001",
+        "reports/evidence/evidence-graph.json#DATA.ROBIN.AUTONOMOUS_LAB.RECURRING_VIEW.V1.001",
+        "reports/evidence/evidence-graph.json#GOV.ROBIN.AUTONOMOUS_LAB.RECURRING_CONSUMPTION.V1.001"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La projection d’ingénierie active V1.005 lie exactement vingt-deux chemins LF-normalisés au digest e15d9f8d98ebb3ed594efd77ff252a94c9f1b12fa53ff6408bd71d3b72c737e0; elle succède à V1.004 uniquement pour la représentation test-only du contrôle de portabilité.",
+      "evidence_refs": [
+        "reports/evidence/evidence-graph.json#GOV.ENGINEERING.ROBIN_AUTONOMOUS_LAB.PROJECTION.V1.005",
+        "scripts/check_no_tracked_absolute_paths.py: TRACKED_ABSOLUTE_PATHS_PASS",
+        "dashboard tests: 9 passed; UNAPPROVED_NETWORK_ATTEMPTS=0"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Aucune nouvelle donnée récurrente n’est présentée comme reçue: le nouveau workflow n’est pas encore fusionné, les workflows 90 et 91 sont encore actifs, et les appels fournisseur, crédits et écritures R2 nouveaux restent à zéro pendant la préparation.",
+      "evidence_refs": [
+        "GitHub Actions inventory 2026-10-04: workflows 373855898 and 374107131 active",
+        "A2 final post-C2 review",
+        "reports/evidence/evidence-graph.json recurring claims status PARTIAL"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "Le résultat exact des contrôles CI sur le commit final n’existe pas encore.",
+    "La disponibilité live des secrets et le comportement CAS/readback R2 réel restent à observer après fusion.",
+    "Les captures, compteurs et artifacts des deux premiers runs schedule distincts n’existent pas encore."
+  ],
+  "assumptions": [
+    "C0 désactivera les workflows 90 et 91 immédiatement après la fusion et avant le premier créneau naturel.",
+    "La projection fonctionnelle V1.005 de vingt-deux chemins ne sera pas modifiée avant le commit correctif.",
+    "Le planificateur GitHub déclenchera le workflow sur main sans dispatch manuel."
+  ],
+  "main_objection": "PASS_AND_HOLD pré-fusion sur la projection V1.005: le défaut Bandit du premier head et le faux positif de portabilité du second sont corrigés sans suppression de contrôle ni changement du runtime HTML. La fusion attend encore un nouveau cycle exact-head entièrement vert; la collecte récurrente reste non exécutée jusqu’à la désactivation vérifiée des routes 90/91 et des runs schedule réels.",
+  "risks": [
+    {
+      "risk": "Une divergence du seed privé R2, d’un secret ou du quota peut faire échouer le premier run; tous ces cas sont conçus pour s’arrêter avant ou sans appel supplémentaire ambigu.",
+      "severity": "MEDIUM",
+      "evidence_refs": [
+        "src/robin/capture/recurring_real_data.py",
+        "A2 final post-C2 review"
+      ]
+    },
+    {
+      "risk": "Les workflows historiques 90 et 91 sont encore actifs avant fusion; le gate du workflow 92 doit continuer à bloquer toute lecture de secret tant qu’ils ne sont pas désactivés.",
+      "severity": "MEDIUM",
+      "evidence_refs": [
+        ".github/workflows/92-robin-autonomous-lab.yml",
+        "GitHub Actions inventory 2026-10-04"
+      ]
+    },
+    {
+      "risk": "La présence d’un claim_id ne vaut pas preuve live; les trois claims récurrents doivent rester PARTIAL jusqu’aux successeurs liés aux reçus schedule.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "reports/evidence/evidence-graph.json",
+        "DP6 final review"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Obtenir en CI exact-head la suite complète verte sur V1.005 et une fusion normale, désactiver les workflows 90/91, puis vérifier au moins deux runs event=schedule distincts avec rapports CLOSED relus, artifacts à quatre fichiers, captures réelles et compteurs bornés.",
+  "recommended_action": "PASS_AND_HOLD: committer avec C0, ouvrir la PR, obtenir les contrôles requis et fusionner normalement; ensuite laisser le calendrier seul produire les preuves live avant fermeture des claims récurrents.",
+  "scale_condition": "Ne déclarer le laboratoire livré qu’après deux runs schedule distincts sur main, aucune route historique active, readback R2 exact, artifact public expurgé vérifié, limites 24 h/30 j respectées et au moins une capture réelle utilisable par run.",
+  "estimated_compute": "Vérifications ciblées locales, une suite complète pré-fusion et deux runs schedule bornés à trente minutes chacun.",
+  "estimated_external_cost": "Préparation et revue: zéro requête fournisseur et zéro crédit. Exploitation: au plus cinq requêtes et dix crédits réservés par créneau, dans les plafonds 140/280 sur 24 h et 4000/8000 sur 30 jours.",
+  "estimated_human_time": "Aucune intervention utilisateur attendue; attente CI et calendrier passive.",
+  "maintenance_impact": "Un workflow schedule-only, un journal comptable R2 append-only, un pointeur latest CAS et quatre artifacts normalisés; aucun nouveau fournisseur, stockage, chiffrement ou canal public.",
+  "confidence": 0.98
+}

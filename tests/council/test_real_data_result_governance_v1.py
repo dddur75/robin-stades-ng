@@ -49,12 +49,8 @@ WORKFLOW_HASH_COMPATIBILITY_CLAIM_ID = (
 )
 SUCCESSOR_PROJECTION_CLAIM_ID = "GOV.ENGINEERING.ROBIN_REAL_DATA_RESULT.PROJECTION.V1.005"
 SUCCESSOR_FINAL_REVIEW_CLAIM_ID = "GOV.REVIEW.ROBIN_REAL_DATA_RESULT.FINAL.V1.005"
-DNS_CLOCK_FAILURE_CLAIM_ID = (
-    "RUNTIME.ROBIN.REAL.RESULT.DNS.CLOCK.ORDERING.FAILURE.V1.001"
-)
-DNS_CLOCK_REGRESSION_CLAIM_ID = (
-    "RUNTIME.ROBIN.REAL.RESULT.DNS.CLOCK.ORDERING.REGRESSION.V1.001"
-)
+DNS_CLOCK_FAILURE_CLAIM_ID = "RUNTIME.ROBIN.REAL.RESULT.DNS.CLOCK.ORDERING.FAILURE.V1.001"
+DNS_CLOCK_REGRESSION_CLAIM_ID = "RUNTIME.ROBIN.REAL.RESULT.DNS.CLOCK.ORDERING.REGRESSION.V1.001"
 DELIVERY_PROJECTION_CLAIM_ID = "GOV.ENGINEERING.ROBIN_REAL_DATA_RESULT.PROJECTION.V1.006"
 DELIVERY_FINAL_REVIEW_CLAIM_ID = "GOV.REVIEW.ROBIN_REAL_DATA_RESULT.FINAL.V1.006"
 EVIDENCE_COVERAGE_FAILURE_CLAIM_ID = (
@@ -63,12 +59,8 @@ EVIDENCE_COVERAGE_FAILURE_CLAIM_ID = (
 EVIDENCE_COVERAGE_REGRESSION_CLAIM_ID = (
     "GOV.CI.ROBIN_REAL_DATA_RESULT.EVIDENCE.SUCCESSOR.COVERAGE.REGRESSION.V1.001"
 )
-EVIDENCE_COVERAGE_PROJECTION_CLAIM_ID = (
-    "GOV.ENGINEERING.ROBIN_REAL_DATA_RESULT.PROJECTION.V1.007"
-)
-EVIDENCE_COVERAGE_FINAL_REVIEW_CLAIM_ID = (
-    "GOV.REVIEW.ROBIN_REAL_DATA_RESULT.FINAL.V1.007"
-)
+EVIDENCE_COVERAGE_PROJECTION_CLAIM_ID = "GOV.ENGINEERING.ROBIN_REAL_DATA_RESULT.PROJECTION.V1.007"
+EVIDENCE_COVERAGE_FINAL_REVIEW_CLAIM_ID = "GOV.REVIEW.ROBIN_REAL_DATA_RESULT.FINAL.V1.007"
 HISTORICAL_ASSERTION_FAILURE_DECISION_ID = "RCV3-20261003-211"
 HISTORICAL_FINAL_DECISION_ID = "RCV3-20261003-212"
 REPRESENTATION_FAILURE_DECISION_ID = "RCV3-20261003-213"
@@ -948,10 +940,14 @@ def test_dns_clock_delivery_fix_has_exact_active_projection_and_review() -> None
 
     records = _records()
     prior_index = next(
-        i for i, record in enumerate(records) if record["decision_id"] == SUCCESSOR_FINAL_DECISION_ID
+        i
+        for i, record in enumerate(records)
+        if record["decision_id"] == SUCCESSOR_FINAL_DECISION_ID
     )
     failure_index = next(
-        i for i, record in enumerate(records) if record["decision_id"] == DNS_CLOCK_FAILURE_DECISION_ID
+        i
+        for i, record in enumerate(records)
+        if record["decision_id"] == DNS_CLOCK_FAILURE_DECISION_ID
     )
     decision_index = next(
         i for i, record in enumerate(records) if record["decision_id"] == DELIVERY_FINAL_DECISION_ID
@@ -1050,7 +1046,7 @@ def test_dns_clock_delivery_fix_has_exact_active_projection_and_review() -> None
         assert hashlib.sha256(canonical_record).hexdigest() == candidate["hash"]
 
 
-def test_evidence_successor_coverage_has_exact_active_projection_and_review() -> None:
+def test_evidence_successor_coverage_preserves_historical_projection_and_review() -> None:
     graph = _load("reports/evidence/evidence-graph.json")
     claims = {claim["claim_id"]: claim for claim in graph["claims"]}
     failure = claims[EVIDENCE_COVERAGE_FAILURE_CLAIM_ID]
@@ -1086,9 +1082,37 @@ def test_evidence_successor_coverage_has_exact_active_projection_and_review() ->
         path: hashlib.sha256((ROOT / path).read_bytes().replace(b"\r\n", b"\n")).hexdigest()
         for path in sorted(EXPECTED_SUCCESSOR_PROJECTION_PATHS)
     }
-    assert projection["artifact_hashes"] == recalculated
-    canonical = json.dumps(recalculated, sort_keys=True, separators=(",", ":")).encode()
+    canonical = json.dumps(
+        projection["artifact_hashes"], sort_keys=True, separators=(",", ":")
+    ).encode()
     assert projection["engineering_projection_sha256"] == hashlib.sha256(canonical).hexdigest()
+    if projection["artifact_hashes"] != recalculated:
+        mismatches = {
+            path
+            for path, actual in recalculated.items()
+            if projection["artifact_hashes"][path] != actual
+        }
+        superseded_claim_ids = {
+            superseded
+            for candidate in claims.values()
+            if candidate["status"] == "VERIFIED"
+            for superseded in candidate.get("supersedes", [])
+        }
+        active_successors = [
+            candidate
+            for candidate in claims.values()
+            if candidate["status"] == "VERIFIED"
+            and EVIDENCE_COVERAGE_PROJECTION_CLAIM_ID in candidate.get("supersedes", [])
+            and candidate["claim_id"] not in superseded_claim_ids
+        ]
+        assert active_successors
+        assert any(
+            all(
+                candidate.get("artifact_hashes", {}).get(path) == recalculated[path]
+                for path in mismatches
+            )
+            for candidate in active_successors
+        )
 
     predecessor_review = claims[DELIVERY_FINAL_REVIEW_CLAIM_ID]
     review = claims[EVIDENCE_COVERAGE_FINAL_REVIEW_CLAIM_ID]
@@ -1190,7 +1214,8 @@ def test_evidence_successor_coverage_has_exact_active_projection_and_review() ->
             "status": "RECORDED",
         },
     ]
-    assert graph["edges"][-len(expected_edges) :] == expected_edges
+    edge_start = next(i for i, edge in enumerate(graph["edges"]) if edge["edge_id"] == "EDGE.850")
+    assert graph["edges"][edge_start : edge_start + len(expected_edges)] == expected_edges
     for candidate in (failure_record, decision):
         canonical_record = json.dumps(
             {key: value for key, value in candidate.items() if key != "hash"},
