@@ -22,7 +22,7 @@ def _lf_sha256(path: Path) -> str:
 def test_workflow_is_schedule_only_on_main_and_serialized_globally() -> None:
     workflow = _workflow()
     trigger = workflow.get("on", workflow.get(True))
-    assert trigger == {"schedule": [{"cron": "17 */2 * * *"}]}
+    assert trigger == {"schedule": [{"cron": "37 * * * *"}]}
     assert workflow["permissions"] == {"actions": "read", "contents": "read"}
     assert workflow["concurrency"] == {
         "group": "robin-autonomous-lab-20261004-global",
@@ -61,8 +61,19 @@ def test_workflow_gates_exact_main_authority_and_retired_provider_routes() -> No
     assert "datetime.timedelta(hours=3) <= expires" in command
     manifest = ROOT / "configs/execution/robin-autonomous-lab-20261004.json"
     source = ROOT / "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-2026-10-04.md"
+    schedule_manifest = (
+        ROOT / "configs/execution/robin-autonomous-lab-schedule-reliability-20261004.json"
+    )
+    schedule_source = (
+        ROOT / "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-SCHEDULE-RELIABILITY-2026-10-04.md"
+    )
     assert gate["env"]["EXPECTED_MANIFEST_SHA256"] == _lf_sha256(manifest)
     assert gate["env"]["EXPECTED_SOURCE_SHA256"] == _lf_sha256(source)
+    assert gate["env"]["EXPECTED_SCHEDULE_MANIFEST_SHA256"] == _lf_sha256(schedule_manifest)
+    assert gate["env"]["EXPECTED_SCHEDULE_SOURCE_SHA256"] == _lf_sha256(schedule_source)
+    assert "set(schedule_manifest) == set(manifest)" in command
+    assert "EXPECTED_SCHEDULE_MANIFEST_SHA256" in command
+    assert "EXPECTED_SCHEDULE_SOURCE_SHA256" in command
 
 
 def test_gate_inventories_every_existing_provider_secret_route() -> None:

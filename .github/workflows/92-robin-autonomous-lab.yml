@@ -2,7 +2,7 @@ name: "92 - Robin autonomous lab"
 
 on:
   schedule:
-    - cron: "17 */2 * * *"
+    - cron: "37 * * * *"
 
 permissions:
   actions: read
@@ -46,6 +46,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           EXPECTED_MANIFEST_SHA256: "98b1538384f942d54535517e445ab2e9bf347e080b7f20bc92f3bb02aaede00a"
           EXPECTED_SOURCE_SHA256: "c611e5cfdb2fb6bc2b1a6238e7bc8ec94191d4841c9cad177abcf6bb8662a813"
+          EXPECTED_SCHEDULE_MANIFEST_SHA256: "0905b3044849b81ea0f574f066e8ae132e61f0deb5412a8a6743d2ab0c15e0bc"
+          EXPECTED_SCHEDULE_SOURCE_SHA256: "7e654d17751685b62aff5ab0a7c9d0460feaabd8b304f1ee80c5fd80596cd65c"
         run: |
           set -euo pipefail
           umask 077
@@ -60,6 +62,8 @@ jobs:
           [[ "$GITHUB_SHA" == "$current_main_sha" ]]
           [[ "$(sha256sum configs/execution/robin-autonomous-lab-20261004.json | cut -d' ' -f1)" == "$EXPECTED_MANIFEST_SHA256" ]]
           [[ "$(sha256sum docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-2026-10-04.md | cut -d' ' -f1)" == "$EXPECTED_SOURCE_SHA256" ]]
+          [[ "$(sha256sum configs/execution/robin-autonomous-lab-schedule-reliability-20261004.json | cut -d' ' -f1)" == "$EXPECTED_SCHEDULE_MANIFEST_SHA256" ]]
+          [[ "$(sha256sum docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-SCHEDULE-RELIABILITY-2026-10-04.md | cut -d' ' -f1)" == "$EXPECTED_SCHEDULE_SOURCE_SHA256" ]]
           python -I - <<'PY'
           import datetime
           import hashlib
@@ -99,7 +103,16 @@ jobs:
 
           manifest_path = Path("configs/execution/robin-autonomous-lab-20261004.json")
           source_path = Path("docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-2026-10-04.md")
+          schedule_manifest_path = Path(
+              "configs/execution/robin-autonomous-lab-schedule-reliability-20261004.json"
+          )
+          schedule_source_path = Path(
+              "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-SCHEDULE-RELIABILITY-2026-10-04.md"
+          )
           manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+          schedule_manifest = json.loads(
+              schedule_manifest_path.read_text(encoding="utf-8")
+          )
           assert set(manifest) == {
               "mission_id", "authorized_stages", "maximum_stage", "external_effects",
               "compute_budget", "time_budget", "source_hash", "expires_at",
@@ -108,6 +121,24 @@ jobs:
           assert manifest["authorized_stages"] == ["E1", "E2", "E3A", "E3B"]
           assert manifest["maximum_stage"] == "E3B"
           assert manifest["source_hash"] == os.environ["EXPECTED_SOURCE_SHA256"]
+          assert set(schedule_manifest) == set(manifest)
+          assert schedule_manifest["mission_id"] == (
+              "ROBIN_AUTONOMOUS_LAB_SCHEDULE_RELIABILITY_20261004"
+          )
+          assert schedule_manifest["authorized_stages"] == manifest["authorized_stages"]
+          assert schedule_manifest["maximum_stage"] == manifest["maximum_stage"] == "E3B"
+          assert schedule_manifest["compute_budget"] == manifest["compute_budget"]
+          assert schedule_manifest["time_budget"] == manifest["time_budget"]
+          assert schedule_manifest["expires_at"] == manifest["expires_at"]
+          assert schedule_manifest["source_hash"] == os.environ[
+              "EXPECTED_SCHEDULE_SOURCE_SHA256"
+          ]
+          assert set(schedule_manifest["external_effects"]) == {
+              "github_actions_schedule_hourly_minute_37",
+              "github_actions_schedule_reuses_parent_two_hour_idempotent_slots",
+              "github_actions_duplicate_closed_slot_zero_provider_dispatch",
+              "github_actions_parent_rolling_budgets_unchanged",
+          }
           expires = datetime.datetime.fromisoformat(
               manifest["expires_at"].replace("Z", "+00:00")
           )
@@ -117,6 +148,12 @@ jobs:
           ]
           assert hashlib.sha256(source_path.read_bytes()).hexdigest() == os.environ[
               "EXPECTED_SOURCE_SHA256"
+          ]
+          assert hashlib.sha256(schedule_manifest_path.read_bytes()).hexdigest() == os.environ[
+              "EXPECTED_SCHEDULE_MANIFEST_SHA256"
+          ]
+          assert hashlib.sha256(schedule_source_path.read_bytes()).hexdigest() == os.environ[
+              "EXPECTED_SCHEDULE_SOURCE_SHA256"
           ]
           PY
 

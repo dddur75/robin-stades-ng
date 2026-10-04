@@ -202,3 +202,31 @@ The mission is delivered only when:
   balance, with no purchase, bet, backfill, promotion or secret exposure;
 - a post-run append-only evidence closure records what actually ran separately
   from code that was merely prepared.
+
+## Schedule reliability successor
+
+Three nominal schedule occurrences after the initial merge were not
+materialized by GitHub as workflow runs. This is an upstream scheduling failure,
+not evidence of a runtime, R2 or provider failure: no job, log or artifact was
+created and the live-effect counters remain unchanged. The exact internal cause
+is not observable from repository state.
+
+The successor changes only the trigger cadence to `37 * * * *`. The durable
+data identity remains the parent runtime's UTC two-hour slot. Consequently an
+hourly run that follows a successful run in the same slot resolves the existing
+closed report before DNS, secret access, quota reservation or provider
+transport. It may publish a fresh delivery artifact for operability, but it
+must report `provider_requests_new=0`, preserve the same report key and digest,
+and leave rolling request and credit totals unchanged.
+
+The original manifest remains byte-identical. A second immutable eight-field
+manifest authorizes only this scheduling overlay, shares the parent's compute,
+time and expiry bounds, and explicitly adds zero provider budget. Workflow 92
+checks both manifests and both source hashes before accessing runtime
+dependencies or secrets.
+
+Live acceptance is now deliberately stronger than counting runs: require two
+distinct two-hour data slots containing real verified reports plus at least one
+natural schedule run that replays a closed slot with zero provider calls. These
+three events must arise from the scheduler on merged `main`; a manual dispatch
+or rerun is not evidence for this condition.
