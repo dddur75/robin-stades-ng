@@ -192,3 +192,28 @@
 - [ ] Run the affected governance checks and one delta review.
 - [ ] Deliver through a small closure PR if repository evidence changed.
 - [ ] Return stable links, observed coverage, incidents, descriptive findings and exact consumption.
+
+### Task 10: Scheduler non-materialization redesign
+
+**Observed after the original merge:** workflow 92 remained active on exact
+`main`, every historical provider route remained disabled, and GitHub created
+no run for the natural 10:17, 12:17 or 14:17 UTC occurrences. A disable/enable
+registration refresh between the second and third occurrence did not change
+that outcome. Because no job existed, this failure caused no secret read,
+provider request, credit reservation or R2 effect.
+
+**Smallest successor delta:** preserve the immutable parent authority, runtime,
+R2 namespace and accounting family. Add a schedule-only overlay authorizing an
+hourly trigger at minute 37 while retaining the two-hour data-slot identity.
+The second hourly opportunity in a closed slot must replay before DNS, secret
+access or transport and leave every provider counter unchanged.
+
+- [x] Reproduce the missing-run boundary and record `FAIL_AND_REDESIGN` at E1.
+- [x] Add the immutable scheduling overlay, matrix/schema bindings and an exact
+  double-manifest workflow gate.
+- [x] Add a test whose two launches occur in different clock hours but the same
+  two-hour slot, with one raw/report hash and five total provider requests.
+- [ ] Obtain C2/A2 review, run the single full pre-merge suite and exact-head CI,
+  then merge normally.
+- [ ] Observe, without dispatch, one captured slot, one same-slot zero-provider
+  replay and a capture in a second data slot before calling the result delivered.

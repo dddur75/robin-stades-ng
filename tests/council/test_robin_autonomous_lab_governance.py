@@ -6,8 +6,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 MISSION_ID = "ROBIN_AUTONOMOUS_LAB_20261004"
+SCHEDULE_MISSION_ID = "ROBIN_AUTONOMOUS_LAB_SCHEDULE_RELIABILITY_20261004"
 SOURCE = "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-2026-10-04.md"
+SCHEDULE_SOURCE = "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-SCHEDULE-RELIABILITY-2026-10-04.md"
 MANIFEST = "configs/execution/robin-autonomous-lab-20261004.json"
+SCHEDULE_MANIFEST = "configs/execution/robin-autonomous-lab-schedule-reliability-20261004.json"
 RECEIPT = "reports/evidence/robin-real-data-result-run-37153158456-public-receipt.json"
 DECISION_ID = "RCV3-20261004-225"
 CLAIM_IDS = {
@@ -25,6 +28,41 @@ HISTORICAL_CLAIM_IDS = {
     "DATA.ROBIN.REAL.RESULT.CAPTURES.V1.001",
     "DATA.ROBIN.REAL.RESULT.VIEW.V1.001",
     "GOV.ROBIN.REAL.RESULT.CONSUMPTION.V1.001",
+}
+SCHEDULE_FAILURE_CLAIM_ID = "GOV.SCHEDULER.ROBIN_AUTONOMOUS_LAB.NON_MATERIALIZATION.V1.001"
+SCHEDULE_AUTHORIZATION_CLAIM_ID = (
+    "GOV.AUTHORIZATION.ROBIN_AUTONOMOUS_LAB.SCHEDULE_RELIABILITY.V1.001"
+)
+SCHEDULE_PROJECTION_CLAIM_ID = "GOV.ENGINEERING.ROBIN_AUTONOMOUS_LAB.PROJECTION.V1.006"
+SCHEDULE_REVIEW_CLAIM_ID = "GOV.REVIEW.ROBIN_AUTONOMOUS_LAB.FINAL.V1.006"
+SCHEDULE_FAILURE_DECISION_ID = "RCV3-20261004-229"
+SCHEDULE_REDESIGN_DECISION_ID = "RCV3-20261004-230"
+SCHEDULE_RELEASE_DECISION_ID = "RCV3-20261004-231"
+SCHEDULE_PROJECTION_PATHS = {
+    ".github/workflows/92-robin-autonomous-lab.yml",
+    "configs/agents/agent-report-schema-v3.json",
+    "configs/agents/mission-activation-matrix-v3.json",
+    "configs/execution/robin-autonomous-lab-20261004.json",
+    SCHEDULE_MANIFEST,
+    "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-2026-10-04.md",
+    SCHEDULE_SOURCE,
+    "docs/superpowers/plans/2026-10-04-robin-autonomous-lab.md",
+    "docs/superpowers/specs/2026-10-04-robin-autonomous-lab-design.md",
+    RECEIPT,
+    "scripts/run_recurring_real_data.py",
+    "src/robin/capture/real_data_dashboard.py",
+    "src/robin/capture/real_data_result.py",
+    "src/robin/capture/recurring_real_data.py",
+    "src/robin/prospective_observatory/chronos_r2.py",
+    "tests/capture/test_real_data_dashboard.py",
+    "tests/capture/test_recurring_real_data.py",
+    "tests/capture/test_recurring_real_data_workflow.py",
+    "tests/capture/test_reprise_collecte_workflow.py",
+    "tests/capture/test_run_recurring_real_data_cli.py",
+    "tests/chronos/test_chronos_r2_effects_v2.py",
+    "tests/council/test_real_data_result_governance_v1.py",
+    "tests/council/test_robin_autonomous_lab_governance.py",
+    "tests/council/test_robin_council_os_v3.py",
 }
 
 
@@ -79,6 +117,168 @@ def test_successor_manifest_has_exact_authority_and_source_hash() -> None:
         "r2_atomic_accounting_head_compare_and_swap",
         "r2_private_latest_projection",
     } <= effects
+
+
+def test_schedule_reliability_overlay_preserves_parent_authority_and_budgets() -> None:
+    parent = _load(MANIFEST)
+    overlay = _load(SCHEDULE_MANIFEST)
+    assert _lf_sha256(MANIFEST) == (
+        "98b1538384f942d54535517e445ab2e9bf347e080b7f20bc92f3bb02aaede00a"
+    )
+    assert (
+        set(overlay)
+        == set(parent)
+        == {
+            "mission_id",
+            "authorized_stages",
+            "maximum_stage",
+            "external_effects",
+            "compute_budget",
+            "time_budget",
+            "source_hash",
+            "expires_at",
+        }
+    )
+    assert overlay["mission_id"] == SCHEDULE_MISSION_ID
+    assert overlay["authorized_stages"] == parent["authorized_stages"]
+    assert overlay["maximum_stage"] == parent["maximum_stage"] == "E3B"
+    assert overlay["compute_budget"] == parent["compute_budget"] == 32_000
+    assert overlay["time_budget"] == parent["time_budget"] == 2_592_000
+    assert overlay["expires_at"] == parent["expires_at"] == "2026-11-03T23:59:59Z"
+    assert overlay["source_hash"] == _lf_sha256(SCHEDULE_SOURCE)
+    assert set(overlay["external_effects"]) == {
+        "github_actions_schedule_hourly_minute_37",
+        "github_actions_schedule_reuses_parent_two_hour_idempotent_slots",
+        "github_actions_duplicate_closed_slot_zero_provider_dispatch",
+        "github_actions_parent_rolling_budgets_unchanged",
+    }
+
+
+def test_schedule_reliability_overlay_has_one_writer_and_existing_review_keys() -> None:
+    matrix = _load("configs/agents/mission-activation-matrix-v3.json")
+    mission = matrix["missions"][SCHEDULE_MISSION_ID]
+    assert mission["writer"] == "C0"
+    assert mission["agents"] == ["C0", "C2", "A2"]
+    assert mission["scale_ceiling"] == "E3B"
+    assert mission["delivery_keys"] == {
+        "governance": ["C2"],
+        "platform": ["A2"],
+    }
+    allowed = set(mission["allowed_paths"])
+    assert {
+        ".github/workflows/92-robin-autonomous-lab.yml",
+        SCHEDULE_MANIFEST,
+        SCHEDULE_SOURCE,
+        "tests/capture/test_recurring_real_data.py",
+        "tests/capture/test_recurring_real_data_workflow.py",
+    } <= allowed
+    schema = _load("configs/agents/agent-report-schema-v3.json")
+    assert SCHEDULE_MISSION_ID in schema["properties"]["mission_id"]["enum"]
+
+
+def test_schedule_reliability_failure_authority_projection_and_review_are_bound() -> None:
+    graph = _load("reports/evidence/evidence-graph.json")
+    claims = {claim["claim_id"]: claim for claim in graph["claims"]}
+
+    failure = claims[SCHEDULE_FAILURE_CLAIM_ID]
+    assert failure["status"] == "VERIFIED"
+    assert failure["workflow_id"] == 374_470_410
+    assert failure["main_revision"] == "9b5afa27a039c0434934fda6f951102f555481d9"
+    assert failure["missing_occurrences_utc"] == [
+        "2026-10-04T10:17:00Z",
+        "2026-10-04T12:17:00Z",
+        "2026-10-04T14:17:00Z",
+    ]
+    assert failure["materialized_run_count"] == 0
+    assert failure["provider_http_requests_new"] == failure["provider_credits_new"] == 0
+    assert failure["r2_reads_new"] == failure["r2_writes_new"] == 0
+    assert failure["historical_http_accounted"] == 16
+    assert failure["historical_credit_accounted"] == 34
+
+    authority = claims[SCHEDULE_AUTHORIZATION_CLAIM_ID]
+    assert authority["status"] == "VERIFIED"
+    assert authority["hash"] == _lf_sha256(SCHEDULE_MANIFEST)
+    assert authority["source_hash"] == _lf_sha256(SCHEDULE_SOURCE)
+    assert authority["parent_manifest_hash"] == (
+        "98b1538384f942d54535517e445ab2e9bf347e080b7f20bc92f3bb02aaede00a"
+    )
+    assert authority["provider_http_budget_increment"] == 0
+    assert authority["provider_credit_budget_increment"] == 0
+
+    projection = claims[SCHEDULE_PROJECTION_CLAIM_ID]
+    assert projection["status"] == "VERIFIED"
+    assert projection["successor_of"] == ("GOV.ENGINEERING.ROBIN_AUTONOMOUS_LAB.PROJECTION.V1.005")
+    assert set(projection["artifact_hashes"]) == SCHEDULE_PROJECTION_PATHS
+    recalculated = {path: _lf_sha256(path) for path in sorted(SCHEDULE_PROJECTION_PATHS)}
+    assert projection["artifact_hashes"] == recalculated
+    canonical = json.dumps(
+        projection["artifact_hashes"], sort_keys=True, separators=(",", ":")
+    ).encode()
+    assert projection["engineering_projection_sha256"] == hashlib.sha256(canonical).hexdigest()
+
+    review = claims[SCHEDULE_REVIEW_CLAIM_ID]
+    assert review["status"] == "VERIFIED"
+    assert (
+        review["candidate_engineering_projection_sha256"]
+        == projection["engineering_projection_sha256"]
+    )
+    assert review["p0_findings"] == review["p1_findings"] == 0
+    report_path = "reports/council/robin-autonomous-lab-final-review-v1.json"
+    assert review["hash"] == _lf_sha256(report_path)
+    assert review["artifact_hashes"] == {report_path: _lf_sha256(report_path)}
+    review_canonical = json.dumps(
+        review["artifact_hashes"], sort_keys=True, separators=(",", ":")
+    ).encode()
+    assert review["engineering_projection_sha256"] == hashlib.sha256(review_canonical).hexdigest()
+    assert review["successor_of"] == "GOV.REVIEW.ROBIN_AUTONOMOUS_LAB.FINAL.V1.005"
+    report = _load(report_path)
+    assert report["mission_id"] == SCHEDULE_MISSION_ID
+
+
+def test_schedule_reliability_records_failure_redesign_and_release_in_order() -> None:
+    records = _ledger()
+    by_id = {record["decision_id"]: record for record in records}
+    failure = by_id[SCHEDULE_FAILURE_DECISION_ID]
+    redesign = by_id[SCHEDULE_REDESIGN_DECISION_ID]
+    release = by_id[SCHEDULE_RELEASE_DECISION_ID]
+    assert failure["record_type"] == "FAILURE"
+    assert failure["decision"] == "FAIL_AND_REDESIGN"
+    assert failure["context"]["current_stage"] == "E1"
+    assert failure["context"]["maximum_authority_stage"] == "E3B"
+    assert redesign["record_type"] == "REDESIGN"
+    assert redesign["decision"] == "PASS_AND_HOLD"
+    assert release["record_type"] == "DECISION"
+    assert release["decision"] == "PASS_AND_HOLD"
+    assert redesign["previous_hash"] == failure["hash"]
+    assert release["previous_hash"] == redesign["hash"]
+    assert release["context"]["writer"] == "C0"
+    assert release["context"]["writer_count"] == 1
+    assert release["context"]["branch"] == "codex/robin-schedule-reliability-v1"
+    assert release["context"]["head"] == "9b5afa27a039c0434934fda6f951102f555481d9"
+    assert release["context"]["pr"] == "86"
+    assert release["context"]["observed_external_effects"] == {
+        "provider_http_requests_new": 0,
+        "provider_credits_new": 0,
+        "r2_reads_new": 0,
+        "r2_writes_new": 0,
+        "public_artifacts_new": 0,
+        "purchases": 0,
+        "bets": 0,
+    }
+    for record in (failure, redesign, release):
+        canonical = json.dumps(
+            {key: value for key, value in record.items() if key != "hash"},
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+        assert hashlib.sha256(canonical).hexdigest() == record["hash"]
+
+    graph = _load("reports/evidence/evidence-graph.json")
+    decisions = {node["decision_id"]: node for node in graph["decision_nodes"]}
+    assert decisions[SCHEDULE_FAILURE_DECISION_ID]["ledger_record_hash"] == failure["hash"]
+    assert decisions[SCHEDULE_REDESIGN_DECISION_ID]["ledger_record_hash"] == redesign["hash"]
+    assert decisions[SCHEDULE_RELEASE_DECISION_ID]["ledger_record_hash"] == release["hash"]
 
 
 def test_verified_seed_receipt_is_exact_and_does_not_relabel_partial_branches() -> None:

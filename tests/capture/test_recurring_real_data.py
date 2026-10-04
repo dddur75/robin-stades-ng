@@ -482,14 +482,16 @@ def test_five_leagues_are_captured_read_back_and_duplicate_run_replays(
     tmp_path: Path,
 ) -> None:
     store = FakeStore()
-    transport = FakeTransportFactory(_now)
+    first_now = START + timedelta(minutes=20)
+    second_now = START + timedelta(hours=1, minutes=20)
+    transport = FakeTransportFactory(lambda: first_now)
     secret = FakeSecretReader()
     resolutions = 0
 
     def resolve() -> NetworkResolution:
         nonlocal resolutions
         resolutions += 1
-        return _resolution(START)
+        return _resolution(first_now)
 
     first = run_recurring_real_data(
         _config(tmp_path),
@@ -497,7 +499,7 @@ def test_five_leagues_are_captured_read_back_and_duplicate_run_replays(
         transport_factory=transport,
         secret_reader=secret,
         resolver=resolve,
-        clock=_now,
+        clock=lambda: first_now,
     )
     assert first["mission_id"] == MISSION_ID
     assert first["validated_capture_count"] == 5
@@ -523,10 +525,15 @@ def test_five_leagues_are_captured_read_back_and_duplicate_run_replays(
         transport_factory=transport,
         secret_reader=secret,
         resolver=resolve,
-        clock=_now,
+        clock=lambda: second_now,
     )
     assert second["replayed_existing_slot"] is True
     assert second["provider_requests_new"] == 0
+    assert second["slot_start_utc"] == first["slot_start_utc"] == "2026-10-04T10:00:00Z"
+    assert second["private_report_r2_key"] == first["private_report_r2_key"]
+    assert second["private_report_r2_sha256"] == first["private_report_r2_sha256"]
+    assert second["rolling_24h_requests"] == first["rolling_24h_requests"]
+    assert second["rolling_24h_credits"] == first["rolling_24h_credits"]
     assert len(transport.requests) == 5
     assert secret.reads == resolutions == 1
 
