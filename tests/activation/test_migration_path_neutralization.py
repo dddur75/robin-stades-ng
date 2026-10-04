@@ -38,7 +38,6 @@ MIGRATION_PATHS = (
     "prequential-prediction.yml",
     "prequential-settlement.yml",
     "prequential-training.yml",
-    "prospective-deep-scheduler.yml",
     "prospective-fixture-registry.yml",
     "prospective-gate-report.yml",
     "prospective-lineup-capture.yml",

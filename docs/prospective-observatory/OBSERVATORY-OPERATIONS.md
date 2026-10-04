@@ -5,15 +5,17 @@
 | Workflow | Cadence/rôle |
 |---|---|
 | `prospective-fixture-registry.yml` | workflow 60, `07 03 * * *`, fixtures futures |
-| `prospective-deep-scheduler.yml` | workflow 61, `13 * * * *`, sélection horaire |
+| `prospective-deep-scheduler.yml` | workflow 61, `13 * * * *`, réaffecté au laboratoire Robin autonome depuis le 2026-10-04 |
 | `prospective-player-capture.yml` | workflow 62, `19 * * * *`, joueurs, squads, statuts et blessures |
 | `prospective-lineup-capture.yml` | workflow 63, `29 * * * *`, lineups et formations |
 | `prospective-odds-capture.yml` | workflow 64, `37 * * * *`, snapshots 1X2 et O/U 2,5 |
 | `prospective-r2-replay-audit.yml` | workflow 65, `47 05 * * *`, replay sans fournisseur |
 | `prospective-gate-report.yml` | workflow 66, `53 06 * * *`, couverture, temporalité et cockpit |
 
-Tous utilisent `prospective-deep-state`, sans `historical-state` ni
-`shadow-state`. Les schedules GitHub ne descendent pas sous une heure.
+Les workflows prospectifs 60 et 62 à 66 utilisent `prospective-deep-state`,
+sans `historical-state` ni `shadow-state`. Le workflow 61 utilise désormais le
+groupe global du laboratoire Robin et ne planifie plus l’Observatoire
+prospectif. Les schedules GitHub ne descendent pas sous une heure.
 `cancel-in-progress=false` interdit qu’un run plus récent annule une écriture
 active.
 La configuration partagée est
