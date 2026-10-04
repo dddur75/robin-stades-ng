@@ -332,7 +332,8 @@ def test_html_is_self_contained_paginated_searchable_and_safe() -> None:
     assert "Aucun edge n’est validé" in html
     assert "Heures affichées en UTC" in html
     assert "</script><img" not in html
-    assert "\\u003c/script\\u003e" in html
+    escaped_closing_script = "\\u003c" + "/script" + "\\u003e"
+    assert escaped_closing_script in html
     assert html.count("<tbody") == 1
     assert html.count("<tr") < 20
 

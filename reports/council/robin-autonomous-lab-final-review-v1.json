@@ -51,6 +51,17 @@
       "status": "VERIFIED"
     },
     {
+      "claim": "Le second run CI exact-head a dépassé Bandit puis isolé un faux positif de portabilité: la représentation littérale d’une balise HTML échappée dans un test était interprétée comme un chemin UNC. La même chaîne attendue est désormais assemblée en fragments; le comportement testé reste identique, le détecteur n’est pas affaibli et le contrôle complet des chemins suivis passe.",
+      "evidence_refs": [
+        "GitHub run 37186054312 / job 111388070166: absolute-path step failure after Bandit success",
+        "local reproduction: tests/capture/test_real_data_dashboard.py:335 WINDOWS_ABSOLUTE_PATH",
+        "scripts/check_no_tracked_absolute_paths.py: TRACKED_ABSOLUTE_PATHS_PASS",
+        "dashboard tests: 9 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
+        "Ruff check and format: passed"
+      ],
+      "status": "VERIFIED"
+    },
+    {
       "claim": "Les quinze captures réelles historiques sont préservées comme seed vérifié: 21 759 lignes, 96 matchs, 25 bookmakers, cinq ligues et les marchés h2h/totals, sans relabellisation en donnée fraîche.",
       "evidence_refs": [
         "reports/evidence/robin-real-data-result-run-37153158456-public-receipt.json",
@@ -84,11 +95,11 @@
       "status": "VERIFIED"
     },
     {
-      "claim": "La projection d’ingénierie active V1.004 lie exactement vingt-deux chemins LF-normalisés au digest 8cfa17f5effad996ae097a358bb139e82c937c7437e8f534fb99655a5dc37fba; elle succède à V1.003 uniquement pour le correctif Bandit fail-closed et ses deux tests.",
+      "claim": "La projection d’ingénierie active V1.005 lie exactement vingt-deux chemins LF-normalisés au digest e15d9f8d98ebb3ed594efd77ff252a94c9f1b12fa53ff6408bd71d3b72c737e0; elle succède à V1.004 uniquement pour la représentation test-only du contrôle de portabilité.",
       "evidence_refs": [
-        "reports/evidence/evidence-graph.json#GOV.ENGINEERING.ROBIN_AUTONOMOUS_LAB.PROJECTION.V1.004",
-        "affected recurring domain: 62 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
-        "exact bounded-capture Bandit command: exit 0"
+        "reports/evidence/evidence-graph.json#GOV.ENGINEERING.ROBIN_AUTONOMOUS_LAB.PROJECTION.V1.005",
+        "scripts/check_no_tracked_absolute_paths.py: TRACKED_ABSOLUTE_PATHS_PASS",
+        "dashboard tests: 9 passed; UNAPPROVED_NETWORK_ATTEMPTS=0"
       ],
       "status": "VERIFIED"
     },
@@ -109,10 +120,10 @@
   ],
   "assumptions": [
     "C0 désactivera les workflows 90 et 91 immédiatement après la fusion et avant le premier créneau naturel.",
-    "La projection fonctionnelle V1.004 de vingt-deux chemins ne sera pas modifiée avant le commit correctif.",
+    "La projection fonctionnelle V1.005 de vingt-deux chemins ne sera pas modifiée avant le commit correctif.",
     "Le planificateur GitHub déclenchera le workflow sur main sans dispatch manuel."
   ],
-  "main_objection": "PASS_AND_HOLD pré-fusion sur la projection V1.004: C4 conclut P0=0 et P1=0 après correction du défaut Bandit du premier head, sans suppression de contrôle, et les diagnostics impossibles deviennent fail-closed. La fusion attend encore un nouveau cycle exact-head entièrement vert; la collecte récurrente reste non exécutée jusqu’à la désactivation vérifiée des routes 90/91 et des runs schedule réels.",
+  "main_objection": "PASS_AND_HOLD pré-fusion sur la projection V1.005: le défaut Bandit du premier head et le faux positif de portabilité du second sont corrigés sans suppression de contrôle ni changement du runtime HTML. La fusion attend encore un nouveau cycle exact-head entièrement vert; la collecte récurrente reste non exécutée jusqu’à la désactivation vérifiée des routes 90/91 et des runs schedule réels.",
   "risks": [
     {
       "risk": "Une divergence du seed privé R2, d’un secret ou du quota peut faire échouer le premier run; tous ces cas sont conçus pour s’arrêter avant ou sans appel supplémentaire ambigu.",
@@ -139,7 +150,7 @@
       ]
     }
   ],
-  "minimum_decisive_test": "Obtenir en CI exact-head la suite complète verte sur V1.004 et une fusion normale, désactiver les workflows 90/91, puis vérifier au moins deux runs event=schedule distincts avec rapports CLOSED relus, artifacts à quatre fichiers, captures réelles et compteurs bornés.",
+  "minimum_decisive_test": "Obtenir en CI exact-head la suite complète verte sur V1.005 et une fusion normale, désactiver les workflows 90/91, puis vérifier au moins deux runs event=schedule distincts avec rapports CLOSED relus, artifacts à quatre fichiers, captures réelles et compteurs bornés.",
   "recommended_action": "PASS_AND_HOLD: committer avec C0, ouvrir la PR, obtenir les contrôles requis et fusionner normalement; ensuite laisser le calendrier seul produire les preuves live avant fermeture des claims récurrents.",
   "scale_condition": "Ne déclarer le laboratoire livré qu’après deux runs schedule distincts sur main, aucune route historique active, readback R2 exact, artifact public expurgé vérifié, limites 24 h/30 j respectées et au moins une capture réelle utilisable par run.",
   "estimated_compute": "Vérifications ciblées locales, une suite complète pré-fusion et deux runs schedule bornés à trente minutes chacun.",
