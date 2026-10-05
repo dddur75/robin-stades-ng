@@ -552,12 +552,20 @@ def test_html_is_self_contained_paginated_searchable_and_safe() -> None:
     assert "function refreshFreshness" in html
     assert "Date.now()" in html
     assert "freshness_limit_seconds" in html
-    assert "setInterval(refreshFreshness,60000)" in html
+    assert "function pollForNewRun" in html
+    assert 'fetch("/status.json"' in html
+    assert "current!==LOADED_RUN_ID" in html
+    assert "location.reload()" in html
+    assert "sessionStorage.setItem" in html
+    assert "restoreFilterState()" in html
     assert "function selectRows" in html
     assert "function exportFilteredCsv" in html
     assert "function exportFilteredJson" in html
     assert "const exportRows=filtered.slice()" in html
-    assert "encodeURIComponent(contents)" in html
+    assert 'method="post"' in html
+    assert 'formaction="/export.csv"' in html
+    assert 'formaction="/export.json"' in html
+    assert 'id="export-content"' in html
     assert "previous_price" in html
     assert "current_price" in html
     assert "kickoff_utc" in html

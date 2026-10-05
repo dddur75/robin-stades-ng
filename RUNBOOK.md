@@ -1033,3 +1033,40 @@ Avant une campagne :
 Le freeze V2 nécessite deux commits. Le second doit référencer le premier par
 `source_code_revision` et son arbre Git exact, puis être lié au contrat V1 avec
 `supersedes`.
+
+## Explorateur privé de données réelles
+
+Ouvrir `http://127.0.0.1:4173/robin-real-data.html`. La collecte continue dans
+GitHub lorsque le PC est éteint. Après ouverture de session, le service privé
+réconcilie les artifacts validés. Une page déjà ouverte contrôle l'état chaque
+minute, conserve ses filtres et se recharge lorsqu'un nouveau run est publié.
+
+Pour explorer, combiner la recherche avec les filtres ligue, bookmaker, marché,
+acquisition, mouvement, cote et variation. **Exporter la sélection CSV** ou JSON
+exporte toutes les lignes filtrées ; **Réinitialiser** restaure les filtres. La
+vue est descriptive : ni meilleur prix garanti, ni conseil, ni preuve d'edge.
+
+État sans secret : `http://127.0.0.1:4173/status.json`.
+
+- installation ScheduledTask : `Stop-ScheduledTask -TaskName RobinRealDataExplorer`
+  puis `Start-ScheduledTask -TaskName RobinRealDataExplorer` ;
+- installation utilisateur `StartupShortcut` : arrêter le processus dont la ligne
+  de commande contient `run_real_data_explorer.py`, puis lancer le raccourci
+  `RobinRealDataExplorer.lnk` du dossier Démarrage ;
+- réinstallation :
+  `powershell -ExecutionPolicy Bypass -File scripts/install_real_data_explorer.ps1`.
+
+Le service écoute seulement `127.0.0.1`. Il lie mission, acquisition, livraison et
+créneau, vérifie reçu, hashes et manifeste local avant lecture, puis bascule
+atomiquement. La corruption ou l'échec GitHub conserve la dernière vue valide.
+
+- `GITHUB_AUTH_REQUIRED` : réparer `gh auth status`, sans jeton dans la page ;
+- `GITHUB_ARTIFACT_UNAVAILABLE`, `GITHUB_ARTIFACT_DOWNLOAD_FAILED`,
+  `GITHUB_READ_TIMEOUT` ou `GITHUB_CLI_UNAVAILABLE` : lecture GitHub échouée ;
+- `SOURCE_HASH_MISMATCH`, `SOURCE_*_INVALID` ou `SOURCE_CARRY_FORWARD_STALE` :
+  artifact refusé ;
+- `LOCAL_VERSION_HASH_MISMATCH` : corruption locale détectée et non servie ;
+- `LATE_ARTIFACT` : artifact tardif volontairement refusé.
+
+L'historique reste épinglé sous
+`/history/<github_run_id>/robin-real-data.html`.
