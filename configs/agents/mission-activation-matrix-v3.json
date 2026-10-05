@@ -806,6 +806,7 @@
         "reports/evidence/evidence-graph.json",
         "reports/evidence/robin-autonomous-lab-run-37231859661-public-receipt.json",
         "reports/evidence/robin-autonomous-lab-run-37245531093-public-receipt.json",
+        "reports/evidence/robin-autonomous-relay-probe-20261005.json",
         "scripts/run_recurring_real_data.py",
         "src/robin/capture/recurring_real_data.py",
         "tests/capture/test_recurring_real_data.py",

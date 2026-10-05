@@ -1,0 +1,100 @@
+{
+  "schema": "robin.autonomous_relay_probe.v1",
+  "observed_at_utc": "2026-10-05T02:37:30Z",
+  "repository": "dddur75/robin-stades-ng",
+  "main_sha": "b5352127f1ebba653bf42d37c5a93319159f4569",
+  "workflow_id": 321915839,
+  "workflow_path": ".github/workflows/prospective-deep-scheduler.yml",
+  "generation": "4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87",
+  "environment": {
+    "name": "robin-autonomous-relay-v1",
+    "created_at_utc": "2026-10-05T02:33:41Z",
+    "wait_timer_minutes": 1,
+    "protection_rule_types": [
+      "branch_policy",
+      "wait_timer"
+    ],
+    "protected_branches": false,
+    "custom_branch_policies": true,
+    "branch_policies": [
+      {
+        "name": "main",
+        "type": "branch"
+      }
+    ],
+    "secret_count": 0,
+    "variable_count": 0,
+    "repository_activation_variable_present": false
+  },
+  "runs": [
+    {
+      "run_id": 37255909445,
+      "role": "manual_provider_free_bootstrap",
+      "sequence": 0,
+      "event": "workflow_dispatch",
+      "actor": "dddur75",
+      "display_title": "robin-probe-bootstrap-4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87-0-0",
+      "head_sha": "b5352127f1ebba653bf42d37c5a93319159f4569",
+      "created_at_utc": "2026-10-05T02:34:04Z",
+      "completed_at_utc": "2026-10-05T02:34:18Z",
+      "conclusion": "success",
+      "bootstrap_conclusion": "success",
+      "relay_conclusion": "skipped",
+      "capture_conclusion": "skipped",
+      "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/37255909445"
+    },
+    {
+      "run_id": 37255920150,
+      "role": "automatic_provider_free_relay",
+      "sequence": 1,
+      "chain_id": 37255909445,
+      "parent_run_id": 37255909445,
+      "event": "workflow_dispatch",
+      "actor": "github-actions[bot]",
+      "display_title": "robin-probe-relay-4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87-37255909445-1",
+      "head_sha": "b5352127f1ebba653bf42d37c5a93319159f4569",
+      "created_at_utc": "2026-10-05T02:34:13Z",
+      "completed_at_utc": "2026-10-05T02:35:32Z",
+      "conclusion": "success",
+      "relay_conclusion": "success",
+      "capture_conclusion": "skipped",
+      "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/37255920150"
+    },
+    {
+      "run_id": 37256000103,
+      "role": "automatic_provider_free_relay",
+      "sequence": 2,
+      "chain_id": 37255909445,
+      "parent_run_id": 37255920150,
+      "event": "workflow_dispatch",
+      "actor": "github-actions[bot]",
+      "display_title": "robin-probe-relay-4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87-37255909445-2",
+      "head_sha": "b5352127f1ebba653bf42d37c5a93319159f4569",
+      "created_at_utc": "2026-10-05T02:35:24Z",
+      "completed_at_utc": "2026-10-05T02:36:45Z",
+      "conclusion": "success",
+      "relay_conclusion": "success",
+      "capture_conclusion": "skipped",
+      "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/37256000103"
+    }
+  ],
+  "observations": {
+    "distinct_run_count": 3,
+    "automatic_relay_hops": 2,
+    "automatic_relay_actors": [
+      "github-actions[bot]",
+      "github-actions[bot]"
+    ],
+    "sequence_3_count": 0,
+    "active_generation_run_count_after_probe": 0,
+    "capture_jobs_executed": 0,
+    "provider_http_requests_new": 0,
+    "provider_credits_new": 0,
+    "r2_reads_new": 0,
+    "r2_writes_new": 0,
+    "purchases": 0,
+    "bets": 0,
+    "ai_credits": "NOT_MEASURED"
+  },
+  "scope_note": "This receipt proves autonomous trigger materialization and ordering only. It contains no supplier payload and does not claim a real capture."
+}

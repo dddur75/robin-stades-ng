@@ -859,3 +859,85 @@ def test_trigger_recovery_v2_records_late_failure_and_successor_authority() -> N
     assert decisions["RCV3-20261005-242"]["ledger_record_hash"] == authority["hash"]
     edges = {edge["edge_id"]: edge for edge in graph["edges"]}
     assert set(edges) >= {f"EDGE.{number}" for number in range(919, 925)}
+
+
+def test_trigger_recovery_provider_free_probe_opens_only_e2_after_two_hops() -> None:
+    receipt_path = "reports/evidence/robin-autonomous-relay-probe-20261005.json"
+    receipt = _load(receipt_path)
+    generation = "4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87"
+    assert receipt["main_sha"] == "b5352127f1ebba653bf42d37c5a93319159f4569"
+    assert receipt["generation"] == generation
+    assert receipt["environment"] == {
+        "name": "robin-autonomous-relay-v1",
+        "created_at_utc": "2026-10-05T02:33:41Z",
+        "wait_timer_minutes": 1,
+        "protection_rule_types": ["branch_policy", "wait_timer"],
+        "protected_branches": False,
+        "custom_branch_policies": True,
+        "branch_policies": [{"name": "main", "type": "branch"}],
+        "secret_count": 0,
+        "variable_count": 0,
+        "repository_activation_variable_present": False,
+    }
+    assert [run["run_id"] for run in receipt["runs"]] == [
+        37_255_909_445,
+        37_255_920_150,
+        37_256_000_103,
+    ]
+    assert [run["actor"] for run in receipt["runs"][1:]] == [
+        "github-actions[bot]",
+        "github-actions[bot]",
+    ]
+    assert all(run["capture_conclusion"] == "skipped" for run in receipt["runs"])
+    assert receipt["observations"] == {
+        "distinct_run_count": 3,
+        "automatic_relay_hops": 2,
+        "automatic_relay_actors": ["github-actions[bot]", "github-actions[bot]"],
+        "sequence_3_count": 0,
+        "active_generation_run_count_after_probe": 0,
+        "capture_jobs_executed": 0,
+        "provider_http_requests_new": 0,
+        "provider_credits_new": 0,
+        "r2_reads_new": 0,
+        "r2_writes_new": 0,
+        "purchases": 0,
+        "bets": 0,
+        "ai_credits": "NOT_MEASURED",
+    }
+
+    graph = _load("reports/evidence/evidence-graph.json")
+    claims = {claim["claim_id"]: claim for claim in graph["claims"]}
+    probe = claims["GOV.SCHEDULER.ROBIN_AUTONOMOUS_LAB.RELAY.PROBE.V1.001"]
+    assert probe["hash"] == _lf_sha256(receipt_path)
+    assert probe["automatic_run_ids"] == [37_255_920_150, 37_256_000_103]
+    assert probe["provider_http_requests_new"] == 0
+    assert probe["provider_credits_new"] == 0
+
+    records = _ledger()
+    by_id = {record["decision_id"]: record for record in records}
+    finished = by_id["RCV3-20261005-249"]
+    scale = by_id["RCV3-20261005-250"]
+    assert finished["record_type"] == "STAGE_FINISHED"
+    assert finished["decision"] == "PASS_AND_HOLD"
+    assert scale["record_type"] == "DECISION"
+    assert scale["decision"] == "PASS_AND_SCALE"
+    assert scale["context"]["current_stage"] == "E1"
+    assert scale["context"]["opened_stage"] == "E2"
+    assert scale["context"]["generation"] == generation
+    assert scale["context"]["historical_provider_http_requests_conservative"] == 26
+    assert scale["context"]["historical_provider_credits_conservative"] == 54
+    assert scale["previous_hash"] == finished["hash"]
+    for record in (finished, scale):
+        canonical = json.dumps(
+            {key: value for key, value in record.items() if key != "hash"},
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+        assert hashlib.sha256(canonical).hexdigest() == record["hash"]
+
+    decisions = {node["decision_id"]: node for node in graph["decision_nodes"]}
+    assert decisions["RCV3-20261005-249"]["ledger_record_hash"] == finished["hash"]
+    assert decisions["RCV3-20261005-250"]["ledger_record_hash"] == scale["hash"]
+    edges = {edge["edge_id"]: edge for edge in graph["edges"]}
+    assert set(edges) >= {f"EDGE.{number}" for number in range(943, 948)}
