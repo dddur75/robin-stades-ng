@@ -4,6 +4,7 @@ from datetime import UTC, datetime, timedelta
 
 from robin.capture.real_data_dashboard import (
     build_dashboard_snapshot,
+    compare_acquisitions,
     render_dashboard_html,
 )
 from robin.capture.recurring_real_data import RECURRING_CLAIM_IDS, SEED_CLAIM_IDS
@@ -282,11 +283,16 @@ def test_price_quantiles_are_hand_checked_and_grouped() -> None:
 
 
 def test_matched_offer_movements_do_not_invent_unmatched_changes() -> None:
-    previous = [_row(event="event-1", price=2.0), _row(event="event-2", price=3.0)]
+    previous_capture = NOW - timedelta(hours=2)
+    current_capture = NOW - timedelta(hours=1)
+    previous = [
+        _row(event="event-1", price=2.0, capture=previous_capture),
+        _row(event="event-2", price=3.0, capture=previous_capture),
+    ]
     current = [
-        _row(event="event-1", price=2.2),
-        _row(event="event-2", price=3.0),
-        _row(event="event-3", price=9.0),
+        _row(event="event-1", price=2.2, capture=current_capture),
+        _row(event="event-2", price=3.0, capture=current_capture),
+        _row(event="event-3", price=9.0, capture=current_capture),
     ]
     previous_report = _report(rows=previous)
     previous_report["claim_ids"] = list(SEED_CLAIM_IDS)
@@ -300,6 +306,160 @@ def test_matched_offer_movements_do_not_invent_unmatched_changes() -> None:
     assert movement["unmatched_current_count"] == 1
     assert movement["changes"][0]["delta"] == 0.2
     assert snapshot["claim_ids"] == [*RECURRING_CLAIM_IDS, *SEED_CLAIM_IDS]
+
+
+def test_comparison_uses_exact_h2h_and_totals_offer_identities() -> None:
+    previous_capture = NOW - timedelta(hours=2)
+    current_capture = NOW - timedelta(hours=1)
+    previous = [
+        _row(event="event-1", market="h2h", outcome="Home", price=2.0, capture=previous_capture),
+        _row(
+            event="event-1",
+            market="totals",
+            outcome="Over",
+            point=2.5,
+            price=1.9,
+            capture=previous_capture,
+        ),
+        _row(
+            event="event-1",
+            market="totals",
+            outcome="Under",
+            point=2.5,
+            price=1.8,
+            capture=previous_capture,
+        ),
+    ]
+    current = [
+        _row(event="event-1", market="h2h", outcome="Home", price=2.1, capture=current_capture),
+        _row(
+            event="event-1",
+            market="totals",
+            outcome="Over",
+            point=2.5,
+            price=1.85,
+            capture=current_capture,
+        ),
+        _row(
+            event="event-1",
+            market="totals",
+            outcome="Over",
+            point=3.5,
+            price=2.4,
+            capture=current_capture,
+        ),
+    ]
+
+    comparison = compare_acquisitions(current, previous)
+
+    assert comparison["matched_offer_count"] == 2
+    assert comparison["changed_offer_count"] == 2
+    assert comparison["appeared_offer_count"] == 1
+    assert comparison["not_observed_offer_count"] == 1
+    assert comparison["excluded_row_count"] == 0
+    assert comparison["changed_proportion"] == 1.0
+    assert {row["point"] for row in comparison["matched_offers"]} == {None, 2.5}
+    assert comparison["appeared_offers"][0]["point"] == 3.5
+    assert comparison["not_observed_offers"][0]["outcome"] == "Under"
+
+
+def test_comparison_excludes_duplicates_invalid_prices_and_unordered_branches() -> None:
+    previous_capture = NOW - timedelta(hours=2)
+    current_capture = NOW - timedelta(hours=1)
+    duplicate = _row(event="duplicate", price=2.0, capture=previous_capture)
+    previous = [
+        duplicate,
+        dict(duplicate),
+        _row(event="invalid", price=2.0, capture=previous_capture),
+        _row(
+            sport="soccer_france_ligue_one",
+            event="unordered",
+            price=2.0,
+            capture=current_capture,
+        ),
+    ]
+    current = [
+        _row(event="duplicate", price=2.1, capture=current_capture),
+        _row(event="invalid", price=float("nan"), capture=current_capture),
+        _row(
+            sport="soccer_france_ligue_one",
+            event="unordered",
+            price=2.2,
+            capture=previous_capture,
+        ),
+    ]
+
+    comparison = compare_acquisitions(current, previous)
+
+    assert comparison["matched_offer_count"] == 0
+    assert comparison["appeared_offer_count"] == 0
+    assert comparison["not_observed_offer_count"] == 0
+    assert comparison["excluded_row_count"] == 7
+    assert comparison["excluded_identity_count"] == 3
+    assert comparison["exclusion_reason_counts"] == {
+        "DUPLICATE_OFFER_IDENTITY": 3,
+        "INVALID_PRICE": 2,
+        "NON_FORWARD_BRANCH_TIME": 2,
+    }
+
+
+def test_comparison_reports_direction_amplitude_and_breakdowns() -> None:
+    previous_capture = NOW - timedelta(hours=2)
+    current_capture = NOW - timedelta(hours=1)
+    previous = [
+        _row(event="event-1", bookmaker="book-a", price=2.0, capture=previous_capture),
+        _row(event="event-2", bookmaker="book-a", price=3.0, capture=previous_capture),
+        _row(
+            event="event-2",
+            bookmaker="book-b",
+            market="totals",
+            outcome="Over",
+            point=2.5,
+            price=1.8,
+            capture=previous_capture,
+        ),
+    ]
+    current = [
+        _row(event="event-1", bookmaker="book-a", price=2.2, capture=current_capture),
+        _row(event="event-2", bookmaker="book-a", price=2.9, capture=current_capture),
+        _row(
+            event="event-2",
+            bookmaker="book-b",
+            market="totals",
+            outcome="Over",
+            point=2.5,
+            price=1.8,
+            capture=current_capture,
+        ),
+    ]
+
+    comparison = compare_acquisitions(current, previous)
+
+    assert comparison["direction_counts"] == {"UP": 1, "DOWN": 1, "UNCHANGED": 1}
+    assert comparison["mean_absolute_delta"] == 0.1
+    assert comparison["median_absolute_delta"] == 0.1
+    assert comparison["maximum_absolute_delta"] == 0.2
+    assert comparison["breakdowns"]["league"] == [
+        {
+            "key": "soccer_epl",
+            "matched_offer_count": 3,
+            "distinct_match_count": 2,
+            "changed_offer_count": 2,
+            "changed_proportion": 0.666667,
+            "up_count": 1,
+            "down_count": 1,
+            "unchanged_count": 1,
+            "mean_absolute_delta": 0.1,
+        }
+    ]
+    assert [item["key"] for item in comparison["breakdowns"]["bookmaker"]] == [
+        "book-a",
+        "book-b",
+    ]
+    assert [item["key"] for item in comparison["breakdowns"]["market"]] == [
+        "h2h",
+        "totals",
+    ]
 
 
 def test_html_is_self_contained_paginated_searchable_and_safe() -> None:

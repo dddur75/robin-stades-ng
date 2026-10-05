@@ -245,53 +245,276 @@ def _offer_identity(row: Mapping[str, object]) -> tuple[object, ...]:
     )
 
 
+def _valid_offer_identity(row: Mapping[str, object]) -> tuple[object, ...] | None:
+    required = (
+        row.get("sport_key"),
+        row.get("event_id"),
+        row.get("bookmaker_key"),
+        row.get("market_key"),
+        row.get("outcome"),
+    )
+    if any(not isinstance(value, str) or not value.strip() for value in required):
+        return None
+    market = cast(str, row["market_key"])
+    point = row.get("point")
+    if market == "h2h":
+        if point is not None:
+            return None
+    elif market == "totals":
+        if (
+            not isinstance(point, (int, float))
+            or isinstance(point, bool)
+            or not math.isfinite(float(point))
+        ):
+            return None
+    else:
+        return None
+    return _offer_identity(row)
+
+
+def _valid_price(row: Mapping[str, object]) -> float | None:
+    price = row.get("price")
+    if (
+        not isinstance(price, (int, float))
+        or isinstance(price, bool)
+        or not math.isfinite(float(price))
+        or float(price) <= 0
+    ):
+        return None
+    return float(price)
+
+
+def _comparison_row(
+    *,
+    current: Mapping[str, object] | None,
+    previous: Mapping[str, object] | None,
+) -> dict[str, object]:
+    source = current if current is not None else previous
+    if source is None:
+        raise ValueError("DASHBOARD_COMPARISON_ROW_EMPTY")
+    result = {
+        field: source.get(field)
+        for field in (
+            "sport_key",
+            "event_id",
+            "match",
+            "kickoff_utc",
+            "bookmaker_key",
+            "bookmaker",
+            "market_key",
+            "outcome",
+            "point",
+        )
+    }
+    if previous is not None:
+        result |= {
+            "previous_slot_start_utc": previous.get("slot_start_utc"),
+            "previous_capture_time_utc": previous.get("capture_time_utc"),
+            "previous_source_timestamp_utc": previous.get("source_timestamp_utc"),
+            "previous_price": _valid_price(previous),
+        }
+    if current is not None:
+        result |= {
+            "current_slot_start_utc": current.get("slot_start_utc"),
+            "current_capture_time_utc": current.get("capture_time_utc"),
+            "current_source_timestamp_utc": current.get("source_timestamp_utc"),
+            "current_price": _valid_price(current),
+        }
+    return result
+
+
+def _excluded_row(row: Mapping[str, object], *, side: str, reason: str) -> dict[str, object]:
+    return {
+        "side": side,
+        "reason": reason,
+        "sport_key": row.get("sport_key"),
+        "event_id": row.get("event_id"),
+        "bookmaker_key": row.get("bookmaker_key"),
+        "market_key": row.get("market_key"),
+        "outcome": row.get("outcome"),
+        "point": row.get("point"),
+    }
+
+
+def _branch_times(
+    rows: Sequence[Mapping[str, object]],
+) -> tuple[dict[str, list[datetime]], set[str]]:
+    result: dict[str, list[datetime]] = defaultdict(list)
+    invalid: set[str] = set()
+    for row in rows:
+        sport = row.get("sport_key")
+        if not isinstance(sport, str) or not sport:
+            continue
+        try:
+            result[sport].append(_utc(row.get("capture_time_utc")))
+        except ValueError:
+            invalid.add(sport)
+    return result, invalid
+
+
+def _movement_breakdown(
+    matched_offers: Sequence[Mapping[str, object]], *, field: str
+) -> list[dict[str, object]]:
+    grouped: dict[str, list[Mapping[str, object]]] = defaultdict(list)
+    for row in matched_offers:
+        key = row.get(field)
+        if isinstance(key, str):
+            grouped[key].append(row)
+    result: list[dict[str, object]] = []
+    for key, rows in sorted(grouped.items()):
+        deltas = [abs(float(cast(float, row["delta"]))) for row in rows]
+        changed = sum(row["direction"] != "UNCHANGED" for row in rows)
+        result.append(
+            {
+                "key": key,
+                "matched_offer_count": len(rows),
+                "distinct_match_count": len({row.get("event_id") for row in rows}),
+                "changed_offer_count": changed,
+                "changed_proportion": round(changed / len(rows), 6),
+                "up_count": sum(row["direction"] == "UP" for row in rows),
+                "down_count": sum(row["direction"] == "DOWN" for row in rows),
+                "unchanged_count": sum(row["direction"] == "UNCHANGED" for row in rows),
+                "mean_absolute_delta": round(sum(deltas) / len(deltas), 6),
+            }
+        )
+    return result
+
+
+def compare_acquisitions(
+    current: Sequence[Mapping[str, object]], previous: Sequence[Mapping[str, object]]
+) -> dict[str, object]:
+    """Compare two normalized acquisitions without hiding ambiguous observations."""
+
+    current_times, current_time_invalid = _branch_times(current)
+    previous_times, previous_time_invalid = _branch_times(previous)
+    shared_sports = set(current_times) & set(previous_times)
+    invalid_time_sports = (current_time_invalid | previous_time_invalid) & (
+        {str(row.get("sport_key")) for row in current}
+        | {str(row.get("sport_key")) for row in previous}
+    )
+    non_forward_sports = {
+        sport for sport in shared_sports if min(current_times[sport]) <= max(previous_times[sport])
+    }
+
+    indexed: dict[str, dict[tuple[object, ...], list[Mapping[str, object]]]] = {
+        "current": defaultdict(list),
+        "previous": defaultdict(list),
+    }
+    excluded: list[dict[str, object]] = []
+    excluded_identities: set[tuple[object, ...]] = set()
+    for side, rows in (("current", current), ("previous", previous)):
+        for row in rows:
+            sport = row.get("sport_key")
+            if sport in invalid_time_sports:
+                identity = _offer_identity(row)
+                excluded_identities.add(identity)
+                excluded.append(_excluded_row(row, side=side, reason="BRANCH_TIME_INVALID"))
+                continue
+            if sport in non_forward_sports:
+                identity = _offer_identity(row)
+                excluded_identities.add(identity)
+                excluded.append(_excluded_row(row, side=side, reason="NON_FORWARD_BRANCH_TIME"))
+                continue
+            identity = _valid_offer_identity(row)
+            if identity is None:
+                excluded.append(_excluded_row(row, side=side, reason="INVALID_OFFER_IDENTITY"))
+                continue
+            indexed[side][identity].append(row)
+
+    all_identities = set(indexed["current"]) | set(indexed["previous"])
+    matched_offers: list[dict[str, object]] = []
+    appeared_offers: list[dict[str, object]] = []
+    not_observed_offers: list[dict[str, object]] = []
+    for identity in sorted(all_identities, key=repr):
+        current_rows = indexed["current"].get(identity, [])
+        previous_rows = indexed["previous"].get(identity, [])
+        combined = [("current", row) for row in current_rows] + [
+            ("previous", row) for row in previous_rows
+        ]
+        if len(current_rows) > 1 or len(previous_rows) > 1:
+            excluded_identities.add(identity)
+            excluded.extend(
+                _excluded_row(row, side=side, reason="DUPLICATE_OFFER_IDENTITY")
+                for side, row in combined
+            )
+            continue
+        if any(_valid_price(row) is None for _, row in combined):
+            excluded_identities.add(identity)
+            excluded.extend(
+                _excluded_row(row, side=side, reason="INVALID_PRICE") for side, row in combined
+            )
+            continue
+        if current_rows and previous_rows:
+            current_row = current_rows[0]
+            previous_row = previous_rows[0]
+            current_price = cast(float, _valid_price(current_row))
+            previous_price = cast(float, _valid_price(previous_row))
+            delta = round(current_price - previous_price, 6)
+            direction = "UP" if delta > 0 else "DOWN" if delta < 0 else "UNCHANGED"
+            matched_offers.append(
+                _comparison_row(current=current_row, previous=previous_row)
+                | {"delta": delta, "direction": direction}
+            )
+        elif current_rows:
+            appeared_offers.append(_comparison_row(current=current_rows[0], previous=None))
+        elif previous_rows:
+            not_observed_offers.append(_comparison_row(current=None, previous=previous_rows[0]))
+
+    matched_offers.sort(
+        key=lambda item: (
+            -abs(float(cast(float, item["delta"]))),
+            repr(_offer_identity(item)),
+        )
+    )
+    appeared_offers.sort(key=lambda item: repr(_offer_identity(item)))
+    not_observed_offers.sort(key=lambda item: repr(_offer_identity(item)))
+    absolute_deltas = [abs(float(cast(float, row["delta"]))) for row in matched_offers]
+    changed = sum(row["direction"] != "UNCHANGED" for row in matched_offers)
+    unchanged = len(matched_offers) - changed
+    reason_counts: dict[str, int] = defaultdict(int)
+    for row in excluded:
+        reason_counts[cast(str, row["reason"])] += 1
+    return {
+        "matched_offer_count": len(matched_offers),
+        "changed_offer_count": changed,
+        "unchanged_offer_count": unchanged,
+        "appeared_offer_count": len(appeared_offers),
+        "not_observed_offer_count": len(not_observed_offers),
+        "unmatched_current_count": len(appeared_offers),
+        "unmatched_previous_count": len(not_observed_offers),
+        "excluded_row_count": len(excluded),
+        "excluded_identity_count": len(excluded_identities),
+        "exclusion_reason_counts": dict(sorted(reason_counts.items())),
+        "changed_proportion": round(changed / len(matched_offers), 6) if matched_offers else None,
+        "direction_counts": {
+            "UP": sum(row["direction"] == "UP" for row in matched_offers),
+            "DOWN": sum(row["direction"] == "DOWN" for row in matched_offers),
+            "UNCHANGED": unchanged,
+        },
+        "mean_absolute_delta": round(sum(absolute_deltas) / len(absolute_deltas), 6)
+        if absolute_deltas
+        else None,
+        "median_absolute_delta": round(_quantile(absolute_deltas, 0.5), 6)
+        if absolute_deltas
+        else None,
+        "maximum_absolute_delta": round(max(absolute_deltas), 6) if absolute_deltas else None,
+        "matched_offers": matched_offers,
+        "appeared_offers": appeared_offers,
+        "not_observed_offers": not_observed_offers,
+        "excluded_rows": excluded,
+        "changes": [row for row in matched_offers if row["direction"] != "UNCHANGED"],
+        "breakdowns": {
+            "league": _movement_breakdown(matched_offers, field="sport_key"),
+            "bookmaker": _movement_breakdown(matched_offers, field="bookmaker_key"),
+            "market": _movement_breakdown(matched_offers, field="market_key"),
+        },
+    }
+
+
 def _price_movement(
     current: Sequence[Mapping[str, object]], previous: Sequence[Mapping[str, object]]
 ) -> dict[str, object]:
-    previous_prices = {
-        _offer_identity(row): float(cast(float, row["price"]))
-        for row in previous
-        if isinstance(row.get("price"), (int, float)) and not isinstance(row.get("price"), bool)
-    }
-    changes: list[dict[str, object]] = []
-    matched = 0
-    unchanged = 0
-    unmatched = 0
-    for row in current:
-        price = row.get("price")
-        if not isinstance(price, (int, float)) or isinstance(price, bool):
-            continue
-        identity = _offer_identity(row)
-        prior = previous_prices.get(identity)
-        if prior is None:
-            unmatched += 1
-            continue
-        matched += 1
-        delta = round(float(price) - prior, 6)
-        if delta == 0:
-            unchanged += 1
-            continue
-        changes.append(
-            {
-                "sport_key": row.get("sport_key"),
-                "event_id": row.get("event_id"),
-                "bookmaker_key": row.get("bookmaker_key"),
-                "market_key": row.get("market_key"),
-                "outcome": row.get("outcome"),
-                "point": row.get("point"),
-                "previous_price": prior,
-                "current_price": float(price),
-                "delta": delta,
-            }
-        )
-    changes.sort(key=lambda item: abs(cast(float, item["delta"])), reverse=True)
-    return {
-        "matched_offer_count": matched,
-        "changed_offer_count": len(changes),
-        "unchanged_offer_count": unchanged,
-        "unmatched_current_count": unmatched,
-        "changes": changes,
-    }
+    return compare_acquisitions(current, previous)
 
 
 def _incidents(branches: Sequence[Mapping[str, object]]) -> list[dict[str, object]]:
