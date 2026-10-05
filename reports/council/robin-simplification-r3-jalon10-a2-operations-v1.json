@@ -3,58 +3,37 @@
   "mission_id": "ROBIN_SIMPLIFICATION_R3_JALON10_20261005",
   "facts_verified": [
     {
-      "claim": "L’addendum possède les huit champs requis, borne le calcul à 5000 et n’autorise que la lecture des sources gelées et des sorties locales ; les effets fournisseur, R2 en écriture, paris et promotions sont explicitement à zéro. Son source_hash correspond au texte normalisé en LF.",
-      "evidence_refs": ["configs/execution/robin-simplification-r3-jalon10-20261005.json:1", "configs/execution/robin-simplification-r3-jalon10-20261005.json:11", "tests/council/test_robin_simplification_r3_jalon10_governance.py:18", "tests/council/test_robin_simplification_r3_jalon10_governance.py:23"],
+      "claim": "Le job R3 distinct télécharge les artefacts du même run, ne lance que le rejeu des trois témoins et son succès est requis par le gate tests.",
+      "evidence_refs": [".github/workflows/ci-safe-v2.yml:567", ".github/workflows/ci-safe-v2.yml:604", ".github/workflows/ci-safe-v2.yml:728", "tests/hypothesis_evidence/test_jalon10_non_regression.py:250"],
       "status": "VERIFIED"
     },
     {
-      "claim": "La matrice désigne C0 comme seul rédacteur et couvre les chemins prévus pour le module, la CLI, le test ciblé, le rapport compact, la documentation, les revues et le ledger. Elle n’ouvre pas les moteurs J10 ni le builder global.",
-      "evidence_refs": ["configs/agents/mission-activation-matrix-v3.json:878", "configs/agents/mission-activation-matrix-v3.json:881", "configs/agents/mission-activation-matrix-v3.json:903"],
+      "claim": "La CLI place le rapport généré sous artifacts par défaut et refuse avant rejeu une sortie détaillée à la racine du dépôt ou l'écrasement de la référence.",
+      "evidence_refs": ["scripts/run_jalon10_non_regression.py:43", "scripts/run_jalon10_non_regression.py:52", "tests/hypothesis_evidence/test_jalon10_non_regression.py:271"],
       "status": "VERIFIED"
     },
     {
-      "claim": "Le ledger ajoute une autorisation PASS_AND_HOLD à E1 sans réécrire sa ligne précédente ; le schéma accepte le nouvel identifiant de mission.",
-      "evidence_refs": ["reports/council/decision-ledger.jsonl:254", "configs/agents/agent-report-schema-v3.json:15"],
-      "status": "VERIFIED"
-    },
-    {
-      "claim": "Le plan limite le rejeu aux trois règles, à 865 appartenances comparées et à des détails hors Git. La source gelée contient six partitions La Liga et six Serie A pour 2020–2025 ; les caches locaux et leurs SHA-256 correspondent au manifeste de référence.",
-      "evidence_refs": ["docs/superpowers/plans/2026-10-05-robin-simplification-exploration.md:87", "docs/superpowers/plans/2026-10-05-robin-simplification-exploration.md:96", "reports/hypothesis-evidence/source-provenance.json:1", "reports/hypothesis-evidence/artifact-hashes.json:1", "C:/Users/ddura/OneDrive/Documents/Robin des stades V2/artifacts/hypothesis-evidence/artifact-manifest.json:1"],
+      "claim": "Le calcul filtre trois règles dans des Parquet à hash vérifié, compare 865 appartenances et conserve les détails sous artifacts ignoré.",
+      "evidence_refs": ["src/robin/hypothesis_evidence/non_regression.py:453", "src/robin/hypothesis_evidence/non_regression.py:466", "src/robin/hypothesis_evidence/non_regression.py:574", ".gitignore:29"],
       "status": "VERIFIED"
     }
   ],
-  "unknowns": [
-    "Le module, la CLI et le test de rejeu R3 ne sont pas encore présents ; aucun résultat avant/après ni absence d’effets de leur future exécution ne peut être attesté.",
-    "Le lieu exact de stockage des sorties détaillées runtime-only n’est pas encore fixé par une implémentation."
-  ],
-  "assumptions": [
-    "Les sorties détaillées seront écrites sous artifacts, hors Git, sans modifier les caches gelés du checkout principal.",
-    "La vérification des hashes sera répétée juste avant le rejeu, et pas seulement déduite du contrôle présent."
-  ],
-  "main_objection": "Verdict PASS_AND_HOLD pour l’autorité, non pour l’équivalence : l’addendum est borné et ses chemins d’implémentation sont suffisants, mais le rejeu n’existe pas encore.",
+  "unknowns": ["Le job R3 corrigé n'a pas encore été observé dans une exécution CI distante de ce diff."],
+  "assumptions": ["Les artefacts téléchargés sont ceux produits par frozen-evidence-windows dans le même run, conformément aux noms run_id et run_attempt."],
+  "main_objection": "Le trajet opérationnel est accepté; le claim de résultat doit être ancré par C0 avant la recette finale.",
   "risks": [
     {
-      "risk": "Une future CLI pourrait traiter plus de trois règles ou écrire des détails dans le dépôt sans contrôle explicite.",
-      "severity": "MEDIUM",
-      "evidence_refs": ["tests/council/test_robin_simplification_r3_jalon10_governance.py:39", "docs/superpowers/plans/2026-10-05-robin-simplification-exploration.md:96"]
-    },
-    {
-      "risk": "Les caches détaillés sont dans un checkout partagé et ignoré par Git : toute utilisation doit revérifier les hashes et préserver les fichiers en lecture seule.",
-      "severity": "MEDIUM",
-      "evidence_refs": ["reports/hypothesis-evidence/README.md:24", "reports/hypothesis-evidence/artifact-hashes.json:1"]
-    },
-    {
-      "risk": "Le tableau des trois témoins dans la source de mission reproduit la mise en forme imparfaite de la demande utilisateur, ce qui nuit à sa lecture humaine sans changer le hash vérifié.",
+      "risk": "Le prérequis frozen-evidence-windows régénère la campagne complète préexistante; seul le nouveau job R3 est borné aux trois règles.",
       "severity": "LOW",
-      "evidence_refs": ["configs/execution/robin-simplification-r3-jalon10-source.md:3"]
+      "evidence_refs": [".github/workflows/ci-safe-v2.yml:471", ".github/workflows/ci-safe-v2.yml:475", ".github/workflows/ci-safe-v2.yml:569"]
     }
   ],
-  "minimum_decisive_test": "Avant tout rejeu, vérifier le hash du registre, des sources pertinentes et du Parquet d’appartenance ; lire seulement les 12 partitions La Liga/Serie A épinglées et évaluer uniquement les trois hashes de règle. Comparer les 865 lignes ordonnées par coup d’envoi et fixture_id, puis profit, ROI et drawdown aux valeurs gelées avec les tolérances fixées dans la spécification. Refuser toute divergence inexpliquée, toute quatrième règle ou toute sortie détaillée dans Git.",
-  "recommended_action": "Conserver PASS_AND_HOLD à E1. Implémenter uniquement les chemins R3 autorisés, fixer le répertoire détaillé sous artifacts et renforcer le test avec l’ensemble exact des chemins et des effets permis.",
-  "scale_condition": "Passage à l’étape suivante seulement après tests ciblés, hashes revérifiés, 865 comparaisons réconciliées, zéro effet externe observé et revues indépendantes C2, DP6 et A2.",
-  "estimated_compute": "Rejeu de trois règles sur 12 partitions pertinentes ; pas de reconstruction des 700 règles.",
-  "estimated_external_cost": "Zéro appel fournisseur, crédit, écriture R2, pari, promotion ou workflow déclenché pendant cette revue.",
-  "estimated_human_time": "Environ 1 à 2 heures pour implémenter, vérifier et relire le contrôle borné.",
-  "maintenance_impact": "Faible si la CLI reste distincte du builder global et si les sorties détaillées demeurent hors Git.",
+  "minimum_decisive_test": "Ancrer le claim de résultat avec le hash du rapport compact puis observer le job R3 et le gate tests verts sur le commit livré.",
+  "recommended_action": "Accepter les corrections opérationnelles et solder l'ancrage du claim; aucun rejeu local intégral supplémentaire.",
+  "scale_condition": "Aucune montée en charge: rester aux trois témoins et aux artefacts figés.",
+  "estimated_compute": "Rejeu R3 borné à trois règles; coût du prérequis CI préexistant inchangé.",
+  "estimated_external_cost": "Zéro appel fournisseur, crédit ou accès R2.",
+  "estimated_human_time": "Quelques minutes pour l'ancrage, hors attente CI.",
+  "maintenance_impact": "Un job CI et une CLI dédiés, sans nouveau chemin de collecte.",
   "confidence": 0.91
 }

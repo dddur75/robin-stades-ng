@@ -3,55 +3,42 @@
   "mission_id": "ROBIN_SIMPLIFICATION_R3_JALON10_20261005",
   "facts_verified": [
     {
-      "claim": "PASS pour la matérialisation E1 : le manifeste contient exactement les huit champs requis, borne la mission à E4, interdit fournisseur/R2/pari/promotion et lie la source par SHA-256 après normalisation LF et retrait du LF terminal définie dans le test.",
-      "evidence_refs": ["configs/execution/robin-simplification-r3-jalon10-20261005.json:1-22", "configs/execution/robin-simplification-r3-jalon10-source.md:1-15", "tests/council/test_robin_simplification_r3_jalon10_governance.py:11-50"],
+      "claim": "PASS scientifique limité à R3, sans P0/P1 de calcul: 865 paris/appartenances correspondent à 863 fixtures distinctes.",
+      "evidence_refs": ["reports/hypothesis-evidence/r3-jalon10-non-regression.json:14", "docs/pattern-research/JALON-10-NON-REGRESSION-R3.md:19", "artifacts/r3-jalon10-non-regression/baseline-before-simplification.jsonl:555"],
       "status": "VERIFIED"
     },
     {
-      "claim": "Le mission_id est présent dans le schéma et la matrice. C0 est l’unique rédacteur ; C2, DP6 et A2 sont les clés de livraison. Les chemins d’implémentation et de preuve ciblés sont autorisés.",
-      "evidence_refs": ["configs/agents/agent-report-schema-v3.json:15", "configs/agents/mission-activation-matrix-v3.json:878-909", "tests/council/test_robin_simplification_r3_jalon10_governance.py:52-68"],
+      "claim": "Les JSONL avant/après sont byte-identiques au SHA-256 61ed7022cbc79c39f715e594ae0a8b3aeb6ba5d43c415810582b0e8e1c94d86c et cette égalité prime les tolérances diagnostiques.",
+      "evidence_refs": ["artifacts/r3-jalon10-non-regression/detailed-manifest.json:1", "src/robin/hypothesis_evidence/non_regression.py:574", "docs/pattern-research/JALON-10-NON-REGRESSION-R3.md:36"],
       "status": "VERIFIED"
     },
     {
-      "claim": "Le plan et la spécification limitent le rejeu à J10-M001/M002/M003, soit 865 appartenances, imposent une comparaison par pari avant/après et conservent le verdict scientifique de non-promotion. Les tolérances absolues sont explicitement fixées.",
-      "evidence_refs": ["docs/superpowers/plans/2026-10-05-robin-simplification-exploration.md:87-108", "docs/superpowers/specs/2026-10-05-robin-simplification-exploration-design.md:82-106", "reports/hypothesis-evidence/top-3.json:51-62", "reports/hypothesis-evidence/top-3.json:113-124", "reports/hypothesis-evidence/top-3.json:175-186"],
+      "claim": "Le recalcul indépendant confirme les sélections, règlements d'après les scores, profits, ROI internes et drawdowns; q=1 et le verdict Jalon 10 reste inchangé.",
+      "evidence_refs": ["reports/hypothesis-evidence/r3-jalon10-non-regression.json:4", "reports/hypothesis-evidence/r3-jalon10-non-regression.json:66", "docs/pattern-research/JALON-10-NON-REGRESSION-R3.md:51"],
       "status": "VERIFIED"
     },
     {
-      "claim": "La source historique épinglée est disponible comme objets Git : arbre 986010a776cb7c0f4948098660febea9577f159e et SHA-256 conformes pour les douze partitions La Liga/Serie A pertinentes. L’arithmétique compacte des trois ROI et profits est reproductible.",
-      "evidence_refs": ["reports/hypothesis-evidence/source-provenance.json:5-11", "reports/hypothesis-evidence/source-provenance.json:48-100", "reports/hypothesis-evidence/source-provenance.json:169-226", "reports/hypothesis-evidence/top-3.json:1-193"],
-      "status": "VERIFIED"
-    },
-    {
-      "claim": "L’autorisation E1 est journalisée avec décision PASS_AND_HOLD ; elle ne constitue pas une preuve d’équivalence des 865 lignes.",
-      "evidence_refs": ["reports/council/decision-ledger.jsonl:254"],
+      "claim": "Le job R3 séparé consomme les artefacts gelés et ne relance pas lui-même la campagne de 700 règles.",
+      "evidence_refs": [".github/workflows/ci-safe-v2.yml:567", ".github/workflows/ci-safe-v2.yml:604", "tests/hypothesis_evidence/test_jalon10_non_regression.py:250"],
       "status": "VERIFIED"
     }
   ],
-  "unknowns": [
-    "Les Parquet détaillés sont absents du worktree examiné ; leur copie locale vérifiée dans le checkout principal doit être contrôlée juste avant usage.",
-    "Aucune équivalence ligne à ligne avant/après n’est encore établie ; aucun résultat de rejeu ciblé n’a été produit par cet audit en lecture seule."
-  ],
-  "assumptions": ["Le hash de source est interprété selon la normalisation explicitement codée dans le test, et non comme SHA-256 des octets bruts du fichier avec LF terminal."],
-  "main_objection": "Verdict PASS E1 / PARTIAL E3A : la gouvernance nouvellement matérialisée est cohérente, mais l’oracle détaillé doit être vérifié localement. Ne pas déclarer l’équivalence des 865 paris avant cette vérification et le recalcul ciblé.",
+  "unknowns": ["L'exécution CI distante finale n'a pas été observée dans cette revue en lecture seule."],
+  "assumptions": ["Les validations locales annoncées par C0 sont consignées dans le ledger avant commit."],
+  "main_objection": "Aucune objection scientifique restante; l'ancrage du claim et la CI distante demeurent des gates de livraison, sans effet sur le verdict historique.",
   "risks": [
     {
-      "risk": "Les résumés compacts et les hashes ne suffisent pas à comparer identités, cotes, règlements et profits individuels sans l’oracle détaillé vérifié.",
-      "severity": "HIGH",
-      "evidence_refs": ["reports/hypothesis-evidence/artifact-hashes.json:2-27", "reports/hypothesis-evidence/README.md:1-32", "docs/superpowers/plans/2026-10-05-robin-simplification-exploration.md:92-106"]
-    },
-    {
-      "risk": "Ces trois règles proviennent d’un corpus Discovery déjà exposé et ont q=1 ; les témoins de non-régression ne doivent pas être interprétés comme validation d’un avantage.",
-      "severity": "HIGH",
-      "evidence_refs": ["docs/pattern-research/JALON-10-REPORT.md:105-130", "docs/superpowers/specs/2026-10-05-robin-simplification-exploration-design.md:101-106"]
+      "risk": "Les témoins sont historiquement exposés et démontrent la non-régression du calcul, pas une performance prédictive.",
+      "severity": "MEDIUM",
+      "evidence_refs": ["docs/pattern-research/JALON-10-NON-REGRESSION-R3.md:3", "reports/hypothesis-evidence/r3-jalon10-non-regression.json:139"]
     }
   ],
-  "minimum_decisive_test": "Vérifier le SHA-256 95f5745803cd76d93bbd949debd5219723506838d15d3d8d034cb82bf710aeea de l’oracle, puis comparer uniquement les trois rule_hash et leurs 865 lignes avec le recalcul des douze partitions historiques pertinentes. Tout écart inexpliqué bloque E3A.",
-  "recommended_action": "Poursuivre le lot borné sous C0, mais maintenir PASS_AND_HOLD tant que l’oracle détaillé n’est pas vérifié et le rejeu exécuté. Ne lancer ni fournisseur, ni R2, ni replay des 700 règles.",
-  "scale_condition": "Passage au-delà d’E3A seulement après 865 comparaisons détaillées, zéro écart inexpliqué, hashes des sorties conservés et confirmation inchangée de JALON_10_NO_ROBUST_PATTERN_FOUND.",
-  "estimated_compute": "Lecture de douze partitions historiques et de trois memberships filtrés ; aucun replay général.",
-  "estimated_external_cost": "0 appel fournisseur, 0 crédit, 0 écriture R2, 0 pari et 0 promotion.",
-  "estimated_human_time": "Environ 30–60 minutes après disponibilité locale de l’oracle vérifié.",
-  "maintenance_impact": "Un test de fidélité ciblé et stable est utile ; éviter de dupliquer le moteur de recherche complet.",
-  "confidence": 0.94
+  "minimum_decisive_test": "Ancrer les hashes définitifs puis constater le job CI R3 comparant 865 lignes et le rapport compact byte-identique.",
+  "recommended_action": "Accepter R3 comme témoin de fidélité et terminer l'ancrage sans nouvelle recherche ni ajustement.",
+  "scale_condition": "Ce PASS n'autorise aucune montée en charge scientifique, promotion ou pari réel.",
+  "estimated_compute": "Relecture et recalcul indépendant des 865 lignes; aucun nouveau rejeu global.",
+  "estimated_external_cost": "Zéro appel fournisseur, crédit ou accès R2.",
+  "estimated_human_time": "Quelques minutes pour l'ancrage final, hors CI.",
+  "maintenance_impact": "Contrôle strict et borné, distinct du coût de la campagne préexistante.",
+  "confidence": 0.96
 }

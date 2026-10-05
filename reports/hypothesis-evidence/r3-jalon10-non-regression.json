@@ -1,0 +1,156 @@
+{
+  "schema_version": "r3-jalon10-non-regression-v1",
+  "mission_id": "ROBIN_SIMPLIFICATION_R3_JALON10_20261005",
+  "equivalence_status": "PASS",
+  "scientific_verdict": "JALON_10_NO_ROBUST_PATTERN_FOUND",
+  "scientific_verdict_changed": false,
+  "search_reopened": false,
+  "rules_replayed": [
+    "J10-M001",
+    "J10-M002",
+    "J10-M003"
+  ],
+  "rule_count": 3,
+  "rows_compared": 865,
+  "unique_fixtures_compared": 863,
+  "source": {
+    "mode": "PINNED_GIT_BLOBS",
+    "historical_revision": "5c85cf20b932df44dca8665de00e52e3f1e02236",
+    "historical_parquet_tree": "986010a776cb7c0f4948098660febea9577f159e",
+    "dataset_hash": "3197b6cbe13dcbc4e851ad83550f4fed0741812df5eb4c386b2a52236a27d495",
+    "partition_count": 30
+  },
+  "oracle": {
+    "artifact_sha256": {
+      "historical_fixture_evidence.parquet": "b16150b9620bb1af4d68bfa0f9c30de2786e3107dfb4b1b1f0152bbdf44be3ce",
+      "hypothesis_fixture_membership.parquet": "95f5745803cd76d93bbd949debd5219723506838d15d3d8d034cb82bf710aeea",
+      "hypothesis_historical_evidence_summary.parquet": "ae3f4b5590c54bb036533871245258f7714d86e4e368c9b6244b524e821e0058"
+    },
+    "campaign_result_hash": "edd5f84a84ebbe63fdfeaea0451478fc3baf3387265a9831b620fd6ef0f8194b",
+    "registry_sha256": "cb928f00340f64893e90cc40aaed9bd4ba22e4ef39d59e5f66994dd79331d731"
+  },
+  "tolerances": {
+    "relative": 0.0,
+    "per_bet_absolute": 1e-12,
+    "aggregate_units_absolute": 1e-09,
+    "roi_absolute": 1e-12,
+    "justification": "Bounds cover binary64 addition noise over at most 363 bets and remain far below the report precision of 0.01 unit."
+  },
+  "detailed_artifacts": {
+    "schema_version": "r3-jalon10-detailed-manifest-v1",
+    "outside_git": true,
+    "rows": 865,
+    "baseline": {
+      "name": "baseline-before-simplification.jsonl",
+      "sha256": "61ed7022cbc79c39f715e594ae0a8b3aeb6ba5d43c415810582b0e8e1c94d86c"
+    },
+    "replay": {
+      "name": "replay-after-simplification.jsonl",
+      "sha256": "61ed7022cbc79c39f715e594ae0a8b3aeb6ba5d43c415810582b0e8e1c94d86c"
+    }
+  },
+  "detailed_manifest_sha256": "43fac78d01ca895bc30ee1f4fea492734bf46aece75725ecd2b929a3c9628cf2",
+  "comparison": {
+    "rows_compared": 865,
+    "unexplained_delta_count": 0,
+    "maximum_absolute_deltas": {
+      "cumulative_profit_units": 0.0,
+      "gross_return_units": 0.0,
+      "market_margin": 0.0,
+      "observed_odds": 0.0,
+      "profit_units": 0.0,
+      "stake_units": 0.0
+    }
+  },
+  "witnesses": [
+    {
+      "hypothesis_id": "J10-M001",
+      "rule_hash": "293f3a6d5e635389abc272e8b6579b5e95df58836cd2e1355737df96c52f4867",
+      "bets": 261,
+      "metrics": {
+        "bets": 261,
+        "wins": 135,
+        "losses": 126,
+        "voids": 0,
+        "total_staked_units": 261.0,
+        "profit_units": 43.43,
+        "roi": 0.1663984674329502,
+        "maximum_drawdown_units": 9.269999999999982
+      },
+      "summary_maximum_absolute_deltas": {
+        "profit_units": 0.0,
+        "roi": 0.0,
+        "maximum_drawdown_units": 0.0,
+        "max_drawdown_units": 0.0,
+        "average_odds": 0.0,
+        "hit_rate": 0.0
+      },
+      "membership_set_hash": "e18508a20c89c22a5be9f024471116a0742cebab9a7098018d9cb71272878c4e",
+      "q_value": 1.0,
+      "status": "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING"
+    },
+    {
+      "hypothesis_id": "J10-M002",
+      "rule_hash": "a82c917853baf22ec85eea189eb2efde72022b0271e1e0eadffb2f851d0623a2",
+      "bets": 363,
+      "metrics": {
+        "bets": 363,
+        "wins": 136,
+        "losses": 227,
+        "voids": 0,
+        "total_staked_units": 363.0,
+        "profit_units": 57.88,
+        "roi": 0.1594490358126722,
+        "maximum_drawdown_units": 19.519999999999868
+      },
+      "summary_maximum_absolute_deltas": {
+        "profit_units": 0.0,
+        "roi": 0.0,
+        "maximum_drawdown_units": 0.0,
+        "max_drawdown_units": 0.0,
+        "average_odds": 0.0,
+        "hit_rate": 0.0
+      },
+      "membership_set_hash": "1a6cec7553a44f933668270908438cb15032600b462a6d0aa1b2ef904602b0b1",
+      "q_value": 1.0,
+      "status": "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING"
+    },
+    {
+      "hypothesis_id": "J10-M003",
+      "rule_hash": "561b8a16908ab9bb8cb477c77af343779d20485d959b40ea7ed2a2e60535ec20",
+      "bets": 241,
+      "metrics": {
+        "bets": 241,
+        "wins": 154,
+        "losses": 87,
+        "voids": 0,
+        "total_staked_units": 241.0,
+        "profit_units": 33.42,
+        "roi": 0.1386721991701245,
+        "maximum_drawdown_units": 7.220000000000027
+      },
+      "summary_maximum_absolute_deltas": {
+        "profit_units": 0.0,
+        "roi": 0.0,
+        "maximum_drawdown_units": 0.0,
+        "max_drawdown_units": 0.0,
+        "average_odds": 0.0,
+        "hit_rate": 0.0
+      },
+      "membership_set_hash": "affc299822a4059e98c04310741f1855f209e781926913ac2ec319908a118312",
+      "q_value": 1.0,
+      "status": "EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING"
+    }
+  ],
+  "explained_legacy_bug_corrections": [],
+  "unexplained_deltas": [],
+  "external_effects": {
+    "provider_http_requests_new": 0,
+    "provider_credits_new": 0,
+    "r2_reads_new": 0,
+    "r2_writes_new": 0,
+    "bets": 0,
+    "promotions": 0
+  },
+  "warning": "Historical exposed engineering witnesses only; not evidence of a predictive edge or future performance."
+}
