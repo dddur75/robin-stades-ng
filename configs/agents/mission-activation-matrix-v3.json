@@ -875,6 +875,38 @@
         "platform": ["A2"]
       }
     },
+    "ROBIN_SIMPLIFICATION_R3_JALON10_20261005": {
+      "agents": ["C0","C2","DP6","A2"],
+      "writer": "C0",
+      "allowed_paths": [
+        ".github/workflows/ci-safe-v2.yml",
+        "configs/agents/agent-report-schema-v3.json",
+        "configs/agents/mission-activation-matrix-v3.json",
+        "configs/execution/robin-simplification-r3-jalon10-20261005.json",
+        "configs/execution/robin-simplification-r3-jalon10-source.md",
+        "docs/pattern-research/JALON-10-NON-REGRESSION-R3.md",
+        "docs/superpowers/plans/2026-10-05-robin-simplification-exploration.md",
+        "docs/superpowers/specs/2026-10-05-robin-simplification-exploration-design.md",
+        "reports/council/decision-ledger.jsonl",
+        "reports/council/robin-simplification-r3-jalon10-a2-operations-v1.json",
+        "reports/council/robin-simplification-r3-jalon10-c2-qa-v1.json",
+        "reports/council/robin-simplification-r3-jalon10-dp6-science-v1.json",
+        "reports/council/robin-simplification-r3-jalon10-final-review-v1.json",
+        "reports/evidence/evidence-graph.json",
+        "reports/hypothesis-evidence/r3-jalon10-non-regression.json",
+        "scripts/run_jalon10_non_regression.py",
+        "src/robin/hypothesis_evidence/non_regression.py",
+        "tests/council/test_robin_simplification_r3_jalon10_governance.py",
+        "tests/council/test_robin_council_os_v3.py",
+        "tests/hypothesis_evidence/test_jalon10_non_regression.py"
+      ],
+      "scale_ceiling": "E4",
+      "delivery_keys": {
+        "governance": ["C2"],
+        "data": ["DP6"],
+        "platform": ["A2"]
+      }
+    },
     "COVERAGE_P0": {
       "agents": ["C0","C1","C2","C3","C4","DP1","DP2","DP3","DP4","DP5","DP6","RP1","RP2","RP4","RP7","UX3","UX6","A1","A2"],
       "writer": "C0_DESIGNATE",

@@ -79,6 +79,32 @@ test de contrat pointe sur SAFE V2.
   validation des reçus, hashes, branches et admissibilité descriptive. Elle est
   déclarée exposée et ne valide aucun edge ni causalité.
 
+### Addendum R3 — témoins de fidélité Jalon 10
+
+L'addendum `ROBIN_SIMPLIFICATION_R3_JALON10_20261005` autorise uniquement le rejeu
+des règles gelées J10-M001, J10-M002 et J10-M003. La source logique reste la
+révision historique `5c85cf20b932df44dca8665de00e52e3f1e02236`, l'arbre Parquet
+`986010a776cb7c0f4948098660febea9577f159e` et le dataset
+`3197b6cbe13dcbc4e851ad83550f4fed0741812df5eb4c386b2a52236a27d495`.
+Le Parquet d'appartenance gelé est l'oracle avant simplification, après vérification
+de son SHA-256 `95f5745803cd76d93bbd949debd5219723506838d15d3d8d034cb82bf710aeea`.
+La mission R3 ne télécharge pas cet oracle : elle lit la copie locale déjà présente
+dans le checkout principal ou l'artefact produit localement par le job gelé SAFE V2.
+Son absence dans ces deux emplacements produit `PARTIAL`, jamais un substitut.
+
+La comparaison est ordonnée par coup d'envoi puis identifiant de fixture. Identité,
+marché, sélection, état de prix et règlement sont exacts. Les cotes, mises et profits
+unitaires ont une tolérance absolue de `1e-12`; profits cumulés, profit total et
+drawdown `1e-9` unité; ROI `1e-12`, sans tolérance relative. Ces bornes couvrent le
+bruit float64 sur au plus 363 additions et restent très inférieures au centième
+d'unité publié. Toute divergence inexpliquée bloque R3. Les sorties détaillées restent
+hors Git; Git conserve leurs hashes, comptes, bornes et écarts maximaux.
+
+Ces témoins sont des tests d'ingénierie sur un corpus déjà exposé. Ils ne constituent
+ni une nouvelle recherche, ni une validation prospective, ni une promotion. Les
+trois règles restent `EXPLORATORY_REJECTED_AFTER_MULTIPLE_TESTING`, avec `q=1`, et
+le verdict `JALON_10_NO_ROBUST_PATTERN_FOUND` est immuable dans cette mission.
+
 ## Recette figée
 
 R1 à R8 sont ceux du §7 du mandat, sans compensation entre critères. Les preuves
@@ -93,4 +119,3 @@ Les huit verrous restent : `STORAGE_PAUSED=true`, `P3_P4_PAUSED=true`,
 `PRODUCTION_LOCKED=true`, `REAL_BETS=false`, `NO_BET_DEFAULT=true`,
 `PROMOTION_LOCKED=true`, `SOCIAL_PUBLISHING_ENABLED=false`,
 `DEMO_MODE_ENABLED=false`.
-

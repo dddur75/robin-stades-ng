@@ -84,6 +84,26 @@ row; state exposure, missing provenance fields and no causal/edge interpretation
 
 **Completion test:** targeted experiment plus dashboard/export reconciliation tests.
 
+### Task 5A: Freeze and replay the three Jalon 10 R3 witnesses
+
+**Files:** addendum mission authority, targeted historical witness module/CLI/test,
+compact evidence report and runtime-only detailed output.
+
+**Interfaces:** Consumes the pinned 2020–2025 historical revision, the three frozen
+J10 rule hashes and the verified detailed membership Parquet; produces a bounded
+three-rule replay, per-bet before/after comparison and exact aggregate reconciliation.
+
+**Steps:** authorize the immutable addendum; verify every source and oracle hash;
+write the failing equivalence tests; replay only J10-M001/M002/M003 from the original
+corpus; compare ordered match identities, odds, settlement, unit profit and running
+profit; recalculate ROI and drawdown; retain detailed results outside Git and commit
+only hashes/counts/deltas. Any unexplained difference is a hard failure. Preserve
+the historical reference if a pre-existing bug is demonstrated; never retune a rule.
+
+**Completion test:** targeted Jalon 10 witness tests plus a CLI replay whose compact
+report has `equivalence_status=PASS`, 865 compared rows, zero unexplained deltas,
+and the unchanged `JALON_10_NO_ROBUST_PATTERN_FOUND` verdict.
+
 ### Task 6: Simplify SAFE V2 while preserving every gate
 
 **Files:** `.github/workflows/ci-safe-v2.yml`, workflow contract tests, CI evidence.
@@ -140,4 +160,3 @@ outcomes, out-of-order branches, invalid hashes, partial multi-file publication,
 stale/late GitHub artifacts, pinned-history drift, browser token leakage, branch
 protection compatibility, missing final-gate dependencies, and contamination of a
 prospective validation by exposed descriptive data.
-
