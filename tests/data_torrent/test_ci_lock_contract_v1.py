@@ -11,7 +11,7 @@ def test_linux_ci_proves_the_exact_runtime_lock_before_the_full_suite() -> None:
     workflow = yaml.safe_load(
         (ROOT / ".github" / "workflows" / "ci-safe-v2.yml").read_text(encoding="utf-8")
     )
-    steps = workflow["jobs"]["tests"]["steps"]
+    steps = workflow["jobs"]["quality-and-tests"]["steps"]
     lock_index = next(
         index
         for index, step in enumerate(steps)
@@ -31,20 +31,20 @@ def test_linux_ci_proves_the_exact_runtime_lock_before_the_full_suite() -> None:
     )
 
 
-def test_safe_ci_is_a_secret_free_copy_of_the_quarantined_legacy_definition() -> None:
+def test_safe_ci_is_the_secret_free_active_definition_not_a_legacy_copy() -> None:
     workflow_root = ROOT / ".github" / "workflows"
     legacy_text = (workflow_root / "ci.yml").read_text(encoding="utf-8")
     safe_text = (workflow_root / "ci-safe-v2.yml").read_text(encoding="utf-8")
     assert "${{ secrets." not in legacy_text
     assert "${{ secrets." not in safe_text
-    legacy = yaml.safe_load(legacy_text)
     safe = yaml.safe_load(safe_text)
     assert safe["name"] == "00 - Qualite continue SAFE V2"
-    legacy["name"] = safe["name"]
-    assert safe == legacy
+    assert safe_text != legacy_text
+    assert "quality-and-tests" in safe["jobs"]
+    assert safe["jobs"]["tests"]["name"] == "tests"
     typing_step = next(
         step
-        for step in safe["jobs"]["tests"]["steps"]
+        for step in safe["jobs"]["quality-and-tests"]["steps"]
         if step.get("name") == "Typage strict"
     )
     typing_command = " ".join(typing_step["run"].split())

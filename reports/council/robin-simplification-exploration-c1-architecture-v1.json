@@ -2,19 +2,21 @@
   "agent_id": "C1",
   "mission_id": "ROBIN_SIMPLIFICATION_EXPLORATION_20261005",
   "facts_verified": [
-    {"claim":"Le cockpit /robin-live et les artifacts réels sont deux parcours séparés; le dashboard réel offre déjà fraîcheur, couverture, filtres simples, pagination et CSV.","evidence_refs":["src/robin/capture/real_data_dashboard.py",".github/workflows/prospective-deep-scheduler.yml"],"status":"VERIFIED"},
-    {"claim":"Le calcul descriptif, l'interface et l'actualisation peuvent rester trois composants bornés sans transformer Council en ordonnanceur.","evidence_refs":["docs/superpowers/specs/2026-10-05-robin-simplification-exploration-design.md"],"status":"VERIFIED"}
+    {"claim":"Le gate final tests agrège sous always() les douze autres jobs SAFE et exige success pour chacun; les quatre contextes requis par le ruleset sont conservés.","evidence_refs":[".github/workflows/ci-safe-v2.yml","GitHub ruleset 20591337"],"status":"VERIFIED"},
+    {"claim":"quality-and-tests et visual-regression attendent les preuves gelées qu'ils consomment; Chronos réutilisable n'en consomme pas et peut démarrer indépendamment.","evidence_refs":[".github/workflows/ci-safe-v2.yml"],"status":"VERIFIED"},
+    {"claim":"Une seule suite Python complète subsiste; les tests PostgreSQL propres aux deux profils et les contrôles de provenance restent présents.","evidence_refs":[".github/workflows/ci-safe-v2.yml",".github/workflows/chronos-bootstrap-ci-v3.yml"],"status":"VERIFIED"},
+    {"claim":"Les nouveaux contrats ciblent SAFE V2 actif et ne traitent plus ci.yml désactivé comme copie autoritative.","evidence_refs":["tests/coverage/test_ci_trigger_contract.py","tests/data_torrent/test_ci_lock_contract_v1.py","tests/council/test_robin_simplification_exploration_governance.py"],"status":"VERIFIED"}
   ],
-  "unknowns": ["Le coût de maintenance final dépendra du nombre de formats de bundle conservés."],
-  "assumptions": ["Le canal artifact GitHub normalisé reste le canal public autorisé."],
-  "main_objection": "Ne pas confondre l'ancien cockpit prospectif avec le nouvel explorateur de données réelles.",
-  "risks": [{"risk":"Deux calculs descriptifs divergents rendraient UI et export incohérents.","severity":"HIGH","evidence_refs":["src/robin/capture/real_data_dashboard.py"]}],
-  "minimum_decisive_test": "Une sélection produit les mêmes lignes, compteurs et exports depuis un seul modèle.",
-  "recommended_action": "Partager un modèle pur, publier un bundle versionné et conserver le collecteur inchangé.",
-  "scale_condition": "R2 et R8 exigent le trajet réel complet et sa preuve intégrée.",
-  "estimated_compute": "Tests ciblés sur les artifacts existants.",
-  "estimated_external_cost": "Zéro appel fournisseur.",
-  "estimated_human_time": "Revue d'architecture bornée.",
-  "maintenance_impact": "Faible si les formats et responsabilités restent uniques.",
-  "confidence": 0.9
+  "unknowns": ["Aucun run PR du nouveau DAG n'a encore prouvé l'acceptation réelle du contexte tests ou la durée."],
+  "assumptions": ["Le ruleset main-trusted-pr-ci-v1 conserve ses quatre contextes actuels jusqu'à la recette réelle."],
+  "main_objection": "Aucun P0/P1 de conception; la recette PR réelle reste nécessaire avant fusion.",
+  "risks": [{"risk":"Les contrats statiques ne prouvent pas à eux seuls la reconnaissance du contexte requis sur GitHub.","severity":"MEDIUM","evidence_refs":["tests/council/test_robin_simplification_exploration_governance.py","GitHub ruleset 20591337"]}],
+  "minimum_decisive_test": "Un PR SAFE V2 vert avec les quatre contextes requis et le gate tests observé après ses douze prérequis.",
+  "recommended_action": "Conserver ce DAG et mesurer sa recette réelle avant fusion.",
+  "scale_condition": "PR vert, gate fail-closed observé, puis trois runs comparables pour la performance.",
+  "estimated_compute": "Tests ciblés locaux puis CI normalement requise.",
+  "estimated_external_cost": "Minutes GitHub Actions, zéro appel fournisseur.",
+  "estimated_human_time": "Revue d'architecture et recette bornées.",
+  "maintenance_impact": "Réduction du couplage et clarification de l'autorité SAFE V2.",
+  "confidence": 0.91
 }

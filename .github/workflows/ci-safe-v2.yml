@@ -614,7 +614,6 @@ jobs:
 
   chronos-postgresql-profiles:
     name: "Chronos PostgreSQL profiles"
-    needs: frozen-evidence-windows
     uses: ./.github/workflows/chronos-bootstrap-ci-v3.yml
     with:
       checkout_ref: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -719,19 +718,9 @@ jobs:
           assert_disabled 329278452 .github/workflows/82-p0-e1b-five-league-canary.yml
           assert_disabled 329420317 .github/workflows/83-p0-e2-capability-sample.yml
 
-  tests:
-    name: tests
-    needs:
-      - bounded-live-canary-ubuntu
-      - bounded-live-canary-windows
-      - frozen-evidence-windows
-      - jalon10-r3-non-regression-windows
-      - chronos-postgresql-profiles
-      - chronos-end-to-end-live-path-replay
-      - chronos-residual-fault-matrix
-      - chronos-exact-workflow-entrypoint
-      - historical-authority-workflows-disabled
-    if: ${{ always() }}
+  quality-and-tests:
+    name: "Quality and domain tests"
+    needs: frozen-evidence-windows
     runs-on: ubuntu-latest
     timeout-minutes: 40
     services:
@@ -749,27 +738,6 @@ jobs:
           --health-timeout 3s
           --health-retries 10
     steps:
-      - name: Refuser tout prerequis absent, annule ou en echec
-        env:
-          BOUNDED_LIVE_CANARY_UBUNTU_RESULT: ${{ needs.bounded-live-canary-ubuntu.result }}
-          BOUNDED_LIVE_CANARY_WINDOWS_RESULT: ${{ needs.bounded-live-canary-windows.result }}
-          FROZEN_EVIDENCE_RESULT: ${{ needs.frozen-evidence-windows.result }}
-          JALON10_R3_NON_REGRESSION_RESULT: ${{ needs.jalon10-r3-non-regression-windows.result }}
-          CHRONOS_PROFILES_RESULT: ${{ needs.chronos-postgresql-profiles.result }}
-          E2E_LIVE_PATH_RESULT: ${{ needs.chronos-end-to-end-live-path-replay.result }}
-          RESIDUAL_FAULT_MATRIX_RESULT: ${{ needs.chronos-residual-fault-matrix.result }}
-          EXACT_WORKFLOW_ENTRYPOINT_RESULT: ${{ needs.chronos-exact-workflow-entrypoint.result }}
-          HISTORICAL_AUTHORITY_BOUNDARY_RESULT: ${{ needs.historical-authority-workflows-disabled.result }}
-        run: |
-          test "$BOUNDED_LIVE_CANARY_UBUNTU_RESULT" = "success"
-          test "$BOUNDED_LIVE_CANARY_WINDOWS_RESULT" = "success"
-          test "$FROZEN_EVIDENCE_RESULT" = "success"
-          test "$JALON10_R3_NON_REGRESSION_RESULT" = "success"
-          test "$CHRONOS_PROFILES_RESULT" = "success"
-          test "$E2E_LIVE_PATH_RESULT" = "success"
-          test "$RESIDUAL_FAULT_MATRIX_RESULT" = "success"
-          test "$EXACT_WORKFLOW_ENTRYPOINT_RESULT" = "success"
-          test "$HISTORICAL_AUTHORITY_BOUNDARY_RESULT" = "success"
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
@@ -893,10 +861,6 @@ jobs:
           if-no-files-found: error
       - name: Executer les tests
         run: python -m pytest -q
-      - name: Tester Parquet et les protections anti-fuite
-        run: python -m pytest -q tests/jalon5 tests/jalon6 tests/jalon7 tests/jalon8 tests/jalon9
-      - name: Tester la factory préquentielle et la sécurité temporelle
-        run: python -m pytest -q tests/jalon14
       - name: Tester les configurations et le pipeline mock
         run: |
           python -c "import json,pathlib,yaml; [yaml.safe_load(p.read_text()) for p in pathlib.Path('.github').rglob('*.yml')]; yaml.safe_load(pathlib.Path('configs/shadow_v1.yaml').read_text()); json.loads(pathlib.Path('configs/prospective_observatory_v1.json').read_text()); json.loads(pathlib.Path('configs/prequential_learning_v1.json').read_text())"
@@ -904,8 +868,6 @@ jobs:
           python scripts/run_shadow_pipeline.py collect-odds --mock --output .ci/shadow
           python scripts/run_shadow_pipeline.py pre-match-shadow --mock --output .ci/shadow
           python scripts/run_shadow_pipeline.py daily-health --mock --output .ci/shadow
-      - name: Tester stockage, replay, rattrapage et burn-in
-        run: python -m pytest -q tests/jalon4
       - name: Smoke test du dashboard de sante
         run: |
           python -m robin.quality.report --input data/matches.parquet --output .ci/quality
@@ -923,9 +885,7 @@ jobs:
           pnpm test
 
   visual-regression:
-    needs:
-      - frozen-evidence-windows
-      - tests
+    needs: frozen-evidence-windows
     name: "Robin Experience — preuves visuelles"
     runs-on: ubuntu-latest
     timeout-minutes: 25
@@ -1014,3 +974,52 @@ jobs:
           if-no-files-found: error
           include-hidden-files: true
           retention-days: 30
+
+  tests:
+    name: tests
+    needs:
+      - historical-deep-quality
+      - bounded-live-canary-ubuntu
+      - bounded-live-canary-windows
+      - frozen-evidence-windows
+      - jalon10-r3-non-regression-windows
+      - chronos-postgresql-profiles
+      - chronos-end-to-end-live-path-replay
+      - chronos-residual-fault-matrix
+      - chronos-exact-workflow-entrypoint
+      - historical-authority-workflows-disabled
+      - quality-and-tests
+      - visual-regression
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Refuser tout contrôle absent, annulé ou en échec
+        env:
+          HISTORICAL_DEEP_QUALITY_RESULT: ${{ needs.historical-deep-quality.result }}
+          BOUNDED_LIVE_CANARY_UBUNTU_RESULT: ${{ needs.bounded-live-canary-ubuntu.result }}
+          BOUNDED_LIVE_CANARY_WINDOWS_RESULT: ${{ needs.bounded-live-canary-windows.result }}
+          FROZEN_EVIDENCE_RESULT: ${{ needs.frozen-evidence-windows.result }}
+          JALON10_R3_NON_REGRESSION_RESULT: ${{ needs.jalon10-r3-non-regression-windows.result }}
+          CHRONOS_PROFILES_RESULT: ${{ needs.chronos-postgresql-profiles.result }}
+          E2E_LIVE_PATH_RESULT: ${{ needs.chronos-end-to-end-live-path-replay.result }}
+          RESIDUAL_FAULT_MATRIX_RESULT: ${{ needs.chronos-residual-fault-matrix.result }}
+          EXACT_WORKFLOW_ENTRYPOINT_RESULT: ${{ needs.chronos-exact-workflow-entrypoint.result }}
+          HISTORICAL_AUTHORITY_BOUNDARY_RESULT: ${{ needs.historical-authority-workflows-disabled.result }}
+          QUALITY_AND_TESTS_RESULT: ${{ needs.quality-and-tests.result }}
+          VISUAL_REGRESSION_RESULT: ${{ needs.visual-regression.result }}
+        run: |
+          test "$HISTORICAL_DEEP_QUALITY_RESULT" = "success"
+          test "$BOUNDED_LIVE_CANARY_UBUNTU_RESULT" = "success"
+          test "$BOUNDED_LIVE_CANARY_WINDOWS_RESULT" = "success"
+          test "$FROZEN_EVIDENCE_RESULT" = "success"
+          test "$JALON10_R3_NON_REGRESSION_RESULT" = "success"
+          test "$CHRONOS_PROFILES_RESULT" = "success"
+          test "$E2E_LIVE_PATH_RESULT" = "success"
+          test "$RESIDUAL_FAULT_MATRIX_RESULT" = "success"
+          test "$EXACT_WORKFLOW_ENTRYPOINT_RESULT" = "success"
+          test "$HISTORICAL_AUTHORITY_BOUNDARY_RESULT" = "success"
+          test "$QUALITY_AND_TESTS_RESULT" = "success"
+          test "$VISUAL_REGRESSION_RESULT" = "success"

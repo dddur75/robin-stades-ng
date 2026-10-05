@@ -4,8 +4,8 @@ import hashlib
 import json
 from pathlib import Path
 
+import yaml
 from jsonschema import Draft202012Validator
-
 
 ROOT = Path(__file__).resolve().parents[2]
 MISSION_ID = "ROBIN_SIMPLIFICATION_EXPLORATION_20261005"
@@ -129,3 +129,77 @@ def test_authorization_is_the_latest_canonical_ledger_record() -> None:
         unhashed, ensure_ascii=False, sort_keys=True, separators=(",", ":")
     ).encode()
     assert hashlib.sha256(canonical).hexdigest() == record["hash"]
+
+
+def test_r4_safe_ci_scope_explicitly_covers_the_active_and_reusable_workflows() -> None:
+    matrix = _json("configs/agents/mission-activation-matrix-v3.json")
+    allowed_paths = set(matrix["missions"][MISSION_ID]["allowed_paths"])
+    assert {
+        ".github/workflows/ci-safe-v2.yml",
+        ".github/workflows/chronos-bootstrap-ci-v3.yml",
+        "tests/data_torrent/test_ci_lock_contract_v1.py",
+        "tests/coverage/test_ci_trigger_contract.py",
+    } <= allowed_paths
+    assert ".github/workflows/ci.yml" not in allowed_paths
+
+
+def test_r4_safe_ci_has_one_full_suite_parallel_consumers_and_a_final_gate() -> None:
+    safe_path = ROOT / ".github" / "workflows" / "ci-safe-v2.yml"
+    chronos_path = ROOT / ".github" / "workflows" / "chronos-bootstrap-ci-v3.yml"
+    safe = yaml.safe_load(safe_path.read_text(encoding="utf-8"))
+    chronos = yaml.safe_load(chronos_path.read_text(encoding="utf-8"))
+    jobs = safe["jobs"]
+
+    assert "needs" not in jobs["chronos-postgresql-profiles"]
+    assert jobs["quality-and-tests"]["needs"] == "frozen-evidence-windows"
+    assert jobs["visual-regression"]["needs"] == "frozen-evidence-windows"
+
+    final_gate = jobs["tests"]
+    assert final_gate["name"] == "tests"
+    assert final_gate["if"] == "${{ always() }}"
+    assert final_gate["timeout-minutes"] == 5
+    assert set(final_gate["needs"]) == set(jobs) - {"tests"}
+    assert set(final_gate["needs"]) == {
+        "historical-deep-quality",
+        "bounded-live-canary-ubuntu",
+        "bounded-live-canary-windows",
+        "frozen-evidence-windows",
+        "jalon10-r3-non-regression-windows",
+        "chronos-postgresql-profiles",
+        "chronos-end-to-end-live-path-replay",
+        "chronos-residual-fault-matrix",
+        "chronos-exact-workflow-entrypoint",
+        "historical-authority-workflows-disabled",
+        "quality-and-tests",
+        "visual-regression",
+    }
+    serialized_gate = yaml.safe_dump(final_gate)
+    for prerequisite in final_gate["needs"]:
+        assert f"needs.{prerequisite}.result" in serialized_gate
+    assert serialized_gate.count('= "success"') == len(final_gate["needs"])
+
+    run_commands: list[str] = []
+    for workflow in (safe, chronos):
+        for job in workflow["jobs"].values():
+            for step in job.get("steps", []):
+                if "run" in step:
+                    run_commands.append(str(step["run"]).strip())
+    assert run_commands.count("python -m pytest -q") == 1
+
+    quality_step_names = {
+        step.get("name") for step in jobs["quality-and-tests"]["steps"]
+    }
+    assert "Tester Parquet et les protections anti-fuite" not in quality_step_names
+    assert "Tester la factory préquentielle et la sécurité temporelle" not in quality_step_names
+    assert "Tester stockage, replay, rattrapage et burn-in" not in quality_step_names
+
+    chronos_profile = chronos["jobs"]["tests"]
+    assert chronos_profile["strategy"]["matrix"]["admin-profile"] == [
+        "superuser",
+        "non_superuser_createrole",
+    ]
+    chronos_commands = "\n".join(
+        str(step.get("run", "")) for step in chronos_profile["steps"]
+    )
+    assert "python -m scripts.run_chronos_dual_principal_ci_v2" in chronos_commands
+    assert "tests/data_torrent/test_postgresql_v1.py" in chronos_commands

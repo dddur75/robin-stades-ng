@@ -830,6 +830,7 @@
       "agents": ["C0","C1","C2","C4","DP5","DP6","UX6","A2"],
       "writer": "C0",
       "allowed_paths": [
+        ".github/workflows/chronos-bootstrap-ci-v3.yml",
         ".github/workflows/ci-safe-v2.yml",
         ".github/workflows/collection-freshness-monitor.yml",
         "RUNBOOK.md",
@@ -862,7 +863,8 @@
         "tests/capture/test_run_recurring_real_data_cli.py",
         "tests/coverage/test_ci_trigger_contract.py",
         "tests/council/test_robin_council_os_v3.py",
-        "tests/council/test_robin_simplification_exploration_governance.py"
+        "tests/council/test_robin_simplification_exploration_governance.py",
+        "tests/data_torrent/test_ci_lock_contract_v1.py"
       ],
       "scale_ceiling": "E4",
       "delivery_keys": {
