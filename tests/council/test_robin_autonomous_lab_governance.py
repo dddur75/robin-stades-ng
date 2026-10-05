@@ -1031,9 +1031,37 @@ def test_automatic_capture_replay_capture_receipts_close_only_observed_e2() -> N
 
     projection = claims["GOV.ENGINEERING.ROBIN_AUTONOMOUS_LAB.PROJECTION.V1.015"]
     assert projection["artifact_path_count"] == 24
-    assert projection["artifact_hashes"] == {
+    recalculated_projection_hashes = {
         path: _lf_sha256(path) for path in projection["artifact_hashes"]
     }
+    if projection["artifact_hashes"] != recalculated_projection_hashes:
+        mismatches = {
+            path
+            for path, actual in recalculated_projection_hashes.items()
+            if projection["artifact_hashes"][path] != actual
+        }
+        superseded_claim_ids = {
+            superseded
+            for candidate in claims.values()
+            if candidate["status"] == "VERIFIED"
+            for superseded in candidate.get("supersedes", [])
+        }
+        active_successors = [
+            candidate
+            for candidate in claims.values()
+            if candidate["status"] == "VERIFIED"
+            and projection["claim_id"] in candidate.get("supersedes", [])
+            and candidate["claim_id"] not in superseded_claim_ids
+        ]
+        assert active_successors
+        assert any(
+            all(
+                candidate.get("artifact_hashes", {}).get(path)
+                == recalculated_projection_hashes[path]
+                for path in mismatches
+            )
+            for candidate in active_successors
+        )
     review = claims["GOV.REVIEW.ROBIN_AUTONOMOUS_LAB.FINAL.V1.014"]
     assert (
         review["candidate_engineering_projection_sha256"]

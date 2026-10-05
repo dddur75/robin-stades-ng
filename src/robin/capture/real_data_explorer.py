@@ -43,7 +43,7 @@ _HASH_FIELDS = {
 }
 _RUN_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 _MAX_EXPORT_BYTES = 32 * 1024 * 1024
-LOCAL_RENDERER_REVISION = "v7"
+LOCAL_RENDERER_REVISION = "v10"
 
 
 class BundleValidationError(ValueError):

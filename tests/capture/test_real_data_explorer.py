@@ -220,7 +220,7 @@ def test_legacy_history_is_republished_with_current_renderer_without_moving_late
     store.publish(older)
     historical_json = store.read_public_bytes("robin-real-data.json", run_id="10")
     store.publish(newer)
-    older_root = store.versions / "run-10-view-v7"
+    older_root = store.versions / "run-10-view-v10"
     legacy_root = store.versions / "run-10-view-v2"
     older_root.rename(legacy_root)
     legacy_manifest_path = legacy_root / "manifest.json"
@@ -234,7 +234,7 @@ def test_legacy_history_is_republished_with_current_renderer_without_moving_late
     assert b'id="new-run-notice"' in historical_html
     assert store.read_public_bytes("robin-real-data.json", run_id="10") == historical_json
     assert store.current_pointer() == pointer_before
-    assert (store.versions / "run-10-view-v7").is_dir()
+    assert (store.versions / "run-10-view-v10").is_dir()
 
 
 def test_local_manifest_is_verified_after_restart_and_before_every_read(tmp_path: Path) -> None:
@@ -414,8 +414,8 @@ def test_refresh_migrates_cached_renderer_before_github_failure(tmp_path: Path) 
 
     migrated = store.current_pointer()
     assert migrated is not None
-    assert migrated["renderer_revision"] == "v7"
-    assert migrated["version"] == "run-10-view-v7"
+    assert migrated["renderer_revision"] == "v10"
+    assert migrated["version"] == "run-10-view-v10"
     assert b"local-refresh-status" in store.read_public_bytes("robin-real-data.html")
     assert store.status()["last_error_code"] == "GITHUB_AUTH_REQUIRED"
 
@@ -438,15 +438,15 @@ def test_history_render_of_current_legacy_run_does_not_block_pointer_migration(
     pointer["version"] = legacy_root.name
     store.pointer_path.write_text(json.dumps(pointer), encoding="utf-8")
     frozen_json = store.read_public_bytes("robin-real-data.json", run_id="10")
-    assert (store.versions / "run-10-view-v7").is_dir()
+    assert (store.versions / "run-10-view-v10").is_dir()
     controller = ExplorerRefreshController(store, _FailingClient(), clock=lambda: NOW)
 
     assert controller.refresh_once() is True
 
     migrated = store.current_pointer()
     assert migrated is not None
-    assert migrated["renderer_revision"] == "v7"
-    assert migrated["version"] == "run-10-view-v7"
+    assert migrated["renderer_revision"] == "v10"
+    assert migrated["version"] == "run-10-view-v10"
     assert store.read_public_bytes("robin-real-data.json") == frozen_json
     assert store.status()["last_error_code"] == "GITHUB_AUTH_REQUIRED"
 
@@ -720,6 +720,25 @@ def test_http_server_serves_latest_pinned_status_and_exact_posted_export(
                 'attachment; filename="robin-selection.csv"'
             )
             assert response.read().decode() == content
+
+        json_content = json.dumps(
+            {
+                "schema_version": "robin-filtered-selection-v1",
+                "row_count": 1,
+                "rows": [{"comparison_status": "MATCHED_CHANGED"}],
+            }
+        )
+        json_request = urllib.request.Request(
+            f"{base}/export.json",
+            data=urllib.parse.urlencode({"content": json_content}).encode(),
+            method="POST",
+        )
+        with urllib.request.urlopen(json_request) as response:
+            assert response.headers["Content-Type"] == "application/json; charset=utf-8"
+            assert response.headers["Content-Disposition"] == (
+                'attachment; filename="robin-selection.json"'
+            )
+            assert json.loads(response.read())["row_count"] == 1
     finally:
         server.shutdown()
         server.server_close()

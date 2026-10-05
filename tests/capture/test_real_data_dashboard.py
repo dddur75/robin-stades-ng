@@ -859,7 +859,15 @@ def test_html_is_self_contained_paginated_searchable_and_safe() -> None:
     assert "function selectRows" in html
     assert "function exportFilteredCsv" in html
     assert "function exportFilteredJson" in html
+    assert "function downloadSelection" in html
     assert "const exportRows=filtered.slice()" in html
+    assert 'id="export-filtered-csv" type="button"' in html
+    assert 'id="export-filtered-json" type="button"' in html
+    assert 'byId("export-filtered-csv").addEventListener("click",' in html
+    assert 'byId("export-filtered-json").addEventListener("click",' in html
+    assert "URL.createObjectURL(blob)" in html
+    assert "URL.revokeObjectURL(url)" in html
+    assert "anchor.download=`robin-selection.${extension}`" in html
     assert 'method="post"' in html
     assert 'formaction="/export.csv"' in html
     assert 'formaction="/export.json"' in html

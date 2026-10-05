@@ -137,6 +137,8 @@ def test_r4_safe_ci_scope_explicitly_covers_the_active_and_reusable_workflows() 
         ".github/workflows/chronos-bootstrap-ci-v3.yml",
         "tests/data_torrent/test_ci_lock_contract_v1.py",
         "tests/coverage/test_ci_trigger_contract.py",
+        "tests/council/test_robin_autonomous_lab_governance.py",
+        "tests/jalon12/test_pilot_bridge_security.py",
     } <= allowed_paths
     assert ".github/workflows/ci.yml" not in allowed_paths
 

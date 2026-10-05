@@ -866,9 +866,11 @@
         "tests/capture/test_real_data_explorer.py",
         "tests/capture/test_run_recurring_real_data_cli.py",
         "tests/coverage/test_ci_trigger_contract.py",
+        "tests/council/test_robin_autonomous_lab_governance.py",
         "tests/council/test_robin_council_os_v3.py",
         "tests/council/test_robin_simplification_exploration_governance.py",
         "tests/data_torrent/test_ci_lock_contract_v1.py",
+        "tests/jalon12/test_pilot_bridge_security.py",
         "tests/portability/test_no_tracked_absolute_paths.py"
       ],
       "scale_ceiling": "E4",
