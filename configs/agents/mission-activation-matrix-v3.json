@@ -806,13 +806,15 @@
         "reports/evidence/evidence-graph.json",
         "reports/evidence/robin-autonomous-lab-run-37231859661-public-receipt.json",
         "reports/evidence/robin-autonomous-lab-run-37245531093-public-receipt.json",
+        "reports/evidence/robin-autonomous-relay-probe-20261005.json",
         "scripts/run_recurring_real_data.py",
         "src/robin/capture/recurring_real_data.py",
         "tests/capture/test_recurring_real_data.py",
         "tests/capture/test_recurring_real_data_workflow.py",
         "tests/capture/test_run_recurring_real_data_cli.py",
         "tests/council/test_robin_autonomous_lab_governance.py",
-        "tests/council/test_robin_council_os_v3.py"
+        "tests/council/test_robin_council_os_v3.py",
+        "tests/historical_deep/test_coverage_proof_export.py"
       ],
       "scale_ceiling": "E3B",
       "delivery_keys": {
