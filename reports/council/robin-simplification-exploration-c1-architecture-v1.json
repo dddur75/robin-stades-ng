@@ -1,0 +1,20 @@
+{
+  "agent_id": "C1",
+  "mission_id": "ROBIN_SIMPLIFICATION_EXPLORATION_20261005",
+  "facts_verified": [
+    {"claim":"Le cockpit /robin-live et les artifacts réels sont deux parcours séparés; le dashboard réel offre déjà fraîcheur, couverture, filtres simples, pagination et CSV.","evidence_refs":["src/robin/capture/real_data_dashboard.py",".github/workflows/prospective-deep-scheduler.yml"],"status":"VERIFIED"},
+    {"claim":"Le calcul descriptif, l'interface et l'actualisation peuvent rester trois composants bornés sans transformer Council en ordonnanceur.","evidence_refs":["docs/superpowers/specs/2026-10-05-robin-simplification-exploration-design.md"],"status":"VERIFIED"}
+  ],
+  "unknowns": ["Le coût de maintenance final dépendra du nombre de formats de bundle conservés."],
+  "assumptions": ["Le canal artifact GitHub normalisé reste le canal public autorisé."],
+  "main_objection": "Ne pas confondre l'ancien cockpit prospectif avec le nouvel explorateur de données réelles.",
+  "risks": [{"risk":"Deux calculs descriptifs divergents rendraient UI et export incohérents.","severity":"HIGH","evidence_refs":["src/robin/capture/real_data_dashboard.py"]}],
+  "minimum_decisive_test": "Une sélection produit les mêmes lignes, compteurs et exports depuis un seul modèle.",
+  "recommended_action": "Partager un modèle pur, publier un bundle versionné et conserver le collecteur inchangé.",
+  "scale_condition": "R2 et R8 exigent le trajet réel complet et sa preuve intégrée.",
+  "estimated_compute": "Tests ciblés sur les artifacts existants.",
+  "estimated_external_cost": "Zéro appel fournisseur.",
+  "estimated_human_time": "Revue d'architecture bornée.",
+  "maintenance_impact": "Faible si les formats et responsabilités restent uniques.",
+  "confidence": 0.9
+}

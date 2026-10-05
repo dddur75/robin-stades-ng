@@ -1,0 +1,20 @@
+{
+  "agent_id": "DP5",
+  "mission_id": "ROBIN_SIMPLIFICATION_EXPLORATION_20261005",
+  "facts_verified": [
+    {"claim":"Les trois derniers runs PR SAFE V2 comparables durent 65,13, 66,48 et 63,05 minutes, médiane 65,13 minutes, avec mêmes blobs CI et requirements.","evidence_refs":["GitHub Actions runs 37285435788, 37257455182, 37251657005",".github/workflows/ci-safe-v2.yml"],"status":"VERIFIED"},
+    {"claim":"Le chemin critique attend les profils indépendants avant la suite complète puis la régression visuelle.","evidence_refs":[".github/workflows/ci-safe-v2.yml:674",".github/workflows/ci-safe-v2.yml:874"],"status":"VERIFIED"}
+  ],
+  "unknowns": ["La somme finale des minutes-jobs du candidat reste à mesurer."],
+  "assumptions": ["Les runs futurs gardent le même périmètre de garanties."],
+  "main_objection": "Un gain mural n'est pas un gain si les contrôles disparaissent ou les minutes-jobs augmentent sans justification.",
+  "risks": [{"risk":"Un agrégateur incomplet peut laisser passer un job annulé ou échoué.","severity":"HIGH","evidence_refs":[".github/workflows/ci-safe-v2.yml:674"]}],
+  "minimum_decisive_test": "Même correctif filtre/export, mêmes assertions, final gate exigeant tous les jobs et délai comparable.",
+  "recommended_action": "Figer 65,13→45,00 minutes et chevaucher seulement les jobs réellement indépendants.",
+  "scale_condition": "Médiane au plus 45 minutes, gain au moins 20,13 minutes et 30,9 %, marge bruit 5 minutes.",
+  "estimated_compute": "Une CI normalement requise peut suffire si l'écart dépasse le bruit; sinon réutiliser les suivantes.",
+  "estimated_external_cost": "Minutes Actions à mesurer, zéro fournisseur.",
+  "estimated_human_time": "Analyse des jobs et des garanties.",
+  "maintenance_impact": "Modéré pour le DAG, faible pour le pré-calcul de recherche.",
+  "confidence": 0.9
+}
