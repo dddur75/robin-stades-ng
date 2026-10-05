@@ -7,7 +7,7 @@ import json
 import os
 import re
 import shutil
-import subprocess
+import subprocess  # nosec B404 - fixed argv-only invocation of the read-only GitHub CLI.
 import threading
 import urllib.parse
 from collections.abc import Callable, Mapping, Sequence

@@ -939,8 +939,7 @@ def build_dashboard_snapshot(
     )
     comparison_available = bool(previous_report is not None and comparable_sports)
     if comparison_available:
-        assert previous_report is not None
-        previous_branches = _branches(previous_report)
+        previous_branches = _branches(cast(Mapping[str, object], previous_report))
         comparison = _price_movement(
             current_rows,
             previous_rows,
