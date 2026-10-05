@@ -339,12 +339,8 @@ def _comparison_row(
     if previous is not None:
         result |= {
             "previous_slot_start_utc": previous.get("slot_start_utc"),
-            "previous_acquisition_started_at_utc": previous.get(
-                "acquisition_started_at_utc"
-            ),
-            "previous_acquisition_finished_at_utc": previous.get(
-                "acquisition_finished_at_utc"
-            ),
+            "previous_acquisition_started_at_utc": previous.get("acquisition_started_at_utc"),
+            "previous_acquisition_finished_at_utc": previous.get("acquisition_finished_at_utc"),
             "previous_capture_time_utc": previous.get("capture_time_utc"),
             "previous_source_timestamp_utc": previous.get("source_timestamp_utc"),
             "previous_price": _valid_price(previous),
@@ -352,12 +348,8 @@ def _comparison_row(
     if current is not None:
         result |= {
             "current_slot_start_utc": current.get("slot_start_utc"),
-            "current_acquisition_started_at_utc": current.get(
-                "acquisition_started_at_utc"
-            ),
-            "current_acquisition_finished_at_utc": current.get(
-                "acquisition_finished_at_utc"
-            ),
+            "current_acquisition_started_at_utc": current.get("acquisition_started_at_utc"),
+            "current_acquisition_finished_at_utc": current.get("acquisition_finished_at_utc"),
             "current_capture_time_utc": current.get("capture_time_utc"),
             "current_source_timestamp_utc": current.get("source_timestamp_utc"),
             "current_price": _valid_price(current),
@@ -480,11 +472,7 @@ def compare_acquisitions(
     )
     shared_sports = set(current_times) & set(previous_times)
     if comparable_sports is None:
-        comparable_sports = (
-            shared_sports
-            if previous
-            else current_sports
-        )
+        comparable_sports = shared_sports if previous else current_sports
     else:
         comparable_sports = set(comparable_sports)
     for rows in (current, previous):
@@ -508,17 +496,11 @@ def compare_acquisitions(
     lineages: dict[str, dict[str, set[tuple[object, object]]]] = {
         "current": defaultdict(
             set,
-            {
-                sport: set(values)
-                for sport, values in (current_branch_lineages or {}).items()
-            },
+            {sport: set(values) for sport, values in (current_branch_lineages or {}).items()},
         ),
         "previous": defaultdict(
             set,
-            {
-                sport: set(values)
-                for sport, values in (previous_branch_lineages or {}).items()
-            },
+            {sport: set(values) for sport, values in (previous_branch_lineages or {}).items()},
         ),
     }
     for side, rows in (("current", current), ("previous", previous)):
@@ -546,9 +528,7 @@ def compare_acquisitions(
             if sport in lineage_incompatible_sports:
                 identity = _offer_identity(row)
                 excluded_identities.add(identity)
-                excluded.append(
-                    _excluded_row(row, side=side, reason="BRANCH_LINEAGE_INCOMPARABLE")
-                )
+                excluded.append(_excluded_row(row, side=side, reason="BRANCH_LINEAGE_INCOMPARABLE"))
                 continue
             if str(sport) in not_comparable_sports:
                 identity = _offer_identity(row)
@@ -734,9 +714,7 @@ def _current_only_state(
             )
         elif _valid_price(candidates[0]) is None:
             excluded_identities.add(identity)
-            excluded.append(
-                _excluded_row(candidates[0], side="current", reason="INVALID_PRICE")
-            )
+            excluded.append(_excluded_row(candidates[0], side="current", reason="INVALID_PRICE"))
         else:
             selected.append(candidates[0])
     reason_counts: dict[str, int] = defaultdict(int)
@@ -795,9 +773,7 @@ def _branch_lineages(
     for branch in branches:
         sport = branch.get("sport_key")
         if isinstance(sport, str) and sport:
-            result[sport].add(
-                (branch.get("provider_key"), branch.get("settlement_period_key"))
-            )
+            result[sport].add((branch.get("provider_key"), branch.get("settlement_period_key")))
     return dict(result)
 
 
@@ -817,8 +793,7 @@ def _public_branch_lineage(
             (
                 branch
                 for branch in branches
-                if isinstance(branch.get("sport_key"), str)
-                and branch.get("sport_key")
+                if isinstance(branch.get("sport_key"), str) and branch.get("sport_key")
             ),
             key=lambda item: (
                 str(item.get("sport_key")),
@@ -833,11 +808,7 @@ def _snapshot_branch_lineages(
     snapshot: Mapping[str, object],
 ) -> dict[str, set[tuple[object, object]]]:
     raw = snapshot.get("branch_lineage")
-    branches = (
-        [item for item in raw if isinstance(item, dict)]
-        if isinstance(raw, list)
-        else []
-    )
+    branches = [item for item in raw if isinstance(item, dict)] if isinstance(raw, list) else []
     explicit = _branch_lineages(branches)
     if explicit:
         return explicit
@@ -845,9 +816,7 @@ def _snapshot_branch_lineages(
     for row in _rows(snapshot):
         sport = row.get("sport_key")
         if isinstance(sport, str):
-            fallback[sport].add(
-                (row.get("provider_key"), row.get("settlement_period_key"))
-            )
+            fallback[sport].add((row.get("provider_key"), row.get("settlement_period_key")))
     return dict(fallback)
 
 
@@ -855,11 +824,7 @@ def _snapshot_branch_observation_times(
     snapshot: Mapping[str, object],
 ) -> dict[str, list[object]]:
     raw = snapshot.get("branch_lineage")
-    branches = (
-        [item for item in raw if isinstance(item, dict)]
-        if isinstance(raw, list)
-        else []
-    )
+    branches = [item for item in raw if isinstance(item, dict)] if isinstance(raw, list) else []
     row_observations: dict[str, list[object]] = defaultdict(list)
     for row in _rows(snapshot):
         sport = row.get("sport_key")
@@ -932,8 +897,7 @@ def build_dashboard_snapshot(
         dict.fromkeys(claim_id for report in provenance_reports for claim_id in _claim_ids(report))
     )
     comparable_sports = (
-        _eligible_branch_sports(current_report)
-        & _eligible_branch_sports(previous_report)
+        _eligible_branch_sports(current_report) & _eligible_branch_sports(previous_report)
         if previous_report is not None and not carry_forward
         else set()
     )
@@ -947,9 +911,7 @@ def build_dashboard_snapshot(
             current_branch_lineages=_branch_lineages(current_branches),
             previous_branch_lineages=_branch_lineages(previous_branches),
             current_branch_observation_times=_branch_observation_times(current_branches),
-            previous_branch_observation_times=_branch_observation_times(
-                previous_branches
-            ),
+            previous_branch_observation_times=_branch_observation_times(previous_branches),
         )
         explorer_rows = _explorer_rows(comparison)
     else:
@@ -1009,6 +971,7 @@ def build_explorer_snapshot(
         or previous_snapshot.get("data_slot_start_utc")
         or previous_snapshot.get("slot_start_utc")
     )
+
     def comparable_sports(snapshot: Mapping[str, object]) -> set[str]:
         explicit = snapshot.get("comparable_branch_sports")
         if isinstance(explicit, list):
@@ -1034,12 +997,8 @@ def build_explorer_snapshot(
             comparable_sports=common_comparable,
             current_branch_lineages=_snapshot_branch_lineages(current_snapshot),
             previous_branch_lineages=_snapshot_branch_lineages(previous_snapshot),
-            current_branch_observation_times=_snapshot_branch_observation_times(
-                current_snapshot
-            ),
-            previous_branch_observation_times=_snapshot_branch_observation_times(
-                previous_snapshot
-            ),
+            current_branch_observation_times=_snapshot_branch_observation_times(current_snapshot),
+            previous_branch_observation_times=_snapshot_branch_observation_times(previous_snapshot),
         )
         explorer_rows = _explorer_rows(comparison)
     else:

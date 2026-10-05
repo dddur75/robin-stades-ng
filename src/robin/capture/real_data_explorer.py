@@ -235,12 +235,10 @@ class AtomicExplorerStore:
         if pointer is not None and any(
             (
                 str(pointer.get("run_id", "")) != str(manifest.get("run_id", "")),
-                str(pointer.get("delivery_run_id", ""))
-                != str(manifest.get("delivery_run_id", "")),
+                str(pointer.get("delivery_run_id", "")) != str(manifest.get("delivery_run_id", "")),
                 str(pointer.get("renderer_revision", ""))
                 != str(manifest.get("renderer_revision", "")),
-                str(pointer.get("slot_start_utc", ""))
-                != str(manifest.get("slot_start_utc", "")),
+                str(pointer.get("slot_start_utc", "")) != str(manifest.get("slot_start_utc", "")),
                 str(pointer.get("source_receipt_sha256", ""))
                 != str(manifest.get("source_receipt_sha256", "")),
             )
@@ -365,9 +363,7 @@ class AtomicExplorerStore:
             current = self.current_pointer()
             same_origin = current is not None and str(current.get("run_id")) == validated.run_id
             if current is not None:
-                renderer_current = (
-                    current.get("renderer_revision") == LOCAL_RENDERER_REVISION
-                )
+                renderer_current = current.get("renderer_revision") == LOCAL_RENDERER_REVISION
                 if same_origin:
                     existing_source = self.current_source()
                     existing_snapshot = _read_json(
@@ -387,9 +383,7 @@ class AtomicExplorerStore:
                         last_error_code=None,
                     )
                     return current
-                if not same_origin and validated.slot_time <= _utc(
-                    current.get("slot_start_utc")
-                ):
+                if not same_origin and validated.slot_time <= _utc(current.get("slot_start_utc")):
                     raise BundleValidationError("LATE_ARTIFACT")
             stage = self.staging / uuid4().hex
             version_name = f"run-{validated.run_id}-view-{LOCAL_RENDERER_REVISION}"
@@ -404,14 +398,10 @@ class AtomicExplorerStore:
                 )
                 if not (
                     same_origin
-                    and existing_manifest.get("delivery_run_id")
-                    == validated.delivery_run_id
-                    and existing_manifest.get("renderer_revision")
-                    == LOCAL_RENDERER_REVISION
-                    and existing_manifest.get("slot_start_utc")
-                    == validated.slot_start_utc
-                    and existing_manifest.get("source_receipt_sha256")
-                    == validated.receipt_sha256
+                    and existing_manifest.get("delivery_run_id") == validated.delivery_run_id
+                    and existing_manifest.get("renderer_revision") == LOCAL_RENDERER_REVISION
+                    and existing_manifest.get("slot_start_utc") == validated.slot_start_utc
+                    and existing_manifest.get("source_receipt_sha256") == validated.receipt_sha256
                 ):
                     raise BundleValidationError("LOCAL_VERSION_COLLISION")
                 pointer = {
@@ -519,10 +509,10 @@ class AtomicExplorerStore:
                 _read_json(self.status_path, "LOCAL_STATUS_INVALID")
                 if self.status_path.is_file()
                 else {
-                "schema_version": "robin-local-explorer-status-v1",
-                "current_run_id": None,
-                "last_success_at_utc": None,
-                "last_error_code": None,
+                    "schema_version": "robin-local-explorer-status-v1",
+                    "current_run_id": None,
+                    "last_success_at_utc": None,
+                    "last_error_code": None,
                 }
             )
             try:
@@ -628,19 +618,19 @@ class GhArtifactClient:
             target = destination / run_id
             try:
                 self._run(
-                [
-                    "gh",
-                    "run",
-                    "download",
-                    run_id,
-                    "--repo",
-                    self.repository,
-                    "--name",
-                    artifact_name,
-                    "--dir",
-                    str(target),
-                ],
-                timeout=180,
+                    [
+                        "gh",
+                        "run",
+                        "download",
+                        run_id,
+                        "--repo",
+                        self.repository,
+                        "--name",
+                        artifact_name,
+                        "--dir",
+                        str(target),
+                    ],
+                    timeout=180,
                 )
             except BundleValidationError as exc:
                 if str(exc) in {"GITHUB_READ_FAILED", "GITHUB_PROCESS_FAILED"}:
@@ -681,8 +671,7 @@ class ExplorerRefreshController:
             pointer = self.store.current_pointer()
             prior_status = self.store.status()
             renderer_needs_refresh = bool(
-                pointer
-                and pointer.get("renderer_revision") != LOCAL_RENDERER_REVISION
+                pointer and pointer.get("renderer_revision") != LOCAL_RENDERER_REVISION
             )
             if renderer_needs_refresh:
                 self.store.publish(self.store.current_source())
@@ -756,9 +745,7 @@ class ExplorerRefreshController:
                         prior.get("last_delivery_run_id")
                         or (pointer.get("delivery_run_id") if pointer else None)
                     ),
-                    last_rejected_delivery_run_id=prior.get(
-                        "last_rejected_delivery_run_id"
-                    ),
+                    last_rejected_delivery_run_id=prior.get("last_rejected_delivery_run_id"),
                     last_success_at_utc=prior.get("last_success_at_utc"),
                     last_checked_at_utc=_iso_z(self._clock()),
                     last_error_code=sticky_error,
@@ -781,9 +768,7 @@ class ExplorerRefreshController:
         except BundleValidationError:
             pointer = None
         self.store.write_status(
-            current_run_id=(
-                pointer.get("run_id") if pointer else prior.get("current_run_id")
-            ),
+            current_run_id=(pointer.get("run_id") if pointer else prior.get("current_run_id")),
             last_delivery_run_id=(
                 prior.get("last_delivery_run_id")
                 or (pointer.get("delivery_run_id") if pointer else None)
@@ -800,9 +785,7 @@ class ExplorerRefreshController:
         except BundleValidationError:
             pointer = None
         self.store.write_status(
-            current_run_id=(
-                pointer.get("run_id") if pointer else prior.get("current_run_id")
-            ),
+            current_run_id=(pointer.get("run_id") if pointer else prior.get("current_run_id")),
             last_delivery_run_id=delivery_run_id,
             last_rejected_delivery_run_id=delivery_run_id,
             last_success_at_utc=prior.get("last_success_at_utc"),

@@ -255,16 +255,12 @@ def test_renderer_revision_rebuild_preserves_existing_comparison(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     store = AtomicExplorerStore(tmp_path / "store", clock=lambda: NOW)
-    store.publish(
-        _bundle(tmp_path / "older", run_id=9, slot=NOW - timedelta(hours=2), price=2.0)
-    )
+    store.publish(_bundle(tmp_path / "older", run_id=9, slot=NOW - timedelta(hours=2), price=2.0))
     current_source = _bundle(tmp_path / "current", run_id=10, slot=NOW, price=2.2)
     store.publish(current_source)
     before = store.read_public("robin-real-data.json")
     before_json = store.read_public_bytes("robin-real-data.json")
-    before_html_sha = hashlib.sha256(
-        store.read_public_bytes("robin-real-data.html")
-    ).hexdigest()
+    before_html_sha = hashlib.sha256(store.read_public_bytes("robin-real-data.html")).hexdigest()
     before_receipt_sha = store.current_pointer()["source_receipt_sha256"]
     pointer_path = store.pointer_path
     pointer = json.loads(pointer_path.read_text("utf-8"))
@@ -284,10 +280,9 @@ def test_renderer_revision_rebuild_preserves_existing_comparison(
     monkeypatch.setattr(
         explorer_module,
         "render_dashboard_html",
-        lambda snapshot, *, csv_filename: original_renderer(
-            snapshot, csv_filename=csv_filename
-        )
-        + b"\n",
+        lambda snapshot, *, csv_filename: (
+            original_renderer(snapshot, csv_filename=csv_filename) + b"\n"
+        ),
     )
 
     rebuilt = store.publish(current_source)
@@ -306,7 +301,8 @@ def test_renderer_revision_rebuild_preserves_existing_comparison(
 
 @pytest.mark.parametrize("renderer_current", [True, False])
 def test_same_origin_semantic_change_is_rejected_without_moving_the_pointer(
-    tmp_path: Path, renderer_current: bool,
+    tmp_path: Path,
+    renderer_current: bool,
 ) -> None:
     store = AtomicExplorerStore(tmp_path / "store", clock=lambda: NOW)
     original = _bundle(tmp_path / "original", run_id=10, slot=NOW, price=2.0)
@@ -420,7 +416,7 @@ def test_refresh_migrates_cached_renderer_before_github_failure(tmp_path: Path) 
     assert migrated is not None
     assert migrated["renderer_revision"] == "v7"
     assert migrated["version"] == "run-10-view-v7"
-    assert b'local-refresh-status' in store.read_public_bytes("robin-real-data.html")
+    assert b"local-refresh-status" in store.read_public_bytes("robin-real-data.html")
     assert store.status()["last_error_code"] == "GITHUB_AUTH_REQUIRED"
 
 
@@ -496,13 +492,13 @@ def test_os_failure_is_sanitized_without_stopping_last_known_good(tmp_path: Path
 
 def test_failed_gh_artifact_download_is_not_treated_as_healthy(tmp_path: Path) -> None:
     def runner(command: list[str], **_kwargs: object) -> subprocess.CompletedProcess[str]:
-        if command[:2] == ["gh", "api"] and command[-1].endswith("runs?status=completed&per_page=6"):
+        if command[:2] == ["gh", "api"] and command[-1].endswith(
+            "runs?status=completed&per_page=6"
+        ):
             return subprocess.CompletedProcess(
                 command,
                 0,
-                stdout=json.dumps(
-                    {"workflow_runs": [{"id": 11, "conclusion": "success"}]}
-                ),
+                stdout=json.dumps({"workflow_runs": [{"id": 11, "conclusion": "success"}]}),
                 stderr="",
             )
         if command[:2] == ["gh", "api"]:

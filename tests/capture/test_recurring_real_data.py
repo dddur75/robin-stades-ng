@@ -527,21 +527,13 @@ def test_five_leagues_are_captured_read_back_and_duplicate_run_replays(
     for branch in report["branches"]:
         assert branch["provider_key"] == "THE_ODDS_API_V4"
         assert branch["settlement_period_key"] == "PROVIDER_DEFAULT_UNSPECIFIED"
-        assert branch["acquisition_started_at_utc"] == first_now.isoformat().replace(
-            "+00:00", "Z"
-        )
-        assert branch["acquisition_finished_at_utc"] == first_now.isoformat().replace(
-            "+00:00", "Z"
-        )
+        assert branch["acquisition_started_at_utc"] == first_now.isoformat().replace("+00:00", "Z")
+        assert branch["acquisition_finished_at_utc"] == first_now.isoformat().replace("+00:00", "Z")
     for row in report["rows"]:
         assert row["provider_key"] == "THE_ODDS_API_V4"
         assert row["settlement_period_key"] == "PROVIDER_DEFAULT_UNSPECIFIED"
-        assert row["acquisition_started_at_utc"] == first_now.isoformat().replace(
-            "+00:00", "Z"
-        )
-        assert row["acquisition_finished_at_utc"] == first_now.isoformat().replace(
-            "+00:00", "Z"
-        )
+        assert row["acquisition_started_at_utc"] == first_now.isoformat().replace("+00:00", "Z")
+        assert row["acquisition_finished_at_utc"] == first_now.isoformat().replace("+00:00", "Z")
     raw_key = report["branches"][0]["raw_object_key"]
     raw_envelope = json.loads(store.objects[raw_key].data)
     assert raw_envelope["schema_version"] == "robin-autonomous-raw-envelope-v2"
@@ -1744,8 +1736,8 @@ def test_v2_raw_envelope_rejects_capture_outside_acquisition_bounds(
         acquisition_finished_at=START + timedelta(minutes=1),
     )
     malformed = json.loads(encoded)
-    malformed["capture_time_utc"] = (START - timedelta(minutes=1)).isoformat().replace(
-        "+00:00", "Z"
+    malformed["capture_time_utc"] = (
+        (START - timedelta(minutes=1)).isoformat().replace("+00:00", "Z")
     )
 
     with pytest.raises(RecurringError, match="RECURRING_RAW_ENVELOPE_INVALID"):

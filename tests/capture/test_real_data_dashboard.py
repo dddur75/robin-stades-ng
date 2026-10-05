@@ -477,9 +477,7 @@ def test_comparison_refuses_different_provider_or_settlement_period_lineage() ->
     assert comparison["appeared_offer_count"] == 0
     assert comparison["not_observed_offer_count"] == 0
     assert comparison["excluded_row_count"] == 2
-    assert comparison["exclusion_reason_counts"] == {
-        "BRANCH_LINEAGE_INCOMPARABLE": 2
-    }
+    assert comparison["exclusion_reason_counts"] == {"BRANCH_LINEAGE_INCOMPARABLE": 2}
 
 
 def test_snapshot_uses_branch_receipts_to_exclude_incomplete_comparisons() -> None:
@@ -783,9 +781,7 @@ def test_empty_v2_branch_cannot_claim_v1_offer_disappeared() -> None:
     movement = upgraded["price_movement"]
     assert movement["not_observed_offer_count"] == 0
     assert movement["excluded_row_count"] == 1
-    assert movement["exclusion_reason_counts"] == {
-        "BRANCH_LINEAGE_INCOMPARABLE": 1
-    }
+    assert movement["exclusion_reason_counts"] == {"BRANCH_LINEAGE_INCOMPARABLE": 1}
 
 
 def test_empty_incomplete_branch_cannot_prove_non_observation() -> None:
@@ -904,15 +900,13 @@ def test_narrow_viewport_exposes_comparison_as_labeled_cards() -> None:
     assert "const NARROW_PAGE_SIZE = 25" in html
     assert "function currentPageSize()" in html
     assert 'const pageMedia=window.matchMedia("(max-width:620px)")' in html
-    assert "pageMedia.addEventListener(\"change\",()=>{page=0;renderRows();})" in html
+    assert 'pageMedia.addEventListener("change",()=>{page=0;renderRows();})' in html
     assert "td.dataset.label=TABLE_LABELS[index]" in html
     assert "td::before{content:attr(data-label)" in html
     assert "thead{display:none}" in html
     assert "tbody tr{display:block" in html
     assert html.index("<th>Bookmaker</th>") < html.index("<th>Ancienne cote</th>")
-    assert html.index("<th>Nouvelle cote</th>") < html.index(
-        "<th>Acquisition précédente"
-    )
+    assert html.index("<th>Nouvelle cote</th>") < html.index("<th>Acquisition précédente")
 
 
 def test_partial_incident_and_empty_filter_state_are_visible() -> None:
