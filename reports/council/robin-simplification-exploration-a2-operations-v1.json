@@ -8,7 +8,7 @@
   "unknowns": ["La continuité complète de 24 heures reste à observer."],
   "assumptions": ["Le client gh authentifié est disponible sur le poste local."],
   "main_objection": "R1 reste partiel jusqu'à la réconciliation continue, et R2 exige une vraie apparition automatique.",
-  "risks": [{"risk":"Une panne de téléchargement ne doit jamais remplacer le dernier bon bundle.","severity":"HIGH","evidence_refs":["C:/Users/ddura/Downloads/ROBIN_BOUCLE_SIMPLIFICATION_100.md:124"]}],
+  "risks": [{"risk":"Une panne de téléchargement ne doit jamais remplacer le dernier bon bundle.","severity":"HIGH","evidence_refs":["tests/capture/test_real_data_explorer.py:462"]}],
   "minimum_decisive_test": "Corruption, coupure et artifact tardif conservent le dernier bon état; une acquisition naturelle valide bascule ensuite seule.",
   "recommended_action": "Staging, validation, dossier immuable et pointeur atomique.",
   "scale_condition": "Aucune consommation fournisseur nouvelle par l'explorateur.",

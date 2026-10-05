@@ -58,9 +58,7 @@ def test_matrix_schema_and_six_read_only_reports_bind_the_mission() -> None:
     matrix = _json("configs/agents/mission-activation-matrix-v3.json")
     mission = matrix["missions"][MISSION_ID]
     assert mission["writer"] == "C0"
-    assert {"C0", "C1", "C2", "DP5", "DP6", "UX6", "A2"} <= set(
-        mission["agents"]
-    )
+    assert {"C0", "C1", "C2", "DP5", "DP6", "UX6", "A2"} <= set(mission["agents"])
     assert mission["scale_ceiling"] == "E4"
 
     schema = _json("configs/agents/agent-report-schema-v3.json")
@@ -143,6 +141,16 @@ def test_r4_safe_ci_scope_explicitly_covers_the_active_and_reusable_workflows() 
     assert ".github/workflows/ci.yml" not in allowed_paths
 
 
+def test_ci_preflight_redesign_scope_covers_portability_guard_and_tests() -> None:
+    matrix = _json("configs/agents/mission-activation-matrix-v3.json")
+    allowed_paths = set(matrix["missions"][MISSION_ID]["allowed_paths"])
+
+    assert {
+        "scripts/check_no_tracked_absolute_paths.py",
+        "tests/portability/test_no_tracked_absolute_paths.py",
+    } <= allowed_paths
+
+
 def test_r4_safe_ci_has_one_full_suite_parallel_consumers_and_a_final_gate() -> None:
     safe_path = ROOT / ".github" / "workflows" / "ci-safe-v2.yml"
     chronos_path = ROOT / ".github" / "workflows" / "chronos-bootstrap-ci-v3.yml"
@@ -186,9 +194,7 @@ def test_r4_safe_ci_has_one_full_suite_parallel_consumers_and_a_final_gate() -> 
                     run_commands.append(str(step["run"]).strip())
     assert run_commands.count("python -m pytest -q") == 1
 
-    quality_step_names = {
-        step.get("name") for step in jobs["quality-and-tests"]["steps"]
-    }
+    quality_step_names = {step.get("name") for step in jobs["quality-and-tests"]["steps"]}
     assert "Tester Parquet et les protections anti-fuite" not in quality_step_names
     assert "Tester la factory préquentielle et la sécurité temporelle" not in quality_step_names
     assert "Tester stockage, replay, rattrapage et burn-in" not in quality_step_names
@@ -198,9 +204,7 @@ def test_r4_safe_ci_has_one_full_suite_parallel_consumers_and_a_final_gate() -> 
         "superuser",
         "non_superuser_createrole",
     ]
-    chronos_commands = "\n".join(
-        str(step.get("run", "")) for step in chronos_profile["steps"]
-    )
+    chronos_commands = "\n".join(str(step.get("run", "")) for step in chronos_profile["steps"])
     assert "python -m scripts.run_chronos_dual_principal_ci_v2" in chronos_commands
     assert "tests/data_torrent/test_postgresql_v1.py" in chronos_commands
 

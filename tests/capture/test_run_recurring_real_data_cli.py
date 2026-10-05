@@ -100,6 +100,7 @@ def _report(*, price: float = 1.8, status: str = "REAL_DATA_PARTIAL") -> dict[st
         "branches": [
             {
                 "sport_key": "soccer_epl",
+                "capture_time_utc": row["capture_time_utc"],
                 "status": "PARTIAL" if status != "REAL_DATA_FAILED" else "INCOMPLETE",
                 "row_count": 1 if status != "REAL_DATA_FAILED" else 0,
                 "limitations": [],
@@ -166,6 +167,10 @@ class FakeStore:
                 for row in previous["rows"]  # type: ignore[index]
             ]
             previous["rows"] = previous_rows
+            previous["branches"] = [
+                dict(branch) | {"capture_time_utc": "2026-10-04T08:17:01Z"}
+                for branch in previous["branches"]  # type: ignore[index]
+            ]
             previous["capture_times_utc"] = ["2026-10-04T08:17:01Z"]
             previous["source_timestamp_min_utc"] = "2026-10-04T08:16:00Z"
             previous["source_timestamp_max_utc"] = "2026-10-04T08:16:00Z"

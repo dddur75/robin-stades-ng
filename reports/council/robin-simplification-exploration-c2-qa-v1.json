@@ -2,13 +2,13 @@
   "agent_id": "C2",
   "mission_id": "ROBIN_SIMPLIFICATION_EXPLORATION_20261005",
   "facts_verified": [
-    {"claim":"R1, R3, R4, R5, R6 et R8 sont EN ATTENTE; R2 et R7 échouent sur le parcours initial selon la recette figée.","evidence_refs":["C:/Users/ddura/Downloads/ROBIN_BOUCLE_SIMPLIFICATION_100.md:182","src/robin/capture/real_data_dashboard.py",".github/workflows/prospective-deep-scheduler.yml"],"status":"VERIFIED"},
+    {"claim":"R1, R3, R4, R5, R6 et R8 sont EN ATTENTE; R2 et R7 échouent sur le parcours initial selon la recette figée.","evidence_refs":["docs/superpowers/specs/2026-10-05-robin-simplification-exploration-design.md:110","BASE:cd59d6c:src/robin/capture/real_data_dashboard.py","BASE:cd59d6c:.github/workflows/prospective-deep-scheduler.yml"],"status":"VERIFIED"},
     {"claim":"La cible R6 est gelée à une médiane CI au plus 45,00 minutes depuis 65,13, gain au moins 20,13 minutes et 30,9 %, marge bruit 5 minutes.","evidence_refs":["GitHub Actions runs 37285435788, 37257455182, 37251657005","docs/superpowers/specs/2026-10-05-robin-simplification-exploration-design.md"],"status":"VERIFIED"}
   ],
   "unknowns": ["La preuve 24 heures et les mesures du candidat restent à produire."],
   "assumptions": ["Le service local ne possède aucune capacité de dispatch fournisseur."],
   "main_objection": "Bascule multi-fichier non atomique, collision d'identité et watchdog auto-surveillé empêchent R2, R8 et R7.",
-  "risks": [{"risk":"Un agrégateur CI incomplet ou un bundle mélangé donnerait un faux PASS.","severity":"HIGH","evidence_refs":[".github/workflows/ci-safe-v2.yml:674","C:/Users/ddura/Downloads/ROBIN_BOUCLE_SIMPLIFICATION_100.md:124"]}],
+  "risks": [{"risk":"Un agrégateur CI incomplet ou un bundle mélangé donnerait un faux PASS.","severity":"HIGH","evidence_refs":[".github/workflows/ci-safe-v2.yml:978","docs/superpowers/specs/2026-10-05-robin-simplification-exploration-design.md:60"]}],
   "minimum_decisive_test": "Artifact altéré, panne avant bascule, collision, seuil totals, branche absente, silence sans run et recalcul QA distinct.",
   "recommended_action": "Bundle versionné avec pointeur atomique, exclusions explicites, final gate fail-closed et moniteur indépendant.",
   "scale_condition": "Huit PASS sur la version livrée, sans réduction de cible.",

@@ -854,6 +854,7 @@
         "reports/evidence/evidence-graph.json",
         "reports/evidence/robin-autonomous-lab-run-37292740942-public-receipt.json",
         "reports/experiments/robin-descriptive-20261005-0800-1000.json",
+        "scripts/check_no_tracked_absolute_paths.py",
         "scripts/install_real_data_explorer.ps1",
         "scripts/run_descriptive_experiment.py",
         "scripts/run_real_data_explorer.py",
@@ -867,7 +868,8 @@
         "tests/coverage/test_ci_trigger_contract.py",
         "tests/council/test_robin_council_os_v3.py",
         "tests/council/test_robin_simplification_exploration_governance.py",
-        "tests/data_torrent/test_ci_lock_contract_v1.py"
+        "tests/data_torrent/test_ci_lock_contract_v1.py",
+        "tests/portability/test_no_tracked_absolute_paths.py"
       ],
       "scale_ceiling": "E4",
       "delivery_keys": {

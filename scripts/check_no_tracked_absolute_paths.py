@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import subprocess
 from dataclasses import dataclass
@@ -20,6 +21,16 @@ UNIX_LOCAL_RE = re.compile(r"(?<![A-Za-z0-9])/(?:home|Users|mnt)/[^\s\"'<>]+")
 LOCAL_MACHINE_NAMES = "|".join(("One" + "Drive", "App" + "Data", r"\." + "codex"))
 LOCAL_SEGMENT_RE = re.compile(
     rf"(?<![A-Za-z0-9])(?:{LOCAL_MACHINE_NAMES})[\\/][^\s\"'<>]+",
+    re.IGNORECASE,
+)
+LEDGER_PATH = "reports/council/decision-ledger.jsonl"
+LEDGER_WORKTREE_PATH_RE = re.compile(
+    r"^C:/"
+    + "Users/"
+    + r"(?!\.{1,2}/)[^/:]+/"
+    + r"\."
+    + "codex/worktrees/"
+    + r"(?!\.{1,2}/)[^/:]+/(?!\.{1,2}$)[^/:]+$",
     re.IGNORECASE,
 )
 FIXTURE_MARKER = "PORTABILITY_TEST_FIXTURE"
@@ -45,6 +56,40 @@ def _mask_allowed(text: str) -> str:
     return "".join(masked)
 
 
+def _mask_ledger_context_worktree_value(text: str) -> str:
+    """Mask only a parsed context.worktree managed-checkout path."""
+    try:
+        record = json.loads(text)
+    except (json.JSONDecodeError, TypeError):
+        return text
+    if not isinstance(record, dict):
+        return text
+    canonical = json.dumps(record, ensure_ascii=False, separators=(",", ":"))
+    if text != canonical:
+        return text
+    context = record.get("context")
+    if not isinstance(context, dict):
+        return text
+    worktree = context.get("worktree")
+    if not isinstance(worktree, str):
+        return text
+    normalized_worktree = worktree.replace("\\", "/")
+    if LEDGER_WORKTREE_PATH_RE.fullmatch(normalized_worktree) is None:
+        return text
+
+    encoded_value = json.dumps(worktree, ensure_ascii=False, separators=(",", ":"))
+    field = f'"worktree":{encoded_value}'
+    if text.count(field) != 1:
+        return text
+
+    masked = list(text)
+    field_start = text.index(field)
+    start = field_start + len('"worktree":') + 1
+    end = start + len(encoded_value) - 2
+    masked[start:end] = " " * (end - start)
+    return "".join(masked)
+
+
 def find_forbidden_absolute_paths(
     text: str,
     *,
@@ -59,7 +104,10 @@ def find_forbidden_absolute_paths(
         legacy_fixture = LEGACY_FIXTURE_FRAGMENTS.get(normalized_path)
         if legacy_fixture is not None and legacy_fixture in raw_line:
             continue
-        line = _mask_allowed(raw_line)
+        line = raw_line
+        if normalized_path == LEDGER_PATH:
+            line = _mask_ledger_context_worktree_value(line)
+        line = _mask_allowed(line)
         for category, pattern in (
             ("WINDOWS_ABSOLUTE_PATH", WINDOWS_RE),
             ("UNIX_LOCAL_ABSOLUTE_PATH", UNIX_LOCAL_RE),

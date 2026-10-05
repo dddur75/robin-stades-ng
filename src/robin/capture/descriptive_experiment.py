@@ -297,8 +297,8 @@ def calculate_descriptive_experiment(
     contaminated = ambiguous_keys | invalid_price_keys
     for key in contaminated:
         reason = "AMBIGUOUS_OFFER_IDENTITY" if key in ambiguous_keys else "INVALID_PRICE"
-        for side in grouped.values():
-            excluded.extend((reason, row) for row in side.pop(key, []))
+        for side_rows in grouped.values():
+            excluded.extend((reason, row) for row in side_rows.pop(key, []))
 
     previous_by_key = grouped["previous"]
     current_by_key = grouped["current"]
@@ -388,7 +388,9 @@ def _input_summary(bundle: VerifiedBundle) -> dict[str, object]:
     }
 
 
-def _finding_sources(result: Mapping[str, object], key: str | None = None) -> list[object]:
+def _finding_sources(
+    result: Mapping[str, object], key: str | None = None
+) -> list[Mapping[str, object]]:
     samples = cast(list[Mapping[str, object]], result["source_samples"])
     if key is None:
         return samples[:3]
