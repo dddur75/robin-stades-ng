@@ -1,0 +1,71 @@
+{
+  "schema_version": "robin-simplification-explorer-ui-evidence-v1",
+  "mission_id": "ROBIN_SIMPLIFICATION_EXPLORATION_20261005",
+  "observed_at_utc": "2026-10-05T12:58:00Z",
+  "status": "VERIFIED_WITH_EXPORT_ROUTE_PENDING_LOCAL_SERVICE",
+  "acquisitions": [
+    {
+      "github_run_id": 37276237875,
+      "slot_start_utc": "2026-10-05T08:00:00Z",
+      "normalized_json_sha256": "83d2f9934cca5c21a6056c300e457e3930cdd6e92fbf646dedf46901417c26dc"
+    },
+    {
+      "github_run_id": 37292740942,
+      "slot_start_utc": "2026-10-05T10:00:00Z",
+      "normalized_json_sha256": "2bb2b0d1169ca75b153d4069bdd38954c7d7070f630a10d10e1c9e8e06abee91"
+    }
+  ],
+  "comparison": {
+    "matched_offer_count": 7648,
+    "changed_offer_count": 682,
+    "unchanged_offer_count": 6966,
+    "appeared_offer_count": 6,
+    "not_observed_offer_count": 83,
+    "excluded_row_count": 0
+  },
+  "real_user_path": {
+    "query": "Arsenal",
+    "league": "soccer_epl",
+    "market": "h2h",
+    "status": "MATCHED_CHANGED",
+    "selected_offer_count": 29,
+    "distinct_match_count": 1,
+    "distinct_bookmaker_count": 14,
+    "distinct_acquisition_count": 2,
+    "reset_verified": true,
+    "full_source_csv_download_verified": true,
+    "filtered_export_route": "PENDING_END_TO_END_WITH_LOCAL_REFRESH_SERVICE"
+  },
+  "responsiveness": {
+    "viewport": "1366x390",
+    "repetitions": 30,
+    "open_ms": {
+      "minimum": 170,
+      "median": 197,
+      "p95": 254,
+      "maximum": 363,
+      "target_p95_max": 2000
+    },
+    "input_to_paint_ms": {
+      "minimum": 18,
+      "median": 28,
+      "p95": 45,
+      "maximum": 50,
+      "target_p95_max": 100
+    }
+  },
+  "targeted_tests": {
+    "command": "pytest tests/capture/test_real_data_dashboard.py tests/capture/test_run_recurring_real_data_cli.py -q",
+    "result": "38 passed; UNAPPROVED_NETWORK_ATTEMPTS=0"
+  },
+  "observed_external_effects": {
+    "provider_http_requests_new": 0,
+    "provider_credits_new": 0,
+    "r2_reads_new": 0,
+    "r2_writes_new": 0,
+    "purchases": 0,
+    "bets": 0,
+    "promotions": 0
+  },
+  "scientific_limit": "Descriptive exposed comparison only; no causal, predictive, profitability or edge claim."
+}

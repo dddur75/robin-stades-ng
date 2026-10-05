@@ -4,6 +4,7 @@ from datetime import UTC, datetime, timedelta
 
 from robin.capture.real_data_dashboard import (
     build_dashboard_snapshot,
+    build_explorer_snapshot,
     compare_acquisitions,
     render_dashboard_html,
 )
@@ -462,6 +463,62 @@ def test_comparison_reports_direction_amplitude_and_breakdowns() -> None:
     ]
 
 
+def test_snapshot_exposes_one_explorer_row_model_for_both_acquisitions() -> None:
+    previous_capture = NOW - timedelta(hours=2)
+    current_capture = NOW - timedelta(hours=1)
+    previous = _report(
+        rows=[
+            _row(event="matched", price=2.0, capture=previous_capture),
+            _row(event="missing", price=3.0, capture=previous_capture),
+        ],
+        capture=previous_capture,
+    )
+    previous["slot_start_utc"] = "2026-10-04T10:00:00Z"
+    current = _report(
+        rows=[
+            _row(event="matched", price=2.2, capture=current_capture),
+            _row(event="appeared", price=4.0, capture=current_capture),
+        ],
+        capture=current_capture,
+    )
+
+    snapshot = build_dashboard_snapshot(current, previous_report=previous, generated_at=NOW)
+
+    assert [row["comparison_status"] for row in snapshot["explorer_rows"]] == [
+        "MATCHED_CHANGED",
+        "APPEARED",
+        "NOT_OBSERVED",
+    ]
+    matched = snapshot["explorer_rows"][0]
+    assert matched["previous_slot_start_utc"] == "2026-10-04T12:00:00Z"
+    assert matched["current_slot_start_utc"] == "2026-10-04T12:00:00Z"
+    assert matched["previous_price"] == 2.0
+    assert matched["current_price"] == 2.2
+    assert matched["delta"] == 0.2
+    assert matched["kickoff_utc"]
+
+
+def test_explorer_snapshot_upgrades_two_verified_public_snapshots() -> None:
+    previous = build_dashboard_snapshot(
+        _report(rows=[_row(event="same", price=2.0, capture=NOW - timedelta(hours=2))]),
+        previous_report=None,
+        generated_at=NOW - timedelta(hours=2),
+    )
+    current = build_dashboard_snapshot(
+        _report(rows=[_row(event="same", price=2.3, capture=NOW - timedelta(hours=1))]),
+        previous_report=None,
+        generated_at=NOW - timedelta(hours=1),
+    )
+
+    upgraded = build_explorer_snapshot(current, previous, generated_at=NOW)
+
+    assert upgraded["schema_version"] == "robin-real-data-explorer-v2"
+    assert upgraded["generated_at_utc"] == "2026-10-04T13:00:00Z"
+    assert upgraded["price_movement"]["changed_offer_count"] == 1
+    assert upgraded["explorer_rows"][0]["previous_price"] == 2.0
+    assert upgraded["explorer_rows"][0]["current_price"] == 2.3
+
+
 def test_html_is_self_contained_paginated_searchable_and_safe() -> None:
     malicious = _row()
     malicious["match"] = "</script><img src=x onerror=alert(1)>"
@@ -477,8 +534,17 @@ def test_html_is_self_contained_paginated_searchable_and_safe() -> None:
     assert "Provenance des métriques" in html
     assert RECURRING_CLAIM_IDS[0] in html
     assert 'id="bookmaker-filter"' in html
+    assert 'id="capture-filter"' in html
     assert 'id="status-filter"' in html
+    assert 'id="odds-min"' in html
+    assert 'id="odds-max"' in html
+    assert 'id="delta-min"' in html
+    assert 'id="delta-max"' in html
+    assert 'id="sort-field"' in html
+    assert 'id="sort-direction"' in html
     assert 'id="reset-filters"' in html
+    assert 'id="export-filtered-csv"' in html
+    assert 'id="export-filtered-json"' in html
     assert 'id="previous-page"' in html
     assert 'id="next-page"' in html
     assert 'id="freshness-status"' in html
@@ -487,7 +553,14 @@ def test_html_is_self_contained_paginated_searchable_and_safe() -> None:
     assert "Date.now()" in html
     assert "freshness_limit_seconds" in html
     assert "setInterval(refreshFreshness,60000)" in html
-    assert 'href="robin-real-data.csv"' in html
+    assert "function selectRows" in html
+    assert "function exportFilteredCsv" in html
+    assert "function exportFilteredJson" in html
+    assert "const exportRows=filtered.slice()" in html
+    assert "encodeURIComponent(contents)" in html
+    assert "previous_price" in html
+    assert "current_price" in html
+    assert "kickoff_utc" in html
     assert "const PAGE_SIZE = 100" in html
     assert "Aucun edge n’est validé" in html
     assert "Heures affichées en UTC" in html
