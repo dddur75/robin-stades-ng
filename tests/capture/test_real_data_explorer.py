@@ -12,6 +12,7 @@ from pathlib import Path
 
 import pytest
 
+import robin.capture.real_data_explorer as explorer_module
 from robin.capture.real_data_dashboard import (
     build_dashboard_snapshot,
     render_dashboard_csv,
@@ -210,6 +211,32 @@ def test_late_artifact_cannot_replace_latest_and_history_stays_pinned(tmp_path: 
     assert current["price_movement"]["changed_offer_count"] == 1
 
 
+def test_legacy_history_is_republished_with_current_renderer_without_moving_latest(
+    tmp_path: Path,
+) -> None:
+    store = AtomicExplorerStore(tmp_path / "store", clock=lambda: NOW)
+    older = _bundle(tmp_path / "older", run_id=10, slot=NOW, price=2.0)
+    newer = _bundle(tmp_path / "newer", run_id=11, slot=NOW + timedelta(hours=2), price=2.2)
+    store.publish(older)
+    historical_json = store.read_public_bytes("robin-real-data.json", run_id="10")
+    store.publish(newer)
+    older_root = store.versions / "run-10-view-v7"
+    legacy_root = store.versions / "run-10-view-v2"
+    older_root.rename(legacy_root)
+    legacy_manifest_path = legacy_root / "manifest.json"
+    legacy_manifest = json.loads(legacy_manifest_path.read_text("utf-8"))
+    legacy_manifest["renderer_revision"] = "v2"
+    legacy_manifest_path.write_text(json.dumps(legacy_manifest), encoding="utf-8")
+    pointer_before = store.current_pointer()
+
+    historical_html = store.read_public_bytes("robin-real-data.html", run_id="10")
+
+    assert b'id="new-run-notice"' in historical_html
+    assert store.read_public_bytes("robin-real-data.json", run_id="10") == historical_json
+    assert store.current_pointer() == pointer_before
+    assert (store.versions / "run-10-view-v7").is_dir()
+
+
 def test_local_manifest_is_verified_after_restart_and_before_every_read(tmp_path: Path) -> None:
     root = tmp_path / "store"
     store = AtomicExplorerStore(root, clock=lambda: NOW)
@@ -224,7 +251,9 @@ def test_local_manifest_is_verified_after_restart_and_before_every_read(tmp_path
     assert restarted.status()["last_error_code"] == "LOCAL_VERSION_HASH_MISMATCH"
 
 
-def test_renderer_revision_rebuild_preserves_existing_comparison(tmp_path: Path) -> None:
+def test_renderer_revision_rebuild_preserves_existing_comparison(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     store = AtomicExplorerStore(tmp_path / "store", clock=lambda: NOW)
     store.publish(
         _bundle(tmp_path / "older", run_id=9, slot=NOW - timedelta(hours=2), price=2.0)
@@ -232,6 +261,11 @@ def test_renderer_revision_rebuild_preserves_existing_comparison(tmp_path: Path)
     current_source = _bundle(tmp_path / "current", run_id=10, slot=NOW, price=2.2)
     store.publish(current_source)
     before = store.read_public("robin-real-data.json")
+    before_json = store.read_public_bytes("robin-real-data.json")
+    before_html_sha = hashlib.sha256(
+        store.read_public_bytes("robin-real-data.html")
+    ).hexdigest()
+    before_receipt_sha = store.current_pointer()["source_receipt_sha256"]
     pointer_path = store.pointer_path
     pointer = json.loads(pointer_path.read_text("utf-8"))
     version_root = store.versions / pointer["version"]
@@ -245,14 +279,180 @@ def test_renderer_revision_rebuild_preserves_existing_comparison(tmp_path: Path)
     manifest.pop("renderer_revision")
     pointer_path.write_text(json.dumps(pointer), encoding="utf-8")
     manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    original_renderer = explorer_module.render_dashboard_html
+    monkeypatch.setattr(explorer_module, "LOCAL_RENDERER_REVISION", "v7")
+    monkeypatch.setattr(
+        explorer_module,
+        "render_dashboard_html",
+        lambda snapshot, *, csv_filename: original_renderer(
+            snapshot, csv_filename=csv_filename
+        )
+        + b"\n",
+    )
 
     rebuilt = store.publish(current_source)
     after = store.read_public("robin-real-data.json")
 
-    assert rebuilt["renderer_revision"] == "v2"
-    assert rebuilt["version"].endswith("-view-v2")
+    assert rebuilt["renderer_revision"] == "v7"
+    assert rebuilt["version"].endswith("-view-v7")
     assert after["price_movement"] == before["price_movement"]
     assert len(after["explorer_rows"]) == len(before["explorer_rows"])
+    assert store.read_public_bytes("robin-real-data.json") == before_json
+    assert store.current_pointer()["source_receipt_sha256"] == before_receipt_sha
+    assert hashlib.sha256(store.read_public_bytes("robin-real-data.html")).hexdigest() != (
+        before_html_sha
+    )
+
+
+@pytest.mark.parametrize("renderer_current", [True, False])
+def test_same_origin_semantic_change_is_rejected_without_moving_the_pointer(
+    tmp_path: Path, renderer_current: bool,
+) -> None:
+    store = AtomicExplorerStore(tmp_path / "store", clock=lambda: NOW)
+    original = _bundle(tmp_path / "original", run_id=10, slot=NOW, price=2.0)
+    changed = _bundle(tmp_path / "changed", run_id=10, slot=NOW, price=2.0)
+    changed_json_path = changed / "robin-real-data.json"
+    changed_snapshot = json.loads(changed_json_path.read_text("utf-8"))
+    changed_snapshot["coverage"] = {"semantic_change": True}
+    changed_json = (
+        json.dumps(
+            changed_snapshot,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        + "\n"
+    ).encode()
+    changed_json_path.write_bytes(changed_json)
+    changed_receipt_path = changed / "public-receipt.json"
+    changed_receipt = json.loads(changed_receipt_path.read_text("utf-8"))
+    changed_receipt["normalized_json_sha256"] = hashlib.sha256(changed_json).hexdigest()
+    changed_receipt_path.write_text(json.dumps(changed_receipt), encoding="utf-8")
+    store.publish(original)
+    if not renderer_current:
+        pointer = json.loads(store.pointer_path.read_text("utf-8"))
+        current_root = store.versions / pointer["version"]
+        legacy_root = store.versions / "run-10-view-v2"
+        current_root.rename(legacy_root)
+        manifest_path = legacy_root / "manifest.json"
+        manifest = json.loads(manifest_path.read_text("utf-8"))
+        manifest["renderer_revision"] = "v2"
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+        pointer["renderer_revision"] = "v2"
+        pointer["version"] = legacy_root.name
+        store.pointer_path.write_text(json.dumps(pointer), encoding="utf-8")
+    pointer_before = store.current_pointer()
+    json_before = store.read_public_bytes("robin-real-data.json")
+
+    with pytest.raises(BundleValidationError, match="LOCAL_SOURCE_IDENTITY_COLLISION"):
+        store.publish(changed)
+
+    assert store.current_pointer() == pointer_before
+    assert store.read_public_bytes("robin-real-data.json") == json_before
+
+
+def test_same_origin_relay_may_refresh_derived_movement_without_changing_acquisition(
+    tmp_path: Path,
+) -> None:
+    store = AtomicExplorerStore(tmp_path / "store", clock=lambda: NOW)
+    original = _bundle(tmp_path / "original", run_id=10, slot=NOW, price=2.0)
+    relay = _bundle(
+        tmp_path / "relay",
+        run_id=10,
+        delivery_run_id=11,
+        slot=NOW,
+        price=2.0,
+    )
+    relay_json_path = relay / "robin-real-data.json"
+    relay_snapshot = json.loads(relay_json_path.read_text("utf-8"))
+    relay_snapshot["price_movement"] = {
+        "matched_offer_count": 0,
+        "changed_offer_count": 0,
+        "changes": [],
+        "unmatched_current_count": 1,
+    }
+    relay_json = (
+        json.dumps(
+            relay_snapshot,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        + "\n"
+    ).encode()
+    relay_json_path.write_bytes(relay_json)
+    relay_receipt_path = relay / "public-receipt.json"
+    relay_receipt = json.loads(relay_receipt_path.read_text("utf-8"))
+    relay_receipt["normalized_json_sha256"] = hashlib.sha256(relay_json).hexdigest()
+    relay_receipt_path.write_text(json.dumps(relay_receipt), encoding="utf-8")
+    original_pointer = store.publish(original)
+    original_public = store.read_public_bytes("robin-real-data.json")
+
+    relayed_pointer = store.publish(relay)
+
+    assert relayed_pointer == original_pointer
+    assert store.current_pointer() == original_pointer
+    assert store.read_public_bytes("robin-real-data.json") == original_public
+    assert store.status()["last_delivery_run_id"] == "11"
+    assert store.status()["last_error_code"] is None
+
+
+def test_refresh_migrates_cached_renderer_before_github_failure(tmp_path: Path) -> None:
+    store = AtomicExplorerStore(tmp_path / "store", clock=lambda: NOW)
+    source = _bundle(tmp_path / "source", run_id=10, slot=NOW, price=2.0)
+    store.publish(source)
+    pointer = json.loads(store.pointer_path.read_text("utf-8"))
+    current_root = store.versions / pointer["version"]
+    legacy_root = store.versions / "run-10-view-v2"
+    current_root.rename(legacy_root)
+    manifest_path = legacy_root / "manifest.json"
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["renderer_revision"] = "v2"
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    pointer["renderer_revision"] = "v2"
+    pointer["version"] = legacy_root.name
+    store.pointer_path.write_text(json.dumps(pointer), encoding="utf-8")
+    controller = ExplorerRefreshController(store, _FailingClient(), clock=lambda: NOW)
+
+    assert controller.refresh_once() is True
+
+    migrated = store.current_pointer()
+    assert migrated is not None
+    assert migrated["renderer_revision"] == "v7"
+    assert migrated["version"] == "run-10-view-v7"
+    assert b'local-refresh-status' in store.read_public_bytes("robin-real-data.html")
+    assert store.status()["last_error_code"] == "GITHUB_AUTH_REQUIRED"
+
+
+def test_history_render_of_current_legacy_run_does_not_block_pointer_migration(
+    tmp_path: Path,
+) -> None:
+    store = AtomicExplorerStore(tmp_path / "store", clock=lambda: NOW)
+    source = _bundle(tmp_path / "source", run_id=10, slot=NOW, price=2.0)
+    store.publish(source)
+    pointer = json.loads(store.pointer_path.read_text("utf-8"))
+    current_root = store.versions / pointer["version"]
+    legacy_root = store.versions / "run-10-view-v2"
+    current_root.rename(legacy_root)
+    manifest_path = legacy_root / "manifest.json"
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    manifest["renderer_revision"] = "v2"
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    pointer["renderer_revision"] = "v2"
+    pointer["version"] = legacy_root.name
+    store.pointer_path.write_text(json.dumps(pointer), encoding="utf-8")
+    frozen_json = store.read_public_bytes("robin-real-data.json", run_id="10")
+    assert (store.versions / "run-10-view-v7").is_dir()
+    controller = ExplorerRefreshController(store, _FailingClient(), clock=lambda: NOW)
+
+    assert controller.refresh_once() is True
+
+    migrated = store.current_pointer()
+    assert migrated is not None
+    assert migrated["renderer_revision"] == "v7"
+    assert migrated["version"] == "run-10-view-v7"
+    assert store.read_public_bytes("robin-real-data.json") == frozen_json
+    assert store.status()["last_error_code"] == "GITHUB_AUTH_REQUIRED"
 
 
 class _FailingClient:
@@ -353,6 +553,39 @@ def test_refresh_loop_survives_unexpected_failure_and_records_sanitized_code() -
 
     assert controller.calls == 1
     assert controller.failures == ["REFRESH_UNEXPECTED_FAILURE"]
+
+
+def test_refresh_loop_can_refresh_immediately_without_waiting() -> None:
+    class Controller:
+        calls = 0
+
+        def refresh_once(self) -> bool:
+            self.calls += 1
+            return True
+
+        def record_failure(self, _code: str) -> None:
+            raise AssertionError("no failure expected")
+
+    class AlreadyStopped:
+        def wait(self, _seconds: float) -> bool:
+            return True
+
+    controller = Controller()
+    run_refresh_loop(controller, AlreadyStopped(), 300, refresh_immediately=True)
+
+    assert controller.calls == 1
+
+
+def test_service_runner_serves_cache_before_background_refresh() -> None:
+    runner = (ROOT / "scripts" / "run_real_data_explorer.py").read_text(encoding="utf-8")
+
+    synchronous_refresh = "if arguments.refresh_once:\n        changed = controller.refresh_once()"
+    assert synchronous_refresh in runner
+    assert runner.index(synchronous_refresh) < runner.index("server = make_server")
+    empty_cache_refresh = "if store.current_pointer() is None:\n        controller.refresh_once()"
+    assert empty_cache_refresh in runner
+    assert runner.index(empty_cache_refresh) < runner.index("server = make_server")
+    assert 'kwargs={"refresh_immediately": True}' in runner
 
 
 def test_replayed_origin_advances_delivery_cursor_without_redownload(tmp_path: Path) -> None:

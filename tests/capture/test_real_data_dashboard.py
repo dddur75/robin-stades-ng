@@ -207,6 +207,11 @@ def test_failed_current_slot_carries_last_usable_rows_as_explicitly_stale() -> N
     assert snapshot["freshness"]["status"] == "STALE"
     assert len(snapshot["rows"]) == 1
     assert snapshot["rows"][0]["branch_status"] == "STALE"
+    assert snapshot["comparison_available"] is False
+    assert snapshot["price_movement"]["appeared_offer_count"] == 0
+    assert snapshot["price_movement"]["not_observed_offer_count"] == 0
+    assert snapshot["price_movement"]["current_only_offer_count"] == 1
+    assert snapshot["explorer_rows"][0]["comparison_status"] == "STALE_CURRENT_ONLY"
     assert snapshot["incidents"][0]["code"] == "RECURRING_DNS_RESOLUTION_FAILED"
     rendered = render_dashboard_html(snapshot).decode("utf-8")
     assert "Dernières observations utilisables conservées" in rendered
@@ -295,10 +300,12 @@ def test_matched_offer_movements_do_not_invent_unmatched_changes() -> None:
         _row(event="event-2", price=3.0, capture=current_capture),
         _row(event="event-3", price=9.0, capture=current_capture),
     ]
-    previous_report = _report(rows=previous)
+    previous_report = _report(rows=previous, capture=previous_capture)
     previous_report["claim_ids"] = list(SEED_CLAIM_IDS)
     snapshot = build_dashboard_snapshot(
-        _report(rows=current), previous_report=previous_report, generated_at=NOW
+        _report(rows=current, capture=current_capture),
+        previous_report=previous_report,
+        generated_at=NOW,
     )
     movement = snapshot["price_movement"]
     assert movement["matched_offer_count"] == 2
@@ -404,6 +411,101 @@ def test_comparison_excludes_duplicates_invalid_prices_and_unordered_branches() 
     }
 
 
+def test_comparison_excludes_sports_missing_from_either_acquisition() -> None:
+    previous_capture = NOW - timedelta(hours=2)
+    current_capture = NOW - timedelta(hours=1)
+    previous = [
+        _row(event="shared", capture=previous_capture),
+        _row(
+            sport="soccer_italy_serie_a",
+            event="missing-branch",
+            capture=previous_capture,
+        ),
+    ]
+    current = [_row(event="shared", capture=current_capture)]
+
+    comparison = compare_acquisitions(current, previous)
+
+    assert comparison["matched_offer_count"] == 1
+    assert comparison["not_observed_offer_count"] == 0
+    assert comparison["excluded_row_count"] == 1
+    assert comparison["exclusion_reason_counts"] == {"BRANCH_NOT_COMPARABLE": 1}
+
+
+def test_comparison_does_not_infer_disappearances_from_an_unscoped_empty_current() -> None:
+    previous = [_row(event="previous-only", capture=NOW - timedelta(hours=2))]
+
+    comparison = compare_acquisitions([], previous)
+
+    assert comparison["not_observed_offer_count"] == 0
+    assert comparison["excluded_row_count"] == 1
+    assert comparison["exclusion_reason_counts"] == {"BRANCH_NOT_COMPARABLE": 1}
+
+
+def test_comparison_excludes_incomplete_public_branches() -> None:
+    previous = _row(capture=NOW - timedelta(hours=2))
+    current = _row(capture=NOW - timedelta(hours=1))
+    previous["branch_status"] = "COMPLETE"
+    current["branch_status"] = "INCOMPLETE"
+
+    comparison = compare_acquisitions([current], [previous])
+
+    assert comparison["matched_offer_count"] == 0
+    assert comparison["excluded_row_count"] == 2
+    assert comparison["exclusion_reason_counts"] == {"BRANCH_NOT_COMPARABLE": 2}
+
+
+def test_comparison_refuses_different_provider_or_settlement_period_lineage() -> None:
+    previous = _row(capture=NOW - timedelta(hours=2))
+    current = _row(capture=NOW - timedelta(hours=1))
+    previous.update(
+        {
+            "provider_key": "THE_ODDS_API_V4",
+            "settlement_period_key": "PROVIDER_DEFAULT_UNSPECIFIED",
+        }
+    )
+    current.update(
+        {
+            "provider_key": "OTHER_PROVIDER",
+            "settlement_period_key": "PROVIDER_DEFAULT_UNSPECIFIED",
+        }
+    )
+
+    comparison = compare_acquisitions([current], [previous])
+
+    assert comparison["matched_offer_count"] == 0
+    assert comparison["appeared_offer_count"] == 0
+    assert comparison["not_observed_offer_count"] == 0
+    assert comparison["excluded_row_count"] == 2
+    assert comparison["exclusion_reason_counts"] == {
+        "BRANCH_LINEAGE_INCOMPARABLE": 2
+    }
+
+
+def test_snapshot_uses_branch_receipts_to_exclude_incomplete_comparisons() -> None:
+    previous_capture = NOW - timedelta(hours=2)
+    current_capture = NOW - timedelta(hours=1)
+    previous = _report(
+        rows=[_row(capture=previous_capture)],
+        capture=previous_capture,
+    )
+    current = _report(
+        rows=[_row(capture=current_capture)],
+        capture=current_capture,
+        diagnostic={"stage": "BODY_READ", "code": "BRANCH_INCOMPLETE"},
+    )
+
+    snapshot = build_dashboard_snapshot(current, previous_report=previous, generated_at=NOW)
+
+    movement = snapshot["price_movement"]
+    assert snapshot["comparison_available"] is False
+    assert movement["matched_offer_count"] == 0
+    assert movement["not_observed_offer_count"] == 0
+    assert movement["appeared_offer_count"] == 0
+    assert movement["current_only_offer_count"] == 1
+    assert snapshot["explorer_rows"][0]["comparison_status"] == "CURRENT_ONLY"
+
+
 def test_comparison_reports_direction_amplitude_and_breakdowns() -> None:
     previous_capture = NOW - timedelta(hours=2)
     current_capture = NOW - timedelta(hours=1)
@@ -500,12 +602,18 @@ def test_snapshot_exposes_one_explorer_row_model_for_both_acquisitions() -> None
 
 def test_explorer_snapshot_upgrades_two_verified_public_snapshots() -> None:
     previous = build_dashboard_snapshot(
-        _report(rows=[_row(event="same", price=2.0, capture=NOW - timedelta(hours=2))]),
+        _report(
+            rows=[_row(event="same", price=2.0, capture=NOW - timedelta(hours=2))],
+            capture=NOW - timedelta(hours=2),
+        ),
         previous_report=None,
         generated_at=NOW - timedelta(hours=2),
     )
     current = build_dashboard_snapshot(
-        _report(rows=[_row(event="same", price=2.3, capture=NOW - timedelta(hours=1))]),
+        _report(
+            rows=[_row(event="same", price=2.3, capture=NOW - timedelta(hours=1))],
+            capture=NOW - timedelta(hours=1),
+        ),
         previous_report=None,
         generated_at=NOW - timedelta(hours=1),
     )
@@ -517,6 +625,194 @@ def test_explorer_snapshot_upgrades_two_verified_public_snapshots() -> None:
     assert upgraded["price_movement"]["changed_offer_count"] == 1
     assert upgraded["explorer_rows"][0]["previous_price"] == 2.0
     assert upgraded["explorer_rows"][0]["current_price"] == 2.3
+
+
+def test_first_snapshot_is_current_only_not_an_unproved_appearance() -> None:
+    current = build_dashboard_snapshot(
+        _report(rows=[_row(event="current-only")]),
+        previous_report=None,
+        generated_at=NOW,
+    )
+
+    assert current["comparison_available"] is False
+    assert current["price_movement"]["appeared_offer_count"] == 0
+    assert current["price_movement"]["current_only_offer_count"] == 1
+    assert current["explorer_rows"][0]["comparison_status"] == "CURRENT_ONLY"
+
+
+def test_current_only_snapshot_excludes_duplicate_invalid_identity_and_invalid_price() -> None:
+    duplicate = _row(event="duplicate")
+    invalid_price = _row(event="invalid-price", price=0.0)
+    invalid_total = _row(event="invalid-total", market="totals", outcome="Over")
+    current = build_dashboard_snapshot(
+        _report(
+            rows=[
+                _row(event="valid"),
+                duplicate,
+                dict(duplicate),
+                invalid_price,
+                invalid_total,
+            ]
+        ),
+        previous_report=None,
+        generated_at=NOW,
+    )
+
+    movement = current["price_movement"]
+    assert movement["current_only_offer_count"] == 1
+    assert movement["excluded_row_count"] == 4
+    assert movement["exclusion_reason_counts"] == {
+        "DUPLICATE_OFFER_IDENTITY": 2,
+        "INVALID_OFFER_IDENTITY": 1,
+        "INVALID_PRICE": 1,
+    }
+    assert [row["event_id"] for row in current["explorer_rows"]] == ["valid"]
+
+
+def test_verified_empty_branch_can_prove_non_observation_with_shared_coverage() -> None:
+    previous = build_dashboard_snapshot(
+        _report(
+            rows=[_row(event="previous", capture=NOW - timedelta(hours=2))],
+            capture=NOW - timedelta(hours=2),
+        ),
+        previous_report=None,
+        generated_at=NOW - timedelta(hours=2),
+    )
+    current_report = _report(rows=[], capture=NOW - timedelta(hours=1))
+    current_report["validated_capture_count"] = 1
+    current_report["capture_times_utc"] = [(NOW - timedelta(hours=1)).isoformat()]
+    current = build_dashboard_snapshot(
+        current_report,
+        previous_report=None,
+        generated_at=NOW - timedelta(hours=1),
+    )
+
+    upgraded = build_explorer_snapshot(current, previous, generated_at=NOW)
+
+    assert upgraded["comparison_available"] is True
+    assert upgraded["price_movement"]["not_observed_offer_count"] == 1
+    assert upgraded["explorer_rows"][0]["comparison_status"] == "NOT_OBSERVED"
+
+
+def test_empty_branch_cannot_claim_disappearance_before_previous_observation() -> None:
+    previous_capture = NOW - timedelta(minutes=30)
+    previous_report = _report(
+        rows=[_row(event="previous", capture=previous_capture)],
+        capture=previous_capture,
+    )
+    previous_branch = previous_report["branches"][0]
+    previous_branch.update(
+        {
+            "provider_key": "THE_ODDS_API_V4",
+            "settlement_period_key": "PROVIDER_DEFAULT_UNSPECIFIED",
+            "acquisition_started_at_utc": (previous_capture - timedelta(minutes=1))
+            .isoformat()
+            .replace("+00:00", "Z"),
+            "acquisition_finished_at_utc": (previous_capture + timedelta(minutes=1))
+            .isoformat()
+            .replace("+00:00", "Z"),
+        }
+    )
+    previous_report["rows"][0].update(
+        {
+            "provider_key": "THE_ODDS_API_V4",
+            "settlement_period_key": "PROVIDER_DEFAULT_UNSPECIFIED",
+        }
+    )
+    previous = build_dashboard_snapshot(
+        previous_report,
+        previous_report=None,
+        generated_at=previous_capture,
+    )
+    current_capture = NOW - timedelta(minutes=45)
+    current_report = _report(rows=[], capture=current_capture)
+    current_report["validated_capture_count"] = 1
+    current_report["branches"][0].update(
+        {
+            "provider_key": "THE_ODDS_API_V4",
+            "settlement_period_key": "PROVIDER_DEFAULT_UNSPECIFIED",
+            "acquisition_started_at_utc": (current_capture - timedelta(minutes=1))
+            .isoformat()
+            .replace("+00:00", "Z"),
+            "acquisition_finished_at_utc": (current_capture + timedelta(minutes=1))
+            .isoformat()
+            .replace("+00:00", "Z"),
+        }
+    )
+    current = build_dashboard_snapshot(
+        current_report,
+        previous_report=None,
+        generated_at=current_capture,
+    )
+
+    upgraded = build_explorer_snapshot(current, previous, generated_at=NOW)
+
+    assert upgraded["comparison_available"] is True
+    movement = upgraded["price_movement"]
+    assert movement["not_observed_offer_count"] == 0
+    assert movement["exclusion_reason_counts"] == {"NON_FORWARD_BRANCH_TIME": 1}
+
+
+def test_empty_v2_branch_cannot_claim_v1_offer_disappeared() -> None:
+    previous = build_dashboard_snapshot(
+        _report(
+            rows=[_row(event="previous", capture=NOW - timedelta(hours=2))],
+            capture=NOW - timedelta(hours=2),
+        ),
+        previous_report=None,
+        generated_at=NOW - timedelta(hours=2),
+    )
+    current_report = _report(rows=[], capture=NOW - timedelta(hours=1))
+    current_report["validated_capture_count"] = 1
+    current_branch = current_report["branches"][0]
+    current_branch.update(
+        {
+            "provider_key": "THE_ODDS_API_V4",
+            "settlement_period_key": "PROVIDER_DEFAULT_UNSPECIFIED",
+        }
+    )
+    current = build_dashboard_snapshot(
+        current_report,
+        previous_report=None,
+        generated_at=NOW - timedelta(hours=1),
+    )
+
+    upgraded = build_explorer_snapshot(current, previous, generated_at=NOW)
+
+    assert upgraded["comparison_available"] is True
+    movement = upgraded["price_movement"]
+    assert movement["not_observed_offer_count"] == 0
+    assert movement["excluded_row_count"] == 1
+    assert movement["exclusion_reason_counts"] == {
+        "BRANCH_LINEAGE_INCOMPARABLE": 1
+    }
+
+
+def test_empty_incomplete_branch_cannot_prove_non_observation() -> None:
+    previous = build_dashboard_snapshot(
+        _report(
+            rows=[_row(event="previous", capture=NOW - timedelta(hours=2))],
+            capture=NOW - timedelta(hours=2),
+        ),
+        previous_report=None,
+        generated_at=NOW - timedelta(hours=2),
+    )
+    current = build_dashboard_snapshot(
+        _report(
+            rows=[],
+            capture=NOW - timedelta(hours=1),
+            diagnostic={"stage": "BODY_READ", "code": "BRANCH_INCOMPLETE"},
+        ),
+        previous_report=None,
+        generated_at=NOW - timedelta(hours=1),
+    )
+
+    upgraded = build_explorer_snapshot(current, previous, generated_at=NOW)
+
+    assert current["comparable_branch_sports"] == []
+    assert upgraded["comparison_available"] is False
+    assert upgraded["price_movement"]["not_observed_offer_count"] == 0
+    assert upgraded["explorer_rows"] == []
 
 
 def test_html_is_self_contained_paginated_searchable_and_safe() -> None:
@@ -549,11 +845,17 @@ def test_html_is_self_contained_paginated_searchable_and_safe() -> None:
     assert 'id="next-page"' in html
     assert 'id="freshness-status"' in html
     assert 'id="freshness-detail"' in html
+    assert 'id="local-refresh-status"' in html
+    assert 'id="new-run-notice"' in html
     assert "function refreshFreshness" in html
     assert "Date.now()" in html
     assert "freshness_limit_seconds" in html
     assert "function pollForNewRun" in html
     assert 'fetch("/status.json"' in html
+    assert "status.last_error_code" in html
+    assert "Actualisation locale en échec" in html
+    assert "Nouvelle capture disponible" in html
+    assert 'location.pathname.startsWith("/history/")' in html
     assert "current!==LOADED_RUN_ID" in html
     assert "location.reload()" in html
     assert "sessionStorage.setItem" in html
@@ -569,14 +871,48 @@ def test_html_is_self_contained_paginated_searchable_and_safe() -> None:
     assert "previous_price" in html
     assert "current_price" in html
     assert "kickoff_utc" in html
+    assert "previous_slot_start_utc" in html
+    assert "previous_source_timestamp_utc" in html
+    assert "current_slot_start_utc" in html
+    assert "current_source_timestamp_utc" in html
+    assert "Début · fin · capture · source" in html
+    assert "previous_acquisition_started_at_utc" in html
+    assert "current_acquisition_finished_at_utc" in html
+    assert "Europe/Paris" in html
+    assert "function formatInstant" in html
     assert "const PAGE_SIZE = 100" in html
     assert "Aucun edge n’est validé" in html
-    assert "Heures affichées en UTC" in html
+    assert "Instants conservés en UTC" in html
+    assert html.index("void pollForNewRun();") < html.index("setInterval(")
     assert "</script><img" not in html
     escaped_closing_script = "\\u003c" + "/script" + "\\u003e"
     assert escaped_closing_script in html
     assert html.count("<tbody") == 1
     assert html.count("<tr") < 20
+
+
+def test_narrow_viewport_exposes_comparison_as_labeled_cards() -> None:
+    snapshot = build_dashboard_snapshot(
+        _report(rows=[_row()]), previous_report=None, generated_at=NOW
+    )
+
+    html = render_dashboard_html(snapshot).decode("utf-8")
+
+    assert 'class="narrow-table-help"' in html
+    assert "sans défilement horizontal" in html
+    assert "const TABLE_LABELS =" in html
+    assert "const NARROW_PAGE_SIZE = 25" in html
+    assert "function currentPageSize()" in html
+    assert 'const pageMedia=window.matchMedia("(max-width:620px)")' in html
+    assert "pageMedia.addEventListener(\"change\",()=>{page=0;renderRows();})" in html
+    assert "td.dataset.label=TABLE_LABELS[index]" in html
+    assert "td::before{content:attr(data-label)" in html
+    assert "thead{display:none}" in html
+    assert "tbody tr{display:block" in html
+    assert html.index("<th>Bookmaker</th>") < html.index("<th>Ancienne cote</th>")
+    assert html.index("<th>Nouvelle cote</th>") < html.index(
+        "<th>Acquisition précédente"
+    )
 
 
 def test_partial_incident_and_empty_filter_state_are_visible() -> None:

@@ -203,3 +203,29 @@ def test_r4_safe_ci_has_one_full_suite_parallel_consumers_and_a_final_gate() -> 
     )
     assert "python -m scripts.run_chronos_dual_principal_ci_v2" in chronos_commands
     assert "tests/data_torrent/test_postgresql_v1.py" in chronos_commands
+
+
+def test_r7_freshness_monitor_is_independent_bounded_and_fail_closed() -> None:
+    monitor_path = ROOT / ".github" / "workflows" / "collection-freshness-monitor.yml"
+    monitor = yaml.safe_load(monitor_path.read_text(encoding="utf-8"))
+    triggers = monitor[True]
+    assert triggers["schedule"] == [{"cron": "17,47 * * * *"}]
+    assert triggers["workflow_dispatch"] == {}
+    assert monitor["permissions"] == {"actions": "read", "contents": "read"}
+    assert monitor["concurrency"]["cancel-in-progress"] is True
+
+    job = monitor["jobs"]["detect-collection-silence"]
+    assert job["timeout-minutes"] == 5
+    assert job["env"]["TARGET_WORKFLOW_ID"] == "321915839"
+    assert job["env"]["MAX_SILENCE_SECONDS"] == "6000"
+    assert job["env"]["MAX_LAST_SUCCESS_SECONDS"] == "6000"
+    assert len(job["steps"]) == 1
+    command = job["steps"][0]["run"]
+    assert "actions/workflows/{workflow_id}/runs" in command
+    assert "COLLECTION_SILENCE_DETECTED" in command
+    assert "COLLECTION_LATEST_RUN_FAILED" in command
+    assert "COLLECTION_LAST_SUCCESS_STALE" in command
+    assert "head_branch" in command and '== "main"' in command
+    assert "workflow_dispatch" in command and "schedule" in command
+    assert "ODDS_API_KEY" not in str(monitor)
+    assert "R2_" not in str(monitor)

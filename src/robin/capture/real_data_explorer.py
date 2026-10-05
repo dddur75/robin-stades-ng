@@ -43,7 +43,7 @@ _HASH_FIELDS = {
 }
 _RUN_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 _MAX_EXPORT_BYTES = 32 * 1024 * 1024
-LOCAL_RENDERER_REVISION = "v2"
+LOCAL_RENDERER_REVISION = "v7"
 
 
 class BundleValidationError(ValueError):
@@ -74,6 +74,24 @@ def _read_json(path: Path, code: str) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise BundleValidationError(code)
     return cast(dict[str, Any], value)
+
+
+def _source_semantic_sha256(snapshot: Mapping[str, object]) -> str:
+    """Bind immutable acquisition identity without renderer or delivery metadata."""
+
+    semantic = {
+        key: value
+        for key, value in snapshot.items()
+        if key not in {"generated_at_utc", "freshness", "price_movement"}
+    }
+    encoded = json.dumps(
+        semantic,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+        allow_nan=False,
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
 
 
 @dataclass(frozen=True)
@@ -240,11 +258,7 @@ class AtomicExplorerStore:
         else:
             if not _RUN_ID.fullmatch(run_id):
                 raise BundleValidationError("LOCAL_HISTORY_ID_INVALID")
-            candidates = (f"run-{run_id}-view-{LOCAL_RENDERER_REVISION}", f"run-{run_id}")
-            version = next(
-                (candidate for candidate in candidates if (self.versions / candidate).is_dir()),
-                candidates[0],
-            )
+            version = self._ensure_history_renderer(run_id)
         return (
             self._verify_version(
                 version,
@@ -253,6 +267,67 @@ class AtomicExplorerStore:
             )
             / "public"
         )
+
+    def _ensure_history_renderer(self, run_id: str) -> str:
+        """Re-render an immutable legacy snapshot without changing the current pointer."""
+
+        version_name = f"run-{run_id}-view-{LOCAL_RENDERER_REVISION}"
+        destination = self.versions / version_name
+        with self._lock:
+            if destination.is_dir():
+                return version_name
+            legacy_names = [f"run-{run_id}"]
+            legacy_names.extend(
+                path.name
+                for path in sorted(self.versions.glob(f"run-{run_id}-view-*"), reverse=True)
+                if path.name != version_name
+            )
+            legacy_name = next(
+                (name for name in legacy_names if (self.versions / name).is_dir()),
+                None,
+            )
+            if legacy_name is None:
+                raise BundleValidationError("LOCAL_VIEW_UNAVAILABLE")
+            legacy_root = self._verify_version(legacy_name, expected_run_id=run_id)
+            validated = validate_source_bundle(legacy_root / "source")
+            snapshot_bytes = (legacy_root / "public" / "robin-real-data.json").read_bytes()
+            try:
+                snapshot = json.loads(snapshot_bytes.decode("utf-8"))
+            except (UnicodeDecodeError, json.JSONDecodeError):
+                raise BundleValidationError("LOCAL_VERSION_INCOMPLETE") from None
+            if not isinstance(snapshot, dict):
+                raise BundleValidationError("LOCAL_VERSION_INCOMPLETE")
+            stage = self.staging / uuid4().hex
+            try:
+                shutil.copytree(validated.source, stage / "source")
+                public = stage / "public"
+                public.mkdir()
+                (public / "robin-real-data.json").write_bytes(snapshot_bytes)
+                (public / "robin-real-data.csv").write_bytes(render_dashboard_csv(snapshot))
+                (public / "robin-real-data.html").write_bytes(
+                    render_dashboard_html(snapshot, csv_filename="robin-real-data.csv")
+                )
+                manifest = {
+                    "schema_version": "robin-local-explorer-version-v1",
+                    "run_id": validated.run_id,
+                    "delivery_run_id": validated.delivery_run_id,
+                    "renderer_revision": LOCAL_RENDERER_REVISION,
+                    "slot_start_utc": validated.slot_start_utc,
+                    "source_receipt_sha256": validated.receipt_sha256,
+                    "public_sha256": {
+                        name: hashlib.sha256((public / name).read_bytes()).hexdigest()
+                        for name in PUBLIC_FILES
+                    },
+                }
+                (stage / "manifest.json").write_text(
+                    json.dumps(manifest, sort_keys=True, separators=(",", ":")) + "\n",
+                    encoding="utf-8",
+                )
+                os.replace(stage, destination)
+            finally:
+                if stage.exists():
+                    shutil.rmtree(stage)
+            return version_name
 
     def read_public_bytes(self, name: str, *, run_id: str | None = None) -> bytes:
         if name not in PUBLIC_FILES:
@@ -264,6 +339,17 @@ class AtomicExplorerStore:
             dict[str, Any],
             json.loads(self.read_public_bytes(name, run_id=run_id).decode("utf-8")),
         )
+
+    def current_source(self) -> Path:
+        """Return the already verified source bundle behind the current pointer."""
+
+        pointer = self.current_pointer()
+        if pointer is None:
+            raise BundleValidationError("LOCAL_VIEW_UNAVAILABLE")
+        root = self._verify_version(str(pointer["version"]), pointer=pointer)
+        source = root / "source"
+        validate_source_bundle(source)
+        return source
 
     def _switch_pointer(self, pointer: Mapping[str, object]) -> None:
         temporary = self.root / f".current-{uuid4().hex}.json"
@@ -277,11 +363,21 @@ class AtomicExplorerStore:
         validated = validate_source_bundle(source)
         with self._lock:
             current = self.current_pointer()
+            same_origin = current is not None and str(current.get("run_id")) == validated.run_id
             if current is not None:
-                same_origin = str(current.get("run_id")) == validated.run_id
                 renderer_current = (
                     current.get("renderer_revision") == LOCAL_RENDERER_REVISION
                 )
+                if same_origin:
+                    existing_source = self.current_source()
+                    existing_snapshot = _read_json(
+                        existing_source / "robin-real-data.json",
+                        "LOCAL_VERSION_INCOMPLETE",
+                    )
+                    if _source_semantic_sha256(existing_snapshot) != (
+                        _source_semantic_sha256(validated.snapshot)
+                    ):
+                        raise BundleValidationError("LOCAL_SOURCE_IDENTITY_COLLISION")
                 if same_origin and renderer_current:
                     self.write_status(
                         current_run_id=validated.run_id,
@@ -299,7 +395,43 @@ class AtomicExplorerStore:
             version_name = f"run-{validated.run_id}-view-{LOCAL_RENDERER_REVISION}"
             destination = self.versions / version_name
             if destination.exists():
-                raise BundleValidationError("LOCAL_VERSION_COLLISION")
+                existing_root = self._verify_version(
+                    version_name,
+                    expected_run_id=validated.run_id,
+                )
+                existing_manifest = _read_json(
+                    existing_root / "manifest.json", "LOCAL_MANIFEST_INVALID"
+                )
+                if not (
+                    same_origin
+                    and existing_manifest.get("delivery_run_id")
+                    == validated.delivery_run_id
+                    and existing_manifest.get("renderer_revision")
+                    == LOCAL_RENDERER_REVISION
+                    and existing_manifest.get("slot_start_utc")
+                    == validated.slot_start_utc
+                    and existing_manifest.get("source_receipt_sha256")
+                    == validated.receipt_sha256
+                ):
+                    raise BundleValidationError("LOCAL_VERSION_COLLISION")
+                pointer = {
+                    "schema_version": "robin-local-explorer-pointer-v1",
+                    "run_id": validated.run_id,
+                    "delivery_run_id": validated.delivery_run_id,
+                    "renderer_revision": LOCAL_RENDERER_REVISION,
+                    "version": version_name,
+                    "slot_start_utc": validated.slot_start_utc,
+                    "source_receipt_sha256": validated.receipt_sha256,
+                    "updated_at_utc": _iso_z(self._clock()),
+                }
+                self._switch_pointer(pointer)
+                self.write_status(
+                    current_run_id=validated.run_id,
+                    last_delivery_run_id=validated.delivery_run_id,
+                    last_success_at_utc=_iso_z(self._clock()),
+                    last_error_code=None,
+                )
+                return pointer
             try:
                 shutil.copytree(validated.source, stage / "source")
                 public = stage / "public"
@@ -544,6 +676,7 @@ class ExplorerRefreshController:
 
     def refresh_once(self) -> bool:
         download_root = self.store.staging / f"refresh-{uuid4().hex}"
+        changed = False
         try:
             pointer = self.store.current_pointer()
             prior_status = self.store.status()
@@ -551,19 +684,20 @@ class ExplorerRefreshController:
                 pointer
                 and pointer.get("renderer_revision") != LOCAL_RENDERER_REVISION
             )
+            if renderer_needs_refresh:
+                self.store.publish(self.store.current_source())
+                changed = True
+                pointer = self.store.current_pointer()
+                prior_status = self.store.status()
             sources = self.client.download_candidates(
                 download_root,
                 current_delivery_run_id=(
-                    (
-                        prior_status.get("last_delivery_run_id")
-                        or (
-                            str(pointer.get("delivery_run_id"))
-                            if pointer and pointer.get("delivery_run_id")
-                            else None
-                        )
+                    prior_status.get("last_delivery_run_id")
+                    or (
+                        str(pointer.get("delivery_run_id"))
+                        if pointer and pointer.get("delivery_run_id")
+                        else None
                     )
-                    if not renderer_needs_refresh
-                    else None
                 ),
             )
             validated_items: list[ValidatedBundle] = []
@@ -588,7 +722,6 @@ class ExplorerRefreshController:
                         continue
                     raise
             validated = sorted(validated_items, key=lambda item: item.slot_time)
-            changed = False
             seen_slots: set[datetime] = set()
             for item in validated:
                 if item.slot_time in seen_slots:
@@ -633,10 +766,10 @@ class ExplorerRefreshController:
             return changed
         except BundleValidationError as exc:
             self.record_failure(str(exc))
-            return False
+            return changed
         except (OSError, subprocess.SubprocessError):
             self.record_failure("LOCAL_IO_FAILURE")
-            return False
+            return changed
         finally:
             if download_root.exists():
                 shutil.rmtree(download_root, ignore_errors=True)
@@ -678,17 +811,28 @@ class ExplorerRefreshController:
         )
 
 
-def run_refresh_loop(controller: Any, stopped: Any, refresh_seconds: float) -> None:
+def run_refresh_loop(
+    controller: Any,
+    stopped: Any,
+    refresh_seconds: float,
+    *,
+    refresh_immediately: bool = False,
+) -> None:
     """Keep polling after an unexpected defect and expose a stable error code."""
 
-    while not stopped.wait(refresh_seconds):
+    def refresh() -> None:
         try:
             controller.refresh_once()
         except Exception:  # fail closed at the long-lived process boundary
             try:
                 controller.record_failure("REFRESH_UNEXPECTED_FAILURE")
             except Exception:
-                continue
+                return
+
+    if refresh_immediately:
+        refresh()
+    while not stopped.wait(refresh_seconds):
+        refresh()
 
 
 def _handler(store: AtomicExplorerStore) -> type[BaseHTTPRequestHandler]:

@@ -524,6 +524,50 @@ def test_five_leagues_are_captured_read_back_and_duplicate_run_replays(
     assert len(report["branches"]) == 5
     assert report["claim_ids"] == list(RECURRING_CLAIM_IDS)
     assert report["accounting"]["rolling_24h_requests"] == 21
+    for branch in report["branches"]:
+        assert branch["provider_key"] == "THE_ODDS_API_V4"
+        assert branch["settlement_period_key"] == "PROVIDER_DEFAULT_UNSPECIFIED"
+        assert branch["acquisition_started_at_utc"] == first_now.isoformat().replace(
+            "+00:00", "Z"
+        )
+        assert branch["acquisition_finished_at_utc"] == first_now.isoformat().replace(
+            "+00:00", "Z"
+        )
+    for row in report["rows"]:
+        assert row["provider_key"] == "THE_ODDS_API_V4"
+        assert row["settlement_period_key"] == "PROVIDER_DEFAULT_UNSPECIFIED"
+        assert row["acquisition_started_at_utc"] == first_now.isoformat().replace(
+            "+00:00", "Z"
+        )
+        assert row["acquisition_finished_at_utc"] == first_now.isoformat().replace(
+            "+00:00", "Z"
+        )
+    raw_key = report["branches"][0]["raw_object_key"]
+    raw_envelope = json.loads(store.objects[raw_key].data)
+    assert raw_envelope["schema_version"] == "robin-autonomous-raw-envelope-v2"
+    assert raw_envelope["provider_key"] == "THE_ODDS_API_V4"
+    assert raw_envelope["settlement_period_key"] == "PROVIDER_DEFAULT_UNSPECIFIED"
+    assert raw_envelope["acquisition_started_at_utc"] == first_now.isoformat().replace(
+        "+00:00", "Z"
+    )
+    assert raw_envelope["acquisition_finished_at_utc"] == first_now.isoformat().replace(
+        "+00:00", "Z"
+    )
+    legacy_envelope = dict(raw_envelope)
+    legacy_envelope["schema_version"] = "robin-autonomous-raw-envelope-v1"
+    for field in (
+        "provider_key",
+        "settlement_period_key",
+        "acquisition_started_at_utc",
+        "acquisition_finished_at_utc",
+    ):
+        legacy_envelope.pop(field)
+    legacy_payload = recurring._payload_from_readback(
+        canonical_json_bytes(legacy_envelope),
+        slot=datetime(2026, 10, 4, 10, tzinfo=UTC),
+        sport_key=raw_envelope["sport_key"],
+    )
+    assert legacy_payload[7:] == (None, None, None, None)
     assert hashlib.sha256(report_object.data).hexdigest() == first["private_report_r2_sha256"]
     assert ACCOUNTING_HEAD_KEY in store.projections
 
@@ -1647,3 +1691,66 @@ def test_market_absent_and_duplicated_are_distinct_while_legacy_is_explicit() ->
     assert classify_market_limitation("RESULT_MARKET_MISSING") == "MISSING"
     assert classify_market_limitation("RESULT_MARKET_DUPLICATED") == "DUPLICATED"
     assert classify_market_limitation("RESULT_MARKET_MISSING_OR_DUPLICATED") == "LEGACY_UNKNOWN"
+
+
+def test_v2_raw_envelope_rejects_capture_outside_acquisition_bounds(
+    tmp_path: Path,
+) -> None:
+    response = LiveTransportResponse(
+        http_status=200,
+        headers={},
+        network_calls=1,
+        provider_calls=1,
+        retries=0,
+        redirects=0,
+        payload=b"[]",
+        first_observed_at_utc=START - timedelta(minutes=1),
+    )
+
+    with pytest.raises(RecurringError, match="RECURRING_ACQUISITION_TIME_INVALID"):
+        recurring._raw_envelope(
+            _config(tmp_path),
+            slot=START,
+            sport_key=SPORT_KEYS[0],
+            response=response,
+            quota=None,
+            quota_code=None,
+            observed_cost=None,
+            observed_remaining=None,
+            acquisition_started_at=START,
+            acquisition_finished_at=START + timedelta(minutes=1),
+        )
+
+    valid_response = LiveTransportResponse(
+        http_status=200,
+        headers={},
+        network_calls=1,
+        provider_calls=1,
+        retries=0,
+        redirects=0,
+        payload=b"[]",
+        first_observed_at_utc=START,
+    )
+    encoded = recurring._raw_envelope(
+        _config(tmp_path),
+        slot=START,
+        sport_key=SPORT_KEYS[0],
+        response=valid_response,
+        quota=None,
+        quota_code=None,
+        observed_cost=None,
+        observed_remaining=None,
+        acquisition_started_at=START,
+        acquisition_finished_at=START + timedelta(minutes=1),
+    )
+    malformed = json.loads(encoded)
+    malformed["capture_time_utc"] = (START - timedelta(minutes=1)).isoformat().replace(
+        "+00:00", "Z"
+    )
+
+    with pytest.raises(RecurringError, match="RECURRING_RAW_ENVELOPE_INVALID"):
+        recurring._payload_from_readback(
+            canonical_json_bytes(malformed),
+            slot=START,
+            sport_key=SPORT_KEYS[0],
+        )

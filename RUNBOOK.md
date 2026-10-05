@@ -1059,6 +1059,18 @@ vue est descriptive : ni meilleur prix garanti, ni conseil, ni preuve d'edge.
 Le service écoute seulement `127.0.0.1`. Il lie mission, acquisition, livraison et
 créneau, vérifie reçu, hashes et manifeste local avant lecture, puis bascule
 atomiquement. La corruption ou l'échec GitHub conserve la dernière vue valide.
+Une première lecture d'un historique ancien peut matérialiser localement son rendu
+avec le renderer courant ; le JSON source, le reçu et le pointeur `latest` restent
+inchangés. Une évolution purement mécanique du renderer régénère automatiquement
+HTML et CSV sans modifier le JSON descriptif. À l'inverse, deux contenus
+d'acquisition différents portant le même identifiant d'origine sont refusés.
+
+Les acquisitions historiques `raw-envelope-v1` ne prouvent ni route fournisseur,
+ni période de règlement, ni bornes début/fin : l'interface les affiche comme
+inconnues. Les acquisitions futures `raw-envelope-v2` portent la route observée,
+la limite `PROVIDER_DEFAULT_UNSPECIFIED` pour la période non attestée par le
+fournisseur et les deux bornes UTC mesurées. Une comparaison entre lignées
+différentes est exclue, jamais complétée par hypothèse.
 
 - `GITHUB_AUTH_REQUIRED` : réparer `gh auth status`, sans jeton dans la page ;
 - `GITHUB_ARTIFACT_UNAVAILABLE`, `GITHUB_ARTIFACT_DOWNLOAD_FAILED`,
@@ -1066,7 +1078,19 @@ atomiquement. La corruption ou l'échec GitHub conserve la dernière vue valide.
 - `SOURCE_HASH_MISMATCH`, `SOURCE_*_INVALID` ou `SOURCE_CARRY_FORWARD_STALE` :
   artifact refusé ;
 - `LOCAL_VERSION_HASH_MISMATCH` : corruption locale détectée et non servie ;
+- `LOCAL_SOURCE_IDENTITY_COLLISION` : un même run désigne deux contenus
+  d'acquisition différents ; conserver la dernière version valide et investiguer ;
 - `LATE_ARTIFACT` : artifact tardif volontairement refusé.
 
 L'historique reste épinglé sous
 `/history/<github_run_id>/robin-real-data.html`.
+
+Le workflow indépendant `collection-freshness-monitor.yml` s'exécute aux minutes
+17 et 47. Il lit seulement les runs GitHub du workflow `321915839`, sans clé
+fournisseur ni accès R2. Il échoue visiblement avec
+`COLLECTION_SILENCE_DETECTED` si aucun run `main` n'a été créé depuis 6 000
+secondes, `COLLECTION_LAST_SUCCESS_STALE` si aucune exécution n'a terminé avec
+succès depuis 6 000 secondes (mesuré sur `updated_at`), ou
+`COLLECTION_LATEST_RUN_FAILED` si le dernier run est terminé en échec. Consulter
+son résumé Actions avant toute reprise ; ne jamais réinitialiser
+génération, compteurs ou créneau pour faire disparaître l'alerte.

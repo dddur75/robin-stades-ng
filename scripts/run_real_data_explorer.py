@@ -36,17 +36,20 @@ def main(argv: list[str] | None = None) -> int:
         workflow_id=arguments.workflow_id,
     )
     controller = ExplorerRefreshController(store, client)
-    changed = controller.refresh_once()
     if arguments.refresh_once:
+        changed = controller.refresh_once()
         print("UPDATED" if changed else "UNCHANGED_OR_UNAVAILABLE")
         return 0 if store.current_pointer() is not None else 2
 
+    if store.current_pointer() is None:
+        controller.refresh_once()
     server = make_server(store, port=arguments.port)
     stopped = threading.Event()
 
     refresh_thread = threading.Thread(
         target=run_refresh_loop,
         args=(controller, stopped, arguments.refresh_seconds),
+        kwargs={"refresh_immediately": True},
         name="robin-explorer-refresh",
         daemon=True,
     )
