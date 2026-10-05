@@ -263,7 +263,13 @@ def test_canonical_journal_suffix_parser_and_exact_grants_fail_closed(
         canonical_journal_suffix(tmp_path)
 
     tampered = original.copy()
-    tampered[-1] = tampered[-1].replace("PASS_AND_HOLD", "PASS_AND_SCALE", 1)
+    tampered_record = json.loads(tampered[-1])
+    tampered_record["proposal"] = f"{tampered_record['proposal']} TAMPERED"
+    tampered[-1] = json.dumps(
+        tampered_record,
+        ensure_ascii=False,
+        separators=(",", ":"),
+    )
     ledger.write_text("\n".join(tampered) + "\n", encoding="utf-8")
     with pytest.raises(ValueError, match="COUNCIL_JOURNAL_RECORD_HASH_INVALID"):
         canonical_journal_suffix(tmp_path)
