@@ -12,6 +12,8 @@ from robin.capture.recurring_real_data import RECURRING_CLAIM_IDS, SEED_CLAIM_ID
 from robin.prospective_observatory.chronos_control_plane import ObservedObject
 from robin.prospective_observatory.chronos_r2 import LatestProjection
 
+RELAY_GENERATION = "4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87"
+
 
 @pytest.fixture(autouse=True)
 def _authorized_recovery_stub(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -25,10 +27,21 @@ def _authorized_recovery_stub(monkeypatch: pytest.MonkeyPatch) -> None:
 def _github_environment(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("GITHUB_REPOSITORY", "dddur75/robin-stades-ng")
     monkeypatch.setenv("GITHUB_REF", "refs/heads/main")
-    monkeypatch.setenv("GITHUB_EVENT_NAME", "schedule")
+    monkeypatch.setenv("GITHUB_EVENT_NAME", "workflow_dispatch")
+    monkeypatch.setenv("GITHUB_ACTOR", "github-actions[bot]")
+    monkeypatch.setenv(
+        "GITHUB_WORKFLOW_REF",
+        "dddur75/robin-stades-ng/.github/workflows/prospective-deep-scheduler.yml@refs/heads/main",
+    )
     monkeypatch.setenv("GITHUB_SHA", "a" * 40)
     monkeypatch.setenv("GITHUB_RUN_ID", "424242")
     monkeypatch.setenv("GITHUB_RUN_ATTEMPT", "1")
+    monkeypatch.setenv("ROBIN_RELAY_MODE", "collect")
+    monkeypatch.setenv("ROBIN_RELAY_ORIGIN", "relay")
+    monkeypatch.setenv("ROBIN_RELAY_GENERATION", RELAY_GENERATION)
+    monkeypatch.setenv("ROBIN_RELAY_CHAIN_ID", "424200")
+    monkeypatch.setenv("ROBIN_RELAY_PARENT_RUN_ID", "424241")
+    monkeypatch.setenv("ROBIN_RELAY_SEQUENCE", "2")
     for name, value in cli.SAFETY_LOCKS.items():
         monkeypatch.setenv(name, value)
 
@@ -75,6 +88,12 @@ def _report(*, price: float = 1.8, status: str = "REAL_DATA_PARTIAL") -> dict[st
         "claim_ids": list(RECURRING_CLAIM_IDS),
         "repository_sha": "a" * 40,
         "github_run_id": "424242",
+        "relay_lineage": {
+            "generation": RELAY_GENERATION,
+            "chain_id": "424200",
+            "parent_run_id": "424241",
+            "sequence": 2,
+        },
         "slot_start_utc": "2026-10-04T10:00:00Z",
         "generated_at_utc": "2026-10-04T10:17:02Z",
         "status": status,
@@ -176,6 +195,12 @@ def _receipt(store: FakeStore, status: str) -> dict[str, object]:
         "status": status,
         "repository_sha": "a" * 40,
         "github_run_id": "424242",
+        "relay_lineage": {
+            "generation": RELAY_GENERATION,
+            "chain_id": "424200",
+            "parent_run_id": "424241",
+            "sequence": 2,
+        },
         "slot_start_utc": "2026-10-04T10:00:00Z",
         "validated_capture_count": 1 if status != "REAL_DATA_FAILED" else 0,
         "incomplete_branch_count": 0 if status != "REAL_DATA_FAILED" else 1,
@@ -247,21 +272,45 @@ def test_cli_delivers_four_normalized_files_and_compares_previous_slot(
     assert "node_key" not in normalized["accounting"]
     assert "raw_payload_base64" not in json.dumps(normalized)
     assert '"status":"REAL_DATA_PARTIAL"' in capsys.readouterr().out
+    assert receipt["relay_lineage"] == {
+        "generation": RELAY_GENERATION,
+        "chain_id": "424200",
+        "parent_run_id": "424241",
+        "sequence": 2,
+    }
 
 
 @pytest.mark.parametrize(
-    ("event_name", "attempt"),
-    [("workflow_dispatch", "1"), ("schedule", "2")],
+    ("name", "value"),
+    [
+        ("GITHUB_REPOSITORY", "someone/else"),
+        ("GITHUB_REF", "refs/heads/not-main"),
+        ("GITHUB_EVENT_NAME", "schedule"),
+        (
+            "GITHUB_WORKFLOW_REF",
+            "dddur75/robin-stades-ng/.github/workflows/other.yml@refs/heads/main",
+        ),
+        ("GITHUB_SHA", "not-a-sha"),
+        ("GITHUB_RUN_ID", "0"),
+        ("GITHUB_RUN_ATTEMPT", "2"),
+        ("GITHUB_ACTOR", "dddur75"),
+        ("ROBIN_RELAY_MODE", "probe"),
+        ("ROBIN_RELAY_ORIGIN", "bootstrap"),
+        ("ROBIN_RELAY_GENERATION", "0" * 64),
+        ("ROBIN_RELAY_CHAIN_ID", "not-a-run-id"),
+        ("ROBIN_RELAY_PARENT_RUN_ID", ""),
+        ("ROBIN_RELAY_PARENT_RUN_ID", "424242"),
+        ("ROBIN_RELAY_SEQUENCE", "0"),
+    ],
 )
-def test_cli_refuses_non_scheduled_or_rerun_context_before_r2(
-    event_name: str,
-    attempt: str,
+def test_cli_refuses_untrusted_relay_or_rerun_context_before_r2(
+    name: str,
+    value: str,
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     _github_environment(monkeypatch)
-    monkeypatch.setenv("GITHUB_EVENT_NAME", event_name)
-    monkeypatch.setenv("GITHUB_RUN_ATTEMPT", attempt)
+    monkeypatch.setenv(name, value)
     touched = False
 
     def forbidden(_environment: object) -> object:

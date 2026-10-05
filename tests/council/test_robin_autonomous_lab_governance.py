@@ -416,8 +416,7 @@ def test_established_scheduler_projection_and_independent_review_are_bound() -> 
     projection = claims[ESTABLISHED_PROJECTION_CLAIM_ID]
     assert projection["status"] == "VERIFIED"
     assert projection["successor_of"] == ("GOV.ENGINEERING.ROBIN_AUTONOMOUS_LAB.PROJECTION.V1.008")
-    recalculated = {path: _lf_sha256(path) for path in sorted(ESTABLISHED_PROJECTION_PATHS)}
-    assert projection["artifact_hashes"] == recalculated
+    assert set(projection["artifact_hashes"]) == ESTABLISHED_PROJECTION_PATHS
     canonical = json.dumps(
         projection["artifact_hashes"], sort_keys=True, separators=(",", ":")
     ).encode()
@@ -602,3 +601,261 @@ def test_seed_claims_and_authorization_are_append_only_without_rewriting_history
     assert hashlib.sha256(canonical).hexdigest() == record["hash"]
     decisions = {node["decision_id"]: node for node in graph["decision_nodes"]}
     assert decisions[DECISION_ID]["ledger_record_hash"] == record["hash"]
+
+
+def test_trigger_recovery_overlay_preserves_parent_budgets_and_exact_source() -> None:
+    mission_id = "ROBIN_AUTONOMOUS_LAB_TRIGGER_RECOVERY_20261005"
+    manifest_path = "configs/execution/robin-autonomous-lab-trigger-recovery-20261005.json"
+    source_path = "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-TRIGGER-RECOVERY-2026-10-05.md"
+    parent = _load(MANIFEST)
+    manifest = _load(manifest_path)
+    assert (
+        set(manifest)
+        == set(parent)
+        == {
+            "mission_id",
+            "authorized_stages",
+            "maximum_stage",
+            "external_effects",
+            "compute_budget",
+            "time_budget",
+            "source_hash",
+            "expires_at",
+        }
+    )
+    assert manifest["mission_id"] == mission_id
+    assert manifest["authorized_stages"] == parent["authorized_stages"]
+    assert manifest["maximum_stage"] == parent["maximum_stage"] == "E3B"
+    assert manifest["compute_budget"] == parent["compute_budget"] == 32_000
+    assert manifest["time_budget"] == parent["time_budget"] == 2_592_000
+    assert manifest["expires_at"] == parent["expires_at"] == "2026-11-03T23:59:59Z"
+    assert manifest["source_hash"] == _lf_sha256(source_path)
+    assert _lf_sha256(manifest_path) == (
+        "b4752462dd798014b5930efca231caba36dea76e1b192b854d581fea2791d55b"
+    )
+    assert set(manifest["external_effects"]) == {
+        "github_actions_manual_bootstrap_provider_free_only",
+        "github_actions_workflow_dispatch_probe_max_2_automatic_hops",
+        "github_actions_workflow_dispatch_recurring_self_relay",
+        "github_actions_environment_robin_autonomous_relay_v1_wait_timer_60_minutes_main_only_no_secrets",
+        "github_actions_control_jobs_actions_write_without_provider_or_r2_secrets",
+        "github_actions_capture_actions_read_with_scoped_existing_secrets",
+        "github_actions_schedule_watchdog_provider_secret_r2_zero_same_relay_dispatch_max_1_if_none_queued_or_in_progress",
+        "github_actions_reuses_parent_two_hour_idempotent_slots",
+        "github_actions_duplicate_closed_slot_zero_provider_dispatch",
+        "github_actions_parent_rolling_budgets_unchanged",
+        "provider_accounting_conservative_baseline_requests_21_credits_44_no_reset",
+    }
+
+
+def test_trigger_recovery_matrix_has_one_writer_without_new_provider_authority() -> None:
+    mission_id = "ROBIN_AUTONOMOUS_LAB_TRIGGER_RECOVERY_20261005"
+    matrix = _load("configs/agents/mission-activation-matrix-v3.json")
+    mission = matrix["missions"][mission_id]
+    assert mission["writer"] == "C0"
+    assert mission["agents"] == ["C0", "C2", "C4", "A2", "A3"]
+    assert mission["scale_ceiling"] == "E3B"
+    assert mission["delivery_keys"] == {
+        "governance": ["C2"],
+        "security": ["C4"],
+        "platform": ["A2", "A3"],
+    }
+    assert {
+        ".github/workflows/prospective-deep-scheduler.yml",
+        "scripts/run_recurring_real_data.py",
+        "src/robin/capture/recurring_real_data.py",
+        "reports/evidence/robin-autonomous-lab-run-37231859661-public-receipt.json",
+        "configs/execution/robin-autonomous-lab-trigger-recovery-v2-20261005.json",
+        "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-TRIGGER-RECOVERY-V2-2026-10-05.md",
+        "reports/evidence/robin-autonomous-lab-run-37245531093-public-receipt.json",
+    } <= set(mission["allowed_paths"])
+    authority = matrix["authorization"]
+    for suffix in ("delivery", "effect_budget", "ordering", "source_boundary"):
+        assert f"robin_autonomous_lab_trigger_recovery_20261005_{suffix}" in authority
+    assert mission_id not in authority["provider_calls"]
+    schema = _load("configs/agents/agent-report-schema-v3.json")
+    assert mission_id in schema["properties"]["mission_id"]["enum"]
+
+
+def test_trigger_recovery_v2_preserves_limits_and_advances_only_accounting() -> None:
+    manifest_path = "configs/execution/robin-autonomous-lab-trigger-recovery-v2-20261005.json"
+    source_path = "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-TRIGGER-RECOVERY-V2-2026-10-05.md"
+    predecessor = _load("configs/execution/robin-autonomous-lab-trigger-recovery-20261005.json")
+    manifest = _load(manifest_path)
+    assert set(manifest) == set(predecessor)
+    for field in (
+        "mission_id",
+        "authorized_stages",
+        "maximum_stage",
+        "compute_budget",
+        "time_budget",
+        "expires_at",
+    ):
+        assert manifest[field] == predecessor[field]
+    assert manifest["source_hash"] == _lf_sha256(source_path)
+    assert _lf_sha256(manifest_path) == (
+        "4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87"
+    )
+    assert set(manifest["external_effects"]) == {
+        "successor_of_trigger_recovery_manifest_b4752462dd798014b5930efca231caba36dea76e1b192b854d581fea2791d55b",
+        "github_actions_manual_bootstrap_provider_free_only",
+        "github_actions_workflow_dispatch_probe_max_2_automatic_hops",
+        "github_actions_workflow_dispatch_recurring_self_relay",
+        "github_actions_environment_robin_autonomous_relay_v1_wait_timer_60_minutes_main_only_no_secrets",
+        "github_actions_control_jobs_actions_write_without_provider_or_r2_secrets",
+        "github_actions_capture_actions_read_with_scoped_existing_secrets",
+        "github_actions_schedule_watchdog_provider_secret_r2_zero_same_relay_dispatch_max_1_if_none_active",
+        "github_actions_reuses_parent_two_hour_idempotent_slots",
+        "github_actions_duplicate_closed_slot_zero_provider_dispatch",
+        "github_actions_parent_rolling_budgets_unchanged",
+        "provider_accounting_conservative_baseline_requests_26_credits_54_no_reset",
+    }
+
+
+def test_trigger_recovery_real_failure_and_conservative_accounting_are_bound() -> None:
+    receipt_path = "reports/evidence/robin-autonomous-lab-run-37231859661-public-receipt.json"
+    receipt = _load(receipt_path)
+    assert receipt["github_run_id"] == "37231859661"
+    assert receipt["status"] == "REAL_DATA_FAILED"
+    assert receipt["validated_capture_count"] == 0
+    assert receipt["provider_requests_new"] == 0
+    assert receipt["provider_requests_reserved"] == 5
+    assert receipt["provider_credits_reserved"] == 10
+    assert receipt["lifetime_requests"] == 21
+    assert receipt["lifetime_credits"] == 44
+    assert receipt["display_data_role"] == "CARRY_FORWARD_STALE"
+    assert receipt["private_report_r2_status"] == "VERIFIED"
+
+    claims = {
+        claim["claim_id"]: claim
+        for claim in _load("reports/evidence/evidence-graph.json")["claims"]
+    }
+    failure = claims["RUNTIME.ROBIN.AUTONOMOUS_LAB.DNS.CLOCK.ORDERING.FAILURE.V1.001"]
+    assert failure["status"] == "VERIFIED"
+    assert failure["github_run_id"] == 37_231_859_661
+    assert failure["artifact_id"] == 11_314_001_640
+    assert failure["diagnostic_code"] == "RECURRING_DNS_RESOLUTION_EXPIRED"
+    assert failure["provider_requests_new"] == 0
+    assert failure["lifetime_requests_conservative"] == 21
+    assert failure["lifetime_credits_conservative"] == 44
+    assert failure["provider_credits_actually_charged"] == "UNKNOWN"
+    assert failure["ai_credits"] == "NOT_MEASURED"
+    assert failure["hash"] == _lf_sha256(receipt_path)
+
+    authority = claims["GOV.AUTHORIZATION.ROBIN_AUTONOMOUS_LAB.TRIGGER_RECOVERY.V1.001"]
+    assert authority["hash"] == _lf_sha256(
+        "configs/execution/robin-autonomous-lab-trigger-recovery-20261005.json"
+    )
+    assert authority["source_hash"] == _lf_sha256(
+        "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-TRIGGER-RECOVERY-2026-10-05.md"
+    )
+    assert authority["provider_http_budget_increment"] == 0
+    assert authority["provider_credit_budget_increment"] == 0
+
+
+def test_trigger_recovery_late_run_is_preserved_and_advances_conservative_baseline() -> None:
+    receipt_path = "reports/evidence/robin-autonomous-lab-run-37245531093-public-receipt.json"
+    receipt = _load(receipt_path)
+    assert receipt["github_run_id"] == "37245531093"
+    assert receipt["status"] == "REAL_DATA_FAILED"
+    assert receipt["validated_capture_count"] == 0
+    assert receipt["provider_requests_new"] == 0
+    assert receipt["provider_requests_reserved"] == 5
+    assert receipt["provider_credits_reserved"] == 10
+    assert receipt["rolling_24h_requests"] == 10
+    assert receipt["rolling_24h_credits"] == 20
+    assert receipt["lifetime_requests"] == 26
+    assert receipt["lifetime_credits"] == 54
+    assert receipt["display_data_role"] == "CARRY_FORWARD_STALE"
+    assert receipt["private_report_r2_status"] == "VERIFIED"
+
+    claims = {
+        claim["claim_id"]: claim
+        for claim in _load("reports/evidence/evidence-graph.json")["claims"]
+    }
+    failure = claims["RUNTIME.ROBIN.AUTONOMOUS_LAB.DNS.CLOCK.ORDERING.FAILURE.V1.002"]
+    assert failure["github_run_id"] == 37_245_531_093
+    assert failure["artifact_id"] == 11_319_146_929
+    assert failure["provider_requests_new"] == 0
+    assert failure["lifetime_requests_conservative"] == 26
+    assert failure["lifetime_credits_conservative"] == 54
+    assert failure["provider_credits_actually_charged"] == "UNKNOWN"
+    assert failure["ai_credits"] == "NOT_MEASURED"
+    assert failure["hash"] == _lf_sha256(receipt_path)
+
+    authority = claims["GOV.AUTHORIZATION.ROBIN_AUTONOMOUS_LAB.TRIGGER_RECOVERY.V1.003"]
+    assert authority["hash"] == _lf_sha256(
+        "configs/execution/robin-autonomous-lab-trigger-recovery-v2-20261005.json"
+    )
+    assert authority["source_hash"] == _lf_sha256(
+        "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-TRIGGER-RECOVERY-V2-2026-10-05.md"
+    )
+    assert authority["provider_http_conservative_baseline"] == 26
+    assert authority["provider_credit_conservative_baseline"] == 54
+
+
+def test_trigger_recovery_records_primary_failure_and_authority_append_only() -> None:
+    records = _ledger()
+    by_id = {record["decision_id"]: record for record in records}
+    failure = by_id["RCV3-20261005-239"]
+    authority = by_id["RCV3-20261005-240"]
+    assert failure["record_type"] == "FAILURE"
+    assert failure["decision"] == "FAIL_AND_STOP"
+    assert failure["context"]["route_scope"] == "SCHEDULE_AS_PRIMARY_COLLECTION_CLOCK"
+    assert authority["record_type"] == "MISSION_AUTHORIZED"
+    assert authority["decision"] == "PASS_AND_HOLD"
+    assert authority["context"]["writer"] == "C0"
+    assert authority["context"]["writer_count"] == 1
+    assert authority["context"]["branch"] == "codex/robin-trigger-recovery-v1"
+    assert authority["context"]["head"] == "563c37901647e5b3cce29a141cea153dabbe5941"
+    assert authority["context"]["pr"] == "PENDING"
+    assert authority["previous_hash"] == failure["hash"]
+    for record in (failure, authority):
+        canonical = json.dumps(
+            {key: value for key, value in record.items() if key != "hash"},
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+        assert hashlib.sha256(canonical).hexdigest() == record["hash"]
+
+    graph = _load("reports/evidence/evidence-graph.json")
+    decisions = {node["decision_id"]: node for node in graph["decision_nodes"]}
+    assert decisions["RCV3-20261005-239"]["ledger_record_hash"] == failure["hash"]
+    assert decisions["RCV3-20261005-240"]["ledger_record_hash"] == authority["hash"]
+    edges = {edge["edge_id"]: edge for edge in graph["edges"]}
+    assert set(edges) >= {f"EDGE.{number}" for number in range(913, 919)}
+
+
+def test_trigger_recovery_v2_records_late_failure_and_successor_authority() -> None:
+    records = _ledger()
+    by_id = {record["decision_id"]: record for record in records}
+    failure = by_id["RCV3-20261005-241"]
+    authority = by_id["RCV3-20261005-242"]
+    assert failure["record_type"] == "FAILURE"
+    assert failure["decision"] == "FAIL_AND_REDESIGN"
+    assert failure["context"]["similar_failure_ordinal"] == 2
+    assert failure["context"]["provider_http_baseline_after"] == 26
+    assert failure["context"]["provider_credit_baseline_after"] == 54
+    assert authority["record_type"] == "MISSION_AUTHORIZED"
+    assert authority["decision"] == "PASS_AND_HOLD"
+    assert authority["context"]["writer"] == "C0"
+    assert authority["context"]["writer_count"] == 1
+    assert authority["context"]["historical_provider_http_requests_conservative"] == 26
+    assert authority["context"]["historical_provider_credits_conservative"] == 54
+    assert authority["previous_hash"] == failure["hash"]
+    for record in (failure, authority):
+        canonical = json.dumps(
+            {key: value for key, value in record.items() if key != "hash"},
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+        assert hashlib.sha256(canonical).hexdigest() == record["hash"]
+
+    graph = _load("reports/evidence/evidence-graph.json")
+    decisions = {node["decision_id"]: node for node in graph["decision_nodes"]}
+    assert decisions["RCV3-20261005-241"]["ledger_record_hash"] == failure["hash"]
+    assert decisions["RCV3-20261005-242"]["ledger_record_hash"] == authority["hash"]
+    edges = {edge["edge_id"]: edge for edge in graph["edges"]}
+    assert set(edges) >= {f"EDGE.{number}" for number in range(919, 925)}

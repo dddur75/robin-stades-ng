@@ -163,6 +163,10 @@ class RecurringConfig:
     repository_sha: str
     github_run_id: str
     github_run_attempt: int
+    relay_generation: str
+    relay_chain_id: str
+    relay_parent_run_id: str
+    relay_sequence: int
     safety_environment: Mapping[str, str]
 
 
@@ -250,6 +254,13 @@ def _validate_config(config: RecurringConfig) -> None:
         re.fullmatch(r"[0-9a-f]{40}", config.repository_sha) is None
         or re.fullmatch(r"[1-9][0-9]{0,19}", config.github_run_id) is None
         or config.github_run_attempt != 1
+        or re.fullmatch(r"[0-9a-f]{64}", config.relay_generation) is None
+        or re.fullmatch(r"[1-9][0-9]{0,19}", config.relay_chain_id) is None
+        or re.fullmatch(r"[1-9][0-9]{0,19}", config.relay_parent_run_id) is None
+        or config.relay_parent_run_id == config.github_run_id
+        or not isinstance(config.relay_sequence, int)
+        or isinstance(config.relay_sequence, bool)
+        or not 1 <= config.relay_sequence <= 9_999_999_999
         or not config.output_directory.is_absolute()
     ):
         raise RecurringError("RECURRING_CONFIG_INVALID")
@@ -1811,7 +1822,7 @@ def _public_receipt(
     replayed: bool,
 ) -> dict[str, object]:
     accounting = cast(Mapping[str, object], report["accounting"])
-    return {
+    receipt: dict[str, object] = {
         "schema_version": "robin-autonomous-lab-public-receipt-v1",
         "mission_id": MISSION_ID,
         "claim_ids": _report_claim_ids(report),
@@ -1850,6 +1861,12 @@ def _public_receipt(
         "backfills": 0,
         "promotions": 0,
     }
+    lineage = report.get("relay_lineage")
+    if lineage is not None:
+        if not isinstance(lineage, Mapping):
+            raise RecurringError("RECURRING_REPORT_INVALID")
+        receipt["relay_lineage"] = dict(lineage)
+    return receipt
 
 
 def _read_existing_report(store: RecurringStore, *, slot: datetime) -> dict[str, object] | None:
@@ -2314,7 +2331,6 @@ def run_recurring_real_data(
 
     def provider_resolution() -> NetworkResolution:
         nonlocal resolution, resolution_attempted, resolution_error
-        now = ensure_utc(clock(), field="recurring_provider_access")
         if resolution_error is not None:
             raise RecurringError(resolution_error)
         if not resolution_attempted:
@@ -2334,6 +2350,7 @@ def run_recurring_real_data(
             resolution_error = "RECURRING_DNS_RESOLUTION_INVALID"
             raise RecurringError(resolution_error)
         try:
+            now = ensure_utc(clock(), field="recurring_provider_access")
             resolution.assert_current(now)
         except Exception:
             resolution_error = "RECURRING_DNS_RESOLUTION_EXPIRED"
@@ -2473,6 +2490,12 @@ def run_recurring_real_data(
         "claim_ids": list(RECURRING_CLAIM_IDS),
         "repository_sha": config.repository_sha,
         "github_run_id": config.github_run_id,
+        "relay_lineage": {
+            "generation": config.relay_generation,
+            "chain_id": config.relay_chain_id,
+            "parent_run_id": config.relay_parent_run_id,
+            "sequence": config.relay_sequence,
+        },
         "slot_start_utc": _iso_z(slot),
         "generated_at_utc": _iso_z(clock()),
         "status": status,

@@ -67,6 +67,10 @@ _OUTPUT_FILENAMES = (
     "robin-real-data.csv",
     "robin-real-data.html",
 )
+_RELAY_GENERATION = "4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87"
+_RELAY_WORKFLOW_REF = (
+    "dddur75/robin-stades-ng/.github/workflows/prospective-deep-scheduler.yml@refs/heads/main"
+)
 _HISTORICAL_RECEIPT_PATH = (
     Path(__file__).resolve().parents[1]
     / "reports/evidence/robin-real-data-result-run-37153158456-public-receipt.json"
@@ -90,22 +94,34 @@ def _required(environment: Mapping[str, str], name: str) -> str:
 
 def _validate_context(
     arguments: argparse.Namespace, environment: Mapping[str, str]
-) -> tuple[str, str, int]:
+) -> tuple[str, str, int, str, str, int]:
     if arguments.execute != MISSION_ID:
         raise RecurringError("RECURRING_EXECUTION_TOKEN_INVALID")
     if (
         environment.get("GITHUB_REPOSITORY") != "dddur75/robin-stades-ng"
         or environment.get("GITHUB_REF") != "refs/heads/main"
-        or environment.get("GITHUB_EVENT_NAME") != "schedule"
+        or environment.get("GITHUB_EVENT_NAME") != "workflow_dispatch"
+        or environment.get("GITHUB_ACTOR") != "github-actions[bot]"
+        or environment.get("GITHUB_WORKFLOW_REF") != _RELAY_WORKFLOW_REF
+        or environment.get("ROBIN_RELAY_MODE") != "collect"
+        or environment.get("ROBIN_RELAY_ORIGIN") != "relay"
+        or environment.get("ROBIN_RELAY_GENERATION") != _RELAY_GENERATION
     ):
         raise RecurringError("RECURRING_GITHUB_CONTEXT_INVALID")
     repository_sha = _required(environment, "GITHUB_SHA")
     github_run_id = _required(environment, "GITHUB_RUN_ID")
     run_attempt_text = _required(environment, "GITHUB_RUN_ATTEMPT")
+    chain_id = _required(environment, "ROBIN_RELAY_CHAIN_ID")
+    parent_run_id = _required(environment, "ROBIN_RELAY_PARENT_RUN_ID")
+    sequence = _required(environment, "ROBIN_RELAY_SEQUENCE")
     if (
         re.fullmatch(r"[0-9a-f]{40}", repository_sha) is None
         or re.fullmatch(r"[1-9][0-9]{0,19}", github_run_id) is None
         or run_attempt_text != "1"
+        or re.fullmatch(r"[1-9][0-9]{0,19}", chain_id) is None
+        or re.fullmatch(r"[1-9][0-9]{0,19}", parent_run_id) is None
+        or re.fullmatch(r"[1-9][0-9]{0,9}", sequence) is None
+        or parent_run_id == github_run_id
     ):
         raise RecurringError("RECURRING_GITHUB_CONTEXT_INVALID")
     output = arguments.output_directory
@@ -116,7 +132,7 @@ def _validate_context(
         or any((output / name).exists() for name in _OUTPUT_FILENAMES)
     ):
         raise RecurringError("RECURRING_OUTPUT_DIRECTORY_INVALID")
-    return repository_sha, github_run_id, 1
+    return repository_sha, github_run_id, 1, chain_id, parent_run_id, int(sequence)
 
 
 def _mapping(data: bytes, code: str) -> dict[str, object]:
@@ -375,9 +391,14 @@ def main(argv: list[str] | None = None) -> int:
     arguments = _parser().parse_args(argv)
     environment = dict(os.environ)
     try:
-        repository_sha, github_run_id, github_run_attempt = _validate_context(
-            arguments, environment
-        )
+        (
+            repository_sha,
+            github_run_id,
+            github_run_attempt,
+            relay_chain_id,
+            relay_parent_run_id,
+            relay_sequence,
+        ) = _validate_context(arguments, environment)
         safety_environment = {name: environment.get(name, "") for name in SAFETY_LOCKS}
         store = ChronosR2ConditionalStore.from_environment(environment)
 
@@ -390,6 +411,10 @@ def main(argv: list[str] | None = None) -> int:
             repository_sha=repository_sha,
             github_run_id=github_run_id,
             github_run_attempt=github_run_attempt,
+            relay_generation=_RELAY_GENERATION,
+            relay_chain_id=relay_chain_id,
+            relay_parent_run_id=relay_parent_run_id,
+            relay_sequence=relay_sequence,
             safety_environment=safety_environment,
         )
         recover_latest_report(

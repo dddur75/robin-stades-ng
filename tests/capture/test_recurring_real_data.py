@@ -276,6 +276,10 @@ def _config(tmp_path: Path, run_id: str = "40000000001") -> RecurringConfig:
         repository_sha="b" * 40,
         github_run_id=run_id,
         github_run_attempt=1,
+        relay_generation="1" * 64,
+        relay_chain_id="39999999999",
+        relay_parent_run_id="39999999998",
+        relay_sequence=2,
         safety_environment=SAFETY,
     )
 
@@ -323,6 +327,10 @@ def test_latest_recovery_checks_expiry_before_any_r2_mutation(tmp_path: Path) ->
         repository_sha=base.repository_sha,
         github_run_id=base.github_run_id,
         github_run_attempt=base.github_run_attempt,
+        relay_generation=base.relay_generation,
+        relay_chain_id=base.relay_chain_id,
+        relay_parent_run_id=base.relay_parent_run_id,
+        relay_sequence=base.relay_sequence,
         safety_environment=base.safety_environment,
     )
     store = FakeStore()
@@ -536,6 +544,78 @@ def test_five_leagues_are_captured_read_back_and_duplicate_run_replays(
     assert second["rolling_24h_credits"] == first["rolling_24h_credits"]
     assert len(transport.requests) == 5
     assert secret.reads == resolutions == 1
+
+
+def test_dns_resolution_is_checked_with_time_observed_after_resolver_returns(
+    tmp_path: Path,
+) -> None:
+    store = FakeStore()
+    ticks = 0
+
+    def advancing_clock() -> datetime:
+        nonlocal ticks
+        observed = START + timedelta(milliseconds=ticks)
+        ticks += 1
+        return observed
+
+    def resolve() -> NetworkResolution:
+        return _resolution(advancing_clock())
+
+    transport = FakeTransportFactory(advancing_clock)
+    receipt = run_recurring_real_data(
+        _config(tmp_path),
+        store=store,
+        transport_factory=transport,
+        secret_reader=FakeSecretReader(),
+        resolver=resolve,
+        clock=advancing_clock,
+    )
+
+    assert receipt["status"] == "REAL_DATA_COMPLETE"
+    assert receipt["validated_capture_count"] == 5
+    assert receipt["provider_requests_new"] == 5
+    assert len(transport.requests) == 5
+    expected_lineage = {
+        "generation": "1" * 64,
+        "chain_id": "39999999999",
+        "parent_run_id": "39999999998",
+        "sequence": 2,
+    }
+    report = json.loads(store.objects[receipt["private_report_r2_key"]].data)
+    assert receipt["relay_lineage"] == expected_lineage
+    assert report["relay_lineage"] == expected_lineage
+
+
+def test_truly_expired_dns_resolution_still_blocks_every_provider_request(
+    tmp_path: Path,
+) -> None:
+    store = FakeStore()
+    secret = FakeSecretReader()
+    transport = FakeTransportFactory(lambda: START)
+    calls = 0
+
+    def expired_resolution() -> NetworkResolution:
+        nonlocal calls
+        calls += 1
+        return _resolution(START - timedelta(minutes=16))
+
+    receipt = run_recurring_real_data(
+        _config(tmp_path),
+        store=store,
+        transport_factory=transport,
+        secret_reader=secret,
+        resolver=expired_resolution,
+        clock=lambda: START,
+    )
+
+    report = json.loads(store.objects[receipt["private_report_r2_key"]].data)
+    assert receipt["status"] == "REAL_DATA_FAILED"
+    assert calls == 1
+    assert secret.reads == 0
+    assert transport.requests == []
+    assert {branch["diagnostic"]["code"] for branch in report["branches"]} == {
+        "RECURRING_DNS_RESOLUTION_EXPIRED"
+    }
 
 
 def test_duplicate_replay_requires_private_report_metadata_digest(
