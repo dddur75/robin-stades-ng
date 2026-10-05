@@ -941,3 +941,119 @@ def test_trigger_recovery_provider_free_probe_opens_only_e2_after_two_hops() -> 
     assert decisions["RCV3-20261005-250"]["ledger_record_hash"] == scale["hash"]
     edges = {edge["edge_id"]: edge for edge in graph["edges"]}
     assert set(edges) >= {f"EDGE.{number}" for number in range(943, 948)}
+
+
+def test_automatic_capture_replay_capture_receipts_close_only_observed_e2() -> None:
+    graph = _load("reports/evidence/evidence-graph.json")
+    claims = {claim["claim_id"]: claim for claim in graph["claims"]}
+    captures = claims["DATA.ROBIN.AUTONOMOUS_LAB.RECURRING_CAPTURES.V1.002"]
+    view = claims["DATA.ROBIN.AUTONOMOUS_LAB.RECURRING_VIEW.V1.002"]
+    consumption = claims["GOV.ROBIN.AUTONOMOUS_LAB.RECURRING_CONSUMPTION.V1.002"]
+    runs = captures["automatic_runs"]
+    assert len(runs) == 3
+    assert [run["sequence"] for run in runs] == [2, 3, 4]
+    assert len({run["run_id"] for run in runs}) == 3
+    generation = _lf_sha256(
+        "configs/execution/robin-autonomous-lab-trigger-recovery-v2-20261005.json"
+    )
+    for run in runs:
+        assert run["event"] == "workflow_dispatch"
+        assert run["actor"] == run["triggering_actor"] == "github-actions[bot]"
+        assert run["conclusion"] == "success"
+        assert run["run_attempt"] == 1
+        assert run["generation"] == generation
+        assert run["chain_id"] == "37262108579"
+        assert run["head_sha"] == "8f21c7c1be5f18721de4859acbd84751e072183f"
+        assert run["successor_created_at_utc"] <= run["relay_completed_at_utc"]
+        assert run["relay_completed_at_utc"] <= run["capture_started_at_utc"]
+    paths = [
+        f"reports/evidence/robin-autonomous-lab-run-{run['run_id']}-public-receipt.json"
+        for run in runs
+    ]
+    mission = _load("configs/agents/mission-activation-matrix-v3.json")["missions"][
+        "ROBIN_AUTONOMOUS_LAB_TRIGGER_RECOVERY_20261005"
+    ]
+    assert set(paths) <= set(mission["allowed_paths"])
+    receipts = [_load(path) for path in paths]
+    first, replay, last = receipts
+    assert [r["delivery_github_run_id"] for r in receipts] == [str(run["run_id"]) for run in runs]
+    assert [r["github_run_id"] for r in receipts] == [
+        str(runs[0]["run_id"]),
+        str(runs[0]["run_id"]),
+        str(runs[2]["run_id"]),
+    ]
+    assert [r["replayed_existing_slot"] for r in receipts] == [False, True, False]
+    assert [r["provider_requests_new"] for r in receipts] == [5, 0, 5]
+    for field in (
+        "slot_start_utc",
+        "capture_times_utc",
+        "private_report_r2_key",
+        "private_report_r2_sha256",
+        "relay_lineage",
+        "csv_sha256",
+        "lifetime_requests",
+        "lifetime_credits",
+    ):
+        assert first[field] == replay[field]
+    assert first["slot_start_utc"] < last["slot_start_utc"]
+    for field in ("private_report_r2_key", "private_report_r2_sha256"):
+        assert first[field] != last[field]
+    assert last["lifetime_requests"] == first["lifetime_requests"] + 5
+    assert last["lifetime_credits"] == first["lifetime_credits"] + 10
+    for receipt in receipts:
+        assert receipt["mission_id"] == MISSION_ID
+        assert receipt["status"] in {"REAL_DATA_COMPLETE", "REAL_DATA_PARTIAL"}
+        assert receipt["validated_capture_count"] == 5
+        assert receipt["incomplete_branch_count"] == 0
+        assert receipt["market_branch_coverage"] == {"h2h": 5, "totals": 5}
+        assert receipt["display_data_role"] == "CURRENT"
+        assert receipt["row_count"] == receipt["display_row_count"] > 0
+        assert receipt["private_report_r2_status"] == "VERIFIED"
+        assert receipt["credit_bound_valid"] is True
+        assert receipt["provider_requests_reserved"] == 5
+        assert receipt["provider_credits_reserved"] == 10
+        assert receipt["rolling_24h_requests"] <= 140
+        assert receipt["rolling_24h_credits"] <= 280
+        assert receipt["rolling_30d_requests"] <= 4000
+        assert receipt["rolling_30d_credits"] <= 8000
+        for field in ("automatic_retries", "purchases", "real_bets", "backfills", "promotions"):
+            assert receipt[field] == 0
+    expected_hashes = {path: _lf_sha256(path) for path in paths}
+    for claim in (captures, view, consumption):
+        assert claim["status"] == "VERIFIED"
+        assert claim["receipt_hashes"] == expected_hashes
+        assert claims[claim["successor_of"]]["status"] == "PARTIAL"
+        assert claim["stability_24h"] == "TO_OBSERVE"
+    assert consumption["provider_http_requests_new"] == 10
+    assert consumption["provider_credits_reserved_increment"] == 20
+    assert consumption["provider_credits_actually_charged"] == "UNKNOWN"
+    assert consumption["ai_credits"] == "NOT_MEASURED"
+
+    projection = claims["GOV.ENGINEERING.ROBIN_AUTONOMOUS_LAB.PROJECTION.V1.015"]
+    assert projection["artifact_path_count"] == 24
+    assert projection["artifact_hashes"] == {
+        path: _lf_sha256(path) for path in projection["artifact_hashes"]
+    }
+    review = claims["GOV.REVIEW.ROBIN_AUTONOMOUS_LAB.FINAL.V1.014"]
+    assert (
+        review["candidate_engineering_projection_sha256"]
+        == projection["engineering_projection_sha256"]
+    )
+    assert review["hash"] == _lf_sha256(review["artifact"])
+    assert review["p0_findings"] == review["p1_findings"] == 0
+    decision = next(r for r in _ledger() if r["decision_id"] == "RCV3-20261005-253")
+    assert decision["record_type"] == "STAGE_FINISHED"
+    assert decision["decision"] == "PASS_AND_HOLD"
+    assert decision["context"]["current_stage"] == "E2"
+    assert decision["context"]["outcome"] == "AUTOMATIC_CAPTURE_REPLAY_CAPTURE_VERIFIED"
+    assert decision["context"]["stability_24h"] == "TO_OBSERVE"
+    assert decision["context"]["continuation"] == "E2_WITHIN_EXISTING_AUTHORITY"
+    canonical = json.dumps(
+        {key: value for key, value in decision.items() if key != "hash"},
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode()
+    assert decision["hash"] == hashlib.sha256(canonical).hexdigest()
+    nodes = {node["decision_id"]: node for node in graph["decision_nodes"]}
+    assert nodes[decision["decision_id"]]["ledger_record_hash"] == decision["hash"]

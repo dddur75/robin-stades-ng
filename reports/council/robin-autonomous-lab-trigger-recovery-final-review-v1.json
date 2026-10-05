@@ -3,119 +3,125 @@
   "mission_id": "ROBIN_AUTONOMOUS_LAB_TRIGGER_RECOVERY_20261005",
   "facts_verified": [
     {
-      "claim": "Le run schedule tardif 37245531093 est conservé sous forme de receipt expurgé: zéro capture, zéro requête fournisseur émise, cinq branches incomplètes, rapport privé R2 vérifié et baseline conservatrice portée à 26 requêtes et 54 crédits.",
+      "claim": "Le correctif DNS, le relay et ses contrôles inchangés sont fusionnés par PR89 sur main 8f21c7c1be5f18721de4859acbd84751e072183f; la CI requise 37257455182 est verte. Les revues runtime, autorité et sécurité restent applicables.",
       "evidence_refs": [
-        "reports/evidence/robin-autonomous-lab-run-37245531093-public-receipt.json",
-        "RUNTIME.ROBIN.AUTONOMOUS_LAB.DNS.CLOCK.ORDERING.FAILURE.V1.002",
-        "RCV3-20261005-241"
+        "https://github.com/dddur75/robin-stades-ng/pull/89",
+        "https://github.com/dddur75/robin-stades-ng/actions/runs/37257455182"
       ],
       "status": "VERIFIED"
     },
     {
-      "claim": "Le runtime contrôle désormais la fraîcheur DNS après le retour du résolveur; une résolution fraîche avec horloge croissante réussit, tandis qu'une résolution réellement expirée reste refusée avant lecture du secret et transport.",
+      "claim": "L’environnement GitHub est configuré à 60 minutes, main uniquement, sans secret ni variable. Les deux sauts provider-free sont réussis et l’activation E2 est déjà autorisée sans réinitialiser les compteurs.",
       "evidence_refs": [
-        "src/robin/capture/recurring_real_data.py",
-        "tests/capture/test_recurring_real_data.py",
-        "revue indépendante A2 du défaut DNS"
+        "GOV.SCHEDULER.ROBIN_AUTONOMOUS_LAB.RELAY.PROBE.V1.001",
+        "RCV3-20261005-250",
+        "RCV3-20261005-252"
       ],
       "status": "VERIFIED"
     },
     {
-      "claim": "Le workflow établi sépare le watchdog schedule et le bootstrap manuels, tous deux sans fournisseur, du relay automatique; seuls les relays valides de github-actions[bot] peuvent atteindre le job capture.",
+      "claim": "Trois runs automatiques consécutifs seq2/3/4 ont réussi: capture, rejeu R2 sans nouvel appel, capture du créneau suivant. Chaque successeur a été créé avant le démarrage du job capture. Ni le bootstrap manuel ni le watchdog ne sont comptés comme capture autonome.",
       "evidence_refs": [
-        ".github/workflows/prospective-deep-scheduler.yml",
-        "tests/capture/test_recurring_real_data_workflow.py",
-        "revue indépendante A2 du relay"
+        "DATA.ROBIN.AUTONOMOUS_LAB.RECURRING_CAPTURES.V1.002",
+        "https://github.com/dddur75/robin-stades-ng/actions/runs/37266365621",
+        "https://github.com/dddur75/robin-stades-ng/actions/runs/37270952996",
+        "https://github.com/dddur75/robin-stades-ng/actions/runs/37276237875"
       ],
       "status": "VERIFIED"
     },
     {
-      "claim": "Chaque relay arme et observe exactement un successeur avant la collecte, valide génération, chaîne, parent et séquence, et sérialise le circuit fournisseur sans réinitialiser les compteurs durables.",
+      "claim": "Les rapports privés des créneaux 06:00Z et 08:00Z ont été conservés puis relus avec vérification SHA-256 dans R2. Le rejeu conserve le rapport privé, le CSV, les horodatages de capture et les compteurs du premier créneau; son delivery_github_run_id est distinct.",
       "evidence_refs": [
-        ".github/workflows/prospective-deep-scheduler.yml",
-        "scripts/run_recurring_real_data.py",
-        "src/robin/capture/recurring_real_data.py",
-        "tests/capture/test_run_recurring_real_data_cli.py"
+        "reports/evidence/robin-autonomous-lab-run-37266365621-public-receipt.json",
+        "reports/evidence/robin-autonomous-lab-run-37270952996-public-receipt.json",
+        "reports/evidence/robin-autonomous-lab-run-37276237875-public-receipt.json"
       ],
       "status": "VERIFIED"
     },
     {
-      "claim": "Le relay vérifie avant exécution le wait_timer exact et la politique de branche main; le mode probe impose une minute et le mode collecte soixante minutes.",
+      "claim": "La dernière livraison réelle contient 7731 lignes, 96 matchs et 25 bookmakers sur cinq ligues et H2H/totals; cinq branches validées, aucune branche incomplète, aucun incident ni doublon. Les 820 marchés absents ne sont pas des pannes. Les captures datent de 08:12:05 à 08:12:12Z; les sources de 08:07:46 à 08:12:07Z.",
       "evidence_refs": [
-        ".github/workflows/prospective-deep-scheduler.yml",
-        "tests/capture/test_recurring_real_data_workflow.py",
-        "revue indépendante A2 après correction de représentation des protection_rules"
+        "DATA.ROBIN.AUTONOMOUS_LAB.RECURRING_VIEW.V1.002",
+        "reports/evidence/robin-autonomous-lab-run-37276237875-public-receipt.json"
       ],
       "status": "VERIFIED"
     },
     {
-      "claim": "L'environnement cible n'existe pas encore; l'absence de secrets et de variables reste une précondition externe à vérifier par inventaire GitHub lors de sa création, avant tout bootstrap.",
+      "claim": "Le contrôle indépendant des représentations JSON/CSV, des hashes livrés, du grain, des prix finis, des dates et des motifs sensibles passe. Le statut PARTIAL conserve l’absence de certains marchés. Les données historiques restent historiques.",
       "evidence_refs": [
-        "GitHub environment robin-autonomous-relay-v1: 404 avant création",
-        "revue indépendante A2 du relay",
-        "GOV.AUTHORIZATION.ROBIN_AUTONOMOUS_LAB.TRIGGER_RECOVERY.V1.002"
-      ],
-      "status": "BLOCKED"
-    },
-    {
-      "claim": "La lignée relay est transportée jusqu'au rapport privé et au receipt public afin qu'un run soit attribuable à sa génération, sa chaîne, son parent et sa séquence sans exposer de secret.",
-      "evidence_refs": [
-        "src/robin/capture/recurring_real_data.py",
-        "scripts/run_recurring_real_data.py",
-        "tests/capture/test_recurring_real_data.py",
-        "tests/capture/test_run_recurring_real_data_cli.py"
+        "DATA.ROBIN.AUTONOMOUS_LAB.RECURRING_VIEW.V1.002",
+        "reports/evidence/robin-autonomous-lab-run-37276237875-public-receipt.json"
       ],
       "status": "VERIFIED"
     },
     {
-      "claim": "Le lot runtime, CLI, workflow et gouvernance passe 120 tests ciblés sans tentative réseau non autorisée. L'unique suite complète a donné 3722 succès, 33 skips de plateforme et un défaut de succession de preuve; après liaison append-only, le nœud exact puis 60 tests Council passent. Ruff format, Ruff check et git diff --check passent également.",
+      "claim": "Exploration descriptive: 7661 offres appariées entre 06:00Z et 08:00Z, dont 438 cotes modifiées et 7223 inchangées; 70 offres nouvelles non appariées. Il ne s’agit ni d’un edge validé ni d’une preuve causale.",
       "evidence_refs": [
-        "pytest ciblé C0: 120 passed; UNAPPROVED_NETWORK_ATTEMPTS=0",
-        "suite complète unique: 3722 passed, 33 skipped, 1 evidence-successor coverage failure",
-        "correction append-only: exact node 1 passed puis Council 60 passed",
-        "ruff format --check: 7 files already formatted",
-        "ruff check: All checks passed",
-        "revue indépendante A2 consolidée"
+        "DATA.ROBIN.AUTONOMOUS_LAB.RECURRING_VIEW.V1.002",
+        "reports/evidence/robin-autonomous-lab-run-37276237875-public-receipt.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le triplet décisif ajoute 10 requêtes et 20 crédits réservés, pas 15/30: le rejeu ajoute zéro. Derniers compteurs conservateurs: 25/50 sur 24h et 41/84 sur 30 jours et cumulés. Solde fournisseur observé dans la dernière réponse: 19939; plancher conservateur 19919. Le solde ne reconstitue pas la facturation historique.",
+      "evidence_refs": [
+        "GOV.ROBIN.AUTONOMOUS_LAB.RECURRING_CONSUMPTION.V1.002",
+        "reports/evidence/robin-autonomous-lab-run-37266365621-public-receipt.json",
+        "reports/evidence/robin-autonomous-lab-run-37270952996-public-receipt.json",
+        "reports/evidence/robin-autonomous-lab-run-37276237875-public-receipt.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le watchdog schedule 37268103904 s’est exécuté sans créer de chaîne concurrente pendant le relay actif. L’absence antérieure d’événement ne permet pas de conclure à une panne générale de GitHub.",
+      "evidence_refs": [
+        "https://github.com/dddur75/robin-stades-ng/actions/runs/37268103904"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le nouveau test passe après son état rouge initial. Council autonome, graphe/journal et Historical Deep tamper: 24 passed avec PYTHONPATH=src du worktree. Ruff check/format et diff --check passent; les préfixes historiques du graphe et du ledger sont inchangés. Les filtres, l’état vide et le reset du tableau sont vérifiés, sans erreur console.",
+      "evidence_refs": [
+        "tests/council/test_robin_autonomous_lab_governance.py",
+        "tests/council/test_robin_council_os_v3.py::test_evidence_graph_and_append_only_ledger_have_mandatory_fields",
+        "tests/historical_deep/test_coverage_proof_export.py::test_canonical_journal_suffix_parser_and_exact_grants_fail_closed"
       ],
       "status": "VERIFIED"
     }
   ],
   "unknowns": [
-    "Les contrôles exact-head du futur commit n'existent pas encore.",
-    "L'environnement GitHub robin-autonomous-relay-v1 n'est pas encore matérialisé ni relu sur le main fusionné.",
-    "Les deux sauts automatiques provider-free puis les cycles de collecte automatique restent à observer.",
-    "Aucune nouvelle capture réelle n'a encore été reçue avec le runtime corrigé.",
-    "Les crédits fournisseur réellement débités par les échecs historiques sont inconnus; les réservations conservatrices restent comptées. Les crédits IA sont non mesurés."
+    "La stabilité de 24 heures reste TO_OBSERVE; les cycles démontrent un fonctionnement sur une fenêtre plus courte.",
+    "Le débit réellement facturé des échecs historiques reste UNKNOWN; les réservations incertaines sont conservées. Les crédits IA sont non mesurés.",
+    "Les contrôles exact-head de cette clôture de preuves restent requis avant fusion; aucune nouvelle validation runtime complète locale n’est justifiée.",
+    "Le tableau localhost est une livraison consultable locale. Les artifacts normalisés et la dernière référence privée R2 sont actualisés par GitHub; aucune nouvelle publication publique n’est créée.",
+    "Le premier essai local importait un ancien worktree editable; PYTHONPATH=src a corrigé la provenance du module sans modification de code. Affichage étroit vérifié; override de largeur normale non honoré par l’hôte, non revendiqué."
   ],
   "assumptions": [
-    "Le candidat reste inchangé après le calcul de sa projection, hors liaisons append-only qui référencent cette projection.",
-    "La configuration de l'environnement sera relue avant le bootstrap et le mode collecte restera interdit jusqu'à une décision PASS_AND_SCALE distincte après la sonde."
+    "Le même runtime déjà revu est conservé; le lot de clôture ne change ni workflow, ni transport, ni manifeste, ni plafond."
   ],
-  "main_objection": "PASS_AND_HOLD: aucun P0 ou P1 résiduel n'est connu dans le candidat, mais l'autonomie et la reprise des données ne seront revendiquées qu'après CI, fusion, sonde automatique à deux sauts, décision de montée en charge et réception R2 vérifiée.",
+  "main_objection": "PASS_AND_HOLD au stade E2: l’autonomie capture-rejeu-capture est observée; aucune montée d’étape ni déclaration de stabilité 24h n’est autorisée par cette clôture.",
   "risks": [
     {
-      "risk": "Une configuration d'environnement différente du contrat pourrait autoriser un délai, une branche ou une surface de secret inattendus; le workflow doit rester fail-closed sur sa relecture exacte.",
-      "severity": "HIGH",
+      "risk": "Une fusion change main; un relay en attente sur l’ancien SHA doit être remplacé par un bootstrap provider-free après inspection, sans circuit fournisseur concurrent.",
+      "severity": "MEDIUM",
       "evidence_refs": [
-        ".github/workflows/prospective-deep-scheduler.yml",
-        "tests/capture/test_recurring_real_data_workflow.py"
+        ".github/workflows/prospective-deep-scheduler.yml"
       ]
     },
     {
-      "risk": "GitHub peut retarder un watchdog schedule; après bootstrap, la chaîne relay avec wait timer devient l'horloge primaire et le watchdog ne fait qu'un réarmement provider-free dédupliqué.",
+      "risk": "Les absences bookmaker/marché et les changements de prix ne démontrent aucune exploitabilité scientifique.",
       "severity": "MEDIUM",
       "evidence_refs": [
-        "GOV.SCHEDULER.ROBIN_AUTONOMOUS_LAB.NON_MATERIALIZATION.V1.003",
-        ".github/workflows/prospective-deep-scheduler.yml"
+        "DATA.ROBIN.AUTONOMOUS_LAB.RECURRING_VIEW.V1.002"
       ]
     }
   ],
-  "minimum_decisive_test": "Obtenir une CI exact-head verte et une fusion normale, configurer puis relire l'environnement exact, observer deux relays automatiques provider-free de la même chaîne sans capture, enregistrer PASS_AND_SCALE, puis recevoir, conserver et relire au moins une nouvelle capture avant de poursuivre les cycles distincts.",
-  "recommended_action": "PASS_AND_HOLD la projection trigger-recovery V1.012 pour commit C0, CI et fusion normale; exécuter ensuite la sonde provider-free, matérialiser la décision de montée en charge append-only, puis laisser le relay collecter sous les plafonds hérités.",
-  "scale_condition": "Deux sauts automatiques provider-free valides, environnement relu, aucun doublon actif et compteurs conservés; après PASS_AND_SCALE, chaque collecte doit vérifier son stockage R2 et sa relecture avant que le relay suivant puisse servir de preuve de fonctionnement récurrent.",
-  "estimated_compute": "120 tests ciblés C0, une suite complète unique (3722 succès, 33 skips, un défaut de liaison), puis 60 tests Council après correction append-only; aucune seconde suite complète locale, les contrôles exact-head restant à exécuter en CI.",
-  "estimated_external_cost": "Préparation et revue du candidat: zéro nouvelle requête fournisseur et zéro nouveau crédit fournisseur. Baseline conservatrice cumulée: 26 requêtes et 54 crédits; débit réel des échecs historiques inconnu. Crédits IA: non mesurés.",
-  "estimated_human_time": "Aucune intervention utilisateur attendue; CI, wait timers et observation des cycles sont passifs.",
-  "maintenance_impact": "Un seul circuit fournisseur demeure; un relay durable remplace schedule comme horloge primaire, schedule devient watchdog provider-free, et la lignée de chaque run est portée par les receipts existants.",
-  "confidence": 0.97
+  "minimum_decisive_test": "Vérifier les trois receipts et les métadonnées GitHub: delivery IDs distincts, source IDs A/A/C, replay false/true/false, appels 5/0/5, clés R2 A/A/C, compteurs A=B puis C=A+5/+10. Vérifier les successors, hashes et le journal canonique par le test Council ciblé.",
+  "recommended_action": "Terminer la revue indépendante consolidée, committer C0, exécuter la CI obligatoire et fusionner normalement. Continuer E2 dans l’autorité existante.",
+  "scale_condition": "Maintien E2 sous les plafonds hérités et les veto Council; stabilité 24h à observer, aucun pari, backfill, achat ou promotion.",
+  "estimated_compute": "Validation locale des artifacts A/B/C et test consolidé Council; réutilisation des contrôles runtime inchangés. Une seule suite complète par les contrôles obligatoires du commit.",
+  "estimated_external_cost": "Triplet décisif: 10 nouvelles requêtes fournisseur, 20 crédits réservés. Depuis la baseline 26/54: 15 nouvelles requêtes et 30 crédits réservés incluant seq1. Cumul conservateur 41/84. Facturation historique UNKNOWN. Crédits IA: non mesurés.",
+  "estimated_human_time": "Aucune intervention utilisateur; attente GitHub et CI passive. Aucun renouvellement du budget de trois heures actives.",
+  "maintenance_impact": "Huit fichiers de clôture, un seul rapport consolidé existant, aucune nouvelle couche runtime ou de gouvernance. Les V1.001 restent PARTIAL dans l’historique.",
+  "confidence": 0.98
 }
