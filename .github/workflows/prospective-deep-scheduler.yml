@@ -1,16 +1,59 @@
 name: "61 - Robin autonomous lab — established scheduler"
+run-name: robin-${{ inputs.mode || 'watchdog' }}-${{ inputs.origin || 'schedule' }}-${{ inputs.generation || 'none' }}-${{ inputs.chain_id || github.run_id }}-${{ inputs.sequence || '0' }}
 
 on:
   schedule:
     - cron: "13 * * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Provider-free probe or admitted recurring collection"
+        required: true
+        type: choice
+        default: probe
+        options:
+          - probe
+          - collect
+      origin:
+        description: "Manual bootstrap or automatic relay"
+        required: true
+        type: choice
+        default: bootstrap
+        options:
+          - bootstrap
+          - relay
+      generation:
+        description: "Immutable trigger-recovery manifest SHA-256"
+        required: true
+        type: string
+        default: "4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87"
+      chain_id:
+        description: "Root GitHub run id (automatic relays only)"
+        required: true
+        type: string
+        default: "0"
+      parent_run_id:
+        description: "Direct parent GitHub run id (automatic relays only)"
+        required: true
+        type: string
+        default: "0"
+      sequence:
+        description: "Monotonic relay sequence (automatic relays only)"
+        required: true
+        type: string
+        default: "0"
 
 permissions:
-  actions: read
   contents: read
 
 concurrency:
-  group: robin-autonomous-lab-20261004-global
-  cancel-in-progress: false
+  group: >-
+    robin-autonomous-lab-20261005-${{
+      github.event_name == 'schedule' && 'seed-control' ||
+      (inputs.origin == 'bootstrap' && 'seed-control' ||
+      (inputs.origin == 'relay' && github.actor == 'github-actions[bot]' && 'relay' || github.run_id))
+    }}
+  queue: max
 
 env:
   STORAGE_PAUSED: "true"
@@ -25,11 +68,319 @@ env:
   PIP_DISABLE_PIP_VERSION_CHECK: "1"
 
 jobs:
-  capture:
+  bootstrap:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      inputs.origin == 'bootstrap' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1
+    permissions:
+      actions: write
+      contents: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+          ref: ${{ github.sha }}
+
+      - name: Validate provider-free bootstrap and dispatch first automatic relay
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MODE: ${{ inputs.mode }}
+          ORIGIN: ${{ inputs.origin }}
+          GENERATION: ${{ inputs.generation }}
+          CHAIN_ID: ${{ inputs.chain_id }}
+          PARENT_RUN_ID: ${{ inputs.parent_run_id }}
+          SEQUENCE: ${{ inputs.sequence }}
+          ACTIVE_GENERATION: ${{ vars.ROBIN_AUTONOMOUS_RELAY_GENERATION }}
+          EXPECTED_GENERATION: "4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87"
+          EXPECTED_SOURCE_SHA256: "1bd2073ac01f68fbaa1de9c190642245c2bf8acf7c3611f69f706159df96821d"
+          EXPECTED_EXPIRES_AT: "2026-11-03T23:59:59Z"
+        run: |
+          set -euo pipefail
+          umask 077
+          [[ "$GITHUB_REPOSITORY" == "dddur75/robin-stades-ng" ]]
+          [[ "$GITHUB_REF" == "refs/heads/main" ]]
+          [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]
+          [[ "$GITHUB_ACTOR" == "dddur75" ]]
+          [[ "$GITHUB_RUN_ATTEMPT" == "1" ]]
+          [[ "$GITHUB_WORKFLOW_REF" == "dddur75/robin-stades-ng/.github/workflows/prospective-deep-scheduler.yml@refs/heads/main" ]]
+          [[ "$MODE" == "probe" || "$MODE" == "collect" ]]
+          [[ "$ORIGIN" == "bootstrap" ]]
+          [[ "$GENERATION" == "$EXPECTED_GENERATION" ]]
+          [[ "$CHAIN_ID" == "0" && "$PARENT_RUN_ID" == "0" && "$SEQUENCE" == "0" ]]
+          [[ "$(sha256sum configs/execution/robin-autonomous-lab-trigger-recovery-v2-20261005.json | cut -d' ' -f1)" == "$EXPECTED_GENERATION" ]]
+          [[ "$(sha256sum docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-TRIGGER-RECOVERY-V2-2026-10-05.md | cut -d' ' -f1)" == "$EXPECTED_SOURCE_SHA256" ]]
+          current_main_sha="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)"
+          [[ "$GITHUB_SHA" == "$current_main_sha" ]]
+          if [[ "$MODE" == "collect" ]]; then
+            [[ "$ACTIVE_GENERATION" == "$EXPECTED_GENERATION" ]]
+          fi
+          environment="$(gh api "repos/$GITHUB_REPOSITORY/environments/robin-autonomous-relay-v1")"
+          expected_wait="1"
+          [[ "$MODE" == "probe" ]] || expected_wait="60"
+          expiry_epoch="$(date -u -d "$EXPECTED_EXPIRES_AT" +%s)"
+          current_epoch="$(date -u +%s)"
+          required_seconds="$((2 * expected_wait * 60 + 600))"
+          if [[ "$MODE" == "collect" ]]; then
+            required_seconds="$((expected_wait * 60 + 10800))"
+          fi
+          (( current_epoch + required_seconds <= expiry_epoch ))
+          [[ "$(jq -r '[.protection_rules[].type] | sort == ["branch_policy", "wait_timer"]' <<<"$environment")" == "true" ]]
+          [[ "$(jq -r '[.protection_rules[] | select(.type == "wait_timer") | .wait_timer] | if length == 1 then .[0] else -1 end' <<<"$environment")" == "$expected_wait" ]]
+          [[ "$(jq -r '.deployment_branch_policy.protected_branches' <<<"$environment")" == "false" ]]
+          [[ "$(jq -r '.deployment_branch_policy.custom_branch_policies' <<<"$environment")" == "true" ]]
+          branch_policies="$(gh api "repos/$GITHUB_REPOSITORY/environments/robin-autonomous-relay-v1/deployment-branch-policies")"
+          [[ "$(jq -r '(.total_count == 1) and ((.branch_policies | length) == 1) and ([.branch_policies[] | select(.name == "main" and .type == "branch")] | length == 1)' <<<"$branch_policies")" == "true" ]]
+          runs="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100")"
+          active_count="$(jq --arg prefix "robin-$MODE-relay-$GENERATION-" '[.workflow_runs[] | select((.status == "queued" or .status == "in_progress" or .status == "requested" or .status == "waiting" or .status == "pending") and (.display_title | startswith($prefix)))] | length' <<<"$runs")"
+          [[ "$active_count" =~ ^[0-9]+$ ]]
+          [[ "$active_count" == "0" ]] || exit 0
+          successor_title="robin-$MODE-relay-$GENERATION-$GITHUB_RUN_ID-1"
+          existing_count="$(jq --arg title "$successor_title" '[.workflow_runs[] | select(.display_title == $title)] | length' <<<"$runs")"
+          [[ "$existing_count" == "0" ]]
+          gh api --method POST \
+            "repos/$GITHUB_REPOSITORY/actions/workflows/prospective-deep-scheduler.yml/dispatches" \
+            -f ref=main \
+            -f "inputs[mode]=$MODE" \
+            -f "inputs[origin]=relay" \
+            -f "inputs[generation]=$GENERATION" \
+            -f "inputs[chain_id]=$GITHUB_RUN_ID" \
+            -f "inputs[parent_run_id]=$GITHUB_RUN_ID" \
+            -f "inputs[sequence]=1"
+          observed_count=0
+          for _ in {1..30}; do
+            observed_count="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100" --jq ".workflow_runs | map(select(.display_title == \"$successor_title\")) | length")"
+            [[ "$observed_count" == "0" ]] || break
+            sleep 2
+          done
+          [[ "$observed_count" == "1" ]]
+
+  watchdog:
     if: >-
       github.event_name == 'schedule' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1
+    permissions:
+      actions: write
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Restart a missing relay without touching provider or R2
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ACTIVE_GENERATION: ${{ vars.ROBIN_AUTONOMOUS_RELAY_GENERATION }}
+          EXPECTED_GENERATION: "4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87"
+          EXPECTED_EXPIRES_AT: "2026-11-03T23:59:59Z"
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_REPOSITORY" == "dddur75/robin-stades-ng" ]]
+          [[ "$GITHUB_REF" == "refs/heads/main" ]]
+          [[ "$GITHUB_EVENT_NAME" == "schedule" ]]
+          [[ "$GITHUB_RUN_ATTEMPT" == "1" ]]
+          [[ "$GITHUB_WORKFLOW_REF" == "dddur75/robin-stades-ng/.github/workflows/prospective-deep-scheduler.yml@refs/heads/main" ]]
+          [[ "$ACTIVE_GENERATION" == "$EXPECTED_GENERATION" ]] || exit 0
+          expiry_epoch="$(date -u -d "$EXPECTED_EXPIRES_AT" +%s)"
+          current_epoch="$(date -u +%s)"
+          (( current_epoch + 60 * 60 + 10800 <= expiry_epoch )) || exit 0
+          environment="$(gh api "repos/$GITHUB_REPOSITORY/environments/robin-autonomous-relay-v1")"
+          [[ "$(jq -r '[.protection_rules[].type] | sort == ["branch_policy", "wait_timer"]' <<<"$environment")" == "true" ]]
+          [[ "$(jq -r '[.protection_rules[] | select(.type == "wait_timer") | .wait_timer] | if length == 1 then .[0] else -1 end' <<<"$environment")" == "60" ]]
+          [[ "$(jq -r '.deployment_branch_policy.protected_branches' <<<"$environment")" == "false" ]]
+          [[ "$(jq -r '.deployment_branch_policy.custom_branch_policies' <<<"$environment")" == "true" ]]
+          branch_policies="$(gh api "repos/$GITHUB_REPOSITORY/environments/robin-autonomous-relay-v1/deployment-branch-policies")"
+          [[ "$(jq -r '(.total_count == 1) and ((.branch_policies | length) == 1) and ([.branch_policies[] | select(.name == "main" and .type == "branch")] | length == 1)' <<<"$branch_policies")" == "true" ]]
+          runs="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100")"
+          active_count="$(jq --arg prefix "robin-collect-relay-$EXPECTED_GENERATION-" '[.workflow_runs[] | select((.status == "queued" or .status == "in_progress" or .status == "requested" or .status == "waiting" or .status == "pending") and (.display_title | startswith($prefix)))] | length' <<<"$runs")"
+          [[ "$active_count" =~ ^[0-9]+$ ]]
+          [[ "$active_count" == "0" ]] || exit 0
+          successor_title="robin-collect-relay-$EXPECTED_GENERATION-$GITHUB_RUN_ID-1"
+          existing_count="$(jq --arg title "$successor_title" '[.workflow_runs[] | select(.display_title == $title)] | length' <<<"$runs")"
+          [[ "$existing_count" == "0" ]]
+          gh api --method POST \
+            "repos/$GITHUB_REPOSITORY/actions/workflows/prospective-deep-scheduler.yml/dispatches" \
+            -f ref=main \
+            -f "inputs[mode]=collect" \
+            -f "inputs[origin]=relay" \
+            -f "inputs[generation]=$EXPECTED_GENERATION" \
+            -f "inputs[chain_id]=$GITHUB_RUN_ID" \
+            -f "inputs[parent_run_id]=$GITHUB_RUN_ID" \
+            -f "inputs[sequence]=1"
+          observed_count=0
+          for _ in {1..30}; do
+            observed_count="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100" --jq ".workflow_runs | map(select(.display_title == \"$successor_title\")) | length")"
+            [[ "$observed_count" == "0" ]] || break
+            sleep 2
+          done
+          [[ "$observed_count" == "1" ]]
+
+  relay:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      inputs.origin == 'relay' &&
+      github.actor == 'github-actions[bot]' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1
+    permissions:
+      actions: write
+      contents: read
+    environment: robin-autonomous-relay-v1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      collect: ${{ steps.relay.outputs.collect }}
+      probe_complete: ${{ steps.relay.outputs.probe_complete }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+          ref: ${{ github.sha }}
+
+      - name: Validate automatic parent and arm successor before collection
+        id: relay
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MODE: ${{ inputs.mode }}
+          ORIGIN: ${{ inputs.origin }}
+          GENERATION: ${{ inputs.generation }}
+          CHAIN_ID: ${{ inputs.chain_id }}
+          PARENT_RUN_ID: ${{ inputs.parent_run_id }}
+          SEQUENCE: ${{ inputs.sequence }}
+          ACTIVE_GENERATION: ${{ vars.ROBIN_AUTONOMOUS_RELAY_GENERATION }}
+          EXPECTED_GENERATION: "4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87"
+          EXPECTED_EXPIRES_AT: "2026-11-03T23:59:59Z"
+        run: |
+          set -euo pipefail
+          umask 077
+          [[ "$GITHUB_REPOSITORY" == "dddur75/robin-stades-ng" ]]
+          [[ "$GITHUB_REF" == "refs/heads/main" ]]
+          [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]
+          [[ "$GITHUB_ACTOR" == "github-actions[bot]" ]]
+          [[ "$GITHUB_RUN_ATTEMPT" == "1" ]]
+          [[ "$GITHUB_WORKFLOW_REF" == "dddur75/robin-stades-ng/.github/workflows/prospective-deep-scheduler.yml@refs/heads/main" ]]
+          [[ "$MODE" == "probe" || "$MODE" == "collect" ]]
+          [[ "$ORIGIN" == "relay" ]]
+          [[ "$GENERATION" == "$EXPECTED_GENERATION" ]]
+          [[ "$CHAIN_ID" =~ ^[1-9][0-9]{0,19}$ ]]
+          [[ "$PARENT_RUN_ID" =~ ^[1-9][0-9]{0,19}$ ]]
+          [[ "$SEQUENCE" =~ ^[1-9][0-9]{0,9}$ ]]
+          [[ "$PARENT_RUN_ID" != "$GITHUB_RUN_ID" ]]
+          [[ "$(sha256sum configs/execution/robin-autonomous-lab-trigger-recovery-v2-20261005.json | cut -d' ' -f1)" == "$EXPECTED_GENERATION" ]]
+          current_main_sha="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)"
+          [[ "$GITHUB_SHA" == "$current_main_sha" ]]
+          parent="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$PARENT_RUN_ID")"
+          [[ "$(jq -r .id <<<"$parent")" == "$PARENT_RUN_ID" ]]
+          [[ "$(jq -r .workflow_id <<<"$parent")" == "321915839" ]]
+          [[ "$(jq -r .head_branch <<<"$parent")" == "main" ]]
+          [[ "$(jq -r .head_sha <<<"$parent")" == "$GITHUB_SHA" ]]
+          [[ "$(jq -r .run_attempt <<<"$parent")" == "1" ]]
+          parent_event="$(jq -r .event <<<"$parent")"
+          parent_title="$(jq -r .display_title <<<"$parent")"
+          [[ "$parent_event" == "workflow_dispatch" || "$parent_event" == "schedule" ]]
+          if [[ "$SEQUENCE" == "1" ]]; then
+            [[ "$CHAIN_ID" == "$PARENT_RUN_ID" ]]
+            [[ "$(jq -r .conclusion <<<"$parent")" == "success" ]]
+            if [[ "$parent_event" == "workflow_dispatch" ]]; then
+              [[ "$parent_title" == "robin-$MODE-bootstrap-$GENERATION-0-0" ]]
+            else
+              [[ "$MODE" == "collect" ]]
+              [[ "$parent_title" == "robin-watchdog-schedule-none-$PARENT_RUN_ID-0" ]]
+            fi
+          else
+            [[ "$parent_event" == "workflow_dispatch" ]]
+            previous_sequence="$((10#$SEQUENCE - 1))"
+            [[ "$parent_title" == "robin-$MODE-relay-$GENERATION-$CHAIN_ID-$previous_sequence" ]]
+            parent_jobs="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$PARENT_RUN_ID/jobs?per_page=100")"
+            [[ "$(jq -r '[.jobs[] | select(.name == "relay" and .conclusion == "success")] | length' <<<"$parent_jobs")" == "1" ]]
+          fi
+          environment="$(gh api "repos/$GITHUB_REPOSITORY/environments/robin-autonomous-relay-v1")"
+          expected_wait="1"
+          [[ "$MODE" == "probe" ]] || expected_wait="60"
+          [[ "$(jq -r '[.protection_rules[].type] | sort == ["branch_policy", "wait_timer"]' <<<"$environment")" == "true" ]]
+          [[ "$(jq -r '[.protection_rules[] | select(.type == "wait_timer") | .wait_timer] | if length == 1 then .[0] else -1 end' <<<"$environment")" == "$expected_wait" ]]
+          [[ "$(jq -r '.deployment_branch_policy.protected_branches' <<<"$environment")" == "false" ]]
+          [[ "$(jq -r '.deployment_branch_policy.custom_branch_policies' <<<"$environment")" == "true" ]]
+          branch_policies="$(gh api "repos/$GITHUB_REPOSITORY/environments/robin-autonomous-relay-v1/deployment-branch-policies")"
+          [[ "$(jq -r '(.total_count == 1) and ((.branch_policies | length) == 1) and ([.branch_policies[] | select(.name == "main" and .type == "branch")] | length == 1)' <<<"$branch_policies")" == "true" ]]
+          current_run_created_at="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" --jq .created_at)"
+          created_epoch="$(date -u -d "$current_run_created_at" +%s)"
+          current_epoch="$(date -u +%s)"
+          (( current_epoch - created_epoch >= expected_wait * 60 ))
+          expiry_epoch="$(date -u -d "$EXPECTED_EXPIRES_AT" +%s)"
+          echo "collect=false" >> "$GITHUB_OUTPUT"
+          echo "probe_complete=false" >> "$GITHUB_OUTPUT"
+          (( current_epoch <= expiry_epoch )) || exit 0
+          if [[ "$MODE" == "collect" ]]; then
+            [[ "$ACTIVE_GENERATION" == "$EXPECTED_GENERATION" ]]
+            (( current_epoch + 10800 <= expiry_epoch )) || exit 0
+            (( current_epoch + 60 * 60 + 10800 <= expiry_epoch )) || exit 0
+          elif [[ "$SEQUENCE" == "2" ]]; then
+            echo "probe_complete=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          else
+            [[ "$SEQUENCE" == "1" ]]
+            (( current_epoch + expected_wait * 60 + 600 <= expiry_epoch ))
+          fi
+          next_sequence="$((10#$SEQUENCE + 1))"
+          successor_title="robin-$MODE-relay-$GENERATION-$CHAIN_ID-$next_sequence"
+          runs="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100")"
+          existing_count="$(jq --arg title "$successor_title" '[.workflow_runs[] | select(.display_title == $title)] | length' <<<"$runs")"
+          [[ "$existing_count" == "0" ]]
+          gh api --method POST \
+            "repos/$GITHUB_REPOSITORY/actions/workflows/prospective-deep-scheduler.yml/dispatches" \
+            -f ref=main \
+            -f "inputs[mode]=$MODE" \
+            -f "inputs[origin]=relay" \
+            -f "inputs[generation]=$GENERATION" \
+            -f "inputs[chain_id]=$CHAIN_ID" \
+            -f "inputs[parent_run_id]=$GITHUB_RUN_ID" \
+            -f "inputs[sequence]=$next_sequence"
+          observed_count=0
+          for _ in {1..30}; do
+            observed_count="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100" --jq ".workflow_runs | map(select(.display_title == \"$successor_title\")) | length")"
+            [[ "$observed_count" == "0" ]] || break
+            sleep 2
+          done
+          [[ "$observed_count" == "1" ]]
+          if [[ "$MODE" == "collect" ]]; then
+            echo "collect=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish provider-free relay summary
+        shell: bash
+        env:
+          MODE: ${{ inputs.mode }}
+          CHAIN_ID: ${{ inputs.chain_id }}
+          PARENT_RUN_ID: ${{ inputs.parent_run_id }}
+          SEQUENCE: ${{ inputs.sequence }}
+          PROBE_COMPLETE: ${{ steps.relay.outputs.probe_complete }}
+        run: |
+          {
+            echo "# Robin autonomous relay"
+            echo
+            echo "- Mode: \`$MODE\`"
+            echo "- Chain: \`$CHAIN_ID\`"
+            echo "- Parent: \`$PARENT_RUN_ID\`"
+            echo "- Sequence: \`$SEQUENCE\`"
+            echo "- Probe complete: \`$PROBE_COMPLETE\`"
+            echo "- Provider requests: \`0\` before the isolated capture job"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  capture:
+    needs: relay
+    if: >-
+      needs.relay.result == 'success' &&
+      needs.relay.outputs.collect == 'true'
+    permissions:
+      actions: read
+      contents: read
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
@@ -50,14 +401,31 @@ jobs:
           EXPECTED_SCHEDULE_SOURCE_SHA256: "7e654d17751685b62aff5ab0a7c9d0460feaabd8b304f1ee80c5fd80596cd65c"
           EXPECTED_ESTABLISHED_MANIFEST_SHA256: "c1e3375370f55f288aaa76a5e706939e5617a54dc61598f85a510fc9d3be14fd"
           EXPECTED_ESTABLISHED_SOURCE_SHA256: "2cf16116c41803c3300bee2fc7cc3cc501b09fa5f80c6c27affce08589e5f84e"
+          EXPECTED_TRIGGER_MANIFEST_SHA256: "4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87"
+          EXPECTED_TRIGGER_SOURCE_SHA256: "1bd2073ac01f68fbaa1de9c190642245c2bf8acf7c3611f69f706159df96821d"
+          ACTIVE_GENERATION: ${{ vars.ROBIN_AUTONOMOUS_RELAY_GENERATION }}
+          ROBIN_RELAY_MODE: ${{ inputs.mode }}
+          ROBIN_RELAY_ORIGIN: ${{ inputs.origin }}
+          ROBIN_RELAY_GENERATION: ${{ inputs.generation }}
+          ROBIN_RELAY_CHAIN_ID: ${{ inputs.chain_id }}
+          ROBIN_RELAY_PARENT_RUN_ID: ${{ inputs.parent_run_id }}
+          ROBIN_RELAY_SEQUENCE: ${{ inputs.sequence }}
         run: |
           set -euo pipefail
           umask 077
           [[ "$GITHUB_REPOSITORY" == "dddur75/robin-stades-ng" ]]
           [[ "$GITHUB_REF" == "refs/heads/main" ]]
-          [[ "$GITHUB_EVENT_NAME" == "schedule" ]]
+          [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]
+          [[ "$GITHUB_ACTOR" == "github-actions[bot]" ]]
           [[ "$GITHUB_WORKFLOW_REF" == "dddur75/robin-stades-ng/.github/workflows/prospective-deep-scheduler.yml@refs/heads/main" ]]
           [[ "$GITHUB_RUN_ATTEMPT" == "1" ]]
+          [[ "$ROBIN_RELAY_MODE" == "collect" ]]
+          [[ "$ROBIN_RELAY_ORIGIN" == "relay" ]]
+          [[ "$ROBIN_RELAY_GENERATION" == "$EXPECTED_TRIGGER_MANIFEST_SHA256" ]]
+          [[ "$ACTIVE_GENERATION" == "$EXPECTED_TRIGGER_MANIFEST_SHA256" ]]
+          [[ "$ROBIN_RELAY_CHAIN_ID" =~ ^[1-9][0-9]{0,19}$ ]]
+          [[ "$ROBIN_RELAY_PARENT_RUN_ID" =~ ^[1-9][0-9]{0,19}$ ]]
+          [[ "$ROBIN_RELAY_SEQUENCE" =~ ^[1-9][0-9]{0,9}$ ]]
           [[ "$GITHUB_SHA" =~ ^[0-9a-f]{40}$ ]]
           [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" ]]
           [[ -z "$(git status --porcelain)" ]]
@@ -69,6 +437,8 @@ jobs:
           [[ "$(sha256sum docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-SCHEDULE-RELIABILITY-2026-10-04.md | cut -d' ' -f1)" == "$EXPECTED_SCHEDULE_SOURCE_SHA256" ]]
           [[ "$(sha256sum configs/execution/robin-autonomous-lab-established-scheduler-20261004.json | cut -d' ' -f1)" == "$EXPECTED_ESTABLISHED_MANIFEST_SHA256" ]]
           [[ "$(sha256sum docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-ESTABLISHED-SCHEDULER-2026-10-04.md | cut -d' ' -f1)" == "$EXPECTED_ESTABLISHED_SOURCE_SHA256" ]]
+          [[ "$(sha256sum configs/execution/robin-autonomous-lab-trigger-recovery-v2-20261005.json | cut -d' ' -f1)" == "$EXPECTED_TRIGGER_MANIFEST_SHA256" ]]
+          [[ "$(sha256sum docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-TRIGGER-RECOVERY-V2-2026-10-05.md | cut -d' ' -f1)" == "$EXPECTED_TRIGGER_SOURCE_SHA256" ]]
           python -I - <<'PY'
           import datetime
           import hashlib
@@ -138,12 +508,21 @@ jobs:
           established_source_path = Path(
               "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-ESTABLISHED-SCHEDULER-2026-10-04.md"
           )
+          trigger_manifest_path = Path(
+              "configs/execution/robin-autonomous-lab-trigger-recovery-v2-20261005.json"
+          )
+          trigger_source_path = Path(
+              "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-TRIGGER-RECOVERY-V2-2026-10-05.md"
+          )
           manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
           schedule_manifest = json.loads(
               schedule_manifest_path.read_text(encoding="utf-8")
           )
           established_manifest = json.loads(
               established_manifest_path.read_text(encoding="utf-8")
+          )
+          trigger_manifest = json.loads(
+              trigger_manifest_path.read_text(encoding="utf-8")
           )
           assert set(manifest) == {
               "mission_id", "authorized_stages", "maximum_stage", "external_effects",
@@ -155,6 +534,7 @@ jobs:
           assert manifest["source_hash"] == os.environ["EXPECTED_SOURCE_SHA256"]
           assert set(schedule_manifest) == set(manifest)
           assert set(established_manifest) == set(manifest)
+          assert set(trigger_manifest) == set(manifest)
           assert schedule_manifest["mission_id"] == (
               "ROBIN_AUTONOMOUS_LAB_SCHEDULE_RELIABILITY_20261004"
           )
@@ -190,6 +570,31 @@ jobs:
               "github_actions_schedule_reuses_parent_two_hour_idempotent_slots",
               "github_actions_parent_rolling_budgets_unchanged",
           }
+          assert trigger_manifest["mission_id"] == (
+              "ROBIN_AUTONOMOUS_LAB_TRIGGER_RECOVERY_20261005"
+          )
+          assert trigger_manifest["authorized_stages"] == manifest["authorized_stages"]
+          assert trigger_manifest["maximum_stage"] == manifest["maximum_stage"] == "E3B"
+          assert trigger_manifest["compute_budget"] == manifest["compute_budget"]
+          assert trigger_manifest["time_budget"] == manifest["time_budget"]
+          assert trigger_manifest["expires_at"] == manifest["expires_at"]
+          assert trigger_manifest["source_hash"] == os.environ[
+              "EXPECTED_TRIGGER_SOURCE_SHA256"
+          ]
+          assert set(trigger_manifest["external_effects"]) == {
+              "successor_of_trigger_recovery_manifest_b4752462dd798014b5930efca231caba36dea76e1b192b854d581fea2791d55b",
+              "github_actions_manual_bootstrap_provider_free_only",
+              "github_actions_workflow_dispatch_probe_max_2_automatic_hops",
+              "github_actions_workflow_dispatch_recurring_self_relay",
+              "github_actions_environment_robin_autonomous_relay_v1_wait_timer_60_minutes_main_only_no_secrets",
+              "github_actions_control_jobs_actions_write_without_provider_or_r2_secrets",
+              "github_actions_capture_actions_read_with_scoped_existing_secrets",
+              "github_actions_schedule_watchdog_provider_secret_r2_zero_same_relay_dispatch_max_1_if_none_active",
+              "github_actions_reuses_parent_two_hour_idempotent_slots",
+              "github_actions_duplicate_closed_slot_zero_provider_dispatch",
+              "github_actions_parent_rolling_budgets_unchanged",
+              "provider_accounting_conservative_baseline_requests_26_credits_54_no_reset",
+          }
           expires = datetime.datetime.fromisoformat(
               manifest["expires_at"].replace("Z", "+00:00")
           )
@@ -211,6 +616,12 @@ jobs:
           ]
           assert hashlib.sha256(established_source_path.read_bytes()).hexdigest() == os.environ[
               "EXPECTED_ESTABLISHED_SOURCE_SHA256"
+          ]
+          assert hashlib.sha256(trigger_manifest_path.read_bytes()).hexdigest() == os.environ[
+              "EXPECTED_TRIGGER_MANIFEST_SHA256"
+          ]
+          assert hashlib.sha256(trigger_source_path.read_bytes()).hexdigest() == os.environ[
+              "EXPECTED_TRIGGER_SOURCE_SHA256"
           ]
           PY
 
@@ -240,6 +651,12 @@ jobs:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+          ROBIN_RELAY_MODE: ${{ inputs.mode }}
+          ROBIN_RELAY_ORIGIN: ${{ inputs.origin }}
+          ROBIN_RELAY_GENERATION: ${{ inputs.generation }}
+          ROBIN_RELAY_CHAIN_ID: ${{ inputs.chain_id }}
+          ROBIN_RELAY_PARENT_RUN_ID: ${{ inputs.parent_run_id }}
+          ROBIN_RELAY_SEQUENCE: ${{ inputs.sequence }}
         run: |
           set -euo pipefail
           python -I scripts/run_recurring_real_data.py \
