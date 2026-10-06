@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import socket
 import subprocess
+import sys
 import threading
 import urllib.parse
 import urllib.request
@@ -15,6 +17,7 @@ import pytest
 import robin.capture.real_data_explorer as explorer_module
 from robin.capture.real_data_dashboard import (
     build_dashboard_snapshot,
+    build_explorer_snapshot,
     render_dashboard_csv,
     render_dashboard_html,
 )
@@ -126,12 +129,44 @@ def _bundle(
     return root
 
 
+def _replace_bundle_snapshot(root: Path, snapshot: dict[str, object]) -> bytes:
+    normalized = (
+        json.dumps(snapshot, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n"
+    ).encode()
+    csv_payload = render_dashboard_csv(snapshot)
+    html_payload = render_dashboard_html(snapshot, csv_filename="robin-real-data.csv")
+    (root / "robin-real-data.json").write_bytes(normalized)
+    (root / "robin-real-data.csv").write_bytes(csv_payload)
+    (root / "robin-real-data.html").write_bytes(html_payload)
+    receipt_path = root / "public-receipt.json"
+    receipt = json.loads(receipt_path.read_text("utf-8"))
+    receipt.update(
+        {
+            "normalized_json_sha256": hashlib.sha256(normalized).hexdigest(),
+            "csv_sha256": hashlib.sha256(csv_payload).hexdigest(),
+            "html_sha256": hashlib.sha256(html_payload).hexdigest(),
+        }
+    )
+    receipt_path.write_text(json.dumps(receipt, sort_keys=True), encoding="utf-8")
+    return normalized
+
+
 def test_source_bundle_rejects_corruption_and_unknown_schema(tmp_path: Path) -> None:
     source = _bundle(tmp_path / "source", run_id=10, slot=NOW, price=2.0)
     assert validate_source_bundle(source).run_id == "10"
     (source / "robin-real-data.csv").write_text("corrupted", encoding="utf-8")
 
     with pytest.raises(BundleValidationError, match="SOURCE_HASH_MISMATCH"):
+        validate_source_bundle(source)
+
+
+def test_source_bundle_rejects_incomplete_explorer_v2_contract(tmp_path: Path) -> None:
+    source = _bundle(tmp_path / "source", run_id=10, slot=NOW, price=2.0)
+    snapshot = json.loads((source / "robin-real-data.json").read_text("utf-8"))
+    snapshot.pop("explorer_rows")
+    _replace_bundle_snapshot(source, snapshot)
+
+    with pytest.raises(BundleValidationError, match="SOURCE_EXPLORER_CONTRACT_INVALID"):
         validate_source_bundle(source)
 
 
@@ -208,7 +243,51 @@ def test_late_artifact_cannot_replace_latest_and_history_stays_pinned(tmp_path: 
     assert store.current_pointer()["run_id"] == "11"
     assert store.read_public_bytes("robin-real-data.html", run_id="10") == old_html
     current = store.read_public("robin-real-data.json")
-    assert current["price_movement"]["changed_offer_count"] == 1
+    assert current["price_movement"]["changed_offer_count"] == 0
+    assert current["price_movement"]["current_only_offer_count"] == 1
+
+
+def test_normalized_explorer_v2_delivery_is_preserved_without_local_recomparison(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    store = AtomicExplorerStore(tmp_path / "store", clock=lambda: NOW + timedelta(hours=5))
+    local_previous = _bundle(tmp_path / "local", run_id=10, slot=NOW, price=2.0)
+    delivered_previous = _bundle(
+        tmp_path / "delivered-previous",
+        run_id=11,
+        slot=NOW + timedelta(hours=2),
+        price=2.1,
+    )
+    delivered_current = _bundle(
+        tmp_path / "delivered-current",
+        run_id=12,
+        slot=NOW + timedelta(hours=4),
+        price=2.3,
+    )
+    previous_snapshot = json.loads((delivered_previous / "robin-real-data.json").read_text("utf-8"))
+    current_snapshot = json.loads((delivered_current / "robin-real-data.json").read_text("utf-8"))
+    normalized_snapshot = build_explorer_snapshot(
+        current_snapshot,
+        previous_snapshot,
+        generated_at=NOW + timedelta(hours=5),
+    )
+    normalized = _replace_bundle_snapshot(delivered_current, normalized_snapshot)
+    store.publish(local_previous)
+
+    store.publish(delivered_current)
+
+    assert store.read_public_bytes("robin-real-data.json") == normalized
+    public = store.read_public("robin-real-data.json")
+    assert public["comparison_acquisitions"]["previous"]["github_run_id"] == "11"
+    assert public["price_movement"]["matched_offer_count"] == 1
+    assert public["price_movement"]["changed_offer_count"] == 1
+    assert public["explorer_rows"][0]["previous_price"] == 2.1
+    assert public["explorer_rows"][0]["current_price"] == 2.3
+
+    monkeypatch.setattr(explorer_module, "LOCAL_RENDERER_REVISION", "v12")
+    store.publish(delivered_current)
+
+    assert store.read_public_bytes("robin-real-data.json") == normalized
 
 
 def test_legacy_history_is_republished_with_current_renderer_without_moving_latest(
@@ -220,7 +299,7 @@ def test_legacy_history_is_republished_with_current_renderer_without_moving_late
     store.publish(older)
     historical_json = store.read_public_bytes("robin-real-data.json", run_id="10")
     store.publish(newer)
-    older_root = store.versions / "run-10-view-v10"
+    older_root = store.versions / "run-10-view-v13"
     legacy_root = store.versions / "run-10-view-v2"
     older_root.rename(legacy_root)
     legacy_manifest_path = legacy_root / "manifest.json"
@@ -234,7 +313,7 @@ def test_legacy_history_is_republished_with_current_renderer_without_moving_late
     assert b'id="new-run-notice"' in historical_html
     assert store.read_public_bytes("robin-real-data.json", run_id="10") == historical_json
     assert store.current_pointer() == pointer_before
-    assert (store.versions / "run-10-view-v10").is_dir()
+    assert (store.versions / "run-10-view-v13").is_dir()
 
 
 def test_local_manifest_is_verified_after_restart_and_before_every_read(tmp_path: Path) -> None:
@@ -361,12 +440,14 @@ def test_same_origin_relay_may_refresh_derived_movement_without_changing_acquisi
     )
     relay_json_path = relay / "robin-real-data.json"
     relay_snapshot = json.loads(relay_json_path.read_text("utf-8"))
-    relay_snapshot["price_movement"] = {
-        "matched_offer_count": 0,
-        "changed_offer_count": 0,
-        "changes": [],
-        "unmatched_current_count": 1,
-    }
+    relay_snapshot["price_movement"].update(
+        {
+            "matched_offer_count": 0,
+            "changed_offer_count": 0,
+            "changes": [],
+            "unmatched_current_count": 1,
+        }
+    )
     relay_json = (
         json.dumps(
             relay_snapshot,
@@ -414,8 +495,8 @@ def test_refresh_migrates_cached_renderer_before_github_failure(tmp_path: Path) 
 
     migrated = store.current_pointer()
     assert migrated is not None
-    assert migrated["renderer_revision"] == "v10"
-    assert migrated["version"] == "run-10-view-v10"
+    assert migrated["renderer_revision"] == "v13"
+    assert migrated["version"] == "run-10-view-v13"
     assert b"local-refresh-status" in store.read_public_bytes("robin-real-data.html")
     assert store.status()["last_error_code"] == "GITHUB_AUTH_REQUIRED"
 
@@ -438,15 +519,15 @@ def test_history_render_of_current_legacy_run_does_not_block_pointer_migration(
     pointer["version"] = legacy_root.name
     store.pointer_path.write_text(json.dumps(pointer), encoding="utf-8")
     frozen_json = store.read_public_bytes("robin-real-data.json", run_id="10")
-    assert (store.versions / "run-10-view-v10").is_dir()
+    assert (store.versions / "run-10-view-v13").is_dir()
     controller = ExplorerRefreshController(store, _FailingClient(), clock=lambda: NOW)
 
     assert controller.refresh_once() is True
 
     migrated = store.current_pointer()
     assert migrated is not None
-    assert migrated["renderer_revision"] == "v10"
-    assert migrated["version"] == "run-10-view-v10"
+    assert migrated["renderer_revision"] == "v13"
+    assert migrated["version"] == "run-10-view-v13"
     assert store.read_public_bytes("robin-real-data.json") == frozen_json
     assert store.status()["last_error_code"] == "GITHUB_AUTH_REQUIRED"
 
@@ -757,12 +838,317 @@ def test_windows_launcher_is_hidden_durable_and_local_only() -> None:
     assert "WScript.Shell" in installer
     assert "Start-Process" in installer
     assert "-WindowStyle Hidden" in installer
+    assert "explorer-runtime" in installer
+    assert "runtime-manifest.json" in installer
+    assert "robin-real-data-explorer-runtime-v2" in installer
+    assert "Get-RobinRuntimeHash" in installer
+    assert "ls-files" in installer
+    assert "ROBIN_EXPLORER_LAUNCHER_NOT_TRACKED" in installer
+    assert "ROBIN_EXPLORER_PYTHON_WORKTREE_FORBIDDEN" in installer
+    assert "ROBIN_EXPLORER_EXISTING_SCHEDULED_TASK_UPDATE_FAILED" in installer
+    assert "ROBIN_EXPLORER_SCHEDULED_TASK_INSPECTION_FAILED" in installer
+    assert "CmdletizationQuery_NotFound_TaskName" in installer
+    assert "--help" in installer
+    assert "'-B'" in installer
+    assert "$installedLauncher" in installer
+    assert "$candidateShortcut.Arguments = $Arguments" in installer
+    assert "$candidateShortcut.WorkingDirectory = $WorkingDirectory" in installer
     assert "--refresh-seconds" in installer
     assert "127.0.0.1" not in installer or "http://127.0.0.1" in installer
     assert "GhArtifactClient" in runner
     assert "make_server" in runner
     assert "GH_TOKEN" not in runner
     assert "GITHUB_TOKEN" not in runner
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows installer integration")
+def test_windows_installer_materializes_only_the_tracked_runtime(tmp_path: Path) -> None:
+    runtime_root = tmp_path / "runtime"
+    data_root = tmp_path / "data"
+    completed = subprocess.run(  # noqa: S603 - fixed local installer argv.
+        [
+            "powershell.exe",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            str(ROOT / "scripts" / "install_real_data_explorer.ps1"),
+            "-RepositoryRoot",
+            str(ROOT),
+            "-DataRoot",
+            str(data_root),
+            "-RuntimeRoot",
+            str(runtime_root),
+            "-PythonPath",
+            sys.executable,
+            "-SkipRegistration",
+            "-SkipStart",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert completed.returncode == 0, completed.stderr
+
+    releases = list((runtime_root / "releases").iterdir())
+    assert len(releases) == 1
+    release = releases[0]
+    manifest = json.loads((release / "runtime-manifest.json").read_text("utf-8-sig"))
+    tracked = subprocess.run(  # noqa: S603 - fixed local git read argv.
+        [
+            "git",
+            "-C",
+            str(ROOT),
+            "ls-files",
+            "--",
+            "scripts/run_real_data_explorer.py",
+            "src/robin",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.splitlines()
+
+    assert manifest["schema_version"] == "robin-real-data-explorer-runtime-v2"
+    assert manifest["runtime_hash"] == release.name
+    assert manifest["files"] == sorted(tracked)
+    assert manifest["file_count"] == len(tracked)
+    assert (release / ".ready").is_file()
+    assert all((release / path).is_file() for path in tracked)
+    assert not list(release.rglob("*.pyc"))
+    assert not list(release.rglob("__pycache__"))
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows installer integration")
+def test_windows_installer_falls_back_only_after_proved_missing_task(tmp_path: Path) -> None:
+    runtime_root = tmp_path / "runtime"
+    data_root = tmp_path / "data"
+    startup_root = tmp_path / "startup"
+    startup_root.mkdir()
+    harness = tmp_path / "fallback.ps1"
+    harness.write_text(
+        """
+function New-ScheduledTaskAction { [CmdletBinding()] param($Execute, $Argument, $WorkingDirectory) [pscustomobject]@{ Kind = 'Action' } }
+function New-ScheduledTaskTrigger { [CmdletBinding()] param([switch]$AtLogOn) [pscustomobject]@{ Kind = 'Trigger' } }
+function New-ScheduledTaskSettingsSet { [CmdletBinding()] param([switch]$StartWhenAvailable, $ExecutionTimeLimit) [pscustomobject]@{ Kind = 'Settings' } }
+function Register-ScheduledTask {
+    [CmdletBinding()] param($TaskName, $Action, $Trigger, $Settings, $Description, [switch]$Force)
+    Write-Error -Message 'denied' -ErrorId 'AccessDenied,Register-ScheduledTask' -Category PermissionDenied
+}
+function Get-ScheduledTask {
+    [CmdletBinding()] param($TaskName)
+    Write-Error -Message 'missing' -ErrorId 'CmdletizationQuery_NotFound_TaskName,Get-ScheduledTask' -Category ObjectNotFound
+}
+& $args[0] -RepositoryRoot $args[1] -DataRoot $args[2] -RuntimeRoot $args[3] -PythonPath $args[4] -StartupPath $args[5] -SkipStart
+""",
+        encoding="utf-8",
+    )
+    completed = subprocess.run(  # noqa: S603 - fixed local harness argv.
+        [
+            "powershell.exe",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            str(harness),
+            str(ROOT / "scripts" / "install_real_data_explorer.ps1"),
+            str(ROOT),
+            str(data_root),
+            str(runtime_root),
+            sys.executable,
+            str(startup_root),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert completed.returncode == 0, completed.stderr
+    assert "StartupShortcut" in completed.stdout
+    assert (startup_root / "RobinRealDataExplorer.lnk").is_file()
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows installer integration")
+def test_windows_installer_blocks_on_unexpected_task_inventory_error(tmp_path: Path) -> None:
+    startup_root = tmp_path / "startup"
+    startup_root.mkdir()
+    harness = tmp_path / "inspection-error.ps1"
+    harness.write_text(
+        """
+function New-ScheduledTaskAction { [CmdletBinding()] param($Execute, $Argument, $WorkingDirectory) [pscustomobject]@{ Kind = 'Action' } }
+function New-ScheduledTaskTrigger { [CmdletBinding()] param([switch]$AtLogOn) [pscustomobject]@{ Kind = 'Trigger' } }
+function New-ScheduledTaskSettingsSet { [CmdletBinding()] param([switch]$StartWhenAvailable, $ExecutionTimeLimit) [pscustomobject]@{ Kind = 'Settings' } }
+function Register-ScheduledTask {
+    [CmdletBinding()] param($TaskName, $Action, $Trigger, $Settings, $Description, [switch]$Force)
+    Write-Error -Message 'denied' -ErrorId 'AccessDenied,Register-ScheduledTask' -Category PermissionDenied
+}
+function Get-ScheduledTask {
+    [CmdletBinding()] param($TaskName)
+    Write-Error -Message 'inventory failed' -ErrorId 'UnexpectedInventoryFailure,Get-ScheduledTask' -Category InvalidOperation
+}
+& $args[0] -RepositoryRoot $args[1] -DataRoot $args[2] -RuntimeRoot $args[3] -PythonPath $args[4] -StartupPath $args[5] -SkipStart
+""",
+        encoding="utf-8",
+    )
+    completed = subprocess.run(  # noqa: S603 - fixed local harness argv.
+        [
+            "powershell.exe",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            str(harness),
+            str(ROOT / "scripts" / "install_real_data_explorer.ps1"),
+            str(ROOT),
+            str(tmp_path / "data"),
+            str(tmp_path / "runtime"),
+            sys.executable,
+            str(startup_root),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert completed.returncode != 0
+    assert "ROBIN_EXPLORER_SCHEDULED_TASK_INSPECTION_FAILED" in (
+        completed.stdout + completed.stderr
+    )
+    assert not (startup_root / "RobinRealDataExplorer.lnk").exists()
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows installer integration")
+def test_windows_installer_preserves_existing_shortcut_mode_without_registering_task(
+    tmp_path: Path,
+) -> None:
+    startup_root = tmp_path / "startup"
+    startup_root.mkdir()
+    shortcut_path = startup_root / "RobinRealDataExplorer.lnk"
+    harness = tmp_path / "existing-shortcut.ps1"
+    harness.write_text(
+        """
+$shell = New-Object -ComObject WScript.Shell
+$old = $shell.CreateShortcut($args[5])
+$old.TargetPath = $args[4]
+$old.Arguments = '--old-runtime'
+$old.WorkingDirectory = $args[2]
+$old.Save()
+function New-ScheduledTaskAction { throw 'SHOULD_NOT_CREATE_TASK_ACTION' }
+function New-ScheduledTaskTrigger { throw 'SHOULD_NOT_CREATE_TASK_TRIGGER' }
+function New-ScheduledTaskSettingsSet { throw 'SHOULD_NOT_CREATE_TASK_SETTINGS' }
+function Register-ScheduledTask { throw 'SHOULD_NOT_REGISTER_TASK' }
+& $args[0] -RepositoryRoot $args[1] -DataRoot $args[2] -RuntimeRoot $args[3] -PythonPath $args[4] -StartupPath (Split-Path -Parent $args[5]) -SkipStart
+$updated = $shell.CreateShortcut($args[5])
+[pscustomobject]@{
+    TargetPath = $updated.TargetPath
+    Arguments = $updated.Arguments
+    WorkingDirectory = $updated.WorkingDirectory
+} | ConvertTo-Json -Compress
+""",
+        encoding="utf-8",
+    )
+    completed = subprocess.run(  # noqa: S603 - fixed local harness argv.
+        [
+            "powershell.exe",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            str(harness),
+            str(ROOT / "scripts" / "install_real_data_explorer.ps1"),
+            str(ROOT),
+            str(tmp_path / "data"),
+            str(tmp_path / "runtime"),
+            sys.executable,
+            str(shortcut_path),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert completed.returncode == 0, completed.stdout + completed.stderr
+    assert "StartupShortcut" in completed.stdout
+    shortcut = json.loads(
+        next(line for line in reversed(completed.stdout.splitlines()) if line.startswith("{"))
+    )
+    assert shortcut["TargetPath"] == sys.executable
+    assert "--old-runtime" not in shortcut["Arguments"]
+    assert "releases" in shortcut["WorkingDirectory"]
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows installer integration")
+def test_windows_installer_failure_before_replace_preserves_existing_shortcut(
+    tmp_path: Path,
+) -> None:
+    startup_root = tmp_path / "startup"
+    startup_root.mkdir()
+    shortcut_path = startup_root / "RobinRealDataExplorer.lnk"
+    setup = subprocess.run(  # noqa: S603 - fixed local PowerShell setup.
+        [
+            "powershell.exe",
+            "-NoProfile",
+            "-Command",
+            (
+                "$shell=New-Object -ComObject WScript.Shell;"
+                f"$shortcut=$shell.CreateShortcut('{shortcut_path}');"
+                f"$shortcut.TargetPath='{sys.executable}';"
+                "$shortcut.Arguments='--old-runtime';"
+                f"$shortcut.WorkingDirectory='{tmp_path}';"
+                "$shortcut.Save()"
+            ),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert setup.returncode == 0, setup.stdout + setup.stderr
+    original = shortcut_path.read_bytes()
+    (tmp_path / ".RobinInstaller").write_text("block staging directory", encoding="utf-8")
+
+    completed = subprocess.run(  # noqa: S603 - fixed local installer argv.
+        [
+            "powershell.exe",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            str(ROOT / "scripts" / "install_real_data_explorer.ps1"),
+            "-RepositoryRoot",
+            str(ROOT),
+            "-DataRoot",
+            str(tmp_path / "data"),
+            "-RuntimeRoot",
+            str(tmp_path / "runtime"),
+            "-PythonPath",
+            sys.executable,
+            "-StartupPath",
+            str(startup_root),
+            "-SkipStart",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert completed.returncode != 0
+    assert shortcut_path.read_bytes() == original
+    assert [path.name for path in startup_root.glob("*.lnk")] == ["RobinRealDataExplorer.lnk"]
+
+
+def test_windows_installer_replaces_shortcut_transactionally() -> None:
+    installer = (ROOT / "scripts/install_real_data_explorer.ps1").read_text("utf-8")
+
+    assert "Unregister-ScheduledTask" not in installer
+    assert "$candidateShortcutPath" in installer
+    assert "$shortcut.Save()" not in installer
+    assert "$stagingDirectory" in installer
+    assert "Join-Path $stagingDirectory ('candidate-'" in installer
+    assert "Join-Path $stagingDirectory ('backup-'" in installer
+    assert '"$Path.candidate-' not in installer
+    assert '"$Path.backup-' not in installer
+    assert "[System.IO.File]::Replace(" in installer
+    assert "ROBIN_EXPLORER_SHORTCUT_VALIDATION_FAILED" in installer
 
 
 def test_runbook_covers_open_filter_export_stop_resume_and_fail_closed_errors() -> None:
@@ -777,5 +1163,7 @@ def test_runbook_covers_open_filter_export_stop_resume_and_fail_closed_errors() 
         "GITHUB_AUTH_REQUIRED",
         "SOURCE_HASH_MISMATCH",
         "LATE_ARTIFACT",
+        "explorer-runtime",
+        "runtime-manifest.json",
     ):
         assert phrase in runbook

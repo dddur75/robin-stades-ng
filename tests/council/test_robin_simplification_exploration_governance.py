@@ -75,7 +75,8 @@ def test_matrix_schema_and_six_read_only_reports_bind_the_mission() -> None:
 
 def test_real_capture_pair_and_ci_baseline_are_frozen_claims() -> None:
     receipt = ROOT / "reports/evidence/robin-autonomous-lab-run-37292740942-public-receipt.json"
-    assert hashlib.sha256(receipt.read_bytes()).hexdigest() == (
+    lf_normalized = receipt.read_text(encoding="utf-8").encode()
+    assert hashlib.sha256(lf_normalized).hexdigest() == (
         "18e2cc5638bb348f0bb264cb5a5c1ae9973cf65379448310910fda9859d45e3d"
     )
     receipt_data = json.loads(receipt.read_text(encoding="utf-8"))
@@ -215,7 +216,10 @@ def test_r7_freshness_monitor_is_independent_bounded_and_fail_closed() -> None:
     monitor_path = ROOT / ".github" / "workflows" / "collection-freshness-monitor.yml"
     monitor = yaml.safe_load(monitor_path.read_text(encoding="utf-8"))
     triggers = monitor[True]
-    assert triggers["schedule"] == [{"cron": "17,47 * * * *"}]
+    assert triggers["schedule"] == [
+        {"cron": "17 * * * *"},
+        {"cron": "47 * * * *"},
+    ]
     assert triggers["workflow_dispatch"] == {}
     assert monitor["permissions"] == {"actions": "read", "contents": "read"}
     assert monitor["concurrency"]["cancel-in-progress"] is True
