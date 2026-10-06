@@ -103,6 +103,22 @@ jobs:
         run: |
           set -euo pipefail
           umask 077
+          read_gh_json() {
+            local label="$1"
+            local endpoint="$2"
+            local payload=""
+            local attempt
+            for attempt in 1 2 3; do
+              if payload="$(gh api "$endpoint")" && [[ -n "$payload" ]] && jq -e . >/dev/null 2>&1 <<<"$payload"; then
+                printf '%s\n' "$payload"
+                return 0
+              fi
+              echo "GitHub API JSON read attempt $attempt/3 failed: $label" >&2
+              (( attempt == 3 )) || sleep "$attempt"
+            done
+            echo "GitHub API JSON read failed after 3 attempts: $label" >&2
+            return 1
+          }
           [[ "$GITHUB_REPOSITORY" == "dddur75/robin-stades-ng" ]]
           [[ "$GITHUB_REF" == "refs/heads/main" ]]
           [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]
@@ -115,12 +131,13 @@ jobs:
           [[ "$CHAIN_ID" == "0" && "$PARENT_RUN_ID" == "0" && "$SEQUENCE" == "0" ]]
           [[ "$(sha256sum configs/execution/robin-autonomous-lab-trigger-recovery-v2-20261005.json | cut -d' ' -f1)" == "$EXPECTED_GENERATION" ]]
           [[ "$(sha256sum docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-TRIGGER-RECOVERY-V2-2026-10-05.md | cut -d' ' -f1)" == "$EXPECTED_SOURCE_SHA256" ]]
-          current_main_sha="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)"
+          current_main="$(read_gh_json main-ref "repos/$GITHUB_REPOSITORY/git/ref/heads/main")"
+          current_main_sha="$(jq -r .object.sha <<<"$current_main")"
           [[ "$GITHUB_SHA" == "$current_main_sha" ]]
           if [[ "$MODE" == "collect" ]]; then
             [[ "$ACTIVE_GENERATION" == "$EXPECTED_GENERATION" ]]
           fi
-          environment="$(gh api "repos/$GITHUB_REPOSITORY/environments/robin-autonomous-relay-v1")"
+          environment="$(read_gh_json relay-environment "repos/$GITHUB_REPOSITORY/environments/robin-autonomous-relay-v1")"
           expected_wait="1"
           [[ "$MODE" == "probe" ]] || expected_wait="60"
           expiry_epoch="$(date -u -d "$EXPECTED_EXPIRES_AT" +%s)"
@@ -134,16 +151,17 @@ jobs:
           [[ "$(jq -r '[.protection_rules[] | select(.type == "wait_timer") | .wait_timer] | if length == 1 then .[0] else -1 end' <<<"$environment")" == "$expected_wait" ]]
           [[ "$(jq -r '.deployment_branch_policy.protected_branches' <<<"$environment")" == "false" ]]
           [[ "$(jq -r '.deployment_branch_policy.custom_branch_policies' <<<"$environment")" == "true" ]]
-          branch_policies="$(gh api "repos/$GITHUB_REPOSITORY/environments/robin-autonomous-relay-v1/deployment-branch-policies")"
+          branch_policies="$(read_gh_json relay-branch-policies "repos/$GITHUB_REPOSITORY/environments/robin-autonomous-relay-v1/deployment-branch-policies")"
           [[ "$(jq -r '(.total_count == 1) and ((.branch_policies | length) == 1) and ([.branch_policies[] | select(.name == "main" and .type == "branch")] | length == 1)' <<<"$branch_policies")" == "true" ]]
-          runs="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100")"
+          runs="$(read_gh_json active-relays "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100")"
           active_count="$(jq --arg prefix "robin-$MODE-relay-$GENERATION-" '[.workflow_runs[] | select((.status == "queued" or .status == "in_progress" or .status == "requested" or .status == "waiting" or .status == "pending") and (.display_title | startswith($prefix)))] | length' <<<"$runs")"
           [[ "$active_count" =~ ^[0-9]+$ ]]
           [[ "$active_count" == "0" ]] || exit 0
           successor_title="robin-$MODE-relay-$GENERATION-$GITHUB_RUN_ID-1"
           existing_count="$(jq --arg title "$successor_title" '[.workflow_runs[] | select(.display_title == $title)] | length' <<<"$runs")"
           [[ "$existing_count" == "0" ]]
-          gh api --method POST \
+          dispatch_exit=0
+          gh api --method POST --silent \
             "repos/$GITHUB_REPOSITORY/actions/workflows/prospective-deep-scheduler.yml/dispatches" \
             -f ref=main \
             -f "inputs[mode]=$MODE" \
@@ -151,10 +169,14 @@ jobs:
             -f "inputs[generation]=$GENERATION" \
             -f "inputs[chain_id]=$GITHUB_RUN_ID" \
             -f "inputs[parent_run_id]=$GITHUB_RUN_ID" \
-            -f "inputs[sequence]=1"
+            -f "inputs[sequence]=1" || dispatch_exit=$?
+          if (( dispatch_exit != 0 )); then
+            echo "Dispatch returned exit $dispatch_exit; reconciling exact successor title without retry" >&2
+          fi
           observed_count=0
           for _ in {1..30}; do
-            observed_count="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100" --jq ".workflow_runs | map(select(.display_title == \"$successor_title\")) | length")"
+            observed_runs="$(read_gh_json successor-observation "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100")"
+            observed_count="$(jq --arg title "$successor_title" '[.workflow_runs[] | select(.display_title == $title)] | length' <<<"$observed_runs")"
             [[ "$observed_count" == "0" ]] || break
             sleep 2
           done
@@ -179,6 +201,22 @@ jobs:
           EXPECTED_EXPIRES_AT: "2026-11-03T23:59:59Z"
         run: |
           set -euo pipefail
+          read_gh_json() {
+            local label="$1"
+            local endpoint="$2"
+            local payload=""
+            local attempt
+            for attempt in 1 2 3; do
+              if payload="$(gh api "$endpoint")" && [[ -n "$payload" ]] && jq -e . >/dev/null 2>&1 <<<"$payload"; then
+                printf '%s\n' "$payload"
+                return 0
+              fi
+              echo "GitHub API JSON read attempt $attempt/3 failed: $label" >&2
+              (( attempt == 3 )) || sleep "$attempt"
+            done
+            echo "GitHub API JSON read failed after 3 attempts: $label" >&2
+            return 1
+          }
           [[ "$GITHUB_REPOSITORY" == "dddur75/robin-stades-ng" ]]
           [[ "$GITHUB_REF" == "refs/heads/main" ]]
           [[ "$GITHUB_EVENT_NAME" == "schedule" ]]
@@ -188,21 +226,22 @@ jobs:
           expiry_epoch="$(date -u -d "$EXPECTED_EXPIRES_AT" +%s)"
           current_epoch="$(date -u +%s)"
           (( current_epoch + 60 * 60 + 10800 <= expiry_epoch )) || exit 0
-          environment="$(gh api "repos/$GITHUB_REPOSITORY/environments/robin-autonomous-relay-v1")"
+          environment="$(read_gh_json relay-environment "repos/$GITHUB_REPOSITORY/environments/robin-autonomous-relay-v1")"
           [[ "$(jq -r '[.protection_rules[].type] | sort == ["branch_policy", "wait_timer"]' <<<"$environment")" == "true" ]]
           [[ "$(jq -r '[.protection_rules[] | select(.type == "wait_timer") | .wait_timer] | if length == 1 then .[0] else -1 end' <<<"$environment")" == "60" ]]
           [[ "$(jq -r '.deployment_branch_policy.protected_branches' <<<"$environment")" == "false" ]]
           [[ "$(jq -r '.deployment_branch_policy.custom_branch_policies' <<<"$environment")" == "true" ]]
-          branch_policies="$(gh api "repos/$GITHUB_REPOSITORY/environments/robin-autonomous-relay-v1/deployment-branch-policies")"
+          branch_policies="$(read_gh_json relay-branch-policies "repos/$GITHUB_REPOSITORY/environments/robin-autonomous-relay-v1/deployment-branch-policies")"
           [[ "$(jq -r '(.total_count == 1) and ((.branch_policies | length) == 1) and ([.branch_policies[] | select(.name == "main" and .type == "branch")] | length == 1)' <<<"$branch_policies")" == "true" ]]
-          runs="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100")"
+          runs="$(read_gh_json active-relays "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100")"
           active_count="$(jq --arg prefix "robin-collect-relay-$EXPECTED_GENERATION-" '[.workflow_runs[] | select((.status == "queued" or .status == "in_progress" or .status == "requested" or .status == "waiting" or .status == "pending") and (.display_title | startswith($prefix)))] | length' <<<"$runs")"
           [[ "$active_count" =~ ^[0-9]+$ ]]
           [[ "$active_count" == "0" ]] || exit 0
           successor_title="robin-collect-relay-$EXPECTED_GENERATION-$GITHUB_RUN_ID-1"
           existing_count="$(jq --arg title "$successor_title" '[.workflow_runs[] | select(.display_title == $title)] | length' <<<"$runs")"
           [[ "$existing_count" == "0" ]]
-          gh api --method POST \
+          dispatch_exit=0
+          gh api --method POST --silent \
             "repos/$GITHUB_REPOSITORY/actions/workflows/prospective-deep-scheduler.yml/dispatches" \
             -f ref=main \
             -f "inputs[mode]=collect" \
@@ -210,10 +249,14 @@ jobs:
             -f "inputs[generation]=$EXPECTED_GENERATION" \
             -f "inputs[chain_id]=$GITHUB_RUN_ID" \
             -f "inputs[parent_run_id]=$GITHUB_RUN_ID" \
-            -f "inputs[sequence]=1"
+            -f "inputs[sequence]=1" || dispatch_exit=$?
+          if (( dispatch_exit != 0 )); then
+            echo "Dispatch returned exit $dispatch_exit; reconciling exact successor title without retry" >&2
+          fi
           observed_count=0
           for _ in {1..30}; do
-            observed_count="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100" --jq ".workflow_runs | map(select(.display_title == \"$successor_title\")) | length")"
+            observed_runs="$(read_gh_json successor-observation "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100")"
+            observed_count="$(jq --arg title "$successor_title" '[.workflow_runs[] | select(.display_title == $title)] | length' <<<"$observed_runs")"
             [[ "$observed_count" == "0" ]] || break
             sleep 2
           done
@@ -259,6 +302,22 @@ jobs:
         run: |
           set -euo pipefail
           umask 077
+          read_gh_json() {
+            local label="$1"
+            local endpoint="$2"
+            local payload=""
+            local attempt
+            for attempt in 1 2 3; do
+              if payload="$(gh api "$endpoint")" && [[ -n "$payload" ]] && jq -e . >/dev/null 2>&1 <<<"$payload"; then
+                printf '%s\n' "$payload"
+                return 0
+              fi
+              echo "GitHub API JSON read attempt $attempt/3 failed: $label" >&2
+              (( attempt == 3 )) || sleep "$attempt"
+            done
+            echo "GitHub API JSON read failed after 3 attempts: $label" >&2
+            return 1
+          }
           [[ "$GITHUB_REPOSITORY" == "dddur75/robin-stades-ng" ]]
           [[ "$GITHUB_REF" == "refs/heads/main" ]]
           [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]
@@ -273,9 +332,10 @@ jobs:
           [[ "$SEQUENCE" =~ ^[1-9][0-9]{0,9}$ ]]
           [[ "$PARENT_RUN_ID" != "$GITHUB_RUN_ID" ]]
           [[ "$(sha256sum configs/execution/robin-autonomous-lab-trigger-recovery-v2-20261005.json | cut -d' ' -f1)" == "$EXPECTED_GENERATION" ]]
-          current_main_sha="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)"
+          current_main="$(read_gh_json main-ref "repos/$GITHUB_REPOSITORY/git/ref/heads/main")"
+          current_main_sha="$(jq -r .object.sha <<<"$current_main")"
           [[ "$GITHUB_SHA" == "$current_main_sha" ]]
-          parent="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$PARENT_RUN_ID")"
+          parent="$(read_gh_json parent-run "repos/$GITHUB_REPOSITORY/actions/runs/$PARENT_RUN_ID")"
           [[ "$(jq -r .id <<<"$parent")" == "$PARENT_RUN_ID" ]]
           [[ "$(jq -r .workflow_id <<<"$parent")" == "321915839" ]]
           [[ "$(jq -r .head_branch <<<"$parent")" == "main" ]]
@@ -297,19 +357,20 @@ jobs:
             [[ "$parent_event" == "workflow_dispatch" ]]
             previous_sequence="$((10#$SEQUENCE - 1))"
             [[ "$parent_title" == "robin-$MODE-relay-$GENERATION-$CHAIN_ID-$previous_sequence" ]]
-            parent_jobs="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$PARENT_RUN_ID/jobs?per_page=100")"
+            parent_jobs="$(read_gh_json parent-jobs "repos/$GITHUB_REPOSITORY/actions/runs/$PARENT_RUN_ID/jobs?per_page=100")"
             [[ "$(jq -r '[.jobs[] | select(.name == "relay" and .conclusion == "success")] | length' <<<"$parent_jobs")" == "1" ]]
           fi
-          environment="$(gh api "repos/$GITHUB_REPOSITORY/environments/robin-autonomous-relay-v1")"
+          environment="$(read_gh_json relay-environment "repos/$GITHUB_REPOSITORY/environments/robin-autonomous-relay-v1")"
           expected_wait="1"
           [[ "$MODE" == "probe" ]] || expected_wait="60"
           [[ "$(jq -r '[.protection_rules[].type] | sort == ["branch_policy", "wait_timer"]' <<<"$environment")" == "true" ]]
           [[ "$(jq -r '[.protection_rules[] | select(.type == "wait_timer") | .wait_timer] | if length == 1 then .[0] else -1 end' <<<"$environment")" == "$expected_wait" ]]
           [[ "$(jq -r '.deployment_branch_policy.protected_branches' <<<"$environment")" == "false" ]]
           [[ "$(jq -r '.deployment_branch_policy.custom_branch_policies' <<<"$environment")" == "true" ]]
-          branch_policies="$(gh api "repos/$GITHUB_REPOSITORY/environments/robin-autonomous-relay-v1/deployment-branch-policies")"
+          branch_policies="$(read_gh_json relay-branch-policies "repos/$GITHUB_REPOSITORY/environments/robin-autonomous-relay-v1/deployment-branch-policies")"
           [[ "$(jq -r '(.total_count == 1) and ((.branch_policies | length) == 1) and ([.branch_policies[] | select(.name == "main" and .type == "branch")] | length == 1)' <<<"$branch_policies")" == "true" ]]
-          current_run_created_at="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" --jq .created_at)"
+          current_run="$(read_gh_json current-run "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID")"
+          current_run_created_at="$(jq -r .created_at <<<"$current_run")"
           created_epoch="$(date -u -d "$current_run_created_at" +%s)"
           current_epoch="$(date -u +%s)"
           (( current_epoch - created_epoch >= expected_wait * 60 ))
@@ -330,10 +391,11 @@ jobs:
           fi
           next_sequence="$((10#$SEQUENCE + 1))"
           successor_title="robin-$MODE-relay-$GENERATION-$CHAIN_ID-$next_sequence"
-          runs="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100")"
+          runs="$(read_gh_json successor-inventory "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100")"
           existing_count="$(jq --arg title "$successor_title" '[.workflow_runs[] | select(.display_title == $title)] | length' <<<"$runs")"
           [[ "$existing_count" == "0" ]]
-          gh api --method POST \
+          dispatch_exit=0
+          gh api --method POST --silent \
             "repos/$GITHUB_REPOSITORY/actions/workflows/prospective-deep-scheduler.yml/dispatches" \
             -f ref=main \
             -f "inputs[mode]=$MODE" \
@@ -341,10 +403,14 @@ jobs:
             -f "inputs[generation]=$GENERATION" \
             -f "inputs[chain_id]=$CHAIN_ID" \
             -f "inputs[parent_run_id]=$GITHUB_RUN_ID" \
-            -f "inputs[sequence]=$next_sequence"
+            -f "inputs[sequence]=$next_sequence" || dispatch_exit=$?
+          if (( dispatch_exit != 0 )); then
+            echo "Dispatch returned exit $dispatch_exit; reconciling exact successor title without retry" >&2
+          fi
           observed_count=0
           for _ in {1..30}; do
-            observed_count="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100" --jq ".workflow_runs | map(select(.display_title == \"$successor_title\")) | length")"
+            observed_runs="$(read_gh_json successor-observation "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100")"
+            observed_count="$(jq --arg title "$successor_title" '[.workflow_runs[] | select(.display_title == $title)] | length' <<<"$observed_runs")"
             [[ "$observed_count" == "0" ]] || break
             sleep 2
           done
