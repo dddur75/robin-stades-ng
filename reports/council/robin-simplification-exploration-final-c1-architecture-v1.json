@@ -29,12 +29,12 @@
     },
     {
       "claim": "L'artifact 11424836985 est non expiré, lié au run 37480732769 et à l'exact head fc45. Le service local l'a chargé automatiquement, sans copie ni commande, en préservant le filtre Real Madrid, l'historique épinglé et les exports réconciliés à 144 lignes.",
-      "evidence_refs": ["reports/evidence/robin-simplification-postmerge-delivery-20261006.json", "reports/evidence/robin-simplification-final-acceptance-20261006.json", "GitHub API artifact 11424836985", "C:/Users/ddura/AppData/Local/Robin/explorer/status.json"],
+      "evidence_refs": ["reports/evidence/robin-simplification-postmerge-delivery-20261006.json", "reports/evidence/robin-simplification-final-acceptance-20261006.json", "GitHub API artifact 11424836985", "operator-state/explorer/status.json"],
       "status": "VERIFIED"
     },
     {
       "claim": "Le contrat Windows sans prise de focus est effectif dans le dépôt, la runtime installée et le lanceur de cette tâche: UseShellExecute=false, CreateNoWindow=true, stdout/stderr redirigés et lus en parallèle avant WaitForExit. La copie racine et la copie suivie ont le même SHA-256 74add41e33fef48b60c510cb39fac4b17742b187f2756cf28092f3b5c4332983.",
-      "evidence_refs": ["scripts/invoke_gh_hidden.ps1:39", "src/robin/capture/real_data_explorer.py:577", "scripts/install_real_data_explorer.ps1:254", "C:/Users/ddura/AppData/Local/Robin/invoke-gh-hidden.ps1", "C:/Users/ddura/AppData/Local/Robin/explorer-runtime/releases/0fb912345db55d8ec926c5fa931ba4b689fb52062f85668c3ec8128ac1eed57c/runtime-manifest.json"],
+      "evidence_refs": ["scripts/invoke_gh_hidden.ps1:39", "src/robin/capture/real_data_explorer.py:577", "scripts/install_real_data_explorer.ps1:254", "operator-helper/invoke-gh-hidden.ps1", "runtime-release:0fb912345db55d8ec926c5fa931ba4b689fb52062f85668c3ec8128ac1eed57c/runtime-manifest.json"],
       "status": "VERIFIED"
     },
     {

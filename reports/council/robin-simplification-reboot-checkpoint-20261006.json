@@ -5,7 +5,7 @@
   "status": "PAUSED_FOR_USER_REBOOT",
   "repository": {
     "worktree": "WORKTREE:robin-r1-r8-acceptance",
-    "path": "C:/Users/ddura/.codex/worktrees/robin-r1-r8-acceptance/Robin des stades V2",
+    "path": "WORKTREE:robin-r1-r8-acceptance",
     "branch": "codex/robin-r1-r8-final-evidence-v1",
     "base_revision": "fc45ebe78260af3eb39cdd2ed567071439e1a380",
     "upstream": "origin/main",

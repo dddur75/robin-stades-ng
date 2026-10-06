@@ -19,7 +19,7 @@
     },
     {
       "claim": "Le service local, démarré avant la création de l'artefact, a ingéré automatiquement la livraison : current_run_id et last_delivery_run_id valent 37480732769, last_error_code est nul et le reçu source a private_report_r2_status=VERIFIED.",
-      "evidence_refs": ["C:/Users/ddura/AppData/Local/Robin/explorer/current.json", "C:/Users/ddura/AppData/Local/Robin/explorer/status.json", "C:/Users/ddura/AppData/Local/Robin/explorer/versions/run-37480732769-view-v13/source/public-receipt.json"],
+      "evidence_refs": ["operator-state/explorer/current.json", "operator-state/explorer/status.json", "operator-state/explorer/versions/run-37480732769-view-v13/source/public-receipt.json"],
       "status": "VERIFIED"
     },
     {
@@ -29,7 +29,7 @@
     },
     {
       "claim": "Les exports filtrés Real Madrid contiennent chacun 144 lignes, 2 matchs, 20 bookmakers et les créneaux 10:00Z/14:00Z. Leur réconciliation indépendante donne zéro divergence d'identité et zéro divergence de valeur, avec 139 lignes appariées et 5 apparitions.",
-      "evidence_refs": ["C:/Users/ddura/Downloads/robin-selection (6).csv", "C:/Users/ddura/Downloads/robin-selection (3).json", "reports/evidence/robin-simplification-postmerge-delivery-20261006.json"],
+      "evidence_refs": ["browser-export/robin-selection.csv", "browser-export/robin-selection.json", "reports/evidence/robin-simplification-postmerge-delivery-20261006.json"],
       "status": "VERIFIED"
     },
     {
@@ -39,17 +39,17 @@
     },
     {
       "claim": "Le lanceur GitHub suivi, sa copie opérateur et sa copie dans le runtime ont tous le SHA-256 74add41e33fef48b60c510cb39fac4b17742b187f2756cf28092f3b5c4332983. Il impose UseShellExecute=false, CreateNoWindow=true, redirige les deux flux et lance leurs lectures asynchrones avant WaitForExit, avec repli PowerShell 5.1.",
-      "evidence_refs": ["scripts/invoke_gh_hidden.ps1", "C:/Users/ddura/AppData/Local/Robin/invoke-gh-hidden.ps1", "C:/Users/ddura/AppData/Local/Robin/explorer-runtime/releases/0fb912345db55d8ec926c5fa931ba4b689fb52062f85668c3ec8128ac1eed57c/scripts/invoke_gh_hidden.ps1", "AGENTS.md"],
+      "evidence_refs": ["scripts/invoke_gh_hidden.ps1", "operator-helper/invoke-gh-hidden.ps1", "runtime-release:0fb912345db55d8ec926c5fa931ba4b689fb52062f85668c3ec8128ac1eed57c/scripts/invoke_gh_hidden.ps1", "AGENTS.md"],
       "status": "VERIFIED"
     },
     {
       "claim": "Le runtime actif utilise pythonw.exe depuis une release durable hors worktree. Son manifeste déclare 222 fichiers, tous présents, et aucun gh.exe ne subsistait après les contrôles.",
-      "evidence_refs": ["C:/Users/ddura/AppData/Local/Robin/explorer-runtime/releases/0fb912345db55d8ec926c5fa931ba4b689fb52062f85668c3ec8128ac1eed57c/runtime-manifest.json", "reports/evidence/robin-simplification-postmerge-delivery-20261006.json"],
+      "evidence_refs": ["runtime-release:0fb912345db55d8ec926c5fa931ba4b689fb52062f85668c3ec8128ac1eed57c/runtime-manifest.json", "reports/evidence/robin-simplification-postmerge-delivery-20261006.json"],
       "status": "VERIFIED"
     },
     {
       "claim": "La formulation du redémarrage est exacte : un redémarrage physique a eu lieu après le checkpoint de 13:33Z, mais le raccourci du runtime actuel a été installé après ce redémarrage. La relance du service est vérifiée ; un redémarrage automatique au prochain logon après cette installation n'est pas revendiqué.",
-      "evidence_refs": ["reports/council/robin-simplification-reboot-checkpoint-20261006.json", "reports/evidence/robin-simplification-final-acceptance-20261006.json", "C:/Users/ddura/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup/RobinRealDataExplorer.lnk"],
+      "evidence_refs": ["reports/council/robin-simplification-reboot-checkpoint-20261006.json", "reports/evidence/robin-simplification-final-acceptance-20261006.json", "startup-logon/RobinRealDataExplorer.lnk"],
       "status": "VERIFIED"
     }
   ],
@@ -70,7 +70,7 @@
     {
       "risk": "Le démarrage automatique au prochain logon depuis l'installation du raccourci actuel reste non observé ; cette limite est correctement déclarée et ne bloque pas le runtime actuellement sain.",
       "severity": "LOW",
-      "evidence_refs": ["reports/evidence/robin-simplification-final-acceptance-20261006.json", "C:/Users/ddura/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup/RobinRealDataExplorer.lnk"]
+      "evidence_refs": ["reports/evidence/robin-simplification-final-acceptance-20261006.json", "startup-logon/RobinRealDataExplorer.lnk"]
     }
   ],
   "minimum_decisive_test": "Après la fusion finale, vérifier le head main exact et l'absence de chaîne concurrente. Si aucun relais exact-head ne subsiste et qu'aucun schedule n'est apparu, effectuer un unique réarmement de maintenance sans remise à zéro, puis observer un relais bot collecter, valider, publier et actualiser l'explorateur.",
