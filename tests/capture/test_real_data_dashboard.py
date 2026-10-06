@@ -777,11 +777,97 @@ def test_empty_v2_branch_cannot_claim_v1_offer_disappeared() -> None:
 
     upgraded = build_explorer_snapshot(current, previous, generated_at=NOW)
 
-    assert upgraded["comparison_available"] is True
+    assert upgraded["comparison_available"] is False
     movement = upgraded["price_movement"]
     assert movement["not_observed_offer_count"] == 0
-    assert movement["excluded_row_count"] == 1
-    assert movement["exclusion_reason_counts"] == {"BRANCH_LINEAGE_INCOMPARABLE": 1}
+    assert movement["current_only_offer_count"] == 0
+    assert movement["comparison_unavailable_reason"] == "BRANCH_LINEAGE_INCOMPARABLE"
+    assert movement["comparison_unavailable_row_count"] == 1
+
+
+def test_v1_to_v2_provenance_transition_keeps_current_offer_visible() -> None:
+    previous = build_dashboard_snapshot(
+        _report(
+            rows=[_row(event="same", price=2.0, capture=NOW - timedelta(hours=2))],
+            capture=NOW - timedelta(hours=2),
+        ),
+        previous_report=None,
+        generated_at=NOW - timedelta(hours=2),
+    )
+    current_report = _report(
+        rows=[_row(event="same", price=2.3, capture=NOW - timedelta(hours=1))],
+        capture=NOW - timedelta(hours=1),
+    )
+    current_report["branches"][0].update(
+        {
+            "provider_key": "THE_ODDS_API_V4",
+            "settlement_period_key": "PROVIDER_DEFAULT_UNSPECIFIED",
+        }
+    )
+    current_report["rows"][0].update(
+        {
+            "provider_key": "THE_ODDS_API_V4",
+            "settlement_period_key": "PROVIDER_DEFAULT_UNSPECIFIED",
+        }
+    )
+    current = build_dashboard_snapshot(
+        current_report,
+        previous_report=None,
+        generated_at=NOW - timedelta(hours=1),
+    )
+
+    upgraded = build_explorer_snapshot(current, previous, generated_at=NOW)
+
+    assert upgraded["comparison_available"] is False
+    movement = upgraded["price_movement"]
+    assert movement["matched_offer_count"] == 0
+    assert movement["changed_offer_count"] == 0
+    assert movement["current_only_offer_count"] == 1
+    assert movement["comparison_unavailable_reason"] == "BRANCH_LINEAGE_INCOMPARABLE"
+    assert movement["comparison_unavailable_row_count"] == 2
+    assert len(upgraded["explorer_rows"]) == 1
+    assert upgraded["explorer_rows"][0]["comparison_status"] == "CURRENT_ONLY"
+    assert upgraded["explorer_rows"][0]["current_price"] == 2.3
+
+
+def test_direct_producer_v1_to_v2_transition_keeps_current_offer_visible() -> None:
+    previous_report = _report(
+        rows=[_row(event="same", price=2.0, capture=NOW - timedelta(hours=2))],
+        capture=NOW - timedelta(hours=2),
+    )
+    current_report = _report(
+        rows=[_row(event="same", price=2.3, capture=NOW - timedelta(hours=1))],
+        capture=NOW - timedelta(hours=1),
+    )
+    current_report["branches"][0].update(
+        {
+            "provider_key": "THE_ODDS_API_V4",
+            "settlement_period_key": "PROVIDER_DEFAULT_UNSPECIFIED",
+        }
+    )
+    current_report["rows"][0].update(
+        {
+            "provider_key": "THE_ODDS_API_V4",
+            "settlement_period_key": "PROVIDER_DEFAULT_UNSPECIFIED",
+        }
+    )
+
+    snapshot = build_dashboard_snapshot(
+        current_report,
+        previous_report=previous_report,
+        generated_at=NOW,
+    )
+
+    assert snapshot["comparison_available"] is False
+    movement = snapshot["price_movement"]
+    assert movement["matched_offer_count"] == 0
+    assert movement["changed_offer_count"] == 0
+    assert movement["current_only_offer_count"] == 1
+    assert movement["comparison_unavailable_reason"] == "BRANCH_LINEAGE_INCOMPARABLE"
+    assert movement["comparison_unavailable_row_count"] == 2
+    assert len(snapshot["explorer_rows"]) == 1
+    assert snapshot["explorer_rows"][0]["comparison_status"] == "CURRENT_ONLY"
+    assert snapshot["explorer_rows"][0]["current_price"] == 2.3
 
 
 def test_empty_incomplete_branch_cannot_prove_non_observation() -> None:
@@ -851,6 +937,7 @@ def test_html_is_self_contained_paginated_searchable_and_safe() -> None:
     assert "status.last_error_code" in html
     assert "Actualisation locale en échec" in html
     assert "Nouvelle capture disponible" in html
+    assert "Comparaison indisponible : transition de provenance" in html
     assert 'location.pathname.startsWith("/history/")' in html
     assert "current!==LOADED_RUN_ID" in html
     assert "location.reload()" in html
@@ -859,15 +946,15 @@ def test_html_is_self_contained_paginated_searchable_and_safe() -> None:
     assert "function selectRows" in html
     assert "function exportFilteredCsv" in html
     assert "function exportFilteredJson" in html
-    assert "function downloadSelection" in html
+    assert "function downloadSelection" not in html
     assert "const exportRows=filtered.slice()" in html
-    assert 'id="export-filtered-csv" type="button"' in html
-    assert 'id="export-filtered-json" type="button"' in html
+    assert 'id="export-filtered-csv" type="submit"' in html
+    assert 'id="export-filtered-json" type="submit"' in html
     assert 'byId("export-filtered-csv").addEventListener("click",' in html
     assert 'byId("export-filtered-json").addEventListener("click",' in html
-    assert "URL.createObjectURL(blob)" in html
-    assert "URL.revokeObjectURL(url)" in html
-    assert "anchor.download=`robin-selection.${extension}`" in html
+    assert "saveFilterState();exportFilteredCsv()" in html
+    assert "saveFilterState();exportFilteredJson()" in html
+    assert "URL.createObjectURL(blob)" not in html
     assert 'method="post"' in html
     assert 'formaction="/export.csv"' in html
     assert 'formaction="/export.json"' in html

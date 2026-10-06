@@ -43,7 +43,7 @@ _HASH_FIELDS = {
 }
 _RUN_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 _MAX_EXPORT_BYTES = 32 * 1024 * 1024
-LOCAL_RENDERER_REVISION = "v10"
+LOCAL_RENDERER_REVISION = "v13"
 
 
 class BundleValidationError(ValueError):
@@ -79,11 +79,14 @@ def _read_json(path: Path, code: str) -> dict[str, Any]:
 def _source_semantic_sha256(snapshot: Mapping[str, object]) -> str:
     """Bind immutable acquisition identity without renderer or delivery metadata."""
 
-    semantic = {
-        key: value
-        for key, value in snapshot.items()
-        if key not in {"generated_at_utc", "freshness", "price_movement"}
+    derived_fields = {
+        "comparison_available",
+        "explorer_rows",
+        "freshness",
+        "generated_at_utc",
+        "price_movement",
     }
+    semantic = {key: value for key, value in snapshot.items() if key not in derived_fields}
     encoded = json.dumps(
         semantic,
         ensure_ascii=False,
@@ -143,6 +146,24 @@ def validate_source_bundle(
     rows = snapshot.get("rows")
     if not isinstance(rows, list):
         raise BundleValidationError("SOURCE_JSON_ROWS_INVALID")
+    if snapshot.get("schema_version") == "robin-real-data-explorer-v2":
+        explorer_rows = snapshot.get("explorer_rows")
+        movement = snapshot.get("price_movement")
+        if (
+            not isinstance(explorer_rows, list)
+            or any(not isinstance(row, dict) for row in explorer_rows)
+            or not isinstance(movement, dict)
+            or not isinstance(snapshot.get("comparison_available"), bool)
+            or any(
+                not isinstance(movement.get(field), int) or movement[field] < 0
+                for field in (
+                    "matched_offer_count",
+                    "changed_offer_count",
+                    "excluded_row_count",
+                )
+            )
+        ):
+            raise BundleValidationError("SOURCE_EXPLORER_CONTRACT_INVALID")
     if snapshot.get("data_role") == "CARRY_FORWARD_STALE":
         raise BundleValidationError("SOURCE_CARRY_FORWARD_STALE")
     if str(snapshot.get("mission_id", "")) != mission_id:
@@ -427,17 +448,16 @@ class AtomicExplorerStore:
                 public = stage / "public"
                 public.mkdir()
                 previous = self.read_public("robin-real-data.json") if current else None
-                snapshot = (
-                    dict(previous)
-                    if current is not None
-                    and str(current.get("run_id")) == validated.run_id
-                    and previous is not None
-                    else build_explorer_snapshot(
+                if same_origin and previous is not None:
+                    snapshot = dict(previous)
+                elif validated.snapshot.get("schema_version") == "robin-real-data-explorer-v2":
+                    snapshot = dict(validated.snapshot)
+                else:
+                    snapshot = build_explorer_snapshot(
                         validated.snapshot,
                         previous or {"rows": [], "claim_ids": []},
                         generated_at=self._clock(),
                     )
-                )
                 normalized = (
                     json.dumps(
                         snapshot,

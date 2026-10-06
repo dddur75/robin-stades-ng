@@ -25,7 +25,17 @@
     "estimated_external_cost": {"type":"string","minLength":1},
     "estimated_human_time": {"type":"string","minLength":1},
     "maintenance_impact": {"type":"string","minLength":1},
-    "confidence": {"type":"number","minimum":0,"maximum":1}
+    "confidence": {"type":"number","minimum":0,"maximum":1},
+    "independent_review": {
+      "type":"object",
+      "additionalProperties":false,
+      "required":["architecture","operations","performance"],
+      "properties": {
+        "architecture":{"enum":["PASS","PARTIAL","FAIL","BLOCKED"]},
+        "operations":{"enum":["PASS","PARTIAL","FAIL","BLOCKED"]},
+        "performance":{"enum":["PASS","PARTIAL","FAIL","BLOCKED"]}
+      }
+    }
   },
   "$defs": {
     "fact": {

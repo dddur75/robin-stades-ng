@@ -641,27 +641,6 @@ def compare_acquisitions(
     }
 
 
-def _price_movement(
-    current: Sequence[Mapping[str, object]],
-    previous: Sequence[Mapping[str, object]],
-    *,
-    comparable_sports: set[str] | None = None,
-    current_branch_lineages: Mapping[str, set[tuple[object, object]]] | None = None,
-    previous_branch_lineages: Mapping[str, set[tuple[object, object]]] | None = None,
-    current_branch_observation_times: Mapping[str, Sequence[object]] | None = None,
-    previous_branch_observation_times: Mapping[str, Sequence[object]] | None = None,
-) -> dict[str, object]:
-    return compare_acquisitions(
-        current,
-        previous,
-        comparable_sports=comparable_sports,
-        current_branch_lineages=current_branch_lineages,
-        previous_branch_lineages=previous_branch_lineages,
-        current_branch_observation_times=current_branch_observation_times,
-        previous_branch_observation_times=previous_branch_observation_times,
-    )
-
-
 def _explorer_rows(comparison: Mapping[str, object]) -> list[dict[str, object]]:
     result: list[dict[str, object]] = []
     for field, status in (
@@ -775,6 +754,19 @@ def _branch_lineages(
         if isinstance(sport, str) and sport:
             result[sport].add((branch.get("provider_key"), branch.get("settlement_period_key")))
     return dict(result)
+
+
+def _lineage_compatible_sports(
+    comparable_sports: set[str],
+    current_lineages: Mapping[str, set[tuple[object, object]]],
+    previous_lineages: Mapping[str, set[tuple[object, object]]],
+) -> set[str]:
+    return {
+        sport
+        for sport in comparable_sports
+        if current_lineages.get(sport)
+        and current_lineages.get(sport) == previous_lineages.get(sport)
+    }
 
 
 def _public_branch_lineage(
@@ -901,15 +893,22 @@ def build_dashboard_snapshot(
         if previous_report is not None and not carry_forward
         else set()
     )
-    comparison_available = bool(previous_report is not None and comparable_sports)
+    previous_branches = _branches(previous_report) if previous_report is not None else []
+    current_lineages = _branch_lineages(current_branches)
+    previous_lineages = _branch_lineages(previous_branches)
+    lineage_compatible_sports = _lineage_compatible_sports(
+        comparable_sports,
+        current_lineages,
+        previous_lineages,
+    )
+    comparison_available = bool(previous_report is not None and lineage_compatible_sports)
     if comparison_available:
-        previous_branches = _branches(cast(Mapping[str, object], previous_report))
-        comparison = _price_movement(
+        comparison = compare_acquisitions(
             current_rows,
             previous_rows,
             comparable_sports=comparable_sports,
-            current_branch_lineages=_branch_lineages(current_branches),
-            previous_branch_lineages=_branch_lineages(previous_branches),
+            current_branch_lineages=current_lineages,
+            previous_branch_lineages=previous_lineages,
             current_branch_observation_times=_branch_observation_times(current_branches),
             previous_branch_observation_times=_branch_observation_times(previous_branches),
         )
@@ -919,6 +918,13 @@ def build_dashboard_snapshot(
             data_rows,
             stale=carry_forward,
         )
+        if previous_report is not None and comparable_sports and not lineage_compatible_sports:
+            comparison.update(
+                {
+                    "comparison_unavailable_reason": "BRANCH_LINEAGE_INCOMPARABLE",
+                    "comparison_unavailable_row_count": len(current_rows) + len(previous_rows),
+                }
+            )
     return {
         "schema_version": "robin-real-data-explorer-v2",
         "mission_id": current_report.get("mission_id"),
@@ -989,14 +995,21 @@ def build_explorer_snapshot(
     current_comparable = comparable_sports(current_snapshot)
     previous_comparable = comparable_sports(previous_snapshot)
     common_comparable = current_comparable & previous_comparable
-    comparison_available = bool(has_previous and common_comparable)
+    current_lineages = _snapshot_branch_lineages(current_snapshot)
+    previous_lineages = _snapshot_branch_lineages(previous_snapshot)
+    lineage_compatible_sports = _lineage_compatible_sports(
+        common_comparable,
+        current_lineages,
+        previous_lineages,
+    )
+    comparison_available = bool(has_previous and lineage_compatible_sports)
     if comparison_available:
         comparison = compare_acquisitions(
             _rows(current_snapshot),
             previous_rows,
             comparable_sports=common_comparable,
-            current_branch_lineages=_snapshot_branch_lineages(current_snapshot),
-            previous_branch_lineages=_snapshot_branch_lineages(previous_snapshot),
+            current_branch_lineages=current_lineages,
+            previous_branch_lineages=previous_lineages,
             current_branch_observation_times=_snapshot_branch_observation_times(current_snapshot),
             previous_branch_observation_times=_snapshot_branch_observation_times(previous_snapshot),
         )
@@ -1006,6 +1019,14 @@ def build_explorer_snapshot(
             _rows(current_snapshot),
             stale=current_snapshot.get("data_role") == "CARRY_FORWARD_STALE",
         )
+        if has_previous and common_comparable and not lineage_compatible_sports:
+            comparison.update(
+                {
+                    "comparison_unavailable_reason": "BRANCH_LINEAGE_INCOMPARABLE",
+                    "comparison_unavailable_row_count": len(_rows(current_snapshot))
+                    + len(previous_rows),
+                }
+            )
     current_claims = current_snapshot.get("claim_ids")
     previous_claims = previous_snapshot.get("claim_ids")
     claim_ids = list(
@@ -1153,7 +1174,7 @@ def render_dashboard_html(
   <select id="sort-direction" aria-label="Ordre du tri"><option value="desc">Décroissant</option><option value="asc">Croissant</option></select>
   <button id="reset-filters" type="button">Réinitialiser</button>
  </div>
- <form id="export-form" class="actions" method="post"><input id="export-content" name="content" type="hidden"><button id="export-filtered-csv" type="button" formaction="/export.csv">Exporter la sélection CSV</button><button id="export-filtered-json" type="button" formaction="/export.json">Exporter la sélection JSON</button></form>
+ <form id="export-form" class="actions" method="post"><input id="export-content" name="content" type="hidden"><button id="export-filtered-csv" type="submit" formaction="/export.csv">Exporter la sélection CSV</button><button id="export-filtered-json" type="submit" formaction="/export.json">Exporter la sélection JSON</button></form>
  <div id="visible-summary" class="sub" aria-live="polite"></div>
   <p class="narrow-table-help">Sur écran étroit, chaque offre est présentée en carte, sans défilement horizontal.</p>
   <div class="table-wrap"><table><thead><tr><th>Match</th><th>Ligue</th><th>Bookmaker</th><th>Marché</th><th>Issue</th><th>Seuil</th><th>Ancienne cote</th><th>Nouvelle cote</th><th>Delta</th><th>État</th><th>Coup d'envoi<br><small>UTC · Europe/Paris</small></th><th>Acquisition précédente<br><small>Début · fin · capture · source</small></th><th>Acquisition récente<br><small>Début · fin · capture · source</small></th></tr></thead><tbody id="rows-body"></tbody></table><div id="empty-state" class="empty">Aucune observation ne correspond aux filtres.</div></div>
@@ -1249,17 +1270,16 @@ function renderRows() {{
 function csvCell(value) {{ let text=value===null||value===undefined?"":String(value); if(/^[=+@\\t\\r-]/.test(text)) text="'"+text; return `"${{text.replaceAll('"','""')}}"`; }}
 function exportFilteredCsv() {{ const exportRows=filtered.slice(); const lines=[EXPORT_FIELDS.join(","),...exportRows.map(row=>EXPORT_FIELDS.map(field=>csvCell(row[field])).join(","))]; const content=lines.join("\\n")+"\\n"; byId("export-content").value=content; return content; }}
 function exportFilteredJson() {{ const exportRows=filtered.slice(); const content=JSON.stringify({{schema_version:"robin-filtered-selection-v1",generated_at_utc:DATA.generated_at_utc,claim_ids:DATA.claim_ids,filters:{{search:byId("search").value,league:byId("league-filter").value,market:byId("market-filter").value,bookmaker:byId("bookmaker-filter").value,capture:byId("capture-filter").value,status:byId("status-filter").value}},row_count:exportRows.length,rows:exportRows.map(row=>Object.fromEntries(EXPORT_FIELDS.map(field=>[field,row[field]??null]))) }},null,2); byId("export-content").value=content; return content; }}
-function downloadSelection(content,extension) {{ const mime=extension==="json"?"application/json;charset=utf-8":"text/csv;charset=utf-8"; const blob=new Blob([content],{{type:mime}}); const url=URL.createObjectURL(blob); const anchor=document.createElement("a"); anchor.href=url; anchor.download=`robin-selection.${{extension}}`; document.body.appendChild(anchor); anchor.click(); anchor.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000); }}
 const FILTER_IDS=["search","league-filter","market-filter","bookmaker-filter","capture-filter","status-filter","odds-min","odds-max","delta-min","delta-max","sort-field","sort-direction"];
 restoreFilterState();
 FILTER_IDS.forEach(id=>byId(id).addEventListener(["search","odds-min","odds-max","delta-min","delta-max"].includes(id)?"input":"change",selectRows));
 byId("reset-filters").addEventListener("click",()=>{{FILTER_IDS.forEach(id=>byId(id).value="");byId("capture-filter").value="comparison";byId("sort-field").value="abs_delta";byId("sort-direction").value="desc";selectRows();}});
-byId("export-filtered-csv").addEventListener("click",()=>downloadSelection(exportFilteredCsv(),"csv"));
-byId("export-filtered-json").addEventListener("click",()=>downloadSelection(exportFilteredJson(),"json"));
+byId("export-filtered-csv").addEventListener("click",()=>{{saveFilterState();exportFilteredCsv();}});
+byId("export-filtered-json").addEventListener("click",()=>{{saveFilterState();exportFilteredJson();}});
  byId("previous-page").addEventListener("click",()=>{{if(page>0){{page--;renderRows();}}}}); byId("next-page").addEventListener("click",()=>{{const pageSize=currentPageSize();if((page+1)*pageSize<filtered.length){{page++;renderRows();}}}});
 pageMedia.addEventListener("change",()=>{{page=0;renderRows();}});
 const distribution=byId("distribution-list"); DATA.price_distribution.forEach(item=>{{const row=document.createElement("div");row.className="stats-row";[`${{item.market_key}} · ${{item.outcome}} (${{item.count}})`,item.minimum,item.p25,item.median,item.p75,item.maximum].forEach(value=>{{const span=document.createElement("span");span.textContent=value;row.appendChild(span);}});distribution.appendChild(row);}}); if(!DATA.price_distribution.length) distribution.textContent="Distribution indisponible : aucune cote vérifiée.";
-const movement=DATA.price_movement, movementBox=byId("movement-summary"); if(DATA.comparison_available===false) {{ movementBox.textContent=`${{movement.current_only_offer_count??0}} offres courantes · comparaison indisponible sans deux branches admissibles.`; }} else {{ movementBox.textContent=`${{movement.matched_offer_count}} offres appariées · ${{movement.changed_offer_count}} changements · ${{movement.unchanged_offer_count}} inchangées · ${{movement.unmatched_current_count}} nouvelles/non appariées`; if(!movement.matched_offer_count) movementBox.textContent += " — aucune offre exacte appariée."; }}
+const movement=DATA.price_movement, movementBox=byId("movement-summary"), lineageExcluded=Number((movement.exclusion_reason_counts||{{}}).BRANCH_LINEAGE_INCOMPARABLE||0), unavailableRows=Number(movement.comparison_unavailable_row_count||0); if(DATA.comparison_available===false) {{ if(movement.comparison_unavailable_reason==="BRANCH_LINEAGE_INCOMPARABLE") movementBox.textContent=`${{movement.current_only_offer_count??0}} offres courantes · Comparaison indisponible : transition de provenance (${{unavailableRows.toLocaleString("fr-FR")}} lignes non comparées).`; else movementBox.textContent=`${{movement.current_only_offer_count??0}} offres courantes · comparaison indisponible sans deux branches admissibles.`; }} else {{ movementBox.textContent=`${{movement.matched_offer_count}} offres appariées · ${{movement.changed_offer_count}} changements · ${{movement.unchanged_offer_count}} inchangées · ${{movement.unmatched_current_count}} nouvelles/non appariées`; if(!movement.matched_offer_count) {{ if(lineageExcluded&&lineageExcluded===Number(movement.excluded_row_count||0)) movementBox.textContent += ` — Comparaison indisponible : transition de provenance (${{lineageExcluded.toLocaleString("fr-FR")}} lignes refusées).`; else movementBox.textContent += " — aucune offre exacte appariée."; }} }}
 if(DATA.comparison_acquisitions) {{ const acquisition=byId("capture-filter"); acquisition.options[1].textContent=`Acquisition récente · ${{DATA.comparison_acquisitions.current.slot_start_utc??"date inconnue"}}`; acquisition.options[2].textContent=`Acquisition précédente · ${{DATA.comparison_acquisitions.previous.slot_start_utc??"date inconnue"}}`; }}
 byId("comparison-limits").textContent=`${{movement.appeared_offer_count??movement.unmatched_current_count}} apparues · ${{movement.not_observed_offer_count??0}} non observées à nouveau · ${{movement.excluded_row_count??0}} lignes exclues. Une absence signifie non observée dans cette acquisition, pas retrait prouvé chez le bookmaker.`;
 selectRows();

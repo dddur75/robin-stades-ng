@@ -1056,6 +1056,22 @@ vue est descriptive : ni meilleur prix garanti, ni conseil, ni preuve d'edge.
 - réinstallation :
   `powershell -ExecutionPolicy Bypass -File scripts/install_real_data_explorer.ps1`.
 
+L'installateur copie uniquement le launcher et `src/robin` dans une release
+adressée par contenu sous `%LOCALAPPDATA%\Robin\explorer-runtime\releases`, puis
+vérifie les hashes, `runtime-manifest.json` et les imports avant de basculer le
+ScheduledTask ou le raccourci. Le cache de données reste séparé dans
+`%LOCALAPPDATA%\Robin\explorer`. Pour diagnostiquer une reprise, contrôler dans
+les propriétés du raccourci que les arguments et le répertoire de travail visent
+la release `explorer-runtime`, puis ouvrir `/status.json`. Une erreur de copie,
+de hash ou d'import survient avant la bascule et conserve l'ancien lancement ;
+une release validée antérieure peut être remise en service en repointant le
+raccourci vers son launcher, sans recopier ni modifier les données. Lorsqu'un
+raccourci de démarrage existe déjà, l'installateur conserve ce mécanisme : il
+écrit et relit un raccourci candidat, puis remplace atomiquement l'ancien sur le
+même volume. Il ne crée donc pas une tâche concurrente. Une erreur avant la
+bascule conserve le raccourci antérieur ; corriger les droits du dossier
+Démarrage, puis relancer l'installateur.
+
 Le service écoute seulement `127.0.0.1`. Il lie mission, acquisition, livraison et
 créneau, vérifie reçu, hashes et manifeste local avant lecture, puis bascule
 atomiquement. La corruption ou l'échec GitHub conserve la dernière vue valide.
