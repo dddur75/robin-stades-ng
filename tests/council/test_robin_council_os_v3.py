@@ -12,6 +12,7 @@ TEXT_ARTIFACT_SUFFIXES = {
     ".json",
     ".jsonl",
     ".md",
+    ".ps1",
     ".py",
     ".toml",
     ".yaml",
@@ -40,6 +41,16 @@ def committed_artifact_sha256(repo: Path, revision: str, relative: str) -> str:
     if Path(relative).suffix.casefold() in TEXT_ARTIFACT_SUFFIXES:
         payload = payload.replace(b"\r\n", b"\n")
     return hashlib.sha256(payload).hexdigest()
+
+
+def test_artifact_sha256_normalizes_powershell_line_endings(tmp_path: Path) -> None:
+    script = tmp_path / "delivery-contract.ps1"
+    script.write_bytes(b"$ErrorActionPreference = 'Stop'\nWrite-Output 'ok'\n")
+    lf_hash = artifact_sha256(script)
+
+    script.write_bytes(b"$ErrorActionPreference = 'Stop'\r\nWrite-Output 'ok'\r\n")
+
+    assert artifact_sha256(script) == lf_hash
 
 
 def committed_changed_paths(repo: Path, base_revision: str, head_revision: str) -> set[str]:
