@@ -1,0 +1,76 @@
+{
+  "agent_id": "C2",
+  "mission_id": "ROBIN_SIMPLIFICATION_EXPLORATION_20261005",
+  "facts_verified": [
+    {
+      "claim": "PASS pre-redemarrage, P0=0 et P1=0 : AGENTS.md impose sous Windows ProcessStartInfo avec UseShellExecute=false, CreateNoWindow=true, stdout/stderr rediriges et lus en parallele avant WaitForExit ; le wrapper local existant applique ces parametres.",
+      "evidence_refs": [
+        "AGENTS.md:90",
+        "%LOCALAPPDATA%/Robin/invoke-gh-hidden.ps1:7"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le checkpoint repertoriait exactement les huit chemins modifies ou non suivis observes avant la sauvegarde de cette revue ; branche codex/robin-r1-r8-final-evidence-v1 et HEAD fc45ebe78260af3eb39cdd2ed567071439e1a380 concordent.",
+      "evidence_refs": [
+        "reports/council/robin-simplification-reboot-checkpoint-20261006.json",
+        "git status --porcelain, git rev-parse HEAD et git branch --show-current lus a 2026-10-06T13:39Z"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Etat local de repos coherent : aucun listener sur 127.0.0.1:4173, PID 25748 absent, zero processus gh.exe ; raccourci Startup, cible pythonw.exe, runtime, entrypoint et cache sont presents.",
+      "evidence_refs": [
+        "reports/council/robin-simplification-reboot-checkpoint-20261006.json",
+        "%APPDATA%/Microsoft/Windows/Start Menu/Programs/Startup/RobinRealDataExplorer.lnk",
+        "%LOCALAPPDATA%/Robin/explorer-runtime/releases/6ae623e622897b043ab985687a1eb4642350bf267897b5f1e151b4a082dc6a73/scripts/run_real_data_explorer.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le cache est preserve : current pointe vers 37442331390, status conserve last_delivery_run_id=37449350561 et last_error_code=null, conformement au checkpoint.",
+      "evidence_refs": [
+        "%LOCALAPPDATA%/Robin/explorer/current.json",
+        "%LOCALAPPDATA%/Robin/explorer/status.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La collecte distante n'a pas ete desactivee : workflows GitHub 321915839 et collection-freshness-monitor sont actifs. L'ancien run 37456214675 a echoue sur SHA 0e732ffe avant capture et aucun run du nouveau SHA fc45ebe7 n'etait visible a 13:39Z. Le checkpoint attend le prochain run naturel et n'en demande aucun declenchement manuel.",
+      "evidence_refs": [
+        "reports/council/robin-simplification-reboot-checkpoint-20261006.json",
+        "https://github.com/dddur75/robin-stades-ng/actions/runs/37456214675",
+        "Lectures GET GitHub via %LOCALAPPDATA%/Robin/invoke-gh-hidden.ps1 a 2026-10-06T13:39Z"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "Le redemarrage physique et la relance automatique au prochain logon ne sont pas encore observes.",
+    "La premiere livraison naturelle issue de fc45ebe7 n'existe pas encore dans les runs visibles ; capture, validation, upload et ingestion restent a constater."
+  ],
+  "assumptions": [],
+  "main_objection": "PASS pre-redemarrage, P0=0/P1=0 dans le perimetre demande ; ce verdict ne transforme pas l'attente post-fusion ni le redemarrage futur en preuves acquises.",
+  "risks": [
+    {
+      "risk": "Le raccourci Startup est present et sa cible existe, mais son execution apres reboot physique reste non verifiee.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "reports/council/robin-simplification-reboot-checkpoint-20261006.json"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Apres logon, constater sans intervention que le raccourci relance un unique service sur 127.0.0.1:4173 et conserve current/status ; attendre ensuite un run naturel 321915839 sur fc45ebe7, puis verifier capture, validation explorer-v2, artifact, R2 VERIFIED et ingestion locale.",
+  "recommended_action": "Conserver le checkpoint et redemarrer lorsque l'utilisateur le souhaite ; ne declencher aucun workflow ni appel fournisseur/R2 pour accelerer la preuve.",
+  "scale_condition": "Aucune montee en charge autorisee par ce controle ; maintenir la collecte distante active et les plafonds existants.",
+  "estimated_compute": "Lectures locales et trois GET GitHub ponctuels via le wrapper cache ; aucun processus longue duree.",
+  "estimated_external_cost": "0 appel fournisseur, 0 credit, 0 acces R2, 0 declenchement de workflow.",
+  "estimated_human_time": "Non mesure.",
+  "maintenance_impact": "La regle Windows ajoute un contrat explicite pour les futurs appels gh ; aucun fichier n'a ete modifie par cette revue.",
+  "confidence": 0.97,
+  "independent_review": {
+    "architecture": "PARTIAL",
+    "operations": "PASS",
+    "performance": "PARTIAL"
+  }
+}

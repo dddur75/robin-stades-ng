@@ -251,15 +251,17 @@ if ([System.IO.Path]::GetFullPath($python) -match $managedCheckoutPattern) {
     throw 'ROBIN_EXPLORER_PYTHON_WORKTREE_FORBIDDEN'
 }
 $launcher = Join-Path $RepositoryRoot 'scripts\run_real_data_explorer.py'
+$ghLauncher = Join-Path $RepositoryRoot 'scripts\invoke_gh_hidden.ps1'
 if (
     -not (Test-Path -LiteralPath $python -PathType Leaf) -or
     -not (Test-Path -LiteralPath $launcher -PathType Leaf) -or
+    -not (Test-Path -LiteralPath $ghLauncher -PathType Leaf) -or
     -not (Test-Path -LiteralPath (Join-Path $RepositoryRoot 'src\robin') -PathType Container)
 ) {
     throw 'ROBIN_EXPLORER_RUNTIME_NOT_FOUND'
 }
 $trackedPaths = @(
-    & git -C $RepositoryRoot ls-files -- 'scripts/run_real_data_explorer.py' 'src/robin'
+    & git -C $RepositoryRoot ls-files -- 'scripts/run_real_data_explorer.py' 'scripts/invoke_gh_hidden.ps1' 'src/robin'
 )
 if ($LASTEXITCODE -ne 0 -or $trackedPaths.Count -eq 0) {
     throw 'ROBIN_EXPLORER_TRACKED_RUNTIME_NOT_FOUND'
@@ -267,6 +269,9 @@ if ($LASTEXITCODE -ne 0 -or $trackedPaths.Count -eq 0) {
 $trackedPaths = @($trackedPaths | ForEach-Object { $_.Replace('/', '\') } | Sort-Object -Unique)
 if ($trackedPaths -notcontains 'scripts\run_real_data_explorer.py') {
     throw 'ROBIN_EXPLORER_LAUNCHER_NOT_TRACKED'
+}
+if ($trackedPaths -notcontains 'scripts\invoke_gh_hidden.ps1') {
+    throw 'ROBIN_EXPLORER_GH_LAUNCHER_NOT_TRACKED'
 }
 
 New-Item -ItemType Directory -Force -Path $DataRoot | Out-Null
@@ -292,7 +297,7 @@ if (-not (Test-Path -LiteralPath $readyMarker -PathType Leaf)) {
         runtime_hash = $runtimeHash
         file_count = $trackedPaths.Count
         files = @($trackedPaths | ForEach-Object { $_.Replace('\', '/') })
-        source_layout = 'scripts/run_real_data_explorer.py+src/robin'
+        source_layout = 'scripts/run_real_data_explorer.py+scripts/invoke_gh_hidden.ps1+src/robin'
     } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $stage 'runtime-manifest.json') -Encoding utf8
     New-Item -ItemType File -Path (Join-Path $stage '.ready') | Out-Null
     Move-Item -LiteralPath $stage -Destination $runtimeRelease

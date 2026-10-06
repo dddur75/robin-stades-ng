@@ -87,6 +87,15 @@ La progression peut être automatique à l'intérieur du manifeste autorisé, ma
 elle ne crée aucune autorité, n'élève jamais le plafond et ne déclenche aucun
 effet externe.
 
+## GitHub CLI sous Windows
+
+Sous Windows, tout appel à `gh.exe`, y compris un appel ponctuel et a fortiori
+une boucle de suivi, passe par `System.Diagnostics.ProcessStartInfo` avec
+`UseShellExecute=false`, `CreateNoWindow=true`, `RedirectStandardOutput=true`
+et `RedirectStandardError=true`. Lire stdout et stderr en parallèle avant
+`WaitForExit` afin d'éviter tout interblocage. Ne jamais lancer directement
+`gh.exe` depuis une boucle PowerShell susceptible d'ouvrir une fenêtre visible.
+
 ## Calcul et données
 
 - Réutiliser les manifests, receipts, hashes, datasets temporels et bundles

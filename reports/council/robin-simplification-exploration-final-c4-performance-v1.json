@@ -1,0 +1,64 @@
+{
+  "agent_id": "C4",
+  "mission_id": "ROBIN_SIMPLIFICATION_EXPLORATION_20261005",
+  "facts_verified": [
+    {
+      "claim": "La série R6 gelée est cohérente : candidats 36,3667 / 39,9000 / 39,6167 minutes, médiane 39,6167 et étendue 3,5333 ; contre 65,1333 minutes de médiane baseline, les secondes sources 3908→2377 donnent 25,5167 minutes et 39,176 % de gain, avec 5,3833 minutes sous la cible de 45 minutes.",
+      "evidence_refs": ["PERF.ROBIN.SIMPLIFICATION.CI.BASELINE.V1.001", "PERF.ROBIN.SIMPLIFICATION.CI.CANDIDATE.SERIES.V1.001", "reports/council/robin-simplification-exploration-c4-performance-v1.json"],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les minutes-jobs candidates 70,80 / 71,7167 / 74,35 ont une médiane de 71,7167 et une étendue de 3,55 ; contre 102,65, la baisse est 30,9333 minutes-jobs, soit 30,135 %.",
+      "evidence_refs": ["PERF.ROBIN.SIMPLIFICATION.CI.CANDIDATE.SERIES.V1.001", "PERF.ROBIN.SIMPLIFICATION.FINAL.R6.GAIN.V1.001"],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le rapport borne correctement la mesure : temps humain avant/après non instrumenté, aucun gain humain ni financier revendiqué et zéro nouvelle étape manuelle récurrente dans le parcours automatisé.",
+      "evidence_refs": ["reports/evidence/robin-simplification-final-acceptance-20261006.json#measured_gain", "PERF.ROBIN.SIMPLIFICATION.CI.CANDIDATE.SERIES.V1.001"],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La sélection réelle Real Madrid contient 144 lignes dans la source, le JSON et le CSV ; 139 lignes appariées et 5 apparues, deux matchs, 20 bookmakers et deux créneaux. Les ensembles d'identités sont identiques, sans doublon, et les 3744 cellules CSV/JSON concordent après la seule inversion de l'apostrophe de protection CSV ; SHA-256 CSV 3647cb9b…6347 et JSON f97646e1…1908.",
+      "evidence_refs": ["reports/evidence/robin-simplification-postmerge-delivery-20261006.json#browser_acceptance", "sha256:3647cb9ba024334a0ab43dc2d82e25330cca16bf19af8237cc2f18b32bb76347", "sha256:f97646e1e5dd081162520e3a154aefe0388070f5ca8fe5c557382a850bb51908"],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le cycle 37480732769 est rattaché au main fc45ebe7 et au créneau 14:00Z : 5 requêtes, 10 crédits réservés, 5 captures validées et lecture R2 VERIFIED. Les compteurs 24 h 55/140 requêtes et 110/280 crédits restent sous plafonds ; achats, paris, promotions et reprises automatiques sont nuls.",
+      "evidence_refs": ["reports/evidence/robin-simplification-postmerge-delivery-20261006.json#automatic_delivery", "configs/execution/robin-autonomous-lab-20261004.json", ".github/workflows/prospective-deep-scheduler.yml:717"],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "L'expérience descriptive reste non scientifique au sens d'un edge : 682/7648 = 8,9174 %, Serie A 202/1608 = 12,5622 %, et les partitions marchés 504+178 et 5352+2296 réconcilient les totaux. Le rapport déclare explicitement aucune causalité, prédiction, rentabilité ou validation d'edge et n'a ajouté aucun effet externe.",
+      "evidence_refs": ["reports/experiments/robin-descriptive-20261005-0800-1000.json", "reports/evidence/robin-simplification-final-acceptance-20261006.json#descriptive_experience"],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les huit claim_ids finaux existent et leurs hashes d'artefacts courants concordent selon la convention LF-normalized ; R2 et R7 pointent désormais exactement sur 571f14dc9b13a156b739e6d364e0c1f762a39005eeab0c54b9b25a3325ed627f.",
+      "evidence_refs": ["reports/evidence/evidence-graph.json", "reports/evidence/robin-simplification-final-acceptance-20261006.json"],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La conclusion de l'ancien rapport C4 final indiquant encore un run post-fusion en cours est périmée ; la livraison réelle 37480732769 et la relève 37489327451 sont maintenant observées, sans modifier la série de performance R6 gelée.",
+      "evidence_refs": ["reports/council/robin-simplification-exploration-final-c4-performance-v1.json", "reports/evidence/robin-simplification-postmerge-delivery-20261006.json"],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [],
+  "assumptions": [],
+  "main_objection": "PASS — les mesures R6, les 144 lignes exportées, le cycle borné 5 requêtes/10 crédits et l'expérience strictement descriptive sont recoupés sans objection P0/P1 ni risque HIGH/CRITICAL ; les limites humaines et financières restent explicitement non mesurées.",
+  "risks": [
+    {
+      "risk": "Soustraire seulement les deux valeurs murales déjà arrondies à quatre décimales donne 25,5166 ; le résultat publié 25,5167 est correct lorsqu'on soustrait d'abord les durées sources exactes 3908 et 2377 secondes puis qu'on arrondit. Cette règle d'arrondi doit rester explicite.",
+      "severity": "LOW",
+      "evidence_refs": ["PERF.ROBIN.SIMPLIFICATION.CI.CANDIDATE.SERIES.V1.001", "reports/council/robin-simplification-exploration-c4-performance-v1.json"]
+    }
+  ],
+  "minimum_decisive_test": "Déjà satisfait : recomputation des deux gains depuis les séries gelées, réconciliation source/CSV/JSON des 144 lignes et de leurs identités, lecture du reçu 37480732769 contre les plafonds du manifeste parent, recomputation des agrégats descriptifs et vérification des huit hashes finaux.",
+  "recommended_action": "Matérialiser ce rapport comme successeur du C4 final périmé, conserver les deux limites NOT_MEASURED et accepter la clôture performance/mesure sans nouveau replay, nouvelle recherche d'edge ni appel externe.",
+  "scale_condition": "Aucune montée en charge supplémentaire n'est requise pour R6/R8. Toute future extension devrait conserver les plafonds 5/10 par créneau, 140/280 sur 24 h, l'identité exacte des exports et la frontière descriptive sans transformer ces observations en edge.",
+  "estimated_compute": "Revue locale en lecture seule des rapports, claims, reçu, snapshot de 21 Mo et deux exports ; aucun test complet ni workflow déclenché.",
+  "estimated_external_cost": "Zéro effet externe causé par la revue ; le cycle observé et déjà autorisé a consommé 5 requêtes fournisseur, réservé 10 crédits et effectué une écriture/lecture R2 attestée.",
+  "estimated_human_time": "Temps humain avant/après du produit : NOT_MEASURED ; aucune économie humaine chiffrée n'est revendiquée.",
+  "maintenance_impact": "Faible : remplacement d'une conclusion C4 périmée et conservation des preuves existantes ; aucune nouvelle étape manuelle récurrente, aucun service ni registre ajouté.",
+  "confidence": 0.995
+}
