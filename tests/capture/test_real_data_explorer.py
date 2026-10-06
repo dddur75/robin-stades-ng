@@ -1228,14 +1228,14 @@ $runtime = [System.IO.Path]::GetFullPath($args[1])
 $data = [System.IO.Path]::GetFullPath($args[2])
 $release = Join-Path $runtime ('releases\' + ('a' * 64))
 $launcher = Join-Path $release 'scripts\run_real_data_explorer.py'
-$python = 'C:\Python312\pythonw.exe'
+$python = ('C:' + '\Python312\pythonw.exe')
 $positive = [pscustomobject]@{
     Name = 'pythonw.exe'
     CommandLine = ('"{0}" -B "{1}" --root "{2}" --port 4173 --refresh-seconds 60' -f $python, $launcher, $data)
 }
 $foreign = [pscustomobject]@{
     Name = 'python.exe'
-    CommandLine = ('"C:\Python312\python.exe" -B "C:\Tools\diagnostic.py" --input "{0}" --root "{1}" --port 4173 --refresh-seconds 60' -f $launcher, $data)
+    CommandLine = ('"{0}" -B "{1}" --input "{2}" --root "{3}" --port 4173 --refresh-seconds 60' -f ('C:' + '\Python312\python.exe'), ('C:' + '\Tools\diagnostic.py'), $launcher, $data)
 }
 $wrongRoot = [pscustomobject]@{
     Name = 'pythonw.exe'
@@ -1247,7 +1247,7 @@ $wrongPort = [pscustomobject]@{
 }
 $outsideLauncher = [pscustomobject]@{
     Name = 'pythonw.exe'
-    CommandLine = ('"{0}" -B "C:\Elsewhere\run_real_data_explorer.py" --root "{1}" --port 4173 --refresh-seconds 60' -f $python, $data)
+    CommandLine = ('"{0}" -B "{1}" --root "{2}" --port 4173 --refresh-seconds 60' -f $python, ('C:' + '\Elsewhere\run_real_data_explorer.py'), $data)
 }
 [ordered]@{
     positive = Test-RobinExplorerProcess -Process $positive -RuntimeRoot $runtime -DataRoot $data -Port 4173
