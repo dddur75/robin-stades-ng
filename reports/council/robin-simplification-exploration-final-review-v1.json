@@ -1,0 +1,75 @@
+{
+  "agent_id": "C0",
+  "mission_id": "ROBIN_SIMPLIFICATION_EXPLORATION_20261005",
+  "facts_verified": [
+    {
+      "claim": "R1 réconcilie sans sélection rétrospective les douze créneaux de la fenêtre stricte de 24 heures, leurs acquisitions, sept rejeux à zéro appel et les incidents conservés. La chaîne réarmée n'a réinitialisé ni génération, ni compteurs, ni données.",
+      "evidence_refs": ["reports/evidence/robin-simplification-final-acceptance-20261006.json#continuity", "reports/evidence/robin-simplification-postmerge-delivery-20261006.json#maintenance_rearm"],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "R2 et R8 reposent sur une livraison réelle : le run bot 37480732769 a collecté, validé explorer-v2, conservé en R2, publié l'artifact 11424836985 et été ingéré automatiquement. Le bot a créé le successeur 37489327451 avant l'admission de capture.",
+      "evidence_refs": ["https://github.com/dddur75/robin-stades-ng/actions/runs/37480732769", "https://github.com/dddur75/robin-stades-ng/actions/runs/37489327451", "reports/evidence/robin-simplification-postmerge-delivery-20261006.json"],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le parcours visible Real Madrid reste utilisable après actualisation : 144 offres, 2 matchs, 20 bookmakers, 2 acquisitions. Écran, CSV et JSON ont les mêmes identités et valeurs; l'historique 37442331390 reste épinglé et le pointeur courant vaut 37480732769.",
+      "evidence_refs": ["http://127.0.0.1:4173/robin-real-data.html", "reports/evidence/robin-simplification-postmerge-delivery-20261006.json#browser_acceptance"],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "R3 conserve exactement les 865 appartenances des trois témoins Jalon 10, leurs identités, cotes, règlements, profits, ROI internes et drawdowns. La tolérance Float64 déclarée n'absorbe aucun écart et le verdict scientifique n'est pas modifié.",
+      "evidence_refs": ["reports/hypothesis-evidence/r3-jalon10-non-regression.json", "DATA.ROBIN.SIMPLIFICATION.R3.JALON10.NON_REGRESSION.V1.002"],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La simplification mesurée réduit la médiane murale 65,1333→39,6167 minutes et les minutes-jobs 102,65→71,7167. L'étendue 3,5333 reste visible; temps humain et gain financier ne sont pas revendiqués.",
+      "evidence_refs": ["PERF.ROBIN.SIMPLIFICATION.CI.CANDIDATE.SERIES.V1.001", "reports/council/robin-simplification-exploration-final-c4-performance-v1.json"],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le runtime Windows actif est contenu, durable et sans prise de focus : helper suivi, copie opérateur et copie runtime partagent le SHA-256 74add41e; les appels PowerShell 5.1 version et API authentifiée réussissent, et aucun gh.exe ne subsiste.",
+      "evidence_refs": ["scripts/invoke_gh_hidden.ps1", "reports/evidence/robin-simplification-postmerge-delivery-20261006.json#windows_runtime", "reports/council/robin-simplification-exploration-final-c2-operations-v1.json"],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les huit critères référencent huit claims VERIFIED dont les hashes LF correspondent aux artifacts courants. Les revues indépendantes finales C1, C2 et C4 sont PASS, sans inconnue critique ni risque HIGH/CRITICAL ouvert.",
+      "evidence_refs": ["reports/evidence/evidence-graph.json", "reports/council/robin-simplification-exploration-final-c1-architecture-v1.json", "reports/council/robin-simplification-exploration-final-c2-operations-v1.json", "reports/council/robin-simplification-exploration-final-c4-performance-v1.json"],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les verrous immuables restent actifs; la seule nouvelle consommation observée est le cycle autorisé de cinq requêtes et dix crédits réservés. Aucun achat, pari, promotion, publication sociale ou appel API-Football n'a eu lieu.",
+      "evidence_refs": ["reports/evidence/robin-simplification-final-acceptance-20261006.json#safety_locks", "reports/evidence/robin-simplification-postmerge-delivery-20261006.json#safety"],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [],
+  "assumptions": [],
+  "main_objection": "PASS_AND_HOLD — le candidat satisfait R1–R8 sur la révision fonctionnelle fusionnée et les trois clés indépendantes sont positives. La conclusion utilisateur reste retenue jusqu'à la fusion normale de cette clôture puis au réarmement maintenance exclusif et à la livraison automatique sur le nouveau head main.",
+  "risks": [
+    {
+      "risk": "La fusion de la clôture changera le head main et invalidera fail-closed le relais fc45 encore en attente. Le réarmement post-fusion doit attendre son état terminal et l'absence de toute chaîne concurrente.",
+      "severity": "MEDIUM",
+      "evidence_refs": ["reports/council/robin-simplification-exploration-final-c1-architecture-v1.json", "https://github.com/dddur75/robin-stades-ng/actions/runs/37489327451"]
+    },
+    {
+      "risk": "La cause interne de l'absence d'événement schedule reste non exposée par l'API; aucune attribution à GitHub n'est faite. Le monitor d'ancienneté et le relais réarmé bornent l'exploitation.",
+      "severity": "LOW",
+      "evidence_refs": ["reports/evidence/robin-simplification-postmerge-delivery-20261006.json#incident_diagnosis", ".github/workflows/collection-freshness-monitor.yml"]
+    },
+    {
+      "risk": "Le prochain démarrage automatique après installation du raccourci n'a pas été observé. La relance de service est vérifiée et cette limite non requise par le mandat reste explicitement déclarée.",
+      "severity": "LOW",
+      "evidence_refs": ["reports/evidence/robin-simplification-final-acceptance-20261006.json#real_explorer_acceptance", "reports/council/robin-simplification-exploration-final-c2-operations-v1.json"]
+    }
+  ],
+  "minimum_decisive_test": "Exécuter les tests ciblés et l'unique suite complète, obtenir une CI exact-head verte, fusionner normalement, attendre la terminaison de l'ancien relais, vérifier zéro chaîne concurrente, réarmer une fois le nouveau main sans remise à zéro, puis constater livraison, ingestion locale et successeur bot avant capture.",
+  "recommended_action": "Committer et livrer le candidat revu, suivre la CI exact-head et fusionner normalement. Après fusion, exécuter la maintenance post-fusion bornée et ne désactiver l'automatisation de suivi qu'après la livraison automatique et son handoff sur le head final.",
+  "scale_condition": "Aucune montée en charge. Conserver 5 requêtes/10 crédits par créneau, 140/280 sur 24 heures, une seule chaîne active, les verrous et la frontière descriptive sans edge.",
+  "estimated_compute": "Tests ciblés, une suite complète avant fusion et une capture bornée post-fusion; aucun replay du corpus historique.",
+  "estimated_external_cost": "Un cycle post-fusion au maximum dans les plafonds existants; zéro achat, pari, promotion ou publication.",
+  "estimated_human_time": "Temps humain avant/après non mesuré; aucune économie chiffrée ni nouvelle étape récurrente revendiquée.",
+  "maintenance_impact": "Le changement opérationnel centralise le lancement GitHub invisible et conserve le runtime content-addressed. Le réarmement exceptionnel ne modifie ni données, ni génération, ni compteurs et n'est pas une preuve autonome.",
+  "confidence": 0.99,
+  "independent_review": {"architecture": "PASS", "operations": "PASS", "performance": "PASS"}
+}

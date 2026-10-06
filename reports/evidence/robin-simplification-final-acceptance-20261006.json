@@ -1,9 +1,9 @@
 {
   "schema_version": "robin-simplification-final-acceptance-v1",
   "mission_id": "ROBIN_SIMPLIFICATION_EXPLORATION_20261005",
-  "status": "PENDING_POSTMERGE_DELIVERY",
+  "status": "PASS",
   "functional_revision": "fc45ebe78260af3eb39cdd2ed567071439e1a380",
-  "completed_at_utc": null,
+  "completed_at_utc": "2026-10-06T15:48:59.130542Z",
   "safety_locks": {
     "STORAGE_PAUSED": true,
     "P3_P4_PAUSED": true,
@@ -30,11 +30,13 @@
       ]
     },
     "R2": {
-      "status": "PENDING",
+      "status": "PASS",
       "claim_ids": ["DATA.ROBIN.SIMPLIFICATION.FINAL.R2.EXPLORER.V1.001"],
       "evidence_refs": [
         "DATA.ROBIN.SIMPLIFICATION.EXPLORER_UI.V1.001",
         "RUNTIME.ROBIN.SIMPLIFICATION.DURABLE_LOCAL_RUNTIME.V1.007",
+        "reports/evidence/robin-simplification-postmerge-delivery-20261006.json",
+        "https://github.com/dddur75/robin-stades-ng/actions/runs/37480732769",
         "http://127.0.0.1:4173/robin-real-data.html"
       ],
       "counterexamples": [
@@ -108,17 +110,20 @@
         "RUNTIME.ROBIN.SIMPLIFICATION.DURABLE_LOCAL_RUNTIME.V1.007"
       ],
       "counterexamples": [
-        "A physical reboot was not performed and automatic logon restart is not claimed as observed.",
+        "A physical reboot occurred before the final runtime installation; automatic logon restart after installation remains unobserved and is not claimed.",
         "An unregistered or ambiguous process is refused before the installer changes a running service.",
         "The independent freshness monitor remains useful when no collector run is produced."
       ]
     },
     "R8": {
-      "status": "PENDING",
+      "status": "PASS",
       "claim_ids": ["GOV.ROBIN.SIMPLIFICATION.FINAL.R8.DELIVERY.V1.001"],
       "evidence_refs": [
         "https://github.com/dddur75/robin-stades-ng/pull/93",
         "https://github.com/dddur75/robin-stades-ng/actions/runs/37454307929",
+        "https://github.com/dddur75/robin-stades-ng/actions/runs/37480732769",
+        "https://github.com/dddur75/robin-stades-ng/actions/runs/37489327451",
+        "reports/evidence/robin-simplification-postmerge-delivery-20261006.json",
         "reports/experiments/robin-descriptive-20261005-0800-1000.json"
       ],
       "counterexamples": [
@@ -165,21 +170,36 @@
   },
   "postmerge_delivery": {
     "repository_sha": "fc45ebe78260af3eb39cdd2ed567071439e1a380",
-    "workflow_run_id": 0,
-    "workflow_url": null,
-    "artifact_id": 0,
-    "artifact_name": null,
-    "schema_version": null,
-    "validation_outcome": "PENDING",
-    "upload_outcome": "PENDING",
-    "r2_readback_status": "PENDING",
+    "workflow_run_id": 37480732769,
+    "workflow_url": "https://github.com/dddur75/robin-stades-ng/actions/runs/37480732769",
+    "artifact_id": 11424836985,
+    "artifact_name": "robin-autonomous-lab-37480732769",
+    "schema_version": "robin-real-data-explorer-v2",
+    "validation_outcome": "success",
+    "upload_outcome": "success",
+    "r2_readback_status": "VERIFIED",
     "local_refresh": {
       "manual_copy_or_command": false,
       "filter_before": "Real Madrid",
-      "filter_after": null,
-      "current_delivery_run_id": null,
+      "filter_after": "Real Madrid",
+      "current_delivery_run_id": "37480732769",
+      "automatic_poll_observed": true,
       "status_last_error_code": null
     }
+  },
+  "arrival_recovery": {
+    "diagnosed_first_failed_link": "SCHEDULE_EVENT_ABSENT_AFTER_MERGE",
+    "last_schedule_run_id": 37448011825,
+    "last_schedule_created_at_utc": "2026-10-06T10:10:31Z",
+    "schedule_internal_cause": "UNKNOWN_NOT_EXPOSED_BY_API",
+    "maintenance_bootstrap_run_id": 37480698746,
+    "maintenance_is_autonomous_trigger_proof": false,
+    "pre_rearm_active_target_runs": 0,
+    "counters_reset": false,
+    "existing_data_reset": false,
+    "automatic_successor_run_id": 37489327451,
+    "successor_created_before_parent_capture": true,
+    "evidence": "reports/evidence/robin-simplification-postmerge-delivery-20261006.json"
   },
   "resolved_delivery_incident": {
     "failed_run_ids": [37405164519, 37410003793],
@@ -213,12 +233,14 @@
     "financial_gain_claimed": false
   },
   "real_explorer_acceptance": {
-    "dataset": "PENDING_AUTOMATIC_POSTMERGE_DELIVERY",
+    "dataset": "AUTOMATIC_POSTMERGE_DELIVERY",
+    "observed_delivery_run_id": "37480732769",
     "url": "http://127.0.0.1:4173/robin-real-data.html",
-    "search": {"query":"Real Madrid","selected_offers":0,"selected_matches":0},
-    "comparison": {"bookmakers":0,"acquisitions":0},
-    "tracking": {"matched_rows":0,"appeared_rows":0,"not_observed_rows":0},
-    "export": {"displayed_rows":0,"csv_rows":0,"json_rows":0,"source_identity_mismatches":0},
+    "search": {"query":"Real Madrid","selected_offers":144,"selected_matches":2},
+    "comparison": {"bookmakers":20,"acquisitions":2,"slot_start_utc":["2026-10-06T10:00:00Z","2026-10-06T14:00:00Z"]},
+    "tracking": {"matched_rows":139,"appeared_rows":5,"not_observed_rows":0},
+    "export": {"displayed_rows":144,"csv_rows":144,"json_rows":144,"source_identity_mismatches":0,"csv_json_value_mismatches":0,"csv_sha256":"3647cb9ba024334a0ab43dc2d82e25330cca16bf19af8237cc2f18b32bb76347","json_sha256":"f97646e1e5dd081162520e3a154aefe0388070f5ca8fe5c557382a850bb51908"},
+    "history_pin": {"pinned_delivery_run_id":"37442331390","pinned_slot_start_utc":"2026-10-06T10:00:00Z","current_delivery_run_id":"37480732769","preserved_after_refresh":true},
     "controls": {
       "search": "PASS",
       "sort": "PASS",
@@ -233,8 +255,12 @@
       "automatic_logon_restart_claimed": false,
       "service_relaunch": "PASS",
       "state_preserved": true,
+      "physical_reboot_observed_before_runtime_install": true,
+      "startup_shortcut_present": true,
+      "hidden_gh_launcher": "PASS",
+      "healthy_hidden_refresh_cycles": 4,
       "runtime_manifest_schema": "robin-real-data-explorer-runtime-v2",
-      "runtime_file_count": 221,
+      "runtime_file_count": 222,
       "runtime_missing_files": 0,
       "runtime_worktree_reference": false
     }
@@ -291,10 +317,10 @@
     "reproducible_report": "reports/experiments/robin-descriptive-20261005-0800-1000.json"
   },
   "external_effects_for_final_evidence": {
-    "provider_http_requests_new": 0,
-    "provider_credits_new": 0,
-    "r2_reads_new": 0,
-    "r2_writes_new": 0,
+    "provider_http_requests_new": 5,
+    "provider_credits_new": 10,
+    "r2_reads_new": 1,
+    "r2_writes_new": 1,
     "purchases": 0,
     "bets": 0,
     "promotions": 0,
@@ -302,7 +328,7 @@
   },
   "limitations": [
     "Provider market coverage remains partial and is displayed as such.",
-    "Automatic restart after a physical PC reboot was not observed and is not claimed.",
+    "The PC reboot preceded installation of the final startup shortcut; automatic restart on a later logon was not observed and is not claimed.",
     "Human-time and financial savings were not measured and are not inferred.",
     "The descriptive experience is not an independent predictive or profitability validation."
   ]

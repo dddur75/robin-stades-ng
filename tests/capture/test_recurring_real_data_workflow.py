@@ -258,6 +258,8 @@ def test_workflow_scopes_secrets_and_uploads_only_normalized_delivery() -> None:
     assert "RECURRING_NORMALIZED_FILE_SET_INVALID" in validate["run"]
     assert "raw_payload_base64" in validate["run"]
     assert "private_report_r2_status" in validate["run"]
+    assert 'snapshot["schema_version"] == "robin-real-data-explorer-v2"' in validate["run"]
+    assert "robin-real-data-dashboard-v1" not in validate["run"]
     upload = next(step for step in steps if step.get("id") == "upload")
     assert upload["with"]["path"] == "${{ runner.temp }}/robin-autonomous-lab"
     assert upload["with"]["retention-days"] == 30

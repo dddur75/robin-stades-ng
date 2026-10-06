@@ -1,0 +1,94 @@
+{
+  "agent_id": "C2",
+  "mission_id": "ROBIN_SIMPLIFICATION_EXPLORATION_20261005",
+  "facts_verified": [
+    {
+      "claim": "P0=0, P1=0, P2=0 dans le périmètre du lanceur GitHub Windows réparé.",
+      "evidence_refs": [
+        "git status --short : A scripts/invoke_gh_hidden.ps1, plus aucun état AM",
+        "git diff --cached -- scripts/invoke_gh_hidden.ps1",
+        "tests/capture/test_real_data_explorer.py:640-724"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "L'index et l'arbre de travail contiennent exactement le même helper complet, SHA-256 74ADD41E33FEF48B60C510CB39FAC4B17742B187F2756CF28092F3B5C4332983, sans diff non indexé.",
+      "evidence_refs": [
+        "git show :scripts/invoke_gh_hidden.ps1",
+        "Get-FileHash scripts/invoke_gh_hidden.ps1",
+        "git diff -- scripts/invoke_gh_hidden.ps1 : vide"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La projection indexée inclut le fallback PowerShell 5.1 : utilisation d'ArgumentList lorsqu'il existe, sinon construction de ProcessStartInfo.Arguments avec échappement Windows des espaces, guillemets et antislashs.",
+      "evidence_refs": [
+        "scripts/invoke_gh_hidden.ps1:8-35",
+        "scripts/invoke_gh_hidden.ps1:48-57",
+        "powershell.exe 5.1.26100.9549 avec ProcessStartInfo.ArgumentList=NULL"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le contrat sans fenêtre est complet : UseShellExecute=false, CreateNoWindow=true, stdout/stderr redirigés, puis les deux ReadToEndAsync sont démarrés avant WaitForExit.",
+      "evidence_refs": [
+        "scripts/invoke_gh_hidden.ps1:39-66",
+        "src/robin/capture/real_data_explorer.py:568-601",
+        "AGENTS.md:90-97"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La couverture de non-régression contrôle désormais séparément stdoutTask et stderrTask avant WaitForExit ; la faiblesse P2 antérieure est fermée.",
+      "evidence_refs": [
+        "tests/capture/test_real_data_explorer.py:690-703"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La vérification fraîche est verte : 41 tests réussis, aucun échec et UNAPPROVED_NETWORK_ATTEMPTS=0.",
+      "evidence_refs": [
+        "PYTHONPATH=src py -3.12 -m pytest -q -p no:cacheprovider tests/capture/test_real_data_explorer.py",
+        "Résultat C2 : 41 passed in 16.88s"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les preuves opérationnelles précédentes restent valides : runtime active 0fb912345db55d8ec926c5fa931ba4b689fb52062f85668c3ec8128ac1eed57c, PID pythonw unique 27804, trois cycles successifs last_error_code=null et aucune fenêtre gh.exe observée pendant un cycle complet.",
+      "evidence_refs": [
+        "%LOCALAPPDATA%/Robin/explorer-runtime/releases/0fb912345db55d8ec926c5fa931ba4b689fb52062f85668c3ec8128ac1eed57c/runtime-manifest.json",
+        "%LOCALAPPDATA%/Robin/explorer/status.json",
+        "Échantillonnage C2 2026-10-06T14:27:28Z–14:28:38Z"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "Le transcript RED initial n'est pas versionné ; C2 a vérifié le GREEN actuel et la capacité du test à détecter le retour au chemin direct."
+  ],
+  "assumptions": [],
+  "main_objection": "Aucune objection P0, P1 ou P2 ne subsiste sur la correction auditée. La branche complète comporte encore d'autres modifications non indexées, qui devront suivre le contrôle pré-commit ordinaire, mais elles ne réouvrent pas ce raccord Windows.",
+  "risks": [
+    {
+      "risk": "Un futur changement non couvert hors du périmètre de ces tests pourrait réintroduire un autre appel direct à gh.exe.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "AGENTS.md:90-97",
+        "tests/capture/test_real_data_explorer.py:640-724"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Conserver le test ciblé 41/41 et vérifier le diff indexé complet avant le commit final.",
+  "recommended_action": "C2 autorise la poursuite de la clôture. Indexer ensuite l'ensemble cohérent des fichiers de livraison, appliquer le ledger pré-commit et exécuter les vérifications proportionnées prévues.",
+  "scale_condition": "PASS opérationnel pour le lanceur caché ; la fusion reste conditionnée par les contrôles globaux R1–R8, la CI exact-head et la recette de livraison automatique.",
+  "estimated_compute": "41 tests ciblés, 16.88 secondes ; aucun replay.",
+  "estimated_external_cost": "0 ; aucun appel fournisseur et aucun appel GitHub direct.",
+  "estimated_human_time": "Aucune correction supplémentaire requise dans ce périmètre.",
+  "maintenance_impact": "Faible : un helper suivi centralise le contrat Windows et les deux niveaux de création sans fenêtre sont testés.",
+  "confidence": 0.995,
+  "independent_review": {
+    "architecture": "PASS",
+    "operations": "PASS",
+    "performance": "PASS"
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "agent_id": "C1",
+  "mission_id": "ROBIN_SIMPLIFICATION_EXPLORATION_20261005",
+  "facts_verified": [
+    {
+      "claim": "P0=0, P1=0. Le chemin Windows lance PowerShell puis gh.exe sans fenêtre, avec UseShellExecute=false, CreateNoWindow=true et lecture asynchrone parallèle de stdout/stderr avant WaitForExit.",
+      "evidence_refs": [
+        "scripts/invoke_gh_hidden.ps1:43",
+        "src/robin/capture/real_data_explorer.py:577",
+        "tests/capture/test_real_data_explorer.py:645"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La branche réelle Windows PowerShell 5.1 utilise le fallback Arguments; un sondage mémoire sans écriture a préservé les arguments simples, espaces, guillemets, chaîne vide et antislash final.",
+      "evidence_refs": [
+        "scripts/invoke_gh_hidden.ps1:7",
+        "scripts/invoke_gh_hidden.ps1:48"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La portabilité non-Windows est préservée: les appels restent des argv directs vers gh, sans creationflags.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_explorer.py:577",
+        "tests/capture/test_real_data_explorer.py:637"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le runtime installé embarque désormais le wrapper suivi par Git et l'inclut dans le hash/manifeste immuable; la résolution relative depuis src/robin/capture atteint correctement la racine de release.",
+      "evidence_refs": [
+        "scripts/install_real_data_explorer.ps1:254",
+        "scripts/install_real_data_explorer.ps1:264",
+        "scripts/install_real_data_explorer.ps1:297",
+        "src/robin/capture/real_data_explorer.py:571"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le producteur et le validateur actifs restent alignés sur robin-real-data-explorer-v2 et le raccord est couvert à la fois par assertions structurelles et par un test comportemental qui accepte la production réelle puis rejette une altération.",
+      "evidence_refs": [
+        ".github/workflows/prospective-deep-scheduler.yml:729",
+        "tests/capture/test_recurring_real_data_workflow.py:261",
+        "tests/capture/test_run_recurring_real_data_cli.py:338"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "L'ancien validateur dashboard-v1 de 92-robin-autonomous-lab.yml n'est pas une régression active: le ledger le conserve explicitement comme workflow retiré disabled_manually et interdit sa réactivation sans nouvelle autorité.",
+      "evidence_refs": [
+        ".github/workflows/92-robin-autonomous-lab.yml:255",
+        "reports/council/decision-ledger.jsonl:301",
+        "tests/capture/test_recurring_real_data_workflow.py:170"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "Cette revue strictement en lecture seule n'a pas relancé pytest ni réinstallé/redémarré le service.",
+    "L'état GitHub dynamique du workflow 92 n'a pas été interrogé; son retrait repose sur le ledger et les gardes versionnées."
+  ],
+  "assumptions": [
+    "La règle de mission maintenant 374470410 désactivé reste en vigueur.",
+    "Les timeouts de 120/180 secondes restent rares sur les lectures GitHub ordinaires."
+  ],
+  "main_objection": "Verdict C1: PASS, P0=0, P1=0, P2=2. Aucun défaut ne bloque le raccord demandé; deux dettes mineures de résilience restent localisées.",
+  "risks": [
+    {
+      "risk": "P2 — En cas de timeout Python, subprocess.run termine le wrapper PowerShell mais ne garantit pas l'arrêt de son enfant gh.exe sous Windows; un téléchargement orphelin peut continuer et chevaucher un cycle ultérieur.",
+      "severity": "MEDIUM",
+      "evidence_refs": [
+        "src/robin/capture/real_data_explorer.py:597",
+        "scripts/invoke_gh_hidden.ps1:55"
+      ]
+    },
+    {
+      "risk": "P2 — Si gh.exe est absent, l'échec se produit dans le wrapper et revient comme GITHUB_READ_FAILED; GITHUB_CLI_UNAVAILABLE n'est plus atteint sur Windows, ce qui réduit la précision du diagnostic sans compromettre le fail-closed.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "scripts/invoke_gh_hidden.ps1:39",
+        "src/robin/capture/real_data_explorer.py:611",
+        "src/robin/capture/real_data_explorer.py:619"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Conserver le test Windows réel --version et ajouter ultérieurement deux tests ciblés: absence simulée de gh.exe donnant GITHUB_CLI_UNAVAILABLE, puis commande bloquée démontrant qu'aucun enfant gh.exe ne survit au timeout.",
+  "recommended_action": "Accepter le correctif actuel pour la clôture R1–R8; enregistrer les deux P2 sans rouvrir le workflow 92. Corriger ensuite la classification d'absence et la terminaison d'arbre de processus dans un micro-lot TDD.",
+  "scale_condition": "Autoriser la livraison après tests ciblés verts, installation du runtime hashé et observation d'au moins deux cycles automatiques sans fenêtre; aucun P0/P1 n'est ouvert.",
+  "estimated_compute": "Revue statique et sondage PowerShell 5.1 en mémoire uniquement; aucun replay de corpus.",
+  "estimated_external_cost": "0 appel fournisseur, 0 crédit, 0 écriture GitHub/R2.",
+  "estimated_human_time": "Deux P2 représentent environ 30–60 minutes de micro-correction et tests dédiés.",
+  "maintenance_impact": "Faible; le wrapper centralise correctement la politique Windows. Les deux P2 concernent uniquement les chemins d'échec.",
+  "confidence": 0.94,
+  "independent_review": {
+    "architecture": "PASS",
+    "operations": "PARTIAL",
+    "performance": "PASS"
+  }
+}

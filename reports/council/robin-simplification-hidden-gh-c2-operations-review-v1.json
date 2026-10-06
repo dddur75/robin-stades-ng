@@ -1,0 +1,145 @@
+{
+  "agent_id": "C2",
+  "mission_id": "ROBIN_SIMPLIFICATION_EXPLORATION_20261005",
+  "facts_verified": [
+    {
+      "claim": "P0=0. La correction active applique deux niveaux sans fenêtre : Python lance powershell.exe avec CREATE_NO_WINDOW, puis le helper lance gh.exe via ProcessStartInfo avec UseShellExecute=false, CreateNoWindow=true et les deux flux redirigés.",
+      "evidence_refs": [
+        "src/robin/capture/real_data_explorer.py:568-601",
+        "scripts/invoke_gh_hidden.ps1:39-64",
+        "AGENTS.md:90-97"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La compatibilité Windows PowerShell 5.1 est effective dans l'arbre de travail : powershell.exe est 5.1.26100.9549, ProcessStartInfo.ArgumentList y est null, le helper prend donc son fallback Arguments avec échappement Windows.",
+      "evidence_refs": [
+        "powershell.exe -NoProfile : PSVersion 5.1.26100.9549, ArgumentList=NULL",
+        "scripts/invoke_gh_hidden.ps1:5-35",
+        "scripts/invoke_gh_hidden.ps1:47-56"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le sous-ensemble explorer est vert fraîchement : 41 tests réussis, 0 échec, UNAPPROVED_NETWORK_ATTEMPTS=0.",
+      "evidence_refs": [
+        "PYTHONPATH=src py -3.12 -m pytest -q -p no:cacheprovider tests/capture/test_real_data_explorer.py",
+        "Résultat 2026-10-06 : 41 passed in 20.51s"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le cycle RED antérieur est rapporté mais non reproduit par C2 : la contrainte de lecture seule interdit de remettre temporairement le code fautif. Le test actuel échoue conceptuellement sur l'ancien chemin direct car il exige le wrapper PowerShell et CREATE_NO_WINDOW.",
+      "evidence_refs": [
+        "tests/capture/test_real_data_explorer.py:640-695",
+        "Diff HEAD..worktree de src/robin/capture/real_data_explorer.py"
+      ],
+      "status": "PARTIAL"
+    },
+    {
+      "claim": "L'installateur inclut désormais le helper suivi, refuse son absence et l'inscrit dans le manifeste et le hash atomique de runtime.",
+      "evidence_refs": [
+        "scripts/install_real_data_explorer.ps1:254-273",
+        "scripts/install_real_data_explorer.ps1:297-304",
+        "%LOCALAPPDATA%/Robin/explorer-runtime/releases/0fb912345db55d8ec926c5fa931ba4b689fb52062f85668c3ec8128ac1eed57c/runtime-manifest.json"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La runtime réellement active est la release 0fb912345db55d8ec926c5fa931ba4b689fb52062f85668c3ec8128ac1eed57c ; ses trois fichiers critiques ont les mêmes SHA-256 que l'arbre de travail.",
+      "evidence_refs": [
+        "Win32_Process PID 27804",
+        "%LOCALAPPDATA%/Robin/explorer-runtime/releases/0fb912345db55d8ec926c5fa931ba4b689fb52062f85668c3ec8128ac1eed57c/runtime-manifest.json",
+        "SHA-256 identiques pour run_real_data_explorer.py, invoke_gh_hidden.ps1 et real_data_explorer.py"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Un seul processus pythonw.exe Robin est actif : PID 27804, démarré à 14:10:48Z, refresh 60 secondes.",
+      "evidence_refs": [
+        "Get-CimInstance Win32_Process filtré sur Name=pythonw.exe et run_real_data_explorer.py",
+        "MANAGED_PYTHONW_COUNT=1"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Trois cycles successifs sont sains : last_checked_at_utc 14:26:28Z, 14:27:30Z et 14:28:32Z, chaque fois last_error_code=null.",
+      "evidence_refs": [
+        "%LOCALAPPDATA%/Robin/explorer/status.json",
+        "Échantillonnage C2 du 2026-10-06T14:27:28Z au 2026-10-06T14:28:34Z"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Aucune fenêtre gh.exe n'a été observée pendant 70 secondes avec sondage toutes les 100 ms, fenêtre couvrant le rafraîchissement de 14:28:32Z ; aucun processus gh.exe ne restait ensuite.",
+      "evidence_refs": [
+        "Sondage Get-Process gh/MainWindowHandle, 2026-10-06T14:27:28Z–14:28:38Z",
+        "GH_WINDOWS vide",
+        "GH_PROCESS_COUNT=0 après cycle"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Aucune sémantique d'acquisition, de sélection des runs, de validation des bundles, de publication atomique, de reprise ou de conservation du pointeur n'a changé ; le diff de production est limité à la construction et au lancement du processus GitHub, et le diff installateur au packaging du helper.",
+      "evidence_refs": [
+        "git diff -- src/robin/capture/real_data_explorer.py",
+        "git diff -- scripts/install_real_data_explorer.ps1",
+        "download_candidates, validate_source_bundle, ExplorerRefreshController et AtomicExplorerStore inchangés"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "P1=1 avant commit : scripts/invoke_gh_hidden.ps1 est en état AM. L'index contient encore la version initiale utilisant ArgumentList sans fallback PowerShell 5.1, tandis que l'arbre de travail et la runtime active contiennent la version réparée.",
+      "evidence_refs": [
+        "git status --short : AM scripts/invoke_gh_hidden.ps1",
+        "git diff --cached -- scripts/invoke_gh_hidden.ps1",
+        "git diff -- scripts/invoke_gh_hidden.ps1"
+      ],
+      "status": "BLOCKED"
+    },
+    {
+      "claim": "P2=1 : le test statique vérifie seulement que la première occurrence de ReadToEndAsync précède WaitForExit ; il ne détecterait pas à lui seul un déplacement futur de la lecture stderr après WaitForExit. Le code courant lit bien les deux flux en parallèle.",
+      "evidence_refs": [
+        "tests/capture/test_real_data_explorer.py:691-695",
+        "scripts/invoke_gh_hidden.ps1:61-65"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": [
+    "La sortie RED originale n'est pas présente dans un artefact versionné consultable par C2.",
+    "L'absence de fenêtre est prouvée par la configuration et un sondage couvrant un cycle, pas par une observation de durée illimitée."
+  ],
+  "assumptions": [],
+  "main_objection": "Le code exécuté et l'arbre de travail sont réparés, mais l'index Git ne l'est pas encore : un commit de l'index actuel livrerait le helper sans fallback Windows PowerShell 5.1. Cette divergence P1 doit être supprimée avant le commit.",
+  "risks": [
+    {
+      "risk": "Commit accidentel de la version indexée incompatible PowerShell 5.1.",
+      "severity": "HIGH",
+      "evidence_refs": [
+        "AM scripts/invoke_gh_hidden.ps1",
+        "Diff index/travail du helper"
+      ]
+    },
+    {
+      "risk": "Régression future de la lecture parallèle de stderr non détectée par l'assertion actuelle.",
+      "severity": "LOW",
+      "evidence_refs": [
+        "tests/capture/test_real_data_explorer.py:695"
+      ]
+    }
+  ],
+  "minimum_decisive_test": "Après réconciliation de l'index, vérifier que git diff --cached du helper contient le fallback ArgumentList/Arguments, puis relancer les 41 tests. Renforcer séparément l'assertion pour exiger que les affectations stdoutTask et stderrTask précèdent chacune WaitForExit.",
+  "recommended_action": "Indexer la version courante complète du helper avant tout commit, contrôler le diff indexé, puis conserver la runtime active telle quelle. Aucun changement supplémentaire du chemin d'acquisition ou de publication n'est requis.",
+  "scale_condition": "Operations PASS après disparition de l'état AM divergent et confirmation du même test 41/41 sur la projection réellement indexée.",
+  "estimated_compute": "Un test ciblé de 20 à 25 secondes ; aucun replay ni calcul fournisseur.",
+  "estimated_external_cost": "0 ; aucun appel fournisseur et aucun nouvel appel GitHub de C2.",
+  "estimated_human_time": "Moins de 5 minutes.",
+  "maintenance_impact": "Faible après centralisation du lancement caché ; ajouter l'assertion stderr réduit encore le risque de régression.",
+  "confidence": 0.99,
+  "independent_review": {
+    "architecture": "PASS",
+    "operations": "PARTIAL",
+    "performance": "PASS"
+  }
+}

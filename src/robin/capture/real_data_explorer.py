@@ -560,22 +560,50 @@ class GhArtifactClient:
         workflow_id: str,
         runner: Callable[..., subprocess.CompletedProcess[str]] = subprocess.run,
         candidate_limit: int = 6,
+        windows: bool | None = None,
+        hidden_gh_wrapper: Path | None = None,
     ) -> None:
         self.repository = repository
         self.workflow_id = workflow_id
         self._runner = runner
         self.candidate_limit = candidate_limit
+        self._windows = os.name == "nt" if windows is None else windows
+        self._hidden_gh_wrapper = hidden_gh_wrapper or (
+            Path(__file__).resolve().parents[3] / "scripts" / "invoke_gh_hidden.ps1"
+        )
+
+    def _process_command(self, command: Sequence[str]) -> tuple[list[str], dict[str, int]]:
+        argv = list(command)
+        if not self._windows:
+            return argv, {}
+        if not argv or argv[0] != "gh" or not self._hidden_gh_wrapper.is_file():
+            raise BundleValidationError("GITHUB_PROCESS_FAILED")
+        return (
+            [
+                "powershell.exe",
+                "-NoProfile",
+                "-NonInteractive",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                str(self._hidden_gh_wrapper),
+                *argv[1:],
+            ],
+            {"creationflags": getattr(subprocess, "CREATE_NO_WINDOW", 0x08000000)},
+        )
 
     def _run(
         self, command: Sequence[str], *, timeout: int = 120
     ) -> subprocess.CompletedProcess[str]:
+        argv, platform_options = self._process_command(command)
         try:
             result = self._runner(
-                list(command),
+                argv,
                 capture_output=True,
                 text=True,
                 timeout=timeout,
                 check=False,
+                **platform_options,
             )
         except FileNotFoundError:
             raise BundleValidationError("GITHUB_CLI_UNAVAILABLE") from None

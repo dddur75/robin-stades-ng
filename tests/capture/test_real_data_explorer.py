@@ -634,10 +634,92 @@ def test_failed_gh_artifact_download_is_not_treated_as_healthy(tmp_path: Path) -
             )
         return subprocess.CompletedProcess(command, 1, stdout="", stderr="artifact expired")
 
-    client = GhArtifactClient(repository="owner/repo", workflow_id="42", runner=runner)
+    client = GhArtifactClient(
+        repository="owner/repo", workflow_id="42", runner=runner, windows=False
+    )
 
     with pytest.raises(BundleValidationError, match="GITHUB_ARTIFACT_DOWNLOAD_FAILED"):
         client.download_candidates(tmp_path / "downloads", current_delivery_run_id="10")
+
+
+def test_windows_gh_calls_use_hidden_processstartinfo_launcher(tmp_path: Path) -> None:
+    wrapper = tmp_path / "invoke-gh-hidden.ps1"
+    wrapper.write_text("# controlled test launcher\n", encoding="utf-8")
+    calls: list[tuple[list[str], dict[str, object]]] = []
+
+    def runner(command: list[str], **kwargs: object) -> subprocess.CompletedProcess[str]:
+        calls.append((command, kwargs))
+        return subprocess.CompletedProcess(
+            command,
+            0,
+            stdout=json.dumps({"workflow_runs": []}),
+            stderr="",
+        )
+
+    client = GhArtifactClient(
+        repository="owner/repo",
+        workflow_id="42",
+        runner=runner,
+        windows=True,
+        hidden_gh_wrapper=wrapper,
+    )
+
+    assert client.download_candidates(tmp_path / "downloads", current_delivery_run_id="10") == []
+    assert len(calls) == 1
+    command, kwargs = calls[0]
+    assert command[:6] == [
+        "powershell.exe",
+        "-NoProfile",
+        "-NonInteractive",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+    ]
+    assert command[6] == str(wrapper)
+    assert command[7:] == [
+        "api",
+        "repos/owner/repo/actions/workflows/42/runs?status=completed&per_page=6",
+    ]
+    assert kwargs["creationflags"] == 0x08000000
+    assert kwargs["capture_output"] is True
+    assert kwargs["text"] is True
+
+    tracked_wrapper = (ROOT / "scripts" / "invoke_gh_hidden.ps1").read_text("utf-8")
+    assert "$startInfo.UseShellExecute = $false" in tracked_wrapper
+    assert "$startInfo.CreateNoWindow = $true" in tracked_wrapper
+    assert "$startInfo.RedirectStandardOutput = $true" in tracked_wrapper
+    assert "$startInfo.RedirectStandardError = $true" in tracked_wrapper
+    wait_index = tracked_wrapper.index("$process.WaitForExit()")
+    assert (
+        tracked_wrapper.index("$stdoutTask = $process.StandardOutput.ReadToEndAsync()") < wait_index
+    )
+    assert (
+        tracked_wrapper.index("$stderrTask = $process.StandardError.ReadToEndAsync()") < wait_index
+    )
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows PowerShell integration")
+def test_hidden_gh_launcher_supports_windows_powershell() -> None:
+    completed = subprocess.run(  # noqa: S603 - fixed tracked local launcher argv.
+        [
+            "powershell.exe",
+            "-NoProfile",
+            "-NonInteractive",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            str(ROOT / "scripts" / "invoke_gh_hidden.ps1"),
+            "--version",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0x08000000),
+    )
+
+    assert completed.returncode == 0
+    assert completed.stderr == ""
+    assert completed.stdout.startswith("gh version ")
 
 
 def test_refresh_loop_survives_unexpected_failure_and_records_sanitized_code() -> None:
@@ -936,6 +1018,7 @@ def test_windows_installer_materializes_only_the_tracked_runtime(tmp_path: Path)
             "ls-files",
             "--",
             "scripts/run_real_data_explorer.py",
+            "scripts/invoke_gh_hidden.ps1",
             "src/robin",
         ],
         check=True,

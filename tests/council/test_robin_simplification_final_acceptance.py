@@ -163,6 +163,8 @@ def test_postmerge_delivery_is_uploaded_and_loaded_without_manual_copy() -> None
     assert delivery["local_refresh"]["filter_before"] == "Real Madrid"
     assert delivery["local_refresh"]["filter_after"] == "Real Madrid"
     assert delivery["local_refresh"]["current_delivery_run_id"] == str(delivery["workflow_run_id"])
+    assert delivery["local_refresh"]["automatic_poll_observed"] is True
+    assert delivery["local_refresh"]["status_last_error_code"] is None
 
 
 def test_incident_and_measurement_limits_remain_visible() -> None:
@@ -191,14 +193,32 @@ def test_real_explorer_acceptance_covers_the_complete_user_path() -> None:
     acceptance = _load(ACCEPTANCE_PATH)
     exploration = acceptance["real_explorer_acceptance"]
     assert exploration["dataset"] == "AUTOMATIC_POSTMERGE_DELIVERY"
+    assert exploration["observed_delivery_run_id"] == str(
+        acceptance["postmerge_delivery"]["workflow_run_id"]
+    )
     assert exploration["search"]["query"] == "Real Madrid"
     assert exploration["search"]["selected_offers"] > 0
     assert exploration["search"]["selected_matches"] > 0
     assert exploration["comparison"]["bookmakers"] >= 2
-    assert exploration["comparison"]["acquisitions"] >= 2
+    assert exploration["comparison"]["acquisitions"] == 2
+    assert len(exploration["comparison"]["slot_start_utc"]) == 2
+    assert len(set(exploration["comparison"]["slot_start_utc"])) == 2
     assert exploration["tracking"]["matched_rows"] > 0
+    assert (
+        exploration["tracking"]["matched_rows"]
+        + exploration["tracking"]["appeared_rows"]
+        + exploration["tracking"]["not_observed_rows"]
+        == exploration["search"]["selected_offers"]
+    )
     assert exploration["export"]["displayed_rows"] == exploration["export"]["csv_rows"]
+    assert exploration["export"]["displayed_rows"] == exploration["export"]["json_rows"]
+    assert exploration["export"]["displayed_rows"] == exploration["search"]["selected_offers"]
     assert exploration["export"]["source_identity_mismatches"] == 0
+    assert exploration["export"]["csv_json_value_mismatches"] == 0
+    assert len(exploration["export"]["csv_sha256"]) == 64
+    assert len(exploration["export"]["json_sha256"]) == 64
+    assert exploration["history_pin"]["preserved_after_refresh"] is True
+    assert exploration["history_pin"]["pinned_delivery_run_id"]
     assert exploration["controls"] == {
         "search": "PASS",
         "sort": "PASS",
@@ -211,6 +231,8 @@ def test_real_explorer_acceptance_covers_the_complete_user_path() -> None:
     assert exploration["restart"]["automatic_logon_restart_claimed"] is False
     assert exploration["restart"]["service_relaunch"] == "PASS"
     assert exploration["restart"]["state_preserved"] is True
+    assert exploration["restart"]["hidden_gh_launcher"] == "PASS"
+    assert exploration["restart"]["healthy_hidden_refresh_cycles"] >= 2
     assert exploration["restart"]["runtime_manifest_schema"] == (
         "robin-real-data-explorer-runtime-v2"
     )
