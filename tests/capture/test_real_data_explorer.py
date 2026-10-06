@@ -426,8 +426,10 @@ def test_same_origin_semantic_change_is_rejected_without_moving_the_pointer(
     assert store.read_public_bytes("robin-real-data.json") == json_before
 
 
+@pytest.mark.parametrize("renderer_current", [True, False])
 def test_same_origin_relay_may_refresh_derived_movement_without_changing_acquisition(
     tmp_path: Path,
+    renderer_current: bool,
 ) -> None:
     store = AtomicExplorerStore(tmp_path / "store", clock=lambda: NOW)
     original = _bundle(tmp_path / "original", run_id=10, slot=NOW, price=2.0)
@@ -440,6 +442,16 @@ def test_same_origin_relay_may_refresh_derived_movement_without_changing_acquisi
     )
     relay_json_path = relay / "robin-real-data.json"
     relay_snapshot = json.loads(relay_json_path.read_text("utf-8"))
+    relay_snapshot["comparison_available"] = False
+    for row in relay_snapshot["explorer_rows"]:
+        row.update(
+            {
+                "comparison_status": "CURRENT_ONLY",
+                "previous_price": None,
+                "delta": None,
+                "direction": "CURRENT_ONLY",
+            }
+        )
     relay_snapshot["price_movement"].update(
         {
             "matched_offer_count": 0,
@@ -464,11 +476,32 @@ def test_same_origin_relay_may_refresh_derived_movement_without_changing_acquisi
     relay_receipt_path.write_text(json.dumps(relay_receipt), encoding="utf-8")
     original_pointer = store.publish(original)
     original_public = store.read_public_bytes("robin-real-data.json")
+    if not renderer_current:
+        current_root = store.versions / original_pointer["version"]
+        legacy_root = store.versions / "run-10-view-v2"
+        current_root.rename(legacy_root)
+        manifest_path = legacy_root / "manifest.json"
+        manifest = json.loads(manifest_path.read_text("utf-8"))
+        manifest["renderer_revision"] = "v2"
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+        legacy_pointer = dict(original_pointer)
+        legacy_pointer["renderer_revision"] = "v2"
+        legacy_pointer["version"] = legacy_root.name
+        store.pointer_path.write_text(json.dumps(legacy_pointer), encoding="utf-8")
 
     relayed_pointer = store.publish(relay)
 
-    assert relayed_pointer == original_pointer
-    assert store.current_pointer() == original_pointer
+    assert relayed_pointer["run_id"] == original_pointer["run_id"]
+    assert relayed_pointer["renderer_revision"] == explorer_module.LOCAL_RENDERER_REVISION
+    assert store.current_pointer() == relayed_pointer
+    if renderer_current:
+        assert relayed_pointer == original_pointer
+    else:
+        assert relayed_pointer["delivery_run_id"] == "11"
+        assert (
+            relayed_pointer["source_receipt_sha256"]
+            == hashlib.sha256(relay_receipt_path.read_bytes()).hexdigest()
+        )
     assert store.read_public_bytes("robin-real-data.json") == original_public
     assert store.status()["last_delivery_run_id"] == "11"
     assert store.status()["last_error_code"] is None

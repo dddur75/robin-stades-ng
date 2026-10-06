@@ -79,11 +79,14 @@ def _read_json(path: Path, code: str) -> dict[str, Any]:
 def _source_semantic_sha256(snapshot: Mapping[str, object]) -> str:
     """Bind immutable acquisition identity without renderer or delivery metadata."""
 
-    semantic = {
-        key: value
-        for key, value in snapshot.items()
-        if key not in {"generated_at_utc", "freshness", "price_movement"}
+    derived_fields = {
+        "comparison_available",
+        "explorer_rows",
+        "freshness",
+        "generated_at_utc",
+        "price_movement",
     }
+    semantic = {key: value for key, value in snapshot.items() if key not in derived_fields}
     encoded = json.dumps(
         semantic,
         ensure_ascii=False,
@@ -445,14 +448,10 @@ class AtomicExplorerStore:
                 public = stage / "public"
                 public.mkdir()
                 previous = self.read_public("robin-real-data.json") if current else None
-                if validated.snapshot.get("schema_version") == "robin-real-data-explorer-v2":
-                    snapshot = dict(validated.snapshot)
-                elif (
-                    current is not None
-                    and str(current.get("run_id")) == validated.run_id
-                    and previous is not None
-                ):
+                if same_origin and previous is not None:
                     snapshot = dict(previous)
+                elif validated.snapshot.get("schema_version") == "robin-real-data-explorer-v2":
+                    snapshot = dict(validated.snapshot)
                 else:
                     snapshot = build_explorer_snapshot(
                         validated.snapshot,
