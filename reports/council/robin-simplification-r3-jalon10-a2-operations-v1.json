@@ -1,0 +1,39 @@
+{
+  "agent_id": "A2",
+  "mission_id": "ROBIN_SIMPLIFICATION_R3_JALON10_20261005",
+  "facts_verified": [
+    {
+      "claim": "Le job R3 distinct télécharge les artefacts du même run, ne lance que le rejeu des trois témoins et son succès est requis par le gate tests.",
+      "evidence_refs": [".github/workflows/ci-safe-v2.yml:567", ".github/workflows/ci-safe-v2.yml:604", ".github/workflows/ci-safe-v2.yml:728", "tests/hypothesis_evidence/test_jalon10_non_regression.py:250"],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La CLI place le rapport généré sous artifacts par défaut et refuse avant rejeu une sortie détaillée à la racine du dépôt ou l'écrasement de la référence.",
+      "evidence_refs": ["scripts/run_jalon10_non_regression.py:43", "scripts/run_jalon10_non_regression.py:52", "tests/hypothesis_evidence/test_jalon10_non_regression.py:271"],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le calcul filtre trois règles dans des Parquet à hash vérifié, compare 865 appartenances et conserve les détails sous artifacts ignoré.",
+      "evidence_refs": ["src/robin/hypothesis_evidence/non_regression.py:453", "src/robin/hypothesis_evidence/non_regression.py:466", "src/robin/hypothesis_evidence/non_regression.py:574", ".gitignore:29"],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": ["Le job R3 corrigé n'a pas encore été observé dans une exécution CI distante de ce diff."],
+  "assumptions": ["Les artefacts téléchargés sont ceux produits par frozen-evidence-windows dans le même run, conformément aux noms run_id et run_attempt."],
+  "main_objection": "Le trajet opérationnel est accepté; le claim de résultat doit être ancré par C0 avant la recette finale.",
+  "risks": [
+    {
+      "risk": "Le prérequis frozen-evidence-windows régénère la campagne complète préexistante; seul le nouveau job R3 est borné aux trois règles.",
+      "severity": "LOW",
+      "evidence_refs": [".github/workflows/ci-safe-v2.yml:471", ".github/workflows/ci-safe-v2.yml:475", ".github/workflows/ci-safe-v2.yml:569"]
+    }
+  ],
+  "minimum_decisive_test": "Ancrer le claim de résultat avec le hash du rapport compact puis observer le job R3 et le gate tests verts sur le commit livré.",
+  "recommended_action": "Accepter les corrections opérationnelles et solder l'ancrage du claim; aucun rejeu local intégral supplémentaire.",
+  "scale_condition": "Aucune montée en charge: rester aux trois témoins et aux artefacts figés.",
+  "estimated_compute": "Rejeu R3 borné à trois règles; coût du prérequis CI préexistant inchangé.",
+  "estimated_external_cost": "Zéro appel fournisseur, crédit ou accès R2.",
+  "estimated_human_time": "Quelques minutes pour l'ancrage, hors attente CI.",
+  "maintenance_impact": "Un job CI et une CLI dédiés, sans nouveau chemin de collecte.",
+  "confidence": 0.91
+}

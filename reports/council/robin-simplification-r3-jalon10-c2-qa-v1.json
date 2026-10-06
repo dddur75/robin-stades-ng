@@ -1,0 +1,38 @@
+{
+  "agent_id": "C2",
+  "mission_id": "ROBIN_SIMPLIFICATION_R3_JALON10_20261005",
+  "facts_verified": [
+    {
+      "claim": "Le comparateur vérifie toutes les identités et valeurs, recalcule le règlement et les agrégats, puis exige l'égalité des SHA-256 canoniques des 865 lignes.",
+      "evidence_refs": ["src/robin/hypothesis_evidence/non_regression.py:178", "src/robin/hypothesis_evidence/non_regression.py:253", "src/robin/hypothesis_evidence/non_regression.py:574"],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le job R3 est distinct, réutilise les artefacts figés, ne contient ni campagne globale ni builder, et son succès est requis par le gate final.",
+      "evidence_refs": [".github/workflows/ci-safe-v2.yml:567", ".github/workflows/ci-safe-v2.yml:604", ".github/workflows/ci-safe-v2.yml:725", "tests/hypothesis_evidence/test_jalon10_non_regression.py:250"],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "La garde CLI refuse la racine du dépôt, les alias résolus et les hardlinks report/verify avant toute écriture; trois tests négatifs couvrent ces cas.",
+      "evidence_refs": ["scripts/run_jalon10_non_regression.py:16", "scripts/run_jalon10_non_regression.py:61", "tests/hypothesis_evidence/test_jalon10_non_regression.py:271", "tests/hypothesis_evidence/test_jalon10_non_regression.py:308"],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le rapport et les détails concordent: 865 appartenances, 863 fixtures distinctes, baseline/replay byte-identiques au SHA-256 61ed7022cbc79c39f715e594ae0a8b3aeb6ba5d43c415810582b0e8e1c94d86c.",
+      "evidence_refs": ["reports/hypothesis-evidence/r3-jalon10-non-regression.json:14", "artifacts/r3-jalon10-non-regression/detailed-manifest.json:1"],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": ["La CI SAFE du commit final n'a pas encore été observée."],
+  "assumptions": ["La primauté byte-identique sur les tolérances numériques est intentionnelle et documentée."],
+  "main_objection": "Aucune objection restante sur le comparateur, le trajet CI nominal ou les protections de chemins; l'ancrage de preuve reste à écrire par C0.",
+  "risks": [],
+  "minimum_decisive_test": "Maintenir les 41 tests ciblés verts, ancrer les hashes dans le graphe puis exiger le job R3 vert sur le commit livré.",
+  "recommended_action": "Conserver le comparateur, les gardes de chemins et leurs tests; terminer l'ancrage sans changer les témoins.",
+  "scale_condition": "Aucune promotion scientifique; R3 reste un témoin d'ingénierie.",
+  "estimated_compute": "Rejeu borné de trois règles et tests ciblés.",
+  "estimated_external_cost": "Zéro appel fournisseur, crédit ou accès R2.",
+  "estimated_human_time": "Aucun correctif supplémentaire hors ancrage et CI.",
+  "maintenance_impact": "Un module, une CLI et un job dédiés avec comparaison fail-closed.",
+  "confidence": 0.98
+}

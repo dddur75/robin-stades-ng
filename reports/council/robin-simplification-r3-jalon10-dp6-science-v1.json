@@ -1,0 +1,44 @@
+{
+  "agent_id": "DP6",
+  "mission_id": "ROBIN_SIMPLIFICATION_R3_JALON10_20261005",
+  "facts_verified": [
+    {
+      "claim": "PASS scientifique limité à R3, sans P0/P1 de calcul: 865 paris/appartenances correspondent à 863 fixtures distinctes.",
+      "evidence_refs": ["reports/hypothesis-evidence/r3-jalon10-non-regression.json:14", "docs/pattern-research/JALON-10-NON-REGRESSION-R3.md:19", "artifacts/r3-jalon10-non-regression/baseline-before-simplification.jsonl:555"],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Les JSONL avant/après sont byte-identiques au SHA-256 61ed7022cbc79c39f715e594ae0a8b3aeb6ba5d43c415810582b0e8e1c94d86c et cette égalité prime les tolérances diagnostiques.",
+      "evidence_refs": ["artifacts/r3-jalon10-non-regression/detailed-manifest.json:1", "src/robin/hypothesis_evidence/non_regression.py:574", "docs/pattern-research/JALON-10-NON-REGRESSION-R3.md:36"],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le recalcul indépendant confirme les sélections, règlements d'après les scores, profits, ROI internes et drawdowns; q=1 et le verdict Jalon 10 reste inchangé.",
+      "evidence_refs": ["reports/hypothesis-evidence/r3-jalon10-non-regression.json:4", "reports/hypothesis-evidence/r3-jalon10-non-regression.json:66", "docs/pattern-research/JALON-10-NON-REGRESSION-R3.md:51"],
+      "status": "VERIFIED"
+    },
+    {
+      "claim": "Le job R3 séparé consomme les artefacts gelés et ne relance pas lui-même la campagne de 700 règles.",
+      "evidence_refs": [".github/workflows/ci-safe-v2.yml:567", ".github/workflows/ci-safe-v2.yml:604", "tests/hypothesis_evidence/test_jalon10_non_regression.py:250"],
+      "status": "VERIFIED"
+    }
+  ],
+  "unknowns": ["L'exécution CI distante finale n'a pas été observée dans cette revue en lecture seule."],
+  "assumptions": ["Les validations locales annoncées par C0 sont consignées dans le ledger avant commit."],
+  "main_objection": "Aucune objection scientifique restante; l'ancrage du claim et la CI distante demeurent des gates de livraison, sans effet sur le verdict historique.",
+  "risks": [
+    {
+      "risk": "Les témoins sont historiquement exposés et démontrent la non-régression du calcul, pas une performance prédictive.",
+      "severity": "MEDIUM",
+      "evidence_refs": ["docs/pattern-research/JALON-10-NON-REGRESSION-R3.md:3", "reports/hypothesis-evidence/r3-jalon10-non-regression.json:139"]
+    }
+  ],
+  "minimum_decisive_test": "Ancrer les hashes définitifs puis constater le job CI R3 comparant 865 lignes et le rapport compact byte-identique.",
+  "recommended_action": "Accepter R3 comme témoin de fidélité et terminer l'ancrage sans nouvelle recherche ni ajustement.",
+  "scale_condition": "Ce PASS n'autorise aucune montée en charge scientifique, promotion ou pari réel.",
+  "estimated_compute": "Relecture et recalcul indépendant des 865 lignes; aucun nouveau rejeu global.",
+  "estimated_external_cost": "Zéro appel fournisseur, crédit ou accès R2.",
+  "estimated_human_time": "Quelques minutes pour l'ancrage final, hors CI.",
+  "maintenance_impact": "Contrôle strict et borné, distinct du coût de la campagne préexistante.",
+  "confidence": 0.96
+}

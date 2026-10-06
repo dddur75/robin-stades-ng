@@ -1,0 +1,20 @@
+{
+  "agent_id": "DP6",
+  "mission_id": "ROBIN_SIMPLIFICATION_EXPLORATION_20261005",
+  "facts_verified": [
+    {"claim":"Les acquisitions réelles 08:00 et 10:00 ont des reçus et hashes cohérents; le recalcul exploratoire indépendant initial trouve 7 648 offres appariées, 682 modifiées, 6 apparues et 83 non revues.","evidence_refs":["GitHub artifacts 11332758005 et 11340204471","reports/evidence/robin-autonomous-lab-run-37276237875-public-receipt.json"],"status":"PARTIAL"},
+    {"claim":"La jointure courante écrase silencieusement les doublons et ne calcule ni disparitions ni exclusions.","evidence_refs":["src/robin/capture/real_data_dashboard.py:237"],"status":"VERIFIED"}
+  ],
+  "unknowns": ["L'admissibilité Discovery doit être gelée sans ouvrir de corpus réservé."],
+  "assumptions": ["La paire est descriptive et exposée, jamais une validation indépendante d'une hypothèse qu'elle inspire."],
+  "main_objection": "Une identité ambiguë ou une branche incomparable doit être exclue, pas écrasée.",
+  "risks": [{"risk":"Contamination prospective si ces lignes servent à former puis valider une hypothèse.","severity":"HIGH","evidence_refs":["docs/hypothesis-intelligence/PROSPECTIVE-HYPOTHESIS-PROTOCOL.md"]}],
+  "minimum_decisive_test": "Recalcul QA indépendant, unicité, prix, ordre temporel, intersection, apparitions/non-observations/exclusions et ventilations.",
+  "recommended_action": "Figer 08:00–10:00, rendre la clé explicite et publier les limites de provenance.",
+  "scale_condition": "Aucune promotion scientifique; tout changement de corpus impose un nouveau gel.",
+  "estimated_compute": "Deux artifacts existants, parcours linéaire.",
+  "estimated_external_cost": "Zéro appel fournisseur et zéro accès R2.",
+  "estimated_human_time": "Revue de quelques lignes sources.",
+  "maintenance_impact": "Une règle partagée et un recalcul QA séparé.",
+  "confidence": 0.86
+}

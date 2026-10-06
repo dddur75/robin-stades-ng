@@ -1,0 +1,22 @@
+{
+  "mission_id": "ROBIN_SIMPLIFICATION_R3_JALON10_20261005",
+  "authorized_stages": [
+    "E1",
+    "E2",
+    "E3A",
+    "E3B",
+    "E4"
+  ],
+  "maximum_stage": "E4",
+  "external_effects": [
+    "READ_PINNED_HISTORICAL_GIT_BLOBS_ONLY",
+    "READ_VERIFIED_LOCAL_FROZEN_EVIDENCE_ONLY",
+    "WRITE_LOCAL_NON_REGRESSION_ARTIFACTS_ONLY",
+    "PROVIDER_HTTP_REQUESTS_0;PROVIDER_CREDITS_0;R2_WRITES_0;R2_DELETES_0",
+    "PURCHASES_0;REAL_BETS_0;PROMOTIONS_0;SOCIAL_PUBLICATIONS_0;BACKFILLS_0"
+  ],
+  "compute_budget": 5000,
+  "time_budget": 604800,
+  "source_hash": "6471afcc91aaa20a55fe61f1d686ef869cd841f90d2afee2e4070a7a59cb92dc",
+  "expires_at": "2026-11-03T23:59:59Z"
+}

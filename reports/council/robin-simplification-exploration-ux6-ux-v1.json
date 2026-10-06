@@ -1,0 +1,20 @@
+{
+  "agent_id": "UX6",
+  "mission_id": "ROBIN_SIMPLIFICATION_EXPLORATION_20261005",
+  "facts_verified": [
+    {"claim":"Sur 7 731 lignes réelles, rechercher Arsenal donne 179 lignes et ajouter Betclic en donne 6; reset restaure 7 731 et l'état vide est cohérent.","evidence_refs":["GitHub artifact du run 37276237875","src/robin/capture/real_data_dashboard.py:538"],"status":"VERIFIED"},
+    {"claim":"La vue actuelle manque deux captures, tri numérique, bornes de cote/delta, coup d'envoi et export de la sélection.","evidence_refs":["src/robin/capture/real_data_dashboard.py:493","src/robin/capture/real_data_dashboard.py:560"],"status":"VERIFIED"}
+  ],
+  "unknowns": ["Aucun essai lecteur d'écran physique n'a été réalisé."],
+  "assumptions": ["Le rendu 7 731 lignes est le corpus de référence UX."],
+  "main_objection": "Le parcours actuel s'arrête après rechercher et filtrer.",
+  "risks": [{"risk":"Le CSV complet actuel peut être pris pour la sélection filtrée.","severity":"HIGH","evidence_refs":["src/robin/capture/real_data_dashboard.py:512"]}],
+  "minimum_decisive_test": "Comparer une offre sur deux acquisitions, filtrer, trier et réconcilier l'export à 1366 et 390 px.",
+  "recommended_action": "Placer l'exploration d'abord et réutiliser une seule sélection pour compteur, table et export.",
+  "scale_condition": "Parcours complet réel, export exact, nouvelle livraison automatique et cibles p95 respectées.",
+  "estimated_compute": "Tests DOM ciblés et 30 interactions par scénario.",
+  "estimated_external_cost": "Zéro fournisseur.",
+  "estimated_human_time": "Recette manuelle courte.",
+  "maintenance_impact": "Réutiliser le tableau et ses formats.",
+  "confidence": 0.94
+}

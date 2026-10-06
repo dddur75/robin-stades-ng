@@ -3,7 +3,7 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
-WORKFLOW = ROOT / ".github" / "workflows" / "ci.yml"
+WORKFLOW = ROOT / ".github" / "workflows" / "ci-safe-v2.yml"
 
 
 def test_codex_heads_keep_at_least_one_ci_validation_route() -> None:

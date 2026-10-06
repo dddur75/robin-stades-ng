@@ -100,6 +100,7 @@ def _report(*, price: float = 1.8, status: str = "REAL_DATA_PARTIAL") -> dict[st
         "branches": [
             {
                 "sport_key": "soccer_epl",
+                "capture_time_utc": row["capture_time_utc"],
                 "status": "PARTIAL" if status != "REAL_DATA_FAILED" else "INCOMPLETE",
                 "row_count": 1 if status != "REAL_DATA_FAILED" else 0,
                 "limitations": [],
@@ -157,10 +158,22 @@ class FakeStore:
                 "github_run_id": "414141",
             }
             previous_rows = [
-                dict(row) | {"slot_start_utc": "2026-10-04T08:00:00Z"}
+                dict(row)
+                | {
+                    "slot_start_utc": "2026-10-04T08:00:00Z",
+                    "capture_time_utc": "2026-10-04T08:17:01Z",
+                    "source_timestamp_utc": "2026-10-04T08:16:00Z",
+                }
                 for row in previous["rows"]  # type: ignore[index]
             ]
             previous["rows"] = previous_rows
+            previous["branches"] = [
+                dict(branch) | {"capture_time_utc": "2026-10-04T08:17:01Z"}
+                for branch in previous["branches"]  # type: ignore[index]
+            ]
+            previous["capture_times_utc"] = ["2026-10-04T08:17:01Z"]
+            previous["source_timestamp_min_utc"] = "2026-10-04T08:16:00Z"
+            previous["source_timestamp_max_utc"] = "2026-10-04T08:16:00Z"
             previous_key = "private/previous.json"
             previous_bytes = canonical_json_bytes(previous)
             self.objects[previous_key] = ObservedObject(
@@ -266,7 +279,7 @@ def test_cli_delivers_four_normalized_files_and_compares_previous_slot(
     assert '"changed_offer_count":1' in html
     assert "Aucun edge n’est validé" in html
     normalized = json.loads((tmp_path / "robin-real-data.json").read_text(encoding="utf-8"))
-    assert normalized["schema_version"] == "robin-real-data-dashboard-v1"
+    assert normalized["schema_version"] == "robin-real-data-explorer-v2"
     assert "branches" not in normalized
     assert "entries" not in normalized["accounting"]
     assert "node_key" not in normalized["accounting"]

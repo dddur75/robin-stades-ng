@@ -136,7 +136,6 @@ jobs:
         env:
           ROBIN_DATABASE_URL: postgresql+psycopg://chronos_reader_login:chronos_reader_ci@localhost:5432/robin_ci
         run: python scripts/check_database_revision.py --expected 0015_data_torrent_opportunity
-      - run: python -m pytest -q
       - run: >-
           python -m ruff check src/robin scripts tests/chronos tests/activation
           tests/data_torrent migrations

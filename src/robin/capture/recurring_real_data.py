@@ -85,6 +85,10 @@ ROLLING_30D_REQUEST_MAX = 4_000
 ROLLING_30D_CREDIT_MAX = 8_000
 MAX_CAS_ATTEMPTS = 3
 MAX_ACCOUNTING_CHAIN_NODES = 2_048
+PROVIDER_KEY = "THE_ODDS_API_V4"
+# The provider route identifies h2h/totals, but its V4 odds response does not
+# attest a soccer settlement period. Preserve that limitation explicitly.
+SETTLEMENT_PERIOD_KEY = "PROVIDER_DEFAULT_UNSPECIFIED"
 
 _MANIFEST_FIELDS = {
     "mission_id",
@@ -1160,6 +1164,10 @@ def _branch_stub(
         "markets_requested": list(MARKETS),
         "status": "INCOMPLETE",
         "source": source,
+        "provider_key": PROVIDER_KEY,
+        "settlement_period_key": SETTLEMENT_PERIOD_KEY,
+        "acquisition_started_at_utc": None,
+        "acquisition_finished_at_utc": None,
         "provider_request_attempted": False,
         "capture_time_utc": None,
         "quota": None,
@@ -1185,17 +1193,28 @@ def _raw_envelope(
     quota_code: str | None,
     observed_cost: int | None,
     observed_remaining: int | None,
+    acquisition_started_at: datetime,
+    acquisition_finished_at: datetime,
 ) -> bytes:
+    started = ensure_utc(acquisition_started_at, field="recurring_acquisition_started")
+    finished = ensure_utc(acquisition_finished_at, field="recurring_acquisition_finished")
+    captured = ensure_utc(response.first_observed_at_utc, field="recurring_capture_time")
+    if finished < started or not started <= captured <= finished:
+        raise RecurringError("RECURRING_ACQUISITION_TIME_INVALID")
     return canonical_json_bytes(
         {
-            "schema_version": "robin-autonomous-raw-envelope-v1",
+            "schema_version": "robin-autonomous-raw-envelope-v2",
             "mission_id": MISSION_ID,
             "slot_start_utc": _iso_z(slot),
             "sport_key": sport_key,
             "markets": list(MARKETS),
             "repository_sha": config.repository_sha,
             "github_run_id": config.github_run_id,
-            "capture_time_utc": _iso_z(response.first_observed_at_utc),
+            "provider_key": PROVIDER_KEY,
+            "settlement_period_key": SETTLEMENT_PERIOD_KEY,
+            "acquisition_started_at_utc": _iso_z(started),
+            "acquisition_finished_at_utc": _iso_z(finished),
+            "capture_time_utc": _iso_z(captured),
             "http_status": response.http_status,
             "quota": dict(quota) if quota is not None else None,
             "quota_diagnostic_code": quota_code,
@@ -1224,10 +1243,16 @@ def _payload_from_readback(
     str | None,
     int | None,
     int | None,
+    str | None,
+    str | None,
+    datetime | None,
+    datetime | None,
 ]:
     envelope = _mapping(data, "RECURRING_RAW_ENVELOPE_INVALID")
+    schema_version = envelope.get("schema_version")
     if (
-        envelope.get("schema_version") != "robin-autonomous-raw-envelope-v1"
+        schema_version
+        not in {"robin-autonomous-raw-envelope-v1", "robin-autonomous-raw-envelope-v2"}
         or envelope.get("mission_id") != MISSION_ID
         or envelope.get("slot_start_utc") != _iso_z(slot)
         or envelope.get("sport_key") != sport_key
@@ -1256,6 +1281,29 @@ def _payload_from_readback(
     quota_code = envelope.get("quota_diagnostic_code")
     observed_cost = envelope.get("observed_credit_cost")
     observed_remaining = envelope.get("observed_remaining_floor")
+    acquisition_started: datetime | None = None
+    acquisition_finished: datetime | None = None
+    provider_key: str | None = None
+    settlement_period_key: str | None = None
+    if schema_version == "robin-autonomous-raw-envelope-v2":
+        if (
+            envelope.get("provider_key") != PROVIDER_KEY
+            or envelope.get("settlement_period_key") != SETTLEMENT_PERIOD_KEY
+        ):
+            raise RecurringError("RECURRING_RAW_ENVELOPE_INVALID")
+        acquisition_started = _parse_time(
+            envelope.get("acquisition_started_at_utc"), "RECURRING_RAW_ENVELOPE_INVALID"
+        )
+        acquisition_finished = _parse_time(
+            envelope.get("acquisition_finished_at_utc"), "RECURRING_RAW_ENVELOPE_INVALID"
+        )
+        if (
+            acquisition_finished < acquisition_started
+            or not acquisition_started <= capture_time <= acquisition_finished
+        ):
+            raise RecurringError("RECURRING_RAW_ENVELOPE_INVALID")
+        provider_key = PROVIDER_KEY
+        settlement_period_key = SETTLEMENT_PERIOD_KEY
     if (
         isinstance(status, bool)
         or not isinstance(status, int)
@@ -1301,6 +1349,10 @@ def _payload_from_readback(
         quota_code,
         observed_cost,
         observed_remaining,
+        provider_key,
+        settlement_period_key,
+        acquisition_started,
+        acquisition_finished,
     )
 
 
@@ -1412,6 +1464,10 @@ def _normalize_raw_branch(
         quota_code,
         observed_cost,
         envelope_remaining,
+        provider_key,
+        settlement_period_key,
+        acquisition_started,
+        acquisition_finished,
     ) = _payload_from_readback(observed.data, slot=slot, sport_key=sport_key)
     observed_remaining = quota.remaining if quota is not None else envelope_remaining
     credit_bound_valid = quota_code is None and quota is not None and observed_cost == 2
@@ -1428,6 +1484,14 @@ def _normalize_raw_branch(
         "sport_key": sport_key,
         "markets_requested": list(MARKETS),
         "source": source,
+        "provider_key": provider_key,
+        "settlement_period_key": settlement_period_key,
+        "acquisition_started_at_utc": (
+            _iso_z(acquisition_started) if acquisition_started is not None else None
+        ),
+        "acquisition_finished_at_utc": (
+            _iso_z(acquisition_finished) if acquisition_finished is not None else None
+        ),
         "provider_request_attempted": provider_request_attempted,
         "capture_time_utc": _iso_z(capture_time),
         "quota": quota.as_dict() if quota is not None else None,
@@ -1496,7 +1560,21 @@ def _normalize_raw_branch(
             observed_remaining=observed_remaining,
             credit_bound_valid=credit_bound_valid,
         )
-    rows = tuple(dict(row) | {"slot_start_utc": _iso_z(slot)} for row in normalized_rows)
+    rows = tuple(
+        dict(row)
+        | {
+            "slot_start_utc": _iso_z(slot),
+            "provider_key": provider_key,
+            "settlement_period_key": settlement_period_key,
+            "acquisition_started_at_utc": (
+                _iso_z(acquisition_started) if acquisition_started is not None else None
+            ),
+            "acquisition_finished_at_utc": (
+                _iso_z(acquisition_finished) if acquisition_finished is not None else None
+            ),
+        }
+        for row in normalized_rows
+    )
     branch_base.update(
         {
             "status": "COMPLETE" if not limitations else "PARTIAL",
@@ -1688,8 +1766,10 @@ def _run_branch(
             rows=(),
             provider_attempts=0,
         )
+    acquisition_started_at: datetime | None = None
     try:
         api_key = provider_secret()
+        acquisition_started_at = ensure_utc(clock(), field="recurring_acquisition_started")
         response = transport.dispatch(request, api_key=api_key)
     except RecurringError as error:
         return _BranchOutcome(
@@ -1706,14 +1786,24 @@ def _run_branch(
             provider_attempts=0,
         )
     except LiveTransportError as error:
+        acquisition_finished_at = ensure_utc(clock(), field="recurring_acquisition_finished")
         branch = _branch_stub(
             sport_key,
             source="LIVE_PROVIDER_FAILURE",
             diagnostic=_transport_diagnostic(error),
         )
-        branch["provider_request_attempted"] = True
+        branch.update(
+            {
+                "provider_request_attempted": True,
+                "acquisition_started_at_utc": (
+                    _iso_z(acquisition_started_at) if acquisition_started_at is not None else None
+                ),
+                "acquisition_finished_at_utc": _iso_z(acquisition_finished_at),
+            }
+        )
         return _BranchOutcome(branch=branch, rows=(), provider_attempts=1)
     except Exception:
+        acquisition_finished_at = ensure_utc(clock(), field="recurring_acquisition_finished")
         branch = _branch_stub(
             sport_key,
             source="LIVE_PROVIDER_FAILURE",
@@ -1723,8 +1813,20 @@ def _run_branch(
                 exception_class="Exception",
             ),
         )
-        branch["provider_request_attempted"] = True
+        branch.update(
+            {
+                "provider_request_attempted": True,
+                "acquisition_started_at_utc": (
+                    _iso_z(acquisition_started_at) if acquisition_started_at is not None else None
+                ),
+                "acquisition_finished_at_utc": _iso_z(acquisition_finished_at),
+            }
+        )
         return _BranchOutcome(branch=branch, rows=(), provider_attempts=1)
+
+    acquisition_finished_at = ensure_utc(clock(), field="recurring_acquisition_finished")
+    if acquisition_started_at is None or acquisition_finished_at < acquisition_started_at:
+        raise RecurringError("RECURRING_ACQUISITION_TIME_INVALID")
 
     quota_code: str | None = None
     observed_quota = None
@@ -1764,6 +1866,8 @@ def _run_branch(
         quota_code=quota_code,
         observed_cost=observed_cost,
         observed_remaining=observed_remaining,
+        acquisition_started_at=acquisition_started_at,
+        acquisition_finished_at=acquisition_finished_at,
     )
     try:
         raw_outcome = _put_exact(
@@ -1793,6 +1897,8 @@ def _run_branch(
             {
                 "provider_request_attempted": True,
                 "capture_time_utc": _iso_z(response.first_observed_at_utc),
+                "acquisition_started_at_utc": _iso_z(acquisition_started_at),
+                "acquisition_finished_at_utc": _iso_z(acquisition_finished_at),
             }
         )
         return _BranchOutcome(

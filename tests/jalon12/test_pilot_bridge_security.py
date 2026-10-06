@@ -40,11 +40,29 @@ def test_safe_ci_uses_a_distinct_workflow_path_and_read_only_permissions() -> No
     assert safe[True]["push"]["branches"] == ["main"]
 
 
-def test_safe_ci_is_equivalent_to_the_sanitized_legacy_copy() -> None:
+def test_safe_ci_preserves_unchanged_legacy_jobs_and_owns_the_simplified_dag() -> None:
     legacy = yaml.safe_load(_text(LEGACY_CI))
     safe = yaml.safe_load(_text(SAFE_CI))
-    legacy["name"] = safe["name"]
-    assert safe == legacy
+
+    legacy_top_level = {key: value for key, value in legacy.items() if key != "jobs"}
+    safe_top_level = {key: value for key, value in safe.items() if key != "jobs"}
+    legacy_top_level["name"] = safe_top_level["name"]
+    assert safe_top_level == legacy_top_level
+
+    safe_only_jobs = {"jalon10-r3-non-regression-windows", "quality-and-tests"}
+    simplified_common_jobs = {
+        "chronos-postgresql-profiles",
+        "tests",
+        "visual-regression",
+    }
+    assert set(safe["jobs"]) == set(legacy["jobs"]) | safe_only_jobs
+    unchanged_jobs = set(legacy["jobs"]) - simplified_common_jobs
+    assert len(unchanged_jobs) == 8
+    assert {job: safe["jobs"][job] for job in unchanged_jobs} == {
+        job: legacy["jobs"][job] for job in unchanged_jobs
+    }
+    assert set(safe["jobs"]["tests"]["needs"]) == set(safe["jobs"]) - {"tests"}
+    assert safe["jobs"]["tests"]["needs"] != legacy["jobs"]["tests"]["needs"]
 
 
 def test_safe_ci_has_no_secret_or_production_environment_surface() -> None:

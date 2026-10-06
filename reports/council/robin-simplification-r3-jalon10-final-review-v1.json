@@ -1,0 +1,49 @@
+{
+  "schema_version": "robin-simplification-r3-jalon10-final-review-v1",
+  "mission_id": "ROBIN_SIMPLIFICATION_R3_JALON10_20261005",
+  "decision": "PASS_AND_HOLD",
+  "scope": "ENGINEERING_NON_REGRESSION_ONLY",
+  "review_order": ["DP6", "C2", "A2", "C0"],
+  "facts": {
+    "rules_replayed": 3,
+    "bets_compared": 865,
+    "unique_fixtures_compared": 863,
+    "unexplained_deltas": 0,
+    "baseline_replay_sha256": "61ed7022cbc79c39f715e594ae0a8b3aeb6ba5d43c415810582b0e8e1c94d86c",
+    "scientific_verdict": "JALON_10_NO_ROBUST_PATTERN_FOUND",
+    "scientific_verdict_changed": false,
+    "provider_http_requests_new": 0,
+    "provider_credits_new": 0,
+    "r2_reads_new": 0,
+    "r2_writes_new": 0
+  },
+  "reviews": {
+    "DP6": {
+      "result": "PASS",
+      "p0": 0,
+      "p1": 0,
+      "finding": "Independent recalculation confirmed match selections, odds bands, margin, score settlement, profits, ROI and chronological drawdown."
+    },
+    "C2": {
+      "result": "PASS",
+      "p0": 0,
+      "p1": 0,
+      "finding": "Fail-closed comparison, byte identity, bounded CI job and path-alias protections accepted after the hardlink correction."
+    },
+    "A2": {
+      "result": "PASS",
+      "p0": 0,
+      "p1": 0,
+      "finding": "The dedicated job reuses same-run frozen artifacts and adds no provider or R2 path; the pre-existing full evidence producer remains distinct."
+    }
+  },
+  "corrected_objections": [
+    "R3 was moved out of the full evidence producer into a dedicated artifact-consuming job.",
+    "Generated reports can no longer overwrite or alias the verification reference, including through hardlinks.",
+    "Detailed output at the repository root is rejected.",
+    "The evidence distinguishes 865 memberships from 863 distinct fixtures.",
+    "Byte identity is documented as stricter than diagnostic floating-point tolerances."
+  ],
+  "remaining_gate": "Fresh exact-head CI is required before merge; this does not block the local equivalence result or change the scientific verdict.",
+  "claim_id": "DATA.ROBIN.SIMPLIFICATION.R3.JALON10.NON_REGRESSION.V1.001"
+}
