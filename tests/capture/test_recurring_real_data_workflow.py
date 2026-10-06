@@ -109,6 +109,38 @@ def test_relay_is_bounded_for_probe_and_arms_collect_successor_first() -> None:
     )
 
 
+def test_control_plane_retries_only_json_gets_and_never_replays_dispatch() -> None:
+    workflow = _workflow()
+    jobs = workflow["jobs"]
+    control_steps = {
+        "bootstrap": next(
+            step
+            for step in jobs["bootstrap"]["steps"]
+            if "dispatch first automatic relay" in step.get("name", "")
+        ),
+        "watchdog": jobs["watchdog"]["steps"][0],
+        "relay": next(step for step in jobs["relay"]["steps"] if step.get("id") == "relay"),
+    }
+
+    for job_name, step in control_steps.items():
+        command = step["run"]
+        assert "read_gh_json()" in command, job_name
+        assert "for attempt in 1 2 3" in command, job_name
+        assert 'payload="$(gh api "$endpoint")"' in command, job_name
+        assert "jq -e ." in command, job_name
+        assert "GitHub API JSON read failed after 3 attempts" in command, job_name
+        assert "gh api --jq" not in command, job_name
+        assert command.count("gh api ") == 2, job_name
+        assert command.count("gh api --method POST --silent") == 1, job_name
+        assert "dispatch_exit=0" in command, job_name
+        assert "|| dispatch_exit=$?" in command, job_name
+        assert "reconciling exact successor title without retry" in command, job_name
+        assert command.index("gh api --method POST --silent") < command.index(
+            '[[ "$observed_count" == "1" ]]'
+        )
+        assert command.index("dispatch_exit=0") < command.index("gh api --method POST --silent")
+
+
 def test_environment_timer_and_main_policy_are_fail_closed() -> None:
     workflow = _workflow()
     for job_name in ("bootstrap", "relay"):
