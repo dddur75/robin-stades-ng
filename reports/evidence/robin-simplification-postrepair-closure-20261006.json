@@ -1,0 +1,236 @@
+{
+  "schema_version": "robin-simplification-postrepair-closure-v1",
+  "mission_id": "ROBIN_SIMPLIFICATION_EXPLORATION_20261005",
+  "status": "PASS",
+  "repository_revision": "7e7ffb0b1982d26ccccb9a28a26c3ae828780c26",
+  "completed_at_utc": "2026-10-06T21:52:51Z",
+  "safety_locks": {
+    "STORAGE_PAUSED": true,
+    "P3_P4_PAUSED": true,
+    "PRODUCTION_LOCKED": true,
+    "REAL_BETS": false,
+    "NO_BET_DEFAULT": true,
+    "PROMOTION_LOCKED": true,
+    "SOCIAL_PUBLISHING_ENABLED": false,
+    "DEMO_MODE_ENABLED": false
+  },
+  "criteria": {
+    "R1": "PASS",
+    "R2": "PASS",
+    "R3": "PASS",
+    "R4": "PASS",
+    "R5": "PASS",
+    "R6": "PASS",
+    "R7": "PASS",
+    "R8": "PASS"
+  },
+  "claim_ids": [
+    "RUNTIME.ROBIN.AUTONOMOUS_LAB.MAINTENANCE.REARM.V1.001",
+    "RUNTIME.ROBIN.AUTONOMOUS_LAB.RELAY.JSON.REPAIR.OPERATIONAL.V1.001",
+    "DATA.ROBIN.SIMPLIFICATION.POSTREPAIR.EXPLORER.V1.001",
+    "GOV.ROBIN.SIMPLIFICATION.POSTREPAIR.R1_R8.CLOSURE.V1.001"
+  ],
+  "decision_id": "RCV3-20261006-326",
+  "repair": {
+    "failed_run_id": 37514038870,
+    "failure_boundary": "PRE_CAPTURE_JSON_CONSUMING_CONTROL_UNTRACED_ENDPOINT",
+    "exact_failed_endpoint": "UNKNOWN_NOT_IN_LOG",
+    "repair_commit": "123c6340e985a6519a40bea44ed35a68accd8e2c",
+    "exact_head_ci_run_id": 37523345904,
+    "exact_head_ci_jobs_passed": 17,
+    "exact_head_ci_jobs_total": 17,
+    "pull_request": 95,
+    "merged_main": "7e7ffb0b1982d26ccccb9a28a26c3ae828780c26"
+  },
+  "workflow_configuration": {
+    "workflow_id": 321915839,
+    "state": "active",
+    "path": ".github/workflows/prospective-deep-scheduler.yml"
+  },
+  "schedule_observation": {
+    "observed_through_utc": "2026-10-06T21:28:00Z",
+    "latest_schedule_run_id": 37498489538,
+    "latest_schedule_created_at_utc": "2026-10-06T16:47:37Z",
+    "new_schedule_event_observed_after_merge": false,
+    "cause": "UNKNOWN_NOT_EXPOSED_BY_OBSERVED_EVIDENCE",
+    "github_cause_claimed": false
+  },
+  "maintenance_rearm": {
+    "run_id": 37528320108,
+    "head_sha": "7e7ffb0b1982d26ccccb9a28a26c3ae828780c26",
+    "conclusion": "success",
+    "authorized_maintenance": true,
+    "pre_rearm_active_target_runs": 0,
+    "autonomy_proof": false,
+    "counters_reset": false,
+    "existing_data_reset": false
+  },
+  "automatic_cycle": {
+    "run_id": 37528344645,
+    "title": "robin-collect-relay-4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87-37528320108-1",
+    "head_sha": "7e7ffb0b1982d26ccccb9a28a26c3ae828780c26",
+    "actor": "github-actions[bot]",
+    "triggering_actor": "github-actions[bot]",
+    "created_at_utc": "2026-10-06T20:41:22Z",
+    "completed_at_utc": "2026-10-06T21:43:28Z",
+    "conclusion": "success",
+    "workflow_jobs": {
+      "relay": "success",
+      "capture": "success"
+    },
+    "artifact": {
+      "id": 11446741531,
+      "name": "robin-autonomous-lab-37528344645",
+      "archive_sha256": "b4316cb32966c5a2718c2489a88a4a86be8f95386fb046c9d0f2d8cec698ecf3",
+      "file_count": 4
+    },
+    "receipt": {
+      "schema_version": "robin-autonomous-lab-public-receipt-v1",
+      "explorer_schema_version": "robin-real-data-explorer-v2",
+      "slot_start_utc": "2026-10-06T20:00:00Z",
+      "status": "REAL_DATA_PARTIAL",
+      "validated_captures": 5,
+      "provider_requests_new": 5,
+      "provider_credits_new": 10,
+      "replayed": false,
+      "resumed": false,
+      "r2_readback_status": "VERIFIED",
+      "r2_key": "robin/autonomous-lab/ROBIN_AUTONOMOUS_LAB_20261004/slots/20261006T200000Z/private-report.json",
+      "private_report_sha256": "14ceb0391d08fb76f89725d5e225ca5e87abe6d060dd66fe1d4e1710a866c841",
+      "observations": 7542,
+      "h2h_observations": 5178,
+      "totals_observations": 2364,
+      "matches": 96,
+      "bookmakers": 25,
+      "incomplete_branches": 0,
+      "previous_lifetime_provider_requests": 116,
+      "previous_lifetime_provider_credits": 234,
+      "lifetime_provider_requests": 121,
+      "lifetime_provider_credits": 244,
+      "rolling_24h_provider_requests": 50,
+      "rolling_24h_provider_requests_limit": 140,
+      "rolling_24h_provider_credits": 100,
+      "rolling_24h_provider_credits_limit": 280,
+      "automatic_retries": 0,
+      "automatic_backfills": 0,
+      "purchases": 0,
+      "real_bets": 0,
+      "promotions": 0
+    },
+    "content_verification": {
+      "receipt_sha256": "124885b99897e347b632b197af763a3b4f32fb28d3950abe3ca3c670687de057",
+      "json_sha256": "fa9599dfcd89b9275a31332158ef45d551f4a9df027bef66d5606da6918da543",
+      "csv_sha256": "f624eed5249216bbe6a3517047ff36029735f7f9ff077b9ae06e56a1e4864212",
+      "html_sha256": "a16490c3ab844800ab146d4c0bee71911280842e0f292b302708d4c6d7114d79",
+      "json_csv_rows": 7542,
+      "source_fields_compared_per_row": 19,
+      "source_field_mismatches": 0,
+      "forbidden_raw_fields": []
+    }
+  },
+  "automatic_handoff": {
+    "run_id": 37535663388,
+    "title": "robin-collect-relay-4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87-37528320108-2",
+    "head_sha": "7e7ffb0b1982d26ccccb9a28a26c3ae828780c26",
+    "actor": "github-actions[bot]",
+    "triggering_actor": "github-actions[bot]",
+    "created_at_utc": "2026-10-06T21:41:35Z",
+    "sequence": 2,
+    "run_attempt": 1,
+    "unique_exact_successors": 1,
+    "created_before_parent_capture": true,
+    "observed_status": "waiting",
+    "observed_at_utc": "2026-10-06T21:52:51Z"
+  },
+  "explorer": {
+    "url": "http://127.0.0.1:4173/robin-real-data.html",
+    "manual_copy_or_command": false,
+    "automatic_poll_observed": true,
+    "ingestion_observed_at_utc": "2026-10-06T21:44:10Z",
+    "current_delivery_run_id": "37528344645",
+    "current_slot_start_utc": "2026-10-06T20:00:00Z",
+    "current_version": "run-37528344645-view-v13",
+    "freshness": "FRESH",
+    "status_last_error_code": null,
+    "observations": 7542,
+    "matches": 96,
+    "bookmakers": 25,
+    "search_before": "Real Madrid",
+    "search_after": "Real Madrid",
+    "selected_offers": 144,
+    "selected_matches": 2,
+    "selected_bookmakers": 20,
+    "selected_acquisitions": 2,
+    "comparison_slots_utc": [
+      "2026-10-06T16:00:00Z",
+      "2026-10-06T20:00:00Z"
+    ],
+    "matched_rows": 7407,
+    "changed_rows": 945,
+    "unchanged_rows": 6462,
+    "appeared_or_unmatched_rows": 135,
+    "absent_markets": 726,
+    "duplicate_rows": 0,
+    "console_errors": [],
+    "console_warnings": [],
+    "export": {
+      "displayed_rows": 144,
+      "csv_rows": 144,
+      "json_rows": 144,
+      "csv_sha256": "f5a9d013d07ec3a2cede6f6eff36b31b6dfdd1cbc1c048a949d05780f61d476e",
+      "json_sha256": "1618a02a13d0eda70a07c737005710f0c673aa80e5a3e5fa7f9c59a3eb2f64f0",
+      "source_identity_mismatches": 0,
+      "csv_json_value_mismatches_after_formula_guard": 0,
+      "negative_formula_guard_cells": 12,
+      "numeric_tolerance_consumed": 0,
+      "formula_guard_justification": "CSV prefixes the twelve negative decimal cells with one apostrophe to prevent spreadsheet formula interpretation; removing only that non-data safety marker yields exact Decimal equality."
+    }
+  },
+  "immutable_reused_evidence": {
+    "reports/evidence/robin-simplification-final-acceptance-20261006.json": "c798bf64643dbb94be0990e1cb21453443baced13286da042317892e847ece87",
+    "reports/evidence/robin-simplification-postmerge-delivery-20261006.json": "571f14dc9b13a156b739e6d364e0c1f762a39005eeab0c54b9b25a3325ed627f",
+    "reports/hypothesis-evidence/r3-jalon10-non-regression.json": "32a2ded72c0e18a1f56583e1f06bc91583b728f7e1ca4448ca0dd7d1469c1c33"
+  },
+  "immutable_reused_evidence_hashing": "SHA256_LF_NORMALIZED_TEXT_BYTES",
+  "jalon10_non_regression": {
+    "membership_count": 865,
+    "distinct_fixture_count": 863,
+    "identity_mismatches": 0,
+    "odds_mismatches": 0,
+    "settlement_mismatches": 0,
+    "profit_mismatches": 0,
+    "roi_mismatches": 0,
+    "drawdown_mismatches": 0,
+    "scientific_verdict_changed": false,
+    "scientific_verdict": "NON_REGRESSION_ONLY_NO_EDGE_RESEARCH_REOPENED"
+  },
+  "measured_gain": {
+    "wall_time_gain_percent": 39.176,
+    "job_minute_gain_percent": 30.135,
+    "human_time_gain_claimed": false,
+    "financial_gain_claimed": false
+  },
+  "external_effects": {
+    "provider_http_requests_new": 5,
+    "provider_credits_new": 10,
+    "r2_reads_new": 1,
+    "r2_writes_new": 1,
+    "purchases": 0,
+    "bets": 0,
+    "promotions": 0,
+    "social_publications": 0
+  },
+  "independent_reviews": {
+    "architecture": "reports/council/robin-simplification-postrepair-final-c1-architecture-v1.json",
+    "operations": "reports/council/robin-simplification-postrepair-final-c2-operations-v1.json",
+    "performance": "reports/council/robin-simplification-postrepair-final-c4-performance-v1.json"
+  },
+  "limitations": [
+    "Provider market coverage remains partial and is displayed as such.",
+    "No post-merge schedule event was observed through 2026-10-06T21:28:00Z; the cause is not exposed by the observed evidence and is not attributed to GitHub.",
+    "Automatic sequence 2 was waiting on its configured environment timer when this evidence was frozen; its unique creation proves the handoff, not its later terminal outcome.",
+    "GitHub runner annotations report a forced Node.js 24 runtime for actions that still target Node.js 20.",
+    "Human-time and financial savings were not measured and are not inferred.",
+    "The descriptive experience remains non-predictive and does not claim an edge or profitability."
+  ]
+}
