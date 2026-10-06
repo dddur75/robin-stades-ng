@@ -125,6 +125,7 @@ function Set-RobinStartupShortcut {
 $taskName = 'RobinRealDataExplorer'
 $startup = if ($StartupPath) { $StartupPath } else { [Environment]::GetFolderPath('Startup') }
 $shortcutPath = Join-Path $startup "$taskName.lnk"
+$managedCheckoutPattern = [Regex]::Escape((Join-Path ('.' + 'codex') 'worktrees'))
 $python = $PythonPath
 if (-not $python) {
     $pythonCandidates = @()
@@ -141,17 +142,17 @@ if (-not $python) {
         Where-Object {
             $_ -and
             (Test-Path -LiteralPath $_ -PathType Leaf) -and
-            ([System.IO.Path]::GetFullPath($_) -notmatch '\\.codex\\worktrees\\')
+            ([System.IO.Path]::GetFullPath($_) -notmatch $managedCheckoutPattern)
         } |
         Select-Object -First 1
     if (-not $python) {
-        if ($pythonCandidates | Where-Object { $_ -and ([System.IO.Path]::GetFullPath($_) -match '\\.codex\\worktrees\\') }) {
+        if ($pythonCandidates | Where-Object { $_ -and ([System.IO.Path]::GetFullPath($_) -match $managedCheckoutPattern) }) {
             throw 'ROBIN_EXPLORER_PYTHON_WORKTREE_FORBIDDEN'
         }
         throw 'ROBIN_EXPLORER_PYTHON_NOT_FOUND'
     }
 }
-if ([System.IO.Path]::GetFullPath($python) -match '\\.codex\\worktrees\\') {
+if ([System.IO.Path]::GetFullPath($python) -match $managedCheckoutPattern) {
     throw 'ROBIN_EXPLORER_PYTHON_WORKTREE_FORBIDDEN'
 }
 $launcher = Join-Path $RepositoryRoot 'scripts\run_real_data_explorer.py'
