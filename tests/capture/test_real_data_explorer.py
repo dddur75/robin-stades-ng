@@ -7,6 +7,7 @@ import socket
 import subprocess
 import sys
 import threading
+import time
 import urllib.parse
 import urllib.request
 from datetime import UTC, datetime, timedelta
@@ -1182,6 +1183,169 @@ def test_windows_installer_replaces_shortcut_transactionally() -> None:
     assert '"$Path.backup-' not in installer
     assert "[System.IO.File]::Replace(" in installer
     assert "ROBIN_EXPLORER_SHORTCUT_VALIDATION_FAILED" in installer
+
+
+def test_windows_installer_retires_only_the_matching_managed_runtime_before_start() -> None:
+    installer = (ROOT / "scripts/install_real_data_explorer.ps1").read_text("utf-8")
+
+    assert "function Test-RobinExplorerProcess" in installer
+    assert "function Get-RobinExplorerProcesses" in installer
+    assert "function Stop-RobinExplorerProcesses" in installer
+    assert "Get-CimInstance Win32_Process" in installer
+    assert "@('python.exe', 'pythonw.exe') -contains $_.Name" in installer
+    assert "(?<launcher>" in installer
+    assert "[0-9a-f]{64}" in installer
+    assert "scripts\\run_real_data_explorer.py" in installer
+    assert "[System.StringComparison]::OrdinalIgnoreCase" in installer
+    assert "Stop-Process -Id $process.ProcessId -Force" in installer
+    assert "ROBIN_EXPLORER_PROCESS_RETIREMENT_TIMEOUT" in installer
+    stop_call = "Stop-RobinExplorerProcesses -RuntimeRoot $RuntimeRoot"
+    assert installer.rindex(stop_call) < installer.rindex("Start-Process")
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows process matcher integration")
+def test_windows_installer_process_matcher_is_anchored_to_the_exact_launcher(
+    tmp_path: Path,
+) -> None:
+    harness = tmp_path / "process-matcher.ps1"
+    harness.write_text(
+        r"""
+$tokens = $null
+$errors = $null
+$ast = [System.Management.Automation.Language.Parser]::ParseFile(
+    $args[0],
+    [ref]$tokens,
+    [ref]$errors
+)
+if ($errors.Count -ne 0) { throw 'INSTALLER_PARSE_FAILED' }
+$function = $ast.FindAll(
+    { param($node) $node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq 'Test-RobinExplorerProcess' },
+    $true
+) | Select-Object -First 1
+if (-not $function) { throw 'MATCHER_FUNCTION_MISSING' }
+Invoke-Expression $function.Extent.Text
+$runtime = [System.IO.Path]::GetFullPath($args[1])
+$data = [System.IO.Path]::GetFullPath($args[2])
+$release = Join-Path $runtime ('releases\' + ('a' * 64))
+$launcher = Join-Path $release 'scripts\run_real_data_explorer.py'
+$python = 'C:\Python312\pythonw.exe'
+$positive = [pscustomobject]@{
+    Name = 'pythonw.exe'
+    CommandLine = ('"{0}" -B "{1}" --root "{2}" --port 4173 --refresh-seconds 60' -f $python, $launcher, $data)
+}
+$foreign = [pscustomobject]@{
+    Name = 'python.exe'
+    CommandLine = ('"C:\Python312\python.exe" -B "C:\Tools\diagnostic.py" --input "{0}" --root "{1}" --port 4173 --refresh-seconds 60' -f $launcher, $data)
+}
+$wrongRoot = [pscustomobject]@{
+    Name = 'pythonw.exe'
+    CommandLine = ('"{0}" -B "{1}" --root "{2}-other" --port 4173 --refresh-seconds 60' -f $python, $launcher, $data)
+}
+$wrongPort = [pscustomobject]@{
+    Name = 'pythonw.exe'
+    CommandLine = ('"{0}" -B "{1}" --root "{2}" --port 41730 --refresh-seconds 60' -f $python, $launcher, $data)
+}
+$outsideLauncher = [pscustomobject]@{
+    Name = 'pythonw.exe'
+    CommandLine = ('"{0}" -B "C:\Elsewhere\run_real_data_explorer.py" --root "{1}" --port 4173 --refresh-seconds 60' -f $python, $data)
+}
+[ordered]@{
+    positive = Test-RobinExplorerProcess -Process $positive -RuntimeRoot $runtime -DataRoot $data -Port 4173
+    foreign = Test-RobinExplorerProcess -Process $foreign -RuntimeRoot $runtime -DataRoot $data -Port 4173
+    wrong_root = Test-RobinExplorerProcess -Process $wrongRoot -RuntimeRoot $runtime -DataRoot $data -Port 4173
+    wrong_port = Test-RobinExplorerProcess -Process $wrongPort -RuntimeRoot $runtime -DataRoot $data -Port 4173
+    outside_launcher = Test-RobinExplorerProcess -Process $outsideLauncher -RuntimeRoot $runtime -DataRoot $data -Port 4173
+} | ConvertTo-Json -Compress
+""",
+        encoding="utf-8",
+    )
+    completed = subprocess.run(  # noqa: S603 - fixed local PowerShell harness.
+        [
+            "powershell.exe",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            str(harness),
+            str(ROOT / "scripts" / "install_real_data_explorer.ps1"),
+            str(tmp_path / "runtime"),
+            str(tmp_path / "data"),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert completed.returncode == 0, completed.stdout + completed.stderr
+    result = json.loads(completed.stdout.splitlines()[-1])
+    assert result == {
+        "positive": True,
+        "foreign": False,
+        "wrong_root": False,
+        "wrong_port": False,
+        "outside_launcher": False,
+    }
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows installer integration")
+def test_windows_installer_rejects_unregistered_start_before_retiring_process(
+    tmp_path: Path,
+) -> None:
+    runtime_root = tmp_path / "runtime with spaces"
+    data_root = tmp_path / "data with spaces"
+    fake_launcher = runtime_root / "releases" / ("b" * 64) / "scripts" / "run_real_data_explorer.py"
+    fake_launcher.parent.mkdir(parents=True)
+    data_root.mkdir()
+    fake_launcher.write_text("import time; time.sleep(60)\n", encoding="utf-8")
+    managed = subprocess.Popen(  # noqa: S603 - controlled local counterexample.
+        [
+            sys.executable,
+            "-B",
+            str(fake_launcher),
+            "--root",
+            str(data_root),
+            "--port",
+            "4173",
+            "--refresh-seconds",
+            "60",
+        ]
+    )
+    try:
+        time.sleep(0.5)
+        completed = subprocess.run(  # noqa: S603 - fixed local installer argv.
+            [
+                "powershell.exe",
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                str(ROOT / "scripts" / "install_real_data_explorer.ps1"),
+                "-RepositoryRoot",
+                str(ROOT),
+                "-DataRoot",
+                str(data_root),
+                "-RuntimeRoot",
+                str(runtime_root),
+                "-PythonPath",
+                sys.executable,
+                "-SkipRegistration",
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+
+        assert completed.returncode != 0
+        assert "ROBIN_EXPLORER_START_REQUIRES_REGISTRATION" in (completed.stdout + completed.stderr)
+        assert managed.poll() is None
+    finally:
+        if managed.poll() is None:
+            managed.terminate()
+            try:
+                managed.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                managed.kill()
+                managed.wait(timeout=5)
 
 
 def test_runbook_covers_open_filter_export_stop_resume_and_fail_closed_errors() -> None:

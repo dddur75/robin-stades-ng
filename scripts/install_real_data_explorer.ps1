@@ -122,6 +122,101 @@ function Set-RobinStartupShortcut {
     }
 }
 
+function Test-RobinExplorerProcess {
+    param(
+        [Parameter(Mandatory = $true)][object]$Process,
+        [Parameter(Mandatory = $true)][string]$RuntimeRoot,
+        [Parameter(Mandatory = $true)][string]$DataRoot,
+        [Parameter(Mandatory = $true)][int]$Port
+    )
+
+    if (-not (@('python.exe', 'pythonw.exe') -contains $Process.Name) -or -not $Process.CommandLine) {
+        return $false
+    }
+    $commandPattern = (
+        '^\s*(?:"[^"]+"|\S+)\s+-B\s+"(?<launcher>[^"]+)"' +
+        '\s+--root\s+"(?<root>[^"]+)"' +
+        '\s+--port\s+(?<port>\d+)' +
+        '\s+--refresh-seconds\s+\d+\s*$'
+    )
+    $match = [Regex]::Match(
+        $Process.CommandLine,
+        $commandPattern,
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase
+    )
+    if (-not $match.Success) {
+        return $false
+    }
+    try {
+        $runtimePrefix = [System.IO.Path]::GetFullPath($RuntimeRoot).TrimEnd('\') + '\'
+        $releasePrefix = [System.IO.Path]::GetFullPath(
+            (Join-Path $runtimePrefix 'releases')
+        ).TrimEnd('\') + '\'
+        $launcher = [System.IO.Path]::GetFullPath($match.Groups['launcher'].Value)
+        $dataAbsolute = [System.IO.Path]::GetFullPath($DataRoot)
+        $processDataRoot = [System.IO.Path]::GetFullPath($match.Groups['root'].Value)
+    }
+    catch {
+        return $false
+    }
+    if (-not $launcher.StartsWith($releasePrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+        return $false
+    }
+    $relativeLauncher = $launcher.Substring($releasePrefix.Length).Replace('/', '\')
+    $launcherMatches = [Regex]::IsMatch(
+        $relativeLauncher,
+        '^[0-9a-f]{64}\\scripts\\run_real_data_explorer\.py$',
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase
+    )
+    $rootMatches = $processDataRoot.Equals(
+        $dataAbsolute,
+        [System.StringComparison]::OrdinalIgnoreCase
+    )
+    $portMatches = $match.Groups['port'].Value -eq [string]$Port
+    return $launcherMatches -and $rootMatches -and $portMatches
+}
+
+function Get-RobinExplorerProcesses {
+    param(
+        [Parameter(Mandatory = $true)][string]$RuntimeRoot,
+        [Parameter(Mandatory = $true)][string]$DataRoot,
+        [Parameter(Mandatory = $true)][int]$Port
+    )
+
+    return @(
+        Get-CimInstance Win32_Process |
+            Where-Object { @('python.exe', 'pythonw.exe') -contains $_.Name } |
+            Where-Object {
+                Test-RobinExplorerProcess -Process $_ -RuntimeRoot $RuntimeRoot -DataRoot $DataRoot -Port $Port
+            }
+    )
+}
+
+function Stop-RobinExplorerProcesses {
+    param(
+        [Parameter(Mandatory = $true)][string]$RuntimeRoot,
+        [Parameter(Mandatory = $true)][string]$DataRoot,
+        [Parameter(Mandatory = $true)][int]$Port,
+        [int]$TimeoutSeconds = 10
+    )
+
+    $processes = @(Get-RobinExplorerProcesses -RuntimeRoot $RuntimeRoot -DataRoot $DataRoot -Port $Port)
+    foreach ($process in ($processes | Sort-Object ProcessId -Descending)) {
+        Stop-Process -Id $process.ProcessId -Force -ErrorAction SilentlyContinue
+    }
+    $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+    do {
+        $remaining = @(
+            Get-RobinExplorerProcesses -RuntimeRoot $RuntimeRoot -DataRoot $DataRoot -Port $Port
+        )
+        if ($remaining.Count -eq 0) {
+            return
+        }
+        Start-Sleep -Milliseconds 100
+    } while ([DateTime]::UtcNow -lt $deadline)
+    throw 'ROBIN_EXPLORER_PROCESS_RETIREMENT_TIMEOUT'
+}
+
 $taskName = 'RobinRealDataExplorer'
 $startup = if ($StartupPath) { $StartupPath } else { [Environment]::GetFolderPath('Startup') }
 $shortcutPath = Join-Path $startup "$taskName.lnk"
@@ -262,13 +357,14 @@ if (-not $SkipRegistration) {
 }
 
 if (-not $SkipStart) {
+    if ($mode -notin @('ScheduledTask', 'StartupShortcut')) {
+        throw 'ROBIN_EXPLORER_START_REQUIRES_REGISTRATION'
+    }
+    Stop-RobinExplorerProcesses -RuntimeRoot $RuntimeRoot -DataRoot $DataRoot -Port $Port
     if ($mode -eq 'ScheduledTask') {
         Start-ScheduledTask -TaskName $taskName
     }
     else {
-        if ($mode -ne 'StartupShortcut') {
-            throw 'ROBIN_EXPLORER_START_REQUIRES_REGISTRATION'
-        }
         Start-Process -FilePath $python -ArgumentList $arguments -WorkingDirectory $runtimeRelease -WindowStyle Hidden
     }
 }
