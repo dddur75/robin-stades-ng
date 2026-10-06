@@ -2,9 +2,13 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
+import yaml
 
 import scripts.run_recurring_real_data as cli
 from robin.capture.contracts import canonical_json_bytes
@@ -13,6 +17,7 @@ from robin.prospective_observatory.chronos_control_plane import ObservedObject
 from robin.prospective_observatory.chronos_r2 import LatestProjection
 
 RELAY_GENERATION = "4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87"
+WORKFLOW = Path(__file__).resolve().parents[2] / ".github/workflows/prospective-deep-scheduler.yml"
 
 
 @pytest.fixture(autouse=True)
@@ -219,6 +224,9 @@ def _receipt(store: FakeStore, status: str) -> dict[str, object]:
         "incomplete_branch_count": 0 if status != "REAL_DATA_FAILED" else 1,
         "row_count": 1 if status != "REAL_DATA_FAILED" else 0,
         "provider_requests_new": 5,
+        "provider_requests_reserved": 5,
+        "provider_credits_reserved": 10,
+        "credit_bound_valid": True,
         "rolling_24h_requests": 21,
         "rolling_24h_credits": 44,
         "rolling_30d_requests": 21,
@@ -234,6 +242,40 @@ def _receipt(store: FakeStore, status: str) -> dict[str, object]:
         "backfills": 0,
         "promotions": 0,
     }
+
+
+def _workflow_validator_source() -> str:
+    workflow = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
+    validate = next(
+        step for step in workflow["jobs"]["capture"]["steps"] if step.get("id") == "validate"
+    )
+    command = validate["run"]
+    marker = "python -I - <<'PY'\n"
+    return command.split(marker, 1)[1].rsplit("\nPY", 1)[0]
+
+
+def _run_workflow_validator(
+    runner_temp: Path,
+) -> subprocess.CompletedProcess[str]:
+    summary = runner_temp / "step-summary.md"
+    environment = os.environ.copy()
+    environment.update(
+        {
+            "RUNNER_TEMP": str(runner_temp),
+            "GITHUB_SHA": "a" * 40,
+            "GITHUB_RUN_ID": "424242",
+            "GITHUB_SERVER_URL": "https://github.com",
+            "GITHUB_REPOSITORY": "dddur75/robin-stades-ng",
+            "GITHUB_STEP_SUMMARY": str(summary),
+        }
+    )
+    return subprocess.run(
+        [sys.executable, "-I", "-c", _workflow_validator_source()],
+        check=False,
+        capture_output=True,
+        text=True,
+        env=environment,
+    )
 
 
 def test_cli_delivers_four_normalized_files_and_compares_previous_slot(
@@ -291,6 +333,43 @@ def test_cli_delivers_four_normalized_files_and_compares_previous_slot(
         "parent_run_id": "424241",
         "sequence": 2,
     }
+
+
+def test_active_workflow_validator_accepts_real_explorer_delivery_and_rejects_tampering(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _github_environment(monkeypatch)
+    delivery = tmp_path / "robin-autonomous-lab"
+    delivery.mkdir()
+    current = _report(price=2.0)
+    store = FakeStore(current=current, previous=_report(price=1.8))
+    monkeypatch.setattr(
+        cli.ChronosR2ConditionalStore,
+        "from_environment",
+        lambda _environment: store,
+    )
+    monkeypatch.setattr(
+        cli,
+        "run_recurring_real_data",
+        lambda *_args, **_kwargs: _receipt(store, "REAL_DATA_PARTIAL"),
+    )
+
+    arguments = _arguments(tmp_path)
+    arguments[-1] = str(delivery)
+    assert cli.main(arguments) == 0
+
+    accepted = _run_workflow_validator(tmp_path)
+    assert accepted.returncode == 0, accepted.stderr
+
+    normalized_path = delivery / "robin-real-data.json"
+    normalized = json.loads(normalized_path.read_text(encoding="utf-8"))
+    normalized["summary"]["row_count"] += 1
+    normalized_path.write_text(json.dumps(normalized), encoding="utf-8")
+
+    rejected = _run_workflow_validator(tmp_path)
+    assert rejected.returncode != 0
+    assert "AssertionError" in rejected.stderr
 
 
 @pytest.mark.parametrize(

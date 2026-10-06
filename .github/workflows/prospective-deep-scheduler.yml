@@ -726,7 +726,7 @@ jobs:
           assert receipt["purchases"] == receipt["real_bets"] == 0
           assert receipt["backfills"] == receipt["promotions"] == 0
           assert receipt["private_report_r2_status"] == "VERIFIED"
-          assert snapshot["schema_version"] == "robin-real-data-dashboard-v1"
+          assert snapshot["schema_version"] == "robin-real-data-explorer-v2"
           assert snapshot["mission_id"] == "ROBIN_AUTONOMOUS_LAB_20261004"
           assert len(snapshot["rows"]) == receipt["display_row_count"]
           assert snapshot["summary"]["row_count"] == receipt["display_row_count"]
