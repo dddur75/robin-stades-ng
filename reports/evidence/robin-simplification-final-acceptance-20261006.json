@@ -1,0 +1,309 @@
+{
+  "schema_version": "robin-simplification-final-acceptance-v1",
+  "mission_id": "ROBIN_SIMPLIFICATION_EXPLORATION_20261005",
+  "status": "PENDING_POSTMERGE_DELIVERY",
+  "functional_revision": "fc45ebe78260af3eb39cdd2ed567071439e1a380",
+  "completed_at_utc": null,
+  "safety_locks": {
+    "STORAGE_PAUSED": true,
+    "P3_P4_PAUSED": true,
+    "PRODUCTION_LOCKED": true,
+    "REAL_BETS": false,
+    "NO_BET_DEFAULT": true,
+    "PROMOTION_LOCKED": true,
+    "SOCIAL_PUBLISHING_ENABLED": false,
+    "DEMO_MODE_ENABLED": false
+  },
+  "criteria": {
+    "R1": {
+      "status": "PASS",
+      "claim_ids": ["DATA.ROBIN.SIMPLIFICATION.FINAL.R1.CONTINUITY.V1.001"],
+      "evidence_refs": [
+        "reports/evidence/robin-autonomous-lab-run-37292740942-public-receipt.json",
+        "https://github.com/dddur75/robin-stades-ng/actions/runs/37428677606",
+        "https://github.com/dddur75/robin-stades-ng/actions/runs/37442782116"
+      ],
+      "counterexamples": [
+        "Run 37360603675 was cancelled before capture and remains an unattributed incident.",
+        "Run 37410003793 captured the 04:00 slot but failed delivery validation; its upload remains failed.",
+        "Run 37442331390 belongs to the following 10:00 slot and is excluded from the frozen window."
+      ]
+    },
+    "R2": {
+      "status": "PENDING",
+      "claim_ids": ["DATA.ROBIN.SIMPLIFICATION.FINAL.R2.EXPLORER.V1.001"],
+      "evidence_refs": [
+        "DATA.ROBIN.SIMPLIFICATION.EXPLORER_UI.V1.001",
+        "RUNTIME.ROBIN.SIMPLIFICATION.DURABLE_LOCAL_RUNTIME.V1.007",
+        "http://127.0.0.1:4173/robin-real-data.html"
+      ],
+      "counterexamples": [
+        "A rejected download or validation must retain the last known good version and expose staleness.",
+        "A missing provider market must remain distinct from a collector failure.",
+        "A replay of one acquisition must not create a second acquisition point."
+      ]
+    },
+    "R3": {
+      "status": "PASS",
+      "claim_ids": ["DATA.ROBIN.SIMPLIFICATION.FINAL.R3.GUARANTEES.V1.001"],
+      "evidence_refs": [
+        "reports/hypothesis-evidence/r3-jalon10-non-regression.json",
+        "DATA.ROBIN.SIMPLIFICATION.R3.JALON10.NON_REGRESSION.V1.002",
+        "RUNTIME.ROBIN.AUTONOMOUS_LAB.DELIVERY.SCHEMA.CONTRACT.FAILURE.V1.001"
+      ],
+      "counterexamples": [
+        "Membership, odds, settlement, profit, ROI and drawdown mismatches all fail equivalence.",
+        "The producer-v2/validator-v1 mismatch failed runs 37405164519 and 37410003793 instead of being reclassified.",
+        "Quota, temporal identity and replay-mutation guards remain fail-closed."
+      ]
+    },
+    "R4": {
+      "status": "PASS",
+      "claim_ids": ["GOV.ROBIN.SIMPLIFICATION.FINAL.R4.EVIDENCE.V1.001"],
+      "evidence_refs": [
+        "reports/evidence/evidence-graph.json",
+        "GOV.ENGINEERING.ROBIN.SIMPLIFICATION.ACCEPTANCE.AUTHORITY.PROJECTION.V1.003",
+        "GOV.ENGINEERING.ROBIN.AUTONOMOUS_LAB.DELIVERY.CONTRACT.REPAIR.V1.001"
+      ],
+      "counterexamples": [
+        "Corrupted delivery bytes, mismatched hashes and semantic acquisition mutation are rejected.",
+        "LF and CRLF PowerShell representations resolve to the declared LF-normalized evidence hash.",
+        "Historical failed claims remain in the graph and require explicit current successors."
+      ]
+    },
+    "R5": {
+      "status": "PASS",
+      "claim_ids": ["GOV.ROBIN.SIMPLIFICATION.FINAL.R5.SIMPLIFICATION.V1.001"],
+      "evidence_refs": [
+        "PERF.ROBIN.SIMPLIFICATION.CI.DAG.V1.002",
+        ".github/workflows/ci-safe-v2.yml",
+        "RUNBOOK.md"
+      ],
+      "counterexamples": [
+        "The final tests gate still fails if any retained prerequisite job is not successful.",
+        "Exactly one complete Python suite remains in the SAFE DAG; domain-specific PostgreSQL profiles remain distinct.",
+        "No new registry, paid service or recurring manual execution step carries displaced complexity."
+      ]
+    },
+    "R6": {
+      "status": "PASS",
+      "claim_ids": ["PERF.ROBIN.SIMPLIFICATION.FINAL.R6.GAIN.V1.001"],
+      "evidence_refs": [
+        "PERF.ROBIN.SIMPLIFICATION.CI.BASELINE.V1.001",
+        "PERF.ROBIN.SIMPLIFICATION.CI.CANDIDATE.SERIES.V1.001",
+        "https://github.com/dddur75/robin-stades-ng/actions/runs/37454307929"
+      ],
+      "counterexamples": [
+        "The candidate range of 3.5333 minutes remains reported rather than collapsed into the median.",
+        "Human time was not measured, so no human-time gain or amortization is claimed.",
+        "No financial gain is inferred from the reduction in CI wall time or job-minutes."
+      ]
+    },
+    "R7": {
+      "status": "PASS",
+      "claim_ids": ["RUNTIME.ROBIN.SIMPLIFICATION.FINAL.R7.OPERATIONS.V1.001"],
+      "evidence_refs": [
+        "RUNBOOK.md",
+        "scripts/install_real_data_explorer.ps1",
+        "RUNTIME.ROBIN.SIMPLIFICATION.DURABLE_LOCAL_RUNTIME.V1.007"
+      ],
+      "counterexamples": [
+        "A physical reboot was not performed and automatic logon restart is not claimed as observed.",
+        "An unregistered or ambiguous process is refused before the installer changes a running service.",
+        "The independent freshness monitor remains useful when no collector run is produced."
+      ]
+    },
+    "R8": {
+      "status": "PENDING",
+      "claim_ids": ["GOV.ROBIN.SIMPLIFICATION.FINAL.R8.DELIVERY.V1.001"],
+      "evidence_refs": [
+        "https://github.com/dddur75/robin-stades-ng/pull/93",
+        "https://github.com/dddur75/robin-stades-ng/actions/runs/37454307929",
+        "reports/experiments/robin-descriptive-20261005-0800-1000.json"
+      ],
+      "counterexamples": [
+        "A green pull-request CI alone is not accepted as deployment proof.",
+        "Failed uploads 37405164519 and 37410003793 remain failed historical evidence.",
+        "The descriptive experience makes no causal, predictive, profitability or edge claim."
+      ]
+    }
+  },
+  "continuity": {
+    "window_start_utc": "2026-10-05T09:50:52Z",
+    "window_end_utc": "2026-10-06T09:50:52Z",
+    "slot_cadence_hours": 2,
+    "late_start_tolerance_minutes": 30,
+    "tolerance_justification": "The authorized relay environment intentionally waits 60 minutes, while two-hour acquisition admission and idempotent replay separate delivery delay from a missed acquisition slot; each original acquisition nevertheless belongs to its exact slot.",
+    "expected_slots": [
+      {"slot_start_utc":"2026-10-05T10:00:00Z","classification":"ACQUISITION","acquisition_run_id":37292740942,"replay_run_ids":[37299211365],"provider_requests":5,"reserved_credits":10,"validated_captures":5,"r2_readback_status":"VERIFIED","artifact_id":11340204471},
+      {"slot_start_utc":"2026-10-05T12:00:00Z","classification":"ACQUISITION","acquisition_run_id":37305759203,"replay_run_ids":[37312726062],"provider_requests":5,"reserved_credits":10,"validated_captures":5,"r2_readback_status":"VERIFIED","artifact_id":11345823890},
+      {"slot_start_utc":"2026-10-05T14:00:00Z","classification":"ACQUISITION","acquisition_run_id":37320542833,"replay_run_ids":[37328785334],"provider_requests":5,"reserved_credits":10,"validated_captures":5,"r2_readback_status":"VERIFIED","artifact_id":11353835436},
+      {"slot_start_utc":"2026-10-05T16:00:00Z","classification":"ACQUISITION","acquisition_run_id":37337131290,"replay_run_ids":[],"provider_requests":5,"reserved_credits":10,"validated_captures":5,"r2_readback_status":"VERIFIED","artifact_id":11360042015},
+      {"slot_start_utc":"2026-10-05T18:00:00Z","classification":"ACQUISITION","acquisition_run_id":37345060939,"replay_run_ids":[37352816617],"incident_run_ids":[37360603675],"provider_requests":5,"reserved_credits":10,"validated_captures":5,"r2_readback_status":"VERIFIED","artifact_id":11363691166},
+      {"slot_start_utc":"2026-10-05T20:00:00Z","classification":"ACQUISITION","acquisition_run_id":37367549550,"replay_run_ids":[],"provider_requests":5,"reserved_credits":10,"validated_captures":5,"r2_readback_status":"VERIFIED","artifact_id":11372010778},
+      {"slot_start_utc":"2026-10-05T22:00:00Z","classification":"ACQUISITION","acquisition_run_id":37375781802,"replay_run_ids":[37382597472],"provider_requests":5,"reserved_credits":10,"validated_captures":5,"r2_readback_status":"VERIFIED","artifact_id":11375192545},
+      {"slot_start_utc":"2026-10-06T00:00:00Z","classification":"ACQUISITION","acquisition_run_id":37388782635,"replay_run_ids":[37394411331],"provider_requests":5,"reserved_credits":10,"validated_captures":5,"r2_readback_status":"VERIFIED","artifact_id":11382276628},
+      {"slot_start_utc":"2026-10-06T02:00:00Z","classification":"ACQUISITION","acquisition_run_id":37399706307,"replay_run_ids":[],"incident_run_ids":[37404739053,37405164519],"provider_requests":5,"reserved_credits":10,"validated_captures":5,"r2_readback_status":"VERIFIED","artifact_id":11387030355},
+      {"slot_start_utc":"2026-10-06T04:00:00Z","classification":"INCIDENT","acquisition_run_id":37410003793,"replay_run_ids":[],"incident_run_ids":[37410003793,37414821127],"provider_requests":5,"reserved_credits":10,"validated_captures":5,"r2_readback_status":"VERIFIED","artifact_id":null,"delivery_upload":"SKIPPED"},
+      {"slot_start_utc":"2026-10-06T06:00:00Z","classification":"ACQUISITION","acquisition_run_id":37422834676,"replay_run_ids":[],"provider_requests":5,"reserved_credits":10,"validated_captures":5,"r2_readback_status":"VERIFIED","artifact_id":11395627127},
+      {"slot_start_utc":"2026-10-06T08:00:00Z","classification":"ACQUISITION","acquisition_run_id":37428677606,"replay_run_ids":[37435252650],"provider_requests":5,"reserved_credits":10,"validated_captures":5,"r2_readback_status":"VERIFIED","artifact_id":11399040739}
+    ],
+    "totals": {
+      "original_acquisitions": 12,
+      "successful_zero_call_replays": 7,
+      "provider_requests": 60,
+      "reserved_credits": 120,
+      "purchases": 0
+    },
+    "unresolved_recurrence_defects": [],
+    "coverage": {
+      "leagues": 5,
+      "h2h_branches": 5,
+      "totals_branches": 5,
+      "partial_provider_coverage_visible": true
+    }
+  },
+  "postmerge_delivery": {
+    "repository_sha": "fc45ebe78260af3eb39cdd2ed567071439e1a380",
+    "workflow_run_id": 0,
+    "workflow_url": null,
+    "artifact_id": 0,
+    "artifact_name": null,
+    "schema_version": null,
+    "validation_outcome": "PENDING",
+    "upload_outcome": "PENDING",
+    "r2_readback_status": "PENDING",
+    "local_refresh": {
+      "manual_copy_or_command": false,
+      "filter_before": "Real Madrid",
+      "filter_after": null,
+      "current_delivery_run_id": null,
+      "status_last_error_code": null
+    }
+  },
+  "resolved_delivery_incident": {
+    "failed_run_ids": [37405164519, 37410003793],
+    "failed_at": "Validate normalized delivery and publish run summary:56",
+    "producer_schema": "robin-real-data-explorer-v2",
+    "former_validator_schema": "robin-real-data-dashboard-v1",
+    "resolution": "ACTIVE_VALIDATOR_ALIGNED_WITH_PRODUCER",
+    "retained_content_controls": [
+      "exact schema version",
+      "required public files",
+      "receipt/hash consistency",
+      "private R2 readback VERIFIED",
+      "non-empty normalized observations",
+      "terminal outcome preserved"
+    ],
+    "failed_uploads_reclassified_as_success": false
+  },
+  "measured_gain": {
+    "baseline_wall_minutes": 65.1333,
+    "candidate_wall_median_minutes": 39.6167,
+    "absolute_gain_minutes": 25.5167,
+    "relative_gain_percent": 39.176,
+    "candidate_wall_range_minutes": 3.5333,
+    "baseline_job_median_minutes": 102.65,
+    "candidate_job_median_minutes": 71.7167,
+    "job_minute_gain": 30.9333,
+    "job_minute_gain_percent": 30.135,
+    "human_time": "NOT_MEASURED",
+    "human_time_gain_claimed": false,
+    "new_recurring_manual_execution_steps": 0,
+    "financial_gain_claimed": false
+  },
+  "real_explorer_acceptance": {
+    "dataset": "PENDING_AUTOMATIC_POSTMERGE_DELIVERY",
+    "url": "http://127.0.0.1:4173/robin-real-data.html",
+    "search": {"query":"Real Madrid","selected_offers":0,"selected_matches":0},
+    "comparison": {"bookmakers":0,"acquisitions":0},
+    "tracking": {"matched_rows":0,"appeared_rows":0,"not_observed_rows":0},
+    "export": {"displayed_rows":0,"csv_rows":0,"json_rows":0,"source_identity_mismatches":0},
+    "controls": {
+      "search": "PASS",
+      "sort": "PASS",
+      "filters": "PASS",
+      "reset": "PASS",
+      "stale_state": "PASS",
+      "failure_state": "PASS",
+      "missing_market_state": "PASS"
+    },
+    "performance": {"open_p95_ms":254,"input_to_paint_p95_ms":45,"open_target_ms":2000,"input_to_paint_target_ms":100},
+    "restart": {
+      "automatic_logon_restart_claimed": false,
+      "service_relaunch": "PASS",
+      "state_preserved": true,
+      "runtime_manifest_schema": "robin-real-data-explorer-runtime-v2",
+      "runtime_file_count": 221,
+      "runtime_missing_files": 0,
+      "runtime_worktree_reference": false
+    }
+  },
+  "jalon10_non_regression": {
+    "corpus": "ORIGINAL_2020_2025",
+    "stake_units": 1,
+    "membership_count": 865,
+    "distinct_fixture_count": 863,
+    "identity_mismatches": 0,
+    "odds_mismatches": 0,
+    "settlement_mismatches": 0,
+    "profit_mismatches": 0,
+    "roi_mismatches": 0,
+    "drawdown_mismatches": 0,
+    "internal_tolerance": {
+      "type": "FLOAT64_REPRESENTATION_ONLY",
+      "relative": 0.0,
+      "per_bet_absolute": 1e-12,
+      "aggregate_units_absolute": 1e-9,
+      "roi_absolute": 1e-12
+    },
+    "tolerance_justification": "The immutable decimal source values are compared exactly; only binary Float64 representation in the unchanged implementation receives a sub-cent, far-below-rounding absolute tolerance. No observed difference is consumed by the tolerance.",
+    "detailed_artifacts": {
+      "rows": 865,
+      "baseline_name": "baseline-before-simplification.jsonl",
+      "baseline_sha256": "61ed7022cbc79c39f715e594ae0a8b3aeb6ba5d43c415810582b0e8e1c94d86c",
+      "replay_name": "replay-after-simplification.jsonl",
+      "replay_sha256": "61ed7022cbc79c39f715e594ae0a8b3aeb6ba5d43c415810582b0e8e1c94d86c",
+      "byte_identical": true,
+      "manifest_sha256": "43fac78d01ca895bc30ee1f4fea492734bf46aece75725ecd2b929a3c9628cf2"
+    },
+    "witnesses": [
+      {"rule":"La Liga|AWAY|2.00-2.50|margin<=0.06","bets":261,"profit_units":43.43,"roi_internal":0.1663984674329502,"roi_report_percent":16.64,"max_drawdown_units":9.269999999999982},
+      {"rule":"Serie A|DRAW|2.50-3.25|margin<=0.06","bets":363,"profit_units":57.88,"roi_internal":0.1594490358126722,"roi_report_percent":15.94,"max_drawdown_units":19.519999999999868},
+      {"rule":"Serie A|AWAY|1.60-2.00|margin<=0.06","bets":241,"profit_units":33.42,"roi_internal":0.1386721991701245,"roi_report_percent":13.87,"max_drawdown_units":7.220000000000027}
+    ],
+    "scientific_verdict_changed": false,
+    "scientific_verdict": "NON_REGRESSION_ONLY_NO_EDGE_RESEARCH_REOPENED"
+  },
+  "descriptive_experience": {
+    "input_rows": 7648,
+    "matched_rows": 7648,
+    "changed_rows": 682,
+    "changed_share_percent": 8.9174,
+    "three_sourced_findings": [
+      "682 of 7648 matched offers changed between captures (8.9174%).",
+      "Serie A changed 202 of 1608 matched offers (12.5622%).",
+      "504 of 5352 matched H2H offers changed; 178 of 2296 matched totals offers changed."
+    ],
+    "predictive_claims": [],
+    "edge_claimed": false,
+    "profitability_claimed": false,
+    "reproducible_report": "reports/experiments/robin-descriptive-20261005-0800-1000.json"
+  },
+  "external_effects_for_final_evidence": {
+    "provider_http_requests_new": 0,
+    "provider_credits_new": 0,
+    "r2_reads_new": 0,
+    "r2_writes_new": 0,
+    "purchases": 0,
+    "bets": 0,
+    "promotions": 0,
+    "social_publications": 0
+  },
+  "limitations": [
+    "Provider market coverage remains partial and is displayed as such.",
+    "Automatic restart after a physical PC reboot was not observed and is not claimed.",
+    "Human-time and financial savings were not measured and are not inferred.",
+    "The descriptive experience is not an independent predictive or profitability validation."
+  ]
+}

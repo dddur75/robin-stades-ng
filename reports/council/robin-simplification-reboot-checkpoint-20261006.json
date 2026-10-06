@@ -1,0 +1,170 @@
+{
+  "schema_version": "robin-reboot-checkpoint-v1",
+  "mission_id": "ROBIN_SIMPLIFICATION_EXPLORATION_20261005",
+  "captured_at_utc": "2026-10-06T13:33:00Z",
+  "status": "PAUSED_FOR_USER_REBOOT",
+  "repository": {
+    "worktree": "WORKTREE:robin-r1-r8-acceptance",
+    "path": "C:/Users/ddura/.codex/worktrees/robin-r1-r8-acceptance/Robin des stades V2",
+    "branch": "codex/robin-r1-r8-final-evidence-v1",
+    "base_revision": "fc45ebe78260af3eb39cdd2ed567071439e1a380",
+    "upstream": "origin/main",
+    "pull_request": 93,
+    "protected_entry_checkout_mutated": false
+  },
+  "work_in_progress": {
+    "intended_checkpoint_files": [
+      "AGENTS.md",
+      "docs/superpowers/plans/2026-10-05-robin-simplification-exploration.md",
+      "reports/council/decision-ledger.jsonl",
+      "reports/council/robin-simplification-exploration-final-c4-performance-v1.json",
+      "reports/council/robin-simplification-reboot-c2-operations-review-v1.json",
+      "reports/council/robin-simplification-reboot-checkpoint-20261006.json",
+      "reports/evidence/evidence-graph.json",
+      "reports/evidence/robin-simplification-final-acceptance-20261006.json",
+      "tests/council/test_robin_simplification_final_acceptance.py"
+    ],
+    "final_acceptance_status": "PENDING_POSTMERGE_DELIVERY",
+    "criteria_passed": ["R1", "R3", "R4", "R5", "R6", "R7"],
+    "criteria_pending": ["R2", "R8"],
+    "pending_reason": "No natural automatic delivery produced from the merged revision has yet been uploaded, validated from R2 and ingested by the local explorer.",
+    "windows_github_cli_rule": {
+      "project_instruction_added": true,
+      "helper": "%LOCALAPPDATA%/Robin/invoke-gh-hidden.ps1",
+      "use_shell_execute": false,
+      "create_no_window": true,
+      "stdout_redirected": true,
+      "stderr_redirected": true,
+      "streams_read_in_parallel": true
+    }
+  },
+  "proofs_acquired": [
+    {
+      "subject": "PR 93 merged normally",
+      "claim_ids": ["GOV.ENGINEERING.ROBIN.SIMPLIFICATION.ACCEPTANCE.AUTHORITY.PROJECTION.V1.003"],
+      "revision": "fc45ebe78260af3eb39cdd2ed567071439e1a380",
+      "url": "https://github.com/dddur75/robin-stades-ng/pull/93"
+    },
+    {
+      "subject": "Exact PR head CI",
+      "claim_ids": ["PERF.ROBIN.SIMPLIFICATION.CI.CANDIDATE.SERIES.V1.001"],
+      "run_id": 37454307929,
+      "result": "SUCCESS_17_OF_17_3823_PASSED_40_SKIPPED"
+    },
+    {
+      "subject": "Exact merged-head postmerge CI",
+      "claim_ids": ["GOV.ENGINEERING.ROBIN.SIMPLIFICATION.ACCEPTANCE.AUTHORITY.PROJECTION.V1.003"],
+      "run_id": 37457243472,
+      "revision": "fc45ebe78260af3eb39cdd2ed567071439e1a380",
+      "result": "SUCCESS_17_OF_17"
+    },
+    {
+      "subject": "R1 frozen continuity window",
+      "claim_ids": ["DATA.ROBIN.SIMPLIFICATION.FINAL.R1.CONTINUITY.V1.001"],
+      "window": "2026-10-05T09:50:52Z/2026-10-06T09:50:52Z",
+      "slots": 12,
+      "provider_requests": 60,
+      "reserved_credits": 120,
+      "leagues": 5
+    },
+    {
+      "subject": "R3 Jalon 10 bounded non-regression",
+      "claim_ids": ["DATA.ROBIN.SIMPLIFICATION.R3.JALON10.NON_REGRESSION.V1.002"],
+      "memberships": 865,
+      "distinct_fixtures": 863,
+      "detailed_before_after_sha256": "61ed7022cbc79c39f715e594ae0a8b3aeb6ba5d43c415810582b0e8e1c94d86c",
+      "unexplained_deltas": 0,
+      "scientific_verdict_changed": false
+    },
+    {
+      "subject": "Delivery validator repair",
+      "claim_ids": ["GOV.ENGINEERING.ROBIN.AUTONOMOUS_LAB.DELIVERY.CONTRACT.REPAIR.V1.001"],
+      "historical_failed_runs": [37405164519, 37410003793],
+      "producer_schema": "robin-real-data-explorer-v2",
+      "former_validator_schema": "robin-real-data-dashboard-v1",
+      "historical_failures_preserved": true
+    },
+    {
+      "subject": "R6 measured simplification",
+      "claim_ids": ["PERF.ROBIN.SIMPLIFICATION.CI.BASELINE.V1.001", "PERF.ROBIN.SIMPLIFICATION.CI.CANDIDATE.SERIES.V1.001"],
+      "wall_minutes_before": 65.1333,
+      "wall_minutes_after_median": 39.6167,
+      "wall_gain_percent": 39.176,
+      "job_minutes_before_median": 102.65,
+      "job_minutes_after_median": 71.7167,
+      "job_minute_gain_percent": 30.135,
+      "human_time": "NOT_MEASURED",
+      "financial_gain_claimed": false
+    }
+  ],
+  "github_runs_to_follow": [
+    {
+      "run_id": 37456214675,
+      "revision": "0e732ffefaff144869dcb7bfe029b5f40d58ae7c",
+      "status": "COMPLETED_FAILURE_FAIL_CLOSED_BEFORE_CAPTURE",
+      "provider_calls": 0,
+      "purpose": "Retain as old-head relay incident evidence; do not reclassify."
+    },
+    {
+      "workflow_id": 321915839,
+      "workflow_name": "61 - Robin autonomous lab — established scheduler",
+      "state": "active",
+      "expected_revision": "fc45ebe78260af3eb39cdd2ed567071439e1a380",
+      "status": "WAIT_FOR_NEXT_NATURAL_RUN",
+      "required_terminal_checks": [
+        "capture succeeds",
+        "validator accepts robin-real-data-explorer-v2",
+        "all content controls remain enforced",
+        "artifact upload succeeds",
+        "R2 readback is VERIFIED",
+        "workflow terminates successfully"
+      ]
+    },
+    {
+      "workflow_name": "Robin collection freshness monitor",
+      "workflow_path": ".github/workflows/collection-freshness-monitor.yml",
+      "state": "active",
+      "status": "PRESERVED"
+    }
+  ],
+  "local_rest_state": {
+    "explorer_service": "STOPPED",
+    "stopped_process_id": 25748,
+    "listener_127_0_0_1_4173": false,
+    "startup_shortcut_preserved": true,
+    "startup_shortcut": "%APPDATA%/Microsoft/Windows/Start Menu/Programs/Startup/RobinRealDataExplorer.lnk",
+    "automatic_restart_on_next_logon_expected_but_not_yet_observed": true,
+    "data_cache_preserved": "%LOCALAPPDATA%/Robin/explorer",
+    "last_known_status": {
+      "current_run_id": "37442331390",
+      "last_delivery_run_id": "37449350561",
+      "last_error_code": null,
+      "last_success_at_utc": "2026-10-06T10:25:01.194994Z"
+    },
+    "local_github_pollers": "STOPPED",
+    "gh_process_count": 0,
+    "remote_github_collection_disabled": false
+  },
+  "next_action": {
+    "after_logon": "Let the preserved Startup shortcut relaunch the explorer, then use only the hidden gh wrapper to observe the next natural workflow 321915839 run on the merged revision.",
+    "acceptance_sequence": [
+      "verify terminal capture, validation, upload and R2 readback on exact merged revision",
+      "wait for automatic local ingestion without manual copy or refresh command",
+      "verify the Real Madrid filter and pinned history survived the refresh",
+      "reconcile browser rows, CSV and JSON exports",
+      "obtain final independent C1, C2 and C4 review",
+      "complete the final report, evidence claims, Council decision and R1-R8 acceptance tests"
+    ],
+    "manual_workflow_trigger_requested": false
+  },
+  "safety_locks": {
+    "STORAGE_PAUSED": true,
+    "P3_P4_PAUSED": true,
+    "PRODUCTION_LOCKED": true,
+    "REAL_BETS": false,
+    "NO_BET_DEFAULT": true,
+    "PROMOTION_LOCKED": true,
+    "SOCIAL_PUBLISHING_ENABLED": false,
+    "DEMO_MODE_ENABLED": false
+  }
+}

@@ -160,3 +160,30 @@ outcomes, out-of-order branches, invalid hashes, partial multi-file publication,
 stale/late GitHub artifacts, pinned-history drift, browser token leakage, branch
 protection compatibility, missing final-gate dependencies, and contamination of a
 prospective validation by exposed descriptive data.
+
+## Point de reprise durable avant redémarrage — 2026-10-06
+
+Le travail est figé dans le worktree `WORKTREE:robin-r1-r8-acceptance`, branche
+`codex/robin-r1-r8-final-evidence-v1`, sur la base fusionnée
+`fc45ebe78260af3eb39cdd2ed567071439e1a380` (PR 93). Le rapport d'acceptation
+reste volontairement `PENDING_POSTMERGE_DELIVERY` : R1, R3, R4, R5, R6 et R7
+sont acquis, tandis que R2 et R8 attendent une livraison naturelle produite par
+le commit fusionné, validée, envoyée, relue depuis R2 et ingérée automatiquement.
+
+Les preuves conservées incluent le run PR exact-head 37454307929, le run CI
+post-fusion 37457243472, les trois témoins Jalon 10 byte-identiques avant/après,
+la fenêtre R1 de 24 heures, le correctif du contrat de livraison et la série R6.
+Le run 37456214675 reste un échec fail-closed de l'ancien head avant capture.
+Le workflow 321915839 et le freshness monitor restent actifs ; aucun workflow
+n'a été déclenché ni désactivé pour ce point de reprise.
+
+L'explorateur local est arrêté, le port 4173 est libéré, le cache est conservé et
+le raccourci `RobinRealDataExplorer.lnk` demeure dans le dossier Démarrage. Il
+doit relancer le service à la prochaine ouverture de session. Les futurs appels
+GitHub passent par `%LOCALAPPDATA%/Robin/invoke-gh-hidden.ps1`, sans fenêtre.
+
+À la reprise : observer le prochain run naturel 321915839 sur le SHA fusionné,
+exiger capture, validation explorer-v2, upload, readback R2 et succès terminal,
+puis attendre l'ingestion locale automatique sans copie. Revalider ensuite le
+filtre Real Madrid, les exports et l'historique épinglé, obtenir C1/C2/C4 et
+clore R1–R8 avec les claims, le ledger et les tests finaux.
