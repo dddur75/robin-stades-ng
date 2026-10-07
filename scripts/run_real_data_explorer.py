@@ -12,8 +12,20 @@ from robin.capture.real_data_explorer import (  # noqa: E402
     AtomicExplorerStore,
     ExplorerRefreshController,
     GhArtifactClient,
-    make_server,
     run_refresh_loop,
+)
+from robin.capture.real_data_questions import run_question_command  # noqa: E402
+from robin.capture.real_data_questions_web import make_server  # noqa: E402
+
+QUESTION_OPTIONS = (
+    "previous",
+    "current",
+    "event",
+    "market",
+    "outcome",
+    "point",
+    "period",
+    "provider",
 )
 
 
@@ -25,12 +37,35 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument("--port", type=int, default=4173)
     result.add_argument("--refresh-seconds", type=int, default=300)
     result.add_argument("--refresh-once", action="store_true")
+    result.add_argument(
+        "--question",
+        choices=("acquisitions", "q1", "q3"),
+        help="Answer from the verified local store only, without GitHub or a server",
+    )
+    for name in QUESTION_OPTIONS:
+        result.add_argument(f"--{name}")
+    result.add_argument("--format", choices=("json", "csv"), default="json")
+    result.add_argument("--output", type=Path)
     return result
 
 
 def main(argv: list[str] | None = None) -> int:
     arguments = parser().parse_args(argv)
     store = AtomicExplorerStore(arguments.root)
+    if arguments.question:
+        options = {
+            name: getattr(arguments, name)
+            for name in QUESTION_OPTIONS
+            if getattr(arguments, name) is not None
+        }
+        code, payload = run_question_command(store, arguments.question, options, arguments.format)
+        if code != 0:
+            sys.stderr.write(payload.decode("utf-8"))
+        elif arguments.output is not None:
+            arguments.output.write_bytes(payload)
+        else:
+            sys.stdout.buffer.write(payload)
+        return code
     client = GhArtifactClient(
         repository=arguments.repository,
         workflow_id=arguments.workflow_id,
