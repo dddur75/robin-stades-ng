@@ -175,12 +175,16 @@ def _store(
     incomplete: dict[int, Sequence[str]] | None = None,
     branches: dict[int, Sequence[str]] | None = None,
     stubs: dict[int, Sequence[str]] | None = None,
+    fresh: Sequence[int] = (),
 ) -> AtomicExplorerStore:
     """Publish acquisitions the way the collection delivers them, oldest first."""
 
     store = AtomicExplorerStore(tmp_path / "store", clock=lambda: KICKOFF + timedelta(days=3))
     previous: dict[str, object] | None = None
     for run_id, capture, offers in acquisitions:
+        if run_id in fresh:
+            # Published without a previous report, as the collection's first run is.
+            previous = None
         stubbed = tuple((stubs or {}).get(run_id, ()))
         report = _report(
             run_id,
@@ -1451,3 +1455,57 @@ def test_q1_web_filters_refuse_unknown_values(tmp_path: Path) -> None:
             status, body, _, _ = pages.respond(path, query)
             assert status == 400 and b"QUERY_INVALID" in body, (path, query)
     assert pages.respond("/questions/q1.json", "status=INCLUDED&strict=1")[0] == 200
+
+
+def test_q1_never_invents_a_capture_time_for_a_run_without_one(tmp_path: Path) -> None:
+    kickoff = KICKOFF + timedelta(hours=1)
+    books = [row for book in ("a", "b", "c") for row in _book(book, 2.0, 3.4, 3.9, kickoff=kickoff)]
+    other = [
+        row
+        for book in ("a", "b", "c")
+        for row in _book(book, 1.5, 4.0, 6.0, event="event-2", kickoff=kickoff + timedelta(days=2))
+    ]
+    start = [
+        (1800, kickoff - timedelta(hours=30), books),
+        (1801, kickoff - timedelta(hours=24), books),
+    ]
+
+    # A failed run after kickoff does not extend the store: the match stays pending.
+    late = _store(
+        tmp_path / "late",
+        [
+            *start,
+            (1802, kickoff - timedelta(hours=1), books),
+            (1803, kickoff + timedelta(hours=1), []),
+        ],
+        stubs={1803: SPORTS},
+        fresh=(1803,),
+    )
+    payload = answer_q1(AcquisitionCatalog(late))
+    assert _q1_rows(late)[(PROVIDER, "soccer_epl", "event-1")]["status"] == "PENDING"
+    assert payload["store"]["last_acquired_at_utc"] == _z(kickoff - timedelta(hours=1))  # type: ignore[index]
+
+    # A failed run whose slot straddles the window cannot be placed in it or out of it.
+    straddle = kickoff - timedelta(hours=6, minutes=30)  # slot starts before the 6 h bound
+    unknown = _store(
+        tmp_path / "unknown",
+        [*start, (1802, straddle, []), (1803, kickoff + timedelta(hours=1), other)],
+        stubs={1802: SPORTS},
+        fresh=(1802, 1803),
+    )
+    row = _q1_rows(unknown)[(PROVIDER, "soccer_epl", "event-1")]
+    assert row["reason"] == "PREMATCH_ABSENT:CAPTURE_TIME_UNKNOWN"
+
+    # A failed run whose whole slot lies in the window is a failed branch in that window.
+    inside = _store(
+        tmp_path / "inside",
+        [
+            *start,
+            (1802, kickoff - timedelta(hours=2, minutes=30), []),
+            (1803, kickoff + timedelta(hours=1), other),
+        ],
+        stubs={1802: SPORTS},
+        fresh=(1802, 1803),
+    )
+    row = _q1_rows(inside)[(PROVIDER, "soccer_epl", "event-1")]
+    assert row["reason"] == "PREMATCH_ABSENT:BRANCH_NOT_ADMISSIBLE"

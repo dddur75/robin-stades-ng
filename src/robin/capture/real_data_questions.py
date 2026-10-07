@@ -15,7 +15,7 @@ import math
 import re
 import threading
 from collections import OrderedDict, defaultdict
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 
@@ -727,22 +727,62 @@ def answer_q3(catalog: AcquisitionCatalog, options: Mapping[str, str | None]) ->
     return compare_selection(previous, previous_rows, current, current_rows, selection)
 
 
-def _acquired_at(item: Acquisition) -> datetime:
-    """Earliest observed branch time of an acquisition, or its slot when none is valid."""
+# recurring_real_data.slot_start_utc maps every run to a two-hour UTC slot.
+SLOT_WIDTH = timedelta(hours=2)
+
+
+@dataclass(frozen=True)
+class _Window:
+    """One Q1 time window, shared by its candidates and its absence explanation."""
+
+    start: datetime
+    end: datetime
+    start_open: bool
+    end_open: bool
+
+    def __contains__(self, at: datetime) -> bool:
+        after = self.start < at if self.start_open else self.start <= at
+        before = at < self.end if self.end_open else at <= self.end
+        return after and before
+
+    def holds_slot(self, slot: datetime) -> bool:
+        """Whether the whole half-open slot [slot, slot + SLOT_WIDTH) is inside."""
+
+        starts = self.start < slot if self.start_open else self.start <= slot
+        return starts and self.end >= slot + SLOT_WIDTH
+
+    def meets_slot(self, slot: datetime) -> bool:
+        """Whether some instant of the half-open slot [slot, slot + SLOT_WIDTH) is inside."""
+
+        low, low_open = (self.start, self.start_open) if self.start >= slot else (slot, False)
+        high, high_open = (
+            (self.end, self.end_open) if self.end < slot + SLOT_WIDTH else (slot + SLOT_WIDTH, True)
+        )
+        return low < high or (low == high and not low_open and not high_open)
+
+
+def _acquired_at(item: Acquisition) -> datetime | None:
+    """Earliest observed branch time of an acquisition; None when no branch time was observed."""
 
     times = [state.observed_at for state in item.sports.values() if state.observed_at is not None]
-    return min(times) if times else item.slot_time
+    return min(times) if times else None
 
 
-def _absence(view: CatalogView, key: EventKey, inside: Callable[[datetime], bool]) -> str:
-    """Explain an empty window from what was stored, with the candidates' own time predicate."""
+def _absence(view: CatalogView, key: EventKey, window: _Window) -> str:
+    """Explain an empty window from what was stored; a capture time is never invented."""
 
     stored = []
     without_branch = False
+    unplaced = False
     for item in view.acquisitions:
         state = item.sports.get(key[2])
         at = (state.observed_at if state else None) or _acquired_at(item)
-        if not inside(at):
+        if at is None:
+            # A run with no observed time happened somewhere in its slot.
+            if not window.holds_slot(item.slot_time):
+                unplaced = unplaced or window.meets_slot(item.slot_time)
+                continue
+        elif at not in window:
             continue
         if state is None:
             without_branch = True
@@ -750,7 +790,9 @@ def _absence(view: CatalogView, key: EventKey, inside: Callable[[datetime], bool
             stored.append(item)
     if not stored:
         # Acquisitions exist in the window but none carries this sport's branch.
-        return "BRANCH_ABSENT" if without_branch else "NO_ACQUISITION_IN_WINDOW"
+        if without_branch:
+            return "BRANCH_ABSENT"
+        return "CAPTURE_TIME_UNKNOWN" if unplaced else "NO_ACQUISITION_IN_WINDOW"
     admissible = [item for item in stored if item.sports[key[2]].admissible]
     if not admissible:
         return "BRANCH_NOT_ADMISSIBLE"
@@ -761,6 +803,8 @@ def _absence(view: CatalogView, key: EventKey, inside: Callable[[datetime], bool
         return "BRANCH_NOT_ADMISSIBLE"
     if without_branch:
         return "BRANCH_ABSENT"
+    if unplaced:
+        return "CAPTURE_TIME_UNKNOWN"
     if any(other != key and other[2:] == key[2:] for item in admissible for other in item.events):
         return "LINEAGE_CHANGED"
     return "EVENT_NOT_LISTED"
@@ -810,7 +854,7 @@ def _q1_windows(
     key: EventKey,
     latest: EventState,
     seen: list[tuple[datetime, Acquisition]],
-    stored: tuple[datetime, datetime],
+    stored: tuple[datetime, datetime] | None,
 ) -> tuple[dict[str, object], tuple[Acquisition, Acquisition] | None]:
     kickoff = latest.kickoff
     row: dict[str, object] = dict.fromkeys(Q1_FIELDS)
@@ -824,22 +868,29 @@ def _q1_windows(
     }
     if kickoff is None:
         return row | {"reason": "KICKOFF_UNKNOWN"}, None
-    if stored[1] < kickoff:
+    if stored is not None and stored[1] < kickoff:
         return row | {"status": "PENDING"}, None
     target = kickoff - REFERENCE_OFFSET
     row["reference_target_utc"] = _iso(target)
-
-    # One predicate per window, shared by the candidates and the absence explanation.
-    def in_reference(at: datetime) -> bool:
-        return abs(at - target) <= REFERENCE_NEAR and at < kickoff
-
-    candidates = [(abs(at - target), at, item) for at, item in seen if in_reference(at)]
+    # The reference window ends before kickoff whatever the declared offsets.
+    near_end = target + REFERENCE_NEAR
+    reference_window = (
+        _Window(target - REFERENCE_NEAR, near_end, False, False)
+        if near_end < kickoff
+        else _Window(target - REFERENCE_NEAR, kickoff, False, True)
+    )
+    candidates = [(abs(at - target), at, item) for at, item in seen if at in reference_window]
     best = min(candidates, key=lambda item: (item[0], item[1])) if candidates else None
     # Out of store only while a capture before the store could still be nearer the target.
-    if stored[0] > target - REFERENCE_NEAR and (best is None or best[0] > target - stored[0]):
+    if (
+        stored is not None
+        and stored[0] > target - REFERENCE_NEAR
+        and (best is None or best[0] > target - stored[0])
+    ):
         return row | {"status": "OUT_OF_STORE"}, None
     if best is None:
-        return row | {"reason": f"REFERENCE_ABSENT:{_absence(view, key, in_reference)}"}, None
+        absence = _absence(view, key, reference_window)
+        return row | {"reason": f"REFERENCE_ABSENT:{absence}"}, None
     distance, reference_at, reference = best
     row |= {
         "reference_run_id": reference.run_id,
@@ -848,12 +899,16 @@ def _q1_windows(
         "reference_class": "J_MINUS_24H" if distance <= REFERENCE_EXACT else "NEAR",
     }
 
-    def in_prematch(at: datetime) -> bool:
-        return reference_at < at < kickoff and kickoff - at <= PREMATCH_FAR
-
-    later = [(at, item) for at, item in seen if in_prematch(at)]
+    far = kickoff - PREMATCH_FAR
+    prematch_window = (
+        _Window(far, kickoff, False, True)
+        if far > reference_at
+        else _Window(reference_at, kickoff, True, True)
+    )
+    later = [(at, item) for at, item in seen if at in prematch_window]
     if not later:
-        return row | {"reason": f"PREMATCH_ABSENT:{_absence(view, key, in_prematch)}"}, None
+        absence = _absence(view, key, prematch_window)
+        return row | {"reason": f"PREMATCH_ABSENT:{absence}"}, None
     prematch_at, prematch = later[-1]
     row |= {
         "last_prematch_run_id": prematch.run_id,
@@ -976,8 +1031,9 @@ def answer_q1(catalog: AcquisitionCatalog) -> dict[str, object]:
     anchors: dict[EventKey, list[tuple[datetime, Acquisition]]] = defaultdict(list)
     # Reference and last-prematch candidates: admissible listings with 1X2 rows.
     seen: dict[EventKey, list[tuple[datetime, Acquisition]]] = defaultdict(list)
-    # PENDING and OUT_OF_STORE follow the whole store's span; a missing branch is an absence.
-    store_times = [_acquired_at(item) for item in view.acquisitions]
+    # PENDING and OUT_OF_STORE follow the whole store's observed span; a run with no observed
+    # time never stands in for a capture, and a missing branch is an absence.
+    store_times: list[datetime] = []
     for item in view.acquisitions:
         admissible = {}
         for sport, state in item.sports.items():
@@ -997,7 +1053,8 @@ def answer_q1(catalog: AcquisitionCatalog) -> dict[str, object]:
         values = sorted(seen.get(key, []), key=lambda pair: (pair[0], pair[1].run_id))
         anchored = sorted(anchors.get(key, []), key=lambda pair: (pair[0], pair[1].run_id))
         latest = (anchored[-1][1] if anchored else listings[-1]).events[key]
-        row, pair = _q1_windows(view, key, latest, values, (min(store_times), max(store_times)))
+        bounds = (min(store_times), max(store_times)) if store_times else None
+        row, pair = _q1_windows(view, key, latest, values, bounds)
         if pair is None:
             rows.append(row)
         else:
