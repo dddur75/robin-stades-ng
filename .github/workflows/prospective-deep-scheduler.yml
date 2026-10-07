@@ -82,7 +82,7 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          fetch-depth: 1
+          fetch-depth: 0
           persist-credentials: false
           ref: ${{ github.sha }}
 
@@ -109,7 +109,7 @@ jobs:
             local payload=""
             local attempt
             for attempt in 1 2 3; do
-              if payload="$(gh api "$endpoint")" && [[ -n "$payload" ]] && jq -e . >/dev/null 2>&1 <<<"$payload"; then
+              if payload="$(timeout --kill-after=5s 20s gh api "$endpoint")" && [[ -n "$payload" ]] && jq -e . >/dev/null 2>&1 <<<"$payload"; then
                 printf '%s\n' "$payload"
                 return 0
               fi
@@ -118,6 +118,15 @@ jobs:
             done
             echo "GitHub API JSON read failed after 3 attempts: $label" >&2
             return 1
+          }
+          validate_documentary_continuity() {
+            local base_sha="$1"
+            local head_sha="$2"
+            [[ "$base_sha" =~ ^[0-9a-f]{40}$ ]]
+            [[ "$head_sha" =~ ^[0-9a-f]{40}$ ]]
+            git fetch --no-tags --force origin "$head_sha"
+            python -I scripts/validate_robin_documentary_continuity.py \
+              --repository . --base "$base_sha" --head "$head_sha"
           }
           [[ "$GITHUB_REPOSITORY" == "dddur75/robin-stades-ng" ]]
           [[ "$GITHUB_REF" == "refs/heads/main" ]]
@@ -133,7 +142,7 @@ jobs:
           [[ "$(sha256sum docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-TRIGGER-RECOVERY-V2-2026-10-05.md | cut -d' ' -f1)" == "$EXPECTED_SOURCE_SHA256" ]]
           current_main="$(read_gh_json main-ref "repos/$GITHUB_REPOSITORY/git/ref/heads/main")"
           current_main_sha="$(jq -r .object.sha <<<"$current_main")"
-          [[ "$GITHUB_SHA" == "$current_main_sha" ]]
+          validate_documentary_continuity "$GITHUB_SHA" "$current_main_sha"
           if [[ "$MODE" == "collect" ]]; then
             [[ "$ACTIVE_GENERATION" == "$EXPECTED_GENERATION" ]]
           fi
@@ -153,34 +162,25 @@ jobs:
           [[ "$(jq -r '.deployment_branch_policy.custom_branch_policies' <<<"$environment")" == "true" ]]
           branch_policies="$(read_gh_json relay-branch-policies "repos/$GITHUB_REPOSITORY/environments/robin-autonomous-relay-v1/deployment-branch-policies")"
           [[ "$(jq -r '(.total_count == 1) and ((.branch_policies | length) == 1) and ([.branch_policies[] | select(.name == "main" and .type == "branch")] | length == 1)' <<<"$branch_policies")" == "true" ]]
-          runs="$(read_gh_json active-relays "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100")"
-          active_count="$(jq --arg prefix "robin-$MODE-relay-$GENERATION-" '[.workflow_runs[] | select((.status == "queued" or .status == "in_progress" or .status == "requested" or .status == "waiting" or .status == "pending") and (.display_title | startswith($prefix)))] | length' <<<"$runs")"
-          [[ "$active_count" =~ ^[0-9]+$ ]]
-          [[ "$active_count" == "0" ]] || exit 0
           successor_title="robin-$MODE-relay-$GENERATION-$GITHUB_RUN_ID-1"
-          existing_count="$(jq --arg title "$successor_title" '[.workflow_runs[] | select(.display_title == $title)] | length' <<<"$runs")"
-          [[ "$existing_count" == "0" ]]
-          dispatch_exit=0
-          gh api --method POST --silent \
-            "repos/$GITHUB_REPOSITORY/actions/workflows/prospective-deep-scheduler.yml/dispatches" \
-            -f ref=main \
-            -f "inputs[mode]=$MODE" \
-            -f "inputs[origin]=relay" \
-            -f "inputs[generation]=$GENERATION" \
-            -f "inputs[chain_id]=$GITHUB_RUN_ID" \
-            -f "inputs[parent_run_id]=$GITHUB_RUN_ID" \
-            -f "inputs[sequence]=1" || dispatch_exit=$?
-          if (( dispatch_exit != 0 )); then
-            echo "Dispatch returned exit $dispatch_exit; reconciling exact successor title without retry" >&2
-          fi
-          observed_count=0
-          for _ in {1..30}; do
-            observed_runs="$(read_gh_json successor-observation "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100")"
-            observed_count="$(jq --arg title "$successor_title" '[.workflow_runs[] | select(.display_title == $title)] | length' <<<"$observed_runs")"
-            [[ "$observed_count" == "0" ]] || break
-            sleep 2
-          done
-          [[ "$observed_count" == "1" ]]
+          successor_result="$(python -I scripts/reconcile_robin_relay_successor.py \
+            --repository "$GITHUB_REPOSITORY" \
+            --mode "$MODE" \
+            --generation "$GENERATION" \
+            --chain-id "$GITHUB_RUN_ID" \
+            --parent-run-id "$GITHUB_RUN_ID" \
+            --sequence 1 \
+            --successor-title "$successor_title" \
+            --active-prefix "robin-$MODE-relay-$GENERATION-")"
+          [[ "$(jq -r .skipped_active <<<"$successor_result")" == "false" ]] || exit 0
+          successor="$(jq -c .successor <<<"$successor_result")"
+          [[ "$(jq -r .workflow_id <<<"$successor")" == "321915839" ]]
+          [[ "$(jq -r .event <<<"$successor")" == "workflow_dispatch" ]]
+          [[ "$(jq -r .head_branch <<<"$successor")" == "main" ]]
+          [[ "$(jq -r .run_attempt <<<"$successor")" == "1" ]]
+          [[ "$(jq -r .actor.login <<<"$successor")" == "github-actions[bot]" ]]
+          successor_sha="$(jq -r .head_sha <<<"$successor")"
+          validate_documentary_continuity "$GITHUB_SHA" "$successor_sha"
 
   watchdog:
     if: >-
@@ -189,9 +189,16 @@ jobs:
       github.run_attempt == 1
     permissions:
       actions: write
+      contents: read
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ github.sha }}
+
       - name: Restart a missing relay without touching provider or R2
         shell: bash
         env:
@@ -207,7 +214,7 @@ jobs:
             local payload=""
             local attempt
             for attempt in 1 2 3; do
-              if payload="$(gh api "$endpoint")" && [[ -n "$payload" ]] && jq -e . >/dev/null 2>&1 <<<"$payload"; then
+              if payload="$(timeout --kill-after=5s 20s gh api "$endpoint")" && [[ -n "$payload" ]] && jq -e . >/dev/null 2>&1 <<<"$payload"; then
                 printf '%s\n' "$payload"
                 return 0
               fi
@@ -217,12 +224,24 @@ jobs:
             echo "GitHub API JSON read failed after 3 attempts: $label" >&2
             return 1
           }
+          validate_documentary_continuity() {
+            local base_sha="$1"
+            local head_sha="$2"
+            [[ "$base_sha" =~ ^[0-9a-f]{40}$ ]]
+            [[ "$head_sha" =~ ^[0-9a-f]{40}$ ]]
+            git fetch --no-tags --force origin "$head_sha"
+            python -I scripts/validate_robin_documentary_continuity.py \
+              --repository . --base "$base_sha" --head "$head_sha"
+          }
           [[ "$GITHUB_REPOSITORY" == "dddur75/robin-stades-ng" ]]
           [[ "$GITHUB_REF" == "refs/heads/main" ]]
           [[ "$GITHUB_EVENT_NAME" == "schedule" ]]
           [[ "$GITHUB_RUN_ATTEMPT" == "1" ]]
           [[ "$GITHUB_WORKFLOW_REF" == "dddur75/robin-stades-ng/.github/workflows/prospective-deep-scheduler.yml@refs/heads/main" ]]
           [[ "$ACTIVE_GENERATION" == "$EXPECTED_GENERATION" ]] || exit 0
+          current_main="$(read_gh_json main-ref "repos/$GITHUB_REPOSITORY/git/ref/heads/main")"
+          current_main_sha="$(jq -r .object.sha <<<"$current_main")"
+          validate_documentary_continuity "$GITHUB_SHA" "$current_main_sha"
           expiry_epoch="$(date -u -d "$EXPECTED_EXPIRES_AT" +%s)"
           current_epoch="$(date -u +%s)"
           (( current_epoch + 60 * 60 + 10800 <= expiry_epoch )) || exit 0
@@ -233,34 +252,25 @@ jobs:
           [[ "$(jq -r '.deployment_branch_policy.custom_branch_policies' <<<"$environment")" == "true" ]]
           branch_policies="$(read_gh_json relay-branch-policies "repos/$GITHUB_REPOSITORY/environments/robin-autonomous-relay-v1/deployment-branch-policies")"
           [[ "$(jq -r '(.total_count == 1) and ((.branch_policies | length) == 1) and ([.branch_policies[] | select(.name == "main" and .type == "branch")] | length == 1)' <<<"$branch_policies")" == "true" ]]
-          runs="$(read_gh_json active-relays "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100")"
-          active_count="$(jq --arg prefix "robin-collect-relay-$EXPECTED_GENERATION-" '[.workflow_runs[] | select((.status == "queued" or .status == "in_progress" or .status == "requested" or .status == "waiting" or .status == "pending") and (.display_title | startswith($prefix)))] | length' <<<"$runs")"
-          [[ "$active_count" =~ ^[0-9]+$ ]]
-          [[ "$active_count" == "0" ]] || exit 0
           successor_title="robin-collect-relay-$EXPECTED_GENERATION-$GITHUB_RUN_ID-1"
-          existing_count="$(jq --arg title "$successor_title" '[.workflow_runs[] | select(.display_title == $title)] | length' <<<"$runs")"
-          [[ "$existing_count" == "0" ]]
-          dispatch_exit=0
-          gh api --method POST --silent \
-            "repos/$GITHUB_REPOSITORY/actions/workflows/prospective-deep-scheduler.yml/dispatches" \
-            -f ref=main \
-            -f "inputs[mode]=collect" \
-            -f "inputs[origin]=relay" \
-            -f "inputs[generation]=$EXPECTED_GENERATION" \
-            -f "inputs[chain_id]=$GITHUB_RUN_ID" \
-            -f "inputs[parent_run_id]=$GITHUB_RUN_ID" \
-            -f "inputs[sequence]=1" || dispatch_exit=$?
-          if (( dispatch_exit != 0 )); then
-            echo "Dispatch returned exit $dispatch_exit; reconciling exact successor title without retry" >&2
-          fi
-          observed_count=0
-          for _ in {1..30}; do
-            observed_runs="$(read_gh_json successor-observation "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100")"
-            observed_count="$(jq --arg title "$successor_title" '[.workflow_runs[] | select(.display_title == $title)] | length' <<<"$observed_runs")"
-            [[ "$observed_count" == "0" ]] || break
-            sleep 2
-          done
-          [[ "$observed_count" == "1" ]]
+          successor_result="$(python -I scripts/reconcile_robin_relay_successor.py \
+            --repository "$GITHUB_REPOSITORY" \
+            --mode collect \
+            --generation "$EXPECTED_GENERATION" \
+            --chain-id "$GITHUB_RUN_ID" \
+            --parent-run-id "$GITHUB_RUN_ID" \
+            --sequence 1 \
+            --successor-title "$successor_title" \
+            --active-prefix "robin-collect-relay-$EXPECTED_GENERATION-")"
+          [[ "$(jq -r .skipped_active <<<"$successor_result")" == "false" ]] || exit 0
+          successor="$(jq -c .successor <<<"$successor_result")"
+          [[ "$(jq -r .workflow_id <<<"$successor")" == "321915839" ]]
+          [[ "$(jq -r .event <<<"$successor")" == "workflow_dispatch" ]]
+          [[ "$(jq -r .head_branch <<<"$successor")" == "main" ]]
+          [[ "$(jq -r .run_attempt <<<"$successor")" == "1" ]]
+          [[ "$(jq -r .actor.login <<<"$successor")" == "github-actions[bot]" ]]
+          successor_sha="$(jq -r .head_sha <<<"$successor")"
+          validate_documentary_continuity "$GITHUB_SHA" "$successor_sha"
 
   relay:
     if: >-
@@ -281,7 +291,7 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          fetch-depth: 1
+          fetch-depth: 0
           persist-credentials: false
           ref: ${{ github.sha }}
 
@@ -308,7 +318,7 @@ jobs:
             local payload=""
             local attempt
             for attempt in 1 2 3; do
-              if payload="$(gh api "$endpoint")" && [[ -n "$payload" ]] && jq -e . >/dev/null 2>&1 <<<"$payload"; then
+              if payload="$(timeout --kill-after=5s 20s gh api "$endpoint")" && [[ -n "$payload" ]] && jq -e . >/dev/null 2>&1 <<<"$payload"; then
                 printf '%s\n' "$payload"
                 return 0
               fi
@@ -317,6 +327,15 @@ jobs:
             done
             echo "GitHub API JSON read failed after 3 attempts: $label" >&2
             return 1
+          }
+          validate_documentary_continuity() {
+            local base_sha="$1"
+            local head_sha="$2"
+            [[ "$base_sha" =~ ^[0-9a-f]{40}$ ]]
+            [[ "$head_sha" =~ ^[0-9a-f]{40}$ ]]
+            git fetch --no-tags --force origin "$head_sha"
+            python -I scripts/validate_robin_documentary_continuity.py \
+              --repository . --base "$base_sha" --head "$head_sha"
           }
           [[ "$GITHUB_REPOSITORY" == "dddur75/robin-stades-ng" ]]
           [[ "$GITHUB_REF" == "refs/heads/main" ]]
@@ -334,12 +353,13 @@ jobs:
           [[ "$(sha256sum configs/execution/robin-autonomous-lab-trigger-recovery-v2-20261005.json | cut -d' ' -f1)" == "$EXPECTED_GENERATION" ]]
           current_main="$(read_gh_json main-ref "repos/$GITHUB_REPOSITORY/git/ref/heads/main")"
           current_main_sha="$(jq -r .object.sha <<<"$current_main")"
-          [[ "$GITHUB_SHA" == "$current_main_sha" ]]
+          validate_documentary_continuity "$GITHUB_SHA" "$current_main_sha"
           parent="$(read_gh_json parent-run "repos/$GITHUB_REPOSITORY/actions/runs/$PARENT_RUN_ID")"
           [[ "$(jq -r .id <<<"$parent")" == "$PARENT_RUN_ID" ]]
           [[ "$(jq -r .workflow_id <<<"$parent")" == "321915839" ]]
           [[ "$(jq -r .head_branch <<<"$parent")" == "main" ]]
-          [[ "$(jq -r .head_sha <<<"$parent")" == "$GITHUB_SHA" ]]
+          parent_sha="$(jq -r .head_sha <<<"$parent")"
+          validate_documentary_continuity "$parent_sha" "$GITHUB_SHA"
           [[ "$(jq -r .run_attempt <<<"$parent")" == "1" ]]
           parent_event="$(jq -r .event <<<"$parent")"
           parent_title="$(jq -r .display_title <<<"$parent")"
@@ -391,30 +411,27 @@ jobs:
           fi
           next_sequence="$((10#$SEQUENCE + 1))"
           successor_title="robin-$MODE-relay-$GENERATION-$CHAIN_ID-$next_sequence"
-          runs="$(read_gh_json successor-inventory "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100")"
-          existing_count="$(jq --arg title "$successor_title" '[.workflow_runs[] | select(.display_title == $title)] | length' <<<"$runs")"
-          [[ "$existing_count" == "0" ]]
-          dispatch_exit=0
-          gh api --method POST --silent \
-            "repos/$GITHUB_REPOSITORY/actions/workflows/prospective-deep-scheduler.yml/dispatches" \
-            -f ref=main \
-            -f "inputs[mode]=$MODE" \
-            -f "inputs[origin]=relay" \
-            -f "inputs[generation]=$GENERATION" \
-            -f "inputs[chain_id]=$CHAIN_ID" \
-            -f "inputs[parent_run_id]=$GITHUB_RUN_ID" \
-            -f "inputs[sequence]=$next_sequence" || dispatch_exit=$?
-          if (( dispatch_exit != 0 )); then
-            echo "Dispatch returned exit $dispatch_exit; reconciling exact successor title without retry" >&2
-          fi
-          observed_count=0
-          for _ in {1..30}; do
-            observed_runs="$(read_gh_json successor-observation "repos/$GITHUB_REPOSITORY/actions/workflows/321915839/runs?event=workflow_dispatch&per_page=100")"
-            observed_count="$(jq --arg title "$successor_title" '[.workflow_runs[] | select(.display_title == $title)] | length' <<<"$observed_runs")"
-            [[ "$observed_count" == "0" ]] || break
-            sleep 2
-          done
-          [[ "$observed_count" == "1" ]]
+          successor_result="$(python -I scripts/reconcile_robin_relay_successor.py \
+            --repository "$GITHUB_REPOSITORY" \
+            --mode "$MODE" \
+            --generation "$GENERATION" \
+            --chain-id "$CHAIN_ID" \
+            --parent-run-id "$GITHUB_RUN_ID" \
+            --sequence "$next_sequence" \
+            --successor-title "$successor_title")"
+          [[ "$(jq -r .skipped_active <<<"$successor_result")" == "false" ]]
+          successor="$(jq -c .successor <<<"$successor_result")"
+          [[ "$(jq -r .workflow_id <<<"$successor")" == "321915839" ]]
+          [[ "$(jq -r .event <<<"$successor")" == "workflow_dispatch" ]]
+          [[ "$(jq -r .head_branch <<<"$successor")" == "main" ]]
+          [[ "$(jq -r .run_attempt <<<"$successor")" == "1" ]]
+          [[ "$(jq -r .actor.login <<<"$successor")" == "github-actions[bot]" ]]
+          successor_sha="$(jq -r .head_sha <<<"$successor")"
+          validate_documentary_continuity "$GITHUB_SHA" "$successor_sha"
+          latest_main="$(read_gh_json main-ref-after-successor "repos/$GITHUB_REPOSITORY/git/ref/heads/main")"
+          latest_main_sha="$(jq -r .object.sha <<<"$latest_main")"
+          validate_documentary_continuity "$GITHUB_SHA" "$latest_main_sha"
+          validate_documentary_continuity "$successor_sha" "$latest_main_sha"
           if [[ "$MODE" == "collect" ]]; then
             echo "collect=true" >> "$GITHUB_OUTPUT"
           fi
@@ -452,7 +469,7 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          fetch-depth: 1
+          fetch-depth: 0
           persist-credentials: false
           ref: ${{ github.sha }}
 
@@ -496,7 +513,9 @@ jobs:
           [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" ]]
           [[ -z "$(git status --porcelain)" ]]
           current_main_sha="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)"
-          [[ "$GITHUB_SHA" == "$current_main_sha" ]]
+          git fetch --no-tags --force origin "$current_main_sha"
+          python -I scripts/validate_robin_documentary_continuity.py \
+            --repository . --base "$GITHUB_SHA" --head "$current_main_sha"
           [[ "$(sha256sum configs/execution/robin-autonomous-lab-20261004.json | cut -d' ' -f1)" == "$EXPECTED_MANIFEST_SHA256" ]]
           [[ "$(sha256sum docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-2026-10-04.md | cut -d' ' -f1)" == "$EXPECTED_SOURCE_SHA256" ]]
           [[ "$(sha256sum configs/execution/robin-autonomous-lab-schedule-reliability-20261004.json | cut -d' ' -f1)" == "$EXPECTED_SCHEDULE_MANIFEST_SHA256" ]]
@@ -699,6 +718,17 @@ jobs:
         id: install
         run: >-
           python -I -m pip install --only-binary=:all: --require-hashes -r requirements-data-torrent.lock
+
+      - name: Revalidate documentary continuity immediately before collection
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          current_main_sha="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)"
+          git fetch --no-tags --force origin "$current_main_sha"
+          python -I scripts/validate_robin_documentary_continuity.py \
+            --repository . --base "$GITHUB_SHA" --head "$current_main_sha"
 
       - name: Prepare normalized delivery directory
         shell: bash
