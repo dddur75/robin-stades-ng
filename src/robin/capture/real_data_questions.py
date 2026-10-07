@@ -535,6 +535,7 @@ def compare_selection(
     if len(sports) != 1 or not (sides["previous"] or sides["current"]):
         raise QuestionError("SELECTION_AMBIGUOUS" if len(sports) > 1 else "SELECTION_NOT_FOUND")
     sport = next(iter(sports))
+    match_key = (*lineage, sport, selection.event_id)
     gate = _pair_gate(previous, current, sport)
     rows: list[dict[str, object]] = []
     if gate is not None:
@@ -554,7 +555,6 @@ def compare_selection(
         books = {
             side: {row.get("bookmaker_key"): row for row in items} for side, items in kept.items()
         }
-        match_key = (*lineage, sport, selection.event_id)
         kickoff = next(
             (
                 _instant(row.get("kickoff_utc"))
@@ -606,7 +606,7 @@ def compare_selection(
                 {
                     _number(item.get("point"))
                     for item in other
-                    if event_key(item) == (*lineage, sport, selection.event_id)
+                    if event_key(item) == match_key
                     and item.get("bookmaker_key") == row["bookmaker_key"]
                     and item.get("market_key") == "totals"
                     and item.get("outcome") == selection.outcome
@@ -623,13 +623,7 @@ def compare_selection(
         )
     )
     kickoffs = {
-        side: sorted(
-            {
-                str(row.get("kickoff_utc"))
-                for row in items
-                if row.get("event_id") == selection.event_id
-            }
-        )
+        side: sorted({str(row.get("kickoff_utc")) for row in items if event_key(row) == match_key})
         for side, items in (("previous", previous_rows), ("current", current_rows))
     }
     return {

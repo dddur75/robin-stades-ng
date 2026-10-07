@@ -1150,6 +1150,11 @@ def test_q3_started_match_uses_the_exact_selected_lineage(tmp_path: Path) -> Non
         period=PERIOD,
     )
     assert _statuses(payload) == {"a": "EVENT_STARTED_BEFORE_CURRENT"}
+    assert payload["kickoff"] == {
+        "previous_kickoff_utc": [_z(KICKOFF)],
+        "current_kickoff_utc": [],
+        "changed": False,
+    }
 
 
 def test_runner_question_mode_never_completes_a_partial_store(
