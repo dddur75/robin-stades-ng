@@ -761,13 +761,6 @@ class _Window:
         return low < high or (low == high and not low_open and not high_open)
 
 
-def _acquired_at(item: Acquisition) -> datetime | None:
-    """Earliest observed branch time of an acquisition; None when no branch time was observed."""
-
-    times = [state.observed_at for state in item.sports.values() if state.observed_at is not None]
-    return min(times) if times else None
-
-
 def _absence(view: CatalogView, key: EventKey, window: _Window) -> str:
     """Explain an empty window from what was stored; a capture time is never invented."""
 
@@ -776,13 +769,19 @@ def _absence(view: CatalogView, key: EventKey, window: _Window) -> str:
     unplaced = False
     for item in view.acquisitions:
         state = item.sports.get(key[2])
-        at = (state.observed_at if state else None) or _acquired_at(item)
-        if at is None:
-            # A run with no observed time happened somewhere in its slot.
-            if not window.holds_slot(item.slot_time):
-                unplaced = unplaced or window.meets_slot(item.slot_time)
+        # A branch is placed by its own time only; an absent branch by every capture of its run.
+        if state is not None:
+            times = [] if state.observed_at is None else [state.observed_at]
+        else:
+            times = [run.observed_at for run in item.sports.values() if run.observed_at is not None]
+        if times:
+            inside = [at in window for at in times]
+            if not all(inside):
+                unplaced = unplaced or any(inside)
                 continue
-        elif at not in window:
+        elif not window.holds_slot(item.slot_time):
+            # No observed time: the run happened somewhere in its slot.
+            unplaced = unplaced or window.meets_slot(item.slot_time)
             continue
         if state is None:
             without_branch = True

@@ -1509,3 +1509,31 @@ def test_q1_never_invents_a_capture_time_for_a_run_without_one(tmp_path: Path) -
     )
     row = _q1_rows(inside)[(PROVIDER, "soccer_epl", "event-1")]
     assert row["reason"] == "PREMATCH_ABSENT:BRANCH_NOT_ADMISSIBLE"
+
+
+def test_q1_never_places_a_failed_branch_with_another_sports_time(tmp_path: Path) -> None:
+    kickoff = KICKOFF + timedelta(hours=1)
+    books = [row for book in ("a", "b", "c") for row in _book(book, 2.0, 3.4, 3.9, kickoff=kickoff)]
+    ligue_one = [
+        row
+        for book in ("a", "b", "c")
+        for row in _book(
+            book, 1.5, 4.0, 6.0, event="event-2", sport="soccer_france_ligue_one", kickoff=kickoff
+        )
+    ]
+    # The run's Ligue 1 capture lies inside the 6 h window, but its slot starts before it.
+    straddle = kickoff - timedelta(hours=5, minutes=30)
+    store = _store(
+        tmp_path,
+        [
+            (1900, kickoff - timedelta(hours=30), books + ligue_one),
+            (1901, kickoff - timedelta(hours=24), books + ligue_one),
+            (1902, straddle, ligue_one),
+            (1903, kickoff + timedelta(hours=1), ligue_one),
+        ],
+        stubs={1902: ("soccer_epl",)},
+        fresh=(1902, 1903),
+        branches={1903: ("soccer_france_ligue_one",)},
+    )
+    row = _q1_rows(store)[(PROVIDER, "soccer_epl", "event-1")]
+    assert row["reason"] == "PREMATCH_ABSENT:CAPTURE_TIME_UNKNOWN"
