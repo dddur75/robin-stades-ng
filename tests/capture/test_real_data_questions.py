@@ -96,6 +96,7 @@ def _report(
     offers: Sequence[dict[str, object]],
     *,
     incomplete: Sequence[str] = (),
+    sports: Sequence[str] = SPORTS,
 ) -> dict[str, object]:
     slot = _slot(capture)
     stamp = _z(capture.replace(microsecond=0))
@@ -110,7 +111,7 @@ def _report(
             **offer,
         }
         for offer in offers
-        if offer["sport_key"] not in incomplete
+        if offer["sport_key"] not in incomplete and offer["sport_key"] in sports
     ]
     branches = [
         {
@@ -125,7 +126,7 @@ def _report(
             "limitations": [],
             "diagnostic": None,
         }
-        for sport in SPORTS
+        for sport in sports
     ]
     return {
         "mission_id": "ROBIN_AUTONOMOUS_LAB_20261004",
@@ -137,7 +138,7 @@ def _report(
         "status": "REAL_DATA_PARTIAL" if incomplete else "REAL_DATA_COMPLETE",
         "branches": branches,
         "rows": rows,
-        "validated_capture_count": len(SPORTS) - len(incomplete),
+        "validated_capture_count": len(sports) - len(incomplete),
         "incomplete_branch_count": len(incomplete),
         "accounting": {"rolling_24h_requests": 5, "rolling_24h_credits": 10},
     }
@@ -172,13 +173,20 @@ def _store(
     acquisitions: Sequence[tuple[int, datetime, Sequence[dict[str, object]]]],
     *,
     incomplete: dict[int, Sequence[str]] | None = None,
+    branches: dict[int, Sequence[str]] | None = None,
 ) -> AtomicExplorerStore:
     """Publish acquisitions the way the collection delivers them, oldest first."""
 
     store = AtomicExplorerStore(tmp_path / "store", clock=lambda: KICKOFF + timedelta(days=3))
     previous: dict[str, object] | None = None
     for run_id, capture, offers in acquisitions:
-        report = _report(run_id, capture, offers, incomplete=(incomplete or {}).get(run_id, ()))
+        report = _report(
+            run_id,
+            capture,
+            offers,
+            incomplete=(incomplete or {}).get(run_id, ()),
+            sports=(branches or {}).get(run_id, SPORTS),
+        )
         snapshot = build_dashboard_snapshot(
             report, previous_report=previous, generated_at=capture + timedelta(minutes=1)
         )
@@ -1321,3 +1329,24 @@ def test_q3_selection_names_the_sport_and_q1_links_carry_it(tmp_path: Path) -> N
     )
     page = QuestionPages(catalog).respond("/questions/q1", "")[1].decode()
     assert "sport=soccer_epl" in page
+
+
+def test_q1_boundaries_follow_the_whole_store_and_name_missing_branches(tmp_path: Path) -> None:
+    both = [row for book in ("a", "b", "c") for row in _book(book, 2.0, 3.4, 3.9)] + [
+        row
+        for book in ("a", "b", "c")
+        for row in _book(book, 1.7, 3.8, 4.6, event="event-7", sport="soccer_france_ligue_one")
+    ]
+    times = [KICKOFF - timedelta(hours=hours) for hours in (30, 24, 1)] + [
+        KICKOFF + timedelta(hours=1)
+    ]
+    acquisitions = [(1300 + index, at, both) for index, at in enumerate(times)]
+    ligue_one = ("soccer_france_ligue_one",)
+    dropped = _store(
+        tmp_path / "dropped", acquisitions, branches={1302: ligue_one, 1303: ligue_one}
+    )
+    row = _q1_rows(dropped)[(PROVIDER, "soccer_epl", "event-1")]
+    assert (row["status"], row["reason"]) == ("EXCLUDED", "PREMATCH_ABSENT:BRANCH_ABSENT")
+    added = _store(tmp_path / "added", acquisitions, branches={1300: ligue_one, 1301: ligue_one})
+    row = _q1_rows(added)[(PROVIDER, "soccer_epl", "event-1")]
+    assert (row["status"], row["reason"]) == ("EXCLUDED", "REFERENCE_ABSENT:BRANCH_ABSENT")

@@ -727,21 +727,32 @@ def answer_q3(catalog: AcquisitionCatalog, options: Mapping[str, str | None]) ->
     return compare_selection(previous, previous_rows, current, current_rows, selection)
 
 
+def _acquired_at(item: Acquisition) -> datetime:
+    """Earliest observed branch time of an acquisition, or its slot when none is valid."""
+
+    times = [state.observed_at for state in item.sports.values() if state.observed_at is not None]
+    return min(times) if times else item.slot_time
+
+
 def _absence(
     view: CatalogView, key: EventKey, start: datetime, end: datetime, *, open_window: bool = False
 ) -> str:
     """Explain an empty window from what was actually stored; ``open_window`` excludes both ends."""
 
     stored = []
+    without_branch = False
     for item in view.acquisitions:
         state = item.sports.get(key[2])
-        if state is None:
+        at = (state.observed_at if state else None) or _acquired_at(item)
+        if not ((start < at < end) if open_window else (start <= at <= end)):
             continue
-        at = state.observed_at or item.slot_time
-        if (start < at < end) if open_window else (start <= at <= end):
+        if state is None:
+            without_branch = True
+        else:
             stored.append(item)
     if not stored:
-        return "NO_ACQUISITION_IN_WINDOW"
+        # Acquisitions exist in the window but none carries this sport's branch.
+        return "BRANCH_ABSENT" if without_branch else "NO_ACQUISITION_IN_WINDOW"
     admissible = [item for item in stored if item.sports[key[2]].admissible]
     if not admissible:
         return "BRANCH_NOT_ADMISSIBLE"
@@ -963,11 +974,12 @@ def answer_q1(catalog: AcquisitionCatalog) -> dict[str, object]:
     anchors: dict[EventKey, list[tuple[datetime, Acquisition]]] = defaultdict(list)
     # Reference and last-prematch candidates: admissible listings with 1X2 rows.
     seen: dict[EventKey, list[tuple[datetime, Acquisition]]] = defaultdict(list)
-    sport_times: dict[str, list[datetime]] = defaultdict(list)
+    # PENDING and OUT_OF_STORE follow the whole store's span; a missing branch is an absence.
+    store_times = [_acquired_at(item) for item in view.acquisitions]
     for item in view.acquisitions:
         admissible = {}
         for sport, state in item.sports.items():
-            sport_times[sport].append(state.observed_at or item.slot_time)
+            store_times.append(state.observed_at or item.slot_time)
             if state.admissible and state.observed_at is not None:
                 admissible[sport] = state.observed_at
         for key, event in item.events.items():
@@ -982,8 +994,7 @@ def answer_q1(catalog: AcquisitionCatalog) -> dict[str, object]:
         values = sorted(seen.get(key, []), key=lambda pair: (pair[0], pair[1].run_id))
         anchored = sorted(anchors.get(key, []), key=lambda pair: (pair[0], pair[1].run_id))
         latest = (anchored[-1][1] if anchored else listings[-1]).events[key]
-        times = sport_times[key[2]]
-        row, pair = _q1_windows(view, key, latest, values, (min(times), max(times)))
+        row, pair = _q1_windows(view, key, latest, values, (min(store_times), max(store_times)))
         if pair is None:
             rows.append(row)
         else:

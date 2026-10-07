@@ -11782,6 +11782,7 @@
     ,{"decision_id":"RCV3-20261007-336","ledger_record_hash":"be78064e414ac74101e6ea5a98ce80aad51f3dcc6c40a58120e591934e51705c"}
     ,{"decision_id":"RCV3-20261007-337","ledger_record_hash":"050622070e9ca55238cba537c471c5f0462ff060e11305fee89251ac1a5132a2"}
     ,{"decision_id":"RCV3-20261007-338","ledger_record_hash":"0d025e7ccd5ce342225411e3381a3d329a5f2554a9dcd89ffcc01cdff65e54f6"}
+    ,{"decision_id":"RCV3-20261007-339","ledger_record_hash":"d42814cc83e694ae3a8a932fcc68ea9b67cc0dc5095a649d35a709d21654fea0"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -12956,5 +12957,7 @@
     ,{"edge_id":"EDGE.1170","from_claim_id":"DATA.ROBIN.AUTONOMOUS_LAB.RECURRING_VIEW.V1.002","to_decision_id":"RCV3-20261007-337","relation":"SUPPORTS","status":"RECORDED"}
     ,{"edge_id":"EDGE.1171","from_claim_id":"GOV.ENGINEERING.ROBIN_AUTONOMOUS_LAB.DOCUMENTARY_CONTINUITY.V1.004","to_decision_id":"RCV3-20261007-338","relation":"SUPPORTS","status":"RECORDED"}
     ,{"edge_id":"EDGE.1172","from_claim_id":"DATA.ROBIN.AUTONOMOUS_LAB.RECURRING_VIEW.V1.002","to_decision_id":"RCV3-20261007-338","relation":"SUPPORTS","status":"RECORDED"}
+    ,{"edge_id":"EDGE.1173","from_claim_id":"GOV.ENGINEERING.ROBIN_AUTONOMOUS_LAB.DOCUMENTARY_CONTINUITY.V1.004","to_decision_id":"RCV3-20261007-339","relation":"SUPPORTS","status":"RECORDED"}
+    ,{"edge_id":"EDGE.1174","from_claim_id":"DATA.ROBIN.AUTONOMOUS_LAB.RECURRING_VIEW.V1.002","to_decision_id":"RCV3-20261007-339","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
