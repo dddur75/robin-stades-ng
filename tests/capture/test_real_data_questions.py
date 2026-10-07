@@ -1350,3 +1350,21 @@ def test_q1_boundaries_follow_the_whole_store_and_name_missing_branches(tmp_path
     added = _store(tmp_path / "added", acquisitions, branches={1300: ligue_one, 1301: ligue_one})
     row = _q1_rows(added)[(PROVIDER, "soccer_epl", "event-1")]
     assert (row["status"], row["reason"]) == ("EXCLUDED", "REFERENCE_ABSENT:BRANCH_ABSENT")
+
+
+def test_q1_absence_windows_use_the_candidates_exact_boundaries(tmp_path: Path) -> None:
+    both = [row for book in ("a", "b", "c") for row in _book(book, 2.0, 3.4, 3.9)] + [
+        row
+        for book in ("a", "b", "c")
+        for row in _book(book, 1.7, 3.8, 4.6, event="event-7", sport="soccer_france_ligue_one")
+    ]
+    times = [KICKOFF - timedelta(hours=hours) for hours in (30, 24, 6)] + [
+        KICKOFF + timedelta(hours=1)
+    ]
+    store = _store(
+        tmp_path,
+        [(1400 + index, at, both) for index, at in enumerate(times)],
+        branches={1402: ("soccer_france_ligue_one",)},
+    )
+    row = _q1_rows(store)[(PROVIDER, "soccer_epl", "event-1")]
+    assert (row["status"], row["reason"]) == ("EXCLUDED", "PREMATCH_ABSENT:BRANCH_ABSENT")

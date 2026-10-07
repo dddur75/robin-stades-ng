@@ -15,7 +15,7 @@ import math
 import re
 import threading
 from collections import OrderedDict, defaultdict
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 
@@ -734,17 +734,15 @@ def _acquired_at(item: Acquisition) -> datetime:
     return min(times) if times else item.slot_time
 
 
-def _absence(
-    view: CatalogView, key: EventKey, start: datetime, end: datetime, *, open_window: bool = False
-) -> str:
-    """Explain an empty window from what was actually stored; ``open_window`` excludes both ends."""
+def _absence(view: CatalogView, key: EventKey, inside: Callable[[datetime], bool]) -> str:
+    """Explain an empty window from what was stored, with the candidates' own time predicate."""
 
     stored = []
     without_branch = False
     for item in view.acquisitions:
         state = item.sports.get(key[2])
         at = (state.observed_at if state else None) or _acquired_at(item)
-        if not ((start < at < end) if open_window else (start <= at <= end)):
+        if not inside(at):
             continue
         if state is None:
             without_branch = True
@@ -827,14 +825,14 @@ def _q1_windows(
     row["reference_target_utc"] = _iso(target)
     if stored[0] > target - REFERENCE_NEAR:
         return row | {"status": "OUT_OF_STORE"}, None
-    candidates = [
-        (abs(at - target), at, item)
-        for at, item in seen
-        if abs(at - target) <= REFERENCE_NEAR and at < kickoff
-    ]
+
+    # One predicate per window, shared by the candidates and the absence explanation.
+    def in_reference(at: datetime) -> bool:
+        return abs(at - target) <= REFERENCE_NEAR and at < kickoff
+
+    candidates = [(abs(at - target), at, item) for at, item in seen if in_reference(at)]
     if not candidates:
-        absence = _absence(view, key, target - REFERENCE_NEAR, target + REFERENCE_NEAR)
-        return row | {"reason": f"REFERENCE_ABSENT:{absence}"}, None
+        return row | {"reason": f"REFERENCE_ABSENT:{_absence(view, key, in_reference)}"}, None
     distance, reference_at, reference = min(candidates, key=lambda item: (item[0], item[1]))
     row |= {
         "reference_run_id": reference.run_id,
@@ -842,16 +840,13 @@ def _q1_windows(
         "reference_offset_minutes": _minutes(reference_at - target),
         "reference_class": "J_MINUS_24H" if distance <= REFERENCE_EXACT else "NEAR",
     }
-    later = [
-        (at, item)
-        for at, item in seen
-        if reference_at < at < kickoff and kickoff - at <= PREMATCH_FAR
-    ]
+
+    def in_prematch(at: datetime) -> bool:
+        return reference_at < at < kickoff and kickoff - at <= PREMATCH_FAR
+
+    later = [(at, item) for at, item in seen if in_prematch(at)]
     if not later:
-        absence = _absence(
-            view, key, max(reference_at, kickoff - PREMATCH_FAR), kickoff, open_window=True
-        )
-        return row | {"reason": f"PREMATCH_ABSENT:{absence}"}, None
+        return row | {"reason": f"PREMATCH_ABSENT:{_absence(view, key, in_prematch)}"}, None
     prematch_at, prematch = later[-1]
     row |= {
         "last_prematch_run_id": prematch.run_id,
