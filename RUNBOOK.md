@@ -1101,6 +1101,42 @@ différentes est exclue, jamais complétée par hypothèse.
 L'historique reste épinglé sous
 `/history/<github_run_id>/robin-real-data.html`.
 
+### Questions Q1 et Q3 (descriptif)
+
+Ouvrir `http://127.0.0.1:4173/questions`. Ces pages lisent seulement les
+acquisitions vérifiées déjà conservées (source liée au reçu et au manifeste
+local) : elles ne téléchargent rien, ne déplacent pas le pointeur et
+n'écrivent rien dans le stock. Le premier appel indexe le stock, ce qui prend
+quelques secondes par dizaine d'acquisitions ; les appels suivants sont
+immédiats jusqu'à la prochaine acquisition. Le nouveau code n'est actif sur le
+PC qu'après la réinstallation décrite ci-dessus.
+
+- **Q3**, `/questions/q3` : choisir l'acquisition de référence (la plus ancienne)
+  et l'acquisition comparée, puis le match, puis la sélection exacte (ligue,
+  marché, issue, seuil, période, fournisseur). Le tableau donne pour chaque bookmaker les
+  deux cotes, leurs heures de capture et de source, l'écart et le statut :
+  hausse, baisse, inchangée, apparue ou non observée (cause non attestée), match
+  commencé avant l'acquisition comparée, ou exclue avec son motif (doublon, prix
+  invalide, branche, lignée ou horodatage non comparable). La synthèse compte
+  exactement les lignes du tableau. **Exporter CSV** et **Exporter JSON**
+  renvoient les mêmes lignes, octet pour octet reproductibles.
+- **Q1**, `/questions/q1` : le favori est l'issue 1X2 de plus petite cote médiane
+  à la référence, sur au moins 3 bookmakers complets ; une égalité ou un nul
+  favori exclut le match. La référence est la capture la plus proche du coup
+  d'envoi moins 24 h en UTC (J−24 h si l'écart est d'au plus 60 min, proche s'il
+  est d'au plus 180 min). La dernière observation est la dernière capture avant
+  le coup d'envoi (au plus 2 h ou au plus 6 h avant). Ce n'est jamais une cote de
+  clôture. Les matchs `PENDING` (coup d'envoi après la dernière acquisition) et
+  `OUT_OF_STORE` (référence antérieure au stock) sont hors dénominateur. Le lien
+  « observations » ouvre la paire justificative dans Q3.
+- Commande équivalente, sans serveur ni GitHub :
+  `python scripts/run_real_data_explorer.py --root <stock> --question q3 --previous <run> --current <run> --event <id> --market h2h --outcome <issue> --format csv --output q3.csv`,
+  ou `--question q1`, ou `--question acquisitions`. `--sport`, `--provider` et
+  `--period` sont facultatifs s'ils sont uniques dans les deux acquisitions.
+  Le code 2 signale un refus
+  explicite (`Q3_ORDER_INVALID`, `SELECTION_AMBIGUOUS`, `SELECTION_NOT_FOUND`…).
+- Q2 (titulaire attendu absent) reste non observable avec les données actuelles.
+
 Le workflow indépendant `collection-freshness-monitor.yml` s'exécute aux minutes
 17 et 47. Il lit seulement les runs GitHub du workflow `321915839`, sans clé
 fournisseur ni accès R2. Il échoue visiblement avec
