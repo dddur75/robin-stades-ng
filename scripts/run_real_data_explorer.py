@@ -51,6 +51,10 @@ def parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     arguments = parser().parse_args(argv)
+    if arguments.question and not (arguments.root / "versions").is_dir():
+        # Question mode only reads an existing store: never create one under a mistyped root.
+        sys.stderr.write("LOCAL_STORE_UNAVAILABLE\n")
+        return 2
     store = AtomicExplorerStore(arguments.root)
     if arguments.question:
         options = {

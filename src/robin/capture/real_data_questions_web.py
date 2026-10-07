@@ -24,6 +24,7 @@ from robin.capture.real_data_questions import (
     answer_q1,
     answer_q3,
     list_selections,
+    summarize_q1,
     to_csv_bytes,
     to_json_bytes,
 )
@@ -137,6 +138,34 @@ def _acquisition_label(view: CatalogView, run_id: object) -> str:
         return _e(run_id)
     view_link = _link(f"/history/{item.run_id}/robin-real-data.html", {}, "vue")
     return f"{_time(item.slot_start_utc)} · run {_e(item.run_id)} · {view_link}"
+
+
+def _q1_overview(summary: Mapping[str, object]) -> list[list[str]]:
+    rows = [
+        [_label(name), _e(count)]
+        for name, count in cast(dict[str, int], summary["status_counts"]).items()
+    ]
+    rows += [
+        [_e(name), _e(count)]
+        for name, count in cast(dict[str, int], summary["exclusion_reason_counts"]).items()
+    ]
+
+    def joined(name: str) -> str:
+        return " / ".join(_e(value) for value in cast(dict[str, int], summary[name]).values())
+
+    return rows + [
+        ["Référence J−24 h / proche", joined("reference_class_counts")],
+        ["Dernière observation ≤ 2 h / ≤ 6 h", joined("last_prematch_class_counts")],
+        ["Inclus avec fenêtres strictes", _e(summary["included_strict_windows"])],
+        [
+            "Consensus du favori (baisse / hausse / inchangé)",
+            joined("included_consensus_direction"),
+        ],
+        [
+            "Médiane des écarts de médianes (inclus)",
+            _e(summary["included_median_of_median_delta"]),
+        ],
+    ]
 
 
 class QuestionPages:
@@ -402,68 +431,41 @@ class QuestionPages:
         )
 
     def _filtered_q1(self, filters: Mapping[str, str]) -> dict[str, object]:
+        """Unfiltered: the CLI bytes. Filtered: the kept rows with their own summary."""
+
         fingerprint = self.catalog.view().fingerprint()
         if self._q1_cache is None or self._q1_cache[0] != fingerprint:
             self._q1_cache = (fingerprint, answer_q1(self.catalog))
         payload = self._q1_cache[1]
-        rows = cast(list[dict[str, object]], payload["rows"])
         wanted = filters.get("status") or None
         strict = filters.get("strict") == "1"
+        if wanted is None and not strict:
+            return payload
         kept = [
             row
-            for row in rows
+            for row in cast(list[dict[str, object]], payload["rows"])
             if (wanted is None or row["status"] == wanted)
             and (not strict or row["strict_windows"] is True)
         ]
         return payload | {
             "filters": {"status": wanted, "strict_windows_only": strict},
-            "filtered_row_count": len(kept),
+            "filtered_summary": summarize_q1(kept),
             "rows": kept,
         }
 
     def _q1(self, filters: Mapping[str, str]) -> str:
         payload = self._filtered_q1(filters)
-        summary = cast(dict[str, object], payload["summary"])
         store = cast(dict[str, object], payload["store"])
         rules = [[_e(name), _e(value)] for name, value in Q1_RULES.items()]
-        status_counts = cast(dict[str, int], summary["status_counts"])
-        overview = [[_label(name), _e(count)] for name, count in status_counts.items()]
-        overview += [
-            [_e(name), _e(count)]
-            for name, count in cast(dict[str, int], summary["exclusion_reason_counts"]).items()
-        ]
-        overview += [
-            [
-                "Référence J−24 h / proche",
-                " / ".join(
-                    _e(value)
-                    for value in cast(dict[str, int], summary["reference_class_counts"]).values()
-                ),
-            ],
-            [
-                "Dernière observation ≤ 2 h / ≤ 6 h",
-                " / ".join(
-                    _e(value)
-                    for value in cast(
-                        dict[str, int], summary["last_prematch_class_counts"]
-                    ).values()
-                ),
-            ],
-            ["Inclus avec fenêtres strictes", _e(summary["included_strict_windows"])],
-            [
-                "Consensus du favori (baisse / hausse / inchangé)",
-                " / ".join(
-                    _e(value)
-                    for value in cast(
-                        dict[str, int], summary["included_consensus_direction"]
-                    ).values()
-                ),
-            ],
-            [
-                "Médiane des écarts de médianes (inclus)",
-                _e(summary["included_median_of_median_delta"]),
-            ],
-        ]
+        coverage = _table(
+            ["Couverture du stock (tous les matchs)", "Nombre"],
+            _q1_overview(cast(dict[str, object], payload["summary"])),
+        )
+        if "filtered_summary" in payload:
+            coverage += _table(
+                ["Synthèse des matchs affichés", "Nombre"],
+                _q1_overview(cast(dict[str, object], payload["filtered_summary"])),
+            )
         options = "".join(
             f'<option value="{name}"{" selected" if filters.get("status") == name else ""}>{_label(name) if name else "Tous"}</option>'
             for name in ("", "INCLUDED", "EXCLUDED", "PENDING", "OUT_OF_STORE")
@@ -532,12 +534,12 @@ class QuestionPages:
                 "Exploration descriptive : aucun edge, aucun conseil de pari, aucune causalité."
             )
             + f"<p>Stock : {_e(store['acquisition_count'])} acquisitions, de {_time(store['first_slot_start_utc'])} à {_time(store['last_slot_start_utc'])}.</p>"
-            + _table(["Couverture", "Nombre"], overview)
+            + coverage
             + "<details><summary>Règles déclarées avant calcul</summary>"
             + _table(["Règle", "Valeur"], rules)
             + "</details>"
             + form
-            + f"<p>{_e(payload['filtered_row_count'])} matchs affichés · {exports}</p>"
+            + f"<p>{_e(len(rows))} matchs affichés · {exports}</p>"
             + _table(headers, rows)
         )
 

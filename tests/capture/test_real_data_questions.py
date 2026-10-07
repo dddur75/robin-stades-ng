@@ -1062,3 +1062,37 @@ def test_catalog_retries_transient_failures_and_web_q1_tracks_rejections(
     assert second["store"]["rejected_versions"] == [
         {"version": "run-101", "code": "SOURCE_HASH_MISMATCH"}
     ]
+
+
+def test_q1_filtered_exports_carry_their_own_summary_and_cli_refuses_bad_inputs(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    import scripts.run_real_data_explorer as runner
+
+    store = _q1_store(tmp_path / "store")
+    pages = QuestionPages(AcquisitionCatalog(store))
+    for suffix in ("json", "csv"):
+        assert (
+            pages.respond(f"/questions/q1.{suffix}", "")[1]
+            == (run_question_command(store, "q1", {}, suffix)[1])
+        )
+
+    filtered = json.loads(pages.respond("/questions/q1.json", "status=PENDING")[1])
+    assert [row["status"] for row in filtered["rows"]] == ["PENDING"]
+    assert filtered["filters"] == {"status": "PENDING", "strict_windows_only": False}
+    assert filtered["filtered_summary"]["match_count"] == 1
+    assert filtered["filtered_summary"]["status_counts"] == {
+        "INCLUDED": 0,
+        "EXCLUDED": 0,
+        "PENDING": 1,
+        "OUT_OF_STORE": 0,
+    }
+    assert filtered["summary"]["match_count"] == 2
+    page = pages.respond("/questions/q1", "status=PENDING")[1].decode()
+    assert "Synthèse des matchs affichés" in page and "1 matchs affichés" in page
+
+    assert run_question_command(store, "acquisitions", {}, "csv") == (2, b"FORMAT_UNSUPPORTED\n")
+    typo = tmp_path / "typo-root"
+    assert runner.main(["--root", str(typo), "--question", "q1", "--format", "csv"]) == 2
+    assert "LOCAL_STORE_UNAVAILABLE" in capsys.readouterr().err
+    assert not typo.exists()

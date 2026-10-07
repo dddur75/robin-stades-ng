@@ -923,6 +923,36 @@ def _q1_movement(
     }
 
 
+def summarize_q1(rows: Sequence[Row]) -> dict[str, object]:
+    """Summary of exactly the listed Q1 rows (the whole store, or a filtered subset)."""
+
+    included = [row for row in rows if row["status"] == "INCLUDED"]
+    deltas = [_number(row["median_delta"]) for row in included]
+    reasons: dict[str, int] = defaultdict(int)
+    for row in rows:
+        if row["status"] == "EXCLUDED":
+            reasons[str(row["reason"])] += 1
+    return {
+        "match_count": len(rows),
+        "status_counts": _counts(
+            rows, "status", ("INCLUDED", "EXCLUDED", "PENDING", "OUT_OF_STORE")
+        ),
+        "evaluable_count": sum(row["status"] in {"INCLUDED", "EXCLUDED"} for row in rows),
+        "exclusion_reason_counts": dict(sorted(reasons.items())),
+        "reference_class_counts": _counts(rows, "reference_class", ("J_MINUS_24H", "NEAR")),
+        "last_prematch_class_counts": _counts(
+            rows, "last_prematch_class", ("WITHIN_2H", "WITHIN_6H")
+        ),
+        "included_strict_windows": sum(row["strict_windows"] is True for row in included),
+        "included_consensus_direction": {
+            "DOWN": sum(delta < 0 for delta in deltas),
+            "UP": sum(delta > 0 for delta in deltas),
+            "UNCHANGED": sum(delta == 0 for delta in deltas),
+        },
+        "included_median_of_median_delta": _median(deltas),
+    }
+
+
 def answer_q1(catalog: AcquisitionCatalog) -> dict[str, object]:
     """Follow each stored match's favourite between the declared Q1 windows."""
 
@@ -960,12 +990,6 @@ def answer_q1(catalog: AcquisitionCatalog) -> dict[str, object]:
             str(row[name]) for name in ("kickoff_utc", "sport_key", "event_id", "provider_key")
         )
     )
-    included = [row for row in rows if row["status"] == "INCLUDED"]
-    deltas = [_number(row["median_delta"]) for row in included]
-    reasons: dict[str, int] = defaultdict(int)
-    for row in rows:
-        if row["status"] == "EXCLUDED":
-            reasons[str(row["reason"])] += 1
     return {
         "schema_version": "robin-explorer-q1-v1",
         "question": "Q1",
@@ -973,25 +997,7 @@ def answer_q1(catalog: AcquisitionCatalog) -> dict[str, object]:
         "engine": ENGINE,
         "rules": Q1_RULES,
         "store": view.store_summary(),
-        "summary": {
-            "match_count": len(rows),
-            "status_counts": _counts(
-                rows, "status", ("INCLUDED", "EXCLUDED", "PENDING", "OUT_OF_STORE")
-            ),
-            "evaluable_count": sum(row["status"] in {"INCLUDED", "EXCLUDED"} for row in rows),
-            "exclusion_reason_counts": dict(sorted(reasons.items())),
-            "reference_class_counts": _counts(rows, "reference_class", ("J_MINUS_24H", "NEAR")),
-            "last_prematch_class_counts": _counts(
-                rows, "last_prematch_class", ("WITHIN_2H", "WITHIN_6H")
-            ),
-            "included_strict_windows": sum(row["strict_windows"] is True for row in included),
-            "included_consensus_direction": {
-                "DOWN": sum(delta < 0 for delta in deltas),
-                "UP": sum(delta > 0 for delta in deltas),
-                "UNCHANGED": sum(delta == 0 for delta in deltas),
-            },
-            "included_median_of_median_delta": _median(deltas),
-        },
+        "summary": summarize_q1(rows),
         "rows": rows,
     }
 
@@ -1079,7 +1085,9 @@ def run_question_command(
             payload = answer_q1(catalog)
         else:
             payload = acquisitions_payload(catalog)
-        if output_format == "csv" and question in {"q1", "q3"}:
+        if output_format == "csv":
+            if question not in {"q1", "q3"}:
+                raise QuestionError("FORMAT_UNSUPPORTED")
             return 0, to_csv_bytes(payload)
         return 0, to_json_bytes(payload)
     except QuestionError as exc:
@@ -1097,6 +1105,7 @@ __all__ = [
     "list_selections",
     "resolve_selection",
     "run_question_command",
+    "summarize_q1",
     "to_csv_bytes",
     "to_json_bytes",
 ]
