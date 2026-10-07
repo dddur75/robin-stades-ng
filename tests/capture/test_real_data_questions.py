@@ -758,6 +758,14 @@ def test_pages_render_escaped_content_and_exports_match_the_engine(tmp_path: Pat
     assert status == 400 and b"Q3_ORDER_INVALID" in body
     status, _, _, _ = pages.respond("/questions/q3", "&".join(f"x{index}=1" for index in range(40)))
     assert status == 400
+    broken = QuestionPages(AcquisitionCatalog(store, row_cache_size=2))
+    broken.catalog.view()
+    broken.catalog._rows.clear()
+    (store.versions / "run-102-view-v13" / "source" / "robin-real-data.json").write_text(
+        "{", encoding="utf-8"
+    )
+    status, body, _, _ = broken.respond("/questions/q3.json", query)
+    assert status == 503 and b"LOCAL_STORE_UNAVAILABLE" in body
 
 
 def test_http_server_keeps_existing_routes_and_guards_question_hosts(
@@ -781,10 +789,21 @@ def test_http_server_keeps_existing_routes_and_guards_question_hosts(
         with urllib.request.urlopen(f"{base}/questions/q1.json") as response:
             assert response.headers["Cache-Control"] == "no-store"
             assert json.loads(response.read())["question"] == "Q1"
-        request = urllib.request.Request(f"{base}/questions", headers={"Host": "evil.example"})
-        with pytest.raises(urllib.error.HTTPError) as refused:
-            urllib.request.urlopen(request)
-        assert refused.value.code == 403
+        for path, data in (
+            ("/questions", None),
+            ("/status.json", None),
+            ("/export.csv", b"content=x"),
+        ):
+            request = urllib.request.Request(
+                f"{base}{path}", data=data, headers={"Host": "evil.example"}
+            )
+            with pytest.raises(urllib.error.HTTPError) as refused:
+                urllib.request.urlopen(request)
+            assert refused.value.code == 403
+        with urllib.request.urlopen(
+            urllib.request.Request(f"{base}/export.csv", data=b"content=a%2Cb")
+        ) as response:
+            assert response.read() == b"a,b"
     finally:
         server.shutdown()
         server.server_close()
@@ -879,3 +898,167 @@ def test_stub_branches_without_capture_time_never_reach_the_shared_engine() -> N
     assert states["soccer_france_ligue_one"].admissible is True
     snapshot["comparable_branch_sports"] = ["soccer_epl"]
     assert _sport_states(snapshot, [])["soccer_epl"].reason == "BRANCH_TIME_INVALID"
+
+
+def _q1_rows(store: AtomicExplorerStore) -> dict[tuple[object, ...], dict[str, object]]:
+    rows = answer_q1(AcquisitionCatalog(store))["rows"]
+    return {(row["provider_key"], row["sport_key"], row["event_id"]): row for row in rows}  # type: ignore[union-attr]
+
+
+def test_q1_keeps_one_row_per_lineage_and_names_lineage_changes(tmp_path: Path) -> None:
+    def three(event: str, **kwargs: object) -> list[dict[str, object]]:
+        return [
+            row
+            for book in ("a", "b", "c")
+            for row in _book(book, 2.0, 3.4, 3.9, event=event, **kwargs)
+        ]
+
+    legacy = {"provider": None, "period": None}
+    store = _store(
+        tmp_path,
+        [
+            (
+                701,
+                KICKOFF - timedelta(hours=30),
+                three("event-1") + three("legacy", **legacy) + three("switch", **legacy),
+            ),
+            (
+                702,
+                KICKOFF - timedelta(hours=24),
+                three("event-1") + three("legacy", **legacy) + three("switch", **legacy),
+            ),
+            (
+                703,
+                KICKOFF - timedelta(hours=1),
+                three("event-1") + three("legacy", **legacy) + three("switch"),
+            ),
+            (704, KICKOFF + timedelta(hours=1), []),
+        ],
+    )
+    rows = _q1_rows(store)
+    assert rows[(PROVIDER, "soccer_epl", "event-1")]["status"] == "INCLUDED"
+    assert rows[(None, "soccer_epl", "legacy")]["status"] == "INCLUDED"
+    assert rows[(None, "soccer_epl", "switch")]["reason"] == "PREMATCH_ABSENT:LINEAGE_CHANGED"
+    assert rows[(PROVIDER, "soccer_epl", "switch")]["reason"] == "REFERENCE_ABSENT:LINEAGE_CHANGED"
+
+
+def test_q1_isolates_a_stray_row_from_another_sport(tmp_path: Path) -> None:
+    books = [row for book in ("a", "b", "c") for row in _book(book, 2.0, 3.4, 3.9)]
+    stray = [_offer("z", "Arsenal", 2.2, sport="soccer_france_ligue_one")]
+    store = _store(
+        tmp_path,
+        [
+            (711, KICKOFF - timedelta(hours=30), books),
+            (712, KICKOFF - timedelta(hours=24), books + stray),
+            (713, KICKOFF - timedelta(hours=1), books),
+            (714, KICKOFF + timedelta(hours=1), []),
+        ],
+    )
+    rows = _q1_rows(store)
+    assert rows[(PROVIDER, "soccer_epl", "event-1")]["status"] == "INCLUDED"
+    assert rows[(PROVIDER, "soccer_france_ligue_one", "event-1")]["status"] == "EXCLUDED"
+
+
+def test_q1_store_bounds_count_inadmissible_branches_and_prematch_window_is_open(
+    tmp_path: Path,
+) -> None:
+    books = [row for book in ("a", "b", "c") for row in _book(book, 2.0, 3.4, 3.9)]
+    failed = _store(
+        tmp_path / "failed",
+        [
+            (801, KICKOFF - timedelta(hours=30), books),
+            (802, KICKOFF - timedelta(hours=24), books),
+            (803, KICKOFF - timedelta(hours=1), books),
+            (804, KICKOFF + timedelta(hours=1), books),
+        ],
+        incomplete={801: ("soccer_epl",), 802: ("soccer_epl",), 804: ("soccer_epl",)},
+    )
+    row = _q1_rows(failed)[(PROVIDER, "soccer_epl", "event-1")]
+    assert (row["status"], row["reason"]) == ("EXCLUDED", "REFERENCE_ABSENT:BRANCH_NOT_ADMISSIBLE")
+    at_kickoff = _store(
+        tmp_path / "kickoff",
+        [
+            (811, KICKOFF - timedelta(hours=30), books),
+            (812, KICKOFF - timedelta(hours=24), books),
+            (813, KICKOFF, books),
+            (814, KICKOFF + timedelta(hours=2), []),
+        ],
+    )
+    row = _q1_rows(at_kickoff)[(PROVIDER, "soccer_epl", "event-1")]
+    assert row["reason"] == "PREMATCH_ABSENT:NO_ACQUISITION_IN_WINDOW"
+
+
+def test_q3_other_thresholds_stay_within_the_selection_lineage(tmp_path: Path) -> None:
+    def totals(book: str, *, full: bool) -> list[dict[str, object]]:
+        half = [_offer(book, "Over", 1.6, market="totals", point=1.5, period="FIRST_HALF")]
+        return half + ([_offer(book, "Over", 1.9, market="totals", point=2.5)] if full else [])
+
+    store = _store(
+        tmp_path,
+        [
+            (821, KICKOFF - timedelta(hours=20), totals("a", full=True) + totals("b", full=True)),
+            (822, KICKOFF - timedelta(hours=10), totals("a", full=True) + totals("b", full=False)),
+        ],
+    )
+    payload = _q3(
+        store,
+        previous="821",
+        current="822",
+        event="event-1",
+        market="totals",
+        outcome="Over",
+        point="2.5",
+        period=PERIOD,
+    )
+    rows = {row["bookmaker_key"]: row for row in payload["rows"]}  # type: ignore[union-attr]
+    assert (rows["b"]["status"], rows["b"]["other_points_observed"]) == ("NOT_OBSERVED", [])
+
+
+def test_q3_duplicates_keep_engine_priority_over_out_of_range_prices(tmp_path: Path) -> None:
+    store = _store(
+        tmp_path,
+        [
+            (831, KICKOFF - timedelta(hours=20), _book("a", 2.0, 3.4, 3.9)),
+            (
+                832,
+                KICKOFF - timedelta(hours=10),
+                _book("a", 2.1, 3.4, 3.9) + [_offer("a", "Arsenal", 1.0)],
+            ),
+        ],
+    )
+    payload = _q3(
+        store, previous="831", current="832", event="event-1", market="h2h", outcome="Arsenal"
+    )
+    assert payload["summary"]["exclusion_reason_counts"] == {"DUPLICATE_OFFER_IDENTITY": 3}  # type: ignore[index]
+
+
+def test_catalog_retries_transient_failures_and_web_q1_tracks_rejections(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import robin.capture.real_data_questions as questions
+
+    store = _pair_store(tmp_path)
+    original = questions.validate_source_bundle
+    calls = {"failed": False}
+
+    def flaky(source: Path, **kwargs: object) -> object:
+        if not calls["failed"] and "run-102" in str(source):
+            calls["failed"] = True
+            raise PermissionError("locked")
+        return original(source)
+
+    monkeypatch.setattr(questions, "validate_source_bundle", flaky)
+    catalog = AcquisitionCatalog(store)
+    assert [item.run_id for item in catalog.view().acquisitions] == ["101"]
+    assert [item.run_id for item in catalog.view().acquisitions] == ["101", "102"]
+
+    pages = QuestionPages(catalog)
+    first = json.loads(pages.respond("/questions/q1.json", "")[1])
+    damaged = store.versions / "run-101"
+    shutil.copytree(store.versions / "run-101-view-v13", damaged)
+    (damaged / "source" / "robin-real-data.json").write_text("{}", encoding="utf-8")
+    second = json.loads(pages.respond("/questions/q1.json", "")[1])
+    assert first["store"]["rejected_versions"] == []
+    assert second["store"]["rejected_versions"] == [
+        {"version": "run-101", "code": "SOURCE_HASH_MISMATCH"}
+    ]

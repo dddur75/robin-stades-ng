@@ -170,12 +170,12 @@ class QuestionPages:
             code = str(exc)
             body = _notice(f"{_ERRORS.get(code, 'Refus')} Code : {code}")
             return self._html("Requête refusée", body, HTTPStatus.BAD_REQUEST)
-        except ValueError:
-            body = _notice(f"{_ERRORS['QUERY_INVALID']} Code : QUERY_INVALID")
-            return self._html("Requête refusée", body, HTTPStatus.BAD_REQUEST)
         except (BundleValidationError, OSError):
             body = _notice("Stock local illisible. Code : LOCAL_STORE_UNAVAILABLE")
             return self._html("Stock indisponible", body, HTTPStatus.SERVICE_UNAVAILABLE)
+        except ValueError:
+            body = _notice(f"{_ERRORS['QUERY_INVALID']} Code : QUERY_INVALID")
+            return self._html("Requête refusée", body, HTTPStatus.BAD_REQUEST)
 
     def _html(
         self, title: str, body: str, status: HTTPStatus = HTTPStatus.OK
@@ -543,27 +543,25 @@ class QuestionPages:
 
 
 def make_server(store: AtomicExplorerStore, *, port: int = 4173) -> ThreadingHTTPServer:
-    """The existing explorer server plus read-only ``/questions`` routes on 127.0.0.1."""
+    """The existing explorer server plus read-only ``/questions`` routes on 127.0.0.1.
+
+    Every route refuses a foreign Host header (DNS rebinding); the existing handlers
+    are otherwise reused unchanged.
+    """
 
     base = _handler(store)
     base_get = cast(Callable[[BaseHTTPRequestHandler], None], getattr(base, "do_GET"))
+    base_post = cast(Callable[[BaseHTTPRequestHandler], None], getattr(base, "do_POST"))
     pages = QuestionPages(AcquisitionCatalog(store))
     allowed_hosts: set[str] = set()
 
-    def do_get(handler: BaseHTTPRequestHandler) -> None:
-        split = urllib.parse.urlsplit(handler.path)
-        if split.path != "/questions" and not split.path.startswith("/questions/"):
-            base_get(handler)
-            return
-        headers: dict[str, str] = {}
-        if handler.headers.get("Host") not in allowed_hosts:
-            status, payload, content_type = HTTPStatus.FORBIDDEN, b"forbidden host\n", "text/plain"
-        else:
-            try:
-                status, payload, content_type, headers = pages.respond(split.path, split.query)
-            except Exception:  # fail closed without exposing internals
-                status, payload = HTTPStatus.INTERNAL_SERVER_ERROR, b"QUESTION_UNEXPECTED_FAILURE\n"
-                content_type = "text/plain; charset=utf-8"
+    def send(
+        handler: BaseHTTPRequestHandler,
+        status: HTTPStatus,
+        payload: bytes,
+        content_type: str,
+        headers: Mapping[str, str],
+    ) -> None:
         handler.send_response(status)
         for name, value in {
             "Content-Type": content_type,
@@ -577,12 +575,40 @@ def make_server(store: AtomicExplorerStore, *, port: int = 4173) -> ThreadingHTT
         handler.end_headers()
         handler.wfile.write(payload)
 
+    def trusted(handler: BaseHTTPRequestHandler) -> bool:
+        if handler.headers.get("Host") in allowed_hosts:
+            return True
+        send(handler, HTTPStatus.FORBIDDEN, b"forbidden host\n", "text/plain", {})
+        return False
+
+    def do_get(handler: BaseHTTPRequestHandler) -> None:
+        if not trusted(handler):
+            return
+        split = urllib.parse.urlsplit(handler.path)
+        if split.path != "/questions" and not split.path.startswith("/questions/"):
+            base_get(handler)
+            return
+        try:
+            status, payload, content_type, headers = pages.respond(split.path, split.query)
+        except Exception:  # fail closed without exposing internals
+            status, payload = HTTPStatus.INTERNAL_SERVER_ERROR, b"QUESTION_UNEXPECTED_FAILURE\n"
+            content_type, headers = "text/plain; charset=utf-8", {}
+        send(handler, status, payload, content_type, headers)
+
+    def do_post(handler: BaseHTTPRequestHandler) -> None:
+        if trusted(handler):
+            base_post(handler)
+
     handler_class = cast(
-        type[BaseHTTPRequestHandler], type("RobinQuestionsHandler", (base,), {"do_GET": do_get})
+        type[BaseHTTPRequestHandler],
+        type("RobinQuestionsHandler", (base,), {"do_GET": do_get, "do_POST": do_post}),
     )
     server = ThreadingHTTPServer(("127.0.0.1", port), handler_class)
     bound_port = int(server.server_address[1])
-    allowed_hosts.update({f"127.0.0.1:{bound_port}", f"localhost:{bound_port}"})
+    for host in ("127.0.0.1", "localhost"):
+        allowed_hosts.add(f"{host}:{bound_port}")
+        if bound_port == 80:
+            allowed_hosts.add(host)
     return server
 
 

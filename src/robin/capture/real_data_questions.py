@@ -253,8 +253,12 @@ class CatalogView:
                 return acquisition
         raise QuestionError("ACQUISITION_UNKNOWN")
 
-    def fingerprint(self) -> tuple[tuple[str, str], ...]:
-        return tuple((item.run_id, item.source_semantic_sha256) for item in self.acquisitions)
+    def fingerprint(self) -> tuple[object, ...]:
+        accepted = tuple(
+            (item.run_id, item.version, item.source_semantic_sha256, item.receipt_sha256)
+            for item in self.acquisitions
+        )
+        return accepted, self.rejected
 
     def store_summary(self) -> dict[str, object]:
         items = self.acquisitions
@@ -346,7 +350,8 @@ class AcquisitionCatalog:
                     marker = (self.store.versions / name / "manifest.json").read_bytes()
                 except OSError:
                     marker = b""
-                if name not in self._index or self._index[name][0] != marker:
+                cached = self._index.get(name)
+                if cached is None or cached[0] != marker or cached[1] is None:
                     self._index_version(name, marker)
             rejected = [(name, code) for name, (_, item, code) in self._index.items() if code]
             by_run: dict[str, list[Acquisition]] = defaultdict(list)
@@ -373,7 +378,10 @@ class AcquisitionCatalog:
         with self._lock:
             cached = self._rows.get(acquisition.version)
             if cached is None:
-                snapshot, cached, _ = self._load(acquisition.version)
+                try:
+                    snapshot, cached, _ = self._load(acquisition.version)
+                except (OSError, json.JSONDecodeError, UnicodeDecodeError):
+                    raise BundleValidationError("LOCAL_VERSION_UNREADABLE") from None
                 if _source_semantic_sha256(snapshot) != acquisition.source_semantic_sha256:
                     raise QuestionError("ACQUISITION_CHANGED_ON_DISK")
             self._remember(acquisition.version, cached)
@@ -532,22 +540,7 @@ def compare_selection(
     if gate is not None:
         rows = [_excluded(side, row, gate) for side, items in sides.items() for row in items]
     else:
-        invalid = {
-            row.get("bookmaker_key")
-            for items in sides.values()
-            for row in items
-            if _price(row) is None
-        }
-        rows = [
-            _excluded(side, row, "INVALID_PRICE")
-            for side, items in sides.items()
-            for row in items
-            if row.get("bookmaker_key") in invalid
-        ]
-        kept = {
-            side: [row for row in items if row.get("bookmaker_key") not in invalid]
-            for side, items in sides.items()
-        }
+        kept = sides
         before, after = previous.sports[sport], current.sports[sport]
         comparison = compare_acquisitions(
             kept["current"],
@@ -577,16 +570,25 @@ def compare_selection(
         )
         for item in _items(comparison["matched_offers"]):
             book = item.get("bookmaker_key")
-            rows.append(
-                _offer(
-                    str(item["direction"]), books["previous"].get(book), books["current"].get(book)
-                )
-            )
+            pair = (books["previous"].get(book), books["current"].get(book))
+            if _price(pair[0]) is None or _price(pair[1]) is None:
+                rows += [_excluded("previous", pair[0], "INVALID_PRICE")]
+                rows += [_excluded("current", pair[1], "INVALID_PRICE")]
+            else:
+                rows.append(_offer(str(item["direction"]), *pair))
         for item in _items(comparison["appeared_offers"]):
-            rows.append(_offer("APPEARED", None, books["current"].get(item.get("bookmaker_key"))))
+            offer = books["current"].get(item.get("bookmaker_key"))
+            if _price(offer) is None:
+                rows.append(_excluded("current", offer, "INVALID_PRICE"))
+            else:
+                rows.append(_offer("APPEARED", None, offer))
         for item in _items(comparison["not_observed_offers"]):
+            offer = books["previous"].get(item.get("bookmaker_key"))
             status = "EVENT_STARTED_BEFORE_CURRENT" if started else "NOT_OBSERVED"
-            rows.append(_offer(status, books["previous"].get(item.get("bookmaker_key")), None))
+            if _price(offer) is None:
+                rows.append(_excluded("previous", offer, "INVALID_PRICE"))
+            else:
+                rows.append(_offer(status, offer, None))
         used: dict[tuple[str, object], int] = defaultdict(int)
         for item in _items(comparison["excluded_rows"]):
             side, book = str(item.get("side")), item.get("bookmaker_key")
@@ -603,7 +605,7 @@ def compare_selection(
                 {
                     _number(item.get("point"))
                     for item in other
-                    if item.get("event_id") == selection.event_id
+                    if event_key(item) == (*lineage, sport, selection.event_id)
                     and item.get("bookmaker_key") == row["bookmaker_key"]
                     and item.get("market_key") == "totals"
                     and item.get("outcome") == selection.outcome
@@ -727,17 +729,26 @@ def answer_q3(catalog: AcquisitionCatalog, options: Mapping[str, str | None]) ->
     return compare_selection(previous, previous_rows, current, current_rows, selection)
 
 
-def _absence(view: CatalogView, sport: str, start: datetime, end: datetime) -> str:
-    stored = [
-        item
-        for item in view.acquisitions
-        if (state := item.sports.get(sport)) is not None
-        and start <= (state.observed_at or item.slot_time) <= end
-    ]
+def _absence(
+    view: CatalogView, key: EventKey, start: datetime, end: datetime, *, open_window: bool = False
+) -> str:
+    """Explain an empty window from what was actually stored; ``open_window`` excludes both ends."""
+
+    stored = []
+    for item in view.acquisitions:
+        state = item.sports.get(key[2])
+        if state is None:
+            continue
+        at = state.observed_at or item.slot_time
+        if (start < at < end) if open_window else (start <= at <= end):
+            stored.append(item)
     if not stored:
         return "NO_ACQUISITION_IN_WINDOW"
-    if not any(item.sports[sport].admissible for item in stored):
+    admissible = [item for item in stored if item.sports[key[2]].admissible]
+    if not admissible:
         return "BRANCH_NOT_ADMISSIBLE"
+    if any(other != key and other[2:] == key[2:] for item in admissible for other in item.events):
+        return "LINEAGE_CHANGED"
     return "EVENT_NOT_LISTED"
 
 
@@ -811,7 +822,7 @@ def _q1_windows(
         if abs(at - target) <= REFERENCE_NEAR and at < kickoff
     ]
     if not candidates:
-        absence = _absence(view, key[2], target - REFERENCE_NEAR, target + REFERENCE_NEAR)
+        absence = _absence(view, key, target - REFERENCE_NEAR, target + REFERENCE_NEAR)
         return row | {"reason": f"REFERENCE_ABSENT:{absence}"}, None
     distance, reference_at, reference = min(candidates, key=lambda item: (item[0], item[1]))
     row |= {
@@ -826,7 +837,9 @@ def _q1_windows(
         if reference_at < at < kickoff and kickoff - at <= PREMATCH_FAR
     ]
     if not later:
-        absence = _absence(view, key[2], max(reference_at, kickoff - PREMATCH_FAR), kickoff)
+        absence = _absence(
+            view, key, max(reference_at, kickoff - PREMATCH_FAR), kickoff, open_window=True
+        )
         return row | {"reason": f"PREMATCH_ABSENT:{absence}"}, None
     prematch_at, prematch = later[-1]
     row |= {
@@ -868,9 +881,10 @@ def _q1_movement(
         return row | {"reason": refusal}
     row["favourite_outcome"] = favourite
     selection = Selection(key[3], "h2h", favourite, None, key[0], key[1])
-    result = compare_selection(
-        reference, reference_rows, prematch, catalog.rows(prematch), selection
-    )
+    # Restrict both sides to this exact match key (sport included) before the shared engine.
+    same = [row for row in reference_rows if event_key(row) == key]
+    later = [row for row in catalog.rows(prematch) if event_key(row) == key]
+    result = compare_selection(reference, same, prematch, later, selection)
     if result["status"] != "COMPARED":
         return row | {"reason": f"COMPARISON_UNAVAILABLE:{result['status']}"}
     offers = _items(result["rows"])
@@ -916,13 +930,11 @@ def answer_q1(catalog: AcquisitionCatalog) -> dict[str, object]:
     seen: dict[EventKey, list[tuple[datetime, Acquisition]]] = defaultdict(list)
     sport_times: dict[str, list[datetime]] = defaultdict(list)
     for item in view.acquisitions:
-        admissible = {
-            sport: state.observed_at
-            for sport, state in item.sports.items()
-            if state.admissible and state.observed_at
-        }
-        for sport, observed in admissible.items():
-            sport_times[sport].append(observed)
+        admissible = {}
+        for sport, state in item.sports.items():
+            sport_times[sport].append(state.observed_at or item.slot_time)
+            if state.admissible and state.observed_at is not None:
+                admissible[sport] = state.observed_at
         for key, event in item.events.items():
             if key[2] in admissible and event.h2h_outcomes:
                 seen[key].append((admissible[key[2]], item))
@@ -937,8 +949,12 @@ def answer_q1(catalog: AcquisitionCatalog) -> dict[str, object]:
         else:
             ready.append((row, key, *pair))
     # Group by acquisition pair so each stored acquisition is parsed as few times as possible.
-    ready.sort(key=lambda item: (item[2].slot_time, item[3].slot_time, item[1]))
-    rows += [_q1_movement(catalog, *item) for item in ready]
+    ready.sort(key=lambda item: (item[2].slot_time, item[3].slot_time, repr(item[1])))
+    for entry in ready:
+        try:
+            rows.append(_q1_movement(catalog, *entry))
+        except QuestionError as exc:
+            rows.append(entry[0] | {"reason": f"COMPARISON_UNAVAILABLE:{exc}"})
     rows.sort(
         key=lambda row: tuple(
             str(row[name]) for name in ("kickoff_utc", "sport_key", "event_id", "provider_key")
