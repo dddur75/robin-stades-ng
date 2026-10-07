@@ -53,6 +53,7 @@ CONTENT_SECURITY_POLICY = (
     f"default-src 'none'; style-src '{_digest(_STYLE)}'; script-src '{_digest(_SCRIPT)}'; "
     "form-action 'self'; base-uri 'none'; frame-ancestors 'none'"
 )
+_Q1_STATUSES = ("INCLUDED", "EXCLUDED", "PENDING", "OUT_OF_STORE")
 _OPTIONS = (
     "previous",
     "current",
@@ -454,6 +455,8 @@ class QuestionPages:
         payload = self._q1_cache[1]
         wanted = filters.get("status") or None
         strict = filters.get("strict") == "1"
+        if wanted not in (None, *_Q1_STATUSES) or filters.get("strict") not in (None, "", "1"):
+            raise QuestionError("QUERY_INVALID")
         if wanted is None and not strict:
             return payload
         kept = [
@@ -483,7 +486,7 @@ class QuestionPages:
             )
         options = "".join(
             f'<option value="{name}"{" selected" if filters.get("status") == name else ""}>{_label(name) if name else "Tous"}</option>'
-            for name in ("", "INCLUDED", "EXCLUDED", "PENDING", "OUT_OF_STORE")
+            for name in ("", *_Q1_STATUSES)
         )
         checked = " checked" if filters.get("strict") == "1" else ""
         form = (
@@ -549,7 +552,7 @@ class QuestionPages:
                 "La dernière cote observée avant le coup d'envoi n'est pas une cote de clôture. "
                 "Exploration descriptive : aucun edge, aucun conseil de pari, aucune causalité."
             )
-            + f"<p>Stock : {_e(store['acquisition_count'])} acquisitions, de {_time(store['first_slot_start_utc'])} à {_time(store['last_slot_start_utc'])}.</p>"
+            + f"<p>Stock : {_e(store['acquisition_count'])} acquisitions, captures de {_time(store['first_acquired_at_utc'])} à {_time(store['last_acquired_at_utc'])} (bornes des statuts en attente et hors stock).</p>"
             + coverage
             + "<details><summary>Règles déclarées avant calcul</summary>"
             + _table(["Règle", "Valeur"], rules)

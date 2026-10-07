@@ -756,6 +756,11 @@ def _absence(view: CatalogView, key: EventKey, inside: Callable[[datetime], bool
         return "BRANCH_NOT_ADMISSIBLE"
     if any(key in item.events for item in admissible):
         return "H2H_NOT_LISTED"
+    # "Not listed" needs every capture in the window: a failed branch could have listed it.
+    if len(admissible) < len(stored):
+        return "BRANCH_NOT_ADMISSIBLE"
+    if without_branch:
+        return "BRANCH_ABSENT"
     if any(other != key and other[2:] == key[2:] for item in admissible for other in item.events):
         return "LINEAGE_CHANGED"
     return "EVENT_NOT_LISTED"
@@ -823,17 +828,19 @@ def _q1_windows(
         return row | {"status": "PENDING"}, None
     target = kickoff - REFERENCE_OFFSET
     row["reference_target_utc"] = _iso(target)
-    if stored[0] > target - REFERENCE_NEAR:
-        return row | {"status": "OUT_OF_STORE"}, None
 
     # One predicate per window, shared by the candidates and the absence explanation.
     def in_reference(at: datetime) -> bool:
         return abs(at - target) <= REFERENCE_NEAR and at < kickoff
 
     candidates = [(abs(at - target), at, item) for at, item in seen if in_reference(at)]
-    if not candidates:
+    best = min(candidates, key=lambda item: (item[0], item[1])) if candidates else None
+    # Out of store only while a capture before the store could still be nearer the target.
+    if stored[0] > target - REFERENCE_NEAR and (best is None or best[0] > target - stored[0]):
+        return row | {"status": "OUT_OF_STORE"}, None
+    if best is None:
         return row | {"reason": f"REFERENCE_ABSENT:{_absence(view, key, in_reference)}"}, None
-    distance, reference_at, reference = min(candidates, key=lambda item: (item[0], item[1]))
+    distance, reference_at, reference = best
     row |= {
         "reference_run_id": reference.run_id,
         "reference_observed_at_utc": _iso(reference_at),
@@ -974,7 +981,8 @@ def answer_q1(catalog: AcquisitionCatalog) -> dict[str, object]:
     for item in view.acquisitions:
         admissible = {}
         for sport, state in item.sports.items():
-            store_times.append(state.observed_at or item.slot_time)
+            if state.observed_at is not None:
+                store_times.append(state.observed_at)
             if state.admissible and state.observed_at is not None:
                 admissible[sport] = state.observed_at
         for key, event in item.events.items():
@@ -1019,7 +1027,12 @@ def answer_q1(catalog: AcquisitionCatalog) -> dict[str, object]:
         "notice": NOTICE,
         "engine": ENGINE,
         "rules": Q1_RULES,
-        "store": view.store_summary(),
+        # The span that decided PENDING and OUT_OF_STORE, next to the slot-based summary.
+        "store": view.store_summary()
+        | {
+            "first_acquired_at_utc": _iso(min(store_times)) if store_times else None,
+            "last_acquired_at_utc": _iso(max(store_times)) if store_times else None,
+        },
         "summary": summarize_q1(rows),
         "rows": rows,
     }

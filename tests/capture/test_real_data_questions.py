@@ -174,19 +174,29 @@ def _store(
     *,
     incomplete: dict[int, Sequence[str]] | None = None,
     branches: dict[int, Sequence[str]] | None = None,
+    stubs: dict[int, Sequence[str]] | None = None,
 ) -> AtomicExplorerStore:
     """Publish acquisitions the way the collection delivers them, oldest first."""
 
     store = AtomicExplorerStore(tmp_path / "store", clock=lambda: KICKOFF + timedelta(days=3))
     previous: dict[str, object] | None = None
     for run_id, capture, offers in acquisitions:
+        stubbed = tuple((stubs or {}).get(run_id, ()))
         report = _report(
             run_id,
             capture,
             offers,
-            incomplete=(incomplete or {}).get(run_id, ()),
+            incomplete=tuple((incomplete or {}).get(run_id, ())) + stubbed,
             sports=(branches or {}).get(run_id, SPORTS),
         )
+        for branch in report["branches"]:  # type: ignore[attr-defined]
+            if branch["sport_key"] in stubbed:
+                # The collector's _branch_stub: a failed branch with no observed time.
+                branch.update(
+                    capture_time_utc=None,
+                    acquisition_started_at_utc=None,
+                    acquisition_finished_at_utc=None,
+                )
         snapshot = build_dashboard_snapshot(
             report, previous_report=previous, generated_at=capture + timedelta(minutes=1)
         )
@@ -1368,3 +1378,76 @@ def test_q1_absence_windows_use_the_candidates_exact_boundaries(tmp_path: Path) 
     )
     row = _q1_rows(store)[(PROVIDER, "soccer_epl", "event-1")]
     assert (row["status"], row["reason"]) == ("EXCLUDED", "PREMATCH_ABSENT:BRANCH_ABSENT")
+
+
+def test_q1_reference_settled_by_the_first_acquisition_is_not_out_of_store(
+    tmp_path: Path,
+) -> None:
+    books = [row for book in ("a", "b", "c") for row in _book(book, 2.0, 3.4, 3.9)]
+    later = [row for book in ("a", "b", "c") for row in _book(book, 1.9, 3.5, 4.0)]
+    times = [
+        KICKOFF - timedelta(hours=24),
+        KICKOFF - timedelta(hours=1),
+        KICKOFF + timedelta(hours=1),
+    ]
+    store = _store(
+        tmp_path, [(1500, times[0], books), (1501, times[1], later), (1502, times[2], [])]
+    )
+    payload = answer_q1(AcquisitionCatalog(store))
+    row = _q1_rows(store)[(PROVIDER, "soccer_epl", "event-1")]
+    assert (row["status"], row["reference_run_id"], row["reference_class"]) == (
+        "INCLUDED",
+        "1500",
+        "J_MINUS_24H",
+    )
+    assert payload["store"]["first_acquired_at_utc"] == _z(times[0])  # type: ignore[index]
+
+
+def test_q1_store_start_ignores_slot_times_of_failed_branches(tmp_path: Path) -> None:
+    kickoff = KICKOFF + timedelta(hours=1)
+    books = [row for book in ("a", "b", "c") for row in _book(book, 2.0, 3.4, 3.9, kickoff=kickoff)]
+    first = kickoff - timedelta(hours=23, minutes=30)  # 30 min after the reference target
+    store = _store(
+        tmp_path,
+        [
+            (1600, first, books),
+            (1601, kickoff - timedelta(hours=1), books),
+            (1602, kickoff + timedelta(hours=1), []),
+        ],
+        stubs={1600: ("soccer_france_ligue_one",)},
+        # Later runs without that sport avoid the shared engine's known stub defect.
+        branches={1601: ("soccer_epl",), 1602: ("soccer_epl",)},
+    )
+    payload = answer_q1(AcquisitionCatalog(store))
+    row = _q1_rows(store)[(PROVIDER, "soccer_epl", "event-1")]
+    # A capture before the store could be nearer the target than the first stored one.
+    assert row["status"] == "OUT_OF_STORE"
+    assert payload["store"]["first_acquired_at_utc"] == _z(first)  # type: ignore[index]
+
+
+def test_q1_never_claims_not_listed_over_failed_captures(tmp_path: Path) -> None:
+    match = [row for book in ("a", "b", "c") for row in _book(book, 2.0, 3.4, 3.9)]
+    other = [
+        row
+        for book in ("a", "b", "c")
+        for row in _book(book, 1.5, 4.0, 6.0, event="event-2", kickoff=KICKOFF + timedelta(days=2))
+    ]
+    hours = (30, 24, 5, 3, 1)
+    acquisitions = [
+        (1700 + index, KICKOFF - timedelta(hours=value), (match if value >= 24 else []) + other)
+        for index, value in enumerate(hours)
+    ] + [(1705, KICKOFF + timedelta(hours=1), other)]
+    store = _store(
+        tmp_path, acquisitions, incomplete={1702: ("soccer_epl",), 1703: ("soccer_epl",)}
+    )
+    row = _q1_rows(store)[(PROVIDER, "soccer_epl", "event-1")]
+    assert (row["status"], row["reason"]) == ("EXCLUDED", "PREMATCH_ABSENT:BRANCH_NOT_ADMISSIBLE")
+
+
+def test_q1_web_filters_refuse_unknown_values(tmp_path: Path) -> None:
+    pages = QuestionPages(AcquisitionCatalog(_q1_store(tmp_path)))
+    for query in ("status=included", "status=BOGUS", "strict=true", "strict=on"):
+        for path in ("/questions/q1", "/questions/q1.json", "/questions/q1.csv"):
+            status, body, _, _ = pages.respond(path, query)
+            assert status == 400 and b"QUERY_INVALID" in body, (path, query)
+    assert pages.respond("/questions/q1.json", "status=INCLUDED&strict=1")[0] == 200
