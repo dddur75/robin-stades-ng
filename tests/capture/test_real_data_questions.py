@@ -1537,3 +1537,33 @@ def test_q1_never_places_a_failed_branch_with_another_sports_time(tmp_path: Path
     )
     row = _q1_rows(store)[(PROVIDER, "soccer_epl", "event-1")]
     assert row["reason"] == "PREMATCH_ABSENT:CAPTURE_TIME_UNKNOWN"
+
+
+def test_q1_unplaced_runs_take_precedence_over_definite_absences(tmp_path: Path) -> None:
+    kickoff = KICKOFF + timedelta(hours=1)
+    books = [row for book in ("a", "b", "c") for row in _book(book, 2.0, 3.4, 3.9, kickoff=kickoff)]
+    ligue_one = [
+        row
+        for book in ("a", "b", "c")
+        for row in _book(
+            book, 1.5, 4.0, 6.0, event="event-2", sport="soccer_france_ligue_one", kickoff=kickoff
+        )
+    ]
+    only_ligue_one = ("soccer_france_ligue_one",)
+    store = _store(
+        tmp_path,
+        [
+            (2000, kickoff - timedelta(hours=30), books + ligue_one),
+            (2001, kickoff - timedelta(hours=24), books + ligue_one),
+            # A failed run whose slot straddles the 6 h bound: it cannot be placed.
+            (2002, kickoff - timedelta(hours=6, minutes=30), []),
+            # A run wholly inside the window without the EPL branch.
+            (2003, kickoff - timedelta(hours=2, minutes=30), ligue_one),
+            (2004, kickoff + timedelta(hours=1), ligue_one),
+        ],
+        stubs={2002: SPORTS},
+        fresh=(2002, 2003),
+        branches={2003: only_ligue_one, 2004: only_ligue_one},
+    )
+    row = _q1_rows(store)[(PROVIDER, "soccer_epl", "event-1")]
+    assert row["reason"] == "PREMATCH_ABSENT:CAPTURE_TIME_UNKNOWN"

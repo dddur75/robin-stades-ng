@@ -787,23 +787,22 @@ def _absence(view: CatalogView, key: EventKey, window: _Window) -> str:
             without_branch = True
         else:
             stored.append(item)
-    if not stored:
-        # Acquisitions exist in the window but none carries this sport's branch.
-        if without_branch:
-            return "BRANCH_ABSENT"
-        return "CAPTURE_TIME_UNKNOWN" if unplaced else "NO_ACQUISITION_IN_WINDOW"
+    # One precedence for every window:
+    # 1. a positive observation of the match without 1X2 rows;
+    # 2. an acquisition that cannot be placed in or out of the window;
+    # 3. evidence gaps among placed acquisitions (failed, then absent branch);
+    # 4. only on complete evidence, a definite "not listed" or "lineage changed".
     admissible = [item for item in stored if item.sports[key[2]].admissible]
-    if not admissible:
-        return "BRANCH_NOT_ADMISSIBLE"
     if any(key in item.events for item in admissible):
         return "H2H_NOT_LISTED"
-    # "Not listed" needs every capture in the window: a failed branch could have listed it.
+    if unplaced:
+        return "CAPTURE_TIME_UNKNOWN"
     if len(admissible) < len(stored):
         return "BRANCH_NOT_ADMISSIBLE"
     if without_branch:
         return "BRANCH_ABSENT"
-    if unplaced:
-        return "CAPTURE_TIME_UNKNOWN"
+    if not stored:
+        return "NO_ACQUISITION_IN_WINDOW"
     if any(other != key and other[2:] == key[2:] for item in admissible for other in item.events):
         return "LINEAGE_CHANGED"
     return "EVENT_NOT_LISTED"
