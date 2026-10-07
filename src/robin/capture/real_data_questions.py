@@ -554,11 +554,12 @@ def compare_selection(
         books = {
             side: {row.get("bookmaker_key"): row for row in items} for side, items in kept.items()
         }
+        match_key = (*lineage, sport, selection.event_id)
         kickoff = next(
             (
                 _instant(row.get("kickoff_utc"))
                 for row in previous_rows
-                if row.get("event_id") == selection.event_id
+                if event_key(row) == match_key
             ),
             None,
         )
@@ -566,7 +567,7 @@ def compare_selection(
             kickoff is not None
             and after.observed_at is not None
             and after.observed_at >= kickoff
-            and not any(row.get("event_id") == selection.event_id for row in current_rows)
+            and not any(event_key(row) == match_key for row in current_rows)
         )
         for item in _items(comparison["matched_offers"]):
             book = item.get("bookmaker_key")
@@ -794,10 +795,10 @@ Q1_FIELDS = (
 def _q1_windows(
     view: CatalogView,
     key: EventKey,
+    latest: EventState,
     seen: list[tuple[datetime, Acquisition]],
     stored: tuple[datetime, datetime],
 ) -> tuple[dict[str, object], tuple[Acquisition, Acquisition] | None]:
-    latest = seen[-1][1].events[key]
     kickoff = latest.kickoff
     row: dict[str, object] = dict.fromkeys(Q1_FIELDS)
     row |= {"provider_key": key[0], "settlement_period_key": key[1]}
@@ -957,6 +958,8 @@ def answer_q1(catalog: AcquisitionCatalog) -> dict[str, object]:
     """Follow each stored match's favourite between the declared Q1 windows."""
 
     view = catalog.view()
+    # Every listed match gets a row, so an unusable branch is reported, never dropped.
+    listed: dict[EventKey, list[Acquisition]] = defaultdict(list)
     seen: dict[EventKey, list[tuple[datetime, Acquisition]]] = defaultdict(list)
     sport_times: dict[str, list[datetime]] = defaultdict(list)
     for item in view.acquisitions:
@@ -966,14 +969,19 @@ def answer_q1(catalog: AcquisitionCatalog) -> dict[str, object]:
             if state.admissible and state.observed_at is not None:
                 admissible[sport] = state.observed_at
         for key, event in item.events.items():
-            if key[2] in admissible and event.h2h_outcomes:
+            if not event.h2h_outcomes:
+                continue
+            listed[key].append(item)
+            if key[2] in admissible:
                 seen[key].append((admissible[key[2]], item))
     rows = []
     ready: list[tuple[dict[str, object], EventKey, Acquisition, Acquisition]] = []
-    for key, values in seen.items():
-        values.sort(key=lambda pair: (pair[0], pair[1].run_id))
+    for key, listings in listed.items():
+        values = sorted(seen.get(key, []), key=lambda pair: (pair[0], pair[1].run_id))
+        # Kickoff and teams come from an admissible observation whenever there is one.
+        latest = (values[-1][1] if values else listings[-1]).events[key]
         times = sport_times[key[2]]
-        row, pair = _q1_windows(view, key, values, (min(times), max(times)))
+        row, pair = _q1_windows(view, key, latest, values, (min(times), max(times)))
         if pair is None:
             rows.append(row)
         else:

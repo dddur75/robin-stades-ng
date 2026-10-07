@@ -1096,3 +1096,71 @@ def test_q1_filtered_exports_carry_their_own_summary_and_cli_refuses_bad_inputs(
     assert runner.main(["--root", str(typo), "--question", "q1", "--format", "csv"]) == 2
     assert "LOCAL_STORE_UNAVAILABLE" in capsys.readouterr().err
     assert not typo.exists()
+
+
+def test_q1_reports_matches_seen_only_on_inadmissible_branches(tmp_path: Path) -> None:
+    def offers(capture: datetime) -> list[dict[str, object]]:
+        healthy = [row for book in ("a", "b", "c") for row in _book(book, 2.0, 3.4, 3.9)]
+        split = [
+            row
+            | {"capture_time_utc": _z(capture.replace(microsecond=0) + timedelta(minutes=index))}
+            for index, row in enumerate(
+                _book("a", 1.8, 3.6, 4.4, event="event-2", sport="soccer_france_ligue_one")
+            )
+        ]
+        return healthy + split
+
+    times = [KICKOFF - timedelta(hours=hours) for hours in (30, 24, 1)] + [
+        KICKOFF + timedelta(hours=1)
+    ]
+    store = _store(tmp_path, [(901 + index, at, offers(at)) for index, at in enumerate(times)])
+    payload = answer_q1(AcquisitionCatalog(store))
+    rows = _q1_rows(store)
+
+    assert rows[(PROVIDER, "soccer_epl", "event-1")]["status"] == "INCLUDED"
+    hidden = rows[(PROVIDER, "soccer_france_ligue_one", "event-2")]
+    assert (hidden["status"], hidden["reason"]) == (
+        "EXCLUDED",
+        "REFERENCE_ABSENT:BRANCH_NOT_ADMISSIBLE",
+    )
+    assert payload["summary"]["match_count"] == 2  # type: ignore[index]
+
+
+def test_q3_started_match_uses_the_exact_selected_lineage(tmp_path: Path) -> None:
+    other = {"provider": None, "period": None, "kickoff": KICKOFF - timedelta(days=2)}
+    store = _store(
+        tmp_path,
+        [
+            (
+                101,
+                KICKOFF - timedelta(hours=1),
+                _book("x", 1.5, 4.0, 6.0, **other) + _book("a", 2.0, 3.4, 3.9),
+            ),
+            (102, KICKOFF + timedelta(hours=1), _book("x", 1.6, 4.0, 5.5, **other)),
+        ],
+    )
+    payload = _q3(
+        store,
+        previous="101",
+        current="102",
+        event="event-1",
+        market="h2h",
+        outcome="Arsenal",
+        provider=PROVIDER,
+        period=PERIOD,
+    )
+    assert _statuses(payload) == {"a": "EVENT_STARTED_BEFORE_CURRENT"}
+
+
+def test_runner_question_mode_never_completes_a_partial_store(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    import scripts.run_real_data_explorer as runner
+
+    store = _pair_store(tmp_path / "source")
+    copy = tmp_path / "copy"
+    shutil.copytree(store.versions, copy / "versions")
+
+    assert runner.main(["--root", str(copy), "--question", "acquisitions"]) == 2
+    assert "LOCAL_STORE_UNAVAILABLE" in capsys.readouterr().err
+    assert sorted(path.name for path in copy.iterdir()) == ["versions"]
