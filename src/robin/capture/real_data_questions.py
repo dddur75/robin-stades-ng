@@ -221,20 +221,21 @@ def _sport_states(snapshot: Row, rows: Sequence[Row]) -> dict[str, SportState]:
 
 
 def _event_states(rows: Sequence[Row]) -> dict[EventKey, EventState]:
-    matches: dict[EventKey, str] = {}
+    matches: dict[EventKey, set[str]] = defaultdict(set)
     kickoffs: dict[EventKey, set[datetime | None]] = defaultdict(set)
     outcomes: dict[EventKey, set[str]] = defaultdict(set)
     for row in rows:
         key = event_key(row)
         if key is None:
             continue
-        matches.setdefault(key, str(row.get("match") or key[3]))
+        matches[key].add(str(row.get("match") or key[3]))
         kickoffs[key].add(_instant(row.get("kickoff_utc")))
         if row.get("market_key") == "h2h" and isinstance(row.get("outcome"), str):
             outcomes[key].add(str(row["outcome"]))
     return {
         key: EventState(
-            match=match,
+            # Every stored label is kept, in a fixed order, so row order never picks one.
+            match=" / ".join(sorted(match)),
             kickoff=next(iter(kickoffs[key])) if len(kickoffs[key]) == 1 else None,
             h2h_outcomes=frozenset(outcomes[key]),
         )
@@ -396,10 +397,12 @@ class Selection:
     point: float | None
     provider_key: str | None
     settlement_period_key: str | None
+    sport_key: str
 
     def matches(self, row: Row) -> bool:
         return (
             row.get("event_id") == self.event_id
+            and row.get("sport_key") == self.sport_key
             and row.get("market_key") == self.market_key
             and row.get("outcome") == self.outcome
             and _same_point(row.get("point"), self.point)
@@ -419,7 +422,7 @@ def _bounded_text(value: str | None, code: str) -> str:
 def resolve_selection(
     options: Mapping[str, str | None], previous_rows: Sequence[Row], current_rows: Sequence[Row]
 ) -> Selection:
-    """Resolve an exact selection; an omitted provider or period must be unique in the data."""
+    """Resolve an exact selection; an omitted sport, provider or period must be unique."""
 
     event = _bounded_text(options.get("event"), "SELECTION_EVENT_INVALID")
     market = options.get("market")
@@ -434,20 +437,20 @@ def resolve_selection(
         point = float(point_text) if _POINT_TEXT.fullmatch(point_text) else 0.0
         if not 0 < point <= 100:
             raise QuestionError("SELECTION_POINT_INVALID")
-    lineages = {
-        (row.get("provider_key"), row.get("settlement_period_key"))
+    candidates = {
+        (row.get("sport_key"), row.get("provider_key"), row.get("settlement_period_key"))
         for row in (*previous_rows, *current_rows)
         if row.get("event_id") == event
         and row.get("market_key") == market
         and row.get("outcome") == outcome
         and _same_point(row.get("point"), point)
     }
-    for position, name in enumerate(("provider", "period")):
+    for position, name in enumerate(("sport", "provider", "period")):
         if name in options:
-            lineages = {item for item in lineages if item[position] == (options[name] or None)}
-    if len(lineages) != 1:
-        raise QuestionError("SELECTION_AMBIGUOUS" if lineages else "SELECTION_NOT_FOUND")
-    provider, period = next(iter(lineages))
+            candidates = {item for item in candidates if item[position] == (options[name] or None)}
+    if len(candidates) != 1:
+        raise QuestionError("SELECTION_AMBIGUOUS" if candidates else "SELECTION_NOT_FOUND")
+    sport, provider, period = next(iter(candidates))
     return Selection(
         event,
         str(market),
@@ -455,6 +458,7 @@ def resolve_selection(
         point,
         provider if isinstance(provider, str) else None,
         period if isinstance(period, str) else None,
+        str(sport),
     )
 
 
@@ -524,7 +528,7 @@ def compare_selection(
         row
         for row in (*previous_rows, *current_rows)
         if (key := event_key(row)) is not None
-        and key[3] == selection.event_id
+        and key[2:] == (selection.sport_key, selection.event_id)
         and key[:2] == lineage
     ]
     sports = {str(row.get("sport_key")) for row in in_event}
@@ -630,7 +634,9 @@ def compare_selection(
         "selection": {
             "event_id": selection.event_id,
             "sport_key": sport,
-            "match": str(in_event[0].get("match") or selection.event_id),
+            "match": " / ".join(
+                sorted({str(row.get("match") or selection.event_id) for row in in_event})
+            ),
             "market_key": selection.market_key,
             "outcome": selection.outcome,
             "point": selection.point,
@@ -685,6 +691,7 @@ def list_selections(
             if row.get("event_id") == event_id and row.get("market_key") in _MARKETS:
                 point = None if row.get("point") is None else _number(row.get("point"))
                 key = (
+                    row.get("sport_key"),
                     row.get("market_key"),
                     point,
                     row.get("outcome"),
@@ -695,11 +702,12 @@ def list_selections(
     ordered = sorted(books.items(), key=lambda pair: tuple(repr(part) for part in pair[0]))
     return [
         {
-            "market_key": key[0],
-            "point": key[1],
-            "outcome": key[2],
-            "provider_key": key[3],
-            "settlement_period_key": key[4],
+            "sport_key": key[0],
+            "market_key": key[1],
+            "point": key[2],
+            "outcome": key[3],
+            "provider_key": key[4],
+            "settlement_period_key": key[5],
             "previous_bookmakers": len(sides[0]),
             "current_bookmakers": len(sides[1]),
         }
@@ -737,6 +745,8 @@ def _absence(
     admissible = [item for item in stored if item.sports[key[2]].admissible]
     if not admissible:
         return "BRANCH_NOT_ADMISSIBLE"
+    if any(key in item.events for item in admissible):
+        return "H2H_NOT_LISTED"
     if any(other != key and other[2:] == key[2:] for item in admissible for other in item.events):
         return "LINEAGE_CHANGED"
     return "EVENT_NOT_LISTED"
@@ -870,7 +880,7 @@ def _q1_movement(
     if favourite is None:
         return row | {"reason": refusal}
     row["favourite_outcome"] = favourite
-    selection = Selection(key[3], "h2h", favourite, None, key[0], key[1])
+    selection = Selection(key[3], "h2h", favourite, None, key[0], key[1], key[2])
     # Restrict both sides to this exact match key (sport included) before the shared engine.
     same = [row for row in reference_rows if event_key(row) == key]
     later = [row for row in catalog.rows(prematch) if event_key(row) == key]
@@ -947,8 +957,11 @@ def answer_q1(catalog: AcquisitionCatalog) -> dict[str, object]:
     """Follow each stored match's favourite between the declared Q1 windows."""
 
     view = catalog.view()
-    # Every listed match gets a row, so an unusable branch is reported, never dropped.
+    # Every listed match gets a row, so an unusable branch or market is reported, never dropped.
     listed: dict[EventKey, list[Acquisition]] = defaultdict(list)
+    # Kickoff and teams: latest admissible listing in any market (Q1_RULES).
+    anchors: dict[EventKey, list[tuple[datetime, Acquisition]]] = defaultdict(list)
+    # Reference and last-prematch candidates: admissible listings with 1X2 rows.
     seen: dict[EventKey, list[tuple[datetime, Acquisition]]] = defaultdict(list)
     sport_times: dict[str, list[datetime]] = defaultdict(list)
     for item in view.acquisitions:
@@ -958,17 +971,17 @@ def answer_q1(catalog: AcquisitionCatalog) -> dict[str, object]:
             if state.admissible and state.observed_at is not None:
                 admissible[sport] = state.observed_at
         for key, event in item.events.items():
-            if not event.h2h_outcomes:
-                continue
             listed[key].append(item)
             if key[2] in admissible:
-                seen[key].append((admissible[key[2]], item))
+                anchors[key].append((admissible[key[2]], item))
+                if event.h2h_outcomes:
+                    seen[key].append((admissible[key[2]], item))
     rows = []
     ready: list[tuple[dict[str, object], EventKey, Acquisition, Acquisition]] = []
     for key, listings in listed.items():
         values = sorted(seen.get(key, []), key=lambda pair: (pair[0], pair[1].run_id))
-        # Kickoff and teams come from an admissible observation whenever there is one.
-        latest = (values[-1][1] if values else listings[-1]).events[key]
+        anchored = sorted(anchors.get(key, []), key=lambda pair: (pair[0], pair[1].run_id))
+        latest = (anchored[-1][1] if anchored else listings[-1]).events[key]
         times = sport_times[key[2]]
         row, pair = _q1_windows(view, key, latest, values, (min(times), max(times)))
         if pair is None:
@@ -984,7 +997,14 @@ def answer_q1(catalog: AcquisitionCatalog) -> dict[str, object]:
             rows.append(entry[0] | {"reason": f"COMPARISON_UNAVAILABLE:{exc}"})
     rows.sort(
         key=lambda row: tuple(
-            str(row[name]) for name in ("kickoff_utc", "sport_key", "event_id", "provider_key")
+            repr(row[name])
+            for name in (
+                "kickoff_utc",
+                "sport_key",
+                "event_id",
+                "provider_key",
+                "settlement_period_key",
+            )
         )
     )
     return {
@@ -1000,7 +1020,7 @@ def answer_q1(catalog: AcquisitionCatalog) -> dict[str, object]:
 
 
 Q3_FIELDS = (
-    "previous_run_id current_run_id event_id match market_key outcome point "
+    "previous_run_id current_run_id event_id sport_key match market_key outcome point "
     "settlement_period_key provider_key status reason side bookmaker_key bookmaker "
     "previous_price previous_capture_time_utc previous_source_timestamp_utc current_price "
     "current_capture_time_utc current_source_timestamp_utc delta other_points_observed"
@@ -1035,7 +1055,7 @@ def to_csv_bytes(payload: Mapping[str, object]) -> bytes:
         acquisitions = payload.get("acquisitions")
         if not isinstance(selection, dict) or not isinstance(acquisitions, dict):
             raise QuestionError("EXPORT_PAYLOAD_INVALID")
-        shared = {name: selection.get(name) for name in Q3_FIELDS[2:9]}
+        shared = {name: selection.get(name) for name in Q3_FIELDS[2:10]}
         shared |= {
             f"{side}_run_id": acquisitions[side]["run_id"] for side in ("previous", "current")
         }

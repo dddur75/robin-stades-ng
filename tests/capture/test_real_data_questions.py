@@ -1195,3 +1195,129 @@ def test_q3_never_labels_a_match_started_from_conflicting_kickoffs(tmp_path: Pat
         )
         assert _statuses(payload) == {"a": "NOT_OBSERVED", "b": "NOT_OBSERVED"}
         assert payload["kickoff"]["previous_kickoff_utc"] == [_z(KICKOFF), _z(late)]  # type: ignore[index]
+
+
+def _totals(book: str, **kwargs: object) -> list[dict[str, object]]:
+    return [
+        _offer(book, "Over", 1.9, market="totals", point=2.5, **kwargs),  # type: ignore[arg-type]
+        _offer(book, "Under", 1.95, market="totals", point=2.5, **kwargs),  # type: ignore[arg-type]
+    ]
+
+
+def test_q1_kickoff_follows_the_latest_admissible_listing_in_any_market(tmp_path: Path) -> None:
+    def full(**kwargs: object) -> list[dict[str, object]]:
+        return [
+            row
+            for book in ("a", "b", "c")
+            for row in (*_book(book, 2.0, 3.4, 3.9, **kwargs), *_totals(book, **kwargs))
+        ]
+
+    later = KICKOFF + timedelta(hours=3)
+    other = {"event": "event-2", "kickoff": KICKOFF + timedelta(days=2)}
+    store = _store(
+        tmp_path,
+        [
+            (201, KICKOFF - timedelta(hours=30), full()),
+            (202, KICKOFF - timedelta(hours=24), full()),
+            (203, KICKOFF - timedelta(hours=1), full()),
+            # The match is postponed; this admissible acquisition lists it in totals only.
+            (204, KICKOFF + timedelta(hours=1), _totals("a", kickoff=later) + full(**other)),
+            (205, KICKOFF + timedelta(hours=5), full(**other)),
+        ],
+    )
+    row = _q1_rows(store)[(PROVIDER, "soccer_epl", "event-1")]
+    assert (row["kickoff_utc"], row["status"], row["reason"]) == (
+        _z(later),
+        "EXCLUDED",
+        "KICKOFF_CHANGED",
+    )
+
+
+def test_q1_reports_matches_listed_without_1x2_rows(tmp_path: Path) -> None:
+    books = [row for book in ("a", "b", "c") for row in _book(book, 2.0, 3.4, 3.9)]
+    totals_only = [row for book in ("a", "b") for row in _totals(book, event="event-9")]
+    store = _store(
+        tmp_path / "gap",
+        [
+            (1100, KICKOFF - timedelta(hours=30), books + totals_only),
+            (1101, KICKOFF - timedelta(hours=24), books + totals_only),
+            (1102, KICKOFF - timedelta(hours=1), _totals("a") + totals_only),
+            (1104, KICKOFF + timedelta(hours=2), []),
+        ],
+    )
+    payload = answer_q1(AcquisitionCatalog(store))
+    rows = _q1_rows(store)
+    assert rows[(PROVIDER, "soccer_epl", "event-1")]["reason"] == "PREMATCH_ABSENT:H2H_NOT_LISTED"
+    assert rows[(PROVIDER, "soccer_epl", "event-9")]["reason"] == "REFERENCE_ABSENT:H2H_NOT_LISTED"
+    assert payload["summary"]["match_count"] == 2  # type: ignore[index]
+
+
+def test_match_labels_and_q1_order_never_depend_on_row_order(tmp_path: Path) -> None:
+    swapped = "Leeds United — Arsenal"
+
+    def offers() -> list[dict[str, object]]:
+        return [
+            *_book("a", 2.0, 3.4, 3.9),
+            *_book("b", 2.0, 3.4, 3.9, match=swapped),
+            *_book("c", 2.0, 3.4, 3.9, match=swapped),
+            *_book("a", 1.5, 4.0, 6.0, event="event-3", period="FIRST_HALF"),
+            *_book("a", 1.5, 4.0, 6.0, event="event-3"),
+        ]
+
+    answers = []
+    for name, order in (("forward", 1), ("reverse", -1)):
+        store = _store(
+            tmp_path / name,
+            [
+                (301, KICKOFF - timedelta(hours=30), offers()[::order]),
+                (302, KICKOFF - timedelta(hours=24), offers()[::order]),
+                (303, KICKOFF - timedelta(hours=1), offers()[::order]),
+                (304, KICKOFF + timedelta(hours=1), []),
+            ],
+        )
+        q1 = answer_q1(AcquisitionCatalog(store))["rows"]
+        q3 = _q3(
+            store, previous="302", current="303", event="event-1", market="h2h", outcome="Arsenal"
+        )
+        answers.append((q1, q3["selection"], q3["rows"]))
+    assert answers[0] == answers[1]
+    rows = {row["event_id"]: row for row in answers[0][0]}  # type: ignore[union-attr]
+    assert rows["event-1"]["match"] == f"Arsenal — Leeds United / {swapped}"
+
+
+def test_q3_selection_names_the_sport_and_q1_links_carry_it(tmp_path: Path) -> None:
+    from robin.capture.real_data_questions import list_selections
+
+    books = [row for book in ("a", "b", "c") for row in _book(book, 2.0, 3.4, 3.9)]
+    stray = [_offer("z", "Arsenal", 2.2, sport="soccer_france_ligue_one")]
+    store = _store(
+        tmp_path,
+        [
+            (711, KICKOFF - timedelta(hours=30), books),
+            (712, KICKOFF - timedelta(hours=24), books + stray),
+            (713, KICKOFF - timedelta(hours=1), books),
+            (714, KICKOFF + timedelta(hours=1), []),
+        ],
+    )
+    catalog = AcquisitionCatalog(store)
+    view = catalog.view()
+    previous, current = view.by_run("712"), view.by_run("713")
+    listed = list_selections(catalog.rows(previous), catalog.rows(current), "event-1")
+    arsenal = [item for item in listed if item["outcome"] == "Arsenal"]
+    assert [(item["sport_key"], item["previous_bookmakers"]) for item in arsenal] == [
+        ("soccer_epl", 3),
+        ("soccer_france_ligue_one", 1),
+    ]
+    request = {"previous": "712", "current": "713", "event": "event-1", "market": "h2h"}
+    with pytest.raises(QuestionError, match="SELECTION_AMBIGUOUS"):
+        _q3(store, **request, outcome="Arsenal")
+    payload = _q3(store, **request, outcome="Arsenal", sport="soccer_epl")
+    assert payload["selection"]["sport_key"] == "soccer_epl"  # type: ignore[index]
+    assert set(_statuses(payload)) == {"a", "b", "c"}
+    assert (
+        to_csv_bytes(payload)
+        .splitlines()[0]
+        .startswith(b"previous_run_id,current_run_id,event_id,sport_key,")
+    )
+    page = QuestionPages(catalog).respond("/questions/q1", "")[1].decode()
+    assert "sport=soccer_epl" in page

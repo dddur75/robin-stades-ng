@@ -1112,8 +1112,8 @@ immédiats jusqu'à la prochaine acquisition. Le nouveau code n'est actif sur le
 PC qu'après la réinstallation décrite ci-dessus.
 
 - **Q3**, `/questions/q3` : choisir l'acquisition de référence (la plus ancienne)
-  et l'acquisition comparée, puis le match, puis la sélection exacte (marché,
-  issue, seuil, période, fournisseur). Le tableau donne pour chaque bookmaker les
+  et l'acquisition comparée, puis le match, puis la sélection exacte (ligue,
+  marché, issue, seuil, période, fournisseur). Le tableau donne pour chaque bookmaker les
   deux cotes, leurs heures de capture et de source, l'écart et le statut :
   hausse, baisse, inchangée, apparue ou non observée (cause non attestée), match
   commencé avant l'acquisition comparée, ou exclue avec son motif (doublon, prix
@@ -1131,7 +1131,9 @@ PC qu'après la réinstallation décrite ci-dessus.
   « observations » ouvre la paire justificative dans Q3.
 - Commande équivalente, sans serveur ni GitHub :
   `python scripts/run_real_data_explorer.py --root <stock> --question q3 --previous <run> --current <run> --event <id> --market h2h --outcome <issue> --format csv --output q3.csv`,
-  ou `--question q1`, ou `--question acquisitions`. Le code 2 signale un refus
+  ou `--question q1`, ou `--question acquisitions`. `--sport`, `--provider` et
+  `--period` sont facultatifs s'ils sont uniques dans les deux acquisitions.
+  Le code 2 signale un refus
   explicite (`Q3_ORDER_INVALID`, `SELECTION_AMBIGUOUS`, `SELECTION_NOT_FOUND`…).
 - Q2 (titulaire attendu absent) reste non observable avec les données actuelles.
 

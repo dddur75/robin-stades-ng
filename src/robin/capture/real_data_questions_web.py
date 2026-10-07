@@ -53,7 +53,17 @@ CONTENT_SECURITY_POLICY = (
     f"default-src 'none'; style-src '{_digest(_STYLE)}'; script-src '{_digest(_SCRIPT)}'; "
     "form-action 'self'; base-uri 'none'; frame-ancestors 'none'"
 )
-_OPTIONS = ("previous", "current", "event", "market", "outcome", "point", "period", "provider")
+_OPTIONS = (
+    "previous",
+    "current",
+    "event",
+    "sport",
+    "market",
+    "outcome",
+    "point",
+    "period",
+    "provider",
+)
 _LABELS = {
     "UP": "Hausse",
     "DOWN": "Baisse",
@@ -283,7 +293,7 @@ class QuestionPages:
                     _time(state.kickoff.isoformat() if state.kickoff else None),
                     _e(key[2]),
                     f"<bdi>{_e(state.match)}</bdi>",
-                    _link("/questions/q3", pair | {"event": key[3]}, "choisir"),
+                    _link("/questions/q3", pair | {"event": key[3], "sport": key[2]}, "choisir"),
                 ]
                 for key, state in sorted(
                     events.items(), key=lambda pair_: (str(pair_[1].kickoff), pair_[1].match)
@@ -299,6 +309,7 @@ class QuestionPages:
         if "market" not in options or "outcome" not in options:
             rows = [
                 [
+                    _e(item["sport_key"]),
                     _e(item["market_key"]),
                     f"<bdi>{_e(item['outcome'])}</bdi>",
                     _e(item["point"]),
@@ -311,6 +322,7 @@ class QuestionPages:
                         pair
                         | {
                             "event": options["event"],
+                            "sport": item["sport_key"],
                             "market": item["market_key"],
                             "outcome": item["outcome"],
                             "point": item["point"],
@@ -321,8 +333,10 @@ class QuestionPages:
                     ),
                 ]
                 for item in list_selections(previous_rows, current_rows, options["event"])
+                if options.get("sport") in (None, item["sport_key"])
             ]
             headers = [
+                "Ligue",
                 "Marché",
                 "Issue",
                 "Seuil",
@@ -344,6 +358,7 @@ class QuestionPages:
             "previous": acquisitions["previous"]["run_id"],
             "current": acquisitions["current"]["run_id"],
             "event": selection["event_id"],
+            "sport": selection["sport_key"],
             "market": selection["market_key"],
             "outcome": selection["outcome"],
             "point": selection["point"],
@@ -485,6 +500,7 @@ class QuestionPages:
                         "previous": row["reference_run_id"],
                         "current": row["last_prematch_run_id"],
                         "event": row["event_id"],
+                        "sport": row["sport_key"],
                         "market": "h2h",
                         "outcome": row["favourite_outcome"],
                         "period": row["settlement_period_key"],

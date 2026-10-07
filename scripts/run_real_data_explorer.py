@@ -21,6 +21,7 @@ QUESTION_OPTIONS = (
     "previous",
     "current",
     "event",
+    "sport",
     "market",
     "outcome",
     "point",
