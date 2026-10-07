@@ -555,14 +555,9 @@ def compare_selection(
         books = {
             side: {row.get("bookmaker_key"): row for row in items} for side, items in kept.items()
         }
-        kickoff = next(
-            (
-                _instant(row.get("kickoff_utc"))
-                for row in previous_rows
-                if event_key(row) == match_key
-            ),
-            None,
-        )
+        # Same rule as Q1: a kickoff counts only when the stored rows agree on one value.
+        listed = previous.events.get(match_key)
+        kickoff = listed.kickoff if listed is not None else None
         started = (
             kickoff is not None
             and after.observed_at is not None

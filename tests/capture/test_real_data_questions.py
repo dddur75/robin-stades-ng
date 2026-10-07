@@ -1169,3 +1169,29 @@ def test_runner_question_mode_never_completes_a_partial_store(
     assert runner.main(["--root", str(copy), "--question", "acquisitions"]) == 2
     assert "LOCAL_STORE_UNAVAILABLE" in capsys.readouterr().err
     assert sorted(path.name for path in copy.iterdir()) == ["versions"]
+
+
+def test_q3_never_labels_a_match_started_from_conflicting_kickoffs(tmp_path: Path) -> None:
+    late = KICKOFF + timedelta(hours=2)
+    for name, first, second in (("early-first", KICKOFF, late), ("late-first", late, KICKOFF)):
+        store = _store(
+            tmp_path / name,
+            [
+                (
+                    101,
+                    KICKOFF - timedelta(hours=1),
+                    _book("a", 2.0, 3.4, 3.9, kickoff=first)
+                    + _book("b", 2.0, 3.4, 3.9, kickoff=second),
+                ),
+                (
+                    102,
+                    KICKOFF + timedelta(hours=1),
+                    _book("x", 1.6, 4.0, 5.5, event="event-2", kickoff=KICKOFF + timedelta(days=1)),
+                ),
+            ],
+        )
+        payload = _q3(
+            store, previous="101", current="102", event="event-1", market="h2h", outcome="Arsenal"
+        )
+        assert _statuses(payload) == {"a": "NOT_OBSERVED", "b": "NOT_OBSERVED"}
+        assert payload["kickoff"]["previous_kickoff_utc"] == [_z(KICKOFF), _z(late)]  # type: ignore[index]
