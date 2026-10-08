@@ -1,6 +1,11 @@
 from __future__ import annotations
 
+import json
+from copy import deepcopy
 from datetime import UTC, datetime, timedelta
+from pathlib import Path
+
+import pytest
 
 from robin.capture.real_data_dashboard import (
     build_dashboard_snapshot,
@@ -8,7 +13,7 @@ from robin.capture.real_data_dashboard import (
     compare_acquisitions,
     render_dashboard_html,
 )
-from robin.capture.recurring_real_data import RECURRING_CLAIM_IDS, SEED_CLAIM_IDS
+from robin.capture.recurring_real_data import RECURRING_CLAIM_IDS, SEED_CLAIM_IDS, _branch_stub
 
 NOW = datetime(2026, 10, 4, 13, 0, tzinfo=UTC)
 
@@ -1024,3 +1029,195 @@ def test_partial_incident_and_empty_filter_state_are_visible() -> None:
     assert "Aucune observation ne correspond aux filtres" in html
     assert "Panne de collecte" in html
     assert "Marché absent" in html
+
+
+_FAILURE_DIAGNOSTIC = {
+    "stage": "PROVIDER_ACCESS",
+    "code": "LIVE_PROVIDER_FAILURE",
+    "exception_class": "RecurringError",
+}
+
+
+def _two_league_report(*, capture: datetime, failed: bool) -> dict[str, object]:
+    healthy = _row(capture=capture)
+    report = _report(rows=[healthy], capture=capture)
+    branches = report["branches"]
+    assert isinstance(branches, list)
+    branches[0].update(provider_key="the_odds_api", settlement_period_key="full_time")
+    if failed:
+        branch = _branch_stub("soccer_spain_la_liga", source="LIVE", diagnostic=_FAILURE_DIAGNOSTIC)
+        report.update(status="REAL_DATA_PARTIAL", incomplete_branch_count=1)
+    else:
+        branch = dict(branches[0], sport_key="soccer_spain_la_liga")
+        rows = report["rows"]
+        assert isinstance(rows, list)
+        rows.append(_row(sport="soccer_spain_la_liga", capture=capture))
+    branches.append(branch)
+    return report
+
+
+@pytest.mark.parametrize(
+    "current_failed,previous_failed", [(True, False), (False, True), (True, True)]
+)
+def test_failed_branch_without_capture_time_is_reported_never_compared(
+    current_failed: bool, previous_failed: bool
+) -> None:
+    current = _two_league_report(capture=NOW, failed=current_failed)
+    previous = _two_league_report(capture=NOW - timedelta(hours=2), failed=previous_failed)
+    snapshot = build_dashboard_snapshot(current, previous_report=previous, generated_at=NOW)
+    movement = snapshot["price_movement"]
+    assert movement["matched_offer_count"] == 1
+    assert movement["appeared_offer_count"] == movement["not_observed_offer_count"] == 0
+    assert movement["exclusion_reason_counts"] == (
+        {} if current_failed and previous_failed else {"BRANCH_NOT_COMPARABLE": 1}
+    )
+    for failed, report in ((current_failed, current), (previous_failed, previous)):
+        if not failed:
+            continue
+        failed_snapshot = build_dashboard_snapshot(report, previous_report=None, generated_at=NOW)
+        assert failed_snapshot["collection_health"] == "PARTIAL"
+        assert failed_snapshot["summary"]["incomplete_branch_count"] == 1
+        assert failed_snapshot["incidents"] == [
+            dict(_FAILURE_DIAGNOSTIC, sport_key="soccer_spain_la_liga")
+        ]
+        branch = next(
+            b for b in failed_snapshot["branch_lineage"] if b["sport_key"] == "soccer_spain_la_liga"
+        )
+        assert branch["capture_time_utc"] is None
+
+
+@pytest.mark.parametrize(
+    "current_failed,previous_failed", [(True, False), (False, True), (True, True)]
+)
+def test_failed_branch_without_time_is_compared_like_a_failed_branch_with_time(
+    current_failed: bool, previous_failed: bool
+) -> None:
+    current = _two_league_report(capture=NOW, failed=current_failed)
+    previous = _two_league_report(capture=NOW - timedelta(hours=2), failed=previous_failed)
+    expected_current, expected_previous = deepcopy(current), deepcopy(previous)
+    for failed, report, capture in (
+        (current_failed, expected_current, NOW),
+        (previous_failed, expected_previous, NOW - timedelta(hours=2)),
+    ):
+        if failed:
+            branch = report["branches"][1]
+            branch["capture_time_utc"] = capture.isoformat().replace("+00:00", "Z")
+            branch["diagnostic"] = dict(_FAILURE_DIAGNOSTIC, code="LIVE_STORAGE_FAILURE")
+    actual = build_dashboard_snapshot(current, previous_report=previous, generated_at=NOW)
+    expected = build_dashboard_snapshot(
+        expected_current, previous_report=expected_previous, generated_at=NOW
+    )
+    assert actual["price_movement"] == expected["price_movement"]
+    assert actual["explorer_rows"] == expected["explorer_rows"]
+
+
+@pytest.mark.parametrize("current_failed", [True, False])
+def test_explorer_snapshot_accepts_a_public_branch_without_capture_time(
+    current_failed: bool,
+) -> None:
+    current = build_dashboard_snapshot(
+        _two_league_report(capture=NOW, failed=current_failed),
+        previous_report=None,
+        generated_at=NOW,
+    )
+    previous = build_dashboard_snapshot(
+        _two_league_report(capture=NOW - timedelta(hours=2), failed=not current_failed),
+        previous_report=None,
+        generated_at=NOW,
+    )
+    snapshot = build_explorer_snapshot(current, previous, generated_at=NOW)
+    assert snapshot["comparison_available"] is True
+    assert snapshot["price_movement"]["matched_offer_count"] == 1
+    assert snapshot["price_movement"]["exclusion_reason_counts"] == {"BRANCH_NOT_COMPARABLE": 1}
+    assert snapshot["price_movement"]["appeared_offer_count"] == 0
+    assert snapshot["price_movement"]["not_observed_offer_count"] == 0
+
+
+@pytest.mark.parametrize("invalid_current", [True, False])
+@pytest.mark.parametrize("unparseable", [None, "not-a-time"])
+def test_unparseable_observation_never_becomes_an_empty_instant_list(
+    invalid_current: bool, unparseable: object
+) -> None:
+    current = [_row(capture=NOW), _row(sport="soccer_spain_la_liga", capture=NOW)]
+    previous = [
+        _row(capture=NOW - timedelta(hours=2)),
+        _row(sport="soccer_spain_la_liga", capture=NOW - timedelta(hours=2)),
+    ]
+    (current if invalid_current else previous)[1]["capture_time_utc"] = unparseable
+    movement = compare_acquisitions(current, previous)
+    assert movement["matched_offer_count"] == 1
+    assert movement["exclusion_reason_counts"] == {"BRANCH_NOT_COMPARABLE": 2}
+    assert movement["appeared_offer_count"] == movement["not_observed_offer_count"] == 0
+
+
+@pytest.mark.parametrize("failed_indices", [(None, 1, 1, 2), (1, None, 2, 1)])
+def test_delivery_survives_a_real_failed_branch_across_consecutive_slots(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, failed_indices: tuple[int | None, ...]
+) -> None:
+    import scripts.run_recurring_real_data as cli
+    from robin.capture.real_data_result import SPORT_KEYS
+    from tests.capture.test_recurring_real_data import (
+        START,
+        FakeSecretReader,
+        FakeStore,
+        FakeTransportFactory,
+        _config,
+        _resolution,
+    )
+    from tests.capture.test_run_recurring_real_data_cli import _github_environment
+
+    _github_environment(monkeypatch)
+    observed = START
+
+    class SlotClock(datetime):
+        @classmethod
+        def now(cls, tz: object = None) -> datetime:
+            return observed
+
+    store = FakeStore()
+    transport = FakeTransportFactory(lambda: observed)
+    monkeypatch.setattr(cli, "datetime", SlotClock)
+    monkeypatch.setattr(cli, "recover_latest_report", lambda *_args, **_kwargs: None)
+    monkeypatch.setattr(cli.ChronosR2ConditionalStore, "from_environment", lambda _env: store)
+    monkeypatch.setattr(cli, "EnvironmentSecretReader", lambda _env: FakeSecretReader())
+    monkeypatch.setattr(cli, "StrictHttpsTransport", lambda **_kwargs: transport(lambda: observed))
+    monkeypatch.setattr(cli, "resolve_provider_once", lambda **_kwargs: _resolution(observed))
+    manifest = _config(tmp_path).manifest_path
+    for index, failed_index in enumerate(failed_indices):
+        observed = START + timedelta(hours=2 * index)
+        transport.failing_sport = SPORT_KEYS[failed_index] if failed_index is not None else None
+        monkeypatch.setenv("GITHUB_RUN_ID", str(424242 + index))
+        output = tmp_path / str(index)
+        output.mkdir()
+        assert (
+            cli.main(
+                [
+                    "--execute",
+                    "ROBIN_AUTONOMOUS_LAB_20261004",
+                    "--manifest",
+                    str(manifest),
+                    "--output-directory",
+                    str(output),
+                ]
+            )
+            == 0
+        )
+        for name in (
+            "robin-real-data.json",
+            "robin-real-data.csv",
+            "robin-real-data.html",
+            "public-receipt.json",
+        ):
+            assert (output / name).stat().st_size > 0
+        snapshot = json.loads((output / "robin-real-data.json").read_bytes())
+        assert snapshot["summary"]["incomplete_branch_count"] == int(failed_index is not None)
+        if failed_index is not None:
+            branch = next(
+                b for b in snapshot["branch_lineage"] if b["sport_key"] == SPORT_KEYS[failed_index]
+            )
+            assert branch["capture_time_utc"] is None
+        if index:
+            assert snapshot["comparison_available"] is True
+            assert snapshot["price_movement"]["matched_offer_count"] > 0
+            assert snapshot["price_movement"]["appeared_offer_count"] == 0
+            assert snapshot["price_movement"]["not_observed_offer_count"] == 0

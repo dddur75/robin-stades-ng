@@ -380,9 +380,11 @@ def _branch_times(
         if not isinstance(sport, str) or not sport:
             continue
         try:
-            result[sport].append(_utc(row.get("capture_time_utc")))
+            instant = _utc(row.get("capture_time_utc"))
         except ValueError:
             invalid.add(sport)
+            continue
+        result[sport].append(instant)
     return result, invalid
 
 
@@ -406,9 +408,11 @@ def _merge_branch_times(
     for sport, values in (branch_observations or {}).items():
         for value in values:
             try:
-                result.setdefault(sport, []).append(_utc(value))
+                instant = _utc(value)
             except ValueError:
                 invalid.add(sport)
+                continue
+            result.setdefault(sport, []).append(instant)
     return result, invalid
 
 
