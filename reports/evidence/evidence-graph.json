@@ -11793,6 +11793,7 @@
     ,{"decision_id":"RCV3-20261007-345","ledger_record_hash":"8a7a7e4895fb0c51b9c60c1c0c371472de8d40474818f358b30071172cc05493"}
     ,{"decision_id":"RCV3-20261008-346","ledger_record_hash":"565c9fb0d32e58d3e9217d3f6d4406546e0fc821779298b34fa7b045ce22c119"}
     ,{"decision_id":"RCV3-20261008-347","ledger_record_hash":"4a686fe50e136102244a4997e567f910c7aa6f1149f37c31934796103695c88f"}
+    ,{"decision_id":"RCV3-20261008-348","ledger_record_hash":"87f5d61111d46600240eb347b554b32695cdb70f9ece2c611bb72690bfb3e103"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -12983,5 +12984,6 @@
     ,{"edge_id":"EDGE.1186","from_claim_id":"DATA.ROBIN.AUTONOMOUS_LAB.RECURRING_VIEW.V1.002","to_decision_id":"RCV3-20261007-345","relation":"SUPPORTS","status":"RECORDED"}
     ,{"edge_id":"EDGE.1187","from_claim_id":"GOV.REVIEW.ROBIN_EXPLORER_Q1_Q3.CODEX_FINDING_TOTALS.V1.001","to_decision_id":"RCV3-20261008-346","relation":"SUPPORTS","status":"RECORDED"}
     ,{"edge_id":"EDGE.1188","from_claim_id":"DATA.ROBIN.SIMPLIFICATION.COMPARISON_ENGINE.V1.011","relation":"SUPPORTS","status":"RECORDED","to_decision_id":"RCV3-20261008-347"}
+    ,{"edge_id":"EDGE.1189","from_claim_id":"DATA.ROBIN.SIMPLIFICATION.COMPARISON_ENGINE.V1.011","relation":"SUPPORTS","status":"RECORDED","to_decision_id":"RCV3-20261008-348"}
   ]
 }
