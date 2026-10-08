@@ -1,0 +1,493 @@
+{
+  "bootstrap": {
+    "actor": "dddur75",
+    "conclusion": "success",
+    "created_at_utc": "2026-10-07T14:15:55Z",
+    "display_title": "robin-collect-bootstrap-4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87-0-0",
+    "event": "workflow_dispatch",
+    "head_branch": "main",
+    "head_sha": "e279124002f67862eec04e11426f8759cad2d1cb",
+    "jobs": [
+      {
+        "completed_at_utc": "2026-10-07T14:16:58Z",
+        "conclusion": "success",
+        "job_id": "112839625203",
+        "name": "bootstrap",
+        "started_at_utc": "2026-10-07T14:16:01Z",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 2
+          },
+          {
+            "conclusion": "success",
+            "name": "Validate provider-free bootstrap and dispatch first automatic relay",
+            "number": 3
+          },
+          {
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 6
+          },
+          {
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 7
+          }
+        ]
+      },
+      {
+        "completed_at_utc": "2026-10-07T14:15:58Z",
+        "conclusion": "skipped",
+        "job_id": "112839627369",
+        "name": "watchdog",
+        "started_at_utc": "2026-10-07T14:15:58Z",
+        "steps": []
+      },
+      {
+        "completed_at_utc": "2026-10-07T14:15:58Z",
+        "conclusion": "skipped",
+        "job_id": "112839627408",
+        "name": "capture",
+        "started_at_utc": "2026-10-07T14:15:58Z",
+        "steps": []
+      },
+      {
+        "completed_at_utc": "2026-10-07T14:15:58Z",
+        "conclusion": "skipped",
+        "job_id": "112839627462",
+        "name": "relay",
+        "started_at_utc": "2026-10-07T14:15:58Z",
+        "steps": []
+      }
+    ],
+    "run_attempt": 1,
+    "run_id": "37635243600",
+    "status": "completed",
+    "triggering_actor": "dddur75",
+    "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/37635243600"
+  },
+  "first_relay": {
+    "actor": "github-actions[bot]",
+    "artifact": {
+      "api_digest": "sha256:f1dcbc9c11961114a9c5c942d815d34ab50fdd5d4f47aac762962d59ea9efcdf",
+      "artifact_id": "11492963893",
+      "created_at_utc": "2026-10-07T15:23:48Z",
+      "downloaded_archive_sha256": "f1dcbc9c11961114a9c5c942d815d34ab50fdd5d4f47aac762962d59ea9efcdf",
+      "expires_at_utc": "2026-11-06T15:23:47Z",
+      "name": "robin-autonomous-lab-37635364344",
+      "size_in_bytes": 1044756
+    },
+    "conclusion": "success",
+    "created_at_utc": "2026-10-07T14:16:48Z",
+    "display_title": "robin-collect-relay-4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87-37635243600-1",
+    "event": "workflow_dispatch",
+    "head_branch": "main",
+    "head_sha": "e279124002f67862eec04e11426f8759cad2d1cb",
+    "jobs": [
+      {
+        "completed_at_utc": "2026-10-07T15:19:52Z",
+        "conclusion": "success",
+        "job_id": "112840039670",
+        "name": "relay",
+        "started_at_utc": "2026-10-07T15:17:18Z",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 2
+          },
+          {
+            "conclusion": "success",
+            "name": "Validate automatic parent and arm successor before collection",
+            "number": 3
+          },
+          {
+            "conclusion": "success",
+            "name": "Publish provider-free relay summary",
+            "number": 4
+          },
+          {
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 8
+          },
+          {
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 9
+          }
+        ]
+      },
+      {
+        "completed_at_utc": "2026-10-07T14:16:50Z",
+        "conclusion": "skipped",
+        "job_id": "112840041586",
+        "name": "watchdog",
+        "started_at_utc": "2026-10-07T14:16:50Z",
+        "steps": []
+      },
+      {
+        "completed_at_utc": "2026-10-07T14:16:50Z",
+        "conclusion": "skipped",
+        "job_id": "112840041769",
+        "name": "bootstrap",
+        "started_at_utc": "2026-10-07T14:16:50Z",
+        "steps": []
+      },
+      {
+        "completed_at_utc": "2026-10-07T15:23:51Z",
+        "conclusion": "success",
+        "job_id": "112866287177",
+        "name": "capture",
+        "started_at_utc": "2026-10-07T15:19:56Z",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 2
+          },
+          {
+            "conclusion": "success",
+            "name": "Verify current authority and retire every prior provider route",
+            "number": 3
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "number": 4
+          },
+          {
+            "conclusion": "success",
+            "name": "Install exact existing runtime dependencies",
+            "number": 5
+          },
+          {
+            "conclusion": "success",
+            "name": "Revalidate documentary continuity immediately before collection",
+            "number": 6
+          },
+          {
+            "conclusion": "success",
+            "name": "Prepare normalized delivery directory",
+            "number": 7
+          },
+          {
+            "conclusion": "success",
+            "name": "Collect one admitted recurring slot",
+            "number": 8
+          },
+          {
+            "conclusion": "success",
+            "name": "Validate normalized delivery and publish run summary",
+            "number": 9
+          },
+          {
+            "conclusion": "success",
+            "name": "Upload consultable normalized table",
+            "number": 10
+          },
+          {
+            "conclusion": "success",
+            "name": "Preserve exact terminal outcome",
+            "number": 11
+          },
+          {
+            "conclusion": "success",
+            "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "number": 21
+          },
+          {
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 22
+          },
+          {
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 23
+          }
+        ]
+      }
+    ],
+    "public_receipt": "reports/evidence/robin-autonomous-lab-run-37635364344-public-receipt.json",
+    "public_receipt_summary": {
+      "incomplete_branch_count": 0,
+      "lifetime_credits": 324,
+      "lifetime_requests": 161,
+      "private_report_r2_status": "VERIFIED",
+      "provider_requests_new": 5,
+      "relay_lineage": {
+        "chain_id": "37635243600",
+        "generation": "4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87",
+        "parent_run_id": "37635243600",
+        "sequence": 1
+      },
+      "replayed_existing_slot": false,
+      "repository_sha": "e279124002f67862eec04e11426f8759cad2d1cb",
+      "rolling_24h_credits": 100,
+      "rolling_24h_requests": 50,
+      "slot_start_utc": "2026-10-07T14:00:00Z",
+      "status": "REAL_DATA_PARTIAL",
+      "validated_capture_count": 5
+    },
+    "run_attempt": 1,
+    "run_id": "37635364344",
+    "status": "completed",
+    "triggering_actor": "github-actions[bot]",
+    "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/37635364344"
+  },
+  "in_flight_relay": {
+    "actor": "github-actions[bot]",
+    "conclusion": "failure",
+    "continuity_validator": {
+      "decision": {
+        "accepted": false,
+        "base_sha": "fa9d59dca537f63707d5601f9cbdfbc90faf1031",
+        "changed_paths": [
+          "RUNBOOK.md",
+          "configs/agents/mission-activation-matrix-v3.json",
+          "reports/council/decision-ledger.jsonl",
+          "reports/evidence/evidence-graph.json",
+          "scripts/run_real_data_explorer.py",
+          "src/robin/capture/real_data_questions.py",
+          "src/robin/capture/real_data_questions_web.py",
+          "tests/capture/test_real_data_questions.py"
+        ],
+        "head_sha": "e279124002f67862eec04e11426f8759cad2d1cb",
+        "reason": "NON_DOCUMENTARY_PATH",
+        "rejected_paths": [
+          "RUNBOOK.md",
+          "configs/agents/mission-activation-matrix-v3.json",
+          "scripts/run_real_data_explorer.py",
+          "src/robin/capture/real_data_questions.py",
+          "src/robin/capture/real_data_questions_web.py"
+        ],
+        "schema_version": "robin-documentary-continuity-v1"
+      },
+      "log_timestamp_utc": "2026-10-07T14:12:15.5641441Z"
+    },
+    "created_at_utc": "2026-10-07T13:08:43Z",
+    "display_title": "robin-collect-relay-4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87-37557395681-12",
+    "event": "workflow_dispatch",
+    "head_branch": "main",
+    "head_sha": "fa9d59dca537f63707d5601f9cbdfbc90faf1031",
+    "jobs": [
+      {
+        "completed_at_utc": "2026-10-07T14:12:18Z",
+        "conclusion": "failure",
+        "job_id": "112809667562",
+        "name": "relay",
+        "started_at_utc": "2026-10-07T14:11:26Z",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 2
+          },
+          {
+            "conclusion": "failure",
+            "name": "Validate automatic parent and arm successor before collection",
+            "number": 3
+          },
+          {
+            "conclusion": "skipped",
+            "name": "Publish provider-free relay summary",
+            "number": 4
+          },
+          {
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 8
+          },
+          {
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 9
+          }
+        ]
+      },
+      {
+        "completed_at_utc": "2026-10-07T13:11:21Z",
+        "conclusion": "skipped",
+        "job_id": "112809669317",
+        "name": "bootstrap",
+        "started_at_utc": "2026-10-07T13:11:22Z",
+        "steps": []
+      },
+      {
+        "completed_at_utc": "2026-10-07T13:11:21Z",
+        "conclusion": "skipped",
+        "job_id": "112809669327",
+        "name": "watchdog",
+        "started_at_utc": "2026-10-07T13:11:22Z",
+        "steps": []
+      },
+      {
+        "completed_at_utc": "2026-10-07T14:12:18Z",
+        "conclusion": "skipped",
+        "job_id": "112837866236",
+        "name": "capture",
+        "started_at_utc": "2026-10-07T14:12:19Z",
+        "steps": []
+      }
+    ],
+    "run_attempt": 1,
+    "run_id": "37626214007",
+    "status": "completed",
+    "triggering_actor": "github-actions[bot]",
+    "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/37626214007"
+  },
+  "merge": {
+    "merge_commit_sha": "e279124002f67862eec04e11426f8759cad2d1cb",
+    "merged_at_utc": "2026-10-07T13:25:00Z",
+    "parents": [
+      "fa9d59dca537f63707d5601f9cbdfbc90faf1031",
+      "c76ed8a1354ba4f9d58a61527952bd1ca512cc9d"
+    ],
+    "pull_request": 98
+  },
+  "previous_relay_for_comparison": {
+    "actor": "github-actions[bot]",
+    "artifact": {
+      "api_digest": "sha256:04e780f1c2d42db9045f0a84ab4ca10d108a9712634e6a727ee8281ae3209bcc",
+      "artifact_id": "11484172826",
+      "created_at_utc": "2026-10-07T13:11:17Z",
+      "downloaded_archive_sha256": "04e780f1c2d42db9045f0a84ab4ca10d108a9712634e6a727ee8281ae3209bcc",
+      "expires_at_utc": "2026-11-06T13:11:16Z",
+      "name": "robin-autonomous-lab-37618510518",
+      "size_in_bytes": 501215
+    },
+    "conclusion": "success",
+    "created_at_utc": "2026-10-07T12:05:09Z",
+    "display_title": "robin-collect-relay-4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87-37557395681-11",
+    "event": "workflow_dispatch",
+    "head_branch": "main",
+    "head_sha": "fa9d59dca537f63707d5601f9cbdfbc90faf1031",
+    "public_receipt": "reports/evidence/robin-autonomous-lab-run-37618510518-public-receipt.json",
+    "public_receipt_summary": {
+      "github_run_id": "37611200932",
+      "lifetime_credits": 314,
+      "lifetime_requests": 156,
+      "replayed_existing_slot": true,
+      "slot_start_utc": "2026-10-07T12:00:00Z",
+      "status": "REAL_DATA_PARTIAL"
+    },
+    "run_attempt": 1,
+    "run_id": "37618510518",
+    "status": "completed",
+    "triggering_actor": "github-actions[bot]",
+    "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/37618510518"
+  },
+  "provider_http_requests_new": 0,
+  "r2_reads_new": 0,
+  "r2_writes_new": 0,
+  "schema_version": "robin-autonomous-lab-post-merge-handover-evidence-v1",
+  "source": "GitHub REST API (runs, jobs, artifacts, pull request 98) read with the repository owner's token; job log of run 37626214007; artifact archives downloaded and checked against the API digest",
+  "successor": {
+    "actor": "github-actions[bot]",
+    "conclusion": "success",
+    "created_at_utc": "2026-10-07T15:19:41Z",
+    "display_title": "robin-collect-relay-4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87-37635243600-2",
+    "event": "workflow_dispatch",
+    "head_branch": "main",
+    "head_sha": "e279124002f67862eec04e11426f8759cad2d1cb",
+    "run_attempt": 1,
+    "run_id": "37642963928",
+    "status": "completed",
+    "triggering_actor": "github-actions[bot]",
+    "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/37642963928"
+  },
+  "watchdog_schedule_runs_before_merge": {
+    "cron": "13 * * * *",
+    "gaps_hours": [
+      7.08,
+      3.9,
+      4.81,
+      6.62,
+      7.91,
+      4.28,
+      7.51,
+      8.96
+    ],
+    "max_gap_hours": 8.96,
+    "min_gap_hours": 3.9,
+    "runs": [
+      {
+        "conclusion": "success",
+        "created_at_utc": "2026-10-07T08:35:00Z",
+        "head_sha": "fa9d59dca537f63707d5601f9cbdfbc90faf1031",
+        "run_id": "37594723568"
+      },
+      {
+        "conclusion": "success",
+        "created_at_utc": "2026-10-07T01:29:59Z",
+        "head_sha": "fa9d59dca537f63707d5601f9cbdfbc90faf1031",
+        "run_id": "37557395681"
+      },
+      {
+        "conclusion": "success",
+        "created_at_utc": "2026-10-06T21:36:14Z",
+        "head_sha": "7e7ffb0b1982d26ccccb9a28a26c3ae828780c26",
+        "run_id": "37535048186"
+      },
+      {
+        "conclusion": "success",
+        "created_at_utc": "2026-10-06T16:47:37Z",
+        "head_sha": "fc45ebe78260af3eb39cdd2ed567071439e1a380",
+        "run_id": "37498489538"
+      },
+      {
+        "conclusion": "success",
+        "created_at_utc": "2026-10-06T10:10:31Z",
+        "head_sha": "0e732ffefaff144869dcb7bfe029b5f40d58ae7c",
+        "run_id": "37448011825"
+      },
+      {
+        "conclusion": "success",
+        "created_at_utc": "2026-10-06T02:15:40Z",
+        "head_sha": "cd59d6c41b212204ba0d3a13cf3ed45611ea66b9",
+        "run_id": "37403262886"
+      },
+      {
+        "conclusion": "success",
+        "created_at_utc": "2026-10-05T21:58:50Z",
+        "head_sha": "cd59d6c41b212204ba0d3a13cf3ed45611ea66b9",
+        "run_id": "37379460143"
+      },
+      {
+        "conclusion": "success",
+        "created_at_utc": "2026-10-05T14:28:24Z",
+        "head_sha": "cd59d6c41b212204ba0d3a13cf3ed45611ea66b9",
+        "run_id": "37324979124"
+      },
+      {
+        "conclusion": "success",
+        "created_at_utc": "2026-10-05T05:30:35Z",
+        "head_sha": "8f21c7c1be5f18721de4859acbd84751e072183f",
+        "run_id": "37268103904"
+      }
+    ]
+  }
+}
