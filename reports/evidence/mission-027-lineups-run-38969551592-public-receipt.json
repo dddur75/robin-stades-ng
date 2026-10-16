@@ -1,0 +1,71 @@
+{
+  "schema_version": "mission-027-lineups-public-receipt-v1",
+  "status": "COMPLETE",
+  "preflight_run_id": "38960293874",
+  "max_calls": 8000,
+  "daily_reserve": 5000,
+  "status_calls_new": 0,
+  "lineup_calls": 1899,
+  "distinct_matches_called": 1899,
+  "target_count": 1899,
+  "fixture_ids_sha256": "3b649f4c5bc789bd25cd5c89fdbe3b87ccdca3f44f7ca55be178f10040606666",
+  "complete_matches": 1899,
+  "matches_without_response": [],
+  "uncertain_reservations": [],
+  "partitions": [
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2020/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "rows": 758,
+      "inserted": 758,
+      "duplicates_avoided": 0,
+      "bytes": 559620,
+      "sha256": "67207a76afac738e007cb00caf4933050a45266e50156b06aaf9bd3219eb6a71",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-027/projection/historical/parquet/competition=Serie-A/season=2020/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2021/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "rows": 760,
+      "inserted": 760,
+      "duplicates_avoided": 0,
+      "bytes": 569315,
+      "sha256": "7c01eb2640971d56fbc9f6a7b69e973a1dd9b80fe3815861bf96f89429ea46b7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-027/projection/historical/parquet/competition=Serie-A/season=2021/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2022/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "rows": 760,
+      "inserted": 760,
+      "duplicates_avoided": 0,
+      "bytes": 605525,
+      "sha256": "f04d3d456b93a947f1d532afd9fb438ce31f5f07fcc1fc6db81cf59ec2c8d4e7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-027/projection/historical/parquet/competition=Serie-A/season=2022/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2023/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "rows": 760,
+      "inserted": 760,
+      "duplicates_avoided": 0,
+      "bytes": 603961,
+      "sha256": "518e3758259a305959ff843bdab135333a439724d45402059811d4f930438f0f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-027/projection/historical/parquet/competition=Serie-A/season=2023/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2024/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "rows": 760,
+      "inserted": 760,
+      "duplicates_avoided": 0,
+      "bytes": 605336,
+      "sha256": "84232f0fa7e30ea4d39832bf8227d34db360e3e990f039ff2e19cc7b7f99b2d9",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-027/projection/historical/parquet/competition=Serie-A/season=2024/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet"
+    }
+  ],
+  "scope": "Serie-A",
+  "phase_target_count": 7228,
+  "phase_fixture_ids_sha256": "4e471c16b27b3ce5deaa8602795eb687f4e812975265d720c5697d4ce6bd288c",
+  "quota_remaining": 144007,
+  "complete_fraction": 1.0,
+  "run_id": "38969551592",
+  "source_receipt_sha256": "e8531bd64cff8ee3e3e0d9dc0ae9cbf4193d57f12201ddae0f018355771146ec",
+  "source_receipt_r2_key": "historical-deep-data/schema-v1/_control/mission-027/runs/38969551592/public-receipt.json",
+  "sanitization": "Only runner-local partition paths made relative; all counters, partition hashes and quota values preserved. Exact original receipt remains in the Actions artifact and R2."
+}

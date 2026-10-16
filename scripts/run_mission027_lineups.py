@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import hashlib
+import io
 import json
 import os
 import sys
@@ -9,6 +10,7 @@ import time
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
+import pyarrow.parquet as pq
 import requests
 
 from robin.historical.normalization import normalize_records
@@ -18,13 +20,7 @@ from robin.historical_deep.collector import HistoricalDeepCollector
 from robin.historical_deep.contracts import ProviderStatus
 from robin.historical_deep.provider import ApiFootballDeepClient
 from robin.historical_deep.quota import QuotaController
-from robin.historical_deep.storage import (
-    HarvestReceipt,
-    R2FirstRepository,
-    TaskVersion,
-    receipt_key,
-    version_key,
-)
+from robin.historical_deep.storage import R2FirstRepository
 
 DIGEST = "4e471c16b27b3ce5deaa8602795eb687f4e812975265d720c5697d4ce6bd288c"
 LEAGUES = {"Premier-League": 39, "La-Liga": 140, "Serie-A": 135, "Bundesliga": 78}
@@ -40,7 +36,7 @@ class LineupTransport:
     def get(self, url, **kwargs):
         time.sleep(max(0.0, self.next_at - time.monotonic()))
         if self.deadline is not None and datetime.now(UTC) >= self.deadline:
-            raise RuntimeError("ORIGINAL_QUOTA_DAY_ENDED")
+            raise RuntimeError("STATUS_PROOF_LEASE_ENDED")
         self.next_at = time.monotonic() + 0.5  # Four isolated workers: <=8 rps total.
         self.calls += 1
         return requests.get(url, allow_redirects=False, **kwargs)
@@ -108,6 +104,16 @@ def collect_once(collector, store, request):
     return collector._collect(**request)
 
 
+def projection_records(body, group):
+    rows = pq.ParquetFile(io.BytesIO(body)).read().to_pylist()
+    fixtures = {}
+    for row in rows:
+        assert row["provider_fixture_id"] in group["fixture_ids"] and row["season"] == group["season"]
+        assert row["availability_status"] == "POST_MATCH_ONLY"
+        fixtures.setdefault(row["provider_fixture_id"], []).append(json.loads(row["payload"]))
+    return rows, fixtures
+
+
 def main():
     OUTPUT.mkdir(parents=True, exist_ok=True)
     receipt = {"schema_version": "mission-027-lineups-public-receipt-v1", "status": "PARTIAL",
@@ -131,31 +137,8 @@ def main():
                         "reserved_by_scope": {league: sum(i in reserved for g in groups if g["competition"] == league for i in g["fixture_ids"]) for league in LEAGUES},
                         "target_count": 7228, "status_calls": 0, "lineup_calls": 0,
                         "raw_payload_reads": 0, "r2_writes": 0,
-                        "calls_by_source_commit": {}, "api_seconds_by_source_commit": {},
-                        "missing_legacy_receipts": [],
                         "receipt_metadata_reads": 0,
                         "observed_at": datetime.now(UTC).isoformat()}
-            legacy = next(g for g in groups if (g["competition"], g["season"]) == ("Premier-League", 2020))
-            for fixture in reserved.intersection(legacy["fixture_ids"]):
-                request = dict(phase="lineups_only", competition=39, season=2020,
-                               family="lineups", endpoint="/fixtures/lineups", params={"fixture": fixture})
-                task = HistoricalDeepCollector(None)._make_task(**request, identity=None)
-                raw = probe.get_object(receipt_key(task))
-                progress["receipt_metadata_reads"] += 1
-                if raw is None:
-                    version = probe.get_object(version_key(task))
-                    progress["receipt_metadata_reads"] += 1
-                    saved = TaskVersion.model_validate_json(version).receipt if version else None
-                else:
-                    saved = HarvestReceipt.model_validate_json(raw)
-                if saved is None:
-                    progress["missing_legacy_receipts"].append(fixture)
-                    continue
-                assert saved.task_hash == task.task_hash
-                counts = progress["calls_by_source_commit"]
-                counts[saved.source_commit] = counts.get(saved.source_commit, 0) + saved.provider_calls
-                times = progress["api_seconds_by_source_commit"]
-                times[saved.source_commit] = times.get(saved.source_commit, 0) + (saved.received_at - saved.requested_at).total_seconds()
             (OUTPUT / "progress.json").write_text(json.dumps(progress) + "\n")
             print(json.dumps(progress), flush=True)
             return 0
@@ -171,10 +154,9 @@ def main():
         proof = json.loads(raw)
         assert proof["status"] == "PASS" and proof["status_calls"] == 1
         checked = datetime.fromisoformat(proof["checked_at"])
-        # Reuse the original key proof only until its original UTC quota reset.
-        # Every response refreshes quota headers; never refresh /status.
+        # Reuse the single key proof for six hours; quota headers refresh after each call.
         status = ProviderStatus(plan="Mega", active=True, checked_at=checked,
-            expires_at=checked.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1),
+            expires_at=checked + timedelta(hours=6),
             subscription_end=proof["subscription_end"], daily_limit=proof["daily_limit"],
             daily_used=proof["daily_limit"] - proof["quota_remaining"],
             daily_remaining=proof["quota_remaining"])
@@ -190,11 +172,27 @@ def main():
         for group in groups:
             rows = []
             league, season = group["competition"], group["season"]
-            for fixture in group["fixture_ids"]:
+            path = parquet.partition_path(competition=league, season=season,
+                entity_type="lineups", dataset_version="api-football-v3")
+            key = f"{PREFIX}/projection/{path.relative_to(OUTPUT.resolve()).as_posix()}"
+            saved = store.get_object(key)
+            projected = {}
+            if saved is not None:
+                rows, projected = projection_records(saved, group)
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(saved)
+                receipt["complete_matches"] += sum(complete(teams) for teams in projected.values())
+            for fixture in set(group["fixture_ids"]) - projected.keys() if saved is not None else group["fixture_ids"]:
                 if datetime.now(UTC) >= transport.deadline or transport.calls >= 8000 or quota.status.daily_remaining <= 5000:
                     raise RuntimeError("MISSION_BUDGET_REACHED")
                 request = dict(phase="lineups_only", competition=LEAGUES[league], season=season,
                     family="lineups", endpoint="/fixtures/lineups", params={"fixture": fixture})
+                if saved is not None:
+                    task = collector._make_task(**request, identity=None)
+                    receipt["matches_without_response"].append(fixture)
+                    if collector.repository.receipt_for(task) is None:
+                        receipt["uncertain_reservations"].append(fixture)
+                    continue
                 before = transport.calls
                 try:
                     call = collect_once(collector, store, request)
@@ -212,10 +210,9 @@ def main():
                     ingestion_run_id="mission-027-status-38960293874",
                     raw_payload_hash=call.payload_sha256, request_params={"fixture": fixture},
                     observed_at=call.received_at))
-            partition = parquet.write_records(rows, competition=league, season=season,
-                entity_type="lineups", dataset_version="api-football-v3")
-            path = Path(partition["path"])
-            key = f"{PREFIX}/projection/{path.relative_to(OUTPUT.resolve()).as_posix()}"
+            partition = ({"path": str(path), "rows": len(rows), "sha256": hashlib.sha256(saved).hexdigest()}
+                if saved is not None else parquet.write_records(rows, competition=league, season=season,
+                    entity_type="lineups", dataset_version="api-football-v3"))
             if not store.put_if_absent(key, path.read_bytes()):
                 assert store.get_object(key) == path.read_bytes()
             receipt["partitions"].append({**partition, "path": path.relative_to(OUTPUT.resolve()).as_posix(), "r2_key": key})

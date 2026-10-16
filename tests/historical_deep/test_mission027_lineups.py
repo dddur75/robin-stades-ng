@@ -1,8 +1,11 @@
+import io
 import json
 import sys
 from pathlib import Path
 from types import SimpleNamespace
 
+import pyarrow as pa
+import pyarrow.parquet as pq
 import pytest
 import yaml
 
@@ -56,22 +59,17 @@ def test_progress_reads_only_reservation_keys_without_provider_credentials(monke
     fixture = json.loads(Path("configs/execution/mission027-targets.json").read_text())["groups"][0]["fixture_ids"][0]
     monkeypatch.setattr(sys, "argv", ["run", "--progress"])
     monkeypatch.setattr(runner, "OUTPUT", tmp_path)
-    def metadata_only(key):
-        assert key.endswith(("/receipt.json", "/version.json"))
-        return None
-
-    probe = SimpleNamespace(iter_keys=lambda prefix: [f"{prefix}{fixture}.json"],
-                            get_object=metadata_only)
+    probe = SimpleNamespace(iter_keys=lambda prefix: [f"{prefix}{fixture}.json"])
     monkeypatch.setattr(runner, "R2ObjectStore", lambda environment: probe)
     monkeypatch.setattr(runner.requests, "get", lambda *a, **kw: pytest.fail("provider forbidden"))
     assert runner.main() == 0
     result = json.loads((tmp_path / "progress.json").read_text())
     assert result["reserved_targets"] == 1
-    assert result["missing_legacy_receipts"] == [fixture]
+    assert result["receipt_metadata_reads"] == 0
     assert result["lineup_calls"] == result["status_calls"] == result["r2_writes"] == 0
 
 
-def test_each_worker_is_limited_to_two_rps_and_original_quota_day(monkeypatch):
+def test_each_worker_is_limited_to_two_rps_and_original_proof_lease(monkeypatch):
     clock, sent = [0.0], []
     monkeypatch.setattr(runner.time, "monotonic", lambda: clock[0])
     monkeypatch.setattr(runner.time, "sleep", lambda delay: clock.__setitem__(0, clock[0] + delay))
@@ -81,6 +79,20 @@ def test_each_worker_is_limited_to_two_rps_and_original_quota_day(monkeypatch):
         transport.get("https://example.test/fixtures/lineups")
     assert sent == [0.0, 0.5, 1.0] and transport.calls == 3
     transport.deadline = runner.datetime.now(runner.UTC) - runner.timedelta(seconds=1)
-    with pytest.raises(RuntimeError, match="ORIGINAL_QUOTA_DAY_ENDED"):
+    with pytest.raises(RuntimeError, match="STATUS_PROOF_LEASE_ENDED"):
         transport.get("https://example.test/fixtures/lineups")
     assert transport.calls == 3
+
+
+@pytest.mark.parametrize("fixture,season", [(1, 2020), (2, 2020), (1, 2025)])
+def test_cached_projection_rejects_wrong_fixture_or_season(fixture, season):
+    body = io.BytesIO()
+    pq.write_table(pa.Table.from_pylist([{"provider_fixture_id": fixture, "season": season,
+        "availability_status": "POST_MATCH_ONLY", "payload": '{"team":{"id":1}}'}]), body)
+    group = {"fixture_ids": [1], "season": 2020}
+    if (fixture, season) == (1, 2020):
+        rows, projected = runner.projection_records(body.getvalue(), group)
+        assert len(rows) == 1 and projected == {1: [{"team": {"id": 1}}]}
+    else:
+        with pytest.raises(AssertionError):
+            runner.projection_records(body.getvalue(), group)

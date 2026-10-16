@@ -11618,6 +11618,42 @@
       "verified_by": [
         "C0"
       ]
+    },
+    {
+      "claim_id": "OPS.MISSION027.PROGRESS.010",
+      "claim": "Read-only Actions run 38980015091 observed 5810 reserved whitelist IDs at 2026-10-16T23:11:34.119347+00:00. It made zero provider calls, raw-payload reads and R2 writes. Reservations do not prove complete lineups. First Premier-League2020 metadata retains the same 256 retired-source and 123 current-source calls plus unknown fixture 592752.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38980015091",
+      "grain": "reservation_snapshot",
+      "temporal_class": "OBSERVED_AT",
+      "artifact": "reports/evidence/mission-027-progress-run-38980015091-public-receipt.json",
+      "hash": "939485222c9bdbb50cc5249c6b8b759a2a1e1dd1018a3d6b7e9a238e59c3f022",
+      "code_revision": "48a93765ca63122e1c32bd7b94f4eaad8e72073d",
+      "execution_id": "38980015091",
+      "scientific_lineage_id": "NOT_APPLICABLE_OPERATIONAL_PROGRESS",
+      "dataset_lineage_id": "mission027-reservations",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "DATA.MISSION027.SERIE_A.011",
+      "claim": "Actions worker38969551592 completed1899 unique Serie-A lineup requests for2020..2024. Offline verification reads all five Parquet files, matches hashes/row counts/target IDs/season/POST_MATCH_ONLY, and confirms all1899 fixtures have two teams with formation and eleven distinct starters. Final header quota snapshot144007. Exact source receipt is pinned by its hash and R2 key in the sanitized Git copy. No verification provider call.",
+      "scope": "MISSION_027_PHASE_1_SERIE_A",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38969551592",
+      "grain": "fixture_lineup_pair",
+      "temporal_class": "POST_MATCH_ONLY",
+      "artifact": "reports/evidence/mission-027-lineups-run-38969551592-public-receipt.json",
+      "hash": "3799d8f742ccd7ccd4b3d37c881d0f7d6f59567d297b6bee0a688f54ffcc03f7",
+      "code_revision": "114d67de25247daf9c67aa33c7c885145e2646f5",
+      "execution_id": "38969551592",
+      "scientific_lineage_id": "NOT_APPLICABLE_COLLECTION_QUALITY",
+      "dataset_lineage_id": "mission027-lineups-Serie-A-2020-2024",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
     }
   ],
   "decision_nodes":[
@@ -12014,6 +12050,18 @@
     {
       "decision_id": "RCV3-20261016-362",
       "ledger_record_hash": "5b46055a1d63c56ae4a06cf2dc3eb3e1a7a7816d26f16ff35a801efd4d7bb7ed"
+    },
+    {
+      "decision_id": "RCV3-20261016-363",
+      "ledger_record_hash": "3b7395b8ee5e57d6c5a95d8ff64f5a1e4df14fd733decdc95f6e809071cae180"
+    },
+    {
+      "decision_id": "RCV3-20261016-364",
+      "ledger_record_hash": "5c80c231150711d73a78b3a1d8517356f51055049d9f1aad837a50f8126c92db"
+    },
+    {
+      "decision_id": "RCV3-20261016-365",
+      "ledger_record_hash": "03e764aef7e9bb61dafa3d3e02878bed6d907bc4a5affa2445614c49da39fd5b"
     }
   ],
   "edges":[
@@ -13297,6 +13345,27 @@
       "relation": "SUPPORTS",
       "status": "RECORDED",
       "to_decision_id": "RCV3-20261016-362"
+    },
+    {
+      "edge_id": "EDGE.1204",
+      "from_claim_id": "OPS.MISSION027.PROGRESS.010",
+      "relation": "SUPPORTS",
+      "status": "RECORDED",
+      "to_decision_id": "RCV3-20261016-363"
+    },
+    {
+      "edge_id": "EDGE.1205",
+      "from_claim_id": "DATA.MISSION027.SERIE_A.011",
+      "relation": "SUPPORTS",
+      "status": "RECORDED",
+      "to_decision_id": "RCV3-20261016-364"
+    },
+    {
+      "edge_id": "EDGE.1206",
+      "from_claim_id": "DATA.MISSION027.SERIE_A.011",
+      "relation": "SUPPORTS",
+      "status": "RECORDED",
+      "to_decision_id": "RCV3-20261016-365"
     }
   ]
 }
