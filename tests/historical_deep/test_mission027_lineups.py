@@ -5,7 +5,7 @@ import pytest
 
 from robin.historical_deep.collector import HistoricalDeepCollector
 from robin.historical_deep.storage import InMemoryObjectStore, R2FirstRepository
-from scripts.run_mission027_lineups import collect_once, complete, validate_targets
+from scripts.run_mission027_lineups import ReceiptBoundary, collect_once, complete, validate_targets
 
 
 def test_whitelist_and_two_complete_teams_are_required():
@@ -32,7 +32,7 @@ def test_reservation_prevents_duplicate_calls_and_uncertain_retry():
             return {"response": []}
 
     provider, store = Provider(), InMemoryObjectStore()
-    collector = HistoricalDeepCollector(provider, R2FirstRepository(store))
+    collector = HistoricalDeepCollector(provider, ReceiptBoundary(R2FirstRepository(store)))
     request = dict(phase="lineups_only", competition=39, season=2020, family="lineups",
                    endpoint="/fixtures/lineups", params={"fixture": 1})
     assert collect_once(collector, store, request) is not None

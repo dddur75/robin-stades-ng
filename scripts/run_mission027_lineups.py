@@ -23,6 +23,35 @@ PREFIX = "historical-deep-data/schema-v1/_control/mission-027"
 OUTPUT = Path("artifacts/historical-deep/mission027")
 
 
+class CachedStore:
+    """Cache immutable reads; every conditional write still reaches R2."""
+    def __init__(self, store):
+        self.store, self.cache = store, {}
+
+    def get_object(self, key):
+        if key not in self.cache:
+            self.cache[key] = self.store.get_object(key)
+        return self.cache[key]
+
+    def put_if_absent(self, key, data):
+        created = self.store.put_if_absent(key, data)
+        self.cache.pop(key, None)
+        if created:
+            self.cache[key] = data
+        return created
+
+    def iter_keys(self, prefix):
+        return self.store.iter_keys(prefix)
+
+
+class ReceiptBoundary:
+    """Expose the collector's minimal receipt/payload/capture interface."""
+    def __init__(self, repository):
+        self.receipt_for = repository.receipt_for
+        self.payload_for = repository.payload_for
+        self.capture = repository.capture
+
+
 def validate_targets(groups):
     assert len(groups) == 20
     assert {(g["competition"], g["season"]) for g in groups} == {
@@ -82,8 +111,8 @@ def main():
         quota = QuotaController(status)
         client = ApiFootballDeepClient(api_key=os.environ["API_FOOTBALL_KEY"], quota=quota,
                                        max_retries=0, transport=transport)
-        store = R2ObjectStore(os.environ)
-        collector = HistoricalDeepCollector(client, R2FirstRepository(store),
+        store = CachedStore(R2ObjectStore(os.environ))
+        collector = HistoricalDeepCollector(client, ReceiptBoundary(R2FirstRepository(store)),
             source_commit=os.environ["GITHUB_SHA"])
         parquet = PartitionedParquetStore(OUTPUT / "historical/parquet")
         for group in groups:
@@ -113,7 +142,7 @@ def main():
             partition = parquet.write_records(rows, competition=league, season=season,
                 entity_type="lineups", dataset_version="api-football-v3")
             path = Path(partition["path"])
-            key = f"{PREFIX}/projection/{path.relative_to(OUTPUT).as_posix()}"
+            key = f"{PREFIX}/projection/{path.relative_to(OUTPUT.resolve()).as_posix()}"
             if not store.put_if_absent(key, path.read_bytes()):
                 assert store.get_object(key) == path.read_bytes()
             receipt["partitions"].append({**partition, "r2_key": key})
