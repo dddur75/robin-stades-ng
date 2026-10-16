@@ -79,7 +79,7 @@ concurrency:
 jobs:
   fixture-bundles:
     runs-on: ubuntu-latest
-    timeout-minutes: 110
+    timeout-minutes: ${{ inputs.lineups_only && 200 || 110 }}
     outputs:
       status: ${{ steps.outcome.outputs.status }}
       provider_stop: ${{ steps.outcome.outputs.provider_stop }}

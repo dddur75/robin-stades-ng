@@ -251,7 +251,10 @@ def test_workflows_70_to_78_are_bounded_serialized_and_fail_closed() -> None:
             assert "API_FOOTBALL_KEY" not in text
             continue
         job = _only_job(workflow)
-        assert 90 <= int(str(job["timeout-minutes"])) <= 110
+        if number == 71:
+            assert job["timeout-minutes"] == "${{ inputs.lineups_only && 200 || 110 }}"
+        else:
+            assert 90 <= int(str(job["timeout-minutes"])) <= 110
         env = _mapping(job["env"])
         assert all(env.get(name) == value for name, value in SAFETY_ENV.items())
         assert "historical-state-persist" not in text

@@ -100,10 +100,10 @@ def main():
         proof = json.loads(raw)
         assert proof["status"] == "PASS" and proof["status_calls"] == 1
         checked = datetime.fromisoformat(proof["checked_at"])
-        # Same 110-minute proof age policy as the existing historical runner.
-        # Preserve the original observation time; never refresh /status.
+        # Reuse the original key proof only until its original UTC quota reset.
+        # Every response refreshes quota headers; never refresh /status.
         status = ProviderStatus(plan="Mega", active=True, checked_at=checked,
-            expires_at=checked + timedelta(minutes=110),
+            expires_at=checked.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1),
             subscription_end=proof["subscription_end"], daily_limit=proof["daily_limit"],
             daily_used=proof["daily_limit"] - proof["quota_remaining"],
             daily_remaining=proof["quota_remaining"])

@@ -11848,6 +11848,10 @@
     {
       "decision_id": "RCV3-20261016-352",
       "ledger_record_hash": "f3a3c508b15e1a3557d98684009d1f54ddb4257f473c6d9e18156804fd6adfc7"
+    },
+    {
+      "decision_id": "RCV3-20261016-353",
+      "ledger_record_hash": "e0606f06216f9a3e7653354324c4fcdc447efa1148b6cc4448b63e0159706e06"
     }
   ],
   "edges":[
@@ -13061,6 +13065,13 @@
       "relation": "SUPPORTS",
       "status": "RECORDED",
       "to_decision_id": "RCV3-20261016-352"
+    },
+    {
+      "edge_id": "EDGE.1194",
+      "from_claim_id": "DATA.MISSION027.PREFLIGHT.001",
+      "relation": "SUPPORTS",
+      "status": "RECORDED",
+      "to_decision_id": "RCV3-20261016-353"
     }
   ]
 }
