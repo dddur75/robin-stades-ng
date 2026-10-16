@@ -18,6 +18,7 @@ def test_whitelist_and_two_complete_teams_are_required():
         {"player": {"id": p}} for p in range(1, 12)
     ]} for n in (1, 2)]
     assert complete(teams)
+    assert not complete([{"team": None}, {}])
     teams[0]["startXI"].pop()
     assert not complete(teams)
 

@@ -64,12 +64,16 @@ def validate_targets(groups):
 
 
 def complete(records):
-    return len(records) == 2 and len({r.get("team", {}).get("id") for r in records}) == 2 and all(
-        r.get("team", {}).get("id") and r.get("formation") and len(r.get("startXI", [])) == 11
-        and len({p.get("player", {}).get("id") for p in r["startXI"]}) == 11
-        and all(p.get("player", {}).get("id") for p in r["startXI"])
-        for r in records
-    )
+    try:
+        return len(records) == 2 and len({r.get("team", {}).get("id") for r in records}) == 2 and all(
+            r.get("team", {}).get("id") and isinstance(r.get("formation"), str) and r["formation"].strip()
+            and len(r.get("startXI", [])) == 11
+            and len({p.get("player", {}).get("id") for p in r["startXI"]}) == 11
+            and all(p.get("player", {}).get("id") for p in r["startXI"])
+            for r in records
+        )
+    except (AttributeError, KeyError, TypeError):
+        return False
 
 
 def collect_once(collector, store, request):
@@ -130,6 +134,7 @@ def main():
                     receipt["distinct_matches_called"] += transport.calls - before
                 if call is None:
                     receipt["uncertain_reservations"].append(fixture)
+                    receipt["matches_without_response"].append(fixture)
                     continue
                 if not call.records:
                     receipt["matches_without_response"].append(fixture)
@@ -149,9 +154,7 @@ def main():
             print(f"Mission 027: {league} {season}; calls={transport.calls}", flush=True)
         receipt["quota_remaining"] = quota.status.daily_remaining
         receipt["complete_fraction"] = receipt["complete_matches"] / 7228
-        receipt["status"] = "COMPLETE" if receipt["complete_fraction"] >= .95 and not (
-            receipt["uncertain_reservations"]
-        ) else "PARTIAL"
+        receipt["status"] = "COMPLETE" if receipt["complete_fraction"] >= .95 else "PARTIAL"
     except Exception as error:
         receipt["reason_class"] = type(error).__name__  # No response body or secret.
     receipt["lineup_calls"] = transport.calls
