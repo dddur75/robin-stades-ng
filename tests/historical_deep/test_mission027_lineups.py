@@ -65,7 +65,7 @@ def test_progress_reads_only_reservation_keys_without_provider_credentials(monke
     assert runner.main() == 0
     result = json.loads((tmp_path / "progress.json").read_text())
     assert result["reserved_targets"] == 1
-    assert result["receipt_metadata_reads"] == 0
+    assert result["reserved_by_scope"]["Premier-League"] == 1
     assert result["lineup_calls"] == result["status_calls"] == result["r2_writes"] == 0
 
 

@@ -137,7 +137,6 @@ def main():
                         "reserved_by_scope": {league: sum(i in reserved for g in groups if g["competition"] == league for i in g["fixture_ids"]) for league in LEAGUES},
                         "target_count": 7228, "status_calls": 0, "lineup_calls": 0,
                         "raw_payload_reads": 0, "r2_writes": 0,
-                        "receipt_metadata_reads": 0,
                         "observed_at": datetime.now(UTC).isoformat()}
             (OUTPUT / "progress.json").write_text(json.dumps(progress) + "\n")
             print(json.dumps(progress), flush=True)
@@ -157,11 +156,12 @@ def main():
         # Reuse the single key proof for six hours; quota headers refresh after each call.
         status = ProviderStatus(plan="Mega", active=True, checked_at=checked,
             expires_at=checked + timedelta(hours=6),
+            next_quota_reset=datetime.now(UTC).replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1),
             subscription_end=proof["subscription_end"], daily_limit=proof["daily_limit"],
             daily_used=proof["daily_limit"] - proof["quota_remaining"],
             daily_remaining=proof["quota_remaining"])
         assert status.is_fresh(datetime.now(UTC))
-        transport.deadline = status.status_expires_at
+        transport.deadline = min(status.status_expires_at, status.next_quota_reset)
         quota = QuotaController(status)
         client = ApiFootballDeepClient(api_key=os.environ["API_FOOTBALL_KEY"], quota=quota,
                                        max_retries=0, transport=transport)

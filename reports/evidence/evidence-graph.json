@@ -11654,6 +11654,24 @@
       "verified_by": [
         "C0"
       ]
+    },
+    {
+      "claim_id": "OPS.MISSION027.CANCELLED_QUEUE.012",
+      "claim": "Continuation runs38981113096 and38981116420 at source876c9933ab1de942485c2331bb1489ae1d0c3919 were cancelled pending with zero jobs each and therefore zero provider requests. This replaces unexecuted code after an offline next-day quota-reset regression was found; original active workers were not cancelled.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38981113096",
+      "grain": "pending_run_cancellation",
+      "temporal_class": "OBSERVED_AT",
+      "artifact": "reports/evidence/mission-027-cancelled-continuations-public-receipt.json",
+      "hash": "0e304c5771b5fe6edd0f7a6c667017854e2daa2cee54aa927bfcd0dab39fbbaf",
+      "code_revision": "876c9933ab1de942485c2331bb1489ae1d0c3919",
+      "execution_id": "38981113096,38981116420",
+      "scientific_lineage_id": "NOT_APPLICABLE_OPERATIONAL_CONTROL",
+      "dataset_lineage_id": "mission027-continuation-queue",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
     }
   ],
   "decision_nodes":[
@@ -12062,6 +12080,10 @@
     {
       "decision_id": "RCV3-20261016-365",
       "ledger_record_hash": "03e764aef7e9bb61dafa3d3e02878bed6d907bc4a5affa2445614c49da39fd5b"
+    },
+    {
+      "decision_id": "RCV3-20261016-366",
+      "ledger_record_hash": "6dfb35e1e765b6cca55d9494809c4f182878c6529b158d1edc951ccf8cc27e91"
     }
   ],
   "edges":[
@@ -13366,6 +13388,13 @@
       "relation": "SUPPORTS",
       "status": "RECORDED",
       "to_decision_id": "RCV3-20261016-365"
+    },
+    {
+      "edge_id": "EDGE.1207",
+      "from_claim_id": "OPS.MISSION027.CANCELLED_QUEUE.012",
+      "relation": "SUPPORTS",
+      "status": "RECORDED",
+      "to_decision_id": "RCV3-20261016-366"
     }
   ]
 }
