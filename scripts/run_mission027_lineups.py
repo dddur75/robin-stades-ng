@@ -128,6 +128,7 @@ def main():
             reserved = {int(key.rsplit("=", 1)[1].split(".")[0]) for key in keys}
             assert reserved <= {i for g in groups for i in g["fixture_ids"]}
             progress = {"status": "OBSERVED", "reserved_targets": len(reserved),
+                        "reserved_by_scope": {league: sum(i in reserved for g in groups if g["competition"] == league for i in g["fixture_ids"]) for league in LEAGUES},
                         "target_count": 7228, "status_calls": 0, "lineup_calls": 0,
                         "raw_payload_reads": 0, "r2_writes": 0,
                         "calls_by_source_commit": {}, "api_seconds_by_source_commit": {},
@@ -217,7 +218,7 @@ def main():
             key = f"{PREFIX}/projection/{path.relative_to(OUTPUT.resolve()).as_posix()}"
             if not store.put_if_absent(key, path.read_bytes()):
                 assert store.get_object(key) == path.read_bytes()
-            receipt["partitions"].append({**partition, "r2_key": key})
+            receipt["partitions"].append({**partition, "path": path.relative_to(OUTPUT.resolve()).as_posix(), "r2_key": key})
             print(f"Mission 027: {league} {season}; calls={transport.calls}", flush=True)
         receipt["quota_remaining"] = quota.status.daily_remaining
         receipt["complete_fraction"] = receipt["complete_matches"] / receipt["target_count"]

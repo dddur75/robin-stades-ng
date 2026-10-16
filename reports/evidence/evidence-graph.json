@@ -11528,6 +11528,96 @@
       "verified_by": [
         "C0"
       ]
+    },
+    {
+      "claim_id": "OPS.MISSION027.PROGRESS.005",
+      "claim": "Read-only Actions run 38971717265 observed 1300 reserved whitelist IDs at 2026-10-16T21:48:49.759589Z. It issued zero provider calls, raw payload reads and R2 writes. The first Premier-League2020 partition metadata documents 256 old and 123 current-source calls, plus the same unknown reservation 592752. Reservation counts do not prove lineup quality.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38971717265",
+      "grain": "reservation_snapshot",
+      "temporal_class": "OBSERVED_AT",
+      "artifact": "reports/evidence/mission-027-progress-run-38971717265-public-receipt.json",
+      "hash": "7b68c200f5f21214ed422ca8fdf06cc5ef8b868f0c0c61209ba851d3e8dfe08f",
+      "code_revision": "114d67de25247daf9c67aa33c7c885145e2646f5",
+      "execution_id": "38971717265",
+      "scientific_lineage_id": "NOT_APPLICABLE_OPERATIONAL_PROGRESS",
+      "dataset_lineage_id": "mission027-reservations",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "OPS.MISSION027.PROGRESS.006",
+      "claim": "Read-only Actions run 38973879550 observed 2452 reserved whitelist IDs at 2026-10-16T22:09:35.406167Z. Provider calls, raw-payload reads and R2 writes are all zero. Reservation counts are not verified complete compositions. The first Premier-League2020 receipt audit retains the same 256 old plus 123 current calls and unknown fixture 592752.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38973879550",
+      "grain": "reservation_snapshot",
+      "temporal_class": "OBSERVED_AT",
+      "artifact": "reports/evidence/mission-027-progress-run-38973879550-public-receipt.json",
+      "hash": "49cb961b1e6de3abd2552593bc7c7c9e4cc09a3dab8132740d720b9d15be1919",
+      "code_revision": "f3cf3e9127aa156109bdc791c1da7a80053e8616",
+      "execution_id": "38973879550",
+      "scientific_lineage_id": "NOT_APPLICABLE_OPERATIONAL_PROGRESS",
+      "dataset_lineage_id": "mission027-reservations",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "OPS.MISSION027.PROGRESS.007",
+      "claim": "Read-only Actions run 38976058727 observed 3611 reserved whitelist IDs at 2026-10-16T22:31:00.427297Z. It made zero provider calls, raw-payload reads and R2 writes. Reservation counts do not prove complete lineups. The first Premier-League2020 metadata still documents 256 retired-source and 123 current-source calls plus unknown fixture 592752.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38976058727",
+      "grain": "reservation_snapshot",
+      "temporal_class": "OBSERVED_AT",
+      "artifact": "reports/evidence/mission-027-progress-run-38976058727-public-receipt.json",
+      "hash": "29ab3aa193fd1933074eb422ccc0135d36b072d10a9a07c3d55447186e4b9bfd",
+      "code_revision": "f3cf3e9127aa156109bdc791c1da7a80053e8616",
+      "execution_id": "38976058727",
+      "scientific_lineage_id": "NOT_APPLICABLE_OPERATIONAL_PROGRESS",
+      "dataset_lineage_id": "mission027-reservations",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "OPS.MISSION027.PROGRESS.008",
+      "claim": "Read-only Actions run 38978084593 observed 4747 reserved whitelist IDs at 2026-10-16T22:51:01.549330+00:00. It made zero provider calls, raw-payload reads and R2 writes. Reservations do not prove complete lineups. First Premier-League2020 metadata retains the same 256 retired-source and 123 current-source calls plus unknown fixture 592752.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38978084593",
+      "grain": "reservation_snapshot",
+      "temporal_class": "OBSERVED_AT",
+      "artifact": "reports/evidence/mission-027-progress-run-38978084593-public-receipt.json",
+      "hash": "d6b9a6792cca64a2429e1a6605db7f7baa140beecfddbbeb3dfa6a167228d315",
+      "code_revision": "f3cf3e9127aa156109bdc791c1da7a80053e8616",
+      "execution_id": "38978084593",
+      "scientific_lineage_id": "NOT_APPLICABLE_OPERATIONAL_PROGRESS",
+      "dataset_lineage_id": "mission027-reservations",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "DATA.MISSION027.BUNDESLIGA.009",
+      "claim": "Actions worker 38969555058 completed 1529 unique Bundesliga lineup calls for seasons2020..2024. Offline ParquetFile verification of all five persisted files confirms all 1529 fixtures have two different teams with formation and eleven distinct starters, with matching file hashes, row counts and target memberships. Provider quota header snapshot is144482; no verification provider call. The Git receipt only replaces runner-local paths with relative paths and pins the exact original receipt hash/R2 key.",
+      "scope": "MISSION_027_PHASE_1_BUNDESLIGA",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38969555058",
+      "grain": "fixture_lineup_pair",
+      "temporal_class": "POST_MATCH_ONLY",
+      "artifact": "reports/evidence/mission-027-lineups-run-38969555058-public-receipt.json",
+      "hash": "aea72f5aa5730591c7e0c5ed47b7025f8fd6d5d304bbdf0350e97493b4232cd3",
+      "code_revision": "114d67de25247daf9c67aa33c7c885145e2646f5",
+      "execution_id": "38969555058",
+      "scientific_lineage_id": "NOT_APPLICABLE_COLLECTION_QUALITY",
+      "dataset_lineage_id": "mission027-lineups-Bundesliga-2020-2024",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
     }
   ],
   "decision_nodes":[
@@ -11904,6 +11994,26 @@
     {
       "decision_id": "RCV3-20261016-357",
       "ledger_record_hash": "3669b8e01267471cb40e485c65ec7215931f5c06f839f696a676d8d107b119db"
+    },
+    {
+      "decision_id": "RCV3-20261016-358",
+      "ledger_record_hash": "51812c4597aaa9adbf6b050e2b296ff5ff6dc77eaf36654483081082212e3e75"
+    },
+    {
+      "decision_id": "RCV3-20261016-359",
+      "ledger_record_hash": "1fca65b3e98637ba22b941adcddbb1a0aa02e15538901b8f528791c311ad63d0"
+    },
+    {
+      "decision_id": "RCV3-20261016-360",
+      "ledger_record_hash": "9be4875b1bd230473741b81e9d4efc16a8052febe168763035cf8b24ae330584"
+    },
+    {
+      "decision_id": "RCV3-20261016-361",
+      "ledger_record_hash": "230c4325a2d4e666b823a9d8d3f577251e45bb2583647a82dd840d4fba9dbc01"
+    },
+    {
+      "decision_id": "RCV3-20261016-362",
+      "ledger_record_hash": "5b46055a1d63c56ae4a06cf2dc3eb3e1a7a7816d26f16ff35a801efd4d7bb7ed"
     }
   ],
   "edges":[
@@ -13152,6 +13262,41 @@
       "relation": "SUPPORTS",
       "status": "RECORDED",
       "to_decision_id": "RCV3-20261016-357"
+    },
+    {
+      "edge_id": "EDGE.1199",
+      "from_claim_id": "OPS.MISSION027.PROGRESS.005",
+      "relation": "SUPPORTS",
+      "status": "RECORDED",
+      "to_decision_id": "RCV3-20261016-358"
+    },
+    {
+      "edge_id": "EDGE.1200",
+      "from_claim_id": "OPS.MISSION027.PROGRESS.006",
+      "relation": "SUPPORTS",
+      "status": "RECORDED",
+      "to_decision_id": "RCV3-20261016-359"
+    },
+    {
+      "edge_id": "EDGE.1201",
+      "from_claim_id": "OPS.MISSION027.PROGRESS.007",
+      "relation": "SUPPORTS",
+      "status": "RECORDED",
+      "to_decision_id": "RCV3-20261016-360"
+    },
+    {
+      "edge_id": "EDGE.1202",
+      "from_claim_id": "OPS.MISSION027.PROGRESS.008",
+      "relation": "SUPPORTS",
+      "status": "RECORDED",
+      "to_decision_id": "RCV3-20261016-361"
+    },
+    {
+      "edge_id": "EDGE.1203",
+      "from_claim_id": "DATA.MISSION027.BUNDESLIGA.009",
+      "relation": "SUPPORTS",
+      "status": "RECORDED",
+      "to_decision_id": "RCV3-20261016-362"
     }
   ]
 }
