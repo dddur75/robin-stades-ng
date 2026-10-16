@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 import sys
+import time
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
@@ -17,7 +18,13 @@ from robin.historical_deep.collector import HistoricalDeepCollector
 from robin.historical_deep.contracts import ProviderStatus
 from robin.historical_deep.provider import ApiFootballDeepClient
 from robin.historical_deep.quota import QuotaController
-from robin.historical_deep.storage import R2FirstRepository
+from robin.historical_deep.storage import (
+    HarvestReceipt,
+    R2FirstRepository,
+    TaskVersion,
+    receipt_key,
+    version_key,
+)
 
 DIGEST = "4e471c16b27b3ce5deaa8602795eb687f4e812975265d720c5697d4ce6bd288c"
 LEAGUES = {"Premier-League": 39, "La-Liga": 140, "Serie-A": 135, "Bundesliga": 78}
@@ -27,8 +34,14 @@ OUTPUT = Path("artifacts/historical-deep/mission027")
 
 class LineupTransport:
     calls = 0
+    next_at = 0.0
+    deadline = None
 
     def get(self, url, **kwargs):
+        time.sleep(max(0.0, self.next_at - time.monotonic()))
+        if self.deadline is not None and datetime.now(UTC) >= self.deadline:
+            raise RuntimeError("ORIGINAL_QUOTA_DAY_ENDED")
+        self.next_at = time.monotonic() + 0.5  # Four isolated workers: <=8 rps total.
         self.calls += 1
         return requests.get(url, allow_redirects=False, **kwargs)
 
@@ -117,10 +130,41 @@ def main():
             progress = {"status": "OBSERVED", "reserved_targets": len(reserved),
                         "target_count": 7228, "status_calls": 0, "lineup_calls": 0,
                         "raw_payload_reads": 0, "r2_writes": 0,
+                        "calls_by_source_commit": {}, "api_seconds_by_source_commit": {},
+                        "missing_legacy_receipts": [],
+                        "receipt_metadata_reads": 0,
                         "observed_at": datetime.now(UTC).isoformat()}
+            legacy = next(g for g in groups if (g["competition"], g["season"]) == ("Premier-League", 2020))
+            for fixture in reserved.intersection(legacy["fixture_ids"]):
+                request = dict(phase="lineups_only", competition=39, season=2020,
+                               family="lineups", endpoint="/fixtures/lineups", params={"fixture": fixture})
+                task = HistoricalDeepCollector(None)._make_task(**request, identity=None)
+                raw = probe.get_object(receipt_key(task))
+                progress["receipt_metadata_reads"] += 1
+                if raw is None:
+                    version = probe.get_object(version_key(task))
+                    progress["receipt_metadata_reads"] += 1
+                    saved = TaskVersion.model_validate_json(version).receipt if version else None
+                else:
+                    saved = HarvestReceipt.model_validate_json(raw)
+                if saved is None:
+                    progress["missing_legacy_receipts"].append(fixture)
+                    continue
+                assert saved.task_hash == task.task_hash
+                counts = progress["calls_by_source_commit"]
+                counts[saved.source_commit] = counts.get(saved.source_commit, 0) + saved.provider_calls
+                times = progress["api_seconds_by_source_commit"]
+                times[saved.source_commit] = times.get(saved.source_commit, 0) + (saved.received_at - saved.requested_at).total_seconds()
             (OUTPUT / "progress.json").write_text(json.dumps(progress) + "\n")
             print(json.dumps(progress), flush=True)
             return 0
+        scope = os.environ.get("MISSION027_COMPETITION", "all")
+        assert scope in LEAGUES  # Only four workers can spend; all is observation-only.
+        groups = [g for g in groups if g["competition"] == scope]
+        scoped_ids = [i for g in groups for i in g["fixture_ids"]]
+        receipt.update(scope=scope, phase_target_count=7228, phase_fixture_ids_sha256=DIGEST,
+                       target_count=len(scoped_ids), fixture_ids_sha256=hashlib.sha256(
+                           "".join(f"{i}\n" for i in sorted(scoped_ids)).encode()).hexdigest())
         raw = Path("artifacts/mission027-preflight/status-public-receipt.json").read_bytes()
         assert hashlib.sha256(raw).hexdigest() == config["status_receipt_sha256"]
         proof = json.loads(raw)
@@ -134,6 +178,7 @@ def main():
             daily_used=proof["daily_limit"] - proof["quota_remaining"],
             daily_remaining=proof["quota_remaining"])
         assert status.is_fresh(datetime.now(UTC))
+        transport.deadline = status.status_expires_at
         quota = QuotaController(status)
         client = ApiFootballDeepClient(api_key=os.environ["API_FOOTBALL_KEY"], quota=quota,
                                        max_retries=0, transport=transport)
@@ -145,7 +190,7 @@ def main():
             rows = []
             league, season = group["competition"], group["season"]
             for fixture in group["fixture_ids"]:
-                if transport.calls >= 8000 or quota.status.daily_remaining <= 5000:
+                if datetime.now(UTC) >= transport.deadline or transport.calls >= 8000 or quota.status.daily_remaining <= 5000:
                     raise RuntimeError("MISSION_BUDGET_REACHED")
                 request = dict(phase="lineups_only", competition=LEAGUES[league], season=season,
                     family="lineups", endpoint="/fixtures/lineups", params={"fixture": fixture})
@@ -175,7 +220,7 @@ def main():
             receipt["partitions"].append({**partition, "r2_key": key})
             print(f"Mission 027: {league} {season}; calls={transport.calls}", flush=True)
         receipt["quota_remaining"] = quota.status.daily_remaining
-        receipt["complete_fraction"] = receipt["complete_matches"] / 7228
+        receipt["complete_fraction"] = receipt["complete_matches"] / receipt["target_count"]
         receipt["status"] = "COMPLETE" if receipt["complete_fraction"] >= .95 else "PARTIAL"
     except Exception as error:
         receipt["reason_class"] = type(error).__name__  # No response body or secret.

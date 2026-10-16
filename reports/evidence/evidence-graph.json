@@ -11492,6 +11492,24 @@
       "limitations": [
         "Provider facts at the observation time; independent Claude review pending."
       ]
+    },
+    {
+      "claim_id": "OPS.MISSION027.PROGRESS.003",
+      "claim": "Read-only progress run 38966634425 observed 208 reserved target IDs at 2026-10-16T21:04:33Z, with zero provider requests, raw payload reads and R2 writes. These are reservation counts, not completed compositions.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38966634425",
+      "grain": "reservation_snapshot",
+      "temporal_class": "OBSERVED_AT",
+      "artifact": "reports/evidence/mission-027-progress-run-38966634425-public-receipt.json",
+      "hash": "bf4d82dbbd977a6dc2f8696058e02977974e87221b9733d3ba16a3465e63e592",
+      "code_revision": "ee4586da160064e4497e95a624232073ca7f87fa",
+      "execution_id": "38966634425",
+      "scientific_lineage_id": "NOT_APPLICABLE_OPERATIONAL_PROGRESS",
+      "dataset_lineage_id": "mission027-reservations",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
     }
   ],
   "decision_nodes":[
@@ -11860,6 +11878,10 @@
     {
       "decision_id": "RCV3-20261016-355",
       "ledger_record_hash": "d98ed520cb1f3fc353172f7ab85e0a982b10fab7206abeccf469b521bcaa66b3"
+    },
+    {
+      "decision_id": "RCV3-20261016-356",
+      "ledger_record_hash": "1333d4b7c58da96f25e75c693628b7ba8de9fad7319d04e2ff5e94aed594eaa6"
     }
   ],
   "edges":[
@@ -13094,6 +13116,13 @@
       "relation": "SUPPORTS",
       "status": "RECORDED",
       "to_decision_id": "RCV3-20261016-355"
+    },
+    {
+      "edge_id": "EDGE.1197",
+      "from_claim_id": "OPS.MISSION027.PROGRESS.003",
+      "relation": "SUPPORTS",
+      "status": "RECORDED",
+      "to_decision_id": "RCV3-20261016-356"
     }
   ]
 }

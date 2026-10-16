@@ -56,10 +56,31 @@ def test_progress_reads_only_reservation_keys_without_provider_credentials(monke
     fixture = json.loads(Path("configs/execution/mission027-targets.json").read_text())["groups"][0]["fixture_ids"][0]
     monkeypatch.setattr(sys, "argv", ["run", "--progress"])
     monkeypatch.setattr(runner, "OUTPUT", tmp_path)
-    probe = SimpleNamespace(iter_keys=lambda prefix: [f"{prefix}{fixture}.json"])
+    def metadata_only(key):
+        assert key.endswith(("/receipt.json", "/version.json"))
+        return None
+
+    probe = SimpleNamespace(iter_keys=lambda prefix: [f"{prefix}{fixture}.json"],
+                            get_object=metadata_only)
     monkeypatch.setattr(runner, "R2ObjectStore", lambda environment: probe)
     monkeypatch.setattr(runner.requests, "get", lambda *a, **kw: pytest.fail("provider forbidden"))
     assert runner.main() == 0
     result = json.loads((tmp_path / "progress.json").read_text())
     assert result["reserved_targets"] == 1
+    assert result["missing_legacy_receipts"] == [fixture]
     assert result["lineup_calls"] == result["status_calls"] == result["r2_writes"] == 0
+
+
+def test_each_worker_is_limited_to_two_rps_and_original_quota_day(monkeypatch):
+    clock, sent = [0.0], []
+    monkeypatch.setattr(runner.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(runner.time, "sleep", lambda delay: clock.__setitem__(0, clock[0] + delay))
+    monkeypatch.setattr(runner.requests, "get", lambda *a, **kw: sent.append(clock[0]))
+    transport = runner.LineupTransport()
+    for _ in range(3):
+        transport.get("https://example.test/fixtures/lineups")
+    assert sent == [0.0, 0.5, 1.0] and transport.calls == 3
+    transport.deadline = runner.datetime.now(runner.UTC) - runner.timedelta(seconds=1)
+    with pytest.raises(RuntimeError, match="ORIGINAL_QUOTA_DAY_ENDED"):
+        transport.get("https://example.test/fixtures/lineups")
+    assert transport.calls == 3

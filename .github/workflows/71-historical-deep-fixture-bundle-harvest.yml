@@ -3,6 +3,10 @@ name: "71 - Fixture Bundle Harvest"
 on:
   workflow_dispatch:
     inputs:
+      competition:
+        description: "Mission 027 : une des quatre ligues ; all réservé au mode habituel"
+        type: string
+        default: all
       lineups_only:
         description: "Mission 027 : liste figée, un appel par match, sans autre famille"
         type: boolean
@@ -30,6 +34,9 @@ on:
         default: 100
   workflow_call:
     inputs:
+      competition:
+        type: string
+        default: all
       lineups_only:
         type: boolean
         default: false
@@ -73,7 +80,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ inputs.progress_only && 'mission-027-progress' || 'historical-deep-r2-state' }}
+  group: ${{ inputs.progress_only && 'mission-027-progress' || inputs.lineups_only && format('mission-027-lineups-{0}', inputs.competition) || 'historical-deep-r2-state' }}
   cancel-in-progress: false
 
 jobs:
@@ -84,6 +91,7 @@ jobs:
       status: ${{ steps.outcome.outputs.status }}
       provider_stop: ${{ steps.outcome.outputs.provider_stop }}
     env:
+      MISSION027_COMPETITION: ${{ inputs.competition }}
       STORAGE_PAUSED: "true"
       P3_P4_PAUSED: "true"
       PRODUCTION_LOCKED: "true"
