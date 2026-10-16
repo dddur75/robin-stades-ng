@@ -11510,6 +11510,24 @@
       "verified_by": [
         "C0"
       ]
+    },
+    {
+      "claim_id": "OPS.MISSION027.LEGACY_AUDIT.004",
+      "claim": "Read-only Actions audit 38969245508 observed 257 historical reservations: 256 documented API calls from source 8d2834223ae3b347c2555839fc46bc5aed105a31 and fixture 592752 without receipt or version. The latter bounds an additional unknown call to one and must never be retried. Audit issued no provider request, raw-payload read or R2 write.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38969245508",
+      "grain": "legacy_receipt_metadata",
+      "temporal_class": "OBSERVED_AT",
+      "artifact": "reports/evidence/mission-027-legacy-audit-run-38969245508-public-receipt.json",
+      "hash": "dfbbb05ace628196e3d3c5847afe7cb205ddfc6c7bc87e6d1531393524ad74a6",
+      "code_revision": "114d67de25247daf9c67aa33c7c885145e2646f5",
+      "execution_id": "38969245508",
+      "scientific_lineage_id": "NOT_APPLICABLE_OPERATIONAL_AUDIT",
+      "dataset_lineage_id": "mission027-legacy-receipts",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
     }
   ],
   "decision_nodes":[
@@ -11882,6 +11900,10 @@
     {
       "decision_id": "RCV3-20261016-356",
       "ledger_record_hash": "1333d4b7c58da96f25e75c693628b7ba8de9fad7319d04e2ff5e94aed594eaa6"
+    },
+    {
+      "decision_id": "RCV3-20261016-357",
+      "ledger_record_hash": "3669b8e01267471cb40e485c65ec7215931f5c06f839f696a676d8d107b119db"
     }
   ],
   "edges":[
@@ -13123,6 +13145,13 @@
       "relation": "SUPPORTS",
       "status": "RECORDED",
       "to_decision_id": "RCV3-20261016-356"
+    },
+    {
+      "edge_id": "EDGE.1198",
+      "from_claim_id": "OPS.MISSION027.LEGACY_AUDIT.004",
+      "relation": "SUPPORTS",
+      "status": "RECORDED",
+      "to_decision_id": "RCV3-20261016-357"
     }
   ]
 }
