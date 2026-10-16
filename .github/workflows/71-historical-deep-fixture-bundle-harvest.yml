@@ -7,8 +7,8 @@ on:
         description: "Mission 027 : liste figée, un appel par match, sans autre famille"
         type: boolean
         default: false
-      status_only:
-        description: "Mission 027 : un seul /status, sans collecte ni stockage R2"
+      progress_only:
+        description: "Mission 027 : compter les réservations, sans fournisseur ni payload brut"
         type: boolean
         default: false
       slice_id:
@@ -33,7 +33,7 @@ on:
       lineups_only:
         type: boolean
         default: false
-      status_only:
+      progress_only:
         type: boolean
         default: false
       slice_id:
@@ -73,7 +73,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: historical-deep-r2-state
+  group: ${{ inputs.progress_only && 'mission-027-progress' || 'historical-deep-r2-state' }}
   cancel-in-progress: false
 
 jobs:
@@ -104,7 +104,7 @@ jobs:
           python -m pip install -r requirements.txt boto3
           python -m pip install --no-deps -e .
       - name: Collecter les bundles et fallbacks ciblés
-        if: '!inputs.status_only && !inputs.lineups_only'
+        if: '!inputs.progress_only && !inputs.lineups_only'
         env:
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
@@ -122,22 +122,15 @@ jobs:
           --max-calls "${{ inputs.max_calls }}"
           --max-duration-minutes "${{ inputs.max_duration_minutes }}"
           --mission-max-minutes 720
-      - name: Mission 027 — vérifier la clé une seule fois
-        if: inputs.status_only && !inputs.lineups_only
-        env:
-          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
-        run: >-
-          python scripts/check_api_football_status.py
-          --output artifacts/historical-deep/status-public-receipt.json
       - uses: actions/download-artifact@v4
-        if: inputs.lineups_only && inputs.execute && !inputs.status_only
+        if: inputs.lineups_only && inputs.execute && !inputs.progress_only
         with:
           name: historical-deep-71-mission-027-status-unique-38960293874-1
           run-id: 38960293874
           github-token: ${{ github.token }}
           path: artifacts/mission027-preflight
       - name: Mission 027 — compositions seules
-        if: inputs.lineups_only && inputs.execute && !inputs.status_only
+        if: inputs.lineups_only && inputs.execute && !inputs.progress_only
         env:
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
@@ -145,9 +138,17 @@ jobs:
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
         run: python -m scripts.run_mission027_lineups
+      - name: Mission 027 — observation sans collecte
+        if: inputs.progress_only
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: python -m scripts.run_mission027_lineups --progress
       - name: Publier la décision provider sanitisée
         id: outcome
-        if: always() && !inputs.status_only && !inputs.lineups_only
+        if: always() && !inputs.progress_only && !inputs.lineups_only
         run: >-
           python scripts/historical_deep_workflow_outcome.py
           artifacts/historical-deep/fixtures.json >> "$GITHUB_OUTPUT"

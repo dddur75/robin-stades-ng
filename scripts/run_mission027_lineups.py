@@ -4,8 +4,11 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import sys
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+
+import requests
 
 from robin.historical.normalization import normalize_records
 from robin.historical.storage import PartitionedParquetStore
@@ -15,12 +18,19 @@ from robin.historical_deep.contracts import ProviderStatus
 from robin.historical_deep.provider import ApiFootballDeepClient
 from robin.historical_deep.quota import QuotaController
 from robin.historical_deep.storage import R2FirstRepository
-from scripts.check_api_football_status import StatusTransport
 
 DIGEST = "4e471c16b27b3ce5deaa8602795eb687f4e812975265d720c5697d4ce6bd288c"
 LEAGUES = {"Premier-League": 39, "La-Liga": 140, "Serie-A": 135, "Bundesliga": 78}
 PREFIX = "historical-deep-data/schema-v1/_control/mission-027"
 OUTPUT = Path("artifacts/historical-deep/mission027")
+
+
+class LineupTransport:
+    calls = 0
+
+    def get(self, url, **kwargs):
+        self.calls += 1
+        return requests.get(url, allow_redirects=False, **kwargs)
 
 
 class CachedStore:
@@ -92,13 +102,25 @@ def main():
                "status_calls_new": 0, "lineup_calls": 0, "distinct_matches_called": 0,
                "target_count": 7228, "fixture_ids_sha256": DIGEST, "complete_matches": 0,
                "matches_without_response": [], "uncertain_reservations": [], "partitions": []}
-    transport = StatusTransport()
+    transport = LineupTransport()
     store = quota = None
     try:
         assert_safety_locks(os.environ)
         config = json.loads(Path("configs/execution/mission027-targets.json").read_text())
         groups = config["groups"]
         validate_targets(groups)  # Validate all seasons and IDs before any storage or HTTP.
+        if "--progress" in sys.argv:
+            probe = R2ObjectStore(os.environ)
+            keys = tuple(probe.iter_keys(f"{PREFIX}/fixture="))
+            reserved = {int(key.rsplit("=", 1)[1].split(".")[0]) for key in keys}
+            assert reserved <= {i for g in groups for i in g["fixture_ids"]}
+            progress = {"status": "OBSERVED", "reserved_targets": len(reserved),
+                        "target_count": 7228, "status_calls": 0, "lineup_calls": 0,
+                        "raw_payload_reads": 0, "r2_writes": 0,
+                        "observed_at": datetime.now(UTC).isoformat()}
+            (OUTPUT / "progress.json").write_text(json.dumps(progress) + "\n")
+            print(json.dumps(progress), flush=True)
+            return 0
         raw = Path("artifacts/mission027-preflight/status-public-receipt.json").read_bytes()
         assert hashlib.sha256(raw).hexdigest() == config["status_receipt_sha256"]
         proof = json.loads(raw)

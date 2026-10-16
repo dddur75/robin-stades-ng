@@ -220,7 +220,10 @@ def test_workflows_70_to_78_are_bounded_serialized_and_fail_closed() -> None:
             expected_permissions["actions"] = "read"
         assert workflow["permissions"] == expected_permissions
         assert workflow["concurrency"] == {
-            "group": "historical-deep-r2-state",
+            "group": (
+                "${{ inputs.progress_only && 'mission-027-progress' || 'historical-deep-r2-state' }}"
+                if number == 71 else "historical-deep-r2-state"
+            ),
             "cancel-in-progress": False,
         }
         if number == 74:

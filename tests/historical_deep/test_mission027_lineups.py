@@ -1,10 +1,14 @@
 import json
+import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
+import yaml
 
 from robin.historical_deep.collector import HistoricalDeepCollector
 from robin.historical_deep.storage import InMemoryObjectStore, R2FirstRepository
+from scripts import run_mission027_lineups as runner
 from scripts.run_mission027_lineups import ReceiptBoundary, collect_once, complete, validate_targets
 
 
@@ -42,3 +46,20 @@ def test_reservation_prevents_duplicate_calls_and_uncertain_retry():
     collector.repository = R2FirstRepository(InMemoryObjectStore())
     assert collect_once(collector, store, request) is None
     assert provider.calls == 1
+
+
+def test_progress_reads_only_reservation_keys_without_provider_credentials(monkeypatch, tmp_path):
+    workflow = yaml.safe_load(Path(".github/workflows/71-historical-deep-fixture-bundle-harvest.yml").read_text())
+    for key, value in workflow["jobs"]["fixture-bundles"]["env"].items():
+        monkeypatch.setenv(key, value)
+    monkeypatch.delenv("API_FOOTBALL_KEY", raising=False)
+    fixture = json.loads(Path("configs/execution/mission027-targets.json").read_text())["groups"][0]["fixture_ids"][0]
+    monkeypatch.setattr(sys, "argv", ["run", "--progress"])
+    monkeypatch.setattr(runner, "OUTPUT", tmp_path)
+    probe = SimpleNamespace(iter_keys=lambda prefix: [f"{prefix}{fixture}.json"])
+    monkeypatch.setattr(runner, "R2ObjectStore", lambda environment: probe)
+    monkeypatch.setattr(runner.requests, "get", lambda *a, **kw: pytest.fail("provider forbidden"))
+    assert runner.main() == 0
+    result = json.loads((tmp_path / "progress.json").read_text())
+    assert result["reserved_targets"] == 1
+    assert result["lineup_calls"] == result["status_calls"] == result["r2_writes"] == 0
