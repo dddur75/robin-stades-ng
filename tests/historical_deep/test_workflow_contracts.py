@@ -216,7 +216,7 @@ def test_workflows_70_to_78_are_bounded_serialized_and_fail_closed() -> None:
     for number, path in PHASE_FILES.items():
         text, workflow = _load(path)
         expected_permissions = {"contents": "read"}
-        if number == 74:
+        if number in {71, 74}:
             expected_permissions["actions"] = "read"
         assert workflow["permissions"] == expected_permissions
         assert workflow["concurrency"] == {

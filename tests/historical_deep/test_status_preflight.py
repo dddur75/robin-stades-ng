@@ -59,7 +59,7 @@ def test_workflow_preflight_is_exclusive_of_harvest():
     steps = workflow["jobs"]["fixture-bundles"]["steps"]
     preflight = next(step for step in steps if "check_api_football_status.py" in step.get("run", ""))
     harvest = next(step for step in steps if "run_historical_deep_harvest.py" in step.get("run", ""))
-    assert preflight["if"] == "inputs.status_only"
+    assert preflight["if"] == "inputs.status_only && !inputs.lineups_only"
     assert preflight["env"] == {"API_FOOTBALL_KEY": "${{ secrets.API_FOOTBALL_KEY }}"}
-    assert harvest["if"] == "!inputs.status_only"
+    assert harvest["if"] == "!inputs.status_only && !inputs.lineups_only"
     assert workflow["jobs"]["fixture-bundles"]["env"]["STORAGE_PAUSED"] == "true"
