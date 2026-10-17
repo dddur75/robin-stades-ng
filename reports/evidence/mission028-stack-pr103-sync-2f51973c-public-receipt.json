@@ -1,0 +1,31 @@
+{
+  "schema_version": "mission028-stack-main-sync-v1",
+  "status": "PARTIAL_PENDING_CLAUDE",
+  "claim_id": "ENGINEERING.MISSION028.STACK.PR103.SYNC.001",
+  "pr": 103,
+  "source_head": "2f51973c78b69cba7ea89c2f0f34df6c81226f01",
+  "incoming_base": "014d2c37b77f0eaa1ff944029836ba7bd29eedf1",
+  "review_base": "014d2c37b77f0eaa1ff944029836ba7bd29eedf1",
+  "canonical_incoming_ledger_sha256": "4cbf7ef7a215b87014a9b2bff3e524881b5775d0a8d13596f7464fcc59c576ce",
+  "archived_source_suffix": "reports/council/mission028-stack-pr103-before-2f51973c-ledger.jsonl",
+  "archived_source_suffix_sha256": "bc54f38ed5e8359372aeaf343eca29e1644d83e6568cbd668236467e76787e88",
+  "archived_graph": "reports/evidence/mission028-stack-pr103-before-2f51973c-evidence.json",
+  "archived_graph_sha256": "9b484d779021fd0cf1f2c0eb5952a613b5fce25c4ad70deb9d7c2a99f3343574",
+  "targeted_tests": "15 passed, 42 deselected in 2.70s",
+  "test_log_sha256": "b184e35c6abb8bab2721a01d447ce40972716d68a37d7af88098761badf49b78",
+  "code_lines_added_deleted": 399,
+  "functional_code_unchanged": true,
+  "frozen_inputs_unchanged": true,
+  "artifact_hashes": {
+    ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "4c686c45fae803d5d036935dc052f8136f1284119fa0fda7a19e566fefbd0127",
+    "scripts/run_mission028.py": "9a293b55537fba6ff7f2c055c33e1309aefd78545916ff45f93ec265920c64e1",
+    "tests/historical_deep/test_mission028.py": "f22ca46e2b2c18b42111ae3c6328351a0eba6727865625c3e35b9178aecf395e",
+    "tests/historical_deep/test_workflow_contracts.py": "8900a3b30a06392f4f5785242ab7d3a87d4449aafb7993e9fbd4528e1c58798d"
+  },
+  "engineering_projection_sha256": "e97dab2d16fa98e83cfd42f8cef9172634691e510adc39455bc306eed9c3270f",
+  "pydantic_bound": ">=2.9,<2.14",
+  "provider_calls_new": 0,
+  "r2_calls_new": 0,
+  "workflow_dispatches_new": 0,
+  "author_merges": 0
+}

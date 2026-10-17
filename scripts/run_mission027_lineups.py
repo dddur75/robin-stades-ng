@@ -26,7 +26,6 @@ DIGEST = "4e471c16b27b3ce5deaa8602795eb687f4e812975265d720c5697d4ce6bd288c"
 LEAGUES = {"Premier-League": 39, "La-Liga": 140, "Serie-A": 135, "Bundesliga": 78}
 PREFIX = "historical-deep-data/schema-v1/_control/mission-027"
 OUTPUT = Path("artifacts/historical-deep/mission027")
-
 class LineupTransport:
     calls = 0
     next_at = 0.0

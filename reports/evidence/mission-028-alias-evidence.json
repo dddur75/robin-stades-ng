@@ -1,0 +1,9001 @@
+{
+  "status": "PENDING_INDEPENDENT_REVIEW",
+  "source_run": "38993960823",
+  "fixture_index_sha256": "4f8961af58599eced537c8d9f14fcb63f276b43b0e5822e2aa3481228a3cefb6",
+  "source_sha256": "8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+  "aliases_sha256": "50931bcabe33c4fd5932a79911064002ecb23addff8c03ef8e05abfeb1e0a2de",
+  "method": "Exact date +/-1 day and final scores support name equivalence; repeated schedule fingerprints propose aliases, then explicit name and rename checks; no fuzzy fixture acceptance. Final terminal-status validation remains in the R2 replay.",
+  "reviewed_repeated_pairs": [
+    {
+      "key": "ARG|Atl. Tucuman",
+      "api": "Atletico Tucuman",
+      "support": 167,
+      "runner_up": 11,
+      "similarity": 0.8,
+      "source_rows": [
+        12,
+        14,
+        32,
+        45,
+        54,
+        71,
+        77,
+        90
+      ],
+      "fixture_ids": [
+        215559,
+        215563,
+        215583,
+        215591,
+        215607,
+        215610,
+        215630,
+        215633
+      ]
+    },
+    {
+      "key": "ARG|Belgrano",
+      "api": "Belgrano Cordoba",
+      "support": 54,
+      "runner_up": 6,
+      "similarity": 0.696,
+      "source_rows": [
+        1502,
+        1510,
+        1521,
+        1536,
+        1549,
+        1572,
+        1582,
+        1598
+      ],
+      "fixture_ids": [
+        971351,
+        971374,
+        971375,
+        971398,
+        971400,
+        971421,
+        971425,
+        971444
+      ]
+    },
+    {
+      "key": "ARG|Central Cordoba",
+      "api": "Central Cordoba de Santiago",
+      "support": 167,
+      "runner_up": 9,
+      "similarity": 0.737,
+      "source_rows": [
+        8,
+        14,
+        27,
+        40,
+        48,
+        61,
+        73,
+        93
+      ],
+      "fixture_ids": [
+        215554,
+        215563,
+        215581,
+        215592,
+        215601,
+        215616,
+        215622,
+        215640
+      ]
+    },
+    {
+      "key": "ARG|Dep. Riestra",
+      "api": "Deportivo Riestra",
+      "support": 27,
+      "runner_up": 3,
+      "similarity": 0.769,
+      "source_rows": [
+        2286,
+        2301,
+        2306,
+        2319,
+        2335,
+        2350,
+        2361,
+        2384
+      ],
+      "fixture_ids": [
+        1158664,
+        1158684,
+        1158691,
+        1158713,
+        1158718,
+        1158742,
+        1158745,
+        1158771
+      ]
+    },
+    {
+      "key": "ARG|Ind. Rivadavia",
+      "api": "Independ. Rivadavia",
+      "support": 27,
+      "runner_up": 4,
+      "similarity": 0.828,
+      "source_rows": [
+        2287,
+        2292,
+        2315,
+        2332,
+        2344,
+        2348,
+        2363,
+        2373
+      ],
+      "fixture_ids": [
+        1158665,
+        1158682,
+        1158694,
+        1158709,
+        1158723,
+        1158736,
+        1158752,
+        1158763
+      ]
+    },
+    {
+      "key": "ARG|Instituto",
+      "api": "Instituto Cordoba",
+      "support": 54,
+      "runner_up": 7,
+      "similarity": 0.72,
+      "source_rows": [
+        1500,
+        1519,
+        1533,
+        1535,
+        1560,
+        1570,
+        1580,
+        1596
+      ],
+      "fixture_ids": [
+        988697,
+        988699,
+        988701,
+        988702,
+        988705,
+        988706,
+        988709,
+        988710
+      ]
+    },
+    {
+      "key": "ARG|Union de Santa Fe",
+      "api": "Union Santa Fe",
+      "support": 167,
+      "runner_up": 13,
+      "similarity": 0.923,
+      "source_rows": [
+        3,
+        20,
+        25,
+        44,
+        53,
+        60,
+        72,
+        84
+      ],
+      "fixture_ids": [
+        215548,
+        215565,
+        215579,
+        215594,
+        215597,
+        215614,
+        215628,
+        215639
+      ]
+    },
+    {
+      "key": "AUT|A. Klagenfurt",
+      "api": "Austria Klagenfurt",
+      "support": 130,
+      "runner_up": 6,
+      "similarity": 0.786,
+      "source_rows": [
+        3044,
+        3046,
+        3052,
+        3054,
+        3060,
+        3070,
+        3072,
+        3078
+      ],
+      "fixture_ids": [
+        705617,
+        705618,
+        718916,
+        718918,
+        718923,
+        718934,
+        718936,
+        718941
+      ]
+    },
+    {
+      "key": "AUT|A. Lustenau",
+      "api": "Austria Lustenau",
+      "support": 67,
+      "runner_up": 3,
+      "similarity": 0.75,
+      "source_rows": [
+        3246,
+        3250,
+        3259,
+        3264,
+        3267,
+        3272,
+        3278,
+        3288
+      ],
+      "fixture_ids": [
+        874358,
+        874361,
+        874372,
+        874375,
+        874379,
+        874383,
+        874389,
+        874397
+      ]
+    },
+    {
+      "key": "AUT|Admira",
+      "api": "Admira Wacker",
+      "support": 96,
+      "runner_up": 9,
+      "similarity": 0.667,
+      "source_rows": [
+        2657,
+        2664,
+        2668,
+        2678,
+        2684,
+        2686,
+        2696,
+        2698
+      ],
+      "fixture_ids": [
+        165355,
+        165362,
+        165368,
+        165375,
+        165382,
+        165385,
+        165393,
+        165399
+      ]
+    },
+    {
+      "key": "AUT|Altach",
+      "api": "SCR Altach",
+      "support": 193,
+      "runner_up": 9,
+      "similarity": 0.8,
+      "source_rows": [
+        2659,
+        2662,
+        2669,
+        2677,
+        2682,
+        2689,
+        2695,
+        2701
+      ],
+      "fixture_ids": [
+        165359,
+        165361,
+        165367,
+        165377,
+        165379,
+        165389,
+        165395,
+        165397
+      ]
+    },
+    {
+      "key": "AUT|BW Linz",
+      "api": "FC BW Linz",
+      "support": 64,
+      "runner_up": 6,
+      "similarity": 0.857,
+      "source_rows": [
+        3442,
+        3447,
+        3450,
+        3460,
+        3463,
+        3469,
+        3475,
+        3481
+      ],
+      "fixture_ids": [
+        1042888,
+        1042898,
+        1042901,
+        1042908,
+        1042910,
+        1042916,
+        1042924,
+        1042926
+      ]
+    },
+    {
+      "key": "AUT|Hartberg",
+      "api": "TSV Hartberg",
+      "support": 197,
+      "runner_up": 9,
+      "similarity": 0.842,
+      "source_rows": [
+        2660,
+        2664,
+        2671,
+        2677,
+        2683,
+        2691,
+        2693,
+        2702
+      ],
+      "fixture_ids": [
+        165357,
+        165362,
+        165370,
+        165377,
+        165383,
+        165388,
+        165390,
+        165400
+      ]
+    },
+    {
+      "key": "AUT|LASK",
+      "api": "Lask Linz",
+      "support": 193,
+      "runner_up": 6,
+      "similarity": 0.667,
+      "source_rows": [
+        2659,
+        2663,
+        2668,
+        2674,
+        2681,
+        2687,
+        2694,
+        2703
+      ],
+      "fixture_ids": [
+        165359,
+        165360,
+        165368,
+        165372,
+        165378,
+        165384,
+        165392,
+        165396
+      ]
+    },
+    {
+      "key": "AUT|Mattersburg",
+      "api": "SV Mattersburg",
+      "support": 32,
+      "runner_up": 2,
+      "similarity": 0.917,
+      "source_rows": [
+        2660,
+        2665,
+        2672,
+        2676,
+        2680,
+        2686,
+        2692,
+        2699
+      ],
+      "fixture_ids": [
+        165357,
+        165363,
+        165369,
+        165373,
+        165380,
+        165385,
+        165394,
+        165398
+      ]
+    },
+    {
+      "key": "AUT|SK Rapid",
+      "api": "Rapid Vienna",
+      "support": 194,
+      "runner_up": 7,
+      "similarity": 0.556,
+      "source_rows": [
+        2656,
+        2666,
+        2669,
+        2679,
+        2681,
+        2690,
+        2696,
+        2700
+      ],
+      "fixture_ids": [
+        165354,
+        165365,
+        165367,
+        165376,
+        165378,
+        165387,
+        165393,
+        165401
+      ]
+    },
+    {
+      "key": "AUT|Salzburg",
+      "api": "Red Bull Salzburg",
+      "support": 192,
+      "runner_up": 9,
+      "similarity": 0.696,
+      "source_rows": [
+        2656,
+        2665,
+        2670,
+        2675,
+        2684,
+        2688,
+        2693,
+        2703
+      ],
+      "fixture_ids": [
+        165354,
+        165363,
+        165366,
+        165374,
+        165382,
+        165386,
+        165390,
+        165396
+      ]
+    },
+    {
+      "key": "AUT|St. Polten",
+      "api": "SKN ST. Polten",
+      "support": 66,
+      "runner_up": 4,
+      "similarity": 0.842,
+      "source_rows": [
+        2661,
+        2666,
+        2673,
+        2675,
+        2680,
+        2691,
+        2695,
+        2698
+      ],
+      "fixture_ids": [
+        165358,
+        165365,
+        165371,
+        165374,
+        165380,
+        165388,
+        165395,
+        165399
+      ]
+    },
+    {
+      "key": "AUT|Tirol",
+      "api": "WSG Wattens",
+      "support": 195,
+      "runner_up": 7,
+      "similarity": 0.133,
+      "source_rows": [
+        2658,
+        2662,
+        2673,
+        2674,
+        2685,
+        2688,
+        2692,
+        2700
+      ],
+      "fixture_ids": [
+        165356,
+        165361,
+        165371,
+        165372,
+        165381,
+        165386,
+        165394,
+        165401
+      ]
+    },
+    {
+      "key": "B1|Club Brugge",
+      "api": "Club Brugge KV",
+      "support": 211,
+      "runner_up": 9,
+      "similarity": 0.909,
+      "source_rows": [
+        3828,
+        3833,
+        3845,
+        3849,
+        3868,
+        3872,
+        3884,
+        3889
+      ],
+      "fixture_ids": [
+        182652,
+        182656,
+        182665,
+        182673,
+        182693,
+        182700,
+        182704,
+        182718
+      ]
+    },
+    {
+      "key": "B1|Eupen",
+      "api": "AS Eupen",
+      "support": 167,
+      "runner_up": 8,
+      "similarity": 0.833,
+      "source_rows": [
+        3832,
+        3839,
+        3843,
+        3849,
+        3861,
+        3864,
+        3873,
+        3885
+      ],
+      "fixture_ids": [
+        182655,
+        182661,
+        182666,
+        182673,
+        182686,
+        182689,
+        182698,
+        182705
+      ]
+    },
+    {
+      "key": "B1|Mechelen",
+      "api": "KV Mechelen",
+      "support": 211,
+      "runner_up": 7,
+      "similarity": 0.889,
+      "source_rows": [
+        3829,
+        3835,
+        3841,
+        3851,
+        3859,
+        3863,
+        3877,
+        3879
+      ],
+      "fixture_ids": [
+        182651,
+        182660,
+        182664,
+        182674,
+        182687,
+        182688,
+        182702,
+        182707
+      ]
+    },
+    {
+      "key": "B1|Mouscron",
+      "api": "Royal Excel Mouscron",
+      "support": 63,
+      "runner_up": 5,
+      "similarity": 0.615,
+      "source_rows": [
+        3827,
+        3840,
+        3847,
+        3855,
+        3861,
+        3863,
+        3878,
+        3883
+      ],
+      "fixture_ids": [
+        182650,
+        182662,
+        182671,
+        182677,
+        182686,
+        182688,
+        182703,
+        182711
+      ]
+    },
+    {
+      "key": "B1|Oud-Heverlee Leuven",
+      "api": "OH Leuven",
+      "support": 182,
+      "runner_up": 8,
+      "similarity": 0.64,
+      "source_rows": [
+        4065,
+        4068,
+        4078,
+        4088,
+        4096,
+        4104,
+        4113,
+        4122
+      ],
+      "fixture_ids": [
+        581149,
+        581152,
+        581168,
+        581177,
+        581186,
+        581191,
+        581199,
+        581213
+      ]
+    },
+    {
+      "key": "B1|RWD Molenbeek",
+      "api": "RWDM",
+      "support": 36,
+      "runner_up": 2,
+      "similarity": 0.5,
+      "source_rows": [
+        4978,
+        4986,
+        4992,
+        5003,
+        5015,
+        5022,
+        5029,
+        5038
+      ],
+      "fixture_ids": [
+        1038424,
+        1038432,
+        1038438,
+        1038451,
+        1038464,
+        1038470,
+        1038481,
+        1038457
+      ]
+    },
+    {
+      "key": "B1|Seraing",
+      "api": "Seraing United",
+      "support": 68,
+      "runner_up": 8,
+      "similarity": 0.7,
+      "source_rows": [
+        4364,
+        4376,
+        4386,
+        4393,
+        4401,
+        4409,
+        4422,
+        4429
+      ],
+      "fixture_ids": [
+        710040,
+        710049,
+        710063,
+        710067,
+        710076,
+        710086,
+        710097,
+        710102
+      ]
+    },
+    {
+      "key": "B1|St. Gilloise",
+      "api": "Union St. Gilloise",
+      "support": 148,
+      "runner_up": 6,
+      "similarity": 0.8,
+      "source_rows": [
+        4367,
+        4379,
+        4382,
+        4394,
+        4404,
+        4410,
+        4419,
+        4428
+      ],
+      "fixture_ids": [
+        710045,
+        710052,
+        710057,
+        710066,
+        710082,
+        710087,
+        710094,
+        710105
+      ]
+    },
+    {
+      "key": "B1|Standard",
+      "api": "Standard Liege",
+      "support": 210,
+      "runner_up": 10,
+      "similarity": 0.762,
+      "source_rows": [
+        3826,
+        3837,
+        3848,
+        3855,
+        3862,
+        3867,
+        3874,
+        3885
+      ],
+      "fixture_ids": [
+        182649,
+        182657,
+        182669,
+        182677,
+        182685,
+        182694,
+        182697,
+        182705
+      ]
+    },
+    {
+      "key": "B1|Waasland-Beveren",
+      "api": "SK Beveren",
+      "support": 63,
+      "runner_up": 2,
+      "similarity": 0.667,
+      "source_rows": [
+        3828,
+        3838,
+        3843,
+        3852,
+        3858,
+        3866,
+        3875,
+        3883
+      ],
+      "fixture_ids": [
+        182652,
+        182663,
+        182666,
+        182676,
+        182682,
+        182692,
+        182699,
+        182711
+      ]
+    },
+    {
+      "key": "B1|Waregem",
+      "api": "Zulte Waregem",
+      "support": 131,
+      "runner_up": 5,
+      "similarity": 0.737,
+      "source_rows": [
+        3829,
+        3837,
+        3844,
+        3856,
+        3860,
+        3870,
+        3873,
+        3886
+      ],
+      "fixture_ids": [
+        182651,
+        182657,
+        182668,
+        182675,
+        182683,
+        182695,
+        182698,
+        182708
+      ]
+    },
+    {
+      "key": "B1|Westerlo",
+      "api": "KVC Westerlo",
+      "support": 113,
+      "runner_up": 4,
+      "similarity": 0.842,
+      "source_rows": [
+        4677,
+        4682,
+        4694,
+        4700,
+        4709,
+        4720,
+        4729,
+        4740
+      ],
+      "fixture_ids": [
+        874736,
+        874740,
+        874752,
+        874756,
+        874772,
+        874781,
+        874786,
+        874798
+      ]
+    },
+    {
+      "key": "BRA|America MG",
+      "api": "America Mineiro",
+      "support": 114,
+      "runner_up": 7,
+      "similarity": 0.696,
+      "source_rows": [
+        6271,
+        6281,
+        6292,
+        6300,
+        6312,
+        6320,
+        6328,
+        6336
+      ],
+      "fixture_ids": [
+        688916,
+        688922,
+        688929,
+        688942,
+        688950,
+        688962,
+        688972,
+        688985
+      ]
+    },
+    {
+      "key": "BRA|Athletico-PR",
+      "api": "Atletico Paranaense",
+      "support": 219,
+      "runner_up": 12,
+      "similarity": 0.69,
+      "source_rows": [
+        5603,
+        5610,
+        5619,
+        5644,
+        5649,
+        5659,
+        5661,
+        5669
+      ],
+      "fixture_ids": [
+        94561,
+        94577,
+        94582,
+        94603,
+        94611,
+        94591,
+        94627,
+        94631
+      ]
+    },
+    {
+      "key": "BRA|Atletico GO",
+      "api": "Atletico Goianiense",
+      "support": 152,
+      "runner_up": 10,
+      "similarity": 0.714,
+      "source_rows": [
+        5899,
+        5908,
+        5922,
+        5930,
+        5940,
+        5946,
+        5957,
+        5974
+      ],
+      "fixture_ids": [
+        328004,
+        328014,
+        328020,
+        328034,
+        328044,
+        328045,
+        328064,
+        328066
+      ]
+    },
+    {
+      "key": "BRA|Botafogo RJ",
+      "api": "Botafogo",
+      "support": 181,
+      "runner_up": 11,
+      "similarity": 0.889,
+      "source_rows": [
+        5606,
+        5616,
+        5624,
+        5632,
+        5644,
+        5650,
+        5668,
+        5677
+      ],
+      "fixture_ids": [
+        94565,
+        94574,
+        94584,
+        94593,
+        94603,
+        94614,
+        94623,
+        94639
+      ]
+    },
+    {
+      "key": "BRA|Bragantino",
+      "api": "RB Bragantino",
+      "support": 152,
+      "runner_up": 38,
+      "similarity": 0.909,
+      "source_rows": [
+        6275,
+        6282,
+        6295,
+        6303,
+        6309,
+        6317,
+        6335,
+        6341
+      ],
+      "fixture_ids": [
+        688917,
+        688926,
+        688936,
+        688940,
+        688949,
+        688966,
+        688978,
+        688986
+      ]
+    },
+    {
+      "key": "BRA|Flamengo RJ",
+      "api": "Flamengo",
+      "support": 219,
+      "runner_up": 12,
+      "similarity": 0.889,
+      "source_rows": [
+        5607,
+        5617,
+        5624,
+        5633,
+        5640,
+        5652,
+        5664,
+        5675
+      ],
+      "fixture_ids": [
+        94566,
+        94576,
+        94584,
+        94594,
+        94606,
+        94620,
+        94624,
+        94636
+      ]
+    },
+    {
+      "key": "BRA|Fortaleza",
+      "api": "Fortaleza EC",
+      "support": 219,
+      "runner_up": 13,
+      "similarity": 0.9,
+      "source_rows": [
+        5600,
+        5614,
+        5625,
+        5629,
+        5648,
+        5651,
+        5666,
+        5676
+      ],
+      "fixture_ids": [
+        94568,
+        94571,
+        94586,
+        94595,
+        94605,
+        94617,
+        94629,
+        94638
+      ]
+    },
+    {
+      "key": "BRA|Vasco",
+      "api": "Vasco DA Gama",
+      "support": 143,
+      "runner_up": 11,
+      "similarity": 0.625,
+      "source_rows": [
+        5601,
+        5613,
+        5622,
+        5636,
+        5645,
+        5652,
+        5667,
+        5674
+      ],
+      "fixture_ids": [
+        94569,
+        94580,
+        94589,
+        94600,
+        94607,
+        94620,
+        94630,
+        94635
+      ]
+    },
+    {
+      "key": "CHN|Cangzhou",
+      "api": "Shijiazhuang Y. J.",
+      "support": 115,
+      "runner_up": 8,
+      "similarity": 0.273,
+      "source_rows": [
+        8074,
+        8081,
+        8089,
+        8097,
+        8103,
+        8114,
+        8119,
+        8127
+      ],
+      "fixture_ids": [
+        697602,
+        697611,
+        697619,
+        697627,
+        697633,
+        697642,
+        697650,
+        697656
+      ]
+    },
+    {
+      "key": "CHN|Chengdu Rongcheng",
+      "api": "Chengdu Better City",
+      "support": 96,
+      "runner_up": 4,
+      "similarity": 0.545,
+      "source_rows": [
+        8247,
+        8249,
+        8258,
+        8263,
+        8272,
+        8284,
+        8290,
+        8302
+      ],
+      "fixture_ids": [
+        823838,
+        823839,
+        863810,
+        863819,
+        863828,
+        863837,
+        863844,
+        863859
+      ]
+    },
+    {
+      "key": "CHN|Chongqing Liangjiang Athletic",
+      "api": "Chongqing Lifan",
+      "support": 57,
+      "runner_up": 3,
+      "similarity": 0.634,
+      "source_rows": [
+        7793,
+        7799,
+        7813,
+        7818,
+        7824,
+        7832,
+        7845,
+        7851
+      ],
+      "fixture_ids": [
+        78149,
+        78155,
+        78169,
+        78174,
+        78179,
+        78188,
+        78208,
+        78197
+      ]
+    },
+    {
+      "key": "CHN|Dalian Pro",
+      "api": "Dalian Aerbin",
+      "support": 106,
+      "runner_up": 4,
+      "similarity": 0.667,
+      "source_rows": [
+        7914,
+        7921,
+        7926,
+        7935,
+        7944,
+        7952,
+        7958,
+        7966
+      ],
+      "fixture_ids": [
+        571469,
+        569818,
+        569824,
+        569833,
+        569842,
+        569850,
+        569858,
+        569864
+      ]
+    },
+    {
+      "key": "CHN|Dalian Yifang F.C.",
+      "api": "Dalian Aerbin",
+      "support": 15,
+      "runner_up": 2,
+      "similarity": 0.615,
+      "source_rows": [
+        7796,
+        7801,
+        7807,
+        7816,
+        7823,
+        7832,
+        7839,
+        7850
+      ],
+      "fixture_ids": [
+        78153,
+        78157,
+        78165,
+        78172,
+        78180,
+        78188,
+        78205,
+        78195
+      ]
+    },
+    {
+      "key": "CHN|Guangzhou City",
+      "api": "Guangzhou R&F",
+      "support": 56,
+      "runner_up": 4,
+      "similarity": 0.75,
+      "source_rows": [
+        8072,
+        8079,
+        8090,
+        8095,
+        8103,
+        8113,
+        8121,
+        8128
+      ],
+      "fixture_ids": [
+        697601,
+        697609,
+        697618,
+        697625,
+        697633,
+        697643,
+        697651,
+        697659
+      ]
+    },
+    {
+      "key": "CHN|Guangzhou Evergrande",
+      "api": "Guangzhou Evergrande FC",
+      "support": 36,
+      "runner_up": 2,
+      "similarity": 0.95,
+      "source_rows": [
+        7790,
+        7791,
+        7800,
+        7807,
+        7815,
+        7827,
+        7836,
+        7844
+      ],
+      "fixture_ids": [
+        78146,
+        78147,
+        78156,
+        78165,
+        78171,
+        78183,
+        78192,
+        78207
+      ]
+    },
+    {
+      "key": "CHN|Guangzhou FC",
+      "api": "Guangzhou Evergrande FC",
+      "support": 56,
+      "runner_up": 4,
+      "similarity": 0.688,
+      "source_rows": [
+        8072,
+        8082,
+        8087,
+        8097,
+        8109,
+        8111,
+        8122,
+        8128
+      ],
+      "fixture_ids": [
+        697601,
+        697610,
+        697617,
+        697627,
+        697635,
+        697641,
+        697649,
+        697659
+      ]
+    },
+    {
+      "key": "CHN|Hebei",
+      "api": "Hebei Zhongji",
+      "support": 89,
+      "runner_up": 4,
+      "similarity": 0.588,
+      "source_rows": [
+        7797,
+        7802,
+        7812,
+        7819,
+        7824,
+        7831,
+        7842,
+        7847
+      ],
+      "fixture_ids": [
+        78154,
+        78158,
+        78168,
+        78175,
+        78179,
+        78187,
+        78203,
+        78196
+      ]
+    },
+    {
+      "key": "CHN|Henan Songshan Longmen",
+      "api": "Henan Jianye",
+      "support": 149,
+      "runner_up": 7,
+      "similarity": 0.516,
+      "source_rows": [
+        7796,
+        7803,
+        7809,
+        7820,
+        7825,
+        7838,
+        7841,
+        7846
+      ],
+      "fixture_ids": [
+        78153,
+        78159,
+        78164,
+        78176,
+        78181,
+        78191,
+        78206,
+        78198
+      ]
+    },
+    {
+      "key": "CHN|Meizhou Hakka",
+      "api": "Meizhou Kejia",
+      "support": 93,
+      "runner_up": 4,
+      "similarity": 0.667,
+      "source_rows": [
+        8256,
+        8267,
+        8277,
+        8285,
+        8290,
+        8299,
+        8308,
+        8315
+      ],
+      "fixture_ids": [
+        863812,
+        863822,
+        863832,
+        863841,
+        863844,
+        863854,
+        863863,
+        863871
+      ]
+    },
+    {
+      "key": "CHN|Qingdao FC",
+      "api": "Qingdao Huanghai",
+      "support": 42,
+      "runner_up": 2,
+      "similarity": 0.583,
+      "source_rows": [
+        7912,
+        7937,
+        7945,
+        7956,
+        7963,
+        7972,
+        7978,
+        7986
+      ],
+      "fixture_ids": [
+        571468,
+        569836,
+        569843,
+        569853,
+        569862,
+        569869,
+        569876,
+        569884
+      ]
+    },
+    {
+      "key": "CHN|Qingdao Hainiu",
+      "api": "Qingdao Jonoon",
+      "support": 60,
+      "runner_up": 5,
+      "similarity": 0.615,
+      "source_rows": [
+        8559,
+        8563,
+        8570,
+        8578,
+        8589,
+        8600,
+        8605,
+        8611
+      ],
+      "fixture_ids": [
+        1021277,
+        1021282,
+        1021288,
+        1021295,
+        1021307,
+        1021314,
+        1021320,
+        1021329
+      ]
+    },
+    {
+      "key": "CHN|Qingdao West Coast",
+      "api": "Qingdao Youth Island",
+      "support": 30,
+      "runner_up": 2,
+      "similarity": 0.529,
+      "source_rows": [
+        8793,
+        8802,
+        8811,
+        8824,
+        8832,
+        8835,
+        8846,
+        8851
+      ],
+      "fixture_ids": [
+        1173037,
+        1173046,
+        1173056,
+        1173068,
+        1173073,
+        1173081,
+        1173092,
+        1173093
+      ]
+    },
+    {
+      "key": "CHN|Shandong Taishan",
+      "api": "Shandong Luneng",
+      "support": 114,
+      "runner_up": 7,
+      "similarity": 0.621,
+      "source_rows": [
+        8071,
+        8082,
+        8088,
+        8096,
+        8104,
+        8113,
+        8119,
+        8129
+      ],
+      "fixture_ids": [
+        697600,
+        697610,
+        697616,
+        697624,
+        697632,
+        697643,
+        697650,
+        697658
+      ]
+    },
+    {
+      "key": "CHN|Shanghai Port",
+      "api": "SHANGHAI SIPG",
+      "support": 116,
+      "runner_up": 8,
+      "similarity": 0.75,
+      "source_rows": [
+        8076,
+        8084,
+        8093,
+        8102,
+        8106,
+        8118,
+        8125,
+        8135
+      ],
+      "fixture_ids": [
+        697605,
+        697612,
+        697623,
+        697631,
+        697636,
+        697645,
+        697655,
+        697671
+      ]
+    },
+    {
+      "key": "CHN|Shenzhen",
+      "api": "Shenzhen Ruby FC",
+      "support": 120,
+      "runner_up": 5,
+      "similarity": 0.727,
+      "source_rows": [
+        7797,
+        7806,
+        7813,
+        7822,
+        7828,
+        7835,
+        7849,
+        7856
+      ],
+      "fixture_ids": [
+        78154,
+        78162,
+        78169,
+        78178,
+        78184,
+        78193,
+        78199,
+        78213
+      ]
+    },
+    {
+      "key": "CHN|Shenzhen Xinpengcheng",
+      "api": "Sichuan Jiuniu",
+      "support": 30,
+      "runner_up": 3,
+      "similarity": 0.303,
+      "source_rows": [
+        8800,
+        8808,
+        8809,
+        8820,
+        8825,
+        8839,
+        8842,
+        8852
+      ],
+      "fixture_ids": [
+        1173043,
+        1173052,
+        1173053,
+        1173063,
+        1173071,
+        1173084,
+        1173087,
+        1173094
+      ]
+    },
+    {
+      "key": "CHN|Shijiazhuang",
+      "api": "Shijiazhuang Y. J.",
+      "support": 19,
+      "runner_up": 3,
+      "similarity": 0.923,
+      "source_rows": [
+        7915,
+        7932,
+        7938,
+        7946,
+        7953,
+        7964,
+        7970,
+        7978
+      ],
+      "fixture_ids": [
+        571471,
+        569829,
+        569835,
+        569844,
+        569852,
+        569861,
+        569867,
+        569876
+      ]
+    },
+    {
+      "key": "CHN|Tianjin Jinmen Tiger",
+      "api": "Tianjin Teda",
+      "support": 148,
+      "runner_up": 7,
+      "similarity": 0.552,
+      "source_rows": [
+        7798,
+        7800,
+        7808,
+        7816,
+        7829,
+        7838,
+        7843,
+        7848
+      ],
+      "fixture_ids": [
+        78152,
+        78156,
+        78163,
+        78172,
+        78185,
+        78191,
+        78210,
+        78202
+      ]
+    },
+    {
+      "key": "CHN|Tianjin Tianhai",
+      "api": "Tianjin Songjiang",
+      "support": 15,
+      "runner_up": 2,
+      "similarity": 0.667,
+      "source_rows": [
+        7791,
+        7806,
+        7811,
+        7819,
+        7829,
+        7837,
+        7845,
+        7852
+      ],
+      "fixture_ids": [
+        78147,
+        78162,
+        78167,
+        78175,
+        78185,
+        78194,
+        78208,
+        78200
+      ]
+    },
+    {
+      "key": "CHN|Wuhan FC",
+      "api": "Wuhan Zall",
+      "support": 93,
+      "runner_up": 5,
+      "similarity": 0.625,
+      "source_rows": [
+        7792,
+        7804,
+        7814,
+        7820,
+        7830,
+        7834,
+        7843,
+        7853
+      ],
+      "fixture_ids": [
+        78148,
+        78160,
+        78170,
+        78176,
+        78186,
+        78190,
+        78210,
+        78201
+      ]
+    },
+    {
+      "key": "CHN|Zhejiang Professional",
+      "api": "Hangzhou Greentown",
+      "support": 95,
+      "runner_up": 6,
+      "similarity": 0.378,
+      "source_rows": [
+        8248,
+        8250,
+        8253,
+        8262,
+        8271,
+        8281,
+        8291,
+        8301
+      ],
+      "fixture_ids": [
+        823840,
+        823841,
+        863806,
+        863817,
+        863825,
+        863838,
+        863846,
+        863855
+      ]
+    },
+    {
+      "key": "D2|Bielefeld",
+      "api": "Arminia Bielefeld",
+      "support": 68,
+      "runner_up": 3,
+      "similarity": 0.72,
+      "source_rows": [
+        9041,
+        9042,
+        9053,
+        9064,
+        9071,
+        9080,
+        9092,
+        9096
+      ],
+      "fixture_ids": [
+        209228,
+        209229,
+        209241,
+        209250,
+        209258,
+        209267,
+        209279,
+        209283
+      ]
+    },
+    {
+      "key": "D2|Bochum",
+      "api": "Vfl Bochum",
+      "support": 68,
+      "runner_up": 5,
+      "similarity": 0.8,
+      "source_rows": [
+        9039,
+        9042,
+        9051,
+        9062,
+        9077,
+        9083,
+        9090,
+        9098
+      ],
+      "fixture_ids": [
+        209225,
+        209229,
+        209238,
+        209251,
+        209264,
+        209271,
+        209278,
+        209286
+      ]
+    },
+    {
+      "key": "D2|Braunschweig",
+      "api": "Eintracht Braunschweig",
+      "support": 136,
+      "runner_up": 6,
+      "similarity": 0.727,
+      "source_rows": [
+        9345,
+        9350,
+        9359,
+        9365,
+        9375,
+        9386,
+        9394,
+        9402
+      ],
+      "fixture_ids": [
+        585065,
+        585080,
+        585083,
+        585097,
+        585106,
+        585115,
+        585121,
+        585133
+      ]
+    },
+    {
+      "key": "D2|Darmstadt",
+      "api": "SV Darmstadt 98",
+      "support": 170,
+      "runner_up": 8,
+      "similarity": 0.818,
+      "source_rows": [
+        9038,
+        9047,
+        9059,
+        9060,
+        9070,
+        9084,
+        9087,
+        9098
+      ],
+      "fixture_ids": [
+        209224,
+        209235,
+        209246,
+        209247,
+        209257,
+        209270,
+        209274,
+        209286
+      ]
+    },
+    {
+      "key": "D2|Dresden",
+      "api": "Dynamo Dresden",
+      "support": 68,
+      "runner_up": 4,
+      "similarity": 0.7,
+      "source_rows": [
+        9034,
+        9046,
+        9056,
+        9060,
+        9072,
+        9083,
+        9093,
+        9101
+      ],
+      "fixture_ids": [
+        209221,
+        209232,
+        209244,
+        209247,
+        209259,
+        209271,
+        209281,
+        209290
+      ]
+    },
+    {
+      "key": "D2|Elversberg",
+      "api": "SV Elversberg",
+      "support": 68,
+      "runner_up": 4,
+      "similarity": 0.909,
+      "source_rows": [
+        10259,
+        10268,
+        10275,
+        10286,
+        10301,
+        10304,
+        10316,
+        10326
+      ],
+      "fixture_ids": [
+        1048578,
+        1048592,
+        1048596,
+        1048610,
+        1048618,
+        1048628,
+        1048637,
+        1048645
+      ]
+    },
+    {
+      "key": "D2|FC Koln",
+      "api": "1. FC Köln",
+      "support": 34,
+      "runner_up": 2,
+      "similarity": 0.923,
+      "source_rows": [
+        10563,
+        10574,
+        10583,
+        10598,
+        10602,
+        10611,
+        10623,
+        10629
+      ],
+      "fixture_ids": [
+        1226165,
+        1226177,
+        1226183,
+        1226195,
+        1226201,
+        1226210,
+        1226219,
+        1226228
+      ]
+    },
+    {
+      "key": "D2|Greuther Furth",
+      "api": "SpVgg Greuther Furth",
+      "support": 136,
+      "runner_up": 34,
+      "similarity": 0.839,
+      "source_rows": [
+        9037,
+        9044,
+        9057,
+        9063,
+        9071,
+        9078,
+        9091,
+        9102
+      ],
+      "fixture_ids": [
+        209226,
+        209231,
+        209245,
+        209249,
+        209258,
+        209265,
+        209276,
+        209289
+      ]
+    },
+    {
+      "key": "D2|Hamburg",
+      "api": "Hamburger SV",
+      "support": 204,
+      "runner_up": 9,
+      "similarity": 0.778,
+      "source_rows": [
+        9038,
+        9050,
+        9051,
+        9066,
+        9074,
+        9086,
+        9094,
+        9100
+      ],
+      "fixture_ids": [
+        209224,
+        209237,
+        209238,
+        209254,
+        209261,
+        209273,
+        209280,
+        209285
+      ]
+    },
+    {
+      "key": "D2|Hannover",
+      "api": "Hannover 96",
+      "support": 204,
+      "runner_up": 9,
+      "similarity": 0.889,
+      "source_rows": [
+        9033,
+        9045,
+        9055,
+        9063,
+        9074,
+        9080,
+        9088,
+        9104
+      ],
+      "fixture_ids": [
+        209220,
+        209233,
+        209242,
+        209249,
+        209261,
+        209267,
+        209275,
+        209291
+      ]
+    },
+    {
+      "key": "D2|Heidenheim",
+      "api": "FC Heidenheim",
+      "support": 136,
+      "runner_up": 5,
+      "similarity": 0.909,
+      "source_rows": [
+        9036,
+        9049,
+        9056,
+        9065,
+        9069,
+        9081,
+        9087,
+        9099
+      ],
+      "fixture_ids": [
+        209223,
+        209234,
+        209244,
+        209253,
+        209256,
+        209268,
+        209274,
+        209287
+      ]
+    },
+    {
+      "key": "D2|Ingolstadt",
+      "api": "FC Ingolstadt 04",
+      "support": 34,
+      "runner_up": 5,
+      "similarity": 0.833,
+      "source_rows": [
+        9647,
+        9658,
+        9669,
+        9680,
+        9682,
+        9692,
+        9707,
+        9711
+      ],
+      "fixture_ids": [
+        719050,
+        719060,
+        719064,
+        719078,
+        719086,
+        719096,
+        719102,
+        719114
+      ]
+    },
+    {
+      "key": "D2|Karlsruhe",
+      "api": "Karlsruher SC",
+      "support": 204,
+      "runner_up": 6,
+      "similarity": 0.857,
+      "source_rows": [
+        9040,
+        9046,
+        9058,
+        9066,
+        9076,
+        9079,
+        9089,
+        9099
+      ],
+      "fixture_ids": [
+        209227,
+        209232,
+        209243,
+        209254,
+        209263,
+        209266,
+        209277,
+        209287
+      ]
+    },
+    {
+      "key": "D2|Nurnberg",
+      "api": "FC Nurnberg",
+      "support": 170,
+      "runner_up": 34,
+      "similarity": 0.889,
+      "source_rows": [
+        9034,
+        9050,
+        9052,
+        9067,
+        9069,
+        9084,
+        9089,
+        9104
+      ],
+      "fixture_ids": [
+        209221,
+        209237,
+        209239,
+        209252,
+        209256,
+        209270,
+        209277,
+        209291
+      ]
+    },
+    {
+      "key": "D2|Osnabruck",
+      "api": "VfL Osnabruck",
+      "support": 102,
+      "runner_up": 4,
+      "similarity": 0.857,
+      "source_rows": [
+        9036,
+        9043,
+        9059,
+        9067,
+        9076,
+        9085,
+        9095,
+        9097
+      ],
+      "fixture_ids": [
+        209223,
+        209230,
+        209246,
+        209252,
+        209263,
+        209272,
+        209282,
+        209284
+      ]
+    },
+    {
+      "key": "D2|Paderborn",
+      "api": "SC Paderborn 07",
+      "support": 170,
+      "runner_up": 6,
+      "similarity": 0.818,
+      "source_rows": [
+        9346,
+        9356,
+        9360,
+        9370,
+        9382,
+        9389,
+        9398,
+        9405
+      ],
+      "fixture_ids": [
+        585070,
+        585073,
+        585081,
+        585091,
+        585104,
+        585109,
+        585118,
+        585127
+      ]
+    },
+    {
+      "key": "D2|PreuÃen MÃ¼nster",
+      "api": "Preußen Münster",
+      "support": 34,
+      "runner_up": 3,
+      "similarity": 0.774,
+      "source_rows": [
+        10570,
+        10580,
+        10586,
+        10593,
+        10600,
+        10616,
+        10621,
+        10630
+      ],
+      "fixture_ids": [
+        1226169,
+        1226181,
+        1226191,
+        1226193,
+        1226209,
+        1226218,
+        1226226,
+        1226234
+      ]
+    },
+    {
+      "key": "D2|Regensburg",
+      "api": "Jahn Regensburg",
+      "support": 136,
+      "runner_up": 34,
+      "similarity": 0.833,
+      "source_rows": [
+        9039,
+        9045,
+        9057,
+        9064,
+        9073,
+        9082,
+        9093,
+        9100
+      ],
+      "fixture_ids": [
+        209225,
+        209233,
+        209245,
+        209250,
+        209260,
+        209269,
+        209281,
+        209285
+      ]
+    },
+    {
+      "key": "D2|Sandhausen",
+      "api": "SV Sandhausen",
+      "support": 136,
+      "runner_up": 8,
+      "similarity": 0.909,
+      "source_rows": [
+        9035,
+        9043,
+        9052,
+        9065,
+        9070,
+        9079,
+        9090,
+        9103
+      ],
+      "fixture_ids": [
+        209222,
+        209230,
+        209239,
+        209253,
+        209257,
+        209266,
+        209278,
+        209288
+      ]
+    },
+    {
+      "key": "D2|Schalke 04",
+      "api": "FC Schalke 04",
+      "support": 102,
+      "runner_up": 4,
+      "similarity": 0.9,
+      "source_rows": [
+        9645,
+        9662,
+        9663,
+        9677,
+        9686,
+        9697,
+        9700,
+        9710
+      ],
+      "fixture_ids": [
+        719043,
+        719052,
+        719062,
+        719076,
+        719080,
+        719091,
+        719098,
+        719113
+      ]
+    },
+    {
+      "key": "D2|St Pauli",
+      "api": "FC St. Pauli",
+      "support": 170,
+      "runner_up": 7,
+      "similarity": 0.875,
+      "source_rows": [
+        9041,
+        9044,
+        9054,
+        9068,
+        9072,
+        9086,
+        9095,
+        9103
+      ],
+      "fixture_ids": [
+        209228,
+        209231,
+        209240,
+        209255,
+        209259,
+        209273,
+        209282,
+        209288
+      ]
+    },
+    {
+      "key": "D2|Stuttgart",
+      "api": "VfB Stuttgart",
+      "support": 34,
+      "runner_up": 3,
+      "similarity": 0.857,
+      "source_rows": [
+        9033,
+        9049,
+        9054,
+        9061,
+        9077,
+        9082,
+        9091,
+        9096
+      ],
+      "fixture_ids": [
+        209220,
+        209234,
+        209240,
+        209248,
+        209264,
+        209269,
+        209276,
+        209283
+      ]
+    },
+    {
+      "key": "D2|Ulm",
+      "api": "SSV Ulm 1846",
+      "support": 34,
+      "runner_up": 3,
+      "similarity": 0.462,
+      "source_rows": [
+        10571,
+        10573,
+        10589,
+        10597,
+        10604,
+        10614,
+        10618,
+        10629
+      ],
+      "fixture_ids": [
+        1226173,
+        1226182,
+        1226190,
+        1226194,
+        1226208,
+        1226213,
+        1226225,
+        1226228
+      ]
+    },
+    {
+      "key": "D2|Wehen",
+      "api": "SV Wehen",
+      "support": 68,
+      "runner_up": 4,
+      "similarity": 0.833,
+      "source_rows": [
+        9040,
+        9048,
+        9055,
+        9062,
+        9073,
+        9078,
+        9092,
+        9097
+      ],
+      "fixture_ids": [
+        209227,
+        209236,
+        209242,
+        209251,
+        209260,
+        209265,
+        209279,
+        209284
+      ]
+    },
+    {
+      "key": "D2|Wurzburger Kickers",
+      "api": "FC Wurzburger Kickers",
+      "support": 34,
+      "runner_up": 2,
+      "similarity": 0.944,
+      "source_rows": [
+        9343,
+        9352,
+        9363,
+        9371,
+        9377,
+        9392,
+        9393,
+        9409
+      ],
+      "fixture_ids": [
+        585071,
+        585072,
+        585089,
+        585098,
+        585100,
+        585116,
+        585117,
+        585134
+      ]
+    },
+    {
+      "key": "DNK|Horsens",
+      "api": "AC Horsens",
+      "support": 98,
+      "runner_up": 5,
+      "similarity": 0.875,
+      "source_rows": [
+        10871,
+        10881,
+        10884,
+        10892,
+        10901,
+        10910,
+        10917,
+        10922
+      ],
+      "fixture_ids": [
+        153736,
+        153745,
+        153748,
+        153755,
+        153764,
+        153771,
+        153777,
+        153785
+      ]
+    },
+    {
+      "key": "DNK|Hvidovre IF",
+      "api": "Hvidovre",
+      "support": 32,
+      "runner_up": 1,
+      "similarity": 0.889,
+      "source_rows": [
+        11691,
+        11701,
+        11705,
+        11714,
+        11715,
+        11724,
+        11732,
+        11736
+      ],
+      "fixture_ids": [
+        1034879,
+        1034888,
+        1034893,
+        1034902,
+        1034903,
+        1034912,
+        1034916,
+        1034922
+      ]
+    },
+    {
+      "key": "DNK|Midtjylland",
+      "api": "FC Midtjylland",
+      "support": 197,
+      "runner_up": 7,
+      "similarity": 0.917,
+      "source_rows": [
+        10869,
+        10879,
+        10885,
+        10894,
+        10901,
+        10908,
+        10916,
+        10923
+      ],
+      "fixture_ids": [
+        153733,
+        153740,
+        153750,
+        153754,
+        153764,
+        153767,
+        153775,
+        153781
+      ]
+    },
+    {
+      "key": "DNK|Nordsjaelland",
+      "api": "FC Nordsjaelland",
+      "support": 196,
+      "runner_up": 9,
+      "similarity": 0.929,
+      "source_rows": [
+        10871,
+        10879,
+        10888,
+        10895,
+        10902,
+        10904,
+        10914,
+        10919
+      ],
+      "fixture_ids": [
+        153736,
+        153740,
+        153749,
+        153756,
+        153765,
+        153770,
+        153774,
+        153786
+      ]
+    },
+    {
+      "key": "E1|Hull",
+      "api": "Hull City",
+      "support": 230,
+      "runner_up": 12,
+      "similarity": 0.667,
+      "source_rows": [
+        12084,
+        12093,
+        12103,
+        12114,
+        12130,
+        12142,
+        12152,
+        12165
+      ],
+      "fixture_ids": [
+        164181,
+        164191,
+        164200,
+        164212,
+        164228,
+        164240,
+        164252,
+        164263
+      ]
+    },
+    {
+      "key": "E1|Nott'm Forest",
+      "api": "Nottingham Forest",
+      "support": 138,
+      "runner_up": 8,
+      "similarity": 0.815,
+      "source_rows": [
+        12081,
+        12094,
+        12107,
+        12118,
+        12128,
+        12143,
+        12157,
+        12167
+      ],
+      "fixture_ids": [
+        164183,
+        164192,
+        164205,
+        164216,
+        164226,
+        164241,
+        164257,
+        164265
+      ]
+    },
+    {
+      "key": "E1|Oxford",
+      "api": "Oxford United",
+      "support": 46,
+      "runner_up": 4,
+      "similarity": 0.667,
+      "source_rows": [
+        14843,
+        14848,
+        14861,
+        14879,
+        14890,
+        14897,
+        14915,
+        14923
+      ],
+      "fixture_ids": [
+        1215850,
+        1215857,
+        1215867,
+        1215886,
+        1215897,
+        1215903,
+        1215921,
+        1215930
+      ]
+    },
+    {
+      "key": "E1|Peterboro",
+      "api": "Peterborough",
+      "support": 46,
+      "runner_up": 5,
+      "similarity": 0.857,
+      "source_rows": [
+        13185,
+        13200,
+        13208,
+        13224,
+        13237,
+        13247,
+        13255,
+        13273
+      ],
+      "fixture_ids": [
+        716803,
+        716816,
+        716824,
+        716840,
+        716853,
+        716864,
+        716872,
+        716889
+      ]
+    },
+    {
+      "key": "E1|Sheffield United",
+      "api": "Sheffield Utd",
+      "support": 138,
+      "runner_up": 9,
+      "similarity": 0.889,
+      "source_rows": [
+        13188,
+        13202,
+        13215,
+        13226,
+        13234,
+        13247,
+        13256,
+        13269
+      ],
+      "fixture_ids": [
+        716806,
+        716818,
+        716831,
+        716842,
+        716850,
+        716864,
+        716871,
+        716885
+      ]
+    },
+    {
+      "key": "E1|Sheffield Weds",
+      "api": "Sheffield Wednesday",
+      "support": 184,
+      "runner_up": 16,
+      "similarity": 0.839,
+      "source_rows": [
+        12082,
+        12098,
+        12106,
+        12116,
+        12132,
+        12145,
+        12159,
+        12169
+      ],
+      "fixture_ids": [
+        164179,
+        164196,
+        164204,
+        164214,
+        164230,
+        164243,
+        164251,
+        164267
+      ]
+    },
+    {
+      "key": "E1|Stoke",
+      "api": "Stoke City",
+      "support": 276,
+      "runner_up": 14,
+      "similarity": 0.714,
+      "source_rows": [
+        12083,
+        12090,
+        12108,
+        12121,
+        12134,
+        12137,
+        12156,
+        12161
+      ],
+      "fixture_ids": [
+        164180,
+        164188,
+        164207,
+        164219,
+        164232,
+        164234,
+        164256,
+        164259
+      ]
+    },
+    {
+      "key": "E2|Accrington",
+      "api": "Accrington ST",
+      "support": 173,
+      "runner_up": 8,
+      "similarity": 0.909,
+      "source_rows": [
+        15393,
+        15410,
+        15421,
+        15435,
+        15442,
+        15452,
+        15460,
+        15480
+      ],
+      "fixture_ids": [
+        167928,
+        167946,
+        167958,
+        167974,
+        167983,
+        167995,
+        168007,
+        168028
+      ]
+    },
+    {
+      "key": "E2|Bristol Rvs",
+      "api": "Bristol Rovers",
+      "support": 219,
+      "runner_up": 9,
+      "similarity": 0.87,
+      "source_rows": [
+        15389,
+        15400,
+        15413,
+        15422,
+        15432,
+        15444,
+        15452,
+        15465
+      ],
+      "fixture_ids": [
+        167923,
+        167936,
+        167950,
+        167959,
+        167971,
+        167985,
+        167995,
+        168013
+      ]
+    },
+    {
+      "key": "E2|Burton",
+      "api": "Burton Albion",
+      "support": 265,
+      "runner_up": 9,
+      "similarity": 0.667,
+      "source_rows": [
+        15390,
+        15402,
+        15412,
+        15427,
+        15438,
+        15444,
+        15462,
+        15475
+      ],
+      "fixture_ids": [
+        167924,
+        167938,
+        167948,
+        167964,
+        167978,
+        167985,
+        168009,
+        168023
+      ]
+    },
+    {
+      "key": "E2|Cambridge",
+      "api": "Cambridge United",
+      "support": 184,
+      "runner_up": 7,
+      "similarity": 0.75,
+      "source_rows": [
+        16341,
+        16353,
+        16372,
+        16377,
+        16389,
+        16405,
+        16426,
+        16433
+      ],
+      "fixture_ids": [
+        715417,
+        715429,
+        715448,
+        715453,
+        715465,
+        715489,
+        715509,
+        715513
+      ]
+    },
+    {
+      "key": "E2|Exeter",
+      "api": "Exeter City",
+      "support": 138,
+      "runner_up": 9,
+      "similarity": 0.75,
+      "source_rows": [
+        16898,
+        16908,
+        16918,
+        16932,
+        16943,
+        16951,
+        16968,
+        16986
+      ],
+      "fixture_ids": [
+        875506,
+        875516,
+        875526,
+        875540,
+        875552,
+        875560,
+        875577,
+        875606
+      ]
+    },
+    {
+      "key": "E2|Hull",
+      "api": "Hull City",
+      "support": 46,
+      "runner_up": 2,
+      "similarity": 0.667,
+      "source_rows": [
+        15792,
+        15805,
+        15818,
+        15829,
+        15835,
+        15855,
+        15862,
+        15873
+      ],
+      "fixture_ids": [
+        595149,
+        595162,
+        595176,
+        595186,
+        595196,
+        595215,
+        595221,
+        595234
+      ]
+    },
+    {
+      "key": "E2|Mansfield",
+      "api": "Mansfield Town",
+      "support": 46,
+      "runner_up": 5,
+      "similarity": 0.818,
+      "source_rows": [
+        17996,
+        18013,
+        18027,
+        18037,
+        18051,
+        18065,
+        18081,
+        18091
+      ],
+      "fixture_ids": [
+        1216395,
+        1216413,
+        1216426,
+        1216436,
+        1216460,
+        1216473,
+        1216486,
+        1216496
+      ]
+    },
+    {
+      "key": "E2|Oxford",
+      "api": "Oxford United",
+      "support": 219,
+      "runner_up": 8,
+      "similarity": 0.667,
+      "source_rows": [
+        15396,
+        15405,
+        15411,
+        15427,
+        15432,
+        15448,
+        15455,
+        15466
+      ],
+      "fixture_ids": [
+        167931,
+        167941,
+        167947,
+        167964,
+        167971,
+        167990,
+        167998,
+        168014
+      ]
+    },
+    {
+      "key": "E2|Peterboro",
+      "api": "Peterborough",
+      "support": 219,
+      "runner_up": 9,
+      "similarity": 0.857,
+      "source_rows": [
+        15394,
+        15405,
+        15416,
+        15430,
+        15436,
+        15449,
+        15467,
+        15479
+      ],
+      "fixture_ids": [
+        167929,
+        167941,
+        167953,
+        167968,
+        167975,
+        167991,
+        168015,
+        168027
+      ]
+    },
+    {
+      "key": "E2|Sheffield Weds",
+      "api": "Sheffield Wednesday",
+      "support": 92,
+      "runner_up": 7,
+      "similarity": 0.839,
+      "source_rows": [
+        16342,
+        16362,
+        16374,
+        16384,
+        16393,
+        16411,
+        16427,
+        16435
+      ],
+      "fixture_ids": [
+        715418,
+        715438,
+        715450,
+        715460,
+        715469,
+        715495,
+        715510,
+        715515
+      ]
+    },
+    {
+      "key": "E2|Stockport",
+      "api": "Stockport County",
+      "support": 46,
+      "runner_up": 3,
+      "similarity": 0.75,
+      "source_rows": [
+        18005,
+        18008,
+        18028,
+        18037,
+        18050,
+        18068,
+        18074,
+        18095
+      ],
+      "fixture_ids": [
+        1216404,
+        1216407,
+        1216427,
+        1216436,
+        1216459,
+        1216476,
+        1216479,
+        1216499
+      ]
+    },
+    {
+      "key": "E2|Swindon",
+      "api": "Swindon Town",
+      "support": 46,
+      "runner_up": 3,
+      "similarity": 0.778,
+      "source_rows": [
+        15798,
+        15801,
+        15822,
+        15831,
+        15844,
+        15856,
+        15864,
+        15899
+      ],
+      "fixture_ids": [
+        595156,
+        595158,
+        595180,
+        595189,
+        595204,
+        595216,
+        595223,
+        595263
+      ]
+    },
+    {
+      "key": "E3|Accrington",
+      "api": "Accrington ST",
+      "support": 92,
+      "runner_up": 6,
+      "similarity": 0.909,
+      "source_rows": [
+        20644,
+        20658,
+        20667,
+        20679,
+        20700,
+        20710,
+        20716,
+        20728
+      ],
+      "fixture_ids": [
+        1039814,
+        1039829,
+        1039838,
+        1039850,
+        1039871,
+        1039881,
+        1039887,
+        1039899
+      ]
+    },
+    {
+      "key": "E3|Bristol Rvs",
+      "api": "Bristol Rovers",
+      "support": 46,
+      "runner_up": 5,
+      "similarity": 0.87,
+      "source_rows": [
+        19545,
+        19554,
+        19565,
+        19573,
+        19586,
+        19598,
+        19612,
+        19623
+      ],
+      "fixture_ids": [
+        717353,
+        717362,
+        717374,
+        717385,
+        717396,
+        717409,
+        717424,
+        717433
+      ]
+    },
+    {
+      "key": "E3|Cambridge",
+      "api": "Cambridge United",
+      "support": 83,
+      "runner_up": 5,
+      "similarity": 0.75,
+      "source_rows": [
+        18548,
+        18560,
+        18574,
+        18584,
+        18597,
+        18614,
+        18621,
+        18633
+      ],
+      "fixture_ids": [
+        168480,
+        168491,
+        168505,
+        168515,
+        168528,
+        168545,
+        168552,
+        168564
+      ]
+    },
+    {
+      "key": "E3|Exeter",
+      "api": "Exeter City",
+      "support": 129,
+      "runner_up": 7,
+      "similarity": 0.75,
+      "source_rows": [
+        18552,
+        18569,
+        18576,
+        18590,
+        18605,
+        18610,
+        18622,
+        18634
+      ],
+      "fixture_ids": [
+        168484,
+        168500,
+        168507,
+        168521,
+        168536,
+        168541,
+        168553,
+        168565
+      ]
+    },
+    {
+      "key": "E3|Harrogate",
+      "api": "Harrogate Town",
+      "support": 230,
+      "runner_up": 11,
+      "similarity": 0.818,
+      "source_rows": [
+        18998,
+        19006,
+        19018,
+        19027,
+        19044,
+        19051,
+        19065,
+        19075
+      ],
+      "fixture_ids": [
+        593818,
+        593826,
+        593839,
+        593850,
+        593858,
+        593872,
+        593886,
+        593896
+      ]
+    },
+    {
+      "key": "E3|Mansfield",
+      "api": "Mansfield Town",
+      "support": 220,
+      "runner_up": 9,
+      "similarity": 0.818,
+      "source_rows": [
+        18556,
+        18565,
+        18573,
+        18589,
+        18604,
+        18610,
+        18628,
+        18632
+      ],
+      "fixture_ids": [
+        168488,
+        168496,
+        168504,
+        168520,
+        168535,
+        168541,
+        168559,
+        168563
+      ]
+    },
+    {
+      "key": "E3|Salford",
+      "api": "Salford City",
+      "support": 267,
+      "runner_up": 11,
+      "similarity": 0.778,
+      "source_rows": [
+        18558,
+        18562,
+        18582,
+        18591,
+        18598,
+        18615,
+        18629,
+        18639
+      ],
+      "fixture_ids": [
+        168479,
+        168493,
+        168513,
+        168522,
+        168529,
+        168546,
+        168560,
+        168570
+      ]
+    },
+    {
+      "key": "E3|Stockport",
+      "api": "Stockport County",
+      "support": 92,
+      "runner_up": 8,
+      "similarity": 0.75,
+      "source_rows": [
+        20100,
+        20114,
+        20124,
+        20132,
+        20147,
+        20159,
+        20173,
+        20177
+      ],
+      "fixture_ids": [
+        876060,
+        876074,
+        876084,
+        876099,
+        876108,
+        876120,
+        876134,
+        876150
+      ]
+    },
+    {
+      "key": "E3|Sutton",
+      "api": "Sutton Utd",
+      "support": 138,
+      "runner_up": 10,
+      "similarity": 0.8,
+      "source_rows": [
+        19542,
+        19560,
+        19581,
+        19594,
+        19617,
+        19621,
+        19626,
+        19644
+      ],
+      "fixture_ids": [
+        717350,
+        717716,
+        717393,
+        717405,
+        717429,
+        717381,
+        717436,
+        717453
+      ]
+    },
+    {
+      "key": "E3|Swindon",
+      "api": "Swindon Town",
+      "support": 220,
+      "runner_up": 9,
+      "similarity": 0.778,
+      "source_rows": [
+        18559,
+        18570,
+        18576,
+        18594,
+        18599,
+        18618,
+        18626,
+        18642
+      ],
+      "fixture_ids": [
+        168490,
+        168501,
+        168507,
+        168525,
+        168530,
+        168549,
+        168557,
+        168573
+      ]
+    },
+    {
+      "key": "EC|Aldershot",
+      "api": "Aldershot Town",
+      "support": 264,
+      "runner_up": 11,
+      "similarity": 0.818,
+      "source_rows": [
+        21748,
+        21770,
+        21780,
+        21784,
+        21796,
+        21816,
+        21820,
+        21836
+      ],
+      "fixture_ids": [
+        211261,
+        211283,
+        211293,
+        211297,
+        211310,
+        211329,
+        211334,
+        211349
+      ]
+    },
+    {
+      "key": "EC|Boston Utd",
+      "api": "Boston United",
+      "support": 46,
+      "runner_up": 4,
+      "similarity": 0.857,
+      "source_rows": [
+        24288,
+        24298,
+        24316,
+        24326,
+        24345,
+        24349,
+        24367,
+        24370
+      ],
+      "fixture_ids": [
+        1237234,
+        1237243,
+        1237261,
+        1237271,
+        1237290,
+        1237295,
+        1237313,
+        1237316
+      ]
+    },
+    {
+      "key": "EC|Braintree Town",
+      "api": "Braintree",
+      "support": 46,
+      "runner_up": 5,
+      "similarity": 0.818,
+      "source_rows": [
+        24294,
+        24299,
+        24311,
+        24332,
+        24334,
+        24353,
+        24359,
+        24379
+      ],
+      "fixture_ids": [
+        1237239,
+        1237244,
+        1237256,
+        1237277,
+        1237279,
+        1237299,
+        1237306,
+        1237326
+      ]
+    },
+    {
+      "key": "EC|Dag and Red",
+      "api": "Dagenham & Redbridge",
+      "support": 262,
+      "runner_up": 11,
+      "similarity": 0.538,
+      "source_rows": [
+        21752,
+        21763,
+        21777,
+        21788,
+        21800,
+        21811,
+        21824,
+        21833
+      ],
+      "fixture_ids": [
+        211265,
+        211277,
+        211290,
+        211301,
+        211314,
+        211324,
+        211338,
+        211346
+      ]
+    },
+    {
+      "key": "EC|Dorking",
+      "api": "Dorking Wanderers",
+      "support": 92,
+      "runner_up": 8,
+      "similarity": 0.609,
+      "source_rows": [
+        23186,
+        23202,
+        23213,
+        23222,
+        23239,
+        23246,
+        23257,
+        23267
+      ],
+      "fixture_ids": [
+        888059,
+        888075,
+        888086,
+        888095,
+        888112,
+        888119,
+        888130,
+        888152
+      ]
+    },
+    {
+      "key": "EC|Dover Athletic",
+      "api": "Dover",
+      "support": 97,
+      "runner_up": 5,
+      "similarity": 0.556,
+      "source_rows": [
+        21750,
+        21763,
+        21775,
+        21785,
+        21801,
+        21815,
+        21825,
+        21838
+      ],
+      "fixture_ids": [
+        211263,
+        211277,
+        211289,
+        211298,
+        211315,
+        211328,
+        211339,
+        211351
+      ]
+    },
+    {
+      "key": "EC|Ebbsfleet",
+      "api": "Ebbsfleet United",
+      "support": 131,
+      "runner_up": 6,
+      "similarity": 0.75,
+      "source_rows": [
+        21754,
+        21762,
+        21776,
+        21790,
+        21805,
+        21812,
+        21823,
+        21836
+      ],
+      "fixture_ids": [
+        211267,
+        211276,
+        211285,
+        211303,
+        211319,
+        211325,
+        211337,
+        211349
+      ]
+    },
+    {
+      "key": "EC|Fylde",
+      "api": "AFC Fylde",
+      "support": 129,
+      "runner_up": 5,
+      "similarity": 0.769,
+      "source_rows": [
+        21748,
+        21764,
+        21776,
+        21792,
+        21802,
+        21813,
+        21826,
+        21832
+      ],
+      "fixture_ids": [
+        211261,
+        211273,
+        211285,
+        211305,
+        211309,
+        211326,
+        211333,
+        211345
+      ]
+    },
+    {
+      "key": "EC|Halifax",
+      "api": "FC Halifax Town",
+      "support": 261,
+      "runner_up": 12,
+      "similarity": 0.7,
+      "source_rows": [
+        21754,
+        21765,
+        21777,
+        21795,
+        21796,
+        21813,
+        21822,
+        21837
+      ],
+      "fixture_ids": [
+        211267,
+        211278,
+        211290,
+        211308,
+        211310,
+        211326,
+        211336,
+        211350
+      ]
+    },
+    {
+      "key": "EC|Harrogate",
+      "api": "Harrogate Town",
+      "support": 37,
+      "runner_up": 3,
+      "similarity": 0.818,
+      "source_rows": [
+        21755,
+        21760,
+        21782,
+        21791,
+        21800,
+        21814,
+        21826,
+        21838
+      ],
+      "fixture_ids": [
+        211268,
+        211274,
+        211295,
+        211304,
+        211314,
+        211327,
+        211333,
+        211351
+      ]
+    },
+    {
+      "key": "EC|Kidderminster",
+      "api": "Kidderminster Harriers",
+      "support": 46,
+      "runner_up": 4,
+      "similarity": 0.765,
+      "source_rows": [
+        23740,
+        23757,
+        23763,
+        23776,
+        23790,
+        23800,
+        23817,
+        23824
+      ],
+      "fixture_ids": [
+        1055593,
+        1055610,
+        1055611,
+        1055629,
+        1055640,
+        1055653,
+        1055670,
+        1055677
+      ]
+    },
+    {
+      "key": "EC|Kings Lynn",
+      "api": "King's Lynn Town",
+      "support": 87,
+      "runner_up": 4,
+      "similarity": 0.818,
+      "source_rows": [
+        22204,
+        22214,
+        22227,
+        22236,
+        22248,
+        22256,
+        22264,
+        22276
+      ],
+      "fixture_ids": [
+        625746,
+        625757,
+        625771,
+        625780,
+        625797,
+        625805,
+        625817,
+        625830
+      ]
+    },
+    {
+      "key": "EC|Maidstone",
+      "api": "Maidstone Utd",
+      "support": 46,
+      "runner_up": 3,
+      "similarity": 0.857,
+      "source_rows": [
+        23183,
+        23201,
+        23213,
+        23228,
+        23238,
+        23242,
+        23258,
+        23272
+      ],
+      "fixture_ids": [
+        888056,
+        888074,
+        888086,
+        888101,
+        888110,
+        888115,
+        888131,
+        888157
+      ]
+    },
+    {
+      "key": "EC|Solihull",
+      "api": "Solihull Moors",
+      "support": 263,
+      "runner_up": 10,
+      "similarity": 0.762,
+      "source_rows": [
+        21755,
+        21768,
+        21780,
+        21787,
+        21805,
+        21817,
+        21830,
+        21837
+      ],
+      "fixture_ids": [
+        211268,
+        211281,
+        211293,
+        211300,
+        211319,
+        211330,
+        211343,
+        211350
+      ]
+    },
+    {
+      "key": "EC|Stockport",
+      "api": "Stockport County",
+      "support": 126,
+      "runner_up": 5,
+      "similarity": 0.75,
+      "source_rows": [
+        21757,
+        21767,
+        21783,
+        21793,
+        21806,
+        21814,
+        21831,
+        21842
+      ],
+      "fixture_ids": [
+        211270,
+        211280,
+        211296,
+        211306,
+        211320,
+        211327,
+        211344,
+        211355
+      ]
+    },
+    {
+      "key": "EC|Sutton",
+      "api": "Sutton Utd",
+      "support": 126,
+      "runner_up": 6,
+      "similarity": 0.8,
+      "source_rows": [
+        21756,
+        21769,
+        21781,
+        21789,
+        21799,
+        21815,
+        21820,
+        21839
+      ],
+      "fixture_ids": [
+        211269,
+        211282,
+        211294,
+        211302,
+        211313,
+        211328,
+        211334,
+        211352
+      ]
+    },
+    {
+      "key": "EC|Yeovil",
+      "api": "Yeovil Town",
+      "support": 216,
+      "runner_up": 11,
+      "similarity": 0.75,
+      "source_rows": [
+        21749,
+        21771,
+        21783,
+        21790,
+        21798,
+        21819,
+        21824,
+        21843
+      ],
+      "fixture_ids": [
+        211262,
+        211284,
+        211296,
+        211303,
+        211312,
+        211332,
+        211338,
+        211356
+      ]
+    },
+    {
+      "key": "F2|Chambly",
+      "api": "Chambly Thelle FC",
+      "support": 66,
+      "runner_up": 7,
+      "similarity": 0.636,
+      "source_rows": [
+        24839,
+        24852,
+        24859,
+        24868,
+        24879,
+        24897,
+        24899,
+        24911
+      ],
+      "fixture_ids": [
+        157795,
+        157811,
+        157816,
+        157824,
+        157836,
+        157843,
+        157855,
+        157869
+      ]
+    },
+    {
+      "key": "F2|Clermont",
+      "api": "Clermont Foot",
+      "support": 100,
+      "runner_up": 5,
+      "similarity": 0.8,
+      "source_rows": [
+        24840,
+        24854,
+        24867,
+        24873,
+        24880,
+        24894,
+        24906,
+        24913
+      ],
+      "fixture_ids": [
+        157799,
+        157806,
+        157820,
+        157831,
+        157840,
+        157852,
+        157859,
+        157871
+      ]
+    },
+    {
+      "key": "F2|Pau FC",
+      "api": "PAU",
+      "support": 186,
+      "runner_up": 11,
+      "similarity": 0.75,
+      "source_rows": [
+        25126,
+        25136,
+        25144,
+        25154,
+        25158,
+        25175,
+        25184,
+        25193
+      ],
+      "fixture_ids": [
+        568092,
+        568099,
+        568109,
+        568118,
+        568125,
+        568140,
+        568150,
+        568161
+      ]
+    },
+    {
+      "key": "F2|Quevilly Rouen",
+      "api": "Quevilly",
+      "support": 114,
+      "runner_up": 9,
+      "similarity": 0.762,
+      "source_rows": [
+        25501,
+        25517,
+        25531,
+        25536,
+        25541,
+        25553,
+        25565,
+        25574
+      ],
+      "fixture_ids": [
+        719659,
+        719675,
+        719691,
+        719672,
+        719701,
+        719711,
+        719724,
+        719731
+      ]
+    },
+    {
+      "key": "F2|Red Star",
+      "api": "RED Star FC 93",
+      "support": 34,
+      "runner_up": 2,
+      "similarity": 0.778,
+      "source_rows": [
+        26638,
+        26654,
+        26660,
+        26668,
+        26679,
+        26685,
+        26697,
+        26700
+      ],
+      "fixture_ids": [
+        1212442,
+        1212454,
+        1212460,
+        1212472,
+        1212478,
+        1212490,
+        1212496,
+        1212508
+      ]
+    },
+    {
+      "key": "F2|St Etienne",
+      "api": "Saint Etienne",
+      "support": 76,
+      "runner_up": 3,
+      "similarity": 0.857,
+      "source_rows": [
+        25881,
+        25895,
+        25907,
+        25915,
+        25927,
+        25937,
+        25946,
+        25955
+      ],
+      "fixture_ids": [
+        871887,
+        871891,
+        871900,
+        871909,
+        871923,
+        871927,
+        871942,
+        924368
+      ]
+    },
+    {
+      "key": "F2|Troyes",
+      "api": "Estac Troyes",
+      "support": 137,
+      "runner_up": 6,
+      "similarity": 0.706,
+      "source_rows": [
+        24843,
+        24854,
+        24866,
+        24870,
+        24886,
+        24890,
+        24905,
+        24908
+      ],
+      "fixture_ids": [
+        157802,
+        157806,
+        157815,
+        157826,
+        157835,
+        157848,
+        157854,
+        157866
+      ]
+    },
+    {
+      "key": "FIN|Ekenas",
+      "api": "EIF",
+      "support": 27,
+      "runner_up": 3,
+      "similarity": 0.222,
+      "source_rows": [
+        27673,
+        27676,
+        27686,
+        27688,
+        27695,
+        27704,
+        27710,
+        27717
+      ],
+      "fixture_ids": [
+        1164563,
+        1164567,
+        1164575,
+        1164578,
+        1164586,
+        1164594,
+        1164601,
+        1164605
+      ]
+    },
+    {
+      "key": "FIN|HIFK",
+      "api": "HIFK Helsinki",
+      "support": 92,
+      "runner_up": 5,
+      "similarity": 0.5,
+      "source_rows": [
+        26944,
+        26950,
+        26957,
+        26964,
+        26969,
+        26971,
+        26979,
+        26984
+      ],
+      "fixture_ids": [
+        112374,
+        112381,
+        112388,
+        112395,
+        112399,
+        112401,
+        112408,
+        112413
+      ]
+    },
+    {
+      "key": "FIN|HJK",
+      "api": "HJK Helsinki",
+      "support": 142,
+      "runner_up": 6,
+      "similarity": 0.429,
+      "source_rows": [
+        26944,
+        26954,
+        26961,
+        26972,
+        26980,
+        26985,
+        26995,
+        27002
+      ],
+      "fixture_ids": [
+        112374,
+        112386,
+        112392,
+        112403,
+        112409,
+        112414,
+        112423,
+        242971
+      ]
+    },
+    {
+      "key": "FIN|KTP",
+      "api": "Kooteepee",
+      "support": 56,
+      "runner_up": 2,
+      "similarity": 0.5,
+      "source_rows": [
+        27166,
+        27167,
+        27175,
+        27176,
+        27182,
+        27189,
+        27195,
+        27202
+      ],
+      "fixture_ids": [
+        646346,
+        646347,
+        672595,
+        672600,
+        672607,
+        672610,
+        672617,
+        672626
+      ]
+    },
+    {
+      "key": "FIN|Rovaniemi",
+      "api": "Rops",
+      "support": 37,
+      "runner_up": 2,
+      "similarity": 0.308,
+      "source_rows": [
+        26948,
+        26957,
+        26965,
+        26967,
+        26976,
+        26982,
+        26988,
+        26995
+      ],
+      "fixture_ids": [
+        112377,
+        112388,
+        112394,
+        112398,
+        112406,
+        112410,
+        112417,
+        112423
+      ]
+    },
+    {
+      "key": "FIN|TPS",
+      "api": "Turku PS",
+      "support": 24,
+      "runner_up": 2,
+      "similarity": 0.6,
+      "source_rows": [
+        27038,
+        27041,
+        27053,
+        27059,
+        27061,
+        27069,
+        27077,
+        27082
+      ],
+      "fixture_ids": [
+        562885,
+        562888,
+        562899,
+        562906,
+        562908,
+        562916,
+        562924,
+        562930
+      ]
+    },
+    {
+      "key": "G1|AEK",
+      "api": "AEK Athens FC",
+      "support": 212,
+      "runner_up": 8,
+      "similarity": 0.429,
+      "source_rows": [
+        27841,
+        27848,
+        27855,
+        27860,
+        27869,
+        27873,
+        27882,
+        27891
+      ],
+      "fixture_ids": [
+        216508,
+        216516,
+        216522,
+        216533,
+        216536,
+        216543,
+        216550,
+        216561
+      ]
+    },
+    {
+      "key": "G1|Apollon",
+      "api": "Apollon Smirnis",
+      "support": 66,
+      "runner_up": 4,
+      "similarity": 0.667,
+      "source_rows": [
+        28095,
+        28101,
+        28108,
+        28115,
+        28120,
+        28124,
+        28126,
+        28133
+      ],
+      "fixture_ids": [
+        635606,
+        642339,
+        611931,
+        642351,
+        642335,
+        642363,
+        642366,
+        642337
+      ]
+    },
+    {
+      "key": "G1|Aris",
+      "api": "Aris Thessalonikis",
+      "support": 212,
+      "runner_up": 14,
+      "similarity": 0.381,
+      "source_rows": [
+        27838,
+        27847,
+        27856,
+        27864,
+        27866,
+        27875,
+        27886,
+        27889
+      ],
+      "fixture_ids": [
+        216509,
+        216517,
+        216524,
+        216534,
+        216538,
+        216544,
+        216551,
+        216557
+      ]
+    },
+    {
+      "key": "G1|Athens Kallithea",
+      "api": "Kallithea",
+      "support": 35,
+      "runner_up": 4,
+      "similarity": 0.75,
+      "source_rows": [
+        29042,
+        29051,
+        29055,
+        29060,
+        29069,
+        29074,
+        29083,
+        29091
+      ],
+      "fixture_ids": [
+        1250506,
+        1250512,
+        1250517,
+        1250530,
+        1250531,
+        1250540,
+        1250545,
+        1250553
+      ]
+    },
+    {
+      "key": "G1|Giannina",
+      "api": "PAS Giannina",
+      "support": 135,
+      "runner_up": 7,
+      "similarity": 0.842,
+      "source_rows": [
+        28091,
+        28097,
+        28103,
+        28108,
+        28111,
+        28113,
+        28121,
+        28122
+      ],
+      "fixture_ids": [
+        628960,
+        635608,
+        642338,
+        611931,
+        642349,
+        642352,
+        642336,
+        642359
+      ]
+    },
+    {
+      "key": "G1|Levadeiakos",
+      "api": "Levadiakos",
+      "support": 68,
+      "runner_up": 6,
+      "similarity": 0.952,
+      "source_rows": [
+        28562,
+        28565,
+        28574,
+        28579,
+        28590,
+        28593,
+        28603,
+        28608
+      ],
+      "fixture_ids": [
+        923698,
+        923707,
+        923806,
+        923725,
+        923729,
+        923739,
+        923743,
+        923750
+      ]
+    },
+    {
+      "key": "G1|OFI Crete",
+      "api": "OFI",
+      "support": 200,
+      "runner_up": 7,
+      "similarity": 0.545,
+      "source_rows": [
+        27838,
+        27845,
+        27853,
+        27861,
+        27870,
+        27877,
+        27880,
+        27887
+      ],
+      "fixture_ids": [
+        216509,
+        216518,
+        216527,
+        216531,
+        216541,
+        216547,
+        216553,
+        216562
+      ]
+    },
+    {
+      "key": "G1|Olympiakos",
+      "api": "Olympiakos Piraeus",
+      "support": 211,
+      "runner_up": 14,
+      "similarity": 0.741,
+      "source_rows": [
+        27840,
+        27850,
+        27854,
+        27865,
+        27868,
+        27875,
+        27880,
+        27891
+      ],
+      "fixture_ids": [
+        216511,
+        216515,
+        216526,
+        216532,
+        216540,
+        216544,
+        216553,
+        216561
+      ]
+    },
+    {
+      "key": "G1|Xanthi",
+      "api": "Xanthi FC",
+      "support": 33,
+      "runner_up": 5,
+      "similarity": 0.857,
+      "source_rows": [
+        27841,
+        27846,
+        27858,
+        27863,
+        27872,
+        27874,
+        27886,
+        27887
+      ],
+      "fixture_ids": [
+        216508,
+        216519,
+        216523,
+        216529,
+        216537,
+        216548,
+        216551,
+        216562
+      ]
+    },
+    {
+      "key": "I2|Vicenza",
+      "api": "Vicenza Virtus",
+      "support": 76,
+      "runner_up": 7,
+      "similarity": 0.7,
+      "source_rows": [
+        29656,
+        29665,
+        29686,
+        29693,
+        29700,
+        29706,
+        29725,
+        29733
+      ],
+      "fixture_ids": [
+        627989,
+        627994,
+        628015,
+        628028,
+        628035,
+        628041,
+        628063,
+        628004
+      ]
+    },
+    {
+      "key": "IRL|Drogheda",
+      "api": "Drogheda United",
+      "support": 145,
+      "runner_up": 5,
+      "similarity": 0.727,
+      "source_rows": [
+        31720,
+        31728,
+        31733,
+        31737,
+        31740,
+        31747,
+        31752,
+        31756
+      ],
+      "fixture_ids": [
+        673515,
+        673522,
+        673524,
+        673531,
+        673534,
+        673538,
+        673543,
+        673551
+      ]
+    },
+    {
+      "key": "IRL|Galway",
+      "api": "Galway United",
+      "support": 36,
+      "runner_up": 3,
+      "similarity": 0.667,
+      "source_rows": [
+        32270,
+        32274,
+        32279,
+        32284,
+        32288,
+        32293,
+        32296,
+        32302
+      ],
+      "fixture_ids": [
+        1167360,
+        1167364,
+        1167370,
+        1167375,
+        1167380,
+        1167385,
+        1167388,
+        1167397
+      ]
+    },
+    {
+      "key": "IRL|Longford",
+      "api": "Longford Town",
+      "support": 36,
+      "runner_up": 2,
+      "similarity": 0.8,
+      "source_rows": [
+        31723,
+        31727,
+        31729,
+        31737,
+        31743,
+        31748,
+        31754,
+        31758
+      ],
+      "fixture_ids": [
+        673518,
+        673520,
+        673528,
+        673531,
+        673536,
+        673540,
+        673544,
+        673550
+      ]
+    },
+    {
+      "key": "IRL|St. Patricks",
+      "api": "St Patrick's Athl.",
+      "support": 175,
+      "runner_up": 7,
+      "similarity": 0.833,
+      "source_rows": [
+        31552,
+        31557,
+        31563,
+        31568,
+        31571,
+        31577,
+        31589,
+        31592
+      ],
+      "fixture_ids": [
+        133643,
+        133649,
+        133656,
+        133662,
+        133666,
+        133674,
+        133679,
+        133684
+      ]
+    },
+    {
+      "key": "IRL|UC Dublin",
+      "api": "UCD",
+      "support": 90,
+      "runner_up": 4,
+      "similarity": 0.545,
+      "source_rows": [
+        31551,
+        31556,
+        31558,
+        31560,
+        31564,
+        31566,
+        31573,
+        31574
+      ],
+      "fixture_ids": [
+        133644,
+        133648,
+        133622,
+        133628,
+        133660,
+        133663,
+        133667,
+        133671
+      ]
+    },
+    {
+      "key": "JPN|Hokkaido Consadole Sapporo",
+      "api": "Consadole Sapporo",
+      "support": 195,
+      "runner_up": 9,
+      "similarity": 0.8,
+      "source_rows": [
+        32455,
+        32460,
+        32468,
+        32480,
+        32489,
+        32498,
+        32508,
+        32517
+      ],
+      "fixture_ids": [
+        112848,
+        112857,
+        112861,
+        112875,
+        112879,
+        112888,
+        112898,
+        112912
+      ]
+    },
+    {
+      "key": "JPN|Iwata",
+      "api": "Jubilo Iwata",
+      "support": 89,
+      "runner_up": 4,
+      "similarity": 0.625,
+      "source_rows": [
+        32449,
+        32463,
+        32469,
+        32482,
+        32495,
+        32503,
+        32509,
+        32515
+      ],
+      "fixture_ids": [
+        112844,
+        112852,
+        112867,
+        112871,
+        112887,
+        112896,
+        112904,
+        112911
+      ]
+    },
+    {
+      "key": "JPN|Kashima Antlers",
+      "api": "Kashima",
+      "support": 196,
+      "runner_up": 14,
+      "similarity": 0.667,
+      "source_rows": [
+        32449,
+        32462,
+        32470,
+        32477,
+        32481,
+        32490,
+        32497,
+        32505
+      ],
+      "fixture_ids": [
+        112844,
+        112853,
+        112865,
+        131903,
+        112874,
+        112881,
+        112894,
+        112900
+      ]
+    },
+    {
+      "key": "JPN|Kyoto",
+      "api": "Kyoto Sanga",
+      "support": 106,
+      "runner_up": 9,
+      "similarity": 0.667,
+      "source_rows": [
+        33297,
+        33305,
+        33315,
+        33331,
+        33337,
+        33349,
+        33355,
+        33363
+      ],
+      "fixture_ids": [
+        821087,
+        836207,
+        836215,
+        836229,
+        836235,
+        836248,
+        836252,
+        836268
+      ]
+    },
+    {
+      "key": "JPN|Machida",
+      "api": "Machida Zelvia",
+      "support": 38,
+      "runner_up": 4,
+      "similarity": 0.7,
+      "source_rows": [
+        33915,
+        33926,
+        33936,
+        33941,
+        33954,
+        33965,
+        33972,
+        33986
+      ],
+      "fixture_ids": [
+        1153770,
+        1166146,
+        1166153,
+        1166164,
+        1166179,
+        1166184,
+        1166200,
+        1166209
+      ]
+    },
+    {
+      "key": "JPN|Tokushima",
+      "api": "Tokushima Vortis",
+      "support": 39,
+      "runner_up": 3,
+      "similarity": 0.75,
+      "source_rows": [
+        32607,
+        32918,
+        32930,
+        32939,
+        32946,
+        32960,
+        32968,
+        32979
+      ],
+      "fixture_ids": [
+        312023,
+        657249,
+        657257,
+        677604,
+        677612,
+        677623,
+        677633,
+        677649
+      ]
+    },
+    {
+      "key": "JPN|Urawa Reds",
+      "api": "Urawa",
+      "support": 196,
+      "runner_up": 11,
+      "similarity": 0.714,
+      "source_rows": [
+        32452,
+        32464,
+        32469,
+        32477,
+        32486,
+        32489,
+        32501,
+        32507
+      ],
+      "fixture_ids": [
+        112845,
+        112854,
+        112867,
+        131903,
+        112876,
+        112879,
+        112893,
+        112902
+      ]
+    },
+    {
+      "key": "JPN|Verdy",
+      "api": "Tokyo Verdy",
+      "support": 38,
+      "runner_up": 4,
+      "similarity": 0.667,
+      "source_rows": [
+        33919,
+        33929,
+        33932,
+        33944,
+        33949,
+        33967,
+        33977,
+        33987
+      ],
+      "fixture_ids": [
+        1153769,
+        1166152,
+        1166161,
+        1166169,
+        1166173,
+        1166186,
+        1166194,
+        1166211
+      ]
+    },
+    {
+      "key": "JPN|Yamaga",
+      "api": "Matsumoto Yamaga",
+      "support": 17,
+      "runner_up": 2,
+      "similarity": 0.571,
+      "source_rows": [
+        32455,
+        32463,
+        32474,
+        32484,
+        32493,
+        32504,
+        32507,
+        32518
+      ],
+      "fixture_ids": [
+        112848,
+        112852,
+        112862,
+        112877,
+        112880,
+        112895,
+        112902,
+        112910
+      ]
+    },
+    {
+      "key": "MEX|Atl. San Luis",
+      "api": "Atletico San Luis",
+      "support": 213,
+      "runner_up": 7,
+      "similarity": 0.8,
+      "source_rows": [
+        34290,
+        34301,
+        34322,
+        34326,
+        34338,
+        34344,
+        34357,
+        34364
+      ],
+      "fixture_ids": [
+        169073,
+        169086,
+        169104,
+        169109,
+        169116,
+        169126,
+        169138,
+        169143
+      ]
+    },
+    {
+      "key": "MEX|Club Leon",
+      "api": "Leon",
+      "support": 220,
+      "runner_up": 10,
+      "similarity": 0.667,
+      "source_rows": [
+        34292,
+        34302,
+        34312,
+        34330,
+        34336,
+        34348,
+        34359,
+        34367
+      ],
+      "fixture_ids": [
+        169074,
+        169082,
+        169094,
+        169110,
+        169119,
+        169129,
+        169137,
+        169147
+      ]
+    },
+    {
+      "key": "MEX|Juarez",
+      "api": "FC Juarez",
+      "support": 200,
+      "runner_up": 14,
+      "similarity": 0.857,
+      "source_rows": [
+        34291,
+        34307,
+        34316,
+        34318,
+        34334,
+        34352,
+        34361,
+        34367
+      ],
+      "fixture_ids": [
+        169072,
+        169087,
+        169097,
+        169102,
+        169115,
+        169132,
+        169142,
+        169147
+      ]
+    },
+    {
+      "key": "MEX|Mazatlan FC",
+      "api": "Mazatlán",
+      "support": 172,
+      "runner_up": 10,
+      "similarity": 0.889,
+      "source_rows": [
+        34571,
+        34577,
+        34585,
+        34592,
+        34604,
+        34618,
+        34619,
+        34628
+      ],
+      "fixture_ids": [
+        570963,
+        569674,
+        569680,
+        569686,
+        569699,
+        569712,
+        569714,
+        569730
+      ]
+    },
+    {
+      "key": "MEX|Pachuca",
+      "api": "CF Pachuca",
+      "support": 226,
+      "runner_up": 10,
+      "similarity": 0.875,
+      "source_rows": [
+        34292,
+        34300,
+        34314,
+        34320,
+        34328,
+        34341,
+        34346,
+        34357
+      ],
+      "fixture_ids": [
+        169074,
+        169081,
+        169093,
+        169101,
+        169107,
+        169120,
+        169128,
+        169138
+      ]
+    },
+    {
+      "key": "MEX|Queretaro",
+      "api": "Club Queretaro",
+      "support": 201,
+      "runner_up": 8,
+      "similarity": 0.818,
+      "source_rows": [
+        34297,
+        34303,
+        34310,
+        34320,
+        34334,
+        34336,
+        34347,
+        34358
+      ],
+      "fixture_ids": [
+        169078,
+        169083,
+        169091,
+        169101,
+        169115,
+        169119,
+        169125,
+        169141
+      ]
+    },
+    {
+      "key": "N1|Almere City",
+      "api": "Almere City FC",
+      "support": 68,
+      "runner_up": 4,
+      "similarity": 0.909,
+      "source_rows": [
+        37427,
+        37432,
+        37441,
+        37445,
+        37459,
+        37463,
+        37477,
+        37483
+      ],
+      "fixture_ids": [
+        1055078,
+        1055082,
+        1055092,
+        1055098,
+        1055113,
+        1055118,
+        1055125,
+        1055135
+      ]
+    },
+    {
+      "key": "N1|Den Haag",
+      "api": "ADO Den Haag",
+      "support": 60,
+      "runner_up": 2,
+      "similarity": 0.824,
+      "source_rows": [
+        36277,
+        36286,
+        36290,
+        36302,
+        36305,
+        36318,
+        36327,
+        36334
+      ],
+      "fixture_ids": [
+        164732,
+        164738,
+        164746,
+        164758,
+        164766,
+        164777,
+        164785,
+        164797
+      ]
+    },
+    {
+      "key": "N1|FC Emmen",
+      "api": "Emmen",
+      "support": 94,
+      "runner_up": 3,
+      "similarity": 0.833,
+      "source_rows": [
+        36272,
+        36281,
+        36291,
+        36300,
+        36304,
+        36316,
+        36328,
+        36334
+      ],
+      "fixture_ids": [
+        164728,
+        164737,
+        164748,
+        164753,
+        164762,
+        164774,
+        164788,
+        164797
+      ]
+    },
+    {
+      "key": "N1|For Sittard",
+      "api": "Fortuna Sittard",
+      "support": 196,
+      "runner_up": 7,
+      "similarity": 0.833,
+      "source_rows": [
+        36276,
+        36284,
+        36295,
+        36307,
+        36319,
+        36325,
+        36331,
+        36336
+      ],
+      "fixture_ids": [
+        164734,
+        164740,
+        164749,
+        164763,
+        164779,
+        164784,
+        164754,
+        164793
+      ]
+    },
+    {
+      "key": "N1|Nijmegen",
+      "api": "NEC Nijmegen",
+      "support": 136,
+      "runner_up": 8,
+      "similarity": 0.842,
+      "source_rows": [
+        36810,
+        36818,
+        36833,
+        36840,
+        36843,
+        36857,
+        36862,
+        36871
+      ],
+      "fixture_ids": [
+        707183,
+        707188,
+        707204,
+        707211,
+        707215,
+        707228,
+        707237,
+        707246
+      ]
+    },
+    {
+      "key": "N1|Volendam",
+      "api": "FC Volendam",
+      "support": 68,
+      "runner_up": 3,
+      "similarity": 0.889,
+      "source_rows": [
+        37121,
+        37132,
+        37147,
+        37148,
+        37154,
+        37160,
+        37172,
+        37184
+      ],
+      "fixture_ids": [
+        872229,
+        872238,
+        872258,
+        872244,
+        872263,
+        872269,
+        872280,
+        872293
+      ]
+    },
+    {
+      "key": "N1|Zwolle",
+      "api": "PEC Zwolle",
+      "support": 162,
+      "runner_up": 8,
+      "similarity": 0.8,
+      "source_rows": [
+        36271,
+        36287,
+        36289,
+        36303,
+        36304,
+        36321,
+        36323,
+        36342
+      ],
+      "fixture_ids": [
+        164726,
+        164743,
+        164744,
+        164759,
+        164762,
+        164776,
+        164783,
+        164791
+      ]
+    },
+    {
+      "key": "NOR|Kristiansund",
+      "api": "Kristiansund BK",
+      "support": 139,
+      "runner_up": 5,
+      "similarity": 0.923,
+      "source_rows": [
+        38036,
+        38056,
+        38062,
+        38065,
+        38071,
+        38079,
+        38088,
+        38095
+      ],
+      "fixture_ids": [
+        75714,
+        75734,
+        75739,
+        75681,
+        75748,
+        75755,
+        75763,
+        75770
+      ]
+    },
+    {
+      "key": "NOR|Odd",
+      "api": "ODD Ballklubb",
+      "support": 168,
+      "runner_up": 8,
+      "similarity": 0.4,
+      "source_rows": [
+        38037,
+        38042,
+        38047,
+        38051,
+        38062,
+        38068,
+        38080,
+        38084
+      ],
+      "fixture_ids": [
+        75715,
+        75683,
+        75725,
+        75728,
+        75739,
+        75745,
+        75756,
+        75762
+      ]
+    },
+    {
+      "key": "NOR|Sarpsborg 08",
+      "api": "Sarpsborg 08 FF",
+      "support": 169,
+      "runner_up": 8,
+      "similarity": 0.917,
+      "source_rows": [
+        38033,
+        38039,
+        38048,
+        38050,
+        38052,
+        38067,
+        38075,
+        38081
+      ],
+      "fixture_ids": [
+        75711,
+        75717,
+        75727,
+        75741,
+        75730,
+        75687,
+        75747,
+        75758
+      ]
+    },
+    {
+      "key": "P1|Guimaraes",
+      "api": "Vitória SC",
+      "support": 204,
+      "runner_up": 9,
+      "similarity": 0.333,
+      "source_rows": [
+        39394,
+        39403,
+        39413,
+        39416,
+        39420,
+        39432,
+        39439,
+        39451
+      ],
+      "fixture_ids": [
+        212134,
+        212141,
+        212153,
+        212127,
+        212160,
+        212171,
+        212179,
+        212189
+      ]
+    },
+    {
+      "key": "P1|Porto",
+      "api": "FC Porto",
+      "support": 204,
+      "runner_up": 9,
+      "similarity": 0.833,
+      "source_rows": [
+        39383,
+        39392,
+        39400,
+        39413,
+        39423,
+        39430,
+        39441,
+        39450
+      ],
+      "fixture_ids": [
+        212119,
+        212132,
+        212138,
+        212153,
+        212163,
+        212170,
+        212181,
+        212185
+      ]
+    },
+    {
+      "key": "P1|Setubal",
+      "api": "Vitoria Setubal",
+      "support": 34,
+      "runner_up": 4,
+      "similarity": 0.667,
+      "source_rows": [
+        39388,
+        39392,
+        39399,
+        39410,
+        39417,
+        39431,
+        39436,
+        39449
+      ],
+      "fixture_ids": [
+        212122,
+        212132,
+        212145,
+        212146,
+        212162,
+        212172,
+        212175,
+        212190
+      ]
+    },
+    {
+      "key": "P1|Sp Braga",
+      "api": "SC Braga",
+      "support": 204,
+      "runner_up": 9,
+      "similarity": 0.857,
+      "source_rows": [
+        39387,
+        39396,
+        39402,
+        39414,
+        39417,
+        39433,
+        39440,
+        39453
+      ],
+      "fixture_ids": [
+        212120,
+        212135,
+        212137,
+        212151,
+        212162,
+        212167,
+        212180,
+        212184
+      ]
+    },
+    {
+      "key": "P1|Sp Lisbon",
+      "api": "Sporting CP",
+      "support": 204,
+      "runner_up": 8,
+      "similarity": 0.444,
+      "source_rows": [
+        39386,
+        39396,
+        39405,
+        39412,
+        39421,
+        39434,
+        39443,
+        39451
+      ],
+      "fixture_ids": [
+        212121,
+        212135,
+        212140,
+        212154,
+        212156,
+        212168,
+        212174,
+        212189
+      ]
+    },
+    {
+      "key": "POL|Cracovia",
+      "api": "Cracovia Krakow",
+      "support": 203,
+      "runner_up": 10,
+      "similarity": 0.727,
+      "source_rows": [
+        41223,
+        41227,
+        41236,
+        41245,
+        41251,
+        41257,
+        41269,
+        41279
+      ],
+      "fixture_ids": [
+        154301,
+        154302,
+        154314,
+        154318,
+        154332,
+        154334,
+        154344,
+        154350
+      ]
+    },
+    {
+      "key": "POL|Gornik Z.",
+      "api": "Gornik Zabrze",
+      "support": 126,
+      "runner_up": 5,
+      "similarity": 0.737,
+      "source_rows": [
+        41224,
+        41225,
+        41240,
+        41242,
+        41250,
+        41260,
+        41264,
+        41277
+      ],
+      "fixture_ids": [
+        154300,
+        154303,
+        154315,
+        154319,
+        154327,
+        154335,
+        154342,
+        154351
+      ]
+    },
+    {
+      "key": "POL|LKS Lodz",
+      "api": "ŁKS Łódź",
+      "support": 71,
+      "runner_up": 3,
+      "similarity": 0.714,
+      "source_rows": [
+        41218,
+        41227,
+        41235,
+        41246,
+        41248,
+        41261,
+        41268,
+        41278
+      ],
+      "fixture_ids": [
+        154296,
+        154302,
+        154312,
+        154322,
+        154333,
+        154338,
+        154349,
+        154355
+      ]
+    },
+    {
+      "key": "POL|Leczna",
+      "api": "Górnik Łęczna",
+      "support": 34,
+      "runner_up": 2,
+      "similarity": 0.556,
+      "source_rows": [
+        41756,
+        41763,
+        41772,
+        41784,
+        41790,
+        41794,
+        41810,
+        41819
+      ],
+      "fixture_ids": [
+        718208,
+        718209,
+        718210,
+        718211,
+        718212,
+        718213,
+        718214,
+        718215
+      ]
+    },
+    {
+      "key": "POL|Legia",
+      "api": "Legia Warszawa",
+      "support": 203,
+      "runner_up": 9,
+      "similarity": 0.556,
+      "source_rows": [
+        41222,
+        41229,
+        41237,
+        41252,
+        41261,
+        41270,
+        41272,
+        41280
+      ],
+      "fixture_ids": [
+        154295,
+        154305,
+        154311,
+        154329,
+        154338,
+        154345,
+        154352,
+        154324
+      ]
+    },
+    {
+      "key": "POL|Legnica",
+      "api": "Miedz Legnica",
+      "support": 34,
+      "runner_up": 3,
+      "similarity": 0.737,
+      "source_rows": [
+        42065,
+        42076,
+        42091,
+        42092,
+        42101,
+        42110,
+        42126,
+        42133
+      ],
+      "fixture_ids": [
+        865087,
+        865103,
+        865115,
+        865120,
+        865127,
+        865137,
+        865145,
+        865154
+      ]
+    },
+    {
+      "key": "POL|Puszcza",
+      "api": "Puszcza Niepołomice",
+      "support": 68,
+      "runner_up": 4,
+      "similarity": 0.56,
+      "source_rows": [
+        42371,
+        42375,
+        42388,
+        42395,
+        42398,
+        42409,
+        42420,
+        42424
+      ],
+      "fixture_ids": [
+        1035820,
+        1035822,
+        1035834,
+        1035844,
+        1035850,
+        1035862,
+        1035871,
+        1035879
+      ]
+    },
+    {
+      "key": "POL|Rakow",
+      "api": "Raków Częstochowa",
+      "support": 203,
+      "runner_up": 10,
+      "similarity": 0.476,
+      "source_rows": [
+        41220,
+        41228,
+        41236,
+        41242,
+        41254,
+        41259,
+        41270,
+        41276
+      ],
+      "fixture_ids": [
+        154298,
+        154304,
+        154314,
+        154319,
+        154331,
+        154340,
+        154345,
+        154356
+      ]
+    },
+    {
+      "key": "POL|Termalica B-B.",
+      "api": "Nieciecza",
+      "support": 34,
+      "runner_up": 3,
+      "similarity": 0.2,
+      "source_rows": [
+        41754,
+        41766,
+        41774,
+        41780,
+        41799,
+        41806,
+        41813,
+        41827
+      ],
+      "fixture_ids": [
+        712798,
+        712806,
+        712815,
+        712822,
+        712838,
+        712851,
+        712855,
+        712862
+      ]
+    },
+    {
+      "key": "POL|Widzew Lodz",
+      "api": "Widzew Łódź",
+      "support": 102,
+      "runner_up": 7,
+      "similarity": 0.9,
+      "source_rows": [
+        42064,
+        42068,
+        42081,
+        42087,
+        42093,
+        42104,
+        42113,
+        42124
+      ],
+      "fixture_ids": [
+        865086,
+        865092,
+        865107,
+        865116,
+        865125,
+        865132,
+        865142,
+        865148
+      ]
+    },
+    {
+      "key": "POL|Wisla",
+      "api": "Wisla Krakow",
+      "support": 101,
+      "runner_up": 5,
+      "similarity": 0.625,
+      "source_rows": [
+        41221,
+        41230,
+        41240,
+        41243,
+        41248,
+        41256,
+        41267,
+        41274
+      ],
+      "fixture_ids": [
+        154299,
+        154307,
+        154315,
+        154323,
+        154333,
+        154336,
+        154348,
+        154353
+      ]
+    },
+    {
+      "key": "POL|Zaglebie",
+      "api": "Zaglebie Lubin",
+      "support": 203,
+      "runner_up": 8,
+      "similarity": 0.762,
+      "source_rows": [
+        41223,
+        41225,
+        41234,
+        41244,
+        41252,
+        41262,
+        41267,
+        41273
+      ],
+      "fixture_ids": [
+        154301,
+        154303,
+        154317,
+        154325,
+        154329,
+        154341,
+        154348,
+        154357
+      ]
+    },
+    {
+      "key": "ROU|Academica Clinceni",
+      "api": "FC Clinceni",
+      "support": 118,
+      "runner_up": 5,
+      "similarity": 0.667,
+      "source_rows": [
+        42981,
+        42986,
+        42992,
+        42998,
+        43005,
+        43013,
+        43021,
+        43026
+      ],
+      "fixture_ids": [
+        169932,
+        169938,
+        169951,
+        169957,
+        169963,
+        169969,
+        169975,
+        169981
+      ]
+    },
+    {
+      "key": "ROU|Astra",
+      "api": "FC Astra Giurgiu",
+      "support": 73,
+      "runner_up": 4,
+      "similarity": 0.526,
+      "source_rows": [
+        42978,
+        42989,
+        42991,
+        43003,
+        43008,
+        43017,
+        43020,
+        43028
+      ],
+      "fixture_ids": [
+        169937,
+        169944,
+        169950,
+        169956,
+        169962,
+        169968,
+        169974,
+        169980
+      ]
+    },
+    {
+      "key": "ROU|CFR Cluj",
+      "api": "CFR 1907 Cluj",
+      "support": 237,
+      "runner_up": 11,
+      "similarity": 0.778,
+      "source_rows": [
+        42979,
+        42986,
+        42993,
+        42999,
+        43007,
+        43014,
+        43022,
+        43028
+      ],
+      "fixture_ids": [
+        169931,
+        169938,
+        169945,
+        169952,
+        169959,
+        169966,
+        169973,
+        169980
+      ]
+    },
+    {
+      "key": "ROU|Din. Bucuresti",
+      "api": "Dinamo Bucuresti",
+      "support": 196,
+      "runner_up": 11,
+      "similarity": 0.889,
+      "source_rows": [
+        42983,
+        42988,
+        42993,
+        42998,
+        43006,
+        43012,
+        43025,
+        43032
+      ],
+      "fixture_ids": [
+        169933,
+        169939,
+        169945,
+        169957,
+        169965,
+        169971,
+        169977,
+        169983
+      ]
+    },
+    {
+      "key": "ROU|FC Arges",
+      "api": "Arges Pitesti",
+      "support": 120,
+      "runner_up": 4,
+      "similarity": 0.526,
+      "source_rows": [
+        43239,
+        43247,
+        43256,
+        43268,
+        43271,
+        43282,
+        43287,
+        43301
+      ],
+      "fixture_ids": [
+        589198,
+        589206,
+        589217,
+        589225,
+        589233,
+        589241,
+        589250,
+        589259
+      ]
+    },
+    {
+      "key": "ROU|FC Hermannstadt",
+      "api": "AFC Hermannstadt",
+      "support": 196,
+      "runner_up": 8,
+      "similarity": 0.966,
+      "source_rows": [
+        42980,
+        42985,
+        42996,
+        43001,
+        43007,
+        43013,
+        43025,
+        43030
+      ],
+      "fixture_ids": [
+        169935,
+        169941,
+        169947,
+        169953,
+        169959,
+        169969,
+        169977,
+        169985
+      ]
+    },
+    {
+      "key": "ROU|FC Rapid Bucuresti",
+      "api": "Rapid",
+      "support": 159,
+      "runner_up": 8,
+      "similarity": 0.476,
+      "source_rows": [
+        43565,
+        43569,
+        43576,
+        43587,
+        43596,
+        43604,
+        43611,
+        43617
+      ],
+      "fixture_ids": [
+        722895,
+        722898,
+        722908,
+        722916,
+        722924,
+        722932,
+        722941,
+        722950
+      ]
+    },
+    {
+      "key": "ROU|Gloria Buzau",
+      "api": "SCM Gloria Buzău",
+      "support": 41,
+      "runner_up": 1,
+      "similarity": 0.88,
+      "source_rows": [
+        44195,
+        44200,
+        44529,
+        44536,
+        44540,
+        44546,
+        44555,
+        44562
+      ],
+      "fixture_ids": [
+        1028956,
+        1028957,
+        1220359,
+        1220366,
+        1220381,
+        1220388,
+        1220395,
+        1220402
+      ]
+    },
+    {
+      "key": "ROU|Mioveni",
+      "api": "CS Mioveni",
+      "support": 84,
+      "runner_up": 5,
+      "similarity": 0.875,
+      "source_rows": [
+        43237,
+        43238,
+        43556,
+        43558,
+        43563,
+        43569,
+        43583,
+        43585
+      ],
+      "fixture_ids": [
+        586257,
+        586258,
+        706025,
+        706026,
+        722892,
+        722898,
+        722907,
+        722914
+      ]
+    },
+    {
+      "key": "ROU|Petrolul",
+      "api": "Petrolul Ploiesti",
+      "support": 117,
+      "runner_up": 5,
+      "similarity": 0.667,
+      "source_rows": [
+        43887,
+        43895,
+        43901,
+        43904,
+        43913,
+        43921,
+        43927,
+        43937
+      ],
+      "fixture_ids": [
+        882956,
+        882964,
+        882972,
+        882980,
+        882988,
+        882996,
+        883004,
+        883012
+      ]
+    },
+    {
+      "key": "ROU|Poli Iasi",
+      "api": "Politehnica Iasi",
+      "support": 156,
+      "runner_up": 5,
+      "similarity": 0.696,
+      "source_rows": [
+        42979,
+        42989,
+        42992,
+        43004,
+        43006,
+        43016,
+        43019,
+        43029
+      ],
+      "fixture_ids": [
+        169931,
+        169944,
+        169951,
+        169958,
+        169965,
+        169972,
+        169979,
+        169986
+      ]
+    },
+    {
+      "key": "ROU|Sepsi Sf. Gheorghe",
+      "api": "Sepsi OSK Sfantu Gheorghe",
+      "support": 237,
+      "runner_up": 11,
+      "similarity": 0.811,
+      "source_rows": [
+        42977,
+        42990,
+        42994,
+        43002,
+        43010,
+        43014,
+        43021,
+        43032
+      ],
+      "fixture_ids": [
+        169936,
+        169942,
+        169948,
+        169954,
+        169960,
+        169966,
+        169975,
+        169983
+      ]
+    },
+    {
+      "key": "ROU|U Craiova",
+      "api": "CS Universitatea Craiova",
+      "support": 57,
+      "runner_up": 5,
+      "similarity": 0.533,
+      "source_rows": [
+        42981,
+        42988,
+        42995,
+        43001,
+        43010,
+        43015,
+        43020,
+        43027
+      ],
+      "fixture_ids": [
+        169932,
+        169939,
+        169946,
+        169953,
+        169960,
+        169967,
+        169974,
+        169982
+      ]
+    },
+    {
+      "key": "ROU|U. Cluj",
+      "api": "Universitatea Cluj",
+      "support": 119,
+      "runner_up": 5,
+      "similarity": 0.455,
+      "source_rows": [
+        43884,
+        43893,
+        43896,
+        43904,
+        43914,
+        43924,
+        43925,
+        43933
+      ],
+      "fixture_ids": [
+        882959,
+        882966,
+        882973,
+        882980,
+        882993,
+        883002,
+        883011,
+        883018
+      ]
+    },
+    {
+      "key": "RUS|Akron Togliatti",
+      "api": "Akron",
+      "support": 32,
+      "runner_up": 2,
+      "similarity": 0.526,
+      "source_rows": [
+        46044,
+        46045,
+        46050,
+        46057,
+        46063,
+        46075,
+        46085,
+        46089
+      ],
+      "fixture_ids": [
+        1201485,
+        1201486,
+        1212964,
+        1212972,
+        1212984,
+        1212992,
+        1212999,
+        1213003
+      ]
+    },
+    {
+      "key": "RUS|Dynamo Makhachkala",
+      "api": "Dinamo Makhachkala",
+      "support": 30,
+      "runner_up": 4,
+      "similarity": 0.941,
+      "source_rows": [
+        46052,
+        46061,
+        46068,
+        46074,
+        46086,
+        46087,
+        46100,
+        46109
+      ],
+      "fixture_ids": [
+        1212968,
+        1212969,
+        1212983,
+        1212990,
+        1212998,
+        1213008,
+        1213011,
+        1213023
+      ]
+    },
+    {
+      "key": "RUS|Dynamo Moscow",
+      "api": "Dinamo Moscow",
+      "support": 150,
+      "runner_up": 30,
+      "similarity": 0.917,
+      "source_rows": [
+        44837,
+        44849,
+        44853,
+        44862,
+        44869,
+        44881,
+        44886,
+        44893
+      ],
+      "fixture_ids": [
+        147029,
+        147034,
+        147043,
+        147049,
+        147059,
+        147067,
+        147075,
+        147085
+      ]
+    },
+    {
+      "key": "RUS|FK Rostov",
+      "api": "FC Rostov",
+      "support": 180,
+      "runner_up": 7,
+      "similarity": 0.875,
+      "source_rows": [
+        44838,
+        44846,
+        44857,
+        44863,
+        44876,
+        44883,
+        44890,
+        44895
+      ],
+      "fixture_ids": [
+        147026,
+        147032,
+        147045,
+        147055,
+        147056,
+        147069,
+        147073,
+        147081
+      ]
+    },
+    {
+      "key": "RUS|Pari NN",
+      "api": "Nizhny Novgorod",
+      "support": 124,
+      "runner_up": 6,
+      "similarity": 0.1,
+      "source_rows": [
+        45322,
+        45329,
+        45333,
+        45341,
+        45354,
+        45360,
+        45367,
+        45374
+      ],
+      "fixture_ids": [
+        711301,
+        711311,
+        711313,
+        711327,
+        711332,
+        711343,
+        711347,
+        711357
+      ]
+    },
+    {
+      "key": "RUS|R. Volgograd",
+      "api": "Rotor Volgograd",
+      "support": 30,
+      "runner_up": 3,
+      "similarity": 0.833,
+      "source_rows": [
+        45081,
+        45087,
+        45094,
+        45102,
+        45113,
+        45115,
+        45128,
+        45132
+      ],
+      "fixture_ids": [
+        574103,
+        574110,
+        574115,
+        574127,
+        574138,
+        574146,
+        574152,
+        574157
+      ]
+    },
+    {
+      "key": "RUS|Rubin Kazan",
+      "api": "Rubin",
+      "support": 150,
+      "runner_up": 7,
+      "similarity": 0.667,
+      "source_rows": [
+        44844,
+        44849,
+        44860,
+        44865,
+        44870,
+        44882,
+        44890,
+        44896
+      ],
+      "fixture_ids": [
+        147027,
+        147034,
+        147044,
+        147053,
+        147057,
+        147068,
+        147073,
+        147083
+      ]
+    },
+    {
+      "key": "RUS|Sochi",
+      "api": "PFC Sochi",
+      "support": 148,
+      "runner_up": 7,
+      "similarity": 0.769,
+      "source_rows": [
+        44839,
+        44851,
+        44854,
+        44866,
+        44874,
+        44877,
+        44892,
+        44896
+      ],
+      "fixture_ids": [
+        147025,
+        147036,
+        147040,
+        147052,
+        147058,
+        147071,
+        147190,
+        147083
+      ]
+    },
+    {
+      "key": "RUS|Torpedo Moscow",
+      "api": "Torpedo Moskva",
+      "support": 30,
+      "runner_up": 2,
+      "similarity": 0.769,
+      "source_rows": [
+        45566,
+        45572,
+        45580,
+        45590,
+        45596,
+        45606,
+        45613,
+        45622
+      ],
+      "fixture_ids": [
+        879871,
+        879880,
+        879889,
+        879895,
+        879904,
+        879907,
+        879919,
+        879928
+      ]
+    },
+    {
+      "key": "RUS|Ufa",
+      "api": "FC UFA",
+      "support": 92,
+      "runner_up": 6,
+      "similarity": 0.75,
+      "source_rows": [
+        44840,
+        44848,
+        44856,
+        44866,
+        44873,
+        44883,
+        44887,
+        44897
+      ],
+      "fixture_ids": [
+        147031,
+        147038,
+        147046,
+        147052,
+        147062,
+        147069,
+        147189,
+        147086
+      ]
+    },
+    {
+      "key": "RUS|Zenit",
+      "api": "Zenit Saint Petersburg",
+      "support": 150,
+      "runner_up": 30,
+      "similarity": 0.4,
+      "source_rows": [
+        44843,
+        44851,
+        44859,
+        44864,
+        44869,
+        44880,
+        44887,
+        44899
+      ],
+      "fixture_ids": [
+        147024,
+        147036,
+        147047,
+        147048,
+        147059,
+        147064,
+        147189,
+        147080
+      ]
+    },
+    {
+      "key": "SC0|Dundee United",
+      "api": "Dundee Utd",
+      "support": 152,
+      "runner_up": 11,
+      "similarity": 0.857,
+      "source_rows": [
+        46467,
+        46474,
+        46477,
+        46484,
+        46487,
+        46494,
+        46502,
+        46507
+      ],
+      "fixture_ids": [
+        569461,
+        569469,
+        569472,
+        569479,
+        569488,
+        569492,
+        569499,
+        569504
+      ]
+    },
+    {
+      "key": "SC0|Hamilton",
+      "api": "Hamilton Academical",
+      "support": 68,
+      "runner_up": 5,
+      "similarity": 0.615,
+      "source_rows": [
+        46290,
+        46293,
+        46299,
+        46306,
+        46312,
+        46319,
+        46323,
+        46334
+      ],
+      "fixture_ids": [
+        166351,
+        166353,
+        166360,
+        166366,
+        166372,
+        166382,
+        166383,
+        166393
+      ]
+    },
+    {
+      "key": "SC0|Hearts",
+      "api": "Heart Of Midlothian",
+      "support": 182,
+      "runner_up": 9,
+      "similarity": 0.435,
+      "source_rows": [
+        46291,
+        46294,
+        46303,
+        46306,
+        46313,
+        46321,
+        46328,
+        46330
+      ],
+      "fixture_ids": [
+        166347,
+        166354,
+        166359,
+        166366,
+        166373,
+        166378,
+        166388,
+        166390
+      ]
+    },
+    {
+      "key": "SC1|Airdrie Utd",
+      "api": "Airdrie United",
+      "support": 72,
+      "runner_up": 4,
+      "similarity": 0.87,
+      "source_rows": [
+        48239,
+        48243,
+        48249,
+        48255,
+        48260,
+        48265,
+        48272,
+        48274
+      ],
+      "fixture_ids": [
+        1051074,
+        1051078,
+        1051083,
+        1051089,
+        1051093,
+        1051099,
+        1051106,
+        1051108
+      ]
+    },
+    {
+      "key": "SC1|Alloa",
+      "api": "Alloa Athletic",
+      "support": 55,
+      "runner_up": 3,
+      "similarity": 0.556,
+      "source_rows": [
+        47607,
+        47614,
+        47617,
+        47625,
+        47628,
+        47631,
+        47639,
+        47641
+      ],
+      "fixture_ids": [
+        166155,
+        166162,
+        166165,
+        166174,
+        166177,
+        166180,
+        166187,
+        166190
+      ]
+    },
+    {
+      "key": "SC1|Ayr",
+      "api": "Ayr Utd",
+      "support": 198,
+      "runner_up": 7,
+      "similarity": 0.667,
+      "source_rows": [
+        47609,
+        47612,
+        47618,
+        47624,
+        47627,
+        47631,
+        47637,
+        47642
+      ],
+      "fixture_ids": [
+        166157,
+        166160,
+        166166,
+        166173,
+        166176,
+        166180,
+        166185,
+        166191
+      ]
+    },
+    {
+      "key": "SC1|Dundee United",
+      "api": "Dundee Utd",
+      "support": 64,
+      "runner_up": 3,
+      "similarity": 0.857,
+      "source_rows": [
+        47610,
+        47611,
+        47620,
+        47621,
+        47627,
+        47632,
+        47638,
+        47641
+      ],
+      "fixture_ids": [
+        166158,
+        166163,
+        166168,
+        166171,
+        166176,
+        166181,
+        166186,
+        166190
+      ]
+    },
+    {
+      "key": "SC1|Hamilton",
+      "api": "Hamilton Academical",
+      "support": 108,
+      "runner_up": 4,
+      "similarity": 0.615,
+      "source_rows": [
+        47881,
+        47885,
+        47889,
+        47895,
+        47897,
+        47903,
+        47909,
+        47913
+      ],
+      "fixture_ids": [
+        712238,
+        712241,
+        712245,
+        712253,
+        712254,
+        712260,
+        712266,
+        712269
+      ]
+    },
+    {
+      "key": "SC1|Hearts",
+      "api": "Heart Of Midlothian",
+      "support": 27,
+      "runner_up": 2,
+      "similarity": 0.435,
+      "source_rows": [
+        47743,
+        47748,
+        47760,
+        47762,
+        47767,
+        47771,
+        47776,
+        47784
+      ],
+      "fixture_ids": [
+        576786,
+        576790,
+        576802,
+        576806,
+        576796,
+        576811,
+        576817,
+        576826
+      ]
+    },
+    {
+      "key": "SC1|Inverness C",
+      "api": "Inverness CT",
+      "support": 162,
+      "runner_up": 7,
+      "similarity": 0.952,
+      "source_rows": [
+        47610,
+        47613,
+        47619,
+        47622,
+        47629,
+        47633,
+        47640,
+        47642
+      ],
+      "fixture_ids": [
+        166158,
+        166161,
+        166167,
+        166172,
+        166178,
+        166182,
+        166188,
+        166191
+      ]
+    },
+    {
+      "key": "SC1|Queen of Sth",
+      "api": "Queen of the South",
+      "support": 91,
+      "runner_up": 4,
+      "similarity": 0.72,
+      "source_rows": [
+        47608,
+        47615,
+        47618,
+        47625,
+        47630,
+        47633,
+        47636,
+        47645
+      ],
+      "fixture_ids": [
+        166156,
+        166164,
+        166166,
+        166174,
+        166179,
+        166182,
+        166189,
+        166194
+      ]
+    },
+    {
+      "key": "SC1|Raith Rvs",
+      "api": "Raith Rovers",
+      "support": 171,
+      "runner_up": 8,
+      "similarity": 0.842,
+      "source_rows": [
+        47747,
+        47752,
+        47753,
+        47761,
+        47765,
+        47772,
+        47773,
+        47782
+      ],
+      "fixture_ids": [
+        576788,
+        576793,
+        576794,
+        576803,
+        576807,
+        576813,
+        576815,
+        576824
+      ]
+    },
+    {
+      "key": "SC2|Airdrie Utd",
+      "api": "Airdrie United",
+      "support": 122,
+      "runner_up": 4,
+      "similarity": 0.87,
+      "source_rows": [
+        48598,
+        48606,
+        48608,
+        48614,
+        48617,
+        48624,
+        48628,
+        48633
+      ],
+      "fixture_ids": [
+        247751,
+        247759,
+        247761,
+        247768,
+        247771,
+        247777,
+        247781,
+        247786
+      ]
+    },
+    {
+      "key": "SC2|Alloa",
+      "api": "Alloa Athletic",
+      "support": 144,
+      "runner_up": 3,
+      "similarity": 0.556,
+      "source_rows": [
+        48851,
+        48852,
+        48858,
+        48862,
+        48871,
+        48876,
+        48880,
+        48883
+      ],
+      "fixture_ids": [
+        711120,
+        711121,
+        711127,
+        711131,
+        711141,
+        711136,
+        711149,
+        711152
+      ]
+    },
+    {
+      "key": "SC2|FC Edinburgh",
+      "api": "Edinburgh City",
+      "support": 36,
+      "runner_up": 2,
+      "similarity": 0.75,
+      "source_rows": [
+        49029,
+        49035,
+        49037,
+        49043,
+        49049,
+        49052,
+        49061,
+        49065
+      ],
+      "fixture_ids": [
+        873683,
+        873689,
+        873691,
+        873697,
+        873703,
+        873706,
+        873720,
+        873724
+      ]
+    },
+    {
+      "key": "SC2|Forfar",
+      "api": "Forfar Athletic",
+      "support": 50,
+      "runner_up": 2,
+      "similarity": 0.6,
+      "source_rows": [
+        48598,
+        48605,
+        48615,
+        48619,
+        48622,
+        48625,
+        48630,
+        48636
+      ],
+      "fixture_ids": [
+        247751,
+        247758,
+        247769,
+        247773,
+        247765,
+        247778,
+        247783,
+        247789
+      ]
+    },
+    {
+      "key": "SC2|Hamilton",
+      "api": "Hamilton Academical",
+      "support": 36,
+      "runner_up": 3,
+      "similarity": 0.615,
+      "source_rows": [
+        49208,
+        49216,
+        49217,
+        49225,
+        49231,
+        49235,
+        49241,
+        49242
+      ],
+      "fixture_ids": [
+        1051254,
+        1051262,
+        1051263,
+        1051271,
+        1051277,
+        1051281,
+        1051287,
+        1051290
+      ]
+    },
+    {
+      "key": "SC2|Inverness C",
+      "api": "Inverness CT",
+      "support": 36,
+      "runner_up": 2,
+      "similarity": 0.952,
+      "source_rows": [
+        49389,
+        49392,
+        49400,
+        49404,
+        49410,
+        49412,
+        49420,
+        49423
+      ],
+      "fixture_ids": [
+        1221109,
+        1221112,
+        1221120,
+        1221124,
+        1221130,
+        1221132,
+        1221140,
+        1221143
+      ]
+    },
+    {
+      "key": "SC2|Queen of Sth",
+      "api": "Queen of the South",
+      "support": 108,
+      "runner_up": 3,
+      "similarity": 0.72,
+      "source_rows": [
+        49031,
+        49036,
+        49041,
+        49046,
+        49050,
+        49056,
+        49061,
+        49066
+      ],
+      "fixture_ids": [
+        873685,
+        873690,
+        873695,
+        873700,
+        873704,
+        873710,
+        873720,
+        873725
+      ]
+    },
+    {
+      "key": "SC2|Raith Rvs",
+      "api": "Raith Rovers",
+      "support": 28,
+      "runner_up": 1,
+      "similarity": 0.842,
+      "source_rows": [
+        48600,
+        48607,
+        48611,
+        48616,
+        48618,
+        48627,
+        48628,
+        48636
+      ],
+      "fixture_ids": [
+        247753,
+        247760,
+        247764,
+        247770,
+        247772,
+        247780,
+        247781,
+        247789
+      ]
+    },
+    {
+      "key": "SC2|Stirling",
+      "api": "Stirling Albion",
+      "support": 36,
+      "runner_up": 3,
+      "similarity": 0.727,
+      "source_rows": [
+        49211,
+        49212,
+        49221,
+        49226,
+        49231,
+        49232,
+        49240,
+        49246
+      ],
+      "fixture_ids": [
+        1051257,
+        1051258,
+        1051264,
+        1051272,
+        1051277,
+        1051278,
+        1051286,
+        1051292
+      ]
+    },
+    {
+      "key": "SC3|Albion Rvs",
+      "api": "Albion Rovers",
+      "support": 120,
+      "runner_up": 5,
+      "similarity": 0.857,
+      "source_rows": [
+        49570,
+        49572,
+        49577,
+        49582,
+        49587,
+        49594,
+        49597,
+        49604
+      ],
+      "fixture_ids": [
+        247934,
+        247936,
+        247941,
+        247946,
+        247951,
+        247958,
+        247961,
+        247968
+      ]
+    },
+    {
+      "key": "SC3|Bonnyrigg Rose",
+      "api": "Bonnyrigg Rose Athletic",
+      "support": 108,
+      "runner_up": 4,
+      "similarity": 0.765,
+      "source_rows": [
+        49994,
+        50001,
+        50008,
+        50010,
+        50015,
+        50021,
+        50026,
+        50032
+      ],
+      "fixture_ids": [
+        873501,
+        873508,
+        873515,
+        873517,
+        873522,
+        873528,
+        873538,
+        873541
+      ]
+    },
+    {
+      "key": "SC3|Elgin",
+      "api": "Elgin City",
+      "support": 194,
+      "runner_up": 7,
+      "similarity": 0.714,
+      "source_rows": [
+        49569,
+        49573,
+        49581,
+        49584,
+        49591,
+        49596,
+        49599,
+        49602
+      ],
+      "fixture_ids": [
+        247933,
+        247937,
+        247945,
+        247948,
+        247955,
+        247960,
+        247963,
+        247966
+      ]
+    },
+    {
+      "key": "SC3|Forfar",
+      "api": "Forfar Athletic",
+      "support": 144,
+      "runner_up": 4,
+      "similarity": 0.6,
+      "source_rows": [
+        49815,
+        49821,
+        49827,
+        49829,
+        49835,
+        49842,
+        49846,
+        49850
+      ],
+      "fixture_ids": [
+        709858,
+        709865,
+        709872,
+        709874,
+        709880,
+        709886,
+        709890,
+        709894
+      ]
+    },
+    {
+      "key": "SC3|Stirling",
+      "api": "Stirling Albion",
+      "support": 158,
+      "runner_up": 5,
+      "similarity": 0.727,
+      "source_rows": [
+        49571,
+        49574,
+        49580,
+        49586,
+        49587,
+        49596,
+        49598,
+        49606
+      ],
+      "fixture_ids": [
+        247935,
+        247938,
+        247944,
+        247950,
+        247951,
+        247960,
+        247962,
+        247970
+      ]
+    },
+    {
+      "key": "SP2|Andorra",
+      "api": "FC Andorra",
+      "support": 84,
+      "runner_up": 6,
+      "similarity": 0.875,
+      "source_rows": [
+        51930,
+        51935,
+        51952,
+        51958,
+        51971,
+        51976,
+        51991,
+        51998
+      ],
+      "fixture_ids": [
+        878329,
+        878336,
+        878350,
+        878356,
+        878373,
+        878378,
+        878395,
+        878400
+      ]
+    },
+    {
+      "key": "SP2|Cartagena",
+      "api": "FC Cartagena",
+      "support": 210,
+      "runner_up": 11,
+      "similarity": 0.9,
+      "source_rows": [
+        51003,
+        51010,
+        51019,
+        51032,
+        51045,
+        51048,
+        51057,
+        51068
+      ],
+      "fixture_ids": [
+        606695,
+        606703,
+        606712,
+        606725,
+        606739,
+        606746,
+        606755,
+        606769
+      ]
+    },
+    {
+      "key": "SP2|Espanol",
+      "api": "Espanyol",
+      "support": 84,
+      "runner_up": 6,
+      "similarity": 0.933,
+      "source_rows": [
+        50996,
+        51011,
+        51022,
+        51035,
+        51036,
+        51055,
+        51058,
+        51075
+      ],
+      "fixture_ids": [
+        606689,
+        606706,
+        606718,
+        606732,
+        606733,
+        606752,
+        606756,
+        606776
+      ]
+    },
+    {
+      "key": "SP2|Extremadura UD",
+      "api": "Extremadura",
+      "support": 42,
+      "runner_up": 4,
+      "similarity": 0.917,
+      "source_rows": [
+        50536,
+        50551,
+        50561,
+        50568,
+        50588,
+        50598,
+        50604,
+        50611
+      ],
+      "fixture_ids": [
+        214402,
+        214423,
+        214432,
+        214438,
+        214456,
+        214466,
+        214470,
+        214479
+      ]
+    },
+    {
+      "key": "SP2|Ferrol",
+      "api": "Racing Ferrol",
+      "support": 84,
+      "runner_up": 5,
+      "similarity": 0.667,
+      "source_rows": [
+        52384,
+        52400,
+        52410,
+        52416,
+        52432,
+        52443,
+        52457,
+        52469
+      ],
+      "fixture_ids": [
+        1045191,
+        1045206,
+        1045213,
+        1045221,
+        1045233,
+        1045246,
+        1045257,
+        1045269
+      ]
+    },
+    {
+      "key": "SP2|Granada",
+      "api": "Granada CF",
+      "support": 84,
+      "runner_up": 6,
+      "similarity": 0.875,
+      "source_rows": [
+        51926,
+        51934,
+        51951,
+        51958,
+        51974,
+        51977,
+        51996,
+        52003
+      ],
+      "fixture_ids": [
+        878330,
+        878334,
+        878346,
+        878356,
+        878367,
+        878379,
+        878397,
+        878401
+      ]
+    },
+    {
+      "key": "SP2|La Coruna",
+      "api": "Deportivo La Coruna",
+      "support": 84,
+      "runner_up": 5,
+      "similarity": 0.64,
+      "source_rows": [
+        50542,
+        50552,
+        50566,
+        50570,
+        50587,
+        50594,
+        50601,
+        50617
+      ],
+      "fixture_ids": [
+        214407,
+        214421,
+        214430,
+        214436,
+        214455,
+        214459,
+        214469,
+        214481
+      ]
+    },
+    {
+      "key": "SP2|Logrones",
+      "api": "UD Logroñés",
+      "support": 42,
+      "runner_up": 4,
+      "similarity": 0.889,
+      "source_rows": [
+        50999,
+        51015,
+        51027,
+        51037,
+        51051,
+        51059,
+        51070,
+        51082
+      ],
+      "fixture_ids": [
+        606698,
+        606713,
+        606728,
+        606736,
+        606750,
+        606757,
+        606772,
+        606785
+      ]
+    },
+    {
+      "key": "SP2|Santander",
+      "api": "Racing Santander",
+      "support": 168,
+      "runner_up": 8,
+      "similarity": 0.75,
+      "source_rows": [
+        50537,
+        50550,
+        50559,
+        50567,
+        50578,
+        50592,
+        50608,
+        50615
+      ],
+      "fixture_ids": [
+        214403,
+        214415,
+        214427,
+        214444,
+        214454,
+        214467,
+        214477,
+        214489
+      ]
+    },
+    {
+      "key": "SP2|Sociedad B",
+      "api": "Real Sociedad II",
+      "support": 42,
+      "runner_up": 4,
+      "similarity": 0.696,
+      "source_rows": [
+        51462,
+        51472,
+        51489,
+        51493,
+        51506,
+        51518,
+        51525,
+        51536
+      ],
+      "fixture_ids": [
+        721266,
+        721277,
+        721289,
+        721295,
+        721312,
+        721322,
+        721331,
+        721346
+      ]
+    },
+    {
+      "key": "SP2|Sp Gijon",
+      "api": "Sporting Gijon",
+      "support": 252,
+      "runner_up": 15,
+      "similarity": 0.7,
+      "source_rows": [
+        50541,
+        50554,
+        50565,
+        50576,
+        50587,
+        50597,
+        50608,
+        50619
+      ],
+      "fixture_ids": [
+        214411,
+        214420,
+        214431,
+        214441,
+        214455,
+        214463,
+        214477,
+        214487
+      ]
+    },
+    {
+      "key": "SP2|Vallecano",
+      "api": "Rayo Vallecano",
+      "support": 84,
+      "runner_up": 5,
+      "similarity": 0.818,
+      "source_rows": [
+        50538,
+        50554,
+        50566,
+        50575,
+        50578,
+        50591,
+        50602,
+        50613
+      ],
+      "fixture_ids": [
+        214405,
+        214420,
+        214430,
+        214440,
+        214454,
+        214465,
+        214475,
+        214483
+      ]
+    },
+    {
+      "key": "SP2|Villarreal B",
+      "api": "Villarreal II",
+      "support": 84,
+      "runner_up": 5,
+      "similarity": 0.87,
+      "source_rows": [
+        51927,
+        51932,
+        51951,
+        51957,
+        51967,
+        51979,
+        51988,
+        52001
+      ],
+      "fixture_ids": [
+        878327,
+        878338,
+        878346,
+        878363,
+        878370,
+        878385,
+        878392,
+        878403
+      ]
+    },
+    {
+      "key": "SWE|AFC Eskilstuna",
+      "api": "Vasby United",
+      "support": 17,
+      "runner_up": 1,
+      "similarity": 0.333,
+      "source_rows": [
+        53314,
+        53316,
+        53327,
+        53332,
+        53341,
+        53348,
+        53359,
+        53363
+      ],
+      "fixture_ids": [
+        76512,
+        76520,
+        76524,
+        76536,
+        76543,
+        76551,
+        76553,
+        76567
+      ]
+    },
+    {
+      "key": "SWE|AIK",
+      "api": "AIK Stockholm",
+      "support": 166,
+      "runner_up": 10,
+      "similarity": 0.4,
+      "source_rows": [
+        53309,
+        53317,
+        53324,
+        53334,
+        53348,
+        53355,
+        53366,
+        53373
+      ],
+      "fixture_ids": [
+        76509,
+        76513,
+        76521,
+        76535,
+        76551,
+        76552,
+        76565,
+        76568
+      ]
+    },
+    {
+      "key": "SWE|Brommapojkarna",
+      "api": "IF Brommapojkarna",
+      "support": 60,
+      "runner_up": 4,
+      "similarity": 0.933,
+      "source_rows": [
+        54170,
+        54178,
+        54186,
+        54199,
+        54204,
+        54217,
+        54220,
+        54231
+      ],
+      "fixture_ids": [
+        1001808,
+        1001815,
+        1001823,
+        1001837,
+        1001842,
+        1001853,
+        1001858,
+        1001869
+      ]
+    },
+    {
+      "key": "SWE|Degerfors",
+      "api": "Degerfors IF",
+      "support": 90,
+      "runner_up": 5,
+      "similarity": 0.9,
+      "source_rows": [
+        53692,
+        53695,
+        53709,
+        53717,
+        53722,
+        53733,
+        53741,
+        53747
+      ],
+      "fixture_ids": [
+        663443,
+        663452,
+        663462,
+        663472,
+        663475,
+        663487,
+        663491,
+        663502
+      ]
+    },
+    {
+      "key": "SWE|Djurgarden",
+      "api": "Djurgardens IF",
+      "support": 168,
+      "runner_up": 10,
+      "similarity": 0.87,
+      "source_rows": [
+        53306,
+        53314,
+        53319,
+        53331,
+        53335,
+        53344,
+        53346,
+        53359
+      ],
+      "fixture_ids": [
+        76499,
+        76512,
+        76515,
+        76526,
+        76529,
+        76539,
+        76545,
+        76553
+      ]
+    },
+    {
+      "key": "SWE|Elfsborg",
+      "api": "IF Elfsborg",
+      "support": 167,
+      "runner_up": 6,
+      "similarity": 0.889,
+      "source_rows": [
+        53315,
+        53317,
+        53330,
+        53338,
+        53344,
+        53351,
+        53360,
+        53369
+      ],
+      "fixture_ids": [
+        76506,
+        76513,
+        76523,
+        76532,
+        76539,
+        76549,
+        76556,
+        76561
+      ]
+    },
+    {
+      "key": "SWE|Falkenbergs",
+      "api": "Falkenbergs FF",
+      "support": 47,
+      "runner_up": 2,
+      "similarity": 0.917,
+      "source_rows": [
+        53312,
+        53318,
+        53325,
+        53333,
+        53340,
+        53352,
+        53356,
+        53367
+      ],
+      "fixture_ids": [
+        76505,
+        76516,
+        76528,
+        76530,
+        76538,
+        76548,
+        76557,
+        76560
+      ]
+    },
+    {
+      "key": "SWE|Goteborg",
+      "api": "IFK Goteborg",
+      "support": 167,
+      "runner_up": 7,
+      "similarity": 0.842,
+      "source_rows": [
+        53308,
+        53318,
+        53327,
+        53336,
+        53345,
+        53352,
+        53361,
+        53368
+      ],
+      "fixture_ids": [
+        76507,
+        76516,
+        76524,
+        76533,
+        76542,
+        76548,
+        76555,
+        76562
+      ]
+    },
+    {
+      "key": "SWE|Hacken",
+      "api": "BK Hacken",
+      "support": 168,
+      "runner_up": 7,
+      "similarity": 0.857,
+      "source_rows": [
+        53307,
+        53313,
+        53320,
+        53326,
+        53335,
+        53342,
+        53349,
+        53357
+      ],
+      "fixture_ids": [
+        76498,
+        76508,
+        76514,
+        76522,
+        76529,
+        76537,
+        76544,
+        76558
+      ]
+    },
+    {
+      "key": "SWE|Hammarby",
+      "api": "Hammarby FF",
+      "support": 168,
+      "runner_up": 9,
+      "similarity": 0.889,
+      "source_rows": [
+        53307,
+        53312,
+        53323,
+        53330,
+        53332,
+        53343,
+        53350,
+        53354
+      ],
+      "fixture_ids": [
+        76498,
+        76505,
+        76517,
+        76523,
+        76536,
+        76540,
+        76547,
+        76554
+      ]
+    },
+    {
+      "key": "SWE|Kalmar",
+      "api": "Kalmar FF",
+      "support": 172,
+      "runner_up": 8,
+      "similarity": 0.857,
+      "source_rows": [
+        53306,
+        53309,
+        53316,
+        53331,
+        53338,
+        53343,
+        53353,
+        53355
+      ],
+      "fixture_ids": [
+        76499,
+        76509,
+        76520,
+        76526,
+        76532,
+        76540,
+        76550,
+        76552
+      ]
+    },
+    {
+      "key": "SWE|Mjallby",
+      "api": "Mjallby AIF",
+      "support": 150,
+      "runner_up": 9,
+      "similarity": 0.824,
+      "source_rows": [
+        53451,
+        53457,
+        53465,
+        53472,
+        53482,
+        53490,
+        53496,
+        53507
+      ],
+      "fixture_ids": [
+        563409,
+        563413,
+        563425,
+        563432,
+        563440,
+        563448,
+        566240,
+        566248
+      ]
+    },
+    {
+      "key": "SWE|Norrkoping",
+      "api": "IFK Norrkoping",
+      "support": 166,
+      "runner_up": 8,
+      "similarity": 0.87,
+      "source_rows": [
+        53313,
+        53321,
+        53329,
+        53336,
+        53351,
+        53358,
+        53365,
+        53376
+      ],
+      "fixture_ids": [
+        76508,
+        76519,
+        76525,
+        76533,
+        76549,
+        76559,
+        76563,
+        76573
+      ]
+    },
+    {
+      "key": "SWE|Orebro",
+      "api": "Orebro SK",
+      "support": 77,
+      "runner_up": 5,
+      "similarity": 0.857,
+      "source_rows": [
+        53310,
+        53320,
+        53325,
+        53339,
+        53345,
+        53353,
+        53357,
+        53362
+      ],
+      "fixture_ids": [
+        76510,
+        76514,
+        76528,
+        76531,
+        76542,
+        76550,
+        76558,
+        76566
+      ]
+    },
+    {
+      "key": "SWE|Ostersunds",
+      "api": "Ostersunds FK",
+      "support": 77,
+      "runner_up": 4,
+      "similarity": 0.909,
+      "source_rows": [
+        53311,
+        53321,
+        53329,
+        53337,
+        53341,
+        53347,
+        53360,
+        53366
+      ],
+      "fixture_ids": [
+        76511,
+        76519,
+        76525,
+        76534,
+        76543,
+        76546,
+        76556,
+        76565
+      ]
+    },
+    {
+      "key": "SWE|Sundsvall",
+      "api": "GIF Sundsvall",
+      "support": 46,
+      "runner_up": 3,
+      "similarity": 0.857,
+      "source_rows": [
+        53308,
+        53323,
+        53326,
+        53333,
+        53347,
+        53354,
+        53369,
+        53377
+      ],
+      "fixture_ids": [
+        76507,
+        76517,
+        76522,
+        76530,
+        76546,
+        76554,
+        76561,
+        76570
+      ]
+    },
+    {
+      "key": "SWE|Varberg",
+      "api": "Varbergs BoIS FC",
+      "support": 122,
+      "runner_up": 8,
+      "similarity": 0.667,
+      "source_rows": [
+        53450,
+        53459,
+        53462,
+        53475,
+        53481,
+        53491,
+        53497,
+        53507
+      ],
+      "fixture_ids": [
+        563407,
+        563416,
+        563419,
+        563433,
+        563434,
+        563449,
+        566237,
+        566248
+      ]
+    },
+    {
+      "key": "SWE|Varnamo",
+      "api": "IFK Varnamo",
+      "support": 92,
+      "runner_up": 4,
+      "similarity": 0.824,
+      "source_rows": [
+        53930,
+        53943,
+        53947,
+        53959,
+        53966,
+        53975,
+        53984,
+        53986
+      ],
+      "fixture_ids": [
+        831248,
+        831255,
+        831263,
+        831273,
+        831279,
+        831289,
+        831295,
+        831307
+      ]
+    },
+    {
+      "key": "SWE|Vasteras SK",
+      "api": "Vasteras SK FK",
+      "support": 30,
+      "runner_up": 3,
+      "similarity": 0.909,
+      "source_rows": [
+        54414,
+        54422,
+        54427,
+        54435,
+        54449,
+        54456,
+        54464,
+        54467
+      ],
+      "fixture_ids": [
+        1164086,
+        1164093,
+        1164097,
+        1164106,
+        1164119,
+        1164127,
+        1164132,
+        1164138
+      ]
+    },
+    {
+      "key": "SWZ|Basel",
+      "api": "FC Basel 1893",
+      "support": 219,
+      "runner_up": 10,
+      "similarity": 0.625,
+      "source_rows": [
+        54652,
+        54657,
+        54663,
+        54667,
+        54673,
+        54679,
+        54685,
+        54687
+      ],
+      "fixture_ids": [
+        167014,
+        167019,
+        167025,
+        167029,
+        167034,
+        167041,
+        167047,
+        167049
+      ]
+    },
+    {
+      "key": "SWZ|Lausanne Ouchy",
+      "api": "Stade Lausanne-Ouchy",
+      "support": 40,
+      "runner_up": 2,
+      "similarity": 0.839,
+      "source_rows": [
+        55376,
+        55377,
+        55383,
+        55388,
+        55390,
+        55396,
+        55406,
+        55414
+      ],
+      "fixture_ids": [
+        1030793,
+        1030794,
+        1048448,
+        1048452,
+        1048455,
+        1048461,
+        1048474,
+        1048480
+      ]
+    },
+    {
+      "key": "SWZ|Lugano",
+      "api": "FC Lugano",
+      "support": 220,
+      "runner_up": 9,
+      "similarity": 0.857,
+      "source_rows": [
+        54656,
+        54659,
+        54666,
+        54669,
+        54676,
+        54679,
+        54684,
+        54691
+      ],
+      "fixture_ids": [
+        167018,
+        167021,
+        167028,
+        167031,
+        167037,
+        167041,
+        167046,
+        167053
+      ]
+    },
+    {
+      "key": "SWZ|Luzern",
+      "api": "FC Luzern",
+      "support": 221,
+      "runner_up": 14,
+      "similarity": 0.857,
+      "source_rows": [
+        54653,
+        54660,
+        54664,
+        54670,
+        54675,
+        54680,
+        54684,
+        54690
+      ],
+      "fixture_ids": [
+        167016,
+        167022,
+        167027,
+        167032,
+        167036,
+        167042,
+        167046,
+        167052
+      ]
+    },
+    {
+      "key": "SWZ|Servette",
+      "api": "Servette FC",
+      "support": 220,
+      "runner_up": 14,
+      "similarity": 0.889,
+      "source_rows": [
+        54655,
+        54658,
+        54664,
+        54667,
+        54677,
+        54678,
+        54682,
+        54691
+      ],
+      "fixture_ids": [
+        167017,
+        167020,
+        167027,
+        167029,
+        167038,
+        167040,
+        167045,
+        167053
+      ]
+    },
+    {
+      "key": "SWZ|Sion",
+      "api": "FC Sion",
+      "support": 186,
+      "runner_up": 10,
+      "similarity": 0.8,
+      "source_rows": [
+        54652,
+        54658,
+        54662,
+        54669,
+        54675,
+        54681,
+        54683,
+        54688
+      ],
+      "fixture_ids": [
+        167014,
+        167020,
+        167024,
+        167031,
+        167036,
+        167043,
+        167044,
+        167050
+      ]
+    },
+    {
+      "key": "SWZ|St. Gallen",
+      "api": "FC ST. Gallen",
+      "support": 220,
+      "runner_up": 10,
+      "similarity": 0.889,
+      "source_rows": [
+        54653,
+        54657,
+        54665,
+        54668,
+        54672,
+        54676,
+        54682,
+        54688
+      ],
+      "fixture_ids": [
+        167016,
+        167019,
+        167026,
+        167030,
+        167039,
+        167037,
+        167045,
+        167050
+      ]
+    },
+    {
+      "key": "SWZ|Thun",
+      "api": "FC Thun",
+      "support": 42,
+      "runner_up": 2,
+      "similarity": 0.8,
+      "source_rows": [
+        54654,
+        54659,
+        54663,
+        54670,
+        54677,
+        54681,
+        54686,
+        54689
+      ],
+      "fixture_ids": [
+        167015,
+        167021,
+        167025,
+        167032,
+        167038,
+        167043,
+        167048,
+        167051
+      ]
+    },
+    {
+      "key": "SWZ|Vaduz",
+      "api": "FC Vaduz",
+      "support": 38,
+      "runner_up": 1,
+      "similarity": 0.833,
+      "source_rows": [
+        54831,
+        54832,
+        54835,
+        54842,
+        54847,
+        54849,
+        54853,
+        54860
+      ],
+      "fixture_ids": [
+        583361,
+        583362,
+        608302,
+        608309,
+        608314,
+        608316,
+        608320,
+        608335
+      ]
+    },
+    {
+      "key": "SWZ|Winterthur",
+      "api": "FC Winterthur",
+      "support": 112,
+      "runner_up": 6,
+      "similarity": 0.909,
+      "source_rows": [
+        55196,
+        55200,
+        55207,
+        55210,
+        55218,
+        55223,
+        55227,
+        55231
+      ],
+      "fixture_ids": [
+        872531,
+        872536,
+        872542,
+        872545,
+        872551,
+        872558,
+        872563,
+        872567
+      ]
+    },
+    {
+      "key": "SWZ|Xamax",
+      "api": "Neuchatel Xamax FC",
+      "support": 36,
+      "runner_up": 2,
+      "similarity": 0.476,
+      "source_rows": [
+        54654,
+        54661,
+        54665,
+        54671,
+        54673,
+        54678,
+        54683,
+        54690
+      ],
+      "fixture_ids": [
+        167015,
+        167023,
+        167026,
+        167033,
+        167034,
+        167040,
+        167044,
+        167052
+      ]
+    },
+    {
+      "key": "SWZ|Young Boys",
+      "api": "BSC Young Boys",
+      "support": 220,
+      "runner_up": 9,
+      "similarity": 0.857,
+      "source_rows": [
+        54655,
+        54661,
+        54666,
+        54668,
+        54674,
+        54680,
+        54685,
+        54689
+      ],
+      "fixture_ids": [
+        167017,
+        167023,
+        167028,
+        167030,
+        167035,
+        167042,
+        167047,
+        167051
+      ]
+    },
+    {
+      "key": "SWZ|Yverdon",
+      "api": "Yverdon Sport",
+      "support": 76,
+      "runner_up": 4,
+      "similarity": 0.737,
+      "source_rows": [
+        55382,
+        55389,
+        55394,
+        55400,
+        55402,
+        55408,
+        55417,
+        55423
+      ],
+      "fixture_ids": [
+        1048447,
+        1048454,
+        1048458,
+        1048465,
+        1048467,
+        1048475,
+        1048482,
+        1048490
+      ]
+    },
+    {
+      "key": "SWZ|Zurich",
+      "api": "FC Zurich",
+      "support": 219,
+      "runner_up": 8,
+      "similarity": 0.857,
+      "source_rows": [
+        54656,
+        54660,
+        54662,
+        54671,
+        54672,
+        54674,
+        54686,
+        54687
+      ],
+      "fixture_ids": [
+        167018,
+        167022,
+        167024,
+        167033,
+        167039,
+        167035,
+        167048,
+        167049
+      ]
+    },
+    {
+      "key": "T1|Ad. Demirspor",
+      "api": "Adana Demirspor",
+      "support": 145,
+      "runner_up": 7,
+      "similarity": 0.88,
+      "source_rows": [
+        56566,
+        56572,
+        56582,
+        56593,
+        56604,
+        56612,
+        56623,
+        56632
+      ],
+      "fixture_ids": [
+        727920,
+        758537,
+        758548,
+        758559,
+        758573,
+        758579,
+        758593,
+        758601
+      ]
+    },
+    {
+      "key": "T1|Bodrumspor",
+      "api": "Bodrum FK",
+      "support": 36,
+      "runner_up": 4,
+      "similarity": 0.667,
+      "source_rows": [
+        57642,
+        57651,
+        57654,
+        57661,
+        57668,
+        57680,
+        57694,
+        57702
+      ],
+      "fixture_ids": [
+        1237857,
+        1237861,
+        1237875,
+        1237876,
+        1237893,
+        1237901,
+        1237911,
+        1237919
+      ]
+    },
+    {
+      "key": "T1|Buyuksehyr",
+      "api": "Başakşehir",
+      "support": 220,
+      "runner_up": 10,
+      "similarity": 0.6,
+      "source_rows": [
+        55843,
+        55848,
+        55860,
+        55865,
+        55879,
+        55881,
+        55896,
+        55902
+      ],
+      "fixture_ids": [
+        215958,
+        215969,
+        215975,
+        215984,
+        215994,
+        216001,
+        216012,
+        216024
+      ]
+    },
+    {
+      "key": "T1|Erzurum BB",
+      "api": "Erzurumspor FK",
+      "support": 40,
+      "runner_up": 3,
+      "similarity": 0.636,
+      "source_rows": [
+        56147,
+        56158,
+        56165,
+        56175,
+        56193,
+        56200,
+        56211,
+        56227
+      ],
+      "fixture_ids": [
+        598905,
+        598915,
+        598925,
+        598935,
+        598955,
+        598965,
+        598975,
+        598985
+      ]
+    },
+    {
+      "key": "T1|Gaziantep",
+      "api": "Gaziantep FK",
+      "support": 208,
+      "runner_up": 10,
+      "similarity": 0.9,
+      "source_rows": [
+        55844,
+        55853,
+        55861,
+        55866,
+        55877,
+        55889,
+        55896,
+        55903
+      ],
+      "fixture_ids": [
+        215957,
+        215965,
+        215977,
+        215988,
+        215993,
+        216002,
+        216012,
+        216023
+      ]
+    },
+    {
+      "key": "T1|Genclerbirligi",
+      "api": "Gençlerbirliği S.K.",
+      "support": 74,
+      "runner_up": 5,
+      "similarity": 0.933,
+      "source_rows": [
+        55837,
+        55853,
+        55860,
+        55870,
+        55876,
+        55885,
+        55892,
+        55901
+      ],
+      "fixture_ids": [
+        215959,
+        215965,
+        215975,
+        215987,
+        215996,
+        216004,
+        216013,
+        216019
+      ]
+    },
+    {
+      "key": "T1|Goztep",
+      "api": "Göztepe",
+      "support": 148,
+      "runner_up": 8,
+      "similarity": 0.923,
+      "source_rows": [
+        55840,
+        55845,
+        55857,
+        55869,
+        55872,
+        55889,
+        55893,
+        55902
+      ],
+      "fixture_ids": [
+        215964,
+        215971,
+        215974,
+        215989,
+        215995,
+        216002,
+        216018,
+        216024
+      ]
+    },
+    {
+      "key": "T1|Karagumruk",
+      "api": "Fatih Karagümrük",
+      "support": 150,
+      "runner_up": 10,
+      "similarity": 0.8,
+      "source_rows": [
+        56145,
+        56159,
+        56162,
+        56176,
+        56188,
+        56195,
+        56200,
+        56214
+      ],
+      "fixture_ids": [
+        598911,
+        598920,
+        598930,
+        598939,
+        598949,
+        598958,
+        598965,
+        598976
+      ]
+    },
+    {
+      "key": "T1|Kasimpasa",
+      "api": "Kasımpaşa",
+      "support": 221,
+      "runner_up": 9,
+      "similarity": 0.889,
+      "source_rows": [
+        55841,
+        55846,
+        55854,
+        55863,
+        55874,
+        55883,
+        55894,
+        55906
+      ],
+      "fixture_ids": [
+        215960,
+        215968,
+        215976,
+        215990,
+        215999,
+        216008,
+        216015,
+        216025
+      ]
+    },
+    {
+      "key": "USA|Atlanta Utd",
+      "api": "Atlanta United FC",
+      "support": 188,
+      "runner_up": 12,
+      "similarity": 0.8,
+      "source_rows": [
+        57978,
+        57988,
+        58007,
+        58009,
+        58016,
+        58027,
+        58039,
+        58053
+      ],
+      "fixture_ids": [
+        128381,
+        128396,
+        128408,
+        128410,
+        128424,
+        128429,
+        128440,
+        128461
+      ]
+    },
+    {
+      "key": "USA|Austin FC",
+      "api": "Austin",
+      "support": 139,
+      "runner_up": 7,
+      "similarity": 0.857,
+      "source_rows": [
+        58514,
+        58532,
+        58543,
+        58563,
+        58571,
+        58596,
+        58609,
+        58610
+      ],
+      "fixture_ids": [
+        684132,
+        684148,
+        695172,
+        695189,
+        695198,
+        695221,
+        695228,
+        695304
+      ]
+    },
+    {
+      "key": "USA|Minnesota United",
+      "api": "Minnesota United FC",
+      "support": 186,
+      "runner_up": 7,
+      "similarity": 0.938,
+      "source_rows": [
+        57980,
+        57989,
+        58002,
+        58021,
+        58033,
+        58044,
+        58057,
+        58065
+      ],
+      "fixture_ids": [
+        128382,
+        128392,
+        128404,
+        128422,
+        128435,
+        128449,
+        128456,
+        128466
+      ]
+    },
+    {
+      "key": "USA|New York City",
+      "api": "New York City FC",
+      "support": 192,
+      "runner_up": 11,
+      "similarity": 0.917,
+      "source_rows": [
+        57981,
+        57993,
+        58003,
+        58017,
+        58028,
+        58047,
+        58051,
+        58053
+      ],
+      "fixture_ids": [
+        128379,
+        128397,
+        128409,
+        128421,
+        128428,
+        128447,
+        128452,
+        128461
+      ]
+    },
+    {
+      "key": "USA|Orlando City",
+      "api": "Orlando City SC",
+      "support": 191,
+      "runner_up": 8,
+      "similarity": 0.917,
+      "source_rows": [
+        57982,
+        57994,
+        58004,
+        58014,
+        58025,
+        58034,
+        58046,
+        58061
+      ],
+      "fixture_ids": [
+        128380,
+        128389,
+        128402,
+        128415,
+        128426,
+        128430,
+        128443,
+        128455
+      ]
+    }
+  ],
+  "reviewed_sparse_pairs": [
+    {
+      "key": "CHN|Zhejiang Greentown",
+      "api": "Hangzhou Greentown",
+      "support": 2,
+      "runner_up": 0,
+      "similarity": 0.765,
+      "source_rows": [
+        8069,
+        8070
+      ],
+      "fixture_ids": [
+        647334,
+        647335
+      ]
+    },
+    {
+      "key": "D2|Hertha",
+      "api": "Hertha Berlin",
+      "support": 34,
+      "runner_up": 34,
+      "similarity": 0.667,
+      "source_rows": [
+        10258,
+        10266,
+        10279,
+        10289,
+        10297,
+        10309,
+        10318,
+        10324
+      ],
+      "fixture_ids": [
+        1048576,
+        1048585,
+        1048593,
+        1048603,
+        1048615,
+        1048621,
+        1048631,
+        1048638
+      ]
+    },
+    {
+      "key": "D2|Kaiserslautern",
+      "api": "FC Kaiserslautern",
+      "support": 68,
+      "runner_up": 34,
+      "similarity": 0.933,
+      "source_rows": [
+        9951,
+        9964,
+        9976,
+        9978,
+        9993,
+        10004,
+        10013,
+        10020
+      ],
+      "fixture_ids": [
+        872862,
+        872876,
+        872888,
+        872897,
+        872898,
+        872915,
+        872922,
+        872933
+      ]
+    },
+    {
+      "key": "D2|Magdeburg",
+      "api": "FC Magdeburg",
+      "support": 68,
+      "runner_up": 34,
+      "similarity": 0.9,
+      "source_rows": [
+        9953,
+        9968,
+        9977,
+        9986,
+        9988,
+        10004,
+        10009,
+        10021
+      ],
+      "fixture_ids": [
+        872869,
+        872879,
+        872886,
+        872891,
+        872905,
+        872915,
+        872920,
+        872932
+      ]
+    },
+    {
+      "key": "FIN|Jaro",
+      "api": "FF Jaro",
+      "support": 2,
+      "runner_up": 0,
+      "similarity": 0.8,
+      "source_rows": [
+        27832,
+        27835
+      ],
+      "fixture_ids": [
+        1312815,
+        1312816
+      ]
+    },
+    {
+      "key": "I2|Cosenza",
+      "api": "Nuova Cosenza",
+      "support": 152,
+      "runner_up": 76,
+      "similarity": 0.737,
+      "source_rows": [
+        29274,
+        29283,
+        29297,
+        29302,
+        29313,
+        29323,
+        29332,
+        29341
+      ],
+      "fixture_ids": [
+        235141,
+        235153,
+        235162,
+        235170,
+        235182,
+        235194,
+        235201,
+        235212
+      ]
+    },
+    {
+      "key": "IRL|Bray",
+      "api": "Bray Wanderers",
+      "support": 1,
+      "runner_up": 0,
+      "similarity": 0.471,
+      "source_rows": [
+        32448
+      ],
+      "fixture_ids": [
+        1315706
+      ]
+    },
+    {
+      "key": "ROU|Calarasi",
+      "api": "Dunarea Calarasi",
+      "support": 2,
+      "runner_up": 0,
+      "similarity": 0.696,
+      "source_rows": [
+        43555,
+        43559
+      ],
+      "fixture_ids": [
+        706027,
+        706028
+      ]
+    },
+    {
+      "key": "ROU|Csikszereda M. Ciuc",
+      "api": "Csikszereda",
+      "support": 2,
+      "runner_up": 1,
+      "similarity": 0.815,
+      "source_rows": [
+        44518,
+        44521
+      ],
+      "fixture_ids": [
+        1200501,
+        1200502
+      ]
+    },
+    {
+      "key": "ROU|Univ. Craiova",
+      "api": "Universitatea Craiova",
+      "support": 120,
+      "runner_up": 59,
+      "similarity": 0.71,
+      "source_rows": [
+        43881,
+        43893,
+        43902,
+        43909,
+        43917,
+        43932,
+        43940,
+        43947
+      ],
+      "fixture_ids": [
+        882958,
+        882966,
+        882974,
+        882982,
+        882990,
+        883006,
+        883015,
+        883024
+      ]
+    },
+    {
+      "key": "RUS|Rodina Moscow",
+      "api": "Rodina Moskva",
+      "support": 2,
+      "runner_up": 0,
+      "similarity": 0.75,
+      "source_rows": [
+        45799,
+        45802
+      ],
+      "fixture_ids": [
+        1030799,
+        1030800
+      ]
+    },
+    {
+      "key": "RUS|Yenisey",
+      "api": "Enisey",
+      "support": 2,
+      "runner_up": 0,
+      "similarity": 0.923,
+      "source_rows": [
+        45800,
+        45801
+      ],
+      "fixture_ids": [
+        1030797,
+        1030798
+      ]
+    },
+    {
+      "key": "SWE|Brage",
+      "api": "IK brage",
+      "support": 2,
+      "runner_up": 0,
+      "similarity": 0.833,
+      "source_rows": [
+        53442,
+        53443
+      ],
+      "fixture_ids": [
+        312049,
+        312050
+      ]
+    },
+    {
+      "key": "SWE|Jonkopings",
+      "api": "Jonkopings Sodra",
+      "support": 2,
+      "runner_up": 0,
+      "similarity": 0.8,
+      "source_rows": [
+        53684,
+        53685
+      ],
+      "fixture_ids": [
+        650215,
+        650216
+      ]
+    },
+    {
+      "key": "SWE|Landskrona",
+      "api": "Landskrona BoIS",
+      "support": 2,
+      "runner_up": 0,
+      "similarity": 0.833,
+      "source_rows": [
+        54650,
+        54651
+      ],
+      "fixture_ids": [
+        1316121,
+        1316122
+      ]
+    },
+    {
+      "key": "SWE|Oster",
+      "api": "Osters IF",
+      "support": 2,
+      "runner_up": 0,
+      "similarity": 0.769,
+      "source_rows": [
+        54168,
+        54169
+      ],
+      "fixture_ids": [
+        971747,
+        971748
+      ]
+    },
+    {
+      "key": "SWZ|Schaffhausen",
+      "api": "FC Schaffhausen",
+      "support": 1,
+      "runner_up": 0,
+      "similarity": 0.923,
+      "source_rows": [
+        55195
+      ],
+      "fixture_ids": [
+        862944
+      ]
+    }
+  ],
+  "rejected_pairs": [
+    {
+      "key": "IRL|Cabinteely",
+      "api": "Finn Harps",
+      "support": 1,
+      "runner_up": 1,
+      "similarity": 0.211,
+      "source_rows": [
+        31601
+      ],
+      "fixture_ids": [
+        133694
+      ]
+    },
+    {
+      "key": "JPN|Kofu",
+      "api": "Urawa",
+      "support": 1,
+      "runner_up": 0,
+      "similarity": 0.222,
+      "source_rows": [
+        32596
+      ],
+      "fixture_ids": [
+        239430
+      ]
+    },
+    {
+      "key": "JPN|Kumamoto",
+      "api": "Sagan Tosu",
+      "support": 1,
+      "runner_up": 0,
+      "similarity": 0.353,
+      "source_rows": [
+        33602
+      ],
+      "fixture_ids": [
+        836502
+      ]
+    },
+    {
+      "key": "JPN|Montedio Yamagata",
+      "api": "Consadole Sapporo",
+      "support": 1,
+      "runner_up": 1,
+      "similarity": 0.25,
+      "source_rows": [
+        32595
+      ],
+      "fixture_ids": [
+        239436
+      ]
+    },
+    {
+      "key": "JPN|Omiya Ardija",
+      "api": "Sagan Tosu",
+      "support": 1,
+      "runner_up": 0,
+      "similarity": 0.1,
+      "source_rows": [
+        32595
+      ],
+      "fixture_ids": [
+        239436
+      ]
+    }
+  ],
+  "reviewed_provider_variants": {
+    "D2": {
+      "Hertha BSC": "Hertha Berlin",
+      "1. FC Kaiserslautern": "FC Kaiserslautern",
+      "1. FC Magdeburg": "FC Magdeburg",
+      "1. FC Nürnberg": "FC Nurnberg",
+      "SSV Jahn Regensburg": "Jahn Regensburg"
+    },
+    "I2": {
+      "Cosenza": "Nuova Cosenza"
+    },
+    "ROU": {
+      "Universitatea Craiova": "CS Universitatea Craiova"
+    },
+    "RUS": {
+      "FC Krasnodar": "Krasnodar",
+      "FC Orenburg": "Orenburg",
+      "Krylia Sovetov": "Krylya Sovetov",
+      "Akhmat": "Akhmat Grozny",
+      "Dynamo": "Dinamo Moscow",
+      "FC Sochi": "PFC Sochi",
+      "Fakel": "Fakel Voronezh",
+      "Lokomotiv": "Lokomotiv Moscow"
+    }
+  }
+}
