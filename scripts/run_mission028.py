@@ -152,6 +152,8 @@ def main():
                      and timedelta(0) <= now - p.checked_at < timedelta(minutes=110)]
             receipt["status_calls"] = int(not fresh)
             status = max(fresh, key=lambda p: p.checked_at) if fresh else client.get_status()
+            receipt.update(preflight_checked_at=status.checked_at.isoformat(),
+                           quota_low=status.daily_remaining)
             quota = QuotaController(status)
             client.quota = quota
             transport.deadline = min(midnight, status.checked_at + timedelta(minutes=110))
@@ -182,6 +184,7 @@ def main():
                     raise ValueError("MISSION028_PROVIDER_SCOPE_INVALID")
                 fixtures.extend(call.records)
                 low = min(low, quota.status.daily_remaining) if quota else None
+                receipt["quota_low"] = low
                 print(f"Mission 028: {code} {season}; calls={transport.calls}", flush=True)
         aliases_path = Path("configs/execution/mission028-aliases.json")
         aliases = json.loads(aliases_path.read_text()) if aliases_path.exists() else {}
@@ -211,6 +214,7 @@ def main():
         if re.fullmatch(r"[A-Z][A-Z0-9_]{0,100}", str(error)):
             receipt["reason_code"] = str(error)
     receipt["calls"] = transport.calls - receipt["status_calls"] if transport else 0
+    receipt["distinct_censuses_called"] = receipt["calls"]
     receipt["quota_remaining"] = quota.status.daily_remaining if quota else None
     body = (json.dumps(receipt, indent=2) + "\n").encode()
     (OUTPUT / "public-receipt.json").write_bytes(body)
