@@ -3,6 +3,12 @@ name: "71 - Fixture Bundle Harvest"
 on:
   workflow_dispatch:
     inputs:
+      mission028:
+        type: boolean
+        default: false
+      mission028_replay:
+        type: boolean
+        default: false
       slice_id:
         type: string
         default: standalone
@@ -22,6 +28,12 @@ on:
         default: 100
   workflow_call:
     inputs:
+      mission028:
+        type: boolean
+        default: false
+      mission028_replay:
+        type: boolean
+        default: false
       slice_id:
         type: string
         default: standalone
@@ -89,6 +101,7 @@ jobs:
           python -m pip install -r requirements.txt boto3
           python -m pip install --no-deps -e .
       - name: Collecter les bundles et fallbacks ciblés
+        if: '!inputs.mission028'
         env:
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
@@ -106,9 +119,19 @@ jobs:
           --max-calls "${{ inputs.max_calls }}"
           --max-duration-minutes "${{ inputs.max_duration_minutes }}"
           --mission-max-minutes 720
+      - name: Mission 028 — correspondance des petites ligues
+        if: inputs.mission028 && inputs.execute
+        env:
+          MISSION028_REPLAY: ${{ inputs.mission028_replay }}
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: python -m scripts.run_mission028
       - name: Publier la décision provider sanitisée
         id: outcome
-        if: always()
+        if: always() && !inputs.mission028
         run: >-
           python scripts/historical_deep_workflow_outcome.py
           artifacts/historical-deep/fixtures.json >> "$GITHUB_OUTPUT"
