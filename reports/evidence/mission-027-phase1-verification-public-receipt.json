@@ -1,0 +1,310 @@
+{
+  "schema_version": "mission-027-phase1-verification-public-receipt-v2",
+  "status": "COMPLETE",
+  "verified_at": "2026-10-17T00:24:00.637134+00:00",
+  "max_calls": 8000,
+  "daily_reserve_min": 5000,
+  "target_count": 7228,
+  "fixture_ids_sha256": "4e471c16b27b3ce5deaa8602795eb687f4e812975265d720c5697d4ce6bd288c",
+  "counting_basis": "HTTP transport invocations, including failed attempts; zero retries; excludes the single /status.",
+  "lineup_calls_observed": 7226,
+  "distinct_matches_called_observed": 7226,
+  "lineup_calls_upper_bound": 7227,
+  "distinct_matches_called_upper_bound": 7227,
+  "uncertain_call_fixture_ids": [
+    592752
+  ],
+  "uncertain_call_count_upper_bound": 1,
+  "accounting_uncertainty_fraction": 0.0001383508577753182,
+  "uncertain_reservation_fixture_ids": [
+    592752,
+    1208381
+  ],
+  "legacy_calls_observed": 256,
+  "new_worker_calls": 6970,
+  "status_calls": 1,
+  "preflight_run_id": "38960293874",
+  "legacy_collection_run_id": "38961408384",
+  "legacy_audit_run_id": "38969245508",
+  "collection_run_ids": [
+    "38969545850",
+    "38969548505",
+    "38969551592",
+    "38969555058",
+    "38981565095",
+    "38981567739"
+  ],
+  "final_projection_run_by_scope": {
+    "Serie-A": "38969551592",
+    "Bundesliga": "38969555058",
+    "Premier-League": "38981565095",
+    "La-Liga": "38981567739"
+  },
+  "source_revision_by_run": {
+    "38969545850": "114d67de25247daf9c67aa33c7c885145e2646f5",
+    "38969548505": "114d67de25247daf9c67aa33c7c885145e2646f5",
+    "38969551592": "114d67de25247daf9c67aa33c7c885145e2646f5",
+    "38969555058": "114d67de25247daf9c67aa33c7c885145e2646f5",
+    "38981565095": "54b45b01ff300eb03c766edf3226becf5e853130",
+    "38981567739": "54b45b01ff300eb03c766edf3226becf5e853130"
+  },
+  "covered_matches": 7226,
+  "complete_matches": 7225,
+  "complete_fraction": 0.999584947426674,
+  "matches_without_lineup_rows": [
+    592752,
+    1208381
+  ],
+  "matches_incomplete": [
+    868231
+  ],
+  "quota_remaining": 149766,
+  "quota_snapshot_run_id": "38981567739",
+  "quota_observation": "Controller state from the most recently completed run which issued requests. Zero-call cached resumes do not supply a fresh quota observation. No new /status query.",
+  "minimum_reported_spending_quota_state": 143019,
+  "quota_states_by_run": [
+    {
+      "run_id": "38969545850",
+      "new_provider_requests": 1621,
+      "remaining": 143020,
+      "source": "last_controller_state_after_requests",
+      "run_completed_at": "2026-10-17T00:00:07Z"
+    },
+    {
+      "run_id": "38969548505",
+      "new_provider_requests": 1676,
+      "remaining": 143019,
+      "source": "last_controller_state_after_requests",
+      "run_completed_at": "2026-10-17T00:00:12Z"
+    },
+    {
+      "run_id": "38969551592",
+      "new_provider_requests": 1899,
+      "remaining": 144007,
+      "source": "last_controller_state_after_requests",
+      "run_completed_at": "2026-10-16T23:17:13Z"
+    },
+    {
+      "run_id": "38969555058",
+      "new_provider_requests": 1529,
+      "remaining": 144482,
+      "source": "last_controller_state_after_requests",
+      "run_completed_at": "2026-10-16T23:07:17Z"
+    },
+    {
+      "run_id": "38981565095",
+      "new_provider_requests": 21,
+      "remaining": 149942,
+      "source": "last_controller_state_after_requests",
+      "run_completed_at": "2026-10-17T00:08:52Z"
+    },
+    {
+      "run_id": "38981567739",
+      "new_provider_requests": 224,
+      "remaining": 149766,
+      "source": "last_controller_state_after_requests",
+      "run_completed_at": "2026-10-17T00:22:55Z"
+    }
+  ],
+  "season_2025_read": false,
+  "partitions": [
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "sha256": "9df742e7ca10656e32277ad9d3f80a8428449d30716a03c16b0e1ee0eadb69a3",
+      "rows": 758,
+      "fixtures_with_rows": 379,
+      "complete_fixtures": 379,
+      "target_count": 380
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2021/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "sha256": "d248e3622d79f448117bcb1aba1142c53fbf8c1efe25be571b03a710d5ad7156",
+      "rows": 760,
+      "fixtures_with_rows": 380,
+      "complete_fixtures": 380,
+      "target_count": 380
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "sha256": "707442fc4e6326f7570ce14eacfb73917f233c6767ee5a4c725fc5e1dc18ccf3",
+      "rows": 760,
+      "fixtures_with_rows": 380,
+      "complete_fixtures": 379,
+      "target_count": 380
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2023/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "sha256": "dcde9a8870992b91dc48b71b55b7e8a63c700f66ebcb954cc6816c0c7c4f69da",
+      "rows": 760,
+      "fixtures_with_rows": 380,
+      "complete_fixtures": 380,
+      "target_count": 380
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2024/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "sha256": "d1bdd8c9812ab416155a35c92cc5cbb40383f8727b98951c4f24238dba7be789",
+      "rows": 758,
+      "fixtures_with_rows": 379,
+      "complete_fixtures": 379,
+      "target_count": 380
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2020/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "sha256": "3f64e1b8c4c9cda238e098a594095a3cbbe522f726c0b380007af226a49b0168",
+      "rows": 760,
+      "fixtures_with_rows": 380,
+      "complete_fixtures": 380,
+      "target_count": 380
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2021/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "sha256": "7c56d7f1a2f9e8ca6f3a7b8f4b93242a9a9c5e30ef324a38d168f3c4168d573e",
+      "rows": 760,
+      "fixtures_with_rows": 380,
+      "complete_fixtures": 380,
+      "target_count": 380
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2022/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "sha256": "9d848ae434cf53df88c40814a003e1864c70ba81bf4223a4f9e938a8640fb02d",
+      "rows": 760,
+      "fixtures_with_rows": 380,
+      "complete_fixtures": 380,
+      "target_count": 380
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2023/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "sha256": "05aef739728c40a6dad2a485d94b1c1bb2be80b6bc387d0243c645135f509631",
+      "rows": 760,
+      "fixtures_with_rows": 380,
+      "complete_fixtures": 380,
+      "target_count": 380
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2024/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "sha256": "82b23c92ba716527ec7c165348a470d74bc2c5ea75b76543c513308b4ec0f043",
+      "rows": 760,
+      "fixtures_with_rows": 380,
+      "complete_fixtures": 380,
+      "target_count": 380
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2020/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "sha256": "67207a76afac738e007cb00caf4933050a45266e50156b06aaf9bd3219eb6a71",
+      "rows": 758,
+      "fixtures_with_rows": 379,
+      "complete_fixtures": 379,
+      "target_count": 379
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2021/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "sha256": "7c01eb2640971d56fbc9f6a7b69e973a1dd9b80fe3815861bf96f89429ea46b7",
+      "rows": 760,
+      "fixtures_with_rows": 380,
+      "complete_fixtures": 380,
+      "target_count": 380
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2022/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "sha256": "f04d3d456b93a947f1d532afd9fb438ce31f5f07fcc1fc6db81cf59ec2c8d4e7",
+      "rows": 760,
+      "fixtures_with_rows": 380,
+      "complete_fixtures": 380,
+      "target_count": 380
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2023/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "sha256": "518e3758259a305959ff843bdab135333a439724d45402059811d4f930438f0f",
+      "rows": 760,
+      "fixtures_with_rows": 380,
+      "complete_fixtures": 380,
+      "target_count": 380
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2024/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "sha256": "84232f0fa7e30ea4d39832bf8227d34db360e3e990f039ff2e19cc7b7f99b2d9",
+      "rows": 760,
+      "fixtures_with_rows": 380,
+      "complete_fixtures": 380,
+      "target_count": 380
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2020/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "sha256": "edca5b1f66a2067a87cfe9ddc8ba11e0dde3f8c19eedc47aa3be47a6b01ebe7a",
+      "rows": 612,
+      "fixtures_with_rows": 306,
+      "complete_fixtures": 306,
+      "target_count": 306
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2021/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "sha256": "21be2813045d0bd8ab5de41084709c38fc699261049600557748d6da78932a02",
+      "rows": 612,
+      "fixtures_with_rows": 306,
+      "complete_fixtures": 306,
+      "target_count": 306
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2022/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "sha256": "821d48ff8c8809108b2fc5a1e8c351d3ec976414c352d79039377919b979eaff",
+      "rows": 612,
+      "fixtures_with_rows": 306,
+      "complete_fixtures": 306,
+      "target_count": 306
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2023/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "sha256": "ec56907f38dd4e50e4b0c848ffc21f920ece8c3746b3d88e34aa692cf027aad6",
+      "rows": 612,
+      "fixtures_with_rows": 306,
+      "complete_fixtures": 306,
+      "target_count": 306
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2024/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "sha256": "3a6a8e5bad71af352ee16a5e3b6069a4bd05e0ca95f892b6c6edc04a0c019d66",
+      "rows": 610,
+      "fixtures_with_rows": 305,
+      "complete_fixtures": 305,
+      "target_count": 305
+    }
+  ],
+  "partition_attestations_checked": 28,
+  "receipt_files": [
+    {
+      "path": "reports/evidence/mission-027-lineups-run-38969545850-public-receipt.json",
+      "sha256": "fd397bece821d08e237e29491f81dc07ffda33a20461fbcdd11038b402d2a693"
+    },
+    {
+      "path": "reports/evidence/mission-027-lineups-run-38969548505-public-receipt.json",
+      "sha256": "cca26bb4affd840bc0a05bc34e874fdc107e3413c9caf171c744c30201415418"
+    },
+    {
+      "path": "reports/evidence/mission-027-lineups-run-38969551592-public-receipt.json",
+      "sha256": "3799d8f742ccd7ccd4b3d37c881d0f7d6f59567d297b6bee0a688f54ffcc03f7"
+    },
+    {
+      "path": "reports/evidence/mission-027-lineups-run-38969555058-public-receipt.json",
+      "sha256": "aea72f5aa5730591c7e0c5ed47b7025f8fd6d5d304bbdf0350e97493b4232cd3"
+    },
+    {
+      "path": "reports/evidence/mission-027-lineups-run-38981565095-public-receipt.json",
+      "sha256": "439812161c8fb95f234ea2018e1918a9876f402ae9ba6377f520f8bb3b0e7401"
+    },
+    {
+      "path": "reports/evidence/mission-027-lineups-run-38981567739-public-receipt.json",
+      "sha256": "967fa610a13d9c75ce0413f27f9d6919b6702eda4a2a41f74a95498597b55cc1"
+    },
+    {
+      "path": "reports/evidence/mission-027-legacy-audit-run-38969245508-public-receipt.json",
+      "sha256": "dfbbb05ace628196e3d3c5847afe7cb205ddfc6c7bc87e6d1531393524ad74a6"
+    },
+    {
+      "path": "reports/evidence/mission-027-run-artifacts-public-receipt.json",
+      "sha256": "8d1e86359aaed9832ea0d4f6818740974c06906958a431772822f2917b88d5e8"
+    }
+  ],
+  "verification_script_sha256": "7e54f4065177369ecc0d6039773023b03ca906f565503d77109a852cd2704250",
+  "completeness_rule_source": "scripts/run_mission027_lineups.py:complete",
+  "verification": "All twenty persisted Parquet files read with ParquetFile; fixture/season membership, hashes, two different teams, formation and eleven unique nonempty starters. No provider or R2 requests. Sum all cleanly finished attempt counters, including partial and zero-call runs, plus the256 documented retired calls. Only the cancelled legacy process lacks a final transport counter, bounding one extra call for592752. Additional uncertain reservations concern missing data and are already bounded by counted transport attempts; they are never retried. Shared conditional once-markers and disjoint target scopes bound phase requests to7228."
+}

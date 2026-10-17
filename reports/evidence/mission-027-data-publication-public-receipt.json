@@ -1,0 +1,32 @@
+{
+  "status": "PUBLISHED",
+  "verification_sha256": "a167f7a722eb3badcc912d958aeb8abc7b0b3a57502c4f660a5bcefdc663a42f",
+  "publication_script_sha256": "ece97acb39d6cb7eef35916cb691663dae1c1e9db49b013ca305b4e769bf37c8",
+  "base_commit": "c800d69f976103177588613d58217345b4e4cf7c",
+  "data_commit": "f87adb9d32d498d873e1095b2a1a8d42c4bd7862",
+  "new_partitions": 20,
+  "paths": [
+    "historical/parquet/competition=Premier-League/season=2020/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+    "historical/parquet/competition=Premier-League/season=2021/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+    "historical/parquet/competition=Premier-League/season=2022/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+    "historical/parquet/competition=Premier-League/season=2023/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+    "historical/parquet/competition=Premier-League/season=2024/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+    "historical/parquet/competition=La-Liga/season=2020/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+    "historical/parquet/competition=La-Liga/season=2021/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+    "historical/parquet/competition=La-Liga/season=2022/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+    "historical/parquet/competition=La-Liga/season=2023/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+    "historical/parquet/competition=La-Liga/season=2024/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+    "historical/parquet/competition=Serie-A/season=2020/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+    "historical/parquet/competition=Serie-A/season=2021/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+    "historical/parquet/competition=Serie-A/season=2022/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+    "historical/parquet/competition=Serie-A/season=2023/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+    "historical/parquet/competition=Serie-A/season=2024/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+    "historical/parquet/competition=Bundesliga/season=2020/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+    "historical/parquet/competition=Bundesliga/season=2021/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+    "historical/parquet/competition=Bundesliga/season=2022/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+    "historical/parquet/competition=Bundesliga/season=2023/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+    "historical/parquet/competition=Bundesliga/season=2024/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet"
+  ],
+  "season_2025_read": false,
+  "unchanged_paths_preservation": "Git tree based on exact previous tree; only the listed new paths were added; fast-forward update without force."
+}
