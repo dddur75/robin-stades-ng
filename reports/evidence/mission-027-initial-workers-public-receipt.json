@@ -1,0 +1,62 @@
+{
+  "schema_version": "mission-027-initial-workers-public-receipt-v1",
+  "status": "PARTIAL",
+  "observed_at": "2026-10-17T00:04:26.297666+00:00",
+  "initial_worker_source": "114d67de25247daf9c67aa33c7c885145e2646f5",
+  "new_worker_request_attempts_documented": 6725,
+  "legacy_request_attempts_documented": 256,
+  "request_attempts_documented_total": 6981,
+  "legacy_additional_call_upper_bound": 1,
+  "counting_basis": "HTTP transport invocations including failed attempts; zero retries. The cancelled legacy process lacks a final counter, so fixture592752 adds at most one unconfirmed call. This is accounting, not final Parquet acceptance.",
+  "workers": [
+    {
+      "run_id": "38969545850",
+      "scope": "Premier-League",
+      "status": "PARTIAL",
+      "reason_class": "ProviderTransportError",
+      "request_attempts": 1621,
+      "distinct_targeted_matches": 1621,
+      "quota_state": 143020,
+      "receipt": "reports/evidence/mission-027-lineups-run-38969545850-public-receipt.json",
+      "sha256": "fd397bece821d08e237e29491f81dc07ffda33a20461fbcdd11038b402d2a693"
+    },
+    {
+      "run_id": "38969548505",
+      "scope": "La-Liga",
+      "status": "PARTIAL",
+      "reason_class": "RuntimeError",
+      "request_attempts": 1676,
+      "distinct_targeted_matches": 1676,
+      "quota_state": 143019,
+      "receipt": "reports/evidence/mission-027-lineups-run-38969548505-public-receipt.json",
+      "sha256": "cca26bb4affd840bc0a05bc34e874fdc107e3413c9caf171c744c30201415418"
+    },
+    {
+      "run_id": "38969551592",
+      "scope": "Serie-A",
+      "status": "COMPLETE",
+      "reason_class": null,
+      "request_attempts": 1899,
+      "distinct_targeted_matches": 1899,
+      "quota_state": 144007,
+      "receipt": "reports/evidence/mission-027-lineups-run-38969551592-public-receipt.json",
+      "sha256": "3799d8f742ccd7ccd4b3d37c881d0f7d6f59567d297b6bee0a688f54ffcc03f7"
+    },
+    {
+      "run_id": "38969555058",
+      "scope": "Bundesliga",
+      "status": "COMPLETE",
+      "reason_class": null,
+      "request_attempts": 1529,
+      "distinct_targeted_matches": 1529,
+      "quota_state": 144482,
+      "receipt": "reports/evidence/mission-027-lineups-run-38969555058-public-receipt.json",
+      "sha256": "aea72f5aa5730591c7e0c5ed47b7025f8fd6d5d304bbdf0350e97493b4232cd3"
+    }
+  ],
+  "active_continuations": [
+    38981565095,
+    38981567739
+  ],
+  "verification_provider_calls": 0
+}

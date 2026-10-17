@@ -1,0 +1,175 @@
+{
+  "schema_version": "mission-027-preparation-public-receipt-v1",
+  "claim_id": "DATA.MISSION027.PREFLIGHT.001",
+  "status": "PARTIAL",
+  "observed_at": "2026-10-16T20:09:54.599060+00:00",
+  "owner_decision": "go collecte A",
+  "spec": {
+    "repository": "dddur75/qg",
+    "path": "file/027-robin-stades-ng-compositions-5-ligues.md",
+    "pr": 72,
+    "head": "e7f8d8a5f3909b5c889be91de27b3734b3dfebea",
+    "merge_commit": null,
+    "state": "OPEN",
+    "authority": "Explicit mission request from David in this chat; no QG merge asserted."
+  },
+  "target_audit": {
+    "source_revision": "c800d69f976103177588613d58217345b4e4cf7c",
+    "source_ref": "historical-data",
+    "source_files": [
+      {
+        "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+        "git_blob_sha": "50f6070f58616591d082ddfa6a733f4d8d073c6b",
+        "sha256": "3f016d1a01eddeb1e12f0c9dddd2381f118c486d791ef85adcb849a519b4493c",
+        "fixtures": 380
+      },
+      {
+        "path": "historical/parquet/competition=Premier-League/season=2021/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+        "git_blob_sha": "f9afe16a95ea54445553538e0546d09256d5e255",
+        "sha256": "ba764e6a23d7e0fb1668aaafd9e799af1532fe6ea826361fefefaf328eca3f19",
+        "fixtures": 380
+      },
+      {
+        "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+        "git_blob_sha": "3213c33ec5229a3ce64fdd5dea0a85f23d438aba",
+        "sha256": "80d0edeee5b07edb0d246c26f7c5c98382ef125d283a807fcaab8908400dfeb4",
+        "fixtures": 380
+      },
+      {
+        "path": "historical/parquet/competition=Premier-League/season=2023/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+        "git_blob_sha": "b575005f7b166f94087a1091c36ee29a54a20c9b",
+        "sha256": "dd49a271333ff6819291e643616ae5b2a42ee11f66fbec2d6703de0f7bb851a1",
+        "fixtures": 380
+      },
+      {
+        "path": "historical/parquet/competition=Premier-League/season=2024/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+        "git_blob_sha": "6607c69a1ff0fbe098501468ab40daf81d84ec23",
+        "sha256": "aa62c8c2a5508b8ec8e5aa587a50c90efc11bb78ae708b37ff5655160eda1180",
+        "fixtures": 380
+      },
+      {
+        "path": "historical/parquet/competition=La-Liga/season=2020/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+        "git_blob_sha": "821e628f3f24c02f500a8639899ee289ef1d178b",
+        "sha256": "a02eaac16cffef0fdad53a29affc0c05e2d1aead1193a03a6658643d61375a4a",
+        "fixtures": 380
+      },
+      {
+        "path": "historical/parquet/competition=La-Liga/season=2021/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+        "git_blob_sha": "676399b4f93b029ca38194afb411da30f8a7ec32",
+        "sha256": "1e3ede1bb9271fac4c1c0489b1b66f9332b1f96887a8b47e7226bc6b4b9482a1",
+        "fixtures": 380
+      },
+      {
+        "path": "historical/parquet/competition=La-Liga/season=2022/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+        "git_blob_sha": "ef1c88b04f06e65d384e078a008ebc69eecd7d78",
+        "sha256": "bfa60d77893935635156c2c0552639a15ec3588ece516677df367eda7284d5e1",
+        "fixtures": 380
+      },
+      {
+        "path": "historical/parquet/competition=La-Liga/season=2023/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+        "git_blob_sha": "db72bb8fdb02d46af7ade3a38c7f7e154b61f9a4",
+        "sha256": "ea6678bb8d4193a47932c48f7fee491f96644d42ac3e27470464fcf0da57cda7",
+        "fixtures": 380
+      },
+      {
+        "path": "historical/parquet/competition=La-Liga/season=2024/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+        "git_blob_sha": "f29b6caba45d6e33a5b90b5c05544bf88ba54f61",
+        "sha256": "0609a9e6b504513ee386841cc92cc0e1f420cbebec4b6bee4e8085456931c9f0",
+        "fixtures": 380
+      },
+      {
+        "path": "historical/parquet/competition=Serie-A/season=2020/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+        "git_blob_sha": "8c8cdb4511513e3cd019d3c321879dd75a009a71",
+        "sha256": "645bbbdd81a5063ee41d987c502374fb159cd462dffd089d0cfe405387e693ed",
+        "fixtures": 379
+      },
+      {
+        "path": "historical/parquet/competition=Serie-A/season=2021/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+        "git_blob_sha": "032e2530c9ec7865d0d6a532be578730b6cb3536",
+        "sha256": "f9f558f6b1f2df920919364edf69f484d446e2fe2ca2a995cdd0aedca10c9508",
+        "fixtures": 380
+      },
+      {
+        "path": "historical/parquet/competition=Serie-A/season=2022/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+        "git_blob_sha": "526c076997d41efe3dc35b52eed3841ed77a76a9",
+        "sha256": "b79e87f0315f08ddfe7cf49eaa7df1e512d65823c1489914383fa9d19fbf7612",
+        "fixtures": 380
+      },
+      {
+        "path": "historical/parquet/competition=Serie-A/season=2023/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+        "git_blob_sha": "76f5a972541f7195f9fde0396fd5fac768c846d4",
+        "sha256": "99aa614c41d31ed84370c2f19f34ba370439da2ac8c668fb7ad92afff941cc3b",
+        "fixtures": 380
+      },
+      {
+        "path": "historical/parquet/competition=Serie-A/season=2024/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+        "git_blob_sha": "7b4dffbc3baa1a0aa21ef9ea7ce67c8e4a7b4091",
+        "sha256": "51a31018c86161325c6f966febc77929558922b37919c0fc0c70fc12c4d366a0",
+        "fixtures": 380
+      },
+      {
+        "path": "historical/parquet/competition=Bundesliga/season=2020/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+        "git_blob_sha": "5509aacc302f66f72ec3fdd8e5e832917b26a969",
+        "sha256": "fd095ab4332b33eb9f51d6833771698db71fee255ef74c142d11f7a84e77fe81",
+        "fixtures": 306
+      },
+      {
+        "path": "historical/parquet/competition=Bundesliga/season=2021/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+        "git_blob_sha": "373c42008103476392396174c480030e473e7723",
+        "sha256": "5684fef3ea103bd9ca7061eb757364394015fff511169ce6e7e4912a8d8d2e26",
+        "fixtures": 306
+      },
+      {
+        "path": "historical/parquet/competition=Bundesliga/season=2022/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+        "git_blob_sha": "cf715986dcc099ac4cf9ef1921c13f92588ffc1b",
+        "sha256": "372dccc10086886efcb9b149a446e8594322582cdee1110a8160e8f3544d2114",
+        "fixtures": 306
+      },
+      {
+        "path": "historical/parquet/competition=Bundesliga/season=2023/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+        "git_blob_sha": "c9bffb7eaceb77962d3a60946ada33e4e9a3b83d",
+        "sha256": "365219016bb5e4819e17a61298cb3e38d793d324dd551a95cb371859fee8f714",
+        "fixtures": 306
+      },
+      {
+        "path": "historical/parquet/competition=Bundesliga/season=2024/entity_type=historical_market_1x2/dataset_version=historical_market_1x2_v1/part-00000.parquet",
+        "git_blob_sha": "36dc88c0057c4ebd42678b3efefde0850d413f71",
+        "sha256": "1aac8ddc890aa5054b7badfc456ecb099b4010eb9d2fac5176241b4e1e2869f1",
+        "fixtures": 305
+      }
+    ],
+    "fixture_count": 7228,
+    "fixture_ids_sha256": "4e471c16b27b3ce5deaa8602795eb687f4e812975265d720c5697d4ce6bd288c",
+    "sorting": "numeric ascending, decimal id per line, final newline",
+    "season_2025_read": false
+  },
+  "budgets": {
+    "phase1_max_calls": 8000,
+    "daily_reserve": 5000,
+    "phase2_daily_max_calls": 60
+  },
+  "execution": {
+    "status_calls": 0,
+    "lineup_calls": 0,
+    "covered_matches": 0,
+    "matches_without_response": null,
+    "quota_remaining": null,
+    "status": "PREFLIGHT_NOT_YET_DISPATCHED",
+    "raw_storage_writes": 0
+  },
+  "workflow_observations": {
+    "historical_71": "disabled_manually; enabled via Actions API with HTTP 204 during preparation",
+    "prospective_lineup": "disabled_manually",
+    "last_lineup_run": "https://github.com/dddur75/robin-stades-ng/actions/runs/31322534010",
+    "last_lineup_run_conclusion": "cancelled",
+    "last_lineup_run_created_at": "2026-08-09T15:58:12Z",
+    "phase2_started": false
+  },
+  "storage_observation": "STORAGE_PAUSED remains true. Historical adapter requires this value yet supports append-only R2; no STORAGE_PAUSED raw-write guard was observed in R2FirstRepository.capture. No storage write attempted.",
+  "limits": "Target counts prove the selected source list only, not lineup availability or collection completion. Phase 2 awaits phase 1. QG PR 72 has no merge commit to record yet.",
+  "verification": {
+    "targeted_tests": "43 passed",
+    "lint": "ruff check passed",
+    "independent_review": "PENDING_CLAUDE"
+  }
+}

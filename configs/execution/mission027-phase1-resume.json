@@ -1,0 +1,29 @@
+{
+  "mission_id": "QG_027_COMPOSITIONS_PHASE1_RESUME",
+  "authorized_stages": [
+    "E1",
+    "E2",
+    "E3A",
+    "E3B"
+  ],
+  "maximum_stage": "E3B",
+  "external_effects": [
+    "one API-Football /status request in run 38960293874",
+    "at most one /fixtures/lineups request per whitelisted fixture via existing collector and workflow 71",
+    "append-only R2 raw capture and normalized lineup Parquet; no destructive writes"
+  ],
+  "compute_budget": {
+    "status_calls": 1,
+    "lineup_calls_max": 8000,
+    "target_fixtures": 7228,
+    "daily_reserve_min": 5000,
+    "fixture_ids_sha256": "4e471c16b27b3ce5deaa8602795eb687f4e812975265d720c5697d4ce6bd288c"
+  },
+  "time_budget": {
+    "workflow_timeout_minutes": 200,
+    "status_observed_at": "2026-10-16T20:11:17.885153Z",
+    "status_proof_valid_until_original_utc_quota_reset": true
+  },
+  "source_hash": "beeb9c771e68deabf0677eccf0e3076bee461b948cdf75840a759dd483a685e5",
+  "expires_at": "2026-10-17T00:00:00Z"
+}

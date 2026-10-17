@@ -1,0 +1,93 @@
+{
+  "schema_version": "mission-027-run-artifacts-public-receipt-v1",
+  "observed_at": "2026-10-17T00:23:44.171408+00:00",
+  "github_metadata_reads": 12,
+  "provider_calls": 0,
+  "r2_operations": 0,
+  "runs": [
+    {
+      "run_id": "38969545850",
+      "source_commit": "114d67de25247daf9c67aa33c7c885145e2646f5",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "started_at": "2026-10-16T21:27:52Z",
+      "completed_at": "2026-10-17T00:00:07Z",
+      "artifact_id": 12081974292,
+      "artifact_name": "historical-deep-71-mission-027-Premier-League-38969545850-1",
+      "archive_file_name": "mission027-Premier-League-initial.zip",
+      "artifact_sha256": "9233056a219b104f63489d69074dd156df590ca092e6327c288123dd019305fd",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38969545850"
+    },
+    {
+      "run_id": "38969548505",
+      "source_commit": "114d67de25247daf9c67aa33c7c885145e2646f5",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "started_at": "2026-10-16T21:27:53Z",
+      "completed_at": "2026-10-17T00:00:12Z",
+      "artifact_id": 12082348173,
+      "artifact_name": "historical-deep-71-mission-027-La-Liga-38969548505-1",
+      "archive_file_name": "mission027-La-Liga-initial.zip",
+      "artifact_sha256": "4b36dce0c5288cce876915d99893e6e8b8385492ae923b531eaabd10abf6b297",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38969548505"
+    },
+    {
+      "run_id": "38969551592",
+      "source_commit": "114d67de25247daf9c67aa33c7c885145e2646f5",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "started_at": "2026-10-16T21:27:55Z",
+      "completed_at": "2026-10-16T23:17:13Z",
+      "artifact_id": 12080762825,
+      "artifact_name": "historical-deep-71-mission-027-Serie-A-38969551592-1",
+      "archive_file_name": "mission027-Serie-A.zip",
+      "artifact_sha256": "9f1029eb8237a6897d643492e5fda190f527ed1e200cd7d01299d267f7eb429a",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38969551592"
+    },
+    {
+      "run_id": "38969555058",
+      "source_commit": "114d67de25247daf9c67aa33c7c885145e2646f5",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "started_at": "2026-10-16T21:27:57Z",
+      "completed_at": "2026-10-16T23:07:17Z",
+      "artifact_id": 12079804952,
+      "artifact_name": "historical-deep-71-mission-027-Bundesliga-38969555058-1",
+      "archive_file_name": "mission027-Bundesliga.zip",
+      "artifact_sha256": "9a4aa6ebe11bda996934c96080a2bd6db3f3a0acb156613efb236bdb507b1b29",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38969555058"
+    },
+    {
+      "run_id": "38981565095",
+      "source_commit": "54b45b01ff300eb03c766edf3226becf5e853130",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "started_at": "2026-10-16T23:27:50Z",
+      "completed_at": "2026-10-17T00:08:52Z",
+      "artifact_id": 12082279510,
+      "artifact_name": "historical-deep-71-mission-027-Premier-League-continuation-UTC-38981565095-1",
+      "archive_file_name": "mission027-Premier-League-continuation.zip",
+      "artifact_sha256": "98d6d059b16e25a844700749e3657693e24a7495b2799e98b29a9366525ec2d9",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38981565095"
+    },
+    {
+      "run_id": "38981567739",
+      "source_commit": "54b45b01ff300eb03c766edf3226becf5e853130",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "started_at": "2026-10-16T23:27:52Z",
+      "completed_at": "2026-10-17T00:22:55Z",
+      "artifact_id": 12082916913,
+      "artifact_name": "historical-deep-71-mission-027-La-Liga-continuation-UTC-38981567739-1",
+      "archive_file_name": "mission027-La-Liga-continuation.zip",
+      "artifact_sha256": "b37c80c7dc6bc669f5e4f3bd1c3f4637ba21e022f276ad222012be7abe6e358e",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38981567739"
+    }
+  ]
+}

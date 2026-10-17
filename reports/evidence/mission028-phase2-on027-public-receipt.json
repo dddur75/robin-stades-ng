@@ -1,0 +1,28 @@
+{
+  "schema_version": "mission028-phase2-stack-on027-v1",
+  "status": "PARTIAL_PENDING_INDEPENDENT_REVIEW",
+  "source_head": "67c8afd29a1b3f679385b74524220acc187260c5",
+  "incoming027": "fdf32f5ace84835832f3186a552d0aee962a4cfd",
+  "new_review_base": "tache-027-compositions",
+  "reason": "Quality merged105; integrate shared workflow71 once in the order102 then104 then106",
+  "code_lines_added_deleted": 400,
+  "targeted_tests": "380 passed in 15.71s",
+  "manual_mode_isolation_cases": 7,
+  "shared_budget_and_mapping_tests_unchanged": true,
+  "collector_ast_unchanged_except_workflow_merge": true,
+  "permissions_inherited_from027": {
+    "actions": "read",
+    "contents": "read"
+  },
+  "new_write_permissions": false,
+  "canonical_incoming_prefix_preserved": true,
+  "archived_old_suffix": "reports/council/mission028-phase2-before-67c8afd2-ledger.jsonl",
+  "archived_old_suffix_sha256": "72543383666d7663fa9f03fdc53cce988cd13b015b25d102061ca744cb582159",
+  "archived_old_graph": "reports/evidence/mission028-phase2-before-67c8afd2-evidence.json",
+  "archived_old_graph_sha256": "81139ee116684f27321a5dc54cd33f731003bf91794dfe1348761618d4b8fa45",
+  "ruff": "passed",
+  "provider_calls_new": 0,
+  "r2_calls_new": 0,
+  "workflow_dispatches_new": 0,
+  "author_pr_merges": 0
+}

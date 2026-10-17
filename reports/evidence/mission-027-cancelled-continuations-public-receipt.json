@@ -1,0 +1,23 @@
+{
+  "schema_version": "mission-027-cancelled-pending-public-receipt-v1",
+  "observed_at": "2026-10-16T23:26:56.544564+00:00",
+  "runs": [
+    {
+      "run_id": 38981113096,
+      "source_commit": "876c9933ab1de942485c2331bb1489ae1d0c3919",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "jobs": 0,
+      "provider_calls": 0
+    },
+    {
+      "run_id": 38981116420,
+      "source_commit": "876c9933ab1de942485c2331bb1489ae1d0c3919",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "jobs": 0,
+      "provider_calls": 0
+    }
+  ],
+  "reason": "Replace pending runs before execution: synthetic next-day test exposed inherited expired quota-reset date. No active collector cancelled."
+}

@@ -1,0 +1,134 @@
+{
+  "schema_version": "mission027-028-noncanonical-merge-snapshot-v1",
+  "source_head": "67c8afd29a1b3f679385b74524220acc187260c5",
+  "incoming_head": "fdf32f5ace84835832f3186a552d0aee962a4cfd",
+  "common_prefix_records": 345,
+  "common_prefix_sha256": "a3676dc464d5910748d3490121e95f517f5b0b8cd24e493ed9be112018a0a83f",
+  "source_ledger_sha256": "ec5291fcf019a229bf2b5f2eac1e6f392e54ba88756429ac26499a60e2316081",
+  "archived_suffix_sha256": "72543383666d7663fa9f03fdc53cce988cd13b015b25d102061ca744cb582159",
+  "archived_record_count": 2,
+  "ledger_archive": "reports/council/mission028-phase2-before-67c8afd2-ledger.jsonl",
+  "claims": [
+    {
+      "claim_id": "DATA.MISSION028.DETAILS.PREPARATION.V2",
+      "claim": "361 local historical and Council tests pass. The immutable60437-id mapping includes the true Argentine cup league; both Parquet families preserve it. Atomic UTC slots, irreversible mapping binding and once-only reservations bound every future run. No details were collected during preparation.",
+      "scope": "MISSION028_PHASE1_PREPARATION",
+      "source": "qg#74@0048757 and local targeted tests",
+      "grain": "frozen_population",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission-028-details-preparation-v2-public-receipt.json",
+      "hash": "8ef5f066b56901764fcf9d4b26b7f5848408ecfbed3f6994826c2e49f34f70f4",
+      "code_revision": "precommit-projection:ae12490824b9f6e3afa82a4e42f7899366d0d41a5febee6415544defcf5fae48",
+      "artifact_hashes": {
+        ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "2cbfa1654f894e5d71edb030794e4c3e1ed9c87ed6778f5ced90fff1d7875cd2",
+        "scripts/run_mission028.py": "f2478a780bbbb2c2fd265da53be1ca3746ed8d098edba4f36cf6d2fbf1f8b520",
+        "scripts/run_mission028_details.py": "553aed0c3a47e6ffa2ae23d56a6aaa23f880f705e0514719365b274f49ed4059",
+        "tests/historical_deep/test_mission028.py": "ebb9ea129738ba7964f60a8d4b3385382d3ac56117b0db718b18840c60c0c0f9",
+        "tests/historical_deep/test_mission028_details.py": "9f6179eb9a1a6d916ea49521338f785380bf773c58d7b0bd26e122f4a6c6d3a8"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 5,
+      "engineering_projection_sha256": "ae12490824b9f6e3afa82a4e42f7899366d0d41a5febee6415544defcf5fae48",
+      "execution_id": "local-mission028-preparation",
+      "scientific_lineage_id": "NOT_APPLICABLE_COLLECTION",
+      "dataset_lineage_id": "mission028-8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "ENGINEERING.MISSION028.STACK.PR104.SYNC.001",
+      "claim": "Main/parent integration preserves the frozen inputs and functional code, retains every old divergent audit row in an exact archive, and passes targeted local checks. CI and independent review are still required.",
+      "scope": "MISSION028_STACK_INTEGRATION",
+      "source": "Current main, prior branch snapshots, local targeted verification, qg76 and user instruction",
+      "grain": "engineering_verification",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission028-stack-pr104-sync-453d4561-public-receipt.json",
+      "hash": "6d3415665bc0779e6ccb593b423b34bbd1e05b6b3be62c2afc432e071b5fb076",
+      "code_revision": "precommit-projection:ae12490824b9f6e3afa82a4e42f7899366d0d41a5febee6415544defcf5fae48",
+      "artifact_hashes": {
+        ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "2cbfa1654f894e5d71edb030794e4c3e1ed9c87ed6778f5ced90fff1d7875cd2",
+        "scripts/run_mission028.py": "f2478a780bbbb2c2fd265da53be1ca3746ed8d098edba4f36cf6d2fbf1f8b520",
+        "scripts/run_mission028_details.py": "553aed0c3a47e6ffa2ae23d56a6aaa23f880f705e0514719365b274f49ed4059",
+        "tests/historical_deep/test_mission028.py": "ebb9ea129738ba7964f60a8d4b3385382d3ac56117b0db718b18840c60c0c0f9",
+        "tests/historical_deep/test_mission028_details.py": "9f6179eb9a1a6d916ea49521338f785380bf773c58d7b0bd26e122f4a6c6d3a8"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 5,
+      "engineering_projection_sha256": "ae12490824b9f6e3afa82a4e42f7899366d0d41a5febee6415544defcf5fae48",
+      "execution_id": "local-stack-sync-pr104",
+      "scientific_lineage_id": "NOT_APPLICABLE_STACK_INTEGRATION",
+      "dataset_lineage_id": "FROZEN_MISSION028_UNCHANGED",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "ENGINEERING.MISSION028.PHASE2_REVIEW.V1",
+      "claim": "Add boundary and duplicate-ID regression tests and charge each new preflight against atomic status allowances before provider access. Share69750 daily detail slots plus200 calendars and50 statuses; reserve5000. Keep every previous test case and frozen input. Factor equivalent validation guards and trim blank lines to retain the400-line PR limit.",
+      "scope": "MISSION027_028_REVIEW_CORRECTIONS",
+      "source": "User-requested Claude review corrections and local verification",
+      "grain": "engineering_verification",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission028-phase2-review-public-receipt.json",
+      "hash": "4698f730f9bfaccd8ed137473cf2fa22487cccc598ec1ad7533c7e12d29ecd9e",
+      "code_revision": "precommit-projection:e0c99a316e381b7476f8f94dbe393fb8c181c6db2ba4b7e6cfccbe714cd35346",
+      "artifact_hashes": {
+        ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "2cbfa1654f894e5d71edb030794e4c3e1ed9c87ed6778f5ced90fff1d7875cd2",
+        "scripts/mission028_budget.py": "d43ee6e7f90fba5bb7be789e126246f5713dd0d0435e3284599bdf7cb7e19bb6",
+        "scripts/run_mission028.py": "f2478a780bbbb2c2fd265da53be1ca3746ed8d098edba4f36cf6d2fbf1f8b520",
+        "scripts/run_mission028_details.py": "dba97b0640354fc1bee67e43bf23f02d074fd8931a1ab8e7c02a7acc11eadea7",
+        "tests/historical_deep/test_mission028.py": "ebb9ea129738ba7964f60a8d4b3385382d3ac56117b0db718b18840c60c0c0f9",
+        "tests/historical_deep/test_mission028_details.py": "cf80ea1e06746b00378e9ec277e4d7efff318434460cf8f1e9defd29241ecf42"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 6,
+      "engineering_projection_sha256": "e0c99a316e381b7476f8f94dbe393fb8c181c6db2ba4b7e6cfccbe714cd35346",
+      "execution_id": "local-review-RCV3-20261017-028-PHASE2-REVIEW-001",
+      "dataset_lineage_id": "FROZEN_POPULATIONS_UNCHANGED",
+      "scientific_lineage_id": "NOT_APPLICABLE_ENGINEERING_REVIEW",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    }
+  ],
+  "decision_nodes": [
+    {
+      "decision_id": "RCV3-20261017-028-STACK-PR104-001",
+      "ledger_record_hash": "5e8604e0311955e214c8cfce316725bfddc32c13224f3b3a90844282bdccdc0f"
+    },
+    {
+      "decision_id": "RCV3-20261017-028-PHASE2-REVIEW-001",
+      "ledger_record_hash": "6985ac63f167e4deba461af976c53ed89f8ec8d6c92ee40efc59530fa8d30644"
+    }
+  ],
+  "edges": [
+    {
+      "edge_id": "EDGE.1197",
+      "from_claim_id": "ENGINEERING.MISSION028.STACK.PR104.SYNC.001",
+      "to_decision_id": "RCV3-20261017-028-STACK-PR104-001",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1198",
+      "from_claim_id": "DATA.MISSION028.DETAILS.PREPARATION.V2",
+      "to_decision_id": "RCV3-20261017-028-STACK-PR104-001",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1199",
+      "from_claim_id": "ENGINEERING.MISSION028.PHASE2_REVIEW.V1",
+      "to_decision_id": "RCV3-20261017-028-PHASE2-REVIEW-001",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    }
+  ]
+}

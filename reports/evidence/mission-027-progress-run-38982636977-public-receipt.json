@@ -1,0 +1,1 @@
+{"status": "OBSERVED", "reserved_targets": 6556, "reserved_by_scope": {"Premier-League": 1667, "La-Liga": 1461, "Serie-A": 1899, "Bundesliga": 1529}, "target_count": 7228, "status_calls": 0, "lineup_calls": 0, "raw_payload_reads": 0, "r2_writes": 0, "observed_at": "2026-10-16T23:41:11.845310+00:00"}
