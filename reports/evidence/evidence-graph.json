@@ -11452,6 +11452,32 @@
     ,{"claim_id":"GOV.REVIEW.ROBIN_EXPLORER_Q1_Q3.CODEX_FINDING_TOTALS.V1.001","claim":"Ledger record RCV3-20261007-345 records Codex review rounds 1 to 8 of PR 98 as round 1 with 2 P1 and 2 P2 and rounds 2 to 8 with 0 P1 and 1 P2 each (round 9 without finding), that is 2 P1 and 9 P2 in total; its own findings_raised_total field states 8 P2, which contradicts its round data.","scope":"ROBIN_SIMPLIFICATION_EXPLORATION_20261005_PR98_REVIEW_TRAIL","source":"Ledger prefix through RCV3-20261007-345 (record hash 8a7a7e4895fb0c51b9c60c1c0c371472de8d40474818f358b30071172cc05493, LF-normalized prefix SHA-256 e79387b1588b8c2a66d1f3acd283a36b9adb45a63ed017cce931d8093a2ff93a); context.independent_review.round_1 to round_9 and findings_raised_total of that record","grain":"ONE_LEDGER_RECORD_REVIEW_ROUND_COUNTS","temporal_class":"DECISION_AS_OF","artifact":"reports/council/decision-ledger.jsonl","hash":"e79387b1588b8c2a66d1f3acd283a36b9adb45a63ed017cce931d8093a2ff93a","code_revision":"e279124002f67862eec04e11426f8759cad2d1cb","execution_id":"council-record:RCV3-20261007-345","scientific_lineage_id":"ROBIN_SIMPLIFICATION_EXPLORATION_20261005","dataset_lineage_id":"robin-ledger-tip-8a7a7e4895fb0c51","status":"PARTIAL","verified_by":["C0"]}
     ,{"artifact":"src/robin/capture/real_data_dashboard.py","artifact_hash_algorithm":"SHA-256","artifact_hash_normalization":"LF_NORMALIZED_TEXT_BYTES","artifact_hashes":{"src/robin/capture/real_data_dashboard.py":"627ef0fb234a380a261d0c659b5349d98bd5c6712127a1c24adb2771e54c2dfa","tests/capture/test_real_data_dashboard.py":"49ae1a02232c400f075bf4636b53c974e68bff3b93dbed4ebd509a437898db0d"},"artifact_path_count":2,"claim":"The comparison engine parses row and branch observation times before recording them. Failed branches without capture times remain visible and excluded from comparisons; healthy leagues and offline consecutive-slot delivery continue normally. The local regression evidence is synthetic. Claude independently accepted code head 487c530 (PR head 55eb196) for C1, C2, C4, DP5, DP6, UX6 and A2; RCV3-20261008-349 attests the verdict.","claim_id":"DATA.ROBIN.SIMPLIFICATION.COMPARISON_ENGINE.V1.011","code_revision":"precommit-projection:7a9c83193ce13f2c79fbb843d523b891261091aee272dbdb8d9280f62eabc503","dataset_lineage_id":"SYNTHETIC_OFFLINE_NO_NEW_DATASET","engineering_projection_sha256":"7a9c83193ce13f2c79fbb843d523b891261091aee272dbdb8d9280f62eabc503","execution_id":"robin-task-016-offline-regression-20261008","grain":"ONE_COMPARISON_ENGINE_REVISION_AND_ITS_REGRESSION_TESTS","hash":"627ef0fb234a380a261d0c659b5349d98bd5c6712127a1c24adb2771e54c2dfa","independent_review":{"A2":"PASS_CLAUDE_ROUND_1","C1":"PASS_CLAUDE_ROUND_1","C2":"PASS_CLAUDE_ROUND_1","C4":"PASS_CLAUDE_ROUND_1","DP5":"PASS_CLAUDE_ROUND_1","DP6":"PASS_CLAUDE_ROUND_1","UX6":"PASS_CLAUDE_ROUND_1","comment":"https://github.com/dddur75/robin-stades-ng/pull/100#issuecomment-6059275521","keys":["C1","C2","C4","DP5","DP6","UX6","A2"],"result":"ACCEPTÉ","reviewed_head":"487c53063c27423872e334f32cdd428e9276775e","reviewed_pr_head":"55eb196065335602c3d5186eb140a9c4b6fcda9f","reviewer":"Claude"},"provider_credits_new":0,"provider_http_requests_new":0,"r2_reads_new":0,"r2_writes_new":0,"scientific_lineage_id":"ROBIN_SIMPLIFICATION_EXPLORATION_20261005","scope":"ROBIN_TASK_016_FAILED_BRANCH_COMPARISON_AND_OFFLINE_DELIVERY","source":"Local regression tests using the real branch stub, collector and delivery CLI with in-memory storage and simulated transport; no provider or R2 access; independent Claude ACCEPTÉ verdict on code head 487c530 (PR head 55eb196): https://github.com/dddur75/robin-stades-ng/pull/100#issuecomment-6059275521; attested in RCV3-20261008-349","status":"VERIFIED","successor_of":"DATA.ROBIN.SIMPLIFICATION.COMPARISON_ENGINE.V1.010","supersedes":["DATA.ROBIN.SIMPLIFICATION.COMPARISON_ENGINE.V1.001","DATA.ROBIN.SIMPLIFICATION.COMPARISON_ENGINE.V1.002","DATA.ROBIN.SIMPLIFICATION.COMPARISON_ENGINE.V1.003","DATA.ROBIN.SIMPLIFICATION.COMPARISON_ENGINE.V1.004","DATA.ROBIN.SIMPLIFICATION.COMPARISON_ENGINE.V1.005","DATA.ROBIN.SIMPLIFICATION.COMPARISON_ENGINE.V1.006","DATA.ROBIN.SIMPLIFICATION.COMPARISON_ENGINE.V1.007","DATA.ROBIN.SIMPLIFICATION.COMPARISON_ENGINE.V1.008","DATA.ROBIN.SIMPLIFICATION.COMPARISON_ENGINE.V1.009","DATA.ROBIN.SIMPLIFICATION.COMPARISON_ENGINE.V1.010"],"temporal_class":"CODE_LOCAL_AS_OF","verified_by":["C0","C1","C2","C4","DP5","DP6","UX6","A2"]},
     {
+      "claim_id": "ENGINEERING.CI.PYDANTIC_UNDER_214.V1",
+      "claim": "Pydantic2.14.1 reproduces the frozen schema mismatch; the upper bound resolves2.13.5 and restores the exact frozen capture hash, with67targeted tests passing and1platform-onlyskip. No provider calls or frozen contract modifications.",
+      "scope": "QG028_REMEDIATION_AND_QG027_REVIEW",
+      "source": "Explicit user instruction, local verification and existing immutable receipts",
+      "grain": "engineering_verification",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/council/decision-ledger.jsonl",
+      "hash": "4cbf7ef7a215b87014a9b2bff3e524881b5775d0a8d13596f7464fcc59c576ce",
+      "code_revision": "precommit-projection:7263e11981be7245e798901bb1bae2cd33359af9980f357f3c60d3d043d20f2d",
+      "artifact_hashes": {
+        "requirements.txt": "3318eb2709f279ed57b970d7298f7fa2a32931fe244ab6e03e2312ab6962a9fa",
+        "pyproject.toml": "c64c46a990634a2fba184c5942d94e1654f720d39c44f0bb6d29116bca77a4dd"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 2,
+      "engineering_projection_sha256": "7263e11981be7245e798901bb1bae2cd33359af9980f357f3c60d3d043d20f2d",
+      "execution_id": "local-review-correction-20261017",
+      "scientific_lineage_id": "NOT_APPLICABLE_REVIEW_CORRECTION",
+      "dataset_lineage_id": "REUSED_EXISTING_RECEIPTS_NO_NEW_COLLECTION",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
       "claim_id": "DATA.MISSION028.PREPARATION.V1",
       "claim": "Frozen 60515-row population copied byte-for-byte; 233 local historical/Council tests pass. This is preparation evidence, not a provider coverage claim.",
       "scope": "MISSION028_PHASE1_PREPARATION",
@@ -11488,6 +11514,34 @@
       ]
     },
     {
+      "claim_id": "ENGINEERING.MISSION028.STACK.PR103.SYNC.001",
+      "claim": "Main/parent integration preserves the frozen inputs and functional code, retains every old divergent audit row in an exact archive, and passes targeted local checks. CI and independent review are still required.",
+      "scope": "MISSION028_STACK_INTEGRATION",
+      "source": "Current main, prior branch snapshots, local targeted verification, qg76 and user instruction",
+      "grain": "engineering_verification",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission028-stack-pr103-sync-2f51973c-public-receipt.json",
+      "hash": "c8bf625509c22c05e6669957652c9a85347b25d8b9d005ef133f669f4a6c8e20",
+      "code_revision": "precommit-projection:e97dab2d16fa98e83cfd42f8cef9172634691e510adc39455bc306eed9c3270f",
+      "artifact_hashes": {
+        ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "4c686c45fae803d5d036935dc052f8136f1284119fa0fda7a19e566fefbd0127",
+        "scripts/run_mission028.py": "9a293b55537fba6ff7f2c055c33e1309aefd78545916ff45f93ec265920c64e1",
+        "tests/historical_deep/test_mission028.py": "f22ca46e2b2c18b42111ae3c6328351a0eba6727865625c3e35b9178aecf395e",
+        "tests/historical_deep/test_workflow_contracts.py": "8900a3b30a06392f4f5785242ab7d3a87d4449aafb7993e9fbd4528e1c58798d"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 4,
+      "engineering_projection_sha256": "e97dab2d16fa98e83cfd42f8cef9172634691e510adc39455bc306eed9c3270f",
+      "execution_id": "local-stack-sync-pr103",
+      "scientific_lineage_id": "NOT_APPLICABLE_STACK_INTEGRATION",
+      "dataset_lineage_id": "FROZEN_MISSION028_UNCHANGED",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
       "claim_id": "DATA.MISSION028.MAPPING.V1",
       "claim": "The frozen mapping covers60437 of60515 source matches, all33 leagues above97 percent, with78 listed gaps. Two hundred unique calendars were called, one status preflight total; quota minimum149555. Independent reconstruction is byte-identical and validates source rows, provider league, season, terminal status, date, both names, both scores and unique fixture ids.",
       "scope": "MISSION028_PHASE1_PREPARATION",
@@ -11500,6 +11554,33 @@
       "execution_id": "local-mission028-preparation",
       "scientific_lineage_id": "NOT_APPLICABLE_COLLECTION",
       "dataset_lineage_id": "mission028-8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "ENGINEERING.MISSION028.STACK.PR105.SYNC.001",
+      "claim": "Main/parent integration preserves the frozen inputs and functional code, retains every old divergent audit row in an exact archive, and passes targeted local checks. CI and independent review are still required.",
+      "scope": "MISSION028_STACK_INTEGRATION",
+      "source": "Current main, prior branch snapshots, local targeted verification, qg76 and user instruction",
+      "grain": "engineering_verification",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission028-stack-pr105-sync-0a853f3a-public-receipt.json",
+      "hash": "4a09b4f54926994c5a35e94d4fbedb8203d87565fb453b4bf1c71d147d90b489",
+      "code_revision": "precommit-projection:d931be7740223eadc774f4c7e8e430df753a17398f4491eb2fc7438698109455",
+      "artifact_hashes": {
+        ".gitattributes": "924f0b94e81240ff5a84a84e6a6ab1bec97890621033c8785ee8e7375e5254ee",
+        "scripts/run_mission028.py": "d945e07ea2ae3450d5ddb35c8ef8fc552bbcacacee97d9b33ea046f4d771ff04",
+        "tests/historical_deep/test_mission028_cup.py": "954df6ea616149aede660599e9a8ec39d98417b1f72d116aa60b01f38026fd74"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 3,
+      "engineering_projection_sha256": "d931be7740223eadc774f4c7e8e430df753a17398f4491eb2fc7438698109455",
+      "execution_id": "local-stack-sync-pr105",
+      "scientific_lineage_id": "NOT_APPLICABLE_STACK_INTEGRATION",
+      "dataset_lineage_id": "FROZEN_MISSION028_UNCHANGED",
       "status": "PARTIAL",
       "verified_by": [
         "C0"
@@ -11529,6 +11610,35 @@
       "execution_id": "local-mission028-preparation",
       "scientific_lineage_id": "NOT_APPLICABLE_COLLECTION",
       "dataset_lineage_id": "mission028-8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "ENGINEERING.MISSION028.STACK.PR104.SYNC.001",
+      "claim": "Main/parent integration preserves the frozen inputs and functional code, retains every old divergent audit row in an exact archive, and passes targeted local checks. CI and independent review are still required.",
+      "scope": "MISSION028_STACK_INTEGRATION",
+      "source": "Current main, prior branch snapshots, local targeted verification, qg76 and user instruction",
+      "grain": "engineering_verification",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission028-stack-pr104-sync-453d4561-public-receipt.json",
+      "hash": "6d3415665bc0779e6ccb593b423b34bbd1e05b6b3be62c2afc432e071b5fb076",
+      "code_revision": "precommit-projection:ae12490824b9f6e3afa82a4e42f7899366d0d41a5febee6415544defcf5fae48",
+      "artifact_hashes": {
+        ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "2cbfa1654f894e5d71edb030794e4c3e1ed9c87ed6778f5ced90fff1d7875cd2",
+        "scripts/run_mission028.py": "f2478a780bbbb2c2fd265da53be1ca3746ed8d098edba4f36cf6d2fbf1f8b520",
+        "scripts/run_mission028_details.py": "553aed0c3a47e6ffa2ae23d56a6aaa23f880f705e0514719365b274f49ed4059",
+        "tests/historical_deep/test_mission028.py": "ebb9ea129738ba7964f60a8d4b3385382d3ac56117b0db718b18840c60c0c0f9",
+        "tests/historical_deep/test_mission028_details.py": "9f6179eb9a1a6d916ea49521338f785380bf773c58d7b0bd26e122f4a6c6d3a8"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 5,
+      "engineering_projection_sha256": "ae12490824b9f6e3afa82a4e42f7899366d0d41a5febee6415544defcf5fae48",
+      "execution_id": "local-stack-sync-pr104",
+      "scientific_lineage_id": "NOT_APPLICABLE_STACK_INTEGRATION",
+      "dataset_lineage_id": "FROZEN_MISSION028_UNCHANGED",
       "status": "PARTIAL",
       "verified_by": [
         "C0"
@@ -11879,48 +11989,20 @@
     ,{"decision_id":"RCV3-20261008-348","ledger_record_hash":"87f5d61111d46600240eb347b554b32695cdb70f9ece2c611bb72690bfb3e103"}
     ,{"decision_id":"RCV3-20261008-349","ledger_record_hash":"365452ea4a83c25c38061fe2636fd1387ba2bb47fa189a2f7dad11a74d9c87fb"},
     {
-      "decision_id": "RCV3-20261017-028-001",
-      "ledger_record_hash": "341dd1f320bdf2be4d9df545234b785e043f0fefcd6a638d38024e0c2d29bae7"
+      "decision_id": "RCV3-20261017-CI-PYDANTIC-001",
+      "ledger_record_hash": "f8c531afbc822b471150b3523430ac856c52b7f974227bdfa86da52a67872434"
     },
     {
-      "decision_id": "RCV3-20261017-028-002",
-      "ledger_record_hash": "43b4625d4fffd5b51704a046cf61bc9a1911883407fc4f5e2f385835284f792c"
+      "decision_id": "RCV3-20261017-028-STACK-PR103-001",
+      "ledger_record_hash": "46b3fee9fe99a3ed1d939ca5f6ece306bbf88fdb260bf277c747b12a71202b25"
     },
     {
-      "decision_id": "RCV3-20261017-028-003",
-      "ledger_record_hash": "ffe9184416318bfe9063f5f4267d97b8eadbe579739336f004d73246e708c847"
+      "decision_id": "RCV3-20261017-028-STACK-PR105-001",
+      "ledger_record_hash": "335c703fd3c4bf70627098b480f49bbdd7fd2f690cf29670d18266e809583e9a"
     },
     {
-      "decision_id": "RCV3-20261017-028-004",
-      "ledger_record_hash": "c066c3fbb2fada89fafc80c421fd14c3f98ab0cdbbaffb7fc0b453e98a2468a8"
-    },
-    {
-      "decision_id": "RCV3-20261017-028-005",
-      "ledger_record_hash": "363cbda1065e269b3d868c25339e9652e69ade718fe0d0776b8d31d4434f8d5a"
-    },
-    {
-      "decision_id": "RCV3-20261017-028-006",
-      "ledger_record_hash": "5664c408071a421c1dc132318e2cc84fe836fd1dcbe43ab1985a4b788f7bd87c"
-    },
-    {
-      "decision_id": "RCV3-20261017-028-007",
-      "ledger_record_hash": "a663c85085c2e4ba59a090f01062ad4fb1509dd0a2b2e9a3dca06cbd14b819ab"
-    },
-    {
-      "decision_id": "RCV3-20261017-028-008",
-      "ledger_record_hash": "a735081390a43222955a5e7d79fcebbf2808c8f80bdeb0ad6bdb0da99710a22f"
-    },
-    {
-      "decision_id": "RCV3-20261017-028-009",
-      "ledger_record_hash": "0134fc1ae4cba4a7eff2136c6bc5d4efa5c06663510a568586494373bd17dbf9"
-    },
-    {
-      "decision_id": "RCV3-20261017-028-010",
-      "ledger_record_hash": "dd57f153461606dddb3608115392cb4b9feb6db61569225230fae35d4020b206"
-    },
-    {
-      "decision_id": "RCV3-20261017-028-PHASE2-001",
-      "ledger_record_hash": "0db7732028293f7c9db2c30256bec2b81d01618d7d573f820a697549965cd197"
+      "decision_id": "RCV3-20261017-028-STACK-PR104-001",
+      "ledger_record_hash": "5e8604e0311955e214c8cfce316725bfddc32c13224f3b3a90844282bdccdc0f"
     }
   ],
   "edges":[
@@ -13116,78 +13198,57 @@
     ,{"edge_id":"EDGE.1190","from_claim_id":"DATA.ROBIN.SIMPLIFICATION.COMPARISON_ENGINE.V1.011","relation":"SUPPORTS","status":"RECORDED","to_decision_id":"RCV3-20261008-349"},
     {
       "edge_id": "EDGE.1191",
-      "from_claim_id": "DATA.MISSION028.PREPARATION.V1",
-      "to_decision_id": "RCV3-20261017-028-001",
+      "from_claim_id": "ENGINEERING.CI.PYDANTIC_UNDER_214.V1",
+      "to_decision_id": "RCV3-20261017-CI-PYDANTIC-001",
       "relation": "SUPPORTS",
       "status": "RECORDED"
     },
     {
       "edge_id": "EDGE.1192",
-      "from_claim_id": "DATA.MISSION028.PREPARATION.V1",
-      "to_decision_id": "RCV3-20261017-028-002",
+      "from_claim_id": "ENGINEERING.MISSION028.STACK.PR103.SYNC.001",
+      "to_decision_id": "RCV3-20261017-028-STACK-PR103-001",
       "relation": "SUPPORTS",
       "status": "RECORDED"
     },
     {
       "edge_id": "EDGE.1193",
       "from_claim_id": "DATA.MISSION028.PREPARATION.V1",
-      "to_decision_id": "RCV3-20261017-028-003",
+      "to_decision_id": "RCV3-20261017-028-STACK-PR103-001",
       "relation": "SUPPORTS",
       "status": "RECORDED"
     },
     {
       "edge_id": "EDGE.1194",
-      "from_claim_id": "DATA.MISSION028.PREPARATION.V1",
-      "to_decision_id": "RCV3-20261017-028-004",
+      "from_claim_id": "DATA.MISSION028.CENSUS.V1",
+      "to_decision_id": "RCV3-20261017-028-STACK-PR103-001",
       "relation": "SUPPORTS",
       "status": "RECORDED"
     },
     {
       "edge_id": "EDGE.1195",
-      "from_claim_id": "DATA.MISSION028.PREPARATION.V1",
-      "to_decision_id": "RCV3-20261017-028-005",
+      "from_claim_id": "ENGINEERING.MISSION028.STACK.PR105.SYNC.001",
+      "to_decision_id": "RCV3-20261017-028-STACK-PR105-001",
       "relation": "SUPPORTS",
       "status": "RECORDED"
     },
     {
       "edge_id": "EDGE.1196",
-      "from_claim_id": "DATA.MISSION028.PREPARATION.V1",
-      "to_decision_id": "RCV3-20261017-028-006",
+      "from_claim_id": "DATA.MISSION028.MAPPING.V1",
+      "to_decision_id": "RCV3-20261017-028-STACK-PR105-001",
       "relation": "SUPPORTS",
       "status": "RECORDED"
     },
     {
       "edge_id": "EDGE.1197",
-      "from_claim_id": "DATA.MISSION028.CENSUS.V1",
-      "to_decision_id": "RCV3-20261017-028-007",
+      "from_claim_id": "ENGINEERING.MISSION028.STACK.PR104.SYNC.001",
+      "to_decision_id": "RCV3-20261017-028-STACK-PR104-001",
       "relation": "SUPPORTS",
       "status": "RECORDED"
     },
     {
       "edge_id": "EDGE.1198",
-      "from_claim_id": "DATA.MISSION028.CENSUS.V1",
-      "to_decision_id": "RCV3-20261017-028-008",
-      "relation": "SUPPORTS",
-      "status": "RECORDED"
-    },
-    {
-      "edge_id": "EDGE.1199",
-      "from_claim_id": "DATA.MISSION028.MAPPING.V1",
-      "to_decision_id": "RCV3-20261017-028-009",
-      "relation": "SUPPORTS",
-      "status": "RECORDED"
-    },
-    {
-      "edge_id": "EDGE.1200",
-      "from_claim_id": "DATA.MISSION028.MAPPING.V1",
-      "to_decision_id": "RCV3-20261017-028-010",
-      "relation": "SUPPORTS",
-      "status": "RECORDED"
-    },
-    {
-      "edge_id": "EDGE.1201",
       "from_claim_id": "DATA.MISSION028.DETAILS.PREPARATION.V2",
-      "to_decision_id": "RCV3-20261017-028-PHASE2-001",
+      "to_decision_id": "RCV3-20261017-028-STACK-PR104-001",
       "relation": "SUPPORTS",
       "status": "RECORDED"
     }
