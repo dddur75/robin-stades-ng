@@ -11468,6 +11468,24 @@
       "verified_by": [
         "C0"
       ]
+    },
+    {
+      "claim_id": "DATA.MISSION028.CENSUS.V1",
+      "claim": "The archived census receipt records 198 fixtures calendar calls, 198 unique reservations, zero additional status calls and quota minimum 149557. Initial exact-name matching covers 28766 matches; final aliases and supplementary calendars still require replay.",
+      "scope": "MISSION028_PHASE1_PREPARATION",
+      "source": "qg#74@0048757 and local targeted tests",
+      "grain": "frozen_population",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission-028-census-run-38993960823-public-receipt.json",
+      "hash": "6a0ce08d6fa199c48749f50e3825c5a8aa0eaa7b51c5a5c9cf3d390b88f93271",
+      "code_revision": "3de528a70ad3ac10c5fcbf8519db875c4e9dbca3",
+      "execution_id": "local-mission028-preparation",
+      "scientific_lineage_id": "NOT_APPLICABLE_COLLECTION",
+      "dataset_lineage_id": "mission028-8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
     }
   ],
   "decision_nodes":[
@@ -11836,6 +11854,10 @@
     {
       "decision_id": "RCV3-20261017-028-006",
       "ledger_record_hash": "5664c408071a421c1dc132318e2cc84fe836fd1dcbe43ab1985a4b788f7bd87c"
+    },
+    {
+      "decision_id": "RCV3-20261017-028-007",
+      "ledger_record_hash": "a663c85085c2e4ba59a090f01062ad4fb1509dd0a2b2e9a3dca06cbd14b819ab"
     }
   ],
   "edges":[
@@ -13068,6 +13090,13 @@
       "edge_id": "EDGE.1196",
       "from_claim_id": "DATA.MISSION028.PREPARATION.V1",
       "to_decision_id": "RCV3-20261017-028-006",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1197",
+      "from_claim_id": "DATA.MISSION028.CENSUS.V1",
+      "to_decision_id": "RCV3-20261017-028-007",
       "relation": "SUPPORTS",
       "status": "RECORDED"
     }

@@ -72,8 +72,8 @@ def match_rows(rows, fixtures, aliases):
         candidates = {f["fixture"]["id"] for f in index[
             LEAGUES[code], season, int(row["buts_dom"]), int(row["buts_ext"])]
             if abs((date.fromisoformat(f["fixture"]["date"][:10]) - day).days) <= 1
-            and name_key(f["teams"]["home"]["name"]) == home
-            and name_key(f["teams"]["away"]["name"]) == away}
+            and name_key(aliases.get(f"{code}|{f['teams']['home']['name']}", f["teams"]["home"]["name"])) == home
+            and name_key(aliases.get(f"{code}|{f['teams']['away']['name']}", f["teams"]["away"]["name"])) == away}
         table.append(dict(row, source_row=number, league_id=LEAGUES[code], season=season,
                           fixture_id=next(iter(candidates)) if len(candidates) == 1 else None,
                           reason="AMBIGUOUS" if len(candidates) > 1 else "UNMATCHED"))

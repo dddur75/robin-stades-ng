@@ -37,8 +37,9 @@ def test_holdout_and_invalid_seasons_rejected(label):
 
 
 def test_match_requires_date_both_names_score_and_unique_fixture():
-    aliases = {"E1|QPR": "Queens Park Rangers"}
-    table, rates = match_rows([ROW], [fixture()], aliases)
+    aliases = {"E1|QPR": "Queens Park Rangers",
+               "E1|Queens Park Rangers FC": "Queens Park Rangers"}
+    table, rates = match_rows([ROW], [fixture(away="Queens Park Rangers FC")], aliases)
     assert table[0]["fixture_id"] == 1 and rates["E1"]["fraction"] == 1
     pending = fixture()
     pending["fixture"]["status"]["short"] = "NS"
