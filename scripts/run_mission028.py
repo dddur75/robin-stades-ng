@@ -7,6 +7,7 @@ import io
 import json
 import os
 import re
+import sys
 import unicodedata
 from collections import Counter, defaultdict
 from datetime import UTC, date, datetime, timedelta
@@ -139,6 +140,13 @@ def main():
         rows = load_targets()  # Before R2 and before any provider request.
         assert_safety_locks(os.environ)
         store = R2ObjectStore(os.environ)
+        if "--progress" in sys.argv:
+            progress = dict(status="OBSERVED", provider_calls_new=0,
+                reserved_censuses=len(tuple(store.iter_keys(f"{PREFIX}/requests/"))),
+                observed_at=datetime.now(UTC).isoformat())
+            (OUTPUT / "progress.json").write_text(json.dumps(progress) + "\n")
+            print(json.dumps(progress), flush=True)
+            return 0
         entries = [json.loads(store.get_object(k)) for k in store.iter_keys(f"{PREFIX}/requests/")]
         budget = Budget(entries)
         replay = os.environ.get("MISSION028_REPLAY") == "true"
