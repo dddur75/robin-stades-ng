@@ -1,4 +1,4 @@
-"""027: compositions 2026 only, durable reservations, canonical prospective storage."""
+"""027: compositions 2026 only, R2-only durable state, no Neon connection."""
 from __future__ import annotations
 
 import json
@@ -186,12 +186,12 @@ def collect(store, state, client, *, clock=lambda: datetime.now(UTC), revision):
 def main():
     args = base.build_parser().parse_args()
     policy = base.ObservatoryPolicy.load(args.policy)
-    estimate = dict(daily_cap=CAP, season=2026, leagues=LEAGUES, policy_sha256=policy.sha256)
+    estimate = dict(daily_cap=CAP, season=2026, leagues=LEAGUES, policy_sha256=policy.sha256, state_backend='R2_ONLY')
     if args.estimate:
         base._write_json(args.output / 'lineup-capture-estimate.json', estimate)
         return 0
     transport = Transport()
-    report = dict(status='PARTIAL', daily_cap=CAP, status_calls=0)
+    report = dict(status='PARTIAL', daily_cap=CAP, status_calls=0, state_backend='R2_ONLY')
     try:
         if not args.execute or base._read_json(args.estimate_file) != json.loads(json.dumps(estimate)):
             raise ValueError('MISSION027_ESTIMATE_REQUIRED')
@@ -199,9 +199,11 @@ def main():
         transport.cutoff = now.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)
         client = ApiFootballDeepClient(api_key=os.environ['API_FOOTBALL_KEY'], max_retries=0, transport=transport, status_ttl_seconds=6600)
         client.quota = QuotaController(quota_proof(store, client, now, os.environ['GITHUB_RUN_ID']))
-        state = base.SQLAlchemyOperationalState(base.build_engine(os.environ['ROBIN_DATABASE_URL']), restore_scope=('2026', tuple(LEAGUES.values())))
+        # collect() rebuilds this disposable view from season-scoped R2 receipts.
+        # Budgets and uncertain attempts remain reserved durably in R2.
+        state = base.MemoryOperationalState()
         report = collect(store, state, client, revision=os.environ['GITHUB_SHA'])
-        report.update(quota_remaining=client.quota.status.daily_remaining, status_calls=transport.status_calls)
+        report.update(quota_remaining=client.quota.status.daily_remaining, status_calls=transport.status_calls, state_backend='R2_ONLY')
         store.put_if_absent(f'{PREFIX}/runs/{os.environ["GITHUB_RUN_ID"]}.json', json.dumps(report).encode())
     except Exception as error:
         report['reason_code'] = str(error) if str(error).startswith('MISSION027_') else type(error).__name__

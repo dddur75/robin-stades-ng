@@ -59,11 +59,16 @@ def test_all_prospective_workflows_are_isolated_fail_closed_and_append_only() ->
         assert all(value in workflow for value in required), name
         assert all(value not in workflow.casefold() for value in forbidden), name
         assert '--policy "$PROSPECTIVE_POLICY"' in workflow
-        assert (
-            "python scripts/check_database_revision.py "
-            f"--expected {'0015_data_torrent_opportunity' if name == 'prospective-lineup-capture.yml' else '0013_historical_evidence_index'}"
-            in workflow
-        )
+        if name == "prospective-lineup-capture.yml":
+            assert "DATABASE_URL" not in workflow
+            assert "check_database_revision.py" not in workflow
+            assert "run_mission027_capture.py capture-lineup" in workflow
+            assert "--estimate" in workflow and "--execute" in workflow
+        else:
+            assert (
+                "python scripts/check_database_revision.py "
+                "--expected 0013_historical_evidence_index" in workflow
+            )
         assert "alembic upgrade" not in workflow
 
 
@@ -175,7 +180,10 @@ def test_capture_workflows_estimate_before_explicit_bounded_execution() -> None:
         assert "github.event_name == 'schedule' || inputs.execute" in workflow
         assert "R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}" in workflow
         assert "R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}" in workflow
-        assert "ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}" in workflow
+        if name == "prospective-lineup-capture.yml":
+            assert "DATABASE_URL" not in workflow
+        else:
+            assert "ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}" in workflow
         assert "alembic upgrade" not in workflow
 
 

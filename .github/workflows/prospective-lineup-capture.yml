@@ -38,28 +38,17 @@ jobs:
       - run: |
           python -m pip install -r requirements.txt boto3
           python -m pip install --no-deps -e .
-      - name: Verifier la revision PostgreSQL sans migration
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: |
-          python scripts/check_database_revision.py --expected 0015_data_torrent_opportunity
       - name: Estimer le coût des fenêtres lineup dues
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: >-
           python scripts/run_mission027_capture.py capture-lineup
           --estimate
           --policy "$PROSPECTIVE_POLICY"
           --max-attempts 3
           --output artifacts/prospective-observatory
-      - name: Capturer dans R2 puis indexer PostgreSQL
+      - name: Capturer et reconstruire l’état dans R2 uniquement
         if: github.event_name == 'schedule' || inputs.execute
         env:
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          ROBIN_DATABASE_URL: ${{ secrets.DATABASE_URL }}
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}

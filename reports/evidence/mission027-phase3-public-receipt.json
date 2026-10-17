@@ -1,0 +1,40 @@
+{
+  "claim_id": "ENGINEERING.MISSION027.PHASE3_R2_ONLY.V1",
+  "status": "PARTIAL",
+  "base_revision": "046dd0e420eff61469f309cf9e8ec12ba7ebfe28",
+  "state_backend": "R2_ONLY",
+  "production_database_revision": "NOT_VERIFIED_NO_NEON_ACCESS_CONFIGURED",
+  "cause": "Run 39063276656 failed before capture at the exact 0015 database revision guard",
+  "workflow_id": 321915843,
+  "observed_workflow_state": "disabled_manually",
+  "data_calls_per_utc_day": 60,
+  "status_calls_per_run": 1,
+  "status_calls_per_utc_day": 24,
+  "status_cache_minutes_exclusive": 110,
+  "provider_reserve": 5000,
+  "offline_domain_tests": {"passed": 536, "failed": 0},
+  "extended_local_check": {
+    "passed": 649,
+    "failed_for_missing_git_history": 12,
+    "reason": "Shallow clone; historical git objects unavailable and terminal GitHub credential expired (401). No test altered or skipped to conceal these failures.",
+    "tests": [
+      "test_global_claim_boundary_v2_evidence_is_exact_append_only_and_effect_free",
+      "test_first_c0_vertical_governance_is_an_exact_append_only_successor",
+      "test_real_execution_bootstrap_closure_v1_authority_and_succession_are_exact",
+      "test_pr67_atomic_evidence_closure_is_exact_append_only_and_effect_free",
+      "test_strict_authority_rotation_v2_is_exact_append_only_and_effect_free",
+      "test_first_c0_hardening_incident_closure_v2_is_append_only_and_effect_bounded",
+      "test_pr69_ci_artifact_scope_isolation_corrective_is_exact_and_append_only",
+      "test_first_real_c0_single_league_canary_is_exact_append_only_and_effect_free",
+      "test_first_c0_authority_v3_is_exact_append_only_and_effect_free",
+      "test_first_c0_authority_v4_recovery_is_exact_append_only_and_effect_free",
+      "test_first_c0_h2_timing_closure_authority_v5_is_exact_append_only_and_effect_free",
+      "test_chronos_loop53_authority_is_exact_bounded_and_manifest_cannot_expand_it"
+    ]
+  },
+  "regressions": ["No Neon engine with absent or unusable database URL", "New memory state replays R2 captures with zero duplicate HTTP calls", "Unchanged 60/61 and 24/25 boundaries"],
+  "checks": ["Ruff", "Bandit", "shared adapter mypy", "secrets", "tracked absolute paths", "compileall", "whitespace"],
+  "new_external_effects": {"provider_calls": 0, "r2_calls": 0, "neon_connections": 0, "migrations": 0, "workflow_activations": 0, "workflow_dispatches": 0, "merges": 0},
+  "pending": ["Independent review and full-history CI", "David's decision to activate", "Real receipt for at least ten pre-kickoff captures"],
+  "rollback": "Revert phase 3 with workflow disabled; preserve R2 objects and reservations; no SQL downgrade"
+}
