@@ -11476,6 +11476,70 @@
       "verified_by": [
         "C0"
       ]
+    },
+    {
+      "claim_id": "DATA.MISSION028.PREPARATION.V1",
+      "claim": "Frozen 60515-row population copied byte-for-byte; 233 local historical/Council tests pass. This is preparation evidence, not a provider coverage claim.",
+      "scope": "MISSION028_PHASE1_PREPARATION",
+      "source": "qg#74@0048757 and local targeted tests",
+      "grain": "frozen_population",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission-028-preparation-public-receipt.json",
+      "hash": "dca3f24a4040956cc6c8dae0a354eeabfe3db17e0df13af483526fa4e792036a",
+      "code_revision": "aa92e7aea792cd5a513c5518f6e2b92b801fa3cb",
+      "execution_id": "local-mission028-preparation",
+      "scientific_lineage_id": "NOT_APPLICABLE_COLLECTION",
+      "dataset_lineage_id": "mission028-8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "DATA.MISSION028.CENSUS.V1",
+      "claim": "The archived census receipt records 198 fixtures calendar calls, 198 unique reservations, zero additional status calls and quota minimum 149557. Initial exact-name matching covers 28766 matches; final aliases and supplementary calendars still require replay.",
+      "scope": "MISSION028_PHASE1_PREPARATION",
+      "source": "qg#74@0048757 and local targeted tests",
+      "grain": "frozen_population",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission-028-census-run-38993960823-public-receipt.json",
+      "hash": "6a0ce08d6fa199c48749f50e3825c5a8aa0eaa7b51c5a5c9cf3d390b88f93271",
+      "code_revision": "3de528a70ad3ac10c5fcbf8519db875c4e9dbca3",
+      "execution_id": "local-mission028-preparation",
+      "scientific_lineage_id": "NOT_APPLICABLE_COLLECTION",
+      "dataset_lineage_id": "mission028-8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "ENGINEERING.MISSION028.STACK.PR103.SYNC.001",
+      "claim": "Main/parent integration preserves the frozen inputs and functional code, retains every old divergent audit row in an exact archive, and passes targeted local checks. CI and independent review are still required.",
+      "scope": "MISSION028_STACK_INTEGRATION",
+      "source": "Current main, prior branch snapshots, local targeted verification, qg76 and user instruction",
+      "grain": "engineering_verification",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission028-stack-pr103-sync-2f51973c-public-receipt.json",
+      "hash": "c8bf625509c22c05e6669957652c9a85347b25d8b9d005ef133f669f4a6c8e20",
+      "code_revision": "precommit-projection:e97dab2d16fa98e83cfd42f8cef9172634691e510adc39455bc306eed9c3270f",
+      "artifact_hashes": {
+        ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "4c686c45fae803d5d036935dc052f8136f1284119fa0fda7a19e566fefbd0127",
+        "scripts/run_mission028.py": "9a293b55537fba6ff7f2c055c33e1309aefd78545916ff45f93ec265920c64e1",
+        "tests/historical_deep/test_mission028.py": "f22ca46e2b2c18b42111ae3c6328351a0eba6727865625c3e35b9178aecf395e",
+        "tests/historical_deep/test_workflow_contracts.py": "8900a3b30a06392f4f5785242ab7d3a87d4449aafb7993e9fbd4528e1c58798d"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 4,
+      "engineering_projection_sha256": "e97dab2d16fa98e83cfd42f8cef9172634691e510adc39455bc306eed9c3270f",
+      "execution_id": "local-stack-sync-pr103",
+      "scientific_lineage_id": "NOT_APPLICABLE_STACK_INTEGRATION",
+      "dataset_lineage_id": "FROZEN_MISSION028_UNCHANGED",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
     }
   ],
   "decision_nodes":[
@@ -11824,6 +11888,10 @@
     {
       "decision_id": "RCV3-20261017-CI-PYDANTIC-001",
       "ledger_record_hash": "f8c531afbc822b471150b3523430ac856c52b7f974227bdfa86da52a67872434"
+    },
+    {
+      "decision_id": "RCV3-20261017-028-STACK-PR103-001",
+      "ledger_record_hash": "46b3fee9fe99a3ed1d939ca5f6ece306bbf88fdb260bf277c747b12a71202b25"
     }
   ],
   "edges":[
@@ -13021,6 +13089,27 @@
       "edge_id": "EDGE.1191",
       "from_claim_id": "ENGINEERING.CI.PYDANTIC_UNDER_214.V1",
       "to_decision_id": "RCV3-20261017-CI-PYDANTIC-001",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1192",
+      "from_claim_id": "ENGINEERING.MISSION028.STACK.PR103.SYNC.001",
+      "to_decision_id": "RCV3-20261017-028-STACK-PR103-001",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1193",
+      "from_claim_id": "DATA.MISSION028.PREPARATION.V1",
+      "to_decision_id": "RCV3-20261017-028-STACK-PR103-001",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1194",
+      "from_claim_id": "DATA.MISSION028.CENSUS.V1",
+      "to_decision_id": "RCV3-20261017-028-STACK-PR103-001",
       "relation": "SUPPORTS",
       "status": "RECORDED"
     }

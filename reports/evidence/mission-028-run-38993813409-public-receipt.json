@@ -1,0 +1,15 @@
+{
+  "schema_version": "mission-028-phase1-v1",
+  "status": "PARTIAL",
+  "calls": 0,
+  "status_calls": 1,
+  "target_sha256": "8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+  "max_calls": 200,
+  "total_cap": 122200,
+  "daily_cap": 70000,
+  "daily_reserve": 5000,
+  "run_id": "38993813409",
+  "reason_class": "ValueError",
+  "reason_code": "HARVEST_CAMPAIGN_ID_INVALID",
+  "quota_remaining": 149755
+}
