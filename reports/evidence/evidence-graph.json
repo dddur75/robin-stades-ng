@@ -11587,6 +11587,466 @@
       ]
     },
     {
+      "claim_id": "DATA.MISSION027.PREFLIGHT.001",
+      "claim": "Mission 027 source whitelist matches 7,228 fixtures and the specified digest; provider collection is not yet executed.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "20 explicitly scoped market parquet files on historical-data at c800d69; no season 2025 read",
+      "grain": "fixture_id",
+      "temporal_class": "OBSERVED_AT",
+      "artifact": "reports/evidence/mission-027-phase1-public-receipt.json",
+      "hash": "f490e0922f4dacb441d649480f025b4066bf40b97167d0be1e12d1050b632ace",
+      "code_revision": "aa92e7aea792cd5a513c5518f6e2b92b801fa3cb",
+      "execution_id": "mission027-preparation-20261016",
+      "scientific_lineage_id": "NOT_APPLICABLE_PREFLIGHT",
+      "dataset_lineage_id": "c800d69f976103177588613d58217345b4e4cf7c",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ],
+      "limitations": [
+        "Independent Claude review pending; no live collection claimed."
+      ]
+    },
+    {
+      "claim_id": "DATA.MISSION027.STATUS.002",
+      "claim": "Actions preflight 38960293874 made exactly one /status call: active Mega plan, daily limit and remaining quota 150000; zero lineup calls.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38960293874",
+      "grain": "provider_status_preflight",
+      "temporal_class": "OBSERVED_AT",
+      "artifact": "reports/evidence/mission-027-status-run-38960293874-public-receipt.json",
+      "hash": "309c985bf979d2839a8c5bdba20ff3715473510d2fb4c1c5b85e2b1d42288f48",
+      "code_revision": "e34c859e19f028ab7e5040cb7a91d71c000f2cef",
+      "execution_id": "38960293874",
+      "scientific_lineage_id": "NOT_APPLICABLE_PREFLIGHT",
+      "dataset_lineage_id": "api-football-status-20261016T201117Z",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ],
+      "limitations": [
+        "Provider facts at the observation time; independent Claude review pending."
+      ]
+    },
+    {
+      "claim_id": "OPS.MISSION027.PROGRESS.003",
+      "claim": "Read-only progress run 38966634425 observed 208 reserved target IDs at 2026-10-16T21:04:33Z, with zero provider requests, raw payload reads and R2 writes. These are reservation counts, not completed compositions.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38966634425",
+      "grain": "reservation_snapshot",
+      "temporal_class": "OBSERVED_AT",
+      "artifact": "reports/evidence/mission-027-progress-run-38966634425-public-receipt.json",
+      "hash": "bf4d82dbbd977a6dc2f8696058e02977974e87221b9733d3ba16a3465e63e592",
+      "code_revision": "ee4586da160064e4497e95a624232073ca7f87fa",
+      "execution_id": "38966634425",
+      "scientific_lineage_id": "NOT_APPLICABLE_OPERATIONAL_PROGRESS",
+      "dataset_lineage_id": "mission027-reservations",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "OPS.MISSION027.LEGACY_AUDIT.004",
+      "claim": "Read-only Actions audit 38969245508 observed 257 historical reservations: 256 documented API calls from source 8d2834223ae3b347c2555839fc46bc5aed105a31 and fixture 592752 without receipt or version. The latter bounds an additional unknown call to one and must never be retried. Audit issued no provider request, raw-payload read or R2 write.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38969245508",
+      "grain": "legacy_receipt_metadata",
+      "temporal_class": "OBSERVED_AT",
+      "artifact": "reports/evidence/mission-027-legacy-audit-run-38969245508-public-receipt.json",
+      "hash": "dfbbb05ace628196e3d3c5847afe7cb205ddfc6c7bc87e6d1531393524ad74a6",
+      "code_revision": "114d67de25247daf9c67aa33c7c885145e2646f5",
+      "execution_id": "38969245508",
+      "scientific_lineage_id": "NOT_APPLICABLE_OPERATIONAL_AUDIT",
+      "dataset_lineage_id": "mission027-legacy-receipts",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "OPS.MISSION027.PROGRESS.005",
+      "claim": "Read-only Actions run 38971717265 observed 1300 reserved whitelist IDs at 2026-10-16T21:48:49.759589Z. It issued zero provider calls, raw payload reads and R2 writes. The first Premier-League2020 partition metadata documents 256 old and 123 current-source calls, plus the same unknown reservation 592752. Reservation counts do not prove lineup quality.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38971717265",
+      "grain": "reservation_snapshot",
+      "temporal_class": "OBSERVED_AT",
+      "artifact": "reports/evidence/mission-027-progress-run-38971717265-public-receipt.json",
+      "hash": "7b68c200f5f21214ed422ca8fdf06cc5ef8b868f0c0c61209ba851d3e8dfe08f",
+      "code_revision": "114d67de25247daf9c67aa33c7c885145e2646f5",
+      "execution_id": "38971717265",
+      "scientific_lineage_id": "NOT_APPLICABLE_OPERATIONAL_PROGRESS",
+      "dataset_lineage_id": "mission027-reservations",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "OPS.MISSION027.PROGRESS.006",
+      "claim": "Read-only Actions run 38973879550 observed 2452 reserved whitelist IDs at 2026-10-16T22:09:35.406167Z. Provider calls, raw-payload reads and R2 writes are all zero. Reservation counts are not verified complete compositions. The first Premier-League2020 receipt audit retains the same 256 old plus 123 current calls and unknown fixture 592752.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38973879550",
+      "grain": "reservation_snapshot",
+      "temporal_class": "OBSERVED_AT",
+      "artifact": "reports/evidence/mission-027-progress-run-38973879550-public-receipt.json",
+      "hash": "49cb961b1e6de3abd2552593bc7c7c9e4cc09a3dab8132740d720b9d15be1919",
+      "code_revision": "f3cf3e9127aa156109bdc791c1da7a80053e8616",
+      "execution_id": "38973879550",
+      "scientific_lineage_id": "NOT_APPLICABLE_OPERATIONAL_PROGRESS",
+      "dataset_lineage_id": "mission027-reservations",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "OPS.MISSION027.PROGRESS.007",
+      "claim": "Read-only Actions run 38976058727 observed 3611 reserved whitelist IDs at 2026-10-16T22:31:00.427297Z. It made zero provider calls, raw-payload reads and R2 writes. Reservation counts do not prove complete lineups. The first Premier-League2020 metadata still documents 256 retired-source and 123 current-source calls plus unknown fixture 592752.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38976058727",
+      "grain": "reservation_snapshot",
+      "temporal_class": "OBSERVED_AT",
+      "artifact": "reports/evidence/mission-027-progress-run-38976058727-public-receipt.json",
+      "hash": "29ab3aa193fd1933074eb422ccc0135d36b072d10a9a07c3d55447186e4b9bfd",
+      "code_revision": "f3cf3e9127aa156109bdc791c1da7a80053e8616",
+      "execution_id": "38976058727",
+      "scientific_lineage_id": "NOT_APPLICABLE_OPERATIONAL_PROGRESS",
+      "dataset_lineage_id": "mission027-reservations",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "OPS.MISSION027.PROGRESS.008",
+      "claim": "Read-only Actions run 38978084593 observed 4747 reserved whitelist IDs at 2026-10-16T22:51:01.549330+00:00. It made zero provider calls, raw-payload reads and R2 writes. Reservations do not prove complete lineups. First Premier-League2020 metadata retains the same 256 retired-source and 123 current-source calls plus unknown fixture 592752.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38978084593",
+      "grain": "reservation_snapshot",
+      "temporal_class": "OBSERVED_AT",
+      "artifact": "reports/evidence/mission-027-progress-run-38978084593-public-receipt.json",
+      "hash": "d6b9a6792cca64a2429e1a6605db7f7baa140beecfddbbeb3dfa6a167228d315",
+      "code_revision": "f3cf3e9127aa156109bdc791c1da7a80053e8616",
+      "execution_id": "38978084593",
+      "scientific_lineage_id": "NOT_APPLICABLE_OPERATIONAL_PROGRESS",
+      "dataset_lineage_id": "mission027-reservations",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "DATA.MISSION027.BUNDESLIGA.009",
+      "claim": "Actions worker 38969555058 completed 1529 unique Bundesliga lineup calls for seasons2020..2024. Offline ParquetFile verification of all five persisted files confirms all 1529 fixtures have two different teams with formation and eleven distinct starters, with matching file hashes, row counts and target memberships. Provider quota header snapshot is144482; no verification provider call. The Git receipt only replaces runner-local paths with relative paths and pins the exact original receipt hash/R2 key.",
+      "scope": "MISSION_027_PHASE_1_BUNDESLIGA",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38969555058",
+      "grain": "fixture_lineup_pair",
+      "temporal_class": "POST_MATCH_ONLY",
+      "artifact": "reports/evidence/mission-027-lineups-run-38969555058-public-receipt.json",
+      "hash": "aea72f5aa5730591c7e0c5ed47b7025f8fd6d5d304bbdf0350e97493b4232cd3",
+      "code_revision": "114d67de25247daf9c67aa33c7c885145e2646f5",
+      "execution_id": "38969555058",
+      "scientific_lineage_id": "NOT_APPLICABLE_COLLECTION_QUALITY",
+      "dataset_lineage_id": "mission027-lineups-Bundesliga-2020-2024",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "OPS.MISSION027.PROGRESS.010",
+      "claim": "Read-only Actions run 38980015091 observed 5810 reserved whitelist IDs at 2026-10-16T23:11:34.119347+00:00. It made zero provider calls, raw-payload reads and R2 writes. Reservations do not prove complete lineups. First Premier-League2020 metadata retains the same 256 retired-source and 123 current-source calls plus unknown fixture 592752.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38980015091",
+      "grain": "reservation_snapshot",
+      "temporal_class": "OBSERVED_AT",
+      "artifact": "reports/evidence/mission-027-progress-run-38980015091-public-receipt.json",
+      "hash": "939485222c9bdbb50cc5249c6b8b759a2a1e1dd1018a3d6b7e9a238e59c3f022",
+      "code_revision": "48a93765ca63122e1c32bd7b94f4eaad8e72073d",
+      "execution_id": "38980015091",
+      "scientific_lineage_id": "NOT_APPLICABLE_OPERATIONAL_PROGRESS",
+      "dataset_lineage_id": "mission027-reservations",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "DATA.MISSION027.SERIE_A.011",
+      "claim": "Actions worker38969551592 completed1899 unique Serie-A lineup requests for2020..2024. Offline verification reads all five Parquet files, matches hashes/row counts/target IDs/season/POST_MATCH_ONLY, and confirms all1899 fixtures have two teams with formation and eleven distinct starters. Final header quota snapshot144007. Exact source receipt is pinned by its hash and R2 key in the sanitized Git copy. No verification provider call.",
+      "scope": "MISSION_027_PHASE_1_SERIE_A",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38969551592",
+      "grain": "fixture_lineup_pair",
+      "temporal_class": "POST_MATCH_ONLY",
+      "artifact": "reports/evidence/mission-027-lineups-run-38969551592-public-receipt.json",
+      "hash": "3799d8f742ccd7ccd4b3d37c881d0f7d6f59567d297b6bee0a688f54ffcc03f7",
+      "code_revision": "114d67de25247daf9c67aa33c7c885145e2646f5",
+      "execution_id": "38969551592",
+      "scientific_lineage_id": "NOT_APPLICABLE_COLLECTION_QUALITY",
+      "dataset_lineage_id": "mission027-lineups-Serie-A-2020-2024",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "OPS.MISSION027.CANCELLED_QUEUE.012",
+      "claim": "Continuation runs38981113096 and38981116420 at source876c9933ab1de942485c2331bb1489ae1d0c3919 were cancelled pending with zero jobs each and therefore zero provider requests. This replaces unexecuted code after an offline next-day quota-reset regression was found; original active workers were not cancelled.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38981113096",
+      "grain": "pending_run_cancellation",
+      "temporal_class": "OBSERVED_AT",
+      "artifact": "reports/evidence/mission-027-cancelled-continuations-public-receipt.json",
+      "hash": "0e304c5771b5fe6edd0f7a6c667017854e2daa2cee54aa927bfcd0dab39fbbaf",
+      "code_revision": "876c9933ab1de942485c2331bb1489ae1d0c3919",
+      "execution_id": "38981113096,38981116420",
+      "scientific_lineage_id": "NOT_APPLICABLE_OPERATIONAL_CONTROL",
+      "dataset_lineage_id": "mission027-continuation-queue",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "OPS.MISSION027.PROGRESS.013",
+      "claim": "Read-only Actions run 38981570282 observed 6272 reserved whitelist IDs at 2026-10-16T23:28:51.597414+00:00. It made zero provider calls, raw-payload reads and R2 writes. Reservations do not prove complete lineups. Retired legacy-call evidence is reused from OPS.MISSION027.LEGACY_AUDIT.004; this snapshot does not re-read receipt metadata.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38981570282",
+      "grain": "reservation_snapshot",
+      "temporal_class": "OBSERVED_AT",
+      "artifact": "reports/evidence/mission-027-progress-run-38981570282-public-receipt.json",
+      "hash": "3567b1244954c9aa57dae9faf8980ae6d6a56ac380743defc9a3efa4e0214c79",
+      "code_revision": "54b45b01ff300eb03c766edf3226becf5e853130",
+      "execution_id": "38981570282",
+      "scientific_lineage_id": "NOT_APPLICABLE_OPERATIONAL_PROGRESS",
+      "dataset_lineage_id": "mission027-reservations",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "OPS.MISSION027.PROGRESS.014",
+      "claim": "Read-only Actions run 38982636977 observed 6556 reserved whitelist IDs at 2026-10-16T23:41:11.845310+00:00. It made zero provider calls, raw-payload reads and R2 writes. Reservations do not prove complete lineups. Retired legacy-call evidence is reused from OPS.MISSION027.LEGACY_AUDIT.004; this snapshot does not re-read receipt metadata.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38982636977",
+      "grain": "reservation_snapshot",
+      "temporal_class": "OBSERVED_AT",
+      "artifact": "reports/evidence/mission-027-progress-run-38982636977-public-receipt.json",
+      "hash": "5aa0fdae5765eb8f28683739ed3d93c130526e53d17391626e2128f11b640720",
+      "code_revision": "54b45b01ff300eb03c766edf3226becf5e853130",
+      "execution_id": "38982636977",
+      "scientific_lineage_id": "NOT_APPLICABLE_OPERATIONAL_PROGRESS",
+      "dataset_lineage_id": "mission027-reservations",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "OPS.MISSION027.INITIAL_ATTEMPTS.015",
+      "claim": "The four initial workers at114d67d ended with6725 documented HTTP transport attempts: PL1621, LaLiga1676, Serie-A1899, Bundesliga1529. Their distinct target counters match. PL/LaLiga produced partial outputs; adding the256 documented retired requests gives6981 attempts, with at most one additional unconfirmed legacy call. The two continuations are executing; final Parquet acceptance is still pending.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38969545850",
+      "grain": "request_attempt_accounting",
+      "temporal_class": "OBSERVED_AT",
+      "artifact": "reports/evidence/mission-027-initial-workers-public-receipt.json",
+      "hash": "fd4d63cfd15a7bcaa3c492150009e90a9a550c70f66ac71776578538e0fc0f40",
+      "code_revision": "114d67de25247daf9c67aa33c7c885145e2646f5",
+      "execution_id": "38969545850,38969548505,38969551592,38969555058",
+      "scientific_lineage_id": "NOT_APPLICABLE_OPERATIONAL_ACCOUNTING",
+      "dataset_lineage_id": "mission027-initial-workers",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "DATA.MISSION027.PREMIER_LEAGUE.016",
+      "claim": "Premier-League continuation38981565095 completed with21 new HTTP attempts and no new/status. Offline verification of its five final Parquet files confirms1897/1900 complete fixtures,1898with rows, missing592752and1208381, incomplete868231. Earlier completed partition bytes remain unchanged. Final quota controller state149942. The two missing fixtures are never retried.",
+      "scope": "MISSION_027_PHASE_1_PREMIER_LEAGUE",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38981565095",
+      "grain": "fixture_lineup_pair",
+      "temporal_class": "POST_MATCH_ONLY",
+      "artifact": "reports/evidence/mission-027-lineups-run-38981565095-public-receipt.json",
+      "hash": "439812161c8fb95f234ea2018e1918a9876f402ae9ba6377f520f8bb3b0e7401",
+      "code_revision": "54b45b01ff300eb03c766edf3226becf5e853130",
+      "execution_id": "38981565095",
+      "scientific_lineage_id": "NOT_APPLICABLE_COLLECTION_QUALITY",
+      "dataset_lineage_id": "mission027-lineups-Premier-League-2020-2024",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "DATA.MISSION027.PHASE1.017",
+      "claim": "All20persisted Parquet files verify7225/7228complete fixtures(99.9584947426674%),7226with rows,missing592752/1208381and incomplete868231. All6worker counters plus256legacy receipts document7226distinct HTTP attempts, bounded by7227with the one unconfirmed legacy call; no duplicate or new/status. All28partition attestations and6artifact ZIP digests match. Last spending-run quota149766, minimum reported spending-run final state143019. Verification makes no provider or R2request.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/runs/38981567739",
+      "grain": "fixture_lineup_pair",
+      "temporal_class": "POST_MATCH_ONLY",
+      "artifact": "reports/evidence/mission-027-phase1-verification-public-receipt.json",
+      "hash": "a167f7a722eb3badcc912d958aeb8abc7b0b3a57502c4f660a5bcefdc663a42f",
+      "code_revision": "54b45b01ff300eb03c766edf3226becf5e853130",
+      "execution_id": "38969545850,38969548505,38969551592,38969555058,38981565095,38981567739",
+      "scientific_lineage_id": "NOT_APPLICABLE_COLLECTION_QUALITY",
+      "dataset_lineage_id": "mission027-lineups-2020-2024-4e471c16",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "DATA.MISSION027.PUBLICATION.018",
+      "claim": "Verified normalized lineup data is published on historical-data atf87adb9d32d498d873e1095b2a1a8d42c4bd7862, parentc800d69f976103177588613d58217345b4e4cf7c. Git compare confirms exactly20added authorized Parquet paths. No existing file is overwritten; the previous tree is preserved opaquely, without reading2025or odds blobs. Publication pins the exact automated verification receipt hash.",
+      "scope": "MISSION_027_PHASE_1",
+      "source": "https://github.com/dddur75/robin-stades-ng/commit/f87adb9d32d498d873e1095b2a1a8d42c4bd7862",
+      "grain": "normalized_parquet_partition",
+      "temporal_class": "POST_MATCH_ONLY",
+      "artifact": "reports/evidence/mission-027-data-publication-public-receipt.json",
+      "hash": "0d9f004963d35381c3db26ffa9716475497c7e5f49d8370fd7e71e7cc49b8a24",
+      "code_revision": "54b45b01ff300eb03c766edf3226becf5e853130",
+      "execution_id": "git-data-api-f87adb9d",
+      "scientific_lineage_id": "NOT_APPLICABLE_DATA_PUBLICATION",
+      "dataset_lineage_id": "mission027-lineups-2020-2024-4e471c16",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "OPS.MISSION027.PHASE2_BLOCK.019",
+      "claim": "Current mainaa92e7a still runs the lineup workflow with shared800/day API budget and unfiltered SQL/R2 restoration. Workflow321915843 isdisabled_manually,last update2026-08-09; observed run31322534010was cancelled without jobs. This mission makes zero phase2provider calls and does not enable that unsafe main workflow. A scoped2026/60-day correction, independent review and main integration are prerequisites to scheduled activation.",
+      "scope": "MISSION_027_PHASE_2",
+      "source": "https://github.com/dddur75/robin-stades-ng/actions/workflows/prospective-lineup-capture.yml",
+      "grain": "workflow_configuration_preflight",
+      "temporal_class": "OBSERVED_AT",
+      "artifact": "reports/evidence/mission-027-phase2-preflight-public-receipt.json",
+      "hash": "706fd27cbec8b6ea99178682e3ac4c5faa2114c0811a1a91be125f2c65d59d0a",
+      "code_revision": "aa92e7aea792cd5a513c5518f6e2b92b801fa3cb",
+      "execution_id": "read-only-github-and-source-preflight",
+      "scientific_lineage_id": "NOT_APPLICABLE_OPERATIONAL_BLOCK",
+      "dataset_lineage_id": "mission027-phase2-preflight",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "DATA.MISSION027.REVIEW_CORRECTIONS.V1",
+      "claim": "The actual mission027 entrypoint rejects8000/8001calls and5000/4999remaining withMISSION_BUDGET_REACHED, while7999calls/5001remaining reaches the blocked synthetic collector. Each guard removal is detected. Existing verified quota states establish143019 as the low point; the clarified final receipt preserves original call counts and all twenty published Parquet.",
+      "scope": "QG028_REMEDIATION_AND_QG027_REVIEW",
+      "source": "Explicit user instruction, local verification and existing immutable receipts",
+      "grain": "engineering_verification",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission-027-phase1-verification-v3-public-receipt.json",
+      "hash": "1ff16a9e9346c3ed0127df23ed065b276739a3f050b765777ebeeb7f23ba4800",
+      "code_revision": "precommit-projection:4691e5c58d0d72957fbd46c16ecaf217efbe3578b9bdaa1c6667a1f9602f8e3c",
+      "artifact_hashes": {
+        "scripts/run_mission027_lineups.py": "659c213578018c3be8a08072f56c28244e0d044b140211a5da545d4b8a9611bf",
+        "tests/historical_deep/test_mission027_lineups.py": "216fca9d024fe18d85701648baec0442084b2e00c5b66c636089eef6365aa4e4",
+        ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "717ea5619e2983bc254aaf652e62fa52a405817574ddf96b12d761f18a865858",
+        "tests/historical_deep/test_workflow_contracts.py": "af5d8f2b192717e360dc0c829d736873e0372df92a2a4407a1f7f4f6c753fb73"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 4,
+      "engineering_projection_sha256": "4691e5c58d0d72957fbd46c16ecaf217efbe3578b9bdaa1c6667a1f9602f8e3c",
+      "execution_id": "local-review-correction-20261017",
+      "scientific_lineage_id": "NOT_APPLICABLE_REVIEW_CORRECTION",
+      "dataset_lineage_id": "REUSED_EXISTING_RECEIPTS_NO_NEW_COLLECTION",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "DATA.MISSION027.REVIEW_CORRECTIONS.V2",
+      "claim": "The two budget guards are covered through the real entrypoint, including8000calls and5000remaining, with a positive near-boundary control. The clarified receipt records quota_low143019.350domain/Council tests pass, plus12mission tests after the synthetic credential-fixture syntax correction. No new provider call, workflow edit or published Parquet change.",
+      "scope": "QG028_REMEDIATION_AND_QG027_REVIEW",
+      "source": "Explicit user instruction, local verification and existing immutable receipts",
+      "grain": "engineering_verification",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission-027-phase1-verification-v3-public-receipt.json",
+      "hash": "1ff16a9e9346c3ed0127df23ed065b276739a3f050b765777ebeeb7f23ba4800",
+      "code_revision": "precommit-projection:3cd50e1a77842dbdd327433435b4c40a14f1a8901238fb305dd2714b048c8393",
+      "artifact_hashes": {
+        "scripts/run_mission027_lineups.py": "659c213578018c3be8a08072f56c28244e0d044b140211a5da545d4b8a9611bf",
+        "tests/historical_deep/test_mission027_lineups.py": "99b1987cba4bc2fc54550c008ca4f9c932236da76d2ef15f158c1480bebf8370",
+        ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "717ea5619e2983bc254aaf652e62fa52a405817574ddf96b12d761f18a865858",
+        "tests/historical_deep/test_workflow_contracts.py": "af5d8f2b192717e360dc0c829d736873e0372df92a2a4407a1f7f4f6c753fb73"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 4,
+      "engineering_projection_sha256": "3cd50e1a77842dbdd327433435b4c40a14f1a8901238fb305dd2714b048c8393",
+      "execution_id": "local-review-correction-20261017",
+      "scientific_lineage_id": "NOT_APPLICABLE_REVIEW_CORRECTION",
+      "dataset_lineage_id": "REUSED_EXISTING_RECEIPTS_NO_NEW_COLLECTION",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "ENGINEERING.MISSION027.MAIN_MERGE.V1",
+      "claim": "Integrate current main by ordinary merge while retaining both mission027 and mission028 workflow modes, the incoming canonical audit prefix and every divergent original027 row in an exact archive. Keep the accepted027 collector AST, frozen inputs and immutable receipts unchanged.",
+      "scope": "MISSION027_028_REVIEW_CORRECTIONS",
+      "source": "User-requested Claude review corrections and local verification",
+      "grain": "engineering_verification",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission027-main-merge-6790e599-public-receipt.json",
+      "hash": "a3733aa153cc117da3df8179f1a96eceadfcf3eb5d51b0173213ee84f26d68fd",
+      "code_revision": "precommit-projection:47b72cc103aa39695fdeb124380edd2468076f659f0fa53139cce59ffe3411f6",
+      "artifact_hashes": {
+        ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "da955bb9183551de4a7820d03b14e284c624234c6cd83d2878e36e811c931114",
+        "scripts/run_mission027_lineups.py": "82b4f57bf8f993397c3dbf8bcbab60ae81de99fd280c75dd08bd857b68343ed4",
+        "tests/historical_deep/test_mission027_lineups.py": "99b1987cba4bc2fc54550c008ca4f9c932236da76d2ef15f158c1480bebf8370",
+        "tests/historical_deep/test_workflow_contracts.py": "4a4f159198049ca70bbf1efadbe20ab75c35f9ede0927e1bffa518216d4d63ac"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 4,
+      "engineering_projection_sha256": "47b72cc103aa39695fdeb124380edd2468076f659f0fa53139cce59ffe3411f6",
+      "execution_id": "local-review-RCV3-20261017-027-MAIN-MERGE-001",
+      "dataset_lineage_id": "FROZEN_POPULATIONS_UNCHANGED",
+      "scientific_lineage_id": "NOT_APPLICABLE_ENGINEERING_REVIEW",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "ENGINEERING.MISSION027.MAIN_MERGE.V2",
+      "claim": "Integrate main again after Quality merged105; keep027 collector, tests and workflow byte-identical to the previously tested merge. Preserve the incoming audit prefix and archive the one divergent original merge record and graph links unchanged. Prepare104 to depend on this reviewed027 base so71 changes can integrate in order.",
+      "scope": "MISSION027_028_REVIEW_CORRECTIONS",
+      "source": "User-requested Claude review corrections and local verification",
+      "grain": "engineering_verification",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission027-main-after-quality105-public-receipt.json",
+      "hash": "d0df9ecccf03a0814a48594fc23c3d23a5f375a0c0908c1b09bfe30b5c59e974",
+      "code_revision": "precommit-projection:47b72cc103aa39695fdeb124380edd2468076f659f0fa53139cce59ffe3411f6",
+      "artifact_hashes": {
+        ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "da955bb9183551de4a7820d03b14e284c624234c6cd83d2878e36e811c931114",
+        "scripts/run_mission027_lineups.py": "82b4f57bf8f993397c3dbf8bcbab60ae81de99fd280c75dd08bd857b68343ed4",
+        "tests/historical_deep/test_mission027_lineups.py": "99b1987cba4bc2fc54550c008ca4f9c932236da76d2ef15f158c1480bebf8370",
+        "tests/historical_deep/test_workflow_contracts.py": "4a4f159198049ca70bbf1efadbe20ab75c35f9ede0927e1bffa518216d4d63ac"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 4,
+      "engineering_projection_sha256": "47b72cc103aa39695fdeb124380edd2468076f659f0fa53139cce59ffe3411f6",
+      "execution_id": "local-review-RCV3-20261017-027-MAIN-MERGE-002",
+      "dataset_lineage_id": "FROZEN_POPULATIONS_UNCHANGED",
+      "scientific_lineage_id": "NOT_APPLICABLE_ENGINEERING_REVIEW",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
       "claim_id": "DATA.MISSION028.DETAILS.PREPARATION.V2",
       "claim": "361 local historical and Council tests pass. The immutable60437-id mapping includes the true Argentine cup league; both Parquet families preserve it. Atomic UTC slots, irreversible mapping binding and once-only reservations bound every future run. No details were collected during preparation.",
       "scope": "MISSION028_PHASE1_PREPARATION",
@@ -11667,6 +12127,36 @@
       "artifact_path_count": 6,
       "engineering_projection_sha256": "e0c99a316e381b7476f8f94dbe393fb8c181c6db2ba4b7e6cfccbe714cd35346",
       "execution_id": "local-review-RCV3-20261017-028-PHASE2-REVIEW-001",
+      "dataset_lineage_id": "FROZEN_POPULATIONS_UNCHANGED",
+      "scientific_lineage_id": "NOT_APPLICABLE_ENGINEERING_REVIEW",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "ENGINEERING.MISSION028.PHASE2_BASE.V1",
+      "claim": "Stack corrected104 on updated102 after Quality merged105, so027 and028 changes to workflow71 share one integration order. Preserve both sets of inputs and isolate historical,027,028-census and028-detail modes. Retain the inherited read permissions, shared budget and all mapping regression cases; no new write permission.",
+      "scope": "MISSION027_028_REVIEW_CORRECTIONS",
+      "source": "User-requested Claude review corrections and local verification",
+      "grain": "engineering_verification",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission028-phase2-on027-public-receipt.json",
+      "hash": "c0cdb0d47379bd04c73af56e28b107dafb54cd668c69634da3b3090705c5184e",
+      "code_revision": "precommit-projection:7c094b257c8a20ab1761c79016906a2378aa4b27a69a033583ad021d3d8e9dae",
+      "artifact_hashes": {
+        ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "bfc78e4afcde37cc594d232d8d285a018aad03a71f65f888cbbd903cec57d193",
+        "scripts/mission028_budget.py": "d43ee6e7f90fba5bb7be789e126246f5713dd0d0435e3284599bdf7cb7e19bb6",
+        "scripts/run_mission028.py": "f2478a780bbbb2c2fd265da53be1ca3746ed8d098edba4f36cf6d2fbf1f8b520",
+        "scripts/run_mission028_details.py": "c574c4933dcee4a39d64a22226341e53322d1b0f234b79136715a863d637ddf3",
+        "tests/historical_deep/test_mission028.py": "ebb9ea129738ba7964f60a8d4b3385382d3ac56117b0db718b18840c60c0c0f9",
+        "tests/historical_deep/test_mission028_details.py": "cf80ea1e06746b00378e9ec277e4d7efff318434460cf8f1e9defd29241ecf42"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 6,
+      "engineering_projection_sha256": "7c094b257c8a20ab1761c79016906a2378aa4b27a69a033583ad021d3d8e9dae",
+      "execution_id": "local-review-RCV3-20261017-028-PHASE2-BASE-001",
       "dataset_lineage_id": "FROZEN_POPULATIONS_UNCHANGED",
       "scientific_lineage_id": "NOT_APPLICABLE_ENGINEERING_REVIEW",
       "status": "PARTIAL",
@@ -11813,6 +12303,36 @@
       "artifact_path_count": 6,
       "engineering_projection_sha256": "480da8a044d87e00a4fb10aed1ee99dfa811d5261e39fd259684554c1752a016",
       "execution_id": "local-review-RCV3-20261017-028-PHASE3-REVIEW-001",
+      "dataset_lineage_id": "FROZEN_POPULATIONS_UNCHANGED",
+      "scientific_lineage_id": "NOT_APPLICABLE_ENGINEERING_REVIEW",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "ENGINEERING.MISSION028.PHASE3_BASE.V1",
+      "claim": "Integrate104 stacked on updated027 so the single workflow71 keeps all inherited read permissions and concurrency. Explicitly exclude027 artifact download, lineup collection and observation on schedule as well as historical bundles/census. KeepREADY-only details, clean stop states, shared budgets and removal of every GitHub continuation component.",
+      "scope": "MISSION027_028_REVIEW_CORRECTIONS",
+      "source": "User-requested Claude review corrections and local verification",
+      "grain": "engineering_verification",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission028-phase3-on027-public-receipt.json",
+      "hash": "c21e9af17d29675db09eac58bec59c518ed0782136389ea3fad5cac0727e90f4",
+      "code_revision": "precommit-projection:ce39b5725d877359a3df09a56c92715587173218312526890ee1cd63a394175b",
+      "artifact_hashes": {
+        ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "99271656e45395540b00291a964006b15370a057449b0fae8ea8536cc0a2a04d",
+        "scripts/mission028_resume.py": "2af4d1331a069bfa929c4d7a351182f2a0128d732006cf112580c425d1d02e24",
+        "scripts/run_mission028_details.py": "33b11e4879916dd10217ca627e1aaee34a2f44b7ffc4bc477d6441aad14edd85",
+        "tests/historical_deep/test_mission028_details.py": "01bd719b8076837c8a54fe7cc066b6cb94e31a2424bd7b34c225a8f1814a3695",
+        "tests/historical_deep/test_mission028_resume.py": "e65e72dd6ca360c8c541af7638fae1834504d60326aae10d20397248129bcce1",
+        "tests/historical_deep/test_workflow_contracts.py": "230cfce63076abd06d0a0064c52133089f1afbd8269a82636ac502384ca8022b"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 6,
+      "engineering_projection_sha256": "ce39b5725d877359a3df09a56c92715587173218312526890ee1cd63a394175b",
+      "execution_id": "local-review-RCV3-20261017-028-PHASE3-BASE-001",
       "dataset_lineage_id": "FROZEN_POPULATIONS_UNCHANGED",
       "scientific_lineage_id": "NOT_APPLICABLE_ENGINEERING_REVIEW",
       "status": "PARTIAL",
@@ -12177,16 +12697,16 @@
       "ledger_record_hash": "335c703fd3c4bf70627098b480f49bbdd7fd2f690cf29670d18266e809583e9a"
     },
     {
-      "decision_id": "RCV3-20261017-028-STACK-PR104-001",
-      "ledger_record_hash": "5e8604e0311955e214c8cfce316725bfddc32c13224f3b3a90844282bdccdc0f"
+      "decision_id": "RCV3-20261017-027-MAIN-MERGE-002",
+      "ledger_record_hash": "a3397ece217bc49600617d2c204afe5e3bc00b825e90a695cb185f1fe7af0165"
     },
     {
-      "decision_id": "RCV3-20261017-028-PHASE2-REVIEW-001",
-      "ledger_record_hash": "6985ac63f167e4deba461af976c53ed89f8ec8d6c92ee40efc59530fa8d30644"
+      "decision_id": "RCV3-20261017-028-PHASE2-BASE-001",
+      "ledger_record_hash": "4983941c5b72a2b7f8b5354dd32cbcd79fc70f7b5ca98946cab33e29c617a9b4"
     },
     {
-      "decision_id": "RCV3-20261017-028-PHASE3-REVIEW-001",
-      "ledger_record_hash": "135226e84be7403b857c7555da0d01cb7bc71ca57607f2092f1d1234cea47b27"
+      "decision_id": "RCV3-20261017-028-PHASE3-BASE-001",
+      "ledger_record_hash": "f205c39811286c31822e6c024c06052cdf58c0a4dcc007fae4fcbc897dbe6b3f"
     }
   ],
   "edges":[
@@ -13424,29 +13944,22 @@
     },
     {
       "edge_id": "EDGE.1197",
-      "from_claim_id": "ENGINEERING.MISSION028.STACK.PR104.SYNC.001",
-      "to_decision_id": "RCV3-20261017-028-STACK-PR104-001",
+      "from_claim_id": "ENGINEERING.MISSION027.MAIN_MERGE.V2",
+      "to_decision_id": "RCV3-20261017-027-MAIN-MERGE-002",
       "relation": "SUPPORTS",
       "status": "RECORDED"
     },
     {
       "edge_id": "EDGE.1198",
-      "from_claim_id": "DATA.MISSION028.DETAILS.PREPARATION.V2",
-      "to_decision_id": "RCV3-20261017-028-STACK-PR104-001",
+      "from_claim_id": "ENGINEERING.MISSION028.PHASE2_BASE.V1",
+      "to_decision_id": "RCV3-20261017-028-PHASE2-BASE-001",
       "relation": "SUPPORTS",
       "status": "RECORDED"
     },
     {
       "edge_id": "EDGE.1199",
-      "from_claim_id": "ENGINEERING.MISSION028.PHASE2_REVIEW.V1",
-      "to_decision_id": "RCV3-20261017-028-PHASE2-REVIEW-001",
-      "relation": "SUPPORTS",
-      "status": "RECORDED"
-    },
-    {
-      "edge_id": "EDGE.1200",
-      "from_claim_id": "ENGINEERING.MISSION028.PHASE3_REVIEW.V1",
-      "to_decision_id": "RCV3-20261017-028-PHASE3-REVIEW-001",
+      "from_claim_id": "ENGINEERING.MISSION028.PHASE3_BASE.V1",
+      "to_decision_id": "RCV3-20261017-028-PHASE3-BASE-001",
       "relation": "SUPPORTS",
       "status": "RECORDED"
     }

@@ -1,0 +1,66 @@
+{
+  "schema_version": "mission-027-lineups-public-receipt-v1",
+  "status": "PARTIAL",
+  "preflight_run_id": "38960293874",
+  "max_calls": 8000,
+  "daily_reserve": 5000,
+  "status_calls_new": 0,
+  "lineup_calls": 1621,
+  "distinct_matches_called": 1621,
+  "target_count": 1900,
+  "fixture_ids_sha256": "0c3ddaff721a9f2c4129ca0876121ab5a071f33468a9fada671542d7c3223134",
+  "complete_matches": 1876,
+  "matches_without_response": [
+    592752
+  ],
+  "uncertain_reservations": [
+    592752
+  ],
+  "partitions": [
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "rows": 758,
+      "inserted": 758,
+      "duplicates_avoided": 0,
+      "bytes": 480466,
+      "sha256": "9df742e7ca10656e32277ad9d3f80a8428449d30716a03c16b0e1ee0eadb69a3",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-027/projection/historical/parquet/competition=Premier-League/season=2020/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2021/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "rows": 760,
+      "inserted": 760,
+      "duplicates_avoided": 0,
+      "bytes": 519639,
+      "sha256": "d248e3622d79f448117bcb1aba1142c53fbf8c1efe25be571b03a710d5ad7156",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-027/projection/historical/parquet/competition=Premier-League/season=2021/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "rows": 760,
+      "inserted": 760,
+      "duplicates_avoided": 0,
+      "bytes": 517714,
+      "sha256": "707442fc4e6326f7570ce14eacfb73917f233c6767ee5a4c725fc5e1dc18ccf3",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-027/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2023/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "rows": 760,
+      "inserted": 760,
+      "duplicates_avoided": 0,
+      "bytes": 524927,
+      "sha256": "dcde9a8870992b91dc48b71b55b7e8a63c700f66ebcb954cc6816c0c7c4f69da",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-027/projection/historical/parquet/competition=Premier-League/season=2023/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet"
+    }
+  ],
+  "scope": "Premier-League",
+  "phase_target_count": 7228,
+  "phase_fixture_ids_sha256": "4e471c16b27b3ce5deaa8602795eb687f4e812975265d720c5697d4ce6bd288c",
+  "reason_class": "ProviderTransportError",
+  "quota_remaining": 143020,
+  "run_id": "38969545850",
+  "source_receipt_sha256": "c90f5421caacceac88beb48f120a3f8faa54bd3c5a8b27e78b6799b0c7c96f02",
+  "source_receipt_r2_key": "historical-deep-data/schema-v1/_control/mission-027/runs/38969545850/public-receipt.json",
+  "sanitization": "Only runner-local partition paths made relative; all counters, partition hashes and quota values preserved. Exact original receipt remains in the Actions artifact and R2."
+}

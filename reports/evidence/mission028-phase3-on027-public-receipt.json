@@ -1,0 +1,52 @@
+{
+  "schema_version": "mission028-phase3-on027-v1",
+  "status": "PARTIAL_PENDING_INDEPENDENT_REVIEW",
+  "source_head": "8c4b96a50343fb1bcf0e43e559d0ed44c77baae7",
+  "incoming_corrected104": "c8ca92c5cd3023ba9fefd45f0c0c6c789626b26c",
+  "code_lines_added_deleted": 283,
+  "targeted_tests": "395 passed in 15.54s",
+  "scheduled_empty_inputs_and_manual_modes_tested": true,
+  "all_historical_027_and_census_steps_skipped_on_schedule": true,
+  "permissions_inherited_unchanged": {
+    "actions": "read",
+    "contents": "read"
+  },
+  "concurrency_inherited_unchanged": true,
+  "only_changed_workflow": ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml",
+  "new_workflow_or_action": false,
+  "github_continuation_or_disable": false,
+  "collects_only_state": "READY",
+  "stop_states": [
+    "DONE",
+    "BUDGET",
+    "PAUSED",
+    "HOLD"
+  ],
+  "schedule_mutations": [
+    {
+      "name": "historical-schedule-guard",
+      "observed_summary": "1 failed in 0.06s",
+      "source_files_modified": false
+    },
+    {
+      "name": "census-schedule-guard",
+      "observed_summary": "1 failed in 0.06s",
+      "source_files_modified": false
+    },
+    {
+      "name": "ready-gate",
+      "observed_summary": "1 failed in 0.05s",
+      "source_files_modified": false
+    }
+  ],
+  "canonical_incoming_prefix_preserved": true,
+  "archived_old_suffix": "reports/council/mission028-phase3-before-8c4b96a5-ledger.jsonl",
+  "archived_old_suffix_sha256": "2c54e9c3375576c7ad44bf1fbce0011f19b3dddb34bb428575f0f0512f27a4bb",
+  "archived_old_graph": "reports/evidence/mission028-phase3-before-8c4b96a5-evidence.json",
+  "archived_old_graph_sha256": "4ae77f1264b064e6d42e280ba59416c9953a26c0033a52ba2b101091fc41a0d6",
+  "ruff": "passed",
+  "provider_calls_new": 0,
+  "r2_calls_new": 0,
+  "workflow_dispatches_new": 0,
+  "author_pr_merges": 0
+}

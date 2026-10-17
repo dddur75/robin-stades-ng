@@ -134,8 +134,7 @@ def preflight():
 def main():
     OUTPUT.mkdir(parents=True, exist_ok=True)
     worker, family = int(os.environ["MISSION028_WORKER"]), os.environ["MISSION028_FAMILY"]
-    receipt = dict(status="PARTIAL", worker=worker, family=family, calls=0, complete_matches=0,
-                   partitions=[], missing=[], source_sha256=DIGEST, daily_cap=70000, daily_reserve=5000)
+    receipt = dict(status="PARTIAL", worker=worker, family=family, calls=0, complete_matches=0, partitions=[], missing=[], source_sha256=DIGEST, daily_cap=70000, daily_reserve=5000)
     transport = store = quota = None
     try:
         require(worker in range(WORKERS) and family in ("lineups", "statistics"), "MISSION028_WORKER_OR_FAMILY_INVALID")
@@ -152,8 +151,7 @@ def main():
         require(proof.checked_at.date() == now.date() and timedelta(0) <= now - proof.checked_at < timedelta(minutes=110), "MISSION028_PREFLIGHT_EXPIRED", RuntimeError)
         transport = PacedTransport(min(midnight, proof.checked_at + timedelta(minutes=110), now + timedelta(minutes=95)))
         quota = QuotaController(proof)
-        client = ApiFootballDeepClient(api_key=os.environ["API_FOOTBALL_KEY"], quota=quota,
-                                      transport=transport, max_retries=0)
+        client = ApiFootballDeepClient(api_key=os.environ["API_FOOTBALL_KEY"], quota=quota, transport=transport, max_retries=0)
         collector = HistoricalDeepCollector(client, R2FirstRepository(store), source_commit=os.environ["GITHUB_SHA"])
         slots, groups = DaySlots(store, now), defaultdict(list)
         parquet = PartitionedParquetStore(OUTPUT / "historical/parquet")
@@ -175,13 +173,11 @@ def main():
                 if saved is not None:
                     records = projected[fixture]
                 else:
-                    request = dict(phase="mission028", competition=provider_by_fixture[fixture], season=season, family=family,
-                                   endpoint=f"/fixtures/{family}", params=dict(fixture=fixture))
+                    request = dict(phase="mission028", competition=provider_by_fixture[fixture], season=season, family=family, endpoint=f"/fixtures/{family}", params=dict(fixture=fixture))
                     call = once(collector, store, slots, request, datetime.now(UTC), quota.status.daily_remaining)
                     records = call.records if call else []
                     if call:
-                        rows.extend(normalize_records(f"fixtures/{family}", records, competition_id=provider_by_fixture[fixture],
-                            season=season, ingestion_run_id="mission-028", raw_payload_hash=call.payload_sha256,
+                        rows.extend(normalize_records(f"fixtures/{family}", records, competition_id=provider_by_fixture[fixture], season=season, ingestion_run_id="mission-028", raw_payload_hash=call.payload_sha256,
                             request_params=dict(fixture=fixture), observed_at=call.received_at))
                 receipt["complete_matches"] += int(complete(family, records))
                 if not complete(family, records):

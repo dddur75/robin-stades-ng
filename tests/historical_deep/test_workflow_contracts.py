@@ -216,11 +216,14 @@ def test_workflows_70_to_78_are_bounded_serialized_and_fail_closed() -> None:
     for number, path in PHASE_FILES.items():
         text, workflow = _load(path)
         expected_permissions = {"contents": "read"}
-        if number == 74:
+        if number in {71, 74}:
             expected_permissions["actions"] = "read"
         assert workflow["permissions"] == expected_permissions
         assert workflow["concurrency"] == {
-            "group": "${{ inputs.mission028_progress && 'mission-028-progress' || 'historical-deep-r2-state' }}" if number == 71 else "historical-deep-r2-state",
+            "group": (
+                "${{ inputs.mission028_progress && 'mission-028-progress' || inputs.progress_only && 'mission-027-progress' || inputs.lineups_only && format('mission-027-lineups-{0}', inputs.competition) || 'historical-deep-r2-state' }}"
+                if number == 71 else "historical-deep-r2-state"
+            ),
             "cancel-in-progress": False,
         }
         if number == 74:
@@ -251,7 +254,10 @@ def test_workflows_70_to_78_are_bounded_serialized_and_fail_closed() -> None:
             assert "API_FOOTBALL_KEY" not in text
             continue
         job = _only_job(workflow)
-        assert 90 <= int(str(job["timeout-minutes"])) <= 110
+        if number == 71:
+            assert job["timeout-minutes"] == "${{ inputs.lineups_only && 200 || 110 }}"
+        else:
+            assert 90 <= int(str(job["timeout-minutes"])) <= 110
         env = _mapping(job["env"])
         assert all(env.get(name) == value for name, value in SAFETY_ENV.items())
         assert "historical-state-persist" not in text
@@ -740,7 +746,10 @@ def test_workflow71_schedule_skips_historical_and_phase1_for_every_resume_state(
     details = next(s for s in steps if s.get("name") == "Mission 028 — détails par match")
     outcome = next(s for s in steps if s.get("id") == "outcome")
     upload = next(s for s in steps if s.get("uses") == "actions/upload-artifact@v4")
-    for step in (historical, census, outcome):
+    legacy027 = tuple(s for s in steps if str(s.get("name", "")).startswith("Mission 027")
+        or s.get("uses") == "actions/download-artifact@v4")
+    assert len(legacy027) == 3
+    for step in (historical, census, outcome, *legacy027):
         assert "github.event_name != 'schedule'" in str(step["if"])
     for state in ("READY", "DONE", "BUDGET", "PAUSED", "HOLD"):
         # schedule supplies no workflow inputs, even when a dispatch has defaults.
@@ -748,13 +757,15 @@ def test_workflow71_schedule_skips_historical_and_phase1_for_every_resume_state(
             "steps": SimpleNamespace(resume=SimpleNamespace(outputs=SimpleNamespace(state=state))),
             "always": lambda: True}
         for step, expected in [(historical, False), (census, False), (outcome, False),
-                               (details, state == "READY"), (upload, state == "READY")]:
+                               (details, state == "READY"), (upload, state == "READY"),
+                               *((step, False) for step in legacy027)]:
             expression = re.sub(r"!(?!=)", " not ", str(step["if"]).replace("&&", " and ").replace("||", " or "))
             assert bool(eval(expression, {"__builtins__": {}}, namespace)) == expected
     for mission, execute, family, expected in [(False, False, "none", (True, False, False)),
             (True, True, "none", (False, True, False)), (False, True, "lineups", (False, False, True))]:
         namespace.update(github=SimpleNamespace(event_name="workflow_dispatch"),
-            inputs=SimpleNamespace(mission028=mission, execute=execute, mission028_progress=False, details_family=family))
+            inputs=SimpleNamespace(mission028=mission, execute=execute, mission028_progress=False,
+                details_family=family, lineups_only=False, progress_only=False))
         for step, enabled in zip((historical, census, details), expected, strict=True):
             expression = re.sub(r"!(?!=)", " not ", str(step["if"]).replace("&&", " and ").replace("||", " or "))
             assert bool(eval(expression, {"__builtins__": {}}, namespace)) == enabled

@@ -14,7 +14,7 @@ DONE arrête la collecte, sans demander de permission de désactivation.
 
 Un déclenchement planifié ne lance ni les bundles historiques, ni la phase 1,
 ni la publication de leur décision provider. Les modes manuels conservent leurs
-conditions. Les permissions de 71 (`contents: read`) et son groupe de concurrence
+conditions. Les permissions de 71 (`contents: read`, `actions: read` déjà hérité de la 027) et son groupe de concurrence
 restent identiques à la base de la PR. La planification ne reçoit aucune clé
 fournisseur ; celle-ci est limitée à l’étape de détails effectivement autorisée.
 

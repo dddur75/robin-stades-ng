@@ -90,9 +90,9 @@ def test_resume_uses_only_workflow71_with_unchanged_read_permissions():
     workflow = yaml.safe_load(path.read_text())
     assert not Path(".github/workflows/mission028-daily.yml").exists()
     assert not Path(".github/actions/mission028-state").exists()
-    assert workflow["permissions"] == {"contents": "read"}
+    assert workflow["permissions"] == {"actions": "read", "contents": "read"}
     assert workflow["concurrency"] == {
-        "group": "${{ inputs.mission028_progress && 'mission-028-progress' || 'historical-deep-r2-state' }}",
+        "group": "${{ inputs.mission028_progress && 'mission-028-progress' || inputs.progress_only && 'mission-027-progress' || inputs.lineups_only && format('mission-027-lineups-{0}', inputs.competition) || 'historical-deep-r2-state' }}",
         "cancel-in-progress": False,
     }
     assert (workflow.get("on", workflow.get(True)))["schedule"] == [{"cron": "17 */2 * * *"}]
