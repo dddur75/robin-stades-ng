@@ -156,6 +156,13 @@ def test_every_known_migration_path_is_guarded_before_workload() -> None:
     assert GUARD in durable
     assert GUARD in historical
     for name in MIGRATION_PATHS:
+        if name == "prospective-lineup-capture.yml":
+            content = (WORKFLOW_ROOT / name).read_text(encoding="utf-8")
+            assert "DATABASE_URL" not in content
+            assert "check_database_revision.py" not in content
+            assert "run_mission027_capture.py capture-lineup" in content
+            assert "--estimate" in content and "--execute" in content
+            continue
         if name == "jalon11-operational-one-shot.yml":
             content = (WORKFLOW_ROOT / name).read_text(encoding="utf-8")
             assert "./.github/workflows/deep-feature-build.yml" in content
