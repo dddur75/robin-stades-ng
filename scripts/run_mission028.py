@@ -158,6 +158,7 @@ def main():
         if "--progress" in sys.argv:
             progress = dict(status="OBSERVED", provider_calls_new=0,
                 reserved_censuses=len(tuple(store.iter_keys(f"{PREFIX}/requests/"))),
+                reserved_details={f: len(tuple(store.iter_keys(f"{PREFIX}/details/{f}/"))) for f in ("lineups", "statistics")},
                 observed_at=datetime.now(UTC).isoformat())
             (OUTPUT / "progress.json").write_text(json.dumps(progress) + "\n")
             print(json.dumps(progress), flush=True)

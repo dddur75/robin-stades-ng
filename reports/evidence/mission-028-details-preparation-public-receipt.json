@@ -1,0 +1,13 @@
+{
+  "schema_version": "mission028-details-preparation-v1",
+  "status": "PREPARED_NOT_COLLECTED",
+  "targets": 60515,
+  "leagues": 33,
+  "league_seasons": 198,
+  "target_sha256": "8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+  "spec_sha256": "19aeb97fbcbaf16f6090ebf751c74f90801cff2a81ba61e4a019f5f38cde5c3a",
+  "provider_http_requests_new": 0,
+  "tests_passed": 240,
+  "code_lines_added_deleted": 375,
+  "review": "PENDING_CLAUDE"
+}

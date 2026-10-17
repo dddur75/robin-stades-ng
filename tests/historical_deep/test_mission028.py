@@ -125,3 +125,4 @@ def test_entrypoint_then_replay_uses_durable_cache_without_http(monkeypatch, tmp
     monkeypatch.setattr("sys.argv", ["run", "--progress"])
     assert run.main() == 0 and len(endpoints) == 7
     assert json.loads((tmp_path / "progress.json").read_text())["reserved_censuses"] == 6
+    assert json.loads((tmp_path / "progress.json").read_text())["reserved_details"] == {"lineups": 0, "statistics": 0}

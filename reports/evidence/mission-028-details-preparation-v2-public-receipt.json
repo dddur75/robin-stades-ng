@@ -1,0 +1,28 @@
+{
+  "schema_version": "mission028-details-preparation-v2",
+  "status": "PREPARED_NOT_COLLECTED",
+  "source_sha256": "8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+  "mapping_sha256": "07bd3dfd004f41ef13bfea1b4273fb2d76619fafb22d4fd5c2c94dfd9d0b3a17",
+  "fixture_ids_sha256": "0f2c4e0d6f783dfc3e5b304e4fad39eb3956ed35ed81029ae84cc64dffb65247",
+  "targets": 60437,
+  "calendar_calls_already_made": 200,
+  "provider_requests_new": 0,
+  "tests_passed": 361,
+  "code_lines_added_deleted": 400,
+  "global_cap": 122200,
+  "daily_cap": 70000,
+  "daily_details_slots": 69800,
+  "daily_calendar_allowance": 200,
+  "daily_reserve": 5000,
+  "mapping_manifest_immutable": true,
+  "engineering_projection_sha256": "ae12490824b9f6e3afa82a4e42f7899366d0d41a5febee6415544defcf5fae48",
+  "artifact_hashes": {
+    ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "2cbfa1654f894e5d71edb030794e4c3e1ed9c87ed6778f5ced90fff1d7875cd2",
+    "scripts/run_mission028.py": "f2478a780bbbb2c2fd265da53be1ca3746ed8d098edba4f36cf6d2fbf1f8b520",
+    "scripts/run_mission028_details.py": "553aed0c3a47e6ffa2ae23d56a6aaa23f880f705e0514719365b274f49ed4059",
+    "tests/historical_deep/test_mission028.py": "ebb9ea129738ba7964f60a8d4b3385382d3ac56117b0db718b18840c60c0c0f9",
+    "tests/historical_deep/test_mission028_details.py": "9f6179eb9a1a6d916ea49521338f785380bf773c58d7b0bd26e122f4a6c6d3a8"
+  },
+  "archived_draft_commit": "4ff700e411eca1424b07483ec41f1ba9ae21f81d",
+  "review": "PENDING_CLAUDE"
+}

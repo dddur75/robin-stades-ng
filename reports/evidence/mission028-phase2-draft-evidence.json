@@ -1,0 +1,42 @@
+{
+  "status": "NONCANONICAL_BRANCH_DRAFT_PRESERVED",
+  "source_commit": "4ff700e411eca1424b07483ec41f1ba9ae21f81d",
+  "source_pr": 104,
+  "archived_ledger_sha256": "78f8faa4f67f970b466e649d00f565c262f2a7d45c7ac6213b84be4304fedd56",
+  "reason": "Parent phase1 continued independently; canonical parent chain is retained, draft bytes archived unchanged and a new successor decision records the merged final state.",
+  "claims": [
+    {
+      "claim_id": "DATA.MISSION028.DETAILS.PREPARATION.V1",
+      "claim": "240 local historical/Council tests pass, including real Parquet normalization and cache resume for both detail families, atomic daily slot contention and uncertain HTTP reservations. No detail data was collected.",
+      "scope": "MISSION028_PHASE1_PREPARATION",
+      "source": "qg#74@0048757 and local targeted tests",
+      "grain": "frozen_population",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission-028-details-preparation-public-receipt.json",
+      "hash": "3a71e968408cfb4b8b296d1a33b0bb87d34cd6752d93947061f82efc02df19ae",
+      "code_revision": "e3d2732a23ea1a20f7c8484f92750ae67cc2d541",
+      "execution_id": "local-mission028-preparation",
+      "scientific_lineage_id": "NOT_APPLICABLE_COLLECTION",
+      "dataset_lineage_id": "mission028-8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    }
+  ],
+  "decision_nodes": [
+    {
+      "decision_id": "RCV3-20261017-028-005",
+      "ledger_record_hash": "bba34faeb84890a22ddfdb3fd821333b01d3a65b3dd4f08316553081a0412a68"
+    }
+  ],
+  "edges": [
+    {
+      "edge_id": "EDGE.1195",
+      "from_claim_id": "DATA.MISSION028.DETAILS.PREPARATION.V1",
+      "to_decision_id": "RCV3-20261017-028-005",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    }
+  ]
+}

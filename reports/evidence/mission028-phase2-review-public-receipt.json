@@ -1,0 +1,61 @@
+{
+  "schema_version": "mission028-phase2-review-v1",
+  "status": "PARTIAL_PENDING_CLAUDE_REVIEW",
+  "source_head": "5d378016ccc7bf9b69da366e04d26584c5837ece",
+  "incoming_parent": "7108701a8a5d963a036ee986080b92cdd0b76a02",
+  "review_comment": "https://github.com/dddur75/robin-stades-ng/pull/104#issuecomment-6231448034",
+  "mapping_cases": [
+    "61001 matched rows rejected",
+    "duplicate fixture ID rejected",
+    "61000 matched rows accepted"
+  ],
+  "detail_daily_cap": 69750,
+  "new_status_daily_cap": 49,
+  "original_status_allowance": 1,
+  "status_global_cap": 925,
+  "calendar_allowance": 200,
+  "total_daily_bound": 70000,
+  "reserve": 5000,
+  "budget_reserved_before_provider_client": true,
+  "code_lines_added_deleted": 400,
+  "targeted_tests": "368 passed in 19.28s",
+  "test_log_sha256": "44255de59b6d2bb9391a7897fbf277fd8d4af01a46559e857f743d378c4600f9",
+  "mutation_checks": [
+    {
+      "name": "mapping-ceiling",
+      "expected_failed_tests": 1,
+      "observed_summary": "1 failed, 2 passed in 0.65s",
+      "source_files_modified": false
+    },
+    {
+      "name": "mapping-duplicate",
+      "expected_failed_tests": 1,
+      "observed_summary": "1 failed, 2 passed in 0.60s",
+      "source_files_modified": false
+    },
+    {
+      "name": "detail-cap",
+      "expected_failed_tests": 1,
+      "observed_summary": "1 failed in 0.04s",
+      "source_files_modified": false
+    },
+    {
+      "name": "status-before-provider",
+      "expected_failed_tests": 2,
+      "observed_summary": "2 failed, 1 passed in 0.06s",
+      "source_files_modified": false
+    }
+  ],
+  "ruff": "passed",
+  "secrets": "passed",
+  "frozen_inputs": {
+    "configs/execution/mission028-aliases.json": "50931bcabe33c4fd5932a79911064002ecb23addff8c03ef8e05abfeb1e0a2de",
+    "configs/execution/mission028-mapping.csv": "07bd3dfd004f41ef13bfea1b4273fb2d76619fafb22d4fd5c2c94dfd9d0b3a17",
+    "configs/execution/mission028-mapping.json": "ef61230e330f9b7fd5bb6a646fbd9ebb635d83933e8fd0797722f0cdd1cafac8",
+    "configs/execution/mission028-targets.csv": "8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b"
+  },
+  "provider_calls_new": 0,
+  "r2_calls_new": 0,
+  "workflow_dispatches_new": 0,
+  "author_pr_merges": 0
+}

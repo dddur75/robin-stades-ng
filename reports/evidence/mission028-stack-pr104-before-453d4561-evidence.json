@@ -1,0 +1,221 @@
+{
+  "schema_version": "mission028-noncanonical-stack-snapshot-v1",
+  "source_head": "453d456167eafbace689d78b3dd589bea4322e88",
+  "incoming_head": "105b5c664d87f0094aabfc064ddf850696580962",
+  "common_prefix_records": 342,
+  "common_prefix_sha256": "e540622e30b38745d89870c5978239274d8a4e1bc7e5eb6e9db9328e4436129c",
+  "source_ledger_sha256": "139ea65d401bc2ed2ef0150715eaba2dfa39b18214a3c93f923eb1044793d803",
+  "archived_suffix_sha256": "3ec8e12ef743423f9376c870e3f2a051dc2098313c41d7c8cdaf823b138a41c6",
+  "archived_record_count": 11,
+  "ledger_archive": "reports/council/mission028-stack-pr104-before-453d4561-ledger.jsonl",
+  "claims": [
+    {
+      "claim_id": "DATA.MISSION028.PREPARATION.V1",
+      "claim": "Frozen 60515-row population copied byte-for-byte; 233 local historical/Council tests pass. This is preparation evidence, not a provider coverage claim.",
+      "scope": "MISSION028_PHASE1_PREPARATION",
+      "source": "qg#74@0048757 and local targeted tests",
+      "grain": "frozen_population",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission-028-preparation-public-receipt.json",
+      "hash": "dca3f24a4040956cc6c8dae0a354eeabfe3db17e0df13af483526fa4e792036a",
+      "code_revision": "aa92e7aea792cd5a513c5518f6e2b92b801fa3cb",
+      "execution_id": "local-mission028-preparation",
+      "scientific_lineage_id": "NOT_APPLICABLE_COLLECTION",
+      "dataset_lineage_id": "mission028-8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "DATA.MISSION028.CENSUS.V1",
+      "claim": "The archived census receipt records 198 fixtures calendar calls, 198 unique reservations, zero additional status calls and quota minimum 149557. Initial exact-name matching covers 28766 matches; final aliases and supplementary calendars still require replay.",
+      "scope": "MISSION028_PHASE1_PREPARATION",
+      "source": "qg#74@0048757 and local targeted tests",
+      "grain": "frozen_population",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission-028-census-run-38993960823-public-receipt.json",
+      "hash": "6a0ce08d6fa199c48749f50e3825c5a8aa0eaa7b51c5a5c9cf3d390b88f93271",
+      "code_revision": "3de528a70ad3ac10c5fcbf8519db875c4e9dbca3",
+      "execution_id": "local-mission028-preparation",
+      "scientific_lineage_id": "NOT_APPLICABLE_COLLECTION",
+      "dataset_lineage_id": "mission028-8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "DATA.MISSION028.MAPPING.V1",
+      "claim": "The frozen mapping covers60437 of60515 source matches, all33 leagues above97 percent, with78 listed gaps. Two hundred unique calendars were called, one status preflight total; quota minimum149555. Independent reconstruction is byte-identical and validates source rows, provider league, season, terminal status, date, both names, both scores and unique fixture ids.",
+      "scope": "MISSION028_PHASE1_PREPARATION",
+      "source": "qg#74@0048757 and local targeted tests",
+      "grain": "frozen_population",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission-028-phase1-verification-public-receipt.json",
+      "hash": "c403568e7cb5e2e984e72356f62574bcf02f959f0d58fb3604ef27dfb1b45d5d",
+      "code_revision": "242f14c69828a436c02a07ae910126f17e9cd417",
+      "execution_id": "local-mission028-preparation",
+      "scientific_lineage_id": "NOT_APPLICABLE_COLLECTION",
+      "dataset_lineage_id": "mission028-8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "DATA.MISSION028.DETAILS.PREPARATION.V2",
+      "claim": "361 local historical and Council tests pass. The immutable60437-id mapping includes the true Argentine cup league; both Parquet families preserve it. Atomic UTC slots, irreversible mapping binding and once-only reservations bound every future run. No details were collected during preparation.",
+      "scope": "MISSION028_PHASE1_PREPARATION",
+      "source": "qg#74@0048757 and local targeted tests",
+      "grain": "frozen_population",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission-028-details-preparation-v2-public-receipt.json",
+      "hash": "8ef5f066b56901764fcf9d4b26b7f5848408ecfbed3f6994826c2e49f34f70f4",
+      "code_revision": "precommit-projection:ae12490824b9f6e3afa82a4e42f7899366d0d41a5febee6415544defcf5fae48",
+      "artifact_hashes": {
+        ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "2cbfa1654f894e5d71edb030794e4c3e1ed9c87ed6778f5ced90fff1d7875cd2",
+        "scripts/run_mission028.py": "f2478a780bbbb2c2fd265da53be1ca3746ed8d098edba4f36cf6d2fbf1f8b520",
+        "scripts/run_mission028_details.py": "553aed0c3a47e6ffa2ae23d56a6aaa23f880f705e0514719365b274f49ed4059",
+        "tests/historical_deep/test_mission028.py": "ebb9ea129738ba7964f60a8d4b3385382d3ac56117b0db718b18840c60c0c0f9",
+        "tests/historical_deep/test_mission028_details.py": "9f6179eb9a1a6d916ea49521338f785380bf773c58d7b0bd26e122f4a6c6d3a8"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 5,
+      "engineering_projection_sha256": "ae12490824b9f6e3afa82a4e42f7899366d0d41a5febee6415544defcf5fae48",
+      "execution_id": "local-mission028-preparation",
+      "scientific_lineage_id": "NOT_APPLICABLE_COLLECTION",
+      "dataset_lineage_id": "mission028-8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    }
+  ],
+  "decision_nodes": [
+    {
+      "decision_id": "RCV3-20261017-028-001",
+      "ledger_record_hash": "341dd1f320bdf2be4d9df545234b785e043f0fefcd6a638d38024e0c2d29bae7"
+    },
+    {
+      "decision_id": "RCV3-20261017-028-002",
+      "ledger_record_hash": "43b4625d4fffd5b51704a046cf61bc9a1911883407fc4f5e2f385835284f792c"
+    },
+    {
+      "decision_id": "RCV3-20261017-028-003",
+      "ledger_record_hash": "ffe9184416318bfe9063f5f4267d97b8eadbe579739336f004d73246e708c847"
+    },
+    {
+      "decision_id": "RCV3-20261017-028-004",
+      "ledger_record_hash": "c066c3fbb2fada89fafc80c421fd14c3f98ab0cdbbaffb7fc0b453e98a2468a8"
+    },
+    {
+      "decision_id": "RCV3-20261017-028-005",
+      "ledger_record_hash": "363cbda1065e269b3d868c25339e9652e69ade718fe0d0776b8d31d4434f8d5a"
+    },
+    {
+      "decision_id": "RCV3-20261017-028-006",
+      "ledger_record_hash": "5664c408071a421c1dc132318e2cc84fe836fd1dcbe43ab1985a4b788f7bd87c"
+    },
+    {
+      "decision_id": "RCV3-20261017-028-007",
+      "ledger_record_hash": "a663c85085c2e4ba59a090f01062ad4fb1509dd0a2b2e9a3dca06cbd14b819ab"
+    },
+    {
+      "decision_id": "RCV3-20261017-028-008",
+      "ledger_record_hash": "a735081390a43222955a5e7d79fcebbf2808c8f80bdeb0ad6bdb0da99710a22f"
+    },
+    {
+      "decision_id": "RCV3-20261017-028-009",
+      "ledger_record_hash": "0134fc1ae4cba4a7eff2136c6bc5d4efa5c06663510a568586494373bd17dbf9"
+    },
+    {
+      "decision_id": "RCV3-20261017-028-010",
+      "ledger_record_hash": "dd57f153461606dddb3608115392cb4b9feb6db61569225230fae35d4020b206"
+    },
+    {
+      "decision_id": "RCV3-20261017-028-PHASE2-001",
+      "ledger_record_hash": "0db7732028293f7c9db2c30256bec2b81d01618d7d573f820a697549965cd197"
+    }
+  ],
+  "edges": [
+    {
+      "edge_id": "EDGE.1191",
+      "from_claim_id": "DATA.MISSION028.PREPARATION.V1",
+      "to_decision_id": "RCV3-20261017-028-001",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1192",
+      "from_claim_id": "DATA.MISSION028.PREPARATION.V1",
+      "to_decision_id": "RCV3-20261017-028-002",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1193",
+      "from_claim_id": "DATA.MISSION028.PREPARATION.V1",
+      "to_decision_id": "RCV3-20261017-028-003",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1194",
+      "from_claim_id": "DATA.MISSION028.PREPARATION.V1",
+      "to_decision_id": "RCV3-20261017-028-004",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1195",
+      "from_claim_id": "DATA.MISSION028.PREPARATION.V1",
+      "to_decision_id": "RCV3-20261017-028-005",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1196",
+      "from_claim_id": "DATA.MISSION028.PREPARATION.V1",
+      "to_decision_id": "RCV3-20261017-028-006",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1197",
+      "from_claim_id": "DATA.MISSION028.CENSUS.V1",
+      "to_decision_id": "RCV3-20261017-028-007",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1198",
+      "from_claim_id": "DATA.MISSION028.CENSUS.V1",
+      "to_decision_id": "RCV3-20261017-028-008",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1199",
+      "from_claim_id": "DATA.MISSION028.MAPPING.V1",
+      "to_decision_id": "RCV3-20261017-028-009",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1200",
+      "from_claim_id": "DATA.MISSION028.MAPPING.V1",
+      "to_decision_id": "RCV3-20261017-028-010",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1201",
+      "from_claim_id": "DATA.MISSION028.DETAILS.PREPARATION.V2",
+      "to_decision_id": "RCV3-20261017-028-PHASE2-001",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    }
+  ]
+}

@@ -24,6 +24,10 @@ on:
         description: "Mission 027 : compter les réservations, sans fournisseur ni payload brut"
         type: boolean
         default: false
+      details_family:
+        type: choice
+        options: [none, lineups, statistics]
+        default: none
       slice_id:
         type: string
         default: standalone
@@ -61,6 +65,9 @@ on:
       progress_only:
         type: boolean
         default: false
+      details_family:
+        type: string
+        default: none
       slice_id:
         type: string
         default: standalone
@@ -130,7 +137,7 @@ jobs:
           python -m pip install -r requirements.txt boto3
           python -m pip install --no-deps -e .
       - name: Collecter les bundles et fallbacks ciblés
-        if: '!inputs.mission028 && !inputs.progress_only && !inputs.lineups_only'
+        if: "!inputs.mission028 && !inputs.progress_only && !inputs.lineups_only && inputs.details_family == 'none'"
         env:
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
@@ -149,14 +156,14 @@ jobs:
           --max-duration-minutes "${{ inputs.max_duration_minutes }}"
           --mission-max-minutes 720
       - uses: actions/download-artifact@v4
-        if: '!inputs.mission028 && inputs.lineups_only && inputs.execute && !inputs.progress_only'
+        if: "!inputs.mission028 && inputs.lineups_only && inputs.execute && !inputs.progress_only && inputs.details_family == 'none'"
         with:
           name: historical-deep-71-mission-027-status-unique-38960293874-1
           run-id: 38960293874
           github-token: ${{ github.token }}
           path: artifacts/mission027-preflight
       - name: Mission 027 — compositions seules
-        if: '!inputs.mission028 && inputs.lineups_only && inputs.execute && !inputs.progress_only'
+        if: "!inputs.mission028 && inputs.lineups_only && inputs.execute && !inputs.progress_only && inputs.details_family == 'none'"
         env:
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
@@ -165,7 +172,7 @@ jobs:
           R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
         run: python -m scripts.run_mission027_lineups
       - name: Mission 027 — observation sans collecte
-        if: inputs.progress_only && !inputs.mission028
+        if: "inputs.progress_only && !inputs.mission028 && inputs.details_family == 'none'"
         env:
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
@@ -173,7 +180,7 @@ jobs:
           R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
         run: python -m scripts.run_mission027_lineups --progress
       - name: Mission 028 — correspondance des petites ligues
-        if: inputs.mission028 && (inputs.execute || inputs.mission028_progress)
+        if: "inputs.mission028 && (inputs.execute || inputs.mission028_progress) && inputs.details_family == 'none'"
         env:
           MISSION028_REPLAY: ${{ inputs.mission028_replay }}
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
@@ -182,9 +189,28 @@ jobs:
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
         run: python -m scripts.run_mission028 ${{ inputs.mission028_progress && '--progress' || '' }}
+      - name: Mission 028 — détails par match
+        if: '!inputs.mission028 && !inputs.lineups_only && !inputs.progress_only && inputs.execute && inputs.details_family != ''none'''
+        env:
+          MISSION028_FAMILY: ${{ inputs.details_family }}
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: |
+          python -m scripts.run_mission028_details --preflight
+          pids=()
+          for worker in 0 1 2 3; do
+            MISSION028_WORKER="$worker" python -m scripts.run_mission028_details &
+            pids+=("$!")
+          done
+          result=0
+          for pid in "${pids[@]}"; do wait "$pid" || result=1; done
+          exit "$result"
       - name: Publier la décision provider sanitisée
         id: outcome
-        if: always() && !inputs.mission028 && !inputs.progress_only && !inputs.lineups_only
+        if: "always() && !inputs.mission028 && !inputs.progress_only && !inputs.lineups_only && inputs.details_family == 'none'"
         run: >-
           python scripts/historical_deep_workflow_outcome.py
           artifacts/historical-deep/fixtures.json >> "$GITHUB_OUTPUT"
