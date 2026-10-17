@@ -11595,6 +11595,29 @@
       "verified_by": [
         "C0"
       ]
+    },
+    {
+      "claim_id": "DATA.MISSION028.LINEUPS_SLICE2.V1",
+      "claim": "The second Actions slice documents6161new distinct lineup calls and19persisted Parquet partitions. The local artifact verification finds3747fixtures in those partitions,3109complete; workers report5510complete processed matches including cache. Total documented lineup calls are6738, low quota142817. Partial data only; do not sum the initial551again or claim95percent coverage.",
+      "scope": "QG028_REMEDIATION_AND_QG027_REVIEW",
+      "source": "Explicit user instruction, local verification and existing immutable receipts",
+      "grain": "engineering_verification",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission-028-lineups-slice2-verification-public-receipt.json",
+      "hash": "81bf77e169df558fe508455279747f762c7d66584640f3eaade73af2109e546c",
+      "code_revision": "precommit-projection:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "artifact_hashes": {},
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 0,
+      "engineering_projection_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "execution_id": "local-review-correction-20261017",
+      "scientific_lineage_id": "NOT_APPLICABLE_REVIEW_CORRECTION",
+      "dataset_lineage_id": "REUSED_EXISTING_RECEIPTS_NO_NEW_COLLECTION",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
     }
   ],
   "decision_nodes":[
@@ -11991,6 +12014,10 @@
     {
       "decision_id": "RCV3-20261017-028-PHASE3-002",
       "ledger_record_hash": "cd0f854d0a9851ae12f3e16ba8a1121ae2212d8c7a03e64b45eb4b9050d28165"
+    },
+    {
+      "decision_id": "RCV3-20261017-028-PHASE3-003",
+      "ledger_record_hash": "a376a8d01584595eee032f5e70d1afb6ec8aaf78686937c3be72969ecaf874c6"
     }
   ],
   "edges":[
@@ -13272,6 +13299,13 @@
       "edge_id": "EDGE.1203",
       "from_claim_id": "DATA.MISSION028.REPRISES.V2",
       "to_decision_id": "RCV3-20261017-028-PHASE3-002",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1204",
+      "from_claim_id": "DATA.MISSION028.LINEUPS_SLICE2.V1",
+      "to_decision_id": "RCV3-20261017-028-PHASE3-003",
       "relation": "SUPPORTS",
       "status": "RECORDED"
     }
