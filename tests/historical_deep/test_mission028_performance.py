@@ -78,7 +78,8 @@ def test_constant_storage_work_and_no_duplicate_after_capture_crash(fail):
     assert len(calls) == 2  # Same match, independent family, each called once.
 
 
-def test_sixteen_workers_sustain_six_to_eight_calls_per_second(tmp_path, monkeypatch):
+@pytest.mark.parametrize('workers', [16, 64])
+def test_workers_admitted_at_six_to_eight_calls_per_second(tmp_path, monkeypatch, workers):
     from scripts import mission028_performance as performance
 
     clock, sleeps, starts = [100.], [], []
@@ -88,22 +89,22 @@ def test_sixteen_workers_sustain_six_to_eight_calls_per_second(tmp_path, monkeyp
     monkeypatch.setattr(performance.time, 'monotonic', lambda: clock[0])
     monkeypatch.setattr(performance.time, 'sleep', sleep)
     # Separate worker connections share the same SQLite admission state.
-    gates = [performance.RateGate(tmp_path / 'pace.sqlite3') for _ in range(16)]
+    gates = [performance.RateGate(tmp_path / 'pace.sqlite3') for _ in range(workers)]
     for _ in range(3):
         for gate in gates:
             gate.acquire()
             starts.append(clock[0])
     for gate in gates:
         gate.connection.close()
-    assert starts == pytest.approx([100. + i * .126 for i in range(48)])
-    assert sleeps == pytest.approx([.126] * 47)
+    assert starts == pytest.approx([100. + i * .126 for i in range(3 * workers)])
+    assert sleeps == pytest.approx([.126] * (3 * workers - 1))
     rate = (len(starts) - 1) / (starts[-1] - starts[0])
     assert rate == pytest.approx(1 / .126)
     assert 6 <= rate <= 8
     assert all(sum(0 <= other - start < 1 for other in starts) <= 8 for start in starts)
 
 
-@pytest.mark.parametrize('mode', ['deadline', 'error', 'error_after_deadline', 'response_error'])
+@pytest.mark.parametrize('mode', ['deadline', 'error', 'error_after_deadline', 'response_error', 'auth_error'])
 def test_worker_deadline_is_partial_success_but_real_errors_fail(monkeypatch, tmp_path, mode):
     from robin.historical_deep.contracts import ProviderStatus
     wall, store = [NOW], InMemoryObjectStore()
@@ -126,10 +127,11 @@ def test_worker_deadline_is_partial_success_but_real_errors_fail(monkeypatch, tm
         if mode == 'deadline':
             wall[0] = NOW + timedelta(minutes=95)
     monkeypatch.setattr(run.RateGate, 'acquire', acquire)
+    monkeypatch.setattr(run.time, 'sleep', lambda delay: None)
     def get(*a, **kw):
         assert mode != 'deadline'
-        if mode == 'response_error':
-            return SimpleNamespace(status_code=400, headers={})
+        if mode in ('response_error', 'auth_error'):
+            return SimpleNamespace(status_code=400 if mode == 'response_error' else 401, headers={})
         if mode == 'error_after_deadline':
             wall[0] = NOW + timedelta(minutes=95)
         raise RuntimeError('synthetic transport failure')
@@ -139,13 +141,18 @@ def test_worker_deadline_is_partial_success_but_real_errors_fail(monkeypatch, tm
     receipt = json.loads((tmp_path / 'worker-0-lineups-public-receipt.json').read_text())
     assert receipt['status'] == 'PARTIAL'
     assert {'provider_http', 'day_slots_reserve', 'receipt_for', 'get_object', 'capture_r2', 'write_parquet'} <= receipt['timings'].keys()
-    if mode == 'deadline':
+    if mode in ('deadline', 'error_after_deadline'):
         assert result == 0 and receipt['reason_code'] == 'MISSION028_TIME_SLICE_ENDED'
-        assert receipt['calls'] == 0 and not tuple(store.iter_keys(f'{run.PREFIX}/terminal/'))
+        assert receipt['calls'] == int(mode == 'error_after_deadline')
+        assert not tuple(store.iter_keys(f'{run.PREFIX}/terminal/'))
         assert not tuple(store.iter_keys(f'{run.PREFIX}/pause/'))
-    else:
-        assert result == 2 and receipt['reason_class'] == ('ProviderResponseError' if mode == 'response_error' else 'ProviderTransportError')
+    elif mode == 'auth_error':
+        assert result == 2 and receipt['reason_class'] == 'ProviderAuthenticationError'
         assert tuple(store.iter_keys(f'{run.PREFIX}/pause/'))
+    else:
+        assert result == 0 and receipt['missing'] == [10]
+        assert receipt['calls'] == (4 if mode == 'error' else 1)
+        assert not tuple(store.iter_keys(f'{run.PREFIX}/pause/'))
 
 
 @pytest.mark.parametrize('age,remaining,new_call', [(20, 100, 0), (94, 16, 1), (20, 90, 1), (10, 99, 1)])

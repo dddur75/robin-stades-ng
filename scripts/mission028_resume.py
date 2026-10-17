@@ -17,7 +17,9 @@ BUDGET_CODES = {TOTAL_CODE, "MISSION028_DAILY_BUDGET_REACHED", "MISSION028_RESER
 def checkpoint(store, receipt, now, revision, deadline=None):
     if store is None:
         return
-    if receipt.get("reason_code") == "MISSION028_TIME_SLICE_ENDED":
+    if receipt.get('reason_class') in ('ProviderTransportError', 'ProviderRateLimitError', 'ProviderResponseError'):
+        return
+    if receipt.get("reason_code") in ("MISSION028_TIME_SLICE_ENDED", "MISSION028_STOP_REQUESTED"):
         return  # A completed time slice never marks the worker terminal.
     if "reason_class" not in receipt:
         if "family" not in receipt:

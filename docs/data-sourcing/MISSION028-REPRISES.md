@@ -30,8 +30,8 @@ jour UTC, et le plafond total demeure bloquant.
 
 Le module partagé réserve 129 750 détails/jour, une marge de 200 calendriers
 et au plus 50 prévols (49 nouveaux plus l’original), soit ≤ 130 000 appels/jour UTC.
-Les 925 nouveaux prévols globaux donnent avec les 60 437 IDs figés un majorant
-200 + 2 × 60 437 + 926 = 122 000 ≤ 122 200. Réserve fournisseur : ≥ 5 000.
+Les détails, relances comprises, disposent de 122 200 − 200 − 926 = 121 074
+réservations globales. Les 925 nouveaux prévols restent bornés. Réserve fournisseur : ≥ 5 000.
 Contrôles, prévols et reçus publics restent append-only dans R2.
 
 DONE signifie cibles parcourues pour les deux familles ; les couvertures et
@@ -49,3 +49,17 @@ Les reçus donnent compte, cumul et médiane de chaque étape (durées imbriqué
 non additionnables). Le débit réel reste à mesurer au prochain run planifié.
 Le contrat teste cron, concurrence et inputs null ; workflow actif, aucun événement
 schedule visible dans l’API à la vérification. Preuves : ENGINEERING.MISSION028.PHASE5_THROUGHPUT.V1.
+
+Phase 6 : quatre collecteurs indépendants par processus donnent 64 flux, avec
+la même porte SQLite à 0,126 s entre admissions. Chaque tentative réserve son
+créneau modulo 64. Un compteur SQLite partagé, initialisé une fois par run depuis
+toutes les réservations quotidiennes R2, borne le total et le quota disponible ;
+les réservations du jour sont déduites conservativement de la preuve fournisseur.
+Les objets natifs de capture et de reprise restent append-only, sans écriture R2
+supplémentaire pour ce compteur. Timeout, réseau, 429 et 5xx autorisent trois
+relances (1/2/4 s, Retry-After respecté), puis un manquant ; une réponse invalide
+devient directement manquante. Les autres matchs continuent. Un arrêt fatal
+signale tous les flux du run avant leur prochain appel. La pause ancienne reste
+en R2, ignorée par le SHA de cette révision. Les tests sont hors réseau avec temps
+simulé ; le débit réel de cette révision attend le prochain run de 71.
+Preuve : ENGINEERING.MISSION028.PHASE6_PARALLEL_RETRY.V1.
