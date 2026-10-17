@@ -1,0 +1,197 @@
+{
+  "schema_version": "mission-028-phase1-v1",
+  "status": "PARTIAL",
+  "calls": 198,
+  "status_calls": 0,
+  "target_sha256": "8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+  "max_calls": 200,
+  "total_cap": 122200,
+  "daily_cap": 70000,
+  "daily_reserve": 5000,
+  "run_id": "38993960823",
+  "rates": {
+    "ARG": {
+      "targets": 2655,
+      "matched": 1630,
+      "fraction": 0.6139359698681732
+    },
+    "AUT": {
+      "targets": 1169,
+      "matched": 87,
+      "fraction": 0.07442258340461934
+    },
+    "B1": {
+      "targets": 1774,
+      "matched": 509,
+      "fraction": 0.28692220969560317
+    },
+    "BRA": {
+      "targets": 2191,
+      "matched": 991,
+      "fraction": 0.45230488361478777
+    },
+    "CHN": {
+      "targets": 1243,
+      "matched": 100,
+      "fraction": 0.08045052292839903
+    },
+    "D2": {
+      "targets": 1836,
+      "matched": 40,
+      "fraction": 0.02178649237472767
+    },
+    "DNK": {
+      "targets": 1207,
+      "matched": 720,
+      "fraction": 0.5965202982601492
+    },
+    "E1": {
+      "targets": 3312,
+      "matched": 2324,
+      "fraction": 0.7016908212560387
+    },
+    "E2": {
+      "targets": 3160,
+      "matched": 1673,
+      "fraction": 0.5294303797468355
+    },
+    "E3": {
+      "targets": 3200,
+      "matched": 1844,
+      "fraction": 0.57625
+    },
+    "EC": {
+      "targets": 3090,
+      "matched": 1211,
+      "fraction": 0.3919093851132686
+    },
+    "F2": {
+      "targets": 2105,
+      "matched": 1439,
+      "fraction": 0.6836104513064133
+    },
+    "FIN": {
+      "targets": 895,
+      "matched": 536,
+      "fraction": 0.5988826815642458
+    },
+    "G1": {
+      "targets": 1433,
+      "matched": 475,
+      "fraction": 0.3314724354501047
+    },
+    "I2": {
+      "targets": 2277,
+      "matched": 2053,
+      "fraction": 0.901624945103206
+    },
+    "IRL": {
+      "targets": 901,
+      "matched": 451,
+      "fraction": 0.5005549389567148
+    },
+    "JPN": {
+      "targets": 1841,
+      "matched": 1023,
+      "fraction": 0.5556762629005975
+    },
+    "MEX": {
+      "targets": 1981,
+      "matched": 915,
+      "fraction": 0.4618879353861686
+    },
+    "N1": {
+      "targets": 1762,
+      "matched": 1047,
+      "fraction": 0.594211123723042
+    },
+    "NOR": {
+      "targets": 1348,
+      "matched": 898,
+      "fraction": 0.6661721068249258
+    },
+    "P1": {
+      "targets": 1836,
+      "matched": 1066,
+      "fraction": 0.5806100217864923
+    },
+    "POL": {
+      "targets": 1760,
+      "matched": 627,
+      "fraction": 0.35625
+    },
+    "ROU": {
+      "targets": 1860,
+      "matched": 317,
+      "fraction": 0.17043010752688173
+    },
+    "RUS": {
+      "targets": 1450,
+      "matched": 426,
+      "fraction": 0.29379310344827586
+    },
+    "SC0": {
+      "targets": 1319,
+      "matched": 934,
+      "fraction": 0.7081122062168309
+    },
+    "SC1": {
+      "targets": 992,
+      "matched": 248,
+      "fraction": 0.25
+    },
+    "SC2": {
+      "targets": 969,
+      "matched": 448,
+      "fraction": 0.46233230134158926
+    },
+    "SC3": {
+      "targets": 967,
+      "matched": 360,
+      "fraction": 0.37228541882109617
+    },
+    "SP2": {
+      "targets": 2772,
+      "matched": 1576,
+      "fraction": 0.5685425685425686
+    },
+    "SWE": {
+      "targets": 1346,
+      "matched": 42,
+      "fraction": 0.031203566121842496
+    },
+    "SWZ": {
+      "targets": 1184,
+      "matched": 11,
+      "fraction": 0.009290540540540541
+    },
+    "T1": {
+      "targets": 2141,
+      "matched": 1055,
+      "fraction": 0.492760392340028
+    },
+    "USA": {
+      "targets": 2539,
+      "matched": 1690,
+      "fraction": 0.6656163844033084
+    }
+  },
+  "missing_censuses": [],
+  "matched": 28766,
+  "fixture_ids_sha256": "bb33706c948b79fd75cd245d7f8e59b0bf15b7dcf343022f55b05b6a5a17d9c3",
+  "quota_low": 149557,
+  "reservations_total": 198,
+  "correspondance.csv": {
+    "sha256": "1bd5a631ab7bf6d25eb03b04a8ebcff21ee773bfce4a08f231f4022c2c963325",
+    "r2_key": "historical-deep-data/schema-v1/_control/mission-028/runs/38993960823/correspondance.csv"
+  },
+  "fixtures-index.csv": {
+    "sha256": "4f8961af58599eced537c8d9f14fcb63f276b43b0e5822e2aa3481228a3cefb6",
+    "r2_key": "historical-deep-data/schema-v1/_control/mission-028/runs/38993960823/fixtures-index.csv"
+  },
+  "ecarts.csv": {
+    "sha256": "0653cbe7d694d5a8b8bd557d40a4ad67530c6a6fcc425ef621de3ab8068d7898",
+    "r2_key": "historical-deep-data/schema-v1/_control/mission-028/runs/38993960823/ecarts.csv"
+  },
+  "quota_remaining": 149557
+}

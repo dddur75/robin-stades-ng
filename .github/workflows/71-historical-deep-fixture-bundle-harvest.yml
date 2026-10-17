@@ -9,6 +9,9 @@ on:
       mission028_replay:
         type: boolean
         default: false
+      mission028_progress:
+        type: boolean
+        default: false
       details_family:
         type: choice
         options: [none, lineups, statistics]
@@ -36,6 +39,9 @@ on:
         type: boolean
         default: false
       mission028_replay:
+        type: boolean
+        default: false
+      mission028_progress:
         type: boolean
         default: false
       details_family:
@@ -77,7 +83,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: historical-deep-r2-state
+  group: ${{ inputs.mission028_progress && 'mission-028-progress' || 'historical-deep-r2-state' }}
   cancel-in-progress: false
 
 jobs:
@@ -127,7 +133,7 @@ jobs:
           --max-duration-minutes "${{ inputs.max_duration_minutes }}"
           --mission-max-minutes 720
       - name: Mission 028 — correspondance des petites ligues
-        if: inputs.mission028 && inputs.execute && inputs.details_family == 'none'
+        if: inputs.mission028 && (inputs.execute || inputs.mission028_progress) && inputs.details_family == 'none'
         env:
           MISSION028_REPLAY: ${{ inputs.mission028_replay }}
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
@@ -135,7 +141,7 @@ jobs:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
-        run: python -m scripts.run_mission028
+        run: python -m scripts.run_mission028 ${{ inputs.mission028_progress && '--progress' || '' }}
       - name: Mission 028 — détails par match
         if: '!inputs.mission028 && inputs.execute && inputs.details_family != ''none'''
         env:

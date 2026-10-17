@@ -1,0 +1,38 @@
+{
+  "schema_version": "mission028-phase1-verification-v1",
+  "status": "VERIFIED_LOCALLY_PENDING_CLAUDE",
+  "targets": 60515,
+  "matched": 60437,
+  "unmatched": 78,
+  "match_fraction": 0.9987110633727175,
+  "leagues_above_threshold": 33,
+  "minimum_league_fraction": 0.9811320754716981,
+  "census_calls_total": 200,
+  "distinct_censuses": 200,
+  "status_calls_total": 1,
+  "quota_low": 149555,
+  "fixture_ids_sha256": "0f2c4e0d6f783dfc3e5b304e4fad39eb3956ed35ed81029ae84cc64dffb65247",
+  "mapping_sha256": "07bd3dfd004f41ef13bfea1b4273fb2d76619fafb22d4fd5c2c94dfd9d0b3a17",
+  "source_sha256": "8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+  "calendar_run_ids": [
+    "38993960823",
+    "38997025720"
+  ],
+  "artifact_id": 12087432512,
+  "artifact_sha256": "7426798ecff52219c6d6fc26d4ac57574a242465a996b586128d984359d04cab",
+  "fixture_index_rows": 63165,
+  "fixture_index_distinct_ids": 63165,
+  "provider_requests_new": 0,
+  "checks": [
+    "original source rows unchanged",
+    "terminal status",
+    "exact provider league and season",
+    "date +/-1 day",
+    "both canonical names",
+    "both final scores",
+    "unique fixture ids",
+    "gap list exact",
+    "mapping replay byte-identical",
+    "every league >=97 percent"
+  ]
+}

@@ -22,6 +22,7 @@ from robin.historical_deep.contracts import ProviderStatus
 from robin.historical_deep.provider import ApiFootballDeepClient
 from robin.historical_deep.quota import QuotaController
 from robin.historical_deep.storage import R2FirstRepository
+from scripts import run_mission028 as census
 from scripts.run_mission028 import DIGEST, LEAGUES, PREFIX, Transport, load_targets, season_start
 
 OUTPUT = Path("artifacts/historical-deep/mission028-details")
@@ -41,7 +42,7 @@ def load_mapping(path=MAPPING, manifest=MANIFEST):
     for number, (row, source) in enumerate(zip(table, original, strict=True), 1):
         if any(row.get(k) != v for k, v in source.items()) or int(row["source_row"]) != number:
             raise ValueError("MISSION028_MAPPING_SOURCE_CHANGED")
-        if int(row["season"]) != season_start(source["saison_fd"]) or int(row["league_id"]) != LEAGUES[row["ligue_fd"]]:
+        if int(row["season"]) != season_start(source["saison_fd"]) or int(row["league_id"]) not in census.provider_league_ids(row["ligue_fd"], int(row["season"])):
             raise ValueError("MISSION028_MAPPING_SCOPE_INVALID")
         if row["fixture_id"]:
             row["fixture_id"] = int(row["fixture_id"])
@@ -118,6 +119,10 @@ def preflight():
         load_mapping()  # No storage or provider call before validating the frozen mapping.
         assert_safety_locks(os.environ)
         store, now = R2ObjectStore(os.environ), datetime.now(UTC)
+        binding = Path(MANIFEST).read_bytes()
+        key = f"{PREFIX}/mapping-manifest.json"
+        if not store.put_if_absent(key, binding) and store.get_object(key) != binding:
+            raise RuntimeError("MISSION028_MAPPING_ALREADY_BOUND")
         proofs = [ProviderStatus.model_validate_json(store.get_object(k))
                   for k in store.iter_keys(f"{PREFIX}/preflight/")]
         fresh = [p for p in proofs if p.checked_at.date() == now.date()
@@ -149,6 +154,7 @@ def main():
         if worker not in range(4) or family not in ("lineups", "statistics"):
             raise ValueError("MISSION028_WORKER_OR_FAMILY_INVALID")
         mapping = load_mapping()
+        provider_by_fixture = {r["fixture_id"]: int(r["league_id"]) for r in mapping}
         selected = [r for r in mapping if sorted(LEAGUES).index(r["ligue_fd"]) % 4 == worker]
         ids = sorted(r["fixture_id"] for r in selected)
         receipt.update(target_count=len(ids), fixture_ids_sha256=hashlib.sha256(
@@ -176,7 +182,7 @@ def main():
             if saved is not None:
                 rows = pq.ParquetFile(io.BytesIO(saved)).read().to_pylist()
                 for row in rows:
-                    if row["provider_fixture_id"] not in fixtures or row["season"] != season or row["availability_status"] != "POST_MATCH_ONLY":
+                    if row["provider_fixture_id"] not in fixtures or row["season"] != season or row["availability_status"] != "POST_MATCH_ONLY" or row["competition_id"] != provider_by_fixture[row["provider_fixture_id"]]:
                         raise ValueError("MISSION028_PROJECTION_SCOPE_INVALID")
                     projected[row["provider_fixture_id"]].append(json.loads(row["payload"]))
                 path.parent.mkdir(parents=True, exist_ok=True)
@@ -185,12 +191,12 @@ def main():
                 if saved is not None:
                     records = projected[fixture]
                 else:
-                    request = dict(phase="mission028", competition=LEAGUES[code], season=season, family=family,
+                    request = dict(phase="mission028", competition=provider_by_fixture[fixture], season=season, family=family,
                                    endpoint=f"/fixtures/{family}", params=dict(fixture=fixture))
                     call = once(collector, store, slots, request, datetime.now(UTC), quota.status.daily_remaining)
                     records = call.records if call else []
                     if call:
-                        rows.extend(normalize_records(f"fixtures/{family}", records, competition_id=LEAGUES[code],
+                        rows.extend(normalize_records(f"fixtures/{family}", records, competition_id=provider_by_fixture[fixture],
                             season=season, ingestion_run_id="mission-028", raw_payload_hash=call.payload_sha256,
                             request_params=dict(fixture=fixture), observed_at=call.received_at))
                 receipt["complete_matches"] += int(complete(family, records))

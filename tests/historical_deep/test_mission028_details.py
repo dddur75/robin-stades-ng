@@ -12,13 +12,14 @@ from scripts.run_mission028_details import DaySlots, complete, load_mapping, onc
 NOW = datetime(2026, 10, 17, 23, 59, tzinfo=UTC)
 
 
-def test_mapping_hash_and_source_identity_fail_closed(tmp_path, monkeypatch):
+@pytest.mark.parametrize("code,season,league", [("E1", "2019-20", 40), ("ARG", "2023", 1032)])
+def test_mapping_hash_and_source_identity_fail_closed(tmp_path, monkeypatch, code, season, league):
     from scripts import run_mission028_details as run
-    original = dict(ligue_fd="E1", saison_fd="2019-20", date="2019-08-01",
+    original = dict(ligue_fd=code, saison_fd=season, date=season[:4]+"-08-01",
                     equipe_dom_fd="A", equipe_ext_fd="B", buts_dom="1", buts_ext="0")
     monkeypatch.setattr(run, "load_targets", lambda: [original])
     path, manifest = tmp_path / "mapping.csv", tmp_path / "manifest.json"
-    row = dict(original, source_row=1, league_id=40, season=2019, fixture_id=10, reason="MATCHED")
+    row = dict(original, source_row=1, league_id=league, season=int(season[:4]), fixture_id=10, reason="MATCHED")
 
     def write():
         with path.open("w", newline="") as stream:
@@ -82,7 +83,8 @@ def test_lineups_require_two_teams_formation_and_eleven_unique_players():
 
 
 @pytest.mark.parametrize("family", ["lineups", "statistics"])
-def test_details_entrypoint_persists_parquet_and_resumes_without_http(monkeypatch, tmp_path, family):
+@pytest.mark.parametrize("code,year,league", [("E1", 2019, 40), ("ARG", 2023, 1032)])
+def test_details_entrypoint_persists_parquet_and_resumes_without_http(monkeypatch, tmp_path, family, code, year, league):
     from types import SimpleNamespace
 
     from robin.historical_deep.contracts import ProviderStatus
@@ -96,9 +98,9 @@ def test_details_entrypoint_persists_parquet_and_resumes_without_http(monkeypatc
         monkeypatch.setenv(key, value)
     monkeypatch.setenv("API_FOOTBALL_KEY", str(tmp_path))
     monkeypatch.setattr(run, "OUTPUT", tmp_path)
-    monkeypatch.setattr(run, "LEAGUES", {"E1": 40})
+    monkeypatch.setattr(run, "LEAGUES", {code: run.LEAGUES[code]})
     monkeypatch.setattr(run, "R2ObjectStore", lambda env: store)
-    monkeypatch.setattr(run, "load_mapping", lambda: [dict(ligue_fd="E1", season="2019", fixture_id=10)])
+    monkeypatch.setattr(run, "load_mapping", lambda: [dict(ligue_fd=code, season=str(year), fixture_id=10, league_id=league)])
     (tmp_path / "preflight.json").write_text(ProviderStatus(plan="Mega", active=True,
         daily_limit=150000, daily_used=0, daily_remaining=150000, checked_at=now,
         expires_at=now + timedelta(minutes=110), subscription_end=now + timedelta(days=30)).model_dump_json())
@@ -117,4 +119,19 @@ def test_details_entrypoint_persists_parquet_and_resumes_without_http(monkeypatc
     assert run.main() == 0
     monkeypatch.setenv("GITHUB_RUN_ID", "synthetic-resume")
     assert run.main() == 0 and len(calls) == 1
-    assert len(list(tmp_path.rglob("*.parquet"))) == 1
+    files = list(tmp_path.rglob("*.parquet"))
+    assert len(files) == 1
+    assert all(r["competition_id"] == league for r in run.pq.ParquetFile(files[0]).read().to_pylist())
+
+
+def test_preflight_refuses_a_different_mapping_after_binding(monkeypatch, tmp_path):
+    from scripts import run_mission028_details as run
+    store, manifest = InMemoryObjectStore(), tmp_path / "mapping.json"
+    manifest.write_bytes(b"second")
+    for name, value in dict(OUTPUT=tmp_path, MANIFEST=manifest, load_mapping=lambda: [],
+        R2ObjectStore=lambda env: store, assert_safety_locks=lambda env: None,
+        ApiFootballDeepClient=lambda **kwargs: pytest.fail("provider must not be created")).items():
+        monkeypatch.setattr(run, name, value)
+    store.put_if_absent(f"{run.PREFIX}/mapping-manifest.json", b"first")
+    assert run.preflight() == 2
+    assert json.loads((tmp_path / "preflight-public-receipt.json").read_text())["reason_class"] == "RuntimeError"

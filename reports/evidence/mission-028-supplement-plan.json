@@ -1,0 +1,31 @@
+{
+  "status": "PREPARED_NOT_COLLECTED",
+  "source_run": "38993960823",
+  "source_population_sha256": "8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+  "original_calendar_requests": 198,
+  "extra_calendar_requests": [
+    {
+      "code": "ARG",
+      "league_id": 1032,
+      "season": 2023,
+      "endpoint": "/fixtures"
+    },
+    {
+      "code": "ARG",
+      "league_id": 1032,
+      "season": 2024,
+      "endpoint": "/fixtures"
+    }
+  ],
+  "calendar_requests_cap": 200,
+  "provider_requests_new": 0,
+  "unmatched_argentina_by_season": {
+    "2023": 204,
+    "2024": 203,
+    "2020": 1
+  },
+  "id_sources": [
+    "https://www.api-football.com/coverage",
+    "https://www.gibiscore.com/competitions/copa-de-la-liga-profesional-argentina-1032"
+  ]
+}
