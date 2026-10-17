@@ -1,6 +1,4 @@
-import time
 from collections import Counter
-from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime, timedelta
 from types import SimpleNamespace
 
@@ -81,37 +79,26 @@ def test_constant_storage_work_and_no_duplicate_after_capture_crash(fail):
 
 
 def test_sixteen_workers_sustain_six_to_eight_calls_per_second(tmp_path, monkeypatch):
-    starts = []
-    def get(*a, **kw):
-        starts.append(time.monotonic())
-        time.sleep(.05)
-        return SimpleNamespace(json=lambda: {'response': []})
-    monkeypatch.setattr(run.requests, 'get', get)
-    class LatencyStore(Store):
-        def get_object(self, key):
-            time.sleep(.1)
-            return super().get_object(key)
-        def put_if_absent(self, key, body):
-            time.sleep(.1)
-            return super().put_if_absent(key, body)
-        def iter_keys(self, prefix):
-            time.sleep(.1)
-            return super().iter_keys(prefix)
-    def worker(number):
-        timings = Timings()
-        transport = run.PacedTransport(datetime.now(UTC) + timedelta(minutes=1), tmp_path / 'pace.sqlite3', timings)
-        store = MeasuredStore(LatencyStore(), timings)
-        slots = run.DaySlots(store, NOW, worker=number)
-        provider = SimpleNamespace(get=lambda endpoint, params: transport.get('https://example.invalid', params=params, timeout=10).json())
-        collector = HistoricalDeepCollector(provider, R2FirstRepository(store))
-        for index in range(3):
-            request = dict(phase='mission028', competition=40, season=2020, family='lineups', endpoint='/fixtures/lineups', params=dict(fixture=number * 10 + index))
-            run.once(collector, store, slots, request, NOW, 150000)
-    with ThreadPoolExecutor(max_workers=16) as pool:
-        list(pool.map(worker, range(16)))
-    starts.sort()
+    from scripts import mission028_performance as performance
+
+    clock, sleeps, starts = [100.], [], []
+    def sleep(delay):
+        sleeps.append(delay)
+        clock[0] += delay
+    monkeypatch.setattr(performance.time, 'monotonic', lambda: clock[0])
+    monkeypatch.setattr(performance.time, 'sleep', sleep)
+    # Separate worker connections share the same SQLite admission state.
+    gates = [performance.RateGate(tmp_path / 'pace.sqlite3') for _ in range(16)]
+    for _ in range(3):
+        for gate in gates:
+            gate.acquire()
+            starts.append(clock[0])
+    for gate in gates:
+        gate.connection.close()
+    assert starts == pytest.approx([100. + i * .126 for i in range(48)])
+    assert sleeps == pytest.approx([.126] * 47)
     rate = (len(starts) - 1) / (starts[-1] - starts[0])
-    print(f'Synthetic: 16 workers, R2=100ms/op, HTTP=50ms, sustained={rate:.3f}/s')
+    assert rate == pytest.approx(1 / .126)
     assert 6 <= rate <= 8
     assert all(sum(0 <= other - start < 1 for other in starts) <= 8 for start in starts)
 
