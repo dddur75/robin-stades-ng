@@ -1,0 +1,165 @@
+{
+  "schema_version": "mission028-noncanonical-stack-snapshot-v1",
+  "source_head": "e83932cab41e94c798d2c7c0f2eee02f9ed77fd3",
+  "incoming_head": "67c8afd29a1b3f679385b74524220acc187260c5",
+  "common_prefix_records": 346,
+  "common_prefix_sha256": "3d7461cf7aab5fd49a03b973ae6f648f70ad2fd048f0376c468788daebf04c37",
+  "source_ledger_sha256": "63128b8095c3ad904f9178e884c03f9d9f04c9db7f16cf8ed3d9920352f2bd5d",
+  "archived_suffix_sha256": "2c61b968c446787932b302529c6ae1fafcc3d42bbde826b945bbbcead3afcd47",
+  "archived_record_count": 1,
+  "ledger_archive": "reports/council/mission028-stack-pr106-before-e83932ca-ledger.jsonl",
+  "claims": [
+    {
+      "claim_id": "DATA.MISSION028.REPRISES.V1",
+      "claim": "370 local domain and Council tests pass for bounded UTC resumption. The first verified Actions artifact records 577 distinct lineup calls, 551 complete matches and a normal proof-lease stop, with quota minimum148990. Full-population data acceptance and independent review remain pending.",
+      "scope": "MISSION028_PHASES2_3_RESUMPTION",
+      "source": "Actions38999517118 and local targeted verification",
+      "grain": "frozen_population",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission-028-reprises-public-receipt.json",
+      "hash": "dce4d15b8a2bc3d43fb45c48692522e8bc9b7745be38ccc7d17e4a10f7b37bdb",
+      "code_revision": "precommit-projection:6cf8a4a757d54d24a780a3888316d23afb129ddf55afc8b7062e6f33051a88d6",
+      "artifact_hashes": {
+        ".github/actions/mission028-state/action.yml": "88c535b639d3b4dcc245add80e13cf9f5f28c3238fd9aa7b768f14b7f076964e",
+        ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "d060319b144ab42669932af65cf08ff0f5ede2b1938e53d4c223ec4d628f20d0",
+        ".github/workflows/mission028-daily.yml": "bc46704149eccac66f94b9fcc352d1698471ee80d133e2a03b8ef8fded46fddd",
+        "scripts/mission028_resume.py": "45c2bfa1ae7664964770b7dbb3ad0863007755a984cb8b75dd681a98493f0b83",
+        "scripts/run_mission028_details.py": "710567201c6433f2c7a447851ac3236aca7738562abbca519fb91622b776afa9",
+        "tests/historical_deep/test_mission028_details.py": "9a4bf221c25966bef3b5bd133b62858f719bb6142b1bcfad38c5e82edf177ce1",
+        "tests/historical_deep/test_mission028_resume.py": "4dcf02020fc0f2215825a8c9a1f2d9e768ebcbf89a17b13d874e01bf6c97c25a"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 7,
+      "engineering_projection_sha256": "6cf8a4a757d54d24a780a3888316d23afb129ddf55afc8b7062e6f33051a88d6",
+      "execution_id": "38999517118",
+      "scientific_lineage_id": "NOT_APPLICABLE_COLLECTION",
+      "dataset_lineage_id": "mission028-8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "DATA.MISSION028.REPRISES.V2",
+      "claim": "370 local domain and Council tests pass for bounded UTC resumption. The first verified Actions artifact records 577 distinct lineup calls, 551 complete matches and a normal proof-lease stop, with quota minimum148990. Full-population data acceptance and independent review remain pending.",
+      "scope": "MISSION028_PHASES2_3_RESUMPTION",
+      "source": "Actions38999517118 and local targeted verification",
+      "grain": "frozen_population",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission-028-reprises-v2-public-receipt.json",
+      "hash": "4a3da67f4241fe7278fb7a7c76db1de8bae52b7785bba7e8d121dfd2d4f9482f",
+      "code_revision": "precommit-projection:92584c0ad755bd5e893bb6e2174781685b95b876d82d27d26adb003051a2d163",
+      "artifact_hashes": {
+        ".github/actions/mission028-state/action.yml": "88c535b639d3b4dcc245add80e13cf9f5f28c3238fd9aa7b768f14b7f076964e",
+        ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "d060319b144ab42669932af65cf08ff0f5ede2b1938e53d4c223ec4d628f20d0",
+        ".github/workflows/mission028-daily.yml": "bc46704149eccac66f94b9fcc352d1698471ee80d133e2a03b8ef8fded46fddd",
+        "scripts/mission028_resume.py": "b3d911739a0a5832205d5096e412f5509c0e7b21ec8c331a909e59ff0cda6731",
+        "scripts/run_mission028_details.py": "710567201c6433f2c7a447851ac3236aca7738562abbca519fb91622b776afa9",
+        "tests/historical_deep/test_mission028_details.py": "9a4bf221c25966bef3b5bd133b62858f719bb6142b1bcfad38c5e82edf177ce1",
+        "tests/historical_deep/test_mission028_resume.py": "4dcf02020fc0f2215825a8c9a1f2d9e768ebcbf89a17b13d874e01bf6c97c25a"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 7,
+      "engineering_projection_sha256": "92584c0ad755bd5e893bb6e2174781685b95b876d82d27d26adb003051a2d163",
+      "execution_id": "38999517118",
+      "scientific_lineage_id": "NOT_APPLICABLE_COLLECTION",
+      "dataset_lineage_id": "mission028-8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "DATA.MISSION028.LINEUPS_SLICE2.V1",
+      "claim": "The second Actions slice documents6161new distinct lineup calls and19persisted Parquet partitions. The local artifact verification finds3747fixtures in those partitions,3109complete; workers report5510complete processed matches including cache. Total documented lineup calls are6738, low quota142817. Partial data only; do not sum the initial551again or claim95percent coverage.",
+      "scope": "QG028_REMEDIATION_AND_QG027_REVIEW",
+      "source": "Explicit user instruction, local verification and existing immutable receipts",
+      "grain": "engineering_verification",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission-028-lineups-slice2-verification-public-receipt.json",
+      "hash": "81bf77e169df558fe508455279747f762c7d66584640f3eaade73af2109e546c",
+      "code_revision": "precommit-projection:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "artifact_hashes": {},
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 0,
+      "engineering_projection_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "execution_id": "local-review-correction-20261017",
+      "scientific_lineage_id": "NOT_APPLICABLE_REVIEW_CORRECTION",
+      "dataset_lineage_id": "REUSED_EXISTING_RECEIPTS_NO_NEW_COLLECTION",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "ENGINEERING.MISSION028.STACK.PR106.SYNC.001",
+      "claim": "Main/parent integration preserves the frozen inputs and functional code, retains every old divergent audit row in an exact archive, and passes targeted local checks. CI and independent review are still required.",
+      "scope": "MISSION028_STACK_INTEGRATION",
+      "source": "Current main, prior branch snapshots, local targeted verification, qg76 and user instruction",
+      "grain": "engineering_verification",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission028-stack-pr106-sync-772b5656-public-receipt.json",
+      "hash": "3ff520cf5e9954bfce44e4c6b09f5d92a1021f80d717ad7b7e6e38d306881e2c",
+      "code_revision": "precommit-projection:92584c0ad755bd5e893bb6e2174781685b95b876d82d27d26adb003051a2d163",
+      "artifact_hashes": {
+        ".github/actions/mission028-state/action.yml": "88c535b639d3b4dcc245add80e13cf9f5f28c3238fd9aa7b768f14b7f076964e",
+        ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "d060319b144ab42669932af65cf08ff0f5ede2b1938e53d4c223ec4d628f20d0",
+        ".github/workflows/mission028-daily.yml": "bc46704149eccac66f94b9fcc352d1698471ee80d133e2a03b8ef8fded46fddd",
+        "scripts/mission028_resume.py": "b3d911739a0a5832205d5096e412f5509c0e7b21ec8c331a909e59ff0cda6731",
+        "scripts/run_mission028_details.py": "710567201c6433f2c7a447851ac3236aca7738562abbca519fb91622b776afa9",
+        "tests/historical_deep/test_mission028_details.py": "9a4bf221c25966bef3b5bd133b62858f719bb6142b1bcfad38c5e82edf177ce1",
+        "tests/historical_deep/test_mission028_resume.py": "4dcf02020fc0f2215825a8c9a1f2d9e768ebcbf89a17b13d874e01bf6c97c25a"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 7,
+      "engineering_projection_sha256": "92584c0ad755bd5e893bb6e2174781685b95b876d82d27d26adb003051a2d163",
+      "execution_id": "local-stack-sync-pr106",
+      "scientific_lineage_id": "NOT_APPLICABLE_STACK_INTEGRATION",
+      "dataset_lineage_id": "FROZEN_MISSION028_UNCHANGED",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    }
+  ],
+  "decision_nodes": [
+    {
+      "decision_id": "RCV3-20261017-028-STACK-PR106-001",
+      "ledger_record_hash": "eccbdf0ab72bfe4d6beda026effff562689f28eca51b55a33afb26d95f06c4ea"
+    }
+  ],
+  "edges": [
+    {
+      "edge_id": "EDGE.1199",
+      "from_claim_id": "ENGINEERING.MISSION028.STACK.PR106.SYNC.001",
+      "to_decision_id": "RCV3-20261017-028-STACK-PR106-001",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1200",
+      "from_claim_id": "DATA.MISSION028.REPRISES.V1",
+      "to_decision_id": "RCV3-20261017-028-STACK-PR106-001",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1201",
+      "from_claim_id": "DATA.MISSION028.REPRISES.V2",
+      "to_decision_id": "RCV3-20261017-028-STACK-PR106-001",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1202",
+      "from_claim_id": "DATA.MISSION028.LINEUPS_SLICE2.V1",
+      "to_decision_id": "RCV3-20261017-028-STACK-PR106-001",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    }
+  ]
+}

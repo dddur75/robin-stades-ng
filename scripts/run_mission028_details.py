@@ -1,4 +1,4 @@
-"""Mission 028 details: four bounded workers, one durable call per fixture/family."""
+"""Mission 028 details: bounded workers, one durable call per fixture/family."""
 from __future__ import annotations
 
 import csv
@@ -24,6 +24,7 @@ from robin.historical_deep.quota import QuotaController
 from robin.historical_deep.storage import R2FirstRepository
 from scripts import run_mission028 as census
 from scripts.mission028_budget import DETAIL_CAP, reserve_status
+from scripts.mission028_resume import BUDGET_CODES, WORKERS, checkpoint
 from scripts.run_mission028 import DIGEST, LEAGUES, PREFIX, Transport, load_targets, season_start
 
 OUTPUT = Path("artifacts/historical-deep/mission028-details")
@@ -92,11 +93,12 @@ class PacedTransport(Transport):
     next_at = 0.0
     def get(self, url, **kwargs):
         time.sleep(max(0, self.next_at - time.monotonic()))
-        self.next_at = time.monotonic() + .5  # Exactly four workflow workers: <=8 rps.
+        self.next_at = time.monotonic() + WORKERS / 8  # Aggregate <=8 rps.
         return super().get(url, **kwargs)
 def preflight():
     OUTPUT.mkdir(parents=True, exist_ok=True)
     receipt = dict(status="PARTIAL", status_calls=0, source_sha256=DIGEST)
+    store = None
     try:
         load_mapping()  # No storage or provider call before validating the frozen mapping.
         assert_safety_locks(os.environ)
@@ -113,14 +115,21 @@ def preflight():
         else:
             reserve_status(store, now)
             receipt["status_calls"] = 1
-            client = ApiFootballDeepClient(api_key=os.environ["API_FOOTBALL_KEY"], max_retries=0, transport=Transport(now + timedelta(minutes=1)), status_ttl_seconds=6600)
+            client = ApiFootballDeepClient(api_key=os.environ["API_FOOTBALL_KEY"], max_retries=0,
+                transport=Transport(now + timedelta(minutes=1)), status_ttl_seconds=6600)
             status = client.get_status()
-            store.put_if_absent(f"{PREFIX}/preflight/{os.environ['GITHUB_RUN_ID']}.json", status.model_dump_json().encode())
+            store.put_if_absent(f"{PREFIX}/preflight/{os.environ['GITHUB_RUN_ID']}.json",
+                                status.model_dump_json().encode())
         (OUTPUT / "preflight.json").write_text(status.model_dump_json())
         receipt.update(status="PASS", checked_at=status.checked_at.isoformat(), quota_remaining=status.daily_remaining)
     except Exception as error:
         receipt["reason_class"] = type(error).__name__
+        if str(error) in BUDGET_CODES:
+            receipt["reason_code"] = str(error)
+    checkpoint(store, receipt, datetime.now(UTC), os.environ.get("GITHUB_SHA", "local"))
     (OUTPUT / "preflight-public-receipt.json").write_text(json.dumps(receipt) + "\n")
+    if store:
+        store.put_if_absent(f"{PREFIX}/runs/{os.environ.get('GITHUB_RUN_ID', 'local')}/preflight-public-receipt.json", (json.dumps(receipt) + "\n").encode())
     return 0 if receipt["status"] == "PASS" else 2
 def main():
     OUTPUT.mkdir(parents=True, exist_ok=True)
@@ -128,10 +137,10 @@ def main():
     receipt = dict(status="PARTIAL", worker=worker, family=family, calls=0, complete_matches=0, partitions=[], missing=[], source_sha256=DIGEST, daily_cap=70000, daily_reserve=5000)
     transport = store = quota = None
     try:
-        require(worker in range(4) and family in ("lineups", "statistics"), "MISSION028_WORKER_OR_FAMILY_INVALID")
+        require(worker in range(WORKERS) and family in ("lineups", "statistics"), "MISSION028_WORKER_OR_FAMILY_INVALID")
         mapping = load_mapping()
         provider_by_fixture = {r["fixture_id"]: int(r["league_id"]) for r in mapping}
-        selected = [r for r in mapping if sorted(LEAGUES).index(r["ligue_fd"]) % 4 == worker]
+        selected = [r for r in mapping if sorted(LEAGUES).index(r["ligue_fd"]) % WORKERS == worker]
         ids = sorted(r["fixture_id"] for r in selected)
         receipt.update(target_count=len(ids), fixture_ids_sha256=hashlib.sha256(
             "".join(f"{i}\n" for i in ids).encode()).hexdigest())
@@ -185,12 +194,15 @@ def main():
         receipt["status"] = "COMPLETE" if receipt["complete_fraction"] >= (.95 if family == "lineups" else .90) else "PARTIAL"
     except Exception as error:
         receipt["reason_class"] = type(error).__name__
+        if str(error) in BUDGET_CODES:
+            receipt["reason_code"] = str(error)
     receipt.update(calls=transport.calls if transport else 0, distinct_matches_called=transport.calls if transport else 0,
                    quota_remaining=quota.status.daily_remaining if quota else None, run_id=os.environ["GITHUB_RUN_ID"])
     body = (json.dumps(receipt, indent=2) + "\n").encode()
     name = f"worker-{worker}-{family}-public-receipt.json"
     (OUTPUT / name).write_bytes(body)
     if store:
+        checkpoint(store, receipt, datetime.now(UTC), os.environ["GITHUB_SHA"], transport.deadline if transport else None)
         store.put_if_absent(f"{PREFIX}/runs/{receipt['run_id']}/{name}", body)
     return 0 if receipt["status"] == "COMPLETE" else 2
 if __name__ == "__main__":

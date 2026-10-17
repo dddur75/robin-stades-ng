@@ -10,14 +10,17 @@ HTTP. Une table manquante ou altérée arrête le prévol.
 
 Workflow 71 existant : `execute=true`, `details_family=lineups` pour la phase 2,
 puis `details_family=statistics` pour la phase 3. Le prévol est unique avant les
-quatre workers. Chaque worker prend des ligues disjointes, avec une limite de
+seize workers. Chaque worker prend des ligues disjointes, avec une limite de
 95 minutes ; le transport interdit de dépasser minuit UTC ou les 110 minutes
 de preuve. La concurrence du workflow reste inchangée.
 
-Les 69 800 slots quotidiens sont partagés par les deux familles et acquis par
-écriture conditionnelle R2 ; 200 places sont conservées pour les calendriers.
-Chaque famille a au plus 61 000 identifiants uniques et une réservation durable
-par identifiant : le total est donc borné à 200 + 61 000 + 61 000 = 122 200.
+Les 69 750 slots quotidiens sont partagés par les deux familles et acquis par
+écriture conditionnelle R2 ; 200 places sont conservées pour les calendriers,
+50 pour les prévols (49 nouveaux, plus le prévol initial). La liste liée au
+manifeste contient exactement 60 437 identifiants ; les deux familles et les
+200 calendriers laissent 1 126 prévols au plafond global de 122 200 appels.
+Nous en gardons au plus 926 (le premier et 925 nouveaux), soit 122 000
+appels au maximum et encore 200 places de marge pour toute la mission.
 Une réservation incertaine consomme le budget et n’est jamais rappelée.
 
 Les partitions achevées sont reprises à l’identique depuis R2. Un groupe

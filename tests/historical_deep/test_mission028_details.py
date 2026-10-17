@@ -79,12 +79,11 @@ def test_details_entrypoint_persists_parquet_and_resumes_without_http(monkeypatc
     for key, value in dict(STORAGE_PAUSED="true", P3_P4_PAUSED="true", PRODUCTION_LOCKED="true",
         REAL_BETS="false", NO_BET_DEFAULT="true", PROMOTION_LOCKED="true", SOCIAL_PUBLISHING_ENABLED="false",
         DEMO_MODE_ENABLED="false", POSTGRESQL_PRODUCTION_DESTRUCTIVE_WRITES="false",
-        THE_ODDS_API_HISTORICAL_CREDITS="false", MISSION028_WORKER="0", MISSION028_FAMILY=family,
+        THE_ODDS_API_HISTORICAL_CREDITS="false", MISSION028_WORKER=str(sorted(run.LEAGUES).index(code) % 16), MISSION028_FAMILY=family,
         GITHUB_RUN_ID="synthetic", GITHUB_SHA="a" * 40).items():
         monkeypatch.setenv(key, value)
     monkeypatch.setenv("API_FOOTBALL_KEY", str(tmp_path))
     monkeypatch.setattr(run, "OUTPUT", tmp_path)
-    monkeypatch.setattr(run, "LEAGUES", {code: run.LEAGUES[code]})
     monkeypatch.setattr(run, "R2ObjectStore", lambda env: store)
     monkeypatch.setattr(run, "load_mapping", lambda: [dict(ligue_fd=code, season=str(year), fixture_id=10, league_id=league)])
     (tmp_path / "preflight.json").write_text(ProviderStatus(plan="Mega", active=True,
@@ -146,3 +145,15 @@ def test_status_reservations_bound_daily_and_total_calls(total, limit, reason):
         reserve_status(store, NOW)
     if not total:
         reserve_status(store, NOW + timedelta(days=1))
+
+
+def test_sixteen_workers_are_paced_to_eight_requests_per_second(monkeypatch):
+    from scripts import run_mission028_details as run
+    sleeps = []
+    monkeypatch.setattr(run.time, "monotonic", lambda: 100.0)
+    monkeypatch.setattr(run.time, "sleep", sleeps.append)
+    monkeypatch.setattr(run.Transport, "get", lambda *a, **kw: None)
+    transport = run.PacedTransport(NOW)
+    transport.get("https://example.invalid")
+    transport.get("https://example.invalid")
+    assert sleeps == [0, 2.0]
