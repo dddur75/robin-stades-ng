@@ -17,12 +17,12 @@ BUDGET_CODES = {TOTAL_CODE, "MISSION028_DAILY_BUDGET_REACHED", "MISSION028_RESER
 def checkpoint(store, receipt, now, revision, deadline=None):
     if store is None:
         return
+    if receipt.get("reason_code") == "MISSION028_TIME_SLICE_ENDED":
+        return  # A completed time slice never marks the worker terminal.
     if "reason_class" not in receipt:
         if "family" not in receipt:
             return  # A successful preflight is not a completed family.
         key = f"{PREFIX}/terminal/{receipt['family']}/worker={receipt['worker']}.json"
-    elif deadline is not None and now >= deadline:
-        return  # A time slice may resume with a fresh proof; never retry its markers.
     elif receipt.get("reason_code") == TOTAL_CODE:
         key = f"{PREFIX}/limits/total.json"
     elif receipt["reason_class"] in ("QuotaExhaustedError", "QuotaStatusExpiredError") or receipt.get("reason_code") in BUDGET_CODES:

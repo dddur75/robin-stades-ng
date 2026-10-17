@@ -740,6 +740,16 @@ def test_workflow71_schedule_skips_historical_and_phase1_for_every_resume_state(
 
     _, workflow = _load(PHASE_FILES[71])
     job = _only_job(workflow)
+    assert workflow.get("on", workflow.get(True))["schedule"] == [{"cron": "17 */2 * * *"}]
+    assert "if" not in job and "concurrency" not in job
+    assert workflow["concurrency"]["cancel-in-progress"] is False
+    class AbsentInputs:
+        def __getattr__(self, name):
+            return None  # GitHub evaluates missing schedule inputs to null.
+    for expression, expected in [(workflow["concurrency"]["group"], "historical-deep-r2-state"),
+                                  (job["timeout-minutes"], 110)]:
+        expression = expression.removeprefix("${{").removesuffix("}}").replace("&&", " and ").replace("||", " or ")
+        assert eval(expression, {"__builtins__": {}}, {"inputs": AbsentInputs()}) == expected
     steps = _steps(job)
     historical = next(s for s in steps if s.get("name") == "Collecter les bundles et fallbacks ciblés")
     census = next(s for s in steps if s.get("name") == "Mission 028 — correspondance des petites ligues")
