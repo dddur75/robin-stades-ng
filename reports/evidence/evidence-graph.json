@@ -11486,6 +11486,24 @@
       "verified_by": [
         "C0"
       ]
+    },
+    {
+      "claim_id": "DATA.MISSION028.MAPPING.V1",
+      "claim": "The frozen mapping covers60437 of60515 source matches, all33 leagues above97 percent, with78 listed gaps. Two hundred unique calendars were called, one status preflight total; quota minimum149555. Independent reconstruction is byte-identical and validates source rows, provider league, season, terminal status, date, both names, both scores and unique fixture ids.",
+      "scope": "MISSION028_PHASE1_PREPARATION",
+      "source": "qg#74@0048757 and local targeted tests",
+      "grain": "frozen_population",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission-028-phase1-verification-public-receipt.json",
+      "hash": "c403568e7cb5e2e984e72356f62574bcf02f959f0d58fb3604ef27dfb1b45d5d",
+      "code_revision": "242f14c69828a436c02a07ae910126f17e9cd417",
+      "execution_id": "local-mission028-preparation",
+      "scientific_lineage_id": "NOT_APPLICABLE_COLLECTION",
+      "dataset_lineage_id": "mission028-8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
     }
   ],
   "decision_nodes":[
@@ -11862,6 +11880,10 @@
     {
       "decision_id": "RCV3-20261017-028-008",
       "ledger_record_hash": "a735081390a43222955a5e7d79fcebbf2808c8f80bdeb0ad6bdb0da99710a22f"
+    },
+    {
+      "decision_id": "RCV3-20261017-028-009",
+      "ledger_record_hash": "0134fc1ae4cba4a7eff2136c6bc5d4efa5c06663510a568586494373bd17dbf9"
     }
   ],
   "edges":[
@@ -13108,6 +13130,13 @@
       "edge_id": "EDGE.1198",
       "from_claim_id": "DATA.MISSION028.CENSUS.V1",
       "to_decision_id": "RCV3-20261017-028-008",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1199",
+      "from_claim_id": "DATA.MISSION028.MAPPING.V1",
+      "to_decision_id": "RCV3-20261017-028-009",
       "relation": "SUPPORTS",
       "status": "RECORDED"
     }

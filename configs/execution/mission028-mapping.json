@@ -1,0 +1,12 @@
+{
+  "schema_version": "mission028-frozen-mapping-v1",
+  "source_sha256": "8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+  "mapping_sha256": "07bd3dfd004f41ef13bfea1b4273fb2d76619fafb22d4fd5c2c94dfd9d0b3a17",
+  "fixture_ids_sha256": "0f2c4e0d6f783dfc3e5b304e4fad39eb3956ed35ed81029ae84cc64dffb65247",
+  "targets": 60515,
+  "matched": 60437,
+  "unmatched": 78,
+  "calendar_requests_total": 200,
+  "source_run_id": "38997025720",
+  "verification_sha256": "c403568e7cb5e2e984e72356f62574bcf02f959f0d58fb3604ef27dfb1b45d5d"
+}
