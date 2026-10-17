@@ -27,7 +27,6 @@ LEAGUES = {"Premier-League": 39, "La-Liga": 140, "Serie-A": 135, "Bundesliga": 7
 PREFIX = "historical-deep-data/schema-v1/_control/mission-027"
 OUTPUT = Path("artifacts/historical-deep/mission027")
 
-
 class LineupTransport:
     calls = 0
     next_at = 0.0
@@ -40,7 +39,6 @@ class LineupTransport:
         self.next_at = time.monotonic() + 0.5  # Four isolated workers: <=8 rps total.
         self.calls += 1
         return requests.get(url, allow_redirects=False, **kwargs)
-
 
 class CachedStore:
     """Cache immutable reads; every conditional write still reaches R2."""
@@ -62,14 +60,12 @@ class CachedStore:
     def iter_keys(self, prefix):
         return self.store.iter_keys(prefix)
 
-
 class ReceiptBoundary:
     """Expose the collector's minimal receipt/payload/capture interface."""
     def __init__(self, repository):
         self.receipt_for = repository.receipt_for
         self.payload_for = repository.payload_for
         self.capture = repository.capture
-
 
 def validate_targets(groups):
     assert len(groups) == 20
@@ -80,7 +76,6 @@ def validate_targets(groups):
     assert all(type(i) is int and i > 0 for i in ids)
     assert len(ids) == len(set(ids)) == 7228
     assert hashlib.sha256("".join(f"{i}\n" for i in sorted(ids)).encode()).hexdigest() == DIGEST
-
 
 def complete(records):
     try:
@@ -94,7 +89,6 @@ def complete(records):
     except (AttributeError, KeyError, TypeError):
         return False
 
-
 def collect_once(collector, store, request):
     task = collector._make_task(**request, identity=None)
     marker = f"{PREFIX}/fixture={request['params']['fixture']}.json"
@@ -102,7 +96,6 @@ def collect_once(collector, store, request):
         if collector.repository.receipt_for(task) is None:
             return None  # Crash or failed response: never issue the request again.
     return collector._collect(**request)
-
 
 def projection_records(body, group):
     rows = pq.ParquetFile(io.BytesIO(body)).read().to_pylist()
@@ -112,7 +105,6 @@ def projection_records(body, group):
         assert row["availability_status"] == "POST_MATCH_ONLY"
         fixtures.setdefault(row["provider_fixture_id"], []).append(json.loads(row["payload"]))
     return rows, fixtures
-
 
 def main():
     OUTPUT.mkdir(parents=True, exist_ok=True)
@@ -230,7 +222,6 @@ def main():
     if store is not None:
         store.put_if_absent(f"{PREFIX}/runs/{receipt['run_id']}/public-receipt.json", payload)
     return 0 if receipt["status"] == "COMPLETE" else 2
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

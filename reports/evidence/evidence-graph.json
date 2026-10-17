@@ -11798,6 +11798,62 @@
       "verified_by": [
         "C0"
       ]
+    },
+    {
+      "claim_id": "DATA.MISSION027.REVIEW_CORRECTIONS.V1",
+      "claim": "The actual mission027 entrypoint rejects8000/8001calls and5000/4999remaining withMISSION_BUDGET_REACHED, while7999calls/5001remaining reaches the blocked synthetic collector. Each guard removal is detected. Existing verified quota states establish143019 as the low point; the clarified final receipt preserves original call counts and all twenty published Parquet.",
+      "scope": "QG028_REMEDIATION_AND_QG027_REVIEW",
+      "source": "Explicit user instruction, local verification and existing immutable receipts",
+      "grain": "engineering_verification",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission-027-phase1-verification-v3-public-receipt.json",
+      "hash": "1ff16a9e9346c3ed0127df23ed065b276739a3f050b765777ebeeb7f23ba4800",
+      "code_revision": "precommit-projection:4691e5c58d0d72957fbd46c16ecaf217efbe3578b9bdaa1c6667a1f9602f8e3c",
+      "artifact_hashes": {
+        "scripts/run_mission027_lineups.py": "659c213578018c3be8a08072f56c28244e0d044b140211a5da545d4b8a9611bf",
+        "tests/historical_deep/test_mission027_lineups.py": "216fca9d024fe18d85701648baec0442084b2e00c5b66c636089eef6365aa4e4",
+        ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "717ea5619e2983bc254aaf652e62fa52a405817574ddf96b12d761f18a865858",
+        "tests/historical_deep/test_workflow_contracts.py": "af5d8f2b192717e360dc0c829d736873e0372df92a2a4407a1f7f4f6c753fb73"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 4,
+      "engineering_projection_sha256": "4691e5c58d0d72957fbd46c16ecaf217efbe3578b9bdaa1c6667a1f9602f8e3c",
+      "execution_id": "local-review-correction-20261017",
+      "scientific_lineage_id": "NOT_APPLICABLE_REVIEW_CORRECTION",
+      "dataset_lineage_id": "REUSED_EXISTING_RECEIPTS_NO_NEW_COLLECTION",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "DATA.MISSION027.REVIEW_CORRECTIONS.V2",
+      "claim": "The two budget guards are covered through the real entrypoint, including8000calls and5000remaining, with a positive near-boundary control. The clarified receipt records quota_low143019.350domain/Council tests pass, plus12mission tests after the synthetic credential-fixture syntax correction. No new provider call, workflow edit or published Parquet change.",
+      "scope": "QG028_REMEDIATION_AND_QG027_REVIEW",
+      "source": "Explicit user instruction, local verification and existing immutable receipts",
+      "grain": "engineering_verification",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission-027-phase1-verification-v3-public-receipt.json",
+      "hash": "1ff16a9e9346c3ed0127df23ed065b276739a3f050b765777ebeeb7f23ba4800",
+      "code_revision": "precommit-projection:3cd50e1a77842dbdd327433435b4c40a14f1a8901238fb305dd2714b048c8393",
+      "artifact_hashes": {
+        "scripts/run_mission027_lineups.py": "659c213578018c3be8a08072f56c28244e0d044b140211a5da545d4b8a9611bf",
+        "tests/historical_deep/test_mission027_lineups.py": "99b1987cba4bc2fc54550c008ca4f9c932236da76d2ef15f158c1480bebf8370",
+        ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "717ea5619e2983bc254aaf652e62fa52a405817574ddf96b12d761f18a865858",
+        "tests/historical_deep/test_workflow_contracts.py": "af5d8f2b192717e360dc0c829d736873e0372df92a2a4407a1f7f4f6c753fb73"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 4,
+      "engineering_projection_sha256": "3cd50e1a77842dbdd327433435b4c40a14f1a8901238fb305dd2714b048c8393",
+      "execution_id": "local-review-correction-20261017",
+      "scientific_lineage_id": "NOT_APPLICABLE_REVIEW_CORRECTION",
+      "dataset_lineage_id": "REUSED_EXISTING_RECEIPTS_NO_NEW_COLLECTION",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
     }
   ],
   "decision_nodes":[
@@ -12242,6 +12298,14 @@
     {
       "decision_id": "RCV3-20261017-374",
       "ledger_record_hash": "52ffa7b83d06427fbf95f648dc7c18a66204f8740f101a864e444b39d37c6a59"
+    },
+    {
+      "decision_id": "RCV3-20261017-027-REVIEW-001",
+      "ledger_record_hash": "4a6fbc38da8e6da80dd9be2c581bd356fd57ac996c73d3d056227db4caa9d3c6"
+    },
+    {
+      "decision_id": "RCV3-20261017-027-REVIEW-002",
+      "ledger_record_hash": "10a43b12e2e00c3cab45bbb89fd7b25990c8946fb8437806dfe2010176678cf0"
     }
   ],
   "edges":[
@@ -13616,6 +13680,20 @@
       "relation": "SUPPORTS",
       "status": "RECORDED",
       "to_decision_id": "RCV3-20261017-374"
+    },
+    {
+      "edge_id": "EDGE.1217",
+      "from_claim_id": "DATA.MISSION027.REVIEW_CORRECTIONS.V1",
+      "to_decision_id": "RCV3-20261017-027-REVIEW-001",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1218",
+      "from_claim_id": "DATA.MISSION027.REVIEW_CORRECTIONS.V2",
+      "to_decision_id": "RCV3-20261017-027-REVIEW-002",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
     }
   ]
 }
