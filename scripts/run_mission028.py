@@ -159,7 +159,7 @@ def main():
                                 status.model_dump_json().encode())
         # R2FirstRepository is the same append-only boundary used by mission 027.
         collector = HistoricalDeepCollector(client, R2FirstRepository(store),
-            campaign_id="mission-028", source_commit=os.environ["GITHUB_SHA"])
+            source_commit=os.environ["GITHUB_SHA"])
         fixtures, missing = [], []
         low = quota.status.daily_remaining if quota else None
         for code in sorted(LEAGUES):

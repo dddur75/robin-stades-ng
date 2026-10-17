@@ -1,4 +1,6 @@
+import json
 from datetime import UTC, datetime, timedelta
+from types import SimpleNamespace
 
 import pytest
 
@@ -81,3 +83,39 @@ def test_once_only_even_after_failure_and_new_collector(crash):
         except RuntimeError:
             assert crash
     assert provider.calls == budget.total == 1
+
+
+def test_entrypoint_then_replay_uses_durable_cache_without_http(monkeypatch, tmp_path):
+    from scripts import run_mission028 as run
+    store, endpoints = InMemoryObjectStore(), []
+    locks = dict(STORAGE_PAUSED="true", P3_P4_PAUSED="true", PRODUCTION_LOCKED="true",
+        REAL_BETS="false", NO_BET_DEFAULT="true", PROMOTION_LOCKED="true",
+        SOCIAL_PUBLISHING_ENABLED="false", DEMO_MODE_ENABLED="false",
+        POSTGRESQL_PRODUCTION_DESTRUCTIVE_WRITES="false", THE_ODDS_API_HISTORICAL_CREDITS="false",
+        GITHUB_RUN_ID="synthetic", GITHUB_SHA="a" * 40)
+    for key, value in locks.items():
+        monkeypatch.setenv(key, value)
+    monkeypatch.setattr(run, "load_targets", lambda: [ROW])
+    monkeypatch.setattr(run, "LEAGUES", {"E1": 40})
+    monkeypatch.setattr(run, "OUTPUT", tmp_path)
+    monkeypatch.setattr(run, "R2ObjectStore", lambda env: store)
+
+    def get(url, **kwargs):
+        assert kwargs["allow_redirects"] is False
+        endpoints.append(url.rsplit("/", 1)[1])
+        response = dict(subscription=dict(plan="Mega", active=True, end="2026-11-25"),
+                        requests=dict(limit_day=150000, current=0))
+        if endpoints[-1] != "status":
+            f = fixture(identifier=kwargs["params"]["season"], away="QPR")
+            f["league"]["season"] = kwargs["params"]["season"]
+            response = [f]
+        return SimpleNamespace(status_code=200, headers={}, json=lambda: {"response": response})
+
+    monkeypatch.setattr(run.requests, "get", get)
+    assert run.main() == 0
+    assert endpoints == ["status"] + ["fixtures"] * 6
+    receipt = json.loads((tmp_path / "public-receipt.json").read_text())
+    assert receipt["calls"] == 6 and receipt["status_calls"] == 1
+    monkeypatch.setenv("GITHUB_RUN_ID", "synthetic-replay")
+    monkeypatch.setenv("MISSION028_REPLAY", "true")
+    assert run.main() == 0 and len(endpoints) == 7
