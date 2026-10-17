@@ -58,6 +58,8 @@ def name_key(value):
 def match_rows(rows, fixtures, aliases):
     index = defaultdict(list)
     for f in fixtures:
+        if f["fixture"].get("status", {}).get("short") not in ("FT", "AET", "PEN", "AWD", "WO"):
+            continue
         index[(f["league"]["id"], f["league"]["season"],
                f["goals"]["home"], f["goals"]["away"])].append(f)
     table, rates = [], {}
@@ -190,7 +192,7 @@ def main():
         aliases = json.loads(aliases_path.read_text()) if aliases_path.exists() else {}
         table, rates = match_rows(rows, fixtures, aliases)
         fixture_index = [dict(fixture_id=f["fixture"]["id"], league_id=f["league"]["id"],
-            season=f["league"]["season"], date=f["fixture"]["date"][:10],
+            season=f["league"]["season"], date=f["fixture"]["date"][:10], status=f["fixture"].get("status", {}).get("short"),
             home=f["teams"]["home"]["name"], away=f["teams"]["away"]["name"],
             home_goals=f["goals"]["home"], away_goals=f["goals"]["away"]) for f in fixtures]
         for filename, values in (("correspondance.csv", table), ("fixtures-index.csv", fixture_index),

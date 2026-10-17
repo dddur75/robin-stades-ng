@@ -11828,6 +11828,10 @@
     {
       "decision_id": "RCV3-20261017-028-004",
       "ledger_record_hash": "c066c3fbb2fada89fafc80c421fd14c3f98ab0cdbbaffb7fc0b453e98a2468a8"
+    },
+    {
+      "decision_id": "RCV3-20261017-028-005",
+      "ledger_record_hash": "363cbda1065e269b3d868c25339e9652e69ade718fe0d0776b8d31d4434f8d5a"
     }
   ],
   "edges":[
@@ -13046,6 +13050,13 @@
       "edge_id": "EDGE.1194",
       "from_claim_id": "DATA.MISSION028.PREPARATION.V1",
       "to_decision_id": "RCV3-20261017-028-004",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1195",
+      "from_claim_id": "DATA.MISSION028.PREPARATION.V1",
+      "to_decision_id": "RCV3-20261017-028-005",
       "relation": "SUPPORTS",
       "status": "RECORDED"
     }

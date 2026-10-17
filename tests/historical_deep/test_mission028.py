@@ -14,7 +14,7 @@ ROW = dict(ligue_fd="E1", saison_fd="2019-20", date="2019-08-01",
 
 
 def fixture(identifier=1, day="2019-08-02", home="Bristol City", away="Queens Park Rangers"):
-    return dict(fixture=dict(id=identifier, date=day + "T00:00:00+00:00"),
+    return dict(fixture=dict(id=identifier, date=day + "T00:00:00+00:00", status=dict(short="FT")),
                 league=dict(id=40, season=2019), goals=dict(home=2, away=1),
                 teams=dict(home=dict(name=home), away=dict(name=away)))
 
@@ -40,8 +40,10 @@ def test_match_requires_date_both_names_score_and_unique_fixture():
     aliases = {"E1|QPR": "Queens Park Rangers"}
     table, rates = match_rows([ROW], [fixture()], aliases)
     assert table[0]["fixture_id"] == 1 and rates["E1"]["fraction"] == 1
+    pending = fixture()
+    pending["fixture"]["status"]["short"] = "NS"
     for candidates in ([fixture(day="2019-08-03")], [fixture(home="Bristol Rovers")],
-                       [dict(fixture(), goals=dict(home=1, away=2))], [fixture(), fixture(2)]):
+                       [dict(fixture(), goals=dict(home=1, away=2))], [fixture(), fixture(2)], [pending]):
         table, rates = match_rows([ROW], candidates, aliases)
         assert table[0]["fixture_id"] is None and rates["E1"]["fraction"] == 0
     table, _ = match_rows([ROW, ROW], [fixture()], aliases)
