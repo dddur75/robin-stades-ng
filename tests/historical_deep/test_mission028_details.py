@@ -37,7 +37,7 @@ def test_mapping_hash_and_source_identity_fail_closed(tmp_path, monkeypatch, cod
 def test_shared_atomic_daily_slots_include_phase1_reserve_and_midnight():
     store = InMemoryObjectStore()
     left, right = DaySlots(store, NOW), DaySlots(store, NOW)
-    left.next_slot = right.next_slot = 69749
+    left.next_slot = right.next_slot = 129749
     left.reserve(NOW, 5001)
     with pytest.raises(RuntimeError, match="BUDGET"):
         right.reserve(NOW, 150000)
@@ -101,6 +101,8 @@ def test_details_entrypoint_persists_parquet_and_resumes_without_http(monkeypatc
     assert run.main() == 0
     monkeypatch.setenv("GITHUB_RUN_ID", "synthetic-resume")
     assert run.main() == 0 and len(calls) == 1
+    receipt = json.loads(next(tmp_path.glob("worker-*-public-receipt.json")).read_text())
+    assert receipt["daily_cap"] == 130000 and receipt["daily_reserve"] == 5000
     files = list(tmp_path.rglob("*.parquet"))
     assert len(files) == 1
     assert all(r["competition_id"] == league for r in run.pq.ParquetFile(files[0]).read().to_pylist())

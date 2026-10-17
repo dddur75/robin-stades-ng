@@ -50,7 +50,7 @@ def load_mapping(path=MAPPING, manifest=MANIFEST):
     require(selected and len(selected) <= 61000 and len({r["fixture_id"] for r in selected}) == len(selected), "MISSION028_MAPPING_DUPLICATE_OR_OVERSIZED")
     return selected
 class DaySlots:
-    """Atomic shared allowance: 69,750 details + 200 calendars + 50 statuses/day."""
+    """Atomic shared allowance: 129,750 details + 200 calendars + 50 statuses/day."""
     def __init__(self, store, now):
         self.store, self.day = store, now.astimezone(UTC).date().isoformat()
         self.prefix = f"{PREFIX}/daily/{self.day}/"
@@ -134,7 +134,7 @@ def preflight():
 def main():
     OUTPUT.mkdir(parents=True, exist_ok=True)
     worker, family = int(os.environ["MISSION028_WORKER"]), os.environ["MISSION028_FAMILY"]
-    receipt = dict(status="PARTIAL", worker=worker, family=family, calls=0, complete_matches=0, partitions=[], missing=[], source_sha256=DIGEST, daily_cap=70000, daily_reserve=5000)
+    receipt = dict(status="PARTIAL", worker=worker, family=family, calls=0, complete_matches=0, partitions=[], missing=[], source_sha256=DIGEST, daily_cap=130000, daily_reserve=5000)
     transport = store = quota = None
     try:
         require(worker in range(WORKERS) and family in ("lineups", "statistics"), "MISSION028_WORKER_OR_FAMILY_INVALID")

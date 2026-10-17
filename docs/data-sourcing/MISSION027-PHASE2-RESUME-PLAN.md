@@ -17,7 +17,5 @@ Changements nécessaires dans une PR « 027 — phase 2 — … », au plus 400 
 Ce document ne constitue ni un changement de workflow ni une activation. Aucun appel fournisseur de phase 2 n'a été fait.
 
 ## Résumé de livraison — 2026-10-17
-- Cause : capture et registre désactivés manuellement le 9 août ; dernier run de capture annulé sans job, auteur et motif non établis.
-- Fait : profil compositions 2026 pour cinq ligues, calendriers inclus dans 60 réservations UTC, reprise R2 par saison, SQL filtré avant chargement ; fenêtres et cadence horaire conservées.
-- Reste : relecture/fusion Qualité, puis réactivation du seul workflow de compositions et reçu réel de dix matchs ; aucune activation ni collecte fournisseur depuis cette session.
-- Risques : sans preuve de quota du workflow 71 datant de moins de 110 minutes le même jour UTC, arrêt PARTIAL sans appel ; contrôle de schéma aligné sur la révision 0015 exigée par l'adaptateur existant.
+- Fait : capture bornée à 2026/cinq ligues et 60 appels UTC ; preuves en ajout strict ; `/status` gratuit autonome, 1/run et 24/jour UTC réservés dans R2, cache <110 minutes, preuve fraîche de 71 acceptée.
+- Reste/risques : relecture et fusion Qualité, puis réactivation du seul workflow de compositions et reçu réel de dix matchs ; aucune collecte ni activation depuis cette session ; budget épuisé ou preuve indisponible → PARTIAL.

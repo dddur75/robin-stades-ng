@@ -1080,9 +1080,7 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
             return statement
         season, competitions = self.restore_scope
         fixtures = self.tables["prospective_fixtures"]
-        eligible = select(fixtures.c.fixture_id).where(
-            fixtures.c.season == season, fixtures.c.competition.in_(competitions)
-        )
+        eligible = select(fixtures.c.fixture_id).where(fixtures.c.season == season, fixtures.c.competition.in_(competitions))
         if table.name == "prospective_fixtures":
             return statement.where(table.c.season == season, table.c.competition.in_(competitions))
         if "fixture_id" in table.c:
