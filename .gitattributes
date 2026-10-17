@@ -1,0 +1,4 @@
+configs/execution/mission028-targets.csv -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+configs/execution/mission028-mapping.csv -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+reports/evidence/mission-028-phase1-gaps.csv -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+reports/evidence/mission-028-phase1-rates.csv -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
