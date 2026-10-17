@@ -1,0 +1,199 @@
+{
+  "schema_version": "mission-028-phase1-v1",
+  "status": "COMPLETE",
+  "calls": 2,
+  "status_calls": 0,
+  "target_sha256": "8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+  "max_calls": 200,
+  "total_cap": 122200,
+  "daily_cap": 70000,
+  "daily_reserve": 5000,
+  "run_id": "38997025720",
+  "preflight_checked_at": "2026-10-17T02:10:32.140053+00:00",
+  "quota_low": 149555,
+  "rates": {
+    "ARG": {
+      "targets": 2655,
+      "matched": 2653,
+      "fraction": 0.9992467043314501
+    },
+    "AUT": {
+      "targets": 1169,
+      "matched": 1169,
+      "fraction": 1.0
+    },
+    "B1": {
+      "targets": 1774,
+      "matched": 1773,
+      "fraction": 0.9994363021420518
+    },
+    "BRA": {
+      "targets": 2191,
+      "matched": 2191,
+      "fraction": 1.0
+    },
+    "CHN": {
+      "targets": 1243,
+      "matched": 1237,
+      "fraction": 0.995172968624296
+    },
+    "D2": {
+      "targets": 1836,
+      "matched": 1836,
+      "fraction": 1.0
+    },
+    "DNK": {
+      "targets": 1207,
+      "matched": 1205,
+      "fraction": 0.9983429991714996
+    },
+    "E1": {
+      "targets": 3312,
+      "matched": 3312,
+      "fraction": 1.0
+    },
+    "E2": {
+      "targets": 3160,
+      "matched": 3160,
+      "fraction": 1.0
+    },
+    "E3": {
+      "targets": 3200,
+      "matched": 3200,
+      "fraction": 1.0
+    },
+    "EC": {
+      "targets": 3090,
+      "matched": 3090,
+      "fraction": 1.0
+    },
+    "F2": {
+      "targets": 2105,
+      "matched": 2104,
+      "fraction": 0.9995249406175772
+    },
+    "FIN": {
+      "targets": 895,
+      "matched": 885,
+      "fraction": 0.9888268156424581
+    },
+    "G1": {
+      "targets": 1433,
+      "matched": 1431,
+      "fraction": 0.9986043265875785
+    },
+    "I2": {
+      "targets": 2277,
+      "matched": 2277,
+      "fraction": 1.0
+    },
+    "IRL": {
+      "targets": 901,
+      "matched": 884,
+      "fraction": 0.9811320754716981
+    },
+    "JPN": {
+      "targets": 1841,
+      "matched": 1834,
+      "fraction": 0.9961977186311787
+    },
+    "MEX": {
+      "targets": 1981,
+      "matched": 1978,
+      "fraction": 0.9984856133266027
+    },
+    "N1": {
+      "targets": 1762,
+      "matched": 1761,
+      "fraction": 0.9994324631101021
+    },
+    "NOR": {
+      "targets": 1348,
+      "matched": 1345,
+      "fraction": 0.9977744807121661
+    },
+    "P1": {
+      "targets": 1836,
+      "matched": 1836,
+      "fraction": 1.0
+    },
+    "POL": {
+      "targets": 1760,
+      "matched": 1759,
+      "fraction": 0.9994318181818181
+    },
+    "ROU": {
+      "targets": 1860,
+      "matched": 1853,
+      "fraction": 0.9962365591397849
+    },
+    "RUS": {
+      "targets": 1450,
+      "matched": 1448,
+      "fraction": 0.9986206896551724
+    },
+    "SC0": {
+      "targets": 1319,
+      "matched": 1319,
+      "fraction": 1.0
+    },
+    "SC1": {
+      "targets": 992,
+      "matched": 992,
+      "fraction": 1.0
+    },
+    "SC2": {
+      "targets": 969,
+      "matched": 968,
+      "fraction": 0.9989680082559339
+    },
+    "SC3": {
+      "targets": 967,
+      "matched": 967,
+      "fraction": 1.0
+    },
+    "SP2": {
+      "targets": 2772,
+      "matched": 2772,
+      "fraction": 1.0
+    },
+    "SWE": {
+      "targets": 1346,
+      "matched": 1346,
+      "fraction": 1.0
+    },
+    "SWZ": {
+      "targets": 1184,
+      "matched": 1184,
+      "fraction": 1.0
+    },
+    "T1": {
+      "targets": 2141,
+      "matched": 2139,
+      "fraction": 0.9990658570761326
+    },
+    "USA": {
+      "targets": 2539,
+      "matched": 2529,
+      "fraction": 0.9960614415124065
+    }
+  },
+  "missing_censuses": [],
+  "matched": 60437,
+  "fixture_ids_sha256": "0f2c4e0d6f783dfc3e5b304e4fad39eb3956ed35ed81029ae84cc64dffb65247",
+  "reservations_total": 200,
+  "correspondance.csv": {
+    "sha256": "07bd3dfd004f41ef13bfea1b4273fb2d76619fafb22d4fd5c2c94dfd9d0b3a17",
+    "r2_key": "historical-deep-data/schema-v1/_control/mission-028/runs/38997025720/correspondance.csv"
+  },
+  "fixtures-index.csv": {
+    "sha256": "744cea5e9bbfdb0ca3b22481c922e0e0917daa1cd2184ffb6a134adddf279410",
+    "r2_key": "historical-deep-data/schema-v1/_control/mission-028/runs/38997025720/fixtures-index.csv"
+  },
+  "ecarts.csv": {
+    "sha256": "f61694e33c34d41532ca1581c064ed5467ccad8d4c841376f847da06be03c012",
+    "r2_key": "historical-deep-data/schema-v1/_control/mission-028/runs/38997025720/ecarts.csv"
+  },
+  "distinct_censuses_called": 2,
+  "quota_remaining": 149555
+}

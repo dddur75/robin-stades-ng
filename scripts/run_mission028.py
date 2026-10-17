@@ -32,6 +32,19 @@ LEAGUES = dict(E1=40, E2=41, E3=42, EC=43, SC0=179, SC1=180, SC2=183, SC3=184,
               MEX=262, NOR=103, POL=106, ROU=283, RUS=235, SWE=113, SWZ=207, USA=253)
 
 
+EXTRA_CENSUSES = (("ARG", 1032, 2023), ("ARG", 1032, 2024))
+
+
+def census_queries():
+    # Spend the two missing calendars before reading the already archived corpus.
+    return [q for q in EXTRA_CENSUSES if q[0] in LEAGUES] + [
+        (code, LEAGUES[code], season) for code in sorted(LEAGUES) for season in range(2019, 2025)]
+
+
+def provider_league_ids(code, season):
+    return {LEAGUES[code]} | {league for c, league, year in EXTRA_CENSUSES if (c, year) == (code, season)}
+
+
 def season_start(label):
     match = re.fullmatch(r"(20\d{2})(?:[-/](\d{2}|20\d{2}))?", label)
     if not match or not 2019 <= int(match[1]) <= 2024:
@@ -57,11 +70,13 @@ def name_key(value):
 
 
 def match_rows(rows, fixtures, aliases):
+    provider_to_fd = {(league, season): LEAGUES[code] for code, league, season in census_queries()}
+    fixture_leagues = {f["fixture"]["id"]: f["league"]["id"] for f in fixtures}
     index = defaultdict(list)
     for f in fixtures:
         if f["fixture"].get("status", {}).get("short") not in ("FT", "AET", "PEN", "AWD", "WO"):
             continue
-        index[(f["league"]["id"], f["league"]["season"],
+        index[(provider_to_fd.get((f["league"]["id"], f["league"]["season"]), f["league"]["id"]), f["league"]["season"],
                f["goals"]["home"], f["goals"]["away"])].append(f)
     table, rates = [], {}
     for number, row in enumerate(rows, 1):
@@ -74,7 +89,7 @@ def match_rows(rows, fixtures, aliases):
             if abs((date.fromisoformat(f["fixture"]["date"][:10]) - day).days) <= 1
             and name_key(aliases.get(f"{code}|{f['teams']['home']['name']}", f["teams"]["home"]["name"])) == home
             and name_key(aliases.get(f"{code}|{f['teams']['away']['name']}", f["teams"]["away"]["name"])) == away}
-        table.append(dict(row, source_row=number, league_id=LEAGUES[code], season=season,
+        table.append(dict(row, source_row=number, league_id=fixture_leagues[next(iter(candidates))] if len(candidates) == 1 else LEAGUES[code], season=season,
                           fixture_id=next(iter(candidates)) if len(candidates) == 1 else None,
                           reason="AMBIGUOUS" if len(candidates) > 1 else "UNMATCHED"))
     counts = Counter(r["fixture_id"] for r in table if r["fixture_id"] is not None)
@@ -174,28 +189,27 @@ def main():
             source_commit=os.environ["GITHUB_SHA"])
         fixtures, missing = [], []
         low = quota.status.daily_remaining if quota else None
-        for code in sorted(LEAGUES):
-            for season in range(2019, 2025):
-                request = dict(phase="mission028", competition=LEAGUES[code], season=season,
-                    family="fixtures", endpoint="/fixtures", params=dict(league=LEAGUES[code], season=season))
-                task = collector._make_task(**request, identity=None)
-                if replay and collector.repository.receipt_for(task) is None:
-                    missing.append([code, season])
-                    continue
-                call = collect_once(collector, store, budget, request, datetime.now(UTC),
-                                    quota.status.daily_remaining if quota else 0)
-                if call is None:
-                    missing.append([code, season])
-                    continue
-                if call.paging_total != 1:
-                    raise RuntimeError("MISSION028_UNEXPECTED_PAGINATION")
-                if any(f["league"]["id"] != LEAGUES[code] or f["league"]["season"] != season
-                       for f in call.records):
-                    raise ValueError("MISSION028_PROVIDER_SCOPE_INVALID")
-                fixtures.extend(call.records)
-                low = min(low, quota.status.daily_remaining) if quota else None
-                receipt["quota_low"] = low
-                print(f"Mission 028: {code} {season}; calls={transport.calls}", flush=True)
+        for code, league_id, season in census_queries():
+            request = dict(phase="mission028", competition=league_id, season=season,
+                family="fixtures", endpoint="/fixtures", params=dict(league=league_id, season=season))
+            task = collector._make_task(**request, identity=None)
+            if replay and collector.repository.receipt_for(task) is None:
+                missing.append([code, season])
+                continue
+            call = collect_once(collector, store, budget, request, datetime.now(UTC),
+                                quota.status.daily_remaining if quota else 0)
+            if call is None:
+                missing.append([code, season])
+                continue
+            if call.paging_total != 1:
+                raise RuntimeError("MISSION028_UNEXPECTED_PAGINATION")
+            if any(f["league"]["id"] != league_id or f["league"]["season"] != season
+                   for f in call.records):
+                raise ValueError("MISSION028_PROVIDER_SCOPE_INVALID")
+            fixtures.extend(call.records)
+            low = min(low, quota.status.daily_remaining) if quota else None
+            receipt["quota_low"] = low
+            print(f"Mission 028: {code} {season}; calls={transport.calls}", flush=True)
         aliases_path = Path("configs/execution/mission028-aliases.json")
         aliases = json.loads(aliases_path.read_text()) if aliases_path.exists() else {}
         table, rates = match_rows(rows, fixtures, aliases)

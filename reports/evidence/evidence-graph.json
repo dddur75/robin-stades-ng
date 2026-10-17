@@ -11542,6 +11542,51 @@
       ]
     },
     {
+      "claim_id": "DATA.MISSION028.MAPPING.V1",
+      "claim": "The frozen mapping covers60437 of60515 source matches, all33 leagues above97 percent, with78 listed gaps. Two hundred unique calendars were called, one status preflight total; quota minimum149555. Independent reconstruction is byte-identical and validates source rows, provider league, season, terminal status, date, both names, both scores and unique fixture ids.",
+      "scope": "MISSION028_PHASE1_PREPARATION",
+      "source": "qg#74@0048757 and local targeted tests",
+      "grain": "frozen_population",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission-028-phase1-verification-public-receipt.json",
+      "hash": "c403568e7cb5e2e984e72356f62574bcf02f959f0d58fb3604ef27dfb1b45d5d",
+      "code_revision": "242f14c69828a436c02a07ae910126f17e9cd417",
+      "execution_id": "local-mission028-preparation",
+      "scientific_lineage_id": "NOT_APPLICABLE_COLLECTION",
+      "dataset_lineage_id": "mission028-8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "ENGINEERING.MISSION028.STACK.PR105.SYNC.001",
+      "claim": "Main/parent integration preserves the frozen inputs and functional code, retains every old divergent audit row in an exact archive, and passes targeted local checks. CI and independent review are still required.",
+      "scope": "MISSION028_STACK_INTEGRATION",
+      "source": "Current main, prior branch snapshots, local targeted verification, qg76 and user instruction",
+      "grain": "engineering_verification",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission028-stack-pr105-sync-0a853f3a-public-receipt.json",
+      "hash": "4a09b4f54926994c5a35e94d4fbedb8203d87565fb453b4bf1c71d147d90b489",
+      "code_revision": "precommit-projection:d931be7740223eadc774f4c7e8e430df753a17398f4491eb2fc7438698109455",
+      "artifact_hashes": {
+        ".gitattributes": "924f0b94e81240ff5a84a84e6a6ab1bec97890621033c8785ee8e7375e5254ee",
+        "scripts/run_mission028.py": "d945e07ea2ae3450d5ddb35c8ef8fc552bbcacacee97d9b33ea046f4d771ff04",
+        "tests/historical_deep/test_mission028_cup.py": "954df6ea616149aede660599e9a8ec39d98417b1f72d116aa60b01f38026fd74"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 3,
+      "engineering_projection_sha256": "d931be7740223eadc774f4c7e8e430df753a17398f4491eb2fc7438698109455",
+      "execution_id": "local-stack-sync-pr105",
+      "scientific_lineage_id": "NOT_APPLICABLE_STACK_INTEGRATION",
+      "dataset_lineage_id": "FROZEN_MISSION028_UNCHANGED",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
       "claim_id": "DATA.MISSION027.PREFLIGHT.001",
       "claim": "Mission 027 source whitelist matches 7,228 fixtures and the specified digest; provider collection is not yet executed.",
       "scope": "MISSION_027_PHASE_1",
@@ -11972,6 +12017,34 @@
       "verified_by": [
         "C0"
       ]
+    },
+    {
+      "claim_id": "ENGINEERING.MISSION027.MAIN_MERGE.V2",
+      "claim": "Integrate main again after Quality merged105; keep027 collector, tests and workflow byte-identical to the previously tested merge. Preserve the incoming audit prefix and archive the one divergent original merge record and graph links unchanged. Prepare104 to depend on this reviewed027 base so71 changes can integrate in order.",
+      "scope": "MISSION027_028_REVIEW_CORRECTIONS",
+      "source": "User-requested Claude review corrections and local verification",
+      "grain": "engineering_verification",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission027-main-after-quality105-public-receipt.json",
+      "hash": "d0df9ecccf03a0814a48594fc23c3d23a5f375a0c0908c1b09bfe30b5c59e974",
+      "code_revision": "precommit-projection:47b72cc103aa39695fdeb124380edd2468076f659f0fa53139cce59ffe3411f6",
+      "artifact_hashes": {
+        ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "da955bb9183551de4a7820d03b14e284c624234c6cd83d2878e36e811c931114",
+        "scripts/run_mission027_lineups.py": "82b4f57bf8f993397c3dbf8bcbab60ae81de99fd280c75dd08bd857b68343ed4",
+        "tests/historical_deep/test_mission027_lineups.py": "99b1987cba4bc2fc54550c008ca4f9c932236da76d2ef15f158c1480bebf8370",
+        "tests/historical_deep/test_workflow_contracts.py": "4a4f159198049ca70bbf1efadbe20ab75c35f9ede0927e1bffa518216d4d63ac"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 4,
+      "engineering_projection_sha256": "47b72cc103aa39695fdeb124380edd2468076f659f0fa53139cce59ffe3411f6",
+      "execution_id": "local-review-RCV3-20261017-027-MAIN-MERGE-002",
+      "dataset_lineage_id": "FROZEN_POPULATIONS_UNCHANGED",
+      "scientific_lineage_id": "NOT_APPLICABLE_ENGINEERING_REVIEW",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
     }
   ],
   "decision_nodes":[
@@ -12326,8 +12399,12 @@
       "ledger_record_hash": "46b3fee9fe99a3ed1d939ca5f6ece306bbf88fdb260bf277c747b12a71202b25"
     },
     {
-      "decision_id": "RCV3-20261017-027-MAIN-MERGE-001",
-      "ledger_record_hash": "6811ea6ea23a1a39becbb4811684b309c3192bc99045d787ff3e936f3062c398"
+      "decision_id": "RCV3-20261017-028-STACK-PR105-001",
+      "ledger_record_hash": "335c703fd3c4bf70627098b480f49bbdd7fd2f690cf29670d18266e809583e9a"
+    },
+    {
+      "decision_id": "RCV3-20261017-027-MAIN-MERGE-002",
+      "ledger_record_hash": "a3397ece217bc49600617d2c204afe5e3bc00b825e90a695cb185f1fe7af0165"
     }
   ],
   "edges":[
@@ -13551,8 +13628,22 @@
     },
     {
       "edge_id": "EDGE.1195",
-      "from_claim_id": "ENGINEERING.MISSION027.MAIN_MERGE.V1",
-      "to_decision_id": "RCV3-20261017-027-MAIN-MERGE-001",
+      "from_claim_id": "ENGINEERING.MISSION028.STACK.PR105.SYNC.001",
+      "to_decision_id": "RCV3-20261017-028-STACK-PR105-001",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1196",
+      "from_claim_id": "DATA.MISSION028.MAPPING.V1",
+      "to_decision_id": "RCV3-20261017-028-STACK-PR105-001",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1197",
+      "from_claim_id": "ENGINEERING.MISSION027.MAIN_MERGE.V2",
+      "to_decision_id": "RCV3-20261017-027-MAIN-MERGE-002",
       "relation": "SUPPORTS",
       "status": "RECORDED"
     }
