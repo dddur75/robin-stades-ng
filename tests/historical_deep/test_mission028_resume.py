@@ -41,8 +41,10 @@ def test_lease_expiration_can_resume_but_unexpected_error_pauses_that_code_revis
 def test_atomic_slot_ceiling_and_continuation_bound_stop_without_provider_calls():
     store = InMemoryObjectStore()
     assert choose(store, NOW, "rev", 20) == ("HOLD", "none")
-    for i in range(69750):
+    for i in range(129749):
         store.put_if_absent(f"{PREFIX}/daily/2026-10-17/{i:05d}", b"{}")
+    assert choose(store, NOW, "rev", 0) == ("READY", "lineups")
+    store.put_if_absent(f"{PREFIX}/daily/2026-10-17/129749", b"{}")
     assert choose(store, NOW, "rev", 0) == ("BUDGET", "none")
 
 
