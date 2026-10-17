@@ -154,7 +154,7 @@ jobs:
         run: |
           python -m scripts.run_mission028_details --preflight
           pids=()
-          for worker in 0 1 2 3; do
+          for worker in {0..15}; do
             MISSION028_WORKER="$worker" python -m scripts.run_mission028_details &
             pids+=("$!")
           done

@@ -1,0 +1,26 @@
+name: Mission 028 state
+description: Validate the frozen whitelist and inspect durable collection controls.
+inputs:
+  cycle:
+    default: "0"
+  dispatch:
+    default: "false"
+outputs:
+  state:
+    value: ${{ steps.state.outputs.state }}
+  family:
+    value: ${{ steps.state.outputs.family }}
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with: {python-version: "3.12", cache: pip}
+    - shell: bash
+      run: |
+        python -m pip install -r requirements.txt boto3
+        python -m pip install --no-deps -e .
+    - id: state
+      shell: bash
+      env:
+        MISSION028_CYCLE: ${{ inputs.cycle }}
+      run: python -m scripts.mission028_resume ${{ inputs.dispatch == 'true' && '--dispatch' || '' }}

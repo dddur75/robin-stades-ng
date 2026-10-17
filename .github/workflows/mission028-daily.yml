@@ -1,0 +1,67 @@
+name: "028 - Reprise quotidienne bornée"
+on:
+  schedule:
+    - cron: "17 0 * * *"
+  workflow_dispatch:
+    inputs:
+      cycle:
+        type: number
+        default: 0
+permissions:
+  contents: read
+concurrency:
+  group: mission-028-continuation
+  cancel-in-progress: false
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      state: ${{ steps.plan.outputs.state }}
+      family: ${{ steps.plan.outputs.family }}
+    env:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: ./.github/actions/mission028-state
+        id: plan
+        with:
+          cycle: ${{ inputs.cycle || 0 }}
+  collect:
+    needs: plan
+    if: needs.plan.outputs.state == 'READY'
+    uses: ./.github/workflows/71-historical-deep-fixture-bundle-harvest.yml
+    with:
+      details_family: ${{ needs.plan.outputs.family }}
+      execute: true
+      slice_id: mission-028-auto
+    secrets:
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+  continue:
+    needs: [plan, collect]
+    if: always() && !cancelled() && needs.plan.result == 'success' && (needs.plan.outputs.state == 'READY' || needs.plan.outputs.state == 'DONE')
+    runs-on: ubuntu-latest
+    permissions: {contents: read, actions: write}
+    env:
+      GH_TOKEN: ${{ github.token }}
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: ./.github/actions/mission028-state
+        id: resume
+        with:
+          cycle: ${{ inputs.cycle || 0 }}
+          dispatch: "true"
+      - if: steps.resume.outputs.state == 'DONE'
+        run: gh workflow disable mission028-daily.yml --repo "$GITHUB_REPOSITORY"

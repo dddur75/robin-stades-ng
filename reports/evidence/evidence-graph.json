@@ -11533,6 +11533,37 @@
       "verified_by": [
         "C0"
       ]
+    },
+    {
+      "claim_id": "DATA.MISSION028.REPRISES.V1",
+      "claim": "370 local domain and Council tests pass for bounded UTC resumption. The first verified Actions artifact records 577 distinct lineup calls, 551 complete matches and a normal proof-lease stop, with quota minimum148990. Full-population data acceptance and independent review remain pending.",
+      "scope": "MISSION028_PHASES2_3_RESUMPTION",
+      "source": "Actions38999517118 and local targeted verification",
+      "grain": "frozen_population",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission-028-reprises-public-receipt.json",
+      "hash": "dce4d15b8a2bc3d43fb45c48692522e8bc9b7745be38ccc7d17e4a10f7b37bdb",
+      "code_revision": "precommit-projection:6cf8a4a757d54d24a780a3888316d23afb129ddf55afc8b7062e6f33051a88d6",
+      "artifact_hashes": {
+        ".github/actions/mission028-state/action.yml": "88c535b639d3b4dcc245add80e13cf9f5f28c3238fd9aa7b768f14b7f076964e",
+        ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "d060319b144ab42669932af65cf08ff0f5ede2b1938e53d4c223ec4d628f20d0",
+        ".github/workflows/mission028-daily.yml": "bc46704149eccac66f94b9fcc352d1698471ee80d133e2a03b8ef8fded46fddd",
+        "scripts/mission028_resume.py": "45c2bfa1ae7664964770b7dbb3ad0863007755a984cb8b75dd681a98493f0b83",
+        "scripts/run_mission028_details.py": "710567201c6433f2c7a447851ac3236aca7738562abbca519fb91622b776afa9",
+        "tests/historical_deep/test_mission028_details.py": "9a4bf221c25966bef3b5bd133b62858f719bb6142b1bcfad38c5e82edf177ce1",
+        "tests/historical_deep/test_mission028_resume.py": "4dcf02020fc0f2215825a8c9a1f2d9e768ebcbf89a17b13d874e01bf6c97c25a"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 7,
+      "engineering_projection_sha256": "6cf8a4a757d54d24a780a3888316d23afb129ddf55afc8b7062e6f33051a88d6",
+      "execution_id": "38999517118",
+      "scientific_lineage_id": "NOT_APPLICABLE_COLLECTION",
+      "dataset_lineage_id": "mission028-8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
     }
   ],
   "decision_nodes":[
@@ -11921,6 +11952,10 @@
     {
       "decision_id": "RCV3-20261017-028-PHASE2-001",
       "ledger_record_hash": "0db7732028293f7c9db2c30256bec2b81d01618d7d573f820a697549965cd197"
+    },
+    {
+      "decision_id": "RCV3-20261017-028-PHASE3-001",
+      "ledger_record_hash": "a4fa29a60dc0f1ba41aed6dfe7bdc602f1b828d2373551a83d4d4781a4163659"
     }
   ],
   "edges":[
@@ -13188,6 +13223,13 @@
       "edge_id": "EDGE.1201",
       "from_claim_id": "DATA.MISSION028.DETAILS.PREPARATION.V2",
       "to_decision_id": "RCV3-20261017-028-PHASE2-001",
+      "relation": "SUPPORTS",
+      "status": "RECORDED"
+    },
+    {
+      "edge_id": "EDGE.1202",
+      "from_claim_id": "DATA.MISSION028.REPRISES.V1",
+      "to_decision_id": "RCV3-20261017-028-PHASE3-001",
       "relation": "SUPPORTS",
       "status": "RECORDED"
     }
