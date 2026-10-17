@@ -3,7 +3,8 @@ from datetime import UTC, datetime, timedelta
 import pytest
 
 from robin.historical_deep.storage import InMemoryObjectStore
-from scripts.mission028_resume import checkpoint, choose, reserve_status
+from scripts.mission028_budget import reserve_status
+from scripts.mission028_resume import checkpoint, choose
 from scripts.run_mission028 import PREFIX
 
 NOW = datetime(2026, 10, 17, 12, tzinfo=UTC)
@@ -54,24 +55,20 @@ def test_status_requests_have_atomic_daily_headroom_and_reset_at_midnight():
     reserve_status(store, NOW + timedelta(days=1))
 
 
-def test_dispatch_is_bounded_and_only_for_ready_frozen_targets(monkeypatch, tmp_path):
-    from types import SimpleNamespace
-
+@pytest.mark.parametrize("state,family", [("READY", "lineups"), ("READY", "statistics"),
+    ("DONE", "none"), ("BUDGET", "none"), ("PAUSED", "none"), ("HOLD", "none")])
+def test_resume_entrypoint_only_emits_state_without_network_dispatch(monkeypatch, tmp_path, state, family):
     from scripts import mission028_resume as run
     from scripts import run_mission028_details as details
-    store, calls = InMemoryObjectStore(), []
-    monkeypatch.setattr(details, "load_mapping", lambda: [])
-    monkeypatch.setattr(run, "R2ObjectStore", lambda env: store)
-    monkeypatch.setattr(run.sys, "argv", ["resume", "--dispatch"])
-    for key, value in dict(GITHUB_SHA="rev", GITHUB_OUTPUT=str(tmp_path / "out"),
-        GITHUB_REPOSITORY="test/repo", GITHUB_REF_NAME="task", GH_TOKEN=str(tmp_path)).items():
-        monkeypatch.setenv(key, value)
-    monkeypatch.setattr(run.requests, "post", lambda url, **kw: calls.append((url, kw)) or SimpleNamespace(status_code=204))
-    assert run.main() == 0 and len(calls) == 1
-    assert calls[0][1]["json"]["inputs"]["cycle"] == 1
-    assert calls[0][1]["json"]["ref"] == "task" and calls[0][1]["allow_redirects"] is False
-    checkpoint(store, dict(reason_class="Unexpected"), NOW, "rev")
-    assert run.main() == 0 and len(calls) == 1
+    events, store = [], InMemoryObjectStore()
+    monkeypatch.setattr(details, "load_mapping", lambda: events.append("mapping"))
+    monkeypatch.setattr(run, "R2ObjectStore", lambda env: events.append("state") or store)
+    monkeypatch.setattr(run, "choose", lambda *args: (state, family))
+    monkeypatch.setattr("requests.post", lambda *args, **kwargs: pytest.fail("no GitHub dispatch"))
+    monkeypatch.setenv("GITHUB_SHA", "rev")
+    monkeypatch.setenv("GITHUB_OUTPUT", str(tmp_path / "out"))
+    assert run.main() == 0 and events == ["mapping", "state"]
+    assert (tmp_path / "out").read_text() == f"state={state}\nfamily={family}\n"
 
 
 def test_total_status_headroom_is_bounded_across_days():
@@ -84,17 +81,26 @@ def test_total_status_headroom_is_bounded_across_days():
     assert choose(store, NOW + timedelta(days=1), "rev", 0) == ("BUDGET", "none")
 
 
-def test_daily_resume_keeps_provider_and_dispatch_permissions_in_separate_jobs():
+def test_resume_uses_only_workflow71_with_unchanged_read_permissions():
     from pathlib import Path
 
     import yaml
 
-    workflow = yaml.safe_load(Path(".github/workflows/mission028-daily.yml").read_text())
-    jobs = workflow["jobs"]
+    path = Path(".github/workflows/71-historical-deep-fixture-bundle-harvest.yml")
+    workflow = yaml.safe_load(path.read_text())
+    assert not Path(".github/workflows/mission028-daily.yml").exists()
+    assert not Path(".github/actions/mission028-state").exists()
     assert workflow["permissions"] == {"contents": "read"}
-    assert jobs["collect"]["uses"].endswith("/71-historical-deep-fixture-bundle-harvest.yml")
-    assert "API_FOOTBALL_KEY" in jobs["collect"]["secrets"]
-    for name in ("plan", "continue"):
-        assert "API_FOOTBALL_KEY" not in jobs[name]["env"]
-    assert jobs["continue"]["permissions"] == {"contents": "read", "actions": "write"}
-    assert jobs["continue"]["steps"][-1]["run"].startswith("gh workflow disable mission028-daily.yml ")
+    assert workflow["concurrency"] == {
+        "group": "${{ inputs.mission028_progress && 'mission-028-progress' || 'historical-deep-r2-state' }}",
+        "cancel-in-progress": False,
+    }
+    assert (workflow.get("on", workflow.get(True)))["schedule"] == [{"cron": "17 */2 * * *"}]
+    assert list(workflow["jobs"]) == ["fixture-bundles"]
+    job = workflow["jobs"]["fixture-bundles"]
+    assert "permissions" not in job
+    plan = next(step for step in job["steps"] if step.get("id") == "resume")
+    assert plan["run"] == "python -m scripts.mission028_resume"
+    assert "API_FOOTBALL_KEY" not in plan["env"]
+    source = Path("scripts/mission028_resume.py").read_text() + path.read_text()
+    assert all(token not in source for token in ("--dispatch", "GH_TOKEN", "actions: write", "requests.post", "workflow disable"))

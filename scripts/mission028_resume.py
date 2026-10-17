@@ -3,30 +3,15 @@ from __future__ import annotations
 
 import json
 import os
-import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
-import requests
-
 from robin.historical_deep.adapters import R2ObjectStore
+from scripts.mission028_budget import DETAIL_CAP, TOTAL_CODE
 from scripts.run_mission028 import PREFIX
 
 WORKERS = 16
-DETAIL_CAP = 69750  # 200 calendars + <=50 statuses leave the daily total <=70000.
-TOTAL_CODE = "MISSION028_TOTAL_BUDGET_REACHED"
 BUDGET_CODES = {TOTAL_CODE, "MISSION028_DAILY_BUDGET_REACHED", "MISSION028_RESERVE_REACHED"}
-
-
-def reserve_status(store, now):
-    # 49 new proofs + the original census preflight: at most 50 statuses/day.
-    if len(tuple(store.iter_keys(f"{PREFIX}/status-slots/"))) >= 925:
-        raise RuntimeError(TOTAL_CODE)  # 200 + 2*60437 + initial status + 925 = 122000 < 122200.
-    prefix = f"{PREFIX}/status-slots/{now.astimezone(UTC).date().isoformat()}/"
-    for slot in range(49):
-        if store.put_if_absent(f"{prefix}{slot:02d}", b'{}'):
-            return
-    raise RuntimeError("MISSION028_DAILY_BUDGET_REACHED")
 
 
 def checkpoint(store, receipt, now, revision, deadline=None):
@@ -73,14 +58,6 @@ def main():
     with Path(os.environ["GITHUB_OUTPUT"]).open("a") as stream:
         stream.write(f"state={state}\nfamily={family}\n")
     print(json.dumps(dict(state=state, family=family, cycle=cycle)), flush=True)
-    if "--dispatch" in sys.argv and state == "READY":
-        response = requests.post(
-            f"https://api.github.com/repos/{os.environ['GITHUB_REPOSITORY']}/actions/workflows/mission028-daily.yml/dispatches",
-            headers={"Authorization": f"Bearer {os.environ['GH_TOKEN']}", "Accept": "application/vnd.github+json"},
-            json={"ref": os.environ["GITHUB_REF_NAME"], "inputs": {"cycle": cycle + 1}},
-            timeout=30, allow_redirects=False)
-        if response.status_code != 204:
-            raise RuntimeError("MISSION028_CONTINUATION_DISPATCH_FAILED")
     return 0
 
 

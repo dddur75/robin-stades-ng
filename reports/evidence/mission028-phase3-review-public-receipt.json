@@ -1,0 +1,67 @@
+{
+  "schema_version": "mission028-phase3-review-v1",
+  "status": "PARTIAL_PENDING_CLAUDE_REVIEW",
+  "source_head": "e83932cab41e94c798d2c7c0f2eee02f9ed77fd3",
+  "incoming_corrected104": "67c8afd29a1b3f679385b74524220acc187260c5",
+  "review_comment": "https://github.com/dddur75/robin-stades-ng/pull/106#issuecomment-6231448209",
+  "only_changed_workflow": ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml",
+  "deleted_feature_components": [
+    ".github/workflows/mission028-daily.yml",
+    ".github/actions/mission028-state/action.yml"
+  ],
+  "cron": "17 */2 * * *",
+  "permission_and_concurrency_unchanged": true,
+  "permissions": {
+    "contents": "read"
+  },
+  "scheduled_historical_and_census_steps_skipped": true,
+  "collects_only_state": "READY",
+  "clean_skip_states": [
+    "DONE",
+    "BUDGET",
+    "PAUSED",
+    "HOLD"
+  ],
+  "github_dispatch_removed": true,
+  "github_token_removed": true,
+  "workflow_disable_removed": true,
+  "shared_budget_module": "scripts/mission028_budget.py",
+  "code_lines_added_deleted": 266,
+  "targeted_tests": "383 passed in 15.56s",
+  "test_log_sha256": "fd70e079eba91639b112bed92a74d6342f14332fbf6b4d532b4c1a5d0a754c01",
+  "additional_scheduled_and_manual_condition_tests": "2 passed",
+  "mutation_checks": [
+    {
+      "name": "historical-schedule-guard",
+      "observed_summary": "1 failed in 0.11s",
+      "source_files_modified": false
+    },
+    {
+      "name": "census-schedule-guard",
+      "observed_summary": "1 failed in 0.05s",
+      "source_files_modified": false
+    },
+    {
+      "name": "ready-gate",
+      "observed_summary": "1 failed in 0.05s",
+      "source_files_modified": false
+    }
+  ],
+  "archived_old_suffix": "reports/council/mission028-stack-pr106-before-e83932ca-ledger.jsonl",
+  "archived_old_suffix_sha256": "2c61b968c446787932b302529c6ae1fafcc3d42bbde826b945bbbcead3afcd47",
+  "archived_old_graph": "reports/evidence/mission028-stack-pr106-before-e83932ca-evidence.json",
+  "archived_old_graph_sha256": "f6fc28f13c48f4511d5853f95e15b1d920c51280f8bce32f8aa28eb626bc0566",
+  "canonical104_prefix_preserved": true,
+  "ruff": "passed",
+  "secrets": "passed",
+  "frozen_inputs": {
+    "configs/execution/mission028-aliases.json": "50931bcabe33c4fd5932a79911064002ecb23addff8c03ef8e05abfeb1e0a2de",
+    "configs/execution/mission028-mapping.csv": "07bd3dfd004f41ef13bfea1b4273fb2d76619fafb22d4fd5c2c94dfd9d0b3a17",
+    "configs/execution/mission028-mapping.json": "ef61230e330f9b7fd5bb6a646fbd9ebb635d83933e8fd0797722f0cdd1cafac8",
+    "configs/execution/mission028-targets.csv": "8cee89679b043fc9929a15c01bac538da2302f50fdbfc58117bc83b58092c17b"
+  },
+  "provider_calls_new": 0,
+  "r2_calls_new": 0,
+  "workflow_dispatches_new": 0,
+  "author_pr_merges": 0
+}

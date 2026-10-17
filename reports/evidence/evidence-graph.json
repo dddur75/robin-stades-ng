@@ -11645,6 +11645,36 @@
       ]
     },
     {
+      "claim_id": "ENGINEERING.MISSION028.PHASE2_REVIEW.V1",
+      "claim": "Add boundary and duplicate-ID regression tests and charge each new preflight against atomic status allowances before provider access. Share69750 daily detail slots plus200 calendars and50 statuses; reserve5000. Keep every previous test case and frozen input. Factor equivalent validation guards and trim blank lines to retain the400-line PR limit.",
+      "scope": "MISSION027_028_REVIEW_CORRECTIONS",
+      "source": "User-requested Claude review corrections and local verification",
+      "grain": "engineering_verification",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission028-phase2-review-public-receipt.json",
+      "hash": "4698f730f9bfaccd8ed137473cf2fa22487cccc598ec1ad7533c7e12d29ecd9e",
+      "code_revision": "precommit-projection:e0c99a316e381b7476f8f94dbe393fb8c181c6db2ba4b7e6cfccbe714cd35346",
+      "artifact_hashes": {
+        ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "2cbfa1654f894e5d71edb030794e4c3e1ed9c87ed6778f5ced90fff1d7875cd2",
+        "scripts/mission028_budget.py": "d43ee6e7f90fba5bb7be789e126246f5713dd0d0435e3284599bdf7cb7e19bb6",
+        "scripts/run_mission028.py": "f2478a780bbbb2c2fd265da53be1ca3746ed8d098edba4f36cf6d2fbf1f8b520",
+        "scripts/run_mission028_details.py": "dba97b0640354fc1bee67e43bf23f02d074fd8931a1ab8e7c02a7acc11eadea7",
+        "tests/historical_deep/test_mission028.py": "ebb9ea129738ba7964f60a8d4b3385382d3ac56117b0db718b18840c60c0c0f9",
+        "tests/historical_deep/test_mission028_details.py": "cf80ea1e06746b00378e9ec277e4d7efff318434460cf8f1e9defd29241ecf42"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 6,
+      "engineering_projection_sha256": "e0c99a316e381b7476f8f94dbe393fb8c181c6db2ba4b7e6cfccbe714cd35346",
+      "execution_id": "local-review-RCV3-20261017-028-PHASE2-REVIEW-001",
+      "dataset_lineage_id": "FROZEN_POPULATIONS_UNCHANGED",
+      "scientific_lineage_id": "NOT_APPLICABLE_ENGINEERING_REVIEW",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
       "claim_id": "DATA.MISSION028.REPRISES.V1",
       "claim": "370 local domain and Council tests pass for bounded UTC resumption. The first verified Actions artifact records 577 distinct lineup calls, 551 complete matches and a normal proof-lease stop, with quota minimum148990. Full-population data acceptance and independent review remain pending.",
       "scope": "MISSION028_PHASES2_3_RESUMPTION",
@@ -11755,6 +11785,36 @@
       "execution_id": "local-stack-sync-pr106",
       "scientific_lineage_id": "NOT_APPLICABLE_STACK_INTEGRATION",
       "dataset_lineage_id": "FROZEN_MISSION028_UNCHANGED",
+      "status": "PARTIAL",
+      "verified_by": [
+        "C0"
+      ]
+    },
+    {
+      "claim_id": "ENGINEERING.MISSION028.PHASE3_REVIEW.V1",
+      "claim": "Merge corrected104 and restrict all mission028 scheduling to existing workflow71. Remove the new workflow, composite action and GitHub continuation/disable calls. Plan inside the same job, collect only onREADY, skip historical/census steps and empty uploads on scheduled stop states, and preserve existing read permissions/concurrency. Shared budget and frozen data stay unchanged.",
+      "scope": "MISSION027_028_REVIEW_CORRECTIONS",
+      "source": "User-requested Claude review corrections and local verification",
+      "grain": "engineering_verification",
+      "temporal_class": "CODE_AS_OF",
+      "artifact": "reports/evidence/mission028-phase3-review-public-receipt.json",
+      "hash": "b7ad47ce30a7334c847c3263724295b5858965127a20bd796458c8a41cad07db",
+      "code_revision": "precommit-projection:480da8a044d87e00a4fb10aed1ee99dfa811d5261e39fd259684554c1752a016",
+      "artifact_hashes": {
+        ".github/workflows/71-historical-deep-fixture-bundle-harvest.yml": "99ac4b1a18bc6d262f0ffd0106742d54f387fe62ca5c8d8b25308646de72d444",
+        "scripts/mission028_resume.py": "2af4d1331a069bfa929c4d7a351182f2a0128d732006cf112580c425d1d02e24",
+        "scripts/run_mission028_details.py": "26c05d3be7ce8ae4ca0ecfb8c5647e87c4746a29d73c9e702a8ef61f5e786369",
+        "tests/historical_deep/test_mission028_details.py": "01bd719b8076837c8a54fe7cc066b6cb94e31a2424bd7b34c225a8f1814a3695",
+        "tests/historical_deep/test_mission028_resume.py": "70a14999726fbc99614007f88a83744c84e29a1cff2d3c50f6505ff145c6b21d",
+        "tests/historical_deep/test_workflow_contracts.py": "08bbe309cb0e47c8696cd84a7ec9c53f21e8d617f38f8293f2050ce46fd317c1"
+      },
+      "artifact_hash_algorithm": "SHA-256",
+      "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count": 6,
+      "engineering_projection_sha256": "480da8a044d87e00a4fb10aed1ee99dfa811d5261e39fd259684554c1752a016",
+      "execution_id": "local-review-RCV3-20261017-028-PHASE3-REVIEW-001",
+      "dataset_lineage_id": "FROZEN_POPULATIONS_UNCHANGED",
+      "scientific_lineage_id": "NOT_APPLICABLE_ENGINEERING_REVIEW",
       "status": "PARTIAL",
       "verified_by": [
         "C0"
@@ -12121,8 +12181,12 @@
       "ledger_record_hash": "5e8604e0311955e214c8cfce316725bfddc32c13224f3b3a90844282bdccdc0f"
     },
     {
-      "decision_id": "RCV3-20261017-028-STACK-PR106-001",
-      "ledger_record_hash": "eccbdf0ab72bfe4d6beda026effff562689f28eca51b55a33afb26d95f06c4ea"
+      "decision_id": "RCV3-20261017-028-PHASE2-REVIEW-001",
+      "ledger_record_hash": "6985ac63f167e4deba461af976c53ed89f8ec8d6c92ee40efc59530fa8d30644"
+    },
+    {
+      "decision_id": "RCV3-20261017-028-PHASE3-REVIEW-001",
+      "ledger_record_hash": "135226e84be7403b857c7555da0d01cb7bc71ca57607f2092f1d1234cea47b27"
     }
   ],
   "edges":[
@@ -13374,29 +13438,15 @@
     },
     {
       "edge_id": "EDGE.1199",
-      "from_claim_id": "ENGINEERING.MISSION028.STACK.PR106.SYNC.001",
-      "to_decision_id": "RCV3-20261017-028-STACK-PR106-001",
+      "from_claim_id": "ENGINEERING.MISSION028.PHASE2_REVIEW.V1",
+      "to_decision_id": "RCV3-20261017-028-PHASE2-REVIEW-001",
       "relation": "SUPPORTS",
       "status": "RECORDED"
     },
     {
       "edge_id": "EDGE.1200",
-      "from_claim_id": "DATA.MISSION028.REPRISES.V1",
-      "to_decision_id": "RCV3-20261017-028-STACK-PR106-001",
-      "relation": "SUPPORTS",
-      "status": "RECORDED"
-    },
-    {
-      "edge_id": "EDGE.1201",
-      "from_claim_id": "DATA.MISSION028.REPRISES.V2",
-      "to_decision_id": "RCV3-20261017-028-STACK-PR106-001",
-      "relation": "SUPPORTS",
-      "status": "RECORDED"
-    },
-    {
-      "edge_id": "EDGE.1202",
-      "from_claim_id": "DATA.MISSION028.LINEUPS_SLICE2.V1",
-      "to_decision_id": "RCV3-20261017-028-STACK-PR106-001",
+      "from_claim_id": "ENGINEERING.MISSION028.PHASE3_REVIEW.V1",
+      "to_decision_id": "RCV3-20261017-028-PHASE3-REVIEW-001",
       "relation": "SUPPORTS",
       "status": "RECORDED"
     }

@@ -266,7 +266,10 @@ def test_workflows_70_to_78_are_bounded_serialized_and_fail_closed() -> None:
             step for step in steps if step.get("uses") == "actions/upload-artifact@v4"
         )
         upload_with = _mapping(upload["with"])
-        assert upload["if"] == "always()"
+        assert upload["if"] == (
+            "always() && (github.event_name != 'schedule' || steps.resume.outputs.state == 'READY')"
+            if number == 71 else "always()"
+        )
         assert upload_with["if-no-files-found"] == "error"
         assert upload_with["retention-days"] == 90
         artifact_name = str(upload_with["name"])
@@ -723,3 +726,35 @@ def test_campaign_quota_and_safety_contract_is_fail_closed() -> None:
         "POSTGRESQL_PRODUCTION_DESTRUCTIVE_WRITES": False,
         "THE_ODDS_API_HISTORICAL_CREDITS": False,
     }
+
+
+def test_workflow71_schedule_skips_historical_and_phase1_for_every_resume_state():
+    import re
+    from types import SimpleNamespace
+
+    _, workflow = _load(PHASE_FILES[71])
+    job = _only_job(workflow)
+    steps = _steps(job)
+    historical = next(s for s in steps if s.get("name") == "Collecter les bundles et fallbacks ciblés")
+    census = next(s for s in steps if s.get("name") == "Mission 028 — correspondance des petites ligues")
+    details = next(s for s in steps if s.get("name") == "Mission 028 — détails par match")
+    outcome = next(s for s in steps if s.get("id") == "outcome")
+    upload = next(s for s in steps if s.get("uses") == "actions/upload-artifact@v4")
+    for step in (historical, census, outcome):
+        assert "github.event_name != 'schedule'" in str(step["if"])
+    for state in ("READY", "DONE", "BUDGET", "PAUSED", "HOLD"):
+        # schedule supplies no workflow inputs, even when a dispatch has defaults.
+        namespace = {"github": SimpleNamespace(event_name="schedule"), "inputs": SimpleNamespace(),
+            "steps": SimpleNamespace(resume=SimpleNamespace(outputs=SimpleNamespace(state=state))),
+            "always": lambda: True}
+        for step, expected in [(historical, False), (census, False), (outcome, False),
+                               (details, state == "READY"), (upload, state == "READY")]:
+            expression = re.sub(r"!(?!=)", " not ", str(step["if"]).replace("&&", " and ").replace("||", " or "))
+            assert bool(eval(expression, {"__builtins__": {}}, namespace)) == expected
+    for mission, execute, family, expected in [(False, False, "none", (True, False, False)),
+            (True, True, "none", (False, True, False)), (False, True, "lineups", (False, False, True))]:
+        namespace.update(github=SimpleNamespace(event_name="workflow_dispatch"),
+            inputs=SimpleNamespace(mission028=mission, execute=execute, mission028_progress=False, details_family=family))
+        for step, enabled in zip((historical, census, details), expected, strict=True):
+            expression = re.sub(r"!(?!=)", " not ", str(step["if"]).replace("&&", " and ").replace("||", " or "))
+            assert bool(eval(expression, {"__builtins__": {}}, namespace)) == enabled
