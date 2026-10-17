@@ -36,7 +36,7 @@ def test_mapping_hash_and_source_identity_fail_closed(tmp_path, monkeypatch, cod
         load_mapping(path, manifest)
 def test_shared_atomic_daily_slots_include_phase1_reserve_and_midnight():
     store = InMemoryObjectStore()
-    left, right = DaySlots(store, NOW), DaySlots(store, NOW)
+    left, right = DaySlots(store, NOW, worker=5), DaySlots(store, NOW, worker=5)
     left.next_slot = right.next_slot = 129749
     left.reserve(NOW, 5001)
     with pytest.raises(RuntimeError, match="BUDGET"):
@@ -149,13 +149,17 @@ def test_status_reservations_bound_daily_and_total_calls(total, limit, reason):
         reserve_status(store, NOW + timedelta(days=1))
 
 
-def test_sixteen_workers_are_paced_to_eight_requests_per_second(monkeypatch):
+def test_sixteen_workers_are_paced_to_eight_requests_per_second(monkeypatch, tmp_path):
+    from scripts import mission028_performance as performance
     from scripts import run_mission028_details as run
-    sleeps = []
-    monkeypatch.setattr(run.time, "monotonic", lambda: 100.0)
-    monkeypatch.setattr(run.time, "sleep", sleeps.append)
-    monkeypatch.setattr(run.Transport, "get", lambda *a, **kw: None)
-    transport = run.PacedTransport(NOW)
+    clock, sleeps = [100.], []
+    def sleep(delay):
+        sleeps.append(delay)
+        clock[0] += delay
+    monkeypatch.setattr(performance.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(performance.time, "sleep", sleep)
+    monkeypatch.setattr(run.requests, "get", lambda *a, **kw: None)
+    transport = run.PacedTransport(NOW, tmp_path / "pace.sqlite3")
     transport.get("https://example.invalid")
     transport.get("https://example.invalid")
-    assert sleeps == [0, 2.0]
+    assert sleeps == [pytest.approx(.126)]

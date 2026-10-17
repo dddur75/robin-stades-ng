@@ -31,9 +31,9 @@ def test_shared_daily_limit_waits_for_next_utc_day():
 def test_lease_expiration_can_resume_but_unexpected_error_pauses_that_code_revision():
     store = InMemoryObjectStore()
     receipt = dict(family="lineups", worker=0, reason_class="ProviderTransportError")
-    checkpoint(store, receipt, NOW, "rev", NOW - timedelta(seconds=1))
+    checkpoint(store, dict(receipt, reason_code="MISSION028_TIME_SLICE_ENDED"), NOW, "rev", NOW - timedelta(seconds=1))
     assert choose(store, NOW, "rev", 0) == ("READY", "lineups")
-    checkpoint(store, receipt, NOW, "rev", NOW + timedelta(hours=1))
+    checkpoint(store, receipt, NOW, "rev", NOW - timedelta(seconds=1))
     assert choose(store, NOW, "rev", 0) == ("PAUSED", "none")
     assert choose(store, NOW, "fixed-rev", 0) == ("READY", "lineups")
 

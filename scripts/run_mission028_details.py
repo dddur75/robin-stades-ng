@@ -7,23 +7,24 @@ import io
 import json
 import os
 import sys
-import time
 from collections import defaultdict
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import pyarrow.parquet as pq
+import requests
 
 from robin.historical.normalization import normalize_records
 from robin.historical.storage import PartitionedParquetStore
 from robin.historical_deep.adapters import R2ObjectStore, assert_safety_locks
 from robin.historical_deep.collector import HistoricalDeepCollector
 from robin.historical_deep.contracts import ProviderStatus
-from robin.historical_deep.provider import ApiFootballDeepClient
+from robin.historical_deep.provider import ApiFootballDeepClient, ProviderTransportError
 from robin.historical_deep.quota import QuotaController
 from robin.historical_deep.storage import R2FirstRepository
 from scripts import run_mission028 as census
 from scripts.mission028_budget import DETAIL_CAP, reserve_status
+from scripts.mission028_performance import MeasuredStore, RateGate, Timings
 from scripts.mission028_resume import BUDGET_CODES, WORKERS, checkpoint
 from scripts.run_mission028 import DIGEST, LEAGUES, PREFIX, Transport, load_targets, season_start
 
@@ -51,17 +52,18 @@ def load_mapping(path=MAPPING, manifest=MANIFEST):
     return selected
 class DaySlots:
     """Atomic shared allowance: 129,750 details + 200 calendars + 50 statuses/day."""
-    def __init__(self, store, now):
+    def __init__(self, store, now, worker=0):
+        require(worker in range(WORKERS), "MISSION028_WORKER_INVALID")
         self.store, self.day = store, now.astimezone(UTC).date().isoformat()
         self.prefix = f"{PREFIX}/daily/{self.day}/"
         slots = [int(k.rsplit("/", 1)[1]) for k in store.iter_keys(self.prefix)]
-        self.next_slot = max(slots, default=-1) + 1
+        self.next_slot = max((slot for slot in slots if slot % WORKERS == worker), default=worker - WORKERS) + WORKERS
     def reserve(self, now, remaining):
         require(now.astimezone(UTC).date().isoformat() == self.day, "MISSION028_DAY_ENDED", RuntimeError)
         require(remaining > 5000, "MISSION028_RESERVE_REACHED", RuntimeError)
         while self.next_slot < DETAIL_CAP:
             key = f"{self.prefix}{self.next_slot:05d}"
-            self.next_slot += 1
+            self.next_slot += WORKERS
             if self.store.put_if_absent(key, b'{"reserved":true}'):
                 return
         raise RuntimeError("MISSION028_DAILY_BUDGET_REACHED")
@@ -90,11 +92,21 @@ def complete(family, records):
     except (KeyError, TypeError, AttributeError):
         return False
 class PacedTransport(Transport):
-    next_at = 0.0
+    time_slice_ended = False
+    def __init__(self, deadline, gate_path=None, timings=None):
+        super().__init__(deadline)
+        self.timings = timings or Timings()
+        self.gate = RateGate(gate_path or OUTPUT / '.pace.sqlite3')
+    def check_deadline(self):
+        if datetime.now(UTC) >= self.deadline:
+            self.time_slice_ended = True
+            raise RuntimeError("MISSION028_TIME_SLICE_ENDED")
     def get(self, url, **kwargs):
-        time.sleep(max(0, self.next_at - time.monotonic()))
-        self.next_at = time.monotonic() + WORKERS / 8  # Aggregate <=8 rps.
-        return super().get(url, **kwargs)
+        self.check_deadline()
+        self.timings.call('rate_wait', self.gate.acquire)
+        self.check_deadline()  # Admission may have waited; never call after cutoff.
+        self.calls += 1
+        return self.timings.call('provider_http', requests.get, url, allow_redirects=False, timeout=kwargs.pop('timeout', 10), **kwargs)
 def preflight():
     OUTPUT.mkdir(parents=True, exist_ok=True)
     receipt = dict(status="PARTIAL", status_calls=0, source_sha256=DIGEST)
@@ -108,15 +120,15 @@ def preflight():
         require(store.put_if_absent(key, binding) or store.get_object(key) == binding, "MISSION028_MAPPING_ALREADY_BOUND", RuntimeError)
         proofs = [ProviderStatus.model_validate_json(store.get_object(k))
                   for k in store.iter_keys(f"{PREFIX}/preflight/")]
-        fresh = [p for p in proofs if p.checked_at.date() == now.date()
-                 and timedelta(0) <= now - p.checked_at < timedelta(minutes=110)]
+        fresh = [p for p in proofs if p.checked_at.date() == now.date() and p.checked_at <= now
+                 and p.status_expires_at - now >= timedelta(minutes=100)]  # 95 + startup margin.
         if fresh:
             status = max(fresh, key=lambda p: p.checked_at)
         else:
             reserve_status(store, now)
             receipt["status_calls"] = 1
             client = ApiFootballDeepClient(api_key=os.environ["API_FOOTBALL_KEY"], max_retries=0,
-                transport=Transport(now + timedelta(minutes=1)), status_ttl_seconds=6600)
+                transport=Transport(now + timedelta(minutes=1)), status_ttl_seconds=7200)
             status = client.get_status()
             store.put_if_absent(f"{PREFIX}/preflight/{os.environ['GITHUB_RUN_ID']}.json",
                                 status.model_dump_json().encode())
@@ -136,6 +148,7 @@ def main():
     worker, family = int(os.environ["MISSION028_WORKER"]), os.environ["MISSION028_FAMILY"]
     receipt = dict(status="PARTIAL", worker=worker, family=family, calls=0, complete_matches=0, partitions=[], missing=[], source_sha256=DIGEST, daily_cap=130000, daily_reserve=5000)
     transport = store = quota = None
+    timings = Timings()
     try:
         require(worker in range(WORKERS) and family in ("lineups", "statistics"), "MISSION028_WORKER_OR_FAMILY_INVALID")
         mapping = load_mapping()
@@ -145,16 +158,20 @@ def main():
         receipt.update(target_count=len(ids), fixture_ids_sha256=hashlib.sha256(
             "".join(f"{i}\n" for i in ids).encode()).hexdigest())
         assert_safety_locks(os.environ)
-        store, now = R2ObjectStore(os.environ), datetime.now(UTC)
+        store, now = MeasuredStore(R2ObjectStore(os.environ), timings), datetime.now(UTC)
         proof = ProviderStatus.model_validate_json((OUTPUT / "preflight.json").read_bytes())
         midnight = now.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)
-        require(proof.checked_at.date() == now.date() and timedelta(0) <= now - proof.checked_at < timedelta(minutes=110), "MISSION028_PREFLIGHT_EXPIRED", RuntimeError)
-        transport = PacedTransport(min(midnight, proof.checked_at + timedelta(minutes=110), now + timedelta(minutes=95)))
+        require(proof.checked_at.date() == now.date() and proof.checked_at <= now and proof.status_expires_at - now >= timedelta(minutes=95), "MISSION028_PREFLIGHT_EXPIRED", RuntimeError)
+        transport = PacedTransport(min(midnight, proof.status_expires_at, now + timedelta(minutes=95)), timings=timings)
         quota = QuotaController(proof)
         client = ApiFootballDeepClient(api_key=os.environ["API_FOOTBALL_KEY"], quota=quota, transport=transport, max_retries=0)
         collector = HistoricalDeepCollector(client, R2FirstRepository(store), source_commit=os.environ["GITHUB_SHA"])
-        slots, groups = DaySlots(store, now), defaultdict(list)
+        for method, stage in [('receipt_for', 'receipt_for'), ('load_receipt', 'receipt_for'), ('capture', 'capture_r2')]:
+            timings.wrap(collector.repository, method, stage)
+        slots, groups = DaySlots(store, now, worker), defaultdict(list)
+        timings.wrap(slots, 'reserve', 'day_slots_reserve')
         parquet = PartitionedParquetStore(OUTPUT / "historical/parquet")
+        timings.wrap(parquet, 'write_records', 'write_parquet')
         receipt["quota_low"] = quota.status.daily_remaining
         for row in selected:
             groups[row["ligue_fd"], int(row["season"])].append(row["fixture_id"])
@@ -170,6 +187,7 @@ def main():
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(saved)
             for fixture in fixtures:
+                transport.check_deadline()
                 if saved is not None:
                     records = projected[fixture]
                 else:
@@ -196,14 +214,17 @@ def main():
         receipt["reason_class"] = type(error).__name__
         if str(error) in BUDGET_CODES:
             receipt["reason_code"] = str(error)
+        if transport and transport.time_slice_ended and (isinstance(error, ProviderTransportError) or str(error) == "MISSION028_TIME_SLICE_ENDED"):
+            receipt.update(reason_class="TimeSliceEnded", reason_code="MISSION028_TIME_SLICE_ENDED")
     receipt.update(calls=transport.calls if transport else 0, distinct_matches_called=transport.calls if transport else 0,
-                   quota_remaining=quota.status.daily_remaining if quota else None, run_id=os.environ["GITHUB_RUN_ID"])
+                   quota_remaining=quota.status.daily_remaining if quota else None, run_id=os.environ["GITHUB_RUN_ID"], timings=timings.summary())
     body = (json.dumps(receipt, indent=2) + "\n").encode()
     name = f"worker-{worker}-{family}-public-receipt.json"
     (OUTPUT / name).write_bytes(body)
     if store:
         checkpoint(store, receipt, datetime.now(UTC), os.environ["GITHUB_SHA"], transport.deadline if transport else None)
         store.put_if_absent(f"{PREFIX}/runs/{receipt['run_id']}/{name}", body)
-    return 0 if receipt["status"] == "COMPLETE" else 2
+    normal = receipt.get("reason_code") in BUDGET_CODES | {"MISSION028_TIME_SLICE_ENDED"} or receipt.get("reason_class") in ("QuotaExhaustedError", "QuotaStatusExpiredError")
+    return 2 if "reason_class" in receipt and not normal else 0
 if __name__ == "__main__":
     raise SystemExit(preflight() if "--preflight" in sys.argv else main())
