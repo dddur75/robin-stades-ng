@@ -9,6 +9,10 @@ on:
       mission028_replay:
         type: boolean
         default: false
+      details_family:
+        type: choice
+        options: [none, lineups, statistics]
+        default: none
       slice_id:
         type: string
         default: standalone
@@ -34,6 +38,9 @@ on:
       mission028_replay:
         type: boolean
         default: false
+      details_family:
+        type: string
+        default: none
       slice_id:
         type: string
         default: standalone
@@ -101,7 +108,7 @@ jobs:
           python -m pip install -r requirements.txt boto3
           python -m pip install --no-deps -e .
       - name: Collecter les bundles et fallbacks ciblés
-        if: '!inputs.mission028'
+        if: '!inputs.mission028 && inputs.details_family == ''none'''
         env:
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
@@ -120,7 +127,7 @@ jobs:
           --max-duration-minutes "${{ inputs.max_duration_minutes }}"
           --mission-max-minutes 720
       - name: Mission 028 — correspondance des petites ligues
-        if: inputs.mission028 && inputs.execute
+        if: inputs.mission028 && inputs.execute && inputs.details_family == 'none'
         env:
           MISSION028_REPLAY: ${{ inputs.mission028_replay }}
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
@@ -129,9 +136,28 @@ jobs:
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
         run: python -m scripts.run_mission028
+      - name: Mission 028 — détails par match
+        if: '!inputs.mission028 && inputs.execute && inputs.details_family != ''none'''
+        env:
+          MISSION028_FAMILY: ${{ inputs.details_family }}
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: |
+          python -m scripts.run_mission028_details --preflight
+          pids=()
+          for worker in 0 1 2 3; do
+            MISSION028_WORKER="$worker" python -m scripts.run_mission028_details &
+            pids+=("$!")
+          done
+          result=0
+          for pid in "${pids[@]}"; do wait "$pid" || result=1; done
+          exit "$result"
       - name: Publier la décision provider sanitisée
         id: outcome
-        if: always() && !inputs.mission028
+        if: always() && !inputs.mission028 && inputs.details_family == 'none'
         run: >-
           python scripts/historical_deep_workflow_outcome.py
           artifacts/historical-deep/fixtures.json >> "$GITHUB_OUTPUT"
