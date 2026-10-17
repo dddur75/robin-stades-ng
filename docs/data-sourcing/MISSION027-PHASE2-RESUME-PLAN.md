@@ -15,3 +15,7 @@ Changements nécessaires dans une PR « 027 — phase 2 — … », au plus 400 
 9. Activer uniquement `prospective-lineup-capture.yml`, puis un dispatch borné si des fenêtres sont dues. Publier un reçu durable agrégé montrant >=10 fixtures complètes, `received_at < kickoff_at`, les 5 ligues, et la comptabilité quotidienne <=60 ; aucune simulation ne prouve ce critère.
 
 Ce document ne constitue ni un changement de workflow ni une activation. Aucun appel fournisseur de phase 2 n'a été fait.
+
+## Résumé de livraison — 2026-10-17
+- Fait : capture bornée à 2026/cinq ligues et 60 appels UTC ; preuves en ajout strict ; `/status` gratuit autonome, 1/run et 24/jour UTC réservés dans R2, cache <110 minutes, preuve fraîche de 71 acceptée.
+- Reste/risques : relecture et fusion Qualité, puis réactivation du seul workflow de compositions et reçu réel de dix matchs ; aucune collecte ni activation depuis cette session ; budget épuisé ou preuve indisponible → PARTIAL.
