@@ -18,8 +18,9 @@ Les 69 750 slots quotidiens sont partagés par les deux familles et acquis par
 écriture conditionnelle R2 ; 200 places sont conservées pour les calendriers,
 50 pour les prévols (49 nouveaux, plus le prévol initial). La liste liée au
 manifeste contient exactement 60 437 identifiants ; les deux familles et les
-200 calendriers laissent 926 prévols au plafond global de 122 200 appels.
-Les nouveaux prévols sont donc aussi plafonnés à 925 pour toute la mission.
+200 calendriers laissent 1 126 prévols au plafond global de 122 200 appels.
+Nous en gardons au plus 926 (le premier et 925 nouveaux), soit 122 000
+appels au maximum et encore 200 places de marge pour toute la mission.
 Une réservation incertaine consomme le budget et n’est jamais rappelée.
 
 Les partitions achevées sont reprises à l’identique depuis R2. Un groupe

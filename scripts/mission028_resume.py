@@ -21,7 +21,7 @@ BUDGET_CODES = {TOTAL_CODE, "MISSION028_DAILY_BUDGET_REACHED", "MISSION028_RESER
 def reserve_status(store, now):
     # 49 new proofs + the original census preflight: at most 50 statuses/day.
     if len(tuple(store.iter_keys(f"{PREFIX}/status-slots/"))) >= 925:
-        raise RuntimeError(TOTAL_CODE)  # 200 + 2*60437 + initial status + 925 = 122200.
+        raise RuntimeError(TOTAL_CODE)  # 200 + 2*60437 + initial status + 925 = 122000 < 122200.
     prefix = f"{PREFIX}/status-slots/{now.astimezone(UTC).date().isoformat()}/"
     for slot in range(49):
         if store.put_if_absent(f"{prefix}{slot:02d}", b'{}'):
