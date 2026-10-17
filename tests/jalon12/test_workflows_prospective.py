@@ -61,7 +61,7 @@ def test_all_prospective_workflows_are_isolated_fail_closed_and_append_only() ->
         assert '--policy "$PROSPECTIVE_POLICY"' in workflow
         assert (
             "python scripts/check_database_revision.py "
-            "--expected 0013_historical_evidence_index"
+            f"--expected {'0015_data_torrent_opportunity' if name == 'prospective-lineup-capture.yml' else '0013_historical_evidence_index'}"
             in workflow
         )
         assert "alembic upgrade" not in workflow

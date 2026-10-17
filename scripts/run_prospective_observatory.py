@@ -23,7 +23,7 @@ from pathlib import Path
 from typing import Any, Protocol, cast
 
 from botocore.exceptions import ClientError  # type: ignore[import-untyped]
-from sqlalchemy import MetaData, Table, inspect, select
+from sqlalchemy import MetaData, Table, false, inspect, select
 from sqlalchemy.engine import Engine
 
 from robin.domain.enums import DataAvailability, DataOrigin
@@ -1023,8 +1023,9 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
         "provider_budget_ledger",
     }
 
-    def __init__(self, engine: Engine) -> None:
+    def __init__(self, engine: Engine, *, restore_scope: tuple[str, tuple[str, ...]] | None = None) -> None:
         super().__init__()
+        self.restore_scope = restore_scope
         self.engine = engine
         names = set(inspect(engine).get_table_names())
         missing = self.REQUIRED_TABLES - names
@@ -1073,6 +1074,21 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
             connection.execute(table.insert().values(**row))
         return True
 
+    def _restore_select(self, table: Table) -> Any:
+        statement = select(table)
+        if self.restore_scope is None:
+            return statement
+        season, competitions = self.restore_scope
+        fixtures = self.tables["prospective_fixtures"]
+        eligible = select(fixtures.c.fixture_id).where(
+            fixtures.c.season == season, fixtures.c.competition.in_(competitions)
+        )
+        if table.name == "prospective_fixtures":
+            return statement.where(table.c.season == season, table.c.competition.in_(competitions))
+        if "fixture_id" in table.c:
+            return statement.where(table.c.fixture_id.in_(eligible))
+        return statement.where(false())
+
     def _restore(self) -> None:
         fixture_table = self.tables["prospective_fixtures"]
         window_table = self.tables["capture_windows"]
@@ -1080,7 +1096,7 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
         receipt_table = self.tables["capture_receipts"]
         budget_table = self.tables["provider_budget_ledger"]
         with self.engine.connect() as connection:
-            fixture_rows = connection.execute(select(fixture_table)).mappings()
+            fixture_rows = connection.execute(self._restore_select(fixture_table)).mappings()
             for row in fixture_rows:
                 fixture = ProspectiveFixture.model_validate(
                     {
@@ -1115,7 +1131,7 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
                         fixture.registry_hash,
                         fixture,
                     )
-            for row in connection.execute(select(window_table)).mappings():
+            for row in connection.execute(self._restore_select(window_table)).mappings():
                 window = CaptureWindow.model_validate(
                     {
                         key: _db_value(row[key])
@@ -1124,7 +1140,7 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
                     }
                 )
                 self.window_rows[window.window_id] = window
-            for row in connection.execute(select(attempt_table)).mappings():
+            for row in connection.execute(self._restore_select(attempt_table)).mappings():
                 attempt = CaptureAttempt.model_validate(
                     {
                         key: _db_value(row[key])
@@ -1133,7 +1149,7 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
                     }
                 )
                 self.attempt_rows[attempt.idempotency_key] = attempt
-            for row in connection.execute(select(receipt_table)).mappings():
+            for row in connection.execute(self._restore_select(receipt_table)).mappings():
                 receipt_data = {
                     key: _db_value(row[key])
                     for key in CaptureReceipt.model_fields
@@ -1141,7 +1157,7 @@ class SQLAlchemyOperationalState(MemoryOperationalState):
                 }
                 receipt = CaptureReceipt.model_validate(receipt_data)
                 self.receipt_rows[receipt.receipt_hash] = receipt
-            for row in connection.execute(select(budget_table)).mappings():
+            for row in connection.execute(self._restore_select(budget_table)).mappings():
                 key = str(row["idempotency_key"])
                 self.budget_rows[key] = BudgetEntry(
                     idempotency_key=key,
