@@ -1,0 +1,69 @@
+{
+  "schema_version": "mission-027-phase2-preflight-public-receipt-v1",
+  "observed_at": "2026-10-17T00:33:08.848321+00:00",
+  "status": "BLOCKED_EXTERNAL_ACTION",
+  "main_revision": "aa92e7aea792cd5a513c5518f6e2b92b801fa3cb",
+  "workflow": {
+    "id": 321915843,
+    "path": ".github/workflows/prospective-lineup-capture.yml",
+    "state": "disabled_manually",
+    "updated_at": "2026-08-09T16:51:39.000Z"
+  },
+  "last_observed_old_run": {
+    "run_id": 31322534010,
+    "conclusion": "cancelled",
+    "jobs": 0,
+    "created_at": "2026-08-09T15:58:12Z"
+  },
+  "disable_actor_or_motive": "Not supplied by workflow/run metadata; no failed job establishes an authentication cause. The mission single status and actual historical requests succeed.",
+  "required_daily_calls_max": 60,
+  "current_api_football_budget": {
+    "per_run": 250,
+    "per_day": 800,
+    "per_competition_per_run": 80,
+    "per_competition_per_day": 240,
+    "per_season": 75000,
+    "provider_reserve": 5000
+  },
+  "source_files": [
+    {
+      "path": "configs/prospective_observatory_v1.json",
+      "sha256": "0b4f3c93af8dc556aed806dfb8a52754e7bc7c0edea4afc2ead7bb5823e7ff4c"
+    },
+    {
+      "path": ".github/workflows/prospective-lineup-capture.yml",
+      "sha256": "f20a1ac7db9a65146024ded1f47669afcd2178db63097c15831fd2a7b59bb5b4"
+    },
+    {
+      "path": "scripts/run_prospective_observatory.py",
+      "sha256": "aace6f32f9d0b7dee313117443400b6fcde0412afe44758669bdd91e18577a56"
+    },
+    {
+      "path": "src/robin/prospective_observatory/r2.py",
+      "sha256": "8a8c434e35988348e59fcb345fc14a9e97e538859c1113206de30d8fd857c4ca"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "ad2673241f472bf7716793b47b8f1dd43c406fa96be3da7ba17aea4effb7b699"
+    }
+  ],
+  "restore_scope": {
+    "sql": "SQLAlchemyOperationalState._restore selects all fixture/window/attempt/receipt rows without season filter.",
+    "r2": "inventory_namespace and opaque recovery intents traverse all seasons before iter_captures; recovery intents contain compressed raw payloads."
+  },
+  "required_changes": [
+    "Private lineup profile <=60 provider request units/day, including auxiliary requests/failures/reservations; preserve other cadences.",
+    "SQL and R2 season2026 filtering before any business-data read, including recovery intents and guards; scope to the five followed leagues.",
+    "Bounded2026 fixture/window preflight, then reviewed main integration before enabling scheduled execution.",
+    "Actual durable receipt for at least10complete distinct fixtures received before kickoff."
+  ],
+  "author_review_rule": "AGENTS.md: L'auteur ne valide jamais seul son travail. Spec: Codex builds, Claude reviews, David validates.",
+  "ci_blocker": "Frozen capture-harness-contract-v1.json mismatch reproduced on unchanged main sources; both OS canaries fail and aggregate tests job reflects those failures. Historical/domain quality jobs succeed.",
+  "mission_phase2_provider_calls": 0,
+  "mission_phase2_capture_runs": [],
+  "production_database_reads": 0,
+  "r2_operations": 0,
+  "season_2025_read": false,
+  "workflow_enabled_by_mission": false,
+  "requires_next_phase_pr": true
+}

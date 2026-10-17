@@ -216,11 +216,14 @@ def test_workflows_70_to_78_are_bounded_serialized_and_fail_closed() -> None:
     for number, path in PHASE_FILES.items():
         text, workflow = _load(path)
         expected_permissions = {"contents": "read"}
-        if number == 74:
+        if number in {71, 74}:
             expected_permissions["actions"] = "read"
         assert workflow["permissions"] == expected_permissions
         assert workflow["concurrency"] == {
-            "group": "${{ inputs.mission028_progress && 'mission-028-progress' || 'historical-deep-r2-state' }}" if number == 71 else "historical-deep-r2-state",
+            "group": (
+                "${{ inputs.mission028_progress && 'mission-028-progress' || inputs.progress_only && 'mission-027-progress' || inputs.lineups_only && format('mission-027-lineups-{0}', inputs.competition) || 'historical-deep-r2-state' }}"
+                if number == 71 else "historical-deep-r2-state"
+            ),
             "cancel-in-progress": False,
         }
         if number == 74:
@@ -251,7 +254,10 @@ def test_workflows_70_to_78_are_bounded_serialized_and_fail_closed() -> None:
             assert "API_FOOTBALL_KEY" not in text
             continue
         job = _only_job(workflow)
-        assert 90 <= int(str(job["timeout-minutes"])) <= 110
+        if number == 71:
+            assert job["timeout-minutes"] == "${{ inputs.lineups_only && 200 || 110 }}"
+        else:
+            assert 90 <= int(str(job["timeout-minutes"])) <= 110
         env = _mapping(job["env"])
         assert all(env.get(name) == value for name, value in SAFETY_ENV.items())
         assert "historical-state-persist" not in text

@@ -1,0 +1,12 @@
+{
+  "schema_version": "mission-027-status-public-receipt-v1",
+  "status": "PASS",
+  "status_calls": 1,
+  "lineup_calls": 0,
+  "checked_at": "2026-10-16T20:11:17.885153+00:00",
+  "run_id": "38960293874",
+  "code_revision": "e34c859e19f028ab7e5040cb7a91d71c000f2cef",
+  "daily_limit": 150000,
+  "quota_remaining": 150000,
+  "subscription_end": "2026-11-25T04:47:22+00:00"
+}

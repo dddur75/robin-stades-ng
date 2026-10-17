@@ -12,6 +12,18 @@ on:
       mission028_progress:
         type: boolean
         default: false
+      competition:
+        description: "Mission 027 : une des quatre ligues ; all réservé au mode habituel"
+        type: string
+        default: all
+      lineups_only:
+        description: "Mission 027 : liste figée, un appel par match, sans autre famille"
+        type: boolean
+        default: false
+      progress_only:
+        description: "Mission 027 : compter les réservations, sans fournisseur ni payload brut"
+        type: boolean
+        default: false
       slice_id:
         type: string
         default: standalone
@@ -38,6 +50,15 @@ on:
         type: boolean
         default: false
       mission028_progress:
+        type: boolean
+        default: false
+      competition:
+        type: string
+        default: all
+      lineups_only:
+        type: boolean
+        default: false
+      progress_only:
         type: boolean
         default: false
       slice_id:
@@ -73,20 +94,22 @@ on:
         value: ${{ jobs['fixture-bundles'].outputs.provider_stop }}
 
 permissions:
+  actions: read
   contents: read
 
 concurrency:
-  group: ${{ inputs.mission028_progress && 'mission-028-progress' || 'historical-deep-r2-state' }}
+  group: ${{ inputs.mission028_progress && 'mission-028-progress' || inputs.progress_only && 'mission-027-progress' || inputs.lineups_only && format('mission-027-lineups-{0}', inputs.competition) || 'historical-deep-r2-state' }}
   cancel-in-progress: false
 
 jobs:
   fixture-bundles:
     runs-on: ubuntu-latest
-    timeout-minutes: 110
+    timeout-minutes: ${{ inputs.lineups_only && 200 || 110 }}
     outputs:
       status: ${{ steps.outcome.outputs.status }}
       provider_stop: ${{ steps.outcome.outputs.provider_stop }}
     env:
+      MISSION027_COMPETITION: ${{ inputs.competition }}
       STORAGE_PAUSED: "true"
       P3_P4_PAUSED: "true"
       PRODUCTION_LOCKED: "true"
@@ -107,7 +130,7 @@ jobs:
           python -m pip install -r requirements.txt boto3
           python -m pip install --no-deps -e .
       - name: Collecter les bundles et fallbacks ciblés
-        if: '!inputs.mission028'
+        if: '!inputs.mission028 && !inputs.progress_only && !inputs.lineups_only'
         env:
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
@@ -125,6 +148,30 @@ jobs:
           --max-calls "${{ inputs.max_calls }}"
           --max-duration-minutes "${{ inputs.max_duration_minutes }}"
           --mission-max-minutes 720
+      - uses: actions/download-artifact@v4
+        if: '!inputs.mission028 && inputs.lineups_only && inputs.execute && !inputs.progress_only'
+        with:
+          name: historical-deep-71-mission-027-status-unique-38960293874-1
+          run-id: 38960293874
+          github-token: ${{ github.token }}
+          path: artifacts/mission027-preflight
+      - name: Mission 027 — compositions seules
+        if: '!inputs.mission028 && inputs.lineups_only && inputs.execute && !inputs.progress_only'
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: python -m scripts.run_mission027_lineups
+      - name: Mission 027 — observation sans collecte
+        if: inputs.progress_only && !inputs.mission028
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: python -m scripts.run_mission027_lineups --progress
       - name: Mission 028 — correspondance des petites ligues
         if: inputs.mission028 && (inputs.execute || inputs.mission028_progress)
         env:
@@ -137,7 +184,7 @@ jobs:
         run: python -m scripts.run_mission028 ${{ inputs.mission028_progress && '--progress' || '' }}
       - name: Publier la décision provider sanitisée
         id: outcome
-        if: always() && !inputs.mission028
+        if: always() && !inputs.mission028 && !inputs.progress_only && !inputs.lineups_only
         run: >-
           python scripts/historical_deep_workflow_outcome.py
           artifacts/historical-deep/fixtures.json >> "$GITHUB_OUTPUT"

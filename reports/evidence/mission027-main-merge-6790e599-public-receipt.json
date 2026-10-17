@@ -1,0 +1,53 @@
+{
+  "schema_version": "mission027-reviewed-main-merge-v1",
+  "status": "PARTIAL_PENDING_NEW_HEAD_CI_AND_REVIEW",
+  "source_head": "6790e599d6097c0387de8e66f08374e0bc92256c",
+  "incoming_main": "0e68c0470a86ace02991a9c13395570250ff0cec",
+  "archived_original_chain": "reports/council/mission027-main-before-6790e599-ledger.jsonl",
+  "archived_original_chain_sha256": "b1c173fa1998f2a13581a91f7ecbb1ec43d144728751bc42f635c9895584c132",
+  "archived_graph": "reports/evidence/mission027-main-before-6790e599-evidence.json",
+  "archived_graph_sha256": "b824550178827e81a40e673919f2bf379575c1b569191f861e7d7f19961b7e93",
+  "archived_record_count": 27,
+  "imported_claims": [
+    "DATA.MISSION027.PREFLIGHT.001",
+    "DATA.MISSION027.STATUS.002",
+    "OPS.MISSION027.PROGRESS.003",
+    "OPS.MISSION027.LEGACY_AUDIT.004",
+    "OPS.MISSION027.PROGRESS.005",
+    "OPS.MISSION027.PROGRESS.006",
+    "OPS.MISSION027.PROGRESS.007",
+    "OPS.MISSION027.PROGRESS.008",
+    "DATA.MISSION027.BUNDESLIGA.009",
+    "OPS.MISSION027.PROGRESS.010",
+    "DATA.MISSION027.SERIE_A.011",
+    "OPS.MISSION027.CANCELLED_QUEUE.012",
+    "OPS.MISSION027.PROGRESS.013",
+    "OPS.MISSION027.PROGRESS.014",
+    "OPS.MISSION027.INITIAL_ATTEMPTS.015",
+    "DATA.MISSION027.PREMIER_LEAGUE.016",
+    "DATA.MISSION027.PHASE1.017",
+    "DATA.MISSION027.PUBLICATION.018",
+    "OPS.MISSION027.PHASE2_BLOCK.019",
+    "DATA.MISSION027.REVIEW_CORRECTIONS.V1",
+    "DATA.MISSION027.REVIEW_CORRECTIONS.V2"
+  ],
+  "canonical_main_prefix_preserved": true,
+  "collector_ast_unchanged": true,
+  "frozen_inputs_and_receipts_unchanged": true,
+  "workflow_modes_retained": [
+    "mission027",
+    "mission028"
+  ],
+  "permissions_preserved_from_reviewed_027": {
+    "actions": "read",
+    "contents": "read"
+  },
+  "code_lines_added_deleted": 400,
+  "targeted_tests": "361 passed in 16.08s",
+  "test_log_sha256": "0881c60b5a4fc868dcd4f772cc5b765b850523f57a5995213ee781623b4f0553",
+  "ruff": "passed",
+  "secrets": "passed",
+  "provider_calls_new": 0,
+  "workflow_dispatches_new": 0,
+  "author_pr_merges": 0
+}
