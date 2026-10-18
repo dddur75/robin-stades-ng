@@ -3,16 +3,19 @@ import hashlib
 import json
 import os
 from datetime import UTC, datetime, timedelta
+from functools import partial
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from robin.historical.normalization import normalize_records
 from robin.historical.storage import PartitionedParquetStore
 from robin.historical_deep.adapters import R2ObjectStore, assert_safety_locks
 from robin.historical_deep.collector import HistoricalDeepCollector
 from robin.historical_deep.provider import ApiFootballDeepClient, CircuitOpenError, ProviderError
+from robin.historical_deep.quota import QuotaController
 from robin.historical_deep.storage import R2FirstRepository
+from scripts.mission029_parallel import PacedTransport, parallel
 from scripts.run_mission027_lineups import LEAGUES, validate_targets
-from scripts.run_mission028 import Transport
 from scripts.run_mission028_details import complete
 
 PREFIX = 'historical-deep-data/schema-v1/_control/mission-029'
@@ -72,7 +75,73 @@ def count_result(receipt, row, family, state):
         receipt['missing'].append(dict(fixture=row['fixture'], family=family, reason=state))
 
 
-def run_phase(phase, targets, families, *, clock=lambda: datetime.now(UTC), quality=None, coverage=.90):
+def now_utc():
+    return datetime.now(UTC)
+
+
+def collect_lane(item, *, deadline, pace, clock, halt, status, quality, result_prefix):
+    index, tasks = item
+    result = dict(complete={}, missing=[], uncertain=[], request_errors=[], partitions=[])
+    lane_transport = lane_client = None
+    try:
+        lane_store = R2ObjectStore(os.environ)
+        lane_transport = PacedTransport(deadline, pace, clock, halt)
+        lane_client = ApiFootballDeepClient(api_key=os.environ['API_FOOTBALL_KEY'],
+            quota=QuotaController(status, now=clock), transport=lane_transport, max_retries=0,
+            now=clock, status_ttl_seconds=7200)
+        collector = HistoricalDeepCollector(lane_client, R2FirstRepository(lane_store),
+            source_commit=os.environ['GITHUB_SHA'])
+        with TemporaryDirectory(dir=OUTPUT, prefix=f'.lane-{index}-') as scratch:
+            parquet = PartitionedParquetStore(Path(scratch) / 'historical/parquet')
+            for row, family in tasks:
+                request = request_for(row, family)
+                name = projection_name(request)
+                lane_transport.check_deadline()
+                try:
+                    call = collect_once(collector, lane_store, request)
+                except CircuitOpenError:
+                    raise
+                except ProviderError as error:
+                    lane_transport.check_deadline()
+                    result['request_errors'].append([row['fixture'], family, type(error).__name__])
+                    call = None
+                if call is None:
+                    count_result(result, row, family, 'UNCERTAIN')
+                    lane_store.put_if_absent(f'{result_prefix}{family}/{name}.UNCERTAIN', b'{}')
+                    continue
+                if call.paging_total != 1:
+                    raise ValueError('MISSION029_PAGINATION')
+                valid = quality(family, call, row) if quality else complete(family, call.records)
+                state = 'COMPLETE' if valid else 'PROVIDER_INCOMPLETE' if call.records else 'PROVIDER_EMPTY'
+                count_result(result, row, family, state)
+                rows = normalize_records(request['endpoint'], call.records,
+                    competition_id=row['league'], season=row['season'], ingestion_run_id='mission029',
+                    raw_payload_hash=call.payload_sha256, request_params=request['params'],
+                    observed_at=call.received_at)
+                partition = parquet.write_records(rows, competition=row['code'], season=row['season'],
+                    entity_type=family, dataset_version='api-football-v3')
+                source = Path(partition['path'])
+                path = OUTPUT.resolve() / source.relative_to(Path(scratch).resolve()).with_name(name)
+                path.parent.mkdir(parents=True, exist_ok=True)
+                source.rename(path)
+                key = f"{PREFIX}/projection/{path.relative_to(OUTPUT.resolve()).as_posix()}"
+                if not (lane_store.put_if_absent(key, path.read_bytes()) or lane_store.get_object(key) == path.read_bytes()):
+                    raise ValueError('MISSION029_PROJECTION_CONFLICT')
+                result['partitions'].append(dict(path=path.relative_to(OUTPUT.resolve()).as_posix(),
+                    sha256=partition['sha256'], r2_key=key))
+                lane_store.put_if_absent(f'{result_prefix}{family}/{name}.{state}',
+                    json.dumps(result['partitions'][-1]).encode())
+    except Exception as error:
+        result.update(reason_class=type(error).__name__, reason_code=str(error)
+            if str(error).startswith(('W71_', 'MISSION029_', 'MISSION028_PREFLIGHT_')) else None)
+        halt.touch()
+    finally:
+        result['calls'] = lane_transport.calls if lane_transport else 0
+        result['quota_remaining'] = lane_client.quota.status.daily_remaining if lane_client else None
+    return result
+
+
+def run_phase(phase, targets, families, *, clock=now_utc, quality=None, coverage=.90):
     if any(r['season'] == 2025 for r in targets):
         raise ValueError('MISSION029_HOLDOUT')
     digest = hashlib.sha256(json.dumps(targets, sort_keys=True).encode()).hexdigest()
@@ -83,7 +152,7 @@ def run_phase(phase, targets, families, *, clock=lambda: datetime.now(UTC), qual
         observed_at=clock().isoformat(), total_cap=240000, daily_cap=130000, provider_reserve=5000)
     receipt['fixture_ids_sha256'] = hashlib.sha256(''.join(
         f'{i}\n' for i in sorted({r['fixture'] for r in targets})).encode()).hexdigest()
-    store = transport = client = None
+    store = transport = client = status = None
     try:
         assert_safety_locks(os.environ)
         if os.environ.get('WORKFLOW71_ADMISSION') != 'true' or os.environ.get('GITHUB_ACTIONS') != 'true':
@@ -103,59 +172,41 @@ def run_phase(phase, targets, families, *, clock=lambda: datetime.now(UTC), qual
                 raise ValueError('MISSION029_RESULT_CONFLICT')
             outcomes[family, name] = state
         expected = {(f, projection_name(request_for(r, f))) for r in targets for f in families}
-        transport = Transport(now + timedelta(minutes=95))
+        halt = OUTPUT / f'.halt-{receipt["run_id"]}-{phase}'
+        halt.unlink(missing_ok=True)
+        pace = OUTPUT / '.pace.sqlite3'
+        transport = PacedTransport(now + timedelta(minutes=95), pace, clock, halt)
         if expected - outcomes.keys():
             client = ApiFootballDeepClient(api_key=os.environ['API_FOOTBALL_KEY'],
-                transport=transport, max_retries=0, status_ttl_seconds=7200)
+                transport=transport, max_retries=0, status_ttl_seconds=7200, now=clock)
             status = client.get_status()
             transport.deadline = min(transport.deadline, status.status_expires_at,
                 now.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1))
-        collector = HistoricalDeepCollector(client, R2FirstRepository(store),
-            source_commit=os.environ['GITHUB_SHA'])
-        parquet = PartitionedParquetStore(OUTPUT / 'historical/parquet')
+        pending = []
         for row in targets:
             for family in families:
-                request = request_for(row, family)
-                name = projection_name(request)
-                saved = outcomes.get((family, name))
+                saved = outcomes.get((family, projection_name(request_for(row, family))))
                 if saved:
                     count_result(receipt, row, family, saved)
                     receipt['reused_results'] += 1
-                    continue
-                if clock() >= transport.deadline:
-                    raise RuntimeError('MISSION029_SLICE_ENDED')
-                try:
-                    call = collect_once(collector, store, request)
-                except CircuitOpenError:
-                    raise
-                except ProviderError as error:
-                    receipt['request_errors'].append([row['fixture'], family, type(error).__name__])
-                    call = None
-                if call is None:
-                    count_result(receipt, row, family, 'UNCERTAIN')
-                    store.put_if_absent(f'{result_prefix}{family}/{name}.UNCERTAIN', b'{}')
-                    continue
-                if call.paging_total != 1:
-                    raise ValueError('MISSION029_PAGINATION')
-                valid = quality(family, call, row) if quality else complete(family, call.records)
-                state = 'COMPLETE' if valid else 'PROVIDER_INCOMPLETE' if call.records else 'PROVIDER_EMPTY'
-                count_result(receipt, row, family, state)
-                rows = normalize_records(request['endpoint'], call.records,
-                    competition_id=row['league'], season=row['season'], ingestion_run_id='mission029',
-                    raw_payload_hash=call.payload_sha256, request_params=request['params'],
-                    observed_at=call.received_at)
-                partition = parquet.write_records(rows, competition=row['code'], season=row['season'],
-                    entity_type=family, dataset_version='api-football-v3')
-                path = Path(partition['path']).rename(Path(partition['path']).with_name(
-                    projection_name(request)))
-                key = f"{PREFIX}/projection/{path.relative_to(OUTPUT.resolve()).as_posix()}"
-                if not (store.put_if_absent(key, path.read_bytes()) or store.get_object(key) == path.read_bytes()):
-                    raise ValueError('MISSION029_PROJECTION_CONFLICT')
-                receipt['partitions'].append(dict(path=path.relative_to(OUTPUT.resolve()).as_posix(),
-                    sha256=partition['sha256'], r2_key=key))
-                store.put_if_absent(f'{result_prefix}{family}/{name}.{state}',
-                    json.dumps(receipt['partitions'][-1]).encode())
-        receipt['status'] = 'EXHAUSTED'
+                else:
+                    pending.append((row, family))
+        results = parallel(partial(collect_lane, deadline=transport.deadline, pace=pace, clock=clock,
+            halt=halt, status=status, quality=quality, result_prefix=result_prefix), pending)
+        for result in results:
+            for family, count in result['complete'].items():
+                receipt['complete'][family] = receipt['complete'].get(family, 0) + count
+            for field in ('missing', 'uncertain', 'request_errors', 'partitions'):
+                receipt[field].extend(result[field])
+        receipt['calls'] = sum(r['calls'] for r in results)
+        lows = [r['quota_remaining'] for r in results if r['quota_remaining'] is not None]
+        receipt['quota_remaining'] = min(lows) if lows else None
+        failures = [r for r in results if 'reason_class' in r]
+        if failures:
+            failure = next((r for r in failures if r.get('reason_code') != 'MISSION029_STOP_REQUESTED'), failures[0])
+            receipt.update(reason_class=failure['reason_class'], reason_code=failure['reason_code'])
+        else:
+            receipt['status'] = 'EXHAUSTED'
     except Exception as error:
         receipt['reason_class'] = type(error).__name__
         if str(error).startswith(('W71_', 'MISSION029_', 'MISSION028_PREFLIGHT_')):
@@ -166,8 +217,9 @@ def run_phase(phase, targets, families, *, clock=lambda: datetime.now(UTC), qual
     receipt['coverage_target'] = thresholds
     receipt['coverage_met'] = bool(targets) and all(v >= thresholds[f]
         for f, v in receipt['complete_fraction'].items())
-    receipt.update(calls=transport.calls if transport else 0,
-        quota_remaining=client.quota.status.daily_remaining if client and client.quota else None)
+    receipt['calls'] += transport.calls if transport else 0
+    if receipt.get('quota_remaining') is None:
+        receipt['quota_remaining'] = client.quota.status.daily_remaining if client and client.quota else None
     body = (json.dumps(receipt, indent=2) + '\n').encode()
     run = os.environ.get('GITHUB_RUN_ID', 'local') + '-' + os.environ.get('GITHUB_RUN_ATTEMPT', '1')
     (OUTPUT / f'{phase}-public-receipt.json').write_bytes(body)

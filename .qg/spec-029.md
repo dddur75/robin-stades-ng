@@ -72,3 +72,11 @@ tout nouveau workflow, `prospective-deep-scheduler.yml`, robin-core.
 Branches `codex/029-phase-a` à `codex/029-phase-e`, PR #113 → #117 ; dernier code sur phase E.
 Étape exacte : code poussé, contrat d'audit corrigé, collecte réelle en attente de la boucle de revue/fusion.
 Prochaine action : boucle seule, intégrer A→E puis observer le workflow 71 actif et les reçus publics sur historical-data ; vérifier les critères avant de cocher la mission.
+
+## Réconciliation PERF 036 — 2026-10-18 (Codex)
+
+- #118 rebasée sur main après #117 ; signature admission mission/data, périmètre semaine et réserve par preuve conservés.
+- Routage A→E et prédécesseurs de #117 conservés ; moteur PERF 16 × 4 sans doublons de reprise.
+- `collect_lane` et `parallel` identiques à #118 relue ; audit PERF ré-appendu après main, empreintes recalculées.
+- Validation : 407 tests domaine/couverture verts, dont les cinq tests E ; Ruff, mypy strict (28 sources), Bandit -ll, scanner ciblé et contrat d’audit verts.
+- Aucun dispatch, fusion, appel fournisseur/R2/Neon ni lecture de données 2025 ; débit réel et recette opérationnelle restent à la boucle.
