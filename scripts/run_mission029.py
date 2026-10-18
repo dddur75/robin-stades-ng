@@ -45,10 +45,19 @@ def collect_once(collector, store, request):
 
 
 def request_for(row, family):
+    query = row.get('query', {})
+    if set(query) - {'from', 'to'}:
+        raise ValueError('MISSION029_QUERY_SCOPE')
     return dict(phase='mission029', competition=row['league'], season=row['season'], family=family,
         endpoint='/fixtures' if family == 'fixtures' else f'/fixtures/{family}',
-        params=dict(league=row['league'], season=row['season']) if family == 'fixtures'
+        params=dict(query, league=row['league'], season=row['season']) if family == 'fixtures'
             else dict(fixture=row['fixture']))
+
+
+def projection_name(request):
+    params = request['params']
+    identity = params.get('fixture') or hashlib.sha256(json.dumps(params, sort_keys=True).encode()).hexdigest()
+    return f'fixture-{identity}.parquet'
 
 
 def run_phase(phase, targets, families, *, clock=lambda: datetime.now(UTC), quality=None, coverage=.90):
@@ -100,7 +109,8 @@ def run_phase(phase, targets, families, *, clock=lambda: datetime.now(UTC), qual
                 valid = quality(family, call, row) if quality else complete(family, call.records)
                 receipt['complete'][family] = receipt['complete'].get(family, 0) + int(valid)
                 if not valid:
-                    receipt['missing'].append([row['fixture'], family])
+                    receipt['missing'].append(dict(fixture=row['fixture'], family=family,
+                        reason='PROVIDER_EMPTY' if not call.records else 'PROVIDER_INCOMPLETE'))
                 rows = normalize_records(request['endpoint'], call.records,
                     competition_id=row['league'], season=row['season'], ingestion_run_id='mission029',
                     raw_payload_hash=call.payload_sha256, request_params=request['params'],
@@ -108,7 +118,7 @@ def run_phase(phase, targets, families, *, clock=lambda: datetime.now(UTC), qual
                 partition = parquet.write_records(rows, competition=row['code'], season=row['season'],
                     entity_type=family, dataset_version='api-football-v3')
                 path = Path(partition['path']).rename(Path(partition['path']).with_name(
-                    f"fixture-{row['fixture']}.parquet"))
+                    projection_name(request)))
                 key = f"{PREFIX}/projection/{path.relative_to(OUTPUT.resolve()).as_posix()}"
                 if not (store.put_if_absent(key, path.read_bytes()) or store.get_object(key) == path.read_bytes()):
                     raise ValueError('MISSION029_PROJECTION_CONFLICT')
@@ -121,8 +131,10 @@ def run_phase(phase, targets, families, *, clock=lambda: datetime.now(UTC), qual
             receipt['reason_code'] = str(error)
     receipt['complete_fraction'] = {f: receipt['complete'].get(f, 0) / len(targets)
         if targets else 1 for f in families}
-    receipt['coverage_target'] = coverage
-    receipt['coverage_met'] = all(v >= coverage for v in receipt['complete_fraction'].values())
+    thresholds = coverage if isinstance(coverage, dict) else {f: coverage for f in families}
+    receipt['coverage_target'] = thresholds
+    receipt['coverage_met'] = bool(targets) and all(v >= thresholds[f]
+        for f, v in receipt['complete_fraction'].items())
     receipt.update(calls=transport.calls if transport else 0,
         quota_remaining=client.quota.status.daily_remaining if client and client.quota else None)
     body = (json.dumps(receipt, indent=2) + '\n').encode()
@@ -137,10 +149,11 @@ def run_phase(phase, targets, families, *, clock=lambda: datetime.now(UTC), qual
 
 def main():
     from scripts.mission029_events import main as events
+    from scripts.mission029_extension import main as extension
     from scripts.mission029_players import main as players
     targets = targets_a()
     phase = os.environ.get('MISSION029_PHASE', 'auto')
-    phases = dict(A=lambda: run_phase('A', targets, ['statistics']), B=events, C=players)
+    phases = dict(A=lambda: run_phase('A', targets, ['statistics']), B=events, C=players, D=extension)
     if phase not in ('auto', *phases):
         raise ValueError('MISSION029_PHASE_INVALID')
     store = R2ObjectStore(os.environ)
