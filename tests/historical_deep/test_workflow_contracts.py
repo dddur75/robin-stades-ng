@@ -263,7 +263,10 @@ def test_workflows_70_to_78_are_bounded_serialized_and_fail_closed() -> None:
         assert "historical-state-persist" not in text
         assert "DATABASE_URL" not in text
         assert "ODDS_API_KEY" not in text
-        assert "contents: write" not in text
+        if number == 71:
+            assert job["permissions"] == {"actions": "read", "contents": "write"}
+        else:
+            assert "contents: write" not in text
 
         steps = _steps(job)
         checkout = next(step for step in steps if step.get("uses") == "actions/checkout@v4")

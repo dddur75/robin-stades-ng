@@ -9,7 +9,7 @@ from robin.historical.normalization import normalize_records
 from robin.historical.storage import PartitionedParquetStore
 from robin.historical_deep.adapters import R2ObjectStore, assert_safety_locks
 from robin.historical_deep.collector import HistoricalDeepCollector
-from robin.historical_deep.provider import ApiFootballDeepClient
+from robin.historical_deep.provider import ApiFootballDeepClient, ProviderError
 from robin.historical_deep.storage import R2FirstRepository
 from scripts.run_mission027_lineups import LEAGUES, validate_targets
 from scripts.run_mission028 import Transport
@@ -32,6 +32,7 @@ def collect_once(collector, store, request):
     task = collector._make_task(**request, identity=None)
     if collector.repository.receipt_for(task) is not None:
         return collector._collect(**request)
+    getattr(getattr(collector, 'provider', None), 'assert_transport_available', lambda: None)()
     identity = request['params'].get('fixture') or hashlib.sha256(
         json.dumps(request['params'], sort_keys=True).encode()).hexdigest()
     marker = f"{PREFIX}/once/{request['family']}/{identity}.json"
@@ -40,13 +41,22 @@ def collect_once(collector, store, request):
     return collector._collect(**request)
 
 
-def run_phase(phase, targets, families, *, clock=lambda: datetime.now(UTC)):
+def request_for(row, family):
+    return dict(phase='mission029', competition=row['league'], season=row['season'], family=family,
+        endpoint='/fixtures' if family == 'fixtures' else f'/fixtures/{family}',
+        params=dict(league=row['league'], season=row['season']) if family == 'fixtures'
+            else dict(fixture=row['fixture']))
+
+
+def run_phase(phase, targets, families, *, clock=lambda: datetime.now(UTC), quality=None):
     if any(r['season'] == 2025 for r in targets):
         raise ValueError('MISSION029_HOLDOUT')
     digest = hashlib.sha256(json.dumps(targets, sort_keys=True).encode()).hexdigest()
     OUTPUT.mkdir(parents=True, exist_ok=True)
     receipt = dict(phase=phase, status='PARTIAL', targets=len(targets), targets_sha256=digest,
-        calls=0, complete={}, missing=[], uncertain=[], partitions=[])
+        calls=0, complete={}, missing=[], uncertain=[], request_errors=[], partitions=[],
+        run_id=os.environ.get('GITHUB_RUN_ID', 'local'), code_revision=os.environ.get('GITHUB_SHA'),
+        observed_at=clock().isoformat(), total_cap=240000, daily_cap=130000, provider_reserve=5000)
     receipt['fixture_ids_sha256'] = hashlib.sha256(''.join(
         f'{i}\n' for i in sorted({r['fixture'] for r in targets})).encode()).hexdigest()
     store = transport = client = None
@@ -73,13 +83,18 @@ def run_phase(phase, targets, families, *, clock=lambda: datetime.now(UTC)):
             for family in families:
                 if clock() >= transport.deadline:
                     raise RuntimeError('MISSION029_SLICE_ENDED')
-                request = dict(phase='mission029', competition=row['league'], season=row['season'],
-                    family=family, endpoint=f'/fixtures/{family}', params=dict(fixture=row['fixture']))
-                call = collect_once(collector, store, request)
+                request = request_for(row, family)
+                try:
+                    call = collect_once(collector, store, request)
+                except ProviderError as error:
+                    receipt['request_errors'].append([row['fixture'], family, type(error).__name__])
+                    call = None
                 if call is None:
                     receipt['uncertain'].append([row['fixture'], family])
                     continue
-                valid = complete(family, call.records)
+                if call.paging_total != 1:
+                    raise ValueError('MISSION029_PAGINATION')
+                valid = quality(family, call, row) if quality else complete(family, call.records)
                 receipt['complete'][family] = receipt['complete'].get(family, 0) + int(valid)
                 if not valid:
                     receipt['missing'].append([row['fixture'], family])
@@ -117,12 +132,21 @@ def run_phase(phase, targets, families, *, clock=lambda: datetime.now(UTC)):
 
 def main():
     targets = targets_a()
-    terminal = R2ObjectStore(os.environ).get_object(f'{PREFIX}/terminal/A')
-    if terminal:
+    phase = os.environ.get('MISSION029_PHASE', 'auto')
+    if phase not in ('auto', 'A', 'B'):
+        raise ValueError('MISSION029_PHASE_INVALID')
+    store = R2ObjectStore(os.environ)
+    if phase == 'B' and store.get_object(f'{PREFIX}/terminal/A') is None:
+        raise ValueError('MISSION029_PREDECESSOR_REQUIRED')
+    if phase == 'A' or (phase == 'auto' and store.get_object(f'{PREFIX}/terminal/A') is None):
+        return run_phase('A', targets, ['statistics'])
+    terminal = store.get_object(f'{PREFIX}/terminal/B')
+    if terminal and phase == 'auto':
         OUTPUT.mkdir(parents=True, exist_ok=True)
-        (OUTPUT / 'A-public-receipt.json').write_bytes(terminal)
+        (OUTPUT / 'B-public-receipt.json').write_bytes(terminal)
         return 0
-    return run_phase('A', targets, ['statistics'])
+    from scripts.mission029_events import main as events
+    return events()
 
 
 if __name__ == '__main__':

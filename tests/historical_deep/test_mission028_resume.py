@@ -100,9 +100,14 @@ def test_resume_uses_only_workflow71_with_unchanged_read_permissions():
     assert (workflow.get("on", workflow.get(True)))["schedule"] == [{"cron": "17 */2 * * *"}]
     assert list(workflow["jobs"]) == ["fixture-bundles"]
     job = workflow["jobs"]["fixture-bundles"]
-    assert "permissions" not in job
+    assert job['permissions'] == {'actions': 'read', 'contents': 'write'}
+    publisher = next(s for s in job['steps'] if s.get('run') == 'python -m scripts.publish_mission029')
+    assert publisher['env']['GH_TOKEN'] == '${{ github.token }}'
+    assert "steps.mission029.outcome == 'success'" in publisher['if']
+    assert all('GH_TOKEN' not in s.get('env', {}) for s in job['steps'] if s is not publisher)
     plan = next(step for step in job["steps"] if step.get("id") == "resume")
     assert plan["run"] == "python -m scripts.mission028_resume"
     assert "API_FOOTBALL_KEY" not in plan["env"]
     source = Path("scripts/mission028_resume.py").read_text() + path.read_text()
-    assert all(token not in source for token in ("--dispatch", "GH_TOKEN", "actions: write", "requests.post", "workflow disable"))
+    assert 'GH_TOKEN' not in plan['env']
+    assert all(token not in source for token in ("--dispatch", "actions: write", "requests.post", "workflow disable"))

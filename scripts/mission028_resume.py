@@ -12,10 +12,13 @@ from scripts.run_mission028 import PREFIX
 
 WORKERS = 16
 BUDGET_CODES = {TOTAL_CODE, "MISSION028_DAILY_BUDGET_REACHED", "MISSION028_RESERVE_REACHED"}
+BUDGET_CODES |= {'W71_LIMIT_REACHED', 'W71_PROVIDER_RESERVE', 'W71_DAY_ENDED', 'W71_STATUS_PENDING'}
 
 
 def checkpoint(store, receipt, now, revision, deadline=None):
     if store is None:
+        return
+    if receipt.get('reason_code') == 'W71_STATUS_PENDING':
         return
     if receipt.get('reason_class') in ('ProviderTransportError', 'ProviderRateLimitError', 'ProviderResponseError'):
         return
