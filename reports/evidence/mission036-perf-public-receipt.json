@@ -1,0 +1,7 @@
+{
+  "mission": "036-PERF", "status": "PARTIAL", "engineering_only": true,
+  "processes": 16, "collectors_per_process": 4, "shared_pace_seconds": 0.126,
+  "simulation": {"minutes": 95, "concurrent_http_storage_seconds": 12, "calls_per_minute": 320.0},
+  "validation": "407 domain/coverage tests including 5 phase-E compatibility tests; council audit; Ruff; strict mypy (28 sources); Bandit -ll; changed-file secret scanner",
+  "real_throughput": "UNMEASURED", "provider_calls": 0, "r2_accesses": 0, "dispatches": 0, "merges": 0
+}
