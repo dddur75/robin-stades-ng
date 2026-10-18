@@ -769,6 +769,8 @@ class HistoricalDeepCollector:
         params: Mapping[str, object],
         identity: Mapping[str, object] | None = None,
     ) -> CollectedResponse:
+        if getattr(self.provider, '_admission', None) and season == 2025:
+            raise ValueError('MISSION029_HOLDOUT')
         task = self._make_task(
             phase=phase,
             competition=competition,

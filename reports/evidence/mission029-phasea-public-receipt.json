@@ -1,0 +1,16 @@
+{
+  "claim_id": "ENGINEERING.MISSION029.PHASEA.V1",
+  "phase": "A",
+  "status": "PREPARED_NOT_COLLECTED",
+  "base_revision": "3afec5f5c47619fc05a8375648d3653162e85cac",
+  "offline_tests_passed": 309,
+  "provider_calls": 0,
+  "r2_calls": 0,
+  "neon_calls": 0,
+  "merges": 0,
+  "data_coverage": "NOT_MEASURED",
+  "weekly_receipts": "PENDING_ACTIONS",
+  "holdout_reads": 0,
+  "validation": "PYTHONPATH=src:. python -m pytest tests/historical_deep -q; Ruff; git diff --check",
+  "review": "PENDING_INDEPENDENT_CLAUDE_REVIEW"
+}

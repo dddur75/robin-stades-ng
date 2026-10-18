@@ -273,7 +273,7 @@ def test_workflows_70_to_78_are_bounded_serialized_and_fail_closed() -> None:
         )
         upload_with = _mapping(upload["with"])
         assert upload["if"] == (
-            "always() && (github.event_name != 'schedule' || steps.resume.outputs.state == 'READY')"
+            "always() && (github.event_name != 'schedule' || steps.resume.outputs.state == 'READY' || steps.resume.outputs.state == 'DONE')"
             if number == 71 else "always()"
         )
         assert upload_with["if-no-files-found"] == "error"
@@ -767,7 +767,7 @@ def test_workflow71_schedule_skips_historical_and_phase1_for_every_resume_state(
             "steps": SimpleNamespace(resume=SimpleNamespace(outputs=SimpleNamespace(state=state))),
             "always": lambda: True}
         for step, expected in [(historical, False), (census, False), (outcome, False),
-                               (details, state == "READY"), (upload, state == "READY"),
+                               (details, state == "READY"), (upload, state in ("READY", "DONE")),
                                *((step, False) for step in legacy027)]:
             expression = re.sub(r"!(?!=)", " not ", str(step["if"]).replace("&&", " and ").replace("||", " or "))
             assert bool(eval(expression, {"__builtins__": {}}, namespace)) == expected
@@ -775,7 +775,7 @@ def test_workflow71_schedule_skips_historical_and_phase1_for_every_resume_state(
             (True, True, "none", (False, True, False)), (False, True, "lineups", (False, False, True))]:
         namespace.update(github=SimpleNamespace(event_name="workflow_dispatch"),
             inputs=SimpleNamespace(mission028=mission, execute=execute, mission028_progress=False,
-                details_family=family, lineups_only=False, progress_only=False))
+                details_family=family, lineups_only=False, progress_only=False, mission029_phase="none"))
         for step, enabled in zip((historical, census, details), expected, strict=True):
             expression = re.sub(r"!(?!=)", " not ", str(step["if"]).replace("&&", " and ").replace("||", " or "))
             assert bool(eval(expression, {"__builtins__": {}}, namespace)) == enabled
