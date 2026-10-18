@@ -159,6 +159,7 @@ def test_sixteen_workers_are_paced_to_eight_requests_per_second(monkeypatch, tmp
     monkeypatch.setattr(performance.time, "monotonic", lambda: clock[0])
     monkeypatch.setattr(performance.time, "sleep", sleep)
     monkeypatch.setattr(run.requests, "get", lambda *a, **kw: None)
+    monkeypatch.setattr(run, "datetime", SimpleNamespace(now=lambda tz: NOW - timedelta(minutes=1)))
     transport = run.PacedTransport(NOW, tmp_path / "pace.sqlite3")
     transport.get("https://example.invalid")
     transport.get("https://example.invalid")

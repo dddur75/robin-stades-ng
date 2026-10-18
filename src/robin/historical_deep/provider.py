@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import random
 import time
 from collections.abc import Callable, Mapping
@@ -227,6 +228,11 @@ class ApiFootballDeepClient:
         self._consecutive_failures = 0
         self._circuit_opened_at: float | None = None
         self._last_unbudgeted_request_at: float | None = None
+        self._admission = None
+        if os.environ.get('WORKFLOW71_ADMISSION') == 'true':
+            from robin.historical_deep.admission import workflow_budget
+            self._admission = workflow_budget()
+            self._status_ttl_seconds = 7200
 
     def _assert_circuit_closed(self) -> None:
         if self._circuit_opened_at is None:
@@ -282,12 +288,18 @@ class ApiFootballDeepClient:
     ) -> ProviderResponse:
         normalized_endpoint = _canonical_endpoint(endpoint)
         safe_params = _safe_params(params)
+        if self._admission and str(safe_params.get('season')) == '2025':
+            raise ValueError('MISSION029_HOLDOUT')
         url = f"{API_FOOTBALL_BASE_URL}{normalized_endpoint}"
         requested_at = self._now()
         attempts = 0
 
         for attempt in range(self._max_retries + 1):
             self._before_transport(require_quota=require_quota)
+            if self._admission:
+                self._admission.reserve(normalized_endpoint,
+                    mission=os.environ.get('MISSION029_ACTIVE') == 'true',
+                    remaining=self.quota.status.daily_remaining if self.quota else None)
             attempts += 1
             try:
                 response = self._transport.get(
@@ -525,13 +537,20 @@ class ApiFootballDeepClient:
 
     def get_status(self) -> ProviderStatus:
         """Call GET /status and retain only the sanitized Mega/quota proof."""
-
+        if self._admission:
+            cached = self._admission.cached_status()
+            if cached:
+                status = ProviderStatus.model_validate(cached)
+                self.quota = QuotaController(status)
+                return status
         response = self._request(
             "/status",
             params={},
             require_quota=False,
         )
         status = self._parse_status(response)
+        if self._admission:
+            self._admission.remember(status)
         if self.quota is None:
             self.quota = QuotaController(
                 status,
