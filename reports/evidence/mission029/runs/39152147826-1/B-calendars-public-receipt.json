@@ -1,0 +1,1031 @@
+{
+  "phase": "B-calendars",
+  "status": "EXHAUSTED",
+  "targets": 200,
+  "targets_sha256": "609deb30f57d64c6ab9f4f108c909f91d75ce6ac4eaad04ef91ed8907872f291",
+  "calls": 0,
+  "complete": {
+    "fixtures": 200
+  },
+  "missing": [],
+  "uncertain": [],
+  "request_errors": [],
+  "partitions": [
+    {
+      "path": "historical/parquet/competition=ARG/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-baa2e6a2d15d100fccdd70fecfd7c7fe548ccd1681ec10b23d89bd82974efe61.parquet",
+      "sha256": "513bc85eff0fd0d4e88c8c34f9a80aa766295beedbc13ed2c79cd8982851b883",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=ARG/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-baa2e6a2d15d100fccdd70fecfd7c7fe548ccd1681ec10b23d89bd82974efe61.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=EC/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-0c50439cd2562a2a7a20f4d28b89c8307682bde19124efda6a0b1c322589c64a.parquet",
+      "sha256": "561db363da54ba72afd8b782d7abac730d3289d37651c7fafb1872c2e7f8b112",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=EC/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-0c50439cd2562a2a7a20f4d28b89c8307682bde19124efda6a0b1c322589c64a.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=POL/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-04c72ff6d4c3ceb6f007984ccd5ef8736432fa5032410c726939aa0f2a2e0838.parquet",
+      "sha256": "d0efcce3482c477c70241edda92678e84c77faa2b2728bb90fc812aae3382321",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=POL/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-04c72ff6d4c3ceb6f007984ccd5ef8736432fa5032410c726939aa0f2a2e0838.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=T1/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-472d6c90b94cb683d71654a87aa6fd5a6aebf2228a00724799d78b6cc85d8bfc.parquet",
+      "sha256": "47c80b59d84dea65e20aebcd84d4668413469c7d8f5241a98970b4c7164ffb0d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=T1/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-472d6c90b94cb683d71654a87aa6fd5a6aebf2228a00724799d78b6cc85d8bfc.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=B1/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-839a754840680c2c7eeb35c37760f04c3f70937f4453ab379065ded0750209cf.parquet",
+      "sha256": "a8760cc3f46c21bfd3bf25b08be8e0ac96579a6c9066fd35232575c014a7b5b7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=B1/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-839a754840680c2c7eeb35c37760f04c3f70937f4453ab379065ded0750209cf.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=G1/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-8ffaa80a72d704ea06e264d2b3649c827df143b654d8a0d57bc4e09e65e8e689.parquet",
+      "sha256": "bbceb9df96553d0723117468f489d32ed931d8c7a9cf3237b2b248b582e02c2e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=G1/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-8ffaa80a72d704ea06e264d2b3649c827df143b654d8a0d57bc4e09e65e8e689.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=RUS/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-0934a613f2b3a1fef24e40476e71c57e59139bd7670b85808608ba0fd658b221.parquet",
+      "sha256": "c0970c36f72346d3b9efc4b65e6773913862f840c3132ce4f3e9776810362879",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=RUS/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-0934a613f2b3a1fef24e40476e71c57e59139bd7670b85808608ba0fd658b221.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=D2/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-2026420ff80228ce55b2cf92c170f1d3a2bf7bb83199036fc358a06ceaa5dab9.parquet",
+      "sha256": "9ffc9faad8da1c21d58e2525f4cf88989dfc6b799b23057d8736043ba60fa44f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=D2/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-2026420ff80228ce55b2cf92c170f1d3a2bf7bb83199036fc358a06ceaa5dab9.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=IRL/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-ac513a732dc7d324a8fa9f8b6169f2bcf514a09f476810715ff13ed02542dab3.parquet",
+      "sha256": "5c32bf735ec56c62ec398ce5f0243907f1dd4d9f55e53fc7e152c115c54b6c9b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=IRL/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-ac513a732dc7d324a8fa9f8b6169f2bcf514a09f476810715ff13ed02542dab3.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC2/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-c6bd8634d0dd2f77283415ff10a9fc2557bed25e528e13cf5d21afeb58d268a9.parquet",
+      "sha256": "696632200929d30c1d714128387a7237a38a92070ffa828acc9e54a29c4123c6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC2/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-c6bd8634d0dd2f77283415ff10a9fc2557bed25e528e13cf5d21afeb58d268a9.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=E1/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-4ae7a671c824e098c498d9da1c547e32f1a78de8444a958d9dffae410739ee52.parquet",
+      "sha256": "2fd3611a06161f276cb5b5952aa20bb9fa00bdf9c7f606fb94876665400d3abc",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=E1/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-4ae7a671c824e098c498d9da1c547e32f1a78de8444a958d9dffae410739ee52.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=N1/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-0167019a33a1782fe849352242d62781b2d17e1cd7a1f9bbdf5e524b57e1fe22.parquet",
+      "sha256": "ef00af0c346e05ea28bda4b7324e5602f15e2f8047f70c231131b46d482fee15",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=N1/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-0167019a33a1782fe849352242d62781b2d17e1cd7a1f9bbdf5e524b57e1fe22.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SWE/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-bd06d4aaa0921356c841382c2429b88c9c1b00198731f616a300850d713e90fc.parquet",
+      "sha256": "b4686453bd31789a8e599877dac11afff221f67888544eb4480e6b8e7d55d565",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SWE/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-bd06d4aaa0921356c841382c2429b88c9c1b00198731f616a300850d713e90fc.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=ARG/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-8fec2995285c12806f05cb62d92a209726a1e1c162f2c636d34bf714a904bce7.parquet",
+      "sha256": "f77afe9e0017a19f957de3fe4c3c87a3e3dc83c0fd1fa131f50a9bc87dbc97ab",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=ARG/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-8fec2995285c12806f05cb62d92a209726a1e1c162f2c636d34bf714a904bce7.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=EC/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-38c45a757ac58b94adb6177346905f56eddcbc8f00fab7d6fbc23e83b5421f16.parquet",
+      "sha256": "f213971103de4a4b39c1035bfdea4d81a3419a381db0d597c19f3e9040a9792e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=EC/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-38c45a757ac58b94adb6177346905f56eddcbc8f00fab7d6fbc23e83b5421f16.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=POL/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-cf18fde529a82f8edcbdaa2a955c905d768e9d2729718abaf1f1b31ac9726319.parquet",
+      "sha256": "bcc3535d04dfeca4bd2e9c3ccd532faef9b1a6aeed599cf81e24e5bc6c928368",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=POL/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-cf18fde529a82f8edcbdaa2a955c905d768e9d2729718abaf1f1b31ac9726319.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=T1/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-888cc702dc046c1723328eddf452cdd005c9f05d04f9e149e626d48abe37b0e2.parquet",
+      "sha256": "8c3c50c85d558dbdbdb88f51114710a1c4fefb4c0db06117bbebb1ffaa944459",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=T1/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-888cc702dc046c1723328eddf452cdd005c9f05d04f9e149e626d48abe37b0e2.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=B1/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-7f7bbdb9cf60199e8215987dc2683c49cc47baf300226341002219e4526af55a.parquet",
+      "sha256": "7a4fdaa675ff3d6198d58de7721626cae6f9585003db13994dc4ea65f99a9b92",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=B1/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-7f7bbdb9cf60199e8215987dc2683c49cc47baf300226341002219e4526af55a.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=G1/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-8fb706d04c60c6a98531c1aca4656b3329ef0971dd9e93d9cc1cc89f5ab9ef88.parquet",
+      "sha256": "1ba5d55b9865df513ffb61b6869bf682b611cfac954a34073a0883ec6508e771",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=G1/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-8fb706d04c60c6a98531c1aca4656b3329ef0971dd9e93d9cc1cc89f5ab9ef88.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=RUS/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-d87e94176d8470d043cc6c72dc51e3e8475ab65c2163685de43bb7a0211382cf.parquet",
+      "sha256": "7cd4ad7bf02389bbad91fec3e4517b963933f2743e87ea33aed4caa52c2a5ee7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=RUS/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-d87e94176d8470d043cc6c72dc51e3e8475ab65c2163685de43bb7a0211382cf.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=D2/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-d22ed8d669b5be7c2ab1b887a904dbd459a78dcd53e05a8931b5b3acb1a769ec.parquet",
+      "sha256": "97b94eaaf3fa1eb7ee1761b58d79944189e4ae3a223732c214384021221d5e10",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=D2/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-d22ed8d669b5be7c2ab1b887a904dbd459a78dcd53e05a8931b5b3acb1a769ec.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=IRL/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-91274fb276d8ea5957a3a0d1b966e24c527c739f9efc97b48636b560791d6089.parquet",
+      "sha256": "b7172e3659d9b8f3c0ed18102f2a9109cd923933e558836781080f8b2ddb9132",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=IRL/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-91274fb276d8ea5957a3a0d1b966e24c527c739f9efc97b48636b560791d6089.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC2/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-ee637ad6becd7b9bc76b439e834e3165385c7623d689cc43e6c62481d932d038.parquet",
+      "sha256": "82e203f84ada7c9ad390707c49aacd0e604c3a178d06635e05905055680fdfe5",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC2/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-ee637ad6becd7b9bc76b439e834e3165385c7623d689cc43e6c62481d932d038.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=E1/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-daf70d69f311e54c863d948244205e02ece90ae19b9ac77eb40372896b4ecb00.parquet",
+      "sha256": "02132a7d1c8b0389d2d3c19ab209c8d5c8a338bd4456611376bfae42bc3872b6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=E1/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-daf70d69f311e54c863d948244205e02ece90ae19b9ac77eb40372896b4ecb00.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=N1/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-c62dc919cb8b67889a5afc1bb329cf333d03a65af9525e64e24ab2b86a81e432.parquet",
+      "sha256": "46b26a57b8984107cfbd1df944efe6ec73faf648c25cf5dffe2df8a970f00ea8",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=N1/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-c62dc919cb8b67889a5afc1bb329cf333d03a65af9525e64e24ab2b86a81e432.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SWE/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-0dfe8308b8cd6177ef7be71a1343edf643bc877632e9c37812d1c25a5f34793d.parquet",
+      "sha256": "45bfcf4cbaa05e37922c7517d379b402c2deb0ba8b4e96bb609ed45055e4bf09",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SWE/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-0dfe8308b8cd6177ef7be71a1343edf643bc877632e9c37812d1c25a5f34793d.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=ARG/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-592ca0c92c94767f37fbca7405bd50d0973586b4bd4e079212b9be34cd3d9157.parquet",
+      "sha256": "034db78e7477249988240ef13e373faa5c789495180b7705959a6602ccf441d7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=ARG/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-592ca0c92c94767f37fbca7405bd50d0973586b4bd4e079212b9be34cd3d9157.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=EC/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-70cd4e26cb75dd80297c2727f4d9c204db766ea456441116f85c4dde81d086ba.parquet",
+      "sha256": "e98f4880f8742d2524f1ed019d6561cc11a8ef50b98c2c8f34e1234020a858fb",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=EC/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-70cd4e26cb75dd80297c2727f4d9c204db766ea456441116f85c4dde81d086ba.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=POL/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-7a94b44841a19dfb9f2c4a8e9b96504c8f68950b5e78837969e0c8a90ae76622.parquet",
+      "sha256": "d683f1981b07a5056542b4f92c754dfb587b86a568433a249ab4a4dbedd379e8",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=POL/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-7a94b44841a19dfb9f2c4a8e9b96504c8f68950b5e78837969e0c8a90ae76622.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=USA/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-6778e6f232603eb6dcc29c1dc36b1975784ca18d5ed152609a7247152f24fe20.parquet",
+      "sha256": "49dda24a632798a5052c8c3a2516c23af2f7c37c0d2f73a41a7663a5a442e347",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=USA/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-6778e6f232603eb6dcc29c1dc36b1975784ca18d5ed152609a7247152f24fe20.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=B1/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-d119a7d16b00aa90390e8410912e8e6cd000120be549ac249764a29fb407f082.parquet",
+      "sha256": "1f166aa9f20ae032c0ff4085258e19d35f6de68620671d65425b55a6c7665d93",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=B1/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-d119a7d16b00aa90390e8410912e8e6cd000120be549ac249764a29fb407f082.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=G1/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-8d6115f6feb0014eb5e037daee0cc801f1402ab08870ba23ec2404397d38cad4.parquet",
+      "sha256": "fac7cb2de32d522aa819fd932fdd1bfb80dab9a4cc3188677c20ec4515a05f59",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=G1/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-8d6115f6feb0014eb5e037daee0cc801f1402ab08870ba23ec2404397d38cad4.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC0/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-89b449ff7b8d28eb87fbe4188e2033fb5cec7a239adf593fd45b3103f866d410.parquet",
+      "sha256": "55c52a659e667f96b73dc2dea084f24690934254542804a51fa96dd63af9db8d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC0/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-89b449ff7b8d28eb87fbe4188e2033fb5cec7a239adf593fd45b3103f866d410.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=D2/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-2ebad28e9ea55361f3f44e604fdae8c8c6a61bb30b18fdcde051a1b889b31ae8.parquet",
+      "sha256": "c5c9e1503a7c65ff68d408b9243a10173e76e4763bddc3240e3e542078d0a46c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=D2/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-2ebad28e9ea55361f3f44e604fdae8c8c6a61bb30b18fdcde051a1b889b31ae8.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=JPN/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-0f47634e37ba4b1ed796d5e963c2d0c4ed34d8fa89046bc6066d4cc7277aa4d8.parquet",
+      "sha256": "8af99deea8046b20cdca6dfe15fa3b15e37368ba4bfb703da40d9e243ea07da7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=JPN/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-0f47634e37ba4b1ed796d5e963c2d0c4ed34d8fa89046bc6066d4cc7277aa4d8.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC2/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-08b04700cbaf3d4eee78ed8054feb62fe6289974f8b02a573b4a8b5fd429af65.parquet",
+      "sha256": "270afd3d57b1ea03c3f458aa0e60700062d5b553d2a7f7641169ff852d3bcaa2",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC2/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-08b04700cbaf3d4eee78ed8054feb62fe6289974f8b02a573b4a8b5fd429af65.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=E2/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-83e3276ad3faa29880412974c2d988952784da1a59d6223bd4783dc7a49e7c13.parquet",
+      "sha256": "568b8f512cb6603eed0fc93cddff56bff55908906a8277992343fbfb71288b93",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=E2/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-83e3276ad3faa29880412974c2d988952784da1a59d6223bd4783dc7a49e7c13.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=N1/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-34cfa28e688928f60e7e638c1b6241671310311f72d75dbcc2d7557cd9f63e8e.parquet",
+      "sha256": "0db17c57fbc9ed54a686bdfeb156048b6ccf824b62592dd310ae26cd29afa192",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=N1/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-34cfa28e688928f60e7e638c1b6241671310311f72d75dbcc2d7557cd9f63e8e.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SWE/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-06d5e1196a3a8b78c11a0f05ddbebf82f26eb47c9f73c9d1ce9f8dcbc8110de7.parquet",
+      "sha256": "1766e44a56fd8624322fe85c8756f2b9d95422c82d0a4533995309b7c045cd96",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SWE/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-06d5e1196a3a8b78c11a0f05ddbebf82f26eb47c9f73c9d1ce9f8dcbc8110de7.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=ARG/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-41a6dd5cb80b1fbf1b895aec60b24dc1529339896dc7041656fae5554f085d75.parquet",
+      "sha256": "676ac07dedf7797f9a7514d4679602ee203c0dcafa0f21f081632a3fb8fa93d7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=ARG/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-41a6dd5cb80b1fbf1b895aec60b24dc1529339896dc7041656fae5554f085d75.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=EC/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-883cb4e1ba99cfa6e1cd97887812ea5de0cf312019529faabea9591b5e33586f.parquet",
+      "sha256": "4b5cdd546c466bc6546e168cf662400eeb2f90501e2a69fc4776bff4ca1914d7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=EC/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-883cb4e1ba99cfa6e1cd97887812ea5de0cf312019529faabea9591b5e33586f.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=POL/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-ac60751e82367b650e2e953afc6c493dfa33f9b08e3ef01b4bf7a9ac6b62bcd2.parquet",
+      "sha256": "92630ca6616943e2383e21b7f6fa6c2f4fd9a73af7c8b5d88c2de55ee386a362",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=POL/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-ac60751e82367b650e2e953afc6c493dfa33f9b08e3ef01b4bf7a9ac6b62bcd2.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=USA/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-54fd9ed3355831d48fd8c82d46b7bf55c8b49ba9ea1e4ebdefcddc248716517e.parquet",
+      "sha256": "d93134d0a7db5cb638d6308a6cfefc85ab72612e2c71ec0274adb85ac38f1275",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=USA/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-54fd9ed3355831d48fd8c82d46b7bf55c8b49ba9ea1e4ebdefcddc248716517e.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=B1/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-42b6bf5d8f4bc7146558c0536de5679158ba035db338d01e75507e472daa6346.parquet",
+      "sha256": "760e4a9ff1ad89265674d3309cda3c08bfaf9130b0a262813b42881e75bb87cb",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=B1/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-42b6bf5d8f4bc7146558c0536de5679158ba035db338d01e75507e472daa6346.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=G1/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-7a5f03a4a6b89941971d7ae36e4b283e2ee4a2f304284b411adacfdfefdfff8c.parquet",
+      "sha256": "0f851157c1b051ee2aaf1d22c26fea72a6cc7f80516dc1d192aa49991e6af437",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=G1/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-7a5f03a4a6b89941971d7ae36e4b283e2ee4a2f304284b411adacfdfefdfff8c.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC0/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-7d4d1f361f614d15111a672848da5699a24d41324f361ddd0e4fba958117ea1c.parquet",
+      "sha256": "95dbe1ffad48fe6424e238e8a0c454d4eac7ea9272c3104833322a2e566cd5c3",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC0/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-7d4d1f361f614d15111a672848da5699a24d41324f361ddd0e4fba958117ea1c.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=D2/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-46d9e7294678382b7cd75f6dd741829835f7dd991da7d5883d6499c937c19878.parquet",
+      "sha256": "0c8021020096b217af7d9e6cade2c9d9223ce560639291cbd2eeb257e39cbc50",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=D2/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-46d9e7294678382b7cd75f6dd741829835f7dd991da7d5883d6499c937c19878.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=JPN/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-336484ce370aa272919d3f3509afdc5fa523e537f862864722fbeec831f8e6d5.parquet",
+      "sha256": "89afbd3428e2f737c41c883f857c0cce0da7429b11375d84332f4fe01f9a3bd9",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=JPN/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-336484ce370aa272919d3f3509afdc5fa523e537f862864722fbeec831f8e6d5.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC2/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-5a30d807eccbb4de0dac5dc50229cea7321e556fc5c55545e49c27398815c982.parquet",
+      "sha256": "6b5d12c7a447788d9aff37f62a9f6c2a1c46c7a66ee7236ca32d45a55290c5e6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC2/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-5a30d807eccbb4de0dac5dc50229cea7321e556fc5c55545e49c27398815c982.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=E2/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-8f807c271f166da81564e85655207c7431bb0d21622005e95abada7760d399f7.parquet",
+      "sha256": "e3d6c63f5276dfe963156d4315b2352a932f0f17b3e738dd39fb2fa0ff6f9746",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=E2/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-8f807c271f166da81564e85655207c7431bb0d21622005e95abada7760d399f7.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=N1/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-50b72d3ac981088e704568942d247d720f1afacf62ba26ead12c7529eb635b65.parquet",
+      "sha256": "8f52e6eca7d86667f1e1b9b91e93f4dad835ee485980bf3ecb4e41c770859101",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=N1/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-50b72d3ac981088e704568942d247d720f1afacf62ba26ead12c7529eb635b65.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SWE/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-630371f9ff63ea153706699969351e384416d2fa3a7fcdb134639c21bd352c7e.parquet",
+      "sha256": "e561c4ac85c510713f63a03f96bb98d07df321f0656a089e4bba580f4715e7fa",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SWE/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-630371f9ff63ea153706699969351e384416d2fa3a7fcdb134639c21bd352c7e.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=ARG/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-1fc7b9d475065d3f14048be6ccbfefa55ad8d9f223455efd477e2824e50f058e.parquet",
+      "sha256": "526b69975aa0039f9f9fac783072f920c3be53450d9ed4a7baa4da8251611b53",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=ARG/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-1fc7b9d475065d3f14048be6ccbfefa55ad8d9f223455efd477e2824e50f058e.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=F2/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-8a3a9a7f5ea7022b48d5cafe399aa0d7bbc6fee5baddd6b87a81f3ded31585e0.parquet",
+      "sha256": "c352415f4c9f7436d7f37101aa9fcd742eb457e67211ccdb22ef28cd97ecca35",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=F2/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-8a3a9a7f5ea7022b48d5cafe399aa0d7bbc6fee5baddd6b87a81f3ded31585e0.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=POL/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-5021b3d9b637f64f6c11df7da640f7a5d1f4ff592f28d3260b3904ee35793f28.parquet",
+      "sha256": "1ae8e5ca419fe061a4b9979fcaaef5d78e11c4475d005d6440e6e718ff9577b1",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=POL/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-5021b3d9b637f64f6c11df7da640f7a5d1f4ff592f28d3260b3904ee35793f28.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=USA/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-72f44a11dc53aca22844181ef2fc77135fd3badea7d4ddc1379175267283f32e.parquet",
+      "sha256": "10b5253c83989070efd5d84be8462d43fe662982433384406a682e96feed2906",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=USA/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-72f44a11dc53aca22844181ef2fc77135fd3badea7d4ddc1379175267283f32e.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=BRA/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-a865ef154951dc9acae6301c011ecf8b3634ec9d0b4f3b4da5e1628270747655.parquet",
+      "sha256": "d52ad2773e9eece0beae320981913968df4aa86a35c6fc614e3bd7f69dc8a4b2",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=BRA/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-a865ef154951dc9acae6301c011ecf8b3634ec9d0b4f3b4da5e1628270747655.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=G1/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-17d293efb25d126544726ea71a844574f290bcd3d339bedb2f07367dc9b999a7.parquet",
+      "sha256": "372d54d04f361f73a03e1a4a8f9a3bacc5bf43080aa791fe8fac358cc3aa20bb",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=G1/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-17d293efb25d126544726ea71a844574f290bcd3d339bedb2f07367dc9b999a7.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC0/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-1f057aea4498f010b9af6abd556f6272dd36ec20699d2a8a1ee5387e6f3081db.parquet",
+      "sha256": "3466dde31e62fff0f2db86d751952c0cc07473815867c17fc69d8758ba137954",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC0/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-1f057aea4498f010b9af6abd556f6272dd36ec20699d2a8a1ee5387e6f3081db.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=D2/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-8cdf59298732a72b8ed1223f818dccb20ecb01bcef0de10005e3816007ad0ce1.parquet",
+      "sha256": "56c2efb192b9bbc09bd4081413f8b8b278fade36118c6963efd5ad01306ed5ef",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=D2/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-8cdf59298732a72b8ed1223f818dccb20ecb01bcef0de10005e3816007ad0ce1.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=JPN/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-c351831daa6f521dcd6149e2e1b5c51d7678b617ee5befd693e59db3c33a9c32.parquet",
+      "sha256": "feb07dd3cdbfe50e522e5608264192a80ee21a710057baaea171f95fc95364e3",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=JPN/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-c351831daa6f521dcd6149e2e1b5c51d7678b617ee5befd693e59db3c33a9c32.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC3/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-6136e11f8f5b1a6ba4b43357f224ee73edbfa3c6323496352d0daa66a1cb58b1.parquet",
+      "sha256": "9099d1b69bb71a407138588dab67b8883dbf572d784276c637fe92da619ea9f3",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC3/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-6136e11f8f5b1a6ba4b43357f224ee73edbfa3c6323496352d0daa66a1cb58b1.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=E2/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-3fc19b851c94b47b5e88be3815e627929946d22b1360c008f44ba5ad92eaa57c.parquet",
+      "sha256": "c3c10a8391e6bb41ade02e1c757078f8d58d0f156741fb35bcdcb6b127c1e85e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=E2/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-3fc19b851c94b47b5e88be3815e627929946d22b1360c008f44ba5ad92eaa57c.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=NOR/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-0f11f64c40f8db760d8dcd5886b51ec4592e99e96d8b02eba96660d13634fa7d.parquet",
+      "sha256": "87475954a52a27ec8ecf71cecba2cdd09a8a545e859cd3e00f8dbda1e6153bcd",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=NOR/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-0f11f64c40f8db760d8dcd5886b51ec4592e99e96d8b02eba96660d13634fa7d.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SWE/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-f1efa111da921f57f0042a0d69e80a4a7accac68af64b9916f6ebe8bd610d2b0.parquet",
+      "sha256": "634d9c51398f5b9974111ee328603fb66244d8854929930d36074cb9e9e41890",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SWE/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-f1efa111da921f57f0042a0d69e80a4a7accac68af64b9916f6ebe8bd610d2b0.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=ARG/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-4d581ec4a15c14a1a030809d0d5e3ec1cbe752ec24cd29bb18d446c034bb7f06.parquet",
+      "sha256": "da36ad72e697bdb39fe4d9695cf0b571a85d175f12c55810a765951616cf3309",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=ARG/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-4d581ec4a15c14a1a030809d0d5e3ec1cbe752ec24cd29bb18d446c034bb7f06.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=F2/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-93d88a69cba94c7439954faf7cb5ee7d6c0b9cc7f65c5edebeb4ae609fbd8204.parquet",
+      "sha256": "2ab22a7ee93bcb9fcd40c807c198768b64cee0489c30bcca9e9dfdef6f90cc2b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=F2/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-93d88a69cba94c7439954faf7cb5ee7d6c0b9cc7f65c5edebeb4ae609fbd8204.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=POL/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-51f3a34803f7af684cc16cbcf12082a74ed0efbd942ff8d6ce1ce14a47b28b50.parquet",
+      "sha256": "f07778d2cc27b230024001ee863f0fdfb0ac02404ca368abaee9a54f2ed5d352",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=POL/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-51f3a34803f7af684cc16cbcf12082a74ed0efbd942ff8d6ce1ce14a47b28b50.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=USA/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-ae66629702f58e578afceee02620cbc31ccc4309064bad55092874c6e32f91dd.parquet",
+      "sha256": "106db8cc25e5eae9f0f472392c26a7126130fd7c6d27b4a925ffe4f2fc05c6df",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=USA/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-ae66629702f58e578afceee02620cbc31ccc4309064bad55092874c6e32f91dd.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=BRA/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-e33eb31079ef22cd23c26c5e42401bad2af2514fe8e2933d1b1175a7b616595c.parquet",
+      "sha256": "23732264f8bad0ef72dc25576bbde5739a3304cf0fba63e569c6138e1a06644c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=BRA/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-e33eb31079ef22cd23c26c5e42401bad2af2514fe8e2933d1b1175a7b616595c.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=G1/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-ac39df01c0c9c4e7b655b227f865ed5cd9b09f6758f02abe595711a7ab6d5ba1.parquet",
+      "sha256": "9b577d5775989e93aecab383d5918c49da3d068734efef93a412612a1b721022",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=G1/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-ac39df01c0c9c4e7b655b227f865ed5cd9b09f6758f02abe595711a7ab6d5ba1.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC0/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-5be3b2f6a309093373fcaa0c8fecce87bfc8e31533faa23903a357ed30bb5df7.parquet",
+      "sha256": "2e9f5c17bfd06f2ee9689e1977bafa48a32484d536a86952e3c83f4094c779b1",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC0/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-5be3b2f6a309093373fcaa0c8fecce87bfc8e31533faa23903a357ed30bb5df7.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=D2/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-0f6f938e9b13ca781eba608597ea647760b29e13baa5507ca13d1f5ad5c5c5a2.parquet",
+      "sha256": "533787738d7427594bb540556668bb31dd9b986e7a0c48049231648d9ca7e8fc",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=D2/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-0f6f938e9b13ca781eba608597ea647760b29e13baa5507ca13d1f5ad5c5c5a2.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=JPN/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-2ede78f47764bb04d68f6f9ddf78c023e710f0329dab50cedfebd83c3bd36ba2.parquet",
+      "sha256": "f1c59a1e9270b53a8564c061e23e8af593d9c8d5e5e62917d78413f5c1ce7082",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=JPN/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-2ede78f47764bb04d68f6f9ddf78c023e710f0329dab50cedfebd83c3bd36ba2.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC3/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-7ecb8c5109aaa8d5104b6165c662d69621b34575aa855d136ad6898a9d7fd09d.parquet",
+      "sha256": "55c2d32c4a5a8b5283a155a6ddf9885dc48c1f1a9211bf1b7f73ee9cecb27bd6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC3/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-7ecb8c5109aaa8d5104b6165c662d69621b34575aa855d136ad6898a9d7fd09d.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=E2/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-33bb292b3de51982e20ba247c14845e9aa6adf324cbfe63715244ae237f9f7b2.parquet",
+      "sha256": "064f68180dd45a00e6aaada4ad2dc47611d7966a44ec902cf8b48600022774d0",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=E2/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-33bb292b3de51982e20ba247c14845e9aa6adf324cbfe63715244ae237f9f7b2.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=NOR/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-4fa5c5f772f7e750b4150c489b504363115952ee11d4933020f42e871011ed85.parquet",
+      "sha256": "53380eb72ecb3d30a1c3eea1475bdf7d7f9962f60a26da97a52587879bc2f01d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=NOR/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-4fa5c5f772f7e750b4150c489b504363115952ee11d4933020f42e871011ed85.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SWE/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-138454242028a47f3803680abc764d4e2a8b529b2ff76dc4343e080e1c60df24.parquet",
+      "sha256": "6035d5eaf69ca6cc31806d2233d8aa93c5ca60a803602785528534c008b530f1",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SWE/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-138454242028a47f3803680abc764d4e2a8b529b2ff76dc4343e080e1c60df24.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=ARG/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-1b96d10f8b8318128c846a1be0c8b8c81443c33586bd3e590b72715a13974c21.parquet",
+      "sha256": "33e1666488f49f63ba8f033b057d179ef5cfbd73526e6367e061df5003f82b96",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=ARG/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-1b96d10f8b8318128c846a1be0c8b8c81443c33586bd3e590b72715a13974c21.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=F2/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-688f7c707945b9b095bae5224742af19ea77ea561c68f5e55186d164c5a1aaa5.parquet",
+      "sha256": "807caea7e7104cd66f31b28c4e6f0373a751d805fa093a6657d70a12b253454d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=F2/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-688f7c707945b9b095bae5224742af19ea77ea561c68f5e55186d164c5a1aaa5.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=ROU/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-7bc93028ba0b77594685bd25a8f2ca161cea80ec4c9d277082793328a97660ef.parquet",
+      "sha256": "88bf8bbc8c49d881a5b3f414765669a9e257fb5e8971c6ff98e9e34030fefc05",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=ROU/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-7bc93028ba0b77594685bd25a8f2ca161cea80ec4c9d277082793328a97660ef.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=USA/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-2595879523fe098c93b49398e5c9fd651eb1ef008e9f169246c6215f76cf84ba.parquet",
+      "sha256": "fa34a72a33e5375e21374619374910637cb90d6199b763496dd1994f6e1875c9",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=USA/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-2595879523fe098c93b49398e5c9fd651eb1ef008e9f169246c6215f76cf84ba.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=BRA/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-1cbb6b4d4fe450a9b3fdbe45e3d37d6aed036475f18d94dac1cea54c2288b172.parquet",
+      "sha256": "be7e27e917dd188255df2bc7ce44ada4b55aa8a3dade0dfbcb1a83409df1ce46",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=BRA/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-1cbb6b4d4fe450a9b3fdbe45e3d37d6aed036475f18d94dac1cea54c2288b172.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=I2/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-5437b66d4893e458f64c72683229a313f4550938eb1fb69aada8e20c727f345b.parquet",
+      "sha256": "67b642f77c07ab2ecaf6160e79ce785609b2d6d850ab140be97b91fb36df7b97",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=I2/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-5437b66d4893e458f64c72683229a313f4550938eb1fb69aada8e20c727f345b.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC0/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-29222cb12f6af4cad28b19123c500b3014350949413a66ec9ab4ac6345c319d4.parquet",
+      "sha256": "ec967df345c7b8eb576ff4acf9cdb9dc9606e430837570e035660ce8bdc77059",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC0/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-29222cb12f6af4cad28b19123c500b3014350949413a66ec9ab4ac6345c319d4.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=DNK/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-be443cc566ae302b5a6e1474c4d6dfbb5eafef56f5905bc0ce3dde335e6592e9.parquet",
+      "sha256": "90c2ad366cc6d08673e846a42b9f16adeac878a082d51d9ef91d9558190356d4",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=DNK/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-be443cc566ae302b5a6e1474c4d6dfbb5eafef56f5905bc0ce3dde335e6592e9.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=JPN/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-e2a7f7ee0bad5e618b7aa8ab8a784402d246d248be00b0aeb2835f4ff23aa379.parquet",
+      "sha256": "fb085007bbd9f5213a2b1133345d7c677a61a62260b39026327ae7e9b9e666e6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=JPN/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-e2a7f7ee0bad5e618b7aa8ab8a784402d246d248be00b0aeb2835f4ff23aa379.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC3/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-96527c2b9ecd9b228530f27e42968944848d731972b3154363e71e748add475f.parquet",
+      "sha256": "0ced2af1d9644aedd744e94ef3ae417077dcd103cfd861bbecd8c5bd68b1b7b2",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC3/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-96527c2b9ecd9b228530f27e42968944848d731972b3154363e71e748add475f.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=E2/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-a823ab72d35e7fd34a67e57a2ec633116af1a0fc62ac70ae7787bbe345ed6e66.parquet",
+      "sha256": "d8ef070809d83100dbc42da003b64917d10d31d3bca8ccb8c47f401b43445762",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=E2/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-a823ab72d35e7fd34a67e57a2ec633116af1a0fc62ac70ae7787bbe345ed6e66.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=NOR/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-0da27d5695536df77b03a4891290630ff3aa69bb5eebf45c9d93540a4ef0def8.parquet",
+      "sha256": "85da1fde5c1c338d41642b77d403b73871033f010c2fff5625cb38afec4151e3",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=NOR/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-0da27d5695536df77b03a4891290630ff3aa69bb5eebf45c9d93540a4ef0def8.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SWZ/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-0d35ef2e5c160548d5fe3cf0b2ed9ac89cc50e83c9e0c60d3f2a619732b31cd7.parquet",
+      "sha256": "be15b8afe160232f0fbb7f950acf6ef5994ba51146bb063f5748a55091d6e89c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SWZ/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-0d35ef2e5c160548d5fe3cf0b2ed9ac89cc50e83c9e0c60d3f2a619732b31cd7.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=ARG/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-1faf64d1e57193689fde77b9195c4869c9fb8eb20e4d02371c50f9b93b6e905a.parquet",
+      "sha256": "549763378835248efefe15507195cf6f1e76bc5cd71ecd28dbb77b99d2c154d7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=ARG/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-1faf64d1e57193689fde77b9195c4869c9fb8eb20e4d02371c50f9b93b6e905a.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=F2/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-dcf82e342f2fe4a27cc1114afc12bbdb680289a50340b4c7756b1ecf62738824.parquet",
+      "sha256": "8032c652de70c800457a3aede3cc61d605e5c3c3985ef29c39b9a119ca8f176f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=F2/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-dcf82e342f2fe4a27cc1114afc12bbdb680289a50340b4c7756b1ecf62738824.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=ROU/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-c1d59eee8d5adebe251cbd9f5118fb7a0fd6469c97fa4a6d7fa95cb17300d238.parquet",
+      "sha256": "dcf78a831d6ab21d29b39d5bd4ee2b51de03507b7f3dc1e7dc8570e5fc5ac8f0",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=ROU/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-c1d59eee8d5adebe251cbd9f5118fb7a0fd6469c97fa4a6d7fa95cb17300d238.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=USA/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-b62cd854f905f43aa4893b9c7c4a2a68afc1f4827432c1d3f59eae1cc4ffa6fb.parquet",
+      "sha256": "1bdf00209e8289eafe610f327269ab73b6fbe405d831df2583b913ae2ae0609e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=USA/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-b62cd854f905f43aa4893b9c7c4a2a68afc1f4827432c1d3f59eae1cc4ffa6fb.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=BRA/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-14dcc523c51224125b8a030d3d9b5eea8c07ab0b28c9058411555bd5d76b43fe.parquet",
+      "sha256": "5678ff46716d5281b04f3c4d9d2480dbf3aef8d718a13343d4ecae7e3e1906fc",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=BRA/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-14dcc523c51224125b8a030d3d9b5eea8c07ab0b28c9058411555bd5d76b43fe.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=I2/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-da9843dd8e56358c69aef1ea1c52c53cea4b707ea25249a5be4996527ce2d648.parquet",
+      "sha256": "cacedd9baa618f129a79653a90174c85f16d947db5a1f684978a4f008df857a7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=I2/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-da9843dd8e56358c69aef1ea1c52c53cea4b707ea25249a5be4996527ce2d648.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC0/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-87a8f6623155f4e91b1b5f5ae7370146aa3df1dcbd3d774dcfe0168219c912e8.parquet",
+      "sha256": "89a49512d9d0a9c8b52281452709bafbdd657624517b87b9d0c90d229ff79300",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC0/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-87a8f6623155f4e91b1b5f5ae7370146aa3df1dcbd3d774dcfe0168219c912e8.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=DNK/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-8c3736ba69e14123952596903a307bb23d6848cef463570a708dd5333d40f364.parquet",
+      "sha256": "a261dfd08e4eac295f5245b8d7bfe4e40fa58e7ed5d736cf38b948e8f338f90f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=DNK/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-8c3736ba69e14123952596903a307bb23d6848cef463570a708dd5333d40f364.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=JPN/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-737ac1dd74891c113f409330b55c6c0c3d1aa6980a0615b132489faed66d1528.parquet",
+      "sha256": "4f9a9e195206913f1a206d3143d4f45084fc743f319bebf6cb5e6e08c0a099bf",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=JPN/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-737ac1dd74891c113f409330b55c6c0c3d1aa6980a0615b132489faed66d1528.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC3/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-c13c6e9489f5dc4c5a0976229b5d16656eb6ceba4ae3fe4f3fdab8c3c168b63c.parquet",
+      "sha256": "b61fc7f5e48b644ee8697e994df8bdce0279fee6398ee1941388c4e5bc99d53f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC3/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-c13c6e9489f5dc4c5a0976229b5d16656eb6ceba4ae3fe4f3fdab8c3c168b63c.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=E2/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-21cbb30e6f89fa10236eb9fe83f972c5bfaa90cb844e489700d2afd1f92c619f.parquet",
+      "sha256": "11a73ea22781e5cdab4aeef31eb9c8c0871b58f9c515b21e450a438a949f10bf",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=E2/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-21cbb30e6f89fa10236eb9fe83f972c5bfaa90cb844e489700d2afd1f92c619f.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=NOR/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-e47b2800fa2bb5ec49e9680b7be2dc61d602bb3d78642870dfbbfffc9c24cd0f.parquet",
+      "sha256": "65eb7ce5cb366b5de12c04188a365a0e7efd7483128fe7633e6ef4604f4e2592",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=NOR/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-e47b2800fa2bb5ec49e9680b7be2dc61d602bb3d78642870dfbbfffc9c24cd0f.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SWZ/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-82e763782c7725b4b04b9530de4e6202316e5ede258307361fc51cc8df0d6d78.parquet",
+      "sha256": "f66d3c1726e22d9dcf62fa58ca97bd74bb0cccc9c191b4b9a6fa7f80da2756ec",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SWZ/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-82e763782c7725b4b04b9530de4e6202316e5ede258307361fc51cc8df0d6d78.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=AUT/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-ab221571d57fca0ad547d8b94b959a94019704f7ec553062b71c09ce04201a73.parquet",
+      "sha256": "2a2e936b511a49efc4f341d95b1d3725da0779fe05d8d1ad5685dbfec37fbc9d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=AUT/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-ab221571d57fca0ad547d8b94b959a94019704f7ec553062b71c09ce04201a73.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=F2/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-95ca455f43420b4ba0bdfdd22e1e7d898638d91d9d699782a6191c9a2ecdaaa2.parquet",
+      "sha256": "0a44ec135d6a1ac17fb3b18c7b2f80e451f23aa3b788ffbe31fce7378f15f1f2",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=F2/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-95ca455f43420b4ba0bdfdd22e1e7d898638d91d9d699782a6191c9a2ecdaaa2.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=ROU/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-b2baf3f22bc15a19c5c54621ff8c19fbbb198a39b33767de7d67be1601bb741b.parquet",
+      "sha256": "b94513e8e07bfad1305ed9c8f84055e510d14149c5e3e1618efe7c83beaf5027",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=ROU/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-b2baf3f22bc15a19c5c54621ff8c19fbbb198a39b33767de7d67be1601bb741b.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=BRA/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-3a53620cabde1697da40f6aba1e43635a92f0abe7599b80be57dade6d02cc863.parquet",
+      "sha256": "29276d8d711955cc62013ffa8c5d9532095f96453803741b15966445d4f2bc63",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=BRA/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-3a53620cabde1697da40f6aba1e43635a92f0abe7599b80be57dade6d02cc863.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=I2/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-56385c93f85c22e4948db2340f348a804d6f4923e11a4c6150d7a509cb76d03a.parquet",
+      "sha256": "57fb08c2faaa4c20f82b604d1ec4440e2805b97f0a41f0724ea9acf5cacc495c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=I2/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-56385c93f85c22e4948db2340f348a804d6f4923e11a4c6150d7a509cb76d03a.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC1/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-d61130ed20bc480544882546dd3514f0d8cf49abf0c2ee40190e5883b414194f.parquet",
+      "sha256": "a7c6e80a304166a48424179228fcf1d1b87403dc98aa530b89c80704e5f62fcc",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC1/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-d61130ed20bc480544882546dd3514f0d8cf49abf0c2ee40190e5883b414194f.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=DNK/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-dc7c6faf0c733dc1b4f215d082a966bc87e1d714e0d42719f6ac51192b64a4a4.parquet",
+      "sha256": "c81303f2c3963e76c05ce07e778763cd797ca487d50420c6af6789807eba6c1e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=DNK/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-dc7c6faf0c733dc1b4f215d082a966bc87e1d714e0d42719f6ac51192b64a4a4.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=MEX/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-fe8b1cedc106141d3d31cd292086f73e9e8d8a557a59dbee46d7732b37c931d2.parquet",
+      "sha256": "432bf4c206a09df2b159cbf2f12d89a6d860248168dcc7858b9ba57ebf0b2a42",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=MEX/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-fe8b1cedc106141d3d31cd292086f73e9e8d8a557a59dbee46d7732b37c931d2.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC3/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-ef9f5eb63d49c89e35334a05dabd0af9a8bb0dc9c82e88d5295528032b0aef79.parquet",
+      "sha256": "2a83124f767db9fcfdf3b3fd221be0775e63deab2b9fe4ddc22a7c8935702807",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC3/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-ef9f5eb63d49c89e35334a05dabd0af9a8bb0dc9c82e88d5295528032b0aef79.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=E3/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-0e0fb355378877c30fa481a7711c6fbb79b3b51797db41468af6b8e9c6273298.parquet",
+      "sha256": "8ed3a58b8b4e5460acbb0146b2265d6598b93983e3a1bc4e68a56946a41c69ac",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=E3/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-0e0fb355378877c30fa481a7711c6fbb79b3b51797db41468af6b8e9c6273298.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=NOR/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-3562622de512d44e3ac4a187c7b48d0565c0b4b4f56e1de29b4fa2fc0163b455.parquet",
+      "sha256": "9d4a110330f3b247ea7e6f5b09892ba9543a96297dea1774b4abbcc181df53e6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=NOR/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-3562622de512d44e3ac4a187c7b48d0565c0b4b4f56e1de29b4fa2fc0163b455.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SWZ/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-82e774b7e707046a58faa5664cd80a7d537f17c52c1937dbcbc866f8ab8d3d48.parquet",
+      "sha256": "de96ac94911c92862e4538a066336f61e7198a7aa98593f43a5f7d45b226a185",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SWZ/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-82e774b7e707046a58faa5664cd80a7d537f17c52c1937dbcbc866f8ab8d3d48.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=AUT/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-7627f2781751fa4057c309247eb45bf381b6f2406114019204c3eb7a39408fdb.parquet",
+      "sha256": "4c521a6a00fb39b2262d8ea76dfc15803af52ee2c345dbb1911e8001908a2722",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=AUT/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-7627f2781751fa4057c309247eb45bf381b6f2406114019204c3eb7a39408fdb.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=F2/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-9e0c381ac5b1152e216b3b0374e72cb34e5f7084fd96af421167caf5bc8cdab1.parquet",
+      "sha256": "c0e14514f4d249c2c43168598396fd443eda635d33defadf872808fbbddd33f5",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=F2/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-9e0c381ac5b1152e216b3b0374e72cb34e5f7084fd96af421167caf5bc8cdab1.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=ROU/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-f9c74c9ff3f577452258a1f042e1d5239628404abdadc719894cd08d5917bb00.parquet",
+      "sha256": "453fb69025f9926d6b06e00c3c54d85e83c4924371806870de55d853c7014234",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=ROU/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-f9c74c9ff3f577452258a1f042e1d5239628404abdadc719894cd08d5917bb00.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=BRA/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-77ca01623bc1af808f749922e01e97833248a156e63a2447da1ec10a85ccc196.parquet",
+      "sha256": "e09933f6e5c63a2da34db28fb401cbcec03e63b743a206c760b58e5eafe04d55",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=BRA/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-77ca01623bc1af808f749922e01e97833248a156e63a2447da1ec10a85ccc196.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=I2/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-84480b3001f6b9783412729db932d449e7d9f8366c28dd390c569565595cda77.parquet",
+      "sha256": "5074b2582ba81dfe1789400fc96b42a12c203d510ce4057f34b6c4bc53d67185",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=I2/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-84480b3001f6b9783412729db932d449e7d9f8366c28dd390c569565595cda77.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC1/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-5c1d2a85780ab676084b06cdb54f56236076e82aebcd4a429fd8c4e36b539d9d.parquet",
+      "sha256": "93b89d696b06d46a4efdfd4cf9357ce27a4abb619dd8452d6182e7b31a1a6751",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC1/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-5c1d2a85780ab676084b06cdb54f56236076e82aebcd4a429fd8c4e36b539d9d.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=DNK/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-d2987fc7b2af69855965de9d8c1ec575d5d49a949e340f0ecd62c9681702e151.parquet",
+      "sha256": "829f216cff69297de76688dd2f5369495dd03a46165e714988965aa09e87c2d0",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=DNK/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-d2987fc7b2af69855965de9d8c1ec575d5d49a949e340f0ecd62c9681702e151.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=MEX/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-88b859909f2fcfda4b196b6dd6622a3921484e90537625300671ea7ccd2fb166.parquet",
+      "sha256": "ad073299056890fbbaefa6df10b1486d40469c9ca988e75d54066902fce99159",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=MEX/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-88b859909f2fcfda4b196b6dd6622a3921484e90537625300671ea7ccd2fb166.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC3/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-37a613fc211ec479d8b4cf7ebb6c5d93d7a04dfb16e3678b993ee323bd418a46.parquet",
+      "sha256": "a64fd04863af38c06f1d06fe2c3d12849e94f2a1e86d56c16257ed734f12f582",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC3/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-37a613fc211ec479d8b4cf7ebb6c5d93d7a04dfb16e3678b993ee323bd418a46.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=E3/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-adc20e423dec49a6770e3411941714b972326b9ba9b2257e027c9a0acac7f548.parquet",
+      "sha256": "1bfc5495c02194ebd749c4866f312b36ed2488424da8c8b1567f00b1280dcee5",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=E3/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-adc20e423dec49a6770e3411941714b972326b9ba9b2257e027c9a0acac7f548.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=NOR/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-14c6d55f5e563e2bed9f25839d56b0f70b6184bdd6d66b13383245dde9bb083c.parquet",
+      "sha256": "a179b370fc891cefc92875439a7f415344f6ca6aa8425fa4f01810cc87afbfdf",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=NOR/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-14c6d55f5e563e2bed9f25839d56b0f70b6184bdd6d66b13383245dde9bb083c.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SWZ/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-14fa4e62e3d164319e3cec892723fad56eb350e821c95f7c2960b45abad63ac1.parquet",
+      "sha256": "b098952234e245af1eabc19cc4b9b005c5617717b359067821632d51b83d5de6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SWZ/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-14fa4e62e3d164319e3cec892723fad56eb350e821c95f7c2960b45abad63ac1.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=AUT/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-f77888df6d081ef7df5f4e295115245bf74b3f24df1af4a701e802eb94643e6e.parquet",
+      "sha256": "44de6f22e935738def701b5660213ee13b032d98e7a588e76d96d3dd51251bbf",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=AUT/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-f77888df6d081ef7df5f4e295115245bf74b3f24df1af4a701e802eb94643e6e.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=FIN/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-9160d4dcf121f62efb478f3b035499ae1413e1c708cc4b054c3ec720d2699b1e.parquet",
+      "sha256": "6580416b402a71c04a5d35a2483ce61e07f4132496152425db8f79332b42ebb6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=FIN/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-9160d4dcf121f62efb478f3b035499ae1413e1c708cc4b054c3ec720d2699b1e.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=ROU/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-7810e9c026f945eb09e6453734e7bf955f6a2859e6fafbc2787b36384a034f1f.parquet",
+      "sha256": "520c42e2c6f621affc5f21226213cdd625c763ef7b0fe271071f8f3cf14963a7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=ROU/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-7810e9c026f945eb09e6453734e7bf955f6a2859e6fafbc2787b36384a034f1f.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=CHN/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-604f2af50db314dcdb251f6d108c934655f2a88e48c1313d963dd6f205068631.parquet",
+      "sha256": "2f185b86ac5ed3624a95431b2d731c92a699e9a68bba3f4cfdd9428dd7a4f688",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=CHN/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-604f2af50db314dcdb251f6d108c934655f2a88e48c1313d963dd6f205068631.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=I2/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-39931ec6f5f5e1af3cb4625a1e3b33e058130752fcd612517dffaf0ae5439136.parquet",
+      "sha256": "1b8aeb841082b0baf52a9cf1e9ab8a899351f075a92f858339e520354c48ad9f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=I2/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-39931ec6f5f5e1af3cb4625a1e3b33e058130752fcd612517dffaf0ae5439136.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC1/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-36ee66701096381d781e4e3cd505bb861c2d4c8e947964aab24a1c2f192dc889.parquet",
+      "sha256": "deb47a6afbdf35618d848bb9de2d75b3893063e5f9f7b1e08a634e39ee9c45fd",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC1/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-36ee66701096381d781e4e3cd505bb861c2d4c8e947964aab24a1c2f192dc889.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=DNK/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-56455441e20a3c416d40da0e7eb016752312f7c80491b516c06f0ba58eeb5dcd.parquet",
+      "sha256": "f91b0115dee2507e635e8cb2268f71d9663fb9a4c6f297294b6699389d5265c2",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=DNK/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-56455441e20a3c416d40da0e7eb016752312f7c80491b516c06f0ba58eeb5dcd.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=MEX/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-f5975037caadabe9c1784ebfad729c0f4b8aeafd6bfcc07f0793ba0d13903845.parquet",
+      "sha256": "057392be01fe3b659e9f21cb3ccaa1b79b3ed2c9c5d45cab8c87d0f372e23117",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=MEX/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-f5975037caadabe9c1784ebfad729c0f4b8aeafd6bfcc07f0793ba0d13903845.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SP2/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-de7ee000439d4c7b5254f0517201a2b74c1794b7a958f262c43110ff9db16a1a.parquet",
+      "sha256": "b52932a2e3c7d704de54a2d15ccfadab2a72b591bc35ad741651bc0a368b0ede",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SP2/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-de7ee000439d4c7b5254f0517201a2b74c1794b7a958f262c43110ff9db16a1a.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=E3/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-9017d26b2adbee2f5f13b60f06b1853d1d17f051bc3c5e123f667faf330dada0.parquet",
+      "sha256": "5439c2efd9431526b567f1c06eb8771179d3ee0e0125af583f5a717e522968ce",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=E3/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-9017d26b2adbee2f5f13b60f06b1853d1d17f051bc3c5e123f667faf330dada0.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=P1/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-3f1ebd59fea0fccb16f09811c8557ff31c80cc7e6970abca825d0073ebd20180.parquet",
+      "sha256": "4d10a2182423c73c9e2c4459efb3704f37de256328cd98bbe216c4e11e9d8b89",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=P1/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-3f1ebd59fea0fccb16f09811c8557ff31c80cc7e6970abca825d0073ebd20180.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SWZ/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-8969b03bb0709cca693d3bc940b680aa8807c4d3e8d9e44d9c3ee2ba75a05334.parquet",
+      "sha256": "a6048b9598710f631623fae560f9de026703e68210db7d5d3af24ba3476eb365",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SWZ/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-8969b03bb0709cca693d3bc940b680aa8807c4d3e8d9e44d9c3ee2ba75a05334.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=AUT/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-2e26b089caa0bf867ecc210964b075c7d60ed9f55ec3639b41446c70ad268474.parquet",
+      "sha256": "adda239425f33a985a5b19658adac87b0ce1896315a717a525e1a44c4d9b2147",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=AUT/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-2e26b089caa0bf867ecc210964b075c7d60ed9f55ec3639b41446c70ad268474.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=FIN/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-9c2fa31d97f2d1ee8175caeb0f6c93d4de4dcb49d7116ab3fc3bf40e92b4ab2a.parquet",
+      "sha256": "442cf1f172ad5f5d1df8f9d0a9e6a2dce8d8a08b4e6a63122c92f8217a15b0bf",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=FIN/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-9c2fa31d97f2d1ee8175caeb0f6c93d4de4dcb49d7116ab3fc3bf40e92b4ab2a.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=ROU/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-a3d6a6d565ba0b7dfaca5314baa3f45b46ecd1fa074143683c635fb57d03ef31.parquet",
+      "sha256": "34226ae4cce66a2ad0c6c6a7d0c85899ad8026bc163c75d40be8cbc5f12b68b0",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=ROU/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-a3d6a6d565ba0b7dfaca5314baa3f45b46ecd1fa074143683c635fb57d03ef31.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=CHN/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-187f764484780c5d654f83cc2d54fbf29943c62ecb90995313157dcfe090ee0f.parquet",
+      "sha256": "898c28f3d88f8b74013f9b17a05595e17bd014c6cb1853d15a7f6625e622b38d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=CHN/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-187f764484780c5d654f83cc2d54fbf29943c62ecb90995313157dcfe090ee0f.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=I2/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-a938c2bd0bb3d8164d0f483687f927491cd4a91841579a4499ed02261c3a11b2.parquet",
+      "sha256": "d1d17878c8c4b751e77e97ae627f7bd8ee4ada2056c19d7e58e56b1c18d7bd12",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=I2/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-a938c2bd0bb3d8164d0f483687f927491cd4a91841579a4499ed02261c3a11b2.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC1/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-739976d14b2389a483fffc5a6469c9cf38c1fb3b44148bd4456be56e7313ad9e.parquet",
+      "sha256": "bad8a8bcc457e60b8db2f8765ad080200b2977430cab0edcac1830adf29cf9c7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC1/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-739976d14b2389a483fffc5a6469c9cf38c1fb3b44148bd4456be56e7313ad9e.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=DNK/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-30148f1bf8394f8402de40c1dd408f9cb80bc47c875c5d1739a0692e26810431.parquet",
+      "sha256": "6e362561f13e5d9a5c15abcec881cc2b3fd295e1ff04077b82f65e23ca2ced0c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=DNK/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-30148f1bf8394f8402de40c1dd408f9cb80bc47c875c5d1739a0692e26810431.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=MEX/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-ba721793be679be13ebaf6ebeb5f2ca7691d063e3a39baa48a905e454f2cb1d4.parquet",
+      "sha256": "5534762be6827d9f5cba6a91a31801258b7d9074370b58d736686d61e5eca31e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=MEX/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-ba721793be679be13ebaf6ebeb5f2ca7691d063e3a39baa48a905e454f2cb1d4.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SP2/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-2233f59f2cc1922dd807ad4d828a4a6ae95a1c2835e39bbc7ba457d181a4243c.parquet",
+      "sha256": "7e1240dbcce20b574b38efb8db199b785d3b4ab8b7fd0ad90c897c924f03883d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SP2/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-2233f59f2cc1922dd807ad4d828a4a6ae95a1c2835e39bbc7ba457d181a4243c.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=E3/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-fd3c79957a0f2f1efbc79ec3ad419bcdf37bb52614be2a98290d93f918af67cd.parquet",
+      "sha256": "97b7a980840fb357b6c33bf9ab708d5ce5e5e4bff946072aa222d614aeee7c20",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=E3/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-fd3c79957a0f2f1efbc79ec3ad419bcdf37bb52614be2a98290d93f918af67cd.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=P1/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-6f7f277856cde510c37bc276f422446f29a2a8bc280d5f12775a2cc7fa1ae1e7.parquet",
+      "sha256": "5e026b68d479032ece94b218a66b709c1e429174b941d62e956766953646ad20",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=P1/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-6f7f277856cde510c37bc276f422446f29a2a8bc280d5f12775a2cc7fa1ae1e7.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SWZ/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-2e00b45fe95d524cac01a08983adec2c643b13b23d8fe16b6f2d9b6b56528013.parquet",
+      "sha256": "ffdcbee56afa44111069de86b9a1a85b898b472c4e993166bc1891dfd1a06ba7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SWZ/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-2e00b45fe95d524cac01a08983adec2c643b13b23d8fe16b6f2d9b6b56528013.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=AUT/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-8123696079385da195def0a5c13b44b4b0e02eb68fe854cc1a532f534f541881.parquet",
+      "sha256": "77c8dc9e43cfa1e3cd52bd0e53eceb3d8d20662c498ee0eeb07212d5369ca117",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=AUT/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-8123696079385da195def0a5c13b44b4b0e02eb68fe854cc1a532f534f541881.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=FIN/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-e2185d3847023b14367aa8cf4526f95b6ae59564aa03f756ce2f3a8f21a03a6b.parquet",
+      "sha256": "71d0efd7cdc61ddbcf965897558db83d99b7f57dbc59019e3333f32fc3aee734",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=FIN/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-e2185d3847023b14367aa8cf4526f95b6ae59564aa03f756ce2f3a8f21a03a6b.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=RUS/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-066cfbc31086e24bbaf23197edde8994e90aae537011d11a6195aad72ff577e0.parquet",
+      "sha256": "a4614228181d2c003ac0b9763b344b64e552ab8a9acbdde49361ac796da82f5a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=RUS/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-066cfbc31086e24bbaf23197edde8994e90aae537011d11a6195aad72ff577e0.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=CHN/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-ac445567cce498b5c8df7b6ea8871beff0a5e3cbb276fb59d2562a9ba0cd5e1d.parquet",
+      "sha256": "95c5fd33d4dd7c10213d5f5ce3fc61ea9cbfa2c927090c6728204019fdd152a3",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=CHN/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-ac445567cce498b5c8df7b6ea8871beff0a5e3cbb276fb59d2562a9ba0cd5e1d.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=IRL/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-e4f447c700a95fad33abc8fe43bd23b63f2319d65d8d83ffd832d0d1c0cb5189.parquet",
+      "sha256": "c2dfffc4249ade37cd72c7c682edf2b3a0cd5accffa2dcf0b40a7cea928d8833",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=IRL/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-e4f447c700a95fad33abc8fe43bd23b63f2319d65d8d83ffd832d0d1c0cb5189.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC1/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-c496d0d493f9dcdf122f6e195d730ae57de0e5c29ca9568e0ca3fb1bdd24182b.parquet",
+      "sha256": "8a82798d7fd8d06edf24492b0920d824ee42e8ad193c7ae0c5fd825619938564",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC1/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-c496d0d493f9dcdf122f6e195d730ae57de0e5c29ca9568e0ca3fb1bdd24182b.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=E1/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-a4e6d516838cbd0c6b2b5a504bab1fdf9d2a25102833b62822be303d8e7a2ba9.parquet",
+      "sha256": "d79f24570f67f2642e0e67f595e3bfda6f89a761971d2c55188d5c282d3a371b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=E1/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-a4e6d516838cbd0c6b2b5a504bab1fdf9d2a25102833b62822be303d8e7a2ba9.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=MEX/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-70befdd13746cdf24d9c07cd4b7b90e537efa4c5362a3092d496c6369122751f.parquet",
+      "sha256": "66e771e33f1da5353b95467bc288d93c5fcf3ac7d65863ce45c31815677912f8",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=MEX/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-70befdd13746cdf24d9c07cd4b7b90e537efa4c5362a3092d496c6369122751f.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SP2/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-03c4b579ff1be060a09049f13718e7d78bed6b558103b22214914f58a38b6ddb.parquet",
+      "sha256": "29401a4eeddd3ec5162d6bbc63b05cab55256abd6f954e8ade67c56e727a5a5f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SP2/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-03c4b579ff1be060a09049f13718e7d78bed6b558103b22214914f58a38b6ddb.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=E3/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-6a889459ff8d2e98541439ae0c1d9add24b967c652ebb7cfd784a352d4a8eaaa.parquet",
+      "sha256": "a955900009731cc93e8505b5bc5d2aabe0708d5a419c7f725c68e6afd64bd519",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=E3/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-6a889459ff8d2e98541439ae0c1d9add24b967c652ebb7cfd784a352d4a8eaaa.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=P1/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-ae303962f51609e8a93324e52e8c6fb31748a6934a428b9d3563f6329cc47f38.parquet",
+      "sha256": "f273d69034bd5fc07ae63e558fb94d3d188608ed8425c349ffccb8a112ff7ecc",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=P1/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-ae303962f51609e8a93324e52e8c6fb31748a6934a428b9d3563f6329cc47f38.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=T1/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-8772b777fef6e8e5cee54deb5aec5181da91a357da6171cd406772f7fa7c3f2d.parquet",
+      "sha256": "e894db6595c1824d4d3a8daf704135ac2574cfea3ea878896d590dd7e5ce2904",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=T1/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-8772b777fef6e8e5cee54deb5aec5181da91a357da6171cd406772f7fa7c3f2d.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=AUT/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-ed689bb1ed77fca14b68359cc278944a5fd7e05a5e310983151795941643a9d1.parquet",
+      "sha256": "d233e921a582555e06314a82abdb603f54d764a0f545f92b0dcad16ec276ef72",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=AUT/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-ed689bb1ed77fca14b68359cc278944a5fd7e05a5e310983151795941643a9d1.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=FIN/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-5352906be0a3fee2e90e9d992cdfab56375d1435cec0d0c6f4e64b3078ec7b74.parquet",
+      "sha256": "a8dca80cd80ac5bdd96255cc10d6dc37a427915cf7cad4a75b19677826cf4f61",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=FIN/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-5352906be0a3fee2e90e9d992cdfab56375d1435cec0d0c6f4e64b3078ec7b74.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=RUS/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-f63d8d48f148fb1938d6b05aaa5cf7479dfe8d1d5eb3290985a4cd2d63806c26.parquet",
+      "sha256": "32357f8efd41b4ba65a61040ce4bed516ddb755af595ae7ce8f0798b2d87440f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=RUS/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-f63d8d48f148fb1938d6b05aaa5cf7479dfe8d1d5eb3290985a4cd2d63806c26.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=CHN/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-ad6baa3d7bca471432039fdd4f0857dcec8ed50ae0a95072413a5dc8f11654be.parquet",
+      "sha256": "83fe6d5755bcc2455a8d9e8b527827121499e3cc17bd35bd2ffa15c36419a3ee",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=CHN/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-ad6baa3d7bca471432039fdd4f0857dcec8ed50ae0a95072413a5dc8f11654be.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=IRL/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-4ecee8b2406b9884bc2aa8c80cff0925693f0eac83bd4bcfa2548b2b7c7f4120.parquet",
+      "sha256": "42682e9fd5e2eb27c2027cc780241cdb68b72ad397e0c9cc7b5d58e28bb9a63a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=IRL/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-4ecee8b2406b9884bc2aa8c80cff0925693f0eac83bd4bcfa2548b2b7c7f4120.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC1/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-49fd1b10b3b75f1baf455c9bb70e6e8349c0887fede3978e660aa10b44f97523.parquet",
+      "sha256": "f3113573246cc57194d2df0d3fb2ceb5031f0d17bbaec935482c50bc9daf5986",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC1/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-49fd1b10b3b75f1baf455c9bb70e6e8349c0887fede3978e660aa10b44f97523.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=E1/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-d726c6af89edc6e00439e4cb5bd366ae5b7a5102c33aa1539163f60923213177.parquet",
+      "sha256": "9e5b1d828eda1f6eb5f7436bb66843f30d5d97c4b7350a27432873f5a4568530",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=E1/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-d726c6af89edc6e00439e4cb5bd366ae5b7a5102c33aa1539163f60923213177.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=MEX/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-26f757b71abd87b4cf6ac487326e9a6482490af0072dcba114aea9c82e97663a.parquet",
+      "sha256": "a5d8da76ca50930fc3fbddaab43968f1f558e3eed30cd606e8e2a22f34562cf7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=MEX/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-26f757b71abd87b4cf6ac487326e9a6482490af0072dcba114aea9c82e97663a.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SP2/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-00b56760ad474ac8f593e0a1e961dbc7d83a40a509bd1a684b292190ae6b54ca.parquet",
+      "sha256": "8421f38ec1508f023d67ae1759b35de4b43b10be060be87623320df93cf5bb33",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SP2/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-00b56760ad474ac8f593e0a1e961dbc7d83a40a509bd1a684b292190ae6b54ca.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=E3/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-8559ff055080a2b2b03e06d64f0ae3c679daf6a7f901ff106b4580dcc757c52b.parquet",
+      "sha256": "3c58db7be00433b24082aed6cb0ec524962e6d0739761c055288a9b05ec2c5df",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=E3/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-8559ff055080a2b2b03e06d64f0ae3c679daf6a7f901ff106b4580dcc757c52b.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=P1/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-de480fd3f5a806c104f41f60dc095f7c4c21ae9502a37869a2f9d4efb5a547d0.parquet",
+      "sha256": "926f839660ea9c89a0c3276205eb799da0e535b74fbc6b972d074eb14355ab30",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=P1/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-de480fd3f5a806c104f41f60dc095f7c4c21ae9502a37869a2f9d4efb5a547d0.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=T1/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-43f9f5d9e71b2913533799ba482a705fd5f72995403fc89bb57bba06e828257c.parquet",
+      "sha256": "ae80d6f49d15f32cfbf237a55c796610e138f53f6fb42e3f9642287390b9bf14",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=T1/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-43f9f5d9e71b2913533799ba482a705fd5f72995403fc89bb57bba06e828257c.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=B1/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-c5f20a232ffe947fee65cc350c77cac645f5839be1788c7c44db7f8681556278.parquet",
+      "sha256": "d32545d6c267070f7dd2f8205b402ce7b083643a833980da816f068ce360836d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=B1/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-c5f20a232ffe947fee65cc350c77cac645f5839be1788c7c44db7f8681556278.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=FIN/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-31552d18d9447ca3264cd6b2a13cf28168eecb23047cc513298ef46009f0b9d0.parquet",
+      "sha256": "50101d29dc534f92629bc16db288fee22f220e0d61ad580ac5610d5eaf47756f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=FIN/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-31552d18d9447ca3264cd6b2a13cf28168eecb23047cc513298ef46009f0b9d0.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=RUS/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-1f7c0c3079b8dcdaae6d07b084592c6c291a3a194dfb1cf733ae37fb3c50496f.parquet",
+      "sha256": "a87b220eae11d88826228269fe077fc4e01d9ba964e6e97efd50647b49bb4271",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=RUS/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-1f7c0c3079b8dcdaae6d07b084592c6c291a3a194dfb1cf733ae37fb3c50496f.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=CHN/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-2a90edd5b57a16feb02bc9d5429d0515baead26a164367312f4066132edf16cd.parquet",
+      "sha256": "82fe4a13c4c96f119002c87ba7144b11978d5d8d2b847e46105d952487c99982",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=CHN/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-2a90edd5b57a16feb02bc9d5429d0515baead26a164367312f4066132edf16cd.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=IRL/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-b5824b1184739bb3f04a31f8d021209102c9d0b5445f04307120fdc886163cc3.parquet",
+      "sha256": "8cf5c2ef7009cb8918270dcfe17f4e259491afa40a6be543e15e07fed33ecef4",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=IRL/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-b5824b1184739bb3f04a31f8d021209102c9d0b5445f04307120fdc886163cc3.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC2/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-d394b9503dc0cf91467268f7f16609cec3e8e5775e42796de452598c31e69785.parquet",
+      "sha256": "75b6591ec137f6a5d2e673ef80de14d4471997f8028f33b13c549a4c24287c8a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC2/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-d394b9503dc0cf91467268f7f16609cec3e8e5775e42796de452598c31e69785.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=E1/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-67f44edc9fcaf4f7464dcfcb16d79efce8a14d75fdbf2181b5b186ebd98063ab.parquet",
+      "sha256": "bdb9ec1c7894eb47cc52a8d32947e964f1f14a7f65b5ce6f0d7842a75b8f3729",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=E1/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-67f44edc9fcaf4f7464dcfcb16d79efce8a14d75fdbf2181b5b186ebd98063ab.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=N1/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-990acfe81d8aee1783c9729ddaacb4f23d11c5d2111a48a17479a791bc852a18.parquet",
+      "sha256": "49fde2d6496b0afe24074abf114b6f38017085ffd3cc4c7f9ea495eaedd5266a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=N1/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-990acfe81d8aee1783c9729ddaacb4f23d11c5d2111a48a17479a791bc852a18.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SP2/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-43eb8eeabeed23977c0ea02a45b14782700a22ab30b9bdcdcf96a4199b07d4f7.parquet",
+      "sha256": "8a6da04eeca183c865d85d97d7b368c6607932268b892ab4e464d967ba5996f4",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SP2/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-43eb8eeabeed23977c0ea02a45b14782700a22ab30b9bdcdcf96a4199b07d4f7.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=EC/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-1ba96e4128a153b9a3fab76edadecca49e6b31043202622c77880123d11e9a3a.parquet",
+      "sha256": "8c74e6ea15a37aabc671f45042b654f302590539b7d80a47e711cfa0e37bafaf",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=EC/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-1ba96e4128a153b9a3fab76edadecca49e6b31043202622c77880123d11e9a3a.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=P1/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-5264e0ff2213902e4ec03d805be70dac4753e377184074a4ecad7a6599bf5a1a.parquet",
+      "sha256": "fba9aa390c22ab0a2f662ad413fdc543d9c735c1160c25eb970c3d941ef314cd",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=P1/season=2023/entity_type=fixtures/dataset_version=api-football-v3/fixture-5264e0ff2213902e4ec03d805be70dac4753e377184074a4ecad7a6599bf5a1a.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=T1/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-50a956a60b4ca1e74703e6761d897d6423aedbdbda47235467f2b24f05c11533.parquet",
+      "sha256": "1169c0fbc37358b2a986ac1add4ecfccd8879fba5247fbc3de1daee3743bbab2",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=T1/season=2021/entity_type=fixtures/dataset_version=api-football-v3/fixture-50a956a60b4ca1e74703e6761d897d6423aedbdbda47235467f2b24f05c11533.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=B1/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-89cfa8b07ddd4766b23862a99fc80a0c03f661824efbd45991886068bfed3d1a.parquet",
+      "sha256": "3eb20e131378fdfb5c6184d232e0ff00ec85ffb3dce69f75d75b0f47adb05947",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=B1/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-89cfa8b07ddd4766b23862a99fc80a0c03f661824efbd45991886068bfed3d1a.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=FIN/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-1a9b6d753d86be697d02fcd8cee966d5dad12632fc3ad70ebd67dfa74c1b6581.parquet",
+      "sha256": "ee90623266638d4bcb226811b7254c309e1d4c9901e7f23bde7d8c6fe70f3631",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=FIN/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-1a9b6d753d86be697d02fcd8cee966d5dad12632fc3ad70ebd67dfa74c1b6581.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=RUS/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-90c67f18ecca35868207234548b2c0035d7bf6b4df92bc6ebfe70c01c3337f7c.parquet",
+      "sha256": "62b673c5368c5256dd6bf3a2152e3bff9c9373d6d33f4db698e632755709c71d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=RUS/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-90c67f18ecca35868207234548b2c0035d7bf6b4df92bc6ebfe70c01c3337f7c.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=CHN/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-18863a71a2d66b9861c750b6bc53346b2a656aad2af959431ea43fa04977d045.parquet",
+      "sha256": "113a0252a76af7f498180e5b27f87c337403231aa5cf465098f5ed6b71b9bdce",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=CHN/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-18863a71a2d66b9861c750b6bc53346b2a656aad2af959431ea43fa04977d045.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=IRL/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-9aaa8907c88aa7c900198b1be33a401c4ad8cd2ae32101f7be3a037a89363fde.parquet",
+      "sha256": "c0e228d850f8a25297e13347af3ef4340d0060244787d27555123116d6321503",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=IRL/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-9aaa8907c88aa7c900198b1be33a401c4ad8cd2ae32101f7be3a037a89363fde.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SC2/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-8d1d684c4de9be3ec4eb183a2d3c82cce1b0873be24b6fe38a073e7e55ae620f.parquet",
+      "sha256": "e3261da7756736c0b1eda620933d2636a5974baad21a28a4cc8b34d56a4af219",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SC2/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-8d1d684c4de9be3ec4eb183a2d3c82cce1b0873be24b6fe38a073e7e55ae620f.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=E1/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-0def19b1dcdbbf8cbfcf2f4288e25dbf529f2ec6dd2e40d479230e7c8b4f5b52.parquet",
+      "sha256": "8a2e1fc3bf5427befdd012e471827e6db11d666d0d9c88adfeebbb8fcfe46910",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=E1/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-0def19b1dcdbbf8cbfcf2f4288e25dbf529f2ec6dd2e40d479230e7c8b4f5b52.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=N1/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-dcccf435be0057b6ad93438140ad0c7d33e28ab99bc01804f9c3a05e02e0c2c4.parquet",
+      "sha256": "2bc3e0f34beeef8ff87725a6ce0f409330bc2804668cbf6de1ee90571c867967",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=N1/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-dcccf435be0057b6ad93438140ad0c7d33e28ab99bc01804f9c3a05e02e0c2c4.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=SP2/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-ae037cb9af65521654fe90c39e1280a7e74b8ded5d5961256e1c4e64596bdf06.parquet",
+      "sha256": "53a36c3c124c47cea2eebaae304c08fbbbdb1b55c6cb879020022967ef9cb5a8",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=SP2/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-ae037cb9af65521654fe90c39e1280a7e74b8ded5d5961256e1c4e64596bdf06.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=EC/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-bbeda9c07e395bcbcaa095f3ceb762c7313a3a2ece80522ce53db3e3ee49311e.parquet",
+      "sha256": "2ea362d979aa91d610b8e9860dfae57b1fa6cbe5bffaab391cad9abfc9a0084f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=EC/season=2020/entity_type=fixtures/dataset_version=api-football-v3/fixture-bbeda9c07e395bcbcaa095f3ceb762c7313a3a2ece80522ce53db3e3ee49311e.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=P1/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-0c08e7d137d81a86bbcc0b26ecd185f5b15d26ff8df564cbce414668d8cea3da.parquet",
+      "sha256": "feea2864ace103a801f693e527f924ad3ba0a3eda22261eec4d26a4f7c59fe96",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=P1/season=2024/entity_type=fixtures/dataset_version=api-football-v3/fixture-0c08e7d137d81a86bbcc0b26ecd185f5b15d26ff8df564cbce414668d8cea3da.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=T1/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-98e3c954f77693897d637037e58e16823a63b1c1c6de92c8d5f63b145a1fb8cf.parquet",
+      "sha256": "9507e653293e2a439028371f6999219c3d4fdad0f057400c9e63291092545b9a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=T1/season=2022/entity_type=fixtures/dataset_version=api-football-v3/fixture-98e3c954f77693897d637037e58e16823a63b1c1c6de92c8d5f63b145a1fb8cf.parquet"
+    }
+  ],
+  "reused_results": 0,
+  "run_id": "39152147826",
+  "code_revision": "d247b2120bccaec7a38cd632ce6438f2eed796f7",
+  "observed_at": "2026-10-18T18:01:18.711977+00:00",
+  "total_cap": 240000,
+  "daily_cap": 130000,
+  "provider_reserve": 5000,
+  "fixture_ids_sha256": "a35af8d7bd1b034c23c8cb0a6c827244855f565d8440dc71e2dff6f67eb8aa9d",
+  "quota_remaining": 107248,
+  "complete_fraction": {
+    "fixtures": 1.0
+  },
+  "coverage_target": {
+    "fixtures": 0.9
+  },
+  "coverage_met": true
+}
