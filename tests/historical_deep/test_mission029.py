@@ -115,8 +115,16 @@ def test_entrypoint_archives_statistics_and_replays_without_http(monkeypatch, tm
         return SimpleNamespace(status_code=200, headers={}, json=lambda: dict(response=records))
     monkeypatch.setattr('requests.get', get)
     targets = [dict(code='E0', league=39, season=2020, fixture=1)]
-    for _ in range(2):
+    payload_reads, original = [], run.R2FirstRepository.payload_for
+    def observe(*args, **kwargs):
+        payload_reads.append(1)
+        return original(*args, **kwargs)
+    monkeypatch.setattr(run.R2FirstRepository, 'payload_for', observe)
+    for attempt in range(2):
+        if attempt:
+            payload_reads.clear()
         assert run.run_phase('A', targets, ['statistics']) == 0
+    assert payload_reads == []
     assert len(urls) == 2
     receipt = json.loads((tmp_path / 'A-public-receipt.json').read_bytes())
     assert receipt['complete']['statistics'] == 1 and receipt['calls'] == 0

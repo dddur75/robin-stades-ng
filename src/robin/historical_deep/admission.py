@@ -2,7 +2,7 @@
 import json
 import os
 from collections.abc import Callable
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from functools import cache
 from threading import RLock
 from typing import Any
@@ -43,12 +43,25 @@ class Admission:
                 return number
         raise RuntimeError('W71_LIMIT_REACHED')
 
-    def check(self, *, mission: bool = True) -> None:
+    def week_scope(self) -> str | None:
+        week = os.environ.get('MISSION029_WEEK')
+        if week:
+            parsed = date.fromisoformat(week)
+            if parsed.weekday() != 0 or not date(2026, 6, 29) <= parsed <= date(2027, 6, 28):
+                raise RuntimeError('W71_WEEK_SCOPE')
+        return week
+
+    def check(self, *, mission: bool = True, data: bool = False) -> None:
+        if mission:
+            self.week_scope()
         if self.clock().astimezone(UTC).date() != self.day:
             raise RuntimeError('W71_DAY_ENDED')
         if self.index(f'{PREFIX}/daily/{self.day}/') >= 130000 - self.legacy or (
             mission and self.index(f'{PREFIX}/mission029/') >= 240000):
             raise RuntimeError('W71_LIMIT_REACHED')
+        if data and self.proof and self.index(f'{PREFIX}/daily/{self.day}/') >= (
+            self.proof['baseline'] + self.proof['remaining'] - 5000):
+            raise RuntimeError('W71_PROVIDER_RESERVE')
 
     def reserve(self, endpoint: str, *, mission: bool = False, remaining: int | None = None) -> None:
         with self.lock:
@@ -67,6 +80,9 @@ class Admission:
             self.before_status = self.take(daily, 130000 - self.legacy, ceiling)
             if mission:
                 self.take(f'{PREFIX}/mission029/', 240000)
+                week = self.week_scope()
+                if week:
+                    self.take(f'{PREFIX}/weeks/{week}/', 240000)
 
     def cached_status(self) -> dict[str, Any] | None:
         now = self.clock().astimezone(UTC)

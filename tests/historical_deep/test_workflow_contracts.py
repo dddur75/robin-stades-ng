@@ -276,7 +276,7 @@ def test_workflows_70_to_78_are_bounded_serialized_and_fail_closed() -> None:
         )
         upload_with = _mapping(upload["with"])
         assert upload["if"] == (
-            "always() && (github.event_name != 'schedule' || steps.resume.outputs.state == 'READY' || steps.resume.outputs.state == 'DONE')"
+            "always() && (github.event_name != 'schedule' || steps.resume.outputs.state == 'READY' || steps.mission029.outcome == 'success' || steps.mission029.outcome == 'failure')"
             if number == 71 else "always()"
         )
         assert upload_with["if-no-files-found"] == "error"
@@ -757,6 +757,7 @@ def test_workflow71_schedule_skips_historical_and_phase1_for_every_resume_state(
     historical = next(s for s in steps if s.get("name") == "Collecter les bundles et fallbacks ciblés")
     census = next(s for s in steps if s.get("name") == "Mission 028 — correspondance des petites ligues")
     details = next(s for s in steps if s.get("name") == "Mission 028 — détails par match")
+    mission029 = next(s for s in steps if s.get("id") == "mission029")
     outcome = next(s for s in steps if s.get("id") == "outcome")
     upload = next(s for s in steps if s.get("uses") == "actions/upload-artifact@v4")
     legacy027 = tuple(s for s in steps if str(s.get("name", "")).startswith("Mission 027")
@@ -767,10 +768,11 @@ def test_workflow71_schedule_skips_historical_and_phase1_for_every_resume_state(
     for state in ("READY", "DONE", "BUDGET", "PAUSED", "HOLD"):
         # schedule supplies no workflow inputs, even when a dispatch has defaults.
         namespace = {"github": SimpleNamespace(event_name="schedule"), "inputs": SimpleNamespace(),
-            "steps": SimpleNamespace(resume=SimpleNamespace(outputs=SimpleNamespace(state=state))),
+            "steps": SimpleNamespace(resume=SimpleNamespace(outputs=SimpleNamespace(state=state)),
+                mission029=SimpleNamespace(outcome="skipped" if state == "READY" else "success")),
             "always": lambda: True}
         for step, expected in [(historical, False), (census, False), (outcome, False),
-                               (details, state == "READY"), (upload, state in ("READY", "DONE")),
+                               (details, state == "READY"), (mission029, state != "READY"), (upload, True),
                                *((step, False) for step in legacy027)]:
             expression = re.sub(r"!(?!=)", " not ", str(step["if"]).replace("&&", " and ").replace("||", " or "))
             assert bool(eval(expression, {"__builtins__": {}}, namespace)) == expected

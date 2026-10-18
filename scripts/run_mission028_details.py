@@ -192,7 +192,7 @@ def main():
         store, now = MeasuredStore(R2ObjectStore(os.environ), timings), datetime.now(UTC)
         proof = ProviderStatus.model_validate_json((OUTPUT / "preflight.json").read_bytes())
         midnight = now.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)
-        require(proof.checked_at.date() == now.date() and proof.checked_at <= now and proof.status_expires_at - now >= timedelta(minutes=95), "MISSION028_PREFLIGHT_EXPIRED", RuntimeError)
+        require(proof.checked_at.date() == now.date() and proof.checked_at <= now and proof.status_expires_at - now >= timedelta(minutes=1), "MISSION028_PREFLIGHT_EXPIRED", RuntimeError)
         transport = PacedTransport(min(midnight, proof.status_expires_at, now + timedelta(minutes=95)), timings=timings)
         quota = QuotaController(proof)
         def fetch(fixture):

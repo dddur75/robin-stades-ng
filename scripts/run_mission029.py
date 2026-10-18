@@ -9,7 +9,7 @@ from robin.historical.normalization import normalize_records
 from robin.historical.storage import PartitionedParquetStore
 from robin.historical_deep.adapters import R2ObjectStore, assert_safety_locks
 from robin.historical_deep.collector import HistoricalDeepCollector
-from robin.historical_deep.provider import ApiFootballDeepClient, ProviderError
+from robin.historical_deep.provider import ApiFootballDeepClient, CircuitOpenError, ProviderError
 from robin.historical_deep.storage import R2FirstRepository
 from scripts.run_mission027_lineups import LEAGUES, validate_targets
 from scripts.run_mission028 import Transport
@@ -32,9 +32,12 @@ def collect_once(collector, store, request):
     task = collector._make_task(**request, identity=None)
     if collector.repository.receipt_for(task) is not None:
         return collector._collect(**request)
+    quota = getattr(getattr(collector, 'provider', None), 'quota', None)
+    if quota and quota.status.daily_remaining <= 5000:
+        raise RuntimeError('W71_PROVIDER_RESERVE')
     gate = getattr(getattr(collector, 'provider', None), '_admission', None)
     if gate:
-        gate.check()
+        gate.check(data=True)
     getattr(getattr(collector, 'provider', None), 'assert_transport_available', lambda: None)()
     identity = request['params'].get('fixture') or hashlib.sha256(
         json.dumps(request['params'], sort_keys=True).encode()).hexdigest()
@@ -60,13 +63,22 @@ def projection_name(request):
     return f'fixture-{identity}.parquet'
 
 
+def count_result(receipt, row, family, state):
+    if state == 'COMPLETE':
+        receipt['complete'][family] = receipt['complete'].get(family, 0) + 1
+    elif state == 'UNCERTAIN':
+        receipt['uncertain'].append([row['fixture'], family])
+    else:
+        receipt['missing'].append(dict(fixture=row['fixture'], family=family, reason=state))
+
+
 def run_phase(phase, targets, families, *, clock=lambda: datetime.now(UTC), quality=None, coverage=.90):
     if any(r['season'] == 2025 for r in targets):
         raise ValueError('MISSION029_HOLDOUT')
     digest = hashlib.sha256(json.dumps(targets, sort_keys=True).encode()).hexdigest()
     OUTPUT.mkdir(parents=True, exist_ok=True)
     receipt = dict(phase=phase, status='PARTIAL', targets=len(targets), targets_sha256=digest,
-        calls=0, complete={}, missing=[], uncertain=[], request_errors=[], partitions=[],
+        calls=0, complete={}, missing=[], uncertain=[], request_errors=[], partitions=[], reused_results=0,
         run_id=os.environ.get('GITHUB_RUN_ID', 'local'), code_revision=os.environ.get('GITHUB_SHA'),
         observed_at=clock().isoformat(), total_cap=240000, daily_cap=130000, provider_reserve=5000)
     receipt['fixture_ids_sha256'] = hashlib.sha256(''.join(
@@ -82,35 +94,52 @@ def run_phase(phase, targets, families, *, clock=lambda: datetime.now(UTC), qual
         key = f'{PREFIX}/targets/{phase}.json'
         if not (store.put_if_absent(key, binding) or store.get_object(key) == binding):
             raise ValueError('MISSION029_TARGETS_CHANGED')
+        result_prefix, outcomes = f'{PREFIX}/results/{phase}/', {}
+        for key in store.iter_keys(result_prefix):
+            family, name = key.removeprefix(result_prefix).split('/', 1)
+            name, state = name.rsplit('.', 1)
+            if (family, name) in outcomes or state not in (
+                'COMPLETE', 'UNCERTAIN', 'PROVIDER_EMPTY', 'PROVIDER_INCOMPLETE'):
+                raise ValueError('MISSION029_RESULT_CONFLICT')
+            outcomes[family, name] = state
+        expected = {(f, projection_name(request_for(r, f))) for r in targets for f in families}
         transport = Transport(now + timedelta(minutes=95))
-        client = ApiFootballDeepClient(api_key=os.environ['API_FOOTBALL_KEY'],
-            transport=transport, max_retries=0, status_ttl_seconds=7200)
-        status = client.get_status()
-        transport.deadline = min(transport.deadline, status.status_expires_at,
-            now.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1))
+        if expected - outcomes.keys():
+            client = ApiFootballDeepClient(api_key=os.environ['API_FOOTBALL_KEY'],
+                transport=transport, max_retries=0, status_ttl_seconds=7200)
+            status = client.get_status()
+            transport.deadline = min(transport.deadline, status.status_expires_at,
+                now.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1))
         collector = HistoricalDeepCollector(client, R2FirstRepository(store),
             source_commit=os.environ['GITHUB_SHA'])
         parquet = PartitionedParquetStore(OUTPUT / 'historical/parquet')
         for row in targets:
             for family in families:
+                request = request_for(row, family)
+                name = projection_name(request)
+                saved = outcomes.get((family, name))
+                if saved:
+                    count_result(receipt, row, family, saved)
+                    receipt['reused_results'] += 1
+                    continue
                 if clock() >= transport.deadline:
                     raise RuntimeError('MISSION029_SLICE_ENDED')
-                request = request_for(row, family)
                 try:
                     call = collect_once(collector, store, request)
+                except CircuitOpenError:
+                    raise
                 except ProviderError as error:
                     receipt['request_errors'].append([row['fixture'], family, type(error).__name__])
                     call = None
                 if call is None:
-                    receipt['uncertain'].append([row['fixture'], family])
+                    count_result(receipt, row, family, 'UNCERTAIN')
+                    store.put_if_absent(f'{result_prefix}{family}/{name}.UNCERTAIN', b'{}')
                     continue
                 if call.paging_total != 1:
                     raise ValueError('MISSION029_PAGINATION')
                 valid = quality(family, call, row) if quality else complete(family, call.records)
-                receipt['complete'][family] = receipt['complete'].get(family, 0) + int(valid)
-                if not valid:
-                    receipt['missing'].append(dict(fixture=row['fixture'], family=family,
-                        reason='PROVIDER_EMPTY' if not call.records else 'PROVIDER_INCOMPLETE'))
+                state = 'COMPLETE' if valid else 'PROVIDER_INCOMPLETE' if call.records else 'PROVIDER_EMPTY'
+                count_result(receipt, row, family, state)
                 rows = normalize_records(request['endpoint'], call.records,
                     competition_id=row['league'], season=row['season'], ingestion_run_id='mission029',
                     raw_payload_hash=call.payload_sha256, request_params=request['params'],
@@ -124,6 +153,8 @@ def run_phase(phase, targets, families, *, clock=lambda: datetime.now(UTC), qual
                     raise ValueError('MISSION029_PROJECTION_CONFLICT')
                 receipt['partitions'].append(dict(path=path.relative_to(OUTPUT.resolve()).as_posix(),
                     sha256=partition['sha256'], r2_key=key))
+                store.put_if_absent(f'{result_prefix}{family}/{name}.{state}',
+                    json.dumps(receipt['partitions'][-1]).encode())
         receipt['status'] = 'EXHAUSTED'
     except Exception as error:
         receipt['reason_class'] = type(error).__name__
@@ -151,17 +182,20 @@ def main():
     from scripts.mission029_events import main as events
     from scripts.mission029_extension import main as extension
     from scripts.mission029_players import main as players
+    from scripts.mission029_weekly import main as weekly
     targets = targets_a()
     phase = os.environ.get('MISSION029_PHASE', 'auto')
     phases = dict(A=lambda: run_phase('A', targets, ['statistics']), B=events, C=players, D=extension)
-    if phase not in ('auto', *phases):
+    if phase not in ('auto', 'E', *phases):
         raise ValueError('MISSION029_PHASE_INVALID')
     store = R2ObjectStore(os.environ)
     pending = [p for p in phases if store.get_object(f'{PREFIX}/terminal/{p}') is None]
     if phase == 'auto' and not pending:
-        OUTPUT.mkdir(parents=True, exist_ok=True)
-        (OUTPUT / 'idle-public-receipt.json').write_text(json.dumps(dict(status='EXHAUSTED', calls=0)))
-        return 0
+        return weekly()
+    if phase == 'E':
+        if pending:
+            raise ValueError('MISSION029_PREDECESSOR_REQUIRED')
+        return weekly()
     selected = pending[0] if phase == 'auto' else phase
     if any(p in pending for p in list(phases)[:list(phases).index(selected)]):
         raise ValueError('MISSION029_PREDECESSOR_REQUIRED')
