@@ -70,9 +70,10 @@ def test_lineups_require_two_teams_formation_and_eleven_unique_players():
     assert complete("statistics", [dict(team=dict(id=i), statistics=[dict(type="Shots", value=0)])
                                     for i in (1, 2)])
     assert not complete("statistics", [])
+@pytest.mark.parametrize("proof_minutes", [110, 10])
 @pytest.mark.parametrize("family", ["lineups", "statistics"])
 @pytest.mark.parametrize("code,year,league", [("E1", 2019, 40), ("ARG", 2023, 1032)])
-def test_details_entrypoint_persists_parquet_and_resumes_without_http(monkeypatch, tmp_path, family, code, year, league):
+def test_details_entrypoint_persists_parquet_and_resumes_without_http(monkeypatch, tmp_path, family, code, year, league, proof_minutes):
     from robin.historical_deep.contracts import ProviderStatus
     from scripts import run_mission028_details as run
     store, calls, now = InMemoryObjectStore(), [], datetime.now(UTC)
@@ -88,7 +89,7 @@ def test_details_entrypoint_persists_parquet_and_resumes_without_http(monkeypatc
     monkeypatch.setattr(run, "load_mapping", lambda: [dict(ligue_fd=code, season=str(year), fixture_id=10, league_id=league)])
     (tmp_path / "preflight.json").write_text(ProviderStatus(plan="Mega", active=True,
         daily_limit=150000, daily_used=0, daily_remaining=150000, checked_at=now,
-        expires_at=now + timedelta(minutes=110), subscription_end=now + timedelta(days=30)).model_dump_json())
+        expires_at=now + timedelta(minutes=proof_minutes), subscription_end=now + timedelta(days=30)).model_dump_json())
     teams = [dict(team=dict(id=i), formation="4-3-3", startXI=[dict(player=dict(id=n))
              for n in range(1, 12)]) for i in (1, 2)]
     if family == "statistics":
