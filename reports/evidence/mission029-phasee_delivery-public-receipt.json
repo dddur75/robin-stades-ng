@@ -1,0 +1,16 @@
+{
+  "claim_id": "ENGINEERING.MISSION029.PHASEE_DELIVERY.V1",
+  "phase": "E_DELIVERY",
+  "status": "PREPARED_NOT_COLLECTED",
+  "base_revision": "44c446e6ebe57a38bf07e9f9c2f37339761a3c60",
+  "offline_tests_passed": 403,
+  "provider_calls": 0,
+  "r2_calls": 0,
+  "neon_calls": 0,
+  "merges": 0,
+  "data_coverage": "NOT_MEASURED",
+  "weekly_receipts": "PENDING_ACTIONS",
+  "holdout_reads": 0,
+  "validation": "PYTHONPATH=src:. python -m pytest tests/historical_deep tests/coverage tests/council/test_robin_council_os_v3.py::test_evidence_graph_and_append_only_ledger_have_mandatory_fields -q; mypy strict; Ruff; Bandit -ll; git diff --check",
+  "review": "PENDING_INDEPENDENT_CLAUDE_REVIEW"
+}

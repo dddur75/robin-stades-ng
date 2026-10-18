@@ -56,3 +56,19 @@ marqueur durable par (fixture, famille), reprise sans rappel.
 
 Crédits The Odds API (liste C), paris, saison 2025-26, toute écriture Neon,
 tout nouveau workflow, `prospective-deep-scheduler.yml`, robin-core.
+
+## Résumé de construction — 2026-10-18
+
+- Code livré en pile depuis main : [A #113](https://github.com/dddur75/robin-stades-ng/pull/113), [B #114](https://github.com/dddur75/robin-stades-ng/pull/114), [C #115](https://github.com/dddur75/robin-stades-ng/pull/115), [D #116](https://github.com/dddur75/robin-stades-ng/pull/116), [E #117](https://github.com/dddur75/robin-stades-ng/pull/117).
+- Tailles de code par phase : 400 / 330 / 143 / 183 / 351 lignes ; aucune fusion.
+- Population B/C figée : 70 084 matchs, dont 2 419 L1 ; empreinte `0f652e40…`.
+- Vérifié : 402 tests domaine/couverture, contrat d'audit, Ruff, mypy strict, Bandit -ll.
+- Aucun appel fournisseur/R2/Neon ni dispatch/activation réalisé par cette session ; holdout exclu.
+- Reste : CI et relecture Claude, collecte par Actions, publication réelle et seuils 90 % / 85 %.
+- Reste : deux reçus E de semaines consécutives, couverts et sous 150 appels ; mission non terminée.
+
+## Reprise
+
+Branches `codex/029-phase-a` à `codex/029-phase-e`, PR #113 → #117 ; dernier code sur phase E.
+Étape exacte : code poussé, contrat d'audit corrigé, collecte réelle en attente de la boucle de revue/fusion.
+Prochaine action : boucle seule, intégrer A→E puis observer le workflow 71 actif et les reçus publics sur historical-data ; vérifier les critères avant de cocher la mission.
