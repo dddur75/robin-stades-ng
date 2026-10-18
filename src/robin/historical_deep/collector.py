@@ -591,6 +591,8 @@ class HistoricalDeepCollector:
             raise ValueError("foundation HarvestTask requires an integer league id")
         contract_family = _CONTRACT_FAMILY_ALIASES.get(family, family)
         temporal_family = _TEMPORAL_FAMILY_ALIASES.get(contract_family, contract_family)
+        if endpoint == '/fixtures/players':
+            temporal_family = 'player_match_statistics'
         competition_spec = CompetitionSpec(
             canonical_key=canonical,
             name=canonical,

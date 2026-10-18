@@ -32,6 +32,9 @@ def collect_once(collector, store, request):
     task = collector._make_task(**request, identity=None)
     if collector.repository.receipt_for(task) is not None:
         return collector._collect(**request)
+    gate = getattr(getattr(collector, 'provider', None), '_admission', None)
+    if gate:
+        gate.check()
     getattr(getattr(collector, 'provider', None), 'assert_transport_available', lambda: None)()
     identity = request['params'].get('fixture') or hashlib.sha256(
         json.dumps(request['params'], sort_keys=True).encode()).hexdigest()
@@ -48,7 +51,7 @@ def request_for(row, family):
             else dict(fixture=row['fixture']))
 
 
-def run_phase(phase, targets, families, *, clock=lambda: datetime.now(UTC), quality=None):
+def run_phase(phase, targets, families, *, clock=lambda: datetime.now(UTC), quality=None, coverage=.90):
     if any(r['season'] == 2025 for r in targets):
         raise ValueError('MISSION029_HOLDOUT')
     digest = hashlib.sha256(json.dumps(targets, sort_keys=True).encode()).hexdigest()
@@ -118,6 +121,8 @@ def run_phase(phase, targets, families, *, clock=lambda: datetime.now(UTC), qual
             receipt['reason_code'] = str(error)
     receipt['complete_fraction'] = {f: receipt['complete'].get(f, 0) / len(targets)
         if targets else 1 for f in families}
+    receipt['coverage_target'] = coverage
+    receipt['coverage_met'] = all(v >= coverage for v in receipt['complete_fraction'].values())
     receipt.update(calls=transport.calls if transport else 0,
         quota_remaining=client.quota.status.daily_remaining if client and client.quota else None)
     body = (json.dumps(receipt, indent=2) + '\n').encode()
@@ -131,22 +136,23 @@ def run_phase(phase, targets, families, *, clock=lambda: datetime.now(UTC), qual
 
 
 def main():
+    from scripts.mission029_events import main as events
+    from scripts.mission029_players import main as players
     targets = targets_a()
     phase = os.environ.get('MISSION029_PHASE', 'auto')
-    if phase not in ('auto', 'A', 'B'):
+    phases = dict(A=lambda: run_phase('A', targets, ['statistics']), B=events, C=players)
+    if phase not in ('auto', *phases):
         raise ValueError('MISSION029_PHASE_INVALID')
     store = R2ObjectStore(os.environ)
-    if phase == 'B' and store.get_object(f'{PREFIX}/terminal/A') is None:
-        raise ValueError('MISSION029_PREDECESSOR_REQUIRED')
-    if phase == 'A' or (phase == 'auto' and store.get_object(f'{PREFIX}/terminal/A') is None):
-        return run_phase('A', targets, ['statistics'])
-    terminal = store.get_object(f'{PREFIX}/terminal/B')
-    if terminal and phase == 'auto':
+    pending = [p for p in phases if store.get_object(f'{PREFIX}/terminal/{p}') is None]
+    if phase == 'auto' and not pending:
         OUTPUT.mkdir(parents=True, exist_ok=True)
-        (OUTPUT / 'B-public-receipt.json').write_bytes(terminal)
+        (OUTPUT / 'idle-public-receipt.json').write_text(json.dumps(dict(status='EXHAUSTED', calls=0)))
         return 0
-    from scripts.mission029_events import main as events
-    return events()
+    selected = pending[0] if phase == 'auto' else phase
+    if any(p in pending for p in list(phases)[:list(phases).index(selected)]):
+        raise ValueError('MISSION029_PREDECESSOR_REQUIRED')
+    return phases[selected]()
 
 
 if __name__ == '__main__':

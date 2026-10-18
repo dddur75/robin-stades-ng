@@ -43,10 +43,16 @@ class Admission:
                 return number
         raise RuntimeError('W71_LIMIT_REACHED')
 
+    def check(self, *, mission: bool = True) -> None:
+        if self.clock().astimezone(UTC).date() != self.day:
+            raise RuntimeError('W71_DAY_ENDED')
+        if self.index(f'{PREFIX}/daily/{self.day}/') >= 130000 - self.legacy or (
+            mission and self.index(f'{PREFIX}/mission029/') >= 240000):
+            raise RuntimeError('W71_LIMIT_REACHED')
+
     def reserve(self, endpoint: str, *, mission: bool = False, remaining: int | None = None) -> None:
         with self.lock:
-            if self.clock().astimezone(UTC).date() != self.day:
-                raise RuntimeError('W71_DAY_ENDED')
+            self.check(mission=mission)
             status = endpoint == '/status'
             if status:
                 self.take(f'{PREFIX}/statuses/total/', 925 - self.legacy_status)
