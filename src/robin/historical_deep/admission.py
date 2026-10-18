@@ -52,6 +52,9 @@ class Admission:
                 self.take(f'{PREFIX}/statuses/total/', 925 - self.legacy_status)
                 prior = len(tuple(self.store.iter_keys(f'{OLD}/status-slots/{self.day}/')))
                 self.take(f'{PREFIX}/statuses/{self.day}/', 49 - prior)
+                lease = f'{PREFIX}/status-refresh/{self.day}/{int(self.clock().timestamp()) // 6600}'
+                if not self.store.put_if_absent(lease, b'{}'):
+                    raise RuntimeError('W71_STATUS_PENDING')
             daily = f'{PREFIX}/daily/{self.day}/'
             proof = self.proof or dict(remaining=remaining or 0, baseline=-self.legacy)
             ceiling = None if status else proof['baseline'] + proof['remaining'] - 5000
