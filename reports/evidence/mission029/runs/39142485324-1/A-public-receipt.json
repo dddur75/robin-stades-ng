@@ -1,0 +1,428 @@
+{
+  "phase": "A",
+  "status": "PARTIAL",
+  "targets": 7228,
+  "targets_sha256": "fa69926d765479dcba8c1d91d37e999ae62b2dd258377592a6fd97d2ad621e88",
+  "calls": 79,
+  "complete": {
+    "statistics": 828
+  },
+  "missing": [],
+  "uncertain": [],
+  "request_errors": [],
+  "partitions": [
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2021/entity_type=statistics/dataset_version=api-football-v3/fixture-710925.parquet",
+      "sha256": "2ff16b58d5e9ef510abb554dc2220e4f7aa8585cbf57d18c415be1878b215d02",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2021/entity_type=statistics/dataset_version=api-football-v3/fixture-710925.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2021/entity_type=statistics/dataset_version=api-football-v3/fixture-710926.parquet",
+      "sha256": "117442c5c8958fc9235be9c44d94a61ada0b09edcb8cabff7bc7881224e5e906",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2021/entity_type=statistics/dataset_version=api-football-v3/fixture-710926.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2021/entity_type=statistics/dataset_version=api-football-v3/fixture-710927.parquet",
+      "sha256": "a28bc9dab3151810df7eb1217915f6fb1854fdcdc23ccd93d74513e42a59fdcc",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2021/entity_type=statistics/dataset_version=api-football-v3/fixture-710927.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2021/entity_type=statistics/dataset_version=api-football-v3/fixture-710928.parquet",
+      "sha256": "5c7ca8451e657c00a44ba7b6941c2f81ca54af6dfb162333ffb612adc9579094",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2021/entity_type=statistics/dataset_version=api-football-v3/fixture-710928.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2021/entity_type=statistics/dataset_version=api-football-v3/fixture-710929.parquet",
+      "sha256": "c1a949a4913f4ef5dfcf07bdd66d86c4e507f9f97fcccaba18634cf8498c851e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2021/entity_type=statistics/dataset_version=api-football-v3/fixture-710929.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2021/entity_type=statistics/dataset_version=api-football-v3/fixture-710930.parquet",
+      "sha256": "0201bdd93e5e1b9d2fb0a3d23bd4fad3c27535bc82d3acac63f41334fd743ad8",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2021/entity_type=statistics/dataset_version=api-football-v3/fixture-710930.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2021/entity_type=statistics/dataset_version=api-football-v3/fixture-710931.parquet",
+      "sha256": "d9e116d7aca54e3842d838fe0966ed8e683426f07846f0e10efd78d27131fc2b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2021/entity_type=statistics/dataset_version=api-football-v3/fixture-710931.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2021/entity_type=statistics/dataset_version=api-football-v3/fixture-710932.parquet",
+      "sha256": "c28c7dc7fb8e9432730adfebfb887721d124f3f1d94bd10e3595545823164fbc",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2021/entity_type=statistics/dataset_version=api-football-v3/fixture-710932.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2021/entity_type=statistics/dataset_version=api-football-v3/fixture-710933.parquet",
+      "sha256": "968a77140154100956051630400feb14b91ddb03a770221c20d31f41e30ab7c0",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2021/entity_type=statistics/dataset_version=api-football-v3/fixture-710933.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2021/entity_type=statistics/dataset_version=api-football-v3/fixture-710934.parquet",
+      "sha256": "73eede460653a2339bcc4fde5a7eb81a091b4cf1af848747fbcdd06965da872e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2021/entity_type=statistics/dataset_version=api-football-v3/fixture-710934.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2021/entity_type=statistics/dataset_version=api-football-v3/fixture-710935.parquet",
+      "sha256": "7675e9465a26866bb485dd5c95b764a4cf316b2b54306a2f68a85ed42bfc5a7c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2021/entity_type=statistics/dataset_version=api-football-v3/fixture-710935.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867946.parquet",
+      "sha256": "c192ef8234019a4008a4b492a04495c0d26cd7f142ecc78d1dde5efb7893d873",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867946.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867947.parquet",
+      "sha256": "96f1ad3ebef56d203644b156ae8d651623f6221bd49b21754f279c23018ed981",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867947.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867948.parquet",
+      "sha256": "f79b581433d3baba8417130c12a926fe8dac8f0764459d33a90a7448e1bd36b2",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867948.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867949.parquet",
+      "sha256": "3a16b00fb47e9625985eb129f3bc14d4f9b4783169df028ca87f4d569cf232cc",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867949.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867950.parquet",
+      "sha256": "45c1ef9b67ffaacdc8626647e1f7d122a2529a963e6f57d744044609ed88be38",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867950.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867951.parquet",
+      "sha256": "6d13a640b4969abbe8071283d72259b3018c854ad0c969217749706c24dfaa1c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867951.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867952.parquet",
+      "sha256": "2136d8e9543cc9fe248ff95c6b74b39c9e86882e5a4bd3cc35b6b0e9b67fd026",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867952.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867953.parquet",
+      "sha256": "d6fae227e77b44c2e109db9c9363fe7057f4c97d03f21f1b0baec4579273b659",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867953.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867954.parquet",
+      "sha256": "1415e470595a78d98986448cdf9a7f0fd9ef26ff4f9a97f51b5a4cc36edf6827",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867954.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867955.parquet",
+      "sha256": "b0cf2683f8d68be56913e690220a31fc88996a551609e5c0ce40116bc10b3b07",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867955.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867956.parquet",
+      "sha256": "8b75f56e93670583c25c064e5e47af5e9ca2b635edec3f10b05a5e3afcef7039",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867956.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867957.parquet",
+      "sha256": "71b88585baef7ad9343a3c386519d3ef25b2ec42c8519c0da7dfc526eb08665e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867957.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867958.parquet",
+      "sha256": "dd8bdb3364b1cf251b5aa0b55ff1dea1ec02acee4a7ba4c8bcb32a40b292f62a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867958.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867959.parquet",
+      "sha256": "d7bdab84cd5ece0a602baa09d2087bdf77651a6937a77d86aa6e14eb818760b6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867959.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867960.parquet",
+      "sha256": "805e79c8b759d14d5c358e51d8741cd6a6e6d423f07341437d4b778bcdb5e2af",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867960.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867961.parquet",
+      "sha256": "16bf314adef262a6506ca0a629d2dbd09bd124b8eaffb9a176d51c17ac2ac673",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867961.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867962.parquet",
+      "sha256": "e1ac37d40382ac83810dd49bb18d36abf7ce697162890fce0e0a156f0f2a59bc",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867962.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867963.parquet",
+      "sha256": "de0ef09f2cb91124817451d58d9849f21ca6143bf9c34c1488920e3dc4afc385",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867963.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867964.parquet",
+      "sha256": "74b0d25be6beb35216e0db34c64a32c458b8753f9cc5e3429d2994a0d014b0cf",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867964.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867965.parquet",
+      "sha256": "a8833588715abfc7f135b718b6c437dfae28ec751426295e003615b99e4b1ac4",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867965.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867966.parquet",
+      "sha256": "39778f98890b9a05e6b9759f9c0d96a2bbc7b1241d8f9468995883c1180cd211",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867966.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867967.parquet",
+      "sha256": "566341914e3c524b9410b438eca4ae4609b0d2c63c71a59ead098cc6588244f0",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867967.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867968.parquet",
+      "sha256": "3cf93be455cd44aa24a4bd4b5f5bb34074443905d7af26ea85c499987007f667",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867968.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867969.parquet",
+      "sha256": "c8c565ae3c25dffb0c008e05760c54c47945bb8f51842c11e8722b6d83f5f154",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867969.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867970.parquet",
+      "sha256": "4d6418dfb1fac8f16ba44774db0f5c1e96de3816187130e2b99ccb45f6c5a664",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867970.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867971.parquet",
+      "sha256": "68706ed9a50a0e44a9339f8003b122b47a5c063c178883badd5998c699ad8739",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867971.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867972.parquet",
+      "sha256": "1d4dc7b47031a2b6aee1e627fa09f2a81d33f52aeea8ea441bf2fb759207714e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867972.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867973.parquet",
+      "sha256": "5cd42a726aa388e2eb07a744e6f46015fa0d7f3051c234e1b87394ae1f0c136c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867973.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867974.parquet",
+      "sha256": "44d398e8d360aa20cf99b75f2cdd36e98e003a2a4bc765421fa7f6d3b14381fe",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867974.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867975.parquet",
+      "sha256": "9ed7a543b3c1adc6e1491317d1a38cf0cfab9ae4497219930773bcb88f475f23",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867975.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867976.parquet",
+      "sha256": "54667bb84d681351a4f150be87c3dff7b775f04215a37f98d528262042b3358f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867976.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867977.parquet",
+      "sha256": "a926dad354079829729f4658edd443786c876f7695c95ef83ab31dbe4e51387c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867977.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867978.parquet",
+      "sha256": "7d9d5717281f5237d0ae66b92203ebf605b09ac94d975de53b5111ec19fd7a23",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867978.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867979.parquet",
+      "sha256": "eeaf2a3adceccf202fcbc7f24e96c69decc4d9e73d443446219c9a2e5735bda6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867979.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867980.parquet",
+      "sha256": "ad3e2ba61eac470fdf013be3a5809e7600ec877305e569f28d512855669c4a5b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867980.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867981.parquet",
+      "sha256": "ec6bd9e8c8ba78f5ae258abafaccbae3f5cee70d9ff11d9823ef17479e20cb51",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867981.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867982.parquet",
+      "sha256": "10e3b26d4de78a2fa6096c32f8ecfe7b031b1c75970b44f5c2defef1ca6bf097",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867982.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867983.parquet",
+      "sha256": "681e72d277687bcec94fd9afe4872ce7960f5fcf8e3c256824379d041124c384",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867983.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867984.parquet",
+      "sha256": "2db43d531160cd58ac57c790e0867d3fa63d65c2fbd25a2171f322405b35d29b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867984.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867985.parquet",
+      "sha256": "0f357b94b5da1ae5e17f4d2d32c0da321846a516d59d823fc75f756eb39adb73",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867985.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867986.parquet",
+      "sha256": "14d1cd859be41d1625b9b6d44589efc5ff5891bbc2f505e31725ad155679457b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867986.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867987.parquet",
+      "sha256": "4090a44ffa6ebf891eedccc16b0aef663c03b31b5f3c01fc10a43975cd637757",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867987.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867988.parquet",
+      "sha256": "a24eaef08662e81fd693d1270e947cc9ae582cefe49be611d9da991df52a52f3",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867988.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867989.parquet",
+      "sha256": "c1f325fdb47d7c3979fd16c2a36b9531aa8d75087b82203b038cd4b94e32463e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867989.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867990.parquet",
+      "sha256": "8eeb371011af3e029f491e3f7ca61f6e0012a55f4f313cd9536c1f23d0ac8628",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867990.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867991.parquet",
+      "sha256": "1aba1eb3092df43115e7a6e976a99439555248b8604b743ee24d13edf872a4fa",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867991.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867992.parquet",
+      "sha256": "a1919d1f44fb1e85f3d5958e0ff5281a9582a8deeedf4ca1ed6f18cc44388fc3",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867992.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867993.parquet",
+      "sha256": "c263750d693630f8ee484fb33c24141821414c0a6193b9de07c80cff9adea692",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867993.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867994.parquet",
+      "sha256": "a985b0e10c16b775399c581ef3232a7fa0641f605d8e295956568e522b43b116",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867994.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867995.parquet",
+      "sha256": "75624bb7b2ac27ff0e91280184167a662a4fd45d4f8b2a5b95cb8454b083ee4e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867995.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867996.parquet",
+      "sha256": "c422e556aad2ad5cd75b0697e0cf68d34cdc083ea5c7f938cf223d4d47497299",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867996.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867997.parquet",
+      "sha256": "aab2df4e44d72d8237cc6945b0c287aa1ab2e4498167931a91038aef06c14360",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867997.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867998.parquet",
+      "sha256": "54e9cea62f34954ff11703e6193613859ec65fac2314acbb5670b601ae873af7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867998.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867999.parquet",
+      "sha256": "b944e1a3a54ec97a0076b52f9d45846519719f4b959eda32463166af71178b82",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-867999.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868000.parquet",
+      "sha256": "2eca45e1d436203de75e66b3992bc25f01727bab7ad96d72bd2eee13fe64f0e2",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868000.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868001.parquet",
+      "sha256": "ac9eb26043d3b1507fb3a98cf97ef348501ae8f9d6e844a6e34e09863b73c5d0",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868001.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868002.parquet",
+      "sha256": "3ba4d849af8814f142fa8e9c92f1480e4746b035cdb088811c0b9fea02bcfc0e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868002.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868003.parquet",
+      "sha256": "4aa40208869f1dc375a7d299e8f82c5f62a1e6031849c47d970dc8007d0d8d7b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868003.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868004.parquet",
+      "sha256": "bc77e3fcca94bf487e0641e5ea9f527ec791cd9f62a226aefd7bc3d418f6401d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868004.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868005.parquet",
+      "sha256": "fe9ce6f939546dff3175d9ba138a789e45fdaf10e10519d806bf2330890b4196",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868005.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868006.parquet",
+      "sha256": "405928f73eecc9bfd7e36f66668d8722044fafdb1d952992c4714a5efb9fae8a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868006.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868007.parquet",
+      "sha256": "03209c6df3b849ed16107820d3c0c7185a000684ec41a4ea5f0b2ce680671f15",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868007.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868008.parquet",
+      "sha256": "5f2b3cf65242b58d26e996fcf6f153220bed72f111c2226f6b9520a3584cb467",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868008.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868009.parquet",
+      "sha256": "e96ea759617cf2fa35960a3a4c17c47096c3658e4d9c7d87d9d6cb857e7edce1",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868009.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868010.parquet",
+      "sha256": "c73c458594a230ee0ae4b34926929b6da34f2d8ee18be288c0f8320fd21f1f28",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868010.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868011.parquet",
+      "sha256": "6a9056bcf10557dd3e15ef8e7e1362575a2ae2e1e8863eea8e1df5d7847b100c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868011.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868012.parquet",
+      "sha256": "02b4fb259e5bf60f8940d8beff907082c1b451a995ae3207f522a3da23d6c403",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868012.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868013.parquet",
+      "sha256": "12efe14536f0d241d0cab6fc0221d4067ee22c298b8791a21b2abfca05c55018",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2022/entity_type=statistics/dataset_version=api-football-v3/fixture-868013.parquet"
+    }
+  ],
+  "reused_results": 749,
+  "run_id": "39142485324",
+  "code_revision": "9521e9973505b0d8c25aaaab51d1ba78e3275435",
+  "observed_at": "2026-10-18T16:11:19.664807+00:00",
+  "total_cap": 240000,
+  "daily_cap": 130000,
+  "provider_reserve": 5000,
+  "fixture_ids_sha256": "4e471c16b27b3ce5deaa8602795eb687f4e812975265d720c5697d4ce6bd288c",
+  "reason_class": "RuntimeError",
+  "reason_code": "MISSION029_SLICE_ENDED",
+  "complete_fraction": {
+    "statistics": 0.11455451023796348
+  },
+  "coverage_target": {
+    "statistics": 0.9
+  },
+  "coverage_met": false,
+  "quota_remaining": 107252
+}
