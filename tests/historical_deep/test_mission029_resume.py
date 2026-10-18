@@ -19,8 +19,9 @@ def test_open_circuit_stops_before_marking_uncalled_matches_uncertain(monkeypatc
     monkeypatch.setattr(run, 'assert_safety_locks', lambda env: None)
     monkeypatch.setattr(run, 'OUTPUT', tmp_path)
     for key, value in dict(WORKFLOW71_ADMISSION='true', GITHUB_ACTIONS='true',
-        API_FOOTBALL_KEY='synthetic', GITHUB_SHA='a' * 40).items():
+        GITHUB_SHA='a' * 40).items():
         monkeypatch.setenv(key, value)
+    monkeypatch.setenv('API_FOOTBALL_KEY', 'synthetic')
     rows = [dict(code='E0', league=39, season=2020, fixture=i) for i in (1, 2)]
     assert run.run_phase('A', rows, ['statistics']) == 2
     assert not list(store.iter_keys(f'{run.PREFIX}/results/'))
