@@ -29,7 +29,7 @@ def snapshot(hours: float, pin: tuple[float, ...], fr: float = 2.2):
 
 def history():
     return [snapshot(48, (2.5, 4, 4)), snapshot(24, (2.2, 4, 4)),
-            snapshot(2, (2, 4, 4)), snapshot(.1, (2, 4, 4))]
+            snapshot(2, (2, 4, 4)), snapshot(.1, (1.8, 3.6, 3.6))]
 
 
 def test_known_clv_lag_and_summary():
