@@ -1,0 +1,18 @@
+{
+  "mission_id": "CLV_2026_27_PAPER",
+  "authorized_stages": [
+    "E1",
+    "E2"
+  ],
+  "maximum_stage": "E2",
+  "external_effects": {
+    "github": "one branch from main and one PR; no merge",
+    "provider_calls": 0,
+    "neon_writes": 0,
+    "real_bets": 0
+  },
+  "compute_budget": "Local synthetic domain tests only; no corpus replay.",
+  "time_budget": "PT1H",
+  "source_hash": "496ea7d6cc43201f37a698c9b23920ec1f1ac442f1710b5765f6e2b099347737",
+  "expires_at": "2026-10-20T23:59:59Z"
+}
