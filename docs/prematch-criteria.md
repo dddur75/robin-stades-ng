@@ -14,6 +14,10 @@ est coup d'envoi + 3 heures. Les fenêtres portent sur les 5 ou 10 dernières
 rencontres connues de l'équipe, sans ignorer un match dont une famille manque.
 Les fenêtres incomplètes restent nulles. Les agrégats saisonniers sont arrêtés
 à la date cible, jamais extraits des fiches joueurs de fin de saison.
+Les fenêtres de forme et de joueurs portent sur la même compétition, en pouvant
+traverser la frontière entre saisons ; le top 11 et la moyenne saison repartent
+à zéro à chaque saison. Les colonnes observées de calendrier suivent ce même
+périmètre, sans prétendre couvrir les coupes ou compétitions internationales.
 
 Les titulaires de la cible sont admis comme feuille officielle avant-match,
 sur instruction de David : `source_compo = feuille_officielle`. Ceci ne prétend
@@ -30,6 +34,8 @@ Les anciens blocs sans fixture_id ne sont jamais rapprochés par ordre de ligne.
   Les arrêts de jeu sont rattachés à la minute 45 ou 90 : ordre des buts
   conservé, sans inventer une durée supplémentaire. Le score reconstruit doit
   égaler le score officiel à 90 minutes. Les tirs au but sont exclus.
+  Ce remplacement décrit le score ; il ne prétend pas mesurer les tirs ni
+  conditionner les minutes à un effectif de 11 contre 11.
 - `points_tardifs5` : somme des points à 90 minutes moins ceux au score après
   les événements de minute <= 80, sur 5 matchs. Un penalty manqué n'est pas un but.
 - `absents_cles` : minutes des 5 derniers matchs des membres du top 11 saison
@@ -46,6 +52,8 @@ Les anciens blocs sans fixture_id ne sont jamais rapprochés par ordre de ligne.
   compétition. Règle demandée : un match ferme ; pas d'extension inventée.
   Les rouges de banc non identifiables et historiques cartons incomplets ne
   prouvent pas un négatif. Le second jaune n'est pas traité comme rouge direct.
+  Un rouge accompagné de deux jaunes au même joueur, ou d'un commentaire
+  explicite de second jaune, est exclu de la partie rouge direct.
 - `cadre_suspendu_cumul` : null si la règle de ligue/saison n'est pas documentée.
   `cadre_suspendu` vaut vrai si le rouge le démontre, sinon null tant que le
   cumul n'est pas démontrable. Aucun seuil universel supposé.
@@ -68,3 +76,27 @@ les buts à 80/90+ et les moyennes saisonnières. Une preuve décalée compare, 
 antérieures plus la seule composition cible ; les données post-match de la
 cible et toutes les données futures sont supprimées. Un test synthétique modifie
 ces données futures et vérifie l'invariance des critères.
+
+## Reproduction
+
+Depuis la racine, avec les dépendances Python du dépôt installées :
+
+```sh
+PYTHONPATH=src python scripts/build_prematch_criteria.py \
+  --repository . \
+  --source-ref fac718f36d0b8e178374d5a8384c1b3cc871f135 \
+  --output /tmp/mission036-prematch
+PYTHONPATH=src python -m pytest -q tests/prematch
+```
+
+Les blobs référencés doivent déjà exister localement : le calcul refuse tout
+protocole Git réseau et toute récupération paresseuse. `source-inventory.csv`
+donne leurs chemins et hashes. On peut les récupérer explicitement depuis le
+dépôt GitHub, sans fournisseur, avant de lancer le calcul. Ne pas checkout la
+branche de données entière (la saison holdout doit rester exclue).
+
+Les taux décrivent cette révision publiée, et non tout le stock R2. Le reçu B
+`39298159113-1` atteste 66 772 événements complets / 70 084 ; le reçu C
+`39315234613-1` atteste 7 283 statistiques joueurs complètes / 70 084. Ces reçus
+ne suffisent pas à reconstruire les payloads non publiés. Aucun accès R2 n'a
+été effectué et aucun secret R2 n'est configuré dans l'environnement de travail.

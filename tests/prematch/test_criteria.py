@@ -155,3 +155,29 @@ def test_season_top_eleven_does_not_use_prior_season_minutes():
 def test_holdout_rejected_before_calculation():
     with pytest.raises(ValueError, match="holdout"):
         PrematchEngine([replace(fixture(1), season=2025)], {}, {}, {})
+
+
+def test_red_with_unknown_player_cannot_prove_negative_suspension():
+    data = pack()
+    data[3][9] = [event(60, kind="Card", detail="Red Card", player=None)]
+    values = engine(data).team(data[0][10], 1)
+    assert values["cadre_suspendu_rouge"] is None
+    assert values["reasons"]["cadre_suspendu_rouge"] == "red_card_identity_unknown"
+
+
+def test_red_after_second_yellow_is_not_a_direct_red():
+    data = pack()
+    data[3][9] = [event(30, kind="Card", detail="Yellow Card"),
+                  event(60, kind="Card", detail="Yellow Card"),
+                  event(60, kind="Card", detail="Red Card")]
+    assert engine(data).team(data[0][10], 1)["cadre_suspendu_rouge"] is False
+
+
+def test_core_player_threshold_is_inclusive_at_600_minutes():
+    data = pack()
+    for i in range(10):
+        data[1][(i, 1)][0] = PlayerStat(1, 60, 7)
+    data[3][9] = [event(60, kind="Card", detail="Red Card")]
+    assert engine(data).team(data[0][10], 1)["cadre_suspendu"] is True
+    data[1][(0, 1)][0] = PlayerStat(1, 59, 7)
+    assert engine(data).team(data[0][10], 1)["cadre_suspendu_rouge"] is False

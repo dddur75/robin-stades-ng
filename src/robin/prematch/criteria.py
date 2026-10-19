@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from bisect import bisect_left
-from collections import defaultdict
+from collections import Counter, defaultdict
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from statistics import mean
@@ -37,6 +37,11 @@ class Fixture:
             raise ValueError("aware kickoff required")
         if self.home == self.away:
             raise ValueError("distinct teams required")
+        if any(type(i) is not int for i in (self.fixture_id, self.home, self.away)):
+            raise ValueError("integer fixture and team identities required")
+        if any(g is not None and (type(g) is not int or g < 0)
+               for g in (self.home_goals, self.away_goals)):
+            raise ValueError("invalid regulation score")
 
 
 @dataclass(frozen=True)
@@ -208,14 +213,25 @@ class PrematchEngine:
                 reasons["cadre_suspendu_rouge"] = "card_events_missing_or_empty"
             elif goal_state(prior[-1], cards, team) is None:
                 reasons["cadre_suspendu_rouge"] = "card_match_events_inconsistent"
+            elif any(e.get("type") == "Card" and e.get("detail") == "Red Card"
+                     and (type(e.get("player", {}).get("id")) is not int or
+                          e.get("team", {}).get("id") not in {prior[-1].home, prior[-1].away})
+                     for e in cards):
+                reasons["cadre_suspendu_rouge"] = "red_card_identity_unknown"
             else:
                 totals: dict[int, int] = defaultdict(int)
                 for b in blocks:
                     for p in b or []:
                         totals[p.player_id] += p.minutes or 0
+                yellows = Counter(e.get("player", {}).get("id") for e in cards
+                                  if e.get("type") == "Card" and e.get("detail") == "Yellow Card"
+                                  and e.get("team", {}).get("id") == team)
                 values["cadre_suspendu_rouge"] = any(
                     e.get("type") == "Card" and e.get("detail") == "Red Card"
                     and e.get("team", {}).get("id") == team
+                    and yellows[e.get("player", {}).get("id")] < 2
+                    and not any(term in (e.get("comments") or "").casefold()
+                                for term in ("second yellow", "2nd yellow", "yellow red"))
                     and totals.get(e.get("player", {}).get("id"), 0) >= 600
                     for e in cards)
         if values["cadre_suspendu_rouge"] is True:
