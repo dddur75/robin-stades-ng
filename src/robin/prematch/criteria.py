@@ -169,24 +169,28 @@ class PrematchEngine:
 
         season_prior = [f for f in prior if f.season == target.season]
         season_stats = [self.players.get((f.fixture_id, team)) for f in season_prior]
-        blocks_ok = bool(season_stats) and all(self._minutes_valid(b) for b in season_stats)
+        blocks_ok = bool(season_stats) and all(self._statistics_valid(b) for b in season_stats)
         if xi is None:
             reasons.update(absents_cles="official_lineup_missing_or_invalid",
                            force_xi="official_lineup_missing_or_invalid")
         elif not blocks_ok:
-            reasons.update(absents_cles="season_player_minutes_incomplete",
+            reasons.update(absents_cles="season_player_statistics_incomplete",
                            force_xi="season_player_statistics_incomplete")
         else:
+            minutes_ok = all(self._minutes_valid(b) for b in season_stats)
+            if not minutes_ok:
+                reasons["absents_cles"] = "season_player_minutes_incomplete"
             minutes_by_player: dict[int, int] = defaultdict(int)
             ratings = []
             for block in season_stats:
                 for p in block or []:
-                    minutes_by_player[p.player_id] += p.minutes or 0
+                    if minutes_ok:
+                        minutes_by_player[p.player_id] += p.minutes or 0
                     if p.rating is not None:
                         ratings.append(p.rating)
             top = sorted(minutes_by_player, key=lambda p: (-minutes_by_player[p], p))[:11]
             last5 = [self.players.get((f.fixture_id, team)) for f in prior[-5:]]
-            if len(prior) >= 5 and len(top) == 11 and all(
+            if minutes_ok and len(prior) >= 5 and len(top) == 11 and all(
                 self._minutes_valid(b) for b in last5
             ):
                 denominator = sum(p.minutes or 0 for b in last5 for p in b or []
@@ -196,7 +200,7 @@ class PrematchEngine:
                 if denominator:
                     values["absents_cles"] = numerator / denominator
             last10 = [self.players.get((f.fixture_id, team)) for f in prior[-10:]]
-            if len(prior) >= 10 and all(self._minutes_valid(b) for b in last10):
+            if len(prior) >= 10 and all(self._statistics_valid(b) for b in last10):
                 individual = {p: [s.rating for b in last10 for s in b or []
                                   if s.player_id == p and s.rating is not None] for p in xi}
                 if ratings and all(individual.values()):
@@ -244,6 +248,10 @@ class PrematchEngine:
         return values
 
     @staticmethod
+    def _statistics_valid(block: list[PlayerStat] | None) -> bool:
+        return bool(block) and len({p.player_id for p in block or []}) == len(block or [])
+
+    @staticmethod
     def _minutes_valid(block: list[PlayerStat] | None) -> bool:
-        return bool(block) and len({p.player_id for p in block or []}) == len(block or []) and all(
+        return PrematchEngine._statistics_valid(block) and all(
             type(p.minutes) is int and 0 <= p.minutes <= 150 for p in block or [])

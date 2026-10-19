@@ -181,3 +181,12 @@ def test_core_player_threshold_is_inclusive_at_600_minutes():
     assert engine(data).team(data[0][10], 1)["cadre_suspendu"] is True
     data[1][(0, 1)][0] = PlayerStat(1, 59, 7)
     assert engine(data).team(data[0][10], 1)["cadre_suspendu_rouge"] is False
+
+
+def test_missing_minutes_do_not_hide_observed_ratings():
+    data = pack()
+    data[1][(0, 1)][0] = PlayerStat(1, None, 7.0)
+    values = engine(data).team(data[0][10], 1)
+    assert values["absents_cles"] is None
+    assert values["cadre_suspendu_rouge"] is None
+    assert values["force_xi"] == 0

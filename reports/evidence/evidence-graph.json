@@ -12780,7 +12780,8 @@
     {"decision_id":"MISSION036-PREMATCH-001","ledger_record_hash":"6acf7c7a98fc32f9979cccc12bdb8a6756be20c6d3cd8b75f2e4c8979997a365"},
     {"decision_id":"MISSION036-PREMATCH-002","ledger_record_hash":"88ff7fd5117342533cb052f6cb541c337d0cc5c2206273014525b322c7833e7f"},
     {"decision_id":"MISSION036-PREMATCH-004","ledger_record_hash":"501967ec75b3a0506c28108679759398529c152ce20004254f7b905910d765ef"},
-    {"decision_id":"MISSION036-PREMATCH-005","ledger_record_hash":"18d20f8c0ee2072866fd81bc3c2a3c0c3e9e0f93cae1b5f15e262ad1c8c46b97"}
+    {"decision_id":"MISSION036-PREMATCH-005","ledger_record_hash":"18d20f8c0ee2072866fd81bc3c2a3c0c3e9e0f93cae1b5f15e262ad1c8c46b97"},
+    {"decision_id":"MISSION036-PREMATCH-006","ledger_record_hash":"c47abd7e1fef38f80159e43b565603d4c45039bb7c62cae5ef9ed2ac801610fd"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
