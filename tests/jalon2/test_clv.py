@@ -126,3 +126,16 @@ def test_normalized_report_reuses_model_and_rejects_conflicts(tmp_path: Path):
         (KICKOFF + timedelta(hours=1)).isoformat()}]}), encoding="utf-8")
     with pytest.raises(ValueError, match="metadata"):
         clv.load([path])
+
+
+def test_single_three_hour_quote_does_not_fill_distant_horizons():
+    rows = clv.calculate([snapshot(3, (2, 4, 4))], DAY, as_of=KICKOFF)
+    assert all(r["status"] == "MISSING_HORIZON" and r["price"] is None
+               and r["gap_minutes"] is None for r in rows if r["horizon"] != 2)
+    assert all(r["status"] == "OK" and r["gap_minutes"] == -60
+               and r["close_gap_minutes"] == 180 for r in rows if r["horizon"] == 2)
+
+
+def test_late_requires_nearby_pinnacle_opening():
+    rows = clv.calculate([snapshot(48, ()), snapshot(2, (2, 4, 4))], DAY, as_of=KICKOFF)
+    assert all(r["late"] is None for r in rows)

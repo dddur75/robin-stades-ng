@@ -26,7 +26,7 @@ BOOKS = {stable_internal_id("bookmaker", "the-odds-api", b): b
 ISSUES = {Selection.HOME: "1", Selection.DRAW: "N", Selection.AWAY: "2"}
 Row = dict[str, Any]
 DETAIL_FIELDS = ("match", "issue", "book", "horizon", "price", "clv", "late",
-                 "p_fair_close", "observed_at", "close_at", "status")
+                 "p_fair_close", "observed_at", "close_at", "gap_minutes", "close_gap_minutes", "status")
 SUMMARY_FIELDS = ("book", "band", "horizon", "n", "mean_clv", "ci95_low", "ci95_high")
 
 
@@ -77,7 +77,9 @@ def calculate(snapshots: list[OddsSnapshot], day: date, *, as_of: datetime) -> l
 
         def nearest(times: Iterable[datetime], hours: int) -> datetime | None:
             target = kickoff - timedelta(hours=hours)
-            return min(times, key=lambda at: (abs(at - target), at), default=None)
+            at = min(times, key=lambda at: (abs(at - target), at), default=None)
+            limit = timedelta(hours=1.5 if hours == 2 else 6)
+            return at if at is not None and abs(at - target) <= limit else None
 
         p2 = nearest(pin, 2)
         for book in sorted(set(prices) & set(FR_BOOKS)):
@@ -99,7 +101,9 @@ def calculate(snapshots: list[OddsSnapshot], day: date, *, as_of: datetime) -> l
                     result.append(dict(zip(DETAIL_FIELDS, (
                         fixture, issue, book, horizon, price, clv, late, fair.get(issue),
                         at.isoformat() if at else None, close.isoformat() if close else None,
-                        "OK" if clv is not None else "MISSING_PRICE_OR_CLOSE",
+                        (at - (kickoff - timedelta(hours=horizon))).total_seconds() / 60 if at else None,
+                        (kickoff - close).total_seconds() / 60 if close else None,
+                        "MISSING_HORIZON" if at is None else "OK" if clv is not None else "MISSING_PRICE_OR_CLOSE",
                     ), strict=True)))
     return result
 
