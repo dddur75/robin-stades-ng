@@ -1,0 +1,21 @@
+{
+  "mission_id": "CLV_CUMUL_2026_27_PAPER",
+  "authorized_stages": [
+    "E1",
+    "E2",
+    "E3A",
+    "E3B"
+  ],
+  "maximum_stage": "E3B",
+  "external_effects": {
+    "github": "read existing artifacts; one branch from main and one PR; no merge",
+    "provider_calls": 0,
+    "neon_writes": 0,
+    "r2_operations": 0,
+    "real_bets": 0
+  },
+  "compute_budget": "One offline cumulative calculation over all available 2026-27 normalized reports through 2026-10-19; synthetic and repository verification. No new collection.",
+  "time_budget": "PT1H",
+  "source_hash": "ca238aa2503a07b23f570fcab0c9372149b1de7e1dfb43fdc7c5eb9b5246e31f",
+  "expires_at": "2026-10-21T23:59:59Z"
+}
