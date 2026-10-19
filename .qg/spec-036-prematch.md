@@ -35,8 +35,14 @@ se terminer par le tableau complet critère × ligue × saison.
 Méthode et conventions : `docs/prematch-criteria.md`.
 Livrables : `reports/prematch/mission036/`.
 
-## Reprise
+## Résumé de construction — 20 octobre 2026
 
-Sources et calculs livrés ; vérification ciblée 433 tests verts. Suite complète
-en cours avec les temporaires sur stockage local. Restent : consigner son bilan,
-ouvrir l'unique PR et y terminer par le tableau de couverture.
+- PR unique #121, branche `codex/036-prematch-criteria`, six commits depuis main.
+- Sept Parquet 2018–2024 : 70 084 matchs, clés complètes, 38 ligues, 225 cellules de couverture.
+- Source figée `fac718f3` : 17 433 contextes ; 52 651 matchs restent au dénominateur sans contexte.
+- État-score : 15 061 lignes équipe-match ; points tardifs : 16 113 ; suspension rouge de cadre : 9.
+- Absences/XI restent nulls faute de croisement ; tirs, cumul de jaunes et calendrier toutes compétitions non prouvés.
+- 577 tests ciblés verts, 28 tests nouveaux, 172 recalculs décalés ; lint, typage, sécurité et hashes verts.
+- Suite globale : 4 066 verts / 50 ignorés / 36 échecs ; provenance corrigée, 35 échecs de capture documentés.
+- Reste : revue indépendante et disponibilité d'un index de rattachement / des payloads déjà collectés hors holdout.
+- Zéro appel fournisseur, accès R2, écriture Neon ou pari ; fichiers interdits inchangés ; aucune fusion.

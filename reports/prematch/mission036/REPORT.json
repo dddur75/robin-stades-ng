@@ -1,5 +1,5 @@
 {
-  "calculator_sha256": "c23c02526cb4e6dcf1c60cbfda23df24fb4cc7907df92ea7d0a58d7600f47601",
+  "calculator_sha256": "de46d3b8166a5035267d5d79b93fe2f0e6e07fdde2762282b7c53e440725f9bc",
   "claim_id": "DATA.MISSION036.PREMATCH.V1",
   "contexts": {
     "fixture_context_missing": 52651,
@@ -22,27 +22,27 @@
     {
       "path": "season=2020.parquet",
       "rows": 11363,
-      "sha256": "76f81a8a83b1786ed8413f4b3c3ff5d1240f6fc761522c099ee9b30aa72f6eda"
+      "sha256": "a46a21d2e204575aa85bc5e6eb31398b0c46fddce10dd1bacf7c170949ac10e4"
     },
     {
       "path": "season=2021.parquet",
       "rows": 12337,
-      "sha256": "e41efb1f54cea53f4c1512100d0a8c39b4c6847f1ee99864aab43d6fab5a0899"
+      "sha256": "42944ec6479e2b2eeccf5c07ab5a1c9a64301aa5ffd315623a3cc542da7b7957"
     },
     {
       "path": "season=2022.parquet",
       "rows": 12466,
-      "sha256": "2a480d7b53179c88341c704d5149cc980508b38804b7460e3d3e7248c7b84a9b"
+      "sha256": "c2ff37c36d251122be05ddfe8a0485fb8fdd2be7afee00fc74ab4d9c5c55ee6a"
     },
     {
       "path": "season=2023.parquet",
       "rows": 12481,
-      "sha256": "e1bd1347ca98980094b7e3fcac097096b29245b00968323470bb92216373f9e7"
+      "sha256": "d38c3324806c3102eae8da253b6a436504a6d5d011a3ac1ed26c08a5f6374fde"
     },
     {
       "path": "season=2024.parquet",
       "rows": 12426,
-      "sha256": "2e7a23e8f1ed3f6b39e0f88e0b2de496132e98ab14d850e4aefb5de7f623a2b0"
+      "sha256": "544f2f8807fb595a23a25cb6105b1dbeb0818d398475e5c9b83526b1e1a791f9"
     }
   ],
   "provider_calls": 0,

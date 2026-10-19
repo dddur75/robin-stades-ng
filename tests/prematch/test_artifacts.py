@@ -14,6 +14,14 @@ ROOT = Path(__file__).resolve().parents[2]
 OUTPUT = ROOT / "reports/prematch/mission036"
 
 
+def test_delivered_report_identifies_the_current_calculator():
+    code = ROOT / "src/robin/prematch"
+    digest = hashlib.sha256(b"".join((code / name).read_bytes()
+        for name in ("criteria.py", "sources.py", "export.py"))).hexdigest()
+    report = json.loads((OUTPUT / "REPORT.json").read_text())
+    assert report["calculator_sha256"] == digest
+
+
 def test_delivered_parquets_reconcile_with_coverage_and_population():
     report = json.loads((OUTPUT / "REPORT.json").read_text())
     seen = set()

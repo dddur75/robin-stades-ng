@@ -151,13 +151,13 @@ def export_snapshot(snapshot: Snapshot, targets: list[Target], output: Path) -> 
         coverage.append(dict(competition=league, season=season, criterion=metric, total_team_rows=total,
                              non_null=non_null, rate=non_null / total, null_reasons=json.dumps(reasons, sort_keys=True)))
     with (output / "coverage.csv").open("w", newline="", encoding="utf-8") as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(coverage[0]))
+        writer = csv.DictWriter(stream, fieldnames=list(coverage[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(coverage)
     inventory_path = output / "source-inventory.csv"
     if snapshot.inventory:
         with inventory_path.open("w", newline="", encoding="utf-8") as stream:
-            writer = csv.DictWriter(stream, fieldnames=list(snapshot.inventory[0]))
+            writer = csv.DictWriter(stream, fieldnames=list(snapshot.inventory[0]), lineterminator="\n")
             writer.writeheader()
             writer.writerows(snapshot.inventory)
     else:
@@ -240,7 +240,7 @@ def _source_coverage(snapshot: Snapshot, targets: list[Target], output: Path) ->
               "events_file_present", "goal_trajectory_valid", "official_xi", "player_block",
               "player_minutes_complete", "xi_and_player_block"]
     with (output / "source-coverage.csv").open("w", newline="", encoding="utf-8") as stream:
-        writer = csv.DictWriter(stream, fieldnames=fields)
+        writer = csv.DictWriter(stream, fieldnames=fields, lineterminator="\n")
         writer.writeheader()
         for (league, season), c in sorted(counts.items()):
             writer.writerow(dict(competition=league, season=season, **{k: c[k] for k in fields[2:]}))

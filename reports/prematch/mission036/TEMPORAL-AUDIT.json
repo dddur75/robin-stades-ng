@@ -1318,7 +1318,7 @@
       "cutoff": "2020-09-18T15:30:00+00:00",
       "fixture_id": 587176,
       "non_null": [],
-      "result_sha256": "42847b57bf55c31568ad1109dcadc696dece352d3216480f7214cfb005391769",
+      "result_sha256": "c0191c525fa9a5c505cefe524efb4f650c4be1ca21f1efaccf391b60f12b2b54",
       "season": 2020,
       "team_id": 157
     },
@@ -1327,7 +1327,7 @@
       "cutoff": "2020-09-18T15:30:00+00:00",
       "fixture_id": 587176,
       "non_null": [],
-      "result_sha256": "42847b57bf55c31568ad1109dcadc696dece352d3216480f7214cfb005391769",
+      "result_sha256": "c0191c525fa9a5c505cefe524efb4f650c4be1ca21f1efaccf391b60f12b2b54",
       "season": 2020,
       "team_id": 174
     },
@@ -1339,7 +1339,7 @@
         "etat_score_buts10",
         "points_tardifs5"
       ],
-      "result_sha256": "fdeb80031ce67c129b26cca15581f4c567c81c6d3f2fa0c88d6e6a3ea16cb485",
+      "result_sha256": "40228988a80e563744921aea37c811b5f17be2bb248b2b3ad79f57c5bfa557d1",
       "season": 2020,
       "team_id": 172
     },
@@ -1351,7 +1351,7 @@
         "etat_score_buts10",
         "points_tardifs5"
       ],
-      "result_sha256": "1fd999a52840df366cf5d5824b899abdaa86185807004174671250c43ac7a69b",
+      "result_sha256": "91c0eeb57e3aeed068a42cadc42edcd9c109a792cbb5524532704631378680cb",
       "season": 2020,
       "team_id": 188
     },
@@ -1363,7 +1363,7 @@
         "etat_score_buts10",
         "points_tardifs5"
       ],
-      "result_sha256": "bc13355cb84487270efa3f56c64049eb772da1fb8d52fbee8f732de935efef7c",
+      "result_sha256": "cb07c85818993a02c0b6662fa738c1b05b1de5f72af01c2b102474f2dfcd6f59",
       "season": 2021,
       "team_id": 163
     },
@@ -1375,7 +1375,7 @@
         "etat_score_buts10",
         "points_tardifs5"
       ],
-      "result_sha256": "4dd94c0e444f3c2e1252090e8bded19a6bc80746801972550dff4512bdce6888",
+      "result_sha256": "5c4ba7d56e3100d36c9b2b1a360104b660ebe8d09b21ecde6f1d72ec5b6a0b06",
       "season": 2021,
       "team_id": 157
     },
@@ -1387,7 +1387,7 @@
         "etat_score_buts10",
         "points_tardifs5"
       ],
-      "result_sha256": "4495e50ae0ee603738d1525677b253ca2c73a7aeefe8b3a7d0e6a2ca693928a7",
+      "result_sha256": "07c512d193bba19122acf025a11d2739386d99ddac66418ee7f5778be3688618",
       "season": 2021,
       "team_id": 188
     },
@@ -1399,7 +1399,7 @@
         "etat_score_buts10",
         "points_tardifs5"
       ],
-      "result_sha256": "0147e8f0893bb6c6e7de2af8617c0b9f53899381c6396e0454045b66c53be112",
+      "result_sha256": "e18b15fd3597b4c1723e499580edef4b5113050aa1a817e7a6cc8e6b296d62e0",
       "season": 2021,
       "team_id": 173
     },
@@ -1411,7 +1411,7 @@
         "etat_score_buts10",
         "points_tardifs5"
       ],
-      "result_sha256": "b5323e552b382aec1159b87c735ecf43b41b609efe56b64f4cabdf71831b1ed0",
+      "result_sha256": "d5d36ae1c930f6a971b8ebe2a894210de64f7fb3387331138e3a6a6c6be1e408",
       "season": 2022,
       "team_id": 169
     },
@@ -1423,7 +1423,7 @@
         "etat_score_buts10",
         "points_tardifs5"
       ],
-      "result_sha256": "dc561daea0906aa8c3ab2830f24195eec38655aa9603f34b2fb8c561bf68e319",
+      "result_sha256": "e52f2f7aba5a01dde8c429898250bef9d39f7e33c610d0329921c5045a6275bb",
       "season": 2022,
       "team_id": 157
     },
@@ -1435,7 +1435,7 @@
         "etat_score_buts10",
         "points_tardifs5"
       ],
-      "result_sha256": "66e85c187aa1250e155b007875be1449c4b1c7e6306994c7e0eeccfcbe228656",
+      "result_sha256": "72b39db6956ac7b59c8bb4ea59dd888563770f7584b16bfd1a05fb48942ea99d",
       "season": 2022,
       "team_id": 162
     },
@@ -1447,7 +1447,7 @@
         "etat_score_buts10",
         "points_tardifs5"
       ],
-      "result_sha256": "586057e7bd0059d983aad7a962566c4a0c700c45e8c890e284e136599aba2e01",
+      "result_sha256": "382693b9ea30fc97ac0556a56fc82185c782aaad0ed9a669f7fb340e0c1eb422",
       "season": 2022,
       "team_id": 192
     },
@@ -1456,7 +1456,7 @@
       "cutoff": "2023-08-18T15:30:00+00:00",
       "fixture_id": 1048881,
       "non_null": [],
-      "result_sha256": "398151aa49ecd74dc7222d22d3edc0afeaaa2d4d8519b008df29b514944f2616",
+      "result_sha256": "ac1dd8130149ec19b60a8e89bdf21accf05bb4450816deb88c6d737a5d08ef0d",
       "season": 2023,
       "team_id": 162
     },
@@ -1465,7 +1465,7 @@
       "cutoff": "2023-08-18T15:30:00+00:00",
       "fixture_id": 1048881,
       "non_null": [],
-      "result_sha256": "a7b4ee5a3205ef21eb85cef9320331b4783efed6cd898e9e08ab82507879920e",
+      "result_sha256": "fc7c4a5ee850b8670a1b21fcbdd6fb982d97d06532875167a473ba607070b85f",
       "season": 2023,
       "team_id": 157
     },
@@ -1474,7 +1474,7 @@
       "cutoff": "2024-08-23T15:30:00+00:00",
       "fixture_id": 1223975,
       "non_null": [],
-      "result_sha256": "2ca882281ffadf525793b26a194403628fd79d266701a6f7950c497f4487ed66",
+      "result_sha256": "7b18c6bce8fd4c9d46f9a49a9bcc20a9df7a269a68adf8c86ecf6a47a1c4aab1",
       "season": 2024,
       "team_id": 163
     },
@@ -1483,7 +1483,7 @@
       "cutoff": "2024-08-23T15:30:00+00:00",
       "fixture_id": 1223975,
       "non_null": [],
-      "result_sha256": "2ca882281ffadf525793b26a194403628fd79d266701a6f7950c497f4487ed66",
+      "result_sha256": "7b18c6bce8fd4c9d46f9a49a9bcc20a9df7a269a68adf8c86ecf6a47a1c4aab1",
       "season": 2024,
       "team_id": 168
     },
@@ -1492,7 +1492,7 @@
       "cutoff": "2020-09-13T09:00:00+00:00",
       "fixture_id": 605065,
       "non_null": [],
-      "result_sha256": "2afa7d5759f1013a57f255a5e0f339e8781b7ff4195fa4a8d1c0d04d66d84314",
+      "result_sha256": "6f4b61e3574eea3459ee30a23ccadc9d21ea80d46b84d64627422c71db33b1c6",
       "season": 2020,
       "team_id": 542
     },
@@ -1501,7 +1501,7 @@
       "cutoff": "2020-09-13T09:00:00+00:00",
       "fixture_id": 605065,
       "non_null": [],
-      "result_sha256": "bfa37be5c9b5c58085c79e4654d88c202b9f13b59243e3f17dd5a5ce58086f1b",
+      "result_sha256": "cd0307ff6d9e63ea5664856ec8934b67c58f87bbca0452c283dc1611ed51779a",
       "season": 2020,
       "team_id": 543
     },
@@ -1510,7 +1510,7 @@
       "cutoff": "2021-08-14T17:00:00+00:00",
       "fixture_id": 720739,
       "non_null": [],
-      "result_sha256": "1110c052b72193d1d21ea73f2600b4edacc87713dd00e6e05e0676af413bc8fb",
+      "result_sha256": "6cfa6c741ec2de3db2e588b96e69952b40935a90fea8a72f8f7f19455218ef06",
       "season": 2021,
       "team_id": 542
     },
@@ -1519,7 +1519,7 @@
       "cutoff": "2021-08-14T17:00:00+00:00",
       "fixture_id": 720739,
       "non_null": [],
-      "result_sha256": "a5f387022b37597c0d9c7069beaaac4c86eb86a9f7ca955b4b1ad41b2420eba9",
+      "result_sha256": "1bb977988e1d62e6f51f2fe3ec7bb23e2e6e7d6bccfba85418ad9bec4c72c9b6",
       "season": 2021,
       "team_id": 541
     },
@@ -1528,7 +1528,7 @@
       "cutoff": "2022-08-15T12:30:00+00:00",
       "fixture_id": 877942,
       "non_null": [],
-      "result_sha256": "9b83d550c04be1d04d5b44b7f74621685b391ab68a01c231e362e744aadf0021",
+      "result_sha256": "40ee3d36ed9e1529db934affa0b8fbfb1159bc39285e781da441c1233c20f5f4",
       "season": 2022,
       "team_id": 531
     },
@@ -1537,7 +1537,7 @@
       "cutoff": "2022-08-15T12:30:00+00:00",
       "fixture_id": 877942,
       "non_null": [],
-      "result_sha256": "b2abe4001faf9c347e550fde6c4be82705353338bc3477874c0f821e05ffb182",
+      "result_sha256": "24a0b0c28966c854542f89123f83afbf6c5de24347014cb58401e272548334f3",
       "season": 2022,
       "team_id": 798
     },
@@ -1546,7 +1546,7 @@
       "cutoff": "2023-08-11T14:30:00+00:00",
       "fixture_id": 1037952,
       "non_null": [],
-      "result_sha256": "a7321e8cfb25930d1d99dc966a26710331ec49620ae0d31288f92cad8fda0042",
+      "result_sha256": "00a64de64ff5db7c6f35cfddf6e1cb0e74b44d9f92cdfc5209198481fded3d4b",
       "season": 2023,
       "team_id": 723
     },
@@ -1555,7 +1555,7 @@
       "cutoff": "2023-08-11T14:30:00+00:00",
       "fixture_id": 1037952,
       "non_null": [],
-      "result_sha256": "7b6c019afc300ad54850080b3f81451775f98887fcb41abf4e72c386d69edce7",
+      "result_sha256": "bf2d7280d6c28b3bb0a97e4f0638b91290284be4a6a1d30aded50216c9205ada",
       "season": 2023,
       "team_id": 728
     },
@@ -1564,7 +1564,7 @@
       "cutoff": "2024-08-15T14:00:00+00:00",
       "fixture_id": 1208494,
       "non_null": [],
-      "result_sha256": "efdbf9408bd78744feabc349b3e791124bbb4bb7a29eb74cb064c76bbe0c9aa2",
+      "result_sha256": "c75ace02b1e0cb91d431450ec4a8d075a54b392477c3ccbc8763a83e87c3b7ef",
       "season": 2024,
       "team_id": 531
     },
@@ -1573,7 +1573,7 @@
       "cutoff": "2024-08-15T14:00:00+00:00",
       "fixture_id": 1208494,
       "non_null": [],
-      "result_sha256": "43870033de586e595c76d23f66e76731e82a7510e5e0dcafdbd21712acca268d",
+      "result_sha256": "1329fd22b7f8b281d94c2fc31a38a077310982f31d51a639aaef816cf2d33e36",
       "season": 2024,
       "team_id": 546
     },
@@ -1708,7 +1708,7 @@
       "cutoff": "2021-01-12T17:15:00+00:00",
       "fixture_id": 592141,
       "non_null": [],
-      "result_sha256": "0cb412590ccd0d545d69c4404d08d670ee263b3bf9494e99e3ab23b2cae5f1aa",
+      "result_sha256": "c833f4f5795012619e567b452b854de736b33b1c99f0ca47431085aefe40d1ca",
       "season": 2020,
       "team_id": 44
     },
@@ -1717,7 +1717,7 @@
       "cutoff": "2021-01-12T17:15:00+00:00",
       "fixture_id": 592141,
       "non_null": [],
-      "result_sha256": "3589c76c722dc5531fd061665d4d820f62a222ace91c4d760c7eaacbd40465ea",
+      "result_sha256": "e51ea9b561932cafe23be80fefaa91c9368163c2ce5680ea1513d90fe9a77eda",
       "season": 2020,
       "team_id": 33
     },
@@ -1726,7 +1726,7 @@
       "cutoff": "2021-08-13T16:00:00+00:00",
       "fixture_id": 710556,
       "non_null": [],
-      "result_sha256": "47443b2c987edca31ece927ab8763d1f390b0ec321b31676134de1a3f1ca9cbd",
+      "result_sha256": "382622cb1ce7942355c6a527ddda981e0cc740c14701314a62f68a44c5d1d294",
       "season": 2021,
       "team_id": 55
     },
@@ -1735,7 +1735,7 @@
       "cutoff": "2021-08-13T16:00:00+00:00",
       "fixture_id": 710556,
       "non_null": [],
-      "result_sha256": "52dd9f99d3e2a5c17f0f3db15bcbe8ef3cad26a4698a28690219e38e2b0314b8",
+      "result_sha256": "3860069e1c8fb1d6970478098297c5cbdd00e071f84b24850869228946a10d02",
       "season": 2021,
       "team_id": 42
     },
@@ -1744,7 +1744,7 @@
       "cutoff": "2022-08-05T16:00:00+00:00",
       "fixture_id": 867946,
       "non_null": [],
-      "result_sha256": "a759ced0c96a387c6119f177b1615c199f100d72fb8fd008bfc2107862bb074b",
+      "result_sha256": "bdda1af1f18a09978e8a3c4d1d277595ebbfb673e8349cef10842d0091ab3bda",
       "season": 2022,
       "team_id": 52
     },
@@ -1753,7 +1753,7 @@
       "cutoff": "2022-08-05T16:00:00+00:00",
       "fixture_id": 867946,
       "non_null": [],
-      "result_sha256": "a759ced0c96a387c6119f177b1615c199f100d72fb8fd008bfc2107862bb074b",
+      "result_sha256": "bdda1af1f18a09978e8a3c4d1d277595ebbfb673e8349cef10842d0091ab3bda",
       "season": 2022,
       "team_id": 42
     },
@@ -1762,7 +1762,7 @@
       "cutoff": "2023-08-11T16:00:00+00:00",
       "fixture_id": 1035037,
       "non_null": [],
-      "result_sha256": "787146a61943b9aa5c019faffe4f6d537ad4e96ad6bfa23ddaef1553d84f4e63",
+      "result_sha256": "1f3365f46b3e4d8d913bc3ab5f199639c0976f14731f8d4610e10dc8d2c3ea1f",
       "season": 2023,
       "team_id": 44
     },
@@ -1771,7 +1771,7 @@
       "cutoff": "2023-08-11T16:00:00+00:00",
       "fixture_id": 1035037,
       "non_null": [],
-      "result_sha256": "9328d16536aea23329f3c29fb5fe189a4856b1cb53face66c3eb612584e72f1b",
+      "result_sha256": "913f634ee7bef87ded6e0d66ad7b92bf7dbf8e0c10da6e6d298efbd6da74ac98",
       "season": 2023,
       "team_id": 50
     },
@@ -1780,7 +1780,7 @@
       "cutoff": "2024-08-16T16:00:00+00:00",
       "fixture_id": 1208021,
       "non_null": [],
-      "result_sha256": "bcf727f3219ed1c22380b2db49a22974cfeb07f2beb22cb5f01c5f4fefb382cf",
+      "result_sha256": "679aebd5a53f0ccfcc8d86267f94a8dcafd8e24b7a165184898d32ac2f165767",
       "season": 2024,
       "team_id": 33
     },
@@ -1789,7 +1789,7 @@
       "cutoff": "2024-08-16T16:00:00+00:00",
       "fixture_id": 1208021,
       "non_null": [],
-      "result_sha256": "cec7bd732e70c8985113b728209095bc4ddba6eaa2775b4364cabf66a1a6d99c",
+      "result_sha256": "ea14b5a995ccb1b6c2b2c6b014cce5c874f99836ca0b9741b3e558102961936c",
       "season": 2024,
       "team_id": 36
     },
@@ -1798,7 +1798,7 @@
       "cutoff": "2020-09-30T13:00:00+00:00",
       "fixture_id": 608480,
       "non_null": [],
-      "result_sha256": "128f9b3ad566dc48a0fb55660c368f7f86bdf42add36a97b177c9cc960a9f9c2",
+      "result_sha256": "14e7ec8150aee3e2a9ff7341b19a1990b721ed96c01aaabc492f16c7253a42b6",
       "season": 2020,
       "team_id": 506
     },
@@ -1807,7 +1807,7 @@
       "cutoff": "2020-09-30T13:00:00+00:00",
       "fixture_id": 608480,
       "non_null": [],
-      "result_sha256": "f2da301f89da96cf17ab01b0c18486ea13bf928503de4fdb5286eeb5e7ffc416",
+      "result_sha256": "3dc4937708e2266c2055e01bb3cff57aefc7abe94f6e4a790f5cedfb6d413619",
       "season": 2020,
       "team_id": 505
     },
@@ -1816,7 +1816,7 @@
       "cutoff": "2021-08-22T13:30:00+00:00",
       "fixture_id": 731584,
       "non_null": [],
-      "result_sha256": "c8b1d639a0450d59b869e1092792c3178111d92e6f64e26dce36b65a852f80b2",
+      "result_sha256": "471cc96c91729a557420b9e26a539e47b043e83f77c7fe892baa2654dbdae37b",
       "season": 2021,
       "team_id": 500
     },
@@ -1825,7 +1825,7 @@
       "cutoff": "2021-08-22T13:30:00+00:00",
       "fixture_id": 731584,
       "non_null": [],
-      "result_sha256": "47443b2c987edca31ece927ab8763d1f390b0ec321b31676134de1a3f1ca9cbd",
+      "result_sha256": "382622cb1ce7942355c6a527ddda981e0cc740c14701314a62f68a44c5d1d294",
       "season": 2021,
       "team_id": 514
     },
@@ -1834,7 +1834,7 @@
       "cutoff": "2022-08-13T13:30:00+00:00",
       "fixture_id": 881780,
       "non_null": [],
-      "result_sha256": "31cb48b6d880a1b0160f693ab5b6d79f041c231b0e439b63879d03539903ee3d",
+      "result_sha256": "08ba21024373542098a2561a99ecb321ad4ec29534eb3b37078fe021a23bd7a3",
       "season": 2022,
       "team_id": 489
     },
@@ -1843,7 +1843,7 @@
       "cutoff": "2022-08-13T13:30:00+00:00",
       "fixture_id": 881780,
       "non_null": [],
-      "result_sha256": "d5d2f611b1b4bc9965615dafacc1bab1d4d5bcfc796234f18c48dbd97316870c",
+      "result_sha256": "2dbd8c4a3c54dcc94179910207ff6b362ab4bf78b042ab097f2e2528b85004b1",
       "season": 2022,
       "team_id": 494
     },
@@ -1852,7 +1852,7 @@
       "cutoff": "2023-08-21T15:45:00+00:00",
       "fixture_id": 1052253,
       "non_null": [],
-      "result_sha256": "2ff1c6ec120ea308896f12f71ab5e359735fb8ec2ada101b0c83302bda49479e",
+      "result_sha256": "35908ab44f428c2273f1616d9486a24d294481860b46675952dfec384649de6f",
       "season": 2023,
       "team_id": 500
     },
@@ -1861,7 +1861,7 @@
       "cutoff": "2023-08-21T15:45:00+00:00",
       "fixture_id": 1052253,
       "non_null": [],
-      "result_sha256": "2ff1c6ec120ea308896f12f71ab5e359735fb8ec2ada101b0c83302bda49479e",
+      "result_sha256": "35908ab44f428c2273f1616d9486a24d294481860b46675952dfec384649de6f",
       "season": 2023,
       "team_id": 489
     },
@@ -1870,7 +1870,7 @@
       "cutoff": "2024-08-18T13:30:00+00:00",
       "fixture_id": 1223595,
       "non_null": [],
-      "result_sha256": "9b793d46c528130443170c113f93a7028165631e4ec9ba8823556f44a267fc96",
+      "result_sha256": "d6df911dbcfc465026f17075dcd288ef2dbf68d29006fcdfb6ad6ac2b5b4e1c0",
       "season": 2024,
       "team_id": 500
     },
@@ -1879,7 +1879,7 @@
       "cutoff": "2024-08-18T13:30:00+00:00",
       "fixture_id": 1223595,
       "non_null": [],
-      "result_sha256": "76bb97bdfc8efa360ce819b4eda1e71074b86aaebd35569c65de1b28f82ba8ab",
+      "result_sha256": "1a8fd4d94da68eab794e2c8340af57239605ac9276304f8c58b3f5163ee3ad70",
       "season": 2024,
       "team_id": 494
     }
