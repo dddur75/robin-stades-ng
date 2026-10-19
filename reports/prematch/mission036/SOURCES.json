@@ -1,0 +1,14 @@
+{
+  "audit": {
+    "conflicting_events": [],
+    "conflicting_fixtures": [],
+    "conflicting_lineups": [],
+    "conflicting_players": [],
+    "invalid_detail_rows": 247,
+    "unlinked_rows": 40561
+  },
+  "inventory_entries": 9803,
+  "inventory_file": "source-inventory.csv",
+  "inventory_sha256": "1424161ca216475781e594c34726062b2fc2f42828b9e8f012ce189f79ad890c",
+  "revision": "fac718f36d0b8e178374d5a8384c1b3cc871f135"
+}

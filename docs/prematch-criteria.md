@@ -100,3 +100,17 @@ Les taux décrivent cette révision publiée, et non tout le stock R2. Le reçu 
 `39315234613-1` atteste 7 283 statistiques joueurs complètes / 70 084. Ces reçus
 ne suffisent pas à reconstruire les payloads non publiés. Aucun accès R2 n'a
 été effectué et aucun secret R2 n'est configuré dans l'environnement de travail.
+
+Les anciennes partitions Ligue 1 perdent l'identifiant de fixture dans les
+familles de détail. Le code historique les relie par `raw_payload_hash` aux
+métadonnées `raw/observations` (`historical.readiness.observation_dimensions`).
+Ces observations ne sont pas publiées individuellement sur la branche retenue ;
+les index de bundles `multi/0/multi` listent des fichiers par date de collecte,
+sans partition de saison permettant d'exclure le holdout avant lecture. Aucun
+payload de ces archives mixtes n'est utilisé. Une réexportation planifiée de
+l'index de rattachement, partitionnée hors holdout, permettrait de reprendre ces
+lignes sans nouvel appel fournisseur.
+
+`games.substitute` n'est pas substitué à `startXI` : les échantillons AUT 2019
+et BRA 2019 marquent chacun 14 joueurs comme non-remplaçants. Une composition
+officielle ne peut pas être déduite de manière fiable de ce champ ancien.

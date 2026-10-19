@@ -1,0 +1,1890 @@
+{
+  "comparisons": [
+    {
+      "competition": "ARG",
+      "cutoff": "2019-07-26T21:00:00+00:00",
+      "fixture_id": 215548,
+      "non_null": [],
+      "result_sha256": "77134ef83afb5a403f640a901dd7dfd26f30ce7a53e7bd2cff5aa27a53abc67a",
+      "season": 2019,
+      "team_id": 436
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2019-07-26T21:00:00+00:00",
+      "fixture_id": 215548,
+      "non_null": [],
+      "result_sha256": "77134ef83afb5a403f640a901dd7dfd26f30ce7a53e7bd2cff5aa27a53abc67a",
+      "season": 2019,
+      "team_id": 441
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2020-03-07T21:00:00+00:00",
+      "fixture_id": 215823,
+      "non_null": [
+        "etat_score_buts10",
+        "cadre_suspendu_rouge",
+        "points_tardifs5"
+      ],
+      "result_sha256": "c72e034350d5650e6d8cf2fcd95313bd7aaf811d51666d5a9ac65b76c75a0995",
+      "season": 2019,
+      "team_id": 455
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2020-03-07T21:00:00+00:00",
+      "fixture_id": 215823,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "41914f9be8595a7db947d2623bb28ed6cdb975a5f57faa29f295ab46157bc501",
+      "season": 2019,
+      "team_id": 435
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2020-02-22T21:50:00+00:00",
+      "fixture_id": 215799,
+      "non_null": [
+        "etat_score_buts10",
+        "cadre_suspendu",
+        "cadre_suspendu_rouge",
+        "points_tardifs5"
+      ],
+      "result_sha256": "198043a14774fa3ccb655416788d474ca3e703bd51ee0b44c7e74e49d694de6e",
+      "season": 2019,
+      "team_id": 455
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2020-02-22T21:50:00+00:00",
+      "fixture_id": 215799,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "e8eec42f4a79905ec300d065869ef2fa2b956d1a4519e0e0496bcb3f59ceb58a",
+      "season": 2019,
+      "team_id": 446
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2020-11-01T16:15:00+00:00",
+      "fixture_id": 643575,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "17379d38c56ecdd01a987ff461aaba336ff7097c79480fa34333b87eb3c751d8",
+      "season": 2020,
+      "team_id": 436
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2020-11-01T16:15:00+00:00",
+      "fixture_id": 643575,
+      "non_null": [
+        "etat_score_buts10",
+        "cadre_suspendu_rouge",
+        "points_tardifs5"
+      ],
+      "result_sha256": "de5479dff80d09a3c3c988582ec6738f74c8aebfdc2ec331d0f2c723191b1e83",
+      "season": 2020,
+      "team_id": 455
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2021-01-17T22:10:00+00:00",
+      "fixture_id": 656995,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "42b6d76e8d5e07a2b440db8e4b225636225cb4d3414d4583bed475915b558c07",
+      "season": 2020,
+      "team_id": 449
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2021-01-17T22:10:00+00:00",
+      "fixture_id": 656995,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "93e67d6bc2abdd106559b31acca0b3da27becf8ca8ce1a845fe210c81e380034",
+      "season": 2020,
+      "team_id": 451
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2021-02-14T21:30:00+00:00",
+      "fixture_id": 674018,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "b4edb589edb5373f175deec11ada0d02e5b8a3b22f7e13483212706734bce11c",
+      "season": 2021,
+      "team_id": 450
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2021-02-14T21:30:00+00:00",
+      "fixture_id": 674018,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "fc28e27cc41d5b33bc439216b49d4fa33579e6147f230546a3b6fb08b7db472f",
+      "season": 2021,
+      "team_id": 435
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2021-12-11T22:00:00+00:00",
+      "fixture_id": 720504,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "1cdb22b9b269d0ca813362749ab3771f4e3e8470605f1f940d29190e6bf40034",
+      "season": 2021,
+      "team_id": 451
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2021-12-11T22:00:00+00:00",
+      "fixture_id": 720504,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "c7d3f8142e3d669bfb535c1d7566954737783d864b766eea57268f1a14333265",
+      "season": 2021,
+      "team_id": 1065
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2022-02-10T19:15:00+00:00",
+      "fixture_id": 831664,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "0e2e69c9561cf1d30a4fc4edf754e6caf5b5c45dea39d0fe150b81b27084479a",
+      "season": 2022,
+      "team_id": 444
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2022-02-10T19:15:00+00:00",
+      "fixture_id": 831664,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "47e02e2f68fea2e2c8fad3cd568cbe1950b60aca9fc48d22b6887511ee80947b",
+      "season": 2022,
+      "team_id": 458
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2022-10-22T16:30:00+00:00",
+      "fixture_id": 863546,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "8eb3b5a1c649b244e50ccaade2326b2d2aa075681de6bc450b0419540ea6fb32",
+      "season": 2022,
+      "team_id": 442
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2022-10-22T16:30:00+00:00",
+      "fixture_id": 863546,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "9d238d104b3546d613edb50175d33a9e30d74e9941a500fc8bcf91632da964b6",
+      "season": 2022,
+      "team_id": 455
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2023-08-19T21:00:00+00:00",
+      "fixture_id": 971182,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "b060d3b61bea65e151a6df7f7b74bce3c90b20b89c56deeddada085f60e3e457",
+      "season": 2023,
+      "team_id": 438
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2023-08-19T21:00:00+00:00",
+      "fixture_id": 971182,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "4b387b6c8d01cfa82b3ced90a83099a813abe9ccf6fcc90eb763bd332a6d7cb1",
+      "season": 2023,
+      "team_id": 2432
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2023-12-16T21:00:00+00:00",
+      "fixture_id": 1147006,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "d321dd4c1c288688c45969d1292b6f735511a0c1d378504af929630364816eeb",
+      "season": 2023,
+      "team_id": 437
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2023-12-16T21:00:00+00:00",
+      "fixture_id": 1147006,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "d81977c4b23592ec2a3a981ee85485b6321b48ba14cddd030af49f2317fb618c",
+      "season": 2023,
+      "team_id": 1064
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2024-01-26T18:00:00+00:00",
+      "fixture_id": 1158464,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "96fa4b04fd6cfc424847b290db3ad9e49713c2bff8d0f2dee6c3dbfb8ac1d858",
+      "season": 2024,
+      "team_id": 2432
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2024-01-26T18:00:00+00:00",
+      "fixture_id": 1158464,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "6ef23bd73daa245ba85b364d59f2cb57095c6a429fe37e723a7c6d507945e80a",
+      "season": 2024,
+      "team_id": 438
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2024-04-21T15:30:00+00:00",
+      "fixture_id": 1196706,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "b0e7aaff1cb9591a7df5be8ebe87ffbc6c42039277ae604f3fc0ab42f9f10ef5",
+      "season": 2024,
+      "team_id": 435
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2024-04-21T15:30:00+00:00",
+      "fixture_id": 1196706,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "7d10cdf9a242d835b73afb19dcbb2e13a016f202f49d09b343b4a579c329b1d4",
+      "season": 2024,
+      "team_id": 451
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2024-05-05T15:30:00+00:00",
+      "fixture_id": 1198418,
+      "non_null": [
+        "points_tardifs5"
+      ],
+      "result_sha256": "f0588efcdc76c8cf0074ac7ea480c2474250b2a08da4de16c16aa7a33a34e344",
+      "season": 2024,
+      "team_id": 450
+    },
+    {
+      "competition": "ARG",
+      "cutoff": "2024-05-05T15:30:00+00:00",
+      "fixture_id": 1198418,
+      "non_null": [
+        "points_tardifs5"
+      ],
+      "result_sha256": "cb4fc400fd11ae048b50ea549eb7549ac171ac5fa9148de87c631edeaa917b2b",
+      "season": 2024,
+      "team_id": 438
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2019-07-26T15:45:00+00:00",
+      "fixture_id": 165354,
+      "non_null": [],
+      "result_sha256": "77134ef83afb5a403f640a901dd7dfd26f30ce7a53e7bd2cff5aa27a53abc67a",
+      "season": 2019,
+      "team_id": 781
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2019-07-26T15:45:00+00:00",
+      "fixture_id": 165354,
+      "non_null": [],
+      "result_sha256": "77134ef83afb5a403f640a901dd7dfd26f30ce7a53e7bd2cff5aa27a53abc67a",
+      "season": 2019,
+      "team_id": 571
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2020-07-15T15:30:00+00:00",
+      "fixture_id": 568082,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "61bd1c9814b8cdbab169513bede7ad5334f30dd8d5bcebf4a34d31fa71b81c04",
+      "season": 2019,
+      "team_id": 1072
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2020-07-15T15:30:00+00:00",
+      "fixture_id": 568082,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "fb7b8f588b5892cc07f34a15a7457e77c98ad1bb3c0ed304b58b4992444815bf",
+      "season": 2019,
+      "team_id": 601
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2020-07-04T12:00:00+00:00",
+      "fixture_id": 338170,
+      "non_null": [
+        "etat_score_buts10",
+        "cadre_suspendu_rouge",
+        "points_tardifs5"
+      ],
+      "result_sha256": "79e5c9e0cd6e695632bcd49a7c0958fb9f71f20163b5fe88bd6040797d9e744a",
+      "season": 2019,
+      "team_id": 1027
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2020-07-04T12:00:00+00:00",
+      "fixture_id": 338170,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "6cd25a727cdc45329c672aaf30a2471cc6fd6716408d8e16ad517cd2f3f0a87e",
+      "season": 2019,
+      "team_id": 618
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2020-09-10T21:00:00+00:00",
+      "fixture_id": 591460,
+      "non_null": [
+        "etat_score_buts10",
+        "cadre_suspendu_rouge",
+        "points_tardifs5"
+      ],
+      "result_sha256": "538ecbc85a168a510d0a6fefe0caeaaa88b18a271fcb8f1036fb68e969b62fb4",
+      "season": 2020,
+      "team_id": 1026
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2020-09-10T21:00:00+00:00",
+      "fixture_id": 591460,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "abc44205d7e8b6f6a9719d5db42fa5be2ed68377f4210d6ba439aa452ff94fd3",
+      "season": 2020,
+      "team_id": 601
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2021-05-29T12:00:00+00:00",
+      "fixture_id": 705618,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "7616f203939befa5cfbc247a27c7fcf2e8ce94b92003c85f99e6e3015252e850",
+      "season": 2020,
+      "team_id": 1027
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2021-05-29T12:00:00+00:00",
+      "fixture_id": 705618,
+      "non_null": [],
+      "result_sha256": "b12302bc719e7818c783c638322879c1c407188ce7606fd2e689876c0a93da7f",
+      "season": 2020,
+      "team_id": 1405
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2020-09-13T09:30:00+00:00",
+      "fixture_id": 591464,
+      "non_null": [
+        "etat_score_buts10",
+        "cadre_suspendu_rouge",
+        "points_tardifs5"
+      ],
+      "result_sha256": "3b6618b610b7f01053373df8ce96a92d8d079801eb1b53dd662892136a8ccfb5",
+      "season": 2020,
+      "team_id": 1027
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2020-09-13T09:30:00+00:00",
+      "fixture_id": 591464,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "797a81d94380d5fe5c7f67a4b7bcf4d79494e6f702e4cb149012bbda41fcbf64",
+      "season": 2020,
+      "team_id": 637
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2021-07-23T15:30:00+00:00",
+      "fixture_id": 718911,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "8f84837e43b5c9f5e61825c4222fa663c8c66ff038e890acd804945444eabbd9",
+      "season": 2021,
+      "team_id": 637
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2021-07-23T15:30:00+00:00",
+      "fixture_id": 718911,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "e1c148e259cafc91d3cbc244c368e23845d151b56d9a1382fc6c47988e20a50f",
+      "season": 2021,
+      "team_id": 571
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2022-05-29T12:00:00+00:00",
+      "fixture_id": 862892,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "8a88d67acf3720e75b094ab12b9e275646a4ed7b255631bbf037b436221f24b6",
+      "season": 2021,
+      "team_id": 781
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2022-05-29T12:00:00+00:00",
+      "fixture_id": 862892,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "f9d54820c6d44cf81776e8c706290d19554313fd0a5e3712e8b576ac0ec4c4b7",
+      "season": 2021,
+      "team_id": 1398
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2022-07-22T15:30:00+00:00",
+      "fixture_id": 874355,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "6db3086777a98f0cd288f61b5fb37f5a432a7c3e46080803c6072ce2dba121c4",
+      "season": 2022,
+      "team_id": 571
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2022-07-22T15:30:00+00:00",
+      "fixture_id": 874355,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "5336634164bda0cadbf72bc7b37b4a65d8c4f527b77355c3d4a90b29c3dd630c",
+      "season": 2022,
+      "team_id": 601
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2023-06-11T12:00:00+00:00",
+      "fixture_id": 1030673,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "647ab2a2bd0cc2488269cc9f1b5d0c0bed83f8cf1fa3d43b6a185ec93499c130",
+      "season": 2022,
+      "team_id": 601
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2023-06-11T12:00:00+00:00",
+      "fixture_id": 1030673,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "3f3c976c3770fc3d313c1b69c11ddd679a647ba49b78c60ddb0f981c9f3a2de2",
+      "season": 2022,
+      "team_id": 1399
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2023-07-28T15:30:00+00:00",
+      "fixture_id": 1042887,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "6489ab137e75e1a003c0cc3d3ef9340f905debce73f753d39fd0666f60f716ab",
+      "season": 2023,
+      "team_id": 1026
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2023-07-28T15:30:00+00:00",
+      "fixture_id": 1042887,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "a96720f5fcf4d0dad7b93a5d2bdd2de941227aeea515fc82f88ec97fbc2c51d6",
+      "season": 2023,
+      "team_id": 781
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2024-05-28T14:00:00+00:00",
+      "fixture_id": 1200886,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "36a48cac72e764176e7d46dfea0253aa0a508b94b3565b6325af0753a2bc30d7",
+      "season": 2023,
+      "team_id": 1072
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2024-05-28T14:00:00+00:00",
+      "fixture_id": 1200886,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "25130e2238a098c6a6f9daca223b9351f3bb47630402f119e3f70ed0c71957c7",
+      "season": 2023,
+      "team_id": 601
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2024-08-02T15:30:00+00:00",
+      "fixture_id": 1218574,
+      "non_null": [],
+      "result_sha256": "77134ef83afb5a403f640a901dd7dfd26f30ce7a53e7bd2cff5aa27a53abc67a",
+      "season": 2024,
+      "team_id": 4256
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2024-08-02T15:30:00+00:00",
+      "fixture_id": 1218574,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "54bc5542d25de6d800fe69cc7f579e0a5d007a7637beac4907b55028ba119a6b",
+      "season": 2024,
+      "team_id": 571
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2025-05-23T14:30:00+00:00",
+      "fixture_id": 1361727,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "928010c3a9468fc3af9a41cd8ff2e5629194d1db530200cd75fd949b1d2546ec",
+      "season": 2024,
+      "team_id": 1398
+    },
+    {
+      "competition": "AUT",
+      "cutoff": "2025-05-23T14:30:00+00:00",
+      "fixture_id": 1361727,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "773452afe24594ff1eade897b2d35871c22308e6ea3662571e76dc7b40e05702",
+      "season": 2024,
+      "team_id": 4256
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2019-07-26T15:30:00+00:00",
+      "fixture_id": 182648,
+      "non_null": [],
+      "result_sha256": "77134ef83afb5a403f640a901dd7dfd26f30ce7a53e7bd2cff5aa27a53abc67a",
+      "season": 2019,
+      "team_id": 742
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2019-07-26T15:30:00+00:00",
+      "fixture_id": 182648,
+      "non_null": [],
+      "result_sha256": "77134ef83afb5a403f640a901dd7dfd26f30ce7a53e7bd2cff5aa27a53abc67a",
+      "season": 2019,
+      "team_id": 734
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2020-03-07T16:00:00+00:00",
+      "fixture_id": 182879,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "01031064f6268ffcd486113e76b47951256309226d99aaf0bc3108288e69f216",
+      "season": 2019,
+      "team_id": 266
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2020-03-07T16:00:00+00:00",
+      "fixture_id": 182879,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "346e025fb49c73b8eeee8784a400d6ec35375521acacc633db13ec00d6a76f1a",
+      "season": 2019,
+      "team_id": 739
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2020-08-08T11:30:00+00:00",
+      "fixture_id": 581142,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "655ea85e70222fd6ef52662f3a202b0bd07b7c3b0eb0173bf00d0bc5628a894f",
+      "season": 2020,
+      "team_id": 569
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2020-08-08T11:30:00+00:00",
+      "fixture_id": 581142,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "14e780c473806b4b45578948984996c42186da298914adcba5ff861216cb0369",
+      "season": 2020,
+      "team_id": 736
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2021-04-18T13:00:00+00:00",
+      "fixture_id": 581447,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "8ed331f1e31be908c54cfb3ece6c91951b64874bd4e8f05f32acce04f2e94089",
+      "season": 2020,
+      "team_id": 260
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2021-04-18T13:00:00+00:00",
+      "fixture_id": 581447,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "b02250f9f22ecc6846e95774497248c38b11901fb061da222a5a9a9aa700eb42",
+      "season": 2020,
+      "team_id": 738
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2021-07-23T15:45:00+00:00",
+      "fixture_id": 710038,
+      "non_null": [],
+      "result_sha256": "cd6e225089c3adaacaab4a596ee51eef8626e9426f50e2f0e1f184dee7733a2a",
+      "season": 2021,
+      "team_id": 733
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2021-07-23T15:45:00+00:00",
+      "fixture_id": 710038,
+      "non_null": [],
+      "result_sha256": "d48cc05474a50f853a5a140bcd4fb4b416cdc61228aefb9259cb0fc14ec14e79",
+      "season": 2021,
+      "team_id": 742
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2022-04-09T13:30:00+00:00",
+      "fixture_id": 710343,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "db80ab4ebc0db16555884797cc93fa2386f30ad322815fbc2e7a0744b9e17337",
+      "season": 2021,
+      "team_id": 739
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2022-04-09T13:30:00+00:00",
+      "fixture_id": 710343,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "b5965b71fc6c86e3cfe8566fdb041c349950014af3242af34e0fd83ee181a751",
+      "season": 2021,
+      "team_id": 624
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2022-07-22T15:45:00+00:00",
+      "fixture_id": 874728,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "6072c50cd219e58780f414b5f0083a8394998306da0d51aebbeaa287121b6223",
+      "season": 2022,
+      "team_id": 733
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2022-07-22T15:45:00+00:00",
+      "fixture_id": 874728,
+      "non_null": [],
+      "result_sha256": "abf1696e9aa91c8e3bdabe7a101a0baaa6a721c2b9acae5cab009ae98ce3ce5d",
+      "season": 2022,
+      "team_id": 631
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2023-04-23T13:30:00+00:00",
+      "fixture_id": 875033,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "6048a68c10d667913a66648683b10e8d3ebdd7d956ab6cdfa92de6ec2076f754",
+      "season": 2022,
+      "team_id": 736
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2023-04-23T13:30:00+00:00",
+      "fixture_id": 875033,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "d2f8de10e1080fd65b18589e9e070fe6f1c1557924262f2ac155bccc9e51b962",
+      "season": 2022,
+      "team_id": 742
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2023-07-28T15:45:00+00:00",
+      "fixture_id": 1038421,
+      "non_null": [],
+      "result_sha256": "d80a4a73afb7aa3bbb8cd4c7f2f0fe89fdd6880c1b5a9b4285e8f433015c05f4",
+      "season": 2023,
+      "team_id": 1393
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2023-07-28T15:45:00+00:00",
+      "fixture_id": 1038421,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "e0425a2d3a3453be94e27f4a666d9a38bc8c2213eb7db80f485ff3b3996486fa",
+      "season": 2023,
+      "team_id": 554
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2024-06-02T08:30:00+00:00",
+      "fixture_id": 1201435,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "33d999faab714d62cd83345a0ba68dc2eadda3477b71c0a8d1385e24a40f5492",
+      "season": 2023,
+      "team_id": 742
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2024-06-02T08:30:00+00:00",
+      "fixture_id": 1201435,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "ffaa967bf02ac1ebef74adb0dc78662fc0dc3dd0123bdb5cd27ef157defa84d6",
+      "season": 2023,
+      "team_id": 631
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2024-07-26T15:45:00+00:00",
+      "fixture_id": 1213201,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "f1c8acaccfee0450b635aaa31659b72e8634b88c11251a1dc32c3cf0cedd29fe",
+      "season": 2024,
+      "team_id": 569
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2024-07-26T15:45:00+00:00",
+      "fixture_id": 1213201,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "10834f75bf7fa5f52b6226d24495e9c54ca036fbde75e3d1d76e61443d168cb1",
+      "season": 2024,
+      "team_id": 266
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2025-05-24T15:00:00+00:00",
+      "fixture_id": 1361799,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "b53faae8bb5f6ed3faff6c25cb935f25a516df048bd8f207d9c6e48cc3180953",
+      "season": 2024,
+      "team_id": 6215
+    },
+    {
+      "competition": "B1",
+      "cutoff": "2025-05-24T15:00:00+00:00",
+      "fixture_id": 1361799,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "48c948afbaf9db489392819220a7aa03882ea61d3cb609bf1fb7d3e55ba47a31",
+      "season": 2024,
+      "team_id": 266
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2019-08-07T19:15:00+00:00",
+      "fixture_id": 94537,
+      "non_null": [],
+      "result_sha256": "ab19861918d3d6b50de981c581bc3eecd6a921f450c3544be1a4b08149df5e1d",
+      "season": 2019,
+      "team_id": 131
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2019-08-07T19:15:00+00:00",
+      "fixture_id": 94537,
+      "non_null": [],
+      "result_sha256": "35d93a1f375a10c8cb2aaf38bb2789428b941d1be70dbd1f0dfb706583acb73a",
+      "season": 2019,
+      "team_id": 151
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2019-12-08T16:00:00+00:00",
+      "fixture_id": 94850,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "6e6883786705ccb3aef4f6c0464f16d724119d21c5b6e39af0c56b7d1a667a11",
+      "season": 2019,
+      "team_id": 133
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2019-12-08T16:00:00+00:00",
+      "fixture_id": 94850,
+      "non_null": [
+        "etat_score_buts10",
+        "cadre_suspendu_rouge",
+        "points_tardifs5"
+      ],
+      "result_sha256": "481f4412b32542ca0384698c8e50fd8f5ba7499af0ddf259c75ca7f18c05068d",
+      "season": 2019,
+      "team_id": 132
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2019-10-12T21:00:00+00:00",
+      "fixture_id": 94718,
+      "non_null": [
+        "etat_score_buts10",
+        "cadre_suspendu",
+        "cadre_suspendu_rouge",
+        "points_tardifs5"
+      ],
+      "result_sha256": "9418faec01e39ce989155cdc75af07f77d444ef3fb87583d6a621ebb3d9d5869",
+      "season": 2019,
+      "team_id": 121
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2019-10-12T21:00:00+00:00",
+      "fixture_id": 94718,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "e45816362a2c72996401c9471f3ad0732327aa6e7eaef43591d46a519a9575ea",
+      "season": 2019,
+      "team_id": 120
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2019-12-08T16:00:00+00:00",
+      "fixture_id": 94846,
+      "non_null": [
+        "etat_score_buts10",
+        "cadre_suspendu_rouge",
+        "points_tardifs5"
+      ],
+      "result_sha256": "6b97063d935c5db7a9d60af6f0cc4ee95be91e4278db0972f07c097319783f27",
+      "season": 2019,
+      "team_id": 154
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2019-12-08T16:00:00+00:00",
+      "fixture_id": 94846,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "36ba3e865f04ec588ad9b985b171e568f127619f84925544420895e0a63bd247",
+      "season": 2019,
+      "team_id": 118
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2020-08-09T16:00:00+00:00",
+      "fixture_id": 327985,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "c38a27d64c35e9975002ce3b8fbd8d7801bc7b9ac6d6b7d0e30f44cc9a313284",
+      "season": 2020,
+      "team_id": 127
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2020-08-09T16:00:00+00:00",
+      "fixture_id": 327985,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "6bb3da459263a7357cfa2bf2c8be723d8faff8e409c4583a3c279e895521228d",
+      "season": 2020,
+      "team_id": 1062
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2021-02-25T21:30:00+00:00",
+      "fixture_id": 328364,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "bb0ce0e1a96fc51706ce5dee4fc610f26baced4b50a9de1d81fb8083fdc3bc30",
+      "season": 2020,
+      "team_id": 133
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2021-02-25T21:30:00+00:00",
+      "fixture_id": 328364,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "39d3304af0b4814ca91c61e1a428c5da20fd0ebfbae8ac8aeba9bedf3d47eb2b",
+      "season": 2020,
+      "team_id": 151
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2020-08-23T20:00:00+00:00",
+      "fixture_id": 328033,
+      "non_null": [
+        "etat_score_buts10",
+        "cadre_suspendu_rouge",
+        "points_tardifs5"
+      ],
+      "result_sha256": "b58d1635dcb8782ebefbeefcf2afc827ffa9f7fc76fd9ad30fa9e9ba10426d0b",
+      "season": 2020,
+      "team_id": 129
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2020-08-23T20:00:00+00:00",
+      "fixture_id": 328033,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "5178313acac400afa27f6a61148e52d6b069a907f1fca023d0889fc1469ff243",
+      "season": 2020,
+      "team_id": 118
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2021-05-30T16:00:00+00:00",
+      "fixture_id": 688909,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "f4f3f11ad4647045065fe75f3c0105627c82f8f0488077b831f830800d97c67f",
+      "season": 2021,
+      "team_id": 127
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2021-05-30T16:00:00+00:00",
+      "fixture_id": 688909,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "00ed9d3173cb10a299f050d330454162f68ef85f0f86ddbb3f9bfe625e102592",
+      "season": 2021,
+      "team_id": 121
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2021-12-09T21:30:00+00:00",
+      "fixture_id": 689288,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "9e8499e349c5573bd5cb8487bf740c098cdf4a7bb8d10dd984575bee54bdb0e7",
+      "season": 2021,
+      "team_id": 144
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2021-12-09T21:30:00+00:00",
+      "fixture_id": 689288,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "920a386cfcabb68a3d7987033f1be03f98483f5070953c66707813e74ca9f9c7",
+      "season": 2021,
+      "team_id": 127
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2021-05-30T18:15:00+00:00",
+      "fixture_id": 688917,
+      "non_null": [
+        "etat_score_buts10",
+        "cadre_suspendu_rouge",
+        "points_tardifs5"
+      ],
+      "result_sha256": "f6048606fe9e5b2c78e94b048611df864d623dc3bf82aca90f24240cc26d2cd1",
+      "season": 2021,
+      "team_id": 132
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2021-05-30T18:15:00+00:00",
+      "fixture_id": 688917,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "3da2451b90544bf34a01067bef3c2ee80dc2cd7d68c8ad0c9d0be6d97351fbf7",
+      "season": 2021,
+      "team_id": 794
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2022-04-10T16:00:00+00:00",
+      "fixture_id": 837991,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "93c77104943cced52d68f883e332e9d77b107fd446ae95bb298ab49e46f80cc0",
+      "season": 2022,
+      "team_id": 1062
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2022-04-10T16:00:00+00:00",
+      "fixture_id": 837991,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "37959710a72a84cba42f61f5866d44608dcaa89817fed4f330881b9b0865071a",
+      "season": 2022,
+      "team_id": 119
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2022-11-13T16:00:00+00:00",
+      "fixture_id": 838370,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "4be52a74ee38e7416701cbbc252aa37edc8868d15ea47addcb39992b4584efae",
+      "season": 2022,
+      "team_id": 134
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2022-11-13T16:00:00+00:00",
+      "fixture_id": 838370,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "bd3ede7fae7d72a581ec6756ac942cf361aff51df35b586b54020ce269a7894a",
+      "season": 2022,
+      "team_id": 120
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2023-04-16T16:00:00+00:00",
+      "fixture_id": 1005649,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "f1174c8d220ccabd4083a091c26c936fe9b62438ac770a5a370ef16b1b581b1f",
+      "season": 2023,
+      "team_id": 127
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2023-04-16T16:00:00+00:00",
+      "fixture_id": 1005649,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "6b4e69ed1981d61a1305fb0599542b6037c42d9b1634fc1c6eb52af406767bdf",
+      "season": 2023,
+      "team_id": 147
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2023-12-06T21:30:00+00:00",
+      "fixture_id": 1006028,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "62af0ed25295198e1bbb04dc4c256104a9e744f385d2942d6f7b49314e4604e0",
+      "season": 2023,
+      "team_id": 1193
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2023-12-06T21:30:00+00:00",
+      "fixture_id": 1006028,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "9588835a81dcf969c4dac5bab32f9f695c50b802357e2777c2c27d377faadf76",
+      "season": 2023,
+      "team_id": 134
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2024-04-13T18:30:00+00:00",
+      "fixture_id": 1180355,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "75b2a5840eb311ab80bea88e1574b23e161d93824be2373d139127ee744b1d84",
+      "season": 2024,
+      "team_id": 119
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2024-04-13T18:30:00+00:00",
+      "fixture_id": 1180355,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "18f1e11b92ae244f4d727416e555384f3219b3e8cf5390758bdee6e44846f249",
+      "season": 2024,
+      "team_id": 118
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2024-12-08T16:00:00+00:00",
+      "fixture_id": 1180734,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "973cb8164106ded46be2b664471e6b9b473ea99d0fd05868cbd296a464b1c3ee",
+      "season": 2024,
+      "team_id": 152
+    },
+    {
+      "competition": "BRA",
+      "cutoff": "2024-12-08T16:00:00+00:00",
+      "fixture_id": 1180734,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "25feeba9bda463b01505a87872bb2d090aef3f2f80cef42ccb6a7c51bf4865cd",
+      "season": 2024,
+      "team_id": 135
+    },
+    {
+      "competition": "Bundesliga",
+      "cutoff": "2020-09-18T15:30:00+00:00",
+      "fixture_id": 587176,
+      "non_null": [],
+      "result_sha256": "42847b57bf55c31568ad1109dcadc696dece352d3216480f7214cfb005391769",
+      "season": 2020,
+      "team_id": 157
+    },
+    {
+      "competition": "Bundesliga",
+      "cutoff": "2020-09-18T15:30:00+00:00",
+      "fixture_id": 587176,
+      "non_null": [],
+      "result_sha256": "42847b57bf55c31568ad1109dcadc696dece352d3216480f7214cfb005391769",
+      "season": 2020,
+      "team_id": 174
+    },
+    {
+      "competition": "Bundesliga",
+      "cutoff": "2021-05-22T10:30:00+00:00",
+      "fixture_id": 587481,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "fdeb80031ce67c129b26cca15581f4c567c81c6d3f2fa0c88d6e6a3ea16cb485",
+      "season": 2020,
+      "team_id": 172
+    },
+    {
+      "competition": "Bundesliga",
+      "cutoff": "2021-05-22T10:30:00+00:00",
+      "fixture_id": 587481,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "1fd999a52840df366cf5d5824b899abdaa86185807004174671250c43ac7a69b",
+      "season": 2020,
+      "team_id": 188
+    },
+    {
+      "competition": "Bundesliga",
+      "cutoff": "2021-08-13T15:30:00+00:00",
+      "fixture_id": 719349,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "bc13355cb84487270efa3f56c64049eb772da1fb8d52fbee8f732de935efef7c",
+      "season": 2021,
+      "team_id": 163
+    },
+    {
+      "competition": "Bundesliga",
+      "cutoff": "2021-08-13T15:30:00+00:00",
+      "fixture_id": 719349,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "4dd94c0e444f3c2e1252090e8bded19a6bc80746801972550dff4512bdce6888",
+      "season": 2021,
+      "team_id": 157
+    },
+    {
+      "competition": "Bundesliga",
+      "cutoff": "2022-05-14T10:30:00+00:00",
+      "fixture_id": 719654,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "4495e50ae0ee603738d1525677b253ca2c73a7aeefe8b3a7d0e6a2ca693928a7",
+      "season": 2021,
+      "team_id": 188
+    },
+    {
+      "competition": "Bundesliga",
+      "cutoff": "2022-05-14T10:30:00+00:00",
+      "fixture_id": 719654,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "0147e8f0893bb6c6e7de2af8617c0b9f53899381c6396e0454045b66c53be112",
+      "season": 2021,
+      "team_id": 173
+    },
+    {
+      "competition": "Bundesliga",
+      "cutoff": "2022-08-05T15:30:00+00:00",
+      "fixture_id": 871164,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "b5323e552b382aec1159b87c735ecf43b41b609efe56b64f4cabdf71831b1ed0",
+      "season": 2022,
+      "team_id": 169
+    },
+    {
+      "competition": "Bundesliga",
+      "cutoff": "2022-08-05T15:30:00+00:00",
+      "fixture_id": 871164,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "dc561daea0906aa8c3ab2830f24195eec38655aa9603f34b2fb8c561bf68e319",
+      "season": 2022,
+      "team_id": 157
+    },
+    {
+      "competition": "Bundesliga",
+      "cutoff": "2023-05-20T10:30:00+00:00",
+      "fixture_id": 871460,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "66e85c187aa1250e155b007875be1449c4b1c7e6306994c7e0eeccfcbe228656",
+      "season": 2022,
+      "team_id": 162
+    },
+    {
+      "competition": "Bundesliga",
+      "cutoff": "2023-05-20T10:30:00+00:00",
+      "fixture_id": 871460,
+      "non_null": [
+        "etat_score_buts10",
+        "points_tardifs5"
+      ],
+      "result_sha256": "586057e7bd0059d983aad7a962566c4a0c700c45e8c890e284e136599aba2e01",
+      "season": 2022,
+      "team_id": 192
+    },
+    {
+      "competition": "Bundesliga",
+      "cutoff": "2023-08-18T15:30:00+00:00",
+      "fixture_id": 1048881,
+      "non_null": [],
+      "result_sha256": "398151aa49ecd74dc7222d22d3edc0afeaaa2d4d8519b008df29b514944f2616",
+      "season": 2023,
+      "team_id": 162
+    },
+    {
+      "competition": "Bundesliga",
+      "cutoff": "2023-08-18T15:30:00+00:00",
+      "fixture_id": 1048881,
+      "non_null": [],
+      "result_sha256": "a7b4ee5a3205ef21eb85cef9320331b4783efed6cd898e9e08ab82507879920e",
+      "season": 2023,
+      "team_id": 157
+    },
+    {
+      "competition": "Bundesliga",
+      "cutoff": "2024-08-23T15:30:00+00:00",
+      "fixture_id": 1223975,
+      "non_null": [],
+      "result_sha256": "2ca882281ffadf525793b26a194403628fd79d266701a6f7950c497f4487ed66",
+      "season": 2024,
+      "team_id": 163
+    },
+    {
+      "competition": "Bundesliga",
+      "cutoff": "2024-08-23T15:30:00+00:00",
+      "fixture_id": 1223975,
+      "non_null": [],
+      "result_sha256": "2ca882281ffadf525793b26a194403628fd79d266701a6f7950c497f4487ed66",
+      "season": 2024,
+      "team_id": 168
+    },
+    {
+      "competition": "La-Liga",
+      "cutoff": "2020-09-13T09:00:00+00:00",
+      "fixture_id": 605065,
+      "non_null": [],
+      "result_sha256": "2afa7d5759f1013a57f255a5e0f339e8781b7ff4195fa4a8d1c0d04d66d84314",
+      "season": 2020,
+      "team_id": 542
+    },
+    {
+      "competition": "La-Liga",
+      "cutoff": "2020-09-13T09:00:00+00:00",
+      "fixture_id": 605065,
+      "non_null": [],
+      "result_sha256": "bfa37be5c9b5c58085c79e4654d88c202b9f13b59243e3f17dd5a5ce58086f1b",
+      "season": 2020,
+      "team_id": 543
+    },
+    {
+      "competition": "La-Liga",
+      "cutoff": "2021-08-14T17:00:00+00:00",
+      "fixture_id": 720739,
+      "non_null": [],
+      "result_sha256": "1110c052b72193d1d21ea73f2600b4edacc87713dd00e6e05e0676af413bc8fb",
+      "season": 2021,
+      "team_id": 542
+    },
+    {
+      "competition": "La-Liga",
+      "cutoff": "2021-08-14T17:00:00+00:00",
+      "fixture_id": 720739,
+      "non_null": [],
+      "result_sha256": "a5f387022b37597c0d9c7069beaaac4c86eb86a9f7ca955b4b1ad41b2420eba9",
+      "season": 2021,
+      "team_id": 541
+    },
+    {
+      "competition": "La-Liga",
+      "cutoff": "2022-08-15T12:30:00+00:00",
+      "fixture_id": 877942,
+      "non_null": [],
+      "result_sha256": "9b83d550c04be1d04d5b44b7f74621685b391ab68a01c231e362e744aadf0021",
+      "season": 2022,
+      "team_id": 531
+    },
+    {
+      "competition": "La-Liga",
+      "cutoff": "2022-08-15T12:30:00+00:00",
+      "fixture_id": 877942,
+      "non_null": [],
+      "result_sha256": "b2abe4001faf9c347e550fde6c4be82705353338bc3477874c0f821e05ffb182",
+      "season": 2022,
+      "team_id": 798
+    },
+    {
+      "competition": "La-Liga",
+      "cutoff": "2023-08-11T14:30:00+00:00",
+      "fixture_id": 1037952,
+      "non_null": [],
+      "result_sha256": "a7321e8cfb25930d1d99dc966a26710331ec49620ae0d31288f92cad8fda0042",
+      "season": 2023,
+      "team_id": 723
+    },
+    {
+      "competition": "La-Liga",
+      "cutoff": "2023-08-11T14:30:00+00:00",
+      "fixture_id": 1037952,
+      "non_null": [],
+      "result_sha256": "7b6c019afc300ad54850080b3f81451775f98887fcb41abf4e72c386d69edce7",
+      "season": 2023,
+      "team_id": 728
+    },
+    {
+      "competition": "La-Liga",
+      "cutoff": "2024-08-15T14:00:00+00:00",
+      "fixture_id": 1208494,
+      "non_null": [],
+      "result_sha256": "efdbf9408bd78744feabc349b3e791124bbb4bb7a29eb74cb064c76bbe0c9aa2",
+      "season": 2024,
+      "team_id": 531
+    },
+    {
+      "competition": "La-Liga",
+      "cutoff": "2024-08-15T14:00:00+00:00",
+      "fixture_id": 1208494,
+      "non_null": [],
+      "result_sha256": "43870033de586e595c76d23f66e76731e82a7510e5e0dcafdbd21712acca268d",
+      "season": 2024,
+      "team_id": 546
+    },
+    {
+      "competition": "Ligue-1",
+      "cutoff": "2018-08-12T16:00:00+00:00",
+      "fixture_id": 37553,
+      "non_null": [],
+      "result_sha256": "77134ef83afb5a403f640a901dd7dfd26f30ce7a53e7bd2cff5aa27a53abc67a",
+      "season": 2018,
+      "team_id": 85
+    },
+    {
+      "competition": "Ligue-1",
+      "cutoff": "2018-08-12T16:00:00+00:00",
+      "fixture_id": 37553,
+      "non_null": [],
+      "result_sha256": "77134ef83afb5a403f640a901dd7dfd26f30ce7a53e7bd2cff5aa27a53abc67a",
+      "season": 2018,
+      "team_id": 88
+    },
+    {
+      "competition": "Ligue-1",
+      "cutoff": "2019-08-10T15:00:00+00:00",
+      "fixture_id": 157413,
+      "non_null": [],
+      "result_sha256": "788230b5a993fafd45800a1280194e97a0f4d0e166460e95db9ff7813a311ee8",
+      "season": 2019,
+      "team_id": 89
+    },
+    {
+      "competition": "Ligue-1",
+      "cutoff": "2019-08-10T15:00:00+00:00",
+      "fixture_id": 157413,
+      "non_null": [],
+      "result_sha256": "788230b5a993fafd45800a1280194e97a0f4d0e166460e95db9ff7813a311ee8",
+      "season": 2019,
+      "team_id": 1063
+    },
+    {
+      "competition": "Ligue-1",
+      "cutoff": "2020-08-23T10:00:00+00:00",
+      "fixture_id": 571472,
+      "non_null": [],
+      "result_sha256": "77134ef83afb5a403f640a901dd7dfd26f30ce7a53e7bd2cff5aa27a53abc67a",
+      "season": 2020,
+      "team_id": 97
+    },
+    {
+      "competition": "Ligue-1",
+      "cutoff": "2020-08-23T10:00:00+00:00",
+      "fixture_id": 571472,
+      "non_null": [],
+      "result_sha256": "6ff063eaf74d6a0326f4296ceb84e7920bec2b426add67110a5b84dae77ddd87",
+      "season": 2020,
+      "team_id": 95
+    },
+    {
+      "competition": "Ligue-1",
+      "cutoff": "2021-08-08T10:00:00+00:00",
+      "fixture_id": 718351,
+      "non_null": [],
+      "result_sha256": "0b53f0763e9d85d91ef9637f18529084767a9d6f4981dffcffa13985c377633c",
+      "season": 2021,
+      "team_id": 78
+    },
+    {
+      "competition": "Ligue-1",
+      "cutoff": "2021-08-08T10:00:00+00:00",
+      "fixture_id": 718351,
+      "non_null": [],
+      "result_sha256": "77134ef83afb5a403f640a901dd7dfd26f30ce7a53e7bd2cff5aa27a53abc67a",
+      "season": 2021,
+      "team_id": 99
+    },
+    {
+      "competition": "Ligue-1",
+      "cutoff": "2022-08-06T12:00:00+00:00",
+      "fixture_id": 871470,
+      "non_null": [],
+      "result_sha256": "f520c813e6c2df5e0ae51116dfbb4bc3a1505331f0d52e189d5813df9fffaf50",
+      "season": 2022,
+      "team_id": 95
+    },
+    {
+      "competition": "Ligue-1",
+      "cutoff": "2022-08-06T12:00:00+00:00",
+      "fixture_id": 871470,
+      "non_null": [],
+      "result_sha256": "af682d915e547d3e989e5cd948a1f7fb76184ffa299bf074edc275779bb325b0",
+      "season": 2022,
+      "team_id": 91
+    },
+    {
+      "competition": "Ligue-1",
+      "cutoff": "2023-08-12T16:00:00+00:00",
+      "fixture_id": 1044881,
+      "non_null": [],
+      "result_sha256": "6051769c11120e31f02630708651b550ba9db3b3a5743ef22325c856569beee1",
+      "season": 2023,
+      "team_id": 85
+    },
+    {
+      "competition": "Ligue-1",
+      "cutoff": "2023-08-12T16:00:00+00:00",
+      "fixture_id": 1044881,
+      "non_null": [],
+      "result_sha256": "12b92e42a9854bd6d90c310b8e1afce73727e1659b9ac42f0ce94240e957e64c",
+      "season": 2023,
+      "team_id": 97
+    },
+    {
+      "competition": "Ligue-1",
+      "cutoff": "2024-08-17T12:00:00+00:00",
+      "fixture_id": 1213747,
+      "non_null": [],
+      "result_sha256": "277080f78191cb11feb2f90c0094bcfe0a30ad0055cb364df8f72048e30a5274",
+      "season": 2024,
+      "team_id": 106
+    },
+    {
+      "competition": "Ligue-1",
+      "cutoff": "2024-08-17T12:00:00+00:00",
+      "fixture_id": 1213747,
+      "non_null": [],
+      "result_sha256": "abae609dfe1e4c3cff3b1281f4f04e5171d20998c6192e1f08b33e76e18be2c5",
+      "season": 2024,
+      "team_id": 81
+    },
+    {
+      "competition": "Premier-League",
+      "cutoff": "2021-01-12T17:15:00+00:00",
+      "fixture_id": 592141,
+      "non_null": [],
+      "result_sha256": "0cb412590ccd0d545d69c4404d08d670ee263b3bf9494e99e3ab23b2cae5f1aa",
+      "season": 2020,
+      "team_id": 44
+    },
+    {
+      "competition": "Premier-League",
+      "cutoff": "2021-01-12T17:15:00+00:00",
+      "fixture_id": 592141,
+      "non_null": [],
+      "result_sha256": "3589c76c722dc5531fd061665d4d820f62a222ace91c4d760c7eaacbd40465ea",
+      "season": 2020,
+      "team_id": 33
+    },
+    {
+      "competition": "Premier-League",
+      "cutoff": "2021-08-13T16:00:00+00:00",
+      "fixture_id": 710556,
+      "non_null": [],
+      "result_sha256": "47443b2c987edca31ece927ab8763d1f390b0ec321b31676134de1a3f1ca9cbd",
+      "season": 2021,
+      "team_id": 55
+    },
+    {
+      "competition": "Premier-League",
+      "cutoff": "2021-08-13T16:00:00+00:00",
+      "fixture_id": 710556,
+      "non_null": [],
+      "result_sha256": "52dd9f99d3e2a5c17f0f3db15bcbe8ef3cad26a4698a28690219e38e2b0314b8",
+      "season": 2021,
+      "team_id": 42
+    },
+    {
+      "competition": "Premier-League",
+      "cutoff": "2022-08-05T16:00:00+00:00",
+      "fixture_id": 867946,
+      "non_null": [],
+      "result_sha256": "a759ced0c96a387c6119f177b1615c199f100d72fb8fd008bfc2107862bb074b",
+      "season": 2022,
+      "team_id": 52
+    },
+    {
+      "competition": "Premier-League",
+      "cutoff": "2022-08-05T16:00:00+00:00",
+      "fixture_id": 867946,
+      "non_null": [],
+      "result_sha256": "a759ced0c96a387c6119f177b1615c199f100d72fb8fd008bfc2107862bb074b",
+      "season": 2022,
+      "team_id": 42
+    },
+    {
+      "competition": "Premier-League",
+      "cutoff": "2023-08-11T16:00:00+00:00",
+      "fixture_id": 1035037,
+      "non_null": [],
+      "result_sha256": "787146a61943b9aa5c019faffe4f6d537ad4e96ad6bfa23ddaef1553d84f4e63",
+      "season": 2023,
+      "team_id": 44
+    },
+    {
+      "competition": "Premier-League",
+      "cutoff": "2023-08-11T16:00:00+00:00",
+      "fixture_id": 1035037,
+      "non_null": [],
+      "result_sha256": "9328d16536aea23329f3c29fb5fe189a4856b1cb53face66c3eb612584e72f1b",
+      "season": 2023,
+      "team_id": 50
+    },
+    {
+      "competition": "Premier-League",
+      "cutoff": "2024-08-16T16:00:00+00:00",
+      "fixture_id": 1208021,
+      "non_null": [],
+      "result_sha256": "bcf727f3219ed1c22380b2db49a22974cfeb07f2beb22cb5f01c5f4fefb382cf",
+      "season": 2024,
+      "team_id": 33
+    },
+    {
+      "competition": "Premier-League",
+      "cutoff": "2024-08-16T16:00:00+00:00",
+      "fixture_id": 1208021,
+      "non_null": [],
+      "result_sha256": "cec7bd732e70c8985113b728209095bc4ddba6eaa2775b4364cabf66a1a6d99c",
+      "season": 2024,
+      "team_id": 36
+    },
+    {
+      "competition": "Serie-A",
+      "cutoff": "2020-09-30T13:00:00+00:00",
+      "fixture_id": 608480,
+      "non_null": [],
+      "result_sha256": "128f9b3ad566dc48a0fb55660c368f7f86bdf42add36a97b177c9cc960a9f9c2",
+      "season": 2020,
+      "team_id": 506
+    },
+    {
+      "competition": "Serie-A",
+      "cutoff": "2020-09-30T13:00:00+00:00",
+      "fixture_id": 608480,
+      "non_null": [],
+      "result_sha256": "f2da301f89da96cf17ab01b0c18486ea13bf928503de4fdb5286eeb5e7ffc416",
+      "season": 2020,
+      "team_id": 505
+    },
+    {
+      "competition": "Serie-A",
+      "cutoff": "2021-08-22T13:30:00+00:00",
+      "fixture_id": 731584,
+      "non_null": [],
+      "result_sha256": "c8b1d639a0450d59b869e1092792c3178111d92e6f64e26dce36b65a852f80b2",
+      "season": 2021,
+      "team_id": 500
+    },
+    {
+      "competition": "Serie-A",
+      "cutoff": "2021-08-22T13:30:00+00:00",
+      "fixture_id": 731584,
+      "non_null": [],
+      "result_sha256": "47443b2c987edca31ece927ab8763d1f390b0ec321b31676134de1a3f1ca9cbd",
+      "season": 2021,
+      "team_id": 514
+    },
+    {
+      "competition": "Serie-A",
+      "cutoff": "2022-08-13T13:30:00+00:00",
+      "fixture_id": 881780,
+      "non_null": [],
+      "result_sha256": "31cb48b6d880a1b0160f693ab5b6d79f041c231b0e439b63879d03539903ee3d",
+      "season": 2022,
+      "team_id": 489
+    },
+    {
+      "competition": "Serie-A",
+      "cutoff": "2022-08-13T13:30:00+00:00",
+      "fixture_id": 881780,
+      "non_null": [],
+      "result_sha256": "d5d2f611b1b4bc9965615dafacc1bab1d4d5bcfc796234f18c48dbd97316870c",
+      "season": 2022,
+      "team_id": 494
+    },
+    {
+      "competition": "Serie-A",
+      "cutoff": "2023-08-21T15:45:00+00:00",
+      "fixture_id": 1052253,
+      "non_null": [],
+      "result_sha256": "2ff1c6ec120ea308896f12f71ab5e359735fb8ec2ada101b0c83302bda49479e",
+      "season": 2023,
+      "team_id": 500
+    },
+    {
+      "competition": "Serie-A",
+      "cutoff": "2023-08-21T15:45:00+00:00",
+      "fixture_id": 1052253,
+      "non_null": [],
+      "result_sha256": "2ff1c6ec120ea308896f12f71ab5e359735fb8ec2ada101b0c83302bda49479e",
+      "season": 2023,
+      "team_id": 489
+    },
+    {
+      "competition": "Serie-A",
+      "cutoff": "2024-08-18T13:30:00+00:00",
+      "fixture_id": 1223595,
+      "non_null": [],
+      "result_sha256": "9b793d46c528130443170c113f93a7028165631e4ec9ba8823556f44a267fc96",
+      "season": 2024,
+      "team_id": 500
+    },
+    {
+      "competition": "Serie-A",
+      "cutoff": "2024-08-18T13:30:00+00:00",
+      "fixture_id": 1223595,
+      "non_null": [],
+      "result_sha256": "76bb97bdfc8efa360ce819b4eda1e71074b86aaebd35569c65de1b28f82ba8ab",
+      "season": 2024,
+      "team_id": 494
+    }
+  ],
+  "method": "rebuild_without_target_or_future_postmatch_data; target_official_XI_only",
+  "passed": true,
+  "sampled_team_rows": 172
+}
