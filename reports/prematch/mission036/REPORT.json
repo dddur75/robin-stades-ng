@@ -1,0 +1,69 @@
+{
+  "calculator_sha256": "5ddfed04266523f94b12109e4f539cd54eaddc3c9f3639dd5671e0311bc97c05",
+  "claim_id": "DATA.MISSION036.PREMATCH.V1",
+  "contexts": {
+    "fixture_context_missing": 52651,
+    "fixture_context_present": 17433
+  },
+  "coverage_unit": "team-fixture; non-null includes 0 and false",
+  "frozen_mission_fixture_ids_sha256": "0f652e40d430f4670436318858161d90fa8ebebe85cd3fcb6d6e77178f56833f",
+  "neon_writes": 0,
+  "outputs": [
+    {
+      "path": "season=2018.parquet",
+      "rows": 380,
+      "sha256": "0d26d2f0c26998cb986174ad23eef2eb352cd7e2cdefd93d548a6358fc16a457"
+    },
+    {
+      "path": "season=2019.parquet",
+      "rows": 8631,
+      "sha256": "24f4e410fb8da8bbb639777530899a391eaa748afd74d88330bc976f7eb5d63f"
+    },
+    {
+      "path": "season=2020.parquet",
+      "rows": 11363,
+      "sha256": "a46a21d2e204575aa85bc5e6eb31398b0c46fddce10dd1bacf7c170949ac10e4"
+    },
+    {
+      "path": "season=2021.parquet",
+      "rows": 12337,
+      "sha256": "42944ec6479e2b2eeccf5c07ab5a1c9a64301aa5ffd315623a3cc542da7b7957"
+    },
+    {
+      "path": "season=2022.parquet",
+      "rows": 12466,
+      "sha256": "c2ff37c36d251122be05ddfe8a0485fb8fdd2be7afee00fc74ab4d9c5c55ee6a"
+    },
+    {
+      "path": "season=2023.parquet",
+      "rows": 12481,
+      "sha256": "d38c3324806c3102eae8da253b6a436504a6d5d011a3ac1ed26c08a5f6374fde"
+    },
+    {
+      "path": "season=2024.parquet",
+      "rows": 12426,
+      "sha256": "544f2f8807fb595a23a25cb6105b1dbeb0818d398475e5c9b83526b1e1a791f9"
+    }
+  ],
+  "provider_calls": 0,
+  "r2_accesses": 0,
+  "schema_version": "mission036-prematch-v1",
+  "source_audit": {
+    "conflicting_events": [],
+    "conflicting_fixtures": [],
+    "conflicting_lineups": [],
+    "conflicting_players": [],
+    "invalid_detail_rows": 247,
+    "unlinked_rows": 40561
+  },
+  "source_inventory_sha256": "dc08dd84838eb528ca04bd5aaa1eed563a92e4184d3b8d6a600cb1eb758868e2",
+  "source_revision": "fac718f36d0b8e178374d5a8384c1b3cc871f135",
+  "status": "PARTIAL",
+  "target_fixture_ids_sha256": "0f652e40d430f4670436318858161d90fa8ebebe85cd3fcb6d6e77178f56833f",
+  "target_fixtures": 70084,
+  "temporal_audit": {
+    "method": "rebuild_without_target_or_future_postmatch_data; target_official_XI_only",
+    "passed": true,
+    "sampled_team_rows": 172
+  }
+}

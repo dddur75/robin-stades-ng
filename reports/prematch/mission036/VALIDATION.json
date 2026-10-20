@@ -1,0 +1,224 @@
+{
+  "status": "DOMAIN_PASS_GLOBAL_NOT_GREEN",
+  "calculator_revision": "precommit-projection:8c006e280dbc92c3825972007b19fe55a3df046d31d94e9ee36912491a2f91cd",
+  "calculator_sha256": "5ddfed04266523f94b12109e4f539cd54eaddc3c9f3639dd5671e0311bc97c05",
+  "source_revision": "fac718f36d0b8e178374d5a8384c1b3cc871f135",
+  "targeted_tests": {
+    "passed": 577,
+    "new_prematch_tests": 28,
+    "command": "python -m pytest -q tests/prematch tests/historical_deep tests/coverage tests/council tests/portability/test_no_tracked_absolute_paths.py",
+    "shifted_team_rows": 172
+  },
+  "full_repository_run": {
+    "command": "python -m pytest -q --basetemp=<local-disk> (TMPDIR on local disk; inherited TLS trust preserved)",
+    "passed": 4066,
+    "skipped": 50,
+    "failed": 36,
+    "duration_seconds": 1052.22,
+    "note": "Started before final provenance/rating fixes. Final affected domains revalidated with 577 passing tests. Broad run was not repeated after those focused fixes.",
+    "introduced_failure_corrected": "tests/council/test_robin_council_os_v3.py::test_evidence_graph_and_append_only_ledger_have_mandatory_fields",
+    "remaining_capture_failures": 35,
+    "failed_test_groups": [
+      {
+        "nodeid": "tests/capture/test_live_canary_transport.py::test_complete_body_is_observed_before_duplicate_control_header_rejection",
+        "failed_parameter_cases": 1,
+        "resolved": false
+      },
+      {
+        "nodeid": "tests/capture/test_live_canary_transport.py::test_direct_transport_rejects_invalid_secret_before_connection",
+        "failed_parameter_cases": 4,
+        "resolved": false
+      },
+      {
+        "nodeid": "tests/capture/test_live_canary_transport.py::test_pinned_transport_keeps_canonical_host_header_before_rejecting_peer",
+        "failed_parameter_cases": 1,
+        "resolved": false
+      },
+      {
+        "nodeid": "tests/capture/test_live_canary_transport.py::test_strict_transport_is_one_direct_tls_get_without_proxy_redirect_or_retry",
+        "failed_parameter_cases": 1,
+        "resolved": false
+      },
+      {
+        "nodeid": "tests/capture/test_live_canary_transport.py::test_strict_transport_revalidates_constructed_requests_and_tls",
+        "failed_parameter_cases": 1,
+        "resolved": false
+      },
+      {
+        "nodeid": "tests/capture/test_live_canary_transport.py::test_transport_enforces_a_total_body_deadline",
+        "failed_parameter_cases": 1,
+        "resolved": false
+      },
+      {
+        "nodeid": "tests/capture/test_live_canary_transport.py::test_transport_exposes_only_allowlisted_body_read_diagnostic",
+        "failed_parameter_cases": 1,
+        "resolved": false
+      },
+      {
+        "nodeid": "tests/capture/test_live_canary_transport.py::test_transport_fails_closed_when_final_cleanup_cannot_be_confirmed",
+        "failed_parameter_cases": 1,
+        "resolved": false
+      },
+      {
+        "nodeid": "tests/capture/test_live_canary_transport.py::test_transport_failure_is_not_retried_and_secret_echo_is_rejected",
+        "failed_parameter_cases": 1,
+        "resolved": false
+      },
+      {
+        "nodeid": "tests/capture/test_live_canary_transport.py::test_transport_journals_fallback_body_when_final_read_exceeds_deadline",
+        "failed_parameter_cases": 1,
+        "resolved": false
+      },
+      {
+        "nodeid": "tests/capture/test_live_canary_transport.py::test_transport_journals_incomplete_read_tail_from_chunked_response",
+        "failed_parameter_cases": 1,
+        "resolved": false
+      },
+      {
+        "nodeid": "tests/capture/test_live_canary_transport.py::test_transport_journals_short_or_ambiguous_content_length_as_incomplete",
+        "failed_parameter_cases": 3,
+        "resolved": false
+      },
+      {
+        "nodeid": "tests/capture/test_live_canary_transport.py::test_transport_redacts_significant_secret_prefixes_from_control_headers",
+        "failed_parameter_cases": 3,
+        "resolved": false
+      },
+      {
+        "nodeid": "tests/capture/test_live_canary_transport.py::test_transport_rejects_header_echo_compression_and_ambiguous_quota",
+        "failed_parameter_cases": 3,
+        "resolved": false
+      },
+      {
+        "nodeid": "tests/capture/test_live_canary_transport.py::test_transport_rejects_reversibly_encoded_secret_echoes",
+        "failed_parameter_cases": 6,
+        "resolved": false
+      },
+      {
+        "nodeid": "tests/capture/test_live_canary_transport.py::test_transport_retries_transient_cleanup_and_returns_only_after_close",
+        "failed_parameter_cases": 1,
+        "resolved": false
+      },
+      {
+        "nodeid": "tests/capture/test_live_canary_transport.py::test_transport_tightens_socket_timeout_across_headers_and_body_chunks",
+        "failed_parameter_cases": 1,
+        "resolved": false
+      },
+      {
+        "nodeid": "tests/capture/test_provider_network_binding.py::test_v2_transport_rejects_binding_expiry_between_dispatch_gate_and_connect",
+        "failed_parameter_cases": 1,
+        "resolved": false
+      },
+      {
+        "nodeid": "tests/capture/test_provider_network_binding.py::test_v2_transport_uses_one_selected_ip_and_rechecks_inside_connect",
+        "failed_parameter_cases": 1,
+        "resolved": false
+      },
+      {
+        "nodeid": "tests/capture/test_real_capture_workspace_bootstrap.py::test_command_timeout_returns_only_after_descendant_tree_is_quiescent",
+        "failed_parameter_cases": 1,
+        "resolved": false
+      },
+      {
+        "nodeid": "tests/capture/test_real_capture_workspace_bootstrap.py::test_completed_root_with_live_descendant_is_failed_and_terminated",
+        "failed_parameter_cases": 1,
+        "resolved": false
+      },
+      {
+        "nodeid": "tests/council/test_robin_council_os_v3.py::test_evidence_graph_and_append_only_ledger_have_mandatory_fields",
+        "failed_parameter_cases": 1,
+        "resolved": true
+      }
+    ],
+    "capture_unapproved_network_attempts": 0
+  },
+  "baseline_reproductions": {
+    "revision": "57fc8748ea6d80f12a17085573db46d6d02b6223",
+    "method": "git archive of main source, configs and capture tests; same inherited trust and local TMPDIR; no provider calls",
+    "tests": [
+      {
+        "nodeid": "tests/capture/test_live_canary_transport.py::test_strict_transport_is_one_direct_tls_get_without_proxy_redirect_or_retry",
+        "result": "FAIL",
+        "actual_code": "LIVE_TRANSPORT_TLS_TRUST_ENV_FORBIDDEN"
+      },
+      {
+        "nodeid": "tests/capture/test_real_capture_workspace_bootstrap.py::test_command_timeout_returns_only_after_descendant_tree_is_quiescent",
+        "result": "FAIL",
+        "actual_code": "WORKSPACE_COMMAND_TERMINATION_UNCONFIRMED"
+      },
+      {
+        "nodeid": "tests/capture/test_real_capture_workspace_bootstrap.py::test_completed_root_with_live_descendant_is_failed_and_terminated",
+        "result": "FAIL",
+        "actual_code": "WORKSPACE_COMMAND_TERMINATION_UNCONFIRMED"
+      }
+    ],
+    "scope_note": "Representative families reproduced; not a claim that every parameterized capture test was individually rerun on main."
+  },
+  "other_checks": {
+    "ruff": "PASS",
+    "mypy_strict": "PASS",
+    "bandit_medium_high": "PASS",
+    "secret_scan": "PASS",
+    "artifact_keys_hashes_coverage_and_bounds": "PASS",
+    "ledger_append_only": "PASS",
+    "existing_evidence_preserved": "PASS",
+    "only_preexisting_modified_paths": [
+      "reports/council/decision-ledger.jsonl",
+      "reports/evidence/evidence-graph.json"
+    ],
+    "calculator_hash_matches_source_projection": "PASS"
+  },
+  "independent_review": "PENDING",
+  "provider_calls": 0,
+  "neon_writes": 0,
+  "r2_accesses": 0,
+  "calculator_file_hashes": {
+    "scripts/build_prematch_criteria.py": "0fd031209451bbef38d3849b488555ee6a1bac10fa86b7c8093ab908b2492cc3",
+    "src/robin/prematch/criteria.py": "a44506fa9b009d48d8d8fee114ed59ba6808e57e4ce5f085f93a4a7b482d4936",
+    "src/robin/prematch/export.py": "1a31806e83341a61aaac0877443fe85b43baeea19aaba9d1e55098c86e11e4b9",
+    "src/robin/prematch/sources.py": "eb6d0376e2159e135bbec4d64bde4045f19ffee58464394d522c30ff31ad12b2"
+  },
+  "final_format_check": "CSV outputs use LF; exporter and artifact checks rerun after formatting-only adjustment",
+  "format_only_followup_tests": {
+    "passed": 29,
+    "command": "python -m pytest -q tests/prematch tests/council/test_robin_council_os_v3.py::test_evidence_graph_and_append_only_ledger_have_mandatory_fields"
+  },
+  "ci_review_followup": {
+    "failed_head": "bfa4f61e20981837f163fd76db6b44a2198e95db",
+    "failed_job": {
+      "conclusion": "failure",
+      "html_url": "https://github.com/dddur75/robin-stades-ng/actions/runs/39343979390/job/118374496070",
+      "name": "Quality and domain tests",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Linting"
+        },
+        {
+          "conclusion": "success",
+          "name": "Typage strict"
+        },
+        {
+          "conclusion": "failure",
+          "name": "Securite basique"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Executer les tests"
+        }
+      ]
+    },
+    "root_cause": "CI runs Bandit at all severities; prior local -ll omitted four Low/High-confidence B404/B603 findings on local Git subprocess usage.",
+    "findings": {
+      "B404": 1,
+      "B603": 3
+    },
+    "correction": "Four line-scoped nosec exceptions with documented fixed Git argv, no shell, protocol.allow=never and GIT_NO_LAZY_FETCH=1. Runtime AST unchanged excluding module documentation.",
+    "bandit_exact_ci_command": "PASS",
+    "ruff": "PASS",
+    "mypy_strict": "PASS",
+    "prematch_tests_passed": 28,
+    "remote_evidence": "Final check URL and conclusion to be recorded in PR description after push; not asserted green by this precommit record."
+  }
+}

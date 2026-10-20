@@ -12378,7 +12378,8 @@
         "C0"
       ],
       "independent_review": "PENDING"
-    }
+    },
+    {"claim_id":"DATA.MISSION036.PREMATCH.V1","claim":"Frozen published sources yield 70084 fixtures in seven season files; 15061 team rows have score-state history, 16113 late-points history and 9 a proven direct-red core-player suspension. XI/player blocks do not intersect; composition criteria remain null. Collection receipts do not establish published payload completeness. Attachment audit reconciles 174 unpublished calendar partitions across 29 leagues and six seasons with all 52651 missing fixture contexts; all 70084 target fixture IDs are present.","scope":"MISSION036_PREMATCH_OFFLINE","source":"reports/prematch/mission036/source-inventory.csv; reports/prematch/mission036/REPORT.json; reports/prematch/mission036/coverage.csv; reports/prematch/mission036/ATTACHMENT-AUDIT.json; reports/prematch/mission036/attachment-coverage.csv","grain":"team_fixture_by_league_season","temporal_class":"LAGGED_RECONSTRUCTED_WITH_OFFICIAL_XI_ADMITTED_BY_USER","artifact":"reports/prematch/mission036/COVERAGE.md","hash":"820307dab6e390b28bc21fbf77e5a67d1a2f1e5c19f30b3f6f36f954b709f029","code_revision":"precommit-projection:8c006e280dbc92c3825972007b19fe55a3df046d31d94e9ee36912491a2f91cd","execution_id":"mission036-prematch-fac718f","scientific_lineage_id":"STRICTLY_PRIOR_MATCHES_NO_PREDICTIVE_OR_EDGE_CLAIM","dataset_lineage_id":"dc08dd84838eb528ca04bd5aaa1eed563a92e4184d3b8d6a600cb1eb758868e2","status":"PARTIAL","verified_by":["C0"],"independent_review":"PENDING","artifact_hashes":{"scripts/build_prematch_criteria.py":"0fd031209451bbef38d3849b488555ee6a1bac10fa86b7c8093ab908b2492cc3","src/robin/prematch/criteria.py":"a44506fa9b009d48d8d8fee114ed59ba6808e57e4ce5f085f93a4a7b482d4936","src/robin/prematch/export.py":"1a31806e83341a61aaac0877443fe85b43baeea19aaba9d1e55098c86e11e4b9","src/robin/prematch/sources.py":"eb6d0376e2159e135bbec4d64bde4045f19ffee58464394d522c30ff31ad12b2"},"artifact_hash_algorithm":"SHA-256","artifact_hash_normalization":"LF_NORMALIZED_TEXT_BYTES","artifact_path_count":4,"engineering_projection_sha256":"8c006e280dbc92c3825972007b19fe55a3df046d31d94e9ee36912491a2f91cd"}
   ],
   "decision_nodes":[
     {"decision_id":"RCV3-20260804-001","ledger_record_hash":"b949c5bfc2d20ecddd8fc03a8bb754a5aa3d7f6e2ba2c562901e778d62988f7e"},
@@ -12774,7 +12775,15 @@
     {
       "decision_id": "RCV3-20261020-CLVCUMUL-001",
       "ledger_record_hash": "e14a98dd8ea89bcdb9107be4661469c747f278ce0b4811a83394436a2bf60928"
-    }
+    },
+    {"decision_id":"MISSION036-PREMATCH-003","ledger_record_hash":"c8d591690aa58695e520345f6bfc8318b6e80a91427919b079420e257f3e0b83"},
+    {"decision_id":"MISSION036-PREMATCH-001","ledger_record_hash":"6acf7c7a98fc32f9979cccc12bdb8a6756be20c6d3cd8b75f2e4c8979997a365"},
+    {"decision_id":"MISSION036-PREMATCH-002","ledger_record_hash":"88ff7fd5117342533cb052f6cb541c337d0cc5c2206273014525b322c7833e7f"},
+    {"decision_id":"MISSION036-PREMATCH-004","ledger_record_hash":"501967ec75b3a0506c28108679759398529c152ce20004254f7b905910d765ef"},
+    {"decision_id":"MISSION036-PREMATCH-005","ledger_record_hash":"18d20f8c0ee2072866fd81bc3c2a3c0c3e9e0f93cae1b5f15e262ad1c8c46b97"},
+    {"decision_id":"MISSION036-PREMATCH-006","ledger_record_hash":"c47abd7e1fef38f80159e43b565603d4c45039bb7c62cae5ef9ed2ac801610fd"},
+    {"decision_id":"MISSION036-PREMATCH-007","ledger_record_hash":"85187c3e871be821f29eee92572de585e2429573a37f5d0c6f7db5edd36226d6"},
+    {"decision_id":"MISSION036-PREMATCH-008","ledger_record_hash":"3c8ec6391c4831c0164dc8156293584f0d6a24348bdb3052566f0b8240a7a1a9"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -14059,6 +14068,10 @@
       "relation": "SUPPORTS",
       "status": "RECORDED",
       "to_decision_id": "RCV3-20261020-CLVCUMUL-001"
-    }
+    },
+    {"edge_id":"EDGE.1224","from_claim_id":"DATA.MISSION036.PREMATCH.V1","relation":"SUPPORTS","status":"RECORDED","to_decision_id":"MISSION036-PREMATCH-003"},
+    {"edge_id":"EDGE.1225","from_claim_id":"DATA.MISSION036.PREMATCH.V1","to_decision_id":"MISSION036-PREMATCH-005","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.1226","from_claim_id":"DATA.MISSION036.PREMATCH.V1","to_decision_id":"MISSION036-PREMATCH-007","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.1227","from_claim_id":"DATA.MISSION036.PREMATCH.V1","to_decision_id":"MISSION036-PREMATCH-008","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
