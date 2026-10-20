@@ -54,5 +54,12 @@
     "bandit_all_severities_recursive": "PASS",
     "git_diff_check": "PASS",
     "note": "Batch index rewrite preserves append-only semantics; seven baseline Parquet bytes remain unchanged."
+  },
+  "first_dispatch": {
+    "run_id": 39395579612,
+    "conclusion": "BLOCKED_REFERENCE_SCOPE_BEFORE_PROJECTION_PUBLICATION",
+    "legacy_producer_evidence": "git show 48a93765 -- scripts/run_mission027_lineups.py",
+    "fix": "Exact historical mission027 runner root only; canonical R2 key and SHA checks preserved",
+    "targeted_tests_passed": 43
   }
 }

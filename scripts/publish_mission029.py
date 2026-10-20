@@ -100,6 +100,13 @@ def load_references(store):
             receipt = json.loads(body)
             for spec in receipt.get('partitions', []):
                 path = spec['path']
+                # Pre-48a93765 mission027 receipts retained the producer's absolute
+                # runner path. Only this exact historical root is an alias; the
+                # canonical path must still equal the immutable R2 projection key.
+                legacy = ('/home/runner/work/robin-stades-ng/robin-stades-ng/'
+                          'artifacts/historical-deep/mission027/')
+                if mission == '027' and path.startswith(legacy):
+                    path = path.removeprefix(legacy)
                 # Holdout exclusion is metadata-only and precedes every object read.
                 if 'season=2025/' in path:
                     continue

@@ -71,3 +71,15 @@ Les détails Ligue 1 anciens sans fixture_id ne sont pas réinventés : un
 rattrapage de publication ne reconstruit pas l'index de leurs observations.
 Les critères inconnus restent nuls avec leur motif. Aucun calendrier toutes
 compétitions, seuil de jaunes ou tirs horodatés n'est déduit de la publication.
+
+### Compatibilité des reçus 027 historiques
+
+Le premier dispatch `39395579612` a refusé une référence (`REFERENCE_SCOPE`),
+avant toute projection publiée. Le producteur antérieur à `48a93765` conservait
+le chemin absolu du runner dans `partitions[].path` :
+`/home/runner/work/robin-stades-ng/robin-stades-ng/artifacts/historical-deep/mission027/`.
+Cette seule racine connue est retirée pour la mission 027 ; le chemin obtenu
+reste soumis au contrat canonique et doit correspondre exactement à la clé R2
+attestée. Aucune lecture du chemin local du reçu, aucun alias libre, aucun
+assouplissement du hash ou du holdout. Le test couvre aussi les racines étrangères
+et la traversée de répertoires.
