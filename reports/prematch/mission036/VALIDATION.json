@@ -1,8 +1,8 @@
 {
-  "status": "DOMAIN_PASS_GLOBAL_NOT_GREEN",
-  "calculator_revision": "precommit-projection:5029d0a626f27b25ce5a6add43749a9dd053c1520a1a666921a3676e83c02502",
+  "status": "PUBLICATION_COMPLETE_PARTIAL_CRITERIA_VALIDATED",
+  "calculator_revision": "64b8b3668b6073d6e4605a9e1e601c2c6207a529",
   "calculator_sha256": "bbdf7b4eeba25f0a3f386643dfb4232dbc0274e27e51ab16b4789021e93661d7",
-  "source_revision": "fac718f36d0b8e178374d5a8384c1b3cc871f135",
+  "source_revision": "8558719f1e91dc2e81e3a285848ec145a77f3f54",
   "targeted_tests": {
     "passed": 577,
     "new_prematch_tests": 28,
@@ -224,5 +224,37 @@
   "publication_presentation_followup": {
     "change": "Only two explanatory strings in coverage prose; formulas, windows, source population and seven season-file bytes unchanged.",
     "numerical_rebuild": "Pending authorized catchup; frozen baseline still fac718f3."
+  },
+  "initial_validation_status": "DOMAIN_PASS_GLOBAL_NOT_GREEN",
+  "initial_source_revision": "fac718f36d0b8e178374d5a8384c1b3cc871f135",
+  "current_publication_validation": {
+    "run_id": 39438595883,
+    "source_revision": "8558719f1e91dc2e81e3a285848ec145a77f3f54",
+    "attachment_rate": 1.0,
+    "temporal_audit": {
+      "method": "rebuild_without_target_or_future_postmatch_data; target_official_XI_only",
+      "passed": true,
+      "sampled_team_rows": 1026
+    },
+    "targeted_tests": {
+      "passed": 102,
+      "xfailed": 1,
+      "seconds": 7.93
+    },
+    "previous_green_code_ci": {
+      "run_id": 39397203825,
+      "job_id": 118545872705,
+      "head_sha": "1416488b517934534ec970d5c2d4a959cb7e2923",
+      "conclusion": "success",
+      "quality_and_domain_tests": {
+        "passed": 4129,
+        "skipped": 41,
+        "seconds": 1762.22
+      },
+      "all_jobs_green": true,
+      "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/39397203825"
+    },
+    "independent_review": "reports/council/mission036-publication/C4-data-review.json",
+    "note": "Earlier full_repository_run records the initial cloud validation failure history. Earlier code CI141 and new generated-data checks are separate observations; final data-commit CI is linked in PR122 after push."
   }
 }

@@ -1,6 +1,6 @@
 {
   "claim_id": "DATA.MISSION036.PUBLICATION.V1",
-  "status": "THIRD_PASS_ATTESTED_E1_READ_RETRY_REDESIGN_TESTED",
+  "status": "COMPLETE_PUBLICATION_VERIFIED_PARTIAL_CRITERIA",
   "base_revision": "4910d3bc2fbab4a0365aa5faa92a399b331b1da2",
   "baseline_source_revision": "fac718f36d0b8e178374d5a8384c1b3cc871f135",
   "baseline_attachment": {
@@ -45,7 +45,7 @@
     "configs/execution",
     "existing collectors"
   ],
-  "external_execution": "Explicit user authorization; workflow71 existing manual mode; no merge requested.",
+  "external_execution": "User-authorized existing workflow71 manual catchup completed; provider job skipped; no merge requested.",
   "final_affected_checks": {
     "publication_events_workflows_resume_passed": 48,
     "prematch_provenance_portability_passed": 46,
@@ -148,5 +148,234 @@
     "requires_non_empty_issues": true,
     "independent_review": "reports/council/mission036-publication/C4-supplement.md",
     "actual_new_execution": "Pending one new dispatch on reviewed new code; no identical rerun141."
-  }
+  },
+  "campaign_accounting": {
+    "initial_expected": 135124,
+    "initial_published": 17255,
+    "receipt_reference_growth_from_independent_main": 8947,
+    "independent_main_additions_between_passes": 904,
+    "confirmed_catchup_batches": 128,
+    "confirmed_catchup_additions": 125912,
+    "final_expected": 144071,
+    "final_published": 144071,
+    "identity": "17255 +904 +125912 =144071",
+    "evidence_journals": [
+      "reports/prematch/mission036/PUBLICATION-PASS-1-BATCHES.jsonl",
+      "reports/prematch/mission036/PUBLICATION-PASS-2-BATCHES.jsonl",
+      "reports/prematch/mission036/PUBLICATION-PASS-3-BATCHES.jsonl",
+      "reports/prematch/mission036/PUBLICATION-BATCHES.jsonl"
+    ]
+  },
+  "analytical_acceptance": {
+    "attachment_goal": ">=90%",
+    "attachment_observed": 1.0,
+    "force_xi_non_null": 9580,
+    "force_xi_non_null_audited_rows": 37,
+    "absence_non_null_goal_met": false,
+    "absence_non_null_observed": 0,
+    "absence_goal_retained_as": "strict XFAIL limited to AssertionError",
+    "source_gap_report": "reports/prematch/mission036/ABSENCE-SOURCE-GAP.json",
+    "analytical_status": "PARTIAL",
+    "original_joint_acceptance": {
+      "passed": 29,
+      "failed": 1,
+      "seconds": 5.51,
+      "failed_condition": "real Abs>0"
+    },
+    "final_targeted": {
+      "passed": 102,
+      "xfailed": 1,
+      "seconds": 7.93
+    }
+  },
+  "actual_publication": {
+    "run_id": 39438595883,
+    "artifact_id": 12274480581,
+    "report": "reports/prematch/mission036/AFTER-PUBLICATION.json",
+    "expected_manifest_sha256": "bd5218479d13a6de822b622a6ae4b19b9437d643d4310ab8689f23e2848733dd",
+    "totals": {
+      "expected": 144071,
+      "published": 144071,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "phases": {
+      "B_calendars": {
+        "expected": 200,
+        "published": 200,
+        "missing": 0,
+        "mismatched": 0
+      },
+      "compositions": {
+        "expected": 20,
+        "published": 20,
+        "missing": 0,
+        "mismatched": 0
+      },
+      "B_events": {
+        "expected": 69553,
+        "published": 69553,
+        "missing": 0,
+        "mismatched": 0
+      },
+      "C_players": {
+        "expected": 67037,
+        "published": 67037,
+        "missing": 0,
+        "mismatched": 0
+      },
+      "A_statistics": {
+        "expected": 7228,
+        "published": 7228,
+        "missing": 0,
+        "mismatched": 0
+      },
+      "receipts": {
+        "expected": 33,
+        "published": 33,
+        "missing": 0,
+        "mismatched": 0
+      }
+    },
+    "before_phases": {
+      "B_calendars": {
+        "expected": 200,
+        "published": 200,
+        "missing": 0,
+        "mismatched": 0
+      },
+      "compositions": {
+        "expected": 20,
+        "published": 20,
+        "missing": 0,
+        "mismatched": 0
+      },
+      "B_events": {
+        "expected": 69553,
+        "published": 69553,
+        "missing": 0,
+        "mismatched": 0
+      },
+      "C_players": {
+        "expected": 67037,
+        "published": 67036,
+        "missing": 1,
+        "mismatched": 0
+      },
+      "A_statistics": {
+        "expected": 7228,
+        "published": 7228,
+        "missing": 0,
+        "mismatched": 0
+      },
+      "receipts": {
+        "expected": 33,
+        "published": 33,
+        "missing": 0,
+        "mismatched": 0
+      }
+    },
+    "code_revision": "64b8b3668b6073d6e4605a9e1e601c2c6207a529",
+    "source_revision": "8558719f1e91dc2e81e3a285848ec145a77f3f54",
+    "artifact_zip_sha256": "318eae7e214082a044418dc900d37605d85f915eb4954f518a6b961176350404"
+  },
+  "current_analytical_validation": {
+    "report": "reports/prematch/mission036/BEFORE-AFTER.json",
+    "attachment_before": 0.24874436390616975,
+    "attachment_after": 1.0,
+    "target_fixtures": 70084,
+    "same_population_sha256": "0f652e40d430f4670436318858161d90fa8ebebe85cd3fcb6d6e77178f56833f",
+    "criteria": {
+      "absents_cles": {
+        "non_null": 0,
+        "total_team_rows": 140168,
+        "rate": 0.0
+      },
+      "cadre_suspendu": {
+        "non_null": 45,
+        "total_team_rows": 140168,
+        "rate": 0.00032104331944523716
+      },
+      "cadre_suspendu_cumul": {
+        "non_null": 0,
+        "total_team_rows": 140168,
+        "rate": 0.0
+      },
+      "cadre_suspendu_rouge": {
+        "non_null": 1166,
+        "total_team_rows": 140168,
+        "rate": 0.008318589121625478
+      },
+      "cong21": {
+        "non_null": 0,
+        "total_team_rows": 140168,
+        "rate": 0.0
+      },
+      "etat_score_buts10": {
+        "non_null": 118024,
+        "total_team_rows": 140168,
+        "rate": 0.8420181496489927
+      },
+      "force_xi": {
+        "non_null": 9580,
+        "total_team_rows": 140168,
+        "rate": 0.06834655556189716
+      },
+      "points_tardifs5": {
+        "non_null": 128340,
+        "total_team_rows": 140168,
+        "rate": 0.9156155470578163
+      },
+      "repos_jours": {
+        "non_null": 0,
+        "total_team_rows": 140168,
+        "rate": 0.0
+      },
+      "tc_neutre10": {
+        "non_null": 0,
+        "total_team_rows": 140168,
+        "rate": 0.0
+      }
+    },
+    "source_coverage_totals": {
+      "target_fixtures": 70084,
+      "target_team_rows": 140168,
+      "fixture_context": 70084,
+      "events_file_present": 69553,
+      "goal_trajectory_valid": 69498,
+      "official_xi": 14452,
+      "player_block": 110231,
+      "player_minutes_complete": 11428,
+      "xi_and_player_block": 14022
+    },
+    "temporal_audit": {
+      "method": "rebuild_without_target_or_future_postmatch_data; target_official_XI_only",
+      "passed": true,
+      "sampled_team_rows": 1026
+    },
+    "calculator_sha256": "bbdf7b4eeba25f0a3f386643dfb4232dbc0274e27e51ab16b4789021e93661d7",
+    "status": "PARTIAL"
+  },
+  "current_targeted_validation": {
+    "passed": 102,
+    "xfailed": 1,
+    "seconds": 7.93,
+    "command": "python -m pytest -q tests/prematch tests/historical_deep/test_mission029_publication.py tests/historical_deep/test_workflow_contracts.py tests/historical_deep/test_mission028_resume.py tests/portability/test_no_tracked_absolute_paths.py",
+    "red_acceptance": "Baseline fails >=90% attachment; actual new artifacts pass attachment and non-vacuous ForceXI. Original Abs>0 objective remains unmet:29passed/1failed in5.51s; retained as strict AssertionError-only XFAIL, with separate PARTIAL/source-gap tests and unchanged positive synthetic Abs tests.",
+    "independent_review": "reports/council/mission036-publication/C4-data-review.json"
+  },
+  "previous_green_code_ci": {
+    "run_id": 39397203825,
+    "job_id": 118545872705,
+    "head_sha": "1416488b517934534ec970d5c2d4a959cb7e2923",
+    "conclusion": "success",
+    "quality_and_domain_tests": {
+      "passed": 4129,
+      "skipped": 41,
+      "seconds": 1762.22
+    },
+    "all_jobs_green": true,
+    "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/39397203825"
+  },
+  "r2_writes": 0
 }

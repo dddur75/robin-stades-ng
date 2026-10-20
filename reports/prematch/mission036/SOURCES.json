@@ -4,11 +4,11 @@
     "conflicting_fixtures": [],
     "conflicting_lineups": [],
     "conflicting_players": [],
-    "invalid_detail_rows": 247,
+    "invalid_detail_rows": 3275,
     "unlinked_rows": 40561
   },
-  "inventory_entries": 9803,
+  "inventory_entries": 136866,
   "inventory_file": "source-inventory.csv",
-  "inventory_sha256": "8a671a42242d8e217477f19be7174ee73ded1311f03d050dd29436f85dd5b2d5",
-  "revision": "fac718f36d0b8e178374d5a8384c1b3cc871f135"
+  "inventory_sha256": "bf0e3549a77419da10da5caecba6487dd7d08d812099dca266a978b3f87d419d",
+  "revision": "8558719f1e91dc2e81e3a285848ec145a77f3f54"
 }

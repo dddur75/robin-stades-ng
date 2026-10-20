@@ -1,0 +1,214 @@
+{
+  "status": "COMPLETE",
+  "phases": {
+    "B_calendars": {
+      "expected": 200,
+      "published": 200,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "compositions": {
+      "expected": 20,
+      "published": 20,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "B_events": {
+      "expected": 69553,
+      "published": 69553,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "C_players": {
+      "expected": 67037,
+      "published": 67037,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "A_statistics": {
+      "expected": 7228,
+      "published": 7228,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "receipts": {
+      "expected": 33,
+      "published": 33,
+      "missing": 0,
+      "mismatched": 0
+    }
+  },
+  "issues": [],
+  "published_revision": "1896187037e0a88a457fff86214ddf023d352f98",
+  "provider_calls": 0,
+  "neon_writes": 0,
+  "r2_writes": 0,
+  "expected_manifest_sha256": "bd5218479d13a6de822b622a6ae4b19b9437d643d4310ab8689f23e2848733dd",
+  "totals": {
+    "expected": 144071,
+    "published": 144071,
+    "missing": 0,
+    "mismatched": 0
+  },
+  "batches": 1,
+  "transient_read_retry_rounds": 0,
+  "before_phases": {
+    "B_calendars": {
+      "expected": 200,
+      "published": 200,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "compositions": {
+      "expected": 20,
+      "published": 20,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "B_events": {
+      "expected": 69553,
+      "published": 69553,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "C_players": {
+      "expected": 67037,
+      "published": 67036,
+      "missing": 1,
+      "mismatched": 0
+    },
+    "A_statistics": {
+      "expected": 7228,
+      "published": 7228,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "receipts": {
+      "expected": 33,
+      "published": 33,
+      "missing": 0,
+      "mismatched": 0
+    }
+  },
+  "code_revision": "64b8b3668b6073d6e4605a9e1e601c2c6207a529",
+  "retrieval_provenance": {
+    "run_id": 39438595883,
+    "run_attempt": 1,
+    "artifact_id": 12274480581,
+    "artifact_zip_sha256": "318eae7e214082a044418dc900d37605d85f915eb4954f518a6b961176350404",
+    "inventory_entries_checked_against_receipt_manifest": 136810,
+    "analytical_source_revision": "8558719f1e91dc2e81e3a285848ec145a77f3f54",
+    "publication_source_revision": "1896187037e0a88a457fff86214ddf023d352f98",
+    "note": "Publication report itself is appended after the data revision; criteria use the subsequent immutable commit."
+  },
+  "campaign_before_phases": {
+    "B_calendars": {
+      "expected": 200,
+      "published": 26,
+      "mismatched": 0,
+      "missing": 174
+    },
+    "compositions": {
+      "expected": 20,
+      "published": 20,
+      "mismatched": 0,
+      "missing": 0
+    },
+    "B_events": {
+      "expected": 69553,
+      "published": 9264,
+      "mismatched": 0,
+      "missing": 60289
+    },
+    "C_players": {
+      "expected": 67037,
+      "published": 5562,
+      "mismatched": 0,
+      "missing": 61475
+    },
+    "A_statistics": {
+      "expected": 7228,
+      "published": 2357,
+      "mismatched": 0,
+      "missing": 4871
+    },
+    "receipts": {
+      "expected": 33,
+      "published": 26,
+      "mismatched": 0,
+      "missing": 7
+    }
+  },
+  "receipt_inventory_growth_since_first_pass": 8947,
+  "previous_pass": {
+    "report": "PUBLICATION-PASS-1.json",
+    "sha256": "9f2b2731d2bda409ac5c3431e0875b6f12a217e428abf3653838a5f6eda206c6",
+    "status": "BLOCKED",
+    "totals": {
+      "expected": 135124,
+      "published": 135123,
+      "missing": 1,
+      "mismatched": 0
+    },
+    "issues": [
+      {
+        "path": "historical/parquet/competition=MEX/season=2019/entity_type=events/dataset_version=api-football-v3/fixture-293438.parquet",
+        "reason": "R2_READ_FAILED"
+      }
+    ]
+  },
+  "previous_passes": [
+    {
+      "attempt": 1,
+      "report": "PUBLICATION-PASS-1.json",
+      "sha256": "9f2b2731d2bda409ac5c3431e0875b6f12a217e428abf3653838a5f6eda206c6",
+      "status": "BLOCKED",
+      "totals": {
+        "expected": 135124,
+        "published": 135123,
+        "missing": 1,
+        "mismatched": 0
+      },
+      "issues": [
+        {
+          "path": "historical/parquet/competition=MEX/season=2019/entity_type=events/dataset_version=api-football-v3/fixture-293438.parquet",
+          "reason": "R2_READ_FAILED"
+        }
+      ],
+      "failed_git_operation": null
+    },
+    {
+      "attempt": 2,
+      "report": "PUBLICATION-PASS-2.json",
+      "sha256": "626a5793aa4d17098fc8fbf3736c0c2d6ccaf1246a6b94f9dbe8aa4d859fe98e",
+      "status": "BLOCKED",
+      "totals": {
+        "expected": 144071,
+        "published": 142027,
+        "missing": 2044,
+        "mismatched": 0
+      },
+      "issues": [],
+      "failed_git_operation": "push"
+    },
+    {
+      "attempt": 3,
+      "report": "PUBLICATION-PASS-3.json",
+      "sha256": "2906969538fb694cc9e9357b149aa9c9720bf0272cb8eb2e37e19beb9c2135d2",
+      "status": "BLOCKED",
+      "totals": {
+        "expected": 144071,
+        "published": 144070,
+        "missing": 1,
+        "mismatched": 0
+      },
+      "issues": [
+        {
+          "path": "historical/parquet/competition=SP2/season=2024/entity_type=players/dataset_version=api-football-v3/fixture-1217550.parquet",
+          "reason": "R2_READ_FAILED"
+        }
+      ],
+      "failed_git_operation": null
+    }
+  ]
+}

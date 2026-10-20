@@ -1,0 +1,25 @@
+{
+  "claim_id": "DATA.MISSION036.PREMATCH.V1",
+  "status": "PARTIAL_SOURCE_GAP_ABSENCE_NON_NULL_GOAL_NOT_MET",
+  "source_revision": "8558719f1e91dc2e81e3a285848ec145a77f3f54",
+  "population_team_rows": 140168,
+  "official_xi_team_rows": 14452,
+  "xi_and_player_block_team_rows": 14022,
+  "absents_cles_non_null": 0,
+  "null_reasons_all_team_rows": {
+    "official_lineup_missing_or_invalid": 125716,
+    "season_player_statistics_incomplete": 2654,
+    "season_player_minutes_incomplete": 11798
+  },
+  "null_reasons_official_xi_team_rows": {
+    "season_player_statistics_incomplete": 2654,
+    "season_player_minutes_incomplete": 11798
+  },
+  "method": "Independent enumeration of delivered Parquet values and their explicit null reasons; no claim that mere source-family intersection proves complete historical minutes.",
+  "cause": "All official-XI output rows lack the historical season minute/statistic completeness required by the unchanged strict formula. Unknown substitute minutes were not converted to zero.",
+  "source_canary": "reports/council/mission036-publication/xi-canary.json",
+  "positive_formula_tests": "tests/prematch/test_export.py; tests/prematch/test_criteria.py",
+  "acceptance": "Attachment >=90% and calculable audited ForceXI achieved. Non-null Abs objective not achieved; keep explicit source gap and PARTIAL status rather than weakening the formula or claiming a positive real-data absence audit.",
+  "provider_calls": 0,
+  "neon_writes": 0
+}

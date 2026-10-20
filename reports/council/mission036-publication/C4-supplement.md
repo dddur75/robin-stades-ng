@@ -110,3 +110,36 @@ Vert :71 tests ciblés, Ruff et Bandit. C4 inspecte le diff et les tests
 nouveau reçu après récupération). Aucun P0/P1 ; PASS_AND_HOLD pour un seul
 nouveau dispatch après traçabilité REDESIGN+DECISION, dans l'autorisation
 utilisateur existante. Revue finale des critères encore en attente.
+
+### Réception finale des données — publication complète, objectif Abs non atteint
+
+C4 a réconcilié hors réseau l'artefact12274480581 du run39438595883 :
+144 071 références publiées, aucun manque ou mismatch ; les sept Parquet,
+70 084 IDs cibles, 225 cellules ligue-saison, 2 250 lignes de couverture et
+1 026 empreintes/listes non_null de l'audit sont vérifiés. ForceXI est non nul
+sur 9 580 lignes, dont 37 auditées. La publication est COMPLETE ; la livraison
+analytique reste PARTIAL, Abs étant nul partout. Les 56 sources héritées hors
+manifest restent sous provenance d'inventaire antérieure, sans nouveau reçu.
+Le rapport détaillé est `C4-data-review.json`, schéma GOVERNANCE validé.
+
+L'objectif Abs>0 non atteint est conservé dans un XFAIL strict limité à
+AssertionError, séparé des tests PASS du rattachement/ForceXI et de l'intégrité.
+C4 approuve cette présentation, qui expose une lacune de source et ne prétend
+pas atteindre tous les objectifs. Une résolution future fera XPASS strict et
+nécessitera la levée explicite de la limite. Les tests ordinaires réconcilient
+les raisons et le statut PARTIAL de `ABSENCE-SOURCE-GAP.json` avec les Parquet.
+Aucune formule ou minute inconnue n'est modifiée ; les tests synthétiques Abs
+positifs restent actifs. L'échec initial29PASS/1FAIL est conservé dans la
+validation, puis102PASS/1XFAIL en7,93s. Les deux substitutions de références
+vers l'URL native de l'artefact et le canari versionné sont approuvées par C4,
+sans changement de fait ni du degré de vérification.
+
+C4 clôt la revue des documents finaux sans blocage P0/P1 : statuts séparés,
+hashes d'artefacts/code et projection precommit sont cohérents, code d'exécution
+réel64b distinct et explicite, baseline historique datée. La prose de la PR
+est corrigée : l'ancien publieur parcourait déjà les clés runs/projection,
+mais ses plafonds laissaient un arriéré et il ne hachait pas les chemins déjà
+publiés. La correction locale du champ code_revision du graphe respecte la
+projection imposée par le schéma ; la vérification obligatoire du ledger et
+du graphe passe (0,71s), sans réécriture historique ni recalcul de données.
+La CI du commit final reste à attendre après push ; aucun merge autorisé.
