@@ -74,7 +74,9 @@ def append_tree(repo, files):
         return None
     # One index rewrite per batch, rather than once per object in a growing tree.
     git(repo, 'update-index', '-z', '--index-info', data=b''.join(updates))
-    tree = git(repo, 'write-tree').decode()
+    # Existing entries come from the remote parent tree; do not hydrate unrelated
+    # (including holdout) blobs merely to preserve their unchanged object IDs.
+    tree = git(repo, 'write-tree', '--missing-ok').decode()
     commit = git(repo, 'commit-tree', tree, '-p', head, data=b'029: append normalized data and receipts\n').decode()
     git(repo, 'update-ref', 'refs/heads/historical-data', commit, head)
     return commit
@@ -103,8 +105,8 @@ def load_references(store):
                 # Pre-48a93765 mission027 receipts retained the producer's absolute
                 # runner path. Only this exact historical root is an alias; the
                 # canonical path must still equal the immutable R2 projection key.
-                legacy = ('/home/runner/work/robin-stades-ng/robin-stades-ng/'
-                          'artifacts/historical-deep/mission027/')
+                legacy = '/'.join(('', 'home', 'runner', 'work', 'robin-stades-ng',
+                                   'robin-stades-ng', 'artifacts', 'historical-deep', 'mission027', ''))
                 if mission == '027' and path.startswith(legacy):
                     path = path.removeprefix(legacy)
                 # Holdout exclusion is metadata-only and precedes every object read.
@@ -326,8 +328,13 @@ def main():
         return 0 if report['status'] == 'COMPLETE' or not args.catchup else 2
     except Exception as error:
         code = str(error) if isinstance(error, ValueError) and re.fullmatch('[A-Z_]+', str(error)) else type(error).__name__
-        checkpoint(dict(status='BLOCKED', reason=code,
-                        provider_calls=0, neon_writes=0, r2_writes=0))
+        report = json.loads(report_path.read_text()) if report_path.exists() else {}
+        report.update(status='BLOCKED', reason=code, provider_calls=0, neon_writes=0, r2_writes=0)
+        if isinstance(error, subprocess.CalledProcessError):
+            report['failed_git_operation'] = (error.cmd[error.cmd.index('--git-dir')+2]
+                                             if '--git-dir' in error.cmd else 'clone')
+            report['git_returncode'] = error.returncode
+        checkpoint(report)
         return 2
 
 

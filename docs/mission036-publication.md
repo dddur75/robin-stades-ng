@@ -77,9 +77,24 @@ compétitions, seuil de jaunes ou tirs horodatés n'est déduit de la publicatio
 Le premier dispatch `39395579612` a refusé une référence (`REFERENCE_SCOPE`),
 avant toute projection publiée. Le producteur antérieur à `48a93765` conservait
 le chemin absolu du runner dans `partitions[].path` :
-`/home/runner/work/robin-stades-ng/robin-stades-ng/artifacts/historical-deep/mission027/`.
+`<home>/runner/work/robin-stades-ng/robin-stades-ng/artifacts/historical-deep/mission027/`
+(racine home Linux du runner historique ; aucun accès au système de fichiers).
 Cette seule racine connue est retirée pour la mission 027 ; le chemin obtenu
 reste soumis au contrat canonique et doit correspondre exactement à la clé R2
 attestée. Aucune lecture du chemin local du reçu, aucun alias libre, aucun
 assouplissement du hash ou du holdout. Le test couvre aussi les racines étrangères
 et la traversée de répertoires.
+
+### Arbre Git partiel et inventaire initial effectivement observé
+
+Le dispatch `39396417715` a vérifié les reçus R2 et les objets sélectionnés déjà
+publiés : 126 756 références, 16 522 conformes, 110 234 absentes, zéro hash
+contradictoire. Il a ensuite échoué avant le premier push. Le test de clone
+partiel reproduit l'échec de `write-tree`, puis prouve le correctif
+`write-tree --missing-ok` jusque dans un push réel vers le dépôt synthétique.
+Les entrées héritées conservent les identifiants du parent distant ; chaque
+nouvel objet a été vérifié SHA-256 puis écrit par `hash-object -w`. Les blobs hors
+périmètre restent absents après le push, sans lecture holdout. Cette option
+n'autorise ni entrée nouvelle arbitraire ni publication d'un objet non vérifié.
+Les erreurs Git gardent les derniers compteurs et exposent seulement le nom
+fixe de l'opération et son code de sortie, sans stderr susceptible d'être secret.

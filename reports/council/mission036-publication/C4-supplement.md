@@ -31,3 +31,12 @@ compatibilité annoncée dans la revue initiale concernait les producteurs actue
 les anciens reçus exigent cet alias maintenant testé. Exhaustivité R2 à vérifier.
 C4 a également revu l'optimisation d'index : le format nul `100644 SHA\tpath\0`
 est valide ; une mise à jour par lot conserve contrôles de conflits, noop et CAS.
+
+C4 delta après le dispatch 39396417715 : aucun P0/P1 ; 43 contrôles indépendants
+passent en 1,98 s. `write-tree --missing-ok` préserve les IDs du parent distant ;
+chaque ajout est écrit par hash-object avant l'index et les références
+sélectionnées restent vérifiées SHA-256. Le test de clone partiel pousse l'ajout
+et confirme qu'un blob non sélectionné reste absent. L'assemblage de l'alias
+historique conserve exactement les octets acceptés. C4 a signalé un P2 sur le
+diagnostic d'échec du clone initial (absence de --git-dir) : C0 l'a gardé et ajouté
+un test de régression ; les 60 contrôles ciblés passent après correction.

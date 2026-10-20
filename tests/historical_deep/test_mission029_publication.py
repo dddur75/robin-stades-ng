@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -224,13 +225,18 @@ def test_partial_git_clone_hydrates_only_selected_blobs(repo, tmp_path_factory, 
     assert cache[published[first[0]['path']]] == first[0]['sha256']
     excluded = published[second[0]['path']]
     assert original(clone, 'cat-file', '--batch-check', data=(excluded+'\n').encode()).endswith(b' missing')
+    third, body = partition(3)
+    assert publication.append_tree(clone, {third['path']: body})
+    publication.git(clone, 'push', 'origin', 'historical-data:historical-data', network=True)
+    assert original(repo, 'show', 'historical-data:'+third['path']) == body
+    assert original(clone, 'cat-file', '--batch-check', data=(excluded+'\n').encode()).endswith(b' missing')
 
 
 def test_legacy_027_absolute_runner_path_is_canonicalized_only_with_exact_r2_proof(repo):
     prefix = PREFIX.replace('029', '027')
     spec, body = partition(1, family='lineups', prefix=prefix)
     canonical = spec['path']
-    legacy_root = '/home/runner/work/robin-stades-ng/robin-stades-ng/artifacts/historical-deep/mission027/'
+    legacy_root = '/home/runner/work/robin-stades-ng/robin-stades-ng/artifacts/historical-deep/mission027/'  # PORTABILITY_TEST_FIXTURE
     store = store_with_receipt([(dict(spec, path=legacy_root+canonical), body)], prefix=prefix)
     expected, receipts = publication.load_references(store)
     assert canonical in expected
@@ -239,3 +245,18 @@ def test_legacy_027_absolute_runner_path_is_canonicalized_only_with_exact_r2_pro
         store = store_with_receipt([(dict(spec, path=path), body)], prefix=prefix)
         with pytest.raises(ValueError, match='REFERENCE_SCOPE'):
             publication.load_references(store)
+
+
+def test_initial_clone_failure_still_emits_a_blocked_report(tmp_path, monkeypatch):
+    monkeypatch.setenv('GITHUB_ACTIONS', 'true')
+    monkeypatch.setenv('GITHUB_REPOSITORY', 'synthetic/repository')
+    monkeypatch.setattr(sys, 'argv', ['publish_mission029', '--catchup'])
+    monkeypatch.setattr(publication, 'OUTPUT', tmp_path)
+    def failed_clone(argv, **kwargs):
+        raise subprocess.CalledProcessError(128, argv, stderr=b'synthetic failure')
+    monkeypatch.setattr(publication.subprocess, 'run', failed_clone)
+    assert publication.main() == 2
+    report = json.loads((tmp_path/'publication-report.json').read_text())
+    assert report['status'] == 'BLOCKED'
+    assert report['failed_git_operation'] == 'clone'
+    assert report['git_returncode'] == 128

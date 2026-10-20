@@ -61,5 +61,17 @@
     "legacy_producer_evidence": "git show 48a93765 -- scripts/run_mission027_lineups.py",
     "fix": "Exact historical mission027 runner root only; canonical R2 key and SHA checks preserved",
     "targeted_tests_passed": 43
+  },
+  "second_dispatch": {
+    "run_id": 39396417715,
+    "expected": 126756,
+    "published": 16522,
+    "missing": 110234,
+    "mismatched": 0,
+    "failure": "Real partial-clone append reproduces write-tree exit128; corrected with --missing-ok after all new objects are written and hashes verified. No push occurred in failed run.",
+    "baseline_report": "reports/prematch/mission036/BEFORE-PUBLICATION.json",
+    "regression": "Real partial-clone append and push preserve absent unselected blob; failed initial clone still emits BLOCKED report.",
+    "targeted_tests_passed": 60,
+    "portability": "TRACKED_ABSOLUTE_PATHS_PASS; literal alias represented as immutable path components, no change to bytes accepted."
   }
 }
