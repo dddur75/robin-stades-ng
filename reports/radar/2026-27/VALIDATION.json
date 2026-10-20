@@ -1,0 +1,19 @@
+{
+  "status": "PASS_LOCAL_CHECKS_INDEPENDENT_REVIEW_PENDING",
+  "computable_rows": 2691,
+  "unique_threshold_counts": {
+    "0": 74,
+    "0.02": 37,
+    "0.05": 19
+  },
+  "threshold_crossings": 130,
+  "all_prices_strictly_before_kickoff": true,
+  "first_crossings_recomputed_separately": true,
+  "reproduction_identical": true,
+  "tests": "32 targeted tests passed",
+  "ruff": "PASS",
+  "bandit_all_severities": "PASS",
+  "provider_calls": 0,
+  "neon_operations": 0,
+  "artifact_download": "403; raw source boost coverage UNKNOWN"
+}

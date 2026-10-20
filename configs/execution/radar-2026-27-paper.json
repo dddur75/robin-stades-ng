@@ -1,0 +1,22 @@
+{
+  "mission_id": "RADAR_2026_27_PAPER",
+  "authorized_stages": [
+    "E1",
+    "E2",
+    "E3A",
+    "E3B"
+  ],
+  "maximum_stage": "E3B",
+  "external_effects": {
+    "github": "read existing artifacts; one new bounded report workflow; one branch and one PR; no merge",
+    "provider_calls": 0,
+    "neon_writes": 0,
+    "r2_operations": 0,
+    "real_bets": 0,
+    "subscriptions": 0
+  },
+  "compute_budget": "Reuse pinned CLV exports for initial report; synthetic tests; four Monday report runs over existing normalized artifacts only, 25 minutes maximum each; no provider collection.",
+  "time_budget": "Four weeks; decision 2026-11-17 Europe/Paris",
+  "source_hash": "8161425c6f1c4063a1deded651dd3c658ca3bfce05ad609585e9a10ef76b0661",
+  "expires_at": "2026-11-17T23:00:00Z"
+}

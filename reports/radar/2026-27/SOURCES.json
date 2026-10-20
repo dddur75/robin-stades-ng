@@ -1,0 +1,53 @@
+{
+  "start": "2026-10-03",
+  "through": "2026-10-19",
+  "latest_kickoff_day": "2026-10-19",
+  "clv_exports": [
+    {
+      "path": "2026-10-09-clv.csv",
+      "sha256": "6d21fc92de4c3004274088dd4f1b0e303c89eb2430cbf530d0d0c158a1150442"
+    },
+    {
+      "path": "2026-10-10-clv.csv",
+      "sha256": "9c4c6a137a2563823992f4abc7886ed7df960541573b03dec45e9e8bf2269c87"
+    },
+    {
+      "path": "2026-10-11-clv.csv",
+      "sha256": "98f4eb70495301b33a5bd1b1dd8ee3eaabbedc0ffce093e04a6aab6a552a5bfd"
+    },
+    {
+      "path": "2026-10-12-clv.csv",
+      "sha256": "d5ea2b9018105ba8d60595dbc7c28482596cf4fe545503bf25c8e93d9b680dc0"
+    },
+    {
+      "path": "2026-10-16-clv.csv",
+      "sha256": "b711e1dbf5342f83f275a1225e4944254dec0c0fb8ab417b6dbddf7445dc27c2"
+    },
+    {
+      "path": "2026-10-17-clv.csv",
+      "sha256": "6ee424891b1f18a7cab83215d34fec0dc0b705087357dbbc40c19ff67d3a29e8"
+    },
+    {
+      "path": "2026-10-18-clv.csv",
+      "sha256": "fcadd68d822ce655aa0f1b825dec726d9edf495456c5aadea3355b041f749be0"
+    },
+    {
+      "path": "2026-10-19-clv.csv",
+      "sha256": "886181ddf12278f1f93044f79e77442dbe41113b975404276b1b702bcee2f1c3"
+    }
+  ],
+  "clv_provenance_sha256": {
+    "SOURCES.json": "fe26321bc29a8ee2239f29086cfb1ba0605bd7724827c3156e2917027613ab56",
+    "ARTIFACTS.json": "67328496a7d057ecb89e2e0f09765e8d3260fc1ddd12005ece4dffd0c77e99a7",
+    "EXCLUSIONS.csv": "202ac431fc2736e799233785079722793bb63a629f1ab3da159fc3cd203bd4eb",
+    "COVERAGE.md": "72b9ccd635f4d56b82289df9afde6d45eb9b8e9e22238518d2c2a9ea873b9f34"
+  },
+  "boost_csv_sha256": "dcba4010a3abe65517d65e78e0d04e7b8fdd2813d752d343c1a0cf318c0a8e17",
+  "boost_audit": {
+    "normalized_files_inspected": 0,
+    "normalized_rows_inspected": 0,
+    "market_keys": {},
+    "boost_label_rows": 0,
+    "status": "UNKNOWN: CLV exports do not preserve promotion labels"
+  }
+}
