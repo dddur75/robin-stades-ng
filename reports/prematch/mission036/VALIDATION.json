@@ -1,7 +1,7 @@
 {
   "status": "DOMAIN_PASS_GLOBAL_NOT_GREEN",
-  "calculator_revision": "precommit-projection:8c006e280dbc92c3825972007b19fe55a3df046d31d94e9ee36912491a2f91cd",
-  "calculator_sha256": "5ddfed04266523f94b12109e4f539cd54eaddc3c9f3639dd5671e0311bc97c05",
+  "calculator_revision": "precommit-projection:5029d0a626f27b25ce5a6add43749a9dd053c1520a1a666921a3676e83c02502",
+  "calculator_sha256": "bbdf7b4eeba25f0a3f386643dfb4232dbc0274e27e51ab16b4789021e93661d7",
   "source_revision": "fac718f36d0b8e178374d5a8384c1b3cc871f135",
   "targeted_tests": {
     "passed": 577,
@@ -175,7 +175,7 @@
   "calculator_file_hashes": {
     "scripts/build_prematch_criteria.py": "0fd031209451bbef38d3849b488555ee6a1bac10fa86b7c8093ab908b2492cc3",
     "src/robin/prematch/criteria.py": "a44506fa9b009d48d8d8fee114ed59ba6808e57e4ce5f085f93a4a7b482d4936",
-    "src/robin/prematch/export.py": "1a31806e83341a61aaac0877443fe85b43baeea19aaba9d1e55098c86e11e4b9",
+    "src/robin/prematch/export.py": "49b90ca34e5b37ca1371304844b87b247dd1fff69ea7e602eee4cc992d563bee",
     "src/robin/prematch/sources.py": "eb6d0376e2159e135bbec4d64bde4045f19ffee58464394d522c30ff31ad12b2"
   },
   "final_format_check": "CSV outputs use LF; exporter and artifact checks rerun after formatting-only adjustment",
@@ -220,5 +220,9 @@
     "mypy_strict": "PASS",
     "prematch_tests_passed": 28,
     "remote_evidence": "Final check URL and conclusion to be recorded in PR description after push; not asserted green by this precommit record."
+  },
+  "publication_presentation_followup": {
+    "change": "Only two explanatory strings in coverage prose; formulas, windows, source population and seven season-file bytes unchanged.",
+    "numerical_rebuild": "Pending authorized catchup; frozen baseline still fac718f3."
   }
 }

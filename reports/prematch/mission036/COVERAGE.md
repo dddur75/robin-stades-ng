@@ -5,10 +5,10 @@ Claim : `DATA.MISSION036.PREMATCH.V1` (revue indépendante en attente).
 Source figée : `fac718f36d0b8e178374d5a8384c1b3cc871f135`. Population : 70084 matchs.
 Unité : équipe-match (2 lignes par match). Taux = valeurs non nulles / population cible.
 Zéro et faux sont comptés comme couverts. Les matchs sans source restent au dénominateur.
-Statut PARTIAL : publication et familles incomplètes ; aucun proxy des données manquantes.
+Statut PARTIAL : critères et familles incomplets ; aucun proxy des données manquantes.
 
 Les compositions officielles sont admissibles conformément à l'instruction utilisateur.
-Abs/XI restent à 0 % faute de recouvrement suffisant avec les statistiques par match.
+Abs/XI sont nuls si compositions et historique joueur requis ne se recoupent pas.
 Les fiches joueurs agrégées sur toute la saison ne sont pas utilisées.
 Le calendrier toutes compétitions et les règles de cumul de jaunes ne sont pas prouvés.
 Une suspension rouge prouvée produit vrai ; sinon la suspension globale reste inconnue.

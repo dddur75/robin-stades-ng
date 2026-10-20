@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "path": "historical/parquet/competition=AUT/season=2019/entity_type=fixtures/dataset_version=api-football-v3/fixture-ab221571d57fca0ad547d8b94b959a94019704f7ec553062b71c09ce04201a73.parquet",
+  "sha256": "2a2e936b511a49efc4f341d95b1d3725da0779fe05d8d1ad5685dbfec37fbc9d",
+  "method": "live GitHub partial clone; explicit selected SHA fetch --refetch --no-filter; SHA256 matches frozen B-calendars receipt",
+  "provider_calls": 0,
+  "r2_operations": 0
+}

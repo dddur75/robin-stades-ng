@@ -1,0 +1,58 @@
+{
+  "claim_id": "DATA.MISSION036.PUBLICATION.V1",
+  "status": "TESTED_REAL_CATCHUP_PENDING",
+  "base_revision": "4910d3bc2fbab4a0365aa5faa92a399b331b1da2",
+  "baseline_source_revision": "fac718f36d0b8e178374d5a8384c1b3cc871f135",
+  "baseline_attachment": {
+    "target_fixtures": 70084,
+    "attached": 17433,
+    "missing": 52651,
+    "rate": 0.24874436390616975
+  },
+  "targeted_precommit_run": {
+    "passed": 590,
+    "seconds": 128.85,
+    "command": "python -m pytest -q tests/historical_deep tests/coverage tests/prematch tests/council tests/portability/test_no_tracked_absolute_paths.py",
+    "timing": "Before the two-string coverage prose correction; later affected checks recorded separately."
+  },
+  "current_focused_publication_workflow_checks": {
+    "passed": 42,
+    "command": "python -m pytest -q tests/historical_deep/test_mission029_publication.py tests/historical_deep/test_mission028_resume.py tests/historical_deep/test_workflow_contracts.py"
+  },
+  "coverage_prose_regression": {
+    "red": "False zero coverage claim reproduced with calculable synthetic XI data",
+    "green": "4 export tests passed"
+  },
+  "ruff": "PASS",
+  "bandit_all_severities_publisher": "PASS",
+  "independent_review": "reports/council/mission036-publication/C4-review.json",
+  "review_supplement": "reports/council/mission036-publication/C4-supplement.md",
+  "git_hydration_proof": "reports/council/mission036-publication/git-hydration.json",
+  "public_receipt_parser_probe": {
+    "receipts": 24,
+    "A_statistics": 7228,
+    "B_calendars": 200,
+    "B_events": 69553,
+    "C_players": 41578,
+    "note": "Published receipt metadata only; complete R2 inventory remains to be measured."
+  },
+  "provider_calls": 0,
+  "neon_writes": 0,
+  "r2_operations_before_dispatch": 0,
+  "forbidden_paths_unchanged": [
+    "prospective-deep-scheduler.yml",
+    "robin-core",
+    "configs/execution",
+    "existing collectors"
+  ],
+  "external_execution": "Explicit user authorization; workflow71 existing manual mode; no merge requested.",
+  "final_affected_checks": {
+    "publication_events_workflows_resume_passed": 48,
+    "prematch_provenance_portability_passed": 46,
+    "ruff": "PASS",
+    "mypy_strict": "PASS",
+    "bandit_all_severities_recursive": "PASS",
+    "git_diff_check": "PASS",
+    "note": "Batch index rewrite preserves append-only semantics; seven baseline Parquet bytes remain unchanged."
+  }
+}

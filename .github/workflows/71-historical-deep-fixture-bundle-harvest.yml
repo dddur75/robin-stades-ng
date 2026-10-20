@@ -5,6 +5,10 @@ on:
     - cron: "17 */2 * * *"
   workflow_dispatch:
     inputs:
+      publication_catchup:
+        description: "Rattraper les seuls objets R2 attestés, sans collecte fournisseur"
+        type: boolean
+        default: false
       mission029_phase:
         type: string
         default: none
@@ -52,6 +56,9 @@ on:
         default: 100
   workflow_call:
     inputs:
+      publication_catchup:
+        type: boolean
+        default: false
       mission029_phase:
         type: string
         default: none
@@ -113,11 +120,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ inputs.mission028_progress && 'mission-028-progress' || inputs.progress_only && 'mission-027-progress' || inputs.lineups_only && format('mission-027-lineups-{0}', inputs.competition) || 'historical-deep-r2-state' }}
+  group: ${{ inputs.publication_catchup && 'historical-deep-r2-state' || inputs.mission028_progress && 'mission-028-progress' || inputs.progress_only && 'mission-027-progress' || inputs.lineups_only && format('mission-027-lineups-{0}', inputs.competition) || 'historical-deep-r2-state' }}
   cancel-in-progress: false
 
 jobs:
   fixture-bundles:
+    if: ${{ !inputs.publication_catchup }}
     runs-on: ubuntu-latest
     permissions: {actions: read, contents: write}
     timeout-minutes: ${{ inputs.lineups_only && 200 || 110 }}
@@ -261,3 +269,74 @@ jobs:
           if-no-files-found: error
           retention-days: 90
           compression-level: 9
+
+  publication-catchup:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.publication_catchup }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    permissions: {actions: read, contents: write}
+    env:
+      STORAGE_PAUSED: "true"
+      P3_P4_PAUSED: "true"
+      PRODUCTION_LOCKED: "true"
+      REAL_BETS: "false"
+      NO_BET_DEFAULT: "true"
+      PROMOTION_LOCKED: "true"
+      SOCIAL_PUBLISHING_ENABLED: "false"
+      DEMO_MODE_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: |
+          python -m pip install -r requirements.txt boto3
+          python -m pip install --no-deps -e .
+      - name: Réconcilier et publier les objets attestés par lots
+        env:
+          GH_TOKEN: ${{ github.token }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: python -m scripts.publish_mission029 --catchup
+      - name: Préparer uniquement les blobs permis pour le recalcul
+        id: prematch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import os, re
+          from scripts.publish_mission029 import OUTPUT, git, hydrate, inventory
+          from robin.prematch.sources import FAMILIES
+          repo, selected = OUTPUT / '.publication.git', {}
+          for path in inventory(repo):
+              if not path.startswith('historical/parquet/') or not path.endswith('.parquet'):
+                  continue
+              parts = dict(p.split('=', 1) for p in path.split('/') if '=' in p)
+              if parts.get('season') == '2025':
+                  continue
+              family = parts.get('entity_type')
+              if family in FAMILIES or (family == 'players' and re.search(r'/fixture-\d+\.parquet$', path)):
+                  selected[path] = {}
+          hydrate(repo, selected)
+          with open(os.environ['GITHUB_ENV'], 'a') as stream:
+              stream.write('GIT_ALTERNATE_OBJECT_DIRECTORIES=' + str((repo / 'objects').resolve()) + '\n')
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as stream:
+              stream.write('source_ref=' + git(repo, 'rev-parse', 'historical-data').decode() + '\n')
+          PY
+      - name: Recalculer les critères et la couverture sans accès réseau
+        run: >-
+          PYTHONPATH=src python scripts/build_prematch_criteria.py --repository .
+          --source-ref "${{ steps.prematch.outputs.source_ref }}"
+          --output artifacts/prematch/mission036
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mission036-publication-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            artifacts/historical-deep/mission029/publication-*
+            artifacts/prematch/mission036/**
+          if-no-files-found: error
+          retention-days: 90
