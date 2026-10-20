@@ -10,10 +10,39 @@
   "all_prices_strictly_before_kickoff": true,
   "first_crossings_recomputed_separately": true,
   "reproduction_identical": true,
-  "tests": "32 targeted tests passed",
+  "tests": "46 CLV/radar tests passed; final governance checks recorded separately",
   "ruff": "PASS",
   "bandit_all_severities": "PASS",
   "provider_calls": 0,
   "neon_operations": 0,
-  "artifact_download": "403; raw source boost coverage UNKNOWN"
+  "artifact_download": "270/270 ZIP and normalized JSON hashes match pinned ARTIFACTS.json via authorized GitHub connector",
+  "direct_computable_rows": 2691,
+  "direct_unique_threshold_counts": {
+    "0": 8,
+    "0.02": 2,
+    "0.05": 0
+  },
+  "direct_confirmation": {
+    "0": {
+      "confirmed": 6,
+      "known": 8,
+      "rate": 0.75
+    },
+    "0.02": {
+      "confirmed": 2,
+      "known": 2,
+      "rate": 1
+    },
+    "0.05": {
+      "confirmed": 0,
+      "known": 0,
+      "rate": null
+    }
+  },
+  "direct_math_and_pre_kickoff": "PASS all computable rows",
+  "direct_raw_triplets_checked": 8,
+  "direct_source_reports_read_for_selected_triplets": 200,
+  "ci_root_cause": "decision_nodes RADAR-001/002 were prepended; now appended in ledger order; no test weakened",
+  "mypy_strict_direct_module": "PASS",
+  "ci_failed_regressions_fixed": 15
 }

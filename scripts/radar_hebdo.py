@@ -16,6 +16,7 @@ from statistics import mean
 from zoneinfo import ZoneInfo
 
 from robin import clv
+from robin.radar_direct import enrich
 
 THRESHOLDS = (0, 0.02, 0.05)
 START = date(2026, 10, 3)
@@ -139,7 +140,7 @@ def load_boosts(path: Path, details: list[Row]) -> list[Row]:
     return result
 
 
-def first_crossings(rows: list[Row]) -> list[Row]:
+def first_crossings(rows: list[Row], *, metric: str = "clv") -> list[Row]:
     """One match/issue/book per threshold, irrespective of horizon and kind."""
     chosen = {}
     for threshold in THRESHOLDS:
@@ -153,7 +154,7 @@ def first_crossings(rows: list[Row]) -> list[Row]:
                 r["kind"],
             ),
         ):
-            ev = r["clv"]
+            ev = r.get(metric)
             if ev is None or (ev <= 0 if threshold == 0 else ev < threshold - 1e-12):
                 continue
             key = (r["match"], r["issue"], r["book"], threshold)
@@ -161,10 +162,10 @@ def first_crossings(rows: list[Row]) -> list[Row]:
     return list(chosen.values())
 
 
-def statistics(crossings: list[Row]) -> list[Row]:
+def statistics(crossings: list[Row], *, metric: str = "clv") -> list[Row]:
     result = []
     for threshold in THRESHOLDS:
-        values = [r["clv"] for r in crossings if r["threshold"] == threshold]
+        values = [r[metric] for r in crossings if r["threshold"] == threshold]
         result.append(
             dict(
                 threshold=threshold,
@@ -176,13 +177,13 @@ def statistics(crossings: list[Row]) -> list[Row]:
     return result
 
 
-def book_table(crossings: list[Row]) -> str:
+def book_table(crossings: list[Row], *, metric: str = "clv") -> str:
     lines = [
         "| Book | EV+ n | ≥2% n | ≥5% n | EV moy. EV+ | Gain 10€ EV+ | EV moy. ≥2% | Gain ≥2% | EV moy. ≥5% | Gain ≥5% |",
         "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for book in clv.FR_BOOKS:
-        stats = statistics([r for r in crossings if r["book"] == book])
+        stats = statistics([r for r in crossings if r["book"] == book], metric=metric)
         means = ["—" if s["mean_ev"] is None else f"{100 * s['mean_ev']:.3f}%" for s in stats]
         lines.append(
             f"| {book} | "
@@ -194,12 +195,11 @@ def book_table(crossings: list[Row]) -> str:
     return "\n".join(lines)
 
 
-def cuts(crossings: list[Row]) -> str:
+def cuts(crossings: list[Row], *, metric: str = "clv") -> str:
     groups = defaultdict(list)
+    band_key = "p_fair_direct" if metric == "ev_direct" else "p_fair_close"
     for r in crossings:
-        groups[r["book"], clv.probability_band(float(r["p_fair_close"])), str(r["horizon"])].append(
-            r
-        )
+        groups[r["book"], clv.probability_band(float(r[band_key])), str(r["horizon"])].append(r)
     lines = [
         "| Book | Bande p juste | Premier horizon | EV+ n | ≥2% n | ≥5% n |",
         "|---|---|---|---:|---:|---:|",
@@ -207,9 +207,84 @@ def cuts(crossings: list[Row]) -> str:
     for (book, band, horizon), values in sorted(groups.items()):
         lines.append(
             f"| {book} | {band} | {horizon} | "
-            + " | ".join(str(s["n"]) for s in statistics(values))
+            + " | ".join(str(s["n"]) for s in statistics(values, metric=metric))
             + " |"
         )
+    return "\n".join(lines)
+
+
+def confirmation_table(crossings: list[Row]) -> str:
+    lines = [
+        "| Book | Seuil direct | Opportunités directes | Confirmées / clôtures connues | Clôtures absentes | Confirmation |",
+        "|---|---|---:|---:|---:|---:|",
+    ]
+    for book in (*clv.FR_BOOKS, "TOTAL"):
+        for threshold in THRESHOLDS:
+            values = [
+                r
+                for r in crossings
+                if (book == "TOTAL" or r["book"] == book) and r["threshold"] == threshold
+            ]
+            known = [r for r in values if r["clv"] is not None]
+            confirmed = sum(r["clv"] > 0 for r in known)
+            rate = f"{100 * confirmed / len(known):.1f}%" if known else "N/C"
+            label = ">0" if threshold == 0 else f"≥{100 * threshold:g}%"
+            lines.append(
+                f"| {book} | {label} | {len(values)} | {confirmed} / {len(known)} | {len(values) - len(known)} | {rate} |"
+            )
+    return "\n".join(lines)
+
+
+def direct_report(rows: list[Row]) -> str:
+    close = first_crossings(rows)
+    direct = first_crossings(rows, metric="ev_direct")
+    lines = [
+        "## EV_direct et EV clôture — comparaison par book",
+        "",
+        "| Book | Clôture >0 | Clôture ≥2% | Clôture ≥5% | Direct >0 | Direct ≥2% | Direct ≥5% | Relevés directs calculables / lignes |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|",
+    ]
+    for book in (*clv.FR_BOOKS, "TOTAL"):
+        book_rows = [r for r in rows if book == "TOTAL" or r["book"] == book]
+        available = sum(r["ev_direct"] is not None for r in book_rows)
+        c = statistics([r for r in close if book == "TOTAL" or r["book"] == book])
+        d = statistics(
+            [r for r in direct if book == "TOTAL" or r["book"] == book], metric="ev_direct"
+        )
+        lines.append(
+            f"| {book} | "
+            + " | ".join(str(x["n"]) for x in c)
+            + " | "
+            + " | ".join(str(x["n"]) if available else "N/C" for x in d)
+            + f" | {available} / {len(book_rows)} |"
+        )
+    lines.extend(
+        [
+            "",
+            "### EV_direct — moyennes et gains théoriques",
+            "",
+            book_table(direct, metric="ev_direct"),
+            "",
+            "### Confirmation EV_direct à la clôture",
+            "",
+            confirmation_table(direct),
+            "",
+            "### EV_direct — première apparition par bande et horizon",
+            "",
+            cuts(direct, metric="ev_direct"),
+            "",
+            "### EV_direct — détail par horizon (répétitions possibles)",
+            "",
+        ]
+    )
+    details = [
+        {**r, "threshold": t}
+        for r in rows
+        for t in THRESHOLDS
+        if r["ev_direct"] is not None
+        and (r["ev_direct"] > 0 if t == 0 else r["ev_direct"] >= t - 1e-12)
+    ]
+    lines.extend([cuts(details, metric="ev_direct"), "", ""])
     return "\n".join(lines)
 
 
@@ -316,12 +391,41 @@ def main(argv: list[str] | None = None) -> None:
             audit.update(
                 market_keys=dict(markets), status="LABEL_AUDIT_ONLY: unlabeled promotions unknown"
             )
-    selected = first_crossings(rows + boosts)
+        direct_files = []
+        paths = (
+            sorted(
+                set(args.stock.rglob("robin-real-data.json"))
+                | set(args.stock.rglob("odds-snapshots.jsonl"))
+            )
+            if args.stock
+            else []
+        )
+        for path in paths:
+            direct_files.append(
+                {
+                    "path": str(path.relative_to(args.stock)),
+                    "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                }
+            )
+
+        def snapshots():
+            import runpy
+
+            loader = runpy.run_path(str(Path(__file__).with_name("clv_cumul.py")))["load_source"]
+            for path in paths:
+                yield from loader(path)
+
+        all_rows = enrich(rows + boosts, snapshots())
+        rows = [r for r in all_rows if r["kind"] == "standard"]
+        boosts = [r for r in all_rows if r["kind"] == "boost"]
+    selected = first_crossings(all_rows)
+    direct_selected = first_crossings(all_rows, metric="ev_direct")
     out = args.output
     out.mkdir(parents=True, exist_ok=True)
     write_csv(out / "DETAIL-HORIZONS.csv", rows)
     write_csv(out / "PREMIERS-FRANCHISSEMENTS.csv", selected)
     write_csv(out / "BOOSTS.csv", boosts)
+    write_csv(out / "PREMIERS-FRANCHISSEMENTS-DIRECT.csv", direct_selected)
     boost_hash = (
         hashlib.sha256(args.boosts.read_bytes()).hexdigest() if args.boosts.exists() else None
     )
@@ -335,6 +439,15 @@ def main(argv: list[str] | None = None) -> None:
                 clv_provenance_sha256=provenance,
                 boost_csv_sha256=boost_hash,
                 boost_audit=audit,
+                direct_reference={
+                    "files": direct_files,
+                    "tolerance_minutes": 15,
+                    "calculable_rows": sum(r["ev_direct"] is not None for r in all_rows),
+                    "status_counts": dict(
+                        (status, sum(r["direct_status"] == status for r in all_rows))
+                        for status in sorted({r["direct_status"] for r in all_rows})
+                    ),
+                },
             ),
             indent=2,
             ensure_ascii=False,
@@ -343,7 +456,7 @@ def main(argv: list[str] | None = None) -> None:
         encoding="utf-8",
     )
     note = f"""Statut **PARTIAL** — papier uniquement ; décision le 17/11/2026.
-Claim source : `DATA.CLV202627.CUMUL.V1` ; dérivation : `DATA.RADAR202627.PAPER.V1`.
+Claim source : `DATA.CLV202627.CUMUL.V1` ; dérivation : `DATA.RADAR202627.PAPER.V1` ; EV directe : `DATA.RADAR202627.DIRECT.V1`.
 Borne demandée : {through} ; dernière journée de matchs disponible : {max(r["day"] for r in rows)}.
 Période depuis le 03/10 ; semaines ISO des coups d'envoi UTC. Couverture R2 non établie.
 Stock global : {len(rows)} lignes horizon, {sum(r["clv"] is not None for r in rows)} EV calculables,
@@ -361,7 +474,15 @@ Pour un boost limité à <10 €, le gain fixe reste théorique et non éligible
 Les détails par horizon ne constituent pas des opportunités supplémentaires.
 Les boosts et prix standards sont dédupliqués ensemble dans le total ; leur détail reste séparé.
 Fenêtres du moteur CLV : ±6h à T−48/T−24, ±90min à T−2, toujours avant coup d'envoi.
-Une cote positive contre la clôture future est un constat rétrospectif, pas un signal disponible en direct.
+EV clôture est rétrospective. EV_direct = prix FR × fair Pinnacle du relevé contemporain − 1.
+Référence directe : triplet 1N2 complet le plus proche à ±15 min inclusives, antérieur en cas d'égalité.
+Le fair de clôture n'est jamais utilisé en remplacement d'un fair direct manquant.
+Les deux timestamps et l'écart signé sont exportés ; un écart positif utilise la tolérance +15 min demandée.
+Observations et ingestions Pinnacle doivent précéder le coup d'envoi et être disponibles au plus tard FR+15 min.
+Bande directe selon p_fair_direct ; seuils et premiers franchissements calculés séparément pour chaque mesure.
+Confirmation par seuil direct : prix du premier franchissement direct encore EV>0 contre la clôture,
+confirmées / clôtures connues ; clôtures absentes séparées, taux N/C si aucune clôture connue.
+Zéro opportunité observée sans fair direct disponible ne prouve pas l'absence d'opportunité.
 Traçabilité : `SOURCES.json`, CSV détaillés et [couverture CLV](../../clv/2026-27/COVERAGE.md).
 Boosts : aucun label observable dans les exports CLV ; absence dans les flux non démontrée.
 Voir [audit et sources](../../../docs/RADAR-2026-27.md).
@@ -388,10 +509,12 @@ Aucun chiffre sur une semaine sans données ne prouve une absence de prix EV+.
             if r["clv"] is not None and (r["clv"] > 0 if t == 0 else r["clv"] >= t - 1e-12)
         ]
         text = f"# Radar {week}\n\n{note}\n## Opportunités uniques par book\n\n{book_table(chosen)}\n\n"
+        text += direct_report(values)
         text += f"## Première apparition par bande et horizon\n\n{cuts(chosen)}\n\n"
         text += f"## Détail par horizon (répétitions possibles)\n\n{cuts(horizon_rows)}\n"
         (out / filename).write_text(text, encoding="utf-8")
     text = f"# Radar de prix 2026-27 — cumul\n\n{note}\n## Opportunités uniques par book\n\n{book_table(selected)}\n\n"
+    text += direct_report(all_rows)
     text += (
         f"## Première apparition par bande et horizon\n\n{cuts(selected)}\n\n## Boosts seuls\n\n"
     )

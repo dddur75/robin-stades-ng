@@ -63,7 +63,7 @@ jobs:
         if: steps.window.outputs.active == 'true'
         run: |
           python -m pip install pytest
-          python -m pytest -q tests/jalon2/test_clv.py tests/jalon2/test_clv_cumul.py tests/jalon2/test_radar.py
+          python -m pytest -q tests/jalon2/test_clv.py tests/jalon2/test_clv_cumul.py tests/jalon2/test_radar.py tests/jalon2/test_radar_direct.py
           python scripts/radar_hebdo.py --stock "$RUNNER_TEMP/radar-stock" --baseline reports/clv/2026-27
           cp "$RUNNER_TEMP/radar-ids.txt" reports/radar/2026-27/GITHUB-ARTIFACT-IDS.txt
           cat reports/radar/2026-27/RADAR.md >> "$GITHUB_STEP_SUMMARY"
