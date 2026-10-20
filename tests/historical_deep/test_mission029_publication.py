@@ -116,6 +116,100 @@ def test_read_failure_resumes_only_the_unpublished_object_on_next_pass(repo):
     assert second['phases']['B_events'] == dict(expected=3, published=3, missing=0, mismatched=0)
 
 
+@pytest.mark.parametrize('persistent', [False, True])
+def test_catchup_retries_only_read_failures_once_after_publishing_good_objects(repo, persistent):
+    parts = [partition(i) for i in range(3)]
+    store = store_with_receipt(parts)
+    original, reads = store.get_object, []
+    failed_key = parts[0][0]['r2_key']
+    def read(key):
+        if '/projection/' in key:
+            reads.append(key)
+        if key == failed_key and (persistent or reads.count(key) == 1):
+            raise OSError('synthetic stream interruption')
+        return original(key)
+    store.get_object = read
+    report = publication.drain(repo, store, until_complete=True, batch_size=2)
+    assert report['status'] == ('BLOCKED' if persistent else 'COMPLETE')
+    assert reads.count(failed_key) == 2
+    assert all(reads.count(spec['r2_key']) == 1 for spec, _ in parts[1:])
+    assert report['transient_read_retry_rounds'] == 1
+    assert report['totals']['missing'] == (1 if persistent else 0)
+
+
+@pytest.mark.parametrize('bad_body', [None, b'corrupt'])
+def test_catchup_does_not_retry_missing_objects_or_hash_mismatches(repo, bad_body):
+    spec, body = partition(1)
+    store = store_with_receipt([(spec, body)])
+    original, reads = store.get_object, []
+    def read(key):
+        if key == spec['r2_key']:
+            reads.append(key)
+            return bad_body
+        return original(key)
+    store.get_object = read
+    report = publication.drain(repo, store, until_complete=True)
+    assert report['status'] == 'BLOCKED'
+    assert len(reads) == 1
+    assert report.get('transient_read_retry_rounds', 0) == 0
+
+
+def test_catchup_does_not_retry_read_errors_after_global_deadline(repo, monkeypatch):
+    spec, body = partition(1)
+    store = store_with_receipt([(spec, body)])
+    original, clock, reads = store.get_object, [0.0], []
+    def read(key):
+        if key == spec['r2_key']:
+            reads.append(key)
+            clock[0] += 2
+            raise OSError('synthetic stream interruption')
+        return original(key)
+    store.get_object = read
+    monkeypatch.setattr(publication.time, 'monotonic', lambda: clock[0])
+    report = publication.drain(repo, store, until_complete=True, max_seconds=1)
+    assert report['status'] == 'BLOCKED'
+    assert len(reads) == 1
+    assert report.get('transient_read_retry_rounds', 0) == 0
+
+
+def test_read_retry_budget_is_shared_across_receipt_inventory_growth(repo):
+    first, second = partition(1), partition(2)
+    store = store_with_receipt([first])
+    original, reads = store.get_object, []
+    def read(key):
+        if '/projection/' in key:
+            reads.append(key)
+        if ((key == first[0]['r2_key'] and reads.count(key) == 1) or
+                key == second[0]['r2_key']):
+            raise OSError('synthetic stream interruption')
+        return original(key)
+    def publish():
+        if first[0]['path'] in publication.inventory(repo):
+            store.put_if_absent(second[0]['r2_key'], second[1])
+            store.put_if_absent(f'{PREFIX}/runs/2-1/B-public-receipt.json',
+                json.dumps(dict(phase='B', partitions=[second[0]])).encode())
+    store.get_object = read
+    report = publication.drain(repo, store, until_complete=True, publish=publish)
+    assert report['status'] == 'BLOCKED'
+    assert reads.count(first[0]['r2_key']) == 2
+    assert reads.count(second[0]['r2_key']) == 1
+    assert report['transient_read_retry_rounds'] == 1
+    assert report['phases']['B_events']['expected'] == 2
+
+
+@pytest.mark.parametrize('status', ['PARTIAL', 'BLOCKED'])
+def test_no_read_retry_for_empty_issues_or_budget_partial_state(repo, monkeypatch, status):
+    store = store_with_receipt([])
+    calls = []
+    def catch_up(*_args, **_kwargs):
+        calls.append(True)
+        return dict(status=status, issues=[])
+    monkeypatch.setattr(publication, 'catch_up', catch_up)
+    report = publication.drain(repo, store, until_complete=True)
+    assert report['status'] == status
+    assert len(calls) == 1
+
+
 def test_holdout_is_excluded_from_metadata_before_any_payload_read(repo):
     spec, body = partition(1, season=2025)
     store = store_with_receipt([(spec, body)])

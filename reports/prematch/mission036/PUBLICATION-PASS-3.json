@@ -1,0 +1,98 @@
+{
+  "status": "BLOCKED",
+  "phases": {
+    "B_calendars": {
+      "expected": 200,
+      "published": 200,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "compositions": {
+      "expected": 20,
+      "published": 20,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "B_events": {
+      "expected": 69553,
+      "published": 69553,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "C_players": {
+      "expected": 67037,
+      "published": 67036,
+      "missing": 1,
+      "mismatched": 0
+    },
+    "A_statistics": {
+      "expected": 7228,
+      "published": 7228,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "receipts": {
+      "expected": 33,
+      "published": 33,
+      "missing": 0,
+      "mismatched": 0
+    }
+  },
+  "issues": [
+    {
+      "path": "historical/parquet/competition=SP2/season=2024/entity_type=players/dataset_version=api-football-v3/fixture-1217550.parquet",
+      "reason": "R2_READ_FAILED"
+    }
+  ],
+  "published_revision": "da0adafeb76dbf7d43d74c6e0a1a3249cba5c950",
+  "provider_calls": 0,
+  "neon_writes": 0,
+  "r2_writes": 0,
+  "expected_manifest_sha256": "bd5218479d13a6de822b622a6ae4b19b9437d643d4310ab8689f23e2848733dd",
+  "totals": {
+    "expected": 144071,
+    "published": 144070,
+    "missing": 1,
+    "mismatched": 0
+  },
+  "batches": 3,
+  "before_phases": {
+    "B_calendars": {
+      "expected": 200,
+      "published": 200,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "compositions": {
+      "expected": 20,
+      "published": 20,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "B_events": {
+      "expected": 69553,
+      "published": 69553,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "C_players": {
+      "expected": 67037,
+      "published": 64993,
+      "missing": 2044,
+      "mismatched": 0
+    },
+    "A_statistics": {
+      "expected": 7228,
+      "published": 7228,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "receipts": {
+      "expected": 33,
+      "published": 33,
+      "missing": 0,
+      "mismatched": 0
+    }
+  },
+  "code_revision": "1416488b517934534ec970d5c2d4a959cb7e2923"
+}

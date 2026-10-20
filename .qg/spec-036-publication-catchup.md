@@ -24,7 +24,11 @@ robin-core, configurations de populations et données fournisseur restent intact
 - Reçus des missions 029 et 027 (compositions), déduplication des références.
 - SHA-256 concordant pour chaque objet, même si son chemin est déjà publié.
 - Lot maximal de 1 000 objets ; délai coopératif 9 600 s en mode rattrapage.
-- Huit lecteurs ; connexions R2 10 s, lectures 30 s, deux tentatives maximales.
+- Huit lecteurs ; connexions R2 10 s, lectures 30 s, deux tentatives SDK par GET.
+- Après redesign E1 des erreurs de lecture observées, une seule ronde de
+  reprise des `R2_READ_FAILED` est permise dans le même budget global :
+  deux tentatives SDK par GET, au plus quatre tentatives réseau par objet
+  sélectionné ; jamais de retry d'absence, de hash discordant ou de push.
 - Job existant de collecte entièrement sauté ; job manuel sans clé fournisseur.
 - Publication Git sans force, aucune écriture R2 ; conflit jamais écrasé.
 - COMPLETE uniquement quand les références sont publiées et le dernier

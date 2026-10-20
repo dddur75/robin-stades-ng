@@ -250,7 +250,7 @@ def catch_up(repo, store, expected, receipts, *, batch_size=1000, max_batches=1,
 
 def drain(repo, store, *, until_complete=False, batch_size=1000, max_seconds=9600,
           publish=lambda: None, checkpoint=lambda report: None, manifest=lambda expected: None):
-    deadline, before = time.monotonic()+max_seconds, None
+    deadline, before, retry_used = time.monotonic()+max_seconds, None, False
     while True:
         expected, receipts = load_references(store)
         manifest(expected)
@@ -261,6 +261,15 @@ def drain(repo, store, *, until_complete=False, batch_size=1000, max_seconds=960
             max_batches=100000 if until_complete else 1,
             max_seconds=max(0.001, deadline-time.monotonic()) if until_complete else max_seconds,
             publish=publish, checkpoint=checkpoint)
+        if (until_complete and not retry_used and report['status'] == 'BLOCKED'
+                and report['issues'] and time.monotonic() < deadline
+                and all(i['reason'] == 'R2_READ_FAILED' for i in report['issues'])):
+            retry_used = True
+            checkpoint(dict(transient_read_retry_round=1, retryable_objects=len(report['issues'])))
+            report = catch_up(repo, store, expected, receipts, batch_size=batch_size,
+                max_batches=100000, max_seconds=max(0.001, deadline-time.monotonic()),
+                publish=publish, checkpoint=checkpoint)
+        report['transient_read_retry_rounds'] = int(retry_used)
         report['before_phases'] = before
         if not until_complete or report['status'] != 'COMPLETE':
             return report
@@ -269,7 +278,8 @@ def drain(repo, store, *, until_complete=False, batch_size=1000, max_seconds=960
             return report
         if time.monotonic() >= deadline:
             report, _ = reconcile(repo, refreshed, {}, {})
-            report.update(before_phases=before, reason='TIME_BUDGET_RECEIPT_INVENTORY_CHANGED')
+            report.update(before_phases=before, transient_read_retry_rounds=int(retry_used),
+                          reason='TIME_BUDGET_RECEIPT_INVENTORY_CHANGED')
             return report
 
 

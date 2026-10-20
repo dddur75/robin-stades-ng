@@ -1,6 +1,6 @@
 {
   "claim_id": "DATA.MISSION036.PUBLICATION.V1",
-  "status": "FIRST_PASS_ATTESTED_RETRY_RUNNING",
+  "status": "THIRD_PASS_ATTESTED_E1_READ_RETRY_REDESIGN_TESTED",
   "base_revision": "4910d3bc2fbab4a0365aa5faa92a399b331b1da2",
   "baseline_source_revision": "fac718f36d0b8e178374d5a8384c1b3cc871f135",
   "baseline_attachment": {
@@ -103,5 +103,50 @@
     "independent_main_run": 39416532582,
     "main_calls_not_triggered_by_this_pr": 8947,
     "own_provider_calls": 0
+  },
+  "second_real_pass": {
+    "attempt": 2,
+    "artifact_id": 12273085198,
+    "artifact_zip_sha256": "f089a21f2a530a5e2c1b1f5535e44d977a207ce46c3f09351dbfeaf3715ec5f5",
+    "report": "reports/prematch/mission036/PUBLICATION-PASS-2.json",
+    "published": 142027,
+    "missing": 2044,
+    "mismatched": 0,
+    "confirmed_objects": 6000,
+    "failure": "push exit1, underlying cause unobserved; no count for unconfirmed local batch"
+  },
+  "third_real_pass": {
+    "attempt": 3,
+    "artifact_id": 12272477063,
+    "artifact_zip_sha256": "9c9a3dc3b258d6f57e6f223b9cd2071f526be6ef99343282bf36a7a094c8411d",
+    "report": "reports/prematch/mission036/PUBLICATION-PASS-3.json",
+    "published": 144070,
+    "missing": 1,
+    "mismatched": 0,
+    "confirmed_objects": 2043,
+    "failure": "R2_READ_FAILED on SP2/2024 fixture1217550; pushes succeeded"
+  },
+  "read_retry_redesign": {
+    "stage": "E1",
+    "decision": "FAIL_AND_REDESIGN then PASS_AND_HOLD after targeted tests and C4",
+    "old_execution_revision": "1416488b517934534ec970d5c2d4a959cb7e2923",
+    "red": "2 failures recoverable/persistent cases before patch; three negative guards passed",
+    "targeted_tests_passed": 71,
+    "automatic_retry_rounds_max": 1,
+    "sdk_attempts_per_get": 2,
+    "maximum_network_attempts_per_selected_object": 4,
+    "global_seconds_max": 9600,
+    "readers": 8,
+    "retryable_reason_only": "R2_READ_FAILED",
+    "no_retry": [
+      "R2_OBJECT_MISSING",
+      "R2_SHA256_MISMATCH",
+      "PUBLISHED_SHA256_MISMATCH",
+      "push failure",
+      "PARTIAL time budget"
+    ],
+    "requires_non_empty_issues": true,
+    "independent_review": "reports/council/mission036-publication/C4-supplement.md",
+    "actual_new_execution": "Pending one new dispatch on reviewed new code; no identical rerun141."
   }
 }

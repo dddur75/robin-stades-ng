@@ -45,6 +45,16 @@ réconciliation dans le budget restant. Un objet R2 absent, corrompu ou
 illisible reste explicitement bloquant ; il n'entraîne aucun rappel fournisseur.
 Une course Git rejette le push ; elle ne réécrit aucune donnée distante.
 
+En mode rattrapage, une seule ronde supplémentaire est permise après drainage
+des bons objets, uniquement si toutes les anomalies sont `R2_READ_FAILED` et
+si le budget global reste ouvert. Elle réconcilie les hashes Git et ne relit
+dans R2 que les objets encore absents. Ce crédit est partagé par toute
+l'exécution, même si de nouveaux reçus apparaissent. Les deux tentatives SDK
+par GET restent bornées : au plus quatre tentatives réseau pour un objet
+sélectionné dans ces deux rondes. Une erreur persistante reste BLOCKED ; aucun
+retry automatique des objets absents, hashes discordants ou échecs de push.
+Le journal marque cette ronde et le rapport donne `transient_read_retry_rounds`.
+
 ## Rapport
 
 L'artefact `mission036-publication-<run>-<attempt>` contient le manifeste figé,

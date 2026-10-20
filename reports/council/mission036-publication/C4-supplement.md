@@ -79,3 +79,34 @@ C4 a aussi recoupé les deux manifests hors réseau : les 135 124 références d
 la tentative1 sont toutes identiques dans l'inventaire élargi à 144 071.
 Seuls 8 946 objets C et un reçu ont été ajoutés par le passage indépendant de
 main. Aucune ancienne preuve n'a été remplacée ou supprimée.
+
+### Passage 2, passage 3 et redesign E1 de reprise des erreurs de lecture
+
+C4 a vérifié hors réseau les deux ZIP et leurs copies JSON/JSONL :
+passage2, artefact12273085198, SHA-256
+`f089a21f2a530a5e2c1b1f5535e44d977a207ce46c3f09351dbfeaf3715ec5f5`,
+6 000 ajouts confirmés, 142 027 / 144 071, 2 044 manquants, push exit1 dont la
+sous-cause n'est pas observée. Le lot local non confirmé n'est pas compté.
+Passage3, artefact12272477063, SHA-256
+`9c9a3dc3b258d6f57e6f223b9cd2071f526be6ef99343282bf36a7a094c8411d`,
+2 043 ajouts confirmés, 144 070 / 144 071, un `R2_READ_FAILED` SP2/2024
+fixture1217550. Les pushes de ce passage réussissent. Aucun mismatch.
+
+Après ce second cas d'erreur de lecture, retour E1 et redesign avant nouveau
+lancement : aucune nouvelle tentative identique sur141. C4 contre-vérifie la
+ronde supplémentaire bornée, réservée au catchup, à BLOCKED et à des issues
+non vides toutes `R2_READ_FAILED`, dans le temps restant. Le flag global est
+consommé avant la ronde et persiste si le manifest croît. Les objets publiés
+passent de nouveau la réconciliation Git ; ils ne sont pas relus dans R2.
+Aucun retry d'objet absent, de hash contradictoire, de push ou d'état PARTIAL.
+Deux tentatives SDK par GET, au plus quatre tentatives réseau par objet
+sélectionné ; plafond global9 600s et huit lecteurs inchangés. Une erreur
+persistante finit BLOCKED. Le marqueur JSONL et le compteur du rapport gardent
+la trace de cette ronde, y compris au retour pour changement d'inventaire.
+
+Rouge : deux tests de récupération/persistance échouent avant correctif.
+Vert :71 tests ciblés, Ruff et Bandit. C4 inspecte le diff et les tests
+(horloge, erreurs persistantes, absences, hashes, issues vides, PARTIAL et
+nouveau reçu après récupération). Aucun P0/P1 ; PASS_AND_HOLD pour un seul
+nouveau dispatch après traçabilité REDESIGN+DECISION, dans l'autorisation
+utilisateur existante. Revue finale des critères encore en attente.
