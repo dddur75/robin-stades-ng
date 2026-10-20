@@ -1,0 +1,1145 @@
+{
+  "start": "2026-10-03",
+  "through": "2026-10-19",
+  "latest_kickoff_day": "2026-10-19",
+  "clv_exports": [
+    {
+      "path": "2026-10-09-clv.csv",
+      "sha256": "6d21fc92de4c3004274088dd4f1b0e303c89eb2430cbf530d0d0c158a1150442"
+    },
+    {
+      "path": "2026-10-10-clv.csv",
+      "sha256": "9c4c6a137a2563823992f4abc7886ed7df960541573b03dec45e9e8bf2269c87"
+    },
+    {
+      "path": "2026-10-11-clv.csv",
+      "sha256": "98f4eb70495301b33a5bd1b1dd8ee3eaabbedc0ffce093e04a6aab6a552a5bfd"
+    },
+    {
+      "path": "2026-10-12-clv.csv",
+      "sha256": "d5ea2b9018105ba8d60595dbc7c28482596cf4fe545503bf25c8e93d9b680dc0"
+    },
+    {
+      "path": "2026-10-16-clv.csv",
+      "sha256": "b711e1dbf5342f83f275a1225e4944254dec0c0fb8ab417b6dbddf7445dc27c2"
+    },
+    {
+      "path": "2026-10-17-clv.csv",
+      "sha256": "6ee424891b1f18a7cab83215d34fec0dc0b705087357dbbc40c19ff67d3a29e8"
+    },
+    {
+      "path": "2026-10-18-clv.csv",
+      "sha256": "fcadd68d822ce655aa0f1b825dec726d9edf495456c5aadea3355b041f749be0"
+    },
+    {
+      "path": "2026-10-19-clv.csv",
+      "sha256": "886181ddf12278f1f93044f79e77442dbe41113b975404276b1b702bcee2f1c3"
+    }
+  ],
+  "clv_provenance_sha256": {
+    "BASELINE-ARTIFACTS.json": "67328496a7d057ecb89e2e0f09765e8d3260fc1ddd12005ece4dffd0c77e99a7",
+    "BASELINE-PROSPECTIVE-AUDIT.json": "1c4fbf9f30e8f839fa6d0a71faee7e4f585cc63880426b1ebf93371a08e39c48",
+    "BASELINE-SOURCES.json": "fe26321bc29a8ee2239f29086cfb1ba0605bd7724827c3156e2917027613ab56"
+  },
+  "boost_csv_sha256": "dcba4010a3abe65517d65e78e0d04e7b8fdd2813d752d343c1a0cf318c0a8e17",
+  "boost_audit": {
+    "normalized_files_inspected": 270,
+    "normalized_rows_inspected": 2033514,
+    "market_keys": {
+      "h2h": 1402452,
+      "totals": 631062
+    },
+    "boost_label_rows": 0,
+    "status": "LABEL_AUDIT_ONLY: unlabeled promotions unknown"
+  },
+  "direct_reference": {
+    "files": [
+      {
+        "path": "11314001640/robin-real-data.json",
+        "sha256": "2fc4d5a98fe458faea60aac9c38b3b9df609bb7fbe8753b476d199b61e69dc41"
+      },
+      {
+        "path": "11319146929/robin-real-data.json",
+        "sha256": "3dda8aa10b8e3587ee61c38a6e215fdc764efa9e42c4313e5bf682869b5824e8"
+      },
+      {
+        "path": "11325944999/robin-real-data.json",
+        "sha256": "40a620bc41368becf32a4ab6f7966bd979732f3eddaf867d89efea42188cc29e"
+      },
+      {
+        "path": "11328078902/robin-real-data.json",
+        "sha256": "b3717aa0b4d8e15d7b58a95f3110e77070c4b0cf4bb98dfda77961ed320c19a4"
+      },
+      {
+        "path": "11330661261/robin-real-data.json",
+        "sha256": "8f4672ed300183fd8cafc89b166b864db9bb3d8a5da36302918c64009d7dd68c"
+      },
+      {
+        "path": "11332758005/robin-real-data.json",
+        "sha256": "83d2f9934cca5c21a6056c300e457e3930cdd6e92fbf646dedf46901417c26dc"
+      },
+      {
+        "path": "11335426797/robin-real-data.json",
+        "sha256": "b6d327890a44581e9775137c6577ea6f71e04d0721e5594b00c081970f88f3e7"
+      },
+      {
+        "path": "11340204471/robin-real-data.json",
+        "sha256": "2bb2b0d1169ca75b153d4069bdd38954c7d7070f630a10d10e1c9e8e06abee91"
+      },
+      {
+        "path": "11343274099/robin-real-data.json",
+        "sha256": "d4bca1160b47733048f43a1634056d429021c91faf0d5531f82ed832ba61d477"
+      },
+      {
+        "path": "11345823890/robin-real-data.json",
+        "sha256": "c8ba613faa2bfd897cee1d428059b655784807433ee37bff2cc6038b60000ff4"
+      },
+      {
+        "path": "11348959383/robin-real-data.json",
+        "sha256": "4fdc37fdc4b33d7f1da602ce04513a1638ca2252f6fd77f854bb2a519d1c2f66"
+      },
+      {
+        "path": "11353835436/robin-real-data.json",
+        "sha256": "e74c4e6ecdf81758e49dc96162fd0c6acfc3e80363f44aea98ab1faef9a06ebb"
+      },
+      {
+        "path": "11356304529/robin-real-data.json",
+        "sha256": "9f500292477185f6a40e0ecfd5eae6672f2a21b879c41251cef734bbccb2dc40"
+      },
+      {
+        "path": "11360042015/robin-real-data.json",
+        "sha256": "db72053e91938c3568f134d38ab7a7fd575b34b641a4f6fd99bf9e8ca30b8695"
+      },
+      {
+        "path": "11363691166/robin-real-data.json",
+        "sha256": "35b8904c5b1375503deb3b80686d29c95bb9e231f67890de17427007d95796e1"
+      },
+      {
+        "path": "11366014396/robin-real-data.json",
+        "sha256": "8082967b8bf58e6a2c89eb24a926ad7b52f5a847bdd877090e2d4a9d1fa90cd8"
+      },
+      {
+        "path": "11372010778/robin-real-data.json",
+        "sha256": "87f117794779a135cec2064608447a771c66812a1f07493c1552008f392c4f4a"
+      },
+      {
+        "path": "11375192545/robin-real-data.json",
+        "sha256": "3b11b92ccbc9d10a3ae894e6838499bf2b032f7d4ea1423fc556be5c72d620b3"
+      },
+      {
+        "path": "11379019662/robin-real-data.json",
+        "sha256": "649e0392bf69f45c7a8ec7d78918d87463b30a4406bf2e202d42d5daa837c0d9"
+      },
+      {
+        "path": "11382276628/robin-real-data.json",
+        "sha256": "96f2cef9c85f336001c1fa35db76bdd537099aa3524ca161ed5f46c808854301"
+      },
+      {
+        "path": "11385135349/robin-real-data.json",
+        "sha256": "91d4000e526c583fcb7a5671376cca21589b469ef497d9185da0e3c95b486192"
+      },
+      {
+        "path": "11387030355/robin-real-data.json",
+        "sha256": "2d9c7d1aae9b97474e83ab583ffd6289e7c819670cb5c5536de7574ecc307825"
+      },
+      {
+        "path": "11395627127/robin-real-data.json",
+        "sha256": "a64eab1a727cbc4d77f14f5ccadcfde8b947db68970d3ffba92f0070b1b9c18a"
+      },
+      {
+        "path": "11399040739/robin-real-data.json",
+        "sha256": "9568a1c042be0aba45282fbc9d4c8818f9183e7a51c004723250d3ccf0c4b45f"
+      },
+      {
+        "path": "11401358939/robin-real-data.json",
+        "sha256": "0692c99c04d6e86956543d7912640513daaa17fc3ad7f3f7b89518c21df39a39"
+      },
+      {
+        "path": "11404464465/robin-real-data.json",
+        "sha256": "4d3eb8daf7528e85d2314e786b595d13efdbfe479db42dedab0933fa990342e4"
+      },
+      {
+        "path": "11409658425/robin-real-data.json",
+        "sha256": "bd37679357279444916ed7253851954696d763b42f530f020cb560d6e1172963"
+      },
+      {
+        "path": "11424836985/robin-real-data.json",
+        "sha256": "02f9bc452124e9490830778b3cf8544ec1a9c067d3f099384f54420f7eefa5fa"
+      },
+      {
+        "path": "11428317572/robin-real-data.json",
+        "sha256": "0c8fc454b9fbb3488194775b50178d86f98c9e7f95d77a0faf9de5b9c4b5038f"
+      },
+      {
+        "path": "11432500310/robin-real-data.json",
+        "sha256": "7c8126d2f7e31d2be5f840f4e8f629c9436e2ff7478c318dffc9ab8196295d1e"
+      },
+      {
+        "path": "11446741531/robin-real-data.json",
+        "sha256": "fa9599dfcd89b9275a31332158ef45d551f4a9df027bef66d5606da6918da543"
+      },
+      {
+        "path": "11448827694/robin-real-data.json",
+        "sha256": "8963b75bea7e6db95113039a48ef4c2f0838b52d7acca18b5f6b9046413c71bb"
+      },
+      {
+        "path": "11456838957/robin-real-data.json",
+        "sha256": "83535f61a4f26b8a8b60f5c1244cf364cbf39bcbbaad943d1716046a8459eda5"
+      },
+      {
+        "path": "11459725936/robin-real-data.json",
+        "sha256": "ba40d977e020c01011b436ab4ae828de33bbb51b6a1123db15307deb1af7f005"
+      },
+      {
+        "path": "11460992592/robin-real-data.json",
+        "sha256": "799d16220e56f46e29572f62ffd0c27a2f46ecd30122fe1176d20227fcdaf6cc"
+      },
+      {
+        "path": "11462554019/robin-real-data.json",
+        "sha256": "8c98e1642c35ff879425611f48d2d2a5f78fcddad23b99593579370c1223c34d"
+      },
+      {
+        "path": "11466006572/robin-real-data.json",
+        "sha256": "b923c4b60121d40af757441707a2f9a1ffec2994da086e09afcbc1ef2ed5ca33"
+      },
+      {
+        "path": "11468166934/robin-real-data.json",
+        "sha256": "e43019dbfc741f2371a49d150a20e521d1679918b2efabcd242b2c605421da89"
+      },
+      {
+        "path": "11470938652/robin-real-data.json",
+        "sha256": "b155f15c0ddfc766fed481b56476478433ada64beea99995bc5e7abbd0fffff2"
+      },
+      {
+        "path": "11473649336/robin-real-data.json",
+        "sha256": "408d80ca775a19d6d5d21ec40011f59d222092e76b8b34cf27c6f163400e0ec2"
+      },
+      {
+        "path": "11478017702/robin-real-data.json",
+        "sha256": "38e9270b2c50b1bd878f09f2ff1499de0ca8cf78b2ad8d8f24789b9f82fae18a"
+      },
+      {
+        "path": "11480609705/robin-real-data.json",
+        "sha256": "d5e7674b1da33397250e4658f94ed423f9d08373e554294e22a6047641c0fb90"
+      },
+      {
+        "path": "11484172826/robin-real-data.json",
+        "sha256": "eeadb327ed1ac4d2bb84b63fb70087f6045392257787cb0f6ead8e5e568f6da1"
+      },
+      {
+        "path": "11492963893/robin-real-data.json",
+        "sha256": "fd14690447d84326da9b2994e13953976302e1be3c9a0fc57ac1864f3ba4c9c5"
+      },
+      {
+        "path": "11496921498/robin-real-data.json",
+        "sha256": "5cc944137ab27ce4ab031d37b06c4c8193648405a3c2eabd38c405c6a9a2b303"
+      },
+      {
+        "path": "11499009373/robin-real-data.json",
+        "sha256": "38a3210cd9a9c96bb5ff924da15bae6091f00de5278ddacf62fb3bd95efa0879"
+      },
+      {
+        "path": "11502449445/robin-real-data.json",
+        "sha256": "d2baf333e04d1eef399cdacbd4715405229c3d6c2cf0c3bf0ce5bae3aa31416d"
+      },
+      {
+        "path": "11505923949/robin-real-data.json",
+        "sha256": "2e7a4a3561cf864d0d02a03f9d639432663e3a3a133517a6d157c8d161482afd"
+      },
+      {
+        "path": "11510069145/robin-real-data.json",
+        "sha256": "1e931d6155f9960761d561f9d27a961f4190360302fd667b94bcf077ab9ad619"
+      },
+      {
+        "path": "11514002040/robin-real-data.json",
+        "sha256": "6c00317a00256e54af92b854e96c790b9cd3229cec963dc101a0583c369e07fd"
+      },
+      {
+        "path": "11516946622/robin-real-data.json",
+        "sha256": "4f60fbca6b83d7a587f2a50dd8085416feb20409152c402bc37f87df80cd5dad"
+      },
+      {
+        "path": "11518989105/robin-real-data.json",
+        "sha256": "b099d74eda27ae809e5d1dcdb6292a648c16e7bd5de6471d76557b385f01e47d"
+      },
+      {
+        "path": "11521393006/robin-real-data.json",
+        "sha256": "352902d8dd794052adbf5fdb216b15265d3d3adff823135a7c7c7ae3ef75fd6a"
+      },
+      {
+        "path": "11523837849/robin-real-data.json",
+        "sha256": "a74c7cad484658928c1fa74495217e77f4d274c2bb1dd91387304f24cc0ab71b"
+      },
+      {
+        "path": "11525582952/robin-real-data.json",
+        "sha256": "676374870e14d6a9522f1070f7f0f0c1a2475a694d5159fbbe2907a63b7c15b9"
+      },
+      {
+        "path": "11528246957/robin-real-data.json",
+        "sha256": "fb2100778bb030fcc4b5240d446d883c931749b5217cb597d4a089244cd879c8"
+      },
+      {
+        "path": "11530282320/robin-real-data.json",
+        "sha256": "68e16e603a0801accb1052a414bda5bfa0b2e1af43799ded891ec35ed86bb5cd"
+      },
+      {
+        "path": "11531529438/robin-real-data.json",
+        "sha256": "ae16c212f2eec22422afd256739fcc3fe2839dc20f49a3ea8ea1af45cd2f3aae"
+      },
+      {
+        "path": "11534294916/robin-real-data.json",
+        "sha256": "5f5422fead1c87014fee49d117a72faac1f68bd3a9591660c34b3b2c50403d02"
+      },
+      {
+        "path": "11538390927/robin-real-data.json",
+        "sha256": "cffed81f51ecead7e72ffb7b178f89a5c424f9ac43011e6006812453070b95c8"
+      },
+      {
+        "path": "11540722642/robin-real-data.json",
+        "sha256": "17e545608936aed46d9034d8c89a02c3c2c239290ddd066221360c4943c3f528"
+      },
+      {
+        "path": "11543708550/robin-real-data.json",
+        "sha256": "152940882edd0501dad60f9becf12cfec1c2873fa93307ce47865eb77cf4d327"
+      },
+      {
+        "path": "11547973805/robin-real-data.json",
+        "sha256": "7ed10f0eaca21e917f1fea9fd6f27be6f1ee19167a384ce342471767ac7a4ae6"
+      },
+      {
+        "path": "11554299946/robin-real-data.json",
+        "sha256": "862def1083d5689ae095875f4cdd59f1d145e11a81221a01614ac94412285685"
+      },
+      {
+        "path": "11559805651/robin-real-data.json",
+        "sha256": "18f916198cc17118e6fb9b8bef4ec1c1d7898c4c89c9ebbf3e69f73672e4d9a5"
+      },
+      {
+        "path": "11562827348/robin-real-data.json",
+        "sha256": "f39a2d0adb5695621030d9b1abd63cebfb8a71ae54a1644a781551971de6b97b"
+      },
+      {
+        "path": "11565848846/robin-real-data.json",
+        "sha256": "2c0414dc067b2046506e57bf13618022b58eec3b910ce0fad25df2ac4c42fe28"
+      },
+      {
+        "path": "11569981914/robin-real-data.json",
+        "sha256": "3873542c8dfbe60d831bb0ae0f21b92b13d8cfac73e63e4224bb892304da1c82"
+      },
+      {
+        "path": "11573112803/robin-real-data.json",
+        "sha256": "fba4a7c1b6c550fd3e4b8cd61de6f04f4393a69a6f3775e96352ad2ba1b6d0c2"
+      },
+      {
+        "path": "11630743370/robin-real-data.json",
+        "sha256": "1c779554473d76ab9a3cf3598c156a07134c5cc4b7122d565f47bb77f28380b3"
+      },
+      {
+        "path": "11634590917/robin-real-data.json",
+        "sha256": "d0c30f8286aeb6c51ce32d14dc75f473ccc84655d8946cf3fc12c01633caedff"
+      },
+      {
+        "path": "11639330441/robin-real-data.json",
+        "sha256": "c4621ed9ccefb8f17ed4ec9231c1f75b1d33c166ccffb7c8dd02091ad27c355e"
+      },
+      {
+        "path": "11641366873/robin-real-data.json",
+        "sha256": "a98ba3dd506096185b629a10ea3bd56bd66d88ffa1929fc6d057402f115351fe"
+      },
+      {
+        "path": "11645001867/robin-real-data.json",
+        "sha256": "d36838d1299000e480b2acdd2a3bd25c17be00ea921441ae0c3b448a582c2fb4"
+      },
+      {
+        "path": "11647795550/robin-real-data.json",
+        "sha256": "be98dee1033deee751c0d111ca9252a6b6d66ef23f8acb98cb4e28fd708cd67b"
+      },
+      {
+        "path": "11650080993/robin-real-data.json",
+        "sha256": "2fd4c37a05b6a4681dfa5c0ec1f65863dd980e1a704077efeacfbc7e5ac988e9"
+      },
+      {
+        "path": "11651179996/robin-real-data.json",
+        "sha256": "4de85c4138a3fda341b488c5d6ac2c355e4fd4f67dcc44d07b052f7e14731592"
+      },
+      {
+        "path": "11653273993/robin-real-data.json",
+        "sha256": "f6fdc24247346634e275d89a1c55cf81517aa0da95aa98da2d18f8dd88c8d173"
+      },
+      {
+        "path": "11655862651/robin-real-data.json",
+        "sha256": "34ddbe174b67c41d9d94f044cdaf8fa545bc3a15a250cc7030d6b79adb67c56b"
+      },
+      {
+        "path": "11657494762/robin-real-data.json",
+        "sha256": "2aa5562d668968a2e6b68b0363498f4be2c66b0e32501d1076b3c4f6c4756903"
+      },
+      {
+        "path": "11659136488/robin-real-data.json",
+        "sha256": "d94549036a04db12050bc4c5983488abb4ca583283e5f54599e73e9d96acd0e9"
+      },
+      {
+        "path": "11660782861/robin-real-data.json",
+        "sha256": "cd0dd02a3fc894046ebb2ec630bbbb76b2d624a7b9ff5a35117b01099f6a9e31"
+      },
+      {
+        "path": "11661809674/robin-real-data.json",
+        "sha256": "b097c15df6381ed56df6f45ff3e8fa792dc41fc0c61e8c02789e7f465143a95d"
+      },
+      {
+        "path": "11662629852/robin-real-data.json",
+        "sha256": "b66ca3110f536947bd7d579a5aedd6f2ff06ae482c536486b83289cf8c791a7a"
+      },
+      {
+        "path": "11665246826/robin-real-data.json",
+        "sha256": "c7140c38ff9528b4f979792d96982c07074c447cb3716c367547c3455959c811"
+      },
+      {
+        "path": "11666043722/robin-real-data.json",
+        "sha256": "430a9478c8dc3969d8b353f97b8dfa9f501c78f0bfdb0f70cd70c8aa8b35a9fc"
+      },
+      {
+        "path": "11666924094/robin-real-data.json",
+        "sha256": "779a7a24b71e38c95772f58a7cde47f47f6d264b67c702362b3a8d50d45becfe"
+      },
+      {
+        "path": "11669126661/robin-real-data.json",
+        "sha256": "af76067784d372444024b69a2c3d1ba9ecdac6df63258d40bdddc3a7dba393e7"
+      },
+      {
+        "path": "11670912441/robin-real-data.json",
+        "sha256": "d66276409c9ff2d14112e093707b01ea3363d7eb84779d7dfacf23875cdca5df"
+      },
+      {
+        "path": "11671093900/robin-real-data.json",
+        "sha256": "1aa533b34a9f646bbdf6e317bd49b7689fe38b551e7b9775ac4570013e0d760a"
+      },
+      {
+        "path": "11673857098/robin-real-data.json",
+        "sha256": "bf74986be3f51edafd14f74893f4c0eda2a96522a1ca7efed846ea6826c7caec"
+      },
+      {
+        "path": "11674329140/robin-real-data.json",
+        "sha256": "a01b1cc034db57c5dfab15d1ecd12b95208cd5643c8971d8e5153d1a2c6f6114"
+      },
+      {
+        "path": "11676986884/robin-real-data.json",
+        "sha256": "e6871589ead5e72cabf75444c56ffba1bdcc68f4cd05eeb215a9f84a9c4ce115"
+      },
+      {
+        "path": "11678174257/robin-real-data.json",
+        "sha256": "c2aa9bbe01cc7be733f813b3d489745b1ce80180f5427fd49d2b461447ffe6ff"
+      },
+      {
+        "path": "11679114503/robin-real-data.json",
+        "sha256": "7c46e8fc47a5cf078f0634952469eb21df56442fe403a86a833222a6a899dd61"
+      },
+      {
+        "path": "11680924577/robin-real-data.json",
+        "sha256": "f88503f49c85cbe371d949d3ff3f3545a16a013cf105a5b927d4db01131473f3"
+      },
+      {
+        "path": "11682995540/robin-real-data.json",
+        "sha256": "f4c34a5c608fe5ba98de2edbbd16084119b93fd5a0b11055a284706f354a3c15"
+      },
+      {
+        "path": "11684113337/robin-real-data.json",
+        "sha256": "d4d69dd1e4880e852d042e5e6d3564b5bd692d02c107488bfbb9ac647aa72ca4"
+      },
+      {
+        "path": "11685569260/robin-real-data.json",
+        "sha256": "c6d4ec32bcf3837797a93276e481d21b8fb5a25d4666ad1e5f072856483a67ab"
+      },
+      {
+        "path": "11687860014/robin-real-data.json",
+        "sha256": "841e399a258ae522e5dda32ded2d38fba323859b87e56860eca5f3b3167e6fa5"
+      },
+      {
+        "path": "11688926516/robin-real-data.json",
+        "sha256": "1423eeb70e3582576fd32f06303968002bdbff3274643cb9e12f900e5ee8f78e"
+      },
+      {
+        "path": "11689533255/robin-real-data.json",
+        "sha256": "b75a6d58da2bc0aae2c41082da47df1d825c139438b9e6b12c2e3715f742f9e4"
+      },
+      {
+        "path": "11690839449/robin-real-data.json",
+        "sha256": "51e229372d45a26c4d89800a950f459c0972fe249ae8f0e093ec558f5054420f"
+      },
+      {
+        "path": "11692985510/robin-real-data.json",
+        "sha256": "9bdde26483ec7e1ab0bac6a8b46f8bf0fb9dd24b18c8a15ad16d5a90f65a083f"
+      },
+      {
+        "path": "11694211348/robin-real-data.json",
+        "sha256": "2af8f6b4158b207366c922193c82907b1ce912166e6ad8c9ea0f2890068db2e9"
+      },
+      {
+        "path": "11695935293/robin-real-data.json",
+        "sha256": "7856d3626b909609625b155f31a7f7cc68071d8235441a89adbbe01dddf610de"
+      },
+      {
+        "path": "11696820713/robin-real-data.json",
+        "sha256": "76d26b8a816434e83b7a2e1e39adf684b90e958283ad2889c965942b7ce18986"
+      },
+      {
+        "path": "11698720288/robin-real-data.json",
+        "sha256": "39103be6ce61983ebe7a3d61767cf79af83763065de62e6c3b6ce94b740ae66b"
+      },
+      {
+        "path": "11699552208/robin-real-data.json",
+        "sha256": "c61ff2810f406151e6617f9b2bad4dbe67d90d1d92508e8dd56d6390a26c9968"
+      },
+      {
+        "path": "11701240281/robin-real-data.json",
+        "sha256": "c6fb2fb15219b086da127d5ca80836d58ccea00de3645b98e1b1287e9a943bd3"
+      },
+      {
+        "path": "11702571381/robin-real-data.json",
+        "sha256": "4a6d8ccd4b5a582a6094141471f8f6d9894df017c1e371f4f6bb02feb92cd632"
+      },
+      {
+        "path": "11704445466/robin-real-data.json",
+        "sha256": "9152598c5d7e329e4aa04c66f579cc245b7138b12b5734b42ee4644bdbc54c32"
+      },
+      {
+        "path": "11705238718/robin-real-data.json",
+        "sha256": "f3d9e06c2c0f1aa675a974707f0dcf34cef3889ae0064da6328ce0e838a87520"
+      },
+      {
+        "path": "11707497608/robin-real-data.json",
+        "sha256": "4d8c388f3aeb650c57677cf334440f47422124cd4bcde1e0fe71748b64893f35"
+      },
+      {
+        "path": "11709236723/robin-real-data.json",
+        "sha256": "82070052b2f7051072d44d0d9b0c5ceec75beadab0c04216946f25a853d60d02"
+      },
+      {
+        "path": "11710438723/robin-real-data.json",
+        "sha256": "9a8d144457ad3d6b4dfbaada8c3130873f9b6e5434c0e10d5aa77a3ded6ff3e5"
+      },
+      {
+        "path": "11711997637/robin-real-data.json",
+        "sha256": "509b3ce26e590c8f24804ecbe915c06d9fd0b803d07187f5057c6c3e54531840"
+      },
+      {
+        "path": "11714218010/robin-real-data.json",
+        "sha256": "5210eee16b6445a0d7d9a09036327281f6d8a17bef2e9dce939cd237a553bdf7"
+      },
+      {
+        "path": "11714789639/robin-real-data.json",
+        "sha256": "9c7a55df48aa5f5c9de3d3d2e72070b6600254b04dd2f193419675b9541e21c3"
+      },
+      {
+        "path": "11717323956/robin-real-data.json",
+        "sha256": "7e68fdb37505b7c4ec8600a801088b45000eb035233c97801b4b93dc986981ca"
+      },
+      {
+        "path": "11718887255/robin-real-data.json",
+        "sha256": "509b46a1b69b3fe5da411ba75874a861c1267d363fc9fb5f1e878f9eb4280e65"
+      },
+      {
+        "path": "11719804298/robin-real-data.json",
+        "sha256": "2923b040ca19c16702a14a2a3fa2b80aa1a920cf33f78b570e8e6fae8e73cc01"
+      },
+      {
+        "path": "11721833017/robin-real-data.json",
+        "sha256": "7e7de60eb794a9dc074b527f4c5f755a590b97d5e8c7e4532df1f1910e5755c6"
+      },
+      {
+        "path": "11723727835/robin-real-data.json",
+        "sha256": "9088f4142ae172180fa51e46d0cdc74cb4cb6f8bb3a11a68aa0bfa132afa45b2"
+      },
+      {
+        "path": "11725028176/robin-real-data.json",
+        "sha256": "38d0d827b7a56a59106ac2492114f689d813148c2db28d7a2e4ade91204d4279"
+      },
+      {
+        "path": "11726823905/robin-real-data.json",
+        "sha256": "df696ebde0a3e8fe67ca1a6d3342e708a63e54182a12c4778eb024961e138bd6"
+      },
+      {
+        "path": "11729271881/robin-real-data.json",
+        "sha256": "7dfa210b9a87e7d28ba026338970b3aec28962d05b68f110025f52faf3dcbf5d"
+      },
+      {
+        "path": "11731831713/robin-real-data.json",
+        "sha256": "67590d060759bcf723341c34492b31634336f027c33aa11f2a00cca4d6b1da34"
+      },
+      {
+        "path": "11734463074/robin-real-data.json",
+        "sha256": "86521bb676213ca7b3a308bea4df2d066cb85047adaf6d8622df68532ef9994f"
+      },
+      {
+        "path": "11737285941/robin-real-data.json",
+        "sha256": "ba956c9aab26139cf68e6c7461c16a02c0b94ec559516dcd7384fed2a4d4be96"
+      },
+      {
+        "path": "11740372846/robin-real-data.json",
+        "sha256": "25372eb1b33de515ae6cad78e13a322e6b0bd5291f6433ef80fde2b648c65f16"
+      },
+      {
+        "path": "11743260777/robin-real-data.json",
+        "sha256": "187e85d5e64131869bd6e7e14067781b170b45525505444f4db135800109f6bf"
+      },
+      {
+        "path": "11747675922/robin-real-data.json",
+        "sha256": "481be05ed9b96711bc648b14eac895785517f58e0f2ffeb3d07ad7ae7788ea97"
+      },
+      {
+        "path": "11749838094/robin-real-data.json",
+        "sha256": "b17989cfbb0cf47ef66e165b76e6b18740cc6dba431acdeab54073b8b0081875"
+      },
+      {
+        "path": "11753822688/robin-real-data.json",
+        "sha256": "f05381c6e455bdca737d2abe87f6fa608c80a7e24b7d7f6003538e6a2828f132"
+      },
+      {
+        "path": "11757312952/robin-real-data.json",
+        "sha256": "5cf772db624ade045d6893532e690d93ccbedbe87b567462d74e722b398b8c29"
+      },
+      {
+        "path": "11759809146/robin-real-data.json",
+        "sha256": "163300de767a260e0088b810f1163410a82a1f622cca3af7eac54f6c2b8ccad2"
+      },
+      {
+        "path": "11763293088/robin-real-data.json",
+        "sha256": "f98ad18254ac837b590cc424aad1ea4670ad46ddafa55c87e717c18ddd382978"
+      },
+      {
+        "path": "11767770828/robin-real-data.json",
+        "sha256": "0f56be5b01f7ca8a171b707a197d3a1725150caf4d59cb57bd605b84833769aa"
+      },
+      {
+        "path": "11771370998/robin-real-data.json",
+        "sha256": "dac997f4dfd31dd596c1d037c8b2d9a330fc7e8fbe9d5cd2d2caf934d57a75df"
+      },
+      {
+        "path": "11774021654/robin-real-data.json",
+        "sha256": "97f49a0d3e419994bfb97095d0bc1cecb341139011620206c9d923af147c6951"
+      },
+      {
+        "path": "11776582667/robin-real-data.json",
+        "sha256": "73a497992f014f122774d1d9cd38421320bfea4231615dff871d02858530c317"
+      },
+      {
+        "path": "11779067434/robin-real-data.json",
+        "sha256": "5ce421e5ad7dab2a7c8ee2240aee4114265e3531e65ad2ee51e06675ef62d25b"
+      },
+      {
+        "path": "11780844455/robin-real-data.json",
+        "sha256": "027c1687f4f1ec3fb3dced044a5faac5f0a6db723ac628e4fcdb552430e1bf2d"
+      },
+      {
+        "path": "11783446952/robin-real-data.json",
+        "sha256": "a10c9f014da935ec93dabf6d6b31e7fc25afa89af16f2c89d563f73d7d8f4526"
+      },
+      {
+        "path": "11785079226/robin-real-data.json",
+        "sha256": "a5754180959c260f3f6e6a515ee06f1ca14722ae1b6a8e4e7298d5cb7ebcb81d"
+      },
+      {
+        "path": "11787486664/robin-real-data.json",
+        "sha256": "eb27d5cc3bba30934fed2294182ec24bcf6f2a767baf9e9d33d09b36d2716f4e"
+      },
+      {
+        "path": "11789737903/robin-real-data.json",
+        "sha256": "ea415c8cd0b1c4c68520cbcbfc344a5ef5da23e942efeedaf11a4171d99e4a51"
+      },
+      {
+        "path": "11791019904/robin-real-data.json",
+        "sha256": "f9b0ac436e40aeb501f8e9df190a26283e1aff1212edc5648dcca8bc0a8177b6"
+      },
+      {
+        "path": "11793463101/robin-real-data.json",
+        "sha256": "d3089deb46dd9e2fd582d3d2d76e0897430920823b6f9fa7c2b67c93426ce780"
+      },
+      {
+        "path": "11797117274/robin-real-data.json",
+        "sha256": "31fa0270eb856475d1eca519012d82986270c995c5c21480fda78586e89b72fe"
+      },
+      {
+        "path": "11799303942/robin-real-data.json",
+        "sha256": "842f0d5e8a3745c5ba515fc31d55ea077f21332c2ba8a8598629d9af39c2d8dc"
+      },
+      {
+        "path": "11803870377/robin-real-data.json",
+        "sha256": "d8e16ac48a49b5b053f061fb691e401190f1aa83a3197511395768528d5349ce"
+      },
+      {
+        "path": "11808095069/robin-real-data.json",
+        "sha256": "daca1896bae0860529d8db07c372e3e3a80e1a6f82e17a6638846eb9a501304f"
+      },
+      {
+        "path": "11811822573/robin-real-data.json",
+        "sha256": "815c429741bf2997dbce4311da4b84c63e1df001163ed0c1abcc01cfe0c9b995"
+      },
+      {
+        "path": "11818485823/robin-real-data.json",
+        "sha256": "7f8ea6eba6e6a1c26ef5b0978f06f0861ae3a4e20975db174233275ffe4e2a90"
+      },
+      {
+        "path": "11823158836/robin-real-data.json",
+        "sha256": "3a28d495b250eded0b7660b880d4dc377fae2868202bb25762b6993d7303a07a"
+      },
+      {
+        "path": "11827651552/robin-real-data.json",
+        "sha256": "1350cb4ece1ac790ac5006b75ac94b25c7768cf5818532ecdc68f7010471d75d"
+      },
+      {
+        "path": "11830589778/robin-real-data.json",
+        "sha256": "26fd3cafd159e4cf7d4a642f846194300090e6812c22ec26e8fc63ca29445889"
+      },
+      {
+        "path": "11836606010/robin-real-data.json",
+        "sha256": "e71365bdbf741ada3ded644c3f8a50614419d0a30b031423fceb54b4c775b4ab"
+      },
+      {
+        "path": "11840053987/robin-real-data.json",
+        "sha256": "93f946c8331a8c4309f182003c8ddc9c67afa8ba38d9b1c93f1527e69068fe8b"
+      },
+      {
+        "path": "11845083163/robin-real-data.json",
+        "sha256": "a045b96420f0f74e4212e45f5cec54b8d629423df25b53cfa421b6df5558f4f1"
+      },
+      {
+        "path": "11850895836/robin-real-data.json",
+        "sha256": "cd0f35619fca8eaca166e0c05064ed0713f56992c9c608683ccd3258301521f3"
+      },
+      {
+        "path": "11854037061/robin-real-data.json",
+        "sha256": "8d0647af5d7d0434b1885b90eb603fd54413be0072228cd93ab45d42663fb1ed"
+      },
+      {
+        "path": "11858293149/robin-real-data.json",
+        "sha256": "dec5d3645e557fbf5b923fd3728caa5d1658673537303c826c69e6a4c0b2c6c3"
+      },
+      {
+        "path": "11861084716/robin-real-data.json",
+        "sha256": "38fc89cc4843f6347c5485f0224abd5e291ac86ce9cc58a036d401a1c9bdeefd"
+      },
+      {
+        "path": "11864375743/robin-real-data.json",
+        "sha256": "e4e28fb1ecb8b43301ebb858140a2e33ef3b9cb59e3ade8253f1a75d6662f7e6"
+      },
+      {
+        "path": "11865972887/robin-real-data.json",
+        "sha256": "d8c61d9df47ff8ae915197522d484a5d0e89537b9db297b3035bd9b1328f753b"
+      },
+      {
+        "path": "11868187973/robin-real-data.json",
+        "sha256": "8b99a4ee1170a0ed604309888c3324098b113821cecb6193f8fbcde954374a81"
+      },
+      {
+        "path": "11870203214/robin-real-data.json",
+        "sha256": "0034b4391a8180e091a16e230f141b634813c3ed0b7b8f313687677214629ba9"
+      },
+      {
+        "path": "11873430626/robin-real-data.json",
+        "sha256": "2a75a053773ddb2e686c214d440c043033f6e00ef0d057624761ed01ae70732f"
+      },
+      {
+        "path": "11876000914/robin-real-data.json",
+        "sha256": "e202464d6b2590b1724b8e14dae0dd11fe0476091b031ab55b9c20cbc707a868"
+      },
+      {
+        "path": "11879520298/robin-real-data.json",
+        "sha256": "e309823837ddb69822aec20bfe6e679c0f168f1aaa40a2520ccc0d719a2d044a"
+      },
+      {
+        "path": "11881633900/robin-real-data.json",
+        "sha256": "fd89040254bd2d74a4829a855e3a85c63a27a41f2473012dd2a017e8e5dda99e"
+      },
+      {
+        "path": "11886365293/robin-real-data.json",
+        "sha256": "c8c43652efbe5baa97486b4be71be004e9741235eb87867050ea11da637b3716"
+      },
+      {
+        "path": "11890058053/robin-real-data.json",
+        "sha256": "c20d77fad14ebd373d426b85ead42a9f9c353f650a031e927f79255598e57b22"
+      },
+      {
+        "path": "11895530106/robin-real-data.json",
+        "sha256": "26888414f9e22023ccd07e93913a2908b6da5185c58757d645a220f09aceedd8"
+      },
+      {
+        "path": "11899301065/robin-real-data.json",
+        "sha256": "1e250741a4d58c4acdf5d3446bc7226138475ee1827bda5404b91b77cd311a54"
+      },
+      {
+        "path": "11904153646/robin-real-data.json",
+        "sha256": "a832e1f8b53adbce3f224e14484b6c1d9945e89476a4393e16e737ecf3bf6633"
+      },
+      {
+        "path": "11908262685/robin-real-data.json",
+        "sha256": "3166d4a4b21321902c487057394980cb4250a4568a6f79a7ff7b19c56bdc1fff"
+      },
+      {
+        "path": "11914976160/robin-real-data.json",
+        "sha256": "560d5302d2c27615c1c6d347882a604250d762bffe4d9e287667d7855c9f6d4c"
+      },
+      {
+        "path": "11917529804/robin-real-data.json",
+        "sha256": "84005e23c2729a04f894b478b0bbba4f85786567ecd0b8ab0c762d995e655ae2"
+      },
+      {
+        "path": "11921129319/robin-real-data.json",
+        "sha256": "fe8842cc29deb566ac0f5091f60460fcf45246fa9f44cde8254988cd1784cd58"
+      },
+      {
+        "path": "11925069329/robin-real-data.json",
+        "sha256": "5bea08f29c05c699825de8607b4dd62d28fc401780d7bded3429dff432356d0d"
+      },
+      {
+        "path": "11930186073/robin-real-data.json",
+        "sha256": "a666ae486b3929d18de7e666f0176f53268fef4256b4a6318e11a16fd7ab39cd"
+      },
+      {
+        "path": "11933427287/robin-real-data.json",
+        "sha256": "9ed4fa8a8dc89414ee71232238b8af274726941d151ae87e96361185f1db699d"
+      },
+      {
+        "path": "11936885731/robin-real-data.json",
+        "sha256": "eda6efe5ebe65b42a87e7632c4c97dee377d4a70144f70444bcc9cc2c222a955"
+      },
+      {
+        "path": "11939710687/robin-real-data.json",
+        "sha256": "33ebb96d42c2292ff6729ce0f94c21e286fb22c3649aaa72201601274a344349"
+      },
+      {
+        "path": "11942981684/robin-real-data.json",
+        "sha256": "10284538b43efc2de3408eab61cf7a7c85bb985bb684c2975ae6eff5da53c34f"
+      },
+      {
+        "path": "11945207621/robin-real-data.json",
+        "sha256": "ea1cb756eeb4ad7bdb24026c5fd0ed5b7551175e97aed8a9a9a5b75eea02fb87"
+      },
+      {
+        "path": "11947398307/robin-real-data.json",
+        "sha256": "decda62b01906134c37e5775205d2b5ff2b7526e2dacc25b0b8320500cf7586c"
+      },
+      {
+        "path": "11949298951/robin-real-data.json",
+        "sha256": "1e9eb05df022e94f342f85d1e109d6756ef4ad5944027e41f59bf2eb86cc01b7"
+      },
+      {
+        "path": "11951938446/robin-real-data.json",
+        "sha256": "73fe81ebb1b3d3f1e7b51448d66569f7a5f3bcfb6a27c19929823bbfde4602a5"
+      },
+      {
+        "path": "11955293520/robin-real-data.json",
+        "sha256": "5320b00d50ea674664377ce7f1493e0abac5e73602e8458f30bbe519145079d7"
+      },
+      {
+        "path": "11957914411/robin-real-data.json",
+        "sha256": "c24663e8896b2d239f0a43275e9c51f12b36dd8f3642ade033d00a7576067467"
+      },
+      {
+        "path": "11962340656/robin-real-data.json",
+        "sha256": "91454a787ce17d3177a5df56ea2a8497e90e354705927535c83955880d258679"
+      },
+      {
+        "path": "11965683029/robin-real-data.json",
+        "sha256": "c90ec8a45defd8a818c6fdc39d65f14ac46a81ea019c747b964bb261496de72d"
+      },
+      {
+        "path": "11969333902/robin-real-data.json",
+        "sha256": "1b2f81c9c14d4f40563117848bba7dbbe4b87a6f58f4e12d94088ae7452ae16b"
+      },
+      {
+        "path": "11974044671/robin-real-data.json",
+        "sha256": "52e7b134f79b6653d3648a822f7077b2dc39b40574699bcb5168a62edfd46d63"
+      },
+      {
+        "path": "11979588562/robin-real-data.json",
+        "sha256": "fc9fa4796ed2d4233a6ab2512a1a2b095bbf6a18c16430a460f06a040cc0230e"
+      },
+      {
+        "path": "11984876558/robin-real-data.json",
+        "sha256": "3115a1195bf3735ce7a3e086972ca9c01a17bbd1b59d3c166e1832bdeaad7acd"
+      },
+      {
+        "path": "11989238653/robin-real-data.json",
+        "sha256": "efe74714fcf7e4fcf4e94641923ee49325be496b9b4ddad4f5e875518fbfc323"
+      },
+      {
+        "path": "11994796484/robin-real-data.json",
+        "sha256": "ca9505f7bc96f248050491f856f9c1d1736c75cebfc7740825ea6c2493b03b5d"
+      },
+      {
+        "path": "11997843778/robin-real-data.json",
+        "sha256": "39cbfb223855ede566b10ee565571f5edbbc66301cb0a4f25602b77ae00967e9"
+      },
+      {
+        "path": "12001368668/robin-real-data.json",
+        "sha256": "dfd2f07d5f38335b4b86955d145faed444cbbe223c222c34c855b13e5154218a"
+      },
+      {
+        "path": "12010031286/robin-real-data.json",
+        "sha256": "3503e83afe07f254d6c8914a384c48995e2ae46259ee33315eed8159ca170d2b"
+      },
+      {
+        "path": "12012841454/robin-real-data.json",
+        "sha256": "4243705f2962f192c34596d7999ad27103e037e6c5f5a29e61283278602b45de"
+      },
+      {
+        "path": "12016370524/robin-real-data.json",
+        "sha256": "33aee9adf14d23928facc32d9c94ea2e47da01048965db8b51e351ae0ad91e2c"
+      },
+      {
+        "path": "12018183407/robin-real-data.json",
+        "sha256": "eab0353c8c64f0716a8d989a34e62419d898c6d70e52ea20ff2463a4a08f61ed"
+      },
+      {
+        "path": "12021341292/robin-real-data.json",
+        "sha256": "14616e365975accb9e67631a9aa5b56de730f4e12343cbb03d11923ed1fdb1e3"
+      },
+      {
+        "path": "12023093314/robin-real-data.json",
+        "sha256": "794e2b7e9d1dd42b5e818b1b8e6905b2caae742ca081c7bd99eab39cbe924fb5"
+      },
+      {
+        "path": "12025457044/robin-real-data.json",
+        "sha256": "f947e01378ada5d0c6bb1a8cf7d41fdddafb08d9753264be8bc6f952396892ef"
+      },
+      {
+        "path": "12027613260/robin-real-data.json",
+        "sha256": "ffc2ccd34c259a91557a0c13911e51f6d913c98ee6a5a7fbffb451d2cc626a73"
+      },
+      {
+        "path": "12030705430/robin-real-data.json",
+        "sha256": "686106f208ae06cdcafcbe13d33cddb8f8368b662a496641090d433a22c7e81b"
+      },
+      {
+        "path": "12032677915/robin-real-data.json",
+        "sha256": "28ae1eeb45d5f39cb7b7727ede06923c7f620c34715846fe981d0a32b0c5b571"
+      },
+      {
+        "path": "12036332531/robin-real-data.json",
+        "sha256": "fe2617f08e18a30d12e6262e1165b43b26afd644aae7b57d4f13e3b5b8c8ca6d"
+      },
+      {
+        "path": "12038944270/robin-real-data.json",
+        "sha256": "aa05c50528da9f9bc8285514222f5408dfd2f2661e2a7fa126c279e554659b92"
+      },
+      {
+        "path": "12042946212/robin-real-data.json",
+        "sha256": "d1fcc08c8265d1ecdf174cbf3e9c041e502d72867097cffd84c4aee0e9a0ddb3"
+      },
+      {
+        "path": "12046345347/robin-real-data.json",
+        "sha256": "eb6b4f21a1523353e479979c95eeab0b82153d3f62133d6a35c8f43d73e00614"
+      },
+      {
+        "path": "12049596420/robin-real-data.json",
+        "sha256": "4ab9ba59b1c4220403c1f081a8b6da9b6c77ab1530b9540a65ed383de42e8880"
+      },
+      {
+        "path": "12053082227/robin-real-data.json",
+        "sha256": "995374d50b017e3f20c6ba03e4f8677c6f304f4a8abfaa61656014fb0827c455"
+      },
+      {
+        "path": "12057620951/robin-real-data.json",
+        "sha256": "058a4bffcdc66b3d03c7f0aeaddb6739c607e9fb90cbd725ad99b1a18e122ec4"
+      },
+      {
+        "path": "12060846862/robin-real-data.json",
+        "sha256": "c5985949daef8ece7ad51a9c78c2aa31e98add657969654553508ef29550d8f0"
+      },
+      {
+        "path": "12065016030/robin-real-data.json",
+        "sha256": "b4666762bfd931d3de086be8a26add72f5702b36b6dbdaee2b5501a859eb2628"
+      },
+      {
+        "path": "12068954106/robin-real-data.json",
+        "sha256": "adcef5b10c1ccddf8c8c0dc1b7e787f0c675a8c5d530a8454ed9d147e425cec5"
+      },
+      {
+        "path": "12072139699/robin-real-data.json",
+        "sha256": "54f5b9f4baa31eb7622640e4b7ff5cb534828c6c4af2c86b4385ddf04b86b829"
+      },
+      {
+        "path": "12075348661/robin-real-data.json",
+        "sha256": "a32fb432bb19e35d48034457e1cf61edb8a4d6bcd76c04c3c3db412a8bb7cd48"
+      },
+      {
+        "path": "12078309756/robin-real-data.json",
+        "sha256": "b2de234f979205d212898ca9bebbc0b844dbdd02dbf380f2fda2ce72ffc42f37"
+      },
+      {
+        "path": "12081925401/robin-real-data.json",
+        "sha256": "d4f7c2ba32dce011dab1cf98efcf62c1a2c01e7742ed07beaa340abf0cfcb050"
+      },
+      {
+        "path": "12083836921/robin-real-data.json",
+        "sha256": "7143c5a6a2a7c8acc2b5a2a8e144773ece9af7dd650d1c3ec3040294bd467689"
+      },
+      {
+        "path": "12085488872/robin-real-data.json",
+        "sha256": "561020eacd0ff28a6bf0868b1c616fbcdd63252a9352be8139086a37fbe75c5f"
+      },
+      {
+        "path": "12087747014/robin-real-data.json",
+        "sha256": "f310eb96c575595ba026edbc2b6024dd01e5c628175711533130fe783903cddd"
+      },
+      {
+        "path": "12089550456/robin-real-data.json",
+        "sha256": "2b9dd040622bbb75d3633ff58dd16b4d5b9fac1a22117c253d6fc85de2d46f9b"
+      },
+      {
+        "path": "12090837011/robin-real-data.json",
+        "sha256": "57feeb1de2277c118018d8468e7143c775d050bc965683a3d6a78a748268c6a5"
+      },
+      {
+        "path": "12092381762/robin-real-data.json",
+        "sha256": "87bf0660745e7db74a8bb02ba6b75d955bfd9f414f2615de1e3c08f574bcc01e"
+      },
+      {
+        "path": "12107481142/robin-real-data.json",
+        "sha256": "29ed61ab781b7e09387a6e361e3e345c7cf4c874fa6c272e39f33e4554dc49e2"
+      },
+      {
+        "path": "12111983201/robin-real-data.json",
+        "sha256": "48d448be4db5cbde965cb9b1d7c979cae61496ff7f532fe1c56734346bc8b6fc"
+      },
+      {
+        "path": "12113733658/robin-real-data.json",
+        "sha256": "a65c234c6761637ccea7eb1016ff3be6b6f4fb2960494c9b5354c575d9ce0642"
+      },
+      {
+        "path": "12114734695/robin-real-data.json",
+        "sha256": "65048ad7e358113b03918417d4b25455d885234ba5d6350d4a01f70519d1dc41"
+      },
+      {
+        "path": "12119604721/robin-real-data.json",
+        "sha256": "89792a440f8e2bcf003744bbe4b51aa301dda0ae32dd80ea101b73d9297e24bc"
+      },
+      {
+        "path": "12122202500/robin-real-data.json",
+        "sha256": "9714b91c574377ebac9632cd1af455ba583ba69f78959f72133576e6b629ed2b"
+      },
+      {
+        "path": "12122689716/robin-real-data.json",
+        "sha256": "c7806892f70bfcb1b085b277697e9fecca7d32a940c05c2fad4eeee7351040d3"
+      },
+      {
+        "path": "12125466479/robin-real-data.json",
+        "sha256": "38024e6872609a52e427aa87f51b33f6ee79aa9031696228cf29bbca2ecd6d86"
+      },
+      {
+        "path": "12126516732/robin-real-data.json",
+        "sha256": "908d20e522b76a4b0b32adf0528f03426393b5922bc615493029409769cc2fba"
+      },
+      {
+        "path": "12127654977/robin-real-data.json",
+        "sha256": "de1edbac84ffedc1e981400d4d50f6aeed3562ae0bc1702058e4aac2a5263aa2"
+      },
+      {
+        "path": "12129313700/robin-real-data.json",
+        "sha256": "ddd21e27239069bdaecc49ca4c9a7ea61dc7389df5365ccbab550302a49a07aa"
+      },
+      {
+        "path": "12130914273/robin-real-data.json",
+        "sha256": "c98b4168073072cbd0a75c63e98d12ec958fc245d60619cfecd1ee9f9d343a85"
+      },
+      {
+        "path": "12132268296/robin-real-data.json",
+        "sha256": "e66d888c68f1f455f537a5e6f9c361063cd464c5c634527fada0b16e2b8e76b1"
+      },
+      {
+        "path": "12134860821/robin-real-data.json",
+        "sha256": "12aaf453824082ec4f3819a0caf64331497009c63b715a373b89d2bed1fda48e"
+      },
+      {
+        "path": "12145894345/robin-real-data.json",
+        "sha256": "48f29c198945e94b2da8660468d05f47d6442bb8d29faaa8787f7ffaf7d09264"
+      },
+      {
+        "path": "12147873813/robin-real-data.json",
+        "sha256": "22779b42ac127dd8de8c77118846dfae6d4c185775600feab658958433992f78"
+      },
+      {
+        "path": "12150370971/robin-real-data.json",
+        "sha256": "112baeda20e58f672ddd1c2e5f20c69ed3dabb2c0a6df558e68ac3c82d0f1f1a"
+      },
+      {
+        "path": "12151544421/robin-real-data.json",
+        "sha256": "856706db14c7f270ce30c4e5640f57043382edda3d4c25bb12f3b76d32a0b1da"
+      },
+      {
+        "path": "12153830932/robin-real-data.json",
+        "sha256": "fafd9aa8d533d45558ab0bae8a28b6eb4e908585361fec1b738af013f4c7adad"
+      },
+      {
+        "path": "12155820873/robin-real-data.json",
+        "sha256": "8888672ca7f847f26bffe91029840785c02ea1a409773d320464b5e2a06b0c0f"
+      },
+      {
+        "path": "12158858805/robin-real-data.json",
+        "sha256": "e854c37c275f890f54d3e5d91380809e7576771614780c6c24db8651086c7770"
+      },
+      {
+        "path": "12160639192/robin-real-data.json",
+        "sha256": "8bda15f2faf79dbfcb5ed3546921d0276b2dbe05cb3d7dd55999b159fdd2ebf2"
+      },
+      {
+        "path": "12163102400/robin-real-data.json",
+        "sha256": "79bcd499a51638e5414162de2a376f773f45e6d5339fcd6eda1f5cf979686866"
+      },
+      {
+        "path": "12165705165/robin-real-data.json",
+        "sha256": "8c3cbf7f2ab7269811dc11b52b96be07cba206664a51ed2aeb6c38abd58373f7"
+      },
+      {
+        "path": "12168040357/robin-real-data.json",
+        "sha256": "a26b6153efcdc948839aae15357bb088e85663126a21f54705c3365800f09696"
+      },
+      {
+        "path": "12170466541/robin-real-data.json",
+        "sha256": "394f2ffb128b6db2501327a6ab270e47f378f0d9a30b17ea7b9524724d00a513"
+      },
+      {
+        "path": "12174615252/robin-real-data.json",
+        "sha256": "27a8bb8740b6627dde2d42962d09b658b2406b6aff02736ec5e4c14d7dd70c11"
+      },
+      {
+        "path": "12178084808/robin-real-data.json",
+        "sha256": "2a41fa9ce0fb74b73956b66bba4c72e38f8370f59c39fa9fb46262986dca465e"
+      },
+      {
+        "path": "12182261147/robin-real-data.json",
+        "sha256": "b939638fd98882bd903509fb5157b2534375aec54b4973ea380ab61bed613aef"
+      },
+      {
+        "path": "12186140965/robin-real-data.json",
+        "sha256": "a19c68a805d6f3d16f0e31bcb2e025dab6f4469a24ace61713c1d53ab5029e13"
+      },
+      {
+        "path": "12191305533/robin-real-data.json",
+        "sha256": "64915b1b11481df5d0178c535d78bea797eaa55b4dd50e63cd464953afeb28d4"
+      },
+      {
+        "path": "12195741533/robin-real-data.json",
+        "sha256": "19a87e460c39d7b4ec6fe4fade8a08726a99c85e51be7f3607716ed228388de4"
+      },
+      {
+        "path": "12201520178/robin-real-data.json",
+        "sha256": "60fec423b90e43c143baef49f2ad3bb0129feb2c053191e862d97e4f9eb9a3b7"
+      },
+      {
+        "path": "12219602083/robin-real-data.json",
+        "sha256": "4c94271168769e2106dfdce813444961fe1d78cc600b39a843c3cb05632b03de"
+      },
+      {
+        "path": "12223986152/robin-real-data.json",
+        "sha256": "ab821f246eddcff82a8d9b4c37b001774a61f21b6b0f65bbcb7a2dd9c7aa1e21"
+      }
+    ],
+    "tolerance_minutes": 15,
+    "calculable_rows": 2691,
+    "status_counts": {
+      "MISSING_FR_PRICE": 450,
+      "OK": 2691
+    }
+  }
+}

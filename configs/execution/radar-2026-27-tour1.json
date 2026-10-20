@@ -1,0 +1,22 @@
+{
+  "mission_id": "RADAR_2026_27_TOUR1",
+  "authorized_stages": [
+    "E1",
+    "E2",
+    "E3A",
+    "E3B"
+  ],
+  "maximum_stage": "E3B",
+  "external_effects": {
+    "github": "read existing comments, logs and artifacts; update same PR branch; no merge",
+    "provider_calls": 0,
+    "neon_writes": 0,
+    "r2_operations": 0,
+    "real_bets": 0,
+    "subscriptions": 0
+  },
+  "compute_budget": "One contemporaneous-reference calculation over existing normalized sources; synthetic and governance tests; no provider or durable-store access.",
+  "time_budget": "Review correction on 2026-10-20; weekly pilot bounded to 2026-11-17",
+  "source_hash": "bfbc1bf4b4b33fa0fd9749e3b14aa03fa95ec52b520c8824ea018ec17f1127e5",
+  "expires_at": "2026-11-17T23:00:00Z"
+}
