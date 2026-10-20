@@ -1,0 +1,56 @@
+{
+  "schema_version": "mission-027-lineups-public-receipt-v1",
+  "status": "COMPLETE",
+  "preflight_run_id": "38960293874",
+  "max_calls": 8000,
+  "daily_reserve": 5000,
+  "status_calls_new": 0,
+  "lineup_calls": 224,
+  "distinct_matches_called": 224,
+  "target_count": 1900,
+  "fixture_ids_sha256": "bfe0675b5be73f052aa4768b0122b71e10b933aa6a9f1272b73430e376d2fcf3",
+  "complete_matches": 1900,
+  "matches_without_response": [],
+  "uncertain_reservations": [],
+  "partitions": [
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2020/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "rows": 760,
+      "sha256": "3f64e1b8c4c9cda238e098a594095a3cbbe522f726c0b380007af226a49b0168",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-027/projection/historical/parquet/competition=La-Liga/season=2020/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2021/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "rows": 760,
+      "sha256": "7c56d7f1a2f9e8ca6f3a7b8f4b93242a9a9c5e30ef324a38d168f3c4168d573e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-027/projection/historical/parquet/competition=La-Liga/season=2021/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2022/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "rows": 760,
+      "sha256": "9d848ae434cf53df88c40814a003e1864c70ba81bf4223a4f9e938a8640fb02d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-027/projection/historical/parquet/competition=La-Liga/season=2022/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2023/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "rows": 760,
+      "sha256": "05aef739728c40a6dad2a485d94b1c1bb2be80b6bc387d0243c645135f509631",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-027/projection/historical/parquet/competition=La-Liga/season=2023/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2024/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "rows": 760,
+      "inserted": 760,
+      "duplicates_avoided": 0,
+      "bytes": 564952,
+      "sha256": "82b23c92ba716527ec7c165348a470d74bc2c5ea75b76543c513308b4ec0f043",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-027/projection/historical/parquet/competition=La-Liga/season=2024/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet"
+    }
+  ],
+  "scope": "La-Liga",
+  "phase_target_count": 7228,
+  "phase_fixture_ids_sha256": "4e471c16b27b3ce5deaa8602795eb687f4e812975265d720c5697d4ce6bd288c",
+  "quota_remaining": 149766,
+  "complete_fraction": 1.0,
+  "run_id": "38981567739"
+}
