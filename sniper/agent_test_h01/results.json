@@ -1,0 +1,539 @@
+{
+  "hypothesis": "H01 agent test; not pre-registered",
+  "stake_units": 1,
+  "order": "date, league, home_team, away_team, season; same-day results excluded",
+  "total": {
+    "bets": 33,
+    "win_rate_pct": 60.60606061,
+    "roi_pct": 2.48484848,
+    "profit_units": 0.82,
+    "max_drawdown_units": 3.45,
+    "average_odds": 1.82606061
+  },
+  "by_season": {
+    "2021": {
+      "bets": 5,
+      "win_rate_pct": 40.0,
+      "roi_pct": -39.0,
+      "profit_units": -1.95,
+      "max_drawdown_units": 2.0,
+      "average_odds": 1.82
+    },
+    "2122": {
+      "bets": 5,
+      "win_rate_pct": 40.0,
+      "roi_pct": -30.0,
+      "profit_units": -1.5,
+      "max_drawdown_units": 2.0,
+      "average_odds": 1.93
+    },
+    "2223": {
+      "bets": 10,
+      "win_rate_pct": 80.0,
+      "roi_pct": 46.7,
+      "profit_units": 4.67,
+      "max_drawdown_units": 2.0,
+      "average_odds": 1.862
+    },
+    "2324": {
+      "bets": 7,
+      "win_rate_pct": 71.42857143,
+      "roi_pct": 9.71428571,
+      "profit_units": 0.68,
+      "max_drawdown_units": 2.0,
+      "average_odds": 1.54428571
+    },
+    "2425": {
+      "bets": 6,
+      "win_rate_pct": 50.0,
+      "roi_pct": -18.0,
+      "profit_units": -1.08,
+      "max_drawdown_units": 1.56,
+      "average_odds": 2.01333333
+    }
+  },
+  "sources": [
+    {
+      "file": "data/2021_E0.csv",
+      "rows": 380,
+      "sha256_lf": "5fe0773d57db8d4598db8e567543bd44bccedd08b4af3f6cb647d25852417ecf",
+      "url": "https://www.football-data.co.uk/mmz4281/2021/E0.csv"
+    },
+    {
+      "file": "data/2021_F1.csv",
+      "rows": 380,
+      "sha256_lf": "deae3eb4a96f8825229fba2c9de454f9d73dc0c8be10d1cc99837386fea0ec10",
+      "url": "https://www.football-data.co.uk/mmz4281/2021/F1.csv"
+    },
+    {
+      "file": "data/2021_D1.csv",
+      "rows": 306,
+      "sha256_lf": "9fb2281c0506f59c5df63ed14d96330ac036ac8b2cbfae45945999473c8bb0e8",
+      "url": "https://www.football-data.co.uk/mmz4281/2021/D1.csv"
+    },
+    {
+      "file": "data/2021_I1.csv",
+      "rows": 380,
+      "sha256_lf": "029aea8a1f76f54527640fe8a8940c015c3de96ea5b596cb48217700c23844bd",
+      "url": "https://www.football-data.co.uk/mmz4281/2021/I1.csv"
+    },
+    {
+      "file": "data/2021_SP1.csv",
+      "rows": 380,
+      "sha256_lf": "452586dd68c3fe7ef2bce747ef42e123f1f72659c5bd2b0e3fbe5df23dc25cc1",
+      "url": "https://www.football-data.co.uk/mmz4281/2021/SP1.csv"
+    },
+    {
+      "file": "data/2122_E0.csv",
+      "rows": 380,
+      "sha256_lf": "95d1dd4afacfb96754b232d958b4972929a5828daa7b6a957edd7690edfc0481",
+      "url": "https://www.football-data.co.uk/mmz4281/2122/E0.csv"
+    },
+    {
+      "file": "data/2122_F1.csv",
+      "rows": 380,
+      "sha256_lf": "46115c3ab4d257075b8184d7c65d77f0c71fed59999ddc935909e1e4411c8ebb",
+      "url": "https://www.football-data.co.uk/mmz4281/2122/F1.csv"
+    },
+    {
+      "file": "data/2122_D1.csv",
+      "rows": 306,
+      "sha256_lf": "d2e4cac59f00b837773be3f75674fbeb4e55949cf4b21335cca11dd1b494d43a",
+      "url": "https://www.football-data.co.uk/mmz4281/2122/D1.csv"
+    },
+    {
+      "file": "data/2122_I1.csv",
+      "rows": 380,
+      "sha256_lf": "757c914f57084159d9818ca6c513a3a0c8149dca7ff7be106034066bdf986a94",
+      "url": "https://www.football-data.co.uk/mmz4281/2122/I1.csv"
+    },
+    {
+      "file": "data/2122_SP1.csv",
+      "rows": 380,
+      "sha256_lf": "34c7dfca71d4811d8dca1a30271006bec7f42892453601b1076cc297b28a1037",
+      "url": "https://www.football-data.co.uk/mmz4281/2122/SP1.csv"
+    },
+    {
+      "file": "data/2223_E0.csv",
+      "rows": 380,
+      "sha256_lf": "e51361323bcdcdcec2faf8f58e7bcfc4f5b193ed6017b284c71538ed70d98ea2",
+      "url": "https://www.football-data.co.uk/mmz4281/2223/E0.csv"
+    },
+    {
+      "file": "data/2223_F1.csv",
+      "rows": 380,
+      "sha256_lf": "35ec7a4685ea069207b76f069fd4f5dfbc622a5c3f35b381e63a422e47ba61ec",
+      "url": "https://www.football-data.co.uk/mmz4281/2223/F1.csv"
+    },
+    {
+      "file": "data/2223_D1.csv",
+      "rows": 306,
+      "sha256_lf": "f07f3e3ae6585ab8f79e5a3e22ea3ae1178b5ac2f61e69d014bd2889db4d9751",
+      "url": "https://www.football-data.co.uk/mmz4281/2223/D1.csv"
+    },
+    {
+      "file": "data/2223_I1.csv",
+      "rows": 380,
+      "sha256_lf": "7be75cd7c88be4fb9f34bc586f5c1ce80eccefdb7a8e8d597f9abdc3627ef979",
+      "url": "https://www.football-data.co.uk/mmz4281/2223/I1.csv"
+    },
+    {
+      "file": "data/2223_SP1.csv",
+      "rows": 380,
+      "sha256_lf": "a14f0133951dd721f310e3378efe591a241e647342c18825223e05dc8aadb003",
+      "url": "https://www.football-data.co.uk/mmz4281/2223/SP1.csv"
+    },
+    {
+      "file": "data/2324_E0.csv",
+      "rows": 380,
+      "sha256_lf": "0b669038e94bf305603d841f02006c7d35ebd41c8722c76e479f2393079b995f",
+      "url": "https://www.football-data.co.uk/mmz4281/2324/E0.csv"
+    },
+    {
+      "file": "data/2324_F1.csv",
+      "rows": 306,
+      "sha256_lf": "baecfbeb21a5e480eeb48b2f09cc7c27558a869cbcbd4237e8a64b0c791438b7",
+      "url": "https://www.football-data.co.uk/mmz4281/2324/F1.csv"
+    },
+    {
+      "file": "data/2324_D1.csv",
+      "rows": 306,
+      "sha256_lf": "c1c1736a9668a8043e836b451f8954ccc11982b496a3a90253c1aeec05937f79",
+      "url": "https://www.football-data.co.uk/mmz4281/2324/D1.csv"
+    },
+    {
+      "file": "data/2324_I1.csv",
+      "rows": 380,
+      "sha256_lf": "56cc1981e8cf62d1c66276fd26bd4ab58e7f804507dfd416deb517972a7763cd",
+      "url": "https://www.football-data.co.uk/mmz4281/2324/I1.csv"
+    },
+    {
+      "file": "data/2324_SP1.csv",
+      "rows": 380,
+      "sha256_lf": "c124815dae7337325a67623fa05493ef870f67f78828aa86b0f60d5bea20f0fc",
+      "url": "https://www.football-data.co.uk/mmz4281/2324/SP1.csv"
+    },
+    {
+      "file": "data/2425_E0.csv",
+      "rows": 380,
+      "sha256_lf": "316173b11634e5fdb836b0f3f9b4728df5044a44e1539361b6bdf18f0d3909a1",
+      "url": "https://www.football-data.co.uk/mmz4281/2425/E0.csv"
+    },
+    {
+      "file": "data/2425_F1.csv",
+      "rows": 306,
+      "sha256_lf": "01614b0c394726a06f1c7470906c39fc56a7f3b3713dd0f1f8a82037e3b00a7f",
+      "url": "https://www.football-data.co.uk/mmz4281/2425/F1.csv"
+    },
+    {
+      "file": "data/2425_D1.csv",
+      "rows": 306,
+      "sha256_lf": "0ec88fab92f6f3689492fb1c22f41c8652e3436d6b8c7d2b5cc5a21a2e9da70b",
+      "url": "https://www.football-data.co.uk/mmz4281/2425/D1.csv"
+    },
+    {
+      "file": "data/2425_I1.csv",
+      "rows": 380,
+      "sha256_lf": "601d409c2fe7fc013b87e4f92b7eb3c76266d5bb654eedb8acba4eb55fc1c679",
+      "url": "https://www.football-data.co.uk/mmz4281/2425/I1.csv"
+    },
+    {
+      "file": "data/2425_SP1.csv",
+      "rows": 380,
+      "sha256_lf": "bb544fa35b029896047a4bd7c12f3c8e50ff40451bb582c003549482fdeaa8a8",
+      "url": "https://www.football-data.co.uk/mmz4281/2425/SP1.csv"
+    }
+  ],
+  "bets": [
+    {
+      "date": "2020-11-08",
+      "season": "2021",
+      "league": "F1",
+      "home_team": "Metz",
+      "away_team": "Dijon",
+      "odds": 1.75,
+      "result": "D",
+      "gain": -1.0
+    },
+    {
+      "date": "2021-02-20",
+      "season": "2021",
+      "league": "I1",
+      "home_team": "Genoa",
+      "away_team": "Verona",
+      "odds": 2.7,
+      "result": "D",
+      "gain": -1.0
+    },
+    {
+      "date": "2021-04-03",
+      "season": "2021",
+      "league": "I1",
+      "home_team": "Lazio",
+      "away_team": "Spezia",
+      "odds": 1.4,
+      "result": "H",
+      "gain": 0.4
+    },
+    {
+      "date": "2021-05-12",
+      "season": "2021",
+      "league": "I1",
+      "home_team": "Inter",
+      "away_team": "Roma",
+      "odds": 1.65,
+      "result": "H",
+      "gain": 0.65
+    },
+    {
+      "date": "2021-05-15",
+      "season": "2021",
+      "league": "D1",
+      "home_team": "M'gladbach",
+      "away_team": "Stuttgart",
+      "odds": 1.6,
+      "result": "A",
+      "gain": -1.0
+    },
+    {
+      "date": "2022-01-09",
+      "season": "2122",
+      "league": "SP1",
+      "home_team": "Villarreal",
+      "away_team": "Ath Madrid",
+      "odds": 2.8,
+      "result": "D",
+      "gain": -1.0
+    },
+    {
+      "date": "2022-02-04",
+      "season": "2122",
+      "league": "SP1",
+      "home_team": "Getafe",
+      "away_team": "Levante",
+      "odds": 1.95,
+      "result": "H",
+      "gain": 0.95
+    },
+    {
+      "date": "2022-02-11",
+      "season": "2122",
+      "league": "F1",
+      "home_team": "Paris SG",
+      "away_team": "Rennes",
+      "odds": 1.55,
+      "result": "H",
+      "gain": 0.55
+    },
+    {
+      "date": "2022-02-13",
+      "season": "2122",
+      "league": "F1",
+      "home_team": "Monaco",
+      "away_team": "Lorient",
+      "odds": 1.4,
+      "result": "D",
+      "gain": -1.0
+    },
+    {
+      "date": "2022-02-26",
+      "season": "2122",
+      "league": "SP1",
+      "home_team": "Getafe",
+      "away_team": "Alaves",
+      "odds": 1.95,
+      "result": "D",
+      "gain": -1.0
+    },
+    {
+      "date": "2022-09-17",
+      "season": "2223",
+      "league": "E0",
+      "home_team": "Tottenham",
+      "away_team": "Leicester",
+      "odds": 1.45,
+      "result": "H",
+      "gain": 0.45
+    },
+    {
+      "date": "2022-10-16",
+      "season": "2223",
+      "league": "F1",
+      "home_team": "Rennes",
+      "away_team": "Lyon",
+      "odds": 2.3,
+      "result": "H",
+      "gain": 1.3
+    },
+    {
+      "date": "2022-10-16",
+      "season": "2223",
+      "league": "SP1",
+      "home_team": "Betis",
+      "away_team": "Almeria",
+      "odds": 1.57,
+      "result": "H",
+      "gain": 0.57
+    },
+    {
+      "date": "2023-01-21",
+      "season": "2223",
+      "league": "D1",
+      "home_team": "Bochum",
+      "away_team": "Hertha",
+      "odds": 2.38,
+      "result": "H",
+      "gain": 1.38
+    },
+    {
+      "date": "2023-02-11",
+      "season": "2223",
+      "league": "SP1",
+      "home_team": "Sevilla",
+      "away_team": "Mallorca",
+      "odds": 1.91,
+      "result": "H",
+      "gain": 0.91
+    },
+    {
+      "date": "2023-03-04",
+      "season": "2223",
+      "league": "D1",
+      "home_team": "Mainz",
+      "away_team": "Hoffenheim",
+      "odds": 1.91,
+      "result": "H",
+      "gain": 0.91
+    },
+    {
+      "date": "2023-03-05",
+      "season": "2223",
+      "league": "SP1",
+      "home_team": "Barcelona",
+      "away_team": "Valencia",
+      "odds": 1.53,
+      "result": "H",
+      "gain": 0.53
+    },
+    {
+      "date": "2023-03-11",
+      "season": "2223",
+      "league": "D1",
+      "home_team": "Ein Frankfurt",
+      "away_team": "Stuttgart",
+      "odds": 1.8,
+      "result": "D",
+      "gain": -1.0
+    },
+    {
+      "date": "2023-05-21",
+      "season": "2223",
+      "league": "SP1",
+      "home_team": "Vallecano",
+      "away_team": "Espanol",
+      "odds": 2.15,
+      "result": "A",
+      "gain": -1.0
+    },
+    {
+      "date": "2023-05-24",
+      "season": "2223",
+      "league": "SP1",
+      "home_team": "Real Madrid",
+      "away_team": "Vallecano",
+      "odds": 1.62,
+      "result": "H",
+      "gain": 0.62
+    },
+    {
+      "date": "2024-01-13",
+      "season": "2324",
+      "league": "E0",
+      "home_team": "Chelsea",
+      "away_team": "Fulham",
+      "odds": 1.6,
+      "result": "H",
+      "gain": 0.6
+    },
+    {
+      "date": "2024-01-15",
+      "season": "2324",
+      "league": "I1",
+      "home_team": "Atalanta",
+      "away_team": "Frosinone",
+      "odds": 1.44,
+      "result": "H",
+      "gain": 0.44
+    },
+    {
+      "date": "2024-01-31",
+      "season": "2324",
+      "league": "E0",
+      "home_team": "Tottenham",
+      "away_team": "Brentford",
+      "odds": 1.67,
+      "result": "H",
+      "gain": 0.67
+    },
+    {
+      "date": "2024-02-10",
+      "season": "2324",
+      "league": "D1",
+      "home_team": "Ein Frankfurt",
+      "away_team": "Bochum",
+      "odds": 1.73,
+      "result": "D",
+      "gain": -1.0
+    },
+    {
+      "date": "2024-03-30",
+      "season": "2324",
+      "league": "D1",
+      "home_team": "RB Leipzig",
+      "away_team": "Mainz",
+      "odds": 1.4,
+      "result": "D",
+      "gain": -1.0
+    },
+    {
+      "date": "2024-05-11",
+      "season": "2324",
+      "league": "E0",
+      "home_team": "Everton",
+      "away_team": "Sheffield United",
+      "odds": 1.4,
+      "result": "H",
+      "gain": 0.4
+    },
+    {
+      "date": "2024-05-12",
+      "season": "2324",
+      "league": "I1",
+      "home_team": "Lazio",
+      "away_team": "Empoli",
+      "odds": 1.57,
+      "result": "H",
+      "gain": 0.57
+    },
+    {
+      "date": "2024-10-19",
+      "season": "2425",
+      "league": "F1",
+      "home_team": "Brest",
+      "away_team": "Rennes",
+      "odds": 2.9,
+      "result": "D",
+      "gain": -1.0
+    },
+    {
+      "date": "2024-11-10",
+      "season": "2425",
+      "league": "I1",
+      "home_team": "Fiorentina",
+      "away_team": "Verona",
+      "odds": 1.44,
+      "result": "H",
+      "gain": 0.44
+    },
+    {
+      "date": "2025-03-02",
+      "season": "2425",
+      "league": "I1",
+      "home_team": "Genoa",
+      "away_team": "Empoli",
+      "odds": 1.91,
+      "result": "D",
+      "gain": -1.0
+    },
+    {
+      "date": "2025-04-12",
+      "season": "2425",
+      "league": "F1",
+      "home_team": "Monaco",
+      "away_team": "Marseille",
+      "odds": 2.0,
+      "result": "H",
+      "gain": 1.0
+    },
+    {
+      "date": "2025-05-04",
+      "season": "2425",
+      "league": "F1",
+      "home_team": "Lille",
+      "away_team": "Marseille",
+      "odds": 2.35,
+      "result": "D",
+      "gain": -1.0
+    },
+    {
+      "date": "2025-05-25",
+      "season": "2425",
+      "league": "SP1",
+      "home_team": "Villarreal",
+      "away_team": "Sevilla",
+      "odds": 1.48,
+      "result": "H",
+      "gain": 0.48
+    }
+  ]
+}
