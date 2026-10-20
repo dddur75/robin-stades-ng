@@ -56,6 +56,8 @@ def load_details(directory: Path, through: date) -> tuple[list[Row], list[Row]]:
                 if r["horizon"] not in (48, 24, 2):
                     raise ValueError("unsupported horizon")
                 r["clv"] = None
+                for field in ("gap_minutes", "close_gap_minutes"):
+                    r[field] = finite(raw[field]) if raw[field] else None
                 if raw["clv"]:
                     p, price = finite(raw["p_fair_close"]), finite(raw["price"])
                     if not 0 < p < 1 or price <= 1:
@@ -214,7 +216,7 @@ def cuts(crossings: list[Row]) -> str:
 def write_csv(path: Path, rows: list[Row]) -> None:
     fields = sorted({k for r in rows for k in r}) or ["match", "issue", "book", "threshold"]
     with path.open("w", encoding="utf-8", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=fields)
+        writer = csv.DictWriter(stream, fieldnames=fields, lineterminator="\n")
         writer.writeheader()
         writer.writerows(
             {

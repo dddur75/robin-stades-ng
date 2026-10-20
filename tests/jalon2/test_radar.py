@@ -103,6 +103,7 @@ def test_weekly_cli_reproducible_and_no_triple_count(tmp_path):
     before = {p.name: p.read_bytes() for p in out.iterdir()}
     api["main"](argv)
     assert before == {p.name: p.read_bytes() for p in out.iterdir()}
+    assert b"\r" not in before["DETAIL-HORIZONS.csv"]
     assert "SEMAINE-2026-42.md" in before
     assert "| betclic_fr | 1 | 1 | 1 |" in before["RADAR.md"].decode()
     assert datetime.fromisoformat("2026-10-19").replace(tzinfo=UTC).isocalendar().week == 43

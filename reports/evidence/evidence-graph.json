@@ -12384,6 +12384,7 @@
     {"claim_id":"DATA.RADAR202627.PAPER.V1","claim":"Pinned CLV exports yield 74 unique positive-EV match/issue/book selections, 37 at 2% and 19 at 5%, each priced at its first threshold crossing. Boost source coverage remains unknown; no edge or complete durable coverage claimed.","scope":"RADAR_2026_27_PAPER","source":"reports/clv/2026-27/SOURCES.json; reports/radar/2026-27/SOURCES.json; reports/radar/2026-27/VALIDATION.json","grain":"unique_match_issue_book_per_threshold_by_ISO_UTC_kickoff_week","temporal_class":"RETROSPECTIVE_CLOSE_REFERENCE","artifact":"reports/radar/2026-27/RADAR.md","hash":"2cbbb97f06c4c2862bc599c8a6e8efb819783b3b76a5890de43cb255fb312f21","code_revision":"164e7093d9cd5eb8cb79606b65aae6d44c234eb1","execution_id":"radar-2026-27-through-20261019","scientific_lineage_id":"DESCRIPTIVE_PAPER_NO_EDGE_CLAIM","dataset_lineage_id":"c26e9f0776fbca4d73389a6741e344106a6df3f13ad815bbd57ee43896226cf1","status":"PARTIAL","verified_by":["C0"],"independent_review":"PENDING"}
   ],
   "decision_nodes":[
+    {"decision_id":"RCV3-20261020-RADAR-002","ledger_record_hash":"f9c50f8064934bfb3163906190a25df9bac7cc6640544019e485b6e61f9901fd"},
     {"decision_id":"RCV3-20261020-RADAR-001","ledger_record_hash":"bf768bc94bbbb38fae5f63d1d081318cd46566321b0b2cf28a86a106e2716041"},
     {"decision_id":"RCV3-20260804-001","ledger_record_hash":"b949c5bfc2d20ecddd8fc03a8bb754a5aa3d7f6e2ba2c562901e778d62988f7e"},
     {"decision_id":"RCV3-20260804-002","ledger_record_hash":"83d790b874272f9efe3bd36672c6396bff91ef4c91881e02207c9ff6b22c57b7"},
@@ -14093,6 +14094,7 @@
     {"edge_id":"EDGE.1234","from_claim_id":"DATA.MISSION036.PUBLICATION.V1","to_decision_id":"MISSION036-PUBLICATION-007","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.1235","from_claim_id":"DATA.MISSION036.PUBLICATION.V1","to_decision_id":"MISSION036-PUBLICATION-008","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.1236","from_claim_id":"DATA.MISSION036.PREMATCH.V1","to_decision_id":"MISSION036-PUBLICATION-008","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.1237","from_claim_id":"DATA.RADAR202627.PAPER.V1","to_decision_id":"RCV3-20261020-RADAR-001","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.1237","from_claim_id":"DATA.RADAR202627.PAPER.V1","to_decision_id":"RCV3-20261020-RADAR-001","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.1238","from_claim_id":"DATA.RADAR202627.PAPER.V1","to_decision_id":"RCV3-20261020-RADAR-002","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
