@@ -114,3 +114,10 @@ lignes sans nouvel appel fournisseur.
 `games.substitute` n'est pas substitué à `startXI` : les échantillons AUT 2019
 et BRA 2019 marquent chacun 14 joueurs comme non-remplaçants. Une composition
 officielle ne peut pas être déduite de manière fiable de ce champ ancien.
+
+Le diagnostic chiffré du rattachement (24,87 %, soit 17 433 / 70 084) et les
+actions nécessaires pour dépasser 90 % sans appel fournisseur figurent dans
+[`ATTACHMENT.md`](../reports/prematch/mission036/ATTACHMENT.md). Les 52 651
+contextes absents correspondent exactement à 174 calendriers non publiés,
+déjà référencés par le reçu B-calendars ; ils ne résultent pas des 40 561 lignes
+de détail Ligue 1 privées de clé de fixture.

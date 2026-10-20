@@ -35,3 +35,22 @@ antérieures sont conservées. Seuls deux fichiers préexistants changent : le
 journal et le graphe de preuves. Workflows, collecteurs, configurations figées,
 robin-core et données source restent inchangés. Aucun appel fournisseur, accès
 R2, écriture Neon ou pari. Revue indépendante en attente ; aucune fusion.
+
+## Correction de la CI demandée dans la relecture de PR #121
+
+Sur `bfa4f61`, le job `Quality and domain tests` (run `39343979390`, job
+`118374496070`) passe le lint et le typage puis échoue à **Securite basique** ;
+les tests sont ignorés après cet échec. La reproduction donne exactement
+**quatre alertes Bandit Low/High-confidence** dans `sources.py` : B404 à l'import
+de `subprocess`, B603 sur deux `check_output` et un `Popen`. La vérification
+locale précédente avec `-ll` ne contrôlait que les sévérités moyenne/haute,
+alors que la CI n'a pas ce filtre : c'était une lacune de validation.
+
+Les quatre exceptions sont limitées aux IDs et lignes concernés, avec motif :
+Git local en argv, sous-commandes fixes, aucun shell, protocoles refusés et
+lazy fetch désactivé. Le comportement du programme est inchangé, vérifié par
+comparaison AST hors docstring. Le workflow et le seuil Bandit restent intacts.
+La commande Bandit complète de CI passe désormais, ainsi que Ruff, mypy strict
+et les **28 tests avant-match**. Les sorties sont régénérées avec l'empreinte
+du calculateur actualisée ; valeurs, couverture et audit décalé inchangés.
+Le statut distant final du job est publié dans la description de PR après push.

@@ -1,4 +1,8 @@
-"""Read normalized Git blobs locally. No lazy fetch, provider or database access."""
+"""Read normalized Git blobs locally. No lazy fetch, provider or database access.
+
+Subprocess use is limited to fixed Git subcommands with argv, never a shell;
+_git denies all protocols, including fallback lazy fetches.
+"""
 
 from __future__ import annotations
 
@@ -9,7 +13,7 @@ import json
 import math
 import os
 import re
-import subprocess
+import subprocess  # nosec B404
 from collections import Counter
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -101,9 +105,10 @@ def _player_block(payload: dict[str, Any]) -> list[PlayerStat]:
 
 def load_snapshot(repo: Path, ref: str) -> Snapshot:
     env = dict(os.environ, GIT_NO_LAZY_FETCH="1")
-    revision = subprocess.check_output(
+    # Fixed Git subcommands receive separate argv elements, never shell text.
+    revision = subprocess.check_output(  # nosec B603
         _git(repo, "rev-parse", "--verify", f"{ref}^{{commit}}"), env=env, text=True).strip()
-    tree = subprocess.check_output(
+    tree = subprocess.check_output(  # nosec B603
         _git(repo, "ls-tree", "-r", revision, "historical/parquet"), env=env, text=True)
     selected = []
     for line in tree.splitlines():
@@ -131,7 +136,8 @@ def load_snapshot(repo: Path, ref: str) -> Snapshot:
         else:
             dest[key] = value
 
-    with subprocess.Popen(_git(repo, "cat-file", "--batch"), env=env,
+    # The long-lived child only reads locally available blobs via fixed cat-file argv.
+    with subprocess.Popen(_git(repo, "cat-file", "--batch"), env=env,  # nosec B603
                           stdin=subprocess.PIPE, stdout=subprocess.PIPE) as process:
         if process.stdin is None or process.stdout is None:
             raise RuntimeError("local Git pipes unavailable")

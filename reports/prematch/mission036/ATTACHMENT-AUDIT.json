@@ -1,0 +1,118 @@
+{
+  "claim_id": "DATA.MISSION036.PREMATCH.V1",
+  "source_revision": "fac718f36d0b8e178374d5a8384c1b3cc871f135",
+  "inventory_sha256": "8a671a42242d8e217477f19be7174ee73ded1311f03d050dd29436f85dd5b2d5",
+  "target_fixtures": 70084,
+  "attached": 17433,
+  "missing": 52651,
+  "attachment_rate": 0.24874436390616975,
+  "missing_leagues": 29,
+  "missing_league_seasons": 174,
+  "minimum_attached_for_90_percent": 63076,
+  "additional_required_for_90_percent": 45643,
+  "receipts": {
+    "calendars": {
+      "source_path": "reports/evidence/mission029/runs/39152147826-1/B-calendars-public-receipt.json",
+      "source_sha256": "fc11d1783a174d845e33a4e07ba8f2feeb67a68a82104ba102e2bf7ee4cf8185",
+      "status": "EXHAUSTED",
+      "targets": 200,
+      "complete": {
+        "fixtures": 200
+      },
+      "receipt_partitions": 200,
+      "published_receipt_partitions": 26,
+      "unpublished_receipt_partitions": 174,
+      "published_hash_mismatches": 0,
+      "missing_reasons": {},
+      "uncertain": 0
+    },
+    "events": {
+      "source_path": "reports/evidence/mission029/runs/39298159113-1/B-public-receipt.json",
+      "source_sha256": "bd8367c936b1cf17912ea333dfeadd979b92f781fb7f3fab894367760981b2ac",
+      "status": "EXHAUSTED",
+      "targets": 70084,
+      "complete": {
+        "events": 66772
+      },
+      "receipt_partitions": 2878,
+      "published_receipt_partitions": 132,
+      "unpublished_receipt_partitions": 2746,
+      "published_hash_mismatches": 0,
+      "missing_reasons": {
+        "PROVIDER_INCOMPLETE": 2774,
+        "PROVIDER_EMPTY": 7
+      },
+      "uncertain": 531,
+      "complete_ids_published": 8145,
+      "complete_ids_unpublished": 58627,
+      "complete_ids_without_fixture_context": 50285
+    },
+    "players": {
+      "source_path": "reports/evidence/mission029/runs/39315234613-1/C-public-receipt.json",
+      "source_sha256": "4ec65f23ce42c08df5dafc7457a09a43e30025c8c6f97c9053a12aeacb341381",
+      "status": "PARTIAL",
+      "targets": 70084,
+      "complete": {
+        "players": 7283
+      },
+      "receipt_partitions": 6082,
+      "published_receipt_partitions": 653,
+      "unpublished_receipt_partitions": 5429,
+      "published_hash_mismatches": 0,
+      "missing_reasons": {
+        "PROVIDER_INCOMPLETE": 328,
+        "PROVIDER_EMPTY": 2540
+      },
+      "uncertain": 53
+    }
+  },
+  "published_files": {
+    "events": {
+      "files": 8631,
+      "empty_files": 1,
+      "rows": 137853
+    },
+    "fixture_events": {
+      "files": 7,
+      "empty_files": 0,
+      "rows": 32383
+    },
+    "fixture_player_statistics": {
+      "files": 6,
+      "empty_files": 0,
+      "rows": 4078
+    },
+    "fixtures": {
+      "files": 63,
+      "empty_files": 0,
+      "rows": 20494
+    },
+    "lineups": {
+      "files": 26,
+      "empty_files": 0,
+      "rows": 18552
+    },
+    "players": {
+      "files": 1070,
+      "empty_files": 255,
+      "rows": 1630
+    }
+  },
+  "unlinked_legacy_detail_rows": {
+    "fixture_events": 32383,
+    "lineups": 4100,
+    "fixture_player_statistics": 4078
+  },
+  "invalid_player_detail_rows": 247,
+  "missing_fixture_context_attributable_to_empty_published_calendars": 0,
+  "missing_fixture_context_attributable_to_absent_target_fixture_id": 0,
+  "missing_fixture_context_attributable_to_missing_calendar_publication": 52651,
+  "provider_calls": 0,
+  "r2_accesses": 0,
+  "neon_writes": 0,
+  "limitations": [
+    "Receipts attest prior R2 writes, not current object availability. No R2 object read performed.",
+    "C receipt is partial; its complete player fixture IDs cannot be reconstructed from missing/uncertain complements.",
+    "Publisher has shared 1000-file/300-second bounds; receipts alone cannot distinguish which bound stopped each run."
+  ]
+}

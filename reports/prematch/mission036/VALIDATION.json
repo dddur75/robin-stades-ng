@@ -1,7 +1,7 @@
 {
   "status": "DOMAIN_PASS_GLOBAL_NOT_GREEN",
-  "calculator_revision": "precommit-projection:2f35e5dde8b3aa416933ba0534a301fc684a6161345ea4bd2e71f074c6a0680b",
-  "calculator_sha256": "de46d3b8166a5035267d5d79b93fe2f0e6e07fdde2762282b7c53e440725f9bc",
+  "calculator_revision": "precommit-projection:8c006e280dbc92c3825972007b19fe55a3df046d31d94e9ee36912491a2f91cd",
+  "calculator_sha256": "5ddfed04266523f94b12109e4f539cd54eaddc3c9f3639dd5671e0311bc97c05",
   "source_revision": "fac718f36d0b8e178374d5a8384c1b3cc871f135",
   "targeted_tests": {
     "passed": 577,
@@ -176,11 +176,49 @@
     "scripts/build_prematch_criteria.py": "0fd031209451bbef38d3849b488555ee6a1bac10fa86b7c8093ab908b2492cc3",
     "src/robin/prematch/criteria.py": "a44506fa9b009d48d8d8fee114ed59ba6808e57e4ce5f085f93a4a7b482d4936",
     "src/robin/prematch/export.py": "1a31806e83341a61aaac0877443fe85b43baeea19aaba9d1e55098c86e11e4b9",
-    "src/robin/prematch/sources.py": "02c2fbdaa365649c922a0ec9b8eb007cf61a7374de79dff9564b61f9a1d28f6a"
+    "src/robin/prematch/sources.py": "eb6d0376e2159e135bbec4d64bde4045f19ffee58464394d522c30ff31ad12b2"
   },
   "final_format_check": "CSV outputs use LF; exporter and artifact checks rerun after formatting-only adjustment",
   "format_only_followup_tests": {
     "passed": 29,
     "command": "python -m pytest -q tests/prematch tests/council/test_robin_council_os_v3.py::test_evidence_graph_and_append_only_ledger_have_mandatory_fields"
+  },
+  "ci_review_followup": {
+    "failed_head": "bfa4f61e20981837f163fd76db6b44a2198e95db",
+    "failed_job": {
+      "conclusion": "failure",
+      "html_url": "https://github.com/dddur75/robin-stades-ng/actions/runs/39343979390/job/118374496070",
+      "name": "Quality and domain tests",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Linting"
+        },
+        {
+          "conclusion": "success",
+          "name": "Typage strict"
+        },
+        {
+          "conclusion": "failure",
+          "name": "Securite basique"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Executer les tests"
+        }
+      ]
+    },
+    "root_cause": "CI runs Bandit at all severities; prior local -ll omitted four Low/High-confidence B404/B603 findings on local Git subprocess usage.",
+    "findings": {
+      "B404": 1,
+      "B603": 3
+    },
+    "correction": "Four line-scoped nosec exceptions with documented fixed Git argv, no shell, protocol.allow=never and GIT_NO_LAZY_FETCH=1. Runtime AST unchanged excluding module documentation.",
+    "bandit_exact_ci_command": "PASS",
+    "ruff": "PASS",
+    "mypy_strict": "PASS",
+    "prematch_tests_passed": 28,
+    "remote_evidence": "Final check URL and conclusion to be recorded in PR description after push; not asserted green by this precommit record."
   }
 }

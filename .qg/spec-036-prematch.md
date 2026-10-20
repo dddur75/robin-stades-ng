@@ -42,7 +42,15 @@ Livrables : `reports/prematch/mission036/`.
 - Source figée `fac718f3` : 17 433 contextes ; 52 651 matchs restent au dénominateur sans contexte.
 - État-score : 15 061 lignes équipe-match ; points tardifs : 16 113 ; suspension rouge de cadre : 9.
 - Absences/XI restent nulls faute de croisement ; tirs, cumul de jaunes et calendrier toutes compétitions non prouvés.
-- 577 tests ciblés verts, 28 tests nouveaux, 172 recalculs décalés ; lint, typage, sécurité et hashes verts.
+- 577 tests ciblés verts, 28 tests nouveaux, 172 recalculs décalés ; sécurité initiale contrôlée seulement au seuil moyen/haut.
 - Suite globale : 4 066 verts / 50 ignorés / 36 échecs ; provenance corrigée, 35 échecs de capture documentés.
 - Reste : revue indépendante et disponibilité d'un index de rattachement / des payloads déjà collectés hors holdout.
 - Zéro appel fournisseur, accès R2, écriture Neon ou pari ; fichiers interdits inchangés ; aucune fusion.
+
+## Complément de relecture — PR #121
+
+- Corriger sur la même branche le job Quality and domain tests : quatre alertes Bandit faibles oubliées par le contrôle local `-ll`.
+- Exceptions ciblées B404/B603 pour Git local sans shell et sans protocole ; aucun seuil CI modifié.
+- Documenter « Pourquoi 25 % seulement » : 174 calendriers non publiés, 29 ligues × six saisons, exactement 52 651 contextes.
+- Audit indépendant des reçus et de l'inventaire ; plan ≥ 90 % à zéro appel fournisseur si les objets attestés sont disponibles.
+- Vérifier le job distant après push ; conserver le tableau de couverture à la fin de la PR.
