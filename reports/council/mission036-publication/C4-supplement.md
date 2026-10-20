@@ -40,3 +40,42 @@ et confirme qu'un blob non sélectionné reste absent. L'assemblage de l'alias
 historique conserve exactement les octets acceptés. C4 a signalé un P2 sur le
 diagnostic d'échec du clone initial (absence de --git-dir) : C0 l'a gardé et ajouté
 un test de régression ; les 60 contrôles ciblés passent après correction.
+
+### Premier passage effectif et contrôle intermédiaire (20 octobre, avant reprise)
+
+C4 a recoupé hors réseau les copies du rapport et du journal avec le ZIP de
+l'artefact 12262822837 (SHA-256
+`96c4b82fbb9e8466e4492ad58b43a327e6171e5ef91cf6411729d807c314d5db`).
+Les 118 lots ajoutent 117 868 objets aux 17 255 déjà publiés : 135 123 / 135 124,
+un seul manque `R2_READ_FAILED` pour MEX2019 fixture293438, zéro hash discordant.
+Rapport et journal sont conservés dans `PUBLICATION-PASS-1.json` et
+`PUBLICATION-PASS-1-BATCHES.jsonl`. La tentative suivante reste nécessaire.
+
+C4 a également lu uniquement les 237 calendriers normalisés déjà présents dans
+le cache Git, protocoles et lazy fetch refusés. Chaque SHA-256 concorde avec le
+manifest des reçus ou l'inventaire antérieur : 75 687 lignes/IDs uniques,
+70 084 IDs cibles présents, zéro absent. La preuve est
+`calendar-id-audit.json`. Elle établit la présence des identifiants, sans
+anticiper la validation des contextes ou la couverture calculée.
+
+Le contrôle non vacuant des critères Abs/XI a été renforcé après une objection
+P2 de C4 : la liste `non_null` de chaque ligne d'audit doit correspondre aux
+valeurs Parquet effectivement hachées. C4 confirme la correction. Les trois
+tests d'artefacts de la livraison antérieure passent ; le nouveau test de
+réception ≥ 90 % et Abs/XI attend les sorties réelles du recalcul.
+
+### Budget du passage ordinaire après préparation lente
+
+C4 confirme le défaut reproduit par horloge simulée : 301 s de préparation
+consommaient les 300 s du mode ordinaire avant le premier GET. Le correctif
+affecte uniquement ce mode : 300 s de transfert après préparation, sous le
+timeout global inchangé du job. Le mode catchup conserve exactement son calcul
+de deadline globale ; l'exécution réelle sur `1416488b` n'est pas modifiée.
+Le test paramétré distingue publication d'un objet en mode normal et absence
+de GET après expiration en mode catchup. Rouge : un échec normal ; vert :
+63 tests ciblés, Ruff et Bandit. Revue C4 du diff : aucun P0/P1 introduit.
+
+C4 a aussi recoupé les deux manifests hors réseau : les 135 124 références de
+la tentative1 sont toutes identiques dans l'inventaire élargi à 144 071.
+Seuls 8 946 objets C et un reçu ont été ajoutés par le passage indépendant de
+main. Aucune ancienne preuve n'a été remplacée ou supprimée.

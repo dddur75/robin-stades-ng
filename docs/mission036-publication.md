@@ -35,7 +35,11 @@ cours gardent leurs limites réseau. L'inventaire Git/reçus et l'hydratation on
 la limite ultime du job, avec une marge de vingt minutes pour l'upload final.
 
 Sans `--catchup`, le même publieur ne traite qu'un lot : l'exécution planifiée
-continue à progresser. Avec `--catchup`, il enchaîne les lots jusqu'à égalité,
+dispose de 300 s de transfert après préparation et vérification de l'inventaire.
+La préparation ne consomme donc pas à elle seule le budget du lot ordinaire ;
+la durée totale reste bornée par le timeout du job existant, non augmenté.
+Avec `--catchup`, la préparation reste incluse dans le budget global de 9 600 s ;
+il enchaîne les lots jusqu'à égalité,
 puis relit l'inventaire des reçus. De nouveaux reçus entraînent une nouvelle
 réconciliation dans le budget restant. Un objet R2 absent, corrompu ou
 illisible reste explicitement bloquant ; il n'entraîne aucun rappel fournisseur.
@@ -48,8 +52,8 @@ le journal des lots et `publication-report.json`. Le rapport final est aussi
 ajouté dans `reports/evidence/mission029/publication/<run>-<attempt>/` sur
 historical-data, avec révision du code et révision des données contrôlées.
 
-Les colonnes `expected`, `published`, `missing`, `mismatched` forment une
-partition disjointe des objets attendus. Elles sont données globalement et par
+Les décomptes `published`, `missing` et `mismatched` sont disjoints et leur somme
+égale `expected`. Ils sont donnés globalement et par
 phase : B calendriers, B événements, C joueurs, compositions (027 et autres
 reçus de lineups), autres phases attestées et reçus eux-mêmes. Une partition
 Parquet vide mais conforme à son hash est un objet publié ; elle ne prouve pas
@@ -71,6 +75,10 @@ Les détails Ligue 1 anciens sans fixture_id ne sont pas réinventés : un
 rattrapage de publication ne reconstruit pas l'index de leurs observations.
 Les critères inconnus restent nuls avec leur motif. Aucun calendrier toutes
 compétitions, seuil de jaunes ou tirs horodatés n'est déduit de la publication.
+Le recoupement composition/joueurs ne suffit pas à prouver tous les critères :
+Abs exige aussi les minutes historiques nécessaires. Une minute inconnue reste
+inconnue, y compris pour un remplaçant sans note ; elle n'est jamais convertie
+en zéro. Les taux finaux et leurs motifs doivent être lus dans `coverage.csv`.
 
 ### Compatibilité des reçus 027 historiques
 

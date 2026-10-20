@@ -1,6 +1,6 @@
 {
   "claim_id": "DATA.MISSION036.PUBLICATION.V1",
-  "status": "TESTED_REAL_CATCHUP_PENDING",
+  "status": "FIRST_PASS_ATTESTED_RETRY_RUNNING",
   "base_revision": "4910d3bc2fbab4a0365aa5faa92a399b331b1da2",
   "baseline_source_revision": "fac718f36d0b8e178374d5a8384c1b3cc871f135",
   "baseline_attachment": {
@@ -73,5 +73,35 @@
     "regression": "Real partial-clone append and push preserve absent unselected blob; failed initial clone still emits BLOCKED report.",
     "targeted_tests_passed": 60,
     "portability": "TRACKED_ABSOLUTE_PATHS_PASS; literal alias represented as immutable path components, no change to bytes accepted."
+  },
+  "real_first_pass": {
+    "run_id": 39397208618,
+    "attempt": 1,
+    "artifact_id": 12262822837,
+    "artifact_zip_sha256": "96c4b82fbb9e8466e4492ad58b43a327e6171e5ef91cf6411729d807c314d5db",
+    "report": "reports/prematch/mission036/PUBLICATION-PASS-1.json",
+    "batches": 118,
+    "new_objects": 117868,
+    "expected": 135124,
+    "published": 135123,
+    "missing": 1,
+    "mismatched": 0,
+    "last_issue": "R2_READ_FAILED",
+    "recovery": "Ordinary failed-job rerun attempt2 on code141; supplier job skipped; no source overwrite or R2 write."
+  },
+  "normal_preparation_budget_fix": {
+    "red": "Hydration301s exhausts normal300s before any GET; catchup correctly expires.",
+    "green_targeted_tests": 63,
+    "behavior": "Only normal mode gets its300s transfer window after preparation; catchup retains global deadline and in-progress run141 is unaffected.",
+    "remaining_limit": "Total normal preparation plus transfer is still bounded by unchanged110min job timeout."
+  },
+  "latest_observed_receipt_inventory": {
+    "expected": 144071,
+    "sha256": "bd5218479d13a6de822b622a6ae4b19b9437d643d4310ab8689f23e2848733dd",
+    "growth_since_first_pass": 8947,
+    "unchanged_previous_references": 135124,
+    "independent_main_run": 39416532582,
+    "main_calls_not_triggered_by_this_pr": 8947,
+    "own_provider_calls": 0
   }
 }

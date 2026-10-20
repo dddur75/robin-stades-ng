@@ -1,0 +1,151 @@
+{
+  "claim_id": "DATA.MISSION036.PREMATCH.V1",
+  "scope": "One-target canary only; no coverage claim or whole-population replay",
+  "source_revision": "042b280a6599db15dea125a45e7ac034ab25948a",
+  "target_fixture_id": 592244,
+  "prior_fixture_count": 20,
+  "player_files_read": 18,
+  "source_compo": "feuille_officielle",
+  "values": {
+    "49": {
+      "tc_neutre10": null,
+      "etat_score_buts10": null,
+      "absents_cles": null,
+      "force_xi": 0.12211162800715059,
+      "cong21": null,
+      "repos_jours": null,
+      "cadre_suspendu": null,
+      "cadre_suspendu_rouge": null,
+      "cadre_suspendu_cumul": null,
+      "points_tardifs5": null,
+      "source_compo": "feuille_officielle",
+      "history_count": 10,
+      "cong21_observe": 2,
+      "repos_jours_observe": 6.145833333333333,
+      "reasons": {
+        "tc_neutre10": "timestamped_shots_unavailable",
+        "etat_score_buts10": "goal_events_missing_or_inconsistent",
+        "absents_cles": "season_player_minutes_incomplete",
+        "cong21": "all_competitions_calendar_unproven",
+        "repos_jours": "all_competitions_calendar_unproven",
+        "cadre_suspendu": "yellow_accumulation_unknown",
+        "cadre_suspendu_rouge": "last10_player_minutes_incomplete",
+        "cadre_suspendu_cumul": "league_season_yellow_rule_undocumented",
+        "points_tardifs5": "goal_events_missing_or_inconsistent"
+      }
+    },
+    "63": {
+      "tc_neutre10": null,
+      "etat_score_buts10": null,
+      "absents_cles": null,
+      "force_xi": null,
+      "cong21": null,
+      "repos_jours": null,
+      "cadre_suspendu": null,
+      "cadre_suspendu_rouge": null,
+      "cadre_suspendu_cumul": null,
+      "points_tardifs5": null,
+      "source_compo": "feuille_officielle",
+      "history_count": 10,
+      "cong21_observe": 2,
+      "repos_jours_observe": 7.104166666666667,
+      "reasons": {
+        "tc_neutre10": "timestamped_shots_unavailable",
+        "etat_score_buts10": "goal_events_missing_or_inconsistent",
+        "absents_cles": "season_player_statistics_incomplete",
+        "force_xi": "season_player_statistics_incomplete",
+        "cong21": "all_competitions_calendar_unproven",
+        "repos_jours": "all_competitions_calendar_unproven",
+        "cadre_suspendu": "yellow_accumulation_unknown",
+        "cadre_suspendu_rouge": "last10_player_minutes_incomplete",
+        "cadre_suspendu_cumul": "league_season_yellow_rule_undocumented",
+        "points_tardifs5": "goal_events_missing_or_inconsistent"
+      }
+    }
+  },
+  "files": [
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=fixtures/dataset_version=api-football-v3/part-00000.parquet",
+      "sha256": "7bed0376df8046387bfb392b3db2861b8dbfcff2a8cfdac5c71b423cc5121fdb"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=lineups/dataset_version=api-football-v3/part-00000.parquet",
+      "sha256": "9df742e7ca10656e32277ad9d3f80a8428449d30716a03c16b0e1ee0eadb69a3"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=players/dataset_version=api-football-v3/fixture-592144.parquet",
+      "sha256": "f23a63b30afcdcbec5a5145d510374330fad1ed08fc770835fdfd7950a60c4bb"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=players/dataset_version=api-football-v3/fixture-592149.parquet",
+      "sha256": "f458be2e9a46096043b461a5d5a26738d0baaee6d91909e9122eac4fa0d66138"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=players/dataset_version=api-football-v3/fixture-592155.parquet",
+      "sha256": "aec221430f02fee0494f6525f9aaa114f6e8cd28a4c64ef19d34b0170687e31d"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=players/dataset_version=api-football-v3/fixture-592153.parquet",
+      "sha256": "2fd412f5105709d2894ceccf5bdfc0b69a03377eea9bfbf9b62cc50cbe5c426b"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=players/dataset_version=api-football-v3/fixture-592169.parquet",
+      "sha256": "ef285eeacf44a671a5ec0280200e2925c5ecedf10930532e6c3df4b046474d68"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=players/dataset_version=api-football-v3/fixture-592167.parquet",
+      "sha256": "02caf35bb0dbaca927baf2ef06aa407254243404dbf80cbce1544c9df013e016"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=players/dataset_version=api-football-v3/fixture-592173.parquet",
+      "sha256": "1fc09e5eda8a85b19911764067bfeaa3cf9baaf24840d7a69df295cd327b73d6"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=players/dataset_version=api-football-v3/fixture-592175.parquet",
+      "sha256": "b34bfff1ed2df815e4647e9ea14a06e60c8b1045b9711c8fc7892e1df497f543"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=players/dataset_version=api-football-v3/fixture-592181.parquet",
+      "sha256": "6ca2be205cad71d5f50454a5c577ef4a65f349e43d7fb247255c88f2943515e1"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=players/dataset_version=api-football-v3/fixture-592192.parquet",
+      "sha256": "8daecd7c337d52068bd9c3b97f71f5e2e19e7766fd34725cf9ff96e6ffd28373"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=players/dataset_version=api-football-v3/fixture-592197.parquet",
+      "sha256": "ee71d29a16576cd3d11507e78d4447e5b482429b93f9660be694217f48500b62"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=players/dataset_version=api-football-v3/fixture-592202.parquet",
+      "sha256": "6d99f8ebaa7f518feb0ca3a36cbc793206d34f80a82449d8c55d3bd4ec6a1748"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=players/dataset_version=api-football-v3/fixture-592204.parquet",
+      "sha256": "593d8c2e6ea64c585900648e36fdb51ea509e151662c20b413c1ea6bd5aabc55"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=players/dataset_version=api-football-v3/fixture-592214.parquet",
+      "sha256": "bdf3fcd1d07c6701cc0a2e1b9da6093b8bf46aafee134e2258d68a8e93e19ee3"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=players/dataset_version=api-football-v3/fixture-592213.parquet",
+      "sha256": "034058a3e94df90f680a667afbf231929c84d60b9d2ad50cbd551f56128b0274"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=players/dataset_version=api-football-v3/fixture-592227.parquet",
+      "sha256": "428437161be1d158bb77984c698badc1656c6e3fa9e8d1ddb3daf78e66d196dc"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=players/dataset_version=api-football-v3/fixture-592224.parquet",
+      "sha256": "7ebfad35aae4d414e767041a7b404c13a58d3b01bec0044f9c704bff952616c3"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2020/entity_type=players/dataset_version=api-football-v3/fixture-592233.parquet",
+      "sha256": "c1195280b5225887d6614a9e049e8b2cc1d757206771d5bd0e5b73586ff8ebc2"
+    }
+  ],
+  "provider_calls": 0,
+  "neon_writes": 0,
+  "r2_writes": 0
+}

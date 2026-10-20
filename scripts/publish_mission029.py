@@ -259,7 +259,8 @@ def drain(repo, store, *, until_complete=False, batch_size=1000, max_seconds=960
             before = reconcile(repo, expected, {}, {})[0]['phases']
         report = catch_up(repo, store, expected, receipts, batch_size=batch_size,
             max_batches=100000 if until_complete else 1,
-            max_seconds=max(0.001, deadline-time.monotonic()), publish=publish, checkpoint=checkpoint)
+            max_seconds=max(0.001, deadline-time.monotonic()) if until_complete else max_seconds,
+            publish=publish, checkpoint=checkpoint)
         report['before_phases'] = before
         if not until_complete or report['status'] != 'COMPLETE':
             return report

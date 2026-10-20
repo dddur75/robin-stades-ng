@@ -93,6 +93,29 @@ def test_missing_or_corrupt_r2_object_stops_without_false_completion(repo, bad_b
     assert report['phases']['B_events']['published'] == 0
 
 
+def test_read_failure_resumes_only_the_unpublished_object_on_next_pass(repo):
+    parts = [partition(i) for i in range(3)]
+    store = store_with_receipt(parts)
+    expected, receipts = publication.load_references(store)
+    original, reads = store.get_object, []
+    failed_key = parts[0][0]['r2_key']
+    def read(key):
+        reads.append(key)
+        if key == failed_key and reads.count(key) == 1:
+            raise OSError('synthetic stream interruption')
+        return original(key)
+    store.get_object = read
+    first = publication.catch_up(repo, store, expected, receipts, batch_size=2, max_batches=10)
+    assert first['status'] == 'BLOCKED'
+    assert first['phases']['B_events'] == dict(expected=3, published=2, missing=1, mismatched=0)
+    assert first['issues'][0]['reason'] == 'R2_READ_FAILED'
+    previous_reads = len(reads)
+    second = publication.catch_up(repo, store, expected, receipts, batch_size=2, max_batches=10)
+    assert second['status'] == 'COMPLETE'
+    assert reads[previous_reads:] == [failed_key]
+    assert second['phases']['B_events'] == dict(expected=3, published=3, missing=0, mismatched=0)
+
+
 def test_holdout_is_excluded_from_metadata_before_any_payload_read(repo):
     spec, body = partition(1, season=2025)
     store = store_with_receipt([(spec, body)])
@@ -150,6 +173,34 @@ def test_new_receipt_appearing_during_publication_is_drained_before_completion(r
     assert report['status'] == 'COMPLETE'
     assert report['phases']['B_events']['published'] == 2
     assert report['before_phases']['B_events']['published'] == 0
+
+
+@pytest.mark.parametrize('until_complete', [False, True])
+def test_slow_preparation_preserves_normal_batch_budget_but_not_catchup_deadline(
+    repo, monkeypatch, until_complete,
+):
+    spec, body = partition(1)
+    store = store_with_receipt([(spec, body)])
+    clock, reads = [0.0], []
+    original_read, original_reconcile = store.get_object, publication.reconcile
+    def hydrate(*_args):
+        clock[0] += 301
+    def reconcile(*args):
+        clock[0] += 0.01
+        return original_reconcile(*args)
+    def read(key):
+        if key == spec['r2_key']:
+            reads.append(key)
+        return original_read(key)
+    store.get_object = read
+    monkeypatch.setattr(publication.time, 'monotonic', lambda: clock[0])
+    monkeypatch.setattr(publication, 'hydrate', hydrate)
+    monkeypatch.setattr(publication, 'reconcile', reconcile)
+    report = publication.drain(repo, store, until_complete=until_complete,
+                               batch_size=1, max_seconds=300)
+    assert len(reads) == (0 if until_complete else 1)
+    assert report['phases']['B_events']['published'] == (0 if until_complete else 1)
+    assert report['status'] == 'PARTIAL'
 
 
 def test_deadline_stops_queued_reads_and_leaves_resumable_partial_checkpoint(repo, monkeypatch):
@@ -250,6 +301,9 @@ def test_legacy_027_absolute_runner_path_is_canonicalized_only_with_exact_r2_pro
 def test_initial_clone_failure_still_emits_a_blocked_report(tmp_path, monkeypatch):
     monkeypatch.setenv('GITHUB_ACTIONS', 'true')
     monkeypatch.setenv('GITHUB_REPOSITORY', 'synthetic/repository')
+    for role in ('AUTHOR', 'COMMITTER'):
+        for field in ('NAME', 'EMAIL'):
+            monkeypatch.setenv(f'GIT_{role}_{field}', 'synthetic')
     monkeypatch.setattr(sys, 'argv', ['publish_mission029', '--catchup'])
     monkeypatch.setattr(publication, 'OUTPUT', tmp_path)
     def failed_clone(argv, **kwargs):
