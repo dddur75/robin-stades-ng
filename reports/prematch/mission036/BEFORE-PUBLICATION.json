@@ -1,0 +1,60 @@
+{
+  "status": "PARTIAL",
+  "phases": {
+    "B_calendars": {
+      "expected": 200,
+      "published": 26,
+      "missing": 174,
+      "mismatched": 0
+    },
+    "compositions": {
+      "expected": 20,
+      "published": 20,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "B_events": {
+      "expected": 69553,
+      "published": 9264,
+      "missing": 60289,
+      "mismatched": 0
+    },
+    "C_players": {
+      "expected": 49724,
+      "published": 4830,
+      "missing": 44894,
+      "mismatched": 0
+    },
+    "A_statistics": {
+      "expected": 7228,
+      "published": 2357,
+      "missing": 4871,
+      "mismatched": 0
+    },
+    "receipts": {
+      "expected": 31,
+      "published": 25,
+      "missing": 6,
+      "mismatched": 0
+    }
+  },
+  "issues": [],
+  "published_revision": "0040b56cd83893d44820610812fd7c27fb1b8575",
+  "provider_calls": 0,
+  "neon_writes": 0,
+  "r2_writes": 0,
+  "expected_manifest_sha256": "aa348d7c87c4b6663cc77a966f2d95205d60881c6b0d3d2f9e68ec072d09c6e1",
+  "totals": {
+    "expected": 126756,
+    "published": 16522,
+    "missing": 110234,
+    "mismatched": 0
+  },
+  "batches": 0,
+  "provenance": {
+    "run_id": 39396417715,
+    "artifact_id": 12252091914,
+    "artifact_zip_sha256": "662c3a91ca83b90ff320e6700ca9dfed017eb04260791bc7a77bf05860c83bb3",
+    "note": "Snapshot before first publication attempt; later dispatch must prove final complete state."
+  }
+}

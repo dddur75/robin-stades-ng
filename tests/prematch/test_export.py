@@ -59,3 +59,13 @@ def test_deterministic_exports_and_lagged_real_sample(tmp_path):
     assert a == b
     assert (tmp_path / "a/season=2020.parquet").read_bytes() == (tmp_path / "b/season=2020.parquet").read_bytes()
     assert json.loads((tmp_path / "a/REPORT.json").read_text())["temporal_audit"]["passed"]
+
+
+def test_coverage_prose_does_not_claim_zero_when_xi_metrics_are_available(tmp_path):
+    fixtures, players, lineups, events = pack()
+    export_snapshot(Snapshot("a" * 40, fixtures, players, lineups, events),
+                    [Target(f.fixture_id, f.competition, f.season) for f in fixtures], tmp_path)
+    rows = pq.ParquetFile(tmp_path / "season=2020.parquet").read().to_pylist()
+    assert any(row['force_xi_home'] is not None for row in rows)
+    assert "Abs/XI restent à 0 %" not in (tmp_path / "COVERAGE.md").read_text()
+    assert "publication et familles incomplètes" not in (tmp_path / "COVERAGE.md").read_text()

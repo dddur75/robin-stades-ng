@@ -97,6 +97,9 @@ def _workflow_call(workflow: Mapping[str, object]) -> Mapping[str, object]:
 
 def _only_job(workflow: Mapping[str, object]) -> Mapping[str, object]:
     jobs = _mapping(workflow["jobs"])
+    if set(jobs) == {"fixture-bundles", "publication-catchup"}:
+        # The manual, provider-free publication job is checked by its own contract.
+        return _mapping(jobs["fixture-bundles"])
     assert len(jobs) == 1
     return _mapping(next(iter(jobs.values())))
 
@@ -221,7 +224,7 @@ def test_workflows_70_to_78_are_bounded_serialized_and_fail_closed() -> None:
         assert workflow["permissions"] == expected_permissions
         assert workflow["concurrency"] == {
             "group": (
-                "${{ inputs.mission028_progress && 'mission-028-progress' || inputs.progress_only && 'mission-027-progress' || inputs.lineups_only && format('mission-027-lineups-{0}', inputs.competition) || 'historical-deep-r2-state' }}"
+                    "${{ inputs.publication_catchup && 'historical-deep-r2-state' || inputs.mission028_progress && 'mission-028-progress' || inputs.progress_only && 'mission-027-progress' || inputs.lineups_only && format('mission-027-lineups-{0}', inputs.competition) || 'historical-deep-r2-state' }}"
                 if number == 71 else "historical-deep-r2-state"
             ),
             "cancel-in-progress": False,
@@ -744,7 +747,7 @@ def test_workflow71_schedule_skips_historical_and_phase1_for_every_resume_state(
     _, workflow = _load(PHASE_FILES[71])
     job = _only_job(workflow)
     assert workflow.get("on", workflow.get(True))["schedule"] == [{"cron": "17 */2 * * *"}]
-    assert "if" not in job and "concurrency" not in job
+    assert job['if'] == '${{ !inputs.publication_catchup }}' and "concurrency" not in job
     assert workflow["concurrency"]["cancel-in-progress"] is False
     class AbsentInputs:
         def __getattr__(self, name):

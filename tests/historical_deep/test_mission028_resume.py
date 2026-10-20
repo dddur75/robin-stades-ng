@@ -94,11 +94,12 @@ def test_resume_uses_only_workflow71_with_unchanged_read_permissions():
     assert not Path(".github/actions/mission028-state").exists()
     assert workflow["permissions"] == {"actions": "read", "contents": "read"}
     assert workflow["concurrency"] == {
-        "group": "${{ inputs.mission028_progress && 'mission-028-progress' || inputs.progress_only && 'mission-027-progress' || inputs.lineups_only && format('mission-027-lineups-{0}', inputs.competition) || 'historical-deep-r2-state' }}",
+        "group": "${{ inputs.publication_catchup && 'historical-deep-r2-state' || inputs.mission028_progress && 'mission-028-progress' || inputs.progress_only && 'mission-027-progress' || inputs.lineups_only && format('mission-027-lineups-{0}', inputs.competition) || 'historical-deep-r2-state' }}",
         "cancel-in-progress": False,
     }
     assert (workflow.get("on", workflow.get(True)))["schedule"] == [{"cron": "17 */2 * * *"}]
-    assert list(workflow["jobs"]) == ["fixture-bundles"]
+    assert list(workflow["jobs"]) == ["fixture-bundles", "publication-catchup"]
+    assert workflow['jobs']['fixture-bundles']['if'] == '${{ !inputs.publication_catchup }}'
     job = workflow["jobs"]["fixture-bundles"]
     assert job['permissions'] == {'actions': 'read', 'contents': 'write'}
     publisher = next(s for s in job['steps'] if s.get('run') == 'python -m scripts.publish_mission029')

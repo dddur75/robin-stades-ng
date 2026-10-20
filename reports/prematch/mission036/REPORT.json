@@ -1,9 +1,8 @@
 {
-  "calculator_sha256": "5ddfed04266523f94b12109e4f539cd54eaddc3c9f3639dd5671e0311bc97c05",
+  "calculator_sha256": "bbdf7b4eeba25f0a3f386643dfb4232dbc0274e27e51ab16b4789021e93661d7",
   "claim_id": "DATA.MISSION036.PREMATCH.V1",
   "contexts": {
-    "fixture_context_missing": 52651,
-    "fixture_context_present": 17433
+    "fixture_context_present": 70084
   },
   "coverage_unit": "team-fixture; non-null includes 0 and false",
   "frozen_mission_fixture_ids_sha256": "0f652e40d430f4670436318858161d90fa8ebebe85cd3fcb6d6e77178f56833f",
@@ -12,37 +11,37 @@
     {
       "path": "season=2018.parquet",
       "rows": 380,
-      "sha256": "0d26d2f0c26998cb986174ad23eef2eb352cd7e2cdefd93d548a6358fc16a457"
+      "sha256": "5a2329d8646375661134aabed14f42eb7d9c42e50b078847390edc0d9f2746fb"
     },
     {
       "path": "season=2019.parquet",
       "rows": 8631,
-      "sha256": "24f4e410fb8da8bbb639777530899a391eaa748afd74d88330bc976f7eb5d63f"
+      "sha256": "0e66ea293e41c956e32c8e72c44f9c3d7d23a7082a780faa5381051ad1c8adfb"
     },
     {
       "path": "season=2020.parquet",
       "rows": 11363,
-      "sha256": "a46a21d2e204575aa85bc5e6eb31398b0c46fddce10dd1bacf7c170949ac10e4"
+      "sha256": "316ecf0113c05cd7a33f44bdae893530b831edabb5f44449eb1fb7afac6567fb"
     },
     {
       "path": "season=2021.parquet",
       "rows": 12337,
-      "sha256": "42944ec6479e2b2eeccf5c07ab5a1c9a64301aa5ffd315623a3cc542da7b7957"
+      "sha256": "dc3a19b3c792c4ddc6a7092f12aafc127a23d01c31a403e939fc06b08cadc9b0"
     },
     {
       "path": "season=2022.parquet",
       "rows": 12466,
-      "sha256": "c2ff37c36d251122be05ddfe8a0485fb8fdd2be7afee00fc74ab4d9c5c55ee6a"
+      "sha256": "f9876f17c91f9ebb458d1ee0e136ba96f255ca18255d69e7e650f0a170655de0"
     },
     {
       "path": "season=2023.parquet",
       "rows": 12481,
-      "sha256": "d38c3324806c3102eae8da253b6a436504a6d5d011a3ac1ed26c08a5f6374fde"
+      "sha256": "da818608beaf165e8ec63cf2242f3f32b4dfabfbf42cd520ead4daa227810fa1"
     },
     {
       "path": "season=2024.parquet",
       "rows": 12426,
-      "sha256": "544f2f8807fb595a23a25cb6105b1dbeb0818d398475e5c9b83526b1e1a791f9"
+      "sha256": "dfc76f4a493839b1b8ee5b186d1a75a99eb82e54bf86bcbecb6f172c3688d0cb"
     }
   ],
   "provider_calls": 0,
@@ -53,17 +52,17 @@
     "conflicting_fixtures": [],
     "conflicting_lineups": [],
     "conflicting_players": [],
-    "invalid_detail_rows": 247,
+    "invalid_detail_rows": 3275,
     "unlinked_rows": 40561
   },
-  "source_inventory_sha256": "dc08dd84838eb528ca04bd5aaa1eed563a92e4184d3b8d6a600cb1eb758868e2",
-  "source_revision": "fac718f36d0b8e178374d5a8384c1b3cc871f135",
+  "source_inventory_sha256": "7aa9c311fbe6675b0880754dc4bbc6c0250651e95553128c84dae217dd13e47d",
+  "source_revision": "8558719f1e91dc2e81e3a285848ec145a77f3f54",
   "status": "PARTIAL",
   "target_fixture_ids_sha256": "0f652e40d430f4670436318858161d90fa8ebebe85cd3fcb6d6e77178f56833f",
   "target_fixtures": 70084,
   "temporal_audit": {
     "method": "rebuild_without_target_or_future_postmatch_data; target_official_XI_only",
     "passed": true,
-    "sampled_team_rows": 172
+    "sampled_team_rows": 1026
   }
 }

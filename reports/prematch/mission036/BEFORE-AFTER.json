@@ -1,0 +1,165 @@
+{
+  "claim_id": "DATA.MISSION036.PREMATCH.V1",
+  "same_frozen_target_population": true,
+  "before": {
+    "source_revision": "fac718f36d0b8e178374d5a8384c1b3cc871f135",
+    "target_fixtures": 70084,
+    "population_sha256": "0f652e40d430f4670436318858161d90fa8ebebe85cd3fcb6d6e77178f56833f",
+    "contexts": {
+      "fixture_context_missing": 52651,
+      "fixture_context_present": 17433
+    },
+    "attachment_rate": 0.24874436390616975,
+    "criteria": {
+      "absents_cles": {
+        "non_null": 0,
+        "total_team_rows": 140168,
+        "rate": 0.0
+      },
+      "cadre_suspendu": {
+        "non_null": 9,
+        "total_team_rows": 140168,
+        "rate": 6.420866388904743e-05
+      },
+      "cadre_suspendu_cumul": {
+        "non_null": 0,
+        "total_team_rows": 140168,
+        "rate": 0.0
+      },
+      "cadre_suspendu_rouge": {
+        "non_null": 178,
+        "total_team_rows": 140168,
+        "rate": 0.0012699046858056047
+      },
+      "cong21": {
+        "non_null": 0,
+        "total_team_rows": 140168,
+        "rate": 0.0
+      },
+      "etat_score_buts10": {
+        "non_null": 15061,
+        "total_team_rows": 140168,
+        "rate": 0.10744963187032704
+      },
+      "force_xi": {
+        "non_null": 0,
+        "total_team_rows": 140168,
+        "rate": 0.0
+      },
+      "points_tardifs5": {
+        "non_null": 16113,
+        "total_team_rows": 140168,
+        "rate": 0.11495491124935792
+      },
+      "repos_jours": {
+        "non_null": 0,
+        "total_team_rows": 140168,
+        "rate": 0.0
+      },
+      "tc_neutre10": {
+        "non_null": 0,
+        "total_team_rows": 140168,
+        "rate": 0.0
+      }
+    },
+    "source_coverage_totals": {
+      "target_fixtures": 70084,
+      "target_team_rows": 140168,
+      "fixture_context": 17433,
+      "events_file_present": 8631,
+      "goal_trajectory_valid": 8616,
+      "official_xi": 14452,
+      "player_block": 1383,
+      "player_minutes_complete": 1314,
+      "xi_and_player_block": 0
+    },
+    "report_sha256": "041a8695285bcae83b8b7d3604b539f54c713e06e60a4c9fb5f8fbf02f3b2eba",
+    "coverage_sha256": "61d3b2c513050b9a2fa71cb9770782c9d122715eec5057f2c52a4bdb62a9a78b"
+  },
+  "after": {
+    "source_revision": "8558719f1e91dc2e81e3a285848ec145a77f3f54",
+    "target_fixtures": 70084,
+    "population_sha256": "0f652e40d430f4670436318858161d90fa8ebebe85cd3fcb6d6e77178f56833f",
+    "contexts": {
+      "fixture_context_present": 70084
+    },
+    "attachment_rate": 1.0,
+    "criteria": {
+      "absents_cles": {
+        "non_null": 0,
+        "total_team_rows": 140168,
+        "rate": 0.0
+      },
+      "cadre_suspendu": {
+        "non_null": 45,
+        "total_team_rows": 140168,
+        "rate": 0.00032104331944523716
+      },
+      "cadre_suspendu_cumul": {
+        "non_null": 0,
+        "total_team_rows": 140168,
+        "rate": 0.0
+      },
+      "cadre_suspendu_rouge": {
+        "non_null": 1166,
+        "total_team_rows": 140168,
+        "rate": 0.008318589121625478
+      },
+      "cong21": {
+        "non_null": 0,
+        "total_team_rows": 140168,
+        "rate": 0.0
+      },
+      "etat_score_buts10": {
+        "non_null": 118024,
+        "total_team_rows": 140168,
+        "rate": 0.8420181496489927
+      },
+      "force_xi": {
+        "non_null": 9580,
+        "total_team_rows": 140168,
+        "rate": 0.06834655556189716
+      },
+      "points_tardifs5": {
+        "non_null": 128340,
+        "total_team_rows": 140168,
+        "rate": 0.9156155470578163
+      },
+      "repos_jours": {
+        "non_null": 0,
+        "total_team_rows": 140168,
+        "rate": 0.0
+      },
+      "tc_neutre10": {
+        "non_null": 0,
+        "total_team_rows": 140168,
+        "rate": 0.0
+      }
+    },
+    "source_coverage_totals": {
+      "target_fixtures": 70084,
+      "target_team_rows": 140168,
+      "fixture_context": 70084,
+      "events_file_present": 69553,
+      "goal_trajectory_valid": 69498,
+      "official_xi": 14452,
+      "player_block": 110231,
+      "player_minutes_complete": 11428,
+      "xi_and_player_block": 14022
+    },
+    "report_sha256": "effac77d78aaed9309fba740ba788633ca9f448fbf876c0ac09ffdb1700a5eeb",
+    "coverage_sha256": "1a867959a350142c61c273fae61434af5452bf644fe839881e9b5e9690bf8480"
+  },
+  "publication_provenance": {
+    "run_id": 39438595883,
+    "run_attempt": 1,
+    "artifact_id": 12274480581,
+    "artifact_zip_sha256": "318eae7e214082a044418dc900d37605d85f915eb4954f518a6b961176350404",
+    "inventory_entries_checked_against_receipt_manifest": 136810,
+    "analytical_source_revision": "8558719f1e91dc2e81e3a285848ec145a77f3f54",
+    "publication_source_revision": "1896187037e0a88a457fff86214ddf023d352f98",
+    "note": "Publication report itself is appended after the data revision; criteria use the subsequent immutable commit."
+  },
+  "provider_calls": 0,
+  "neon_writes": 0
+}
