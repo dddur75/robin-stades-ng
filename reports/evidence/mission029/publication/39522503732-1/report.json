@@ -1,0 +1,142 @@
+{
+  "status": "PARTIAL",
+  "phases": {
+    "B_calendars": {
+      "expected": 200,
+      "published": 200,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "compositions": {
+      "expected": 6223,
+      "published": 5941,
+      "missing": 282,
+      "mismatched": 0
+    },
+    "B_events": {
+      "expected": 69553,
+      "published": 69553,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "C_players": {
+      "expected": 69557,
+      "published": 68642,
+      "missing": 915,
+      "mismatched": 0
+    },
+    "D_events": {
+      "expected": 5912,
+      "published": 0,
+      "missing": 5912,
+      "mismatched": 0
+    },
+    "D-calendars_fixtures": {
+      "expected": 20,
+      "published": 0,
+      "missing": 20,
+      "mismatched": 0
+    },
+    "D_players": {
+      "expected": 5949,
+      "published": 0,
+      "missing": 5949,
+      "mismatched": 0
+    },
+    "D_statistics": {
+      "expected": 6123,
+      "published": 0,
+      "missing": 6123,
+      "mismatched": 0
+    },
+    "A_statistics": {
+      "expected": 7228,
+      "published": 7228,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "receipts": {
+      "expected": 49,
+      "published": 34,
+      "missing": 15,
+      "mismatched": 0
+    }
+  },
+  "issues": [],
+  "published_revision": "4ba88ae66d6dc3f648eafb4bb3d1ce518e4f89dd",
+  "provider_calls": 0,
+  "neon_writes": 0,
+  "r2_writes": 0,
+  "expected_manifest_sha256": "ad6ed3b753c892eb9a6c9e093b956a3f4d46672386712b1d10f099e1f66195a1",
+  "totals": {
+    "expected": 170814,
+    "published": 151598,
+    "missing": 19216,
+    "mismatched": 0
+  },
+  "batches": 1,
+  "transient_read_retry_rounds": 0,
+  "before_phases": {
+    "B_calendars": {
+      "expected": 200,
+      "published": 200,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "compositions": {
+      "expected": 6223,
+      "published": 4941,
+      "missing": 1282,
+      "mismatched": 0
+    },
+    "B_events": {
+      "expected": 69553,
+      "published": 69553,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "C_players": {
+      "expected": 69557,
+      "published": 68642,
+      "missing": 915,
+      "mismatched": 0
+    },
+    "D_events": {
+      "expected": 5912,
+      "published": 0,
+      "missing": 5912,
+      "mismatched": 0
+    },
+    "D-calendars_fixtures": {
+      "expected": 20,
+      "published": 0,
+      "missing": 20,
+      "mismatched": 0
+    },
+    "D_players": {
+      "expected": 5949,
+      "published": 0,
+      "missing": 5949,
+      "mismatched": 0
+    },
+    "D_statistics": {
+      "expected": 6123,
+      "published": 0,
+      "missing": 6123,
+      "mismatched": 0
+    },
+    "A_statistics": {
+      "expected": 7228,
+      "published": 7228,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "receipts": {
+      "expected": 49,
+      "published": 34,
+      "missing": 15,
+      "mismatched": 0
+    }
+  },
+  "code_revision": "227b5ae1f188a58b80c6d645faf64ff7f1c9507a"
+}
