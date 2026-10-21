@@ -1,0 +1,178 @@
+{
+  "status": "PARTIAL",
+  "phases": {
+    "B_calendars": {
+      "expected": 200,
+      "published": 200,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "compositions": {
+      "expected": 7237,
+      "published": 7237,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "B_events": {
+      "expected": 69553,
+      "published": 69553,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "C_players": {
+      "expected": 69557,
+      "published": 69557,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "D_events": {
+      "expected": 6853,
+      "published": 972,
+      "missing": 5881,
+      "mismatched": 0
+    },
+    "D-calendars_fixtures": {
+      "expected": 20,
+      "published": 3,
+      "missing": 17,
+      "mismatched": 0
+    },
+    "D_players": {
+      "expected": 6852,
+      "published": 905,
+      "missing": 5947,
+      "mismatched": 0
+    },
+    "D_statistics": {
+      "expected": 7213,
+      "published": 909,
+      "missing": 6304,
+      "mismatched": 0
+    },
+    "A_statistics": {
+      "expected": 7228,
+      "published": 7228,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "E-2026-10-12_events": {
+      "expected": 48,
+      "published": 0,
+      "missing": 48,
+      "mismatched": 0
+    },
+    "E-2026-10-12-calendars_fixtures": {
+      "expected": 5,
+      "published": 0,
+      "missing": 5,
+      "mismatched": 0
+    },
+    "E-2026-10-12_statistics": {
+      "expected": 48,
+      "published": 0,
+      "missing": 48,
+      "mismatched": 0
+    },
+    "receipts": {
+      "expected": 54,
+      "published": 34,
+      "missing": 20,
+      "mismatched": 0
+    }
+  },
+  "issues": [],
+  "published_revision": "be6a2792ba2d3d2ada289eed67dc2778d85509e0",
+  "provider_calls": 0,
+  "neon_writes": 0,
+  "r2_writes": 0,
+  "expected_manifest_sha256": "7ca032a273501a1d6bbf7565d26d87396f13e095b2cdb573f4c6847ec42b20a8",
+  "totals": {
+    "expected": 174868,
+    "published": 156598,
+    "missing": 18270,
+    "mismatched": 0
+  },
+  "batches": 1,
+  "transient_read_retry_rounds": 0,
+  "before_phases": {
+    "B_calendars": {
+      "expected": 200,
+      "published": 200,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "compositions": {
+      "expected": 7237,
+      "published": 7237,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "B_events": {
+      "expected": 69553,
+      "published": 69553,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "C_players": {
+      "expected": 69557,
+      "published": 69557,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "D_events": {
+      "expected": 6853,
+      "published": 600,
+      "missing": 6253,
+      "mismatched": 0
+    },
+    "D-calendars_fixtures": {
+      "expected": 20,
+      "published": 2,
+      "missing": 18,
+      "mismatched": 0
+    },
+    "D_players": {
+      "expected": 6852,
+      "published": 599,
+      "missing": 6253,
+      "mismatched": 0
+    },
+    "D_statistics": {
+      "expected": 7213,
+      "published": 588,
+      "missing": 6625,
+      "mismatched": 0
+    },
+    "A_statistics": {
+      "expected": 7228,
+      "published": 7228,
+      "missing": 0,
+      "mismatched": 0
+    },
+    "E-2026-10-12_events": {
+      "expected": 48,
+      "published": 0,
+      "missing": 48,
+      "mismatched": 0
+    },
+    "E-2026-10-12-calendars_fixtures": {
+      "expected": 5,
+      "published": 0,
+      "missing": 5,
+      "mismatched": 0
+    },
+    "E-2026-10-12_statistics": {
+      "expected": 48,
+      "published": 0,
+      "missing": 48,
+      "mismatched": 0
+    },
+    "receipts": {
+      "expected": 54,
+      "published": 34,
+      "missing": 20,
+      "mismatched": 0
+    }
+  },
+  "code_revision": "227b5ae1f188a58b80c6d645faf64ff7f1c9507a"
+}
