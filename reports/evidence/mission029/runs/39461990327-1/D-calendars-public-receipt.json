@@ -1,0 +1,131 @@
+{
+  "phase": "D-calendars",
+  "status": "EXHAUSTED",
+  "targets": 20,
+  "targets_sha256": "7f64a05e0fa1fad0778e2619ac6856a5f1695101f03a9e970b27147032d886d5",
+  "calls": 1,
+  "complete": {
+    "fixtures": 20
+  },
+  "missing": [],
+  "uncertain": [],
+  "request_errors": [],
+  "partitions": [
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2015/entity_type=fixtures/dataset_version=api-football-v3/fixture-d36161d4ba12cc6ff64c7ad771b9f0e46635279898297111bfa868286ff14052.parquet",
+      "sha256": "fa58c33ea3b1f09c278f9083d90e5ac0a18d9b2bd74d047151d7423bbe005759",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2015/entity_type=fixtures/dataset_version=api-football-v3/fixture-d36161d4ba12cc6ff64c7ad771b9f0e46635279898297111bfa868286ff14052.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2015/entity_type=fixtures/dataset_version=api-football-v3/fixture-00e74e42a1c6914ac2d7f74cbe8fd8f1ad40235dc1eddb96bd409790d3584e86.parquet",
+      "sha256": "c491c8b62e927a1fcaac277b91d0161088bacdddd877323134ca92dfba9204b3",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2015/entity_type=fixtures/dataset_version=api-football-v3/fixture-00e74e42a1c6914ac2d7f74cbe8fd8f1ad40235dc1eddb96bd409790d3584e86.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2015/entity_type=fixtures/dataset_version=api-football-v3/fixture-95c5a9ff411ac57ab43c35a56b04d784dea1c6aeed304b9ba01d6b756eee575b.parquet",
+      "sha256": "3fe8f5591bb3b9b89dd6faf82b3193c0a3b4b83f88b007c60e2d0070df69d6ad",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2015/entity_type=fixtures/dataset_version=api-football-v3/fixture-95c5a9ff411ac57ab43c35a56b04d784dea1c6aeed304b9ba01d6b756eee575b.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2015/entity_type=fixtures/dataset_version=api-football-v3/fixture-fe3b20a6bf40988c6363f9fbabc9c66917941ee329bc202ad587a1fa8117ea8e.parquet",
+      "sha256": "3aa1829561407f92a6f1a78071e9f20c200642a8dd848a760674b0886db624ea",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2015/entity_type=fixtures/dataset_version=api-football-v3/fixture-fe3b20a6bf40988c6363f9fbabc9c66917941ee329bc202ad587a1fa8117ea8e.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2015/entity_type=fixtures/dataset_version=api-football-v3/fixture-55ce8c46bb26bc83f0c3da45a8c3107467a69e138a99fb7ac5a0bfdf6f90cf76.parquet",
+      "sha256": "61264c791bca3a001eacb79a2e80aa6d2ae57e109fe011f401383845dc8f23f8",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2015/entity_type=fixtures/dataset_version=api-football-v3/fixture-55ce8c46bb26bc83f0c3da45a8c3107467a69e138a99fb7ac5a0bfdf6f90cf76.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2016/entity_type=fixtures/dataset_version=api-football-v3/fixture-cafeb5f9b5e0c1acbf3d3a2d73cd806c6f9bf343da2f5a54c73996dd28a17c10.parquet",
+      "sha256": "c458355c6aefec8805f27c723627700c42fb30afd4d82f8e32ba2366a906908d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2016/entity_type=fixtures/dataset_version=api-football-v3/fixture-cafeb5f9b5e0c1acbf3d3a2d73cd806c6f9bf343da2f5a54c73996dd28a17c10.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2016/entity_type=fixtures/dataset_version=api-football-v3/fixture-b195dbe67c4f6a67aeb527dd8899ca13881874c902e4e268ad5df1a4041e26b4.parquet",
+      "sha256": "472281222f22b421e2bdc70ac80bf2d6d36b10cf0c9e51aeff0bc875ee6bc909",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2016/entity_type=fixtures/dataset_version=api-football-v3/fixture-b195dbe67c4f6a67aeb527dd8899ca13881874c902e4e268ad5df1a4041e26b4.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2016/entity_type=fixtures/dataset_version=api-football-v3/fixture-286474271ff95a15f5ae301f8b15dc3fc2d9e926941839cb12d80b1391b2765e.parquet",
+      "sha256": "53f8674f553a23f0f0aff5e64509d5961fec9ea7c1b9808e1e0549e03a65150f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2016/entity_type=fixtures/dataset_version=api-football-v3/fixture-286474271ff95a15f5ae301f8b15dc3fc2d9e926941839cb12d80b1391b2765e.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2016/entity_type=fixtures/dataset_version=api-football-v3/fixture-c0ffc8269580a59e8da1118fdbec55d379b4edd38f4ade27a21ce1ec414d7deb.parquet",
+      "sha256": "046cb1545f7ec67ecc26c665c20b20f6f2730f39e898649b1614c57065a5c4dd",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2016/entity_type=fixtures/dataset_version=api-football-v3/fixture-c0ffc8269580a59e8da1118fdbec55d379b4edd38f4ade27a21ce1ec414d7deb.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2016/entity_type=fixtures/dataset_version=api-football-v3/fixture-73c60c4ea0a912abdc6de99711da8c9bcec8e103e2d403b11373733cf603cb4a.parquet",
+      "sha256": "9bbb0b9a693d1103232d930a40d098118cf369b4cf9b6e77cc5d5e0a3cfd9f24",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2016/entity_type=fixtures/dataset_version=api-football-v3/fixture-73c60c4ea0a912abdc6de99711da8c9bcec8e103e2d403b11373733cf603cb4a.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=fixtures/dataset_version=api-football-v3/fixture-8e0212b172b351906029bf4a675e78ececde1e2351c19e65572ae909534462db.parquet",
+      "sha256": "75e68b867892ec3a7739c8e5f7703ab983b35d91bf0170854c6fbcd646d18886",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=fixtures/dataset_version=api-football-v3/fixture-8e0212b172b351906029bf4a675e78ececde1e2351c19e65572ae909534462db.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2017/entity_type=fixtures/dataset_version=api-football-v3/fixture-2b7819c29e51b82f3ad7722bb4985784ee0c090cff8c40111c10aeb2606a7fbd.parquet",
+      "sha256": "61666b52762d102f6cd6f137aed7355d5dcec9574f3005b525a13baf68071f99",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2017/entity_type=fixtures/dataset_version=api-football-v3/fixture-2b7819c29e51b82f3ad7722bb4985784ee0c090cff8c40111c10aeb2606a7fbd.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2017/entity_type=fixtures/dataset_version=api-football-v3/fixture-89137143c9e1ada0e9a9820c9f783f0a8a64ebdcaed0e2e80c83cf456e35456d.parquet",
+      "sha256": "20307f8753909abd9cb267a474c9d0c3fb072164bcfadb3253baf74a984cd199",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2017/entity_type=fixtures/dataset_version=api-football-v3/fixture-89137143c9e1ada0e9a9820c9f783f0a8a64ebdcaed0e2e80c83cf456e35456d.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2017/entity_type=fixtures/dataset_version=api-football-v3/fixture-1e0a59faab8941042844f858bc29d68eba2d38f77313b443ea525b403822278f.parquet",
+      "sha256": "f7c9c1f12567f7e6ac4eea896f3db2130469df02f062c219b1de6715436296cb",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2017/entity_type=fixtures/dataset_version=api-football-v3/fixture-1e0a59faab8941042844f858bc29d68eba2d38f77313b443ea525b403822278f.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2017/entity_type=fixtures/dataset_version=api-football-v3/fixture-70ae4103e4aa521a46f88bd9cab7ff5578d8f9e311732b8382f4c4460f10bac4.parquet",
+      "sha256": "8384a4bd9d65c4c104dbe0aeeb8cf56e553b3e04e6881c5efd4e2a2660b3d87b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2017/entity_type=fixtures/dataset_version=api-football-v3/fixture-70ae4103e4aa521a46f88bd9cab7ff5578d8f9e311732b8382f4c4460f10bac4.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2018/entity_type=fixtures/dataset_version=api-football-v3/fixture-249104e0ce27a2d3fcacab3685c2fb22f56662fb6de0f462d5d89996f60cca0b.parquet",
+      "sha256": "d2da726174671b246312039f4279cce358a43df7f3398346aa8a5bb957decb18",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2018/entity_type=fixtures/dataset_version=api-football-v3/fixture-249104e0ce27a2d3fcacab3685c2fb22f56662fb6de0f462d5d89996f60cca0b.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2018/entity_type=fixtures/dataset_version=api-football-v3/fixture-1be9d6dbf5d7c9d7125489b2a6fad242c354b34e0281d6b9fef38d0288d69df0.parquet",
+      "sha256": "96e43024ecca0d22c4679a2f54ffc240f7d10589871fa5236dcdae48815a03c7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2018/entity_type=fixtures/dataset_version=api-football-v3/fixture-1be9d6dbf5d7c9d7125489b2a6fad242c354b34e0281d6b9fef38d0288d69df0.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2018/entity_type=fixtures/dataset_version=api-football-v3/fixture-067f72bf334cd4b181627b2a6cbbf51bdbc0148208dabce6b6d0c3edf31e9f3e.parquet",
+      "sha256": "7abc23d144c2be7b19dc16b251c2aa0e8982f85de6b25c983880d9c793392842",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2018/entity_type=fixtures/dataset_version=api-football-v3/fixture-067f72bf334cd4b181627b2a6cbbf51bdbc0148208dabce6b6d0c3edf31e9f3e.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2018/entity_type=fixtures/dataset_version=api-football-v3/fixture-257849c316b3070a766dbc20d0b3c8e0f27894477de970ec17ac6caa751cffb3.parquet",
+      "sha256": "644486d98e845a402b426ca9462728a1248bcd5c2a94880665ffca5c8d562585",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2018/entity_type=fixtures/dataset_version=api-football-v3/fixture-257849c316b3070a766dbc20d0b3c8e0f27894477de970ec17ac6caa751cffb3.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2018/entity_type=fixtures/dataset_version=api-football-v3/fixture-cefde3e4ba596fa7511fb924eaf943065eeae004c8248ce2429c64be8317c791.parquet",
+      "sha256": "469e540dff75a50097d4b10c21a255a4ea4f6da1e8a84d85e58c9571f67604eb",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2018/entity_type=fixtures/dataset_version=api-football-v3/fixture-cefde3e4ba596fa7511fb924eaf943065eeae004c8248ce2429c64be8317c791.parquet"
+    }
+  ],
+  "reused_results": 0,
+  "run_id": "39461990327",
+  "code_revision": "164e7093d9cd5eb8cb79606b65aae6d44c234eb1",
+  "observed_at": "2026-10-20T16:58:32.786732+00:00",
+  "total_cap": 240000,
+  "daily_cap": 130000,
+  "provider_reserve": 5000,
+  "fixture_ids_sha256": "b2f627f78356b47b9cc2a32b298a12b7ee969dd53ec631130dc107ec340aebf2",
+  "quota_remaining": 94567,
+  "complete_fraction": {
+    "fixtures": 1.0
+  },
+  "coverage_target": {
+    "fixtures": 0.9
+  },
+  "coverage_met": true
+}

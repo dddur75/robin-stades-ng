@@ -1,0 +1,980 @@
+{
+  "phase": "D",
+  "status": "PARTIAL",
+  "targets": 7306,
+  "targets_sha256": "31a83a4351e81bcef8fae782a244efac9c87d441439ac8ee7f138bc208cd73bb",
+  "calls": 1,
+  "complete": {
+    "lineups": 3917,
+    "statistics": 3925,
+    "events": 3892,
+    "players": 3936
+  },
+  "missing": [
+    {
+      "fixture": 79,
+      "family": "players",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 2776,
+      "family": "players",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 2793,
+      "family": "players",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 2796,
+      "family": "players",
+      "reason": "PROVIDER_EMPTY"
+    },
+    {
+      "fixture": 2801,
+      "family": "players",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 9514,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 9557,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 9569,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 9604,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 9733,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 9751,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 9758,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 11714,
+      "family": "lineups",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 11728,
+      "family": "lineups",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 16863,
+      "family": "lineups",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 16890,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 16907,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 16946,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 17500,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 20627,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 20686,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 20707,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 20710,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 20737,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 20740,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 20746,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 20756,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 20761,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 20780,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 20781,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 20793,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 20800,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 20815,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 20819,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 20823,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 21476,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 21520,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 21596,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 21649,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 21659,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 27242,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 27328,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 27341,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 27411,
+      "family": "lineups",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 27411,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 27411,
+      "family": "players",
+      "reason": "PROVIDER_EMPTY"
+    },
+    {
+      "fixture": 27443,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 27458,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 27510,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    }
+  ],
+  "uncertain": [
+    [
+      85,
+      "events"
+    ],
+    [
+      85,
+      "players"
+    ],
+    [
+      86,
+      "statistics"
+    ],
+    [
+      110,
+      "lineups"
+    ],
+    [
+      309,
+      "lineups"
+    ],
+    [
+      8745,
+      "lineups"
+    ],
+    [
+      9586,
+      "lineups"
+    ],
+    [
+      9727,
+      "lineups"
+    ],
+    [
+      11207,
+      "events"
+    ],
+    [
+      11215,
+      "events"
+    ],
+    [
+      11219,
+      "events"
+    ],
+    [
+      11533,
+      "events"
+    ],
+    [
+      11564,
+      "lineups"
+    ],
+    [
+      11576,
+      "lineups"
+    ],
+    [
+      11584,
+      "lineups"
+    ],
+    [
+      11588,
+      "lineups"
+    ],
+    [
+      11591,
+      "lineups"
+    ],
+    [
+      11595,
+      "lineups"
+    ],
+    [
+      11599,
+      "lineups"
+    ],
+    [
+      11616,
+      "statistics"
+    ],
+    [
+      11624,
+      "statistics"
+    ],
+    [
+      11624,
+      "events"
+    ],
+    [
+      11628,
+      "statistics"
+    ],
+    [
+      11632,
+      "events"
+    ],
+    [
+      11636,
+      "events"
+    ],
+    [
+      11638,
+      "statistics"
+    ],
+    [
+      11650,
+      "statistics"
+    ],
+    [
+      11662,
+      "lineups"
+    ],
+    [
+      11662,
+      "statistics"
+    ],
+    [
+      11670,
+      "lineups"
+    ],
+    [
+      11670,
+      "events"
+    ],
+    [
+      11674,
+      "lineups"
+    ],
+    [
+      11674,
+      "events"
+    ],
+    [
+      11682,
+      "lineups"
+    ],
+    [
+      11682,
+      "events"
+    ],
+    [
+      11693,
+      "statistics"
+    ],
+    [
+      11701,
+      "statistics"
+    ],
+    [
+      11705,
+      "statistics"
+    ],
+    [
+      11713,
+      "statistics"
+    ],
+    [
+      11722,
+      "players"
+    ],
+    [
+      11724,
+      "players"
+    ],
+    [
+      11726,
+      "players"
+    ],
+    [
+      11734,
+      "players"
+    ],
+    [
+      11735,
+      "events"
+    ],
+    [
+      11736,
+      "players"
+    ],
+    [
+      11739,
+      "events"
+    ],
+    [
+      11743,
+      "events"
+    ],
+    [
+      11744,
+      "players"
+    ],
+    [
+      11745,
+      "events"
+    ],
+    [
+      11748,
+      "players"
+    ],
+    [
+      11754,
+      "lineups"
+    ],
+    [
+      11757,
+      "events"
+    ],
+    [
+      11759,
+      "lineups"
+    ],
+    [
+      11764,
+      "events"
+    ],
+    [
+      11764,
+      "players"
+    ],
+    [
+      11770,
+      "lineups"
+    ],
+    [
+      11779,
+      "events"
+    ],
+    [
+      11780,
+      "players"
+    ],
+    [
+      11781,
+      "players"
+    ],
+    [
+      11784,
+      "players"
+    ],
+    [
+      11785,
+      "players"
+    ],
+    [
+      11786,
+      "events"
+    ],
+    [
+      11786,
+      "players"
+    ],
+    [
+      11788,
+      "players"
+    ],
+    [
+      11789,
+      "players"
+    ],
+    [
+      11790,
+      "players"
+    ],
+    [
+      11791,
+      "lineups"
+    ],
+    [
+      11791,
+      "events"
+    ],
+    [
+      11792,
+      "players"
+    ],
+    [
+      11793,
+      "events"
+    ],
+    [
+      11793,
+      "players"
+    ],
+    [
+      11794,
+      "lineups"
+    ],
+    [
+      11794,
+      "players"
+    ],
+    [
+      11796,
+      "lineups"
+    ],
+    [
+      11796,
+      "events"
+    ],
+    [
+      11797,
+      "players"
+    ],
+    [
+      11798,
+      "lineups"
+    ],
+    [
+      11798,
+      "players"
+    ],
+    [
+      11799,
+      "events"
+    ],
+    [
+      11799,
+      "players"
+    ],
+    [
+      11800,
+      "players"
+    ],
+    [
+      11802,
+      "events"
+    ],
+    [
+      11802,
+      "players"
+    ],
+    [
+      11803,
+      "lineups"
+    ],
+    [
+      11803,
+      "players"
+    ],
+    [
+      11804,
+      "statistics"
+    ],
+    [
+      11805,
+      "statistics"
+    ],
+    [
+      11807,
+      "events"
+    ],
+    [
+      11807,
+      "players"
+    ],
+    [
+      11808,
+      "lineups"
+    ],
+    [
+      11808,
+      "statistics"
+    ],
+    [
+      11808,
+      "events"
+    ],
+    [
+      11810,
+      "players"
+    ],
+    [
+      11811,
+      "lineups"
+    ],
+    [
+      11812,
+      "lineups"
+    ],
+    [
+      11812,
+      "events"
+    ],
+    [
+      11813,
+      "statistics"
+    ],
+    [
+      11816,
+      "lineups"
+    ],
+    [
+      11820,
+      "lineups"
+    ],
+    [
+      11820,
+      "statistics"
+    ],
+    [
+      11822,
+      "statistics"
+    ],
+    [
+      11824,
+      "players"
+    ],
+    [
+      11825,
+      "statistics"
+    ],
+    [
+      11827,
+      "statistics"
+    ],
+    [
+      11828,
+      "players"
+    ],
+    [
+      11832,
+      "lineups"
+    ],
+    [
+      11832,
+      "events"
+    ],
+    [
+      11835,
+      "statistics"
+    ],
+    [
+      11839,
+      "statistics"
+    ],
+    [
+      11844,
+      "statistics"
+    ],
+    [
+      11845,
+      "lineups"
+    ],
+    [
+      11865,
+      "lineups"
+    ],
+    [
+      11869,
+      "lineups"
+    ],
+    [
+      11873,
+      "lineups"
+    ],
+    [
+      20758,
+      "statistics"
+    ],
+    [
+      21343,
+      "statistics"
+    ],
+    [
+      27175,
+      "events"
+    ],
+    [
+      27179,
+      "events"
+    ],
+    [
+      27183,
+      "events"
+    ],
+    [
+      27187,
+      "events"
+    ],
+    [
+      27198,
+      "events"
+    ],
+    [
+      27202,
+      "events"
+    ],
+    [
+      27216,
+      "lineups"
+    ],
+    [
+      27225,
+      "players"
+    ],
+    [
+      27228,
+      "lineups"
+    ],
+    [
+      27236,
+      "lineups"
+    ],
+    [
+      27237,
+      "players"
+    ],
+    [
+      27240,
+      "lineups"
+    ],
+    [
+      27245,
+      "players"
+    ],
+    [
+      27249,
+      "players"
+    ],
+    [
+      27271,
+      "players"
+    ],
+    [
+      27279,
+      "statistics"
+    ],
+    [
+      27283,
+      "statistics"
+    ],
+    [
+      27287,
+      "lineups"
+    ],
+    [
+      27287,
+      "statistics"
+    ],
+    [
+      27291,
+      "lineups"
+    ],
+    [
+      27293,
+      "lineups"
+    ],
+    [
+      27299,
+      "lineups"
+    ],
+    [
+      27299,
+      "players"
+    ],
+    [
+      27300,
+      "events"
+    ],
+    [
+      27302,
+      "statistics"
+    ],
+    [
+      27304,
+      "events"
+    ],
+    [
+      27305,
+      "lineups"
+    ],
+    [
+      27307,
+      "statistics"
+    ],
+    [
+      27312,
+      "players"
+    ],
+    [
+      27314,
+      "statistics"
+    ],
+    [
+      27316,
+      "players"
+    ],
+    [
+      27317,
+      "lineups"
+    ],
+    [
+      27322,
+      "statistics"
+    ],
+    [
+      27326,
+      "statistics"
+    ],
+    [
+      27329,
+      "lineups"
+    ],
+    [
+      27336,
+      "players"
+    ],
+    [
+      27340,
+      "players"
+    ],
+    [
+      27345,
+      "statistics"
+    ],
+    [
+      27346,
+      "lineups"
+    ],
+    [
+      27353,
+      "statistics"
+    ],
+    [
+      27354,
+      "lineups"
+    ],
+    [
+      27356,
+      "statistics"
+    ],
+    [
+      27357,
+      "statistics"
+    ],
+    [
+      27358,
+      "lineups"
+    ],
+    [
+      27360,
+      "statistics"
+    ],
+    [
+      27364,
+      "statistics"
+    ],
+    [
+      27365,
+      "statistics"
+    ],
+    [
+      27366,
+      "lineups"
+    ],
+    [
+      27368,
+      "statistics"
+    ],
+    [
+      27413,
+      "events"
+    ],
+    [
+      27417,
+      "events"
+    ],
+    [
+      27421,
+      "events"
+    ],
+    [
+      27441,
+      "events"
+    ],
+    [
+      27458,
+      "players"
+    ],
+    [
+      27470,
+      "players"
+    ],
+    [
+      27478,
+      "players"
+    ],
+    [
+      27498,
+      "players"
+    ]
+  ],
+  "request_errors": [],
+  "partitions": [],
+  "reused_results": 15892,
+  "run_id": "39511421224",
+  "code_revision": "227b5ae1f188a58b80c6d645faf64ff7f1c9507a",
+  "observed_at": "2026-10-20T22:55:54.602114+00:00",
+  "total_cap": 240000,
+  "daily_cap": 130000,
+  "provider_reserve": 5000,
+  "fixture_ids_sha256": "6b35d77a2913bf45b31f15996d558f94d0342766f22a0d636457ff5d1baffbe4",
+  "quota_remaining": 78848,
+  "reason_class": "RuntimeError",
+  "reason_code": "W71_PROVIDER_RESERVE",
+  "complete_fraction": {
+    "lineups": 0.5361346838215165,
+    "statistics": 0.5372296742403504,
+    "events": 0.5327128387626608,
+    "players": 0.5387352860662469
+  },
+  "coverage_target": {
+    "lineups": 0.95,
+    "statistics": 0.9,
+    "events": 0.9,
+    "players": 0.85
+  },
+  "coverage_met": false
+}

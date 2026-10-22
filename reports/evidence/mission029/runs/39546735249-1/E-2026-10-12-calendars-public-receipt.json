@@ -1,0 +1,56 @@
+{
+  "phase": "E-2026-10-12-calendars",
+  "status": "EXHAUSTED",
+  "targets": 5,
+  "targets_sha256": "15fb935c4da09a860358f57fbacb1b0970f732b9e0c7d1c12a63c8c4c5a0871e",
+  "calls": 6,
+  "complete": {
+    "fixtures": 5
+  },
+  "missing": [],
+  "uncertain": [],
+  "request_errors": [],
+  "partitions": [
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2026/entity_type=fixtures/dataset_version=api-football-v3/fixture-2eb0628bb4ec9e011d768814d311fa741eb72b39325691cd3ab01b13d0946982.parquet",
+      "sha256": "db38990f6d241d1a109a80c1ca51b2690176d556ae0be7fe0550096dc55d3056",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2026/entity_type=fixtures/dataset_version=api-football-v3/fixture-2eb0628bb4ec9e011d768814d311fa741eb72b39325691cd3ab01b13d0946982.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2026/entity_type=fixtures/dataset_version=api-football-v3/fixture-3a1b06df448fd170d90fcb49174164559d5a7182dffd08f606f7c3be417eb749.parquet",
+      "sha256": "51b394e74c80bff77e8e8c88a3fe810f017a0d50b7cf88827886cefe61fc94ca",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2026/entity_type=fixtures/dataset_version=api-football-v3/fixture-3a1b06df448fd170d90fcb49174164559d5a7182dffd08f606f7c3be417eb749.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2026/entity_type=fixtures/dataset_version=api-football-v3/fixture-0f8597014fba0973d56ef4eb140c43a1635944b855f34bdd71828140551618c1.parquet",
+      "sha256": "91e36bd2139af3eee4a03afa33a7bc318e2d8f3f226f283a67aa6cf3d8e45537",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2026/entity_type=fixtures/dataset_version=api-football-v3/fixture-0f8597014fba0973d56ef4eb140c43a1635944b855f34bdd71828140551618c1.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2026/entity_type=fixtures/dataset_version=api-football-v3/fixture-eabb836f0df8ed36789dc0f570e9c7f380a7ed52cb47667e4ec0f8a15f2fdbd0.parquet",
+      "sha256": "72edbbad1de2e753fcb62ebc87fd224622a968596f570eaa0f05e28d7f9818dc",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2026/entity_type=fixtures/dataset_version=api-football-v3/fixture-eabb836f0df8ed36789dc0f570e9c7f380a7ed52cb47667e4ec0f8a15f2fdbd0.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2026/entity_type=fixtures/dataset_version=api-football-v3/fixture-340a6d8bef0586704a27309e70b7d2e7358d3fd9d8768af4bd2bc79e4acf3ebc.parquet",
+      "sha256": "fd934b400c2265d8bde269f8c555bd497bdad584d3c5b112000e3f37b0d5ac45",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2026/entity_type=fixtures/dataset_version=api-football-v3/fixture-340a6d8bef0586704a27309e70b7d2e7358d3fd9d8768af4bd2bc79e4acf3ebc.parquet"
+    }
+  ],
+  "reused_results": 0,
+  "run_id": "39546735249",
+  "code_revision": "227b5ae1f188a58b80c6d645faf64ff7f1c9507a",
+  "observed_at": "2026-10-21T04:56:58.451018+00:00",
+  "total_cap": 240000,
+  "daily_cap": 130000,
+  "provider_reserve": 5000,
+  "fixture_ids_sha256": "b2f627f78356b47b9cc2a32b298a12b7ee969dd53ec631130dc107ec340aebf2",
+  "quota_remaining": 137572,
+  "complete_fraction": {
+    "fixtures": 1.0
+  },
+  "coverage_target": {
+    "fixtures": 0.9
+  },
+  "coverage_met": true
+}

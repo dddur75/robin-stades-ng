@@ -1,0 +1,128 @@
+{
+  "phase": "D-availability",
+  "scopes": [
+    {
+      "league": 39,
+      "season": 2015,
+      "availability": "CAPTURED",
+      "fixtures": 380
+    },
+    {
+      "league": 39,
+      "season": 2016,
+      "availability": "CAPTURED",
+      "fixtures": 380
+    },
+    {
+      "league": 39,
+      "season": 2017,
+      "availability": "CAPTURED",
+      "fixtures": 380
+    },
+    {
+      "league": 39,
+      "season": 2018,
+      "availability": "CAPTURED",
+      "fixtures": 380
+    },
+    {
+      "league": 78,
+      "season": 2015,
+      "availability": "CAPTURED",
+      "fixtures": 306
+    },
+    {
+      "league": 78,
+      "season": 2016,
+      "availability": "CAPTURED",
+      "fixtures": 306
+    },
+    {
+      "league": 78,
+      "season": 2017,
+      "availability": "CAPTURED",
+      "fixtures": 306
+    },
+    {
+      "league": 78,
+      "season": 2018,
+      "availability": "CAPTURED",
+      "fixtures": 308
+    },
+    {
+      "league": 135,
+      "season": 2015,
+      "availability": "CAPTURED",
+      "fixtures": 380
+    },
+    {
+      "league": 135,
+      "season": 2016,
+      "availability": "CAPTURED",
+      "fixtures": 380
+    },
+    {
+      "league": 135,
+      "season": 2017,
+      "availability": "CAPTURED",
+      "fixtures": 380
+    },
+    {
+      "league": 135,
+      "season": 2018,
+      "availability": "CAPTURED",
+      "fixtures": 380
+    },
+    {
+      "league": 140,
+      "season": 2015,
+      "availability": "CAPTURED",
+      "fixtures": 380
+    },
+    {
+      "league": 140,
+      "season": 2016,
+      "availability": "CAPTURED",
+      "fixtures": 380
+    },
+    {
+      "league": 140,
+      "season": 2017,
+      "availability": "CAPTURED",
+      "fixtures": 380
+    },
+    {
+      "league": 140,
+      "season": 2018,
+      "availability": "CAPTURED",
+      "fixtures": 380
+    },
+    {
+      "league": 61,
+      "season": 2015,
+      "availability": "CAPTURED",
+      "fixtures": 380
+    },
+    {
+      "league": 61,
+      "season": 2016,
+      "availability": "CAPTURED",
+      "fixtures": 380
+    },
+    {
+      "league": 61,
+      "season": 2017,
+      "availability": "CAPTURED",
+      "fixtures": 380
+    },
+    {
+      "league": 61,
+      "season": 2018,
+      "availability": "CAPTURED",
+      "fixtures": 380
+    }
+  ],
+  "played_targets": 7306,
+  "provider_calls": 0,
+  "note": "UNCONFIRMED is distinct from PROVIDER_EMPTY"
+}

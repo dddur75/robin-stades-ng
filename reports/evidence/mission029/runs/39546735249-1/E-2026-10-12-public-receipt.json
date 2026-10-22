@@ -1,0 +1,555 @@
+{
+  "phase": "E-2026-10-12",
+  "status": "EXHAUSTED",
+  "targets": 48,
+  "targets_sha256": "f772538d0bd244316fa579ef813dbf2462a891c118ce3318c6080514f46b66ea",
+  "calls": 96,
+  "complete": {
+    "statistics": 48,
+    "events": 40
+  },
+  "missing": [
+    {
+      "fixture": 1552789,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 1550146,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 1575188,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 1557420,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 1550150,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 1570421,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 1557428,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 1575193,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    }
+  ],
+  "uncertain": [],
+  "request_errors": [],
+  "partitions": [
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1550137.parquet",
+      "sha256": "96e00ef7cf249449fd9586842109cd21aec41fee67a50f39dda2efdac859ec7f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1550137.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1570415.parquet",
+      "sha256": "07727612ecb2faa4fa388abe88c06fae6a328583912b5ac60b914256ac5f7dbe",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1570415.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1550155.parquet",
+      "sha256": "056ef3a0af3dcc9e1a5337dd8895112459be156eb99553dc179a1245522c29a6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1550155.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1575186.parquet",
+      "sha256": "fef28fa1e2aaf65bfca3213bfe1c2414cc0b45067b4a31f85713d1ac2e9f19bb",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1575186.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1552789.parquet",
+      "sha256": "f63b9fae6a0e2fd4090143606ad16fc6e9f92231dff55ee056dbb64454d6eb9f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1552789.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1557431.parquet",
+      "sha256": "48d24837c78c608edc7dace68f4f0c19b4119ea07d3ba20c832c88845ea08128",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1557431.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1550137.parquet",
+      "sha256": "bb595ac131aa5a70d8976415386c9a8311e66cd862e570b8235647965e5c603e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1550137.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1570415.parquet",
+      "sha256": "8d356f6d44df636c17970515a7c87a96f9c3b1bcd76e9f8c1e19d1fdea09b20a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1570415.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1550155.parquet",
+      "sha256": "28986f9b55eef371e16781e8ce296f08c8c69a206a6fd21176b709b8828de58f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1550155.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1575186.parquet",
+      "sha256": "2a8ee0f1f63238b37a59bdf8b104c8cc55984e37a6b642d616e004d1fbad31ac",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1575186.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1552789.parquet",
+      "sha256": "ca6d9c79c4d37bca1f65d3d1bb399dae7b3471ac69118fe2e265b4cfe434d55c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1552789.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1557431.parquet",
+      "sha256": "8cfa0c6768cc24122dc72720dc30a910fde6aa59f9c836ff73a4f5aa42a29e4f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1557431.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1550146.parquet",
+      "sha256": "22669df6d93f50c50a9cff601ea595f63f5a83ae8bd638c7f2bebe2d035614d0",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1550146.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1570416.parquet",
+      "sha256": "6464cddfd68cf37bdb82e40a47d918d5cec1f3fecb13a64581a8e9408ca09ca9",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1570416.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1550156.parquet",
+      "sha256": "b52780a8563dc3945aa64bce62e9cdd904e1f81e7067eb92d9f4dbe20676db73",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1550156.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1575187.parquet",
+      "sha256": "81c378833bdbf345345da71ecf5cfdaaf34b7131067186bb4d4893208572c341",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1575187.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1552790.parquet",
+      "sha256": "80d0d373c2a0ce34d87abf64c893c65e372746b734314e1f5ccfb446cc530eb8",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1552790.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1557432.parquet",
+      "sha256": "39c5aef651f4826489f9d321707f33ed4b0c049fae6db7cd651b93b22186f828",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1557432.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1550146.parquet",
+      "sha256": "61f7627b0c61de010a15db78da694611394caa027101c80eb3896708dd9e93f8",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1550146.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1570416.parquet",
+      "sha256": "795e4accd63750aa3b64d520d73e3aaa075a97175acca16352b0c2354c6beb60",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1570416.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1550156.parquet",
+      "sha256": "38bbcbc7827bf8d979b313cdcc29aa8fc4e9f6b8d7402019adf7f70594497c4d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1550156.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1575187.parquet",
+      "sha256": "07241836225005169da2b8e3131f5618f673d5cebd7b1be7343af6bc875edbdd",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1575187.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1552790.parquet",
+      "sha256": "2c5f97b87329c2ea661a8a54a0911e5ec18a042ebc9c152fcd14ccf50f07e2f4",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1552790.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1557432.parquet",
+      "sha256": "4f1748a901490025360c5cbdaabddbce90b0532392f84c1d506a069c247b1e16",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1557432.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1550147.parquet",
+      "sha256": "532f2cacc54d4984574a0a9f6a2c9068ebabcd15260bc4a33396e6f8fc32ba8a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1550147.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1570418.parquet",
+      "sha256": "52f39a038eadd4d91491829dc094188b8b6cd64314e3868f2d012a0ba1f81971",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1570418.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1552783.parquet",
+      "sha256": "7afa1e1bd6405334685528d9a3919035bb909741ed3c42bc3417d3af8a427d70",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1552783.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1575188.parquet",
+      "sha256": "ae98ef3ca652942e0115001fe5fcd1d26604f62a0fbbea68e58c461b51b5672f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1575188.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1552791.parquet",
+      "sha256": "99ee4ac76181e4a257d9576a5b977e9e204dd677b2c7823f3e645a587e0ec894",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1552791.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1557433.parquet",
+      "sha256": "958f13d75f0426a54fee8285a801b2939fb20e1f5e91299cc146b22488c05646",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1557433.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1550147.parquet",
+      "sha256": "46b4dc557645695a60a3171a35c81122b9b3e84e7b1805faa6072198a2862564",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1550147.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1570418.parquet",
+      "sha256": "c56e6d7fc4ec3ab9a1129fc7264cc43e23174077cd3ea193930bb122aa43a379",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1570418.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1552783.parquet",
+      "sha256": "652b38db8dc0717fd21805ea0521bb18d884a87113e722299d9fef3579efb097",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1552783.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1575188.parquet",
+      "sha256": "9b0bd5ab3cfb5b01b56d4967fab32cae0cfe038f2a465430dde0ab6ff9ad7186",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1575188.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1552791.parquet",
+      "sha256": "da559228d556c980b1978342913d5f838a73512c320594d050593e89d18c252f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1552791.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1557433.parquet",
+      "sha256": "fd3e5ee4c4f5f0e5b35f46ea4fbefe97246c24901c26a9b50298e224e3b97f68",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1557433.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1550148.parquet",
+      "sha256": "01a9e95391960fdd998ff045999b3da24ecac1c472253a4b12a9d5b3d97eeb9e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1550148.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1570419.parquet",
+      "sha256": "5ac0c5db3cc0aeb6cf3278a42ff8c6680440a0697681d6c832d7c34af39c8171",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1570419.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1552784.parquet",
+      "sha256": "0f4ff4ebd5929c04d9def7fec839e910293e825a3bfd51c1bb8351528a276ea9",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1552784.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1575189.parquet",
+      "sha256": "dc04f89a6bf35fbb3c7109a35c8e12718af35f7b9e2fdb7d3333f3b9c1e0ce81",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1575189.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1557420.parquet",
+      "sha256": "5b3e2d1afbf5251c4b9dec80470f87649e878bc7f4fab59f1f9015f793c8f0de",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1557420.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1557434.parquet",
+      "sha256": "cd63e0b709bdf67ebea6af22620c75800e950b782e4748b8042efc8bae1e6004",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1557434.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1550148.parquet",
+      "sha256": "e8344b7061fabeef068916e98d394f8c533060b87f4b592afd681d80c52806af",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1550148.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1570419.parquet",
+      "sha256": "50ae0137a8d68bf639aa0bef00af9cffc7e8ed1d4b7d837eb71f724e92879750",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1570419.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1552784.parquet",
+      "sha256": "2d1b1f9b497acdba2dfa8f486d414d2d54fe498edc94cf7403c78540960112af",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1552784.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1575189.parquet",
+      "sha256": "53c9729f7d6a67d82806b9817c3eaf548d2eeeef31ccb3cb863cb69c00706fef",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1575189.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1557420.parquet",
+      "sha256": "5b5da27f15638b79f9256442dc26b7dc34434c6ee849769ffbcd630e0a3289ba",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1557420.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1557434.parquet",
+      "sha256": "08313e1ac0feeda1b9bb452b8c1bff57843e9ae9b6d0a3134a5d78a6dd9955ba",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1557434.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1550149.parquet",
+      "sha256": "ae71be7d4fab64fa97a4abe33b644167cd2b648b0e97b07dd306014059fc53d7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1550149.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1570420.parquet",
+      "sha256": "7bbfeeac294f9afe9093bec0a823c5168b0dd60668b8ae6c2dc3919dbd68128d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1570420.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1552785.parquet",
+      "sha256": "5c18b725cf1e8ed577fb045fe773f2a8621ae9432d079388e38bac3e72fd366a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1552785.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1575190.parquet",
+      "sha256": "dca091762ed347e7a0d1c78d5ccc09db234c96ab818b85c70206140c60f5f5ea",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1575190.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1557427.parquet",
+      "sha256": "c7cd2c1a0e6dcc37ecdd02172283d7e4e46cd97f0041f19b2bd04081a5b30777",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1557427.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1557435.parquet",
+      "sha256": "0818e7d0a96eeb9b06f4a370576c3612363a46a4cd4499103e74ab0b0cad88e8",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1557435.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1550149.parquet",
+      "sha256": "dd6babfc74eb594ec93a807dbb6ce769ad2a38a679b5f75aa8b1cf84c9f0442a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1550149.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1570420.parquet",
+      "sha256": "13cf35139e31c2a40e89393c0ae6e561f29855036af09e1d05386136b308ee5a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1570420.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1552785.parquet",
+      "sha256": "f3d52de7b3663c610d6218e843c4ecdd1d566e3cc8bb82bfae7a81c79bf1b42b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1552785.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1575190.parquet",
+      "sha256": "97c55de97e01b769a07f6ff644eb1da2ed695743f3193c4ab33868539033e35d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1575190.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1557427.parquet",
+      "sha256": "890190cd3e0b9bd15c6f158841f4aac916748402ecd766915436de739598cdf2",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1557427.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1557435.parquet",
+      "sha256": "b75f4a8dd8fb7949c061cabd55aec4e2202554b02b7f010b9317987345d45084",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1557435.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1550150.parquet",
+      "sha256": "dabb6d3e732d8389c51e2b7c668a5acab7bbbe29966f3c5adadfcb572b73dd24",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1550150.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1570421.parquet",
+      "sha256": "36ff3e6fd21be31f0ae500383e98f972307b5754921dc003bbc4555aa69c8688",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1570421.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1552786.parquet",
+      "sha256": "26506fc5afa4c1f9ee7ba932ee26f25a435d312025714e63c61099ae23bcf7c1",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1552786.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1575191.parquet",
+      "sha256": "5f6ba7c9ab16df25b2a047317c708835915905bf5d6362ac627bbcb6c113d258",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1575191.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1557428.parquet",
+      "sha256": "04eaed187b81ca0d71a9e777d8cc0d8e4444eb2a600554b9744fb6151a1ac73c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1557428.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1570407.parquet",
+      "sha256": "1285aece0de14b3fc8a203a6d4b331353c8687c28643e597567a8dec834a6608",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1570407.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1550150.parquet",
+      "sha256": "1e9fc6c4028c7aff8fafdb818a31cd2acb69871dcf473b312e3270d220a6ebd0",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1550150.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1570421.parquet",
+      "sha256": "7def00a56b3626ff2530fa207a00ccbc82603ed15460f98411a9ea12b9bf8549",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1570421.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1552786.parquet",
+      "sha256": "8a8fe1daf5276018a5d965975ecc2daa3b1fc4baba2df346719a0e2c6795aa3e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1552786.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1575191.parquet",
+      "sha256": "353c3e9d1873643dd88f6632d6b549da1843761def0f70e047538e34166c48d6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1575191.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1557428.parquet",
+      "sha256": "bb452d569ff67e2cfc93c29f28de4959be83ffdd96566d29144f8206c7480294",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1557428.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1570407.parquet",
+      "sha256": "3d3c64207fc22ec30f34124e343ce7fceeec1811811f25e3a6f1441eda5073c7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1570407.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1550151.parquet",
+      "sha256": "bc525570827844e014747514e21cdaea147ce89ad0d4d4283a82c38e855c0c1b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1550151.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1570422.parquet",
+      "sha256": "229a06b11ae450c4af503208859cf36e6cf4e9d1c83dbaf7d5448acbb9049d10",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1570422.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1552787.parquet",
+      "sha256": "02c907c96a91ec7ad544e0dadc5b9ca279ae9e7b3fb04cb31e4c46fdc903c61e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1552787.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1575192.parquet",
+      "sha256": "2aac7bfa6246c99c12b5b0d4fea036e12a8be64c8a19d19d63b8437636e493c3",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1575192.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1557429.parquet",
+      "sha256": "df3f3b25a61bee3406b915559988a03bba704d3776e11ced50f7824ccf6c4d21",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1557429.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1570413.parquet",
+      "sha256": "8302d5d1c88d95a2b4d463b0563a3ce62882d6edc2ad1ee3f0f239bb85e5c428",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1570413.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1550151.parquet",
+      "sha256": "f85b8fcaf2dbd46203b111d6f2a306d2346e96dc58c2567a05827728ae2fc7cb",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1550151.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1570422.parquet",
+      "sha256": "7598b7467dfbd0df559899a8d051286bb00841a27ecbd7e7eba6ac37d2785378",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1570422.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1552787.parquet",
+      "sha256": "c20650d60a3ff7bf37a3c2dc51062d8c264ce37031fbfca161b69bbd464689e9",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1552787.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1575192.parquet",
+      "sha256": "13ab90ea852e4a1b2125e30e3e66bb061fae53f73ebff230630df8adb72d9245",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1575192.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1557429.parquet",
+      "sha256": "2ac2a1736ebaaef102cacafe8fab5fef673cf2ae7aff3e9fa3cd5d8067bffdd2",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1557429.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1570413.parquet",
+      "sha256": "62bc0c5bf3490d2afc852f49ea60d6e570847b82d541a028c3b957c9465b9788",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1570413.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1550152.parquet",
+      "sha256": "c1798a548858d9b2d04826f619de04df7aa974a3054bdcd9727ebe65efb89f12",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1550152.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1575185.parquet",
+      "sha256": "8145708d763a7a896defb1943ba652ad28d5f227f2f972f897dd7158da4caf01",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1575185.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1552788.parquet",
+      "sha256": "77bf08667cadd2c0b63b6e6ae18deea868d68a1aad89893631798521107a3ef6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1552788.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1575193.parquet",
+      "sha256": "c7e6afe5f90905839d7d0587abc2938f594bbaef4faa7e4483bde7dd2fec6668",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1575193.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1557430.parquet",
+      "sha256": "5aba576edc422f9ae4fc5a036480aacec58c12f56f5a1f36a7bde93ff412fd17",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1557430.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1570414.parquet",
+      "sha256": "65fae260656f52f68883050928251b9c93c98e093b91fc0c8bc496548ce57c29",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2026/entity_type=statistics/dataset_version=api-football-v3/fixture-1570414.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Serie-A/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1550152.parquet",
+      "sha256": "3955f6fe77cea232a0ac45af1430ab196fc827a737d4d5cc03b855db957f4e80",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Serie-A/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1550152.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1575185.parquet",
+      "sha256": "c31590f4f0e8db888b252ce50358f368f5a43724745012121500a0c787f29852",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1575185.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Ligue-1/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1552788.parquet",
+      "sha256": "6e19b8e36e1c8d0a064fd8f8a95bdbfbcc45be577d2bd024046acb62013715d7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Ligue-1/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1552788.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1575193.parquet",
+      "sha256": "a87426564d411f571efe5e24c7af7c20328e1eff13a37eb5a88ad3a29b25654a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1575193.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1557430.parquet",
+      "sha256": "bb37a6c092268e5aa83da4730ff73512d6ea4fa553b73f8a730f871096d18050",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1557430.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=La-Liga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1570414.parquet",
+      "sha256": "ca6af8f142a8dd460fb33bbe3d11ecf560fca71d06d16c2fbe1f28b17ed0fe4c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=La-Liga/season=2026/entity_type=events/dataset_version=api-football-v3/fixture-1570414.parquet"
+    }
+  ],
+  "reused_results": 0,
+  "run_id": "39546735249",
+  "code_revision": "227b5ae1f188a58b80c6d645faf64ff7f1c9507a",
+  "observed_at": "2026-10-21T04:59:45.896316+00:00",
+  "total_cap": 240000,
+  "daily_cap": 130000,
+  "provider_reserve": 5000,
+  "fixture_ids_sha256": "1c06f77220a8534e7d8c1894ab3c139a9fedbdea30b9a53eb0861da8402d8d88",
+  "quota_remaining": 137510,
+  "complete_fraction": {
+    "statistics": 1.0,
+    "events": 0.8333333333333334
+  },
+  "coverage_target": {
+    "statistics": 0.9,
+    "events": 0.9
+  },
+  "coverage_met": false
+}

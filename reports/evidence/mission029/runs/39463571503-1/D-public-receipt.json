@@ -1,0 +1,2246 @@
+{
+  "phase": "D",
+  "status": "PARTIAL",
+  "targets": 7306,
+  "targets_sha256": "31a83a4351e81bcef8fae782a244efac9c87d441439ac8ee7f138bc208cd73bb",
+  "calls": 384,
+  "complete": {
+    "lineups": 2003,
+    "statistics": 2014,
+    "events": 1990,
+    "players": 1993
+  },
+  "missing": [
+    {
+      "fixture": 79,
+      "family": "players",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 2776,
+      "family": "players",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 2793,
+      "family": "players",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 2796,
+      "family": "players",
+      "reason": "PROVIDER_EMPTY"
+    },
+    {
+      "fixture": 2801,
+      "family": "players",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 9514,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 9557,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 9569,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 9604,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 9733,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 9751,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 9758,
+      "family": "events",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 11714,
+      "family": "lineups",
+      "reason": "PROVIDER_INCOMPLETE"
+    },
+    {
+      "fixture": 11728,
+      "family": "lineups",
+      "reason": "PROVIDER_INCOMPLETE"
+    }
+  ],
+  "uncertain": [
+    [
+      85,
+      "events"
+    ],
+    [
+      85,
+      "players"
+    ],
+    [
+      86,
+      "statistics"
+    ],
+    [
+      110,
+      "lineups"
+    ],
+    [
+      309,
+      "lineups"
+    ],
+    [
+      8745,
+      "lineups"
+    ],
+    [
+      9586,
+      "lineups"
+    ],
+    [
+      9727,
+      "lineups"
+    ],
+    [
+      11207,
+      "events"
+    ],
+    [
+      11576,
+      "lineups"
+    ],
+    [
+      11726,
+      "players"
+    ],
+    [
+      11215,
+      "events"
+    ],
+    [
+      11739,
+      "events"
+    ],
+    [
+      11744,
+      "players"
+    ],
+    [
+      11219,
+      "events"
+    ],
+    [
+      11693,
+      "statistics"
+    ],
+    [
+      11636,
+      "events"
+    ],
+    [
+      11734,
+      "players"
+    ],
+    [
+      11624,
+      "statistics"
+    ],
+    [
+      11701,
+      "statistics"
+    ],
+    [
+      11533,
+      "events"
+    ],
+    [
+      11584,
+      "lineups"
+    ],
+    [
+      11624,
+      "events"
+    ],
+    [
+      11670,
+      "lineups"
+    ],
+    [
+      11638,
+      "statistics"
+    ],
+    [
+      11735,
+      "events"
+    ],
+    [
+      11650,
+      "statistics"
+    ],
+    [
+      11722,
+      "players"
+    ],
+    [
+      11588,
+      "lineups"
+    ],
+    [
+      11670,
+      "events"
+    ],
+    [
+      11793,
+      "players"
+    ],
+    [
+      11662,
+      "lineups"
+    ],
+    [
+      11591,
+      "lineups"
+    ],
+    [
+      11803,
+      "players"
+    ],
+    [
+      11662,
+      "statistics"
+    ],
+    [
+      11628,
+      "statistics"
+    ],
+    [
+      11736,
+      "players"
+    ],
+    [
+      11789,
+      "players"
+    ],
+    [
+      11724,
+      "players"
+    ],
+    [
+      11827,
+      "statistics"
+    ],
+    [
+      11682,
+      "lineups"
+    ],
+    [
+      11595,
+      "lineups"
+    ],
+    [
+      11564,
+      "lineups"
+    ],
+    [
+      11616,
+      "statistics"
+    ],
+    [
+      11748,
+      "players"
+    ],
+    [
+      11674,
+      "lineups"
+    ],
+    [
+      11705,
+      "statistics"
+    ],
+    [
+      11682,
+      "events"
+    ],
+    [
+      11743,
+      "events"
+    ],
+    [
+      11713,
+      "statistics"
+    ],
+    [
+      11599,
+      "lineups"
+    ],
+    [
+      11632,
+      "events"
+    ],
+    [
+      11674,
+      "events"
+    ]
+  ],
+  "request_errors": [],
+  "partitions": [
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11635.parquet",
+      "sha256": "f95b6e31b340a43b186b1c5a9c4a09e99bb4ffb5334d4c1623be76bf2c684cde",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11635.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11676.parquet",
+      "sha256": "320d983ba54468174847913b345eff6f2b79307eede5207e430947973cf31fc0",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11676.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11706.parquet",
+      "sha256": "f596b28b337bf489e51a0fddbad4f05638a843e59c49c1bbc312679dcb1b2dc5",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11706.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11734.parquet",
+      "sha256": "e98a832e75dfb0346c772316b340c3ef4e90ec83ee3aa0d4f1153ce885f687ed",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11734.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11755.parquet",
+      "sha256": "b9cb3d9480124137290c09ecfaad7f3679a951c73ebcac4967076ae9fa1f0479",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11755.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11776.parquet",
+      "sha256": "512b00dd77a48436c4f93600fdd8d8960a8e67bb4e1a17d3fafdcfa70d6fb7fe",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11776.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11796.parquet",
+      "sha256": "9697fe140534dd0834432481b9f6fd84f3e80795d7c6c28d3637dffa4792b470",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11796.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11647.parquet",
+      "sha256": "36cce9748e276e95df4a7397ae68524b71b508ff7c4460cb2cc59056777bf0a6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11647.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11684.parquet",
+      "sha256": "8dec06f2a8feff1de731f5def8fe8d37d22c53b403849b18a82c010f5704c87a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11684.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11714.parquet",
+      "sha256": "c98367435c96832292eaed165c321770504316978ea1c1ef76716fd20653708c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11714.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11739.parquet",
+      "sha256": "e6401fb434ff2266ba711c3de85bcdfff872ed2aebcc485f58247aa653b20885",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11739.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11760.parquet",
+      "sha256": "4979a73e96c270a8d05ec346c178251f7e1997581bc79df7596ea94fbb46b35a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11760.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11782.parquet",
+      "sha256": "01caf961e54a68e8b3f5d3fcba348f4835008434237378f03ebbaf3ff271a39c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11782.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11801.parquet",
+      "sha256": "9d93f21c3d20e75355675fcf38687a9ae9aa6f45af1dcff96eab33bb6f9f8f6d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11801.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11601.parquet",
+      "sha256": "97c58f49c1115784f9b01667c56d3d1c4463b844159733a436c92b45e70b5304",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11601.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11657.parquet",
+      "sha256": "29d1f3d83973d84d39bf25b5ca2b8ee998b481622477f8dfaa8bd27b97afa309",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11657.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11692.parquet",
+      "sha256": "fa4707fd5b7dda5ee815df1da8ae5646c49f06b99ef148a7ed14b5959fae15a7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11692.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11721.parquet",
+      "sha256": "a23f946c087dce66fb7eceae9243dfcb2a3f53c57214bd7eb8e4ed849c000b4a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11721.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11744.parquet",
+      "sha256": "3884169c9f24b62695d1ef57539fbd3fcb10de050283383f3198821cbef5356b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11744.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11766.parquet",
+      "sha256": "da5234f24e2f51722b57ba38118ad28544cbdc673448f048f6639439b64e0c1c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11766.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11621.parquet",
+      "sha256": "d3447475f1b19dd028b48202b21a79cefe1ee1a1d12b1c0e95d59e22d6ce8d93",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11621.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11668.parquet",
+      "sha256": "b23c1f6b38beda8928a2b6819f554d2ce3c97b76e33403507e2d57ed7760d006",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11668.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11700.parquet",
+      "sha256": "4c6dae1c713ef839383bf81792edba806023ffe8ecaa8e125d371c4cd0765c28",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11700.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11750.parquet",
+      "sha256": "1e19d2c32922c9efb7de6252d91c49a172b29afaf1d1bdc2065381b7010fa402",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11750.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11771.parquet",
+      "sha256": "5639a3449a1e1f8dbd31244a5c23feda7b5bef7525ccc7e9a4d34d4046ed9a2e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11771.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11792.parquet",
+      "sha256": "aad66f12334edb806cad8695851db88fd91f58155b33e3dc263d8e8a496bdd99",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11792.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11810.parquet",
+      "sha256": "2ddafb66eed52c320ab1037ba9eec6d191bfcc705da6ba98c89f56d5589b1a7e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11810.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11636.parquet",
+      "sha256": "063e6b983b36db29336694d91817608fd253a769523fc5e5e6b1156da5e6905b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11636.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11676.parquet",
+      "sha256": "bbb61ef3676c2c53d66453bf3c79eb2fa234777d834bbe7d381a3422d21c2957",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11676.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11707.parquet",
+      "sha256": "5c2d1df361763b324e0bb85bc6bba821cf67bfb633ac6b316db5103dfbddbe4e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11707.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11734.parquet",
+      "sha256": "9c4a23a1805f34e0916181945d6df7c7c2fbb541dbb4a1df838a5d5cce61a07e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11734.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11756.parquet",
+      "sha256": "8eef643099fc4f02bfe24b3105f50cd9f432267b81a03ce1d67f2027239df4e8",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11756.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11777.parquet",
+      "sha256": "5a27478d6b263607b4f42d962f0157b0ea583ed728b1c33882d160e2505e42b8",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11777.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11797.parquet",
+      "sha256": "8fb6319742495139f8a76d076122ec02bcbedc471782c2cebaf75f82b36b5952",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11797.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11577.parquet",
+      "sha256": "b4b50ce92e7d531aba97ad499230db4dac782fec1ccd911f3e741dd8e65d4b73",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11577.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11648.parquet",
+      "sha256": "7db6bd33385e097b62ed9bb52e118e7ce70eeecb5bb8e2d6f7cc39f246ea02ec",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11648.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11684.parquet",
+      "sha256": "c252151a96e1a07f136a1f54c91f8eda19edccc587d0115591f60ba0c0c640e1",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11684.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11714.parquet",
+      "sha256": "33541d675649a79198f3614e0ade1eaf378da7537bf170e6a460e4c823f179b8",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11714.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11761.parquet",
+      "sha256": "5120a0ea9151b3f5ab24dbd22aaca9c095cb9e9f6d18acfc699a046bd8aa3b5a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11761.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11782.parquet",
+      "sha256": "a5f638f739c9d16be45ae86d5f9452cfb1a82194dfe9a193e640e6ef22d09b83",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11782.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11801.parquet",
+      "sha256": "d0e180fc170ddfb636635018b68d2e4c4624ed45e5df55936a546d1998eb4204",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11801.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11603.parquet",
+      "sha256": "2349ee7724ded631abe3ce297ee708e5b642d3b223839b870679c8b5859b6249",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11603.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11658.parquet",
+      "sha256": "7750d431fa3743a9077c726f8a01bb1e349f64f6524a582c80c007e9dfa95a63",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11658.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11692.parquet",
+      "sha256": "179c6459a5916344e18fe046c7b8eaca2f107fd63b7b4022ca72d65b695cd263",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11692.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11721.parquet",
+      "sha256": "a63d39c7bc7965068e24a4077d026c057762ea111e98228d2aebbae68041f3ab",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11721.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11766.parquet",
+      "sha256": "9734b07029863d10225ee1a4a34f65d1225c50c5e2125019c65abed2cd298b4c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11766.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11787.parquet",
+      "sha256": "a5345adf29f97a4059366dda5714641e106c3705bbd65ee6b5f519db90319461",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11787.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11806.parquet",
+      "sha256": "be4c46ca4d3d09aba593e1d60984df0fcb1ff3d5ebe0dcd590a733351c4f9e27",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11806.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11623.parquet",
+      "sha256": "6b59d655af84f91194c7fbc91ee938bead151ab90a0235f92ddee31875df829f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11623.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11668.parquet",
+      "sha256": "fa62aa1663b82520e8ed34fda7df3a89658bffb78ae07d62346b327f4518434b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11668.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11700.parquet",
+      "sha256": "ace810cce1b94224454bde6239616fa6d256893c9fea9ae441224128968320f5",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11700.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11727.parquet",
+      "sha256": "6af7064de1d641715aafe1ed2ffb73cfc48416a24860091636a7824902d2b9a4",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11727.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11750.parquet",
+      "sha256": "5b9968dbb979100ad15219b87e311aa929f094f3ae633f650f57a424985bcc52",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11750.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11772.parquet",
+      "sha256": "e516a2ef8d381060f575435344f66e0043b605aaeab72d93500595f1be78c3c5",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11772.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11792.parquet",
+      "sha256": "43361673c91671033d1453bf2a77d59d6736e3e11e0420ddb7f1dd2e58cf4be6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11792.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11636.parquet",
+      "sha256": "1f0d4b022087e1027233bb4159ba9c30ec88ab3c0380576e64267b0ee1c9be3d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11636.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11676.parquet",
+      "sha256": "f3fd7b0c4e57012553cf2043093148ec2c5b74c3363f115c45c7f866bcce08b0",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11676.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11708.parquet",
+      "sha256": "e837cf8688ffd565dddf4c20e61fb2735f708e8b6f55f2c84e373f19b0778172",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11708.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11734.parquet",
+      "sha256": "cf94b17c7177ad6be705fb89b3e341140b7947e342d4a512d16ba0ba7fd90340",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11734.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11756.parquet",
+      "sha256": "829679043db1b6759202cd90f2dc9e64564dad9eff9178753cc2c5562371d15d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11756.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11777.parquet",
+      "sha256": "5e63e48cbb2cc36e9ff46a62b7ad379db3d80cb77d3d64e69b42943bdb4e4979",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11777.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11797.parquet",
+      "sha256": "64d92b26f8f031e15f6be2faab77e67d74ecd607049ca498112282299bf6e23b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11797.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11580.parquet",
+      "sha256": "225a57c3c5e58eb15e52e0a7a60c2c688e0252ad7b4e933a2df34aa186b47f2c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11580.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11648.parquet",
+      "sha256": "6700853bb7434316e90bee1c453fb54dd7e2d8fedf5728cf41cf1046d518962f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11648.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11685.parquet",
+      "sha256": "714f59f8673f7628ea34e86e92ddcc4c52f82ef2887336b502040f7f3178795d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11685.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11714.parquet",
+      "sha256": "cfac128d3ff51fe9f7636a4cfec5c54560d1b8fc1223303724029842c3e1084e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11714.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11740.parquet",
+      "sha256": "e6441c4d31b0b1240cf3225ff9b595bb5bceb8e28c8969e773574d8bc371c095",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11740.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11761.parquet",
+      "sha256": "154fdf4cdcb37910bc7ba79fc354913d0eff669110af57e55b78d87eea399479",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11761.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11782.parquet",
+      "sha256": "d1a0fb71e6b8ca0f3ea6a3bda59b20091aaab325fdd394469facd0ef98c555f4",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11782.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11802.parquet",
+      "sha256": "f954ecb0f5ab6de4f0e6f818e68831d33f05bfc756f514128b2d7db2c48684f8",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11802.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11604.parquet",
+      "sha256": "6ae28134dc5119461352b4f44f00b3731025faf783cb1a8fe64c774b41f89ba3",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11604.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11659.parquet",
+      "sha256": "973f509b8ed3eda63dcb7ca22980ffa5ae4bd80a9fb556dd318fa5465211031f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11659.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11722.parquet",
+      "sha256": "1a86fa94e1381106b7ff0d8e041aabdbd33cc52fec3afc469600451c7bcd92b6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11722.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11745.parquet",
+      "sha256": "8401b2b66061c961143635ad669e7d990d14f37c07fcdc6959f50796023ab354",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11745.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11766.parquet",
+      "sha256": "65938ccf1dd78f0caf47166eb2768ee7cd9db6e3f9a3616df357fb8e314bd285",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11766.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11787.parquet",
+      "sha256": "df0c7312f82f23e954799490b9f3721f700c21fa943005e224f95d1ad4140493",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11787.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11806.parquet",
+      "sha256": "f00558fcfdce8102a95ddac5e5fcabcd0b014a8b86274af3b59dcdaa2efe1f05",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11806.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11624.parquet",
+      "sha256": "e296f2442c2a2bdba3cbc1379a45f9158548a99ad9df918d867c95874096eb49",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11624.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11668.parquet",
+      "sha256": "b7c0865d3d637632cb3d44c4834e91f904ff3f0e39aa02b3bd5acadb9f5d1d65",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11668.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11700.parquet",
+      "sha256": "b359a8f1e4681f4c4f8b23c491babbd01a73763ee3668fa2f08152b12d8da323",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11700.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11728.parquet",
+      "sha256": "2df367c7219d0a1eae7b23f4d3a6bca3d3ad9fa4d7ed0f02ad38c139afdd037c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11728.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11750.parquet",
+      "sha256": "788e3e69cd79d7f61da3a681b09608525d5f3bab5d977ef8ab51e556af79245c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11750.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11772.parquet",
+      "sha256": "5b01be0f762c2c06bf0c16b3f79c00868efd459aeb204b17ef80dc4b0ce53dcb",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11772.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11792.parquet",
+      "sha256": "6876f6e53ff6a5c3025a164e48c6a97d96a645dcd603c1962f3d3f2c2e3d1836",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11792.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Bundesliga/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11223.parquet",
+      "sha256": "03ada7e77e2b4c5c414c5510458c5e7f3d398923cdbbdd1509c17449f903ca97",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Bundesliga/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11223.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11677.parquet",
+      "sha256": "d3aae49cb3bf742bc2e5fcde3fc6a00370b0e8cf312a2c79b4ccc1ebb341a82a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11677.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11708.parquet",
+      "sha256": "ab23cb03104464976044aa2093ab85ea21b942d8849b4e691afd47cf5c0a2115",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11708.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11756.parquet",
+      "sha256": "a5fc43b8a446fb4afaf9eb4ebfd7e67b8808bcbef17c721498c7ba09c69f6a07",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11756.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11778.parquet",
+      "sha256": "f191cd653be8708b385e2a795b7cae8d1cac0f3cb58f1cc9d94debc90f12efa6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11778.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11581.parquet",
+      "sha256": "03b1147502f3ab82b9c93ff547aaf4cae7a0eb31d38345a54c83757f6cb59ed5",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11581.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11648.parquet",
+      "sha256": "19a84d0e15aafe9d23db6d9505bac71cc2fdb244fc4e69650fa09abbea3dc4d7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11648.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11686.parquet",
+      "sha256": "ac5848fd3d7621d8841075b70230d38d7f47df47b88b8513f540e0096da400eb",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11686.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11715.parquet",
+      "sha256": "c956e3224ab0eac385d34c1b9783626753c2eae73668ecaaf7c7dc96b8e97f8f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11715.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11740.parquet",
+      "sha256": "bcce3f65393495ebb7cd6eb47511e73abb06df3aa65dddc7ced5a6bb647df799",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11740.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11605.parquet",
+      "sha256": "3e7084bd5195d7458d5cac18e9cef0728706ea7c2f19b92d0e0b557041cd0c4f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11605.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11660.parquet",
+      "sha256": "f024e93d9d1ee5a7ce6d559bb3b3cc5103797963f64ea8dde4d601d538eecf87",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11660.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11693.parquet",
+      "sha256": "ea9cb40916ac9a0ee354f49bd1da842e1fa4d875d06cd5109534948b2d7834ad",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11693.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11722.parquet",
+      "sha256": "5c103f7b90763fc2aeea13e4e3d5eb3a496075b837ee20bd40b0b977661a82a2",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11722.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11669.parquet",
+      "sha256": "68fb6680894c3a66e6808f789ac3a7ca9c264b151ef8010ebd43d677acb78f98",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11669.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11728.parquet",
+      "sha256": "f4fe2a60655d2715faf4f962acedfe1be6230799fc9fe5311e19e97009d5d446",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11728.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11751.parquet",
+      "sha256": "52e65ab8ef4ee2eb9bec46df14cbdbda8bf40260c8f5f425e13ee195c754a0e8",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11751.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11772.parquet",
+      "sha256": "b44df8f965ca2feda732ff5d78bd8ebe8e054a905cdd8c15f2c1a1330600fcbc",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11772.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11637.parquet",
+      "sha256": "2e0d1d8189247be7102601f29feb0e15c039333609d85cb0f94f1cdc36bc8792",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11637.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11678.parquet",
+      "sha256": "0d0bbe59a613e135a5d4b2fea56a47d8bb188360bd34dc933b6533fbd4f5fe66",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11678.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11708.parquet",
+      "sha256": "4c4696583dc6a3cce92b9b2bcf9e36c4929a63e25a828c597978b4d4a314a8f8",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11708.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11735.parquet",
+      "sha256": "d163a9ac4cc2f1fd82a9de59d7ccd05c3b3963f7aa0c4068dd4d7ae5ce6bf934",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11735.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11756.parquet",
+      "sha256": "76912cea261a24dc5a7e7260f68e788c4575972184acdf6ee6fd3fdde85e7ccb",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11756.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11778.parquet",
+      "sha256": "22d5ef6a0b847258f3b29ca6f2706946a0ff4dd65f60657ed87ec8c110abd95b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11778.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11649.parquet",
+      "sha256": "0cc2526dfe8b0bdb1b1ddc1acfe65747584ce2fadb8c33ddd2456cef53370362",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11649.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11686.parquet",
+      "sha256": "54811762ef030fd71fc0fa62786c28eb5a0bc954abbb52838bf13f96fc356613",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11686.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11716.parquet",
+      "sha256": "e265f66eddb5c1f8e6f194e69bc748d1ac72dfcb4139400e42214a00c20a11ee",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11716.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11740.parquet",
+      "sha256": "9a73458cae2e7b3a8e194d0bb91fbc50e32b065bd8d2defaf0ab0c185166e550",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11740.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11762.parquet",
+      "sha256": "94dc6f7ba58ffed1bbec07f760ba88f999bb46e3d8d0e6b0aff407dcb600c916",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11762.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11783.parquet",
+      "sha256": "87d8083f799476014078006b8572d528e860130540e6976fb240348e53aeee4f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11783.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11607.parquet",
+      "sha256": "68fa6cf8b6cdd2fef203e8c8c1f9ca41eba91c18adf3568de1707d4c66955873",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11607.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11660.parquet",
+      "sha256": "0cddc0b5cb319f3ec7142497ed2128eb663f35950a637d04d1e75626682d0a3b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11660.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11694.parquet",
+      "sha256": "33d560bd0af611643c4660763f25da63d85a43a1057397418fe1259912a9c6a0",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11694.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11722.parquet",
+      "sha256": "e3ff8150487aa7baff5f720a1d82526c276157eb9271dc10d2ac49ebd75d6ba2",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11722.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11746.parquet",
+      "sha256": "f47d8f45a7fc3f6d2ffd488da84033c6efce2a622a51fb62790c32e5aee997f5",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11746.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11767.parquet",
+      "sha256": "909ee106a729b28bc71cffa75b68b33983f27c8b66bc23b30a66948d911df490",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11767.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11701.parquet",
+      "sha256": "105969abd5ec7ae4dad0fdc14844ae3f057db34b2a21134a1eb53da5e4b23410",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11701.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11728.parquet",
+      "sha256": "f33a701b098937c8d8d9906bbb5846a26a6fe44243583a868b6d31c39969d5ed",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11728.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11751.parquet",
+      "sha256": "f61e2463667f06a0a52e0a12c55569af982bd63020a07cbb81a7747927142d8c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11751.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11772.parquet",
+      "sha256": "5621152919195c45b2952d47b4ed1aa97c7287c54af7652d1597ff83918ed158",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11772.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11793.parquet",
+      "sha256": "40882aa28608cf02f9c6be87152bd6ea4efeac23d8ad0a31a2e83da1fdcd17ce",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11793.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11537.parquet",
+      "sha256": "a2ec1e874c5fb66722418b52f31f38f4b41d4cb9e2a49e0f349221a69d4604b2",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11537.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11678.parquet",
+      "sha256": "ad08cff3f2c8deb272444ffb5c7293113fe9d71499777511bfd0e649222743ce",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11678.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11709.parquet",
+      "sha256": "862046b7ef22e7a52de785890b8a8b4fd8d9126decde7cb4fe0feef4d97120be",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11709.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11757.parquet",
+      "sha256": "a11755e2471c2ab6149423c78988f218025289348a44282637ff8d78102ef4a5",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11757.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11778.parquet",
+      "sha256": "f3ee9802bffb242432013dc443936a2fcbac66a8eb89e3f3bb69de1f4dc8258e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11778.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11798.parquet",
+      "sha256": "db56152448adc1acd9bfd5e3d727228943f252eb7295c68c335db7c2e4ad551f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11798.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11585.parquet",
+      "sha256": "aeacf2c6a6c5ab93ff56f6f15c27bf6cc66538971372059dbfe97a03b8db5109",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11585.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11686.parquet",
+      "sha256": "12e5999fcaff6440e68dd2a0014bb503d7e6319de98a861df3dad6d8220d77c5",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11686.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11716.parquet",
+      "sha256": "6677d50024001d879aa84b65eb4841903f46bdd59df924fb86e77a01513ffabf",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11716.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11740.parquet",
+      "sha256": "c20902777c14f060625bcea78a0137fdfaa995227baa6e698aa8a7e078e73281",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11740.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11762.parquet",
+      "sha256": "f0e18b9cbde8a756b612bc8ca52d2eba2d2e97d6456bd069c635017a9d40df33",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11762.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11783.parquet",
+      "sha256": "10b99ac2d3d67eaec2b3c087d7892f7954cfe01216f969951111cd98f35dfe2b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11783.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11608.parquet",
+      "sha256": "f59ce49fd76ea60bfd08f6fbc8db2b37a3dd5f107aec0cfc817283d2fa8f7c4b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11608.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11660.parquet",
+      "sha256": "9efc7ca288547aaaf9bd70b9a4a0968b8aa2894b4bbb3e1538f53aab478bbcb5",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11660.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11694.parquet",
+      "sha256": "5e0a1d72f8034074f23abe1cbf67e74c5e7bdd796a248345cae4e7ba25752c30",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11694.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11746.parquet",
+      "sha256": "fa8db4aa4945c9c6bf630ab55c48212340c3bc063344100ef1046031c0e17b25",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11746.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11768.parquet",
+      "sha256": "f58e98b5bce90b9ab9a6229b9b9a2a0ced9a62ff4bf6ff7afb21718d0924574f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11768.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11788.parquet",
+      "sha256": "4b1133dca416ff7b5db82f72988d037cbef94c21dfacd0acbe585820e163e53e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11788.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11625.parquet",
+      "sha256": "212b4a30d3cbde58e82b74d1aede71543f693a7b100c84b0fe868e2a5257864d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11625.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11670.parquet",
+      "sha256": "339f76936540798c4dfb2ec9223e18163a011fd48ef91abd97574908e601a920",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11670.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11702.parquet",
+      "sha256": "5582b182ed997587d519299c0f5ded0fa3c1a02b13b9f17a1971d4c8c361fc71",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11702.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11729.parquet",
+      "sha256": "ef00ab88ce4e155244cd25bf2a4ad4b64254147f8f2906177e3691d9303d8800",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11729.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11752.parquet",
+      "sha256": "949143c091ea32568aff5642757b4c1649d8128b72dd2a674781bdb23502190a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11752.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11773.parquet",
+      "sha256": "f13b8045b06cd7fa74ed48c14621e5527c1a652427b101557c8711ba3e55e788",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11773.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11541.parquet",
+      "sha256": "4d4f05d4d9c4a8067412f0e2be6568dc765073b84e13636786c27e28ec289be1",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11541.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11639.parquet",
+      "sha256": "645d367c7a300fd0620135292cbaed91890c8cb367219fa7dd0e001d0075edef",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11639.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11679.parquet",
+      "sha256": "6f330f0f7838a38a8337e1839b60de6e2fcf68c032639cbd4303eb2bee1b987e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11679.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11709.parquet",
+      "sha256": "448b907514cc3eb8e7c750d61f6ea95b7059e2401555c25bdc96ca9fdcb64eeb",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11709.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11736.parquet",
+      "sha256": "7748c8458528af98e19fa9d7950d8ce8f51a206df238c6f99d157570b730626b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11736.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11651.parquet",
+      "sha256": "a485bc5cd04992a008c5f052896aaea4ba7e2936350a28222c257973afd7f0fa",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11651.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11687.parquet",
+      "sha256": "42d4eb6ba1404f6ab9f135f481624d08d1a729c3d93e1a9d1d5981432e11bf20",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11687.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11716.parquet",
+      "sha256": "c71f4ab88c6688dc715956f36d2eb26019aeaee9478cc0d4ae6b2bd97c819bd8",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11716.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11741.parquet",
+      "sha256": "00424cdc1d1843864ee4481c1b5e0e51132641260bf09a37e19f2b1d2f677e7d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11741.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11762.parquet",
+      "sha256": "ed4be125e95963d2b9c2aa6b1b242cc6785b26589429c2057d25dfc228e30a87",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11762.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11784.parquet",
+      "sha256": "e9aeb6bb1b397a92e677d3d25d7d33b5c0600e792ddb7e8b99a6439e6f373c9d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11784.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11609.parquet",
+      "sha256": "c17b32674a0f7994c51ed2a49b38f28e16b91cf56d229f539fdcc65f9606436c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11609.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11661.parquet",
+      "sha256": "1678131fec7e402f2918324d5db04645d1046f88f27b0ae3cc6f0f567d159628",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11661.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11694.parquet",
+      "sha256": "f28575e9f9404bb50a6f5834496ddf8d4c47ba16873d296216d0ae6323c6ece0",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11694.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11723.parquet",
+      "sha256": "db6fbede2f5c4ff5a386f89b58fcde34d85470b38d2fb01f2dfbee711dfe6b4a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11723.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11746.parquet",
+      "sha256": "d3de52f97208902c757c0faa1d5f9b35041f5570edb54923203efb38f2c629a3",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11746.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11768.parquet",
+      "sha256": "a987e09bc6fc67c413608007a9dbe5eea28a78d498b20ff9f3a63b36f668934d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11768.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11627.parquet",
+      "sha256": "c80de47742c57aa494eba149e44eaf23e35e75095b8713ed8a5abc9d0f12e9c2",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11627.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11702.parquet",
+      "sha256": "14ac048529b592ae34898709f012dfa3879ded2a73fd507bd851fadfcf0f5ec6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11702.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11729.parquet",
+      "sha256": "0a06c268ecef633f532363ea0b467b7b0c44f05b8292be60ba46fd940180f533",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11729.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11752.parquet",
+      "sha256": "f0e9162cea33cfb9b519456e16aad662f249c217ace2b62246693ae66d17685d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11752.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11773.parquet",
+      "sha256": "7e4d0a740c56485d0fba414b09fc8c875a470c3df3b15620eaebde167e9b0b30",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11773.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11545.parquet",
+      "sha256": "5ed202e5ea804bec04c83088599fd61758c963a4220f63cd3e3bc374e90ee3dd",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11545.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11640.parquet",
+      "sha256": "60efde5431f1cf4d0573015457edf9a467f9a0fa6783b1d59bb66f9f14ce7df6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11640.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11680.parquet",
+      "sha256": "3014925707e24026a577f03a4d038ae3e47f2a0f0030119786b6ed8760553f13",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11680.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11710.parquet",
+      "sha256": "6249c2b062898d4cd595eafef5984c7d9cf888f74b90482d0c76d2a1bac16f29",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11710.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11736.parquet",
+      "sha256": "80972ab7cfadd36b0a226f85d2df128be538969590c7e1e473adc9b8e98043d4",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11736.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11758.parquet",
+      "sha256": "bdc249be9280830b9e03e84fb017f12f02335e8d02826570e870d5eace609736",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11758.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11779.parquet",
+      "sha256": "abd2e531124f5adf1bebaee446d30e13de600bbdbbe843639d68a1ffb51a2d7c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11779.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11589.parquet",
+      "sha256": "07fe39c51a28cebf5a7062eea430d2e3fadde23ba759f9d805b0b3d3c716a86b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11589.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11652.parquet",
+      "sha256": "86e0890a64a22833137b84d806ff66557b88428365e0146baec17da6c0b1a6f9",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11652.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11688.parquet",
+      "sha256": "4a9c90859f98f830b3e9c52894e113916e0f1262dc114d6ac8e6fabb8b5c5f50",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11688.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11717.parquet",
+      "sha256": "dd993e38a37e59ead0eda475d6f32eda7ffd97b5a980b50df530fbd65c6a4d41",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11717.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11741.parquet",
+      "sha256": "2234ed4114ac9dbd77cef7ce9af65bd0fe9cae368147fdb4190c85096a30c847",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11741.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11763.parquet",
+      "sha256": "b31617324acf09187599a5e973f447ce68a2fd989a9dae542e2da26fde5be9a4",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11763.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11784.parquet",
+      "sha256": "763ab8e383b598ac771b98133d6e52e1ca17790515b208218c3beef7c236f5f6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11784.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11611.parquet",
+      "sha256": "1f1e151d2b6282b9b45e9c8b8ba3026c8e9d740bcd214c4b6acbfd62ebccb11f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11611.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11695.parquet",
+      "sha256": "437e2d136f7a970653873e4192b9993242a3e980d2176a3f54bc4bc03f9896e3",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11695.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11724.parquet",
+      "sha256": "62b408e3342b010f1a0b34feb37f319f0dbe076562ddc67b29ef1e8068f1b3df",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11724.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11746.parquet",
+      "sha256": "2582e88fffdc9a691483cd137eb8b185b5b57ca4eb25601e7984fd89a47f9b81",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11746.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11768.parquet",
+      "sha256": "c10d3f7c1ba53b5f2f0bf2367d35f5944e6c4526f1dc07c55b476b5468a6430e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11768.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11789.parquet",
+      "sha256": "c5a638689207b26afb759d8d28208a03d0439140b18ddb29caf3125c27c0f8c7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11789.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11628.parquet",
+      "sha256": "775ae167d72b63bc814e396fd7a698339dd5db905a7975bcb2161e0be9812420",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11628.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11671.parquet",
+      "sha256": "e19b1d79d28593f1d993c43da52869c5b55ad39b98649253547c41f71b9213f8",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11671.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11702.parquet",
+      "sha256": "a922816ad8dec04d2744c92001707fe03ce48f7e7f6bc2354a689ae93c8c9591",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11702.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11730.parquet",
+      "sha256": "2cb205f2178c9b3abdf497308516be76ce304dedc0e836c25d51ffb6aa935727",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11730.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11752.parquet",
+      "sha256": "f26401ddf0ce4c263b22d382e6c42e5bb4252ef097807746b78fbb931ea08b1f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11752.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11774.parquet",
+      "sha256": "b6eddc87ff1ce0683b3053d5808859b3e0970bb74a48c04004728be059a8a4fa",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11774.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11549.parquet",
+      "sha256": "2071e0ff507e27cf44126d9798b5aa67bcdec2b413cebbb1ad656ed3a298327b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11549.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11640.parquet",
+      "sha256": "a686dd4fdaf07724e9adf9a40761e07b8697bca8cbccde6ba0a2f21ffd9ac188",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11640.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11680.parquet",
+      "sha256": "0c528d2bf42daf9d8f10f80d6ccf2c91a99c5fea3feaf485430d3826aa2e1853",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11680.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11710.parquet",
+      "sha256": "75b2c894d2b26609cfd9663a1143682a2a36322d20f8ede4583fa0b393d6f7ce",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11710.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11736.parquet",
+      "sha256": "f0b67a784a4d422e542a39afc27dd834d75a9711ff1906baceeddc435067d95d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11736.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11758.parquet",
+      "sha256": "1c45894bfff08d2e53af5e1e6c3a0c86c77e32c3ba20bfa8eed3ea8c7788493b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11758.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11652.parquet",
+      "sha256": "d4de738ab8a6eb88b06c6ab6c4900416bc52d5b483c08ff06682d6b105e8a4d6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11652.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11688.parquet",
+      "sha256": "71a0d0414264cf112dba57f955dd3a17d2e33a4a1f14a1aeebc9a05c8e586102",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11688.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11717.parquet",
+      "sha256": "475cbc93868bf03dc6111daf6600d0f7b5447fce03e6826bdaeaaeec77967201",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11717.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11742.parquet",
+      "sha256": "ed3476dcd884fbe6f0c128bdf38328d6ed876867aed8f9c5dacf47ef75892b25",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11742.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11763.parquet",
+      "sha256": "0c54429525da0102040715aa3043f44f54e20362c93bb4fa2430029ab9c20b46",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11763.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11784.parquet",
+      "sha256": "fb2db2aa2feebe6430d7934757c83bbfbff6dfe19b887fea7a7169ac76cec642",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11784.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11612.parquet",
+      "sha256": "c5da8b79ba62fa019f84f11dc74d1197df8668bf2dfee550c5ba1a32bf1d14ab",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11612.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11696.parquet",
+      "sha256": "b647d32991c7b325bbeaa3144a6fbf8b8e1cff37faa81dd490b9eeedf6e1a0c8",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11696.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11724.parquet",
+      "sha256": "69bf80e6097ade5ae1fc3e0b749bc0b97ac2154007b36abb0790a5ba06dddf2a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11724.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11747.parquet",
+      "sha256": "2c3f025499c546c510459dcd507207cb0749a895a179dbb39bbb62054c4d1ff6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11747.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11768.parquet",
+      "sha256": "4b1109c0aa327c841906eb343c06a4ee21dfa772df00b591f13758c3a533aec2",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11768.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11789.parquet",
+      "sha256": "7be5273eee2b4218a7adeaab961e4d094cdaaf0a2fd0ad42310b44f98935d391",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11789.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11672.parquet",
+      "sha256": "a7ee276ce474394ce0c1ed0b9424ec394884b8a5b93ad18e0b9b2f9d8cb0a80c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11672.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11703.parquet",
+      "sha256": "bee5a043a43a53c352abad01d7d72fcbed38bf9db02728c8b80fba384d284fdc",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11703.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11730.parquet",
+      "sha256": "41ce9a24379a03968c8b724d2e4e0a1b6a18af56a6ea49856453964d4e9f434f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11730.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11752.parquet",
+      "sha256": "0378848c612c24947c352ded3d362f4dcbeef7a9ef24032d7df9b239f115b58c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11752.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11774.parquet",
+      "sha256": "9cece362c4437d53f27c5e0221c63c988bd7432304fdab87ebbb64bb3068042f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11774.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11794.parquet",
+      "sha256": "03795ac0c51dca0955645136c4c9beaecdb804113b40a7a589d890434b349d27",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11794.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11553.parquet",
+      "sha256": "71413be14f5a413dab64c23ebc28637ed0dce1c935ea4bc726b3ef59f01a3717",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11553.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11640.parquet",
+      "sha256": "048e4e07a8470fe3f821aa6ad0dbd832d11b942086bd1b51fd42274bc177b0ca",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11640.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11680.parquet",
+      "sha256": "ea03b1b9000c898085e63cb74f8bbeed4be08ec64edc69a49ce8323bc1a8a2b8",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11680.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11710.parquet",
+      "sha256": "6e00740629a127536490ab56f40121bb5e980ffdbdc13eacae51c506cb7ac6e5",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11710.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11758.parquet",
+      "sha256": "8fa913ed4a3de656d984f4724f351e3c636268b1b87677e073ce7d2a16aac16f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11758.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11780.parquet",
+      "sha256": "620093f57102940ea38ee3a5d6e576f6cce35a2a26a3796fd75476fcc2f1b6a4",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11780.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11592.parquet",
+      "sha256": "7c5cb33eb972440665741e25e721195d70fc0613d349caa96258bb9c7b930aa7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11592.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11652.parquet",
+      "sha256": "da14785418f60a488941437ac229707e29f4d046812a8a5b71198fea0d76f1ba",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11652.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11688.parquet",
+      "sha256": "4bd4aaee089b921d8426143f82191edcd00a276054a14a9ae531b4f5ec740093",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11688.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11718.parquet",
+      "sha256": "8bea45d362d6c8f5e72f4c8df4b386ea96bdc14a2d4c8798b76b2dc050d014ff",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11718.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11742.parquet",
+      "sha256": "df0c38647fcc01ee5aae4efcbe8ba31f84786a3f63d8bfe39d1154bbe59ef873",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11742.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11764.parquet",
+      "sha256": "c4d2ea91d0e3d95ebd3c2723f4a9499f0bddafb661abd1cd1f462e9c64b57902",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11764.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11613.parquet",
+      "sha256": "a1faacae06df228bec9204a25f8402efca5a813aafe60fc9830ac14eda50e985",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11613.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11663.parquet",
+      "sha256": "98542441363d5f360b736ce9f75a2225479571683de204d1e11ded07c2bbdb2a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11663.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11696.parquet",
+      "sha256": "2524c05101ff6be1f3fc35c7ee769607bee92347006b7ad213208c7cfade9e63",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11696.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11724.parquet",
+      "sha256": "20929b478187bb523c4018dd49033ca3146875388e8e1ff082091e434074c87b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11724.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11748.parquet",
+      "sha256": "d16583edb96c120ef02947b076337f36ad8b6f360fa216cecb1d59742f5bdb8c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11748.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11769.parquet",
+      "sha256": "9f2147288ace690a2f8a4f3214e1d2886d9c27e44c084a9fc96fff3f54a4e938",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11769.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11628.parquet",
+      "sha256": "7cf1374c37b8973c1b40281406aff0950d1ae744031c576e8b0842f17c2fcf8f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11628.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11672.parquet",
+      "sha256": "0ba39582882d11d8d8bb25e5d2febcee747e62d4f963438b0e5a4651928bfe41",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11672.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11704.parquet",
+      "sha256": "0da636a253f598a09c66720524ba11707b8803638af939b3167f4e650774c507",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11704.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11730.parquet",
+      "sha256": "023c7b2e6f1c99ea98fed0564101c6c509cd50af62da657242ceb6e045da81ba",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11730.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11753.parquet",
+      "sha256": "f496dd4a12dde0a6eac70ad31c13c93a6d35d2cea644fe9b0a1449c268237c04",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11753.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11774.parquet",
+      "sha256": "34042a47883a25734075b43490536349ad1d6773cb64a3a3e7c6a64ee362ad9a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11774.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11794.parquet",
+      "sha256": "bff2cea88dfed0cc14070212d83f92e9133e7cc8f3a0382caeb61e19c0d5df14",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11794.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11557.parquet",
+      "sha256": "a3cc37f9a04697a4a9a60ddb56a933f0efae4c5ed1e65f506215fdaea3092d41",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11557.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11641.parquet",
+      "sha256": "c7fc6dc6b9b1580d0867f2e4c318a42685627c20ab501d52c826fca86a87edf1",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11641.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11681.parquet",
+      "sha256": "20cbe1677c3c548910202d8029a182bdd95ec8b625cf63ef31d7b507843a0dfd",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11681.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11711.parquet",
+      "sha256": "9b95a497620ffb6bc1f7c191f4682061e2d3fd7656d929f9626dbd5126f02782",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11711.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11737.parquet",
+      "sha256": "c5ee846f9155af26b7fd3d9a4105dc3c1184520cad807ddd5b0caba2372408f0",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11737.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11758.parquet",
+      "sha256": "9d4a8185bba8b50fadeafcaf9e25fcb441687261e5230deb7ee5ff8f0472bd63",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11758.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11780.parquet",
+      "sha256": "868a23e952df24cb464ffe429ccb4f483ae1cd486a27092cb68d15ce0b3d51b1",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11780.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11593.parquet",
+      "sha256": "6fe396fdddee45c97ad00865a446896b0b5f12c464dd8eca76bce8718ab27f26",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11593.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11653.parquet",
+      "sha256": "cfde1ae88d6a80cf644ef000fe344bdf09517d9242b0bdd98e16d55c590760ab",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11653.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11689.parquet",
+      "sha256": "7134edfb4decb4cc39cc1dbda18e1e3a99c9ffa03e47ce82a178ed2cad817329",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11689.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11718.parquet",
+      "sha256": "3cddceebc7e85d25e746c3907bcd2615e09d248cf53bde159e53a0e5a6add3ae",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11718.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11742.parquet",
+      "sha256": "a9a5e7f34b6e804d0ef78fb64fc6e4659edbf5b03398a9770abd3ed5419ea3f3",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11742.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11764.parquet",
+      "sha256": "3e4c45f27acccba0ff6f59b36809a10f3fbd5db3cd965a1de326d477efbf13f8",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11764.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11785.parquet",
+      "sha256": "05e301da4beb5f562222e5b5b60ba9aff4b1e85d6b5a6f26db2d790751618045",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11785.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11615.parquet",
+      "sha256": "3b8d035660e734d4bff8bddd4e15f78537f78d95a031642bd230001a8a9ff366",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11615.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11664.parquet",
+      "sha256": "a0b2fdd3127cdd2b3afc4770bac79a6d0a4a5c1eb6626c5fbb7b4186174d9cae",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11664.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11696.parquet",
+      "sha256": "17df48dccbcc044343d0f031eb3ece30bca5e93de9c03e68942b7ceefe27909a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11696.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11748.parquet",
+      "sha256": "444ab998fad9e70224a0d4206055eba83b649b350499cb224d1c7ae6698f8790",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11748.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11769.parquet",
+      "sha256": "3ac8648f437e65ce6801851a8a6458af4a0c83bef4ac25b7b8659c46f6015286",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11769.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11790.parquet",
+      "sha256": "3e3ff9ec042ea6c95138e44f05388a250ea9d230e437d008e35b99de2068d5ff",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11790.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11808.parquet",
+      "sha256": "af79becd33bc0746590ff6f8b99f7840a5f1f56be305a1cbc331bc4b5be19933",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11808.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11629.parquet",
+      "sha256": "75f4ee69c23d80c97330df745937d9912f2cc44f959b4e055a9fa8cd70655c03",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11629.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11672.parquet",
+      "sha256": "18f832e99c8241b1f184b77f139d6f1384040c0c2c08489e8c9dc8e07f438fc1",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11672.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11704.parquet",
+      "sha256": "86b44ad79e4e592c580d181d8442373a3b5d2bc04c6d558f8e2645d151ce02d7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11704.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11731.parquet",
+      "sha256": "047141e9cb00c92bbfeea9a118d00fdcfb993aa74f271ae4e160ebc3961093db",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11731.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11753.parquet",
+      "sha256": "3806553e99995287c132633c2842e509b0cc725a2e459a3aeb64540a736e42c6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11753.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11774.parquet",
+      "sha256": "c9da751531436edcca6a5eb4fabdbe4302938da97265299cd2085dcf8b3dff39",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11774.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11561.parquet",
+      "sha256": "00d5fca794cda55b425615a48a05aad52959daf0c409ca9b9c20f09c8350fb92",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11561.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11643.parquet",
+      "sha256": "419a286ab5c6d1805f46e6b7236b0583dce3d420592dae8fedc23b7e2d8913bf",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11643.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11712.parquet",
+      "sha256": "81c026fab033b38833669079c80a8e0d9d3fd04625be539ac394059c65656cee",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11712.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11737.parquet",
+      "sha256": "5ebbe537d12caae29f36944f5121ed3b03ddc2eaf3c628e47afe09e8963c5b12",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11737.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11654.parquet",
+      "sha256": "7fc353840374a95ae79eb52216b54ef0515928ac6d5326de4d12ec0968deec68",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11654.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11690.parquet",
+      "sha256": "4736a8e86b90ab572d8d9255a6d04894d06cfdb1de03d219859989b70737aee1",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11690.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11718.parquet",
+      "sha256": "6c97a4531513e59aa3d97266901e92813cc6595ff12b4971520321161d50a5a9",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11718.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11742.parquet",
+      "sha256": "9552d95b2245ebb2849e9e7dac60edae93af73482dabedd2928494bda69edaa8",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11742.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11616.parquet",
+      "sha256": "186bb7e3bdfa650b8877a7e5d70f117ba7d9ee2ba7a7745e27828488bdf9cb29",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11616.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11664.parquet",
+      "sha256": "90ba959e872b07325228d9cae72d496f9c016415ca7985ac9b12e8111efdad35",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11664.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11697.parquet",
+      "sha256": "903ede2a8f272dd8aff552f8e8429ac892fd29590569235d3cab1faee26ca918",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11697.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11725.parquet",
+      "sha256": "ac9a5f12eeaffc4a992904d9e14f151b462fea51b831e2528068c45034925e5b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11725.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11748.parquet",
+      "sha256": "bcd5620e7708e7044e1f3890937d6ea0274cb529acfd66827739832a2d6d8c7b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11748.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11631.parquet",
+      "sha256": "91cc142281b3c5d20f92400ae6ee392457cc510a5e1fb45234cdb858c4c90554",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11631.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11673.parquet",
+      "sha256": "7e15980ea1d14dd7732781b542c75e7e194ce1109cb8357d35ee326b84db1d3c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11673.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11704.parquet",
+      "sha256": "08657d61b52e225191f06114b087833f44ba33fae127b0f57750487f85f6ef30",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11704.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11732.parquet",
+      "sha256": "574566e90ea0d86fdcfbaa107e29b69e488c5aa7aa0b88acc1e7eec1373b99db",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11732.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11644.parquet",
+      "sha256": "afd85d179924b14d8153286fd98c0ed673755e82dd30e3628eb14f632c98008b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11644.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11682.parquet",
+      "sha256": "005a955ec66523c83047882986e8503902f4fec977d3eaed0e903ef9197cd4bf",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11682.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11712.parquet",
+      "sha256": "597802c11e98119c4d4016a25e5e3b2b4d477a14c2c0ff4c05602317baf1ac11",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11712.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11738.parquet",
+      "sha256": "03d7f94b14b75f90f695df17926de0a1a4183f8380b64499a2b912b36bd02b0b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11738.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11759.parquet",
+      "sha256": "fea32e0f9361a6c8fb437f315f119c5427c6ce277ddfe18f99c5735c15a0036b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11759.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11596.parquet",
+      "sha256": "200b3d22b27598cb38cf8701a1140de48ed3828a7b84142e90fcafbeb9d20950",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11596.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11655.parquet",
+      "sha256": "521773aa11f0a04a32ec346166925836cc6f6186d25723df25d884c841ddb1f6",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11655.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11690.parquet",
+      "sha256": "b811c78cdb439befde61704c4010b4043387ca71c53df592b1d9d7d3cf3edfd5",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11690.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11719.parquet",
+      "sha256": "4892e4d3c846c271289000e1dabacc00ceb9f7cd3b36e7493da45490bdea7c11",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11719.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11743.parquet",
+      "sha256": "1aabea913229c010cc917aca375d5d60c7a3c6eed54a16aeddd78a0003fed448",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11743.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11664.parquet",
+      "sha256": "bb728e7103a8e3610e0160c34ff72a6cea390918af20f944690606641fc1124c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11664.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11698.parquet",
+      "sha256": "62f00e42365230ef30a453da0126ffc8406ac29eadd11f2fac0451cd8a99ecd7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11698.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11725.parquet",
+      "sha256": "b406176d82485621519504eee2ba22ca35486310188c0e645fc649bd5b42fccd",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11725.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11770.parquet",
+      "sha256": "f812727a3ad63bf9606e3e5ab4555d1cc2c7101472fbcd150187efb034a667ad",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11770.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11790.parquet",
+      "sha256": "b5342779df777539d3d1f0b4054fbb15d9bd701b986bd664cafc6b44614f14e3",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11790.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11809.parquet",
+      "sha256": "5acf0203891d13c2965134e7ae40fee7729776a77ad213fa4f3c7f9f4bafe1a7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11809.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11632.parquet",
+      "sha256": "c1d82bbfb07f9ee97b66c39f466c40d32646fb1b46d25b525764f4db6d8e232c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11632.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11732.parquet",
+      "sha256": "28b59f6be7030821008ac46f1c7250478ccae00683355f8915a075942df65e0c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11732.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11754.parquet",
+      "sha256": "dd3d9d8a8868691069e0d95fa731ea0eebbc5bd0c756704c22e785ac4c2c7d77",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11754.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11775.parquet",
+      "sha256": "4c6d3060327ee0d54b0696568836a3e0d4e2eb1f73ad8be1ee4f28f696cfe7c3",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11775.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11795.parquet",
+      "sha256": "270ad80f7f6481c333b0a923da5bb29ebe658e88461afb56aa706a7b60438498",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11795.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11814.parquet",
+      "sha256": "691e9f5255f01de01a8866bdd8dcb1d1235d302b1c04bf5e8748e0b25169e396",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11814.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11565.parquet",
+      "sha256": "935447598b877430f823dbf21a52baa26ba5dcc7ce5b88bbccb8d3c6231a6f9a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11565.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11644.parquet",
+      "sha256": "07a3d5367382afa8f2df389fe674542e5af57c1e25379374859654c3cf59a70a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11644.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11712.parquet",
+      "sha256": "4005675e14e30c3d6f3f370c3e8e54f2fcd3d6f504c026384f3b34d33b892e12",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11712.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11738.parquet",
+      "sha256": "bb56384e70b48ff334501694f6fc031a5063fc354c404cae330cdd932b3ceb40",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11738.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11760.parquet",
+      "sha256": "ff3b3ecf13ed5533f9a3943a6d76441b28d65bf08190897d808e102d79c69b1b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11760.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11781.parquet",
+      "sha256": "afd81aecdeb30a7438ac04b0eb3c2e58129033e520f4ef2755161e9dfaee1b61",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11781.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11597.parquet",
+      "sha256": "9653435972eaee0b4d0f41ef06b00b6bfe56da6829df64a9e5cbc042c7ce5385",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11597.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11656.parquet",
+      "sha256": "676e854adaf6cf16f85f826dc0b278387435b3d06f3ded429fc03a1c931049d3",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11656.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11690.parquet",
+      "sha256": "8e9d61d774c2734a671c928a5d2801ba2213395886ebd46033a8766d008faf8f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11690.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11720.parquet",
+      "sha256": "4d0e3913053f6df568ebf12d9c18f6a88cd7f9b43d5d052ddcdeb0ae81422eea",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11720.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11765.parquet",
+      "sha256": "9eeb70a1aeb1d4d1f3062dc0daec94bbd035607a35bff1ee36ea49718dd8265e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11765.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11786.parquet",
+      "sha256": "a4bf573087e8a3a26080ee62213c25590da8d46606fdf8e9328f12d4bc507404",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11786.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11617.parquet",
+      "sha256": "732858a06dcb623fd57387d85b062a11f483d7f75c5a87e5b18e9ca548f8fea7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11617.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11665.parquet",
+      "sha256": "6314669784ab675ed3e47de52ce1f7c1a5732dd2b19fea1de79a2788dbb2406f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11665.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11698.parquet",
+      "sha256": "88899deb468c250a11eeda4cf7f46ea12e18e5291b71a8afed384826363a3ea5",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11698.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11726.parquet",
+      "sha256": "e4b2a1cdd6970684efb500ed01f604b4fa10123040457e1f9a1f8a050a9f405d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11726.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11749.parquet",
+      "sha256": "45a2d73de1e2edf7ff50890dc0199e1d03cd32509e24503a6e1c250ae1953ff3",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11749.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11770.parquet",
+      "sha256": "9317882080d42909933bb8a65468cbcfdfa6c64e9514b3e2fadc9705b70c054d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11770.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11632.parquet",
+      "sha256": "6956fe6d5d78a20a68b91eda37c056e5d5a9145963f1f1cf1db8604aca8a6bd0",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11632.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11674.parquet",
+      "sha256": "608cc1bbd97174f7b1ce17af52021e68d0af8ab93d71718a1f5363008e181f52",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11674.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11705.parquet",
+      "sha256": "801fe4f3d23b4a508be6565acc0e6231c416b5814cded5c6e3c57bf5ee1108fe",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11705.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11732.parquet",
+      "sha256": "58ad9b9230404ff4d0380da2481a1438b41e3c9bb2321adf4d17ef38590f266f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11732.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11754.parquet",
+      "sha256": "b44a114da0abe8048b3d925ecf1bfb6bfd5d5d39ae855e68f3602b55293524e7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11754.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11776.parquet",
+      "sha256": "ef0cb6086d0abf700c7d6249df97198b25b88a6b172eecae89df6301c1964871",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11776.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11569.parquet",
+      "sha256": "2085ad3b8705fb7057ed397eba6c5131593f559593cc297ae3adc61d9c9213ba",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11569.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11644.parquet",
+      "sha256": "b2471317d8e73a36c348d4953c6650dbc94e9b7107e2f7933264e64fe0cd8cf5",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11644.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11683.parquet",
+      "sha256": "338cb3f3863c6c2526ad146d9e62f5b94bddc2877e70a9b5b4e6468e69dadf8f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11683.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11738.parquet",
+      "sha256": "8fde44302c140236112482893367fefa62588fbfc61660942803f9cd8ebffa21",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11738.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11760.parquet",
+      "sha256": "a2f81bf6b787310334349a22660ebce8febb4d1b8d98e3f8177dc7df068f4ec3",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11760.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11781.parquet",
+      "sha256": "f6971b1afef417f474ec7dc202b25b3e1986ea7deadb48314be088cc85c052e8",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11781.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11656.parquet",
+      "sha256": "9306089fe9dfebd3236322ff8589ce5a56bc6891f0c72277064992fe0be1ee2c",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11656.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11691.parquet",
+      "sha256": "5bab754a1a153ee8473ee607904b9dd3611ddfddacdedbdf7a86b0a2e8bfeba4",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11691.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11720.parquet",
+      "sha256": "4816837558e57e8449c42b71503422797bab99dd66c7ced0e90cdfffb491653d",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11720.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11744.parquet",
+      "sha256": "ad3d70658813ab8c11f4289deb4218b7087135c7f6675c8e424b3b6cc10f40b1",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11744.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11765.parquet",
+      "sha256": "710d40bb006c099cccc71b6474af90f324b68d7d322e1369012572f85fa6f045",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11765.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11786.parquet",
+      "sha256": "1e2600e57dd08b931d5f7318e3ad3e47b1098ae13366e223aeb939c99f78d58b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11786.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11619.parquet",
+      "sha256": "11a64e4cbe041715980caea52d7011060be287ea3f1f00ded8d10de754e713f2",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11619.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11666.parquet",
+      "sha256": "89fce16458867aa85ddae7cb13de3613f30d430528841e4bfdc055157a360646",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11666.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11698.parquet",
+      "sha256": "3c611677007eb18cc3911acd27c3a5b358faa43a660dafc1cdc8c6d2a0c3c939",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11698.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11726.parquet",
+      "sha256": "e2aa13eefe0f08be200dd39b2da0052e7a58e66495c3ee3d91e372357cf7a6a7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11726.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11749.parquet",
+      "sha256": "0b76594695fa7924a88791fae27810dcac8b1afe9a3d182a57bb8890446b6864",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11749.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11770.parquet",
+      "sha256": "8462227779d6ac8a91b98f95277514bd7565169cbd48a50c5c8e083c839864ad",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11770.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11706.parquet",
+      "sha256": "cdf93405467680ec123768b8b1febc1cc8fb7d2987426fe8268e4606cc094b94",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11706.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11733.parquet",
+      "sha256": "5b03621694fcb59c13151e2961a646d8cfe349799bc98895fc39ec8c0d3eaabd",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11733.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11754.parquet",
+      "sha256": "9c86b9062ce4cbf037814d94ec0138bfd96175388d12518f2c0240008888ca40",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11754.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11776.parquet",
+      "sha256": "19eb4f1b66e27ccc55234035dac5129609cc0955803632b5d5b33911a38d9e2b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11776.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11796.parquet",
+      "sha256": "551bfe9cb897c43c7b5e42483e9f0d4ec877e6750de7b19af616142264516a75",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11796.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11814.parquet",
+      "sha256": "2d1eff19df1094bd0408e1f6a46fd148c0390e9765fccb6c31d91a3f1bf0b5a4",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11814.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11573.parquet",
+      "sha256": "fba76135519461525c0d28e8418dae1ebcb4c83db52cd038dc22f9fb5e4fc83a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11573.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11645.parquet",
+      "sha256": "3c7b40496b7ad3b83a03f8cff693d3e432c4495376ce3183c06e2e9d42b67511",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11645.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11684.parquet",
+      "sha256": "9bd3a8eeb4b5f8321017974d7b41440decd94bcde4aa9ed05f5f0abc55a861ce",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11684.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11713.parquet",
+      "sha256": "e6d04ef83cc7cca6ccaee161389643fe51a9bd658c782f7b36536d0fd88f258e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11713.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11738.parquet",
+      "sha256": "1ed3cf37693163a7b537842866fe6acad68b7ba3cb8765b718fdf529404f0955",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=players/dataset_version=api-football-v3/fixture-11738.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11760.parquet",
+      "sha256": "ae8c3f59b0179eb247acf54543cab461225c696f7e833b1a93b1c1df5e0cc6ab",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11760.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11600.parquet",
+      "sha256": "1226fac216a16893309c0898abcba1059104042d8d97ced6075bad8aa866ebfb",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11600.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11656.parquet",
+      "sha256": "9ee2474a682944465e0d1c14c0eb27aee48dc0a51be750d3d8b2811b465375dc",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11656.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11692.parquet",
+      "sha256": "745489646bcb8c7220faeeac0297bb68eaba951fb4a3d0875b527ef7474e16bd",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11692.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11720.parquet",
+      "sha256": "cbc5b37d19cd68ff57fd922fb7b8d0e74f149023aa7def676a177009b3f2e2e1",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11720.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11744.parquet",
+      "sha256": "296051e4204c02589d423e0ddb5b8124394ece4b6fa795e86a4c7e1fe18efc44",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11744.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11766.parquet",
+      "sha256": "609625abe0e18a8093b51c4dc5e289013c1377f5f2d9abf2797584db4e41143a",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11766.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11620.parquet",
+      "sha256": "6c8001f9cdcf7cfdb45cf4ce062a815ea41b76760da9ad13ab131cee23d3e570",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11620.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11667.parquet",
+      "sha256": "a850acfccd3896e53f2377fe1186f0ac643725f94a7742302ca23bec356f299b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11667.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11699.parquet",
+      "sha256": "08d4e6675e145da5711cedfb3de21594357f451f37ba9baae867163db615356f",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11699.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11726.parquet",
+      "sha256": "7fd948563a1cc773b2afbf8a738c58ee57deb6caae48e24d6385371eb762c307",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11726.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11750.parquet",
+      "sha256": "f75fc328868b74cd4de962188218a2df69fd9a9efd8fde217a8d1fcebab57d76",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11750.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11771.parquet",
+      "sha256": "0d8401773b0acc1707bc9684dd2c571b1e6dee7dfcef146aafb343791ae16312",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11771.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11633.parquet",
+      "sha256": "dd3a7a232700140450f42f25612a236cd927150db6c46f2a9f381e2cba86952e",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11633.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11675.parquet",
+      "sha256": "44919bcc827a2138f294e2168302ab35873fb0ce837ba79d4977e339be2029a4",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11675.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11706.parquet",
+      "sha256": "564e2d733b6a934d5744b94515424aff218ef4c4b6d6093e2c8ac61763f8f8b7",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=statistics/dataset_version=api-football-v3/fixture-11706.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11733.parquet",
+      "sha256": "69936a882bd03258a1de1d53c393acb045b74858fc5b77299cf78e5c51613008",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11733.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11755.parquet",
+      "sha256": "d80813a836802c0755fda9ae9c310420abf832695f690ef9c8180c55865c2b3b",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=lineups/dataset_version=api-football-v3/fixture-11755.parquet"
+    },
+    {
+      "path": "historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11776.parquet",
+      "sha256": "5511709486d71accdb5c00675c432bee74f9c296db6c77bc503a67fe4e4adc28",
+      "r2_key": "historical-deep-data/schema-v1/_control/mission-029/projection/historical/parquet/competition=Premier-League/season=2017/entity_type=events/dataset_version=api-football-v3/fixture-11776.parquet"
+    }
+  ],
+  "reused_results": 7638,
+  "run_id": "39463571503",
+  "code_revision": "164e7093d9cd5eb8cb79606b65aae6d44c234eb1",
+  "observed_at": "2026-10-20T18:48:43.627698+00:00",
+  "total_cap": 240000,
+  "daily_cap": 130000,
+  "provider_reserve": 5000,
+  "fixture_ids_sha256": "6b35d77a2913bf45b31f15996d558f94d0342766f22a0d636457ff5d1baffbe4",
+  "quota_remaining": 86568,
+  "reason_class": "RuntimeError",
+  "reason_code": "MISSION029_SLICE_ENDED",
+  "complete_fraction": {
+    "lineups": 0.2741582261155215,
+    "statistics": 0.275663837941418,
+    "events": 0.2723788666849165,
+    "players": 0.27278948809197917
+  },
+  "coverage_target": {
+    "lineups": 0.95,
+    "statistics": 0.9,
+    "events": 0.9,
+    "players": 0.85
+  },
+  "coverage_met": false
+}
