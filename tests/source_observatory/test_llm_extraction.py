@@ -13,7 +13,7 @@ from robin.source_observatory.store import AppendOnlyStore
 
 t = datetime(2026, 10, 26, tzinfo=UTC)
 text = 'Mon pari : victoire de Reims cote 1,85'
-prompt_sha256 = '2c2ba78bc72317930f1709a61c5eacb05eda0c054b830d9f4cdd28aefd012142'
+prompt_sha256 = '69dafca29b2de56467427b0ff475bbcfaef27491d52a4c685304b2a8f567fe70'
 
 
 def seeded(tmp_path, source_text=text):
@@ -65,7 +65,7 @@ def test_drafts_have_existing_lineage_and_prompt_journal(tmp_path):
     assert store.path.read_bytes().startswith(prefix)
     record = AppendOnlyStore(store.path).entities()[-1]
     assert record.prompt_sha256 == prompt_sha256
-    assert record.drafts[0].extraction_metadata() == row
+    assert record.drafts[0].extraction_metadata() | {'prompt_sha256': prompt_sha256} == row
     assert not any(isinstance(entity, models.Contribution) for entity in store.entities())
     assert text not in store.path.read_text(encoding='utf-8')
 
@@ -93,9 +93,9 @@ def test_noise_and_invalid_jsonl_lines_are_not_contributions(tmp_path):
     store = seeded(tmp_path)
     output = '\n'.join(('Here is the result:', '```jsonl', '{bad}', '[]',
                         response(pick(), id='wrong'), response(pick()), '```', 'Done.'))
-    assert len(extract(store, output=output)) == 1
+    assert extract(store, output=output) == []
     record = store.entities()[-1]
-    assert record.rejected_lines == 7
+    assert record.rejected_lines == 8
     assert record.prompt_sha256 == prompt_sha256
 
 
@@ -150,10 +150,10 @@ def test_unknown_version_and_wrong_text_refuse_before_route(tmp_path):
 def test_excerpt_must_be_literal_and_bounded(tmp_path):
     source_text = text + ' ' + 'synthetic ' * 100
     store = seeded(tmp_path, source_text)
-    row = extract(store, source_text, output=response(pick(), extrait_preuve=source_text),
+    row = extract(store, source_text, output=response(pick(), extrait_preuve=text),
                   preuve_permise='https://example.invalid/permission')[0]
     excerpt = row['extraits_preuve'][0]
-    assert len(excerpt['text']) == 500
+    assert excerpt['text'] == text
     assert source_text[excerpt['start']:excerpt['end']] == excerpt['text']
     validate_contribution(row)
 
@@ -241,17 +241,22 @@ def test_canonical_markets_keep_literal_odds_but_not_resolved_match(tmp_path, so
     assert row['match_id'] is None
 
 
-def test_no_bet_never_invokes_the_route(tmp_path):
+def test_no_bet_invokes_route_and_journals_empty_response(tmp_path):
     from robin.source_observatory.llm_extraction import extract_contributions
 
     source_text = 'Le stade ouvre à 18 heures.'
     store = seeded(tmp_path, source_text)
 
-    def forbidden(request):
-        raise AssertionError('route must not run without a bet')
+    requests = []
+
+    def route(request):
+        requests.append(json.loads(request.splitlines()[-1]))
+        return response(extrait_preuve='')
 
     assert extract_contributions(source_text, store=store, version_id='v', author_id='a',
-                                 observed_at=t, route=forbidden) == []
+                                 observed_at=t, route=route) == []
+    assert requests == [{'id': 'v', 'texte': source_text}]
+    assert store.entities()[-1].drafts == ()
 
 
 def test_missing_frozen_digest_refuses_before_any_append(tmp_path):

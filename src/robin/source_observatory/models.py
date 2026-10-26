@@ -145,6 +145,8 @@ class EvidenceExcerpt:
             raise TypeError('excerpt offsets must be integers')
         if not 0 <= self.start < self.end:
             raise ValueError('excerpt requires 0 <= start < end')
+        if self.end - self.start > 500:
+            raise ValueError('necessary excerpt must be <= 500 characters')
         if self.text is not None:
             _text(self.text, 'excerpt')
             if len(self.text) > 500 or len(self.text) != self.end - self.start:
@@ -606,10 +608,14 @@ class ExtractionRecord:
     rejected_lines: int
 
     def __post_init__(self) -> None:
+        from .llm_extraction import FROZEN_PROMPT_SHA256
+
         _text(self.extraction_id, 'extraction_id')
         _text(self.version_id, 'version_id')
         for digest in (self.text_sha256, self.prompt_sha256, self.output_sha256):
             _hash(digest)
+        if self.prompt_sha256 != FROZEN_PROMPT_SHA256:
+            raise ValueError('extraction prompt sha256 differs from frozen prompt')
         _instant(self.observed_at, 'extraction observation')
         if type(self.rejected_lines) is not int or self.rejected_lines < 0:
             raise ValueError('nonnegative rejected line count required')

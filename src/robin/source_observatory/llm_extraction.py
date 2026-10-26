@@ -25,8 +25,7 @@ from hashlib import sha256
 from pathlib import Path
 from typing import Any
 
-from .extractor import _normal
-from .extractor import extract_contributions as deterministic_extract
+from .extractor import _clauses, _history, _hypothetical, _normal, _picks, _team_name
 from .models import (
     Contribution,
     EvidenceExcerpt,
@@ -39,6 +38,8 @@ from .models import (
 )
 from .schema_validation import validate_contribution
 from .store import AppendOnlyStore
+
+FROZEN_PROMPT_SHA256 = '69dafca29b2de56467427b0ff475bbcfaef27491d52a4c685304b2a8f567fe70'
 
 
 @dataclass(frozen=True)
@@ -86,11 +87,11 @@ class AgyRoute:
 
 def _frozen_prompt(prompt_path: Path, freeze_path: Path) -> tuple[str, str]:
     try:
-        raw = prompt_path.read_bytes()
+        raw = prompt_path.read_bytes().replace(b'\r\n', b'\n')
         freeze = freeze_path.read_text(encoding='utf-8')
-        hashes = re.findall(r'^sha256\s*:\s*([0-9a-f]{64})\s*$', freeze, re.MULTILINE)
+        hashes = re.findall(r'^sha256_lf\s*:\s*([0-9a-f]{64})\s*$', freeze, re.MULTILINE)
         digest = sha256(raw).hexdigest()
-        if hashes != [digest]:
+        if hashes != [digest] or digest != FROZEN_PROMPT_SHA256:
             raise ValueError('prompt sha256 differs from frozen prompt')
         return raw.decode('utf-8'), digest
     except (OSError, UnicodeError):
@@ -116,7 +117,8 @@ def _envelope(line: str, version_id: str) -> dict[str, Any]:
     if (not isinstance(value, dict)
             or set(value) != {'id', 'contributions', 'extrait_preuve'}
             or value['id'] != version_id or not isinstance(value['contributions'], list)
-            or not isinstance(value['extrait_preuve'], str)):
+            or not isinstance(value['extrait_preuve'], str)
+            or len(value['extrait_preuve']) > 500):
         raise ValueError('invalid extraction envelope')
     for pick in value['contributions']:
         if (not isinstance(pick, dict) or set(pick) != {
@@ -137,38 +139,48 @@ def _envelope(line: str, version_id: str) -> dict[str, Any]:
 
 
 def _canonical_pick(market: str, selection: str, line: str | None, text: str) -> bool:
-    fixed = {
-        'double_chance': {'home_or_draw', 'draw_or_away', 'home_or_away'},
-        'total': {'over', 'under'}, 'btts': {'yes', 'no'},
-    }
+    clause = re.sub(r'\bprix\b', 'cote', _normal(text))
     if market in ('total', 'handicap'):
         if line is None:
             return False
     elif line is not None:
         return False
-    if market in fixed:
-        return selection in fixed[market]
-    if market == 'score_exact':
-        return re.fullmatch(r'\d+-\d+', selection) is not None
-    if market == '1N2' and selection in ('home', 'away', 'draw'):
-        return True
-    if market in ('1N2', 'handicap'):
-        return (re.fullmatch(r"[a-z0-9][a-z0-9 '.-]*", selection) is not None
-                and re.search(r'(?<!\w)' + re.escape(selection) + r'(?!\w)', _normal(text))
-                is not None)
-    if market == 'combine':
-        # The prompt has no closed leg syntax: retain only an unresolved draft.
+    if market == '1N2' and selection in ('home', 'away'):
         return False
-    return False
+    if market in ('1N2', 'handicap') and _team_name(selection) != selection:
+        return False
+    if market == 'total':
+        if line is None or Decimal(line) <= 0 or not re.search(
+                r'\b(?:over|under|plus de|moins de)\s+' + re.escape(line).replace(r'\.', '[.,]')
+                + r'\s+buts?\b', clause):
+            return False
+    if market == 'handicap' and (line is None or not line.startswith(('+', '-'))):
+        return False
+    return any(p.marche == market and p.selection == selection and (
+        p.ligne == line or (p.ligne is not None and line is not None
+                           and Decimal(p.ligne) == Decimal(line))) for p in _picks(clause))
 
 
 def _literal_odds(value: Any, text: str) -> tuple[Decimal | None, bool]:
     if value is None:
         return None, True
     quote = str(value).replace(',', '.')
-    tokens = {m[0].replace(',', '.') for m in re.finditer(
-        r'(?<![\w.,])\d+(?:[.,]\d+)?(?!\w|[.,]\d)', text)}
-    if re.fullmatch(r'[1-9]\d*(?:\.\d+)?', quote) is None or quote not in tokens:
+    if re.fullmatch(r'[1-9]\d*\.\d+', quote) is None:
+        return None, False
+    clause = _normal(text)
+    tokens = []
+    for match in re.finditer(r'(?:\b(?:cote|prix)\s*(?:a\s+)?|@\s*)'
+                             r'([1-9]\d*[.,]\d+)(?!\w|[.,]\d)', clause):
+        prefix = clause[max(0, match.start() - 40):match.start()]
+        suffix = clause[match.end():]
+        if re.search(r'\b(?:ancienne|adverse|observee|relevee|bookmaker|probabilite|'
+                     r'statistique|mise|xg)\b[^@()]*$', prefix):
+            continue
+        if re.match(r'\s*(?:%|€|buts?\b|corners?\b|cartons?\b|euros?\b|eur\b|'
+                    r'xg\b|ou\b|/)', suffix):
+            continue
+        tokens.append(match[1].replace(',', '.'))
+    if quote not in tokens or len(set(tokens)) != 1:
         return None, False
     return Decimal(quote), True
 
@@ -177,13 +189,25 @@ def _draft(pick: dict[str, Any], *, text: str, excerpt: str, version: Publicatio
            publication: Publication, author_id: str, observed_at: datetime,
            preuve_permise: str | None, identity: str, slot: int) -> Contribution:
     start = text.find(excerpt)
-    if not excerpt.strip() or start < 0:
+    if not excerpt.strip() or start < 0 or len(excerpt) > 500:
         raise ValueError('nonliteral evidence excerpt')
-    end = min(start + len(excerpt), start + 500)
-    odds, literal = _literal_odds(pick['cote_declaree'], text)
+    end = start + len(excerpt)
+    # Validate the containing source clause too: cropping away a negation must
+    # not turn a refusal into a selection. Source prose never configures guards.
+    clauses = [clause for begin, finish, clause in _clauses(text)
+               if begin < end and finish > start]
+    if len(clauses) != 1:
+        raise ValueError('one asserted evidence clause required')
+    clause = _normal(clauses[0])
+    if (not _picks(clause) or _hypothetical.search(clause) or _history.search(clause)
+            or re.search(r"\b(?:ne\b[^.;!?]*\b(?:pas|jamais|plus|rien|aucun)\b|"
+                         r"sans choix\b|pas de\b|aucun\b|"
+                         r"(?:je|on) (?:joue|mise|parie|prends) pas\b)", clause)):
+        raise ValueError('evidence is not an asserted selection')
+    odds, literal = _literal_odds(pick['cote_declaree'], text[start:end])
     market, selection = pick['marche'], pick['selection']
     line = pick['ligne'].replace(',', '.') if pick['ligne'] is not None else None
-    canonical = _canonical_pick(market, selection, line, text)
+    canonical = _canonical_pick(market, selection, line, text[start:end])
     reason = 'match_non_rapproche'
     if not literal:
         reason = 'cote_non_litterale'
@@ -226,8 +250,8 @@ def extract_contributions(
     """Verify lineage and prompt before invoking a route; append only safe drafts.
 
     Pass ``AgyRoute.from_env()`` explicitly for production. For tests supply an
-    in-memory callable. Every nonempty invalid JSONL line is rejected as a whole;
-    valid surrounding lines survive. Blank lines are ignored. Drafts are held
+    in-memory callable. Exactly one JSONL envelope is allowed for this version;
+    prose, Markdown and multiple envelopes invalidate the whole response. Drafts are held
     in ExtractionRecord, never directly added to accepted Contribution entities.
     """
     prompt, prompt_digest = _frozen_prompt(prompt_path, freeze_path)
@@ -246,47 +270,29 @@ def extract_contributions(
         raise ValueError('extraction precedes usable version')
     publication = next(p for p in entities if isinstance(p, Publication)
                        and p.publication_id == version.publication_id)
-    # Reuse conservative French intent recognition, not the deterministic picks:
-    # ambiguous/unknown picks can still be interpreted by the injected route.
-    eligible = deterministic_extract(
-        text, source_id=publication.source_id, publication_url=publication.publication_url,
-        author_id=author_id, publication_id=publication.publication_id,
-        version_id=version_id, observed_at=observed_at,
-    )
-    # The deterministic extractor also reports negated picks as ambiguous rows.
-    # An explicit refusal is not permission for a model to manufacture a bet.
-    has_bet = any(not re.search(
-        r'\b(?:ne .{0,35}pas|aucun pari|pas de pari|sans pari|'
-        r'(?:je|on) (?:joue|mise|parie|prends) pas)\b',
-        _normal(text[row['extraits_preuve'][0]['start']:row['extraits_preuve'][0]['end']]),
-    ) for row in eligible)
-    output = ''
-    if has_bet:
-        output = route(prompt + '\n' + json.dumps({'id': version_id, 'texte': text},
-                                                ensure_ascii=False))
-        if not isinstance(output, str):
-            raise ValueError('route must return JSONL text')
+    output = route(prompt + '\n' + json.dumps({'id': version_id, 'texte': text},
+                                            ensure_ascii=False))
+    if not isinstance(output, str):
+        raise ValueError('route must return JSONL text')
     output_digest = text_fingerprint(output)
     identity = text_fingerprint(f'{version_id}|{prompt_digest}|{output_digest}|'
                                 f'{observed_at.isoformat()}|{author_id}|{preuve_permise}')
     drafts: list[Contribution] = []
     rejected = 0
-    for line in output.splitlines():
-        if not line.strip():
-            continue
-        try:
-            envelope = _envelope(line, version_id)
-            pending = [_draft(
-                pick, text=text, excerpt=envelope['extrait_preuve'], version=version,
-                publication=publication, author_id=author_id, observed_at=observed_at,
-                preuve_permise=preuve_permise, identity=identity, slot=len(drafts) + index + 1,
-            ) for index, pick in enumerate(envelope['contributions'])]
-        except (ValueError, TypeError, ArithmeticError):
-            rejected += 1
-            continue
-        drafts.extend(pending)
+    lines = [line for line in output.splitlines() if line.strip()]
+    try:
+        if len(lines) != 1:
+            raise ValueError('exactly one JSONL envelope required')
+        envelope = _envelope(lines[0], version_id)
+        drafts = [_draft(
+            pick, text=text, excerpt=envelope['extrait_preuve'], version=version,
+            publication=publication, author_id=author_id, observed_at=observed_at,
+            preuve_permise=preuve_permise, identity=identity, slot=index + 1,
+        ) for index, pick in enumerate(envelope['contributions'])]
+    except (ValueError, TypeError, ArithmeticError):
+        rejected = max(1, len(lines))
     store.append(ExtractionRecord(
         'extraction:' + identity, version_id, version.text_sha256, prompt_digest,
         output_digest, observed_at, tuple(drafts), rejected,
     ))
-    return [draft.extraction_metadata() for draft in drafts]
+    return [draft.extraction_metadata() | {'prompt_sha256': prompt_digest} for draft in drafts]

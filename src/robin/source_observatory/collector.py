@@ -15,7 +15,6 @@ from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from email.utils import parsedate_to_datetime
 from hashlib import sha256
-from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any, Protocol
 from urllib.error import HTTPError
@@ -35,6 +34,7 @@ from .models import (
     instant_text,
     text_fingerprint,
 )
+from .public_formats import check_declarations, clean_text, decode_document, html_publications
 from .store import AppendOnlyStore
 
 USER_AGENT = 'RobinSourceObservatory/1.0'
@@ -271,88 +271,31 @@ def _local(tag: str) -> str:
     return tag.rsplit('}', 1)[-1]
 
 
-class _Articles(HTMLParser):
-    def __init__(self, url: str) -> None:
-        super().__init__(convert_charrefs=True)
-        self.url = url
-        self.posts: list[PublicPost] = []
-        self.depth = 0
-        self.skip = 0
-        self.parts: list[str] = []
-        self.identifier: str | None = None
-        self.post_url: str | None = None
-        self.date: datetime | None = None
-        self.time_candidate: tuple[datetime | None, bool, int] | None = None
-
-    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        values = dict(attrs)
-        if not self.depth and (tag == 'article' or (tag == 'div' and values.get('id')
-                and 'post' in (values.get('class') or '').split())):
-            self.depth = 1
-            self.identifier, self.post_url, self.date = values.get('id'), None, None
-            self.time_candidate = None
-            self.parts = []
-            return
-        if self.depth:
-            if tag not in ('br', 'img', 'meta', 'link', 'input', 'hr', 'source', 'wbr'):
-                self.depth += 1
-            if tag in ('script', 'style'):
-                self.skip += 1
-            if tag == 'time' and self.date is None:
-                explicit = ('datePublished' in (values.get('itemprop') or '').split()
-                            or 'pubdate' in values
-                            or bool({'published', 'entry-date'} & set(
-                                (values.get('class') or '').split())))
-                self.time_candidate = (_announced(values.get('datetime')), explicit, len(self.parts))
-            if tag == 'a' and self.post_url is None and 'bookmark' in (values.get('rel') or '').split():
-                href = values.get('href')
-                target = urljoin(self.url, href) if href else None
-                if target and target.rstrip('#') != self.url.rstrip('#'):
-                    self.post_url = target
-
-    def handle_endtag(self, tag: str) -> None:
-        if self.depth:
-            if tag == 'time' and self.time_candidate is not None:
-                candidate, explicit, start = self.time_candidate
-                label = _fold(''.join(self.parts[start:]))
-                if self.date is None and (explicit or re.search(
-                        r'\b(?:publiee?|publication|published|posted)\b', label)):
-                    self.date = candidate
-                self.time_candidate = None
-            if tag in ('script', 'style'):
-                self.skip = max(0, self.skip - 1)
-            if tag not in ('br', 'img', 'meta', 'link', 'input', 'hr', 'source', 'wbr'):
-                self.depth -= 1
-            if not self.depth:
-                if not self.post_url and not self.identifier:
-                    raise ValueError('publication without public permalink')
-                target = self.post_url or (self.url + '#' + self.identifier
-                                           if self.identifier else self.url)
-                self.posts.append(PublicPost(target, ''.join(self.parts), self.date))
-
-    def handle_data(self, data: str) -> None:
-        if self.depth and not self.skip:
-            self.parts.append(data)
+def _feed_value(element: Any) -> str:
+    # Keep XHTML tags and privacy attributes until the passive cleaner sees them.
+    return (element.text or '') + ''.join(
+        ElementTree.tostring(child, encoding='unicode') for child in element)
 
 
-def parse_publications(body: bytes, url: str) -> tuple[PublicPost, ...]:
-    declarations = re.sub(br'<!doctype\s+html\s*>', b'', body, flags=re.IGNORECASE)
-    if (len(body) > MAX_BYTES or b'<!DOCTYPE' in declarations.upper()
-            or b'<!ENTITY' in declarations.upper()):
+def parse_publications(body: bytes, url: str, *, content_type: str = '') -> tuple[PublicPost, ...]:
+    if len(body) > MAX_BYTES:
         raise ValueError('unsupported or oversized document')
+    _url(url)
+    text_document = decode_document(body, content_type)
+    check_declarations(text_document)
     posts = []
     try:
-        root = ElementTree.fromstring(body)  # nosec B314 - entrée bornée sans DOCTYPE/ENTITY
+        root = ElementTree.fromstring(text_document)  # nosec B314 - bounded, no DTD/entities
     except ElementTree.ParseError:
         root = None
     if root is not None and _local(root.tag) in ('rss', 'feed', 'RDF'):
         for entry in root.iter():
             if _local(entry.tag) not in ('item', 'entry'):
                 continue
-            fields = {_local(e.tag): ''.join(e.itertext()) for e in entry}
+            fields = {_local(e.tag): _feed_value(e) for e in entry}
             if not fields.get('description', '').strip():
-                fields['description'] = next((''.join(e.itertext()) for e in entry.iter()
-                    if _local(e.tag) == 'description' and ''.join(e.itertext()).strip()), '')
+                fields['description'] = next((_feed_value(e) for e in entry.iter()
+                    if _local(e.tag) == 'description' and _feed_value(e).strip()), '')
             links = [e.attrib['href'] for e in entry if _local(e.tag) == 'link'
                      and 'href' in e.attrib and e.attrib.get('rel', 'alternate') == 'alternate']
             link = links[0] if links else fields.get('link')
@@ -365,13 +308,9 @@ def parse_publications(body: bytes, url: str) -> tuple[PublicPost, ...]:
                 text = title + '\n' + text
             announced = _announced(fields.get('published') or fields.get('pubDate')
                                    or fields.get('date'))
-            posts.append(PublicPost(urljoin(url, link.strip()), text, announced))
+            posts.append(PublicPost(urljoin(url, link.strip()), clean_text(text), announced))
     else:
-        parser = _Articles(url)
-        parser.feed(body.decode('utf-8-sig'))
-        if parser.depth or not parser.posts:
-            raise ValueError('public publication format not supported')
-        posts = parser.posts
+        posts = [PublicPost(*p) for p in html_publications(text_document, url, _announced)]
     if len({p.url for p in posts}) != len(posts):
         raise ValueError('duplicate or unstable publication permalink')
     for post in posts:
@@ -518,7 +457,8 @@ def collect(plan: dict[str, Any], sources: Iterable[PilotSource], store: AppendO
                     elif not any(observed < f.kickoff for f in active):
                         reason = 'hors_pre_match'
                     else:
-                        posts = parse_publications(response.body, endpoint)
+                        posts = parse_publications(response.body, endpoint,
+                                                   content_type=response.content_type)
                         # A global feed may mix leagues. Keep explicit Ligue 1 posts only.
                         selected = [p for p in posts if re.search(r'ligue[ -]?1|\bl1\b',
                                     _fold(p.text + ' ' + p.url))]
@@ -534,7 +474,6 @@ def collect(plan: dict[str, Any], sources: Iterable[PilotSource], store: AppendO
                                                observed, 'ok', tuple(ids), None)
                         store.append_batch((*pending, receipt))
                         continue
-                        status, reason = 'ok', None
             except (OSError, ValueError, ElementTree.ParseError):
                 reason = 'lecture_publique_echouee'
         store.append(VisitReceipt('receipt:' + visit['visit_id'], visit['visit_id'], observed,

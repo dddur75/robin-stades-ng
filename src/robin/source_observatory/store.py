@@ -226,7 +226,10 @@ def _validate_lineage(entity: Entity, known: dict[tuple[str, str], Entity]) -> N
         version = _get(known, PublicationVersion, entity.version_id)
         if entity.text_sha256 != version.text_sha256 or entity.observed_at < version.usable_at:
             raise ValueError('extraction version lineage mismatch')
-        pending = known.copy()
+        # Draft selection slots belong to this extraction only. Keep source and
+        # version predecessors without mixing accepted Contribution slots in.
+        pending: dict[tuple[str, str], Entity] = {
+            key: value for key, value in known.items() if not isinstance(value, Contribution)}
         for draft in entity.drafts:
             from .schema_validation import validate_contribution
 

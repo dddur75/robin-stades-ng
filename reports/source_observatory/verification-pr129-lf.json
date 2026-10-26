@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-26T16:02:09.986460+00:00",
+  "runtime": "Robin Python 3.12.14",
+  "command": [
+    "runtime-robin/python",
+    "-m",
+    "pytest",
+    "tests/source_observatory",
+    "-q",
+    "--tb=short",
+    "-p",
+    "no:cacheprovider"
+  ],
+  "cwd": "temporary directory outside repository; copied src; both prompt files LF; pytest raw fixtures outside copied source tree",
+  "duration_seconds": 5.406,
+  "exit_code": 0,
+  "stdout": "........................................................................ [ 13%]\n........................................................................ [ 27%]\n........................................................................ [ 40%]\n........................................................................ [ 54%]\n........................................................................ [ 67%]\n........................................................................ [ 81%]\n........................................................................ [ 94%]\n.............................                                            [100%]\n533 passed in 4.81s\n",
+  "stderr": "",
+  "lf_prompt_sha256": "69dafca29b2de56467427b0ff475bbcfaef27491d52a4c685304b2a8f567fe70",
+  "harness_diagnostics": [
+    {
+      "passed": 532,
+      "failed": 1,
+      "cause": "cwd moved without source: raw-directory boundary test no longer exercised a path inside imported source tree"
+    },
+    {
+      "passed": 493,
+      "failed": 40,
+      "cause": "pytest basetemp inside copied source: synthetic external raw fixtures correctly rejected by the raw-directory boundary"
+    }
+  ],
+  "harness_resolution": "Copy source tree with LF prompts, place pytest basetemp in a sibling temporary directory; no production or test change."
+}
