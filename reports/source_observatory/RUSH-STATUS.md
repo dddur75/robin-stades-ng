@@ -22,6 +22,11 @@ Mis à jour : 2026-10-26 12:40 — plafond de travail en cours : 4. Routes : voi
 - T6 critères gelés : commit 65c5e3e (sha256 2d1a9f65…)
 - Gouvernance : 567 tests passés, 2 échecs préexistants sur main (test_reprise_collecte_governance_v1) ; chemins absolus PASS
 
+## Mesures C3 (2026-10-26)
+- Extracteur à règles (jeu final 39 textes) : précision 57 % (4/7), non_resolu 0/2, rappel 11 % → abandonné comme principal (2 cycles sans progrès).
+- Extraction IA (Gemini + garde-fou déterministe), 53 textes notés, annotateur Grok relu par Gemini : précision 85,4 % (35/41), 0 cote inventée, schéma 100 %, rappel 67 %, non_resolu 0/1 (non mesurable). C3 = PARTIAL (C3.3 non atteint). Détail : mesure-c3-extraction-llm.json.
+- Gemini ronde 4 sur 940a2eb : ACCEPTE_SOUS_RESERVE (0 bloquant chaîne pilote).
+
 ## Bloqués / limites
 - C3.1 non atteint : précision 80 % (4/5) sur le jeu final caché ; C3.3 non mesurable (1 ambigu) — remesure après C33
 - Grok : écriture de fichiers et fetch de pages refusés en headless → texte seul
