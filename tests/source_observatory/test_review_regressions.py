@@ -238,7 +238,7 @@ def test_rankings_derive_cohort_state_from_journal_windows_and_visits():
     failed_visit = models.Visit('failed', 's1', future, future + timedelta(minutes=1), False)
     assert service.rankings([*entities, failed_visit], at=at)['account-a'].status == 'Comparable'
     unrelated = replace(failed_visit, visit_id='other-source', source_id='unrelated')
-    assert service.rankings([*entities, unrelated], at=at)['account-a'].status == 'Signal prospectif'
+    assert service.rankings([*entities, unrelated], at=at)['account-a'].status == 'Comparable'
 
 
 def test_historical_report_ignores_future_contributions_and_corrections():
@@ -285,11 +285,12 @@ def test_new_contribution_at_or_after_kickoff_is_retrospective(tmp_path, offset)
 def test_similarity_revision_cannot_alias_an_existing_account():
     a = contribution()
     b = contribution('b', author_id='account-b', publication_id='p2', version_id='v2')
-    revision = models.IdentityRevision('similar', None,
-        (models.AccountAssignment('account-b', 'account-a'),), T, H, 'pseudo similaire',
-        certainty='similarite')
+    with pytest.raises(ValueError):
+        models.IdentityRevision('similar', None,
+            (models.AccountAssignment('account-b', 'account-a'),), T, H, 'pseudo similaire',
+            certainty='similarite')
     entities = [version(), version('v2', publication_id='p2'), a, b,
-                *evaluated(a), *evaluated(b, won=False), revision]
+                *evaluated(a), *evaluated(b, won=False)]
     report = service.rankings(entities)
     assert set(report) == {'account-a', 'account-b'}
     assert report['account-b'].net == Decimal('-1')

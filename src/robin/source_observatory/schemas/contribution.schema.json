@@ -280,6 +280,13 @@
   },
   "allOf": [
     {
+      "if": {"properties": {"categorie": {"const": "selection_avec_cote"}}},
+      "then": {"anyOf": [
+        {"properties": {"cote_declaree": {"type": "string"}}},
+        {"properties": {"cote_observee": {"type": "string"}}}
+      ]}
+    },
+    {
       "if": {
         "properties": {
           "statut": {

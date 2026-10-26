@@ -1,0 +1,18 @@
+{
+  "competition": "Ligue 1 2026/2027 J9",
+  "timezone": "Europe/Paris",
+  "target_window": ["2026-10-31", "2026-11-02"],
+  "verified_on": "2026-10-26",
+  "evidence_url": "https://ligue1.com/fr/articles/l1_article_5805-",
+  "corroboration_url": "https://www.asmonaco.com/fr/news/decouvre-la-prog-du-deplacement-sur-la-pelouse-du-paris-fc-pour-la-j9",
+  "scope_note": "Sept matchs dans la fenetre demandee. Les deux matchs du vendredi 30/10 sont hors fenetre. Aucun match annonce le 02/11 dans cette programmation.",
+  "fixtures": [
+    {"fixture_id": "j9-nice-rennes", "kickoff": "2026-10-31T17:15:00+01:00"},
+    {"fixture_id": "j9-lyon-angers", "kickoff": "2026-10-31T20:45:00+01:00"},
+    {"fixture_id": "j9-lorient-brest", "kickoff": "2026-10-31T20:45:00+01:00"},
+    {"fixture_id": "j9-troyes-le-mans", "kickoff": "2026-10-31T20:45:00+01:00"},
+    {"fixture_id": "j9-strasbourg-auxerre", "kickoff": "2026-11-01T15:00:00+01:00"},
+    {"fixture_id": "j9-paris-fc-monaco", "kickoff": "2026-11-01T17:15:00+01:00"},
+    {"fixture_id": "j9-marseille-toulouse", "kickoff": "2026-11-01T20:45:00+01:00"}
+  ]
+}

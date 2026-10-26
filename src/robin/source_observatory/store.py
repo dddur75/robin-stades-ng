@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import os
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, fields, is_dataclass
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
@@ -30,19 +30,21 @@ from .models import (
     SettlementRule,
     Source,
     Visit,
+    VisitReceipt,
     Withdrawal,
     decimal_text,
     instant_text,
 )
+from .ranking import observation_time
 from .service import combined_legs_proven, evaluate
 
 GENESIS = '0' * 64
 _TYPES = (Source, Publication, PublicationVersion, Contribution, MatchMarket, Result, Evaluation,
-          IdentityRevision, Withdrawal, Visit, Cohort)
+          IdentityRevision, Withdrawal, Visit, Cohort, VisitReceipt)
 _REGISTRY = {cls.__name__: cls for cls in _TYPES}
 _IDS = ('source_id', 'publication_id', 'version_id', 'contribution_id',
         'match_market_id', 'result_id', 'evaluation_id', 'revision_id', 'withdrawal_id', 'visit_id',
-        'cohort_id')
+        'cohort_id', 'receipt_id')
 _ID_FIELDS = dict(zip(_TYPES, _IDS, strict=True))
 _DATES = frozenset(('announced_by_platform_at', 'first_observed_by_robin_at',
                     'modification_observed_at', 'usable_at', 'contribution_usable_at',
@@ -150,7 +152,7 @@ def _decode_data(cls: type[object], raw: object) -> dict[str, object]:
                 factory = cast(Callable[..., object], nested)
                 decoded.append(factory(**_decode_data(nested, item)))
             data[name] = tuple(decoded)
-        elif name == 'author_ids':
+        elif name in ('author_ids', 'publication_ids'):
             if not isinstance(value, list):
                 raise IntegrityError('explicit cohort membership required')
             data[name] = tuple(value)
@@ -180,13 +182,9 @@ def _get(known: dict[tuple[str, str], Entity], cls: type[T], identifier: str) ->
 def _validate_lineage(entity: Entity, known: dict[tuple[str, str], Entity]) -> None:
     if _key(entity) in known:
         raise AppendOnlyViolation('identity already recorded: append a new observation instead')
-    if isinstance(entity, (PublicationVersion, Contribution)):
-        observed = (entity.modification_observed_at or entity.first_observed_by_robin_at
-                    if isinstance(entity, PublicationVersion) else entity.observed_at)
-        observations = [
-            (e.modification_observed_at or e.first_observed_by_robin_at)
-            if isinstance(e, PublicationVersion) else e.observed_at
-            for e in known.values() if isinstance(e, (PublicationVersion, Contribution, Result))]
+    observed = observation_time(entity)
+    if observed is not None:
+        observations = [t for e in known.values() if (t := observation_time(e)) is not None]
         if observations and observed < max(observations):
             raise ValueError('observation cannot be backdated in the journal')
     if isinstance(entity, Publication):
@@ -216,6 +214,9 @@ def _validate_lineage(entity: Entity, known: dict[tuple[str, str], Entity]) -> N
             raise ValueError('contribution lineage metadata mismatch')
         if entity.observed_at < version.usable_at:
             raise ValueError('contribution observation precedes usable version')
+        if (entity.cote_observee_at is not None
+                and entity.cote_observee_at < version.usable_at):
+            raise ValueError('observed odds precede usable version')
         if any(isinstance(previous, Contribution) and previous.version_id == entity.version_id
                and previous.selection_key == entity.selection_key for previous in known.values()):
             raise ValueError('one contribution per selection slot and version')
@@ -232,8 +233,11 @@ def _validate_lineage(entity: Entity, known: dict[tuple[str, str], Entity]) -> N
             raise ValueError('contribution match identity mismatch')
     elif isinstance(entity, Result):
         match = _get(known, MatchMarket, entity.match_market_id)
+        if entity.outcome != 'en_attente' and match.statut != 'resolu':
+            raise ValueError('settled result requires resolved market')
+        contribution = _get(known, Contribution, match.contribution_id)
         if entity.legs and entity.outcome != 'en_attente' and not any(
-                combined_legs_proven(entity, known.values(), basis)
+                combined_legs_proven(contribution, match, entity, known.values(), basis)
                 for basis in ('cote_declaree', 'cote_observee')):
             raise ValueError('combined legs require pre-match contributions and result evidence')
         if match.match_usable_at is not None and entity.observed_at < match.match_usable_at:
@@ -273,6 +277,20 @@ def _validate_lineage(entity: Entity, known: dict[tuple[str, str], Entity]) -> N
             raise ValueError('withdrawal precedes observation')
     elif isinstance(entity, Visit):
         _get(known, Source, entity.source_id)
+    elif isinstance(entity, VisitReceipt):
+        visit = _get(known, Visit, entity.visit_id)
+        if visit.completed_at is not None or any(isinstance(e, VisitReceipt)
+                and e.visit_id == entity.visit_id for e in known.values()):
+            raise AppendOnlyViolation('visit already completed; no second receipt allowed')
+        if entity.completed_at < visit.planned_at:
+            raise ValueError('visit receipt precedes planned time')
+        for identifier in entity.publication_ids:
+            publication = _get(known, Publication, identifier)
+            if publication.source_id != visit.source_id:
+                raise ValueError('visit publication belongs to another source')
+            if not any(isinstance(e, PublicationVersion) and e.publication_id == identifier
+                       for e in known.values()):
+                raise ValueError('visit publication requires observed version')
     elif isinstance(entity, Cohort):
         for existing in known.values():
             if isinstance(existing, (PublicationVersion, Contribution, Result)):
@@ -341,16 +359,33 @@ class AppendOnlyStore:
         return tuple(record.entity for record in self.read())
 
     def append(self, entity: Entity) -> StoredRecord:
-        if type(entity) not in _TYPES:
-            raise TypeError('only observatory metadata dataclasses are accepted')
+        return self.append_batch((entity,))[0]
+
+    def append_batch(self, entities: Iterable[Entity]) -> tuple[StoredRecord, ...]:
+        """Validate the complete single-writer batch before opening the journal."""
         records = self.read()
         known = {_key(record.entity): record.entity for record in records}
-        _validate_lineage(entity, known)
         previous = records[-1].hash if records else GENESIS
-        body = {'sequence': len(records) + 1, 'kind': type(entity).__name__,
-                'data': _wire(entity), 'previous_hash': previous}
-        digest = sha256(_canonical(body)).hexdigest()
-        line = _canonical(body | {'hash': digest}) + b'\n'
+        pending: list[StoredRecord] = []
+        lines: list[bytes] = []
+        for entity in entities:
+            if type(entity) not in _TYPES:
+                raise TypeError('only observatory metadata dataclasses are accepted')
+            _validate_lineage(entity, known)
+            data = _wire(entity)
+            if _decode(type(entity).__name__, data) != entity:
+                raise ValueError('noncanonical or unroundtrippable metadata')
+            sequence = len(records) + len(pending) + 1
+            body = {'sequence': sequence, 'kind': type(entity).__name__,
+                    'data': data, 'previous_hash': previous}
+            digest = sha256(_canonical(body)).hexdigest()
+            lines.append(_canonical(body | {'hash': digest}) + b'\n')
+            pending.append(StoredRecord(sequence, type(entity).__name__, entity, previous, digest))
+            known[_key(entity)] = entity
+            previous = digest
+        if not pending:
+            return ()
+        line = b''.join(lines)
         self.path.parent.mkdir(parents=True, exist_ok=True)
         # Binary append cannot truncate an existing file. A partial I/O error is
         # fail-closed on the next read; never truncate or repair the previous bytes.
@@ -360,8 +395,8 @@ class AppendOnlyStore:
                 raise OSError('incomplete append; journal must remain quarantined')
             stream.flush()
             os.fsync(stream.fileno())
-        self._anchor = (len(records) + 1, digest)
-        return StoredRecord(len(records) + 1, type(entity).__name__, entity, previous, digest)
+        self._anchor = (pending[-1].sequence, pending[-1].hash)
+        return tuple(pending)
 
     def update(self, identifier: str, entity: Entity) -> None:
         raise AppendOnlyViolation('updates forbidden; append a new version')

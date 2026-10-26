@@ -50,7 +50,7 @@ def version(**changes: object) -> PublicationVersion:
     values = dict(
         version_id='v1', publication_id='p1', text_sha256=TEXT_HASH,
         announced_by_platform_at=T - timedelta(hours=1),
-        first_observed_by_robin_at=T, modification_observed_at=T + timedelta(minutes=1),
+        first_observed_by_robin_at=T, modification_observed_at=None,
         usable_at=T + timedelta(minutes=2),
     )
     return PublicationVersion(**(values | changes))
@@ -68,7 +68,7 @@ def contribution(**changes: object) -> Contribution:
         match_id='fixture', certitude_rapprochement='certaine', ligne=None,
         periode='reglementaire', reglement=settlement_rule(),
         cote_declaree_provenance='auteur', cote_declaree_at=T,
-        cote_observee_provenance='observation Robin', cote_observee_at=T, bookmaker=None,
+        cote_observee_provenance='observation Robin', cote_observee_at=T + timedelta(minutes=2), bookmaker=None,
         categorie='selection_avec_cote', probabilite=None, observed_at=version().usable_at,
     )
     for basis in ('cote_declaree', 'cote_observee'):
@@ -125,7 +125,7 @@ def complete_identity(identity: IdentityService) -> None:
 
 
 def test_four_instants_are_preserved_and_frozen():
-    v = version()
+    v = version(previous_version_id='v0', modification_observed_at=T + timedelta(minutes=1))
     assert (v.announced_by_platform_at, v.first_observed_by_robin_at,
             v.modification_observed_at, v.usable_at) == (
                 T - timedelta(hours=1), T, T + timedelta(minutes=1), T + timedelta(minutes=2))
@@ -139,7 +139,8 @@ def test_four_instants_are_preserved_and_frozen():
 
 @pytest.mark.parametrize('changes', [
     {'usable_at': T - timedelta(seconds=1)},
-    {'usable_at': T},  # modification is only observed one minute later
+    {'usable_at': T, 'previous_version_id': 'v0',
+     'modification_observed_at': T + timedelta(minutes=1)},
     {'modification_observed_at': T - timedelta(seconds=1)},
     {'first_observed_by_robin_at': T.replace(tzinfo=None)},
     {'announced_by_platform_at': T.replace(tzinfo=None)},

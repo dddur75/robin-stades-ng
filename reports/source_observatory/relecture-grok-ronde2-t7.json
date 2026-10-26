@@ -1,0 +1,15 @@
+{
+  "exit_code": 1,
+  "stdout": "{\"type\": \"error\", \"message\": \"Couldn't start session: Managed policy could not be verified: the policy lock file under <profil>\\\\.grok is not accessible. Fix permissions and start again.\"}",
+  "stderr": "Error: Couldn't start session: Managed policy could not be verified: the policy lock file under <profil>\\.grok is not accessible. Fix permissions and start again.\n",
+  "date": "2026-10-26T10:31:37.725685+00:00",
+  "task": "source_observatory round2 + T7",
+  "poste": "relecteur",
+  "requested_model": "grok-4.7",
+  "requested_reasoning_effort": "high",
+  "reported_model": null,
+  "cost_usd": null,
+  "duration_seconds": 0.235,
+  "david_verdict": "en_attente",
+  "actual_model_call": "not_started_policy_lock_inaccessible"
+}

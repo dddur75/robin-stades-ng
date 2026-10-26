@@ -112,6 +112,8 @@ class PublicationVersion:
             _text(self.previous_version_id, 'previous_version_id')
             if self.modification_observed_at is None:
                 raise ValueError('correction requires observed modification time')
+        elif self.modification_observed_at is not None:
+            raise ValueError('initial version cannot have modification_observed_at')
         for name in ('announced_by_platform_at', 'first_observed_by_robin_at',
                      'modification_observed_at', 'usable_at'):
             instant = getattr(self, name)
@@ -284,10 +286,15 @@ class Contribution:
             if odds is not None:
                 _text(provenance, basis + '_provenance')
                 _instant(at, basis + '_at')
+                if at > self.observed_at:
+                    raise ValueError('odds timestamp exceeds contribution observation')
             elif provenance is not None or at is not None:
                 raise ValueError('absent odds cannot have invented quote metadata')
         if self.categorie not in CATEGORIES:
             raise ValueError('unknown ranking category')
+        if (self.categorie == 'selection_avec_cote' and self.cote_declaree is None
+                and self.cote_observee is None):
+            raise ValueError('priced selection requires at least one explicit odds quote')
         if self.categorie == 'selection_sans_cote' and (
                 self.cote_declaree is not None or self.cote_observee is not None):
             raise ValueError('unpriced selection cannot contain odds')
@@ -379,6 +386,8 @@ class Result:
         _text(self.match_market_id, 'match_market_id')
         if self.outcome not in OUTCOMES:
             raise ValueError('unknown result; never infer a settlement')
+        if self.outcome != 'en_attente' and self.reglement is None:
+            raise ValueError('settled result requires a documented settlement rule')
         _instant(self.observed_at, 'observed_at')
         _hash(self.evidence_sha256)
         if self.previous_result_id is not None:
@@ -471,8 +480,8 @@ class IdentityRevision:
             raise ValueError('duplicate account assignment')
         if self.certainty not in ('attestee', 'similarite'):
             raise ValueError('explicit identity certainty required')
-        if self.certainty != 'attestee' and len({a.identity_id for a in self.assignments}) < len(
-                self.assignments):
+        if self.certainty != 'attestee' and any(a.author_id != a.identity_id
+                                               for a in self.assignments):
             raise ValueError('similar accounts cannot be merged without attested identity')
 
 
@@ -552,8 +561,40 @@ class Cohort:
             raise ValueError('explicit predeclared visit coverage threshold in (0,1] required')
 
 
+@dataclass(frozen=True, slots=True)
+class VisitReceipt:
+    """One immutable outcome per planned Visit, without replacing the plan."""
+
+    receipt_id: str
+    visit_id: str
+    completed_at: datetime
+    status: Literal['ok', 'echec', 'bloque_robots']
+    publication_ids: tuple[str, ...]
+    reason: str | None
+
+    def __post_init__(self) -> None:
+        _text(self.receipt_id, 'receipt_id')
+        _text(self.visit_id, 'visit_id')
+        _instant(self.completed_at, 'completed_at')
+        if self.status not in ('ok', 'echec', 'bloque_robots'):
+            raise ValueError('unknown collection status')
+        if type(self.publication_ids) is not tuple or len(set(self.publication_ids)) != len(
+                self.publication_ids):
+            raise ValueError('immutable unique publication ids required')
+        for identifier in self.publication_ids:
+            _text(identifier, 'publication_id')
+        if self.status == 'ok':
+            if self.reason is not None:
+                raise ValueError('successful visit cannot have a failure reason')
+        else:
+            if self.reason is None:
+                raise ValueError('visit failure requires a reason')
+            _text(self.reason, 'visit failure reason')
+
+
 Entity: TypeAlias = (Source | Publication | PublicationVersion | Contribution | MatchMarket
-                     | Result | Evaluation | IdentityRevision | Withdrawal | Visit | Cohort)
+                     | Result | Evaluation | IdentityRevision | Withdrawal | Visit | Cohort
+                     | VisitReceipt)
 
 
 def decimal_text(value: Decimal | None) -> str | None:

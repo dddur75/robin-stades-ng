@@ -1,0 +1,37 @@
+{
+  "mis_a_jour": "2026-10-26T12:40:00+01:00",
+  "methode": "DDDUR RUSH (orchestrer-essaims-rush 0.1.1)",
+  "plafond_travail_en_cours": 4,
+  "routes": [
+    {
+      "poste": "Codex",
+      "version": "codex-cli 0.163.0",
+      "modele_observe": "gpt-6.1-sol, effort high (en-tete d'un appel reussi)",
+      "etat": "teste",
+      "preuve": "appels exec reussis jusqu'au 2026-10-26 (livraisons T1, T4, T7, correctifs ronde 2)",
+      "mode": "codex exec -s workspace-write ; ne peut ni committer ni tirer (sandbox git) ; commit/push par le chef",
+      "simultaneite_observee": "1 redacteur sur le worktree ; plusieurs exec en parallele possibles mais interdits (redacteur unique)",
+      "pool_quota": "inconnu"
+    },
+    {
+      "poste": "Gemini",
+      "version": "agy (Antigravity CLI) ; la CLI gemini 0.64.0 est indisponible (UNSUPPORTED_CLIENT)",
+      "modele_observe": "gemini-4-argon-high (demande)",
+      "etat": "teste via agy ; gemini CLI indisponible",
+      "preuve": "appels agy reussis : registre T2, corpus, revues rondes 1 a 3",
+      "mode": "agy -p --dangerously-skip-permissions ; acces web en lecture ; ecrit des fichiers",
+      "simultaneite_observee": "4 appels agy simultanes observes sans erreur (corpus x2 + revue)",
+      "pool_quota": "inconnu"
+    },
+    {
+      "poste": "Grok",
+      "version": "grok 1.0.67",
+      "modele_observe": "inconnu (effort high demande)",
+      "etat": "teste en mode texte seul ; ecriture de fichiers et fetch de pages refuses en headless (verrou de politique)",
+      "preuve": "annotation de reference 50 textes rendue par stdout ; recherche web OK, fetch de page refuse",
+      "mode": "grok -p ; sortie texte uniquement ; une seule session a la fois",
+      "simultaneite_observee": "1 (regle : une session a la fois)",
+      "pool_quota": "inconnu"
+    }
+  ]
+}

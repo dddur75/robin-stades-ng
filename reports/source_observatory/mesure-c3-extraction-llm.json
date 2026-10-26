@@ -1,0 +1,55 @@
+{
+ "date": "2026-10-26",
+ "extracteur": "IA (Gemini via agy) + garde-fou déterministe (cote littérale, schéma)",
+ "annotateur_reference": "Grok (autre fournisseur), relu par Gemini ; annotations contestées écartées",
+ "textes_notes": 53,
+ "resultats": {
+  "precision_marche_selection": {
+   "valeur": 0.854,
+   "resolus_predits": 41,
+   "corrects": 35,
+   "seuil": 0.85,
+   "statut": "atteint (marginal)"
+  },
+  "cotes_inventees": {
+   "valeur": 0,
+   "seuil": 0,
+   "statut": "atteint"
+  },
+  "non_resolu_correct": {
+   "annotes_non_resolu": 1,
+   "corrects": 0,
+   "seuil": 0.9,
+   "statut": "NON atteint / non mesurable (1 seul cas)"
+  },
+  "conformite_schema": {
+   "valeur": 1.0,
+   "statut": "atteint"
+  },
+  "rappel": {
+   "valeur": 0.673,
+   "statut": "rapporté sans seuil"
+  },
+  "faux_positifs_sur_textes_sans_pari": {
+   "textes_sans_pari": 26,
+   "faux_positifs": 1
+  }
+ },
+ "echantillon_40_textes": "atteint (53)",
+ "extracteur_a_regles": {
+  "jeu_final_39_textes": {
+   "precision": 0.571,
+   "resolus_predits": 7,
+   "non_resolu_correct": "0/2",
+   "rappel": 0.114
+  },
+  "conclusion": "abandonné comme extracteur principal (2 cycles sans progrès) ; conservé comme repli"
+ },
+ "limites": [
+  "un seul texte annoté non_resolu : C3.3 non démontré",
+  "corpus de 53 textes d'origine mixte (sites, forums, YouTube, Reddit), 8 URL non vérifiables (403)",
+  "annotateur Grok unique, relu par Gemini sur 25 % des cas ambigus"
+ ],
+ "c3_global": "PARTIAL (C3.1, C3.2, C3.5 atteints ; C3.3 non atteint)",
+ "criteres_geles_modifies": false
+}

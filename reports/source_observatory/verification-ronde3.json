@@ -1,0 +1,182 @@
+{
+  "claim_id": "ENG.SOURCE_OBSERVATORY.ROUND3.20261026",
+  "date": "2026-10-26T12:09:42.704841+00:00",
+  "branch": "codex/observatoire-sources-v2",
+  "head": "1ffe0f3bc1f7ecf10a0d60f49c5f124b2ee3b7ce",
+  "runtime_version": "3.12.14",
+  "runtime_role": "Robin Python 3.12 runtime",
+  "commit_created": false,
+  "writer": "codex",
+  "checks": [
+    {
+      "command": [
+        "runtime-robin/python",
+        "-m",
+        "pytest",
+        "tests/source_observatory",
+        "tests/council",
+        "tests/hypothesis_intelligence",
+        "-q",
+        "--tb=short"
+      ],
+      "exit_code": 1,
+      "duration_seconds": 85.969,
+      "stdout": "........................................................................ [ 11%]\n........................................................................ [ 23%]\n........................................................................ [ 35%]\n........................................................................ [ 46%]\n........................................................................ [ 58%]\n...............................FF....................................... [ 70%]\n........................................................................ [ 82%]\n........................................................................ [ 93%]\n.....................................                                    [100%]\n================================== FAILURES ===================================\n____ test_successor_is_non_runtime_and_reuses_the_parent_cumulative_budget ____\ntests\\council\\test_reprise_collecte_governance_v1.py:290: in test_successor_is_non_runtime_and_reuses_the_parent_cumulative_budget\n    assert (\nE   AssertionError: assert '591501bf7a66...a38dba3a850dc' == '815788fb8ba6...295136750fdb2'\nE     \nE     - 815788fb8ba61b21782797cd32d36a4b49a8b6d072610a59ba3295136750fdb2\nE     + 591501bf7a668abe79535daf97db08f5c5edc18a5734c18659ca38dba3a850dc\n__ test_sqlite_successor_is_test_only_and_does_not_extend_runtime_authority ___\ntests\\council\\test_reprise_collecte_governance_v1.py:311: in test_sqlite_successor_is_test_only_and_does_not_extend_runtime_authority\n    assert (\nE   AssertionError: assert '591501bf7a66...a38dba3a850dc' == '815788fb8ba6...295136750fdb2'\nE     \nE     - 815788fb8ba61b21782797cd32d36a4b49a8b6d072610a59ba3295136750fdb2\nE     + 591501bf7a668abe79535daf97db08f5c5edc18a5734c18659ca38dba3a850dc\n=========================== short test summary info ===========================\nFAILED tests/council/test_reprise_collecte_governance_v1.py::test_successor_is_non_runtime_and_reuses_the_parent_cumulative_budget\nFAILED tests/council/test_reprise_collecte_governance_v1.py::test_sqlite_successor_is_test_only_and_does_not_extend_runtime_authority\n2 failed, 611 passed in 85.23s (0:01:25)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "runtime-robin/python",
+        "-m",
+        "pytest",
+        "tests/source_observatory/test_round3_regressions.py",
+        "-q",
+        "--tb=short"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 1.703,
+      "stdout": "............................................                             [100%]\n44 passed in 1.15s\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "runtime-robin/python",
+        "-m",
+        "ruff",
+        "check",
+        "src/robin/source_observatory",
+        "tests/source_observatory"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.11,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "runtime-robin/python",
+        "-m",
+        "mypy",
+        "src/robin/source_observatory",
+        "--follow-imports=silent"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.984,
+      "stdout": "Success: no issues found in 10 source files\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "runtime-robin/python",
+        "-m",
+        "bandit",
+        "-r",
+        "src/robin/source_observatory",
+        "-q"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.562,
+      "stdout": "",
+      "stderr": "[manager]\tWARNING\tTest in comment: DOCTYPE is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: ENTITY is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: refus is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: s is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: avant is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: analyse is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: entr is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: e is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: born is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: e is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: sans is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: DOCTYPE is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: ENTITY is not a test name or id, ignoring\n"
+    },
+    {
+      "command": [
+        "runtime-robin/python",
+        "scripts/check_no_tracked_absolute_paths.py"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 6.422,
+      "stdout": "TRACKED_ABSOLUTE_PATHS_PASS\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "warning: in the working copy of 'reports/source_observatory/RUSH-STATUS.md', CRLF will be replaced by LF the next time Git touches it\n"
+    }
+  ],
+  "guards": {
+    "owned_files": [
+      "src/robin/source_observatory/collector.py",
+      "src/robin/source_observatory/extractor.py",
+      "src/robin/source_observatory/models.py",
+      "src/robin/source_observatory/ranking.py",
+      "src/robin/source_observatory/schema_validation.py",
+      "src/robin/source_observatory/service.py",
+      "src/robin/source_observatory/settlement.py",
+      "src/robin/source_observatory/store.py",
+      "tests/source_observatory/test_conception.py",
+      "tests/source_observatory/test_observatory.py",
+      "tests/source_observatory/test_round3_regressions.py"
+    ],
+    "violations": [],
+    "uppercase_paths": []
+  },
+  "red_before_fix": {
+    "1": 9,
+    "2": 9,
+    "3": 3,
+    "4": 12,
+    "5": 4,
+    "6": 3,
+    "7": 2
+  },
+  "characterization_tests_already_passing": 2,
+  "coverage": {
+    "total_sources": 39,
+    "planned_visits": 819,
+    "baseline_collectable_sources": [
+      "SRC_002",
+      "SRC_006",
+      "SRC_008",
+      "SRC_009",
+      "SRC_010",
+      "SRC_011",
+      "SRC_025",
+      "SRC_026",
+      "SRC_028",
+      "SRC_029",
+      "SRC_030",
+      "SRC_037",
+      "SRC_038",
+      "SRC_040"
+    ],
+    "current_collectable_sources": [
+      "SRC_002",
+      "SRC_006",
+      "SRC_008",
+      "SRC_009",
+      "SRC_010",
+      "SRC_011",
+      "SRC_037",
+      "SRC_038",
+      "SRC_040",
+      "SRC_041"
+    ],
+    "current_collectable_visits": 210,
+    "baseline_ceiling": "0.358974358974359",
+    "current_ceiling": "0.2564102564102564",
+    "live_visits_executed": 0,
+    "interpretation": "ceiling from endpoint gates only; not a network success rate"
+  },
+  "source_hashes": {
+    "src/robin/source_observatory/collector.py": "4142c3a6fd40c356c51410a502f8d5a864081ea22ef8a5c2721ee448ecc5eb06",
+    "src/robin/source_observatory/extractor.py": "9e119ed51d44b1fb175ba7d76a886147175cd068585fffd5a818bc8be5639eaa",
+    "src/robin/source_observatory/models.py": "049c0ce603a6e51afe6dd0af5b928325e6947d23cdae6e4efee3a4b4b340884c",
+    "src/robin/source_observatory/ranking.py": "60fad6c67c2b970d09e59994a5c880336f0fb60c471a8d413047ae73753a0476",
+    "src/robin/source_observatory/schema_validation.py": "1e540016e779d8c78d40dccac208437012e56dba02b5b863b84b516e6be2e366",
+    "src/robin/source_observatory/service.py": "9c38e273f1e861f48a2dc03e9f6e91af33b87bedb755d5f4efd88d9a3376c385",
+    "src/robin/source_observatory/settlement.py": "323a369d2a747842c987bf04693a5bbfce0cbfe91111c7e2b1e8e1a438f398f9",
+    "src/robin/source_observatory/store.py": "5437dd3cd72f94a4bfdbdb77f9198454ad57c557cd3e5b67d9c5bc82af4d7d48",
+    "tests/source_observatory/test_conception.py": "9548b78c01bd5620799ad538b3bb0b50a2b661a96ab0f406804e9d2477f2c8ad",
+    "tests/source_observatory/test_observatory.py": "c90021f89ffda78d54c616ce6fa9755c99515dfdfb43744f44da31b81f93fae4",
+    "tests/source_observatory/test_round3_regressions.py": "1501f494b55fef7cb04159fd97b1462034e6be67fcd01e5b5ff529b02e63f044"
+  },
+  "independent_review": "UNAVAILABLE_GROK_POLICY_LOCK",
+  "david_verdict": "en_attente"
+}
