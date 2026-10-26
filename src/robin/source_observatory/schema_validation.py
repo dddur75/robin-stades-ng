@@ -73,7 +73,7 @@ def _fallback(value: Any, rule: dict[str, Any], root: dict[str, Any]) -> None:
             except ValueError as exc:
                 raise ValueError('schema date-time format') from exc
             if parsed.tzinfo is None or not re.fullmatch(
-                    r'\d{4}-\d\d-\d\d[Tt]\d\d:\d\d:\d\d(?:\.\d+)?(?:[Zz]|[+-]\d\d:\d\d)',
+                    r'\d{4}-\d{2}-\d{2}[Tt]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:[Zz]|[+-]\d{2}:\d{2})',
                     value):
                 raise ValueError('schema date-time timezone')
     if type(value) in (int, float):
