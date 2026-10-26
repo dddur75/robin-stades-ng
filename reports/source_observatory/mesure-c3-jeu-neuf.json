@@ -1,0 +1,65 @@
+{
+ "date": "2026-10-26",
+ "jeu": "jeu neuf de 30 textes réels (collecté après le gel du prompt, dédoublonné, jamais utilisé) ; annotation de référence Grok, relue par Gemini (4 annotations contestées écartées) ; extraction Gemini avec le prompt gelé",
+ "prompt_sha256": "2c2ba78bc72317930f1709a61c5eacb05eda0c054b830d9f4cdd28aefd012142",
+ "prompt_gele_dans": "data/source_observatory/prompt_extraction.freeze.md (commit d31bbbb0)",
+ "authenticite": "9/10 URL tirées au hasard contiennent le texte cité ; 0 doublon avec les corpus précédents",
+ "resultats_sans_contestees": {
+  "textes": 26,
+  "resolus_annotes": 26,
+  "resolus_predits": 26,
+  "resolus_corrects": 25,
+  "precision": 0.962,
+  "rappel": 0.962,
+  "cotes_inventees": 0,
+  "non_resolus_annotes": 5,
+  "non_resolu_correct": 5,
+  "textes_sans_pari": 9,
+  "faux_positifs_sans_pari": 0,
+  "sorties": 31,
+  "conformes": 31
+ },
+ "resultats_toutes_annotations": {
+  "textes": 30,
+  "resolus_annotes": 31,
+  "resolus_predits": 26,
+  "resolus_corrects": 25,
+  "precision": 0.962,
+  "rappel": 0.806,
+  "cotes_inventees": 0,
+  "non_resolus_annotes": 7,
+  "non_resolu_correct": 7,
+  "textes_sans_pari": 9,
+  "faux_positifs_sans_pari": 0,
+  "sorties": 37,
+  "conformes": 37
+ },
+ "criteres_C3": {
+  "C3.1_precision_85": {
+   "valeur": 0.962,
+   "resolus_predits": 26,
+   "corrects": 25,
+   "statut": "atteint (n=26 résolus : intervalle large)"
+  },
+  "C3.2_cote_inventee": {
+   "valeur": 0,
+   "statut": "atteint"
+  },
+  "C3.3_non_resolu_90": {
+   "annotes": 5,
+   "corrects": 5,
+   "statut": "atteint (n=5 seulement)"
+  },
+  "C3.4_rappel": {
+   "valeur": 0.962,
+   "statut": "rapporté"
+  },
+  "C3.5_schema_100": {
+   "valeur": 1.0,
+   "statut": "atteint"
+  },
+  "echantillon_40_textes": "NON atteint sur le jeu neuf seul (30 textes, 26 notés) ; atteint seulement en cumulant les corpus précédents, qui ne sont pas aveugles"
+ },
+ "conclusion": "C3 : atteint sur les valeurs mesurées mais PARTIAL sur l'échantillon (30 < 40) ; critères gelés inchangés. Recommandation : étendre le jeu neuf à ≥40 textes aveugles avant d'affirmer C3.",
+ "criteres_geles_modifies": false
+}
