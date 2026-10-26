@@ -20,6 +20,7 @@ from .models import (
     Entity,
     Evaluation,
     EvidenceExcerpt,
+    ExtractionRecord,
     IdentityRevision,
     MatchMarket,
     Publication,
@@ -40,11 +41,11 @@ from .service import combined_legs_proven, evaluate
 
 GENESIS = '0' * 64
 _TYPES = (Source, Publication, PublicationVersion, Contribution, MatchMarket, Result, Evaluation,
-          IdentityRevision, Withdrawal, Visit, Cohort, VisitReceipt)
+          IdentityRevision, Withdrawal, Visit, Cohort, VisitReceipt, ExtractionRecord)
 _REGISTRY = {cls.__name__: cls for cls in _TYPES}
 _IDS = ('source_id', 'publication_id', 'version_id', 'contribution_id',
         'match_market_id', 'result_id', 'evaluation_id', 'revision_id', 'withdrawal_id', 'visit_id',
-        'cohort_id', 'receipt_id')
+        'cohort_id', 'receipt_id', 'extraction_id')
 _ID_FIELDS = dict(zip(_TYPES, _IDS, strict=True))
 _DATES = frozenset(('announced_by_platform_at', 'first_observed_by_robin_at',
                     'modification_observed_at', 'usable_at', 'contribution_usable_at',
@@ -142,11 +143,12 @@ def _decode_data(cls: type[object], raw: object) -> dict[str, object]:
         elif name == 'reglement' and value is not None:
             factory = cast(Callable[..., object], SettlementRule)
             data[name] = factory(**_decode_data(SettlementRule, value))
-        elif name in ('extraits_preuve', 'liens_reprise', 'assignments', 'legs'):
+        elif name in ('extraits_preuve', 'liens_reprise', 'assignments', 'legs', 'drafts'):
             if not isinstance(value, list):
                 raise IntegrityError('typed metadata list required')
             nested = {'extraits_preuve': EvidenceExcerpt, 'liens_reprise': RepriseLink,
-                      'assignments': AccountAssignment, 'legs': SettlementLeg}[name]
+                      'assignments': AccountAssignment, 'legs': SettlementLeg,
+                      'drafts': Contribution}[name]
             decoded = []
             for item in value:
                 factory = cast(Callable[..., object], nested)
@@ -220,6 +222,17 @@ def _validate_lineage(entity: Entity, known: dict[tuple[str, str], Entity]) -> N
         if any(isinstance(previous, Contribution) and previous.version_id == entity.version_id
                and previous.selection_key == entity.selection_key for previous in known.values()):
             raise ValueError('one contribution per selection slot and version')
+    elif isinstance(entity, ExtractionRecord):
+        version = _get(known, PublicationVersion, entity.version_id)
+        if entity.text_sha256 != version.text_sha256 or entity.observed_at < version.usable_at:
+            raise ValueError('extraction version lineage mismatch')
+        pending = known.copy()
+        for draft in entity.drafts:
+            from .schema_validation import validate_contribution
+
+            validate_contribution(draft.extraction_metadata())
+            _validate_lineage(draft, pending)
+            pending[_key(draft)] = draft
     elif isinstance(entity, MatchMarket):
         contribution = _get(known, Contribution, entity.contribution_id)
         version = _get(known, PublicationVersion, contribution.version_id)

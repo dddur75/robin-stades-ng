@@ -11,6 +11,7 @@ from .models import (
     Contribution,
     Entity,
     Evaluation,
+    ExtractionRecord,
     IdentityRevision,
     MatchMarket,
     OddsBasis,
@@ -26,7 +27,7 @@ def observation_time(entity: Entity) -> datetime | None:
     """Actual observation only: a future visit plan is not an observation."""
     if isinstance(entity, PublicationVersion):
         return entity.modification_observed_at or entity.first_observed_by_robin_at
-    if isinstance(entity, (Contribution, Result, IdentityRevision, Withdrawal)):
+    if isinstance(entity, (Contribution, Result, IdentityRevision, Withdrawal, ExtractionRecord)):
         return entity.observed_at
     if isinstance(entity, (Visit, VisitReceipt)):
         return entity.completed_at

@@ -1,0 +1,140 @@
+{
+  "claim_id": "ENG.SOURCE_OBSERVATORY.T4E.20261026",
+  "date": "2026-10-26T14:47:54.644637+00:00",
+  "branch": "codex/observatoire-sources-v2",
+  "head": "d31bbbb0b39f4320e1cba74165d36fb24213aaf9",
+  "runtime_version": "3.12.14",
+  "runtime_role": "Robin Python 3.12 runtime",
+  "writer": "codex",
+  "commit_created": false,
+  "checks": [
+    {
+      "command": [
+        "runtime-robin/python",
+        "-m",
+        "pytest",
+        "tests/source_observatory",
+        "-q",
+        "--tb=short"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 4.594,
+      "stdout": "........................................................................ [ 17%]\n........................................................................ [ 35%]\n........................................................................ [ 53%]\n........................................................................ [ 71%]\n........................................................................ [ 89%]\n.........................................                                [100%]\n401 passed in 4.05s\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "runtime-robin/python",
+        "-m",
+        "pytest",
+        "tests/council",
+        "tests/hypothesis_intelligence",
+        "-q",
+        "--tb=short"
+      ],
+      "exit_code": 1,
+      "duration_seconds": 81.281,
+      "stdout": "...................................FF................................... [ 28%]\n........................................................................ [ 56%]\n........................................................................ [ 84%]\n.........................................                                [100%]\n================================== FAILURES ===================================\n____ test_successor_is_non_runtime_and_reuses_the_parent_cumulative_budget ____\ntests\\council\\test_reprise_collecte_governance_v1.py:290: in test_successor_is_non_runtime_and_reuses_the_parent_cumulative_budget\n    assert (\nE   AssertionError: assert '591501bf7a66...a38dba3a850dc' == '815788fb8ba6...295136750fdb2'\nE     \nE     - 815788fb8ba61b21782797cd32d36a4b49a8b6d072610a59ba3295136750fdb2\nE     + 591501bf7a668abe79535daf97db08f5c5edc18a5734c18659ca38dba3a850dc\n__ test_sqlite_successor_is_test_only_and_does_not_extend_runtime_authority ___\ntests\\council\\test_reprise_collecte_governance_v1.py:311: in test_sqlite_successor_is_test_only_and_does_not_extend_runtime_authority\n    assert (\nE   AssertionError: assert '591501bf7a66...a38dba3a850dc' == '815788fb8ba6...295136750fdb2'\nE     \nE     - 815788fb8ba61b21782797cd32d36a4b49a8b6d072610a59ba3295136750fdb2\nE     + 591501bf7a668abe79535daf97db08f5c5edc18a5734c18659ca38dba3a850dc\n=========================== short test summary info ===========================\nFAILED tests/council/test_reprise_collecte_governance_v1.py::test_successor_is_non_runtime_and_reuses_the_parent_cumulative_budget\nFAILED tests/council/test_reprise_collecte_governance_v1.py::test_sqlite_successor_is_test_only_and_does_not_extend_runtime_authority\n2 failed, 255 passed in 80.61s (0:01:20)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "runtime-robin/python",
+        "-m",
+        "ruff",
+        "check",
+        "src/robin/source_observatory",
+        "tests/source_observatory"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.11,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "runtime-robin/python",
+        "-m",
+        "mypy",
+        "src/robin/source_observatory",
+        "--follow-imports=silent"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.781,
+      "stdout": "Success: no issues found in 11 source files\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "runtime-robin/python",
+        "-m",
+        "bandit",
+        "-r",
+        "src/robin/source_observatory",
+        "-q"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.547,
+      "stdout": "",
+      "stderr": "[manager]\tWARNING\tTest in comment: DOCTYPE is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: ENTITY is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: refus is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: s is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: avant is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: analyse is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: entr is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: e is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: born is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: e is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: sans is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: DOCTYPE is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: ENTITY is not a test name or id, ignoring\n"
+    },
+    {
+      "command": [
+        "runtime-robin/python",
+        "scripts/check_no_tracked_absolute_paths.py"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 6.422,
+      "stdout": "TRACKED_ABSOLUTE_PATHS_PASS\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "guards": {
+    "owned_files": [
+      "src/robin/source_observatory/llm_extraction.py",
+      "src/robin/source_observatory/models.py",
+      "src/robin/source_observatory/store.py",
+      "src/robin/source_observatory/ranking.py",
+      "tests/source_observatory/test_llm_extraction.py"
+    ],
+    "violations": [],
+    "uppercase_paths": []
+  },
+  "source_hashes": {
+    "src/robin/source_observatory/llm_extraction.py": "9eb82bad690150a9a06e535a05bdaff10a3416a3f76e0cf864c8ad842fc17a34",
+    "src/robin/source_observatory/models.py": "211da4ddc51d0cd1d69ad021024d777c3a8f3c9a43fccd89bf5258eca30ae8a2",
+    "src/robin/source_observatory/store.py": "3bdbb4e7e3973bfcef1e420aa6cb7743c83edb98ea224c8c918fd3eee1b25749",
+    "src/robin/source_observatory/ranking.py": "1f1bd2bd8adbbc42e14d0ec65a3facee8a271a9eeb12bd2e1ad48139aeb6b930",
+    "tests/source_observatory/test_llm_extraction.py": "d3b9d3b385c654ef8c718642bd2a7a4a529de952a259bfe27d6f5599416aa71a"
+  },
+  "scope": "local synthetic extraction and targeted council/hypothesis tests; no production IA extraction",
+  "production_extraction_calls": 0,
+  "network_or_ia_calls_in_tests": 0,
+  "prompt_sha256": "2c2ba78bc72317930f1709a61c5eacb05eda0c054b830d9f4cdd28aefd012142",
+  "extraction_record_policy": "drafts only; no accepted Contribution entity or automatic match identity",
+  "red_before_implementation": 32,
+  "explicit_refusal_regression_red_before_fix": 1,
+  "baseline_failures": [
+    "tests/council/test_reprise_collecte_governance_v1.py::test_successor_is_non_runtime_and_reuses_the_parent_cumulative_budget",
+    "tests/council/test_reprise_collecte_governance_v1.py::test_sqlite_successor_is_test_only_and_does_not_extend_runtime_authority"
+  ],
+  "baseline_evidence": "reports/source_observatory/verification-ronde3.json",
+  "independent_review": "UNAVAILABLE_GROK_AND_GEMINI",
+  "review_receipts": [
+    "reports/source_observatory/relecture-grok-t4e.json",
+    "reports/source_observatory/relecture-gemini-t4e.json"
+  ],
+  "benchmark_journal": "outside_writable_scope_not_modified; model-call receipts retained locally",
+  "david_verdict": "en_attente",
+  "status": "PARTIAL_PENDING_INDEPENDENT_REVIEW"
+}
