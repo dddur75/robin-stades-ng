@@ -1,0 +1,51 @@
+{
+  "phase": "E",
+  "season": 2026,
+  "week_start": "2026-10-19",
+  "week_end": "2026-10-25",
+  "calls": 108,
+  "call_count_basis": "durable_reservations_including_uncertain_attempts",
+  "targets": 51,
+  "complete": {
+    "statistics": 51,
+    "events": 37
+  },
+  "fixture_ids_sha256": "08c6e54a24ce608b699751985d74ce82327f6f9115822fcca6d712c1c6519a73",
+  "quota_remaining": 149923,
+  "calendar_scopes": [
+    {
+      "league": 39,
+      "season": 2026,
+      "availability": "CAPTURED",
+      "fixtures": 11
+    },
+    {
+      "league": 78,
+      "season": 2026,
+      "availability": "CAPTURED",
+      "fixtures": 9
+    },
+    {
+      "league": 135,
+      "season": 2026,
+      "availability": "CAPTURED",
+      "fixtures": 12
+    },
+    {
+      "league": 140,
+      "season": 2026,
+      "availability": "CAPTURED",
+      "fixtures": 11
+    },
+    {
+      "league": 61,
+      "season": 2026,
+      "availability": "CAPTURED",
+      "fixtures": 8
+    }
+  ],
+  "coverage_met": false,
+  "finalized": true,
+  "under_150_calls": true,
+  "two_consecutive_ready": false
+}
