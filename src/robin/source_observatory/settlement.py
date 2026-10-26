@@ -20,6 +20,14 @@ def supported(rule: SettlementRule | None, market: str, period: str) -> bool:
             and market in ('1N2', '1X2', 'qualification', 'total', 'handicap', 'combine'))
 
 
+def supported_line(contribution: Contribution) -> bool:
+    line = contribution.ligne
+    if contribution.marche in ('1N2', '1X2', 'qualification', 'combine'):
+        return line is None
+    return (line is not None and line % Decimal('0.25') == 0
+            and (contribution.marche != 'total' or line >= 0))
+
+
 def return_factor(outcome: Outcome, odds: Decimal) -> Decimal | None:
     """Return includes the stake. Caller supplies adequate Decimal precision."""
     return {'gagne': odds, 'perdu': Decimal(0), 'rembourse': Decimal(1),
@@ -47,7 +55,7 @@ def settle(
     rule = contribution.reglement
     market, selection, line = contribution.marche, contribution.selection, contribution.ligne
     outcome: Outcome = 'en_attente'
-    if supported(rule, market, contribution.periode):
+    if supported(rule, market, contribution.periode) and supported_line(contribution):
         if rule is None:
             raise ValueError('regle de reglement absente')
         if score.status == 'reporte':
@@ -77,7 +85,7 @@ def settle(
 
 
 def combined_return(legs: tuple[SettlementLeg, ...]) -> Decimal | None:
-    if not legs:
+    if len(legs) < 2 or len({leg.contribution_id for leg in legs}) != len(legs):
         return None
     value = Decimal(1)
     for leg in legs:

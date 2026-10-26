@@ -9,5 +9,6 @@
   "cost_usd": null,
   "status": "unavailable",
   "error_code": 1,
-  "diagnostic": "Error: Couldn't start session: Managed policy could not be verified: the policy lock file under C:\\Users\\ddura\\.grok is not accessible. Fix permissions and start again.\n"
+  "diagnostic": "Error: Couldn't start session: Managed policy could not be verified: the policy lock file under <profil-utilisateur>/.grok is not accessible. Fix permissions and start again.\n",
+  "local_paths_redacted": true
 }

@@ -34,7 +34,7 @@ from .models import (
     decimal_text,
     instant_text,
 )
-from .service import evaluate
+from .service import combined_legs_proven, evaluate
 
 GENESIS = '0' * 64
 _TYPES = (Source, Publication, PublicationVersion, Contribution, MatchMarket, Result, Evaluation,
@@ -180,6 +180,15 @@ def _get(known: dict[tuple[str, str], Entity], cls: type[T], identifier: str) ->
 def _validate_lineage(entity: Entity, known: dict[tuple[str, str], Entity]) -> None:
     if _key(entity) in known:
         raise AppendOnlyViolation('identity already recorded: append a new observation instead')
+    if isinstance(entity, (PublicationVersion, Contribution)):
+        observed = (entity.modification_observed_at or entity.first_observed_by_robin_at
+                    if isinstance(entity, PublicationVersion) else entity.observed_at)
+        observations = [
+            (e.modification_observed_at or e.first_observed_by_robin_at)
+            if isinstance(e, PublicationVersion) else e.observed_at
+            for e in known.values() if isinstance(e, (PublicationVersion, Contribution, Result))]
+        if observations and observed < max(observations):
+            raise ValueError('observation cannot be backdated in the journal')
     if isinstance(entity, Publication):
         _get(known, Source, entity.source_id)
     elif isinstance(entity, PublicationVersion):
@@ -192,8 +201,8 @@ def _validate_lineage(entity: Entity, known: dict[tuple[str, str], Entity]) -> N
                 raise ValueError('correction requires previous version')
             if (entity.first_observed_by_robin_at != last.first_observed_by_robin_at
                     or entity.modification_observed_at is None
-                    or entity.usable_at < last.usable_at
-                    or entity.modification_observed_at < last.usable_at):
+                    or entity.usable_at <= last.usable_at
+                    or entity.modification_observed_at <= last.usable_at):
                 raise ValueError('correction must retain first observation and advance time')
         elif entity.previous_version_id is not None:
             raise ValueError('first version cannot reference a missing predecessor')
@@ -205,19 +214,28 @@ def _validate_lineage(entity: Entity, known: dict[tuple[str, str], Entity]) -> N
                 or entity.publication_url != publication.publication_url
                 or entity.text_sha256 != version.text_sha256):
             raise ValueError('contribution lineage metadata mismatch')
+        if entity.observed_at < version.usable_at:
+            raise ValueError('contribution observation precedes usable version')
         if any(isinstance(previous, Contribution) and previous.version_id == entity.version_id
                and previous.selection_key == entity.selection_key for previous in known.values()):
             raise ValueError('one contribution per selection slot and version')
     elif isinstance(entity, MatchMarket):
         contribution = _get(known, Contribution, entity.contribution_id)
         version = _get(known, PublicationVersion, contribution.version_id)
-        if entity.version_id != version.version_id or entity.contribution_usable_at != version.usable_at:
+        if any(isinstance(e, MatchMarket) and e.contribution_id == entity.contribution_id
+               for e in known.values()):
+            raise AppendOnlyViolation('one match market per contribution; append a corrected contribution')
+        if (entity.version_id != version.version_id or entity.contribution_usable_at != max(
+                version.usable_at, contribution.observed_at)):
             raise ValueError('match/contribution temporal lineage mismatch')
-        if contribution.match_id is not None and entity.match_id is not None and (
-                contribution.match_id != entity.match_id):
+        if entity.statut == 'resolu' and contribution.match_id != entity.match_id:
             raise ValueError('contribution match identity mismatch')
     elif isinstance(entity, Result):
         match = _get(known, MatchMarket, entity.match_market_id)
+        if entity.legs and entity.outcome != 'en_attente' and not any(
+                combined_legs_proven(entity, known.values(), basis)
+                for basis in ('cote_declaree', 'cote_observee')):
+            raise ValueError('combined legs require pre-match contributions and result evidence')
         if match.match_usable_at is not None and entity.observed_at < match.match_usable_at:
             raise ValueError('result observation precedes kickoff')
         settlements = [e for e in known.values() if isinstance(e, Result)
@@ -235,7 +253,8 @@ def _validate_lineage(entity: Entity, known: dict[tuple[str, str], Entity]) -> N
         contribution = _get(known, Contribution, entity.contribution_id)
         match = _get(known, MatchMarket, entity.match_market_id)
         result = _get(known, Result, entity.result_id)
-        if entity != evaluate(contribution, match, result, odds_basis=entity.odds_basis):
+        if entity != evaluate(contribution, match, result, odds_basis=entity.odds_basis,
+                              leg_evidence=known.values()):
             raise ValueError('evaluation must reproduce the evidence-backed unit calculation')
     elif isinstance(entity, IdentityRevision):
         previous_revisions = [e for e in known.values() if isinstance(e, IdentityRevision)]
@@ -256,6 +275,11 @@ def _validate_lineage(entity: Entity, known: dict[tuple[str, str], Entity]) -> N
         _get(known, Source, entity.source_id)
     elif isinstance(entity, Cohort):
         for existing in known.values():
+            if isinstance(existing, (PublicationVersion, Contribution, Result)):
+                observed = (existing.modification_observed_at or existing.first_observed_by_robin_at
+                            if isinstance(existing, PublicationVersion) else existing.observed_at)
+                if observed > entity.defined_at:
+                    raise ValueError('cohort must be recorded before observations and results')
             if isinstance(existing, Evaluation):
                 c = _get(known, Contribution, existing.contribution_id)
                 if c.author_id in entity.author_ids:

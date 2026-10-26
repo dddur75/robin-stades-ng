@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from datetime import datetime
 from decimal import Decimal, localcontext
 
@@ -9,8 +10,23 @@ from robin.domain.enums import EntityType
 from robin.domain.identity import ProviderIdentity
 from robin.identity.service import IdentityConflictError, IdentityService
 
-from .models import Contribution, Evaluation, MatchMarket, OddsBasis, PublicationVersion, Result
-from .settlement import combined_return, return_factor, settle, settle_combined, supported
+from .models import (
+    Contribution,
+    Entity,
+    Evaluation,
+    MatchMarket,
+    OddsBasis,
+    PublicationVersion,
+    Result,
+)
+from .settlement import (
+    combined_return,
+    return_factor,
+    settle,
+    settle_combined,
+    supported,
+    supported_line,
+)
 
 
 def resolve_match_market(
@@ -40,12 +56,16 @@ def resolve_match_market(
             reason = 'identite_absente'
         else:
             match_id, market_id, selection_id = ids
+            if match_id != contribution.match_id:
+                match_id = market_id = selection_id = None
+                reason = 'identite_contribution_incoherente'
     except IdentityConflictError:
         reason = 'identite_ambigue'
     return MatchMarket(
         match_market_id=f'match-market:{contribution.contribution_id}',
         contribution_id=contribution.contribution_id, version_id=version.version_id,
-        contribution_usable_at=version.usable_at, match_usable_at=match_usable_at,
+        contribution_usable_at=max(version.usable_at, contribution.observed_at),
+        match_usable_at=match_usable_at,
         match_id=match_id, market_id=market_id, selection_id=selection_id,
         statut='resolu' if reason is None else 'non_resolu', raison_non_resolu=reason,
     )
@@ -57,6 +77,7 @@ def evaluate(
     result: Result,
     *,
     odds_basis: OddsBasis,
+    leg_evidence: Iterable[Entity] = (),
 ) -> Evaluation:
     """A unit-stake paper result, always using the explicitly chosen odds field."""
     if (contribution.contribution_id != match.contribution_id
@@ -74,11 +95,12 @@ def evaluate(
         reason = 'non_resolu'
     elif match.match_usable_at is None:
         reason = 'coup_envoi_inconnu'
-    elif not match.pre_match_valid:
+    elif not match.pre_match_valid or contribution.observed_at >= match.match_usable_at:
         reason = 'invalide_pre_match'
     elif result.observed_at < match.match_usable_at:
         raise ValueError('result observation precedes kickoff')
     elif (not supported(contribution.reglement, contribution.marche, contribution.periode)
+          or not supported_line(contribution)
           or result.reglement != contribution.reglement or result.outcome == 'en_attente'):
         reason = 'en_attente'
     elif result.outcome in ('demi_gagne', 'demi_perdu') and contribution.marche not in (
@@ -127,7 +149,10 @@ def evaluate(
                 for leg in result.legs:
                     if leg.odds is not None:
                         quoted *= leg.odds
-                if factor is None or quoted != odds:
+                outcome = ('gagne' if factor is not None and factor > 1 else
+                           'perdu' if factor is not None and factor < 1 else 'rembourse')
+                if (factor is None or quoted != odds or outcome != result.outcome
+                        or not combined_legs_proven(result, leg_evidence, odds_basis)):
                     reason = 'en_attente'
                 else:
                     profit = factor - 1
@@ -146,6 +171,29 @@ def evaluate(
         factual_accuracy=factual_accuracy, anteriority_seconds=anteriority,
         binary_outcome=binary_outcome,
     )
+
+
+def combined_legs_proven(result: Result, evidence: Iterable[Entity], basis: OddsBasis) -> bool:
+    """Each leg needs its own pre-match contribution and latest observed settlement."""
+    items = tuple(evidence)
+    cs = {e.contribution_id: e for e in items if isinstance(e, Contribution)}
+    ms = {e.contribution_id: e for e in items if isinstance(e, MatchMarket)}
+    rs = {e.match_market_id: e for e in items if isinstance(e, Result)}
+    if len(result.legs) < 2:
+        return False
+    for leg in result.legs:
+        c, m = cs.get(leg.contribution_id), ms.get(leg.contribution_id)
+        if c is None or m is None or c.marche == 'combine' or m.match_usable_at is None:
+            return False
+        r = rs.get(m.match_market_id)
+        if (r is None or r.observed_at > result.observed_at or leg.reglement != c.reglement
+                or r.reglement != leg.reglement or r.outcome != leg.outcome
+                or getattr(c, basis) != leg.odds
+                or c not in pre_match_contributions(items, m.match_usable_at)):
+            return False
+        if not evaluate(c, m, r, odds_basis=basis).evaluable:
+            return False
+    return True
 
 
 # Public domain services are also available from this original entry point.

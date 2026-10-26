@@ -28,7 +28,7 @@ origin https://github.com/dddur75/robin-stades-ng.git ; main dans un autre
 worktree. Modifications déjà présentes : ledger, data/source_observatory,
 reports/source_observatory, src/robin/source_observatory, tests/source_observatory.
 
-Relecture ind?pendante : deux tentatives Grok 4.7 high ont ?chou? avant
-r?ponse, verrou de politique Grok inaccessible dans le sandbox. Aucun avis
-re?u, aucune validation ind?pendante ni mont?e en charge. Le journal global
-du banc est hors racine inscriptible ; re?us locaux conserv?s, sans y ?crire.
+Relecture indépendante : deux tentatives Grok 4.7 high ont échoué avant
+réponse, verrou de politique Grok inaccessible dans le sandbox. Aucun avis
+reçu, aucune validation indépendante ni montée en charge. Le journal global
+du banc est hors racine inscriptible ; reçus locaux conservés, sans y écrire.

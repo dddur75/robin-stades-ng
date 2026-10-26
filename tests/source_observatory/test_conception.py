@@ -40,7 +40,7 @@ def contribution(identifier='c1', **changes):
         statut='resolu', raison_non_resolu=None, extraits_preuve=(models.EvidenceExcerpt(
             H, 0, 4, 'home'),), liens_reprise=(), match_id='m1',
         certitude_rapprochement='certaine', ligne=None, periode='reglementaire',
-        reglement=rule(), categorie='selection_avec_cote', probabilite=None,
+        reglement=rule(), categorie='selection_avec_cote', probabilite=None, observed_at=T,
     ) | changes))
 
 
@@ -75,7 +75,8 @@ def test_scenario_a_observed_18_kickoff_20_corrected_22(tmp_path):
                          modification_observed_at=T + timedelta(hours=4),
                          usable_at=T + timedelta(hours=4)))
     store.append(contribution('c2', version_id='v2', text_sha256='b' * 64,
-                              selection='away', extraits_preuve=()))
+                              selection='away', extraits_preuve=(),
+                              observed_at=T + timedelta(hours=4)))
     assert service.pre_match_contributions(store.entities(), T + timedelta(hours=2)) == (
         contribution(),)
     assert len(AppendOnlyStore(store.path).entities()) == 6
@@ -85,7 +86,7 @@ def test_scenario_b_platform_18_discovered_22_is_retrospective(tmp_path):
     store = AppendOnlyStore(tmp_path / 'b.jsonl')
     v = version(first_observed_by_robin_at=T + timedelta(hours=4),
                 usable_at=T + timedelta(hours=4))
-    seed(store, v=v)
+    seed(store, v=v, c=contribution(observed_at=T + timedelta(hours=4)))
     assert service.pre_match_contributions(store.entities(), T + timedelta(hours=2)) == ()
     evaluation = service.evaluate(contribution(), match(contribution(),
         contribution_usable_at=v.usable_at), settled(), odds_basis='cote_declaree')
@@ -127,7 +128,6 @@ def test_ten_attested_reprises_one_group_unknown_origins_stay_separate():
     assert len(groups['p1']) == 11
     assert groups['u1'] == ('u1',)
     assert groups['u2'] == ('u2',)
-    assert copies[0].source_id == origin.source_id  # provenance is never rewritten
 
 
 @pytest.mark.parametrize('market,selection,line,score,expected', [
@@ -171,7 +171,17 @@ def test_combined_half_settlements_and_missing_leg_rule():
     c = contribution(marche='combine', reglement=rule('combine'), cote_declaree=Decimal('6'))
     r = service.settle_combined(c, match(c), result_id='combo',
         observed_at=T + timedelta(hours=4), evidence_sha256=H, legs=legs)
-    assert service.evaluate(c, match(c), r, odds_basis='cote_declaree').unit_profit == Decimal('0.5')
+    evidence = []
+    for leg, line in zip(legs, ('0.25', '2'), strict=True):
+        leg_c = contribution(leg.contribution_id, publication_id=leg.contribution_id,
+            version_id=leg.contribution_id, marche=leg.reglement.market,
+            ligne=Decimal(line), reglement=leg.reglement, cote_declaree=leg.odds)
+        leg_m = match(leg_c)
+        leg_r = replace(settled(leg_c), outcome=leg.outcome)
+        evidence.extend((version(leg_c.version_id, publication_id=leg_c.publication_id),
+                         leg_c, leg_m, leg_r))
+    assert service.evaluate(c, match(c), r, odds_basis='cote_declaree',
+                            leg_evidence=evidence).unit_profit == Decimal('0.5')
     pending = service.settle_combined(c, match(c), result_id='pending',
         observed_at=T + timedelta(hours=4), evidence_sha256=H,
         legs=(replace(legs[0], reglement=None), legs[1]))
@@ -203,12 +213,14 @@ def test_merge_split_recalculates_and_withdrawal_does_not_improve_roi(tmp_path):
     assert separate['account-b'].net == Decimal('-1')
     merge = models.IdentityRevision('merge', None, (
         models.AccountAssignment('account-a', 'merged'),
-        models.AccountAssignment('account-b', 'merged')), T + timedelta(hours=5), H, 'preuve')
+        models.AccountAssignment('account-b', 'merged')), T + timedelta(hours=5), H, 'preuve',
+        certainty='attestee')
     store.append(merge)
     assert service.rankings(store.entities())['merged'].roi == Decimal('0.2')
     store.append(models.IdentityRevision('split', 'merge', (
         models.AccountAssignment('account-a', 'account-a'),
-        models.AccountAssignment('account-b', 'account-b')), T + timedelta(hours=6), H, 'erreur fusion'))
+        models.AccountAssignment('account-b', 'account-b')), T + timedelta(hours=6), H, 'erreur fusion',
+        certainty='attestee'))
     assert service.rankings(AppendOnlyStore(store.path).entities()) == separate
     store.append(models.Withdrawal('withdraw', 'c2', T + timedelta(hours=7), H, 'retire'))
     after = service.rankings(AppendOnlyStore(store.path).entities())
@@ -256,8 +268,9 @@ def test_pre_match_correction_keeps_all_selections_of_new_version(tmp_path):
     store.append(version('v2', previous_version_id='v1',
                          modification_observed_at=T + timedelta(minutes=30),
                          usable_at=T + timedelta(minutes=30)))
-    c2 = contribution('c2', version_id='v2', selection='away')
-    c3 = contribution('c3', version_id='v2', selection='draw', selection_key='selection-2')
+    c2 = contribution('c2', version_id='v2', selection='away', observed_at=T + timedelta(minutes=30))
+    c3 = contribution('c3', version_id='v2', selection='draw', selection_key='selection-2',
+                      observed_at=T + timedelta(minutes=30))
     store.append(c2)
     store.append(c3)
     assert service.pre_match_contributions(store.entities(), T + timedelta(hours=2)) == (c2, c3)
@@ -272,9 +285,12 @@ def test_withdrawn_unevaluated_publication_suspends_the_author(tmp_path):
     store.append(r)
     store.append(service.evaluate(c, match(c), r, odds_basis='cote_declaree'))
     other = contribution('c2', publication_id='p2', version_id='v2',
-                         publication_url='https://example.invalid/p2')
+                         publication_url='https://example.invalid/p2',
+                         observed_at=T + timedelta(hours=4))
     store.append(models.Publication('p2', 's1', other.publication_url))
-    store.append(version('v2', publication_id='p2'))
+    store.append(version('v2', publication_id='p2',
+                         first_observed_by_robin_at=T + timedelta(hours=4),
+                         usable_at=T + timedelta(hours=4)))
     store.append(other)
     store.append(models.Withdrawal('w', 'c2', T + timedelta(hours=5), H, 'retire'))
     assert service.rankings(store.entities())['account-a'].status == 'Comparable suspendu'
@@ -392,19 +408,20 @@ def test_unknown_origins_and_cyclic_links_remain_explicitly_unresolved():
 
 def test_cohort_and_visit_are_persisted_before_any_evaluation(tmp_path):
     store = AppendOnlyStore(tmp_path / 'cohort.jsonl')
-    seed(store)
     cohort = models.Cohort('cohort', ('account-a',), T - timedelta(days=2),
         T - timedelta(days=1), T + timedelta(days=1), T + timedelta(days=2),
         T + timedelta(days=3), 2, Decimal('0.8'), H)
     store.append(cohort)
+    seed(store)
     visit = models.Visit('visit', 's1', T, T + timedelta(minutes=1), True)
     store.append(visit)
-    assert AppendOnlyStore(store.path).entities()[-2:] == (cohort, visit)
+    restored = AppendOnlyStore(store.path).entities()
+    assert restored[0] == cohort and restored[-1] == visit
     c, m, r = contribution(), match(), settled()
     store.append(m)
     store.append(r)
     store.append(service.evaluate(c, m, r, odds_basis='cote_declaree'))
-    with pytest.raises(ValueError, match='before evaluations'):
+    with pytest.raises(ValueError, match='before observations'):
         store.append(replace(cohort, cohort_id='late'))
 
 

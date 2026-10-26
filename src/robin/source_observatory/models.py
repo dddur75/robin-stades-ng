@@ -110,6 +110,8 @@ class PublicationVersion:
         _hash(self.text_sha256)
         if self.previous_version_id is not None:
             _text(self.previous_version_id, 'previous_version_id')
+            if self.modification_observed_at is None:
+                raise ValueError('correction requires observed modification time')
         for name in ('announced_by_platform_at', 'first_observed_by_robin_at',
                      'modification_observed_at', 'usable_at'):
             instant = getattr(self, name)
@@ -246,9 +248,11 @@ class Contribution:
     bookmaker: str | None
     categorie: Category
     probabilite: Decimal | None
+    observed_at: datetime
     selection_key: str = 'selection-1'
 
     def __post_init__(self) -> None:
+        _instant(self.observed_at, 'contribution observed_at')
         for name in ('contribution_id', 'version_id', 'source_id', 'author_id', 'publication_id',
                      'langue', 'marche', 'selection', 'periode', 'selection_key'):
             _text(getattr(self, name), name)
@@ -300,6 +304,8 @@ class Contribution:
             raise ValueError('publication cannot reprise itself')
         if type(self.extraits_preuve) is not tuple:
             raise TypeError('evidence excerpts must be an immutable tuple')
+        if len(self.extraits_preuve) > 5:
+            raise ValueError('at most five evidence locations per contribution')
         for excerpt in self.extraits_preuve:
             if type(excerpt) is not EvidenceExcerpt:
                 raise TypeError('only excerpt hashes and offsets are allowed')
@@ -307,6 +313,12 @@ class Contribution:
                 raise ValueError('excerpt fingerprint must match contribution')
             if excerpt.text is not None and self.preuve_permise is None:
                 raise ValueError('necessary excerpt requires permission evidence')
+        texts = [e.text for e in self.extraits_preuve if e.text is not None]
+        if len(texts) > 1 or sum(map(len, texts)) > 500:
+            raise ValueError('one necessary text excerpt, at most 500 characters in total')
+        excerpts = sorted(self.extraits_preuve, key=lambda e: e.start)
+        if any(a.end > b.start for a, b in zip(excerpts, excerpts[1:])):
+            raise ValueError('overlapping evidence excerpts forbidden')
 
     def extraction_metadata(self) -> dict[str, object]:
         """Closed extraction contract, including the complete evidence lineage."""
@@ -445,6 +457,7 @@ class IdentityRevision:
     observed_at: datetime
     evidence_sha256: str
     reason: str
+    certainty: Literal['attestee', 'similarite'] = 'similarite'
 
     def __post_init__(self) -> None:
         _text(self.revision_id, 'revision_id')
@@ -456,6 +469,11 @@ class IdentityRevision:
             raise ValueError('explicit immutable assignments required')
         if len({item.author_id for item in self.assignments}) != len(self.assignments):
             raise ValueError('duplicate account assignment')
+        if self.certainty not in ('attestee', 'similarite'):
+            raise ValueError('explicit identity certainty required')
+        if self.certainty != 'attestee' and len({a.identity_id for a in self.assignments}) < len(
+                self.assignments):
+            raise ValueError('similar accounts cannot be merged without attested identity')
 
 
 @dataclass(frozen=True, slots=True)

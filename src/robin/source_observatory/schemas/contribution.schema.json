@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://robin-des-stades.invalid/schemas/source-observatory/contribution.schema.json",
-  "title": "Dossier fid?le ? contribution ?04/05 version 2",
+  "title": "Dossier fidèle à contribution §04/05 version 3",
   "description": "Immutable evidence lineage. Only necessary authorized excerpts, exact explicit quotes, documented versioned settlement rules. UTC plus original timezone.",
   "type": "object",
   "additionalProperties": false,
@@ -35,7 +35,8 @@
     "cote_declaree_provenance",
     "cote_declaree_at",
     "cote_observee_provenance",
-    "cote_observee_at"
+    "cote_observee_at",
+    "observed_at"
   ],
   "properties": {
     "source_id": {
@@ -115,10 +116,24 @@
               "null"
             ],
             "minLength": 1,
-            "maxLength": 500
+            "maxLength": 500,
+            "pattern": "\\S"
           }
         }
-      }
+      },
+      "maxItems": 5,
+      "contains": {
+        "properties": {
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "minContains": 0,
+      "maxContains": 1
     },
     "contribution_id": {
       "type": "string",
@@ -258,6 +273,9 @@
           "type": "null"
         }
       ]
+    },
+    "observed_at": {
+      "$ref": "#/$defs/instant"
     }
   },
   "allOf": [

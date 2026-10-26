@@ -69,7 +69,7 @@ def contribution(**changes: object) -> Contribution:
         periode='reglementaire', reglement=settlement_rule(),
         cote_declaree_provenance='auteur', cote_declaree_at=T,
         cote_observee_provenance='observation Robin', cote_observee_at=T, bookmaker=None,
-        categorie='selection_avec_cote', probabilite=None,
+        categorie='selection_avec_cote', probabilite=None, observed_at=version().usable_at,
     )
     for basis in ('cote_declaree', 'cote_observee'):
         if basis in changes and changes[basis] is None:
