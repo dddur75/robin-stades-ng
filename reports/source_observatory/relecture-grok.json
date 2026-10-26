@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-26T06:41:34.458Z",
+  "task": "source-observatory-conception",
+  "poste": "relecteur",
+  "requested_model": "grok-4.7",
+  "requested_effort": "high",
+  "duration_seconds": 0.199,
+  "david_verdict": "en_attente",
+  "cost_usd": null,
+  "status": "unavailable",
+  "error_code": 1,
+  "diagnostic": "Error: Couldn't start session: Managed policy could not be verified: the policy lock file under C:\\Users\\ddura\\.grok is not accessible. Fix permissions and start again.\n"
+}

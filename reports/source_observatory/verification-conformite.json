@@ -1,0 +1,71 @@
+{
+  "claim_id": "ENG.SOURCE_OBSERVATORY.CONCEPTION.20261026.V2",
+  "observed_at": "2026-10-26T06:46:02.548808+00:00",
+  "scope": "targeted synthetic source_observatory tests only; not full repository suite",
+  "head": "227b5ae1f188a58b80c6d645faf64ff7f1c9507a",
+  "worktree": "C:\\Users\\ddura\\IA-Team\\robin-stades-ng-wt\\observatoire",
+  "commit_created": false,
+  "independent_review": "BLOCKED_GROK_POLICY_LOCK",
+  "david_verdict": "en_attente",
+  "checks": [
+    {
+      "command": [
+        "C:\\Users\\ddura\\IA-Team\\robin-stades-ng-wt\\observatoire\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "tests/source_observatory",
+        "-q"
+      ],
+      "exit_code": 0,
+      "stdout": "........................................................................ [ 79%]\n...................                                                      [100%]\n91 passed in 1.14s\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\ddura\\IA-Team\\robin-stades-ng-wt\\observatoire\\.venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "src/robin/source_observatory",
+        "tests/source_observatory"
+      ],
+      "exit_code": 0,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\ddura\\IA-Team\\robin-stades-ng-wt\\observatoire\\.venv\\Scripts\\python.exe",
+        "-m",
+        "mypy",
+        "--strict",
+        "--follow-imports=silent",
+        "src/robin/source_observatory"
+      ],
+      "exit_code": 0,
+      "stdout": "Success: no issues found in 6 source files\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "warning: in the working copy of 'src/robin/storage/__init__.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'src/robin/storage/hypothesis_models.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'src/robin/storage/models.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'src/robin/storage/prequential_models.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'src/robin/storage/prospective_models.py', LF will be replaced by CRLF the next time Git touches it\n"
+    }
+  ],
+  "artifact_hashes": {
+    "src/robin/source_observatory/__init__.py": "31b3bd2722a2f68bd70f4a3b9373fd837675fc62a8f067ebdea01ca673f86f18",
+    "src/robin/source_observatory/models.py": "1d3ca80ebb30a4095c9a3cc30657d8be47786716105c07eef1b097e7dd276948",
+    "src/robin/source_observatory/ranking.py": "203396231b7add12965afb9e517087f162fc12220c4229e044b545a07f2eec93",
+    "src/robin/source_observatory/schemas/contribution.schema.json": "3ee95424af99d40f5079ff67e32ef90518a0541d5778f24c5c98810de8b460e6",
+    "src/robin/source_observatory/service.py": "84eb39e6bcdd8fbfd6527c1133362d18ec2a8d62f357c0dd679cba5da70138f0",
+    "src/robin/source_observatory/settlement.py": "9e2f14270be3606734ac7566341c3154685b8b4d8308a8c06e32f18ec1bc750f",
+    "src/robin/source_observatory/store.py": "3b9e19afc3fbe8ed6f70e476be3f790bec9b11243315b670cdb3573aeebd9c29",
+    "tests/source_observatory/test_conception.py": "5dd4f34030a2d02412a30c1135d0842c959e56f3a42e5a6b6e3672f896f4d20d",
+    "tests/source_observatory/test_observatory.py": "cf307aa5ae277163d18f5fee63a70120be77f517dd2e56c20d5a5d9f2307dc5c"
+  }
+}
