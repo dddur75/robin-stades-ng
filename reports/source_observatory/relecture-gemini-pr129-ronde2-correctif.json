@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-26T16:54:08.089Z",
+  "task": "source-observatory-pr129-round2",
+  "poste": "relecteur_secours",
+  "requested_model": "gemini-4-argon-high",
+  "requested_effort": "high",
+  "reported_model": null,
+  "duration_seconds": 0.122,
+  "cost_usd": null,
+  "david_verdict": "en_attente",
+  "benchmark_journal": "non_ecrit_hors_perimetre_inscriptible",
+  "status": "unavailable",
+  "exit_code": 2,
+  "diagnostic": "Error: -p took \"--model\" as its prompt, so the intended prompt was left as an argument and ignored. Attach the prompt to the flag (-p='your prompt') and move --model elsewhere on the command line. "
+}

@@ -27,6 +27,18 @@ Mis à jour : 2026-10-26 12:40 — plafond de travail en cours : 4. Routes : voi
 - Extraction IA (Gemini + garde-fou déterministe), 53 textes notés, annotateur Grok relu par Gemini : précision 85,4 % (35/41), 0 cote inventée, schéma 100 %, rappel 67 %, non_resolu 0/1 (non mesurable). C3 = PARTIAL (C3.3 non atteint). Détail : mesure-c3-extraction-llm.json.
 - Gemini ronde 4 sur 940a2eb : ACCEPTE_SOUS_RESERVE (0 bloquant chaîne pilote).
 
+- JEU NEUF aveugle (30 textes, prompt gelé sha256 2c2ba78b…) : précision 96,2 % (25/26), 0 cote inventée, non_resolu 5/5, rappel 96,2 %, schéma 100 %, 0 faux positif sur 9 textes sans pari. Échantillon 30 < 40 → C3 PARTIAL sur la taille. Détail : mesure-c3-jeu-neuf.json.
+- Runner RUSH (sans IA) : IA-Team\scripts
+ush
+ush-runner.ps1, file IA-Team
+ush\queue.json, journal runner.log ; tâche planifiée Windows NON créée (accord de David requis).
+
+## Décision de David (26/10) — consignée au ledger (EDGE.1247, PARTIAL)
+Le pilote a lieu le 31/10 sur les seules sources CONFORMES, verdict PARTIAL assumé si C1 non atteint ; pas de collecte manuelle ni report ; règles d'accès inchangées.
+
+## Contrôle des sources (sans IA, règles du collecteur)
+Registre 74 sources, plan v3 : 71 sources / 1491 visites. Conformes avec publications Ligue 1 : 19 (9 petits) ; lisibles sans publication L1 pour l'instant : 8 ; illisibles : 6 ; refusées CGU : 39 ; refusées robots : 2. L'ancien « 20/23 OK » est RETIRÉ (contrôle non conforme).
+
 ## Bloqués / limites
 - C3.1 non atteint : précision 80 % (4/5) sur le jeu final caché ; C3.3 non mesurable (1 ambigu) — remesure après C33
 - Grok : écriture de fichiers et fetch de pages refusés en headless → texte seul

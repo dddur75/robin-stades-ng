@@ -1,0 +1,272 @@
+{
+ "date": "2026-10-26",
+ "methode": "contrôle déterministe sans IA (robots.txt via robotparser pour '*' et l'agent du collecteur, accès HTTP sans compte, mur d'accès par mots-clés)",
+ "resultat": {
+  "ok": 20,
+  "a_revoir": [
+   "SRC_048",
+   "SRC_056",
+   "SRC_060"
+  ]
+ },
+ "limites": [
+  "les clauses CGU citées par Gemini n'ont PAS été revérifiées indépendamment : la revue croisée Codex (sans réseau dans son bac à sable) a rendu REFUSE faute de pouvoir ouvrir les pages",
+  "une absence de robots.txt n'est pas une autorisation : le collecteur applique en plus les CGU consignées au registre"
+ ],
+ "detail": [
+  {
+   "source_id": "SRC_043",
+   "adresse": "https://www.quiparier.com/competition-football,ligue-1.html",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": false,
+   "dates_visibles": true,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_044",
+   "adresse": "https://wallabet.fr/pronostic-sportif/football-p1/ligue-1/",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": false,
+   "dates_visibles": true,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_045",
+   "adresse": "https://www.mightytips.com/football-predictions/ligue-1/",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": false,
+   "dates_visibles": true,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_046",
+   "adresse": "https://www.kicktipp.fr/pronostics-ligue1/",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": false,
+   "dates_visibles": false,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_047",
+   "adresse": "https://www.football.fr/ligue-1",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": false,
+   "dates_visibles": true,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_048",
+   "adresse": "https://www.foot01.com/ligue1",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": true,
+   "dates_visibles": true,
+   "verdict": "A_REVOIR"
+  },
+  {
+   "source_id": "SRC_049",
+   "adresse": "https://www.maxifoot.fr/foot-matchs_ligue1.htm",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": false,
+   "dates_visibles": true,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_050",
+   "adresse": "https://www.foot-national.com/ligue-1.html",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": false,
+   "dates_visibles": true,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_051",
+   "adresse": "https://www.onzemondial.com/ligue-1",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": false,
+   "dates_visibles": true,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_052",
+   "adresse": "https://www.livefoot.fr/france/ligue1/ligue1.php",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": false,
+   "dates_visibles": true,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_053",
+   "adresse": "https://www.football365.fr/france/ligue-1",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": false,
+   "dates_visibles": true,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_054",
+   "adresse": "https://www.pronor.fr/blog-actualite-paris-sportifs/",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": false,
+   "dates_visibles": true,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_055",
+   "adresse": "https://www.ligue1pro.com/index.php?page=prono",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": false,
+   "dates_visibles": true,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_056",
+   "adresse": "https://www.forumtfc.net/topic/49574-pronostic-tfc-20262027/",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": true,
+   "dates_visibles": true,
+   "verdict": "A_REVOIR"
+  },
+  {
+   "source_id": "SRC_057",
+   "adresse": "https://www.asm-vizu.net/forum/divers/fvpa/1830854-ligue-1-vizu-2026-2027-8%C3%A8me-journ%C3%A9e-avant-le-23-10-20h45",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": false,
+   "dates_visibles": true,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_058",
+   "adresse": "https://legruppetto.fr/forum/viewforum.php?f=21",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": false,
+   "dates_visibles": true,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_059",
+   "adresse": "https://www.info-stades.fr/forum/viewforum.php?f=1",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": false,
+   "dates_visibles": true,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_060",
+   "adresse": "https://www.hexagones.org/forums/forum/27-duel-pronos/",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": true,
+   "dates_visibles": true,
+   "verdict": "A_REVOIR"
+  },
+  {
+   "source_id": "SRC_061",
+   "adresse": "https://www.lesviolets.com/calendrier-ligue-1",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": false,
+   "dates_visibles": true,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_062",
+   "adresse": "https://www.culturepsg.com/news/ligue1",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": false,
+   "dates_visibles": true,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_063",
+   "adresse": "http://www.massalialive.com/",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": false,
+   "dates_visibles": true,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_064",
+   "adresse": "https://allezparis.fr/ligue-1/",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": false,
+   "dates_visibles": true,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_065",
+   "adresse": "https://www.jeunesfooteux.com/categorie/ligue-1",
+   "robots_http": 200,
+   "robots_autorise_bot": true,
+   "robots_autorise_etoile": true,
+   "page_http": 200,
+   "mur_acces": false,
+   "dates_visibles": true,
+   "verdict": "OK"
+  }
+ ],
+ "SUPERSEDE": "Ce contrôle est INVALIDE (User-Agent usurpé, page téléchargée sans lecture préalable de robots.txt, CGU ignorées). Voir controle-sources-conformes.json."
+}

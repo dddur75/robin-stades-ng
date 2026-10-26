@@ -1,0 +1,570 @@
+{
+  "schema_version": "public-formats-comparison-v1",
+  "claim_id": "ENG.SOURCE_OBSERVATORY.PUBLIC_FORMATS.20261026",
+  "base_head": "0201ee4bf9bf7bfbfb741fb0fa983c83e8488b27",
+  "branch": "codex/observatoire-sources-v3",
+  "pr": 129,
+  "measurement": "Deterministic parser comparison on identical public HTTP responses fetched once with existing endpoint, robots policy and delays; no AI in extraction or counting; raw payloads retained outside Git in session temporary storage.",
+  "registry_sha256": "dd038f6c4b75c77d738f6721001adc0426da194884f36b8568b4bde7e9db9a86",
+  "selected_by_endpoint": 23,
+  "user_reported_baseline": {
+    "readable": 9,
+    "with_ligue1": 6,
+    "provenance": "user message; not reproduced in this access-controlled measurement"
+  },
+  "measured_before": {
+    "readable": 7,
+    "with_ligue1": 5
+  },
+  "measured_after": {
+    "readable": 15,
+    "with_ligue1": 8
+  },
+  "ligue1_rule": "ligue[ -]?1|\\bl1\\b on folded publication text plus publication URL; same rule as collector",
+  "baseline_difference": "SRC_010 and SRC_057 denied by current robots policy; SRC_006 connection reset. No blocked content was fetched.",
+  "compatibility_exception": "Existing inert HTML5 <!DOCTYPE html> remains accepted to preserve the existing regression test. PUBLIC/SYSTEM/internal DTDs and ENTITY declarations remain refused, including UTF-16/32 input. This differs from a literal ban on every DOCTYPE.",
+  "date_policy": "Explicit publication timestamp with timezone or None; never inferred from kickoff, observation, URL or modification time. New generic cards/fallback page identities require valid date evidence; existing identifiable publications may retain an absent platform timestamp.",
+  "remaining_parser_refusals": {
+    "SRC_037": "marketing articles without publication identity/date",
+    "SRC_044": "no supported dated publication block",
+    "SRC_046": "no supported dated publication block",
+    "SRC_055": "no supported dated publication block",
+    "SRC_058": "external XHTML DTD, intentionally refused"
+  },
+  "checks": {
+    "runtime": "Robin Python 3.12 runtime; PYTHONPATH=src",
+    "baseline": {
+      "command": "pytest tests/source_observatory tests/council tests/hypothesis_intelligence -q",
+      "passed": 656,
+      "failed": 2
+    },
+    "source_observatory": {
+      "command": "pytest tests/source_observatory -q",
+      "passed": 441,
+      "failed": 0,
+      "synthetic_new_cases": 40
+    },
+    "council_hypothesis_intelligence": {
+      "command": "pytest tests/council tests/hypothesis_intelligence -q",
+      "passed": 255,
+      "failed": 2
+    },
+    "preexisting_failures": [
+      "tests/council/test_reprise_collecte_governance_v1.py::test_successor_is_non_runtime_and_reuses_the_parent_cumulative_budget",
+      "tests/council/test_reprise_collecte_governance_v1.py::test_sqlite_successor_is_test_only_and_does_not_extend_runtime_authority"
+    ],
+    "preexisting_failure_reason": "Unchanged parent manifest SHA-256 differs from the hardcoded expected hash; reproduced before any modification.",
+    "ruff": "PASS",
+    "mypy_targeted": "PASS",
+    "bandit_targeted": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "review": {
+    "status": "UNAVAILABLE_BEFORE_MODEL_CALL",
+    "requested_model": "grok-4.7",
+    "reasoning_effort": "high",
+    "tools": false,
+    "subagents": false,
+    "max_turns": 1,
+    "launcher_duration_seconds": 0.32855029999999996,
+    "reported_model": null,
+    "model_duration_seconds": null,
+    "cost_or_credits": null,
+    "david_verdict": "en_attente",
+    "reason": "Managed policy lock inaccessible; process exited 1 before starting session. No independent verdict returned."
+  },
+  "delivery_status": "PARTIAL_PENDING_INDEPENDENT_REVIEW_AND_HTML5_EXCEPTION_ACCEPTANCE",
+  "commit_created": false,
+  "fetch_pull_push_merge_performed": false,
+  "endpoint_changed": false,
+  "rows": [
+    {
+      "source_id": "SRC_002",
+      "url": "https://www.coteur.com/pronostic/foot/ligue-1",
+      "robots_status": 200,
+      "robots_sha256": "c7b989e6ed2cb69970172118378d2e552e2c752fb625a864d312a3d1c5b32d3d",
+      "status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 49957,
+      "sha256": "afab8e3396988d06d3d2941e5048e400867d397da392466f301e8c66bbf58fd4",
+      "recorded_at_utc": "2026-10-26T15:24:33.904541+00:00",
+      "before": {
+        "readable": false,
+        "ligue1": false,
+        "parse_error": "public publication format not supported"
+      },
+      "after": {
+        "readable": true,
+        "ligue1": false,
+        "posts": 1,
+        "dated": 0
+      }
+    },
+    {
+      "source_id": "SRC_006",
+      "url": "https://pensebet.com/feed/",
+      "recorded_at_utc": "2026-10-26T15:24:33.419237+00:00",
+      "access_failure": "connection_reset",
+      "before": {
+        "readable": false,
+        "ligue1": false
+      },
+      "after": {
+        "readable": false,
+        "ligue1": false
+      }
+    },
+    {
+      "source_id": "SRC_008",
+      "url": "https://dailysportpick.com/fr/tips/ligue-1-tips/",
+      "robots_status": 200,
+      "robots_sha256": "abe5f730b5c5b6e8ab6d22251d7ee93e99d532ca57d640228746339957ecad55",
+      "status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 261294,
+      "sha256": "567dad54a75b541d5f66106344c26223c9959be69ac0931f4b181cd1b8f4e3ce",
+      "recorded_at_utc": "2026-10-26T15:24:34.237603+00:00",
+      "before": {
+        "readable": true,
+        "ligue1": true,
+        "posts": 1,
+        "dated": 0
+      },
+      "after": {
+        "readable": true,
+        "ligue1": true,
+        "posts": 1,
+        "dated": 0
+      }
+    },
+    {
+      "source_id": "SRC_009",
+      "url": "https://www.zone-supporter.com/tipsters-foot/",
+      "robots_status": 200,
+      "robots_sha256": "dc2f08337f914b83104b1cc09a2e273eec7d4003cc6fd7046411db9500c6056f",
+      "status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 70920,
+      "sha256": "a8a30e7657f2ecf11639c8cbe7b33ee6f28e33e79517e543147feec0b1bb1c3a",
+      "recorded_at_utc": "2026-10-26T15:24:43.678755+00:00",
+      "before": {
+        "readable": false,
+        "ligue1": false,
+        "parse_error": "public publication format not supported"
+      },
+      "after": {
+        "readable": true,
+        "ligue1": true,
+        "posts": 2,
+        "dated": 1
+      }
+    },
+    {
+      "source_id": "SRC_010",
+      "url": "https://www.les-transferts.com/paris-sportifs/feed/",
+      "robots_status": 200,
+      "robots_sha256": "0726314857933255cedbb42808616ec37a12e291c2aea34b7b04c587a52d6996",
+      "recorded_at_utc": "2026-10-26T15:24:33.362992+00:00",
+      "access_failure": "robots_denied",
+      "before": {
+        "readable": false,
+        "ligue1": false
+      },
+      "after": {
+        "readable": false,
+        "ligue1": false
+      }
+    },
+    {
+      "source_id": "SRC_011",
+      "url": "https://onefootball.com/fr/paris-sportif/pronostics",
+      "robots_status": 200,
+      "robots_sha256": "1574e24255a75fde6e618ea0ea98afa488e45264ff56a07204ee1475f3e927a5",
+      "status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 150137,
+      "sha256": "9ee6ef72810eae8da98e21ae08a6c655ba9933d4f7995f0548014eea0a61948e",
+      "recorded_at_utc": "2026-10-26T15:24:34.526868+00:00",
+      "before": {
+        "readable": false,
+        "ligue1": false,
+        "parse_error": "public publication format not supported"
+      },
+      "after": {
+        "readable": true,
+        "ligue1": true,
+        "posts": 1,
+        "dated": 0
+      }
+    },
+    {
+      "source_id": "SRC_037",
+      "url": "https://www.pari-ligue1.fr/",
+      "robots_status": 200,
+      "robots_sha256": "7a68418001a6b233ddf8dc96b89c8bedee786f17790d2afaeee9a9e582fb4018",
+      "status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 383795,
+      "sha256": "e73c051525dca4d1c2b7f5c48c1d1d5ba2917aef8eb497f23429aed15bfe9334",
+      "recorded_at_utc": "2026-10-26T15:24:33.953551+00:00",
+      "before": {
+        "readable": false,
+        "ligue1": false,
+        "parse_error": "publication without public permalink"
+      },
+      "after": {
+        "readable": false,
+        "ligue1": false,
+        "parse_error": "publication without public permalink"
+      }
+    },
+    {
+      "source_id": "SRC_038",
+      "url": "http://forum.sco1919.com/viewtopic.php?t=13259",
+      "robots_status": 200,
+      "robots_sha256": "dc2f08337f914b83104b1cc09a2e273eec7d4003cc6fd7046411db9500c6056f",
+      "status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 110688,
+      "sha256": "8348f70c571bb0589cf78e855edd61268f04070d8e8a131e06d9930511053ce2",
+      "recorded_at_utc": "2026-10-26T15:24:44.642550+00:00",
+      "before": {
+        "readable": true,
+        "ligue1": false,
+        "posts": 30,
+        "dated": 0
+      },
+      "after": {
+        "readable": true,
+        "ligue1": false,
+        "posts": 30,
+        "dated": 0
+      }
+    },
+    {
+      "source_id": "SRC_040",
+      "url": "https://forum.poteaux-carres.com/viewforum.php?f=42",
+      "robots_status": 404,
+      "robots_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 42515,
+      "sha256": "c2a8f5d9c3e31ca5396a7c474c305b0fdd1309278cee6f0effff706e1e3a9c65",
+      "recorded_at_utc": "2026-10-26T15:24:34.387954+00:00",
+      "before": {
+        "readable": false,
+        "ligue1": false,
+        "parse_error": "public publication format not supported"
+      },
+      "after": {
+        "readable": true,
+        "ligue1": false,
+        "posts": 12,
+        "dated": 12
+      }
+    },
+    {
+      "source_id": "SRC_041",
+      "url": "https://forum.madeinlens.com/forum/16-pronostics/",
+      "robots_status": 200,
+      "robots_sha256": "ec7d94d4cee771c080fe99104b9b0dea4218b80ae871dfda597ae92e86f75f47",
+      "status": 200,
+      "content_type": "text/html;charset=UTF-8",
+      "bytes": 65525,
+      "sha256": "4bccb3c6a8122a9fd9a2218e32a24a0aa0a1914f063667565b4cc1e27c604e18",
+      "recorded_at_utc": "2026-10-26T15:24:34.443533+00:00",
+      "before": {
+        "readable": false,
+        "ligue1": false,
+        "parse_error": "public publication format not supported"
+      },
+      "after": {
+        "readable": true,
+        "ligue1": true,
+        "posts": 6,
+        "dated": 6
+      }
+    },
+    {
+      "source_id": "SRC_044",
+      "url": "https://wallabet.fr/pronostic-sportif/football-p1/ligue-1/",
+      "robots_status": 200,
+      "robots_sha256": "b8be180024d6eba420f82ae4d74389bb9bcd89ce49c81fd11482903a99f506ad",
+      "status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 190046,
+      "sha256": "3ff296043f94396ca5aeb39eb84e90eccf8af15039e9ab70f9be6073fa45c10b",
+      "recorded_at_utc": "2026-10-26T15:24:35.535768+00:00",
+      "before": {
+        "readable": false,
+        "ligue1": false,
+        "parse_error": "public publication format not supported"
+      },
+      "after": {
+        "readable": false,
+        "ligue1": false,
+        "parse_error": "public publication format not supported"
+      }
+    },
+    {
+      "source_id": "SRC_045",
+      "url": "https://www.mightytips.com/football-predictions/ligue-1/",
+      "robots_status": 200,
+      "robots_sha256": "aebfd5bf534b936e4ba5b8573bd31d98e2080c164e6c36a6f16b34d2ad0dce6b",
+      "status": 200,
+      "content_type": "text/html",
+      "bytes": 246212,
+      "sha256": "2225c0eb6f50b1e461763aabcf99d0dd5b87eeda4d895d5553b44e052fd94e83",
+      "recorded_at_utc": "2026-10-26T15:24:34.943898+00:00",
+      "before": {
+        "readable": false,
+        "ligue1": false,
+        "parse_error": "public publication format not supported"
+      },
+      "after": {
+        "readable": true,
+        "ligue1": false,
+        "posts": 4,
+        "dated": 0
+      }
+    },
+    {
+      "source_id": "SRC_046",
+      "url": "https://www.kicktipp.fr/pronostics-ligue1/",
+      "robots_status": 200,
+      "robots_sha256": "86c4d87673e7cf3df08ffa578991b0525af8cdbc39477052ab429456246ea47a",
+      "status": 200,
+      "content_type": "text/html;charset=utf-8",
+      "bytes": 10900,
+      "sha256": "42cf60ec0ebb023a49b5ddb4efaee991123c141b0867b23b70fcbc3cd6695e42",
+      "recorded_at_utc": "2026-10-26T15:24:34.882707+00:00",
+      "before": {
+        "readable": false,
+        "ligue1": false,
+        "parse_error": "public publication format not supported"
+      },
+      "after": {
+        "readable": false,
+        "ligue1": false,
+        "parse_error": "public publication format not supported"
+      }
+    },
+    {
+      "source_id": "SRC_050",
+      "url": "https://www.foot-national.com/rss/ligue-1.html",
+      "robots_status": 200,
+      "robots_sha256": "66534f58e7fd36497fd1fcbcf6f4f39463d83315bf7f463b84360e200b8519c4",
+      "status": 200,
+      "content_type": "application/rss+xml; charset=UTF-8",
+      "bytes": 21463,
+      "sha256": "11013a8197cc5022f3f171da7e8a4c7900c6efa14c58006d41055f8858ea4043",
+      "recorded_at_utc": "2026-10-26T15:24:37.952372+00:00",
+      "before": {
+        "readable": true,
+        "ligue1": true,
+        "posts": 20,
+        "dated": 20
+      },
+      "after": {
+        "readable": true,
+        "ligue1": true,
+        "posts": 20,
+        "dated": 20
+      }
+    },
+    {
+      "source_id": "SRC_051",
+      "url": "https://www.onzemondial.com/rss/france.html",
+      "robots_status": 200,
+      "robots_sha256": "5cdcf9636932042aefe2c308bf32fc40bf91e4a8009329b9789db59152970d1b",
+      "status": 200,
+      "content_type": "application/rss+xml; charset=UTF-8",
+      "bytes": 19436,
+      "sha256": "e29788d827af32beecee4470b134074619ff28d8d20f678b5b7edf6436575f31",
+      "recorded_at_utc": "2026-10-26T15:24:40.636998+00:00",
+      "before": {
+        "readable": true,
+        "ligue1": true,
+        "posts": 20,
+        "dated": 20
+      },
+      "after": {
+        "readable": true,
+        "ligue1": true,
+        "posts": 20,
+        "dated": 20
+      }
+    },
+    {
+      "source_id": "SRC_052",
+      "url": "https://www.livefoot.fr/france/ligue1/ligue1.php",
+      "robots_status": 200,
+      "robots_sha256": "f1515783fca2b7f202b4da5463e1b819eec7777e828d09571a19302507fa004e",
+      "status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 222402,
+      "sha256": "d5041c32f86e0d238dc745d8b08e1f3623bad2e6d2c52fa0ce6a5f41d54f3cbb",
+      "recorded_at_utc": "2026-10-26T15:24:35.367857+00:00",
+      "before": {
+        "readable": false,
+        "ligue1": false,
+        "parse_error": "publication without public permalink"
+      },
+      "after": {
+        "readable": true,
+        "ligue1": false,
+        "posts": 18,
+        "dated": 0
+      }
+    },
+    {
+      "source_id": "SRC_055",
+      "url": "https://www.ligue1pro.com/index.php?page=prono",
+      "robots_status": 200,
+      "robots_sha256": "fd89345af6aca5dab85f2aa6a830e270a362b1fa6b5f19607ddd773a081ed651",
+      "status": 200,
+      "content_type": "text/html; charset=ISO-8859-1",
+      "bytes": 33707,
+      "sha256": "a382f0de962961ff3ca8debdfc2896cf97b28e5262e7bc9b2cbb0612f7fd2bbd",
+      "recorded_at_utc": "2026-10-26T15:24:35.852782+00:00",
+      "before": {
+        "readable": false,
+        "ligue1": false,
+        "parse_error": "public publication format not supported"
+      },
+      "after": {
+        "readable": false,
+        "ligue1": false,
+        "parse_error": "public publication format not supported"
+      }
+    },
+    {
+      "source_id": "SRC_057",
+      "url": "https://www.asm-vizu.net/forum/divers/fvpa/1830854-ligue-1-vizu-2026-2027-8%C3%A8me-journ%C3%A9e-avant-le-23-10-20h45",
+      "robots_status": 200,
+      "robots_sha256": "2c2e7b5d64b004397f7574ae563e1b0c614e9c2871ed02cf4b168c4b0bc011e2",
+      "recorded_at_utc": "2026-10-26T15:24:35.712597+00:00",
+      "access_failure": "robots_denied",
+      "before": {
+        "readable": false,
+        "ligue1": false
+      },
+      "after": {
+        "readable": false,
+        "ligue1": false
+      }
+    },
+    {
+      "source_id": "SRC_058",
+      "url": "https://legruppetto.fr/forum/viewforum.php?f=21",
+      "robots_status": 200,
+      "robots_sha256": "069d2128e3623fe63af729ec7f53b8da3a9960cc4723b4e6574c072fd9d17fd1",
+      "status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 79130,
+      "sha256": "33a35ee53e7c923d2db3f707c53cdf5e619c73b93699e45b982b7b649991c3e1",
+      "recorded_at_utc": "2026-10-26T15:24:36.424687+00:00",
+      "before": {
+        "readable": false,
+        "ligue1": false,
+        "parse_error": "unsupported or oversized document"
+      },
+      "after": {
+        "readable": false,
+        "ligue1": false,
+        "parse_error": "unsupported or oversized document"
+      }
+    },
+    {
+      "source_id": "SRC_059",
+      "url": "https://www.info-stades.fr/forum/viewforum.php?f=1",
+      "robots_status": 200,
+      "robots_sha256": "dc2f08337f914b83104b1cc09a2e273eec7d4003cc6fd7046411db9500c6056f",
+      "status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 121069,
+      "sha256": "af2ec5ff46ee8ff23484c5e94c681b9e50e8a17f4f1bf6f32089ef72a180d09f",
+      "recorded_at_utc": "2026-10-26T15:24:46.414697+00:00",
+      "before": {
+        "readable": false,
+        "ligue1": false,
+        "parse_error": "public publication format not supported"
+      },
+      "after": {
+        "readable": true,
+        "ligue1": false,
+        "posts": 21,
+        "dated": 20
+      }
+    },
+    {
+      "source_id": "SRC_061",
+      "url": "https://www.lesviolets.com/actu/rss",
+      "robots_status": 200,
+      "robots_sha256": "df5d301fc804c6b0204b7f6527338f19d1b904961b581bcccaf58d0e305f1a47",
+      "status": 200,
+      "content_type": "text/xml",
+      "bytes": 22725,
+      "sha256": "ba5fcf7a9fd129b63a39a5cd967361ca30946f26ad057f5867cd0d96ad14200b",
+      "recorded_at_utc": "2026-10-26T15:24:36.940086+00:00",
+      "before": {
+        "readable": true,
+        "ligue1": true,
+        "posts": 20,
+        "dated": 20
+      },
+      "after": {
+        "readable": true,
+        "ligue1": true,
+        "posts": 20,
+        "dated": 20
+      }
+    },
+    {
+      "source_id": "SRC_062",
+      "url": "https://www.culturepsg.com/news?rss",
+      "robots_status": 200,
+      "robots_sha256": "0563ce67fbc4e4d58b49682897c6d74c272618c27503668fb7cbb32ee9f2ea36",
+      "status": 200,
+      "content_type": "application/rss+xml;charset=UTF-8",
+      "bytes": 39816,
+      "sha256": "dcf54f96cc5a4ef5286b103f65ce717721ccebe5b22a31b63636c4d39cb2bf6c",
+      "recorded_at_utc": "2026-10-26T15:24:37.631789+00:00",
+      "before": {
+        "readable": true,
+        "ligue1": true,
+        "posts": 50,
+        "dated": 50
+      },
+      "after": {
+        "readable": true,
+        "ligue1": true,
+        "posts": 50,
+        "dated": 50
+      }
+    },
+    {
+      "source_id": "SRC_063",
+      "url": "http://www.massalialive.com/",
+      "robots_status": 200,
+      "robots_sha256": "d53bcc32b8f58b1348a46382a3e9882230acefeb52f5d2fa809ead727aedaa3b",
+      "status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 119622,
+      "sha256": "c5be1402086207027678de19d18b7a0ef69b773a87f83cb6686ff1b20d261a7b",
+      "recorded_at_utc": "2026-10-26T15:24:43.438444+00:00",
+      "before": {
+        "readable": true,
+        "ligue1": false,
+        "posts": 6,
+        "dated": 0
+      },
+      "after": {
+        "readable": true,
+        "ligue1": false,
+        "posts": 6,
+        "dated": 0
+      }
+    }
+  ]
+}

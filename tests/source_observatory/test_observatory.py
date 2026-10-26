@@ -367,7 +367,7 @@ def test_schema_is_closed_and_matches_extraction_contract():
     schema = json.loads((Path(__file__).parents[2] / 'src/robin/source_observatory/schemas/'
                          'contribution.schema.json').read_text(encoding='utf-8'))
     data = contribution(cote_declaree=None).extraction_metadata()
-    assert set(data) == set(schema['required']) == set(schema['properties'])
+    assert set(data) == set(schema['required']) == set(schema['properties']) - {'prompt_sha256'}
     assert schema['additionalProperties'] is False
     assert data['cote_declaree'] is None
     assert data['cote_observee'] == '2.15'

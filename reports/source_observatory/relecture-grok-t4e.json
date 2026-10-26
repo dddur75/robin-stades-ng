@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-26T14:41:03.606Z",
+  "task": "source-observatory-t4e",
+  "poste": "relecteur",
+  "requested_model": "grok-4.7",
+  "requested_effort": "high",
+  "reported_model": null,
+  "duration_seconds": 0.35,
+  "cost_usd": null,
+  "david_verdict": "en_attente",
+  "benchmark_journal": "outside_writable_scope_not_modified",
+  "status": "unavailable",
+  "error_code": 1
+}

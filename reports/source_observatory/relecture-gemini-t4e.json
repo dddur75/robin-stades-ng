@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-26T14:43:06.018Z",
+  "task": "source-observatory-t4e",
+  "poste": "relecteur_secours",
+  "requested_model": "gemini-4-argon-high",
+  "requested_effort": "high",
+  "reported_model": null,
+  "duration_seconds": 0.117,
+  "cost_usd": null,
+  "david_verdict": "en_attente",
+  "benchmark_journal": "outside_writable_scope_not_modified",
+  "status": "unavailable",
+  "exit_code": 2
+}

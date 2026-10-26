@@ -39,6 +39,9 @@
     "observed_at"
   ],
   "properties": {
+    "prompt_sha256": {
+      "const": "69dafca29b2de56467427b0ff475bbcfaef27491d52a4c685304b2a8f567fe70"
+    },
     "source_id": {
       "type": "string",
       "minLength": 1,

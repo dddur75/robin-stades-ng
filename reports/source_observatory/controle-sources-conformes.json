@@ -1,0 +1,546 @@
+{
+ "date": "2026-10-26",
+ "methode": "contrôle déterministe sans IA avec les règles du collecteur : agent déclaré, robots.txt lu avant toute page (échec = refus), CGU via collector._endpoint, parseur public actuel",
+ "correction": "remplace l'ancien contrôle '20/23 OK' (non conforme : User-Agent usurpé, page lue sans robots, CGU ignorées) — annonce retirée",
+ "bilan": {
+  "REFUSE_CGU": 39,
+  "A_REVOIR_SANS_PUBLICATION_L1": 8,
+  "A_REVOIR_LECTURE": 6,
+  "OK": 19,
+  "REFUSE_ROBOTS": 2
+ },
+ "sources_conformes_avec_publications_l1": 19,
+ "sources_lisibles_sans_publication_l1": 8,
+ "detail": [
+  {
+   "source_id": "SRC_001",
+   "raison_cgu": "manuel_sans_collecte_automatisee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_002",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 1,
+   "publications_ligue1": 0,
+   "verdict": "A_REVOIR_SANS_PUBLICATION_L1"
+  },
+  {
+   "source_id": "SRC_003",
+   "raison_cgu": "manuel_sans_collecte_automatisee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_004",
+   "raison_cgu": "cgu_inconnues",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_005",
+   "raison_cgu": "manuel_sans_collecte_automatisee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_006",
+   "raison_cgu": null,
+   "verdict": "A_REVOIR_LECTURE",
+   "erreur": "<urlopen error [WinError 10054] Une connexion existante a dû être fermée par l’h"
+  },
+  {
+   "source_id": "SRC_007",
+   "raison_cgu": "cgu_collecte_automatisee_refusee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_008",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 1,
+   "publications_ligue1": 1,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_009",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 2,
+   "publications_ligue1": 1,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_010",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": false,
+   "verdict": "REFUSE_ROBOTS"
+  },
+  {
+   "source_id": "SRC_011",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 1,
+   "publications_ligue1": 1,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_012",
+   "raison_cgu": "manuel_sans_collecte_automatisee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_013",
+   "raison_cgu": "manuel_sans_collecte_automatisee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_014",
+   "raison_cgu": "manuel_sans_collecte_automatisee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_015",
+   "raison_cgu": "manuel_sans_collecte_automatisee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_016",
+   "raison_cgu": "manuel_sans_collecte_automatisee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_017",
+   "raison_cgu": "manuel_sans_collecte_automatisee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_018",
+   "raison_cgu": "manuel_sans_collecte_automatisee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_019",
+   "raison_cgu": "manuel_sans_collecte_automatisee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_020",
+   "raison_cgu": "cgu_inconnues",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_021",
+   "raison_cgu": "cgu_collecte_automatisee_refusee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_022",
+   "raison_cgu": "manuel_sans_collecte_automatisee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_023",
+   "raison_cgu": "cgu_collecte_automatisee_refusee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_024",
+   "raison_cgu": "cgu_inconnues",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_025",
+   "raison_cgu": "cgu_collecte_automatisee_refusee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_026",
+   "raison_cgu": "cgu_collecte_automatisee_refusee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_027",
+   "raison_cgu": "cgu_collecte_automatisee_refusee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_028",
+   "raison_cgu": "cgu_collecte_automatisee_refusee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_029",
+   "raison_cgu": "cgu_collecte_automatisee_refusee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_030",
+   "raison_cgu": "cgu_collecte_automatisee_refusee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_031",
+   "raison_cgu": "cgu_collecte_automatisee_refusee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_032",
+   "raison_cgu": "cgu_collecte_automatisee_refusee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_033",
+   "raison_cgu": "cgu_collecte_automatisee_refusee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_034",
+   "raison_cgu": "cgu_collecte_automatisee_refusee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_035",
+   "raison_cgu": "cgu_inconnues",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_036",
+   "raison_cgu": "manuel_sans_collecte_automatisee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_037",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "verdict": "A_REVOIR_LECTURE",
+   "erreur": "publication without public permalink"
+  },
+  {
+   "source_id": "SRC_038",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 30,
+   "publications_ligue1": 0,
+   "verdict": "A_REVOIR_SANS_PUBLICATION_L1"
+  },
+  {
+   "source_id": "SRC_039",
+   "raison_cgu": "manuel_sans_collecte_automatisee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_040",
+   "raison_cgu": null,
+   "robots_http": 404,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 12,
+   "publications_ligue1": 0,
+   "verdict": "A_REVOIR_SANS_PUBLICATION_L1"
+  },
+  {
+   "source_id": "SRC_041",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 6,
+   "publications_ligue1": 2,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_042",
+   "raison_cgu": "cgu_inconnues",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_043",
+   "raison_cgu": "cgu_collecte_automatisee_refusee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_044",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "verdict": "A_REVOIR_LECTURE",
+   "erreur": "public publication format not supported"
+  },
+  {
+   "source_id": "SRC_045",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 4,
+   "publications_ligue1": 0,
+   "verdict": "A_REVOIR_SANS_PUBLICATION_L1"
+  },
+  {
+   "source_id": "SRC_046",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "verdict": "A_REVOIR_LECTURE",
+   "erreur": "public publication format not supported"
+  },
+  {
+   "source_id": "SRC_047",
+   "raison_cgu": "cgu_collecte_automatisee_refusee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_049",
+   "raison_cgu": "cgu_collecte_automatisee_refusee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_050",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 20,
+   "publications_ligue1": 12,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_051",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 20,
+   "publications_ligue1": 18,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_052",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 18,
+   "publications_ligue1": 0,
+   "verdict": "A_REVOIR_SANS_PUBLICATION_L1"
+  },
+  {
+   "source_id": "SRC_053",
+   "raison_cgu": "cgu_collecte_automatisee_refusee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_054",
+   "raison_cgu": "cgu_collecte_automatisee_refusee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_055",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "verdict": "A_REVOIR_LECTURE",
+   "erreur": "public publication format not supported"
+  },
+  {
+   "source_id": "SRC_057",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": false,
+   "verdict": "REFUSE_ROBOTS"
+  },
+  {
+   "source_id": "SRC_058",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "verdict": "A_REVOIR_LECTURE",
+   "erreur": "unsupported or oversized document"
+  },
+  {
+   "source_id": "SRC_059",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 21,
+   "publications_ligue1": 0,
+   "verdict": "A_REVOIR_SANS_PUBLICATION_L1"
+  },
+  {
+   "source_id": "SRC_061",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 20,
+   "publications_ligue1": 4,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_062",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 50,
+   "publications_ligue1": 13,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_063",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 6,
+   "publications_ligue1": 0,
+   "verdict": "A_REVOIR_SANS_PUBLICATION_L1"
+  },
+  {
+   "source_id": "SRC_064",
+   "raison_cgu": "cgu_collecte_automatisee_refusee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_065",
+   "raison_cgu": "cgu_collecte_automatisee_refusee",
+   "verdict": "REFUSE_CGU"
+  },
+  {
+   "source_id": "SRC_068",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 20,
+   "publications_ligue1": 20,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_069",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 12,
+   "publications_ligue1": 1,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_070",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 10,
+   "publications_ligue1": 2,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_071",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 30,
+   "publications_ligue1": 17,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_072",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 24,
+   "publications_ligue1": 5,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_073",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 6,
+   "publications_ligue1": 0,
+   "verdict": "A_REVOIR_SANS_PUBLICATION_L1"
+  },
+  {
+   "source_id": "SRC_074",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 10,
+   "publications_ligue1": 9,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_075",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 10,
+   "publications_ligue1": 4,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_076",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 10,
+   "publications_ligue1": 1,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_077",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 10,
+   "publications_ligue1": 7,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_078",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 10,
+   "publications_ligue1": 8,
+   "verdict": "OK"
+  },
+  {
+   "source_id": "SRC_079",
+   "raison_cgu": null,
+   "robots_http": 200,
+   "robots_autorise": true,
+   "page_http": 200,
+   "publications": 1,
+   "publications_ligue1": 1,
+   "verdict": "OK"
+  }
+ ]
+}

@@ -1,0 +1,151 @@
+{
+  "claim_id": "ENG.SOURCE_OBSERVATORY.PR129.B.20261026",
+  "date": "2026-10-26T16:04:29.922755+00:00",
+  "head": "0201ee4bf9bf7bfbfb741fb0fa983c83e8488b27",
+  "branch": "codex/observatoire-sources-v3",
+  "pr": 129,
+  "writer": "codex",
+  "runtime": "Robin Python 3.12.14",
+  "red_phase": {
+    "baseline": "isolated temporary copy with llm_extraction.py/models.py/store.py/collector.py from HEAD, other required modules reused",
+    "passed": 17,
+    "failed": 56,
+    "cases_at_time_of_run": 73,
+    "lf_portability_before_fix": {
+      "failed": 2,
+      "passed": 0
+    }
+  },
+  "checks": [
+    {
+      "command": [
+        "runtime-robin/python",
+        "-m",
+        "pytest",
+        "tests/source_observatory",
+        "-q",
+        "--tb=short",
+        "-p",
+        "no:cacheprovider",
+        "--basetemp",
+        "<temp>\\pytest"
+      ],
+      "duration_seconds": 5.109,
+      "exit_code": 0,
+      "stdout": "........................................................................ [ 13%]\n........................................................................ [ 27%]\n........................................................................ [ 40%]\n........................................................................ [ 54%]\n........................................................................ [ 67%]\n........................................................................ [ 81%]\n........................................................................ [ 94%]\n.............................                                            [100%]\n533 passed in 4.47s\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "runtime-robin/python",
+        "-m",
+        "ruff",
+        "check",
+        "src/robin/source_observatory",
+        "tests/source_observatory"
+      ],
+      "duration_seconds": 0.094,
+      "exit_code": 0,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "runtime-robin/python",
+        "-m",
+        "mypy",
+        "src/robin/source_observatory",
+        "--follow-imports=silent",
+        "--cache-dir",
+        "<temp>\\mypy"
+      ],
+      "duration_seconds": 9.75,
+      "exit_code": 0,
+      "stdout": "Success: no issues found in 12 source files\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "runtime-robin/python",
+        "-m",
+        "bandit",
+        "-r",
+        "src/robin/source_observatory",
+        "-q"
+      ],
+      "duration_seconds": 0.547,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "[manager]\tWARNING\tTest in comment: DOCTYPE is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: ENTITY is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: refus is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: s is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: avant is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: analyse is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: bounded is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: no is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: DTD is not a test name or id, ignoring\n[manager]\tWARNING\tTest in comment: entities is not a test name or id, ignoring\n"
+    }
+  ],
+  "council_hypothesis_intelligence": {
+    "command": [
+      "runtime-robin/python",
+      "-m",
+      "pytest",
+      "tests/council",
+      "tests/hypothesis_intelligence",
+      "-q",
+      "--tb=short",
+      "-p",
+      "no:cacheprovider"
+    ],
+    "exit_code": 1,
+    "passed": 255,
+    "failed": 2,
+    "pytest_duration_seconds": 101.04,
+    "preexisting_failures": [
+      "tests/council/test_reprise_collecte_governance_v1.py::test_successor_is_non_runtime_and_reuses_the_parent_cumulative_budget",
+      "tests/council/test_reprise_collecte_governance_v1.py::test_sqlite_successor_is_test_only_and_does_not_extend_runtime_authority"
+    ],
+    "actual_manifest_sha256": "591501bf7a668abe79535daf97db08f5c5edc18a5734c18659ca38dba3a850dc",
+    "expected_manifest_sha256": "815788fb8ba61b21782797cd32d36a4b49a8b6d072610a59ba3295136750fdb2",
+    "reused_baseline_evidence": "reports/source_observatory/verification-t4e.json"
+  },
+  "temporary_lf_run": "reports/source_observatory/verification-pr129-lf.json",
+  "constraints": {
+    "no_assert_in_targeted_source": true,
+    "no_drive_absolute_pattern": true,
+    "lf_only": true,
+    "lowercase_source_filenames": true
+  },
+  "file_sha256": {
+    "src/robin/source_observatory/collector.py": "6e0ac5dcdf3f9b662b6fd1999f93a384b53ce68342690d5ffd775c148ea645e3",
+    "src/robin/source_observatory/llm_extraction.py": "5cb4d343011edac20db7b3af531cd1eaa7468d5ea9196a8c0b63982acafbd62e",
+    "src/robin/source_observatory/models.py": "2e8622776f12f8a43698f7272aa368dad6cfe95fe16c23ab99537ca8791cd584",
+    "src/robin/source_observatory/store.py": "e7be428eec7a03993573757f493cff4aa2847595c71bc23a3e86c0133ffc0d5e",
+    "src/robin/source_observatory/schemas/contribution.schema.json": "8a5a671409ae81aca4426759fc89a2c1eafaab2680d9170147e4414ceda1aa43",
+    "tests/source_observatory/test_pr129_review.py": "4700ae93211fcd17eaa5317ba071be87447ae29437eae4368fbade1b1d9e0cf2",
+    "tests/source_observatory/test_llm_extraction.py": "27a67404a517854a268055a9a3d246acc8933b4a2d03141196c8145bc7a99c83",
+    "tests/source_observatory/test_observatory.py": "bc86c7b8a21617f09e532da4002fa5f4ca879a898b88728e170cd9252242635d",
+    ".gitattributes": "a321db31a426e6e3fcee86ba7a593e5c740d9f38c9dd7013dc0c2a4f0628b2af",
+    "data/source_observatory/prompt_extraction.md": "69dafca29b2de56467427b0ff475bbcfaef27491d52a4c685304b2a8f567fe70",
+    "data/source_observatory/prompt_extraction.freeze.md": "2298e07cc79ca49f7b06423680925f4eeefd099a8660914c0de29eef8af15f37"
+  },
+  "source_registry_characterization": {
+    "total": 59,
+    "a_construire": 45,
+    "endpoint_selected": 23,
+    "cgu_inconnues": 4,
+    "cgu_collecte_automatisee_refusee": 18,
+    "endpoint_policy_changed": false,
+    "endpoint_ast_identical_to_head": true
+  },
+  "independent_review": {
+    "status": "UNAVAILABLE",
+    "grok_access": "grok models: exit 1, managed policy lock inaccessible and not authenticated",
+    "gemini_access": "agy models: exit 1, not logged into Antigravity; no model response",
+    "model_call_performed": false,
+    "reviewer_verdict": null,
+    "david_verdict": "en attente"
+  },
+  "commit_created": false,
+  "pull_performed": false,
+  "external_effects": [],
+  "last_test_fixture_adjustment": {
+    "change": "remove incidental letter-colon-backslash pattern in prose fixture without changing tested behavior",
+    "targeted_cases": 5,
+    "passed": 5
+  }
+}

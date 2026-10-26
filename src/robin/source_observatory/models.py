@@ -145,6 +145,8 @@ class EvidenceExcerpt:
             raise TypeError('excerpt offsets must be integers')
         if not 0 <= self.start < self.end:
             raise ValueError('excerpt requires 0 <= start < end')
+        if self.end - self.start > 500:
+            raise ValueError('necessary excerpt must be <= 500 characters')
         if self.text is not None:
             _text(self.text, 'excerpt')
             if len(self.text) > 500 or len(self.text) != self.end - self.start:
@@ -592,9 +594,43 @@ class VisitReceipt:
             _text(self.reason, 'visit failure reason')
 
 
+@dataclass(frozen=True, slots=True)
+class ExtractionRecord:
+    """Audited drafts, deliberately outside accepted Contribution projections."""
+
+    extraction_id: str
+    version_id: str
+    text_sha256: str
+    prompt_sha256: str
+    output_sha256: str
+    observed_at: datetime
+    drafts: tuple[Contribution, ...]
+    rejected_lines: int
+
+    def __post_init__(self) -> None:
+        from .llm_extraction import FROZEN_PROMPT_SHA256
+
+        _text(self.extraction_id, 'extraction_id')
+        _text(self.version_id, 'version_id')
+        for digest in (self.text_sha256, self.prompt_sha256, self.output_sha256):
+            _hash(digest)
+        if self.prompt_sha256 != FROZEN_PROMPT_SHA256:
+            raise ValueError('extraction prompt sha256 differs from frozen prompt')
+        _instant(self.observed_at, 'extraction observation')
+        if type(self.rejected_lines) is not int or self.rejected_lines < 0:
+            raise ValueError('nonnegative rejected line count required')
+        if type(self.drafts) is not tuple or any(type(c) is not Contribution for c in self.drafts):
+            raise TypeError('immutable typed contribution drafts required')
+        for draft in self.drafts:
+            if (draft.version_id != self.version_id or draft.text_sha256 != self.text_sha256
+                    or draft.observed_at != self.observed_at or draft.statut != 'non_resolu'
+                    or draft.match_id is not None):
+                raise ValueError('draft lineage and unresolved match required')
+
+
 Entity: TypeAlias = (Source | Publication | PublicationVersion | Contribution | MatchMarket
                      | Result | Evaluation | IdentityRevision | Withdrawal | Visit | Cohort
-                     | VisitReceipt)
+                     | VisitReceipt | ExtractionRecord)
 
 
 def decimal_text(value: Decimal | None) -> str | None:
