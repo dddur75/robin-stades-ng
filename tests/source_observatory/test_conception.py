@@ -86,10 +86,11 @@ def test_scenario_b_platform_18_discovered_22_is_retrospective(tmp_path):
     store = AppendOnlyStore(tmp_path / 'b.jsonl')
     v = version(first_observed_by_robin_at=T + timedelta(hours=4),
                 usable_at=T + timedelta(hours=4))
-    seed(store, v=v, c=contribution(observed_at=T + timedelta(hours=4)))
+    c = contribution(observed_at=T + timedelta(hours=4))
+    seed(store, v=v, c=c)
     assert service.pre_match_contributions(store.entities(), T + timedelta(hours=2)) == ()
-    evaluation = service.evaluate(contribution(), match(contribution(),
-        contribution_usable_at=v.usable_at), settled(), odds_basis='cote_declaree')
+    evaluation = service.evaluate(c, match(c,
+        contribution_usable_at=v.usable_at), settled(c), odds_basis='cote_declaree')
     assert not evaluation.evaluable
     assert evaluation.reason == 'invalide_pre_match'
 
@@ -322,8 +323,8 @@ def test_result_rule_version_mismatch_and_quote_after_kickoff_are_excluded():
     c = contribution()
     r = replace(settled(c), reglement=rule(version='2'))
     assert service.evaluate(c, match(c), r, odds_basis='cote_declaree').reason == 'en_attente'
-    c = replace(c, cote_declaree_at=T + timedelta(hours=3))
-    assert service.evaluate(c, match(c), settled(c), odds_basis='cote_declaree').reason == 'cote_tardive'
+    with pytest.raises(ValueError, match='odds timestamp'):
+        replace(c, cote_declaree_at=T + timedelta(hours=3))
 
 
 def test_cohort_is_fixed_before_evaluation_and_signal_requires_future_holdout():
@@ -421,7 +422,7 @@ def test_cohort_and_visit_are_persisted_before_any_evaluation(tmp_path):
     store.append(m)
     store.append(r)
     store.append(service.evaluate(c, m, r, odds_basis='cote_declaree'))
-    with pytest.raises(ValueError, match='before observations'):
+    with pytest.raises(ValueError, match='before observations|backdated'):
         store.append(replace(cohort, cohort_id='late'))
 
 

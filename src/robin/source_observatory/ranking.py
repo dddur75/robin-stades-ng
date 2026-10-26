@@ -2,7 +2,7 @@
 
 from collections import defaultdict
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime
 from decimal import Decimal, localcontext
 
@@ -17,8 +17,31 @@ from .models import (
     PublicationVersion,
     Result,
     Visit,
+    VisitReceipt,
     Withdrawal,
 )
+
+
+def observation_time(entity: Entity) -> datetime | None:
+    """Actual observation only: a future visit plan is not an observation."""
+    if isinstance(entity, PublicationVersion):
+        return entity.modification_observed_at or entity.first_observed_by_robin_at
+    if isinstance(entity, (Contribution, Result, IdentityRevision, Withdrawal)):
+        return entity.observed_at
+    if isinstance(entity, (Visit, VisitReceipt)):
+        return entity.completed_at
+    if isinstance(entity, Cohort):
+        return entity.defined_at
+    return None
+
+
+def preserves_evidence(previous: Contribution, current: Contribution) -> bool:
+    return (not (previous.statut == 'resolu' and current.statut != 'resolu')
+            and not (previous.certitude_rapprochement == 'certaine'
+                     and current.certitude_rapprochement != 'certaine')
+            and all(getattr(previous, basis) is None or getattr(current, basis) is not None
+                    for basis in ('cote_declaree', 'cote_observee'))
+            and previous.categorie == current.categorie)
 
 
 def pre_match_contributions(
@@ -27,15 +50,16 @@ def pre_match_contributions(
     """Latest proven selection per slot; omissions never erase earlier selections."""
     items = tuple(entities)
     versions = {e.version_id: e for e in items if isinstance(e, PublicationVersion)}
-    latest: dict[tuple[str, str], Contribution] = {}
+    latest: dict[tuple[str, str | None, str], Contribution] = {}
     for entity in items:
         if isinstance(entity, Contribution):
             v = versions[entity.version_id]
             if max(v.usable_at, entity.observed_at) >= kickoff:
                 continue
-            slot = (entity.publication_id, entity.selection_key)
+            slot = (entity.publication_id, entity.match_id, entity.selection_key)
             previous = latest.get(slot)
-            if previous is None or v.usable_at > versions[previous.version_id].usable_at:
+            if previous is None or (v.usable_at > versions[previous.version_id].usable_at
+                                    and preserves_evidence(previous, entity)):
                 latest[slot] = entity
     return tuple(latest.values())
 
@@ -45,10 +69,12 @@ def reprise_groups(contributions: Iterable[Contribution]) -> dict[str, tuple[str
     items = tuple(contributions)
     parent: dict[str, str] = {}
     roots: set[str] = set()
+    outgoing: set[str] = set()
     for c in items:
         parent.setdefault(c.publication_id, c.publication_id)
         for link in c.liens_reprise:
             if link.certainty == 'attestee':
+                outgoing.add(c.publication_id)
                 parent.setdefault(link.publication_id, link.publication_id)
                 roots.add(link.publication_id)
 
@@ -67,7 +93,8 @@ def reprise_groups(contributions: Iterable[Contribution]) -> dict[str, tuple[str
     for pub in sorted(parent):
         groups[find(pub)].append(pub)
     # Prefer an attested root as label, deterministically, including cyclic evidence.
-    return {min(set(pubs) & roots or set(pubs)): tuple(pubs) for pubs in groups.values()}
+    return {min((set(pubs) & (roots - outgoing)) or set(pubs)): tuple(pubs)
+            for pubs in groups.values()}
 
 
 @dataclass(frozen=True, slots=True)
@@ -123,14 +150,13 @@ def rankings(entities: Iterable[Entity], *,
     if odds_basis not in ('cote_declaree', 'cote_observee'):
         raise ValueError('choose declared or observed odds explicitly')
     items = tuple(entities)
+    if at is None:
+        at = max((t for e in items if (t := observation_time(e)) is not None), default=None)
     if at is not None:
         if at.tzinfo is None or at.utcoffset() is None:
             raise ValueError('explicit report timezone required')
-        items = tuple(e for e in items if (
-            (e.modification_observed_at or e.first_observed_by_robin_at)
-            if isinstance(e, PublicationVersion) else
-            e.observed_at if isinstance(e, (Contribution, Result, IdentityRevision, Withdrawal))
-            else e.defined_at if isinstance(e, Cohort) else at) <= at)
+        items = tuple(e for e in items if isinstance(e, Visit)
+                      or (observation_time(e) or at) <= at)
     contributions = {e.contribution_id: e for e in items if isinstance(e, Contribution)}
     matches = {e.match_market_id: e for e in items if isinstance(e, MatchMarket)
                and e.contribution_id in contributions}
@@ -138,7 +164,7 @@ def rankings(entities: Iterable[Entity], *,
     identities: dict[str, str] = {}
     for entity in items:
         if isinstance(entity, IdentityRevision) and entity.certainty == 'attestee':
-            identities.update({a.author_id: a.identity_id for a in entity.assignments})
+            identities = {a.author_id: a.identity_id for a in entity.assignments}
     withdrawn = {e.contribution_id for e in items if isinstance(e, Withdrawal)}
     affected_authors = {identities.get(contributions[key].author_id, contributions[key].author_id)
                         for key in withdrawn}
@@ -147,6 +173,7 @@ def rankings(entities: Iterable[Entity], *,
         later = [v for v in versions.values() if v.publication_id == c.publication_id
                  and v.usable_at > versions[c.version_id].usable_at]
         if any(not any(other.version_id == v.version_id and other.selection_key == c.selection_key
+                       and other.match_id == c.match_id and preserves_evidence(c, other)
                        for other in contributions.values()) for v in later):
             affected_authors.add(identities.get(c.author_id, c.author_id))
     by_author: dict[str, list[Evaluation]] = defaultdict(list)
@@ -157,6 +184,12 @@ def rankings(entities: Iterable[Entity], *,
             by_author[identities.get(member, member)] = []
     for m in matches.values():
         c = contributions[m.contribution_id]
+        if (identities.get(c.author_id, c.author_id) in affected_authors
+                and m.match_usable_at is not None and at is not None
+                and at >= m.match_usable_at
+                and c in pre_match_contributions(items, m.match_usable_at)
+                and m.match_market_id not in latest_results):
+            raise ValueError('retained contribution requires result and evaluation')
         if (m.match_market_id in latest_results and m.match_usable_at is not None
                 and c in pre_match_contributions(items, m.match_usable_at)
                 and not any(isinstance(e, Evaluation)
@@ -182,6 +215,13 @@ def rankings(entities: Iterable[Entity], *,
         eligible = pre_match_contributions(items, match.match_usable_at)
         if c not in eligible:
             continue
+        if c.marche == 'combine' and entity.evaluable:
+            from .service import combined_legs_proven
+
+            result = next(e for e in items if isinstance(e, Result)
+                          and e.result_id == entity.result_id)
+            if not combined_legs_proven(c, match, result, items, odds_basis):
+                raise ValueError('combined result requires audited update after leg correction')
         if c.contribution_id in seen:
             if c.categorie in ('probabilite_explicite', 'information_factuelle'):
                 continue
@@ -192,10 +232,12 @@ def rankings(entities: Iterable[Entity], *,
     groups = reprise_groups(contributions.values())
     group_for = {pub: group for group, pubs in groups.items() for pub in pubs}
     for author, evaluations in by_author.items():
-        unique: dict[tuple[str, str | None, str | None, str | None, str], Evaluation] = {}
-        for e in sorted(evaluations, key=lambda e: contributions[e.contribution_id].observed_at):
+        unique: dict[tuple[object, ...], Evaluation] = {}
+        for e in sorted(evaluations, key=lambda e: (not e.evaluable,
+                        contributions[e.contribution_id].observed_at, e.contribution_id)):
             c, m = contributions[e.contribution_id], matches[e.match_market_id]
-            key = (group_for[c.publication_id], m.match_id, m.market_id, m.selection_id, e.category)
+            key = (group_for[c.publication_id], m.match_id, m.market_id, m.selection_id,
+                   c.ligne, c.periode, e.category)
             unique.setdefault(key, e)
         evaluations = list(unique.values())
         cs = [contributions[e.contribution_id] for e in evaluations]
@@ -203,7 +245,8 @@ def rankings(entities: Iterable[Entity], *,
         # Several selections may be priced, but independence is counted by origin + match.
         category_counts: dict[str, int] = defaultdict(int)
         for e in evaluations:
-            category_counts[e.category] += 1
+            if e.category != 'selection_avec_cote' or e.evaluable:
+                category_counts[e.category] += 1
         profits = [e.unit_profit for e in evaluations if e.unit_profit is not None]
         with localcontext() as context:
             context.prec = max(28, sum(len(p.as_tuple().digits) + 8 for p in profits))
@@ -235,8 +278,22 @@ def rankings(entities: Iterable[Entity], *,
     return output
 
 
-def visit_coverage(visits: Iterable[Visit]) -> Decimal | None:
-    items = tuple(visits)
+def effective_visits(entities: Iterable[Entity], at: datetime | None = None) -> tuple[Visit, ...]:
+    items = tuple(entities)
+    receipts: dict[str, VisitReceipt] = {}
+    for e in items:
+        if isinstance(e, VisitReceipt):
+            if e.visit_id in receipts:
+                raise ValueError('duplicate visit receipt')
+            if at is None or e.completed_at <= at:
+                receipts[e.visit_id] = e
+    return tuple(replace(e, completed_at=receipts[e.visit_id].completed_at,
+                         succeeded=receipts[e.visit_id].status == 'ok')
+                 if e.visit_id in receipts else e for e in items if isinstance(e, Visit))
+
+
+def visit_coverage(visits: Iterable[Entity]) -> Decimal | None:
+    items = effective_visits(visits)
     if len({v.visit_id for v in items}) != len(items):
         raise ValueError('duplicate planned visit')
     return Decimal(sum(v.succeeded for v in items)) / len(items) if items else None
@@ -252,7 +309,6 @@ def cohort_state(
           and identities.get(e.author_id, e.author_id) == author_id}
     ms = {e.match_market_id: e for e in items if isinstance(e, MatchMarket)}
     rs = {e.match_market_id: e for e in items if isinstance(e, Result) and e.observed_at <= at}
-    sources = {c.source_id for c in cs.values()}
 
     def window(start: datetime, end: datetime) -> tuple[int, Decimal | None]:
         matches = set()
@@ -267,8 +323,8 @@ def cohort_state(
                     and start <= m.match_usable_at < end
                     and c in pre_match_contributions(items, m.match_usable_at)):
                 matches.add(m.match_id)
-        visits = [v for v in items if isinstance(v, Visit) and v.source_id in sources
-                  and start <= v.planned_at < end and v.planned_at <= at]
+        visits = [v for v in effective_visits(items, at)
+                  if start <= v.planned_at < end and v.planned_at <= at]
         if len({v.visit_id for v in visits}) != len(visits):
             raise ValueError('duplicate planned visit')
         successes = sum(v.succeeded and v.completed_at is not None and v.completed_at <= at

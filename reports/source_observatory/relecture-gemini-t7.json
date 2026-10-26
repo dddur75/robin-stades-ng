@@ -1,0 +1,15 @@
+{
+  "exit_code": 1,
+  "stdout": "{\"conversation_id\":\"\",\"status\":\"ERROR\",\"response\":\"\",\"error\":\"authentication failed or timed out\",\"duration_seconds\":0,\"num_turns\":0,\"usage\":{\"input_tokens\":0,\"output_tokens\":0,\"thinking_tokens\":0,\"cache_read_tokens\":0,\"total_tokens\":0}}\n",
+  "stderr": "Antigravity not authenticated. Local log writes denied; authentication timed out. Requested model was not confirmed. No review turn, no model tokens. OAuth URL and local diagnostics intentionally not retained.",
+  "date": "2026-10-26T10:34:19.941156+00:00",
+  "task": "source_observatory T7 fallback review",
+  "poste": "relecteur_secours",
+  "requested_model": "gemini-4-argon-high",
+  "requested_reasoning_effort": "high",
+  "reported_model": null,
+  "cost_usd": null,
+  "duration_seconds": 60.922,
+  "david_verdict": "en_attente",
+  "actual_model_call": "not_started_authentication_unavailable"
+}

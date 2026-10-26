@@ -1,0 +1,122 @@
+{
+  "claim_id": "ENG.SOURCE_OBSERVATORY.ROUND2.T7.20261026",
+  "date": "2026-10-26T10:34:04.033511+00:00",
+  "branch": "codex/observatoire-sources-v2",
+  "head": "a58fc2adad1fcf886ed1d56e721d417adab68a83",
+  "writer": "codex",
+  "commit_created": false,
+  "checks": [
+    {
+      "command": [
+        "python",
+        "-m",
+        "pytest",
+        "tests/source_observatory",
+        "-q",
+        "--tb=short"
+      ],
+      "exit_code": 0,
+      "stdout": "........................................................................ [ 23%]\n........................................................................ [ 46%]\n........................................................................ [ 69%]\n........................................................................ [ 92%]\n........................                                                 [100%]\n312 passed in 2.76s\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "ruff",
+        "check",
+        "src/robin/source_observatory",
+        "tests/source_observatory"
+      ],
+      "exit_code": 0,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "mypy",
+        "src/robin/source_observatory",
+        "--follow-imports=silent"
+      ],
+      "exit_code": 0,
+      "stdout": "Success: no issues found in 10 source files\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "newline conversion warnings only"
+    }
+  ],
+  "static_checks": {
+    "assertions": [],
+    "uppercase_names": [],
+    "local_absolute_paths": [],
+    "absolute_path_scan": "AST string values: drive-absolute prefix or user home path; excludes regex syntax and HTTP(S) URLs"
+  },
+  "source_hashes": {
+    "src/robin/source_observatory/collector.py": "f07d74dbd90b95cf289607e351ccc693289caf7af6463b7dd0bdbdd9c752f0e3",
+    "src/robin/source_observatory/evaluate_extractor.py": "44d3a69abd71ab38081ece65ece91668a0f855b6b80e8edf6e3b61eb7b9bc6aa",
+    "src/robin/source_observatory/extractor.py": "07acf6b956d0b30e7ea117d2fff202be87970085da7d6da65834ddae4b264fde",
+    "src/robin/source_observatory/models.py": "c8bdc8e415122b81aae8348512787d0a719e4c257d9e2bc076aa961d4ad22085",
+    "src/robin/source_observatory/ranking.py": "8f11893593294a29192598c2fe3a1548f4d1723b8b3cce6e33a84caa2d503f5a",
+    "src/robin/source_observatory/schema_validation.py": "56a26fb8564a4f243acdf20d2cb3745756f1b9a4c157dd2b45905a1d699ee0d1",
+    "src/robin/source_observatory/service.py": "10f15f3135b6b8ee5e784a8de9e200fca2ef7e5d7357bc38c21bbad626cf4b97",
+    "src/robin/source_observatory/settlement.py": "2b1fb63c15cb0afc16fb6645345b4ad5e37b07773b71eb174b3ecf8708b8fc62",
+    "src/robin/source_observatory/store.py": "600d1e955b523f4e6102a1e965388f702b907365a78f8f84979a36da0d64145d",
+    "src/robin/source_observatory/__init__.py": "31b3bd2722a2f68bd70f4a3b9373fd837675fc62a8f067ebdea01ca673f86f18",
+    "tests/source_observatory/test_collector.py": "7a10f8c6213aa6adc75ed08a9372edfd9152be0f80106bc896e4e973e9bc745b",
+    "tests/source_observatory/test_round2_regressions.py": "accf1c17741658bd6a9f00a343fb3f37e01b4f74a0082d86cb41781b1e225882"
+  },
+  "external_effects": {
+    "api_football_calls": 0,
+    "source_collector_live_calls": 0,
+    "bets": 0,
+    "publications": 0,
+    "pushes": 0
+  },
+  "tdd": {
+    "round2_initial_failures": 25,
+    "round2_invalid_period_fixture_removed": 1,
+    "round2_confirmed_counterexamples": 24,
+    "t7_initial": "collector import absent",
+    "t7_additional_red_counterexamples": [
+      "arrival_after_kickoff",
+      "naive_visit_clock",
+      "robots_html_challenge",
+      "cgu_interdiction_wording",
+      "html5_doctype"
+    ]
+  },
+  "independent_review": "UNAVAILABLE: Grok policy lock; Gemini authentication. No independent verdict.",
+  "pilot_acceptance": "PARTIAL_NOT_RUN",
+  "security_check": "AST: no source assert; public HTTP rejects redirects and auth; XML entity declarations refused; payload root outside all Git worktrees. Dedicated regression tests cover these gates. Bandit is not installed in existing venv.",
+  "plan": {
+    "path": "data/source_observatory/visit_plan_20261031.json",
+    "sha256": "685571365a0793e60664c8809ed0cc1b1ca6413c63c46149f26594dd33220fe3",
+    "sources": 39,
+    "visits": 819,
+    "fixtures": 7,
+    "automatic_endpoints": 14
+  },
+  "dry_run": {
+    "command": [
+      "python",
+      "-m",
+      "robin.source_observatory.collector",
+      "--dry-run"
+    ],
+    "exit_code": 0,
+    "planned": 819,
+    "succeeded": 0,
+    "coverage": "0",
+    "network_calls": 0
+  }
+}

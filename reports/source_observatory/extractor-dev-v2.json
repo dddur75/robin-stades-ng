@@ -1,0 +1,102 @@
+{
+  "claim_id": "ENG.SOURCE_OBSERVATORY.EXTRACTOR.DEV.20261026.V2",
+  "observed_at": "2026-10-26T10:15:28.728945+00:00",
+  "status": "PARTIAL",
+  "scope": "explicitly_annotated_development_subset_only",
+  "corpus_text_count": 25,
+  "gold_text_count": 20,
+  "missing_gold_ids": [
+    "M17",
+    "M19",
+    "M23",
+    "N14",
+    "N18"
+  ],
+  "full_dev_evaluation": "BLOCKED: corpus and gold must contain exactly the same text IDs",
+  "evaluation_method": "evaluate_extractor on the explicit ID intersection in OS temporary files; missing labels never imputed; evaluator and C3 criteria unchanged",
+  "metrics": {
+    "precision_marche_selection": 1.0,
+    "cotes_inventees": 0,
+    "taux_non_resolu_correct": null,
+    "rappel": 0.4444444444444444,
+    "conformite_schema": 1.0,
+    "effectifs": {
+      "textes": 20,
+      "sorties": 12,
+      "resolus_predits": 12,
+      "resolus_annotes": 27,
+      "resolus_corrects": 12,
+      "non_resolus_annotes": 0,
+      "non_resolus_corrects": 0,
+      "sorties_conformes": 12
+    },
+    "c3": {
+      "statut": "PARTIAL",
+      "controles": {
+        "echantillon_40_textes_minimum": false,
+        "c3_1_precision_85": true,
+        "c3_2_aucune_cote_inventee": true,
+        "c3_3_non_resolu_90": false,
+        "c3_4_rappel_rapporte": true,
+        "c3_5_schema_100": true
+      }
+    }
+  },
+  "private_input_sha256": {
+    "dev_corpus.jsonl": "7ba665cf3f1a29d5c414aca9ff7a71d7cd3f4dc3ccfaedf712d7579748885d76",
+    "dev_gold.jsonl": "b99191c7f60fcb33b0c02f4c9209aec04e2c1f06596c110c559d7282e5aa11d2"
+  },
+  "source_sha256": {
+    "src/robin/source_observatory/extractor.py": "07acf6b956d0b30e7ea117d2fff202be87970085da7d6da65834ddae4b264fde",
+    "src/robin/source_observatory/evaluate_extractor.py": "44d3a69abd71ab38081ece65ece91668a0f855b6b80e8edf6e3b61eb7b9bc6aa",
+    "src/robin/source_observatory/schema_validation.py": "56a26fb8564a4f243acdf20d2cb3745756f1b9a4c157dd2b45905a1d699ee0d1"
+  },
+  "reproduced_price_error": "A written price was attached to an unidentified market and selection. Reproduced on dev only; original full-sample error not independently inspected.",
+  "general_changes": [
+    "Explicit price markers only: no unlabeled parentheses, spaced percentages, amounts or goal lines as odds",
+    "Unresolved selections carry no attributed odds; per-leg quotes never become combination prices",
+    "Local combinations and independent quoted table rows; dates never treated as numeric alternatives",
+    "Explicit winner, double chance, BTTS, total abbreviations and written score grammar; no fixture or home-away inference",
+    "Combined selection joins ordered explicit legs with & instead of JSON in a string; no persistent schema change"
+  ],
+  "verification": {
+    "domain_tests": "249 passed",
+    "ruff": "PASS",
+    "mypy": "PASS: 3 source files",
+    "source_constraints": "PASS",
+    "bandit": "NOT_RUN: module unavailable",
+    "full_suite": "NOT_RUN: targeted domain suite per repository policy"
+  },
+  "independent_review": {
+    "status": "BLOCKED",
+    "grok": "No response: managed-policy lock inaccessible",
+    "gemini_fallback": "No response: authentication failed or timed out; requested model absent from local config",
+    "acceptance": "No independent verdict; no C3 acceptance or scaling"
+  },
+  "model_attempts": [
+    {
+      "poste": "relecteur",
+      "requested_model": "grok-4.7",
+      "reported_model": null,
+      "effort": "high",
+      "duration_ms": 264,
+      "cost": null,
+      "david_verdict": "en_attente",
+      "result": "BLOCKED_BEFORE_RESPONSE"
+    },
+    {
+      "poste": "relecteur_secours",
+      "requested_model": "gemini-4-argon-high",
+      "reported_model": null,
+      "effort": "high",
+      "duration_ms": 60650,
+      "cost": null,
+      "david_verdict": "en_attente",
+      "result": "AUTHENTICATION_FAILED"
+    }
+  ],
+  "central_model_journal": "NOT_WRITTEN: outside writable workspace roots; attempt records retained here; costs unknown; David verdicts pending",
+  "hidden_final_set": "NOT_OPENED",
+  "private_text_in_repository": false,
+  "commit_created": false
+}

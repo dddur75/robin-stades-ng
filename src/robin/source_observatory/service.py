@@ -152,7 +152,8 @@ def evaluate(
                 outcome = ('gagne' if factor is not None and factor > 1 else
                            'perdu' if factor is not None and factor < 1 else 'rembourse')
                 if (factor is None or quoted != odds or outcome != result.outcome
-                        or not combined_legs_proven(result, leg_evidence, odds_basis)):
+                        or not combined_legs_proven(contribution, match, result,
+                                                    leg_evidence, odds_basis)):
                     reason = 'en_attente'
                 else:
                     profit = factor - 1
@@ -173,7 +174,8 @@ def evaluate(
     )
 
 
-def combined_legs_proven(result: Result, evidence: Iterable[Entity], basis: OddsBasis) -> bool:
+def combined_legs_proven(contribution: Contribution, match: MatchMarket, result: Result,
+                         evidence: Iterable[Entity], basis: OddsBasis) -> bool:
     """Each leg needs its own pre-match contribution and latest observed settlement."""
     items = tuple(evidence)
     cs = {e.contribution_id: e for e in items if isinstance(e, Contribution)}
@@ -183,7 +185,10 @@ def combined_legs_proven(result: Result, evidence: Iterable[Entity], basis: Odds
         return False
     for leg in result.legs:
         c, m = cs.get(leg.contribution_id), ms.get(leg.contribution_id)
-        if c is None or m is None or c.marche == 'combine' or m.match_usable_at is None:
+        if (c is None or m is None or c.marche == 'combine' or m.match_usable_at is None
+                or c.author_id != contribution.author_id
+                or max(match.contribution_usable_at, contribution.observed_at)
+                >= m.match_usable_at):
             return False
         r = rs.get(m.match_market_id)
         if (r is None or r.observed_at > result.observed_at or leg.reglement != c.reglement
