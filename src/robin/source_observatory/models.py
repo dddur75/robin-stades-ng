@@ -112,6 +112,8 @@ class PublicationVersion:
             _text(self.previous_version_id, 'previous_version_id')
             if self.modification_observed_at is None:
                 raise ValueError('correction requires observed modification time')
+        elif self.modification_observed_at is not None:
+            raise ValueError('initial version cannot have modification_observed_at')
         for name in ('announced_by_platform_at', 'first_observed_by_robin_at',
                      'modification_observed_at', 'usable_at'):
             instant = getattr(self, name)
@@ -384,6 +386,8 @@ class Result:
         _text(self.match_market_id, 'match_market_id')
         if self.outcome not in OUTCOMES:
             raise ValueError('unknown result; never infer a settlement')
+        if self.outcome != 'en_attente' and self.reglement is None:
+            raise ValueError('settled result requires a documented settlement rule')
         _instant(self.observed_at, 'observed_at')
         _hash(self.evidence_sha256)
         if self.previous_result_id is not None:

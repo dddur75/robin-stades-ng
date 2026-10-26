@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import os
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, fields, is_dataclass
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
@@ -215,8 +215,8 @@ def _validate_lineage(entity: Entity, known: dict[tuple[str, str], Entity]) -> N
         if entity.observed_at < version.usable_at:
             raise ValueError('contribution observation precedes usable version')
         if (entity.cote_observee_at is not None
-                and entity.cote_observee_at < version.first_observed_by_robin_at):
-            raise ValueError('observed odds precede first observation')
+                and entity.cote_observee_at < version.usable_at):
+            raise ValueError('observed odds precede usable version')
         if any(isinstance(previous, Contribution) and previous.version_id == entity.version_id
                and previous.selection_key == entity.selection_key for previous in known.values()):
             raise ValueError('one contribution per selection slot and version')
@@ -233,6 +233,8 @@ def _validate_lineage(entity: Entity, known: dict[tuple[str, str], Entity]) -> N
             raise ValueError('contribution match identity mismatch')
     elif isinstance(entity, Result):
         match = _get(known, MatchMarket, entity.match_market_id)
+        if entity.outcome != 'en_attente' and match.statut != 'resolu':
+            raise ValueError('settled result requires resolved market')
         contribution = _get(known, Contribution, match.contribution_id)
         if entity.legs and entity.outcome != 'en_attente' and not any(
                 combined_legs_proven(contribution, match, entity, known.values(), basis)
@@ -357,16 +359,33 @@ class AppendOnlyStore:
         return tuple(record.entity for record in self.read())
 
     def append(self, entity: Entity) -> StoredRecord:
-        if type(entity) not in _TYPES:
-            raise TypeError('only observatory metadata dataclasses are accepted')
+        return self.append_batch((entity,))[0]
+
+    def append_batch(self, entities: Iterable[Entity]) -> tuple[StoredRecord, ...]:
+        """Validate the complete single-writer batch before opening the journal."""
         records = self.read()
         known = {_key(record.entity): record.entity for record in records}
-        _validate_lineage(entity, known)
         previous = records[-1].hash if records else GENESIS
-        body = {'sequence': len(records) + 1, 'kind': type(entity).__name__,
-                'data': _wire(entity), 'previous_hash': previous}
-        digest = sha256(_canonical(body)).hexdigest()
-        line = _canonical(body | {'hash': digest}) + b'\n'
+        pending: list[StoredRecord] = []
+        lines: list[bytes] = []
+        for entity in entities:
+            if type(entity) not in _TYPES:
+                raise TypeError('only observatory metadata dataclasses are accepted')
+            _validate_lineage(entity, known)
+            data = _wire(entity)
+            if _decode(type(entity).__name__, data) != entity:
+                raise ValueError('noncanonical or unroundtrippable metadata')
+            sequence = len(records) + len(pending) + 1
+            body = {'sequence': sequence, 'kind': type(entity).__name__,
+                    'data': data, 'previous_hash': previous}
+            digest = sha256(_canonical(body)).hexdigest()
+            lines.append(_canonical(body | {'hash': digest}) + b'\n')
+            pending.append(StoredRecord(sequence, type(entity).__name__, entity, previous, digest))
+            known[_key(entity)] = entity
+            previous = digest
+        if not pending:
+            return ()
+        line = b''.join(lines)
         self.path.parent.mkdir(parents=True, exist_ok=True)
         # Binary append cannot truncate an existing file. A partial I/O error is
         # fail-closed on the next read; never truncate or repair the previous bytes.
@@ -376,8 +395,8 @@ class AppendOnlyStore:
                 raise OSError('incomplete append; journal must remain quarantined')
             stream.flush()
             os.fsync(stream.fileno())
-        self._anchor = (len(records) + 1, digest)
-        return StoredRecord(len(records) + 1, type(entity).__name__, entity, previous, digest)
+        self._anchor = (pending[-1].sequence, pending[-1].hash)
+        return tuple(pending)
 
     def update(self, identifier: str, entity: Entity) -> None:
         raise AppendOnlyViolation('updates forbidden; append a new version')

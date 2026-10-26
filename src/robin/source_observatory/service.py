@@ -95,7 +95,8 @@ def evaluate(
         reason = 'non_resolu'
     elif match.match_usable_at is None:
         reason = 'coup_envoi_inconnu'
-    elif not match.pre_match_valid or contribution.observed_at >= match.match_usable_at:
+    elif (not match.pre_match_valid or contribution.observed_at >= match.match_usable_at
+          or match.contribution_usable_at < contribution.observed_at):
         reason = 'invalide_pre_match'
     elif result.observed_at < match.match_usable_at:
         raise ValueError('result observation precedes kickoff')
@@ -183,6 +184,10 @@ def combined_legs_proven(contribution: Contribution, match: MatchMarket, result:
     rs = {e.match_market_id: e for e in items if isinstance(e, Result)}
     if len(result.legs) < 2:
         return False
+    leg_matches = [ms[leg.contribution_id].match_id for leg in result.legs
+                   if leg.contribution_id in ms]
+    if len(set(leg_matches)) != len(result.legs):
+        return False
     for leg in result.legs:
         c, m = cs.get(leg.contribution_id), ms.get(leg.contribution_id)
         if (c is None or m is None or c.marche == 'combine' or m.match_usable_at is None
@@ -195,6 +200,11 @@ def combined_legs_proven(contribution: Contribution, match: MatchMarket, result:
                 or r.reglement != leg.reglement or r.outcome != leg.outcome
                 or getattr(c, basis) != leg.odds
                 or c not in pre_match_contributions(items, m.match_usable_at)):
+            return False
+        if (any(isinstance(e, PublicationVersion) and e.version_id == contribution.version_id
+                for e in items) and contribution not in pre_match_contributions(
+                    (*items, contribution) if contribution not in items else items,
+                    m.match_usable_at)):
             return False
         if not evaluate(c, m, r, odds_basis=basis).evaluable:
             return False

@@ -24,6 +24,7 @@ from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_ope
 from xml.etree import ElementTree  # nosec B405 - DOCTYPE/ENTITY refusés avant analyse
 
 from .models import (
+    Entity,
     Publication,
     PublicationVersion,
     Source,
@@ -199,14 +200,16 @@ def _endpoint(source: PilotSource) -> tuple[str | None, str | None]:
     youtube_feed = bool(feed and urlsplit(feed).hostname == 'www.youtube.com'
                         and urlsplit(feed).path == '/feeds/videos.xml'
                         and 'channel_id=' in urlsplit(feed).query)
+    cleaned = re.sub(r"\b(?:pas (?:de\s+|d')|aucune?\s+|sans\s+)(?:clause\s+)?(?:d'|de\s+)?"
+                     r"(?:interdiction|anti-scraping|restriction)\b", '', terms)
+    if re.search(r'interdit|interdiction|prohib|forbidden|not permitted|anti-scraping|'
+                 r'usage personnel|non[- ]commercial|uniquement.*navigation|usage prive', cleaned):
+        return None, 'cgu_collecte_automatisee_refusee'
     # Only an explicitly permitted official feed can be used on YouTube.
     if 'youtube.com' in source.url:
         if youtube_feed and re.search(r'flux (atom public|rss public|officiels)', terms):
             return feed, None
         return None, 'cgu_interface_officielle_non_documentee'
-    cleaned = re.sub(r"(?:pas de|pas d'|aucune? )[^;:.]*?(?:interdiction|anti-scraping)", '', terms)
-    if re.search(r'interdit|interdiction|prohib|uniquement.*navigation|usage prive', cleaned):
-        return None, 'cgu_collecte_automatisee_refusee'
     endpoint = feed or source.url
     _url(endpoint)
     if urlsplit(endpoint).hostname.removeprefix('www.') != urlsplit(source.url).hostname.removeprefix('www.'):  # type: ignore[union-attr]
@@ -236,10 +239,10 @@ def robots_policy(text: str, url: str) -> tuple[bool, float]:
             rules.append((key, value))
     if agents:
         groups.append((agents, rules))
-    ua = USER_AGENT.split('/')[0].lower()
+    ua = USER_AGENT.lower()
     def specificity(names: list[str]) -> int:
-        return max((0 if name == '*' else len(name) for name in names
-                    if name == '*' or name in ua), default=-1)
+        return max((len(name.replace('*', '')) for name in names
+                    if name and re.search(re.escape(name).replace(r'\*', '.*'), ua)), default=-1)
     best = max((specificity(a) for a, _ in groups), default=-1)
     parsed = urlsplit(url)
     target = unquote(parsed.path or '/') + ('?' + unquote(parsed.query) if parsed.query else '')
@@ -279,6 +282,7 @@ class _Articles(HTMLParser):
         self.identifier: str | None = None
         self.post_url: str | None = None
         self.date: datetime | None = None
+        self.time_candidate: tuple[datetime | None, bool, int] | None = None
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         values = dict(attrs)
@@ -286,6 +290,7 @@ class _Articles(HTMLParser):
                 and 'post' in (values.get('class') or '').split())):
             self.depth = 1
             self.identifier, self.post_url, self.date = values.get('id'), None, None
+            self.time_candidate = None
             self.parts = []
             return
         if self.depth:
@@ -293,18 +298,34 @@ class _Articles(HTMLParser):
                 self.depth += 1
             if tag in ('script', 'style'):
                 self.skip += 1
-            if tag == 'time':
-                self.date = _announced(values.get('datetime'))
-            if tag == 'a' and 'bookmark' in (values.get('rel') or '').split():
-                self.post_url = urljoin(self.url, values.get('href') or '')
+            if tag == 'time' and self.date is None:
+                explicit = ('datePublished' in (values.get('itemprop') or '').split()
+                            or 'pubdate' in values
+                            or bool({'published', 'entry-date'} & set(
+                                (values.get('class') or '').split())))
+                self.time_candidate = (_announced(values.get('datetime')), explicit, len(self.parts))
+            if tag == 'a' and self.post_url is None and 'bookmark' in (values.get('rel') or '').split():
+                href = values.get('href')
+                target = urljoin(self.url, href) if href else None
+                if target and target.rstrip('#') != self.url.rstrip('#'):
+                    self.post_url = target
 
     def handle_endtag(self, tag: str) -> None:
         if self.depth:
+            if tag == 'time' and self.time_candidate is not None:
+                candidate, explicit, start = self.time_candidate
+                label = _fold(''.join(self.parts[start:]))
+                if self.date is None and (explicit or re.search(
+                        r'\b(?:publiee?|publication|published|posted)\b', label)):
+                    self.date = candidate
+                self.time_candidate = None
             if tag in ('script', 'style'):
                 self.skip = max(0, self.skip - 1)
             if tag not in ('br', 'img', 'meta', 'link', 'input', 'hr', 'source', 'wbr'):
                 self.depth -= 1
             if not self.depth:
+                if not self.post_url and not self.identifier:
+                    raise ValueError('publication without public permalink')
                 target = self.post_url or (self.url + '#' + self.identifier
                                            if self.identifier else self.url)
                 self.posts.append(PublicPost(target, ''.join(self.parts), self.date))
@@ -329,13 +350,19 @@ def parse_publications(body: bytes, url: str) -> tuple[PublicPost, ...]:
             if _local(entry.tag) not in ('item', 'entry'):
                 continue
             fields = {_local(e.tag): ''.join(e.itertext()) for e in entry}
+            if not fields.get('description', '').strip():
+                fields['description'] = next((''.join(e.itertext()) for e in entry.iter()
+                    if _local(e.tag) == 'description' and ''.join(e.itertext()).strip()), '')
             links = [e.attrib['href'] for e in entry if _local(e.tag) == 'link'
                      and 'href' in e.attrib and e.attrib.get('rel', 'alternate') == 'alternate']
             link = links[0] if links else fields.get('link')
             if not link:
                 raise ValueError('publication without public permalink')
             text = next((fields[key] for key in ('encoded', 'content', 'description', 'title')
-                         if fields.get(key)), '')
+                         if fields.get(key, '').strip()), '')
+            title = fields.get('title', '').strip()
+            if title and title not in text:
+                text = title + '\n' + text
             announced = _announced(fields.get('published') or fields.get('pubDate')
                                    or fields.get('date'))
             posts.append(PublicPost(urljoin(url, link.strip()), text, announced))
@@ -365,8 +392,8 @@ def _payload_root() -> Path:
     return root
 
 
-def _persist_post(store: AppendOnlyStore, source: PilotSource, post: PublicPost,
-                   observed: datetime, raw_root: Path) -> str:
+def _prepare_post(entities: Iterable[Entity], source: PilotSource, post: PublicPost,
+                  observed: datetime, raw_root: Path) -> tuple[str, tuple[Entity, ...]]:
     digest = text_fingerprint(post.text)
     raw_root.mkdir(parents=True, exist_ok=True)
     target = raw_root / (digest + '.txt')
@@ -377,19 +404,20 @@ def _persist_post(store: AppendOnlyStore, source: PilotSource, post: PublicPost,
         with target.open('xb') as stream:
             stream.write(post.text.encode('utf-8'))
     pub_id = 'publication:' + text_fingerprint(source.source_id + ':' + post.url)
-    entities = store.entities()
+    entities = tuple(entities)
+    pending: list[Entity] = []
     versions = [e for e in entities if isinstance(e, PublicationVersion)
                 and e.publication_id == pub_id]
     if not any(isinstance(e, Publication) and e.publication_id == pub_id for e in entities):
-        store.append(Publication(pub_id, source.source_id, post.url))
+        pending.append(Publication(pub_id, source.source_id, post.url))
     previous = versions[-1] if versions else None
     if previous is None or previous.text_sha256 != digest:
         version_id = 'version:' + text_fingerprint(pub_id + ':' + digest + ':' + instant_text(observed))
-        store.append(PublicationVersion(version_id, pub_id, digest, post.announced_at,
+        pending.append(PublicationVersion(version_id, pub_id, digest, post.announced_at,
             previous.first_observed_by_robin_at if previous else observed,
             observed if previous else None, observed,
             previous.version_id if previous else None))
-    return pub_id
+    return pub_id, tuple(pending)
 
 
 def _summary(plan: dict[str, Any], store: AppendOnlyStore, dry_run: bool) -> dict[str, Any]:
@@ -494,8 +522,18 @@ def collect(plan: dict[str, Any], sources: Iterable[PilotSource], store: AppendO
                         # A global feed may mix leagues. Keep explicit Ligue 1 posts only.
                         selected = [p for p in posts if re.search(r'ligue[ -]?1|\bl1\b',
                                     _fold(p.text + ' ' + p.url))]
-                        publication_ids = tuple(_persist_post(store, source, p, observed, raw_root)
-                                                for p in selected)
+                        pending: list[Entity] = []
+                        ids = []
+                        existing_posts = store.entities()
+                        for post in selected:
+                            pub_id, records = _prepare_post((*existing_posts, *pending), source,
+                                                           post, observed, raw_root)
+                            ids.append(pub_id)
+                            pending.extend(records)
+                        receipt = VisitReceipt('receipt:' + visit['visit_id'], visit['visit_id'],
+                                               observed, 'ok', tuple(ids), None)
+                        store.append_batch((*pending, receipt))
+                        continue
                         status, reason = 'ok', None
             except (OSError, ValueError, ElementTree.ParseError):
                 reason = 'lecture_publique_echouee'

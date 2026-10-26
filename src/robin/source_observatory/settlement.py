@@ -52,10 +52,15 @@ def settle(
 ) -> Result:
     if contribution.contribution_id != match.contribution_id:
         raise ValueError('settlement contribution mismatch')
+    if match.match_usable_at is not None and observed_at < match.match_usable_at:
+        raise ValueError('result observation precedes kickoff')
     rule = contribution.reglement
     market, selection, line = contribution.marche, contribution.selection, contribution.ligne
+    if match.selection_id in ('home', 'away', 'draw', 'over', 'under'):
+        selection = match.selection_id
     outcome: Outcome = 'en_attente'
-    if supported(rule, market, contribution.periode) and supported_line(contribution):
+    if (match.statut == 'resolu' and supported(rule, market, contribution.periode)
+            and supported_line(contribution)):
         if rule is None:
             raise ValueError('regle de reglement absente')
         if score.status == 'reporte':
@@ -106,8 +111,10 @@ def settle_combined(
 ) -> Result:
     if contribution.contribution_id != match.contribution_id:
         raise ValueError('settlement contribution mismatch')
+    if match.match_usable_at is not None and observed_at < match.match_usable_at:
+        raise ValueError('result observation precedes kickoff')
     outcome: Outcome = 'en_attente'
-    if supported(contribution.reglement, 'combine', contribution.periode) and (
+    if match.statut == 'resolu' and supported(contribution.reglement, 'combine', contribution.periode) and (
             contribution.marche == 'combine'):
         with localcontext() as context:
             context.prec = max(28, sum(len(leg.odds.as_tuple().digits) + 8

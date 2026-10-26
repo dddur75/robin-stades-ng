@@ -39,7 +39,7 @@ def _fallback(value: Any, rule: dict[str, Any], root: dict[str, Any]) -> None:
 
     kinds = {
         'null': value is None, 'string': isinstance(value, str),
-        'integer': type(value) is int or (type(value) is float and value.is_integer()),
+        'integer': type(value) is int,
         'object': isinstance(value, dict), 'array': isinstance(value, list),
     }
     types = rule.get('type', list(kinds))

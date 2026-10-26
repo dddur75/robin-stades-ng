@@ -57,6 +57,15 @@ def pre_match_contributions(
             if max(v.usable_at, entity.observed_at) >= kickoff:
                 continue
             slot = (entity.publication_id, entity.match_id, entity.selection_key)
+            # Extraction positions move when a preceding selection is removed.
+            # Reattach an unchanged market/selection to its earlier slot first.
+            for old_slot, old in latest.items():
+                if (old.publication_id == entity.publication_id and old.match_id == entity.match_id
+                        and versions[old.version_id].usable_at < v.usable_at
+                        and (old.marche, old.selection, old.ligne, old.periode)
+                        == (entity.marche, entity.selection, entity.ligne, entity.periode)):
+                    slot = old_slot
+                    break
             previous = latest.get(slot)
             if previous is None or (v.usable_at > versions[previous.version_id].usable_at
                                     and preserves_evidence(previous, entity)):

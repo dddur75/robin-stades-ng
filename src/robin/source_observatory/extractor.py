@@ -289,10 +289,12 @@ def extract_contributions(
                 p.selection + (' ' + p.ligne if p.ligne else '') for p in picks
             ) if picks else 'indeterminee'
             line = None
-            # A single quote on an implicit, same-match conjunction is its price.
-            # Explicit per-leg prices on named combinations are never multiplied.
-            if ('&' in clause and not re.search(r'\bcombine\b', clause) and
-                    not any(_odds(leg)[0] for leg in legs[:-1])):
+            # Only an explicit total/global quote prices the whole combination.
+            # A quote attached after the closing delimiter also names the whole bet.
+            enclosed = re.search(r'(?P<bet>"[^"]+"|«[^»]+»|\([^()]+\))\s*'
+                                 r'(?:\(\s*)?(?:cote\s*(?:a\s+)?|@\s*)'
+                                 + _decimal_odds, clause)
+            if enclosed and _picks(enclosed.group('bet')) == picks:
                 odds, odds_conflict = _odds(clause)
                 if odds_conflict:
                     reason = reason or 'plusieurs_cotes_declarees'

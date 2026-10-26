@@ -48,8 +48,9 @@ def match(c=None, **changes):
     c = c or contribution()
     return models.MatchMarket(**(dict(
         match_market_id='mm:' + c.contribution_id, contribution_id=c.contribution_id,
-        version_id=c.version_id, contribution_usable_at=T, match_usable_at=T + timedelta(hours=2),
-        match_id='m1', market_id='market', selection_id='selection', statut='resolu',
+        version_id=c.version_id, contribution_usable_at=max(T, c.observed_at),
+        match_usable_at=T + timedelta(hours=2),
+        match_id=c.match_id, market_id='market', selection_id='selection', statut='resolu',
         raison_non_resolu=None,
     ) | changes))
 
@@ -175,7 +176,7 @@ def test_combined_half_settlements_and_missing_leg_rule():
     evidence = []
     for leg, line in zip(legs, ('0.25', '2'), strict=True):
         leg_c = contribution(leg.contribution_id, publication_id=leg.contribution_id,
-            version_id=leg.contribution_id, marche=leg.reglement.market,
+            version_id=leg.contribution_id, match_id=leg.contribution_id, marche=leg.reglement.market,
             ligne=Decimal(line), reglement=leg.reglement, cote_declaree=leg.odds)
         leg_m = match(leg_c)
         leg_r = replace(settled(leg_c), outcome=leg.outcome)
