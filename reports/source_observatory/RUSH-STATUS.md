@@ -11,10 +11,10 @@ Mis à jour : 2026-10-25 (T0)
 ## Tâches
 | Id | Poste | État | Preuve |
 |---|---|---|---|
-| T1 module + tests + schéma | Codex | en cours | inbox/codex/T1.log |
-| T2 registre + CGU | Gemini (agy) | en cours | inbox/gemini/T2.log |
-| T3 tipsters + corpus 40 + prompt | Grok | en cours | inbox/grok/T3.log |
+| T1 module + tests + schéma | Codex | ACCEPTÉ (91 tests relancés par le chef) | PR #127, 14d358a |
+| T2 registre + CGU | Gemini | ACCEPTÉ sous réserve revue (42 sources, 18 petits) | 8/8 URL 200 |
+| T3 tipsters + corpus + prompt | Grok | RELANCÉ sans écriture (verrou politique) -> sortie stdout | inbox/grok/*.txt |
 | T4 extracteur + précision | Codex | prêt (attend schéma T1 accepté + corpus T3 accepté) | |
-| T5 revue PR | Gemini | prêt (attend PR) | |
-| T6 critères gelés (avant 30/10) | chef | prêt | |
+| T5 revue PR | Gemini | en cours | inbox/gemini/revue-PR127.md |
+| T6 critères gelés | chef | FAIT — data/source_observatory/pilot_criteria.md | commit de gel |
 | T7 collecte réelle / règlement / rapport | script + IA | prêt après T6 | |
