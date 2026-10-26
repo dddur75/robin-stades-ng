@@ -313,7 +313,7 @@ def test_version_cannot_be_backdated_after_collection_receipt(tmp_path, monkeypa
 
 def test_real_plan_matches_registry_and_requested_date_scope():
     sources = collector.load_sources(Path('data/source_observatory/pilot_sources.csv'))
-    path = Path('data/source_observatory/visit_plan_20261031_v2.json')
+    path = Path('data/source_observatory/visit_plan_20261031_v3.json')
     p = json.loads(path.read_text(encoding='utf-8'))
     fixtures = tuple(collector.Fixture(f['fixture_id'], collector.parse_instant(f['kickoff']),
                      f['evidence_url']) for f in p['fixtures'])

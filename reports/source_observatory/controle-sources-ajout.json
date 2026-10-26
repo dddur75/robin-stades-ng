@@ -267,5 +267,6 @@
    "dates_visibles": true,
    "verdict": "OK"
   }
- ]
+ ],
+ "SUPERSEDE": "Ce contrôle est INVALIDE (User-Agent usurpé, page téléchargée sans lecture préalable de robots.txt, CGU ignorées). Voir controle-sources-conformes.json."
 }

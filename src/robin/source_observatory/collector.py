@@ -484,7 +484,7 @@ def collect(plan: dict[str, Any], sources: Iterable[PilotSource], store: AppendO
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--sources', type=Path, default=Path('data/source_observatory/pilot_sources.csv'))
-    parser.add_argument('--plan', type=Path, default=Path('data/source_observatory/visit_plan_20261031_v2.json'))
+    parser.add_argument('--plan', type=Path, default=Path('data/source_observatory/visit_plan_20261031_v3.json'))
     parser.add_argument('--journal', type=Path, default=Path('data/source_observatory/collection.jsonl'))
     parser.add_argument('--dry-run', action='store_true')
     args = parser.parse_args(argv)
