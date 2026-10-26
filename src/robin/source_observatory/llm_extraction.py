@@ -25,7 +25,7 @@ from hashlib import sha256
 from pathlib import Path
 from typing import Any
 
-from .extractor import _clauses, _history, _hypothetical, _normal, _picks, _team_name
+from .extractor import _clauses, _history, _hypothetical, _intent, _normal, _picks, _team_name
 from .models import (
     Contribution,
     EvidenceExcerpt,
@@ -120,6 +120,7 @@ def _envelope(line: str, version_id: str) -> dict[str, Any]:
             or not isinstance(value['extrait_preuve'], str)
             or len(value['extrait_preuve']) > 500):
         raise ValueError('invalid extraction envelope')
+    seen = set()
     for pick in value['contributions']:
         if (not isinstance(pick, dict) or set(pick) != {
                 'marche', 'selection', 'ligne', 'cote_declaree', 'statut', 'raison_non_resolu'}
@@ -135,11 +136,22 @@ def _envelope(line: str, version_id: str) -> dict[str, Any]:
                     not isinstance(pick['raison_non_resolu'], str)
                     or not pick['raison_non_resolu'].strip()))):
             raise ValueError('invalid contribution shape')
+        key = (pick['marche'], pick['selection'],
+               Decimal(pick['ligne'].replace(',', '.')) if pick['ligne'] is not None else None)
+        if key in seen:
+            raise ValueError('duplicate selection in extraction envelope')
+        seen.add(key)
     return value
 
 
 def _canonical_pick(market: str, selection: str, line: str | None, text: str) -> bool:
     clause = re.sub(r'\bprix\b', 'cote', _normal(text))
+    picks = _picks(clause)
+    ambiguity = clause
+    if any(p.marche == 'double_chance' and p.selection.endswith(' ou draw') for p in picks):
+        ambiguity = re.sub(r'\bou\s+(?:nul|n)\b', '', ambiguity)
+    if re.search(r'\b(?:ou|soit)\b', ambiguity):
+        return False
     if market in ('total', 'handicap'):
         if line is None:
             return False
@@ -150,18 +162,43 @@ def _canonical_pick(market: str, selection: str, line: str | None, text: str) ->
     if market in ('1N2', 'handicap') and _team_name(selection) != selection:
         return False
     if market == 'total':
+        if re.search(r'\bbuts?\s+(?:pour|de|du|des)\b', clause):
+            return False
         if line is None or Decimal(line) <= 0 or not re.search(
                 r'\b(?:over|under|plus de|moins de)\s+' + re.escape(line).replace(r'\.', '[.,]')
                 + r'\s+buts?\b', clause):
             return False
     if market == 'handicap' and (line is None or not line.startswith(('+', '-'))):
         return False
+    if market == '1N2' and selection == 'draw' and not re.search(
+            r'\bmatch\s+nul\b|\b(?:1n2|1x2)\s*[:=-]?\s*[nx]\b|'
+            r'\b(?:pari|prono(?:stic)?|selection|choix)\s*:\s*(?:le\s+)?nul\b|'
+            r'\b(?:joue|mise|parie|prends|vois)\s+(?:le\s+|un\s+)?nul\b|^\s*nul\b', clause):
+        return False
+    if market == 'combine':
+        legs = re.split(r'\s+[+&x]\s+|\s+et\s+', clause)
+        return (len(legs) >= 2 and len(picks) >= 2
+                and all(len(_picks(leg)) == 1 for leg in legs)
+                and all(_canonical_pick(p.marche, p.selection, p.ligne, clause) for p in picks)
+                and selection == ' & '.join(
+                    p.selection + (' ' + p.ligne if p.ligne else '') for p in picks))
+    # Bind the literal team to the choice grammar, rather than treating every
+    # source word (or part of a price) as a team when an intent marker is present.
+    team = re.escape(selection)
+    if (market == '1N2' and selection != 'draw' and not picks
+            and re.search(r'[a-z]', selection)
+            and re.search(
+                r'\b(?:je (?:joue|mise|prends|parie(?: sur)?)|'
+                r'(?:mon choix|(?:mon|notre) pari)\s*:)\s+' + team
+                + r'\s*(?:cote\b|prix\b|@|vainqueur\b|$)|'
+                r'(?<!\w)' + team + r'\s+vainqueur\b', clause)):
+        return True
     return any(p.marche == market and p.selection == selection and (
         p.ligne == line or (p.ligne is not None and line is not None
-                           and Decimal(p.ligne) == Decimal(line))) for p in _picks(clause))
+                           and Decimal(p.ligne) == Decimal(line))) for p in picks)
 
 
-def _literal_odds(value: Any, text: str) -> tuple[Decimal | None, bool]:
+def _literal_odds(value: Any, text: str, *, combined: bool = False) -> tuple[Decimal | None, bool]:
     if value is None:
         return None, True
     quote = str(value).replace(',', '.')
@@ -169,9 +206,10 @@ def _literal_odds(value: Any, text: str) -> tuple[Decimal | None, bool]:
         return None, False
     clause = _normal(text)
     tokens = []
-    for match in re.finditer(r'(?:\b(?:cote|prix)\s*(?:a\s+)?|@\s*)'
-                             r'([1-9]\d*[.,]\d+)(?!\w|[.,]\d)', clause):
-        prefix = clause[max(0, match.start() - 40):match.start()]
+    marker = (r'\bcote\s+(?:totale|globale|du combine)\s*(?:a\s+)?' if combined else
+              r'(?:\b(?:cote|prix)\s*(?:a\s+)?|@\s*|\bvainqueur\s+a\s*)')
+    for match in re.finditer(marker + r'([1-9]\d*[.,]\d+)(?!\w|[.,]\d)', clause):
+        prefix = clause[:match.start()]
         suffix = clause[match.end():]
         if re.search(r'\b(?:ancienne|adverse|observee|relevee|bookmaker|probabilite|'
                      r'statistique|mise|xg)\b[^@()]*$', prefix):
@@ -185,29 +223,64 @@ def _literal_odds(value: Any, text: str) -> tuple[Decimal | None, bool]:
     return Decimal(quote), True
 
 
+def _unasserted(clause: str) -> bool:
+    # Inspect only the containing clause. An instruction elsewhere in the source
+    # is data too, and cannot enable/disable validation of a separate prediction.
+    if (_hypothetical.search(clause) or _history.search(clause)
+            or re.search(r'\bignore\s+(?:tout|toutes)\b|'
+                         r'\b(?:retourne|reponds)\s+marche\s*=|\bsystem\s*:', clause)):
+        return True
+    # Intensifying "si" ("le temps est si beau") is not a condition.
+    conditions = re.sub(r'\b(?:est|sont|semble|parait|reste)\s+si\b', '', clause)
+    if re.search(r'\b(?:si|sauf|peut[- ]etre|eventuellement|hypothese)\b', conditions):
+        return True
+    if re.search(r'\bsans\s+(?:choix|parier|jouer|miser)\b', clause):
+        return True
+    # Commas delimit independent assertions, but never decimal tokens. This keeps
+    # "je ne regarde pas la meteo, mon pari ..." without accepting "ne joue pas".
+    for part in re.split(r',(?=\s|$)', clause):
+        if not (_picks(part) or _intent.search(part)):
+            continue
+        if re.search(r"\b(?:ne\b.*\b(?:pas|jamais|plus|rien|aucune?s?)\b|"
+                     r"aucune?s?\b|ni\b|sans\b|"
+                     r"pas de\b|(?:je|on) (?:joue|mise|parie|prends) pas\b)", part):
+            return True
+    return False
+
+
 def _draft(pick: dict[str, Any], *, text: str, excerpt: str, version: PublicationVersion,
            publication: Publication, author_id: str, observed_at: datetime,
-           preuve_permise: str | None, identity: str, slot: int) -> Contribution:
+           preuve_permise: str | None, identity: str, slot: int,
+           source_clauses: list[tuple[int, int, str]]) -> Contribution:
     start = text.find(excerpt)
     if not excerpt.strip() or start < 0 or len(excerpt) > 500:
         raise ValueError('nonliteral evidence excerpt')
     end = start + len(excerpt)
+    if ((start > 0 and text[start - 1].isalnum())
+            or (start > 1 and text[start - 1] in '.,' and text[start - 2].isdigit()
+                and text[start].isdigit())
+            or (end < len(text) and text[end].isalnum())
+            or (end + 1 < len(text) and text[end] in '.,' and text[end + 1].isdigit())):
+        raise ValueError('evidence cuts a source token')
     # Validate the containing source clause too: cropping away a negation must
     # not turn a refusal into a selection. Source prose never configures guards.
-    clauses = [clause for begin, finish, clause in _clauses(text)
+    clauses = [(begin, finish, clause) for begin, finish, clause in source_clauses
                if begin < end and finish > start]
     if len(clauses) != 1:
         raise ValueError('one asserted evidence clause required')
-    clause = _normal(clauses[0])
-    if (not _picks(clause) or _hypothetical.search(clause) or _history.search(clause)
-            or re.search(r"\b(?:ne\b[^.;!?]*\b(?:pas|jamais|plus|rien|aucun)\b|"
-                         r"sans choix\b|pas de\b|aucun\b|"
-                         r"(?:je|on) (?:joue|mise|parie|prends) pas\b)", clause)):
-        raise ValueError('evidence is not an asserted selection')
-    odds, literal = _literal_odds(pick['cote_declaree'], text[start:end])
+    begin, finish, original = clauses[0]
+    clause = _normal(original)
     market, selection = pick['marche'], pick['selection']
     line = pick['ligne'].replace(',', '.') if pick['ligne'] is not None else None
-    canonical = _canonical_pick(market, selection, line, text[start:end])
+    if (_unasserted(clause) or (finish < len(text) and text[finish] == '?')
+            or not (_picks(clause) or _canonical_pick(market, selection, line, clause))):
+        raise ValueError('evidence is not an asserted selection')
+    odds, literal = _literal_odds(pick['cote_declaree'], excerpt, combined=market == 'combine')
+    _, clause_literal = _literal_odds(pick['cote_declaree'], original,
+                                     combined=market == 'combine')
+    literal = literal and clause_literal
+    canonical = (_canonical_pick(market, selection, line, original)
+                 and _canonical_pick(market, selection, line, excerpt))
     reason = 'match_non_rapproche'
     if not literal:
         reason = 'cote_non_litterale'
@@ -220,6 +293,13 @@ def _draft(pick: dict[str, Any], *, text: str, excerpt: str, version: Publicatio
         odds = None
     if not canonical:
         market, selection, line = 'indetermine', 'indeterminee', None
+    # Keep neighbouring context in the evidence, rather than persisting the
+    # route's potentially misleading crop. Long safe clauses may still use a
+    # bounded literal excerpt; uncertain context beyond that budget is refused.
+    if finish - begin <= 500:
+        start, end = begin, finish
+    elif not literal or not canonical:
+        raise ValueError('uncertain source context exceeds evidence budget')
     draft = Contribution(
         contribution_id=f'llm:{identity}:{slot}', version_id=version.version_id,
         source_id=publication.source_id, publication_url=publication.publication_url,
@@ -284,10 +364,12 @@ def extract_contributions(
         if len(lines) != 1:
             raise ValueError('exactly one JSONL envelope required')
         envelope = _envelope(lines[0], version_id)
+        source_clauses = _clauses(text)
         drafts = [_draft(
             pick, text=text, excerpt=envelope['extrait_preuve'], version=version,
             publication=publication, author_id=author_id, observed_at=observed_at,
             preuve_permise=preuve_permise, identity=identity, slot=index + 1,
+            source_clauses=source_clauses,
         ) for index, pick in enumerate(envelope['contributions'])]
     except (ValueError, TypeError, ArithmeticError):
         rejected = max(1, len(lines))

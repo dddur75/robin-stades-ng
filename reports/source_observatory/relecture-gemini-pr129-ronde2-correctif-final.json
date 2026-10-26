@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-26T16:56:49.205Z",
+  "task": "source-observatory-pr129-round2",
+  "poste": "relecteur_secours",
+  "requested_model": "gemini-4-argon-high",
+  "requested_effort": "high",
+  "reported_model": null,
+  "duration_seconds": 60.68,
+  "cost_usd": null,
+  "david_verdict": "en_attente",
+  "benchmark_journal": "non_ecrit_hors_perimetre_inscriptible",
+  "status": "unavailable",
+  "exit_code": 1,
+  "diagnostic": "Authentication required. Please visit the URL to log in:   http<chemin-local>  Waiting for authentication (timeout 60s)... Or, paste the authorization code here and press Enter: Error: authentication timed out. error: authentication failed or timed out "
+}

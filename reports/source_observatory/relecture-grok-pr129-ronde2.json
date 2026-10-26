@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-26T16:51:53.967Z",
+  "task": "source-observatory-pr129-round2",
+  "poste": "relecteur",
+  "requested_model": "grok-4.7",
+  "requested_effort": "high",
+  "reported_model": null,
+  "duration_seconds": 0.233,
+  "cost_usd": null,
+  "david_verdict": "en_attente",
+  "benchmark_journal": "non_ecrit_hors_perimetre_inscriptible",
+  "status": "unavailable",
+  "diagnostic": "Error: Couldn't start session: Managed policy could not be verified: the policy lock file under <chemin-local> "
+}
