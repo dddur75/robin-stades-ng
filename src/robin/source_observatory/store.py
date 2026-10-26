@@ -82,7 +82,8 @@ def _wire(value: object) -> object:
         return value
     if isinstance(value, datetime):
         offset = value.utcoffset()
-        assert offset is not None
+        if offset is None:
+            raise ValueError('datetime sans fuseau')
         return {'utc': instant_text(value),
                 'origin_timezone': getattr(value.tzinfo, 'key', None) or value.tzname(),
                 'origin_offset_seconds': int(offset.total_seconds())}

@@ -2,7 +2,7 @@
 
 Date d'exécution : `2026-10-25`  
 Rôle : GEMINI (Recherche)  
-Dossier de sortie : `C:\Users\ddura\IA-Team\robin-stades-ng-wt\inbox\gemini\`
+Dossier de sortie : `inbox/gemini/` (worktree local, hors dépôt)  
 
 ---
 

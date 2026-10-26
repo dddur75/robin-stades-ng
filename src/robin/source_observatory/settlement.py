@@ -48,7 +48,8 @@ def settle(
     market, selection, line = contribution.marche, contribution.selection, contribution.ligne
     outcome: Outcome = 'en_attente'
     if supported(rule, market, contribution.periode):
-        assert rule is not None
+        if rule is None:
+            raise ValueError('regle de reglement absente')
         if score.status == 'reporte':
             outcome = rule.postponed
         elif score.status == 'termine':

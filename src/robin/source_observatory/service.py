@@ -90,7 +90,8 @@ def evaluate(
         if result.outcome not in ('gagne', 'perdu'):
             reason = 'en_attente'
         else:
-            assert contribution.probabilite is not None
+            if contribution.probabilite is None:
+                raise ValueError('probabilite_explicite sans probabilite')
             p = contribution.probabilite
             with localcontext() as context:
                 context.prec = max(28, len(p.as_tuple().digits) * 2 + 8)
