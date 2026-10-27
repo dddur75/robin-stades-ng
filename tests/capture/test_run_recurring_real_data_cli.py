@@ -16,7 +16,7 @@ from robin.capture.recurring_real_data import RECURRING_CLAIM_IDS, SEED_CLAIM_ID
 from robin.prospective_observatory.chronos_control_plane import ObservedObject
 from robin.prospective_observatory.chronos_r2 import LatestProjection
 
-RELAY_GENERATION = "4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87"
+RELAY_GENERATION = "0ed702e9cffd5ff43f98550673547bc8c39ac3ac1b4a0f7db7abc62a8abdb14a"
 WORKFLOW = Path(__file__).resolve().parents[2] / ".github/workflows/prospective-deep-scheduler.yml"
 
 
