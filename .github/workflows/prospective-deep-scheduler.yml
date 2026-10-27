@@ -26,7 +26,7 @@ on:
         description: "Immutable trigger-recovery manifest SHA-256"
         required: true
         type: string
-        default: "4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87"
+        default: "0ed702e9cffd5ff43f98550673547bc8c39ac3ac1b4a0f7db7abc62a8abdb14a"
       chain_id:
         description: "Root GitHub run id (automatic relays only)"
         required: true
@@ -97,9 +97,9 @@ jobs:
           PARENT_RUN_ID: ${{ inputs.parent_run_id }}
           SEQUENCE: ${{ inputs.sequence }}
           ACTIVE_GENERATION: ${{ vars.ROBIN_AUTONOMOUS_RELAY_GENERATION }}
-          EXPECTED_GENERATION: "4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87"
+          EXPECTED_GENERATION: "0ed702e9cffd5ff43f98550673547bc8c39ac3ac1b4a0f7db7abc62a8abdb14a"
           EXPECTED_SOURCE_SHA256: "1bd2073ac01f68fbaa1de9c190642245c2bf8acf7c3611f69f706159df96821d"
-          EXPECTED_EXPIRES_AT: "2026-11-03T23:59:59Z"
+          EXPECTED_EXPIRES_AT: "2026-12-03T23:59:59Z"
         run: |
           set -euo pipefail
           umask 077
@@ -138,7 +138,7 @@ jobs:
           [[ "$ORIGIN" == "bootstrap" ]]
           [[ "$GENERATION" == "$EXPECTED_GENERATION" ]]
           [[ "$CHAIN_ID" == "0" && "$PARENT_RUN_ID" == "0" && "$SEQUENCE" == "0" ]]
-          [[ "$(sha256sum configs/execution/robin-autonomous-lab-trigger-recovery-v2-20261005.json | cut -d' ' -f1)" == "$EXPECTED_GENERATION" ]]
+          [[ "$(sha256sum configs/execution/robin-autonomous-lab-trigger-recovery-v2-20261005-prolongation-20261203.json | cut -d' ' -f1)" == "$EXPECTED_GENERATION" ]]
           [[ "$(sha256sum docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-TRIGGER-RECOVERY-V2-2026-10-05.md | cut -d' ' -f1)" == "$EXPECTED_SOURCE_SHA256" ]]
           current_main="$(read_gh_json main-ref "repos/$GITHUB_REPOSITORY/git/ref/heads/main")"
           current_main_sha="$(jq -r .object.sha <<<"$current_main")"
@@ -204,8 +204,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           ACTIVE_GENERATION: ${{ vars.ROBIN_AUTONOMOUS_RELAY_GENERATION }}
-          EXPECTED_GENERATION: "4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87"
-          EXPECTED_EXPIRES_AT: "2026-11-03T23:59:59Z"
+          EXPECTED_GENERATION: "0ed702e9cffd5ff43f98550673547bc8c39ac3ac1b4a0f7db7abc62a8abdb14a"
+          EXPECTED_EXPIRES_AT: "2026-12-03T23:59:59Z"
         run: |
           set -euo pipefail
           read_gh_json() {
@@ -307,8 +307,8 @@ jobs:
           PARENT_RUN_ID: ${{ inputs.parent_run_id }}
           SEQUENCE: ${{ inputs.sequence }}
           ACTIVE_GENERATION: ${{ vars.ROBIN_AUTONOMOUS_RELAY_GENERATION }}
-          EXPECTED_GENERATION: "4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87"
-          EXPECTED_EXPIRES_AT: "2026-11-03T23:59:59Z"
+          EXPECTED_GENERATION: "0ed702e9cffd5ff43f98550673547bc8c39ac3ac1b4a0f7db7abc62a8abdb14a"
+          EXPECTED_EXPIRES_AT: "2026-12-03T23:59:59Z"
         run: |
           set -euo pipefail
           umask 077
@@ -350,7 +350,7 @@ jobs:
           [[ "$PARENT_RUN_ID" =~ ^[1-9][0-9]{0,19}$ ]]
           [[ "$SEQUENCE" =~ ^[1-9][0-9]{0,9}$ ]]
           [[ "$PARENT_RUN_ID" != "$GITHUB_RUN_ID" ]]
-          [[ "$(sha256sum configs/execution/robin-autonomous-lab-trigger-recovery-v2-20261005.json | cut -d' ' -f1)" == "$EXPECTED_GENERATION" ]]
+          [[ "$(sha256sum configs/execution/robin-autonomous-lab-trigger-recovery-v2-20261005-prolongation-20261203.json | cut -d' ' -f1)" == "$EXPECTED_GENERATION" ]]
           current_main="$(read_gh_json main-ref "repos/$GITHUB_REPOSITORY/git/ref/heads/main")"
           current_main_sha="$(jq -r .object.sha <<<"$current_main")"
           validate_documentary_continuity "$GITHUB_SHA" "$current_main_sha"
@@ -478,13 +478,13 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-          EXPECTED_MANIFEST_SHA256: "98b1538384f942d54535517e445ab2e9bf347e080b7f20bc92f3bb02aaede00a"
+          EXPECTED_MANIFEST_SHA256: "2457a895e74d96ed906372408fee65f3f2066e89ce20dbae86b0249f17395625"
           EXPECTED_SOURCE_SHA256: "c611e5cfdb2fb6bc2b1a6238e7bc8ec94191d4841c9cad177abcf6bb8662a813"
-          EXPECTED_SCHEDULE_MANIFEST_SHA256: "0905b3044849b81ea0f574f066e8ae132e61f0deb5412a8a6743d2ab0c15e0bc"
+          EXPECTED_SCHEDULE_MANIFEST_SHA256: "9eaffaf356305083bf3598b933f1ba0ea327a6c90575c5ad800246d690a0ac1b"
           EXPECTED_SCHEDULE_SOURCE_SHA256: "7e654d17751685b62aff5ab0a7c9d0460feaabd8b304f1ee80c5fd80596cd65c"
-          EXPECTED_ESTABLISHED_MANIFEST_SHA256: "c1e3375370f55f288aaa76a5e706939e5617a54dc61598f85a510fc9d3be14fd"
+          EXPECTED_ESTABLISHED_MANIFEST_SHA256: "9e5af281dd8414e2b1b482bf9d8e62172235b992bb3965aeb7eb86c3300135e5"
           EXPECTED_ESTABLISHED_SOURCE_SHA256: "2cf16116c41803c3300bee2fc7cc3cc501b09fa5f80c6c27affce08589e5f84e"
-          EXPECTED_TRIGGER_MANIFEST_SHA256: "4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87"
+          EXPECTED_TRIGGER_MANIFEST_SHA256: "0ed702e9cffd5ff43f98550673547bc8c39ac3ac1b4a0f7db7abc62a8abdb14a"
           EXPECTED_TRIGGER_SOURCE_SHA256: "1bd2073ac01f68fbaa1de9c190642245c2bf8acf7c3611f69f706159df96821d"
           ACTIVE_GENERATION: ${{ vars.ROBIN_AUTONOMOUS_RELAY_GENERATION }}
           ROBIN_RELAY_MODE: ${{ inputs.mode }}
@@ -516,13 +516,13 @@ jobs:
           git fetch --no-tags --force origin "$current_main_sha"
           python -I scripts/validate_robin_documentary_continuity.py \
             --repository . --base "$GITHUB_SHA" --head "$current_main_sha"
-          [[ "$(sha256sum configs/execution/robin-autonomous-lab-20261004.json | cut -d' ' -f1)" == "$EXPECTED_MANIFEST_SHA256" ]]
+          [[ "$(sha256sum configs/execution/robin-autonomous-lab-20261004-prolongation-20261203.json | cut -d' ' -f1)" == "$EXPECTED_MANIFEST_SHA256" ]]
           [[ "$(sha256sum docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-2026-10-04.md | cut -d' ' -f1)" == "$EXPECTED_SOURCE_SHA256" ]]
-          [[ "$(sha256sum configs/execution/robin-autonomous-lab-schedule-reliability-20261004.json | cut -d' ' -f1)" == "$EXPECTED_SCHEDULE_MANIFEST_SHA256" ]]
+          [[ "$(sha256sum configs/execution/robin-autonomous-lab-schedule-reliability-20261004-prolongation-20261203.json | cut -d' ' -f1)" == "$EXPECTED_SCHEDULE_MANIFEST_SHA256" ]]
           [[ "$(sha256sum docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-SCHEDULE-RELIABILITY-2026-10-04.md | cut -d' ' -f1)" == "$EXPECTED_SCHEDULE_SOURCE_SHA256" ]]
-          [[ "$(sha256sum configs/execution/robin-autonomous-lab-established-scheduler-20261004.json | cut -d' ' -f1)" == "$EXPECTED_ESTABLISHED_MANIFEST_SHA256" ]]
+          [[ "$(sha256sum configs/execution/robin-autonomous-lab-established-scheduler-20261004-prolongation-20261203.json | cut -d' ' -f1)" == "$EXPECTED_ESTABLISHED_MANIFEST_SHA256" ]]
           [[ "$(sha256sum docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-ESTABLISHED-SCHEDULER-2026-10-04.md | cut -d' ' -f1)" == "$EXPECTED_ESTABLISHED_SOURCE_SHA256" ]]
-          [[ "$(sha256sum configs/execution/robin-autonomous-lab-trigger-recovery-v2-20261005.json | cut -d' ' -f1)" == "$EXPECTED_TRIGGER_MANIFEST_SHA256" ]]
+          [[ "$(sha256sum configs/execution/robin-autonomous-lab-trigger-recovery-v2-20261005-prolongation-20261203.json | cut -d' ' -f1)" == "$EXPECTED_TRIGGER_MANIFEST_SHA256" ]]
           [[ "$(sha256sum docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-TRIGGER-RECOVERY-V2-2026-10-05.md | cut -d' ' -f1)" == "$EXPECTED_TRIGGER_SOURCE_SHA256" ]]
           python -I - <<'PY'
           import datetime
@@ -579,22 +579,22 @@ jobs:
               assert response["path"] == f".github/workflows/{filename}"
               assert response["state"] == "disabled_manually"
 
-          manifest_path = Path("configs/execution/robin-autonomous-lab-20261004.json")
+          manifest_path = Path("configs/execution/robin-autonomous-lab-20261004-prolongation-20261203.json")
           source_path = Path("docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-2026-10-04.md")
           schedule_manifest_path = Path(
-              "configs/execution/robin-autonomous-lab-schedule-reliability-20261004.json"
+              "configs/execution/robin-autonomous-lab-schedule-reliability-20261004-prolongation-20261203.json"
           )
           schedule_source_path = Path(
               "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-SCHEDULE-RELIABILITY-2026-10-04.md"
           )
           established_manifest_path = Path(
-              "configs/execution/robin-autonomous-lab-established-scheduler-20261004.json"
+              "configs/execution/robin-autonomous-lab-established-scheduler-20261004-prolongation-20261203.json"
           )
           established_source_path = Path(
               "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-ESTABLISHED-SCHEDULER-2026-10-04.md"
           )
           trigger_manifest_path = Path(
-              "configs/execution/robin-autonomous-lab-trigger-recovery-v2-20261005.json"
+              "configs/execution/robin-autonomous-lab-trigger-recovery-v2-20261005-prolongation-20261203.json"
           )
           trigger_source_path = Path(
               "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-TRIGGER-RECOVERY-V2-2026-10-05.md"
@@ -757,7 +757,7 @@ jobs:
           set -euo pipefail
           python -I scripts/run_recurring_real_data.py \
             --execute ROBIN_AUTONOMOUS_LAB_20261004 \
-            --manifest configs/execution/robin-autonomous-lab-20261004.json \
+            --manifest configs/execution/robin-autonomous-lab-20261004-prolongation-20261203.json \
             --output-directory "$RUNNER_TEMP/robin-autonomous-lab"
 
       - name: Validate normalized delivery and publish run summary

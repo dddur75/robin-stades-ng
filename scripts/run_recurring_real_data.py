@@ -67,7 +67,7 @@ _OUTPUT_FILENAMES = (
     "robin-real-data.csv",
     "robin-real-data.html",
 )
-_RELAY_GENERATION = "4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87"
+_RELAY_GENERATION = "0ed702e9cffd5ff43f98550673547bc8c39ac3ac1b4a0f7db7abc62a8abdb14a"
 _RELAY_WORKFLOW_REF = (
     "dddur75/robin-stades-ng/.github/workflows/prospective-deep-scheduler.yml@refs/heads/main"
 )

@@ -18,6 +18,7 @@ _PROTECTED_PATHS = frozenset(
         "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-SCHEDULE-RELIABILITY-2026-10-04.md",
         "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-ESTABLISHED-SCHEDULER-2026-10-04.md",
         "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-TRIGGER-RECOVERY-V2-2026-10-05.md",
+        "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-PROLONGATION-2026-10-27.md",
         "reports/evidence/robin-real-data-result-run-37153158456-public-receipt.json",
     }
 )

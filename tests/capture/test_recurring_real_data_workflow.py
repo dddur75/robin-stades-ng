@@ -10,7 +10,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW = ROOT / ".github/workflows/prospective-deep-scheduler.yml"
-GENERATION = "4c150973fc3d486e3738f80716019839ac2c4126644849d336e267e6929e6d87"
+GENERATION = "0ed702e9cffd5ff43f98550673547bc8c39ac3ac1b4a0f7db7abc62a8abdb14a"
 CONTINUITY_HELPER = ROOT / "scripts/validate_robin_documentary_continuity.py"
 SUCCESSOR_HELPER = ROOT / "scripts/reconcile_robin_relay_successor.py"
 
@@ -281,13 +281,13 @@ def test_capture_gates_documentary_main_continuity_and_retired_provider_routes()
     assert "datetime.timedelta(hours=3) <= expires" in command
 
     paths = {
-        "EXPECTED_MANIFEST_SHA256": "configs/execution/robin-autonomous-lab-20261004.json",
+        "EXPECTED_MANIFEST_SHA256": "configs/execution/robin-autonomous-lab-20261004-prolongation-20261203.json",
         "EXPECTED_SOURCE_SHA256": "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-2026-10-04.md",
-        "EXPECTED_SCHEDULE_MANIFEST_SHA256": "configs/execution/robin-autonomous-lab-schedule-reliability-20261004.json",
+        "EXPECTED_SCHEDULE_MANIFEST_SHA256": "configs/execution/robin-autonomous-lab-schedule-reliability-20261004-prolongation-20261203.json",
         "EXPECTED_SCHEDULE_SOURCE_SHA256": "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-SCHEDULE-RELIABILITY-2026-10-04.md",
-        "EXPECTED_ESTABLISHED_MANIFEST_SHA256": "configs/execution/robin-autonomous-lab-established-scheduler-20261004.json",
+        "EXPECTED_ESTABLISHED_MANIFEST_SHA256": "configs/execution/robin-autonomous-lab-established-scheduler-20261004-prolongation-20261203.json",
         "EXPECTED_ESTABLISHED_SOURCE_SHA256": "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-ESTABLISHED-SCHEDULER-2026-10-04.md",
-        "EXPECTED_TRIGGER_MANIFEST_SHA256": "configs/execution/robin-autonomous-lab-trigger-recovery-v2-20261005.json",
+        "EXPECTED_TRIGGER_MANIFEST_SHA256": "configs/execution/robin-autonomous-lab-trigger-recovery-v2-20261005-prolongation-20261203.json",
         "EXPECTED_TRIGGER_SOURCE_SHA256": "docs/data-sourcing/ROBIN-AUTONOMOUS-LAB-TRIGGER-RECOVERY-V2-2026-10-05.md",
     }
     for environment_name, relative_path in paths.items():
