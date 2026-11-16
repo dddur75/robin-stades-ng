@@ -1,9 +1,9 @@
-"""Eleven targeted acceptance cases for the minimal Council V3.1 contract."""
+"""Targeted acceptance cases for the minimal Council V3.1 contract."""
 
 from __future__ import annotations
 
 from dataclasses import FrozenInstanceError, replace
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone, tzinfo
 
 import pytest
 
@@ -18,15 +18,26 @@ from robin.governance.autoscale import (
     JournalEvent,
     JournalRecord,
     MissionManifest,
+    TransitionDecision,
     TransitionRequest,
     apply_two_failure_rule,
-    validate_transition,
 )
+from robin.governance.autoscale import validate_transition as decide_transition
 
-FUTURE = datetime(2099, 1, 1, tzinfo=timezone.utc)
+FUTURE = datetime(2026, 1, 2, tzinfo=timezone.utc)
+EVALUATED_AT = FUTURE - timedelta(seconds=1)
 SOURCE_HASH = "a" * 64
 ARCHITECTURE_HASH = "b" * 64
 REDESIGNED_ARCHITECTURE_HASH = "c" * 64
+
+
+def validate_transition(
+    manifest: MissionManifest,
+    request: TransitionRequest,
+    *,
+    evaluated_at: datetime = EVALUATED_AT,
+) -> TransitionDecision:
+    return decide_transition(manifest, request, evaluated_at=evaluated_at)
 
 
 def mission(
@@ -57,6 +68,8 @@ def transition(
         current_stage_proven=True,
         criteria_satisfied=True,
         observed_source_hash=SOURCE_HASH,
+        compute_used=0,
+        time_used=0,
     )
 
 
@@ -147,6 +160,98 @@ def test_external_effect_is_default_denied() -> None:
     assert result.reason == "separate_external_authorization_required"
 
 
+@pytest.mark.parametrize(
+    "effect",
+    ["r2_delete", "database_destructive_write", "real_bet", "purchase", "social_publication",
+     "unknown_effect"],
+)
+@pytest.mark.parametrize("separate_proof", [False, True])
+def test_effect_must_be_permitted_by_platform_policy(effect: str, separate_proof: bool) -> None:
+    request = replace(
+        transition(EvidenceStage.E1, EvidenceStage.E2),
+        requested_external_effects=(effect,),
+        separate_external_authorization_proven=separate_proof,
+    )
+    result = validate_transition(mission(external_effects=(effect,)), request)
+    assert result.state is DecisionState.BLOCKED_EXTERNAL_ACTION
+    assert result.reason == f"external_effect_default_deny:{effect}"
+    assert not result.permits_scale
+
+
+def test_conditional_effect_uses_separate_authorization() -> None:
+    request = replace(
+        transition(EvidenceStage.E1, EvidenceStage.E2),
+        requested_external_effects=("r2_read_existing_immutable_evidence",),
+        separate_external_authorization_proven=True,
+    )
+    manifest = mission(external_effects=request.requested_external_effects)
+    assert validate_transition(manifest, request).permits_scale
+    assert validate_transition(mission(), request).state is DecisionState.BLOCKED_EXTERNAL_ACTION
+
+
+def test_terminal_ceiling_holds_after_current_stage_is_proven() -> None:
+    request = transition(EvidenceStage.E4, EvidenceStage.E4)
+    result = validate_transition(mission(), request)
+    assert result.state is DecisionState.PASS_AND_HOLD
+    assert result.reason == "mission_ceiling_reached"
+    assert not result.permits_scale
+    unproven = replace(request, current_stage_proven=False)
+    assert validate_transition(mission(), unproven).reason == "current_stage_not_proven"
+
+
+def test_ceiling_never_masks_a_stage_skip() -> None:
+    result = validate_transition(
+        mission(maximum_stage=EvidenceStage.E2),
+        transition(EvidenceStage.E1, EvidenceStage.E3A),
+    )
+    assert result.state is DecisionState.FAIL_AND_STOP
+    assert result.reason == "non_adjacent_stage"
+
+
+def test_scaling_requires_explicit_budget_observations() -> None:
+    request = TransitionRequest(
+        current_stage=EvidenceStage.E1,
+        next_stage=EvidenceStage.E2,
+        current_stage_proven=True,
+        criteria_satisfied=True,
+        observed_source_hash=SOURCE_HASH,
+    )
+    result = validate_transition(mission(), request)
+    assert result.state is DecisionState.PASS_AND_HOLD
+    assert result.reason == "budget_observation_missing"
+
+
+@pytest.mark.parametrize("offset", [-1, 0, 1])
+def test_mission_expiry_includes_the_boundary(offset: int) -> None:
+    result = validate_transition(
+        mission(),
+        transition(EvidenceStage.E1, EvidenceStage.E2),
+        evaluated_at=FUTURE + timedelta(seconds=offset),
+    )
+    if offset < 0:
+        assert result.state is DecisionState.PASS_AND_SCALE
+    else:
+        assert result.state is DecisionState.FAIL_AND_STOP
+        assert result.reason == "mission_expired"
+
+
+def test_expiry_compares_instants_during_a_repeated_local_hour() -> None:
+    class RepeatedHour(tzinfo):
+        def utcoffset(self, dt: datetime | None) -> timedelta:
+            return timedelta(hours=-5 if dt is not None and dt.fold else -4)
+
+    zone = RepeatedHour()
+    expires_at = datetime(2026, 11, 1, 1, 30, tzinfo=zone)
+    evaluated_at = datetime(2026, 11, 1, 1, 15, tzinfo=zone, fold=1)
+    result = validate_transition(
+        replace(mission(), expires_at=expires_at),
+        transition(EvidenceStage.E1, EvidenceStage.E2),
+        evaluated_at=evaluated_at,
+    )
+    assert result.state is DecisionState.FAIL_AND_STOP
+    assert result.reason == "mission_expired"
+
+
 def test_absent_required_source_stops_transition() -> None:
     request = replace(
         transition(EvidenceStage.E1, EvidenceStage.E2),
@@ -155,6 +260,17 @@ def test_absent_required_source_stops_transition() -> None:
 
     result = validate_transition(mission(), request)
 
+    assert result.state is DecisionState.FAIL_AND_STOP
+    assert result.reason == "required_source_absent"
+
+
+def test_missing_source_stops_even_when_external_authorization_is_pending() -> None:
+    request = replace(
+        transition(EvidenceStage.E1, EvidenceStage.E2),
+        source_available=False,
+        requested_external_effects=("r2_write",),
+    )
+    result = validate_transition(mission(external_effects=("r2_write",)), request)
     assert result.state is DecisionState.FAIL_AND_STOP
     assert result.reason == "required_source_absent"
 

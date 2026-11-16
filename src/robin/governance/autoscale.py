@@ -34,6 +34,16 @@ STAGE_SEQUENCE: tuple[EvidenceStage, ...] = (
 )
 _STAGE_INDEX = {stage: index for index, stage in enumerate(STAGE_SEQUENCE)}
 _SHA256_PATTERN = re.compile(r"[0-9a-f]{64}")
+# Effect categories that the activation matrix can authorize separately.
+_EXTERNALLY_AUTHORIZABLE_EFFECTS = frozenset(
+    {
+        "r2_read_existing_immutable_evidence",
+        "provider_calls",
+        "r2_write",
+        "database_write",
+        "deployment",
+    }
+)
 
 
 class DecisionState(StrEnum):
@@ -116,8 +126,8 @@ class TransitionRequest:
     critical_veto_open: bool = False
     source_available: bool = True
     observed_source_hash: str = ""
-    compute_used: int = 0
-    time_used: int = 0
+    compute_used: int | None = None
+    time_used: int | None = None
     requested_external_effects: tuple[str, ...] = ()
     separate_external_authorization_proven: bool = False
 
@@ -138,9 +148,13 @@ class TransitionRequest:
             _require_sha256(self.observed_source_hash, "observed_source_hash")
         elif self.observed_source_hash:
             _require_sha256(self.observed_source_hash, "observed_source_hash")
-        if type(self.compute_used) is not int or self.compute_used < 0:
+        if self.compute_used is not None and (
+            type(self.compute_used) is not int or self.compute_used < 0
+        ):
             raise ValueError("compute_used must be a non-negative integer")
-        if type(self.time_used) is not int or self.time_used < 0:
+        if self.time_used is not None and (
+            type(self.time_used) is not int or self.time_used < 0
+        ):
             raise ValueError("time_used must be a non-negative integer")
 
         effects = tuple(sorted(set(self.requested_external_effects)))
@@ -174,25 +188,6 @@ def validate_transition(
     now = evaluated_at or datetime.now(timezone.utc)
     if not isinstance(now, datetime) or now.utcoffset() is None:
         raise ValueError("evaluated_at must be a timezone-aware datetime")
-
-    if (
-        request.requested_external_effects
-        and not request.separate_external_authorization_proven
-    ):
-        return TransitionDecision(
-            DecisionState.BLOCKED_EXTERNAL_ACTION,
-            request.current_stage,
-            request.next_stage,
-            "separate_external_authorization_required",
-        )
-    forbidden_effects = set(request.requested_external_effects) - set(manifest.external_effects)
-    if forbidden_effects:
-        return TransitionDecision(
-            DecisionState.BLOCKED_EXTERNAL_ACTION,
-            request.current_stage,
-            request.next_stage,
-            "external_effect_default_deny:" + ",".join(sorted(forbidden_effects)),
-        )
     if not request.source_available:
         return TransitionDecision(
             DecisionState.FAIL_AND_STOP,
@@ -207,12 +202,29 @@ def validate_transition(
             request.next_stage,
             "source_hash_mismatch",
         )
-    if now >= manifest.expires_at:
+    if now.astimezone(timezone.utc) >= manifest.expires_at.astimezone(timezone.utc):
         return TransitionDecision(
             DecisionState.FAIL_AND_STOP,
             request.current_stage,
             request.next_stage,
             "mission_expired",
+        )
+
+    allowed_effects = _EXTERNALLY_AUTHORIZABLE_EFFECTS.intersection(manifest.external_effects)
+    forbidden_effects = set(request.requested_external_effects) - allowed_effects
+    if forbidden_effects:
+        return TransitionDecision(
+            DecisionState.BLOCKED_EXTERNAL_ACTION,
+            request.current_stage,
+            request.next_stage,
+            "external_effect_default_deny:" + ",".join(sorted(forbidden_effects)),
+        )
+    if request.requested_external_effects and not request.separate_external_authorization_proven:
+        return TransitionDecision(
+            DecisionState.BLOCKED_EXTERNAL_ACTION,
+            request.current_stage,
+            request.next_stage,
+            "separate_external_authorization_required",
         )
     if request.current_stage not in manifest.authorized_stages:
         return TransitionDecision(
@@ -221,21 +233,10 @@ def validate_transition(
             request.next_stage,
             "current_stage_not_authorized",
         )
-    if _STAGE_INDEX[request.next_stage] > _STAGE_INDEX[manifest.maximum_stage]:
-        return TransitionDecision(
-            DecisionState.PASS_AND_HOLD,
-            request.current_stage,
-            request.next_stage,
-            "maximum_stage_exceeded",
-        )
-    if request.next_stage not in manifest.authorized_stages:
-        return TransitionDecision(
-            DecisionState.FAIL_AND_STOP,
-            request.current_stage,
-            request.next_stage,
-            "next_stage_not_authorized",
-        )
-    if _STAGE_INDEX[request.next_stage] != _STAGE_INDEX[request.current_stage] + 1:
+    at_ceiling = request.current_stage is manifest.maximum_stage
+    stage_increment = _STAGE_INDEX[request.next_stage] - _STAGE_INDEX[request.current_stage]
+    terminal_assessment = request.current_stage is EvidenceStage.E4 and stage_increment == 0
+    if stage_increment != 1 and not terminal_assessment:
         return TransitionDecision(
             DecisionState.FAIL_AND_STOP,
             request.current_stage,
@@ -263,6 +264,13 @@ def validate_transition(
             request.next_stage,
             "critical_veto_open",
         )
+    if request.compute_used is None or request.time_used is None:
+        return TransitionDecision(
+            DecisionState.PASS_AND_HOLD,
+            request.current_stage,
+            request.next_stage,
+            "budget_observation_missing",
+        )
     if request.compute_used > manifest.compute_budget:
         return TransitionDecision(
             DecisionState.PASS_AND_HOLD,
@@ -276,6 +284,13 @@ def validate_transition(
             request.current_stage,
             request.next_stage,
             "time_budget_exceeded",
+        )
+    if at_ceiling:
+        return TransitionDecision(
+            DecisionState.PASS_AND_HOLD,
+            request.current_stage,
+            request.next_stage,
+            "mission_ceiling_reached" if terminal_assessment else "maximum_stage_exceeded",
         )
     return TransitionDecision(
         DecisionState.PASS_AND_SCALE,

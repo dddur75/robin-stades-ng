@@ -50,15 +50,26 @@ plafond, les critères et budgets sont satisfaits, le manifeste n'est pas expir�
 aucun veto critique n'est ouvert et aucun effet externe interdit n'est demandé.
 
 `PASS_AND_SCALE` ouvre exactement un niveau. Il ne crée aucune autorité et ne
-relève jamais `maximum_stage`. Au plafond, le résultat est `PASS_AND_HOLD`. Une
-source obligatoire absente donne `FAIL_AND_STOP`; un effet externe interdit donne
-`BLOCKED_EXTERNAL_ACTION`.
+relève jamais `maximum_stage`. Les observations de calcul et de temps sont
+explicites et utilisent les mêmes unités que le manifeste. Zéro est une mesure.
+
+| Décision ou motif | Suite pour l'opérateur |
+|---|---|
+| `PASS_AND_SCALE` | Ouvrir uniquement l'étape adjacente si `permits_scale` vaut vrai. |
+| `PASS_AND_HOLD` au plafond | Conserver le dernier niveau prouvé. À E4, demander E4 → E4 pour constater le maintien terminal. |
+| `PASS_AND_HOLD` pour preuve, critères, veto ou budget | Garder l'étape et consigner le motif précis avant de réévaluer. |
+| `FAIL_AND_STOP` | Arrêter la mission, notamment si la source manque, si son hash diverge ou si le manifeste a expiré. |
+| `BLOCKED_EXTERNAL_ACTION` | Maintenir le refus. Seuls les effets prévus par la matrice peuvent recevoir une autorisation séparée, dans les limites du manifeste. |
+
+`next_stage` désigne l'étape demandée. Le passage dépend de `permits_scale`.
 
 ### 4. Appliquer la règle des deux échecs
 
 Le premier échec similaire appelle le plus petit correctif et conserve le
 niveau. Le deuxième produit `FAIL_AND_REDESIGN` et ramène à E1. Une troisième
 tentative inchangée est interdite et produit `FAIL_AND_STOP`.
+Au passage de relais, appliquer l'état et `retry_allowed` avant d'utiliser
+`return_stage`. Un retour E1 prépare une proposition modifiée.
 
 ### 5. Enregistrer les faits de contrôle
 
@@ -66,6 +77,8 @@ Le journal append-only contient seulement : mission autorisée, étape commencé
 étape terminée, décision, échec, veto et redesign. Leur représentation JSON est
 canonique; chaque record porte un hash SHA-256 déterministe et le hash précédent.
 Le journal prouve la chaîne de contrôle locale, pas l'exécution du workload.
+Pour le relais opérationnel, le registre du dépôt associe à chaque décision son
+motif, la référence de preuve et le responsable de la suite.
 
 ## Frontière d'exécution
 
