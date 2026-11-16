@@ -40,7 +40,7 @@ def test_safe_ci_uses_a_distinct_workflow_path_and_read_only_permissions() -> No
     assert safe[True]["push"]["branches"] == ["main"]
 
 
-def test_safe_ci_preserves_unchanged_legacy_jobs_and_owns_the_simplified_dag() -> None:
+def test_safe_ci_preserves_legacy_job_contracts_and_owns_the_simplified_dag() -> None:
     legacy = yaml.safe_load(_text(LEGACY_CI))
     safe = yaml.safe_load(_text(SAFE_CI))
 
@@ -56,11 +56,19 @@ def test_safe_ci_preserves_unchanged_legacy_jobs_and_owns_the_simplified_dag() -
         "visual-regression",
     }
     assert set(safe["jobs"]) == set(legacy["jobs"]) | safe_only_jobs
-    unchanged_jobs = set(legacy["jobs"]) - simplified_common_jobs
-    assert len(unchanged_jobs) == 8
-    assert {job: safe["jobs"][job] for job in unchanged_jobs} == {
-        job: legacy["jobs"][job] for job in unchanged_jobs
+    shared_jobs = set(legacy["jobs"]) - simplified_common_jobs
+    assert len(shared_jobs) == 8
+    expected_jobs = {job: legacy["jobs"][job] for job in shared_jobs}
+    ubuntu_runner_overrides = {
+        "bounded-live-canary-ubuntu",
+        "chronos-end-to-end-live-path-replay",
+        "chronos-exact-workflow-entrypoint",
+        "chronos-residual-fault-matrix",
     }
+    for job in ubuntu_runner_overrides:
+        assert expected_jobs[job]["runs-on"] == "ubuntu-latest"
+        expected_jobs[job] = {**expected_jobs[job], "runs-on": "ubuntu-24.04"}
+    assert {job: safe["jobs"][job] for job in shared_jobs} == expected_jobs
     assert set(safe["jobs"]["tests"]["needs"]) == set(safe["jobs"]) - {"tests"}
     assert safe["jobs"]["tests"]["needs"] != legacy["jobs"]["tests"]["needs"]
 
