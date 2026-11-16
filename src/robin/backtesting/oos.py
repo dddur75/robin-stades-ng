@@ -5,7 +5,9 @@ from __future__ import annotations
 import hashlib
 import math
 import statistics
+from collections.abc import Callable
 from dataclasses import asdict, dataclass
+from typing import cast
 
 import pandas as pd
 
@@ -293,8 +295,10 @@ def evaluate_walk_forward(
                         _profit(odds[0], outcomes[0])
                     )
                     wins["cote_fixe_1_80_2_20"] += int(outcomes[0])
+            # Pandas returns a bool for scalar inputs from the row iterator.
+            scalar_notna = cast(Callable[[object], bool], pd.notna)
             over_odds = (
-                _as_float(row.pc_o25) if pd.notna(row.pc_o25) else float("nan")
+                _as_float(row.pc_o25) if scalar_notna(row.pc_o25) else float("nan")
             )
             under_value = getattr(row, "pc_u25", float("nan"))
             under_odds = (
