@@ -12826,7 +12826,9 @@
     ,{"decision_id":"RCV3-20261027-ROBIN-AUTONOMOUS-LAB-PROLONGATION-20261203","ledger_record_hash":"af68cf0bbebb070f5d4fc48b356fbe902bedbf3bbdc5ffd6ec16660629b52a85"},
     {"decision_id":"RCV31-20261116-RECETTE-E0","ledger_record_hash":"e8e7b1128809db4469e62f2ecdf41e20fc327631c6cc1d6679bd7ba7fe7cf2b6"},
     {"decision_id":"RCV31-20261116-CI-UBUNTU-2404","ledger_record_hash":"fbdd14e5715c529df566d1793188449ceb868bda5b0d23b98add5724ba0436bb"},
-    {"decision_id":"RCV31-20261117-CI-MYPY-OOS","ledger_record_hash":"771dccb3e0935d6bbffa758a554319a65d0ceb67fbb3223b8742561da78b9cc0"}
+    {"decision_id":"RCV31-20261117-CI-MYPY-OOS","ledger_record_hash":"771dccb3e0935d6bbffa758a554319a65d0ceb67fbb3223b8742561da78b9cc0"},
+    {"decision_id":"RCV3-20261117-COCKPIT-DOSSIER-FIDELE-PROTOTYPE","ledger_record_hash":"dc7b46e52a6e03c147ea745202a57b3e42121176206c8e653b98ac8d718f2711"},
+    {"decision_id":"RCV3-20261117-COCKPIT-DOSSIER-FIDELE-CI-REGISTRY","ledger_record_hash":"6d23a17800641fc41eaa22646f74baed2116b1490736813872df706ce1b9683f"}
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -14141,6 +14143,8 @@
     {"edge_id":"EDGE.1250","from_claim_id":"GOV.V31.RECETTE.E0.20261116.001","to_decision_id":"RCV31-20261116-RECETTE-E0","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.1251","from_claim_id":"GOV.V31.PR29.PROVENANCE.20261116.001","to_decision_id":"RCV31-20261116-RECETTE-E0","relation":"SUPPORTS","status":"RECORDED"},
     {"edge_id":"EDGE.1252","from_claim_id":"GOV.V31.CI.RUNNER.20261116.001","to_decision_id":"RCV31-20261116-CI-UBUNTU-2404","relation":"SUPPORTS","status":"RECORDED"},
-    {"edge_id":"EDGE.1253","from_claim_id":"GOV.V31.CI.MYPY.OOS.20261117.001","to_decision_id":"RCV31-20261117-CI-MYPY-OOS","relation":"SUPPORTS","status":"RECORDED"}
+    {"edge_id":"EDGE.1253","from_claim_id":"GOV.V31.CI.MYPY.OOS.20261117.001","to_decision_id":"RCV31-20261117-CI-MYPY-OOS","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.1254","from_claim_id":"GOV.SOURCE_OBSERVATORY.DOSSIER_FIDELE.PLAN_V4.20261026","to_decision_id":"RCV3-20261117-COCKPIT-DOSSIER-FIDELE-PROTOTYPE","relation":"SUPPORTS","status":"RECORDED"},
+    {"edge_id":"EDGE.1255","from_claim_id":"GOV.SOURCE_OBSERVATORY.DOSSIER_FIDELE.PLAN_V4.20261026","to_decision_id":"RCV3-20261117-COCKPIT-DOSSIER-FIDELE-CI-REGISTRY","relation":"SUPPORTS","status":"RECORDED"}
   ]
 }
