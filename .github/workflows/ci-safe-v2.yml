@@ -88,7 +88,7 @@ jobs:
 
   bounded-live-canary-ubuntu:
     name: "Bounded live canary - Ubuntu"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 12
     permissions:
       contents: read
@@ -620,7 +620,7 @@ jobs:
 
   chronos-end-to-end-live-path-replay:
     name: "End-to-End Live Path Replay"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
       contents: read
@@ -643,7 +643,7 @@ jobs:
 
   chronos-residual-fault-matrix:
     name: "Residual Fault Matrix"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
       contents: read
@@ -668,7 +668,7 @@ jobs:
 
   chronos-exact-workflow-entrypoint:
     name: "Exact Workflow Entrypoint"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
       contents: read
@@ -721,7 +721,7 @@ jobs:
   quality-and-tests:
     name: "Quality and domain tests"
     needs: frozen-evidence-windows
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 40
     services:
       postgres:
@@ -887,7 +887,7 @@ jobs:
   visual-regression:
     needs: frozen-evidence-windows
     name: "Robin Experience — preuves visuelles"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
     permissions:
       contents: read
