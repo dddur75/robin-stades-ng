@@ -163,6 +163,12 @@ export function ExpertPage() {
         <ViewModeSwitch />
       </PageHeader>
 
+      <p>
+        <InlineLink href="/expert/observatoire-sources">
+          {t("nav.expert.sourceObservatory")}
+        </InlineLink>
+      </p>
+
       {!isExpert ? (
         <>
           <section className="expert-gate">

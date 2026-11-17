@@ -217,6 +217,15 @@ code { font: .78rem var(--font-geist-mono), monospace; overflow-wrap: anywhere; 
   display: inline-flex; align-items: center; justify-content: center; width: 25px; height: 25px;
   border-radius: 8px; background: var(--paper-deep);
 }
+.metrics-grid.source-observatory-metrics {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 128px), 1fr));
+}
+.source-observatory-metrics .metric-card-label > span:only-child {
+  display: inline;
+  width: auto;
+  height: auto;
+  background: none;
+}
 .metric-card strong {
   display: block; margin: 9px 0 3px; font: 400 clamp(1.15rem,2vw,1.72rem) var(--font-geist-mono),monospace;
   letter-spacing: -.05em; overflow-wrap: anywhere;
@@ -351,6 +360,7 @@ code { font: .78rem var(--font-geist-mono), monospace; overflow-wrap: anywhere; 
   align-items: end; gap: 12px; margin-bottom: 18px; padding: 15px;
   border: 1px solid var(--line); border-radius: var(--radius); background: #fff;
 }
+.filter-panel.source-observatory-filter { position: static; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); }
 .filter-panel label, .table-tools > label { color: var(--muted); font-size: .63rem; font-weight: 650; }
 .filter-panel label > span, .table-tools > label > span { display: block; margin: 0 0 5px 3px; }
 input, select {

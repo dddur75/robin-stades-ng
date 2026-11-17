@@ -22,7 +22,8 @@ export type PublicSection =
   | "laboratory"
   | "results"
   | "method"
-  | "expert";
+  | "expert"
+  | "source-observatory";
 
 const publicNavigation: Array<{
   key: PublicSection;
@@ -49,6 +50,7 @@ const expertNavigation: Array<{
   label: ReturnType<typeof t>;
 }> = [
   { activeSection: "expert", href: "/expert", label: t("nav.expert") },
+  { activeSection: "source-observatory", href: "/expert/observatoire-sources", label: t("nav.expert.sourceObservatory") },
   { activeSection: "learning", href: "/apprentissage", label: t("nav.learning") },
   { activeSection: "laboratory", href: "/laboratoire", label: t("nav.laboratory") },
   { href: "/expert#donnees", label: t("nav.expert.data") },
@@ -71,7 +73,7 @@ export function ExperienceShellClient({
   const glossaryRef = useRef<HTMLElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const isExpertNavigationActive =
-    active === "expert" || active === "learning" || active === "laboratory";
+    ["expert", "learning", "laboratory", "source-observatory"].includes(active);
 
   useEffect(() => {
     if (!glossaryOpen) return;
@@ -124,7 +126,7 @@ export function ExperienceShellClient({
           <div className="observatory-state">
             <span className="live-dot" aria-hidden="true" />
             <span>
-              <strong>{t("home.observatory")}</strong>
+              <strong>{t(active === "source-observatory" ? "home.matchObservatory" : "home.observatory")}</strong>
               <small>{summary.fixtures} rencontres suivies</small>
             </span>
           </div>
@@ -221,7 +223,7 @@ export function ExperienceShellClient({
             </Link>
           ))}
           <Link
-            aria-current={isExpertNavigationActive ? "page" : undefined}
+            aria-current={active === "expert" ? "page" : isExpertNavigationActive ? "location" : undefined}
             className={isExpertNavigationActive ? "active" : ""}
             href="/expert"
           >
