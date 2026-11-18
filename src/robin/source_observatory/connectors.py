@@ -112,7 +112,8 @@ def public_get(url: str, *, timeout: float = 40.0) -> Response:
     """
     parsed = urlsplit(public_url(url))
     hostname = parsed.hostname
-    assert hostname
+    if hostname is None:
+        raise ValueError('public hostname required')
     port = 443 if parsed.scheme == 'https' else 80
     deadline = time.monotonic() + timeout
     def remaining() -> float:
@@ -161,7 +162,8 @@ def public_get(url: str, *, timeout: float = 40.0) -> Response:
         if parsed.query:
             target += '?' + parsed.query
         connection.request('GET', target, headers={'User-Agent': USER_AGENT, 'Accept-Encoding': 'identity'})
-        assert connection.sock
+        if connection.sock is None:
+            raise OSError('public transport unavailable')
         transport = connection.sock
         transport.settimeout(remaining())
         response = connection.getresponse()

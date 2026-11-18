@@ -1,0 +1,27 @@
+{
+  "schema_version": "robin-connector-ci-guards-v1",
+  "base_revision": "144f2be64cd3728804daf504455e131cda0597ff",
+  "failed_run": 44295041480,
+  "failed_job": 134769786404,
+  "root_cause": "Bandit B101 rejects the two runtime assertions in public_get.",
+  "change": "Use explicit ValueError/OSError guards which remain active under Python optimization.",
+  "normalized_source_sha256": "ba991ea9c1ab0ebc4bca7814d5216edc47a91ac7ea7e3ecb219270326ffe79a6",
+  "validation": {
+    "connector_regressions": {
+      "passed": 26
+    },
+    "ruff": "PASS",
+    "strict_mypy": "PASS",
+    "bandit_1_9_4": "PASS"
+  },
+  "security_review": {
+    "C3": "PASS",
+    "p0": 0,
+    "p1": 0
+  },
+  "provider_gets_for_fix": 0,
+  "historical_receipt_head": "541a5f2d86baef5945a5dff6f2f1133e5b0ffb6301166659a207d7a64641fd84",
+  "historical_acceptance_artifact_unchanged": "reports/ux/TIPSTER-CONNECTORS-RECETTE-20261118.json",
+  "historical_executed_html_tooling_preserved": true,
+  "tipster_collection_verdict": "PARTIAL"
+}
