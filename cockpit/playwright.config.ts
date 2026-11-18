@@ -25,6 +25,7 @@ export default defineConfig({
     "source-observatory.spec.ts",
     "tipsters-pilot.spec.ts",
     "tipster-sources.spec.ts",
+    "tipster-connectors.spec.ts",
   ],
   timeout: 30_000,
   use: {

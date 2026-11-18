@@ -77,7 +77,7 @@ test("parcours expert, recherche, fiche horodatée et téléchargement du bilan"
   await expect(page.getByRole("cell", { name: "Créneau manqué", exact: true })).toBeVisible();
   await page.route("**/api/tipsters", (route) => route.fulfill({ status: 503, json: { status: "invalid", message: "Preuve invalide" } }));
   await page.getByRole("button", { name: "Actualiser le suivi" }).click();
-  await expect(page.getByRole("alert")).toContainText("Dernier suivi vérifié conservé");
+  await expect(page.getByRole("alert").filter({ hasText: "Dernier suivi vérifié conservé" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Télécharger le bilan JSON" })).toBeDisabled();
   expect(errors).toEqual([]);
 });
@@ -86,7 +86,7 @@ test("API distante indisponible rend un état explicite", async ({ page }) => {
   await page.route("**/api/tipsters", (route) => route.fulfill({ status: 404, contentType: "text/html", body: "Not found" }));
   await page.goto("/expert/tipsters");
   await expect(page.getByRole("heading", { name: "Connexion au pilote local requise" })).toBeVisible();
-  await expect(page.getByRole("alert")).toContainText("A9_Mega");
+  await expect(page.getByRole("alert").filter({ hasText: "A9_Mega" })).toBeVisible();
 });
 
 test("une correction et un pilote clos restent décrits fidèlement", async ({ page }) => {

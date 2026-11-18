@@ -1,0 +1,263 @@
+{
+  "schema_version": "robin-html-correction-preflight-v1",
+  "phase": {
+    "changes": "Lift the unsupported categorical HTML refusal. Preserve all other gates and original cumulative budgets.",
+    "codePins": {
+      "cockpit/scripts/run-tipster-connectors.py": "c8b2bc1814845a802be9ff735f9a7d03f95c145d46b27cf389736ff3bf1342e5",
+      "src/robin/source_observatory/collector.py": "8cb27141974f14b78afcfed9de288127c40dcdba420c0dcfd95e0c6539215949",
+      "src/robin/source_observatory/connectors.py": "1807d8595370b3910d6f4f3fac6ff9b15b8db970a6750ddb7b978af2080bbcb3",
+      "src/robin/source_observatory/extractor.py": "9e119ed51d44b1fb175ba7d76a886147175cd068585fffd5a818bc8be5639eaa",
+      "src/robin/source_observatory/models.py": "2e8622776f12f8a43698f7272aa368dad6cfe95fe16c23ab99537ca8791cd584",
+      "src/robin/source_observatory/public_formats.py": "b6750a73cc21a105958df82d035d63f3bbede259ef830140b8c629d8a580cf09",
+      "src/robin/source_observatory/schema_validation.py": "1e540016e779d8c78d40dccac208437012e56dba02b5b863b84b516e6be2e366"
+    },
+    "decisionId": "RCV3-20261118-CONNECTORS57-HTML-CORRECTION",
+    "phaseId": "HTML-FACTS-CORRECTION-20261118",
+    "predecessorHead": "0a8ffe2fed728314744fa1471d6edb647584ffe58e935e89b2ffc8ce5d6fcdd3",
+    "sourceHash": "8e77ed4bf65203e9358808cabfbe3a3451293df6d36796fc3114b08ccae4fdc6",
+    "sourceIds": [
+      "SRC_002",
+      "SRC_021",
+      "SRC_038",
+      "SRC_043",
+      "SRC_045",
+      "SRC_046",
+      "SRC_052",
+      "SRC_059",
+      "SRC_079"
+    ],
+    "witnesses": {
+      "SRC_002": {
+        "allowedUrls": [
+          "https://www.coteur.com/pronostic/foot/ligue-1",
+          "https://www.coteur.com/mention-legale"
+        ],
+        "checkedAt": "2026-11-18T10:50:58.667882+00:00",
+        "expiresAt": "2026-11-18T11:50:58.667882+00:00",
+        "historicalCodePins": {
+          "cockpit/scripts/run-tipster-connectors.py": "cef529fed59ec823f4c14de2479f5487235c07a0854ba734cef9117d4c7d7e23",
+          "src/robin/source_observatory/collector.py": "8cb27141974f14b78afcfed9de288127c40dcdba420c0dcfd95e0c6539215949",
+          "src/robin/source_observatory/connectors.py": "be53ef8638a68144e9185597beec3f22d9a4b6947fd32789dcdfd484b4b4b1c4",
+          "src/robin/source_observatory/extractor.py": "9e119ed51d44b1fb175ba7d76a886147175cd068585fffd5a818bc8be5639eaa",
+          "src/robin/source_observatory/models.py": "2e8622776f12f8a43698f7272aa368dad6cfe95fe16c23ab99537ca8791cd584",
+          "src/robin/source_observatory/public_formats.py": "b6750a73cc21a105958df82d035d63f3bbede259ef830140b8c629d8a580cf09",
+          "src/robin/source_observatory/schema_validation.py": "1e540016e779d8c78d40dccac208437012e56dba02b5b863b84b516e6be2e366"
+        },
+        "maximumCrawlDelaySeconds": 60,
+        "priorFinishedHash": "870154a2fbcbfa486174d2b8b6db351e28cacbf65c6905bd1608d3ab34921406",
+        "robotsReceiptHash": "b06fe5d8ca9b6f36ff2b90a56432ce35ab378238eecf1e9b9b78e0c4a593a412",
+        "robotsSha256": "f2d61297a3430cf6a5721642687d216474adb2395988d83d973499efb057d11b",
+        "sourceId": "SRC_002",
+        "termsReceiptHash": "8b88fe9996d3e01c0baa5a023ae8630d650662508f5c213c71f9bcfa58185b7c",
+        "userAgent": "RobinSourceObservatory/1.0"
+      },
+      "SRC_021": {
+        "allowedUrls": [
+          "https://www.statarea.com/predictions",
+          "https://www.statarea.com/help/terms"
+        ],
+        "checkedAt": "2026-11-18T10:51:03.463681+00:00",
+        "expiresAt": "2026-11-18T11:51:03.463681+00:00",
+        "historicalCodePins": {
+          "cockpit/scripts/run-tipster-connectors.py": "cef529fed59ec823f4c14de2479f5487235c07a0854ba734cef9117d4c7d7e23",
+          "src/robin/source_observatory/collector.py": "8cb27141974f14b78afcfed9de288127c40dcdba420c0dcfd95e0c6539215949",
+          "src/robin/source_observatory/connectors.py": "be53ef8638a68144e9185597beec3f22d9a4b6947fd32789dcdfd484b4b4b1c4",
+          "src/robin/source_observatory/extractor.py": "9e119ed51d44b1fb175ba7d76a886147175cd068585fffd5a818bc8be5639eaa",
+          "src/robin/source_observatory/models.py": "2e8622776f12f8a43698f7272aa368dad6cfe95fe16c23ab99537ca8791cd584",
+          "src/robin/source_observatory/public_formats.py": "b6750a73cc21a105958df82d035d63f3bbede259ef830140b8c629d8a580cf09",
+          "src/robin/source_observatory/schema_validation.py": "1e540016e779d8c78d40dccac208437012e56dba02b5b863b84b516e6be2e366"
+        },
+        "maximumCrawlDelaySeconds": 60,
+        "priorFinishedHash": "e98282d0eeafe5774bd086048d984a2e7da0b336ad20aede8a7e8fdace1eeb37",
+        "robotsReceiptHash": "1743fc28f9106002419c25741028640ea771035c4adf8ec7de5e94c6a734f4fc",
+        "robotsSha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95",
+        "sourceId": "SRC_021",
+        "termsReceiptHash": "99d241277a3eaa7a4a063ae96fb8e68291af4ae2d918e5a610f3a03b36c74918",
+        "userAgent": "RobinSourceObservatory/1.0"
+      },
+      "SRC_038": {
+        "allowedUrls": [
+          "http://forum.sco1919.com/viewtopic.php?t=13259",
+          "http://forum.sco1919.com/ucp.php?mode=terms"
+        ],
+        "checkedAt": "2026-11-18T10:51:05.439926+00:00",
+        "expiresAt": "2026-11-18T11:51:05.439926+00:00",
+        "historicalCodePins": {
+          "cockpit/scripts/run-tipster-connectors.py": "cef529fed59ec823f4c14de2479f5487235c07a0854ba734cef9117d4c7d7e23",
+          "src/robin/source_observatory/collector.py": "8cb27141974f14b78afcfed9de288127c40dcdba420c0dcfd95e0c6539215949",
+          "src/robin/source_observatory/connectors.py": "be53ef8638a68144e9185597beec3f22d9a4b6947fd32789dcdfd484b4b4b1c4",
+          "src/robin/source_observatory/extractor.py": "9e119ed51d44b1fb175ba7d76a886147175cd068585fffd5a818bc8be5639eaa",
+          "src/robin/source_observatory/models.py": "2e8622776f12f8a43698f7272aa368dad6cfe95fe16c23ab99537ca8791cd584",
+          "src/robin/source_observatory/public_formats.py": "b6750a73cc21a105958df82d035d63f3bbede259ef830140b8c629d8a580cf09",
+          "src/robin/source_observatory/schema_validation.py": "1e540016e779d8c78d40dccac208437012e56dba02b5b863b84b516e6be2e366"
+        },
+        "maximumCrawlDelaySeconds": 60,
+        "priorFinishedHash": "04cbe222c595fa1025d195beed3844fc64ad0ec2baaa82a78b9e540b25f70e41",
+        "robotsReceiptHash": "2b3958a71e66df34c53cfc1e5b9ef0a3077a1d708dbf674101a776015024c1de",
+        "robotsSha256": "dc2f08337f914b83104b1cc09a2e273eec7d4003cc6fd7046411db9500c6056f",
+        "sourceId": "SRC_038",
+        "termsReceiptHash": "9ffb2fe1925e9dcc11fab562322da8ade63aef166208adcc2a43de90bef21016",
+        "userAgent": "RobinSourceObservatory/1.0"
+      },
+      "SRC_043": {
+        "allowedUrls": [
+          "https://www.quiparier.com/competition-football,ligue-1.html",
+          "https://www.quiparier.com/mentions-legales.html"
+        ],
+        "checkedAt": "2026-11-18T10:51:16.453196+00:00",
+        "expiresAt": "2026-11-18T11:51:16.453196+00:00",
+        "historicalCodePins": {
+          "cockpit/scripts/run-tipster-connectors.py": "cef529fed59ec823f4c14de2479f5487235c07a0854ba734cef9117d4c7d7e23",
+          "src/robin/source_observatory/collector.py": "8cb27141974f14b78afcfed9de288127c40dcdba420c0dcfd95e0c6539215949",
+          "src/robin/source_observatory/connectors.py": "be53ef8638a68144e9185597beec3f22d9a4b6947fd32789dcdfd484b4b4b1c4",
+          "src/robin/source_observatory/extractor.py": "9e119ed51d44b1fb175ba7d76a886147175cd068585fffd5a818bc8be5639eaa",
+          "src/robin/source_observatory/models.py": "2e8622776f12f8a43698f7272aa368dad6cfe95fe16c23ab99537ca8791cd584",
+          "src/robin/source_observatory/public_formats.py": "b6750a73cc21a105958df82d035d63f3bbede259ef830140b8c629d8a580cf09",
+          "src/robin/source_observatory/schema_validation.py": "1e540016e779d8c78d40dccac208437012e56dba02b5b863b84b516e6be2e366"
+        },
+        "maximumCrawlDelaySeconds": 60,
+        "priorFinishedHash": "9e7f9def325ed414113bed654fb280b7012e974760a7106c1a656fc94e8619ef",
+        "robotsReceiptHash": "791eb74a8acb1ee4af7ccbc311285eccd29032f2070b38671273199327e1163c",
+        "robotsSha256": "68f904e55ff82986f5b65665bf124dd189352edb639d3873cff441d081fe219b",
+        "sourceId": "SRC_043",
+        "termsReceiptHash": "ee17aceb0f40a2d124290c2e71e9c191a49594d7e3b820eb37082746ba58ab6e",
+        "userAgent": "RobinSourceObservatory/1.0"
+      },
+      "SRC_045": {
+        "allowedUrls": [
+          "https://www.mightytips.com/football-predictions/ligue-1/",
+          "https://www.mightytips.com/about-us/privacy-policy/"
+        ],
+        "checkedAt": "2026-11-18T10:51:19.005570+00:00",
+        "expiresAt": "2026-11-18T11:51:19.005570+00:00",
+        "historicalCodePins": {
+          "cockpit/scripts/run-tipster-connectors.py": "cef529fed59ec823f4c14de2479f5487235c07a0854ba734cef9117d4c7d7e23",
+          "src/robin/source_observatory/collector.py": "8cb27141974f14b78afcfed9de288127c40dcdba420c0dcfd95e0c6539215949",
+          "src/robin/source_observatory/connectors.py": "be53ef8638a68144e9185597beec3f22d9a4b6947fd32789dcdfd484b4b4b1c4",
+          "src/robin/source_observatory/extractor.py": "9e119ed51d44b1fb175ba7d76a886147175cd068585fffd5a818bc8be5639eaa",
+          "src/robin/source_observatory/models.py": "2e8622776f12f8a43698f7272aa368dad6cfe95fe16c23ab99537ca8791cd584",
+          "src/robin/source_observatory/public_formats.py": "b6750a73cc21a105958df82d035d63f3bbede259ef830140b8c629d8a580cf09",
+          "src/robin/source_observatory/schema_validation.py": "1e540016e779d8c78d40dccac208437012e56dba02b5b863b84b516e6be2e366"
+        },
+        "maximumCrawlDelaySeconds": 60,
+        "priorFinishedHash": "9a0c64dff6b3e1fadb7dd088128b3bc8fb92d8f555bcf3949704453e278ec3e1",
+        "robotsReceiptHash": "25a0971485b5ee6f221b833c86c59e1add80f7206bbf6ef57cc4afeb4ead8073",
+        "robotsSha256": "aebfd5bf534b936e4ba5b8573bd31d98e2080c164e6c36a6f16b34d2ad0dce6b",
+        "sourceId": "SRC_045",
+        "termsReceiptHash": "ff1ee5e040e3031aa860e31e5d1dc24887ba42bebeea249b660241477e3f634f",
+        "userAgent": "RobinSourceObservatory/1.0"
+      },
+      "SRC_046": {
+        "allowedUrls": [
+          "https://www.kicktipp.fr/pronostics-ligue1/",
+          "https://www.kicktipp.fr/info/service/conditions-utilisation"
+        ],
+        "checkedAt": "2026-11-18T10:51:19.837794+00:00",
+        "expiresAt": "2026-11-18T11:51:19.837794+00:00",
+        "historicalCodePins": {
+          "cockpit/scripts/run-tipster-connectors.py": "cef529fed59ec823f4c14de2479f5487235c07a0854ba734cef9117d4c7d7e23",
+          "src/robin/source_observatory/collector.py": "8cb27141974f14b78afcfed9de288127c40dcdba420c0dcfd95e0c6539215949",
+          "src/robin/source_observatory/connectors.py": "be53ef8638a68144e9185597beec3f22d9a4b6947fd32789dcdfd484b4b4b1c4",
+          "src/robin/source_observatory/extractor.py": "9e119ed51d44b1fb175ba7d76a886147175cd068585fffd5a818bc8be5639eaa",
+          "src/robin/source_observatory/models.py": "2e8622776f12f8a43698f7272aa368dad6cfe95fe16c23ab99537ca8791cd584",
+          "src/robin/source_observatory/public_formats.py": "b6750a73cc21a105958df82d035d63f3bbede259ef830140b8c629d8a580cf09",
+          "src/robin/source_observatory/schema_validation.py": "1e540016e779d8c78d40dccac208437012e56dba02b5b863b84b516e6be2e366"
+        },
+        "maximumCrawlDelaySeconds": 60,
+        "priorFinishedHash": "1984e3657bc56c29790ef26e8d8829f88f673557e5782ffbc202aa351169c9d0",
+        "robotsReceiptHash": "b646e986a81395d2cc98da25e8149ddb3544b244d0ae0bc1dc709bb41146e7de",
+        "robotsSha256": "86c4d87673e7cf3df08ffa578991b0525af8cdbc39477052ab429456246ea47a",
+        "sourceId": "SRC_046",
+        "termsReceiptHash": "4f18e61a5af07a2a722c841f8ca30465c8ffbc36437142625dfbfeba343b9216",
+        "userAgent": "RobinSourceObservatory/1.0"
+      },
+      "SRC_052": {
+        "allowedUrls": [
+          "https://www.livefoot.fr/france/ligue1/ligue1.php",
+          "https://www.livefoot.fr/mentions-legales.php"
+        ],
+        "checkedAt": "2026-11-18T10:51:22.941024+00:00",
+        "expiresAt": "2026-11-18T11:51:22.941024+00:00",
+        "historicalCodePins": {
+          "cockpit/scripts/run-tipster-connectors.py": "cef529fed59ec823f4c14de2479f5487235c07a0854ba734cef9117d4c7d7e23",
+          "src/robin/source_observatory/collector.py": "8cb27141974f14b78afcfed9de288127c40dcdba420c0dcfd95e0c6539215949",
+          "src/robin/source_observatory/connectors.py": "be53ef8638a68144e9185597beec3f22d9a4b6947fd32789dcdfd484b4b4b1c4",
+          "src/robin/source_observatory/extractor.py": "9e119ed51d44b1fb175ba7d76a886147175cd068585fffd5a818bc8be5639eaa",
+          "src/robin/source_observatory/models.py": "2e8622776f12f8a43698f7272aa368dad6cfe95fe16c23ab99537ca8791cd584",
+          "src/robin/source_observatory/public_formats.py": "b6750a73cc21a105958df82d035d63f3bbede259ef830140b8c629d8a580cf09",
+          "src/robin/source_observatory/schema_validation.py": "1e540016e779d8c78d40dccac208437012e56dba02b5b863b84b516e6be2e366"
+        },
+        "maximumCrawlDelaySeconds": 60,
+        "priorFinishedHash": "a84e71b4016b362afd374984ca58089bbb460f59f1e6e64cacc4c7d40c044842",
+        "robotsReceiptHash": "53066d035679ed7ea91253fcf60956c478a9b6695b9c062514809e6304bfcae5",
+        "robotsSha256": "f1515783fca2b7f202b4da5463e1b819eec7777e828d09571a19302507fa004e",
+        "sourceId": "SRC_052",
+        "termsReceiptHash": "4f1827242ab13b99cb4b00580b3ce769d20de00cb4b02503e538911fdbb92b8f",
+        "userAgent": "RobinSourceObservatory/1.0"
+      },
+      "SRC_059": {
+        "allowedUrls": [
+          "https://www.info-stades.fr/forum/viewforum.php?f=1",
+          "https://www.info-stades.fr/forum/ucp.php?mode=terms"
+        ],
+        "checkedAt": "2026-11-18T10:51:28.522863+00:00",
+        "expiresAt": "2026-11-18T11:51:28.522863+00:00",
+        "historicalCodePins": {
+          "cockpit/scripts/run-tipster-connectors.py": "cef529fed59ec823f4c14de2479f5487235c07a0854ba734cef9117d4c7d7e23",
+          "src/robin/source_observatory/collector.py": "8cb27141974f14b78afcfed9de288127c40dcdba420c0dcfd95e0c6539215949",
+          "src/robin/source_observatory/connectors.py": "be53ef8638a68144e9185597beec3f22d9a4b6947fd32789dcdfd484b4b4b1c4",
+          "src/robin/source_observatory/extractor.py": "9e119ed51d44b1fb175ba7d76a886147175cd068585fffd5a818bc8be5639eaa",
+          "src/robin/source_observatory/models.py": "2e8622776f12f8a43698f7272aa368dad6cfe95fe16c23ab99537ca8791cd584",
+          "src/robin/source_observatory/public_formats.py": "b6750a73cc21a105958df82d035d63f3bbede259ef830140b8c629d8a580cf09",
+          "src/robin/source_observatory/schema_validation.py": "1e540016e779d8c78d40dccac208437012e56dba02b5b863b84b516e6be2e366"
+        },
+        "maximumCrawlDelaySeconds": 60,
+        "priorFinishedHash": "c8197af1f432f68e43fae0b00a85c9b272ee1b6cd7a42540ead839a19310b55e",
+        "robotsReceiptHash": "bfc7c33832ec65dedca98d5bf1270e5a0c989ec9a54fe1ab27b839e350646935",
+        "robotsSha256": "dc2f08337f914b83104b1cc09a2e273eec7d4003cc6fd7046411db9500c6056f",
+        "sourceId": "SRC_059",
+        "termsReceiptHash": "3a1adcf7d7fdacc84774f6d3b808c7bf5ee453637755b9920b6facb8df44e4ba",
+        "userAgent": "RobinSourceObservatory/1.0"
+      },
+      "SRC_079": {
+        "allowedUrls": [
+          "https://www.envertetcontretous.fr/actus/ligue-1",
+          "https://www.envertetcontretous.fr/mentions-legales/"
+        ],
+        "checkedAt": "2026-11-18T10:52:08.532486+00:00",
+        "expiresAt": "2026-11-18T11:52:08.532486+00:00",
+        "historicalCodePins": {
+          "cockpit/scripts/run-tipster-connectors.py": "cef529fed59ec823f4c14de2479f5487235c07a0854ba734cef9117d4c7d7e23",
+          "src/robin/source_observatory/collector.py": "8cb27141974f14b78afcfed9de288127c40dcdba420c0dcfd95e0c6539215949",
+          "src/robin/source_observatory/connectors.py": "be53ef8638a68144e9185597beec3f22d9a4b6947fd32789dcdfd484b4b4b1c4",
+          "src/robin/source_observatory/extractor.py": "9e119ed51d44b1fb175ba7d76a886147175cd068585fffd5a818bc8be5639eaa",
+          "src/robin/source_observatory/models.py": "2e8622776f12f8a43698f7272aa368dad6cfe95fe16c23ab99537ca8791cd584",
+          "src/robin/source_observatory/public_formats.py": "b6750a73cc21a105958df82d035d63f3bbede259ef830140b8c629d8a580cf09",
+          "src/robin/source_observatory/schema_validation.py": "1e540016e779d8c78d40dccac208437012e56dba02b5b863b84b516e6be2e366"
+        },
+        "maximumCrawlDelaySeconds": 60,
+        "priorFinishedHash": "78b9e34f5e10c1564618b6b2f489a33b742dad8c48a80401b3f5e0ae99a2f789",
+        "robotsReceiptHash": "e395d954fbf9b7bea8a77351456b7473c9f3966b5fd6e2d1ebf7ed81ad88b912",
+        "robotsSha256": "3a125e84a637dc3f5442bb6949fa200056f37db4627b4c2a3addc55bbb89b703",
+        "sourceId": "SRC_079",
+        "termsReceiptHash": "9882a4a946c4d1ebef59881389a24f800c71d8458d2ed6f350ca6a8f1bc432f8",
+        "userAgent": "RobinSourceObservatory/1.0"
+      }
+    }
+  },
+  "phase_sha256": "f52dc115248afe08b3be49956a307c8c0c1bf2dbced9b3affc356b4634be1222",
+  "tests": {
+    "connector_regressions": 24,
+    "ruff": "PASS",
+    "strict_mypy": "PASS"
+  },
+  "reviews": {
+    "C1": "PASS_LOCAL",
+    "C3_SECURITY": "PASS_LOCAL"
+  },
+  "first_canary": [
+    "SRC_002"
+  ],
+  "remaining_sources_conditional_on_canary": true,
+  "real_calls_by_this_preflight": 0
+}

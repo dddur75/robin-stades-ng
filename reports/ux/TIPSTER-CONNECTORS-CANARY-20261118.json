@@ -1,0 +1,119 @@
+{
+  "schema_version": "robin-connectors-canary-v1",
+  "observed_at": "2026-11-18T10:50:51.699674+00:00",
+  "claim_id": "ENG.SOURCE_OBSERVATORY.CONNECTORS57.CANARY.20261118",
+  "counts": {
+    "requests": 6,
+    "attemptedSources": 3,
+    "collectedSources": 0,
+    "publications": 0,
+    "candidates": 0,
+    "verifiedPreMatch": 0
+  },
+  "sources": [
+    {
+      "id": "SRC_006",
+      "status": "terms_http_301"
+    },
+    {
+      "id": "SRC_041",
+      "status": "permission_required"
+    },
+    {
+      "id": "SRC_050",
+      "status": "terms_unverified"
+    }
+  ],
+  "journal_head": "b0a8efdad4038515d9c2ae3c1bb77b0c9f720f2a2edaf6499238b5a2d6f31520",
+  "receipts": [
+    {
+      "at": "2026-11-18T10:46:41.874669+00:00",
+      "bytes": 332,
+      "contentType": "text/plain; charset=utf-8",
+      "httpStatus": 200,
+      "kind": "REQUEST_FINISHED",
+      "previousHash": "29dc674b65624fd206c139cc6742a33f1eed66e11798325ba2a1a0feb5fe8aa9",
+      "reservation": "29dc674b65624fd206c139cc6742a33f1eed66e11798325ba2a1a0feb5fe8aa9",
+      "responseSha256": "65edce939029aa79daee2c96b419149d1c039c18e208a518fe3dd9ba69bd112e",
+      "sequence": 3,
+      "sourceId": "SRC_006",
+      "url": "https://pensebet.com/robots.txt",
+      "hash": "f87f58448ac78e0f79555383464d4063cb15e53367066020c3b10a474dafb970"
+    },
+    {
+      "at": "2026-11-18T10:46:42.649811+00:00",
+      "bytes": 0,
+      "contentType": "text/html; charset=UTF-8",
+      "httpStatus": 301,
+      "kind": "REQUEST_FINISHED",
+      "previousHash": "34aeeefa0079b60327c91c578f4afc4aec6495b05c9cb85017ec174e11ad2972",
+      "reservation": "34aeeefa0079b60327c91c578f4afc4aec6495b05c9cb85017ec174e11ad2972",
+      "responseSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sequence": 5,
+      "sourceId": "SRC_006",
+      "url": "https://pensebet.com/terms",
+      "hash": "b30a31270585ae1d7871f4ac9e3011467235d1e159e792b33277e903736e6b9d"
+    },
+    {
+      "at": "2026-11-18T10:46:42.925608+00:00",
+      "bytes": 702,
+      "contentType": "text/plain;charset=UTF-8",
+      "httpStatus": 200,
+      "kind": "REQUEST_FINISHED",
+      "previousHash": "fe165abb8554ff39ccc2d0498debfd27deadadc73dd96e8b9efc15950c63d457",
+      "reservation": "fe165abb8554ff39ccc2d0498debfd27deadadc73dd96e8b9efc15950c63d457",
+      "responseSha256": "ec7d94d4cee771c080fe99104b9b0dea4218b80ae871dfda597ae92e86f75f47",
+      "sequence": 8,
+      "sourceId": "SRC_041",
+      "url": "https://forum.madeinlens.com/robots.txt",
+      "hash": "115321ee023cba4cdda5aace923c94f21aa558ab27e08e581583590bda3acd99"
+    },
+    {
+      "at": "2026-11-18T10:46:43.173104+00:00",
+      "bytes": 23998,
+      "contentType": "text/html;charset=UTF-8",
+      "httpStatus": 200,
+      "kind": "REQUEST_FINISHED",
+      "previousHash": "4345f24175d3cb65b3af83b54aca9c99eaee685ab2dba9abc15ebfc2cb330cb0",
+      "reservation": "4345f24175d3cb65b3af83b54aca9c99eaee685ab2dba9abc15ebfc2cb330cb0",
+      "responseSha256": "9acd91566c05f03bfb89c893ebfd61634870521383fe48f362abde0a86b1bf4f",
+      "sequence": 10,
+      "sourceId": "SRC_041",
+      "url": "https://forum.madeinlens.com/terms/",
+      "hash": "b475ac07f27ea1ca859b55bb0bdd0d2b2dab7cb53e6c07d70eac8b7d82eec84d"
+    },
+    {
+      "at": "2026-11-18T10:46:43.513486+00:00",
+      "bytes": 0,
+      "contentType": "text/html; charset=UTF-8",
+      "httpStatus": 200,
+      "kind": "REQUEST_FINISHED",
+      "previousHash": "9fa698adb55027c99d902df9fc7b27f857331b347eb6b4e57b172fac880fcfea",
+      "reservation": "9fa698adb55027c99d902df9fc7b27f857331b347eb6b4e57b172fac880fcfea",
+      "responseSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sequence": 13,
+      "sourceId": "SRC_050",
+      "url": "https://www.foot-national.com/robots.txt",
+      "hash": "f8e76e736ba787ec8c4e4c3538631950d3b1a15785a4bb68bc238d7ae2d69847"
+    },
+    {
+      "at": "2026-11-18T10:46:43.732932+00:00",
+      "bytes": 0,
+      "contentType": "text/html; charset=UTF-8",
+      "httpStatus": 200,
+      "kind": "REQUEST_FINISHED",
+      "previousHash": "ca3be6c3001348a810debbbe72b1d3f459749ce4c14e0018bde9ae9954cd67e8",
+      "reservation": "ca3be6c3001348a810debbbe72b1d3f459749ce4c14e0018bde9ae9954cd67e8",
+      "responseSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sequence": 15,
+      "sourceId": "SRC_050",
+      "url": "https://www.foot-national.com/mentions.html",
+      "hash": "2a60ac24a940622de91a1afba4d76453e124edc1fd8171f451953d85afa70cfd"
+    }
+  ],
+  "reviews": {
+    "C1": "PASS_AND_HOLD_E1",
+    "C3_SECURITY": "PASS_LOCAL"
+  },
+  "collection_verdict": "PARTIAL"
+}

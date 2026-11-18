@@ -16,6 +16,14 @@ test("le suivi autorise une lecture locale de même origine", () => {
   assert.equal(permitsLocalPilotRead(request({ headers: { origin: "http://127.0.0.1:4173", "sec-fetch-site": "same-origin" } })), true);
 });
 
+test("la collecte explicite requiert POST JSON local de même origine", () => {
+  const headers = { origin: "http://127.0.0.1:4173", "content-type": "application/json" };
+  assert.equal(permitsLocalPilotAccess(request({ method: "POST", headers }), "POST"), true);
+  assert.equal(permitsLocalPilotAccess(request({ method: "POST" }), "POST"), false);
+  assert.equal(permitsLocalPilotAccess(request({ method: "GET", headers }), "POST"), false);
+  assert.equal(permitsLocalPilotAccess(request({ method: "POST", headers, address: "192.168.0.2" }), "POST"), false);
+});
+
 test("la sauvegarde requiert PUT, JSON et une origine exacte", () => {
   const valid = { method: "PUT", headers: { origin: "http://127.0.0.1:4173", "content-type": "application/json" } };
   assert.equal(permitsLocalPilotAccess(request(valid), "PUT"), true);

@@ -9,7 +9,7 @@ const loopback = new Set(["127.0.0.1", "::1", "::ffff:127.0.0.1"]);
 const hostnames = new Set(["127.0.0.1", "localhost", "[::1]"]);
 const frozenPlan = "e81c73a2b850d9b2b9a3a07a230c80e850428d6367a8d5a3a332fb4c467ebaea";
 
-export function permitsLocalPilotAccess(request: IncomingMessage, method: "GET" | "PUT"): boolean {
+export function permitsLocalPilotAccess(request: IncomingMessage, method: "GET" | "PUT" | "POST"): boolean {
   if (!loopback.has(request.socket.remoteAddress ?? "") || request.method !== method) return false;
   try {
     const host = request.headers.host;
@@ -17,7 +17,7 @@ export function permitsLocalPilotAccess(request: IncomingMessage, method: "GET" 
     const address = new URL(`http://${host}`);
     if (!hostnames.has(address.hostname) || address.host !== host || address.pathname !== "/") return false;
     if (request.headers.origin && request.headers.origin !== address.origin) return false;
-    if (method === "PUT" && (request.headers.origin !== address.origin
+    if (method !== "GET" && (request.headers.origin !== address.origin
       || request.headers["content-type"]?.split(";")[0].trim() !== "application/json")) return false;
     const site = request.headers["sec-fetch-site"];
     return !site || site === "same-origin" || site === "none";

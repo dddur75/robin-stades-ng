@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 
 import { formatDateTime, formatNumber } from "../../i18n";
 import { marketLabels, periodLabels, selectionLabels, visitLabels, type PilotPick, type PilotSnapshot } from "../../lib/tipsters-pilot";
@@ -176,11 +176,11 @@ function CollectionAdmin({ snapshot }: { snapshot: PilotSnapshot }) {
   </>;
 }
 
-export function TipstersPilot({ admin = false, tipsterId }: { admin?: boolean; tipsterId?: string }) {
+export function TipstersPilot({ admin = false, tipsterId, children }: { admin?: boolean; tipsterId?: string; children?: ReactNode }) {
   const { snapshot, error, loading, refresh } = usePilot();
   return <>
     <PageHeader eyebrow="Dossier fidèle · Ligue 1" title={admin ? "Suivi admin de la collecte" : "Tipsters et pronostics"}
-      subtitle={admin ? "Suivez les créneaux et les preuves du pilote local sur A9_Mega." : "Consultez les pronostics attribués aux tipsters et lus avant les matchs."} />
+      subtitle={admin ? "Suivez les sources tipsters et les preuves du pilote local sur A9_Mega." : "Consultez les pronostics attribués aux tipsters et lus avant les matchs."} />
     <nav className="pilot-actions" aria-label="Suivi des tipsters">
       <InlineLink href="/expert/sources-tipsters">Paramétrage des sources</InlineLink>
       <InlineLink href={admin ? "/expert/tipsters" : "/expert/admin-collecte"}>{admin ? "Fiches tipsters" : "Suivi admin"}</InlineLink>
@@ -189,6 +189,7 @@ export function TipstersPilot({ admin = false, tipsterId }: { admin?: boolean; t
     </nav>
     <p className="pilot-refresh" role="status" aria-live="polite">{snapshot ? `Suivi vérifié le ${stamp(snapshot.generatedAt)}. Actualisation toutes les 30 secondes.` : loading ? "Lecture du journal local…" : "Le suivi local est indisponible."}</p>
     {error && <div role="alert" className="pilot-alert"><p>{error}</p>{snapshot && <p>Dernier suivi vérifié conservé du {stamp(snapshot.generatedAt)}.</p>}</div>}
+    {children}
     {snapshot ? <>
       {!admin && <div className="metrics-grid source-observatory-metrics">
         <MetricCard label="Pronostics distincts avant match" value={snapshot.distinctPicks === null ? "En attente" : formatNumber(snapshot.distinctPicks)} detail="Dédupliqués par rencontre et identifiant fournisseur" />

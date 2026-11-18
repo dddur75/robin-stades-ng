@@ -3,6 +3,7 @@ import { defineConfig } from "vite";
 import hostingConfig from "./.openai/hosting.json";
 import { sites } from "./build/sites-vite-plugin";
 import { tipstersPilot } from "./scripts/tipsters-pilot-plugin";
+import { tipstersConnectors } from "./scripts/tipsters-connectors-plugin";
 
 const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
   "00000000-0000-4000-8000-000000000000";
@@ -50,6 +51,7 @@ export default defineConfig(async () => {
       : undefined,
     plugins: [
       tipstersPilot(),
+      tipstersConnectors(),
       vinext(),
       sites(),
       cloudflare({
