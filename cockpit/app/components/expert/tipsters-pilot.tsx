@@ -7,7 +7,7 @@ import { formatDateTime, formatNumber } from "../../i18n";
 import { marketLabels, periodLabels, selectionLabels, visitLabels, type PilotPick, type PilotSnapshot } from "../../lib/tipsters-pilot";
 import { EmptyState, EvidenceNote, InlineLink, MetricCard, PageHeader, SectionHeading } from "../common/ui";
 
-function usePilot() {
+function usePilot(endpoint: string) {
   const [snapshot, setSnapshot] = useState<PilotSnapshot | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -17,7 +17,7 @@ function usePilot() {
     const request = new AbortController();
     controller.current = request;
     const timeout = window.setTimeout(() => request.abort(), 12_000);
-    return fetch("/api/tipsters", { cache: "no-store", signal: request.signal }).then(async (response) => {
+    return fetch(endpoint, { cache: "no-store", signal: request.signal }).then(async (response) => {
       if (!response.headers.get("content-type")?.includes("application/json")) {
         throw new Error("Ouvrez cette page dans Robin sur A9_Mega pour consulter le pilote local.");
       }
@@ -40,7 +40,7 @@ function usePilot() {
       controller.current = null;
       setLoading(false);
     });
-  }, []);
+  }, [endpoint]);
   useEffect(() => {
     void refresh();
     const interval = window.setInterval(() => { if (!document.hidden) void refresh(); }, 30_000);
@@ -101,13 +101,13 @@ function PickCard({ pick, snapshot }: { pick: PilotPick; snapshot: PilotSnapshot
   );
 }
 
-function TipsterDirectory({ snapshot, tipsterId }: { snapshot: PilotSnapshot; tipsterId?: string }) {
+function TipsterDirectory({ snapshot, tipsterId, recurring = false }: { snapshot: PilotSnapshot; tipsterId?: string; recurring?: boolean }) {
   const [query, setQuery] = useState("");
   const [fixtureId, setFixtureId] = useState("");
   if (tipsterId) {
     const author = snapshot.tipsters.find((item) => item.id === tipsterId);
     return <>
-      <p><InlineLink href="/expert/tipsters">Tous les tipsters</InlineLink></p>
+      <p><InlineLink href={recurring ? "/expert/collecte-recurrente?view=tipsters" : "/expert/tipsters"}>Tous les tipsters</InlineLink></p>
       {author ? <>
         <SectionHeading title={author.label} subtitle="En observation · Pseudonyme technique d’attribution par source" />
         <p>{author.picks} pronostic{author.picks > 1 ? "s" : ""} distinct{author.picks > 1 ? "s" : ""} sur {author.fixtureIds.length} rencontre{author.fixtureIds.length > 1 ? "s" : ""}.</p>
@@ -139,7 +139,7 @@ function TipsterDirectory({ snapshot, tipsterId }: { snapshot: PilotSnapshot; ti
   </section>;
 }
 
-function CollectionAdmin({ snapshot }: { snapshot: PilotSnapshot }) {
+function CollectionAdmin({ snapshot, recurring = false }: { snapshot: PilotSnapshot; recurring?: boolean }) {
   const [state, setState] = useState("");
   const selection = snapshot.visits.filter((visit) => !state || visit.status === state);
   return <>
@@ -147,12 +147,12 @@ function CollectionAdmin({ snapshot }: { snapshot: PilotSnapshot }) {
       <SectionHeading title="État du pilote" subtitle={`${stamp(snapshot.startsAt)} au ${stamp(snapshot.expiresAt)}`} />
       <p>{({ scheduled: "Collecte programmée", collecting: "Fenêtre de collecte ouverte", closed: "Fenêtre de collecte close" })[snapshot.phase]}</p>
       <div className="metrics-grid source-observatory-metrics">
-        <MetricCard label="Visites réussies" value={snapshot.journalHead ? formatNumber(snapshot.counts.succeeded ?? 0) : "En attente"} detail={`Sur ${snapshot.plannedVisits} visites de match prévues`} />
+        <MetricCard label={recurring ? "Créneaux réussis" : "Visites réussies"} value={snapshot.journalHead ? formatNumber(snapshot.counts.succeeded ?? 0) : "En attente"} detail={recurring ? `Sur ${snapshot.plannedSlots} créneaux prévus` : `Sur ${snapshot.plannedVisits} visites de match prévues`} />
         <MetricCard label="Échecs de lecture" value={snapshot.journalHead ? formatNumber(snapshot.counts.failed ?? 0) : "En attente"} detail="Visites avec échec documenté" />
-        <MetricCard label="Blocages robots.txt" value={snapshot.journalHead ? formatNumber(snapshot.counts.blocked ?? 0) : "En attente"} detail="Visites bloquées dans le journal" />
+        {!recurring && <MetricCard label="Blocages robots.txt" value={snapshot.journalHead ? formatNumber(snapshot.counts.blocked ?? 0) : "En attente"} detail="Visites bloquées dans le journal" />}
         <MetricCard label="Créneaux manqués" value={formatNumber(snapshot.counts.missed ?? 0)} detail="Visites échues sans reçu" />
-        <MetricCard label="Interrompues" value={formatNumber(snapshot.counts.interrupted ?? 0)} detail="Visites commencées sans reçu après quatre minutes" />
-        <MetricCard label="Plafond de requêtes" value={formatNumber(snapshot.requestsMax)} detail={`${snapshot.plannedSlots} vérifications robots.txt et ${snapshot.plannedVisits} lectures de match`} />
+        <MetricCard label="Interrompues" value={formatNumber(snapshot.counts.interrupted ?? 0)} detail={recurring ? "Créneaux commencés sans fin après leur fenêtre de trois minutes" : "Visites commencées sans reçu après quatre minutes"} />
+        <MetricCard label="Plafond de requêtes" value={formatNumber(snapshot.requestsMax)} detail={recurring ? `${snapshot.requestCount} requêtes réservées au total, contrôles et fiches compris` : `${snapshot.plannedSlots} vérifications robots.txt et ${snapshot.plannedVisits} lectures de match`} />
       </div>
       <p>Dernière lecture de match {snapshot.lastObservationAt ? stamp(snapshot.lastObservationAt) : "encore absente"}.</p>
       <p>Recette technique {snapshot.technicalVerdict === "PENDING" ? "en attente de clôture" : snapshot.technicalVerdict === "PASS_AND_HOLD" ? "réussie sur le périmètre du pilote" : "partielle"}. Dossier fidèle en recette partielle.</p>
@@ -166,18 +166,18 @@ function CollectionAdmin({ snapshot }: { snapshot: PilotSnapshot }) {
       <p role="status">{selection.length} visite{selection.length > 1 ? "s" : ""} affichée{selection.length > 1 ? "s" : ""}</p>
       {selection.length ? <div className="table-scroll" role="region" aria-label="Visites du pilote" tabIndex={0}><table>
         <caption>Créneaux et lectures du pilote Forecast Record</caption>
-        <thead><tr><th scope="col">Créneau, heure de Paris</th><th scope="col">Rencontre</th><th scope="col">État</th><th scope="col">Pronostics dans la visite</th></tr></thead>
+        <thead><tr><th scope="col">Créneau, heure de Paris</th>{!recurring && <th scope="col">Rencontre</th>}<th scope="col">État</th>{!recurring && <th scope="col">Pronostics dans la visite</th>}</tr></thead>
         <tbody>{selection.map((visit) => <tr key={`${visit.slot}-${visit.fixtureId}`}>
-          <td>{formatDateTime(visit.slot, true)}</td><td>{snapshot.fixtures.find((f) => f.id === visit.fixtureId)?.label}</td>
-          <td>{visitLabels[visit.status]}</td><td>{visit.picks ?? "En attente"}</td>
+          <td>{formatDateTime(visit.slot, true)}</td>{!recurring && <td>{snapshot.fixtures.find((f) => f.id === visit.fixtureId)?.label}</td>}
+          <td>{visitLabels[visit.status]}</td>{!recurring && <td>{visit.picks ?? "En attente"}</td>}
         </tr>)}</tbody>
       </table></div> : <EmptyState title="Aucune visite dans cet état" text="Sélectionnez un autre état pour consulter les créneaux du plan." />}
     </section>
   </>;
 }
 
-export function TipstersPilot({ admin = false, tipsterId, children }: { admin?: boolean; tipsterId?: string; children?: ReactNode }) {
-  const { snapshot, error, loading, refresh } = usePilot();
+export function TipstersPilot({ admin = false, tipsterId, children, endpoint = "/api/tipsters" }: { admin?: boolean; tipsterId?: string; children?: ReactNode; endpoint?: "/api/tipsters" | "/api/tipsters/recurring" }) {
+  const { snapshot, error, loading, refresh } = usePilot(endpoint);
   return <>
     <PageHeader eyebrow="Dossier fidèle · Ligue 1" title={admin ? "Suivi admin de la collecte" : "Tipsters et pronostics"}
       subtitle={admin ? "Suivez les sources tipsters et les preuves du pilote local sur A9_Mega." : "Consultez les pronostics attribués aux tipsters et lus avant les matchs."} />
@@ -190,13 +190,14 @@ export function TipstersPilot({ admin = false, tipsterId, children }: { admin?: 
     <p className="pilot-refresh" role="status" aria-live="polite">{snapshot ? `Suivi vérifié le ${stamp(snapshot.generatedAt)}. Actualisation toutes les 30 secondes.` : loading ? "Lecture du journal local…" : "Le suivi local est indisponible."}</p>
     {error && <div role="alert" className="pilot-alert"><p>{error}</p>{snapshot && <p>Dernier suivi vérifié conservé du {stamp(snapshot.generatedAt)}.</p>}</div>}
     {children}
+    {endpoint === "/api/tipsters/recurring" && <EvidenceNote>Pronostics individuels attribués par Forecast Record et observés localement avant le coup d’envoi. L’identité humaine reste déclarée par la source. Consultez chaque document original pour sa provenance.</EvidenceNote>}
     {snapshot ? <>
       {!admin && <div className="metrics-grid source-observatory-metrics">
         <MetricCard label="Pronostics distincts avant match" value={snapshot.distinctPicks === null ? "En attente" : formatNumber(snapshot.distinctPicks)} detail="Dédupliqués par rencontre et identifiant fournisseur" />
         <MetricCard label="Tipsters observés" value={snapshot.distinctPicks === null ? "En attente" : formatNumber(snapshot.tipsters.length)} detail="Attributions pseudonymisées par source" />
         <MetricCard label="Rencontres du pilote" value={formatNumber(snapshot.fixtures.length)} detail={snapshot.source} />
       </div>}
-      {admin ? <CollectionAdmin snapshot={snapshot} /> : <TipsterDirectory snapshot={snapshot} tipsterId={tipsterId} />}
+      {admin ? <CollectionAdmin snapshot={snapshot} recurring={endpoint === "/api/tipsters/recurring"} /> : <TipsterDirectory snapshot={snapshot} tipsterId={tipsterId} recurring={endpoint === "/api/tipsters/recurring"} />}
       <p className="pilot-credit">Provenance des mesures et attributions · Forecast Record</p>
     </> : !loading && <EmptyState title="Connexion au pilote local requise" text="Les preuves du pilote sont conservées sur A9_Mega. Le suivi devient disponible dans Robin lancé sur ce poste." />}
   </>;

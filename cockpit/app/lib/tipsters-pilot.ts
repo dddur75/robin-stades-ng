@@ -31,6 +31,7 @@ export type PilotSnapshot = {
   startsAt: string;
   expiresAt: string;
   requestsMax: number;
+  requestCount?: number;
   plannedSlots: number;
   plannedVisits: number;
   journalPresent: boolean;

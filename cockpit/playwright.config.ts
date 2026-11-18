@@ -26,6 +26,7 @@ export default defineConfig({
     "tipsters-pilot.spec.ts",
     "tipster-sources.spec.ts",
     "tipster-connectors.spec.ts",
+    "tipsters-recurring.spec.ts",
   ],
   timeout: 30_000,
   use: {
