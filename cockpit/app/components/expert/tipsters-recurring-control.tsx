@@ -7,7 +7,7 @@ type Campaign = { state: string; authorizationText?: string; startsAt?: string; 
   slots?: number; requestsMax?: number; intervalMinutes?: number; planSha256?: string; manifestSha256?: string; personalCollectionProven?: boolean };
 type State = { status: string; distinctPicks: number; requestCount: number; technicalVerdict: string;
   qualificationVerdict?: string;
-  generatedAt: string; lastObservationAt: string | null; campaign: Campaign; tipsters: unknown[]; unresolvedAttributions?: number; transportVerdict?: string };
+  generatedAt: string; lastObservationAt: string | null; campaign: Campaign; tipsters: unknown[]; unresolvedAttributions?: number; transportVerdict?: string; halted?: boolean };
 
 export function TipstersRecurringControl({ compact = false }: { compact?: boolean }) {
   const [data, setData] = useState<State | null>(null);
@@ -36,6 +36,7 @@ export function TipstersRecurringControl({ compact = false }: { compact?: boolea
     <SectionHeading title="Collecte récurrente des pronostics" />
     {error && <p role="alert">{error}</p>}
     {data ? <>
+      {data.halted && <p role="alert">Campagne arrêtée par un contrôle de sécurité. Aucune nouvelle requête ne sera exécutée par cette campagne. Consultez le bilan JSON avant toute nouvelle autorisation.</p>}
       <p><strong>{data.distinctPicks} pronostic(s) personnel(s) qualifié(s) observé(s) avant match</strong> · {data.tipsters.length} attribution(s) · {data.requestCount} requête(s) réservée(s).</p>
       {!!data.unresolvedAttributions && <p>{data.unresolvedAttributions} sélection(s) historique(s) exclue(s) du compteur individuel : auteur collectif ou rôle personnel non prouvé. Les observations d’origine sont conservées.</p>}
       <p>Dernière lecture : {data.lastObservationAt ? formatDateTime(data.lastObservationAt, true) : "Aucune"}. Vue du {formatDateTime(data.generatedAt, true)}.</p>

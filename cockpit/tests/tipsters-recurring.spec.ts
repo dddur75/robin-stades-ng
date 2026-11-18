@@ -57,3 +57,11 @@ for (const state of ["invalid_package","expired"]) test(`campagne ${state} ne pr
  await expect(page.getByText(state==="expired" ? "Campagne expirée" : "Paquet invalide",{exact:false})).toBeVisible();
  await expect(page.getByRole("button",{name:"Copier l’autorisation précise"})).toHaveCount(0);
 });
+
+test("arrêt de sécurité reste visible même si l’autorisation existe",async({page})=>{
+ await page.route("**/api/tipsters/recurring",r=>r.fulfill({json:{...data,halted:true,distinctPicks:0,tipsters:[],picks:[],technicalVerdict:"PARTIAL",qualificationVerdict:"PARTIAL",campaign:{...data.campaign,state:"authorized",authorizationText:null}}}));
+ await page.goto("/expert/collecte-recurrente");
+ await expect(page.getByRole("alert").filter({hasText:"Campagne arrêtée"})).toBeVisible();
+ await expect(page.getByText("Aucune nouvelle requête ne sera exécutée",{exact:false})).toBeVisible();
+ await expect(page.getByRole("button",{name:"Copier l’autorisation précise"})).toHaveCount(0);
+});
