@@ -23,7 +23,9 @@ export type PublicSection =
   | "results"
   | "method"
   | "expert"
-  | "source-observatory";
+  | "source-observatory"
+  | "tipsters"
+  | "collection-admin";
 
 const publicNavigation: Array<{
   key: PublicSection;
@@ -50,6 +52,8 @@ const expertNavigation: Array<{
   label: ReturnType<typeof t>;
 }> = [
   { activeSection: "expert", href: "/expert", label: t("nav.expert") },
+  { activeSection: "tipsters", href: "/expert/tipsters", label: "Tipsters et pronostics" },
+  { activeSection: "collection-admin", href: "/expert/admin-collecte", label: "Suivi admin de la collecte" },
   { activeSection: "source-observatory", href: "/expert/observatoire-sources", label: t("nav.expert.sourceObservatory") },
   { activeSection: "learning", href: "/apprentissage", label: t("nav.learning") },
   { activeSection: "laboratory", href: "/laboratoire", label: t("nav.laboratory") },
@@ -72,8 +76,9 @@ export function ExperienceShellClient({
   const [glossaryOpen, setGlossaryOpen] = useState(false);
   const glossaryRef = useRef<HTMLElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+  const isTipstersPilot = active === "tipsters" || active === "collection-admin";
   const isExpertNavigationActive =
-    ["expert", "learning", "laboratory", "source-observatory"].includes(active);
+    ["expert", "learning", "laboratory", "source-observatory", "tipsters", "collection-admin"].includes(active);
 
   useEffect(() => {
     if (!glossaryOpen) return;
@@ -126,8 +131,8 @@ export function ExperienceShellClient({
           <div className="observatory-state">
             <span className="live-dot" aria-hidden="true" />
             <span>
-              <strong>{t(active === "source-observatory" ? "home.matchObservatory" : "home.observatory")}</strong>
-              <small>{summary.fixtures} rencontres suivies</small>
+              <strong>{isTipstersPilot ? "Dossier fidèle" : t(active === "source-observatory" ? "home.matchObservatory" : "home.observatory")}</strong>
+              <small>{isTipstersPilot ? "Suivi des tipsters sur A9_Mega" : `${summary.fixtures} rencontres suivies`}</small>
             </span>
           </div>
           <nav className="side-nav" aria-label="Navigation principale">
@@ -178,14 +183,14 @@ export function ExperienceShellClient({
               <span>R</span>
               Robin
             </Link>
-            <p>
+            {isTipstersPilot ? <p>Collecte tipsters · Journal local A9_Mega</p> : <p>
               {t("common.updated")}{" "}
               <time dateTime={summary.generatedAt}>
                 {formatDateTime(summary.generatedAt, true)}
               </time>
               {" · "}
               <StatusBadge value={summary.freshnessStatus} />
-            </p>
+            </p>}
             <div className="topbar-actions">
               <button
                 aria-label={t("glossary.title")}

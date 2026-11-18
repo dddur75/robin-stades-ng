@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { formatDateTime, formatNumber, formatPercent, t } from "../../i18n";
-import { EmptyState, EvidenceNote, MetricCard, PageHeader, SectionHeading } from "../common/ui";
+import { EmptyState, EvidenceNote, InlineLink, MetricCard, PageHeader, SectionHeading } from "../common/ui";
 
 type SourceAccess = "a_construire" | "manuel";
 
@@ -62,6 +62,7 @@ export function SourceObservatory({ snapshot }: { snapshot: SourceObservatorySna
         title={t("nav.expert.sourceObservatory")}
         subtitle="Consultez les sources de pronostics des tipsters et les visites documentées du pilote."
       />
+      <p><InlineLink href="/expert/tipsters">Consulter les tipsters du pilote actuel</InlineLink></p>
       <section className="section-card" aria-label="Plan du pilote">
         <SectionHeading
           title="Plan historique du pilote"

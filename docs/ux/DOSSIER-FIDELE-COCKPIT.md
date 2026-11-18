@@ -24,7 +24,7 @@ Pour publier des observations vérifiées dans une prochaine version, fournir en
 
 L’instantané fourni ici contient le plan et les sources historiques. Le test de projection compare ce fichier au résultat régénéré. Le suivi des contributions détaillées et le rapport de recette C1–C6 dépendent des preuves d’un pilote réel.
 
-## Proposition de reprise Ligue 1
+## Proposition historique de reprise Ligue 1
 
 La J12 du 27 au 29 novembre 2026 fournit une fenêtre future. Candidat de préparation du **lundi 23 novembre à 20 h 45** au **dimanche 29 novembre à 20 h 44** (heure de Paris), sous réserve de disponibilité du runner, de la conformité des sources et d’accord sur le plan final. Les horaires ci-dessous viennent du [programme officiel de la J12](https://ligue1.com/fr/articles/l1_article_5843-).
 
@@ -42,3 +42,17 @@ La J12 du 27 au 29 novembre 2026 fournit une fenêtre future. Candidat de prépa
 **À préparer avant autorisation.** Revoir les règles d’accès des sources candidates et les horaires officiels. Figer le registre exact, les visites, les empreintes et le plafond avant la fenêtre. Le projet de cadence reprend une visite toutes les six heures et un créneau une minute avant chaque coup d’envoi distinct. Tester hors réseau ce dernier créneau avec les délais du collecteur. Si la charge séquentielle ne tient pas, construire une proposition corrigée avant le gel. Documenter les sources exclues avant le gel. Après le gel, garder les visites en échec, bloquées ou sans reçu dans le dénominateur. Présenter la recette du pilote au regard de C1–C6 et conserver le verdict `PARTIAL` si un seuil manque.
 
 Le lancement et tout changement de plan nécessitent la décision explicite prévue par `RCV3-20261026-SOURCE-OBSERVATORY-DOSSIER-FIDELE-PLAN-V4` dans le journal Council. Le plan d’octobre et sa répétition à blanc ne font pas office de preuve pour cette nouvelle fenêtre.
+
+## Raccordement applicatif du pilote J12
+
+La décision de David du 17 novembre autorise le pilote Forecast Record sur A9_Mega, du 26 novembre à 08 h 45 au 29 novembre à 20 h 45, heure de Paris. Le plan figé prévoit sept rencontres, 23 créneaux, 28 lectures de match et 23 lectures de robots.txt. Son SHA-256 est `e81c73a2b850d9b2b9a3a07a230c80e850428d6367a8d5a3a332fb4c467ebaea`. Le collecteur et sa tâche Windows continuent à écrire dans le paquet local autorisé.
+
+L'application lit ce journal directement sur le poste. Les routes `/expert/tipsters` et `/expert/tipsters/[id]` montrent les attributions pseudonymisées, les pronostics, leur première lecture locale, la détection fournisseur et la publication déclarée lorsqu'elle existe. Les variantes observées restent consultables dans l'historique. La première version observée est affichée par défaut. Les reprises de lecture sont dédupliquées par rencontre et identifiant fournisseur. Une attribution historique `author_key` reste limitée à la publication et n'est pas fusionnée avec une clé d'attribution plus récente.
+
+La route `/expert/admin-collecte` permet de filtrer les visites planifiées, en cours, interrompues, manquées, réussies, échouées, bloquées ou arrêtées. Chaque rafraîchissement lit une image du journal et vérifie le plan, l'autorisation, les empreintes, le chaînage, l'ordre des créneaux et l'antériorité au coup d'envoi. Une ligne en cours d'écriture produit un état temporaire. Une ligne complète altérée produit une erreur. L'écran conserve alors le dernier suivi vérifié, daté, et suspend son export. Le zéro de pronostics exige au moins une visite réussie et vérifiée. Le bilan JSON téléchargé est celui affiché et inclut sa référence de preuve et son graphe de provenance local.
+
+Le serveur Vite local expose `GET /api/tipsters` avec contrôle de l'adresse loopback, de Host, d'Origin et de Fetch Metadata. L'appel Python emploie des arguments fixes, un délai de huit secondes, une limite de sortie et une seule projection simultanée. Le lecteur reste hors du chemin d'exécution du collecteur. Le navigateur rafraîchit les preuves toutes les trente secondes et au retour sur la fenêtre. Le build du Worker conserve une réponse d'indisponibilité locale et les écrans indiquent que la consultation nécessite Robin sur A9_Mega.
+
+Pour ouvrir l'application sur le poste, exécuter `pwsh -File cockpit/scripts/start-local-robin.ps1` depuis la racine du dépôt, puis accéder à `http://127.0.0.1:4173/expert/tipsters` ou `http://127.0.0.1:4173/expert/admin-collecte`. Le script lance le serveur de développement local en arrière-plan avec les journaux dans `.ci/local-robin`. La commande directe est `pnpm dev -p 4173 -H 127.0.0.1` depuis `cockpit`. Par défaut, le lecteur utilise le dossier frère `pilote-tipsters-j12` et le Python de `.venv`. Les installations différentes peuvent définir côté serveur `ROBIN_TIPSTERS_DIRECTORY`, `ROBIN_TIPSTERS_PYTHON` et `ROBIN_TIPSTERS_PLAN_SHA256`. Ces paramètres restent hors du navigateur et des exports.
+
+La recette de développement utilise des journaux synthétiques isolés pour les cas de pronostic, de correction, d'échec, de corruption et de lecture tardive. Le contrôle nominal sur le paquet autorisé vérifie l'état programmé avant les premières observations. La recette de développement et le résultat réel du pilote disposent de leurs propres preuves. La recette globale du Dossier fidèle reste soumise aux critères C1–C6 gelés.
