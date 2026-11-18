@@ -24,6 +24,7 @@ export default defineConfig({
     "p0-coverage-desk.spec.ts",
     "source-observatory.spec.ts",
     "tipsters-pilot.spec.ts",
+    "tipster-sources.spec.ts",
   ],
   timeout: 30_000,
   use: {

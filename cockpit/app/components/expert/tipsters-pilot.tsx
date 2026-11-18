@@ -182,6 +182,7 @@ export function TipstersPilot({ admin = false, tipsterId }: { admin?: boolean; t
     <PageHeader eyebrow="Dossier fidèle · Ligue 1" title={admin ? "Suivi admin de la collecte" : "Tipsters et pronostics"}
       subtitle={admin ? "Suivez les créneaux et les preuves du pilote local sur A9_Mega." : "Consultez les pronostics attribués aux tipsters et lus avant les matchs."} />
     <nav className="pilot-actions" aria-label="Suivi des tipsters">
+      <InlineLink href="/expert/sources-tipsters">Paramétrage des sources</InlineLink>
       <InlineLink href={admin ? "/expert/tipsters" : "/expert/admin-collecte"}>{admin ? "Fiches tipsters" : "Suivi admin"}</InlineLink>
       <button type="button" className="pilot-button" onClick={() => void refresh()} disabled={loading}>{loading ? "Lecture en cours…" : "Actualiser le suivi"}</button>
       {snapshot && <button type="button" className="pilot-button" onClick={() => exportSnapshot(snapshot)} disabled={Boolean(error) || loading}>Télécharger le bilan JSON</button>}

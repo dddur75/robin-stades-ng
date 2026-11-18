@@ -165,6 +165,7 @@ export function ExpertPage() {
 
         <p><InlineLink href="/expert/tipsters">Tipsters et pronostics</InlineLink></p>
         <p><InlineLink href="/expert/admin-collecte">Suivi admin de la collecte</InlineLink></p>
+        <p><InlineLink href="/expert/sources-tipsters">Paramétrage des sources tipsters</InlineLink></p>
         <p>
         <InlineLink href="/expert/observatoire-sources">
           {t("nav.expert.sourceObservatory")}

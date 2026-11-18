@@ -25,6 +25,7 @@ export type PublicSection =
   | "expert"
   | "source-observatory"
   | "tipsters"
+  | "tipster-sources"
   | "collection-admin";
 
 const publicNavigation: Array<{
@@ -54,6 +55,7 @@ const expertNavigation: Array<{
   { activeSection: "expert", href: "/expert", label: t("nav.expert") },
   { activeSection: "tipsters", href: "/expert/tipsters", label: "Tipsters et pronostics" },
   { activeSection: "collection-admin", href: "/expert/admin-collecte", label: "Suivi admin de la collecte" },
+  { activeSection: "tipster-sources", href: "/expert/sources-tipsters", label: "Paramétrage des sources" },
   { activeSection: "source-observatory", href: "/expert/observatoire-sources", label: t("nav.expert.sourceObservatory") },
   { activeSection: "learning", href: "/apprentissage", label: t("nav.learning") },
   { activeSection: "laboratory", href: "/laboratoire", label: t("nav.laboratory") },
@@ -76,9 +78,9 @@ export function ExperienceShellClient({
   const [glossaryOpen, setGlossaryOpen] = useState(false);
   const glossaryRef = useRef<HTMLElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
-  const isTipstersPilot = active === "tipsters" || active === "collection-admin";
+  const isTipstersPilot = active === "tipsters" || active === "collection-admin" || active === "tipster-sources";
   const isExpertNavigationActive =
-    ["expert", "learning", "laboratory", "source-observatory", "tipsters", "collection-admin"].includes(active);
+    ["expert", "learning", "laboratory", "source-observatory", "tipsters", "collection-admin", "tipster-sources"].includes(active);
 
   useEffect(() => {
     if (!glossaryOpen) return;

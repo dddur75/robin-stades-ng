@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import type { IncomingMessage } from "node:http";
 import test from "node:test";
 
-import { permitsLocalPilotRead } from "../scripts/tipsters-pilot-plugin";
+import { permitsLocalPilotAccess, permitsLocalPilotRead } from "../scripts/tipsters-pilot-plugin";
 
 function request(overrides: { method?: string; address?: string; headers?: Record<string, string> } = {}) {
   return {
@@ -14,6 +14,15 @@ function request(overrides: { method?: string; address?: string; headers?: Recor
 test("le suivi autorise une lecture locale de même origine", () => {
   assert.equal(permitsLocalPilotRead(request()), true);
   assert.equal(permitsLocalPilotRead(request({ headers: { origin: "http://127.0.0.1:4173", "sec-fetch-site": "same-origin" } })), true);
+});
+
+test("la sauvegarde requiert PUT, JSON et une origine exacte", () => {
+  const valid = { method: "PUT", headers: { origin: "http://127.0.0.1:4173", "content-type": "application/json" } };
+  assert.equal(permitsLocalPilotAccess(request(valid), "PUT"), true);
+  assert.equal(permitsLocalPilotAccess(request({ method: "PUT" }), "PUT"), false);
+  assert.equal(permitsLocalPilotAccess(request({ ...valid, headers: { ...valid.headers, origin: "http://127.0.0.1:4174" } }), "PUT"), false);
+  assert.equal(permitsLocalPilotAccess(request({ ...valid, headers: { ...valid.headers, "content-type": "text/plain" } }), "PUT"), false);
+  assert.equal(permitsLocalPilotAccess(request({ ...valid, address: "192.168.1.2" }), "PUT"), false);
 });
 
 test("le suivi refuse les autres méthodes, origines, ports, hôtes et clients réseau", () => {
