@@ -23,10 +23,10 @@ test('les preuves absentes sont affichées comme indisponibles',async({page})=>{
  await expect(page.getByText('0 pronostic(s)',{exact:false})).toHaveCount(0);
 });
 
-test('SRO bare author hashes navigate to their public personal file',async({page})=>{
+test('SRO links use a typed forum route and preserve stored author hashes',async({page})=>{
  const bare='b'.repeat(64);const p={...data.picks[0],authorId:bare,authorLabel:'SRO synthétique',sourceId:'SRC_039'};
  await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,picks:[p]}}));await page.goto('/expert/collecte-publique');
- await page.getByRole('link',{name:'SRO synthétique',exact:true}).click();await expect(page.getByRole('heading',{name:'SRO synthétique',exact:true})).toBeVisible();
+ const link=page.getByRole('link',{name:'SRO synthétique',exact:true});await expect(link).toHaveAttribute('href','/expert/tipsters/'+encodeURIComponent('forum:'+bare));await link.click();await expect(page.getByRole('heading',{name:'SRO synthétique',exact:true})).toBeVisible();
  await expect(page.getByRole('heading',{name:'Nice – PSG · score prévu 1-3',exact:true})).toBeVisible();
 });
 

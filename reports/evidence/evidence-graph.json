@@ -12620,6 +12620,25 @@
         "C2",
         "C4"
       ]
+    },
+    {
+      "claim_id":"ENG.SOURCE_OBSERVATORY.TYPED.ROUTE.CORRECTIVE.20261119",
+      "claim":"TypedforumroutepreserveslegacyForecastbareSHAIDs;59tipsterdomainand4actualA9checksPASSincluding13renderedauthorlinks;sourcefacts/budgetsunchanged,newexactheadCIpending",
+      "scope":"LOCAL_CORRECTIVE_NO_SCALE",
+      "source":"C0regressionRED/GREEN;C2independentroutecontractcounterreview;A9actualreadback",
+      "grain":"typed_route_contract",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/source_observatory/TIPSTERS-ROUTE-CORRECTIVE-20261119.json",
+      "hash":"228bb18a309e393e5b343fb5db2f2e9f05e0859fe699f276a33ff21623305db8",
+      "code_revision":"5ad01d6b5b2d7594c37326dd0a12b40e1e9c9d97",
+      "execution_id":"ROBIN-TIPSTERS-ROUTE-CORRECTIVE-20261119",
+      "scientific_lineage_id":"NO_NEW_SOURCE_ADMISSION",
+      "dataset_lineage_id":"ffbda3556b2a6e2c54828db707d0c418fdf2f8f2987c9477d9657a62c016275a",
+      "status":"VERIFIED",
+      "verified_by":[
+        "C0",
+        "C2"
+      ]
     }
   ],
   "decision_nodes":[
@@ -13163,6 +13182,18 @@
     {
       "decision_id":"RCV3-20261119-PUBLIC-TECHNICAL-PRECOMMIT",
       "ledger_record_hash":"1ab62b20b8c62c9d936db2d990b3c4f1ca850a6fa26776429a39d81f186b50a0"
+    },
+    {
+      "decision_id":"RCV3-20261119-NOTBETTING-PUBLIC-INDEX-DISCOVERY",
+      "ledger_record_hash":"016ecf437a5d1d7517c75cc90482f032f796550a37c83a2f8dce279d46b0c61e"
+    },
+    {
+      "decision_id":"RCV3-20261119-TIPSTER-ROUTE-CI-FAILURE",
+      "ledger_record_hash":"5f46e5726807e38414f51630d68d4b4178c2692b7760a6de29f8b199cc103e07"
+    },
+    {
+      "decision_id":"RCV3-20261119-TYPED-ROUTE-CORRECTIVE-PRECOMMIT",
+      "ledger_record_hash":"f4c2737816d8d5d367e32cde13962d1ca695a935d90424f6b600c4fa946d7eec"
     }
   ],
   "edges":[
@@ -14745,6 +14776,41 @@
       "relation":"SUPPORTS",
       "status":"RECORDED",
       "to_decision_id":"RCV3-20261119-PUBLIC-TECHNICAL-PRECOMMIT"
+    },
+    {
+      "edge_id":"EDGE.1317",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.PUBLIC.TECHNICAL.ACCESS.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-NOTBETTING-PUBLIC-INDEX-DISCOVERY"
+    },
+    {
+      "edge_id":"EDGE.1318",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.TYPED.ROUTE.CORRECTIVE.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-TIPSTER-ROUTE-CI-FAILURE"
+    },
+    {
+      "edge_id":"EDGE.1319",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.TYPED.ROUTE.CORRECTIVE.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-TYPED-ROUTE-CORRECTIVE-PRECOMMIT"
+    },
+    {
+      "edge_id":"EDGE.1320",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.OLBG.RECURRENT.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-TYPED-ROUTE-CORRECTIVE-PRECOMMIT"
+    },
+    {
+      "edge_id":"EDGE.1321",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.PUBLIC.TECHNICAL.ACCESS.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-TYPED-ROUTE-CORRECTIVE-PRECOMMIT"
     }
   ]
 }
