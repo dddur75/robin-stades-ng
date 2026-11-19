@@ -12419,7 +12419,87 @@
     {"artifact":"reports/ux/TIPSTERS-FORUMS-ACTIVATED-20261119.json","claim":"Exact owner-authorized two-forum72GET task is installed Ready with12future triggers; no execution or source GET yet. Forecast disabled and J12 unchanged.","claim_id":"ENG.SOURCE_OBSERVATORY.FORUMS.ACTIVATION.20261119","code_revision":"47419525173a6047f1701a24f85ce21a0b0cce70","dataset_lineage_id":"74def990602b5d2bf1b2a030827967e8d155af664ed9016769cf81b4cdd236ce","execution_id":"TIPSTERS-INTEGRATION317-20261119","grain":"documentary_record_and_bounded_task_state","hash":"dbd14300b72cbe8aa75d20c0871873688044ae474364189694f987344101bccc","scientific_lineage_id":"NOT_FORECAST_PERFORMANCE_ACCEPTANCE","scope":"A9_LOCAL_PRIVATE_PROTOTYPE_ONLY","source":"immutable candidate receipt, exact owner grant, native readback, targeted tests and independent Council keys","status":"VERIFIED","temporal_class":"OBSERVED_AT","verified_by":["C0","C4"]},
     {"artifact":"reports/ux/TIPSTERS-CANDIDATES317-RECETTE-20261119.json","claim":"317historical candidate records are imported locally with provenance and inactive booleans, search/filter/profile views; no extra real prediction or source authority is inferred.","claim_id":"DATA.SOURCE_OBSERVATORY.CANDIDATES317.20261119","code_revision":"47419525173a6047f1701a24f85ce21a0b0cce70","dataset_lineage_id":"74def990602b5d2bf1b2a030827967e8d155af664ed9016769cf81b4cdd236ce","execution_id":"TIPSTERS-INTEGRATION317-20261119","grain":"documentary_record_and_bounded_task_state","hash":"717bd7b95a60632313164e32a9f1e3e44003c107e42506f80fb37286cfeccddd","scientific_lineage_id":"NOT_FORECAST_PERFORMANCE_ACCEPTANCE","scope":"A9_LOCAL_PRIVATE_PROTOTYPE_ONLY","source":"immutable candidate receipt, exact owner grant, native readback, targeted tests and independent Council keys","status":"VERIFIED","temporal_class":"OBSERVED_AT","verified_by":["C0","C1","C3","UX6","A3"]},
     {"artifact":"reports/ux/TIPSTERS-FORUMS-VIEW-20261119.json","claim":"Read-only view preserves24seed facts, exposes native programming and journal-based campaign counters, isolates corrupt campaign inputs and keeps documentary profiles separate.","claim_id":"ENG.SOURCE_OBSERVATORY.FORUMS.VIEW.20261119","code_revision":"47419525173a6047f1701a24f85ce21a0b0cce70","dataset_lineage_id":"74def990602b5d2bf1b2a030827967e8d155af664ed9016769cf81b4cdd236ce","execution_id":"TIPSTERS-INTEGRATION317-20261119","grain":"documentary_record_and_bounded_task_state","hash":"498be9120c8c5815e0b17d49d728cb05cc4888ff87d7a4bf85db161d0edbeccf","scientific_lineage_id":"NOT_FORECAST_PERFORMANCE_ACCEPTANCE","scope":"A9_LOCAL_PRIVATE_PROTOTYPE_ONLY","source":"immutable candidate receipt, exact owner grant, native readback, targeted tests and independent Council keys","status":"VERIFIED","temporal_class":"OBSERVED_AT","verified_by":["C0","C1","C3","UX6","A3"]},
-    {"artifact":"reports/ux/TIPSTERS-CANDIDATES317-CI-ALERTS-20261119.json","claim":"Source tests deterministically exercise simultaneous candidate503 and source error, requiring both visible; all7cases pass locally after reproduced2case failure.","claim_id":"ENG.SOURCE_OBSERVATORY.CANDIDATES317.CI_ALERTS.20261119","code_revision":"a4249f8b13d7e68932f1543f502aedc46038a950","dataset_lineage_id":"NO_PRODUCT_DATA_CHANGE","execution_id":"TIPSTERS-CANDIDATES317-CI-ALERTS-20261119","grain":"test_assertion","hash":"f6ef0d8a9232953867516388cc7f03599b4bae171a6fc981297229cad2ffceaa","scientific_lineage_id":"NOT_FORECAST_PERFORMANCE_ACCEPTANCE","scope":"LOCAL_TARGETED_TEST_ONLY","source":"Playwright targeted reproduction, seven-case rerun and independent C1 diff review","status":"VERIFIED","temporal_class":"OBSERVED_AT","verified_by":["C0","C1"]}
+    {"artifact":"reports/ux/TIPSTERS-CANDIDATES317-CI-ALERTS-20261119.json","claim":"Source tests deterministically exercise simultaneous candidate503 and source error, requiring both visible; all7cases pass locally after reproduced2case failure.","claim_id":"ENG.SOURCE_OBSERVATORY.CANDIDATES317.CI_ALERTS.20261119","code_revision":"a4249f8b13d7e68932f1543f502aedc46038a950","dataset_lineage_id":"NO_PRODUCT_DATA_CHANGE","execution_id":"TIPSTERS-CANDIDATES317-CI-ALERTS-20261119","grain":"test_assertion","hash":"f6ef0d8a9232953867516388cc7f03599b4bae171a6fc981297229cad2ffceaa","scientific_lineage_id":"NOT_FORECAST_PERFORMANCE_ACCEPTANCE","scope":"LOCAL_TARGETED_TEST_ONLY","source":"Playwright targeted reproduction, seven-case rerun and independent C1 diff review","status":"VERIFIED","temporal_class":"OBSERVED_AT","verified_by":["C0","C1"]},
+    {
+      "claim_id":"DATA.SOURCE_OBSERVATORY.QUALIFICATION317.20261119",
+      "claim":"317records/19platformsassessed with explicit accessmatrix and4personallyproved; no blanketpersonalqualification",
+      "scope":"LOCAL_A9_BOUNDED_PERSONAL_RECETTE",
+      "source":"HashlinkedE1/E2receipts, immutable317registry, independentC1/C4/C2reviews and A9browserreadback",
+      "grain":"candidate_record",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/source_observatory/TIPSTERS-QUALIFICATION317-20261119.json",
+      "hash":"56902a8507251ca6187e40938d2122a8b3c86926e6857a18593d67740b685380",
+      "code_revision":"abc48bc98f7b9dd54494be374a25bd6f6e9b337a",
+      "execution_id":"QUALIFICATION317-20261119",
+      "scientific_lineage_id":"NOT_ROI_OR_CIVIL_IDENTITY_CERTIFICATION",
+      "dataset_lineage_id":"74def990602b5d2bf1b2a030827967e8d155af664ed9016769cf81b4cdd236ce",
+      "status":"VERIFIED",
+      "verified_by":[
+        "C0",
+        "C1",
+        "C4"
+      ]
+    },
+    {
+      "claim_id":"DATA.SOURCE_OBSERVATORY.SRO.PICKS.20261119",
+      "claim":"34distinctsource-scopedSROpersonalpicks from4matchedauthors observedbefore9verifiedkickoffs",
+      "scope":"LOCAL_A9_BOUNDED_PERSONAL_RECETTE",
+      "source":"HashlinkedE1/E2receipts, immutable317registry, independentC1/C4/C2reviews and A9browserreadback",
+      "grain":"author_fixture_market",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/source_observatory/TIPSTERS-QUALIFICATION317-20261119.json",
+      "hash":"56902a8507251ca6187e40938d2122a8b3c86926e6857a18593d67740b685380",
+      "code_revision":"abc48bc98f7b9dd54494be374a25bd6f6e9b337a",
+      "execution_id":"QUALIFICATION317-20261119",
+      "scientific_lineage_id":"NOT_ROI_OR_CIVIL_IDENTITY_CERTIFICATION",
+      "dataset_lineage_id":"74def990602b5d2bf1b2a030827967e8d155af664ed9016769cf81b4cdd236ce",
+      "status":"VERIFIED",
+      "verified_by":[
+        "C0",
+        "C1",
+        "C4"
+      ]
+    },
+    {
+      "claim_id":"ENG.SOURCE_OBSERVATORY.SRO.ACTIVATION.20261119",
+      "claim":"NativeWindowsSROsuccessorcanaryacceptedrealprematchpicks; finite12slot36GETmissionplus3priorwithin39; oldtaskDisabled",
+      "scope":"LOCAL_A9_BOUNDED_PERSONAL_RECETTE",
+      "source":"HashlinkedE1/E2receipts, immutable317registry, independentC1/C4/C2reviews and A9browserreadback",
+      "grain":"native_task_slot",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/source_observatory/TIPSTERS-QUALIFICATION317-20261119.json",
+      "hash":"56902a8507251ca6187e40938d2122a8b3c86926e6857a18593d67740b685380",
+      "code_revision":"abc48bc98f7b9dd54494be374a25bd6f6e9b337a",
+      "execution_id":"QUALIFICATION317-20261119",
+      "scientific_lineage_id":"NOT_ROI_OR_CIVIL_IDENTITY_CERTIFICATION",
+      "dataset_lineage_id":"74def990602b5d2bf1b2a030827967e8d155af664ed9016769cf81b4cdd236ce",
+      "status":"VERIFIED",
+      "verified_by":[
+        "C0",
+        "C1",
+        "C4"
+      ]
+    },
+    {
+      "claim_id":"ENG.SOURCE_OBSERVATORY.QUALIFICATION317.VIEW.20261119",
+      "claim":"Localcatalogue/profile/adminjoins andnativefreshnessgate verified by25mock/3actualA9browsertests; existingfacts survivebadcompanion",
+      "scope":"LOCAL_A9_BOUNDED_PERSONAL_RECETTE",
+      "source":"HashlinkedE1/E2receipts, immutable317registry, independentC1/C4/C2reviews and A9browserreadback",
+      "grain":"application_read_view",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/source_observatory/TIPSTERS-QUALIFICATION317-20261119.json",
+      "hash":"56902a8507251ca6187e40938d2122a8b3c86926e6857a18593d67740b685380",
+      "code_revision":"abc48bc98f7b9dd54494be374a25bd6f6e9b337a",
+      "execution_id":"QUALIFICATION317-20261119",
+      "scientific_lineage_id":"NOT_ROI_OR_CIVIL_IDENTITY_CERTIFICATION",
+      "dataset_lineage_id":"74def990602b5d2bf1b2a030827967e8d155af664ed9016769cf81b4cdd236ce",
+      "status":"VERIFIED",
+      "verified_by":[
+        "C0",
+        "C2",
+        "C3"
+      ]
+    }
   ],
   "decision_nodes":[
     {"decision_id":"RCV3-20260804-001","ledger_record_hash":"b949c5bfc2d20ecddd8fc03a8bb754a5aa3d7f6e2ba2c562901e778d62988f7e"},
@@ -12870,7 +12950,39 @@
     {"decision_id":"RCV3-20261119-WORKBOOK-INVENTORY-RECONCILIATION","ledger_record_hash":"dc3bea3d7f2084f034bca324a9c85977352f5ad9a9c8c377ab1ce915e3b36db3"},
     {"decision_id":"RCV3-20261119-FORUMS-OWNER-GRANTED","ledger_record_hash":"844ffbd4ce9381e57caed757005f1de73236e3cb2f6715ae42cc7bb200b0dc4c"},
     {"decision_id":"RCV3-20261119-CANDIDATES317-AND-FORUMS-LOCAL-ACCEPTANCE","ledger_record_hash":"1b311d93a1af7013e22ac45573519edeeb2c9c36ba1110a5eb6cd92610978a0d"},
-    {"decision_id":"RCV3-20261119-CANDIDATES317-CI-ALERT-SCOPING","ledger_record_hash":"215a6634b2a41ac1306b09fbd2bf1ad6c6a4e91051e8d59b817e8695a9a660e0"}
+    {"decision_id":"RCV3-20261119-CANDIDATES317-CI-ALERT-SCOPING","ledger_record_hash":"215a6634b2a41ac1306b09fbd2bf1ad6c6a4e91051e8d59b817e8695a9a660e0"},
+    {
+      "decision_id":"RCV3-20261119-QUALIFY317-E1-OWNER",
+      "ledger_record_hash":"c63718d934c52d43a20e83588c4e571ed33560c4ea8c5563a11bcf32e225528f"
+    },
+    {
+      "decision_id":"RCV3-20261119-QUALIFY317-ROBOTS404-REDESIGN",
+      "ledger_record_hash":"ae64781e1056835002b2fe5a0491e38aa11d0c92852ed50832f4af127ecfd09e"
+    },
+    {
+      "decision_id":"RCV3-20261119-SRO-E2-EXACT-ACTIVATION",
+      "ledger_record_hash":"695080082d1fa0bc5f2c32374cf512dfbe02251824d7ecb90385de7e8141444e"
+    },
+    {
+      "decision_id":"RCV3-20261119-SRO-REGISTRATION-DATEKIND-FIX",
+      "ledger_record_hash":"8f432655df648252eb7fcf3027e76ec041eedf0b59a3985d7aac8494751bce53"
+    },
+    {
+      "decision_id":"RCV3-20261119-SRO-CHARTER-HASH-E1-REDESIGN",
+      "ledger_record_hash":"b01820513b1ede9d606cb001bb1ba98de2b443ee16d40733d477048ac9988859"
+    },
+    {
+      "decision_id":"RCV3-20261119-SRO-V4-EXACT-ACTIVATION",
+      "ledger_record_hash":"8aff4860039000a69e736e4809a359fbcfc7794e1f6cb9977055a899c9ee22c8"
+    },
+    {
+      "decision_id":"RCV3-20261119-QUALIFICATION317-LOCAL-RECETTE",
+      "ledger_record_hash":"56a93b7078275e977ee41d24f57d80edb0e1e28611c27b0925798e46c2314d64"
+    },
+    {
+      "decision_id":"RCV3-20261119-QUALIFICATION317-INDEPENDENT-RECETTE",
+      "ledger_record_hash":"16ee0f4e7c011cbbdf9527645612db3c3a5c927328647c3d650dffba99532674"
+    }
   ],
   "edges":[
     {"edge_id":"EDGE.001","from_claim_id":"ENV.ENTRY.BRANCH.001","to_decision_id":"RCV3-20260804-001","relation":"SUPPORTS","status":"RECORDED"},
@@ -14214,6 +14326,104 @@
     {"edge_id":"EDGE.1279","from_claim_id":"ENG.SOURCE_OBSERVATORY.FORUMS.ACTIVATION.20261119","relation":"SUPPORTS","status":"RECORDED","to_decision_id":"RCV3-20261119-CANDIDATES317-AND-FORUMS-LOCAL-ACCEPTANCE"},
     {"edge_id":"EDGE.1280","from_claim_id":"DATA.SOURCE_OBSERVATORY.CANDIDATES317.20261119","relation":"SUPPORTS","status":"RECORDED","to_decision_id":"RCV3-20261119-CANDIDATES317-AND-FORUMS-LOCAL-ACCEPTANCE"},
     {"edge_id":"EDGE.1281","from_claim_id":"ENG.SOURCE_OBSERVATORY.FORUMS.VIEW.20261119","relation":"SUPPORTS","status":"RECORDED","to_decision_id":"RCV3-20261119-CANDIDATES317-AND-FORUMS-LOCAL-ACCEPTANCE"},
-    {"edge_id":"EDGE.1282","from_claim_id":"ENG.SOURCE_OBSERVATORY.CANDIDATES317.CI_ALERTS.20261119","relation":"SUPPORTS","status":"RECORDED","to_decision_id":"RCV3-20261119-CANDIDATES317-CI-ALERT-SCOPING"}
+    {"edge_id":"EDGE.1282","from_claim_id":"ENG.SOURCE_OBSERVATORY.CANDIDATES317.CI_ALERTS.20261119","relation":"SUPPORTS","status":"RECORDED","to_decision_id":"RCV3-20261119-CANDIDATES317-CI-ALERT-SCOPING"},
+    {
+      "edge_id":"EDGE.1283",
+      "from_claim_id":"DATA.SOURCE_OBSERVATORY.CANDIDATES317.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-QUALIFY317-E1-OWNER"
+    },
+    {
+      "edge_id":"EDGE.1284",
+      "from_claim_id":"DATA.SOURCE_OBSERVATORY.CANDIDATES317.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-QUALIFY317-ROBOTS404-REDESIGN"
+    },
+    {
+      "edge_id":"EDGE.1285",
+      "from_claim_id":"DATA.SOURCE_OBSERVATORY.SRO.PICKS.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-SRO-E2-EXACT-ACTIVATION"
+    },
+    {
+      "edge_id":"EDGE.1286",
+      "from_claim_id":"DATA.SOURCE_OBSERVATORY.SRO.PICKS.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-SRO-REGISTRATION-DATEKIND-FIX"
+    },
+    {
+      "edge_id":"EDGE.1287",
+      "from_claim_id":"DATA.SOURCE_OBSERVATORY.SRO.PICKS.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-SRO-CHARTER-HASH-E1-REDESIGN"
+    },
+    {
+      "edge_id":"EDGE.1288",
+      "from_claim_id":"DATA.SOURCE_OBSERVATORY.SRO.PICKS.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-SRO-V4-EXACT-ACTIVATION"
+    },
+    {
+      "edge_id":"EDGE.1289",
+      "from_claim_id":"DATA.SOURCE_OBSERVATORY.QUALIFICATION317.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-QUALIFICATION317-LOCAL-RECETTE"
+    },
+    {
+      "edge_id":"EDGE.1290",
+      "from_claim_id":"DATA.SOURCE_OBSERVATORY.SRO.PICKS.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-QUALIFICATION317-LOCAL-RECETTE"
+    },
+    {
+      "edge_id":"EDGE.1291",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.SRO.ACTIVATION.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-QUALIFICATION317-LOCAL-RECETTE"
+    },
+    {
+      "edge_id":"EDGE.1292",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.QUALIFICATION317.VIEW.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-QUALIFICATION317-LOCAL-RECETTE"
+    },
+    {
+      "edge_id":"EDGE.1293",
+      "from_claim_id":"DATA.SOURCE_OBSERVATORY.QUALIFICATION317.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-QUALIFICATION317-INDEPENDENT-RECETTE"
+    },
+    {
+      "edge_id":"EDGE.1294",
+      "from_claim_id":"DATA.SOURCE_OBSERVATORY.SRO.PICKS.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-QUALIFICATION317-INDEPENDENT-RECETTE"
+    },
+    {
+      "edge_id":"EDGE.1295",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.SRO.ACTIVATION.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-QUALIFICATION317-INDEPENDENT-RECETTE"
+    },
+    {
+      "edge_id":"EDGE.1296",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.QUALIFICATION317.VIEW.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-QUALIFICATION317-INDEPENDENT-RECETTE"
+    }
   ]
 }

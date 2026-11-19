@@ -4,15 +4,13 @@ import { promisify } from "node:util";
 import type { Plugin } from "vite";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { permitsLocalPilotRead } from "./tipsters-pilot-plugin";
+import {readNativeState} from './tipsters-native-state';
 
 const runFile = promisify(execFile);
 
 export function publicTipsters(): Plugin {
   let root = process.cwd();
   let pending: Promise<string> | undefined;
-  let nativeState: Record<string, unknown> = {state:"checking"};
-  let nativePending: Promise<void> | undefined;
-  let nativeRefreshed = 0;
   const middleware = async (request: IncomingMessage, response: ServerResponse, next: () => void) => {
     if (request.url?.split("?")[0] !== "/api/tipsters/public") return next();
     response.setHeader("Cache-Control", "no-store");
@@ -30,13 +28,9 @@ export function publicTipsters(): Plugin {
       {timeout:8000,maxBuffer:12000000,windowsHide:true,encoding:"utf8"}).then(r=>{
         const value=JSON.parse(r.stdout);
         if(process.platform === "win32" && value.campaign){
+          const nativeState=readNativeState(root);
           value.campaign.native=nativeState;
-          if(!nativePending && Date.now()-nativeRefreshed>=15000){
-            nativePending=runFile("pwsh.exe",["-NoProfile","-NonInteractive","-File",resolve(root,"scripts/read-public-task-state.ps1")],{timeout:6000,maxBuffer:20000,windowsHide:true,encoding:"utf8"})
-              .then(native=>{nativeState=JSON.parse(native.stdout);})
-              .catch(()=>{nativeState={state:"unavailable"};})
-              .finally(()=>{nativeRefreshed=Date.now();nativePending=undefined;});
-          }
+          if(value.sroCampaign)value.sroCampaign.native=nativeState.sro??{state:"checking"};
         }
         return JSON.stringify(value);
       }).finally(()=>{pending=undefined;});

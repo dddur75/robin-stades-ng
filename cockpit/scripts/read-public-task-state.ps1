@@ -1,8 +1,12 @@
 $ErrorActionPreference='Stop'
+function Read-TaskState([string]$name) {
 try {
- $name='Robin-Tipsters-Forums-V1-20261120'
  $task=Get-ScheduledTask -TaskName $name -ErrorAction SilentlyContinue
- if(-not $task){@{state='not_found';verifiedAt=[DateTimeOffset]::UtcNow.ToString('o')} | ConvertTo-Json -Compress;exit 0}
+ if(-not $task){return @{state='not_found';verifiedAt=[DateTimeOffset]::UtcNow.ToString('o')}}
  $info=Get-ScheduledTaskInfo -TaskName $name -ErrorAction Stop
- @{state=$task.State.ToString();enabled=[bool]$task.Settings.Enabled;nextRunTime=$info.NextRunTime.ToString('o');lastResult=$info.LastTaskResult;verifiedAt=[DateTimeOffset]::UtcNow.ToString('o')} | ConvertTo-Json -Compress
-} catch {@{state='unavailable';verifiedAt=[DateTimeOffset]::UtcNow.ToString('o')} | ConvertTo-Json -Compress}
+ return @{state=$task.State.ToString();enabled=[bool]$task.Settings.Enabled;nextRunTime=$info.NextRunTime.ToString('o');lastResult=$info.LastTaskResult;verifiedAt=[DateTimeOffset]::UtcNow.ToString('o')}
+} catch {return @{state='unavailable';verifiedAt=[DateTimeOffset]::UtcNow.ToString('o')}}
+}
+$result=Read-TaskState 'Robin-Tipsters-Forums-V1-20261120'
+$result.sro=Read-TaskState 'Robin-Tipsters-SRO-V2-20261119'
+$result|ConvertTo-Json -Depth 4 -Compress

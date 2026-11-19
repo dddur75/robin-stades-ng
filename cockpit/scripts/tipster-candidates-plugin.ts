@@ -4,6 +4,7 @@ import { promisify } from "node:util";
 import type { Plugin } from "vite";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { permitsLocalPilotRead } from "./tipsters-pilot-plugin";
+import {readNativeState,sourceTaskIsCurrent} from './tipsters-native-state';
 
 const runFile = promisify(execFile);
 
@@ -23,7 +24,17 @@ export function tipsterCandidates(): Plugin {
       const python = process.env.ROBIN_TIPSTERS_PYTHON ?? resolve(repository, ".venv",process.platform === "win32" ? "Scripts/python.exe" : "bin/python");
       pending ??= runFile(python, ["-X","utf8","-B",resolve(root,"scripts/read-tipster-candidates.py"),
         "--directory",process.env.ROBIN_TIPSTER_CANDIDATES_DIRECTORY ?? resolve(root,".ci/tipsters-l1-candidates-20261119")],
-      {timeout:8000,maxBuffer:12000000,windowsHide:true,encoding:"utf8"}).then(r=>r.stdout).finally(()=>{pending=undefined;});
+      {timeout:8000,maxBuffer:12000000,windowsHide:true,encoding:"utf8"}).then(r=>{
+        const data=JSON.parse(r.stdout);
+        if(data.qualification?.status==='ok'){
+          const native=readNativeState(root).sro;
+          data.qualification.nativeSRO=native;
+          const enabled=Boolean(data.qualification.sourceOperational&&sourceTaskIsCurrent(native));
+          data.qualification.sourceOperational=enabled;
+          if(!enabled){data.enabledCount=0;for(const row of data.candidates)row.collectionEnabled=false;}
+        }
+        return JSON.stringify(data);
+      }).finally(()=>{pending=undefined;});
       const result = await pending;
       if (JSON.parse(result).status !== "ok") response.statusCode=503;
       response.end(result);

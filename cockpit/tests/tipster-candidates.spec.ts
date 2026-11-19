@@ -24,3 +24,35 @@ for(const width of [360,375,390,430])test(`candidats accessibles à ${width}px`,
  await page.setViewportSize({width,height:900});await page.route('**/api/tipsters/candidates',r=>r.fulfill({json:data}));await page.goto('/expert/catalogue-tipsters');
  const input=page.getByLabel('Rechercher une fiche');await input.focus();await expect(input).toBeFocused();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
+
+test('qualification personnelle rejoint la fiche sans qualifier les autres',async({page})=>{
+ const access={platform:'Forum test',label:'Accès public vérifié',reason:'Sujet courant contrôlé',requiredAccess:'Aucun compte pour ce sujet',ownerAction:'Campagne personnelle bornée',url:'https://example.org/',scope:'platform_only'};
+ const choice={id:'synthetic-pick',fixtureLabel:'Nice – PSG',selection:'1-3',observedAt:'2026-11-19T14:00:00Z',kickoff:'2026-11-21T16:15:00Z',sourceUrl:'https://example.org/post/123'};
+ const active={...data,enabledCount:1,qualification:{status:'ok',assessedCount:2,qualifiedCount:1,claimId:'SYNTHETIC.QUALIFICATION',platforms:[access]},candidates:[{...row,collectionEnabled:true,qualification:{...access,label:'Choix personnels observés avant match',profileVisited:false,documentaryIssues:[],personallyProven:true,picks:[choice]}},data.candidates[1]]};
+ await page.route('**/api/tipsters/candidates',r=>r.fulfill({json:active}));
+ await page.goto('/expert/catalogue-tipsters');await expect(page.getByText('2 fiches examinées : 1 avec des choix personnels',{exact:false})).toBeVisible();
+ await page.getByRole('link',{name:'Alice',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'Nice – PSG · score prévu 1-3',exact:true})).toBeVisible();
+ await expect(page.getByText('Collecte autorisée dans la campagne',{exact:false})).toBeVisible();
+ await expect(page.getByText('Aucun pronostic collecté n’est attribué à cette fiche par cet import.',{exact:true})).toHaveCount(0);
+});
+
+test('blocages et geste précis sont consultables au clavier sur mobile',async({page})=>{
+ await page.setViewportSize({width:390,height:850});
+ const access={platform:'Forum test',label:'Accès refusé',reason:'HTTP403 observé',requiredAccess:'Flux officiel autorisé',ownerAction:'Aucun mot de passe à transmettre',url:'https://example.org/',scope:'platform_only'};
+ await page.route('**/api/tipsters/candidates',r=>r.fulfill({json:{...data,qualification:{status:'ok',assessedCount:2,qualifiedCount:0,platforms:[access]}}}));
+ await page.goto('/expert/catalogue-tipsters');const detail=page.getByText('Accès et blocages par plateforme',{exact:true});await detail.focus();await page.keyboard.press('Enter');
+ await expect(page.getByText('Accès à établir : Flux officiel autorisé',{exact:true})).toBeVisible();
+ await expect(page.getByText('Aucun mot de passe à transmettre',{exact:true})).toBeVisible();
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});
+
+test('une erreur de lecture se rétablit au prochain rafraîchissement local',async({page})=>{
+ await page.clock.install();let reads=0;
+ await page.route('**/api/tipsters/candidates',r=>++reads===1?r.fulfill({status:503,json:{status:'unavailable'}}):r.fulfill({json:data}));
+ await page.goto('/expert/catalogue-tipsters');
+ await expect(page.getByRole('alert').filter({hasText:'registre local'})).toBeVisible();
+ await page.clock.fastForward(15000);
+ await expect(page.getByText('2 fiches importées',{exact:true})).toBeVisible();
+ await expect(page.getByRole('alert').filter({hasText:'registre local'})).toHaveCount(0);
+});

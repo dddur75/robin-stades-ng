@@ -48,3 +48,11 @@ test('campagne programmée conserve les faits ponctuels sans prétendre une exé
  await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,campaign:{state:'scheduled',startsAt:'2026-11-20T07:00:00Z',expiresAt:'2026-11-21T07:00:00Z',slots:12,requests:0,requestsMax:72,successfulSlots:0,native:{state:'Ready'}}}}));
  await page.goto('/expert/collecte-publique');await expect(page.getByText('Programmée : premier lancement',{exact:false})).toBeVisible();await expect(page.getByText('0 créneau(x) validé(s)',{exact:false})).toBeVisible();await expect(page.getByText('Aucune collecte automatique de ces forums',{exact:false})).toHaveCount(0);
 });
+
+test('SRO affiche son canari et son budget distinct du lot initial',async({page})=>{
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,recurring:true,sroCampaign:{state:'collecting',successfulSlots:1,requests:3,requestsMax:39,native:{state:'Ready',verifiedAt:'2026-11-19T15:00:00Z'}}}}));
+ await page.goto('/expert/collecte-publique');
+ await expect(page.getByRole('heading',{name:'Collecte Stade Rennais Online',exact:true})).toBeVisible();
+ await expect(page.getByText('1 créneau(x) validé(s) · 3 GET réservés sur 39 maximum.',{exact:true})).toBeVisible();
+ await expect(page.getByText('1 pronostic(s) personnel(s) collecté(s)',{exact:false})).toBeVisible();
+});
