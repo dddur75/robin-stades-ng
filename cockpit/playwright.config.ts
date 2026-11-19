@@ -27,6 +27,7 @@ export default defineConfig({
     "tipster-sources.spec.ts",
     "tipster-connectors.spec.ts",
     "tipsters-recurring.spec.ts",
+    "public-tipsters.spec.ts",
   ],
   timeout: 30_000,
   use: {

@@ -47,3 +47,14 @@ Les clés C1 (preuve), C4 (sécurité) et UX6 (interface) sont distinctes de la 
 Le créneau de 08 h reste manqué, sans rattrapage. Le prochain créneau prévu est 10 h Paris. Le paquet effectif est désormais `cockpit/.ci/tipsters-recurring-launcher-fix-20261119`, plan `fe1a68ba8b058ee95038564a68dc8c7ae7a97282f087a5423a9814ba26d15835`. Il conserve exactement le manifeste, les plafonds, les 84 créneaux et l'approbation originale. Sa dérivation technique lie les anciennes et nouvelles empreintes, avec la clé C4 ; elle ne fabrique pas une nouvelle déclaration propriétaire. Le journal historique est conservé comme préfixe et les compteurs ne sont pas remis à zéro.
 
 La tâche change uniquement l'argument de répertoire; J12 est inchangé. Les autres sources n'ont pas été recontactées pour ce diagnostic. Détails et claim : `reports/ux/TIPSTERS-FIRST-LAUNCH-20261119.json` (`ENG.SOURCE_OBSERVATORY.RECURRING.FIRST_LAUNCH.20261119`).
+
+
+## Bilan observé après correction — 19 novembre à 10 h
+
+Le déclenchement automatique de 10 h a terminé normalement : six GET HTTP 200 (robots, contrat API, catalogue et trois fiches). Nice–PSG, Lens–Toulouse et Strasbourg–Brest ont été lus avant les coups d'envoi fournisseur du 21 novembre. Aucun pronostic personnel admissible n'a été enregistré. Le compteur reste zéro ; les sept anciennes sélections collectives ne sont pas ajoutées.
+
+Le collecteur a journalisé `FAIL_AND_STOP` pour `required_individual_attribution_missing`. Conformément à la condition propriétaire, la seule tâche récurrente est désormais **Disabled / Enabled=false**. Aucune relance de cette campagne n'est prévue. J12 reste Ready et sa définition est inchangée. Les six requêtes restent comptabilisées sur le plafond 504, sans réinitialisation ni hausse de budget.
+
+Le blocage principal est la preuve source de pronostics personnels admissibles. Les autres accès officiels, permissions éditeurs et conditions à vérifier restent détaillés dans le registre des 57 sources ; aucun recensement supplémentaire n'a été lancé. La recette métier demeure PARTIAL.
+
+Preuve : `reports/ux/TIPSTERS-SCHEDULED-RESULT-20261119.json`, claim `DATA.SOURCE_OBSERVATORY.RECURRING.RESULT.20261119`. Le correctif logiciel `130f94e` a sa CI verte : 17 jobs, 4 904 tests et 62 parcours visuels.

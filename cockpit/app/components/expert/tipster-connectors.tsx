@@ -99,6 +99,7 @@ export function TipsterConnectors({ compact = false, authorId }: { compact?: boo
   </section>;
   return <section className="section-card" aria-labelledby={compact ? "connector-summary" : "connector-admin"}>
     <h2 id={compact ? "connector-summary" : "connector-admin"}>Collecte des sources tipsters</h2>
+    <p>Journal de qualification initiale du 18 novembre. Ses compteurs n’incluent pas les choix des forums collectés ensuite. <InlineLink href="/expert/collecte-publique">Consulter les pronostics personnels des forums</InlineLink>.</p>
     <p>Le suivi sépare les publications lues, les sélections à vérifier et les pronostics prouvés avant match.</p>
     {error && <p role="alert">{error}</p>}
     {!view && !error && <p role="status">Lecture des reçus locaux…</p>}
