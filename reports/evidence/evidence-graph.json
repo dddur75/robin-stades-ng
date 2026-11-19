@@ -12658,6 +12658,37 @@
         "C0",
         "C2"
       ]
+    },
+    {
+      "claim_id":"ENG.SOURCE_OBSERVATORY.ROUTE.RECEIPTS.SUCCESSION.20261119",
+      "claim":"Content-addressedone-pathengineeringprojectionformallysupersedesthehistorical228bbreceipt-locatorreportwithportable326c;sourcefacts,testresultsandreceiptcontenthashesunchanged",
+      "scope":"AUDIT_METADATA_SUCCESSION_ONLY_NO_SCALE",
+      "source":"C2independentreporthashandcanonicalmapprojectionrecomputation;existingCouncilmandatoryfieldscontract",
+      "grain":"ONE_ARTIFACT_ENGINEERING_PROJECTION",
+      "temporal_class":"CODE_LOCAL_AS_OF",
+      "artifact":"reports/source_observatory/TIPSTERS-ROUTE-CORRECTIVE-20261119.json",
+      "hash":"326c8883ba1e81523dd7aae57ea44387dffa78cd91eb93e91881cf290358b4be",
+      "code_revision":"precommit-projection:e54db87dc644f4b46caab81a4f94159cfdc0e09143dd1e2db16b46ce43d5c38c",
+      "execution_id":"ROBIN-RECEIPT-SUCCESSION-20261119",
+      "scientific_lineage_id":"NO_SOURCE_OR_RESULT_REWRITE",
+      "dataset_lineage_id":"ffbda3556b2a6e2c54828db707d0c418fdf2f8f2987c9477d9657a62c016275a",
+      "status":"VERIFIED",
+      "verified_by":[
+        "C0",
+        "C2"
+      ],
+      "supersedes":[
+        "ENG.SOURCE_OBSERVATORY.TYPED.ROUTE.CORRECTIVE.20261119"
+      ],
+      "base_revision":"8e7719f241e7f4f60dedd18450860352b02db19f",
+      "artifact_hash_algorithm":"SHA-256",
+      "artifact_hash_normalization":"LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count":1,
+      "projection_path_count":1,
+      "engineering_projection_sha256":"e54db87dc644f4b46caab81a4f94159cfdc0e09143dd1e2db16b46ce43d5c38c",
+      "artifact_hashes":{
+        "reports/source_observatory/TIPSTERS-ROUTE-CORRECTIVE-20261119.json":"326c8883ba1e81523dd7aae57ea44387dffa78cd91eb93e91881cf290358b4be"
+      }
     }
   ],
   "decision_nodes":[
@@ -13217,6 +13248,10 @@
     {
       "decision_id":"RCV3-20261119-RECEIPT-PORTABILITY-PRECOMMIT",
       "ledger_record_hash":"88603903f29050267c041446ffd1ee34f4cfb387400928c66d8e30da6ebdc658"
+    },
+    {
+      "decision_id":"RCV3-20261119-RECEIPT-HASH-SUCCESSION-PRECOMMIT",
+      "ledger_record_hash":"9ab8a39217320639dbf4bb46a053398b98369d10942ec4ecdefa49f9e8f46191"
     }
   ],
   "edges":[
@@ -14848,6 +14883,20 @@
       "relation":"SUPPORTS",
       "status":"RECORDED",
       "to_decision_id":"RCV3-20261119-RECEIPT-PORTABILITY-PRECOMMIT"
+    },
+    {
+      "edge_id":"EDGE.1324",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.ROUTE.RECEIPTS.SUCCESSION.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-RECEIPT-HASH-SUCCESSION-PRECOMMIT"
+    },
+    {
+      "edge_id":"EDGE.1325",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.ROUTE.RECEIPTS.PORTABLE.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-RECEIPT-HASH-SUCCESSION-PRECOMMIT"
     }
   ]
 }
