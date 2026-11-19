@@ -16,6 +16,11 @@ const snapshot: SourceCatalogue = {
   })),
 };
 
+test.beforeEach(async ({ context }) => {
+  // Exercise source settings independently of the local-only candidate catalogue.
+  await context.route("**/api/tipsters/candidates", (route) => route.fulfill({ status: 503, json: { status: "unavailable" } }));
+});
+
 test("le registre réel conserve les 74 sources et le fournisseur du pilote séparé", async ({ page, request }) => {
   const response = await request.get("/api/tipsters/sources");
   const value = await response.json();
@@ -60,7 +65,8 @@ test("préparation persistante, brouillons conservés et conflit entre deux fen�
   await page.getByRole("button", { name: "Enregistrer la préparation", exact: true }).click();
   await expect(page.getByRole("status").filter({ hasText: "Révision" })).toBeVisible();
   await second.getByRole("button", { name: "Enregistrer la préparation", exact: true }).click();
-  await expect(second.getByRole("alert")).toContainText("Votre brouillon est conservé");
+  await expect(second.getByRole("alert").filter({ hasText: "Votre brouillon est conservé" })).toBeVisible();
+  await expect(second.getByRole("alert").filter({ hasText: "Le registre local des candidats est indisponible" })).toBeVisible();
   await expect(second.getByLabel("Notes de préparation")).toHaveValue("Brouillon de la deuxième fenêtre");
   await second.getByRole("button", { name: "Actualiser le registre", exact: true }).click();
   await expect(second.getByLabel("Notes de préparation")).toHaveValue("Brouillon de la deuxième fenêtre");
@@ -82,7 +88,8 @@ test("préparation persistante, brouillons conservés et conflit entre deux fen�
 test("un journal invalide affiche une erreur de lecture", async ({ page }) => {
   await page.route("**/api/tipsters/sources", (route) => route.fulfill({ json: { status: "invalid", message: "Intégrité du journal invalide" } }));
   await page.goto("/expert/sources-tipsters");
-  await expect(page.getByRole("alert")).toContainText("Intégrité");
+  await expect(page.getByRole("alert").filter({ hasText: "Intégrité du journal invalide" })).toBeVisible();
+  await expect(page.getByRole("alert").filter({ hasText: "Le registre local des candidats est indisponible" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Enregistrer la préparation", exact: true })).toHaveCount(0);
 });
 
