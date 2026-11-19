@@ -10,6 +10,9 @@ const runFile = promisify(execFile);
 export function publicTipsters(): Plugin {
   let root = process.cwd();
   let pending: Promise<string> | undefined;
+  let nativeState: Record<string, unknown> = {state:"checking"};
+  let nativePending: Promise<void> | undefined;
+  let nativeRefreshed = 0;
   const middleware = async (request: IncomingMessage, response: ServerResponse, next: () => void) => {
     if (request.url?.split("?")[0] !== "/api/tipsters/public") return next();
     response.setHeader("Cache-Control", "no-store");
@@ -22,8 +25,21 @@ export function publicTipsters(): Plugin {
       const repository = resolve(root, "..");
       const python = process.env.ROBIN_TIPSTERS_PYTHON ?? resolve(repository, ".venv",process.platform === "win32" ? "Scripts/python.exe" : "bin/python");
       pending ??= runFile(python, ["-X","utf8","-B",resolve(root,"scripts/read-public-tipsters.py"),
-        "--directory",process.env.ROBIN_PUBLIC_TIPSTERS_DIRECTORY ?? resolve(root,".ci/tipsters-unblock-20261119")],
-      {timeout:8000,maxBuffer:12000000,windowsHide:true,encoding:"utf8"}).then(r=>r.stdout).finally(()=>{pending=undefined;});
+        "--directory",process.env.ROBIN_PUBLIC_TIPSTERS_DIRECTORY ?? resolve(root,".ci/tipsters-unblock-20261119"),
+        "--campaign-directory",process.env.ROBIN_FORUM_CAMPAIGN_DIRECTORY ?? resolve(root,".ci/tipsters-forums-pending-20261120")],
+      {timeout:8000,maxBuffer:12000000,windowsHide:true,encoding:"utf8"}).then(r=>{
+        const value=JSON.parse(r.stdout);
+        if(process.platform === "win32" && value.campaign){
+          value.campaign.native=nativeState;
+          if(!nativePending && Date.now()-nativeRefreshed>=15000){
+            nativePending=runFile("pwsh.exe",["-NoProfile","-NonInteractive","-File",resolve(root,"scripts/read-public-task-state.ps1")],{timeout:6000,maxBuffer:20000,windowsHide:true,encoding:"utf8"})
+              .then(native=>{nativeState=JSON.parse(native.stdout);})
+              .catch(()=>{nativeState={state:"unavailable"};})
+              .finally(()=>{nativeRefreshed=Date.now();nativePending=undefined;});
+          }
+        }
+        return JSON.stringify(value);
+      }).finally(()=>{pending=undefined;});
       const result = await pending;
       if (JSON.parse(result).status !== "ok") response.statusCode=503;
       response.end(result);

@@ -1,3 +1,4 @@
+import {TipsterCandidates} from "../../components/expert/tipster-candidates";
 import { PublicTipsters } from "../../components/expert/public-tipsters";
 import { TipstersPilot } from "../../components/expert/tipsters-pilot";
 import { TipsterConnectors } from "../../components/expert/tipster-connectors";
@@ -5,5 +6,5 @@ import { TipstersRecurringControl } from "../../components/expert/tipsters-recur
 import { ExperienceShell } from "../../components/navigation/experience-shell";
 
 export default function TipstersRoute() {
-  return <ExperienceShell active="tipsters"><TipstersPilot><PublicTipsters compact /><TipstersRecurringControl compact /><TipsterConnectors compact /></TipstersPilot></ExperienceShell>;
+  return <ExperienceShell active="tipsters"><TipstersPilot><PublicTipsters compact /><TipsterCandidates compact /><TipstersRecurringControl compact /><TipsterConnectors compact /></TipstersPilot></ExperienceShell>;
 }

@@ -43,3 +43,8 @@ test('forums : recette partielle, arrêt récurrent et zoom200 restent lisibles'
  await page.evaluate(()=>{document.documentElement.style.zoom='2';});
  await expect(page.getByRole('link',{name:'Auteur synthétique',exact:true})).toBeVisible();
 });
+
+test('campagne programmée conserve les faits ponctuels sans prétendre une exécution',async({page})=>{
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,campaign:{state:'scheduled',startsAt:'2026-11-20T07:00:00Z',expiresAt:'2026-11-21T07:00:00Z',slots:12,requests:0,requestsMax:72,successfulSlots:0,native:{state:'Ready'}}}}));
+ await page.goto('/expert/collecte-publique');await expect(page.getByText('Programmée : premier lancement',{exact:false})).toBeVisible();await expect(page.getByText('0 créneau(x) validé(s)',{exact:false})).toBeVisible();await expect(page.getByText('Aucune collecte automatique de ces forums',{exact:false})).toHaveCount(0);
+});

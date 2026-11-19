@@ -1,3 +1,4 @@
+import {TipsterCandidates} from "../../../components/expert/tipster-candidates";
 import { PublicTipsters } from "../../../components/expert/public-tipsters";
 import { TipstersPilot } from "../../../components/expert/tipsters-pilot";
 import { TipsterConnectors } from "../../../components/expert/tipster-connectors";
@@ -6,6 +7,7 @@ import { ExperienceShell } from "../../../components/navigation/experience-shell
 
 export default async function TipsterRoute({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  if (/^catalogue:[a-f0-9]{64}$/.test(id)) return <ExperienceShell active="tipsters"><PageHeader eyebrow="Dossier fidèle" title="Fiche candidate Ligue 1" subtitle="Qualification et provenance de l’inventaire."/><TipsterCandidates tipsterId={id} /></ExperienceShell>;
   if (/^public:[a-f0-9]{64}$/.test(id)) return <ExperienceShell active="tipsters"><PageHeader eyebrow="Dossier fidèle" title="Fiche tipster" subtitle="Choix attribués à un pseudonyme public." /><PublicTipsters tipsterId={id} /></ExperienceShell>;
   if (/^forecaster:[a-f0-9]{64}$/.test(id)) return <ExperienceShell active="tipsters">
     <TipstersPilot endpoint="/api/tipsters/recurring" tipsterId={id} />
