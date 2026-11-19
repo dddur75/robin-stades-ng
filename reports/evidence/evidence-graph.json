@@ -12639,6 +12639,25 @@
         "C0",
         "C2"
       ]
+    },
+    {
+      "claim_id":"ENG.SOURCE_OBSERVATORY.ROUTE.RECEIPTS.PORTABLE.20261119",
+      "claim":"Sixauditreceiptlocatorschangedtorepository-relativepaths;all6contenthashesandallotherreportfieldsunchanged;historical228bbartifactretainedinGit",
+      "scope":"METADATA_PORTABILITY_ONLY_NO_SOURCE_EFFECT",
+      "source":"Historicalartifactlocator d8945c16b5fbf8e73eef83e8a2ab251ace8606f6:reports/source_observatory/TIPSTERS-ROUTE-CORRECTIVE-20261119.json ;C2independenthistoricalhashverification",
+      "grain":"receipt_locator",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/source_observatory/TIPSTERS-ROUTE-CORRECTIVE-20261119.json",
+      "hash":"326c8883ba1e81523dd7aae57ea44387dffa78cd91eb93e91881cf290358b4be",
+      "code_revision":"d8945c16b5fbf8e73eef83e8a2ab251ace8606f6",
+      "execution_id":"ROBIN-ROUTE-RECEIPTS-PORTABILITY-20261119",
+      "scientific_lineage_id":"NO_TEST_SOURCE_RESULT_REWRITE",
+      "dataset_lineage_id":"ffbda3556b2a6e2c54828db707d0c418fdf2f8f2987c9477d9657a62c016275a",
+      "status":"VERIFIED",
+      "verified_by":[
+        "C0",
+        "C2"
+      ]
     }
   ],
   "decision_nodes":[
@@ -13194,6 +13213,10 @@
     {
       "decision_id":"RCV3-20261119-TYPED-ROUTE-CORRECTIVE-PRECOMMIT",
       "ledger_record_hash":"f4c2737816d8d5d367e32cde13962d1ca695a935d90424f6b600c4fa946d7eec"
+    },
+    {
+      "decision_id":"RCV3-20261119-RECEIPT-PORTABILITY-PRECOMMIT",
+      "ledger_record_hash":"88603903f29050267c041446ffd1ee34f4cfb387400928c66d8e30da6ebdc658"
     }
   ],
   "edges":[
@@ -14811,6 +14834,20 @@
       "relation":"SUPPORTS",
       "status":"RECORDED",
       "to_decision_id":"RCV3-20261119-TYPED-ROUTE-CORRECTIVE-PRECOMMIT"
+    },
+    {
+      "edge_id":"EDGE.1322",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.ROUTE.RECEIPTS.PORTABLE.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-RECEIPT-PORTABILITY-PRECOMMIT"
+    },
+    {
+      "edge_id":"EDGE.1323",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.TYPED.ROUTE.CORRECTIVE.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-RECEIPT-PORTABILITY-PRECOMMIT"
     }
   ]
 }
