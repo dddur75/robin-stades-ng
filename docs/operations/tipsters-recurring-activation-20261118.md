@@ -38,3 +38,12 @@ Le fichier `reports/ux/TIPSTERS-SOURCE-AUTHORIZATIONS-20261118.json` donne les *
 ## Livraison technique et limites
 
 Les clés C1 (preuve), C4 (sécurité) et UX6 (interface) sont distinctes de la recette métier. La PR #133 reste brouillon et non déployée tant que les contrôles de livraison ne sont pas terminés. La CI finale est suivie sur le commit exact. Production, paris, promotion, stockage fournisseur brut dans Git et écritures R2 restent fermés.
+
+
+## Relevé du premier lancement — 19 novembre 2026
+
+À 08 h Paris, Windows a déclenché la tâche, mais le lanceur a échoué avant le collecteur : zéro requête, zéro visite et zéro pronostic collecté. Le problème de conversion de date sous culture française est reproduit puis corrigé avec `ConvertFrom-Json -DateKind String`. Les quatre cas de date/culture et les 25 tests de récurrence passent.
+
+Le créneau de 08 h reste manqué, sans rattrapage. Le prochain créneau prévu est 10 h Paris. Le paquet effectif est désormais `cockpit/.ci/tipsters-recurring-launcher-fix-20261119`, plan `fe1a68ba8b058ee95038564a68dc8c7ae7a97282f087a5423a9814ba26d15835`. Il conserve exactement le manifeste, les plafonds, les 84 créneaux et l'approbation originale. Sa dérivation technique lie les anciennes et nouvelles empreintes, avec la clé C4 ; elle ne fabrique pas une nouvelle déclaration propriétaire. Le journal historique est conservé comme préfixe et les compteurs ne sont pas remis à zéro.
+
+La tâche change uniquement l'argument de répertoire; J12 est inchangé. Les autres sources n'ont pas été recontactées pour ce diagnostic. Détails et claim : `reports/ux/TIPSTERS-FIRST-LAUNCH-20261119.json` (`ENG.SOURCE_OBSERVATORY.RECURRING.FIRST_LAUNCH.20261119`).

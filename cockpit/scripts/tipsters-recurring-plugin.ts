@@ -23,7 +23,7 @@ export function tipstersRecurring(): Plugin {
       const python = process.env.ROBIN_TIPSTERS_PYTHON ?? resolve(repository, ".venv",process.platform === "win32" ? "Scripts/python.exe" : "bin/python");
       pending ??= runFile(python, ["-X","utf8","-B",resolve(root,"scripts/read-tipsters-recurring.py"),
         "--directory",process.env.ROBIN_RECURRING_CANARY_DIRECTORY ?? resolve(root,".ci/tipsters-recurrence"),
-        "--campaign-directory",process.env.ROBIN_RECURRING_CAMPAIGN_DIRECTORY ?? resolve(root,".ci/tipsters-recurring-final-20261118")],
+        "--campaign-directory",process.env.ROBIN_RECURRING_CAMPAIGN_DIRECTORY ?? resolve(root,".ci/tipsters-recurring-launcher-fix-20261119")],
       {timeout:8000,maxBuffer:12000000,windowsHide:true,encoding:"utf8"}).then(r=>r.stdout).finally(()=>{pending=undefined;});
       const result = await pending;
       if (JSON.parse(result).status !== "ok") response.statusCode=503;
