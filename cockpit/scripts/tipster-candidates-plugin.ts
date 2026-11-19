@@ -4,7 +4,7 @@ import { promisify } from "node:util";
 import type { Plugin } from "vite";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { permitsLocalPilotRead } from "./tipsters-pilot-plugin";
-import {readNativeState,sourceTaskIsCurrent} from './tipsters-native-state';
+import {readNativeState,gateSourceOperations} from './tipsters-native-state';
 
 const runFile = promisify(execFile);
 
@@ -27,11 +27,7 @@ export function tipsterCandidates(): Plugin {
       {timeout:8000,maxBuffer:12000000,windowsHide:true,encoding:"utf8"}).then(r=>{
         const data=JSON.parse(r.stdout);
         if(data.qualification?.status==='ok'){
-          const native=readNativeState(root).sro;
-          data.qualification.nativeSRO=native;
-          const enabled=Boolean(data.qualification.sourceOperational&&sourceTaskIsCurrent(native));
-          data.qualification.sourceOperational=enabled;
-          if(!enabled){data.enabledCount=0;for(const row of data.candidates)row.collectionEnabled=false;}
+          gateSourceOperations(data,readNativeState(root));
         }
         return JSON.stringify(data);
       }).finally(()=>{pending=undefined;});

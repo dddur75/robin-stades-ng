@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "robin-source-technical-access-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.PUBLIC.TECHNICAL.ACCESS.20261119",
+  "status": "PARTIAL",
+  "scope": "Local personal noncommercial source qualification; no global source activation, deployment, commercial license or ROI certification.",
+  "qualificationGET": 90,
+  "qualificationGETCeiling": 134,
+  "olbgTechnicalPhaseGET": 10,
+  "olbgAllPhasesGET": 18,
+  "separateOLBGE2GETCeiling": 36,
+  "platforms": [
+    {
+      "platform": "OLBG",
+      "label": "Adaptateur personnel opérationnel ; un profil prouvé",
+      "reason": "Les choix se trouvent dans les données publiques intégrées à la page. Le chemin personnel actuel du profil 648433 a été observé et contrôlé : deux choix Ligue 1 strictement avant match. Les autres profils du catalogue ne sont pas certifiés par cette preuve. Le statut actif dépend séparément du canari et de la tâche Windows.",
+      "requiredAccess": "Aucun compte pour le profil 648433 prouvé. Les autres profils exigent une qualification personnelle ; aucune nécessité de compte n’est démontrée. Accord écrit distinct avant usage commercial.",
+      "ownerAction": "Aucune intervention pour la campagne privée bornée du profil 648433. Conserver les choix natifs sans inventer de marché normalisé, d’heure de publication ou de rendement.",
+      "observedAt": "2026-11-19T18:34:52.326191+00:00",
+      "status": "one_personal_profile_proven",
+      "evidenceRefs": ["DATA.SOURCE_OBSERVATORY.OLBG.NATIVE.PICKS.20261119", "bf52449920c226132588333bc65f51c0547a024f28de5384116503a0dffc3c25", "1248b86c3f9e8adc061c3fd489b3ba0576812956ff8ff051b8b3483ce6e4590f"]
+    },
+    {
+      "platform": "NotBetting",
+      "label": "Profil public accessible ; flux de choix non établi",
+      "reason": "Le profil Dexter fournit des statistiques et une zone de choix chargée dynamiquement. Le chemin API découvert dans le JavaScript concerne des statistiques ; il ne prouve pas un endpoint de pronostics. Les robots publics interdisent /api/. Aucun appel à cette API n’a été effectué.",
+      "requiredAccess": "Aucun accès utilisateur indispensable n’est démontré. La route publique des choix reste à établir techniquement ; un flux ou export officiel autorisé est une option si les restrictions de l’éditeur sont confirmées.",
+      "ownerAction": "Aucune intervention, achat ou connexion demandé sur cette preuve. Poursuivre la qualification technique de la route des choix. Ne transmettre aucun mot de passe ou token dans le chat.",
+      "observedAt": "2026-11-19T17:42:37.699296+00:00",
+      "status": "public_pick_route_unverified",
+      "evidenceRefs": ["f2167f1c8e21338caddc8585cd9eb629f5b7253b73580fce202f5790c94b99ba", "87392703743e0dca2090acc79dbfd948996fc3cf0202ff3f7765890033bc09ec"]
+    },
+    {
+      "platform": "Kicktipp",
+      "label": "J11 courante résolue ; choix masqués avant coup d’envoi",
+      "reason": "Le tableau courant du concours pronostics-ligue1 et sa saison4503609 ont été retrouvés. Sa règle indique que les pronostics ne sont visibles qu’après expiration du délai, fixé à zéro minute avant match. Les cellules masquées, scores et points ne sont pas des choix personnels collectés avant match.",
+      "requiredAccess": "Un export prospectif expressément autorisé par l’organisateur du concours, donnant les choix individuels et leurs horodatages avant match. Une connexion de participant ne garantit pas cet accès.",
+      "ownerAction": "Obtenir de l’organisateur un export autorisé avant les coups d’envoi et l’autorisation d’exploitation personnelle. Aucun contournement du masquage ni récupération rétroactive comme preuve avant match.",
+      "observedAt": "2026-11-19T17:45:01.226564+00:00",
+      "status": "pre_kickoff_visibility_blocked",
+      "evidenceRefs": ["039260985b5415dc959069d0dc3a9954e5bb3fcf1cdb0fc9da69f9edb3a93667", "ad28da5e5fee335f28b133455253fbf8c084bdebba5b76ad3a1695cba5b8ca83"]
+    },
+    {
+      "platform": "Stavka.tv",
+      "label": "TLS réparé ; conditions d’automatisation à clarifier",
+      "reason": "Le magasin Mozilla épinglé permet une chaîne et un nom de serveur vérifiés. Les trois GET robots, accueil et CGU ont répondu200. Une clause sur les programmes automatisés a imposé l’arrêt avant les pronostics ; son contexte juridique exige clarification. Aucune collecte de pronostics n’est activée.",
+      "requiredAccess": "Une confirmation écrite de l’éditeur permettant la collecte automatisée envisagée, ou une route officielle explicitement compatible. Aucun besoin de compte n’est établi.",
+      "ownerAction": "Obtenir cette confirmation et la portée autorisée avant activation. La vérification TLS reste obligatoire ; aucun achat n’est nécessairement établi.",
+      "observedAt": "2026-11-19T17:59:36.788324+00:00",
+      "status": "tls_verified_automation_terms_hold",
+      "evidenceRefs": ["e9a019a49201ae4a4e7a4eb9ebdc347fa1421f0a3e87e003a7f8320d73600a83", "3f8661842c35e1114d56c4a9e4d707052e0d077742aeb3bfeae8cc47864a8aa3"]
+    },
+    {
+      "platform": "Telegram",
+      "label": "TLS vérifié ; canaux et droits à qualifier",
+      "reason": "Le dernier probe IPv4 avec le magasin Mozilla épinglé a validé la chaîne, le nom t.me et TLS1.3. Il n’a envoyé aucune requête HTTP. Cela prouve la connectivité actuelle, sans établir les droits de lecture automatique, les canaux ni l’attribution personnelle des choix.",
+      "requiredAccess": "Qualification d’un canal public précis, de ses règles et du mode officiel de collecte. Aucun token, compte ou abonnement manquant n’est démontré par ce contrôle TLS.",
+      "ownerAction": "Aucune action utilisateur indispensable établie. La qualification technique des canaux publics déjà présents dans le registre et de leurs règles reste à réaliser. Ne communiquer aucun code de connexion ou token dans le chat.",
+      "observedAt": "2026-11-19T18:27:25.300833+00:00",
+      "status": "tls_verified_source_not_admitted",
+      "evidenceRefs": ["f34aa8e644a2ab37e423105e6dd6fa6377b4524a10c0165f5335324fe3614fdd"]
+    }
+  ],
+  "tls": {
+    "validation": "CERT_REQUIRED and hostname verification; preinstalled certifi Mozilla bundle checked by SHA256; no machine trust-store mutation, no insecure fallback, no retry after final probe",
+    "mozillaCASha256": "2ef52ad56b4803e264045c915e55c236cbfa045b84b81efefc218a19eb44bd2b",
+    "dedicatedProbesDNS": 4,
+    "dedicatedProbesTLS": 4,
+    "dedicatedProbesHTTP": 0,
+    "causalityLimit": "Original failed IP addresses were not retained. New successful probes establish current verified reachability, not a matched-IP causal comparison."
+  }
+}

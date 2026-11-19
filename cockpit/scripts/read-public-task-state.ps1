@@ -9,4 +9,5 @@ try {
 }
 $result=Read-TaskState 'Robin-Tipsters-Forums-V1-20261120'
 $result.sro=Read-TaskState 'Robin-Tipsters-SRO-V2-20261119'
+$result.olbg=Read-TaskState 'Robin-Tipsters-OLBG-V1-20261119'
 $result|ConvertTo-Json -Depth 4 -Compress

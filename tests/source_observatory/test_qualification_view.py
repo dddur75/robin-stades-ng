@@ -110,6 +110,41 @@ def test_no_future_or_unrelated_proof_and_inactive_without_task(base, assessment
     assert r["enabledCount"] == 0 and r["qualification"]["qualifiedCount"] == 0
 
 
+@pytest.mark.parametrize("sro,olbg", [(True, False), (False, True), (True, True), (False, False)])
+def test_operation_authority_is_independent_per_source(base, assessment, sro, olbg):
+    import json
+
+    directory, _ = assessment
+    base["candidates"][1]["platform"] = "OLBG"
+    base["candidates"][1]["sourceUrl"] = "https://www.olbg.com/tipsters/tips/648433"
+    a = json.loads((directory / "assessment.json").read_bytes())
+    a["platforms"][1]["platform"] = "OLBG"
+    raw = canonical(a)
+    (directory / "assessment.json").write_bytes(raw)
+    p = public()
+    p["picks"].append(
+        dict(
+            p["picks"][0],
+            id="native",
+            sourceId="SRC_014",
+            authorUrl=base["candidates"][1]["sourceUrl"],
+            authorId="olbg:648433",
+            selection="PSG",
+            market="source_native",
+        )
+    )
+    result = apply_qualification(
+        base,
+        directory,
+        expected_sha256=sha256(raw).hexdigest(),
+        public_data=p,
+        operational_by_source={"SRC_039": sro, "SRC_014": olbg},
+    )
+    assert result["qualification"]["qualifiedCount"] == 2
+    assert [r["collectionEnabled"] for r in result["candidates"]] == [sro, olbg]
+    assert result["enabledCount"] == int(sro) + int(olbg)
+
+
 def test_tampered_or_incomplete_assessment_refused(base, assessment):
     directory, digest = assessment
     (directory / "assessment.json").write_text("{}")

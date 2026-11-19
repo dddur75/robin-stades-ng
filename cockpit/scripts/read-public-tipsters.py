@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 from robin.source_observatory.campaign_view import read_public_view
+from robin.source_observatory.olbg_store import read_olbg_companion
 from robin.source_observatory.qualification_view import read_sro_companion
 
 parser = argparse.ArgumentParser()
@@ -15,6 +16,10 @@ try:
     view = read_public_view(args.directory, args.campaign_directory)
     view, _, _ = read_sro_companion(
         view, Path(__file__).resolve().parents[1] / ".ci/tipsters-sro-recurring-20261119-v4"
+    )
+    root = Path(__file__).resolve().parents[1] / ".ci"
+    view, _, _ = read_olbg_companion(
+        view, root / "tipsters-olbg-e1-20261119", root / "tipsters-olbg-recurring-20261119-v2"
     )
     print(json.dumps(view, ensure_ascii=False))
 except (ValueError, OSError, KeyError, TypeError):

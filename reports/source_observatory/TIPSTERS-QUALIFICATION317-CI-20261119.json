@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "robin-qualification317-ci-closure-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.QUALIFICATION317.CI.20261119",
+  "head": "205601c2fe8c4567238327f14c4af22fd44df95b",
+  "run": 44560069538,
+  "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/44560069538",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "id": 135686597440,
+      "name": "Jalon 10 - entrees de preuve gelees",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 135686598218,
+      "name": "End-to-End Live Path Replay",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 135686598229,
+      "name": "Residual Fault Matrix",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 135686598324,
+      "name": "Bounded live canary - Ubuntu",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 135686598326,
+      "name": "Historical Authority Workflows Disabled",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 135686598494,
+      "name": "Chronos PostgreSQL profiles / Chronos static contracts",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 135686598524,
+      "name": "Historical Deep — contrat cache-only",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 135686598532,
+      "name": "Chronos PostgreSQL profiles / Chronos source and activation",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 135686598595,
+      "name": "Chronos PostgreSQL profiles / tests (superuser)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 135686598614,
+      "name": "Exact Workflow Entrypoint",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 135686598757,
+      "name": "Chronos PostgreSQL profiles / tests (non_superuser_createrole)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 135686599595,
+      "name": "Bounded live canary - Windows",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 135688572707,
+      "name": "Chronos PostgreSQL profiles / Chronos provider-free Cockpit",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 135689786854,
+      "name": "Quality and domain tests",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 135689786900,
+      "name": "Robin Experience — preuves visuelles",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 135689787078,
+      "name": "Jalon 10 - trois temoins R3 bornes",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 135706404814,
+      "name": "tests",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "checks": {
+    "generalPython": {
+      "passed": 4991,
+      "skipped": 41,
+      "xfailed": 1
+    },
+    "ubuntuCanary": {
+      "passed": 1043,
+      "skipped": 23
+    },
+    "windowsCanary": {
+      "passed": 1031
+    },
+    "visual": {
+      "passed": 80,
+      "skipped": 2
+    },
+    "cockpitModel": {
+      "passed": 102
+    },
+    "node": {
+      "total": 36,
+      "passed": 32,
+      "skipped": 4
+    }
+  },
+  "scope": "Exact published product commit; later private hydration inspection changes no product or active execution code."
+}

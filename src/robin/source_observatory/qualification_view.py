@@ -20,6 +20,7 @@ def apply_qualification(
     expected_sha256: str,
     public_data: dict[str, Any] | None = None,
     operational: bool = False,
+    operational_by_source: dict[str, bool] | None = None,
 ) -> dict[str, Any]:
     raw = (directory / "assessment.json").read_bytes()
     if len(raw) > 2_000_000 or sha256(raw).hexdigest() != expected_sha256:
@@ -37,17 +38,23 @@ def apply_qualification(
         raise ValueError("qualification provenance/count mismatch")
     data = deepcopy(base)
     picks = (public_data or {}).get("picks", [])
+    source_states = (
+        operational_by_source if operational_by_source is not None else {"SRC_039": operational}
+    )
+    source_ids = {"Stade Rennais Online": "SRC_039", "OLBG": "SRC_014"}
     qualified = 0
     for row in data["candidates"]:
         scope = platforms[row["platform"]]
+        source_id = source_ids.get(row["platform"])
         personal = [
             p
             for p in picks
-            if p.get("sourceId") == "SRC_039"
+            if source_id is not None
+            and p.get("sourceId") == source_id
             and p.get("authorUrl") == row["sourceUrl"]
             and instant(p["observedAt"]) < instant(p["kickoff"])
         ]
-        enabled = bool(personal and operational)
+        enabled = bool(personal and source_states.get(source_id or "", False))
         qualified += bool(personal)
         row["collectionEnabled"] = enabled
         row["qualification"] = dict(
@@ -55,6 +62,7 @@ def apply_qualification(
             **entries[row["id"]],
             label="Choix personnels observés avant match" if personal else scope["label"],
             personallyProven=bool(personal),
+            sourceId=source_id,
             picks=deepcopy(personal),
         )
     data["enabledCount"] = sum(r["collectionEnabled"] for r in data["candidates"])
@@ -67,6 +75,7 @@ def apply_qualification(
         observedAt=assessment.get("observedAt"),
         platforms=list(platforms.values()),
         sourceOperational=operational,
+        operationalBySource=source_states,
     )
     return data
 

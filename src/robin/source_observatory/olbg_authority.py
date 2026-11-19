@@ -1,0 +1,5 @@
+"""Independent Council anchors, outside mutable execution packets."""
+
+APPROVED_PLAN_SHA256 = "06670453bd1dd75969e94892bf5b9aac49612f3eaed89055b98f26fd362aeedc"
+APPROVED_MANIFEST_SHA256 = "1df921321bedb32ffcdb8b5591e6afeb78fe95ab2edec30bef90dd718f5bcc5c"
+APPROVED_E1_SHA256 = "bf52449920c226132588333bc65f51c0547a024f28de5384116503a0dffc3c25"

@@ -2,6 +2,16 @@ import {expect,test} from '@playwright/test';
 const id=`catalogue:${'a'.repeat(64)}`;
 const row={id,label:'Alice',platform:'Forum test',sourceUrl:'https://example.org/profile/alice',evidenceUrl:'https://example.org/post/123',declaredLastDate:'2026-10-30',status:'pending_qualification',collectionEnabled:false,origin:{sheet:'Catalogue',row:5,workbookSha256:'b'.repeat(64)}};
 const data={status:'ok',schemaVersion:'robin-candidate-registry-v1',count:2,platformCount:2,datedCount:1,candidates:[row,{...row,id:`catalogue:${'c'.repeat(64)}`,label:'Bob',platform:'Autre forum',declaredLastDate:null}],receipt:{registrySha256:'d'.repeat(64),claimId:'SYNTHETIC.TEST'}};
+
+test('native personal choices in candidate files retain their source type',async({page})=>{
+ const access={platform:'OLBG',label:'Choix personnels observés avant match',reason:'Profil prouvé',requiredAccess:'Aucun compte',ownerAction:'Usage privé',url:'https://www.olbg.com/',scope:'one_profile'};
+ const choice={id:'native',market:'source_native',fixtureLabel:'Nice – PSG',selection:'PSG',observedAt:'2026-11-19T18:00:00Z',kickoff:'2026-11-21T16:15:00Z',sourceUrl:'https://www.olbg.com/tipsters/tips/648433'};
+ await page.route('**/api/tipsters/candidates',r=>r.fulfill({json:{...data,candidates:[{...row,qualification:{...access,profileVisited:true,documentaryIssues:[],personallyProven:true,picks:[choice]}}]}}));
+ await page.goto(`/expert/tipsters/${encodeURIComponent(id)}`);
+ await expect(page.getByRole('heading',{name:'Nice – PSG · Choix publié (Win) : PSG',exact:true})).toBeVisible();
+ await expect(page.getByText('score prévu PSG',{exact:false})).toHaveCount(0);
+ await expect(page.getByText('évaluation de performance désactivée.',{exact:false})).toBeVisible();
+});
 test('annuaire filtrable vers fiche candidate sans activation',async({page})=>{
  let writes=0;await page.route('**/api/tipsters/candidates',r=>{if(r.request().method()!=='GET')writes++;return r.fulfill({json:data});});
  await page.goto('/expert/catalogue-tipsters');

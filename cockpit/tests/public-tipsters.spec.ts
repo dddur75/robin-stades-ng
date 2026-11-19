@@ -23,6 +23,13 @@ test('les preuves absentes sont affichées comme indisponibles',async({page})=>{
  await expect(page.getByText('0 pronostic(s)',{exact:false})).toHaveCount(0);
 });
 
+test('SRO bare author hashes navigate to their public personal file',async({page})=>{
+ const bare='b'.repeat(64);const p={...data.picks[0],authorId:bare,authorLabel:'SRO synthétique',sourceId:'SRC_039'};
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,picks:[p]}}));await page.goto('/expert/collecte-publique');
+ await page.getByRole('link',{name:'SRO synthétique',exact:true}).click();await expect(page.getByRole('heading',{name:'SRO synthétique',exact:true})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'Nice – PSG · score prévu 1-3',exact:true})).toBeVisible();
+});
+
 for(const width of [360,375,390,430])test(`forums : clavier et largeur ${width}`,async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width,height:900});
@@ -55,4 +62,20 @@ test('SRO affiche son canari et son budget distinct du lot initial',async({page}
  await expect(page.getByRole('heading',{name:'Collecte Stade Rennais Online',exact:true})).toBeVisible();
  await expect(page.getByText('1 créneau(x) validé(s) · 3 GET réservés sur 39 maximum.',{exact:true})).toBeVisible();
  await expect(page.getByText('1 pronostic(s) personnel(s) collecté(s)',{exact:false})).toBeVisible();
+});
+
+test('OLBG preserves native choices and unknown publication without inventing scores',async({page})=>{
+ const native={...data.picks[0],id:'olbg-tip:123',authorId:'olbg:648433',authorLabel:'Alexmur',sourceId:'SRC_014',market:'source_native',selection:'PSG',publishedCivilDate:null,sourceUrl:'https://www.olbg.com/tipsters/tips/648433'};
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,distinctPicks:2,authorCount:2,picks:[...data.picks,native],olbgCampaign:{state:'collecting',successfulSlots:1,requests:3,requestsMax:36,native:{state:'Disabled'}}}}));
+ await page.goto('/expert/collecte-publique');
+ await expect(page.getByRole('heading',{name:'Nice – PSG · Choix publié (Win) : PSG',exact:true})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'Nice – PSG · score prévu 1-3',exact:true})).toBeVisible();
+ await expect(page.getByText('Date civile affichée : non renseignée.',{exact:false})).toBeVisible();
+ await expect(page.getByText('Marché normalisé et durée de jeu non certifiés.',{exact:false})).toBeVisible();
+ await expect(page.getByText('score prévu PSG',{exact:false})).toHaveCount(0);
+ await expect(page.getByText('État Windows : Disabled.',{exact:false})).toBeVisible();
+ await page.getByRole('link',{name:'Alexmur',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'Alexmur',exact:true})).toBeVisible();
+ await expect(page.getByText('Historique de la collecte des forums',{exact:false})).toHaveCount(0);
+ await expect(page.getByRole('heading',{name:'Nice – PSG · Choix publié (Win) : PSG',exact:true})).toBeVisible();
 });
