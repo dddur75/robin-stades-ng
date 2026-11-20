@@ -33,7 +33,7 @@ export function TipstersRecurringControl({ compact = false }: { compact?: boolea
     catch { setNotice("Sélectionnez le texte d’autorisation affiché pour le copier."); }
   }
   return <section className="section-card">
-    <SectionHeading title="Collecte récurrente des pronostics" />
+    <SectionHeading title="Campagne Forecast Record" />
     {error && <p role="alert">{error}</p>}
     {data ? <>
       {data.halted && <p role="alert">Campagne arrêtée par un contrôle de sécurité. Aucune nouvelle requête ne sera exécutée par cette campagne. Consultez le bilan JSON avant toute nouvelle autorisation.</p>}
@@ -43,7 +43,7 @@ export function TipstersRecurringControl({ compact = false }: { compact?: boolea
       <p>Recette du canari : {(data.qualificationVerdict ?? data.technicalVerdict) === "PASS_AND_HOLD" ? "Deux créneaux validés" : (data.qualificationVerdict ?? data.technicalVerdict) === "PENDING" ? "En cours, bilan non clos" : "Partielle"}.</p>
       {data.transportVerdict === "PASS_AND_HOLD" && data.distinctPicks === 0 && <p>Les deux créneaux réseau ont fonctionné. Aucun pronostic personnel admissible n’est encore prouvé.</p>}
       <nav className="pilot-actions"><InlineLink href="/expert/collecte-recurrente">Suivre les créneaux récurrents</InlineLink>
-        <InlineLink href="/expert/collecte-recurrente?view=tipsters">Consulter les pronostics et les fiches</InlineLink></nav>
+        <InlineLink href="/expert/collecte-recurrente?view=tipsters">Fiches de cette campagne Forecast</InlineLink></nav>
       {!compact && <>
         <h3>Activation de la campagne</h3>
         <p>{data.campaign.state === "authorized" ? "Autorisation enregistrée. Les lectures effectives restent attestées par le journal des créneaux." : data.campaign.state === "awaiting_authorization" ? "Campagne prête, en attente de votre autorisation. Aucune tâche récurrente n’est activée par cette préparation." : data.campaign.state === "invalid_package" ? "Paquet invalide ou code modifié : activation refusée, nouvelle préparation nécessaire." : data.campaign.state === "expired" ? "Campagne expirée : aucune nouvelle collecte autorisée." : "Le paquet de campagne est en préparation."}</p>

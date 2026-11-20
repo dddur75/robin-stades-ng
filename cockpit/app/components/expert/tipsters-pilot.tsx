@@ -176,11 +176,11 @@ function CollectionAdmin({ snapshot, recurring = false }: { snapshot: PilotSnaps
   </>;
 }
 
-export function TipstersPilot({ admin = false, tipsterId, children, endpoint = "/api/tipsters" }: { admin?: boolean; tipsterId?: string; children?: ReactNode; endpoint?: "/api/tipsters" | "/api/tipsters/recurring" }) {
+export function TipstersPilot({ admin = false, embedded = false, tipsterId, children, endpoint = "/api/tipsters" }: { admin?: boolean; embedded?: boolean; tipsterId?: string; children?: ReactNode; endpoint?: "/api/tipsters" | "/api/tipsters/recurring" }) {
   const { snapshot, error, loading, refresh } = usePilot(endpoint);
   return <>
-    <PageHeader eyebrow="Dossier fidèle · Ligue 1" title={admin ? "Suivi admin de la collecte" : "Tipsters et pronostics"}
-      subtitle={admin ? "Suivez les sources tipsters et les preuves du pilote local sur A9_Mega." : "Consultez les pronostics attribués aux tipsters et lus avant les matchs."} />
+    {!embedded && <PageHeader eyebrow="Dossier fidèle · Ligue 1" title={admin ? "Suivi admin de la collecte" : "Tipsters et pronostics"}
+      subtitle={admin ? "Suivez les sources tipsters et les preuves du pilote local sur A9_Mega." : "Consultez les pronostics attribués aux tipsters et lus avant les matchs."} />}
     <nav className="pilot-actions" aria-label="Suivi des tipsters">
       <InlineLink href="/expert/sources-tipsters">Paramétrage des sources</InlineLink>
       <InlineLink href={admin ? "/expert/tipsters" : "/expert/admin-collecte"}>{admin ? "Fiches tipsters" : "Suivi admin"}</InlineLink>

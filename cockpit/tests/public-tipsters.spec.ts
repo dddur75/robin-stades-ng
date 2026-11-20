@@ -52,8 +52,9 @@ test('forums : recette partielle, arrêt récurrent et zoom200 restent lisibles'
 });
 
 test('campagne programmée conserve les faits ponctuels sans prétendre une exécution',async({page})=>{
- await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,campaign:{state:'scheduled',startsAt:'2026-11-20T07:00:00Z',expiresAt:'2026-11-21T07:00:00Z',slots:12,requests:0,requestsMax:72,successfulSlots:0,native:{state:'Ready'}}}}));
- await page.goto('/expert/collecte-publique');await expect(page.getByText('Programmée : premier lancement',{exact:false})).toBeVisible();await expect(page.getByText('0 créneau(x) validé(s)',{exact:false})).toBeVisible();await expect(page.getByText('Aucune collecte automatique de ces forums',{exact:false})).toHaveCount(0);
+ const now=Date.now();
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,campaign:{state:'scheduled',startsAt:new Date(now+3600000).toISOString(),expiresAt:new Date(now+86400000).toISOString(),slots:12,requests:0,requestsMax:72,successfulSlots:0,native:{state:'Ready',enabled:true,verifiedAt:new Date(now).toISOString(),nextRunTime:new Date(now+3600000).toISOString()}}}}));
+ await page.goto('/expert/collecte-publique');await expect(page.getByText('Programmation confirmée par Windows.',{exact:true})).toBeVisible();await expect(page.getByText('0 créneau(x) validé(s)',{exact:false})).toBeVisible();await expect(page.getByText('Aucune collecte automatique de ces forums',{exact:false})).toHaveCount(0);
 });
 
 test('SRO affiche son canari et son budget distinct du lot initial',async({page})=>{

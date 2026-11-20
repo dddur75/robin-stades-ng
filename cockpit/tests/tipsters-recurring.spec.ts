@@ -1,5 +1,9 @@
 import {expect,test} from "@playwright/test";
 
+test.beforeEach(async({page})=>{
+ await page.route('**/api/tipsters/public',r=>r.fulfill({status:503,json:{status:'unavailable'}}));
+});
+
 const author=`forecaster:${"a".repeat(64)}`;
 const data={status:"ok",schemaVersion:"robin-tipsters-pilot-v1",generatedAt:"2026-11-18T13:00:00Z",
  phase:"closed",source:"Forecast Record",missionId:"synthetic-recurring",startsAt:"2026-11-18T12:00:00Z",expiresAt:"2026-11-18T13:00:00Z",
@@ -64,4 +68,60 @@ test("arrêt de sécurité reste visible même si l’autorisation existe",async
  await expect(page.getByRole("alert").filter({hasText:"Campagne arrêtée"})).toBeVisible();
  await expect(page.getByText("Aucune nouvelle requête ne sera exécutée",{exact:false})).toBeVisible();
  await expect(page.getByRole("button",{name:"Copier l’autorisation précise"})).toHaveCount(0);
+});
+
+const clock=new Date('2026-11-20T01:30:00Z');
+const publicCampaign={state:'collecting',successfulSlots:1,requests:3,requestsMax:36,expiresAt:'2026-11-21T07:00:00Z',
+ native:{state:'Ready',enabled:true,verifiedAt:clock.toISOString(),nextRunTime:'2026-11-20T07:00:00Z'}};
+const publicSnapshot={status:'ok',schemaVersion:'robin-public-tipsters-v1',distinctPicks:2,authorCount:1,
+ requestCount:22,generatedAt:clock.toISOString(),claimId:'SYNTHETIC.TEST',picks:[],
+ campaign:{...publicCampaign,state:'collecting',successfulSlots:0,requests:1,requestsMax:72},
+ sroCampaign:{...publicCampaign,requests:6,requestsMax:39},
+ olbgCampaign:{...publicCampaign,native:{...publicCampaign.native,state:'Disabled',enabled:false}}};
+
+test('la page récurrente garde les campagnes publiques visibles si Forecast échoue',async({page})=>{
+ await page.clock.install({time:clock});
+ let writes=0;page.on('request',r=>{if(r.url().includes('/api/tipsters/')&&r.method()!=='GET')writes++;});
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:publicSnapshot}));
+ await page.route('**/api/tipsters/recurring',r=>r.fulfill({status:503,json:{status:'unavailable',message:'Forecast indisponible'}}));
+ await page.goto('/expert/collecte-recurrente');
+ await expect(page.getByRole('heading',{level:1,name:'Collecte récurrente'})).toBeVisible();
+ await expect(page.getByRole('heading',{level:1})).toHaveCount(1);
+ await expect(page.getByText('2 pronostic(s) personnel(s) collecté(s)',{exact:false})).toBeVisible();
+ const forums=page.locator('.section-card').filter({has:page.getByRole('heading',{name:'Campagne des deux forums',exact:true})}).last();
+ await expect(forums.getByText('0 créneau(x) validé(s) · 1 GET réservés sur 72 maximum.',{exact:true})).toBeVisible();
+ const sro=page.locator('.section-card').filter({has:page.getByRole('heading',{name:'Collecte Stade Rennais Online',exact:true})}).last();
+ await expect(sro.getByText('Programmation confirmée par Windows.',{exact:true})).toBeVisible();
+ await expect(sro.getByText('Prochain créneau Windows :',{exact:false})).toBeVisible();
+ const olbg=page.locator('.section-card').filter({has:page.getByRole('heading',{name:'Collecte OLBG · profil 648433',exact:true})}).last();
+ await expect(olbg.getByText('Tâche Windows désactivée.',{exact:true})).toBeVisible();
+ await expect(olbg.getByText('Programmation confirmée par Windows.',{exact:true})).toHaveCount(0);
+ await page.getByRole('link',{name:'Voir les fiches et les pronostics collectés',exact:true}).focus();
+ expect(writes).toBe(0);
+});
+
+test('la confirmation Windows expire localement malgré une réponse ancienne répétée',async({page})=>{
+ await page.clock.install({time:clock});
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:publicSnapshot}));
+ await page.route('**/api/tipsters/recurring',r=>r.fulfill({json:data}));
+ await page.goto('/expert/collecte-recurrente');
+ await expect(page.getByText('Programmation confirmée par Windows.',{exact:true})).toHaveCount(2);
+ await page.clock.fastForward(31_000);
+ await expect(page.getByText('Programmation confirmée par Windows.',{exact:true})).toHaveCount(0);
+ await expect(page.getByText('Prochain créneau Windows :',{exact:false})).toHaveCount(0);
+ await expect(page.getByText('Confirmation Windows à actualiser.',{exact:true})).toHaveCount(3);
+});
+
+test('sans prochain créneau ou compteurs prouvés la page ne promet ni lecture ni faux zéro',async({page})=>{
+ await page.clock.install({time:clock});
+ const snapshot={...publicSnapshot,campaign:{...publicCampaign,native:{...publicCampaign.native,nextRunTime:undefined}},
+  sroCampaign:{state:'invalid_package'},olbgCampaign:{...publicCampaign,native:{...publicCampaign.native,verifiedAt:'date illisible'}}};
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:snapshot}));
+ await page.route('**/api/tipsters/recurring',r=>r.fulfill({json:data}));
+ await page.goto('/expert/collecte-recurrente');
+ await expect(page.getByText('Tâche Windows prête ; aucun prochain créneau confirmé.',{exact:true})).toBeVisible();
+ await expect(page.getByText('Programmation confirmée par Windows.',{exact:true})).toHaveCount(0);
+ await expect(page.getByText('Compteurs indisponibles : preuves de campagne incomplètes.',{exact:true})).toBeVisible();
+ await expect(page.getByText('0 créneau(x) validé(s) · 0 GET réservés',{exact:false})).toHaveCount(0);
+ await expect(page.getByText('Confirmation Windows à actualiser.',{exact:true})).toBeVisible();
 });

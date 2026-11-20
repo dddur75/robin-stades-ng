@@ -12689,6 +12689,61 @@
       "artifact_hashes":{
         "reports/source_observatory/TIPSTERS-ROUTE-CORRECTIVE-20261119.json":"326c8883ba1e81523dd7aae57ea44387dffa78cd91eb93e91881cf290358b4be"
       }
+    },
+    {
+      "claim_id":"ENG.SOURCE_OBSERVATORY.TECHNICAL.CI.CLOSURE.20261119",
+      "claim":"Exact343d89CIrun240completedSUCCESS17of17;freshlocal60prematchchoices13pseudonyms5qualifiedandenabledrecords;sourcebudgetsunchanged,overallPARTIAL",
+      "scope":"LOCAL_CLOSURE_NO_SCALE",
+      "source":"FreshC0GitHubAPIandindependentC1terminaljobs/logs;freshA9readonlyCLI/nativequery",
+      "grain":"exact_head_CI_and_local_readback",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/source_observatory/TIPSTERS-TECHNICAL-CI-CLOSURE-20261119.json",
+      "hash":"e1673bec26e46f55562c359f6805cdcb4c130613ed6087c1a773177647f64e9e",
+      "code_revision":"343d89fd9fe702cc534dca80d352be00930e1c7e",
+      "execution_id":"CI-44607438965",
+      "scientific_lineage_id":"NO_GLOBAL_SOURCE_OR_ROI_ACCEPTANCE",
+      "dataset_lineage_id":"ffbda3556b2a6e2c54828db707d0c418fdf2f8f2987c9477d9657a62c016275a",
+      "status":"VERIFIED",
+      "verified_by":[
+        "C0",
+        "C1"
+      ]
+    },
+    {
+      "claim_id":"ENG.SOURCE_OBSERVATORY.RECURRING.VIEW.20261120",
+      "claim":"Three public native campaigns shown independently from Forecast; local 60 distinct prematch choices and 13 pseudonyms reused with unchanged journals; 08:00 Paris execution still unproven",
+      "scope":"LOCAL_READ_ONLY_VIEW_NO_SCALE",
+      "source":"C0 targeted tests and A9 browser readback; independent C1 data and C2 code review",
+      "grain":"local_campaign_snapshot_and_presentation",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/source_observatory/TIPSTERS-RECURRING-VIEW-20261120.json",
+      "hash":"3ef546a11467c53b8f8e5a08b5f9fb70a15a33548fed3cd39f2fface95d17139",
+      "code_revision":"precommit-projection:d1fc75705563674f6678783f81245649656101ac91dc6a189e2c69da9e555054",
+      "artifact_hashes":{
+        "cockpit/app/components/expert/public-campaign-status.tsx":"95e0767bb6cfd29ee2c1d4fcccd2e9e29ff3dca86e87d409f8570128db7a3071",
+        "cockpit/app/components/expert/public-tipsters.tsx":"20daf572c1bc52289055956ea693644bf7c501538a190a121d907a6e849e7b81",
+        "cockpit/app/components/expert/tipsters-pilot.tsx":"95dd5b1bcc1b4249f2cb9026245bde75e70b587f7f92ab8b4ccb8b312aff87c9",
+        "cockpit/app/components/expert/tipsters-recurring-control.tsx":"fde889db7e085afe260ce7247abba6c120fc766cd15977ae2eab237da9f5dd44",
+        "cockpit/app/expert/collecte-recurrente/page.tsx":"3ea61845f531d6f427a39700706f385be7624df3be20e197def46e1ebfd32387",
+        "cockpit/app/lib/tipsters-campaign.ts":"56cdc032b5c516213255c7bb185b9b32308f6e06d8e36ac28b4cbb939bcfbf53",
+        "cockpit/tests/public-tipsters.spec.ts":"25df7a76a3673241f3c0ad89d8adf996ee68a71e5465606a7e5f5a292336a250",
+        "cockpit/tests/tipsters-campaign.test.ts":"4143415bb7997d42f0a3d366d00aded45d318473363b3c9836c4771a9b32c696",
+        "cockpit/tests/tipsters-recurring.spec.ts":"07b88afe8b1db7ffc1fbb5ecdada71eee2e40d4fcada6c1b488f5893beacaf96",
+        "docs/superpowers/plans/2026-11-20-recurring-view.md":"0528ded49f3f6bf5bd69ec2646e30b1a69cbc2ed02843d45f61e206cc7023130",
+        "reports/source_observatory/TIPSTERS-RECURRING-VIEW-20261120.json":"3ef546a11467c53b8f8e5a08b5f9fb70a15a33548fed3cd39f2fface95d17139"
+      },
+      "artifact_hash_algorithm":"SHA-256",
+      "artifact_hash_normalization":"LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count":11,
+      "engineering_projection_sha256":"d1fc75705563674f6678783f81245649656101ac91dc6a189e2c69da9e555054",
+      "execution_id":"A9-RECURRING-VIEW-20261120-RECEIPT-V2",
+      "scientific_lineage_id":"NO_NEW_SCIENTIFIC_OR_GLOBAL_ACCEPTANCE",
+      "dataset_lineage_id":"REUSE_PUBLIC_SRO_OLBG_PREMATCH_CLAIMS",
+      "status":"VERIFIED",
+      "verified_by":[
+        "C0",
+        "C2"
+      ]
     }
   ],
   "decision_nodes":[
@@ -13252,6 +13307,18 @@
     {
       "decision_id":"RCV3-20261119-RECEIPT-HASH-SUCCESSION-PRECOMMIT",
       "ledger_record_hash":"9ab8a39217320639dbf4bb46a053398b98369d10942ec4ecdefa49f9e8f46191"
+    },
+    {
+      "decision_id":"RCV3-20261119-TIPSTERS-TECHNICAL-CI-CLOSURE",
+      "ledger_record_hash":"ad420ecc22a47b1431d32383806e3b5ef664701f37b4b5606acc80ad4fbb00b2"
+    },
+    {
+      "decision_id":"RCV3-20261120-RECURRING-VIEW-PRECOMMIT",
+      "ledger_record_hash":"e959d502fb610ecb93c7f24eb030d0c0c9fa7e0d7e4abb482fffa137db1a93a0"
+    },
+    {
+      "decision_id":"RCV3-20261120-RECURRING-VIEW-FINAL-KEYS",
+      "ledger_record_hash":"9eeacbf3159e6818856a70907ebc733101e7a17484c7ba300e3aa598b2c53279"
     }
   ],
   "edges":[
@@ -14897,6 +14964,97 @@
       "relation":"SUPPORTS",
       "status":"RECORDED",
       "to_decision_id":"RCV3-20261119-RECEIPT-HASH-SUCCESSION-PRECOMMIT"
+    },
+    {
+      "edge_id":"EDGE.1326",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.TECHNICAL.CI.CLOSURE.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-TIPSTERS-TECHNICAL-CI-CLOSURE"
+    },
+    {
+      "edge_id":"EDGE.1327",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.OLBG.RECURRENT.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-TIPSTERS-TECHNICAL-CI-CLOSURE"
+    },
+    {
+      "edge_id":"EDGE.1328",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.ROUTE.RECEIPTS.SUCCESSION.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261119-TIPSTERS-TECHNICAL-CI-CLOSURE"
+    },
+    {
+      "edge_id":"EDGE.1329",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.RECURRING.VIEW.20261120",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261120-RECURRING-VIEW-PRECOMMIT"
+    },
+    {
+      "edge_id":"EDGE.1330",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.TECHNICAL.CI.CLOSURE.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261120-RECURRING-VIEW-PRECOMMIT"
+    },
+    {
+      "edge_id":"EDGE.1331",
+      "from_claim_id":"DATA.SOURCE_OBSERVATORY.PUBLIC_PICKS.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261120-RECURRING-VIEW-PRECOMMIT"
+    },
+    {
+      "edge_id":"EDGE.1332",
+      "from_claim_id":"DATA.SOURCE_OBSERVATORY.SRO.PICKS.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261120-RECURRING-VIEW-PRECOMMIT"
+    },
+    {
+      "edge_id":"EDGE.1333",
+      "from_claim_id":"DATA.SOURCE_OBSERVATORY.OLBG.NATIVE.PICKS.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261120-RECURRING-VIEW-PRECOMMIT"
+    },
+    {
+      "edge_id":"EDGE.1334",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.RECURRING.VIEW.20261120",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261120-RECURRING-VIEW-FINAL-KEYS"
+    },
+    {
+      "edge_id":"EDGE.1335",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.TECHNICAL.CI.CLOSURE.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261120-RECURRING-VIEW-FINAL-KEYS"
+    },
+    {
+      "edge_id":"EDGE.1336",
+      "from_claim_id":"DATA.SOURCE_OBSERVATORY.PUBLIC_PICKS.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261120-RECURRING-VIEW-FINAL-KEYS"
+    },
+    {
+      "edge_id":"EDGE.1337",
+      "from_claim_id":"DATA.SOURCE_OBSERVATORY.SRO.PICKS.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261120-RECURRING-VIEW-FINAL-KEYS"
+    },
+    {
+      "edge_id":"EDGE.1338",
+      "from_claim_id":"DATA.SOURCE_OBSERVATORY.OLBG.NATIVE.PICKS.20261119",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261120-RECURRING-VIEW-FINAL-KEYS"
     }
   ]
 }
