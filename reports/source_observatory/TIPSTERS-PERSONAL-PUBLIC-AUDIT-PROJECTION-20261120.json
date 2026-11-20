@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "robin-private-to-public-audit-projection-v1",
+  "claimId": "GOV.SOURCE_OBSERVATORY.PERSONAL.AUDIT.PROJECTION.20261120",
+  "generatedAt": "2026-11-20T17:01:31.290967+00:00",
+  "publicNamespace": "ROBIN_PERSONAL_PUBLICATION_AUDIT",
+  "sourceNamespace": "A9_ROBIN_PERSONAL_RUNTIME",
+  "sourceWorktreeAlias": "robin-dossier-fidele",
+  "commonAncestorCommit": "8e8b1e38e47db7c46e70505cf74fbdea21452ef4",
+  "commonAncestorLedgerRecords": 478,
+  "commonAncestorLedgerSha256": "e278002c81fa07c30730e94ed55c65da97ceebd68290576b9e6566f4a9e49443",
+  "prefixComparison": "LF_NORMALIZED_BYTES_AND_EXACT_RECORD_JSON",
+  "sourcePhysicalCRLFLines": 408,
+  "completePrivateSourceRecords": 486,
+  "completePrivateSourceLedgerSha256": "806b3c26a53b12444b04d4fc001602756f1d3e744620cc23a2a308662f2a61fd",
+  "completePrivateSourceGraphSha256": "3f84dde2b655ec103bcd89422be5c49f0fe0b55a3626a4e89fae69c029d555d5",
+  "privateTerminalRecordHash": "14b108af955fcfb62b483f272091ba0ee476e0bd21089314e2583cfd5c1f0c80",
+  "privateAuditLocators": {
+    "ledger": "cockpit/.ci/tipsters-personal-20261120/audit-source/source-ledger.jsonl",
+    "graph": "cockpit/.ci/tipsters-personal-20261120/audit-source/source-evidence-graph.json",
+    "namespaceRequired": "A9_ROBIN_PERSONAL_RUNTIME"
+  },
+  "privateSuffixInclusive": [
+    479,
+    486
+  ],
+  "privateRecordSummary": [
+    {
+      "line": 479,
+      "decisionId": "RCV3-20261120-WORKBOOK-EXACT-HEAD-CI-CLOSED",
+      "recordHash": "dee35affa3cc29128d6e2244a09fad1409516e66d33b64b61f0a810c4ce9f509",
+      "recordType": "DECISION"
+    },
+    {
+      "line": 480,
+      "decisionId": "RCV3-20261120-PERSONAL-RIGHTS-DOCUMENTS-AUTHORIZED",
+      "recordHash": "5b856be1de2c0361b14e9c7dbaf561b8b0f165215af16a069e884a32dbf556d8",
+      "recordType": "DECISION"
+    },
+    {
+      "line": 481,
+      "decisionId": "RCV3-20261120-PERSONAL-PL-DOCUMENTS-AUTHORIZED",
+      "recordHash": "eba0433556b7e2b2536e76fbfcd16eba76f3e50f88f17c4fa5177b0c3e002f4e",
+      "recordType": "DECISION"
+    },
+    {
+      "line": 482,
+      "decisionId": "RCV3-20261120-PERSONAL-L2-DOCUMENTS-AUTHORIZED",
+      "recordHash": "11efcbd4f0ead05ecad6285d1a77498e46398686420ac107931913e84cfc99dd",
+      "recordType": "DECISION"
+    },
+    {
+      "line": 483,
+      "decisionId": "RCV3-20261120-PERSONAL-KICKTIPP-DOCUMENTS-AUTHORIZED",
+      "recordHash": "6cfe0584cbbd89a565767b12d6998890a31f342f01645c73637074ca8560f454",
+      "recordType": "DECISION"
+    },
+    {
+      "line": 484,
+      "decisionId": "RCV3-20261120-PERSONAL-DOCUMENTS-CLOSED",
+      "recordHash": "991622948d010ada25797ebd686b405c7b01bf73da973c7d0ed1c6c8b2211345",
+      "recordType": "DECISION"
+    },
+    {
+      "line": 485,
+      "decisionId": "RCV3-20261120-PERSONAL-PUBLIC-PROFILES-V2-AUTHORIZED",
+      "recordHash": "ed5f82df57f5fd548f12d5a5f223e24443b68e351f621703d088184ab4e44f46",
+      "recordType": "DECISION"
+    },
+    {
+      "line": 486,
+      "decisionId": "RCV3-20261120-PERSONAL-RUNTIME-RECETTE-ACCEPTED",
+      "recordHash": "14b108af955fcfb62b483f272091ba0ee476e0bd21089314e2583cfd5c1f0c80",
+      "recordType": "DECISION"
+    }
+  ],
+  "publiclyRetainedPortableRecordIds": [
+    "RCV3-20261120-WORKBOOK-EXACT-HEAD-CI-CLOSED"
+  ],
+  "summarizedOnlyNotReissuedRecordIds": [
+    "RCV3-20261120-PERSONAL-RIGHTS-DOCUMENTS-AUTHORIZED",
+    "RCV3-20261120-PERSONAL-PL-DOCUMENTS-AUTHORIZED",
+    "RCV3-20261120-PERSONAL-L2-DOCUMENTS-AUTHORIZED",
+    "RCV3-20261120-PERSONAL-KICKTIPP-DOCUMENTS-AUTHORIZED",
+    "RCV3-20261120-PERSONAL-DOCUMENTS-CLOSED",
+    "RCV3-20261120-PERSONAL-PUBLIC-PROFILES-V2-AUTHORIZED",
+    "RCV3-20261120-PERSONAL-RUNTIME-RECETTE-ACCEPTED"
+  ],
+  "publicReceiptDecisionId": "RCV3-20261120-PERSONAL-PUBLIC-AUDIT-PROJECTED",
+  "sourceAuthorityInherited": false,
+  "operationalRecordsRewritten": false,
+  "executedSourceLedgerUnchanged": true,
+  "newSourceRequestsAuthorized": 0,
+  "newTaskAuthority": false,
+  "interpretation": "This is a publication receipt in a DISTINCT audit namespace. It attests privately retained executed records and reviewed facts; it is NOT a mission manifest, grant, reissuance, renewal or replacement of the private ledger. The public checkout contains no private .ci authority or source data. Runtime and Windows tasks continue to use only the preserved source worktree.",
+  "localDurability": "Complete raw private ledger and graph retained in two verified local copies; detailed local identifiers are not published.",
+  "limits": [
+    "The source contains five valid executed records with machine-local locators. They are preserved verbatim in the private chain, not sanitized or exempted by a path guard.",
+    "Git line ending normalization is explicit; parsed ancestor records and canonical record hashes are unchanged.",
+    "This receipt cannot be used as an execution authorization.",
+    "No source access, budget, recurrence, production deployment or merge is granted."
+  ]
+}

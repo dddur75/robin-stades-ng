@@ -6,6 +6,22 @@ const data={status:'ok',schemaVersion:'robin-public-tipsters-v1',distinctPicks:1
  picks:[{id:'p1',authorId:id,authorLabel:'Auteur synthétique',sourceId:'SRC_058',fixtureLabel:'Nice – PSG',market:'correct_score',selection:'1-3',
  kickoff:'2026-11-21T16:15:00Z',observedAt:'2026-11-19T09:34:00Z',publishedCivilDate:'2026-11-18',publishedAt:null,
  sourceUrl:'https://legruppetto.fr/forum/viewtopic.php?t=24850&p=123#p123'}]};
+
+test('observations du catalogue et qualification complémentaire ont deux dates distinctes',async({page})=>{
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,generatedAt:'2026-11-20T16:22:00Z',sourceObservedThrough:'2026-11-20T15:00:00Z',personalCollection:{state:'historical_observations_qualified',qualifiedAt:'2026-11-20T16:22:00Z'}}}));
+ await page.goto('/expert/collecte-publique');
+ const dates=page.getByText('Dernière observation du catalogue :',{exact:false});
+ await expect(dates).toContainText('16 h 00');await expect(dates).toContainText('17 h 22');
+ await page.getByRole('link',{name:'Auteur synthétique',exact:true}).click();
+ await expect(page.getByText('Dernière observation du catalogue :',{exact:false})).toBeVisible();
+});
+
+test('complément personnel indisponible garde les faits antérieurs avec un avertissement',async({page})=>{
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,personalCollection:{state:'unavailable'}}}));
+ await page.goto('/expert/collecte-publique');
+ await expect(page.getByRole('alert').filter({hasText:'preuves personnelles complémentaires'})).toBeVisible();
+ await expect(page.getByText('1 pronostic(s) personnel(s) collecté(s)',{exact:false})).toBeVisible();
+});
 test('les faits publics conduisent à la fiche et à la source sans collecte navigateur',async({page})=>{
  let writes=0;await page.route('**/api/tipsters/public',r=>{if(r.request().method()!=='GET')writes++;return r.fulfill({json:data});});
  await page.goto('/expert/collecte-publique');

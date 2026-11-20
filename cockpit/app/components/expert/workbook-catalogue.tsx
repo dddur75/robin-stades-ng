@@ -5,7 +5,7 @@ import {formatDateTime} from '../../i18n';
 
 type Access={label:string;reason:string;requiredAccess:string;ownerAction:string};
 type Row={recordId:string;label:string;platform:string;kind:string;sheet:string;row:number;sourceUrl:string|null;collectionEnabled:boolean;qualifiedRecordId?:string;qualification?:Access&{personallyProven:boolean};platformAssessment?:Access;historicalLevel?:string|null;historicalL1?:string|null;fields?:Record<string,string>};
-type Data={status:string;records:Row[];total:number;addressCount:number;profileRows:number;referenceRows:number;page:number;limit:number;sheets:string[];platforms:string[];headers:Record<string,string>;receipt:{claimId:string;workbookSha256:string};qualifiedRegistryState?:string;readAt?:string};
+type Data={status:string;records:Row[];total:number;addressCount:number;profileRows:number;referenceRows:number;page:number;limit:number;sheets:string[];platforms:string[];headers:Record<string,string>;receipt:{claimId:string;workbookSha256:string};qualifiedRegistryState?:string;readAt?:string;personalAccessState?:string};
 export function WorkbookCatalogue(){
  const [q,setQ]=useState(''),[sheet,setSheet]=useState(''),[platform,setPlatform]=useState(''),[page,setPage]=useState(0),[id,setId]=useState('');
  const [revision,setRevision]=useState(0);
@@ -18,12 +18,13 @@ export function WorkbookCatalogue(){
   return()=>{clearTimeout(timer);c.abort();};},[q,sheet,platform,page,id,requestKey]);
  const change=()=>{setPage(0);setId('');};
  return <section className="section-card">
-  <p><Link className="inline-link" href="/expert/catalogue-tipsters">Fiches Ligue 1 et preuves personnelles déjà qualifiées</Link></p>
+  <p><Link className="inline-link" href="/expert/catalogue-tipsters">Fiches et preuves Ligue 1</Link></p>
   {error?<p role="alert">Le catalogue complet est indisponible. Les fiches Ligue 1 restent accessibles par le lien ci-dessus.</p>:data&&<>
    <p><strong>{data.addressCount.toLocaleString('fr-FR')} adresses distinctes</strong> dans Catalogue et Profils FR. {data.referenceRows.toLocaleString('fr-FR')} lignes de référence dans {data.sheets.length} onglets.</p>
-   <p>Une référence peut désigner un auteur, un concours, un fil, une plateforme ou un dépôt. L’import documentaire ne prouve pas un pronostic ni une autorisation de collecte.</p>
+   <p>Usage personnel local confirmé. Une référence peut désigner un auteur, un concours, un fil, une plateforme ou un dépôt. La lecture effective, le choix personnel et sa chronologie restent à établir pour chaque fiche.</p>
    <p>États de collecte relevés {data.readAt?`le ${formatDateTime(data.readAt,true)}`:'à une date non disponible'}. <button className="inline-link" onClick={()=>setRevision(n=>n+1)}>Actualiser les états</button></p>
    {data.qualifiedRegistryState==='unavailable'&&<p role="alert">Les états actuels du registre qualifié sont indisponibles ; aucune activation n’est déduite de l’inventaire.</p>}
+   {data.personalAccessState==='unavailable'&&<p role="alert">L’actualisation personnelle est indisponible. Les évaluations précédentes restent affichées avec leur provenance.</p>}
   </>}
   <div className="filter-panel pilot-filters">
    <label>Rechercher dans le classeur<input type="search" maxLength={120} value={q} onChange={e=>{setQ(e.target.value);change();}}/></label>

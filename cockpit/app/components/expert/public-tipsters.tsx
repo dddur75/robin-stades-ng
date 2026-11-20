@@ -9,8 +9,9 @@ import { PublicCampaignCounters, PublicCampaignStatus } from './public-campaign-
 type Pick = { id:string; authorId:string; authorLabel:string; sourceId:string; fixtureLabel:string;
  selection:string; market?:string; kickoff:string; observedAt:string; publishedCivilDate:string|null; sourceUrl:string };
 type State = { status:string; distinctPicks:number; authorCount:number; requestCount:number;
- generatedAt:string; claimId:string; claimIds?:string[]; recurring?:boolean; halted?:boolean; picks:Pick[];
- campaign?:PublicCampaign; sroCampaign?:PublicCampaign; olbgCampaign?:PublicCampaign; expandedOlbgCampaign?:PublicCampaign };
+ generatedAt:string; sourceObservedThrough?:string; claimId:string; claimIds?:string[]; recurring?:boolean; halted?:boolean; picks:Pick[];
+ campaign?:PublicCampaign; sroCampaign?:PublicCampaign; olbgCampaign?:PublicCampaign; expandedOlbgCampaign?:PublicCampaign;
+ personalCollection?:{state:string;claimId?:string;qualifiedAt?:string;nativeChoices?:number} };
 export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean; tipsterId?:string }) {
  const [data,setData]=useState<State|null>(null); const [error,setError]=useState(false);
  useEffect(()=>{const controller=new AbortController();let alive=true;let pending=false;
@@ -29,6 +30,9 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
    <p><strong>{(tipsterId ? data.picks.filter(p=>p.authorId===tipsterId).length : data.distinctPicks)} pronostic(s) personnel(s) collecté(s)</strong> · {tipsterId ? (selected ? 1 : 0) : data.authorCount} pseudonyme(s).</p>
    <p>Choix attribués à leur source personnelle et observés avant match. Le type de choix est conservé tel que publié. Les pseudonymes ne certifient pas l’identité civile.</p>
    <p>Dossier fidèle en recette partielle.</p>
+   {data.personalCollection?.state==='historical_observations_qualified'&&<p>Usage personnel local confirmé. Des calendriers officiels supplémentaires ont complété les preuves de choix déjà observés ; leurs dates de lecture d’origine sont conservées.</p>}
+   {data.personalCollection?.state==='historical_observations_qualified'&&data.personalCollection.qualifiedAt&&<p>Dernière observation du catalogue : {formatDateTime(data.sourceObservedThrough??data.generatedAt,true)}. Qualification complémentaire du catalogue : {formatDateTime(data.personalCollection.qualifiedAt,true)}.</p>}
+   {data.personalCollection?.state==='unavailable'&&<p role="alert">Les preuves personnelles complémentaires sont indisponibles. Les faits antérieurs restent conservés avec leur provenance.</p>}
    <p>Horaires des lectures et des coups d’envoi : heure de Paris.</p>
    {!tipsterId&&<p>{data.recurring ? "Historique de la collecte des forums" : "Lot de collecte ponctuelle"} · {data.requestCount} GET publics HTTP(S) pour ce lot initial. {!data.recurring && !data.campaign && "Aucune collecte automatique de ces forums n’est activée."}</p>}
    {!tipsterId && data.campaign && <div className="section-card">

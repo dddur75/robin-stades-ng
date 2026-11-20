@@ -1,0 +1,182 @@
+{
+  "schemaVersion": "robin-workbook-delivery-ci-closure-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.WORKBOOK.DELIVERY.CLOSURE.20261120",
+  "collectionClaimId": "DATA.SOURCE_OBSERVATORY.WORKBOOK.POSTPUSH.COLLECTION.20261120",
+  "generatedAt": "2026-11-20T11:36:30.009609+00:00",
+  "status": "EXACT_HEAD_CI_ACCEPTED_DOCUMENT_INTEGRATION_COMPLETE_GLOBAL_COLLECTION_PARTIAL",
+  "head": "8e8b1e38e47db7c46e70505cf74fbdea21452ef4",
+  "pr": 133,
+  "draft": true,
+  "merged": false,
+  "deployed": false,
+  "ci": {
+    "runId": 44724508175,
+    "runNumber": 243,
+    "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/44724508175",
+    "status": "completed",
+    "conclusion": "success",
+    "jobsPassed": 17,
+    "jobs": [
+      {
+        "id": 136248398665,
+        "name": "Residual Fault Matrix",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136248398880,
+        "name": "Exact Workflow Entrypoint",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136248398947,
+        "name": "Historical Authority Workflows Disabled",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136248398968,
+        "name": "End-to-End Live Path Replay",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136248398985,
+        "name": "Jalon 10 - entrees de preuve gelees",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136248399028,
+        "name": "Bounded live canary - Ubuntu",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136248399036,
+        "name": "Chronos PostgreSQL profiles / tests (superuser)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136248399055,
+        "name": "Bounded live canary - Windows",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136248399065,
+        "name": "Historical Deep — contrat cache-only",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136248399418,
+        "name": "Chronos PostgreSQL profiles / tests (non_superuser_createrole)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136248399481,
+        "name": "Chronos PostgreSQL profiles / Chronos source and activation",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136248399601,
+        "name": "Chronos PostgreSQL profiles / Chronos static contracts",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136249443613,
+        "name": "Chronos PostgreSQL profiles / Chronos provider-free Cockpit",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136251964468,
+        "name": "Jalon 10 - trois temoins R3 bornes",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136251964509,
+        "name": "Robin Experience — preuves visuelles",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136251964531,
+        "name": "Quality and domain tests",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136262698878,
+        "name": "tests",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "collectionSnapshot": {
+    "sourceObservationsThrough": "2026-11-20T11:00:35.573090+00:00",
+    "operatorReadAt": "2026-11-20T11:07:04.688531+00:00",
+    "sha256": "29bd333e48d3effd83034d861ccafcbeb11b9e91b1215633ea74d0327823e628",
+    "uniqueChoices": 119,
+    "sourcePseudonyms": 24,
+    "allObservedStrictlyBeforeCanonicalKickoff": true,
+    "sourceCounts": {
+      "SRC_038": 10,
+      "SRC_058": 63,
+      "SRC_039": 43,
+      "SRC_014": 3
+    },
+    "deltaFromEarlier101Snapshot": {
+      "additionalUniqueChoices": 18,
+      "additionalSourcePseudonyms": 2,
+      "source": "SRC_058",
+      "removedIds": 0
+    },
+    "attribution": "The additional18choices come from the pre-existing Gruppetto campaign. This is not a further OLBG expansion or new source authorization."
+  },
+  "document": {
+    "claimId": "DATA.SOURCE_OBSERVATORY.WORKBOOK.COMPLETE.20261120",
+    "distinctDocumentaryAddresses": 18003,
+    "referenceRows": 18375,
+    "platformLabels": 183,
+    "enrichedWorkbookSha256": "924009a40676bce3c2a9220a4afd89ee894903230168df6fb6424d5e95bd644f",
+    "earlier101SnapshotAndWorkbookUnmodified": true
+  },
+  "proofs": [
+    {
+      "path": "cockpit/.ci/tipsters-workbook-complete-20261120/ci-jobs-terminal.json",
+      "sha256": "becf549ca5052938ca8f069bfb7603c49f046fc00aacb698f6a64545696e5fc5"
+    },
+    {
+      "path": "cockpit/.ci/tipsters-workbook-complete-20261120/ci-runs-terminal.json",
+      "sha256": "9bf69164fbde76fa4a3c8e75fa3a9b1a0ef35d07ed748e374e316f532d0910ec"
+    },
+    {
+      "path": "cockpit/.ci/tipsters-workbook-complete-20261120/pr-terminal.json",
+      "sha256": "0db2dcd27d60cd854bd5a75884992e5e3d6939ef2d7a3fa38251a2ba239a7988"
+    }
+  ],
+  "effects": {
+    "newSourceGETDuringClosure": 0,
+    "newTasks": 0,
+    "budgetExtension": false,
+    "merge": false,
+    "deployment": false,
+    "apiFootball": 0
+  },
+  "limits": [
+    "This receipt is local uncommitted closure metadata at creation; no metadata-only push is required.",
+    "CI certifies the exact commit, not future scheduled source execution.",
+    "Detailed workbook, index and source choices remain private.",
+    "Global source collection remainsPARTIAL; no claim that every documentary address is personally qualified or activated.",
+    "Source pseudonyms are not verified identities; no ROI or real betting claim."
+  ]
+}

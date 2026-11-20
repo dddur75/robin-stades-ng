@@ -7,6 +7,7 @@ from pathlib import Path
 from robin.source_observatory.campaign_view import read_public_view
 from robin.source_observatory.expansion_view import add_public_expansion
 from robin.source_observatory.olbg_store import read_olbg_companion
+from robin.source_observatory.personal_access import add_personal_public
 from robin.source_observatory.qualification_view import read_sro_companion
 
 parser = argparse.ArgumentParser()
@@ -23,6 +24,7 @@ try:
         view, root / "tipsters-olbg-e1-20261119", root / "tipsters-olbg-recurring-20261119-v2"
     )
     view = add_public_expansion(view, Path(__file__).resolve().parents[2])
+    view = add_personal_public(view, Path(__file__).resolve().parents[2])
     print(json.dumps(view, ensure_ascii=False))
 except (ValueError, OSError, KeyError, TypeError):
     print(

@@ -93,3 +93,12 @@ test('mise à jour absente conserve les évaluations précédentes avec un avert
  await page.getByText('Accès et blocages par plateforme',{exact:true}).click();
  await expect(page.getByText(oldClaim,{exact:false})).toBeVisible();await expect(page.getByText(newClaim,{exact:false})).toHaveCount(0);
 });
+
+test('qualification personnelle absente conserve les faits et affiche le repli',async({page})=>{
+ await page.route('**/api/tipsters/candidates',r=>r.fulfill({json:{...nt,qualification:{...nt.qualification,personalOverlayState:'unavailable',personalCollectionState:'unavailable'}}}));
+ await page.goto('/expert/catalogue-tipsters');
+ await expect(page.getByRole('alert').filter({hasText:'qualification personnelle'})).toBeVisible();
+ await expect(page.getByText('2 fiches importées',{exact:true})).toBeVisible();
+ await page.getByText('Accès et blocages par plateforme',{exact:true}).click();
+ await expect(page.getByText(oldClaim,{exact:false})).toBeVisible();
+});

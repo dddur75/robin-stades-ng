@@ -62,6 +62,7 @@ def _unadmitted(url: str, bundle: dict[str, Any], content: dict[str, Any]) -> li
             )
             out.append(
                 {
+                    "sourceTipId": row["tipid"],
                     "fixtureLabel": row.get("eventname"),
                     "selection": row.get("selection"),
                     "marketLabel": row.get("market") or "Win, libellé source",

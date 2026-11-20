@@ -11,6 +11,7 @@ from robin.source_observatory.followup_access import (
     apply_followup_access,
 )
 from robin.source_observatory.olbg_store import read_olbg_companion
+from robin.source_observatory.personal_access import add_personal_candidates
 from robin.source_observatory.qualification_view import (
     APPROVED_ASSESSMENT_SHA,
     apply_qualification,
@@ -66,6 +67,7 @@ try:
     except (ValueError, OSError, KeyError, TypeError):
         base["qualification"] = dict(status="unavailable")
     base = add_candidate_expansion(base, Path(__file__).resolve().parents[2])
+    base = add_personal_candidates(base, Path(__file__).resolve().parents[2])
     print(json.dumps(base, ensure_ascii=False))
 except (ValueError, OSError, KeyError, TypeError):
     print(

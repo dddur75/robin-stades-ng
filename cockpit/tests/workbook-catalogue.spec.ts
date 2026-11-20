@@ -16,7 +16,7 @@ test('fiche globale conserve champs historiques et lien qualifié',async({page})
  await expect(page.getByText('Aucune preuve personnelle actuelle',{exact:false})).toBeVisible();
 });
 test('index absent préserve accès au registre historique mobile',async({page})=>{
- await page.setViewportSize({width:360,height:900});await page.route('**/api/tipsters/workbook?*',r=>r.fulfill({status:503,json:{status:'unavailable'}}));await page.goto('/expert/catalogue-sources');await expect(page.getByRole('alert')).toContainText('indisponible');await expect(page.getByRole('link',{name:'Fiches Ligue 1 et preuves personnelles déjà qualifiées'})).toHaveAttribute('href','/expert/catalogue-tipsters');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ await page.setViewportSize({width:360,height:900});await page.route('**/api/tipsters/workbook?*',r=>r.fulfill({status:503,json:{status:'unavailable'}}));await page.goto('/expert/catalogue-sources');await expect(page.getByRole('alert')).toContainText('indisponible');await expect(page.getByRole('link',{name:'Fiches et preuves Ligue 1'})).toHaveAttribute('href','/expert/catalogue-tipsters');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
 test('la sélection masque immédiatement la liste précédente en attendant sa propre réponse',async({page})=>{
  await page.route('**/api/tipsters/workbook?*',async r=>{const p=new URL(r.request().url()).searchParams;if(p.get('id'))await new Promise(done=>setTimeout(done,400));return r.fulfill({json:{...response,records:p.get('id')?[{...b,fields:{A:'Bob'}}]:[a,b],total:p.get('id')?1:2}});});

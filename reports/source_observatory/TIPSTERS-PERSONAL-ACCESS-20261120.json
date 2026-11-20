@@ -1,0 +1,187 @@
+{
+  "schemaVersion": "robin-personal-access-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.PERSONAL.ACCESS.20261120",
+  "scope": "LOCAL_PERSONAL_NONCOMMERCIAL_NO_REDISTRIBUTION",
+  "generatedAt": "2026-11-20T16:31:25.656623+00:00",
+  "status": "PERSONAL_ACCESS_CORRECTED_FOUR_ADDITIONAL_PROOFS_COLLECTION_GLOBAL_PARTIAL",
+  "ownerScopeConfirmed": true,
+  "platforms": [
+    {
+      "platform": "Coteur",
+      "label": "Usage personnel : rendu des choix à finaliser",
+      "reason": "La lecture officielle établit les limites de reproduction et de base de données, sans démontrer une interdiction de toute lecture personnelle minimale. Le canari public a reçu200 ; le lecteur a stoppé sur un marqueur Loading global dont la pertinence pour les choix personnels est inconnue.",
+      "requiredAccess": "Une lecture permettant d’isoler les choix personnels et leur chronologie ; pas d’accord commercial imposé par défaut.",
+      "ownerAction": "Aucun compte, achat ou courrier éditeur demandé. Résoudre le rendu et l’attribution dans un périmètre technique distinct ; aucun choix admis depuis ce canari.",
+      "status": "partial_technical_render_unestablished",
+      "observedAt": "2026-11-20T16:31:25.656623+00:00",
+      "evidenceRefs": [
+        "ENG.SOURCE_OBSERVATORY.PERSONAL.ACCESS.20261120",
+        "https://www.coteur.com/mention-legale",
+        "sha256:80379a161d17a2ef79cce1157ca933a03a6a677c691a9ca3eee8b7e344f7a272"
+      ]
+    },
+    {
+      "platform": "NotBetting",
+      "label": "Conditions personnelles retrouvées ; rendu à finaliser",
+      "reason": "Les conditions officielles /terms sont lisibles et distinguent l’interdiction commerciale de l’usage personnel. Le profil public a répondu200 ; un marqueur de sécurité global a arrêté le lecteur sans prouver un challenge effectif, une absence de choix ou un besoin de compte.",
+      "requiredAccess": "Une voie de lecture personnelle donnant des choix attribuables avant match, compatible avec les robots ; /api/ reste refusé.",
+      "ownerAction": "Aucune licence commerciale ni souscription indispensable démontrée pour les faits publics. Le canari est clos sans relance ni endpoint alternatif.",
+      "status": "partial_technical_render_unestablished",
+      "observedAt": "2026-11-20T16:31:25.656623+00:00",
+      "evidenceRefs": [
+        "ENG.SOURCE_OBSERVATORY.PERSONAL.ACCESS.20261120",
+        "https://notbetting.com/terms",
+        "sha256:80379a161d17a2ef79cce1157ca933a03a6a677c691a9ca3eee8b7e344f7a272"
+      ]
+    },
+    {
+      "platform": "Stavka.tv",
+      "label": "Usage personnel et automatisation à distinguer",
+      "reason": "Des permissions personnelles et une restriction d’interaction automatisée ont été documentées. La nouvelle vue officielle ne couvre pas encore leur contexte intégral ; aucune permission écrite générale n’est déduite.",
+      "requiredAccess": "Le contexte applicable à l’automatisation prévue ; aucun besoin de compte établi.",
+      "ownerAction": "Conserver la consultation personnelle distincte de l’extraction automatisée. Réétablir le contexte exact avant de conclure à une exception ou à une restriction applicable.",
+      "status": "automation_context_incomplete",
+      "observedAt": "2026-11-20T16:31:25.656623+00:00",
+      "evidenceRefs": [
+        "ENG.SOURCE_OBSERVATORY.PERSONAL.ACCESS.20261120",
+        "https://stavka.tv/other/terms",
+        "ENG.SOURCE_OBSERVATORY.PUBLIC.TECHNICAL.ACCESS.20261119"
+      ]
+    },
+    {
+      "platform": "Telegram",
+      "label": "Consultation personnelle distincte du pipeline IA",
+      "reason": "La restriction relevée vise notamment le développement, le benchmark et le déploiement IA/ML ; elle ne démontre pas une interdiction de toute consultation personnelle. La compatibilité d’un mode public ordinaire distinct, sans données transmises à un modèle, reste à établir.",
+      "requiredAccess": "Un mode de consultation personnelle conforme à l’usage public prévu. La restriction relevée reste pertinente pour l’alimentation IA.",
+      "ownerAction": "Aucun bot, token, achat ou accord commercial imposé par défaut. Aucun message Telegram lu ni nouvel accès activé dans cette phase.",
+      "status": "personal_mode_unverified_ai_pipeline_restricted",
+      "observedAt": "2026-11-20T16:31:25.656623+00:00",
+      "evidenceRefs": [
+        "ENG.SOURCE_OBSERVATORY.PERSONAL.ACCESS.20261120",
+        "ENG.SOURCE_OBSERVATORY.NT.QUALIFICATION.20261120"
+      ]
+    },
+    {
+      "platform": "Kicktipp",
+      "label": "Règles et visibilité à vérifier par concours",
+      "reason": "Le masquage prouvé pour pronostics-ligue1 ne s’applique pas par déduction aux autres concours. Le lecteur robots du domaine allemand a été indisponible ; aucune règle ni fiche allemande n’a été ouverte.",
+      "requiredAccess": "Les règles du concours réellement ciblé et la visibilité de ses choix avant match.",
+      "ownerAction": "Pas d’export organisateur exigé pour tous les concours. Respecter le masquage du seul concours contrôlé et qualifier séparément les autres.",
+      "status": "contest_specific_visibility_unverified",
+      "observedAt": "2026-11-20T16:31:25.656623+00:00",
+      "evidenceRefs": [
+        "ENG.SOURCE_OBSERVATORY.PERSONAL.ACCESS.20261120",
+        "ENG.SOURCE_OBSERVATORY.PUBLIC.TECHNICAL.ACCESS.20261119"
+      ],
+      "contestAssessments": {
+        "pronostics-ligue1": {
+          "platform": "Kicktipp",
+          "label": "Concours Ligue1 : choix masqués avant match",
+          "reason": "Le règlement de ce concours contrôlé rend les choix visibles après la clôture, fixée au coup d’envoi. Ce constat ne qualifie aucun autre concours.",
+          "requiredAccess": "Pour ce concours masqué, un export prospectif autorisé donnant les choix et leur horodatage avant match.",
+          "ownerAction": "Une connexion de participant ne prouve pas l’accès aux choix masqués ; aucun contournement ni résultat rétrospectif présenté comme choix avant match.",
+          "status": "pre_kickoff_visibility_blocked",
+          "observedAt": "2026-11-20T16:31:25.656623+00:00",
+          "evidenceRefs": [
+            "ENG.SOURCE_OBSERVATORY.PERSONAL.ACCESS.20261120",
+            "ENG.SOURCE_OBSERVATORY.PUBLIC.TECHNICAL.ACCESS.20261119"
+          ]
+        },
+        "bundesliga-tippspiel": {
+          "platform": "Kicktipp",
+          "label": "Concours Bundesliga : règles non établies",
+          "reason": "Le regroupement local retrouve ce concours dans le classeur ; le lecteur robots a été indisponible et aucune règle de visibilité n’a été obtenue.",
+          "requiredAccess": "Robots et règles propres à ce concours ; pas de masquage déduit du concours Ligue1.",
+          "ownerAction": "Aucun export organisateur ou compte déclaré nécessaire sur la seule preuve du concours Ligue1.",
+          "status": "contest_rules_unestablished",
+          "observedAt": "2026-11-20T16:31:25.656623+00:00",
+          "evidenceRefs": [
+            "ENG.SOURCE_OBSERVATORY.PERSONAL.ACCESS.20261120",
+            "ENG.SOURCE_OBSERVATORY.PUBLIC.TECHNICAL.ACCESS.20261119"
+          ]
+        }
+      }
+    }
+  ],
+  "collection": {
+    "claimId": "DATA.SOURCE_OBSERVATORY.PERSONAL.PREMATCH.20261120",
+    "bundleSha256": "8a8279f54e728bb4083e33a21bf41a8abdf70ddaeaa7aa9a52e548174485f17e",
+    "calendarSha256": "e1ab42617a2954566b76586b73fc97efdbc7fa97bf89708fc75f34560ccea0ee",
+    "candidateIdentity": {
+      "candidateId": "catalogue:f99c5b110457584ede5574932f8f67b83003a18b1eb4d4b74763f370ffdcb1b8",
+      "sourceUrl": "https://www.olbg.com/tipsters/tips/383717",
+      "sheet": "Catalogue",
+      "row": 271
+    },
+    "newNativeChoices": 4,
+    "authorRequestsForTheseChoices": 0,
+    "sourceObservedAt": "2026-11-20T09:38:55.699316+00:00",
+    "kickoff": "2026-11-21T15:00:00Z",
+    "admission": "C1 exact bundle hash and four IDs accepted; actual source observation preserved, new calendar acquisition separate.",
+    "newRecurrentAuthority": false
+  },
+  "profileCanary": {
+    "resultSha256": "80379a161d17a2ef79cce1157ca933a03a6a677c691a9ca3eee8b7e344f7a272",
+    "journalSha256": "14900d78b6d3007a4d36e4aaffc525f38a03ec5d430473ac189c6d88a39d7609",
+    "requests": 4,
+    "responses200": 4,
+    "admittedChoices": 0,
+    "factsRetained": 0,
+    "newTasks": 0,
+    "status": "PARTIAL_TECHNICAL_RENDER_UNESTABLISHED",
+    "diagnosticLimit": "Global heuristic markers triggered the reader. Actual challenge, personal loading state, absence of choices, account or licence requirement are not established."
+  },
+  "documentaryBudget": {
+    "priorConservativeUnits": 117,
+    "documentaryReservations": 7,
+    "additionalPublisherGET": 4,
+    "totalConservativeUnits": 128,
+    "hardMaximum": 134,
+    "documentaryMissionsClosed": 4,
+    "unusedOldAuthorityCancelled": true,
+    "budgetReset": false,
+    "remainingUnitsAreNotNewAuthority": true
+  },
+  "kicktippDocumentaryGrouping": {
+    "claimId": "DATA.SOURCE_OBSERVATORY.WORKBOOK.COMPLETE.20261120",
+    "bundesliga-tippspiel": 11634,
+    "pronostics-ligue1": 40,
+    "info": 1,
+    "the-predictor": 1,
+    "ligue-mm": 1,
+    "unit": "documentary references, not current verified people/picks",
+    "scope": "Catalogue"
+  },
+  "completedEarlierCampaign": {
+    "claimId": "DATA.SOURCE_OBSERVATORY.EXPANDED.OLBG.E2.20261120",
+    "task": "Robin-Tipsters-OLBG-Expanded383717-20261120",
+    "requests": 9,
+    "successfulSlots": 3,
+    "uniqueChoiceIds": 1,
+    "expiredAt": "2026-11-20T15:15:00Z",
+    "journalSha256": "d8481bb792a10db9051ea9486529bd2b3941593f69f095852781e203147c7354",
+    "currentAuthority": false
+  },
+  "evidence": [
+    {
+      "path": "cockpit/.ci/tipsters-personal-20261120/document-projection.json",
+      "sha256": "d74a26c5d2b6ceedf663a52eda4aa18c84694b257a14970f17ab3f179c48967a"
+    },
+    {
+      "path": "cockpit/.ci/tipsters-personal-20261120/operations.jsonl",
+      "sha256": "09ed28afa37982b27e48e2c1bce42d0ee3a622447c761630e68f51e96b0148c5"
+    },
+    {
+      "path": "cockpit/.ci/tipsters-personal-20261120/admission-receipt.json",
+      "sha256": "2fe73c9de49bd5db8daa2ce1e42c5144a345688c305a2fde0f51bf720ea4fc77"
+    }
+  ],
+  "limits": [
+    "Personal use does not create visibility, provenance or automation rights by itself.",
+    "No blanket commercial licence or written permission requirement is asserted.",
+    "No bulk collection or scientific readiness of18003addresses is claimed.",
+    "No source observation is backdated; no betting contract, publication UTC, ROI or certified identity invented.",
+    "Earlier assessments and source facts remain preserved by an append-only qualification overlay.",
+    "Global collection remainsPARTIAL."
+  ]
+}

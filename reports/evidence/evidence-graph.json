@@ -13101,6 +13101,149 @@
         "ENG.SOURCE_OBSERVATORY.RECURRING.VIEW.20261120",
         "ENG.SOURCE_OBSERVATORY.NT.FOLLOWUP.VIEW.20261120"
       ]
+    },
+    {
+      "claim_id":"ENG.SOURCE_OBSERVATORY.WORKBOOK.DELIVERY.CLOSURE.20261120",
+      "claim":"Exact-head CI run243/44724508175 accepted with17of17jobs successful for commit8e8b1e38, same open draftPR133; no merge or deployment.",
+      "scope":"EXACT_HEAD_ENGINEERING_AND_TIMESTAMPED_LOCAL_SNAPSHOT_GLOBAL_COLLECTION_PARTIAL",
+      "source":"C0 and independent C1 terminal GitHub CI and snapshot verification; C4 metadata review.",
+      "grain":"exact_commit_and_terminal_ci_run",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/source_observatory/TIPSTERS-WORKBOOK-CI-CLOSURE-20261120.json",
+      "hash":"2d13a04353716c9617ca48c6581e8d4a730745051102ea24354860458fba077c",
+      "code_revision":"8e8b1e38e47db7c46e70505cf74fbdea21452ef4",
+      "execution_id":"CI-44724508175-WORKBOOK-20261120",
+      "scientific_lineage_id":"DOCUMENTARY_INTEGRATION_NOT_GLOBAL_ACTIVATION_NO_ROI",
+      "dataset_lineage_id":"SNAPSHOT_29bd333e_PRIOR_4b8492ef",
+      "status":"VERIFIED",
+      "verified_by":[
+        "C0",
+        "C1"
+      ]
+    },
+    {
+      "claim_id":"DATA.SOURCE_OBSERVATORY.WORKBOOK.POSTPUSH.COLLECTION.20261120",
+      "claim":"Postpush private source snapshot contains119unique choices from24source pseudonyms, all observed strictly before canonical kickoff. Delta18choices/2pseudonyms belongs to pre-existing Gruppetto campaign; no additional source authority.",
+      "scope":"EXACT_HEAD_ENGINEERING_AND_TIMESTAMPED_LOCAL_SNAPSHOT_GLOBAL_COLLECTION_PARTIAL",
+      "source":"C0 and independent C1 terminal GitHub CI and snapshot verification; C4 metadata review.",
+      "grain":"unique_native_choice_and_source_pseudonym_at_timestamp",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/source_observatory/TIPSTERS-WORKBOOK-CI-CLOSURE-20261120.json",
+      "hash":"2d13a04353716c9617ca48c6581e8d4a730745051102ea24354860458fba077c",
+      "code_revision":"8e8b1e38e47db7c46e70505cf74fbdea21452ef4",
+      "execution_id":"CI-44724508175-WORKBOOK-20261120",
+      "scientific_lineage_id":"DOCUMENTARY_INTEGRATION_NOT_GLOBAL_ACTIVATION_NO_ROI",
+      "dataset_lineage_id":"SNAPSHOT_29bd333e_PRIOR_4b8492ef",
+      "status":"VERIFIED",
+      "verified_by":[
+        "C0",
+        "C1"
+      ]
+    },
+    {
+      "claim_id":"ENG.SOURCE_OBSERVATORY.PERSONAL.ACCESS.20261120",
+      "claim":"Source-specific personal-use requirements corrected using official documents and independent C4; Coteur/NotBetting reader stopped on heuristics, not a demonstrated account/licence/challenge requirement. No new source authority.",
+      "scope":"LOCAL_PERSONAL_NONCOMMERCIAL_NO_REDISTRIBUTION_GLOBAL_COLLECTION_PARTIAL",
+      "source":"Independent C1 exact source/bundle/workbook/readback keys, C2 code review and C4 source scope/metadata keys; C0 sole writer.",
+      "grain":"source_native_choice_and_timestamped_personal_access_recette",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/source_observatory/TIPSTERS-PERSONAL-ACCESS-20261120.json",
+      "hash":"b26016a8af3d9d99679e7569dfd9a757ace21cdd553731df18ea6afe609044a1",
+      "code_revision":"reviewed-native-bundle:8a8279f54e728bb4083e33a21bf41a8abdf70ddaeaa7aa9a52e548174485f17e",
+      "execution_id":"PERSONAL-SOURCE-ACCESS-20261120",
+      "scientific_lineage_id":"NO_BETTING_NORMALIZATION_NO_ROI_NO_BLANKET_ACTIVATION",
+      "dataset_lineage_id":"CONTENT594df706_BUNDLE8a8279f5_A9_142_27",
+      "status":"VERIFIED",
+      "verified_by":[
+        "C0",
+        "C1",
+        "C4"
+      ]
+    },
+    {
+      "claim_id":"DATA.SOURCE_OBSERVATORY.PERSONAL.PREMATCH.20261120",
+      "claim":"Four additional native Andy choices qualified from preserved09:38source observations against newly acquired official21November15:00GMT kickoffs. No new author request for these facts or recurrent authority.",
+      "scope":"LOCAL_PERSONAL_NONCOMMERCIAL_NO_REDISTRIBUTION_GLOBAL_COLLECTION_PARTIAL",
+      "source":"Independent C1 exact source/bundle/workbook/readback keys, C2 code review and C4 source scope/metadata keys; C0 sole writer.",
+      "grain":"source_native_choice_and_timestamped_personal_access_recette",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/source_observatory/TIPSTERS-PERSONAL-ACCESS-20261120.json",
+      "hash":"b26016a8af3d9d99679e7569dfd9a757ace21cdd553731df18ea6afe609044a1",
+      "code_revision":"reviewed-native-bundle:8a8279f54e728bb4083e33a21bf41a8abdf70ddaeaa7aa9a52e548174485f17e",
+      "execution_id":"PERSONAL-SOURCE-ACCESS-20261120",
+      "scientific_lineage_id":"NO_BETTING_NORMALIZATION_NO_ROI_NO_BLANKET_ACTIVATION",
+      "dataset_lineage_id":"CONTENT594df706_BUNDLE8a8279f5_A9_142_27",
+      "status":"VERIFIED",
+      "verified_by":[
+        "C0",
+        "C1",
+        "C4"
+      ]
+    },
+    {
+      "claim_id":"ENG.SOURCE_OBSERVATORY.PERSONAL.RECETTE.20261120",
+      "claim":"Actual A9 application142unique choices/27pseudonyms,7proven/6enabled profiles; historical dates and expiry preserved. Updated personal workbook preserves304102source cells and18003links. Local tests and independent reviews accepted; new exact-head CI pending.",
+      "scope":"LOCAL_PERSONAL_NONCOMMERCIAL_NO_REDISTRIBUTION_GLOBAL_COLLECTION_PARTIAL",
+      "source":"Independent C1 exact source/bundle/workbook/readback keys, C2 code review and C4 source scope/metadata keys; C0 sole writer.",
+      "grain":"source_native_choice_and_timestamped_personal_access_recette",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/source_observatory/TIPSTERS-PERSONAL-RECETTE-20261120.json",
+      "hash":"30b680775f89d76c2d8208b2df83430b5b2b1cd1848c718b01485eb28dd43547",
+      "code_revision":"precommit-projection:78050ad0ef96d4fb8c6455929f452c4a39a6a68257d6a6255477d61d2ff30fb4",
+      "execution_id":"PERSONAL-SOURCE-ACCESS-20261120",
+      "scientific_lineage_id":"NO_BETTING_NORMALIZATION_NO_ROI_NO_BLANKET_ACTIVATION",
+      "dataset_lineage_id":"CONTENT594df706_BUNDLE8a8279f5_A9_142_27",
+      "status":"VERIFIED",
+      "verified_by":[
+        "C0",
+        "C1",
+        "C4"
+      ],
+      "artifact_hashes":{
+        "cockpit/app/components/expert/public-tipsters.tsx":"bc1e3728ee12be1f118faaac596857e8bae900949b693c9efb16bf2e90de83f9",
+        "cockpit/app/components/expert/tipster-candidates.tsx":"8d6d0dfce5f6b485da3fb4078fd52f888e7298d7dadf9a46b75f81458dece218",
+        "cockpit/app/components/expert/workbook-catalogue.tsx":"4f2ba6f5be2cde3c5461ccbd1afe65b2c5bf67321f1f8d3f5009c15752350140",
+        "cockpit/scripts/read-public-tipsters.py":"634accac4455375b166c667ed8dbf8d91445ce75c17ff424896eddca4990db5a",
+        "cockpit/scripts/read-tipster-candidates.py":"d7bf22ab291f345d801e34638284052db956ee901340a0c19f398c34aebd5da0",
+        "cockpit/scripts/workbook-inventory-state.ts":"dea3febf9b72be1c7b20fdaafba3150e0e88aefe245615cf1713565d846c5a44",
+        "cockpit/tests/public-tipsters.spec.ts":"7e64c982fb3bd366a7fd4800aedae4470961a51cffcec559db0159ba7dd260dd",
+        "cockpit/tests/tipster-candidates.spec.ts":"d001f4fa84e97e4e740427e2035df67e28bf541f8f14dff93d1ed68100408dcd",
+        "cockpit/tests/workbook-catalogue.spec.ts":"af2cac6fc4a5b84284f7e6e01d536daf4dc6fdd8e872cec4b877ec3140f61832",
+        "cockpit/tests/workbook-inventory-state.test.ts":"c45ee75aae9e7bb534b3226a642090ac0736076ecad8919626da3982b1ff224a",
+        "docs/superpowers/plans/2026-11-20-personal-source-access.md":"44a5e04f351eaf97001cb974cfe4960dc1b5dfb2ea45272d1e627ef1e3b0c502",
+        "reports/source_observatory/TIPSTERS-PERSONAL-ACCESS-20261120.json":"b26016a8af3d9d99679e7569dfd9a757ace21cdd553731df18ea6afe609044a1",
+        "reports/source_observatory/TIPSTERS-PERSONAL-RECETTE-20261120.json":"30b680775f89d76c2d8208b2df83430b5b2b1cd1848c718b01485eb28dd43547",
+        "reports/source_observatory/TIPSTERS-WORKBOOK-CI-CLOSURE-20261120.json":"2d13a04353716c9617ca48c6581e8d4a730745051102ea24354860458fba077c",
+        "src/robin/source_observatory/expansion_view.py":"3968f0ae94fd6220b0a365cb1f5b1fc7da475b7f220e38f469c7c94a59bb2198",
+        "src/robin/source_observatory/personal_access.py":"29968d63fb94178e5bd1d0dc9e18bdee2f4eacec1f89c04b3e2caf0bf0df52c1",
+        "tests/source_observatory/test_personal_access.py":"99c64ab283c21b4c9d09d1f0f6dd342127483d0e51838dee5bc476af50d1eaa1"
+      },
+      "artifact_hash_algorithm":"SHA-256",
+      "artifact_hash_normalization":"LF_NORMALIZED_TEXT_BYTES",
+      "artifact_path_count":17,
+      "engineering_projection_sha256":"78050ad0ef96d4fb8c6455929f452c4a39a6a68257d6a6255477d61d2ff30fb4",
+      "supersedes":[
+        "ENG.SOURCE_OBSERVATORY.WORKBOOK.COMPLETE.VIEW.20261120"
+      ]
+    },
+    {
+      "claim_id":"GOV.SOURCE_OBSERVATORY.PERSONAL.AUDIT.PROJECTION.20261120",
+      "claim":"Distinct public audit projection anchors complete private runtime ledger486andgraph, including every suffix record479through486. Original executed source records remain unchanged; public receipt is non-authorizing and inherits no source grants.",
+      "scope":"PUBLICATION_AUDIT_ONLY_ZERO_SOURCE_AUTHORITY",
+      "source":"C0 private snapshot hashes and independent C1/C2/C4 publication-namespace reviews.",
+      "grain":"complete_private_audit_snapshot_and_public_receipt",
+      "temporal_class":"OBSERVED_AT",
+      "artifact":"reports/source_observatory/TIPSTERS-PERSONAL-PUBLIC-AUDIT-PROJECTION-20261120.json",
+      "hash":"909e58e5c7d18c29274943a7ef7f7919fa688e1482c444802b719fb3202c0917",
+      "code_revision":"8e8b1e38e47db7c46e70505cf74fbdea21452ef4",
+      "execution_id":"PERSONAL-PUBLICATION-AUDIT-20261120",
+      "scientific_lineage_id":"NO_DATA_MUTATION_OR_NEW_MISSION_AUTHORITY",
+      "dataset_lineage_id":"PRIVATE_RUNTIME_SUFFIX479_TO486_PRESERVED",
+      "status":"VERIFIED",
+      "verified_by":[
+        "C0",
+        "C4"
+      ]
     }
   ],
   "decision_nodes":[
@@ -13752,6 +13895,18 @@
     {
       "decision_id":"RCV3-20261120-WORKBOOK-COMPLETE-PRECOMMIT",
       "ledger_record_hash":"13a533692733321644cb7785a98ef1fbc322ddb1f3e139800f9cffeea6d1fa07"
+    },
+    {
+      "decision_id":"RCV3-20261120-WORKBOOK-EXACT-HEAD-CI-CLOSED",
+      "ledger_record_hash":"dee35affa3cc29128d6e2244a09fad1409516e66d33b64b61f0a810c4ce9f509"
+    },
+    {
+      "decision_id":"RCV3-20261120-PERSONAL-PUBLIC-AUDIT-PROJECTED",
+      "ledger_record_hash":"327369b9efe9fa22d050d62a2ba6f6db9e90ac350607a1fb394986070c158fa8"
+    },
+    {
+      "decision_id":"RCV3-20261120-PERSONAL-PUBLICATION-PRECOMMIT",
+      "ledger_record_hash":"9cb06967f788c0a375e6342a815d44fc846a430a656e13a6ecd49ab0d028b99b"
     }
   ],
   "edges":[
@@ -15775,6 +15930,90 @@
       "relation":"SUPPORTS",
       "status":"RECORDED",
       "to_decision_id":"RCV3-20261120-WORKBOOK-COMPLETE-PRECOMMIT"
+    },
+    {
+      "edge_id":"EDGE.1380",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.WORKBOOK.DELIVERY.CLOSURE.20261120",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261120-WORKBOOK-EXACT-HEAD-CI-CLOSED"
+    },
+    {
+      "edge_id":"EDGE.1381",
+      "from_claim_id":"DATA.SOURCE_OBSERVATORY.WORKBOOK.POSTPUSH.COLLECTION.20261120",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261120-WORKBOOK-EXACT-HEAD-CI-CLOSED"
+    },
+    {
+      "edge_id":"EDGE.1382",
+      "from_claim_id":"DATA.SOURCE_OBSERVATORY.WORKBOOK.COMPLETE.20261120",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261120-WORKBOOK-EXACT-HEAD-CI-CLOSED"
+    },
+    {
+      "edge_id":"EDGE.1383",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.WORKBOOK.COMPLETE.VIEW.20261120",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261120-WORKBOOK-EXACT-HEAD-CI-CLOSED"
+    },
+    {
+      "edge_id":"EDGE.1384",
+      "from_claim_id":"GOV.SOURCE_OBSERVATORY.PERSONAL.AUDIT.PROJECTION.20261120",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261120-PERSONAL-PUBLIC-AUDIT-PROJECTED"
+    },
+    {
+      "edge_id":"EDGE.1385",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.PERSONAL.ACCESS.20261120",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261120-PERSONAL-PUBLIC-AUDIT-PROJECTED"
+    },
+    {
+      "edge_id":"EDGE.1386",
+      "from_claim_id":"DATA.SOURCE_OBSERVATORY.PERSONAL.PREMATCH.20261120",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261120-PERSONAL-PUBLIC-AUDIT-PROJECTED"
+    },
+    {
+      "edge_id":"EDGE.1387",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.PERSONAL.RECETTE.20261120",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261120-PERSONAL-PUBLIC-AUDIT-PROJECTED"
+    },
+    {
+      "edge_id":"EDGE.1388",
+      "from_claim_id":"GOV.SOURCE_OBSERVATORY.PERSONAL.AUDIT.PROJECTION.20261120",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261120-PERSONAL-PUBLICATION-PRECOMMIT"
+    },
+    {
+      "edge_id":"EDGE.1389",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.PERSONAL.ACCESS.20261120",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261120-PERSONAL-PUBLICATION-PRECOMMIT"
+    },
+    {
+      "edge_id":"EDGE.1390",
+      "from_claim_id":"DATA.SOURCE_OBSERVATORY.PERSONAL.PREMATCH.20261120",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261120-PERSONAL-PUBLICATION-PRECOMMIT"
+    },
+    {
+      "edge_id":"EDGE.1391",
+      "from_claim_id":"ENG.SOURCE_OBSERVATORY.PERSONAL.RECETTE.20261120",
+      "relation":"SUPPORTS",
+      "status":"RECORDED",
+      "to_decision_id":"RCV3-20261120-PERSONAL-PUBLICATION-PRECOMMIT"
     }
   ]
 }

@@ -9,7 +9,7 @@ type Unadmitted={fixtureLabel:string;selection:string;marketLabel:string;sourceE
 type Qualification=Access&{profileVisited:boolean;documentaryIssues:string[];personallyProven:boolean;unadmittedFacts?:Unadmitted[];expansionClaimId?:string;picks:{id:string;fixtureLabel:string;selection:string;market?:string;observedAt:string;kickoff:string;sourceUrl:string}[]};
 type Candidate={id:string;label:string;platform:string;sourceUrl:string;evidenceUrl:string;declaredLastDate:string|null;
  status:'pending_qualification';collectionEnabled:boolean;qualification?:Qualification;origin:{sheet:string;row:number;workbookSha256:string}};
-type Registry={status:string;schemaVersion:string;count:number;platformCount:number;datedCount:number;enabledCount?:number;candidates:Candidate[];receipt:{registrySha256:string;claimId:string};qualification?:{status:string;claimId?:string;technicalClaimId?:string;technicalClaimIds?:string[];followupOverlayState?:string;expansionState?:string;expansionClaimId?:string;assessedCount?:number;qualifiedCount?:number;platforms?:Access[]}};
+type Registry={status:string;schemaVersion:string;count:number;platformCount:number;datedCount:number;enabledCount?:number;candidates:Candidate[];receipt:{registrySha256:string;claimId:string};qualification?:{status:string;claimId?:string;technicalClaimId?:string;technicalClaimIds?:string[];followupOverlayState?:string;expansionState?:string;expansionClaimId?:string;personalOverlayState?:string;personalCollectionState?:string;personalClaimId?:string;assessedCount?:number;qualifiedCount?:number;platforms?:Access[]}};
 export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;tipsterId?:string}){
  const [data,setData]=useState<Registry|null>(null);const[error,setError]=useState(false);
  const[q,setQ]=useState('');const[platform,setPlatform]=useState('');const[dated,setDated]=useState(false);const[page,setPage]=useState(0);
@@ -24,7 +24,7 @@ export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;ti
  const reset=()=>setPage(0);
  return <section className="section-card">
   <SectionHeading title={selected?.label??'Fiches Ligue 1 à qualifier'} />
-  <InlineLink href="/expert/catalogue-sources">Consulter le catalogue complet du classeur, toutes références</InlineLink>
+  <InlineLink href="/expert/catalogue-sources">Catalogue complet des sources</InlineLink>
   {error?<p role="alert">Le registre local des candidats est indisponible. Aucun total de fiches n’est déduit de cette erreur.</p>:!data?<p role="status">Lecture du registre local…</p>:<>
    <p>Registre : <strong>{data.count} fiches importées</strong> · {data.platformCount} libellés de plateforme · {data.datedCount} dates historiques renseignées.</p>
    {data.qualification?.status==='ok'?<>
@@ -32,6 +32,8 @@ export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;ti
     <p>Un contrôle de plateforme ne certifie pas chacun de ses profils. Les autres fiches conservent leur blocage ou attendent une preuve personnelle.</p>
     {data.qualification.followupOverlayState==='unavailable'&&<p role="alert">L’actualisation NotBetting et Telegram est indisponible. Les évaluations antérieures restent affichées avec leur provenance.</p>}
     {data.qualification.expansionState==='unavailable'&&<p role="alert">Le contrôle des profils supplémentaires est indisponible. Les preuves antérieures restent conservées.</p>}
+    {(data.qualification.personalOverlayState==='unavailable'||data.qualification.personalCollectionState==='unavailable')&&<p role="alert">L’actualisation de la qualification personnelle est indisponible. Les évaluations et preuves antérieures restent affichées avec leur provenance.</p>}
+    {data.qualification.personalClaimId&&<p style={{overflowWrap:'anywhere'}}>Usage personnel local confirmé. Preuve de qualification : {data.qualification.personalClaimId}</p>}
     {data.qualification.expansionClaimId&&<p style={{overflowWrap:'anywhere'}}>Preuve des profils supplémentaires : {data.qualification.expansionClaimId}</p>}
     <details><summary>Accès et blocages par plateforme</summary><ul>{(data.qualification.platforms??[]).map(a=><li key={a.platform} style={{overflowWrap:'anywhere'}}><strong>{a.platform} · {a.label}</strong><p>{a.reason}</p><p>Accès à établir : {a.requiredAccess}</p><p>{a.ownerAction}</p><a className="inline-link" href={a.url} target="_blank" rel="noopener noreferrer">Consulter la plateforme</a></li>)}</ul><small style={{overflowWrap:'anywhere'}}>Preuve {data.qualification.claimId}{(data.qualification.technicalClaimIds??[data.qualification.technicalClaimId]).filter(Boolean).map(id=>` · ${id}`).join('')}</small></details>
    </>:<p>Statut : à qualifier. Collecte désactivée pour ces candidats. Leur import n’ajoute aucun pronostic au compteur des observations avant match.</p>}
