@@ -10,7 +10,7 @@ type Pick = { id:string; authorId:string; authorLabel:string; sourceId:string; f
  selection:string; market?:string; kickoff:string; observedAt:string; publishedCivilDate:string|null; sourceUrl:string };
 type State = { status:string; distinctPicks:number; authorCount:number; requestCount:number;
  generatedAt:string; claimId:string; claimIds?:string[]; recurring?:boolean; halted?:boolean; picks:Pick[];
- campaign?:PublicCampaign; sroCampaign?:PublicCampaign; olbgCampaign?:PublicCampaign };
+ campaign?:PublicCampaign; sroCampaign?:PublicCampaign; olbgCampaign?:PublicCampaign; expandedOlbgCampaign?:PublicCampaign };
 export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean; tipsterId?:string }) {
  const [data,setData]=useState<State|null>(null); const [error,setError]=useState(false);
  useEffect(()=>{const controller=new AbortController();let alive=true;let pending=false;
@@ -26,7 +26,7 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
  return <section className="section-card">
   <SectionHeading title={selected?.authorLabel??'Pronostics personnels collectés'} />
   {error ? <p role="alert">La collecte publique locale est indisponible : preuves absentes ou invalides.</p>:!data ? <p role="status">Lecture des preuves locales…</p>:<>
-   <p><strong>{(tipsterId ? data.picks.filter(p=>p.authorId===tipsterId).length : data.distinctPicks)} pronostic(s) personnel(s) collecté(s)</strong> · {tipsterId ? (selected ? 1 : 0) : data.authorCount} pseudonyme(s) · neuf rencontres au maximum par grille.</p>
+   <p><strong>{(tipsterId ? data.picks.filter(p=>p.authorId===tipsterId).length : data.distinctPicks)} pronostic(s) personnel(s) collecté(s)</strong> · {tipsterId ? (selected ? 1 : 0) : data.authorCount} pseudonyme(s).</p>
    <p>Choix attribués à leur source personnelle et observés avant match. Le type de choix est conservé tel que publié. Les pseudonymes ne certifient pas l’identité civile.</p>
    <p>Dossier fidèle en recette partielle.</p>
    <p>Horaires des lectures et des coups d’envoi : heure de Paris.</p>
@@ -45,13 +45,21 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
     <p>Un canari puis onze créneaux toutes les deux heures, du 20 novembre à 8 h au 21 à 4 h ; expiration à 8 h, heure de Paris. Le plafond inclut les trois GET du premier arrêt et du diagnostic. Usage personnel local uniquement.</p>
     <p>État Windows : {data.sroCampaign.native?.state??'vérification en cours'}.{Number.isFinite(Date.parse(data.sroCampaign.native?.verifiedAt??''))&&` Vérifié le ${formatDateTime(data.sroCampaign.native!.verifiedAt!,true)}.`}</p>
    </div>}
-   {(!tipsterId||selected?.sourceId==='SRC_014') && data.olbgCampaign && data.olbgCampaign.state!=='awaiting_preparation' && <div className="section-card">
+   {(!tipsterId||selected?.authorId==='olbg:648433') && data.olbgCampaign && data.olbgCampaign.state!=='awaiting_preparation' && <div className="section-card">
     <h3>Collecte OLBG · profil 648433</h3>
     <PublicCampaignStatus campaign={data.olbgCampaign} />
     <PublicCampaignCounters campaign={data.olbgCampaign} />
     <p>Un canari puis onze créneaux toutes les deux heures, du 20 novembre à 8 h au 21 à 4 h ; expiration à 8 h, heure de Paris. Profil 648433 uniquement, usage personnel local. Arrêt si aucun choix admissible ou si les conditions changent.</p>
     <p>État Windows : {data.olbgCampaign.native?.state??'vérification en cours'}.{Number.isFinite(Date.parse(data.olbgCampaign.native?.verifiedAt??''))&&` Vérifié le ${formatDateTime(data.olbgCampaign.native!.verifiedAt!,true)}.`}</p>
    </div>}
+   {(!tipsterId||selected?.authorId==='olbg:383717') && data.expandedOlbgCampaign && <div className="section-card">
+    <h3>Collecte OLBG · profil 383717</h3>
+    <PublicCampaignStatus campaign={data.expandedOlbgCampaign}/>
+    <PublicCampaignCounters campaign={data.expandedOlbgCampaign}/>
+    {data.expandedOlbgCampaign.state==='unavailable'?<p>L’autorité récurrente de ce profil est indisponible. Aucune programmation active n’est certifiée par cette lecture.</p>:<p>Autorité distincte : un canari puis deux créneaux le 20 novembre à 14 h et 16 h, heure de Paris. Plafond neuf GET ; expiration à 16 h 15. Aucun autre profil n’est couvert.</p>}
+    <p>État Windows : {data.expandedOlbgCampaign.native?.state??'indisponible'}.</p>
+   </div>}
+   {selected?.authorId==='olbg:383717'&&!data.expandedOlbgCampaign&&<p>Ce profil dispose d’une preuve ponctuelle. Son autorité récurrente est indisponible ; la campagne du profil 648433 ne le couvre pas.</p>}
    {data.halted && <p role="alert">Campagne des forums arrêtée. Historique préservé ; aucune nouvelle lecture autorisée par cette campagne.</p>}
    {compact ? <InlineLink href="/expert/collecte-publique">Voir les fiches et les pronostics collectés</InlineLink>:<>
     <p><InlineLink href="/expert/collecte-publique">Tous les tipsters collectés</InlineLink></p>

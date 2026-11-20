@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 from robin.source_observatory.candidate_registry import load_registry
+from robin.source_observatory.expansion_view import add_candidate_expansion
 from robin.source_observatory.followup_access import (
     APPROVED_NT_FOLLOWUP_SHA256,
     apply_followup_access,
@@ -64,6 +65,7 @@ try:
             base["qualification"]["followupOverlayState"] = "unavailable"
     except (ValueError, OSError, KeyError, TypeError):
         base["qualification"] = dict(status="unavailable")
+    base = add_candidate_expansion(base, Path(__file__).resolve().parents[2])
     print(json.dumps(base, ensure_ascii=False))
 except (ValueError, OSError, KeyError, TypeError):
     print(

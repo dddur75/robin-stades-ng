@@ -32,6 +32,7 @@ export function publicTipsters(): Plugin {
           value.campaign.native=nativeState;
           if(value.sroCampaign)value.sroCampaign.native=nativeState.sro??{state:"checking"};
           if(value.olbgCampaign)value.olbgCampaign.native=nativeState.olbg??{state:"checking"};
+          if(value.expandedOlbgCampaign)value.expandedOlbgCampaign.native=nativeState.expansion??{state:"checking"};
         }
         return JSON.stringify(value);
       }).finally(()=>{pending=undefined;});

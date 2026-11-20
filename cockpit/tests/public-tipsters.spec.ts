@@ -23,6 +23,14 @@ test('les preuves absentes sont affichées comme indisponibles',async({page})=>{
  await expect(page.getByText('0 pronostic(s)',{exact:false})).toHaveCount(0);
 });
 
+test('les profils OLBG ont des campagnes natives distinctes',async({page})=>{
+ const now='2026-11-20T10:00:00Z';await page.clock.install({time:new Date(now)});const choice={...data.picks[0],authorId:'olbg:383717',authorLabel:'Auteur supplémentaire',sourceId:'SRC_014',market:'source_native',sourceUrl:'https://www.olbg.com/tipsters/tips/383717'};
+ const alex={state:'collecting',requests:9,requestsMax:36,successfulSlots:3,slots:12,expiresAt:'2026-11-21T07:00:00Z',native:{state:'Ready',enabled:true,verifiedAt:now}};
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,picks:[choice],olbgCampaign:alex}}));
+ await page.goto('/expert/tipsters/olbg%3A383717');await expect(page.getByRole('heading',{name:'Collecte OLBG · profil 648433'})).toHaveCount(0);await expect(page.getByText('Ce profil dispose d’une preuve ponctuelle.',{exact:false})).toBeVisible();
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,picks:[choice],olbgCampaign:alex,expandedOlbgCampaign:{state:'collecting',requests:3,requestsMax:9,successfulSlots:1,slots:3,expiresAt:'2026-11-20T15:15:00Z',native:{state:'Disabled',enabled:false,verifiedAt:now}}}}));await page.reload();await expect(page.getByRole('heading',{name:'Collecte OLBG · profil 383717'})).toBeVisible();await expect(page.getByRole('heading',{name:'Collecte OLBG · profil 648433'})).toHaveCount(0);await expect(page.getByText('Tâche Windows désactivée.',{exact:false})).toBeVisible();
+});
+
 test('SRO links use a typed forum route and preserve stored author hashes',async({page})=>{
  const bare='b'.repeat(64);const p={...data.picks[0],authorId:bare,authorLabel:'SRO synthétique',sourceId:'SRC_039'};
  await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,picks:[p]}}));await page.goto('/expert/collecte-publique');

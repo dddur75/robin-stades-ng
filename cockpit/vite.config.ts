@@ -1,4 +1,5 @@
 import {tipsterCandidates} from "./scripts/tipster-candidates-plugin";
+import {workbookInventory} from "./scripts/workbook-inventory-plugin";
 import vinext from "vinext";
 import { defineConfig } from "vite";
 import hostingConfig from "./.openai/hosting.json";
@@ -58,6 +59,7 @@ export default defineConfig(async () => {
       tipstersRecurring(),
       publicTipsters(),
       tipsterCandidates(),
+      workbookInventory(),
       vinext(),
       sites(),
       cloudflare({

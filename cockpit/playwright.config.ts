@@ -29,6 +29,7 @@ export default defineConfig({
     "tipsters-recurring.spec.ts",
     "public-tipsters.spec.ts",
     "tipster-candidates.spec.ts",
+    "workbook-catalogue.spec.ts",
   ],
   timeout: 30_000,
   use: {

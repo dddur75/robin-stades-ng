@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "robin-expanded-olbg-e2-receipt-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.EXPANDED.OLBG.E2.20261120",
+  "generatedAt": "2026-11-20T10:27:58.202666+00:00",
+  "status": "VERIFIED_MANUAL_CANARY_AND_FINITE_SCHEDULE_GLOBAL_PARTIAL",
+  "missionId": "ROBIN-OLBG-EXPANDED383717-20261120",
+  "profileUrl": "https://www.olbg.com/tipsters/tips/383717",
+  "scope": "Local personal noncommercial source-native facts only; no normalized bet, publication time, ROI or general source activation.",
+  "planCanonicalSha256": "f612995c5a15be3b0ad7bec6783437530b3e7fada90d3d6fa4f7bc2d19b132b9",
+  "manifestCanonicalSha256": "c7634db4632e1c8527ce987567edc5c79387ca27f2fefc53861501f89b3378fa",
+  "manualCanary": {
+    "accepted": true,
+    "requests": 3,
+    "requestsMaximum": 9,
+    "choicesObserved": 1,
+    "newUniqueChoicesRelativeToE1": 0,
+    "firstSeenPreserved": true,
+    "bundleSha256": "49a935319780c34e6f53bc18f6069aa5325f7ddb541dffc6669f180ca2711342"
+  },
+  "nativeSnapshot": {
+    "verifiedAt": "2026-11-20T10:20:00.7460156Z",
+    "independentC1VerifiedAt": "2026-11-20T10:21:00Z",
+    "state": "Ready",
+    "enabled": true,
+    "hidden": true,
+    "principal": "Interactive",
+    "runLevel": "Limited",
+    "wakeToRun": false,
+    "startWhenAvailable": false,
+    "scheduledSlots": [
+      "2026-11-20T13:00:00Z",
+      "2026-11-20T15:00:00Z"
+    ],
+    "expiresAt": "2026-11-20T15:15:00Z",
+    "futureSlotsProvenExecuted": 0
+  },
+  "evidence": {
+    "events.jsonl": "30bb03900f679dd0c1a22e27cb08cc9e2f37aeac0195d271f86d858db8d456d4",
+    "authorization.json": "f4b44c4de66e9c66f265b191489f24bcb7892704a46c712be7ed6e3f0f7eab72",
+    "native-readback.json": "afeed3e2e8c32c389d49e857d19503fb13d65a01411cfc3d9c9b61239245eeb6",
+    "installed-task.xml": "abfb7abcf05e871bca7c81caf2365862f08c918d0b27699b418db19bdadd1675",
+    "installed-task.normalized.xml": "5ace9ed4226a6849de42e4457a182b71c64b60e68acbd18e18c89fc73e6e4d79"
+  },
+  "receiptEncoding": "Original task XML bytes preserved; a separate copy only normalizes the UTF-16 declaration to the actual UTF-8 encoding. Windows task and pinned registrar remain unchanged.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "limitations": [
+    "One additional author, not every OLBG profile.",
+    "The two future scheduled slots are not certified executed.",
+    "Six GET remain reserved for those slots, not transferable.",
+    "Qualification remains113publisherGET plus2searchqueries/2officialopens; this separateE2 budget does not reset it.",
+    "Old thirty campaign code pins unchanged.",
+    "Native state is a timestamped observation, not a guarantee of future execution."
+  ]
+}
