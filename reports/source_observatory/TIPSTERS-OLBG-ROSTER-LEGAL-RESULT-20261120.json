@@ -1,0 +1,20 @@
+{
+  "generatedAt": "2026-11-20T21:22:00.200981+00:00",
+  "schemaVersion": "robin-roster-documentary-result-v1",
+  "claimId": "GOV.SOURCE_OBSERVATORY.OLBG.ROSTER.LEGAL.RESULT.20261120",
+  "missionId": "ROBIN-OLBG-ROSTER-LEGAL-E1-20261120",
+  "status": "E1_COMPLETE_CONTEXT_REVIEWED_NO_BULK_EFFECT_KEY",
+  "requestReservations": 2,
+  "qualificationLineageUnits": 154,
+  "sourceChoices": 0,
+  "tasks": 0,
+  "resultSha256": "d1436b22fad8c1aa4a5e17c71d74d817787bed04322b309f17a831ee38d06d06",
+  "journalSha256": "84f94143dea25000182fb0e0b8fcea339ec50abda68826320faf72140c800757",
+  "observedAt": "2026-11-20T20:53:34.717680+00:00",
+  "legalTextCharacters": 44790,
+  "legalTextSha256": "1248b86c3f9e8adc061c3fd489b3ba0576812956ff8ff051b8b3483ce6e4590f",
+  "interpretation": "Complete operative context privately reviewed C4: no contractual veto identified against preparing this bounded private personal factual roster. Sections7.1/9.2 personal noncommercial use,7.3 no unauthorized interference; no platform-wide permission or redistribution inferred.",
+  "bulkCollectionAuthorized": false,
+  "legalTextPublished": false,
+  "rawHtmlStored": false
+}

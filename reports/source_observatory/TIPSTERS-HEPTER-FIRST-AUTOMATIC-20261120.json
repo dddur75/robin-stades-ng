@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-11-20T21:22:00.173905+00:00",
+  "schemaVersion": "robin-profile-first-automatic-receipt-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.HEPTER.FIRST.AUTOMATIC.20261120",
+  "missionId": "ROBIN-OLBG-HEPTER669088-E2V2-20261120",
+  "status": "FIRST_NATIVE_TRIGGER_SUCCEEDED_REOBSERVATION_NO_UNIQUE_INCREMENT",
+  "slot": "2026-11-20T21:00:00Z",
+  "observedAt": "2026-11-20T21:00:05.016347+00:00",
+  "nativeLastResult": 0,
+  "canaryAndAutomaticSlots": 2,
+  "cumulativeGET": 4,
+  "originalGETCap": 18,
+  "remainingGET": 14,
+  "acceptedRecordsThisSlot": 5,
+  "distinctSourceChoices": 5,
+  "uniqueNewChoicesFromThisSlot": 0,
+  "futureSlotsRemaining": 7,
+  "journalSha256": "b97ccb645a0d8e1e43793e08b595fa3d1aa2d2f0705e17d555fbe8ad13e83517",
+  "observationSha256": "c549b3e72fecf7de29222890350196d0e5e6ea46c44cf2bd0058b323bb0b7ab9",
+  "sourceAPI": 0,
+  "allCompatibleSourcesIntegrated": false
+}

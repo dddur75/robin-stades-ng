@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-11-20T22:10:55.005958+00:00",
+  "schemaVersion": "robin-roster42-real-canary-recipe-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.ROSTER42.RECURRING.20261120",
+  "missionId": "ROBIN-OLBG-ROSTER42-E2V2-20261120",
+  "status": "REAL_CANARY_ACCEPTED_NATIVE_INSTALLATION_PENDING",
+  "planSha256": "762d5f2662768e0db3909f66fa35ec2f882ba86e5b77c0cddf6f2d9439addf5e",
+  "manifestSha256": "9e943a20b3d6ae26208f4a0db5dbedc7e4660fadb1f97b20d466c68dd4a8a02e",
+  "canaryJournalSha256": "65ec3e547cee1d726dcb5ed8227b18019eeb517b657fa7328060ea416e15d231",
+  "canaryHeadHash": "513767aa5009b680ce21e3279540aa43e0799a3f38aa831639287556e1eeb76b",
+  "canaryReadbackSha256": "cce4875174c12aa334696b44532ecd7262bd000e9bda454870ae624661bcb18c",
+  "canaryAuthors": [
+    13000,
+    229856,
+    669101
+  ],
+  "acceptedRecords": 15,
+  "distinctNewChoices": 0,
+  "nativeWin": 14,
+  "opaque": 1,
+  "GETUsed": 4,
+  "GETRemaining": 129,
+  "GETTotalMax": 133,
+  "activeMilliseconds": 10125,
+  "remainingActiveMilliseconds": 589875,
+  "activeSecondsTotalMax": 600,
+  "eligibleProfiles": 42,
+  "futureSlotsUTC": [
+    "2026-11-20T23:05:00Z",
+    "2026-11-21T05:05:00Z",
+    "2026-11-21T11:05:00Z"
+  ],
+  "expiresAt": "2026-11-21T11:15:00Z",
+  "futureAutomaticExecutionsProven": false,
+  "nativeInstallationProven": false,
+  "rawBodiesStored": false,
+  "sourceAPI": 0
+}

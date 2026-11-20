@@ -9,7 +9,7 @@ from typing import Any
 from .personal_access import apply_personal_access
 
 APPROVED_COMPATIBLE_ACCESS_SHA256 = (
-    "009a1b28e474e0e9a5153bfae576a81f86245eba076dabe521bbdcccb29ce8a1"
+    "d9aaa27d738b6614c581e17eeda12fc32a21716d9e4e17da323f54b264b1e389"
 )
 
 
@@ -34,6 +34,6 @@ def read_compatible_access(base: dict[str, Any], path: Path, expected_sha: str) 
 def add_compatible_access(base: dict[str, Any], root: Path) -> dict[str, Any]:
     return read_compatible_access(
         base,
-        root / "reports/source_observatory/TIPSTERS-COMPATIBLE-ACCESS-20261120.json",
+        root / "reports/source_observatory/TIPSTERS-COMPATIBLE-ACCESS-FOLLOWUP-20261120.json",
         APPROVED_COMPATIBLE_ACCESS_SHA256,
     )

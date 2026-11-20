@@ -12,6 +12,8 @@ from robin.source_observatory.olbg_store import read_olbg_companion
 from robin.source_observatory.personal_access import add_personal_public
 from robin.source_observatory.profile_collection import add_profile_public
 from robin.source_observatory.qualification_view import read_sro_companion
+from robin.source_observatory.roster_collection import add_roster_public
+from robin.source_observatory.roster_recurring_view import add_group_public
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--directory", type=Path, required=True)
@@ -42,6 +44,8 @@ try:
         view = read_local_base()
     view = add_family_public(view, Path(__file__).resolve().parents[2])
     view = add_profile_public(view, Path(__file__).resolve().parents[2])
+    view = add_roster_public(view, Path(__file__).resolve().parents[2])
+    view = add_group_public(view, Path(__file__).resolve().parents[2])
     print(json.dumps(view, ensure_ascii=False))
 except (ValueError, OSError, KeyError, TypeError):
     print(

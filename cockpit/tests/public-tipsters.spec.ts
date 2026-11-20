@@ -7,6 +7,34 @@ const data={status:'ok',schemaVersion:'robin-public-tipsters-v1',distinctPicks:1
  kickoff:'2026-11-21T16:15:00Z',observedAt:'2026-11-19T09:34:00Z',publishedCivilDate:'2026-11-18',publishedAt:null,
  sourceUrl:'https://legruppetto.fr/forum/viewtopic.php?t=24850&p=123#p123'}]};
 
+test('un lot de profils indisponible garde les choix antérieurs avec une alerte',async({page})=>{
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,rosterCollection:{state:'unavailable'}}}));
+ await page.goto('/expert/collecte-publique');
+ await expect(page.getByRole('alert')).toContainText('Une partie des preuves individuelles');
+ await expect(page.getByRole('link',{name:'Auteur synthétique',exact:true})).toBeVisible();
+});
+
+test('un auteur hors registre affiche sa propre campagne de groupe et son canari distinct',async({page})=>{
+ const now='2026-11-20T22:15:00Z';await page.clock.install({time:new Date(now)});
+ const author='olbg:669101';const choice={...data.picks[0],authorId:author,authorLabel:'OliverL',sourceId:'SRC_014',market:'source_native'};
+ const campaign={state:'collecting',campaignId:'ROBIN-OLBG-ROSTER42-E2V2-20261120',authorIds:[author],profileCount:42,successfulSlots:1,requests:4,requestsMax:133,startsAt:'2026-11-20T23:05:00Z',expiresAt:'2026-11-21T11:15:00Z',native:{state:'Ready',enabled:true,verifiedAt:now,nextRunTime:'2026-11-20T23:05:00Z'}};
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,picks:[choice],rosterCampaign:campaign}}));
+ await page.goto('/expert/tipsters/olbg%3A669101');
+ await expect(page.getByRole('heading',{name:'Collecte du groupe OLBG · 42 profils',exact:true})).toBeVisible();
+ await expect(page.getByText('Canari vérifié sur trois auteurs.',{exact:false})).toBeVisible();
+ await expect(page.getByText('Prochain créneau Windows :',{exact:false})).toContainText('00 h 05');
+ await expect(page.getByRole('heading',{name:'Collecte OLBG · profil 669088',exact:true})).toHaveCount(0);
+});
+
+test('un reçu de groupe indisponible ne fabrique ni42profils ni canari réussi',async({page})=>{
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,rosterCampaign:{state:'unavailable'}}}));
+ await page.goto('/expert/collecte-publique');
+ await expect(page.getByRole('heading',{name:'Collecte du groupe OLBG',exact:true})).toBeVisible();
+ await expect(page.getByText('Preuves du groupe indisponibles',{exact:false})).toBeVisible();
+ await expect(page.getByText('Canari vérifié sur trois auteurs.',{exact:false})).toHaveCount(0);
+ await expect(page.getByRole('heading',{name:'Collecte du groupe OLBG · 42 profils',exact:true})).toHaveCount(0);
+});
+
 test('opaque choices show source literals without a score or performance interpretation',async({page})=>{
  await page.setViewportSize({width:360,height:900});
  const choice={...data.picks[0],market:'source_native_opaque',selection:'Under 2.50',sourceMarketLabel:'Total Goals',sourceBetType:'Win',sourceFields:{hcap:'2.50'},performanceEvaluationAllowed:false,settlementAllowed:false};

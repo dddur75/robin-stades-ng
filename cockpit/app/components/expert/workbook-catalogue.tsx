@@ -4,7 +4,7 @@ import {useEffect,useState} from 'react';
 import {formatDateTime} from '../../i18n';
 
 type Access={label:string;reason:string;requiredAccess:string;ownerAction:string};
-type Row={recordId:string;label:string;platform:string;kind:string;sheet:string;row:number;sourceUrl:string|null;collectionEnabled:boolean;qualifiedRecordId?:string;qualification?:Access&{personallyProven:boolean};platformAssessment?:Access;historicalLevel?:string|null;historicalL1?:string|null;fields?:Record<string,string>};
+type Row={recordId:string;label:string;platform:string;kind:string;sheet:string;row:number;sourceUrl:string|null;collectionEnabled:boolean;qualifiedRecordId?:string;qualification?:Access&{personallyProven:boolean;nativeAuthorId?:string;nativeFactCount?:number;observedAt?:string;rosterObservedAt?:string};platformAssessment?:Access;historicalLevel?:string|null;historicalL1?:string|null;fields?:Record<string,string>};
 type Data={status:string;records:Row[];total:number;addressCount:number;profileRows:number;referenceRows:number;page:number;limit:number;sheets:string[];platforms:string[];headers:Record<string,string>;receipt:{claimId:string;workbookSha256:string};qualifiedRegistryState?:string;readAt?:string;personalAccessState?:string};
 export function WorkbookCatalogue(){
  const [q,setQ]=useState(''),[sheet,setSheet]=useState(''),[platform,setPlatform]=useState(''),[page,setPage]=useState(0),[id,setId]=useState('');
@@ -43,6 +43,8 @@ export function WorkbookCatalogue(){
      {(r.qualification??r.platformAssessment)&&<><p>Accès à établir : {(r.qualification??r.platformAssessment)?.requiredAccess}</p><p>{(r.qualification??r.platformAssessment)?.ownerAction}</p></>}
      {r.sourceUrl&&<p><a className="inline-link" href={r.sourceUrl} target="_blank" rel="noopener noreferrer">Ouvrir la référence d’origine</a></p>}
      {r.qualifiedRecordId&&<p><Link className="inline-link" href={`/expert/tipsters/${encodeURIComponent(r.qualifiedRecordId)}`}>Consulter la fiche et ses preuves qualifiées</Link></p>}
+     {!r.qualifiedRecordId&&r.qualification?.personallyProven&&r.qualification.nativeAuthorId&&<p><Link className="inline-link" href={`/expert/tipsters/${encodeURIComponent(r.qualification.nativeAuthorId)}`}>Consulter les choix personnels et leurs preuves</Link></p>}
+     {typeof r.qualification?.nativeFactCount==='number'&&r.qualification.rosterObservedAt&&<p>Inventaire observé le {formatDateTime(r.qualification.rosterObservedAt,true)} : {r.qualification.nativeFactCount} fait(s) source, distincts des choix admis.</p>}
      <details><summary>Champs historiques du classeur</summary><dl>{Object.entries(r.fields??{}).map(([k,v])=><div key={k}><dt><strong>{data.headers[k]??k}</strong></dt><dd>{v}</dd></div>)}</dl></details>
     </>}
    </li>)}</ul>

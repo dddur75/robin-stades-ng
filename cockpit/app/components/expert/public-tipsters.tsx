@@ -13,7 +13,7 @@ type State = { status:string; distinctPicks:number; authorCount:number; requestC
  generatedAt:string; sourceObservedThrough?:string; claimId:string; claimIds?:string[]; recurring?:boolean; halted?:boolean; picks:Pick[];
  campaign?:PublicCampaign; sroCampaign?:PublicCampaign; olbgCampaign?:PublicCampaign; expandedOlbgCampaign?:PublicCampaign; profileCampaign?:PublicCampaign;
  personalCollection?:{state:string;claimId?:string;qualifiedAt?:string;nativeChoices?:number};
- familyCollection?:{state:string;nativeWinState?:string;opaqueState?:string} };
+ familyCollection?:{state:string;nativeWinState?:string;opaqueState?:string}; rosterCollection?:{state:string}; rosterCampaign?:PublicCampaign&{authorIds?:string[];poolAuthorIds?:string[];profileCount?:number} };
 export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean; tipsterId?:string }) {
  const [data,setData]=useState<State|null>(null); const [error,setError]=useState(false);
  useEffect(()=>{const controller=new AbortController();let alive=true;let pending=false;
@@ -35,7 +35,7 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
    {data.personalCollection?.state==='historical_observations_qualified'&&<p>Usage personnel local confirmé. Des calendriers officiels supplémentaires ont complété les preuves de choix déjà observés ; leurs dates de lecture d’origine sont conservées.</p>}
    {data.personalCollection?.state==='historical_observations_qualified'&&data.personalCollection.qualifiedAt&&<p>Dernière observation du catalogue : {formatDateTime(data.sourceObservedThrough??data.generatedAt,true)}. Qualification complémentaire du catalogue : {formatDateTime(data.personalCollection.qualifiedAt,true)}.</p>}
    {data.personalCollection?.state==='unavailable'&&<p role="alert">Les preuves personnelles complémentaires sont indisponibles. Les faits antérieurs restent conservés avec leur provenance.</p>}
-   {(data.familyCollection?.state==='unavailable'||data.familyCollection?.nativeWinState==='unavailable'||data.familyCollection?.opaqueState==='unavailable')&&<p role="alert">Une partie des preuves individuelles supplémentaires est indisponible. Les autres observations restent conservées avec leur provenance.</p>}
+   {(data.rosterCampaign?.state==='unavailable'||data.rosterCollection?.state==='unavailable'||data.familyCollection?.state==='unavailable'||data.familyCollection?.nativeWinState==='unavailable'||data.familyCollection?.opaqueState==='unavailable')&&<p role="alert">Une partie des preuves individuelles supplémentaires est indisponible. Les autres observations restent conservées avec leur provenance.</p>}
    <p>Horaires des lectures et des coups d’envoi : heure de Paris.</p>
    {!tipsterId&&<p>{data.recurring ? "Historique de la collecte des forums" : "Lot de collecte ponctuelle"} · {data.requestCount} GET publics HTTP(S) pour ce lot initial. {!data.recurring && !data.campaign && "Aucune collecte automatique de ces forums n’est activée."}</p>}
    {!tipsterId && data.campaign && <div className="section-card">
@@ -73,6 +73,16 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
     <PublicCampaignCounters campaign={data.profileCampaign}/>
     <p>Ce profil dispose de sa propre campagne temporaire : un canari et huit créneaux, limités à dix-huit GET et aux cinq rencontres vérifiées. Fin le 21 novembre à 12 h 15, heure de Paris, avant le premier match. Les réobservations d’un même choix ne comptent pas comme de nouveaux pronostics.</p>
     <p>Les conditions de la source sont réutilisées pour cette période bornée ; elles ne sont pas relues à chaque créneau. Aucun rendement ni résultat calculé.</p>
+   </div>}
+   {data.rosterCampaign&&(!tipsterId||(data.rosterCampaign.poolAuthorIds??data.rosterCampaign.authorIds)?.includes(tipsterId))&&<div className="section-card">
+    <h3>Collecte du groupe OLBG{typeof data.rosterCampaign.profileCount==='number'&&` · ${data.rosterCampaign.profileCount} profils`}</h3>
+    <PublicCampaignStatus campaign={data.rosterCampaign}/>
+    {data.rosterCampaign.state==='unavailable'?<p>Preuves du groupe indisponibles ; aucune programmation n’est certifiée par cette lecture.</p>:<>
+     <PublicCampaignCounters campaign={data.rosterCampaign}/>
+     {typeof data.rosterCampaign.successfulSlots==='number'&&data.rosterCampaign.successfulSlots>0&&<p>Canari vérifié sur trois auteurs. Les trois passages prévus concernent le groupe qualifié, y compris les profils hors registre Ligue 1. Les doublons observés à nouveau ne sont pas de nouveaux pronostics.</p>}
+     <p>Fin le 21 novembre à 12 h 15, heure de Paris. Arrêt individuel si aucun choix admissible ; arrêt du groupe en cas de refus, incident ou limite atteinte.</p>
+     {tipsterId&&data.rosterCampaign.poolAuthorIds?.includes(tipsterId)&&!data.rosterCampaign.authorIds?.includes(tipsterId)&&<p>Ce profil n’est plus collecté par cette campagne. Ses observations antérieures restent conservées.</p>}
+    </>}
    </div>}
    {data.halted && <p role="alert">Campagne des forums arrêtée. Historique préservé ; aucune nouvelle lecture autorisée par cette campagne.</p>}
    {compact ? <InlineLink href="/expert/collecte-publique">Voir les fiches et les pronostics collectés</InlineLink>:<>

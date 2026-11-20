@@ -21,6 +21,8 @@ from robin.source_observatory.qualification_view import (
     apply_qualification,
     read_sro_companion,
 )
+from robin.source_observatory.roster_collection import add_roster_candidates
+from robin.source_observatory.roster_recurring_view import add_group_candidates
 from robin.source_observatory.technical_access import (
     APPROVED_TECHNICAL_SHA256,
     apply_technical_access,
@@ -84,6 +86,8 @@ try:
     base = add_compatible_access(base, Path(__file__).resolve().parents[2])
     base = add_family_candidates(base, Path(__file__).resolve().parents[2])
     base = add_profile_candidates(base, Path(__file__).resolve().parents[2])
+    base = add_roster_candidates(base, Path(__file__).resolve().parents[2])
+    base = add_group_candidates(base, Path(__file__).resolve().parents[2])
     print(json.dumps(base, ensure_ascii=False))
 except (ValueError, OSError, KeyError, TypeError):
     print(

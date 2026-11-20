@@ -18,3 +18,15 @@ test('independent source tasks gate their own rows and preserve personal facts',
   assert.deepEqual(data.candidates.map(r=>r.collectionEnabled),[sro,olbg]);assert.equal(data.enabledCount,Number(sro)+Number(olbg));
  }
 });
+
+test('roster rows and catalogue-only rows require their own fresh exact task',()=>{
+ const task={state:'Ready',enabled:true,verifiedAt:new Date(now).toISOString()};
+ for(const own of [undefined,task]){
+  const row={collectionEnabled:true,qualification:{sourceId:'SRC_014',rosterCampaignId:'ROBIN-OLBG-ROSTER42-E2V2-20261120',rosterAuthorUrl:'https://www.olbg.com/tipsters/tips/669101'}};
+  const data={enabledCount:1,candidates:[structuredClone(row)],rosterAssessments:[structuredClone(row),{...structuredClone(row),qualification:{...row.qualification,rosterAuthorUrl:'https://www.olbg.com/tipsters/tips/669088'}}],qualification:{operationalBySource:{SRC_014:true}}};
+  gateSourceOperations(data,{state:'Ready',olbg:task,hepter:task,roster:own},now);
+  assert.equal(data.candidates[0].collectionEnabled,Boolean(own));
+  assert.equal(data.rosterAssessments[0].collectionEnabled,Boolean(own));
+  assert.equal(data.rosterAssessments[1].collectionEnabled,false);
+ }
+});

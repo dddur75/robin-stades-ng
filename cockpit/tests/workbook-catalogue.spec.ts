@@ -22,3 +22,14 @@ test('la sélection masque immédiatement la liste précédente en attendant sa 
  await page.route('**/api/tipsters/workbook?*',async r=>{const p=new URL(r.request().url()).searchParams;if(p.get('id'))await new Promise(done=>setTimeout(done,400));return r.fulfill({json:{...response,records:p.get('id')?[{...b,fields:{A:'Bob'}}]:[a,b],total:p.get('id')?1:2}});});
  await page.goto('/expert/catalogue-sources');await page.getByRole('button',{name:'Bob',exact:true}).click();await expect(page.getByRole('button',{name:'Alice',exact:true})).toHaveCount(0);await expect(page.getByText('Champs historiques du classeur')).toHaveCount(1);
 });
+
+test('un inventaire zéro est affiché seulement avec une mesure et sa propre date',async({page})=>{
+ let measured=false;
+ await page.route('**/api/tipsters/workbook?*',r=>r.fulfill({json:{...response,records:[{...b,qualification:{label:'Évaluation datée',reason:'Sans mesure',requiredAccess:'À établir',ownerAction:'Qualification',personallyProven:false,observedAt:'2026-11-20T21:00:00Z',...(measured?{nativeFactCount:0,rosterObservedAt:'2026-11-19T10:00:00Z'}:{})}}],total:1}}));
+ await page.goto('/expert/catalogue-sources?id=workbook:b');
+ await expect(page.getByText('Évaluation datée',{exact:true})).toBeVisible();
+ await expect(page.getByText('Inventaire observé le',{exact:false})).toHaveCount(0);
+ measured=true;await page.getByRole('button',{name:'Actualiser les états',exact:true}).click();
+ await expect(page.getByText('Inventaire observé le',{exact:false})).toContainText('0 fait(s) source');
+ await expect(page.getByText('Inventaire observé le',{exact:false})).toContainText('19 novembre 2026');
+});

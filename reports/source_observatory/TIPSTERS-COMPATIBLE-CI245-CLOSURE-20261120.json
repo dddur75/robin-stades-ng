@@ -1,0 +1,148 @@
+{
+  "generatedAt": "2026-11-20T21:22:00.145180+00:00",
+  "schemaVersion": "robin-compatible-ci-closure-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COMPATIBLE.CI245.CLOSURE.20261120",
+  "status": "EXACT_HEAD_CI_ACCEPTED_GLOBAL_SOURCE_COVERAGE_PARTIAL",
+  "head": "70a22b83452c3d4fc60f8f59e8b48ed7c77920eb",
+  "pr": 133,
+  "draft": true,
+  "merged": false,
+  "deployed": false,
+  "ci": {
+    "runId": 44811211649,
+    "runNumber": 245,
+    "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/44811211649",
+    "successfulJobs": 17,
+    "jobs": [
+      {
+        "id": 136547921446,
+        "name": "End-to-End Live Path Replay",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136547921733,
+        "name": "Historical Deep — contrat cache-only",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136547921844,
+        "name": "Jalon 10 - entrees de preuve gelees",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136547921883,
+        "name": "Residual Fault Matrix",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136547921915,
+        "name": "Historical Authority Workflows Disabled",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136547921928,
+        "name": "Bounded live canary - Ubuntu",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136547921997,
+        "name": "Chronos PostgreSQL profiles / Chronos static contracts",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136547922015,
+        "name": "Chronos PostgreSQL profiles / tests (non_superuser_createrole)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136547922030,
+        "name": "Bounded live canary - Windows",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136547922051,
+        "name": "Exact Workflow Entrypoint",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136547922456,
+        "name": "Chronos PostgreSQL profiles / tests (superuser)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136547922457,
+        "name": "Chronos PostgreSQL profiles / Chronos source and activation",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136550931788,
+        "name": "Chronos PostgreSQL profiles / Chronos provider-free Cockpit",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136551803229,
+        "name": "Robin Experience — preuves visuelles",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136551803247,
+        "name": "Quality and domain tests",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136551803350,
+        "name": "Jalon 10 - trois temoins R3 bornes",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136563447884,
+        "name": "tests",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "tests": {
+    "pythonPassed": 5124,
+    "pythonSkipped": 41,
+    "pythonXfailed": 1,
+    "pythonSeconds": 1146.6,
+    "visualPassed": 99,
+    "visualSkipped": 2
+  },
+  "allCompatibleSourcesIntegrated": false,
+  "evidence": [
+    {
+      "path": "ci245-terminal-jobs.json",
+      "sha256": "b5eb52858a3b5664fab72d5c1858777c4857521c8eff7446c734df3faacf9c1f"
+    },
+    {
+      "path": "ci245-terminal-runs.json",
+      "sha256": "63ad816acb0fca17b0d3dbe05ebc3f71308ea91de0f89d3fc934510b87f2333c"
+    },
+    {
+      "path": "ci245-quality-log.json",
+      "sha256": "ced3c79fa763ceda666e85a9cb6cdd69c1bbdb38d22ae557c5c1eb03fe018af1"
+    },
+    {
+      "path": "ci245-visual-log.json",
+      "sha256": "d10ad2168ed4d6a8dfe19169b4490fcd9f23de929e8aa1e08a8c1e5a527455e2"
+    }
+  ]
+}

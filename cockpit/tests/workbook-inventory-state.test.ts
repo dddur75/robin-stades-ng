@@ -30,3 +30,14 @@ test('la règle Kicktipp est propre au concours de la référence',()=>{
  assert.equal(result.records[1].platformAssessment?.requiredAccess,'Export prospectif pour ce concours');
  assert(result.records.every(r=>r.collectionEnabled===false));
 });
+
+test('une preuve du catalogue hors317 est jointe exactement sans activation',()=>{
+ const row={...person,recordId:'outside317',candidateId:'new',sourceUrl:'https://www.olbg.com/tipsters/tips/20'};
+ const qualification={personallyProven:true,nativeAuthorId:'olbg:20'};
+ const packet={status:'ok',candidates:[],qualification:{status:'ok',rosterCollectionState:'ok'},rosterAssessments:[{recordId:row.recordId,candidateId:'new',sheet:'Catalogue',row:5,sourceUrl:row.sourceUrl,collectionEnabled:false as const,qualification}]};
+ const result=decorateInventory({records:[row,{...row,recordId:'wrong'},{...row,sourceUrl:row.sourceUrl+'/history'}]},packet,'2026-11-20T22:00:00Z');
+ assert.deepEqual(result.records[0].qualification,qualification);
+ assert.equal(result.records[0].qualifiedRecordId,undefined);
+ assert(result.records.every(r=>!r.collectionEnabled));
+ assert.equal(result.records[1].qualification,undefined);assert.equal(result.records[2].qualification,undefined);
+});

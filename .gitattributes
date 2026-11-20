@@ -5,3 +5,7 @@ reports/evidence/mission-028-phase1-rates.csv -text whitespace=blank-at-eol,blan
 data/source_observatory/*.md text eol=lf
 data/source_observatory/pilot_sources.csv text eol=lf
 reports/source_observatory/*.json text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.ps1 text eol=lf
+.gitattributes text eol=lf
