@@ -17,9 +17,11 @@ export function PublicCampaignStatus({campaign}:{campaign:PublicCampaign}){
   halted:'Campagne arrêtée : historique conservé, aucune nouvelle collecte autorisée.',
   expired:'Campagne expirée. Les observations sont conservées.',
   invalid_package:'Paquet de campagne invalide : exécution refusée.',
-  blocked_lock:'Collecte bloquée par un verrou : contrôle nécessaire.'};
+  blocked_lock:'Collecte bloquée par un verrou : contrôle nécessaire.',
+  missed_slot:'Créneau manqué : collecte arrêtée sans rattrapage, observations conservées.',
+  completed:'Tous les créneaux sont terminés. Les observations sont conservées.'};
  return <>
-  <p role={['halted','invalid_package','blocked_lock'].includes(view.kind)?'alert':'status'}>{labels[view.kind as keyof typeof labels]}</p>
+  <p role={['halted','invalid_package','blocked_lock','missed_slot'].includes(view.kind)?'alert':'status'}>{labels[view.kind as keyof typeof labels]}</p>
   {view.nextAt&&<p>Prochain créneau Windows : {formatDateTime(view.nextAt,true)}, heure de Paris. Son exécution reste à vérifier.</p>}
  </>;
 }

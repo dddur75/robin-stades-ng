@@ -2,7 +2,7 @@ import {execFile} from 'node:child_process';
 import {resolve} from 'node:path';
 import {promisify} from 'node:util';
 export type TaskState={state:string;enabled?:boolean;verifiedAt?:string};
-type NativeState=TaskState&{sro?:TaskState;olbg?:TaskState;expansion?:TaskState};
+type NativeState=TaskState&{sro?:TaskState;olbg?:TaskState;expansion?:TaskState;hepter?:TaskState};
 const runFile=promisify(execFile);
 let state:NativeState={state:'checking'};
 let pending:Promise<void>|undefined;
@@ -22,10 +22,10 @@ export function readNativeState(root:string):NativeState{
    .finally(()=>{refreshed=Date.now();pending=undefined;});
  }
  const old=(s:TaskState)=>Date.now()-Date.parse(s.verifiedAt??'')>30000?{...s,state:'stale',enabled:false}:s;
- return {...old(state),sro:state.sro?old(state.sro):{state:'checking'},olbg:state.olbg?old(state.olbg):{state:'checking'},expansion:state.expansion?old(state.expansion):{state:'checking'}};
+ return {...old(state),sro:state.sro?old(state.sro):{state:'checking'},olbg:state.olbg?old(state.olbg):{state:'checking'},expansion:state.expansion?old(state.expansion):{state:'checking'},hepter:state.hepter?old(state.hepter):{state:'checking'}};
 }
 
-export function gateSourceOperations(data:{candidates:{collectionEnabled:boolean;qualification?:{sourceId?:string;expansionCampaignId?:string;expansionAuthorUrl?:string}}[];enabledCount:number;qualification:{operationalBySource?:Record<string,boolean>;sourceOperational?:boolean;nativeSRO?:TaskState;nativeOLBG?:TaskState;nativeExpansion?:TaskState}},native:NativeState,now=Date.now()):void{
+export function gateSourceOperations(data:{candidates:{collectionEnabled:boolean;qualification?:{sourceId?:string;expansionCampaignId?:string;expansionAuthorUrl?:string;profileCampaignId?:string;profileAuthorUrl?:string}}[];enabledCount:number;qualification:{operationalBySource?:Record<string,boolean>;sourceOperational?:boolean;nativeSRO?:TaskState;nativeOLBG?:TaskState;nativeExpansion?:TaskState}},native:NativeState,now=Date.now()):void{
  const states=data.qualification.operationalBySource??{'SRC_039':Boolean(data.qualification.sourceOperational)};
  const allowed:Record<string,boolean>={'SRC_039':Boolean(states.SRC_039&&sourceTaskIsCurrent(native.sro,now)),'SRC_014':Boolean(states.SRC_014&&sourceTaskIsCurrent(native.olbg,now))};
  data.qualification.nativeSRO=native.sro;data.qualification.nativeOLBG=native.olbg;
@@ -33,7 +33,9 @@ export function gateSourceOperations(data:{candidates:{collectionEnabled:boolean
  data.qualification.operationalBySource=allowed;data.qualification.sourceOperational=allowed.SRC_039;
  for(const row of data.candidates){
   const q=row.qualification;
-  const permitted=q?.expansionCampaignId
+  const permitted=q?.profileCampaignId
+   ?q.profileCampaignId==='ROBIN-OLBG-HEPTER669088-E2V2-20261120'&&q.profileAuthorUrl==='https://www.olbg.com/tipsters/tips/669088'&&sourceTaskIsCurrent(native.hepter,now)
+   :q?.expansionCampaignId
    ?q.expansionCampaignId==='ROBIN-OLBG-EXPANDED383717-20261120'&&q.expansionAuthorUrl==='https://www.olbg.com/tipsters/tips/383717'&&sourceTaskIsCurrent(native.expansion,now)
    :allowed[q?.sourceId??'SRC_039'];
   row.collectionEnabled=Boolean(row.collectionEnabled&&permitted);

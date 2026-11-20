@@ -20,7 +20,7 @@ export function workbookInventory():Plugin {
   try{
    const repo=resolve(root,'..');const python=process.env.ROBIN_TIPSTERS_PYTHON??resolve(repo,'.venv',process.platform==='win32'?'Scripts/python.exe':'bin/python');
    const options={timeout:12000,maxBuffer:2000000,windowsHide:true,encoding:'utf8' as const,env:{...process.env,PYTHONPATH:resolve(repo,'src')}};
-   const inventory=await runFile(python,['-X','utf8','-B',resolve(root,'scripts/read-workbook-inventory.py'),'--directory',resolve(root,'.ci/tipsters-workbook-complete-20261120'),'--query',JSON.stringify(query)],options);
+   const inventory=await runFile(python,['-X','utf8','-B',resolve(root,'scripts/read-workbook-inventory.py'),'--directory',process.env.ROBIN_WORKBOOK_INVENTORY_DIRECTORY??resolve(root,'.ci/tipsters-workbook-complete-20261120'),'--query',JSON.stringify(query)],options);
    let data=JSON.parse(inventory.stdout);
    if(data.status!=='ok'){res.statusCode=503;res.end(JSON.stringify(data));return;}
    try{

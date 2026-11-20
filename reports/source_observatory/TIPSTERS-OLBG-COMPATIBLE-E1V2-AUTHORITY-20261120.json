@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "robin-olbg-compatible-family-authority-v1",
+  "claimId": "GOV.SOURCE_OBSERVATORY.OLBG.COMPATIBLE.FAMILY.E1V2.20261120",
+  "generatedAt": "2026-11-20T19:01:47.311480+00:00",
+  "status": "BOUNDED_DISTINCT_E1_AUTHORITY_NOT_SOURCE_ADMISSION",
+  "planSha256": "573c6fd70d591d4a8a57f882bfe0f610834949d4182588214ebc128a6e2bea06",
+  "manifestSha256": "cbe24354579cb3c39c250f9d18d36c9b848e97ce17814c01e9838db65f25b96e",
+  "priorCompatibleCampaign": {
+    "actualReservations": 16,
+    "ceiling": 18,
+    "unusedCancelled": 2,
+    "activeMilliseconds": 5809,
+    "journalSha256": "3d0c313ccd4a69e0f6e835eae85835655d84b24b1e3b6cb25a7bfdae977aa0e3"
+  },
+  "boundedFamily": {
+    "historicalQualificationUnits": 144,
+    "httpsGETsMax": 4,
+    "profileGETsMax": 3,
+    "projectedAggregateMax": 148,
+    "stage": "E1",
+    "activeSecondsMax": 300,
+    "expiresAt": "2026-11-20T21:00:00+00:00",
+    "rosterSha256": "3847216c1b30be9c482eddc7b7cefaee8ced2a65eaa70ab4a2db1b880b6f679b"
+  },
+  "evidenceReuse": {
+    "calendarSha256": "2feb3b728d9fd64cec95f4f8b7f4376f5e550441eae8b4e96f7edd0fd1bea8e8",
+    "canonicalFixtures": 14,
+    "legalNormalizedTextSha256": "1248b86c3f9e8adc061c3fd489b3ba0576812956ff8ff051b8b3483ce6e4590f"
+  },
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "effects": {
+    "admissions": 0,
+    "tasks": 0,
+    "API": 0,
+    "JavaScript": 0,
+    "auth": 0,
+    "purchases": 0
+  },
+  "limits": [
+    "This new authority comes from the current explicit owner continuation, not a transfer of expired grants or an increase of prior immutable ceilings.",
+    "It fixes three preselected profiles only; no400author harvest, hidden repeated batches, E2 or automatic expansion.",
+    "Newly acquired candidate facts require separate C1/calendar review before integration as personal pre-match choices.",
+    "The compatible source programme is not declared complete by this bounded authority."
+  ]
+}

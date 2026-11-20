@@ -5,13 +5,15 @@ import { formatDateTime } from "../../i18n";
 import { InlineLink, SectionHeading } from "../common/ui";
 import type { PublicCampaign } from '../../lib/tipsters-campaign';
 import { PublicCampaignCounters, PublicCampaignStatus } from './public-campaign-status';
+import {choiceHeading,OpaqueChoiceDetails,type SourceChoice} from './source-choice';
 
-type Pick = { id:string; authorId:string; authorLabel:string; sourceId:string; fixtureLabel:string;
+type Pick = SourceChoice & { id:string; authorId:string; authorLabel:string; sourceId:string; fixtureLabel:string;
  selection:string; market?:string; kickoff:string; observedAt:string; publishedCivilDate:string|null; sourceUrl:string };
 type State = { status:string; distinctPicks:number; authorCount:number; requestCount:number;
  generatedAt:string; sourceObservedThrough?:string; claimId:string; claimIds?:string[]; recurring?:boolean; halted?:boolean; picks:Pick[];
- campaign?:PublicCampaign; sroCampaign?:PublicCampaign; olbgCampaign?:PublicCampaign; expandedOlbgCampaign?:PublicCampaign;
- personalCollection?:{state:string;claimId?:string;qualifiedAt?:string;nativeChoices?:number} };
+ campaign?:PublicCampaign; sroCampaign?:PublicCampaign; olbgCampaign?:PublicCampaign; expandedOlbgCampaign?:PublicCampaign; profileCampaign?:PublicCampaign;
+ personalCollection?:{state:string;claimId?:string;qualifiedAt?:string;nativeChoices?:number};
+ familyCollection?:{state:string;nativeWinState?:string;opaqueState?:string} };
 export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean; tipsterId?:string }) {
  const [data,setData]=useState<State|null>(null); const [error,setError]=useState(false);
  useEffect(()=>{const controller=new AbortController();let alive=true;let pending=false;
@@ -33,6 +35,7 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
    {data.personalCollection?.state==='historical_observations_qualified'&&<p>Usage personnel local confirmé. Des calendriers officiels supplémentaires ont complété les preuves de choix déjà observés ; leurs dates de lecture d’origine sont conservées.</p>}
    {data.personalCollection?.state==='historical_observations_qualified'&&data.personalCollection.qualifiedAt&&<p>Dernière observation du catalogue : {formatDateTime(data.sourceObservedThrough??data.generatedAt,true)}. Qualification complémentaire du catalogue : {formatDateTime(data.personalCollection.qualifiedAt,true)}.</p>}
    {data.personalCollection?.state==='unavailable'&&<p role="alert">Les preuves personnelles complémentaires sont indisponibles. Les faits antérieurs restent conservés avec leur provenance.</p>}
+   {(data.familyCollection?.state==='unavailable'||data.familyCollection?.nativeWinState==='unavailable'||data.familyCollection?.opaqueState==='unavailable')&&<p role="alert">Une partie des preuves individuelles supplémentaires est indisponible. Les autres observations restent conservées avec leur provenance.</p>}
    <p>Horaires des lectures et des coups d’envoi : heure de Paris.</p>
    {!tipsterId&&<p>{data.recurring ? "Historique de la collecte des forums" : "Lot de collecte ponctuelle"} · {data.requestCount} GET publics HTTP(S) pour ce lot initial. {!data.recurring && !data.campaign && "Aucune collecte automatique de ces forums n’est activée."}</p>}
    {!tipsterId && data.campaign && <div className="section-card">
@@ -64,6 +67,13 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
     <p>État Windows : {data.expandedOlbgCampaign.native?.state??'indisponible'}.</p>
    </div>}
    {selected?.authorId==='olbg:383717'&&!data.expandedOlbgCampaign&&<p>Ce profil dispose d’une preuve ponctuelle. Son autorité récurrente est indisponible ; la campagne du profil 648433 ne le couvre pas.</p>}
+   {(!tipsterId||selected?.authorId==='olbg:669088')&&data.profileCampaign&&<div className="section-card">
+    <h3>Collecte OLBG · profil 669088</h3>
+    <PublicCampaignStatus campaign={data.profileCampaign}/>
+    <PublicCampaignCounters campaign={data.profileCampaign}/>
+    <p>Ce profil dispose de sa propre campagne temporaire : un canari et huit créneaux, limités à dix-huit GET et aux cinq rencontres vérifiées. Fin le 21 novembre à 12 h 15, heure de Paris, avant le premier match. Les réobservations d’un même choix ne comptent pas comme de nouveaux pronostics.</p>
+    <p>Les conditions de la source sont réutilisées pour cette période bornée ; elles ne sont pas relues à chaque créneau. Aucun rendement ni résultat calculé.</p>
+   </div>}
    {data.halted && <p role="alert">Campagne des forums arrêtée. Historique préservé ; aucune nouvelle lecture autorisée par cette campagne.</p>}
    {compact ? <InlineLink href="/expert/collecte-publique">Voir les fiches et les pronostics collectés</InlineLink>:<>
     <p><InlineLink href="/expert/collecte-publique">Tous les tipsters collectés</InlineLink></p>
@@ -71,17 +81,19 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
     {!tipsterId && data.picks.length===0 && <p>Aucun pronostic personnel admissible dans ces preuves locales.</p>}
     {tipsterId && !selected && <p>Cette fiche ne figure pas dans les preuves locales actuelles.</p>}
     {(tipsterId ? data.picks.filter(p=>p.authorId===tipsterId) : data.picks).map(p=><article key={p.id} className="section-card tipster-pick">
-     <h3>{p.fixtureLabel} · {p.market==='source_native'?'Choix publié (Win) :':'score prévu'} {p.selection}</h3>
+     <h3>{p.fixtureLabel} · {choiceHeading(p)} {p.selection}</h3>
      <p>{p.authorLabel} · {p.sourceId}</p>
      <p>Coup d’envoi : {formatDateTime(p.kickoff,true)}.</p>
      <p>Observé avant match le {formatDateTime(p.observedAt,true)}.</p>
      <p>Date civile affichée : {p.publishedCivilDate??'non renseignée'}. Publication : heure et fuseau non certifiés.</p>
      {p.market==='source_native'&&<p>Marché normalisé et durée de jeu non certifiés. Évaluation de performance désactivée.</p>}
+     <OpaqueChoiceDetails choice={p}/>
      <a className="inline-link" href={p.sourceUrl} target="_blank" rel="noopener noreferrer">Voir le message source</a>
      <p>En observation · aucun résultat ni rendement calculé.</p>
     </article>)}
    </>}
-   <p><small>Preuve {(data.claimIds??[data.claimId]).join(' · ')} · vue du {formatDateTime(data.generatedAt,true)}.</small></p>
+   <p><small>Dossier actualisé le {formatDateTime(data.generatedAt,true)}.</small></p>
+   <details><summary>Preuves du dossier</summary><p style={{overflowWrap:'anywhere'}}><small>{(data.claimIds??[data.claimId]).join(' · ')}</small></p></details>
   </>}
  </section>;
 }

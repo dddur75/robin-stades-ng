@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "robin-profile-canary-receipt-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.HEPTER.RECURRING.20261120",
+  "generatedAt": "2026-11-20T19:58:57.748831+00:00",
+  "status": "CANARY_ACCEPTED_REGISTRATION_AUTHORIZED",
+  "planSha256": "5c05bd9d13aa35b23d779c506667078a305e91746944e226a88689d8810d71cc",
+  "manifestSha256": "f35594f71c4b74702ff3315cb7b4b5318f19d1341add356c9431732b8aa6dc17",
+  "journalSha256": "8bdd37af7ff199c618bf7c15c185336965930d25f84a08fe5b2cbcf0dac3fb95",
+  "observationSha256": "c0de0c2c377b51b298a902e1b2be4f84d27d7f831d9dc2f927581997b19158e8",
+  "sourceObservedAt": "2026-11-20T19:56:29.967772+00:00",
+  "distinctChoices": 5,
+  "sourcePseudonyms": 1,
+  "additionalUniqueChoicesOverE1": 0,
+  "requestReservations": 2,
+  "https200": 2,
+  "activeMilliseconds": 3409,
+  "remainingGETMax": 16,
+  "totalE2GETMax": 18,
+  "scheduledFutureSlots": 8,
+  "expiresAt": "2026-11-21T11:15:00Z",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceRawBodiesStored": false,
+  "performanceEvaluationAllowed": false,
+  "limitations": [
+    "Five source IDs already present in E1, freshly reobserved before their five canonical kickoffs.",
+    "Registration is authorized here, not yet attested installed. Future slots have not run.",
+    "Global all-compatible-source delivery remains partial."
+  ]
+}

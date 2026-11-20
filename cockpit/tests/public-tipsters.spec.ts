@@ -7,6 +7,30 @@ const data={status:'ok',schemaVersion:'robin-public-tipsters-v1',distinctPicks:1
  kickoff:'2026-11-21T16:15:00Z',observedAt:'2026-11-19T09:34:00Z',publishedCivilDate:'2026-11-18',publishedAt:null,
  sourceUrl:'https://legruppetto.fr/forum/viewtopic.php?t=24850&p=123#p123'}]};
 
+test('opaque choices show source literals without a score or performance interpretation',async({page})=>{
+ await page.setViewportSize({width:360,height:900});
+ const choice={...data.picks[0],market:'source_native_opaque',selection:'Under 2.50',sourceMarketLabel:'Total Goals',sourceBetType:'Win',sourceFields:{hcap:'2.50'},performanceEvaluationAllowed:false,settlementAllowed:false};
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,picks:[choice]}}));
+ await page.goto('/expert/collecte-publique');
+ await expect(page.getByRole('heading',{name:'Nice – PSG · Choix publié (marché source non interprété) : Under 2.50',exact:true})).toBeVisible();
+ await expect(page.getByText('Marché source : Total Goals · type source : Win · handicap source : 2.50.',{exact:true})).toBeVisible();
+ await expect(page.getByText('Règlement et évaluation de performance désactivés.',{exact:false})).toBeVisible();
+ await expect(page.getByText('score prévu Under',{exact:false})).toHaveCount(0);
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});
+
+test('hepter shows its exact campaign without borrowing another author task',async({page})=>{
+ const now='2026-11-20T20:00:00Z';await page.clock.install({time:new Date(now)});
+ const choice={...data.picks[0],authorId:'olbg:669088',authorLabel:'Hepter',sourceId:'SRC_014',market:'source_native'};
+ const campaign={state:'collecting',successfulSlots:1,requests:2,requestsMax:18,slots:9,startsAt:'2026-11-20T21:00:00Z',expiresAt:'2026-11-21T11:15:00Z',native:{state:'Ready',enabled:true,verifiedAt:now,nextRunTime:'2026-11-20T21:00:00Z'}};
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,picks:[choice],profileCampaign:campaign}}));
+ await page.goto('/expert/tipsters/olbg%3A669088');
+ await expect(page.getByRole('heading',{name:'Collecte OLBG · profil 669088',exact:true})).toBeVisible();
+ await expect(page.getByText('1 créneau(x) validé(s) · 2 GET réservés sur 18 maximum.',{exact:true})).toBeVisible();
+ await expect(page.getByText('Prochain créneau Windows :',{exact:false})).toContainText('22 h 00');
+ await expect(page.getByRole('heading',{name:'Collecte OLBG · profil 648433',exact:true})).toHaveCount(0);
+});
+
 test('observations du catalogue et qualification complémentaire ont deux dates distinctes',async({page})=>{
  await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,generatedAt:'2026-11-20T16:22:00Z',sourceObservedThrough:'2026-11-20T15:00:00Z',personalCollection:{state:'historical_observations_qualified',qualifiedAt:'2026-11-20T16:22:00Z'}}}));
  await page.goto('/expert/collecte-publique');

@@ -8,6 +8,11 @@ import { permitsLocalPilotAccess } from "./tipsters-pilot-plugin";
 
 const runFile = promisify(execFile);
 
+export function connectorDirectory(root:string,writing:boolean,env:Record<string,string|undefined>=process.env):string {
+  const own=env.ROBIN_CONNECTORS_DIRECTORY??resolve(root,'.ci/tipsters-connectors');
+  return writing?own:env.ROBIN_CONNECTORS_READ_DIRECTORY??own;
+}
+
 export function tipstersConnectors(): Plugin {
   let root = process.cwd();
   let running = false;
@@ -17,7 +22,7 @@ export function tipstersConnectors(): Plugin {
     const python = process.env.ROBIN_TIPSTERS_PYTHON ?? resolve(repository, ".venv",
       process.platform === "win32" ? "Scripts/python.exe" : "bin/python");
     const args = ["-X", "utf8", "-B", resolve(root, "scripts/run-tipster-connectors.py"),
-      "--directory", process.env.ROBIN_CONNECTORS_DIRECTORY ?? resolve(root, ".ci/tipsters-connectors")];
+      "--directory", connectorDirectory(root,Boolean(sourceId))];
     if (sourceId) args.push("--run", ...(sourceId === "all" ? [] : ["--source-id", sourceId]));
     return runFile(python, args, { timeout: sourceId ? 2_760_000 : 8_000,
       maxBuffer: 12_000_000, windowsHide: true, encoding: "utf8" });

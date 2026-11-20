@@ -5,13 +5,17 @@ import json
 from pathlib import Path
 
 from robin.source_observatory.candidate_registry import load_registry
+from robin.source_observatory.compatible_access import add_compatible_access
 from robin.source_observatory.expansion_view import add_candidate_expansion
+from robin.source_observatory.family_collection import add_family_candidates
 from robin.source_observatory.followup_access import (
     APPROVED_NT_FOLLOWUP_SHA256,
     apply_followup_access,
 )
+from robin.source_observatory.legacy_bridge import read_legacy_snapshot
 from robin.source_observatory.olbg_store import read_olbg_companion
 from robin.source_observatory.personal_access import add_personal_candidates
+from robin.source_observatory.profile_collection import add_profile_candidates
 from robin.source_observatory.qualification_view import (
     APPROVED_ASSESSMENT_SHA,
     apply_qualification,
@@ -25,8 +29,10 @@ from robin.source_observatory.technical_access import (
 p = argparse.ArgumentParser()
 p.add_argument("--directory", type=Path, required=True)
 a = p.parse_args()
-try:
-    base = load_registry(a.directory)
+
+
+def read_local_base(directory: Path) -> dict:
+    base = load_registry(directory)
     root = Path(__file__).resolve().parents[1] / ".ci"
     try:
         _sro_public, personal, operational = read_sro_companion(
@@ -68,6 +74,16 @@ try:
         base["qualification"] = dict(status="unavailable")
     base = add_candidate_expansion(base, Path(__file__).resolve().parents[2])
     base = add_personal_candidates(base, Path(__file__).resolve().parents[2])
+    return base
+
+
+try:
+    base = read_legacy_snapshot("read-tipster-candidates.py", ["--directory", str(a.directory)])
+    if base is None:
+        base = read_local_base(a.directory)
+    base = add_compatible_access(base, Path(__file__).resolve().parents[2])
+    base = add_family_candidates(base, Path(__file__).resolve().parents[2])
+    base = add_profile_candidates(base, Path(__file__).resolve().parents[2])
     print(json.dumps(base, ensure_ascii=False))
 except (ValueError, OSError, KeyError, TypeError):
     print(

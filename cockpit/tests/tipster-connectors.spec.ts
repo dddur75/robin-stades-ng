@@ -47,7 +47,8 @@ test("un journal expiré interdit le lancement et une source refusée reste visi
   await page.goto("/expert/admin-collecte");
   await expect(page.getByRole("button", { name: "Vérifier les 1 sources restantes" })).toBeDisabled();
   await expect(page.getByText("Mission expirée ou absente. Un nouveau plan est requis.")).toBeVisible();
-  await expect(page.getByRole("cell", { name: "Permission de l’éditeur requise" })).toBeVisible();
+  await expect(page.getByRole("cell", { name: "Conditions de cet accès à réexaminer" })).toBeVisible();
+  await expect(page.getByText("Permission de l’éditeur requise",{exact:true})).toHaveCount(0);
 });
 
 test("les lignes et les extractions ambiguës restent explicites", async ({ page }) => {

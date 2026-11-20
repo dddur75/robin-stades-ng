@@ -8,6 +8,13 @@ import {readNativeState,gateSourceOperations} from './tipsters-native-state';
 
 const runFile = promisify(execFile);
 
+type CandidateOperationView=Parameters<typeof gateSourceOperations>[0]&{status:string};
+export function applyCandidateNativeState(data:CandidateOperationView,native:Parameters<typeof gateSourceOperations>[1],now=Date.now()):void{
+  if(data.status==='ok'&&Array.isArray(data.candidates)&&data.qualification){
+    gateSourceOperations(data,native,now);
+  }
+}
+
 export function tipsterCandidates(): Plugin {
   let root = process.cwd();
   let pending: Promise<string> | undefined;
@@ -26,9 +33,7 @@ export function tipsterCandidates(): Plugin {
         "--directory",process.env.ROBIN_TIPSTER_CANDIDATES_DIRECTORY ?? resolve(root,".ci/tipsters-l1-candidates-20261119")],
       {timeout:8000,maxBuffer:12000000,windowsHide:true,encoding:"utf8"}).then(r=>{
         const data=JSON.parse(r.stdout);
-        if(data.qualification?.status==='ok'){
-          gateSourceOperations(data,readNativeState(root));
-        }
+        applyCandidateNativeState(data,readNativeState(root));
         return JSON.stringify(data);
       }).finally(()=>{pending=undefined;});
       const result = await pending;

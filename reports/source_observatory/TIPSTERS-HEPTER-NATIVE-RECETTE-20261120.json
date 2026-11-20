@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "robin-profile-native-recette-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.HEPTER.NATIVE.RECETTE.20261120",
+  "generatedAt": "2026-11-20T20:15:08.726117+00:00",
+  "status": "TEMPORARY_TASK_READY_FUTURE_AUTOMATIC_EXECUTIONS_UNPROVEN",
+  "taskName": "Robin-Tipsters-OLBG-Hepter669088-20261120",
+  "planSha256": "5c05bd9d13aa35b23d779c506667078a305e91746944e226a88689d8810d71cc",
+  "manifestSha256": "f35594f71c4b74702ff3315cb7b4b5318f19d1341add356c9431732b8aa6dc17",
+  "installedXmlSha256": "cf1425fbd4b7cbc45512c52c757e6347ec365cd616bdd1267d297e9afc6588e1",
+  "registrationReceiptSha256": "a2a9e913ae4f61ce08e19b8856850d2ba1c10acfade26f9e54fbf57cc7ad868c",
+  "canaryJournalSha256": "8bdd37af7ff199c618bf7c15c185336965930d25f84a08fe5b2cbcf0dac3fb95",
+  "canaryBundleSha256": "c0de0c2c377b51b298a902e1b2be4f84d27d7f831d9dc2f927581997b19158e8",
+  "sourceClaimId": "DATA.SOURCE_OBSERVATORY.HEPTER.RECURRING.20261120",
+  "native": {
+    "lastResult": 267011,
+    "verifiedAt": "2026-11-20T20:13:48.5903638+00:00",
+    "enabled": true,
+    "nextRunTime": "2026-11-20T22:00:00.0000000+01:00",
+    "state": "Ready"
+  },
+  "scheduledUtc": [
+    "2026-11-20T21:00:00Z",
+    "2026-11-20T23:00:00Z",
+    "2026-11-21T01:00:00Z",
+    "2026-11-21T03:00:00Z",
+    "2026-11-21T05:00:00Z",
+    "2026-11-21T07:00:00Z",
+    "2026-11-21T09:00:00Z",
+    "2026-11-21T11:00:00Z"
+  ],
+  "expiry": "2026-11-21T11:15:00Z",
+  "principal": "Interactive/Limited",
+  "hidden": true,
+  "multipleInstances": "IgnoreNew",
+  "executionTimeLimitSeconds": 120,
+  "restartCount": 0,
+  "wakeToRun": false,
+  "startWhenAvailable": false,
+  "usedGET": 2,
+  "totalGETMax": 18,
+  "remainingGETMax": 16,
+  "uniqueChoices": 5,
+  "additionalUniqueChoicesOverE1": 0,
+  "readAt": "2026-11-20T20:14:05.775Z",
+  "nativeIndependentReviewer": "C2",
+  "dataAndScopeReviewers": [
+    "C1",
+    "C4"
+  ],
+  "limitations": [
+    "Windows267011 means scheduler has not executed the task yet; the manually supervised canary is separately proven.",
+    "Future automatic slots are scheduled, not attested successful.",
+    "Source terms reused for a bounded period; no per-slot terms surveillance."
+  ]
+}

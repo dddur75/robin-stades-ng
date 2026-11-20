@@ -4,9 +4,9 @@ export type PublicCampaign = {
  native?:{state:string;enabled?:boolean;verifiedAt?:string;nextRunTime?:string};
 };
 
-type Kind='scheduled'|'ready'|'running'|'disabled'|'unknown'|'halted'|'expired'|'invalid_package'|'blocked_lock';
+type Kind='scheduled'|'ready'|'running'|'disabled'|'unknown'|'halted'|'expired'|'invalid_package'|'blocked_lock'|'missed_slot'|'completed';
 export function campaignPresentation(campaign:PublicCampaign,now:number):{kind:Kind;nextAt:string|null}{
- const stopped=['halted','expired','invalid_package','blocked_lock'] as const;
+ const stopped=['halted','expired','invalid_package','blocked_lock','missed_slot','completed'] as const;
  for(const kind of stopped)if(campaign.state===kind)return{kind,nextAt:null};
  const expires=Date.parse(campaign.expiresAt??'');
  if(Number.isFinite(expires)&&expires<=now)return{kind:'expired',nextAt:null};
