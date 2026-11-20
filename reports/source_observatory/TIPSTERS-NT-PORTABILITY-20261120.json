@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "robin-nt-portability-repair-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NT.PORTABLE.SUCCESSION.20261120",
+  "generatedAt": "2026-11-20T07:22:41.601427+00:00",
+  "status": "LOCAL_PORTABILITY_REPAIR_REVIEW_PENDING",
+  "correctedReports": [
+    {
+      "path": "reports/source_observatory/TIPSTERS-FIRST-RECURRING-SLOT-20261120.json",
+      "oldSha256": "7919b8904b6937e2acb350e4fe1b4e4a73c2f2ffd34c09c7dd92e110e17ef665",
+      "newSha256": "d9510f40884a2a48a46c27a54949a1b770b70087b9cce45a9e69bb57bf80649f",
+      "changedLocators": [
+        {
+          "valueSha256": "b20f37a8eb7f6354dfe3d5cf27a8d4867346bf97e8c600e978bb849c9c345fd2",
+          "relative": "cockpit/.ci/tipsters-nt-delivery-20261120/first-slot-readback.json"
+        }
+      ],
+      "backup": "cockpit/.ci/tipsters-nt-delivery-20261120/pre-portability/7919b8904b6937e2acb350e4fe1b4e4a73c2f2ffd34c09c7dd92e110e17ef665-TIPSTERS-FIRST-RECURRING-SLOT-20261120.json"
+    },
+    {
+      "path": "reports/source_observatory/TIPSTERS-NT-DOM-AUTHORITY-20261120.json",
+      "oldSha256": "b64b820c4fffb55bd203b4249ef3366aa1ffcf23b5e7624d22aad73bb6a1fa10",
+      "newSha256": "8f0ab1b201a37b045fd3a19f7e3b117651cee438783c38dfcdddf8f98031828b",
+      "changedLocators": [
+        {
+          "valueSha256": "bb1e2f792e85451abca7251209a2506f881d827119d6c893cf4d1cef2bcc9522",
+          "relative": "cockpit/.ci/tipsters-nt-dom-redesign-20261120/fetch.py"
+        },
+        {
+          "valueSha256": "90596a855c7f3e56a4d732575474ce65f8bba3a155cc6e000caa7cead6b100a4",
+          "relative": "cockpit/.ci/tipsters-nt-dom-redesign-20261120/render.mjs"
+        }
+      ],
+      "backup": "cockpit/.ci/tipsters-nt-delivery-20261120/pre-portability/b64b820c4fffb55bd203b4249ef3366aa1ffcf23b5e7624d22aad73bb6a1fa10-TIPSTERS-NT-DOM-AUTHORITY-20261120.json"
+    },
+    {
+      "path": "reports/source_observatory/TIPSTERS-NT-E1-LEGAL-CORRECTIVE-20261120.json",
+      "oldSha256": "bcb0899d654ab444a70312f0d9107f52de49ffa853b7ba87b3447216eca77c04",
+      "newSha256": "d02bb76bb631311488c442b389dfbfce376625477c864e90d1b9f5aaa9a80aeb",
+      "changedLocators": [
+        {
+          "valueSha256": "e7ccd6d3cd800616944488f0d33d9067199bd4b222f5c71f24985447173cf46c",
+          "relative": "cockpit/.ci/tipsters-nt-legal-corrective-20261120/legal.py"
+        }
+      ],
+      "backup": "cockpit/.ci/tipsters-nt-delivery-20261120/pre-portability/bcb0899d654ab444a70312f0d9107f52de49ffa853b7ba87b3447216eca77c04-TIPSTERS-NT-E1-LEGAL-CORRECTIVE-20261120.json"
+    },
+    {
+      "path": "reports/source_observatory/TIPSTERS-NT-E1-AUTHORITY-20261120.json",
+      "oldSha256": "9f17051b0eb131a6b42bb4183363be6c2210e9d390c14b60606a33b09e184169",
+      "newSha256": "7d5a3175b6c36b4eb59b7e55efde5bf24e5fc879e867ced04f9b8986b59b1163",
+      "changedLocators": [
+        {
+          "valueSha256": "1889a61c6e25a13063739c8edd5ac01e3314ecac63792dc396a73edf90b4a80c",
+          "relative": "cockpit/.ci/tipsters-notbetting-telegram-20261120/qualify_v2.py"
+        },
+        {
+          "valueSha256": "e460463742dd6fcc5383ec364ba1580eb12e562e41a67080f07616ad9dfd695a",
+          "relative": "cockpit/.ci/tipsters-notbetting-telegram-20261120/transport.py"
+        }
+      ],
+      "backup": "cockpit/.ci/tipsters-nt-delivery-20261120/pre-portability/9f17051b0eb131a6b42bb4183363be6c2210e9d390c14b60606a33b09e184169-TIPSTERS-NT-E1-AUTHORITY-20261120.json"
+    },
+    {
+      "path": "reports/source_observatory/TIPSTERS-NT-FOLLOWUP-VIEW-RECETTE-20261120.json",
+      "oldSha256": "8de0831191064f102503046e953fec25db51a1d7f52b92d0a5f9a05717a5b061",
+      "newSha256": "637e4f769c727aac21343747cce18580245181939849ea30278f71ee8773fd08",
+      "changedLocators": [
+        {
+          "valueSha256": "3a3b2ceec5cce203d85850248d81c8b6956aabb940f720380c62546b118a1629",
+          "relative": "cockpit/.ci/tipsters-nt-delivery-20261120/a9-access-readback.json"
+        },
+        {
+          "valueSha256": "9a87d384bff70510767c3ea39f183451b0636dfd1bb6549429e8167728b17d05",
+          "relative": "cockpit/.ci/tipsters-nt-delivery-20261120/actual-overlay-comparison.json"
+        },
+        {
+          "valueSha256": "b20f37a8eb7f6354dfe3d5cf27a8d4867346bf97e8c600e978bb849c9c345fd2",
+          "relative": "cockpit/.ci/tipsters-nt-delivery-20261120/first-slot-readback.json"
+        }
+      ],
+      "backup": "cockpit/.ci/tipsters-nt-delivery-20261120/pre-portability/8de0831191064f102503046e953fec25db51a1d7f52b92d0a5f9a05717a5b061-TIPSTERS-NT-FOLLOWUP-VIEW-RECETTE-20261120.json",
+      "intermediatePortableSha256": "0645ff4a863283120a9191a363a78c1b581fbd40e0395a13831ee6f0c260f0fa",
+      "additionalEngineeringMetadataChanges": [
+        "tests.portabilityGuard added after21 passing targeted tests",
+        "codeHashesLF updated for the portability design note and guard/test implementation"
+      ]
+    }
+  ],
+  "factsAndPrivatePacketsUnchanged": true,
+  "immutableLedgerException": {
+    "path": "reports/council/decision-ledger.jsonl",
+    "line": 461,
+    "decisionId": "RCV3-20261120-NT-E1-LEGAL-AUTHORIZED",
+    "rawLineSha256": "dadb8c125638d2bdc0d99682d0beafb041ad1979abd9824c2ea850e31ac04a24",
+    "canonicalRecordSha256": "cee3f5935a07569017e75816104afcdc9431c63b3b992644554422d01dde299c",
+    "allowedValueSha256ByContextFilesIndex": {
+      "1": "c9c669575fcd45bc9e9b27c0206f96c10c8f03955b72023065676a4362c4398c",
+      "2": "135a76173d3652aba2f66fc4fc9bda7f361f2c7935f99e1c8f0f5eb432a276f4"
+    },
+    "mask": "Only exact JSON string content spans, with unchanged diagnostic columns. No general context.files allowance. Other fields and secrets fully scanned."
+  },
+  "tests": {
+    "pathGuardCases": 21,
+    "exactAccepted": true,
+    "duplicateAtLine462Rejected": true,
+    "changedAndRehashedValuesRejected": true,
+    "thirdPathOtherFieldOtherDecisionOtherFileRejected": true,
+    "noncanonicalAndMovedLineRejected": true,
+    "strictMypy": "PASS"
+  },
+  "codeHashesLF": {
+    "scripts/check_no_tracked_absolute_paths.py": "41400ea64d624aadc0a79e2db29848bda51d1dc254a0a7ee7284bb2ac92854df",
+    "tests/portability/test_no_tracked_absolute_paths.py": "8dcc94dcc7385fe1d27f958a68513fe14e2ee453bfefcf31af8c917b4695348c"
+  },
+  "effects": {
+    "publisherGets": 0,
+    "ledgerHistoricalEdits": 0,
+    "sourceRightsChanges": 0,
+    "campaignChanges": 0,
+    "secretGuardChanges": 0
+  }
+}

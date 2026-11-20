@@ -66,3 +66,30 @@ test('une erreur de lecture se rétablit au prochain rafraîchissement local',as
  await expect(page.getByText('2 fiches importées',{exact:true})).toBeVisible();
  await expect(page.getByRole('alert').filter({hasText:'registre local'})).toHaveCount(0);
 });
+
+const oldClaim='ENG.SOURCE_OBSERVATORY.PUBLIC.TECHNICAL.ACCESS.20261119';
+const newClaim='ENG.SOURCE_OBSERVATORY.NT.QUALIFICATION.20261120';
+const ntAccess={platform:'NotBetting',label:'Conditions non établies',reason:'Vue juridique incomplète ; aucun profil lu dans cette mission.',requiredAccess:'Conditions officielles lisibles et flux autorisé avant match.',ownerAction:'Aucun compte ou achat indispensable démontré.',url:'https://notbetting.com/en/terms',scope:'platform_rights_only'};
+const nt={...data,enabledCount:0,qualification:{status:'ok',assessedCount:2,qualifiedCount:0,claimId:'SYNTHETIC.QUALIFICATION',technicalClaimId:oldClaim,technicalClaimIds:[oldClaim,newClaim],followupOverlayState:'ok',platforms:[ntAccess,{...ntAccess,platform:'Telegram',label:'Droits IA à établir',reason:'Les six canaux restent fermés avant lecture des messages.',requiredAccess:'Permission expresse et droits des contenus.'}]},candidates:[{...row,platform:'NotBetting',qualification:{...ntAccess,profileVisited:true,personallyProven:false,picks:[],documentaryIssues:[]}}]};
+
+test('qualification N/T affiche les deux preuves et la fiche reste désactivée',async({page})=>{
+ let writes=0;await page.setViewportSize({width:360,height:900});
+ await page.route('**/api/tipsters/candidates',r=>{if(r.request().method()!=='GET')writes++;return r.fulfill({json:nt});});
+ await page.goto('/expert/catalogue-tipsters');await page.getByText('Accès et blocages par plateforme',{exact:true}).click();
+ await expect(page.getByText('Permission expresse et droits des contenus.',{exact:false})).toBeVisible();
+ await expect(page.getByText(oldClaim,{exact:false})).toBeVisible();await expect(page.getByText(newClaim,{exact:false})).toBeVisible();
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ await page.getByRole('link',{name:'Alice',exact:true}).click();
+ await expect(page.getByText('Collecte désactivée',{exact:false})).toBeVisible();
+ await expect(page.getByText('Route de profil déjà visitée dans l’historique des contrôles.',{exact:true})).toBeVisible();
+ await expect(page.getByText('Aucun choix personnel admissible',{exact:false})).toBeVisible();expect(writes).toBe(0);
+});
+
+test('mise à jour absente conserve les évaluations précédentes avec un avertissement',async({page})=>{
+ await page.route('**/api/tipsters/candidates',r=>r.fulfill({json:{...nt,qualification:{...nt.qualification,technicalClaimIds:[oldClaim],followupOverlayState:'unavailable'}}}));
+ await page.goto('/expert/catalogue-tipsters');
+ await expect(page.getByRole('alert').filter({hasText:'actualisation NotBetting et Telegram'})).toBeVisible();
+ await expect(page.getByText('2 fiches importées',{exact:true})).toBeVisible();
+ await page.getByText('Accès et blocages par plateforme',{exact:true}).click();
+ await expect(page.getByText(oldClaim,{exact:false})).toBeVisible();await expect(page.getByText(newClaim,{exact:false})).toHaveCount(0);
+});

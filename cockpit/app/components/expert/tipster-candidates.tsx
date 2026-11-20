@@ -8,7 +8,7 @@ type Access={platform:string;label:string;reason:string;requiredAccess:string;ow
 type Qualification=Access&{profileVisited:boolean;documentaryIssues:string[];personallyProven:boolean;picks:{id:string;fixtureLabel:string;selection:string;market?:string;observedAt:string;kickoff:string;sourceUrl:string}[]};
 type Candidate={id:string;label:string;platform:string;sourceUrl:string;evidenceUrl:string;declaredLastDate:string|null;
  status:'pending_qualification';collectionEnabled:boolean;qualification?:Qualification;origin:{sheet:string;row:number;workbookSha256:string}};
-type Registry={status:string;schemaVersion:string;count:number;platformCount:number;datedCount:number;enabledCount?:number;candidates:Candidate[];receipt:{registrySha256:string;claimId:string};qualification?:{status:string;claimId?:string;technicalClaimId?:string;assessedCount?:number;qualifiedCount?:number;platforms?:Access[]}};
+type Registry={status:string;schemaVersion:string;count:number;platformCount:number;datedCount:number;enabledCount?:number;candidates:Candidate[];receipt:{registrySha256:string;claimId:string};qualification?:{status:string;claimId?:string;technicalClaimId?:string;technicalClaimIds?:string[];followupOverlayState?:string;assessedCount?:number;qualifiedCount?:number;platforms?:Access[]}};
 export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;tipsterId?:string}){
  const [data,setData]=useState<Registry|null>(null);const[error,setError]=useState(false);
  const[q,setQ]=useState('');const[platform,setPlatform]=useState('');const[dated,setDated]=useState(false);const[page,setPage]=useState(0);
@@ -28,7 +28,8 @@ export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;ti
    {data.qualification?.status==='ok'?<>
     <p>{data.qualification.assessedCount} fiches examinées : {data.qualification.qualifiedCount} avec des choix personnels observés avant match. {data.enabledCount??0} rattachée(s) au canari récurrent validé.</p>
     <p>Un contrôle de plateforme ne certifie pas chacun de ses profils. Les autres fiches conservent leur blocage ou attendent une preuve personnelle.</p>
-    <details><summary>Accès et blocages par plateforme</summary><ul>{(data.qualification.platforms??[]).map(a=><li key={a.platform} style={{overflowWrap:'anywhere'}}><strong>{a.platform} · {a.label}</strong><p>{a.reason}</p><p>Accès à établir : {a.requiredAccess}</p><p>{a.ownerAction}</p><a className="inline-link" href={a.url} target="_blank" rel="noopener noreferrer">Consulter la plateforme</a></li>)}</ul><small>Preuve {data.qualification.claimId}{data.qualification.technicalClaimId&&` · ${data.qualification.technicalClaimId}`}</small></details>
+    {data.qualification.followupOverlayState==='unavailable'&&<p role="alert">L’actualisation NotBetting et Telegram est indisponible. Les évaluations antérieures restent affichées avec leur provenance.</p>}
+    <details><summary>Accès et blocages par plateforme</summary><ul>{(data.qualification.platforms??[]).map(a=><li key={a.platform} style={{overflowWrap:'anywhere'}}><strong>{a.platform} · {a.label}</strong><p>{a.reason}</p><p>Accès à établir : {a.requiredAccess}</p><p>{a.ownerAction}</p><a className="inline-link" href={a.url} target="_blank" rel="noopener noreferrer">Consulter la plateforme</a></li>)}</ul><small style={{overflowWrap:'anywhere'}}>Preuve {data.qualification.claimId}{(data.qualification.technicalClaimIds??[data.qualification.technicalClaimId]).filter(Boolean).map(id=>` · ${id}`).join('')}</small></details>
    </>:<p>Statut : à qualifier. Collecte désactivée pour ces candidats. Leur import n’ajoute aucun pronostic au compteur des observations avant match.</p>}
    {compact?<InlineLink href="/expert/catalogue-tipsters">Consulter les 317 fiches Ligue 1</InlineLink>:tipsterId?<>
     <InlineLink href="/expert/catalogue-tipsters">Retour aux fiches candidates</InlineLink>
@@ -38,7 +39,7 @@ export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;ti
      <p>Provenance : Catalogue, ligne {selected.origin.row}. Classement historique A, Ligue 1.</p>
      {selected.qualification?<>
       <p>{selected.qualification.reason}</p><p>Accès à établir : {selected.qualification.requiredAccess}</p><p>{selected.qualification.ownerAction}</p>
-      <p>{selected.qualification.profileVisited?'Route de profil visitée lors du contrôle.':'Aucune visite individuelle du profil ; portée du contrôle précisée ci-dessus.'}</p>
+      <p>{selected.qualification.profileVisited?'Route de profil déjà visitée dans l’historique des contrôles.':'Aucune visite individuelle du profil ; portée du contrôle précisée ci-dessus.'}</p>
       {selected.qualification.documentaryIssues.map((x,i)=><p key={i}>{x}</p>)}
       {selected.qualification.picks.length?<><h3>Choix personnels observés avant match</h3>{selected.qualification.picks.map(p=><article className="section-card" key={p.id}><h4>{p.fixtureLabel} · {p.market==='source_native'?'Choix publié (Win) :':'score prévu'} {p.selection}</h4><p>Observé le {formatDateTime(p.observedAt,true)} · coup d’envoi le {formatDateTime(p.kickoff,true)}.</p>{p.market==='source_native'&&<p>Publication, marché normalisé et durée non certifiés ; évaluation de performance désactivée.</p>}<a className="inline-link" href={p.sourceUrl} target="_blank" rel="noopener noreferrer">Voir le message original</a></article>)}</>:<p>Aucun choix personnel admissible n’est établi pour cette fiche.</p>}
      </>:<p>Aucun pronostic collecté n’est attribué à cette fiche par cet import.</p>}

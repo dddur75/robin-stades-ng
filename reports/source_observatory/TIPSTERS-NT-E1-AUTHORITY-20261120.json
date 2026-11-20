@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "robin-source-nt-e1-authority-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NT.E1.AUTHORITY.20261120",
+  "generatedAt": "2026-11-20T06:23:13.676797+00:00",
+  "status": "AUTHORIZED_LEGAL_READ_ONLY_NO_PERSONAL_SOURCE_QUALIFICATION_YET",
+  "missionId": "ROBIN-NOTBETTING-TELEGRAM-20261120-E1",
+  "planSha256": "c8b3955c9b70cb6dd4e059e3f0eacb36e497dde75bc68a4700e475e744bcd434",
+  "manifestSha256": "74d590af53c88866657711084bb6b76b9855f4ee69dff257859abf92b9dcede6",
+  "manifest": {
+    "authorized_stages": [
+      "E1"
+    ],
+    "compute_budget": {
+      "process_ram_seconds": 1800,
+      "response_bytes_max": 2000000,
+      "workers": 1
+    },
+    "expires_at": "2026-11-20T08:00:00+00:00",
+    "external_effects": {
+      "api_calls": false,
+      "api_football": false,
+      "authenticated": false,
+      "cookies": false,
+      "notbetting_get_max": 4,
+      "post": false,
+      "public_get_max": 12,
+      "telegram_get_max": 8
+    },
+    "maximum_stage": "E1",
+    "mission_id": "ROBIN-NOTBETTING-TELEGRAM-20261120-E1",
+    "source_hash": "c8b3955c9b70cb6dd4e059e3f0eacb36e497dde75bc68a4700e475e744bcd434",
+    "time_budget": {
+      "active_seconds_max": 300,
+      "network_seconds_max": 144,
+      "new_request_seconds_per_job": 180
+    }
+  },
+  "priorQualificationGET": 90,
+  "sharedQualificationGETCeiling": 134,
+  "maximumAfterThisMission": 102,
+  "scope": "Current publisher rules first; one Telegram canary and one NotBetting profile only after separate exact content decision. No activation or budget extension.",
+  "codePins": {
+    "cockpit/.ci/tipsters-notbetting-telegram-20261120/qualify_v2.py": "6de6b198dbdb6f11da23d90ff04d7930451a322822ccfc160c610e84cfb8ce37",
+    "cockpit/.ci/tipsters-notbetting-telegram-20261120/transport.py": "6ec2b85b2a5b36e578ec9a2ef23c2cd5303a1e2d7e3717869df08030529b1ad5",
+    "src/robin/source_observatory/collector.py": "8cb27141974f14b78afcfed9de288127c40dcdba420c0dcfd95e0c6539215949",
+    "src/robin/source_observatory/connectors.py": "ba991ea9c1ab0ebc4bca7814d5216edc47a91ac7ea7e3ecb219270326ffe79a6",
+    "src/robin/source_observatory/public_formats.py": "b6750a73cc21a105958df82d035d63f3bbede259ef830140b8c629d8a580cf09"
+  },
+  "priorEvidence": [
+    {
+      "path": "cockpit/.ci/tipsters-qualification317-20261119/events.jsonl",
+      "reservations": 51,
+      "sha256": "dc7f05817a6d02f36a0c70922e54a64f36e2b508854f4663f3b1831481921b5e"
+    },
+    {
+      "path": "cockpit/.ci/tipsters-qualification317-20261119/hydration-e1-v3/events.jsonl",
+      "reservations": 6,
+      "sha256": "ebe8f6de37bb7b7a20765b6ad9a4a6ff01dc29c7560d25c18016f45b0d556220"
+    },
+    {
+      "path": "cockpit/.ci/tipsters-qualification317-rfc404-20261119/events.jsonl",
+      "reservations": 11,
+      "sha256": "d7722cc211e99b41b97c01599b9d1a062b28faaeda53521bdae55f6aee866b7a"
+    },
+    {
+      "path": "cockpit/.ci/tipsters-technical-20261119/http-e1-v2/events.jsonl",
+      "reservations": 14,
+      "sha256": "70397d97f78f58af29f408359d5f94f2f69a122f5e474db2a6c2d8b543fe33eb"
+    },
+    {
+      "path": "cockpit/.ci/tipsters-technical-20261119/olbg-legal-e1-v2/events.jsonl",
+      "reservations": 1,
+      "sha256": "fc85c96f06f0460229475bffea629cf6f8f070f053f614d2c25d691043de952c"
+    },
+    {
+      "path": "cockpit/.ci/tipsters-technical-20261119/olbg-personal-e1/events.jsonl",
+      "reservations": 3,
+      "sha256": "3c506b4c3cd8ceca4032f71c2c28bddfad148420298d290a261efd8fb1226a6f"
+    },
+    {
+      "path": "cockpit/.ci/tipsters-technical-20261119/olbg-structure-e1/events.jsonl",
+      "reservations": 1,
+      "sha256": "72fe484b35e336cb78a0c57a74b64c84979a9792fc342aa16cd77578eb872f6a"
+    },
+    {
+      "path": "cockpit/.ci/tipsters-technical-20261119/stavka-http-e1-v2/events.jsonl",
+      "reservations": 3,
+      "sha256": "7d3f1f0ccb854d0ecaa9efd0a443abf3b7353deed99a87464cc1ff0338448837"
+    }
+  ],
+  "tests": {
+    "offlinePassed": 18,
+    "sourceHttpDuringTests": 0
+  },
+  "reviewKeys": {
+    "C1": "PASS_AND_HOLD exact corrected packet",
+    "C2": "PASS_AND_HOLD bootstrap only",
+    "C4": "PASS_AND_HOLD bootstrap only"
+  },
+  "publisherBodies": "RAM only; metadata hashes/categories/locators on disk; reviewer excerpts bounded globally180 words and once per response",
+  "locks": "Campaign pins/timers/budgets unchanged; API-Football0; no auth, cookie, purchase, secret, real bet, promotion or social publication",
+  "portableProjection": {
+    "originalPublicReportSha256": "9f17051b0eb131a6b42bb4183363be6c2210e9d390c14b60606a33b09e184169",
+    "originalBytesRetainedAt": "cockpit/.ci/tipsters-nt-delivery-20261120/pre-portability/9f17051b0eb131a6b42bb4183363be6c2210e9d390c14b60606a33b09e184169-TIPSTERS-NT-E1-AUTHORITY-20261120.json",
+    "normalization": "REPOSITORY_RELATIVE_POINTERS_ONLY",
+    "factsAndPrivatePacketsUnchanged": true
+  }
+}
