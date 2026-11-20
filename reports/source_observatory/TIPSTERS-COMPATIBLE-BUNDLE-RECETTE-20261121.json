@@ -1,0 +1,340 @@
+{
+  "schemaVersion": "robin-compatible-bundle-correction-recette-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COMPATIBLE.BUNDLE.RECETTE.20261121",
+  "generatedAt": "2026-11-20T23:32:25.827648+00:00",
+  "status": "LOCAL_TARGETED_CHECKS_PASS_CORRECTIVE_LINUX_CI_PENDING_GLOBAL_SOURCE_COVERAGE_PARTIAL",
+  "scope": "Share six campaign frames and native details, shorten repeated explanations and reuse six campaign objects. Preserve all identity,date,state,pool and source-authority gates. No source engine or task mutation.",
+  "actualA9": {
+    "readAt": "2026-11-20T23:22:53.828Z",
+    "views": [
+      {
+        "path": "/robin-live",
+        "http": 200,
+        "h1": [
+          "Robin suit les cinq grands championnats"
+        ]
+      },
+      {
+        "path": "/expert/admin-collecte",
+        "http": 200,
+        "h1": [
+          "Suivi admin de la collecte"
+        ]
+      },
+      {
+        "path": "/expert/catalogue-sources",
+        "http": 200,
+        "h1": [
+          "Catalogue complet des sources"
+        ]
+      },
+      {
+        "path": "/expert/collecte-recurrente",
+        "http": 200,
+        "h1": [
+          "Collecte récurrente"
+        ]
+      },
+      {
+        "path": "/expert/tipsters/olbg%3A668600",
+        "http": 200,
+        "h1": [
+          "Fiche tipster"
+        ]
+      }
+    ],
+    "errors": [],
+    "externalRequests": [],
+    "mobileOverflow": false,
+    "public": {
+      "distinctPicks": 399,
+      "authorCount": 77,
+      "rosterCampaign": {
+        "state": "collecting",
+        "successfulSlots": 2,
+        "slots": 4,
+        "requests": 47,
+        "requestsMax": 133,
+        "startsAt": "2026-11-20T23:05:00Z",
+        "expiresAt": "2026-11-21T11:15:00Z",
+        "campaignId": "ROBIN-OLBG-ROSTER42-E2V2-20261120",
+        "authorIds": [
+          "olbg:13000",
+          "olbg:46601",
+          "olbg:55960",
+          "olbg:62103",
+          "olbg:79569",
+          "olbg:119481",
+          "olbg:141750",
+          "olbg:154645",
+          "olbg:192737",
+          "olbg:197017",
+          "olbg:203797",
+          "olbg:229856",
+          "olbg:231310",
+          "olbg:246295",
+          "olbg:253741",
+          "olbg:254608",
+          "olbg:269051",
+          "olbg:375469",
+          "olbg:377758",
+          "olbg:378852",
+          "olbg:383717",
+          "olbg:411789",
+          "olbg:458096",
+          "olbg:460418",
+          "olbg:506193",
+          "olbg:507269",
+          "olbg:511157",
+          "olbg:530492",
+          "olbg:544617",
+          "olbg:590816",
+          "olbg:591729",
+          "olbg:594504",
+          "olbg:595998",
+          "olbg:602760",
+          "olbg:633943",
+          "olbg:642599",
+          "olbg:643087",
+          "olbg:644907",
+          "olbg:648478",
+          "olbg:658159",
+          "olbg:668600",
+          "olbg:669101"
+        ],
+        "lastObservedAt": "2026-11-20T23:07:09.550017+00:00",
+        "profileCount": 42,
+        "poolAuthorIds": [
+          "olbg:13000",
+          "olbg:46601",
+          "olbg:55960",
+          "olbg:62103",
+          "olbg:79569",
+          "olbg:119481",
+          "olbg:141750",
+          "olbg:154645",
+          "olbg:192737",
+          "olbg:197017",
+          "olbg:203797",
+          "olbg:229856",
+          "olbg:231310",
+          "olbg:246295",
+          "olbg:253741",
+          "olbg:254608",
+          "olbg:269051",
+          "olbg:375469",
+          "olbg:377758",
+          "olbg:378852",
+          "olbg:383717",
+          "olbg:411789",
+          "olbg:458096",
+          "olbg:460418",
+          "olbg:506193",
+          "olbg:507269",
+          "olbg:511157",
+          "olbg:530492",
+          "olbg:544617",
+          "olbg:590816",
+          "olbg:591729",
+          "olbg:594504",
+          "olbg:595998",
+          "olbg:602760",
+          "olbg:633943",
+          "olbg:642599",
+          "olbg:643087",
+          "olbg:644907",
+          "olbg:648478",
+          "olbg:658159",
+          "olbg:668600",
+          "olbg:669101"
+        ],
+        "native": {
+          "state": "Ready",
+          "lastResult": 0,
+          "enabled": true,
+          "verifiedAt": "2026-11-20T23:22:37.6546884+00:00",
+          "nextRunTime": "2026-11-21T06:05:00.0000000+01:00"
+        }
+      },
+      "claimIds": [
+        "DATA.SOURCE_OBSERVATORY.PUBLIC_PICKS.20261119",
+        "ENG.SOURCE_OBSERVATORY.FORUMS.CAMPAIGN.20261119",
+        "DATA.SOURCE_OBSERVATORY.SRO.PICKS.20261119",
+        "DATA.SOURCE_OBSERVATORY.OLBG.NATIVE.PICKS.20261119",
+        "DATA.SOURCE_OBSERVATORY.EXPANSION.PREMATCH.20261120",
+        "DATA.SOURCE_OBSERVATORY.EXPANDED.OLBG.E2.20261120",
+        "DATA.SOURCE_OBSERVATORY.PERSONAL.PREMATCH.20261120",
+        "DATA.SOURCE_OBSERVATORY.OLBG.FAMILY.E1.20261120",
+        "DATA.SOURCE_OBSERVATORY.OPAQUE.PREMATCH.E1.20261120",
+        "DATA.SOURCE_OBSERVATORY.HEPTER.RECURRING.20261120",
+        "DATA.SOURCE_OBSERVATORY.OLBG.CURRENT138.CORRECTED.20261120",
+        "DATA.SOURCE_OBSERVATORY.OLBG.ROSTER42.RECURRING.20261120"
+      ]
+    },
+    "candidates": {
+      "count": 317,
+      "qualified": 24,
+      "enabled": 23,
+      "rosterEnabled": 42,
+      "rosterCount": 137,
+      "compatibleClaimId": "ENG.SOURCE_OBSERVATORY.COMPATIBLE.FOLLOWUP.20261120"
+    },
+    "admin": {
+      "recurring": {
+        "http": 200,
+        "status": "ok",
+        "counts": {
+          "planned": 63,
+          "running": 0,
+          "succeeded": 1,
+          "failed": 0,
+          "missed": 20,
+          "interrupted": 0
+        },
+        "halted": true,
+        "journalHead": "3971151f3649f6991f47bc80654fda706a572c738506abf0e4fb1c27929f4ec0"
+      },
+      "connectors": {
+        "http": 200,
+        "status": "ok",
+        "counts": {
+          "requests": 105,
+          "attemptedSources": 57,
+          "collectedSources": 9,
+          "publications": 173,
+          "candidates": 0,
+          "unresolvedExtractions": 3,
+          "verifiedPreMatch": 0
+        },
+        "canRun": false,
+        "journalHead": "541a5f2d86baef5945a5dff6f2f1133e5b0ffb6301166659a207d7a64641fd84"
+      },
+      "sources": {
+        "http": 200,
+        "status": "ok",
+        "counts": {
+          "manuel": 14,
+          "a_construire": 57,
+          "bloque": 3
+        },
+        "prepared": 74,
+        "revision": "1180fd446fab782b621f45db80f796f674d686b00cc2b95c3d4e8ca7190a7ddc"
+      }
+    }
+  },
+  "firstAutomatic": {
+    "slot": "2026-11-20T23:05:00Z",
+    "HTTP200": 43,
+    "authors": 42,
+    "nativeWin": 127,
+    "literalOpaque": 85,
+    "reobservedChoices": 208,
+    "newUniqueOpaqueChoices": 4,
+    "globalBefore": 395,
+    "globalAfter": 399,
+    "pseudonyms": 77,
+    "previousObjectsPreserved": 395,
+    "earlierSROAddedChoices": 32,
+    "earlierSROAddedAuthors": 4,
+    "noNewAuthorFromGroup": true,
+    "sourceGETCumulative": 47,
+    "sourceGETCap": 133,
+    "sourceGETRemaining": 86,
+    "activeMillisecondsCumulative": 137468,
+    "activeMillisecondsCap": 600000,
+    "futureSlotsProven": false
+  },
+  "checks": {
+    "publicTipsterBrowserCasesPassed": 19,
+    "typecheck": "PASS",
+    "targetedESLint": "PASS",
+    "builtClientJSFiles": 43,
+    "localClientBytesBefore": 1358680,
+    "localClientBytesAfter": 1357157,
+    "localBytesRemoved": 1523,
+    "localStrictBundleLimit": "FAIL_UNRESOLVED_DIFFERENCE_FROM_LINUX",
+    "LinuxExactOldHeadBytes": 1350866,
+    "LinuxRequiredStrictlyBelow": 1350000,
+    "correctiveLinuxBundleVerdict": "PENDING_CHANGED_HEAD",
+    "sourcePythonCI246": {
+      "passed": 5160,
+      "skipped": 41,
+      "xfailed": 1,
+      "seconds": 1092.01
+    },
+    "fullLocalSuiteRerun": false,
+    "corpusReplays": 0,
+    "presentationModelLFHashMatchesExisting": "c52f95415126b0c76f3d6c7cdd5d8cecf706a5438bdc20b08314cab232508fda"
+  },
+  "documentary": {
+    "qualificationUnits": 293,
+    "Pronosoft": "Robots301 not followed; current canonical terms unknown.",
+    "PronoContest": "Robots200 and historical terms URL404; current terms unknown.",
+    "TipsterPlatform": "Both documents200; local template guard rejected projection. First corrective not yet authorized.",
+    "newPersonalProfilesRead": 0,
+    "newChoicesAdmitted": 0,
+    "noAccountOrPurchaseRequirementInferred": true
+  },
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.ROSTER42.FIRST.AUTOMATIC.20261121",
+    "ENG.SOURCE_OBSERVATORY.COMPATIBLE.CI246.CLOSURE.20261121",
+    "ENG.SOURCE_OBSERVATORY.CONTEST.DOCUMENTARY.PARTIAL.20261121",
+    "ENG.SOURCE_OBSERVATORY.PRONOCONTEST.DOCUMENTARY.PARTIAL.20261121",
+    "ENG.SOURCE_OBSERVATORY.TP.DOCUMENTARY.PARTIAL.20261121"
+  ],
+  "evidence": [
+    {
+      "path": "cockpit/.ci/olbg-roster-recurring-20261120/first-automatic-readback.json",
+      "sha256": "bbfb94b76757328c10239a4472a78ef8f7601cdf421ba1b1b2fa46edc0e4a957"
+    },
+    {
+      "path": "cockpit/.ci/olbg-roster-recurring-20261120/first-automatic-ui.json",
+      "sha256": "33d7e2edd5b34d78a42e3bdfeabacff623f28a8c891afac1232e75c9803b9ee8"
+    },
+    {
+      "path": "cockpit/.ci/olbg-roster-recurring-20261120/first-automatic-desktop.png",
+      "sha256": "eb911c667b2d61b72e82ec90b24aa3b5f786d8fcca466ecc95dcb3dd50f72009"
+    },
+    {
+      "path": "cockpit/.ci/olbg-roster-recurring-20261120/first-automatic-mobile.png",
+      "sha256": "89383c853f6b5143d3e9188622874ab0bacdbc20f399472e118e5b5026f56a52"
+    },
+    {
+      "path": "cockpit/.ci/olbg-roster-recurring-20261120/ci246-terminal-jobs.json",
+      "sha256": "9fd2cf1aca9a310e573fc0ae0d232d3a2d431587a853e0c53ce3ab5991f9e0fc"
+    },
+    {
+      "path": "cockpit/.ci/olbg-roster-recurring-20261120/ci246-terminal-runs.json",
+      "sha256": "4174d781e1ddc53b439d00dcfdb64aea853d898675efe08c5d43994192d131fa"
+    },
+    {
+      "path": "cockpit/.ci/olbg-roster-recurring-20261120/ci246-quality-log.json",
+      "sha256": "856090de8db144e65224fd4385362864d37bf6b3cf98085c579077142e16fbc9"
+    }
+  ],
+  "limits": [
+    "CI246 remains FAILURE. Only exact changed-head Linux CI can certify this bundle correction. No threshold is raised.",
+    "The difference between local and Linux byte totals is unresolved; no local bundle PASS claimed.",
+    "The mobile full-page screenshot has a fixed navigation overlay over some lower cards; no horizontal overflow observed,not simultaneous visibility of every title.",
+    "Global source delivery remains PARTIAL: Coteur,NotBetting,Telegram,Kicktipp and other workbook families retain their individually documented gaps.137/138currentOLBGinventories is not exhaustive compatibility qualification.",
+    "Hepter style exception remains frozen until21November11:15UTC and must be removed after closure before merge."
+  ],
+  "delivery": {
+    "pr": 133,
+    "draft": true,
+    "merge": false,
+    "deployed": false,
+    "sourcePayloadsPublished": false,
+    "allCompatibleSourcesIntegrated": false
+  },
+  "locks": {
+    "STORAGE_PAUSED": true,
+    "P3_P4_PAUSED": true,
+    "PRODUCTION_LOCKED": true,
+    "REAL_BETS": false,
+    "NO_BET_DEFAULT": true,
+    "PROMOTION_LOCKED": true,
+    "SOCIAL_PUBLISHING_ENABLED": false,
+    "DEMO_MODE_ENABLED": false
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "generatedAt": "2026-11-20T23:09:44.558213+00:00",
+  "schemaVersion": "robin-roster-first-automatic-receipt-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.ROSTER42.FIRST.AUTOMATIC.20261121",
+  "missionId": "ROBIN-OLBG-ROSTER42-E2V2-20261120",
+  "status": "FIRST_NATIVE_TRIGGER_SUCCEEDED_FOUR_NEW_LITERAL_SOURCE_CHOICES",
+  "slot": "2026-11-20T23:05:00Z",
+  "nativeLastResult": 0,
+  "canaryAndAutomaticSlots": 2,
+  "automaticGET": 43,
+  "cumulativeGET": 47,
+  "GETCap": 133,
+  "remainingGET": 86,
+  "elapsedMilliseconds": 127343,
+  "cumulativeMilliseconds": 137468,
+  "activeMillisecondsCap": 600000,
+  "observedAuthors": 42,
+  "stoppedAuthors": 0,
+  "acceptedChoicesThisSlot": 212,
+  "nativeWin": 127,
+  "literalOpaque": 85,
+  "reobservedChoices": 208,
+  "newUniqueChoices": 4,
+  "newChoiceIds": [
+    "olbg-tip:296418217",
+    "olbg-tip:296418219",
+    "olbg-tip:296418228",
+    "olbg-tip:296418230"
+  ],
+  "distinctPublicChoices": 399,
+  "pseudonyms": 77,
+  "preservedPublicObjects": 395,
+  "earlierSROChoicesAlreadyInBaseline": 32,
+  "futureSlotsUTC": [
+    "2026-11-21T05:05:00Z",
+    "2026-11-21T11:05:00Z"
+  ],
+  "futureSlotsProven": false,
+  "journalSha256": "3f9af9f45f36f5d3bb5d6c740416e52b9db0903631b7240326941e813fdb8a08",
+  "journalHead": "4e4c3b3e24fe79d568c1e7161eb30ef9d6d57f25b1d5f39f51e382c95e2d4387",
+  "allCompatibleSourcesIntegrated": false,
+  "evidence": [
+    {
+      "path": "cockpit/.ci/olbg-roster-recurring-20261120/pre-first-automatic-2303-public.json",
+      "sha256": "402495c09f3f4503f466a85c308fbdd8ea18f5a8daaebc8b810f369426f53c27"
+    },
+    {
+      "path": "cockpit/.ci/olbg-roster-recurring-20261120/pre-first-automatic-2303-readback.json",
+      "sha256": "fc1ce62522aaa0dad4663e261def37f9ad3aef4cf97ac4d11a4028150800b35a"
+    },
+    {
+      "path": "cockpit/.ci/olbg-roster-recurring-20261120/first-automatic-public.json",
+      "sha256": "f0c675ea28b0a6c080fcb041e4f76ce137af2c19d5f48a1193b6cd5ab99324a1"
+    },
+    {
+      "path": "cockpit/.ci/olbg-roster-recurring-20261120/first-automatic-readback.json",
+      "sha256": "bbfb94b76757328c10239a4472a78ef8f7601cdf421ba1b1b2fa46edc0e4a957"
+    }
+  ]
+}

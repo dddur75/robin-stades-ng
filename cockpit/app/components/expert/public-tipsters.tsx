@@ -1,11 +1,18 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { formatDateTime } from "../../i18n";
 import { InlineLink, SectionHeading } from "../common/ui";
 import type { PublicCampaign } from '../../lib/tipsters-campaign';
 import { PublicCampaignCounters, PublicCampaignStatus } from './public-campaign-status';
 import {choiceHeading,OpaqueChoiceDetails,type SourceChoice} from './source-choice';
+
+function CampaignBlock({title,campaign,children,counters=true}:{title:ReactNode;campaign:PublicCampaign;children?:ReactNode;counters?:boolean}){
+ return <div className="section-card"><h3>{title}</h3><PublicCampaignStatus campaign={campaign}/>{counters&&<PublicCampaignCounters campaign={campaign}/>} {children}</div>;
+}
+function NativeDetail({campaign}:{campaign:PublicCampaign}){
+ return <p>État Windows : {campaign.native?.state??'vérification en cours'}.{Number.isFinite(Date.parse(campaign.native?.verifiedAt??''))&&` Vérifié le ${formatDateTime(campaign.native!.verifiedAt!,true)}.`}</p>;
+}
 
 type Pick = SourceChoice & { id:string; authorId:string; authorLabel:string; sourceId:string; fixtureLabel:string;
  selection:string; market?:string; kickoff:string; observedAt:string; publishedCivilDate:string|null; sourceUrl:string };
@@ -24,66 +31,49 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
   }).catch(()=>{if(alive)setError(true);}).finally(()=>{pending=false;});};
   read();const timer=setInterval(()=>{if(!document.hidden)read();},15000);
   return()=>{alive=false;controller.abort();clearInterval(timer);};},[]);
+ const {campaign,sroCampaign,olbgCampaign,expandedOlbgCampaign,profileCampaign,rosterCampaign}=data??{};
  const authors=[...new Map((data?.picks??[]).map(p=>[p.authorId,p])).values()];
  const selected=tipsterId ? authors.find(p=>p.authorId===tipsterId):null;
  return <section className="section-card">
   <SectionHeading title={selected?.authorLabel??'Pronostics personnels collectés'} />
   {error ? <p role="alert">La collecte publique locale est indisponible : preuves absentes ou invalides.</p>:!data ? <p role="status">Lecture des preuves locales…</p>:<>
    <p><strong>{(tipsterId ? data.picks.filter(p=>p.authorId===tipsterId).length : data.distinctPicks)} pronostic(s) personnel(s) collecté(s)</strong> · {tipsterId ? (selected ? 1 : 0) : data.authorCount} pseudonyme(s).</p>
-   <p>Choix attribués à leur source personnelle et observés avant match. Le type de choix est conservé tel que publié. Les pseudonymes ne certifient pas l’identité civile.</p>
+   <p>Choix personnels observés avant match, conservés tels que publiés. Pseudonymes sans identité civile certifiée.</p>
    <p>Dossier fidèle en recette partielle.</p>
    {data.personalCollection?.state==='historical_observations_qualified'&&<p>Usage personnel local confirmé. Des calendriers officiels supplémentaires ont complété les preuves de choix déjà observés ; leurs dates de lecture d’origine sont conservées.</p>}
    {data.personalCollection?.state==='historical_observations_qualified'&&data.personalCollection.qualifiedAt&&<p>Dernière observation du catalogue : {formatDateTime(data.sourceObservedThrough??data.generatedAt,true)}. Qualification complémentaire du catalogue : {formatDateTime(data.personalCollection.qualifiedAt,true)}.</p>}
    {data.personalCollection?.state==='unavailable'&&<p role="alert">Les preuves personnelles complémentaires sont indisponibles. Les faits antérieurs restent conservés avec leur provenance.</p>}
-   {(data.rosterCampaign?.state==='unavailable'||data.rosterCollection?.state==='unavailable'||data.familyCollection?.state==='unavailable'||data.familyCollection?.nativeWinState==='unavailable'||data.familyCollection?.opaqueState==='unavailable')&&<p role="alert">Une partie des preuves individuelles supplémentaires est indisponible. Les autres observations restent conservées avec leur provenance.</p>}
+   {(rosterCampaign?.state==='unavailable'||data.rosterCollection?.state==='unavailable'||data.familyCollection?.state==='unavailable'||data.familyCollection?.nativeWinState==='unavailable'||data.familyCollection?.opaqueState==='unavailable')&&<p role="alert">Une partie des preuves individuelles supplémentaires est indisponible. Les autres observations restent conservées avec leur provenance.</p>}
    <p>Horaires des lectures et des coups d’envoi : heure de Paris.</p>
-   {!tipsterId&&<p>{data.recurring ? "Historique de la collecte des forums" : "Lot de collecte ponctuelle"} · {data.requestCount} GET publics HTTP(S) pour ce lot initial. {!data.recurring && !data.campaign && "Aucune collecte automatique de ces forums n’est activée."}</p>}
-   {!tipsterId && data.campaign && <div className="section-card">
-    <h3>Campagne des deux forums</h3>
-    <PublicCampaignStatus campaign={data.campaign} />
-    <PublicCampaignCounters campaign={data.campaign} />
-    {data.campaign.slots && Number.isFinite(Date.parse(data.campaign.expiresAt??'')) && <p>{data.campaign.slots} créneaux, toutes les deux heures. Fin le {formatDateTime(data.campaign.expiresAt!,true)}, heure de Paris.</p>}
-    {Number.isFinite(Date.parse(data.campaign.native?.verifiedAt??'')) && <p>État Windows vérifié le {formatDateTime(data.campaign.native!.verifiedAt!,true)}.</p>}
-   </div>}
-   {(!tipsterId||selected?.sourceId==='SRC_039') && data.sroCampaign && data.sroCampaign.state!=='awaiting_preparation' && <div className="section-card">
-    <h3>Collecte Stade Rennais Online</h3>
-    <PublicCampaignStatus campaign={data.sroCampaign} />
-    <PublicCampaignCounters campaign={data.sroCampaign} />
-    <p>Un canari puis onze créneaux toutes les deux heures, du 20 novembre à 8 h au 21 à 4 h ; expiration à 8 h, heure de Paris. Le plafond inclut les trois GET du premier arrêt et du diagnostic. Usage personnel local uniquement.</p>
-    <p>État Windows : {data.sroCampaign.native?.state??'vérification en cours'}.{Number.isFinite(Date.parse(data.sroCampaign.native?.verifiedAt??''))&&` Vérifié le ${formatDateTime(data.sroCampaign.native!.verifiedAt!,true)}.`}</p>
-   </div>}
-   {(!tipsterId||selected?.authorId==='olbg:648433') && data.olbgCampaign && data.olbgCampaign.state!=='awaiting_preparation' && <div className="section-card">
-    <h3>Collecte OLBG · profil 648433</h3>
-    <PublicCampaignStatus campaign={data.olbgCampaign} />
-    <PublicCampaignCounters campaign={data.olbgCampaign} />
-    <p>Un canari puis onze créneaux toutes les deux heures, du 20 novembre à 8 h au 21 à 4 h ; expiration à 8 h, heure de Paris. Profil 648433 uniquement, usage personnel local. Arrêt si aucun choix admissible ou si les conditions changent.</p>
-    <p>État Windows : {data.olbgCampaign.native?.state??'vérification en cours'}.{Number.isFinite(Date.parse(data.olbgCampaign.native?.verifiedAt??''))&&` Vérifié le ${formatDateTime(data.olbgCampaign.native!.verifiedAt!,true)}.`}</p>
-   </div>}
-   {(!tipsterId||selected?.authorId==='olbg:383717') && data.expandedOlbgCampaign && <div className="section-card">
-    <h3>Collecte OLBG · profil 383717</h3>
-    <PublicCampaignStatus campaign={data.expandedOlbgCampaign}/>
-    <PublicCampaignCounters campaign={data.expandedOlbgCampaign}/>
-    {data.expandedOlbgCampaign.state==='unavailable'?<p>L’autorité récurrente de ce profil est indisponible. Aucune programmation active n’est certifiée par cette lecture.</p>:<p>Autorité distincte : un canari puis deux créneaux le 20 novembre à 14 h et 16 h, heure de Paris. Plafond neuf GET ; expiration à 16 h 15. Aucun autre profil n’est couvert.</p>}
-    <p>État Windows : {data.expandedOlbgCampaign.native?.state??'indisponible'}.</p>
-   </div>}
-   {selected?.authorId==='olbg:383717'&&!data.expandedOlbgCampaign&&<p>Ce profil dispose d’une preuve ponctuelle. Son autorité récurrente est indisponible ; la campagne du profil 648433 ne le couvre pas.</p>}
-   {(!tipsterId||selected?.authorId==='olbg:669088')&&data.profileCampaign&&<div className="section-card">
-    <h3>Collecte OLBG · profil 669088</h3>
-    <PublicCampaignStatus campaign={data.profileCampaign}/>
-    <PublicCampaignCounters campaign={data.profileCampaign}/>
-    <p>Ce profil dispose de sa propre campagne temporaire : un canari et huit créneaux, limités à dix-huit GET et aux cinq rencontres vérifiées. Fin le 21 novembre à 12 h 15, heure de Paris, avant le premier match. Les réobservations d’un même choix ne comptent pas comme de nouveaux pronostics.</p>
-    <p>Les conditions de la source sont réutilisées pour cette période bornée ; elles ne sont pas relues à chaque créneau. Aucun rendement ni résultat calculé.</p>
-   </div>}
-   {data.rosterCampaign&&(!tipsterId||(data.rosterCampaign.poolAuthorIds??data.rosterCampaign.authorIds)?.includes(tipsterId))&&<div className="section-card">
-    <h3>Collecte du groupe OLBG{typeof data.rosterCampaign.profileCount==='number'&&` · ${data.rosterCampaign.profileCount} profils`}</h3>
-    <PublicCampaignStatus campaign={data.rosterCampaign}/>
-    {data.rosterCampaign.state==='unavailable'?<p>Preuves du groupe indisponibles ; aucune programmation n’est certifiée par cette lecture.</p>:<>
-     <PublicCampaignCounters campaign={data.rosterCampaign}/>
-     {typeof data.rosterCampaign.successfulSlots==='number'&&data.rosterCampaign.successfulSlots>0&&<p>Canari vérifié sur trois auteurs. Les trois passages prévus concernent le groupe qualifié, y compris les profils hors registre Ligue 1. Les doublons observés à nouveau ne sont pas de nouveaux pronostics.</p>}
-     <p>Fin le 21 novembre à 12 h 15, heure de Paris. Arrêt individuel si aucun choix admissible ; arrêt du groupe en cas de refus, incident ou limite atteinte.</p>
-     {tipsterId&&data.rosterCampaign.poolAuthorIds?.includes(tipsterId)&&!data.rosterCampaign.authorIds?.includes(tipsterId)&&<p>Ce profil n’est plus collecté par cette campagne. Ses observations antérieures restent conservées.</p>}
+   {!tipsterId&&<p>{data.recurring ? "Historique de la collecte des forums" : "Lot de collecte ponctuelle"} · {data.requestCount} GET publics HTTP(S) pour ce lot initial. {!data.recurring && !campaign && "Aucune collecte automatique de ces forums n’est activée."}</p>}
+   {!tipsterId && campaign && <CampaignBlock title="Campagne des deux forums" campaign={campaign}>
+    {campaign.slots && Number.isFinite(Date.parse(campaign.expiresAt??'')) && <p>{campaign.slots} créneaux, toutes les deux heures. Fin le {formatDateTime(campaign.expiresAt!,true)}, heure de Paris.</p>}
+    {Number.isFinite(Date.parse(campaign.native?.verifiedAt??'')) && <p>État Windows vérifié le {formatDateTime(campaign.native!.verifiedAt!,true)}.</p>}
+   </CampaignBlock>}
+   {(!tipsterId||selected?.sourceId==='SRC_039') && sroCampaign && sroCampaign.state!=='awaiting_preparation' && <CampaignBlock title="Collecte Stade Rennais Online" campaign={sroCampaign}>
+    <p>Canari puis onze créneaux toutes les deux heures, du 20/11 à 8 h au 21/11 à 4 h (Paris) ; expiration à 8 h. Plafond incluant les trois GET initiaux et du diagnostic. Usage personnel local.</p>
+    <NativeDetail campaign={sroCampaign}/>
+   </CampaignBlock>}
+   {(!tipsterId||selected?.authorId==='olbg:648433') && olbgCampaign && olbgCampaign.state!=='awaiting_preparation' && <CampaignBlock title="Collecte OLBG · profil 648433" campaign={olbgCampaign}>
+    <p>Profil 648433 seul : canari puis onze créneaux toutes les deux heures, du 20/11 à 8 h au 21/11 à 4 h (Paris), expiration à 8 h. Usage personnel local ; arrêt sans choix admissible ou si les conditions changent.</p>
+    <NativeDetail campaign={olbgCampaign}/>
+   </CampaignBlock>}
+   {(!tipsterId||selected?.authorId==='olbg:383717') && expandedOlbgCampaign && <CampaignBlock title="Collecte OLBG · profil 383717" campaign={expandedOlbgCampaign}>
+    {expandedOlbgCampaign.state==='unavailable'?<p>Autorité indisponible ; programmation active non certifiée.</p>:<p>Ce profil seul : canari puis deux créneaux le 20/11 à 14 h et 16 h (Paris). Neuf GET maximum ; expiration à 16 h 15.</p>}
+    <p>État Windows : {expandedOlbgCampaign.native?.state??'indisponible'}.</p>
+   </CampaignBlock>}
+   {selected?.authorId==='olbg:383717'&&!expandedOlbgCampaign&&<p>Ce profil dispose d’une preuve ponctuelle. Autorité récurrente indisponible ; le profil 648433 ne le couvre pas.</p>}
+   {(!tipsterId||selected?.authorId==='olbg:669088')&&profileCampaign&&<CampaignBlock title="Collecte OLBG · profil 669088" campaign={profileCampaign}>
+    <p>Ce profil seul : canari et huit créneaux, 18 GET maximum sur cinq matchs vérifiés. Fin le 21/11 à 12 h 15 (Paris), avant le premier match. Réobservations comptées une fois.</p>
+    <p>Conditions réutilisées pour cette période, sans relecture par créneau. Aucun résultat ni rendement calculé.</p>
+   </CampaignBlock>}
+   {rosterCampaign&&(!tipsterId||(rosterCampaign.poolAuthorIds??rosterCampaign.authorIds)?.includes(tipsterId))&&<CampaignBlock title={<>Collecte du groupe OLBG{typeof rosterCampaign.profileCount==='number'&&` · ${rosterCampaign.profileCount} profils`}</>} campaign={rosterCampaign} counters={rosterCampaign.state!=='unavailable'}>
+    {rosterCampaign.state==='unavailable'?<p>Preuves du groupe indisponibles ; programmation non certifiée.</p>:<>
+     {typeof rosterCampaign.successfulSlots==='number'&&rosterCampaign.successfulSlots>0&&<p>Canari vérifié sur trois auteurs. Trois passages prévus, y compris hors registre Ligue 1. Réobservations comptées une fois.</p>}
+     <p>Fin le 21/11 à 12 h 15 (Paris). Profil arrêté sans choix admissible ; groupe arrêté sur refus, incident ou limite.</p>
+     {tipsterId&&rosterCampaign.poolAuthorIds?.includes(tipsterId)&&!rosterCampaign.authorIds?.includes(tipsterId)&&<p>Profil arrêté par cette campagne ; observations conservées.</p>}
     </>}
-   </div>}
+   </CampaignBlock>}
    {data.halted && <p role="alert">Campagne des forums arrêtée. Historique préservé ; aucune nouvelle lecture autorisée par cette campagne.</p>}
    {compact ? <InlineLink href="/expert/collecte-publique">Voir les fiches et les pronostics collectés</InlineLink>:<>
     <p><InlineLink href="/expert/collecte-publique">Tous les tipsters collectés</InlineLink></p>

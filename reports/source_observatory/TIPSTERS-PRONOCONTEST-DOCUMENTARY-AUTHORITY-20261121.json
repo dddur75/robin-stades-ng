@@ -1,0 +1,34 @@
+{
+  "generatedAt": "2026-11-20T23:18:04.482238+00:00",
+  "schemaVersion": "robin-documentary-preflight-authority-v1",
+  "claimId": "GOV.SOURCE_OBSERVATORY.PRONOCONTEST.DOCUMENTARY.E1.20261121",
+  "missionId": "ROBIN-PRONOCONTEST-DOCUMENTARY-E1-20261121",
+  "status": "UNATTEMPTED_FAMILY_DOCUMENTARY_ONLY",
+  "planSha256": "67512cffb3ebf1f53223307705782df498ab1d3c0532fe00c70bdff542ff9268",
+  "manifestSha256": "18ca5eea41d7de1e388ca5c1e7c9f20255bb6fbc69e239729e126b6336253140",
+  "documents": [
+    {
+      "family": "PronoContest",
+      "role": "robots",
+      "url": "https://fr.pronocontest.com/robots.txt"
+    },
+    {
+      "family": "PronoContest",
+      "role": "terms",
+      "url": "https://fr.pronocontest.com/terms-of-service"
+    }
+  ],
+  "expiresAt": "2026-11-21T01:00:00Z",
+  "GETMax": 2,
+  "cumulativePriorGET": 1,
+  "cumulativeMax": 3,
+  "originalFamilyCap": 4,
+  "profileGET": 0,
+  "sourceAPI": 0,
+  "newTasks": 0,
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}
