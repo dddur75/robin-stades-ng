@@ -19,6 +19,7 @@ export function workbookInventory():Plugin {
   if(query.q.length>120||query.sheet.length>80||query.platform.length>160||query.record_id.length>100||!Number.isInteger(query.page)||query.page<0||query.page>10000||!Number.isInteger(query.limit)||query.limit<1||query.limit>50){res.statusCode=400;res.end(JSON.stringify({status:'invalid_query'}));return;}
   try{
    const repo=resolve(root,'..');const python=process.env.ROBIN_TIPSTERS_PYTHON??resolve(repo,'.venv',process.platform==='win32'?'Scripts/python.exe':'bin/python');
+   const native=readNativeState(root);
    const options={timeout:12000,maxBuffer:2000000,windowsHide:true,encoding:'utf8' as const,env:{...process.env,PYTHONPATH:resolve(repo,'src')}};
    const inventory=await runFile(python,['-X','utf8','-B',resolve(root,'scripts/read-workbook-inventory.py'),'--directory',process.env.ROBIN_WORKBOOK_INVENTORY_DIRECTORY??resolve(root,'.ci/tipsters-workbook-complete-20261120'),'--query',JSON.stringify(query)],options);
    let data=JSON.parse(inventory.stdout);
@@ -27,7 +28,7 @@ export function workbookInventory():Plugin {
     const qualified=await runFile(python,['-X','utf8','-B',resolve(root,'scripts/read-tipster-candidates.py'),'--directory',process.env.ROBIN_TIPSTER_CANDIDATES_DIRECTORY??resolve(root,'.ci/tipsters-l1-candidates-20261119')],options);
     const legacy=JSON.parse(qualified.stdout);
     if(legacy.status==='ok'){
-     if(legacy.qualification?.status==='ok')gateSourceOperations(legacy,readNativeState(root));
+     if(legacy.qualification?.status==='ok')gateSourceOperations(legacy,await native);
      data=decorateInventory(data,legacy,new Date().toISOString());
     }else data.qualifiedRegistryState='unavailable';
    }catch{data.qualifiedRegistryState='unavailable';}

@@ -28,12 +28,13 @@ export function tipsterCandidates(): Plugin {
     }
     try {
       const repository = resolve(root, "..");
+      const native=readNativeState(root);
       const python = process.env.ROBIN_TIPSTERS_PYTHON ?? resolve(repository, ".venv",process.platform === "win32" ? "Scripts/python.exe" : "bin/python");
       pending ??= runFile(python, ["-X","utf8","-B",resolve(root,"scripts/read-tipster-candidates.py"),
         "--directory",process.env.ROBIN_TIPSTER_CANDIDATES_DIRECTORY ?? resolve(root,".ci/tipsters-l1-candidates-20261119")],
-      {timeout:8000,maxBuffer:12000000,windowsHide:true,encoding:"utf8"}).then(r=>{
+      {timeout:8000,maxBuffer:12000000,windowsHide:true,encoding:"utf8"}).then(async r=>{
         const data=JSON.parse(r.stdout);
-        applyCandidateNativeState(data,readNativeState(root));
+        applyCandidateNativeState(data,await native);
         return JSON.stringify(data);
       }).finally(()=>{pending=undefined;});
       const result = await pending;

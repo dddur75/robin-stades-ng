@@ -1,0 +1,35 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.NETWORK.PHASES.READINESS.20261121",
+  "status": "ZERO_HTTP_NETWORK_DIAGNOSTIC_AUTHORIZED_NOT_EXECUTED",
+  "scope": "One DNS resolution, one TCP connection, one strict default TLS handshake only. Zero HTTP and zero application-data send/read. No source compatibility or collection inferred.",
+  "planCanonicalSHA256": "f7744a41c6db6c608708d7a6d7f2d83e70b3da03e29acce1a1a2a8357582c752",
+  "manifestCanonicalSHA256": "17f594c4cd486665eb541ab2cfed889ebf30727e5c2a0493fa104574ebd8e272",
+  "workerSHA256": "4ceb9ce59eb41cf9b904cffde11d21e9a72ada0de39142ae1655f1ca19a1b655",
+  "httpMaximum": 0,
+  "applicationDataAllowed": false,
+  "DNSMaximum": 1,
+  "TCPMaximum": 1,
+  "TLSMaximum": 1,
+  "phaseSeconds": {
+    "DNS": 4,
+    "TCP": 5,
+    "TLS": 8
+  },
+  "maximumSeconds": 30,
+  "closureMarginSeconds": 5,
+  "expiresAt": "2026-11-21T15:10:00Z",
+  "priorHTTPReservationsConsumed": 2,
+  "priorHTTPFailuresPreserved": true,
+  "sourceContentRequestsExecuted": 0,
+  "networkDiagnosticsExecuted": 0,
+  "globalSourceDelivery": "PARTIAL",
+  "limits": [
+    "DNS daemon timeout bounds Python wait, not OS cancellation or packet count.",
+    "Phase label means phase entered; guard may refuse before native call."
+  ],
+  "verifiedBy": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.SRO.SUCCESSOR.E1.PREGET.REFUSAL.20261121",
+  "status": "FAIL_AND_STOP_SCOPE_V1_BEFORE_ANY_REQUEST",
+  "scope": "Only exact V1 canary entry refusal. Old mission and journal preserved; old debt39 not reset or consumed again. New R2 requires new reviews and grants.",
+  "missionId": "SRO_SUCCESSOR_MANUAL_CANARY_E1_20261121",
+  "parentToolV2RawSHA256": "81984e609519b4ad93134d991998356853170c576da911a9a8a5364125e8020f",
+  "parentExitCode": 1,
+  "parentResultReason": "AUTHORITY_OR_ENTRY_REFUSED",
+  "liveFiles": [
+    "mission.json",
+    "plan.json"
+  ],
+  "attemptFileAbsent": true,
+  "reservationAbsent": true,
+  "workerNotStarted": true,
+  "sourceGET": 0,
+  "newGETReservations": 0,
+  "priorGET": 39,
+  "priorDebtComposition": {
+    "previousReservations": 36,
+    "earlierDebt": 3
+  },
+  "historicalFamilyMilliseconds": null,
+  "historicalTimeState": "UNKNOWN",
+  "causeDiagnosed": "ABSOLUTE_ROBIN_IMPORT_UNAVAILABLE_UNDER_BASE_ISOLATION",
+  "diagnosticSourceRequests": 0,
+  "sourceImportChain": [
+    "candidate_forums",
+    "connectors",
+    "collector",
+    "store",
+    "service",
+    "robin.domain_or_identity"
+  ],
+  "oldUnusedGrantsReusable": false,
+  "automaticRetryAuthorized": false,
+  "invalidParentV1NotUsed": true,
+  "verifiedBy": [
+    "C0",
+    "C4"
+  ]
+}

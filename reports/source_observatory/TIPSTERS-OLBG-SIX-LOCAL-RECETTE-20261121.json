@@ -1,0 +1,23 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.SIX.LOCAL.RECETTE.20261121",
+  "status": "LOCAL_SIX_ADDITIONS_VERIFIED_OVERALL_PARTIAL",
+  "scope": "Two archived local HTTP reads prove exact additive integration of six independently admitted pre-match opaque choices and their author links.",
+  "observedAt": "2026-11-21T10:20:25.324Z",
+  "readbackSha256": "65e871585c76c6462a3b9143e818bb125093bc80e6f2f915cf61f8237b218766",
+  "dataClaimId": "DATA.SOURCE_OBSERVATORY.OLBG.SIX.RETAINED.PREMATCH.20261121",
+  "applicationChoices": 409,
+  "applicationAuthors": 79,
+  "applicationFixtures": 16,
+  "previousChoicesPreserved": 403,
+  "previousFixturesPreserved": 16,
+  "registryCount": 317,
+  "registryQualifiedCount": 24,
+  "registryNewActivations": 0,
+  "nativeActivationAssessment": "COLD_READ_NOT_A_FRESH_SUCCESSFUL_SOURCE_RUN",
+  "newSourceGET": 0,
+  "taskMutations": 0,
+  "localHTTPReads": 2,
+  "localCopies": 4,
+  "overallDelivery": "PARTIAL",
+  "recordedAt": "2026-11-21T10:21:35.813858+00:00"
+}

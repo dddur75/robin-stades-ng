@@ -1,0 +1,58 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.LATEST.SOURCE.STATUS.LOCAL.RECETTE.20261121",
+  "status": "DATED_ADMIN_SOURCE_STATUS_INTEGRATED_GLOBAL_SOURCE_DELIVERY_PARTIAL",
+  "scope": "Exact two-file local metadata update and three loopback responses, independently verified. All prior461 declarations and20 fixtures preserved. No acquisition,collection activation or source/task mutation.",
+  "observedAt": "2026-11-21T15:21:45.400Z",
+  "readbackRawSHA256": "0d56ed64464a77062bccb74b8ed04db2a4a05b3eba8d3b06dca4020f4123feb5",
+  "assessmentClaimId": "ENG.SOURCE_OBSERVATORY.LATEST.SOURCE.STATUS.20261121",
+  "assessmentRawSHA256": "60b6254b94f009beba529268d5c6a90bd212ea179abc91df1f4b9811078b1d04",
+  "moduleRawSHA256": "9fd35fa89f6d111993f0eb9212b64034a49727de05951f0594b88a4e5da9364e",
+  "oldModuleBackupSHA256": "a26d5810b4980565a102ef3826382c953942be93c8f0e58b781f5379e7caa9dc",
+  "localCopies": 2,
+  "localBackups": 1,
+  "localGET": 3,
+  "localHTTP200": 3,
+  "elapsedBeforeFinalFsyncMilliseconds": 12675,
+  "operatorObservedElapsedAfterFinalFsyncMilliseconds": 12687,
+  "targetedTestsPassed": 2,
+  "targetedTestsReceiptRawSHA256": "2b46ed166abcff6dff5711fce7651d824663f8db3e9140fb012eb712b30d5410",
+  "choices": 461,
+  "authors": 79,
+  "fixtures": 20,
+  "all461WholeChoicesPreserved": true,
+  "all20WholeFixturesPreserved": true,
+  "registryCount": 317,
+  "qualifiedCount": 24,
+  "enabledCount": 13,
+  "rosterEnabledCount": 42,
+  "TelegramProvenOrActivated": 0,
+  "sourceGET": 0,
+  "taskMutations": 0,
+  "newAcquisitions": 0,
+  "sourceStatuses": {
+    "Telegram": {
+      "label": "Connexion sécurisée vérifiée ; pronostics non qualifiés",
+      "status": "tls_verified_source_not_admitted",
+      "observedAt": "2026-11-21T15:08:02.594261+00:00"
+    },
+    "NotBetting": {
+      "label": "Quatre choix qualifiés ; campagne terminée",
+      "status": "bounded_collection_expired_existing_choices_only",
+      "observedAt": "2026-11-21T15:13:31.671Z"
+    },
+    "Coteur": {
+      "label": "Ressource publique reçue ; lecture technique non qualifiée",
+      "status": "partial_technical",
+      "observedAt": "2026-11-21T04:20:48.292686+00:00"
+    },
+    "Kicktipp": {
+      "label": "Règles par concours ; liaison des choix non établie",
+      "status": "contest_specific_partial_native_join_unestablished",
+      "observedAt": "2026-11-21T11:45:01.075744+00:00"
+    }
+  },
+  "verifiedBy": [
+    "C0",
+    "C2"
+  ]
+}

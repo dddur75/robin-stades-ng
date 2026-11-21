@@ -1,0 +1,59 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.LOCAL.METADATA.LF.REPRESENTATION.20261121",
+  "generatedAt": "2026-11-21T08:41:49.436113+00:00",
+  "status": "DETERMINISTIC_LF_REPRESENTATION_SUCCESSOR_FACTS_AND_RAW_BYTES_UNCHANGED",
+  "scope": "The ordinary graph guard compares artifact hashes after LF normalization. Three newly retained reports were originally hashed on raw CRLF bytes. Reuse exactly their LF hashes independently verified by C1 and C2 in the192-file projection. Supersede representation only; no source fact, report byte, historical graph claim or ledger row is rewritten.",
+  "supersedes": [
+    "ENG.SOURCE_OBSERVATORY.NATIVE.FAILURE.DIAGNOSTIC.E1.20261121",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.OFFLINE.DESIGN.E1.RECETTE.20261121",
+    "ENG.SOURCE_OBSERVATORY.CI250.LOCAL.RESTORE.RECETTE.20261121"
+  ],
+  "artifact_hashes": {
+    "reports/source_observatory/TIPSTERS-CI250-LOCAL-RESTORE-RECETTE-20261121.json": "312bba4c67148962513e84564224a41143064872f2d518298539cb9b7197f2d2",
+    "reports/source_observatory/TIPSTERS-COTEUR-OFFLINE-DESIGN-E1-RECETTE-20261121.json": "064e4aa7caab87dde526002f57fc239712a9829521521d19f14d70f2f48370de",
+    "reports/source_observatory/TIPSTERS-NATIVE-FAILURE-DIAGNOSTIC-E1-20261121.json": "7cf489497bc20e503d6105ad05d182eb30241c8610760c787db27ace17abe89e"
+  },
+  "artifact_hash_algorithm": "SHA-256",
+  "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+  "artifact_path_count": 3,
+  "engineering_projection_sha256": "37bde5211f91ee6118de34739d7ae426b60eab57cfe436efdfee5aadc9bd5139",
+  "code_revision": "precommit-projection:37bde5211f91ee6118de34739d7ae426b60eab57cfe436efdfee5aadc9bd5139",
+  "projectionKind": "METADATA_REPRESENTATION_ONLY_NOT_CURRENT_CODE_COVERAGE",
+  "reviewedEngineeringProjection": "ff37468d1cd63f2cd4bbdaeee4ccfd49b81d3de358ef77fb51e49c585c96dde0",
+  "reviewedDraftRawSHA256": "ed5f6e24359452b2637e035e22dd023d1ee2c8b7e354a1c4988b716ea8a2c9dd",
+  "retainedRepresentations": [
+    {
+      "claimId": "ENG.SOURCE_OBSERVATORY.NATIVE.FAILURE.DIAGNOSTIC.E1.20261121",
+      "artifact": "reports/source_observatory/TIPSTERS-NATIVE-FAILURE-DIAGNOSTIC-E1-20261121.json",
+      "originalRawSHA256": "52fc434756b8a197c704970185d62132ec24bc114c3024f25d0932580346c23b",
+      "LF_SHA256": "7cf489497bc20e503d6105ad05d182eb30241c8610760c787db27ace17abe89e",
+      "rawCRLFCount": 67,
+      "artifactBytesChanged": false
+    },
+    {
+      "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.OFFLINE.DESIGN.E1.RECETTE.20261121",
+      "artifact": "reports/source_observatory/TIPSTERS-COTEUR-OFFLINE-DESIGN-E1-RECETTE-20261121.json",
+      "originalRawSHA256": "2c7e91f21fd19c001d3301e458490f492eeb10992bf987e47de2893567a7a410",
+      "LF_SHA256": "064e4aa7caab87dde526002f57fc239712a9829521521d19f14d70f2f48370de",
+      "rawCRLFCount": 76,
+      "artifactBytesChanged": false
+    },
+    {
+      "claimId": "ENG.SOURCE_OBSERVATORY.CI250.LOCAL.RESTORE.RECETTE.20261121",
+      "artifact": "reports/source_observatory/TIPSTERS-CI250-LOCAL-RESTORE-RECETTE-20261121.json",
+      "originalRawSHA256": "42abc41776ea3a70a0ebafb423d78491a0febbe0d73a0b0bc16541f08cde9da8",
+      "LF_SHA256": "312bba4c67148962513e84564224a41143064872f2d518298539cb9b7197f2d2",
+      "rawCRLFCount": 121,
+      "artifactBytesChanged": false
+    }
+  ],
+  "verifiedBy": [
+    "C0",
+    "C1",
+    "C2"
+  ],
+  "verificationScope": "C1/C2 exact LF hash verification is reused, not represented as a new standalone review of this administrative report.",
+  "sourceGET": 0,
+  "commits": 0,
+  "pushes": 0
+}

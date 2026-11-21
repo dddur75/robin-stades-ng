@@ -1,0 +1,67 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NATIVE.FAILURE.DIAGNOSTIC.E1.20261121",
+  "generatedAt": "2026-11-21T08:12:15.920775+00:00",
+  "status": "OFFLINE_E1_VERIFIED_NOT_PUBLISHED_OR_RUNTIME_COPIED_GLOBAL_SOURCE_DELIVERY_PARTIAL",
+  "scope": "Missing child task states inherit unavailable only after a native read failure. Startup and missing children under a Ready parent remain checking. Existing independent states, freshness gates and source permissions are unchanged.",
+  "missionId": "ROBIN-NATIVE-FAILURE-DIAGNOSTIC-E1-20261121",
+  "manifestCanonicalSHA256": "c4ac0c4af8fdeb01c14c07159632c2c8c0f590022bd9188cf047379e6d08ad8f",
+  "checks": {
+    "targetedTestsPassed": 8,
+    "failed": 0,
+    "durationMs": 378.1062,
+    "typecheck": "PASS",
+    "targetedESLint": "PASS",
+    "fullSuiteRerun": false,
+    "asyncRecoveryProven": false,
+    "python503CauseResolved": false
+  },
+  "files": [
+    {
+      "path": "cockpit/scripts/tipsters-native-state.ts",
+      "LF_SHA256": "9cae74736f9b94a633792f6dcd7e62c7ee5d343467e564d36885538912b8b798"
+    },
+    {
+      "path": "cockpit/tests/tipsters-native-state.test.ts",
+      "LF_SHA256": "e16b79ee08cb43da73ccd32094dfc55b6a41c0480d077edf62c4dc6753d1c3f5"
+    }
+  ],
+  "evidence": [
+    {
+      "namespace": "A9_PRIVATE_NATIVE_FAILURE_DIAGNOSTIC_E1",
+      "path": "cockpit/.ci/native-state-diagnostic-20261121/manifest.json",
+      "sha256": "25d231b2ac0ac57e27fb4477e2ab1558b0651da101708cbc3f970f08edd24085"
+    },
+    {
+      "namespace": "A9_PRIVATE_NATIVE_FAILURE_DIAGNOSTIC_E1",
+      "path": "cockpit/.ci/native-state-diagnostic-20261121/baseline.json",
+      "sha256": "61506542e1e2363e5cf7ecc66c2bce17ce315ae31fd9bee51ec92f83559837a5"
+    },
+    {
+      "namespace": "A9_PRIVATE_NATIVE_FAILURE_DIAGNOSTIC_E1",
+      "path": "cockpit/.ci/native-state-diagnostic-20261121/tests.log",
+      "sha256": "1cc5f9840e18bc0930702896d99ca9ce1d0ef81aadf49edef2caf2eff17c9077"
+    },
+    {
+      "namespace": "A9_PRIVATE_NATIVE_FAILURE_DIAGNOSTIC_E1",
+      "path": "cockpit/.ci/native-state-diagnostic-20261121/typecheck.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "namespace": "A9_PRIVATE_NATIVE_FAILURE_DIAGNOSTIC_E1",
+      "path": "cockpit/.ci/native-state-diagnostic-20261121/lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "externalEffects": {
+    "sourceGET": 0,
+    "browser": 0,
+    "taskMutations": 0,
+    "runtimeCopies": 0,
+    "commits": 0,
+    "pushes": 0
+  },
+  "verifiedBy": [
+    "C0",
+    "C2"
+  ]
+}

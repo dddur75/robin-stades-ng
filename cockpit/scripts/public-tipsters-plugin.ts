@@ -21,19 +21,22 @@ export function publicTipsters(): Plugin {
     }
     try {
       const repository = resolve(root, "..");
+      const native=readNativeState(root);
       const python = process.env.ROBIN_TIPSTERS_PYTHON ?? resolve(repository, ".venv",process.platform === "win32" ? "Scripts/python.exe" : "bin/python");
       pending ??= runFile(python, ["-X","utf8","-B",resolve(root,"scripts/read-public-tipsters.py"),
         "--directory",process.env.ROBIN_PUBLIC_TIPSTERS_DIRECTORY ?? resolve(root,".ci/tipsters-unblock-20261119"),
         "--campaign-directory",process.env.ROBIN_FORUM_CAMPAIGN_DIRECTORY ?? resolve(root,".ci/tipsters-forums-pending-20261120")],
-      {timeout:8000,maxBuffer:12000000,windowsHide:true,encoding:"utf8"}).then(r=>{
+      {timeout:8000,maxBuffer:12000000,windowsHide:true,encoding:"utf8"}).then(async r=>{
         const value=JSON.parse(r.stdout);
         if(process.platform === "win32"){
-          const nativeState=readNativeState(root);
+          const nativeState=await native;
           if(value.campaign)value.campaign.native=nativeState;
+          if(value.sroNextCampaign)value.sroNextCampaign.native=nativeState.sroNext??{state:"checking"};
           if(value.sroCampaign)value.sroCampaign.native=nativeState.sro??{state:"checking"};
           if(value.olbgCampaign)value.olbgCampaign.native=nativeState.olbg??{state:"checking"};
           if(value.profileCampaign)value.profileCampaign.native=nativeState.hepter??{state:"checking"};
           if(value.rosterCampaign)value.rosterCampaign.native=nativeState.roster??{state:"checking"};
+          if(value.rosterNextCampaign)value.rosterNextCampaign.native=nativeState.rosterNext??{state:"checking"};
           if(value.notbettingOccurrenceCampaign)value.notbettingOccurrenceCampaign.native=nativeState.notbetting??{state:"checking"};
           if(value.expandedOlbgCampaign)value.expandedOlbgCampaign.native=nativeState.expansion??{state:"checking"};
         }

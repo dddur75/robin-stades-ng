@@ -1,0 +1,38 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.SRO.CANARY.R2.REOBSERVED.20261121",
+  "status": "FIFTY_FIVE_PREMATCH_REOBSERVATIONS_ZERO_NEW_DECLARATIONS",
+  "scope": "Only the actual18:18UTC SRO E1R2 canary. Fifty-five existing choices were reobserved; twelve past-fixture objects preserved. Not67fresh or new choices; no application or recurrence authority.",
+  "observedAt": "2026-11-21T18:18:42.376705Z",
+  "sourceResponseSHA256": "08fd337db3294edb2111da858a8c537d3bed243755ee22a5cac7a73ef4bdec6c",
+  "candidateRawSHA256": "bb36494ae56699a7f2ae928f32d4d4b4156df6240f56e13446d94dd4cee0737a",
+  "receiptRawSHA256": "f3357934cb67f682278ae69cc4e94fa9820738e7244a44911d28efbca291e707",
+  "journalRawSHA256": "915729a1d8e275a5516d5702e070e886ce6e517ae9add7db0a9543e984de9646",
+  "journalRecords": 8,
+  "journalHead": "265211657405b10d5017a2c49a32d0f7259936a123f332b37a3af3fde3e62037",
+  "baselineMergedChoices": 67,
+  "reobservedChoices": 55,
+  "unchangedPastChoices": 12,
+  "reobservedAuthors": 8,
+  "reobservedFutureFixtures": 7,
+  "newDistinctChoices": 0,
+  "onlyChangedField": "lastSeenAt",
+  "firstSeenIdentitySelectionAndProvenancePreserved": true,
+  "minimumSecondsObservedBeforeKickoff": 5177.623295,
+  "identityCertified": false,
+  "odds": null,
+  "performanceInferred": false,
+  "sourceGET": 3,
+  "responseCodes": [
+    404,
+    200,
+    200
+  ],
+  "baselinePublicApplicationChoices": 477,
+  "applicationAdmissionAuthorized": false,
+  "recurrenceAuthorized": false,
+  "verifiedBy": [
+    "C0",
+    "C1",
+    "C2"
+  ]
+}

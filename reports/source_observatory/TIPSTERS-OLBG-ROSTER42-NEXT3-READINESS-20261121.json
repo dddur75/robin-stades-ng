@@ -1,0 +1,39 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.ROSTER42.NEXT3.READINESS.20261121",
+  "status": "EXACT_SOURCE_SCOPE_AUTHORIZED_WINDOWS_NOT_INSTALLED",
+  "scope": "Three future ordinary public OLBG slots, separate from the completed133request campaign; no request executed by this readiness adoption.",
+  "planCanonicalSHA256": "10422fdb333dbe3a46b41c53342e4c249a69ecd21faca9374c9fe5aadb893dd2",
+  "manifestCanonicalSHA256": "e1089674a9b89f70051530e6a2c420268ef830a098a650c3a8dd91dd48682ab1",
+  "codeSHA256": "10acf9d9ee6bdc7c755a43ae21f66582d299a519bb01762484975fd9b3d77868",
+  "readerSHA256": "b643572e9938ffe166927e3cc800b17dcb08f6670b873ab12145e73dcf57ebbe",
+  "legalReviewSHA256": "54a5639603d5ead5caf21c1df1229bff75a278edea11ef114d2c188b76aba9cd",
+  "freshDocumentClaim": "ENG.SOURCE_OBSERVATORY.OLBG.TERMS.LOCAL.DOC.RESULT.20261121",
+  "priorDataClaim": "DATA.SOURCE_OBSERVATORY.ROSTER42.FINAL.NATURAL.20261121",
+  "oldRequestsConsumed": 133,
+  "newRequestMaximum": 129,
+  "collectorCombinedCeiling": 262,
+  "documentaryRequestsSeparate": 2,
+  "newRequestsExecuted": 0,
+  "newSlotsExecuted": 0,
+  "profileCount": 42,
+  "fixtureCount": 14,
+  "slots": [
+    "2026-11-21T17:05:00Z",
+    "2026-11-21T23:05:00Z",
+    "2026-11-22T05:05:00Z"
+  ],
+  "expiresAt": "2026-11-22T05:15:00Z",
+  "baselineRestitutedChoices": 246,
+  "historicalIDsCheckedForCollision": 272,
+  "canaryReplayed": false,
+  "catchup": false,
+  "retry": false,
+  "windowsInstalled": false,
+  "globalSourceDelivery": "PARTIAL",
+  "reviewScopes": {
+    "C1": "Exact source and task scope, fresh terms and scientific temporal rules.",
+    "C2": "Independent code and task scope, collision, stop, failed-slot and app preservation.",
+    "C4": "Independent code security, documentary context and exact source/task scope."
+  },
+  "recordedAt": "2026-11-21T12:59:41.355684+00:00"
+}

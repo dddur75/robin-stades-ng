@@ -1,0 +1,32 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.NETWORK.PHASES.RESULT.20261121",
+  "status": "PARTIAL_DNS_TCP_SUCCEEDED_TLS_CERTIFICATE_VERIFICATION_FAILED",
+  "scope": "Exact spent zero-HTTP network diagnostic. DNS and TCP finished; TLS certificate verification failed. No source content or collection capability established.",
+  "observedAt": "2026-11-21T14:52:07.775862+00:00",
+  "outcome": "PHASE_FAILED",
+  "failureCode": "TLS_CERTIFICATE_VERIFY_FAILED",
+  "verifyCode": 19,
+  "receiptRawSHA256": {
+    "result.json": "54a57551b28690eb782c6cbede377175580cb88d8c628e0c3d0aa0bdb974e949",
+    "events.jsonl": "f9e7077b95f13e8f86ccc30ea976c00c89d90ec7d022185708bbc9e60f6c34da",
+    "spent.json": "cf09da546dda2f0ebc040a7b04eeb3c1d8bf76f5f954577a461d3cb6ebb1c3fe"
+  },
+  "validLinkedRecords": 7,
+  "DNSFinished": true,
+  "TCPFinished": true,
+  "TLSFinished": false,
+  "addressFamily": 6,
+  "addressCount": 2,
+  "allAddressesGlobal": true,
+  "httpOperations": 0,
+  "applicationContentRead": 0,
+  "priorHTTPReservationsConsumed": 2,
+  "priorFailuresPreserved": true,
+  "overrunMarkerPresent": false,
+  "rootCertificateCause": "UNKNOWN",
+  "retryAuthorityCreated": false,
+  "verifiedBy": [
+    "C0",
+    "C4"
+  ]
+}

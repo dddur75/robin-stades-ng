@@ -1,0 +1,62 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.ROSTER42.EXECUTABLE.REPAIR.E1.READINESS.20261121",
+  "generatedAt": "2026-11-21T09:38:13.399399+00:00",
+  "status": "EXACT_INFRASTRUCTURE_REPAIR_REVIEWED_AWAIT_FUTURE_WINDOW_NO_TASK_CHANGED",
+  "scope": "Repair only the missing versioned PowerShell executable of the existing Roster42 task. Retain wrapper, arguments, triggers, expiry, principal, concurrency, source budgets and watchdog. The current binary is not guaranteed beyond this final authorized tick.",
+  "packetIndexRawSHA256": "581d9e8dbecef3776974b3b6cc3b5c8b727642c3a6d6848c9423c05b15f175d2",
+  "packetProjectionSHA256": "db9decd7000e25ae754bc501cdef5ac6d43c63430989ae82f497c4131b81f15f",
+  "preparedArtifacts": 33,
+  "syntheticPowerShellTestsPassed": 8,
+  "controllerClosureTestsPassed": 4,
+  "beforeXML_LF_SHA256": "cad9b4c7955c8f56674f5ff58a0d3251a5d64a0234a4cfb979091cda6d388ae0",
+  "proposedXML_LF_SHA256": "37c4714b8ff7ceb8ca8f2842cb1fec944587c07bd0fe01e9243fa76e29eab25e",
+  "semanticXMLChanges": [
+    "Actions/Exec/Command"
+  ],
+  "newExecutableRawSHA256": "2a6769a3330dc1084d0154bfde7d164ab750ca7f700f313f9d417c1be78b2233",
+  "newExecutableSignature": "Valid",
+  "repairPlanLF_SHA256": "41f9ca8489f861f00d555e6f1e774b9c2a2829fc119a8782421f424260e79eaf",
+  "operatorRawSHA256": "4a62d3485aeb83c5bb567e0f7622c0a5c1b2d150c231105af9bb6d7aeb9dbed0",
+  "controllerRawSHA256": "eaf1cd30f33810589ea69198bc4850129d88c65975b5379599b1e4359e6bfc27",
+  "manifest": {
+    "mission_id": "ROSTER42_EXECUTABLE_REPAIR_APPLY_E1_20261121",
+    "authorized_stages": [
+      "E1"
+    ],
+    "maximum_stage": "E1",
+    "external_effects": {
+      "task_name": "Robin-Tipsters-OLBG-Roster42-20261120",
+      "task_path": "\\",
+      "task_xml_updates": 1,
+      "manual_run": 0,
+      "source_get": 0,
+      "other_task_mutations": 0
+    },
+    "compute_budget": {
+      "workers": 1,
+      "max_updates": 1
+    },
+    "time_budget": {
+      "authorized_at": "2026-11-21T09:45:00Z",
+      "max_elapsed_ms": 60000
+    },
+    "source_hash": "41f9ca8489f861f00d555e6f1e774b9c2a2829fc119a8782421f424260e79eaf",
+    "expires_at": "2026-11-21T09:46:00Z"
+  },
+  "manifestCanonicalSHA256": "eb51eb66a71eeefe04a4822afdc889aeac7c100ec104399801c6758dbff78acc",
+  "sourceGETByRepair": 0,
+  "manualRunsAllowed": 0,
+  "sourceBudget": {
+    "maximum": 133,
+    "consumed": 90,
+    "remaining": 43,
+    "resetAllowed": false
+  },
+  "nextNaturalTriggerUTC": "2026-11-21T11:05:00Z",
+  "collectionObservedByRepair": false,
+  "verifiedBy": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

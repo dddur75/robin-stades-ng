@@ -1,0 +1,28 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.SRO.SUCCESSOR.E1.READINESS.20261121",
+  "status": "EXACT_SINGLE_E1_INVOCATION_AUTHORIZED_NO_EXECUTION_YET",
+  "scope": "Only independently reviewed exact E1 scope and bounded current mission. No recurrence, task, application admission or future profile authority.",
+  "planCanonicalSHA256": "f485711470867dc7c490cbbacc0130b6d27f7b119564af5b3077fc73042982e9",
+  "manifestCanonicalSHA256": "c6957ad3a8cfd6725aecae5e119d4c491c7a5fea119c4cf26fa3040ac4227eff",
+  "indexRawSHA256": "545431ee24eccef2cccbe5abd9e4768435718a13b8548398f0702c66bdf81e00",
+  "expiresAt": "2026-11-21T18:30:00Z",
+  "sourceGETExecuted": 0,
+  "sourceHEADExecuted": 0,
+  "planned": {
+    "priorGET": 39,
+    "newGETMaximum": 3,
+    "familyGETCeiling": 42,
+    "historicalFamilyMilliseconds": null,
+    "historicalTimeState": "UNKNOWN",
+    "newReservedMilliseconds": 50000,
+    "owners": 8,
+    "fixturePool": 7,
+    "recurrenceAllowed": false,
+    "applicationAdmissionAllowed": false
+  },
+  "verifiedBy": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

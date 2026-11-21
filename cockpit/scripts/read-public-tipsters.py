@@ -1,5 +1,11 @@
 """Expose accepted public-post facts locally, without network or mutation."""
 
+# Deadline starts before historical-reader imports.
+# ruff: noqa: E402
+from time import monotonic
+
+READER_DEADLINE = monotonic() + 6.5
+
 import argparse
 import json
 from pathlib import Path
@@ -18,8 +24,11 @@ from robin.source_observatory.olbg_store import read_olbg_companion
 from robin.source_observatory.personal_access import add_personal_public
 from robin.source_observatory.profile_collection import add_profile_public
 from robin.source_observatory.qualification_view import read_sro_companion
+from robin.source_observatory.retained_choices import add_retained_public
 from robin.source_observatory.roster_collection import add_roster_public
 from robin.source_observatory.roster_recurring_view import add_group_public
+from robin.source_observatory.roster_successor_view import add_next_public
+from robin.source_observatory.sro_successor_view import add_sro_next_public
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--directory", type=Path, required=True)
@@ -56,6 +65,9 @@ try:
     view = add_bundes_occurrences(view, Path(__file__).resolve().parents[2])
     view = add_closed_occurrences(view, Path(__file__).resolve().parents[2])
     view = add_live_occurrences(view, Path(__file__).resolve().parents[2])
+    view = add_retained_public(view, Path(__file__).resolve().parents[2])
+    view = add_next_public(view, Path(__file__).resolve().parents[2], deadline=READER_DEADLINE)
+    view = add_sro_next_public(view, Path(__file__).resolve().parents[2], deadline=READER_DEADLINE)
     print(json.dumps(view, ensure_ascii=False))
 except (ValueError, OSError, KeyError, TypeError):
     print(

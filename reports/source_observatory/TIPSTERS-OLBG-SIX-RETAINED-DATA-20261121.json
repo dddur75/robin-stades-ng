@@ -1,0 +1,20 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.SIX.RETAINED.PREMATCH.20261121",
+  "status": "EXACT_SIX_DATA_ACCEPTED_E1_APP_RECETTE_PENDING",
+  "scope": "Six retained source-literal choices independently verified before kickoff; no interpreted market, performance, settlement or recurrence.",
+  "manifestCanonicalSha256": "05fafeb5cea8bda66619b2050fdf79487c937ddce23d7d06b9d80100c3789586",
+  "sourceSha256": "e172cdd005df8009b57e8cbb0ee565bff960140663b65750cc5e108424b81d42",
+  "bundleSha256": "e90ef19f7ca4609dc751668e1f9cc0da13d1d9279a538eb140a93dad8a4b32d4",
+  "envelopeSha256": "d14b954f9a50375de142d6a2f88513a0644369441ea9d205493b009564e6ff20",
+  "realRetainedChoices": 6,
+  "projectedApplicationChoices": 409,
+  "projectedApplicationAuthors": 79,
+  "applicationResultNotYetVerified": true,
+  "qualifiedAt": "2026-11-21T10:13:38.056364+00:00",
+  "originalObservationDatesPreserved": true,
+  "performanceEvaluationAllowed": false,
+  "marketInterpretationAllowed": false,
+  "settlementAllowed": false,
+  "recurrenceAuthorized": false,
+  "sourceGET": 0
+}

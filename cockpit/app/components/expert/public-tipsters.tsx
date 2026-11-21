@@ -14,13 +14,20 @@ function CampaignBlock({title,campaign,children,counters=true}:{title:ReactNode;
 }
 
 type Pick = SourceChoice & { id:string; authorId:string; authorLabel:string; sourceId:string; fixtureLabel:string;
- selection:string; market?:string; kickoff:string; observedAt:string; publishedCivilDate:string|null; sourceUrl:string; observationCount?:number; lastObservedAt?:string };
+ selection:string; market?:string; kickoff:string; observedAt:string; firstSeenAt?:string; publishedCivilDate:string|null; sourceUrl:string; observationCount?:number; lastObservedAt?:string };
+
+export function isSroReobservation(pick:{firstSeenAt?:string;observedAt:string},update:{lastSeenAt:string}|undefined):boolean{
+ if(!update)return false;
+ const first=Date.parse(pick.firstSeenAt??pick.observedAt),last=Date.parse(update.lastSeenAt);
+ return Number.isFinite(first)&&Number.isFinite(last)&&last>first;
+}
 type State = { status:string; distinctPicks:number; authorCount:number; requestCount:number;
  generatedAt:string; sourceObservedThrough?:string; claimId:string; claimIds?:string[]; recurring?:boolean; halted?:boolean; picks:Pick[];
+ sroNextCompanion?:{updates:Record<string,{lastSeenAt:string;claimId:string}>}; sroNextCampaign?:PublicCampaign&{canaryReobservations?:number;priorFamilyGET?:number;familyGETMax?:number;futureReceiptReview?:string;poolAuthorIds?:string[]};
  campaign?:PublicCampaign; sroCampaign?:PublicCampaign; olbgCampaign?:PublicCampaign; expandedOlbgCampaign?:PublicCampaign; profileCampaign?:PublicCampaign;
  personalCollection?:{state:string;claimId?:string;qualifiedAt?:string;nativeChoices?:number}; notbettingBundesOccurrences?:{state:string;nativeOccurrences?:number}; notbettingClosedOccurrences?:{state:string};
  notbettingOccurrenceCompanion?:{updates:Record<string,{lastObservedAt:string;observations:unknown[]}>}; notbettingOccurrenceCampaign?:PublicCampaign;
- familyCollection?:{state:string;nativeWinState?:string;opaqueState?:string}; rosterCollection?:{state:string}; notbettingCollection?:{state:string}; rosterCampaign?:PublicCampaign&{authorIds?:string[];poolAuthorIds?:string[];profileCount?:number} };
+ familyCollection?:{state:string;nativeWinState?:string;opaqueState?:string}; rosterCollection?:{state:string}; notbettingCollection?:{state:string}; rosterNextCampaign?:PublicCampaign&{authorIds?:string[];poolAuthorIds?:string[];profileCount?:number}; rosterCampaign?:PublicCampaign&{authorIds?:string[];poolAuthorIds?:string[];profileCount?:number} };
 export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean; tipsterId?:string }) {
  const [data,setData]=useState<State|null>(null); const [error,setError]=useState(false);
  useEffect(()=>{const controller=new AbortController();let alive=true;let pending=false;
@@ -31,7 +38,7 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
   }).catch(()=>{if(alive)setError(true);}).finally(()=>{pending=false;});};
   read();const timer=setInterval(()=>{if(!document.hidden)read();},15000);
   return()=>{alive=false;controller.abort();clearInterval(timer);};},[]);
- const {campaign,sroCampaign,olbgCampaign,expandedOlbgCampaign,profileCampaign,rosterCampaign}=data??{};
+ const {campaign,sroCampaign,sroNextCampaign,olbgCampaign,expandedOlbgCampaign,profileCampaign,rosterCampaign,rosterNextCampaign}=data??{};
  const authors=[...new Map((data?.picks??[]).map(p=>[p.authorId,p])).values()];
  const selected=tipsterId ? authors.find(p=>p.authorId===tipsterId):null;
  const showNotBetting=!tipsterId||selected?.sourceId==='NotBetting';
@@ -57,6 +64,13 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
    {!tipsterId && campaign && <CampaignBlock title="Campagne des deux forums" campaign={campaign}>
     {campaign.slots&&<p>{campaign.slots} créneaux, toutes les deux heures.</p>}
    </CampaignBlock>}
+   {sroNextCampaign&&(!tipsterId||sroNextCampaign.poolAuthorIds?.includes(tipsterId))&&<CampaignBlock title="Prochaine collecte Stade Rennais Online · huit auteurs" campaign={sroNextCampaign} counters={sroNextCampaign.state!=='unavailable'}>
+    {sroNextCampaign.state==='unavailable'?<p>Preuves du nouveau plan indisponibles ; historique conservé.</p>:<>
+     <p>Trois nouveaux passages, au maximum neuf GET. Budget familial : {sroNextCampaign.priorFamilyGET} GET antérieurs et neuf prévus, plafond {sroNextCampaign.familyGETMax}.</p>
+     <p>Canari : {sroNextCampaign.canaryReobservations} choix déjà connus relus avant match ; aucun nouveau pronostic pour ce canari.</p>
+     {sroNextCampaign.futureReceiptReview==='PENDING'&&<p>Les nouveaux choix éventuels attendent leur qualification indépendante.</p>}
+    </>}
+   </CampaignBlock>}
    {(!tipsterId||selected?.sourceId==='SRC_039') && sroCampaign && sroCampaign.state!=='awaiting_preparation' && <CampaignBlock title="Collecte Stade Rennais Online" campaign={sroCampaign}>
     <p>Budget incluant le diagnostic.</p>
    </CampaignBlock>}
@@ -76,6 +90,11 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
      {tipsterId&&rosterCampaign.poolAuthorIds?.includes(tipsterId)&&!rosterCampaign.authorIds?.includes(tipsterId)&&<p>Profil arrêté ; historique conservé.</p>}
     </>}
    </CampaignBlock>}
+   {rosterNextCampaign&&(!tipsterId||rosterNextCampaign.poolAuthorIds?.includes(tipsterId))&&<CampaignBlock title="Prochaine collecte OLBG · 42 profils au maximum" campaign={rosterNextCampaign} counters={rosterNextCampaign.state!=='unavailable'}>
+    <p>Trois passages distincts de la campagne terminée. Leurs compteurs commencent à zéro.</p>
+    {typeof rosterNextCampaign.successfulSlots==='number'&&rosterNextCampaign.successfulSlots>0&&<p>Les passages comptabilisés disposent d’un journal de collecte clôturé.</p>}
+    <p>Sans choix admissible : arrêt du profil. Créneau manqué ou refus d’accès : arrêt sans rattrapage.</p>
+   </CampaignBlock>}
    {data.halted && <p role="alert">Campagne des forums arrêtée. Historique préservé ; aucune nouvelle lecture autorisée par cette campagne.</p>}
    {compact ? <InlineLink href="/expert/collecte-publique">Voir les fiches et les pronostics collectés</InlineLink>:<>
     <p><InlineLink href="/expert/collecte-publique">Tous les tipsters collectés</InlineLink></p>
@@ -83,6 +102,7 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
     {!tipsterId && data.picks.length===0 && <p>Aucun pronostic personnel admissible dans ces preuves locales.</p>}
     {tipsterId && !selected && <p>Cette fiche ne figure pas dans les preuves locales actuelles.</p>}
     {(tipsterId ? data.picks.filter(p=>p.authorId===tipsterId) : data.picks).map(p=>{
+     const sroUpdate=data.sroNextCompanion?.updates[p.id];
      const update=data.notbettingOccurrenceCompanion?.updates[p.id], count=update?.observations.length??p.observationCount, last=update?.lastObservedAt??p.lastObservedAt;
      return <article key={p.id} className="section-card tipster-pick">
      <h3>{p.fixtureLabel} · {choiceHeading(p)} {p.selection}</h3>
@@ -90,6 +110,7 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
      <p>Coup d’envoi : {formatDateTime(p.kickoff,true)}.</p>
      <p>Observé avant match le {formatDateTime(p.observedAt,true)}.</p>
      {(update||p.sourceWalkTruncated)&&Number.isSafeInteger(count)&&count!>1&&last&&<p>{count} lectures concordantes{update&&' de la même source'}. Dernière : {formatDateTime(last,true)}.</p>}
+     {sroUpdate&&isSroReobservation(p,sroUpdate)&&<p>Choix déjà connu, relu avant match le {formatDateTime(sroUpdate.lastSeenAt,true)}. Première observation conservée.</p>}
      <p>Date civile affichée : {p.publishedCivilDate??'non renseignée'}. Publication : heure et fuseau non certifiés.</p>
      {p.market==='source_native'&&<p>Marché normalisé et durée de jeu non certifiés. Évaluation de performance désactivée.</p>}
      <OpaqueChoiceDetails choice={p}/>

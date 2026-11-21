@@ -1,0 +1,162 @@
+{
+  "generatedAt": "2026-11-21T15:13:31.671Z",
+  "schemaVersion": "robin-personal-access-v1",
+  "scope": "LOCAL_PERSONAL_NONCOMMERCIAL_NO_REDISTRIBUTION",
+  "claimId": "ENG.SOURCE_OBSERVATORY.LATEST.SOURCE.STATUS.20261121",
+  "status": "PARTIAL_DATED_SOURCE_STATUS_NO_COLLECTION_GRANT",
+  "platforms": [
+    {
+      "platform": "Coteur",
+      "label": "Ressource publique reçue ; lecture technique non qualifiée",
+      "reason": "Le second script natif et robots ont répondu HTTP 200 le 21 novembre. La projection structurée n’a pas été produite ; le seul diagnostic durable est ValueError après réception. La cause précise reste inconnue. Aucun choix ni contrat API n’est établi par cet essai.",
+      "requiredAccess": "Une source structurée ou un contrat public documenté reliant le pseudonyme, l’événement daté et le choix ; aucun besoin de compte ou achat démontré.",
+      "ownerAction": "Aucun accès personnel manquant identifié avec certitude. Le blocage actuel est technique ; pas de nouvel appel ni de relecture du script pour ajuster le lecteur dans cette mission.",
+      "status": "partial_technical",
+      "observedAt": "2026-11-21T04:20:48.292686+00:00",
+      "evidenceRefs": [
+        "ENG.SOURCE_OBSERVATORY.COTEUR.SECOND.ASSET.AST.RESULT.20261121"
+      ]
+    },
+    {
+      "platform": "NotBetting",
+      "label": "Quatre choix qualifiés ; campagne terminée",
+      "reason": "Les quatre choix avant match déjà qualifiés restent affichés. La fenêtre de la campagne temporaire a pris fin le 21 novembre à 12 h 15 (Paris). Le journal conserve le canari et le passage de 8 h ; il ne prouve aucun passage ultérieur ni nouveau pronostic.",
+      "requiredAccess": "Préparer une nouvelle campagne prospective en conservant le consommé et les créneaux manqués. Aucun compte ou achat indispensable n’est établi pour la page publique examinée ; les autres profils restent à qualifier.",
+      "ownerAction": "Le travail restant porte sur la campagne et son lancement technique. Aucun secret utilisateur à fournir n’est identifié pour cette page publique.",
+      "status": "bounded_collection_expired_existing_choices_only",
+      "observedAt": "2026-11-21T15:13:31.671Z",
+      "evidenceRefs": [
+        "DATA.SOURCE_OBSERVATORY.NOTBETTING.OPAQUE.PREMATCH.20261121",
+        "DATA.SOURCE_OBSERVATORY.NOTBETTING.BUNDES.BOUNDED.OCCURRENCES.20261121",
+        "DATA.SOURCE_OBSERVATORY.NOTBETTING.CLOSED.OCCURRENCES.E1.20261121",
+        "DATA.SOURCE_OBSERVATORY.NOTBETTING.OCCURRENCE.CANARY.20261121",
+        "ENG.SOURCE_OBSERVATORY.NOTBETTING.OCCURRENCE.WINDOWS.RECETTE.20261121"
+      ],
+      "collectionExpiredAt": "2026-11-21T11:15:00Z",
+      "campaignGETReserved": 4,
+      "campaignMaximumGET": 8
+    },
+    {
+      "platform": "Telegram",
+      "label": "Connexion sécurisée vérifiée ; pronostics non qualifiés",
+      "reason": "La connexion sécurisée à t.me a été vérifiée le 21 novembre à 16 h 08 (Paris). Aucun aperçu ni message n’a été lu. Les canaux, les auteurs et les pronostics restent à qualifier ; ce contrôle du transport ne valide aucun usage des contenus.",
+      "requiredAccess": "Qualifier l’aperçu du canal public, les règles du traitement prévu, l’attribution personnelle des choix et leur observation avant match. Aucun accès privé indispensable n’est établi par ce seul contrôle.",
+      "ownerAction": "Aucune action utilisateur indispensable identifiée pour ce contrôle public. La qualification du canal et du traitement local reste à réaliser avant activation.",
+      "status": "tls_verified_source_not_admitted",
+      "observedAt": "2026-11-21T15:08:02.594261+00:00",
+      "evidenceRefs": [
+        "ENG.SOURCE_OBSERVATORY.TELEGRAM.NETWORK.CA.R2.RESULT.20261121",
+        "ENG.SOURCE_OBSERVATORY.TELEGRAM.OFFICIAL.DOCUMENTARY.RESULT.20261121"
+      ],
+      "documentaryReferenceCount": 87,
+      "historicalMessageLocators": 16,
+      "messageReads": 0,
+      "userReportsNoExport": true,
+      "publicPreviewGET": 0,
+      "exportOrAPIRequiredForTransportDiagnostic": false
+    },
+    {
+      "platform": "Kicktipp",
+      "label": "Règles par concours ; liaison des choix non établie",
+      "reason": "Les trois concours examinés Ligue1, Bundesliga et ligue-mm rendent les choix visibles après leur clôture au coup d’envoi. The Predictor reste distinct : le dernier contrôle natif a échoué sur le contrat du tableau, sans établir la liaison auteur–choix–rencontre. Aucun pronostic n’est admis par ces contrôles.",
+      "requiredAccess": "Une preuve de choix visible dans la fenêtre propre au concours, reliée au calendrier officiel.",
+      "ownerAction": "Aucun masquage ni besoin de compte généralisé à tous les concours. Une cellule masquée ou un résultat ne vaut pas un pronostic.",
+      "status": "contest_specific_partial_native_join_unestablished",
+      "observedAt": "2026-11-21T11:45:01.075744+00:00",
+      "evidenceRefs": [
+        "ENG.SOURCE_OBSERVATORY.KICKTIPP.L1.DOCUMENTARY.RESULT.20261121",
+        "ENG.SOURCE_OBSERVATORY.COMPATIBLE.QUALIFICATION.20261120",
+        "ENG.SOURCE_OBSERVATORY.KICKTIPP.NATIVE.LINK.RESULTS.20261120",
+        "ENG.SOURCE_OBSERVATORY.KICKTIPP.NATIVE.LIVE.R3.RESULT.20261121",
+        "DATA.SOURCE_OBSERVATORY.KICKTIPP.OFFICIAL.CALENDAR.CANDIDATES.20261121"
+      ],
+      "contestAssessments": {
+        "pronostics-ligue1": {
+          "platform": "Kicktipp",
+          "label": "Ligue1 : visibilité après le coup d’envoi de chaque match",
+          "reason": "Les règles actuelles rendent les choix visibles après la clôture, fixée zéro minute avant l’événement correspondant. Le premier match de la journée ne débloque donc pas les suivants selon cette règle. Les 40 fiches historiques restent conservées.",
+          "requiredAccess": "Pour ce concours masqué, un export prospectif autorisé donnant les choix et leur horodatage avant match.",
+          "ownerAction": "Une connexion de participant ne prouve pas l’accès aux choix masqués ; aucun contournement ni résultat rétrospectif présenté comme choix avant match.",
+          "status": "pre_kickoff_visibility_blocked",
+          "observedAt": "2026-11-21T00:58:30.626391+00:00",
+          "evidenceRefs": [
+            "ENG.SOURCE_OBSERVATORY.KICKTIPP.L1.DOCUMENTARY.RESULT.20261121",
+            "https://www.kicktipp.fr/pronostics-ligue1/regles"
+          ]
+        },
+        "bundesliga-tippspiel": {
+          "platform": "Kicktipp",
+          "label": "Bundesliga : choix masqués jusqu’au coup d’envoi",
+          "reason": "Les choix deviennent visibles après la clôture, fixée à zéro minute avant l’événement pour ce concours contrôlé.",
+          "requiredAccess": "Des choix observables avant match ; la règle publique actuelle ne fournit pas cette fenêtre.",
+          "ownerAction": "Aucun contournement ni résultat rétrospectif présenté comme une observation avant match. Cette conclusion vaut seulement pour ce concours.",
+          "status": "pre_kickoff_visibility_blocked",
+          "observedAt": "2026-11-20T18:24:55.004769+00:00",
+          "evidenceRefs": [
+            "ENG.SOURCE_OBSERVATORY.COMPATIBLE.QUALIFICATION.20261120",
+            "https://www.kicktipp.de/bundesliga-tippspiel/spielregeln"
+          ]
+        },
+        "ligue-mm": {
+          "platform": "Kicktipp",
+          "label": "ligue-mm : choix masqués jusqu’au coup d’envoi",
+          "reason": "Les choix deviennent visibles après la clôture, fixée à zéro minute avant l’événement pour ce concours contrôlé.",
+          "requiredAccess": "Des choix observables avant match ; la règle publique actuelle ne fournit pas cette fenêtre.",
+          "ownerAction": "Aucun contournement ni résultat rétrospectif présenté comme une observation avant match. Cette conclusion vaut seulement pour ce concours.",
+          "status": "pre_kickoff_visibility_blocked",
+          "observedAt": "2026-11-20T18:25:18.019350+00:00",
+          "evidenceRefs": [
+            "ENG.SOURCE_OBSERVATORY.COMPATIBLE.QUALIFICATION.20261120",
+            "https://www.kicktipp.fr/ligue-mm/regles"
+          ]
+        },
+        "the-predictor": {
+          "platform": "Kicktipp",
+          "label": "The Predictor : lecture native non qualifiée",
+          "reason": "Les réponses publiques ont été reçues, mais le dernier contrat de tableau n’a pas été validé. La liaison entre auteur, choix et événement reste absente. Les horaires officiels disponibles ne suffisent pas à établir cette liaison.",
+          "requiredAccess": "Un contrat ou une source structurée fiable reliant auteur, choix personnel, événement et horodatage avant match.",
+          "ownerAction": "Aucun compte ou achat indispensable n’est démontré. Les essais clos restent conservés ; aucun nouvel appel n’est autorisé par cette évaluation.",
+          "status": "partial_native_contract_unestablished",
+          "observedAt": "2026-11-21T11:45:01.075744+00:00",
+          "evidenceRefs": [
+            "ENG.SOURCE_OBSERVATORY.COMPATIBLE.QUALIFICATION.20261120",
+            "https://www.kicktipp.fr/the-predictor/regles",
+            "https://www.kicktipp.fr/the-predictor/tableau-pronostics",
+            "ENG.SOURCE_OBSERVATORY.KICKTIPP.NATIVE.LIVE.R3.RESULT.20261121",
+            "DATA.SOURCE_OBSERVATORY.KICKTIPP.OFFICIAL.CALENDAR.CANDIDATES.20261121"
+          ]
+        }
+      }
+    }
+  ],
+  "metrics": {
+    "allCompatibleSourcesIntegrated": false,
+    "collectionGrantCreated": false,
+    "newSourceRequestsByThisAssessment": 0
+  },
+  "previousAssessmentClaimId": "ENG.SOURCE_OBSERVATORY.COMPATIBLE.RESULTS.FOLLOWUP.20261121",
+  "previousAssessmentRawSHA256": "ed4ea2c4611d73696084a5beb47c2210d99d56dea4378fff62cf6c52df4be4e9",
+  "limits": [
+    "Transport verification is distinct from public preview access, personal attribution, pre-kickoff evidence and collection compatibility.",
+    "Only the exact sampled routes and contests are assessed; all unexamined workbook references remain unqualified.",
+    "This dated assessment neither enables a collector nor extends any expired campaign."
+  ],
+  "evidence": [
+    {
+      "namespace": "A9_PRIVATE_TELEGRAM_CA_DIAGNOSTIC",
+      "path": "telegram-network-ca-e1-r2-20261121/live/result.json",
+      "sha256": "ff2c44c12e3d327b950e757a6acffe50f627471554a7482783e9901a331310d8"
+    },
+    {
+      "namespace": "A9_PRIVATE_NOTBETTING_CAMPAIGN",
+      "path": "notbetting-occurrence-campaign-20261121/mission.json",
+      "sha256": "def52064d2375061c3f0d83b4d480076d1e6e30488a24d2586ad55c63c882ba6"
+    },
+    {
+      "namespace": "A9_PRIVATE_NOTBETTING_CAMPAIGN",
+      "path": "notbetting-occurrence-campaign-20261121/events.jsonl",
+      "sha256": "9d1fc5a5fe93c6b1f5fdf3462e786a7d3adae170d5d0d516d6aa5a122ed687bb"
+    }
+  ],
+  "verifiedBy": []
+}

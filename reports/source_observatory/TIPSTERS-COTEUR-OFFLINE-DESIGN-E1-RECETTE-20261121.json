@@ -1,0 +1,76 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.OFFLINE.DESIGN.E1.RECETTE.20261121",
+  "generatedAt": "2026-11-21T08:12:15.980742+00:00",
+  "status": "PARTIAL_SYNTHETIC_DESIGN_ONLY_NO_SOURCE_OR_OS_CONFINEMENT_APPROVAL",
+  "scope": "Independent C1 verification of exact synthetic A2 prototype; neither corrected Chromium recipe nor real Coteur collection is recetted.",
+  "projectionSHA256": "cba2d9171b2efdcd31436ec1f61bfd09ad273047024cb00fbcfa85af79a2ffd2",
+  "packetIndexRawSHA256": "75d739ad18ac48bb54c6a654af7e6790e3992f5ae739c14a640631909b830cad",
+  "indexedArtifacts": 30,
+  "initialBrowser": {
+    "launches": 1,
+    "contexts": 2,
+    "checksPassed": 23,
+    "checksFailed": 1,
+    "globalTest": "FAIL",
+    "incorrectServiceWorkerAssertionPreserved": true
+  },
+  "correction": {
+    "offlineTestsPassed": 15,
+    "correctedBrowserRecipe": "NON_REPLAYED",
+    "actualServiceWorkerInventory": "UNPROVEN"
+  },
+  "network": {
+    "providerGET": 0,
+    "loopbackControlsAndIntents": 8,
+    "browserTCPWitnessDelta": 0,
+    "browserHTTPWitnessDelta": 0,
+    "osDNSUDPContainment": "UNPROVEN"
+  },
+  "source": {
+    "newCoteurGET": 0,
+    "personalChoicesAdmitted": 0,
+    "historicalLiveFailuresRemainClosed": true,
+    "thirdLiveArchitectureAuthorized": false
+  },
+  "evidence": [
+    {
+      "namespace": "A9_PRIVATE_COTEUR_OFFLINE_DESIGN_E1",
+      "path": "cockpit/.ci/coteur-browser-offline-e1-20261121/manifest.json",
+      "sha256": "bfa2b9c96b26adb9c276d596024e7ba41e196cdeec69d80158bde45da27fced8"
+    },
+    {
+      "namespace": "A9_PRIVATE_COTEUR_OFFLINE_DESIGN_E1",
+      "path": "cockpit/.ci/coteur-browser-offline-e1-20261121/packet-index.json",
+      "sha256": "75d739ad18ac48bb54c6a654af7e6790e3992f5ae739c14a640631909b830cad"
+    },
+    {
+      "namespace": "A9_PRIVATE_COTEUR_OFFLINE_DESIGN_E1",
+      "path": "cockpit/.ci/coteur-browser-offline-e1-20261121/agent-report.json",
+      "sha256": "a2f70a6aefaa298c0cd28399a4ea6935d7fb9c8247d834601126464590f41529"
+    },
+    {
+      "namespace": "A9_PRIVATE_COTEUR_OFFLINE_DESIGN_E1",
+      "path": "cockpit/.ci/coteur-browser-offline-e1-20261121/result.json",
+      "sha256": "956efb8e28feb833e4a1e7a31bc1dfa77437aed7465c6133c9c0284563c84cb4"
+    },
+    {
+      "namespace": "A9_PRIVATE_COTEUR_OFFLINE_DESIGN_E1",
+      "path": "cockpit/.ci/coteur-browser-offline-e1-20261121/harness-run.log",
+      "sha256": "ac52028e7e4c8221694a000a3c0eff826a9300b63ae06f83f40e13c27e3e0218"
+    },
+    {
+      "namespace": "A9_PRIVATE_COTEUR_OFFLINE_DESIGN_E1",
+      "path": "cockpit/.ci/coteur-browser-offline-e1-20261121/harness.initial.cjs",
+      "sha256": "1578b7c381bf525e0e476ee7b88e05703be32bd7aa707454819a9749fa1bf414"
+    },
+    {
+      "namespace": "A9_PRIVATE_COTEUR_OFFLINE_DESIGN_E1",
+      "path": "cockpit/.ci/coteur-browser-offline-e1-20261121/offline-corrected-final.log",
+      "sha256": "79c80f611da26798bdae70cb9f693358de57cb950a904a2b35715e7e69e4e4d3"
+    }
+  ],
+  "verifiedBy": [
+    "C0",
+    "C1"
+  ]
+}

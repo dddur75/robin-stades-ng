@@ -1,0 +1,46 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.WORKBOOK.SUIVI.V3.RECETTE.20261121",
+  "status": "DATED_LOCAL_WORKBOOK_VERIFIED_GLOBAL_SOURCE_DELIVERY_PARTIAL",
+  "scope": "Only Suivi Robin refreshed from the13:13UTC application receipt. Nine source sheets and prior outputs preserved. No future source execution claimed.",
+  "observedAt": "2026-11-21T13:13:30.922Z",
+  "generatedAt": "2026-11-21T13:20:40.752Z",
+  "output": {
+    "namespace": "A9_LOCAL_WORKBOOK_DELIVERABLE",
+    "path": "outputs/robin-v3-suivi-20261121-1413/Robin_des_Stades_sources_et_tipsters_suivi.xlsx",
+    "sha256": "5160ae0436da85d15e111f0b50eceb587aa41ea9fe72f7f73b796fdd524494a6",
+    "bytes": 3356143
+  },
+  "receiptSHA256": "e496868ac1edb6eaa0d00ed631332b0f42d79a8f167ba14cd1b12c86c5558582",
+  "verificationSHA256": "8a973e8e568b03f20fd5b5fa73ca704d586ee189a183f96da92796a38daa00e9",
+  "sourceSheetsUnchanged": 9,
+  "nativeTablesPreserved": 9,
+  "totalSheetsPreserved": 10,
+  "prior394127CellProofReused": true,
+  "fullCellComparisonReplayed": false,
+  "sourceXMLSemanticEqualityAfterRelationIDResolution": true,
+  "sourceStylesUnchanged": true,
+  "sourceSharedStringReferences": 0,
+  "applicationChoices": 460,
+  "applicationAuthors": 79,
+  "applicationFixtures": 19,
+  "registryCount": 317,
+  "registryQualified": 24,
+  "registryEnabled": 13,
+  "assessedOLBGRosterCount": 137,
+  "scheduledOLBGProfiles": 42,
+  "newSourceGET": 0,
+  "newChoices": 0,
+  "newSuccessfulSlots": 0,
+  "plannedSlots": 3,
+  "newGETMaximum": 129,
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.ROSTER42.NEXT3.LOCAL.RECETTE.20261121",
+    "DATA.SOURCE_OBSERVATORY.OLBG.ROSTER42.NEXT3.20261121"
+  ],
+  "nativeExcelNotTested": true,
+  "author": "C1",
+  "verifiedBy": [
+    "C0",
+    "C4"
+  ]
+}

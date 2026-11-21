@@ -1,0 +1,89 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.ROSTER42.EXECUTABLE.REPAIR.APPLIED.20261121",
+  "generatedAt": "2026-11-21T09:58:42.054077+00:00",
+  "status": "COMMAND_ONLY_REPAIR_APPLIED_AWAIT_NATURAL_TRIGGER_NOT_COLLECTION_PROOF",
+  "scope": "One existing Roster42 action Command repaired under the exact future window and pinned external closure controller. No other XML field, source budget or task was changed; no manual collection occurred.",
+  "manifestCanonicalSHA256": "eb51eb66a71eeefe04a4822afdc889aeac7c100ec104399801c6758dbff78acc",
+  "controllerRawSHA256": "eaf1cd30f33810589ea69198bc4850129d88c65975b5379599b1e4359e6bfc27",
+  "operatorExit": 0,
+  "operatorElapsedMilliseconds": 2937,
+  "controllerClosedAt": "2026-11-21T09:45:30.699993+00:00",
+  "nativeVerifiedAt": "2026-11-21T09:45:56.8095599+00:00",
+  "taskXMLUpdates": 1,
+  "semanticChanges": [
+    "Actions/Exec/Command"
+  ],
+  "beforeXML_LF_SHA256": "cad9b4c7955c8f56674f5ff58a0d3251a5d64a0234a4cfb979091cda6d388ae0",
+  "afterXML_LF_SHA256": "37c4714b8ff7ceb8ca8f2842cb1fec944587c07bd0fe01e9243fa76e29eab25e",
+  "nativeState": "Ready",
+  "executablePresent": true,
+  "nextNaturalTriggerUTC": "2026-11-21T11:05:00Z",
+  "historicalLastTaskResult": 0,
+  "historicalLastTaskResultIsNewCollection": false,
+  "sourceGETByRepair": 0,
+  "manualRuns": 0,
+  "sourceBudget": {
+    "consumed": 90,
+    "maximum": 133,
+    "remaining": 43,
+    "reset": false
+  },
+  "collectionObserved": false,
+  "vetoReceipts": 0,
+  "notBetting": {
+    "taskChanged": false,
+    "journalEvents": 18,
+    "lastCompletedNaturalSlot": "2026-11-21T07:00:00Z",
+    "missedSlot": "2026-11-21T09:00:00Z",
+    "missedSlotSourceGET": 0,
+    "missedSlotWindowsError": "0x80070002",
+    "nextOldPlanSlotEligible": false,
+    "reason": "Missing previous PASS_COMPLETED blocks11:00 even after an executable repair; no catchup or rewritten history."
+  },
+  "evidence": [
+    {
+      "namespace": "A9_PRIVATE_ROSTER42_REPAIR_APPLY",
+      "path": "cockpit/.ci/roster42-executable-repair-apply-20261121/manifest.json",
+      "sha256": "deb115cb7251406148860191d86a44a87c810c30dc5f87bbb29d1ae84b5fd6d5"
+    },
+    {
+      "namespace": "A9_PRIVATE_ROSTER42_REPAIR_APPLY",
+      "path": "cockpit/.ci/roster42-executable-repair-apply-20261121/independent-keys.json",
+      "sha256": "983a3f3bb6a0d39362b9a38ead853846dc6db413ed351a0d6bfe57d0ac0142f2"
+    },
+    {
+      "namespace": "A9_PRIVATE_ROSTER42_REPAIR_APPLY",
+      "path": "cockpit/.ci/roster42-executable-repair-apply-20261121/controller-attempt.json",
+      "sha256": "9dfc68d4fadb490e0a6be466e271d504975cf0c92b09ebdbf75a43b5242e3a44"
+    },
+    {
+      "namespace": "A9_PRIVATE_ROSTER42_REPAIR_APPLY",
+      "path": "cockpit/.ci/roster42-executable-repair-apply-20261121/controller-result.json",
+      "sha256": "8893734595f0cb7d5943b5a868de34557dbd0ea1adfc5a23cf0c608522b94aae"
+    },
+    {
+      "namespace": "A9_PRIVATE_ROSTER42_REPAIR_APPLY",
+      "path": "cockpit/.ci/roster42-executable-repair-apply-20261121/native-after.json",
+      "sha256": "a5860280f323fc8a36e3bfdb1b39791940a4f3d735a964d46e4f92c02c87a3ab"
+    },
+    {
+      "namespace": "A9_PRIVATE_ROSTER42_REPAIR_PREPARED",
+      "path": "cockpit/.ci/roster42-executable-repair-e1-20261121/update-attempt.json",
+      "sha256": "703bf82791ea8f4e9bb760882a2f23c72b734eb14e391d4633f7e72e9d589076"
+    },
+    {
+      "namespace": "A9_PRIVATE_ROSTER42_REPAIR_PREPARED",
+      "path": "cockpit/.ci/roster42-executable-repair-e1-20261121/update-result.json",
+      "sha256": "3a383b491be70ea217d2978c387cb81e43a9a1b20d08d14a2f15097d697e2d3c"
+    },
+    {
+      "namespace": "A9_PRIVATE_ROSTER42_REPAIR_PREPARED",
+      "path": "cockpit/.ci/roster42-executable-repair-e1-20261121/applied-after.xml",
+      "sha256": "ffa561efc0228a018cfc7e817012e657a56ad96de3ce3af1460c8d734eece8a6"
+    }
+  ],
+  "verifiedBy": [
+    "C0",
+    "C2"
+  ]
+}

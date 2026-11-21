@@ -1,0 +1,39 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.SRO.SUCCESSOR.E1.R2.RESULT.20261121",
+  "status": "REAL_CANARY_CANDIDATE_ONLY_SAFE_CLOSURE_NO_NEW_ID",
+  "scope": "Only exact R2 invocation and receipt safety; old39debt plus3actual requests reaches42. Does not authorize E2, Windows or app admission.",
+  "dataClaimId": "DATA.SOURCE_OBSERVATORY.SRO.CANARY.R2.REOBSERVED.20261121",
+  "parentToolRawSHA256": "ab39ed42a7a4ffaf38b30222239a7d2ddcdeacff98de248ee220bd9e972953fd",
+  "parentExitCode": 0,
+  "parentToolWallSeconds": 8.1190404,
+  "receiptRawSHA256": "f3357934cb67f682278ae69cc4e94fa9820738e7244a44911d28efbca291e707",
+  "candidateRawSHA256": "bb36494ae56699a7f2ae928f32d4d4b4156df6240f56e13446d94dd4cee0737a",
+  "journalRawSHA256": "915729a1d8e275a5516d5702e070e886ce6e517ae9add7db0a9543e984de9646",
+  "newGETReservations": 3,
+  "priorGET": 39,
+  "familyGET": 42,
+  "familyCeiling": 42,
+  "newReservedMilliseconds": 50000,
+  "historicalFamilyMilliseconds": null,
+  "historicalTimeState": "UNKNOWN",
+  "responseCodes": [
+    404,
+    200,
+    200
+  ],
+  "robots404BodyNotRead": true,
+  "emptyHashIsNotProofEmptyWireBody": true,
+  "rulesNormalizedDigestExpected": "cff9b4b4b724ab00aa5ac3a5fb74bbe0f5b72f40f0755c272e1a208a3cb9c356",
+  "rulesMatchAttestedByPinnedGuard": true,
+  "rulesNormalizationIndependentlyRecomputedFromBody": false,
+  "rawBodyDurable": false,
+  "stopOverrunHaltAbsent": true,
+  "initialV1UnchangedNoDebit": true,
+  "next3SourcePinsPreserved": 65,
+  "applicationAdmissionAllowed": false,
+  "recurringAuthority": false,
+  "verifiedBy": [
+    "C0",
+    "C4"
+  ]
+}

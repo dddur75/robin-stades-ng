@@ -1,0 +1,24 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NODE22.DOWNLOAD.R2.READINESS.20261121",
+  "status": "BOUNDED_TOOL_DOWNLOAD_ONLY_AUTHORIZED_NOT_EXECUTED",
+  "scope": "Two fixed official Node22.13.0 download GETs only; no provider data, Node execution, build, installation or global change.",
+  "workerSHA256": "9738f6780fb40d6f0ff87a3a85919f8f1a4c1bccbf2b5ad9564bced56d66d37c",
+  "planRawSHA256": "aa693fcecbb2032b5221b16b18bb70216efdb2562a945210b5b3d512e102a608",
+  "manifestRawSHA256": "68d0b6d0638285126873b1216e8b67edec0c9a5080af40c6339ae005fd13ef4d",
+  "approvalRawSHA256": "1e52a412ff5157d14ad1db9fb79d0ae6dd7a78b1d4f7dec8cca2abc26f9edf1a",
+  "maximumGET": 2,
+  "maximumResponseBodyBytes": 60000000,
+  "maximumSeconds": 90,
+  "expiresAt": "2026-11-21T15:15:00Z",
+  "authenticodeRequiredBeforeExecution": true,
+  "sourceOrToolGETExecuted": 0,
+  "priorAttemptStatus": "FAIL_PARENT_OR_CHILD_BEFORE_HTTP",
+  "priorHTTPReservations": 0,
+  "familyMaximumGET": 2,
+  "priorFailurePreserved": true,
+  "author": "C3",
+  "verifiedBy": [
+    "C0",
+    "C1"
+  ]
+}

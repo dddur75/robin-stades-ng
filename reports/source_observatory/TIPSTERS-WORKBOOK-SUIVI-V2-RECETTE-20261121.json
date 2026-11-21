@@ -1,0 +1,38 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.WORKBOOK.SUIVI.V2.RECETTE.20261121",
+  "status": "DATED_LOCAL_WORKBOOK_VERIFIED_GLOBAL_COLLECTION_PARTIAL",
+  "scope": "Only Suivi Robin updated; all nine source sheets and historical catalogue columns preserved.",
+  "observedAt": "2026-11-21T11:44:06.884Z",
+  "generatedAt": "2026-11-21T12:40:07.307Z",
+  "output": {
+    "namespace": "A9_LOCAL_WORKBOOK_DELIVERABLE",
+    "path": "outputs/robin-v3-suivi-20261121-1345/Robin_des_Stades_sources_et_tipsters_suivi.xlsx",
+    "sha256": "49a796e02a0f79862758b4d9fdea853c24146269d3541ad0b56a394e3ccd1da4",
+    "bytes": 3356091
+  },
+  "receiptSHA256": "cbe24a1c097b57424ced2c5c6831c52c50158dd77475e8d75919f0df47ae8466",
+  "verificationSHA256": "09407c588533ead356ceccdf390aa73b5e419b15643fe56014a0cc6ea4c89d1f",
+  "sourceSheetsUnchanged": 9,
+  "sourceCellsUnchanged": 394127,
+  "nativeTablesPreserved": 9,
+  "totalSheetsPreserved": 10,
+  "applicationChoices": 460,
+  "applicationAuthors": 79,
+  "applicationFixtures": 19,
+  "newAcquisitions21November": 34,
+  "olderObservationsNewlyQualified": 23,
+  "nextCampaignAtSnapshot": "PROPOSED_NOT_ACTIVE",
+  "oldOLBGRequests": 133,
+  "oldOLBGComplete": true,
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.NORWICH.SEVEN.LOCAL.RECETTE.20261121",
+    "DATA.SOURCE_OBSERVATORY.ROSTER42.FINAL.NATURAL.20261121"
+  ],
+  "nativeExcelNotTested": true,
+  "verifiedBy": [
+    "C0",
+    "C4"
+  ],
+  "author": "C1",
+  "priorOutputPreserved": true
+}

@@ -1,0 +1,30 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.NATIVE.TERMS.GET.E1.READINESS.20261121",
+  "status": "EXACT_SINGLE_E1_INVOCATION_AUTHORIZED_NO_EXECUTION_YET",
+  "scope": "Only independently reviewed exact E1 scope and bounded current mission. No recurrence, task, application admission or future profile authority.",
+  "planCanonicalSHA256": "42d336b569a6d2649ae8714da85a4dd97dffb8625cf6fc84939d7039b439df25",
+  "manifestCanonicalSHA256": "fe81b35cd9b96cbfa2f582d0b78a4010dadbfeaa9045c73bad40a748d5d11a24",
+  "indexRawSHA256": "d24deb414c12b75a1b6fe06dfdd376d556faef1a2b3584937c3ad48a7b538de6",
+  "expiresAt": "2026-11-21T19:00:00Z",
+  "sourceGETExecuted": 0,
+  "sourceHEADExecuted": 0,
+  "planned": {
+    "priorHTTPReservations": 17,
+    "priorGET": 16,
+    "priorHEAD": 1,
+    "newGETMaximum": 1,
+    "familyHTTPAfterReservation": 18,
+    "familyHTTPCeilingUnchanged": 20,
+    "futureCapacityNotGranted": 2,
+    "familyChargedMillisecondsAfterReservation": 197999,
+    "profileGETAuthorized": 0,
+    "termsRenewalAutomatic": false,
+    "route": "/en/terms",
+    "routeProvenance": "PINNED_NATIVE_HEAD"
+  },
+  "verifiedBy": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

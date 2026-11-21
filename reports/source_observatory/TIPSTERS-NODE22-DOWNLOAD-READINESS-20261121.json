@@ -1,0 +1,20 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NODE22.DOWNLOAD.READINESS.20261121",
+  "status": "BOUNDED_TOOL_DOWNLOAD_ONLY_AUTHORIZED_NOT_EXECUTED",
+  "scope": "Two fixed official Node22.13.0 download GETs only; no provider data, Node execution, build, installation or global change.",
+  "workerSHA256": "a0e72d6f080689e3d93df5f571a03bf5fc2f5d8c8a4813196e4d395be9a08bd0",
+  "planRawSHA256": "aa693fcecbb2032b5221b16b18bb70216efdb2562a945210b5b3d512e102a608",
+  "manifestRawSHA256": "cd48ef823cd4f3abeb260c1418bce3b3fb94d6a48dac2f91c60e97ed8303df32",
+  "approvalRawSHA256": "5247324cb398edf332b04e743dd1f4838bafeb97d6ef21869bf52bb8641bc90c",
+  "maximumGET": 2,
+  "maximumResponseBodyBytes": 60000000,
+  "maximumSeconds": 90,
+  "expiresAt": "2026-11-21T15:05:00Z",
+  "authenticodeRequiredBeforeExecution": true,
+  "sourceOrToolGETExecuted": 0,
+  "author": "C3",
+  "verifiedBy": [
+    "C0",
+    "C1"
+  ]
+}

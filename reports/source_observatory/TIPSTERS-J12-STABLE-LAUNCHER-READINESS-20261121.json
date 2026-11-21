@@ -1,0 +1,28 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.J12.STABLE.LAUNCHER.READINESS.20261121",
+  "status": "EXACT_REPAIR_READY_NOT_YET_APPLIED",
+  "scope": "One stable windowless bootstrap and one action repair for the existing authorized J12 task; no provider request or manual run.",
+  "manifestRawSha256": "4b1bf937df86cb2580b77ee74676f1f7dcc4e213709bd81a9b76378db768fc09",
+  "controllerRawSha256": "bb67953fef24fc23827a288466d71b0f556b8f07d4ed2218291243f3bd631448",
+  "operatorRawSha256": "76d2ba95a2f628b21a2f88eb1ff61c43394c73b1df2e9284e597ed13a10dd25b",
+  "planRawSha256": "363a943bbc835108162f5a74892162516da86ded330aa7a675ce22f107693fff",
+  "bootstrapRawSha256": "032cc77eaf6052ed21d146a75bdf93356c32f7dd56770abc95d92a6d85e0b429",
+  "syntheticTestsPassed": 4,
+  "mypy": "PASS_STRICT",
+  "ruff": "PASS",
+  "banditLowFindings": [
+    "B404",
+    "B603"
+  ],
+  "banditDisposition": "INDEPENDENT_C4_REVIEW_FIXED_ARGUMENT_VECTOR_NO_SHELL_PINNED_EXECUTABLE_AND_INPUTS",
+  "validatedPlanSlots": 23,
+  "validatedPlanFixtures": 7,
+  "pilotRequestLimitUnchanged": 51,
+  "triggersPreserved": 24,
+  "taskHiddenOriginalFalse": true,
+  "nativeExecutionTimeLimit": "PT4M",
+  "validationReceiptOriginalTimestampNotRetained": true,
+  "taskMutationCompleted": false,
+  "pilotCollectedPredictionsNotMeasured": true,
+  "sourceGET": 0
+}

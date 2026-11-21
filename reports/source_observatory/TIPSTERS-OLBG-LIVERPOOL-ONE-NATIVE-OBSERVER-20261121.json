@@ -1,0 +1,27 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.LIVERPOOL.ONE.NATIVE.OBSERVER.20261121",
+  "status": "READONLY_WARM_NATIVE_CACHE_CONFIRMED_NO_SOURCE_EXECUTION",
+  "scope": "SEPARATE_E1_READONLY_TWO_LOOPBACK_OBSERVATION_NOT_E2_COPY_BUDGET",
+  "observedAt": "2026-11-21T13:51:10.409Z",
+  "observerReadbackRawSHA256": "f461c08d09f9489e3e6e3d4ae6deaef8cd239c1a0e371d09e76d51e7ecaef6a1",
+  "loopbackHTTPReads": 2,
+  "HTTP200": 2,
+  "firstResponseNativeState": "stale",
+  "lastResponseNativeState": "Ready",
+  "registryCount": 317,
+  "registryQualified": 24,
+  "registryEnabled": 13,
+  "assessedOLBGRosterEnabled": 42,
+  "hepterEnabled": [
+    false,
+    false
+  ],
+  "nextRunTime": "2026-11-21T18:05:00.0000000+01:00",
+  "nativeVerifiedAt": "2026-11-21T13:51:01.8359626+00:00",
+  "lastResult": 267011,
+  "newSourceRequests": 0,
+  "newSourceChoices": 0,
+  "taskMutations": 0,
+  "sourceGET": 0,
+  "sourceExecutionProved": false
+}

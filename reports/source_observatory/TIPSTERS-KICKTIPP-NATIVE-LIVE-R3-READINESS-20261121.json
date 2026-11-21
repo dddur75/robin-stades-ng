@@ -1,0 +1,19 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.KICKTIPP.NATIVE.LIVE.R3.READINESS.20261121",
+  "status": "TWO_GET_DIAGNOSTIC_READY_CAPTURE_NOT_EXECUTED",
+  "scope": "Exact bounded native calendar/identity diagnostic; one participant/score and at most five calendar rows, no source-choice admission, binding or recurrence.",
+  "manifestCanonicalSha256": "c104a1d1646f75d4e8ce91ceccc3ab6f4786a9493e91b8c7d40f326e620e0e94",
+  "manifestRawSha256": "af3269ff4350bc23f2ed400ed13d36edee2ca57813b4dcb971c9b45b4486b8e4",
+  "planCanonicalSha256": "b18c3d0eb43018b0d4cb9928e07fe7f6e18ea2d0916f162842342531d84940db",
+  "workerRawSha256": "527c2a7e22527015f79dff9081c5e1b060c1f6ecf5528dc4e8135abe2272353a",
+  "extractRawSha256": "5dc32a5c522ef5a17d7974c27930f43d8e9e8c380e0fbe37e843a017973739d5",
+  "preflightRawSha256": "8fc0c961e265e4f33176c7611fef747c5e5de3c2a2a3ba159d7bc16c4589a3be",
+  "pinsVerified": 91,
+  "diagnosticSyntheticTestsPassed": 2,
+  "sourceGETMaximum": 2,
+  "sourceGETConsumedNotYetObserved": true,
+  "workerSecondsMaximum": 90,
+  "sourceTimezoneUnknown": true,
+  "selectedScoreMayBeHistorical": true,
+  "allChoicesUnadmitted": true
+}

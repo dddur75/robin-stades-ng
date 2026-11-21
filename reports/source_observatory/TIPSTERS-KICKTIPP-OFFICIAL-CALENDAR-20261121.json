@@ -1,0 +1,70 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.KICKTIPP.OFFICIAL.CALENDAR.CANDIDATES.20261121",
+  "generatedAt": "2026-11-21T09:36:39.924119+00:00",
+  "status": "OFFICIAL_FIXTURE_CANDIDATES_VERIFIED_NO_NATIVE_TIPSTER_BINDING",
+  "scope": "Primary club documents establish exact fixtures and UTC kickoff candidates. This calendar does not identify a Kicktipp game ID or qualify a personal selection.",
+  "fixtures": [
+    {
+      "id": "epl-20261122-liverpool-manutd",
+      "home": "Liverpool",
+      "away": "Manchester United",
+      "competition": "Premier League",
+      "season": "2026/27",
+      "kickoff": "2026-11-22T16:30:00Z",
+      "timeBasis": "Explicit GMT in the official away-club announcement; corroborated by both clubs match pages.",
+      "primarySources": [
+        "https://www.manutd.com/en/news/november-2026-clashes-with-villa-and-liverpool-moved",
+        "https://www.manutd.com/en/matches/mens-team/liverpool-v-manchester-united-premier-league-20261122",
+        "https://www.liverpoolfc.com/tickets/match/liverpool-v-manchester-united-english-premier-league-20261122"
+      ]
+    },
+    {
+      "id": "seriea-20261122-atalanta-inter",
+      "home": "Atalanta",
+      "away": "Inter",
+      "competition": "Serie A",
+      "season": "2026/27",
+      "localKickoff": "2026-11-22T20:45:00+01:00",
+      "kickoff": "2026-11-22T19:45:00Z",
+      "timeBasis": "Official Inter calendar explicitly states Italian local time; converted with Europe/Rome, not with any guessed Kicktipp timezone.",
+      "timezone": "Europe/Rome",
+      "tzdataVersion": "2026.6",
+      "primarySources": [
+        "https://www.inter.it/it/CALENDARIO/2026/11",
+        "https://www.atalanta.it/news/atalanta-inter-info-biglietti-serie-a-enilive-2026-27-md12"
+      ]
+    }
+  ],
+  "tipsterGET": 0,
+  "mediatedSearchQueries": 2,
+  "primaryPageOpen": 1,
+  "backendHTTPCount": "UNKNOWN_NOT_CLAIMED",
+  "admittedChoices": 0,
+  "nativeGameBinding": false,
+  "evidence": [
+    {
+      "namespace": "A9_PRIVATE_OFFICIAL_CALENDAR_DOCUMENTARY_E1",
+      "path": "cockpit/.ci/kicktipp-official-calendar-20261121/manifest.json",
+      "sha256": "d6b98ae84768c6959622809bc2a8d61f88f40ecda9f32425020b3c13694237c5"
+    },
+    {
+      "namespace": "A9_PRIVATE_OFFICIAL_CALENDAR_DOCUMENTARY_E1",
+      "path": "cockpit/.ci/kicktipp-official-calendar-20261121/plan.json",
+      "sha256": "882c66eebd4da4b30fdc1c83fd7ca1b75bdcd657f503a39a27dd11dc4a8fd559"
+    },
+    {
+      "namespace": "A9_PRIVATE_OFFICIAL_CALENDAR_DOCUMENTARY_E1",
+      "path": "cockpit/.ci/kicktipp-official-calendar-20261121/calendar-facts.json",
+      "sha256": "47c28b3d1254428d9569206ddc291ee9dc8af58549ef91f054e9aef0e572dc32"
+    },
+    {
+      "namespace": "A9_PRIVATE_OFFICIAL_CALENDAR_DOCUMENTARY_E1",
+      "path": "cockpit/.ci/kicktipp-official-calendar-20261121/primary-fragments.json",
+      "sha256": "d7fd4b6cdd114850848bace7847238c558194fa5f653f2840642c5c963c02763"
+    }
+  ],
+  "verifiedBy": [
+    "C0",
+    "C1"
+  ]
+}

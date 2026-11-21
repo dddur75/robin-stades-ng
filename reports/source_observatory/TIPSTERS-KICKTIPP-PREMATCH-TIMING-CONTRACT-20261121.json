@@ -1,0 +1,28 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.KICKTIPP.PREMATCH.TIMING.CONTRACT.20261121",
+  "generatedAt": "2026-11-21T08:37:15.776301+00:00",
+  "status": "CONTRACT_CLARIFIED_REAL_NATIVE_JOIN_AND_OFFICIAL_KICKOFF_STILL_MISSING",
+  "scope": "Source timezone is not a necessary independent condition when an unambiguous native author/choice/event join and exact official UTC kickoff prove observedAtUTC strictly before kickoffUTC. Native civil date stays literal, sourceTimezone unknown and publishedAt null. No new source choice is admitted.",
+  "required": [
+    "unique_native_author_choice_event_join",
+    "unique_official_fixture_correspondence",
+    "timezone_aware_UTC_observedAt",
+    "official_UTC_kickoff",
+    "observedAt_strictly_before_kickoff"
+  ],
+  "notRequiredForThisTemporalComparison": [
+    "sourceTimezone",
+    "reconstructedPublishedAt"
+  ],
+  "unknown": [
+    "native_real_join",
+    "official_kickoffs_for_two_22November_candidates"
+  ],
+  "sourceCodeChanged": false,
+  "sourceGET": 0,
+  "admittedChoices": 0,
+  "verifiedBy": [
+    "C0",
+    "C1"
+  ]
+}

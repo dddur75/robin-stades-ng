@@ -1,5 +1,11 @@
 """Read documentary candidates without contacting their sources."""
 
+# Deadline starts before historical-reader imports.
+# ruff: noqa: E402
+from time import monotonic
+
+READER_DEADLINE = monotonic() + 6.5
+
 import argparse
 import json
 from pathlib import Path
@@ -21,8 +27,11 @@ from robin.source_observatory.qualification_view import (
     apply_qualification,
     read_sro_companion,
 )
+from robin.source_observatory.retained_choices import add_retained_candidates
 from robin.source_observatory.roster_collection import add_roster_candidates
 from robin.source_observatory.roster_recurring_view import add_group_candidates
+from robin.source_observatory.roster_successor_view import add_next_candidates
+from robin.source_observatory.sro_successor_view import add_sro_next_candidates
 from robin.source_observatory.technical_access import (
     APPROVED_TECHNICAL_SHA256,
     apply_technical_access,
@@ -88,6 +97,9 @@ try:
     base = add_profile_candidates(base, Path(__file__).resolve().parents[2])
     base = add_roster_candidates(base, Path(__file__).resolve().parents[2])
     base = add_group_candidates(base, Path(__file__).resolve().parents[2])
+    base = add_retained_candidates(base, Path(__file__).resolve().parents[2])
+    base = add_next_candidates(base, Path(__file__).resolve().parents[2], deadline=READER_DEADLINE)
+    base = add_sro_next_candidates(base, Path(__file__).resolve().parents[2], deadline=READER_DEADLINE)
     print(json.dumps(base, ensure_ascii=False))
 except (ValueError, OSError, KeyError, TypeError):
     print(

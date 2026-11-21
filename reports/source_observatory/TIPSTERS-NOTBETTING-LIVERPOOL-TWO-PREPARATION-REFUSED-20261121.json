@@ -1,0 +1,24 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.LIVERPOOL.TWO.PREPARATION.REFUSED.20261121",
+  "status": "PREPARATION_TOO_LATE_NO_SOURCE_NO_GRANT_CREATED",
+  "scope": "The preparation guard refused before readiness report, ledger grant, live directory or source worker invocation. This is not evidence of source failure or incompatibility.",
+  "refusalVerificationObservedAt": "2026-11-21T16:11:05.382Z",
+  "actualRefusalTimeNotRetained": true,
+  "refusalWitnessRawSHA256": "e90256d8a7bbaa67e1e2738d8649d4cbbf268b7d129a0c6f8fa156b381869653",
+  "controllerRawSHA256": "a61801e7e5b0067c13c258d98c98a0ed9c1f9e6685159d18ec49264429189c3c",
+  "preparedIndexRawSHA256": "44eac073528c8fc6c3b5d52b02b8fa3da6714a178ce43615286b5d1dde1337de",
+  "oldGETConsumed": 15,
+  "familyGETCapUnchanged": 19,
+  "newGETReserved": 0,
+  "sourceInvocations": 0,
+  "sourceCompatibility": "UNKNOWN",
+  "secondCaptureAllowed": false,
+  "grantsCreated": 0,
+  "taskMutations": 0,
+  "legacyMissedSlotsPreserved": true,
+  "sourceFailureCounterIncremented": false,
+  "verifiedBy": [
+    "C0",
+    "C4"
+  ]
+}

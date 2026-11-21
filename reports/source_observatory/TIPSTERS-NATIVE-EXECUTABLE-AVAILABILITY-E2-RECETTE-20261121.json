@@ -1,0 +1,79 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NATIVE.EXECUTABLE.AVAILABILITY.E2.RECETTE.20261121",
+  "generatedAt": "2026-11-21T09:58:42.010731+00:00",
+  "status": "LOCAL_STATE_FIDELITY_VERIFIED_NO_COLLECTION_OR_PUBLICATION",
+  "scope": "Ready native tasks with a future trigger and missing executable are projected invalid_package, preserving nativeState and Enabled. This diagnoses availability only, not execution or source-stage eligibility.",
+  "manifestCanonicalSHA256": "fc16cad0b532ffb9a0e5d7328a4df09748f3f5bc5960b0929c57c54211aa8893",
+  "runtimeFile": "cockpit/scripts/read-public-task-state.ps1",
+  "runtimeLF_SHA256": "8ffbe82e1f922ab1a29920810c1ee3658f462a5de21f1195f9bd466b2cd72ff7",
+  "runtimeCopies": 1,
+  "frozenPinsUnchanged": 15,
+  "pureTestsPassed": 4,
+  "localHTTP200": 2,
+  "sourceGET": 0,
+  "taskMutations": 0,
+  "observationBeforeRosterRepair": {
+    "at": "2026-11-21T09:42:14.836Z",
+    "http": 200,
+    "status": "ok",
+    "count": 317,
+    "qualified": 24,
+    "enabled": 0,
+    "native": {
+      "nativeSRO": {
+        "state": "no_future_run",
+        "nativeState": "Ready",
+        "enabled": true,
+        "actionExecutablePresent": false,
+        "verifiedAt": "2026-11-21T09:42:08.7041289+00:00"
+      },
+      "nativeOLBG": {
+        "state": "no_future_run",
+        "nativeState": "Ready",
+        "enabled": true,
+        "actionExecutablePresent": false,
+        "verifiedAt": "2026-11-21T09:42:09.1496881+00:00"
+      },
+      "nativeExpansion": {
+        "state": "no_future_run",
+        "nativeState": "Ready",
+        "enabled": true,
+        "actionExecutablePresent": false,
+        "verifiedAt": "2026-11-21T09:42:09.6065203+00:00"
+      },
+      "nativeRoster": {
+        "state": "invalid_package",
+        "nativeState": "Ready",
+        "enabled": true,
+        "actionExecutablePresent": false,
+        "verifiedAt": "2026-11-21T09:42:10.4673241+00:00"
+      }
+    }
+  },
+  "evidence": [
+    {
+      "namespace": "A9_PRIVATE_NATIVE_EXECUTABLE_AVAILABILITY",
+      "path": "cockpit/.ci/native-executable-availability-20261121/manifest.json",
+      "sha256": "2922bd0ae283cfc5b662ff9b167a7bfb68e72fb1bd17fa9b77bde7f462fc4cfa"
+    },
+    {
+      "namespace": "A9_PRIVATE_NATIVE_EXECUTABLE_AVAILABILITY",
+      "path": "cockpit/.ci/native-executable-availability-20261121/tests.log",
+      "sha256": "52bf56b3f1080e853c7d5a25b331d7fef844ef3a304e19cb03b363e4e4d036e3"
+    },
+    {
+      "namespace": "A9_PRIVATE_NATIVE_EXECUTABLE_AVAILABILITY",
+      "path": "cockpit/.ci/native-executable-availability-20261121/copy-receipt.json",
+      "sha256": "a3839cfa16cdf99a920f1d3c1348c92c9f281325495f341e5dba0e87df85d8fb"
+    },
+    {
+      "namespace": "A9_PRIVATE_NATIVE_EXECUTABLE_AVAILABILITY",
+      "path": "cockpit/.ci/native-executable-availability-20261121/readback.json",
+      "sha256": "6da54ca02a9beabff1513eb6603df42eae816deddaee0dbdb00a2dc15a61f8b5"
+    }
+  ],
+  "verifiedBy": [
+    "C0",
+    "C2"
+  ]
+}

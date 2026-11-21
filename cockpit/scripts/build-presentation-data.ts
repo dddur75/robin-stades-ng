@@ -6,10 +6,12 @@ import { delimiter, join, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { buildPresentationModel } from "../app/lib/presentation-model";
+import { encodePresentationWire } from "../app/lib/presentation-wire";
 import { requiredIsoInstant } from "./presentation-build-clock";
 
 const inputUrl = new URL("../app/cockpit-data.json", import.meta.url);
 const outputUrl = new URL("../app/cockpit-presentation.json", import.meta.url);
+const clientOutputUrl = new URL("../app/cockpit-presentation-client.json", import.meta.url);
 const expertOutputUrl = new URL("../app/cockpit-expert-data.json", import.meta.url);
 const hypothesisOutputUrl = new URL(
   "../app/hypothesis-universe-data.json",
@@ -218,6 +220,11 @@ const publicPresentation = {
 await writeFile(
   outputUrl,
   `${JSON.stringify(publicPresentation, null, 2)}\n`,
+  "utf8",
+);
+await writeFile(
+  clientOutputUrl,
+  `${JSON.stringify(encodePresentationWire(publicPresentation), null, 2)}\n`,
   "utf8",
 );
 

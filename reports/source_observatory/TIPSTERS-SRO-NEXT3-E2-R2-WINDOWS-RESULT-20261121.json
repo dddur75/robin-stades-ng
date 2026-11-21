@@ -1,0 +1,41 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.SRO.NEXT3.E2.R2.WINDOWS.RESULT.20261121",
+  "status": "PARTIAL_FAIL_AND_STOP_INSTALLATION_UNCONFIRMED",
+  "scope": "One actual bounded Windows installation attempt. Task absent at readback; no source E2 capture or data admission. Do not infer that no Register call was invoked or guess the failing operation. No retry or catchup.",
+  "sourceMissionId": "SRO_NEXT3_E2_R2_20261121",
+  "sourcePlanCanonicalSHA256": "2526e65a6b5165b79ce53df99167d536e6ef3f3962da40cc04e44be557d1a02b",
+  "sourceManifestCanonicalSHA256": "6c75104deb45995dec0b389b168a43b34dcf27bddcb4cb42439b753a2501b026",
+  "windowsPlanCanonicalSHA256": "5445ca2b759320261b078fb58f314a576b364f34da6cd7c17e69c543fbcee4ec",
+  "windowsManifestCanonicalSHA256": "b1bd85b50796320ad05880325140fcfb194f33854137b32f1eef2c0501a20d42",
+  "Wdecision": "13298cb38246d785314cdf7449d34bea2875b9d7e94f0be9c930ba52b5936480",
+  "expectedNativeXmlSHA256": "c9c99eeccf949929b41bc33de31c71be5a96b975812311fdaaf5b5e5c6a23a9a",
+  "parentToolRawSHA256": "9e03110b3a4499ee69581f9cd9af3747c7751dcdb51599fd631bfda310871c9d",
+  "parentToolExitCode": 1,
+  "parentToolWallSeconds": 4.3243915,
+  "unknownMarkerRawSHA256": "6ac00112efddd12ddfb866bc0c50b23d0a01e739ec42d7888e459096d95b3d42",
+  "outerSpentRawSHA256": "7ea4456550a6e3c552124d58dd6ecbd4715a6ba5ee7982539224a2173a1c5444",
+  "innerSpentRawSHA256": "436ba571ae7653a7bc3ce0482a0ce432b123729f4143bd712dfbe80024812cca",
+  "haltRawSHA256": "bcdc6d3f519d360e0846e557c5e081f09e6d659bfe683b86900d1605a8041a8e",
+  "taskReadback": {
+    "observedAt": "2026-11-21T19:58:06Z",
+    "taskPresent": false,
+    "evidenceKind": "EXACT_EXEC_TOOL_TRANSCRIPT",
+    "receiptRawSHA256": "4635119069269d253238301b860e133dafd11ff68fb5636dc1b4ecac06a4e097"
+  },
+  "nativeTaskXmlPresent": false,
+  "registrationPresent": false,
+  "slotArtifactsPresent": false,
+  "sourceE2GET": 0,
+  "sourceFamilyGET": 42,
+  "sourceFamilyGrantedCeiling": 51,
+  "recurrenceOperational": false,
+  "appDataGrantCreated": false,
+  "bridgeConfigCreated": false,
+  "preciseFailureReason": "NOT_RETAINED",
+  "secondInstallationAttemptAllowed": false,
+  "globalDelivery": "PARTIAL",
+  "verifiedBy": [
+    "C0",
+    "C4"
+  ]
+}

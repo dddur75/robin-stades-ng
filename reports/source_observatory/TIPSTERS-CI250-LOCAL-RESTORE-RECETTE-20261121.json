@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "robin-ci250-runtime-restoration-recette-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI250.LOCAL.RESTORE.RECETTE.20261121",
+  "generatedAt": "2026-11-21T08:26:29.922751+00:00",
+  "status": "CI250_SUCCESS_ON_PUBLISHED_HEAD_LOCAL_E2_RESTORE_VERIFIED_GLOBAL_SOURCE_DELIVERY_PARTIAL",
+  "scope": "CI250 certifies published commit0f7eb5e only. Local native-state projection correction is separately tested and copied to A9 runtime; it is not included in that GitHub commit. Local loopback service restored once; no source campaign or task was changed.",
+  "ci": {
+    "head": "0f7eb5e52c36e22e21454d2d842004dd5123f0b6",
+    "runId": 44881380934,
+    "runNumber": 250,
+    "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/44881380934",
+    "status": "completed",
+    "conclusion": "success",
+    "jobsPassed": 17,
+    "jobsFailed": 0,
+    "pythonPassed": 5436,
+    "pythonSkipped": 41,
+    "pythonXfailed": 1,
+    "pythonSeconds": 1849.52,
+    "strictClientByteBudget": 1350000,
+    "strictClientBudgetCheck": "PASS",
+    "exactLinuxClientBytes": "NOT_REPORTED_ON_PASS"
+  },
+  "local": {
+    "manifestCanonicalSHA256": "f8a0631de1db331fdbe26ad102e5766214c33040c102bb278b66ecd7e07f34de",
+    "readAt": "2026-11-21T08:23:32.666Z",
+    "pid": 6204,
+    "host": "127.0.0.1",
+    "port": 4173,
+    "starts": 1,
+    "copies": 1,
+    "localGETs": 5,
+    "allHTTP200": true,
+    "publicDeclarations": 403,
+    "pseudonyms": 78,
+    "registryCandidates": 317,
+    "qualifiedCandidates": 24,
+    "nativeEnabledOnColdRead": 0,
+    "coldReadNativeState": "checking",
+    "sourcePinsUnchanged": 15,
+    "independentNativeTaskRead": {
+      "milliseconds": 4490,
+      "exit": 0,
+      "roster": "Ready",
+      "notbetting": "Ready"
+    },
+    "asyncFailureRecoveryProven": false,
+    "historicalPython503RootCauseResolved": false,
+    "locksPreserved": true,
+    "writeTargets": "RUNTIME_DEFAULTS",
+    "historicalReads": "PINNED_LEGACY_READ_ONLY",
+    "privateEvidenceWatchIgnored": true,
+    "collectorSourceCodeChanged": false
+  },
+  "externalEffects": {
+    "providerGET": 0,
+    "taskMutations": 0,
+    "installs": 0,
+    "commits": 0,
+    "pushes": 0,
+    "merges": 0,
+    "production": 0
+  },
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.CLIENT.BUDGET.CORRECTIVE.RECETTE.20261121",
+    "ENG.SOURCE_OBSERVATORY.NATIVE.FAILURE.DIAGNOSTIC.E1.20261121",
+    "DATA.SOURCE_OBSERVATORY.NOTBETTING.OCCURRENCE.FIRST.SCHEDULED.20261121"
+  ],
+  "evidence": [
+    {
+      "namespace": "A9_PRIVATE_RUNTIME_RESTORE_E2V2",
+      "path": "cockpit/.ci/runtime-restoration-v2-20261121/manifest.json",
+      "sha256": "d39bff1c558b651c9e0a710f6fef7e70cf219d2acf44cfafce02297705a0fa4e"
+    },
+    {
+      "namespace": "A9_PRIVATE_RUNTIME_RESTORE_E2V2",
+      "path": "cockpit/.ci/runtime-restoration-v2-20261121/pins.json",
+      "sha256": "80992591278e7a5e6d98f7286be4cc4ab3c21dd66e6badb33fbf38ea63098017"
+    },
+    {
+      "namespace": "A9_PRIVATE_RUNTIME_RESTORE_E2V2",
+      "path": "cockpit/.ci/runtime-restoration-v2-20261121/authorization.json",
+      "sha256": "ac1aef789dbf452267004a4d067da5778b1bc224955c2ae1f410c9c31bca4d7a"
+    },
+    {
+      "namespace": "A9_PRIVATE_RUNTIME_RESTORE_E2V2",
+      "path": "cockpit/.ci/runtime-restoration-v2-20261121/readback.json",
+      "sha256": "1c6db9862f0f7ba879c2c462cd1b4059acb145095f185cea6c1fec8dab572d7b"
+    },
+    {
+      "namespace": "A9_PRIVATE_RUNTIME_RESTORE_E2V2",
+      "path": "cockpit/.ci/runtime-restoration-v2-20261121/started.json",
+      "sha256": "813fc1f0f6a872a44c86789bc52e9903f5d55be8ca636c7d34ae9c8e78388490"
+    },
+    {
+      "namespace": "A9_PRIVATE_RUNTIME_RESTORE_E2V2",
+      "path": "cockpit/.ci/runtime-restoration-v2-20261121/native-read.metadata.json",
+      "sha256": "281cbecae2bf690ecd3f7c8ce11b3be6e8864ed0daa4e7d4355b5ea803d23210"
+    },
+    {
+      "namespace": "A9_PRIVATE_RUNTIME_RESTORE_E2V2",
+      "path": "cockpit/.ci/runtime-restoration-v2-20261121/native-read.stdout.json",
+      "sha256": "0dece7e3b6f4747cba5044cf4bd3ab16330e43a0564908fee8626075dd52f825"
+    },
+    {
+      "namespace": "A9_PRIVATE_CI250_CLOSURE",
+      "path": "cockpit/.ci/client-budget-corrective-20261121/ci250-terminal.json",
+      "sha256": "00aa179c6a6941f4ebb70a2adfd7afaa520f855bfd5db1ff6d00d9af8a36b94c"
+    },
+    {
+      "namespace": "A9_PRIVATE_CI250_CLOSURE",
+      "path": "cockpit/.ci/client-budget-corrective-20261121/ci250-quality-extract.json",
+      "sha256": "af1dbb9c15a9d4a60e155eda83bcbe9bfb570f2325b3f2522b9cf331cab3bdf8"
+    }
+  ],
+  "verifiedBy": [
+    "C0",
+    "C2",
+    "C4"
+  ]
+}

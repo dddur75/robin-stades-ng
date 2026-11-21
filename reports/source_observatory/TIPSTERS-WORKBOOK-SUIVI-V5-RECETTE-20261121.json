@@ -1,0 +1,112 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.WORKBOOK.SUIVI.V5.RECETTE.20261121",
+  "status": "VERIFIED_DATED_WORKBOOK_PARTIAL_SOURCE_DELIVERY",
+  "scope": "Only sixteen followup cells changed. Nine original source catalogues and native tables preserved; source inventory does not establish compatibility or full collection.",
+  "outputFileName": "Robin_des_Stades_sources_et_tipsters_suivi.xlsx",
+  "outputSHA256": "a1de5137da30b796c815059711e1cd559aa43fa50a57c5f04f1750b08e4485a8",
+  "outputBytes": 3356498,
+  "previousWorkbookSHA256": "a7ecc4d210ee04906fb08d56e8b747a64c04041319ce6734b53c686d3a859bd4",
+  "originalInputSHA256": "38978efe53f64ab725fea57025968bacfc4acaee028effa667e4fa6695cfd747",
+  "receiptRawSHA256": "d8ca5cb4aff9db5c268f042e259faed54f73d632494b47d9ef4fe2a668c29a90",
+  "verificationRawSHA256": "aabf0ee98544de27a4160522affd98d9a09bad2dde5656f40bc2cd922a594549",
+  "authorReportRawSHA256": "8b9dba4467306883bdbebeccdad17bcebeb7f891e4d8488fa6c292cee1b4b116",
+  "countsObservedAt": "2026-11-21T19:43:57.081Z",
+  "registryCountEvidenceObservedAt": "2026-11-21T17:27:46.543Z",
+  "windowsStatusObservedAt": "2026-11-21T19:58:06Z",
+  "counts": {
+    "choices": 477,
+    "authors": 79,
+    "fixtures": 20,
+    "previouslyPresent": 403,
+    "newToday": 49,
+    "olderNewlyQualified": 25,
+    "registryCount": 317,
+    "registryQualified": 24,
+    "registryEnabled": 6,
+    "assessedRoster": 137,
+    "rosterEnabled": 11,
+    "initialPool": 42,
+    "stoppedProfiles": 31,
+    "newGET": 43,
+    "newGETMax": 129,
+    "successfulSlots": 1,
+    "plannedSlots": 3
+  },
+  "notBetting": {
+    "eligible": 0,
+    "secondCaptureAllowed": false,
+    "historicalChoices": 4,
+    "familyHTTP": 20,
+    "familyGET": 19,
+    "familyHEAD": 1,
+    "familyCeiling": 22,
+    "familyChargedMilliseconds": 247999,
+    "currentTerms": "UNKNOWN"
+  },
+  "sro": {
+    "reobserved": 55,
+    "newChoices": 0,
+    "authors": 8,
+    "fixtures": 7,
+    "historicalObjects": 67,
+    "sourceFamilyGET": 42,
+    "sourceE2GET": 0,
+    "taskPresent": false,
+    "registrationPresent": false,
+    "recurrenceOperational": false
+  },
+  "clientBuild": {
+    "bytes": 1340237,
+    "exclusiveMaximumBytes": 1350000,
+    "passed": true
+  },
+  "preservation": {
+    "tabCount": 10,
+    "sourceSheetCount": 9,
+    "nativeTableCount": 9,
+    "sourceXMLWithResolvedRelationsUnchanged": true,
+    "relationshipIdOnlyRenumberedSheets": 8,
+    "globalStyleXMLUnchanged": true,
+    "referencedSharedStringCount": 0,
+    "reusedPriorCellProof": 394127,
+    "fullCellComparisonReplayed": false,
+    "priorVerificationSHA256": "63b02df0ed31cfd5d4ce493e20612637d9ba9036a4921dce7ef19420ca6cba0c"
+  },
+  "checks": {
+    "changedCellCount": 16,
+    "formulaErrors": 0,
+    "rendersInspected": 4,
+    "tableAndStylePreservation": true,
+    "nativeExcelOpened": false
+  },
+  "reportPins": {
+    "TIPSTERS-OLBG-NORWICH-ONE-LOCAL-RECETTE-20261121.json": "92ab58357fc5db8019bde4038c842d38e47b31cfd2f581214cb88d0efe2ac58b",
+    "TIPSTERS-OLBG-ROSTER42-NEXT3-FIRST-NATURAL-DATA-20261121.json": "83940b96d6d296bb5daed6dc13dc30b41e956e1857d11629fee17748c9a6e59c",
+    "TIPSTERS-NATIVE-REFRESH-AWAIT-LOCAL-RECETTE-20261121.json": "8f9c3f6d3298138a42def56610f93e09890dd7cafa0bc8a61df186b67521830c",
+    "TIPSTERS-SRO-BRIDGE-R3-LOCAL-RECETTE-20261121.json": "435a96d75bd6a3e17223683b8475728f3f42b91009095132e37b0a1db552b069",
+    "TIPSTERS-NOTBETTING-PERSONAL-TWO-R3-RESULT-20261121.json": "fb6457e95dad17dab546baf3651ee2e8e573ada707e9105a32cf8d5ac6df2630",
+    "TIPSTERS-SRO-CANARY-R2-REOBSERVED-DATA-20261121.json": "4f07bbe0b51da0f6b12940e12b2584ee3d7b26ff7c928fbd17b5adb383754edf",
+    "TIPSTERS-SRO-NEXT3-E2-R2-WINDOWS-RESULT-20261121.json": "db193ebf2182292f3b6f0011c8742c6746246846724852622cacc9f6785d2b48",
+    "TIPSTERS-TELEGRAM-NETWORK-CA-R2-RESULT-20261121.json": "4c590704f33a4704579800d6d7cd223b4dee401aec8d488bf42f94b834e3eda4"
+  },
+  "referencedClaims": [
+    "ENG.SOURCE_OBSERVATORY.SRO.BRIDGE.R3.LOCAL.RECETTE.20261121",
+    "DATA.SOURCE_OBSERVATORY.OLBG.ROSTER42.NEXT3.FIRST.NATURAL.20261121",
+    "ENG.SOURCE_OBSERVATORY.NATIVE.REFRESH.AWAIT.LOCAL.RECETTE.20261121",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PERSONAL.TWO.R3.RESULT.20261121",
+    "DATA.SOURCE_OBSERVATORY.SRO.CANARY.R2.REOBSERVED.20261121",
+    "ENG.SOURCE_OBSERVATORY.SRO.NEXT3.E2.R2.WINDOWS.RESULT.20261121",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.NETWORK.CA.R2.RESULT.20261121"
+  ],
+  "sourceGET": 0,
+  "sourceParserReplay": 0,
+  "allCompatibleSourcesIntegrated": false,
+  "userReportsNoTelegramExport": true,
+  "exportRequiredForPublicAccessProven": false,
+  "globalDelivery": "PARTIAL",
+  "verifiedBy": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}
