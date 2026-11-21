@@ -1,0 +1,26 @@
+{
+  "generatedAt": "2026-11-21T00:49:48.417775+00:00",
+  "schemaVersion": "robin-one-capacity-correction-authority-v1",
+  "claimId": "GOV.SOURCE_OBSERVATORY.NOTBETTING.COLLECTIVE.CAPACITY.20261121",
+  "missionId": "ROBIN-NOTBETTING-COLLECTIVE-CAPACITY-E1-20261121",
+  "status": "ONE_ISOLATED_4M_CORRECTION_UNADMITTED_ONLY",
+  "planSha256": "ba932f5b23e3488395f0a7569dd84506fb52fce4d5983d5a66066458337ed9fe",
+  "manifestSha256": "2b3114a50a2559b53f3f045ad6718f016e24c56f06789657ac945c9bdba972b2",
+  "url": "https://notbetting.com/en/tipsters-league/picks",
+  "newGETMax": 1,
+  "familyGETMax": 5,
+  "qualificationMax": 301,
+  "acceptedBodyBytesMax": 4000000,
+  "sentinelBytesMax": 1,
+  "priorActiveMilliseconds": 6203,
+  "newActiveSecondsMax": 293.797,
+  "robotsReuseMaxSeconds": 3600,
+  "expiresAt": "2026-11-21T01:15:00Z",
+  "syntheticTests": 28,
+  "sourceChoicesAdmitted": 0,
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

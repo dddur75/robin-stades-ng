@@ -20,7 +20,7 @@ type State = { status:string; distinctPicks:number; authorCount:number; requestC
  generatedAt:string; sourceObservedThrough?:string; claimId:string; claimIds?:string[]; recurring?:boolean; halted?:boolean; picks:Pick[];
  campaign?:PublicCampaign; sroCampaign?:PublicCampaign; olbgCampaign?:PublicCampaign; expandedOlbgCampaign?:PublicCampaign; profileCampaign?:PublicCampaign;
  personalCollection?:{state:string;claimId?:string;qualifiedAt?:string;nativeChoices?:number};
- familyCollection?:{state:string;nativeWinState?:string;opaqueState?:string}; rosterCollection?:{state:string}; rosterCampaign?:PublicCampaign&{authorIds?:string[];poolAuthorIds?:string[];profileCount?:number} };
+ familyCollection?:{state:string;nativeWinState?:string;opaqueState?:string}; rosterCollection?:{state:string}; notbettingCollection?:{state:string}; rosterCampaign?:PublicCampaign&{authorIds?:string[];poolAuthorIds?:string[];profileCount?:number} };
 export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean; tipsterId?:string }) {
  const [data,setData]=useState<State|null>(null); const [error,setError]=useState(false);
  useEffect(()=>{const controller=new AbortController();let alive=true;let pending=false;
@@ -34,16 +34,18 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
  const {campaign,sroCampaign,olbgCampaign,expandedOlbgCampaign,profileCampaign,rosterCampaign}=data??{};
  const authors=[...new Map((data?.picks??[]).map(p=>[p.authorId,p])).values()];
  const selected=tipsterId ? authors.find(p=>p.authorId===tipsterId):null;
+ const personalCollection=selected?.sourceId==='NotBetting'?undefined:data?.personalCollection;
  return <section className="section-card">
   <SectionHeading title={selected?.authorLabel??'Pronostics personnels collectés'} />
   {error ? <p role="alert">La collecte publique locale est indisponible : preuves absentes ou invalides.</p>:!data ? <p role="status">Lecture des preuves locales…</p>:<>
    <p><strong>{(tipsterId ? data.picks.filter(p=>p.authorId===tipsterId).length : data.distinctPicks)} pronostic(s) personnel(s) collecté(s)</strong> · {tipsterId ? (selected ? 1 : 0) : data.authorCount} pseudonyme(s).</p>
    <p>Choix personnels observés avant match, conservés tels que publiés. Pseudonymes sans identité civile certifiée.</p>
    <p>Dossier fidèle en recette partielle.</p>
-   {data.personalCollection?.state==='historical_observations_qualified'&&<p>Usage personnel local confirmé. Des calendriers officiels supplémentaires ont complété les preuves de choix déjà observés ; leurs dates de lecture d’origine sont conservées.</p>}
-   {data.personalCollection?.state==='historical_observations_qualified'&&data.personalCollection.qualifiedAt&&<p>Dernière observation du catalogue : {formatDateTime(data.sourceObservedThrough??data.generatedAt,true)}. Qualification complémentaire du catalogue : {formatDateTime(data.personalCollection.qualifiedAt,true)}.</p>}
-   {data.personalCollection?.state==='unavailable'&&<p role="alert">Les preuves personnelles complémentaires sont indisponibles. Les faits antérieurs restent conservés avec leur provenance.</p>}
-   {(rosterCampaign?.state==='unavailable'||data.rosterCollection?.state==='unavailable'||data.familyCollection?.state==='unavailable'||data.familyCollection?.nativeWinState==='unavailable'||data.familyCollection?.opaqueState==='unavailable')&&<p role="alert">Une partie des preuves individuelles supplémentaires est indisponible. Les autres observations restent conservées avec leur provenance.</p>}
+   {personalCollection?.state==='historical_observations_qualified'&&<p>Usage personnel local confirmé. Des calendriers officiels supplémentaires ont complété les preuves de choix déjà observés ; leurs dates de lecture d’origine sont conservées.</p>}
+   {personalCollection?.state==='historical_observations_qualified'&&personalCollection.qualifiedAt&&<p>Dernière observation du catalogue : {formatDateTime(data.sourceObservedThrough??data.generatedAt,true)}. Qualification complémentaire du catalogue : {formatDateTime(personalCollection.qualifiedAt,true)}.</p>}
+   {personalCollection?.state==='unavailable'&&<p role="alert">Les preuves personnelles complémentaires sont indisponibles. Les faits antérieurs restent conservés avec leur provenance.</p>}
+   {(rosterCampaign?.state==='unavailable'||data.rosterCollection?.state==='unavailable'||data.notbettingCollection?.state==='unavailable'||data.familyCollection?.state==='unavailable'||data.familyCollection?.nativeWinState==='unavailable'||data.familyCollection?.opaqueState==='unavailable')&&<p role="alert">Une partie des preuves individuelles supplémentaires est indisponible. Les autres observations restent conservées avec leur provenance.</p>}
+   {(!tipsterId||selected?.sourceId==='NotBetting')&&data.notbettingCollection?.state==='qualified_one_time'&&<p>NotBetting : collecte ponctuelle qualifiée.</p>}
    <p>Horaires des lectures et des coups d’envoi : heure de Paris.</p>
    {!tipsterId&&<p>{data.recurring ? "Historique de la collecte des forums" : "Lot de collecte ponctuelle"} · {data.requestCount} GET publics HTTP(S) pour ce lot initial. {!data.recurring && !campaign && "Aucune collecte automatique de ces forums n’est activée."}</p>}
    {!tipsterId && campaign && <CampaignBlock title="Campagne des deux forums" campaign={campaign}>

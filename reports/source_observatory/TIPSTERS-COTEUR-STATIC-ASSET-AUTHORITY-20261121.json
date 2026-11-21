@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-11-21T00:53:31.540882+00:00",
+  "schemaVersion": "robin-static-asset-authority-v1",
+  "claimId": "GOV.SOURCE_OBSERVATORY.COTEUR.STATIC.ASSET.20261121",
+  "missionId": "ROBIN-COTEUR-STATIC-ASSET-E1-20261121",
+  "status": "ONE_STATIC_DOCUMENTARY_ASSET_ONLY",
+  "planSha256": "b0cfd0bf08aa4033fe791b2e94733807dd3718c5c7fecf2a95a7f8d863193305",
+  "manifestSha256": "3daae242083f2cba801a6fff13853d993c827bfaae65b3de4795bbdf2cab67e7",
+  "url": "https://www.coteur.com/build/app.ea41d58c.js",
+  "newGETMax": 1,
+  "qualificationMax": 302,
+  "expiresAt": "2026-11-21T01:15:00Z",
+  "robotsReuseMaxSeconds": 3600,
+  "retention": "At most32textual route references<=200characters with omissions; no code context,body,query/credential/contact. No route executed or completed.",
+  "syntheticTests": 4,
+  "newAdmittedChoices": 0,
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

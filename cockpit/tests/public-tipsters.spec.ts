@@ -14,6 +14,27 @@ test('un lot de profils indisponible garde les choix antérieurs avec une alerte
  await expect(page.getByRole('link',{name:'Auteur synthétique',exact:true})).toBeVisible();
 });
 
+test('un choix NotBetting ponctuel ouvre sa fiche sans inventer de programmation',async({page})=>{
+ await page.setViewportSize({width:360,height:900});
+ const choice={...data.picks[0],sourceId:'NotBetting',authorLabel:'Alias NotBetting synthétique',market:'source_native_opaque',selection:'Libellé source littéral',publishedCivilDate:null};
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,picks:[choice],notbettingCollection:{state:'qualified_one_time'},personalCollection:{state:'historical_observations_qualified',qualifiedAt:'2026-11-20T16:22:00Z'}}}));
+ await page.goto(`/expert/tipsters/${encodeURIComponent(id)}`);
+ await expect(page.getByRole('heading',{name:'Alias NotBetting synthétique',exact:true})).toBeVisible();
+ await expect(page.getByText('NotBetting : collecte ponctuelle qualifiée.',{exact:true})).toBeVisible();
+ await expect(page.getByText('Prochain créneau Windows :',{exact:false})).toHaveCount(0);
+ await expect(page.getByText('Qualification complémentaire du catalogue :',{exact:false})).toHaveCount(0);
+ await expect(page.getByRole('heading',{name:'Nice – PSG · Choix publié (marché source non interprété) : Libellé source littéral',exact:true})).toBeVisible();
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});
+
+test('preuve NotBetting indisponible conserve les autres choix avec une alerte',async({page})=>{
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,notbettingCollection:{state:'unavailable'}}}));
+ await page.goto('/expert/collecte-publique');
+ await expect(page.getByRole('alert').filter({hasText:'Une partie des preuves individuelles'})).toBeVisible();
+ await expect(page.getByRole('link',{name:'Auteur synthétique',exact:true})).toBeVisible();
+ await expect(page.getByText('NotBetting : collecte ponctuelle qualifiée.',{exact:true})).toHaveCount(0);
+});
+
 test('un auteur hors registre affiche sa propre campagne de groupe et son canari distinct',async({page})=>{
  const now='2026-11-20T22:15:00Z';await page.clock.install({time:new Date(now)});
  const author='olbg:669101';const choice={...data.picks[0],authorId:author,authorLabel:'OliverL',sourceId:'SRC_014',market:'source_native'};

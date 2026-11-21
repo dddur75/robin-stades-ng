@@ -1,0 +1,52 @@
+{
+  "generatedAt": "2026-11-20T23:42:59.317271+00:00",
+  "schemaVersion": "robin-documentary-preflight-authority-v1",
+  "claimId": "GOV.SOURCE_OBSERVATORY.TP.DOCUMENTARY.E1V2R1.20261121",
+  "missionId": "ROBIN-TP-DOCUMENTARY-E1V2R1-20261121",
+  "status": "ONE_DOCUMENTARY_CORRECTIVE_GET_ONLY",
+  "planSha256": "9b100b06ba3990f4cc2746df92c071b41d0345cf91b79d19075401a25d641201",
+  "manifestSha256": "54efc117fd014fcce4fb345ab886defe12210b0a8a87ecdb81e82236611125d8",
+  "documents": [
+    {
+      "family": "Tipster Platform",
+      "role": "terms",
+      "url": "https://tipsterplatform.com/legal/terminos"
+    }
+  ],
+  "expiresAt": "2026-11-21T00:20:00Z",
+  "GETMax": 1,
+  "priorFamilyGET": 2,
+  "familyGETCap": 3,
+  "qualificationPrior": 293,
+  "qualificationMax": 294,
+  "newActiveSecondsMax": 297,
+  "priorActiveSeconds": 3,
+  "familyActiveSecondsMax": 300,
+  "priorRobotsGate": {
+    "directory": "cockpit/.ci/tp-documentary-20261121",
+    "familyGETCap": 3,
+    "journalSha256": "aeafaddb2d818d13b5bedaa17b17b0e96a39ac878b9d542a09da2cfbe3ac23af",
+    "maximumReuseAgeSeconds": 3600,
+    "newGET": 1,
+    "planSha256": "14fac0b4257855ffab3a701632bef145b0c25b9ce2e56ddde8a93d4ccc86984d",
+    "priorActiveMilliseconds": 3000,
+    "priorGET": 2,
+    "resultSha256": "5668cc988fe6ed27efa782b9d920b9701418f03ec3f8df4df7f587dba75c999e",
+    "robotsResponseEventHash": "4d61075a30919711b229654af0d61b535322da31b8aa29ab97df4e5369ccbf45",
+    "termsReservationHash": "441bf0afa9fe3a4414f07bdaae195f5807de42ec5fd47968764de79f3c106e3e",
+    "termsResponseEventHash": "7ec3ea737ce2737846b5172a3ab1d0996e36269515615345edef8d9b4b99c1ed",
+    "userAgent": "RobinSourceObservatory/1.0"
+  },
+  "syntheticTests": 10,
+  "optimizedPythonRejectedBeforeJournalOrGET": true,
+  "profiles": 0,
+  "CSV": 0,
+  "sourceAPI": 0,
+  "tasks": 0,
+  "sourceChoices": 0,
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

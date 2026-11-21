@@ -1,0 +1,122 @@
+{
+  "generatedAt": "2026-11-21T01:27:11.828228+00:00",
+  "schemaVersion": "robin-local-source-assessment-recette-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COMPATIBLE.ACCESS.RECETTE.20261121",
+  "missionId": "ROBIN-COMPATIBLE-ACCESS-REFRESH-20261121",
+  "status": "LOCAL_APP_RECETTED_GLOBAL_SOURCE_DELIVERY_PARTIAL",
+  "observedAt": "2026-11-21T01:08:24.021Z",
+  "views": [
+    {
+      "path": "/robin-live",
+      "http": 200,
+      "h1": [
+        "Robin suit les cinq grands championnats"
+      ]
+    },
+    {
+      "path": "/expert/admin-collecte",
+      "http": 200,
+      "h1": [
+        "Suivi admin de la collecte"
+      ]
+    },
+    {
+      "path": "/expert/catalogue-sources",
+      "http": 200,
+      "h1": [
+        "Catalogue complet des sources"
+      ]
+    },
+    {
+      "path": "/expert/collecte-recurrente",
+      "http": 200,
+      "h1": [
+        "Collecte récurrente"
+      ]
+    },
+    {
+      "path": "/expert/catalogue-tipsters",
+      "http": 200,
+      "h1": [
+        "Catalogue Ligue 1"
+      ]
+    }
+  ],
+  "public": {
+    "distinctPicks": 399,
+    "authorCount": 77,
+    "claimIds": [
+      "DATA.SOURCE_OBSERVATORY.PUBLIC_PICKS.20261119",
+      "ENG.SOURCE_OBSERVATORY.FORUMS.CAMPAIGN.20261119",
+      "DATA.SOURCE_OBSERVATORY.SRO.PICKS.20261119",
+      "DATA.SOURCE_OBSERVATORY.OLBG.NATIVE.PICKS.20261119",
+      "DATA.SOURCE_OBSERVATORY.EXPANSION.PREMATCH.20261120",
+      "DATA.SOURCE_OBSERVATORY.EXPANDED.OLBG.E2.20261120",
+      "DATA.SOURCE_OBSERVATORY.PERSONAL.PREMATCH.20261120",
+      "DATA.SOURCE_OBSERVATORY.OLBG.FAMILY.E1.20261120",
+      "DATA.SOURCE_OBSERVATORY.OPAQUE.PREMATCH.E1.20261120",
+      "DATA.SOURCE_OBSERVATORY.HEPTER.RECURRING.20261120",
+      "DATA.SOURCE_OBSERVATORY.OLBG.CURRENT138.CORRECTED.20261120",
+      "DATA.SOURCE_OBSERVATORY.OLBG.ROSTER42.RECURRING.20261120"
+    ]
+  },
+  "candidates": {
+    "count": 317,
+    "qualified": 24,
+    "enabled": 23,
+    "rosterEnabled": 42,
+    "compatibleClaimId": "ENG.SOURCE_OBSERVATORY.COMPATIBLE.FOLLOWUP.20261121"
+  },
+  "preservedWholeChoices": 399,
+  "preservedChoiceOrder": true,
+  "preservedOriginalFixturesAndClaims": true,
+  "preservedIndividualFlagsAndPicks": true,
+  "preservedRosterAssessments": 137,
+  "errors": 0,
+  "externalBrowserRequests": 0,
+  "mobileHorizontalOverflow": false,
+  "mobileViewportWidth": 360,
+  "targetedPythonTests": {
+    "passed": 13,
+    "executionChunk": "4e0087",
+    "suite": "personal_access+compatible_access+followup_access",
+    "fullSuiteRerun": false
+  },
+  "targetedRuff": "PASS",
+  "localServerRestarted": true,
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COMPATIBLE.FOLLOWUP.20261121",
+    "DATA.SOURCE_OBSERVATORY.OLBG.ROSTER42.FIRST.AUTOMATIC.20261121"
+  ],
+  "evidence": [
+    {
+      "namespace": "A9_ROBIN_LOCAL_BROWSER_RECEIPT",
+      "path": "cockpit/.ci/compatible-access-refresh-20261121/ui-receipt.json",
+      "sha256": "e4905c57a6766ba45f297743ad7f17f1eb9b9aa05bcdb2a25f789162f5949524"
+    },
+    {
+      "namespace": "A9_ROBIN_LOCAL_BROWSER_RECEIPT",
+      "path": "cockpit/.ci/compatible-access-refresh-20261121/preservation-receipt.json",
+      "sha256": "3796ea707e8c55f0fedfef76bb25983b1a43b042a4bcd80d3f677afe3b07ab91"
+    },
+    {
+      "namespace": "A9_ROBIN_LOCAL_BROWSER_RECEIPT",
+      "path": "cockpit/.ci/compatible-access-refresh-20261121/desktop.png",
+      "sha256": "043f996c7567e377856432f4bfa7f08f591bc270fb6701e943f32b73bc769385"
+    },
+    {
+      "namespace": "A9_ROBIN_LOCAL_BROWSER_RECEIPT",
+      "path": "cockpit/.ci/compatible-access-refresh-20261121/mobile.png",
+      "sha256": "058b345509f7a5db4a7fc3c2add544d3762ac7b7ce5eb42136e70f4289125336"
+    }
+  ],
+  "limitations": [
+    "Five local routes checked,not deployment or permanent uptime guarantee.",
+    "No new source prediction admitted or source activated by the qualification overlay.",
+    "Global compatible source integration remainsPARTIAL."
+  ],
+  "keys": [
+    "C0",
+    "C2"
+  ]
+}
