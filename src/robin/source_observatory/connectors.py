@@ -103,6 +103,7 @@ class Response:
     body: bytes
     content_type: str
     location: str | None
+    link_header: str | None = None
 
 
 def public_get(url: str, *, timeout: float = 40.0) -> Response:
@@ -185,7 +186,7 @@ def public_get(url: str, *, timeout: float = 40.0) -> Response:
         if expired.is_set():
             raise TimeoutError('transfer deadline')
         return Response(response.status, body, response.getheader('Content-Type', ''),
-                        response.getheader('Location'))
+                        response.getheader('Location'), response.getheader('Link'))
     except (OSError, http.client.HTTPException) as exc:
         if expired.is_set():
             raise TimeoutError('transfer deadline') from exc

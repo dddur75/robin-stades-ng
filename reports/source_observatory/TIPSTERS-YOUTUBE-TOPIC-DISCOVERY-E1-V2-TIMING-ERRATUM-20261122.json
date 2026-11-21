@@ -1,0 +1,24 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.YOUTUBE.TOPIC.DISCOVERY.E1.V2.TIMING.ERRATUM.20261122",
+  "generatedAt": "2026-11-21T23:32:23.069Z",
+  "status": "AUDITED_METADATA_LABEL_CORRECTION",
+  "scope": "Correct one mislabeled duration in the retained discovery result; original source receipts, outcome and historical report remain unchanged.",
+  "correctsClaimId": "ENG.SOURCE_OBSERVATORY.YOUTUBE.TOPIC.DISCOVERY.E1.V2.RESULT.20261121",
+  "correctsPath": "result.interReservationSeconds",
+  "historicalScalar": 3.33463,
+  "interReservationSeconds": 3.673393,
+  "robotsResponseToTopicReservationSeconds": 3.33463,
+  "sourceGET": 0,
+  "newSourceAttempt": false,
+  "admissions": 0,
+  "globalDelivery": "PARTIAL",
+  "evidenceReceiptSHA256": {
+    "reservation1": "22d7930583ad05b683e3f38bf2853c6207e43f96c25033fcb3d74758b976c928",
+    "response1": "467152a74a943852c41b4df21f2fd612a4ded90a9303b398b7ee2da9b3e06d75",
+    "reservation2": "c3e88234b02370635d85c385551b87b1a9d07c52e784e0fb271d5513a2674ea0"
+  },
+  "reviewedBy": [
+    "C0",
+    "C3"
+  ]
+}

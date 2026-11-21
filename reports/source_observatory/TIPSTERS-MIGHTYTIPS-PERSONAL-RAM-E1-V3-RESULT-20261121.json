@@ -1,0 +1,62 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.MIGHTYTIPS.PERSONAL.RAM.E1.V3.RESULT.20261121",
+  "generatedAt": "2026-11-21T22:04:44.800Z",
+  "status": "PARTIAL",
+  "scope": "Actual one-shot private RAM qualification ended before any article. Native personal-prediction compatibility remains unproven. No inference from HTTP200 to eligibility or source-wide absence.",
+  "missionId": "MIGHTYTIPS_SRC045_PERSONAL_RAM_E1_20261121",
+  "planSHA256": "eb19bdc033095d69b9c483f26e736686e8f3df00d126f205cd2e17b7ecee838d",
+  "manifestSHA256": "bcdfdf2f5bede62f258e1b76e8027bb0e8b27271b3ce836ce3a0aa0c0bc1f383",
+  "sourceGrant": "d0883091c62bddd7e6b0cf79c6cf6049b47275cd4021f937b3aa017150861969",
+  "sourceGETsReserved": 2,
+  "httpResponses": [
+    {
+      "kind": "robots",
+      "status": 200,
+      "observedAt": "2026-11-21T22:02:02.293244+00:00",
+      "receiptSHA256": "84894d8f9f7827e8574fbe4433d783a12859500ad52b19624fd544058f0cd76b"
+    },
+    {
+      "kind": "index",
+      "status": 200,
+      "observedAt": "2026-11-21T22:02:06.195129+00:00",
+      "receiptSHA256": "791ce12ca11da53409cad3121db831534185c76a6b48862f6f12ae4c07e94d0b"
+    }
+  ],
+  "articleGET": 0,
+  "candidatesProduced": 0,
+  "admissions": 0,
+  "outerProcessExit": 1,
+  "observedElapsedSeconds": 6.0968313,
+  "closure": "PARENT_EXIT1_AND_OUTER_VETO_NO_OUTER_SUCCESS_RECEIPT",
+  "workerReason": "UNPROVEN_OR_TRANSPORT",
+  "finerCause": "NOT_RETAINED",
+  "tlsIncidentProven": false,
+  "noEligibleArticleProven": false,
+  "rawProviderBodiesStored": false,
+  "articleProseStored": false,
+  "readbackSHA256": "1d20bf9e914b4fcb4d32b2828bb3a3efe725ead0f4ebc7a57615fb6a75b7bdfd",
+  "privatePacketNamespace": "A9_PRIVATE_CLIENTWIRE_MIGHTYTIPS_E1_20261121",
+  "reviews": {
+    "C0": "Actual process exit and receipts",
+    "C3": "Independent10receipt/29pin/context/spacing verification, RESULT PARTIAL"
+  },
+  "spentPreserved": true,
+  "unusedGETIsNotRetryAuthority": true,
+  "recurringEnabled": false,
+  "applicationChanged": false,
+  "calendarStatus": "SECONDARY_PROJECTION_ONLY_PRIMARY_NOT_PHYSICALLY_VERIFIED",
+  "historical": {
+    "exactLegacySequences": [
+      95,
+      97,
+      269,
+      271
+    ],
+    "knownSRC045Reservations": 4,
+    "mediatedBackendHTTPCount": null,
+    "olderDirectScopeClaim": 8,
+    "overlapAndCumulativeFamilyTotal": null,
+    "previousMediatedDocumentReads": 2
+  },
+  "globalDelivery": "PARTIAL"
+}

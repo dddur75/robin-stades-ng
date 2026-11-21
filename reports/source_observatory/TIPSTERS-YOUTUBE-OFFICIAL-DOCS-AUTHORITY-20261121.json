@@ -1,0 +1,71 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.YOUTUBE.OFFICIAL.DOCS.AUTHORITY.20261121",
+  "generatedAt": "2026-11-21T22:21:00.240781+00:00",
+  "status": "AUTHORIZED_DOCUMENTARY_ONLY_NOT_ACQUISITION",
+  "scope": "Verify official public Atom/WebSub channel-feed documentation and published service restrictions before proposing any acquisition route; no channel page, feed, video or prediction read.",
+  "planSHA256": "c7fb568ae4ace04fc575c3d25dd31a07f7c9d4a5032f95ca8cebce014784e57b",
+  "manifestSHA256": "5a0b3a3ba79935a34dcf33fc17f9c86c2fc054dbeb5ccd9981a5c8e5f332e6f8",
+  "plan": {
+    "mission_id": "YOUTUBE_OFFICIAL_DOCS_ONLY_E1_20261121",
+    "purpose": "Verify official public Atom/WebSub channel-feed documentation and published service restrictions before proposing any acquisition route; no channel page, feed, video or prediction read.",
+    "operations": [
+      {
+        "kind": "technical_document",
+        "url": "https://developers.google.com/youtube/v3/guides/push_notifications"
+      },
+      {
+        "kind": "terms_document",
+        "url": "https://www.youtube.com/static?template=terms"
+      }
+    ],
+    "transport": "MEDIATED_WEB_OPEN_ONLY",
+    "directGET": 0,
+    "mediatedOperationsMaximum": 2,
+    "backendHTTPAndRedirectCount": "UNKNOWN_NOT_EQUIVALENT_TO_TWO_GET",
+    "sourcePredictionsRead": 0,
+    "sourceChannelsRead": 0,
+    "sourceFeedsRead": 0,
+    "purchases": 0,
+    "accounts": 0,
+    "tasks": 0,
+    "APIKeys": 0,
+    "rawHTTPBodyStored": false,
+    "durableStorage": "BOUNDED_DOCUMENTARY_METADATA_HASHES_AND_PARAPHRASES_ONLY",
+    "stopOnRefusalChallengeOrBudget": true,
+    "authorizationBasis": "Owner authorizes qualification of possible sources for local personal Robin use; no blanket service permission inferred.",
+    "expires_at": "2026-11-21T22:40:00Z"
+  },
+  "manifest": {
+    "mission_id": "YOUTUBE_OFFICIAL_DOCS_ONLY_E1_20261121",
+    "authorized_stages": [
+      "E1"
+    ],
+    "maximum_stage": "E1",
+    "external_effects": {
+      "mediated_document_operations_maximum": 2,
+      "direct_source_gets": 0,
+      "channel_feed_video_reads": 0,
+      "source_predictions_read": 0,
+      "new_tasks": 0,
+      "purchases": 0,
+      "accounts": 0,
+      "raw_body_storage": 0
+    },
+    "compute_budget": {
+      "workers": 1,
+      "corpus_replays": 0
+    },
+    "time_budget": {
+      "elapsed_active_operations_and_metadata_close_seconds": 120
+    },
+    "source_hash": "c7fb568ae4ace04fc575c3d25dd31a07f7c9d4a5032f95ca8cebce014784e57b",
+    "expires_at": "2026-11-21T22:40:00Z"
+  },
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceFeedsRead": 0,
+  "sourcePredictionsRead": 0
+}

@@ -1,0 +1,74 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.YOUTUBE.WEBSUB.PROTOCOL.DOCS.R4.AUTHORITY.20261121",
+  "generatedAt": "2026-11-21T22:48:59.494349+00:00",
+  "status": "AUTHORIZED_DOCUMENTARY_ONLY_NOT_ACQUISITION",
+  "scope": "Verify the protocol reference linked by the official YouTube guide and whether subscriber discovery describes retrieval of a topic resource. No channel data is accessed and no polling or aggregation license is inferred.",
+  "planSHA256": "9501ea9485fcfeba0bbc2516a0bafc9b9bc1a4558895f2c7ea8a4527b66f2ebe",
+  "manifestSHA256": "ee646c0f71e27f4247430e04b6222d0a8d2090457ab9c87e806ce1dce47a94eb",
+  "plan": {
+    "mission_id": "YOUTUBE_WEBSUB_PROTOCOL_DOCS_E1_R4_20261121",
+    "purpose": "Verify the protocol reference linked by the official YouTube guide and whether subscriber discovery describes retrieval of a topic resource. No channel data is accessed and no polling or aggregation license is inferred.",
+    "operations": [
+      {
+        "kind": "linked_protocol_repository_readme",
+        "tool": "github.fetch",
+        "url": "https://api.github.com/repos/pubsubhubbub/PubSubHubbub/readme"
+      },
+      {
+        "kind": "official_protocol_specification",
+        "tool": "web.open",
+        "url": "https://www.w3.org/TR/websub/"
+      }
+    ],
+    "mediatedOperationsMaximum": 2,
+    "directSourceGET": 0,
+    "backendHTTPAndRedirectCount": "UNKNOWN",
+    "sourceChannelsRead": 0,
+    "sourceFeedsRead": 0,
+    "sourceVideosRead": 0,
+    "sourcePredictionsRead": 0,
+    "rawHTTPBodyStored": false,
+    "durableStorage": "BOUNDED_DOCUMENTARY_METADATA_HASHES_AND_SHORT_PARAPHRASES_ONLY",
+    "knownGoogleGuideURL": "https://developers.google.com/youtube/data/guides/push_notifications",
+    "priorGooglePolicyProjectionSHA256": "89495968a2c47c3e837ce419938d2f71bda7cf57d5c307f5f58b02d99dde1102",
+    "stopOnRefusalChallengeOrBudget": true,
+    "purchases": 0,
+    "accounts": 0,
+    "APIKeys": 0,
+    "tasks": 0,
+    "expires_at": "2026-11-21T23:10:00Z"
+  },
+  "manifest": {
+    "mission_id": "YOUTUBE_WEBSUB_PROTOCOL_DOCS_E1_R4_20261121",
+    "authorized_stages": [
+      "E1"
+    ],
+    "maximum_stage": "E1",
+    "external_effects": {
+      "mediated_document_operations_maximum": 2,
+      "direct_source_gets": 0,
+      "channel_feed_video_reads": 0,
+      "source_predictions_read": 0,
+      "new_tasks": 0,
+      "purchases": 0,
+      "accounts": 0,
+      "raw_body_storage": 0
+    },
+    "compute_budget": {
+      "workers": 1,
+      "corpus_replays": 0
+    },
+    "time_budget": {
+      "elapsed_active_operations_and_initial_metadata_close_seconds": 120
+    },
+    "source_hash": "9501ea9485fcfeba0bbc2516a0bafc9b9bc1a4558895f2c7ea8a4527b66f2ebe",
+    "expires_at": "2026-11-21T23:10:00Z"
+  },
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceFeedsRead": 0,
+  "sourcePredictionsRead": 0
+}

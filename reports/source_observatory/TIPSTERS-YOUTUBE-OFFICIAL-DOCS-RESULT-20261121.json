@@ -1,0 +1,72 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.YOUTUBE.OFFICIAL.DOCS.RESULT.20261121",
+  "generatedAt": "2026-11-21T22:21:45.249Z",
+  "status": "DOCUMENTARY_FACTS_VERIFIED_SOURCE_ACQUISITION_STILL_UNQUALIFIED",
+  "scope": "Two mediated primary document opens only; no source channel/feed/video/prediction read.",
+  "planSHA256": "c7fb568ae4ace04fc575c3d25dd31a07f7c9d4a5032f95ca8cebce014784e57b",
+  "manifestSHA256": "5a0b3a3ba79935a34dcf33fc17f9c86c2fc054dbeb5ccd9981a5c8e5f332e6f8",
+  "elapsedBeforeMetadataSeconds": 36.466,
+  "mediatedOperations": 2,
+  "directSourceGET": 0,
+  "backendHTTPAndRedirectCount": "UNKNOWN",
+  "rawHTTPBodyStored": false,
+  "documents": [
+    {
+      "requestedURL": "https://developers.google.com/youtube/v3/guides/push_notifications",
+      "resolvedURL": "https://developers.google.com/youtube/data/guides/push_notifications",
+      "toolReference": "turn67view0",
+      "renderedLineCount": 148,
+      "reportedLastUpdated": "2026-11-12",
+      "operativeLines": [
+        47,
+        85
+      ],
+      "facts": [
+        "Official guide specifies Atom notifications for channel uploads and title/description updates via a callback server and Google hub.",
+        "The topic is https://www.youtube.com/xml/feeds/videos.xml?channel_id=CHANNEL_ID.",
+        "The documented setup does not list an API key; that is not proof of an unrestricted polling or durable collection license.",
+        "The example includes video/channel identifiers, channel author metadata and publication/update times, but no match-specific personal forecast."
+      ],
+      "toolCrawlAge": "today"
+    },
+    {
+      "requestedURL": "https://www.youtube.com/static?template=terms",
+      "toolReference": "turn68view0",
+      "renderedLineCount": 208,
+      "publishedVersionDate": "2023-12-15",
+      "operativeLines": [
+        79,
+        103,
+        121,
+        122
+      ],
+      "renderedServiceProvider": "Google LLC",
+      "facts": [
+        "Published terms permit personal noncommercial viewing and some account-free browsing.",
+        "Automated access and collection of identifying information are restricted; service-enabled uses and express permission are relevant exceptions.",
+        "The text does not establish an unrestricted personal scraping or durable reuse license.",
+        "Rendered regional terms do not by themselves establish all conditions applicable in France or to the documented API/WebSub interface."
+      ],
+      "toolCrawlAge": "two_weeks",
+      "currentNativeTermsRefreshProven": false
+    }
+  ],
+  "conclusions": {
+    "universalAPIKeyRequirementProven": false,
+    "officialTopicTemplateProven": true,
+    "sevenRegisteredFeedRoutesAreDifferentFromOfficialTemplate": true,
+    "officialWorkflowRequiresCallbackServer": true,
+    "unrestrictedPollingPermissionProven": false,
+    "sourcePersonalPredictionsProven": false,
+    "sourceAcquisitionGrant": false
+  },
+  "sourceFeedsRead": 0,
+  "sourceVideosRead": 0,
+  "sourcePredictionsRead": 0,
+  "newTasks": 0,
+  "purchases": 0,
+  "globalDelivery": "PARTIAL",
+  "durableCloseElapsedSeconds": 36.501,
+  "durableCloseWithin120Seconds": true,
+  "reviewScope": "C4 validates documentary projection only; no service license or data access inferred."
+}

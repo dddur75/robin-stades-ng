@@ -314,3 +314,48 @@ def test_slow_headers_are_interrupted_by_wall_clock(monkeypatch):
     with pytest.raises(TimeoutError, match='transfer deadline'):
         public_get('http://pensebet.com/feed/', timeout=.01)
     assert time.monotonic() - started < .15
+
+
+@pytest.mark.parametrize('link_header', [None, '<https://hub.example.test/>; rel="hub"'])
+def test_public_get_preserves_link_header_for_protocol_discovery(monkeypatch, link_header):
+    import http.client
+    import socket
+
+    class FakeSocket:
+        def settimeout(self, value):
+            pass
+        def connect(self, address):
+            assert address == ('8.8.8.8', 80)
+        def shutdown(self, how):
+            pass
+        def close(self):
+            pass
+
+    class FakeResponse:
+        status = 200
+        body = b'<feed/>'
+        def read1(self, size):
+            chunk, self.body = self.body, b''
+            return chunk
+        def getheader(self, name, default=None):
+            return {'Content-Type': 'application/atom+xml', 'Link': link_header}.get(name, default)
+
+    class FakeConnection:
+        sock = None
+        def request(self, method, target, headers):
+            assert method == 'GET' and target == '/feed/'
+            assert headers['Accept-Encoding'] == 'identity'
+        def getresponse(self):
+            return FakeResponse()
+        def close(self):
+            pass
+
+    monkeypatch.setattr(socket, 'getaddrinfo', lambda *a, **k: [
+        (socket.AF_INET, socket.SOCK_STREAM, 6, '', ('8.8.8.8', 80))])
+    monkeypatch.setattr(socket, 'socket', lambda *a: FakeSocket())
+    monkeypatch.setattr(http.client, 'HTTPConnection', lambda *a, **k: FakeConnection())
+    result = public_get('http://pensebet.com/feed/', timeout=1)
+    assert result.body == b'<feed/>'
+    assert result.content_type == 'application/atom+xml' and result.location is None
+    assert result.link_header == link_header
+    assert Response(200, b'', 'application/atom+xml', None).link_header is None
