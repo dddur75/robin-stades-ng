@@ -159,6 +159,7 @@ def test_new_campaign_cannot_reassign_a_later_admitted_outside_author(monkeypatc
 def test_slow_next_reader_uses_only_the_remaining_parent_budget(tmp_path, monkeypatch):
     packet = tmp_path / "packet"
     packet.mkdir()
+    (packet / "runtime").mkdir()
     reader = packet / "read.py"
     reader.write_text("import time; time.sleep(10)", encoding="utf-8")
     config = tmp_path / view.CONFIG
@@ -176,6 +177,7 @@ def test_slow_next_reader_uses_only_the_remaining_parent_budget(tmp_path, monkey
         encoding="utf-8",
     )
     monkeypatch.setattr(view, "PACKET", packet)
+    monkeypatch.setattr(view, "READER_SHA256", sha256(reader.read_bytes()).hexdigest(), raising=False)
     monkeypatch.setattr(view, "PYTHON", Path(sys.executable))
     base = dict(picks=[dict(id="preserved")])
     original_run = view.subprocess.run
@@ -192,3 +194,51 @@ def test_slow_next_reader_uses_only_the_remaining_parent_budget(tmp_path, monkey
     assert result["picks"] == base["picks"]
     assert result["rosterNextCampaign"]["state"] == "unavailable"
     assert len(timeouts) == 1 and 0 < timeouts[0] <= 0.05
+
+
+def test_configured_matching_hash_does_not_authorize_a_different_reader(tmp_path, monkeypatch):
+    packet = tmp_path / 'packet'
+    (packet / 'runtime').mkdir(parents=True)
+    reader = packet / 'read.py'
+    reader.write_text('# arbitrary replacement')
+    config = tmp_path / view.CONFIG
+    config.parent.mkdir(parents=True)
+    config.write_text(json.dumps(dict(directory=str(packet / 'runtime'), readerSha256=sha256(reader.read_bytes()).hexdigest(), sourceDecisionSha256='1'*64, taskDecisionSha256='2'*64, nativeXmlSha256='3'*64)))
+    monkeypatch.setattr(view, 'PACKET', packet)
+    monkeypatch.setattr(view, 'READER_SHA256', 'f'*64, raising=False)
+    monkeypatch.setattr(view.subprocess, 'run', lambda *a, **k: (_ for _ in ()).throw(AssertionError('replacement executed')))
+    import pytest
+    with pytest.raises(ValueError):
+        view._read(tmp_path)
+
+
+def test_same_named_roster_clone_is_refused_before_import(tmp_path, monkeypatch):
+    import pytest
+    packet = tmp_path / 'trusted' / 'packet'
+    (packet / 'runtime').mkdir(parents=True)
+    reader = packet / 'read.py'
+    reader.write_text('# legitimate pinned reader bytes')
+    clone = tmp_path / 'foreign' / packet.name
+    (clone / 'runtime').mkdir(parents=True)
+    (clone / 'read.py').write_bytes(reader.read_bytes())
+    (clone / 'successor.py').write_text('raise RuntimeError("untrusted sibling import")')
+    path = tmp_path / view.CONFIG
+    path.parent.mkdir(parents=True)
+    pin = sha256(reader.read_bytes()).hexdigest()
+    path.write_text(json.dumps(dict(directory=str(clone / 'runtime'), readerSha256=pin, sourceDecisionSha256='1'*64, taskDecisionSha256='2'*64, nativeXmlSha256='3'*64)))
+    monkeypatch.setattr(view, 'PACKET', packet)
+    monkeypatch.setattr(view, 'READER_SHA256', pin)
+    monkeypatch.setattr(view.subprocess, 'run', lambda *a, **k: pytest.fail('foreign sibling import started'))
+    with pytest.raises(ValueError):
+        view._read(tmp_path)
+
+
+def test_missing_private_config_survives_a_shallow_checkout(tmp_path):
+    from types import ModuleType
+    shallow = Path(Path(view.__file__).anchor) / 'portable-reader-fixture'
+    module = ModuleType('robin.source_observatory.portability_fixture')
+    module.__package__ = 'robin.source_observatory'
+    module.__file__ = str(shallow / 'src' / 'robin' / 'source_observatory' / Path(view.__file__).name)
+    source = Path(view.__file__).read_text(encoding='utf-8')
+    exec(compile(source, module.__file__, 'exec'), vars(module))
+    assert module._read(tmp_path) is None

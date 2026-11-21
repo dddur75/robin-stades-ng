@@ -28,7 +28,15 @@ function Test-SroNextTaskPackage([string]$Xml,[object]$Config,[object]$Task,[obj
   if(@($Config.PSObject.Properties.Name).Count -ne 8){return $false}
   foreach($key in $keys){if($key -cnotin $Config.PSObject.Properties.Name){return $false}}
   foreach($key in $keys|Where-Object {$_ -ne 'directory'}){if($Config.$key -isnot [string] -or $Config.$key -cnotmatch '^[0-9a-f]{64}$'){return $false}}
-  $expected='C:/Users/ddura/.codex/worktrees/robin-roster-successor-e1/Robin V3/cockpit/.ci/sro-next3-e2-r2-20261121/runtime'
+  $readerRoot=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
+  $worktreesRoot=[IO.Directory]::GetParent([IO.Directory]::GetParent($readerRoot).FullName).FullName
+  $expected=[IO.Path]::Combine($worktreesRoot,'robin-roster-successor-e1',[IO.Path]::GetFileName($readerRoot),'cockpit','.ci','sro-next3-e2-r2-20261121','live')
+  if($Config.directory -isnot [string] -or -not [IO.Path]::IsPathRooted($Config.directory)){return $false}
+  if($Config.readerSha256 -cne 'd2e89c31e552875cf0909fcc42bca84107051fc84f11b781cd61717dfce793be'){return $false}
+  foreach($localPath in @($expected,[IO.Path]::GetDirectoryName($expected),(Join-Path ([IO.Path]::GetDirectoryName($expected)) 'read.py'))){
+   $entry=Get-Item -LiteralPath $localPath -Force -ErrorAction Stop
+   if(($entry.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0){return $false}
+  }
   if([IO.Path]::GetFullPath($Config.directory) -ine [IO.Path]::GetFullPath($expected)){return $false}
   if($Task.TaskName -cne 'Robin-Tipsters-SRO-Next3-20261121' -or $Task.TaskPath -cne '\'){return $false}
   if($State.actionExecutablePresent -isnot [bool] -or $State.enabled -isnot [bool] -or $State.actionExecutablePresent -ne $true -or $State.enabled -ne $true){return $false}

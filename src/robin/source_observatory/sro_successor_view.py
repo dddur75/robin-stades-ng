@@ -3,6 +3,7 @@
 import json
 import re
 import subprocess  # nosec B404
+import sys
 from copy import deepcopy
 from datetime import datetime
 from hashlib import sha256
@@ -13,11 +14,13 @@ from typing import Any
 CAMPAIGN_ID = "ROBIN-SRO-NEXT3-20261121"
 CANARY_CLAIM = "DATA.SOURCE_OBSERVATORY.SRO.CANARY.R2.REOBSERVED.20261121"
 ALGORITHM_CLAIM = "ENG.SOURCE_OBSERVATORY.SRO.NEXT3.E2.ALGORITHM.20261121"
-PACKET = Path(
-    "C:/Users/ddura/.codex/worktrees/robin-roster-successor-e1/Robin V3/"
-    "cockpit/.ci/sro-next3-e2-r2-20261121"
+REPOSITORY = Path(__file__).resolve().parents[3]
+PACKET = (
+    REPOSITORY.parent.parent / "robin-roster-successor-e1" / REPOSITORY.name
+    / "cockpit" / ".ci" / "sro-next3-e2-r2-20261121"
 )
-PYTHON = Path("C:/Users/ddura/AppData/Local/Python/pythoncore-3.12-64/python.exe")
+PYTHON = Path(getattr(sys, "_base_executable", sys.executable))
+READER_SHA256 = "d2e89c31e552875cf0909fcc42bca84107051fc84f11b781cd61717dfce793be"
 PYTHON_SHA256 = "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a"
 CONFIG = "cockpit/.ci/sro-next-bridge-20261121/config.json"
 OWNER_URLS = frozenset(
@@ -121,13 +124,20 @@ def _read(root: Path, deadline: float | None = None) -> tuple[dict[str, Any], bo
     )
     if set(config) != {"directory", *pins}:
         raise ValueError("SRO successor config shape")
-    if Path(config["directory"]).resolve() != (PACKET / "runtime").resolve():
+    directory = Path(config["directory"])
+    expected_directory = PACKET / "live"
+    if not directory.is_absolute() or directory != directory.resolve() or directory != expected_directory:
         raise ValueError("SRO successor directory")
     for key in pins:
         if not isinstance(config[key], str) or not re.fullmatch("[0-9a-f]{64}", config[key]):
             raise ValueError("SRO successor pin")
     reader = PACKET / "read.py"
-    if reader.stat().st_size > 100_000 or sha256(reader.read_bytes()).hexdigest() != config["readerSha256"]:
+    for local_path in (PACKET, expected_directory, reader):
+        if local_path.resolve() != local_path or local_path.is_symlink() or local_path.is_junction():
+            raise ValueError("successor path redirect")
+    if config["readerSha256"] != READER_SHA256:
+        raise ValueError("successor reader identity")
+    if reader.stat().st_size > 100_000 or sha256(reader.read_bytes()).hexdigest() != READER_SHA256:
         raise ValueError("SRO successor reader pin")
     if sha256(PYTHON.read_bytes()).hexdigest() != PYTHON_SHA256:
         raise ValueError("SRO successor isolated Python pin")

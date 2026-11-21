@@ -173,7 +173,8 @@ def configured(tmp_path, monkeypatch):
     reader.write_text("# pinned read only")
     python = tmp_path / "python.exe"
     python.write_bytes(b"synthetic-python")
-    config = dict(directory=str(packet / "runtime"), readerSha256=sha256(reader.read_bytes()).hexdigest(),
+    (packet / "live").mkdir()
+    config = dict(directory=str(packet / "live"), readerSha256=sha256(reader.read_bytes()).hexdigest(),
                   sourceDecisionSha256="1"*64, privacyDecisionSha256="2"*64,
                   scaleDecisionSha256="3"*64, taskDecisionSha256="4"*64,
                   dataDecisionSha256="5"*64, nativeXmlSha256="8"*64)
@@ -181,6 +182,7 @@ def configured(tmp_path, monkeypatch):
     path.parent.mkdir(parents=True)
     path.write_text(json.dumps(config))
     monkeypatch.setattr(view, "PACKET", packet)
+    monkeypatch.setattr(view, "READER_SHA256", sha256(reader.read_bytes()).hexdigest(), raising=False)
     monkeypatch.setattr(view, "PYTHON", python)
     monkeypatch.setattr(view, "PYTHON_SHA256", sha256(python.read_bytes()).hexdigest())
     return path, config
@@ -419,3 +421,45 @@ def test_malformed_future_lineage_keeps_history_and_closes_overlay(monkeypatch, 
 
 
 
+
+
+def test_reader_digest_cannot_be_replaced_by_configuration(tmp_path, monkeypatch):
+    path, config = configured(tmp_path, monkeypatch)
+    reader = view.PACKET / 'read.py'
+    reader.write_text('# different code with matching untrusted config hash')
+    config['readerSha256'] = sha256(reader.read_bytes()).hexdigest()
+    path.write_text(json.dumps(config))
+    monkeypatch.setattr(view.subprocess, 'run', lambda *a, **k: pytest.fail('untrusted reader executed'))
+    with pytest.raises(ValueError):
+        view._read(tmp_path)
+
+def test_same_named_packet_clone_is_rejected_before_child(tmp_path, monkeypatch):
+    path, config = configured(tmp_path, monkeypatch)
+    foreign = tmp_path / 'foreign' / view.PACKET.name / 'live'
+    foreign.mkdir(parents=True)
+    (foreign.parent / 'read.py').write_bytes((view.PACKET / 'read.py').read_bytes())
+    config['directory'] = str(foreign)
+    path.write_text(json.dumps(config))
+    monkeypatch.setattr(view.subprocess, 'run', lambda *a, **k: pytest.fail('foreign packet executed'))
+    with pytest.raises(ValueError):
+        view._read(tmp_path)
+
+
+def test_sro_packet_link_refuses_before_child(tmp_path, monkeypatch):
+    configured(tmp_path, monkeypatch)
+    original = Path.is_symlink
+    monkeypatch.setattr(Path, 'is_symlink', lambda p: p == view.PACKET or original(p))
+    monkeypatch.setattr(view.subprocess, 'run', lambda *a, **k: pytest.fail('redirected packet executed'))
+    with pytest.raises(ValueError):
+        view._read(tmp_path)
+
+
+def test_missing_private_config_survives_a_shallow_checkout(tmp_path):
+    from types import ModuleType
+    shallow = Path(Path(view.__file__).anchor) / 'portable-reader-fixture'
+    module = ModuleType('robin.source_observatory.portability_fixture')
+    module.__package__ = 'robin.source_observatory'
+    module.__file__ = str(shallow / 'src' / 'robin' / 'source_observatory' / Path(view.__file__).name)
+    source = Path(view.__file__).read_text(encoding='utf-8')
+    exec(compile(source, module.__file__, 'exec'), vars(module))
+    assert module._read(tmp_path) is None

@@ -3,6 +3,7 @@
 import json
 import re
 import subprocess  # nosec B404
+import sys
 from copy import deepcopy
 from hashlib import sha256
 from pathlib import Path
@@ -12,12 +13,13 @@ from typing import Any
 from .roster_recurring_view import _check, merge_group_candidates, merge_group_public
 
 CAMPAIGN_ID = "ROBIN-OLBG-ROSTER42-NEXT3-20261121"
-PACKET = Path(
-    "C:/Users/ddura/.codex/worktrees/robin-roster-successor-e1/Robin V3/cockpit/.ci/roster42-next3-e1-20261121"
+REPOSITORY = Path(__file__).resolve().parents[3]
+PACKET = (
+    REPOSITORY.parent.parent / "robin-roster-successor-e1" / REPOSITORY.name
+    / "cockpit" / ".ci" / "roster42-next3-e1-20261121"
 )
-PYTHON = Path(
-    "C:/Users/ddura/.codex/worktrees/robin-dossier-fidele/Robin V3/.venv/Scripts/python.exe"
-)
+PYTHON = Path(sys.executable)
+READER_SHA256 = "b643572e9938ffe166927e3cc800b17dcb08f6670b873ab12145e73dcf57ebbe"
 CONFIG = "cockpit/.ci/roster-next-bridge-20261121/config.json"
 
 
@@ -36,15 +38,22 @@ def _read(root: Path, deadline: float | None = None) -> tuple[dict[str, Any], bo
         "nativeXmlSha256",
     }:
         raise ValueError("successor bridge contract")
-    if Path(config["directory"]).resolve() != (PACKET / "runtime").resolve():
+    directory = Path(config["directory"])
+    expected_directory = PACKET / "runtime"
+    if not directory.is_absolute() or directory != directory.resolve() or directory != expected_directory:
         raise ValueError("successor directory")
     for key in ("readerSha256", "sourceDecisionSha256", "taskDecisionSha256", "nativeXmlSha256"):
         if not isinstance(config[key], str) or not re.fullmatch(r"[0-9a-f]{64}", config[key]):
             raise ValueError("successor pin")
     reader = PACKET / "read.py"
+    for local_path in (PACKET, expected_directory, reader):
+        if local_path.resolve() != local_path or local_path.is_symlink() or local_path.is_junction():
+            raise ValueError("successor path redirect")
+    if config["readerSha256"] != READER_SHA256:
+        raise ValueError("successor reader identity")
     if (
         reader.stat().st_size > 100_000
-        or sha256(reader.read_bytes()).hexdigest() != config["readerSha256"]
+        or sha256(reader.read_bytes()).hexdigest() != READER_SHA256
     ):
         raise ValueError("successor reader pin")
     remaining = min(5.0, deadline - monotonic() - 0.3) if deadline is not None else 5.0
