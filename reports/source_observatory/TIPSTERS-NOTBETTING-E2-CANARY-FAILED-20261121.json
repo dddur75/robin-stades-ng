@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2026-11-21T03:22:50.986958+00:00",
+  "schemaVersion": "robin-notbetting-canary-failed-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.E2.CANARY.FAILED.20261121",
+  "missionId": "NOTBETTING_ELIMAGAR_E2_20261121",
+  "status": "FAILED_PARTIAL_HALTED_NO_REGISTRATION",
+  "reason": "retention_limit",
+  "completeTraversalProven": false,
+  "newChoicesAdmitted": 0,
+  "retainedPrematchCandidates": 2,
+  "retainedNoneligibleWitnesses": 3,
+  "omittedNoneligibleWitnesses": 6,
+  "newRequestReservations": 2,
+  "HTTP200": 2,
+  "chargedMilliseconds": 9187,
+  "inheritedFamilyReserved": 9,
+  "inheritedFamilyMilliseconds": 19812,
+  "familyCeilings": {
+    "requests": 19,
+    "milliseconds": 600000
+  },
+  "unusedAccountingOnly": {
+    "requests": 10,
+    "milliseconds": 580188
+  },
+  "unusedBudgetAutomaticallyAuthorized": false,
+  "windowsTasksInstalled": 0,
+  "registrationDraftInvalidForExecution": true,
+  "baselinePreserved": {
+    "distinctChoices": 400,
+    "pseudonyms": 78,
+    "fixtures": 14
+  },
+  "evidence": [
+    {
+      "namespace": "A9_PRIVATE",
+      "path": "cockpit/.ci/notbetting-recurring-e2-20261121/events.jsonl",
+      "sha256": "3e7269678e799b65000ec70d028e02c227ab4a7ecb2c32821915e38eb1765a35"
+    },
+    {
+      "namespace": "A9_PRIVATE",
+      "path": "cockpit/.ci/notbetting-recurring-e2-20261121/plan.json",
+      "sha256": "f33e202c4b80d2a370bf021c52d1ab1d06d430d4b29dd4cbef7094a445e678a3"
+    },
+    {
+      "namespace": "A9_PRIVATE",
+      "path": "cockpit/.ci/notbetting-recurring-e2-20261121/mission.json",
+      "sha256": "81009244007a5c072c601d727f345013cec9f2a73a0fdbe94bd26377677b8413"
+    },
+    {
+      "namespace": "A9_PRIVATE",
+      "path": "cockpit/.ci/notbetting-recurring-e2-20261121/code-projection-v3.json",
+      "sha256": "4cc72842a666bf3a9dd1aab74833a68d91d6e04dd62ffe7cdbcd999784d098f9"
+    }
+  ]
+}

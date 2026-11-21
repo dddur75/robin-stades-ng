@@ -1,0 +1,86 @@
+{
+  "generatedAt": "2026-11-21T05:58:25.979853+00:00",
+  "schemaVersion": "robin-single-windows-task-authority-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.OCCURRENCE.WINDOWS.PUBLIC.METADATA.20261121",
+  "status": "SINGLE_CREATION_AUTHORIZED_NOT_YET_INSTALLED",
+  "registrationPlanSha256": "e7246974c2c41d1812e63054ddafc78ee03f0c1cd9c27b2e987fe581fe8a78a1",
+  "registrationManifestSha256": "007e576f2680939347df60d45db3034718b6c79b8e312e51570c978eee68ce34",
+  "operatorSha256": "68303a6be54af8c0e624234716e9541c13e205a5c3d2508caaf22d86d8514386",
+  "plan": {
+    "canaryFourKeyAcceptanceRequired": true,
+    "directSourceGETMax": 0,
+    "endBoundaryUTC": "2026-11-21T11:15:00Z",
+    "existingSourcesOrBudgetsChanged": false,
+    "expiresAt": "2026-11-21T06:45:00Z",
+    "overwriteExisting": false,
+    "packetDirectory": "cockpit/.ci/notbetting-occurrence-campaign-20261121",
+    "python": "LOCAL_PINNED_INTERPRETER",
+    "pythonExeSha256": "0b471133e110cfb53a061cad528ce8e517d7b9ac41a0a396c39ad795a487fc14",
+    "refusalIfExisting": true,
+    "registerScript": "cockpit/scripts/notbetting-occurrence-register.ps1",
+    "registerScriptSha256": "385c7f0a5cfba544dcc5982f8d5e19d0e4c87875b09fbcff7d407f1da348b21b",
+    "schemaVersion": "robin-one-task-registration-plan-v1",
+    "settings": {
+      "childWatchdogSeconds": 110,
+      "executionTimeLimit": "PT2M",
+      "hidden": true,
+      "logonType": "Interactive",
+      "multipleInstances": "IgnoreNew",
+      "restartCount": 0,
+      "runLevel": "Limited",
+      "startWhenAvailable": false,
+      "wakeToRun": false
+    },
+    "sourceDecisionHash": "37a417f5f102c84299eedfa44c8a7ca4bf24b6f310e498180f569e4495603125",
+    "sourceDecisionId": "RCV3-20261121-NOTBETTING-OCCURRENCE-CAMPAIGN-SOURCE-AUTHORIZED",
+    "sourceManifestSha256": "26eeb127708847b6c7484d351c849cfebbec33f100e071603aad6fc5fc60d1e7",
+    "sourcePlanSha256": "b3416214560ba160cb91694b0be004a282b57cd4a47b2436e43667ce55d15406",
+    "taskName": "Robin-Tipsters-NotBetting-Occurrences-E2-20261121",
+    "tasksMax": 1,
+    "triggersUTC": [
+      "2026-11-21T07:00:00Z",
+      "2026-11-21T09:00:00Z",
+      "2026-11-21T11:00:00Z"
+    ]
+  },
+  "manifest": {
+    "authorized_stages": [
+      "E1"
+    ],
+    "compute_budget": {
+      "workers": 1
+    },
+    "expires_at": "2026-11-21T06:45:00Z",
+    "external_effects": {
+      "accounts": 0,
+      "direct_source_gets": 0,
+      "overwrite_existing": false,
+      "production_changes": 0,
+      "purchases": 0,
+      "source_effects_require_exact_E2_authority": true,
+      "task_name": "Robin-Tipsters-NotBetting-Occurrences-E2-20261121",
+      "windows_tasks_create_max": 1
+    },
+    "maximum_stage": "E1",
+    "mission_id": "NOTBETTING_CLOSED_OCCURRENCE_ONE_WINDOWS_TASK_20261121",
+    "source_hash": "e7246974c2c41d1812e63054ddafc78ee03f0c1cd9c27b2e987fe581fe8a78a1",
+    "time_budget": {
+      "seconds": 120
+    }
+  },
+  "canaryAcceptanceDecisionHash": "d463ea1f5cc9eda4fdd0a7b169e2ab60edbed6601566e49e2a3f21d936c18f31",
+  "negativeExpiryTests": [
+    "2026-11-21T06:43:00Z",
+    "2026-11-21T06:44:00Z",
+    "2026-11-21T06:46:00Z"
+  ],
+  "sourceGETs": 0,
+  "overwrite": false,
+  "publicationRedaction": {
+    "field": "/plan/python",
+    "reason": "Local interpreter path omitted from public metadata; original private authority packet and executable hash remain unchanged.",
+    "originalPrivateArtifactSha256": "2f04962b8d36ab701ebd7a520e699ca4e74ffb66f071dfc83a618c8dc55c86a2"
+  },
+  "originalAuthorityClaimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.OCCURRENCE.WINDOWS.AUTHORITY.20261121",
+  "planRepresentation": "SANITIZED_PROJECTION_NOT_REGISTRATION_PLAN_HASH_INPUT"
+}

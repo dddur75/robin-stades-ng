@@ -1,0 +1,20 @@
+{
+  "generatedAt": "2026-11-21T03:01:02.509338+00:00",
+  "schemaVersion": "robin-mediated-documentary-authority-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.OFFICIAL.DOCUMENTARY.AUTHORITY.20261121",
+  "missionId": "ROBIN-TELEGRAM-OFFICIAL-INDEX-E1-20261121",
+  "status": "AUTHORIZED_NOT_EXECUTED",
+  "planSha256": "242c0c1902e72fab0f31ac9009d75774ccd8e6bdb082688b5966925337cc1088",
+  "manifestSha256": "0d2e546c9aba6e902be3a3345e7b980919632bd5de6d0f3c483c3728efce0aa8",
+  "searchMax": 1,
+  "openMax": 0,
+  "startsAt": "2026-11-21T03:00:00Z",
+  "expiresAt": "2026-11-21T03:10:00Z",
+  "activeSecondsMax": 180,
+  "providerTransportOpaque": true,
+  "publisherHTTPCountNotKnown": true,
+  "contentOrSourceCompatibilityGranted": false,
+  "reservationRequiredBeforeEveryToolInvocation": true,
+  "openURLsMustComeFromAuthorizedOfficialSearch": true,
+  "privatePlanPath": "cockpit/.ci/official-doc-research-20261121/telegram/plan.json"
+}

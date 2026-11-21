@@ -1,0 +1,40 @@
+{
+  "generatedAt": "2026-11-21T04:34:41.713285+00:00",
+  "schemaVersion": "robin-unused-canary-preflight-stop-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.E2V4.PREFLIGHT.STOP.20261121",
+  "status": "STOPPED_BEFORE_SOURCE_REQUESTS",
+  "stoppedAt": "2026-11-21T04:29:44.6410100+00:00",
+  "sourceGETs": 0,
+  "requestReservations": 0,
+  "eventsAbsent": true,
+  "reason": "LOCAL_REACT_PRODUCTION_SERIALIZER_SCALARS_NOT_RECOGNIZED",
+  "oldPlanSha256": "a97fcbcadf440e3c71b891a3abf87a19dbd1aa2a62f60af7aea3d7ac88dd18b2",
+  "oldCodeAndAuthorityPreserved": [
+    {
+      "path": "cockpit/.ci/notbetting-recurring-e2v4-20261121/unexecuted-0430/plan.json",
+      "sha256": "4e4b3fb545ace69bea467a2abbe5d02ae51a254c2f83aa0d3631f963493a51d3"
+    },
+    {
+      "path": "cockpit/.ci/notbetting-recurring-e2v4-20261121/unexecuted-0430/mission.json",
+      "sha256": "daf21a9159ce1316689554fb4bc895092e5412c59c1e7e59d8ddf042699d55f4"
+    },
+    {
+      "path": "cockpit/.ci/notbetting-recurring-e2v4-20261121/unexecuted-0430/approval.json",
+      "sha256": "11243051c921ed4986d129a8e7c2698d6088f25213e0c475009816a320cd15b5"
+    },
+    {
+      "path": "cockpit/.ci/notbetting-recurring-e2v4-20261121/unexecuted-0430/notbetting_recurring_v4.py",
+      "sha256": "341328e3bc0d89363a6cf8afbd38787c5d035e98b903c32be3f46d382b673bdd"
+    },
+    {
+      "path": "cockpit/.ci/notbetting-recurring-e2v4-20261121/unexecuted-0430/test_notbetting_recurring_v4.py",
+      "sha256": "990e98d2e506e47ea3b8bebebaa0aa3d212014ad0e1a93ed94aff42c37db2f8d"
+    },
+    {
+      "path": "cockpit/.ci/notbetting-recurring-e2v4-20261121/unexecuted-0430/preflight-stop.json",
+      "sha256": "781c36b7dc9d66ac15390ae2440737316947b0ad393e062c2da07d6db590da6f"
+    }
+  ],
+  "sourceFailureCountNotIncremented": true,
+  "inheritedGETsRemain": 9
+}

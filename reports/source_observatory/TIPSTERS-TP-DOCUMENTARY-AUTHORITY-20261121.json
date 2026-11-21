@@ -1,0 +1,35 @@
+{
+  "generatedAt": "2026-11-20T23:28:15.562290+00:00",
+  "schemaVersion": "robin-documentary-preflight-authority-v1",
+  "claimId": "GOV.SOURCE_OBSERVATORY.TP.DOCUMENTARY.E1.20261121",
+  "missionId": "ROBIN-TP-DOCUMENTARY-E1-20261121",
+  "status": "DOCUMENTARY_ONLY_NO_PROFILE_CSV_GRANT",
+  "planSha256": "14fac0b4257855ffab3a701632bef145b0c25b9ce2e56ddde8a93d4ccc86984d",
+  "manifestSha256": "265d30fddc50f8743acc050d7e4eb4c15ff1a40f14af339fc7e9782a6369b757",
+  "documents": [
+    {
+      "family": "Tipster Platform",
+      "role": "robots",
+      "url": "https://tipsterplatform.com/robots.txt"
+    },
+    {
+      "family": "Tipster Platform",
+      "role": "terms",
+      "url": "https://tipsterplatform.com/legal/terminos"
+    }
+  ],
+  "expiresAt": "2026-11-21T01:00:00Z",
+  "GETMax": 2,
+  "priorQualificationUnits": 291,
+  "qualificationProjectedMax": 293,
+  "profiles": 0,
+  "CSV": 0,
+  "directory": 0,
+  "sourceAPI": 0,
+  "tasks": 0,
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

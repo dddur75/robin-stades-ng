@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "robin-first-recurring-slot-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.FIRST.RECURRING.SLOT.20261120",
+  "generatedAt": "2026-11-20T07:12:32.087947+00:00",
+  "slotParis": "2026-11-20T08:00:00+01:00",
+  "status": "REAL_PREMATCH_CHOICES_ACCEPTED_WITHIN_EXISTING_MISSIONS",
+  "before": {
+    "choices": 60,
+    "authors": 13,
+    "claimId": "ENG.SOURCE_OBSERVATORY.RECURRING.VIEW.CI.CLOSURE.20261120"
+  },
+  "after": {
+    "distinctPicks": 91,
+    "sourcePseudonyms": 20,
+    "cataloguePersonallyProven": 6
+  },
+  "delta": {
+    "newDistinctObservedPickIds": 31,
+    "newSourcePseudonyms": 7,
+    "removedOldPickIds": 0,
+    "newPicksBySource": {
+      "SRC_038": 4,
+      "SRC_058": 18,
+      "SRC_039": 9,
+      "SRC_014": 0
+    }
+  },
+  "afterBySource": {
+    "SRC_038": 10,
+    "SRC_058": 36,
+    "SRC_039": 43,
+    "SRC_014": 2
+  },
+  "prematch": {
+    "checkedChoices": 91,
+    "observedStrictlyBeforeCanonicalKickoff": 91,
+    "publicationTimeCertified": false
+  },
+  "campaigns": {
+    "forums": {
+      "state": "collecting",
+      "taskName": "Robin-Tipsters-Forums-V1-20261120",
+      "startsAt": "2026-11-20T07:00:00Z",
+      "expiresAt": "2026-11-21T07:00:00Z",
+      "slots": 12,
+      "requestsMax": 72,
+      "requests": 6,
+      "successfulSlots": 1,
+      "journalHead": "84e62eace21c4328e0aa07bc42645148c765cc6ddac8821673bc1a0b0a51d2f2",
+      "native": {
+        "state": "Ready",
+        "sro": {
+          "state": "Ready",
+          "lastResult": 0,
+          "verifiedAt": "2026-11-20T07:08:59.9677118+00:00",
+          "enabled": true,
+          "nextRunTime": "2026-11-20T10:00:00.0000000+01:00"
+        },
+        "lastResult": 0,
+        "enabled": true,
+        "verifiedAt": "2026-11-20T07:08:59.3641795+00:00",
+        "olbg": {
+          "state": "Ready",
+          "lastResult": 0,
+          "verifiedAt": "2026-11-20T07:09:00.5520398+00:00",
+          "enabled": true,
+          "nextRunTime": "2026-11-20T10:00:00.0000000+01:00"
+        },
+        "nextRunTime": "2026-11-20T10:00:00.0000000+01:00"
+      }
+    },
+    "sro": {
+      "state": "collecting",
+      "startsAt": "2026-11-19T15:50:00+00:00",
+      "expiresAt": "2026-11-21T07:00:00+00:00",
+      "slots": 12,
+      "successfulSlots": 2,
+      "requests": 9,
+      "requestsMax": 39,
+      "priorRequests": 3,
+      "currentRequests": 6,
+      "currentRequestsMax": 36,
+      "native": {
+        "state": "Ready",
+        "lastResult": 0,
+        "verifiedAt": "2026-11-20T07:08:59.9677118+00:00",
+        "enabled": true,
+        "nextRunTime": "2026-11-20T10:00:00.0000000+01:00"
+      }
+    },
+    "olbg": {
+      "state": "collecting",
+      "successfulSlots": 2,
+      "requests": 6,
+      "requestsMax": 36,
+      "slots": 12,
+      "startsAt": "2026-11-19T18:48:00+00:00",
+      "expiresAt": "2026-11-21T07:00:00+00:00",
+      "native": {
+        "state": "Ready",
+        "lastResult": 0,
+        "verifiedAt": "2026-11-20T07:09:00.5520398+00:00",
+        "enabled": true,
+        "nextRunTime": "2026-11-20T10:00:00.0000000+01:00"
+      }
+    }
+  },
+  "campaignJournalHashes": [
+    {
+      "path": "cockpit/.ci/tipsters-forums-pending-20261120/events.jsonl",
+      "sha256": "369ddf0e79bb82141876afa8c0a555f017110a042547f114a8752a04cd13cbcc"
+    },
+    {
+      "path": "cockpit/.ci/tipsters-sro-recurring-20261119-v4/events.jsonl",
+      "sha256": "be52328df118b14a01c8e96f7ff58c5ad68d8df026d503aefb654ac4fc0bf92d"
+    },
+    {
+      "path": "cockpit/.ci/tipsters-olbg-recurring-20261119-v2/events.jsonl",
+      "sha256": "3c7dcb6932523e82e25adac53b3470dc6b9c47e21a15c7cc1031ba7f5852332f"
+    }
+  ],
+  "bundleSha256": {
+    "forums": "30e4be1580a034ab6a199a90d7b9777caad8f6795adc5f6fd670d6718e094e91",
+    "sro": "d082c54285053f7e6e2a3de88f23aba84857cd63e51361734e3d5095c235b9d6",
+    "olbg": "b519db6f6f9f477287895f54ddd6ca8bc096c882aebbb663484ed367bf310d08"
+  },
+  "independentC1": {
+    "nativeSlotCompleted": true,
+    "allThreeLastResult": 0,
+    "nextParis": "2026-11-20T10:00:00+01:00",
+    "newIdsComparedAgainstStoredBaseline": 31,
+    "allJournalChainsAndBundlesVerified": true
+  },
+  "localReceipt": {
+    "path": "cockpit/.ci/tipsters-nt-delivery-20261120/first-slot-readback.json",
+    "sha256": "837f27c96e8a2730e3525b081196be545f4596e5875d3c0cc254015447486a29"
+  },
+  "limitations": [
+    "Pseudonyms are source identities, not certified civil persons.",
+    "These choices were newly observed, not necessarily newly published.",
+    "Scheduled later slots are not proven executed.",
+    "No NotBetting or Telegram choice was collected or activated.",
+    "The12GET of this scheduled slot are distinct from source qualification101/134."
+  ],
+  "portableProjection": {
+    "originalPublicReportSha256": "7919b8904b6937e2acb350e4fe1b4e4a73c2f2ffd34c09c7dd92e110e17ef665",
+    "originalBytesRetainedAt": "cockpit/.ci/tipsters-nt-delivery-20261120/pre-portability/7919b8904b6937e2acb350e4fe1b4e4a73c2f2ffd34c09c7dd92e110e17ef665-TIPSTERS-FIRST-RECURRING-SLOT-20261120.json",
+    "normalization": "REPOSITORY_RELATIVE_POINTERS_ONLY",
+    "factsAndPrivatePacketsUnchanged": true
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "generatedAt": "2026-11-21T00:58:19.830620+00:00",
+  "schemaVersion": "robin-contest-documentary-authority-v1",
+  "claimId": "GOV.SOURCE_OBSERVATORY.KICKTIPP.L1.DOCUMENTARY.20261121",
+  "missionId": "ROBIN-KICKTIPP-L1-DOCUMENTARY-E1-20261121",
+  "status": "PUBLIC_DOCUMENTARY_ONLY_NO_PERSONAL_ACCESS",
+  "planSha256": "f90b091d9502fe25a4491e991403c13970331005ba970a314539f4cb1c6f9547",
+  "manifestSha256": "8f574ae3efb69a342dfb17a41152e5ced36f3a776810c827019630e9295e8ecc",
+  "operations": [
+    {
+      "role": "robots",
+      "url": "https://www.kicktipp.fr/robots.txt"
+    },
+    {
+      "role": "terms",
+      "url": "https://www.kicktipp.fr/info/service/conditions-utilisation"
+    },
+    {
+      "role": "rules",
+      "url": "https://www.kicktipp.fr/pronostics-ligue1/regles"
+    }
+  ],
+  "newGETMax": 3,
+  "qualificationMax": 305,
+  "expiresAt": "2026-11-21T02:00:00Z",
+  "retention": "Complete normalized public documentary text<=80000characters/document,private only,never truncate clauses; metadata/complete robots<=20000bytes. No matrix/author/profile/choice.",
+  "syntheticTests": 3,
+  "newAdmittedChoices": 0,
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

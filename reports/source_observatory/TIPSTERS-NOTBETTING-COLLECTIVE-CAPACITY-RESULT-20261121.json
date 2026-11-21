@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-11-21T00:53:08.977441+00:00",
+  "schemaVersion": "robin-isolated-capacity-result-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.COLLECTIVE.CAPACITY.RESULT.20261121",
+  "missionId": "ROBIN-NOTBETTING-COLLECTIVE-CAPACITY-E1-20261121",
+  "status": "PARTIAL_PREMATCH_PROOF_NOT_ESTABLISHED",
+  "requests": 1,
+  "statusCode": 200,
+  "bytes": 2213152,
+  "responseSha256": "cfe1bdd47b400d1cb9803974c8c90c9e71f7927e059da02720615292909573d5",
+  "observedAt": "2026-11-21T00:49:56.451686+00:00",
+  "activeMilliseconds": 1297,
+  "familyGET": 5,
+  "familyActiveMilliseconds": 7500,
+  "qualificationUnits": 301,
+  "privateNativeWitnesses": 3,
+  "omittedRecords": 97,
+  "walkTruncated": true,
+  "jsonDocuments": 117,
+  "flightFragments": 101,
+  "malformedJsonDocuments": 37,
+  "corroboratedNativePseudonymAttribution": true,
+  "sourceDatesPreserved": false,
+  "canonicalFixtureAndDateJoinEstablished": false,
+  "newAdmittedChoices": 0,
+  "sourceAPICalls": 0,
+  "newTasks": 0,
+  "resultSha256": "efde53152d2e3880608d56514dabd69de42e2783c3bbbb2495bff05fcf68a34b",
+  "journalSha256": "e032c6eb32babbda146bf02610c4a245b693a0b31becc011195510a53ceb4162",
+  "journalHead": "4f8af15c35fcbf6236719ec56c6f2eccaafbca6d08e7f323a008102ff2f9be50",
+  "limitations": [
+    "Three native closed records corroborate stable ID/pseudonym attribution only. No chronological admission.",
+    "Private original witnesses immutable; omit unnecessary displayed name in future contracts.",
+    "No exhaustive inventory,no parser-only refetch,no account/purchase necessity inferred."
+  ],
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

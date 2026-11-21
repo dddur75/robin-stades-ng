@@ -1,0 +1,126 @@
+{
+  "schemaVersion": "robin-complete-workbook-view-recette-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.WORKBOOK.COMPLETE.VIEW.20261120",
+  "dataClaimId": "DATA.SOURCE_OBSERVATORY.WORKBOOK.COMPLETE.20261120",
+  "generatedAt": "2026-11-20T10:58:58.183138+00:00",
+  "status": "LOCAL_RECETTE_ACCEPTED_EXACT_HEAD_CI_PENDING_GLOBAL_COLLECTION_PARTIAL",
+  "scope": "Local full documentary catalogue and enriched workbook, existing317registry preserved, exact-author E1/E2 OLBG extension; no global activation.",
+  "actualA9": {
+    "observedAt": "2026-11-20T09:45:24.773Z",
+    "addressCount": 18003,
+    "referenceRows": 18375,
+    "olbg": 400,
+    "kicktipp": 11677,
+    "qualifiedRegistryState": "ok",
+    "concurrentFiltersIndependent": true,
+    "mobileWidth": 360,
+    "mobileOverflow": false,
+    "externalAttemptsBlocked": 0,
+    "sourceHTTP": 0,
+    "firstRecordRendered": true
+  },
+  "checks": {
+    "targetedPythonFresh": {
+      "passed": 57,
+      "failed": 0
+    },
+    "targetedNativeAndInventoryTypescriptFresh": {
+      "passed": 5,
+      "failed": 0
+    },
+    "sourceDomainEarlier": {
+      "passed": 824,
+      "failed": 2,
+      "resolution": "Raw registry LF portability fixed and original target retested; engineering projection succession will be verified by the mandatory graph test before commit."
+    },
+    "targetedBrowser": "27of28 initially passed; one assertion wording corrected and fixed-clock case independently rerun1of1PASS. No unresolved product failure.",
+    "appTypecheck": "PASS",
+    "targetedEslint": "PASS",
+    "strictMypy": "PASS",
+    "targetedBandit": "PASS",
+    "desktopMobileAndConcurrentQueries": "PASS",
+    "targetedBrowserFresh": {
+      "passed": 28,
+      "failed": 0
+    },
+    "targetedRuffFresh": "PASS"
+  },
+  "windowsPortability": {
+    "file": "data/source_observatory/pilot_sources.csv",
+    "rule": ".gitattributes text eol=lf",
+    "rawSha256": "cbf70f2bd7d985b93a8aa29a08ceec01dbea223d8af8ccf130437108bc4ac88c",
+    "originalRuntimeByteHashCheckPreserved": true,
+    "registryContentAndFrozenCollectorPinsUnchanged": true
+  },
+  "guards": [
+    "No source requests from document import, UI, pagination or recette.",
+    "Missing or stale own-author native state cannot inherit another OLBG task grant.",
+    "Platform example URL cannot become a qualified individual.",
+    "Query/detail results hidden until their matching request completes; concurrent filter payloads independent.",
+    "Missing/corrupt expansion authority preserves earlier source facts and leaves activation closed."
+  ],
+  "privateEvidence": [
+    {
+      "path": "cockpit/.ci/tipsters-workbook-complete-20261120/actual-readback.json",
+      "sha256": "e638b4db85fd3537911a975def70843e11661dc70d86d7cbc9bd3fd92aff0b4b"
+    },
+    {
+      "path": "cockpit/.ci/tipsters-workbook-complete-20261120/native-table-resize.json",
+      "sha256": "5c85e7ba13e39aa9b228da2d3b81ce0e56d9193b5ecd2f534311adb900ce3576"
+    }
+  ],
+  "effects": {
+    "additionalPublisherGETForDocumentAndView": 0,
+    "apiFootball": 0,
+    "newFiniteTask": "Robin-Tipsters-OLBG-Expanded383717-20261120",
+    "newTaskBudgetGET": 9,
+    "manualCanaryGET": 3,
+    "futureSlotsCertifiedExecuted": 0,
+    "merge": false,
+    "deploy": false
+  },
+  "publication": "Sanitized counts, hashes, code and tests only. Detailed workbook/index, raw bodies and native individual choice payloads remain private.",
+  "limitations": [
+    "Exact-head CI of the forthcoming commit is pending; earlier green CI does not certify these changes.",
+    "The app index is a local A9 companion and is not published by the PR.",
+    "Future source task slots are separately gated and not certified by this local receipt.",
+    "Global collection remainsPARTIAL."
+  ],
+  "codeHashesLF": {
+    ".gitattributes": "69de9f2ea758e066fa80cf2ad7a3eb4127a04846a9a4e86854d9c088d068258e",
+    "cockpit/app/api/tipsters/workbook/route.ts": "ab5815f530c80f48db26bc69999e8eda55ba0c517b6e7707a88a81ada205661c",
+    "cockpit/app/components/expert/public-tipsters.tsx": "25d1bcdf29543554fa1cfbbe8fa68b1128a6468fb63907726774f946e388de60",
+    "cockpit/app/components/expert/tipster-candidates.tsx": "fdfdd4cc3215dbec7eeaabd2fef4c56ec7f1cc0cce7efd918799901f7235dc0d",
+    "cockpit/app/components/expert/workbook-catalogue.tsx": "4221b5acc5b3b7ce9546c04175f9260ab34f59c91520e4fa523c65111a66f389",
+    "cockpit/app/expert/catalogue-sources/page.tsx": "f56d200a5b0dfaa9f02ff7fbccadb15e10e1ac48ba5bb1fa148c7250473538df",
+    "cockpit/playwright.config.ts": "322a518a50d150f25ba8dc37d274210ba26c42894532f815a0861e143652d541",
+    "cockpit/scripts/collect-expanded-olbg.py": "a1e3ad3f8479a8e0ce8e2711f51a6f3f54885624acef94d20b2d9b90a726a715",
+    "cockpit/scripts/expanded-olbg-tick.ps1": "e6ae6734dce4c665b5cf2ec3a325c9a0504e481e0ab5bccdc0c8ad6b31b26713",
+    "cockpit/scripts/public-tipsters-plugin.ts": "fe8cac92394bb6c344ff2fe2c5dfbf81e8e2ffed78c42007f2506ced6eaea388",
+    "cockpit/scripts/read-public-task-state.ps1": "8b8f8e3078b21017add4ac18361a216e05d30b85557722c20adc18438e83077b",
+    "cockpit/scripts/read-public-tipsters.py": "4e178225d5d5c1863ca6c90fb663364cc022553b74d4aa2bc1879aad0e0fc18a",
+    "cockpit/scripts/read-tipster-candidates.py": "e0e8d3f32d8c9c353e26aa330deca8bc9ff4efcb3f475a8aa9130e2044c180b7",
+    "cockpit/scripts/read-workbook-inventory.py": "a289e872ecc274a1f64815748f49949f9c83a5befd7fa939a1e5c9d0253a0ba8",
+    "cockpit/scripts/register-expanded-olbg-task.ps1": "49e122f0c9e800be2f21f2c0425656029ce1db1a900ceddeeb27f6af562f2632",
+    "cockpit/scripts/tipsters-native-state.ts": "2f9acdeb8380ad4a9ec1d33bf97c4d1a4749745db28e828a4dcc2e131b873c47",
+    "cockpit/scripts/workbook-inventory-plugin.ts": "e9f90fedb144f05a6ff3316492c8a71b7e2821c273363c0db7f7c663c6085ca6",
+    "cockpit/scripts/workbook-inventory-state.ts": "319c31bba99dae9079613c91d7cc8442e2abdf307c4be7e5c83dd849444386de",
+    "cockpit/tests/expanded-native-authority.test.ts": "618a35015f71157f3c5a96287af56d02945b202d4ffffaeddec8a2e6688f16fb",
+    "cockpit/tests/public-tipsters.spec.ts": "bf1154abb7463f694b8242a37dbc590a0e25a5a2c3de7d6a7559aaedc1ba620b",
+    "cockpit/tests/workbook-catalogue.spec.ts": "bfd701c273511d754d6951d40ef518dd4e1aa996358dcacbe800ad3e3c20afae",
+    "cockpit/tests/workbook-inventory-state.test.ts": "1c385f799956a180b5c2728e2d0ff0caa42a05e6425d55d2c082c1f217c00e79",
+    "cockpit/vite.config.ts": "eb20d9a9d777ac60b0953ffb467db2d4f17f8bc8d862b99aa5d1a3a21aa153cf",
+    "docs/superpowers/plans/2026-11-20-complete-workbook-catalogue.md": "eeca0de4a00429e60e8cf40a7633a1848f55033bd43a35b226d967ae3970d363",
+    "reports/source_observatory/TIPSTERS-EXPANDED-OLBG-E2-20261120.json": "2fef7c299d00c00bf1f38e946e2a6472eb2e269269d0522f6e36196e1c9646b2",
+    "reports/source_observatory/TIPSTERS-NT-CI-CLOSURE-20261120.json": "0d203bb8e349715b8d50b3211ac395cb945c3227bb87fd5a747595e78f991cf0",
+    "reports/source_observatory/TIPSTERS-SOURCE-EXPANSION-E1-20261120.json": "879b334212406dff9f0383d3236569201fd6c5f3533d4abe742fe7cbe5e20b02",
+    "reports/source_observatory/TIPSTERS-WORKBOOK-COMPLETE-20261120.json": "54b31040ca2ea94075d1cd35dab2bc7a8777bad5ddeffe75d53c2ef445d3d406",
+    "src/robin/source_observatory/expanded_olbg_authority.py": "92cf907f3ae3be7cf1cd6a6b569e87066b99689f6ea4a99e9a8787b1d73c07cc",
+    "src/robin/source_observatory/expanded_olbg_campaign.py": "7d2e4b599decf687bf5ae2cf397deca4a3d9671fd34378c68da966f56f127e78",
+    "src/robin/source_observatory/expansion_view.py": "f4c5cd5083b66c0eeaf21fe8ac73207f56007238a0131254083553125b56b7ef",
+    "src/robin/source_observatory/workbook_inventory.py": "d5dca6505986cb7e6e11b095fc6b4e072d128ea641d13d036d8506d59016e4f0",
+    "tests/source_observatory/test_expanded_olbg_campaign.py": "b4a094278c35d24a46d63305ed2cc7dcea56b516811dc03e03b02053eda42425",
+    "tests/source_observatory/test_expansion_view.py": "308ec9d585f8db236ced8e55eea18693551f9afee3c0e7d5598381a2665acd9c",
+    "tests/source_observatory/test_workbook_inventory.py": "3dd1de49b27caf34285836357e5d84e5f600dc15c6e1278d16cc66bbb9e61e37"
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "robin-exact-profile-e2-authority-v1",
+  "claimId": "GOV.SOURCE_OBSERVATORY.HEPTER.E2V2.20261120",
+  "generatedAt": "2026-11-20T19:56:25.199872+00:00",
+  "status": "EXACT_CANARY_AUTHORIZED_REGISTRATION_REQUIRES_REAL_RECIPE",
+  "planSha256": "5c05bd9d13aa35b23d779c506667078a305e91746944e226a88689d8810d71cc",
+  "manifestSha256": "f35594f71c4b74702ff3315cb7b4b5318f19d1341add356c9431732b8aa6dc17",
+  "authorId": 669088,
+  "sourceId": "SRC_014",
+  "endpoint": "https://www.olbg.com/tipsters/tips/669088",
+  "stage": "E2",
+  "priorE1GET": 4,
+  "e2GETMax": 18,
+  "familyGETMax": 22,
+  "passages": 9,
+  "scheduledSlots": 8,
+  "fixtures": 5,
+  "expiresAt": "2026-11-21T11:15:00Z",
+  "activeSecondsMax": 600,
+  "reusedE1Sha256": "b4d63e1f63e0666988fd2f334e351104d57a5857d665e60d2c05b4e795cec545",
+  "reusedTerms": {
+    "eventHash": "24ce75fba98dbb25e30d459afa7e722ef6a404e8acab132a876daf9781be11e3",
+    "limitation": "Bounded reuse below24hours; the two GET slots do not detect unencountered terms changes. Stop on actual refusal/change signal.",
+    "normalizedTextSha256": "1248b86c3f9e8adc061c3fd489b3ba0576812956ff8ff051b8b3483ce6e4590f",
+    "observedAt": "2026-11-20T17:00:06.418530Z",
+    "perSlotTermsMonitoring": false,
+    "responseSha256": "a3666863b0c24166fd157f9f225a1b79d1cfb24c0b80f57cbf1a09bc2bb2fd30",
+    "url": "https://www.olbg.com/use",
+    "validThrough": "2026-11-21T11:15:00Z"
+  },
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "previousUnexecutedPacket": {
+    "planSha256": "7f4cc89579a6e9e9ac3c6938c2949e184e8340cbd8df8cc038e087031c39d41a",
+    "GET": 0,
+    "tasks": 0,
+    "disposition": "Preserved, not executed. Window intersection and terminal crash-prefix reading redesigned before a new exact packet."
+  },
+  "effects": {
+    "canaryGETMax": 2,
+    "taskRegistrationNow": false,
+    "sourceAPI": 0,
+    "API_FOOTBALL": 0,
+    "rawBodiesStored": false,
+    "auth": 0,
+    "purchases": 0
+  },
+  "limits": [
+    "No inherited old task or source-wide author authority.",
+    "Only five exact canonical fixtures and NativeWin facts; publication/market normalization and performance remain uncertified.",
+    "Global compatible-source integration remains partial."
+  ]
+}

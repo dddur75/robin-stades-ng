@@ -1,0 +1,24 @@
+{
+  "generatedAt": "2026-11-20T23:28:15.542277+00:00",
+  "schemaVersion": "robin-documentary-result-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.PRONOCONTEST.DOCUMENTARY.PARTIAL.20261121",
+  "missionId": "ROBIN-PRONOCONTEST-DOCUMENTARY-E1-20261121",
+  "status": "PARTIAL_TERMS_URL_HTTP404",
+  "requests": 2,
+  "eventCount": 8,
+  "robotsStatus": 200,
+  "termsStatus": 404,
+  "activeMilliseconds": 2842,
+  "termsRead": 0,
+  "profilesRead": 0,
+  "choicesRead": 0,
+  "qualificationUnits": 291,
+  "journalSha256": "bcac702563cc530ffa8d9ceab2cda0a30697c5d24f639c1b8814d60d77b274e5",
+  "resultSha256": "f19b3960182c58df4ca3cb90ff5bfeb6914a14749fc7cf350ff605e5e4f82309",
+  "currentTermsScope": "UNESTABLISHED_NOT_PLATFORM_INCOMPATIBILITY",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

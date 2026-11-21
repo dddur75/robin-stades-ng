@@ -1,0 +1,52 @@
+{
+  "generatedAt": "2026-11-21T04:45:16.225708+00:00",
+  "schemaVersion": "robin-notbetting-closed-native-data-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.NOTBETTING.CLOSED.OCCURRENCES.E1.20261121",
+  "status": "QUALIFIED_BOUNDED_NATIVE_DECLARATIONS_NOT_CANONICAL",
+  "missionId": "NOTBETTING_CLOSED_NATIVE_OCCURRENCES_OFFLINE_E1_20261121",
+  "qualifiedAt": "2026-11-21T04:43:03.865855+00:00",
+  "planSha256": "b1e2f8f36a9a6ec5cd6b9cdc04976f11c9d10e88de06399ce94eb96b6a271cdf",
+  "manifestSha256": "264bd1e9443e59b8861b462c2a377fd76abe39c36e6502f2ea47b905858b1d70",
+  "qualifierSha256": "ab5314bba43a5624bfd40a570dda90092f930ee00841b04fcd9dfcbbb57fcf99",
+  "bundlePath": "cockpit/.ci/notbetting-closed-occurrences-e1-20261121/observations-d5ff1f820b637839b699e492718a43787dcf9e42dd4aeafa4f324ae81ab28e42.json",
+  "bundleSha256": "d5ff1f820b637839b699e492718a43787dcf9e42dd4aeafa4f324ae81ab28e42",
+  "nativeDeclarations": 2,
+  "nativeObservations": 4,
+  "alreadyInLocalApp": 1,
+  "newLocalDeclarationPending": 1,
+  "observationClocks": [
+    "2026-11-21T03:15:04.006106+00:00",
+    "2026-11-21T04:35:04.095542+00:00"
+  ],
+  "sameSourceDistinctTemporalCapturesNotIndependentSources": true,
+  "productScope": "CLOSED_NATIVE_OCCURRENCE_ONLY",
+  "sourceTraversalComplete": false,
+  "canonicalQualification": false,
+  "globalVariantConsistency": "NOT_ESTABLISHED_OUTSIDE_RETAINED_RECORDS",
+  "performanceEvaluationAllowed": false,
+  "settlementAllowed": false,
+  "marketInterpretationAllowed": false,
+  "sourceExperimentsRemainFailed": true,
+  "sourceGETs": 0,
+  "newTaskAuthorized": false,
+  "recurringAuthority": false,
+  "applicationUpdated": false,
+  "applicationMergeNeedsSeparateReview": true,
+  "priorE1ChelseaObjectAndFirstSeenMustRemainUnchanged": true,
+  "targetedChecks": {
+    "goldenPassed": 12,
+    "independentC1Passed": 12,
+    "frozenRederviationConfirmedBy": [
+      "C0",
+      "C1",
+      "C2",
+      "C4"
+    ],
+    "strictMypy": "PASS",
+    "bandit": "PASS"
+  },
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.E2.CANARY.FAILED.20261121",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.E2V4.CANARY.FAILED.20261121"
+  ]
+}

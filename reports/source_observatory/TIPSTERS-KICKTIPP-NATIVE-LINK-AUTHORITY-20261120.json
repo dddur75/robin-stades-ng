@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-11-20T22:33:29.369676+00:00",
+  "schemaVersion": "robin-kicktipp-native-link-authority-v1",
+  "claimId": "GOV.SOURCE_OBSERVATORY.KICKTIPP.NATIVE.LINK.E1.20261120",
+  "missionId": "ROBIN-KICKTIPP-NATIVE-LINK-E1V3-20261120",
+  "status": "TWO_DOCUMENTARY_GET_ONLY_NO_ADMISSION_OR_TASK",
+  "planSha256": "b5678b0126a9d6d0333b6031343131bd9f89741e1ae250172765275fc57511aa",
+  "manifestSha256": "a616d568ca7063feb16a80834eb6e04544ccfde860ce3a4718f876ffc41653f6",
+  "urls": [
+    "https://www.kicktipp.fr/robots.txt",
+    "https://www.kicktipp.fr/the-predictor/tableau-pronostics"
+  ],
+  "GETMax": 2,
+  "priorQualificationUnits": 286,
+  "qualificationMaximum": 288,
+  "expiresAt": "2026-11-20T22:55:00Z",
+  "legalReuse": {
+    "currentTermsFreshlyFetched": false,
+    "observedAt": "2026-11-19T14:36:00.628919+00:00",
+    "responseSha256": "6dbe755b259fd5bef8d7d215791db0e2ca9cf3232d48be6f87dfea7b85e48a90",
+    "reviewEventHash": "36060d206c02d7a52996f01b9eca38b8a1e6dfdb725f1b6a342eda0200c8d1f5",
+    "scope": "Prior C0/C4 private public-facts review reused for this exact two-GET diagnostic only; source contest rules are not permission.",
+    "url": "https://www.kicktipp.fr/info/service/conditions-utilisation",
+    "validThrough": "2026-11-20T22:55:00Z"
+  },
+  "sourceChoicesAdmitted": 0,
+  "linksFollowed": 0,
+  "sourceAPI": 0,
+  "tasks": 0,
+  "rawBodiesStored": false
+}

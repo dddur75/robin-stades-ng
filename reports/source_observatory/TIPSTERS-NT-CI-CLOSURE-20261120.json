@@ -1,0 +1,185 @@
+{
+  "schemaVersion": "robin-nt-ci-closure-v1",
+  "generatedAt": "2026-11-20T08:01:08.945734+00:00",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NT.CI.CLOSURE.20261120",
+  "status": "EXACT_HEAD_CI_SUCCESS_QUALIFICATION_CLOSED_GLOBAL_PARTIAL",
+  "functionalHead": "d70444406c3a15e5a7290a5dbc3ef52c5467566c",
+  "ci": {
+    "head": "d70444406c3a15e5a7290a5dbc3ef52c5467566c",
+    "runId": 44695299873,
+    "runNumber": 242,
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/44695299873",
+    "observedAt": "2026-11-20T08:00:28Z",
+    "independentC1Confirmed": true,
+    "independentKey": "C1 PASS_AND_HOLD exact-head terminal confirmation 2026-11-20T08:00:28Z",
+    "jobs": [
+      {
+        "id": 136150527728,
+        "name": "End-to-End Live Path Replay",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136150527915,
+        "name": "Jalon 10 - entrees de preuve gelees",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136150528046,
+        "name": "Exact Workflow Entrypoint",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136150528073,
+        "name": "Bounded live canary - Windows",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136150528078,
+        "name": "Historical Deep — contrat cache-only",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136150528079,
+        "name": "Bounded live canary - Ubuntu",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136150528087,
+        "name": "Historical Authority Workflows Disabled",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136150528102,
+        "name": "Residual Fault Matrix",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136150528153,
+        "name": "Chronos PostgreSQL profiles / Chronos source and activation",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136150528387,
+        "name": "Chronos PostgreSQL profiles / Chronos static contracts",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136150528397,
+        "name": "Chronos PostgreSQL profiles / tests (superuser)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136150528506,
+        "name": "Chronos PostgreSQL profiles / tests (non_superuser_createrole)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136151980872,
+        "name": "Chronos PostgreSQL profiles / Chronos provider-free Cockpit",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136153290939,
+        "name": "Robin Experience — preuves visuelles",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136153290989,
+        "name": "Quality and domain tests",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136153291024,
+        "name": "Jalon 10 - trois temoins R3 bornes",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136162577537,
+        "name": "tests",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "results": {
+      "python": {
+        "passed": 5049,
+        "skipped": 41,
+        "xfailed": 1,
+        "seconds": 1143.79
+      },
+      "node": {
+        "passed": 32,
+        "skipped": 4
+      },
+      "models": {
+        "passed": 107
+      },
+      "visual": {
+        "passed": 88,
+        "skipped": 2
+      },
+      "windows": {
+        "passed": 1031,
+        "seconds": 569.99
+      },
+      "ubuntu": {
+        "passed": 1043,
+        "skipped": 23,
+        "seconds": 151.68
+      },
+      "unapprovedNetworkAttempts": 0
+    }
+  },
+  "reusedClaimIds": [
+    "ENG.SOURCE_OBSERVATORY.NT.QUALIFICATION.20261120",
+    "DATA.SOURCE_OBSERVATORY.FIRST.RECURRING.SLOT.20261120",
+    "ENG.SOURCE_OBSERVATORY.NT.FOLLOWUP.VIEW.20261120",
+    "ENG.SOURCE_OBSERVATORY.NT.PORTABLE.SUCCESSION.20261120"
+  ],
+  "acceptedSnapshot": {
+    "slot": "2026-11-20T08:00:00+01:00",
+    "uniqueChoices": 91,
+    "sourcePseudonyms": 20,
+    "newChoiceIdentifiers": 31,
+    "allObservedBeforeCanonicalKickoff": true,
+    "notbettingTelegramNewChoices": 0,
+    "notbettingTelegramRecords": 7,
+    "notbettingTelegramEnabled": 0,
+    "activeCatalogueRecords": 6,
+    "claimId": "DATA.SOURCE_OBSERVATORY.FIRST.RECURRING.SLOT.20261120"
+  },
+  "effects": {
+    "newSourceGets": 0,
+    "taskMutations": 0,
+    "taskLaunches": 0,
+    "activationChanges": 0,
+    "merge": false,
+    "deploy": false,
+    "scale": false
+  },
+  "limitations": [
+    "Post-CI closure metadata is local, uncommitted and outside the tested functional head.",
+    "No sealed report or historical claim is rewritten; this receipt is a separate successor.",
+    "NotBetting and Telegram content gates remain closed pending the documented external rights/source evidence.",
+    "Counts refer to the proven natural 08h snapshot only; no future slot is certified.",
+    "Source and overall application coverage remain PARTIAL; no global delivery is claimed."
+  ]
+}

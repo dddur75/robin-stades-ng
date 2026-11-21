@@ -1,0 +1,62 @@
+{
+  "generatedAt": "2026-11-21T00:27:10.022892+00:00",
+  "schemaVersion": "robin-linked-choice-route-e1-authority-v1",
+  "claimId": "GOV.SOURCE_OBSERVATORY.LINKED.CHOICE.ROUTES.E1V2.20261121",
+  "missionId": "ROBIN-LINKED-CHOICE-ROUTES-E1V2-20261121",
+  "status": "EXACT_NEW_PUBLIC_ROUTES_UNADMITTED_WITNESSES_ONLY",
+  "planSha256": "e0df1e96015c1f246b92434019c49781337dc886e2b8464f676af48ceeb6d436",
+  "manifestSha256": "3ee65d80881bbf77e8e492c3a6170097fc714cffbdd95caf6d86d037aa37cd01",
+  "sources": [
+    {
+      "contentUrl": "https://www.coteur.com/tipster/pronos/jamakom",
+      "indexWitness": "Catalogue:H509",
+      "ownerHint": "jamakom",
+      "platform": "Coteur",
+      "robotsUrl": "https://www.coteur.com/robots.txt"
+    },
+    {
+      "contentUrl": "https://notbetting.com/en/tipsters-league/picks",
+      "indexWitness": "Catalogue:H268,H12362,H12365,H12367,H12369",
+      "ownerHint": null,
+      "platform": "NotBetting",
+      "robotsUrl": "https://notbetting.com/robots.txt"
+    }
+  ],
+  "priorQualificationUnits": 296,
+  "qualificationMax": 300,
+  "GETMax": 4,
+  "GETPerPlatformMax": 2,
+  "contentPerPlatformMax": 1,
+  "witnessesPerPlatformMax": 3,
+  "expiresAt": "2026-11-21T01:30:00Z",
+  "activeSecondsMax": 300,
+  "requestSecondsMax": 12,
+  "sourceChoicesAdmitted": 0,
+  "newTasks": 0,
+  "legalReviewObservedAt": "2026-11-20T16:15:14.330276+00:00",
+  "legalReviewSha256": "d74a26c5d2b6ceedf663a52eda4aa18c84694b257a14970f17ab3f179c48967a",
+  "legalReviewScope": "Reuse prior primary review attestation explicitly dated,not full terms or current freshness. Personal private minimal public factual witnesses only; no bulk licence or subscription content grant.",
+  "syntheticTests": 23,
+  "retention": {
+    "analyses": false,
+    "biographies": false,
+    "contacts": false,
+    "flightFragmentsMax": 4096,
+    "localReferenceHopsMax": 8,
+    "omissionsMeasured": true,
+    "rawHtml": false,
+    "recordFieldMax": 40,
+    "recordNestedDepthMax": 3,
+    "recordsAndTableRowsMaxPerSource": 3,
+    "robotsDirectivesCharactersMax": 20000,
+    "scalarCharactersMax": 160,
+    "schemaKeysMax": 160,
+    "sourceWalkDepthMax": 20,
+    "sourceWalkNodesMax": 20000
+  },
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

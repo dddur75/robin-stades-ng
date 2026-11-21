@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "robin-passive-hydration-receipt-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.PASSIVE.HYDRATION.RESULTS.20261120",
+  "generatedAt": "2026-11-20T20:53:30.102479+00:00",
+  "status": "PARTIAL_FAIL_AND_STOP_THIS_TECHNICAL_LINE",
+  "requestReservations": 4,
+  "http200": 4,
+  "activeMilliseconds": 6156,
+  "qualificationLineageUnits": 152,
+  "newChoicesAdmitted": 0,
+  "newTasks": 0,
+  "sourceAPI": 0,
+  "executedJavaScript": false,
+  "rawBodiesStored": false,
+  "sourceAnalysesStored": false,
+  "resultSha256": "dd2957612d0a748908557e3e8eca1c5a432082d0bd87c1b975dc2ea7ed974e9a",
+  "journalSha256": "0eff64c3ba78a38b6d9b1ecca5a988315cbd38d82009caa32668947ae6840351",
+  "findings": {
+    "Coteur": "Expected DOM owner recognized; one single-column table has no approved factual header. Personal choices remain unestablished.",
+    "NotBetting": "93 Flight fragments and100 JSON records decoded; owner value seen but attribution unestablished, walk truncated. No absence of choices or account/payment requirement inferred."
+  },
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "limits": [
+    "No third identical retry or activation under this mission.",
+    "Two nonconclusive architectures require fail-closed partial status for this technical line, not a general platform ban."
+  ]
+}

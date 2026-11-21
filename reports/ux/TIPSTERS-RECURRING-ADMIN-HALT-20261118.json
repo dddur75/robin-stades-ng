@@ -1,0 +1,15 @@
+{
+  "claim_id": "ENG.SOURCE_OBSERVATORY.RECURRING.ADMIN_HALT.20261118",
+  "base_head": "6b396f4e4938482ec4a06cda1a371a219aa6765b",
+  "change": "Display existing campaign halt flag as an explicit admin alert even when historical authority remains present.",
+  "tests": [
+    "Targeted browser regression PASS",
+    "TypeScript PASS",
+    "ESLint PASS"
+  ],
+  "review": "UX6 PASS P0=0 P1=0",
+  "provider_gets": 0,
+  "code_pins_changed": false,
+  "plan_changed": false,
+  "business": "PARTIAL; zero qualified personal forecasts"
+}

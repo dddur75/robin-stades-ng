@@ -1,0 +1,34 @@
+{
+  "generatedAt": "2026-11-21T01:21:45.937374+00:00",
+  "schemaVersion": "robin-core-documentary-result-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.CORE.TERMS.RESULT.20261121",
+  "missionId": "ROBIN-TELEGRAM-CORE-TERMS-E1-20261121",
+  "status": "PARTIAL_TRANSPORT_DEADLINE",
+  "requestsReserved": 1,
+  "requestsWithHTTPResponse": 0,
+  "activeMilliseconds": 12030,
+  "familyGETReserved": 4,
+  "familyActiveMilliseconds": 16888,
+  "qualificationUnits": 309,
+  "attemptedUrl": "https://core.telegram.org/robots.txt",
+  "termsUrlNotAttempted": "https://core.telegram.org/api/terms",
+  "termsReviewed": false,
+  "unexecutedTermsOperationCancelled": true,
+  "messagesRead": 0,
+  "channelsRead": 0,
+  "sourceAPICalls": 0,
+  "newAdmittedChoices": 0,
+  "resultSha256": "b9c475a1d371b02784bcda661a7d76414432cfa2897d35792851d0f261f04cc4",
+  "journalSha256": "28701aaf60b7f651804f444159e7ae2f48c20339dc2dc8d7503b4ce3aaf00357",
+  "journalHead": "bea965dd5bed7a3ca5d0c9222c10a1b81c87a885217265de3c206e29f5723e79",
+  "limitations": [
+    "Transport timeout establishes neither robots refusal nor legal refusal nor certificate failure.",
+    "No account,purchase or publisher permission necessity inferred.",
+    "Lock preserved,no retry or inherited fallback; exact unexecuted terms operation cancelled."
+  ],
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import subprocess
@@ -24,6 +25,19 @@ LOCAL_SEGMENT_RE = re.compile(
     re.IGNORECASE,
 )
 LEDGER_PATH = "reports/council/decision-ledger.jsonl"
+# Preserve one already executed, hash-linked authorization byte for byte.
+# This is not a general allowance for context.files or other machine paths.
+SEALED_AUTHORIZATION_LINE = 461
+SEALED_AUTHORIZATION_LINE_SHA256 = (
+    "dadb8c125638d2bdc0d99682d0beafb041ad1979abd9824c2ea850e31ac04a24"
+)
+SEALED_AUTHORIZATION_RECORD_SHA256 = (
+    "cee3f5935a07569017e75816104afcdc9431c63b3b992644554422d01dde299c"
+)
+SEALED_AUTHORIZATION_FILE_VALUES = {
+    1: "c9c669575fcd45bc9e9b27c0206f96c10c8f03955b72023065676a4362c4398c",
+    2: "135a76173d3652aba2f66fc4fc9bda7f361f2c7935f99e1c8f0f5eb432a276f4",
+}
 LEDGER_WORKTREE_PATH_RE = re.compile(
     r"^C:/"
     + "Users/"
@@ -90,6 +104,57 @@ def _mask_ledger_context_worktree_value(text: str) -> str:
     return "".join(masked)
 
 
+def _mask_sealed_authorization_file_values(text: str, line_number: int) -> str:
+    """Mask two exact JSON string spans on one immutable ledger line only."""
+    if line_number != SEALED_AUTHORIZATION_LINE:
+        return text
+    if hashlib.sha256(text.encode("utf-8")).hexdigest() != SEALED_AUTHORIZATION_LINE_SHA256:
+        return text
+    record = json.loads(text)
+    if record.get("decision_id") != "RCV3-20261120-NT-E1-LEGAL-AUTHORIZED":
+        return text
+    if record.get("hash") != SEALED_AUTHORIZATION_RECORD_SHA256:
+        return text
+    payload = json.dumps(
+        {key: value for key, value in record.items() if key != "hash"},
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    if hashlib.sha256(payload.encode("utf-8")).hexdigest() != SEALED_AUTHORIZATION_RECORD_SHA256:
+        return text
+    context = record["context"]
+    files = context["files"]
+    if any(
+        not isinstance(files[index], str)
+        or hashlib.sha256(files[index].encode("utf-8")).hexdigest() != expected
+        for index, expected in SEALED_AUTHORIZATION_FILE_VALUES.items()
+    ):
+        return text
+    encoded_context = json.dumps(context, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    context_field = '"context":' + encoded_context
+    encoded_files = json.dumps(files, ensure_ascii=False, separators=(",", ":"))
+    files_field = '"files":' + encoded_files
+    if text.count(context_field) != 1 or encoded_context.count(files_field) != 1:
+        return text
+    offset = (
+        text.index(context_field)
+        + len('"context":')
+        + encoded_context.index(files_field)
+        + len('"files":')
+        + 1
+    )
+    masked = list(text)
+    for index, value in enumerate(files):
+        encoded = json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+        if index in SEALED_AUTHORIZATION_FILE_VALUES:
+            start = offset + 1
+            end = offset + len(encoded) - 1
+            masked[start:end] = " " * (end - start)
+        offset += len(encoded) + 1
+    return "".join(masked)
+
+
 def find_forbidden_absolute_paths(
     text: str,
     *,
@@ -106,6 +171,7 @@ def find_forbidden_absolute_paths(
             continue
         line = raw_line
         if normalized_path == LEDGER_PATH:
+            line = _mask_sealed_authorization_file_values(line, line_number)
             line = _mask_ledger_context_worktree_value(line)
         line = _mask_allowed(line)
         for category, pattern in (

@@ -1,0 +1,159 @@
+{
+  "generatedAt": "2026-11-20T23:28:15.520765+00:00",
+  "schemaVersion": "robin-compatible-ci-closure-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COMPATIBLE.CI246.CLOSURE.20261121",
+  "status": "CI_FAILURE_CLIENT_BUNDLE_OVER_BUDGET",
+  "head": "8a234ae98b5052ccc026bd193e88175478a5a834",
+  "pr": 133,
+  "draft": true,
+  "merge": false,
+  "deployed": false,
+  "ci": {
+    "runId": 44832370663,
+    "runNumber": 246,
+    "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/44832370663",
+    "successfulJobs": 13,
+    "failedJobs": 4,
+    "jobs": [
+      {
+        "id": 136620227656,
+        "name": "Bounded live canary - Windows",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136620227986,
+        "name": "Historical Deep — contrat cache-only",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136620228001,
+        "name": "Chronos PostgreSQL profiles / tests (superuser)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136620228018,
+        "name": "Chronos PostgreSQL profiles / Chronos source and activation",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136620228032,
+        "name": "Residual Fault Matrix",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136620228069,
+        "name": "Chronos PostgreSQL profiles / Chronos static contracts",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136620228071,
+        "name": "Exact Workflow Entrypoint",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136620228109,
+        "name": "End-to-End Live Path Replay",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136620228142,
+        "name": "Historical Authority Workflows Disabled",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136620228220,
+        "name": "Jalon 10 - entrees de preuve gelees",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136620228240,
+        "name": "Bounded live canary - Ubuntu",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136620228252,
+        "name": "Chronos PostgreSQL profiles / tests (non_superuser_createrole)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136621275993,
+        "name": "Chronos PostgreSQL profiles / Chronos provider-free Cockpit",
+        "status": "completed",
+        "conclusion": "failure"
+      },
+      {
+        "id": 136623384751,
+        "name": "Robin Experience — preuves visuelles",
+        "status": "completed",
+        "conclusion": "failure"
+      },
+      {
+        "id": 136623384763,
+        "name": "Jalon 10 - trois temoins R3 bornes",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136623384772,
+        "name": "Quality and domain tests",
+        "status": "completed",
+        "conclusion": "failure"
+      },
+      {
+        "id": 136632885898,
+        "name": "tests",
+        "status": "completed",
+        "conclusion": "failure"
+      }
+    ]
+  },
+  "tests": {
+    "pythonPassed": 5160,
+    "pythonSkipped": 41,
+    "pythonXfailed": 1,
+    "pythonSeconds": 1092.01,
+    "visualCasesExecuted": false
+  },
+  "failure": {
+    "signature": "CLIENT_TOTAL_BYTES_OVER_STRICT_LIMIT",
+    "actualBytes": 1350866,
+    "requiredStrictlyBelow": 1350000,
+    "independentFrontendJobs": 3,
+    "aggregateRejected": true
+  },
+  "allCompatibleSourcesIntegrated": false,
+  "evidence": [
+    {
+      "path": "cockpit/.ci/olbg-roster-recurring-20261120/ci246-terminal-jobs.json",
+      "sha256": "9fd2cf1aca9a310e573fc0ae0d232d3a2d431587a853e0c53ce3ab5991f9e0fc"
+    },
+    {
+      "path": "cockpit/.ci/olbg-roster-recurring-20261120/ci246-terminal-runs.json",
+      "sha256": "4174d781e1ddc53b439d00dcfdb64aea853d898675efe08c5d43994192d131fa"
+    },
+    {
+      "path": "cockpit/.ci/olbg-roster-recurring-20261120/ci246-quality-log.json",
+      "sha256": "856090de8db144e65224fd4385362864d37bf6b3cf98085c579077142e16fbc9"
+    },
+    {
+      "path": "cockpit/.ci/olbg-roster-recurring-20261120/ci246-cockpit-log.json",
+      "sha256": "c4110c5db66971140f532f36e21623bf06f9292631f846589601e642c628317b"
+    },
+    {
+      "path": "cockpit/.ci/olbg-roster-recurring-20261120/ci246-visual-log.json",
+      "sha256": "0f2e4a03ed7d9883275378b69ec450bf8cce81648fd52c141230df23c74d396d"
+    }
+  ]
+}

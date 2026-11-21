@@ -1,0 +1,69 @@
+{
+  "generatedAt": "2026-11-21T07:22:02.752042+00:00",
+  "schemaVersion": "robin-first-scheduled-positive-declaration-receipt-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.NOTBETTING.OCCURRENCE.FIRST.SCHEDULED.20261121",
+  "status": "FIRST_SCHEDULED_PASS_ACCEPTED_NONCANONICAL_REOBSERVATIONS_ZERO_NEW_DECLARATIONS",
+  "scope": "Natural07UTCpass reobserves2existingnativeIDs beforeofficialKO, no newIDs or pending;4temporalobservations each. Partialnative source scope only.",
+  "observedAt": "2026-11-21T07:01:34.338420+00:00",
+  "slot": "2026-11-21T07:00:00Z",
+  "journalPrefixSha256": "9d1fc5a5fe93c6b1f5fdf3462e786a7d3adae170d5d0d516d6aa5a122ed687bb",
+  "journalHead": "39f9ee89132c47ae89f98a4c3da39d34da444b44bbd1a39727682490f55362db",
+  "events": 18,
+  "completedScheduledPasses": 1,
+  "successfulCanaries": 1,
+  "requestsReservedThisPass": 2,
+  "requestsReservedCampaign": 4,
+  "http200ThisPass": 2,
+  "nativeRowsThisPass": 2,
+  "stateDeclarationIDs": 2,
+  "pendingIDs": 0,
+  "newIDsComparedToAcceptedBaseline": 0,
+  "temporalObservationsEach": [
+    4,
+    4
+  ],
+  "sourceObservedAt": "2026-11-21T07:00:09.081685+00:00",
+  "sourceTraversalComplete": false,
+  "canonicalQualification": false,
+  "halted": false,
+  "campaignChargedMilliseconds": 18937,
+  "thisPassChargedMilliseconds": 9375,
+  "familyAccounting": {
+    "consumedGET": 15,
+    "maximumGET": 19,
+    "remainingGET": 4,
+    "chargedMilliseconds": 47999,
+    "maximumMilliseconds": 600000,
+    "remainingMilliseconds": 552001
+  },
+  "native": {
+    "state": "Ready",
+    "enabled": true,
+    "lastResult": 0,
+    "lastRunUTC": "2026-11-21T07:00:00Z",
+    "nextRunUTC": "2026-11-21T09:00:00Z",
+    "xmlSha256": "7503cdd2197e6eb0459e3cbd07465416d90c732ea233d7fdf2435a00adf81de6"
+  },
+  "actualA9": {
+    "publicChoices": 403,
+    "pseudonyms": 78,
+    "fixtures": 16,
+    "profileHTTP": 200,
+    "viewportWidth": 360,
+    "companionCardsWithFourObservations": 2,
+    "pageErrors": 0,
+    "externalBrowserRequests": 0,
+    "horizontalOverflow": false,
+    "independentlyVerifiedBy": "C2"
+  },
+  "performanceEvaluationAllowed": false,
+  "settlementAllowed": false,
+  "marketInterpretationAllowed": false,
+  "newSourceGETAuthorized": 0,
+  "newTasksAuthorized": 0,
+  "manualSourceTriggers": 0,
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.NOTBETTING.OCCURRENCE.CANARY.20261121",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OCCURRENCE.WINDOWS.RECETTE.20261121"
+  ]
+}

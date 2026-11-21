@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "robin-compatible-family-view-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COMPATIBLE.FAMILY.DATA.20261120",
+  "dataClaimIds": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.FAMILY.E1.20261120",
+    "DATA.SOURCE_OBSERVATORY.OPAQUE.PREMATCH.E1.20261120"
+  ],
+  "qualifiedAt": "2026-11-20T19:32:13.466972+00:00",
+  "status": "DATA_ACCEPTED_RUNTIME_RECETTE_SEPARATE",
+  "nativeWinBundleSha256": "b4d63e1f63e0666988fd2f334e351104d57a5857d665e60d2c05b4e795cec545",
+  "opaqueBundleSha256": "33dbfa05cbd528f66abbe5658529bb64d9455c7c74817d2f2da59b36ca1a0971",
+  "sourceResultSha256": "e0469a5fda7e611a6dba9efc2ec64bfff057cb87b461e3b3f468b9ef7f129791",
+  "profiles": [
+    {
+      "candidateId": "catalogue:09e5ff014a7c0a7f4640149ec4e2e2b1dfbf3116d2c3b14c34c2a047166e8fd6",
+      "recordId": "workbook:c864fa66f316ad04e2ed16cf8d1f78432ed60527c6d3e8fa4911c005ce9e2047",
+      "sourceUrl": "https://www.olbg.com/tipsters/tips/669088",
+      "sheet": "Catalogue",
+      "row": 70,
+      "label": "hepter",
+      "authorId": 669088,
+      "observedAt": "2026-11-20T19:01:53.870439+00:00",
+      "mode": "current",
+      "nativeRecords": 21,
+      "footballRecords": 21,
+      "omittedRecords": 0,
+      "qualifiedChoices": 5,
+      "responseSha256": "f9e785b668a354d2ed8dcd8eff6da84d1b641872beb1eda665823a774415bbf3"
+    },
+    {
+      "candidateId": "catalogue:b65447a765703ecb443a45992dab690f056007564d85adfe6a44805cadea4654",
+      "recordId": "workbook:7c02521fc934ec404c7fad220df74ade1c109a131fc237c37e8720bdda6324d4",
+      "sourceUrl": "https://www.olbg.com/tipsters/tips/158",
+      "sheet": "Catalogue",
+      "row": 274,
+      "label": "Bobby",
+      "authorId": 158,
+      "observedAt": "2026-11-20T19:01:57.006816+00:00",
+      "mode": "current",
+      "nativeRecords": 20,
+      "footballRecords": 20,
+      "omittedRecords": 0,
+      "qualifiedChoices": 2,
+      "responseSha256": "239e1ed7a5578a5e985902159c0fb6ba2a8b73558fb54c826022f1c7df4b0356"
+    },
+    {
+      "candidateId": "catalogue:09419c345807eb50887f935895fff6875e71fdfa9ee7a94835861e0a49cda31e",
+      "recordId": "workbook:b9e14035ce4659699414736025dc236cc8c5f675eb371a8047ce55fe8759ee11",
+      "sourceUrl": "https://www.olbg.com/tipsters/tips/609057",
+      "sheet": "Catalogue",
+      "row": 275,
+      "label": "Cusanus",
+      "authorId": 609057,
+      "observedAt": "2026-11-20T19:02:00.064902+00:00",
+      "mode": "current",
+      "nativeRecords": 5,
+      "footballRecords": 3,
+      "omittedRecords": 0,
+      "qualifiedChoices": 0,
+      "responseSha256": "45760b645ef5df99a6fd8683376f79b80a4756bafc8920b679b490f553cce397"
+    }
+  ],
+  "counts": {
+    "profilesObserved": 3,
+    "nativeRecords": 46,
+    "omittedRecords": 0,
+    "qualifiedNativeWin": 5,
+    "qualifiedOpaque": 2,
+    "qualifiedDistinctChoices": 7,
+    "qualifiedPseudonyms": 2,
+    "requestReservations": 4,
+    "activeMilliseconds": 9516,
+    "historicalQualificationUnits": 144,
+    "aggregateQualificationUnits": 148
+  },
+  "sourceJournalSha256": "f30ccb0d112cc83de92279611fcba700dbfb9fd8305683044faef3969cd85582",
+  "calendarSha256": "2feb3b728d9fd64cec95f4f8b7f4376f5e550441eae8b4e96f7edd0fd1bea8e8",
+  "lexicalParserSha256": "6b274c26a184f6acde6f1c839f1e1309e75e27c55089055ca41e572887a1c959",
+  "opaqueReaderSha256": "49e5acbe96a0f107de8c55ef67905c6845bfcd1da085677af24a8cb4d5a3595c",
+  "dataReviewers": [
+    "C0",
+    "C1"
+  ],
+  "scopeReviewers": [
+    "C0",
+    "C4"
+  ],
+  "flags": {
+    "newRecurringAuthority": false,
+    "newTasks": 0,
+    "newGETsForQualification": 0,
+    "normalizedBettingContracts": false,
+    "performanceEvaluationAllowed": false,
+    "settlementAllowed": false
+  },
+  "limits": [
+    "Seven individual source choices observed before their independently proved kickoffs; pseudonyms do not certify civil identities.",
+    "The two opaque selections retain source fields, types and unknown publication/timezone; no market interpretation or winning result inferred from winew=Win.",
+    "Detailed source records and choices remain private; only metadata and hashes are published.",
+    "Runtime integration and any future E2 task require distinct verification/authority; the three observed profiles are not activated by this receipt.",
+    "Bobby and Cusanus are not empty profiles. Non-admitted source facts do not become proven choices by import or a source-wide label.",
+    "Global compatible-source closure remains PARTIAL; no exhaustive catalogue activation or collection is claimed."
+  ]
+}

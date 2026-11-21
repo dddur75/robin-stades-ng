@@ -1,7 +1,13 @@
+import {tipsterCandidates} from "./scripts/tipster-candidates-plugin";
+import {workbookInventory} from "./scripts/workbook-inventory-plugin";
 import vinext from "vinext";
 import { defineConfig } from "vite";
 import hostingConfig from "./.openai/hosting.json";
 import { sites } from "./build/sites-vite-plugin";
+import { tipstersPilot } from "./scripts/tipsters-pilot-plugin";
+import { tipstersConnectors } from "./scripts/tipsters-connectors-plugin";
+import { publicTipsters } from "./scripts/public-tipsters-plugin";
+import { tipstersRecurring } from "./scripts/tipsters-recurring-plugin";
 
 const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
   "00000000-0000-4000-8000-000000000000";
@@ -48,6 +54,12 @@ export default defineConfig(async () => {
       ? { watch: { useFsEvents: false, usePolling: true } }
       : undefined,
     plugins: [
+      tipstersPilot(),
+      tipstersConnectors(),
+      tipstersRecurring(),
+      publicTipsters(),
+      tipsterCandidates(),
+      workbookInventory(),
       vinext(),
       sites(),
       cloudflare({

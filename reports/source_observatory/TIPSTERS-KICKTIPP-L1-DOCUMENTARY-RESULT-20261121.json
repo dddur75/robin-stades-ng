@@ -1,0 +1,65 @@
+{
+  "generatedAt": "2026-11-21T01:00:38.430299+00:00",
+  "schemaVersion": "robin-contest-documentary-result-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.KICKTIPP.L1.DOCUMENTARY.RESULT.20261121",
+  "missionId": "ROBIN-KICKTIPP-L1-DOCUMENTARY-E1-20261121",
+  "status": "EXACT_CONTEST_PUBLIC_PREMATCH_WINDOW_UNAVAILABLE_UNDER_CURRENT_RULE",
+  "requests": 3,
+  "HTTP200": 3,
+  "activeMilliseconds": 4938,
+  "qualificationUnits": 305,
+  "responses": [
+    {
+      "bytes": 249,
+      "contentType": "text/plain;charset=utf-8",
+      "observedAt": "2026-11-21T00:58:26.067115+00:00",
+      "responseSha256": "86c4d87673e7cf3df08ffa578991b0525af8cdbc39477052ab429456246ea47a",
+      "role": "robots",
+      "status": 200,
+      "url": "https://www.kicktipp.fr/robots.txt"
+    },
+    {
+      "bytes": 10015,
+      "contentType": "text/html;charset=utf-8",
+      "observedAt": "2026-11-21T00:58:28.357378+00:00",
+      "responseSha256": "6dbe755b259fd5bef8d7d215791db0e2ca9cf3232d48be6f87dfea7b85e48a90",
+      "role": "terms",
+      "status": 200,
+      "url": "https://www.kicktipp.fr/info/service/conditions-utilisation"
+    },
+    {
+      "bytes": 11100,
+      "contentType": "text/html;charset=utf-8",
+      "observedAt": "2026-11-21T00:58:30.626391+00:00",
+      "responseSha256": "8ccedaca34da894747b11608eb88ecb920d275009ef2d4fcb33d9df7045fb9bb",
+      "role": "rules",
+      "status": 200,
+      "url": "https://www.kicktipp.fr/pronostics-ligue1/regles"
+    }
+  ],
+  "interpretation": {
+    "contest": "pronostics-ligue1",
+    "visibility": "After prediction deadline",
+    "deadlineMinutesBeforeEachCorrespondingEvent": 0,
+    "firstMatchOfRoundUnlock": false,
+    "strictlyPrematchPublicWindowEstablished": false
+  },
+  "workbookHistoricalProfileRoutes": 40,
+  "matrixRead": false,
+  "newAdmittedChoices": 0,
+  "newTasks": 0,
+  "rawHtmlStored": false,
+  "resultSha256": "ab2b39c612a45368eed57dd8f2ab3f83b5db87be3dedea5433d24eebe139b4f0",
+  "journalSha256": "197cb4a1a78d94252d66062a42305eba00960791908d313ae07029da69dae6e3",
+  "journalHead": "0fbdca0d983d89eb0533aa6d1ed1bac4df02fb0f2433232c2f33f57661e19162",
+  "limitations": [
+    "This conclusion applies only to this exact contest and observed current rules,not allKicktipp.",
+    "Preserve40historical identities; no need for account,purchase or absence of predictions inferred.",
+    "No matrix GET or retrospective choice admission necessary or granted."
+  ],
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

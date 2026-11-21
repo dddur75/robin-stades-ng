@@ -1,0 +1,39 @@
+{
+  "generatedAt": "2026-11-20T22:07:18.571962+00:00",
+  "schemaVersion": "robin-roster42-recurrence-authority-v1",
+  "claimId": "GOV.SOURCE_OBSERVATORY.OLBG.ROSTER42.RECURRENCE.20261120",
+  "missionId": "ROBIN-OLBG-ROSTER42-E2V2-20261120",
+  "status": "ONE_CANARY_ONLY_FUTURE_EFFECTS_CONDITIONAL_ON_INDEPENDENT_RECIPE",
+  "planSha256": "762d5f2662768e0db3909f66fa35ec2f882ba86e5b77c0cddf6f2d9439addf5e",
+  "manifestSha256": "9e943a20b3d6ae26208f4a0db5dbedc7e4660fadb1f97b20d466c68dd4a8a02e",
+  "canaryGETMax": 4,
+  "canaryAuthors": [
+    13000,
+    229856,
+    669101
+  ],
+  "totalEnvelopeGETMax": 133,
+  "cumulativeActiveSecondsMax": 600,
+  "eligibleAuthors": 42,
+  "alreadyAcceptedFutureChoices": 208,
+  "scheduledUTC": [
+    "2026-11-20T23:05:00Z",
+    "2026-11-21T05:05:00Z",
+    "2026-11-21T11:05:00Z"
+  ],
+  "expiresAt": "2026-11-21T11:15:00Z",
+  "taskRegistrationAuthorized": false,
+  "futureSlotsAuthorizedNow": false,
+  "requiredCanaryAcceptanceKeys": [
+    "C0",
+    "C1",
+    "C2",
+    "C4"
+  ],
+  "oldBudgetsReset": 0,
+  "oldTasksModified": 0,
+  "sourceAPI": 0,
+  "purchases": 0,
+  "rawBodiesStored": false,
+  "sourceAnalysesStored": false
+}

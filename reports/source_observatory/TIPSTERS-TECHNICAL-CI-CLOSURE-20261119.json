@@ -1,0 +1,233 @@
+{
+  "schemaVersion": "robin-tipsters-technical-ci-closure-v1",
+  "generatedAt": "2026-11-19T20:50:51.904246+00:00",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TECHNICAL.CI.CLOSURE.20261119",
+  "status": "CI_SUCCESS_LOCAL_E2_ACCEPTED_GLOBAL_PARTIAL",
+  "functionalHead": "343d89fd9fe702cc534dca80d352be00930e1c7e",
+  "ci": {
+    "head": "343d89fd9fe702cc534dca80d352be00930e1c7e",
+    "runId": 44607438965,
+    "runNumber": 240,
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/44607438965",
+    "independentC1Confirmed": true,
+    "jobs": [
+      {
+        "id": 135854792246,
+        "name": "Bounded live canary - Ubuntu",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135854792570,
+        "name": "Residual Fault Matrix",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135854792612,
+        "name": "End-to-End Live Path Replay",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135854792746,
+        "name": "Bounded live canary - Windows",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135854792920,
+        "name": "Historical Deep — contrat cache-only",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135854792933,
+        "name": "Exact Workflow Entrypoint",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135854792954,
+        "name": "Historical Authority Workflows Disabled",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135854793156,
+        "name": "Chronos PostgreSQL profiles / Chronos source and activation",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135854793456,
+        "name": "Chronos PostgreSQL profiles / tests (superuser)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135854793459,
+        "name": "Jalon 10 - entrees de preuve gelees",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135854793468,
+        "name": "Chronos PostgreSQL profiles / tests (non_superuser_createrole)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135854793636,
+        "name": "Chronos PostgreSQL profiles / Chronos static contracts",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135856237346,
+        "name": "Chronos PostgreSQL profiles / Chronos provider-free Cockpit",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135858717653,
+        "name": "Robin Experience — preuves visuelles",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135858717916,
+        "name": "Jalon 10 - trois temoins R3 bornes",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135858717946,
+        "name": "Quality and domain tests",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135872343938,
+        "name": "tests",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "verifiedTestSummaries": {
+      "python": {
+        "passed": 5039,
+        "skipped": 41,
+        "xfailed": 1,
+        "failed": 0,
+        "seconds": 1153.55,
+        "unapprovedNetworkAttempts": 0
+      },
+      "cockpitModel": {
+        "passed": 103,
+        "total": 103
+      },
+      "node": {
+        "passed": 32,
+        "skipped": 4,
+        "total": 36,
+        "failed": 0
+      },
+      "visual": {
+        "passed": 83,
+        "skipped": 2,
+        "failed": 0
+      },
+      "ubuntu": {
+        "passed": 1043,
+        "skipped": 23
+      },
+      "windows": {
+        "passed": 1031
+      }
+    }
+  },
+  "currentLocalReadback": {
+    "distinctPrematchChoices": 60,
+    "pseudonyms": 13,
+    "catalogueRecords": 317,
+    "personallyQualified": 5,
+    "enabled": 5,
+    "olbgCampaign": {
+      "state": "collecting",
+      "successfulSlots": 1,
+      "requests": 3,
+      "requestsMax": 36,
+      "slots": 12,
+      "startsAt": "2026-11-19T18:48:00+00:00",
+      "expiresAt": "2026-11-21T07:00:00+00:00"
+    },
+    "sroCampaign": {
+      "state": "collecting",
+      "startsAt": "2026-11-19T15:50:00+00:00",
+      "expiresAt": "2026-11-21T07:00:00+00:00",
+      "slots": 12,
+      "successfulSlots": 1,
+      "requests": 6,
+      "requestsMax": 39,
+      "priorRequests": 3,
+      "currentRequests": 3,
+      "currentRequestsMax": 36
+    },
+    "native": {
+      "sro": {
+        "verifiedAt": "2026-11-19T20:50:51.2677842+00:00",
+        "state": "Ready",
+        "nextRunTime": "2026-11-20T08:00:00.0000000+01:00",
+        "lastResult": 0,
+        "enabled": true
+      },
+      "lastResult": 267011,
+      "verifiedAt": "2026-11-19T20:50:50.6317773+00:00",
+      "enabled": true,
+      "state": "Ready",
+      "olbg": {
+        "verifiedAt": "2026-11-19T20:50:51.7982223+00:00",
+        "state": "Ready",
+        "nextRunTime": "2026-11-20T08:00:00.0000000+01:00",
+        "lastResult": 0,
+        "enabled": true
+      },
+      "nextRunTime": "2026-11-20T08:00:00.0000000+01:00"
+    }
+  },
+  "budgets": {
+    "qualificationGET": 90,
+    "qualificationMax": 134,
+    "olbgGET": 3,
+    "olbgMax": 36,
+    "publicIndexQueries": 2,
+    "publicIndexSourceGET": 0
+  },
+  "scope": "PersonalnoncommercialA9only;otherprofiles/blockedplatforms/futureslotsnotcertified",
+  "sourceGETIncrement": 0,
+  "newScaleAuthorization": false,
+  "merged": false,
+  "postHeadClosure": "Thisnewlocalmetadataartifactandappend-onlyCouncilrecordareoutsidepublishedCIHEAD;no functionalcodechangeoradditionalcommit",
+  "evidence": {
+    "E1": "bf52449920c226132588333bc65f51c0547a024f28de5384116503a0dffc3c25",
+    "E2": "ffbda3556b2a6e2c54828db707d0c418fdf2f8f2987c9477d9657a62c016275a",
+    "portableReport": "326c8883ba1e81523dd7aae57ea44387dffa78cd91eb93e91881cf290358b4be"
+  },
+  "reviewKeys": {
+    "ci": [
+      "C0",
+      "C1"
+    ],
+    "sourceAdmission": [
+      "C1",
+      "C4"
+    ],
+    "engineering": [
+      "C2",
+      "C4"
+    ]
+  }
+}

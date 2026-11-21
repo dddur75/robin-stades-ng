@@ -1,0 +1,24 @@
+{
+  "generatedAt": "2026-11-20T23:18:04.459130+00:00",
+  "schemaVersion": "robin-documentary-result-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.CONTEST.DOCUMENTARY.PARTIAL.20261121",
+  "missionId": "ROBIN-CONTEST-DOCUMENTARY-E1V3-20261121",
+  "status": "PARTIAL_ROBOTS_REDIRECT_NOT_FOLLOWED",
+  "requests": 1,
+  "source": "Pronosoft robots",
+  "httpStatus": 301,
+  "activeMilliseconds": 812,
+  "termsRead": 0,
+  "profilesRead": 0,
+  "PronoContestAttempted": false,
+  "destinationKnown": false,
+  "journalSha256": "36528c0726c73d42eb73592dda4bfc20ed6db656af119b05b3d5fb4e29d430b7",
+  "resultSha256": "e622449b357b9583d8b1d02fd39190b355ad42e906707dd55ea3ebba74ea03cd",
+  "qualificationUnits": 289,
+  "sourceCompatibility": "UNESTABLISHED_NOT_A_CGU_REFUSAL",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

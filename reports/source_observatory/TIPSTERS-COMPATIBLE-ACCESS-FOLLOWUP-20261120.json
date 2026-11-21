@@ -1,0 +1,185 @@
+{
+  "schemaVersion": "robin-personal-access-v1",
+  "scope": "LOCAL_PERSONAL_NONCOMMERCIAL_NO_REDISTRIBUTION",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COMPATIBLE.FOLLOWUP.20261120",
+  "generatedAt": "2026-11-20T22:36:42.301028+00:00",
+  "status": "PARTIAL_SOURCE_SPECIFIC_DIAGNOSTICS_CLOSED_NO_PERSONAL_ADMISSIONS",
+  "platforms": [
+    {
+      "platform": "Coteur",
+      "label": "Lecture passive effectuée ; preuve personnelle non établie",
+      "reason": "Le propriétaire attendu est reconnu dans le DOM du profil échantillon. Sa table à une colonne n’expose aucun en-tête factuel admis. Ce diagnostic ne prouve pas l’absence de choix sur les autres profils.",
+      "requiredAccess": "Une vue ou un export structuré reliant le choix à son auteur, à la rencontre et à une observation avant match.",
+      "ownerAction": "Aucun achat ou compte indispensable démontré. Cette piste passive est close après deux approches non concluantes ; pas de troisième lecture identique.",
+      "status": "personal_proof_unestablished_technical_line_closed",
+      "observedAt": "2026-11-20T20:38:19.996293+00:00",
+      "evidenceRefs": [
+        "ENG.SOURCE_OBSERVATORY.COMPATIBLE.QUALIFICATION.20261120",
+        "https://www.coteur.com/tipster/doume3112",
+        "ENG.SOURCE_OBSERVATORY.PASSIVE.HYDRATION.RESULTS.20261120"
+      ]
+    },
+    {
+      "platform": "NotBetting",
+      "label": "Hydratation lue ; attribution personnelle non établie",
+      "reason": "Le transport passif a décodé 93 fragments Flight et 100 documents JSON. La valeur du propriétaire apparaît mais la marche est tronquée ; aucune attribution de choix personnel n’est établie. Aucun manque de contenu ou besoin d’abonnement n’en est déduit.",
+      "requiredAccess": "Des faits attribuables à l’auteur et à une rencontre datée, accessibles par une route permise ; /api/ reste refusé par robots.",
+      "ownerAction": "Aucun achat, licence commerciale ou compte imposé par défaut. La piste passive actuelle reste close sans relance identique.",
+      "status": "decoded_but_truncated_personal_proof_unestablished",
+      "observedAt": "2026-11-20T20:38:22.716506+00:00",
+      "evidenceRefs": [
+        "ENG.SOURCE_OBSERVATORY.COMPATIBLE.QUALIFICATION.20261120",
+        "https://notbetting.com/en/tipster/Dexter",
+        "https://notbetting.com/terms",
+        "ENG.SOURCE_OBSERVATORY.PASSIVE.HYDRATION.RESULTS.20261120"
+      ]
+    },
+    {
+      "platform": "Telegram",
+      "label": "87 références inventoriées ; collecte automatique à qualifier",
+      "reason": "Le classeur contient 85 liens de prévisualisation pour 84 canaux distincts et deux invitations, ainsi que 16 permaliens de messages dans les champs historiques. Aucun message n’a été collecté par ces diagnostics. Les documents officiels distinguent consultation personnelle et extraction pour des usages IA.",
+      "requiredAccess": "Un mode de collecte compatible avec l’usage et les contenus ; validité et accès des deux invitations restent à établir. Les liens historiques ne prouvent ni auteur personnel ni publication avant match.",
+      "ownerAction": "Aucun achat, compte ou jeton indispensable démontré pour toutes les références. Aucun contenu Telegram n’alimente un modèle dans cette qualification.",
+      "status": "ordinary_personal_automation_unestablished_ai_restricted",
+      "observedAt": "2026-11-20T18:37:15.292687+00:00",
+      "evidenceRefs": [
+        "ENG.SOURCE_OBSERVATORY.COMPATIBLE.QUALIFICATION.20261120",
+        "https://telegram.org/tos/content-licensing",
+        "https://telegram.org/faq_channels",
+        "DATA.SOURCE_OBSERVATORY.WORKBOOK.COMPLETE.20261120"
+      ],
+      "documentaryReferenceCount": 87,
+      "historicalMessageLocators": 16,
+      "messageReads": 0
+    },
+    {
+      "platform": "Kicktipp",
+      "label": "Concours qualifiés séparément ; jointure personnelle encore absente",
+      "reason": "Trois concours contrôlés masquent les choix jusqu’au coup d’envoi. The Predictor offre une visibilité potentielle plus tôt, mais la nouvelle lecture n’a pas établi la jointure native entre rencontre, colonne, auteur et choix.",
+      "requiredAccess": "Une preuve de choix visible dans la fenêtre propre au concours, reliée au calendrier officiel.",
+      "ownerAction": "Aucun masquage ni besoin de compte généralisé à tous les concours. Une cellule masquée ou un résultat ne vaut pas un pronostic.",
+      "status": "contest_specific_partial_native_join_unestablished",
+      "observedAt": "2026-11-20T22:33:33.752083+00:00",
+      "evidenceRefs": [
+        "ENG.SOURCE_OBSERVATORY.COMPATIBLE.QUALIFICATION.20261120",
+        "ENG.SOURCE_OBSERVATORY.KICKTIPP.NATIVE.LINK.RESULTS.20261120"
+      ],
+      "contestAssessments": {
+        "pronostics-ligue1": {
+          "platform": "Kicktipp",
+          "label": "Concours Ligue1 : choix masqués avant match",
+          "reason": "Le règlement de ce concours contrôlé rend les choix visibles après la clôture, fixée au coup d’envoi. Ce constat ne qualifie aucun autre concours.",
+          "requiredAccess": "Pour ce concours masqué, un export prospectif autorisé donnant les choix et leur horodatage avant match.",
+          "ownerAction": "Une connexion de participant ne prouve pas l’accès aux choix masqués ; aucun contournement ni résultat rétrospectif présenté comme choix avant match.",
+          "status": "pre_kickoff_visibility_blocked",
+          "observedAt": "2026-11-20T16:31:25.656623+00:00",
+          "evidenceRefs": [
+            "ENG.SOURCE_OBSERVATORY.PERSONAL.ACCESS.20261120",
+            "ENG.SOURCE_OBSERVATORY.PUBLIC.TECHNICAL.ACCESS.20261119"
+          ]
+        },
+        "bundesliga-tippspiel": {
+          "platform": "Kicktipp",
+          "label": "Bundesliga : choix masqués jusqu’au coup d’envoi",
+          "reason": "Les choix deviennent visibles après la clôture, fixée à zéro minute avant l’événement pour ce concours contrôlé.",
+          "requiredAccess": "Des choix observables avant match ; la règle publique actuelle ne fournit pas cette fenêtre.",
+          "ownerAction": "Aucun contournement ni résultat rétrospectif présenté comme une observation avant match. Cette conclusion vaut seulement pour ce concours.",
+          "status": "pre_kickoff_visibility_blocked",
+          "observedAt": "2026-11-20T18:24:55.004769+00:00",
+          "evidenceRefs": [
+            "ENG.SOURCE_OBSERVATORY.COMPATIBLE.QUALIFICATION.20261120",
+            "https://www.kicktipp.de/bundesliga-tippspiel/spielregeln"
+          ]
+        },
+        "ligue-mm": {
+          "platform": "Kicktipp",
+          "label": "ligue-mm : choix masqués jusqu’au coup d’envoi",
+          "reason": "Les choix deviennent visibles après la clôture, fixée à zéro minute avant l’événement pour ce concours contrôlé.",
+          "requiredAccess": "Des choix observables avant match ; la règle publique actuelle ne fournit pas cette fenêtre.",
+          "ownerAction": "Aucun contournement ni résultat rétrospectif présenté comme une observation avant match. Cette conclusion vaut seulement pour ce concours.",
+          "status": "pre_kickoff_visibility_blocked",
+          "observedAt": "2026-11-20T18:25:18.019350+00:00",
+          "evidenceRefs": [
+            "ENG.SOURCE_OBSERVATORY.COMPATIBLE.QUALIFICATION.20261120",
+            "https://www.kicktipp.fr/ligue-mm/regles"
+          ]
+        },
+        "the-predictor": {
+          "platform": "Kicktipp",
+          "label": "The Predictor : fenêtre possible, preuve personnelle non établie",
+          "reason": "Le tableau répond200 et projette cinq déclarations civiles ; le lecteur n’a reconnu aucune liaison native jeu-colonne-auteur. Deux déclarations sans résultat ne prouvent ni match futur ni observation avant match.",
+          "requiredAccess": "Une jointure fournie par la source ou un export prospectif documenté reliant auteur, choix et événement, puis un coup d’envoi canonique indépendant.",
+          "ownerAction": "Aucun compte ou achat nécessaire démontré. Cette approche reste close ; aucun pronostic n’est admis ni collecte activée.",
+          "status": "native_join_and_prematch_proof_unestablished",
+          "observedAt": "2026-11-20T22:33:33.752083+00:00",
+          "evidenceRefs": [
+            "ENG.SOURCE_OBSERVATORY.COMPATIBLE.QUALIFICATION.20261120",
+            "https://www.kicktipp.fr/the-predictor/regles",
+            "https://www.kicktipp.fr/the-predictor/tableau-pronostics"
+          ]
+        }
+      }
+    }
+  ],
+  "metrics": {
+    "newDiagnosticGET": 6,
+    "qualificationLineageUnits": 288,
+    "diagnosticAdmissions": 0,
+    "recurringBudgetsSeparateAndUnchanged": true
+  },
+  "evidence": [
+    {
+      "namespace": "A9_ROBIN_COMPATIBLE_SOURCE_READERS",
+      "path": "cockpit/.ci/compatible-source-readers-20261120/events.jsonl",
+      "sha256": "3d0c313ccd4a69e0f6e835eae85835655d84b24b1e3b6cb25a7bfdae977aa0e3"
+    },
+    {
+      "namespace": "A9_ROBIN_COMPATIBLE_SOURCE_READERS",
+      "path": "cockpit/.ci/compatible-source-readers-20261120/coteur-result.json",
+      "sha256": "03f7dd4dc37e177ebacb18a961611789dfbd7a244a263b4d6d2cc8d7c99f3e74"
+    },
+    {
+      "namespace": "A9_ROBIN_COMPATIBLE_SOURCE_READERS",
+      "path": "cockpit/.ci/compatible-source-readers-20261120/notbetting-result.json",
+      "sha256": "855cb8105e8dedf4f8b81f72ad6bb239d6701faca1f31d5941deb27b1442bd7d"
+    },
+    {
+      "namespace": "A9_ROBIN_COMPATIBLE_SOURCE_READERS",
+      "path": "cockpit/.ci/compatible-source-readers-20261120/kicktipp-de-docs-result.json",
+      "sha256": "b3aa71ce77e62423ea84d81dd162027672075decebe72e6a8b9aeb33aa7412bf"
+    },
+    {
+      "namespace": "A9_ROBIN_COMPATIBLE_SOURCE_READERS",
+      "path": "cockpit/.ci/compatible-source-readers-20261120/kicktipp-fr-docs-result.json",
+      "sha256": "d1f9b1e5b78e39bce63b3ab0bf842d2639c86abb837e4ef11aee333e77db48c3"
+    },
+    {
+      "namespace": "A9_ROBIN_COMPATIBLE_SOURCE_READERS",
+      "path": "cockpit/.ci/compatible-source-readers-20261120/telegram-mozilla-docs-result.json",
+      "sha256": "58ec12471266cc1449ead9f4002a800598c24607e9d77fbd1ff82f3e47d47111"
+    },
+    {
+      "namespace": "A9_ROBIN_COMPATIBLE_SOURCE_READERS",
+      "path": "cockpit/.ci/compatible-source-readers-20261120/predictor-overview-result.json",
+      "sha256": "8fdd06b7db3cc12ff2fb377d47553b75f83612707632bd0b6e3292a005eaa09e"
+    },
+    {
+      "namespace": "CURRENT_PUBLICATION_PRIVATE",
+      "path": "cockpit/.ci/kicktipp-linked-e1-20261120/result.json",
+      "sha256": "5135c2ddcd94badfde3b865f798d7cde21a1b70d2726b2b4987c23cbaf323df6"
+    },
+    {
+      "namespace": "CURRENT_PUBLICATION_PRIVATE",
+      "path": "cockpit/.ci/next-profile-hydration-20261120/result.json",
+      "sha256": "dd2957612d0a748908557e3e8eca1c5a432082d0bd87c1b975dc2ea7ed974e9a"
+    }
+  ],
+  "limits": [
+    "This is source-specific documentary qualification, not a licence, source grant, recurrence or admission.",
+    "Existing facts, task pins, prior assessments and immutable private source audit are preserved.",
+    "Zero new native predictions admitted in these diagnostics; existing collection totals retain their own timestamped proof.",
+    "Global compatible-source closure remains PARTIAL; unresolved catalogue references are not classified as incompatible by default."
+  ],
+  "supersededUnpublishedDraftSha256": "737242a387e20d2d770402bf68dea4ecb709b1fe6439ff6766da4dc0d3f60efe",
+  "previousAssessmentClaimId": "ENG.SOURCE_OBSERVATORY.COMPATIBLE.QUALIFICATION.20261120"
+}

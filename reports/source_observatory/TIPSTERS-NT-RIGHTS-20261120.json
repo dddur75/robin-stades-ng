@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "robin-nt-current-rights-v1",
+  "generatedAt": "2026-11-20T06:55:56.715927+00:00",
+  "status": "TELEGRAM_BLOCKED_EXTERNAL_ACTION_NOTBETTING_LEGAL_INCOMPLETE",
+  "qualificationGET": 100,
+  "ceiling": 134,
+  "personalSourceContentGET": 0,
+  "telegramChannelsVisited": 0,
+  "telegram": {
+    "decision": "BLOCKED_EXTERNAL_ACTION",
+    "sourceUrl": "https://telegram.org/tos/content-licensing",
+    "responseSha256": "882c8a1472bc4a3cbced8228e71e1782566b08869fa6bd116f57f1288e7317a8",
+    "sourceClauses": "Two complete selected sentences observed in the corrected RAM reader, with governing headings and no truncation.",
+    "restriction": "La politique exclut les usages hors utilisation ordinaire prévue et interdit collecte ou agrégation de données pour le développement, le benchmark ou le déploiement de technologies IA/ML.",
+    "requiredAccess": "Accord exprès couvrant la collecte et cet usage, avec les droits des contenus, ou source première et voie explicitement licenciées compatibles. Un compte, token, bot ou API ne remplace pas ces droits.",
+    "scope": "All six catalogue channels remain closed at the common platform-rights gate; no individual channel or personal pick qualification claimed."
+  },
+  "notbetting": {
+    "status": "conditions_not_established_by_first_reader",
+    "requiredAccess": "Aucun besoin de compte ou abonnement démontré. Dernier examen juridique indépendant avant conclusion ; aucune permission de contenu inférée."
+  },
+  "privateReceipts": [
+    "cockpit/.ci/tipsters-notbetting-telegram-20261120/events.jsonl",
+    "cockpit/.ci/tipsters-nt-legal-corrective-20261120/events.jsonl"
+  ],
+  "bodyPolicy": "Raw publisher bodies and review text not published. Metadata and paraphrases only.",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NT.TELEGRAM.RIGHTS.20261120"
+}

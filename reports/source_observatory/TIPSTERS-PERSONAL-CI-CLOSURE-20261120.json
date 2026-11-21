@@ -1,0 +1,169 @@
+{
+  "schemaVersion": "robin-personal-source-ci-closure-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.PERSONAL.CI.CLOSURE.20261120",
+  "generatedAt": "2026-11-20T17:49:41.584175+00:00",
+  "status": "EXACT_HEAD_CI_ACCEPTED_PERSONAL_LOT_GLOBAL_COLLECTION_PARTIAL",
+  "head": "b31993379ed90a3888b9018396ee236b6e458ab3",
+  "pr": 133,
+  "draft": true,
+  "merged": false,
+  "deployed": false,
+  "ci": {
+    "runId": 44780131511,
+    "runNumber": 244,
+    "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/44780131511",
+    "status": "completed",
+    "conclusion": "success",
+    "successfulJobs": 17,
+    "jobs": [
+      {
+        "id": 136440295813,
+        "name": "Bounded live canary - Ubuntu",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136440296216,
+        "name": "Jalon 10 - entrees de preuve gelees",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136440296239,
+        "name": "Historical Authority Workflows Disabled",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136440296312,
+        "name": "Residual Fault Matrix",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136440296356,
+        "name": "End-to-End Live Path Replay",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136440296382,
+        "name": "Bounded live canary - Windows",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136440296412,
+        "name": "Chronos PostgreSQL profiles / Chronos source and activation",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136440296451,
+        "name": "Chronos PostgreSQL profiles / Chronos static contracts",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136440296475,
+        "name": "Chronos PostgreSQL profiles / tests (superuser)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136440296477,
+        "name": "Chronos PostgreSQL profiles / tests (non_superuser_createrole)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136440296498,
+        "name": "Historical Deep — contrat cache-only",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136440296533,
+        "name": "Exact Workflow Entrypoint",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136441675662,
+        "name": "Chronos PostgreSQL profiles / Chronos provider-free Cockpit",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136443141911,
+        "name": "Robin Experience — preuves visuelles",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136443141946,
+        "name": "Jalon 10 - trois temoins R3 bornes",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136443141977,
+        "name": "Quality and domain tests",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136463501108,
+        "name": "tests",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "acceptedLocalProofs": [
+    "ENG.SOURCE_OBSERVATORY.PERSONAL.ACCESS.20261120",
+    "DATA.SOURCE_OBSERVATORY.PERSONAL.PREMATCH.20261120",
+    "ENG.SOURCE_OBSERVATORY.PERSONAL.RECETTE.20261120",
+    "GOV.SOURCE_OBSERVATORY.PERSONAL.AUDIT.PROJECTION.20261120"
+  ],
+  "workbookSha256": "38978efe53f64ab725fea57025968bacfc4acaee028effa667e4fa6695cfd747",
+  "localCollectionSnapshot": "The already accepted actual17:53Paris readback142/27 remains its own timestamped source proof; CI does not claim a later source count.",
+  "evidence": [
+    {
+      "namespace": "PRIVATE_A9_CI_READBACK",
+      "path": "cockpit/.ci/tipsters-personal-20261120/ci244-jobs-terminal.json",
+      "sha256": "5acc7ca0cfd2314fab1ea17720b4a4415fed82500682dbe847d09c9639b69297"
+    },
+    {
+      "namespace": "PRIVATE_A9_CI_READBACK",
+      "path": "cockpit/.ci/tipsters-personal-20261120/ci244-runs-terminal.json",
+      "sha256": "7d6df9d2a19bd39c4528e61808406f09c3f5f15332d6a17cb12fd14813a580bb"
+    },
+    {
+      "namespace": "PRIVATE_A9_CI_READBACK",
+      "path": "cockpit/.ci/tipsters-personal-20261120/ci244-pr-terminal.json",
+      "sha256": "e5ad4544876ff2ad9fc193c6bd38601c0d59653362b739f0f355809d3f579ce2"
+    }
+  ],
+  "runtimeAuditUnchanged": {
+    "sourceLedgerRecords": 486,
+    "sourceLedgerSha256": "806b3c26a53b12444b04d4fc001602756f1d3e744620cc23a2a308662f2a61fd",
+    "sourceGraphSha256": "3f84dde2b655ec103bcd89422be5c49f0fe0b55a3626a4e89fae69c029d555d5",
+    "privateNamespace": "A9_ROBIN_PERSONAL_RUNTIME"
+  },
+  "effects": {
+    "sourceGET": 0,
+    "newSourceAuthority": false,
+    "newTasks": 0,
+    "merge": false,
+    "deployment": false,
+    "metadataOnlyPush": false
+  },
+  "limits": [
+    "This is local uncommitted closure metadata at creation, not a new source grant.",
+    "No metadata-only push restarts CI.",
+    "Operational private ledger/graph stay intact; public audit remains a separate namespace.",
+    "Global source collection remainsPARTIAL; Coteur/NotBetting technical reader issues and other source-specific evidence limitations are not erased by green CI.",
+    "Detailed workbook, index and choices remain private."
+  ]
+}

@@ -1,0 +1,97 @@
+"""Read documentary candidates without contacting their sources."""
+
+import argparse
+import json
+from pathlib import Path
+
+from robin.source_observatory.candidate_registry import load_registry
+from robin.source_observatory.compatible_access import add_compatible_access
+from robin.source_observatory.expansion_view import add_candidate_expansion
+from robin.source_observatory.family_collection import add_family_candidates
+from robin.source_observatory.followup_access import (
+    APPROVED_NT_FOLLOWUP_SHA256,
+    apply_followup_access,
+)
+from robin.source_observatory.legacy_bridge import read_legacy_snapshot
+from robin.source_observatory.olbg_store import read_olbg_companion
+from robin.source_observatory.personal_access import add_personal_candidates
+from robin.source_observatory.profile_collection import add_profile_candidates
+from robin.source_observatory.qualification_view import (
+    APPROVED_ASSESSMENT_SHA,
+    apply_qualification,
+    read_sro_companion,
+)
+from robin.source_observatory.roster_collection import add_roster_candidates
+from robin.source_observatory.roster_recurring_view import add_group_candidates
+from robin.source_observatory.technical_access import (
+    APPROVED_TECHNICAL_SHA256,
+    apply_technical_access,
+)
+
+p = argparse.ArgumentParser()
+p.add_argument("--directory", type=Path, required=True)
+a = p.parse_args()
+
+
+def read_local_base(directory: Path) -> dict:
+    base = load_registry(directory)
+    root = Path(__file__).resolve().parents[1] / ".ci"
+    try:
+        _sro_public, personal, operational = read_sro_companion(
+            dict(picks=[], claimId="DOCUMENTARY_ONLY"), root / "tipsters-sro-recurring-20261119-v4"
+        )
+        combined, _olbg_personal, olbg_operational = read_olbg_companion(
+            personal or dict(picks=[], claimId="DOCUMENTARY_ONLY"),
+            root / "tipsters-olbg-e1-20261119",
+            root / "tipsters-olbg-recurring-20261119-v2",
+        )
+        base = apply_qualification(
+            base,
+            root / "tipsters-qualification317-20261119",
+            expected_sha256=APPROVED_ASSESSMENT_SHA,
+            public_data=combined,
+            operational=operational,
+            operational_by_source={"SRC_039": operational, "SRC_014": olbg_operational},
+        )
+        try:
+            base = apply_technical_access(
+                base,
+                Path(__file__).resolve().parents[2]
+                / "reports/source_observatory/TIPSTERS-TECHNICAL-ACCESS-20261119.json",
+                APPROVED_TECHNICAL_SHA256,
+            )
+            try:
+                base = apply_followup_access(
+                    base,
+                    Path(__file__).resolve().parents[2]
+                    / "reports/source_observatory/TIPSTERS-NT-QUALIFICATION-20261120.json",
+                    APPROVED_NT_FOLLOWUP_SHA256,
+                )
+            except (OSError, ValueError, KeyError, TypeError):
+                base["qualification"]["followupOverlayState"] = "unavailable"
+        except (OSError, ValueError, KeyError, TypeError):
+            base["qualification"]["technicalOverlayState"] = "unavailable"
+            base["qualification"]["followupOverlayState"] = "unavailable"
+    except (ValueError, OSError, KeyError, TypeError):
+        base["qualification"] = dict(status="unavailable")
+    base = add_candidate_expansion(base, Path(__file__).resolve().parents[2])
+    base = add_personal_candidates(base, Path(__file__).resolve().parents[2])
+    return base
+
+
+try:
+    base = read_legacy_snapshot("read-tipster-candidates.py", ["--directory", str(a.directory)])
+    if base is None:
+        base = read_local_base(a.directory)
+    base = add_compatible_access(base, Path(__file__).resolve().parents[2])
+    base = add_family_candidates(base, Path(__file__).resolve().parents[2])
+    base = add_profile_candidates(base, Path(__file__).resolve().parents[2])
+    base = add_roster_candidates(base, Path(__file__).resolve().parents[2])
+    base = add_group_candidates(base, Path(__file__).resolve().parents[2])
+    print(json.dumps(base, ensure_ascii=False))
+except (ValueError, OSError, KeyError, TypeError):
+    print(
+        json.dumps(
+            {"status": "unavailable", "message": "Registre des candidats absent ou invalide."}
+        )
+    )

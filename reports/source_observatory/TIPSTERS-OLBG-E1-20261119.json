@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "robin-olbg-personal-e1-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.NATIVE.PICKS.20261119",
+  "status": "VERIFIED_E1_LOCAL_ONLY",
+  "scope": "Personalnoncommerciallocal;notcommerciallicense,normalizedmarket,publishedtime,civilidentityorROIproof",
+  "generatedAt": "2026-11-19T18:37:38.380879+00:00",
+  "observationSha256": "bf52449920c226132588333bc65f51c0547a024f28de5384116503a0dffc3c25",
+  "structuralProjectionSha256": "db817b6558e293df3917462b108dd3d499f9b0355db28b50516c24899b91a4ad",
+  "journalSha256": "72fe484b35e336cb78a0c57a74b64c84979a9792fc342aa16cd77578eb872f6a",
+  "personalArrayPath": "current-author.tipsByDate[].events[].tips[]",
+  "sourceUrl": "https://www.olbg.com/tipsters/tips/648433",
+  "author": "profile648433",
+  "authorId": "olbg:648433",
+  "observedAt": "2026-11-19T18:34:52.326191+00:00",
+  "distinctChoices": 2,
+  "provisionalHistoricalBundle": {
+    "sha256": "bf6d7a4b4bed8fcecea0165c70e3a0c86afdcb8f684c3ec641c0f14af4bea507",
+    "state": "PARTIAL_ATTRIBUTION_EXCLUDED_FROM_COUNTERS_AND_FIRSTSEEN"
+  },
+  "qualificationGET": 90,
+  "technicalPhaseOLBGGET": 10,
+  "allPhasesOLBGGET": 18,
+  "reviewKeys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "observationMetadata": [
+    {
+      "fixtureId": "j11-nice-psg",
+      "kickoff": "2026-11-21T16:15:00Z",
+      "observedAt": "2026-11-19T18:34:52.326191+00:00",
+      "firstSeenAt": "2026-11-19T18:34:52.326191+00:00",
+      "market": "source_native",
+      "publishedAt": null,
+      "sourceEventTimezone": null,
+      "performanceEvaluationAllowed": false,
+      "responseSha256": "73d5af87978b5489982bc5c03a14848ab298c849b3bd45d2757ae0a774a815e1",
+      "parserSha256": "6b274c26a184f6acde6f1c839f1e1309e75e27c55089055ca41e572887a1c959",
+      "calendarSha256": "03283a47f03c96ac87d84f42ed226f91854a33f02f2c586a92a0094fe70b0fbc"
+    },
+    {
+      "fixtureId": "j11-monaco-auxerre",
+      "kickoff": "2026-11-21T19:45:00Z",
+      "observedAt": "2026-11-19T18:34:52.326191+00:00",
+      "firstSeenAt": "2026-11-19T18:34:52.326191+00:00",
+      "market": "source_native",
+      "publishedAt": null,
+      "sourceEventTimezone": null,
+      "performanceEvaluationAllowed": false,
+      "responseSha256": "73d5af87978b5489982bc5c03a14848ab298c849b3bd45d2757ae0a774a815e1",
+      "parserSha256": "6b274c26a184f6acde6f1c839f1e1309e75e27c55089055ca41e572887a1c959",
+      "calendarSha256": "03283a47f03c96ac87d84f42ed226f91854a33f02f2c586a92a0094fe70b0fbc"
+    }
+  ],
+  "publicationBoundary": "Publicmetadataonly;personalchoicesandnormalizedsourcefactsremainlocalinuntracked.ci;no providerHTML/JS/JSONpayloadpublished"
+}

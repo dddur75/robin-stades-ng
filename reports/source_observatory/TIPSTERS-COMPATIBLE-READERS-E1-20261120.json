@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "robin-compatible-reader-preparation-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COMPATIBLE.READERS.E1.20261120",
+  "generatedAt": "2026-11-20T18:23:31.849941+00:00",
+  "status": "OFFLINE_DIAGNOSTIC_READY_NOT_SOURCE_ACTIVATION",
+  "missionId": "ROBIN-COMPATIBLE-SOURCE-READERS-E1V2-20261120",
+  "planSha256": "a0f4adcba6b39ad7a2e978129e2c7109ef7ef3cba2b1f91511eee658bfe109f3",
+  "manifestSha256": "dfba0b058651daba818253ccba95cda72947f0bff2a2c067d664107e3a60b443",
+  "priorMission": {
+    "ceiling": 134,
+    "closed": true,
+    "oldManifestModified": false,
+    "sourceAuthorityTransferred": false,
+    "unusedCancelled": 6,
+    "used": 128
+  },
+  "newOperationsMax": 18,
+  "plannedOperations": 13,
+  "unallocatedClosed": 5,
+  "aggregateMax": 146,
+  "tests": {
+    "profileSyntheticPassed": 12,
+    "budgetSyntheticPassed": 4,
+    "scope": "Targeted tests only; no corpus or network replay."
+  },
+  "codePins": {
+    "cockpit/.ci/compatible-source-readers-20261120/probe.py": "f634ed2e3075dc64224cb8e55a79f8761dba6e68c681f2c636e8c175670d4b40",
+    "src/robin/source_observatory/collector.py": "8cb27141974f14b78afcfed9de288127c40dcdba420c0dcfd95e0c6539215949",
+    "src/robin/source_observatory/connectors.py": "ba991ea9c1ab0ebc4bca7814d5216edc47a91ac7ea7e3ecb219270326ffe79a6",
+    "src/robin/source_observatory/profile_pages.py": "ab286cabcf2ec153b3e65df1c40519eea2aa393d197bf63736a71892abbe0249",
+    "src/robin/source_observatory/public_formats.py": "b6750a73cc21a105958df82d035d63f3bbede259ef830140b8c629d8a580cf09"
+  },
+  "reviewers": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "effects": {
+    "sourceGETsAtPreparation": 0,
+    "admissions": 0,
+    "newTasks": 0
+  },
+  "privateAuditNamespace": "A9_ROBIN_COMPATIBLE_SOURCE_READERS",
+  "previousRuntimeAuditPreserved": true,
+  "limits": [
+    "This engineering claim proves synthetic reader and boundary checks, not real source choices or compatibility.",
+    "Each fixed diagnostic group needs its own exact decision; no canal, overview, source API, JS, authentication or task is authorized.",
+    "No authority is inherited from the old personal publication audit projection. Global collection remains PARTIAL."
+  ]
+}

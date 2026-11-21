@@ -1,0 +1,143 @@
+{
+  "schemaVersion": "robin-tipsters-recurring-view-v1",
+  "generatedAt": "2026-11-20T01:39:06.509656+00:00",
+  "claimId": "ENG.SOURCE_OBSERVATORY.RECURRING.VIEW.20261120",
+  "status": "LOCAL_ACCEPTED_CI_PENDING_GLOBAL_PARTIAL",
+  "baseHead": "343d89fd9fe702cc534dca80d352be00930e1c7e",
+  "design": "Independent public campaigns and labelled historical Forecast view; no collector mutation",
+  "verifiedAt": "2026-11-20T01:37:44.909Z",
+  "actual": {
+    "distinctPicks": 60,
+    "authors": 13,
+    "dataClaimIds": [
+      "DATA.SOURCE_OBSERVATORY.PUBLIC_PICKS.20261119",
+      "DATA.SOURCE_OBSERVATORY.SRO.PICKS.20261119",
+      "DATA.SOURCE_OBSERVATORY.OLBG.NATIVE.PICKS.20261119"
+    ],
+    "campaigns": {
+      "forums": {
+        "state": "scheduled",
+        "taskName": "Robin-Tipsters-Forums-V1-20261120",
+        "startsAt": "2026-11-20T07:00:00Z",
+        "expiresAt": "2026-11-21T07:00:00Z",
+        "slots": 12,
+        "requestsMax": 72,
+        "requests": 0,
+        "successfulSlots": 0,
+        "journalHead": null,
+        "native": {
+          "enabled": true,
+          "olbg": {
+            "nextRunTime": "2026-11-20T08:00:00.0000000+01:00",
+            "enabled": true,
+            "state": "Ready",
+            "verifiedAt": "2026-11-20T01:37:29.7230017+00:00",
+            "lastResult": 0
+          },
+          "lastResult": 267011,
+          "state": "Ready",
+          "verifiedAt": "2026-11-20T01:37:28.3286495+00:00",
+          "sro": {
+            "nextRunTime": "2026-11-20T08:00:00.0000000+01:00",
+            "enabled": true,
+            "state": "Ready",
+            "verifiedAt": "2026-11-20T01:37:29.0376730+00:00",
+            "lastResult": 0
+          },
+          "nextRunTime": "2026-11-20T08:00:00.0000000+01:00"
+        }
+      },
+      "sro": {
+        "state": "collecting",
+        "startsAt": "2026-11-19T15:50:00+00:00",
+        "expiresAt": "2026-11-21T07:00:00+00:00",
+        "slots": 12,
+        "successfulSlots": 1,
+        "requests": 6,
+        "requestsMax": 39,
+        "priorRequests": 3,
+        "currentRequests": 3,
+        "currentRequestsMax": 36,
+        "native": {
+          "nextRunTime": "2026-11-20T08:00:00.0000000+01:00",
+          "enabled": true,
+          "state": "Ready",
+          "verifiedAt": "2026-11-20T01:37:29.0376730+00:00",
+          "lastResult": 0
+        }
+      },
+      "olbg": {
+        "state": "collecting",
+        "successfulSlots": 1,
+        "requests": 3,
+        "requestsMax": 36,
+        "slots": 12,
+        "startsAt": "2026-11-19T18:48:00+00:00",
+        "expiresAt": "2026-11-21T07:00:00+00:00",
+        "native": {
+          "nextRunTime": "2026-11-20T08:00:00.0000000+01:00",
+          "enabled": true,
+          "state": "Ready",
+          "verifiedAt": "2026-11-20T01:37:29.7230017+00:00",
+          "lastResult": 0
+        }
+      }
+    }
+  },
+  "semantics": [
+    "Native freshness expires after thirty seconds, including suspension/focus",
+    "Only a fresh enabled Ready task with an admissible future nextRunTime confirms scheduling",
+    "Running, ready without next run, stopped, expired and unknown remain distinct",
+    "Absent counters never become measured zero; invalid timestamps are not formatted",
+    "A failed Forecast API cannot hide public observations; public API failure preserves Forecast",
+    "A scheduled slot is not a successfully executed slot"
+  ],
+  "tests": {
+    "policyAndNative": 7,
+    "cockpitModel": 107,
+    "recurringAndPublicBrowser": 24,
+    "actualA9ReadOnly": 1,
+    "typecheck": "PASS",
+    "targetedEslint": "PASS",
+    "independentC2": "PASS_AND_HOLD"
+  },
+  "effects": {
+    "sourceHttpGets": 0,
+    "taskMutations": 0,
+    "taskLaunches": 0,
+    "apiFootball": 0,
+    "apiWrites": 0,
+    "externalBrowserHttp": "BLOCKED",
+    "blockedExternalAttempts": 4,
+    "journalHashesUnchanged": true,
+    "journalHashes": [
+      "a022ed6b0106fd20cbb859acb25c0a483824ec23f6d48bd1412a3a13918aef22",
+      "f1829e52efa4903a4e578e93095b56383d1f61d7c0fb0fcbb59b522bb8076660"
+    ],
+    "newAuthority": false,
+    "merge": false,
+    "deploy": false
+  },
+  "localReceipts": {
+    "cockpit/.ci/tipsters-recurring-view-20261120/receipt-v2/a9-readback.json": "b9206b8ba1797587d35288598ffefec316a92f7ad4600181d120219c676d7aa8",
+    "cockpit/.ci/tipsters-recurring-view-20261120/receipt-v2/recurring-desktop.png": "4eac28461acc76be3d6c60b80faa9b191136d7ad855ef9f6e2628515504f5c4c",
+    "cockpit/.ci/tipsters-recurring-view-20261120/receipt-v2/recurring-mobile.png": "dbe6316eb8093a6b37ba6550404796bc69e7d94a60bba999f517d80f53af8e58"
+  },
+  "codeHashesLF": {
+    "cockpit/app/lib/tipsters-campaign.ts": "56cdc032b5c516213255c7bb185b9b32308f6e06d8e36ac28b4cbb939bcfbf53",
+    "cockpit/app/components/expert/public-campaign-status.tsx": "95e0767bb6cfd29ee2c1d4fcccd2e9e29ff3dca86e87d409f8570128db7a3071",
+    "cockpit/app/components/expert/public-tipsters.tsx": "20daf572c1bc52289055956ea693644bf7c501538a190a121d907a6e849e7b81",
+    "cockpit/app/components/expert/tipsters-pilot.tsx": "95dd5b1bcc1b4249f2cb9026245bde75e70b587f7f92ab8b4ccb8b312aff87c9",
+    "cockpit/app/components/expert/tipsters-recurring-control.tsx": "fde889db7e085afe260ce7247abba6c120fc766cd15977ae2eab237da9f5dd44",
+    "cockpit/app/expert/collecte-recurrente/page.tsx": "3ea61845f531d6f427a39700706f385be7624df3be20e197def46e1ebfd32387",
+    "cockpit/tests/tipsters-campaign.test.ts": "4143415bb7997d42f0a3d366d00aded45d318473363b3c9836c4771a9b32c696",
+    "cockpit/tests/tipsters-recurring.spec.ts": "07b88afe8b1db7ffc1fbb5ecdada71eee2e40d4fcada6c1b488f5893beacaf96",
+    "cockpit/tests/public-tipsters.spec.ts": "25df7a76a3673241f3c0ad89d8adf996ee68a71e5465606a7e5f5a292336a250",
+    "docs/superpowers/plans/2026-11-20-recurring-view.md": "0528ded49f3f6bf5bd69ec2646e30b1a69cbc2ed02843d45f61e206cc7023130"
+  },
+  "limitations": [
+    "First 20 November 08:00 Paris slots not yet due at observation time",
+    "Global source coverage remains partial; no new personal picks claimed by a UI change",
+    "Private receipts stay on A9; public report contains metadata only"
+  ]
+}

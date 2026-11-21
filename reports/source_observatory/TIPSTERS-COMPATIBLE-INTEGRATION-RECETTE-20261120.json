@@ -1,0 +1,244 @@
+{
+  "schemaVersion": "robin-compatible-integration-recette-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COMPATIBLE.INTEGRATION.RECETTE.20261120",
+  "generatedAt": "2026-11-20T20:15:08.736635+00:00",
+  "status": "LOCAL_RECIPE_ACCEPTED_PUBLICATION_CI_PENDING_GLOBAL_PARTIAL",
+  "scope": "Specific compatible readers, seven new individual choices, one exact recurring author, and preserved local admin histories. Not an exhaustive all-source admission.",
+  "actualA9": {
+    "admin": {
+      "recurring": {
+        "http": 200,
+        "status": "ok",
+        "counts": {
+          "planned": 65,
+          "running": 0,
+          "succeeded": 1,
+          "failed": 0,
+          "missed": 18,
+          "interrupted": 0
+        },
+        "halted": true,
+        "journalHead": "3971151f3649f6991f47bc80654fda706a572c738506abf0e4fb1c27929f4ec0"
+      },
+      "connectors": {
+        "http": 200,
+        "status": "ok",
+        "counts": {
+          "requests": 105,
+          "attemptedSources": 57,
+          "collectedSources": 9,
+          "publications": 173,
+          "candidates": 0,
+          "unresolvedExtractions": 3,
+          "verifiedPreMatch": 0
+        },
+        "canRun": false,
+        "journalHead": "541a5f2d86baef5945a5dff6f2f1133e5b0ffb6301166659a207d7a64641fd84"
+      },
+      "sources": {
+        "http": 200,
+        "status": "ok",
+        "counts": {
+          "manuel": 14,
+          "a_construire": 57,
+          "bloque": 3
+        },
+        "prepared": 74,
+        "revision": "1180fd446fab782b621f45db80f796f674d686b00cc2b95c3d4e8ca7190a7ddc"
+      }
+    },
+    "readAt": "2026-11-20T20:14:05.775Z",
+    "views": [
+      {
+        "path": "/robin-live",
+        "status": 200,
+        "h1": [
+          "Robin suit les cinq grands championnats"
+        ]
+      },
+      {
+        "path": "/expert/admin-collecte",
+        "status": 200,
+        "h1": [
+          "Suivi admin de la collecte"
+        ]
+      },
+      {
+        "path": "/expert/catalogue-sources",
+        "status": 200,
+        "h1": [
+          "Catalogue complet des sources"
+        ]
+      },
+      {
+        "path": "/expert/tipsters/olbg%3A669088",
+        "status": 200,
+        "h1": [
+          "Fiche tipster"
+        ]
+      },
+      {
+        "path": "/expert/collecte-publique",
+        "status": 200,
+        "h1": [
+          "Collecte des pronostics personnels"
+        ]
+      }
+    ],
+    "errors": [],
+    "externalRequests": [],
+    "mobileOverflow": false,
+    "public": {
+      "distinctPicks": 151,
+      "authorCount": 31,
+      "profileCampaign": {
+        "state": "collecting",
+        "successfulSlots": 1,
+        "slots": 9,
+        "requests": 2,
+        "requestsMax": 18,
+        "startsAt": "2026-11-20T21:00:00Z",
+        "expiresAt": "2026-11-21T11:15:00Z",
+        "authorUrl": "https://www.olbg.com/tipsters/tips/669088",
+        "campaignId": "ROBIN-OLBG-HEPTER669088-E2V2-20261120",
+        "termsMonitoring": "Bounded reuse of source terms; no per-slot terms request.",
+        "native": {
+          "lastResult": 267011,
+          "verifiedAt": "2026-11-20T20:13:48.5903638+00:00",
+          "enabled": true,
+          "nextRunTime": "2026-11-20T22:00:00.0000000+01:00",
+          "state": "Ready"
+        }
+      },
+      "claims": [
+        "DATA.SOURCE_OBSERVATORY.PUBLIC_PICKS.20261119",
+        "ENG.SOURCE_OBSERVATORY.FORUMS.CAMPAIGN.20261119",
+        "DATA.SOURCE_OBSERVATORY.SRO.PICKS.20261119",
+        "DATA.SOURCE_OBSERVATORY.OLBG.NATIVE.PICKS.20261119",
+        "DATA.SOURCE_OBSERVATORY.EXPANSION.PREMATCH.20261120",
+        "DATA.SOURCE_OBSERVATORY.EXPANDED.OLBG.E2.20261120",
+        "DATA.SOURCE_OBSERVATORY.PERSONAL.PREMATCH.20261120",
+        "DATA.SOURCE_OBSERVATORY.OLBG.FAMILY.E1.20261120",
+        "DATA.SOURCE_OBSERVATORY.OPAQUE.PREMATCH.E1.20261120",
+        "DATA.SOURCE_OBSERVATORY.HEPTER.RECURRING.20261120"
+      ]
+    },
+    "candidates": {
+      "count": 317,
+      "qualified": 9,
+      "enabled": 7,
+      "compatibleClaimId": "ENG.SOURCE_OBSERVATORY.COMPATIBLE.QUALIFICATION.20261120",
+      "profileCollectionState": "ok"
+    }
+  },
+  "newData": {
+    "previousUniqueChoices": 144,
+    "uniqueChoices": 151,
+    "newUniqueChoices": 7,
+    "newPseudonyms": 2,
+    "nativeWinChoices": 5,
+    "opaqueLiteralChoices": 2,
+    "sourceGETForNewE1": 4,
+    "canaryGET": 2,
+    "canaryAdditionalUniqueChoices": 0
+  },
+  "documentaryDiagnostics": {
+    "reservations": 16,
+    "closedCeiling": 18,
+    "unusedCancelled": 2,
+    "qualificationLineageUnitsAfterOLBG_E1": 148,
+    "diagnosticAdmissions": 0,
+    "rawBodiesStored": false
+  },
+  "nativeTaskClaimId": "ENG.SOURCE_OBSERVATORY.HEPTER.NATIVE.RECETTE.20261120",
+  "nativeTaskReceiptSha256": "16a52494442f7210cd959044db0f0c513dba45ec4b97ed01e2156aa183fc6665",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.PUBLIC_PICKS.20261119",
+    "ENG.SOURCE_OBSERVATORY.FORUMS.CAMPAIGN.20261119",
+    "DATA.SOURCE_OBSERVATORY.SRO.PICKS.20261119",
+    "DATA.SOURCE_OBSERVATORY.OLBG.NATIVE.PICKS.20261119",
+    "DATA.SOURCE_OBSERVATORY.EXPANSION.PREMATCH.20261120",
+    "DATA.SOURCE_OBSERVATORY.EXPANDED.OLBG.E2.20261120",
+    "DATA.SOURCE_OBSERVATORY.PERSONAL.PREMATCH.20261120",
+    "DATA.SOURCE_OBSERVATORY.OLBG.FAMILY.E1.20261120",
+    "DATA.SOURCE_OBSERVATORY.OPAQUE.PREMATCH.E1.20261120",
+    "DATA.SOURCE_OBSERVATORY.HEPTER.RECURRING.20261120"
+  ],
+  "evidence": [
+    {
+      "path": "cockpit/.ci/compatible-runtime/actual-final-readback.json",
+      "sha256": "ea36cdc3af498bbc876035cea507be78b677964dba193f7a393fb3d72d04dcca"
+    },
+    {
+      "path": "cockpit/.ci/compatible-runtime/hepter-desktop.png",
+      "sha256": "525224359be3165c7f6fdf828e232481ffdc4f2571e3c7dc6dd1c821701328e0"
+    },
+    {
+      "path": "cockpit/.ci/compatible-runtime/hepter-mobile.png",
+      "sha256": "79e24cfe9aebb0c171c692671aadc17b4967fce7a978e24a5bf5b425375ff736"
+    }
+  ],
+  "historyPreservation": {
+    "oldPublicChoicesPreserved": 144,
+    "oldCandidateIdsAndOriginsPreserved": 317,
+    "oldTasksUnchanged": 5,
+    "oldExecutionPinsVerified": 53,
+    "oldPrivateLedgerSha256": "806b3c26a53b12444b04d4fc001602756f1d3e744620cc23a2a308662f2a61fd",
+    "oldPrivateGraphSha256": "3f84dde2b655ec103bcd89422be5c49f0fe0b55a3626a4e89fae69c029d555d5",
+    "settingsCopySha256": "f231b2c8de5d88b80b73bd29c8eda6a07cb2f76a06434e1c51ffd8ca99192e5f",
+    "settingsPrepared": 74,
+    "separateWritableFile": true,
+    "historicalConnectorsGET": 105,
+    "historicalPublications": 173,
+    "historicalPublicationsPreMatchAdmissions": 0,
+    "forecastGET": 6,
+    "forecastHalted": true,
+    "forecastPrematchChoices": 0,
+    "newHepterExecutionPinsVerified": 12,
+    "totalExecutionPinChecks": 65
+  },
+  "checks": {
+    "sourceObservatoryDomain": "880 PASS before final small admin correction; then targeted bridge4PASS and independent actual admin recipe. Recurring qualification fallback3PASS after final review.",
+    "browserDistinctCases": 55,
+    "browserScope": "34 public/candidate/workbook cases and21connector/recurring cases. One outdated permission-label expectation corrected and its case rerun PASS.",
+    "typescriptModelCases": 14,
+    "strictMypy": "PASS 8 new source modules",
+    "ruff": "PASS source_observatory",
+    "bandit": "PASS targeted modules; fixed interpreter subprocess import/call reviewed and locally annotated.",
+    "typecheck": "PASS",
+    "eslint": "PASS targeted changed UI/plugins",
+    "actualBrowser": "Five real routes200, zero pageerror/external requests, viewport360 without overflow; expanded proof text fits.",
+    "styleException": "Only profile_campaign.py E701/E702/I001; exact active code hash frozen through21Nov11:15Z. Static exception requires explicit removal and formatting after campaign closure before merge."
+  },
+  "remaining": [
+    "Coteur: personal table attribution not established.",
+    "NotBetting: generic parser is nonconclusive; /api/ remains robots-denied. A different passive hydration design remains to qualify.",
+    "Telegram: ordinary personal consultation distinguished from automation/AI scope; no channel message grant or collection established.",
+    "Kicktipp: three exact contests lack public pre-KO window; the-predictor needs canonical fixture/window/visible personal cells.",
+    "Other workbook routes and proof locators remain individually unresolved;317is not exhaustive."
+  ],
+  "deployment": {
+    "draftPR": 133,
+    "merge": false,
+    "publicDeployment": false,
+    "privateSourceDataPublished": false
+  },
+  "locks": {
+    "STORAGE_PAUSED": true,
+    "P3_P4_PAUSED": true,
+    "PRODUCTION_LOCKED": true,
+    "REAL_BETS": false,
+    "NO_BET_DEFAULT": true,
+    "PROMOTION_LOCKED": true,
+    "SOCIAL_PUBLISHING_ENABLED": false,
+    "DEMO_MODE_ENABLED": false
+  },
+  "finalReviewCorrections": [
+    "Recompute qualifiedCount after an independently valid recurring profile, even when the family overlay is missing.",
+    "Always apply the candidate API native gate when a legacy qualification is unavailable; do not promote that legacy status."
+  ],
+  "supersededUnpublishedDraftSha256s": [
+    "dff86c0bc9040a88f41cee4b856e740a827f13218d17ba3c721242e9b4c9c326",
+    "bb276838f233705beb41e3f47372ee5b35cc0b63e572e6c270909b30ee62468b"
+  ]
+}

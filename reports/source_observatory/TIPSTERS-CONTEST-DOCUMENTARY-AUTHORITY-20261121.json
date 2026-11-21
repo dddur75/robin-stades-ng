@@ -1,0 +1,53 @@
+{
+  "generatedAt": "2026-11-20T23:12:49.422461+00:00",
+  "schemaVersion": "robin-documentary-preflight-authority-v1",
+  "claimId": "GOV.SOURCE_OBSERVATORY.CONTEST.DOCUMENTARY.E1V3.20261121",
+  "missionId": "ROBIN-CONTEST-DOCUMENTARY-E1V3-20261121",
+  "status": "DOCUMENTARY_ONLY_NO_PERSONAL_CONTENT_GRANT",
+  "planSha256": "b96c7ab4f2eac41a99bccf5c520a923fa89448820b3941ac5bc1681988fa3667",
+  "manifestSha256": "20ccfc248213a8033c09583f60f5537453db8b3b3eec02450a69471000534276",
+  "documents": [
+    {
+      "family": "Pronosoft contest profiles",
+      "role": "robots",
+      "url": "https://www.pronosoft.com/robots.txt"
+    },
+    {
+      "family": "Pronosoft contest profiles",
+      "role": "terms",
+      "url": "https://www.pronosoft.com/fr/contct/mentions_legales.htm"
+    },
+    {
+      "family": "PronoContest",
+      "role": "robots",
+      "url": "https://fr.pronocontest.com/robots.txt"
+    },
+    {
+      "family": "PronoContest",
+      "role": "terms",
+      "url": "https://fr.pronocontest.com/terms-of-service"
+    }
+  ],
+  "expiresAt": "2026-11-21T01:00:00Z",
+  "GETMax": 4,
+  "priorQualificationUnits": 288,
+  "projectedQualificationMax": 292,
+  "profileGET": 0,
+  "sourceChoices": 0,
+  "sourceAPI": 0,
+  "newTasks": 0,
+  "operativeTermsCoverage": "UNESTABLISHED_PENDING_REVIEW",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "syntheticTests": 4,
+  "retention": {
+    "analysis": false,
+    "forecasts": false,
+    "legalTextCharactersMaxPerDocument": 80000,
+    "privateStructuredNormalizedLegalText": true,
+    "rawHtml": false
+  }
+}

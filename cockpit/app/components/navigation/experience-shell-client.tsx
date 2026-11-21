@@ -22,7 +22,11 @@ export type PublicSection =
   | "laboratory"
   | "results"
   | "method"
-  | "expert";
+  | "expert"
+  | "source-observatory"
+  | "tipsters"
+  | "tipster-sources"
+  | "collection-admin";
 
 const publicNavigation: Array<{
   key: PublicSection;
@@ -49,6 +53,10 @@ const expertNavigation: Array<{
   label: ReturnType<typeof t>;
 }> = [
   { activeSection: "expert", href: "/expert", label: t("nav.expert") },
+  { activeSection: "tipsters", href: "/expert/tipsters", label: "Tipsters et pronostics" },
+  { activeSection: "collection-admin", href: "/expert/admin-collecte", label: "Suivi admin de la collecte" },
+  { activeSection: "tipster-sources", href: "/expert/sources-tipsters", label: "Paramétrage des sources" },
+  { activeSection: "source-observatory", href: "/expert/observatoire-sources", label: t("nav.expert.sourceObservatory") },
   { activeSection: "learning", href: "/apprentissage", label: t("nav.learning") },
   { activeSection: "laboratory", href: "/laboratoire", label: t("nav.laboratory") },
   { href: "/expert#donnees", label: t("nav.expert.data") },
@@ -70,8 +78,9 @@ export function ExperienceShellClient({
   const [glossaryOpen, setGlossaryOpen] = useState(false);
   const glossaryRef = useRef<HTMLElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+  const isTipstersPilot = active === "tipsters" || active === "collection-admin" || active === "tipster-sources";
   const isExpertNavigationActive =
-    active === "expert" || active === "learning" || active === "laboratory";
+    ["expert", "learning", "laboratory", "source-observatory", "tipsters", "collection-admin", "tipster-sources"].includes(active);
 
   useEffect(() => {
     if (!glossaryOpen) return;
@@ -124,8 +133,8 @@ export function ExperienceShellClient({
           <div className="observatory-state">
             <span className="live-dot" aria-hidden="true" />
             <span>
-              <strong>{t("home.observatory")}</strong>
-              <small>{summary.fixtures} rencontres suivies</small>
+              <strong>{isTipstersPilot ? "Dossier fidèle" : t(active === "source-observatory" ? "home.matchObservatory" : "home.observatory")}</strong>
+              <small>{isTipstersPilot ? "Suivi des tipsters sur A9_Mega" : `${summary.fixtures} rencontres suivies`}</small>
             </span>
           </div>
           <nav className="side-nav" aria-label="Navigation principale">
@@ -176,14 +185,14 @@ export function ExperienceShellClient({
               <span>R</span>
               Robin
             </Link>
-            <p>
+            {isTipstersPilot ? <p>Collecte tipsters · Journal local A9_Mega</p> : <p>
               {t("common.updated")}{" "}
               <time dateTime={summary.generatedAt}>
                 {formatDateTime(summary.generatedAt, true)}
               </time>
               {" · "}
               <StatusBadge value={summary.freshnessStatus} />
-            </p>
+            </p>}
             <div className="topbar-actions">
               <button
                 aria-label={t("glossary.title")}
@@ -221,7 +230,7 @@ export function ExperienceShellClient({
             </Link>
           ))}
           <Link
-            aria-current={isExpertNavigationActive ? "page" : undefined}
+            aria-current={active === "expert" ? "page" : isExpertNavigationActive ? "location" : undefined}
             className={isExpertNavigationActive ? "active" : ""}
             href="/expert"
           >

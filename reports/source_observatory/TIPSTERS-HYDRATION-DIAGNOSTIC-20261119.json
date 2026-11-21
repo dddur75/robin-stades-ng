@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "robin-hydration-diagnostic-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.QUALIFICATION317.HYDRATION.20261119",
+  "generatedAt": "2026-11-19T16:31:58.246724+00:00",
+  "status": "PARTIAL",
+  "scope": "Passive local source representation/route diagnosis only; no source API or recurring activation",
+  "priorQualificationGET": 62,
+  "diagnosticGET": 6,
+  "totalQualificationGET": 68,
+  "sharedQualificationGETMax": 134,
+  "perPlatformGET": {
+    "OLBG": 3,
+    "NotBetting": 3
+  },
+  "newAdmittedPredictions": 0,
+  "admissionAttempted": false,
+  "sourceAPIRequests": 0,
+  "thirdPartyRequests": 0,
+  "javascriptExecution": false,
+  "rawPayloadsSaved": false,
+  "session": {
+    "startedAt": "2026-11-19T16:26:54.023017+00:00",
+    "quitObservedAt": "2026-11-19T16:29:20+00:00",
+    "lastGETAt": "2026-11-19T16:27:39.565478+00:00",
+    "within210BatchAnd300Quit": true,
+    "firstEOFStartupGET": 0
+  },
+  "journalSha256": "ebe8f6de37bb7b7a20765b6ad9a4a6ff01dc29c7560d25c18016f45b0d556220",
+  "journalHead": "fc689a7984ef1821e198b67eab74f3308c9e40d7f1a1550fee279ae3d4370409",
+  "httpReceipts": [
+    {
+      "sourceId": "Q317_10",
+      "url": "https://www.olbg.com/robots.txt",
+      "httpStatus": 200,
+      "responseSha256": "3e6044a915c133edb598a707c900d8cf9de6926aaba75117c9392683257f8106",
+      "observedAt": "2026-11-19T16:27:11.991637+00:00"
+    },
+    {
+      "sourceId": "Q317_09",
+      "url": "https://notbetting.com/robots.txt",
+      "httpStatus": 200,
+      "responseSha256": "83a04d5544dbbd95a0e12fe097091f6823208bba0f9d7afd6b501ab9ab0eb2c7",
+      "observedAt": "2026-11-19T16:27:11.993144+00:00"
+    },
+    {
+      "sourceId": "Q317_10",
+      "url": "https://www.olbg.com/tipsters/tips/669088",
+      "httpStatus": 200,
+      "responseSha256": "7fcd976d890e11fe752567e6abfafd610c79f24cfa10af9ca354b01e1abb2015",
+      "observedAt": "2026-11-19T16:27:19.427209+00:00"
+    },
+    {
+      "sourceId": "Q317_09",
+      "url": "https://notbetting.com/en/tipster/Dexter",
+      "httpStatus": 200,
+      "responseSha256": "c205f315770464402192e3856206921f685f4e479fa6637ec5bb61b651724b2e",
+      "observedAt": "2026-11-19T16:27:19.428210+00:00"
+    },
+    {
+      "sourceId": "Q317_10",
+      "url": "https://www.olbg.com/sk-assets/js/theme.js?v=15",
+      "httpStatus": 200,
+      "responseSha256": "14bbcf5aca2cfe4749c93218519db7d0ab08c99bb7fff99aa07721d83edaafc6",
+      "observedAt": "2026-11-19T16:27:39.525332+00:00"
+    },
+    {
+      "sourceId": "Q317_09",
+      "url": "https://notbetting.com/_next/static/chunks/app/%5Blocale%5D/tipster/%5Busername%5D/page-846b52a95f3a4ee1.js",
+      "httpStatus": 200,
+      "responseSha256": "c7f01c4eadf28eabb097a70516bf50a2850884c5e1ed70b0a73551e774171e5c",
+      "observedAt": "2026-11-19T16:27:39.565478+00:00"
+    }
+  ],
+  "findings": [
+    {
+      "platform": "OLBG",
+      "candidateRoutes": [
+        "https://olbgliveapi.olbg.com",
+        "https://www.olbg.com/api/svelte"
+      ],
+      "routeWitness": "HTMLprofilepublic669088",
+      "accessRequirement": "NOT_ESTABLISHED",
+      "remainingWork": "Qualify actual hydration data and public read contract/robots for candidate data origins; no account or paid API need established."
+    },
+    {
+      "platform": "NotBetting",
+      "candidateRoutes": [
+        "/api/tipster/"
+      ],
+      "routeWitness": "profile script page-846b52a95f3a4ee1.js",
+      "accessRequirement": "NOT_ESTABLISHED",
+      "remainingWork": "Qualify route suffix, GET contract, robots and public access; generic payment/subscription routes are not proof that personal picks need an account."
+    }
+  ],
+  "limitations": [
+    "No API candidate was called",
+    "No claim that either profile contains zero available picks",
+    "No new individual qualification or activation",
+    "No OLBGtrackingasset fetched",
+    "No modification to active SRO/Forums/J12/Forecast missions"
+  ]
+}

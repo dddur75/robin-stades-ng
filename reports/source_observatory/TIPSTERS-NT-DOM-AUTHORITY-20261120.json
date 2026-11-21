@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "robin-nt-dom-authority-v1",
+  "generatedAt": "2026-11-20T06:55:56.715927+00:00",
+  "status": "AUTHORIZED_RULES_ONLY_LAST_NOTBETTING_READ",
+  "missionId": "ROBIN-NT-OFFLINE-DOM-REDESIGN-20261120-E1",
+  "planSha256": "002de110741fcf104a3a35a2e59247a096b767b713f68ee49dff216e554e43c7",
+  "manifestSha256": "39fffd65021909c8ab2be360fc4beb705461eb12c5c16805fefcd0134c63bbaf",
+  "manifest": {
+    "authorized_stages": [
+      "E1"
+    ],
+    "compute_budget": {
+      "offline_chromium": true,
+      "process_ram_seconds": 1800,
+      "response_bytes_max": 2000000,
+      "review_words_max": 90,
+      "workers": 1
+    },
+    "expires_at": "2026-11-20T08:00:00+00:00",
+    "external_effects": {
+      "api_calls": false,
+      "authenticated": false,
+      "notbetting_get_max": 1,
+      "post": false,
+      "public_get_max": 1,
+      "telegram_get_max": 0
+    },
+    "maximum_stage": "E1",
+    "mission_id": "ROBIN-NT-OFFLINE-DOM-REDESIGN-20261120-E1",
+    "source_hash": "002de110741fcf104a3a35a2e59247a096b767b713f68ee49dff216e554e43c7",
+    "time_budget": {
+      "family_active_seconds_max": 300,
+      "family_network_seconds_max": 144,
+      "prior_active_milliseconds": 128907,
+      "prior_network_conservative_seconds": 120
+    }
+  },
+  "priorQualificationGET": 100,
+  "maximumAfterMission": 101,
+  "ceiling": 134,
+  "family": {
+    "priorGET": 10,
+    "afterGET": 11,
+    "maxGET": 12,
+    "notbettingAfter": 4,
+    "notbettingMax": 4,
+    "telegramGET": 7,
+    "telegramMax": 8,
+    "priorActiveMilliseconds": 128907,
+    "priorNetworkConservativeSeconds": 120
+  },
+  "reason": "Second insufficient DOM extraction forces an E1 redesign with an independent browser DOM on the same one-response RAM bytes. No third identical Python parser reading.",
+  "codePins": {
+    "cockpit/.ci/tipsters-nt-dom-redesign-20261120/fetch.py": "8b3d6571da32365c31edfca01b57785ff4a7a601a9d23d5e2f4fea21a7899b68",
+    "cockpit/.ci/tipsters-nt-dom-redesign-20261120/render.mjs": "3240fcb56e1ad9380967bad437c8ebde063d9409b73b5388cce8df3fcf679a68",
+    "cockpit/.ci/tipsters-notbetting-telegram-20261120/qualify_v2.py": "6de6b198dbdb6f11da23d90ff04d7930451a322822ccfc160c610e84cfb8ce37",
+    "cockpit/.ci/tipsters-notbetting-telegram-20261120/transport.py": "6ec2b85b2a5b36e578ec9a2ef23c2cd5303a1e2d7e3717869df08030529b1ad5",
+    "src/robin/source_observatory/connectors.py": "ba991ea9c1ab0ebc4bca7814d5216edc47a91ac7ea7e3ecb219270326ffe79a6"
+  },
+  "previousPackets": [
+    {
+      "path": "cockpit/.ci/tipsters-notbetting-telegram-20261120/events.jsonl",
+      "sha256": "8ad12e668458c84cbb71d0fbb86bb76afe75e8c933f9867383ab47909fbc214b"
+    },
+    {
+      "path": "cockpit/.ci/tipsters-nt-legal-corrective-20261120/events.jsonl",
+      "sha256": "5c6311bb795401a546dab6e86ebea55bbaa50ce5928d7eef529856a1ea4d9cc4"
+    }
+  ],
+  "offlineTests": {
+    "passed": 3,
+    "publisherGET": 0,
+    "mixedDomDiscriminant": true,
+    "shellVerdict": "PARTIAL",
+    "childFailureSanitized": true,
+    "windowsFifoVerified": true
+  },
+  "scope": "One verified TLS GET, no redirects/retries, followed by offline Chromium with no site JS, external network, cookies or body persistence. No personal profile, API or activation. If incomplete, terminal PARTIAL for this branch.",
+  "acceptance": "Require projection and JOB_FINISHED receipt; CHILD_FAILED/CONTROLLED_FAILURE is failure regardless of exit code.",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NT.E1.DOM.REDESIGN.20261120",
+  "portableProjection": {
+    "originalPublicReportSha256": "b64b820c4fffb55bd203b4249ef3366aa1ffcf23b5e7624d22aad73bb6a1fa10",
+    "originalBytesRetainedAt": "cockpit/.ci/tipsters-nt-delivery-20261120/pre-portability/b64b820c4fffb55bd203b4249ef3366aa1ffcf23b5e7624d22aad73bb6a1fa10-TIPSTERS-NT-DOM-AUTHORITY-20261120.json",
+    "normalization": "REPOSITORY_RELATIVE_POINTERS_ONLY",
+    "factsAndPrivatePacketsUnchanged": true
+  }
+}

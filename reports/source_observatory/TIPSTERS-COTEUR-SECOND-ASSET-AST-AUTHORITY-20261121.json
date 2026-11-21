@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-11-21T04:18:47.875853+00:00",
+  "schemaVersion": "robin-static-ast-documentary-e1-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.SECOND.ASSET.AST.AUTHORITY.20261121",
+  "missionId": "ROBIN-COTEUR-SECOND-ASSET-AST-E1-20261121",
+  "status": "DOCUMENTARY_ONLY_AUTHORIZED_NOT_EXECUTED",
+  "planSha256": "840fa804552537500bdc5abc7deced6321a32a606739005439dc0918a6713ca7",
+  "manifestSha256": "5cfeb2403609e62452bf37032f26e93eb1ff9ad23f74cbc41c4caf4f3e973a6d",
+  "startsAt": "2026-11-21T04:18:00Z",
+  "expiresAt": "2026-11-21T04:23:00Z",
+  "newGETMax": 2,
+  "activeMillisecondsMax": 120000,
+  "perGETSecondsMax": 12,
+  "qualificationLineagePriorReserved": 311,
+  "qualificationLineageReservedCeiling": 313,
+  "newHypothesis": "Parse second attested unread asset AST; same-call syntactic GET/URL relation, not old lexical nearby-route guess.",
+  "sameCallASTCandidatesAreNotEstablishedContracts": true,
+  "sourceAPIRequestsAuthorized": 0,
+  "sourceChoicesExpected": 0,
+  "sourceJavaScriptExecuted": false,
+  "rawBodiesStored": false,
+  "candidatesMax": 8,
+  "prefixesMax": 32,
+  "retries": 0,
+  "followedExtractedRoutes": 0,
+  "tests": {
+    "astSyntheticPassed": 15,
+    "deadlineDirectoryPassed": 4,
+    "independentC1BothConfirmed": true
+  },
+  "evidence": [
+    {
+      "path": "cockpit/.ci/coteur-static-ast-e1-20261121/plan.json",
+      "sha256": "9f26d63de1e08d9f097edede1ae7530284c35d5e45d580cdd2937bcf98d6d858"
+    },
+    {
+      "path": "cockpit/.ci/coteur-static-ast-e1-20261121/mission.json",
+      "sha256": "56015047341c5a4f718d656e1a8a2780b53b7f9bd5aae506b615cca4f2c435a8"
+    }
+  ]
+}

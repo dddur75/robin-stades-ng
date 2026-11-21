@@ -1,0 +1,101 @@
+{
+  "schema_version": "robin-tipsters-application-acceptance-v1",
+  "scope": "PRIVATE_LOCAL_APPLICATION_INTEGRATION",
+  "base_revision": "ea0b68aa4337acf1a172ee728385babebdfe2a28",
+  "writer": "C0",
+  "pr": 133,
+  "development_acceptance": "PASS_LOCAL",
+  "pilot_live_acceptance": "PENDING_FUTURE_OBSERVATIONS",
+  "global_dossier_fidele": "PARTIAL",
+  "claim_id": "ENG.SOURCE_OBSERVATORY.J12.APP.20261118",
+  "journal_registration_claim_id": "DATA.SOURCE_OBSERVATORY.J12.LOCAL_JOURNAL.V1",
+  "plan_sha256": "e81c73a2b850d9b2b9a3a07a230c80e850428d6367a8d5a3a332fb4c467ebaea",
+  "routes": [
+    "/expert/tipsters",
+    "/expert/tipsters/[id]",
+    "/expert/admin-collecte"
+  ],
+  "checks": {
+    "python_projection_regressions": {
+      "passed": 20,
+      "provider_calls": 0
+    },
+    "python_ruff_and_mypy": "PASS",
+    "cockpit_full_test_command": "pnpm test",
+    "cockpit_full_test_result": "PASS",
+    "typescript_domain_tests": {
+      "passed": 98
+    },
+    "historical_ssr_assets": "FOUR_EXISTING_TESTS_SKIPPED_WITHOUT_LOCAL_ASSETS",
+    "browser_targeted_tests": {
+      "passed": 13,
+      "widths": [
+        360,
+        375,
+        390,
+        430
+      ],
+      "zoom_percent": 200
+    },
+    "real_adapter_chain": {
+      "data_class": "SYNTHETIC_ISOLATED",
+      "distinct_picks": 1,
+      "preserved_versions": 2,
+      "page_errors": 0,
+      "utf8_accents": "PASS"
+    },
+    "actual_authorized_packet": {
+      "phase": "scheduled",
+      "journal_present": false,
+      "counts": "UNOBSERVED"
+    },
+    "final_build": "PASS",
+    "private_packet_fingerprints_unchanged": true,
+    "accessibility": {
+      "keyboard": "PASS",
+      "aria_trace": "REVIEWED",
+      "physical_screen_reader": "NOT_RUN",
+      "reduced_motion": "PASS"
+    },
+    "remote_worker_api": "EXPLICIT_503_LOCAL_ACCESS_REQUIRED"
+  },
+  "review_keys": {
+    "C3": "PASS_LOCAL",
+    "UX6": "PASS_LOCAL",
+    "A3": "PASS_LOCAL"
+  },
+  "local_evidence": {
+    "fiche-synthetique.png": "0a8d4d4642e619ffea3d1d209402ef57a6d9fb254bd57d9e45edd5e202f0300e",
+    "admin-plan-reel.png": "dd531b8f401728df0b68f348969b3e1bcb946f50f14963349bce32e31deda6a1",
+    "fiche-aria.txt": "e23f8c3342d2e7ab9cc06faaf35f24dfe4f0c122d8c361ab0a0531a296728632",
+    "admin-aria.txt": "9e48348ee605c98ac3905ac394acbacf41dc795cbb880b838a5a7d28322c5c51"
+  },
+  "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+  "source_file_sha256": {
+    "cockpit/scripts/read-tipsters-pilot.py": "33b3cdb56796db6fbe3c3ab9993d6d5d4e381b042c5842f58cf4c5098cf30351",
+    "cockpit/scripts/tipsters-pilot-plugin.ts": "e72faa3147997bab765cc70fb405ff6de2767cff218f29cbba70d65f1469a720",
+    "cockpit/scripts/start-local-robin.ps1": "c799635fd21fa120b7e3d1cd21c08bf87e6b61e725d4bb4f73c2cf63447ce6f4",
+    "cockpit/app/components/expert/tipsters-pilot.tsx": "26b2ee81f0f2ec6a87127dae37a3768905f36fbf239c17708af2ed2f58eed480",
+    "cockpit/app/lib/tipsters-pilot.ts": "f4f82723f15b3fd30c3aec227ba2a2357932c5c317839392343a2dc202284813",
+    "cockpit/app/api/tipsters/route.ts": "e56a3a337f20214d0edbaa3528857e21782f45366aeeb1fdb26ad016e3ae0127",
+    "cockpit/app/expert/tipsters/page.tsx": "50c62b9a112f253812b05d3f8aeb6a3462ae95c2439ce601183935f48ca12c1c",
+    "cockpit/app/expert/tipsters/[id]/page.tsx": "55f22e1179d04fc9fab307421c30167aceb9800c2dcdd48c8b16404dcb7ad94c",
+    "cockpit/app/expert/admin-collecte/page.tsx": "c129c7c19b15231001aa2021c07908ef62c167c09aa8b637ef3b8f7d82a492c8",
+    "cockpit/app/components/expert/expert-page.tsx": "b4029b6032d483fdc33356e1afcb80cc0e6f2214783faac1df9f6588bfe4897c",
+    "cockpit/app/components/expert/source-observatory.tsx": "35c7814930f8c98c475fee98a871314a590d22a2869d3c39f5bf7d6cf9861363",
+    "cockpit/app/components/navigation/experience-shell-client.tsx": "b4b42e88542b06bf1eb01fdf32f6cdfe70c8156e8b0542e186dd238ec18223ee",
+    "cockpit/app/globals.css": "50963cf758d357fc30521d9ef13820376dfc1d80ff7c912178afde73342903ee",
+    "cockpit/playwright.config.ts": "3f495941ea3d16c0acfb4bde003cfa9a8970ed2fc91b5e6a42b8f4a7e2a4e4e8",
+    "cockpit/vite.config.ts": "e37313ffe88c3e4464c3e0f13c4266b918ccfd17595909a6f2d2eba98cb48c24",
+    "docs/ux/DOSSIER-FIDELE-COCKPIT.md": "b834b3dcf6d9aed1f6e2c305ffdab82d4a13a83fe8d97e4766eceff27d8f9aa0",
+    "cockpit/tests/tipsters-pilot.spec.ts": "801deb8c3243b916857d3bd17415f27876e4afc26124e592847d817f0c2b2ac5",
+    "cockpit/tests/tipsters-local-api.test.ts": "5510af592d282377b600e4952d266fa103d2bd3ce9a158672c38d34ad37ecd21",
+    "tests/ux/test_tipsters_pilot_projection.py": "93ea87c2bba911fc426445d9525750a8aa01fa86701d71b2f13af2899da9426e"
+  },
+  "limits": [
+    "The delivered access is local on A9_Mega using the development server.",
+    "The production hosted cockpit is not updated by this change.",
+    "Live collection counts require the scheduled future observations.",
+    "Physical screen-reader speech has not been tested."
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-11-21T00:12:28.254082+00:00",
+  "schemaVersion": "robin-public-native-export-e1-result-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TP.SARRACINO.E1.RESULT.20261121",
+  "missionId": "ROBIN-TP-SARRACINO-E1V2-20261121",
+  "status": "PARTIAL_OWNER_DOM_NOT_ESTABLISHED_NO_RETRY",
+  "sourceGET": 2,
+  "robotsStatus": 200,
+  "profileStatus": 200,
+  "profileBytes": 281985,
+  "profileSha256": "96e07d1fc52b1bab084d35ce604d03181917f14f422558471901b129edbdba74",
+  "canonicalExact": true,
+  "retainedOwnerHeadings": 0,
+  "ownerEstablished": false,
+  "CSVRead": 0,
+  "choicesAdmitted": 0,
+  "exportAvailability": "UNESTABLISHED_OWNER_GATE_PREVENTED_DECISION",
+  "activeMilliseconds": 3734,
+  "TPFamilyGET": 5,
+  "TPFamilyActiveMilliseconds": 7500,
+  "qualificationUnits": 296,
+  "resultSha256": "e806d0f6de963d72c05c77ab23ac6518294d8b77067bd3f981e47f06f1e45634",
+  "journalSha256": "27de01479d3147fbd2e876c27272d3f329f35fa8493b7fc13b9da1142970b84e",
+  "newTask": 0,
+  "rawHtmlStored": false,
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

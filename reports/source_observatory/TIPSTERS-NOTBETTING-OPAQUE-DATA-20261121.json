@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "robin-notbetting-opaque-data-v1",
+  "scope": "LOCAL_PERSONAL_NONCOMMERCIAL_NO_REDISTRIBUTION",
+  "claimId": "DATA.SOURCE_OBSERVATORY.NOTBETTING.OPAQUE.PREMATCH.20261121",
+  "dataClaimId": "DATA.SOURCE_OBSERVATORY.NOTBETTING.OPAQUE.PREMATCH.20261121",
+  "qualifiedAt": "2026-11-21T01:37:47.876767+00:00",
+  "status": "ONE_SOURCE_LITERAL_PREMATCH_CHOICE_NO_RECURRING_AUTHORITY",
+  "bundleSha256": "c6d283eac3659a8cc116ac050756bdea438cd18e59a0a9b666ddf3f074030614",
+  "sourceResultSha256": "a921b485b7c034fb04c2208b64f7e28044fd7e5040da7bbe0427556ff0c444a0",
+  "nativeRecordsParserSha256": "aeb03c9ccf8d2ef37eec35e18254ce38f2572245e19b03af0069402096461388",
+  "calendarSha256": "2feb3b728d9fd64cec95f4f8b7f4376f5e550441eae8b4e96f7edd0fd1bea8e8",
+  "capturePlanSha256": "8883c48a8deac7c7670bd7ada7880f4b0f3653a9925dd043d95f913cd487bdf1",
+  "capturedAt": "2026-11-21T01:30:14.391200+00:00",
+  "baselineFirstSeenAt": "2026-11-21T00:49:56.451686+00:00",
+  "qualifiedChoices": 1,
+  "qualifiedNativePseudonyms": 1,
+  "unadmittedBundesligaWitnesses": 2,
+  "preselectedRecordsRead": 3,
+  "unselectedRecordsExcluded": 104,
+  "sourceWalkTruncated": true,
+  "newGET": 2,
+  "familyGET": 7,
+  "familyActiveMilliseconds": 10625,
+  "qualificationLineageUnits": 311,
+  "publicationCertified": false,
+  "performanceEvaluationAllowed": false,
+  "settlementAllowed": false,
+  "marketInterpretationAllowed": false,
+  "recurringAuthority": false,
+  "existingRegistryCandidatesQualifiedOrActivated": 0,
+  "evidence": [
+    {
+      "namespace": "A9_ROBIN_PRIVATE_NOTBETTING",
+      "path": "cockpit/.ci/notbetting-prospective-0130-v2-20261121/result.json",
+      "sha256": "a921b485b7c034fb04c2208b64f7e28044fd7e5040da7bbe0427556ff0c444a0"
+    },
+    {
+      "namespace": "A9_ROBIN_PRIVATE_NOTBETTING",
+      "path": "cockpit/.ci/notbetting-prospective-0130-v2-20261121/events.jsonl",
+      "sha256": "09377b3f1f40a50ab28ad1e0819c5041f7eb963a82dd35cd7d505e9f0540999a"
+    },
+    {
+      "namespace": "A9_ROBIN_PRIVATE_NOTBETTING",
+      "path": "cockpit/.ci/notbetting-prospective-0130-v2-20261121/observations-c6d283eac3659a8cc116ac050756bdea438cd18e59a0a9b666ddf3f074030614.json",
+      "sha256": "c6d283eac3659a8cc116ac050756bdea438cd18e59a0a9b666ddf3f074030614"
+    }
+  ],
+  "limitations": [
+    "Only one exact PremierLeague choice is qualified; both Bundesliga witnesses remainNONADMIS without canonical calendars.",
+    "Qualifying observedAt is01:30; firstSeen00:49does not retrodate the new temporal evidence. createdAt remains literal,not certified publication.",
+    "Collective author is not assigned to any candidate by sharedURL; no claim of exhaustive NotBetting coverage.",
+    "No recurrence,sourceGET,account,purchase or source API follows from data qualification."
+  ],
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}
