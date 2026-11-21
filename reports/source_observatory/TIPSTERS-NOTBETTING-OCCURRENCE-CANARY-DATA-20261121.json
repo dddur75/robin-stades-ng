@@ -1,0 +1,84 @@
+{
+  "generatedAt": "2026-11-21T05:46:13.339315+00:00",
+  "schemaVersion": "robin-positive-closed-declaration-canary-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.NOTBETTING.OCCURRENCE.CANARY.20261121",
+  "status": "NONCANONICAL_PRODUCT_CANARY_ACCEPTED_FULL_CAPTURE_NOT_CLAIMED",
+  "missionId": "NOTBETTING_CLOSED_OCCURRENCE_E2_20261121",
+  "planSha256": "b3416214560ba160cb91694b0be004a282b57cd4a47b2436e43667ce55d15406",
+  "manifestSha256": "26eeb127708847b6c7484d351c849cfebbec33f100e071603aad6fc5fc60d1e7",
+  "observedAt": "2026-11-21T05:40:04.302570+00:00",
+  "journalSha256": "1442f2cc44e53b27d713ad415780245d1b3390c6619f82ca45cf9b772a55adb4",
+  "journalHead": "694c50aa5e616e62cf93045af1936ab455b0e02ce64b9c7de42c554e5fd1fbc7",
+  "captureEventHash": "77948f7679911fee7ce6889a8f39902a21e8fd4809d04207efdcdaa02086ce41",
+  "captureReceiptSha256": "607e9ec1aa4fc1ff821ec29aaf78da4ef3978431acad4f4ad56b5ff0cd70af12",
+  "journalPrefixSha256": "1bfeb144c552a828ea5c122fecb59f5015cc90d1950e5e2d9f2e7c7c5d082b05",
+  "journalPrefixScope": "IMMUTABLE_PREFIX_THROUGH_CAPTURE_EVENT",
+  "parserSha256": "1ef22506963e4bccd323da76ccfd8d48e534f30c238ac0ee7450ac732e27ac64",
+  "actualGETs": 2,
+  "http200": 2,
+  "chargedMilliseconds": 9562,
+  "nativeDeclarations": 2,
+  "newDistinctDeclarationIDs": 0,
+  "newNativeObservationsThisPass": 2,
+  "cumulativeTemporalObservations": 6,
+  "observationsPerDeclaration": 3,
+  "sameSourceDistinctTemporalCapturesNotIndependentSources": true,
+  "sourceFieldsConcordantWithBaseline": true,
+  "strictlyBeforeOfficialKO": true,
+  "canonicalQualification": false,
+  "globalVariantConsistency": "NOT_ESTABLISHED_OUTSIDE_RETAINED_RECORDS",
+  "sourceTraversalComplete": false,
+  "performanceEvaluationAllowed": false,
+  "settlementAllowed": false,
+  "marketInterpretationAllowed": false,
+  "diagnostics": {
+    "depthBoundHit": true,
+    "excludedOtherOwners": 83,
+    "omittedAdmissible": 0,
+    "omittedWitnesses": 6,
+    "reason": "unresolved_data_reference",
+    "reasons": [
+      "unresolved_data_reference",
+      "depth_bound",
+      "cyclic_data_reference"
+    ],
+    "status": "partial",
+    "traversalComplete": false,
+    "visitedNodes": 12958,
+    "walkBoundHit": false,
+    "witnessSampleLimited": true,
+    "witnesses": [
+      {
+        "admitted": false,
+        "reason": "calendar_absent_or_ambiguous",
+        "sourceTipId": "de4ef1d8-d457-4051-8b1b-1fa003c07761"
+      },
+      {
+        "admitted": false,
+        "reason": "calendar_absent_or_ambiguous",
+        "sourceTipId": "f560d2a5-1704-4bb2-aa19-0c88e6e3e0fc"
+      },
+      {
+        "admitted": false,
+        "reason": "calendar_absent_or_ambiguous",
+        "sourceTipId": "b828798c-ee1a-471e-8b62-7d3bcc7d99ed"
+      }
+    ]
+  },
+  "familyAccounting": {
+    "consumedGET": 13,
+    "familyGETMax": 19,
+    "remainingGET": 6,
+    "consumedMilliseconds": 38624,
+    "familyMillisecondsMax": 600000,
+    "remainingMilliseconds": 561376
+  },
+  "sourceExperimentsR3R4RemainFailed": true,
+  "windowsTaskInstalled": false,
+  "applicationHookAuthorized": false,
+  "recurringAuthority": false,
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.NOTBETTING.CLOSED.OCCURRENCES.E1.20261121",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OCCURRENCE.CAMPAIGN.AUTHORITY.20261121"
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "generatedAt": "2026-11-21T04:10:59.130514+00:00",
+  "schemaVersion": "robin-notbetting-source-corrected-e2-authority-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.E2V4.AUTHORITY.20261121",
+  "missionId": "NOTBETTING_ELIMAGAR_E2V4_20261121",
+  "status": "SCIENTIFIC_GETS_AUTHORIZED_NOT_EXECUTED",
+  "planSha256": "a97fcbcadf440e3c71b891a3abf87a19dbd1aa2a62f60af7aea3d7ac88dd18b2",
+  "manifestSha256": "b6cd4e9d98d5a6eace9845a2c4dafb2e290ff788046ea1b3568e73dd3af65390",
+  "codeProjection": "cdde978621564bc68bb2541100c0c24144071f3674d2fcda432dcbc2edd4294f",
+  "firstCorrectionAtSameStage": true,
+  "failedV3HistoryUnchanged": true,
+  "canaryAt": "2026-11-21T04:30:00Z",
+  "slots": [
+    "2026-11-21T05:00:00Z",
+    "2026-11-21T07:00:00Z",
+    "2026-11-21T09:00:00Z",
+    "2026-11-21T11:00:00Z"
+  ],
+  "expiresAt": "2026-11-21T11:15:00Z",
+  "budgets": {
+    "inheritedGET": 9,
+    "newGETMax": 10,
+    "familyGETMax": 19,
+    "inheritedMilliseconds": 19812,
+    "newMillisecondsMax": 580188,
+    "familyMillisecondsMax": 600000
+  },
+  "retention": {
+    "grain": "PER_CAPTURE",
+    "eligibleIncludingReobservationsMax": 20,
+    "noneligibleSampleMax": 3,
+    "omissionsCounted": true,
+    "capturesMax": 5
+  },
+  "fullSupportedTraversalMandatory": true,
+  "chronologyOfUnacceptedOccurrenceIsNotAdmission": true,
+  "tests": {
+    "targetedPassed": 106,
+    "seconds": 17.9,
+    "independentC1TargetedPassed": 42,
+    "ruff": "PASS",
+    "strictMypy": "PASS",
+    "bandit": "PASS"
+  },
+  "windowsRegistrationAuthorized": false,
+  "applicationHookAuthorized": false,
+  "subsequentPassesRequireFourKeyCanary": true,
+  "globalDelivery": "PARTIAL",
+  "evidence": [
+    {
+      "path": "cockpit/.ci/notbetting-recurring-e2v4-20261121/plan.json",
+      "sha256": "4e4b3fb545ace69bea467a2abbe5d02ae51a254c2f83aa0d3631f963493a51d3"
+    },
+    {
+      "path": "cockpit/.ci/notbetting-recurring-e2v4-20261121/mission.json",
+      "sha256": "daf21a9159ce1316689554fb4bc895092e5412c59c1e7e59d8ddf042699d55f4"
+    },
+    {
+      "path": "cockpit/.ci/notbetting-recurring-e2v4-20261121/code-projection.json",
+      "sha256": "453c707b5f891773b60404851c5114da1f0acb000f273327c803e6484ef90af8"
+    }
+  ]
+}

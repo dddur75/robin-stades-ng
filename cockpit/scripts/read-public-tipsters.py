@@ -8,7 +8,12 @@ from robin.source_observatory.campaign_view import read_public_view
 from robin.source_observatory.expansion_view import add_public_expansion
 from robin.source_observatory.family_collection import add_family_public
 from robin.source_observatory.legacy_bridge import read_legacy_snapshot
+from robin.source_observatory.notbetting_bundes_view import add_public as add_bundes_occurrences
 from robin.source_observatory.notbetting_collection import add_public as add_notbetting_public
+from robin.source_observatory.notbetting_occurrence_live_view import (
+    add_public as add_live_occurrences,
+)
+from robin.source_observatory.notbetting_occurrence_view import add_public as add_closed_occurrences
 from robin.source_observatory.olbg_store import read_olbg_companion
 from robin.source_observatory.personal_access import add_personal_public
 from robin.source_observatory.profile_collection import add_profile_public
@@ -48,6 +53,9 @@ try:
     view = add_roster_public(view, Path(__file__).resolve().parents[2])
     view = add_group_public(view, Path(__file__).resolve().parents[2])
     view = add_notbetting_public(view, Path(__file__).resolve().parents[2])
+    view = add_bundes_occurrences(view, Path(__file__).resolve().parents[2])
+    view = add_closed_occurrences(view, Path(__file__).resolve().parents[2])
+    view = add_live_occurrences(view, Path(__file__).resolve().parents[2])
     print(json.dumps(view, ensure_ascii=False))
 except (ValueError, OSError, KeyError, TypeError):
     print(

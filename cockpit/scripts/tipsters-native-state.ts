@@ -3,7 +3,7 @@ import {resolve} from 'node:path';
 import {promisify} from 'node:util';
 import {isRosterAuthor} from './roster-task-authority';
 export type TaskState={state:string;enabled?:boolean;verifiedAt?:string};
-type NativeState=TaskState&{sro?:TaskState;olbg?:TaskState;expansion?:TaskState;hepter?:TaskState;roster?:TaskState};
+type NativeState=TaskState&{sro?:TaskState;olbg?:TaskState;expansion?:TaskState;hepter?:TaskState;roster?:TaskState;notbetting?:TaskState};
 const runFile=promisify(execFile);
 let state:NativeState={state:'checking'};
 let pending:Promise<void>|undefined;
@@ -23,7 +23,7 @@ export function readNativeState(root:string):NativeState{
    .finally(()=>{refreshed=Date.now();pending=undefined;});
  }
  const old=(s:TaskState)=>Date.now()-Date.parse(s.verifiedAt??'')>30000?{...s,state:'stale',enabled:false}:s;
- return {...old(state),sro:state.sro?old(state.sro):{state:'checking'},olbg:state.olbg?old(state.olbg):{state:'checking'},expansion:state.expansion?old(state.expansion):{state:'checking'},hepter:state.hepter?old(state.hepter):{state:'checking'},roster:state.roster?old(state.roster):{state:'checking'}};
+ return {...old(state),sro:state.sro?old(state.sro):{state:'checking'},olbg:state.olbg?old(state.olbg):{state:'checking'},expansion:state.expansion?old(state.expansion):{state:'checking'},hepter:state.hepter?old(state.hepter):{state:'checking'},roster:state.roster?old(state.roster):{state:'checking'},notbetting:state.notbetting?old(state.notbetting):{state:'checking'}};
 }
 
 export function gateSourceOperations(data:{candidates:{collectionEnabled:boolean;qualification?:{sourceId?:string;expansionCampaignId?:string;expansionAuthorUrl?:string;profileCampaignId?:string;profileAuthorUrl?:string;rosterCampaignId?:string;rosterAuthorUrl?:string}}[];rosterAssessments?:{collectionEnabled:boolean;qualification?:{sourceId?:string;expansionCampaignId?:string;expansionAuthorUrl?:string;profileCampaignId?:string;profileAuthorUrl?:string;rosterCampaignId?:string;rosterAuthorUrl?:string}}[];enabledCount:number;qualification:{operationalBySource?:Record<string,boolean>;sourceOperational?:boolean;nativeSRO?:TaskState;nativeOLBG?:TaskState;nativeExpansion?:TaskState;nativeRoster?:TaskState}},native:NativeState,now=Date.now()):void{

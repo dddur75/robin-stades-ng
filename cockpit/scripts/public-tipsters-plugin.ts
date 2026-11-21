@@ -27,13 +27,14 @@ export function publicTipsters(): Plugin {
         "--campaign-directory",process.env.ROBIN_FORUM_CAMPAIGN_DIRECTORY ?? resolve(root,".ci/tipsters-forums-pending-20261120")],
       {timeout:8000,maxBuffer:12000000,windowsHide:true,encoding:"utf8"}).then(r=>{
         const value=JSON.parse(r.stdout);
-        if(process.platform === "win32" && value.campaign){
+        if(process.platform === "win32"){
           const nativeState=readNativeState(root);
-          value.campaign.native=nativeState;
+          if(value.campaign)value.campaign.native=nativeState;
           if(value.sroCampaign)value.sroCampaign.native=nativeState.sro??{state:"checking"};
           if(value.olbgCampaign)value.olbgCampaign.native=nativeState.olbg??{state:"checking"};
           if(value.profileCampaign)value.profileCampaign.native=nativeState.hepter??{state:"checking"};
           if(value.rosterCampaign)value.rosterCampaign.native=nativeState.roster??{state:"checking"};
+          if(value.notbettingOccurrenceCampaign)value.notbettingOccurrenceCampaign.native=nativeState.notbetting??{state:"checking"};
           if(value.expandedOlbgCampaign)value.expandedOlbgCampaign.native=nativeState.expansion??{state:"checking"};
         }
         return JSON.stringify(value);

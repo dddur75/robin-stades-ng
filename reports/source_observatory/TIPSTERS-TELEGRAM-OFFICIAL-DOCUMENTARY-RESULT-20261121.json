@@ -1,0 +1,39 @@
+{
+  "generatedAt": "2026-11-21T03:09:13.728570+00:00",
+  "schemaVersion": "robin-mediated-documentary-result-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.OFFICIAL.DOCUMENTARY.RESULT.20261121",
+  "missionId": "ROBIN-TELEGRAM-OFFICIAL-INDEX-E1-20261121",
+  "status": "DOCUMENTARY_TARGET_ESTABLISHED_NO_CONTENT_OR_COLLECTION_GRANT",
+  "mediatedToolOperations": 1,
+  "activeMilliseconds": 2795,
+  "publisherHTTPCountUnknown": true,
+  "evidenceKind": "TOOL_RENDERED_OFFICIAL_DOCUMENT_NOT_RAW_HTTP_BODY",
+  "details": {
+    "targetURL": "https://core.telegram.org/api/terms",
+    "targetSections": "INTRO_1.1_THROUGH_4.2_AND_CLOSING_RENDERED",
+    "targetTermsReadable": true,
+    "completeReferencedGuidelinesVerified": false,
+    "messageReads": 0,
+    "clientRouteQualified": false,
+    "allRoutesRequireAccount": false,
+    "concreteClientPrerequisites": [
+      "OWN_API_ID_FOR_NEW_API_CLIENT",
+      "LOCAL_USER_AUTHENTICATION_TO_ESTABLISH",
+      "CLIENT_FUNCTION_AND_SECURITY_COMPLIANCE",
+      "NO_TELEGRAM_DATA_OR_DERIVATIVES_FOR_AI_ML_PURPOSES"
+    ],
+    "offlineExportAlternative": "PROVENANCE_AND_ACTUAL_FILE_NOT_ESTABLISHED"
+  },
+  "evidence": [
+    {
+      "namespace": "A9_MEDIATED_OFFICIAL_DOCUMENTS",
+      "path": "cockpit/.ci/official-doc-research-20261121/telegram/operations.jsonl",
+      "sha256": "75b67dfff6b35f172750bc6d569e53fa2fbf221d7fd26a8e021301e74044afae"
+    },
+    {
+      "namespace": "A9_MEDIATED_OFFICIAL_DOCUMENTS",
+      "path": "cockpit/.ci/official-doc-research-20261121/telegram/search-result.json",
+      "sha256": "2b625f4ac82eb26e81c7931cc58e0b14581d575849dc52e468d70fe5e4ce8157"
+    }
+  ]
+}

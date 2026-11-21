@@ -1,0 +1,20 @@
+{
+  "generatedAt": "2026-11-21T03:01:02.542725+00:00",
+  "schemaVersion": "robin-mediated-documentary-authority-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.BUNDES.OFFICIAL.DOCUMENTARY.AUTHORITY.20261121",
+  "missionId": "ROBIN-BUNDES-OFFICIAL-CALENDAR-E1-20261121",
+  "status": "AUTHORIZED_NOT_EXECUTED",
+  "planSha256": "fb5a002e8cff0f549e4107afb5be72468737ab5811bd5c8cc562d387e56116ae",
+  "manifestSha256": "d6e6dce99fa523a431a2cc023bd8505458b6b6ee10ff5c48ff917620f639f2f3",
+  "searchMax": 1,
+  "openMax": 2,
+  "startsAt": "2026-11-21T03:00:00Z",
+  "expiresAt": "2026-11-21T03:10:00Z",
+  "activeSecondsMax": 180,
+  "providerTransportOpaque": true,
+  "publisherHTTPCountNotKnown": true,
+  "contentOrSourceCompatibilityGranted": false,
+  "reservationRequiredBeforeEveryToolInvocation": true,
+  "openURLsMustComeFromAuthorizedOfficialSearch": true,
+  "privatePlanPath": "cockpit/.ci/official-doc-research-20261121/bundes/plan.json"
+}

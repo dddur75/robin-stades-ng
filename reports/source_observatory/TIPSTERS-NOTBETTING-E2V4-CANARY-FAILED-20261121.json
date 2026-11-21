@@ -1,0 +1,60 @@
+{
+  "generatedAt": "2026-11-21T04:38:46.968377+00:00",
+  "schemaVersion": "robin-notbetting-corrected-canary-failure-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.E2V4.CANARY.FAILED.20261121",
+  "missionId": "NOTBETTING_ELIMAGAR_E2V4_SCALAR_CORRECTION_20261121",
+  "status": "HALTED_SECOND_SIMILAR_FAILURE_REDESIGN_E1_REQUIRED",
+  "startedAt": "2026-11-21T04:35:00.074720+00:00",
+  "haltedAt": "2026-11-21T04:35:04.256978+00:00",
+  "sourceRequestsReserved": 2,
+  "http200": 2,
+  "chargedMilliseconds": 9250,
+  "journalSha256": "986192f8cfb8ef2225fc9b738b0294e6c9d2309af159d6502c7833da50c0eeea",
+  "journalHead": "c2e07b476fb6fd8e1d49e5e8272461037f8645b304aef26f40384fb0741afe2e",
+  "reasons": [
+    "unresolved_data_reference",
+    "depth_bound",
+    "cyclic_data_reference"
+  ],
+  "traversalComplete": false,
+  "visitedNodes": 12686,
+  "depthBoundHit": true,
+  "walkBoundHit": false,
+  "retainedUnadmittedCandidates": 2,
+  "retainedWitnesses": 3,
+  "omittedWitnesses": 6,
+  "reportedOmittedAdmissible": 0,
+  "performanceEvaluationAllowed": false,
+  "settlementAllowed": false,
+  "marketInterpretationAllowed": false,
+  "canaryAccepted": false,
+  "newSourceChoicesAdmitted": 0,
+  "windowsTaskRegistered": false,
+  "recurringAuthority": false,
+  "familyAccounting": {
+    "consumedGET": 11,
+    "familyGETMax": 19,
+    "residualGET": 8,
+    "consumedMilliseconds": 29062,
+    "familyMillisecondsMax": 600000,
+    "residualMilliseconds": 570938,
+    "residualAccountingIsNotAuthority": true
+  },
+  "thirdIdenticalSourceAttemptForbidden": true,
+  "newArchitectureMustRestartAtE1": true,
+  "rawBodiesStored": false,
+  "evidence": [
+    {
+      "path": "cockpit/.ci/notbetting-recurring-e2v4-20261121/events.jsonl",
+      "sha256": "986192f8cfb8ef2225fc9b738b0294e6c9d2309af159d6502c7833da50c0eeea"
+    },
+    {
+      "path": "cockpit/.ci/notbetting-recurring-e2v4-20261121/plan.json",
+      "sha256": "a80b6fae27e5d6c6860ac7573e425202ccb81f40369dfbaa1afe3d68334b1c8f"
+    },
+    {
+      "path": "cockpit/.ci/notbetting-recurring-e2v4-20261121/mission.json",
+      "sha256": "2c9fea21fb81a0af2ee071d9e8213510f75172f97a904efdcefc14322d721f67"
+    }
+  ]
+}

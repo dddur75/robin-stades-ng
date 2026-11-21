@@ -27,6 +27,11 @@ test('stop package and mission expiry override native task readiness',()=>{
  assert.equal(campaignPresentation({...campaign,expiresAt:new Date(now).toISOString()},now).kind,'expired');
  assert.equal(campaignPresentation({...campaign,expiresAt:undefined},now).kind,'unknown');
 });
+
+test('unknown or divergent Windows proof never claims a task was disabled',()=>{
+ for(const state of ['unavailable','stale','checking','not_found'])assert.equal(campaignPresentation({...campaign,native:{...campaign.native!,state,enabled:false}},now).kind,'unknown');
+ assert.equal(campaignPresentation({...campaign,native:{...campaign.native!,state:'invalid_package',enabled:false}},now).kind,'invalid_package');
+});
 test('next run must be a valid future instant within the finite mission',()=>{
  for(const nextRunTime of ['invalid',new Date(now-1).toISOString(),campaign.expiresAt!,'2026-11-22T00:00:00Z']){
   const value=campaignPresentation({...campaign,native:{...campaign.native!,nextRunTime}},now);
@@ -34,4 +39,12 @@ test('next run must be a valid future instant within the finite mission',()=>{
  }
  assert.equal(campaignPresentation({...campaign,startsAt:'2026-11-20T08:00:00Z'},now).kind,'ready');
  assert.equal(campaignPresentation({...campaign,native:{...campaign.native!,state:'Running'}},now).kind,'running');
+});
+
+test('no future native trigger is explicit while expiry and stops retain priority',()=>{
+ const ended:PublicCampaign={...campaign,slots:12,successfulSlots:12,native:{...campaign.native!,state:'no_future_run',nextRunTime:undefined}};
+ assert.deepEqual(campaignPresentation(ended,now),{kind:'no_future_run',nextAt:null});
+ assert.equal(campaignPresentation({...ended,expiresAt:new Date(now).toISOString()},now).kind,'expired');
+ assert.equal(campaignPresentation({...ended,state:'halted'},now).kind,'halted');
+ assert.equal(campaignPresentation({...ended,native:{...ended.native!,verifiedAt:new Date(now-31000).toISOString()}},now).kind,'unknown');
 });

@@ -1,0 +1,84 @@
+{
+  "generatedAt": "2026-11-21T05:21:22.584104+00:00",
+  "schemaVersion": "robin-closed-native-occurrence-local-recette-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.CLOSED.OCCURRENCES.LOCAL.RECETTE.20261121",
+  "status": "LOCAL_APP_RECETTED_GLOBAL_COLLECTION_PARTIAL",
+  "observedAt": "2026-11-21T04:54:26.515Z",
+  "targetedCardObservedAt": "2026-11-21T04:55:24.380Z",
+  "nativeDeclarationIds": 403,
+  "pseudonyms": 78,
+  "fixtures": 16,
+  "newBournemouthDeclaration": 1,
+  "sourceClaim": "DATA.SOURCE_OBSERVATORY.NOTBETTING.CLOSED.OCCURRENCES.E1.20261121",
+  "backendReferenceMerge": {
+    "priorWholeObjectsStrictlyPreserved": 402,
+    "priorFixturesStrictlyPreserved": 16,
+    "oldPLAndBundesSummariesStrictlyPreserved": true,
+    "idempotent": true
+  },
+  "actualHTTPReadback": {
+    "priorIDsPreservedInOrder": 402,
+    "priorFixturesStrictlyPreserved": 16,
+    "oldChoiceEquivalentClockSerializationDifferences": 1392,
+    "additionalPLSummaryEquivalentDateDifferences": 1,
+    "otherOldChoiceDifferences": 0,
+    "explanation": "PowerShell before-snapshot serialization reformatted date strings; instants remain identical."
+  },
+  "loaderSha256": "2363eec4e8e845c818ce34828ef3ece8c3440c4c258cbe1eadb5d651e1ca50d5",
+  "sourceObservedThrough": "2026-11-21T04:35:04.095542+00:00",
+  "viewGeneratedAt": "2026-11-21T04:43:03.865855+00:00",
+  "perRowPartialWarnings": 3,
+  "oldPLBadge": 1,
+  "additionalObservedChoicesCard": 1,
+  "canonicalQualification": false,
+  "recurringAuthority": false,
+  "targetedChecks": [
+    "12GoldenPythonPASS",
+    "8merge/loaderPASS",
+    "1syntheticbrowserPASS",
+    "TypeScriptPASS",
+    "targetedRuff/ESLintPASS",
+    "actualDesktop/mobile360PASS"
+  ],
+  "pageErrors": 0,
+  "externalBrowserRequests": 0,
+  "mobileOverflow": false,
+  "sourceGETs": 0,
+  "newTasks": 0,
+  "evidence": [
+    {
+      "path": "cockpit/.ci/notbetting-closed-occurrences-e1-20261121/local-ui-receipt.json",
+      "sha256": "79dbcb7897afbfffb8ffc53ee0d543a803ec57c28fd47c5bba79d95ff7b68348"
+    },
+    {
+      "path": "cockpit/.ci/notbetting-closed-occurrences-e1-20261121/new-card-ui-receipt.json",
+      "sha256": "031c963437fbab4eb62b3780cd9f6146e485de6b5b5b36567de074f710ee3eb7"
+    },
+    {
+      "path": "cockpit/.ci/notbetting-closed-occurrences-e1-20261121/local-desktop.png",
+      "sha256": "5caaf1158fcd43cc47a375f95c8984fe02537f9967b3a7797b00b631131eb54f"
+    },
+    {
+      "path": "cockpit/.ci/notbetting-closed-occurrences-e1-20261121/new-card-mobile.png",
+      "sha256": "34899170031203e03857c35c809569c38b998f2156aa8a5d85efb4aca1095739"
+    },
+    {
+      "path": "cockpit/.ci/notbetting-closed-occurrences-e1-20261121/before-public.json",
+      "sha256": "9f9403f4077c71ff38fadc0eab9594227e16865e42e24ba3a23e991f216b7ec3"
+    },
+    {
+      "path": "cockpit/.ci/notbetting-closed-occurrences-e1-20261121/after-public.json",
+      "sha256": "0b25086e60639c4cdf4be17db96808d62b8116cd7a6fd9cea41dfbb06888e83e"
+    },
+    {
+      "path": "cockpit/.ci/notbetting-closed-occurrences-e1-20261121/preview-public.json",
+      "sha256": "7ccd652368119f454a9b353008f70e924e7baa2fb0203e317bb861c97c7ba9ea"
+    }
+  ],
+  "limits": [
+    "This adds one bounded declaration, not two new choices.",
+    "Temporal corroboration is from one publisher at two different observation times.",
+    "Failed source experiments and the noncanonical unknown-variants scope remain unchanged.",
+    "CI248 certifies the older334b786head only; newcodeCI is pending."
+  ]
+}

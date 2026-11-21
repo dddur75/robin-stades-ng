@@ -35,6 +35,26 @@ test('preuve NotBetting indisponible conserve les autres choix avec une alerte',
  await expect(page.getByText('NotBetting : collecte ponctuelle qualifiée.',{exact:true})).toHaveCount(0);
 });
 
+test('une occurrence native bornée affiche sa limite sans qualifier les autres choix',async({page})=>{
+ const bounded={...data.picks[0],id:'bounded',sourceId:'NotBetting',market:'source_native_opaque',selection:'Choix littéral synthétique',sourceWalkTruncated:true,evidenceScope:'CLOSED_NATIVE_OCCURRENCE_ONLY',canonicalQualification:false};
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,distinctPicks:2,picks:[data.picks[0],bounded]}}));
+ await page.goto('/expert/collecte-publique');
+ await expect(page.getByText('2 pronostic(s) personnel(s) collecté(s)',{exact:false})).toBeVisible();
+ await expect(page.getByText('Capture partielle : les variantes hors du parcours restent inconnues.',{exact:true})).toHaveCount(1);
+ await expect(page.getByRole('heading',{name:'Nice – PSG · Choix publié (marché source non interprété) : Choix littéral synthétique',exact:true})).toBeVisible();
+ await expect(page.getByText('Prochain créneau Windows :',{exact:false})).toHaveCount(0);
+});
+
+test('les lectures concordantes bornées restent distinctes des déclarations et du statut ponctuel',async({page})=>{
+ const choice={...data.picks[0],sourceId:'NotBetting',market:'source_native_opaque',sourceWalkTruncated:true,observationCount:2,lastObservedAt:'2026-11-20T10:30:00Z'};
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,picks:[choice],notbettingCollection:{state:'qualified_one_time'},notbettingClosedOccurrences:{state:'bounded_declarations_qualified'}}}));
+ await page.goto(`/expert/tipsters/${encodeURIComponent(id)}`);
+ await expect(page.getByText('NotBetting : collecte ponctuelle qualifiée.',{exact:true})).toBeVisible();
+ await expect(page.getByText('Une déclaration supplémentaire provient de deux lectures partielles concordantes. Variantes hors parcours inconnues.',{exact:true})).toBeVisible();
+ await expect(page.getByText('2 lectures concordantes. Dernière :',{exact:false})).toBeVisible();
+ await expect(page.getByText('Capture partielle : les variantes hors du parcours restent inconnues.',{exact:true})).toHaveCount(1);
+});
+
 test('un auteur hors registre affiche sa propre campagne de groupe et son canari distinct',async({page})=>{
  const now='2026-11-20T22:15:00Z';await page.clock.install({time:new Date(now)});
  const author='olbg:669101';const choice={...data.picks[0],authorId:author,authorLabel:'OliverL',sourceId:'SRC_014',market:'source_native'};
@@ -152,6 +172,17 @@ test('campagne programmée conserve les faits ponctuels sans prétendre une exé
  const now=Date.now();
  await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,campaign:{state:'scheduled',startsAt:new Date(now+3600000).toISOString(),expiresAt:new Date(now+86400000).toISOString(),slots:12,requests:0,requestsMax:72,successfulSlots:0,native:{state:'Ready',enabled:true,verifiedAt:new Date(now).toISOString(),nextRunTime:new Date(now+3600000).toISOString()}}}}));
  await page.goto('/expert/collecte-publique');await expect(page.getByText('Programmation confirmée par Windows.',{exact:true})).toBeVisible();await expect(page.getByText('0 créneau(x) validé(s)',{exact:false})).toBeVisible();await expect(page.getByText('Aucune collecte automatique de ces forums',{exact:false})).toHaveCount(0);
+});
+
+test('NotBetting separates preserved declarations, temporal observations and future slots',async({page})=>{
+ const now=Date.now();const authorId='public:'+'c'.repeat(64);const pick={...data.picks[0],id:'bounded',sourceId:'NotBetting',authorId,authorLabel:'ELIMAGAR'};
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,picks:[pick],notbettingOccurrenceCompanion:{updates:{bounded:{lastObservedAt:new Date(now-1000).toISOString(),observations:[{},{},{}]}}},notbettingOccurrenceCampaign:{state:'scheduled',startsAt:new Date(now+3600000).toISOString(),expiresAt:new Date(now+86400000).toISOString(),slots:3,successfulSlots:0,requests:2,requestsMax:8,native:{state:'Ready',enabled:true,verifiedAt:new Date(now).toISOString(),nextRunTime:new Date(now+3600000).toISOString()}}}}));
+ await page.goto('/expert/tipsters/'+encodeURIComponent(authorId));
+ await expect(page.getByRole('heading',{name:'Collecte NotBetting · ELIMAGAR',exact:true})).toBeVisible();
+ await expect(page.getByText('0 créneau(x) validé(s) · 2 GET réservés sur 8 maximum.',{exact:true})).toBeVisible();
+ await expect(page.getByText('3 lectures concordantes de la même source.',{exact:false})).toBeVisible();
+ await expect(page.getByText('Son exécution reste à vérifier.',{exact:false})).toBeVisible();
+ await expect(page.getByText('Observé avant match le',{exact:false})).toHaveCount(1);
 });
 
 test('SRO affiche son canari et son budget distinct du lot initial',async({page})=>{

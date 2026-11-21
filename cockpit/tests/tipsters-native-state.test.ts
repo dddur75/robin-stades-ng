@@ -10,6 +10,10 @@ test('disabled removed missing or stale tasks never count active',()=>{
  for(const state of [undefined,{state:'Disabled',enabled:false,verifiedAt:'2026-11-19T15:00:00Z'},{state:'not_found'},{state:'Ready',enabled:false,verifiedAt:'2026-11-19T15:00:00Z'},{state:'Ready',enabled:true,verifiedAt:'2026-11-19T14:59:00Z'}])assert.equal(sourceTaskIsCurrent(state,now),false);
 });
 
+test('a successful task without a future trigger is not an active collection',()=>{
+ assert.equal(sourceTaskIsCurrent({state:'no_future_run',enabled:true,verifiedAt:new Date(now).toISOString()},now),false);
+});
+
 test('independent source tasks gate their own rows and preserve personal facts',()=>{
  for(const [sro,olbg] of [[true,false],[false,true],[true,true],[false,false]]){
   const data={enabledCount:2,candidates:[{collectionEnabled:true,qualification:{sourceId:'SRC_039'}},{collectionEnabled:true,qualification:{sourceId:'SRC_014'}}],qualification:{operationalBySource:{SRC_039:true,SRC_014:true}}};

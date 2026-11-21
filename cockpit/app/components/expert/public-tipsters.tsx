@@ -11,15 +11,16 @@ function CampaignBlock({title,campaign,children,counters=true}:{title:ReactNode;
  return <div className="section-card"><h3>{title}</h3><PublicCampaignStatus campaign={campaign}/>{counters&&<PublicCampaignCounters campaign={campaign}/>} {children}</div>;
 }
 function NativeDetail({campaign}:{campaign:PublicCampaign}){
- return <p>État Windows : {campaign.native?.state??'vérification en cours'}.{Number.isFinite(Date.parse(campaign.native?.verifiedAt??''))&&` Vérifié le ${formatDateTime(campaign.native!.verifiedAt!,true)}.`}</p>;
+ return <p>État Windows : {campaign.native?.state==='no_future_run'?'aucun prochain passage programmé':campaign.native?.state??'vérification en cours'}.{Number.isFinite(Date.parse(campaign.native?.verifiedAt??''))&&` Vérifié le ${formatDateTime(campaign.native!.verifiedAt!,true)}.`}</p>;
 }
 
 type Pick = SourceChoice & { id:string; authorId:string; authorLabel:string; sourceId:string; fixtureLabel:string;
- selection:string; market?:string; kickoff:string; observedAt:string; publishedCivilDate:string|null; sourceUrl:string };
+ selection:string; market?:string; kickoff:string; observedAt:string; publishedCivilDate:string|null; sourceUrl:string; observationCount?:number; lastObservedAt?:string };
 type State = { status:string; distinctPicks:number; authorCount:number; requestCount:number;
  generatedAt:string; sourceObservedThrough?:string; claimId:string; claimIds?:string[]; recurring?:boolean; halted?:boolean; picks:Pick[];
  campaign?:PublicCampaign; sroCampaign?:PublicCampaign; olbgCampaign?:PublicCampaign; expandedOlbgCampaign?:PublicCampaign; profileCampaign?:PublicCampaign;
- personalCollection?:{state:string;claimId?:string;qualifiedAt?:string;nativeChoices?:number};
+ personalCollection?:{state:string;claimId?:string;qualifiedAt?:string;nativeChoices?:number}; notbettingBundesOccurrences?:{state:string;nativeOccurrences?:number}; notbettingClosedOccurrences?:{state:string};
+ notbettingOccurrenceCompanion?:{updates:Record<string,{lastObservedAt:string;observations:unknown[]}>}; notbettingOccurrenceCampaign?:PublicCampaign;
  familyCollection?:{state:string;nativeWinState?:string;opaqueState?:string}; rosterCollection?:{state:string}; notbettingCollection?:{state:string}; rosterCampaign?:PublicCampaign&{authorIds?:string[];poolAuthorIds?:string[];profileCount?:number} };
 export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean; tipsterId?:string }) {
  const [data,setData]=useState<State|null>(null); const [error,setError]=useState(false);
@@ -44,9 +45,14 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
    {personalCollection?.state==='historical_observations_qualified'&&<p>Usage personnel local confirmé. Des calendriers officiels supplémentaires ont complété les preuves de choix déjà observés ; leurs dates de lecture d’origine sont conservées.</p>}
    {personalCollection?.state==='historical_observations_qualified'&&personalCollection.qualifiedAt&&<p>Dernière observation du catalogue : {formatDateTime(data.sourceObservedThrough??data.generatedAt,true)}. Qualification complémentaire du catalogue : {formatDateTime(personalCollection.qualifiedAt,true)}.</p>}
    {personalCollection?.state==='unavailable'&&<p role="alert">Les preuves personnelles complémentaires sont indisponibles. Les faits antérieurs restent conservés avec leur provenance.</p>}
-   {(rosterCampaign?.state==='unavailable'||data.rosterCollection?.state==='unavailable'||data.notbettingCollection?.state==='unavailable'||data.familyCollection?.state==='unavailable'||data.familyCollection?.nativeWinState==='unavailable'||data.familyCollection?.opaqueState==='unavailable')&&<p role="alert">Une partie des preuves individuelles supplémentaires est indisponible. Les autres observations restent conservées avec leur provenance.</p>}
+   {(rosterCampaign?.state==='unavailable'||data.rosterCollection?.state==='unavailable'||data.notbettingCollection?.state==='unavailable'||data.notbettingBundesOccurrences?.state==='unavailable'||data.notbettingClosedOccurrences?.state==='unavailable'||data.familyCollection?.state==='unavailable'||data.familyCollection?.nativeWinState==='unavailable'||data.familyCollection?.opaqueState==='unavailable')&&<p role="alert">Une partie des preuves individuelles supplémentaires est indisponible. Les autres observations restent conservées avec leur provenance.</p>}
    {(!tipsterId||selected?.sourceId==='NotBetting')&&data.notbettingCollection?.state==='qualified_one_time'&&<p>NotBetting : collecte ponctuelle qualifiée.</p>}
+   {(!tipsterId||selected?.sourceId==='NotBetting')&&data.notbettingBundesOccurrences?.state==='bounded_occurrences_qualified'&&<p>Deux occurrences supplémentaires proviennent d’une capture partielle. Cohérence globale des variantes non établie.</p>}
+   {(!tipsterId||selected?.sourceId==='NotBetting')&&data.notbettingClosedOccurrences?.state==='bounded_declarations_qualified'&&<p>Une déclaration supplémentaire provient de deux lectures partielles concordantes. Variantes hors parcours inconnues.</p>}
    <p>Horaires des lectures et des coups d’envoi : heure de Paris.</p>
+   {(!tipsterId||selected?.sourceId==='NotBetting')&&data.notbettingOccurrenceCampaign&&<CampaignBlock title="Collecte NotBetting · ELIMAGAR" campaign={data.notbettingOccurrenceCampaign}>
+    <p>Canari puis trois passages à 8 h, 10 h et 12 h (Paris), fin à 12 h 15 le 21/11. Huit GET maximum, canari compris. Une nouvelle déclaration exige deux lectures concordantes avant match. Parcours partiel ; variantes hors parcours inconnues.</p>
+   </CampaignBlock>}
    {!tipsterId&&<p>{data.recurring ? "Historique de la collecte des forums" : "Lot de collecte ponctuelle"} · {data.requestCount} GET publics HTTP(S) pour ce lot initial. {!data.recurring && !campaign && "Aucune collecte automatique de ces forums n’est activée."}</p>}
    {!tipsterId && campaign && <CampaignBlock title="Campagne des deux forums" campaign={campaign}>
     {campaign.slots && Number.isFinite(Date.parse(campaign.expiresAt??'')) && <p>{campaign.slots} créneaux, toutes les deux heures. Fin le {formatDateTime(campaign.expiresAt!,true)}, heure de Paris.</p>}
@@ -62,7 +68,7 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
    </CampaignBlock>}
    {(!tipsterId||selected?.authorId==='olbg:383717') && expandedOlbgCampaign && <CampaignBlock title="Collecte OLBG · profil 383717" campaign={expandedOlbgCampaign}>
     {expandedOlbgCampaign.state==='unavailable'?<p>Autorité indisponible ; programmation active non certifiée.</p>:<p>Ce profil seul : canari puis deux créneaux le 20/11 à 14 h et 16 h (Paris). Neuf GET maximum ; expiration à 16 h 15.</p>}
-    <p>État Windows : {expandedOlbgCampaign.native?.state??'indisponible'}.</p>
+    <NativeDetail campaign={expandedOlbgCampaign}/>
    </CampaignBlock>}
    {selected?.authorId==='olbg:383717'&&!expandedOlbgCampaign&&<p>Ce profil dispose d’une preuve ponctuelle. Autorité récurrente indisponible ; le profil 648433 ne le couvre pas.</p>}
    {(!tipsterId||selected?.authorId==='olbg:669088')&&profileCampaign&&<CampaignBlock title="Collecte OLBG · profil 669088" campaign={profileCampaign}>
@@ -87,6 +93,7 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
      <p>{p.authorLabel} · {p.sourceId}</p>
      <p>Coup d’envoi : {formatDateTime(p.kickoff,true)}.</p>
      <p>Observé avant match le {formatDateTime(p.observedAt,true)}.</p>
+     {data.notbettingOccurrenceCompanion?.updates[p.id]?<p>{data.notbettingOccurrenceCompanion.updates[p.id].observations.length} lectures concordantes de la même source. Dernière : {formatDateTime(data.notbettingOccurrenceCompanion.updates[p.id].lastObservedAt,true)}.</p>:p.sourceWalkTruncated&&Number.isSafeInteger(p.observationCount)&&p.observationCount!>1&&p.lastObservedAt&&<p>{p.observationCount} lectures concordantes. Dernière : {formatDateTime(p.lastObservedAt,true)}.</p>}
      <p>Date civile affichée : {p.publishedCivilDate??'non renseignée'}. Publication : heure et fuseau non certifiés.</p>
      {p.market==='source_native'&&<p>Marché normalisé et durée de jeu non certifiés. Évaluation de performance désactivée.</p>}
      <OpaqueChoiceDetails choice={p}/>
