@@ -22,7 +22,7 @@ test('un choix NotBetting ponctuel ouvre sa fiche sans inventer de programmation
  await expect(page.getByRole('heading',{name:'Alias NotBetting synthétique',exact:true})).toBeVisible();
  await expect(page.getByText('NotBetting : collecte ponctuelle qualifiée.',{exact:true})).toBeVisible();
  await expect(page.getByText('Prochain créneau Windows :',{exact:false})).toHaveCount(0);
- await expect(page.getByText('Qualification complémentaire du catalogue :',{exact:false})).toHaveCount(0);
+ await expect(page.getByText('Lecture du catalogue :',{exact:false})).toHaveCount(0);
  await expect(page.getByRole('heading',{name:'Nice – PSG · Choix publié (marché source non interprété) : Libellé source littéral',exact:true})).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
@@ -97,16 +97,17 @@ test('hepter shows its exact campaign without borrowing another author task',asy
  await expect(page.getByRole('heading',{name:'Collecte OLBG · profil 669088',exact:true})).toBeVisible();
  await expect(page.getByText('1 créneau(x) validé(s) · 2 GET réservés sur 18 maximum.',{exact:true})).toBeVisible();
  await expect(page.getByText('Prochain créneau Windows :',{exact:false})).toContainText('22 h 00');
+ await expect(page.getByText('Fin du plan :',{exact:false})).toContainText('21 novembre 2026 à 12 h 15');
  await expect(page.getByRole('heading',{name:'Collecte OLBG · profil 648433',exact:true})).toHaveCount(0);
 });
 
 test('observations du catalogue et qualification complémentaire ont deux dates distinctes',async({page})=>{
  await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,generatedAt:'2026-11-20T16:22:00Z',sourceObservedThrough:'2026-11-20T15:00:00Z',personalCollection:{state:'historical_observations_qualified',qualifiedAt:'2026-11-20T16:22:00Z'}}}));
  await page.goto('/expert/collecte-publique');
- const dates=page.getByText('Dernière observation du catalogue :',{exact:false});
+ const dates=page.getByText('Lecture du catalogue :',{exact:false});
  await expect(dates).toContainText('16 h 00');await expect(dates).toContainText('17 h 22');
  await page.getByRole('link',{name:'Auteur synthétique',exact:true}).click();
- await expect(page.getByText('Dernière observation du catalogue :',{exact:false})).toBeVisible();
+ await expect(page.getByText('Lecture du catalogue :',{exact:false})).toBeVisible();
 });
 
 test('complément personnel indisponible garde les faits antérieurs avec un avertissement',async({page})=>{
@@ -128,7 +129,7 @@ test('les faits publics conduisent à la fiche et à la source sans collecte nav
 test('les preuves absentes sont affichées comme indisponibles',async({page})=>{
  await page.route('**/api/tipsters/public',r=>r.fulfill({status:503,json:{status:'unavailable'}}));
  await page.goto('/expert/collecte-publique');
- await expect(page.getByRole('alert').filter({hasText:'collecte publique'})).toBeVisible();
+ await expect(page.getByRole('alert').filter({hasText:'Preuves locales'})).toBeVisible();
  await expect(page.getByText('0 pronostic(s)',{exact:false})).toHaveCount(0);
 });
 
@@ -195,14 +196,14 @@ test('SRO affiche son canari et son budget distinct du lot initial',async({page}
 
 test('OLBG preserves native choices and unknown publication without inventing scores',async({page})=>{
  const native={...data.picks[0],id:'olbg-tip:123',authorId:'olbg:648433',authorLabel:'Alexmur',sourceId:'SRC_014',market:'source_native',selection:'PSG',publishedCivilDate:null,sourceUrl:'https://www.olbg.com/tipsters/tips/648433'};
- await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,distinctPicks:2,authorCount:2,picks:[...data.picks,native],olbgCampaign:{state:'collecting',successfulSlots:1,requests:3,requestsMax:36,native:{state:'Disabled'}}}}));
+ await page.route('**/api/tipsters/public',r=>r.fulfill({json:{...data,distinctPicks:2,authorCount:2,picks:[...data.picks,native],olbgCampaign:{state:'collecting',successfulSlots:1,requests:3,requestsMax:36,native:{state:'Disabled',enabled:false,verifiedAt:new Date().toISOString()}}}}));
  await page.goto('/expert/collecte-publique');
  await expect(page.getByRole('heading',{name:'Nice – PSG · Choix publié (Win) : PSG',exact:true})).toBeVisible();
  await expect(page.getByRole('heading',{name:'Nice – PSG · score prévu 1-3',exact:true})).toBeVisible();
  await expect(page.getByText('Date civile affichée : non renseignée.',{exact:false})).toBeVisible();
  await expect(page.getByText('Marché normalisé et durée de jeu non certifiés.',{exact:false})).toBeVisible();
  await expect(page.getByText('score prévu PSG',{exact:false})).toHaveCount(0);
- await expect(page.getByText('État Windows : Disabled.',{exact:false})).toBeVisible();
+ await expect(page.getByText('Tâche Windows désactivée.',{exact:false})).toBeVisible();
  await page.getByRole('link',{name:'Alexmur',exact:true}).click();
  await expect(page.getByRole('heading',{name:'Alexmur',exact:true})).toBeVisible();
  await expect(page.getByText('Historique de la collecte des forums',{exact:false})).toHaveCount(0);

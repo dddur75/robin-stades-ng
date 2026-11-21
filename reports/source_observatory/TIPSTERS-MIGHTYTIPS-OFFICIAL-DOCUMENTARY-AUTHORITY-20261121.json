@@ -1,0 +1,74 @@
+{
+  "generatedAt": "2026-11-21T06:59:14.140616+00:00",
+  "schemaVersion": "robin-official-documentary-authority-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.MIGHTYTIPS.OFFICIAL.DOCUMENTARY.AUTHORITY.20261121",
+  "status": "AUTHORIZED_NOT_YET_EXECUTED_DOCUMENTARY_ONLY",
+  "scope": "Two mediated official-document operations only; current robots must permit terms route; no prediction read or permission inference.",
+  "planSha256": "c3678949fa667278f746d729d002e448bf7c5c20964d75264edbfccd78283ec1",
+  "manifestSha256": "9234a2da909716f42e3342238f448eb767b88d22fa20981b6cf42cb176785ab1",
+  "plan": {
+    "accounts": 0,
+    "articleOrProfileReads": 0,
+    "directSourceGETs": 0,
+    "expiresAt": "2026-11-21T07:20:00Z",
+    "firstOperationNotBefore": "2026-11-21T07:05:00Z",
+    "historicalScopeNotCombinedWithMediatedOperations": true,
+    "knownHistoricalDirectReservationScope": 8,
+    "mediatedOperationsMax": 2,
+    "newTasks": 0,
+    "operations": [
+      {
+        "id": "robots",
+        "tool": "web.open",
+        "url": "https://www.mightytips.com/robots.txt"
+      },
+      {
+        "id": "terms",
+        "requires": "robots_allows_terms",
+        "tool": "web.open",
+        "url": "https://www.mightytips.com/about-us/terms-conditions/"
+      }
+    ],
+    "purchases": 0,
+    "purpose": "Determine exact published terms for proposed local personal factual collection; do not infer platform-wide permission or ban from old labels.",
+    "rawProviderBodyStorage": 0,
+    "rawTermsPriorHash": "cd0b1f0a398c7a078b6ee6f31858beba847009e0dbdb45c987b5dd86cdc58719",
+    "redirectFallbackOrRetry": 0,
+    "schemaVersion": "robin-exact-official-documentary-plan-v1",
+    "sourceChoicesAdmitted": 0,
+    "sourceId": "SRC_045",
+    "workload": "READ_OFFICIAL_ROBOTS_AND_CURRENT_TERMS_ONLY"
+  },
+  "manifest": {
+    "authorized_stages": [
+      "E1"
+    ],
+    "compute_budget": {
+      "workers": 1
+    },
+    "expires_at": "2026-11-21T07:20:00Z",
+    "external_effects": {
+      "accounts": 0,
+      "admissions": 0,
+      "direct_source_gets": 0,
+      "mediated_official_documentary_operations_max": 2,
+      "new_tasks": 0,
+      "purchases": 0,
+      "raw_body_storage": 0,
+      "source_predictions_read": 0
+    },
+    "maximum_stage": "E1",
+    "mission_id": "MIGHTYTIPS_OFFICIAL_DOCUMENTARY_E1_20261121",
+    "source_hash": "c3678949fa667278f746d729d002e448bf7c5c20964d75264edbfccd78283ec1",
+    "time_budget": {
+      "elapsed_seconds_max": 120
+    }
+  },
+  "backendHTTPRequestsNotQuantified": true,
+  "backendRedirectBehaviorNotGuaranteed": true,
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

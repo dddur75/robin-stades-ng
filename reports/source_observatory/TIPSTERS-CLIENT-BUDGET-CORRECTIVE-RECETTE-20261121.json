@@ -1,0 +1,152 @@
+{
+  "schemaVersion": "robin-client-budget-corrective-recette-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.CLIENT.BUDGET.CORRECTIVE.RECETTE.20261121",
+  "generatedAt": "2026-11-21T07:31:09.122062+00:00",
+  "missionId": "ROBIN-CLIENT-BUDGET-CORRECTIVE-PUBLIC-20261121",
+  "status": "TARGETED_LOCAL_CHECKS_PASS_EXACT_NEW_HEAD_LINUX_CI_PENDING_GLOBAL_SOURCE_DELIVERY_PARTIAL",
+  "scope": "Correct exactCI249strictJSbudgetfailure by sharing campaign metadata and concise labels in twoUI files. Preserve source data, warnings, native gates and all frozen source workers. Include independently verified firstscheduledreceipt and bounded documentary findings.",
+  "problem": {
+    "previousHead": "5b7599477d9995576279755ac6b8a63d0854fa99",
+    "runId": 44877663573,
+    "actualLinuxJSBytes": 1351615,
+    "strictThresholdBytes": 1350000,
+    "minimumReductionRequired": 1616,
+    "failedJobs": 4,
+    "oneSharedRootCause": true
+  },
+  "correction": {
+    "sourceCodeChanged": false,
+    "dataChanged": false,
+    "frozenRuntimePinsChanged": false,
+    "UIFiles": [
+      "cockpit/app/components/expert/public-tipsters.tsx",
+      "cockpit/tests/public-tipsters.spec.ts"
+    ],
+    "sharedExpiryAndVerificationMetadata": true,
+    "partialWarningsPreserved": true,
+    "strictThresholdRaised": false
+  },
+  "localMeasurement": {
+    "platform": "Windows",
+    "previousJSBytes": 1359429,
+    "currentJSBytes": 1357218,
+    "reductionBytes": 2211,
+    "clientJSFiles": 43,
+    "estimatedLinuxBytes": 1349404,
+    "linuxEstimateNotMeasurement": true,
+    "exactNewHeadLinuxCIPending": true
+  },
+  "checks": {
+    "publicTipsterBrowserPassed": 24,
+    "browserSeconds": 16.4,
+    "typecheck": "PASS",
+    "targetedESLint": "PASS",
+    "build": "PASS",
+    "sourcePinsUnchanged": 15,
+    "pythonChanges": 0,
+    "previousCI249PythonPassed": 5436,
+    "previousCI249PythonSkipped": 41,
+    "previousCI249PythonXfailed": 1,
+    "fullLocalSuiteRerun": false,
+    "corpusReplays": 0
+  },
+  "actualA9": {
+    "observedAt": "2026-11-21T07:24:37.313Z",
+    "views": [
+      {
+        "path": "/expert/tipsters/public%3Aea7c3033521ef4d59062d519cdac85d69e993544aab2eea430b5c164d6cade8d",
+        "http": 200,
+        "counters": 1,
+        "expires": "Fin du plan : 21 novembre 2026 à 12 h 15.",
+        "observations": 2,
+        "partial": 3,
+        "overflow": false
+      },
+      {
+        "path": "/expert/admin-collecte",
+        "http": 200,
+        "counters": 1,
+        "expires": "Fin du plan : 21 novembre 2026 à 12 h 15.",
+        "observations": null,
+        "partial": null,
+        "overflow": false
+      }
+    ],
+    "errors": [],
+    "external": [],
+    "publicChoices": 403,
+    "pseudonyms": 78,
+    "fixtures": 16,
+    "scheduledPasses": 1,
+    "requests": 4
+  },
+  "evidence": [
+    {
+      "namespace": "A9_PRIVATE_CLIENT_BUDGET_CORRECTIVE",
+      "path": "cockpit/.ci/client-budget-corrective-20261121/actual-ui.json",
+      "sha256": "73c340ee44ea2d3d58c3829e62d28991031251582079fe220877c796182c3d95"
+    },
+    {
+      "namespace": "A9_PRIVATE_CLIENT_BUDGET_CORRECTIVE",
+      "path": "cockpit/.ci/client-budget-corrective-20261121/route-0-desktop.png",
+      "sha256": "b44922572efcdf1affc38bcee0c718197484acc2c98fda1dde28180b9263e013"
+    },
+    {
+      "namespace": "A9_PRIVATE_CLIENT_BUDGET_CORRECTIVE",
+      "path": "cockpit/.ci/client-budget-corrective-20261121/route-0-mobile.png",
+      "sha256": "32aa3a4361ff28bb4cfd43443eaaeffcd3ce3d6ea86ceff65589651cdc16120a"
+    },
+    {
+      "namespace": "A9_PRIVATE_CLIENT_BUDGET_CORRECTIVE",
+      "path": "cockpit/.ci/client-budget-corrective-20261121/route-1-desktop.png",
+      "sha256": "60046247fc9956b79e3316186111fdd8f62f66a8e5854ef1967c8dc5b113bc0b"
+    },
+    {
+      "namespace": "A9_PRIVATE_CLIENT_BUDGET_CORRECTIVE",
+      "path": "cockpit/.ci/client-budget-corrective-20261121/route-1-mobile.png",
+      "sha256": "e5e8b304104bb5707f175dbba840778856ae3e4326daa063da853e11b04b0500"
+    },
+    {
+      "namespace": "A9_PRIVATE_CLIENT_BUDGET_CORRECTIVE",
+      "path": "cockpit/.ci/client-budget-corrective-20261121/ci249-terminal.json",
+      "sha256": "52f07f77627cdee72e2111681940c02360dde819b88aebe0b060fbb3bcd25371"
+    }
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.CI249.CLOSURE.20261121",
+    "DATA.SOURCE_OBSERVATORY.NOTBETTING.OCCURRENCE.FIRST.SCHEDULED.20261121",
+    "ENG.SOURCE_OBSERVATORY.MIGHTYTIPS.OFFICIAL.DOCUMENTARY.RESULT.20261121",
+    "ENG.SOURCE_OBSERVATORY.BOUNDED.COLLECTION.PUBLIC.SNAPSHOT.DELIVERY.20261121"
+  ],
+  "limits": [
+    "The1350000-byte cap is strict and unchanged; Windows savings and the Linux estimate do not certify the newhead.",
+    "FirstscheduledNotBettingpass reobserves2existingIDs and adds0newchoices;4same-publisher observations each. Partialcapture/unknownvariants and noROI/settlement remain.",
+    "MightyTips has an explicit personal-storage exception plus transitory-license limits. Durable collection remains unqualified; its documentary closure exceeded its timebudget and is recorded FAILURE.",
+    "Telegram has no export according to the user; this alone does not establish that every other access route is unavailable. No Telegram message has been read.",
+    "Coteur remainsPARTIAL after twofailedarchitectures. Kicktipp conclusions remain contest-specific. Allcompatible source coverage is not delivered.",
+    "Public/source-runtime namespaces remain distinct. No runtime journal/authority is replaced and no grant is reissued."
+  ],
+  "publication": {
+    "pr": 133,
+    "draft": true,
+    "remoteBranch": "codex/robin-dossier-fidele",
+    "expectedRemoteSHA": "5b7599477d9995576279755ac6b8a63d0854fa99",
+    "correctiveNonforcePushMax": 1,
+    "newHeadCIRunsMax": 1,
+    "merge": false,
+    "deployment": false,
+    "newSourceGET": 0,
+    "newTasks": 0,
+    "allCompatibleSourcesIntegrated": false
+  },
+  "locks": {
+    "STORAGE_PAUSED": true,
+    "P3_P4_PAUSED": true,
+    "PRODUCTION_LOCKED": true,
+    "REAL_BETS": false,
+    "NO_BET_DEFAULT": true,
+    "PROMOTION_LOCKED": true,
+    "SOCIAL_PUBLISHING_ENABLED": false,
+    "DEMO_MODE_ENABLED": false
+  }
+}
