@@ -1,0 +1,47 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI259.VISUAL.CONTRACT.LOCAL.RECETTE.20261122",
+  "recordedAt": "2026-11-22T15:42:03.201Z",
+  "status": "TWO_TARGETED_SYNTHETIC_VISUAL_CASES_PASS",
+  "scope": "Only two existing synthetic Playwright cases align to reviewed historical UI. Keep source choice Alice, unqualified Bob, unknown current operation, measured-zero/date distinction. No product logic or data changes.",
+  "missionId": "CI259_VISUAL_HISTORICAL_CONTRACT_LOCAL_FIX_20261122",
+  "authorityClaim": "ENG.SOURCE_OBSERVATORY.CI259.VISUAL.CONTRACT.LOCAL.AUTHORITY.20261122",
+  "sourceFailureClaim": "ENG.SOURCE_OBSERVATORY.CI259.VISUAL.FAILURE.20261122",
+  "decision": {
+    "grant": "39e24f95e3537882e64e3e4c1ccf573ea23a125e8bbb7537c4ce21d03d093086",
+    "authorizedAt": "2026-11-22T15:37:57.129344+00:00"
+  },
+  "planSHA256": "bfa71b7d0407c3b58a3726f1ce016decbe20a72ec88e03b0d22d83f4ecba43a3",
+  "manifestSHA256": "1359d13c119be54c844ed67ced69871be7620bcf575ed5775fe1febd5bd4745c",
+  "sourceCodeChanged": false,
+  "fixturesOnly": true,
+  "tests": {
+    "startTime": "2026-11-22T15:39:49.043Z",
+    "duration": 3732.989,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "network": {
+    "contexts": 2,
+    "mockedAPIResponses": 3,
+    "realAPIRequests": 0,
+    "externalRequests": 0,
+    "nonGETRequests": 0
+  },
+  "runnerSHA256": "13b4947f237d126a79059ef46e9157c2cd80fd390aa2cd4ce68cfa8bf906a8f4",
+  "checks": {
+    "lint": "PASS_TWO_FILES",
+    "worker": 1,
+    "retries": 0,
+    "webServerLaunched": false,
+    "sourceGET": 0,
+    "TaskQueries": 0
+  },
+  "operatorCorrection": "Initial node_repl process module import was refused before CLI invocation; zero browser/test/network started. Native PowerShell process-local environment then launched reviewed Node CLI once.",
+  "actualCompletedAt": "2026-11-22T15:39:52.776Z",
+  "publications": 0,
+  "newAdmissions": 0,
+  "globalDelivery": "PARTIAL",
+  "independentReview": "C3 actual two trace ZIP and276hash map PASS; C4 actual147loopbackGET/3mockedAPI/2contexts/3expertURLs/0realAPI/source/task and timing PASS. No app/data/remote effects."
+}

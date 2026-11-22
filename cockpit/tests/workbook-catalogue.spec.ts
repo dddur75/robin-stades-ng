@@ -29,7 +29,7 @@ test('un inventaire zéro est affiché seulement avec une mesure et sa propre da
  await page.goto('/expert/catalogue-sources?id=workbook:b');
  await expect(page.getByText('Évaluation datée',{exact:true})).toBeVisible();
  await expect(page.getByText('Inventaire observé le',{exact:false})).toHaveCount(0);
- measured=true;await page.getByRole('button',{name:'Actualiser les états',exact:true}).click();
+ measured=true;await page.getByRole('button',{name:'Actualiser le catalogue',exact:true}).click();
  await expect(page.getByText('Inventaire observé le',{exact:false})).toContainText('0 fait(s) source');
  await expect(page.getByText('Inventaire observé le',{exact:false})).toContainText('19 novembre 2026');
 });

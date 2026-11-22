@@ -1,0 +1,40 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI259.VISUAL.CONTRACT.PUBLICATION.AUTHORITY.20261122",
+  "recordedAt": "2026-11-22T16:04:23.887Z",
+  "status": "ONE_CORRECTIVE_COMMIT_NONFORCE_PUSH_AND_EXACT_HEAD_CI_WATCH",
+  "scope": "Two synthetic visual contract specs only plus audited aggregate proof metadata and append-only graph/ledger. No application code, private data, native literals, source collection or old CI rerun.",
+  "planSHA256": "6ce6e022df8be41b88e50188bf45893efb16624ea54f3d8a7f4490b68ce1c750",
+  "manifestSHA256": "16079693f87f6a3230879ba134dd29fdd0d8d37d10e96b92339f4fe37a000cdc",
+  "baseHEAD": "8dd2ea38a164c65ef64e69cf938e5aaf6f3d9901",
+  "files": 12,
+  "maximumCommits": 1,
+  "maximumNonForcePushes": 1,
+  "maximumPRMetadataUpdates": 0,
+  "knownPreviousPushCalls": 9,
+  "knownNextMaximumPushCalls": 10,
+  "CIWatchSeconds": 2700,
+  "CIReadCallsMaximum": 90,
+  "CIReadIntervalMinimumSeconds": 30,
+  "reusedClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V18.ENGINEERING.RECETTE.20261122",
+    "ENG.SOURCE_OBSERVATORY.CI259.VISUAL.CONTRACT.LOCAL.RECETTE.20261122",
+    "ENG.SOURCE_OBSERVATORY.CI259.EXACT.HEAD.RESULT.20261122",
+    "ENG.SOURCE_OBSERVATORY.OLBG.REP.NATIVE.LITERALS.SOURCE.RESULT.20261122",
+    "ENG.SOURCE_OBSERVATORY.SOURCE.COVERAGE.CLOSURE.PARTIAL.20261122"
+  ],
+  "reviews": {
+    "C3": "PASS exact6ce6/1607 tuple,9immutableLFpins,12paths,2specsactualPASS, hardened executor6186 onlyderivedbindings; final grant/map12/terminal review before index required.",
+    "C4": "PASS exact tuple/privacy7aggregate reports plus2synthetic specs, historical graph/ledger prefixes,onecommit1nonforcepush9to10/PRmetadata0/CI2700s90readsmin30/17:30/no sourceTask."
+  },
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "newAdmissions": 0,
+  "applicationCodeChanges": 0,
+  "PRMetadataUpdates": 0,
+  "merge": 0,
+  "deployment": 0,
+  "privateDataPublished": 0,
+  "expiresAt": "2026-11-22T17:30:00Z",
+  "globalDelivery": "PARTIAL"
+}

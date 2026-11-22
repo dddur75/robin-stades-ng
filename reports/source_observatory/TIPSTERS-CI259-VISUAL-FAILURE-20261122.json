@@ -1,0 +1,20 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI259.VISUAL.FAILURE.20261122",
+  "recordedAt": "2026-11-22T15:37:56.208Z",
+  "status": "VISUAL_JOB_FAILED_GLOBAL_RUN_PENDING",
+  "scope": "CI259 visual job on exact8dd2 only, not terminal whole-run receipt. Two stale historical-UI locators failed;107 visual tests passed and2skipped. No new application defect established.",
+  "runId": 45036992965,
+  "jobId": 137254877135,
+  "head": "8dd2ea38a164c65ef64e69cf938e5aaf6f3d9901",
+  "visualPassed": 107,
+  "visualFailed": 2,
+  "visualSkipped": 2,
+  "primaryLogsResultSHA256": "3b35350c7fce7a315d11384a321676275e108024b359ff66f96edec4d189f8ca",
+  "failedCases": [
+    "tipster-candidates.spec.ts:qualification personnelle rejoint",
+    "workbook-catalogue.spec.ts:inventaire zéro mesuré"
+  ],
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "globalDelivery": "PARTIAL"
+}

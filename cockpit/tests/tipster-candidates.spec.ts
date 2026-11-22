@@ -53,15 +53,18 @@ for(const width of [360,375,390,430])test(`candidats accessibles à ${width}px`,
  const input=page.getByLabel('Rechercher une fiche');await input.focus();await expect(input).toBeFocused();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
 
-test('qualification personnelle rejoint la fiche sans qualifier les autres',async({page})=>{
+test('qualification historique rejoint la fiche sans activer les collectes ni qualifier les autres',async({page})=>{
  const access={platform:'Forum test',label:'Accès public vérifié',reason:'Sujet courant contrôlé',requiredAccess:'Aucun compte pour ce sujet',ownerAction:'Campagne personnelle bornée',url:'https://example.org/',scope:'platform_only'};
  const choice={id:'synthetic-pick',fixtureLabel:'Nice – PSG',selection:'1-3',observedAt:'2026-11-19T14:00:00Z',kickoff:'2026-11-21T16:15:00Z',sourceUrl:'https://example.org/post/123'};
- const active={...data,enabledCount:1,qualification:{status:'ok',assessedCount:2,qualifiedCount:1,claimId:'SYNTHETIC.QUALIFICATION',platforms:[access]},candidates:[{...row,collectionEnabled:true,qualification:{...access,label:'Choix personnels observés avant match',profileVisited:false,documentaryIssues:[],personallyProven:true,picks:[choice]}},data.candidates[1]]};
- await page.route('**/api/tipsters/candidates',r=>r.fulfill({json:active}));
- await page.goto('/expert/catalogue-tipsters');await expect(page.getByText('2 fiches examinées : 1 avec des choix personnels',{exact:false})).toBeVisible();
+ const historical={...data,enabledCount:null,operationalState:'unknown',historicalEvidence:{sourceObservedAt:'2026-11-19T14:00:00Z'},qualification:{status:'ok',assessedCount:2,qualifiedCount:1,claimId:'SYNTHETIC.QUALIFICATION',platforms:[access]},candidates:[{...row,collectionEnabled:null,qualification:{...access,label:'Choix personnels observés avant match',profileVisited:false,documentaryIssues:[],personallyProven:true,picks:[choice]}},{...data.candidates[1],collectionEnabled:null}]};
+ await page.route('**/api/tipsters/candidates',r=>r.fulfill({json:historical}));
+ await page.goto('/expert/catalogue-tipsters');await expect(page.getByText('Qualification historique conservée : 2 fiches examinées ; 1 avec des choix personnels observés avant match. État actuel des collectes non vérifié.',{exact:true})).toBeVisible();
+ await expect(page.getByRole('link',{name:'Bob',exact:true}).locator('..')).toContainText('À qualifier');
  await page.getByRole('link',{name:'Alice',exact:true}).click();
  await expect(page.getByRole('heading',{name:'Nice – PSG · score prévu 1-3',exact:true})).toBeVisible();
- await expect(page.getByText('Collecte autorisée dans la campagne',{exact:false})).toBeVisible();
+ await expect(page.getByText('État actuel de collecte non vérifié',{exact:false})).toBeVisible();
+ await expect(page.getByText('Collecte autorisée dans la campagne',{exact:false})).toHaveCount(0);
+ await expect(page.getByText('Collecte désactivée',{exact:false})).toHaveCount(0);
  await expect(page.getByText('Aucun pronostic collecté n’est attribué à cette fiche par cet import.',{exact:true})).toHaveCount(0);
 });
 
