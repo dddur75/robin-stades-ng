@@ -27,7 +27,7 @@ function text(value: unknown, maximum = 500): string {
 }
 function date(value: unknown): string {
   const stamp = text(value, 40);
-  if (!/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{1,6})?(?:Z|\+00:00)$/.test(stamp)
+  if (!/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]{1,6})?(?:Z|\+00:00)$/.test(stamp)
     || !Number.isFinite(Date.parse(stamp)) || Date.parse(stamp) > Date.now() + 300_000
     || new Date(stamp).toISOString().slice(0, 19) !== stamp.slice(0, 19)) {
     throw new Error("Invalid qualification date");

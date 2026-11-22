@@ -1,0 +1,56 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI254.TERMINAL.LABEL.FIX.20261122",
+  "generatedAt": "2026-11-22T02:49:49.976Z",
+  "status": "TWO_TARGETED_CAUSES_FIXED_LOCALLY_PENDING_NEW_EXACT_HEAD_CI",
+  "scope": "Two minimal independent causes of the same failedCI254: equivalent UTC regex and a unique qualification refresh accessible name. Existing guards and failing tests unchanged.",
+  "run": 44976353421,
+  "runNumber": 254,
+  "head": "45ea2bf5f54c862ae7d070ad8832dd1dc626e3b9",
+  "terminal": {
+    "conclusion": "failure",
+    "totalJobs": 17,
+    "successful": 12,
+    "failed": 5
+  },
+  "failureBreakdown": {
+    "pathGuardJobs": 3,
+    "visualJob": 1,
+    "aggregateGate": 1
+  },
+  "visualJob": 137068235189,
+  "visualCause": "Pilot refresh and new qualifications refresh shared one accessible button name, making global keyboard locators ambiguous.",
+  "existingVisualJobResults": {
+    "passed": 104,
+    "failed": 5,
+    "skipped": 2
+  },
+  "component": "cockpit/app/components/expert/tipster-qualification.tsx",
+  "beforeComponentSHA256": "ca1f95dd47992aa16a8601bd42ff19e70d8eb47bb722f1d7cfd59c0b4339f4ec",
+  "afterComponentSHA256": "5b6db27c140dc8724e5b2c2a3b5f2105f791c3d14fbb92869896acd096778bd6",
+  "newQualificationRefreshName": "Actualiser les qualifications",
+  "pilotRefreshNameUnchanged": "Actualiser le suivi",
+  "priorUTCRegexFixClaim": "ENG.SOURCE_OBSERVATORY.CI254.UTC.REGEX.PORTABILITY.FIX.20261122",
+  "targetedBrowser": {
+    "unchangedExistingTests": 5,
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "outerExit": 0,
+    "elapsedSeconds": 9.514999999999418,
+    "keyboardFocusAndCSSZoomEmulation": true,
+    "manualScreenReader": false,
+    "testResultSHA256": "c9c98a9c6fcfb18b0ff9717d4c7c50d61de039165d1665c84814ecd4dc7c9b7a",
+    "boundedReceiptSHA256": "4eacc0464e545907b29e7a16b92674ba4bcd43c15fd872dd76967d7d6a49e494"
+  },
+  "codeDiff": {
+    "libLinesAdded": 1,
+    "libLinesRemoved": 1,
+    "componentLinesAdded": 1,
+    "componentLinesRemoved": 1
+  },
+  "publicationAttemptOfSixFileTupleSpent": false,
+  "sourceGrantChanges": 0,
+  "tasks": 0,
+  "globalDelivery": "PARTIAL"
+}

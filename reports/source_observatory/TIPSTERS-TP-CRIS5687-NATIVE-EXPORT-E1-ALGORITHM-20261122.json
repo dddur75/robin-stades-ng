@@ -1,0 +1,101 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TP.CRIS5687.NATIVE.EXPORT.E1.ALGORITHM.20261122",
+  "generatedAt": "2026-11-22T02:36:12.101Z",
+  "status": "EXACT_PRIVATE_NATIVE_EXPORT_CANARY_AFTER_INDEPENDENT_KEYS",
+  "scope": "One publicly offered source account-route CSV, three conditional GET, ten selected L1 fixtures; private opaque candidates only, no human identity or admission.",
+  "missionId": "TP_CRIS5687_NATIVE_EXPORT_E1_20261122",
+  "planSHA256": "7b0a507691286f5ed2cee84b470a28c6974ab89f0ad092b2075a64f6a6ab0020",
+  "manifestSHA256": "33df4b0c852b50adcc268d3e27425db6fd4edad0c2d5cc782afda99b320e7c77",
+  "source": {
+    "slug": "cr-is5687",
+    "recordId": "catalogue:dd0fcc2e67d807ffca3adbc94cb442bf8415a43d34e07de475969b157e0af04c",
+    "ordered": [
+      "https://tipsterplatform.com/robots.txt",
+      "https://tipsterplatform.com/tipster/cr-is5687",
+      "https://tipsterplatform.com/tipster/cr-is5687/historial.csv"
+    ],
+    "existingNativeExportClaim": "DATA.SOURCE_OBSERVATORY.EXPANSION.PREMATCH.20261120",
+    "legalClaim": "ENG.SOURCE_OBSERVATORY.TP.DOCUMENTARY.CORRECTED.20261121"
+  },
+  "attribution": "Publisher-declared account-route resource association only: exact profile plus native actual href and exact CSV endpoint response, no redirects/identity contradictions. Canonical/OG:url optional; conflicting identity STOP. No h1/title/JSON owner inference, no human/DOM-card/row-author claim.",
+  "csvContract": {
+    "encoding": "UTF-8-sig",
+    "exactHeaderCount": 20,
+    "keep": [
+      "published_at",
+      "event_date",
+      "competition",
+      "event",
+      "market",
+      "selection",
+      "odds",
+      "fingerprint"
+    ],
+    "marketInterpretationAllowed": false,
+    "missingNativeValues": "UNKNOWN_NEVER_INFERRED",
+    "sourceMarketLiteral": "h2h"
+  },
+  "calendar": {
+    "fixtureCount": 10,
+    "canonicalSHA256": "737723c9cb9ce16f52c20dca72225cc52e92e73af9396542aa9b12c1cc6b152d",
+    "provisionalJ12": 7,
+    "nativeUTCProof": false,
+    "minimumLeadHoursForProvisional": 48,
+    "policyClaim": "ENG.SOURCE_OBSERVATORY.FUTURE.L1.CALENDAR.CONTEXTUAL.POLICY.20261122"
+  },
+  "bounds": {
+    "GET": 3,
+    "attempts": 1,
+    "seconds": 90,
+    "CSVRows": 1000,
+    "privateCandidates": 100,
+    "noTruncation": true,
+    "admissions": 0,
+    "tasks": 0,
+    "API_FOOTBALL_CALLS": 0
+  },
+  "retention": {
+    "namespace": "A9_PRIVATE_TP_CRIS5687_NATIVE_EXPORT_E1_20261122",
+    "rawBodies": "RAM_ONLY",
+    "selectedPrivateFields": [
+      "published_at",
+      "event_date",
+      "competition",
+      "event",
+      "market",
+      "selection",
+      "odds",
+      "fingerprint"
+    ],
+    "eligibleForApplication": false,
+    "verifiedPreMatch": false,
+    "performanceAllowed": false,
+    "settlementAllowed": false
+  },
+  "history": {
+    "counter5IsDocumentarySubsetOnly": true,
+    "documentaryAndSarracinoKnownGET": 5,
+    "expansionKnownGET": 6,
+    "initialKnownGET": 5,
+    "knownTPGETAtLeast": 16,
+    "newAttemptMax": 1,
+    "newGETMax": 3,
+    "oldTPExactTotal": "UNKNOWN",
+    "priorGrantOrUnspentAllowanceTransferred": false,
+    "sarracinoClosedNoRetry": true
+  },
+  "tests": {
+    "C2": 22,
+    "C3Independent": 22,
+    "ruffExit": 0,
+    "targetedMypyExit": 0,
+    "banditExit": 0
+  },
+  "reviews": {
+    "C1": "Exact account route, historical native export/header proof and calendar29pins",
+    "C3": "22 independent tests, actual AST loading, network audit, closure and controller guards",
+    "C4": "Exact personal opaque private export scope and whitelist; no general permission inferred"
+  },
+  "globalDelivery": "PARTIAL",
+  "allCompatibleSourcesIntegrated": false
+}

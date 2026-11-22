@@ -41,7 +41,7 @@ export function TipsterQualification() {
     <h2 id="recent-source-qualification">Qualifications récentes des sources</h2>
     <p>Contrôles ponctuels et ciblés. Ce suivi couvre une partie des sources du classeur ; les collectes actives restent indiquées dans le suivi récurrent.</p>
     <button className="pilot-button" type="button" onClick={() => { setPending(true); void refresh(); }} disabled={pending}>
-      {pending ? "Lecture du suivi…" : "Actualiser le suivi"}</button>
+      {pending ? "Lecture des qualifications…" : "Actualiser les qualifications"}</button>
     {error && <p role="alert">{error}</p>}
     {!snapshot && !error && <p role="status">Lecture des résultats locaux…</p>}
     {snapshot && <>

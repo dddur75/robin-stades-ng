@@ -1,0 +1,131 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TP.CRIS5687.NATIVE.EXPORT.E1.RESULT.20261122",
+  "recordedAt": "2026-11-22T02:40:08.345Z",
+  "status": "PARTIAL_ZERO_ELIGIBLE_UNDER_TEN_L1_FIXTURE_FILTER",
+  "scope": "One native public account-route export;325 CSV rows fully parsed, zero private candidates under exact h2h/alias/date/ten-fixture/time filters. No general source inactivity or absence-of-football/future-choice inference.",
+  "missionId": "TP_CRIS5687_NATIVE_EXPORT_E1_20261122",
+  "planSHA256": "7b0a507691286f5ed2cee84b470a28c6974ab89f0ad092b2075a64f6a6ab0020",
+  "manifestSHA256": "33df4b0c852b50adcc268d3e27425db6fd4edad0c2d5cc782afda99b320e7c77",
+  "grant": "79fc07f642c08c0c2383ff92b21524f979e131724f184aff8d549633a12f2032",
+  "closedAt": "2026-11-22T02:36:25.6279538Z",
+  "externalExitCode": 1,
+  "externalElapsedSeconds": 11.6993653,
+  "reservations": 3,
+  "responses": 3,
+  "HTTP200": 3,
+  "observedAtUTC": "2026-11-22T02:36:24.763692Z",
+  "diagnostics": {
+    "barrierCause": "NONE",
+    "barrierParsingCompleted": true,
+    "barrierParsingStarted": true,
+    "candidateCount": 0,
+    "canonicalExact": true,
+    "canonicalPresent": true,
+    "captchaIntegrationPresent": false,
+    "challengeMarkupPresent": false,
+    "csvParsingCompleted": true,
+    "csvParsingStarted": true,
+    "csvRowCount": 325,
+    "declaredRouteAttributed": true,
+    "interstitialTextPresent": false,
+    "interstitialTitlePresent": false,
+    "nativeExportAnchorCount": 1,
+    "ogUrlExact": true,
+    "ogUrlPresent": true,
+    "profileParsingCompleted": true,
+    "profileParsingStarted": true,
+    "sourceBarrierDetected": false
+  },
+  "attribution": "DECLARED_EXPORT_ROUTE_ONLY",
+  "humanIdentityEstablished": false,
+  "rowAuthorEstablished": false,
+  "sourceTimezone": null,
+  "sourcePublishedAtQualification": false,
+  "calendar": {
+    "fixtures": 10,
+    "retainedCurrent": 3,
+    "contextualJ12": 7,
+    "minimumLeadHoursForProvisional": 48,
+    "nativeUTCProofForJ12": false,
+    "policyClaim": "ENG.SOURCE_OBSERVATORY.FUTURE.L1.CALENDAR.CONTEXTUAL.POLICY.20261122"
+  },
+  "individualExclusionCauses": "UNKNOWN_NOT_RETAINED",
+  "candidateFilePresent": false,
+  "admissions": 0,
+  "rawBodiesOrRowsStored": false,
+  "readbackSHA256": "f4c1364a5a35f4c960e9ceca743be65a2bc95f89e949269f534b18ff18717cbd",
+  "receiptHashes": {
+    "spent.json": {
+      "sha256": "8f7c0b1cc5ba1391c62aca4809aa5544093ab877e3956a51895b12d84fdc7455",
+      "bytes": 372
+    },
+    "parent-started.json": {
+      "sha256": "286bcb4b3dec7034d7bc47833ba3597471b3885af2e0df16b03bedef317dbd0d",
+      "bytes": 427
+    },
+    "worker-started.json": {
+      "sha256": "c0c6e4e2e4fa19578df2235645b56f7857ec16d674b251de87db67ecc957b105",
+      "bytes": 288
+    },
+    "reservation-1.json": {
+      "sha256": "e60796dc7ef1cd29abe27e10e40290beef75df77876c2e1b84dc2acedfe60058",
+      "bytes": 354
+    },
+    "response-1.json": {
+      "sha256": "883bc174662597c4b168480bea7a0bda5475f143225cf425dbf39ec7d22b727a",
+      "bytes": 450
+    },
+    "reservation-2.json": {
+      "sha256": "e5ace23ec31b2dbd955e9d5134c33b36ef37e25ab1041f403b8ba8de1049dd2b",
+      "bytes": 354
+    },
+    "response-2.json": {
+      "sha256": "b7b7e8f8fedc714d20b2c6f4c7009d37716415c3b27b55eb1c8e77128ab300e9",
+      "bytes": 452
+    },
+    "reservation-3.json": {
+      "sha256": "6410da4eafdb9d5bf863557d18b6a5c9d4666610864512832756537678dbaecf",
+      "bytes": 354
+    },
+    "response-3.json": {
+      "sha256": "2a51909310ec75a5e0ca9ad0c8c85bb71558cd428e68cc283ce322f0e4250bb4",
+      "bytes": 450
+    },
+    "worker-stop.json": {
+      "sha256": "e6db08219cc0a312666105d705e7e750d5b157988930fce16d347dbbf5b6a28d",
+      "bytes": 907
+    },
+    "parent-result.json": {
+      "sha256": "75ebe706363a9a17a008bc3736d9ca2b8f86fa503250518b9650af6091966a3e",
+      "bytes": 344
+    },
+    "outer-veto.json": {
+      "sha256": "7407ae6b8b1fe8dc7744b8f51b2b658c264a06863379a504e763d1f8236a2949",
+      "bytes": 284
+    }
+  },
+  "independentC3": {
+    "receipts": 12,
+    "pins": 29,
+    "valid": true,
+    "spentToVetoSeconds": 11.345009,
+    "priorResponseToReservationSeconds": [
+      3.537425,
+      3.70879
+    ]
+  },
+  "history": {
+    "priorKnownGETAtLeast": 16,
+    "newGET": 3,
+    "totalKnownGETAtLeast": 19,
+    "exactTotal": "UNKNOWN",
+    "sarracinoClosed": true
+  },
+  "decision": "FAIL_AND_STOP",
+  "noRetry": true,
+  "recurring": false,
+  "runtimeChanges": 0,
+  "API_FOOTBALL_CALLS": 0,
+  "globalDelivery": "PARTIAL",
+  "allCompatibleSourcesIntegrated": false
+}
