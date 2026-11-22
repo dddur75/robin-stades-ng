@@ -21,7 +21,7 @@ export function isSroReobservation(pick:{firstSeenAt?:string;observedAt:string},
  const first=Date.parse(pick.firstSeenAt??pick.observedAt),last=Date.parse(update.lastSeenAt);
  return Number.isFinite(first)&&Number.isFinite(last)&&last>first;
 }
-type State = { status:string; distinctPicks:number; authorCount:number; requestCount:number;
+type State = { retainedSnapshot?:{state:string;operationalState:string;snapshotPreparedAt:string}; status:string; distinctPicks:number; authorCount:number; requestCount:number;
  generatedAt:string; sourceObservedThrough?:string; claimId:string; claimIds?:string[]; recurring?:boolean; halted?:boolean; picks:Pick[];
  forumCompanion?:{state:string;claimId?:string;approvedObservationCount?:number;approvedNewCount?:number;approvedReobservationCount?:number;updates?:Record<string,{lastSeenAt:string;claimId:string}>};
  sroNextCompanion?:{updates:Record<string,{lastSeenAt:string;claimId:string}>}; sroNextCampaign?:PublicCampaign&{canaryReobservations?:number;priorFamilyGET?:number;familyGETMax?:number;futureReceiptReview?:string;poolAuthorIds?:string[]};
@@ -50,11 +50,12 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
    <p><strong>{(tipsterId ? data.picks.filter(p=>p.authorId===tipsterId).length : data.distinctPicks)} pronostic(s) personnel(s) collecté(s)</strong> · {tipsterId ? (selected ? 1 : 0) : data.authorCount} pseudonyme(s).</p>
    <p>Choix relevés avant match, tels que publiés. Pseudonymes non certifiés.</p>
    <p>Dossier fidèle en recette partielle.</p>
+   {data.retainedSnapshot&&<p>Historique validé conservé. L’état actuel des collectes automatiques n’est pas vérifié dans cette vue.</p>}
    {personalCollection?.state==='historical_observations_qualified'&&<p>Calendriers officiels et dates de lecture d’origine conservés.</p>}
    {personalCollection?.state==='historical_observations_qualified'&&personalCollection.qualifiedAt&&<p>Lecture du catalogue : {formatDateTime(data.sourceObservedThrough??data.generatedAt,true)}. Qualification : {formatDateTime(personalCollection.qualifiedAt,true)}.</p>}
    {personalCollection?.state==='unavailable'&&<p role="alert">Les preuves personnelles complémentaires sont indisponibles. Historique conservé.</p>}
    {[rosterCampaign?.state,data.rosterCollection?.state,data.notbettingCollection?.state,data.notbettingBundesOccurrences?.state,data.notbettingClosedOccurrences?.state,data.familyCollection?.state,data.familyCollection?.nativeWinState,data.familyCollection?.opaqueState,data.forumCompanion?.state].includes('unavailable')&&<p role="alert">Une partie des preuves individuelles supplémentaires est indisponible. Historique conservé.</p>}
-   {data.forumCompanion?.state==='available'&&<p>Dernier lot qualifié des deux forums : {data.forumCompanion.approvedNewCount} nouveau choix et {data.forumCompanion.approvedReobservationCount} choix déjà connus relus avant match.</p>}
+   {data.forumCompanion?.state==='available'&&<p>Dernier lot de pronostics qualifié : {data.forumCompanion.approvedNewCount} nouveau choix et {data.forumCompanion.approvedReobservationCount} choix déjà connus relus avant match.</p>}
    {showNotBetting&&data.notbettingCollection?.state==='qualified_one_time'&&<p>NotBetting : collecte ponctuelle qualifiée.</p>}
    {showNotBetting&&data.notbettingBundesOccurrences?.state==='bounded_occurrences_qualified'&&<p>Deux occurrences supplémentaires proviennent d’une capture partielle. Cohérence globale des variantes non établie.</p>}
    {showNotBetting&&data.notbettingClosedOccurrences?.state==='bounded_declarations_qualified'&&<p>Une déclaration supplémentaire provient de deux lectures partielles concordantes. Variantes hors parcours inconnues.</p>}
@@ -62,7 +63,7 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
    {showNotBetting&&data.notbettingOccurrenceCampaign&&<CampaignBlock title="Collecte NotBetting · ELIMAGAR" campaign={data.notbettingOccurrenceCampaign}>
     <p>Canari et trois passages, budget commun. Deux lectures avant match par nouvelle déclaration. Parcours partiel, variantes inconnues.</p>
    </CampaignBlock>}
-   {!tipsterId&&<p>{data.recurring ? "Historique de la collecte des forums" : "Lot de collecte ponctuelle"} · {data.requestCount} GET publics HTTP(S) pour ce lot initial. {!data.recurring && !campaign && "Aucune collecte automatique de ces forums n’est activée."}</p>}
+   {!tipsterId&&<p>{data.retainedSnapshot ? "Historique qualifié" : data.recurring ? "Historique de la collecte des forums" : "Lot de collecte ponctuelle"} · {data.requestCount} GET publics HTTP(S) pour ce lot initial. {!data.retainedSnapshot && !data.recurring && !campaign && "Aucune collecte automatique de ces forums n’est activée."}</p>}
    {!tipsterId && campaign && <CampaignBlock title="Campagne des deux forums" campaign={campaign}>
     {campaign.slots&&<p>{campaign.slots} créneaux, toutes les deux heures.</p>}
    </CampaignBlock>}

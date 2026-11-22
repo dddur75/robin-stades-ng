@@ -1,0 +1,36 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.FORUMS.BATCHES.STABLE.FACTS.PUBLICATION.AUTHORITY.20261122",
+  "recordedAt": "2026-11-22T10:46:34.990Z",
+  "status": "ONE_REVIEWED_COMMIT_NONFORCE_PUSH_PR_BODY_AND_BOUNDED_CI_WATCH",
+  "scope": "Publish only exact reviewed source-observatory code/tests and aggregate evidence in existing draft PR133. Retained private facts, provider bodies and workbook are excluded; complete-source delivery remains PARTIAL.",
+  "planSHA256": "e772cd225742c7292377f9e89d55a0405515287f9226641e8197b89c9ddb85f2",
+  "manifestSHA256": "07a9f8733f28d3958710cb66cb0b57fc84115691e2bf446e34e85bdd6c25ea24",
+  "baseHEAD": "0c8efea46a86e203ca1377dbc21f9753530f68ff",
+  "files": 32,
+  "maximumCommits": 1,
+  "maximumNonForcePushes": 1,
+  "maximumPRBodyUpdates": 1,
+  "knownPreviousPushCalls": 7,
+  "knownNextMaximumPushCalls": 8,
+  "CIWatchSeconds": 2700,
+  "CIReadCallsMaximum": 90,
+  "CIReadIntervalMinimumSeconds": 30,
+  "PRBodySHA256": "b28e9b3c4c80caa9d6493ce57d349a7fdf75eb8cf29d31364a3c2cc9a3d5da1c",
+  "reusedClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V13.ENGINEERING.RECETTE.20261122",
+    "ENG.SOURCE_OBSERVATORY.PUBLIC.FACTS.STABLE.SNAPSHOT.E2.RESULT.20261122",
+    "ENG.SOURCE_OBSERVATORY.SOURCE.COVERAGE.CLOSURE.PARTIAL.20261122"
+  ],
+  "reviews": {
+    "C3": "Exact31 current files and29 immutable LF pins, preserved ledger/graph, versions and global PARTIAL verified. Final controller review still required before commit.",
+    "C4": "Exact plan/MF/body and32 final files,7to8 known push count, bounded CI and zero source/Task/merge/deploy approved."
+  },
+  "sourceGET": 0,
+  "TaskChanges": 0,
+  "merge": 0,
+  "deployment": 0,
+  "privateWorkbookPublished": 0,
+  "rawProviderDataPublished": 0,
+  "expiresAt": "2026-11-22T12:00:00Z",
+  "globalDelivery": "PARTIAL"
+}

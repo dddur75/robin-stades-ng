@@ -1,0 +1,60 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.SCO1919.PERSONAL.CURRENT.E1.R1.ALGORITHM.20261122",
+  "recordedAt": "2026-11-22T09:19:16.021Z",
+  "status": "REVIEWED_DISTINCT_SINGLE_SOURCE_E1_NOT_EXECUTED",
+  "scope": "One distinct single-source E1 qualification, limited to three fresh GET and ninety seconds; closes at the source boundary. Prior incomplete RAM records and unused authority are not transferred. No Task, recurring collection or application admission.",
+  "missionId": "SCO_PERSONAL_CURRENT_E1_R1_20261122",
+  "planSHA256": "ae56f4ef577b6edcfae5044b0341a0897f1217b5c50dddfa06e3908304034b3e",
+  "manifestSHA256": "653e55b8719e8cb9a74b7115515d31b8c9f78f6246d40e280bfe71df00a6605b",
+  "pins": 36,
+  "pinnedBytes": 7325618,
+  "ASTClosure": 9,
+  "maximumGET": 3,
+  "maximumSeconds": 90,
+  "deadlines": {
+    "worker": 75,
+    "parent": 82,
+    "outer": 90
+  },
+  "HTTPTimeoutMaximumSeconds": 10,
+  "expiresAt": "2026-11-22T09:45:00Z",
+  "sourceId": "SRC_038",
+  "orderedRoutes": [
+    "http://forum.sco1919.com/robots.txt",
+    "http://forum.sco1919.com/ucp.php?mode=terms",
+    "http://forum.sco1919.com/viewtopic.php?t=13259&start=300"
+  ],
+  "privateCandidateMaximum": 300,
+  "postsMaximum": 100,
+  "rawBodyStorage": false,
+  "identityCertified": false,
+  "nativePublicationUTC": "UNKNOWN",
+  "sourceTimezone": "UNKNOWN",
+  "format": "forums-private-candidates-v1_without_slot",
+  "benchmarkClaim": "ENG.SOURCE_OBSERVATORY.SCO1919.LOCAL.GUARD.BENCHMARK.E1.R2.RESULT.20261122",
+  "successPathBudget": {
+    "fullChecks": 6,
+    "dynamicChecks": 18,
+    "fsyncs": 12,
+    "indicativeSeconds": 69.317156,
+    "notGuaranteed": true
+  },
+  "knownForumSubset": {
+    "priorCompletedGET": 89,
+    "priorReservations": 90,
+    "newGETMaximum": 3,
+    "newCompletedGETCeiling": 92,
+    "newReservationCeiling": 93,
+    "allTimeGET": "UNKNOWN",
+    "unusedOldUnitsTransferred": 0
+  },
+  "reviews": {
+    "C1": "Sealed36pins/9AST,23 targeted tests and exact v1 private schema.",
+    "C3": "Exact closure, guards, deadlines, framing and tests independently verified.",
+    "C4": "Exact personal single-source scope, fresh robots/terms required, one attempt, no Task/admission."
+  },
+  "sourceGET": 0,
+  "TaskChanges": 0,
+  "newAdmissions": 0,
+  "globalDelivery": "PARTIAL"
+}

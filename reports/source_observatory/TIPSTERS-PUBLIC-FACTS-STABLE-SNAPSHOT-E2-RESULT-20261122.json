@@ -1,0 +1,151 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.PUBLIC.FACTS.STABLE.SNAPSHOT.E2.RESULT.20261122",
+  "recordedAt": "2026-11-22T10:41:15.071Z",
+  "status": "LOCAL_RETAINED_FACTS_AND_SCOPED_UI_RECETTE_PASS",
+  "scope": "Stable local retained personal forecast facts and approved42 reobservations. Only public fact component, qualification row and one individual profile recettés; other admin widgets, recurring source operation and complete-source delivery are not certified.",
+  "planSHA256": "4c19571c9efd8c3d3527c89f109f76e974f84d2b1edbac2f47ee7932c3d110bb",
+  "manifestSHA256": "d69dda4ba505b7d1a1e62afe2cce612ede99fbf99d2ade050437f73bb8a94048",
+  "snapshotSHA256": "9efe723236e37b6817175a6583e08471c8acd54a3405c6dfc3d5d98f3e857b66",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.APP479.PREMATCH.METADATA.AUDIT.20261122",
+    "DATA.SOURCE_OBSERVATORY.LEGRUPPETTO.PERSONAL.CURRENT.E1.R1.PREMATCH.20261122",
+    "DATA.SOURCE_OBSERVATORY.SCO1919.PERSONAL.CURRENT.E1.R1.PREMATCH.20261122"
+  ],
+  "choices": 479,
+  "pseudonyms": 80,
+  "fixtures": 20,
+  "acceptedReobservations": {
+    "SCO1919": 12,
+    "LeGruppetto": 30
+  },
+  "newDistinctChoices": 0,
+  "allOtherPickFieldsPreserved": true,
+  "sourceObservedThrough": "2026-11-22T09:55:32.548710+00:00",
+  "snapshotPreparedAt": "2026-11-22T04:43:05.096Z",
+  "sourcePublishedUTC": "UNKNOWN",
+  "identityCertified": false,
+  "performanceCertified": false,
+  "C0API": [
+    {
+      "at": "2026-11-22T10:34:34.171Z",
+      "HTTP": 200,
+      "responseSHA256": "7f201e5e02b35893d170538cb113b0bea3964daadc99fdab1a9eb201af69b783",
+      "elapsedMs": 64.69850000739098,
+      "choices": 479,
+      "pseudonyms": 80,
+      "fixtures": 20,
+      "advancedLastSeen": 42,
+      "immutableChanges": 0,
+      "operationalFields": [],
+      "operationState": "unknown",
+      "sourceObservedThrough": "2026-11-22T09:55:32.548710+00:00",
+      "batches": [
+        "available",
+        "available"
+      ]
+    },
+    {
+      "at": "2026-11-22T10:34:34.236Z",
+      "HTTP": 200,
+      "responseSHA256": "7f201e5e02b35893d170538cb113b0bea3964daadc99fdab1a9eb201af69b783",
+      "elapsedMs": 61.989500001072884,
+      "choices": 479,
+      "pseudonyms": 80,
+      "fixtures": 20,
+      "advancedLastSeen": 42,
+      "immutableChanges": 0,
+      "operationalFields": [],
+      "operationState": "unknown",
+      "sourceObservedThrough": "2026-11-22T09:55:32.548710+00:00",
+      "batches": [
+        "available",
+        "available"
+      ]
+    },
+    {
+      "at": "2026-11-22T10:34:34.298Z",
+      "HTTP": 200,
+      "responseSHA256": "7f201e5e02b35893d170538cb113b0bea3964daadc99fdab1a9eb201af69b783",
+      "elapsedMs": 50.763800010085106,
+      "choices": 479,
+      "pseudonyms": 80,
+      "fixtures": 20,
+      "advancedLastSeen": 42,
+      "immutableChanges": 0,
+      "operationalFields": [],
+      "operationState": "unknown",
+      "sourceObservedThrough": "2026-11-22T09:55:32.548710+00:00",
+      "batches": [
+        "available",
+        "available"
+      ]
+    }
+  ],
+  "C3API": {
+    "at": "2026-11-22T10:35:39.628Z",
+    "HTTP": 200,
+    "elapsedMs": 20.6194,
+    "responseSHA256": "7f201e5e02b35893d170538cb113b0bea3964daadc99fdab1a9eb201af69b783",
+    "exactSameBodyAsC0": true
+  },
+  "qualification": {
+    "HTTP": 200,
+    "rows": 14,
+    "responseSHA256": "ac4ee08970a8beb453b9d74c498ef75067b8f5830c51395d341647cab81e6022"
+  },
+  "browser": {
+    "startedAt": "2026-11-22T10:34:39.696Z",
+    "state": "PASS",
+    "localGET": 156,
+    "externalBlocked": 0,
+    "writesBlocked": 0,
+    "pageErrors": 0,
+    "sourceGET": 0,
+    "phase": "PROFILE",
+    "webSockets": 2,
+    "outOfScopeAPIBlocked": 4,
+    "adminAPI": {
+      "HTTP": 200,
+      "choices": 479,
+      "claim": "DATA.SOURCE_OBSERVATORY.LEGRUPPETTO.CURRENT.PREMATCH.ADMISSION.20261122"
+    },
+    "retainedHistoryNotice": true,
+    "adminCount479": true,
+    "qualificationCandidates": 30,
+    "qualificationAdded": 0,
+    "singleSourceCaption": true,
+    "profileHTTP": 200,
+    "profileNinePicks": true,
+    "reobservationVisible": true,
+    "firstObservationPreserved": true,
+    "closedAt": "2026-11-22T10:34:40.888Z"
+  },
+  "versionedMicroCorrection": {
+    "claimId": "ENG.SOURCE_OBSERVATORY.PUBLIC.FACTS.STABLE.SNAPSHOT.MICRO.CORRECTION.20261122",
+    "APIAndBrowserHelperSHA256": "a18ffb64ae411236f81802c5e5470aa3fba65850098f2ef1a6a0734e9e1a1854",
+    "finalRuntimeHelperSHA256": "32a5931c77bee1069a99851228b90083efcbf4da5d73f511376ddd47ad6fad17",
+    "finalCopyAt": "2026-11-22T10:40:09.536Z",
+    "delta": "Only remove two unused cached operational flags from historical observation companion. Updates and all choice objects unchanged.",
+    "postCorrectionValidation": "Independent exact delta/RAM projection,12 targeted tests/typecheck/lint and exact runtime byte copy. No new HTTP/browser run."
+  },
+  "checks": {
+    "snapshotTests": 12,
+    "forumTestsReused": 16,
+    "typecheck": "PASS",
+    "lint": "PASS",
+    "fullLocalSuite": 0
+  },
+  "globalLocalAPIReads": 8,
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "publications": 0,
+  "recurringActivated": false,
+  "completedWithin1800Seconds": true,
+  "reviews": {
+    "C1": "Complete preserved choice objects and historical provenance PASS.",
+    "C3": "Independent actual2API, real middleware RAM cases, V13 and microdelta PASS.",
+    "C4": "Targeted actual UI/API scope PASS; P2 resolved in reviewed projection."
+  },
+  "globalDelivery": "PARTIAL"
+}

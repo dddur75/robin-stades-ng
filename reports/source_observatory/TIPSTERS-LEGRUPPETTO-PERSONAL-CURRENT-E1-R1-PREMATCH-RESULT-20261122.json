@@ -1,0 +1,70 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.LEGRUPPETTO.PERSONAL.CURRENT.E1.R1.PREMATCH.20261122",
+  "recordedAt": "2026-11-22T10:07:41.047Z",
+  "status": "NATIVE_SINGLE_SOURCE_PREMATCH_LOT_CLOSED_NOT_ADMITTED",
+  "scope": "Thirty personal-pseudonym forecasts observed again before three retained Sunday kickoffs. No new native choice, version, pseudonym or fixture.",
+  "planSHA256": "b71614dfc97f1b1b3d8d33f5addb04d4f045e9f3a17033779ab6741b8a015bcd",
+  "manifestSHA256": "7103025237eb0719a88ac5d24636ca3113aad9207ec50c7ab8e8f1565f27d67e",
+  "grant": "73954d1651bd7bbb8a03626517c38dda2f3824af76fb9139327fb70fe5821d8b",
+  "externalProcess": {
+    "startedAt": "2026-11-22T09:55:20.373Z",
+    "closedAt": "2026-11-22T09:55:32.846Z",
+    "exit": 0,
+    "error": null,
+    "stdoutBytes": 167,
+    "stderrBytes": 0,
+    "stdoutSHA256": "3e75dc5d0bc45955153060fb79f53872fc8295e47b96e49b7595f4856cd72a03",
+    "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "candidateSHA256": "2bc42c2ed6afbd2d8a87a53a377b49372098fdbe2338ca9f24e76e8fe4cd28b1",
+  "requests": {
+    "reservations": 3,
+    "GET": 3,
+    "HTTP200Complete": 3,
+    "redirects": 0
+  },
+  "nativePosts": 17,
+  "eligibleCandidates": 30,
+  "uniqueNativeChoices": 30,
+  "pseudonyms": 10,
+  "fixtures": 3,
+  "observedAt": "2026-11-22T09:55:32.548710+00:00",
+  "kickoff": [
+    "2026-11-22T14:00:00Z",
+    "2026-11-22T16:15:00Z",
+    "2026-11-22T19:45:00Z"
+  ],
+  "prematch": 30,
+  "late": 0,
+  "unknownFixture": 0,
+  "newChoices": 0,
+  "reobservations": 30,
+  "changedVersions": 0,
+  "newAuthors": 0,
+  "baselineChoices": 479,
+  "baselineAuthors": 80,
+  "baselineFixtures": 20,
+  "applicationAdmissions": 0,
+  "publishedAtUnknown": 30,
+  "sourceTimezoneUnknown": 30,
+  "identityCertified": false,
+  "noPerformanceOrSettlement": true,
+  "rawBodyStored": false,
+  "TaskChanges": 0,
+  "unusedGET": 0,
+  "knownForumSubset": {
+    "completedGET": 95,
+    "reservations": 96,
+    "allTime": "UNKNOWN"
+  },
+  "workerSHA256": "0ca32ce464df5b7c74feb59e64adff9af4fef28184f8301503a8e308cb062a13",
+  "parentSHA256": "9690ba1ab6fe766dba69e81cd4417cf7b4b26c5acb9575bfce7385f2c4530962",
+  "outerSHA256": "7c43d1865c2d47b5e658c8386dc170a5afbb1f957ac36bff4a7932ba558efcbf",
+  "stdoutSHA256": "3e75dc5d0bc45955153060fb79f53872fc8295e47b96e49b7595f4856cd72a03",
+  "reviews": {
+    "C1": "Independent native IDs, versions, source, UTC and baseline comparison PASS.",
+    "C3": "Exact grant, receipts, closure chain and thirty unchanged native IDs PASS.",
+    "C4": "Scope, strict TLS, fresh robots/terms, bounded closure and private retention PASS."
+  },
+  "globalDelivery": "PARTIAL"
+}

@@ -1,0 +1,28 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.WORKBOOK.SUIVI.V9.RECETTE.20261122",
+  "recordedAt": "2026-11-22T09:16:15.680Z",
+  "status": "LOCAL_WORKBOOK_RELEASED_EXACT_REVIEWED_BYTES",
+  "scope": "Twenty-eight literal follow-up cells updated, preserving all nine source worksheets, native tables and styles. Workbook remains a dated partial qualification report, not proof that every source is active.",
+  "inputSHA256": "0b330526d5a368c78bbc808bebb945de62f929651f1d289e0b80762d4ce8d7ce",
+  "outputSHA256": "0849b6c87c661490f7d151cb7da83d3bce01a74005280820a2f4478fe5fe6c43",
+  "outputLabel": "robin-v3-suivi-20261122-v9",
+  "cellsChanged": 28,
+  "sourceSheetsPreserved": 9,
+  "nativeTablesPreserved": 9,
+  "globalStyleXMLUnchanged": true,
+  "sourceXMLResolvedRelationsUnchanged": true,
+  "fullSourceCellReplay": false,
+  "fullRecalculation": false,
+  "applicationAuditClaim": "DATA.SOURCE_OBSERVATORY.APP479.PREMATCH.METADATA.AUDIT.20261122",
+  "CIClaim": "ENG.SOURCE_OBSERVATORY.CI257.EXACT.HEAD.RESULT.20261122",
+  "failedSlotClaim": "ENG.SOURCE_OBSERVATORY.FORUMS.CURRENT.E2.R5.R2.NATURAL.RESULT.20261122",
+  "futureSourceCanary": "NOT_EXECUTED_AT_SNAPSHOT",
+  "reviews": {
+    "C1": "Prepared builder and preservation verifier, prior phase closed.",
+    "C0": "Twenty-eight authorized cells, verification PASS, five views inspected.",
+    "C4": "Independent exact output SHA/XML/tables/styles and five-render final release approval."
+  },
+  "sourceGET": 0,
+  "TaskChanges": 0,
+  "globalDelivery": "PARTIAL"
+}

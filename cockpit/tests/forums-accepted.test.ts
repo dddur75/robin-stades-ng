@@ -4,7 +4,7 @@ import {mkdirSync, mkdtempSync, writeFileSync, unlinkSync, rmdirSync} from 'node
 import {tmpdir} from 'node:os';
 import {dirname, join} from 'node:path';
 import {test} from 'node:test';
-import {applyAcceptedForums, mergeForumObservations, readForumEnvelope} from '../scripts/forums-accepted';
+import {applyAcceptedForums, applyReviewedForumBatches, mergeForumObservations, readForumEnvelope} from '../scripts/forums-accepted';
 
 type Row = Record<string, unknown>;
 const mission = 'FORUMS_SUCCESSOR_E1_R5_20261122';
@@ -198,3 +198,138 @@ test('freshness dates advance deterministically with strict UTC and preserve unk
     unavailable(broken, envelope);
   }
 });
+
+function approvalFor(envelope: Row) {
+  const source = envelope.sourceCandidates as Row;
+  const raw = JSON.stringify(envelope), sha = hash(raw);
+  return {
+    relativePath: '.ci/forums-approved/' + sha + '/envelope.json', envelopeSHA256: sha,
+    missionId: String(source.missionId), claimId: String(envelope.acceptedClaimId),
+    decisionSHA256: 'f'.repeat(64), sourceIds: ['SRC_038','SRC_058'],
+    newNativeChoiceIds: [...envelope.newNativeChoiceIds as string[]], maximumRows: 42,
+    plan: String(source.plan), manifest: String(source.manifest), grant: String(source.grant),
+    parserSha256: String(source.parserSha256), calendarSha256: String(source.calendarSha256),
+  };
+}
+function nextKnownBatch() {
+  const {base,envelope,source} = fixture();
+  const prefix = mergeForumObservations(base,envelope);
+  source.missionId = 'SYNTHETIC_APPROVED_NEXT_E1';
+  source.candidates = (source.candidates as Row[]).slice(0,2);
+  source.eligibleCurrentCount = 2;
+  for (const r of source.candidates as Row[]) {
+    r.id = hash(canonical([source.missionId,r.nativeChoiceId]));
+    r.versionId = hash(canonical([source.missionId,r.nativeChoiceId,r.market,r.selection]));
+    r.observedAt = '2026-11-22T06:00:00.123457Z';
+  }
+  envelope.acceptedClaimId = 'DATA.SOURCE_OBSERVATORY.SYNTHETIC.APPROVED.NEXT';
+  envelope.preparedAt = '2026-11-22T07:00:00Z';
+  envelope.newNativeChoiceIds = []; envelope.newAuthorLabels = {};
+  resign(envelope);
+  return {prefix,envelope,source};
+}
+function writeBatch(t: {after: (fn:()=>void)=>void}, envelope: Row) {
+  const root=mkdtempSync(join(tmpdir(),'robin-approved-batch-synthetic-'));
+  const approval=approvalFor(envelope), path=join(root,approval.relativePath);
+  mkdirSync(dirname(path),{recursive:true});writeFileSync(path,JSON.stringify(envelope));
+  t.after(()=>{unlinkSync(path);rmdirSync(dirname(path));rmdirSync(dirname(dirname(path)));
+    rmdirSync(join(root,'.ci'));rmdirSync(root);});
+  return {root,approval,path};
+}
+
+test('approved later mission reobservations preserve prefix, history, labels and exact microseconds',()=>{
+  const {prefix,envelope,source}=nextKnownBatch(), before=structuredClone(prefix);
+  prefix.generatedAt='2026-11-22T06:00:00Z';prefix.sourceObservedThrough='2026-11-22T06:00:00.123456Z';
+  const output=mergeForumObservations(prefix,envelope,approvalFor(envelope));
+  assert.equal(output.distinctPicks,3);assert.equal(output.authorCount,3);
+  assert.equal((output.forumCompanion as Row).approvedNewCount,0);
+  assert.equal((output.forumCompanion as Row).approvedReobservationCount,2);
+  assert.equal(output.sourceObservedThrough,'2026-11-22T06:00:00.123457Z');
+  assert.equal(output.generatedAt,'2026-11-22T07:00:00Z');
+  for(const prior of picks(before)){
+    const now=picks(output).find(r=>r.id===prior.id)!;
+    for(const key of ['firstSeenAt','observedAt','authorLabel','versions'])assert.deepEqual(now[key],prior[key]);
+  }
+  assert.equal(picks(output)[0].lastSeenAt,(source.candidates as Row[])[0].observedAt);
+});
+
+test('exact approved IO is idempotent and a missing later batch preserves the accepted prefix',(t)=>{
+  const {prefix,envelope}=nextKnownBatch(), {root,approval}=writeBatch(t,envelope);
+  const once=applyReviewedForumBatches(prefix,root,[approval]);
+  assert.equal(once.distinctPicks,3);assert.equal((once.forumBatches as Row[])[0].state,'available');
+  assert.deepEqual(applyReviewedForumBatches(once,root,[approval]),once);
+  const missing={...approval,envelopeSHA256:'0'.repeat(64),relativePath:'.ci/forums-approved/'+'0'.repeat(64)+'/envelope.json'};
+  const result=applyReviewedForumBatches(prefix,root,[approval,missing]);
+  assert.deepEqual(result.picks,once.picks);assert.equal(result.distinctPicks,3);
+  assert.deepEqual((result.forumBatches as Row[]).map(r=>r.state),['available','unavailable']);
+});
+
+test('duplicate descriptor stops at its boundary and preserves the first accepted batch',(t)=>{
+  const {prefix,envelope}=nextKnownBatch(),{root,approval}=writeBatch(t,envelope);
+  const output=applyReviewedForumBatches(prefix,root,[approval,approval]);
+  assert.equal(output.distinctPicks,3);assert.equal(picks(output).length,3);
+  assert.deepEqual((output.forumBatches as Row[]).map(r=>r.state),['available','unavailable']);
+});
+
+test('wrong mission, claim or tuple rejects the later batch without losing approved rows',()=>{
+  for(const key of ['missionId','claimId','plan','manifest','grant','parserSha256','calendarSha256']){
+    const {prefix,envelope}=nextKnownBatch();const approval=approvalFor(envelope);
+    Object.assign(approval,{[key]:key==='missionId'?'OTHER_MISSION':key==='claimId'?'DATA.SOURCE_OBSERVATORY.OTHER':'1'.repeat(64)});
+    const result=mergeForumObservations(prefix,envelope,approval);
+    assert.equal((result.forumCompanion as Row).state,'unavailable');assert.deepEqual(result.picks,prefix.picks);
+    assert.equal(result.distinctPicks,3);
+  }
+});
+
+test('unapproved new IDs, changed selections, late observations and unknown slots are refused',()=>{
+  for(const kind of ['newId','selection','late','slot']){
+    const {prefix,envelope,source}=nextKnownBatch();
+    const row=(source.candidates as Row[])[0];
+    if(kind==='newId'){
+      const added=candidate('SRC_038','p103','j11-paris-angers','synthetic-a');
+      added.id=hash(canonical([source.missionId,added.nativeChoiceId]));
+      added.versionId=hash(canonical([source.missionId,added.nativeChoiceId,added.market,added.selection]));
+      (source.candidates as Row[]).push(added);source.eligibleCurrentCount=3;
+    }
+    if(kind==='selection'){
+      row.selection='3-0';row.nativeVersionId=hash(canonical([row.nativeChoiceId,row.market,row.selection]));
+      row.versionId=hash(canonical([source.missionId,row.nativeChoiceId,row.market,row.selection]));
+    }
+    if(kind==='late')row.observedAt=row.kickoff;
+    if(kind==='slot')source.slot=0;
+    resign(envelope);
+    const result=mergeForumObservations(prefix,envelope,approvalFor(envelope));
+    assert.equal((result.forumCompanion as Row).state,'unavailable');
+    assert.deepEqual(result.picks,prefix.picks);
+  }
+});
+
+test('a new choice by an existing pseudonym keeps its established label and author count',()=>{
+  const {prefix,envelope,source}=nextKnownBatch();
+  const added=candidate('SRC_038','p103','j11-paris-angers','synthetic-a');
+  added.id=hash(canonical([source.missionId,added.nativeChoiceId]));
+  added.versionId=hash(canonical([source.missionId,added.nativeChoiceId,added.market,added.selection]));
+  (source.candidates as Row[]).push(added);source.eligibleCurrentCount=3;
+  envelope.newNativeChoiceIds=[added.nativeChoiceId];resign(envelope);
+  const output=mergeForumObservations(prefix,envelope,approvalFor(envelope));
+  assert.equal(output.distinctPicks,4);assert.equal(output.authorCount,3);
+  assert.equal(picks(output).find(r=>r.id===added.nativeChoiceId)!.authorLabel,'Retained A');
+  assert.deepEqual(mergeForumObservations(output,envelope,approvalFor(envelope)),output);
+});
+
+test('descriptor paths, raw hash, source bounds and approval list bound fail closed',(t)=>{
+  const {prefix,envelope}=nextKnownBatch(),{root,approval}=writeBatch(t,envelope);
+  for(const wrong of [
+    {...approval,relativePath:'../private/envelope.json'},
+    {...approval,sourceIds:['OTHER']},
+    {...approval,maximumRows:43},
+    {...approval,envelopeSHA256:'0'.repeat(64),relativePath:'.ci/forums-approved/'+'0'.repeat(64)+'/envelope.json'},
+  ]){
+    const output=applyReviewedForumBatches(prefix,root,[wrong]);
+    assert.deepEqual(output.picks,prefix.picks);
+    assert.equal((output.forumBatches as Row[]).at(-1)!.state,'unavailable');
+  }
+  assert.deepEqual(applyReviewedForumBatches(prefix,root,Array(9).fill(approval)).picks,prefix.picks);
+});
+
+test('malformed internal batch history preserves approved picks without throwing',()=>{const base={status:'ok',picks:[{id:'retained'}],distinctPicks:479,forumBatches:[null]};const result=applyReviewedForumBatches(base,'',[{} as never]);assert.deepEqual(result.picks,base.picks);assert.equal(result.distinctPicks,479);assert.equal((result.forumBatches as Row[])[0].state,'unavailable');});

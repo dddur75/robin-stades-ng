@@ -1,0 +1,76 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.LEGRUPPETTO.CURRENT.PREMATCH.ADMISSION.20261122",
+  "recordedAt": "2026-11-22T10:15:26.623Z",
+  "status": "LOCAL_GR_REOBSERVATIONS_API_VERIFIED_UI_PARTIAL",
+  "scope": "Thirty exact known GR choices and twelve previous SCO rows independently verified in the local API; one browser sample returned a reduced upstream baseline, so full UI receipt remains partial.",
+  "planSHA256": "60c4d7c11dcc3161c138ff82ff4bf13175d56587ac6b7ec88038dfccf098b62e",
+  "manifestSHA256": "a29e288603cc4b1d2f5e0d9394e5ca7f9d883d42dc6115ee10d072d0d234a156",
+  "decisionSHA256": "86e0fc8e7cacb7ccb454b5641d4852de503c0d1530dc617aa9ac55b7c4a6b869",
+  "descriptorCanonicalSHA256": "77e7eddb050e56139a4d815fbdea00b527814689386e61d05df7fff6af9b6190",
+  "envelopeSHA256": "42f66143ab769597c0276749e9af3856626e54ee5a85c55accefeecc9c1cbe9b",
+  "sourceCandidateSHA256": "2bc42c2ed6afbd2d8a87a53a377b49372098fdbe2338ca9f24e76e8fe4cd28b1",
+  "sourceClaim": "DATA.SOURCE_OBSERVATORY.LEGRUPPETTO.PERSONAL.CURRENT.E1.R1.PREMATCH.20261122",
+  "reobservationsAccepted": 30,
+  "newDistinctChoices": 0,
+  "newAuthors": 0,
+  "choices": 479,
+  "pseudonyms": 80,
+  "fixtures": 20,
+  "immutableFieldsChanged": 0,
+  "sourceObservedThrough": "2026-11-22T09:55:32.548710+00:00",
+  "generatedAt": "2026-11-22T10:08:06.460Z",
+  "publishedAtUnknown": true,
+  "identityCertified": false,
+  "recurringActivated": false,
+  "C0API": {
+    "observedAt": "2026-11-22T10:12:07.293Z",
+    "HTTP": 503,
+    "responseSHA256": "4f6ebfa3f2e1f2ef2663b7ee599f01046b4970c9b1c0c818983b66ef785dd90f",
+    "advancedLastSeen": null
+  },
+  "C3API": {
+    "observedAt": "2026-11-22T10:13:14.254Z",
+    "HTTP": 200,
+    "responseSHA256": "76caac408696d34fa84b829bb32cfd9c99144dcb5e7cb1b5e085ef641ca30e21",
+    "baselineImmutableExactlyPreserved": true,
+    "advancedLastSeen": 30,
+    "SCOCompleteRowsPreserved": 12
+  },
+  "qualification": {
+    "rows": 14,
+    "priorRowsPreserved": 13,
+    "candidates": 30,
+    "newChoicesAdmitted": 0,
+    "HTTP": 200,
+    "responseSHA256": "ac4ee08970a8beb453b9d74c498ef75067b8f5830c51395d341647cab81e6022"
+  },
+  "browser": {
+    "startedAt": "2026-11-22T10:12:44.755Z",
+    "state": "PARTIAL",
+    "localGET": 87,
+    "externalBlocked": 0,
+    "writesBlocked": 0,
+    "pageErrors": 0,
+    "sourceGET": 0,
+    "phase": "ADMIN",
+    "webSockets": 1,
+    "adminAPI": {
+      "HTTP": 200,
+      "choices": 463,
+      "claim": "DATA.SOURCE_OBSERVATORY.LEGRUPPETTO.CURRENT.PREMATCH.ADMISSION.20261122"
+    },
+    "failureCode": "API_DATA",
+    "closedAt": "2026-11-22T10:12:54.785Z"
+  },
+  "checks": {
+    "targetedTests": 16,
+    "typecheck": "PASS",
+    "lint": "PASS",
+    "localFullSuite": 0
+  },
+  "actualCompletedWithin600Seconds": true,
+  "sourceGET": 0,
+  "TaskChanges": 0,
+  "publications": 0,
+  "globalDelivery": "PARTIAL"
+}

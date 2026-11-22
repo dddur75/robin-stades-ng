@@ -1,0 +1,82 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.FORUMS.CURRENT.E2.R5.R2.NATURAL.RESULT.20261122",
+  "recordedAt": "2026-11-22T08:20:56.824Z",
+  "status": "FAIL_AND_REDESIGN_RETURN_E1",
+  "scope": "Actual natural 08:15 UTC slot failed cooperatively before completion. No closed source candidate or application admission; no third identical two-source attempt is permitted.",
+  "planSHA256": "f0e66ed35bbd1b09e9146846fd2bf2095d8c675a0e821fbafe6ffd999218925a",
+  "manifestSHA256": "eebf4e93d01cbf14cca4883f63f9d47d8f41243bdb6186de3f23e5c9ec607519",
+  "sourceGrant": "88fa92f1a27f478734a7e3c50011dcf2ff1d1f6b89258a6094799b592381681a",
+  "observedSlotUTC": "2026-11-22T08:15:00Z",
+  "reservations": 5,
+  "confirmedGET": 5,
+  "HTTP200Complete": 5,
+  "nativeQueriesSaved": 5,
+  "nativeQuerySeconds": 9.25,
+  "request6Reserved": false,
+  "query6": false,
+  "response6": false,
+  "stopReason": "PACING_DEADLINE",
+  "haltAt": "2026-11-22T08:16:11.505700+00:00",
+  "parentFailedAt": "2026-11-22T08:16:11.523657+00:00",
+  "outerFailedAt": "2026-11-22T08:16:11.543171+00:00",
+  "deadlineSeconds": {
+    "worker": 75,
+    "parent": 82,
+    "outer": 90
+  },
+  "partialRAMOnly": {
+    "posts": 30,
+    "candidateRecords": 12,
+    "novelty": "UNKNOWN_NO_BASELINE",
+    "eligibleForAdmission": false
+  },
+  "persistedCandidateFiles": 0,
+  "closedLots": 0,
+  "applicationAdmissions": 0,
+  "distinctChoicesAdded": 0,
+  "knownForumSubset": {
+    "completedGET": 89,
+    "reservations": 90,
+    "unusedGETRelinquished": 1,
+    "allTimeGET": "UNKNOWN"
+  },
+  "workerStopSHA256": "b576618a54faa097eb13582071b0f07ff2efa1b5760a24f5a362337a1773f7e3",
+  "slotFileHashes": {
+    "busy.json": "c68ee2f07402121b01cab80ba13452e61c585e14b416de6a6ff2c0d5d118cc3c",
+    "outer-failed.json": "c3fec808ef4b1854123937e4d167921c85101c690e6ff32716557760a49a204b",
+    "parent-failed.json": "6bd0271ad0a84761f9e5fa8cb42b97d9326b032a76c342f3cc1924457e735cc0",
+    "parent-started.json": "ddb3ffff5bad5a3013f6b295648d47ee53d89f8308e83ee5b9a34ffc32fd81b6",
+    "reservation-1.json": "4cc4760729a4e8d82acaf24bfa03def8aed5cacdbca5708f9dc7bffe1db11aa1",
+    "reservation-2.json": "2f9e064665319e12d456d2099f649bfa59ec9de6f4c5d5e2a6a93246e72e338a",
+    "reservation-3.json": "2c16c851f5264fdc9bb212c3722b9a85f42e57234d2cc5b7cc01ec692003dbd8",
+    "reservation-4.json": "a173e6ba3cf436d07e9159669c9bec86aa33b8960487d599160f72393849c278",
+    "reservation-5.json": "601901e6cac7c06080d3c3d93f96f2b4b58450e1e3c48c4bd27e96ea8993c9ce",
+    "response-1.json": "fb64fcf09051c8358448e3640468ca9ee0a99b1630d8017877680f665d71a553",
+    "response-2.json": "dea84280ff49e738f96ea95dd553ea86f2a6d86b85008d75eba7a6b91aab8475",
+    "response-3.json": "115061dd303d8c4135afc2649f465b1ed91ba477288d70283bd11e37f8e85421",
+    "response-4.json": "c5563f019969786ced0ba43dc63d54ce9969709cca6d29c5636e1d1262f9f09f",
+    "response-5.json": "968fb39925f0b39e77f742eeb2b2a37a1bef98b989c0582d76c0f18cd94e1f7c",
+    "spent.json": "5941acece0ecd7d03baa110c5f2526349cd864299c23fcff7db87787fe7f78f3",
+    "task-query-1.json": "5de73743fd730e7454689587a84098386b48197c12c7eb199e851b1bf53ce9db",
+    "task-query-2.json": "3e0e9987346ad68139ec360f4ebd0f9b474dab7b63d9ff4dc47f7d26c714e957",
+    "task-query-3.json": "fda69c8da2b059904e98503cf3e93fa81214647a6bac6ea5c91b56cdd30a7adb",
+    "task-query-4.json": "c985088628022756176d9d5b35bf772e75a5063b806988cacbfe4169f7775238",
+    "task-query-5.json": "0019ae375748326a23a38855b13b693a0877702e364cfd491a3d32fce73e38e5",
+    "worker-started.json": "a358b7a769a262564b06ee394eac4aeb1e9297570802491da508bd9f5e428cb1",
+    "worker-stop.json": "b576618a54faa097eb13582071b0f07ff2efa1b5760a24f5a362337a1773f7e3"
+  },
+  "slotFileMapCanonicalSHA256": "4288675dc3a9c15ddebdbc411a028582982ed23f9b6124dabe38b93f9b582337",
+  "nativeTask": {
+    "state": "Ready",
+    "lastResult": 1,
+    "nextRunUTC": null,
+    "XMLSHA256": "5a940f1436236b3219a7dbff9ebf3e8ab231190244de3e068dc161388e752621"
+  },
+  "quiescentAt": "2026-11-22T08:17:37Z",
+  "reviews": {
+    "C1": "Exact five pairs, chain, identities and no candidate/admission; no sixth request.",
+    "C3": "Retained cause PACING_DEADLINE, queries successful and cooperative close before deadlines.",
+    "C4": "Exact 118 pins and quiescence; FAIL_AND_REDESIGN, no reuse of unused authority."
+  },
+  "globalDelivery": "PARTIAL"
+}

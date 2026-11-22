@@ -1,0 +1,63 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.LEGRUPPETTO.PERSONAL.CURRENT.E1.R1.ALGORITHM.20261122",
+  "recordedAt": "2026-11-22T09:55:08.789Z",
+  "status": "REVIEWED_DISTINCT_SINGLE_SOURCE_E1_NOT_EXECUTED",
+  "scope": "One separate LeGruppetto personal-forecast qualification, three fresh exact HTTPS routes and ninety seconds maximum. This does not reuse SCO authority or incomplete combined-job RAM candidates.",
+  "missionId": "LEGRUPPETTO_PERSONAL_CURRENT_E1_R1_20261122",
+  "planSHA256": "b71614dfc97f1b1b3d8d33f5addb04d4f045e9f3a17033779ab6741b8a015bcd",
+  "manifestSHA256": "7103025237eb0719a88ac5d24636ca3113aad9207ec50c7ab8e8f1565f27d67e",
+  "pins": 45,
+  "pinnedBytes": 7334365,
+  "ASTClosure": 9,
+  "maximumGET": 3,
+  "maximumSeconds": 90,
+  "deadlines": {
+    "worker": 75,
+    "parent": 82,
+    "outer": 90
+  },
+  "HTTPTimeoutMaximumSeconds": 10,
+  "TLS": "CERT_REQUIRED_HOSTNAME_AND_SNI",
+  "expiresAt": "2026-11-22T10:15:00Z",
+  "sourceId": "SRC_058",
+  "orderedRoutes": [
+    "https://legruppetto.fr/robots.txt",
+    "https://legruppetto.fr/forum/ucp.php?mode=terms",
+    "https://legruppetto.fr/forum/viewtopic.php?f=21&t=24850&start=240"
+  ],
+  "privateCandidateMaximum": 300,
+  "postsMaximum": 100,
+  "rawBodyStorage": false,
+  "identityCertified": false,
+  "nativePublicationUTC": "UNKNOWN",
+  "sourceTimezone": "UNKNOWN",
+  "format": "forums-private-candidates-v1_without_slot",
+  "freshOwnTermsRequired": true,
+  "benchmarkClaim": "ENG.SOURCE_OBSERVATORY.SCO1919.LOCAL.GUARD.BENCHMARK.E1.R2.RESULT.20261122",
+  "priorSingleSourceProof": "DATA.SOURCE_OBSERVATORY.SCO1919.PERSONAL.CURRENT.E1.R1.PREMATCH.20261122",
+  "successPathBudget": {
+    "fullChecks": 6,
+    "dynamicChecks": 18,
+    "fsyncs": 12,
+    "indicativeSeconds": 69.317156,
+    "notGuaranteed": true
+  },
+  "knownForumSubset": {
+    "priorCompletedGET": 92,
+    "priorReservations": 93,
+    "newGETMaximum": 3,
+    "newCompletedGETCeiling": 95,
+    "newReservationCeiling": 96,
+    "allTimeGET": "UNKNOWN",
+    "unusedOldUnitsTransferred": 0
+  },
+  "reviews": {
+    "C1": "Sealed45pins/9AST,21 targeted tests and five byte-identical Job proofs reused.",
+    "C3": "Exact closure, HTTPS/TLS refusal witnesses, guards, framing and source delta independently verified.",
+    "C4": "Exact own robots/terms, three routes, one attempt and zero Task/admission scope."
+  },
+  "sourceGET": 0,
+  "TaskChanges": 0,
+  "newAdmissions": 0,
+  "globalDelivery": "PARTIAL"
+}
