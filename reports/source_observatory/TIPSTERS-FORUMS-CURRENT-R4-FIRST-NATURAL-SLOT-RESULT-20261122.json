@@ -1,0 +1,68 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.FORUMS.CURRENT.R4.FIRST.NATURAL.SLOT.RESULT.20261122",
+  "recordedAt": "2026-11-22T06:26:17.845Z",
+  "status": "PARTIAL_FAILED_CLOSED_NO_NEW_ADMISSION",
+  "scope": "Actual first natural fixedslot at06:15UTC after exact installation adoption. Failure stopped before sixth HTTP call;secondslot blocked. Historical app479 unchanged.",
+  "missionId": "FORUMS_CURRENT_E1_E2_RECOVERY_R4_20261122",
+  "planSHA256": "8c07095759536c063184ecb26a60777f77cf05193a9d5a36cd63f7eae01f986c",
+  "manifestSHA256": "c67bf39475cc7dab95f2f0667b399aa12dbc79bfe576cd49bf8c9972b83f0113",
+  "sourceGrant": "a6d3a54de9f04b3ca47b0a0be3eb2fe695ad9c12729b3da94eaaa041a5dea2b8",
+  "scheduledAt": "2026-11-22T06:15:00Z",
+  "haltAt": "2026-11-22T06:16:05.756292+00:00",
+  "reservations": 6,
+  "confirmedActualGET": 5,
+  "HTTP200": 5,
+  "completeResponseBodies": 5,
+  "nativeQueriesPersisted": 5,
+  "sixthHTTPReached": false,
+  "intermediateFirstSource": {
+    "posts": 30,
+    "candidates": 12,
+    "persistedCandidateBundle": false,
+    "newNativeCount": null
+  },
+  "secondSource": {
+    "topicRead": false,
+    "nativeParsingStarted": false
+  },
+  "candidateFile": false,
+  "parentResult": false,
+  "outerResult": false,
+  "busyReleased": false,
+  "applicationAdmissions": 0,
+  "newApplicationChoices": 0,
+  "sourceFineCause": "UNKNOWN_NOT_RETAINED",
+  "knownDiagnosticDefect": "Failed native query discarded before persistence;local code not in closed source-reason whitelist.",
+  "offlineTimingDefect": "ENTRY plus remainingUTC subtracts startup twice;this is not established incident cause.",
+  "deadlineHypothesis": {
+    "workerInheritedApproxUTC": "2026-11-22T06:16:06.960Z",
+    "sixthReservationUTC": "2026-11-22T06:16:03.960943+00:00",
+    "approxSecondsRemaining": 3,
+    "conversionAssumption": "UTC offset stable between run and later monotonic pairing;15.625ms monotonic resolution",
+    "provesFineCause": false
+  },
+  "sourceBodyReplay": 0,
+  "retainedRawBodies": 0,
+  "readbackSHA256": "76d8397dc0c18df61ee7a0e839278b5af81ecf710ee457b0d2d14def2196bc48",
+  "nativeState": {
+    "observedAt": "2026-11-22T06:19:38Z",
+    "state": "Ready",
+    "enabled": true,
+    "lastTaskResult": 1,
+    "collectorProcesses": 0,
+    "nextTrigger": "2026-11-22T08:15:00Z",
+    "sourceAllowed": false
+  },
+  "unusedCampaignUnitsRelinquished": 6,
+  "knownForumSubset": {
+    "actualGET": 84,
+    "chargedReservations": 85,
+    "allTime": "UNKNOWN"
+  },
+  "reviews": {
+    "C1": "Timingmetadatareconstructiononly",
+    "C3": "Exact5HTTPproof/failedquerywitness/anchorwitness;no source",
+    "C4": "Actualreceipt/privacy/budget/quiescenceindependent"
+  },
+  "globalDelivery": "PARTIAL"
+}

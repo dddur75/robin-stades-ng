@@ -1,0 +1,34 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.APP479.PREMATCH.METADATA.AUDIT.20261122",
+  "recordedAt": "2026-11-22T07:58:54.453Z",
+  "status": "VERIFIED_LOCAL_OBSERVATIONS_NOT_NATIVE_PUBLICATION_DATES",
+  "scope": "All 479 stored distinct choices have observedAt before the kickoff in the served structured calendars; this does not establish native publication time, physical identity or performance.",
+  "rootAudit": {
+    "observedAt": "2026-11-22T06:41:35.163Z",
+    "sourceResponseSHA256": "c7b92602e7f6b28dff2ddef8eaf10cab9947c778e4b1702549425a5f3184d46d",
+    "distinctChoices": 479,
+    "pseudonyms": 80,
+    "fixtures": 20,
+    "beforeKO": 479,
+    "firstSeenBeforeKO": 479,
+    "late": 0,
+    "unknown": 0,
+    "kickoffMismatch": 0
+  },
+  "C1": {
+    "observedAt": "2026-11-22T06:55:53.628166Z",
+    "responseSHA256": "5fd8e54cbdceae7a7326082c232b1deae7229b6971b1da5deb059cced9f85319",
+    "choices": 479,
+    "pseudonymIds": 80,
+    "fixtures": 20,
+    "duplicateIds": 0,
+    "late": 0,
+    "unknown": 0
+  },
+  "nativePublishedAtNull": 479,
+  "identityCertified": false,
+  "sourceNativeOpaque": 147,
+  "sourceNative": 154,
+  "correctScore": 178,
+  "globalDelivery": "PARTIAL"
+}

@@ -1,0 +1,43 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.ROBOTS.SHAPE.E1.ALGORITHM.20261122",
+  "recordedAt": "2026-11-22T07:52:20.525Z",
+  "status": "REVIEWED_DISTINCT_E1_OBSERVATION_NO_PROFILE_RETRY",
+  "scope": "DistinctE1aftertwofailedprofilearchitectures:oneanchoredrobotsGETforclosedheaderforms only. Anchor192/hashmustmatchbeforeall-headerRAMscan;no value,reconstruction,fallback,profile,forecast,Task,admissionorpermission.",
+  "missionId": "OLBG_ROBOTS_SHAPE_DIAGNOSTIC_E1_20261122",
+  "planSHA256": "100dff1a3500f56a4e1002e2228dbc8bbfa48b817d76a6456ff23eaf6e786475",
+  "manifestSHA256": "616601204f1fe11febe8545a096da35444305a279dc0e71d1572123528b313bc",
+  "codePins": 33,
+  "ASTPins": 6,
+  "maximumGET": 1,
+  "maximumSeconds": 90,
+  "expiresAt": "2026-11-22T08:05:00Z",
+  "URL": "https://www.olbg.com/robots.txt",
+  "sourceGET": 0,
+  "profileGET": 0,
+  "forecasts": 0,
+  "TaskChanges": 0,
+  "applicationAdmissions": 0,
+  "rawSourceBodyStorage": false,
+  "permissionGranted": false,
+  "profileAcquisitionBlocked": true,
+  "repSourceSHA256": "10663f63e78f2785938f652f8fbee086267972b52459b1879c7bf3f668cf6ede",
+  "knownPriorNativeCause": "UNKNOWN_NOT_RETAINED",
+  "oldKnown3UnusedUnitsRelinquished": 3,
+  "oldAuthorityTransferred": false,
+  "reviews": {
+    "C1": "Author16targetedtests/no selfacceptance",
+    "C3": "Exact33pins6AST/15independentcases/realclosureanchorSTOP/privacyandcapsPASS",
+    "C4": "ExactdistinctE1/oneGET/anchor/noUAvalue/noProfilepermissionScopePASS"
+  },
+  "globalDelivery": "PARTIAL",
+  "anchor": {
+    "ordinal": 192,
+    "lineSHA256": "5917b09b26c9b64b8b02d114c97174e8f8e482ef5d9b4c2e72a09ffbfd14d1e6",
+    "changeStopsWithoutSearch": true
+  },
+  "headerScanMaximum": 1024,
+  "shapeOutputMaximumBytes": 262144,
+  "finalOutputMaximumBytes": 270336,
+  "knownClosedSubsetGET": 58,
+  "maximumKnownSubsetAfterNew": 59
+}

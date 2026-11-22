@@ -1,0 +1,37 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.KNOWN3.CURRENT.E1.R2.ALGORITHM.20261122",
+  "recordedAt": "2026-11-22T06:21:22.380Z",
+  "status": "REVIEWED_ONE_SHOT_CANARY_SCOPE_NOT_YET_EXECUTED",
+  "scope": "One new bounded three-profile OLBG canary with fresh robots and three retained future L1 fixtures;existing Next3 closed and unmodified. Private candidates only,no admission or recurrence follows.",
+  "missionId": "OLBG_KNOWN3_CURRENT_E1_R2_20261122",
+  "planSHA256": "ec5b43a623ead689dd3e3f88805ebfdb2cd1ea14720a580ec1b7ceb265346c65",
+  "manifestSHA256": "c7476b15b8f4ff2634fad783f4d6ff41a70b991ac81d7f07fcca4b602e0d0da1",
+  "codePins": 41,
+  "ASTPins": 12,
+  "maximumGET": 4,
+  "maximumSeconds": 90,
+  "expiresAt": "2026-11-22T07:15:00Z",
+  "calendarSHA256": "7e61eebf7dd920011fb18558212d67cb70f242c0da3e335c4a036fc4fb806977",
+  "URLs": [
+    "https://www.olbg.com/robots.txt",
+    "https://www.olbg.com/tipsters/tips/229856",
+    "https://www.olbg.com/tipsters/tips/254608",
+    "https://www.olbg.com/tipsters/tips/530492"
+  ],
+  "oldNext3GETClosed": 55,
+  "oldAuthoritiesTransferred": false,
+  "oldNext3Rearm": false,
+  "sourceGET": 0,
+  "taskChanges": 0,
+  "admissions": 0,
+  "publicationTimestamp": "UNKNOWN_WHERE_NOT_NATIVE",
+  "newChoiceCount": null,
+  "performance": false,
+  "reviews": {
+    "C3": "Exact41pins12AST;3deltaand2realclosurefakepipelinesPASS;legacy12testsreused;noNetwork",
+    "C4": "ExactpersonalboundedScopeCGU/calendar/retentionPASS;zeroTaskorrecurrence",
+    "C1": "AuthorR2delta3GREEN/13retainedR1proofs;no self-acceptance"
+  },
+  "sourceQuiescenceR4VerifiedByC4": "2026-11-22T06:19:38Z",
+  "globalDelivery": "PARTIAL"
+}

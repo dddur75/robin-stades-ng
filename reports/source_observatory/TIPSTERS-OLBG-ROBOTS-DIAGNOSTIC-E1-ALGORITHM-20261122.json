@@ -1,0 +1,33 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.ROBOTS.DIAGNOSTIC.E1.ALGORITHM.20261122",
+  "recordedAt": "2026-11-22T07:00:48.743Z",
+  "status": "REVIEWED_MONO_GET_DIAGNOSTIC_NOT_EXECUTED",
+  "scope": "One fresh robots response only to recover missing closed diagnostic;three profile routes are RAM evaluation inputs,not HTTPtargets. No permission,profile,forecast,Task or admission follows from ALLOW/DENY/UNPROVEN.",
+  "missionId": "OLBG_ROBOTS_DIAGNOSTIC_E1_20261122",
+  "planSHA256": "be5794f2efaed663d9380363899a568dcb6d32197e06012acb4cf01476a689c4",
+  "manifestSHA256": "047d544a6c21d1caffc7356f9e7007750d8cacad2ff294e4fdbfbfe9212aa235",
+  "codePins": 29,
+  "ASTPins": 5,
+  "maximumGET": 1,
+  "maximumSeconds": 90,
+  "expiresAt": "2026-11-22T07:30:00Z",
+  "URL": "https://www.olbg.com/robots.txt",
+  "sourceGET": 0,
+  "profileGET": 0,
+  "forecasts": 0,
+  "TaskChanges": 0,
+  "applicationAdmissions": 0,
+  "rawSourceBodyStorage": false,
+  "permissionGranted": false,
+  "profileAcquisitionBlocked": true,
+  "repSourceSHA256": "641ce87374cfb6d589ab57d49064d395b5e1c0d5fb4d3d98e169b44669d15337",
+  "knownPriorNativeCause": "UNKNOWN_NOT_RETAINED",
+  "oldKnown3UnusedUnitsRelinquished": 3,
+  "oldAuthorityTransferred": false,
+  "reviews": {
+    "C1": "Author15targetedcases,no selfacceptance",
+    "C3": "Exact29pins5AST14independentcases/realclosure/framing/URLprofilebeforeDNSSTOP",
+    "C4": "ExactpersonalmonoGET/privatecloseddiagnostic/noprofileoradmissionPASS"
+  },
+  "globalDelivery": "PARTIAL"
+}

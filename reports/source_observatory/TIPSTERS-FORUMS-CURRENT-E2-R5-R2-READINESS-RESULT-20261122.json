@@ -1,0 +1,57 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.FORUMS.CURRENT.E2.R5.R2.READINESS.RESULT.20261122",
+  "recordedAt": "2026-11-22T06:52:07.622Z",
+  "status": "ONE_REMAINING_FUTURE_SLOT_INSTALLED_ADOPTED_NOT_YET_COLLECTED",
+  "scope": "Actual one existing-task Action update succeeded;independentquery and C4actualreview preceded freshC0adoption. Sourceallowedonly08:15UTC,6GETmaximum;historical06:15trigger conveys no sourceauthority. FailedR4preserved;no immediatecollection/admission.",
+  "missionId": "FORUMS_CURRENT_E1_E2_SUCCESSOR_R5_R2_20261122",
+  "planSHA256": "f0e66ed35bbd1b09e9146846fd2bf2095d8c675a0e821fbafe6ffd999218925a",
+  "manifestSHA256": "eebf4e93d01cbf14cca4883f63f9d47d8f41243bdb6186de3f23e5c9ec607519",
+  "sourceGrant": "88fa92f1a27f478734a7e3c50011dcf2ff1d1f6b89258a6094799b592381681a",
+  "recoveryGrant": "16e021850f274a26daa51a0af02e3c039da62055b0e44558167b75ee77657814",
+  "adoptionDecision": "69f4eaa31cb69a7274ef6225c751361b33981aa149e822ca69a053b0d00fdd99",
+  "externalProcess": {
+    "startedAt": "2026-11-22T06:45:23.500Z",
+    "closedAt": "2026-11-22T06:45:32.918Z",
+    "exit": 0,
+    "error": null,
+    "stdoutBytes": 0,
+    "stderrBytes": 0,
+    "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "sourceGET": 0,
+    "elapsedSeconds": 9.418
+  },
+  "taskXMLSHA256": "5a940f1436236b3219a7dbff9ebf3e8ab231190244de3e068dc161388e752621",
+  "externalVerificationSHA256": "8d4cb6d98551ab8bea853686efd621b65d019c8c409d91c0f4f54ea1c59c3f57",
+  "independentQueryAt": "2026-11-22T06:45:58.816484+00:00",
+  "sourceAuthorityGate": "PASS_WITHOUT_GET",
+  "nativeEnabled": true,
+  "slotUTC": [
+    "2026-11-22T08:15:00Z"
+  ],
+  "expiresAt": "2026-11-22T08:20:00Z",
+  "registrations": 0,
+  "actionUpdates": 1,
+  "enableStartDeleteOperations": 0,
+  "unknownR3Preserved": true,
+  "sourceGET": 0,
+  "maximumFutureGET": 6,
+  "applicationAdmissions": 0,
+  "review": {
+    "CODE": "C3exact84pins9AST",
+    "SCOPE": "C4exact",
+    "ACTUAL_RESULT": "C4external0/query/11fields/84pins/noreservations"
+  },
+  "globalDelivery": "PARTIAL",
+  "nativeTriggersUTC": [
+    "2026-11-22T06:15:00Z",
+    "2026-11-22T08:15:00Z"
+  ],
+  "R4HaltPreserved": true,
+  "unusedR4UnitsRelinquished": 6,
+  "deadlinesFromSlot": {
+    "worker": 75,
+    "parent": 82,
+    "outer": 90
+  }
+}

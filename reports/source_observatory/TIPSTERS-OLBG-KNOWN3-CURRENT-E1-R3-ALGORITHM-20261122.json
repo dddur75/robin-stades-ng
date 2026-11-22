@@ -1,0 +1,50 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.KNOWN3.CURRENT.E1.R3.ALGORITHM.20261122",
+  "recordedAt": "2026-11-22T07:24:49.473Z",
+  "status": "REVIEWED_FRESH_ROBOTS_AND_THREE_PROFILE_CANARY_NOT_EXECUTED",
+  "scope": "New boundedcanary after closed nativeUA_SYNTAXdiagnostic;preserve isolated nonmatchingforeigninvalidgroups without agentidentitychange. AllthreefreshrobotspoliciesmustALLOW plus freshC4datedtermsacceptance beforeanyprofile. No oldauthority,retry,Task,admissionorperformance.",
+  "missionId": "OLBG_KNOWN3_CURRENT_E1_R3_20261122",
+  "planSHA256": "3f634c99f1dd8e15f3b6b70aef5b37c4e4ed7739cecefb3ebf21c022638774f4",
+  "manifestSHA256": "83890f330712712ccd6fbafc390df9d9587a6a9a66a00788f65de326b9e7f1a9",
+  "codePins": 64,
+  "ASTPins": 12,
+  "maximumGET": 4,
+  "maximumSeconds": 90,
+  "expiresAt": "2026-11-22T08:00:00Z",
+  "calendarSHA256": "7e61eebf7dd920011fb18558212d67cb70f242c0da3e335c4a036fc4fb806977",
+  "URLs": [
+    "https://www.olbg.com/robots.txt",
+    "https://www.olbg.com/tipsters/tips/229856",
+    "https://www.olbg.com/tipsters/tips/254608",
+    "https://www.olbg.com/tipsters/tips/530492"
+  ],
+  "oldNext3GETClosed": 55,
+  "oldAuthoritiesTransferred": false,
+  "oldNext3Rearm": false,
+  "sourceGET": 0,
+  "taskChanges": 0,
+  "admissions": 0,
+  "publicationTimestamp": "UNKNOWN_WHERE_NOT_NATIVE",
+  "newChoiceCount": null,
+  "performance": false,
+  "reviews": {
+    "C1": "Author20canary/12helpergoldens/27projectedcompatibilitycases;no selfacceptance",
+    "C3": "Exact64pins12AST;6groupgoldens/7ambiguousrejects/4preflightcases/realclosurePASS",
+    "C4": "Exactnew4GETscopeandexplicitdatedtermsreuseacceptedforthispersonalnoncommercialcanaryonly"
+  },
+  "sourceQuiescenceR4VerifiedByC4": "2026-11-22T06:19:38Z",
+  "globalDelivery": "PARTIAL",
+  "helperSHA256": "10663f63e78f2785938f652f8fbee086267972b52459b1879c7bf3f668cf6ede",
+  "c4TermsAcceptance": {
+    "acceptedForThisCanaryOnly": true,
+    "retainedTermsSHA256": "d1436b22fad8c1aa4a5e17c71d74d817787bed04322b309f17a831ee38d06d06",
+    "reconfirmedAt": "2026-11-21T12:00:00Z",
+    "freshTermsGET": 0,
+    "currentTermsRereadClaimed": false,
+    "generalLicenseClaimed": false
+  },
+  "knownClosedPriorSubsetGET": 57,
+  "maximumKnownSubsetAfterNew": 61,
+  "allTimeOLBGFamilyGET": "UNKNOWN",
+  "TaskChanges": 0
+}

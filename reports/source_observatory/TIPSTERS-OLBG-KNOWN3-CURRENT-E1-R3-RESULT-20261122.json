@@ -1,0 +1,39 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.KNOWN3.CURRENT.E1.R3.RESULT.20261122",
+  "recordedAt": "2026-11-22T07:58:54.454Z",
+  "status": "FAIL_AND_REDESIGN_AT_E1_NO_PROFILES",
+  "scope": "Fresh one-shot stopped at unsupported robots syntax. No third identical profile canary is authorized; remaining units are relinquished.",
+  "planSHA256": "3f634c99f1dd8e15f3b6b70aef5b37c4e4ed7739cecefb3ebf21c022638774f4",
+  "manifestSHA256": "83890f330712712ccd6fbafc390df9d9587a6a9a66a00788f65de326b9e7f1a9",
+  "grant": "18be2bb95944427ec00a7d0e77d5214448cb87ca291c5b518dcb47a64dcad456",
+  "externalProcess": {
+    "startedAt": "2026-11-22T07:26:11.347Z",
+    "closedAt": "2026-11-22T07:26:16.939Z",
+    "exit": 1,
+    "error": "NONZERO_EXIT",
+    "stdoutBytes": 0,
+    "stderrBytes": 0,
+    "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "sourceGET": 1,
+  "profileGET": 0,
+  "applicationAdmissions": 0,
+  "responseSHA256": "3e6044a915c133edb598a707c900d8cf9de6926aaba75117c9392683257f8106",
+  "policiesSHA256": "543d4a6f052f66bceae733366d51d437b0a6f7ecd5352df43308bd4bbfe97e47",
+  "reason": "UA_SYNTAX",
+  "lineOrdinal": 192,
+  "permissionGranted": false,
+  "unusedGETRelinquished": 3,
+  "knownClosedOLBGSubsetGET": 58,
+  "allTimeOLBGGET": "UNKNOWN",
+  "termsPrecisionClarification": {
+    "historicalAlgorithmNarrativeHour": "2026-11-21T12:00:00Z",
+    "actualPinnedSourceObservation": "2026-11-21T12:00:18.423812+00:00",
+    "receiptSHA256": "709664c03677b1da0220a9585914406dc4345cac3f05e828d047810fd7b7c5cd",
+    "historicalRecordUnchanged": true,
+    "authorityUnchanged": true,
+    "priorReceiptSHA256": "d1436b22fad8c1aa4a5e17c71d74d817787bed04322b309f17a831ee38d06d06"
+  },
+  "globalDelivery": "PARTIAL"
+}
