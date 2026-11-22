@@ -1,0 +1,61 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CATALOGUE.HISTORICAL.FOLLOWUP.PUBLICATION.AUTHORITY.20261122",
+  "recordedAt": "2026-11-22T15:04:44.871Z",
+  "status": "ONE_REVIEWED_COMMIT_NONFORCE_PUSH_PR_BODY_AND_BOUNDED_CI_WATCH",
+  "scope": "Publish exact47 reviewed code/test/aggregate-proof files in existing draftPR133 after two PUBLIC TSX CRLF-to-LF corrections and mandatory guard pass. Private structured facts/provider bodies/workbook remain local; all-compatible-source delivery PARTIAL.",
+  "planSHA256": "d9138697ae8a9066985762c8481776e6e05d1e5eb8f1c06d6f94d0210bcaebba",
+  "manifestSHA256": "36a39f9436702e2a97bd1e52cc7f3d215ca1a3c03735971f39f7beb5d9968bf1",
+  "baseHEAD": "d882f77f8f882d89484122d86843194d0701e9c8",
+  "files": 47,
+  "maximumCommits": 1,
+  "maximumNonForcePushes": 1,
+  "maximumPRBodyUpdates": 1,
+  "knownPreviousPushCalls": 8,
+  "knownNextMaximumPushCalls": 9,
+  "CIWatchSeconds": 2700,
+  "CIReadCallsMaximum": 90,
+  "CIReadIntervalMinimumSeconds": 30,
+  "PRBodySHA256": "e6381520a7b74890075123ca3cf42f9896857deb0009404bbc8cd75a68d39025",
+  "reusedClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V17.ENGINEERING.RECETTE.20261122",
+    "ENG.SOURCE_OBSERVATORY.HISTORICAL.SRO.GR.LOCAL.ADMISSION.RESULT.20261122",
+    "ENG.SOURCE_OBSERVATORY.CATALOGUE.INDEPENDENT.READ.LOCAL.RESULT.20261122",
+    "ENG.SOURCE_OBSERVATORY.WORKBOOK.SUIVI.V11.RECETTE.20261122",
+    "ENG.SOURCE_OBSERVATORY.CI258.EXACT.HEAD.RESULT.20261122",
+    "ENG.SOURCE_OBSERVATORY.SOURCE.COVERAGE.CLOSURE.PARTIAL.20261122"
+  ],
+  "precommitLocalCorrection": {
+    "allowedFiles": [
+      "cockpit/app/components/expert/workbook-catalogue.tsx",
+      "cockpit/app/components/expert/tipster-candidates.tsx"
+    ],
+    "beforeRawSHA256": [
+      "d7120835240a81e18e1e8dec73adc2f520bce002d3b7b0958d7a14d7ee2225a6",
+      "4e2e6d66ac4c03a07bdd28b425310d0a54e83ff1de658ca6cacb8129f730a9c5"
+    ],
+    "afterRawAndLFSHA256": [
+      "3426e26332580fb036d13d736b379c29fd47571c80022d2ac30d6b3f878af45a",
+      "16d76690a00efccb7bed10467105ca5229b69a8502473de8d1104534e6d7ed60"
+    ],
+    "change": "PUBLIC ONLY exact CRLF to LF; no other byte/logic/type changes; RUNTIME retained and LF semantic equality verified.",
+    "reason": "Graph guard hashes .tsx raw bytes, whereas projection and attributes require LF. Two current catalogue TSX files retained CRLF from reviewed prototype.",
+    "maximumActiveSeconds": 300,
+    "maximumTargetedGuardRunsAfterCorrection": 1,
+    "otherDomainRetests": 0,
+    "requires": "Independent C3 CODE and C4 SCOPE before local copy; after fresh C0 grant, normalize only two exact files and run one graph guard; final independent binding/map review before Git commit.",
+    "noTestWeakening": true
+  },
+  "reviews": {
+    "C3": "PASS exact new tuple,44LFpins, eleven reviewed code/test paths, no private data, executor preview hardened guards and exact2PUBLIC CRLFtoLF inputs. After fresh C0grant, one mandatory guard and final47file/ledger/executor binding review before commit.",
+    "C4": "PASS new tuple47files/44LFpins/privacy/PRbody; exact local2TSX correction300s, onecommit1nonforcepush8to9/onePRbody, CI2700s90readsmin30,16:30expiry,sourceTaskmergeprod0."
+  },
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "merge": 0,
+  "deployment": 0,
+  "privateWorkbookPublished": 0,
+  "rawProviderDataPublished": 0,
+  "expiresAt": "2026-11-22T16:30:00Z",
+  "globalDelivery": "PARTIAL"
+}

@@ -1,0 +1,91 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.HISTORICAL.SRO.GR.LOCAL.ADMISSION.RESULT.20261122",
+  "recordedAt": "2026-11-22T14:47:13.572Z",
+  "status": "SCOPED_LOCAL_ADMISSION_PASS",
+  "scope": "Local retained source DATA only:55 historical SRO and20 GR slot1 known-choice reobservations. Targeted public/qualification API and two-page UI; four other admin APIs intentionally blocked, prior full admin V15 receipt retained. Global delivery PARTIAL.",
+  "missionId": "HISTORICAL_SRO_GR_SLOT1_LOCAL_ADMISSION_20261122",
+  "authorityClaim": "ENG.SOURCE_OBSERVATORY.HISTORICAL.SRO.GR.LOCAL.ADMISSION.AUTHORITY.20261122",
+  "admissionDecision": "ae50622f72b8a85aaf28fd94f00b5a5cc82c379d64b4348e402c4c36f3b1c6b1",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.SRO.CANARY.R2.REOBSERVED.20261121",
+    "DATA.SOURCE_OBSERVATORY.LEGRUPPETTO.RECURRING.R2.SLOT1.PREMATCH.20261122"
+  ],
+  "planSHA256": "c8c9f725b0261bd1815cf79dca180de493169212e5068c05fc5743a840918797",
+  "manifestSHA256": "aeed37faa108413c1deea8840482861c5f30ef6c7990496cc85bd7977a3f27b0",
+  "api": {
+    "status": "PASS_ACTUAL_LOCAL_API",
+    "startedAt": "2026-11-22T14:46:04.839Z",
+    "closedAt": "2026-11-22T14:46:04.941Z",
+    "HTTP": 200,
+    "rawSHA256": "de8939b8283e577ebed97f85db4a38e7fdb1a65d0f4e36c08abc52caa5f49532",
+    "choices": 479,
+    "pseudonyms": 80,
+    "fixtures": 20,
+    "lastSeenAdvanced": 75,
+    "bySource": {
+      "SRC_058": 20,
+      "SRC_039": 55
+    },
+    "immutableChanges": 0,
+    "newChoices": 0,
+    "sourceGET": 0,
+    "TaskQueries": 0,
+    "APIReads": 1,
+    "sroClaim": "DATA.SOURCE_OBSERVATORY.SRO.HISTORICAL.CANARY.R2.APP.ADMISSION.20261122",
+    "grClaim": "DATA.SOURCE_OBSERVATORY.LEGRUPPETTO.RECURRING.R2.SLOT1.APP.ADMISSION.20261122"
+  },
+  "browser": {
+    "apiGET": 3,
+    "startedAt": "2026-11-22T14:46:13.636Z",
+    "state": "PASS",
+    "localGET": 156,
+    "externalBlocked": 0,
+    "writesBlocked": 0,
+    "pageErrors": 0,
+    "sourceGET": 0,
+    "phase": "PROFILE",
+    "webSockets": 2,
+    "outOfScopeAPIBlocked": 4,
+    "sroHistoricalClaim": "DATA.SOURCE_OBSERVATORY.SRO.HISTORICAL.CANARY.R2.APP.ADMISSION.20261122",
+    "sroObservedAt": "2026-11-21T18:18:42.376705+00:00",
+    "adminAPI": {
+      "HTTP": 200,
+      "choices": 479,
+      "claim": "DATA.SOURCE_OBSERVATORY.LEGRUPPETTO.RECURRING.R2.SLOT1.APP.ADMISSION.20261122"
+    },
+    "retainedHistoryNotice": true,
+    "adminCount479": true,
+    "qualificationCandidates": 30,
+    "qualificationAdded": 0,
+    "singleSourceCaption": true,
+    "profileHTTP": 200,
+    "sroNewHistoricalDateVisible": true,
+    "profileNinePicks": true,
+    "reobservationVisible": true,
+    "firstObservationPreserved": true,
+    "closedAt": "2026-11-22T14:46:15.999Z"
+  },
+  "engineering": {
+    "domainTestsPassed": 17,
+    "typecheck": "PASS_REAL_ES2017",
+    "lint": "PASS_THREE_FILES"
+  },
+  "changes": {
+    "lastSeenAdvanced": 75,
+    "SROHistorical": 55,
+    "GRSlot1": 20,
+    "newChoices": 0,
+    "newAuthors": 0,
+    "immutableChanges": 0,
+    "qualificationOldRows": 17,
+    "qualificationTotalRows": 19
+  },
+  "provenance": "SRO sourceObservedAt21Nov18:18 preserved; new response companion only, original row SHA retained. GR source mission old post deadline failure preserved; separate local data authority does not reopen source.",
+  "uiLimit": "The generic last forum batch caption on a SRO profile remains global, not a count of that SRO profile. No current full-admin or all-source delivery claim.",
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "publications": 0,
+  "globalDelivery": "PARTIAL",
+  "independentReview": "C1 actual DATA all479fields and native grains PASS; C3 actual CODE DATA UI and276hash projection PASS; C4 actual effects/timing and limits PASS. Global profile caption P2 explicitly retained."
+}

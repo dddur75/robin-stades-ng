@@ -1,0 +1,218 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CATALOGUE.INDEPENDENT.READ.LOCAL.RESULT.20261122",
+  "recordedAt": "2026-11-22T13:35:00.182Z",
+  "status": "LOCAL_DOCUMENTARY_CATALOGUES_AND_ALL_SIX_ADMIN_GETS_SCOPED_RECETTE_PASS",
+  "scope": "Real local API/UI recipe for317 documentary candidates and one exact reference in the retained18003-address index. Six admin GETs completed200; historical qualifications and dates remain displayed with unknown current activation. Source forecasts remain479, with the30 previously accepted GR lastSeen updates only. No source request, Task query, new forecast, acquisition permission, physical identity, all-source integration or production delivery certified.",
+  "missionId": "CATALOGUE_INDEPENDENT_READ_LOCAL_E1_E2_20261122",
+  "authorityClaim": "ENG.SOURCE_OBSERVATORY.CATALOGUE.INDEPENDENT.READ.LOCAL.AUTHORITY.20261122",
+  "planSHA256": "aa9826a1acb16feec221338b0c374adbdd32af2ba401e105ea3e9f3b694746f2",
+  "manifestSHA256": "e7cfd21c59dd5fac419d62de267f5d3776467159b199d4a2880c550f7526c3e1",
+  "grant": "7c7620aeda02b45c96724f4339dc70ac9dccdb6ed4b75d233b9dae071c6ef1be",
+  "codeHashes": {
+    "cockpit/scripts/catalogue-independent.ts": "137c9934ec0717d7ab07a8d323f7f0ce05b5c36233c18cf0f14431a5ef60bf48",
+    "cockpit/scripts/tipster-candidates-plugin.ts": "62a6df7f14dae6bb6197a7c9638dbc0a2232be720c6f1b613b24d644943aefae",
+    "cockpit/app/components/expert/tipster-candidates.tsx": "4e2e6d66ac4c03a07bdd28b425310d0a54e83ff1de658ca6cacb8129f730a9c5",
+    "cockpit/app/components/expert/workbook-catalogue.tsx": "d7120835240a81e18e1e8dec73adc2f520bce002d3b7b0958d7a14d7ee2225a6",
+    "cockpit/scripts/workbook-inventory-plugin.ts": "0eb4b40107fe34678da73d23cb2a904b2636f059b2587734d31d6ff722a57adb",
+    "cockpit/tests/catalogue-independent.test.ts": "c5d60bc2fcd7a1bbe110e38389bb398d60bfe15bf5172abc717248227715b52b",
+    "cockpit/tests/profile-native-authority.test.ts": "285db9079138075ab98deb9f568f6171f24cc1905578215bca9e0b4977145637"
+  },
+  "inputHashes": {
+    "registry": "74def990602b5d2bf1b2a030827967e8d155af664ed9016769cf81b4cdd236ce",
+    "receipt": "da1098fac5cf1b2606d10fef956f3b9e1e1d3962d72b8ad567cdad0f1f526414",
+    "qualification": "c5775a1b108a7ad99637c11558c757713402662f1a49c05991630ca2edf433c9",
+    "adminQualification": "5cd19dbf965e0ef5f38ebb313279e7e77d909008a831d22eb50844de932dae80"
+  },
+  "actualCompletedAt": "2026-11-22T13:33:29.356Z",
+  "actualElapsedFromGrantSeconds": 392.701,
+  "activeSecondsMaximum": 600,
+  "registryCount": 317,
+  "historicalPersonallyProven": 24,
+  "historicalRosterAssessments": 137,
+  "documentaryAddresses": 18003,
+  "referenceRows": 18375,
+  "workbookTabs": 9,
+  "compatibleSourceCount": null,
+  "allCompatibleIntegrated": false,
+  "forecasts": {
+    "choices": 479,
+    "pseudonyms": 80,
+    "fixtures": 20,
+    "immutableChanges": 0,
+    "previouslyAdmittedGRLastSeenChangesVersusHistoricalBaseline": 30,
+    "newChangesByThisMission": 0,
+    "sourceObservationThrough": "2026-11-22T12:15:12.294187+00:00"
+  },
+  "qualificationRows": 17,
+  "priorQualificationRowsPreserved": 16,
+  "AHProfileVisited": true,
+  "AHExportAssociation": "UNPROVEN",
+  "AHNewChoices": 0,
+  "AHAccountPurchaseRequirement": "NOT_ESTABLISHED",
+  "operationalState": "unknown",
+  "enabledCount": null,
+  "collectionEnabled": null,
+  "currentWindowsStateCertified": false,
+  "historicalCaptureTimeCertified": false,
+  "APIReads": {
+    "C0": 2,
+    "browser": 7,
+    "total": 9,
+    "maximum": 10,
+    "unusedRelinquished": 1
+  },
+  "browser": {
+    "startedAt": "2026-11-22T13:33:24.783Z",
+    "state": "PASS",
+    "apiGET": 7,
+    "apiMaximum": 8,
+    "C0PriorAPIReads": 2,
+    "globalAPIMaximum": 10,
+    "localGET": 157,
+    "externalBlocked": 0,
+    "writesBlocked": 0,
+    "pageErrors": 0,
+    "sourceGET": 0,
+    "TaskQueries": 0,
+    "responses": [
+      {
+        "path": "/api/tipsters/public",
+        "query": "",
+        "HTTP": 200,
+        "at": "2026-11-22T13:33:26.467Z",
+        "file": "response-0.json",
+        "bodySHA256": "9b21b20a33e1a33043226ce95f750bc864a25d7e3a84d1cc26cf410fbbfa445c",
+        "bytes": 597587
+      },
+      {
+        "path": "/api/tipsters/candidates",
+        "query": "",
+        "HTTP": 200,
+        "at": "2026-11-22T13:33:26.526Z",
+        "file": "response-1.json",
+        "bodySHA256": "e2ab40db114cd6d3ee05d0dec5ea172255b67f5f493e3d61f1d51f39511ad8a5",
+        "bytes": 1666831
+      },
+      {
+        "path": "/api/tipsters/qualification",
+        "query": "",
+        "HTTP": 200,
+        "at": "2026-11-22T13:33:26.558Z",
+        "file": "response-2.json",
+        "bodySHA256": "e75fa661cf415ea4ae85be250890d3cbe050c6c9bcfb975668fd6cf3683883f4",
+        "bytes": 14122
+      },
+      {
+        "path": "/api/tipsters",
+        "query": "",
+        "HTTP": 200,
+        "at": "2026-11-22T13:33:26.658Z",
+        "file": "response-3.json",
+        "bodySHA256": "fa4083d3cf382b3a8f83b00adb0a468201c96ab7f6963bd4f400b5f75ea46926",
+        "bytes": 5305
+      },
+      {
+        "path": "/api/tipsters/connectors",
+        "query": "",
+        "HTTP": 200,
+        "at": "2026-11-22T13:33:27.429Z",
+        "file": "response-4.json",
+        "bodySHA256": "87928c68464c05a654ecb1b127744a485d173e6665ac017234698b51021b4dec",
+        "bytes": 260113
+      },
+      {
+        "path": "/api/tipsters/recurring",
+        "query": "",
+        "HTTP": 200,
+        "at": "2026-11-22T13:33:27.431Z",
+        "file": "response-5.json",
+        "bodySHA256": "fcd21fda413685a18e0e42f1eb74793a5e103e923de535013fe3a722020cd512",
+        "bytes": 11984
+      },
+      {
+        "path": "/api/tipsters/workbook",
+        "query": "?q=&sheet=&platform=&page=0&limit=25&id=workbook%3A4b9847651385d800a59982a34bba6dc9952a2de4e1a3246c45ea1fadbba76e1a",
+        "HTTP": 200,
+        "at": "2026-11-22T13:33:29.177Z",
+        "file": "response-6.json",
+        "bodySHA256": "becc64cd801caada18ec36cda084d5c78315d30001dc3c17955db6f923b9dcfb",
+        "bytes": 11146
+      }
+    ],
+    "phase": "WORKBOOK_AH",
+    "webSockets": 2,
+    "adminAPIStatuses": {
+      "/api/tipsters": 200,
+      "/api/tipsters/candidates": 200,
+      "/api/tipsters/recurring": 200,
+      "/api/tipsters/connectors": 200,
+      "/api/tipsters/public": 200,
+      "/api/tipsters/qualification": 200
+    },
+    "fullAdminGETAvailable": true,
+    "admin479": true,
+    "registry317": true,
+    "historicalQualified24": true,
+    "AHAdminMissingEvidence": true,
+    "AHNoMeasuredCandidates": true,
+    "workbook18003": true,
+    "AHExactReference": true,
+    "AHCurrentStateUnknown": true,
+    "noAccountPurchaseRequirementInvented": true,
+    "closedAt": "2026-11-22T13:33:29.356Z"
+  },
+  "canaryAPI": [
+    {
+      "path": "/api/tipsters/candidates",
+      "HTTP": 200,
+      "startedAt": "2026-11-22T13:29:35.601Z",
+      "closedAt": "2026-11-22T13:29:35.661Z",
+      "bodySHA256": "e2ab40db114cd6d3ee05d0dec5ea172255b67f5f493e3d61f1d51f39511ad8a5",
+      "bytes": 1666831
+    },
+    {
+      "path": "/api/tipsters/workbook?id=workbook%3A4b9847651385d800a59982a34bba6dc9952a2de4e1a3246c45ea1fadbba76e1a",
+      "HTTP": 200,
+      "startedAt": "2026-11-22T13:29:35.669Z",
+      "closedAt": "2026-11-22T13:29:36.857Z",
+      "bodySHA256": "becc64cd801caada18ec36cda084d5c78315d30001dc3c17955db6f923b9dcfb",
+      "bytes": 11146
+    }
+  ],
+  "readiness": {
+    "observedAt": "2026-11-22T13:28:03.527Z",
+    "state": "NEW_CANDIDATE_PLUGIN_RESTART_CONFIRMED",
+    "logOffsetBefore": 10020,
+    "lastCodeCopyAt": "2026-11-22T13:27:59.533Z",
+    "segmentSHA256": "a246180c4fb9bf480e7b784d5a060ea6fadc56d9d44cf1ac323e85bc1e69f2e9",
+    "APIReads": 0,
+    "sourceGET": 0,
+    "TaskQueries": 0,
+    "manualOSRestart": 0
+  },
+  "checks": {
+    "domainTestsPassed": 9,
+    "typing": "PASS",
+    "lint": "PASS",
+    "fullSuite": 0
+  },
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "publications": 0,
+  "merge": 0,
+  "deployment": 0,
+  "rawProviderInGit": 0,
+  "statisticScope": "60ms and1188ms are two dated endpoint samples only, not guaranteed service latency.",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.CANDIDATES317.20261119",
+    "ENG.SOURCE_OBSERVATORY.SRO.BRIDGE.R3.LOCAL.RECETTE.20261121",
+    "ENG.SOURCE_OBSERVATORY.TP.AH.DOCUMENTARY.E1.R2.ACTUAL.RESULT.20261122",
+    "DATA.SOURCE_OBSERVATORY.LEGRUPPETTO.RECURRING.R2.SLOT0.APP.ADMISSION.20261122"
+  ],
+  "reviews": {
+    "C3": "Actual7files4inputs/reload chain/9GET2pages/317candidate facts+167picks+137roster preservation/479facts invariance/274LF hashes and local screenshots independently PASS.",
+    "C4": "Actual effects/budget392.7s/600,9GET2pages/all200/unknown operational states and source0Task0 independently PASS; unused1read relinquished."
+  },
+  "globalDelivery": "PARTIAL"
+}

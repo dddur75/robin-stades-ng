@@ -1,0 +1,35 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.HISTORICAL.SRO.GR.LOCAL.ADMISSION.AUTHORITY.20261122",
+  "recordedAt": "2026-11-22T14:39:51.631Z",
+  "status": "BOUNDED_LOCAL_REOBSERVATION_ADMISSION_ONLY",
+  "scope": "All479 IDs and all fields except75 lastSeenAt; original dates/selection/versions/rowSHA retained. SRO21Nov freshness stays historical. GR PFC10 excluded secondslot unchanged. Qualification17 existing rows unchanged.",
+  "missionId": "HISTORICAL_SRO_GR_SLOT1_LOCAL_ADMISSION_20261122",
+  "planSHA256": "c8c9f725b0261bd1815cf79dca180de493169212e5068c05fc5743a840918797",
+  "manifestSHA256": "aeed37faa108413c1deea8840482861c5f30ef6c7990496cc85bd7977a3f27b0",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.SRO.CANARY.R2.REOBSERVED.20261121",
+    "DATA.SOURCE_OBSERVATORY.LEGRUPPETTO.RECURRING.R2.SLOT1.PREMATCH.20261122"
+  ],
+  "counts": {
+    "choices": 479,
+    "pseudonyms": 80,
+    "fixtures": 20,
+    "newChoices": 0,
+    "newAuthors": 0,
+    "sroHistoricalUpdates": 55,
+    "grSlot1Updates": 20
+  },
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "publications": 0,
+  "localAPIReadsMaximum": 4,
+  "browserPagesMaximum": 2,
+  "expiresAt": "2026-11-22T15:00:00Z",
+  "globalDelivery": "PARTIAL",
+  "reviews": {
+    "C1": "PASS_AND_HOLD independent real RAM complete pipeline,479/80/20 and only75lastSeen advances55SRO20GR; wrappers and qualified17oldrows preserved.",
+    "C3": "PASS_AND_HOLD exact CODE DATA final tuple; helper and portable import-only test; old descriptors preserved; new local grant final binding review required.",
+    "C4": "PASS_AND_HOLD exact corrected tuple, source Task0, three code three inputs,4API2pages600s before15:00, operational prior failure preserved."
+  }
+}

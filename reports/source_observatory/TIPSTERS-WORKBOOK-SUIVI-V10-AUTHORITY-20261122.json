@@ -1,0 +1,43 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.WORKBOOK.SUIVI.V10.AUTHORITY.20261122",
+  "recordedAt": "2026-11-22T10:58:44.438Z",
+  "status": "TEN_LITERAL_CELL_STAGING_ONLY_RELEASE_PENDING",
+  "scope": "Update ten literal followup cells in the private workbook from reviewed source observations and stable local facts. Preserve all nine source tabs, tables, styles and historical CI257 cells; no new CI258 outcome inferred.",
+  "missionId": "WORKBOOK_SUIVI_V10_LOCAL_FACTS_UPDATE_R2_20261122",
+  "planSHA256": "1fd5ee8360985a609c8c238229779c8afdfbfce037c1b8d3e7a5c8d1cac7a12e",
+  "manifestSHA256": "79194ad91e7d31b4d3c5f40d8637bc15fdfcc015e8116355169fce15bacef490",
+  "inputSHA256": "0849b6c87c661490f7d151cb7da83d3bce01a74005280820a2f4478fe5fe6c43",
+  "changes": {
+    "C11": "479 choix, 80 pseudonymes, 20 rencontres. Lecteur local de faits stable ; 42 réobservations admises, 0 nouveau choix. Collecte globale PARTIAL ; campagnes non vérifiées. Publication UTC, identité humaine et performance non établies.",
+    "D11": "ENG.SOURCE_OBSERVATORY.PUBLIC.FACTS.STABLE.SNAPSHOT.E2.RESULT.20261122",
+    "B16": 46348.4830975463,
+    "B18": "ENG.SOURCE_OBSERVATORY.PUBLIC.FACTS.STABLE.SNAPSHOT.E2.RESULT.20261122",
+    "B169": "14 choix cumulés ; 12 réobservations admises",
+    "C169": "Observées le 22/11 à 10:20 Paris puis admises : 12 réobservations, 0 nouveau choix. Échec du créneau automatique 08:15 UTC conservé.",
+    "D169": "DATA.SOURCE_OBSERVATORY.SCO1919.CURRENT.PREMATCH.ADMISSION.20261122",
+    "B175": "89 choix cumulés ; 30 réobservations admises",
+    "C175": "Observées le 22/11 à 10:55 Paris puis admises : 30 réobservations sur 3 rencontres, 0 nouveau choix. Lecteur stable ; campagnes non vérifiées.",
+    "D175": "DATA.SOURCE_OBSERVATORY.LEGRUPPETTO.CURRENT.PREMATCH.ADMISSION.20261122"
+  },
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.PUBLIC.FACTS.STABLE.SNAPSHOT.E2.RESULT.20261122",
+    "DATA.SOURCE_OBSERVATORY.LEGRUPPETTO.CURRENT.PREMATCH.ADMISSION.20261122",
+    "DATA.SOURCE_OBSERVATORY.SCO1919.CURRENT.PREMATCH.ADMISSION.20261122",
+    "ENG.SOURCE_OBSERVATORY.WORKBOOK.SUIVI.V9.RECETTE.20261122"
+  ],
+  "builderSHA256": "691d1df610307a99fcdc56fe00b955340b28bccfa8368a26e7815b684e2a99d3",
+  "verifierSHA256": "fc850922c561be88559df137a8115c26f81a18505af95b3c8556252a76eb0e91",
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "GitCommits": 0,
+  "GitPushes": 0,
+  "privateDataPublished": 0,
+  "fullRecalculation": false,
+  "sourceReplay": false,
+  "reviews": {
+    "C1": "Exact ten-cell factual update proposal and source proof references checked.",
+    "C4": "Exact R2 scope approved, source observation time distinguished from admission; final release requires semantic and visual checks."
+  },
+  "globalDelivery": "PARTIAL"
+}

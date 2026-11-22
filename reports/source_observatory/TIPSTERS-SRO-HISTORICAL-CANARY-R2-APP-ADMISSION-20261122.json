@@ -1,0 +1,21 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.SRO.HISTORICAL.CANARY.R2.APP.ADMISSION.20261122",
+  "recordedAt": "2026-11-22T14:50:02.396002+00:00",
+  "status": "ADMITTED_LOCAL_KNOWN_REOBSERVATIONS",
+  "scope": "55 exact known-choice lastSeen advances only; all479choices immutable fields retained. Dated source observation, no current source or Task grant.",
+  "missionId": "HISTORICAL_SRO_GR_SLOT1_LOCAL_ADMISSION_20261122",
+  "sourceClaim": "DATA.SOURCE_OBSERVATORY.SRO.CANARY.R2.REOBSERVED.20261121",
+  "sourceObservedAt": "2026-11-21T18:18:42.376705Z",
+  "admissionDecision": "ae50622f72b8a85aaf28fd94f00b5a5cc82c379d64b4348e402c4c36f3b1c6b1",
+  "localRecipeClaim": "ENG.SOURCE_OBSERVATORY.HISTORICAL.SRO.GR.LOCAL.ADMISSION.RESULT.20261122",
+  "apiRawSHA256": "de8939b8283e577ebed97f85db4a38e7fdb1a65d0f4e36c08abc52caa5f49532",
+  "acceptedLastSeenUpdates": 55,
+  "newChoices": 0,
+  "newAuthors": 0,
+  "choices": 479,
+  "pseudonyms": 80,
+  "fixtures": 20,
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "globalDelivery": "PARTIAL"
+}

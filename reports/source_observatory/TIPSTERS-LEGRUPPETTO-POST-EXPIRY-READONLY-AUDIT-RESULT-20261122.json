@@ -1,0 +1,41 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.LEGRUPPETTO.POST.EXPIRY.READONLY.AUDIT.RESULT.20261122",
+  "recordedAt": "2026-11-22T14:29:41.934Z",
+  "status": "PASSIVE_AUDIT_COMPLETE_LATE_CORRELATION_ORIGINAL_POST_WINDOW_STILL_MISSED",
+  "scope": "One passive3-read Windows correlation after source expiry only. No retroactive validation, source request, launch, Task mutation or app admission.",
+  "missionId": "LEGRUPPETTO_RECURRING_POST_EXPIRY_READONLY_AUDIT_20261122",
+  "planSHA256": "be0cbb21409614845c8c549f1148b3061f332546647d503cdd549a865d99f3a2",
+  "manifestSHA256": "aebfc5443affa9e8058a1e52085c3223546ffa355cd20199be30c7b09b83de48",
+  "grant": "36d41c9427409315477a4ec523affbf841e66383523efa349873ea52d42e9a26",
+  "authorityClaim": "ENG.SOURCE_OBSERVATORY.LEGRUPPETTO.POST.EXPIRY.READONLY.AUDIT.AUTHORITY.20261122",
+  "processSHA256": "56ff96179950cd0fcb9b22c4e82d066a44d31ab687fd99be35313b0b3701f584",
+  "startedAt": "2026-11-22T14:25:36.059Z",
+  "closedAt": "2026-11-22T14:25:37.328Z",
+  "exit": 0,
+  "elapsedSeconds": 1.269,
+  "processMaximumSeconds": 15,
+  "totalMaximumSeconds": 60,
+  "native": {
+    "TaskName": "Robin-Tipsters-LeGruppetto-20261122-1415",
+    "state": "Ready",
+    "lastRunUTC": "2026-11-22T14:15:00.0000000Z",
+    "lastResult": 0,
+    "XMLSHA256": "5e8d88197c777a01e42e4c5cb9789aa334ea6ff26cfcaa0b6faee7e29612a452",
+    "observedAt": "2026-11-22T14:25:37.2832031Z"
+  },
+  "nativeReads": 3,
+  "nativeReadMaximum": 3,
+  "TaskWrites": 0,
+  "sourceGET": 0,
+  "oldUnusedReadsRelinquished": 3,
+  "oldDeadlineMet": false,
+  "oldOperatorFailurePreserved": true,
+  "oldLatePrelaunchRefusalPreserved": true,
+  "sourceAuthorityTransferred": false,
+  "knownNativeSchedulerOperationsAcrossScopes": 16,
+  "reviews": {
+    "C3": "Actualfreshgrant/process1.269s/XML/3reads/nodatebackdating PASS.",
+    "C4": "Actualeffects3reads0writes/source+late timing PASS."
+  },
+  "globalDelivery": "PARTIAL"
+}

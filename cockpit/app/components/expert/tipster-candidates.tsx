@@ -7,10 +7,10 @@ import {choiceHeading,OpaqueChoiceDetails,type SourceChoice} from './source-choi
 
 type Access={platform:string;label:string;reason:string;requiredAccess:string;ownerAction:string;url:string;scope:string};
 type Unadmitted={fixtureLabel:string;selection:string;marketLabel:string;sourceEventText:string;observedAt:string;sourceUrl:string;reason:string};
-type Qualification=Access&{profileVisited:boolean;documentaryIssues:string[];personallyProven:boolean;unadmittedFacts?:Unadmitted[];expansionClaimId?:string;picks:(SourceChoice&{id:string;fixtureLabel:string;selection:string;market?:string;observedAt:string;kickoff:string;sourceUrl:string})[]};
+type Qualification=Access&{profileVisited:boolean;documentaryIssues:string[];personallyProven:boolean;observedAt?:string;unadmittedFacts?:Unadmitted[];expansionClaimId?:string;picks:(SourceChoice&{id:string;fixtureLabel:string;selection:string;market?:string;observedAt:string;kickoff:string;sourceUrl:string})[]};
 type Candidate={id:string;label:string;platform:string;sourceUrl:string;evidenceUrl:string;declaredLastDate:string|null;
- status:'pending_qualification';collectionEnabled:boolean;qualification?:Qualification;origin:{sheet:string;row:number;workbookSha256:string}};
-type Registry={status:string;schemaVersion:string;count:number;platformCount:number;datedCount:number;enabledCount?:number;candidates:Candidate[];receipt:{registrySha256:string;claimId:string};qualification?:{status:string;claimId?:string;technicalClaimId?:string;technicalClaimIds?:string[];followupOverlayState?:string;expansionState?:string;expansionClaimId?:string;personalOverlayState?:string;personalCollectionState?:string;personalClaimId?:string;compatibleAccessState?:string;compatibleClaimId?:string;rosterCollectionState?:string;rosterRecurringState?:string;familyCollectionState?:string;familyNativeWinState?:string;familyOpaqueState?:string;familyClaimId?:string;assessedCount?:number;qualifiedCount?:number;platforms?:Access[]}};
+ status:'pending_qualification';collectionEnabled:boolean|null;qualification?:Qualification;origin:{sheet:string;row:number;workbookSha256:string}};
+type Registry={historicalEvidence?:{sourceObservedAt?:string|null};operationalState?:'unknown';status:string;schemaVersion:string;count:number;platformCount:number;datedCount:number;enabledCount?:number|null;candidates:Candidate[];receipt:{registrySha256:string;claimId:string};qualification?:{status:string;claimId?:string;technicalClaimId?:string;technicalClaimIds?:string[];followupOverlayState?:string;expansionState?:string;expansionClaimId?:string;personalOverlayState?:string;personalCollectionState?:string;personalClaimId?:string;compatibleAccessState?:string;compatibleClaimId?:string;rosterCollectionState?:string;rosterRecurringState?:string;familyCollectionState?:string;familyNativeWinState?:string;familyOpaqueState?:string;familyClaimId?:string;assessedCount?:number;qualifiedCount?:number;platforms?:Access[]}};
 export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;tipsterId?:string}){
  const [data,setData]=useState<Registry|null>(null);const[error,setError]=useState(false);
  const[q,setQ]=useState('');const[platform,setPlatform]=useState('');const[dated,setDated]=useState(false);const[page,setPage]=useState(0);
@@ -29,7 +29,8 @@ export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;ti
   {error?<p role="alert">Le registre local des candidats est indisponible. Aucun total de fiches n’est déduit de cette erreur.</p>:!data?<p role="status">Lecture du registre local…</p>:<>
    <p>Registre : <strong>{data.count} fiches importées</strong> · {data.platformCount} libellés de plateforme · {data.datedCount} dates historiques renseignées.</p>
    {data.qualification?.status==='ok'?<>
-    <p>{data.qualification.assessedCount} fiches examinées : {data.qualification.qualifiedCount} avec des choix personnels observés avant match. {data.enabledCount??0} rattachée(s) à une campagne récurrente programmée et vérifiée.</p>
+    <p>Qualification historique conservée : {data.qualification.assessedCount} fiches examinées ; {data.qualification.qualifiedCount} avec des choix personnels observés avant match. État actuel des collectes non vérifié.</p>
+    <p>Référence historique : {data.historicalEvidence?.sourceObservedAt?formatDateTime(data.historicalEvidence.sourceObservedAt,true):'date non renseignée'}. Ce champ source ne certifie pas l’heure de capture.</p>
     <p>Un contrôle de plateforme ne certifie pas chacun de ses profils. Les autres fiches conservent leur blocage ou attendent une preuve personnelle.</p>
     {data.qualification.followupOverlayState==='unavailable'&&<p role="alert">L’actualisation NotBetting et Telegram est indisponible. Les évaluations antérieures restent affichées avec leur provenance.</p>}
     {data.qualification.expansionState==='unavailable'&&<p role="alert">Le contrôle des profils supplémentaires est indisponible. Les preuves antérieures restent conservées.</p>}
@@ -40,14 +41,15 @@ export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;ti
     {data.qualification.personalClaimId&&<p style={{overflowWrap:'anywhere'}}>Usage personnel local confirmé. Preuve de qualification : {data.qualification.personalClaimId}</p>}
     {data.qualification.expansionClaimId&&<p style={{overflowWrap:'anywhere'}}>Preuve des profils supplémentaires : {data.qualification.expansionClaimId}</p>}
     <details><summary>Accès et blocages par plateforme</summary><ul>{(data.qualification.platforms??[]).map(a=><li key={a.platform} style={{overflowWrap:'anywhere'}}><strong>{a.platform} · {a.label}</strong><p>{a.reason}</p><p>Accès à établir : {a.requiredAccess}</p><p>{a.ownerAction}</p><a className="inline-link" href={a.url} target="_blank" rel="noopener noreferrer">Consulter la plateforme</a></li>)}</ul><small style={{overflowWrap:'anywhere'}}>Preuve {data.qualification.claimId}{(data.qualification.technicalClaimIds??[data.qualification.technicalClaimId]).filter(Boolean).map(id=>` · ${id}`).join('')}</small></details>
-   </>:<p>Statut : à qualifier. Collecte désactivée pour ces candidats. Leur import n’ajoute aucun pronostic au compteur des observations avant match.</p>}
+   </>:<p>Qualifications historiques indisponibles ; les fiches documentaires restent visibles. État actuel des collectes non vérifié. Cet import n’ajoute aucun pronostic.</p>}
    {compact?<InlineLink href="/expert/catalogue-tipsters">Consulter les 317 fiches Ligue 1</InlineLink>:tipsterId?<>
     <InlineLink href="/expert/catalogue-tipsters">Retour aux fiches candidates</InlineLink>
     {selected?<article className="section-card">
-     <p>{selected.platform} · {selected.qualification?.label??'À qualifier'} · {selected.collectionEnabled?'Collecte autorisée dans la campagne':'Collecte désactivée'}</p>
+     <p>{selected.platform} · {selected.qualification?.label??'À qualifier'} · {selected.collectionEnabled===null?'État actuel de collecte non vérifié':selected.collectionEnabled?'Collecte autorisée dans la campagne':'Collecte désactivée'}</p>
      <p>Dernière date déclarée dans l’inventaire : {selected.declaredLastDate??'Non renseignée'}. Elle ne certifie pas une publication avant match.</p>
      <p>Provenance : Catalogue, ligne {selected.origin.row}. Classement historique A, Ligue 1.</p>
      {selected.qualification?<>
+      <p>Qualification historique : {selected.qualification.observedAt?formatDateTime(selected.qualification.observedAt,true):'date non renseignée'}. État actuel non vérifié.</p>
       <p>{selected.qualification.reason}</p><p>Accès à établir : {selected.qualification.requiredAccess}</p><p>{selected.qualification.ownerAction}</p>
       <p>{selected.qualification.profileVisited?'Route de profil déjà visitée dans l’historique des contrôles.':'Aucune visite individuelle du profil ; portée du contrôle précisée ci-dessus.'}</p>
       {selected.qualification.documentaryIssues.map((x,i)=><p key={i}>{x}</p>)}

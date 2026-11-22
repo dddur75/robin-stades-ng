@@ -1,0 +1,19 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.GLOBAL.BATCH.CAPTION.LOCAL.AUTHORITY.20261122",
+  "recordedAt": "2026-11-22T14:52:58.894Z",
+  "status": "BOUNDED_LOCAL_WORDING_FIX_ONLY",
+  "scope": "Insert global in one existing caption so a SRO profile does not imply the latest GR batch describes that profile.",
+  "missionId": "GLOBAL_FORUM_BATCH_CAPTION_LOCAL_FIX_20261122",
+  "planSHA256": "7f54ec33eaf0665a914884d82f439170dbd76e54de0c4556fe37ca2a75a03730",
+  "manifestSHA256": "6301aa7550c4c49c4afdca661616dfbdc5d4f5c12da9a7d0268994ff22144da0",
+  "beforeSHA256": "1b3547c3d6d6c4dc16b1751564b953e65eee20f8248c384726ab7a967ba7eb7a",
+  "afterSHA256": "fae3d406feb560d06116da90f1e15d794f963b1c5f0a4825c2592fa89ccda127",
+  "reviews": {
+    "C3": "PASS exact one word, no type/logic change, appropriate reuse17domain and ES2017 receipt.",
+    "C4": "PASS exact one-file/oneAPI/onepage/300s15:15 sourceTaskpub0."
+  },
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "publications": 0,
+  "globalDelivery": "PARTIAL"
+}

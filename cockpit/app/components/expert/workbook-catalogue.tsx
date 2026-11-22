@@ -4,8 +4,8 @@ import {useEffect,useState} from 'react';
 import {formatDateTime} from '../../i18n';
 
 type Access={label:string;reason:string;requiredAccess:string;ownerAction:string};
-type Row={recordId:string;label:string;platform:string;kind:string;sheet:string;row:number;sourceUrl:string|null;collectionEnabled:boolean;qualifiedRecordId?:string;qualification?:Access&{personallyProven:boolean;nativeAuthorId?:string;nativeFactCount?:number;observedAt?:string;rosterObservedAt?:string};platformAssessment?:Access;historicalLevel?:string|null;historicalL1?:string|null;fields?:Record<string,string>};
-type Data={status:string;records:Row[];total:number;addressCount:number;profileRows:number;referenceRows:number;page:number;limit:number;sheets:string[];platforms:string[];headers:Record<string,string>;receipt:{claimId:string;workbookSha256:string};qualifiedRegistryState?:string;readAt?:string;personalAccessState?:string};
+type Row={recordId:string;label:string;platform:string;kind:string;sheet:string;row:number;sourceUrl:string|null;collectionEnabled:boolean|null;qualifiedRecordId?:string;qualification?:Access&{personallyProven:boolean;nativeAuthorId?:string;nativeFactCount?:number;observedAt?:string;rosterObservedAt?:string};platformAssessment?:Access;historicalLevel?:string|null;historicalL1?:string|null;fields?:Record<string,string>};
+type Data={historicalEvidence?:{sourceObservedAt?:string|null};operationalState?:'unknown';status:string;records:Row[];total:number;addressCount:number;profileRows:number;referenceRows:number;page:number;limit:number;sheets:string[];platforms:string[];headers:Record<string,string>;receipt:{claimId:string;workbookSha256:string};qualifiedRegistryState?:string;readAt?:string;personalAccessState?:string};
 export function WorkbookCatalogue(){
  const [q,setQ]=useState(''),[sheet,setSheet]=useState(''),[platform,setPlatform]=useState(''),[page,setPage]=useState(0),[id,setId]=useState('');
  const [revision,setRevision]=useState(0);
@@ -22,8 +22,8 @@ export function WorkbookCatalogue(){
   {error?<p role="alert">Le catalogue complet est indisponible. Les fiches Ligue 1 restent accessibles par le lien ci-dessus.</p>:data&&<>
    <p><strong>{data.addressCount.toLocaleString('fr-FR')} adresses distinctes</strong> dans Catalogue et Profils FR. {data.referenceRows.toLocaleString('fr-FR')} lignes de référence dans {data.sheets.length} onglets.</p>
    <p>Usage personnel local confirmé. Une référence peut désigner un auteur, un concours, un fil, une plateforme ou un dépôt. La lecture effective, le choix personnel et sa chronologie restent à établir pour chaque fiche.</p>
-   <p>États de collecte relevés {data.readAt?`le ${formatDateTime(data.readAt,true)}`:'à une date non disponible'}. <button className="inline-link" onClick={()=>setRevision(n=>n+1)}>Actualiser les états</button></p>
-   {data.qualifiedRegistryState==='unavailable'&&<p role="alert">Les états actuels du registre qualifié sont indisponibles ; aucune activation n’est déduite de l’inventaire.</p>}
+   <p>Qualifications historiques conservées : référence {data.historicalEvidence?.sourceObservedAt?formatDateTime(data.historicalEvidence.sourceObservedAt,true):'non renseignée'}. Ce champ source ne certifie pas l’heure de capture. État actuel des collectes non vérifié. <button className="inline-link" onClick={()=>setRevision(n=>n+1)}>Actualiser le catalogue</button></p>
+   {data.qualifiedRegistryState==='unavailable'&&<p role="alert">Les qualifications historiques sont indisponibles ; les références restent visibles. Aucune activation actuelle n’est déduite de l’inventaire.</p>}
    {data.personalAccessState==='unavailable'&&<p role="alert">L’actualisation personnelle est indisponible. Les évaluations précédentes restent affichées avec leur provenance.</p>}
   </>}
   <div className="filter-panel pilot-filters">
@@ -37,8 +37,9 @@ export function WorkbookCatalogue(){
    {!data.records.length&&<p>Aucune référence ne correspond à ces filtres.</p>}
    <ul>{data.records.map(r=><li key={r.recordId} style={{overflowWrap:'anywhere',marginBottom:'1rem'}}>
     <button className="inline-link" onClick={()=>{setId(r.recordId);setPage(0);}}>{r.label}</button> · {r.platform||r.kind} · {r.sheet}, ligne {r.row}
-    <p>{r.collectionEnabled?(data.readAt?'Collecte activée lors du relevé daté ci-dessus':'État de campagne à actualiser'):r.qualification?.label??'Référence inventoriée, qualification individuelle à établir'}</p>
+    <p>{r.collectionEnabled===null?'État actuel de collecte non vérifié':r.collectionEnabled?'Collecte activée lors du relevé daté':r.qualification?.label??'Référence inventoriée, qualification individuelle à établir'}</p>
     {id&&<>
+     <p>Qualification historique : {r.qualification?.observedAt?formatDateTime(r.qualification.observedAt,true):'date non renseignée'}. État actuel non vérifié.</p>
      <p>{r.qualification?.reason??r.platformAssessment?.reason??'Aucune preuve personnelle actuelle ni autorisation de collecte n’est attribuée à cette référence par l’import.'}</p>
      {(r.qualification??r.platformAssessment)&&<><p>Accès à établir : {(r.qualification??r.platformAssessment)?.requiredAccess}</p><p>{(r.qualification??r.platformAssessment)?.ownerAction}</p></>}
      {r.sourceUrl&&<p><a className="inline-link" href={r.sourceUrl} target="_blank" rel="noopener noreferrer">Ouvrir la référence d’origine</a></p>}

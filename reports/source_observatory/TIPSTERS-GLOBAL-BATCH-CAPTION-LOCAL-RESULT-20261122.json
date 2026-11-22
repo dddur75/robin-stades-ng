@@ -1,0 +1,39 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.GLOBAL.BATCH.CAPTION.LOCAL.RESULT.20261122",
+  "recordedAt": "2026-11-22T14:53:43.739Z",
+  "status": "SCOPED_UI_CANARY_PASS",
+  "scope": "One word makes global forum batch caption explicit on a SRO profile. Existing facts and source dates byte-identical; no all-source or full-admin delivery claim.",
+  "missionId": "GLOBAL_FORUM_BATCH_CAPTION_LOCAL_FIX_20261122",
+  "authorityClaim": "ENG.SOURCE_OBSERVATORY.GLOBAL.BATCH.CAPTION.LOCAL.AUTHORITY.20261122",
+  "decision": {
+    "grant": "0faea3a3c5651ab80d288ab03f620087e3c9c9867fed0a3640284d719916b4fe",
+    "authorizedAt": "2026-11-22T14:52:59.799089+00:00"
+  },
+  "planSHA256": "7f54ec33eaf0665a914884d82f439170dbd76e54de0c4556fe37ca2a75a03730",
+  "manifestSHA256": "6301aa7550c4c49c4afdca661616dfbdc5d4f5c12da9a7d0268994ff22144da0",
+  "file": "cockpit/app/components/expert/public-tipsters.tsx",
+  "beforeSHA256": "1b3547c3d6d6c4dc16b1751564b953e65eee20f8248c384726ab7a967ba7eb7a",
+  "afterSHA256": "fae3d406feb560d06116da90f1e15d794f963b1c5f0a4825c2592fa89ccda127",
+  "lint": "PASS_ONE_FILE",
+  "reusedTests": "ENG.SOURCE_OBSERVATORY.HISTORICAL.SRO.GR.LOCAL.ADMISSION.RESULT.20261122",
+  "canary": {
+    "startedAt": "2026-11-22T14:53:25.164Z",
+    "status": "PASS",
+    "APIReads": 1,
+    "pages": 1,
+    "sourceGET": 0,
+    "TaskQueries": 0,
+    "externalBlocked": 0,
+    "writesBlocked": 0,
+    "pageErrors": 0,
+    "apiRAW": "de8939b8283e577ebed97f85db4a38e7fdb1a65d0f4e36c08abc52caa5f49532",
+    "captionGlobalVisible": true,
+    "existingFactsByteExact": true,
+    "closedAt": "2026-11-22T14:53:25.955Z"
+  },
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "publications": 0,
+  "globalDelivery": "PARTIAL",
+  "independentReview": "C3 exact CODE, one-file lint receipt, actual one-GET/one-page proof and V17 map PASS; C4 actual scope and readable global caption PASS. Targeted P2 resolved."
+}
