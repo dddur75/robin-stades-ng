@@ -1,0 +1,67 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG480.REVIEWED.READER.PUBLICATION.AUTHORITY.20261122",
+  "recordedAt": "2026-11-22T18:58:47.015Z",
+  "status": "EXACT_REVIEWED_CODE_AND_AGGREGATES_PUBLICATION_ONLY",
+  "scope": "Four reviewed application files simplify immutable snapshot reader and preserve approved historical provenance; private480 snapshot remains local and is never published. Aggregate reviewed engineering/source partial result metadata only. No new source, recurrence, Task, admission, merge or deployment authority.",
+  "missionId": "OLBG480_REVIEWED_READER_PUBLICATION_20261122",
+  "planSHA256": "8a1dee3c2d274c6491ad3fc3ad8a5d698dc9770276ea7c455cd864e9a1b0c5cb",
+  "manifestSHA256": "321fa658ccb7a8746db183a4f9a745918aa5ef25156eb6051e0c1a75959ae1db",
+  "grantContext": {
+    "mission_id": "OLBG480_REVIEWED_READER_PUBLICATION_20261122",
+    "plan_sha256": "8a1dee3c2d274c6491ad3fc3ad8a5d698dc9770276ea7c455cd864e9a1b0c5cb",
+    "manifest_sha256": "321fa658ccb7a8746db183a4f9a745918aa5ef25156eb6051e0c1a75959ae1db",
+    "grant": "EXACT_28_FILES_REVIEWED_READER_ONE_NONFORCE_PUSH_NO_PR_METADATA",
+    "keys": [
+      "C0",
+      "C1",
+      "C3",
+      "C4"
+    ]
+  },
+  "filesMaximum": 28,
+  "privateSnapshotsPublished": 0,
+  "rawProviderDataPublished": 0,
+  "sourceGET": 0,
+  "TaskChanges": 0,
+  "commitsMax": 1,
+  "nonForcePushesMax": 1,
+  "knownNextPushCall": 11,
+  "merge": 0,
+  "deployment": 0,
+  "PRMetadataUpdates": 0,
+  "CIWatchSeconds": 2700,
+  "CIReadsMaximum": 90,
+  "CIReadIntervalMinimumSeconds": 30,
+  "CI260BaselineOnly": true,
+  "appLocalCounts": {
+    "choices": 480,
+    "pseudonyms": 80,
+    "fixtures": 20,
+    "adminQualificationRows": 20
+  },
+  "latestCohort": {
+    "newChoices": 0,
+    "reobservations": 2,
+    "status": "PARTIAL_EXTERNAL_CLOSURE_RECEIPT_MISSING",
+    "admissions": 0
+  },
+  "compatibleSourceCount": null,
+  "recurrenceOperational": false,
+  "testsReused": [
+    "V19 targeted reader13 and plugin13",
+    "V19 strict project type and lint",
+    "480 actual app2APIs+1maskedpage",
+    "admin20 scoped2APIs+1page"
+  ],
+  "newChecks": {
+    "graphLedgerTargeted": "1 passed",
+    "portabilityModifiedFiles": 0,
+    "diffCheckExit": 0
+  },
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ]
+}

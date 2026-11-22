@@ -1,0 +1,161 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI260.EXACT.HEAD.RESULT.20261122",
+  "recordedAt": "2026-11-22T16:42:01.572Z",
+  "status": "PUBLISHED_EXACT_HEAD_CI_SUCCESS",
+  "scope": "CI260 terminal success at exact published commit e6fa8e; all17materialized jobs completed/success. Covers committed twelve-file corrective publication only, not later private REP helper/admissions or all compatible-source delivery.",
+  "head": {
+    "closedAt": "2026-11-22T16:06:13.217941+00:00",
+    "head": "e6fa8e817665f0c54daeab248e13a495af6d3799",
+    "tree": "e5f8d5dcc47bebaae05c525d55f65c70b2c7c864"
+  },
+  "runId": 45041959811,
+  "runNumber": 260,
+  "runURL": "https://github.com/dddur75/robin-stades-ng/actions/runs/45041959811",
+  "terminalRun": {
+    "status": "completed",
+    "conclusion": "success",
+    "observedAt": "2026-11-22T16:40:20.527Z"
+  },
+  "jobs": [
+    {
+      "id": 137268156613,
+      "name": "Bounded live canary - Ubuntu",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137268156794,
+      "name": "Historical Deep — contrat cache-only",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137268156806,
+      "name": "Historical Authority Workflows Disabled",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137268156834,
+      "name": "Chronos PostgreSQL profiles / Chronos static contracts",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137268156848,
+      "name": "Exact Workflow Entrypoint",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137268156859,
+      "name": "Bounded live canary - Windows",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137268156878,
+      "name": "End-to-End Live Path Replay",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137268156885,
+      "name": "Jalon 10 - entrees de preuve gelees",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137268156893,
+      "name": "Residual Fault Matrix",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137268156977,
+      "name": "Chronos PostgreSQL profiles / Chronos source and activation",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137268157061,
+      "name": "Chronos PostgreSQL profiles / tests (superuser)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137268157080,
+      "name": "Chronos PostgreSQL profiles / tests (non_superuser_createrole)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137269010828,
+      "name": "Chronos PostgreSQL profiles / Chronos provider-free Cockpit",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137269889322,
+      "name": "Jalon 10 - trois temoins R3 bornes",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137269889326,
+      "name": "Robin Experience — preuves visuelles",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137269889471,
+      "name": "Quality and domain tests",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137276769905,
+      "name": "tests",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "counts": {
+    "total": 17,
+    "success": 17,
+    "failure": 0,
+    "incomplete": 0
+  },
+  "watch": {
+    "startedAt": "2026-11-22T16:06:19.594306+00:00",
+    "closedAt": "2026-11-22T16:40:20.527Z",
+    "readCalls": 5,
+    "maximumReadCalls": 90,
+    "maximumSeconds": 2700,
+    "elapsedSeconds": 2040.933,
+    "workflowReruns": 0
+  },
+  "publication": {
+    "commits": 1,
+    "nonForcePushes": 1,
+    "PRMetadataUpdates": 0,
+    "knownPushCalls": 10,
+    "files": 12,
+    "merge": 0,
+    "deployment": 0
+  },
+  "primaryResultHashes": {
+    "jobs": "aecbb49377b5334652390b1396f93cb359e594576dbf72873c05dc7b03d074c8",
+    "run": "91b74a5adaca51b2a2d4145c01b746d8688ff96403efb958aca838fa47db2574",
+    "journal": "120d7afd0de002aac3d104f05f36c6862429c5dac8a9e3fdaa1ca48bea7b12d3"
+  },
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.CI259.VISUAL.CONTRACT.LOCAL.RECETTE.20261122"
+  ],
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "globalDelivery": "PARTIAL",
+  "compatibleSourceCount": null,
+  "independentReview": "C3 CODE and C4 SCOPE actual terminal primaries/push scope/5 bounded reads PASS. No further CI polling, rerun or publication authority."
+}

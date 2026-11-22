@@ -75,3 +75,11 @@ test('configured endpoint never invokes historical subprocesses, including missi
 test('approved native source identifiers need not be SHA hashes',()=>{const value=fixture();value.picks[0].id='olbg-tip:296399226';using(s=>assert.equal(readReviewedPublicSnapshot(s.root,s.approval).distinctPicks,1),value);});
 
 test('historical observation companions never carry cached operational flags',()=>{const value=fixture();Object.assign(value.notbettingOccurrenceCompanion,{active:false,pending:0});using(s=>{const c=readReviewedPublicSnapshot(s.root,s.approval).notbettingOccurrenceCompanion as Record<string,unknown>;assert.deepEqual(c,{updates:value.notbettingOccurrenceCompanion.updates});},value);});
+
+test('reviewed historical SRO and forum batch provenance survives without operational flags',()=>{
+ const value=fixture() as ReturnType<typeof fixture>&Record<string,unknown>;
+ const historical={updates:{p:{lastSeenAt:'2026-11-22T08:00:00Z'}},claimId:'DATA.SRO',parentClaimId:'DATA.SRO.PARENT',sourceMissionId:'SRO.OLD',candidateSHA256:'a'.repeat(64),receiptSHA256:'b'.repeat(64),sourceResponseSHA256:'c'.repeat(64),sourceObservedAt:'2026-11-21T08:00:00Z',wrapperSHA256:'d'.repeat(64),decisionSHA256:'e'.repeat(64),approvedReobservationCount:1,approvedNewCount:0,kind:'historical'};
+ const batch={state:'available',envelopeSHA256:'f'.repeat(64),missionId:'FORUM.OLD',claimId:'DATA.FORUM',decisionSHA256:'e'.repeat(64),preparedAt:'2026-11-22T08:00:00Z',approvedObservationCount:1,approvedNewCount:0,approvedReobservationCount:1};
+ value.sroNextCompanion={...historical,active:true,native:{ready:true}};value.forumBatches=[{...batch,active:true,native:{ready:true}}];
+ using(s=>{const result=readReviewedPublicSnapshot(s.root,s.approval);assert.deepEqual(result.sroNextCompanion,historical);assert.deepEqual(result.forumBatches,[batch]);assert.equal(result.sourceObservedThrough,value.sourceObservedThrough);assert.deepEqual(result.picks,value.picks);},value);
+});

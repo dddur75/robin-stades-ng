@@ -1,0 +1,39 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.REP.FOREIGN.BOUNDARIES.CODE.E1.RECETTE.20261122",
+  "recordedAt": "2026-11-22T16:18:08.029Z",
+  "status": "PRIVATE_OFFLINE_PROTOTYPE_CODE_RECETTE_PASS",
+  "scope": "Conservative observer-specific handling of37 closed native foreign user-agent digests. Preserve own/wildcard/ambiguous group boundaries and the original policy AST. Offline only; no caller promoted and no profile permission established.",
+  "planSHA256": "374ca4a379869a588f95b963c8cc5d08c9498287efca2d321594b1b40919dc6a",
+  "manifestSHA256": "17f92573680f2c59c4f13fcdd050cd3cfd74b435f34d4ac17fd7694251b77181",
+  "helperSHA256": "db48668eb3f8089afda913ef6618c1e7fed078a7dd7a03b75078ba834727963d",
+  "nativeDocumentClaim": "ENG.SOURCE_OBSERVATORY.OLBG.REP.NATIVE.LITERALS.SOURCE.RESULT.20261122",
+  "nativeProjectionRAW": "32bbc0ea24446c26f9f1f58954a6ed2a596656b045e86452f68cf1b7b9f3b76a",
+  "additionalClosedNativeDigests": 37,
+  "baseForeignHeadersPreserved": 20,
+  "goldenCasesPassed": 4,
+  "baseCasesReusedWithoutReplay": 27,
+  "policyASTUnchanged": true,
+  "technicalEvaluation": {
+    "count": 1,
+    "input": "STRUCTURED_REP_PROJECTION_IN_RAM",
+    "projectedRAMBytes": 8060,
+    "target": "ARTIFICIAL_NON_PROFILE",
+    "result": "ALLOW",
+    "quarantinedHeaders": 57,
+    "matchingWildcardGroups": 2,
+    "nativeBodyReconstructed": false,
+    "profilePermissionEvaluated": false
+  },
+  "reviews": {
+    "C3": "Exact18pins/204492B, policy+error AST unchanged, closed37 digests match native evidence;4 independent goldensPASS network blocked; no native evaluation replay.",
+    "C4": "Exact offlineE1 scope/private data, one artificial technical evaluation, no profile permission or caller promotion."
+  },
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "appChanges": 0,
+  "admissions": 0,
+  "profilePermissionGranted": false,
+  "callerPromoted": false,
+  "globalDelivery": "PARTIAL"
+}

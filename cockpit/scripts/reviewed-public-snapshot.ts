@@ -6,7 +6,7 @@ import type {JsonObject} from './forums-accepted';
 export type SnapshotApproval={relativePath:string;sha256:string;claimId:string;choices:number;pseudonyms:number;fixtures:number;maximumBytes:number;idsSHA256:string;immutableSHA256:string};
 const HASH=/^[a-f0-9]{64}$/;
 const immutableFields=['id','firstSeenAt','observedAt','versions','authorLabel','selection','sourceUrl'];
-const factFields=['schemaVersion','status','distinctPicks','authorCount','picks','fixtures','calendarEvidence','calendarSha256','parserSha256','missionId','generatedAt','sourceObservedThrough','claimId','claimIds','requestCount','observationSha256','notbettingOccurrenceCompanion','sroNextCompanion','forumCompanion'];
+const factFields=['schemaVersion','status','distinctPicks','authorCount','picks','fixtures','calendarEvidence','calendarSha256','parserSha256','missionId','generatedAt','sourceObservedThrough','claimId','claimIds','requestCount','observationSha256','notbettingOccurrenceCompanion','sroNextCompanion','forumCompanion','forumBatches'];
 function check(v:unknown):asserts v {if(!v)throw Error('REVIEWED_PUBLIC_SNAPSHOT_UNAVAILABLE');}
 function object(v:unknown):JsonObject {check(v!==null&&typeof v==='object'&&!Array.isArray(v));return v as JsonObject;}
 function canonical(v:unknown):string{
@@ -16,6 +16,15 @@ function canonical(v:unknown):string{
 }
 function sha(v:Buffer|string):string{return createHash('sha256').update(v).digest('hex');}
 function utc(v:unknown):number{check(typeof v==='string'&&/(?:Z|\+00:00)$/.test(v));const n=Date.parse(v);check(Number.isFinite(n));return n;}
+
+function historicalMetadata(v:unknown,keys:readonly string[]):JsonObject{
+ const source=object(v),result:JsonObject={};
+ for(const key of keys){const value=source[key];if(value===undefined)continue;
+  if(key==='updates')result[key]=object(value);
+  else {check(typeof value==='string'||typeof value==='number'&&Number.isSafeInteger(value)&&value>=0);result[key]=value;}
+ }
+ return result;
+}
 
 /** Reads exactly one reviewed local fact snapshot; never consults a provider or an operational reader. */
 export function readReviewedPublicSnapshot(root:string,a:SnapshotApproval):JsonObject{
@@ -47,7 +56,9 @@ export function readReviewedPublicSnapshot(root:string,a:SnapshotApproval):JsonO
  utc(value.generatedAt);utc(value.sourceObservedThrough);
  const result:JsonObject={};
  for(const key of factFields)if(value[key]!==undefined)result[key]=value[key];
- for(const key of ['notbettingOccurrenceCompanion','sroNextCompanion'])if(value[key]!==undefined){const companion=object(value[key]);result[key]={updates:object(companion.updates)};}
+ if(value.notbettingOccurrenceCompanion!==undefined)result.notbettingOccurrenceCompanion={updates:object(object(value.notbettingOccurrenceCompanion).updates)};
+ if(value.sroNextCompanion!==undefined)result.sroNextCompanion=historicalMetadata(value.sroNextCompanion,["updates","claimId","parentClaimId","sourceMissionId","candidateSHA256","receiptSHA256","sourceResponseSHA256","sourceObservedAt","wrapperSHA256","decisionSHA256","approvedReobservationCount","approvedNewCount","kind"]);
+ if(value.forumBatches!==undefined){check(Array.isArray(value.forumBatches)&&value.forumBatches.length<=8);result.forumBatches=value.forumBatches.map(v=>historicalMetadata(v,["state","envelopeSHA256","missionId","claimId","decisionSHA256","preparedAt","approvedObservationCount","approvedNewCount","approvedReobservationCount"]));}
  const claims=Array.isArray(value.claimIds)?value.claimIds:[value.claimId];
  check(claims.every(c=>typeof c==='string'));
  result.claimIds=[...new Set([...claims,a.claimId])];

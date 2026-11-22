@@ -1,0 +1,93 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.SINGLE.PERSONAL.REP.V2.PREMATCH.RESULT.20261122",
+  "recordedAt": "2026-11-22T16:45:09.292Z",
+  "status": "ONE_REAL_NEW_PRIVATE_PREMATCH_CHOICE_REVIEWED_NOT_ADMITTED",
+  "scope": "Actual one-profile two-GET OLBG canary. One new personal native choice observed before the retained fixture kickoff, independently compared to the479current accepted baseline. Private candidate remains unadmitted; original capture noveltyUNKNOWN preserved, later DATA comparison recorded separately. No personal forecast values in reports/models/Git.",
+  "missionId": "OLBG_SINGLE_PERSONAL_REP_V2_SOURCE_E1_20261122",
+  "planSHA256": "866630b06ee6b1f31677204fc5c4b5e5e5d17da715c8b32ea5e4a8addb957e18",
+  "manifestSHA256": "3598c34c2725d4a3e9fccac74275184894e2de9f8350f0e1754b66365b71edfa",
+  "grantSHA256": "f24ae6aba3b016e056870eca81c8caebfef41c5117bec6ea1a93c5c70d1eb0f3",
+  "acquisition": {
+    "sourceGET": 2,
+    "profileGET": 1,
+    "HTTP200": 2,
+    "redirects": 0,
+    "retries": 0,
+    "attempts": 1,
+    "robotsBytes": 9452,
+    "profileBytes": 161468,
+    "candidateBytes": 2753,
+    "bodyStored": false
+  },
+  "counts": {
+    "nativeFacts": 7,
+    "footballOpenFacts": 2,
+    "retainedFutureFixtures": 1,
+    "candidates": 1,
+    "preKickoffCandidates": 1,
+    "lateCandidates": 0,
+    "newNativeChoicesAgainstCurrentBaseline": 1,
+    "reobservationsAgainstCurrentBaseline": 0,
+    "newAuthorsAgainstCurrentBaseline": 0,
+    "admissions": 0
+  },
+  "dates": {
+    "observedAt": "2026-11-22T16:35:13.251986+00:00",
+    "kickoff": "2026-11-22T19:45:00+00:00",
+    "closedAt": "2026-11-22T16:35:13.689Z",
+    "publishedAt": null,
+    "sourceEventTimezone": null
+  },
+  "closure": {
+    "exit": 0,
+    "timedOut": false,
+    "subtreeKillConfirmed": true,
+    "jobSeconds": 5.98399999999674,
+    "hardSeconds": 70,
+    "parentSourceGET": null,
+    "sourceGETEstablishedBy": "worker+2reservation+2response",
+    "spacingSeconds": 3.296135
+  },
+  "hashes": {
+    "candidate": "d0329e45a6d6fed08e7dd65fd38c399b0b80957a67fa173d584cb1bef34f776d",
+    "result": "f5894bfff7eb09e66e44160c7066ad37a1d683c1463b9f2328b6c852780fe38a",
+    "process": "d52ec9d684d45ea10f20a31f1f00f936b86868f0f1e60b6863558bada07aafcb",
+    "responses": [
+      "bd23a3c7d833ced0554ca604e30adc07e4b016d02e71632efb9cf14bb5464d00",
+      "3cb4bf74b10237b2bef37718677bae596246de65f0b320397b5710c01d6c1458"
+    ],
+    "baseline": "de8939b8283e577ebed97f85db4a38e7fdb1a65d0f4e36c08abc52caa5f49532"
+  },
+  "baseline": {
+    "choices": 479,
+    "pseudonyms": 80,
+    "fixtures": 20,
+    "unchanged": true
+  },
+  "sourceBudget": {
+    "maximum": 2,
+    "consumed": 2,
+    "closed": true,
+    "unusedTransfer": false,
+    "retryAllowed": false
+  },
+  "performanceEvaluationAllowed": false,
+  "settlementAllowed": false,
+  "identityCertified": false,
+  "sourceContentToModels": false,
+  "sourceContentToStdout": false,
+  "sourceContentToReports": false,
+  "sourceContentToGit": false,
+  "appChanges": 0,
+  "TaskChanges": 0,
+  "TaskQueries": 0,
+  "API_FOOTBALL": 0,
+  "allCompatibleIntegrated": false,
+  "compatibleSourceCount": null,
+  "globalDelivery": "PARTIAL",
+  "independentReview": {
+    "C1": "Actual schema/pins/attribution/calendar+strictpreKO and1newnative against currentde8939 baseline verified by local structured program, no content exposed.",
+    "C3": "36pins/grant/chain/2HTTP/closure/privacy actual PASS. Candidate hashed only, no parsing by C3.",
+    "C4": "Exact scope/pacing/2GETclosed/time/privacy/termsreuse PASS. No admission or scale."
+  }
+}

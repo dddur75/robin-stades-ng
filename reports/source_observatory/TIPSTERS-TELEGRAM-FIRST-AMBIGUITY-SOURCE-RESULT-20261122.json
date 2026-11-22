@@ -1,0 +1,55 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.FIRST.AMBIGUITY.SOURCE.RESULT.20261122",
+  "recordedAt": "2026-11-22T18:03:09.186Z",
+  "status": "PARTIAL_TRANSPORT_STOP_BEFORE_PREVIEW_WITNESS",
+  "scope": "Actual fresh Telegram metadata witness attempt stopped before preview response was retained. Two reservations consumed, only complete robots404 response retained; actual GET count unknown in[1,2]. No native ambiguity witness or message fields extracted, no absence-of-messages or account/export conclusion. Fine transport cause was not retained; no retrospective reconstruction.",
+  "missionId": "TELEGRAM_FIRST_AMBIGUITY_WITNESS_SOURCE_E1_20261122",
+  "planSHA256": "373f10da6a9297f79b1d65432d810b14d9b9e718c266a43771272a95e670b1f3",
+  "manifestSHA256": "e23464623e235017f9a327a47771c7bccd407f80c3be9ae89503897c3c0189d4",
+  "grantSHA256": "dc83d1c134df8ca5c0c32375d1d2604ffa19e231bb8e328e8d83e43111038fb0",
+  "reservations": 2,
+  "responses": 1,
+  "sourceGET": null,
+  "sourceGETLowerBound": 1,
+  "sourceGETUpperBound": 2,
+  "robots": {
+    "status": 404,
+    "bytes": 153,
+    "complete": true,
+    "redirect": false,
+    "bodySHA256": "29b8ea7cf7286595bdce7f04d1ed55b2670cffc86ffe6e4917f6667f6b595cdb"
+  },
+  "previewResponseRetained": false,
+  "firstAmbiguityWitness": null,
+  "reason": "UNPROVEN_OR_TRANSPORT",
+  "fineCause": "UNKNOWN_NOT_RETAINED",
+  "closure": {
+    "startedAt": "2026-11-22T17:54:52.173Z",
+    "closedAt": "2026-11-22T17:54:58.927Z",
+    "exit": 1,
+    "timedOut": false,
+    "subtreeKillConfirmed": true,
+    "elapsedSecondsExternal": 6.754,
+    "jobSeconds": 6.688000000009197,
+    "jobMaximumSeconds": 70,
+    "spacingSeconds": 3.368789
+  },
+  "budget": {
+    "maximumReservations": 2,
+    "consumed": 2,
+    "closed": true,
+    "retryAllowed": false
+  },
+  "messageTextExtracted": false,
+  "messageFieldsExtracted": false,
+  "sourceBodyStored": false,
+  "admissions": 0,
+  "appChanges": 0,
+  "TaskChanges": 0,
+  "accountAPIExportRequirement": "UNKNOWN",
+  "independentReview": {
+    "C3": "Actual tuple/pins/2reservations1response/orderedclosure/boundedpacing and lostdiagnostic codes verified. No rerun. FAIL_AND_STOP.",
+    "C4": "Actual scope/privacy/quiescence/countersUNKNOWN1..2 and closedbudget2/2 verified.404implies no permission, no account/message absence inference."
+  },
+  "globalDelivery": "PARTIAL"
+}

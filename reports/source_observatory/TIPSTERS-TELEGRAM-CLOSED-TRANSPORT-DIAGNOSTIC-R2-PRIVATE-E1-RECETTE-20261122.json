@@ -1,0 +1,36 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.CLOSED.TRANSPORT.DIAGNOSTIC.R2.PRIVATE.E1.RECETTE.20261122",
+  "recordedAt": "2026-11-22T18:47:47.494Z",
+  "status": "PRIVATE_SYNTHETIC_DIAGNOSTIC_REVIEWED_NO_SOURCE_AUTHORITY",
+  "scope": "Closed transport phase/reason diagnostics preserve the original strict framing and parser acceptance. R2 distinguishes uninspected encoding (null) from an inspected absent header. Previous native failure cause remains unknown.",
+  "missionId": "TELEGRAM_CLOSED_TRANSPORT_DIAGNOSTIC_PRIVATE_E1_20261122",
+  "planSHA256": "3e595d4f871ce8b661e3847bf24268bc77f54d1602c702a3e600cd4ca841e3fc",
+  "manifestSHA256": "31d60656246b4a7dcafe44022efc576ca48e3e28b964e3ac5f8c508d7b378da1",
+  "codeMapSHA256": "1a05a1035f1b05c5c71e4eb5798f791f036b49acee482520eaccb05ca8fbd1f6",
+  "frozenAt": "2026-11-22T18:30:41.463Z",
+  "tests": {
+    "casesPassed": 4,
+    "HTMLFragmentsReused": 3,
+    "oldAcceptanceUnchanged": true,
+    "poisonAbsent": true,
+    "encodingBeforeInspectionNull": true,
+    "actualAbsentAfterInspectionABSENT": true,
+    "oldVersionRegressionExit": 1,
+    "criticalLintExit": 0
+  },
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "author": "C0",
+  "independentCodeReviewer": "C1",
+  "sourceReady": false,
+  "newSourceGET": 0,
+  "DNS": 0,
+  "TaskChanges": 0,
+  "appChanges": 0,
+  "oldCause": "UNKNOWN_NOT_RETAINED",
+  "budgetReset": false,
+  "oldFrozenPinsPreserved": true
+}
