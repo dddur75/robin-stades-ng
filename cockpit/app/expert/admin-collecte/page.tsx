@@ -1,4 +1,5 @@
 import {TipsterCandidates} from "../../components/expert/tipster-candidates";
+import { TipsterQualification } from "../../components/expert/tipster-qualification";
 import { PublicTipsters } from "../../components/expert/public-tipsters";
 import { TipstersPilot } from "../../components/expert/tipsters-pilot";
 import { TipsterConnectors } from "../../components/expert/tipster-connectors";
@@ -6,5 +7,5 @@ import { TipstersRecurringControl } from "../../components/expert/tipsters-recur
 import { ExperienceShell } from "../../components/navigation/experience-shell";
 
 export default function CollectionAdminRoute() {
-  return <ExperienceShell active="collection-admin"><TipstersPilot admin><PublicTipsters compact /><TipsterCandidates compact /><TipstersRecurringControl /><TipsterConnectors /></TipstersPilot></ExperienceShell>;
+  return <ExperienceShell active="collection-admin"><TipstersPilot admin><PublicTipsters compact /><TipsterQualification /><TipsterCandidates compact /><TipstersRecurringControl /><TipsterConnectors /></TipstersPilot></ExperienceShell>;
 }

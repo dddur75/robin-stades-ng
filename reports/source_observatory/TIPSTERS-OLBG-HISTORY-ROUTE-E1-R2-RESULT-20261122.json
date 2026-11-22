@@ -1,0 +1,96 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.HISTORY.ROUTE.E1.R2.RESULT.20261122",
+  "generatedAt": "2026-11-22T00:15:54.912Z",
+  "missionId": "OLBG_HISTORY_ROUTE_E1_20261122_R2",
+  "status": "PARTIAL_RAW_DENIAL_MARKER_CLASSIFIER_STOPPED",
+  "scope": "Actual two-GET documentary attempt, stopped before native anchors were measured. No publisher-denial or absent-route inference.",
+  "planSHA256": "e5a097b397a783640eddf545819b20eafbfb9eb4026ae2341564098c843f979f",
+  "manifestSHA256": "c6fe9e66fe9ba56ebb1cf59e73e66a9f88c069663963fe2fb7cc0c62c15fb06f",
+  "sourceGrant": "e66bdd45d9f5ee2f182392d03926283063604c88669ef57db0da977ba40e34c0",
+  "result": {
+    "reservations": 2,
+    "responses": 2,
+    "HTTP200": 2,
+    "robotsBodyBytes": 9452,
+    "historyBodyBytes": 212800,
+    "currentGET": 0,
+    "predictionParsing": 0,
+    "admissions": 0,
+    "exit": 1,
+    "externalElapsedSeconds": 6.2722405,
+    "spentToOuterVetoSeconds": 6.088114,
+    "interReservationSeconds": 3.671762,
+    "robotsResponseToHistoryReservationSeconds": 3.309801,
+    "stopCode": "SOURCE_DENIED",
+    "measuredCause": "RAW_REGEX_DENIAL_MARKER_MATCH",
+    "underlyingMatchingMarker": "NOT_RETAINED",
+    "anchorParserReached": false,
+    "routePresence": "NOT_MEASURED",
+    "publisherDenialEstablished": false
+  },
+  "responseProofs": [
+    {
+      "file": "response-1.json",
+      "receiptSHA256": "25b72469c2e3d9f439f4de068e7941b19d1af83c0e1fa686597ccdaf148f636d",
+      "bodyBytes": 9452,
+      "bodySha256": "3e6044a915c133edb598a707c900d8cf9de6926aaba75117c9392683257f8106",
+      "contentType": "text/plain",
+      "grant": "e66bdd45d9f5ee2f182392d03926283063604c88669ef57db0da977ba40e34c0",
+      "httpStatus": 200,
+      "locationPresent": false,
+      "manifest": "c6fe9e66fe9ba56ebb1cf59e73e66a9f88c069663963fe2fb7cc0c62c15fb06f",
+      "n": 1,
+      "observedAt": "2026-11-22T00:10:51.948440+00:00",
+      "plan": "e5a097b397a783640eddf545819b20eafbfb9eb4026ae2341564098c843f979f"
+    },
+    {
+      "file": "response-2.json",
+      "receiptSHA256": "ee13daf0415adf7366d715c3ff3d6797c984d426a8304127292e6778c94f061f",
+      "bodyBytes": 212800,
+      "bodySha256": "79d127572b5d6546cd530b8a13f7fb576303e9ed594c4582ea2f4181e053c108",
+      "contentType": "text/html",
+      "grant": "e66bdd45d9f5ee2f182392d03926283063604c88669ef57db0da977ba40e34c0",
+      "httpStatus": 200,
+      "locationPresent": false,
+      "manifest": "c6fe9e66fe9ba56ebb1cf59e73e66a9f88c069663963fe2fb7cc0c62c15fb06f",
+      "n": 2,
+      "observedAt": "2026-11-22T00:10:56.511063+00:00",
+      "plan": "e5a097b397a783640eddf545819b20eafbfb9eb4026ae2341564098c843f979f"
+    }
+  ],
+  "receiptHashes": {
+    "outer-veto.json": "33d11dce5a0a1a8ea6705ed3e264d5a00d8d3e8d7bed6810147650be646e9d4c",
+    "parent-result.json": "9a3c40770ee744dff2a76649afa8153903ab171251c1121cd0636205b9f134cb",
+    "parent-started.json": "4789cedbb9f6b1270c7c32087dfec36ae1d3446266ec7c450692625183a960e7",
+    "reservation-1.json": "feaba228f34e0fef3ff2e5429cb93a69e38c17232cc0b8bc495a18e1fd665873",
+    "reservation-2.json": "42b84a76b75b87e93deb3d4a84abe32887a140bb4bdec4b0ce1f2afe0f112f65",
+    "response-1.json": "25b72469c2e3d9f439f4de068e7941b19d1af83c0e1fa686597ccdaf148f636d",
+    "response-2.json": "ee13daf0415adf7366d715c3ff3d6797c984d426a8304127292e6778c94f061f",
+    "spent.json": "59a248c11aaaa5008189ec64f779710bb99a864ee04f9dae79d49fdd0458de8b",
+    "worker-started.json": "89d8d6b523027c0605050661f9f31f0da92bc01a7122a8f7c5b0c5bedfd4e867",
+    "worker-stop.json": "af32a9bb7608adb09eec0edc6bcb935c99745a81b1ac4fe47b04e22c6b0fb886"
+  },
+  "offlineCounterexample": {
+    "verifiedBy": "C3",
+    "normalPageWithExactHref": "QUALIFIES",
+    "samePagePlusRecaptchaScriptAsset": "REJECTED_SOURCE_DENIED",
+    "trueInterstitialExample": "REJECTED_SOURCE_DENIED",
+    "inference": "Raw HTML token detection is overbroad; actual discarded body classification remains unknown."
+  },
+  "history": {
+    "sourceAttemptsInThisEpisode": 1,
+    "GETInThisEpisode": 2,
+    "priorV1SourceAttempts": 0,
+    "spentPreserved": true,
+    "retryAuthority": false,
+    "oldFamilyGETTotal": "UNKNOWN",
+    "next3Unchanged": true
+  },
+  "reviewedBy": [
+    "C0",
+    "C3"
+  ],
+  "rawSourceBodyOrHrefProseInGit": false,
+  "globalDelivery": "PARTIAL",
+  "allCompatibleSourcesIntegrated": false
+}

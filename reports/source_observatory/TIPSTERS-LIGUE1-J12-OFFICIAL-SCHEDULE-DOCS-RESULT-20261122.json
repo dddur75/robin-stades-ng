@@ -1,0 +1,176 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.LIGUE1.J12.OFFICIAL.SCHEDULE.DOCUMENTARY.20261122",
+  "generatedAt": "2026-11-22T01:18:46.577Z",
+  "status": "VERIFIED_LOCAL_PROGRAMME_PROVISIONAL_UTC_CONTEXT_ONLY",
+  "scope": "Official nine-match future local programme, not silently admitted UTC fixtures or tipster predictions.",
+  "sourceURL": "https://ligue1.com/fr/articles/l1_article_5843-",
+  "sourceReference": "turn75view0",
+  "sourceCrawled": "today",
+  "observedProgrammeLines": "12..43",
+  "seasonObserved": "2026/2027",
+  "roundObserved": 12,
+  "publishedDocumentDateRaw": "04/09/2026 08:53",
+  "localFixtures": [
+    {
+      "publishedLocalDateTime": "2026-11-27T20:45:00",
+      "home": "Stade Brestois 29",
+      "away": "Paris FC"
+    },
+    {
+      "publishedLocalDateTime": "2026-11-28T17:15:00",
+      "home": "Angers SCO",
+      "away": "RC Lens"
+    },
+    {
+      "publishedLocalDateTime": "2026-11-28T20:45:00",
+      "home": "Paris Saint-Germain",
+      "away": "FC Lorient"
+    },
+    {
+      "publishedLocalDateTime": "2026-11-28T20:45:00",
+      "home": "Le Mans FC",
+      "away": "LOSC"
+    },
+    {
+      "publishedLocalDateTime": "2026-11-28T20:45:00",
+      "home": "Havre AC",
+      "away": "RC Strasbourg Alsace"
+    },
+    {
+      "publishedLocalDateTime": "2026-11-28T20:45:00",
+      "home": "OGC Nice",
+      "away": "ESTAC Troyes"
+    },
+    {
+      "publishedLocalDateTime": "2026-11-29T15:00:00",
+      "home": "AJ Auxerre",
+      "away": "Olympique de Marseille"
+    },
+    {
+      "publishedLocalDateTime": "2026-11-29T17:15:00",
+      "home": "Toulouse FC",
+      "away": "Stade Rennais FC"
+    },
+    {
+      "publishedLocalDateTime": "2026-11-29T20:45:00",
+      "home": "Olympique Lyonnais",
+      "away": "AS Monaco"
+    }
+  ],
+  "explicitTimezoneInObservedArticle": false,
+  "proposedConversionTimezone": "Europe/Paris",
+  "proposedTimezoneBasis": "Pre-existing project table explicitly labels these same schedule times Paris/UTC; actual article is French domestic L1 TV programme. This is contextual interpretation, not a native UTC field.",
+  "nativeUTCProof": false,
+  "independentCalendarAdmission": "LOCAL_FACTS_CONFIRMED_UTC_CONTEXTUAL_PRIVATE_CANARY_ONLY",
+  "mediatedToolCalls": 1,
+  "optionalFind": "CANCELLED_PROGRAMME_ALREADY_VISIBLE",
+  "initialToolAndMetadataCloseSeconds": 1.119,
+  "nativeHTTPCount": "UNKNOWN_TOOL_BACKEND",
+  "nativeSourceGET": 0,
+  "ForecastRecordGET": 0,
+  "APIFootballCalls": 0,
+  "J12ObservationAdds": 0,
+  "taskChanges": 0,
+  "oldCalendarOrSourceMutation": 0,
+  "rawDocumentStored": false,
+  "globalDelivery": "PARTIAL",
+  "allCompatibleSourcesIntegrated": false,
+  "reviewedBy": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "independentReview": "C1 confirms nine local programme entries and conditional +01:00 conversions matching seven prior seeds; C4 allows only provisional personal canary use, no native UTC assertion.",
+  "proposedUTCFixtures": [
+    {
+      "publishedLocalDateTime": "2026-11-27T20:45:00",
+      "home": "Stade Brestois 29",
+      "away": "Paris FC",
+      "sourceTimezone": null,
+      "conversionTimezone": "Europe/Paris",
+      "timezoneBasis": "CONTEXTUAL_ASSUMPTION_NOT_NATIVE",
+      "proposedKickoffUTC": "2026-11-27T19:45:00.000Z",
+      "nativeUTCProof": false
+    },
+    {
+      "publishedLocalDateTime": "2026-11-28T17:15:00",
+      "home": "Angers SCO",
+      "away": "RC Lens",
+      "sourceTimezone": null,
+      "conversionTimezone": "Europe/Paris",
+      "timezoneBasis": "CONTEXTUAL_ASSUMPTION_NOT_NATIVE",
+      "proposedKickoffUTC": "2026-11-28T16:15:00.000Z",
+      "nativeUTCProof": false
+    },
+    {
+      "publishedLocalDateTime": "2026-11-28T20:45:00",
+      "home": "Paris Saint-Germain",
+      "away": "FC Lorient",
+      "sourceTimezone": null,
+      "conversionTimezone": "Europe/Paris",
+      "timezoneBasis": "CONTEXTUAL_ASSUMPTION_NOT_NATIVE",
+      "proposedKickoffUTC": "2026-11-28T19:45:00.000Z",
+      "nativeUTCProof": false
+    },
+    {
+      "publishedLocalDateTime": "2026-11-28T20:45:00",
+      "home": "Le Mans FC",
+      "away": "LOSC",
+      "sourceTimezone": null,
+      "conversionTimezone": "Europe/Paris",
+      "timezoneBasis": "CONTEXTUAL_ASSUMPTION_NOT_NATIVE",
+      "proposedKickoffUTC": "2026-11-28T19:45:00.000Z",
+      "nativeUTCProof": false
+    },
+    {
+      "publishedLocalDateTime": "2026-11-28T20:45:00",
+      "home": "Havre AC",
+      "away": "RC Strasbourg Alsace",
+      "sourceTimezone": null,
+      "conversionTimezone": "Europe/Paris",
+      "timezoneBasis": "CONTEXTUAL_ASSUMPTION_NOT_NATIVE",
+      "proposedKickoffUTC": "2026-11-28T19:45:00.000Z",
+      "nativeUTCProof": false
+    },
+    {
+      "publishedLocalDateTime": "2026-11-28T20:45:00",
+      "home": "OGC Nice",
+      "away": "ESTAC Troyes",
+      "sourceTimezone": null,
+      "conversionTimezone": "Europe/Paris",
+      "timezoneBasis": "CONTEXTUAL_ASSUMPTION_NOT_NATIVE",
+      "proposedKickoffUTC": "2026-11-28T19:45:00.000Z",
+      "nativeUTCProof": false
+    },
+    {
+      "publishedLocalDateTime": "2026-11-29T15:00:00",
+      "home": "AJ Auxerre",
+      "away": "Olympique de Marseille",
+      "sourceTimezone": null,
+      "conversionTimezone": "Europe/Paris",
+      "timezoneBasis": "CONTEXTUAL_ASSUMPTION_NOT_NATIVE",
+      "proposedKickoffUTC": "2026-11-29T14:00:00.000Z",
+      "nativeUTCProof": false
+    },
+    {
+      "publishedLocalDateTime": "2026-11-29T17:15:00",
+      "home": "Toulouse FC",
+      "away": "Stade Rennais FC",
+      "sourceTimezone": null,
+      "conversionTimezone": "Europe/Paris",
+      "timezoneBasis": "CONTEXTUAL_ASSUMPTION_NOT_NATIVE",
+      "proposedKickoffUTC": "2026-11-29T16:15:00.000Z",
+      "nativeUTCProof": false
+    },
+    {
+      "publishedLocalDateTime": "2026-11-29T20:45:00",
+      "home": "Olympique Lyonnais",
+      "away": "AS Monaco",
+      "sourceTimezone": null,
+      "conversionTimezone": "Europe/Paris",
+      "timezoneBasis": "CONTEXTUAL_ASSUMPTION_NOT_NATIVE",
+      "proposedKickoffUTC": "2026-11-29T19:45:00.000Z",
+      "nativeUTCProof": false
+    }
+  ]
+}

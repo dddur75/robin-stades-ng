@@ -1,0 +1,68 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.HISTORY.ROUTE.E1.R2.ALGORITHM.20261122",
+  "generatedAt": "2026-11-22T00:09:47.382Z",
+  "status": "INDEPENDENT_EXACT_BOUNDED_ALGORITHM_REVIEW",
+  "scope": "One two-GET conditional documentary history-route discovery, RAM only. No current-page acquisition or prediction parsing/admission.",
+  "planSHA256": "e5a097b397a783640eddf545819b20eafbfb9eb4026ae2341564098c843f979f",
+  "manifestSHA256": "c6fe9e66fe9ba56ebb1cf59e73e66a9f88c069663963fe2fb7cc0c62c15fb06f",
+  "missionId": "OLBG_HISTORY_ROUTE_E1_20261122_R2",
+  "source": {
+    "nativeProfileId": "334365",
+    "documentaryHistoryURL": "https://www.olbg.com/tipsters/tips/history/334365",
+    "conditionalCurrentRoute": "https://www.olbg.com/tipsters/tips/334365",
+    "currentRouteObserved": false,
+    "workbookRecordId": "workbook:8c78825e5356d642ff3b84339040db75a500156da08f6c393d214a8183dc09c3",
+    "provenance": "Catalogue12371",
+    "approvedIndexSHA256": "0a4cfac9f560bbc2317ca19d5ccf790695b0b14ea4bfd4a352e6be11d4befcb5",
+    "priorMetadataReviewed": true,
+    "neverEvaluatedClaim": false,
+    "L1CurrentCompatibility": "UNKNOWN"
+  },
+  "algorithm": {
+    "sameElementHrefOrBaseAmbiguity": "STOP",
+    "plaintext": "REJECT",
+    "noembedAndNoframes": "INERT",
+    "unrelatedUidRecommendations": "IGNORED",
+    "exactSameUidRouteRequired": true,
+    "routePresenceDoesNotProveActivity": true
+  },
+  "pinnedArtifacts": {
+    "PUBLIC/src/robin/source_observatory/collector.py": "955c10b28755fb4551b431bbbaa58588ecc254ee993d9cf5b9d67780f1515853",
+    "PUBLIC/src/robin/source_observatory/connectors.py": "98239d46c5721cc4b976990cef75c42e5c897562b7a802ed390d3a0d41838700",
+    "PUBLIC/src/robin/source_observatory/public_formats.py": "4c77577a07d7d26b8c490932d99d056a9c912a6592dddc871bdfcc5b69610414",
+    "CLIENT/.ci/olbg-history-route-e1-20261122-r2/PLAN.md": "ef89df3df5dd1b4781104dd9cba9541bc70e0e71bb6df1cb29eb9626bb61b7b9",
+    "CLIENT/.ci/olbg-history-route-e1-20261122-r2/R2-REVIEW.md": "1815c4876355b20129fd04485d6d12947aaeb147c218f8423fbbcc3d8d0db14a",
+    "CLIENT/.ci/olbg-history-route-e1-20261122-r2/control.py": "d0fdef34927c425e5f53182e2e6a19b70e67ab12a00fc678749e746a712ba872",
+    "CLIENT/.ci/olbg-history-route-e1-20261122-r2/delta.diff": "9b4b97360907f16e3c1731589911c66146a1e33ec87749cf6d64ac42c815e4b3",
+    "CLIENT/.ci/olbg-history-route-e1-20261122-r2/original-packet-pins.json": "2709c8633329bd390f7594b2d49308d3b63fffa9e90fc57fc33cefb5d0ab8ed0",
+    "CLIENT/.ci/olbg-history-route-e1-20261122-r2/probe.py": "ec83746cedf226d6834313712038420b3c8437ebd42047badfab2e9fc009d6f3",
+    "CLIENT/.ci/olbg-history-route-e1-20261122-r2/seal.py": "cf0424cb1b29f1002380b465890ab34edca8fee7bd388cf0baaace223bb1dcfb",
+    "CLIENT/.ci/olbg-history-route-e1-20261122-r2/source_loading.py": "8040e650db24b99406502db7b7ab1c021984f51662f5844ab1cacc2aa87db48a",
+    "CLIENT/.ci/olbg-history-route-e1-20261122-r2/test_control.py": "79376b4ad3681fc9353a7b72df6514bbda7c8fd2e9c506fbb36e4d6243921923",
+    "CLIENT/.ci/olbg-history-route-e1-20261122-r2/test_loading.py": "2e838b81f17f770b0bd63d917b8fdf7dd9997b4312adc2ed3bfd834b30c4d5ec",
+    "CLIENT/.ci/olbg-history-route-e1-20261122-r2/test_probe.py": "3037dde1d74b364e8d9ce9766a9f639ef99afdfa79ec9038807332ec87bca3fb",
+    "NEXT/cockpit/.ci/roster42-next3-e1-20261121/launcher.py": "435eaa48f02772cef806bcdafc6a9bcd7ada23c47fa75502c901ed5fbc235305",
+    "A9_PYTHON_RUNTIME": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a"
+  },
+  "targetedTests": {
+    "author": 26,
+    "independentNewFocused": 4,
+    "loaderAndPriorControllerReused": true,
+    "ruffExit": 0,
+    "banditExit": 0
+  },
+  "reviews": {
+    "C1": "Exact source provenance, R2 identity,16 pins and unchanged scope",
+    "C3": "HTML inert correction and exact controller delta reviewed;4 focused tests passed; raw and AST pins loaded offline",
+    "C4": "Exact R2 scope/privacy review, no content persistence or current GET"
+  },
+  "historical": {
+    "oldV1": "FROZEN_NO_AUTHORITY_NO_SOURCE_EXECUTION",
+    "preauthorizationDefect": "HTML_INERT_P2_REPRODUCED_AND_MINIMALLY_FIXED",
+    "oldBudgetsReset": false,
+    "oldFamilyGETTotal": "UNKNOWN",
+    "next3": "SEPARATE_UNCHANGED"
+  },
+  "globalDelivery": "PARTIAL",
+  "allCompatibleSourcesIntegrated": false
+}

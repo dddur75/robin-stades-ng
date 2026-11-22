@@ -1035,3 +1035,20 @@ td { padding: 11px 10px; border-top: 1px solid var(--line); font-size: .7rem; }
 .source-preparation-form textarea { resize: vertical; }
 #source-preparation { scroll-margin-top: 100px; overflow-wrap: anywhere; }
 .source-catalogue-table { max-height: 600px; }
+section[aria-labelledby="recent-source-qualification"] { scroll-margin-top: 120px; }
+.qualification-results { min-width: 900px; }
+.qualification-results th, .qualification-results td { padding: 14px; font-size: .875rem; line-height: 1.5; vertical-align: top; }
+.qualification-results tbody th { min-width: 170px; }
+.qualification-results small { display: block; margin-top: 6px; font-size: .8rem; line-height: 1.5; }
+.qualification-results p { margin: 8px 0; }
+.qualification-results summary { cursor: pointer; }
+.qualification-results code { overflow-wrap: anywhere; }
+@media (max-width: 620px) {
+  .qualification-results, .qualification-results tbody { display: block; min-width: 0; }
+  .qualification-results caption { display: block; padding: 12px 0; text-align: left; }
+  .qualification-results thead { display: none; }
+  .qualification-results tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 18px; border: 1px solid var(--line); border-radius: 10px; }
+  .qualification-results th, .qualification-results td { display: block; min-width: 0; padding: 12px; }
+  .qualification-results th, .qualification-results td:nth-child(2), .qualification-results td:last-child { grid-column: 1 / -1; }
+  .qualification-results td[data-label]::before { display: block; margin-bottom: 6px; content: attr(data-label); color: var(--muted); font-weight: 600; }
+}

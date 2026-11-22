@@ -1,0 +1,44 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.ORDINARY.PERSONAL.DOCS.RESULT.20261122",
+  "generatedAt": "2026-11-22T00:39:24.647Z",
+  "status": "PARTIAL_GENERAL_TOS_LOCALE_NOT_QUALIFIED",
+  "missionId": "TELEGRAM_ORDINARY_PERSONAL_DOCS_E1_20261122",
+  "scope": "Official document rendering only; no message, preview, account or source data access.",
+  "mediatedToolCalls": 1,
+  "requestedDocumentURLs": 2,
+  "nativeProviderHTTPCount": "UNKNOWN_TOOL_BACKEND",
+  "nativeSourceGET": 0,
+  "channelOrMessageReads": 0,
+  "optionalSecondOperation": "CANCELLED_TARGET_MESSAGE_LINK_SECTION_ALREADY_OBSERVED",
+  "initialToolAndMetadataCloseSeconds": 82.228,
+  "generalTOS": {
+    "requestedURL": "https://telegram.org/tos",
+    "renderedURL": "https://telegram.org/tos/br",
+    "reference": "turn73view0",
+    "crawled": "today",
+    "language": "Portuguese_Brazil",
+    "relevantLocaleQualified": false,
+    "observedSections": "Locale navigation, general bullets22..29 and part of Premium terms; output partly clipped.",
+    "nativeFrenchLinkId": 6,
+    "nativeFrenchLinkLabel": "Français",
+    "followingNativeLocaleLinkAuthorized": false
+  },
+  "publicMessageLinks": {
+    "requestedURL": "https://core.telegram.org/api/links#public-message-links",
+    "reference": "turn73view1",
+    "observedLines": "209..248 Message links",
+    "finding": "Official syntax distinguishes public username/message identifiers from private channel/message identifiers. The section describes client link resolution, not an unauthenticated channel-preview collection or reuse permission.",
+    "channelPreviewContract": "NOT_OBSERVED_IN_THIS_SECTION"
+  },
+  "limitations": [
+    "Relevant general ToS locale remains a mandatory documentary gap.",
+    "No general permission, API/export requirement or AI-use conclusion follows.",
+    "No raw tool output saved; factual short paraphrase and references only."
+  ],
+  "globalDelivery": "PARTIAL",
+  "reviewedBy": [
+    "C0",
+    "C4"
+  ],
+  "independentReview": "C4 confirms partial locale gap, observed message-link section, cancelled optional operation and no collection inference."
+}

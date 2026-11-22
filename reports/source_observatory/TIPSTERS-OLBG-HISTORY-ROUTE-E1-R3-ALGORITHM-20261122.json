@@ -1,0 +1,82 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.HISTORY.ROUTE.E1.R3.ALGORITHM.20261122",
+  "generatedAt": "2026-11-22T00:22:42.230Z",
+  "status": "INDEPENDENT_EXACT_SMALLEST_CLASSIFIER_CORRECTION",
+  "scope": "Second and final permitted attempt in this single history-route episode, documentary only; no current page GET or choice processing.",
+  "planSHA256": "4a216b861271b59f54ca792f1bc2af1a5d70344e8bc78628b281bd0cfc70ea95",
+  "manifestSHA256": "52a785e24e05bd43a341c6aac81294e74a986bd74cd0e5c9a96909dace5f719b",
+  "missionId": "OLBG_HISTORY_ROUTE_E1_20261122_R3",
+  "source": {
+    "nativeProfileId": "334365",
+    "documentaryHistoryURL": "https://www.olbg.com/tipsters/tips/history/334365",
+    "conditionalCurrentRoute": "https://www.olbg.com/tipsters/tips/334365",
+    "currentRouteObserved": false,
+    "workbookRecordId": "workbook:8c78825e5356d642ff3b84339040db75a500156da08f6c393d214a8183dc09c3",
+    "provenance": "Catalogue12371",
+    "approvedIndexSHA256": "0a4cfac9f560bbc2317ca19d5ccf790695b0b14ea4bfd4a352e6be11d4befcb5",
+    "priorMetadataReviewed": true,
+    "neverEvaluatedClaim": false,
+    "L1CurrentCompatibility": "UNKNOWN"
+  },
+  "pinnedArtifacts": {
+    "PUBLIC/src/robin/source_observatory/collector.py": "955c10b28755fb4551b431bbbaa58588ecc254ee993d9cf5b9d67780f1515853",
+    "PUBLIC/src/robin/source_observatory/connectors.py": "98239d46c5721cc4b976990cef75c42e5c897562b7a802ed390d3a0d41838700",
+    "PUBLIC/src/robin/source_observatory/public_formats.py": "4c77577a07d7d26b8c490932d99d056a9c912a6592dddc871bdfcc5b69610414",
+    "CLIENT/.ci/olbg-history-route-e1-20261122-r3/PLAN.md": "5ace4ae6ddb5fa67ff8bab2c3f07520865068ae45ef5c136ec60979b1acf1db4",
+    "CLIENT/.ci/olbg-history-route-e1-20261122-r3/R3-REVIEW.md": "17868c7b0b66082e4f84bcbac637ba56455d86265ebd481d55a09b923e94c528",
+    "CLIENT/.ci/olbg-history-route-e1-20261122-r3/control.py": "2c9e32603ec436a88c34675778f5fd6cf0af7b0c59c71261e07b0e5d228c2f66",
+    "CLIENT/.ci/olbg-history-route-e1-20261122-r3/delta.diff": "5b85439110b6887c947c06b6ec43d8846a97de5236eb1a2adc0730acc7cf37bf",
+    "CLIENT/.ci/olbg-history-route-e1-20261122-r3/original-packet-pins.json": "d86bebfcd7e2424b1e421c33a2d69d61333cfefe292f94e50b894c664a9d1911",
+    "CLIENT/.ci/olbg-history-route-e1-20261122-r3/probe.py": "4569f0591bbc9e0b91c1184d9dd6253eb9996215e92818a0e98c157d2e36e85f",
+    "CLIENT/.ci/olbg-history-route-e1-20261122-r3/seal.py": "22152cc6d227f13db046703b07d29e0f37bc1b5fa93c114241308b4c600ad3de",
+    "CLIENT/.ci/olbg-history-route-e1-20261122-r3/source_loading.py": "8040e650db24b99406502db7b7ab1c021984f51662f5844ab1cacc2aa87db48a",
+    "CLIENT/.ci/olbg-history-route-e1-20261122-r3/test_control.py": "79376b4ad3681fc9353a7b72df6514bbda7c8fd2e9c506fbb36e4d6243921923",
+    "CLIENT/.ci/olbg-history-route-e1-20261122-r3/test_loading.py": "2e838b81f17f770b0bd63d917b8fdf7dd9997b4312adc2ed3bfd834b30c4d5ec",
+    "CLIENT/.ci/olbg-history-route-e1-20261122-r3/test_probe.py": "a1ad3341ad58bc85178d0dd9010a4ab07be3b09c5078f9a8d6237b917912d561",
+    "NEXT/cockpit/.ci/roster42-next3-e1-20261121/launcher.py": "435eaa48f02772cef806bcdafc6a9bcd7ada23c47fa75502c901ed5fbc235305",
+    "A9_PYTHON_RUNTIME": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a"
+  },
+  "algorithm": {
+    "rawTokenAloneIsNotDenial": true,
+    "passiveStructuredBarrierMarkers": true,
+    "incidentalCaptchaAssetOrCommentForm": "DOES_NOT_DENY_METADATA_READ",
+    "knownInterstitialTitlesTextsAndDedicatedMarkup": "STOP",
+    "noCaptchaInteraction": true,
+    "noExhaustiveAbsenceOfChallengeClaim": true,
+    "plaintext": "REJECT",
+    "noembedAndNoframes": "INERT",
+    "unrelatedUidLinks": "IGNORED",
+    "exactCurrentHrefPresenceDoesNotProveActivity": true,
+    "diagnosticPhasesDistinguishNotMeasured": true
+  },
+  "targetedTests": {
+    "author": 34,
+    "independentNewFocused": 8,
+    "unchangedLoaderAndControllerTestsReused": true,
+    "ruffExit": 0,
+    "banditExit": 0
+  },
+  "history": {
+    "priorResultClaimId": "ENG.SOURCE_OBSERVATORY.OLBG.HISTORY.ROUTE.E1.R2.RESULT.20261122",
+    "priorActualAttempts": 1,
+    "priorActualGET": 2,
+    "priorMatchingMarker": "UNKNOWN_NOT_RETAINED",
+    "maxEpisodeAttemptsAfterThis": 2,
+    "maxEpisodeGETAfterThis": 4,
+    "secondSimilarFailure": "FAIL_AND_REDESIGN",
+    "thirdIdenticalAttempt": "FORBIDDEN",
+    "oldV1AndR2": "PRESERVED",
+    "oldBudgetsReset": false,
+    "oldFamilyGETTotal": "UNKNOWN",
+    "next3": "SEPARATE_UNCHANGED"
+  },
+  "reviews": {
+    "C1": "Exact R3 source facts,16 pins and carried bounds",
+    "C3": "8 independent new tests, exact raw and AST pins and smallest correction; known-marker detector limitation explicit",
+    "C4": "Exact R3 transient privacy and bounded metadata purpose; no challenge interaction"
+  },
+  "publishedCodeCommit": "d2868edd1863672555a57dfb4b6782eb413e9efd",
+  "thisPrivateControllerCoveredByPublishedCI": false,
+  "globalDelivery": "PARTIAL",
+  "allCompatibleSourcesIntegrated": false
+}

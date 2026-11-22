@@ -1,0 +1,78 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.QUALIFICATION.ADMIN.BROWSER.E1.R2.RESULT.20261122",
+  "generatedAt": "2026-11-22T02:10:58.392Z",
+  "status": "ADMIN_QUALIFICATION_DOM_VERIFIED",
+  "scope": "Five dated private admin summaries, manual refresh, stale-view error and initial503 checked in local browser; not full cockpit accessibility acceptance.",
+  "planSHA256": "751145d88ba723501a6db9fd45c87363e552934fe8a59228ec93ee8ea4e25d40",
+  "manifestSHA256": "d449de1f5bf858bb67d17974d2bf00c5deb890081abbbe31b0c926e1f25c6a32",
+  "result": {
+    "status": "ADMIN_QUALIFICATION_DOM_VERIFIED",
+    "startedAt": "2026-11-22T02:07:48.653Z",
+    "localGET": 174,
+    "qualificationGET": 4,
+    "navigations": 2,
+    "externalBlocked": 0,
+    "writesBlocked": 0,
+    "webSocketsBlocked": 0,
+    "pageErrors": [],
+    "sourceGET": 0,
+    "taskChanges": 0,
+    "admissions": 0,
+    "webSocketsAllowed": 2,
+    "rows": [
+      {
+        "label": "OLBG · profil 642100Observé le 22 novembre 2026 à 02 h 53 · Paris",
+        "candidates": "0",
+        "admitted": "0"
+      },
+      {
+        "label": "OLBG · profil 334365Observé le 22 novembre 2026 à 01 h 50 · Paris",
+        "candidates": "0",
+        "admitted": "0"
+      },
+      {
+        "label": "YouTube · SRC_023Observé le 22 novembre 2026 à 00 h 21 · Paris",
+        "candidates": "Non mesuré",
+        "admitted": "0"
+      },
+      {
+        "label": "MightyTips · SRC_045Observé le 21 novembre 2026 à 23 h 02 · Paris",
+        "candidates": "0",
+        "admitted": "0"
+      },
+      {
+        "label": "TelegramRapport documentaire enregistré le 22 novembre 2026 à 01 h 45 · Paris",
+        "candidates": "Non mesuré",
+        "admitted": "0"
+      }
+    ],
+    "refreshVerified": true,
+    "datedStaleViewRetained": true,
+    "mobile": {
+      "width": 328,
+      "viewport": 390,
+      "scrollWidth": 424,
+      "overflow": "auto"
+    },
+    "initial503HasNoTable": true,
+    "browserClosed": true,
+    "closeMilliseconds": 76,
+    "finishedAt": "2026-11-22T02:07:50.073Z",
+    "elapsedMilliseconds": 1420
+  },
+  "outerElapsedMilliseconds": 1843,
+  "outerExit": 0,
+  "rawReceiptSHA256": "cac9e175aedcf7fbe54ec08380a40b9383901888d1f59f786817a3ef8489f2b7",
+  "screenshots": {
+    "desktop": "d9b3e2a5f3626dc5167222e8844817109d3d2bf4f891759ff5acaaaf254d4548",
+    "mobile": "0469ee3f6b4b04c7255607300ced2ec214c4a2c7aeece20510037d1c590c36f6"
+  },
+  "visualReview": "Mobile columns too narrow under inherited table styling. Functional check passes; isolated responsive styling follow-up required.",
+  "V1PreciseErrorCause": "UNKNOWN; corrected HMR harness observed zero page errors without app code change",
+  "missingFullCockpitAcceptance": [
+    "UX6/A3 complete interface keys",
+    "manual screen-reader trace",
+    "all specified widths and200percent zoom"
+  ],
+  "globalDelivery": "PARTIAL"
+}

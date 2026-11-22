@@ -1,0 +1,85 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.CURRENT334365.E1.ALGORITHM.20261122",
+  "generatedAt": "2026-11-22T00:50:15.518Z",
+  "status": "INDEPENDENT_EXACT_ONE_PROFILE_CURRENT_CANDIDATE_CANARY",
+  "scope": "One current URI, two conditional GET maximum. Minimal structured private candidates only, no application admission until independent data review.",
+  "missionId": "OLBG_CURRENT334365_E1_20261122",
+  "planSHA256": "0040878bab9116b8acafa73e8e774f9706d515a0c04d36a3c4f0a724a029a420",
+  "manifestSHA256": "45463ccf6d8bf0a46aca071f0a1970450cec5b813f6c6cfa48d50fd5749a10d6",
+  "source": {
+    "uid": 334365,
+    "currentURL": "https://www.olbg.com/tipsters/tips/334365",
+    "nativeRouteProofClaim": "ENG.SOURCE_OBSERVATORY.OLBG.HISTORY.ROUTE.E1.R3.RESULT.20261122",
+    "workbookProvenance": "Catalogue12371",
+    "ownerModeMustMatch": true
+  },
+  "calendar": {
+    "fixtureCount": 20,
+    "canonicalSHA256": "93c7561515aec3bb55b4647d72b1f3d501e796bc85360ecb577e68cb9f5d98af",
+    "sourcePayloadSHA256": "146f96dbf70c1cc9e8697155aeb891edfcd7bf20cf776ac57907d18dacb80825",
+    "sourceClaimId": "DATA.SOURCE_OBSERVATORY.OLBG.ROSTER42.NEXT3.SECOND.NATURAL.20261121",
+    "old478PicksRequalified": false,
+    "noNewScheduleLookup": true
+  },
+  "reuse": {
+    "purePUBLIC": [
+      "olbg.extract_profile",
+      "roster_campaign._choices",
+      "opaque_choices.build_opaque_choices"
+    ],
+    "strictSportIntRequired": true,
+    "rawModuleAndASTPinsReviewed": 23,
+    "applicationImports": false,
+    "priorCampaignFunctionsCalled": false,
+    "publishedCICodeProof": "ENG.SOURCE_OBSERVATORY.CI253.EXACT.HEAD.RESULT.20261122"
+  },
+  "bounds": {
+    "sourceGET": 2,
+    "historyGET": 0,
+    "currentAttempts": 1,
+    "nativeFactsMax": 100,
+    "truncation": false,
+    "totalSeconds": 65,
+    "admissions": 0,
+    "runtimeChanges": 0,
+    "newTasks": 0,
+    "API_FOOTBALL_CALLS": 0
+  },
+  "privacy": {
+    "rawBodyFactsCommentsNames": "RAM_ONLY",
+    "output": "MINIMAL_NORMALIZED_WIN_OR_OPAQUE_STRUCTURED_CANDIDATES_PRIVATE",
+    "publicationDate": null,
+    "publicationTimezone": null,
+    "eligibleForApplication": false,
+    "performanceAllowed": false,
+    "settlementAllowed": false,
+    "marketInterpretationAllowed": false,
+    "rawDataInGit": false
+  },
+  "history": {
+    "closedHistoryGET": 4,
+    "closedHistoryAttempts": 2,
+    "historyEpisodeRemainsClosed": true,
+    "newCurrentGETMax": 2,
+    "knownUIDGETMax": 6,
+    "oldFamilyGETTotal": "UNKNOWN",
+    "next3Unchanged": true,
+    "noAllowanceTransfer": true
+  },
+  "targetedTests": {
+    "author": 19,
+    "independentC3": 19,
+    "ruffExit": 0,
+    "targetedMypyExit": 0,
+    "strictMypyBaselineLimitationsDocumented": true,
+    "banditExit": 0,
+    "coreCorpusReplay": false
+  },
+  "reviews": {
+    "C1": "Exact native route,20fixtures and23pins; no old pick requalification",
+    "C3": "19 independent true-AST caller/TLS tests and raw/AST closure review",
+    "C4": "Exact minimal private whitelist and bounded personal OLBG use; no missing mandatory source identified for this canary"
+  },
+  "globalDelivery": "PARTIAL",
+  "allCompatibleSourcesIntegrated": false
+}

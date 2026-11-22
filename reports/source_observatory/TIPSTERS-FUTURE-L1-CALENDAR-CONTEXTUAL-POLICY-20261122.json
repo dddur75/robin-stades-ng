@@ -1,0 +1,33 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.FUTURE.L1.CALENDAR.CONTEXTUAL.POLICY.20261122",
+  "generatedAt": "2026-11-22T01:32:05.218Z",
+  "status": "PROVISIONAL_CONTEXTUAL_CONVERSION_PRIVATE_CANARY_ONLY",
+  "scope": "Explicit interpretation policy for French domestic L1 TV programme in bounded personal canaries; no native UTC or canonical performance claim.",
+  "programmeClaimId": "DATA.SOURCE_OBSERVATORY.LIGUE1.J12.OFFICIAL.SCHEDULE.DOCUMENTARY.20261122",
+  "sourceTimezone": null,
+  "conversionTimezone": "Europe/Paris",
+  "timezoneBasis": "CONTEXTUAL_ASSUMPTION_NOT_NATIVE",
+  "nativeUTCProof": false,
+  "localFactsArePrimary": true,
+  "derivedUTCAreNativeFacts": false,
+  "permittedUses": [
+    "PRIVATE_PERSONAL_SOURCE_CANARY_CANDIDATES"
+  ],
+  "provisionalFixtureObservationMarginHours": 48,
+  "retainedVerifiedUTCFixturesKeepExistingStrictKickoffRule": true,
+  "maxCanaryFixtures": 10,
+  "oneLeagueSeason": "LIGUE1_2026_2027",
+  "applicationAdmission": false,
+  "sourceCollectionGrant": false,
+  "performanceAllowed": false,
+  "settlementAllowed": false,
+  "marketInterpretationAllowed": false,
+  "productionAllowed": false,
+  "oldCalendarAndJ12Mutation": false,
+  "reviewBasis": {
+    "C1": "Primary local identities and conditional IANA arithmetic only; earlier seeds are not independent timezone proof.",
+    "C4": "Provisional contextual use allowed for a bounded personal canary well before fixtures.",
+    "C0": "Adopt explicit contextual convention with48h minimum buffer and retained false nativeUTC flag; this grants no network or data admission."
+  },
+  "globalDelivery": "PARTIAL"
+}

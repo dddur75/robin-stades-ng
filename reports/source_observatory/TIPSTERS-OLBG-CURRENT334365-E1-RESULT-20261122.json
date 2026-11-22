@@ -1,0 +1,80 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.CURRENT334365.E1.RESULT.20261122",
+  "generatedAt": "2026-11-22T01:00:07.196Z",
+  "status": "PARTIAL_ZERO_ELIGIBLE_FOR_RETAINED_CALENDAR",
+  "scope": "One current-profile retrieval and native parse against the exact retained20-fixture calendar. No general absence-of-football or inactivity inference.",
+  "missionId": "OLBG_CURRENT334365_E1_20261122",
+  "planSHA256": "0040878bab9116b8acafa73e8e774f9706d515a0c04d36a3c4f0a724a029a420",
+  "manifestSHA256": "45463ccf6d8bf0a46aca071f0a1970450cec5b813f6c6cfa48d50fd5749a10d6",
+  "sourceGrant": "811d15ee852d6963d6eb6fae517f94081f485898fdf1d5a6dd07ee35376dcccc",
+  "result": {
+    "reservations": 2,
+    "responses": 2,
+    "HTTP200": 2,
+    "robotsBytes": 9452,
+    "currentBytes": 174308,
+    "observedAt": "2026-11-22T00:50:49.794380Z",
+    "knownBarrierCause": "NONE",
+    "nativeParsingCompleted": true,
+    "choiceCompositionCompleted": true,
+    "nativeFacts": 31,
+    "winCandidates": 0,
+    "opaqueCandidates": 0,
+    "candidates": 0,
+    "candidateFileExists": false,
+    "admissions": 0,
+    "runtimeChanges": 0,
+    "externalExit": 1,
+    "stopCode": "ZERO_ELIGIBLE",
+    "externalElapsedSeconds": 6.6142783,
+    "spentToOuterVetoSeconds": 6.442895,
+    "interReservationSeconds": 3.783545,
+    "robotsResponseToCurrentReservationSeconds": 3.416603
+  },
+  "calendar": {
+    "canonicalSHA256": "93c7561515aec3bb55b4647d72b1f3d501e796bc85360ecb577e68cb9f5d98af",
+    "fixtures": 20,
+    "minimumKickoff": "2026-11-20T19:45:00Z",
+    "maximumKickoff": "2026-11-22T19:45:00Z",
+    "stillFutureAtObservation": 4,
+    "alreadyPastAtObservation": 16,
+    "scopeLimitedToThisCalendar": true
+  },
+  "individualExclusionReasons": "UNKNOWN_NOT_RETAINED",
+  "limitations": [
+    "31 native records does not mean31 admitted or pre-match football predictions.",
+    "Zero eligible does not establish empty or inactive profile, absent football, or absence of choices outside the retained calendar.",
+    "No raw records retained, so no retroactive requalification or cause invention."
+  ],
+  "receiptHashes": {
+    "outer-veto.json": "0d254e692d5d677b26667465a25b003759acb9b0e74e3e2974aa41aafd2d9496",
+    "parent-result.json": "bcd83e516e61e898071549b3623bad0aceb7130482e15396ad994c2fc06a8886",
+    "parent-started.json": "655b65d2d79960c0481d88faa414c487ef87342f75815bd9692263d6187a7a7c",
+    "reservation-1.json": "29e2cf5ee6901bc83b65a0cd9fa9e24f9e6beaa11dcb49b429c33fedfec46078",
+    "reservation-2.json": "5e390a76c33b53383753be103087671365790a38b627b733c90904ead5aba1ad",
+    "response-1.json": "4fba13b4028d2653ca393bfd91223f845bd9c8de94792dd654bfa661017d5c5e",
+    "response-2.json": "c1e03caad564fb352d0be3401db41ad9a1e32dd450d386ae9045c53d68642003",
+    "spent.json": "61d9f6fd3e0495eb0b305b12ba368423337530d58e19779fe475d3149b0d1530",
+    "worker-started.json": "4f3199df65abc70df493731e74d083a8aa4685711f2c14c484375fe45f1638c8",
+    "worker-stop.json": "1a1ffda6e6bd3103b4a160981f31ddab5a06d21e9d3c201e51fc4f1db56b5cb6"
+  },
+  "episode": {
+    "historySpent": 2,
+    "historyGET": 4,
+    "currentSpent": 1,
+    "currentGET": 2,
+    "totalUIDKnownGET": 6,
+    "currentAuthorityConsumed": true,
+    "profileStoppedWithoutRetry": true,
+    "noAllowanceTransfer": true,
+    "next3Unchanged": true
+  },
+  "reviews": {
+    "C0": "Native external process and readback",
+    "C3": "Independent ten-receipt/pin/grant/closure audit and actual residual calendar calculation"
+  },
+  "privateSourceDataPersisted": false,
+  "globalAppPicksAdded": 0,
+  "globalDelivery": "PARTIAL",
+  "allCompatibleSourcesIntegrated": false
+}

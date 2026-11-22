@@ -1,0 +1,24 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.LIGUE1.J12.OFFICIAL.SCHEDULE.DOCS.AUTHORITY.20261122",
+  "generatedAt": "2026-11-22T01:09:10.952Z",
+  "status": "BOUNDED_OFFICIAL_SCHEDULE_VERIFICATION_ONLY",
+  "scope": "One already cited official L1 programme, before admitting any new future fixtures or collecting sources against them.",
+  "planSHA256": "514757ef5158c25f2109808edc786d81d7fda5de6011ade118aac4aaa1fefcab",
+  "manifestSHA256": "3deb5d73a2e805ef2b1d9f9f0d92696ea6cb3efecc4a790173775962cf067959",
+  "sourceURL": "https://ligue1.com/fr/articles/l1_article_5843-",
+  "sourceRepositoryPointer": "docs/ux/DOSSIER-FIDELE-COCKPIT.md:29",
+  "maximumMediatedCalls": 2,
+  "nativeHTTPCount": "UNKNOWN_TOOL_BACKEND",
+  "nativeSourceGET": 0,
+  "ForecastRecordGET": 0,
+  "APIFootballCalls": 0,
+  "taskChanges": 0,
+  "calendarAdmission": 0,
+  "deadlineSeconds": 180,
+  "reviewedBy": [
+    "C0",
+    "C4"
+  ],
+  "knownGap": "Seven planned J12 UTC times and witness exist, but no detailed primary timestamp receipt was located.",
+  "globalDelivery": "PARTIAL"
+}

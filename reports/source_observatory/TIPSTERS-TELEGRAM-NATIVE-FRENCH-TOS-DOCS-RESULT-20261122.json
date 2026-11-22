@@ -1,0 +1,38 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.NATIVE.FRENCH.TOS.DOCS.RESULT.20261122",
+  "generatedAt": "2026-11-22T00:45:09.770Z",
+  "missionId": "TELEGRAM_NATIVE_FRENCH_TOS_DOC_E1_20261122",
+  "status": "PARTIAL_WRONG_REGIONAL_DOCUMENT_AND_LATE_INITIAL_METADATA_CLOSE",
+  "scope": "One official native language link only; document remains Brazil-specific and no collection conclusion follows.",
+  "mediatedToolCalls": 1,
+  "nativeProviderHTTPCount": "UNKNOWN_TOOL_BACKEND",
+  "nativeSourceGET": 0,
+  "channelMessageOrPreviewReads": 0,
+  "accountActions": 0,
+  "requestedNativeLink": {
+    "reference": "turn73view0",
+    "id": 6,
+    "label": "Français"
+  },
+  "actual": {
+    "reference": "turn74view0",
+    "renderedURL": "https://telegram.org/tos/br?setln=fr",
+    "navigationLanguage": "French",
+    "mainDocumentLanguage": "Portuguese_Brazil",
+    "crawled": "2 days ago",
+    "observedGeneralSection": "22..29 Brazil-specific general terms",
+    "relevantRegionalDocumentQualified": false
+  },
+  "initialToolAndMetadataCloseSeconds": 158.58,
+  "initialCloseDeadlineSeconds": 90,
+  "deadlineExceeded": true,
+  "nextAction": "STOP_THIS_DOCUMENTARY_EPISODE_NO_THIRD_IDENTICAL_LOCALE_REQUEST",
+  "sourceDataOrAIGrant": false,
+  "rawDocumentStored": false,
+  "globalDelivery": "PARTIAL",
+  "reviewedBy": [
+    "C0",
+    "C4"
+  ],
+  "independentReview": "C4 confirms wrong regional document and real late initial metadata close; no collection grant or third identical request."
+}

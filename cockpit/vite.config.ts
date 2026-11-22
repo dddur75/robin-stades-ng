@@ -1,4 +1,5 @@
 import {tipsterCandidates} from "./scripts/tipster-candidates-plugin";
+import { tipsterQualification } from "./scripts/tipster-qualification-plugin";
 import {workbookInventory} from "./scripts/workbook-inventory-plugin";
 import vinext from "vinext";
 import { defineConfig } from "vite";
@@ -59,6 +60,7 @@ export default defineConfig(async () => {
       tipstersRecurring(),
       publicTipsters(),
       tipsterCandidates(),
+      tipsterQualification(),
       workbookInventory(),
       vinext(),
       sites(),
