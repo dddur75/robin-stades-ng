@@ -4,7 +4,7 @@ export type QualificationMetrics = {
 };
 export type QualificationResult = {
   id: string; label: string; checkedAt: string; dateKind: "observation" | "documentary_record" | "technical_close";
-  outcome: "no_eligible" | "technical_failure" | "missing_evidence";
+  outcome: "no_eligible" | "technical_failure" | "missing_evidence" | "qualified";
   summary: string; scope: string; nextStep: string; metrics: QualificationMetrics; claims: string[];
 };
 export type QualificationSnapshot = {
@@ -48,7 +48,7 @@ export function parseQualificationSnapshot(value: unknown): QualificationSnapsho
     if (!/^[a-z0-9-]+$/.test(id) || ids.has(id)) throw new Error("Invalid qualification identity");
     ids.add(id);
     if (row.dateKind !== "observation" && row.dateKind !== "documentary_record" && row.dateKind !== "technical_close") throw new Error("Invalid date kind");
-    if (typeof row.outcome !== "string" || !["no_eligible", "technical_failure", "missing_evidence"].includes(row.outcome)) {
+    if (typeof row.outcome !== "string" || !["no_eligible", "technical_failure", "missing_evidence", "qualified"].includes(row.outcome)) {
       throw new Error("Invalid qualification outcome");
     }
     const metrics = object(row.metrics, metricKeys);

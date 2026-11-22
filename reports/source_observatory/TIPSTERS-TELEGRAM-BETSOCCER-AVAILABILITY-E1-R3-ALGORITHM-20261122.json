@@ -1,0 +1,33 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.BETSOCCER.AVAILABILITY.E1.R3.ALGORITHM.20261122",
+  "recordedAt": "2026-11-22T03:59:32.665Z",
+  "status": "REVIEWED_TECHNICAL_AVAILABILITY_ONLY",
+  "scope": "At most robots then one literal public-preview URL; retain only HTTP metadata and structural enum/booleans. No message acquisition or collection qualification.",
+  "missionId": "TELEGRAM_BETSOCCER_AVAILABILITY_E1_R3_20261122",
+  "planSHA256": "ca82c38e631ebf6ffff914ead0f9ac610833f640045822dfc89e832a17479a4e",
+  "manifestSHA256": "67454fe41693de1c26f2e0d527946670b91faaf34f0961782c0924033559b5e3",
+  "sourceURL": "https://t.me/s/betsoccer",
+  "provenance": "Literal workbook Catalogue308 route, not native message author proof",
+  "maxGET": 2,
+  "maximumSeconds": 90,
+  "expiresAt": "2026-11-22T04:30:00Z",
+  "codePins": 22,
+  "strictRobotsSHA256": "7bf0ef690ddaf2f7dc78108305d3452156dcd8dbe269ad991e263d86e3c4d5a3",
+  "independentReviews": {
+    "C3": "Full packet CODE PASS:23 targeted tests,8inert-context reproductions,22pins,MF8/grant5,CA/Job unchanged",
+    "C4": "Exact tuple structural scope PASS only, no message grant"
+  },
+  "retention": {
+    "providerBodies": "RAM_ONLY",
+    "messageText": false,
+    "author": false,
+    "messageID": false,
+    "messageDate": false,
+    "forecasts": false,
+    "attributeValues": false
+  },
+  "admissions": 0,
+  "recurrence": 0,
+  "taskMutations": 0,
+  "globalDelivery": "PARTIAL"
+}

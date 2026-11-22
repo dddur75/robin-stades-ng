@@ -1,0 +1,41 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.BETSOCCER.AVAILABILITY.E1.R4.ALGORITHM.20261122",
+  "recordedAt": "2026-11-22T04:05:47.542Z",
+  "status": "REVIEWED_TECHNICAL_AVAILABILITY_ONLY",
+  "scope": "One literal preview GET with structural-only metadata under a pinned complete native404 robots response no older than600s. No message acquisition or extraction qualification.",
+  "missionId": "TELEGRAM_BETSOCCER_AVAILABILITY_E1_R4_20261122",
+  "planSHA256": "a1876118cf5f84e4952b87c8c9a563b714390ad1141a1cc81706047270e050dd",
+  "manifestSHA256": "7bd52276f793ad6479e2b330dc4bf628ac6c47d512d63ef45682248bd8f8a948",
+  "sourceURL": "https://t.me/s/betsoccer",
+  "provenance": "Literal workbook Catalogue308 route, not native message author proof",
+  "maxGET": 1,
+  "maximumSeconds": 90,
+  "expiresAt": "2026-11-22T04:09:44Z",
+  "codePins": 26,
+  "independentReviews": {
+    "C3": "Exact26pins/MF8/grant5;9delta tests PASS;fresh404proof afterreserve immediately beforeonepreview GET;CA/Job/structure byteexactR3",
+    "C4": "ExactR4 structural-only scope PASS;404unavailable distinct from permission;family1+1<=2;no messages or activation"
+  },
+  "retention": {
+    "providerBodies": "RAM_ONLY",
+    "messageText": false,
+    "author": false,
+    "messageID": false,
+    "messageDate": false,
+    "forecasts": false,
+    "attributeValues": false
+  },
+  "admissions": 0,
+  "recurrence": 0,
+  "taskMutations": 0,
+  "globalDelivery": "PARTIAL",
+  "prior404": {
+    "sourceClaim": "ENG.SOURCE_OBSERVATORY.TELEGRAM.BETSOCCER.AVAILABILITY.E1.R3.RESULT.20261122",
+    "observedAt": "2026-11-22T03:59:44.695999Z",
+    "maxAgeSeconds": 600,
+    "state": "ROBOTS_UNAVAILABLE_404",
+    "robotsPolicyAllowed": null,
+    "priorGET": 1,
+    "knownFamilyMaxIncludingThis": 2
+  }
+}

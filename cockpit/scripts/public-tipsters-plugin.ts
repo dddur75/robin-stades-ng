@@ -5,6 +5,7 @@ import type { Plugin } from "vite";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { permitsLocalPilotRead } from "./tipsters-pilot-plugin";
 import {readNativeState} from './tipsters-native-state';
+import {applyAcceptedForums} from './forums-accepted';
 
 const runFile = promisify(execFile);
 
@@ -40,7 +41,7 @@ export function publicTipsters(): Plugin {
           if(value.notbettingOccurrenceCampaign)value.notbettingOccurrenceCampaign.native=nativeState.notbetting??{state:"checking"};
           if(value.expandedOlbgCampaign)value.expandedOlbgCampaign.native=nativeState.expansion??{state:"checking"};
         }
-        return JSON.stringify(value);
+        return JSON.stringify(applyAcceptedForums(value, root, "31c4363a8db90eb18fc0a73722af941a98bb39de4d0fd252f7f2077938b83c04"));
       }).finally(()=>{pending=undefined;});
       const result = await pending;
       if (JSON.parse(result).status !== "ok") response.statusCode=503;

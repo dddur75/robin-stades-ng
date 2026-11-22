@@ -1,0 +1,41 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.FORUMS.APP.PUBLICATION.AUTHORITY.20261122",
+  "recordedAt": "2026-11-22T06:07:28.851Z",
+  "status": "REVIEWED_BOUNDED_PUBLICATION_AUTHORITY_NOT_YET_EXECUTED",
+  "scope": "Publish exact reviewed local forum app integration,robots product-token correction and metadata receipts to existing draftPR133;no merge,deploy,source,Task or current/future data admission.",
+  "planSHA256": "7b10ae6acade4fd55baf0a6b3a1cf5ecd4d8d7a2abe432364d0b036ca0474b69",
+  "manifestSHA256": "ce1cdef00c460ad90370efb97a884353241a40d127a7253eba5efe91c158c021",
+  "missionId": "FORUMS_APP_PUBLICATION_20261122",
+  "existingHEAD": "5cf8714098b1a9663209454e885ae2f995e3ceb0",
+  "localBranch": "codex/robin-bounded-delivery-public-r1",
+  "remoteBranch": "codex/robin-dossier-fidele",
+  "inputFileCount": 36,
+  "maximumAdditionalAuthorityReports": 1,
+  "maximumCommits": 1,
+  "maximumNonForcePushes": 1,
+  "maximumPRMetadataUpdates": 1,
+  "oldKnownPushesSpent": 5,
+  "newKnownPushMaximum": 6,
+  "executorSHA256": "b25a910437e6227746e25b92b764836175dc0d144d39b6a97ff5b42b73579c04",
+  "CIReadMaximum": 60,
+  "CIWatchSeconds": 2400,
+  "CIReadIntervalMinimumSeconds": 30,
+  "expiresAt": "2026-11-22T07:10:00Z",
+  "reuseClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V9.ENGINEERING.RECETTE.20261122",
+    "ENG.SOURCE_OBSERVATORY.FORUMS.APP.INTEGRATION.E1.RESULT.20261122",
+    "ENG.SOURCE_OBSERVATORY.FORUMS.CURRENT.E2.R4.RECOVERY.RESULT.20261122",
+    "ENG.SOURCE_OBSERVATORY.COMPLETE.CATALOGUE.PAGINATION.RECETTE.20261122"
+  ],
+  "sourceGET": 0,
+  "taskChanges": 0,
+  "corpusReplay": 0,
+  "merge": 0,
+  "deployment": 0,
+  "review": {
+    "C3": "Exact34LFinputs/9code-tests and compatible source-specific reviews;finalmetadata/executorreviewstillrequired",
+    "C4": "ExactboundedpublicationprivacyandscopePASS"
+  },
+  "privateRuntimeDataExcluded": true,
+  "globalDelivery": "PARTIAL"
+}

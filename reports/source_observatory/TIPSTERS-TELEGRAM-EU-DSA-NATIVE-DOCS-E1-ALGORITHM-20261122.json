@@ -1,0 +1,78 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.EU.DSA.NATIVE.DOCS.E1.ALGORITHM.20261122",
+  "generatedAt": "2026-11-22T03:12:42.835Z",
+  "status": "EXACT_ONE_INCORPORATED_DOCUMENT_READ_AFTER_INDEPENDENT_KEYS",
+  "scope": "One explicitly incorporatedEU-DSA document, previously unread. No channel, message, public-preview, session, AI or collection authority.",
+  "missionId": "TELEGRAM_EU_DSA_NATIVE_DOCS_E1_20261122",
+  "planSHA256": "6e66bbd2b76306d68c92bb3a76393ff5b7a3fe84597074c9d020e7cd0e3c4341",
+  "manifestSHA256": "0228747aa6f3da5344b4f33caf243bb10ab57841e886f013fbcc94a45e647492",
+  "sourceURL": "https://telegram.org/tos/eu-dsa",
+  "incorporation": {
+    "parentSourceURL": "https://telegram.org/tos/eu",
+    "parentSourceClaim": "ENG.SOURCE_OBSERVATORY.TELEGRAM.EU.NATIVE.DOCS.E1.R2.RESULT.20261122",
+    "parentPrivateProjectionSHA256": "a28c29192ce52b15d6307de24b3d6bdb6bbf16e06e3e502ee5f7f0b6c53c86fb",
+    "block": 33,
+    "nativeExactLink": true
+  },
+  "bounds": {
+    "accountActions": 0,
+    "admissions": 0,
+    "apiKeys": 0,
+    "appChanges": 0,
+    "cookies": 0,
+    "credentials": 0,
+    "externalLinkGET": 0,
+    "maxBodyBytes": 131072,
+    "maxPrivateProjectionBytes": 65536,
+    "maxSourceGET": 1,
+    "newTasks": 0,
+    "privatePlainDocumentProjection": true,
+    "rawProviderBodyStorage": false,
+    "recurring": 0,
+    "redirects": 0,
+    "requestRetries": 0,
+    "runtimeChanges": 0,
+    "sourceMessages": 0,
+    "url": "https://telegram.org/tos/eu-dsa"
+  },
+  "projection": {
+    "allQueryFragmentUserinfoEscapedReferences": "HASH_ONLY",
+    "externalLinkGET": 0,
+    "htmlStorage": false,
+    "maximumBlockCharacters": 4096,
+    "maximumBlocks": 256,
+    "maximumReferencedLinks": 200,
+    "maximumURLCharacters": 2048,
+    "maximumUTF8Bytes": 65536,
+    "officialLegalHosts": [
+      "telegram.org",
+      "core.telegram.org"
+    ],
+    "operativeCompleteness": "UNKNOWN",
+    "optionalHTMLEndsTolerated": true,
+    "plainText": true,
+    "private": true,
+    "qualification": "UNKNOWN_PENDING_C4",
+    "truncationAllowed": false,
+    "namespace": "A9_PRIVATE_TELEGRAM_EU_DSA_NATIVE_DOCS_E1_20261122"
+  },
+  "history": {
+    "R1SourceGET": 0,
+    "R2EUCurrentSourceGET": 1,
+    "priorNativeRootAndEU": 2,
+    "oldExactTelegramFamilyTotal": "UNKNOWN",
+    "newDSADocumentGETMaximum": 1,
+    "oldBudgetsClosed": true
+  },
+  "reviews": {
+    "C1AuthorTests": 52,
+    "C3IndependentDeltaTests": 6,
+    "C3Pins": 20,
+    "C4": "Exact one incorporated document-only scope",
+    "parserAndTransport": "ValidatedR2 unchanged after URL binding; strictCA andWindowsJob byteexact"
+  },
+  "sourceMessages": 0,
+  "sourceActivationChanges": 0,
+  "API_FOOTBALL_CALLS": 0,
+  "globalDelivery": "PARTIAL"
+}

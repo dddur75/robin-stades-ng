@@ -87,3 +87,16 @@ test("l'endpoint est local, GET seulement, sans cache et indisponible sans preuv
     assert.equal((await result.text()).includes("private path"), false);
   } finally { unavailableServer.closeAllConnections(); await new Promise<void>((resolve) => unavailableServer.close(() => resolve())); }
 });
+
+
+test("un lot qualifié distingue les candidats des nouveaux choix ajoutés", () => {
+  const value = fixture();
+  value.results[0].outcome = "qualified";
+  value.results[0].metrics.candidates = 42;
+  value.results[0].metrics.admitted = 1;
+  const parsed = parseQualificationSnapshot(value);
+  assert.equal(parsed.results[0].outcome, "qualified");
+  assert.equal(parsed.results[0].metrics.candidates, 42);
+  assert.equal(parsed.results[0].metrics.admitted, 1);
+  assert.equal(parsed.coverage, "partial");
+});

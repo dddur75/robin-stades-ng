@@ -1,0 +1,59 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.FORUMS.CURRENT.E2.R3.ALGORITHM.20261122",
+  "recordedAt": "2026-11-22T05:41:17.384Z",
+  "status": "REVIEWED_CONDITIONAL_RECURRING_SCOPE_NOT_INSTALLED",
+  "scope": "New bounded two-forum campaign after reused E1 proof;one Windows task,two fixed slots,private candidates only. No current or future app admission follows.",
+  "missionId": "FORUMS_CURRENT_E1_E2_R3_20261122",
+  "planSHA256": "c4fa0525c2cddd9725f08ec78fd89d47ef34f5717559d40aced1c687b0c0fc39",
+  "manifestSHA256": "02bc6eb72070ad0d22dee9107613169e1c10bdc079102d787bac4f42b66e28bd",
+  "E1ReceiptSHA256": "74dacbe8d6ead54d99c0f501e38dc7215f591793310838a9cc0bb876619a55d9",
+  "reusedSourceDataClaim": "DATA.SOURCE_OBSERVATORY.FORUMS.SUCCESSOR.PREMATCH.E1.R5.20261122",
+  "E1NewGET": 0,
+  "codePins": 75,
+  "ASTPins": 9,
+  "sourceURLs": [
+    "http://forum.sco1919.com/robots.txt",
+    "http://forum.sco1919.com/ucp.php?mode=terms",
+    "http://forum.sco1919.com/viewtopic.php?t=13259&start=300",
+    "https://legruppetto.fr/robots.txt",
+    "https://legruppetto.fr/forum/ucp.php?mode=terms",
+    "https://legruppetto.fr/forum/viewtopic.php?f=21&t=24850&start=240"
+  ],
+  "slotsUTC": [
+    "2026-11-22T06:15:00Z",
+    "2026-11-22T08:15:00Z"
+  ],
+  "expiresAt": "2026-11-22T08:20:00Z",
+  "maximumNewGET": 12,
+  "perSlotGET": 6,
+  "perSlotSeconds": 90,
+  "totalCollectionSeconds": 180,
+  "installationSeconds": 30,
+  "OSLatencySeconds": 10,
+  "deadlineAnchoredToSlot": true,
+  "sourceGETBeforeTriggers": 0,
+  "taskRegistrationsMaximum": 1,
+  "windowlessTaskAction": true,
+  "scheduledPythonwSHA256": "d72294fb338bc2fc8896d25a7395a4db466425427e1559e77185d5135a830681",
+  "oldNext3Rearm": false,
+  "oldSourceAuthoritiesTransferred": false,
+  "applicationAdmissions": 0,
+  "recurrenceRequiresExternalC0Adoption": true,
+  "adoptionVerificationFields": 11,
+  "adoptionContextFields": 10,
+  "unknownFailedLateCloseStopsAllSources": true,
+  "history": {
+    "knownClosedPriorGET": 79,
+    "maximumKnownSubsetIncludingNew": 91,
+    "allTimeForumFamilyGET": "UNKNOWN"
+  },
+  "reviews": {
+    "C1": "Author facts75pins/55synthetic tests;no self-code acceptance",
+    "C3": "Exact75pins9AST,15independent targeted tests;14criticalR2functions unchanged",
+    "C4": "ExactR3scope/privacy/authority/windowless/time/budget PASS conditionalfresh decisions"
+  },
+  "sourceGET": 0,
+  "taskInstalled": false,
+  "rawProviderBodiesStored": false,
+  "globalDelivery": "PARTIAL"
+}

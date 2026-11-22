@@ -1,0 +1,63 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.FORUMS.SUCCESSOR.E1.R5.ALGORITHM.20261122",
+  "recordedAt": "2026-11-22T04:24:36.270Z",
+  "status": "REVIEWED_ONE_SHOT_PRIVATE_CANDIDATES",
+  "scope": "One fresh6GET canary overSCO1919/LeGruppetto with corrected delay-only REP and proven explicit HTTP framing;3SundayL1fixtures/private candidates only,no admission or recurrence.",
+  "missionId": "FORUMS_SUCCESSOR_E1_R5_20261122",
+  "planSHA256": "75db5c1a85d5dfd6cca374bcf441131d8d0a3d5e72618c4a043666794e48b740",
+  "manifestSHA256": "719fbe76f7b957f1ae431e1e7632700738f9e78ec4037e7112f0576c4a6575e8",
+  "codePins": 45,
+  "astPins": 9,
+  "calendarSHA256": "7e61eebf7dd920011fb18558212d67cb70f242c0da3e335c4a036fc4fb806977",
+  "fixtureCount": 3,
+  "maximumGET": 6,
+  "maximumSeconds": 90,
+  "expiresAt": "2026-11-22T04:40:00Z",
+  "strictRobotsSHA256": "63bbc70e65302540d8ca31d672d8d4615d525353c9aadbdbcd5c29de31c75987",
+  "nativeGETScope": [
+    "http://forum.sco1919.com/robots.txt",
+    "http://forum.sco1919.com/ucp.php?mode=terms",
+    "http://forum.sco1919.com/viewtopic.php?t=13259&start=300",
+    "https://legruppetto.fr/robots.txt",
+    "https://legruppetto.fr/forum/ucp.php?mode=terms",
+    "https://legruppetto.fr/forum/viewtopic.php?f=21&t=24850&start=240"
+  ],
+  "robotsAndUnchangedTermsRequired": true,
+  "privateMinimalProjection": true,
+  "newVsReobserved": "UNKNOWN_NO_BASELINE_IN_THIS_CANARY",
+  "nativeChoiceIndependentOfMission": true,
+  "selectionVersionIndependentOfPageHash": true,
+  "sourcePublicationTimeZone": "UNKNOWN",
+  "identityCertified": false,
+  "eligibleForApplication": false,
+  "admissions": 0,
+  "recurrence": 0,
+  "taskMutations": 0,
+  "sourceRawBodiesStored": false,
+  "reviews": {
+    "C1": "Exact45rawpins/9AST/MF8/calendar3/CGU/history79verified independently",
+    "C3": "11targeted independent testsPASS;transportAST exactly2framinghooks;CL/chunkterminal strict,SCOdelay10/fresh90/postreserve;noP1P2open",
+    "C4": "ExactR5source6GET/privacy/history79scope PASS;unusedR4five relinquished,no cache/rearm"
+  },
+  "historical": {
+    "oldClosedCampaignGET": 72,
+    "oldClosedSlots": 12,
+    "priorUnexecutedR1R2R3GET": 0,
+    "R4ConsumedGET": 1,
+    "R4UnusedGETRelinquished": 5,
+    "knownCampaignPlusCanariesCeiling": 79,
+    "netCeilingIncrease": 1,
+    "reason": "PreviouslyreceivedSCOrobotsbodyframingnotproven;distinctfreshresponseexplicitlybudgeted",
+    "allTimeForumFamilyGET": "UNKNOWN"
+  },
+  "globalDelivery": "PARTIAL",
+  "HTTPFraming": {
+    "explicitContentLengthOrChunkedRequired": true,
+    "truncationRejected": true,
+    "chunkCRLFAndTerminalValidated": true,
+    "unknownOrMalformedStopped": true,
+    "privateASTHooks": 2,
+    "stdlibPinned": true,
+    "publicSourceModified": false
+  }
+}

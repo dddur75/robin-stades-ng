@@ -1,0 +1,47 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.FORUMS.CURRENT.E2.R4.RECOVERY.RESULT.20261122",
+  "recordedAt": "2026-11-22T05:59:16.368Z",
+  "status": "EXISTING_TASK_RECOVERY_ADOPTED_SOURCE_NOT_YET_RUN",
+  "scope": "Actual exact-existing-task Action/WorkingDirectory correction succeeded and was independentlyverified before C0external adoption. Two fixed future slots only;no collection yet or admission follows.",
+  "missionId": "FORUMS_CURRENT_E1_E2_RECOVERY_R4_20261122",
+  "planSHA256": "8c07095759536c063184ecb26a60777f77cf05193a9d5a36cd63f7eae01f986c",
+  "manifestSHA256": "c67bf39475cc7dab95f2f0667b399aa12dbc79bfe576cd49bf8c9972b83f0113",
+  "sourceGrant": "a6d3a54de9f04b3ca47b0a0be3eb2fe695ad9c12729b3da94eaaa041a5dea2b8",
+  "recoveryGrant": "692ac5473d940e8364121c267a4fa578a32774917b206f201e2208266bbfd5c4",
+  "adoptionDecision": "302c1213a2c7c6fe18c4dc27080f8ddf9dc0eafefa4a0550541bce5e669a7ea4",
+  "externalProcess": {
+    "startedAt": "2026-11-22T05:56:53.245Z",
+    "closedAt": "2026-11-22T05:57:00.524Z",
+    "exit": 0,
+    "error": null,
+    "stdoutBytes": 0,
+    "stderrBytes": 0,
+    "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "sourceGET": 0,
+    "elapsedSeconds": 7.279
+  },
+  "taskXMLSHA256": "145e5656b163589adddfe8910e7a2cadea7df098483274191d88f0f606a3fee2",
+  "externalVerificationSHA256": "7ca63449dcf8940ae76acee05c5cbec6c9bb8edf2ffbdc71ae5be30ec12acf74",
+  "independentQueryAt": "2026-11-22T05:57:27.616167+00:00",
+  "sourceAuthorityGate": "PASS_WITHOUT_GET",
+  "nativeEnabled": true,
+  "slotUTC": [
+    "2026-11-22T06:15:00Z",
+    "2026-11-22T08:15:00Z"
+  ],
+  "expiresAt": "2026-11-22T08:20:00Z",
+  "registrations": 0,
+  "actionUpdates": 1,
+  "enableStartDeleteOperations": 0,
+  "unknownR3Preserved": true,
+  "sourceGET": 0,
+  "maximumFutureGET": 12,
+  "applicationAdmissions": 0,
+  "review": {
+    "CODE": "C3exact84pins9AST",
+    "SCOPE": "C4exact",
+    "ACTUAL_RESULT": "C4external0/query/11fields/84pins/noreservations"
+  },
+  "globalDelivery": "PARTIAL"
+}

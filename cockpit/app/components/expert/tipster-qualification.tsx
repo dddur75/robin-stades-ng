@@ -5,7 +5,7 @@ import { formatDateTime } from "../../i18n";
 import { parseQualificationSnapshot, qualificationCount, type QualificationSnapshot } from "../../lib/tipster-qualification";
 
 const labels = { no_eligible: "Lecture terminée, aucun candidat admissible", technical_failure: "Contrôle technique interrompu",
-  missing_evidence: "Preuve nécessaire manquante" };
+  missing_evidence: "Preuve nécessaire manquante", qualified: "Lot qualifié" };
 const dateLabels = { observation: "Observé", documentary_record: "Rapport documentaire enregistré", technical_close: "Contrôle clos" };
 
 export function TipsterQualification() {

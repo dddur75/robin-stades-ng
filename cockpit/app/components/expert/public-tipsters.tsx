@@ -23,6 +23,7 @@ export function isSroReobservation(pick:{firstSeenAt?:string;observedAt:string},
 }
 type State = { status:string; distinctPicks:number; authorCount:number; requestCount:number;
  generatedAt:string; sourceObservedThrough?:string; claimId:string; claimIds?:string[]; recurring?:boolean; halted?:boolean; picks:Pick[];
+ forumCompanion?:{state:string;claimId?:string;approvedObservationCount?:number;approvedNewCount?:number;approvedReobservationCount?:number;updates?:Record<string,{lastSeenAt:string;claimId:string}>};
  sroNextCompanion?:{updates:Record<string,{lastSeenAt:string;claimId:string}>}; sroNextCampaign?:PublicCampaign&{canaryReobservations?:number;priorFamilyGET?:number;familyGETMax?:number;futureReceiptReview?:string;poolAuthorIds?:string[]};
  campaign?:PublicCampaign; sroCampaign?:PublicCampaign; olbgCampaign?:PublicCampaign; expandedOlbgCampaign?:PublicCampaign; profileCampaign?:PublicCampaign;
  personalCollection?:{state:string;claimId?:string;qualifiedAt?:string;nativeChoices?:number}; notbettingBundesOccurrences?:{state:string;nativeOccurrences?:number}; notbettingClosedOccurrences?:{state:string};
@@ -52,7 +53,8 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
    {personalCollection?.state==='historical_observations_qualified'&&<p>Calendriers officiels et dates de lecture d’origine conservés.</p>}
    {personalCollection?.state==='historical_observations_qualified'&&personalCollection.qualifiedAt&&<p>Lecture du catalogue : {formatDateTime(data.sourceObservedThrough??data.generatedAt,true)}. Qualification : {formatDateTime(personalCollection.qualifiedAt,true)}.</p>}
    {personalCollection?.state==='unavailable'&&<p role="alert">Les preuves personnelles complémentaires sont indisponibles. Historique conservé.</p>}
-   {[rosterCampaign?.state,data.rosterCollection?.state,data.notbettingCollection?.state,data.notbettingBundesOccurrences?.state,data.notbettingClosedOccurrences?.state,data.familyCollection?.state,data.familyCollection?.nativeWinState,data.familyCollection?.opaqueState].includes('unavailable')&&<p role="alert">Une partie des preuves individuelles supplémentaires est indisponible. Historique conservé.</p>}
+   {[rosterCampaign?.state,data.rosterCollection?.state,data.notbettingCollection?.state,data.notbettingBundesOccurrences?.state,data.notbettingClosedOccurrences?.state,data.familyCollection?.state,data.familyCollection?.nativeWinState,data.familyCollection?.opaqueState,data.forumCompanion?.state].includes('unavailable')&&<p role="alert">Une partie des preuves individuelles supplémentaires est indisponible. Historique conservé.</p>}
+   {data.forumCompanion?.state==='available'&&<p>Dernier lot qualifié des deux forums : {data.forumCompanion.approvedNewCount} nouveau choix et {data.forumCompanion.approvedReobservationCount} choix déjà connus relus avant match.</p>}
    {showNotBetting&&data.notbettingCollection?.state==='qualified_one_time'&&<p>NotBetting : collecte ponctuelle qualifiée.</p>}
    {showNotBetting&&data.notbettingBundesOccurrences?.state==='bounded_occurrences_qualified'&&<p>Deux occurrences supplémentaires proviennent d’une capture partielle. Cohérence globale des variantes non établie.</p>}
    {showNotBetting&&data.notbettingClosedOccurrences?.state==='bounded_declarations_qualified'&&<p>Une déclaration supplémentaire provient de deux lectures partielles concordantes. Variantes hors parcours inconnues.</p>}
@@ -103,6 +105,7 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
     {tipsterId && !selected && <p>Cette fiche ne figure pas dans les preuves locales actuelles.</p>}
     {(tipsterId ? data.picks.filter(p=>p.authorId===tipsterId) : data.picks).map(p=>{
      const sroUpdate=data.sroNextCompanion?.updates[p.id];
+     const reobservation=sroUpdate??data.forumCompanion?.updates?.[p.id];
      const update=data.notbettingOccurrenceCompanion?.updates[p.id], count=update?.observations.length??p.observationCount, last=update?.lastObservedAt??p.lastObservedAt;
      return <article key={p.id} className="section-card tipster-pick">
      <h3>{p.fixtureLabel} · {choiceHeading(p)} {p.selection}</h3>
@@ -110,7 +113,7 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
      <p>Coup d’envoi : {formatDateTime(p.kickoff,true)}.</p>
      <p>Observé avant match le {formatDateTime(p.observedAt,true)}.</p>
      {(update||p.sourceWalkTruncated)&&Number.isSafeInteger(count)&&count!>1&&last&&<p>{count} lectures concordantes{update&&' de la même source'}. Dernière : {formatDateTime(last,true)}.</p>}
-     {sroUpdate&&isSroReobservation(p,sroUpdate)&&<p>Choix déjà connu, relu avant match le {formatDateTime(sroUpdate.lastSeenAt,true)}. Première observation conservée.</p>}
+     {reobservation&&isSroReobservation(p,reobservation)&&<p>Choix déjà connu, relu avant match le {formatDateTime(reobservation.lastSeenAt,true)}. Première observation conservée.</p>}
      <p>Date civile affichée : {p.publishedCivilDate??'non renseignée'}. Publication : heure et fuseau non certifiés.</p>
      {p.market==='source_native'&&<p>Marché normalisé et durée de jeu non certifiés. Évaluation de performance désactivée.</p>}
      <OpaqueChoiceDetails choice={p}/>

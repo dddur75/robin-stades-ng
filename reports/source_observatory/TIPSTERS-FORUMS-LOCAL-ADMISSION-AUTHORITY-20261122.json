@@ -1,0 +1,42 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.FORUMS.CURRENT.PREMATCH.ADMISSION.20261122",
+  "recordedAt": "2026-11-22T05:20:08.487Z",
+  "status": "APPROVED_LOCAL_ADMISSION_PENDING_RUNTIME_RECETTE",
+  "scope": "Exact immutable R5 structured envelope approved for local application:42 prematch observations,one new native choice and41same-selection reobservations. This records acceptance authority; current app counts remain478/79/20 until a separate actual readback.",
+  "missionId": "FORUMS_R5_OBSERVATIONS_LOCAL_ADMISSION_E1_20261122",
+  "planSHA256": "8b15bb424d08d1b93cf71319f5fb549ebc8864fc15ce426b1137d4fab3babf9c",
+  "manifestSHA256": "7d42feaf03e3454c640f0ee7fba68080f03229e22caa0d877efb60197e56a7d9",
+  "sourceDataClaim": "DATA.SOURCE_OBSERVATORY.FORUMS.SUCCESSOR.PREMATCH.E1.R5.20261122",
+  "candidateSHA256": "d03ab8eeed949d0db8c65055deefad057015f52bac60aae74ad9771798018f61",
+  "envelopeSHA256": "31c4363a8db90eb18fc0a73722af941a98bb39de4d0fd252f7f2077938b83c04",
+  "approvedObservations": 42,
+  "approvedNewNativeChoices": 1,
+  "approvedReobservations": 41,
+  "approvedNewPseudonyms": 1,
+  "newFixtures": 0,
+  "sourceCandidateFlagsPreserved": true,
+  "historicalFirstDatesSelectionsAndVersionsPreserved": true,
+  "aliasType": "PUBLIC_TECHNICAL_HASH_ALIAS_NOT_CERTIFIED_IDENTITY",
+  "independentReviews": {
+    "C1": "Exact frozen R5 DATA reused:1new/41reobservations/newAuthor1,sourcecandidate d03 unchanged",
+    "C3": "Exact backend e691 CODE approved,includingES2017literal transformation and7independent puretests",
+    "C2": "Exact sixrootwiring/testfiles reviewed independently;no self-validation of backend",
+    "C4": "Exactplan8b15.../MF7d42.../envelopeV2/runtimeprestate/snapshotconditionalcopy PASS"
+  },
+  "validation": {
+    "domainTests": 15,
+    "typecheck": true,
+    "lint": true,
+    "build": true,
+    "bundleTest": true,
+    "clientJavaScriptBytes": 1347034,
+    "limit": 1350000
+  },
+  "sourceGET": 0,
+  "windowsTaskMutations": 0,
+  "remoteWrites": 0,
+  "productionDeploys": 0,
+  "currentAppAdmissionMeasured": false,
+  "globalDelivery": "PARTIAL",
+  "allCompatibleSourcesIntegrated": false
+}
