@@ -1,0 +1,27 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.NATIVE.PREFIX.STORAGE.PRIVATE.RESULT.20261123",
+  "missionId": "TELEGRAM_NATIVE_PREFIX_STORAGE_PRIVATE_E1_20261123",
+  "generatedAt": "2026-11-23T15:26:36.151Z",
+  "status": "PRIVATE_WORKER_POLICY_COMPONENT_ACCEPTED_PENDING_FULL_BINDING",
+  "scope": "IndependentC0/C1/C3 accept synthetic RAMsink worker/policy component only. WholebodyauthChallengebeforeprefix, strictschema≤10messages/102400UTF8bytes/4falsegates/totalUNKNOWN/prefixnotforecasts. Onefixedprivateparsedmessageartifact, noHTML/messagesstdout/model/Git. RED1/harnessargvfailurebeforemethods then4GREENonce/criticalRuff4files0/RAMcompile4. Physicalwx/fsync/readbackNOTtested here; workerdoesNOTcomputeartifactreadbackSHA. Futureactualfileproofmustbedistinct. PolicyV2exact10/1/102400andnewouterpin; nooldauthorityreuse,no currentSOURCE/configSSL/defaultledger/Job proof. IOfailure0acceptedreceipt,orphanpossible/noatomicity.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.PRIVATE.RESULT.20261123"
+  ],
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "workerSHA": "221ea41b45ee0d9667e7c11fcd67fef74c4396ca98184f6fbaa6b293182a0cb6",
+  "policySHA": "4726ce94b35c3b4ec51558d01759aaa201d7216574f4aa2a477d327e28a9a5d4",
+  "outerSHA": "9560c89b76ccec35c2ba7cfbd0e6e29c32b3761f9983c2ae430cf3e1b7ac3c35",
+  "parentSHA": "a7a0da012b63717c76a68ed89f7940d9de7f1568cb27abcb90bf28111b63a5f7",
+  "prefixSHA": "7b9262a7bff52e0692c07251bd903aff270f06b786c3ebe823f24c3aa55b159b",
+  "tests": 4,
+  "conservativeExecutions": 6,
+  "codeMapCAN": "58b0997edca4edc954eec1f28d1994bf65f1bffddae0bb8d051d41463ce29f86"
+}

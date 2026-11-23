@@ -1,0 +1,40 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.APP.UI.ADMIN.ROWS.REDESIGN.R1.ACTUAL.RESULT.20261123",
+  "missionId": "SOURCE_OBSERVATION_UI_ADMIN_ROWS_REDESIGN_R1_20261123",
+  "status": "THREE_TARGETED_METADATA_VIEWS_PASS",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Real browser targeted acceptance only: exact workbook reference observation panel/history, exact candidate observation panel/history, source qualification section and unique BetSoccer/NotBetting rowheaders. Full UI/admin not accepted. Four consoleerrors and four blocked other APIs retained without inferred one-to-one causality. No source authority, future grant, new forecasts or data upgrade.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.APP.UI.ADMIN.ROWS.REDESIGN.R1.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.SOURCE.OBSERVATION.UI.UTF8.FIX.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.UI.FIRST.ERROR.R2.ACTUAL.DEBUG.RESULT.20261123"
+  ],
+  "primarySHA": "f010d76ad22d4fef90a3b7767968b90695b92bbb39857039658961abe49b3c2f",
+  "resultSHA": "5731ca977057b99010e81fe044acdd70a99de638baa72bd86aba8eb59555c866",
+  "browserGrantSHA": "2a6e834ca4e919ef2abec4be42cc6ac3933c0315616346939955128faf1e7cc4",
+  "codeSHA": "0cfa2c7ad785079e8f4d9525f3a3c279aa5f3a195dd0a31e90e34cf53d153e1d",
+  "exit": 0,
+  "elapsedMS": 3435.630499996245,
+  "views": 3,
+  "newMissionAPIReads": 3,
+  "APIHeaderResponses": 3,
+  "APIFulfills": 3,
+  "HMRReservations": 2,
+  "cachedResponses": 1,
+  "pageErrors": 0,
+  "consoleErrors": 4,
+  "blockedOtherAPIs": 4,
+  "sourceGET": 0,
+  "admissions": 0,
+  "appWrites": 0,
+  "fullAdminAccepted": false,
+  "fullUIAccepted": false,
+  "browserCloseResolved": true,
+  "physicalOSCleanupAttested": false,
+  "rawAPIOrMessagesPersisted": false,
+  "unusedAuthorityRevoked": true
+}

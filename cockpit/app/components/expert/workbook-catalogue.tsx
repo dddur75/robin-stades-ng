@@ -1,10 +1,12 @@
 "use client";
+import {ReviewedSourceObservationPanel} from './reviewed-source-observation';
+import type {ReviewedSourceObservation} from '../../../scripts/catalogue-independent';
 import Link from 'next/link';
 import {useEffect,useState} from 'react';
 import {formatDateTime} from '../../i18n';
 
 type Access={label:string;reason:string;requiredAccess:string;ownerAction:string};
-type Row={recordId:string;label:string;platform:string;kind:string;sheet:string;row:number;sourceUrl:string|null;collectionEnabled:boolean|null;qualifiedRecordId?:string;qualification?:Access&{personallyProven:boolean;nativeAuthorId?:string;nativeFactCount?:number;observedAt?:string;rosterObservedAt?:string};platformAssessment?:Access;historicalLevel?:string|null;historicalL1?:string|null;fields?:Record<string,string>};
+type Row={reviewedSourceObservation?:ReviewedSourceObservation;recordId:string;label:string;platform:string;kind:string;sheet:string;row:number;sourceUrl:string|null;collectionEnabled:boolean|null;qualifiedRecordId?:string;qualification?:Access&{personallyProven:boolean;nativeAuthorId?:string;nativeFactCount?:number;observedAt?:string;rosterObservedAt?:string};platformAssessment?:Access;historicalLevel?:string|null;historicalL1?:string|null;fields?:Record<string,string>};
 type Data={historicalEvidence?:{sourceObservedAt?:string|null};operationalState?:'unknown';status:string;records:Row[];total:number;addressCount:number;profileRows:number;referenceRows:number;page:number;limit:number;sheets:string[];platforms:string[];headers:Record<string,string>;receipt:{claimId:string;workbookSha256:string};qualifiedRegistryState?:string;readAt?:string;personalAccessState?:string};
 export function WorkbookCatalogue(){
  const [q,setQ]=useState(''),[sheet,setSheet]=useState(''),[platform,setPlatform]=useState(''),[page,setPage]=useState(0),[id,setId]=useState('');
@@ -39,9 +41,12 @@ export function WorkbookCatalogue(){
     <button className="inline-link" onClick={()=>{setId(r.recordId);setPage(0);}}>{r.label}</button> · {r.platform||r.kind} · {r.sheet}, ligne {r.row}
     <p>{r.collectionEnabled===null?'État actuel de collecte non vérifié':r.collectionEnabled?'Collecte activée lors du relevé daté':r.qualification?.label??'Référence inventoriée, qualification individuelle à établir'}</p>
     {id&&<>
+     {r.reviewedSourceObservation&&<ReviewedSourceObservationPanel observation={r.reviewedSourceObservation}/>}
+     <details open={!r.reviewedSourceObservation}><summary>Évaluation historique conservée</summary>
      <p>Qualification historique : {r.qualification?.observedAt?formatDateTime(r.qualification.observedAt,true):'date non renseignée'}. État actuel non vérifié.</p>
      <p>{r.qualification?.reason??r.platformAssessment?.reason??'Aucune preuve personnelle actuelle ni autorisation de collecte n’est attribuée à cette référence par l’import.'}</p>
      {(r.qualification??r.platformAssessment)&&<><p>Accès à établir : {(r.qualification??r.platformAssessment)?.requiredAccess}</p><p>{(r.qualification??r.platformAssessment)?.ownerAction}</p></>}
+     </details>
      {r.sourceUrl&&<p><a className="inline-link" href={r.sourceUrl} target="_blank" rel="noopener noreferrer">Ouvrir la référence d’origine</a></p>}
      {r.qualifiedRecordId&&<p><Link className="inline-link" href={`/expert/tipsters/${encodeURIComponent(r.qualifiedRecordId)}`}>Consulter la fiche et ses preuves qualifiées</Link></p>}
      {!r.qualifiedRecordId&&r.qualification?.personallyProven&&r.qualification.nativeAuthorId&&<p><Link className="inline-link" href={`/expert/tipsters/${encodeURIComponent(r.qualification.nativeAuthorId)}`}>Consulter les choix personnels et leurs preuves</Link></p>}

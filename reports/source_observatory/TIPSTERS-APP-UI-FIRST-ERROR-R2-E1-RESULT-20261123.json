@@ -1,0 +1,26 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.APP.UI.FIRST.ERROR.R2.E1.RESULT.20261123",
+  "missionId": "SOURCE_OBSERVATION_UI_FIRST_ERROR_R2_20261123",
+  "status": "EXACT_PRIVATE_DIAGNOSTIC_ACCEPTED_E1",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Independent redaction fix review only; five fixed cases PASS, legacy regression FAIL. Exact three pinned static component paths, unknown omitted. New diagnostic uses cached target response, physical API0; no actual recipe/UI/source acceptance.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.APP.UI.CANARY.LOCAL.R3.ACTUAL.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.UI.CANARY.FIX.PRIVATE.CODE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.WARM.FINAL.BINDING.R3.ACTUAL.API.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.UI.FIRST.ERROR.R1.E1.PARTIAL.20261123"
+  ],
+  "planSHA": "fad517edec8ff802739ca315f6e7cbd8bf2d2d3426f95ece3b7ff1d409b8ca74",
+  "manifestSHA": "806efa00dad9b5eff8a1f1068bb000d01af739aac5bf50c65c5fc0d9a3a4e3dc",
+  "codeSHA": "a44932b42ae3b6973c52a7b2d74d651390e77e34923f9dac6fb949a90e1f87ed",
+  "targetedProcesses": 2,
+  "greenCases": 5,
+  "legacyRegressionExit": 1,
+  "physicalAPI": 0,
+  "browser": 0,
+  "sourceGET": 0
+}

@@ -1,0 +1,25 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.APP.UI.HMR.REDESIGN.R1.E1.PARTIAL.20261123",
+  "missionId": "SOURCE_OBSERVATION_UI_HMR_REDESIGN_R1_20261123",
+  "status": "E1_UNUSED_CLOSED_SUCCESSOR_REQUIRED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "No browser/API effect. Preserve reviewed private gate proof; first version drop-threshold17 must become16 terminal. Native admin href may reload document, so successor explicitly authorizes at most3 local HMR reservations, one per view; no old authority reuse.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.APP.WARM.FINAL.BINDING.R3.ACTUAL.API.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.WARM.FINAL.BINDING.R3.LOCAL.CLOSE.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.SOURCE.OBSERVATION.UI.UTF8.FIX.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.UI.CANARY.FIX.PRIVATE.CODE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.UI.CANARY.LOCAL.R2.ACTUAL.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.UI.FIRST.ERROR.R2.ACTUAL.DEBUG.RESULT.20261123"
+  ],
+  "codeSHA": "00ea73a4ee247e65337559238483d35ea4a4971452ff2c8b00cc0ea9e7506d84",
+  "syntheticProcesses": 2,
+  "assertions": 10,
+  "newBrowser": 0,
+  "newAPI": 0,
+  "sourceGET": 0
+}

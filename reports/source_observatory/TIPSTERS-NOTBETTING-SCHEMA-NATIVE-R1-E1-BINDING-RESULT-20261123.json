@@ -1,0 +1,32 @@
+{
+  "parentGrant": "33add8899141a5fb3a3e9cd2328f2804823adeabb5a44a3126559a09688a68eb",
+  "planSHA": "98b58c805dc2ef2be0d93d2cee4e815529d95320b37e9734f6fe70bb26340bed",
+  "manifestSHA": "c87c3dd541b6b085c66856953b0f88569b7084bb39515f6b72283a0020c60afe",
+  "configSHA": "e996070a342fb3b9e3af6201d96daf93310e79940e32d4c23dc442f5792c6781",
+  "workerSHA": "08bc78dc155a8157f5faf8e0ab451abd3329bd2d5bb2b4bfaf03378a4a3188b5",
+  "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+  "outerSHA": "d9876f8c48395d14b43b22c07f1d354ed38e6f316d1714e6190ef3e5e2c2e1db",
+  "samplerSHA": "02ccd3f852acf239bb58fa69032b7801c896861261742c3bcafc03c99077fc4b",
+  "consumerSHA": "fdd66421fe4da8841bdb61ca9027f01c22f59012005b2b3687f2dc0cefc97ed0",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.SCHEMA.NATIVE.R1.E1.BINDING.RESULT.20261123",
+  "missionId": "NOTBETTING_TECHNICAL_SCHEMA_NATIVE_R1_20261123",
+  "status": "EXACT_LOADER_SSL_SYNTHETIC_SHAPE_PASS_E1_ONLY",
+  "generatedAt": "2026-11-23T13:59:01.567Z",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.SCHEMA.TRUNCATION.CONTRACT.FIX.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.RECORD.INDEX.STANDALONE.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CURRENT.TERMS.PERSONAL.CONTEXT.RESULT.20261123"
+  ],
+  "scope": "Exact frozen6component loader, strict SSL,9calendarrows and one synthetic sampler-consumer roundtrip passed under DENYbefore imports. Authority sidecar was intercepted RAM-only, not actual source-decision rootfile. e1-execution.json is actual primary; e1-primary.json absent. No collect/main/fetch/Job/GET or nativebusiness proof. SOURCE keys require fresh postclose review of unchanged tuple.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "primarySHA": "6ed00cbaa571b791e86316aa4f3f1d3e5e47716dbeda0f10bd9d49a59e509bc0"
+}

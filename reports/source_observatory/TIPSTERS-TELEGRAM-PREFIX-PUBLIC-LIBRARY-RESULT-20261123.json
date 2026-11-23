@@ -1,0 +1,36 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.PUBLIC.LIBRARY.RESULT.20261123",
+  "missionId": "TELEGRAM_PREFIX_PUBLIC_LIBRARY_E1_20261123",
+  "status": "CODE_AWAITING_INDEPENDENT_REVIEW",
+  "generatedAt": "2026-11-23T16:11:44.912Z",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.STRUCTURED.NATIVE.R2.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.CACHED.SCREENING.LOCAL.R1.ACTUAL.RESULT.20261123"
+  ],
+  "scope": "New ordinary pure application library telegram_prefix.py with perinvocation subclass/sentinel, no global monkeypatch. Existing strict telegram_preview.py byteunchanged. Stop only after validNthcomplete wrapper, prefixRefusalatomic; suffix/enclosingDOMunexamined/totalNULL/fourfalsegates remain. REDmissingmodule then21domain tests+6subtestsPASS; TypedDict update keyword typing failure fixed by5assignments then7targettestsPASS/strictmypyPASS. RuffPASS beforetype-onlyfix, no finalRuffrerun claimed. 28methodexec/6processes, independentC1/C3/C4 reviews noP1, rootSTOP16:10:25.556. No native/helper/runtime binding or forecast/globalqualification; notyetcommitted/pushed/publicCIcovered.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "author": "C0",
+  "authorStoppedAt": "2026-11-23T16:10:25.556Z",
+  "codeSHA": "e4153492e6579d5b03aaca3ecea4939804bb99f049853c6063ff55906deab497",
+  "testsSHA": "1a78768c1eef9213eb5bacdb65b43dabf7cccfbd578d73f2b705a4a28c8f9775",
+  "parentSHA": "a7a0da012b63717c76a68ed89f7940d9de7f1568cb27abcb90bf28111b63a5f7",
+  "RED": "missingmodule",
+  "domainPass": 21,
+  "domainSubtestsPass": 6,
+  "postTypeFixPass": 7,
+  "targetedMethodExecutions": 28,
+  "processes": 6,
+  "strictMypy": 0,
+  "ruffBeforeTypedDictOnlyFix": 0,
+  "admissions": 0
+}

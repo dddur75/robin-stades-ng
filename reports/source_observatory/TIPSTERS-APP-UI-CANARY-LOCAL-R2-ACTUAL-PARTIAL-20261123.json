@@ -1,0 +1,25 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.APP.UI.CANARY.LOCAL.R2.ACTUAL.PARTIAL.20261123",
+  "missionId": "SOURCE_OBSERVATION_UI_CANARY_LOCAL_R2_20261123",
+  "status": "PARTIAL",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "First actual browser canary failed BROWSER_TIMEOUT. No success receipt, target UI not accepted. One workbook reservation is not a completed response. Old R2 stopped, no retry or remaining quota.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.APP.UI.CANARY.LOCAL.R2.E1.RESULT.20261123"
+  ],
+  "primarySHA": "f02cd7c5f53e319463ebe8650d6e7f772616dac21da12ee7e613f4ac5f1c91ac",
+  "errorSHA": "d52255f493fdb0626e8b7615a9300a6cf736cec093c502b20eb0a2df657139d7",
+  "exit": 1,
+  "elapsedMS": 11327.826300002635,
+  "APIReservations": 1,
+  "APIResponses": null,
+  "viewsAccepted": 0,
+  "sourceGET": 0,
+  "admissions": 0,
+  "exactTimeoutPhase": "UNKNOWN",
+  "physicalCleanupProven": false
+}

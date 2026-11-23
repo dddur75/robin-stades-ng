@@ -1,0 +1,26 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.APP.UI.HMR.REDESIGN.R2.ACTUAL.PARTIAL.20261123",
+  "missionId": "SOURCE_OBSERVATION_UI_HMR_REDESIGN_R2_20261123",
+  "status": "PARTIAL_FIRST_NEW_ARCHITECTURE_FAILURE",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Actual catalogue observation panel and history passed; candidate and admin not accepted. UI_HISTORY may be count/open assertion: prior DOM hypothesis plausible not exclusive proven cause. Zero JS errors measured here does not establish exclusive Vite cause. Old grant spent and stopped.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.APP.UI.HMR.REDESIGN.R2.E1.RESULT.20261123"
+  ],
+  "primarySHA": "d3c7a65962432f7af26833bd5fd2f3cc605f247e78be1d45cef37e75d9cfa3fe",
+  "diagnosticSHA": "40140de83b7892088b754d5986a694018fb5705351ff904454597e7b8f3b4e5d",
+  "exit": 1,
+  "viewsAccepted": 1,
+  "backendReservations": 1,
+  "APIHeaderResponses": 1,
+  "APIFulfills": 1,
+  "HMRReservations": 1,
+  "pageErrorEvents": 0,
+  "consoleErrors": 0,
+  "sourceGET": 0,
+  "admissions": 0
+}

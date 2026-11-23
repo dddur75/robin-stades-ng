@@ -1,0 +1,31 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.APP.OWNED.RELOAD.R1.E1.REJECTED.20261123",
+  "missionId": "SOURCE_OBSERVATION_OWNED_RELOAD_R1_20261123",
+  "generatedAt": "2026-11-23T17:15:59.713Z",
+  "status": "PARTIAL_CODE_HOLD_NO_EFFECT",
+  "keys": [
+    "C0",
+    "C1"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.APP.SOURCE.OBSERVATION.INTEGRATION.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.SOURCE.OBSERVATION.UI.UTF8.FIX.RESULT.20261123"
+  ],
+  "scope": "Actualreadonlyownership LISTEN6204/creation/exe/command andallpins verified. No configtouch/HTTP/stop/start/browser performed. C1CODEHOLD P1: finalresult/errorwrites notfsynced/postdeadlinechecked, onlywallclock no monotonic ceiling. E1cut17:13:48 reached withoutacceptance; oldmissionFAIL_AND_STOP/no E2/remainderquota. InitialPS-Filedeniedbeforequery, trustedinlineCommandreadonlysuccessWITHOUTexecutionpolicychange; preservebothprimaries. Freshwarm-onlycorrectiveMF mustaddmonotonic/durablepostguard+failurepriority test, noimplicitcoldauthority.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "configTouches": 0,
+  "manualStops": 0,
+  "serverLaunches": 0,
+  "browserExecuted": false,
+  "tuple": {
+    "planSHA": "98feac8dfca780798a26c8372a930572d54548885e900ecb6dfbe2c7c20995cd",
+    "manifestSHA": "47b6a05b805ea85da4b99b5d55ed27bbe0c4b0f2d6d21e3e3942f029dfa2c893",
+    "controllerSHA": "340ad4097989610883c0749ac22165da78e4f62fb48c05babdd63d383d93c50f",
+    "ownershipSHA": "c3f5afe2906c9c37e3fc25c5d78259760fc4b0fa5c8bbf17c916d3a4f0abcc6f",
+    "ownerPrimarySHA": "3ba1ff8830afb70a4311c01e031e4e241a6c826498eba383b63f0c110ceba88e"
+  },
+  "ownerPrimarySHA": "3ba1ff8830afb70a4311c01e031e4e241a6c826498eba383b63f0c110ceba88e"
+}

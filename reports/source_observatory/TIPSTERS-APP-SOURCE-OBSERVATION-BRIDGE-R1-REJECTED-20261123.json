@@ -1,0 +1,26 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.APP.SOURCE.OBSERVATION.BRIDGE.R1.REJECTED.20261123",
+  "missionId": "SOURCE_OBSERVATION_CATALOGUE_BRIDGE_E1_20261123",
+  "generatedAt": "2026-11-23T16:42:04.400Z",
+  "status": "PARTIAL_FAIL_AND_STOP_ADOPTION",
+  "keys": [
+    "C0",
+    "C1",
+    "C3"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.STRUCTURED.NATIVE.R2.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.CACHED.SCREENING.LOCAL.R1.ACTUAL.RESULT.20261123"
+  ],
+  "scope": "C4functionalcandidate independentC1/C3 reviewfindsP1 UTF8mojibake across twoexistingFrenchUI files beyondnewfeature. Joins/pinneddescriptor/basefallback/unknownstates coherent but16Nodeassertions/targettype4roots/lintdidnotexerciseFrenchUI. HOLDALLcopy/adoption: PUBRTunchanged. Rootpreservedrejectedbytes innewUTF8correctivecontrol; freshC4phasefromcleanbeforeUTF8 only. OldresultcontrollerShellCalls6UNDERCOUNT actual7, targetedcheckprocesses6 separately; explicitaddendum,nohistoricrewrite. AuthorSTOP284.104s,noactualAPI/browser/realcatalogue317/nativevalues/source.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "descriptorSHA": "e4c97ea493c5ef304eae72e419f2e4ae9fd8b6709ddec5eb5d0ef6839e082853",
+  "functionalMapSHA": "d642b0e084b47903ee4395fee941e6376dc0eee844a2f120e1653693d8d7f8df",
+  "resultSHA": "bb64446c742ca3f6016413b31cecefd22708c8112cc11e67ea43ddf376b3b893",
+  "actualControllerShellCalls": 7,
+  "reportedControllerShellCalls": 6,
+  "targetedCheckProcesses": 6
+}

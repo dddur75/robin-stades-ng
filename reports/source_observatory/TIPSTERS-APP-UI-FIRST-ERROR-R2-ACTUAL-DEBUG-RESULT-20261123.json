@@ -1,0 +1,28 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.APP.UI.FIRST.ERROR.R2.ACTUAL.DEBUG.RESULT.20261123",
+  "missionId": "SOURCE_OBSERVATION_UI_FIRST_ERROR_R2_20261123",
+  "status": "DEBUG_RETAINED_RESPONSE_REPLAY",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "First runtime TypeError captured before fixture fulfillment. Debug only, not UI/API/source acceptance; no cause or physical OS cleanup guarantee. No raw error message/stack retained.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.APP.UI.FIRST.ERROR.R2.E1.RESULT.20261123"
+  ],
+  "primarySHA": "0f2c83628e142ee5a01f915bfd95978c053c446198368f3c1016c35fc1b545a2",
+  "resultSHA": "8fa5825a328cc5a4182bedd071709ece5836be264b24f6f20b23f0f0e3d6e279",
+  "exit": 0,
+  "elapsedMS": 856.4002000018954,
+  "firstError": {
+    "kind": "TypeError",
+    "frames": []
+  },
+  "pageErrorEvents": 70,
+  "fixtureFulfills": 0,
+  "physicalAPI": 0,
+  "sourceGET": 0,
+  "browserCloseResolved": true,
+  "viewAccepted": false
+}

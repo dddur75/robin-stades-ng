@@ -1,0 +1,38 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.ADMIN.SOURCE.QUALIFICATION.PAIR.LATEST.RUNTIME.RESULT.20261123",
+  "missionId": "ADMIN_SOURCE_QUALIFICATION_PAIR_LATEST_20261123",
+  "generatedAt": "2026-11-23T16:05:22.662Z",
+  "status": "LOCAL_DATA_API_RECETTE_PASS",
+  "keys": [
+    "C0",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.STRUCTURED.NATIVE.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.STRUCTURED.NATIVE.R2.ACTUAL.RESULT.20261123"
+  ],
+  "scope": "Exactly two local admin qualification rows updated NB and Telegram; other35of37 byte-equivalent JSON values preserved, capturedAt refreshed. API200 normalized equals runtimefile. NBfour owner-coherent sampled occurrences failcompetition, no distincthumans/globalabsence; Telegram10structuredUNQUALIFIED prefixmessages only/totalUNKNOWN. Three forecast-relatedunknown counters null/admitted0. No appcode/restart/task/sourceGET/admissions or fullbrowseradmin acceptance.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "primary": {
+    "capturedAt": "2026-11-23T16:02:46.653Z",
+    "sourceClaims": [
+      "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.STRUCTURED.NATIVE.R1.ACTUAL.RESULT.20261123",
+      "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.STRUCTURED.NATIVE.R2.ACTUAL.RESULT.20261123"
+    ],
+    "beforeSHA": "21d82f5dfdbe05a2bc1f6859e8f006adcf6235f2aa43de4ac9a04d101001fcf6",
+    "afterSHA": "fc02cea84dc63b920e9e7e1d2180c25e2629500a0b7bf93293b2b506db7198a3",
+    "rows": 37,
+    "changedRows": 2,
+    "otherRowsPreserved": true,
+    "apiStatus": 200,
+    "apiEqualsCurrent": true,
+    "sourceGET": 0,
+    "admissions": 0,
+    "newForecasts": 0,
+    "taskChanges": 0,
+    "appRestart": 0
+  }
+}

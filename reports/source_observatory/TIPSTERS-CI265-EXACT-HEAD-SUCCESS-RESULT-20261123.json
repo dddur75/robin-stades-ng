@@ -1,0 +1,42 @@
+{
+  "generatedAt": "2026-11-23T13:33:51.827Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI265.EXACT.HEAD.SUCCESS.RESULT.20261123",
+  "missionId": "CI265_EXACT_HEAD_READONLY_WATCH_20261123",
+  "status": "TERMINAL_SUCCESS",
+  "scope": "C1 unique managed read-only watch confirmed CI265 terminal success for exact published93e7 head. All17 jobs succeeded; strict typing, Cockpit dependency installation beforepytest, tiny TypeScript preflight, Python test suite and Cockpit build/tests actually passed in Quality. No success logs/artifacts downloaded, so exact pytest count and GitHub finish timestamp remain UNKNOWN. This certifies exact code commit only, not all-source compatibility, native forecasts, later local changes, merge/deploy or source activation.",
+  "keys": [
+    "C0",
+    "C1"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.CI264.CORRECTIVE.PUBLICATION.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.CI264.DEPENDENCY.ORDER.CORRECTIVE.RESULT.20261123"
+  ],
+  "runId": 45179387924,
+  "runNumber": 265,
+  "head": "93e7ea9dd14715f4a99a58ecc8c049ed95ab83db",
+  "workflowURL": "https://github.com/dddur75/robin-stades-ng/actions/runs/45179387924",
+  "GitHubCompletedAt": null,
+  "pytestPassedCount": null,
+  "jobs": {
+    "total": 17,
+    "success": 17,
+    "failure": 0,
+    "skipped": 0
+  },
+  "qualityMilestones": {
+    "strictTyping": "success",
+    "installBeforePytest": "success",
+    "TypeScriptPreflight": "success",
+    "pythonSuite": "success",
+    "CockpitBuildTests": "success"
+  },
+  "managedReads": 25,
+  "logsDownloaded": 0,
+  "artifactsDownloaded": 0,
+  "watchMinutesApprox": 32.5,
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "allCompatibleIntegrated": false
+}

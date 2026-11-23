@@ -1,0 +1,47 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.PUBLIC.VERIFICATION.STATUS.REPAIR.R1.20261123",
+  "missionId": "SOURCE_OBSERVATION_STATUS_REPAIR_AND_PUBLICATION_R1_20261123",
+  "status": "METADATA_ONLY_FAIL_CLOSED_DOWNGRADE",
+  "scope": "Exactly two self-reviewed partial receipts had been incorrectly labeled VERIFIED by generic recorder. Downgrade graph status only to PARTIAL, retain original report bytes/IDs/hashes/reviewers and old ledger history. No new source result, reviewer or authority.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V29.ENGINEERING.RECETTE.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.SCHEMA.NATIVE.R1.PUBLIC.PROJECTION.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.UI.ADMIN.ROWS.REDESIGN.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREDICATE.COMPLETION.BATCH.R1.PARTIAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.PREFIX.NATIVE.R1.E1.FAILURE.20261123"
+  ],
+  "changes": [
+    {
+      "afterStatus": "PARTIAL",
+      "artifact": "reports/source_observatory/TIPSTERS-NOTBETTING-PREDICATE-COMPLETION-BATCH-R1-PARTIAL-RESULT-20261123.json",
+      "artifactSHA256": "75190cd01cd61afffe6924a97c87f2f167ad441f7727930a12afad715e2ed24a",
+      "beforeStatus": "VERIFIED",
+      "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREDICATE.COMPLETION.BATCH.R1.PARTIAL.RESULT.20261123",
+      "preimageSHA": "36fb162e58adf1ae8faaf7c1537a5cc8fad14e5fdefc74c9f5bc583b2ed24a86",
+      "verifiedByPreserved": [
+        "C0"
+      ]
+    },
+    {
+      "afterStatus": "PARTIAL",
+      "artifact": "reports/source_observatory/TIPSTERS-TELEGRAM-BEXTRA-PREFIX-NATIVE-R1-E1-FAILURE-20261123.json",
+      "artifactSHA256": "0240e54584e575995f39cbd63f5999a460ebde5395d1ab0bd4c909d0a348157f",
+      "beforeStatus": "VERIFIED",
+      "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.PREFIX.NATIVE.R1.E1.FAILURE.20261123",
+      "preimageSHA": "ddb3fc93632bbbc01436cf422bc74cbdce80bf52ebb856645625d63269db1ff2",
+      "verifiedByPreserved": [
+        "C0"
+      ]
+    }
+  ],
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "allCompatibleIntegrated": false,
+  "overallStatus": "PARTIAL"
+}

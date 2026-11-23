@@ -56,7 +56,7 @@ function qualification(value:unknown,depth=0):FactObject{
  if(q.contestAssessments!==undefined){const c=object(q.contestAssessments);check(Object.keys(c).length<=100);out.contestAssessments=Object.fromEntries(Object.entries(c).map(([k,v])=>[k,qualification(v,depth+1)]));}
  return out;
 }
-export type Candidate=FactObject&{id:string;sourceUrl:string;origin:FactObject;collectionEnabled:null;operationalState:'unknown';qualification?:FactObject};
+export type Candidate=FactObject&{reviewedSourceObservation?:ReviewedSourceObservation;id:string;sourceUrl:string;origin:FactObject;collectionEnabled:null;operationalState:'unknown';qualification?:FactObject};
 export type Catalogue=FactObject&{status:'ok';count:number;candidates:Candidate[];enabledCount:null;operationalState:'unknown';qualification:FactObject;rosterAssessments:FactObject[];historicalEvidence:FactObject};
 
 /** Pure fact projection. Optional qualification failure never removes valid registry facts. */
@@ -106,15 +106,16 @@ function readBounded(path:string,maximum:number):Uint8Array{
   while(size<b.length){const n=readSync(fd,b,size,b.length-size,null);if(!n)break;size+=n;}check(size>0&&size<=maximum);return b.subarray(0,size);
  }finally{if(fd!==undefined)closeSync(fd);}
 }
-/** Fixed local inputs only; there is no Python, native state, source or overlay fallback. */
+/** Fixed local reviewed inputs only; no Python, native state or source fallback. */
 export function readIndependentCatalogue(root:string):Catalogue{
  const a=CATALOGUE_APPROVAL,dir=resolve(root,'.ci/catalogue-independent',a.registrySHA256);
  const registry=readBounded(resolve(dir,'registry.json'),2_000_000),receipt=readBounded(resolve(dir,'receipt.json'),32768);
  let optional:Uint8Array|undefined;try{optional=readBounded(resolve(root,'.ci/catalogue-independent',a.qualificationSHA256,'qualification.json'),2_000_000);}catch{/* Historical qualifications are optional. */}
- return projectCatalogue(registry,receipt,optional,a);
+ const base=projectCatalogue(registry,receipt,optional,a);
+ try{return applyReviewedSourceObservations(base,readBounded(resolve(root,'../configs/source_observatory/reviewed-source-observations.json'),16384));}catch{return base;}
 }
 
-export type InventoryRow=FactObject&{recordId:string;candidateId?:string;sheet:string;row:number;sourceUrl?:string|null;collectionEnabled:unknown;qualification?:FactObject;qualifiedRecordId?:string};
+export type InventoryRow=FactObject&{reviewedSourceObservation?:ReviewedSourceObservation;recordId:string;candidateId?:string;sheet:string;row:number;sourceUrl?:string|null;collectionEnabled:unknown;qualification?:FactObject;qualifiedRecordId?:string};
 export type InventoryPage=FactObject&{records:InventoryRow[]};
 /** Same exact joins as the historical decorator, without operational gates or a new readAt. */
 export function decorateIndependentInventory(page:InventoryPage,registry:Catalogue|undefined):InventoryPage{
@@ -124,6 +125,8 @@ export function decorateIndependentInventory(page:InventoryPage,registry:Catalog
  if(valid)output.qualifiedCount=registry?.qualification.qualifiedCount;
  output.records=page.records.map(r=>{
   const row:InventoryRow={...select(r,INVENTORY_ROW_FIELDS),recordId:r.recordId,sheet:r.sheet,row:r.row,collectionEnabled:null,operationalState:'unknown'};
+  const observed=byId.get(r.candidateId??'');
+  if(observed?.reviewedSourceObservation&&observed.sourceUrl===r.sourceUrl&&observed.origin.sheet===r.sheet&&observed.origin.row===r.row)row.reviewedSourceObservation=observed.reviewedSourceObservation;
   if(!valid)return row;
   const proposed=byId.get(r.candidateId??'');const prior=proposed&&proposed.origin.sheet===r.sheet&&proposed.origin.row===r.row&&proposed.sourceUrl===r.sourceUrl?proposed:undefined;
   const roster=registry?.rosterAssessments.find(x=>x.recordId===r.recordId&&x.candidateId===r.candidateId&&x.sheet===r.sheet&&x.row===r.row&&x.sourceUrl===r.sourceUrl);
@@ -135,4 +138,21 @@ export function decorateIndependentInventory(page:InventoryPage,registry:Catalog
   if(platform)row.platformAssessment=platform;
   return row;
  });return output;
+}
+
+export type ReviewedSourceObservation={candidateId:string;sourceUrl:string;registrySHA256:string;workbookSHA256:string;sourceObservedAtUTC:string;sourceClosedAtUTC:string;messageCount:number;admittedForecasts:0;publishedFrom:string;publishedThrough:string;totalMessageCount:null;suffixHTMLUnexamined:true;claimIds:string[];adminHref:string};
+const OBSERVATION_SHA='e4c97ea493c5ef304eae72e419f2e4ae9fd8b6709ddec5eb5d0ef6839e082853';
+export function applyReviewedSourceObservations(base:Catalogue,raw:Uint8Array):Catalogue{
+ try{
+  const descriptor=object(decode(raw,OBSERVATION_SHA,16384));check(descriptor.schemaVersion==='robin-reviewed-source-observations-v1'&&Array.isArray(descriptor.observations)&&descriptor.observations.length===1);
+  const value=object(descriptor.observations[0]);
+  check(value.candidateId==='catalogue:fdf2c770bfb309bc55a9cbae8f6085742f6db7fa483bcf620679aa96414c4a0b'&&value.sourceUrl==='https://t.me/s/betsoccer');
+  check(value.registrySHA256===object(base.receipt).registrySha256&&value.workbookSHA256===object(base.receipt).sourceWorkbookSha256);
+  check(value.status==='STRUCTURED_MESSAGES_UNQUALIFIED'&&value.messageCount===10&&value.admittedForecasts===0&&value.sourceReady===false&&value.personalIdentityVerified===false&&value.recurringCollectionActive===false&&value.totalMessageCount===null&&value.suffixHTMLUnexamined===true);
+  check(value.adminHref==='/expert/admin-collecte'&&Array.isArray(value.claimIds)&&value.claimIds.length===2);
+  for(const k of ['sourceObservedAtUTC','sourceClosedAtUTC','publishedFrom','publishedThrough'])check(typeof value[k]==='string'&&Number.isFinite(Date.parse(value[k]as string)));
+  const observation=JSON.parse(JSON.stringify(value))as ReviewedSourceObservation;
+  const candidates=base.candidates.map(c=>c.id===value.candidateId&&c.sourceUrl===value.sourceUrl&&c.origin.sheet==='Catalogue'&&c.origin.row===308&&c.origin.workbookSha256===value.workbookSHA256?{...c,reviewedSourceObservation:observation}:c);
+  return {...base,candidates};
+ }catch{return base;}
 }

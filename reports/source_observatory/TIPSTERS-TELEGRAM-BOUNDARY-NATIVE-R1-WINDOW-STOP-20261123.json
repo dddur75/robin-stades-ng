@@ -1,0 +1,43 @@
+{
+  "DNS": 0,
+  "SSLCertRequired": true,
+  "SSLHostnameChecked": true,
+  "TCP": 0,
+  "bridgeSyntheticProbePassed": true,
+  "collectExecuted": false,
+  "configSHA": "3e38709326ab1d8131c41e221668e92f6d07980d61b16dd2f56e2a0879af6007",
+  "loaderExecuted": true,
+  "mainExecuted": false,
+  "manifestSHA": "6623ae470431f24c2beec1e103c829631a1e12a0c18e0923d9fce94d8579398b",
+  "nativeJobs": 0,
+  "observerSHA": "69947fb4b0f12378b55727866c0f39cefe758a4c26f7659619534cc93d37b6f8",
+  "outerSHA": "ad7bcecba11b3281ffc5a6c46bdfde9620be561a47cb369881c8af98da5a2c5e",
+  "parentGrant": "00c510be74e53670311cf506a0813121e4a741e75d3501306e91b78a979e5ee6",
+  "parserSHA": "a7a0da012b63717c76a68ed89f7940d9de7f1568cb27abcb90bf28111b63a5f7",
+  "planSHA": "b1ccf15e860f1b4ed906740a3c784c3babf7927c82417b93b9a00e04b6012989",
+  "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+  "realAuthorityValidated": false,
+  "sourceDecisionSynthetic": true,
+  "sourceGET": 0,
+  "spawns": 0,
+  "status": "WINDOW_STOP_NO_SOURCE_AUTHORITY",
+  "transportSHA": "fc19e9274c13cc557d58b73d660aa66f00ecc1e380ac895325e0d7026000fa62",
+  "workerSHA": "eb196c759da13cfdabb8408851e6b7ce877c4fdbbea28fd070b37cbae970f732",
+  "generatedAt": "2026-11-23T13:47:03.194Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.BOUNDARY.NATIVE.R1.WINDOW.STOP.20261123",
+  "missionId": "TELEGRAM_BOUNDARY_WITNESS_NATIVE_R1_20261123",
+  "scope": "Loader, strict SSL and empty synthetic bridge passed independently. E1 durable closure cutoff13:45:45.542551UTC was missed. No SOURCE decision, native Job or GET was issued. Mission closed; no residual quota or automatic relaunch. Latest historical native fine cause remains UNKNOWN.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BOUNDARY.OBSERVER.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.MESSAGE.CONTRACT.NATIVE.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.EU.DSA.NATIVE.DOCS.E1.RESULT.20261122"
+  ],
+  "newForecasts": 0,
+  "sourceReady": false
+}

@@ -1,0 +1,30 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.DISCOVERY.PRIVATE.RESULT.20261123",
+  "missionId": "NOTBETTING_OWNER_DISCOVERY_PRIVATE_E1_20261123",
+  "generatedAt": "2026-11-23T14:52:43.070Z",
+  "status": "PRIVATE_SELECTED_RECORD_ADAPTER_ACCEPTED_PENDING_BINDING",
+  "scope": "IndependentC0/C1/C4 accept selected-record synthetic component only. Two passes useprovidedsharedbudget≤150k, <=4occurrences; contextTrue is callerattestation requiringfutureprovenselector. Captureonlyselectedrecord,4canonicalUUIDstrictsame+sourceboundedlabelinRAM then unchangedBASEqualification; exactselectedpick+ownerhash/projectionqualified required. Sourcevalues/fullprojectionnotreturned; closedprivatehashes/enums/counts only. profileCount is syntheticcomponent-passedownerhashes, not appprofiles/humans/newnativecontract.6GREENonce/criticalRuff0; no RED/mypy/fullRuff/dedicatedcompile claim. Author258.342s<300 butsoft240miss18.342. No selector/nativecaller/SD/Job/GET/admission/sourceReady. Historical21Novrecords provide scopedstructureevidenceonly, no canonical/global readiness.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREDICATE.FINAL.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREDICATE.POSTFIX.PRIVATE.REVIEW.RESULT.20261123"
+  ],
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "adapterSHA": "68ad085bb7f6406467d1d278be83d05a36ecebbf5c7e0e2d8e212c42f8cb8dcc",
+  "testSHA": "984b772634f127e70e5cb3149c64a046f9268619193c8655e62571cf86979b33",
+  "codeMapCAN": "c4aef79d61c9825bb00b7efa4993c37016ac1de35f0aa6579165ada967698696",
+  "tests": 6,
+  "criticalRuffExit": 0,
+  "fullMypyExecuted": false,
+  "fullRuffExecuted": false,
+  "dedicatedCompileExecuted": false,
+  "authorStoppedAt": "2026-11-23T14:44:19.969313+00:00",
+  "authorSeconds": 258.341886
+}

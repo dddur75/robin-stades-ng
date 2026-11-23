@@ -1,0 +1,34 @@
+{
+  "parentGrant": "911e6530a796f5c70eb9bf50654149e8374a3bd8ff3a5924d324fd76504b889b",
+  "planSHA": "9c987595db901e90566f634db1c546d6693b97e84ecb0f04a1ca81e42d3f72a9",
+  "manifestSHA": "892ebcd6f7bc4e9d501de3547fd0047ca7b6439c2af57e378e07914bbc0ac1f6",
+  "configSHA": "54acc58809ca53bb4272d09abb4b858dbf898fa15cecfccc1cdc426c95a852d7",
+  "workerSHA": "6ede7261e35d9aee5e0cdc9c8d9256968d8ccf14ae981326764a20798e141156",
+  "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+  "outerSHA": "7d830674c5063f2f3abda92de1afdd3d09cf44142377ad1898a224c9f2cd6b71",
+  "policySHA": "477a2f7bd5daf28d6c4cc72d07a36d30051c5c4f398e316ad0ada36b81dd1247",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.STRUCTURED.NATIVE.R1.E1.RESULT.20261123",
+  "missionId": "NOTBETTING_OWNER_STRUCTURED_NATIVE_R1_20261123",
+  "generatedAt": "2026-11-23T15:37:32.331Z",
+  "status": "EXACT_FROZEN_FULL_LOADER_SSL_SYNTHETIC_PROBE_PASS_E1_ONLY",
+  "scope": "IndependentC0/C1/C3/C4 exactcode/pin/binding reviews acceptedactualfull_load_components strictSSL underDENYbeforeimports/RAMfakeSD. Nineofficialcalendarrows+emptyownerbridgeprobe. No collect/storage/sourceSD/rootspents/Job/GET or realauthorityvalidation. ManifestV2explicitboundedPRIVATEstructuredstorage; rawproviderHTML/notproviderJSEXEC/stdout-model-Git data0. No nativehuman/admission/compatibilityclaim; freshSOURCEkeys required AFTER durableclose.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.NATIVE.OWNER.STORAGE.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.SELECTOR.BRIDGE.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.DISCOVERY.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CURRENT.TERMS.PERSONAL.CONTEXT.RESULT.20261123",
+    "DATA.SOURCE_OBSERVATORY.BUNDES.J11.FUTURE.UTC.PROGRAMME.RESULT.20261123"
+  ],
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "actualLoaderExit": 0,
+  "primarySHA": "08c6ac0364839a0b50eabe4a6d2fabf8446d3c92e50186bf2616ac5c811eb20b"
+}

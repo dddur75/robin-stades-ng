@@ -1,0 +1,32 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.APP.WARM.FINAL.BINDING.R3.LOCAL.CLOSE.20261123",
+  "missionId": "SOURCE_OBSERVATION_WARM_FINAL_BINDING_R3_20261123",
+  "generatedAt": "2026-11-23T17:35:54.140Z",
+  "status": "TARGETED_API_DELIVERED_BROWSER_NOT_EXECUTED",
+  "keys": [
+    "C0",
+    "C1",
+    "C3"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.APP.WARM.FINAL.BINDING.R3.ACTUAL.API.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.UI.CANARY.CONTROLLER.E1.PARTIAL.20261123"
+  ],
+  "scope": "Warm-onlysubstepfulfilledandindependentlyC1/C3verified:1mtime/contentunchanged/APIreviewedvisible/owner6204same/noerror. MainE2stagecut17:32:29.240077reached; browserneverauthorised/executedbecausecandidateP1/authorphaseexpired. OldMFremaining3API/browserquotaREVOKEDNOTreset/rearmed. UserlocalAPIannotationworks, nofullUI/globaldelivery claim. NextUIinspectionisanindependentnewmissionwithOWN3loopbackreads/onebrowser andacceptedwarmproof reused, zeroprovider/source/admission.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "configTouches": 1,
+  "configContentUnchanged": true,
+  "apiReads": 1,
+  "apiStatus": 200,
+  "reviewedVisible": true,
+  "ownerPID": 6204,
+  "manualStops": 0,
+  "serverLaunches": 0,
+  "browserExecuted": false,
+  "primarySHA": "784e4d3df54ecad6a1e1d6d0405e68254b688e2072e4347117b4658a13da78f0",
+  "resultSHA": "a79c3333daa6d522c703785ce90ccd67fa2753aab14a4c053a7e6751a59f1f8e",
+  "bodySHA": "f87c7665290500494d69d2dac38191996ff406a8f3865d45b4f3b674c0a3adc2"
+}

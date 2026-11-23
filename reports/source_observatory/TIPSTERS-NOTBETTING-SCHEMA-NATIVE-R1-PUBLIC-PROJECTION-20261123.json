@@ -1,0 +1,36 @@
+{
+  "generatedAt": "2026-11-23T18:35:21.500Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.SCHEMA.NATIVE.R1.PUBLIC.PROJECTION.20261123",
+  "missionId": "SOURCE_OBSERVATION_PUBLIC_DELIVERY_V29_20261123",
+  "status": "PUBLIC_METADATA_REDACTION_NO_AUTHORITY_CHANGE",
+  "scope": "Public projection removes only private technicalFieldTypesOnly and adds explicit provenance. Original report bytes/hash retained outside Git; old claim/hash and ledger unchanged. No source result, identity, forecast or authority is upgraded.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.SCHEMA.NATIVE.R1.ACTUAL.RESULT.20261123"
+  ],
+  "originalReportSHA256": "cf8806b2cdf50cc02ebe7064199a1e183e734e0d09f6fecd4ec0a717b700f191",
+  "projectedReportSHA256": "c75ece2bdab9212df19236a8b9b5a651afcfb8f4bb49c3b2e990f7383f358de8",
+  "removedFields": [
+    "technicalFieldTypesOnly"
+  ],
+  "privateOriginalRetained": true,
+  "artifact_hashes": {
+    "reports/source_observatory/TIPSTERS-NOTBETTING-SCHEMA-NATIVE-R1-ACTUAL-RESULT-20261123.json": "c75ece2bdab9212df19236a8b9b5a651afcfb8f4bb49c3b2e990f7383f358de8"
+  },
+  "artifact_hash_algorithm": "SHA-256",
+  "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+  "artifact_path_count": 1,
+  "engineering_projection_sha256": "fe1748018d55bdc50328aaeb923946cff92827449592f1c94130a87615a25b47",
+  "code_revision": "precommit-projection:fe1748018d55bdc50328aaeb923946cff92827449592f1c94130a87615a25b47",
+  "supersedes": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.SCHEMA.NATIVE.R1.ACTUAL.RESULT.20261123"
+  ],
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "allCompatibleIntegrated": false
+}

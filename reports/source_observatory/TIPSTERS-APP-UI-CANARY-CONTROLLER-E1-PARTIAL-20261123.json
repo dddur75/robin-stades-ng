@@ -1,0 +1,23 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.APP.UI.CANARY.CONTROLLER.E1.PARTIAL.20261123",
+  "missionId": "SOURCE_OBSERVATION_UI_CANARY_CONTROLLER_E1_20261123",
+  "generatedAt": "2026-11-23T17:35:52.251Z",
+  "status": "PARTIAL_FAIL_AND_STOP_NO_BROWSER",
+  "keys": [
+    "C0",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.APP.SOURCE.OBSERVATION.UI.UTF8.FIX.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.SOURCE.OBSERVATION.INTEGRATION.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.WARM.FINAL.BINDING.R3.E1.RESULT.20261123"
+  ],
+  "scope": "C4authorphaseexpired17:30:17.819, actualSTOPobserved17:30:35.186 notfalselymtime. Onlycanary.mjs11025B existsSHA bc1345132dafbb2b01725a466ce0d385ef3107e74d3e840d7a0c8916e91e9ced; noresult/map/syntax proof. RootreadconfirmsP1 repeatedpre60000undersame60000monotonic impossibleentry, timerstartsafterlaunch, panelcountbeforewait races. No browser/API everexecuted, no promotion/runofcandidate. Newsmallcorrectivecontrollerneeded; no3rdunchanged/sourceeffect.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "browserExecuted": false,
+  "appApiReads": 0,
+  "candidateSHA": "bc1345132dafbb2b01725a466ce0d385ef3107e74d3e840d7a0c8916e91e9ced"
+}

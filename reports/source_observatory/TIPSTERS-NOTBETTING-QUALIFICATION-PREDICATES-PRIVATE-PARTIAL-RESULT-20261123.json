@@ -1,0 +1,89 @@
+{
+  "capturedAt": "2026-11-23T14:12:22.644Z",
+  "missionId": "NOTBETTING_QUALIFICATION_PREDICATES_PRIVATE_E1_20261123",
+  "status": "PARTIAL_NOT_SOURCE_ELIGIBLE",
+  "scope": "Only selected-record prototype present, no selector4/pending/globalsharedbudget/nativecaller. Author declaredSTOP14:11:13Z afterhard14:11:03.597; filemtime evidence below does not prove an earlier exact authorSTOP. No result/code-map/scaled readiness invented. All existing inputs retained unchanged; no latecompletion. Independent C1/C4 agree partialretention only, no CODE/SOURCE promotion. Two byteidentical3PASS receipts do not independently distinguish two runs:6methodexec/4process are authorreports, not measuredunique runproof. Full returnprojection may contain sourcevalues/picks; never persist/expose a native fullreturn. Only12closedbool/null+firstStopenum may become future output after strict integration. COMPONENTS_PASS is localexecution point, not business/globalqualification.",
+  "files": [
+    {
+      "file": "final-ruff-primary.json",
+      "sha256": "706c31705632271cf9622200d85f72bb3d0469a10e55d346de32793c793ced99",
+      "bytes": 546,
+      "modifiedAt": "2026-11-23T14:10:47.970Z"
+    },
+    {
+      "file": "final-test-primary.json",
+      "sha256": "c94845e62805b98f220975a072c0019d0b14d1c2493d6b45c950506866481f79",
+      "bytes": 757,
+      "modifiedAt": "2026-11-23T14:10:47.858Z"
+    },
+    {
+      "file": "parent-qualifier.py",
+      "sha256": "cc6362abca54c16b94651198f2427072d29bcfe6872074c8b8a1edb791efece9",
+      "bytes": 24280,
+      "modifiedAt": "2026-11-23T14:08:09.819Z"
+    },
+    {
+      "file": "predicate-schema.json",
+      "sha256": "1a6dc3534c7b92cd36a1d25cd086e1b593b98987127dc9fcf0a1572c6ea65ba2",
+      "bytes": 1148,
+      "modifiedAt": "2026-11-23T14:10:47.657Z"
+    },
+    {
+      "file": "predicates.py",
+      "sha256": "c9b8a8befe119449a3edd4a3f3aa3abf414229e41bc7ca6a40644eda4dd9c7ca",
+      "bytes": 7672,
+      "modifiedAt": "2026-11-23T14:10:47.656Z"
+    },
+    {
+      "file": "record_index.parent.py.txt",
+      "sha256": "56a9027a85c8487bcc230214b6cbc099ba21009d332ea1538c9b2ca6c6dfec08",
+      "bytes": 7927,
+      "modifiedAt": "2026-11-23T14:08:09.819Z"
+    },
+    {
+      "file": "ruff-primary.json",
+      "sha256": "706c31705632271cf9622200d85f72bb3d0469a10e55d346de32793c793ced99",
+      "bytes": 546,
+      "modifiedAt": "2026-11-23T14:10:09.912Z"
+    },
+    {
+      "file": "safe-start.json",
+      "sha256": "57a3fa59d36af3a00783b98f79a016f806b16b84298ea2ba4c3ab23641b9cea1",
+      "bytes": 3496,
+      "modifiedAt": "2026-11-23T14:08:09.819Z"
+    },
+    {
+      "file": "test-primary.json",
+      "sha256": "c94845e62805b98f220975a072c0019d0b14d1c2493d6b45c950506866481f79",
+      "bytes": 757,
+      "modifiedAt": "2026-11-23T14:10:09.815Z"
+    },
+    {
+      "file": "test_predicates.py",
+      "sha256": "a68b8c6a203f8cee0c6571e229755143b91bca68ffcfdc858d428a08ce099674",
+      "bytes": 2284,
+      "modifiedAt": "2026-11-23T14:10:09.613Z"
+    }
+  ],
+  "missing": [
+    "physicalSelector4",
+    "sharedGlobalWorkAndPendingBudget",
+    "finalAuthorResult",
+    "finalAuthorCodeMap"
+  ],
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "authorReportedMethodExecutions": 6,
+  "authorReportedTargetedProcesses": 4,
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.QUALIFICATION.PREDICATES.PRIVATE.PARTIAL.RESULT.20261123",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.SCHEMA.NATIVE.R1.ACTUAL.RESULT.20261123"
+  ]
+}

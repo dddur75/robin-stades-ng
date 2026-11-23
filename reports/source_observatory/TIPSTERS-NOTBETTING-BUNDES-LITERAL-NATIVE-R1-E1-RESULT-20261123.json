@@ -1,0 +1,33 @@
+{
+  "parentGrant": "da35fef098ba86cd09b32af22aeb3defc72f5eee0a04c0697a830652cd550535",
+  "planSHA": "2de03b051509ee6d691e363d71bb386befba53bd0272f60bdf83f5d69f68e9b4",
+  "manifestSHA": "584b0ddf19c06a8bb7348638b16fb979db340f95fb287291b168c86419786f4e",
+  "configSHA": "5b7c50b66aa39717d50e259c997d37c5dd54c756b47e971f34cc4ebb4f47fa31",
+  "workerSHA": "dc15cf61bfbfeb4eb4d63e3d480361a1b432a17c119529fe790b10d09df863ec",
+  "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+  "outerSHA": "c0779bf07e5bb71eec7aa690037cebe07456341212e70614fe92aeeb1cfbc368",
+  "policySHA": "2926fe57391073fd53ee98db1102dd4d2c33c555521fb8a27a6b1635bcc90c89",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.BUNDES.LITERAL.NATIVE.R1.E1.RESULT.20261123",
+  "missionId": "NOTBETTING_BUNDES_LITERAL_NATIVE_R1_20261123",
+  "generatedAt": "2026-11-23T16:45:09.481Z",
+  "status": "FROZEN_LOADER_SSL_FULL_POLICY_SYNTHETIC_PASS_E1_ONLY",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.BUNDES.LITERAL.SELECTOR.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.LOCAL.SCREENING.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.NATIVE.PENDING.STORAGE.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CURRENT.TERMS.PERSONAL.CONTEXT.RESULT.20261123"
+  ],
+  "scope": "Independentfourkeys accept exactfrozenloader6components/9calendarSSLstrict/emptynewc6b972bridgeclosedtwoaddedcounters, fullpurepolicy4RAMsyntheticcasespositive+3pendingboolrejections. Noactualauthority/collect/store/GETJob/SDspents. CorrectedBundesliteralbeforecap4/noresolve/capraise/shared150k8calls/separatequalified+pending4/32768each, no nativeBundesexistence/human/forecast/globalabsence proof. FreshSOURCEfourkeysAFTERdurableclose required.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "primarySHA": "e500dcffc0d471b53a68c3638bc72928c7b2accf6f0b5bc047b7f158cf9d3246",
+  "policyPrimarySHA": "21cbb9edd83dee888fc279022a0146aabecd289b1c5b3eee1b55c78196873b86"
+}

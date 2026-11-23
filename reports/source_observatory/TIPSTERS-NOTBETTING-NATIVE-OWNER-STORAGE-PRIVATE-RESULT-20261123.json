@@ -1,0 +1,26 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.NATIVE.OWNER.STORAGE.PRIVATE.RESULT.20261123",
+  "missionId": "NOTBETTING_NATIVE_OWNER_STORAGE_PRIVATE_E1_20261123",
+  "generatedAt": "2026-11-23T15:26:34.615Z",
+  "status": "PRIVATE_WORKER_POLICY_COMPONENT_ACCEPTED_PENDING_FULL_BINDING",
+  "scope": "IndependentC0/C1/C4 accept synthetic privateworker/policy delta only. Controlledbridge load+collecttwoFAKEHTTP/no network and realtemporarywx/fsync/readbackSHA,3methods/criticalRuff5files0/RAMcompile6. Optionalcallbackonly exactselectedqualifiedmatch,defaultNoneinvariant,copies<=4/32768 beforeoneconstantprivatefile; sourcevalues/fullprojection notoutput. SourceReady/appAdmissions0; profile/recordcounts not humanverified/globalcanonical. PolicyV2requires3explicitlocalstorage limits, rejectsoldpicksPersisted authorization; oldgrantsnotreused. Completeconfig/SSL/defaultledger/OSJob SOURCE absent. IOfailure noacceptedreceipt,possibleorphan,noatomicityclaim.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.SELECTOR.BRIDGE.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.DISCOVERY.PRIVATE.RESULT.20261123"
+  ],
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "workerSHA": "6ede7261e35d9aee5e0cdc9c8d9256968d8ccf14ae981326764a20798e141156",
+  "adapterSHA": "24ee127d720e659acf40e4e8f91d0949c3b0548e2f4063dc370e2ba978396bfa",
+  "policySHA": "477a2f7bd5daf28d6c4cc72d07a36d30051c5c4f398e316ad0ada36b81dd1247",
+  "outerSHA": "7d830674c5063f2f3abda92de1afdd3d09cf44142377ad1898a224c9f2cd6b71",
+  "tests": 3,
+  "codeMapCAN": "55db950332401f3b0875793244d4df1ac10768c131208437daff5a658e8b7314"
+}

@@ -1,0 +1,23 @@
+{
+  "generatedAt": "2026-11-23T13:54:28.680Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.ADMIN.PRIMARY.LATEST.RUNTIME.RESULT.20261123",
+  "missionId": "ADMIN_NOTBETTING_LATEST_E1_20261123",
+  "status": "LOCAL_ROW_AND_API_ACCEPTED",
+  "scope": "One new primary NotBetting row added to ignored runtime qualification JSON.36 prior rows unchanged,37total; null counts preserved,requests2/admissions0 from accepted record-index actual. One APIloopback200 matches exact normalizeddata; no browser/fulladmin/forecaststock/globalcompatibility acceptance. No sourceGET/task/Git/appcode changes.",
+  "keys": [
+    "C0",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.RECORD.INDEX.STANDALONE.R1.ACTUAL.RESULT.20261123"
+  ],
+  "sourceGET": 0,
+  "localAPIReads": 1,
+  "localAPIStatus": 200,
+  "beforeSHA": "98b0575a7dbac0877f58990fa05a2e135945ee0bcc3df4f4edddc698588181f4",
+  "afterSHA": "657e7b8368a6e1a378c426e9d4afedfefe000eddca4b198a73d44a777b78890d",
+  "oldRowsUnchanged": true,
+  "rows": 37,
+  "newForecasts": 0,
+  "sourceReady": false
+}

@@ -1,0 +1,29 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.APP.SOURCE.OBSERVATION.INTEGRATION.R1.ACTUAL.RESULT.20261123",
+  "missionId": "SOURCE_OBSERVATION_APP_INTEGRATION_R1_20261123",
+  "generatedAt": "2026-11-23T17:05:28.079Z",
+  "status": "PARTIAL_API_REVIEWED_FIELD_ABSENT",
+  "keys": [
+    "C0",
+    "C1",
+    "C3"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.APP.SOURCE.OBSERVATION.INTEGRATION.R1.E1.RESULT.20261123"
+  ],
+  "scope": "IndependentC1/C3 actualreview: sevenRTfiles sameRAW/backups, qualification37→38/twoexistingupdates+oneBextra/other35preserved. OneboundedmanualAPIHTTP200/other4returnedrowsunchanged BUTtargetreviewedfieldABSENT; zero browserexecuted/sourceGET/admission/restart. OneactualretainedtargetmetadataofflinehelperTRUE is NOTactiveAPIrepair orfull317replay. PriorprivatepartialreceiptstatusMODULE_NOT_REFRESHED is UNPROVENhypothesis; this additiveclaimcorrectscause=UNKNOWN(loading/path/cache). DoNOTrewriteoriginalreceipt. 6204commandlinescript+sourceproveRTrootcreateServer only, NOTyetTCP4173ownership/env. OldscopeFAIL_AND_STOP/remaindersclosed; newownedrecoveryrequiresownership/config/envproofs+freshkeys.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "runtimeFilesCopied": 7,
+  "qualificationRowsAfter": 38,
+  "manualApiReads": 1,
+  "browserExecuted": false,
+  "reviewedFieldVisible": false,
+  "activeFailureCause": "UNKNOWN",
+  "runtimeCopySHA": "b160312e3ed6e60871f36deeab770dfd24e8c2ee9d2a50114f709e640908039e",
+  "manualApiSHA": "08ca9028655221ec2370bfc976d214b5ff6fb46d249160c0a137e09ba2470ddc",
+  "partialReceiptSHA": "bfe434938b4333d68fd9f658aa99b2b62bffa1f132af45740b7ffead73f99a08",
+  "offlineSingleTargetSHA": "94c9b3ed2974d0e1590ef4718e276a878b988dd85f58c240652078178fc8ba16"
+}

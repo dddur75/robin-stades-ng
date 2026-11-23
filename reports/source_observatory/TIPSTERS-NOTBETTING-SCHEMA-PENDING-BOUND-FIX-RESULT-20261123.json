@@ -1,0 +1,30 @@
+{
+  "generatedAt": "2026-11-23T13:49:00.829Z",
+  "missionId": "NOTBETTING_SCHEMA_PENDING_BOUND_FIX_E1_20261123",
+  "writer": "C0",
+  "status": "PRIVATE_HELPER_ACCEPTED_QUALITY_PARTIAL",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "schemaSHA": "065edaf7bec1c00e1a7224c3c7b83a5a82e6e7fbe38427f44f79902302130f05",
+  "testsSHA": "7daac7795107c2952bdc35cc993bc2d9443816a340d741982d360086ffede6a9",
+  "targetedProcesses": 5,
+  "targetedProcessesMax": 5,
+  "redMethods": 1,
+  "redObservedReservedWork": 160009,
+  "greenMethods": 12,
+  "syntheticMethodExecutions": 13,
+  "syntheticMethodExecutionsMax": 13,
+  "mypyStrictExit": 0,
+  "ruffExit": 1,
+  "scope": "Only list and dict guards changed: reserve queued work; dict conservatively reserves all keys+children before pruning. Wide/deep regression inspects actual pending stack, failed160009 before fix and passes after. Initial Ruff failure primary not saved due thrown exec; one bounded rerun retained exact diagnostic. No source caller/native authority. Original defective helper retained immutable. Independent C1/C3/C4 accept invariant visitedNodes+pending<=150000 and unchanged privacy. GREEN/mypy numericexit is derived from successful exec resolution, absent in saved JSON; test and Success strings are directly retained. Ruff remains1. No exact authorSTOP timestamp claimed; result timestamp is beforehardexpiry.",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.SCHEMA.PENDING.BOUND.FIX.RESULT.20261123",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": []
+}

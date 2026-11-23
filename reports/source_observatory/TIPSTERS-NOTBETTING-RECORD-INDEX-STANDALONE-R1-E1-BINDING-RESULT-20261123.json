@@ -1,0 +1,35 @@
+{
+  "planSHA": "fb927d95205a3cf4adfa95dc780697e5da177d611098897d7188296dc4ded64c",
+  "manifestSHA": "977e7db39a30b19aa94e4b20837c5e0db0d97399d358e549de60cb1af1c50f5e",
+  "configSHA": "504c417e8f20bc2f4d63d19394983a201b29a316b779cec9acd1a3fbca7a0bc3",
+  "workerSHA": "0f7cf7e2b5c19a1f70c41a3235ec7964564712ba239f774eaf20771c09b024cc",
+  "outerSHA": "d9876f8c48395d14b43b22c07f1d354ed38e6f316d1714e6190ef3e5e2c2e1db",
+  "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+  "parentGrant": "8a91ff764fad5eb23d619962bf0ddb3adb783b47c62772517da9f17c71a72ccd",
+  "generatedAt": "2026-11-23T13:19:15.442Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.RECORD.INDEX.STANDALONE.R1.E1.BINDING.RESULT.20261123",
+  "missionId": "NOTBETTING_RECORD_INDEX_FIRST_NATIVE_STANDALONE_R1_20261123",
+  "status": "E1_FROZEN_INDEX_CALLER_FULL_LOAD_ACCEPTED_NO_SOURCE_AUTHORITY",
+  "scope": "Fresh standalone first-native-record-index package after old window closed without any record-indexJob/GET. Seven frozen components plus calendar/context unchanged, paths and selfpins rebound. Exact actualsixcomponent loader with9retained programme rows andSSLhostname passed under external auditDENY; one RAMsynthetic sidecar only,0fetch/collect/main/Job/source. No actualauthority/serverTLS/confinement/business admissibility proven. New budget distinct, old authority/quota not transferred.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.RECORD.INDEX.R2.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.RECORD.INDEX.CALLER.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.RECORD.INDEX.NATIVE.R2.WINDOW.STOP.20261123",
+    "DATA.SOURCE_OBSERVATORY.BUNDES.J11.FUTURE.UTC.PROGRAMME.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CURRENT.TERMS.PERSONAL.CONTEXT.RESULT.20261123"
+  ],
+  "primarySHA256": "352779de6fdae4a79da9cc76c4442b350ffa9fb3949ac705f97854d515148984",
+  "loadedCalendarRows": 9,
+  "elapsedSeconds": 0.09400000001187436,
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "admissions": 0,
+  "sourceReady": false
+}

@@ -1,0 +1,28 @@
+{
+  "planSHA": "6f18e7b491e609f6931deaf3c39c9756803eaeb8996d7a527a94aa5876b74144",
+  "manifestSHA": "e24653bcc2a14adc8509eafd5bd50d76195d51bb78f824b6814c7f8f6d558859",
+  "controllerSHA": "c270535d2715b27a3b18c3a12dd011ea1847993ce62ec273ff5862c287f51655",
+  "durabilitySHA": "81238957ad82a5b7f94addce5d24deec6bd1dc728bf3a22b8c626e17ff34c8a2",
+  "ownershipSHA": "c3f5afe2906c9c37e3fc25c5d78259760fc4b0fa5c8bbf17c916d3a4f0abcc6f",
+  "claimId": "ENG.SOURCE_OBSERVATORY.APP.WARM.FINAL.BINDING.R3.E1.RESULT.20261123",
+  "missionId": "SOURCE_OBSERVATION_WARM_FINAL_BINDING_R3_20261123",
+  "generatedAt": "2026-11-23T17:25:15.607Z",
+  "status": "REUSED_ACCEPTED_CODE_FRESH_BINDING_E1_PASS_ONLY",
+  "keys": [
+    "C0",
+    "C1",
+    "C3"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.APP.WARM.DURABLE.R2.FINAL.CODE.ARTIFACT.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.SOURCE.OBSERVATION.INTEGRATION.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.SOURCE.OBSERVATION.UI.UTF8.FIX.RESULT.20261123"
+  ],
+  "scope": "C1/C3accept exactnewbinding: onlyDdirectoryliteralchanged, inversebyteequalsacceptedd0ab; helper8123/ownershipc3f5 unchanged, planexplicitpins, syntaxPASS, twofsyncclocktestsreused/no replay. No touch/API/browser/stop/start/SOURCE. OldR2closedlate/unusedquotaNOTreused; freshE2LOCALkeysneededafterdurableclose. EXPLICITdocumentarycorrection: priorchatexpiry17:32:59.027 wasincorrect; actualimmutableMF/PLANexpiry17:32:59.191Z isauthoritative, no file/timechange/reset. C0mayretainstricter027boundalso withoutincrease. WARMONLYone touch/probe, zero cold/browservia controller; authorityexternallyissuedC0notgenericdistributedcontroller.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "manifestExpiry": "2026-11-23T17:32:59.191Z",
+  "conservativeExpiry": "2026-11-23T17:32:59.027Z"
+}

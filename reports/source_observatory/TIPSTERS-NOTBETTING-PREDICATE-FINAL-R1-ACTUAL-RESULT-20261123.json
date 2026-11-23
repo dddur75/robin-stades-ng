@@ -1,0 +1,39 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREDICATE.FINAL.R1.ACTUAL.RESULT.20261123",
+  "missionId": "NOTBETTING_PREDICATE_FINAL_BINDING_R1_20261123",
+  "generatedAt": "2026-11-23T14:36:07.494Z",
+  "status": "PARTIAL_CAMPAIGN_STOP",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREDICATE.FINAL.R1.E1.BINDING.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREDICATE.POSTFIX.PRIVATE.REVIEW.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.SCHEMA.NATIVE.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CURRENT.TERMS.PERSONAL.CONTEXT.RESULT.20261123"
+  ],
+  "scope": "Sanitized public-safe receipt only: hashes/times/HTTPcounts/closedfirstStop aggregate. One authorizednativejob/twoGET consumed thenSTOP, no retries/remainder/oldquota. Four sampledphysicaloccurrences stopOWNER_NOT_TARGET, not fouruniqueauthors/forecasts or proof configuredtargetgloballyabsent or filterincorrect. Later owneridentity/fixture/date predicates remainunreached, notfalse. Individualstates/sourcevalues/fullprojection areprivate-model-only and notcopiedhere. SourceReadyfalse/admissions0/appTask0/globalCoverageUNKNOWN. No allcompatible or operationalcollectionupgrade.",
+  "sourceDecisionSHA": "10cdbd5fe2a2dc5031238808a98be777eb9fb3bb0991492a790c2f8bef88329b",
+  "sourceGET": 2,
+  "httpStatusCounts": {
+    "200": 2
+  },
+  "firstStopAggregate": {
+    "OWNER_NOT_TARGET": 4
+  },
+  "nativeJobSeconds": 1.2659999999741558,
+  "authorizedAt": "2026-11-23T14:33:20.882920+00:00",
+  "observedAt": "2026-11-23T14:33:22.716851+00:00",
+  "workerClosedAt": "2026-11-23T14:33:22.773828+00:00",
+  "nativeResultSHA": "6fdff37fb99071a1a032c4a4e22573b9438eda70c5a22e02cea7928e75cf4a7a",
+  "privateDiagnosticSHA": "4fb2bd29c48fe0b82d012a77cd829e6cd03faccd85247a38ec1e2a0554320507",
+  "nativePrimarySHA": "a2db3a24d277fb7f8a24b2863cd59963c284d1cddd67f9ab70db819056f84a6b",
+  "newForecasts": 0,
+  "admittedCount": 0,
+  "candidateCount": null,
+  "sourceReady": false,
+  "globalCoverage": "UNKNOWN"
+}
