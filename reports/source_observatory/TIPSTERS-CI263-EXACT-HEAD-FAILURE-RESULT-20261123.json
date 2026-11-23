@@ -1,0 +1,37 @@
+{
+  "generatedAt": "2026-11-23T11:35:16.159Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI263.EXACT.HEAD.FAILURE.RESULT.20261123",
+  "missionId": "CI263_EXACT_HEAD_READ_ONLY_WATCH_20261123",
+  "status": "CI_TERMINAL_FAILURE",
+  "scope": "C1 independently followed exact corrective HEADe87e627 to terminal CI263.17 completed jobs:14success/3failure/no skipped. PG import-lint failures resolved. Provider-free server-artifact step fails six CommonJS no-require-imports lint errors plus one nonfatal warning; Quality fails105mypy errors in2source modules(19Coteur/86NotBetting); aggregator refuses failures. No rerun/cancel/remote mutation. Exact GitHub finish time not returned, remainsunknown.",
+  "keys": [
+    "C0",
+    "C1"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V24.ENGINEERING.RECETTE.20261123",
+    "ENG.SOURCE_OBSERVATORY.CI262.IMPORTS.CORRECTIVE.RESULT.20261123"
+  ],
+  "head": "e87e627c0ea1f6bfe7a57356b7230422f477fa65",
+  "run": 45163220904,
+  "number": 263,
+  "GitHubStatus": "completed",
+  "GitHubConclusion": "failure",
+  "GitHubCompletedAt": null,
+  "jobs": {
+    "total": 17,
+    "success": 14,
+    "failure": 3,
+    "skipped": 0
+  },
+  "failedJobs": [
+    137654947503,
+    137657377044,
+    137659888191
+  ],
+  "managedReads": 13,
+  "readCeiling": 90,
+  "minimumIntervalSeconds": 30,
+  "sourceGET": 0,
+  "newForecasts": 0
+}

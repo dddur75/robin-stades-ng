@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-11-23T11:35:14.556Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.RECORD.INDEX.NATIVE.R2.WINDOW.STOP.20261123",
+  "missionId": "NOTBETTING_RECORD_INDEX_NATIVE_R2_20261123",
+  "status": "PARTIAL_NO_NATIVE_OBSERVATION_ENTRY_WINDOW_EXPIRED",
+  "scope": "Real dependency load succeeded0.109s; fresh SOURCE code key was not available before mandatory full80s entry window. C3 explicitly refused late execution. Original family expiry preserved, no reset/rearm/nativeJob/GET or actual SOURCE decision created. This does not qualify source content, business anchor, admissible tips or global compatibility.",
+  "keys": [
+    "C0",
+    "C3"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.RECORD.INDEX.NATIVE.R2.E1.BINDING.RESULT.20261123"
+  ],
+  "originalExpiry": "2026-11-23T11:27:56.234Z",
+  "latestEntry": "2026-11-23T11:26:36.234Z",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "sourceReady": false,
+  "newForecasts": 0,
+  "actualSDPresent": false,
+  "nativeSpentPresent": false
+}

@@ -1,0 +1,32 @@
+{
+  "generatedAt": "2026-11-23T11:50:57.919Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI263.TYPING.CJS.PRIVATE.REVIEW.RESULT.20261123",
+  "missionId": "CI263_PRIVATE_CORRECTIONS_REVIEW_E1_20261123",
+  "status": "INDEPENDENT_PRIVATE_CANDIDATES_ACCEPTED",
+  "scope": "C1 C3 C4 independently accepted two annotation-only private candidates and exact-file ESLint override. Runtime business AST and import bindings preserved, no admission or source readiness change. Integration and global CI validation are separate.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.CI263.EXACT.HEAD.FAILURE.RESULT.20261123"
+  ],
+  "candidateSHA256": {
+    "coteur": "21c45019ae58cf4415811a73587fe3c09db5d678f85eaa74edef853af348584a",
+    "notbetting": "57888da1fdc75c4b83b5fdc2a6366cec444d8c0b89b8bf5ae6eecfc0570aa2e8"
+  },
+  "testsPassed": 46,
+  "privateStrictMypyErrors": 0,
+  "ESLint": {
+    "errorsBefore": 6,
+    "errorsAfter": 0,
+    "warningsAfter": 1,
+    "otherTSRuleLevel": 2,
+    "CLIBytesUnchanged": true
+  },
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "sourceReady": false
+}

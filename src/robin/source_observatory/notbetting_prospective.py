@@ -4,8 +4,13 @@ module validates binding, never authenticates a decision or grants permission.
 """
 import json
 import re
+from collections.abc import Callable
 from datetime import datetime, timezone
 from hashlib import sha256
+from typing import Any
+
+# JSON payload boundaries are polymorphic; reference identity remains precise.
+ReferenceChain = tuple[tuple[str, tuple[str, ...]], ...]
 
 MAX_VISITS = 150000
 MAX_DEPTH = 40
@@ -17,10 +22,10 @@ UUID = re.compile('[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}')
 SKIP = re.compile('stats|statistics|recommend|suggest|reco|analysis|description|biography|contact', re.I)
 GATES = ('isPaid', 'isPremium', 'requiresAuth', 'authenticatedOnly', 'isLocked')
 
-def canonical(value):
+def canonical(value: object) -> bytes:
     return json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(',', ':'), allow_nan=False).encode()
 
-def instant(value):
+def instant(value: object) -> datetime:
     if not isinstance(value, str) or len(value) > 80:
         raise ValueError('AWARE_DATE_REQUIRED')
     result = datetime.fromisoformat(value.replace('Z', '+00:00'))
@@ -28,13 +33,15 @@ def instant(value):
         raise ValueError('AWARE_DATE_REQUIRED')
     return result.astimezone(timezone.utc)
 
-def qualify_documents(documents, fixtures, observed, *, ownerSpec, competition, responseSHA, parserSHA, calendarClaim, calendarSHA, known=None, _observer=None):
+def qualify_documents(documents: dict[str, Any], fixtures: list[dict[str, Any]], observed: datetime, *, ownerSpec: dict[str, Any], competition: str, responseSHA: str, parserSHA: str, calendarClaim: str, calendarSHA: str, known: list[dict[str, Any]] | None = None, _observer: Callable[[dict[str, Any]], object] | None = None) -> dict[str, Any]:
     """Private opaque picks; partial traversal or global contradictions clear all."""
     if not isinstance(documents, dict) or not isinstance(fixtures, list) or (not 0 < len(fixtures) <= 32) or (not isinstance(observed, datetime)) or (observed.tzinfo is None) or (observed.utcoffset() is None) or (competition not in {'Premier League', 'Bundesliga'}) or (not isinstance(ownerSpec, dict)) or (set(ownerSpec) != {'uid', 'label'}) or (not isinstance(ownerSpec['uid'], str)) or (UUID.fullmatch(ownerSpec['uid']) is None) or (not isinstance(ownerSpec['label'], str)) or (not 0 < len(ownerSpec['label']) <= 96) or (not isinstance(calendarClaim, str)) or (not 0 < len(calendarClaim) <= 200) or any((not isinstance(h, str) or HASH.fullmatch(h) is None for h in (responseSHA, parserSHA, calendarSHA))):
         raise ValueError('INPUT_CONTRACT')
     observed = observed.astimezone(timezone.utc)
     uid, label = (ownerSpec['uid'], ownerSpec['label'])
-    pool = []
+    pool: list[tuple[dict[str, Any], datetime]] = []
+    fixture_ids: set[str]
+    pairs: set[tuple[str, str]]
     fixture_ids, pairs = (set(), set())
     for f in fixtures:
         if not isinstance(f, dict) or f.get('competition') != competition or f.get('calendarSHA') != calendarSHA or (f.get('calendarClaim') != calendarClaim) or (not all((isinstance(f.get(k), str) and 0 < len(f[k]) <= 200 for k in ('id', 'home', 'away', 'kickoff')))) or (f['home'] == f['away']) or (f['id'] in fixture_ids) or ((f['home'], f['away']) in pairs):
@@ -48,8 +55,8 @@ def qualify_documents(documents, fixtures, observed, *, ownerSpec, competition, 
     known = [] if known is None else known
     if not isinstance(known, list) or len(known) > 1000:
         raise ValueError('KNOWN_BOUND')
-    known_ids = {}
-    known_first = {}
+    known_ids: dict[str, bytes] = {}
+    known_first: dict[str, datetime] = {}
     for item in known:
         if not isinstance(item, dict) or not isinstance(item.get('sourceTipId'), str) or (not isinstance(item.get('sourceFields'), dict)):
             raise ValueError('KNOWN_CONTRACT')
@@ -67,27 +74,30 @@ def qualify_documents(documents, fixtures, observed, *, ownerSpec, competition, 
                 raise ValueError('KNOWN_TIME')
             if identifier not in known_first or first < known_first[identifier]:
                 known_first[identifier] = first
-    result = dict(status='qualified', picks=[], reasons=[], witnesses=[], omittedWitnesses=0, omittedAdmissible=0, excludedOtherOwners=0, traversalComplete=True, visitedNodes=0, depthBoundHit=False, walkBoundHit=False, permissionEstablished=False)
+    result: dict[str, Any] = dict(status='qualified', picks=[], reasons=[], witnesses=[], omittedWitnesses=0, omittedAdmissible=0, excludedOtherOwners=0, traversalComplete=True, visitedNodes=0, depthBoundHit=False, walkBoundHit=False, permissionEstablished=False)
+    seen: dict[str, tuple[bytes, bool]]
+    owned: set[str]
+    conflicts: set[str]
     seen, owned, conflicts = ({}, set(), set())
 
-    def reject(reason):
+    def reject(reason: str) -> None:
         if reason not in result['reasons']:
             result['reasons'].append(reason)
         result['status'] = 'partial'
 
-    def incomplete(reason):
+    def incomplete(reason: str) -> None:
         result['traversalComplete'] = False
         reject(reason)
 
-    def witness(reason):
+    def witness(reason: str) -> None:
         if len(result['witnesses']) < MAX_WITNESSES:
             result['witnesses'].append(dict(reason=reason, sampleOnly=True))
         else:
             result['omittedWitnesses'] += 1
-    _capture_seen = set()
+    _capture_seen: set[bytes] = set()
     _capture_bytes = 0
 
-    def _capture(error, reference=None, depth=None, references=None):
+    def _capture(error: BaseException, reference: object = None, depth: object = None, references: object = None) -> None:
         nonlocal _capture_bytes
         try:
             if _observer is None or len(_capture_seen) >= 4:
@@ -108,7 +118,7 @@ def qualify_documents(documents, fixtures, observed, *, ownerSpec, competition, 
     class ReferenceFailure(ValueError):
         pass
 
-    def gate(value):
+    def gate(value: object) -> None:
         if not isinstance(value, dict):
             return
         for key in ('isReco', *GATES):
@@ -124,7 +134,7 @@ def qualify_documents(documents, fixtures, observed, *, ownerSpec, competition, 
                 raise ReferenceFailure('gated_reference')
             raise ReferenceFailure('gate_state_unproven')
 
-    def touch(value, depth):
+    def touch(value: object, depth: int) -> None:
         result['visitedNodes'] += 1
         if result['visitedNodes'] > MAX_VISITS:
             result['walkBoundHit'] = True
@@ -134,7 +144,7 @@ def qualify_documents(documents, fixtures, observed, *, ownerSpec, competition, 
             raise ReferenceFailure('depth_bound')
         gate(value)
 
-    def plain(reference, chain, depth):
+    def plain(reference: str, chain: ReferenceChain, depth: int) -> tuple[Any, ReferenceChain, int]:
         match = re.fullmatch('\\$([a-f0-9]+)((?::[^:\\x00-\\x1f]+)*)', reference)
         if match is None:
             raise ReferenceFailure('unsupported_required_reference')
@@ -178,14 +188,14 @@ def qualify_documents(documents, fixtures, observed, *, ownerSpec, competition, 
             return plain(value, active, depth)
         return (value, active, depth)
 
-    def resolve(value, chain=()):
+    def resolve(value: Any, chain: ReferenceChain = ()) -> Any:
         if not isinstance(value, str) or not value.startswith('$'):
             gate(value)
             return value
         value, _, _ = plain(value, chain, 0)
         return value
 
-    def examine(row):
+    def examine(row: dict[str, Any]) -> None:
         identifier = row.get('id')
         try:
             tipster = resolve(row.get('tipster'))
@@ -260,7 +270,7 @@ def qualify_documents(documents, fixtures, observed, *, ownerSpec, competition, 
         else:
             result['omittedAdmissible'] += 1
 
-    def walk(value, depth=0, chain=()):
+    def walk(value: Any, depth: int = 0, chain: ReferenceChain = ()) -> None:
         if result['walkBoundHit']:
             return
         try:
@@ -311,15 +321,15 @@ def qualify_documents(documents, fixtures, observed, *, ownerSpec, competition, 
         reject('no_admissible_choice')
     return result
 
-def accepted_calendar(raw, expectedSHA, expectedClaim):
+def accepted_calendar(raw: bytes, expectedSHA: str, expectedClaim: str) -> list[dict[str, str]]:
     """Bind retained accepted programme bytes. Caller authenticates authority."""
     if type(raw) is not bytes or not 0 < len(raw) <= 131072 or (not isinstance(expectedSHA, str)) or (HASH.fullmatch(expectedSHA) is None) or (not isinstance(expectedClaim, str)) or (not 0 < len(expectedClaim) <= 200):
         raise ValueError('ACCEPTED_CALENDAR_INPUT')
     if sha256(raw).hexdigest() != expectedSHA:
         raise ValueError('ACCEPTED_CALENDAR_SHA')
 
-    def closed_object(pairs):
-        obj = {}
+    def closed_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        obj: dict[str, Any] = {}
         for key, value in pairs:
             if key in obj:
                 raise ValueError('CALENDAR_DUPLICATE_KEY')
@@ -329,7 +339,7 @@ def accepted_calendar(raw, expectedSHA, expectedClaim):
     if not isinstance(value, dict) or value.get('schemaVersion') != 'robin-official-published-calendar-v1' or value.get('claimId') != expectedClaim or (value.get('status') != 'ACCEPTED_PUBLISHED_UTC_PROGRAMME_ONLY') or (value.get('competition') != 'Bundesliga') or (value.get('season') != '2026/27') or (type(value.get('matchday')) is not int) or (value['matchday'] != 11) or (value.get('nativeCalendarAccepted') is not True) or (value.get('bodyComplete') is not True) or (value.get('sourceUTCHeaderConfirmed') is not True) or (value.get('sourceCETHeaderConfirmed') is not True) or (type(value.get('pageCountFromPinnedPredicate')) is not int) or (value['pageCountFromPinnedPredicate'] != 1) or (not isinstance(value.get('fixtures'), list)) or (not 0 < len(value['fixtures']) <= 10):
         raise ValueError('ACCEPTED_CALENDAR_SCHEMA')
 
-    def utc(text):
+    def utc(text: object) -> datetime:
         if not isinstance(text, str) or re.fullmatch('[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]{1,6})?(?:Z|\\+00:00)', text) is None:
             raise ValueError('CALENDAR_UTC_REQUIRED')
         return instant(text)
@@ -339,6 +349,9 @@ def accepted_calendar(raw, expectedSHA, expectedClaim):
     for key in ('sourceResultRAW_SHA256', 'payloadSHA256'):
         if not isinstance(value.get(key), str) or HASH.fullmatch(value[key]) is None:
             raise ValueError('CALENDAR_PROVENANCE')
+    fixtures: list[dict[str, str]]
+    teams: set[str]
+    identifiers: set[str]
     fixtures, teams, identifiers = ([], set(), set())
     for row in value['fixtures']:
         if not isinstance(row, dict) or set(row) != {'home', 'away', 'scheduledUTC', 'semantic'} or row['semantic'] != 'DFL_SCHEDULED_UTC_ONLY' or (not all((isinstance(row[k], str) and 0 < len(row[k]) <= 96 and (row[k] == row[k].strip()) for k in ('home', 'away')))) or (row['home'] == row['away']) or (row['home'] in teams) or (row['away'] in teams):

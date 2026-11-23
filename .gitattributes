@@ -9,3 +9,4 @@ reports/source_observatory/*.json text eol=lf
 *.tsx text eol=lf
 *.ps1 text eol=lf
 .gitattributes text eol=lf
+cockpit/eslint.config.mjs text eol=lf

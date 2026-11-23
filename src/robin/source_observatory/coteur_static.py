@@ -1,24 +1,25 @@
 """Pure strict query-metadata protocol; no IO or authority."""
 import json
 import re
+from typing import Any
 
 TOP = {'schemaVersion', 'status', 'projectionComplete', 'omissions', 'candidates', 'prefixes', 'sourceReady', 'sourceChoices', 'sourceAPICalls', 'executedJavaScript'}
 CAND = {'method', 'methodEvidence', 'sourceOffset', 'pathSegments', 'literalQueryKeysObserved', 'queryValuesElided', 'runtimeQueryContractEstablished', 'bindingEstablished', 'contractEstablished'}
 PREFIX = {'path', 'sourceOffset', 'queryValuesElided', 'contractEstablished'}
 
-def integer(x):
+def integer(x: object) -> bool:
     return type(x) is int and 0 <= x <= 2000000
 
-def path(x):
+def path(x: object) -> bool:
     return type(x) is str and 0 < len(x) <= 200 and x.startswith('/') and (not x.startswith('//')) and (re.search('[?#@%\\\\\\x00-\\x20]', x) is None)
 
-def classify(raw):
-    result = dict(status='UNPROVEN', reason='OUTPUT_CONTRACT', projection=None, sourceReady=False)
+def classify(raw: object) -> dict[str, Any]:
+    result: dict[str, Any] = dict(status='UNPROVEN', reason='OUTPUT_CONTRACT', projection=None, sourceReady=False)
     if type(raw) is not bytes or len(raw) > 32768:
         return dict(result, reason='STDOUT_CAP')
 
-    def unique(pairs):
-        out = {}
+    def unique(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        out: dict[str, Any] = {}
         for k, v in pairs:
             if k in out:
                 raise ValueError('DUPLICATE')
@@ -51,7 +52,7 @@ def classify(raw):
         keys = c['literalQueryKeysObserved']
         if type(parts) is not list or not 1 <= len(parts) <= 16 or type(keys) is not list or (len(keys) > 12):
             return result
-        copied = []
+        copied: list[dict[str, Any]] = []
         for s in parts:
             if type(s) is not dict:
                 return result
@@ -76,13 +77,13 @@ def classify(raw):
 
 
 
-def decode_bound_witness(raw):
+def decode_bound_witness(raw: object) -> dict[str, Any] | None:
     """Decode a closed diagnostic only; never a usable API projection."""
     if type(raw) is not bytes or len(raw) > 32768:
         return None
 
-    def unique(pairs):
-        value = {}
+    def unique(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        value: dict[str, Any] = {}
         for key, item in pairs:
             if key in value:
                 raise ValueError('DUPLICATE')
@@ -144,6 +145,8 @@ def decode_bound_witness(raw):
             return None
         if len(json.dumps(witnesses, ensure_ascii=False, separators=(',', ':')).encode('utf8')) > 4096:
             return None
+        copied: list[dict[str, Any]]
+        seen: set[str]
         copied, seen = [], set()
         for item in witnesses:
             if (type(item) is not dict or set(item) != PREFIX or not path(item['path'])
@@ -163,7 +166,7 @@ def decode_bound_witness(raw):
         return None
 
 
-def classify_child(*, returncode, timed_out, stdout, stderr):
+def classify_child(*, returncode: object, timed_out: object, stdout: object, stderr: object) -> dict[str, Any]:
     """Validate one completed local projector; retain no raw failure output."""
     from hashlib import sha256
 
@@ -173,7 +176,7 @@ def classify_child(*, returncode, timed_out, stdout, stderr):
         raise ValueError("CHILD_METADATA")
     metadata = dict(childExit=returncode, timedOut=timed_out, stdoutBytes=len(stdout),
                     stderrBytes=len(stderr), stderrSHA256=sha256(stderr).hexdigest())
-    failure = dict(status="UNPROVEN", reason=None, projection=None, sourceReady=False,
+    failure: dict[str, Any] = dict(status="UNPROVEN", reason=None, projection=None, sourceReady=False,
                    childReason=None, **metadata)
     if timed_out:
         return dict(failure, reason="CHILD_TIMEOUT")
@@ -185,8 +188,8 @@ def classify_child(*, returncode, timed_out, stdout, stderr):
         bound = decode_bound_witness(stdout)
         if bound is not None:
             return dict(failure, reason='CHILD_NONZERO', childReason=bound['reason'], boundWitness=bound)
-        def unique(pairs):
-            value = {}
+        def unique(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+            value: dict[str, Any] = {}
             for key, item in pairs:
                 if key in value:
                     raise ValueError("DUPLICATE")
