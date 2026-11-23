@@ -1,0 +1,95 @@
+{
+  "assessmentRAW_SHA256": "2e70512d14b2e2616a6c14dbdf421e992589724ff535061a211d6de1190263d4",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PROSPECTIVE.SOURCE.R2.NATIVE.PARTIAL.20261123",
+  "codeMapCanonicalSHA256": "d5f10c9de304e51ee5fd1292e504b5f1a685e17ce49cd455a858399a742d4ce8",
+  "decision": "FAIL_AND_STOP",
+  "effects": {
+    "API_FOOTBALL_CALLS": 0,
+    "TaskChanges": 0,
+    "appChanges": 0,
+    "recurrence": 0,
+    "retries": 0,
+    "sourceWrites": 0
+  },
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "limits": [
+    "Full current public page received and REP allowed target; parsing traversal incomplete. Zero retained does not establish global absence of personal predictions or competition inactivity.",
+    "Source raw body RAM discarded; no reconstructed replay, native content or personal source fields sent to model/stdout/Git. Only private structured empty result and closed diagnostics retained.",
+    "Exact four-key real grant, preexec Python pin and current ledger guards executed in one physical Job. Outer exit0 is not child success: childexit1 explicitly retained.",
+    "Current mission budget fully consumed and SOURCE stopped; no retry, leftover quota, recurrence, application admission or source-ready promotion. Future diagnostic work returns to separately bounded E1."
+  ],
+  "missionId": "NOTBETTING_PROSPECTIVE_SOURCE_R2_20261123",
+  "nativeProcessRAW_SHA256": "3d03897fe54d1550228a7cb08e10230ea531185e741721b354236c3d253171bf",
+  "nativeSourceResultRAW_SHA256": "1b1ce2c72b62b355a61914becf608382867ea9b2830611f27803e4d0e5abf4f7",
+  "observed": {
+    "completedAt": "2026-11-23T01:12:52.973Z",
+    "externalObservedSeconds": 1.222,
+    "jobElapsedSeconds": 1.157,
+    "outerGETCount": null,
+    "outerProcessExit": 0,
+    "startedAt": "2026-11-23T01:12:51.751Z",
+    "subtreeKillConfirmed": true,
+    "timedOut": false,
+    "workerElapsedSeconds": 1.125,
+    "workerExit": 1
+  },
+  "qualification": {
+    "admittedToApplication": 0,
+    "candidateCount": null,
+    "currentCanaryVerifiedPrematchForecasts": 0,
+    "depthBoundHit": true,
+    "excludedOtherOwners": 23,
+    "globalSourceEligibleForecastCount": null,
+    "phase": "QUALIFY",
+    "privateRetainedPicks": 0,
+    "reason": "QUALIFICATION_PARTIAL",
+    "reasons": [
+      "cyclic_or_deep_reference",
+      "depth_bound",
+      "no_admissible_choice",
+      "unresolved_data_reference"
+    ],
+    "traversalComplete": false,
+    "visitedNodes": 7654,
+    "walkBoundHit": false,
+    "witnessCount": 1,
+    "witnessReasons": [
+      "competition_unmatched"
+    ],
+    "witnessSampleOnly": true
+  },
+  "reviewedAt": "2026-11-23T01:15:51.595Z",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PROSPECTIVE.SOURCE.R2.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.NATIVE.AUTHORITY.CORRECTION.PRIVATE.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PROSPECTIVE.PUBLIC.INTEGRATION.E1.RESULT.20261123",
+    "DATA.SOURCE_OBSERVATORY.BUNDES.J11.FUTURE.UTC.PROGRAMME.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CURRENT.TERMS.PERSONAL.CONTEXT.RESULT.20261123"
+  ],
+  "sourceDecisionRAW_SHA256": "994f3d4bf810130ed78e981e4fbfe26f15173f793a682ea2d1aab4352d1918c7",
+  "sourceReady": false,
+  "status": "PARTIAL",
+  "transport": {
+    "DNS": 2,
+    "GETBounds": [
+      2,
+      2
+    ],
+    "GETConfirmed": 2,
+    "GETReservations": 2,
+    "GETSendBoundaries": 2,
+    "HTTP200Responses": 2,
+    "REPAllowsTarget": true,
+    "TCP": 2,
+    "crawlDelay": 0,
+    "picksBytes": 974299,
+    "robotsBytes": 1300,
+    "sourceResponseSHA256": "3436d8acda55b5be7b6440c7350d5ae40f4e4179e5718fd82c0f1dd013b5e4ab",
+    "strictChunkedBothComplete": true
+  }
+}

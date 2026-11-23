@@ -359,3 +359,27 @@ def test_public_get_preserves_link_header_for_protocol_discovery(monkeypatch, li
     assert result.content_type == 'application/atom+xml' and result.location is None
     assert result.link_header == link_header
     assert Response(200, b'', 'application/atom+xml', None).link_header is None
+
+
+@pytest.mark.parametrize('text', [
+    'Conditions: usage personnel et non commercial uniquement.',
+    'Terms: personal use and non-commercial purposes only.',
+])
+def test_personal_context_is_distinct_from_explicit_ban(text):
+    assert permission(text, 'rss_atom') == 'personal_context_required'
+    assert permission(text + ' Automated scraping is prohibited.', 'rss_atom') == 'permission_required'
+
+
+def test_personal_context_does_not_open_content_fetch(tmp_path):
+    profile = next(p for p in build_profiles(ROOT / 'data/source_observatory/pilot_sources.csv')
+                   if p['id'] == 'SRC_006')
+    calls = []
+    def get(url):
+        calls.append(url)
+        if url.endswith('robots.txt'):
+            return Response(200, b'User-agent: *\nAllow: /\n', 'text/plain', None)
+        assert url == profile['termsUrl']
+        return Response(200, b'Terms: personal use and non-commercial purposes only.', 'text/html', None)
+    result = collect_source(profile, make_journal(tmp_path), get=get, sleep=lambda _: None)
+    assert result['status'] == 'personal_context_required'
+    assert calls == [profile['robotsUrl'], profile['termsUrl']]

@@ -1,9 +1,10 @@
+import{readHistoricalAnnotation,type HistoricalAnnotationApproval}from'./olbg-historical-annotation';
 import {createHash} from 'node:crypto';
 import {openSync,closeSync,fstatSync,readSync} from 'node:fs';
 import {resolve} from 'node:path';
 import type {JsonObject} from './forums-accepted';
 
-export type SnapshotApproval={relativePath:string;sha256:string;claimId:string;choices:number;pseudonyms:number;fixtures:number;maximumBytes:number;idsSHA256:string;immutableSHA256:string};
+export type SnapshotApproval={historicalAnnotation?:HistoricalAnnotationApproval;relativePath:string;sha256:string;claimId:string;choices:number;pseudonyms:number;fixtures:number;maximumBytes:number;idsSHA256:string;immutableSHA256:string};
 const HASH=/^[a-f0-9]{64}$/;
 const immutableFields=['id','firstSeenAt','observedAt','versions','authorLabel','selection','sourceUrl'];
 const factFields=['schemaVersion','status','distinctPicks','authorCount','picks','fixtures','calendarEvidence','calendarSha256','parserSha256','missionId','generatedAt','sourceObservedThrough','claimId','claimIds','requestCount','observationSha256','notbettingOccurrenceCompanion','sroNextCompanion','forumCompanion','forumBatches'];
@@ -63,5 +64,5 @@ export function readReviewedPublicSnapshot(root:string,a:SnapshotApproval):JsonO
  check(claims.every(c=>typeof c==='string'));
  result.claimIds=[...new Set([...claims,a.claimId])];
  result.retainedSnapshot={state:'verified',claimId:a.claimId,snapshotSHA256:a.sha256,snapshotPreparedAt:value.generatedAt,operationalState:'unknown'};
- return result;
+ return a.historicalAnnotation?readHistoricalAnnotation(result,root,a.historicalAnnotation):result;
 }

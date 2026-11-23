@@ -1,0 +1,41 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.BUNDES.FRAMING.ADMIN25.LOCAL.RESULT.20261122",
+  "generatedAt": "2026-11-22T23:51:02.157Z",
+  "status": "PASS_LOCAL_QUALIFICATION_ROW_ONLY",
+  "missionId": "BUNDES_FRAMING_ADMIN25_LOCAL_E1_20261122",
+  "keys": [
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "grant": "bc56e80f76542cb702d2333e16531ca2e6ad83390caeb8d5634ce928fe39f8cd",
+  "review": {
+    "C1": "ACTUAL_API_RUNTIME_FACTS_AND_PNG_PASS",
+    "C3": "FROZEN_CANARY_CODE_PASS",
+    "C4": "ACTUAL_SCOPE_AND_PNG_PASS"
+  },
+  "runtimeSnapshotSHA256": "d5bc762d0d12c6e6bf14588412ddcf39b506378c529f2d88c63a1c754fd92807",
+  "expectedDirectBrowserAPI_SHA256": "b0936fcf4908466ad6845330eb356d9a06ca1c56a030196dcdf0d4d6201d1c42",
+  "rows": 25,
+  "previous24Preserved": true,
+  "addedRows": 1,
+  "sourceClaim": "ENG.SOURCE_OBSERVATORY.BUNDES.J11.NATIVE.PDF.FRAMING.PARTIAL.20261122",
+  "actualAppCheckedAt": "2026-11-22T23:49:12.535Z",
+  "APIReads": 2,
+  "pages": 1,
+  "rowScreenshots": 1,
+  "pageErrors": 0,
+  "outOfScopeAPIsBlockedBeforeTransport": 5,
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "admittedFromNewRow": 0,
+  "newCandidateCount": null,
+  "forecastSnapshotChanged": false,
+  "codeChanges": 0,
+  "fullAdminCurrentStateAccepted": false,
+  "WindowsCurrentStateAccepted": false,
+  "sourceReady": false,
+  "globalDelivery": "PARTIAL",
+  "PNG_SHA256": "a4f0c9990bf6567982c59bd3e1967bc58479ff0fb9845cff8e5aca9fcd2f975f"
+}

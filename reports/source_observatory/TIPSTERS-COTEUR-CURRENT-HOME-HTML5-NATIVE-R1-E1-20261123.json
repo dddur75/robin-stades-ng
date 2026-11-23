@@ -1,0 +1,43 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.CURRENT.HOME.HTML5.NATIVE.R1.E1.20261123",
+  "missionId": "COTEUR_CURRENT_HOME_HTML5_NATIVE_R1_20261123",
+  "status": "EXACT_REBIND_AND_CORRECTED_AST_PROOF_VERIFIED",
+  "scope": "Exact frozen native caller rebound and one corrected transport function-name delta proof passed; prior9cases reused without replay. Source grant absent, no caller/dependency imports or Job.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.CURRENT.HOME.HTML5.CALLER.PRIVATE.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.HTML5.REFERENCE.R2.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.DOCUMENTARY.PERSONAL.CONTEXT.RESULT.20261123"
+  ],
+  "parentGrant": "292e6e19196928c85524d07f95e627beed7ec5fa7b8f7d3ee0f21443d160a911",
+  "planSHA": "b936bb97619f994237e1c0a7ad35aa355e58ef079acc05e6014f232d250cdbfd",
+  "manifestSHA": "f3b537f00a5041297f98266a1437eb072a712ee25424b8a47c5b13695ebc25ee",
+  "configSHA": "0e9f336dc22f4d4c7950238bde96f79cc568ea7953e014c68797aa7b1df20953",
+  "workerSHA": "dc477fbd4394eeeeb0079a0d4c73055fb28aceec848846529d13bbab0ae9801c",
+  "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+  "outerSHA": "fec1d45ca1e9bc878ac7a4467d32d11b08184623093e0aa495750e26335e1e6e",
+  "policySHA": "05311b3471abc5a3d1c1f1142b5dc83f6152947ac6733f7047c4f46eba69b213",
+  "transportSHA": "5233b7904f06df8dd8a8ac8755ec500dc242bc8c3b9e7cc83a7227aef9930281",
+  "helperSHA": "438594587bac1f6137d4b42d83da1eddfbd3f3ffe771915813f7241aadd23a2f",
+  "authorizedAt": "2026-11-23T07:15:10.568442+00:00",
+  "frozenAt": "2026-11-23T07:16:05.030Z",
+  "authorStatus": "STOP",
+  "ASTProofRuns": 1,
+  "ASTProofExit": 0,
+  "priorSyntheticCasesReused": 9,
+  "priorCasesRerun": 0,
+  "dependencyImports": 0,
+  "callerLoads": 0,
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "sourceReady": false,
+  "configEnumAloneGrantsNoAuthority": true,
+  "fullNativeBindingUnexercised": true,
+  "C0IndependentParentCodeReview": true,
+  "finalReceiptZeroReferenceRule": "urls empty => PARTIAL_ZERO_LITERAL_REFERENCES_AND_STOP regardless child or outer exit; no retry or follow. Nonempty literal subset remains documentary metadata only, never sourceReady."
+}

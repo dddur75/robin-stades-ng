@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-11-23T08:03:57.306Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.BOUNDED.ITERATIVE.REDESIGN.PRIVATE.RESULT.20261123",
+  "missionId": "COTEUR_BOUNDED_ITERATIVE_AST_REDESIGN_PRIVATE_E1_20261123",
+  "status": "PRIVATE_ITERATIVE_DIAGNOSTIC_PROTOTYPE_VERIFIED",
+  "scope": "Offline iterative AST prototype passes8 tiny fixtures, preserving complete small outputs and bounded closed NODE/DEPTH witnesses under unchanged defaults. Python adapter absent; no native retry or provider-bundle replay.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.CURRENT.APP.STATIC.NATIVE.R5.REDESIGN.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.PUBLIC.INTEGRATION.RESULT.20261123"
+  ],
+  "resultSHA256": "0a27f5fc7a273a65c63ecd13f79ba4a7769e72ea1b94d8715a150b8fe1abf065",
+  "codeMapCAN": "efbdb7589bf4c99e135146c0e377d5376d94092a81000ae197cea9d9a45409c9",
+  "candidateSHA256": "00d4a5a46df64f1d82538d8591a2126fa4744af5be5cff5f5bc423ca107f2c1a",
+  "schemaSHA256": "9434fe0d8c44504dbfa72e15a92000234e3fa3bf690278b8ed2299ede1c70bb2",
+  "tinyCases": 8,
+  "NodeProcesses": 2,
+  "defaultNodeLimit": 200000,
+  "defaultDepthLimit": 100,
+  "defaultInputBytes": 2000000,
+  "witnessesMax": 4,
+  "witnessBytesMax": 4096,
+  "smallCompleteOutputsIdentical": true,
+  "queryValuesAbsent": true,
+  "ASTConstructionMemoryBoundProven": false,
+  "totalEnumerationWorkWithinVisitCountProven": false,
+  "directNodeOSNetworkAuditMeasured": false,
+  "oldNativeASTBoundSubtype": "UNKNOWN",
+  "PythonAdapterImplemented": false,
+  "providerDataReads": 0,
+  "oldBundleReplay": 0,
+  "sourceGET": 0,
+  "sourceReady": false
+}

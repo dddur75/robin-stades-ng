@@ -1,0 +1,24 @@
+{
+  "generatedAt": "2026-11-23T10:09:00.781Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.WRAPPER.CONFOUND.CAUSAL.PAIR.RESULT.20261123",
+  "missionId": "NOTBETTING_WRAPPER_CONFOUND_PAIR_PRIVATE_E1_20261123",
+  "status": "TARGETED_CAUSAL_PAIR_VERIFIED",
+  "scope": "Additive correction: previous six-case positive-list versus cycle-record-wrapper comparison changed two factors. Intentional SKIP reco matches record, so that comparison did not establish cycle-only causality. Fresh pair uses identical items wrapper, documents, source fields and parent; only sidebar reference varies. Two calls: no edge qualified1, edge partial0/cyclic_reference. Proves this synthetic parent property only, not native leaf cause or business irrelevance of every cycle. SKIP unchanged.",
+  "keys": [
+    "C0",
+    "C1"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.RECORD.SCOPE.DESIGN.PRIVATE.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.TYPED.TARGET.CALLER.PRIVATE.RESULT.20261123"
+  ],
+  "correctsClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.RECORD.SCOPE.DESIGN.PRIVATE.PARTIAL.20261123"
+  ],
+  "primarySHA256": "2c91652205a7958672e8d801488d03955ac5d252cc8c4fb497d85fe391d6523c",
+  "testSHA256": "5c0bc9bea259e415a617ff5d1ec84fbc5a4344f5cd40e8b9c6845a0186260b05",
+  "syntheticCalls": 2,
+  "processes": 1,
+  "sourceGET": 0,
+  "newForecasts": 0
+}

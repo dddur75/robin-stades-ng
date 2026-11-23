@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-11-23T09:32:33.291Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG648433.FUTURE.L1.NATIVE.R1.E1.BINDING.RESULT.20261123",
+  "missionId": "OLBG648433_FUTURE_L1_NATIVE_R1_20261123",
+  "status": "E1_FRESH_BINDINGS_AND_LOCAL_LOAD_VERIFIED",
+  "scope": "One actual full local component load with nine retained contextual programme rows, strict CA and42rebased helper pins. Only SOURCEdecision injected synthetically in RAM; zero fetch/collect/main/nativeJob/network. Final critical Ruff passes. Proposed dated terms config is not C4 SOURCE acceptance. E2 requires distinct exact four SOURCE keys and fresh C4 dated-context reacceptance.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG648433.FUTURE.L1.WHOLECALLER.PRIVATE.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.OLBG648433.FUTURE.L1.COMPONENTS.PRIVATE.PARTIAL.20261123",
+    "DATA.SOURCE_OBSERVATORY.OLBG.SINGLE.PERSONAL.REP.V2.PREMATCH.RESULT.20261122",
+    "DATA.SOURCE_OBSERVATORY.LIGUE1.J12.OFFICIAL.SCHEDULE.DOCUMENTARY.20261122",
+    "ENG.SOURCE_OBSERVATORY.FUTURE.L1.CALENDAR.CONTEXTUAL.POLICY.20261122",
+    "ENG.SOURCE_OBSERVATORY.OLBG.TERMS.LOCAL.DOC.RESULT.20261121"
+  ],
+  "planSHA": "61082dd2c386053df541d45da4203f1e6eb3025488be08369ddd17f6eeee151e",
+  "manifestSHA": "bd047319c096f20992a7133d81d46cb7153568dc6837d684bcb0d3528e916d9f",
+  "configSHA": "7038a5b413f96ecd0deb781f701ba9e4e5ec0d5fa58c79967c8d86ff0380294a",
+  "workerSHA": "b8d7fd8376e9b5ef44c706a6b23891113ba5349443c940692822ae66ffeb5678",
+  "outerSHA": "657206b5698bf620a57a4c81c62ac58cf92429b5ac7b5ac347aa912c1a54a021",
+  "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+  "policySHA": "a0ef95888d1aa181fc7dc38cdeb111db2e81cefaa600972c16341aa341ce4b17",
+  "transportSHA": "0bd4f703151288af753292a96ad5521efac51242bdb967936b39c5c6f70b6987",
+  "expiresAt": "2026-11-23T09:39:58.522Z",
+  "primarySHA256": "af92f23127043faa90bcdbb845fa13649aec89746f230fb209d559e668a7526e",
+  "criticalLintPrimarySHA256": "5b1cac6eaaa2d47431ad1f598876568b71ca4c9b2c583eb10434f8928c01282c",
+  "criticalRuffExit": 0,
+  "retainedProgrammeRows": 9,
+  "localLoadSeconds": 0.25,
+  "sourceGET": 0,
+  "nativeUTCProof": false,
+  "applicationAdmission": false,
+  "sourceReady": false
+}

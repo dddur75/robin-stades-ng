@@ -1,0 +1,68 @@
+{
+  "generatedAt": "2026-11-23T09:38:17.442Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG648433.FUTURE.L1.NATIVE.R1.ACTUAL.RESULT.20261123",
+  "missionId": "OLBG648433_FUTURE_L1_NATIVE_R1_20261123",
+  "status": "PARTIAL_ZERO_ELIGIBLE_IN_RETAINED_CONTEXT",
+  "scope": "One terminal bounded native observation of one OLBG owner. Two complete HTTP200 responses; one open football source record, but zero supported candidates for the retained contextual9L1J12 programme under48hmargin. This is not a global absence of forecasts or a precise mismatch cause. Outcome candidateCount remains null; no private candidate/admission. Worker exact closedAt absent; last profile observation and operator process-return clocks are distinct. No sourceReady/nativeUTC/app admission, recurrence or old quota reuse.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG648433.FUTURE.L1.NATIVE.R1.E1.BINDING.RESULT.20261123"
+  ],
+  "planSHA": "61082dd2c386053df541d45da4203f1e6eb3025488be08369ddd17f6eeee151e",
+  "manifestSHA": "bd047319c096f20992a7133d81d46cb7153568dc6837d684bcb0d3528e916d9f",
+  "configSHA": "7038a5b413f96ecd0deb781f701ba9e4e5ec0d5fa58c79967c8d86ff0380294a",
+  "workerSHA": "b8d7fd8376e9b5ef44c706a6b23891113ba5349443c940692822ae66ffeb5678",
+  "outerSHA": "657206b5698bf620a57a4c81c62ac58cf92429b5ac7b5ac347aa912c1a54a021",
+  "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+  "policySHA": "a0ef95888d1aa181fc7dc38cdeb111db2e81cefaa600972c16341aa341ce4b17",
+  "transportSHA": "0bd4f703151288af753292a96ad5521efac51242bdb967936b39c5c6f70b6987",
+  "expiresAt": "2026-11-23T09:39:58.522Z",
+  "sourceDecisionSHA256": "eec2c2c6aaa60cafeac78702b144e7cc750b94960f88d8ac1459088dd5fdba73",
+  "resultSHA256": "029cbe08a0ee2f35b8c2545fff3508449880eca107ff016c0fa278d9518256d5",
+  "nativePrimarySHA256": "c80875e8478fda8909d7d57d227d680311cdd45fc689600702c10e5e44c1c268",
+  "lastProfileObservedAtUTC": "2026-11-23T09:33:50.151222+00:00",
+  "operatorProcessReturnedAtUTC": "2026-11-23T09:33:50.211Z",
+  "workerExactClosedAt": null,
+  "sourceGET": 2,
+  "outerSourceGET": null,
+  "HTTPStatuses": [
+    200,
+    200
+  ],
+  "responseBytes": [
+    9452,
+    158358
+  ],
+  "framing": [
+    "UNIQUE_CL_COMPLETE",
+    "STRICT_CHUNKED_COMPLETE"
+  ],
+  "auditDNS": 2,
+  "auditTCP": 2,
+  "auditGETSendBoundary": 2,
+  "jobElapsedSeconds": 5.062,
+  "outerExit": 0,
+  "childExit": 1,
+  "timedOut": false,
+  "subtreeKillConfirmed": true,
+  "sourceNativeRecordCount": 1,
+  "footballOpenRecordCount": 1,
+  "retainedContextualFixtures": 9,
+  "diagnosticCandidateCount": 0,
+  "candidateCount": null,
+  "privateCandidateFilePresent": false,
+  "admittedCount": 0,
+  "newForecasts": 0,
+  "nativeUTCProof": false,
+  "applicationAdmission": false,
+  "sourceReady": false,
+  "reason": "ZERO_ELIGIBLE",
+  "nativeParseReason": "NO_SUPPORTED_PREMATCH_CANDIDATE",
+  "fineMismatchCause": "UNKNOWN",
+  "remainingQuotaDiscarded": true
+}

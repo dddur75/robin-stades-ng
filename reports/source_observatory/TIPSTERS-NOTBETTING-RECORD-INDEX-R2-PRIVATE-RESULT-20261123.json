@@ -1,0 +1,26 @@
+{
+  "generatedAt": "2026-11-23T10:14:59.697Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.RECORD.INDEX.R2.PRIVATE.RESULT.20261123",
+  "missionId": "NOTBETTING_RECORD_INDEX_R2_PRIVATE_E1_20261123",
+  "status": "PRIVATE_DIAGNOSTIC_INDEX_VERIFIED",
+  "scope": "Private record diagnostic only, ten final synthetic variants pass after same-architecture minimal corrections. Index physical JSON IDs before candidate/known selection; preserve partial occurrences and physical gate paths. Shared per-invocation caps32 closures/150000 total physical+closure visits, lowerable only. No mutable global counter. Output16 records/4 geometry summaries/8 fixed ENUM segments/16KiB. GeometryComplete means no truncation, not unique location/provenance; COMPONENTS_PROVEN can concern one occurrence, not whole-group admissibility. Business anchor and incoming contexts remain UNPROVEN, globalCoverage UNKNOWN, sourceReady false, admission0; no source/caller integration or production promotion.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.RECORD.INDEX.PRIVATE.FIRST.GOLDEN.FAILED.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.WRAPPER.CONFOUND.CAUSAL.PAIR.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.RECORD.SCOPE.DESIGN.PRIVATE.PARTIAL.20261123"
+  ],
+  "resultSHA256": "1599bb775266e9b6c6ee14c66089509fc10b61e59ae8d8e598bee350eb4bb9eb",
+  "codeSHA256": "56a9027a85c8487bcc230214b6cbc099ba21009d332ea1538c9b2ca6c6dfec08",
+  "codeMapCanonicalSHA256": "bd875f99befb8a6a9dc6fb28c143660943c011fe5bc41e602f8fa030451dda25",
+  "uniqueSyntheticVariants": 10,
+  "syntheticRuns": 2,
+  "targetedProcesses": 3,
+  "sourceGET": 0,
+  "sourceReady": false,
+  "admitted": 0
+}

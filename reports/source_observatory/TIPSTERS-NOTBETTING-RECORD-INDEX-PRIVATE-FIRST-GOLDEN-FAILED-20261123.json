@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-11-23T10:09:02.651Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.RECORD.INDEX.PRIVATE.FIRST.GOLDEN.FAILED.20261123",
+  "missionId": "NOTBETTING_RECORD_INDEX_PRIVATE_E1_20261123",
+  "status": "PARTIAL_FIRST_GOLDEN_FAILED_NO_PROMOTION",
+  "scope": "First private diagnostic prototype is not functional or accepted. First golden expected components under record wrapper, which intentionally matches SKIP. Preserve failed receipt and two additional P1: first16 all-ID selection can omit actual candidate groups; closure calls lack shared global bound. No gate weakening or production caller change. Target240s exceeded at267.453s but hard300/expiry respected. No assertion eight variants passed: one attempted, zero completed.",
+  "keys": [
+    "C0",
+    "C1"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.RECORD.SCOPE.DESIGN.PRIVATE.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.WRAPPER.CONFOUND.CAUSAL.PAIR.RESULT.20261123"
+  ],
+  "resultSHA256": "e9fb47dfbd57cbd306faa8f7b35abc18c1a9cb472b59de401a09e07602597efa",
+  "codeMapCanonicalSHA256": "f0c2166ba7dfe068ebaf1266252be2abf81631a3ef7c88f2cfbcff57746af372",
+  "sourceGET": 0,
+  "sourceReady": false,
+  "variantsAttempted": 1,
+  "variantsPassed": 0,
+  "newForecasts": 0
+}

@@ -1,0 +1,58 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.DIAG.R2.CALLER.PRIVATE.E1.RECETTE.20261122",
+  "generatedAt": "2026-11-22T21:46:20.728Z",
+  "status": "PRIVATE_CALLER_CORRECTION_ACCEPTED_NO_SOURCE_AUTHORITY",
+  "scope": "Metadata-only caller integrates reviewed closed transport diagnostics; same checked buffer observer loader and corrected native Job foundation prepared but no source/native execution.",
+  "missionId": "TELEGRAM_DIAG_R2_CALLER_PRIVATE_E1_20261122",
+  "planSHA256": "261ada49184500adbcfe091fa8d89d8d428c3556d7f369bbd20967d742ee9a9c",
+  "manifestSHA256": "eae473483b83c4ff9e49cb270b6e842de3225015071ff394381173b7534736f7",
+  "grant": "f92d1573ec511d9c0bd0f4f62ba401c2393888abafdf6642b008fb901b27b5f7",
+  "resultSHA256": "83557f98cd54ed6d95662b74f56295e96a63f8dc8406d57de90da70962304b66",
+  "codeMapSHA256": "5d69106079068e450f32a0e9253cb43bc6dfb1b97c93335ad27b5ffe5995cde5",
+  "pins": 15,
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "author": "C0",
+  "authorWorkloadStoppedAt": "2026-11-22T21:42:50.198Z",
+  "authorWorkloadSeconds": 145.145,
+  "authorWorkloadBudgetSeconds": 300,
+  "councilReviewRecordedAt": "2026-11-22T21:46:20.729Z",
+  "independentCodeReviewer": "C3",
+  "testCoverage": {
+    "wrapperCases": 3,
+    "HTMLFragments": 3,
+    "transportCasesReused": 4,
+    "transportAndPipelineByteExact": true,
+    "afterContextOrderCorrection": {
+      "wrapperCases": 3,
+      "HTMLReplayed": 0,
+      "RuffCriticalExit": 0
+    },
+    "firstLintFailurePreserved": true
+  },
+  "securityFindings": {
+    "Bandit": [
+      {
+        "id": "B102",
+        "severity": "MEDIUM",
+        "count": 2,
+        "scope": "Execution of pinned local code bytes, disclosed; no whole-system security-zero claim"
+      }
+    ]
+  },
+  "sourceGET": 0,
+  "DNS": 0,
+  "Win32": 0,
+  "TaskChanges": 0,
+  "appChanges": 0,
+  "GitPush": 0,
+  "sourceBindingsPresent": false,
+  "sourceReady": false,
+  "oldNativeFineCause": "UNKNOWN_NOT_RETAINED",
+  "accountOrExportRequirement": "NOT_ESTABLISHED",
+  "globalDelivery": "PARTIAL"
+}

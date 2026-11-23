@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-11-23T06:36:26.811Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.HISTORICAL.INTEGRATION.QUALITY.PRIVATE.RESULT.20261123",
+  "missionId": "OLBG_HISTORICAL_INTEGRATION_QUALITY_PRIVATE_E1_20261123",
+  "status": "EXACT_PRIVATE_PROPOSALS_APP_TYPECHECK_PASSED",
+  "scope": "Exact four private proposals successfully typechecked in actual app config via in-memory overlays. No files integrated, real snapshot read, or collection activated.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.HISTORICAL.DIAGNOSTIC.R3.PRIVATE.RESULT.20261123"
+  ],
+  "authorStatus": "STOP",
+  "authorizedAt": "2026-11-23T06:33:01.629315+00:00",
+  "frozenAt": "2026-11-23T06:33:18.560Z",
+  "fullAppTypecheck": true,
+  "virtualFiles": 4,
+  "rootFiles": 145,
+  "diagnostics": [],
+  "targetedRuns": 1,
+  "actualDataReads": 0,
+  "appFilesWritten": 0,
+  "sourceGET": 0,
+  "codeMapCAN": "9d360251382b64f4f825852c3dbe13e87dfc788c28bbcb6af3fc7ba60057d1cb",
+  "qualityPrimarySHA256": "46365d1e34f2730f0e9af07732d943015c3901b717a46836af9719b00ffc5802",
+  "candidateMapCAN": "3b2cc90c865bdc9c5b2711178a21f7dbc1f046743b63b453b2464449ddf06ec8",
+  "integrationAuthorized": false
+}

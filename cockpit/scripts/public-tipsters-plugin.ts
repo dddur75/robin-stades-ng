@@ -12,7 +12,8 @@ export const REVIEWED_PUBLIC_SNAPSHOT:SnapshotApproval={
   "fixtures": 20,
   "maximumBytes": 2000000,
   "idsSHA256": "feb57da85e4af5fc371c96f4963474f936a0d480e2f424451bc17eb019a2bca5",
-  "immutableSHA256": "a3f858e511ad0def5f51c5438c78243f23ea45002767c627a5ff2f4683bd621e"
+  "immutableSHA256": "a3f858e511ad0def5f51c5438c78243f23ea45002767c627a5ff2f4683bd621e",
+  "historicalAnnotation":{"authorIdSHA256":"0ce928a9e21d664eb026859dcb38680e1accb8b5fc765a82d6d3f571190bd3dd","claimId":"ENG.SOURCE_OBSERVATORY.OLBG.ONE.PROGRAMME.AUTHOR.NAMESPACE.FIX.RESULT.20261123","fixtureIdSHA256":"8bb92dfef7a87b676c923aacc47792af1e2ba5d90d34710bfb0c71d9c731399f","relativePath":".ci/historical-programme/cebc219e5255c7af9bb7a884ad9ceb2bf3c4aefb045d7b8c08ffc765ec1f24ff/sidecar.json","sidecarSHA256":"cebc219e5255c7af9bb7a884ad9ceb2bf3c4aefb045d7b8c08ffc765ec1f24ff","sourceTipIdSHA256":"151d8ec252997233eba1b4526872cdaa39d225594c0dd10e1311d58ec5338083","targetIdSHA256":"08341bf449a10e5b10028f15d1c86c9615a77116df650668447f9d4208d22eae","targetRowSHA256":"614ecc93696b4e23646419f9e5f94c7ac3d64e5cba99a95c63471a3f1142fac0","versionsSHA256":"ed13aa2629235c58ca6adcd77f25a2c71dd2c42d6302cd25fd4142e657c14967"}
 };
 
 export function publicTipsters(approval:SnapshotApproval=REVIEWED_PUBLIC_SNAPSHOT):Plugin{

@@ -1,0 +1,31 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.BUNDES.PDF.OFFICIAL.FORMAT.PARTIAL.E1.REVIEW.20261122",
+  "generatedAt": "2026-11-22T23:18:14.370Z",
+  "missionId": "BUNDES_PDF_OFFICIAL_FORMAT_CORRECTIVE_E1_20261122",
+  "status": "PARTIAL_OFFICIAL_SHAPED_SYNTHETIC_PASS_TEMPORAL_VETO",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "author": "C3",
+  "grant": "b7dd01dfd9dea7fdbd8dbd5f4a0621e3f65882b81ae2c31add1ad574a8bfaf38",
+  "authorResultRAW_SHA256": "46973b58bd5e54ec35a48594762b51f767906484339ee2a88e1807279ee15c82",
+  "codeMapCanonicalSHA256": "6b9c9541559b97f51bc80c27cfedbd08ecb675ee206d120686601c72ea1f2a8e",
+  "authorStoppedAt": "2026-11-22T23:14:45.546756+00:00",
+  "authorSeconds": 182.42921,
+  "syntheticPDFs": 2,
+  "negativeVariants": 10,
+  "onlyProjectChanged": true,
+  "UTCColumnSelected1930NotCET2030": true,
+  "P1": "Common DATE plus CET00:30/UTC23:30 accepts wrong or unproven absolute UTC day; no clock-consistency/date-alignment gate.",
+  "temporalQualificationAccepted": false,
+  "nativeJ11Calendar": false,
+  "sourceReady": false,
+  "sourceGET": 0,
+  "DNS": 0,
+  "Win32": 0,
+  "appChanges": 0,
+  "TaskChanges": 0,
+  "globalDelivery": "PARTIAL"
+}

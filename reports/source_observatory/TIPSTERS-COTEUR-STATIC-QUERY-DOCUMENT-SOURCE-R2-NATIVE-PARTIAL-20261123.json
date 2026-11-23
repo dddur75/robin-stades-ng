@@ -1,0 +1,64 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.DOCUMENT.SOURCE.R2.NATIVE.PARTIAL.20261123",
+  "missionId": "COTEUR_STATIC_QUERY_DOCUMENT_SOURCE_R2_20261123",
+  "status": "PARTIAL_NATIVE_DOCUMENT_CANARY_STOPPED",
+  "scope": "ONE_STRICT_COMPLETE_ROBOTS_RESPONSE_NO_ASSET_OR_PROJECTION",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.DOCUMENT.SOURCE.R2.E1.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.WINDOWS.AUDITED.SPAWN.FIX.RESULT.20261123"
+  ],
+  "sourceReady": false,
+  "actualSourceGET": 1,
+  "GETReservations": 1,
+  "nativeJobs": 1,
+  "actualNodeChildren": 0,
+  "sourceChoices": 0,
+  "admittedCount": 0,
+  "sourceAPICalls": 0,
+  "candidateCount": null,
+  "projection": null,
+  "workerReason": "COMPONENT_UNPROVEN",
+  "closedAt": "2026-11-23T04:19:51.499848+00:00",
+  "outerExit": 0,
+  "workerExit": 1,
+  "auditCounts": {
+    "DNS": 1,
+    "GET_SEND_BOUNDARY": 1,
+    "NODE": 0,
+    "TCP": 1
+  },
+  "robotsTrace": {
+    "CLbucket": "VALID",
+    "CLcount": 1,
+    "TEbucket": "ABSENT",
+    "TEcount": 0,
+    "bodyComplete": true,
+    "bytesReceived": 1960,
+    "contentEncodingBucket": "ABSENT",
+    "exceptionKind": null,
+    "finalZeroSeen": null,
+    "framing": "CL",
+    "httpStatus": 200,
+    "phase": "DONE",
+    "reason": null,
+    "schemaVersion": "coteur-fixed-transport-diagnostic-v1",
+    "terminalStrictVerified": null,
+    "trailerComplete": null
+  },
+  "primarySHA256": "903e4c6c419c06b6524ee44a14494823b68ffc127e2f26654356da6892b319d5",
+  "nativeResultSHA256": "2d43fd55ab081fab4bbb43d0804430c57cad42319c8b0ce45befb33640ae2591",
+  "sourceDecisionSHA256": "d101b670b5fb4068793a107321151808bf41f1df73f1ab86d037154a01341e21",
+  "unusedGETCanceled": 1,
+  "limits": [
+    "Fine dynamic cause UNKNOWN; missing unquote is a separately identified local defect, not proven to be this native cause.",
+    "HTTP200 robots is not proof REP allowed or a tipster forecast; no asset fetched, no projection generated.",
+    "Outer exit0 reports job lifecycle; child exit1 remains a failure. Outer sourceGET null is not rewritten.",
+    "No body retained or reread, no retry or remainder transfer."
+  ]
+}

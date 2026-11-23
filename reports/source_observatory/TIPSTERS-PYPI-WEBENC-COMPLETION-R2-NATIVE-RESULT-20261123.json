@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-11-23T06:25:11.613Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.PYPI.WEBENC.COMPLETION.R2.NATIVE.RESULT.20261123",
+  "missionId": "PYPI_WEBENCODINGS_WHEEL_COMPLETION_NATIVE_R2_20261123",
+  "status": "ARCHIVE_VERIFIED_IN_QUARANTINE_NOT_ACTIVATED",
+  "scope": "One missing dependency wheel acquired and verified against official metadata; prior html5lib archive reused. No package import, extraction, install or tipster source readiness.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.PYPI.WEBENC.COMPLETION.R1.E1.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.PYPI.HTML5.WHEELS.R1.NATIVE.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.PYPI.HTML5.METADATA.R2.NATIVE.RESULT.20261123"
+  ],
+  "resultSHA256": "24a6f0da542417f3332046d5b805ed15ac5832bd2696d6a098c09b7db90be87d",
+  "nativePrimarySHA256": "cffd9e524bfda443cb91273b97ec7aaee72d32b543e8845b230ae26ec05ccc94",
+  "sourceDecisionSHA256": "0d9b2ba32388fa93948e7ca787e692f1792129c025fd2bfec1f2b2a34f2cf1cf",
+  "registryGET": 1,
+  "tipsterGET": 0,
+  "archiveBytes": 11774,
+  "archiveSHA256": "a0af1213f3c2226497a97e2b3aa01a7e4bee4f403f95be16fc9acd2947514a78",
+  "HTTPStatus": 200,
+  "bodyComplete": true,
+  "contentTypeCount": 1,
+  "mediaTypeBucket": "BINARY_OCTET_STREAM",
+  "priorRefusalExactMIME": "UNKNOWN",
+  "outerGETCounter": null,
+  "workerGETSendBoundaryCount": 1,
+  "outerExit": 0,
+  "childExit": 0,
+  "elapsedJobSeconds": 0.578,
+  "subtreeKillConfirmed": true,
+  "closedAt": "2026-11-23T06:10:07.574764+00:00",
+  "sourceReady": false,
+  "packageExtraction": 0,
+  "packageExecution": 0,
+  "packageInstallation": 0
+}

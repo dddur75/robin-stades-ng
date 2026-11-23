@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-11-23T10:01:54.289Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.RECORD.SCOPE.DESIGN.PRIVATE.PARTIAL.20261123",
+  "missionId": "NOTBETTING_RECORD_SCOPE_DESIGN_PRIVATE_E1_20261123",
+  "status": "PARTIAL_DESIGN_ONLY_OUTPUT_LOCATION_DEVIATION",
+  "scope": "Six tiny counterexamples against unchanged exact parent; valid record alone retained1, with independent synthetic UI cycle retained0/partial. This is a synthetic profile property, not native failure cause. Proposed physical JSON index plus record-local closure remains unimplemented, no admission contract, native business anchor and incoming gate provenance unproven. Actual private output used DESIGN/.ci instead of planned DESIGN/cockpit/.ci; preserve location deviation and no silent relocation.",
+  "keys": [
+    "C0",
+    "C1"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.TYPED.TARGET.CALLER.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.DIAGNOSTIC.NATIVE.R1.ACTUAL.RESULT.20261123"
+  ],
+  "resultSHA256": "fe76ed3315e065c99922d6494b708cce09344d96dd8142cf052583e91fc4b422",
+  "plannedOutputRelative": "cockpit/.ci/notbetting-record-scope-design-private-e1-20261123",
+  "actualOutputRelative": ".ci/notbetting-record-scope-design-private-e1-20261123",
+  "sourceGET": 0,
+  "sourceReady": false,
+  "implemented": false,
+  "newForecasts": 0
+}

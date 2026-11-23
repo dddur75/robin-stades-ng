@@ -1,0 +1,59 @@
+{
+  "missionId": "COTEUR_WINDOWS_AUDITED_SPAWN_FIX_E1_20261123",
+  "writer": "C0",
+  "authorStoppedAt": "2026-11-23T04:14:43.643Z",
+  "status": "ACCEPTED_LOCAL_WINDOWS_AUDIT_FIX_ONLY",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.WINDOWS.AUDITED.SPAWN.FIX.RESULT.20261123",
+  "codeMap": {
+    "source_worker.py": "62f87bdd8992ebe71afbcb5c5b43049c5bbe2cf3ff9b3457b22ddb5f1911e8a4",
+    "test_audited_spawn.py": "92e8656bed095027259493ada5097e343c6c77ffddd58f743b712022b533d769",
+    "red-primary.json": "fa530eaf5cc88f7aeb949d0e1292d98f32f73c86d4e201595e014e626dbce848",
+    "green-primary.json": "593f2f854ed8659a7c7f65a88be74b42c13e50ecc7c3c9f7658eaa38b2e15d09",
+    "lint-primary.json": "c7421798d280e44acf0389f137b4cc5e198998dae8580a12afd51de06b8cbb8b",
+    "plan.json": "d16e8b2a5adb6d4950e733ac153fddd722aa9eecd7c2178e6b3e303336f987f4",
+    "mission.json": "da50ad3b7448e7df301229feb7681180e76d389d4b2b2781baf0854192f7bb43"
+  },
+  "parentWorkerSHA": "0b0bdb351da2b45bc6ce4ceb4a62cc82e67ff165bb65782437bac29f45f8cc0b",
+  "actualNodeChildren": 1,
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "sourceReady": false,
+  "tests": [
+    {
+      "mode": "red",
+      "exit": 0,
+      "primarySHA": "fa530eaf5cc88f7aeb949d0e1292d98f32f73c86d4e201595e014e626dbce848"
+    },
+    {
+      "mode": "green",
+      "exit": 0,
+      "primarySHA": "593f2f854ed8659a7c7f65a88be74b42c13e50ecc7c3c9f7658eaa38b2e15d09"
+    }
+  ],
+  "lintExit": 0,
+  "limits": [
+    "Actual Windows Python hook and one Node CLI tested; no native Job, HTTP or source readiness proven.",
+    "Old source R1 E2 canceled, unused quotas cannot be reused.",
+    "Current documentary rights/browser/reproduction unknowns unchanged."
+  ],
+  "scope": "REAL_ISOLATED_WINDOWS_AUDIT_HOOK_AND_ONE_SYNTHETIC_NODE_CHILD",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "grant": "9f096280362aac583d9fcf0334fea9d66e2aadb440b2e3316232a3dd9e6b9aa8",
+  "elapsedSeconds": 52.617,
+  "planSHA256": "2eee5d45c1ef082cc905b40c975a20dcad5f34b8364e61e1ba23a9d2d5f85444",
+  "manifestSHA256": "000b53353a4602428984dd5f815a01575c332bcae9fc9797ae1c7a012b46d149",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.CANONICAL.PREFLIGHT.CALLER.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.PUBLIC.INTEGRATION.RESULT.20261123"
+  ],
+  "reviewSummary": {
+    "C1": "Primary hashes/two runs/one real Node verified; five checks are not five real children.",
+    "C3": "Exact minimal Windows tuple/Popen/finally delta favorable, no residual P1 established in delta.",
+    "C4": "Local E1 only, old SOURCE R1 canceled, no quota transfer or rights clearance."
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-11-23T08:24:17.594Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.BOUND.WITNESS.PUBLIC.INTEGRATION.RESULT.20261123",
+  "missionId": "COTEUR_BOUND_WITNESS_PUBLIC_FIX_E1_20261123",
+  "status": "PUBLIC_DIAGNOSTIC_INTEGRATION_VERIFIED",
+  "scope": "Iterative bounded static AST traversal and strict diagnostic-only Python consumer integrated. Thirty targeted tests pass, including actual tiny Node-to-Python node/queue/depth witnesses and final DEL/C1/whitespace restrictions. Original success schema and default200k/100/2M limits unchanged. No provider replay or native source activation.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.BOUND.WITNESS.ADAPTER.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.BOUNDED.ITERATIVE.REDESIGN.PRIVATE.RESULT.20261123"
+  ],
+  "authorStatus": "STOP",
+  "authorizedAt": "2026-11-23T08:22:06.173821+00:00",
+  "frozenAt": "2026-11-23T08:22:32.455Z",
+  "codeMapCAN": "b1594d2703f1a4a2f915cce7df35a59ed22a9069a3071411892135fda0b61ba4",
+  "codeMap": {
+    "cockpit/scripts/coteur-static-query-shapes.cjs": "beadb184d4fc841d4343055885c196deb39061d087dc1b541810288bf4cd8af5",
+    "src/robin/source_observatory/coteur_static.py": "ad4bbb62d2a68be2618626b7ed3f4a0a31fd2747db7312987f6067cf96e9a7be",
+    "tests/source_observatory/test_coteur_bound_witness.py": "8d036911484df7f7ad4ca1c113be448c9c2e7f674599cd774c9763455e85ee61"
+  },
+  "testsPassed": 30,
+  "testsExit": 0,
+  "qualityCommandsFulfilled": 2,
+  "qualityNumericExitRetained": false,
+  "greenPrimarySHA256": "ed005b20343f532a2c2aea14c8dd91f396f6bffe636621a1ce38ae5b9d556556",
+  "previous24Pass1FailPreserved": true,
+  "oldNativeBoundSubtype": "UNKNOWN",
+  "ASTConstructionMemoryBoundProven": false,
+  "sourceReady": false,
+  "sourceGET": 0,
+  "providerDataReads": 0,
+  "runtimeWrites": 0
+}

@@ -1,0 +1,50 @@
+{
+  "CLIProcesses": 1,
+  "actualCurrentTargetedTestsPassed": 2,
+  "authorStoppedAt": "2026-11-23T03:33:42.767Z",
+  "capabilities": [
+    "Portable pinned-TypeScript CLI parses provider script statically; provider JS never executed.",
+    "Only path shapes and literal query-key names retained; query values elided, dynamic/secret keys unproven, no runtime query or binding contract.",
+    "Strict rebuilt output whitelist and all omission counters; partial metadata never reported complete.",
+    "Bounded stdin/strictUTF8, closed syntax/dependency/inputcap errors, childtimeout/stdoutcap classification, no raw stderr passthrough."
+  ],
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.PUBLIC.INTEGRATION.RESULT.20261123",
+  "criticalRuffExit": 0,
+  "deepInputTrials": 0,
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "limits": [
+    "Existing five passing tests and their unchanged bodies reused; two new targeted tests passed, no full seven-case replay claimed.",
+    "Old depth assumptions failed twice and remain preserved. RecursionError branch now tested by disclosed dependency injection; no third identical deep-input trial.",
+    "No real Coteur asset or API called by this integration; no current endpoint contract, forecast, collection activation, recurrence, app admission or Git push."
+  ],
+  "missionId": "COTEUR_PUBLIC_JSON_FAULT_TEST_REDESIGN_E1_20261123",
+  "oldDistinctPassingTestsReused": 5,
+  "originalFiveTestsNotReplayed": true,
+  "productionCodeReviewBy": "C3 reviewed C0 dependency/stdin/closed-child wrapper deltas; C0 reviewed private core; C1 CODEFACTS reviewed finaltests and unchanged production.",
+  "productionPinsUnchanged": true,
+  "publicProjectionSHA256": "67ab6ac9f550e76f1d55c9f029a53323cccdbaf4fe9bbdbe60a527ca05686d45",
+  "publicProtocolSHA256": "9a71bd2da8d99a16c682dc500b133fb6cd0fe6e3ae49e5392c1e51cd0a0a8ce0",
+  "scope": "LOCAL_CLI_QUERY_KEYS_ONLY_NOT_LIVE_COLLECTION",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.SHAPES.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.PUBLIC.INTEGRATION.TEST.STRATEGY.PARTIAL.20261123"
+  ],
+  "sourceGET": 0,
+  "sourceReady": false,
+  "status": "ACCEPTED_PUBLIC_METADATA_COMMAND_WITH_REUSED_TARGETED_EVIDENCE",
+  "targetedRuns": 1,
+  "targetedTests": 2,
+  "testsExit": 0,
+  "testsSHA256": "72d31650ee424626c61340483e0ad5071b6983c1780259831d02b5f62a882231",
+  "unchangedFiveTestBodiesASTVerifiedBy": [
+    "C1",
+    "C4"
+  ],
+  "wholeSevenTestsRun": false,
+  "writer": "C0"
+}

@@ -1,0 +1,34 @@
+{
+  "generatedAt": "2026-11-23T06:25:11.614Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.HISTORICAL.MASKED.PROJECTION.R2.PARTIAL.20261123",
+  "missionId": "OLBG_ONE_HISTORICAL_MASKED_PROJECTION_PRIVATE_R2_E1_20261123",
+  "status": "PARTIAL_MASKED_PROJECTION_FAILED",
+  "scope": "Unique real target membership and syntax checks retained; actual TS annotation unproven because closed wrapper omitted failed invariant. No integration authorized.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.HISTORICAL.ANNOTATION.PRIVATE.PARTIAL.20261123"
+  ],
+  "resultSHA256": "1021656c28a4645f86e2f133208b8f6e87ef9327172b18b9b1d0a7c9a95947eb",
+  "codeMapCAN": "ee582ce49a9775734ac3dfbd5eff577f42b8eb904e637463948d70716bf503ae",
+  "actualTargetLookups": 1,
+  "actualProjectionAttempts": 1,
+  "actualRowsSuccessfullyApplied": null,
+  "canonicalPYJSEquivalence": "UNPROVEN",
+  "maskedExitCode": 1,
+  "firstFailedInvariant": "NOT_RETAINED",
+  "descriptorAuthorized": false,
+  "syntaxFiles": 4,
+  "syntaxErrors": 0,
+  "fullTypecheck": false,
+  "incorrectInternalUIProofActualRowsAppliedHint": 1,
+  "internalHintIsNotActualSuccessEvidence": true,
+  "sourceGET": 0,
+  "sourceReady": false,
+  "runtimeWrites": 0,
+  "publicBusinessWrites": 0,
+  "elapsedSeconds": 287.520614
+}

@@ -1,0 +1,26 @@
+{
+  "generatedAt": "2026-11-23T10:37:37.408Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.PUBLICATION.V22.DIFFCHECK.FAILURE.20261123",
+  "missionId": "PUBLICATION_V22_EXACT_E1_E2_20261123",
+  "status": "PARTIAL_STOPPED_BEFORE_COMMIT_PUSH",
+  "scope": "Actual first publication execution staged154 authorized files then strict cached diff check stopped on one extra EOF blank line in a synthetic test. Commit and push calls were not reached; HEAD unchanged. Preserve staged tree and terminal failed reservation/approval, no rearm or clearing user index. Audit timestamps do not establish exact time of last Git command. Requires smallest EOF/lineage correction and separately reviewed staged-index continuation, no new source effect.",
+  "keys": [
+    "C0",
+    "C1"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V22.ENGINEERING.RECETTE.20261123"
+  ],
+  "primarySHA256": "0df2acd1d6905cc201c80810f54de5bca33e0dc668776e22ed26a16b3699e78f",
+  "diffcheckSHA256": "34d103a92da2623ab990be0e4e7eba9413e4c8288921a29388cc0d3bee650661",
+  "actualHEAD": "6d389745cb11ff3a930afaa9a79412aa436461c7",
+  "stagedFiles": 154,
+  "stagedTree": "813ce29b75f65ce9790ff22abfbec818fbb7a612",
+  "indexMutationOccurred": true,
+  "commitCallsReached": 0,
+  "pushCallsReached": 0,
+  "auditRecordedAt": "2026-11-23T10:34:57.994Z",
+  "lastGitCommandExactTime": null,
+  "sourceGET": 0,
+  "sourceReady": false
+}

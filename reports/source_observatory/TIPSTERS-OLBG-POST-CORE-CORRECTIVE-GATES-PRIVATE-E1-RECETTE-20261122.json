@@ -1,0 +1,65 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.POST.CORE.CORRECTIVE.GATES.PRIVATE.E1.RECETTE.20261122",
+  "recordedAt": "2026-11-22T19:28:30.905Z",
+  "status": "PRIVATE_CORRECTIVE_E1_ACCEPTED_NO_NATIVE_READINESS",
+  "scope": "Independent C0 CODE C1 FACTS C4 SCOPE review of C3 minimal private fixes: fail on unsuccessful handle closure; pending/fsync/guard before per-file receipt publication with tested late rollback. Sixteen synthetic methods exercise real Job/authentication/publication functions. No native operational or recurrence readiness.",
+  "missionId": "OLBG_POST_CORE_CORRECTIVE_GATES_PRIVATE_E1_20261122",
+  "planSHA256": "6dca1579620fd60de3f554693e455617f080ed45e7c7649d19a3c31dd935a6d5",
+  "manifestSHA256": "b6f32d9cdac9a60d1230dcde32668f6934e60e0dc6b85abf24af3601e5d61153",
+  "grant": "7bd301d3728127e656f16b3a78daead08af0130ce9d5517a734bcd6fbba55956",
+  "resultSHA256": "67022bca3ea8da5df275c311f42dec576d37a7de8f30cfbebb8288e49dcfc134",
+  "codeMapSHA256": "127bd6ea07169c9dda5976cb329c724d8084ddde2bb9e5726b77bd0dc69773c9",
+  "pinsVerified": 26,
+  "originalModulesPreserved": 4,
+  "changedModules": [
+    "post_core.py",
+    "slot0/post-outer.py"
+  ],
+  "author": "C3_STOPPED",
+  "independentCodeReviewer": "C0_NOT_AUTHOR",
+  "authorStoppedAt": "2026-11-22T19:18:02.599895+00:00",
+  "elapsedSeconds": 487.22768,
+  "budgetSeconds": 900,
+  "tests": {
+    "methods": 16,
+    "syntheticRows": 3,
+    "initialREDFailures": 2,
+    "latePublicationREDFailures": 1,
+    "finalFailures": 0,
+    "finalErrors": 0,
+    "RAMCompiles": 4,
+    "criticalRuffExit": 0
+  },
+  "security": {
+    "banditExit": 1,
+    "inheritedFindings": [
+      "B404 LOW subprocess import",
+      "B102 MEDIUM adjacent-core exec"
+    ],
+    "securityZeroClaimed": false
+  },
+  "newSourceGET": 0,
+  "Win32Calls": 0,
+  "nativeTaskQueries": 0,
+  "TaskChanges": 0,
+  "realCandidateReads": 0,
+  "appChanges": 0,
+  "GitCommit": 0,
+  "GitPush": 0,
+  "sourceReady": false,
+  "postReady": false,
+  "effectiveBindingsPresent": false,
+  "expiredSlotsRearmed": false,
+  "crossReceiptCrashTransactionClaimed": false,
+  "remaining": [
+    "Fresh bounded deployment source/post Task bindings and independent acceptance absent",
+    "Native Windows and real filesystem behavior unmeasured",
+    "Adjacent core dynamic exec must be pinned before any future deployment",
+    "Nonzero unknown halt or incomplete outer proof must block all future acceptance"
+  ],
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "missionId": "PYPI_WEBENCODINGS_WHEEL_COMPLETION_NATIVE_R2_20261123",
+  "claimId": "ENG.SOURCE_OBSERVATORY.PYPI.WEBENC.COMPLETION.R2.E1.20261123",
+  "status": "ACCEPTED_HASH_ONLY_BINDING_REUSED_CODE_NO_DYNAMIC_E1",
+  "scope": "UNCHANGED_CALLER_REBOUND_NO_LOAD_OR_TEST_REPLAY",
+  "writer": "C0",
+  "authorStoppedAt": "2026-11-23T06:06:21.657Z",
+  "codeMap": {
+    "authority_policy.py": "358688ecdb5a0a627273a4f213a4ddd0521fbbcb521fc031491ebba49d4a0cc4",
+    "native_outer.py": "cdd0697037a918ef9b6b1da60c050ed0d757fe281bad97703ec2fe918dcdbbec",
+    "fixed_transport.py": "a607bbb43e795e799bb874e0a4c769c27ab0e075c7daa2f43d590d90bee1ea7f",
+    "source_worker.py": "dcbe7fd95cf710ad694dcfc5a139d94e08fe803f3e489ecf598aacded1563948",
+    "plan.json": "e205581cd37cad1edc7da0a4bc8e759830bc081231fd3426e58a8b6789eea47d",
+    "mission.json": "c493b7957f909424718443048ad6629e287fe8a37764849c9b2b4f677d1ed265",
+    "config.json": "a0877ec2b7de095027e23bbc09455d4b56699fc68c008ec70a4e69acc2a9da83"
+  },
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.PYPI.WEBENC.COMPLETION.R1.E1.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.PYPI.HTML5.WHEELS.R1.NATIVE.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.PYPI.HTML5.METADATA.R2.NATIVE.RESULT.20261123"
+  ],
+  "E1ModuleLoads": 0,
+  "E1TargetedRuns": 0,
+  "E1ActualArchiveVerifications": 0,
+  "retainedTestPrimarySHA256": "c50e9c0cc8fbf3999987cbba5a6852605e0bf15b2d63745b5922cfeafe84d32f",
+  "registryGET": 0,
+  "tipsterGET": 0,
+  "packageExecution": 0,
+  "sourceReady": false,
+  "limits": [
+    "No claim new config/authority tuple was dynamically loaded. Byte-exact worker/controls and retained15case primary reused; independent exact binding checks and live preflight required.",
+    "Old helpercap excess stays PARTIAL; unused old GET canceled, no quota/parent reused. Fresh distinct1GET only after E1close and four new keys."
+  ],
+  "parentGrant": "c470f88b5086c11aa3e5233a040b30c801038c1516c3c83789c88505673452a8",
+  "planSHA": "e45b8ac31a83f70688e59b1e9fa16c23699f3b79b2942f713c6b8b509ea172d4",
+  "manifestSHA": "87c8befff11ec62bea676d819c667262fc974e073c33c09ab0f3053e4d8a937b",
+  "configSHA": "a0877ec2b7de095027e23bbc09455d4b56699fc68c008ec70a4e69acc2a9da83",
+  "workerSHA": "dcbe7fd95cf710ad694dcfc5a139d94e08fe803f3e489ecf598aacded1563948",
+  "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+  "outerSHA": "cdd0697037a918ef9b6b1da60c050ed0d757fe281bad97703ec2fe918dcdbbec",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ]
+}

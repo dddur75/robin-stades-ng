@@ -1,0 +1,19 @@
+{
+  "generatedAt": "2026-11-23T08:34:03.894Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.IPV4.STRICT.CALLER.PRIVATE.PARTIAL.20261123",
+  "missionId": "TELEGRAM_IPV4_STRICT_CALLER_RESOLVED_PRIVATE_E1_20261123",
+  "status": "PARTIAL_ASSEMBLY_WITH_DISCLOSED_LIMITATIONS",
+  "scope": "Private frozen caller assembly; six fake collect cases and reused authority/Job definitions. Author264.6s below300 hard but above240 target; initial pointer failure and construction error retained. Full module load and SOURCE policy/Job not exercised in this phase. No source authority.",
+  "keys": [
+    "C0",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.IPV4.STRICT.TRANSPORT.PRIVATE.RESULT.20261123"
+  ],
+  "codeMapCAN": "9fdc4fa6045fd1767247a9e4b739317bcf5ee127376ba36824ee96b016b139ca",
+  "resultSHA256": "5833f331b6ee5bc85702dbbe59eee165980451fc0aca764a558743d7c8a21bce",
+  "workerSHA256": "7574f3ce5f1ca92f3ec2e496a91595af467c99ac9a5d91db9def366476b53b40",
+  "sourceGET": 0,
+  "sourceReady": false
+}

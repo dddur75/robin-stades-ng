@@ -1,0 +1,49 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.BUNDES.J11.DOCUMENTARY.ACCESS.PARTIAL.20261122",
+  "generatedAt": "2026-11-22T22:54:49.264Z",
+  "status": "PARTIAL_MEDIATED_ACCESS_UNAVAILABLE_NO_FUTURE_CALENDAR",
+  "scope": "One derived public J11 PDF URL open failed in managed web tool. No response schedule, page count, UTC column, fixtures or native provider status observed; not a global source absence finding.",
+  "missionId": "BUNDES_OFFICIAL_FUTURE_J11_DOCUMENTARY_E1_20261122",
+  "planSHA256": "d549aa91b302460ac14fe3927fe13c83ec17e4ec9c12ce59549539b5a1bb4618",
+  "manifestSHA256": "a23abcbc72ac721938e190c5b639a0b0b99f1dd02ea8d305284895f97bf93d35",
+  "grant": "e33ab4bb91a5469984e213aae881373b698a908925eff11a119fcb9b89842bb8",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "candidateURL": "https://products.bundesliga.com/fixtures/export/pdf?league%5B0%5D=1d570dd9-b10b-44de-9f64-8c91e56bf168&matchday%5B0%5D=11&season=b2f90c16-d6ef-40b1-a974-e6b1bf102c2a",
+  "candidateURLIsDerived": true,
+  "mediatedOperations": 1,
+  "underlyingHTTPCount": null,
+  "nativeGET": 0,
+  "toolIsErrorFlag": false,
+  "contentOutcome": "INTERNAL_ERROR_URL_NOT_ACCESSIBLE_VIA_TOOL",
+  "representationSHA256": "0f779a0f448919238197d339b1a6de482ead994ce12c25ce6a4d873c43b0bf2b",
+  "representationBytes": 524,
+  "fixtureCount": null,
+  "primaryUTCProof": false,
+  "pageCount": null,
+  "screenshotPerformed": false,
+  "remainingConditionalScreenshotAbandoned": true,
+  "noRetry": true,
+  "API_FOOTBALL_CALLS": 0,
+  "tipsterGET": 0,
+  "appChanges": 0,
+  "TaskChanges": 0,
+  "globalDelivery": "PARTIAL",
+  "administrativeClosedAt": "2026-11-22T23:00:57.424Z",
+  "assessmentWithin300Seconds": true,
+  "administrativeCloseAfterWorkloadDeadline": true,
+  "workloadDeadline": "2026-11-22T22:58:24.050436Z",
+  "review": {
+    "C0": "EXACT_TOOL_ERROR_AND_REPRESENTATION_PIN_VERIFIED",
+    "C1": "PARTIAL_NO_FUTURE_CALENDAR",
+    "C4": "FAIL_AND_STOP_NO_RETRY"
+  },
+  "representationRetained": true,
+  "representationVerifiedBy": [
+    "C0"
+  ],
+  "sourceWindowClosed": true
+}

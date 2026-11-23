@@ -1,0 +1,81 @@
+{
+  "missionId": "COTEUR_NATIVE_ADMIN32_LOCAL_20261123",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.NATIVE.ADMIN32.LOCAL.RESULT.20261123",
+  "status": "ACCEPTED_LOCAL_ADMIN32_QUALIFICATION_CANARY_ONLY",
+  "scope": "TWO_COTEUR_CLOSURES_VISIBLE_LOCAL_ADMIN_ONLY",
+  "writer": "C0",
+  "authorStoppedAt": "2026-11-23T04:33:30.757Z",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.DOCUMENT.SOURCE.R2.NATIVE.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.DOCUMENT.SOURCE.R3.NATIVE.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.ROBOTS.CLOSURE.FIX.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.WINDOWS.AUDITED.SPAWN.FIX.RESULT.20261123"
+  ],
+  "codeMap": {
+    "plan.json": "cb25af80029d1fe1508520532cfd183de88071afe1a15991f6ad68224b2edf60",
+    "mission.json": "5076bb7edb37c937667483f4024ef3d0a77b7c25a2bac705b76eb29e65ba4101",
+    "before.json": "94f3d14d2f66a3f76af811eac42d13186099fa58496ab13e260a80181bef64a6",
+    "proposed.json": "9230c83e8972f0d2fbe8d6ee8006b09f5131107da78adc348db75eddf6fd5117",
+    "validate-proposed.ts": "090832ff36f00feffaacb182cf2c2e669b722930334472df173df21e66ed40fa",
+    "validation-primary.json": "ee9e3d68399bbc6e0afb27cc3036d724a31ce5e27f2eca21a5ecda4c818e9cad",
+    "canary-admin.mjs": "8ff064a6bf4795e0cd0c2c57e3b47d50dc59189c6a54869b1d26e6f106a2fbbf"
+  },
+  "actualProofMap": {
+    "snapshot-write-receipt.json": "fbcb94104c54abb5d4be6d719fb5b67345fc3b36c6920bb37f9a243060c7c845",
+    "canary-primary.json": "e15ca4673f58472b4da506e2f16bf08ac6beb551c9d3005cce3b66d95119c318",
+    "app-canary-result.json": "fe0833defad8844d33ab68aa20f4a91e00e5bb78c7751a69d905d8c2386b673f",
+    "actual-api.json": "8bfffeb363e1ad3a743de074895a91828d5bc3470e1f8e28b7012af4ee8c3d0f",
+    "admin-row-0.png": "d6d0205baad83ec4f60819e359400ef4ae2b096b601529f240dd8730be962fc9",
+    "admin-row-1.png": "1a87bdf85b6209ab65ec679b41aa74f67c14fc52ca24b766148a7b7ef5464345"
+  },
+  "localCanary": {
+    "startedAt": "2026-11-23T04:33:06.464Z",
+    "status": "PASS",
+    "APIReads": 2,
+    "pages": 1,
+    "sourceGET": 0,
+    "TaskQueries": 0,
+    "externalBlocked": 0,
+    "writesBlocked": 0,
+    "outOfScopeAPIBlocked": 5,
+    "pageErrors": 0,
+    "personalContentExposed": false,
+    "expectedAPIHash": "8bfffeb363e1ad3a743de074895a91828d5bc3470e1f8e28b7012af4ee8c3d0f",
+    "directAPIHash": "8bfffeb363e1ad3a743de074895a91828d5bc3470e1f8e28b7012af4ee8c3d0f",
+    "qualificationRows": 32,
+    "previous30DeepEqual": true,
+    "candidates": null,
+    "admittedFromNewRows": 0,
+    "browserAPIHash": "8bfffeb363e1ad3a743de074895a91828d5bc3470e1f8e28b7012af4ee8c3d0f",
+    "adminRowsVisible": 2,
+    "otherAPIsIntentionallyBlocked": true,
+    "fullAdminCurrentStateAccepted": false,
+    "closedAt": "2026-11-23T04:33:07.186Z"
+  },
+  "qualificationRows": 32,
+  "previous30DeepEqual": true,
+  "runtimeSnapshotSHA256": "9230c83e8972f0d2fbe8d6ee8006b09f5131107da78adc348db75eddf6fd5117",
+  "sourceGET": 0,
+  "admittedFromNewRows": 0,
+  "newForecastsCollected": 0,
+  "candidateCount": null,
+  "sourceReady": false,
+  "allCompatibleIntegrated": false,
+  "compatibleSourceCount": null,
+  "fullAdminCurrentStateAccepted": false,
+  "WindowsCurrentStateAccepted": false,
+  "limits": [
+    "Only qualification API/page canary; five other API requests deliberately blocked. No full admin, recurring tasks or Windows readiness certified.",
+    "Two native documentary closures added, not tipster forecasts; global compatibility denominator remains unknown.",
+    "Source calls3 belong to prior two separately closed claims, not this local phase. No additional provider request, task, push or admission."
+  ],
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "elapsedParentSeconds": 217.395684,
+  "elapsedE2Seconds": 25.344821,
+  "reviewSummary": "C1 FACTS, C3 CODE and C4 SCOPE independently verified bytes, API hashes, row clocks, prior30 equality, bounded effects and both readable screenshots."
+}

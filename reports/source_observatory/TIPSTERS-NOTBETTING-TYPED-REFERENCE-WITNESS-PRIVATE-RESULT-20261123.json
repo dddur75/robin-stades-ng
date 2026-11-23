@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-11-23T09:15:45.533Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.TYPED.REFERENCE.WITNESS.PRIVATE.RESULT.20261123",
+  "missionId": "NOTBETTING_TYPED_REFERENCE_WITNESS_PRIVATE_E1_20261123",
+  "status": "PRIVATE_PROTOTYPE_WITH_DISCLOSED_TEST_LIMITATION",
+  "scope": "Optional v2 observer classifies lexical reference family and capture call site without changing resolution, traversal, gates, old four-field observer or qualification. Seven variants precede final gate-try change; only eighth gate tested final bytes in this phase. Resolve depth/count were entry counters, not failure location. Later final receipt is separate.",
+  "keys": [
+    "C0",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.DIAGNOSTIC.NATIVE.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.WITNESS.PUBLIC.INTEGRATION.RESULT.20261123"
+  ],
+  "resultSHA256": "86f49941c7fdf3dc32dd2abc6e8ffa7c066dbdcb600d3bf94dae1d75fa0e273f",
+  "codeMapCAN": "f7c327cd45e9f1b7d87d004ea126e164e490a5fd3f43396bd3aae15480a763be",
+  "qualifierSHA256": "8efba2c37e1941a13bc8846f5b66d9202e69fb175213d20fc65cbd78a1d7ee8c",
+  "authorSeconds": 197.14087,
+  "sourceGET": 0,
+  "sourceReady": false
+}

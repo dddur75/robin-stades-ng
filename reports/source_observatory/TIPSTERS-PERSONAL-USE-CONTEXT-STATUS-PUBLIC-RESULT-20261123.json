@@ -1,0 +1,30 @@
+{
+  "generatedAt": "2026-11-23T08:31:14.880Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.PERSONAL.USE.CONTEXT.STATUS.PUBLIC.RESULT.20261123",
+  "missionId": "PERSONAL_USE_CONTEXT_STATUS_E1_20261123",
+  "status": "PUBLIC_CONTEXT_STATUS_CORRECTION_VERIFIED",
+  "scope": "Personal/noncommercial wording distinguished from explicit automation/reproduction bans. New context-pending status remains denied by collect_source; UI label clarified. Thirty-one targeted tests, Ruff and ESLint fulfilled. No grant, source-specific permission, runtime copy or source access inferred.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V20.ENGINEERING.RECETTE.20261123"
+  ],
+  "authorStatus": "STOP",
+  "authorizedAt": "2026-11-23T08:25:05.538298+00:00",
+  "frozenAt": "2026-11-23T08:26:26.933Z",
+  "codeMapCAN": "fa289e578831131b581e43e6825f42104a1c36284ba7f9f8379a12293efd5b86",
+  "codeMap": {
+    "src/robin/source_observatory/connectors.py": "cf0312424aa541f03e492ebb27056065e709575c4c7359ebdb3a75437a17b270",
+    "tests/source_observatory/test_connectors.py": "d2f2cfca08f25abf8e49c0ea11199c16978b7d9fa5977df23145fc101eeb560e",
+    "cockpit/app/components/expert/tipster-connectors.tsx": "e3a2af79562fa0449a17b600bbf7909851431c209b48d3a369b99d647031d426"
+  },
+  "testsPassed": 31,
+  "testsExit": 0,
+  "qualityCommandsFulfilled": 2,
+  "sourceGET": 0,
+  "runtimeWrites": 0,
+  "sourceReady": false
+}

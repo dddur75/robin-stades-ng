@@ -1,0 +1,144 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.TELEGRAM.FIRST.AMBIGUITY.NATIVE.WITNESS.R2.20261122",
+  "generatedAt": "2026-11-22T21:59:43.378Z",
+  "status": "VERIFIED_NATIVE_METADATA_WITNESS_COLLECTION_UNQUALIFIED",
+  "scope": "One bounded native public-preview structural witness; no message text or fields extracted. First observed parse ambiguity is closing an SVG group with nonoptional descendants. Native selfclosing slashes are not retained, so the specific path-selfclosing root cause remains a corrective hypothesis.",
+  "missionId": "TELEGRAM_DIAG_R2_FIXED_SOURCE_E1_20261122",
+  "planSHA256": "4b27fb2f02e60aa992b5a47b714be3205bc556f24b648394ec7740bafb0dd5ea",
+  "manifestSHA256": "d6452534add39115414133c65998ba5c27b324e8bfb2dde859258b956d0555a9",
+  "grant": "09a78750bf2d9de89f99504e45011b4518a7a12a5b2fa78325a246ad257c4302",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceResultSHA256": "eaf62fb22215b7d89d23aad7d6e7050b36eb2352a5b7bc5c6a127425d49dd96b",
+  "processSHA256": "7542f8f606ce439050eeb2634ae53bb2de07ba648e6382946cb510e6e1383297",
+  "assessmentSHA256": "5484713a983fd46467d6838c15c7679c9fc92003d8993851be3b56653bf67123",
+  "reservations": 2,
+  "sourceGETMeasured": 2,
+  "responses": [
+    {
+      "n": 1,
+      "status": 404,
+      "bytes": 153,
+      "complete": true,
+      "bodySHA256": "29b8ea7cf7286595bdce7f04d1ed55b2670cffc86ffe6e4917f6667f6b595cdb",
+      "observedAt": "2026-11-22T21:56:50.156014+00:00"
+    },
+    {
+      "n": 2,
+      "status": 200,
+      "bytes": 113950,
+      "complete": true,
+      "bodySHA256": "0a0531ab739896a1b6f73f66bb2f6582bc027843c0e09fb84331f9bf84a58f25",
+      "observedAt": "2026-11-22T21:56:59.537253+00:00"
+    }
+  ],
+  "sourceClosedAt": "2026-11-22T21:57:00.050200+00:00",
+  "assessmentAt": "2026-11-22T21:57:00.192Z",
+  "operatorElapsedSeconds": 14.677,
+  "operatorWindowSeconds": 300,
+  "processClosure": {
+    "exitCode": 0,
+    "childExitCode": 0,
+    "jobSeconds": 13.905999999988126,
+    "externalSeconds": 13.968679699987174,
+    "timedOut": false,
+    "subtreeKillConfirmed": true
+  },
+  "diagnostics": {
+    "authenticationMarkupPresent": false,
+    "bodyTagPresent": true,
+    "dedicatedChallengeMarkupPresent": false,
+    "htmlTagPresent": true,
+    "landingMarkupPresent": false,
+    "messageFieldExtractionPerformed": false,
+    "messageMarkupPresent": true,
+    "pageShape": "UNRECOGNIZED",
+    "parseAmbiguous": true,
+    "plaintextUnqualifiable": false,
+    "previewMarkupPresent": true,
+    "textExtractionPerformed": false
+  },
+  "firstAmbiguity": {
+    "branch": "END_NONOPTIONAL_DESCENDANT",
+    "hasSVGAncestor": true,
+    "hiddenFrameCount": 1,
+    "omittedFrames": 7,
+    "plaintextActive": false,
+    "rawActive": false,
+    "stackDepth": 19,
+    "tag": "g",
+    "tagCallbackOrdinal": 77,
+    "tailStack": [
+      {
+        "hidden": true,
+        "tag": "svg"
+      },
+      {
+        "hidden": false,
+        "tag": "g"
+      },
+      {
+        "hidden": false,
+        "tag": "path"
+      },
+      {
+        "hidden": false,
+        "tag": "path"
+      },
+      {
+        "hidden": false,
+        "tag": "path"
+      },
+      {
+        "hidden": false,
+        "tag": "path"
+      },
+      {
+        "hidden": false,
+        "tag": "path"
+      },
+      {
+        "hidden": false,
+        "tag": "path"
+      },
+      {
+        "hidden": false,
+        "tag": "path"
+      },
+      {
+        "hidden": false,
+        "tag": "path"
+      },
+      {
+        "hidden": false,
+        "tag": "path"
+      },
+      {
+        "hidden": false,
+        "tag": "path"
+      }
+    ]
+  },
+  "sourceRawBodyStored": false,
+  "rawMessageFieldsExtracted": false,
+  "messageTextExtracted": false,
+  "nativeMessageCount": null,
+  "collectedForecasts": 0,
+  "admissions": 0,
+  "appChanges": 0,
+  "TaskChanges": 0,
+  "robotsPolicyAllowed": null,
+  "robots404MeansPermission": false,
+  "accountRequirement": "UNKNOWN",
+  "universalExportRequirement": "NOT_ESTABLISHED",
+  "oldTransportFineCause": "UNKNOWN_NOT_RETAINED",
+  "collectionQualified": false,
+  "sourceActivated": false,
+  "recurrence": false,
+  "noFurtherAttempts": true,
+  "globalDelivery": "PARTIAL"
+}

@@ -1,0 +1,60 @@
+{
+  "missionId": "PYPI_WEBENCODINGS_WHEEL_COMPLETION_NATIVE_R1_20261123",
+  "claimId": "ENG.SOURCE_OBSERVATORY.PYPI.WEBENC.COMPLETION.R1.E1.PARTIAL.20261123",
+  "status": "PARTIAL_SYNTHETIC_PASS_HELPER_CAP_EXCEEDED_NO_E2",
+  "scope": "ONE_MISSING_WHEEL_CALLER_REUSING_VERIFIED_FIRST_ARCHIVE_ONLY",
+  "writer": "C0",
+  "authorStoppedAt": "2026-11-23T05:59:45.737Z",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.PYPI.HTML5.WHEELS.R1.NATIVE.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.PYPI.HTML5.METADATA.R2.NATIVE.RESULT.20261123"
+  ],
+  "codeMap": {
+    "authority_policy.py": "358688ecdb5a0a627273a4f213a4ddd0521fbbcb521fc031491ebba49d4a0cc4",
+    "native_outer.py": "cdd0697037a918ef9b6b1da60c050ed0d757fe281bad97703ec2fe918dcdbbec",
+    "fixed_transport.py": "a607bbb43e795e799bb874e0a4c769c27ab0e075c7daa2f43d590d90bee1ea7f",
+    "source_worker.py": "dcbe7fd95cf710ad694dcfc5a139d94e08fe803f3e489ecf598aacded1563948",
+    "plan.json": "d04230944bd14defd8f24cd39b755bf07800ab49e0d00e611cf33b6d7422a943",
+    "mission.json": "d82854494d43492e5f82539502f62a96fa97f59f4a297a9decfbc9e17ae9af91",
+    "config.json": "6d915c833ca4851ba7d6ec257e9aaea244b2bbacbed0d9b86ca38461aaf35367",
+    "test_metadata.py": "b6946102cd1c739bf82583de872d53d68a345b1ec38720891b32c4d4ed3292e0",
+    "test-primary-run-1.json": "63d5af6155297bdbb7d3f2761678f870865168dfb083eb68e5c41b1824b7242a",
+    "test-primary-run-2.json": "c50e9c0cc8fbf3999987cbba5a6852605e0bf15b2d63745b5922cfeafe84d32f",
+    "lint-primary.json": "c7421798d280e44acf0389f137b4cc5e198998dae8580a12afd51de06b8cbb8b"
+  },
+  "testExits": [
+    1,
+    0
+  ],
+  "lintExit": 0,
+  "registryGET": 0,
+  "tipsterGET": 0,
+  "actualArchiveWrites": 0,
+  "packageExecution": 0,
+  "sourceReady": false,
+  "limits": [
+    "First targeted run failed on test internal transport entrypoint with uninitialized trace, revealing extension closure needed. Primary preserved; no source request.",
+    "Output worker adds explicit closed MIME diagnostic adapter: base trace still validated by original unchanged pinned validator, new count/enum and total4096B validated separately. Raw control files unchanged.",
+    "Second run exercises PUBLIC transport API with actual strict HTTPResponse over memory socket, binary MIME accepted and duplicate MIME rejected. No network, Node, Job, or actual quarantine write.",
+    "Actual immutable html5lib archive rehashed by loader, no redownload/import. Legacy binary MIME remains prospective until native observation.",
+    "Both targeted runs reached actual loader/reused-archive verification. Scope allowed3runs but helpercaps1 were exceeded; preserve actual2 counters, do not relabel eachrun1 as phase1.",
+    "No E2/source authority issued. Successor may reuse frozen code/proofs under hash-only E1 with0loads/0tests and fresh oneGET ceiling; never reset this manifest."
+  ],
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "observedActualLoads": 2,
+  "observedReusedArchiveVerifications": 2,
+  "declaredActualLoadsMax": 1,
+  "declaredReusedArchiveVerificationsMax": 1,
+  "E2NeverOpened": true,
+  "unusedRegistryGETCanceled": 1,
+  "reviewOutcomes": {
+    "C1": "Functional facts and file pins verified",
+    "C3": "Code facts limited E1 favorable",
+    "C4": "E2 held because two runs repeated helper operations beyond cap1"
+  }
+}

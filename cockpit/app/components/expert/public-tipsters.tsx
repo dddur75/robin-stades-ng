@@ -13,7 +13,7 @@ function CampaignBlock({title,campaign,children,counters=true}:{title:ReactNode;
   {Number.isFinite(Date.parse(campaign.native?.verifiedAt??''))&&<p>État Windows vérifié le {formatDateTime(campaign.native!.verifiedAt!,true)}.</p>}{children}</div>;
 }
 
-type Pick = SourceChoice & { id:string; authorId:string; authorLabel:string; sourceId:string; fixtureLabel:string;
+type Pick = SourceChoice & { historicalProgrammeObservation?:{kind:'retained_programme_historical_only';collectorObservedUTC:string;officialProgrammeUTC:string}; id:string; authorId:string; authorLabel:string; sourceId:string; fixtureLabel:string;
  selection:string; market?:string; kickoff:string; observedAt:string; firstSeenAt?:string; publishedCivilDate:string|null; sourceUrl:string; observationCount?:number; lastObservedAt?:string };
 
 export function isSroReobservation(pick:{firstSeenAt?:string;observedAt:string},update:{lastSeenAt:string}|undefined):boolean{
@@ -111,8 +111,8 @@ export function PublicTipsters({ compact=false, tipsterId }: { compact?:boolean;
      return <article key={p.id} className="section-card tipster-pick">
      <h3>{p.fixtureLabel} · {choiceHeading(p)} {p.selection}</h3>
      <p>{p.authorLabel} · {p.sourceId}</p>
-     <p>Coup d’envoi : {formatDateTime(p.kickoff,true)}.</p>
-     <p>Observé avant match le {formatDateTime(p.observedAt,true)}.</p>
+     {p.historicalProgrammeObservation?.kind==='retained_programme_historical_only'?<><p>Observation enregistrée avant le programme officiel conservé.</p><p>Lecture enregistrée le {formatDateTime(p.historicalProgrammeObservation.collectorObservedUTC,true)}.</p><p>Programme officiel conservé : {formatDateTime(p.historicalProgrammeObservation.officialProgrammeUTC,true)}.</p></>:<><p>Coup d’envoi : {formatDateTime(p.kickoff,true)}.</p>
+     <p>Observé avant match le {formatDateTime(p.observedAt,true)}.</p></>}
      {(update||p.sourceWalkTruncated)&&Number.isSafeInteger(count)&&count!>1&&last&&<p>{count} lectures concordantes{update&&' de la même source'}. Dernière : {formatDateTime(last,true)}.</p>}
      {reobservation&&isSroReobservation(p,reobservation)&&<p>Choix déjà connu, relu avant match le {formatDateTime(reobservation.lastSeenAt,true)}. Première observation conservée.</p>}
      <p>Date civile affichée : {p.publishedCivilDate??'non renseignée'}. Publication : heure et fuseau non certifiés.</p>

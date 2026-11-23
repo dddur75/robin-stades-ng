@@ -1,0 +1,36 @@
+{
+  "generatedAt": "2026-11-23T06:31:36.335Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.HISTORICAL.DIAGNOSTIC.R3.PRIVATE.RESULT.20261123",
+  "missionId": "OLBG_ONE_HISTORICAL_DIAGNOSTIC_R3_E1_20261123",
+  "status": "PRIVATE_ACTUAL_FIX_PROVEN_QUALITY_PARTIAL",
+  "scope": "Exact positive safe-integer identifier guard failure reproduced and comparison-only fix passes one cached real row plus twelve synthetic cases. Integration quality remains unproven.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.HISTORICAL.MASKED.PROJECTION.R2.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.OLBG.ONE.PROGRAMME.AUTHOR.NAMESPACE.FIX.RESULT.20261123"
+  ],
+  "resultSHA256": "15fbe9d2d1124285952f796a8ac35030aaaa28ff6842729102aed2e9b9859fa7",
+  "codeMapCAN": "3b2cc90c865bdc9c5b2711178a21f7dbc1f046743b63b453b2464449ddf06ec8",
+  "moduleSHA256": "90add7f07bab81c582874e039661ef7dfe450b762140ad90887c16dd92cf6ac9",
+  "actualLookupCount": 1,
+  "distinctActualRows": 1,
+  "actualApplyCalls": 2,
+  "targetedRuns": 3,
+  "syntheticCases": 12,
+  "actualCorrectedProjectionPASS": true,
+  "canonicalPYJSEqual": true,
+  "allOriginalFieldsVersionsFlagsClocksPreserved": true,
+  "descriptorChangedKeys": [],
+  "qualityRunExit": 1,
+  "qualityFailure": "HARNESS_ARGV_INDEX_BEFORE_CHECKS",
+  "typecheckProven": false,
+  "syntaxProven": false,
+  "descriptorAuthorized": false,
+  "sourceGET": 0,
+  "sourceReady": false,
+  "appWrites": 0
+}

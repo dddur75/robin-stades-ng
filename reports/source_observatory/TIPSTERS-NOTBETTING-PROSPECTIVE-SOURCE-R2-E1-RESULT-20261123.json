@@ -1,0 +1,58 @@
+{
+  "DNS": 0,
+  "authorStoppedAt": "2026-11-23T01:09:03.522Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PROSPECTIVE.SOURCE.R2.E1.RESULT.20261123",
+  "decision": "PASS_AND_HOLD",
+  "elapsedSeconds": 43.335849,
+  "files": {
+    "authority_policy.py": "7799199fc267e151514d67a80f63a40b93bc6572cb803b22b5c9e770649e502a",
+    "config.json": "f4d31977713a6dc5b7534e9f03a213f067b3eb5ef41f46ff68c4e6ee94c093e3",
+    "fixed_transport.py": "54293fd94de94f7db4d10c1e2280ed3d5d94d1772a11a9f5a44fcd49f04b2670",
+    "load-critical-ruff-primary.json": "7ea5a5d9be49f86d2db0ec3232263ae6ac42f07f0f1a330b0134cb04164b1508",
+    "load-primary.json": "abd66b325bbf258a631fa35775862af522dd4a95d314bb6cf85805794fc56312",
+    "native_outer.py": "d9876f8c48395d14b43b22c07f1d354ed38e6f316d1714e6190ef3e5e2c2e1db",
+    "source_worker.py": "7baee55c7cbc032cdf7727adb42ab8ed4541074d291b5b7574fe073243f60cd4",
+    "test_load.py": "46879cfcb5e1f4d335f139c8ca613b9a6b71e072200f51406ea154a23a81645f"
+  },
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "limits": [
+    "Actual load_components/dependency closure exercised with explicitly SYNTHETIC RAM sidecar at pinned source-decision read only; source-decision file absent. This is not authenticated SOURCE or physical native confinement proof.",
+    "Exact reviewed outer/policy/worker/transport bytes copied, new config/manifest pins only. Old mission remains rejected and old quota/deadline closed.",
+    "E2 needs immediate next-stage explicit four fresh keys and C0 real source-decision ledger binding, all before original new mission600seconds/expiry.",
+    "Ruff stdout positive retained without separate exitcode field; no stronger standalone exit receipt claimed."
+  ],
+  "loadProof": {
+    "actualLoadComponents": true,
+    "actualNativeConfinementProven": false,
+    "actualSourceAuthorityGranted": false,
+    "collectCalled": 0,
+    "fetchCalled": 0,
+    "internalSeconds": 0.078,
+    "loadedCalendarRows": 9,
+    "networkCalls": 0,
+    "processExit": 0,
+    "processSeconds": 0.232,
+    "realForecastRows": 0,
+    "spawnCalls": 0,
+    "syntheticRAMSidecarReads": 1,
+    "workerMainCalled": false
+  },
+  "mapCanonicalSHA256": "d5f10c9de304e51ee5fd1292e504b5f1a685e17ce49cd455a858399a742d4ce8",
+  "missionId": "NOTBETTING_PROSPECTIVE_SOURCE_R2_20261123",
+  "nativeJobs": 0,
+  "preparedResultSHA256": "de6bf90fd9761c87552bcda1d7e378114e033fd2a45308f23bf3c554733662bc",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.NATIVE.AUTHORITY.CORRECTION.PRIVATE.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PROSPECTIVE.PUBLIC.INTEGRATION.E1.RESULT.20261123",
+    "DATA.SOURCE_OBSERVATORY.BUNDES.J11.FUTURE.UTC.PROGRAMME.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CURRENT.TERMS.PERSONAL.CONTEXT.RESULT.20261123"
+  ],
+  "sourceGET": 0,
+  "sourceReady": false,
+  "status": "PARTIAL"
+}

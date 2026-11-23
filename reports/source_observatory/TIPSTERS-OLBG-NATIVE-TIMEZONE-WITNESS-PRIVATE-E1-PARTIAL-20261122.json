@@ -1,0 +1,43 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.NATIVE.TIMEZONE.WITNESS.PRIVATE.E1.PARTIAL.20261122",
+  "recordedAt": "2026-11-22T20:35:45.985Z",
+  "status": "PARTIAL_PRIVATE_SYNTAX_WITNESS_PROMOTION_STOPPED",
+  "scope": "Frozen offline candidate extractor only. Independent CODE found a Date.parse property-rebinding counterexample; preserve package and stop promotion pending minimal correction. No primary source acquisition, native UTC proof or observation requalification.",
+  "missionId": "OLBG_NATIVE_TIMEZONE_WITNESS_PRIVATE_E1_20261122",
+  "planSHA256": "db531a9200c814f93dd0fede8892d7f93cd048796c66a291bdf55a1d04a8de7f",
+  "manifestSHA256": "8eb2a9d9dd6dacbab14778badbfb73ca7c8cb6a9c5936495c6473614ad6551b5",
+  "grant": "5df81a775617f6e6d7d06d947f4a670f2e0832fa6ff85f5be73cde5bb1ca25a4",
+  "resultSHA256": "265f0a76e15ec9ce54f36abacd73f1598922a194e575fc3aec0438710f506bae",
+  "codeMapSHA256": "9e6cebe66b808be248906800a22fa969d8d8e23e96824ed3e7b553de13f97ff0",
+  "pins": 20,
+  "author": "C1_STOPPED",
+  "authorStoppedAt": "2026-11-22T20:27:38.382193+00:00",
+  "elapsedSeconds": 738.903217,
+  "budgetSeconds": 900,
+  "methods": 12,
+  "syntheticFragments": 3,
+  "codeFinding": {
+    "severity": "P2",
+    "signature": "DATE_PARSE_PROPERTY_REFERENCE_ALLOWED_OUTSIDE_CALL_POSITION",
+    "counterexample": "Date.parse = arbitrary; Date.parse(row.event_datetime + \"Z\");",
+    "expected": "UNPROVEN_UNKNOWN_BINDING",
+    "actualFromStaticReview": "CANDIDATE"
+  },
+  "authorQuality": {
+    "nodeSyntaxChecks": 2,
+    "pythonRAMCompile": true,
+    "Ruff": "UNAVAILABLE_IN_AUTHOR_CHECKED_CONTEXT",
+    "Bandit": "UNAVAILABLE_IN_AUTHOR_CHECKED_CONTEXT",
+    "securityZeroClaimed": false
+  },
+  "sourceGET": 0,
+  "network": 0,
+  "Win32Calls": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "appChanges": 0,
+  "realCandidateReads": 0,
+  "GitPush": 0,
+  "nativeUTCProof": false,
+  "sourceReady": false
+}

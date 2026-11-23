@@ -1,0 +1,43 @@
+{
+  "missionId": "COTEUR_ROBOTS_CLOSURE_FIX_E1_20261123",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.ROBOTS.CLOSURE.FIX.RESULT.20261123",
+  "status": "ACCEPTED_LOCAL_ROBOTS_CLOSURE_AND_CLOSED_DIAGNOSTICS_ONLY",
+  "writer": "C0",
+  "authorStoppedAt": "2026-11-23T04:22:41.130Z",
+  "testExit": 0,
+  "lintExit": 0,
+  "sourceGET": 0,
+  "actualNodeChildren": 0,
+  "nativeJobs": 0,
+  "sourceReady": false,
+  "codeMap": {
+    "source_worker.py": "afb93e392a2c12f5b38f66dde0725aaa1726b0de572ed505482501db92ae2125",
+    "test_robots_closure.py": "3f3485cafef28166578c91d8fa697922e10c8144fb7a94dc249c4bc9bf81c725",
+    "config.json": "0d8fd339f10a9ce57115d0de74efec9a34829624077be82b633cedeea188d9f7",
+    "plan.json": "6e3f20ebbeac08835eee1d2f2d5bb9e6c44219838276a082d29232c6a1a24114",
+    "mission.json": "962f8d84f9cbb7cd63d10742c15aa4c6a4b95d43ab92b65a0a80f66cde16385d",
+    "test-primary.json": "4c55e6731d8fc60cacc1be64640996ef4619e4156769376b6b0f172db93a2980",
+    "lint-primary.json": "c7421798d280e44acf0389f137b4cc5e198998dae8580a12afd51de06b8cbb8b"
+  },
+  "limits": [
+    "Old missing-global defect dynamically reproduced on synthetic REP only; exact cause of earlier native R2 failure remains UNKNOWN.",
+    "Six synthetic cases/three fake GETs are not source observations or source authority.",
+    "Worker BASE redirected to isolated E1 config for old-worker comparison; SOURCE sidecar is RAM synthetic only.",
+    "Actual AST helper invoked after real load_components; Node/transport bodies simulated in integration branches, no network or Node process."
+  ],
+  "scope": "SIX_SYNTHETIC_CASES_ACTUAL_LOADED_ROBOTS_HELPER_NO_SOURCE",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.DOCUMENT.SOURCE.R2.E1.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.WINDOWS.AUDITED.SPAWN.FIX.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.DOCUMENT.SOURCE.R2.NATIVE.PARTIAL.20261123"
+  ],
+  "planSHA256": "0923ddd3047f334b583ad2c8b69ffea6bf26816d642b1fd71da31b01cd1c302c",
+  "manifestSHA256": "a3483974b5a1f053032921447588ddd92159f78fc61833ba249906f513c2a475",
+  "elapsedSeconds": 73.5994
+}

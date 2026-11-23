@@ -1,0 +1,62 @@
+{
+  "missionId": "PYPI_HTML5_WHEEL_QUARANTINE_NATIVE_R1_20261123",
+  "claimId": "ENG.SOURCE_OBSERVATORY.PYPI.HTML5.WHEELS.R1.E1.20261123",
+  "status": "ACCEPTED_WHEEL_QUARANTINE_CALLER_E1_ONLY",
+  "scope": "TWO_ATTESTED_WHEEL_QUARANTINE_CALLER_PREPARATION_ONLY",
+  "writer": "C0",
+  "authorStoppedAt": "2026-11-23T05:33:48.976Z",
+  "testExit": 0,
+  "lintExit": 0,
+  "codeMap": {
+    "authority_policy.py": "22761a6b12aed644234ccb0a7a89908adfabe57b768d29963dc2379b371e9675",
+    "native_outer.py": "db24a03de6b255dd2788d07d956cb7e67d21d2561c920b8a18bbef39d3269fec",
+    "fixed_transport.py": "51a51637eb7aac5887fece5beaab09c2b13440ae86e623e6451c5d5ad838b33d",
+    "source_worker.py": "fd9edfafa8c248947166305c67e835170dbc6a3339bfedf44ac856ed590ef952",
+    "plan.json": "25034512e6f99ea04182df6c371f9c569bef0ad76497623ce5047b9ad001c431",
+    "mission.json": "073e52d03fe18b7b2892f374170d1a3a5097b2d6202a0a4cd473d1089b6999d2",
+    "config.json": "2f45e9702832149bd3837a77e0b47338e2ce5d6c073489a8742f143b32971bcf",
+    "test_metadata.py": "b203860b3cd3085b9e85bfde049693f4976eabed0118457679957d6517ec6f1b",
+    "test-primary-run-1.json": "86a9ef81c820c0ae48b944d5f324f1d20d8892696f5b4f5df6cd72c4b12d1a6a",
+    "lint-primary.json": "c7421798d280e44acf0389f137b4cc5e198998dae8580a12afd51de06b8cbb8b"
+  },
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.PYPI.HTML5.METADATA.R2.NATIVE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.PYPI.HTML5.METADATA.R2.E1.20261123"
+  ],
+  "registryGET": 0,
+  "tipsterGET": 0,
+  "packagesAcquired": 0,
+  "packageExecution": 0,
+  "sourceReady": false,
+  "tests": {
+    "targetedRuns": 1,
+    "cases": 13,
+    "actualLoads": 1,
+    "actualAuthorityRAMOnly": true,
+    "actualMetadataBinding": true,
+    "fakeGETs": 3,
+    "fakeStoresRAM": 2,
+    "actualArchiveWrites": 0,
+    "realNetwork": 0,
+    "Node": 0,
+    "Job": 0
+  },
+  "limits": [
+    "Filesystem quarantine writer not executed in E1; actual bounded canary required before measured archive integrity claim.",
+    "Fake plan digests/body sizes substituted explicitly for synthetic bytes; real accepted metadata input bound by actual loader without mutation.",
+    "No actual wheel/archive or package execution, extraction or install; no app/Task/source corpus replay."
+  ],
+  "parentGrant": "b086afdc9c114b675849949953c150144521ab116120eb66462bc50f154fc8a6",
+  "planSHA": "ca5bfb4b25cadc793a532a0c658f85c8b2c0096892b7ee052766da7bb1d8eca4",
+  "manifestSHA": "a399fffb4973f51e7d2af53776079b72cd7d5562a8dbab1b2331689dd5aa7c9b",
+  "configSHA": "2f45e9702832149bd3837a77e0b47338e2ce5d6c073489a8742f143b32971bcf",
+  "workerSHA": "fd9edfafa8c248947166305c67e835170dbc6a3339bfedf44ac856ed590ef952",
+  "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+  "outerSHA": "db24a03de6b255dd2788d07d956cb7e67d21d2561c920b8a18bbef39d3269fec",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ]
+}

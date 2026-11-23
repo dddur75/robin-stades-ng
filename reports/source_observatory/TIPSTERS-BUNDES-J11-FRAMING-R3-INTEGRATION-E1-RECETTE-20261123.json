@@ -1,0 +1,30 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.BUNDES.J11.FRAMING.R3.INTEGRATION.E1.RECETTE.20261123",
+  "generatedAt": "2026-11-23T00:12:07.168Z",
+  "status": "E1_SYNTHETIC_INTEGRATION_PROVEN_E2_STILL_CLOSED",
+  "missionId": "BUNDES_J11_FRAMING_R3_PILOT_20261123",
+  "keys": [
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "author": "C0",
+  "grant": "98a1dbbff9c939f5c8ab5f249ede9903efb722e51c33ed763630c35ef154a0b3",
+  "preparedRAW_SHA256": "f9bf681c3a732d82593e98dcf5951b8ed0002f31af3179dccea4b9ff8719b04e",
+  "codeMapCanonicalSHA256": "97040ac4be53d69c29e409784b97879238d73f979fcc931943f5024fde24a5b1",
+  "authorStoppedAt": "2026-11-23T00:10:28.145Z",
+  "authorSeconds": 95.085,
+  "primarySyntheticStdoutRetained": true,
+  "syntheticPDFs": 1,
+  "wireVariants": 3,
+  "hypotheticalFixtureCount": 1,
+  "hypotheticalUTC": "2026-11-27T19:30:00+00:00",
+  "negativeCasesBlockedBeforeExtraction": 2,
+  "actualSourceGET": 0,
+  "actualDNS": 0,
+  "nativeJobs": 0,
+  "sourceReady": false,
+  "parentTransportReviewClaim": "ENG.SOURCE_OBSERVATORY.PDF.HTTP.FRAMING.R3.PRIVATE.E1.REVIEW.20261123",
+  "sourceProof": false,
+  "globalDelivery": "PARTIAL"
+}

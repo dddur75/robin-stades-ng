@@ -1,0 +1,52 @@
+{
+  "DNS": 0,
+  "TaskChanges": 0,
+  "actualNativeConfinementProven": false,
+  "actualSourceAuthorityGranted": false,
+  "appChanges": 0,
+  "authorElapsedSeconds": 0.662941,
+  "authorStoppedAt": "2026-11-23T02:49:15.405Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PLAIN.REFERENCE.SOURCE.R3.E1.RESULT.20261123",
+  "codeMap": {
+    "authority_policy.py": "7799199fc267e151514d67a80f63a40b93bc6572cb803b22b5c9e770649e502a",
+    "config.json": "e4bb9ce291d0bf80f5a79695ce73c66fde7fde0141ef258f56b6c96d65a87d98",
+    "fixed_transport.py": "54293fd94de94f7db4d10c1e2280ed3d5d94d1772a11a9f5a44fcd49f04b2670",
+    "load-primary.json": "c461b4c16f6363d01fa09ccfaacb8f58d74d56ccb0ad475e32f26113411b060b",
+    "mission.json": "8a0ca46d5f5909fdca8cf9a2a81a154f57dce91a00aa6be5d3ac0a94bbbdbe83",
+    "native_outer.py": "d9876f8c48395d14b43b22c07f1d354ed38e6f316d1714e6190ef3e5e2c2e1db",
+    "plan.json": "093694fac98b49d81af8662e25b9b1d6fee1c5cf1003aadace80f622816617cf",
+    "source_worker.py": "7baee55c7cbc032cdf7727adb42ab8ed4541074d291b5b7574fe073243f60cd4",
+    "test_load.py": "46879cfcb5e1f4d335f139c8ca613b9a6b71e072200f51406ea154a23a81645f"
+  },
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "limits": [
+    "ProgrammeUTC only, not actual whistle or stability guarantee; no oldsource result repaired.",
+    "Personalprivate current terms context not general automation licence; exact separately reviewed bounded public mission only.",
+    "Private candidates not appadmission, performance, settlement, recurrence or global compatible coverage.",
+    "One RAM synthetic source-decision boundary injection only, no real sidecar/grant/Job. Fresh exact four source keys and nextstage decision required.",
+    "Current ledger/veto is checked before Job, not at each GET. New closed parser reasons outside old worker whitelist remain flagged unknownReasonPresent."
+  ],
+  "loadExit": 0,
+  "loadedCalendarRows": 9,
+  "missionId": "NOTBETTING_PLAIN_REFERENCE_SOURCE_R3_20261123",
+  "nativeJobs": 0,
+  "realForecastRows": 0,
+  "scope": "ONE_CURRENT_PACKAGE_DEPENDENCY_LOAD_NOT_NATIVE_SOURCE_AUTHORITY",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.NATIVE.AUTHORITY.CORRECTION.PRIVATE.E1.RESULT.20261123",
+    "DATA.SOURCE_OBSERVATORY.BUNDES.J11.FUTURE.UTC.PROGRAMME.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CURRENT.TERMS.PERSONAL.CONTEXT.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PLAIN.REFERENCE.PUBLIC.INTEGRATION.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PROSPECTIVE.SOURCE.R2.NATIVE.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.REACT.FLIGHT.PRIMARY.WEB.GRAMMAR.E1.RESULT.20261123"
+  ],
+  "sourceGET": 0,
+  "sourceReady": false,
+  "status": "ACCEPTED_ISOLATED_COMPONENT_LOAD_WITH_RAM_SYNTHETIC_SIDECAR_ONLY",
+  "writer": "C0"
+}

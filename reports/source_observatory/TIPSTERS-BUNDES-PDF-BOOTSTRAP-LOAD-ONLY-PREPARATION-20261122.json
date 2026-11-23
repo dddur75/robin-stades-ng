@@ -1,0 +1,33 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.BUNDES.PDF.BOOTSTRAP.LOAD.ONLY.PREP.20261122",
+  "status": "THREE_KEYS_FROZEN_CODE_READY_FOR_ONE_ZERO_GET_LOAD_ONLY_JOB",
+  "missionId": "BUNDES_PDF_NATIVE_BOOTSTRAP_ZERO_GET_E1_20261122",
+  "generatedAt": "2026-11-22T23:26:34.520Z",
+  "keys": [
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "author": "C0",
+  "grant": "03936d217580de8c22e274832d4c4cc005bfd65187876946b7b1652c97eb279d",
+  "codeMapCanonicalSHA256": "14e61d5cc8c056d1cd05f1e3f5100263dff7d5f87a443cc8eb37578ca7bfaeb8",
+  "preparedResultRAW_SHA256": "1b5ae7a86092ac194f09933e76425a992f65c66e51326a13c42302c8b8de8d47",
+  "workerSHA256": "5bc1ede7799176de6b42b3298c0c17f65fa3532b21f4fb285252ac7115746367",
+  "outerSHA256": "213d04109c051ecbbc08adbce6ec6941c862ebb9f6376fa2ad1e57d47800d617",
+  "coreBoundSHA256": "726db0376f5b8b0f1422861c2b0efba2d57e2f3f361e4b52e6a0c355825350f9",
+  "sourceGET": 0,
+  "DNS": 0,
+  "nativeRunYet": false,
+  "sourceReady": false,
+  "globalMemoryBoundCertified": false,
+  "review": {
+    "C1": "PASS_EXACT_FACTS",
+    "C3": "PASS_LOAD_ONLY_CODE",
+    "C4": "PASS_ZERO_GET_SCOPE_ORIGINAL300S"
+  },
+  "limits": [
+    "Only one LOAD_ONLY job conditional on full window remaining before/after reservation and exact fresh decision.",
+    "No source fetch extraction or projection. Code/audit counters are scoped, not OS/global network attestation.",
+    "No global memory bound certified."
+  ]
+}

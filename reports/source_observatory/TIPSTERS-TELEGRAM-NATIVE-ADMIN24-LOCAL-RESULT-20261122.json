@@ -1,0 +1,52 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.NATIVE.ADMIN24.LOCAL.RESULT.20261122",
+  "generatedAt": "2026-11-22T22:35:07.483Z",
+  "status": "LOCAL_QUALIFICATION_ROWS_RECETTE_PASS_NOT_FULL_ADMIN",
+  "scope": "Two reviewed Telegram diagnostic rows appended to existing local qualification view. The actual native SVG witness and distinct TCP stop remain separate; unknown counts stay unknown and no forecast is admitted.",
+  "missionId": "TELEGRAM_NATIVE_QUALIFICATION_ADMIN24_LOCAL_E1_20261122",
+  "planSHA256": "7eadc50fc9151592a6cc9ae9031c77aef2b8db58d6848fab4bfb36c94dcee072",
+  "manifestSHA256": "9e4f4ae9132a513b37ac5ef82029eee462c3ff5db15d70d786140300516e6627",
+  "grant": "2e6b04fa2905b5fdd421db1991568c9e506a484b74c92b4334a503a91051568b",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "dataSHA256": "90db48c1bc3bdb52c2592e7dc855f59a29126973d5f34d77b66f6d62c5dfddbb",
+  "APIHash": "1d739c5851eed13d72598e1cbb537ca537f49b221ca1b832439923959dbcd274",
+  "previousRowsPreserved": 22,
+  "qualificationRows": 24,
+  "newRows": 2,
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.TELEGRAM.FIRST.AMBIGUITY.NATIVE.WITNESS.R2.20261122",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.SVG.NATIVE.AB.TRANSPORT.STOP.20261122",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.SAFE.SVG.SELFCLOSING.PRIVATE.E1.RECETTE.20261122",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.SVG.RECHECK.CALLER.PRIVATE.E1.RECETTE.20261122"
+  ],
+  "actualStartedAt": "2026-11-22T22:32:46.278Z",
+  "actualClosedAt": "2026-11-22T22:32:47.627Z",
+  "externalSeconds": 2.0682305999994277,
+  "canaryProcessExit": 0,
+  "APIReads": 2,
+  "localPages": 1,
+  "rowScreenshots": 2,
+  "otherAPIsBlockedBeforeTransport": 5,
+  "newRowCandidates": null,
+  "newRowAdmissions": 0,
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "codeChanges": 0,
+  "forecastSnapshotChanges": 0,
+  "admissions": 0,
+  "GitPush": 0,
+  "fullAdminCurrentStateAccepted": false,
+  "WindowsCurrentStateAccepted": false,
+  "independentVisualReview": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "globalDelivery": "PARTIAL"
+}

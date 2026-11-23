@@ -1,0 +1,46 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CALENDAR.TERMS.ADMIN27.LOCAL.RESULT.20261123",
+  "generatedAt": "2026-11-23T00:37:06.004Z",
+  "status": "PASS_LOCAL_TWO_DOCUMENTARY_ROWS_ONLY",
+  "missionId": "CALENDAR_TERMS_ADMIN27_LOCAL_E1_20261123",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "grant": "9d753cd4d72ac78a91ee330ac64195ad431f4b78c6ff7f6dbfe4fb73e901ba69",
+  "review": {
+    "C1": "CANARY_CODE_ACTUAL_API_RUNTIME_FACTS_AND_IMAGES_PASS",
+    "C4": "ACTUAL_SCOPE_AND_IMAGES_PASS"
+  },
+  "runtimeSnapshotSHA256": "25a0dbeedd7bff43371fd509844f0dabe30ae49a43043d5d102b5bfb3f0e4cc0",
+  "expectedDirectBrowserAPI_SHA256": "e9c0877fbc9cac5f2408de485b164cdec1a7503a8345dc504912f9fc542e246a",
+  "rows": 27,
+  "previous25Preserved": true,
+  "addedRows": 2,
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.BUNDES.J11.FUTURE.UTC.PROGRAMME.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CURRENT.TERMS.PERSONAL.CONTEXT.RESULT.20261123"
+  ],
+  "actualAppCheckedAt": "2026-11-23T00:35:36.825Z",
+  "APIReads": 2,
+  "pages": 1,
+  "rowScreenshots": 2,
+  "outOfScopeAPIsBlockedBeforeTransport": 5,
+  "pageErrors": 0,
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "admittedFromNewRows": 0,
+  "candidateCounts": null,
+  "forecastSnapshotChanged": false,
+  "codeChanges": 0,
+  "fullAdminCurrentStateAccepted": false,
+  "WindowsCurrentStateAccepted": false,
+  "sourceReady": false,
+  "globalDelivery": "PARTIAL",
+  "imagesSHA256": [
+    "a592b745899aa262c3650bea6ae2dda94b5df519e4c785f74df3886a11e03c19",
+    "f00025321c6994bf35efa3752ddc8daeef45a6f770de12729fbe2a45038f60f6"
+  ]
+}

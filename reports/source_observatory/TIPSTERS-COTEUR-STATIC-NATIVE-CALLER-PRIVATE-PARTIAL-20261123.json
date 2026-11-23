@@ -1,0 +1,31 @@
+{
+  "actualNodeCLI": 0,
+  "actualSourceGET": 0,
+  "authorElapsedSeconds": 262.22299,
+  "authorStoppedAt": "2026-11-23T03:47:12.583975+00:00",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.NATIVE.CALLER.PRIVATE.PARTIAL.20261123",
+  "completeScenariosPassed": 0,
+  "keys": [
+    "C0",
+    "C1"
+  ],
+  "limits": [
+    "Two runs failed in first synthetic complete scenario beforeNode; later cases and pipeline not qualified.",
+    "TypeScript alias resolves to pnpm canonical path with SAME pinned SHA. No need to relax p.resolve()==p; preflight/configcanonicalization must be redesigned before anyGET.",
+    "Context guard contract also requires exact alignment with newly reviewed Coteur context; no NotBetting reuse.",
+    "Static8WinJob/2framing AST and compile/Ruff do not establish functional source readiness. All source/grant/spent budgets remain absent/closed."
+  ],
+  "mapCanonicalSHA256": "e3fd99786a76b407579f9de54e7a32afc523b8d1645e588fcf5ab82034923866",
+  "missionId": "COTEUR_STATIC_NATIVE_CALLER_PRIVATE_E1_20261123",
+  "nativeJobs": 0,
+  "primaryExits": [
+    1,
+    1
+  ],
+  "resultRAW_SHA256": "b0bba081e858a7482468af96b9da0eddabec46a6ba4691ca973607c068bbdd34",
+  "scope": "PRIVATE_CALLER_FAILS_CANONICAL_TYPESCRIPT_INPUT_PATH_BEFORE_NODE",
+  "simulatedGETCalls": 4,
+  "sourceReady": false,
+  "status": "PARTIAL_CALLER_NOT_QUALIFIED_TWO_PRE_NODE_FAILURES",
+  "testRuns": 2
+}

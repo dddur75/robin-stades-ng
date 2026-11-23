@@ -1,0 +1,33 @@
+{
+  "DNS": 0,
+  "authorStoppedAt": "2026-11-23T01:01:01.817Z",
+  "byteExactSource": true,
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PROSPECTIVE.PUBLIC.INTEGRATION.E1.RESULT.20261123",
+  "criticalRuffExit": 0,
+  "decision": "PASS_AND_HOLD",
+  "elapsedSeconds": 58.055909,
+  "files": {
+    "src/robin/source_observatory/notbetting_prospective.py": "afd65ff663d372a3aca597b066c1e9dec7259c47fb296a5fa01264a840e38057",
+    "tests/source_observatory/test_notbetting_prospective.py": "247a8fcb70a841cc1ea567528b5ec63dbe2e1ab438d27abd9e26377180a0cc8f"
+  },
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "limits": [
+    "Initial test collection used legacy editable venv path and failed before any case. Preserved receipt; explicitly prepend current-worktree src for actual 8-case execution.",
+    "Only current public parser and targeted synthetic protections, not real capture/application/recurrence qualification.",
+    "Accepted calendar adapter is intentionally current published J11 programme only; no future programme assumption."
+  ],
+  "missionId": "NOTBETTING_PROSPECTIVE_PUBLIC_INTEGRATION_E1_20261123",
+  "nativeJobs": 0,
+  "review": "C1 independently read new portable test code and verified actual8PASS primary plus byte-exact source; C4 SCOPE confirms private paths absent and no source/runtime effects.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PROSPECTIVE.CALENDAR.FIX.PRIVATE.E1.RESULT.20261123"
+  ],
+  "sourceGET": 0,
+  "sourceReady": false,
+  "status": "PARTIAL",
+  "targetedCasesPassed": 8
+}

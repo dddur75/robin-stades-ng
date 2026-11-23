@@ -20,7 +20,8 @@ type View = { status: string; running: boolean; canRun: boolean; updatedAt: stri
 
 const labels: Record<string, string> = {
   collected: "Publications collectées", readable_no_publication: "Lecture réussie, aucun élément",
-  permission_required: "Conditions de cet accès à réexaminer", terms_unverified: "Conditions non vérifiées",
+  permission_required: "Conditions de cet accès à réexaminer",
+  personal_context_required: "Usage personnel à qualifier", terms_unverified: "Conditions non vérifiées",
   robots_denied: "Lecture refusée par robots.txt", read_failed: "Lecture échouée, aucun nouvel essai",
   official_api_required: "Interface officielle à configurer", cross_domain_permission_required: "Accès au domaine tiers à vérifier",
   interrupted_no_retry: "Interrompue, aucun nouvel essai", crawl_delay_exceeds_budget: "Délai supérieur au budget",

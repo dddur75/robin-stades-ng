@@ -1,0 +1,28 @@
+{
+  "generatedAt": "2026-11-23T08:41:24.583Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.DIAGNOSTIC.CALLER.PRIVATE.PARTIAL.20261123",
+  "missionId": "NOTBETTING_OWNER_DIAGNOSTIC_CALLER_PRIVATE_E1_20261123",
+  "status": "PARTIAL_FULL_NATIVE_BINDING_UNPROVEN",
+  "scope": "Closed failure observer wired into diagnostic-only caller. Ten unique GREEN cases and one reused RED, real parser calls6 with fake transport/RAM durable. No candidate or pick persistence even positive qualification. Diagnostic precedes explicit rejection guard only; physical fsync/deadline durability, SOURCE load/ledger/Job not exercised. Old native cause remains UNKNOWN; no new source authority.",
+  "keys": [
+    "C0",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.WITNESS.PUBLIC.INTEGRATION.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PLAIN.REFERENCE.SOURCE.R3.NATIVE.PARTIAL.20261123"
+  ],
+  "resultSHA256": "1d6144044179ccc52373819466840d8e51f5afae67482f6d69af727b720c459e",
+  "codeMapCAN": "42cc4aed8de38cc398da33db8839d3232c5ea50c4bd70e5660dda21afb72c590",
+  "workerSHA256": "3a4d13200e64113345509ee01bda437e3244c0631991258c69c64833501375a6",
+  "authorStatus": "STOP",
+  "elapsedSeconds": 238.729281,
+  "testsPassed": 10,
+  "totalCaseExecutions": 11,
+  "sourceGET": 0,
+  "sourceReady": false,
+  "providerDataReads": 0,
+  "admittedCount": 0,
+  "candidateCount": null
+}

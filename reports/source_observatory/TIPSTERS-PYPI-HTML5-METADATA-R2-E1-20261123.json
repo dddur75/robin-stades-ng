@@ -1,0 +1,62 @@
+{
+  "missionId": "PYPI_HTML5_METADATA_NATIVE_R2_20261123",
+  "claimId": "ENG.SOURCE_OBSERVATORY.PYPI.HTML5.METADATA.R2.E1.20261123",
+  "status": "ACCEPTED_PYPI_METADATA_CALLER_E1_ONLY",
+  "scope": "TWO_FIXED_PYPI_DOCUMENT_CALLER_PREPARATION_ONLY",
+  "writer": "C0",
+  "authorStoppedAt": "2026-11-23T05:12:49.513Z",
+  "testExit": 0,
+  "lintExit": 0,
+  "codeMap": {
+    "authority_policy.py": "9277634223fe70cb720e4875dd95b8d8a6f252742d79c58d8ae0d3abf4ad0f50",
+    "native_outer.py": "93ad3ec8c76579d84197d1ed6ed59773e643bedeec5ed1d53e81d78a3465db49",
+    "fixed_transport.py": "a1e8f34b76bd6088f0a713d2d43080eedfce9f6136a5f70bc851f3ccaaee34c8",
+    "source_worker.py": "f65662f8feac686dd31ed61dabd8ed659a415f7ae0714537bac02a531616efe1",
+    "plan.json": "ef83fe6328a7c3799c8eca38aadce4cb271b0fcbadc07cf5302dd76d68d54236",
+    "mission.json": "ef59855abb3190b99409ba4ae21d81fc438ce854631f40d08ccf196bd77a39ca",
+    "config.json": "d1a04c28181ffe0b4bd9047916871c10a9cf240b06289f30978a94fe7b55a3de",
+    "test_metadata.py": "8a0acdd64d21f9388307d9e8a76a59b558e23f0d806c6907ab227642afef7391",
+    "test-primary-run-1.json": "00dd116585a54dd01201699057e82100764f959db1ac4ea26d89dd26af41896e",
+    "lint-primary.json": "c7421798d280e44acf0389f137b4cc5e198998dae8580a12afd51de06b8cbb8b"
+  },
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.HTML5LIB.DEPS.R1.E1.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.CURRENT.ENTRYPOINT.DISCOVERY.R1.E1.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.DOCUMENT.SOURCE.R3.NATIVE.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.PYPI.HTML5.METADATA.R1.E1.PARTIAL.20261123"
+  ],
+  "registryGET": 0,
+  "tipsterGET": 0,
+  "packagesAcquired": 0,
+  "packageExecution": 0,
+  "sourceReady": false,
+  "tests": {
+    "targetedRuns": 1,
+    "cases": 23,
+    "actualLoads": 1,
+    "actualAuthorityRAMOnly": true,
+    "negativeAuthorityCases": 4,
+    "fakeGETs": 3,
+    "actualNetwork": 0,
+    "Node": 0,
+    "Job": 0
+  },
+  "limits": [
+    "Actual full Python policy exercised with RAM synthetic sidecar/ledger extension; global veto missingmission/duplicateIDs/forgedparent/naivedates refused. Not a real E2 grant.",
+    "Output code mutable only during E1 and now frozen, immutable prototype/control pins retained. Any E2 decision must bind current code/config/output tuple.",
+    "No registry/tipster/Node/Job/wheel/package effect, no fullsuite/oldpack replay."
+  ],
+  "parentGrant": "b5c434d9b7d32163981dea1bb3ce7a7b62ecb41104b1b8d2ef78c47f75481396",
+  "planSHA": "844e2f609956cd3d9b1eb9190f9b9e3ca0e82cfc7329f8855bc504f67f6e85b5",
+  "manifestSHA": "b152bf889006e027ecffa74e53f112781ad85e46a246d8e8d186a80f63693ddb",
+  "configSHA": "d1a04c28181ffe0b4bd9047916871c10a9cf240b06289f30978a94fe7b55a3de",
+  "workerSHA": "f65662f8feac686dd31ed61dabd8ed659a415f7ae0714537bac02a531616efe1",
+  "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+  "outerSHA": "93ad3ec8c76579d84197d1ed6ed59773e643bedeec5ed1d53e81d78a3465db49",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ]
+}

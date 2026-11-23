@@ -1,0 +1,36 @@
+{
+  "DNS": 0,
+  "authorResultSHA256": "1c4cdc304437bbf29c1da294464bddda871617b6c18dd9755e560795158646a8",
+  "authorStoppedAt": "2026-11-23T01:02:52.880226+00:00",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.NATIVE.AUTHORITY.CORRECTION.PRIVATE.E1.RESULT.20261123",
+  "codeReview": "C0 independently read all54policy lines, outer tail40lines and test policy. Exact full grant/parent/date/4keys/plan/manifest/config/worker/Python/outer tuple binds hash-linked ledger; postgrant veto/failure/redesign denied. Outer re-reads suffix after fsynced runonce reservation and immediately before Job; fixed Python bytes SHA checked before CreateProcess. C1 FACTS and C4 SCOPE actual receipts/pins accepted.",
+  "decision": "PASS_AND_HOLD",
+  "elapsedSeconds": 278.56502,
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "limits": [
+    "Pure policy tests and static real outer sequence; main/Job/fsync physical sequence not executed, no atomic transaction claim.",
+    "Blocked old mission and original temporal ceiling remain closed. Future source requires new manifest and exact independently reviewed bindings; no quota reused."
+  ],
+  "mapCanonicalSHA256": "1f44cd83051c6eece47e2f74e572a034c071a503090bbebf37ecf94fcbee4ad2",
+  "missionId": "NOTBETTING_NATIVE_AUTHORITY_CORRECTION_E1_20261123",
+  "nativeJobs": 0,
+  "outerSHA256": "d9876f8c48395d14b43b22c07f1d354ed38e6f316d1714e6190ef3e5e2c2e1db",
+  "policySHA256": "7799199fc267e151514d67a80f63a40b93bc6572cb803b22b5c9e770649e502a",
+  "proof": {
+    "criticalRuffExit": 0,
+    "maxRows": 3,
+    "pureControlVariants": 8,
+    "syntheticLedgerSeeds": 1,
+    "unchangedWin32ASTDefinitions": 8
+  },
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PROSPECTIVE.NATIVE.PREPARATION.HOLD.20261123"
+  ],
+  "sourceGET": 0,
+  "sourceReady": false,
+  "status": "PARTIAL"
+}

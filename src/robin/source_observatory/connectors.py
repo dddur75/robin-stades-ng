@@ -207,9 +207,12 @@ def permission(text: str, adapter: str) -> str:
     if re.search(r'(?:automat|scrap|robots?|reproduc|represent|copi|extract|distribut).{0,180}'
                  r'(?:interdi|prohibit|forbidden|not permitted|permission|autorisation)|'
                  r'(?:interdi|prohibit|forbidden).{0,180}(?:scrap|automat|cop|reproduc)|'
-                 r'usage personnel|non[- ]commercial|personal use|you may not|'
+                 r'you may not|'
                  r'(?:automat|scrap).{0,100}not allowed|no scraping|no automated', folded, re.S):
         return 'permission_required'
+    # Personal-use wording requires a source-specific context, not a blanket ban or grant.
+    if re.search(r'usage personnel|non[- ]commercial|personal use', folded):
+        return 'personal_context_required'
     if not re.search(r'mentions legales|conditions|terms|legal|editeur|publisher|privacy', folded):
         return 'terms_unverified'
     return 'public_feed_facts_only' if adapter == 'rss_atom' else 'public_page_facts_only'

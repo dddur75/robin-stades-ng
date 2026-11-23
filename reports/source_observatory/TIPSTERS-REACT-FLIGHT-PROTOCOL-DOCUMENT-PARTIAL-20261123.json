@@ -1,0 +1,30 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.REACT.FLIGHT.PROTOCOL.DOCUMENT.PARTIAL.20261123",
+  "decision": "FAIL_AND_STOP",
+  "errorClass": "InvalidInputException",
+  "errorCode": "UNKNOWN",
+  "errorSummary": "Exact requested public GitHub path did not return readable file content",
+  "grammarVerified": false,
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "limits": [
+    "No HTTPstatus/permission/notfound/rootcause established by this tool result.",
+    "No fallback/search/retry within this consumed mission; no protocol conclusion or parser promotion."
+  ],
+  "managedGitHubOperations": 1,
+  "missionId": "REACT_FLIGHT_PROTOCOL_DOCUMENT_E1_20261123",
+  "nativeCauseEstablished": false,
+  "observedAt": "2026-11-23T01:32:58.154Z",
+  "primaryRepresentationSHA256": "8dd8d37839b211cbfb12ad3b0a14a29dfce067167c599224b1a65cb1047ee0c5",
+  "returnedBlobSHA": null,
+  "returnedCommitSHA": null,
+  "sourceContentAvailable": false,
+  "sourceExecutions": 0,
+  "status": "PARTIAL",
+  "tipsterGET": 0,
+  "toolIsError": true,
+  "underlyingHTTPCount": null
+}

@@ -1,0 +1,57 @@
+{
+  "TaskChanges": 0,
+  "WindowsCurrentStateAccepted": false,
+  "actualCanary": {
+    "APIReads": 2,
+    "TaskQueries": 0,
+    "adminRowsVisible": 2,
+    "admittedFromNewRows": 0,
+    "browserAPIHash": "81dc58123c63f365cbe3c842c3228f3f0e1b42b0ab8ddeab1e870faaca378981",
+    "candidates": null,
+    "closedAt": "2026-11-23T03:00:12.436Z",
+    "directAPIHash": "81dc58123c63f365cbe3c842c3228f3f0e1b42b0ab8ddeab1e870faaca378981",
+    "expectedAPIHash": "81dc58123c63f365cbe3c842c3228f3f0e1b42b0ab8ddeab1e870faaca378981",
+    "externalBlocked": 0,
+    "fullAdminCurrentStateAccepted": false,
+    "otherAPIsIntentionallyBlocked": true,
+    "outOfScopeAPIBlocked": 5,
+    "pageErrors": 0,
+    "pages": 1,
+    "personalContentExposed": false,
+    "previous28DeepEqual": true,
+    "qualificationRows": 30,
+    "sourceGET": 0,
+    "startedAt": "2026-11-23T03:00:11.604Z",
+    "status": "PASS",
+    "writesBlocked": 0
+  },
+  "authorElapsedSeconds": 2.380593,
+  "authorStoppedAt": "2026-11-23T03:00:12.466Z",
+  "canaryExit": 0,
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.HISTORY.NOTBETTING.ADMIN30.LOCAL.RESULT.20261123",
+  "forecastChanges": 0,
+  "fullAdminCurrentStateAccepted": false,
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "limits": [
+    "Two local history rows only: one OLBG historical temporal proof and one stopped NotBetting R3 qualification, no future forecast added.",
+    "First predecessor schema validation failed before runtimewrite; primary captured late, failure remains preserved and was not retroactively passed.",
+    "Only qualification API/page flow accepted; five other APIs intentionally blocked, no whole admin/Windows/source/recurrence acceptance."
+  ],
+  "missionId": "OLBG_HISTORY_NOTBETTING_ADMIN30_CLOCK_FIX_E1_20261123",
+  "previous28DeepEqual": true,
+  "qualificationRows": 30,
+  "runtimeSnapshotSHA256": "94f3d14d2f66a3f76af811eac42d13186099fa58496ab13e260a80181bef64a6",
+  "scope": "LOCAL_ADMIN30_TWO_NEW_ROWS_WITH_PREVIOUS28_PRESERVED",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.ONE.PROGRAMME.AUTHOR.NAMESPACE.FIX.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PLAIN.REFERENCE.SOURCE.R3.NATIVE.PARTIAL.20261123"
+  ],
+  "sourceGET": 0,
+  "sourceReady": false,
+  "status": "ACCEPTED_TWO_LOCAL_QUALIFICATION_HISTORY_ROWS_ONLY",
+  "writer": "C0"
+}
