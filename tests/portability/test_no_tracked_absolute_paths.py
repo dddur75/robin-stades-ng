@@ -4,6 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 
+import scripts.check_no_tracked_absolute_paths as candidate_checker
 from scripts.check_no_tracked_absolute_paths import find_forbidden_absolute_paths
 
 
@@ -260,3 +261,81 @@ def test_worktree_field_outside_append_only_ledger_remains_rejected() -> None:
     )
 
     assert any(finding.category == "WINDOWS_ABSOLUTE_PATH" for finding in findings)
+
+
+# New immutable-publication receipt regression; no provider corpus is loaded.
+
+
+def publication_line() -> str:
+    root = Path(__file__).resolve().parents[2]
+    assert (
+        Path(candidate_checker.__file__).resolve()
+        == root / "scripts/check_no_tracked_absolute_paths.py"
+    )
+    return (
+        (root / "reports/council/decision-ledger.jsonl")
+        .read_text(encoding="utf-8")
+        .splitlines()[1992]
+    )
+
+
+def scan_publication(
+    line: str, *, number: int = 1993, path: str = "reports/council/decision-ledger.jsonl"
+):
+    return find_forbidden_absolute_paths("\n" * (number - 1) + line, path=path)
+
+
+def test_exact_publication_test_receipt_values_are_sealed() -> None:
+    passed = not scan_publication(publication_line())
+    assert passed, "EXACT_PUBLICATION_RECEIPTS_NOT_MASKED"
+
+
+def test_publication_copy_wrong_line_and_file_are_rejected() -> None:
+    line = publication_line()
+    assert scan_publication(line, number=1994)
+    assert scan_publication(line, path="reports/other.jsonl")
+
+
+def test_publication_mutations_remain_rejected() -> None:
+    for mutation in ("id", "hash", "value", "order", "sixth", "other", "newrecord"):
+        record = json.loads(publication_line())
+        values = record["context"]["targeted_tests"]
+        if mutation == "id":
+            record["decision_id"] = "UNREVIEWED"
+        elif mutation == "hash":
+            record["hash"] = "0" * 64
+        elif mutation == "value":
+            values[0] += ".changed"
+        elif mutation == "order":
+            values.reverse()
+        elif mutation == "sixth":
+            values.append(values[0] + ".sixth")
+        elif mutation == "other":
+            record["proposal"] = values[0]
+        else:
+            record = {"decision_id": "NEW", "context": {"targeted_tests": values}}
+        changed = (
+            json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+            if mutation == "hash"
+            else canonical_record(record)
+        )
+        assert scan_publication(changed)
+    record = json.loads(publication_line())
+    record["context"]["targeted_tests"][0] += ".changed"
+    assert scan_publication(
+        json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    )
+    assert scan_publication(publication_line().replace(":", ": ", 1))
+
+
+def test_publication_masks_only_five_string_interiors() -> None:
+    line = publication_line()
+    masked = candidate_checker._mask_sealed_publication_test_values(line, 1993)
+    expected = line
+    values = json.loads(line)["context"]["targeted_tests"]
+    for value in values:
+        encoded = json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+        assert expected.count(encoded) == 1
+        expected = expected.replace(encoded, '"' + " " * (len(encoded) - 2) + '"', 1)
+    assert masked == expected
+    assert len(masked) == len(line)

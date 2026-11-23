@@ -155,6 +155,77 @@ def _mask_sealed_authorization_file_values(text: str, line_number: int) -> str:
     return "".join(masked)
 
 
+SEALED_PUBLICATION_LINE = 1993
+SEALED_PUBLICATION_LINE_SHA256 = "045d94358ad1e21dda6fa42cc5b7d621eea5ef586e6c8b0a134685dbc7172265"
+SEALED_PUBLICATION_RECORD_SHA256 = (
+    "526b7d9c251b6cc31784eb6d5f44fb6486a03753d7e30a6899e47cae1b5863dc"
+)
+SEALED_PUBLICATION_VALUE_SHA256 = (
+    "0fd8bac29b1ba979c6576f082a9e103d5fa6946c2f94a54f06fd33878e923c87",
+    "e79fa7c7861c3c6ba4921e370136a33f531bb74f737d994fdf591b6d57ca8da7",
+    "4d4ec701a0a57f691e5530b0879eb4baaf2bb15ec9a538b13d15171e54abcc95",
+    "f2fc832a56caf88078e251f3c6ff03d42c1ec1a215685b198a803ed4d3d727b0",
+    "cbd3014570af2be8394a54a620e8739d01ac8e64b6f9981b264260a9ca10acd4",
+)
+
+
+def _mask_sealed_publication_test_values(text: str, line_number: int) -> str:
+    """Mask exactly five receipt string interiors on the sealed publication line."""
+    if line_number != SEALED_PUBLICATION_LINE:
+        return text
+    if hashlib.sha256(text.encode("utf-8")).hexdigest() != SEALED_PUBLICATION_LINE_SHA256:
+        return text
+    try:
+        record = json.loads(text)
+    except (json.JSONDecodeError, TypeError):
+        return text
+    if not isinstance(record, dict):
+        return text
+    if record.get("decision_id") != "RCV3-20261123-C0-FINAL-PUBLIC-BINDING-R1-PRECOMMIT":
+        return text
+    if record.get("hash") != SEALED_PUBLICATION_RECORD_SHA256:
+        return text
+    payload = json.dumps(
+        {key: value for key, value in record.items() if key != "hash"},
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    if hashlib.sha256(payload.encode("utf-8")).hexdigest() != SEALED_PUBLICATION_RECORD_SHA256:
+        return text
+    context = record.get("context")
+    if not isinstance(context, dict):
+        return text
+    values = context.get("targeted_tests")
+    if type(values) is not list or len(values) != 5:
+        return text
+    if any(
+        type(value) is not str or hashlib.sha256(value.encode("utf-8")).hexdigest() != expected
+        for value, expected in zip(values, SEALED_PUBLICATION_VALUE_SHA256, strict=True)
+    ):
+        return text
+    encoded_context = json.dumps(context, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    context_field = '"context":' + encoded_context
+    encoded_values = json.dumps(values, ensure_ascii=False, separators=(",", ":"))
+    values_field = '"targeted_tests":' + encoded_values
+    if text.count(context_field) != 1 or encoded_context.count(values_field) != 1:
+        return text
+    offset = (
+        text.index(context_field)
+        + len('"context":')
+        + encoded_context.index(values_field)
+        + len('"targeted_tests":')
+        + 1
+    )
+    masked = list(text)
+    for value in values:
+        encoded = json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+        start, end = offset + 1, offset + len(encoded) - 1
+        masked[start:end] = " " * (end - start)
+        offset += len(encoded) + 1
+    return "".join(masked)
+
+
 def find_forbidden_absolute_paths(
     text: str,
     *,
@@ -172,6 +243,7 @@ def find_forbidden_absolute_paths(
         line = raw_line
         if normalized_path == LEDGER_PATH:
             line = _mask_sealed_authorization_file_values(line, line_number)
+            line = _mask_sealed_publication_test_values(line, line_number)
             line = _mask_ledger_context_worktree_value(line)
         line = _mask_allowed(line)
         for category, pattern in (
