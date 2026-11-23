@@ -1,0 +1,49 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.USERNAME.CASE.CANONICAL.PRIVATE.E1.RESULT.20261123",
+  "missionId": "TELEGRAM_USERNAME_ASCII_CASE_CANONICAL_PRIVATE_E1_20261123",
+  "status": "PRIVATE_CASE_CANONICAL_READER_SYNTHETIC_FIX_ACCEPTED",
+  "scope": "Private fix canonicalizes only configured ASCII username segments in strict Telegram post/permalink references. Numeric IDs, text, duplicate attributes and other parent guards remain unchanged. Canonical references are DERIVED under the pinned profile, not raw source spelling. Archived parent/prefix unchanged; all four business gates remain false. No actual case-corrected source, caller binding or source authority has been exercised.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.FIRST.WRAPPER.IDENTITY.NATIVE.R1.ACTUAL.RESULT.20261123",
+    "DATA.SOURCE_OBSERVATORY.TELEGRAM.USERNAME.CASE.OFFICIAL.DOCUMENTARY.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.FIRST.WRAPPER.IDENTITY.PRIVATE.E1.RESULT.20261123"
+  ],
+  "factorySHA": "ce51d79d419ba1221cc4e1f3e98fd367402c7bd3663f851ff22cf83243048575",
+  "workerSHA": "54732c09f61ab58266447a31c9557fcdb619832179d1c1d09e3a8b03c21e0e05",
+  "testSHA": "f7485a7a24528f54835ff796e60d577b0f05c7a4b554eb754407eab8092ff70b",
+  "fileMapSHA": "6f7e2cec99c2733ea3b533fd13c57405d4e1ed0d8125ccc2142a3db0df340e90",
+  "privateResultSHA": "f8f3f86ccb1856ae768f370d5812429bf6081b822cd5a85da070269301343601",
+  "normalizationProfile": "TG_ASCII_USERNAME_CANONICAL_V1",
+  "referenceProvenance": "DERIVED_CANONICAL_CONFIGURED_ASCII_USERNAME_NOT_RAW_SOURCE_SPELLING",
+  "author": "C3",
+  "authorStoppedAt": "2026-11-23T21:04:38.960935+00:00",
+  "methodsPassed": 3,
+  "uniqueSyntheticFixtures": 24,
+  "factoryFullRuffExit": 0,
+  "workerTestCriticalRuffExit": 0,
+  "RAMCompileFiles": 3,
+  "conservativeTargetedProcesses": 7,
+  "inverseASTProof": {
+    "parentWholeASTEqual": true,
+    "prefixInverseWholeASTEqual": true,
+    "constructorChanges": 1,
+    "normalizationProfile": "TG_ASCII_USERNAME_CANONICAL_V1",
+    "canonicalReferencesDerived": true,
+    "diagnosticObserverExecuted": false
+  },
+  "workerOnlyFactoryLiteralChanged": true,
+  "diagnosticObserverExecuted": false,
+  "unknownDiagnosticMeansNoObserver": true,
+  "actualNewSSLLoaderTested": false,
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "overallStatus": "PARTIAL"
+}

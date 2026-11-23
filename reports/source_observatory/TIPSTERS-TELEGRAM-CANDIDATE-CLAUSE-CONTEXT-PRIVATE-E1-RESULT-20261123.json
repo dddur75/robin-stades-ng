@@ -1,0 +1,32 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.CANDIDATE.CLAUSE.CONTEXT.PRIVATE.E1.RESULT.20261123",
+  "missionId": "TELEGRAM_CANDIDATE_CLAUSE_CONTEXT_PRIVATE_E1_20261123",
+  "status": "ACCEPTED_PRIVATE_CLAUSE_ONLY_ALIASPAIR_CONTEXT_SYNTHETIC_ONLY",
+  "scope": "Hash-pinned3buffer/source binding and singleboundedcandidateexcerpt only. Literal oriented declaredaliaspairs against9contextrows, atmost4x9fixture comparisons; no header fallback, re-extraction or canonical match/prematch/person admission. Exact500char excerpts unproven. Six syntheticpacks andcriticalqualitypass, no real inputs yet.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.CHANNEL.CANDIDATES.LOCAL.E1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.EXTRACTOR.CHANNEL.CANDIDATES.PRIVATE.E1.RESULT.20261123",
+    "DATA.SOURCE_OBSERVATORY.LIGUE1.J12.OFFICIAL.SCHEDULE.DOCUMENTARY.20261122"
+  ],
+  "helperSHA": "032709853b3e3f063a340f404a9c42907710f922d44d02c2db8385973521b8a7",
+  "resultSHA": "c5c45cd8cee2b7e9a2288572f6d1fe5b7015e3cda984095ff9add9a5a5541285",
+  "fileMapSHA": "1e1cc725dab488ef39e791e4eef8acb94c88377e1fba25c2534b1b4472e5d063",
+  "validation": {
+    "syntheticPacks": 6,
+    "GREENMethods": 1,
+    "criticalRuffExit": 0,
+    "compiledFiles": 2,
+    "targetedAuthorChildren": 4,
+    "mandatoryGitROProcesses": 5
+  },
+  "sourceGET": 0,
+  "realCacheReads": 0,
+  "sourceReady": false,
+  "newForecasts": 0,
+  "LOCALAuthority": false
+}

@@ -1,0 +1,37 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.TEMPORAL.METADATA.LOCAL.E1.ACTUAL.RESULT.20261123",
+  "missionId": "BEXTRA_TEMPORAL_METADATA_LOCAL_E1_20261123",
+  "status": "BOUNDED_CACHED_TEMPORAL_METADATA_COMPLETE_AUTHORITY_STOP",
+  "scope": "Exactly10retained UNQUALIFIED prefix publications aged relative to independently recorded source observation, not execution time:one less24h andnine in[1day,7days). One physical prefix read, no sourceGET/textinterpretation; no forecast, prematch, human identity or whole-channel/suffix freshness inferred.",
+  "keys": [
+    "C0",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.TEMPORAL.METADATA.FINAL.PRIVATE.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.INHERITED.TEXT.NATIVE.R1.ACTUAL.RESULT.20261123"
+  ],
+  "resultSHA": "7a95d00463ec3a3c6bb007b3f7a3ce06b2b30d854858db39400edf60adad4733",
+  "primarySHA": "e2b16d120de2c6d51132eebfd4156dfa920e2051bede25280651616524635ed4",
+  "finalAcceptedReturnSHA": "6e83dd49c6d08e44617e258e845aece04724d89e05ef96809afb6571c770ddab",
+  "prefixReads": 1,
+  "retainedMessageCount": 10,
+  "publicationAgeBuckets": {
+    "D1_TO_7D": 9,
+    "D7_TO_30D": 0,
+    "GE30D": 0,
+    "LT24H": 1
+  },
+  "ageAnchorSourceObservedAtUTC": "2026-11-23T21:58:18.320357+00:00",
+  "elapsedMilliseconds": 236.50830000638962,
+  "postFsyncDeadlineChecked": true,
+  "totalMessageCount": null,
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "admissions": 0,
+  "sourceReady": false,
+  "globalCoverage": "UNKNOWN",
+  "localAuthorityClosed": true,
+  "retryAllowed": false
+}

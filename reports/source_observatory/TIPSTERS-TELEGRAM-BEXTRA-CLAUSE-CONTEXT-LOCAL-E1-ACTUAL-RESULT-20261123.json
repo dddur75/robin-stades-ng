@@ -1,0 +1,56 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.CLAUSE.CONTEXT.LOCAL.E1.ACTUAL.RESULT.20261123",
+  "missionId": "BEXTRA_CLAUSE_CONTEXT_LOCAL_E1_20261123",
+  "status": "BOUNDED_CACHED_CLAUSE_CONTEXT_COMPLETE_NO_CANONICAL_MATCH_ADMISSIONS",
+  "scope": "Four pendingCHANNELcandidateclauses compared once againstnineexistingcontextualL1fixtures usingcase-sensitiveexplicitdeclaredaliaspairs andfixedseparators.36candidate-fixturecomparisons:NONE4/UNIQUE0/AMBIGUOUS0/UNPROVEN0. No headerfallback/re-extraction or absenceglobalclaim. Canonicalfixture/person/nativeUTC/prematch unproved, allgatesfalse.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.CANDIDATE.CLAUSE.CONTEXT.PRIVATE.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.CHANNEL.CANDIDATES.LOCAL.E1.ACTUAL.RESULT.20261123",
+    "DATA.SOURCE_OBSERVATORY.LIGUE1.J12.OFFICIAL.SCHEDULE.DOCUMENTARY.20261122"
+  ],
+  "resultSHA": "d3e9ea420dfc72056df983b90be1d535702a506b1740523c1ec8f878141737a9",
+  "primarySHA": "9dfc795e1e6dc0ea3ec8914192f367bb7219cebeb97fb5767fb93791aaa6648c",
+  "finalAcceptedReturnSHA": "32b92208b6c66c490c1289245690405e8d11788f326e2f8fb7bb325056fee0c2",
+  "summary": {
+    "admissible": false,
+    "admissions": 0,
+    "applicationAdmission": false,
+    "candidateCount": 4,
+    "canonicalFixture": null,
+    "classificationCounts": {
+      "AMBIGUOUS": 0,
+      "NONE": 4,
+      "UNIQUE": 0,
+      "UNPROVEN": 0
+    },
+    "fixtureCount": 9,
+    "globalCoverage": "UNKNOWN",
+    "headerAssociationAllowed": false,
+    "nativeUTCProof": false,
+    "personIdentityVerified": false,
+    "preMatchProven": false,
+    "recordFixturePairsExamined": 36,
+    "schemaVersion": "telegram-clause-pair-context-v1",
+    "sourceGET": 0,
+    "sourceReady": false,
+    "status": "ALIASPAIR_CONTEXT_ONLY"
+  },
+  "inputReads": {
+    "prefix": 1,
+    "candidates": 1,
+    "calendar": 1
+  },
+  "elapsedMilliseconds": 347.55640000104904,
+  "postFsyncDeadlineChecked": true,
+  "sourceGET": 0,
+  "newAdmittedForecasts": 0,
+  "sourceReady": false,
+  "allCompatibleIntegrated": false,
+  "localAuthorityClosed": true,
+  "retryAllowed": false
+}

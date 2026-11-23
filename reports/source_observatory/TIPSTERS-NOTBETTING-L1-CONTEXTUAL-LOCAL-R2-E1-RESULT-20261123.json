@@ -1,0 +1,47 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.L1.CONTEXTUAL.LOCAL.R2.E1.RESULT.20261123",
+  "missionId": "NOTBETTING_L1_CONTEXTUAL_LOCAL_R2_20261123",
+  "status": "ONE_VETO_FILTER_ORDER_FIX_RED_GREEN_E1_PASS_NO_CACHE_READ",
+  "scope": "Smallest first-failure correction swaps date filter before context access. Historical null contexts preceding current decision remain outside window; current unknown contexts still fail closed and own current veto still refuses. Four synthetic cases, exact inverse whole AST and current-config preflight pass. No actual cached screen yet.",
+  "keys": [
+    "C0",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.L1.CONTEXTUAL.LOCAL.R1.REFUSED.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.L1.SAME.BUFFER.RUNNER.PRIVATE.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.L1.PRECOMPETITION.COUNTS.PRIVATE.E1.RESULT.20261123",
+    "DATA.SOURCE_OBSERVATORY.LIGUE1.J12.OFFICIAL.SCHEDULE.DOCUMENTARY.20261122",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.SOURCE.NATIVE.R1.ACTUAL.RESULT.20261123"
+  ],
+  "planSHA": "58be989cde3765e17ef0483bbd5dd828fd8e7518d37c4bd63e68696d6b7a2f49",
+  "manifestSHA": "b5f020b59abe8f3bca69486c65f4f493bbe1f0607925dbd5889ee8529a312ee0",
+  "configSHA": "c1d0523716b9b3c83a1481b71d0caefdef58d6840fc70c16de6ecdbc9c12c75a",
+  "controllerSHA": "93d99d4dd534582d63cefe93ac97019d3c916f899e95ecffbc1c661d1d42e7bd",
+  "outerSHA": "47a195bd4a3030ce5c268c5909968c9e4b4b7c150b6325b29f869015103f3054",
+  "runnerSHA": "9a02c561257c2c3e22e18dd5df8cdcd51dc6eb29bff10fb58d899651dd017fea",
+  "preflightSHA": "27a801090ff695217a00cb880518ec6063cd0969a1f0763898ab7dfb529a1bb2",
+  "mockPrimarySHA": "6227472014e4f2a2279a67afe519caacfc0db511a9f8702ee29d40ead80d0ddb",
+  "authorStoppedAt": "2026-11-23T22:00:52.008Z",
+  "preflightProcesses": 4,
+  "syntheticNodeMocks": 3,
+  "initialHarnessFailures": {
+    "ASTSelectorAssertion": 1,
+    "realCacheReads": 0
+  },
+  "postFsyncGuardRequired": true,
+  "finalFailurePriority": true,
+  "actualServicesInjectionAllowed": false,
+  "sourceGET": 0,
+  "realMatching": 0,
+  "admissions": 0,
+  "sourceReady": false,
+  "greenPrimarySHA": "7fe52bbb1b7936e0bb8653fbde378fcb3eaa1871ca9a6bd102ff10b12d44ab77",
+  "redPrimarySHA": "5ffbb9468e4b98a8dff80ad88b71d3a67f9d2a915b6712913f9c28279624d939",
+  "outerExpectedSHA": "51b2e4e84299ce4c83323c5d5d0b1d069b83731a95a0b1a13666f28e133adaa1",
+  "syntheticVetoCases": 4,
+  "bookkeepingAUTHProcessSeparately": 1,
+  "newLintRun": false,
+  "inverseWholeASTEqual": true
+}

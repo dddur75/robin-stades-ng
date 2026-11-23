@@ -1,0 +1,29 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.PUBLICATION.GIT.GUARD.CORRECTIVE.PRIVATE.E1.RESULT.20261123",
+  "missionId": "PUBLICATION_GIT_GUARD_CORRECTIVE_PRIVATE_E1_20261123",
+  "status": "PRIVATE_HELPERS_ACCEPTED_ADOPTION_REQUIRES_EARLY_READ_VALIDATION_AND_FRESH_BINDING",
+  "scope": "Privatecorrectivehelpers bindcurrentauth/close/decision/SD/keys canonicalpresence/fulltuple/dates, closeREADforms andchecktimeafterreservation/resultsfsync.16puremetadatacasesPASS. Mainstilldoes2constantreadonlybranch/HEADcallsbeforerejectingbadrequestedargv, so0totalmainspawns notproved; futureC0adoptionmustmovevalidationbeforeanyGitandtestwhole-main. OldMFtimefieldstotal2400 incompatible, newE2MaxSeconds/total<=900required.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.FOLLOWUP.PUBLICATION.SNAPSHOT.VERIFIED.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.CHANNEL.PREFIX.PUBLIC.INTEGRATION.E1.RESULT.20261123"
+  ],
+  "controllerSHA": "58241a3ef859383ecb9ed124111255c58fe1fe69fbc5627268fa61ca299acb3c",
+  "resultSHA": "3d0a069b1f2fc4eb52cb8e6198425c875418263592acc146ade39efecfe7db5f",
+  "fileMapSHA": "c071853930cb23b0248a4937ea7720c76d48743a740544c07a38a07c8ebda1a5",
+  "validation": {
+    "syntheticMetadataCases": 16,
+    "criticalRuffExit": 0,
+    "RAMCompileFiles": 2,
+    "targetedAuthorChildren": 4,
+    "GitROProcesses": 5
+  },
+  "wholeMainZeroSpawnProven": false,
+  "GitEffects": 0,
+  "sourceGET": 0,
+  "E2Authority": false
+}

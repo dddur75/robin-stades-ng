@@ -1,0 +1,40 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.L1.SAME.BUFFER.RUNNER.PRIVATE.E1.RESULT.20261123",
+  "missionId": "NOTBETTING_L1_SAME_BUFFER_RUNNER_PRIVATE_E1_20261123",
+  "status": "ACCEPTED_PRIVATE_SAME_BUFFER_CALLER_ONLY",
+  "scope": "Frozen private caller verifies exact length and SHA on each single-read buffer before decoding or compilation, invokes accepted pure contextual screen; no actual cached input or source used.",
+  "keys": [
+    "C0",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.L1.PRECOMPETITION.COUNTS.PRIVATE.E1.RESULT.20261123",
+    "DATA.SOURCE_OBSERVATORY.LIGUE1.J12.OFFICIAL.SCHEDULE.DOCUMENTARY.20261122"
+  ],
+  "pins": {
+    "runnerSHA": "9a02c561257c2c3e22e18dd5df8cdcd51dc6eb29bff10fb58d899651dd017fea",
+    "testSHA": "8e18e9088b75c43a4c283ecea6dcefb8086165abe7f9a74567a1c143084efdeb",
+    "screenSHA": "7a219ebae78be32a6a9954956ecf318eaa92e989a782a9aa2472ba451cfbc327",
+    "pureSHA": "040ba32b67fcf06b5c18a49eac813b20f2eaf3088ee9990cb477143e0e4e46a2",
+    "resultSHA": "3b65b0a30b7179527467eb07741c014a9e6891c44136b73eaac7977cec9adeb2",
+    "fileMapSHA": "a015231e5d116e7c68854cd417474eaee390c62ce5bc1b983f398199cd9e941d"
+  },
+  "validation": {
+    "GREENMethods": 6,
+    "syntheticPacks": 6,
+    "allPythonProcessesIncludingControllers": 6,
+    "criticalRuffExit": 0,
+    "authorSeconds": 163.701636
+  },
+  "sourceGET": 0,
+  "realMatching": 0,
+  "admissions": 0,
+  "sourceReady": false,
+  "localAuthority": false,
+  "sourceAuthority": false,
+  "limitations": [
+    "Future LOCAL controller must independently pin config/provenance/paths, use default reader only in isolated process, authorize exactly one4x9pass and retain closed result.",
+    "Contextual calendar UTC is not native source UTC. Potential pair match is not a canonical forecast."
+  ]
+}

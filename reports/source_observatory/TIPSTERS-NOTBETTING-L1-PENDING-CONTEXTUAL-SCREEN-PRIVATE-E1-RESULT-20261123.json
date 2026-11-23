@@ -1,0 +1,42 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.L1.PENDING.CONTEXTUAL.SCREEN.PRIVATE.E1.RESULT.20261123",
+  "missionId": "NOTBETTING_L1_PENDING_CONTEXTUAL_SCREEN_PRIVATE_E1_20261123",
+  "status": "PRIVATE_SYNTHETIC_CONTEXTUAL_SCREEN_ACCEPTED_NARROW_OUTPUT",
+  "scope": "Pure bounded four-record/nine-fixture contextual screen tooling only. Frozen provenance/schema/UUID and contextual calendar checks reused; all business gates remain false. Matching is computed before literal competition gating but potential pair results are not separately returned for unknown competitions; this component alone cannot answer that diagnostic. No real pending/calendar read or match was executed.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.SOURCE.NATIVE.R1.ACTUAL.RESULT.20261123",
+    "DATA.SOURCE_OBSERVATORY.LIGUE1.J12.OFFICIAL.SCHEDULE.DOCUMENTARY.20261122"
+  ],
+  "author": "C1",
+  "authorStoppedAt": "2026-11-23T21:06:10.537765+00:00",
+  "screenSHA": "a72bdc3cf3a340e3d2c7725d9d9c802f721fda8cfb3bbd8f6a617830e1c28e9f",
+  "pureExtractSHA": "040ba32b67fcf06b5c18a49eac813b20f2eaf3088ee9990cb477143e0e4e46a2",
+  "testSHA": "72006dd1e7c6f711c94456c6a9ab76e39addbe50524e1a5d9570156015c7ea18",
+  "fileMapSHA": "28cd758f6b9a2d8b615439daa490d1bdafbbb2d8f075545c40d2cc305cc1edb8",
+  "privateResultSHA": "c028abdf9c9666c5fbbb73dfc5933f2ef38a5e93ef91af27eb4f3b5d62eafbbd",
+  "methodsPassed": 3,
+  "syntheticUniquePacks": 12,
+  "criticalRuffExit": 0,
+  "RAMCompileFiles": 3,
+  "targetedPythonProcessesIncludingControllers": 8,
+  "mandatoryGitReadonlySubprocessesSeparate": 10,
+  "globalOSProcessCountNotClaimed": true,
+  "contextualUTCNotNative": true,
+  "futureMarginHours": 48,
+  "sourceDateNotActualKickoff": true,
+  "preCompetitionPairCountsExposed": false,
+  "actualCachedInputReads": 0,
+  "actualMatchingRuns": 0,
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "admissions": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "overallStatus": "PARTIAL"
+}

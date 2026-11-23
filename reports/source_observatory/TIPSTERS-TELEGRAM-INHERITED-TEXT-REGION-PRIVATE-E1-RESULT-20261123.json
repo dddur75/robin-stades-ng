@@ -1,0 +1,43 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.INHERITED.TEXT.REGION.PRIVATE.E1.RESULT.20261123",
+  "missionId": "TELEGRAM_INHERITED_TEXT_REGION_PRIVATE_E1_20261123",
+  "status": "ACCEPTED_PRIVATE_ONE_GUARD_SEMANTIC_CHANGE_SYNTHETIC_ONLY",
+  "scope": "Private executed parent AST changes exactly one text-class guard to require no inherited text context; nested markup shares existing region and retains text once. Two independent text regions remain refused. Raw parent archive unchanged, executed AST explicitly changed under new profile; no native compatibility or source forecast claimed.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.TEXT.REGION.NATIVE.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.TEXT.WITNESS.FINAL.BYTE.PRIVATE.E1.RESULT.20261123"
+  ],
+  "pins": {
+    "authority_policy.py": "b248c36c7bb9bdad53c49ed5f8e16d7fe4ea73a1411c8ea787c9eaefaeadddfa",
+    "baseline-factory.py": "c51e29c8ba66db419e9eb90dc6a08235559858d10c0bb5d23a8ca59c7bbeb094",
+    "diagnostic_factory.py": "06f8f89f1f07825bb26ddb9b8b90259c896e7c75bb0339323e8d5f631b5fa3d1",
+    "native_outer.py": "df5672eb4188672fb9fa5d95d2a82f390ec2b2b825195425b46c68cddcb8c4c9",
+    "parent.py": "a7a0da012b63717c76a68ed89f7940d9de7f1568cb27abcb90bf28111b63a5f7",
+    "prefix.py": "e4153492e6579d5b03aaca3ecea4939804bb99f049853c6063ff55906deab497",
+    "source_worker.py": "e4f20dafcdf0d3e33304780072e511b972f39ec6fa6cbafb30f8749c852fbcd4",
+    "test_inherited.py": "52d09645966129f51bd84fb06e94114934d2e66049399f99e8e84fd98d7eabc4",
+    "transport_diagnostics.py": "574a1023971594354150e658f3e16c809b811866b03e868d6289abbd2f1f216e"
+  },
+  "resultSHA": "db3387657481f2ccc798630db44f4dfc117bbecf3fc8518b47b45c0c776a2bf0",
+  "fileMapSHA": "d7136f010a74782a9d5b6a8ab51e9f60bb9533293f192ee174a593ba7475a375",
+  "semanticProfile": "TG_INHERITED_TEXT_REGION_V1",
+  "normalizationProfile": "TG_ASCII_USERNAME_CANONICAL_V1",
+  "validation": {
+    "GREENMethods": 1,
+    "syntheticUniqueFixtures": 9,
+    "pythonProcesses": 3,
+    "criticalRuffExit": 0,
+    "wholeParentInverseAST": true,
+    "workerDelta": "factory SHA literal only",
+    "authorStoppedAt": "2026-11-23T21:50:11.267Z"
+  },
+  "sourceGET": 0,
+  "admissions": 0,
+  "sourceReady": false,
+  "sourceAuthority": false
+}

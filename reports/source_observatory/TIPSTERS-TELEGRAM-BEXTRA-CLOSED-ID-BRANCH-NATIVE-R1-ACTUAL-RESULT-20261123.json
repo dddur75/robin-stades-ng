@@ -1,0 +1,63 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.CLOSED.ID.BRANCH.NATIVE.R1.ACTUAL.RESULT.20261123",
+  "missionId": "TELEGRAM_BEXTRA_CLOSED_ID_BRANCH_NATIVE_R1_20261123",
+  "status": "CURRENT_CHANNEL_LITERAL_MISMATCH_DIAGNOSTIC_ONLY_COLLECTOR_REFUSED",
+  "scope": "One bounded current Bextra observation identifies EXPECTED_CHANNEL_MISMATCH at the actual MESSAGE_ID refusal. This proves an exact configured-channel comparison failed on this capture only. Case-only difference, alias and channel identity remain unknown; older discarded captures are not retroactively classified. Strict rejection is atomic, no messages stored and no admissible forecast. All campaign authority is consumed and stopped.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.CLOSED.ID.BRANCH.NATIVE.R1.E1.RESULT.20261123"
+  ],
+  "nativePrimarySHA": "4bbfe18235fc7884b049efd54c61b3d9d309693c0dff22836efbf12113f62aa0",
+  "nativeResultSHA": "8447c1c52d0b41df4eb7edd399b2e047cb04f65c088dc5ed44e7538f7f24b138",
+  "sourceDecisionSHA": "cd7fd6f8afcf41352b277c21d96cb22e2942396b6fb790cea105ec871d6120ee",
+  "observedAtUTC": "2026-11-23T20:23:41.342421+00:00",
+  "closedAtUTC": "2026-11-23T20:23:41.349653+00:00",
+  "outerExit": 0,
+  "workerExit": 1,
+  "jobElapsedSeconds": 1.1409999999741558,
+  "timedOut": false,
+  "subtreeKillConfirmed": true,
+  "sourceGET": 1,
+  "GETReservations": 1,
+  "nativeJobs": 1,
+  "auditCounts": {
+    "DNS": 1,
+    "GET_SEND_BOUNDARY": 1,
+    "NODE": 0,
+    "TCP": 1
+  },
+  "outerReportedSourceGET": null,
+  "responseBytes": 98409,
+  "responseSHA256": "f6f84e713807b0d9ff1163b29a6af43a92abfe1c645175736f930f1d00d63569",
+  "rawBodyStored": false,
+  "messageIdWitness": {
+    "attributePresent": true,
+    "completedPrefixCount": 0,
+    "detail": "EXPECTED_CHANNEL_MISMATCH",
+    "schemaVersion": "telegram-message-id-witness-v1",
+    "site": "MESSAGE_START_ID_GUARD"
+  },
+  "coarseRefusalReason": "MESSAGE_ID",
+  "collectorRefusal": "PREFIX_CONTRACT",
+  "retainedStructuredMessages": 0,
+  "messageCount": null,
+  "privateMessageFileCreated": false,
+  "admissions": 0,
+  "newForecasts": 0,
+  "caseOnlyDifference": null,
+  "aliasOrIdentityEstablished": false,
+  "oldCapturesRetrospectivelyClassified": false,
+  "sourceReady": false,
+  "admissible": false,
+  "personIdentityVerified": false,
+  "nativeMarkupContractProven": false,
+  "allCompatibleIntegrated": false,
+  "overallStatus": "PARTIAL",
+  "campaignState": "STOP",
+  "retriesAuthorized": 0
+}

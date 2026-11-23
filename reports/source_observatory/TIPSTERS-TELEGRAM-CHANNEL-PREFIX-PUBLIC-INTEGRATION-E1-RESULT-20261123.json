@@ -1,0 +1,37 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.CHANNEL.PREFIX.PUBLIC.INTEGRATION.E1.RESULT.20261123",
+  "missionId": "TELEGRAM_CHANNEL_PREFIX_PUBLIC_INTEGRATION_E1_20261123",
+  "status": "PUBLIC_WORKTREE_MODULE_AND_TARGETED_TESTS_ACCEPTED_NOT_PUBLISHED",
+  "scope": "Exact accepted74linechannelreader copied into publicsrc plus portable synthetic tests.15testsPASS with SHA of owningPUBLICimportedmodule asserted; fulltargetedRuff and strictmypy1newsourcefilePASS. Originalparent/prefix remainbyteexact. Initial directpositive test failed withoutretaineddetailedoutput; no finecause invented. No source, runtimewiring, CIverdict or Gitpublication yet.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.CHANNEL.PREFIX.PUBLIC.CANDIDATE.PRIVATE.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.INHERITED.TEXT.NATIVE.R1.ACTUAL.RESULT.20261123"
+  ],
+  "files": [
+    "src/robin/source_observatory/telegram_channel_prefix.py",
+    "tests/source_observatory/test_telegram_channel_prefix.py"
+  ],
+  "moduleSHA": "8d051fa809140a1af924d9f48fc40214f573a1753e8456269090da2956aeebc3",
+  "testsSHA": "71ce9484bf8ede40c793f372ba1745dd0e39dc8030ef5bedc4341475a64dcd23",
+  "resultSHA": "87674b354815244b4e343105ff23e3226e545050b2c9785e3c8c97215b21f5e1",
+  "greenPrimarySHA": "4e8c6747ec3d3b3b93822acd915079a378e27c132b9718ff94ee628f097c44cb",
+  "strictParentSHA": "a7a0da012b63717c76a68ed89f7940d9de7f1568cb27abcb90bf28111b63a5f7",
+  "strictPrefixSHA": "e4153492e6579d5b03aaca3ecea4939804bb99f049853c6063ff55906deab497",
+  "testsPASS": 15,
+  "fullRuffExit": 0,
+  "mypyTargetedExit": 0,
+  "mypySourceFiles": 1,
+  "targetedProcesses": 5,
+  "AUTHBookkeepingProcessSeparately": 1,
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "CIForThisCopy": false,
+  "GitCommit": false,
+  "GitPush": false
+}

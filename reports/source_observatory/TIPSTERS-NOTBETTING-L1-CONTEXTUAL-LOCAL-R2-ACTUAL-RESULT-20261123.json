@@ -1,0 +1,71 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.L1.CONTEXTUAL.LOCAL.R2.ACTUAL.RESULT.20261123",
+  "missionId": "NOTBETTING_L1_CONTEXTUAL_LOCAL_R2_20261123",
+  "status": "BOUNDED_CACHED_CONTEXTUAL_SCREEN_COMPLETE_NO_ADMISSIONS_AUTHORITY_STOP",
+  "scope": "Exactly four retained source records compared once with nine separate contextual official Ligue1 fixtures:36 oriented lexical pairs examined, none matched. Two source competition literals NBA and two unrecognized. No whole-site football/L1 absence, canonical fixture, personal forecast or actual kickoff proof inferred.",
+  "keys": [
+    "C0",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.L1.CONTEXTUAL.LOCAL.R2.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.L1.SAME.BUFFER.RUNNER.PRIVATE.E1.RESULT.20261123"
+  ],
+  "localDecisionSHA": "80c1af02425df61db925272484ba7b6bec9ab8a0d55fc601502b54829ebf1911",
+  "resultSHA": "397c027bba07a4fb788b82d84f49ec2cec40552e4b0b6a02e27f7425e007a73e",
+  "primarySHA": "05533ecc9544dc828877f0ebc71839d7a66ad44bdb836ba856665c3ca606efa7",
+  "finalAcceptedReturnSHA": "9fe4737fe415da0b8691fe923fe80ea77f8362d6452fbb3eb5d65263eb235378",
+  "authorityStopSHA": "80b0934ee9417a3793646f46857c51ee00779bcc1d70c220e120de388d2a740d",
+  "result": {
+    "admissible": false,
+    "admissions": 0,
+    "applicationAdmission": false,
+    "calendarUTC": "CONTEXTUAL_NOT_NATIVE",
+    "competitionClassCounts": {
+      "NBA": 2,
+      "UNRECOGNIZED_LITERAL": 2
+    },
+    "fixtureCount": 9,
+    "futureMarginHours": 48,
+    "globalCoverage": "UNKNOWN",
+    "interpretationAllowed": false,
+    "pairsExamined": 36,
+    "performanceEvaluationAllowed": false,
+    "personIdentityVerified": false,
+    "potentialOrientedPairCountsBeforeCompetition": {
+      "AMBIGUOUS": 0,
+      "NONE": 4,
+      "UNIQUE": 0
+    },
+    "recordCount": 4,
+    "schemaVersion": "notbetting-l1-contextual-screen-v1",
+    "settlementAllowed": false,
+    "sourceDateSemantics": "SOURCE_DECLARED_ONLY_NOT_ACTUAL_KICKOFF",
+    "sourceDeclaredDateRelationCounts": {
+      "AFTER_SOURCE_OBSERVATION": 4
+    },
+    "sourceReady": false,
+    "stopCounts": {
+      "COMPETITION_NOT_L1": 4
+    },
+    "unknownCompetitionPotentialOrientedPairCounts": {
+      "AMBIGUOUS": 0,
+      "NONE": 2,
+      "UNIQUE": 0
+    }
+  },
+  "recordCount": 4,
+  "fixtureCount": 9,
+  "pairsExamined": 36,
+  "lexicalPairMatches": 0,
+  "elapsedMilliseconds": 275.91539999842644,
+  "postFsyncDeadlineChecked": true,
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "admissions": 0,
+  "sourceReady": false,
+  "allCompatibleIntegrated": false,
+  "localAuthorityClosed": true,
+  "retryAllowed": false
+}

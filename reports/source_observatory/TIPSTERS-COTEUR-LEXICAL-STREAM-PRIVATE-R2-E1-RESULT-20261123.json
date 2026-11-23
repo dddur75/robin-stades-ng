@@ -1,0 +1,51 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.LEXICAL.STREAM.PRIVATE.R2.E1.RESULT.20261123",
+  "missionId": "COTEUR_LEXICAL_STREAM_REDESIGN_PRIVATE_R2_E1_20261123",
+  "status": "ACCEPTED_PRIVATE_BOUNDED_LEXICAL_ONLY_COMPONENT_NO_SOURCE_ADAPTER",
+  "scope": "Different architecture from failed fullAST: trusted pinned Acorn tokenizes provider text statically with rolling4tokens/boundedstack and ≤16closed LOOKALIKE spans. No full AST or alltokenarray. Complete lexical pass does not prove validJS, endpoint ownership or exhaustiveAPI discovery. No actual provider payload, CLI or source use.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LEXICAL.REDESIGN.INPUT.PIN.REFUSAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.CURRENT.APP.STATIC.NATIVE.R5.REDESIGN.20261123"
+  ],
+  "scannerSHA": "f858febf7e1d747ba9b07e2b93c2d8ee8c23c5bc9594640191b40a669213fce9",
+  "testsSHA": "77838e46f00f521e9bd430dea2293972b6b95d78e98de3c47b0eaadd325b1093",
+  "resultSHA": "c04abc2deb629f8b8b6187babc53a762f0a0f63a5e635778120ac2d5f6c12795",
+  "fileMapSHA": "77a789d33bebbec85f57510f04eb710aeab968232fd3f1c710f54569fbfb6c38",
+  "validation": {
+    "syntheticFixtures": 8,
+    "REDExit": 1,
+    "GREENExit": 0,
+    "NodeSyntaxExit": 0,
+    "targetedAuthorChildren": 4,
+    "mandatoryGitROProcesses": 5,
+    "authorStoppedAt": "2026-11-23T22:23:02.680Z"
+  },
+  "limits": {
+    "uniqueSyntheticFixturesMax": 8,
+    "inputBytesMax": 1048576,
+    "tokensMax": 250000,
+    "depthMax": 128,
+    "potentialSpansMax": 16,
+    "outputBytesMax": 8192,
+    "tokenizationMillisecondsMax": 5000,
+    "newDependencies": 0,
+    "targetedAuthorChildrenMax": 5,
+    "mandatoryGitROProcessesSeparately": 5
+  },
+  "limitations": [
+    "Cooperative5s checks between tokens require future process hardtimeout.",
+    "UTF16 spans stop at opening token, not complete expressions.",
+    "Maximum delimiter metric is admitted stack, not attempted overflow or grammar depth.",
+    "TIME_CAP INPUT_BYTES TOKENIZER_REFUSED branches not exercised.",
+    "No endpoint/API ownership, SOURCE or scale authority."
+  ],
+  "sourceGET": 0,
+  "sourceReady": false,
+  "newForecasts": 0,
+  "scaleApproved": false
+}

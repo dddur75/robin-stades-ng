@@ -1,0 +1,30 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.L1.CONTEXTUAL.LOCAL.R1.REFUSED.RESULT.20261123",
+  "missionId": "NOTBETTING_L1_CONTEXTUAL_LOCAL_R1_20261123",
+  "status": "PARTIAL_CHILD_REFUSED_BEFORE_CACHE_RESERVATION_NO_RETRY",
+  "scope": "First local attempt exited nonzero before local-spent.json; pending/calendar inputs therefore not read by this controller path. Runtime exception detail not retained. Independent static inspection proves a sufficient defect: historical context:null records hit context.get before date filtering. No real matching result or forecast measured.",
+  "keys": [
+    "C0",
+    "C1"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.L1.CONTEXTUAL.LOCAL.R1.E1.RESULT.20261123"
+  ],
+  "localDecisionSHA": "036c4c366493ebd118db5741845b9af35709bbd82edc097caec551e85262d511",
+  "controllerSHA": "227a4cabcdaa6a63d4157b0a6f89366c2be2dcdf8815dce0cf7ec521eb63b346",
+  "failedStopSHA": "2077a5e0d5b2a947c10897433de56ce780bbf52d6eaf25928b0b4bf00be9f7a6",
+  "spentFileAbsent": true,
+  "resultFileAbsent": true,
+  "actualPrimaryAbsent": true,
+  "exceptionDetailRetained": false,
+  "staticDefect": "HISTORICAL_NULL_CONTEXT_ACCESSED_BEFORE_DATE_FILTER",
+  "sourceGET": 0,
+  "realPendingReads": 0,
+  "realCalendarReads": 0,
+  "realMatchingRuns": 0,
+  "newForecasts": 0,
+  "admissions": 0,
+  "sourceReady": false,
+  "retryAllowed": false,
+  "sourceAuthority": false
+}

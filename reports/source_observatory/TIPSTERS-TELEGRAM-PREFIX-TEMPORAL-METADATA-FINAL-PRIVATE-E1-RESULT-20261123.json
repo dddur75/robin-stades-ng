@@ -1,0 +1,32 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.TEMPORAL.METADATA.FINAL.PRIVATE.E1.RESULT.20261123",
+  "missionId": "TELEGRAM_TEMPORAL_FINAL_VERIFICATION_E1_20261123",
+  "status": "ACCEPTED_PRIVATE_TEMPORAL_SUMMARY_WITH_ADDITIVE_CORRECTION",
+  "scope": "Pure same-buffer hash-pinned UNQUALIFIED prefix temporal buckets, at most10 rows, exact schemas and closed output. Reuse8synthetic tests plus separate criticalRuff and discriminating UTF8-beforeJSON confirmation. Original phase PARTIAL for Ruff only; prior claim of missing UTF8 coverage corrected additively from actual frozen test AST. No real cache or source qualification.",
+  "keys": [
+    "C0",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.INHERITED.TEXT.NATIVE.R1.ACTUAL.RESULT.20261123"
+  ],
+  "helperSHA": "a6111f784c2ef99b48571f8add65a680072d18c8e12b6d8d7974a02ee4678885",
+  "originalResultSHA": "bf5ce11fb3d13eb37e8f75369a91669be6c63829804474138e37721fd8987df9",
+  "verificationResultSHA": "5b8f4eb532d3d471755f41e82ece5e9b8b8235f8b7e5235bdfa7b927842ec2c4",
+  "addendumSHA": "d02054f056099b948a6fb04f789b4a2bde09bd05471a8c91248cac5881e9c193",
+  "validation": {
+    "originalGREENTests": 8,
+    "originalTargetedAuthorProcesses": 4,
+    "newVerificationProcesses": 2,
+    "criticalRuffExit": 0,
+    "trueUTF8NegativeConfirmation": true,
+    "jsonDecodeCallsOnInvalidUTF8": 0,
+    "originalUTF8CoverageAlreadyPresent": true
+  },
+  "sourceGET": 0,
+  "realCacheReads": 0,
+  "sourceReady": false,
+  "newForecasts": 0,
+  "LOCALAuthority": false
+}

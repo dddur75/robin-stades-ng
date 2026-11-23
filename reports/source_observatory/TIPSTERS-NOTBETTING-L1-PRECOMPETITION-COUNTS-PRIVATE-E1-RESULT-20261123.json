@@ -1,0 +1,39 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.L1.PRECOMPETITION.COUNTS.PRIVATE.E1.RESULT.20261123",
+  "missionId": "NOTBETTING_L1_PRECOMPETITION_COUNTS_PRIVATE_E1_20261123",
+  "scope": "Accepted private diagnostic-only counter extension; oriented lexical pair counts before competition gate, no actual cached screening or admission.",
+  "keys": [
+    "C0",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.L1.PENDING.CONTEXTUAL.SCREEN.PRIVATE.E1.RESULT.20261123"
+  ],
+  "pins": {
+    "screenSHA": "7a219ebae78be32a6a9954956ecf318eaa92e989a782a9aa2472ba451cfbc327",
+    "testSHA": "013a3bdf442e7a531fabee8d265a3e8a07cbe9bc7659f5a1cbb422ddb0a59ebb",
+    "pureSHA": "040ba32b67fcf06b5c18a49eac813b20f2eaf3088ee9990cb477143e0e4e46a2",
+    "resultSHA": "dc4c676dfbe3563db710a3fb9188ef43d2e44a5a48d23bc44e1886190a827693",
+    "fileMapSHA": "17c89ee401341b045d6c9d810d4003f3507af941f8ebc9c62b4fd7bcc31cd90c"
+  },
+  "validation": {
+    "GREENMethods": 4,
+    "syntheticPacksMax": 14,
+    "allPythonProcessesIncludingControllers": 6,
+    "RuffCriticalExit": 0,
+    "inverseRawBaselineSHA": "a72bdc3cf3a340e3d2c7725d9d9c802f721fda8cfb3bbd8f6a617830e1c28e9f",
+    "independentInverseAST": true,
+    "authorSeconds": 115.503948
+  },
+  "newForecasts": 0,
+  "admissions": 0,
+  "sourceReady": false,
+  "localActualAllowed": false,
+  "sourceAllowed": false,
+  "limitations": [
+    "No real pending or calendar data read in this E1.",
+    "Counts are records, not people or forecasts. UNKNOWN UNIQUE remains rejected COMPETITION_NOT_L1.",
+    "Future same-buffer runner and bounded LOCAL authorization required."
+  ]
+}

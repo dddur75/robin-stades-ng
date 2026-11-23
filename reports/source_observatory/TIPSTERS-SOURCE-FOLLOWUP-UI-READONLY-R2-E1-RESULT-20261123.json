@@ -1,0 +1,49 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.SOURCE.FOLLOWUP.UI.READONLY.R2.E1.RESULT.20261123",
+  "missionId": "SOURCE_FOLLOWUP_UI_READONLY_R2_E1_20261123",
+  "status": "TARGETED_UI_ADMIN_TWO_ROWS_AND_THREE_ROUTES_PASS_OVERALL_PARTIAL",
+  "scope": "Fresh ephemeral browser shows both updated qualification rowheaders and renders three localhost routesHTTP200. Screenshot proves Bextra row readable; NotBetting row top partly hidden by stickyheader so DOMvisibility is not full screenshot legibility proof. No new Bextra catalogue panel or full admin flows proved. Previous harness failure retained, exact root cause not isolated by this combined test correction.",
+  "keys": [
+    "C0",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.SOURCE.FOLLOWUP.METADATA.APP.E1.RESULT.20261123"
+  ],
+  "resultSHA": "7c4a3232ea81a8b89d7b13d2b12996029d36c8616bacc693060945d7fb14560a",
+  "screenshotSHA": "f1559ee2720fd572dced6b9263508fc2d9c1dd4ef5ad90af8586e81767834fb8",
+  "routes": [
+    {
+      "route": "/expert/admin-collecte",
+      "status": 200,
+      "BextraVisible": true,
+      "NotBettingVisible": true,
+      "rendered": true
+    },
+    {
+      "route": "/expert/sources-tipsters",
+      "status": 200,
+      "rendered": true
+    },
+    {
+      "route": "/expert/catalogue-tipsters",
+      "status": 200,
+      "rendered": true
+    }
+  ],
+  "network": {
+    "localGET": 128,
+    "blockedExternal": 0,
+    "blockedMethods": 0,
+    "blockedOverCap": 0,
+    "localWS": 2,
+    "blockedWS": 0
+  },
+  "pageErrors": 0,
+  "consoleErrors": 0,
+  "fullUIAdminDelivered": false,
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "allCompatibleIntegrated": false
+}

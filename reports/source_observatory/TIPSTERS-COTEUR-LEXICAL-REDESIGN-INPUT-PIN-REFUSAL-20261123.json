@@ -1,0 +1,28 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.LEXICAL.REDESIGN.INPUT.PIN.REFUSAL.20261123",
+  "missionId": "COTEUR_LEXICAL_STREAM_REDESIGN_PRIVATE_E1_20261123",
+  "status": "PARTIAL_REQUIRED_OLD_PIN_REFUSED_NO_SCANNER_BUILT",
+  "scope": "New lexical architecture attempt stopped before candidate code/tests/source because mandatory existing projector pin67ab mismatched current committedbeadb. Current public and runtime projector bytehashes equalbeadb and gitshow HEAD matches with clean file status. Old reports/pins retained, no equivalence to old67ab asserted; a fresh current binding is required.",
+  "keys": [
+    "C0",
+    "C3"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.CURRENT.APP.STATIC.NATIVE.R5.REDESIGN.20261123"
+  ],
+  "resultSHA": "ffaa9f46069c718678c928b3b59a695937546e784abfe07f0f82df44d53a70e9",
+  "expectedOldProjectorSHA": "67ab6ac9f550e76f1d55c9f029a53323cccdbaf4fe9bbdbe60a527ca05686d45",
+  "currentProjectorSHA": "beadb184d4fc841d4343055885c196deb39061d087dc1b541810288bf4cd8af5",
+  "currentPublicHEAD": "1a6cf4181cc8589f90b9a1c1f84bbb78f6a4b693",
+  "currentProjectorMatchesHEAD": true,
+  "authorChildren": 3,
+  "GitROProcesses": 10,
+  "totalCountedProcesses": 13,
+  "computeScopeAmbiguityDisclosed": true,
+  "syntheticFixturesExecuted": 0,
+  "codeCandidateWritten": false,
+  "sourceGET": 0,
+  "providerPayloadReads": 0,
+  "sourceReady": false,
+  "newForecasts": 0
+}
