@@ -1,5 +1,7 @@
 """Pure strict query-metadata protocol; no IO or authority."""
-import json, re
+import json
+import re
+
 TOP = {'schemaVersion', 'status', 'projectionComplete', 'omissions', 'candidates', 'prefixes', 'sourceReady', 'sourceChoices', 'sourceAPICalls', 'executedJavaScript'}
 CAND = {'method', 'methodEvidence', 'sourceOffset', 'pathSegments', 'literalQueryKeysObserved', 'queryValuesElided', 'runtimeQueryContractEstablished', 'bindingEstablished', 'contractEstablished'}
 PREFIX = {'path', 'sourceOffset', 'queryValuesElided', 'contractEstablished'}

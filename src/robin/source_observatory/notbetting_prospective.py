@@ -6,6 +6,7 @@ import json
 import re
 from datetime import datetime, timezone
 from hashlib import sha256
+
 MAX_VISITS = 150000
 MAX_DEPTH = 40
 MAX_PICKS = 20
