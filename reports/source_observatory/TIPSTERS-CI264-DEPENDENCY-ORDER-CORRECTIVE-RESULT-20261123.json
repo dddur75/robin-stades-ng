@@ -1,0 +1,48 @@
+{
+  "generatedAt": "2026-11-23T12:38:34.578Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI264.DEPENDENCY.ORDER.CORRECTIVE.RESULT.20261123",
+  "missionId": "CI264_TYPESCRIPT_BEFORE_PYTEST_E1_20261123",
+  "status": "LOCAL_DEPENDENCY_LAYOUT_REPRODUCED_TARGETED_FIX_VERIFIED_PENDING_CI",
+  "scope": "CI264 loader detailed cause remains UNKNOWN in truncated logs. Owning workflows install pinned Cockpit dependency only after pytest. Isolated exact CLI without TypeScript reproduces DEPENDENCY_UNPROVEN; adding only pinned TypeScript bytes/package metadata makes tiny AST probe pass. Move existing Node/pnpm/install earlier in both quality jobs and add tiny trusted-input CLI preflight. Action pins/versions/services/permissions/otherjobs and CLI bytes unchanged.30 Coteur tests and22 existing workflow-contract tests pass. First workflow harness failed to import scripts because root absent in sys.path; corrected private harness passes, no product fix or failed receipt erased. Actual next CI required.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.CI264.EXACT.HEAD.FAILURE.RESULT.20261123"
+  ],
+  "headUnderTest": "27cb9322c55081008fc11270d960fc58522c18ab",
+  "workflowEdits": [
+    {
+      "path": ".github/workflows/ci-safe-v2.yml",
+      "beforeSHA": "13a3225bfc0d36f2ac0c55ea2ebdab5ad41a3f2460aef7660ac421bae5321d2b",
+      "afterSHA": "c7cbb22f0dbe2632214aa12e08f8fe23802bd43f7843c3cc8c77f051564f4ce5",
+      "setupMoved": true,
+      "installMoved": true,
+      "preflightAdded": true
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "beforeSHA": "1bf99681ff5f885c9d30778236492c263f1c29a10e42119ff586cc53dc9a00d2",
+      "afterSHA": "0a1106ad208738f2439880c3ac20ee528d4db3d9f191aa7530389b7eb179a87f",
+      "setupMoved": true,
+      "installMoved": true,
+      "preflightAdded": true
+    }
+  ],
+  "typescriptSHA256": "3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675",
+  "CLIBytesUnchanged": true,
+  "isolatedRedExit": 1,
+  "isolatedRedReason": "DEPENDENCY_UNPROVEN",
+  "isolatedGreenExit": 0,
+  "coteurTestsPassed": 30,
+  "workflowTestsPassed": 22,
+  "priorHarnessExit": 2,
+  "correctedHarnessExit": 0,
+  "corpusReplay": 0,
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "sourceReady": false
+}

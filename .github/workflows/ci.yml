@@ -840,6 +840,19 @@ jobs:
           name: chronos-dual-principal-superuser-${{ github.run_id }}-${{ github.run_attempt }}
           path: .ci/chronos-dual-principal-superuser-v2.json
           if-no-files-found: error
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22.13.0"
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+        with:
+          version: "11.9.0"
+      - name: Installer les dépendances Cockpit avant les tests Python
+        working-directory: cockpit
+        run: pnpm install --frozen-lockfile
+      - name: Vérifier la dépendance TypeScript du collecteur Coteur
+        working-directory: cockpit
+        run: >-
+          node -e "const {project}=require('./scripts/coteur-static-query-shapes.cjs');const r=project('const x=1;');if(r.executedJavaScript!==false||r.sourceReady!==false)process.exit(1)"
       - name: Executer les tests
         run: python -m pytest -q
       - name: Tester Parquet et les protections anti-fuite
@@ -859,16 +872,9 @@ jobs:
         run: |
           python -m robin.quality.report --input data/matches.parquet --output .ci/quality
           python -c "from pathlib import Path; assert Path('.ci/quality/health.html').stat().st_size > 1000"
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: "22.13.0"
-      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
-        with:
-          version: "11.9.0"
       - name: Compiler et tester le Cockpit Live V2
         working-directory: cockpit
         run: |
-          pnpm install --frozen-lockfile
           pnpm test
 
   visual-regression:

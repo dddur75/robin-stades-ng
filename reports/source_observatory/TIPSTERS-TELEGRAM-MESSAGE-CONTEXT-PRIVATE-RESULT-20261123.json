@@ -1,0 +1,32 @@
+{
+  "generatedAt": "2026-11-23T12:18:03.079Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.MESSAGE.CONTEXT.PRIVATE.RESULT.20261123",
+  "missionId": "TELEGRAM_MESSAGE_CONTEXT_REDESIGN_E1_20261123",
+  "status": "PRIVATE_SYNTHETIC_CONTEXT_CONTRACT_ACCEPTED",
+  "scope": "Pure per-message preview parser with exact channel/post/permalink/time binding and RAM text, independent C1 FACTS C3 CODE C4 SCOPE accepted targeted context-barrier redesign. R1 initial fixture failure and R2 context veto retained. Fourteen synthetic tests pass; no native message fields, human identity, fixture join, visibility or reuse contract established. Not operational source activation.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.EXPLICIT.TCP.STRUCTURAL.NATIVE.R2.ACTUAL.RESULT.20261123"
+  ],
+  "codeSHA256": "a7a0da012b63717c76a68ed89f7940d9de7f1568cb27abcb90bf28111b63a5f7",
+  "testRawSHA256": "5ca2dd75c2c584e6cc202cbf4609646bd126e650a7b167af2f4ac7527079530c",
+  "greenPrimarySHA256": "10dc88fa9b34dca775c179f15548a15e524b96cc5d889bb16078adcb50f038e7",
+  "testsPassed": 14,
+  "targetedCommands": 4,
+  "testMethodExecutions": 17,
+  "testMethodExecutionsMax": 20,
+  "mypyStrictExit": 0,
+  "ruffExit": 0,
+  "closedAt": "2026-11-23T12:15:28.898Z",
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "admissible": false,
+  "personIdentityVerified": false,
+  "nativeMarkupContractProven": false
+}

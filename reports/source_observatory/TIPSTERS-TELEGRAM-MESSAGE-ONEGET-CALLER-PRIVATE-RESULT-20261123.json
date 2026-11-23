@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-11-23T12:27:03.544Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.MESSAGE.ONEGET.CALLER.PRIVATE.RESULT.20261123",
+  "missionId": "TELEGRAM_MESSAGE_ONEGET_CALLER_PRIVATE_E1_20261123",
+  "status": "PRIVATE_CALLER_SYNTHETIC_ACCEPTED_FULL_BINDING_REQUIRED",
+  "scope": "C0 CODE C1 FACTS C4 SCOPE accepted frozen new one-previewGET caller, strict explicit-TCP transport and oneGET authority policy. Eight synthetic tests and critical Ruff pass; no real full loader/SSL/Job/source execution. Changed-effect test rejects earlier hash binding, not dynamic effect guard coverage. Consumer location field is not independent redirect proof; pinned transport rejects location headers. Personal public inspection assumed, documented scraping restriction applicability and reuse contract UNKNOWN. No old mission rearmed.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.MESSAGE.CONTEXT.PRIVATE.RESULT.20261123"
+  ],
+  "workerSHA": "a7189dfcf9415f5cfee48dd3b861446e903d636d9a97fe87e324e724735761d6",
+  "policySHA": "3cb19e535a78209a9ddae72674ac43732f79f8154793d477a8d333b3ca26f588",
+  "outerSHA": "ad7bcecba11b3281ffc5a6c46bdfde9620be561a47cb369881c8af98da5a2c5e",
+  "transportSHA": "fc19e9274c13cc557d58b73d660aa66f00ecc1e380ac895325e0d7026000fa62",
+  "parserSHA": "a7a0da012b63717c76a68ed89f7940d9de7f1568cb27abcb90bf28111b63a5f7",
+  "testsPassed": 8,
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false
+}
