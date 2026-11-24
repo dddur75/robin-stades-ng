@@ -177,7 +177,8 @@ def bind_source_runtime(
         raise PermissionError("CURRENT_SOURCE_RUNTIME_PIN")
     module = ModuleType("olbg_pinned_current_source_runtime")
     module.__file__ = record["path"]
-    exec(compile(raw, record["path"], "exec"), vars(module))
+    # Execute only approved local runtime bytes SHA-256 checked above.
+    exec(compile(raw, record["path"], "exec"), vars(module))  # nosec B102
     runtime = module.bind_source(
         directory=directory, plan=plan, mission=mission, approval=approval,
         legacy_get=public_get,
