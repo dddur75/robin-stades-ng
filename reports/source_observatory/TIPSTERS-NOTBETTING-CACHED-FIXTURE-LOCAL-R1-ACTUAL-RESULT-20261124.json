@@ -1,0 +1,46 @@
+{
+  "applicationAdmissions": 0,
+  "authorityClosed": true,
+  "closedAtUTC": "2026-11-24T07:35:12.035645+00:00",
+  "counts": {
+    "codeReads": 4,
+    "network": 0,
+    "payloadReads": 2,
+    "spawn": 0
+  },
+  "diagnoseCalls": 1,
+  "diagnostic": {
+    "admissions": 0,
+    "competitionMatches": true,
+    "dateEqualsMatchedKO": null,
+    "eventSplitsIntoTwo": false,
+    "exactPairCount": null,
+    "firstStop": "EVENT_SHAPE_UNPROVEN",
+    "globalCoverage": "UNKNOWN",
+    "observedBeforeMatchedKO": null,
+    "pairRelation": "UNSPLITTABLE",
+    "reversedPairCount": null,
+    "sourceDateAware": null,
+    "sourceReady": false,
+    "status": "UNQUALIFIED"
+  },
+  "missionId": "NOTBETTING_CACHED_FIXTURE_LOCAL_R1_20261124",
+  "payloadMutations": 0,
+  "retry": false,
+  "sourceGET": 0,
+  "status": "PARTIAL",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.CACHED.FIXTURE.LOCAL.R1.ACTUAL.RESULT.20261124",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Actualonecachedpendingrecord diagnostic, 2samebufferpayloadreads/1call/no network or edits. FirstlegacyparserstopEVENT_SHAPE_UNPROVEN; pair/dategatesnotreached remainNULL. No absence ofofficialfixture inferred, noadmission or KOsemanticsproof.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CACHED.FIXTURE.DIAGNOSTIC.PRIVATE.CODE.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PL.NATIVE.R2.ACTUAL.RESULT.20261124",
+    "DATA.SOURCE_OBSERVATORY.PREMIERLEAGUE.NOVEMBER.FUTURE.GMT.PROGRAMME.RESULT.20261124"
+  ],
+  "receiptSHA": "6b654a3649834cc4dcbafda5660357d18cf6a6e8067ac07f224d5db97afa37ae",
+  "sourcePayloadsViewedByReviewers": false
+}

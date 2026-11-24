@@ -1,0 +1,139 @@
+{
+  "missionId": "CI271_EXACT_HEAD_RESULT_20261124",
+  "commitSHA": "3a30319c5503bf54e851e233f4a9dc034ef602c9",
+  "treeSHA": "76aafec73243a1d354b4053867d21b3193cb0acb",
+  "runId": 45347506758,
+  "runNumber": 271,
+  "status": "VERIFIED",
+  "conclusion": "success",
+  "counts": {
+    "success": 17,
+    "failure": 0,
+    "skipped": 0
+  },
+  "jobs": [
+    {
+      "id": 138285539436,
+      "name": "Historical Deep — contrat cache-only",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138285539683,
+      "name": "End-to-End Live Path Replay",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138285539691,
+      "name": "Bounded live canary - Ubuntu",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138285539783,
+      "name": "Jalon 10 - entrees de preuve gelees",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138285539846,
+      "name": "Historical Authority Workflows Disabled",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138285539856,
+      "name": "Chronos PostgreSQL profiles / Chronos source and activation",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138285539910,
+      "name": "Residual Fault Matrix",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138285540044,
+      "name": "Bounded live canary - Windows",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138285540104,
+      "name": "Exact Workflow Entrypoint",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138285540151,
+      "name": "Chronos PostgreSQL profiles / Chronos static contracts",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138285540198,
+      "name": "Chronos PostgreSQL profiles / tests (non_superuser_createrole)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138285540288,
+      "name": "Chronos PostgreSQL profiles / tests (superuser)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138286681288,
+      "name": "Chronos PostgreSQL profiles / Chronos provider-free Cockpit",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138289996550,
+      "name": "Robin Experience — preuves visuelles",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138289996621,
+      "name": "Jalon 10 - trois temoins R3 bornes",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138289996713,
+      "name": "Quality and domain tests",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138300498151,
+      "name": "tests",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "PR": 133,
+  "draft": true,
+  "merge": false,
+  "sourceGET": 0,
+  "newRunTriggered": 0,
+  "claimId": "ENG.SOURCE_OBSERVATORY.PUBLICATION.CI271.EXACT.HEAD.SUCCESS.RESULT.20261124",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Exactpublished3a30319c5503bf54e851e233f4a9dc034ef602c9/tree76aafe/run45347506758 terminalSUCCESS17jobs. Root+C1independentGitHubmeasurements,C4sealedsummaryreview. Nofuturelocalcode/sourcequalification/recurrence/merge/allcompatibleupgrade.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.SELECTOR.BANDIT.CORRECTIVE.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V35.ENGINEERING.RECETTE.20261124"
+  ],
+  "primarySummarySHA": "beef824bd8ca62c75b0ba904a7097e3190e0889bcc5b2d4afc1c41a817b07b94",
+  "reviewScope": {
+    "C1": "IndependentexactSHAworkflow+17jobstatuses read",
+    "C4": "Sealedsummary/countsreview,RootretainedPRsnapshot"
+  }
+}

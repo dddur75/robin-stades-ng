@@ -1,0 +1,49 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.APP.LOOPBACK.METADATA.R3.ACTUAL.RESULT.20261124",
+  "missionId": "NOTBETTING_PENDING_APP_LOOPBACK_METADATA_R3_E1_20261124",
+  "status": "PASS_AND_HOLD",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.APP.PUBLIC.INTEGRATION.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.APP.RUNTIME.LOCAL.R2.ACTUAL.RESULT.20261124"
+  ],
+  "scope": "Independent closed metadata from one actual loopback API read only. No accepted browser-flow recette, source qualification or whole-controller conformity.",
+  "httpStatus": 200,
+  "bytes": 1670629,
+  "registryStatus": "ok",
+  "candidateCount": 317,
+  "notBettingCandidateCount": 1,
+  "telegramCandidateCount": 6,
+  "notBettingRootPresent": true,
+  "pendingRecordCount": 1,
+  "sourceReady": false,
+  "preMatchProven": false,
+  "personIdentityVerified": false,
+  "canonicalFixtureNull": true,
+  "admissions": 0,
+  "expectedClaimPresent": true,
+  "realValuesLogged": false,
+  "sourceGET": 0,
+  "localGET": 1,
+  "runtimeWrites": 0,
+  "producerStatus": "LOCAL_METADATA_ONLY",
+  "authorityClosed": true,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "receiptSHA256": "ad0ec456520383213a83292b6870d4d98d9393e4bb289df0aec2210f8b9d7945",
+  "stop": {
+    "hash": "095cdae3abb9b15f3f34dc1c2916ecba39393742e156127df73070ff8c2e1688",
+    "date": "2026-11-24T08:33:31.077320+00:00",
+    "authorityClosed": true
+  },
+  "limits": [
+    "Three API booleans observed false: sourceReady, preMatchProven, personIdentityVerified; admissible was not read by this projection.",
+    "Current response size exceeds prior 1MiB cap; previous exact failure predicate and payload equality remain unknown.",
+    "Controller guard ran after child and before r+b fsync; no guard after final fsync is proved. Metadata facts accepted without certifying complete controller conformity.",
+    "Previous diagnostic PARTIAL/controller EBADF retained; no old GET rerun or retrospective success."
+  ]
+}

@@ -1,4 +1,5 @@
 "use client";
+import type {NotBettingPendingObservation,PlatformPendingObservations} from '../../../scripts/notbetting-pending-source';
 import {TipsterQualification} from "./tipster-qualification";
 import {platformQualificationResultIds} from "../../lib/tipster-qualification";
 import {ReviewedSourceObservationPanel} from './reviewed-source-observation';
@@ -15,7 +16,7 @@ type Unadmitted={fixtureLabel:string;selection:string;marketLabel:string;sourceE
 type Qualification=Access&{profileVisited:boolean;documentaryIssues:string[];personallyProven:boolean;observedAt?:string;unadmittedFacts?:Unadmitted[];expansionClaimId?:string;picks:(SourceChoice&{id:string;fixtureLabel:string;selection:string;market?:string;observedAt:string;kickoff:string;sourceUrl:string})[]};
 type Candidate={pendingChannelObservation?:PendingChannelObservation;reviewedSourceObservation?:ReviewedSourceObservation;id:string;label:string;platform:string;sourceUrl:string;evidenceUrl:string;declaredLastDate:string|null;
  status:'pending_qualification';collectionEnabled:boolean|null;qualification?:Qualification;origin:{sheet:string;row:number;workbookSha256:string}};
-type Registry={historicalEvidence?:{sourceObservedAt?:string|null};operationalState?:'unknown';status:string;schemaVersion:string;count:number;platformCount:number;datedCount:number;enabledCount?:number|null;candidates:Candidate[];receipt:{registrySha256:string;claimId:string};qualification?:{status:string;claimId?:string;technicalClaimId?:string;technicalClaimIds?:string[];followupOverlayState?:string;expansionState?:string;expansionClaimId?:string;personalOverlayState?:string;personalCollectionState?:string;personalClaimId?:string;compatibleAccessState?:string;compatibleClaimId?:string;rosterCollectionState?:string;rosterRecurringState?:string;familyCollectionState?:string;familyNativeWinState?:string;familyOpaqueState?:string;familyClaimId?:string;assessedCount?:number;qualifiedCount?:number;platforms?:Access[]}};
+type Registry={platformPendingObservations?:PlatformPendingObservations;historicalEvidence?:{sourceObservedAt?:string|null};operationalState?:'unknown';status:string;schemaVersion:string;count:number;platformCount:number;datedCount:number;enabledCount?:number|null;candidates:Candidate[];receipt:{registrySha256:string;claimId:string};qualification?:{status:string;claimId?:string;technicalClaimId?:string;technicalClaimIds?:string[];followupOverlayState?:string;expansionState?:string;expansionClaimId?:string;personalOverlayState?:string;personalCollectionState?:string;personalClaimId?:string;compatibleAccessState?:string;compatibleClaimId?:string;rosterCollectionState?:string;rosterRecurringState?:string;familyCollectionState?:string;familyNativeWinState?:string;familyOpaqueState?:string;familyClaimId?:string;assessedCount?:number;qualifiedCount?:number;platforms?:Access[]}};
 export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;tipsterId?:string}){
  const [data,setData]=useState<Registry|null>(null);const[error,setError]=useState(false);
  const[q,setQ]=useState('');const[platform,setPlatform]=useState('');const[dated,setDated]=useState(false);const[page,setPage]=useState(0);
@@ -48,6 +49,7 @@ export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;ti
     {data.qualification.expansionClaimId&&<p style={{overflowWrap:'anywhere'}}>Preuve des profils supplémentaires : {data.qualification.expansionClaimId}</p>}
     <details><summary>Accès et blocages par plateforme</summary><ul>{(data.qualification.platforms??[]).map(a=><li key={a.platform} style={{overflowWrap:'anywhere'}}><strong>{a.platform} · {a.label}</strong><p>{a.reason}</p><p>Accès à établir : {a.requiredAccess}</p><p>{a.ownerAction}</p><a className="inline-link" href={a.url} target="_blank" rel="noopener noreferrer">Consulter la plateforme</a></li>)}</ul><small style={{overflowWrap:'anywhere'}}>Preuve {data.qualification.claimId}{(data.qualification.technicalClaimIds??[data.qualification.technicalClaimId]).filter(Boolean).map(id=>` · ${id}`).join('')}</small></details>
    </>:<p>Qualifications historiques indisponibles ; les fiches documentaires restent visibles. État actuel des collectes non vérifié. Cet import n’ajoute aucun pronostic.</p>}
+   {data.platformPendingObservations?.NotBetting&&(compact||selected?.platform==='NotBetting')&&<NotBettingPendingPanel observation={data.platformPendingObservations.NotBetting}/>}
    {compact?<InlineLink href="/expert/catalogue-tipsters">Consulter les 317 fiches Ligue 1</InlineLink>:tipsterId?<>
     <InlineLink href="/expert/catalogue-tipsters">Retour aux fiches candidates</InlineLink>
     {selected?<article className="section-card">
@@ -100,5 +102,19 @@ function PendingChannelPanel({observation:o}:{observation:PendingChannelObservat
    <p>Publication déclarée : {formatDateTime(choice.publicationDeclaredAtUTC,true)}. Cette date n’est pas un coup d’envoi.</p>
    <a className="inline-link" href={choice.sourceUrl} target="_blank" rel="noopener noreferrer">Consulter la publication source</a>
   </article>)}<details><summary>Traçabilité de la collecte</summary>{o.claimIds.map(id=><p key={id} style={{overflowWrap:'anywhere'}}>{id}</p>)}</details><p>La publication avant le début du match et l’évaluation des performances ne sont pas établies.</p>
+ </section>;
+}
+
+function NotBettingPendingPanel({observation:o}:{observation:NotBettingPendingObservation}){
+ return <section aria-label="NotBetting : faits source non qualifiés"><h3>NotBetting · {o.records.length} fait(s) source à qualifier</h3>
+  <p>Contexte de plateforme : ces faits ne sont pas attribués à cette fiche. Aucun pronostic admis ; identité personnelle et rencontre restent à établir.</p>
+  <p>Observé le {formatDateTime(o.observedAtUTC,true)}. Couverture globale inconnue.</p>
+  {o.records.map(record=><article className="section-card" key={record.key}><h4>Choix déclaré : {record.selection}</h4>
+   <p>Événement déclaré : {record.eventText}. Compétition déclarée : {record.competitionText}.</p>
+   <p>Alias du compte source : {record.sourceAccountAlias}. Cet alias ne certifie pas une personne.</p>
+   <p>Date déclarée par la source : {record.nativeDateText}. Cette valeur ne prouve ni publication ni coup d’envoi.</p>
+   <a className="inline-link" href={record.sourceUrl} target="_blank" rel="noopener noreferrer">Consulter la page source</a>
+  </article>)}<details><summary>Références du contrôle</summary>{o.claimIds.map(id=><p key={id} style={{overflowWrap:'anywhere'}}>{id}</p>)}</details>
+  <p>La publication avant match, l’interprétation du choix et l’évaluation des performances ne sont pas établies. Collecte récurrente inactive.</p>
  </section>;
 }

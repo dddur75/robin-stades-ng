@@ -1,3 +1,4 @@
+import {applyNotBettingPlatformObservation,type PlatformPendingObservations} from './notbetting-pending-source';
 import {applyPendingChannelObservation,type PendingChannelObservation} from './telegram-pending-channel';
 import {createHash} from 'node:crypto';
 import {openSync,closeSync,fstatSync,readSync} from 'node:fs';
@@ -58,7 +59,7 @@ function qualification(value:unknown,depth=0):FactObject{
  return out;
 }
 export type Candidate=FactObject&{pendingChannelObservation?:PendingChannelObservation;reviewedSourceObservation?:ReviewedSourceObservation;id:string;sourceUrl:string;origin:FactObject;collectionEnabled:null;operationalState:'unknown';qualification?:FactObject};
-export type Catalogue=FactObject&{receipt:FactObject;status:'ok';count:number;candidates:Candidate[];enabledCount:null;operationalState:'unknown';qualification:FactObject;rosterAssessments:FactObject[];historicalEvidence:FactObject};
+export type Catalogue=FactObject&{platformPendingObservations?:PlatformPendingObservations;receipt:FactObject;status:'ok';count:number;candidates:Candidate[];enabledCount:null;operationalState:'unknown';qualification:FactObject;rosterAssessments:FactObject[];historicalEvidence:FactObject};
 
 /** Pure fact projection. Optional qualification failure never removes valid registry facts. */
 export function projectCatalogue(registryRaw:Uint8Array,receiptRaw:Uint8Array,qualificationRaw:Uint8Array|undefined,a:Readonly<Approval>):Catalogue{
@@ -114,7 +115,9 @@ export function readIndependentCatalogue(root:string):Catalogue{
  let optional:Uint8Array|undefined;try{optional=readBounded(resolve(root,'.ci/catalogue-independent',a.qualificationSHA256,'qualification.json'),2_000_000);}catch{/* Historical qualifications are optional. */}
  const base=projectCatalogue(registry,receipt,optional,a);
  let reviewed=base;try{reviewed=applyReviewedSourceObservations(base,readBounded(resolve(root,'../configs/source_observatory/reviewed-source-observations.json'),16384));}catch{/* Preserve base. */}
- try{return applyPendingChannelObservation(reviewed,readBounded(resolve(root,'.ci/local-robin/telegram-channel-candidates.json'),65536));}catch{return reviewed;}
+ let decorated=reviewed;
+ try{decorated=applyPendingChannelObservation(reviewed,readBounded(resolve(root,'.ci/local-robin/telegram-channel-candidates.json'),65536));}catch{/* Preserve reviewed catalogue. */}
+ try{return applyNotBettingPlatformObservation(decorated,readBounded(resolve(root,'.ci/local-robin/notbetting-pending-source-records.json'),32768),readBounded(resolve(root,'.ci/local-robin/notbetting-pending-source-receipt.json'),65536));}catch{return decorated;}
 }
 
 export type InventoryRow=FactObject&{reviewedSourceObservation?:ReviewedSourceObservation;recordId:string;candidateId?:string;sheet:string;row:number;sourceUrl?:string|null;collectionEnabled:unknown;qualification?:FactObject;qualifiedRecordId?:string};
