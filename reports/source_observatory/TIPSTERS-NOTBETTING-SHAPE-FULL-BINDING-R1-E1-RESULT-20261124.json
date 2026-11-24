@@ -1,0 +1,140 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.SHAPE.FULL.BINDING.R1.E1.RESULT.20261124",
+  "missionId": "NOTBETTING_SHAPE_DIAGNOSTIC_NATIVE_R1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "scope": "Private NotBetting shape full binding accepted on exact tuple and immutable files. Original firstnine assertions are controlflow evidence only, initial process failed its firstsnapshot due inconsistent synthetic fixturecalendarhash. Two corrected targeted actualcollect scenarios PASS with normal1212B snapshot and76B errorfallback preserving originalerror; actual authorityCFG unchanged. 12 scenario executions meetcap, no wholepackreplay. Source execution NOT launched: unchanged170s entry margin became insufficient after reviews. No native diagnostic measured.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.STATIC.COMPETITION.SELECTOR.PUBLIC.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.STATIC.SELECTOR.GUARDED.CALLER.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREFILTER.NATIVE.R2.TIMEOUT.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREFILTER.NATIVE.R3.SECOND.TIMEOUT.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.POLICY.PROOF.CACHE.PRIVATE.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.FRAMING.AUTHORITY.SPLIT.PRIVATE.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CURRENT.TERMS.PERSONAL.CONTEXT.RESULT.20261123",
+    "DATA.SOURCE_OBSERVATORY.BUNDES.J11.FUTURE.UTC.PROGRAMME.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.FRAMING.SPLIT.NATIVE.R1.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.REFERENCE.SELECTOR.PUBLIC.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.SHAPE.FIRST.REJECTION.PRIVATE.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.REFERENCE.SELECTOR.NATIVE.R1.ACTUAL.RESULT.20261124"
+  ],
+  "files": {
+    "qualifier_observer.py": {
+      "sha256": "ea6310cb59a820e3f4e0ad053d119678c616f4b6bbb9b5ff656ec609d73665e4",
+      "bytes": 5542
+    },
+    "bridge.py": {
+      "sha256": "818d679aa2cc44a7c81457a8fc0d25f1ac2730d834e12e0f2ba2d71361041bc2",
+      "bytes": 2858
+    },
+    "owner_discovery.py": {
+      "sha256": "138214bd7a5933e1fbcc56cecd076031296f982305c3fdf61bb3447bac5a23f6",
+      "bytes": 12685
+    },
+    "predicates.py": {
+      "sha256": "f43374deb46d5bbe5244d34bcfbca16dd7da23384e1b8453ce6e72d49d78b93a",
+      "bytes": 8411
+    },
+    "parent-qualifier.py": {
+      "sha256": "cc6362abca54c16b94651198f2427072d29bcfe6872074c8b8a1edb791efece9",
+      "bytes": 24280
+    },
+    "record_index.parent.py.txt": {
+      "sha256": "56a9027a85c8487bcc230214b6cbc099ba21009d332ea1538c9b2ca6c6dfec08",
+      "bytes": 7927
+    },
+    "source_worker.py": {
+      "sha256": "aba8fb4755c35c96795f45dae8760027c6858c85b9c8b8ad2a2b0d3ef219a1c4",
+      "bytes": 24819
+    },
+    "parser.py": {
+      "sha256": "56a9027a85c8487bcc230214b6cbc099ba21009d332ea1538c9b2ca6c6dfec08",
+      "bytes": 7927
+    },
+    "output-schema.json": {
+      "sha256": "de2fcbdf4ff66b9abaeb5005aa091ca6e4f79693e9f6a7051929a47b3065badb",
+      "bytes": 2286
+    },
+    "fixed_transport.py": {
+      "sha256": "757650ee46452f40ec9aad6f6358b31e7805a3e84516f3e3692d848ac2407f00",
+      "bytes": 14587
+    },
+    "authority_policy.py": {
+      "sha256": "2926fe57391073fd53ee98db1102dd4d2c33c555521fb8a27a6b1635bcc90c89",
+      "bytes": 5898
+    },
+    "native_outer.py": {
+      "sha256": "c0779bf07e5bb71eec7aa690037cebe07456341212e70614fe92aeeb1cfbc368",
+      "bytes": 7987
+    },
+    "notbetting_selection.py": {
+      "sha256": "f591fcc097bda9f0f695b20a00f4e45fbbaed86b09d1cedf1614a213149539f2",
+      "bytes": 13286
+    },
+    "plan.json": {
+      "sha256": "5bfd26ecf8ecf35c582bf38cb20a4192df0738f145f52c94277d8ef112fc7d7c",
+      "bytes": 5980
+    },
+    "mission.json": {
+      "sha256": "7bab65f200609f63b956030df6e2f6de026e8fcadcd86000aeaa2ee91eeead01",
+      "bytes": 885
+    },
+    "config.json": {
+      "sha256": "79b5ee4d9d40ec0097f615ffb83c9b1412a659d489b0366f07e23bc4fb3ebca6",
+      "bytes": 5957
+    },
+    "harness-full-binding.py": {
+      "sha256": "5be6087fe3169f78fe6f7322681a2f45138233dbe1bc503a6506e4c894cf36b8",
+      "bytes": 13431
+    },
+    "full-binding-process-result.json": {
+      "sha256": "5e565ef8ad9cc421097f1a0b48a061a164b100c56d2a4af826641328db3cb197",
+      "bytes": 715
+    },
+    "harness-snapshot-corrected.py": {
+      "sha256": "eac47b68e47f99d28fc9546779c09e22eb56f45494a28acc5f793acd38bf0451",
+      "bytes": 7429
+    },
+    "snapshot-integration-primary.json": {
+      "sha256": "4d953dddb202b1d551e0a572de3647d98154035aa7a49a95a3a05045fb4f5781",
+      "bytes": 496
+    },
+    "snapshot-corrected-process-result.json": {
+      "sha256": "1e855b81365317b14e6e7c2ef7227d670353974dc37c4d41e160275a26e5acf0",
+      "bytes": 621
+    }
+  },
+  "primarySHA": "88a0f9259df38660b8978c96ebbe9fb794f2d91dfa99dceecda6d5b1a6f31ba1",
+  "tuple": {
+    "missionId": "NOTBETTING_SHAPE_DIAGNOSTIC_NATIVE_R1_20261124",
+    "planSHA": "de0b786195086d78baf84bbfc44d6925e713e77e3e5e087ee077a437446daa56",
+    "manifestSHA": "478f23911022746dd131ab2ae671355de661582057af20fddd7ea324ebebf3e4",
+    "configSHA": "79b5ee4d9d40ec0097f615ffb83c9b1412a659d489b0366f07e23bc4fb3ebca6",
+    "workerSHA": "aba8fb4755c35c96795f45dae8760027c6858c85b9c8b8ad2a2b0d3ef219a1c4",
+    "outerSHA": "c0779bf07e5bb71eec7aa690037cebe07456341212e70614fe92aeeb1cfbc368",
+    "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+    "parentGrant": "3f20dedd1116394c5cbcdd61a104a9e0a1d51aca3376344e1034dd6694564529"
+  },
+  "scenarioAccounting": {
+    "originalReachedScenarios": 10,
+    "correctedTargetedScenarios": 2,
+    "totalScenarioExecutions": 12,
+    "cap": 12,
+    "wholeHarnessReplay": false
+  },
+  "limits": {
+    "sourceGET": 0,
+    "sourceNativeJobs": 0,
+    "Node": 0,
+    "sourceSDCreated": false,
+    "sourceReady": false,
+    "admissions": 0,
+    "nativeCause": "UNKNOWN",
+    "allCompatibleIntegrated": false
+  }
+}

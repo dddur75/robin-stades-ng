@@ -1,0 +1,39 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.ADMIN.LATEST.LOCAL.ROUNDTRIP.RESULT.20261124",
+  "missionId": "NOTBETTING_ADMIN_LATEST_OBSERVATION_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Localadmin metadata roundtrip accepted after actualwrite: exactcandidate oneNotBettingrow+capturedAt,38rows37otherrowsdeepEqual. QualificationAPI200 snapshotexact and adminrouteHTML200. No fullvisual/fullAdminUIrecette, no source/forecast/production/code/serverrestart/Task/Git effect. Newbodycomplete/selectionpartial zero admissions shown honestly.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.FRAMING.SPLIT.NATIVE.R1.ACTUAL.RESULT.20261124"
+  ],
+  "primarySHA": "ffef94a9ac25ddfc24f389ce11dcfd77377ce54eae8dd0773c1bfa261612f1d3",
+  "candidateSHA": "649bd5d51d83c8b68069e31a797101d831764a583f3409f025c1d49b7ae3ca42",
+  "baselineSHA": "326bf48e06a3bdf084bcba8447dbcd3c523660fe813c2d77670bb112b329a49a",
+  "actual": {
+    "metadataWrites": 1,
+    "localHTTPGET": 2,
+    "qualificationHTTP": 200,
+    "adminHTMLHTTP": 200,
+    "rowCount": 38,
+    "otherRowsUnchanged": 37,
+    "sourceGET": 0,
+    "newAdmittedForecasts": 0
+  },
+  "limits": {
+    "visualFlowVerified": false,
+    "fullAdminUIRecette": false,
+    "sourceReady": false,
+    "allCompatibleIntegrated": false,
+    "overall": "PARTIAL",
+    "authorityClosed": true,
+    "remainingWrites": 0,
+    "remainingLocalGET": 0,
+    "retry": false
+  },
+  "producerClosedAtUTC": "2026-11-24T04:01:31.635165+00:00"
+}

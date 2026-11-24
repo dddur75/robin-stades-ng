@@ -339,3 +339,49 @@ def test_publication_masks_only_five_string_interiors() -> None:
         expected = expected.replace(encoded, '"' + " " * (len(encoded) - 2) + '"', 1)
     assert masked == expected
     assert len(masked) == len(line)
+
+
+def audit_lines():
+    root = Path(__file__).resolve().parents[2]
+    lines = (root / "reports/council/decision-ledger.jsonl").read_text(encoding="utf8").splitlines()
+    return [(seal, lines[seal["line"] - 1]) for seal in candidate_checker.SEALED_LOCAL_AUDIT_VALUES]
+
+
+def test_local_audit_exact_seals_mask_only_one_string_interior():
+    for seal, line in audit_lines():
+        encoded = json.dumps(
+            json.loads(line)["context"][seal["field"]], ensure_ascii=False, separators=(",", ":")
+        )
+        assert line.count(encoded) == 1
+        expected = line.replace(encoded, '"' + " " * (len(encoded) - 2) + '"', 1)
+        assert candidate_checker._mask_sealed_local_audit_value(line, seal["line"]) == expected
+        assert not scan_publication(line, number=seal["line"])
+
+
+def test_local_audit_copies_other_lines_files_and_noncanonical_refused():
+    for seal, line in audit_lines():
+        assert scan_publication(line, number=seal["line"] + 1)
+        assert scan_publication(line, number=seal["line"], path="reports/other.jsonl")
+        assert scan_publication(line.replace(":", ": ", 1), number=seal["line"])
+
+
+def test_local_audit_rehashed_mutations_and_new_paths_refused():
+    for seal, line in audit_lines():
+        for mutation in ("value", "decision", "hash", "extra", "moved"):
+            record = json.loads(line)
+            if mutation == "value":
+                record["context"][seal["field"]] += ".changed"
+            elif mutation == "decision":
+                record["decision_id"] = "NEW-UNREVIEWED"
+            elif mutation == "hash":
+                record["hash"] = "0" * 64
+            elif mutation == "extra":
+                record["proposal"] = record["context"][seal["field"]]
+            else:
+                record["proposal"] = record["context"].pop(seal["field"])
+            changed = (
+                json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+                if mutation == "hash"
+                else canonical_record(record)
+            )
+            assert scan_publication(changed, number=seal["line"])

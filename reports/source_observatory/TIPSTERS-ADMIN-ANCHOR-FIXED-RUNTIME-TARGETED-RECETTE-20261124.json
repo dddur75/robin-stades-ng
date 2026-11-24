@@ -1,0 +1,75 @@
+{
+  "Git": 0,
+  "Task": 0,
+  "authorityClosed": true,
+  "browser": {
+    "adminAnchorInViewport": true,
+    "adminAnchorMatched": true,
+    "closedAtUTC": "2026-11-24T06:37:43.586Z",
+    "contextRows": 1,
+    "exactCandidateId": "catalogue:3f1242f3e19d6fb3012eaecf7eb257d53360b6176c89ead39669c60bd4b9bcb1",
+    "globalUIRecette": false,
+    "hmrClientFramesForwarded": 0,
+    "originalProviderRequestsContinued": 0,
+    "otherPlatformHasNoContext": true,
+    "platform": "Coteur",
+    "platformContextNotIndividualProof": true,
+    "qualificationRows": 39,
+    "realChoicesLogged": false,
+    "screenshotTechnicalContextOnly": true,
+    "sourceCollectorRuns": 0,
+    "stats": {
+      "blockedExternal": 0,
+      "blockedWebSockets": 0,
+      "blockedWrites": 0,
+      "consoleErrors": 0,
+      "droppedClientHMRFrames": 0,
+      "localGET": 239,
+      "localHMRSockets": 3,
+      "pageErrors": 0,
+      "requestCapHit": false
+    },
+    "status": "LOCAL_PLATFORM_CONTEXT_CANARY_PASS",
+    "twoCandidateQualificationMetadataHashUnchanged": true
+  },
+  "browserJobs": 1,
+  "closedAtUTC": "2026-11-24T06:37:43.858761+00:00",
+  "codeFileWrites": 2,
+  "globalUIRecette": false,
+  "job": {
+    "activeSecondsMax": 50,
+    "elapsedSeconds": 6.812999999994645,
+    "exit": 0,
+    "hardSeconds": 60,
+    "sourceGET": null,
+    "subtreeKillConfirmed": true,
+    "taskMutations": 0,
+    "timedOut": false
+  },
+  "metadataWrites": 0,
+  "missionId": "ADMIN_ANCHOR_FIXED_RUNTIME_R1_20261124",
+  "newAdmissions": 0,
+  "retry": false,
+  "runtimeCodeHashes": {
+    "cockpit/app/components/expert/tipster-qualification.tsx": "28b8c8a3eb8f1c6944aee41aabc0f435197efc081615696568068be638597566",
+    "cockpit/app/lib/tipster-qualification.ts": "0c05cc6232f0910933094f924f078be807bc3c693564f502c6c345e5314c9a08"
+  },
+  "serverRestarts": 0,
+  "sourceActivation": false,
+  "sourceCollectorRuns": 0,
+  "status": "VERIFIED",
+  "targetMetadataSHA": "c6736687a3a58645d91e6710646f430a8ada93ff962836e4ff2b170d29bdc8cd",
+  "claimId": "ENG.SOURCE_OBSERVATORY.ADMIN.ANCHOR.FIXED.RUNTIME.TARGETED.RECETTE.RESULT.20261124",
+  "scope": "Actual local three-view Coteur fiche platform context→visible exact admin anchor→otherplatform no-context acceptance. Two codefiles adopted, metadata unchanged. Not full application/source completion.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.ADMIN.ANCHOR.MINIMAL.FIX.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.ADMIN.ANCHOR.GEOMETRY.DIAGNOSTIC.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.PLATFORM.CONTEXT.FICHES.UI.E1.RESULT.20261124"
+  ],
+  "receiptSHA": "170af51cdefc4dcd8b5fdb1bd6de9b5e95affbaf8a2947a5e239339e34e267a6"
+}

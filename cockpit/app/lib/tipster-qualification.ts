@@ -73,3 +73,30 @@ export function parseQualificationSnapshot(value: unknown): QualificationSnapsho
 export function qualificationCount(value: number | null): string {
   return value === null ? "Non mesuré" : String(value);
 }
+
+
+/** Explicit technical context only; never an individual qualification join. */
+export function platformQualificationResultIds(platform: string): readonly string[] {
+  switch (platform) {
+    case "Coteur": return ["coteur-lecture-technique-20261124"];
+    case "NotBetting": return ["notbetting"];
+    default: return [];
+  }
+}
+
+export function qualificationResults(snapshot: QualificationSnapshot, resultIds?: readonly string[]): QualificationResult[] {
+  const allowed = resultIds === undefined ? null : new Set(resultIds);
+  return snapshot.results.filter((row) => allowed === null || allowed.has(row.id))
+    .sort((a, b) => Date.parse(b.checkedAt) - Date.parse(a.checkedAt));
+}
+
+export function qualificationAdminHref(id: string): string {
+  if (!/^[a-z0-9-]{1,80}$/.test(id)) throw new Error("Invalid qualification identity");
+  return "/expert/admin-collecte#qualification-" + id;
+}
+
+
+export function qualificationAnchorTarget(hash: string, results: readonly QualificationResult[]): string | null {
+  const match = /^#qualification-([a-z0-9-]{1,80})$/.exec(hash);
+  return match && results.some((row) => row.id === match[1]) ? "qualification-" + match[1] : null;
+}

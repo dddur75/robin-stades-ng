@@ -1,0 +1,57 @@
+{
+  "missionId": "ADMIN_ANCHOR_MINIMAL_FIX_E1_20261124",
+  "status": "PASS",
+  "author": "C0",
+  "actualStoppedAt": "2026-11-24T06:35:19.114628+00:00",
+  "files": {
+    "cockpit/app/lib/tipster-qualification.ts": {
+      "sha256": "0c05cc6232f0910933094f924f078be807bc3c693564f502c6c345e5314c9a08",
+      "bytes": 5365
+    },
+    "cockpit/app/components/expert/tipster-qualification.tsx": {
+      "sha256": "28b8c8a3eb8f1c6944aee41aabc0f435197efc081615696568068be638597566",
+      "bytes": 6668
+    },
+    "cockpit/tests/tipster-qualification.test.ts": {
+      "sha256": "7dc8f4150edea0b3511279885adb2b6346d28251c36dae0d2a4bed969cd0f65c",
+      "bytes": 8744
+    }
+  },
+  "sourceGET": 0,
+  "runtimeCodeWrites": 0,
+  "GitMutations": 0,
+  "newAdmissions": 0,
+  "sourceActivation": false,
+  "fullSuite": 0,
+  "buildDataReplay": 0,
+  "limitations": [
+    "Platform context is not individual qualification",
+    "Latest explicit observation IDs only, unknown/empty never fallback",
+    "No runtimeadoption or browservisualrecette yet",
+    "Old sourcecounts/picks/provenance untouched"
+  ],
+  "claimId": "ENG.SOURCE_OBSERVATORY.ADMIN.ANCHOR.MINIMAL.FIX.E1.RESULT.20261124",
+  "scope": "Bounded public admin known-fragment positioning code only; browser not yet verified; no source or personalqualification promotion.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.PLATFORM.CONTEXT.FICHES.UI.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.PLATFORM.CONTEXT.RUNTIME.R2.PARTIAL.RESULT.20261124"
+  ],
+  "primaryResultSHA": "b822d8973545f67368d9dc5efc3f033b713fcd02269f3bfcd6502d05f18423c5",
+  "verification": {
+    "targetedTests": 9,
+    "typecheckExit": 0,
+    "lintExit": 0,
+    "sourceGET": 0
+  },
+  "reviews": {
+    "C1": "pending separate C1; code accepted by C3/C4 only",
+    "C3": "PASS_AND_HOLD exacthashes/lifecycle",
+    "C4": "PASS_AND_HOLD exacthashes/scope"
+  }
+}

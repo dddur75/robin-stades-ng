@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "official-programme-documentary-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.PREMIERLEAGUE.NOVEMBER.FUTURE.GMT.PROGRAMME.RESULT.20261124",
+  "competition": "Premier League",
+  "sourceURL": "https://www.premierleague.com/en/news/4725574",
+  "sourceTitle": "Fixture amendments for Premier League matches in November",
+  "publishedDate": "2026-09-21",
+  "observations": [
+    {
+      "role": "C1",
+      "completedByUTC": "2026-11-24T05:43:36Z",
+      "fixtureCount": 9,
+      "exhaustive": false
+    },
+    {
+      "role": "C4",
+      "completedByUTC": "2026-11-24T05:48:16Z",
+      "fixtureCount": 10,
+      "exhaustive": false
+    }
+  ],
+  "nativeTimezone": "GMT",
+  "nativeTimeRule": "All fixtures are GMT and are 15:00 kick-offs unless otherwise stated.",
+  "utcConversion": "GMT equals UTC+00:00",
+  "rawHTTPRequests": null,
+  "rawHTTPStatus": null,
+  "rawBodySHA256": null,
+  "rawBodyComplete": null,
+  "transport": "UNKNOWN_TOOL_MANAGED",
+  "programmeOnly": true,
+  "actualWhistle": false,
+  "subsequentReschedulingUnknown": true,
+  "aliasesAdded": false,
+  "officialFixtureIDsInvented": false,
+  "fixtures": [
+    {
+      "scheduledUTC": "2026-11-27T20:00:00Z",
+      "home": "Nott'm Forest",
+      "away": "Chelsea",
+      "timeExplicit": true
+    },
+    {
+      "scheduledUTC": "2026-11-28T15:00:00Z",
+      "home": "Leeds",
+      "away": "Coventry",
+      "timeExplicit": false
+    },
+    {
+      "scheduledUTC": "2026-11-28T15:00:00Z",
+      "home": "Man Utd",
+      "away": "Brentford",
+      "timeExplicit": false
+    },
+    {
+      "scheduledUTC": "2026-11-28T17:30:00Z",
+      "home": "Ipswich",
+      "away": "Aston Villa",
+      "timeExplicit": true
+    },
+    {
+      "scheduledUTC": "2026-11-29T12:00:00Z",
+      "home": "Everton",
+      "away": "Liverpool",
+      "timeExplicit": true
+    },
+    {
+      "scheduledUTC": "2026-11-29T14:05:00Z",
+      "home": "Brighton",
+      "away": "Newcastle",
+      "timeExplicit": true
+    },
+    {
+      "scheduledUTC": "2026-11-29T14:05:00Z",
+      "home": "Crystal Palace",
+      "away": "Hull City",
+      "timeExplicit": true
+    },
+    {
+      "scheduledUTC": "2026-11-29T14:05:00Z",
+      "home": "Fulham",
+      "away": "Bournemouth",
+      "timeExplicit": true
+    },
+    {
+      "scheduledUTC": "2026-11-29T14:05:00Z",
+      "home": "Sunderland",
+      "away": "Spurs",
+      "timeExplicit": true
+    },
+    {
+      "scheduledUTC": "2026-11-29T16:30:00Z",
+      "home": "Arsenal",
+      "away": "Man City",
+      "timeExplicit": true
+    }
+  ],
+  "missionId": "PL_FUTURE_PROGRAMME_PROJECTION_E1_20261124",
+  "status": "VERIFIED",
+  "scope": "Bounded official published Premier League November future programme; explicit native GMT conversion, exact teamlabels, no subsequentreschedule/actualwhistle forecastorindividual proof.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [],
+  "projectionSHA": "03fc95484ae179e4459190666103712baa1eea240feef0dd7907a54c79988eba",
+  "newSourceReads": 0
+}

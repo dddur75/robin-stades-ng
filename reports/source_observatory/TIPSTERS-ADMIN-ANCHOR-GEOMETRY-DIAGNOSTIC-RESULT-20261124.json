@@ -1,0 +1,99 @@
+{
+  "Git": 0,
+  "Task": 0,
+  "authorityClosed": true,
+  "browser": {
+    "DOMTextOrPayloadLogged": false,
+    "after": {
+      "bottom": 662.875,
+      "container": {
+        "clientHeight": 8806,
+        "scrollHeight": 8806,
+        "scrollTop": 0
+      },
+      "documentScrollHeight": 12385,
+      "height": 226.75,
+      "inViewport": true,
+      "left": 321,
+      "right": 1377,
+      "scrollY": 733,
+      "top": 436.125,
+      "viewportHeight": 1100,
+      "viewportWidth": 1440
+    },
+    "appCodeWrites": 0,
+    "before": {
+      "bottom": 1395.875,
+      "container": {
+        "clientHeight": 8806,
+        "scrollHeight": 8806,
+        "scrollTop": 0
+      },
+      "documentScrollHeight": 12385,
+      "height": 226.75,
+      "inViewport": false,
+      "left": 321,
+      "right": 1377,
+      "scrollY": 0,
+      "top": 1169.125,
+      "viewportHeight": 1100,
+      "viewportWidth": 1440
+    },
+    "closedAtUTC": "2026-11-24T06:27:55.517Z",
+    "explicitScrolls": 1,
+    "firstIdIsLatestNotBetting": true,
+    "hmrClientFramesForwarded": 0,
+    "metadataWrites": 0,
+    "rowAttached": true,
+    "scope": "Oneadminnavigation/geometryonly; no retroactive oldassertion or hydrationcausality proof",
+    "sourceCollectorRuns": 0,
+    "stats": {
+      "blockedExternal": 0,
+      "blockedWebSockets": 0,
+      "blockedWrites": 0,
+      "consoleErrors": 0,
+      "droppedClientHMRFrames": 0,
+      "localGET": 87,
+      "localHMRSockets": 1,
+      "pageErrors": 0,
+      "requestCapHit": false
+    },
+    "status": "ADMIN_ANCHOR_GEOMETRY_CAPTURED",
+    "targetRowCount": 1,
+    "totalMetadataRows": 39,
+    "urlChecks": {
+      "hashMatches": true,
+      "originMatches": true,
+      "pathMatches": true
+    }
+  },
+  "closedAtUTC": "2026-11-24T06:27:55.726409+00:00",
+  "job": {
+    "activeSecondsMax": 50,
+    "elapsedSeconds": 1.562999999994645,
+    "exit": 0,
+    "hardSeconds": 60,
+    "sourceGET": null,
+    "subtreeKillConfirmed": true,
+    "taskMutations": 0,
+    "timedOut": false
+  },
+  "metadataWrites": 0,
+  "missionId": "ADMIN_ANCHOR_GEOMETRY_DIAGNOSTIC_20261124",
+  "retry": false,
+  "runtimeWrites": 0,
+  "sourceCollectorRuns": 0,
+  "status": "VERIFIED",
+  "claimId": "ENG.SOURCE_OBSERVATORY.ADMIN.ANCHOR.GEOMETRY.DIAGNOSTIC.RESULT.20261124",
+  "scope": "One read-only direct admin fragment observation; offscreen attached row becomes visible after one explicit scroll. No cause of old compound failure established.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.PLATFORM.CONTEXT.RUNTIME.R2.PARTIAL.RESULT.20261124"
+  ],
+  "receiptSHA": "540f049e8b21f3f7d880a1f0e58742ccf4250e434df8b08e4e2711abb1960e80",
+  "effectiveHMRCap": 1
+}

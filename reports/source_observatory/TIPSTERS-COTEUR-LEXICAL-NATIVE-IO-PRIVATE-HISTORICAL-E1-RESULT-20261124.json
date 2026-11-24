@@ -1,0 +1,60 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.LEXICAL.NATIVE.IO.PRIVATE.E1.HISTORICAL.RESULT.20261124",
+  "missionId": "COTEUR_LEXICAL_NATIVE_IO_ADAPTER_E1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Limited historical engineering acceptance of frozen private Coteur lexical IO adapter. One synthetic Windows Job and one trusted Node validate framing and independent UTF16 length, with failure classification before JSON. No real provider bundle, endpoint, owner, SOURCE execution authority or production adoption is proved. Original manifest expired after timely workload; this is read-only fact acceptance, not reopening it.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LEXICAL.STREAM.PRIVATE.R2.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LEXICAL.CLI.PROTOCOL.PRIVATE.E1.RESULT.20261123"
+  ],
+  "adapterSHA": "62db811ab106135c440399796c9e475f05af87e09c0a435ac4dc3487eaf905f8",
+  "resultSHA": "72104d479ac3d60e1db69b3072639ac4dda435a1d182234f35c64538fcd4eb4b",
+  "authorStoppedAt": "2026-11-24T00:40:51.124Z",
+  "timelyAuthorWithin300": true,
+  "synthetic": {
+    "JobObjects": 1,
+    "NodeChildren": 1,
+    "inputBytes": 19,
+    "independentUTF16Units": 17,
+    "elapsedSeconds": 0.5469999999913853,
+    "jobExit": 0,
+    "timedOut": false,
+    "subtreeKillConfirmed": true,
+    "childSourceGET": 0,
+    "wrapperSourceGET": null,
+    "childDNS": 0,
+    "childTCP": 0,
+    "childSend": 0,
+    "rawProviderExecuted": false,
+    "lookalikeOnly": true
+  },
+  "quality": {
+    "syntheticCases": 5,
+    "timeoutNonzeroOverflowBeforeJSON": true,
+    "mockJSONCalls": 0,
+    "invalidUTF8Refused": true,
+    "criticalRuff": "PASS",
+    "knownAuthorOSProcesses": 13,
+    "additionalReportedReadOnlyControlProcesses": 1,
+    "exhaustiveDescendantCountProven": false
+  },
+  "limits": {
+    "generalJSONDuplicateKeyDefenseProven": false,
+    "oldRunnerHasBoundedLegacyNetworkRoutes": true,
+    "freshSOURCEManifestAndDenyOrAuthorityBindingRequired": true,
+    "retainedRealBundleReads": 0,
+    "endpointContractProven": false,
+    "ownerProven": false,
+    "sourceReady": false,
+    "admissions": 0,
+    "publicCodeAdoption": false,
+    "runtimeWrites": 0,
+    "allCompatibleIntegrated": false,
+    "overall": "PARTIAL"
+  }
+}

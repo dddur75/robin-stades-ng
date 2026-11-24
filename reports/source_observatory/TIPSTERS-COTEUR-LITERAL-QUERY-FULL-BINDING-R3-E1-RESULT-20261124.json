@@ -1,0 +1,139 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.LITERAL.QUERY.FULL.BINDING.R3.E1.RESULT.20261124",
+  "missionId": "COTEUR_LITERAL_QUERY_FULLBINDING_NATIVE_R3_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Frozen C3-authored Coteur static-literal-query full binding independently accepted by C0 C1 C4. Actual one synthetic WindowsJob2.125s/oneNode40B38UTF16, eight scenarios PASS, TLS verification and real default current ledger prefix with explicit SD RAM synthetic only. Worker/io/CLI/scanner/consumer immutable exact hashes. Source execution NOT launched: unchanged170s entry margin became insufficient after reviews. Old R1/R2 failures preserved; no source/readiness/endpoint/forecast claim.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LEXICAL.NATIVE.IO.PRIVATE.E1.HISTORICAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LEXICAL.STREAM.PRIVATE.R2.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LEXICAL.CLI.PROTOCOL.PRIVATE.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LITERAL.QUERY.CONSUMER.CORRECTIVE.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LITERAL.QUERY.IO.REBIND.E1.RESULT.20261124"
+  ],
+  "files": {
+    "SYNTH-fsync-marker.json": {
+      "bytes": 22,
+      "sha256": "09341d71af5bfd3ce2511340ba37bb7601c66b0bc28cbfe67c910240295f7620"
+    },
+    "authority_policy.py": {
+      "bytes": 5905,
+      "sha256": "5f25f650ab787eb3580e4badc70ec583500381a603ed1a69506751df947d11e8"
+    },
+    "child-primary.json": {
+      "bytes": 367,
+      "sha256": "f9302127bd7ef40df6f6185664d92b4897acb34437c1655ce942628304fc97c4"
+    },
+    "cli.cjs": {
+      "bytes": 4640,
+      "sha256": "8bed30285466324d6c4cb203468a0e06c09eddf71fa727932de6ab560f8de4f7"
+    },
+    "config-draft-tested.json": {
+      "bytes": 5746,
+      "sha256": "7f6928ba338cc97cd604efa10e5d412df828952c302fa20bb573927d70c1cb0c"
+    },
+    "config.json": {
+      "bytes": 5743,
+      "sha256": "334e26b61e36d7cb7bda5d60f12ac1e8e10941068e97d981529e4ad5d5b1ded1"
+    },
+    "construct-fullbinding.py": {
+      "bytes": 15232,
+      "sha256": "4dad0d2a17c0d58cadd73141040439d373e49d5ff8041ae7e2b61384c6b2527b"
+    },
+    "fixed_transport.py": {
+      "bytes": 14896,
+      "sha256": "1ffc6a32d4e8627857c47c73c381ba21eb65f2db69a8fb22414298f1c942b4e8"
+    },
+    "grant.json": {
+      "bytes": 129,
+      "sha256": "c7ba052137c114c74d714fafe2a93bf7eed32fd66d123ba1465cfc57a1d71059"
+    },
+    "initial-constructor-failure.json": {
+      "bytes": 142,
+      "sha256": "5d621dfc29103c1661b81494e0c2dc472846c64ada10da3831b200184076ba7d"
+    },
+    "io_adapter.py": {
+      "bytes": 3728,
+      "sha256": "6f1cbf9cc5eacc4e5a4d44cb7159e0f512828b86ea9cc715b90afad622431b44"
+    },
+    "job-child.py": {
+      "bytes": 7682,
+      "sha256": "0ccd962ef62e3bb3be7b8a05bbce8038066849e5c2e29d3e049f1bd9d6933c04"
+    },
+    "job-primary.json": {
+      "bytes": 152,
+      "sha256": "1c7e4e396044b76dbbc23d6f3cd750defae8a529eb5028eb69e3fac22b5cf5ad"
+    },
+    "lexical_stream.cjs": {
+      "bytes": 6908,
+      "sha256": "8a7811c4bbc9a820ec8fc84cfaa9e479e8c72c09fab192efdb7942c24c724373"
+    },
+    "mission.json": {
+      "bytes": 738,
+      "sha256": "bedd9e8e80fa6f08808a8a57e70a13eda29297e31c249cb06faa00b394849f09"
+    },
+    "native_outer.py": {
+      "bytes": 8332,
+      "sha256": "3330951411603c0447b3d92b7dad3dca31fd59fafc0114d9fe01ed1e67311231"
+    },
+    "old-outer.py": {
+      "bytes": 8332,
+      "sha256": "3330951411603c0447b3d92b7dad3dca31fd59fafc0114d9fe01ed1e67311231"
+    },
+    "old-worker.py": {
+      "bytes": 13066,
+      "sha256": "c27980cbb9156bf080d8c7dd5c93fa36b5f17797d76bf2c3a2621e8e2530a026"
+    },
+    "plan.json": {
+      "bytes": 4651,
+      "sha256": "cb90a8576f6956673afc460f10911f70baac7f06a783e75eeb3fdf3ebe1a145c"
+    },
+    "pure-parent-preflight.json": {
+      "bytes": 191,
+      "sha256": "efbd0a5bdf35955d072d68f05345a724b514510407bb1ad6e19ac24844f1396f"
+    },
+    "source_worker.py": {
+      "bytes": 9224,
+      "sha256": "b733c86c41b1c4d1989492a98bf33db8c2cd46627c5fc6dd2db4bdc7eaa5aaf7"
+    },
+    "startup-git.json": {
+      "bytes": 3755,
+      "sha256": "5d9ad0dd8dc9e449af80377607dc330f4042edd706305b7ed85b62a6a78e3a3b"
+    },
+    "validator.py": {
+      "bytes": 4430,
+      "sha256": "146357c4832378082f84d4410549954072b573b2245e0b10b908e6a5255eb5e7"
+    }
+  },
+  "primarySHA": "e5aefcf0f30ec5bebf8adf49f7a6a03dbd0e20b7bf015fdc911b37b3afa6540e",
+  "tuple": {
+    "missionId": "COTEUR_LITERAL_QUERY_FULLBINDING_NATIVE_R3_20261124",
+    "configSHA": "334e26b61e36d7cb7bda5d60f12ac1e8e10941068e97d981529e4ad5d5b1ded1",
+    "manifestSHA": "7674520d132ebbe078a57f106f39cea27e2ada7a7526b03246f070cfa22eab51",
+    "outerSHA": "3330951411603c0447b3d92b7dad3dca31fd59fafc0114d9fe01ed1e67311231",
+    "parentGrant": "e64078688e797a88001e9c661b39fa9068e73ef3c4748ec5e6533a63f044856e",
+    "planSHA": "e5075db98d06adcd5ede984faa2eeeb0d881a14d80d89afdfee3f27cf6b633d8",
+    "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+    "workerSHA": "b733c86c41b1c4d1989492a98bf33db8c2cd46627c5fc6dd2db4bdc7eaa5aaf7"
+  },
+  "limits": {
+    "sourceGET": 0,
+    "sourceNativeJobs": 0,
+    "syntheticNativeJobs": 1,
+    "syntheticNode": 1,
+    "sourceSDCreated": false,
+    "sourceReady": false,
+    "admissions": 0,
+    "allCompatibleIntegrated": false
+  },
+  "independentReviewers": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "author": "C3"
+}

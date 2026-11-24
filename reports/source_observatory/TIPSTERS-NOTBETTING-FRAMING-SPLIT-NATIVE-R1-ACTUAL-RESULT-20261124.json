@@ -1,0 +1,71 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.FRAMING.SPLIT.NATIVE.R1.ACTUAL.RESULT.20261124",
+  "missionId": "NOTBETTING_FRAMING_SPLIT_NATIVE_R1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "New framingarchitecture actualcapture completed bothHTTP200CHUNKED bodies with strictterminal/trailer checks. PICKS1208815bytes, oneJob4.062s child1/outerprogram0/noJobtimeout/subtreeclosed. Bounded acquisition selected0/qualification0 with7omissions, so overallPARTIAL/PASS_AND_HOLD and globalavailabilityUNKNOWN; no nativequalified/pending records stored. This successful transport does not prove unique cause of oldtimeouts or businessreadiness.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.FRAMING.AUTHORITY.SPLIT.PRIVATE.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.POLICY.PROOF.CACHE.PRIVATE.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.STATIC.COMPETITION.SELECTOR.PUBLIC.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.STATIC.SELECTOR.GUARDED.CALLER.E1.RESULT.20261124"
+  ],
+  "receiptSHA": "eb91eec4bedf639a5b0fdb177338aec122a1b2f166b975cb0a139dae16db98cb",
+  "primarySHA": "b8e6a5cf411c5876811c246bd3a4c416398472fd1fc7561fbb895007cd9ba682",
+  "tuple": {
+    "configSHA": "7e73c1e17c12ccee052a7c4b8d0faf1f8d97a3b7f684be0fe878f8d245106aa1",
+    "manifestSHA": "d9cf1c473a0987fc941aca95611a1146374c10e67f667b8804552eb6ba8d642f",
+    "missionId": "NOTBETTING_FRAMING_SPLIT_NATIVE_R1_20261124",
+    "outerSHA": "c0779bf07e5bb71eec7aa690037cebe07456341212e70614fe92aeeb1cfbc368",
+    "parentGrant": "3f93715eef3524336ae252157bda03cde82b57beea6ad13c54a0eb2916b0d470",
+    "planSHA": "83eca24b3cf5d05fcf9dbbd79e24daaf01fd7e47da803c556c3725acc3537cb2",
+    "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+    "workerSHA": "d9f074c9fba87dc1751730adf7974725273fe985df38fcdfc14ebffcd4378e4d"
+  },
+  "observedAt": "2026-11-24T03:41:20.786399+00:00",
+  "closedAt": "2026-11-24T03:41:20.903242+00:00",
+  "actual": {
+    "GETReservations": 2,
+    "GETTransmissionBounds": [
+      2,
+      2
+    ],
+    "DNS": 2,
+    "TCP": 2,
+    "GETSendBoundaries": 2,
+    "nativeInvocations": 1,
+    "jobSeconds": 4.062,
+    "childExit": 1,
+    "outerProgramExit": 0,
+    "JobTimeout": false,
+    "outerGET": null,
+    "robotsBodyBytes": 1300,
+    "picksBodyBytes": 1208815,
+    "picksBodySHA": "bd12338f1e6514463d304719f8b7a6745f511cb483195667d871cda95b5d40c4",
+    "bodyComplete": true,
+    "strictTerminalVerified": true,
+    "selectedOccurrences": 0,
+    "qualificationCalls": 0,
+    "profiles": 0,
+    "physicalVisitedNodes": 24208,
+    "omittedBranches": 7,
+    "selectionComplete": false,
+    "newStructuredForecastFiles": 0,
+    "newAdmittedForecasts": 0
+  },
+  "limits": {
+    "sourceReady": false,
+    "allCompatibleIntegrated": false,
+    "overall": "PARTIAL",
+    "globalForecastAvailability": "UNKNOWN",
+    "authorityClosed": true,
+    "remainingGET": 0,
+    "remainingJobs": 0,
+    "retry": false,
+    "currentNativeZeroCause": "UNPROVEN_RAW_REFERENCE_FORMAT_RISK_SUSPECTED_ONLY"
+  }
+}

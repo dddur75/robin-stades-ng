@@ -1,0 +1,42 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.POLICY.PROOF.CACHE.PRIVATE.E1.RESULT.20261124",
+  "missionId": "NOTBETTING_POLICY_PROOF_CACHE_PRIVATE_E1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C3",
+    "C4"
+  ],
+  "scope": "Private exact positive-proof cache accepted on explicit source hash: only SourceSession changes; each guard still rereads and checks raw config/SD/worker/full ledger with SHA plus byte equality, canonical plan/MF/SD. Changed proof calls real default-prefix policy; any exception clears cache. Wall>=grantStart/originalend>80 and nonnegativeMono<50 are enforced on every hit. Source/network/time/caps unchanged; microbenchmark only, no native timeout causality proved.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREFILTER.NATIVE.R2.TIMEOUT.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.STATIC.SELECTOR.GUARDED.CALLER.E1.RESULT.20261124"
+  ],
+  "resultSHA": "b62ef5ab2abe77e584f40b192f29476586c870084a5471b44dedf23cddce023d",
+  "workerSHA": "79ee30456dd771d7d550cf54068f991d46ba41ce8b02785ffde3e2142c514543",
+  "tests": {
+    "RED": 1,
+    "GREEN": 10,
+    "criticalRuffExit": 0,
+    "oldTwoChecksSeconds": 0.0771387999993749,
+    "newTwoChecksSeconds": 0.04895419999957085,
+    "oldValidationCalls": 2,
+    "newValidationCalls": 1,
+    "policyDefaultPrefixUnchanged": true,
+    "currentLedgerControlOnly": true
+  },
+  "constructorCorrection": "Initial deadline variable shadow made guard refuse before candidate write; two original inputcopies retained. Corrected index name, resumed under ORIGINAL AUTH+50 conservative wall, frozen within deadline, failure preserved.",
+  "limits": {
+    "liveTimeoutCauseProven": false,
+    "HTTPReadPerformancePromised": false,
+    "sourceGET": 0,
+    "providerPayloadReads": 0,
+    "Node": 0,
+    "actualSourceBinding": false,
+    "oldSourceQuotaRearmed": false,
+    "sourceReady": false,
+    "admissions": 0,
+    "allCompatibleIntegrated": false,
+    "overall": "PARTIAL"
+  }
+}

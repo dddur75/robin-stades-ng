@@ -1,0 +1,140 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.REFERENCE.SELECTOR.NATIVE.R1.ACTUAL.RESULT.20261124",
+  "missionId": "NOTBETTING_REFERENCE_SELECTOR_NATIVE_R1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Actual bounded NotBetting native capture completed two HTTP200 strictly complete responses after separately keyed E2 authority. Job4.391s, picks1208815B, zero selected occurrences/reference traversal/qualification/retained records, seven omitted branches. Canonical reference selector was verified synthetically but exercised no native candidate. Native availability and cause of zero remain UNKNOWN, source quotas closed/no retry. Engineering PARTIAL, no application or recurrence authority.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.STATIC.COMPETITION.SELECTOR.PUBLIC.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.STATIC.SELECTOR.GUARDED.CALLER.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREFILTER.NATIVE.R2.TIMEOUT.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREFILTER.NATIVE.R3.SECOND.TIMEOUT.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.POLICY.PROOF.CACHE.PRIVATE.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.FRAMING.AUTHORITY.SPLIT.PRIVATE.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CURRENT.TERMS.PERSONAL.CONTEXT.RESULT.20261123",
+    "DATA.SOURCE_OBSERVATORY.BUNDES.J11.FUTURE.UTC.PROGRAMME.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.FRAMING.SPLIT.NATIVE.R1.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.REFERENCE.SELECTOR.PUBLIC.E1.RESULT.20261124"
+  ],
+  "result": {
+    "missionId": "NOTBETTING_REFERENCE_SELECTOR_NATIVE_R1_20261124",
+    "status": "PARTIAL",
+    "decision": "PASS_AND_HOLD",
+    "closedAtUTC": "2026-11-24T04:26:29.508647+00:00",
+    "sourceGETReservations": 2,
+    "sourceGETTransmissionCount": 2,
+    "auditCounts": {
+      "DNS": 2,
+      "GET_SEND_BOUNDARY": 2,
+      "SPAWN_BLOCKED": 0,
+      "TCP": 2
+    },
+    "nativeInvocations": 1,
+    "job": {
+      "activeSecondsMax": 50,
+      "elapsedSeconds": 4.39100000000326,
+      "exit": 1,
+      "hardSeconds": 60,
+      "sourceGET": null,
+      "subtreeKillConfirmed": true,
+      "taskMutations": 0,
+      "timedOut": false
+    },
+    "resultStatus": "PRIVATE_OWNER_DIAGNOSTIC_PARTIAL",
+    "phase": "DONE",
+    "reason": null,
+    "observedAt": "2026-11-24T04:26:28.148048+00:00",
+    "workerClosedAt": "2026-11-24T04:26:28.269631+00:00",
+    "bodyBytes": 1208815,
+    "bodySHA": "111bd3ad0e06c9a2bcb41d6e2002694219b72a267b255d0e5d7e6b5e6218a29a",
+    "normalized": {
+      "SHA256": null,
+      "applicationAdmissions": 0,
+      "bytes": 0,
+      "recordCount": 0,
+      "status": "NO_SELECTED_QUALIFIED_RECORDS"
+    },
+    "pending": {
+      "SHA256": null,
+      "applicationAdmissions": 0,
+      "bytes": 0,
+      "recordCount": 0,
+      "status": "NO_PENDING_SOURCE_RECORDS"
+    },
+    "selectedOccurrences": 0,
+    "qualificationCalls": 0,
+    "profiles": 0,
+    "physicalVisitedNodes": 24208,
+    "referenceVisitedNodes": 0,
+    "selectionVisitedNodes": 24208,
+    "qualificationVisitedNodes": 0,
+    "visitedNodes": 24208,
+    "omittedBranches": 7,
+    "selectionComplete": false,
+    "newStructurallyQualifiedPrematchRecords": 0,
+    "sourceReady": false,
+    "admissions": 0,
+    "traces": {
+      "picks": {
+        "phase": "DONE",
+        "reason": null,
+        "exceptionKind": null,
+        "httpStatus": 200,
+        "framing": "CHUNKED",
+        "bodyComplete": true,
+        "bytesReceived": 1208815,
+        "terminalStrictVerified": true
+      },
+      "robots": {
+        "phase": "DONE",
+        "reason": null,
+        "exceptionKind": null,
+        "httpStatus": 200,
+        "framing": "CHUNKED",
+        "bodyComplete": true,
+        "bytesReceived": 1300,
+        "terminalStrictVerified": true
+      }
+    },
+    "sourceDecisionSHA": "6da6ce639785bc5f741f55fb0c4294a0506b60dc69fe7f547b20edac08680438",
+    "tuple": {
+      "configSHA": "25615b37353509ba4d7b7233c0402e809d898a4a18cc651e64dfdbe687f4236e",
+      "manifestSHA": "e569ed2be32962760f7e8639e6183428625990490f6580a8ee80c5acdea2ace5",
+      "missionId": "NOTBETTING_REFERENCE_SELECTOR_NATIVE_R1_20261124",
+      "outerSHA": "c0779bf07e5bb71eec7aa690037cebe07456341212e70614fe92aeeb1cfbc368",
+      "parentGrant": "140b4c97e3839fbd53a9fb4f910d49aad53d84ef9c52947ad8ff4d35caeae7b4",
+      "planSHA": "53059ec2e5e3a72106182836f5b9286ae2c04c27e3495f075bcff018d53978ee",
+      "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+      "workerSHA": "d9f074c9fba87dc1751730adf7974725273fe985df38fcdfc14ebffcd4378e4d"
+    },
+    "authorityClosed": true,
+    "remainingGET": 0,
+    "remainingJobs": 0,
+    "retry": false,
+    "primarySHA": "851abdf9d9b486e21b07b3c77b23dc440253aebc888da8316b98fd74058c6399",
+    "processSHA": "fc21c671cbdac24038b9ecddfc67180dbca8c8285ae838136ef64849a03b3474",
+    "allCompatibleIntegrated": false,
+    "globalForecastAvailability": "UNKNOWN",
+    "nativeZeroCause": "UNKNOWN"
+  },
+  "actualReceiptSHA": "d6c4ee255482a0049548d7a5a5c09a4b3c56e28651445d8270b59e88f1042fe0",
+  "actualSTOP": {
+    "hash": "d6d029ed9591a4f1beb31a4d92871e05cc34c402072f9a746223286a4d4aa158",
+    "date": "2026-11-24T04:26:29.552313+00:00",
+    "authorityClosed": true
+  },
+  "limits": {
+    "sourceReady": false,
+    "admissions": 0,
+    "allCompatibleIntegrated": false,
+    "denominator": null,
+    "sourceQuotasClosed": true,
+    "rawProviderStorage": 0,
+    "appWrites": 0,
+    "recurrence": 0
+  }
+}

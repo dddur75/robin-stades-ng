@@ -1,4 +1,6 @@
 "use client";
+import {TipsterQualification} from "./tipster-qualification";
+import {platformQualificationResultIds} from "../../lib/tipster-qualification";
 import {ReviewedSourceObservationPanel} from './reviewed-source-observation';
 import type {ReviewedSourceObservation} from '../../../scripts/catalogue-independent';
 import type {PendingChannelObservation} from '../../../scripts/telegram-pending-channel';
@@ -24,6 +26,7 @@ export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;ti
  }).catch(()=>{if(alive)setError(true);}).finally(()=>{pending=false;});};read();
  const timer=setInterval(()=>{if(!document.hidden)read();},15000);return()=>{alive=false;c.abort();clearInterval(timer);};},[]);
  const rows=data?.candidates??[];const selected=rows.find(r=>r.id===tipsterId);
+ const platformResultIds=selected?platformQualificationResultIds(selected.platform):[];
  const filtered=rows.filter(r=>(!platform||r.platform===platform)&&(!dated||r.declaredLastDate)&&`${r.label} ${r.platform}`.toLocaleLowerCase('fr').includes(q.trim().toLocaleLowerCase('fr')));
  const reset=()=>setPage(0);
  return <section className="section-card">
@@ -53,6 +56,7 @@ export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;ti
      <p>Provenance : Catalogue, ligne {selected.origin.row}. Classement historique A, Ligue 1.</p>
      {selected.reviewedSourceObservation&&<ReviewedSourceObservationPanel observation={selected.reviewedSourceObservation}/>}
      {selected.pendingChannelObservation&&<PendingChannelPanel observation={selected.pendingChannelObservation}/>}
+     {platformResultIds.length>0&&<TipsterQualification resultIds={platformResultIds} platformContext/>}
      {selected.qualification?<>
       <details open={!selected.reviewedSourceObservation}><summary>Évaluation historique conservée</summary>
       <p>Qualification historique : {selected.qualification.observedAt?formatDateTime(selected.qualification.observedAt,true):'date non renseignée'}. État actuel non vérifié.</p>

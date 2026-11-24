@@ -1,0 +1,38 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.LITERAL.QUERY.CONSUMER.CORRECTIVE.E1.RESULT.20261124",
+  "missionId": "COTEUR_LITERAL_QUERY_CONSUMER_CORRECTIVE_R1_E1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Private literal-query scanner/CLI candidate and minimal independent Python consumer correction accepted as bounded synthetic engineering facts. Previous consumer987830 accepted a forged query in PATH; immutable historical failure preserved. New146357 rejects ? in PATH, inverse byteexact old verified, RED1 thenGREEN7, critical Ruff/compile. CLI8bed/scanner8a78 unchanged; old20 unique synthetic primary reused without replay. No IO/SOURCE authority from this receipt.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LEXICAL.TWO.GET.R2.ACTUAL.RESULT.20261124"
+  ],
+  "resultSHA": "48d79f608ba35e15521ee1c6f5e7ceca3e66802ddb699201110f7eb3e01c4da2",
+  "validatorSHA": "146357c4832378082f84d4410549954072b573b2245e0b10b908e6a5255eb5e7",
+  "cliSHA": "8bed30285466324d6c4cb203468a0e06c09eddf71fa727932de6ab560f8de4f7",
+  "scannerSHA": "8a7811c4bbc9a820ec8fc84cfaa9e479e8c72c09fab192efdb7942c24c724373",
+  "tests": {
+    "RED": 1,
+    "GREEN": 7,
+    "totalCaseExecutions": 8,
+    "Node": 0,
+    "knownOSProcessesAtStop": 11,
+    "criticalRuffExit": 0,
+    "compileFiles": 2
+  },
+  "limits": {
+    "opaquePathSecretsUniversallyExcluded": false,
+    "duplicateJSONKeysGenerallyRejected": false,
+    "sourceGET": 0,
+    "realBundleReads": 0,
+    "sourceReady": false,
+    "admissions": 0,
+    "IOBindingProved": false,
+    "allCompatibleIntegrated": false,
+    "overall": "PARTIAL"
+  }
+}

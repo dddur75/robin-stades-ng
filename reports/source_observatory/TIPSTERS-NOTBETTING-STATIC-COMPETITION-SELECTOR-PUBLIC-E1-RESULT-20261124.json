@@ -1,0 +1,68 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.STATIC.COMPETITION.SELECTOR.PUBLIC.E1.RESULT.20261124",
+  "missionId": "NOTBETTING_STATIC_SELECTOR_PUBLIC_E1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Public static pure selector and targeted tests verified independently on explicit uncommitted artifact hashes, baselineGitHEAD ee44ae27cc550e6974780fed87bb8103b2583143. Exact competition is tested BEFORE four-occurrence quota; shared bounded traversal and downstream RAM record identity preserved. Eight focused synthetic tests, Ruff and strict mypy PASS. This is helper-only engineering: caller not migrated, no native source or activation, old private phase remains PARTIAL/FAIL_AND_STOP.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.L1.CONTEXTUAL.LOCAL.R2.ACTUAL.RESULT.20261123"
+  ],
+  "files": {
+    "src/robin/source_observatory/notbetting_selection.py": {
+      "sha256": "b29a3fdea180fa6639d1297dd58f9083ca73f4c43508eb87c00b659b5699442d",
+      "bytes": 4869
+    },
+    "tests/source_observatory/test_notbetting_selection.py": {
+      "sha256": "183006fd7717847c43d4926db17d1af2f30acad2d932d77c7b05557cacc17f99",
+      "bytes": 4240
+    }
+  },
+  "primarySHA": "96d36bf3a382c78103e9a9b618cf7a6444814d31b60bcd3ab92d3a1e79d28bce",
+  "receipts": {
+    "red.json": "e032e9dd60d8c7396e0086258ca51307055440df5e3de7d40f76bb4168f897cc",
+    "green-failure.json": "8760d4476d7ce1eeb58686e19bcae5590df3e6917701caf6043de42fc6e437d3",
+    "green-exact-source.json": "fab1041033da338d09db462567af0325da0589cd7f3588c1ba7e6b9efc2d9e23",
+    "format-result.json": "159ba6dfa4f4cd9ec6f98542bfaf8635603aa847c26258e839834f12c1121b4f",
+    "lint-result.json": "6762203825947d5d6fde8792ec5f2626b618a19b317fb5f2ed2e01b90895acf6",
+    "typing-result.json": "19122ae08e572a85bfadac03ef1b742f15c3b975fbd7900626edbfc86f96ee83",
+    "lint-final-result.json": "46ef177cdc43a576182783ec6a1072f60601abb0c03ba2409bc1abe009b0622b",
+    "format-ast-result.json": "0c7b8fc1a6d6811707c72c4fca661326cedfd456bf738f4ce89a5e1a5632d422"
+  },
+  "tests": {
+    "focusedTestsPassed": 8,
+    "syntheticCasesExecutedConservativeUpperBound": 16,
+    "syntheticCaseExecutionsMax": 20,
+    "initialRED": "Missing module collection error",
+    "firstGREENFailure": "Inherited Python import resolved legacy worktree, no test body executed. Explicit source-path assertion/bootstrap corrected; retained failure.",
+    "actualGREEN": "8 passed in0.05s, exact PUB module import asserted",
+    "Ruff": "PASS after import-spacing correction",
+    "mypyStrict": "PASS one source file; follow-imports skip, dependencies are stdlib only",
+    "postFormatASTEquivalent": true,
+    "fullSuite": 0
+  },
+  "limits": {
+    "sourceGET": 0,
+    "providerPayloadReads": 0,
+    "rawDurableStorage": 0,
+    "callerMigrated": false,
+    "nativeL1CompetitionOrRouteProven": false,
+    "CIOfTheseNewFiles": false,
+    "GitMutations": 0,
+    "runtimeWrites": 0,
+    "admissions": 0,
+    "sourceReady": false,
+    "allCompatibleIntegrated": false,
+    "overall": "PARTIAL"
+  },
+  "accounting": {
+    "knownOSProcesses": 9,
+    "maxOSProcesses": 12,
+    "caseExecutionConservativeUpperBound": 16,
+    "maxCaseExecutions": 20
+  },
+  "safety": "Selection metrics count nodes+keys and occurrences, never unique people. Only closed diagnostics may be logged; records must remain RAM only."
+}

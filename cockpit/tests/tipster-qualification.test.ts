@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createServer } from "node:http";
 import test from "node:test";
-import { parseQualificationSnapshot, qualificationCount } from "../app/lib/tipster-qualification";
+import { parseQualificationSnapshot, platformQualificationResultIds, qualificationAnchorTarget, qualificationAdminHref, qualificationCount, qualificationResults } from "../app/lib/tipster-qualification";
 import { qualificationMiddleware, readQualificationSnapshot } from "../scripts/tipster-qualification-plugin";
 
 function fixture() {
@@ -99,4 +99,49 @@ test("un lot qualifié distingue les candidats des nouveaux choix ajoutés", () 
   assert.equal(parsed.results[0].metrics.candidates, 42);
   assert.equal(parsed.results[0].metrics.admitted, 1);
   assert.equal(parsed.coverage, "partial");
+});
+
+
+test("le contexte technique utilise seulement les identités explicites de la plateforme", () => {
+  assert.deepEqual(platformQualificationResultIds("Coteur"), ["coteur-lecture-technique-20261124"]);
+  assert.deepEqual(platformQualificationResultIds("NotBetting"), ["notbetting"]);
+  for (const platform of ["coteur", "NotBetting clone", "Telegram", "OLBG", "https://www.coteur.com/"]) {
+    assert.deepEqual(platformQualificationResultIds(platform), []);
+  }
+  assert.equal(qualificationAdminHref("notbetting"), "/expert/admin-collecte#qualification-notbetting");
+  assert.throws(() => qualificationAdminHref("../../other"));
+});
+
+test("un contexte absent ne récupère jamais une preuve par libellé ou par défaut", () => {
+  const value = fixture();
+  value.results.push({ ...value.results[0], id: "notbetting", label: "Same platform text" });
+  const snapshot = parseQualificationSnapshot(value);
+  assert.deepEqual(qualificationResults(snapshot, []).map((row) => row.id), []);
+  assert.deepEqual(qualificationResults(snapshot, ["unknown"]).map((row) => row.id), []);
+  assert.deepEqual(qualificationResults(snapshot, ["notbetting"]).map((row) => row.id), ["notbetting"]);
+  assert.equal(qualificationResults(snapshot).length, 2);
+  assert.deepEqual(qualificationResults(snapshot).map((row) => row.id), ["olbg-642100", "notbetting"]);
+  assert.equal(qualificationResults(snapshot, ["notbetting", "notbetting"]).length, 1);
+  assert.equal(snapshot.results[1].metrics.admitted, 0);
+});
+
+test("les contrôles les plus récents sont visibles sans réécrire les observations", () => {
+  const value = fixture();
+  value.capturedAt = "2026-11-24T05:00:00Z";
+  value.results.push({ ...value.results[0], id: "notbetting", checkedAt: "2026-11-24T04:00:00Z" });
+  const snapshot = parseQualificationSnapshot(value);
+  const before = JSON.stringify(snapshot);
+  assert.deepEqual(qualificationResults(snapshot).map((row) => row.id), ["notbetting", "olbg-642100"]);
+  assert.equal(JSON.stringify(snapshot), before);
+  assert.equal(qualificationCount(null), "Non mesuré");
+});
+
+
+test("une ancre différée vise seulement une ligne connue après chargement", () => {
+  const rows = parseQualificationSnapshot(fixture()).results;
+  assert.equal(qualificationAnchorTarget("#qualification-olbg-642100", rows), "qualification-olbg-642100");
+  assert.equal(qualificationAnchorTarget("#qualification-olbg-642100", []), null);
+  for (const hash of ["", "#other", "#qualification-unknown", "#qualification-olbg-642100?x=1", "##qualification-olbg-642100", "#qualification-../../other", "#qualification-OLBG-642100"]) {
+    assert.equal(qualificationAnchorTarget(hash, rows), null);
+  }
 });

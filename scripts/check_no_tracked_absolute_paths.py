@@ -226,6 +226,131 @@ def _mask_sealed_publication_test_values(text: str, line_number: int) -> str:
     return "".join(masked)
 
 
+# Exact frozen audit locators only; future records remain subject to normal checks.
+SEALED_LOCAL_AUDIT_VALUES = [
+    {
+        "line": 2250,
+        "line_sha256": "996981b0ac8fcfa8481733f16f9672fd47a36689cd5542814ccae1153f5a76ab",
+        "record_sha256": "7d778bd5475fce61c1ce669b6989e5a2ea53198f58475ddd3e8b51dd5973cd65",
+        "decision_id": "RCV3-20261124-C0-NOTBETTING-ADMIN-LATEST-E2-LOCAL",
+        "field": "target",
+        "value_sha256": "fbab47f024a8fa83c7d10041da5fcefcc59279961954e30d83deab87100ccd22",
+    },
+    {
+        "line": 2263,
+        "line_sha256": "77aeadec3321d113999c69428508e87e0f719cc80bfe21cdec5a5f8ac016f35f",
+        "record_sha256": "a431ae9008ef7dfeb1c432dde523bcda26e12f9dcd70aff4afd03cbe8a173583",
+        "decision_id": "RCV3-20261124-C0-COTEUR-LITERAL-QUERY-FULLBINDING-E1-AUTH",
+        "field": "privateWorktree",
+        "value_sha256": "010a2c575039cfb4ad2f8f463b00c0fb8e44106c8e0dc1877dda9230a399a061",
+    },
+    {
+        "line": 2268,
+        "line_sha256": "58ce416af80a022607299d556c6641f06ccf2dcdf763c71d78fd78ee08517afb",
+        "record_sha256": "1f90583dc7144459e4f2be203236d19c616a76eb8957358fc35d3b9b84165a83",
+        "decision_id": "RCV3-20261124-C0-COTEUR-LITERAL-QUERY-FULLBINDING-R2-E1-AUTH",
+        "field": "privateWorktree",
+        "value_sha256": "010a2c575039cfb4ad2f8f463b00c0fb8e44106c8e0dc1877dda9230a399a061",
+    },
+    {
+        "line": 2271,
+        "line_sha256": "a73d1ccc0b55a135a78d79ac5a4ebdce9d900f247483b263304fc539b0bb7357",
+        "record_sha256": "e64078688e797a88001e9c661b39fa9068e73ef3c4748ec5e6533a63f044856e",
+        "decision_id": "RCV3-20261124-C0-COTEUR-LITERAL-QUERY-FULLBINDING-R3-E1-AUTH",
+        "field": "privateWorktree",
+        "value_sha256": "010a2c575039cfb4ad2f8f463b00c0fb8e44106c8e0dc1877dda9230a399a061",
+    },
+    {
+        "line": 2284,
+        "line_sha256": "ca3e30ec379ef9c298168863335875c26ebe90f6c9ef1118507062f7f35ccec8",
+        "record_sha256": "eed89ebbc953f1bd3cd9c3ef2a3b87168a8ccff105cd26024b9dc82858e007a8",
+        "decision_id": "RCV3-20261124-C0-COTEUR-LITERAL-QUERY-R4-ACTUAL-STOP",
+        "field": "privateExecutionDirectory",
+        "value_sha256": "cf9b944277ccfa02d4eaa45f2de91bac1a077f42532a740d61593b7a0f732334",
+    },
+    {
+        "line": 2289,
+        "line_sha256": "cf74fdedaa1d7db37f6502f77cafb4987c98f17db011362c9bcc0d8c6ffdc3eb",
+        "record_sha256": "3f163236bf753098c13a781a8c0b68923ddc7a04f4a8ad173c7c25cb01b4eb41",
+        "decision_id": "RCV3-20261124-C0-NOTBETTING-COMPETITION-BUCKETS-E1-AUTH",
+        "field": "privateWorktree",
+        "value_sha256": "d8318a134f79359277d1577253843f18e9c4f900b74cfbb398ef3b0e215185c6",
+    },
+    {
+        "line": 2292,
+        "line_sha256": "928883be56ebe90c0b72eac344ed1636abaa3454369d33261c1094586d2c8d71",
+        "record_sha256": "a02c5583b3b9ca41b7753e93e800ba94990159503a470ab831a83a85fc92e9a7",
+        "decision_id": "RCV3-20261124-C0-SOURCE-ADMIN-COTEUR-NOTBETTING-E2-LOCAL",
+        "field": "target",
+        "value_sha256": "fbab47f024a8fa83c7d10041da5fcefcc59279961954e30d83deab87100ccd22",
+    },
+    {
+        "line": 2297,
+        "line_sha256": "fe93c97f69b6fba015bdec58c92069d3f7f928b39cd367f4200f5c37897aaa85",
+        "record_sha256": "22dbe5da860bc5ea34a57e2436053f392d374df02e4f900354f686f3fb2a9889",
+        "decision_id": "RCV3-20261124-C0-NOTBETTING-COMPETITION-BUCKETS-NATIVE-R1-E1-AUTH",
+        "field": "privateWorktree",
+        "value_sha256": "d8318a134f79359277d1577253843f18e9c4f900b74cfbb398ef3b0e215185c6",
+    },
+    {
+        "line": 2312,
+        "line_sha256": "040b5bd34ce03112fa57bfb0e775c308902a03ea293f8562a9a51fe3f91d3267",
+        "record_sha256": "411bd2ddd31ab334bbde390a1317a11a0db405c7330cb8cee01634fa6a9a3182",
+        "decision_id": "RCV3-20261124-C0-PLATFORM-CONTEXT-RUNTIME-R2-E2-LOCAL",
+        "field": "targetWorktree",
+        "value_sha256": "d553924f844207bdf56f03f10de3cf4e4a544f5d3e524289636b6042d2a991bc",
+    },
+    {
+        "line": 2317,
+        "line_sha256": "026871e8781bd21a97c330e6014c04c612165499f47c7f65d9974025e8705d6c",
+        "record_sha256": "e225204541792f4146d05ba702ab1b420caac04fd8a82755e3c154759f51e28f",
+        "decision_id": "RCV3-20261124-C0-ADMIN-ANCHOR-GEOMETRY-E2-LOCAL",
+        "field": "targetWorktree",
+        "value_sha256": "d553924f844207bdf56f03f10de3cf4e4a544f5d3e524289636b6042d2a991bc",
+    },
+    {
+        "line": 2324,
+        "line_sha256": "3f32f454ee5741ae064910b5b9f2801300850fd1246f8d0d751b092638741a0b",
+        "record_sha256": "b7b9484b09acf2150d657777a53517a112f4d3325517aabbc22c2c32d953c596",
+        "decision_id": "RCV3-20261124-C0-ADMIN-ANCHOR-FIXED-RUNTIME-E2-LOCAL",
+        "field": "targetWorktree",
+        "value_sha256": "d553924f844207bdf56f03f10de3cf4e4a544f5d3e524289636b6042d2a991bc",
+    },
+]
+
+
+def _mask_sealed_local_audit_value(text: str, line_number: int) -> str:
+    seal = next((item for item in SEALED_LOCAL_AUDIT_VALUES if item["line"] == line_number), None)
+    if seal is None or hashlib.sha256(text.encode("utf-8")).hexdigest() != seal["line_sha256"]:
+        return text
+    record = json.loads(text)
+    if (
+        record.get("decision_id") != seal["decision_id"]
+        or record.get("hash") != seal["record_sha256"]
+    ):
+        return text
+    payload = json.dumps(
+        {key: value for key, value in record.items() if key != "hash"},
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    if hashlib.sha256(payload.encode()).hexdigest() != seal["record_sha256"]:
+        return text
+    value = record.get("context", {}).get(seal["field"])
+    if (
+        not isinstance(value, str)
+        or hashlib.sha256(value.encode()).hexdigest() != seal["value_sha256"]
+    ):
+        return text
+    encoded = json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+    if text.count(encoded) != 1:
+        return text
+    start = text.index(encoded) + 1
+    end = start + len(encoded) - 2
+    return text[:start] + " " * (end - start) + text[end:]
+
+
 def find_forbidden_absolute_paths(
     text: str,
     *,
@@ -244,6 +369,7 @@ def find_forbidden_absolute_paths(
         if normalized_path == LEDGER_PATH:
             line = _mask_sealed_authorization_file_values(line, line_number)
             line = _mask_sealed_publication_test_values(line, line_number)
+            line = _mask_sealed_local_audit_value(line, line_number)
             line = _mask_ledger_context_worktree_value(line)
         line = _mask_allowed(line)
         for category, pattern in (

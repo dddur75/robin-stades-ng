@@ -1,0 +1,78 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.LEXICAL.TWO.GET.R2.ACTUAL.RESULT.20261124",
+  "missionId": "COTEUR_LEXICAL_TWO_GET_ACTUAL_R2_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Actual bounded Coteur personal private static-script diagnostic completed once after four actual SOURCE keys and durable E1 independent close. Two fresh same-run GET reservations, robots allowed exact asset, one trusted lexical Node, Windows Job14.078s exit0. Lexical SPAN_CAP is an incomplete prefix:17 potential call lookalikes,16 retained spans and1 omitted. Neither17 endpoints nor forecasts nor provider permission are established. Engineering receipt VERIFIED; source qualification/delivery remains PARTIAL.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LEXICAL.NATIVE.IO.PRIVATE.E1.HISTORICAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LEXICAL.STREAM.PRIVATE.R2.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LEXICAL.CLI.PROTOCOL.PRIVATE.E1.RESULT.20261123"
+  ],
+  "primarySHA": "14224072b5f643325b187e81c650e6da5ab80b11fa1bf436d44d926f8a9d7e48",
+  "receiptSHA": "2900ee53ba3d0d67c27805bf6fc2d3c14c53fa7b2937a8ab71ad150c44768dff",
+  "tuple": {
+    "missionId": "COTEUR_LEXICAL_TWO_GET_ACTUAL_R2_20261124",
+    "planSHA": "83c8b17eaa30a3f6711a4ba918c88c9824b9ba4ea1cfb0986a0c69e3c54124ec",
+    "manifestSHA": "e99e5e4fa6a745ccaf46e747d5c0f90b9d35b3bec524af355c6131ac70a78f08",
+    "configSHA": "52acaa3c753085f5ce59427926cff164dac786c60971f840635b005fd546bb5b",
+    "workerSHA": "b733c86c41b1c4d1989492a98bf33db8c2cd46627c5fc6dd2db4bdc7eaa5aaf7",
+    "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+    "outerSHA": "3330951411603c0447b3d92b7dad3dca31fd59fafc0114d9fe01ed1e67311231",
+    "parentGrant": "05666f0b345efc243d367bd0a02ac3a1c614ea799bb1c8c4a9d4185d20e23011"
+  },
+  "observedAtUTC": "2026-11-24T01:59:52.207702+00:00",
+  "closedAtUTC": "2026-11-24T01:59:52.567973+00:00",
+  "actual": {
+    "nativeInvocations": 1,
+    "GETReservations": 2,
+    "auditDNS": 2,
+    "auditTCP": 2,
+    "auditGETSendBoundary": 2,
+    "auditNode": 1,
+    "outerGET": null,
+    "jobExit": 0,
+    "jobSeconds": 14.078,
+    "subtreeKillConfirmed": true,
+    "bodyBytes": 634651,
+    "bodySHA": "cef3dc549b4a0ba0f845d501c45efb1fa0f95f4a5bd0aa832a1b313ace1c132c",
+    "bodyUTF16Length": 634118,
+    "freshRobotsAllowed": true,
+    "lexicalPotentialCallCount": 17,
+    "retainedSpans": 16,
+    "omittedSpans": 1,
+    "tokensObserved": 66004,
+    "maxDelimiterDepth": 38,
+    "capStatus": "SPAN_CAP",
+    "completeLexicalScan": false
+  },
+  "limits": {
+    "syntaxValidity": "UNPROVEN",
+    "ownershipProven": false,
+    "globalCoverage": "UNKNOWN",
+    "APIRequests": 0,
+    "tipsterDataReads": 0,
+    "rawDurableStorage": 0,
+    "providerJSExecuted": false,
+    "newAdmittedForecasts": 0,
+    "sourceReady": false,
+    "allCompatibleIntegrated": false,
+    "overall": "PARTIAL",
+    "authorityClosed": true,
+    "remainingGET": 0,
+    "remainingJobs": 0,
+    "retry": false
+  },
+  "contextUnknowns": [
+    "Section4 browser-client compliance UNKNOWN",
+    "Section5 reproduction/adaptation applicability to transient RAM inspection UNKNOWN",
+    "Section7 database protection scope UNKNOWN",
+    "Native terms freshness UNKNOWN",
+    "Explicit automation permission UNKNOWN"
+  ],
+  "prelaunchCallerFailure": "Initial nonpersistent JS binding prevented any native exec. Its empty failure capture and independent absent-spent check are preserved; correction reads persisted SD rawSHA. One actual native invocation only."
+}

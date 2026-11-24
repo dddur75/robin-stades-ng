@@ -1,0 +1,68 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREFILTER.NATIVE.R3.SECOND.TIMEOUT.ACTUAL.RESULT.20261124",
+  "missionId": "NOTBETTING_COMPETITION_PREFILTER_NATIVE_R3_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Second actual bounded NotBetting capture also stopped REQUEST_TIMEOUT during PICKS200CHUNKED body read. Verified negative result is PARTIAL/FAIL_AND_REDESIGN returnE1, not delivery. OneJob13.75s child1/outerprogram0/noJobtimeout/killtrue; twoGETspent, no normalized/pending forecasts created, data received unknown. No third unchanged native attempt, oldauthorityclosed.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREFILTER.NATIVE.R2.TIMEOUT.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.POLICY.PROOF.CACHE.PRIVATE.E1.RESULT.20261124"
+  ],
+  "receiptSHA": "62c8f01b479412068565c6ba284d0fd1dc52313f1e7c4d1d8c3db8a89e104de9",
+  "primarySHA": "18442adc584ca3d9ca83a2f42ee2397bfab0403bcf1072208eef3872b296ce76",
+  "tuple": {
+    "configSHA": "02211e01618be639b0bee7de2eacaf45e8b3c5cf471e27f50c51dc9be370b861",
+    "manifestSHA": "56387bad3eacb34761199d01ac7d8210245a3d2bc08cb3cd2b91af8953504ee1",
+    "missionId": "NOTBETTING_COMPETITION_PREFILTER_NATIVE_R3_20261124",
+    "outerSHA": "c0779bf07e5bb71eec7aa690037cebe07456341212e70614fe92aeeb1cfbc368",
+    "parentGrant": "f6ac4f1928104fc0a52ad5f5fbca7d9b9c1a2fcc119066e3bf89dc843f8849d5",
+    "planSHA": "fa5a7dc806cb1f3b905dbdc0525a1be04967c1a69eafe7825e4187eade3c7b11",
+    "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+    "workerSHA": "79ee30456dd771d7d550cf54068f991d46ba41ce8b02785ffde3e2142c514543"
+  },
+  "actual": {
+    "GETReservations": 2,
+    "GETTransmissionBounds": [
+      2,
+      2
+    ],
+    "DNS": 2,
+    "TCP": 2,
+    "GETSendBoundaries": 2,
+    "nativeInvocations": 1,
+    "jobSeconds": 13.75,
+    "childExit": 1,
+    "outerProgramExit": 0,
+    "JobTimeout": false,
+    "outerGET": null,
+    "robotsHTTP": 200,
+    "robotsBytes": 1300,
+    "picksHTTP": 200,
+    "picksPhase": "BODY_READ",
+    "picksReason": "REQUEST_TIMEOUT",
+    "picksExceptionKind": "CONTRACT_ERROR",
+    "picksBodyBytes": null,
+    "picksBodyComplete": null,
+    "newStructuredForecastFiles": 0,
+    "newAdmittedForecasts": 0
+  },
+  "limits": {
+    "sourceReady": false,
+    "overall": "PARTIAL",
+    "allCompatibleIntegrated": false,
+    "globalForecastAvailability": "UNKNOWN",
+    "authorityClosed": true,
+    "remainingGET": 0,
+    "remainingJobs": 0,
+    "retry": false,
+    "stageReturn": "E1",
+    "thirdUnchangedAttemptForbidden": true,
+    "requestTimeoutSeconds": 12,
+    "bodyLimitBytes": 2097152,
+    "cause": "UNPROVEN_CPU_OR_NETWORK_OR_FRAMING_LATENCY"
+  }
+}

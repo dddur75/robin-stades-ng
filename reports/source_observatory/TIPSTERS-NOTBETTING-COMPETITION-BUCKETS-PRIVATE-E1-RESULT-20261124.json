@@ -1,0 +1,71 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.COMPETITION.BUCKETS.PRIVATE.E1.RESULT.20261124",
+  "missionId": "NOTBETTING_COMPETITION_BUCKETS_VERIFICATION_R2_E1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "scope": "Frozen private helper adds six exact fixed-enum competition counts only at the existing resolution outcome, including UNPROVEN on resolver failure. Three-delta inverse is byteexact f591 before format; formatting AST unchanged. Seven targeted synthetic function calls, fullhelperRuff and strictmypy PASS. Whole selection result/recordidentity/gates/budget and resolvercalls old1=new1 unchanged. Existing workeraba8/bridge818d immutable. No native competition distribution measured, public adoption, SOURCE or application grant; old C1 no-Ruff partial preserved.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.SHAPE.FIRST.REJECTION.PRIVATE.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.SHAPE.NATIVE.R2.ACTUAL.RESULT.20261124"
+  ],
+  "files": {
+    "notbetting_selection.py": {
+      "sha256": "4b5e82c8260589684c17ae92a8a3b4c0f302196fe91d129ee718dacd906b3940",
+      "bytes": 14185
+    },
+    "before-notbetting_selection.py": {
+      "sha256": "f591fcc097bda9f0f695b20a00f4e45fbbaed86b09d1cedf1614a213149539f2",
+      "bytes": 13286
+    },
+    "test_competition_buckets.py": {
+      "sha256": "91f48892ccb6ecc2dfe592b9410b965cfebdd555b574b4927de7fcf8facec00e",
+      "bytes": 3247
+    },
+    "source_worker.py": {
+      "sha256": "aba8fb4755c35c96795f45dae8760027c6858c85b9c8b8ad2a2b0d3ef219a1c4",
+      "bytes": 24819
+    },
+    "inverse-primary.json": {
+      "sha256": "19e1dbe600f408d5923c200df41a876710324b6005f96b588cfdeda13c949589",
+      "bytes": 116
+    },
+    "green-primary.json": {
+      "sha256": "4f1dda3cc3a7037355acfae2d820ade0cdd4410479c63fc1f21e4d81d64aa912",
+      "bytes": 332
+    },
+    "ruff-primary.json": {
+      "sha256": "ef2b63cc76f84a1b9f58a91c05d89155a147471292717a9961d27295cd779834",
+      "bytes": 59
+    },
+    "mypy-primary.json": {
+      "sha256": "08c97b5b1af59ddb3acde4c29c190f1512d57efe37925d0dc70a54d5054dbc95",
+      "bytes": 82
+    }
+  },
+  "primarySHA": "bfa99b67de2e545983b093f24f14160d059886954e45c64f8b113a64c735093e",
+  "tests": {
+    "syntheticFunctionCalls": 7,
+    "buckets": 6,
+    "wholeProjectionAndRecordIdentityEqual": true,
+    "resolverCallsOld": 1,
+    "resolverCallsNew": 1,
+    "fullRuffHelper": "PASS",
+    "strictMypyHelper": "PASS"
+  },
+  "limits": {
+    "sourceGET": 0,
+    "nativeJobs": 0,
+    "Node": 0,
+    "sourceReady": false,
+    "admissions": 0,
+    "allCompatibleIntegrated": false,
+    "globalDistribution": "UNKNOWN",
+    "knownNonFootballIsOnlyLiteralWhitelist": true,
+    "OTHERHasNoSportInference": true
+  }
+}

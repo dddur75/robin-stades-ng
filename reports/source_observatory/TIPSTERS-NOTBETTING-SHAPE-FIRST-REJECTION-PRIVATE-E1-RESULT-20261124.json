@@ -1,0 +1,68 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.SHAPE.FIRST.REJECTION.PRIVATE.E1.RESULT.20261124",
+  "missionId": "NOTBETTING_SHAPE_FIRST_REJECTION_VERIFICATION_R2_E1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Private same-traversal fixed-enum shape diagnostic verified against exact immutable helper/worker files. 42 synthetic function calls PASS under60, helperfullRuff/workercriticalRuff/stricthelpermypy PASS. Additional fixed-key work is charged to the existing150000 shared budget. Presence and first-rejection counts refer to occurrences only, gated beforefields; unevaluated laterpredicatesUNKNOWN. Original helper recordidentity/selection equivalence is measured when budget fits. Worker snapshotfinally code reviewed but not yet exercised through collect in this component phase. No native cause or SOURCE/public/application authority.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.REFERENCE.SELECTOR.NATIVE.R1.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.REFERENCE.SELECTOR.PUBLIC.E1.RESULT.20261124"
+  ],
+  "files": {
+    "notbetting_selection.py": {
+      "sha256": "f591fcc097bda9f0f695b20a00f4e45fbbaed86b09d1cedf1614a213149539f2",
+      "bytes": 13286
+    },
+    "source_worker.py": {
+      "sha256": "aba8fb4755c35c96795f45dae8760027c6858c85b9c8b8ad2a2b0d3ef219a1c4",
+      "bytes": 24819
+    },
+    "test_shape.py": {
+      "sha256": "cdecb9fbcf3e19f98bfbb0b1ac7884206fb782d1edbe8f881e61c8c0ba718702",
+      "bytes": 4365
+    },
+    "before-notbetting_selection.py": {
+      "sha256": "a777e2fa2c4407e66d5d2f1da4d0e88458c33a9a48b06f0dd95c5c312483f374",
+      "bytes": 8868
+    },
+    "green.json": {
+      "sha256": "31ca2788829b0868f064459d054e0527e4f1541827113c2a7e6291c4f14902a5",
+      "bytes": 276
+    },
+    "ruff-helper.json": {
+      "sha256": "ef2b63cc76f84a1b9f58a91c05d89155a147471292717a9961d27295cd779834",
+      "bytes": 59
+    },
+    "ruff-worker.json": {
+      "sha256": "ef2b63cc76f84a1b9f58a91c05d89155a147471292717a9961d27295cd779834",
+      "bytes": 59
+    },
+    "mypy.json": {
+      "sha256": "08c97b5b1af59ddb3acde4c29c190f1512d57efe37925d0dc70a54d5054dbc95",
+      "bytes": 82
+    }
+  },
+  "primarySHA": "bb0b29b3a2629ddb0b6d8d9b82a8c47f95bd342986338dcf7d9a9b818d631462",
+  "tests": {
+    "actualSyntheticFunctionCalls": 42,
+    "cap": 60,
+    "fullRuffHelper": "PASS",
+    "criticalRuffWorker": "PASS",
+    "strictMypyHelper": "PASS"
+  },
+  "limitations": {
+    "physicalVisitedNodesIncludesAuditKeyChecks": true,
+    "zeroCountersDoNotValidateLaterPredicates": true,
+    "workerCollectIntegrationTested": false,
+    "sourceGET": 0,
+    "sourceReady": false,
+    "admissions": 0,
+    "allCompatibleIntegrated": false,
+    "nativeCause": "UNKNOWN",
+    "historicalFailedHarnessPhaseUnchanged": true
+  }
+}

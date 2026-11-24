@@ -1,0 +1,53 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.LITERAL.QUERY.IO.REBIND.E1.RESULT.20261124",
+  "missionId": "COTEUR_LITERAL_QUERY_IO_REBIND_E1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C3",
+    "C4"
+  ],
+  "scope": "Private IO rebind accepted after independent review of authorC1: three SHA substitutions only, inverse byteexact oldIO62db. One synthetic Windows Job with trusted Node literal-query CLI and corrected consumer146357, source0;40bytes38UTF16 independently checked, queryvalues discarded, falsebusinessgates. IO engineering only; no actual source binding/authority.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LEXICAL.TWO.GET.R2.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LITERAL.QUERY.CONSUMER.CORRECTIVE.E1.RESULT.20261124"
+  ],
+  "resultSHA": "dfb3394c2a3a9f3ccf1b2d1ec3d5b62edb1a95896727a45a29beaadce88e8850",
+  "fileMapSHA": "1df007dcd4e2d522e8c73612a2bc503a9e25ae0eb94769992735e1d8d29abda6",
+  "ioSHA": "6f1cbf9cc5eacc4e5a4d44cb7159e0f512828b86ea9cc715b90afad622431b44",
+  "job": {
+    "activeSecondsMax": 50,
+    "elapsedSeconds": 0.34299999999348074,
+    "exit": 0,
+    "hardSeconds": 60,
+    "sourceGET": null,
+    "subtreeKillConfirmed": true,
+    "taskMutations": 0,
+    "timedOut": false
+  },
+  "tests": {
+    "syntheticCases": 2,
+    "Node": 1,
+    "sourceGET": 0,
+    "DNS": 0,
+    "TCP": 0,
+    "inputBytes": 40,
+    "independentUTF16Length": 38,
+    "RuffCriticalExit": 0,
+    "RAMCompileFiles": 3,
+    "knownOSProcesses": 29,
+    "maxOSProcesses": 32
+  },
+  "limits": {
+    "physicalPipeBytesMax": 32768,
+    "acceptedStdoutBytesMax": 8192,
+    "sourceGET": 0,
+    "realBundleReads": 0,
+    "opaquePathSecretsUniversallyExcluded": false,
+    "actualSourceBinding": false,
+    "sourceReady": false,
+    "admissions": 0,
+    "allCompatibleIntegrated": false,
+    "overall": "PARTIAL"
+  }
+}
