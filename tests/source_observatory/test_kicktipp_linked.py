@@ -67,3 +67,56 @@ def test_bounded_projection_prefers_unresolved_source_result_without_claiming_fu
     assert value["participants"][0]["cells"][0]["nativeHome"] == "Home4"
     assert len(value["participants"][0]["cells"]) == 3
     assert value["canonicalKickoffsEstablished"] is False and value["admittedChoices"] == 0
+
+
+NATIVE_GAME_PATH = '/the-predictor/tippuebersicht/spiel'
+NATIVE_QUERY = 'spieltagIndex=1&tippsaisonId=2&tippspielId=3'
+
+
+def native_document(schedule_query=NATIVE_QUERY, header_query=NATIVE_QUERY, *, route=NATIVE_GAME_PATH):
+    body = document()
+    old = b'/the-predictor/spielinfo?spielIndex=123'
+    body = body.replace(old, f'{route}?{schedule_query}'.encode(), 1)
+    return body.replace(old, f'{route}?{header_query}'.encode(), 1)
+
+
+def test_observed_native_game_href_shape_recognized_without_semantic_upgrade():
+    # Values are SYNTHETIC: only path and query names were retained from the source.
+    value = project_linked_overview(native_document(), 'text/html', URL)
+    cell = value['participants'][0]['cells'][0] if value['participants'] else None
+    assert cell is not None, 'retained native route/query shape must be recognized'
+    assert cell['nativeFixtureRef'] == f'https://www.kicktipp.fr{NATIVE_GAME_PATH}?{NATIVE_QUERY}'
+    assert cell['nativeSelection'] == '2:1'
+    assert value['admittedChoices'] == 0
+    assert value['canonicalKickoffsEstablished'] is False
+    assert value['sourceTimezone'] is None and value['publishedAt'] is None
+
+
+@pytest.mark.parametrize('query', [
+    'spieltagIndex=1&tippsaisonId=2',
+    'spieltagIndex=1&tippsaisonId=2&tippspielId=',
+    NATIVE_QUERY + '&tippspielId=4',
+    NATIVE_QUERY + '&tippspielId=',
+    NATIVE_QUERY + '&extra=4',
+    NATIVE_QUERY + '&extra=',
+    'spieltagIndex=1&tippsaisonId=2&tippspielId=abc',
+    'spieltagIndex=1&tippsaisonId=2&tippspielId=-3',
+    'spieltagIndex=1&tippsaisonId=2&tippspielId=' + '3' * 16,
+    NATIVE_QUERY + '#fragment',
+])
+def test_native_shape_requires_exact_single_bounded_numeric_scope(query):
+    assert not project_linked_overview(native_document(query, query), 'text/html', URL)['participants']
+
+
+@pytest.mark.parametrize('route', [
+    'https://example.test/the-predictor/tippuebersicht/spiel',
+    '/other-contest/tippuebersicht/spiel',
+    '/the-predictor/tippuebersicht/tipper',
+])
+def test_native_query_shape_never_widens_other_routes_or_hosts(route):
+    assert not project_linked_overview(native_document(route=route), 'text/html', URL)['participants']
+
+
+def test_distinct_native_triplets_do_not_join_by_game_id_alone():
+    value = project_linked_overview(native_document(header_query='spieltagIndex=9&tippsaisonId=2&tippspielId=3'), 'text/html', URL)
+    assert not value['participants'] and value['admittedChoices'] == 0

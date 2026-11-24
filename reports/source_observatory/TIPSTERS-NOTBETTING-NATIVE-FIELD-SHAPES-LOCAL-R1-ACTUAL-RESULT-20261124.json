@@ -1,0 +1,59 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.NATIVE.FIELD.SHAPES.LOCAL.R1.ACTUAL.RESULT.20261124",
+  "missionId": "NOTBETTING_NATIVE_FIELD_SHAPES_LOCAL_R1_20261124",
+  "status": "PASS_AND_HOLD",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Independent actual closed literal-shape metadata from one cached unqualified record only. No native event/date meaning, fixture, account-person join or new collection established.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.NATIVE.FIELD.SHAPES.PRIVATE.CODE.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PL.NATIVE.R2.ACTUAL.RESULT.20261124"
+  ],
+  "shapes": {
+    "admissions": 0,
+    "canonicalFixture": null,
+    "dateLength": 24,
+    "dateMeaningProven": false,
+    "dateShape": "AWARE_ISO_LITERAL",
+    "eventLength": 24,
+    "eventShape": "OTHER_TEXT",
+    "nativeContractProven": false,
+    "personIdentityVerified": false,
+    "preMatchProven": false,
+    "schemaVersion": "notbetting-native-field-shapes-v1",
+    "sourceReady": false,
+    "status": "LITERAL_SHAPES_ONLY_UNQUALIFIED"
+  },
+  "counts": {
+    "closedPendingCalls": 1,
+    "codeReads": 2,
+    "network": 0,
+    "newHelperCalls": 1,
+    "payloadReads": 1,
+    "spawn": 0
+  },
+  "sourceObservedAtUTC": "2026-11-24T07:07:09.437437+00:00",
+  "closedAtUTC": "2026-11-24T09:51:27.616408+00:00",
+  "receiptSHA256": "a88856b8a48cffef21075c88acbb4a81c52cea82ed654a90cf8fe2e65f6fe129",
+  "shapesSHA256": "ef0c8b67075ecc27c6cb3de49589abe883a889504149614a8d155f9621fa7861",
+  "stop": {
+    "hash": "3485bf6e23d99ced8d819f0e887d237255cf36990c370c5ff403ef951c234c3e",
+    "date": "2026-11-24T09:51:28.942674+00:00",
+    "authorityClosed": true,
+    "retry": false
+  },
+  "sourceGET": 0,
+  "sourceReady": false,
+  "admissions": 0,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "authorityClosed": true,
+  "limits": [
+    "OTHER_TEXT length24 does not prove identifier, alias, name or event semantics.",
+    "AWARE_ISO_LITERAL length24 is syntax only; no KO/publication/native contract/timezone business meaning or prematch proof.",
+    "No pending value printed or published. Same source observation07:07 retained, no fresh source read or global absence inferred."
+  ]
+}

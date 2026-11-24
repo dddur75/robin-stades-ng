@@ -1,0 +1,50 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.NATIVE.LITERAL.CONTEXT.DEPTH.FIX.PRIVATE.CODE.E1.RESULT.20261124",
+  "missionId": "NOTBETTING_NATIVE_LITERAL_CONTEXT_DEPTH_FIX_E1_20261124",
+  "status": "PASS_AND_HOLD",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Independent private synthetic physical-context probe and scalar-depth microfix only; old candidate remains blocked. No native docs or pending read, no semantic join/identity/fixture/time/source authorization.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.NATIVE.FIELD.SHAPES.LOCAL.R1.ACTUAL.RESULT.20261124"
+  ],
+  "helperSHA256": "e4c3b37e4cdf2e5320e750f65c72fd9811281e278be2210171b6bef7eed412eb",
+  "testSHA256": "4b3c1ecffc94d8d5c065340f3227de3ae41ead283622a03459cdd60a7a347b24",
+  "resultSHA256": "c7dfd42b918c6ec2f982334973f8721e25212a4d643149517fdf6dfa262c5f26",
+  "parentHelperSHA256": "33d2043677343901f0bf276eb357d15cf82f0c7d3e9f57799746b0c5a1be30f7",
+  "proof": {
+    "twoGuardsOnly": true,
+    "inverseByteExact": true,
+    "helperInvocations": 12,
+    "RED": 1,
+    "GREEN": 11,
+    "greenMethods": 5,
+    "newMethods": 1,
+    "rootLaunchedProcesses": 11,
+    "phaseFilesIncludingControls": 13,
+    "ruffFiles": 2,
+    "ruffExit": 0,
+    "mypyHelperStrictExit": 0,
+    "RAMCompile": 2
+  },
+  "actualStoppedAtUTC": "2026-11-24T10:14:58.134209+00:00",
+  "authorDeadlineUTC": "2026-11-24T10:18:36.922105+00:00",
+  "sourceGET": 0,
+  "actualProviderPayloadReads": 0,
+  "sourceReady": false,
+  "admissions": 0,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "limits": [
+    "SYNTHETIC_ONLY",
+    "Old literal-context candidate remains frozen and blocked for native usage",
+    "Inherited gate preprocessing is explicit, scalar candidate comparisons are bounded at child depth",
+    "No values/hrefs/aliases/semantic joins",
+    "No actual source/pending/page read",
+    "mypy helper only",
+    "Separate independent acceptance and future SOURCE authority required"
+  ]
+}

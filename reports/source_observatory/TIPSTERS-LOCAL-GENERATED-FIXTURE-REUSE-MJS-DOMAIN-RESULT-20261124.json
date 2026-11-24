@@ -1,0 +1,93 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.LOCAL.GENERATED.FIXTURE.REUSE.MJS.DOMAIN.RESULT.20261124",
+  "missionId": "GENERATED_NODE_FIXTURE_REUSE_LOCAL_R1_20261124",
+  "status": "PASS_AND_HOLD",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Independent bounded local cached fixture reuse and mjs domain facts. Four exact generated pages match current PUBLIC manifest; no whole corpus regeneration. New domain result does not rewrite old PARTIAL phases or establish CI, UI, source readiness or global delivery.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V37.ENGINEERING.RECETTE.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.TEST.LOADER.CI.FIX.E1.RESULT.20261124"
+  ],
+  "snapshotSHA256": "cb3f1dd216b43066f99809e87ac45c7ee95aa8cf42f2fed4672b7e5c208e33b3",
+  "fixtureFiles": [
+    {
+      "path": "cockpit/public/data/hypotheses/nodes/page-001.json",
+      "bytes": 73614,
+      "SHA256": "da041167cb13952359b5254b08fe4fc7354f40e3efee9b155abc89a37d1f3125",
+      "records": 50
+    },
+    {
+      "path": "cockpit/public/data/hypotheses/nodes/page-002.json",
+      "bytes": 90345,
+      "SHA256": "df944d2929749f16d889e5584c8dfdc5214b61800b25b4b9eb7eb9e4374884ef",
+      "records": 50
+    },
+    {
+      "path": "cockpit/public/data/hypotheses/nodes/page-003.json",
+      "bytes": 95675,
+      "SHA256": "cf9845bb823e96676b6f82030438ac25fcfa553cb1e45c17281c319c50a25cea",
+      "records": 50
+    },
+    {
+      "path": "cockpit/public/data/hypotheses/nodes/page-004.json",
+      "bytes": 59149,
+      "SHA256": "5ecc88fdbad1c76f1b003d96973c825c8c25c1a0ff42a24b914723292e5e5972",
+      "records": 30
+    }
+  ],
+  "copiedBytes": 318783,
+  "domain": {
+    "fail": 0,
+    "pass": 43,
+    "skipped": 4,
+    "tests": 47
+  },
+  "domainExit": 0,
+  "countsScope": {
+    "copyIntegrityBufferReads": 12,
+    "ordinaryUnitFixtureReadsNotIncluded": true,
+    "rootDomainNodeJobs": 1,
+    "nodeWorkerDescendants": null,
+    "totalOSProcesses": null,
+    "PythonAuditOnly": true,
+    "legacyCodeReadsCounterExcludesTestFileChecksumReads": true
+  },
+  "sourceGET": 0,
+  "sourceCollectorRuns": 0,
+  "runtimeWrites": 0,
+  "GitMutations": 0,
+  "admissions": 0,
+  "sourceReady": false,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "receiptSHA256": "f89799a38b94c95883396023d1bf77a51d662b798b1c4e32a02110f5aead120e",
+  "domainPrimarySHA256": "bc8b33f4e940071bd31860429e3cb077de15d4a2e355a2d243de45c306098a77",
+  "closedAtUTC": "2026-11-24T09:32:18.716616+00:00",
+  "stop": {
+    "hash": "bf634fb211b374b843ad912b36b4d452962d24808c80f0a234b8250e2b960610",
+    "date": "2026-11-24T09:32:20.120002+00:00",
+    "authorityClosed": true,
+    "retry": false
+  },
+  "previousProcessCountAddendum": {
+    "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.TEST.LOADER.CI.FIX.E1.RESULT.20261124",
+    "rootLaunchedProcesses": 9,
+    "rootLaunchedNodeJobs": 3,
+    "totalOSProcesses": null,
+    "descendantProcessCount": null,
+    "totalOSBudgetConformance": "UNPROVEN",
+    "oldFieldActualOSProcesses9WasRootLaunchesOnly": true,
+    "oldPhaseRemains": "PARTIAL",
+    "originalReportsNotRewritten": true
+  },
+  "limits": [
+    "43 passed and four skipped; four skips are historical published evidence assets absent. Not a complete SSR/visual application acceptance.",
+    "Only the four served-page byte hashes are reused. Different LEGACY main snapshot never replaces PUBLIC snapshot.",
+    "Network/spawn counters cover Python controller only, not all Node worker activity. Source collector is not invoked.",
+    "Historical process count nine was root-launched processes, not total descendants. No total process budget compliance is asserted retrospectively."
+  ]
+}

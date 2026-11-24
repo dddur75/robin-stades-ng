@@ -17,6 +17,23 @@ def _references(node: _Node, base: str, *, author: bool = False) -> list[str]:
             continue
         url = urljoin(base, child.attrs["href"])
         parsed = urlsplit(url)
+        # Source evidence retains this exact route/key set, not the key values or semantics.
+        if parsed.path == "/the-predictor/tippuebersicht/spiel":
+            native_query = parse_qs(parsed.query, keep_blank_values=True)
+            if (
+                not author
+                and parsed.scheme == "https"
+                and parsed.netloc == "www.kicktipp.fr"
+                and not parsed.fragment
+                and len(parsed.query) <= 256
+                and set(native_query) == {"spieltagIndex", "tippsaisonId", "tippspielId"}
+                and all(
+                    len(values) == 1 and re.fullmatch(r"[0-9]{1,15}", values[0]) is not None
+                    for values in native_query.values()
+                )
+            ):
+                result.append(url)
+            continue
         query = parse_qs(parsed.query)
         keys = ("rankingTeilnehmerId",) if author else ("spiel", "spielIndex", "spielId")
         if (
