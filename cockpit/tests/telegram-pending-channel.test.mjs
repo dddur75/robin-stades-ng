@@ -19,7 +19,7 @@ for(const kind of ['gate','person','match','foreign','unsafe','provenance','stat
 const target={id:m.IDENTITY.candidateId,sourceUrl:m.IDENTITY.sourceUrl,origin:{sheet:'Catalogue',row:309,workbookSha256:m.IDENTITY.workbookSHA},qualification:{picks:[],label:'Historical'},collectionEnabled:null};
 const other={...target,id:'betsoccer',reviewedSourceObservation:{messageCount:10},sourceUrl:'https://t.me/s/betsoccer'};
 const base={receipt:{registrySha256:m.IDENTITY.registrySHA,sourceWorkbookSha256:m.IDENTITY.workbookSHA},candidates:[target,other],qualification:{qualifiedCount:0}};const before=structuredClone(base),out=m.applyPendingChannelObservation(base,bytes,a);
-assert.equal(out.candidates[0].pendingChannelObservation.choices.length,1);assert.deepEqual(out.candidates[1],other);assert.deepEqual(out.candidates[0].qualification,target.qualification);assert.deepEqual(base,before);assert.equal(out.qualification.qualifiedCount,0);
+assert.strictEqual(out,base);assert.equal(out.candidates.some(c=>Object.hasOwn(c,'pendingChannelObservation')),false);assert.deepEqual(out.candidates[1],other);assert.deepEqual(out.candidates[0].qualification,target.qualification);assert.deepEqual(base,before);assert.equal(out.qualification.qualifiedCount,0);
 assert.deepEqual(m.applyPendingChannelObservation(base,Buffer.from('{}'),a),base);
 assert.deepEqual(m.applyPendingChannelObservation({...base,candidates:[{...target,sourceUrl:'https://foreign.example/'},other]},bytes,a).candidates,[{...target,sourceUrl:'https://foreign.example/'},other]);
 console.log('SYNTHETIC_PENDING_PROJECTION_AND_JOIN_PASS');

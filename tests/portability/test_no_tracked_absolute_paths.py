@@ -396,8 +396,8 @@ def current_audit_lines():
 
 def test_current_audit_exact_spans_preserve_every_other_byte():
     rows = current_audit_lines()
-    assert len(rows) == 50
-    assert sum(len(seal["fields"]) for seal, _ in rows) == 51
+    assert len(rows) == 51
+    assert sum(len(seal["fields"]) for seal, _ in rows) == 52
     duplicates = 0
     for seal, line in rows:
         masked = candidate_checker._mask_sealed_current_audit_spans(line, seal["line"])

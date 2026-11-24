@@ -1,3 +1,5 @@
+import {applyLocalOLBGCatalogue} from './olbg-retained-approved';
+import {OLBG_RETAINED_APPROVAL} from './olbg-retained-approval';
 import {applyReviewedOLBGPendingToCandidate} from './olbg-pending-candidate';
 import {OLBG_REVIEWED_APPROVAL} from './olbg-reviewed-pending-approval';
 import type {OLBGPendingObservation} from './olbg-pending-source';
@@ -123,9 +125,9 @@ export function readIndependentCatalogue(root:string):Catalogue{
  let pending=decorated;
  try{pending=applyNotBettingPlatformObservation(decorated,readBounded(resolve(root,'.ci/local-robin/notbetting-pending-source-records.json'),32768),readBounded(resolve(root,'.ci/local-robin/notbetting-pending-source-receipt.json'),65536));}catch{/* Preserve reviewed catalogue. */}
  if(OLBG_REVIEWED_APPROVAL!==null){
-  try{return applyReviewedOLBGPendingToCandidate(pending,readBounded(resolve(root,'.ci/local-robin/olbg-pending-profile-observations.json'),131072),readBounded(resolve(root,'.ci/local-robin/olbg-pending-profile-receipt.json'),65536),OLBG_REVIEWED_APPROVAL);}catch{/* Unapproved or unavailable OLBG snapshot never replaces existing facts. */}
+  try{pending=applyReviewedOLBGPendingToCandidate(pending,readBounded(resolve(root,'.ci/local-robin/olbg-pending-profile-observations.json'),131072),readBounded(resolve(root,'.ci/local-robin/olbg-pending-profile-receipt.json'),65536),OLBG_REVIEWED_APPROVAL);}catch{/* Unapproved or unavailable OLBG snapshot never replaces existing facts. */}
  }
- return pending;
+ return applyLocalOLBGCatalogue(pending,root,OLBG_RETAINED_APPROVAL);
 }
 
 export type InventoryRow=FactObject&{reviewedSourceObservation?:ReviewedSourceObservation;recordId:string;candidateId?:string;sheet:string;row:number;sourceUrl?:string|null;collectionEnabled:unknown;qualification?:FactObject;qualifiedRecordId?:string};

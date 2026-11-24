@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "robin-source-engineering-result-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.RETAINED.TS.PUBLIC.CODE.RESULT.20261124",
+  "missionId": "OLBG_RETAINED_TS_OVERLAY_PUBLIC_CODE_E1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Shared TypeScript catalogue/public-stock companion reader and merge logic; code-only disabled, no actual data or app activation.",
+  "codeSHA256": "11fbbf7b3492791a71eca3cb87873fecb6482a0a5c07f40212a6b025942e6f1d",
+  "files": {
+    "scripts/catalogue-independent.ts": "8ad864d992e5902b307f4d5afc2fd662195d8ab195081e75c8a1b6ddf24e8e57",
+    "scripts/olbg-retained-approval.ts": "d384d3271457788417469a14f9b028e7ce90ffb7c8b00c03f5264677c9700dc3",
+    "scripts/olbg-retained-approved.ts": "11fbbf7b3492791a71eca3cb87873fecb6482a0a5c07f40212a6b025942e6f1d",
+    "scripts/public-tipsters-plugin.ts": "aa5346c01125db57f2843f5b68d08ad0d70277373a3a60dda92a702edb399430",
+    "tests/olbg-retained-overlay.test.mjs": "be7e2140214e565d57ece45f735ca85d4ffbfd42cd790d290a221a082aa60fd4",
+    "tests/reviewed-source-observation.test.mjs": "ea2e63717b662587f326edf6cbd2effa5570ba5e36c7cdbc6b0a1c9c650f3759"
+  },
+  "checks": {
+    "app-tsc": 0,
+    "legacy": 0,
+    "lint": 0,
+    "synthetic": 0
+  },
+  "synthetic": {
+    "actualPayloadReads": 0,
+    "catalogueCalls": 3,
+    "publicCalls": 6,
+    "readerCalls": 19,
+    "sourceGET": 0,
+    "syntheticMethodsRun": 10
+  },
+  "actualResultSHA256": "5ea5e00b17ed70bd0c90b6386ffa1fd83ccced33c3cedf5b699aa250dec916ca",
+  "actualSTOP_SHA256": "28bc9bc2968f8c8ab67aa1168b8fad775c26e8e9c25fc842aa0def481fc9878d",
+  "descriptor": null,
+  "sourceGET": 0,
+  "actualPayloadReads": 0,
+  "runtimeWrites": 0,
+  "applicationAdmissions": 0,
+  "sourceReady": false,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "authorityClosed": true,
+  "stoppedAtUTC": "2026-11-24T18:23:59.096912+00:00"
+}

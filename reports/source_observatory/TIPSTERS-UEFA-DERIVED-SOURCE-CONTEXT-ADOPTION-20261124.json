@@ -1,0 +1,31 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.UEFA.DERIVED.SOURCE.CONTEXT.ADOPTION.20261124",
+  "missionId": "OLBG_CACHED_OPAQUE_NORMALIZATION_LOCAL_E1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Nine retained official UEFA programme rows accepted as source context for this private opaque normalization only. Preserve native home/away labels and explicit CET/+01 conversion; derive calendar identifiers from calendar SHA, home, away and UTC kickoff, and derive display labels from home - away. No native provider fixture identity, actual whistle, native event timezone, legal-person identity, application admission or performance claim.",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.UEFA.24NOV.PRIMARY.CALENDAR.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.OPAQUE.DIAGNOSTIC.QUALITY.R2.RESULT.20261124"
+  ],
+  "calendarSnapshotSHA256": "dc9181bf657f1b72d64c4ce143dc0daff611856aa7fa6a395fadc857fc8f9ee1",
+  "acceptedMappingSHA256": "c517ac0b34d266a8d33bf07593f6796e5e896f92ba5db1f05d5cc5c959d4921d",
+  "fixtureRows": 9,
+  "identityBasis": "DERIVED_PROGRAMME_ROW",
+  "displayLabelBasis": "DERIVED_HOME_SPACE_DASH_SPACE_AWAY",
+  "sourceObservedAtUTC": "2026-11-24T14:09:43.639793+00:00",
+  "calendarObservedAtUTC": "2026-11-24T14:41:31.976Z",
+  "calendarKnownAtEarlierCaptureNotClaimed": true,
+  "sourceRepresentation": "MANAGED_OFFICIAL_PAGE_TRANSCRIPTION_NOT_RAW_HTTP_BODY_SHA",
+  "nativeProviderFixtureIdMissingIsVeto": false,
+  "sourceContextNormalizationAllowed": true,
+  "applicationAdmissionAllowed": false,
+  "marketInterpretationAllowed": false,
+  "performanceEvaluationAllowed": false,
+  "settlementAllowed": false,
+  "sourceGET": 0
+}

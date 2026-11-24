@@ -1,0 +1,64 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.FICHE.ADMIN.PUBLICATION.ACTUAL.RESULT.20261124",
+  "missionId": "OLBG_PENDING_FICHE_ADMIN_PUBLICATION_GIT_R3_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Actual exact 51-file publication to the existing public draft PR133 only. Local 17 OLBG observations remain unqualified; no source activation or admission. CI275 queued at remote verification, not yet accepted.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.FICHE.ADMIN.PUBLICATION.GIT.E1.20261124",
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V40.ENGINEERING.RECETTE.20261124"
+  ],
+  "commitSHA": "90914fba8733f8c9980f034a99d7a34172f4a3d7",
+  "treeSHA": "81a89b1d8a0de7448e9d1a0002b1e2443d4c677b",
+  "parentSHA": "7b53b3b7f35ecb4e050c39cfd0ec0b8866f4a783",
+  "PR": 133,
+  "remoteBranch": "codex/robin-dossier-fidele",
+  "actualEffects": {
+    "stage": 1,
+    "commit": 1,
+    "nonForcePush": 1,
+    "sourceGET": 0,
+    "runtimeWrites": 0,
+    "PRMetadataUpdates": 0,
+    "merge": 0,
+    "admissions": 0
+  },
+  "receipts": {
+    "commitSHA256": "e317995616c54e1183a40e598864135ce25ac038a735e05b0fbe968ea6b84a1d",
+    "pushSHA256": "273c4e8e92b92b0274aa9207864d5e9e7220aefc3eb47a72320f6863f0311ee4",
+    "producerStopSHA256": "3c5a0306998468af55196f13e292fc7d258727f00d246df1aae21779586fd490",
+    "actualIndexReportSHA256": "f47c87f879b1e9b78bc5a19d3c189b62ea002d470398472fd31ffcdc17e6d6e2"
+  },
+  "timing": {
+    "pushReservedAt": "2026-11-24T16:45:00.189139+00:00",
+    "producerStoppedAt": "2026-11-24T16:45:06.394519+00:00",
+    "effectiveDeadline": "2026-11-24T16:47:33.580596+00:00",
+    "withinOriginalWindow": true
+  },
+  "knownStyleFinding": {
+    "cachedCheckExit": 2,
+    "severity": "P3_STYLE_ONLY",
+    "count": 1,
+    "acceptedBy": [
+      "C0",
+      "C1",
+      "C4"
+    ],
+    "description": "One trailing ASCII space after closed JSX; no source or functional behavior change. Original failed check retained."
+  },
+  "CI": {
+    "runId": 45440733790,
+    "runNumber": 275,
+    "stateAtInitialVerification": "QUEUED",
+    "conclusion": null,
+    "headSHA": "90914fba8733f8c9980f034a99d7a34172f4a3d7"
+  },
+  "sourceReady": false,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "authorityClosed": true
+}

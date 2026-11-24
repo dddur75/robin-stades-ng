@@ -14,7 +14,13 @@ const olbgCandidateSource=readFileSync(new URL('../scripts/olbg-pending-candidat
 const olbgCandidateURL='data:text/javascript;base64,'+Buffer.from(stripTypeScriptTypes(olbgCandidateSource)
   .replace("from './olbg-pending-source'","from '"+olbgPendingURL+"'")
   .replace("from './olbg-reviewed-pending-approval'","from '"+olbgApprovalURL+"'")).toString('base64');
+const retainedSource=readFileSync(new URL('../scripts/olbg-retained-approved.ts',import.meta.url),'utf8');
+const retainedURL='data:text/javascript;base64,'+Buffer.from(stripTypeScriptTypes(retainedSource)).toString('base64');
+const retainedApprovalSource=readFileSync(new URL('../scripts/olbg-retained-approval.ts',import.meta.url),'utf8');
+const retainedApprovalURL='data:text/javascript;base64,'+Buffer.from(stripTypeScriptTypes(retainedApprovalSource)).toString('base64');
 const resolvedSource=stripTypeScriptTypes(source)
+  .replace("from './olbg-retained-approved'","from '"+retainedURL+"'")
+  .replace("from './olbg-retained-approval'","from '"+retainedApprovalURL+"'")
   .replace("from './telegram-pending-channel'","from '"+pendingURL+"'")
   .replace("from './notbetting-pending-source'","from '"+notBettingURL+"'")
   .replace("from './olbg-pending-source'","from '"+olbgPendingURL+"'")

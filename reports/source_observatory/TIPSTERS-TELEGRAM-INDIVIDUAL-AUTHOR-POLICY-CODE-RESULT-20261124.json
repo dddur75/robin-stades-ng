@@ -1,0 +1,35 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.INDIVIDUAL.AUTHOR.POLICY.CODE.RESULT.20261124",
+  "missionId": "TELEGRAM_INDIVIDUAL_AUTHOR_POLICY_E1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Explicit user criterion: an individual Telegram author is mandatory. A valid channel-only observation remains decodable as audit evidence but is not newly attached to any tipster fiche. This code result does not purge pre-enriched objects or runtime caches; local adoption remains separate.",
+  "userCriterion": {
+    "individualAuthorMandatory": true,
+    "anonymousChannelAttributionRejected": true,
+    "individualAuthorInvented": false
+  },
+  "checks": {
+    "redExitExpected": 1,
+    "greenExit": 0,
+    "nodeTestEntriesPassed": 1,
+    "lintExit": 0,
+    "strictAppTypecheckExit": 0,
+    "sourceGET": 0,
+    "actualPayloadReads": 0,
+    "runtimeWrites": 0,
+    "GitWrites": 0
+  },
+  "codeSHA256": "348aea21b297062cfe3eb61460ff0a15c9991fdd574db1dc10493a2c0fe2da25",
+  "testSHA256": "3b5186b9083ab3ab0bdada1f88df148fcd097ba8c574a123631cb7434545efb2",
+  "actualResultSHA256": "bc72d89ded318d490ddc458c7f93cacbc88dd1ec1290d2323e89106672df482d",
+  "actualProducerStopSHA256": "572518bc588c395449a3ad2425d0c4ce17fe873b9ea1607e55f16debd2c52853",
+  "producerStoppedAt": "2026-11-24T16:58:52.744155+00:00",
+  "sourceReady": false,
+  "admissions": 0,
+  "allCompatibleIntegrated": false
+}

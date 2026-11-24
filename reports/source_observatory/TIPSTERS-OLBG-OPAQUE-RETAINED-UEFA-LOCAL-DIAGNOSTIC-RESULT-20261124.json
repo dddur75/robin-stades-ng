@@ -1,0 +1,68 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.OPAQUE.RETAINED.UEFA.LOCAL.DIAGNOSTIC.RESULT.20261124",
+  "missionId": "OLBG_OPAQUE17X9_LOCAL_E1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Independently verified closed diagnostic counters only: seventeen retained source observations compared with nine documentary UEFA rows. Three pass the exact opaque predicate prefix; fourteen have no exact oriented pair in this local view. No source activation, personal prediction admission, market interpretation or performance claim. Original raw caller stdout unavailable; final return is a C3 retained structured callback attestation, not independently retained raw stream.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.OPAQUE.DIAGNOSTIC.QUALITY.R2.RESULT.20261124",
+    "DATA.SOURCE_OBSERVATORY.OLBG.PENDING.REAL.NATIVE.RESULT.20261124",
+    "DATA.SOURCE_OBSERVATORY.UEFA.24NOV.PRIMARY.CALENDAR.20261124"
+  ],
+  "diagnostic": {
+    "actualWhistleProven": false,
+    "admissions": 0,
+    "calendarIdentityBasis": "DERIVED_PROGRAMME_ROW",
+    "canonicalDerivedIdentityAvailable": true,
+    "canonicalNativeIdentityMissing": true,
+    "firstStopCounts": {
+      "EVENT_NOT_SPLITTABLE": 0,
+      "INTERNAL_UNPROVEN": 0,
+      "NATIVE_DATE_PARSE_UNPROVEN": 0,
+      "NATIVE_DAY_MISMATCH": 0,
+      "NATIVE_FIELDS_PROVENANCE_UNPROVEN": 0,
+      "OBSERVATION_NOT_BEFORE_SCHEDULE": 0,
+      "OPAQUE_PREDICATES_PASS": 3,
+      "PAIR_MULTIPLE": 0,
+      "PAIR_ZERO": 14,
+      "REQUIRED_NATIVE_FIELDS_MISSING": 0,
+      "SOURCE_ACCOUNT_UNPROVEN": 0
+    },
+    "fixtureRows": 9,
+    "globalCoverage": "UNKNOWN",
+    "interpretationAllowed": false,
+    "nativeDateTimezone": null,
+    "nativeFixtureIDMissingIsVeto": false,
+    "pairComparisonsUpperBound": 153,
+    "performanceEvaluationAllowed": false,
+    "personCivilIdentityRequired": false,
+    "personIdentityCertified": false,
+    "preMatchAdmission": false,
+    "recordOccurrences": 17,
+    "schemaVersion": "olbg-opaque-cached-predicate-counts-v1",
+    "settlementAllowed": false,
+    "sourceReady": false
+  },
+  "actualDataReads": 2,
+  "diagnoseCalls": 1,
+  "elapsedProducerSeconds": 0.969,
+  "actualResultSHA256": "4d8ea7dde7794ae2acbfe9e78eb63ec1005018ca4b2e5cf3d562fbc7c083c354",
+  "actualProducerStopSHA256": "f1977dff407fa0a4b40722ceaaf3e5465801b8700d22eb0eb556b59922c79979",
+  "retainedCallbackAttestationSHA256": "a4bcd93cb2610ba9871cf5fa044eefc6aea5b0bde27c8235bebc5457085ef107",
+  "controlReceipt": {
+    "rawStdoutRetained": false,
+    "rawStdoutReconstructed": false,
+    "finalReturnAttribution": "C3_ORIGINAL_RETAINED_STRUCTURED_CALLBACK_ATTESTATION",
+    "independentRawFinalReturnVerified": false
+  },
+  "sourceGET": 0,
+  "admissions": 0,
+  "sourceReady": false,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "authorityClosed": true
+}

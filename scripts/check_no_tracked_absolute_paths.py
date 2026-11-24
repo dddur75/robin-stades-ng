@@ -1112,6 +1112,21 @@ SEALED_CURRENT_AUDIT_SPANS = [
                 "value_sha256": "3eb729adf3c7387c33104cf3043ddaae4868a19136681c9c0d2016465b5f0849"
             }
         ]
+    },
+    {
+        "line": 2574,
+        "line_sha256": "0e10775980e99afc3dde7cc62738dc1e85d62c79e31ea2327713b61d7bc24bb7",
+        "record_sha256": "c9565d349886f7a101d7db41dd5ca0cfef33da53682f75e4542046e5c328acca",
+        "decision_id": "RCV3-20261124-C0-OLBG-THREE-TELEGRAM-LOCAL-E1-AUTH",
+        "fields": [
+            {
+                "path": [
+                    "context",
+                    "controllerWorktree"
+                ],
+                "value_sha256": "3eb729adf3c7387c33104cf3043ddaae4868a19136681c9c0d2016465b5f0849"
+            }
+        ]
     }
 ]
 

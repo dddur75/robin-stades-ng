@@ -1,3 +1,5 @@
+import {applyLocalOLBGPublic} from './olbg-retained-approved';
+import {OLBG_RETAINED_APPROVAL} from './olbg-retained-approval';
 import type {Plugin} from 'vite';
 import type {IncomingMessage,ServerResponse} from 'node:http';
 import {permitsLocalPilotRead} from './tipsters-pilot-plugin';
@@ -25,7 +27,8 @@ export function publicTipsters(approval:SnapshotApproval=REVIEWED_PUBLIC_SNAPSHO
   response.setHeader('X-Content-Type-Options','nosniff');
   if(!permitsLocalPilotRead(request)){response.statusCode=403;response.end(JSON.stringify({status:'forbidden',message:'Accès local A9_Mega requis.'}));return;}
   try{
-   const facts=readReviewedPublicSnapshot(root,approval);
+   const base=readReviewedPublicSnapshot(root,approval);
+   const facts=applyLocalOLBGPublic(base,root,OLBG_RETAINED_APPROVAL,approval.sha256);
    response.end(JSON.stringify(facts));
   }catch{
    response.statusCode=503;

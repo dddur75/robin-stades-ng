@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "robin-source-application-result-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.THREE.LOCAL.APP.ADMISSION.20261124",
+  "missionId": "OLBG_THREE_AND_TELEGRAM_LOCAL_E1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Exactly three cached individual source-account choices admitted to local catalogue and public stock, with six API readbacks. Local UI recette remains PARTIAL; recurrence/source readiness/global coverage not established.",
+  "codeSHA256": "11fbbf7b3492791a71eca3cb87873fecb6482a0a5c07f40212a6b025942e6f1d",
+  "controllerStatus": "PARTIAL",
+  "APIApplicationAdmissionVerified": true,
+  "newChoices": 3,
+  "newFixtures": 3,
+  "stockChoices": 483,
+  "sourceAuthors": 80,
+  "fixtures": 23,
+  "historical480FactsCanonicalEqual": true,
+  "historicalFixtureFactsCanonicalEqual": true,
+  "catalogueRows": 317,
+  "pendingView": 14,
+  "telegramChannelAttachments": 0,
+  "notBettingPending": 1,
+  "adminRows": 40,
+  "historical39AdminRowsCanonicalEqual": true,
+  "lotOutcome": "qualified",
+  "metadata": {
+    "allCompatibleIntegrated": false,
+    "catalogueRows": 317,
+    "choiceValuesLogged": false,
+    "compatibleDenominator": null,
+    "historical480Preserved": true,
+    "historicalFixturesPreserved": true,
+    "http": [
+      {
+        "bytes": 1677126,
+        "http": 200,
+        "kind": "CANDIDATES"
+      },
+      {
+        "bytes": 618423,
+        "http": 200,
+        "kind": "PUBLIC"
+      },
+      {
+        "bytes": 5305,
+        "http": 200,
+        "kind": "PILOT"
+      },
+      {
+        "bytes": 260113,
+        "http": 200,
+        "kind": "CONNECTORS"
+      },
+      {
+        "bytes": 2539,
+        "http": 200,
+        "kind": "RECURRING"
+      }
+    ],
+    "loopbackGET": 5,
+    "notBettingPending": 1,
+    "pendingView": 14,
+    "recurrence": false,
+    "retainedChoices": 3,
+    "retainedFixtures": 3,
+    "sourceGET": 0,
+    "sourceReady": false,
+    "status": "LOCAL_METADATA_PASS",
+    "stockAuthors": 80,
+    "stockChoices": 483,
+    "stockFixtures": 23,
+    "stockNewChoices": 3,
+    "stockNewFixtures": 3,
+    "telegramAttachments": 0
+  },
+  "admin": {
+    "admitted": 3,
+    "historical39QualificationRowsPreserved": true,
+    "http": 200,
+    "loopbackGET": 1,
+    "lotOutcome": "qualified",
+    "qualificationRows": 40,
+    "sourceGET": 0,
+    "status": "LOCAL_ADMIN_PASS"
+  },
+  "UIStatus": "PARTIAL",
+  "UIFailureStep": "EXACT_FICHE",
+  "UIFailureCause": "NOT_PROVEN_NESTED_ARTICLE_SELECTOR_HYPOTHESIS",
+  "sourceGET": 0,
+  "sourceGETBasis": "Controller and loopback routing; native outer sourceGET null is not an independent zero counter.",
+  "recurrence": false,
+  "sourceReady": false,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "rawResultSHA256": "d4785041f5d2a1f3a1b9d09c572162f1f2d73deac717590be5028a71c8f4cffd",
+  "rawSTOP_SHA256": "d90d885b533f8944dcdfe0c63e4e48bb60bb233b3cc59c388aac92bc9e392fea",
+  "runtimeDescriptorSHA256": "b07786970acbfe6c72e664ff5639e67e1739c2009b266cab4c719cbc369e78d1",
+  "normalizationEnvelopeSHA256": "5829368df2d2a1d569047e6ade3bd31254dea2b8bd953c0b42043a2c4fb72a05",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.THREE.UEFA.SCHEDULED.PREMATCH.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.RETAINED.TS.PUBLIC.CODE.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.INDIVIDUAL.AUTHOR.POLICY.CODE.RESULT.20261124"
+  ],
+  "authorityClosed": true,
+  "closedAtUTC": "2026-11-24T18:33:14.615748+00:00"
+}
