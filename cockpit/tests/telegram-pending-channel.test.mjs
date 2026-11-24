@@ -1,0 +1,25 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import {stripTypeScriptTypes} from 'node:module';
+const source=readFileSync(new URL('../scripts/telegram-pending-channel.ts',import.meta.url),'utf8');
+const m=await import('data:text/javascript;base64,'+Buffer.from(stripTypeScriptTypes(source)).toString('base64'));
+const digest=x=>createHash('sha256').update(x).digest('hex');
+const observed='2026-11-23T21:58:18.320357+00:00',channel='bextra_pronostics_foot';
+const fields=m.CONTRIBUTION_KEYS;
+const contribution=Object.fromEntries(fields.map(k=>[k,null]));
+Object.assign(contribution,{source_id:'telegram:channel:'+channel,publication_url:'https://t.me/'+channel+'/1',text_sha256:'a'.repeat(64),langue:'fr',marche:'1N2',selection:'SYNTHETIC_SELECTION',ligne:null,cote_declaree:'1.80',cote_declaree_provenance:'SYNTHETIC_EXPLICIT_TEXT',statut:'resolu',extraits_preuve:[{text_sha256:'a'.repeat(64),start:0,end:10,text:null}],contribution_id:'extraction:'+'b'.repeat(64),version_id:'telegram-observation:'+'c'.repeat(64),author_id:'telegram-channel:'+channel,publication_id:channel+'/1',liens_reprise:[],certitude_rapprochement:'non_resolue',periode:'non_precisee',categorie:'selection_avec_cote',selection_key:'selection-1',cote_declaree_at:{utc:observed,origin_timezone:'UTC',origin_offset_seconds:0},observed_at:{utc:observed,origin_timezone:'UTC',origin_offset_seconds:0}});
+const row={status:'UNQUALIFIED_CHANNEL_SELECTION',attribution:'CHANNEL',personIdentityVerified:false,preMatchProven:false,fixture:null,publicationDeclaredAtUTC:'2026-11-20T10:00:00+00:00',sourceReady:false,admissions:0,contribution};
+const value={schemaVersion:'telegram-private-channel-candidates-v1',status:'UNQUALIFIED_CHANNEL_SELECTION',sourceReady:false,admissions:0,personIdentityVerified:false,preMatchProven:false,candidates:[row]};
+const raw=x=>Buffer.from(JSON.stringify(x)),approve=b=>({sha256:digest(b),bytes:b.length,count:1,sourceObservedAtUTC:observed});
+const bytes=raw(value),a=approve(bytes),got=m.projectPendingChannelObservation(bytes,a);
+assert.equal(got.choices.length,1);assert.equal(got.choices[0].selection,'SYNTHETIC_SELECTION');assert.equal(got.choices[0].publicationDeclaredAtUTC,row.publicationDeclaredAtUTC);assert.equal(got.observedAtUTC,observed);assert.equal(got.canonicalFixture,null);assert.equal(got.admissions,0);assert.equal(got.personIdentityVerified,false);
+assert.throws(()=>m.projectPendingChannelObservation(bytes,{...a,sha256:'0'.repeat(64)}));
+for(const kind of ['gate','person','match','foreign','unsafe','provenance','status_type']){const v=structuredClone(value);if(kind==='provenance')v.candidates[0].contribution.cote_declaree_provenance=null;if(kind==='status_type')v.candidates[0].contribution.statut=['resolu'];if(kind==='gate')v.sourceReady=true;if(kind==='person')v.candidates[0].personIdentityVerified=true;if(kind==='match')v.candidates[0].contribution.match_id='UNAUTHORIZED';if(kind==='foreign')v.candidates[0].contribution.author_id='person:foreign';if(kind==='unsafe')v.candidates[0].contribution.publication_url='javascript:UNSAFE';const b=raw(v);assert.throws(()=>m.projectPendingChannelObservation(b,approve(b)),kind);}
+const target={id:m.IDENTITY.candidateId,sourceUrl:m.IDENTITY.sourceUrl,origin:{sheet:'Catalogue',row:309,workbookSha256:m.IDENTITY.workbookSHA},qualification:{picks:[],label:'Historical'},collectionEnabled:null};
+const other={...target,id:'betsoccer',reviewedSourceObservation:{messageCount:10},sourceUrl:'https://t.me/s/betsoccer'};
+const base={receipt:{registrySha256:m.IDENTITY.registrySHA,sourceWorkbookSha256:m.IDENTITY.workbookSHA},candidates:[target,other],qualification:{qualifiedCount:0}};const before=structuredClone(base),out=m.applyPendingChannelObservation(base,bytes,a);
+assert.equal(out.candidates[0].pendingChannelObservation.choices.length,1);assert.deepEqual(out.candidates[1],other);assert.deepEqual(out.candidates[0].qualification,target.qualification);assert.deepEqual(base,before);assert.equal(out.qualification.qualifiedCount,0);
+assert.deepEqual(m.applyPendingChannelObservation(base,Buffer.from('{}'),a),base);
+assert.deepEqual(m.applyPendingChannelObservation({...base,candidates:[{...target,sourceUrl:'https://foreign.example/'},other]},bytes,a).candidates,[{...target,sourceUrl:'https://foreign.example/'},other]);
+console.log('SYNTHETIC_PENDING_PROJECTION_AND_JOIN_PASS');

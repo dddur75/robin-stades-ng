@@ -1,0 +1,72 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.PENDING.APP.PUBLIC.INTEGRATION.E1.RESULT.20261124",
+  "missionId": "TELEGRAM_PENDING_APP_CORRECTIVE_LOCAL_R1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Exact reviewed public app integration prepares a separate unqualified CHANNEL selection panel on the existing Bextra fiche and existing candidates API. Consumed odds provenance and status types are checked; historical qualifications and BetSoccer observations are preserved. Targeted synthetic tests, semantic app typing and lint pass. Runtime/data ingestion/browser are not yet verified.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.CHANNEL.CANDIDATES.LOCAL.E1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.CLAUSE.CONTEXT.LOCAL.E1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.SOURCE.FOLLOWUP.METADATA.APP.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.SOURCE.FOLLOWUP.UI.READONLY.R2.E1.RESULT.20261123"
+  ],
+  "files": {
+    "cockpit/scripts/telegram-pending-channel.ts": {
+      "SHA256": "051412ac92d84b6c709f2fe1117c05c4101b349b6006faf904515560a7dafea6",
+      "bytes": 9099
+    },
+    "cockpit/scripts/catalogue-independent.ts": {
+      "SHA256": "50db4cd6eeab24b69308f67d7e35c21e8c4b5d199359666a61dc8c275cd1295e",
+      "bytes": 16592
+    },
+    "cockpit/app/components/expert/tipster-candidates.tsx": {
+      "SHA256": "e61ca1b831af3e785ef1177be8d17677d323c6d46c4d242a7bfde42bd89416c6",
+      "bytes": 14365
+    },
+    "cockpit/tests/telegram-pending-channel.test.mjs": {
+      "SHA256": "c8a8a2e8c03bdd9f3cb34c47e8c639c68fd916339953cf2ed6d05e1cd7d7de75",
+      "bytes": 4434
+    },
+    "cockpit/tests/reviewed-source-observation.test.mjs": {
+      "SHA256": "cbc63a37dbc03dbbcf4f0f4bf7f2f35ce66759f5b0c4287064105db6c6ecf810",
+      "bytes": 3140
+    }
+  },
+  "quality": {
+    "threeTargetedFilesGreen": true,
+    "goldenRegistryRows": 2,
+    "goldenInventoryRows": 3,
+    "semanticAppTypes": "PASS",
+    "targetedLint": "PASS",
+    "producerStoppedAt": "2026-11-23T23:56:48.998Z",
+    "correctiveTargetedProcesses": 4,
+    "priorIntegrationTestRootAndWorkers": 4,
+    "priorQualityProcesses": 2
+  },
+  "corrections": {
+    "privateInvalidOddsProvenanceFixturePreserved": true,
+    "fixtureNowValid": true,
+    "statusArrayRejected": true,
+    "consumedOddsNullCorrelationsChecked": true,
+    "dataURLHarnessResolvesActualDependency": true,
+    "testSideEffectRemoved": true,
+    "explicitReceiptTypeOnly": true
+  },
+  "limitations": {
+    "fullJSONSchemaGuarantee": false,
+    "independentMicrosecondOrdering": false,
+    "realCandidateReads": 0,
+    "runtimeWrites": 0,
+    "browserRecette": false,
+    "sourceGET": 0,
+    "newAdmittedForecasts": 0,
+    "allCompatibleIntegrated": false,
+    "compatibleDenominator": null,
+    "overall": "PARTIAL"
+  },
+  "E2Disposition": "NOT_CONSUMED; separate LOCAL preflight and fresh keys required"
+}

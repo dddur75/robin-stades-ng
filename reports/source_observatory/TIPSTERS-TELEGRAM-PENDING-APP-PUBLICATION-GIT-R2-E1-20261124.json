@@ -1,0 +1,74 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.PENDING.APP.PUBLICATION.GIT.R2.E1.20261124",
+  "missionId": "TELEGRAM_PENDING_APP_PUBLICATION_GIT_R2_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Corrected metadata-only publication preparation for existing PR133: exact13 allowlisted paths, five unchanged reviewed app files, V32 owning projection current and old rejected binding retained. No Git E2, actual tree or PR write authority is inferred from this E1 result.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V32.ENGINEERING.RECETTE.20261124",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PENDING.APP.LOCAL.TARGETED.RECETTE.20261124",
+    "ENG.SOURCE_OBSERVATORY.PUBLICATION.CI268.EXACT.HEAD.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PENDING.APP.PUBLIC.INTEGRATION.E1.RESULT.20261124"
+  ],
+  "planSHA": "acd38117cb45da75c03fddeabf581ee2ccad09c1ec478dfbb869ead002415338",
+  "manifestSHA": "79d1b8fb2d67200869627a125c1ad99b9bc44e8e4128f5a8ee64b337511c2629",
+  "controllerSHA": "0cfeba9fbe856685c3b64403ed619a9e1d18397beaefd91bf4ccdff76145c34f",
+  "baseHEAD": "d0fa199ae71dfb218fc94155088878c3b6c3ebda",
+  "branch": "codex/robin-bounded-delivery-public-r1",
+  "PR": 133,
+  "files": [
+    "cockpit/app/components/expert/tipster-candidates.tsx",
+    "cockpit/scripts/catalogue-independent.ts",
+    "cockpit/scripts/telegram-pending-channel.ts",
+    "cockpit/tests/reviewed-source-observation.test.mjs",
+    "cockpit/tests/telegram-pending-channel.test.mjs",
+    "reports/council/decision-ledger.jsonl",
+    "reports/evidence/evidence-graph.json",
+    "reports/source_observatory/TIPSTERS-LOCAL-FOLLOWUP-V32-ENGINEERING-RECETTE-20261124.json",
+    "reports/source_observatory/TIPSTERS-PUBLICATION-CI268-EXACT-HEAD-RESULT-20261124.json",
+    "reports/source_observatory/TIPSTERS-TELEGRAM-PENDING-APP-LOCAL-TARGETED-RECETTE-20261124.json",
+    "reports/source_observatory/TIPSTERS-TELEGRAM-PENDING-APP-PUBLIC-INTEGRATION-E1-RESULT-20261124.json",
+    "reports/source_observatory/TIPSTERS-TELEGRAM-PENDING-APP-PUBLICATION-GIT-E1-20261124.json",
+    "reports/source_observatory/TIPSTERS-TELEGRAM-PENDING-APP-PUBLICATION-GIT-R2-E1-20261124.json"
+  ],
+  "allowlistPathCount": 13,
+  "narrativeErratum": {
+    "oldStepTextSays": 11,
+    "structuredControllerAndFinalBindingRequire": 13,
+    "immutablePlanNotRewritten": true
+  },
+  "preflight": {
+    "presentBeforeBinding": 12,
+    "plannedAfterBinding": 13,
+    "activeOwningProjections": 17,
+    "changedOwningPinsCurrent": true,
+    "newClaims": 5,
+    "ledgerTailRecords": 26,
+    "oldLedgerPrefixUnchanged": true,
+    "oldClaimsUnchanged": true,
+    "portableViolations": 0,
+    "newFunctionalTestReplay": 0
+  },
+  "owningProjection": {
+    "claimId": "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V32.ENGINEERING.RECETTE.20261124",
+    "projectionSHA": "8068e486874adbc325aba97c761e522dcaf95add8c6a1edf0bbc1cb3d725a9e3",
+    "paths": 390,
+    "guardGreenPrimarySHA": "37dd8338123932d50de72e10b87b2a3e779a853fcf20e191ab8c32b716ef1b40"
+  },
+  "bodyTemplateSHA": "865b423733326b525812fd85210d335466189263c5442fc0a69656225e466e91",
+  "limits": {
+    "producerLOCALStatus": "PARTIAL_FAIL_AND_STOP_PRESERVED",
+    "oldPublicationR1": "E2_REFUSED_ZERO_EFFECT_PRESERVED",
+    "sourceGET": 0,
+    "runtimeWrites": 0,
+    "privatePayloadPublication": false,
+    "admissions": 0,
+    "allCompatibleIntegrated": false,
+    "compatibleDenominator": null,
+    "overall": "PARTIAL"
+  }
+}

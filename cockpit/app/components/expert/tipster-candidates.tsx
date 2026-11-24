@@ -1,6 +1,7 @@
 "use client";
 import {ReviewedSourceObservationPanel} from './reviewed-source-observation';
 import type {ReviewedSourceObservation} from '../../../scripts/catalogue-independent';
+import type {PendingChannelObservation} from '../../../scripts/telegram-pending-channel';
 import Link from "next/link";
 import {useEffect,useState} from "react";
 import {InlineLink,SectionHeading} from "../common/ui";
@@ -10,7 +11,7 @@ import {choiceHeading,OpaqueChoiceDetails,type SourceChoice} from './source-choi
 type Access={platform:string;label:string;reason:string;requiredAccess:string;ownerAction:string;url:string;scope:string};
 type Unadmitted={fixtureLabel:string;selection:string;marketLabel:string;sourceEventText:string;observedAt:string;sourceUrl:string;reason:string};
 type Qualification=Access&{profileVisited:boolean;documentaryIssues:string[];personallyProven:boolean;observedAt?:string;unadmittedFacts?:Unadmitted[];expansionClaimId?:string;picks:(SourceChoice&{id:string;fixtureLabel:string;selection:string;market?:string;observedAt:string;kickoff:string;sourceUrl:string})[]};
-type Candidate={reviewedSourceObservation?:ReviewedSourceObservation;id:string;label:string;platform:string;sourceUrl:string;evidenceUrl:string;declaredLastDate:string|null;
+type Candidate={pendingChannelObservation?:PendingChannelObservation;reviewedSourceObservation?:ReviewedSourceObservation;id:string;label:string;platform:string;sourceUrl:string;evidenceUrl:string;declaredLastDate:string|null;
  status:'pending_qualification';collectionEnabled:boolean|null;qualification?:Qualification;origin:{sheet:string;row:number;workbookSha256:string}};
 type Registry={historicalEvidence?:{sourceObservedAt?:string|null};operationalState?:'unknown';status:string;schemaVersion:string;count:number;platformCount:number;datedCount:number;enabledCount?:number|null;candidates:Candidate[];receipt:{registrySha256:string;claimId:string};qualification?:{status:string;claimId?:string;technicalClaimId?:string;technicalClaimIds?:string[];followupOverlayState?:string;expansionState?:string;expansionClaimId?:string;personalOverlayState?:string;personalCollectionState?:string;personalClaimId?:string;compatibleAccessState?:string;compatibleClaimId?:string;rosterCollectionState?:string;rosterRecurringState?:string;familyCollectionState?:string;familyNativeWinState?:string;familyOpaqueState?:string;familyClaimId?:string;assessedCount?:number;qualifiedCount?:number;platforms?:Access[]}};
 export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;tipsterId?:string}){
@@ -51,6 +52,7 @@ export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;ti
      <p>Dernière date déclarée dans l’inventaire : {selected.declaredLastDate??'Non renseignée'}. Elle ne certifie pas une publication avant match.</p>
      <p>Provenance : Catalogue, ligne {selected.origin.row}. Classement historique A, Ligue 1.</p>
      {selected.reviewedSourceObservation&&<ReviewedSourceObservationPanel observation={selected.reviewedSourceObservation}/>}
+     {selected.pendingChannelObservation&&<PendingChannelPanel observation={selected.pendingChannelObservation}/>}
      {selected.qualification?<>
       <details open={!selected.reviewedSourceObservation}><summary>Évaluation historique conservée</summary>
       <p>Qualification historique : {selected.qualification.observedAt?formatDateTime(selected.qualification.observedAt,true):'date non renseignée'}. État actuel non vérifié.</p>
@@ -82,5 +84,17 @@ export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;ti
    </>}
    <details><summary>Preuve de l’import documentaire</summary><p>{data.receipt.claimId}</p><code style={{overflowWrap:'anywhere'}}>{data.receipt.registrySha256}</code></details>
   </>}
+ </section>;
+}
+
+function PendingChannelPanel({observation:o}:{observation:PendingChannelObservation}){
+ return <section aria-label="Sélections du canal à qualifier"><h3>{o.choices.length} sélections du canal à qualifier</h3>
+  <p>Sélections publiées par le canal. L’identité personnelle et le match restent à vérifier. Aucun pronostic validé ; collecte récurrente inactive.</p>
+  <p>Collecté le {formatDateTime(o.observedAtUTC,true)}. Couverture globale inconnue.</p>
+  {o.choices.map(choice=><article className="section-card" key={choice.key}><h4>{choice.selection}</h4>
+   <p>Marché extrait : {choice.market}{choice.line!==null?' · ligne '+choice.line:''}. Cote déclarée : {choice.declaredOdds??'Non renseignée'}.</p>
+   <p>Publication déclarée : {formatDateTime(choice.publicationDeclaredAtUTC,true)}. Cette date n’est pas un coup d’envoi.</p>
+   <a className="inline-link" href={choice.sourceUrl} target="_blank" rel="noopener noreferrer">Consulter la publication source</a>
+  </article>)}<details><summary>Traçabilité de la collecte</summary>{o.claimIds.map(id=><p key={id} style={{overflowWrap:'anywhere'}}>{id}</p>)}</details><p>La publication avant le début du match et l’évaluation des performances ne sont pas établies.</p>
  </section>;
 }
