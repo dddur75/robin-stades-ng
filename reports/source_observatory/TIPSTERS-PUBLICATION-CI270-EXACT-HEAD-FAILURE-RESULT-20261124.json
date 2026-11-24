@@ -1,0 +1,167 @@
+{
+  "missionId": "CI270_EXACT_HEAD_RESULT_20261124",
+  "commitSHA": "c2ee4b2ba39deb1a7c40df68ffecbc87ff89b6c8",
+  "runId": 45344413159,
+  "runNumber": 270,
+  "status": "PARTIAL",
+  "conclusion": "failure",
+  "counts": {
+    "success": 12,
+    "failure": 4,
+    "skipped": 1
+  },
+  "jobs": [
+    {
+      "id": 138275418386,
+      "name": "Residual Fault Matrix",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 138275418693,
+      "name": "Historical Deep — contrat cache-only",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 138275418773,
+      "name": "Chronos PostgreSQL profiles / tests (non_superuser_createrole)",
+      "status": "completed",
+      "conclusion": "failure",
+      "failedSteps": [
+        "Run python -m bandit -q -r src/robin scripts/chronos_production_bootstrap_v3.py scripts/run_chronos_dual_principal_ci_v2.py scripts/check_chronos_github_hold_v3.py scripts/github_release_attestation_v1.py scripts/install_chronos_runtime_bindings_v1.py scripts/seal_chronos_controlled_go_v1.py scripts/run_chronos_provider_free_canary_v3.py scripts/run_data_torrent_v1.py migrations/versions/0015_data_torrent_opportunity.py scripts/chronos_neon_pure_readonly_preflight_v4.py"
+      ]
+    },
+    {
+      "id": 138275418789,
+      "name": "Exact Workflow Entrypoint",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 138275418802,
+      "name": "Chronos PostgreSQL profiles / tests (superuser)",
+      "status": "completed",
+      "conclusion": "failure",
+      "failedSteps": [
+        "Run python -m bandit -q -r src/robin scripts/chronos_production_bootstrap_v3.py scripts/run_chronos_dual_principal_ci_v2.py scripts/check_chronos_github_hold_v3.py scripts/github_release_attestation_v1.py scripts/install_chronos_runtime_bindings_v1.py scripts/seal_chronos_controlled_go_v1.py scripts/run_chronos_provider_free_canary_v3.py scripts/run_data_torrent_v1.py migrations/versions/0015_data_torrent_opportunity.py scripts/chronos_neon_pure_readonly_preflight_v4.py"
+      ]
+    },
+    {
+      "id": 138275418909,
+      "name": "Bounded live canary - Ubuntu",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 138275418946,
+      "name": "Historical Authority Workflows Disabled",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 138275418954,
+      "name": "End-to-End Live Path Replay",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 138275418986,
+      "name": "Bounded live canary - Windows",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 138275419053,
+      "name": "Jalon 10 - entrees de preuve gelees",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 138275419182,
+      "name": "Chronos PostgreSQL profiles / Chronos static contracts",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 138275419263,
+      "name": "Chronos PostgreSQL profiles / Chronos source and activation",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 138276493204,
+      "name": "Chronos PostgreSQL profiles / Chronos provider-free Cockpit",
+      "status": "completed",
+      "conclusion": "skipped",
+      "failedSteps": []
+    },
+    {
+      "id": 138279360720,
+      "name": "Robin Experience — preuves visuelles",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 138279360732,
+      "name": "Quality and domain tests",
+      "status": "completed",
+      "conclusion": "failure",
+      "failedSteps": [
+        "Securite basique"
+      ]
+    },
+    {
+      "id": 138279360825,
+      "name": "Jalon 10 - trois temoins R3 bornes",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 138281434136,
+      "name": "tests",
+      "status": "completed",
+      "conclusion": "failure",
+      "failedSteps": [
+        "Refuser tout contrôle absent, annulé ou en échec"
+      ]
+    }
+  ],
+  "cause": {
+    "code": "B101",
+    "file": "src/robin/source_observatory/notbetting_selection.py",
+    "lines": [
+      106,
+      120,
+      163
+    ],
+    "affectedDirectJobs": 3,
+    "aggregateFailureJobs": 1
+  },
+  "sourceGET": 0,
+  "newRunTriggered": 0,
+  "claimId": "ENG.SOURCE_OBSERVATORY.PUBLICATION.CI270.EXACT.HEAD.FAILURE.RESULT.20261124",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Exactc2ee4b2CI270terminalfailure measurement fromRootGitHubplugin. C1C4reviewedsealedmetadata/countcoherence, notfreshindependentAPIlogs. No correctedheadCIreadiness.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.SELECTOR.BANDIT.CORRECTIVE.E1.RESULT.20261124"
+  ],
+  "primarySummarySHA": "234d99413a88f3a7d75d2f58399c32929ee725e00676c50e65761c8bf28fd193",
+  "independentReviewScope": "C1C4sealedsummary andlocalREDcoherence; logmeasurementsRootretained."
+}

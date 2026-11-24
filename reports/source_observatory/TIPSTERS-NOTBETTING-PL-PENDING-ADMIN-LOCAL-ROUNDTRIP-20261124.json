@@ -1,0 +1,49 @@
+{
+  "closedAtUTC": "2026-11-24T07:15:12.511057+00:00",
+  "fullAdminUIRecette": false,
+  "localHTTPGET": 2,
+  "metadataWrites": 1,
+  "overall": "PARTIAL",
+  "results": [
+    {
+      "HTTP": 200,
+      "checkedAt": "2026-11-24T07:07:09.437437+00:00",
+      "claims": [
+        "ENG.SOURCE_OBSERVATORY.NOTBETTING.PL.NATIVE.R2.ACTUAL.RESULT.20261124"
+      ],
+      "kind": "API",
+      "metrics": {
+        "admitted": 0,
+        "candidates": null,
+        "footballRecords": null,
+        "nativeRecords": 0,
+        "requests": 2
+      },
+      "other38RowsEqual": true,
+      "outcome": "missing_evidence",
+      "rowCount": 39
+    },
+    {
+      "HTTP": 200,
+      "bodyBytes": 28445,
+      "kind": "ADMIN_ROUTE_HTML",
+      "visualFlowVerified": false
+    }
+  ],
+  "serverRestarts": 0,
+  "sourceGET": 0,
+  "status": "VERIFIED",
+  "targetSHA": "14eafb19a57fab3557724c8f29ba62269e6f3c02ed1333ef41d82b079ad3f01a",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PL.PENDING.ADMIN.LOCAL.ROUNDTRIP.RESULT.20261124",
+  "missionId": "NOTBETTING_PL_PENDING_ADMIN_LOCAL_20261124",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "ActualoneNotBettingmetadata row localupdate; pendingunqualifiedfixtureunproven text only,39rows38preserved/APIandadminHTML200. No privatechoicevalues, fullUI, sourceactivationoradmission.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PL.NATIVE.R2.ACTUAL.RESULT.20261124"
+  ],
+  "receiptSHA": "fb21c06329803a77597e6f5740bc3316c19519f56a722c16e1aae6972e320e6c"
+}

@@ -103,7 +103,7 @@ def select_records(
             _require(0 < len(reference) <= 512)
             matched = re.fullmatch(r"\$([a-f0-9]+)((?::[^:\x00-\x1f]+)*)", reference)
             _require(matched is not None)
-            assert matched is not None
+            matched = cast(re.Match[str], matched)
             key = matched[1]
             path = tuple(matched[2][1:].split(":")) if matched[2] else ()
             _require(
@@ -117,7 +117,7 @@ def select_records(
             for entry in entries:
                 touch(None)
                 _require(type(entry) is str and 0 < len(entry) <= 512)
-                assert isinstance(entry, str)
+                entry = cast(str, entry)
                 _require(
                     re.fullmatch("[a-f0-9]+", entry) is not None
                     and entry == format(int(entry, 16), "x")
@@ -160,7 +160,7 @@ def select_records(
         if type(value) is str and value.startswith("$"):
             value, active, depth = plain(value, active, 0)
         _require(type(value) is str and 0 < len(value) <= 512)
-        assert isinstance(value, str)
+        value = cast(str, value)
         return value
 
     while stack:
