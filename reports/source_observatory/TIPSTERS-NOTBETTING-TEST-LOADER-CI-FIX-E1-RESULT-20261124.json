@@ -1,0 +1,77 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.TEST.LOADER.CI.FIX.E1.RESULT.20261124",
+  "missionId": "NOTBETTING_TEST_LOADER_CI_FIX_E1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Independent facts acceptance of minimal test-loader correction only: target sixteen assertions and static lint pass, application code unchanged. Original local domain remains PARTIAL for missing generated fixture. No new CI success asserted.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.APP.PUBLIC.INTEGRATION.E1.RESULT.20261124"
+  ],
+  "sourceReady": false,
+  "admissions": 0,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "file": "cockpit/tests/reviewed-source-observation.test.mjs",
+  "beforeSHA256": "cbc63a37dbc03dbbcf4f0f4bf7f2f35ce66759f5b0c4287064105db6c6ecf810",
+  "afterSHA256": "f3c578accd7ff0e94426608f3222515f5183200f113e7746b990767a3463d263",
+  "ciFailure": {
+    "head": "cfd3874bb01df86722ccce63ae7c5c0de773290d",
+    "run": 45359912980,
+    "job": 138328246444,
+    "error": "ERR_UNSUPPORTED_RESOLVE_REQUEST",
+    "unresolvedImport": "./notbetting-pending-source",
+    "test": "cockpit/tests/reviewed-source-observation.test.mjs"
+  },
+  "reproducedRED": true,
+  "green": {
+    "nodeEntries": 1,
+    "syntheticAssertions": 16,
+    "exit": 0
+  },
+  "domain": {
+    "tests": 47,
+    "pass": 42,
+    "fail": 1,
+    "skip": 4,
+    "status": "PARTIAL",
+    "precondition": "ENOENT public/data/hypotheses/nodes/page-001.json"
+  },
+  "lint": {
+    "exit": 0,
+    "distinctStaticPhase": true,
+    "replay": 0
+  },
+  "producerStatus": "PARTIAL_PRESERVED",
+  "countErratum": {
+    "actualNodeChildren": 3,
+    "actualOSProcesses": 9,
+    "incorrectPlannedChildren4RetainedInFrozenResult": true
+  },
+  "unchangedApplicationPins": {
+    "cockpit/scripts/notbetting-pending-source.ts": {
+      "SHA256": "debf492cfade61e65d0d3a81b5b4c8d2fd2b3f090965ad1200c0f96502ec90c9",
+      "bytes": 6697
+    },
+    "cockpit/scripts/catalogue-independent.ts": {
+      "SHA256": "7c1e56818110c428fa2231e421b6fc52c0aba935b690cac5c89f82f1790e53f8",
+      "bytes": 17072
+    },
+    "cockpit/app/components/expert/tipster-candidates.tsx": {
+      "SHA256": "8c199f3e4b58f376784018098c74f297dd5e4eeec8e42fd5c4a51a7bb9e7a053",
+      "bytes": 16454
+    },
+    "cockpit/tests/notbetting-pending-source.test.mjs": {
+      "SHA256": "2e453952d10bed20aac20c6156e16b1845ed7fd2ba182bf75d4301b8aea1d0c1",
+      "bytes": 6365
+    }
+  },
+  "rawResultSHA256": "c504bf6ad460836afdd3cb6453267704e99fcd1b4f61c0ef210714c9a39cbfa4",
+  "staticResultSHA256": "fc43fb4bf54849e738e865b79ffb5f19efd3cac29c01118b001dbc9f5d21d170",
+  "sourceGET": 0,
+  "runtimeWrites": 0,
+  "GitMutations": 0
+}

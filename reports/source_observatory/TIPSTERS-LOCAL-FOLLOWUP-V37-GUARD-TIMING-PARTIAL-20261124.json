@@ -1,0 +1,42 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V37.GUARD.TIMING.PARTIAL.RESULT.20261124",
+  "missionId": "NOTBETTING_TEST_LOADER_PROJECTION_V37_E1_20261124",
+  "status": "PARTIAL",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Post-phase independent factual review only. Static mapping V37 and actual functional graph test reusable; original timing phase remains FAIL_AND_STOP/PARTIAL_TIMING_NOT_CONFORMANT and authority closed. No replay, retrospective timing success or source upgrade.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V37.ENGINEERING.RECETTE.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.TEST.LOADER.CI.FIX.E1.RESULT.20261124"
+  ],
+  "adoptionAcceptedBeforeGuard": true,
+  "guardExit": 0,
+  "guardFunctionalTests": 1,
+  "guardElapsedReportedSeconds": 28.55,
+  "controllerObservedAfterReceiptFsyncAtUTC": "2026-11-24T09:09:13.449Z",
+  "manifestExpiresAtUTC": "2026-11-24T09:09:13.227Z",
+  "withinDeadlineProven": false,
+  "childExitUTC": null,
+  "rerun": 0,
+  "sourceGET": 0,
+  "runtimeWrites": 0,
+  "guardPrimarySHA256": "7ba16e62fcbb779136b88e6627f8d2b249341cdc6a98e1a372771312cac178e9",
+  "sourceReady": false,
+  "admissions": 0,
+  "authorityClosed": true,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "primaryFileMtimeUTC": "2026-11-24T09:09:13.446297Z",
+  "adoptionAuthorStoppedAtUTC": "2026-11-24T09:08:44.009793+00:00",
+  "rawCandidateReportSHA256": "bf0176178a148dbef876383e567940b9c104b2b11929643d7bcbc5a5a0b04a2f",
+  "engineeringProjectionSHA256": "54431a510c87623f633ef80e13885a6f63e5fa52ec6695e690be4b45922f67d0",
+  "oldV36CanonicalSHA256": "11897787e42fd3c3ef4bdb21c9cc438bfd68f1049f1b513286785b84a8b21fd9",
+  "limits": [
+    "VERIFIED mapping node means statically reviewed exact ownership map only; no certificate of complete phase timing.",
+    "Author STOP covers adoption before guard, not final guard receipt. Child exit UTC absent; durable close within manifest deadline unproved.",
+    "No guard rerun or extension. Fresh publication may reuse functional facts only under its own exact pins/authority and live additive snapshot audit."
+  ]
+}

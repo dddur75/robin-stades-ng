@@ -4,7 +4,11 @@ import {stripTypeScriptTypes} from 'node:module';
 const source=readFileSync(new URL('../scripts/catalogue-independent.ts',import.meta.url),'utf8');
 const pendingSource=readFileSync(new URL('../scripts/telegram-pending-channel.ts',import.meta.url),'utf8');
 const pendingURL='data:text/javascript;base64,'+Buffer.from(stripTypeScriptTypes(pendingSource)).toString('base64');
-const resolvedSource=stripTypeScriptTypes(source).replace("from './telegram-pending-channel'","from '"+pendingURL+"'");
+const notBettingSource=readFileSync(new URL('../scripts/notbetting-pending-source.ts',import.meta.url),'utf8');
+const notBettingURL='data:text/javascript;base64,'+Buffer.from(stripTypeScriptTypes(notBettingSource)).toString('base64');
+const resolvedSource=stripTypeScriptTypes(source)
+  .replace("from './telegram-pending-channel'","from '"+pendingURL+"'")
+  .replace("from './notbetting-pending-source'","from '"+notBettingURL+"'");
 const m=await import('data:text/javascript;base64,'+Buffer.from(resolvedSource).toString('base64'));
 assert.equal(typeof m.applyReviewedSourceObservations,'function');
 const bytes=readFileSync(new URL('../../configs/source_observatory/reviewed-source-observations.json',import.meta.url));
