@@ -1,3 +1,6 @@
+import {applyReviewedOLBGPendingToCandidate} from './olbg-pending-candidate';
+import {OLBG_REVIEWED_APPROVAL} from './olbg-reviewed-pending-approval';
+import type {OLBGPendingObservation} from './olbg-pending-source';
 import {applyNotBettingPlatformObservation,type PlatformPendingObservations} from './notbetting-pending-source';
 import {applyPendingChannelObservation,type PendingChannelObservation} from './telegram-pending-channel';
 import {createHash} from 'node:crypto';
@@ -58,7 +61,7 @@ function qualification(value:unknown,depth=0):FactObject{
  if(q.contestAssessments!==undefined){const c=object(q.contestAssessments);check(Object.keys(c).length<=100);out.contestAssessments=Object.fromEntries(Object.entries(c).map(([k,v])=>[k,qualification(v,depth+1)]));}
  return out;
 }
-export type Candidate=FactObject&{pendingChannelObservation?:PendingChannelObservation;reviewedSourceObservation?:ReviewedSourceObservation;id:string;sourceUrl:string;origin:FactObject;collectionEnabled:null;operationalState:'unknown';qualification?:FactObject};
+export type Candidate=FactObject&{pendingOLBGObservation?:OLBGPendingObservation;pendingChannelObservation?:PendingChannelObservation;reviewedSourceObservation?:ReviewedSourceObservation;id:string;sourceUrl:string;origin:FactObject;collectionEnabled:null;operationalState:'unknown';qualification?:FactObject};
 export type Catalogue=FactObject&{platformPendingObservations?:PlatformPendingObservations;receipt:FactObject;status:'ok';count:number;candidates:Candidate[];enabledCount:null;operationalState:'unknown';qualification:FactObject;rosterAssessments:FactObject[];historicalEvidence:FactObject};
 
 /** Pure fact projection. Optional qualification failure never removes valid registry facts. */
@@ -117,7 +120,12 @@ export function readIndependentCatalogue(root:string):Catalogue{
  let reviewed=base;try{reviewed=applyReviewedSourceObservations(base,readBounded(resolve(root,'../configs/source_observatory/reviewed-source-observations.json'),16384));}catch{/* Preserve base. */}
  let decorated=reviewed;
  try{decorated=applyPendingChannelObservation(reviewed,readBounded(resolve(root,'.ci/local-robin/telegram-channel-candidates.json'),65536));}catch{/* Preserve reviewed catalogue. */}
- try{return applyNotBettingPlatformObservation(decorated,readBounded(resolve(root,'.ci/local-robin/notbetting-pending-source-records.json'),32768),readBounded(resolve(root,'.ci/local-robin/notbetting-pending-source-receipt.json'),65536));}catch{return decorated;}
+ let pending=decorated;
+ try{pending=applyNotBettingPlatformObservation(decorated,readBounded(resolve(root,'.ci/local-robin/notbetting-pending-source-records.json'),32768),readBounded(resolve(root,'.ci/local-robin/notbetting-pending-source-receipt.json'),65536));}catch{/* Preserve reviewed catalogue. */}
+ if(OLBG_REVIEWED_APPROVAL!==null){
+  try{return applyReviewedOLBGPendingToCandidate(pending,readBounded(resolve(root,'.ci/local-robin/olbg-pending-profile-observations.json'),131072),readBounded(resolve(root,'.ci/local-robin/olbg-pending-profile-receipt.json'),65536),OLBG_REVIEWED_APPROVAL);}catch{/* Unapproved or unavailable OLBG snapshot never replaces existing facts. */}
+ }
+ return pending;
 }
 
 export type InventoryRow=FactObject&{reviewedSourceObservation?:ReviewedSourceObservation;recordId:string;candidateId?:string;sheet:string;row:number;sourceUrl?:string|null;collectionEnabled:unknown;qualification?:FactObject;qualifiedRecordId?:string};

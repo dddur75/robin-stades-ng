@@ -1,0 +1,142 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.UEFA.24NOV.PRIMARY.CALENDAR.20261124",
+  "missionId": "UEFA_24NOV_PRIMARY_SEARCH_ARCHITECTURE_E1_20261124",
+  "status": "PRIMARY_DOCUMENTARY_CALENDAR_ONLY",
+  "scope": "Nine scheduled fixtures on24November2026 from actual primary UEFA page, explicit CET/+01 conversion. Search discovery only; no tipster match join, actual whistle, reschedule guarantee or application admission.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.UEFA.24NOV.DOCUMENTARY.PAGE.PARTIAL.20261124",
+    "DATA.SOURCE_OBSERVATORY.OLBG.PENDING.REAL.NATIVE.RESULT.20261124"
+  ],
+  "sourceURL": "https://www.uefa.com/uefachampionsleague/news/02a8-2174c9e9019d-f909a77bd77a-1000--202627-champions-league-all-the-league-phase-fixtures-and-results/",
+  "observedAtUTC": "2026-11-24T14:41:31.976Z",
+  "managedToolRepresentationSHA256": "b83de5f7919c6f619170860b06420234c34f27d25a171eb3632eaee12e6478bf",
+  "rawHTTPBodySHA256": null,
+  "timezoneStatement": "Kick-offs are 21:00 unless stated; all times CET.",
+  "timezoneLine": 17,
+  "fixtureDateLine": 20,
+  "fixtures": [
+    {
+      "home": "Bodø/Glimt",
+      "away": "LASK",
+      "sourceLocalDate": "2026-11-24",
+      "sourceLocalTime": "18:45",
+      "sourceTimezone": "CET",
+      "sourceUTCOffset": "+01:00",
+      "scheduledKickoffUTC": "2026-11-24T17:45:00.000Z",
+      "line": 21,
+      "actualWhistleProven": false
+    },
+    {
+      "home": "Galatasaray",
+      "away": "Aston Villa",
+      "sourceLocalDate": "2026-11-24",
+      "sourceLocalTime": "18:45",
+      "sourceTimezone": "CET",
+      "sourceUTCOffset": "+01:00",
+      "scheduledKickoffUTC": "2026-11-24T17:45:00.000Z",
+      "line": 22,
+      "actualWhistleProven": false
+    },
+    {
+      "home": "Arsenal",
+      "away": "Borussia Dortmund",
+      "sourceLocalDate": "2026-11-24",
+      "sourceLocalTime": "21:00",
+      "sourceTimezone": "CET",
+      "sourceUTCOffset": "+01:00",
+      "scheduledKickoffUTC": "2026-11-24T20:00:00.000Z",
+      "line": 23,
+      "actualWhistleProven": false
+    },
+    {
+      "home": "Como",
+      "away": "AEK Athens",
+      "sourceLocalDate": "2026-11-24",
+      "sourceLocalTime": "21:00",
+      "sourceTimezone": "CET",
+      "sourceUTCOffset": "+01:00",
+      "scheduledKickoffUTC": "2026-11-24T20:00:00.000Z",
+      "line": 24,
+      "actualWhistleProven": false
+    },
+    {
+      "home": "Feyenoord",
+      "away": "Porto",
+      "sourceLocalDate": "2026-11-24",
+      "sourceLocalTime": "21:00",
+      "sourceTimezone": "CET",
+      "sourceUTCOffset": "+01:00",
+      "scheduledKickoffUTC": "2026-11-24T20:00:00.000Z",
+      "line": 25,
+      "actualWhistleProven": false
+    },
+    {
+      "home": "Manchester City",
+      "away": "Napoli",
+      "sourceLocalDate": "2026-11-24",
+      "sourceLocalTime": "21:00",
+      "sourceTimezone": "CET",
+      "sourceUTCOffset": "+01:00",
+      "scheduledKickoffUTC": "2026-11-24T20:00:00.000Z",
+      "line": 26,
+      "actualWhistleProven": false
+    },
+    {
+      "home": "Leipzig",
+      "away": "Lens",
+      "sourceLocalDate": "2026-11-24",
+      "sourceLocalTime": "21:00",
+      "sourceTimezone": "CET",
+      "sourceUTCOffset": "+01:00",
+      "scheduledKickoffUTC": "2026-11-24T20:00:00.000Z",
+      "line": 27,
+      "actualWhistleProven": false
+    },
+    {
+      "home": "Real Madrid",
+      "away": "PSV Eindhoven",
+      "sourceLocalDate": "2026-11-24",
+      "sourceLocalTime": "21:00",
+      "sourceTimezone": "CET",
+      "sourceUTCOffset": "+01:00",
+      "scheduledKickoffUTC": "2026-11-24T20:00:00.000Z",
+      "line": 28,
+      "actualWhistleProven": false
+    },
+    {
+      "home": "Slovan Bratislava",
+      "away": "Real Betis",
+      "sourceLocalDate": "2026-11-24",
+      "sourceLocalTime": "21:00",
+      "sourceTimezone": "CET",
+      "sourceUTCOffset": "+01:00",
+      "scheduledKickoffUTC": "2026-11-24T20:00:00.000Z",
+      "line": 29,
+      "actualWhistleProven": false
+    }
+  ],
+  "managedSearchCalls": 1,
+  "managedOpenCalls": 1,
+  "underlyingHTTPCalls": null,
+  "nativeTipsterGET": 0,
+  "API_FOOTBALL_CALLS": 0,
+  "applicationAdmissions": 0,
+  "calendarAdopted": false,
+  "producerStop": {
+    "status": "STOP",
+    "at": "2026-11-24T14:41:32.087756+00:00",
+    "monotonicNs": "282767078000000",
+    "withinOriginalWindow": true,
+    "managedSearchCalls": 1,
+    "managedOpenCalls": 1,
+    "nativeTipsterGET": 0,
+    "authorityClosed": true
+  },
+  "allCompatibleIntegrated": false,
+  "independentReviewScope": "C1/C4 independently verified closed retained receipts, exact 9-label/time transcription supplied by C0 and CET/+01 arithmetic. Full managed render/search RAM was not accessible to reviewer kernels; full representation and literal search membership are C0 attestation. No HTTP body hash or independent page re-open."
+}

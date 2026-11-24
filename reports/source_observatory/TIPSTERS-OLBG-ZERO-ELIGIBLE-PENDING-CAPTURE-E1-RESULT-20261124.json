@@ -1,0 +1,49 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.ZERO.ELIGIBLE.PENDING.CAPTURE.E1.RESULT.20261124",
+  "missionId": "OLBG_PENDING_ZERO_ELIGIBLE_CAPTURE_E1_20261124",
+  "status": "PASS_AND_HOLD_CODE_ONLY_RESOURCE_CACHE_SCOPE_PARTIAL",
+  "scope": "Private synthetic zero-eligible pending capture only; no real pending writer, runtime adoption or SOURCE authority",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.OBSERVATION.BUILDER.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.OBSERVER.COMPLETE.COLLECTOR.CALLER.R2.E1.RESULT.20261124",
+    "DATA.SOURCE_OBSERVATORY.OLBG.FIRST.OPAQUE.REFUSAL.NATIVE.RESULT.20261124"
+  ],
+  "planSHA": "ff07d5d3e8bbcb8b6d0967d01231b4f610d12ebaed2e113d8564a24ff5663d46",
+  "manifestSHA": "df9e625a95ca8556b237f1495e9e553de6b0c58754864f9d96b6dd109e1a303d",
+  "callerSHA": "fe3189c40478ac44ef02ad6494b9ce46a22ec36d77abc51d2bb88a834d4a4fde",
+  "testSHA": "3d9c50f8e482be2312f11a45bcf3cf0ebe287404924a50bcd50af46a5d4fd737",
+  "resultSHA": "bf8bdd722f34df286d99e48c816ab6c311dc56c50e532d7add68a3c9a1468700",
+  "builderSHA": "d6e1b1691fba712fd578eea81e6f6d4793e5a5054f31281af33fdb57acbb1882",
+  "verification": {
+    "greenMethods": 6,
+    "redMethods": 1,
+    "totalFakeGET": 12,
+    "totalLoaderLoads": 2,
+    "authorDirectLaunches": 12,
+    "retainedDirectoryFiles": 20,
+    "formatAndCheckAndMypyPassed": true,
+    "networkAttempts": 0,
+    "realPendingWrites": 0
+  },
+  "resourceFootprint": {
+    "ruffCheckCacheDisabled": true,
+    "mypyCacheDisabled": true,
+    "ruffFormatCacheDisabled": false,
+    "possibleFormatCacheFootprint": "NOT_MEASURED_NO_FULL_ABSENCE_CLAIM",
+    "totalOSProcesses": null
+  },
+  "limitations": [
+    "Real filesystem writer and post-write revocation not tested; file may exist after a refused postguard, never accepted by receipt",
+    "Truthy nonTrue authorizer and post-sink veto are statically guarded, not explicitly exercised",
+    "Native-source and local-pending permissions require separate new manifest/policy and independent fresh keys"
+  ],
+  "sourceReady": false,
+  "applicationAdmission": false,
+  "nativeUTCProof": false,
+  "allCompatibleIntegrated": false
+}

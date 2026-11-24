@@ -1,3 +1,4 @@
+import type {OLBGPendingObservation} from './olbg-pending-source';
 import {createHash} from 'node:crypto';
 
 export const NOTBETTING_PICKS_URL='https://notbetting.com/en/tipsters-league/picks';
@@ -7,7 +8,7 @@ export type PendingApproval={pendingSHA256:string;reportSHA256:string;bytes:numb
 export const REVIEWED_PENDING_APPROVAL:Readonly<PendingApproval>=Object.freeze({pendingSHA256:'d676b71d18f9e9570724159771e81df362749bc74423649d7ee5dbc679a8128b',reportSHA256:'3ff30b9c2fa169f539e9d9e5e6404507fe6f4bb6858b9f313a630140e96d01df',bytes:1238,count:1,observedAtUTC:'2026-11-24T07:07:09.437437+00:00',responseSHA256:'492aa8b655d119e612ee29a5009183d218b0ede407e1f1b5cb7f87a17e7b1a3f',pendingAdapterSHA256:'138214bd7a5933e1fbcc56cecd076031296f982305c3fdf61bb3447bac5a23f6',calendarSHA256:'03fc95484ae179e4459190666103712baa1eea240feef0dd7907a54c79988eba'});
 export type PendingSourceRecord={key:string;eventText:string;selection:string;competitionText:string;nativeDateText:string;sourceAccountAlias:string;sourceUrl:string};
 export type NotBettingPendingObservation={status:'UNQUALIFIED_SOURCE_ACCOUNT_RECORDS';attribution:'SOURCE_ACCOUNT_UNVERIFIED';observedAtUTC:string;records:PendingSourceRecord[];canonicalFixture:null;preMatchProven:false;personIdentityVerified:false;sourceReady:false;admissible:false;interpretationAllowed:false;performanceEvaluationAllowed:false;settlementAllowed:false;admissions:0;globalCoverage:'UNKNOWN';claimIds:readonly string[]};
-export type PlatformPendingObservations={NotBetting?:NotBettingPendingObservation};
+export type PlatformPendingObservations={NotBetting?:NotBettingPendingObservation;OLBG?:OLBGPendingObservation};
 type Obj=Record<string,unknown>;
 const HASH=/^[a-f0-9]{64}$/,UUID=/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/;
 const FIELDS=['id','event','pick','competition','date','tipsterId','tipster.user.id','tipster.user.tipster.id','tipster.user.tipster.userId','tipster.user.username'];

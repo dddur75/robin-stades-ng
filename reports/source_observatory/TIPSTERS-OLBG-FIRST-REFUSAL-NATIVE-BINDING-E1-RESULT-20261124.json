@@ -1,0 +1,50 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.FIRST.REFUSAL.NATIVE.BINDING.E1.RESULT.20261124",
+  "missionId": "OLBG_FIRST_REFUSAL_NATIVE_BINDING_20261124",
+  "scope": "Private native entry binding with network-denied synthetic dispatcher only; actual SOURCE grant and full ledger policy not yet executed",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.OBSERVER.COMPLETE.COLLECTOR.CALLER.R2.E1.RESULT.20261124",
+    "DATA.SOURCE_OBSERVATORY.OLBG.SINGLE.PERSONAL.REP.V2.PREMATCH.RESULT.20261122",
+    "DATA.SOURCE_OBSERVATORY.LIGUE1.J12.OFFICIAL.SCHEDULE.DOCUMENTARY.20261122",
+    "ENG.SOURCE_OBSERVATORY.FUTURE.L1.CALENDAR.CONTEXTUAL.POLICY.20261122",
+    "ENG.SOURCE_OBSERVATORY.OLBG.TERMS.LOCAL.DOC.RESULT.20261121"
+  ],
+  "planSHA": "1dc5508e10003a053ddb8368f828b91192f44dec9ca7a767ae6688231d0185e4",
+  "manifestSHA": "2d0f10aea018e584cc2b83f1dc17e18a3a4744b7bc9cdd6923ef455ac3d6e144",
+  "configSHA": "5d081a7f690bc0a9c8545f0bb6e39277cd875e7423fb6ecf107f496be085ba10",
+  "workerSHA": "42b8ff97cd16210f839f19720432b9d8e786230eff18fb78dbb2cd2fbbb07416",
+  "outerSHA": "657206b5698bf620a57a4c81c62ac58cf92429b5ac7b5ac347aa912c1a54a021",
+  "policySHA": "a0ef95888d1aa181fc7dc38cdeb111db2e81cefaa600972c16341aa341ce4b17",
+  "resultSHA": "278c2f0ac8390e282c24d17208d7961fff2725bc3011d950f0a51d6e95c95f76",
+  "status": "PASS_AND_HOLD",
+  "verification": {
+    "canaryExit": 0,
+    "networkAttempts": 0,
+    "spawnAttempts": 0,
+    "transportFetch": 0,
+    "RAMSyntheticSidecar": 1,
+    "syntheticCollectDispatch": 1,
+    "fullCollectReplay": 0,
+    "RuffFatalOnlyExit": 0,
+    "privateFilesAtAuthorStop": 28,
+    "explicitChildLaunchesAtAuthorStop": 9,
+    "totalOSProcesses": null
+  },
+  "nativeUTCProof": false,
+  "applicationAdmission": false,
+  "sourceReady": false,
+  "sourceAllowed": false,
+  "oldAuthoritiesReused": false,
+  "allCompatibleIntegrated": false,
+  "limitations": [
+    "E2 ONLY after accepted E1 and fresh exact C0/C1/C3/C4 SOURCE keys, including retained normalized dated terms reacceptance: one Job max2GET robots then fixed648433 profile; first refusal/zero/partial stops without retry.",
+    "Nine retained L1J12 context fixtures, >=48h margin, Europe/Paris assumption only; nativeUTCProof=false/applicationAdmission=false/sourceReady=false. No current programme proof or actual kickoff inferred. Metadata only except possible local structured private candidate≤20/128KiB; no raw body/JS/name/selection in stdout/model/Git.",
+    "Worker50/job60/outer70/HTTP12. Fresh pinned helper perJob, namespace untouched until observer; wrapper restoredchoicesonly; real ledger/MF/grant/pin validation by unchanged a0ef policy andouterbeforelaunch. No adapter-only authority claim."
+  ]
+}

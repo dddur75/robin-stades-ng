@@ -1,0 +1,47 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.LOCAL.SERVER.RELOAD.PREPARATION.E1.RESULT.20261124",
+  "missionId": "OLBG_LOCAL_SERVER_RELOAD_AND_TWO_VIEW_20261124",
+  "status": "PASS_AND_HOLD_PREPARATION_ONLY",
+  "scope": "Read-only identification of exact current local Robin Node process, creation time, executable, two-argument entry script and loopback listener. Syntax of prepared controls and7runtime code pins verified;2data files stat-only. No server stop/launch/browser or source query. First probe process-policy refusal retained; smallest process-only invocation correction succeeded under original AUTH deadline.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.APP.PREDICATE.AND.LOADER.FIX.R2.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.EXACT.FICHE.APP.LOCAL.FIRST.CANARY.PARTIAL.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.EXACT.FICHE.APP.WIRING.E1.RESULT.20261124"
+  ],
+  "result": {
+    "admissions": 0,
+    "bindingSHA": "3ce3f0ec14384a800ac5a3ce35db88b1f706293cfdb6c30df5071a8be4906050",
+    "browserJobs": 0,
+    "closedAtUTC": "2026-11-24T15:12:10.874722+00:00",
+    "dataStatOnly": true,
+    "identity": {
+      "argvExact": true,
+      "controlSyntaxErrors": 0,
+      "creationExact": true,
+      "exeExact": true,
+      "nodeHashExact": true,
+      "pid": 42672,
+      "processMutations": 0,
+      "scriptHashExact": true,
+      "soleOwnedLoopbackListener": true,
+      "sourceGET": 0,
+      "status": "READONLY_IDENTITY_ONLY"
+    },
+    "missionId": "OLBG_LOCAL_SERVER_RELOAD_AND_TWO_VIEW_20261124",
+    "pythonActorASTValid": true,
+    "runtimePinsExact": true,
+    "serverProcessMutations": 0,
+    "sourceGET": 0,
+    "status": "PREPARATION_READY"
+  },
+  "resultSHA256": "0a443fef2a8dc6381f8f5213c9bdf376c3362910175cc2908a33ff988b88dbbd",
+  "stopSHA256": "bd25ad525782d8ab27adc605176e2583b7b897d9b3e95a76dfe2e08bec14774d",
+  "sourceReady": false,
+  "admissions": 0,
+  "authorityClosed": true
+}

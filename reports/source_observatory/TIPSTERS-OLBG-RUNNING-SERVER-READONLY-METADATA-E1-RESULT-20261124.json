@@ -1,0 +1,45 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.RUNNING.SERVER.READONLY.METADATA.E1.RESULT.20261124",
+  "missionId": "OLBG_RUNNING_SERVER_READONLY_UI_RECETTE_20261124",
+  "status": "PASS_AND_HOLD_METADATA_ONLY",
+  "scope": "One actual loopback API GET on already-reloaded server returns317fiches and17unqualified OLBG observations onONEexact source-account candidate, allgates false/admissions0/NotBetting preserved. No process lifecycle changes, data/code writes, source requests or actual DOM acceptance.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.LOCAL.SERVER.RELOAD.ACTUAL.PARTIAL.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.APP.PREDICATE.AND.LOADER.FIX.R2.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.EXACT.FICHE.APP.WIRING.E1.RESULT.20261124"
+  ],
+  "result": {
+    "admissions": 0,
+    "closedAtUTC": "2026-11-24T15:22:51.540724+00:00",
+    "metadata": {
+      "attachments": 1,
+      "catalogueRows": 317,
+      "gatesFalse": true,
+      "http": 200,
+      "notBettingPreserved": true,
+      "pendingPresent": true,
+      "pendingRecords": 17,
+      "readyForBrowser": true,
+      "sourceGET": 0,
+      "status": "CLOSED_METADATA_ONLY",
+      "targetExact": true,
+      "valuesLogged": false
+    },
+    "metadataChildExit": 0,
+    "missionId": "OLBG_RUNNING_SERVER_READONLY_UI_RECETTE_20261124",
+    "processMutations": 0,
+    "runtimeWrites": 0,
+    "sourceGET": 0,
+    "status": "METADATA_READY"
+  },
+  "resultSHA256": "e3756e6b4357eda78e01cca99942f7462b21750421a8ecd2c86c474098a4f137",
+  "stopSHA256": "7b6dae4f566578eb05605f0c2c63cda2265a1a84969ec01a0c815db1ad16cf23",
+  "sourceReady": false,
+  "admissions": 0,
+  "authorityClosed": true
+}

@@ -1,0 +1,39 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.UEFA.24NOV.DOCUMENTARY.PAGE.PARTIAL.20261124",
+  "missionId": "UEFA_24NOV_OFFICIAL_CALENDAR_DOCUMENTARY_E1_20261124",
+  "status": "PARTIAL_NO_CALENDAR_FIELDS_IN_MANAGED_RENDER",
+  "scope": "One official UEFA managed page rendering only; no accepted calendar, timezone or actual kickoff evidence",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "DATA.MISSION036.PUBLICATION.V1"
+  ],
+  "sourceUrl": "https://www.uefa.com/uefachampionsleague/fixtures-results/",
+  "toolReturnReceiptSHA": "f5e8bd3c74c2a6f32d66fbf75a0e4963271943110f73057415c1bf6f7384c03f",
+  "representationSHA": "6eaaff2b26d2df67910a27ea520f0c85febc885d2499c86ac0a60f4a71c607cd",
+  "representationBytes": 1882,
+  "managedInvocations": 1,
+  "nativeTipsterGET": 0,
+  "underlyingHTTP": null,
+  "rawHTTPBodySHA": null,
+  "calendarAdoptions": 0,
+  "sourceReady": false,
+  "sourceAllowed": false,
+  "authorityClosed": true,
+  "retryAllowed": false,
+  "semanticObservation": {
+    "attributedTo": "C0_FROM_RETAINED_RAM_RENDER_NOT_INDEPENDENTLY_REOPENED",
+    "renderedLines": 46,
+    "sourceTitle": "Fixtures & results | UEFA Champions League 2026/27 | UEFA.com",
+    "fixtureRowsInReturnedRender": 0,
+    "nativeTimezoneFieldsInReturnedRender": 0,
+    "globalFixtureAbsence": false
+  },
+  "independentReviewScope": "C1/C4 independently verified closed receipt, reservations, caps, UTC/monotonic post-fsync stop only",
+  "producerStoppedWithinOriginalWindow": true,
+  "controllerRecordPreparedAt": "2026-11-24T14:03:49.392Z",
+  "controllerRecordPreparedWithinOriginalWindow": false
+}

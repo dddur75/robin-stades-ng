@@ -1,0 +1,41 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.FILESYSTEM.POLICY.E1.PARTIAL.RESULT.20261124",
+  "missionId": "OLBG_PENDING_FILESYSTEM_POLICY_E1_20261124",
+  "status": "PARTIAL",
+  "scope": "Private synthetic filesystem/policy phase: seven passing cases, success case blocked by reused RED scratch directory; final quality absent",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.ZERO.ELIGIBLE.PENDING.CAPTURE.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.OBSERVATION.BUILDER.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.APP.READER.E1.RESULT.20261124"
+  ],
+  "resultSHA": "783e5b513a0764a88a00dcf8b40d561fd4401385a24f947162bd15086ba50a77",
+  "writerSHA": "86f005cdba412d1a2c54f0a4771bb8c6bd1f6ed819c0fc6b67e64ab3ac05adcd",
+  "policySHA": "3dc8425a8e233345d3585d9625ce7ad30f6c4c4861c625658464fd7d63696e90",
+  "testSHA": "b1a186d1f1b1d6554509b210ef22dd5322f5bda881f9416027e41205c0657716",
+  "verification": {
+    "greenPassed": 7,
+    "greenErrors": 1,
+    "error": "FileExistsError in test_success setUp before test body",
+    "greenSyntheticPayloadWrites": 5,
+    "greenAccepted": 1,
+    "acceptedMeaning": "test_collision lambda authorizer only, not successful writer plus real policy",
+    "greenPolicyCalls": 8,
+    "sourceGET": 0,
+    "networkAttempts": 0,
+    "spawnAttempts": 0,
+    "privateFiles": 25,
+    "authorDirectLaunches": 11,
+    "ruffFinal": null,
+    "mypyFinal": null
+  },
+  "sourceReady": false,
+  "applicationAdmission": false,
+  "authorityClosed": true,
+  "sourceAllowed": false,
+  "next": "Fresh corrective manifest: preserve old bundle; run only missing positive case in distinct scratch and final quality, reuse successful cases without replay"
+}

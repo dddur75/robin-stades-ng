@@ -1,0 +1,78 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.EXACT.FICHE.APP.WIRING.E1.RESULT.20261124",
+  "missionId": "OLBG_EXACT_FICHE_APP_WIRING_20261124",
+  "status": "PASS_AND_HOLD_BOUNDED_LOCAL_CODE_FACTS",
+  "scope": "Exact source-account pending observations attached to one catalogue fiche and displayed as unqualified in fiche/admin; three SSR cases and app typecheck/lint pass. No runtime adoption or admitted forecasts. Publication remains blocked by relative-import data-URL harness defect identified by C1.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.REVIEWED.PENDING.CANDIDATE.HELPER.R2.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.CATALOGUE.PANEL.WIRING.CODE.FACTS.PARTIAL.20261124",
+    "DATA.SOURCE_OBSERVATORY.OLBG.PENDING.REAL.NATIVE.RESULT.20261124"
+  ],
+  "result": {
+    "admissions": 0,
+    "closedAtUTC": "2026-11-24T14:52:09.703871+00:00",
+    "greenExit": 0,
+    "lintExit": 0,
+    "missionId": "OLBG_EXACT_FICHE_APP_WIRING_20261124",
+    "privateValuesLogged": false,
+    "productPins": {
+      "cockpit/app/components/expert/olbg-pending-panel.tsx": {
+        "bytes": 1931,
+        "sha256": "eb4e3d46fcf136bd9f56e754850f642628ac8f10d450d199b73437fc43245821"
+      },
+      "cockpit/app/components/expert/tipster-candidates.tsx": {
+        "bytes": 17099,
+        "sha256": "8e8a6213f5fe84aaf402b4896e313f1cf8f58d8da3c0d2edd9f203c806718372"
+      },
+      "cockpit/scripts/catalogue-independent.ts": {
+        "bytes": 17777,
+        "sha256": "df23838788e1252d2c67bd0c9f85fcd1b2ccfe03f917602cc0349699331d5bd7"
+      },
+      "cockpit/scripts/notbetting-pending-source.ts": {
+        "bytes": 6793,
+        "sha256": "cd6537f8fbe0f34b07628ac4adaa53612056b710d5b5fdf6735d5948ead28896"
+      },
+      "cockpit/scripts/olbg-pending-candidate.ts": {
+        "bytes": 1074,
+        "sha256": "8a7371a4fc6a0ac2fabe887fcf07e669068f414c11c0c537e94017fd66768c60"
+      },
+      "cockpit/scripts/olbg-pending-source.ts": {
+        "bytes": 6709,
+        "sha256": "28da007500b5727802f7fba15b112e421f84e54761cb2f983e8b2583855ac015"
+      },
+      "cockpit/scripts/olbg-reviewed-pending-approval.ts": {
+        "bytes": 936,
+        "sha256": "8780a00e049746ec8bd758e8cc919ddbb1b1a6eff7f5a1183376f41713f76bbc"
+      }
+    },
+    "publicCodeWrites": 5,
+    "publicTestWrites": 1,
+    "realPendingReads": 0,
+    "redExit": 1,
+    "reusedHelperTests": 6,
+    "reusedReaderTests": 16,
+    "rootActorChildren": 4,
+    "runtimeWrites": 0,
+    "sourceGET": 0,
+    "sourceReady": false,
+    "status": "COMPLETE_PENDING_INDEPENDENT_REVIEW",
+    "syntheticPanelTests": 3,
+    "tscExit": 0
+  },
+  "resultSHA256": "c611bc71ae1806d4ce83db0648607784ca6ed96e5a28409ec89b50b116d69d26",
+  "stopSHA256": "743a0f0bc593d716742a14477820cfbc53ef7ccea6152b7b87fe755eadf6c70c",
+  "publicationP1": {
+    "file": "cockpit/tests/reviewed-source-observation.test.mjs",
+    "reason": "Data URL harness does not resolve three newly transitive OLBG imports",
+    "status": "OPEN",
+    "runtimeDefectProven": false
+  },
+  "admissions": 0,
+  "sourceReady": false,
+  "authorityClosed": true
+}

@@ -1,0 +1,53 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.CATALOGUE.PANEL.WIRING.CODE.FACTS.PARTIAL.20261124",
+  "missionId": "OLBG_PENDING_CATALOGUE_PANEL_WIRING_E1_20261124",
+  "status": "PARTIAL_PRODUCER_STOP_LATE",
+  "scope": "Public catalogue and panel functional code facts only; formal stop outside original window, no positive phase acceptance or runtime adoption",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.APP.READER.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.OBSERVATION.BUILDER.E1.RESULT.20261124"
+  ],
+  "files": {
+    "cockpit/scripts/notbetting-pending-source.ts": "cd6537f8fbe0f34b07628ac4adaa53612056b710d5b5fdf6735d5948ead28896",
+    "cockpit/scripts/catalogue-independent.ts": "8f208077b98a0e638b06bb6295b89c53f75641acb8302c0a9a22c049efc059de",
+    "cockpit/app/components/expert/tipster-candidates.tsx": "00d2c5e5dbc6d0aa7dcc431124aeec03eb3161fde5bcb25329fff3fba900405f",
+    "cockpit/app/components/expert/olbg-pending-panel.tsx": "dd5157d5b382ecbfd6512883a360cec909e9726a8863e7ff72634a7ddb4edfa0",
+    "cockpit/tests/olbg-pending-panel.test.tsx": "3546e490e4860e58f51ee9674a3315f256a55a10d016c0d0fe6fba8fb226e9d3"
+  },
+  "authorResultSHA": "80f14f21ab2a04afc3164f825b458e15eda0727ab3b671223e097ff511fed48a",
+  "timingRefusalSHA": "7c5fd60a58ffde626d122ac969c30b71fcf39489e3e299cafdead86e489de878",
+  "verification": {
+    "panelRenderCases": 2,
+    "existingSyntheticCatalogueContractFilePassed": true,
+    "syntheticRegistryRows": 2,
+    "syntheticInventoryRows": 3,
+    "optionalQualificationFailures": 3,
+    "projectTypecheckExit": 0,
+    "eslintCodeFiles": 4,
+    "eslintExit": 0,
+    "readerSixteenTestsReusedWithoutReplay": true
+  },
+  "timing": {
+    "originalDeadline": "2026-11-24T13:27:35.335Z",
+    "durableProducerStop": "2026-11-24T13:31:42.763Z",
+    "withinOriginalWindow": false,
+    "noRetroactiveRepair": true
+  },
+  "approvalDefault": null,
+  "realPendingWrites": 0,
+  "runtimePort": false,
+  "sourceGET": 0,
+  "sourceReady": false,
+  "applicationAdmission": false,
+  "allCompatibleIntegrated": false,
+  "limits": [
+    "New actor must finalize UTC and monotonic result/STOP inside same execution before model resumes",
+    "No real browser/API recette of the new code",
+    "No personal candidate join, platform context only"
+  ]
+}

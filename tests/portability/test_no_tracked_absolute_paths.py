@@ -385,3 +385,87 @@ def test_local_audit_rehashed_mutations_and_new_paths_refused():
                 else canonical_record(record)
             )
             assert scan_publication(changed, number=seal["line"])
+
+
+# Exact historical audit spans: no provider corpus or network access.
+def current_audit_lines():
+    root = Path(__file__).resolve().parents[2]
+    lines = (root / candidate_checker.LEDGER_PATH).read_text(encoding="utf8").splitlines()
+    return [(seal, lines[seal["line"] - 1]) for seal in candidate_checker.SEALED_CURRENT_AUDIT_SPANS]
+
+
+def test_current_audit_exact_spans_preserve_every_other_byte():
+    rows = current_audit_lines()
+    assert len(rows) == 50
+    assert sum(len(seal["fields"]) for seal, _ in rows) == 51
+    duplicates = 0
+    for seal, line in rows:
+        masked = candidate_checker._mask_sealed_current_audit_spans(line, seal["line"])
+        assert len(masked) == len(line)
+        source, actual = json.loads(line), json.loads(masked)
+        expected = json.loads(line)
+        for field in seal["fields"]:
+            parent = expected
+            for key in field["path"][:-1]:
+                parent = parent[key]
+            key = field["path"][-1]
+            encoded = json.dumps(parent[key], ensure_ascii=False, separators=(",", ":"))
+            parent[key] = " " * (len(encoded) - 2)
+        assert masked == json.dumps(expected, ensure_ascii=False, separators=(",", ":"))
+        assert actual["context"]["worktree"] == source["context"]["worktree"]
+        if source["context"].get("controllerWorktree") == source["context"]["worktree"]:
+            duplicates += 1
+        assert not scan_publication(line, number=seal["line"])
+    assert duplicates == 6
+
+
+def test_current_audit_wrong_line_file_and_noncanonical_are_refused():
+    for seal, line in current_audit_lines():
+        assert scan_publication(line, number=seal["line"] + 1)
+        assert scan_publication(line, number=seal["line"], path="reports/other.jsonl")
+        assert scan_publication(line.replace(":", ": ", 1), number=seal["line"])
+
+
+def test_current_audit_rehashed_mutations_cannot_reuse_a_seal():
+    for seal, line in current_audit_lines():
+        for mutation in ("value", "decision", "hash", "extra", "moved"):
+            record = json.loads(line)
+            field = seal["fields"][0]
+            parent = record
+            for key in field["path"][:-1]:
+                parent = parent[key]
+            key = field["path"][-1]
+            if mutation == "value":
+                parent[key] += ".changed"
+            elif mutation == "decision":
+                record["decision_id"] = "NEW-UNREVIEWED"
+            elif mutation == "hash":
+                record["hash"] = "0" * 64
+            elif mutation == "extra":
+                record["proposal"] = parent[key]
+            else:
+                record["proposal"] = parent[key]
+                parent[key] = "reports/moved"
+            changed = (
+                json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+                if mutation == "hash"
+                else canonical_record(record)
+            )
+            assert candidate_checker._mask_sealed_current_audit_spans(changed, seal["line"]) == changed
+            assert scan_publication(changed, number=seal["line"])
+
+
+def test_current_audit_two_array_spans_are_atomic_and_order_bound():
+    seal, line = next((s, line) for s, line in current_audit_lines() if len(s["fields"]) == 2)
+    for mutate in ("reverse", "append", "onevalue"):
+        record = json.loads(line)
+        values = record["context"]["files"]
+        if mutate == "reverse":
+            values.reverse()
+        elif mutate == "append":
+            values.append(values[0])
+        else:
+            values[0] += ".changed"
+        changed = canonical_record(record)
+        assert candidate_checker._mask_sealed_current_audit_spans(changed, seal["line"]) == changed
+        assert scan_publication(changed, number=seal["line"])

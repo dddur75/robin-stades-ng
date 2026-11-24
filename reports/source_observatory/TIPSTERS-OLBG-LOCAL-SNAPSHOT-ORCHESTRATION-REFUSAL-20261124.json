@@ -1,0 +1,31 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.LOCAL.SNAPSHOT.ORCHESTRATION.REFUSAL.20261124",
+  "missionId": "OLBG_REAL_PENDING_LOCAL_SNAPSHOT_20261124",
+  "status": "PARTIAL",
+  "scope": "Author-reported orchestration syntax failure followed by AUTHOR_DEADLINE refusal before mutation; no code, tests, pending reads or timely producer STOP, no LOCAL E2 adoption. Independently acknowledged by C1/C4 as author report only.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.PENDING.REAL.NATIVE.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.APP.READER.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.CATALOGUE.PANEL.WIRING.CODE.FACTS.PARTIAL.20261124",
+    "DATA.SOURCE_OBSERVATORY.CANDIDATES317.20261119",
+    "DATA.SOURCE_OBSERVATORY.OLBG.CURRENT138.CORRECTED.20261120"
+  ],
+  "authorReport": {
+    "producerResultExists": false,
+    "producerStopExists": false,
+    "durableWrites": 0,
+    "sourceGET": 0,
+    "payloadReads": 0,
+    "runtimeWrites": 0,
+    "publicWrites": 0,
+    "tests": 0,
+    "reportedExplicitChildren": 7,
+    "independentlyExecuted": false
+  },
+  "allCompatibleIntegrated": false
+}

@@ -6,9 +6,20 @@ const pendingSource=readFileSync(new URL('../scripts/telegram-pending-channel.ts
 const pendingURL='data:text/javascript;base64,'+Buffer.from(stripTypeScriptTypes(pendingSource)).toString('base64');
 const notBettingSource=readFileSync(new URL('../scripts/notbetting-pending-source.ts',import.meta.url),'utf8');
 const notBettingURL='data:text/javascript;base64,'+Buffer.from(stripTypeScriptTypes(notBettingSource)).toString('base64');
+const olbgPendingSource=readFileSync(new URL('../scripts/olbg-pending-source.ts',import.meta.url),'utf8');
+const olbgPendingURL='data:text/javascript;base64,'+Buffer.from(stripTypeScriptTypes(olbgPendingSource)).toString('base64');
+const olbgApprovalSource=readFileSync(new URL('../scripts/olbg-reviewed-pending-approval.ts',import.meta.url),'utf8');
+const olbgApprovalURL='data:text/javascript;base64,'+Buffer.from(stripTypeScriptTypes(olbgApprovalSource).replace("from './olbg-pending-source'","from '"+olbgPendingURL+"'")).toString('base64');
+const olbgCandidateSource=readFileSync(new URL('../scripts/olbg-pending-candidate.ts',import.meta.url),'utf8');
+const olbgCandidateURL='data:text/javascript;base64,'+Buffer.from(stripTypeScriptTypes(olbgCandidateSource)
+  .replace("from './olbg-pending-source'","from '"+olbgPendingURL+"'")
+  .replace("from './olbg-reviewed-pending-approval'","from '"+olbgApprovalURL+"'")).toString('base64');
 const resolvedSource=stripTypeScriptTypes(source)
   .replace("from './telegram-pending-channel'","from '"+pendingURL+"'")
-  .replace("from './notbetting-pending-source'","from '"+notBettingURL+"'");
+  .replace("from './notbetting-pending-source'","from '"+notBettingURL+"'")
+  .replace("from './olbg-pending-source'","from '"+olbgPendingURL+"'")
+  .replace("from './olbg-pending-candidate'","from '"+olbgCandidateURL+"'")
+  .replace("from './olbg-reviewed-pending-approval'","from '"+olbgApprovalURL+"'");
 const m=await import('data:text/javascript;base64,'+Buffer.from(resolvedSource).toString('base64'));
 assert.equal(typeof m.applyReviewedSourceObservations,'function');
 const bytes=readFileSync(new URL('../../configs/source_observatory/reviewed-source-observations.json',import.meta.url));

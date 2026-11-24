@@ -1,0 +1,122 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.ROBIN.ORIGINAL.READ.ENVIRONMENT.PREPARATION.E1.RESULT.20261124",
+  "missionId": "ROBIN_ORIGINAL_READ_ENVIRONMENT_RESTORATION_20261124",
+  "status": "PASS_AND_HOLD_PREPARATION_ONLY",
+  "scope": "Original SHA-pinned12-key read configuration validated;12settings absent from controller,11paths exist. Default runtime Python not found, original Python --version succeeds. Exact ownedPID7056 identity and prepared syntax verified. Construction of earlier launcher omitted original packet; no direct reading of its process environment or unique503cause asserted. No server changes or source requests.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.ADMIN.CONSOLE.DIAGNOSTIC.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.LOCAL.SERVER.RELOAD.ACTUAL.PARTIAL.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.RUNNING.SERVER.READONLY.METADATA.E1.RESULT.20261124"
+  ],
+  "result": {
+    "admissions": 0,
+    "closedAtUTC": "2026-11-24T15:39:18.950658+00:00",
+    "identity": {
+      "argvExact": true,
+      "controlSyntaxErrors": 0,
+      "creationExact": true,
+      "exeExact": true,
+      "nodeHashExact": true,
+      "pid": 7056,
+      "processMutations": 0,
+      "scriptHashExact": true,
+      "soleOwnedLoopbackListener": true,
+      "sourceGET": 0,
+      "status": "READONLY_IDENTITY_ONLY"
+    },
+    "missionId": "ROBIN_ORIGINAL_READ_ENVIRONMENT_RESTORATION_20261124",
+    "packetKeys": 12,
+    "packetSHA": "0f9ffb4e960558bc4c55df14c6d203043b577ac7149b25e660be6c8fee9c54bc",
+    "preparedPythonASTValid": true,
+    "processLifecycleMutations": 0,
+    "pythonVersionProbes": [
+      {
+        "errorKind": "EXECUTABLE_NOT_FOUND",
+        "exit": null,
+        "kind": "FALLBACK",
+        "python3VersionPrefix": false
+      },
+      {
+        "errorKind": null,
+        "exit": 0,
+        "kind": "ORIGINAL",
+        "python3VersionPrefix": true
+      }
+    ],
+    "readyForRestoration": true,
+    "settingsComparisons": {
+      "NODE_ENV": {
+        "matchesOriginal": false,
+        "pathExists": null,
+        "presentInController": false
+      },
+      "PYTHONPATH": {
+        "matchesOriginal": false,
+        "pathExists": true,
+        "presentInController": false
+      },
+      "ROBIN_CONNECTORS_READ_DIRECTORY": {
+        "matchesOriginal": false,
+        "pathExists": true,
+        "presentInController": false
+      },
+      "ROBIN_FORUM_CAMPAIGN_DIRECTORY": {
+        "matchesOriginal": false,
+        "pathExists": true,
+        "presentInController": false
+      },
+      "ROBIN_LEGACY_READ_ROOT": {
+        "matchesOriginal": false,
+        "pathExists": true,
+        "presentInController": false
+      },
+      "ROBIN_PUBLIC_TIPSTERS_DIRECTORY": {
+        "matchesOriginal": false,
+        "pathExists": true,
+        "presentInController": false
+      },
+      "ROBIN_RECURRING_CAMPAIGN_DIRECTORY": {
+        "matchesOriginal": false,
+        "pathExists": true,
+        "presentInController": false
+      },
+      "ROBIN_RECURRING_CANARY_DIRECTORY": {
+        "matchesOriginal": false,
+        "pathExists": true,
+        "presentInController": false
+      },
+      "ROBIN_TIPSTERS_DIRECTORY": {
+        "matchesOriginal": false,
+        "pathExists": true,
+        "presentInController": false
+      },
+      "ROBIN_TIPSTERS_PYTHON": {
+        "matchesOriginal": false,
+        "pathExists": true,
+        "presentInController": false
+      },
+      "ROBIN_TIPSTER_CANDIDATES_DIRECTORY": {
+        "matchesOriginal": false,
+        "pathExists": true,
+        "presentInController": false
+      },
+      "ROBIN_WORKBOOK_INVENTORY_DIRECTORY": {
+        "matchesOriginal": false,
+        "pathExists": true,
+        "presentInController": false
+      }
+    },
+    "sourceGET": 0,
+    "status": "ENV_PREPARATION_READY"
+  },
+  "resultSHA256": "f178befd99d93b5bc19b6518f69911c0d94ce2f6e56dd287bb44ec352f1c375b",
+  "stopSHA256": "07d1dd95f69438029ae5748debfe5f7841e19c000e072c4a0b145cc301a23db1",
+  "sourceReady": false,
+  "admissions": 0,
+  "authorityClosed": true
+}

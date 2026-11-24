@@ -1,0 +1,94 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.APP.THREE.VIEW.LOCAL.R5.ACTUAL.RESULT.20261124",
+  "missionId": "NOTBETTING_PENDING_APP_BROWSER_RECETTE_R5_20261124",
+  "status": "PASS_AND_HOLD",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Independently verified targeted DOM/UI acceptance of three actual local views: NotBetting catalogue fiche, collection admin, and another Telegram fiche. Existing unqualified source fields display only as platform context, with their own claim provenance; no individual tipster join, fixture, prematch qualification, source activation or global UI acceptance.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.APP.PUBLIC.INTEGRATION.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.APP.LOOPBACK.METADATA.R3.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PL.NATIVE.R2.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.KICKTIPP.HREF.PUBLICATION.ACTUAL.RESULT.20261124"
+  ],
+  "browser": {
+    "actualFieldDOMComparisonInMemory": true,
+    "adminPendingVisible": true,
+    "catalogueRows": 317,
+    "closedAtUTC": "2026-11-24T11:15:51.594Z",
+    "globalUIRecette": false,
+    "hmrClientFramesForwarded": 0,
+    "originalProviderRequestsContinued": 0,
+    "otherPlatformHasNoNotBettingContext": true,
+    "pendingRecords": 1,
+    "platform": "NotBetting",
+    "platformContextNotIndividualProof": true,
+    "qualificationRows": 39,
+    "realChoicesLogged": false,
+    "screenshots": 0,
+    "sourceCollectorRuns": 0,
+    "stats": {
+      "blockedExternal": 0,
+      "blockedWebSockets": 0,
+      "blockedWrites": 0,
+      "consoleErrors": 0,
+      "droppedClientHMRFrames": 0,
+      "localGET": 239,
+      "localHMRSockets": 3,
+      "pageErrors": 0,
+      "requestCapHit": false
+    },
+    "status": "LOCAL_PLATFORM_CONTEXT_CANARY_PASS",
+    "twoCandidateMetadataIncludingTelegramUnchanged": true
+  },
+  "job": {
+    "activeSecondsMax": 50,
+    "elapsedSeconds": 4.5,
+    "exit": 0,
+    "hardSeconds": 60,
+    "sourceGET": null,
+    "subtreeKillConfirmed": true,
+    "taskMutations": 0,
+    "timedOut": false
+  },
+  "closedAtUTC": "2026-11-24T11:15:51.942361+00:00",
+  "stop": {
+    "hash": "7d721e17780c30bdffb72c9a2514d96ab6cd1ef3ab96a9b1934f23ddb45c728d",
+    "date": "2026-11-24T11:15:53.344431+00:00",
+    "authorityClosed": true
+  },
+  "receiptSHA": "5072035f75b1cf9af55d32da48eee0c3ec046c305561ed8280d0d131d730d8be",
+  "browserPrimarySHA": "9376732bbcc955923eb25a564bb8418acd2cf0a1b4625f4e42390f7dd899fa48",
+  "jobPrimarySHA": "ecd95c596b4eba530f2d11c3a397d86c921f658a3dd9c2da31f4fba7969ec699",
+  "bindingSHA": "8dc40b5a73868d21e9607d08eff128bf1719b14b78cdc4a9904f8894ed2f0a18",
+  "codeFiles": {
+    "cockpit/app/components/expert/tipster-candidates.tsx": "8c199f3e4b58f376784018098c74f297dd5e4eeec8e42fd5c4a51a7bb9e7a053",
+    "cockpit/scripts/catalogue-independent.ts": "7c1e56818110c428fa2231e421b6fc52c0aba935b690cac5c89f82f1790e53f8",
+    "cockpit/scripts/notbetting-pending-source.ts": "debf492cfade61e65d0d3a81b5b4c8d2fd2b3f090965ad1200c0f96502ec90c9"
+  },
+  "metadataSHA": "14eafb19a57fab3557724c8f29ba62269e6f3c02ed1333ef41d82b079ad3f01a",
+  "codeFileWrites": 0,
+  "privateDataWrites": 0,
+  "metadataWrites": 0,
+  "sourceCollectorRuns": 0,
+  "sourceGET": 0,
+  "GitMutations": 0,
+  "Task": 0,
+  "newAdmissions": 0,
+  "sourceReady": false,
+  "globalUIRecette": false,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "authorityClosed": true,
+  "retry": false,
+  "limits": [
+    "Exactly three local DOM/visibility views at the frozen current state; no pixel screenshot or global usability/assistive-technology acceptance.",
+    "Pending source fields remain unqualified. Telegram selection count or platform ownership is not personal identity.",
+    "Actual original browser R2 failure predicate remains unknown. Later preparations R3/R4 had no browser effects; historical PARTIAL records are preserved.",
+    "The correct pending claim is attached within its owning NotBetting panel; the separate platform qualification row remains present.",
+    "Only direct actor integrity-read counts are bounded; total application file reads and total OS processes are not asserted."
+  ]
+}

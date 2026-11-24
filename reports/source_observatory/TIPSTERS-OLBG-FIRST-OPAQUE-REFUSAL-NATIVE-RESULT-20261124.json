@@ -1,0 +1,90 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.FIRST.OPAQUE.REFUSAL.NATIVE.RESULT.20261124",
+  "missionId": "OLBG_FIRST_REFUSAL_NATIVE_BINDING_20261124",
+  "scope": "One actual bounded native OLBG read, first individual opaque exception only against nine frozen contextual L1 fixtures; no application admission or global source verdict",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.FIRST.REFUSAL.NATIVE.BINDING.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.OBSERVER.COMPLETE.COLLECTOR.CALLER.R2.E1.RESULT.20261124",
+    "DATA.SOURCE_OBSERVATORY.OLBG.SINGLE.PERSONAL.REP.V2.PREMATCH.RESULT.20261122",
+    "DATA.SOURCE_OBSERVATORY.LIGUE1.J12.OFFICIAL.SCHEDULE.DOCUMENTARY.20261122",
+    "ENG.SOURCE_OBSERVATORY.FUTURE.L1.CALENDAR.CONTEXTUAL.POLICY.20261122",
+    "ENG.SOURCE_OBSERVATORY.OLBG.TERMS.LOCAL.DOC.RESULT.20261121"
+  ],
+  "status": "PARTIAL",
+  "decision": "FAIL_AND_STOP",
+  "planSHA": "1dc5508e10003a053ddb8368f828b91192f44dec9ca7a767ae6688231d0185e4",
+  "manifestSHA": "2d0f10aea018e584cc2b83f1dc17e18a3a4744b7bc9cdd6923ef455ac3d6e144",
+  "configSHA": "5d081a7f690bc0a9c8545f0bb6e39277cd875e7423fb6ecf107f496be085ba10",
+  "workerSHA": "42b8ff97cd16210f839f19720432b9d8e786230eff18fb78dbb2cd2fbbb07416",
+  "sourceDecisionSHA": "c82f2a9ad102e467311f2106e0b0367cf15e1d6d0edfae0383b23944a65f9a12",
+  "sourceDecisionLedgerHash": "2027b5c47d9d018a8398ef6e55e76b0b304d2b9be8078e5cbcec9cd22d842639",
+  "job": {
+    "activeSecondsMax": 50,
+    "elapsedSeconds": 5.5,
+    "exit": 1,
+    "hardSeconds": 60,
+    "sourceGET": null,
+    "subtreeKillConfirmed": true,
+    "taskMutations": 0,
+    "timedOut": false,
+    "outerExit": 0
+  },
+  "resultSHA": "d934da781426c3fce6dd7072c8b7d84c5b79272a12ad22ce9ad1bc0f43e6f53a",
+  "workerResultSHA": "e4588c90f57656074e8b61c69df181b43cb972d307daddfb8d3e63dc515b18ed",
+  "observations": {
+    "sourceGETSendBoundaries": 2,
+    "DNS": 2,
+    "TCP": 2,
+    "completeHTTP200Responses": 2,
+    "nativeFactRecordsParsed": 20,
+    "sourceTypedFootballOpenRecords": 17,
+    "firstIndividualOpaqueRefusal": "FIXTURE_NOT_UNIQUE",
+    "firstRefusalCount": 1,
+    "firstRefusalIsAllRecordsDiagnosis": false,
+    "diagnosticCandidateCount": 0,
+    "rootCandidateCount": null,
+    "retainedContextualL1FixtureCount": 9,
+    "privateCandidateCreated": false,
+    "newPersonalPrematchAdmissions": 0
+  },
+  "sourceGETMeaning": "Two actual audited GET sends, distinct from outer sourceGET:null",
+  "factsMeaning": "Parsed native personal-profile records observed transiently; not retained forecasts or proven prematch predictions",
+  "calendarScope": "Nine frozen contextual L1 fixtures only, not global fixture universe or fresh-whistle proof",
+  "temporal": {
+    "sourceObservedAtUTC": "2026-11-24T12:35:18.100442+00:00",
+    "sourceTimezone": null,
+    "nativeUTCProof": false,
+    "applicationAdmission": false
+  },
+  "privacy": {
+    "rawPayloadRetained": false,
+    "providerChoicesInGit": false,
+    "privateCandidateCreated": false
+  },
+  "sourceReady": false,
+  "applicationAdmission": false,
+  "allCompatibleIntegrated": false,
+  "authorityClosed": true,
+  "retryAllowed": false,
+  "futureSourceAuthority": false,
+  "producerStopWithinOriginalWindow": true,
+  "privateFileCountAtProducerStop": 46,
+  "explicitRootChildLaunchesBeforeFinalRecorder": 12,
+  "totalOSProcesses": null,
+  "retainedTermsDate": "2026-11-21",
+  "currentTermsStability": null,
+  "independentReviews": {
+    "C1": "Actual documentary facts accepted after authority closure; no SOURCE authority",
+    "C4": "Actual facts accepted PARTIAL/FAIL_AND_STOP; no admissions or global absence"
+  },
+  "documentaryReviewAfterAuthorityClosure": true,
+  "documentaryReceiptWithinOriginalMissionWindow": false,
+  "sourceAuthorityClosedAt": "2026-11-24T12:39:38.917188+00:00",
+  "producerStoppedAt": "2026-11-24T12:35:48.198Z",
+  "finalDocumentaryRecordedAt": "2026-11-24T12:41:36.396Z"
+}

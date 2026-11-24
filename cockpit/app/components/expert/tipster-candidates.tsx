@@ -1,4 +1,6 @@
 "use client";
+import {OLBGPendingPanel} from './olbg-pending-panel';
+import type {OLBGPendingObservation} from '../../../scripts/olbg-pending-source';
 import type {NotBettingPendingObservation,PlatformPendingObservations} from '../../../scripts/notbetting-pending-source';
 import {TipsterQualification} from "./tipster-qualification";
 import {platformQualificationResultIds} from "../../lib/tipster-qualification";
@@ -14,7 +16,7 @@ import {choiceHeading,OpaqueChoiceDetails,type SourceChoice} from './source-choi
 type Access={platform:string;label:string;reason:string;requiredAccess:string;ownerAction:string;url:string;scope:string};
 type Unadmitted={fixtureLabel:string;selection:string;marketLabel:string;sourceEventText:string;observedAt:string;sourceUrl:string;reason:string};
 type Qualification=Access&{profileVisited:boolean;documentaryIssues:string[];personallyProven:boolean;observedAt?:string;unadmittedFacts?:Unadmitted[];expansionClaimId?:string;picks:(SourceChoice&{id:string;fixtureLabel:string;selection:string;market?:string;observedAt:string;kickoff:string;sourceUrl:string})[]};
-type Candidate={pendingChannelObservation?:PendingChannelObservation;reviewedSourceObservation?:ReviewedSourceObservation;id:string;label:string;platform:string;sourceUrl:string;evidenceUrl:string;declaredLastDate:string|null;
+type Candidate={pendingOLBGObservation?:OLBGPendingObservation;pendingChannelObservation?:PendingChannelObservation;reviewedSourceObservation?:ReviewedSourceObservation;id:string;label:string;platform:string;sourceUrl:string;evidenceUrl:string;declaredLastDate:string|null;
  status:'pending_qualification';collectionEnabled:boolean|null;qualification?:Qualification;origin:{sheet:string;row:number;workbookSha256:string}};
 type Registry={platformPendingObservations?:PlatformPendingObservations;historicalEvidence?:{sourceObservedAt?:string|null};operationalState?:'unknown';status:string;schemaVersion:string;count:number;platformCount:number;datedCount:number;enabledCount?:number|null;candidates:Candidate[];receipt:{registrySha256:string;claimId:string};qualification?:{status:string;claimId?:string;technicalClaimId?:string;technicalClaimIds?:string[];followupOverlayState?:string;expansionState?:string;expansionClaimId?:string;personalOverlayState?:string;personalCollectionState?:string;personalClaimId?:string;compatibleAccessState?:string;compatibleClaimId?:string;rosterCollectionState?:string;rosterRecurringState?:string;familyCollectionState?:string;familyNativeWinState?:string;familyOpaqueState?:string;familyClaimId?:string;assessedCount?:number;qualifiedCount?:number;platforms?:Access[]}};
 export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;tipsterId?:string}){
@@ -50,6 +52,8 @@ export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;ti
     <details><summary>Accès et blocages par plateforme</summary><ul>{(data.qualification.platforms??[]).map(a=><li key={a.platform} style={{overflowWrap:'anywhere'}}><strong>{a.platform} · {a.label}</strong><p>{a.reason}</p><p>Accès à établir : {a.requiredAccess}</p><p>{a.ownerAction}</p><a className="inline-link" href={a.url} target="_blank" rel="noopener noreferrer">Consulter la plateforme</a></li>)}</ul><small style={{overflowWrap:'anywhere'}}>Preuve {data.qualification.claimId}{(data.qualification.technicalClaimIds??[data.qualification.technicalClaimId]).filter(Boolean).map(id=>` · ${id}`).join('')}</small></details>
    </>:<p>Qualifications historiques indisponibles ; les fiches documentaires restent visibles. État actuel des collectes non vérifié. Cet import n’ajoute aucun pronostic.</p>}
    {data.platformPendingObservations?.NotBetting&&(compact||selected?.platform==='NotBetting')&&<NotBettingPendingPanel observation={data.platformPendingObservations.NotBetting}/>}
+   {compact&&rows.filter(c=>c.pendingOLBGObservation).map(c=><OLBGPendingPanel key={c.id} observation={c.pendingOLBGObservation!} assigned candidateId={c.id}/>)}
+   {data.platformPendingObservations?.OLBG&&(compact||selected?.platform==='OLBG')&&<OLBGPendingPanel observation={data.platformPendingObservations.OLBG}/>} 
    {compact?<InlineLink href="/expert/catalogue-tipsters">Consulter les 317 fiches Ligue 1</InlineLink>:tipsterId?<>
     <InlineLink href="/expert/catalogue-tipsters">Retour aux fiches candidates</InlineLink>
     {selected?<article className="section-card">
@@ -57,6 +61,7 @@ export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;ti
      <p>Dernière date déclarée dans l’inventaire : {selected.declaredLastDate??'Non renseignée'}. Elle ne certifie pas une publication avant match.</p>
      <p>Provenance : Catalogue, ligne {selected.origin.row}. Classement historique A, Ligue 1.</p>
      {selected.reviewedSourceObservation&&<ReviewedSourceObservationPanel observation={selected.reviewedSourceObservation}/>}
+     {selected.pendingOLBGObservation&&<OLBGPendingPanel observation={selected.pendingOLBGObservation} assigned candidateId={selected.id}/>}
      {selected.pendingChannelObservation&&<PendingChannelPanel observation={selected.pendingChannelObservation}/>}
      {platformResultIds.length>0&&<TipsterQualification resultIds={platformResultIds} platformContext/>}
      {selected.qualification?<>

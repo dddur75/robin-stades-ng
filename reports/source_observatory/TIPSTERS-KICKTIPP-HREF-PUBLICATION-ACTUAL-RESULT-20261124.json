@@ -1,0 +1,70 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.KICKTIPP.HREF.PUBLICATION.ACTUAL.RESULT.20261124",
+  "missionId": "KICKTIPP_HREF_PUBLICATION_GIT_R1_20261124",
+  "status": "PARTIAL",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Actual independently verified bounded publication of the reviewed Kicktipp exact-route correction and metadata receipts to existing draft PR133. CI274 is in progress; no source activation, qualification, full UI acceptance or global delivery follows.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V38.ENGINEERING.RECETTE.20261124",
+    "ENG.SOURCE_OBSERVATORY.KICKTIPP.NATIVE.HREF.CORRECTION.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.NATIVE.LITERAL.CONTEXT.SOURCE.R2.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.PUBLICATION.CI273.EXACT.HEAD.SUCCESS.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.LOCAL.GENERATED.FIXTURE.REUSE.MJS.DOMAIN.RESULT.20261124"
+  ],
+  "commit": {
+    "commitSHA": "7b53b3b7f35ecb4e050c39cfd0ec0b8866f4a783",
+    "treeSHA": "1fef534a1e09395b1b2107a556ecd66d615547ce",
+    "parentSHA": "5a4483ceab9693cae8019e048a72a5180bc7997e",
+    "at": "2026-11-24T11:01:56.845Z"
+  },
+  "files": [
+    "reports/council/decision-ledger.jsonl",
+    "reports/evidence/evidence-graph.json",
+    "reports/source_observatory/TIPSTERS-KICKTIPP-HREF-PUBLICATION-GIT-E1-20261124.json",
+    "reports/source_observatory/TIPSTERS-KICKTIPP-NATIVE-HREF-CORRECTION-E1-RESULT-20261124.json",
+    "reports/source_observatory/TIPSTERS-LOCAL-FOLLOWUP-V38-ENGINEERING-RECETTE-20261124.json",
+    "reports/source_observatory/TIPSTERS-LOCAL-GENERATED-FIXTURE-REUSE-MJS-DOMAIN-RESULT-20261124.json",
+    "reports/source_observatory/TIPSTERS-NOTBETTING-NATIVE-FIELD-SHAPES-LOCAL-R1-ACTUAL-RESULT-20261124.json",
+    "reports/source_observatory/TIPSTERS-NOTBETTING-NATIVE-FIELD-SHAPES-PRIVATE-CODE-E1-RESULT-20261124.json",
+    "reports/source_observatory/TIPSTERS-NOTBETTING-NATIVE-LITERAL-CONTEXT-DEPTH-FIX-PRIVATE-CODE-E1-RESULT-20261124.json",
+    "reports/source_observatory/TIPSTERS-NOTBETTING-NATIVE-LITERAL-CONTEXT-SOURCE-R2-ACTUAL-RESULT-20261124.json",
+    "reports/source_observatory/TIPSTERS-PUBLICATION-CI272-EXACT-HEAD-CANCELLED-RESULT-20261124.json",
+    "reports/source_observatory/TIPSTERS-PUBLICATION-CI273-EXACT-HEAD-SUCCESS-RESULT-20261124.json",
+    "src/robin/source_observatory/kicktipp_linked.py",
+    "tests/source_observatory/test_kicktipp_linked.py"
+  ],
+  "stageCount": 1,
+  "commitCount": 1,
+  "nonforcePushCount": 1,
+  "PRBodyUpdates": 1,
+  "bodySHA": "c59b946eaf3c5ef0421b0b29cae2aded17146bce76db08b88459d68d21adb182",
+  "closedAtUTC": "2026-11-24T11:02:54.377Z",
+  "allMutationAuthorityClosed": true,
+  "PR": {
+    "number": 133,
+    "state": "open",
+    "draft": true,
+    "merged": false,
+    "head": "7b53b3b7f35ecb4e050c39cfd0ec0b8866f4a783"
+  },
+  "CI": {
+    "runId": 45380371219,
+    "runNumber": 274,
+    "status": "IN_PROGRESS_NOT_YET_ACCEPTED",
+    "conclusion": null
+  },
+  "sourceGET": 0,
+  "runtimeWrites": 0,
+  "Task": 0,
+  "merge": 0,
+  "sourceReady": false,
+  "admissions": 0,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "receiptSHA": "40d5d9fda86dcb507a72721edcda01131a020725cc51fb73e0d8415ff7fdc68c",
+  "timeLimitUTC": "2026-11-24T11:09:48.324373+00:00"
+}
