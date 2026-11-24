@@ -1,3 +1,4 @@
+import {applyOLBGCampaignPublic} from './olbg-campaign-companion';
 import {applyLocalOLBGPublic} from './olbg-retained-approved';
 import {OLBG_RETAINED_APPROVAL} from './olbg-retained-approval';
 import type {Plugin} from 'vite';
@@ -28,7 +29,7 @@ export function publicTipsters(approval:SnapshotApproval=REVIEWED_PUBLIC_SNAPSHO
   if(!permitsLocalPilotRead(request)){response.statusCode=403;response.end(JSON.stringify({status:'forbidden',message:'Accès local A9_Mega requis.'}));return;}
   try{
    const base=readReviewedPublicSnapshot(root,approval);
-   const facts=applyLocalOLBGPublic(base,root,OLBG_RETAINED_APPROVAL,approval.sha256);
+   const facts=applyOLBGCampaignPublic(applyLocalOLBGPublic(base,root,OLBG_RETAINED_APPROVAL,approval.sha256),root,approval.sha256);
    response.end(JSON.stringify(facts));
   }catch{
    response.statusCode=503;

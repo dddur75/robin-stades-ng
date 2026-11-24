@@ -18,7 +18,10 @@ const retainedSource=readFileSync(new URL('../scripts/olbg-retained-approved.ts'
 const retainedURL='data:text/javascript;base64,'+Buffer.from(stripTypeScriptTypes(retainedSource)).toString('base64');
 const retainedApprovalSource=readFileSync(new URL('../scripts/olbg-retained-approval.ts',import.meta.url),'utf8');
 const retainedApprovalURL='data:text/javascript;base64,'+Buffer.from(stripTypeScriptTypes(retainedApprovalSource)).toString('base64');
+const campaignSource=readFileSync(new URL('../scripts/olbg-campaign-companion.ts',import.meta.url),'utf8');
+const campaignURL='data:text/javascript;base64,'+Buffer.from(stripTypeScriptTypes(campaignSource)).toString('base64');
 const resolvedSource=stripTypeScriptTypes(source)
+  .replace("from './olbg-campaign-companion'","from '"+campaignURL+"'")
   .replace("from './olbg-retained-approved'","from '"+retainedURL+"'")
   .replace("from './olbg-retained-approval'","from '"+retainedApprovalURL+"'")
   .replace("from './telegram-pending-channel'","from '"+pendingURL+"'")
@@ -26,6 +29,10 @@ const resolvedSource=stripTypeScriptTypes(source)
   .replace("from './olbg-pending-source'","from '"+olbgPendingURL+"'")
   .replace("from './olbg-pending-candidate'","from '"+olbgCandidateURL+"'")
   .replace("from './olbg-reviewed-pending-approval'","from '"+olbgApprovalURL+"'");
+const campaignModule=await import(campaignURL);
+assert.equal(typeof campaignModule.applyOLBGCampaignCatalogue,'function');
+assert.ok(source.includes("from './olbg-campaign-companion'"));
+assert.equal(resolvedSource.includes("from './olbg-campaign-companion'"),false);
 const m=await import('data:text/javascript;base64,'+Buffer.from(resolvedSource).toString('base64'));
 assert.equal(typeof m.applyReviewedSourceObservations,'function');
 const bytes=readFileSync(new URL('../../configs/source_observatory/reviewed-source-observations.json',import.meta.url));

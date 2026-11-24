@@ -1,0 +1,55 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.EVENT.LEXEME.LOCAL.RESULT.20261124",
+  "missionId": "NOTBETTING_EVENT_LEXEME_LOCAL_R1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "One cached pending record passed existing owner backlink gate and one strict lexical classifier. NON_HEX24_LITERAL only; no identifier, event relation, date meaning, fixture or prematch proof.",
+  "lexical": {
+    "admissions": 0,
+    "canonicalFixture": null,
+    "dateMeaningProven": false,
+    "dateOpaque": true,
+    "eligibleForApplication": false,
+    "eventLexeme": "NON_HEX24_LITERAL",
+    "interpretationAllowed": false,
+    "nativeContractProven": false,
+    "ownerGatePassed": true,
+    "performanceEvaluationAllowed": false,
+    "personIdentityVerified": false,
+    "preMatchProven": false,
+    "schemaVersion": "notbetting-event-lexeme-v1",
+    "settlementAllowed": false,
+    "sourceReady": false,
+    "status": "LEXICAL_ONLY_UNQUALIFIED"
+  },
+  "counts": {
+    "driverPayloadReads": 1,
+    "helperCalls": 1,
+    "ownerCalls": 1
+  },
+  "originalSourceObservedAtUTC": "2026-11-24T07:07:09.437437+00:00",
+  "syntheticPrerequisite": {
+    "methods": 2,
+    "helperCalls": 6,
+    "receiptSHA": "2cdcaaef50ac6330065f3c41dd12e89cc316c412cc4687f6d6bd3c931186d17f",
+    "sourceGET": 0,
+    "actualPayloadReads": 0
+  },
+  "resultRAW_SHA256": "6809c759d271e7caff0877ff44457f9c765d0a2800323a17e262979562688d83",
+  "stopRAW_SHA256": "3c8b55dfe9df9ee2a859d00c46fa352c1cbb1e01847dd734bba836d32e43eb04",
+  "rootPlanSHA256": "02d40b8a6970840ad1f88506426bacb2c4202992113e3b2d7675ce412600a213",
+  "rootManifestSHA256": "e73ffdeb80cd29ba6a811eb4b50aec6927c44be4a4cfaa32589983c401c726c2",
+  "rootCloseHash": "61972a70fb31979e0d22b699aad393b020fdc87139cc58896f10dd339a78d83a",
+  "sourceGET": 0,
+  "calendarReads": 0,
+  "sourceReady": false,
+  "applicationAdmissions": 0,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "authorityClosed": true,
+  "nextDecisiveEvidence": "Native consumer event/date relationship; no more blind delimiter, HEX or repeated picks-neighborhood probes."
+}

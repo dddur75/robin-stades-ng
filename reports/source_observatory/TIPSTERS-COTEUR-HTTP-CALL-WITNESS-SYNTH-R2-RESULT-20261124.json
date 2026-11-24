@@ -1,0 +1,48 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.HTTP.CALL.WITNESS.SYNTH.R2.RESULT.20261124",
+  "missionId": "COTEUR_HTTP_CALL_WITNESS_SYNTH_R2_E1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C3",
+    "C4"
+  ],
+  "scope": "One real execution of six synthetic families and seven bounded witness calls. Technical syntax witness only; no provider body or native request/author/fixture/time contract validated.",
+  "syntheticFamilies": 6,
+  "witnessCalls": 7,
+  "nodeLaunches": 1,
+  "nodeExit": 0,
+  "nodeElapsedSeconds": 0.4529999999795109,
+  "stdoutBytes": 144,
+  "stderrBytes": 0,
+  "timeout": false,
+  "overflow": false,
+  "maximumSyntheticInputBytes": 8193,
+  "maximumAcceptedWindowBytes": 8192,
+  "primaryRAW_SHA256": "2da5077423352b49246d4d6989893c6cf9a19b6853b89ca62af3696d330684bf",
+  "resultRAW_SHA256": "6014f8b22fd752ede62015ee19be55c8c3b7319b99ea8976df839dfa73ff86c7",
+  "stopRAW_SHA256": "e7dfa61b91537d3e1c0da60953fca82e3afa41ffe99e18b06ab39be859330543",
+  "testCodePins": {
+    "worker.py": "c824733f6fc55910d9305fb15acc3b099fa8fcb623515313767e9075091d3e35",
+    "guard.py": "11754ef411d42835fb8d5d45f228119af0e45d416efef3fa1a73fb135f379a75",
+    "synthetic-entry.cjs": "2f71c9dd2bdfdd7a05082f77d0c1bf7631478bca08d27ff7ff257f3260fa1948",
+    "test-proposal-pinned.cjs": "8c7273c70a646616e317e14a415af41b5092688565174f7bedfe18af0970b6b8"
+  },
+  "rootPlanSHA256": "c1a8cc885fe560ece7d705469a97f7623cc73fdaa0c3824acdbe51dc2ed179c9",
+  "rootManifestSHA256": "cc7d41e5cc78c9156673ef22aac947cd25b3cee4c42fd161b3f83ecd1df119af",
+  "rootCloseHash": "60349d5debdda32df7891e53f91d40d3170163eb9c1ccb1490fba7233c430de0",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LITERAL.QUERY.NATIVE.R4.ACTUAL.RESULT.20261124"
+  ],
+  "runtimeHTTPVerb": "UNPROVEN",
+  "receiverBinding": "UNPROVEN",
+  "semanticReadOnly": "UNKNOWN",
+  "authorFixtureTimeContract": "UNPROVEN",
+  "sourceGET": 0,
+  "providerReads": 0,
+  "sourceReady": false,
+  "applicationAdmissions": 0,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "authorityClosed": true
+}
