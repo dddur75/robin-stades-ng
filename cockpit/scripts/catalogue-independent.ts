@@ -68,6 +68,55 @@ function qualification(value:unknown,depth=0):FactObject{
 export type Candidate=FactObject&{pendingOLBGObservation?:OLBGPendingObservation;pendingChannelObservation?:PendingChannelObservation;reviewedSourceObservation?:ReviewedSourceObservation;id:string;sourceUrl:string;origin:FactObject;collectionEnabled:null;operationalState:'unknown';qualification?:FactObject};
 export type Catalogue=FactObject&{platformPendingObservations?:PlatformPendingObservations;receipt:FactObject;status:'ok';count:number;candidates:Candidate[];enabledCount:null;operationalState:'unknown';qualification:FactObject;rosterAssessments:FactObject[];historicalEvidence:FactObject};
 
+function registryCandidate(value:unknown,workbook:string):Candidate{
+ const r=object(value),source=url(r.sourceUrl),id=string(r.id);check(id==='catalogue:'+hash(source));
+ check(r.status==='pending_qualification'&&r.collectionEnabled===false);string(r.label);string(r.platform);url(r.evidenceUrl);civil(r.declaredLastDate);
+ return {...select(r,REGISTRY_FIELDS),id,sourceUrl:source,origin:origin(r.origin,workbook),collectionEnabled:null,operationalState:'unknown'};
+}
+
+export type CandidateSupplementApproval=Readonly<{relativePath:string;sha256:string;workbookSHA256:string;indexSHA256:string;sourceClaimId:string;candidateClaimId:string;count:number}>;
+/** Public code carries no local documentary supplement authority. */
+export const CANDIDATE_SUPPLEMENT_APPROVAL:CandidateSupplementApproval|null=null;
+function exactKeys(value:FactObject,keys:string[]):void{check(Object.keys(value).length===keys.length&&keys.every(k=>Object.hasOwn(value,k)));}
+/** Add documentary identities only; native choices remain a separate admission. */
+export function projectCandidateSupplement(base:Catalogue,raw:Uint8Array,a:CandidateSupplementApproval):Catalogue{
+ check(Number.isSafeInteger(a.count)&&a.count>=1&&a.count<=50);
+ for(const pin of [a.sha256,a.workbookSHA256,a.indexSHA256])check(HASH.test(pin));
+ string(a.sourceClaimId);string(a.candidateClaimId);
+ check(base.receipt.sourceWorkbookSha256===a.workbookSHA256&&base.count===base.candidates.length);
+ const e=object(decode(raw,a.sha256,262144));
+ exactKeys(e,['schemaVersion','workbookSHA256','indexSHA256','sourceClaimId','candidateClaimId','rows']);
+ check(e.schemaVersion==='robin-candidate-supplement-v1'&&e.workbookSHA256===a.workbookSHA256&&e.indexSHA256===a.indexSHA256&&e.sourceClaimId===a.sourceClaimId&&e.candidateClaimId===a.candidateClaimId);
+ check(Array.isArray(e.rows)&&e.rows.length===a.count);
+ const ids=new Set(base.candidates.map(c=>c.id)),records=new Set<string>(),authors=new Set<number>();
+ const added:Candidate[]=e.rows.map(value=>{
+  const row=object(value);exactKeys(row,['candidate','recordId','mapping']);
+  const r=object(row.candidate);exactKeys(r,[...REGISTRY_FIELDS,'collectionEnabled']);
+  const c=registryCandidate(r,a.workbookSHA256),recordId=string(row.recordId);
+  check(/^workbook:[a-f0-9]{64}$/.test(recordId)&&!records.has(recordId)&&!ids.has(c.id));
+  exactKeys(c.origin,['sheet','row','workbookSha256']);
+  const m=object(row.mapping);exactKeys(m,['documentaryURL','currentURL','profileId','nativeAuthorId','nativeMode','nativeResponseSHA256','nativeBatchSHA256']);
+  check(c.platform==='OLBG'&&Number.isSafeInteger(m.profileId)&&Number(m.profileId)>0&&m.nativeAuthorId===m.profileId&&!authors.has(Number(m.profileId))&&m.nativeMode==='current');
+  check([`https://www.olbg.com/tipsters/tips/history/${m.profileId}`,`https://www.olbg.com/tipsters/tips/${m.profileId}`].includes(c.sourceUrl)&&m.documentaryURL===c.sourceUrl&&m.currentURL===`https://www.olbg.com/tipsters/tips/${m.profileId}`);
+  check(!base.candidates.some(prior=>prior.sourceUrl===m.currentURL||(prior.origin.sheet===c.origin.sheet&&prior.origin.row===c.origin.row&&prior.origin.workbookSha256===c.origin.workbookSha256)));
+  check(HASH.test(string(m.nativeResponseSHA256))&&HASH.test(string(m.nativeBatchSHA256)));
+  ids.add(c.id);records.add(recordId);authors.add(Number(m.profileId));
+  return {...c,qualification:{id:c.id,status:'documentary_only',documentaryIssues:[],picks:[],personallyProven:false},
+   documentarySupplement:{claimId:a.candidateClaimId,sourceClaimId:a.sourceClaimId,indexSHA256:a.indexSHA256,recordId,mapping:{...m}}};
+ });
+ const candidates=[...base.candidates,...added];
+ return {...base,candidates,count:candidates.length,platformCount:new Set(candidates.map(c=>c.platform)).size,
+  datedCount:candidates.filter(c=>c.declaredLastDate!==null).length,
+  candidateSupplement:{claimId:a.candidateClaimId,sourceClaimId:a.sourceClaimId,indexSHA256:a.indexSHA256,workbookSHA256:a.workbookSHA256,baseRegistryCount:base.count,addedCandidates:added.length}};
+}
+export function applyApprovedCandidateSupplement(base:Catalogue,root:string,a:CandidateSupplementApproval|null=CANDIDATE_SUPPLEMENT_APPROVAL):Catalogue{
+ if(a===null)return base;
+ try{
+  check(/^\.ci\/[a-zA-Z0-9/_-]+\.json$/.test(a.relativePath)&&!a.relativePath.split('/').includes('..'));
+  return projectCandidateSupplement(base,readBounded(resolve(root,a.relativePath),262144),a);
+ }catch{return base;}
+}
+
 /** Pure fact projection. Optional qualification failure never removes valid registry facts. */
 export function projectCatalogue(registryRaw:Uint8Array,receiptRaw:Uint8Array,qualificationRaw:Uint8Array|undefined,a:Readonly<Approval>):Catalogue{
  check(Number.isSafeInteger(a.count)&&a.count>0&&a.count<=317&&Number.isSafeInteger(a.rosterCount)&&a.rosterCount>=0&&a.rosterCount<=137);
@@ -76,9 +125,7 @@ export function projectCatalogue(registryRaw:Uint8Array,receiptRaw:Uint8Array,qu
  check(receipt.registrySha256===a.registrySHA256&&receipt.sourceWorkbookSha256===a.workbookSHA256&&receipt.csvSha256===a.csvSHA256);
  const parsed=decode(registryRaw,a.registrySHA256,2_000_000);check(Array.isArray(parsed)&&parsed.length===a.count);
  const ids=new Set<string>();const candidates:Candidate[]=parsed.map(value=>{
-  const r=object(value),source=url(r.sourceUrl),id=string(r.id);check(id==='catalogue:'+hash(source)&&!ids.has(id));ids.add(id);
-  check(r.status==='pending_qualification'&&r.collectionEnabled===false);string(r.label);string(r.platform);url(r.evidenceUrl);civil(r.declaredLastDate);
-  return {...select(r,REGISTRY_FIELDS),id,sourceUrl:source,origin:origin(r.origin,a.workbookSHA256),collectionEnabled:null,operationalState:'unknown'};
+  const candidate=registryCandidate(value,a.workbookSHA256);check(!ids.has(candidate.id));ids.add(candidate.id);return candidate;
  });
  check(receipt.count===candidates.length&&receipt.platformCount===new Set(candidates.map(r=>r.platform)).size&&receipt.datedCount===candidates.filter(r=>r.declaredLastDate!==null).length);
  const base:Catalogue={status:'ok',schemaVersion:'robin-candidate-registry-v1',count:a.count,platformCount:receipt.platformCount,datedCount:receipt.datedCount,receipt,
@@ -129,7 +176,9 @@ export function readIndependentCatalogue(root:string):Catalogue{
  if(OLBG_REVIEWED_APPROVAL!==null){
   try{pending=applyReviewedOLBGPendingToCandidate(pending,readBounded(resolve(root,'.ci/local-robin/olbg-pending-profile-observations.json'),131072),readBounded(resolve(root,'.ci/local-robin/olbg-pending-profile-receipt.json'),65536),OLBG_REVIEWED_APPROVAL);}catch{/* Unapproved or unavailable OLBG snapshot never replaces existing facts. */}
  }
- const stable=restoreStableCatalogue(applyLocalOLBGCatalogue(pending,root,OLBG_RETAINED_APPROVAL));
+ const retained=applyLocalOLBGCatalogue(pending,root,OLBG_RETAINED_APPROVAL);
+ const supplemented=applyApprovedCandidateSupplement(retained,root);
+ const stable=restoreStableCatalogue(supplemented);
  return applyParentCampaignCatalogue(stable,root,OLBG_CAMPAIGN_APPROVAL);
 }
 

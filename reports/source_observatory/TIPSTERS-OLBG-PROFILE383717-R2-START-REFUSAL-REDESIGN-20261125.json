@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "robin-bounded-source-attempt-result-v1",
+  "generatedAt": "2026-11-25T13:01:48.924Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.PROFILE383717.R2.START.REFUSAL.REDESIGN.RESULT.20261125",
+  "status": "PARTIAL_NOT_STARTED_SECOND_FIXED_WINDOW_MISSED",
+  "scope": "Metadata start window missed before any authorization or controller; no judgment about source compatibility.",
+  "missionId": "OLBG_PROFILE383717_NATIVE_R2_20261125",
+  "planTuple": {
+    "parentPlanSHA": "535a35d6dde5d1685206ef5fa3491f2600c5c04aca9cbef218ad94e7cab2583b",
+    "parentManifestSHA": "084b2fea9cf2c40c398796cca2eb53331b5dbd54315b30577968e87af82688b0",
+    "childPlanSHA": "9ba7202e638c2c7eaef5903ba92cb24199b12d898f870f0a48e870959f5f0bb2",
+    "childManifestSHA": "b961dbe16b5d497dbdb859f8b5d669bb0ff7cfe516d40d2dcb345c21eadd8e3f"
+  },
+  "sourceGETMeasured": null,
+  "sourceGETInferred": 0,
+  "JobMarkers": 0,
+  "AUTHMarkers": 0,
+  "newObservations": 0,
+  "applicationAdmissions": 0,
+  "inferenceBasis": "No controller invoked; parent/child/Root authorization and native-spent files absent; campaign receipts/events absent. C4 independently inspected.",
+  "oldPermissionsClosed": true,
+  "oldPermissionsReused": false,
+  "disposition": "FAIL_AND_REDESIGN_RETURN_TO_E1",
+  "thirdUnchangedAttemptForbidden": true,
+  "correction": "Prepare dependencies and independent scoped reviews before arming a bounded launch; reuse proven parser and transport; no additional synthetic pack.",
+  "sourceReady": false
+}

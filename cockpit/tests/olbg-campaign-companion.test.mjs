@@ -10,17 +10,32 @@ const canonical=v=>Array.isArray(v)?'['+v.map(canonical).join(',')+']':v&&typeof
 const hash=v=>createHash('sha256').update(v).digest('hex'),bytes=v=>Buffer.from(canonical(v)+'\n');
 const endpoint='https://www.olbg.com/tipsters/tips/648433',slots=['2026-11-27T12:00:00+00:00','2026-11-27T13:00:00+00:00'];
 const fixture={id:'synth:match',home:'Home',away:'Away',label:'Home - Away',homeAliases:['Home'],awayAliases:['Away'],kickoff:'2026-11-27T20:00:00+00:00'};
-function pack(){
+// Proposed targeted method only; C3 did not run this file or its retained tests.
+test('generic personal profile default642100 and unique catalogue join',()=>{
+ for(const id of [648433,642100]){
+  const p=pack(id);p.accept(slots[0],[[10,'SYNTH_ONLY']]);const c=p.read(),url='https://www.olbg.com/tipsters/tips/'+id;
+  assert.equal(c.profileId,id);assert.equal(c.picks[0].authorId,'olbg:'+id);
+  const sourceUrl=id===642100?'https://www.olbg.com/tipsters/tips/history/'+id:url;
+  const target={id:'catalogue:'+hash(sourceUrl),platform:'OLBG',sourceUrl,origin:{sheet:'Catalogue',row:269},qualification:{picks:[]}};
+  const base={candidates:[target]},before=JSON.stringify(base);const decorated=mergeCampaignCatalogue(base,c);
+  assert.equal(decorated.candidates[0].qualification.picks.length,1);assert.equal(JSON.stringify(base),before);
+  assert.throws(()=>mergeCampaignCatalogue({candidates:[target,{...target,id:'catalogue:'+hash(url),sourceUrl:url}]},c));
+  assert.throws(()=>mergeCampaignCatalogue({candidates:[{...target,sourceUrl:url+'/'}]},c));
+ }
+});
+function pack(profileId=648433){
+ const endpoint='https://www.olbg.com/tipsters/tips/'+profileId;
  const cal=hash(canonical([fixture])),parser='a'.repeat(64),builder='b'.repeat(64),claim='SYNTH.NOT.REAL';
  const plan={id:'SYNTH_OPAQUE_CAMPAIGN',claimId:claim,endpoint,robotsUrl:'https://www.olbg.com/robots.txt',termsUrl:'https://www.olbg.com/use',zeroEligiblePolicy:'HALT',slots,fixtures:[fixture],calendarSha256:cal,parserSha256:parser,builderSha256:builder};
+ if(profileId!==648433)plan.profileId=profileId;
  const mf={mission_id:plan.id,authorized_stages:['E1','E2'],maximum_stage:'E2',external_effects:{https_get_max:6,per_source_max:6},compute_budget:{},time_budget:{seconds:600},source_hash:hash(canonical(plan)),expires_at:'2026-11-27T19:00:00+00:00'};
  const planRaw=bytes(plan),mfRaw=bytes(mf),approval={planSHA256:hash(planRaw),manifestSHA256:hash(mfRaw),claimId:claim,publicBaseSHA256:'f'.repeat(64)};
  const events=[],files=new Map(),controls=new Map(),confirmed=new Map();let currentAt=slots[0];let previous='0'.repeat(64);
  function append(kind,data={}){const e={sequence:events.length+1,kind,at:data.slot??currentAt,previousHash:previous,...data};e.hash=hash(canonical(e));previous=e.hash;events.push(e);}
  function batch(at,rows){
   const response=hash('SYNTH'+at),records=rows.map(([tid,selection])=>({tipid:tid,eventid:900,eventname:'Home v Away',selection,market:'synthetic market',winew:'',event_datetime:'2026-11-27 20:00:00',vc_sport_id:1,result:'Open'}));
-  const picks=records.map(n=>({id:'olbg-tip:'+n.tipid,sourceId:'SRC_014',authorId:'olbg:648433',authorLabel:'Synthetic',authorUrl:endpoint,sourceUrl:endpoint,sourceTipId:n.tipid,sourceEventId:n.eventid,fixtureId:fixture.id,fixtureLabel:fixture.label,kickoff:fixture.kickoff,selection:n.selection,market:'source_native_opaque',marketLabel:'Synthetic opaque',sourceMarketLabel:n.market,sourceBetType:n.winew,sourceFields:n,sourceEventLocalText:n.event_datetime,sourceEventTimezone:null,publishedAt:null,publishedCivilDate:null,observedAt:at,firstSeenAt:at,responseSha256:response,parserSha256:parser,calendarSha256:cal,performanceEvaluationAllowed:false,settlementAllowed:false,marketInterpretationAllowed:false,versions:[{selection:n.selection,observedAt:at}],versionCount:1}));
-  return {schemaVersion:'robin-olbg-opaque-campaign-batch-v1',missionId:plan.id,claimId:claim,source:{profiles:[{facts:{authorId:648433,authorLabel:'Synthetic',mode:'current',records},request:{url:endpoint,observedAt:at,responseSha256:response}}],fixtures:[fixture],calendarSha256:cal},acceptedSourceTipIds:records.map(r=>r.tipid),picks,parserSha256:parser,builderSha256:builder,calendarSha256:cal,sourceReady:false,applicationAdmissions:0,recurrence:true};
+  const picks=records.map(n=>({id:'olbg-tip:'+n.tipid,sourceId:'SRC_014',authorId:'olbg:'+profileId,authorLabel:'Synthetic',authorUrl:endpoint,sourceUrl:endpoint,sourceTipId:n.tipid,sourceEventId:n.eventid,fixtureId:fixture.id,fixtureLabel:fixture.label,kickoff:fixture.kickoff,selection:n.selection,market:'source_native_opaque',marketLabel:'Synthetic opaque',sourceMarketLabel:n.market,sourceBetType:n.winew,sourceFields:n,sourceEventLocalText:n.event_datetime,sourceEventTimezone:null,publishedAt:null,publishedCivilDate:null,observedAt:at,firstSeenAt:at,responseSha256:response,parserSha256:parser,calendarSha256:cal,performanceEvaluationAllowed:false,settlementAllowed:false,marketInterpretationAllowed:false,versions:[{selection:n.selection,observedAt:at}],versionCount:1}));
+  return {schemaVersion:'robin-olbg-opaque-campaign-batch-v1',missionId:plan.id,claimId:claim,source:{profiles:[{facts:{authorId:profileId,authorLabel:'Synthetic',mode:'current',records},request:{url:endpoint,observedAt:at,responseSha256:response}}],fixtures:[fixture],calendarSha256:cal},acceptedSourceTipIds:records.map(r=>r.tipid),picks,parserSha256:parser,builderSha256:builder,calendarSha256:cal,sourceReady:false,applicationAdmissions:0,recurrence:true};
  }
   function parentReceipt(slot,batchName,batchRaw,count){
   const summary=raw=>({bytes:raw.length,sha256:hash(raw)}),stdout=Buffer.from('{"state":"succeeded","requests":3}\\n'),stderr=Buffer.alloc(0);

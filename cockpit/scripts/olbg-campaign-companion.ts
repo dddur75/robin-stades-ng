@@ -3,10 +3,9 @@ import {closeSync,fstatSync,openSync,readSync} from 'node:fs';
 import {resolve} from 'node:path';
 
 type J=Record<string,unknown>;
-export type OLBGCampaignApproval=Readonly<{planSHA256:string;manifestSHA256:string;claimId:string;publicBaseSHA256:string}>;
+export type OLBGCampaignApproval=Readonly<{planSHA256:string;manifestSHA256:string;claimId:string;publicBaseSHA256:string;campaignDirectory?:string}>;
 export const OLBG_CAMPAIGN_APPROVAL:OLBGCampaignApproval|null=null;
-const TARGET='catalogue:d6120a2a545cd92a3d9b740d887d663e90af1023dfe8a64101e35cc8ea5415c1';
-const URL='https://www.olbg.com/tipsters/tips/648433',HASH=/^[a-f0-9]{64}$/;
+const HASH=/^[a-f0-9]{64}$/;
 const IMMUTABLE=['id','sourceId','authorId','sourceTipId','sourceEventId','fixtureId','kickoff','sourceUrl','authorUrl','market','calendarSha256'];
 const VERSION=['selection','sourceMarketLabel','sourceBetType','sourceFields'];
 const FLAGS=['performanceEvaluationAllowed','settlementAllowed','marketInterpretationAllowed'];
@@ -45,7 +44,12 @@ export function mergeCampaignPicks(previous:unknown,additional:J[]):J[]{
   Object.assign(old,p,{firstSeenAt:first,observedAt:p.observedAt,lastSeenAt:p.lastSeenAt??p.observedAt,versions,versionCount:versions.length,observationVersions:observations});
  }return out;
 }
-type Companion={picks:J[];fixtures:J[];claimId:string;calendarSHA256:string;batchCount:number;publicBaseSHA256:string};
+type Companion={picks:J[];fixtures:J[];claimId:string;calendarSHA256:string;batchCount:number;publicBaseSHA256:string;profileId?:number};
+function companionProfile(c:Companion):{id:number;url:string}{
+ check(c.picks.length>0);const author=text(c.picks[0].authorId),match=/^olbg:([1-9][0-9]*)$/.exec(author);check(match!==null);
+ const id=c.profileId??Number(match[1]);check(typeof id==='number'&&Number.isSafeInteger(id)&&id>0&&author==='olbg:'+id);
+ const url='https://www.olbg.com/tipsters/tips/'+id;check(c.picks.every(p=>p.authorId==='olbg:'+id&&p.sourceUrl===url&&p.authorUrl===url));return {id,url};
+}
 export type ParentProofIO={loadControl:(slot:string,name:'primary.json'|'result.json'|'AUTHOR-STOP.json')=>Uint8Array;confirmExit:(campaignId:string,slot:string,receiptSHA256:string)=>boolean};
 const PARENT_KEYS='schemaVersion missionId slotRunMissionId slot sourceDecisionLedgerHash accepted childExit timedOut subtreeKillConfirmed batch primarySHA256 resultSHA256 STOP_SHA256 rawStdout rawStderr postChildFullGuardPassed sourceReady'.split(' ');
 function verifyParent(plan:J,slot:string,receipt:J,loadFile:(name:string)=>Uint8Array,io:ParentProofIO|undefined):number{
@@ -77,6 +81,7 @@ function verifyParent(plan:J,slot:string,receipt:J,loadFile:(name:string)=>Uint8
 
 export function readCampaignBuffers(planRaw:Uint8Array,mfRaw:Uint8Array,journalRaw:Uint8Array,loadBatch:(name:string)=>Uint8Array,a:OLBGCampaignApproval,parentIO?:ParentProofIO):Companion{
  const plan=obj(decode(planRaw,a.planSHA256,65536)),mf=obj(decode(mfRaw,a.manifestSHA256,16384));
+ const profileId=plan.profileId??648433;check(typeof profileId==='number'&&Number.isSafeInteger(profileId)&&profileId>0);const URL='https://www.olbg.com/tipsters/tips/'+profileId;
  check(Object.keys(mf).length===8&&mf.mission_id===plan.id&&mf.maximum_stage==='E2'&&equal(mf.authorized_stages,['E1','E2'])&&mf.source_hash===hash(canonical(plan)));
  check(plan.claimId===a.claimId&&plan.endpoint===URL&&plan.robotsUrl==='https://www.olbg.com/robots.txt'&&plan.termsUrl==='https://www.olbg.com/use'&&plan.zeroEligiblePolicy==='HALT');
  const slots=arr(plan.slots,12).map(v=>text(v,80));check(slots.length>0&&new Set(slots).size===slots.length&&equal(slots,[...slots].sort()));for(const s of slots)check(utc(s)<utc(mf.expires_at));
@@ -98,10 +103,10 @@ export function readCampaignBuffers(planRaw:Uint8Array,mfRaw:Uint8Array,journalR
   const parentBytes=verifyParent(plan,text(receipt.slot),receipt,loadBatch,parentIO);const batchRaw=loadBatch(name);check(batchRaw.length===parentBytes);
   const b=obj(decode(batchRaw,digest,131072));check(b.schemaVersion==='robin-olbg-opaque-campaign-batch-v1'&&b.missionId===plan.id&&b.claimId===a.claimId&&b.parserSha256===plan.parserSha256&&b.builderSha256===plan.builderSha256&&b.calendarSha256===plan.calendarSha256&&b.sourceReady===false&&b.applicationAdmissions===0&&b.recurrence===true);
   const source=obj(b.source);check(equal(source.fixtures,fixtures)&&source.calendarSha256===plan.calendarSha256);
-  const profiles=arr(source.profiles,1);check(profiles.length===1);const profile=obj(profiles[0]),facts=obj(profile.facts),request=obj(profile.request);check(facts.authorId===648433&&facts.mode==='current'&&request.url===URL&&request.responseSha256===proof.responseSha256);text(facts.authorLabel,80);utc(request.observedAt);
+  const profiles=arr(source.profiles,1);check(profiles.length===1);const profile=obj(profiles[0]),facts=obj(profile.facts),request=obj(profile.request);check(facts.authorId===profileId&&facts.mode==='current'&&request.url===URL&&request.responseSha256===proof.responseSha256);text(facts.authorLabel,80);utc(request.observedAt);
   const records=arr(facts.records,20).map(obj),accepted=arr(b.acceptedSourceTipIds,20).map(integer),rows=arr(b.picks,20).map(obj);check(rows.length>0&&rows.length===receipt.count&&rows.length===accepted.length&&new Set(accepted).size===accepted.length);
   check(new Set(rows.map(p=>p.sourceTipId)).size===rows.length);for(const p of rows){const tid=integer(p.sourceTipId),matches=records.filter(n=>n.tipid===tid);check(matches.length===1&&accepted.includes(tid));const native=matches[0],fixture=fixtures.find(f=>f.id===p.fixtureId);check(fixture&&equal(p.sourceFields,native)&&native.vc_sport_id===1&&native.result==='Open');integer(native.eventid);
-   check(p.id==='olbg-tip:'+tid&&p.sourceId==='SRC_014'&&p.authorId==='olbg:648433'&&p.sourceEventId===native.eventid&&p.authorLabel===facts.authorLabel&&p.authorUrl===URL&&p.sourceUrl===URL&&p.kickoff===fixture.kickoff&&p.fixtureLabel===fixture.label);
+   check(p.id==='olbg-tip:'+tid&&p.sourceId==='SRC_014'&&p.authorId==='olbg:'+profileId&&p.sourceEventId===native.eventid&&p.authorLabel===facts.authorLabel&&p.authorUrl===URL&&p.sourceUrl===URL&&p.kickoff===fixture.kickoff&&p.fixtureLabel===fixture.label);
    check(p.observedAt===request.observedAt&&p.firstSeenAt===request.observedAt&&utc(p.observedAt)<utc(p.kickoff)&&p.selection===native.selection&&p.sourceMarketLabel===native.market&&p.sourceBetType===native.winew&&p.sourceEventLocalText===native.event_datetime);
    check(p.responseSha256===proof.responseSha256&&p.parserSha256===plan.parserSha256&&p.calendarSha256===plan.calendarSha256&&p.market==='source_native_opaque'&&FLAGS.every(k=>p[k]===false)&&p.publishedAt===null&&p.publishedCivilDate===null&&p.sourceEventTimezone===null);
    check(p.versionCount===1&&equal(p.versions,[{selection:p.selection,observedAt:p.observedAt}]));text(p.selection,120);used.add(text(p.fixtureId));
@@ -111,7 +116,7 @@ export function readCampaignBuffers(planRaw:Uint8Array,mfRaw:Uint8Array,journalR
   picks=mergeCampaignPicks(picks,rows);
  }
  check(finishes.every(e=>receipts.some(r=>r.slot===e.slot)));
- return {picks,fixtures:fixtures.filter(f=>used.has(text(f.id))),claimId:a.claimId,calendarSHA256:text(plan.calendarSha256),batchCount:receipts.length,publicBaseSHA256:a.publicBaseSHA256};
+ return {picks,fixtures:fixtures.filter(f=>used.has(text(f.id))),claimId:a.claimId,calendarSHA256:text(plan.calendarSha256),batchCount:receipts.length,publicBaseSHA256:a.publicBaseSHA256,profileId};
 }
 function mergePublic<T extends J>(base:T,c:Companion,baseSHA:string):T{
  check(baseSHA===c.publicBaseSHA256);const prior=arr(base.picks).map(obj),picks=mergeCampaignPicks(prior,c.picks),fixtures=arr(base.fixtures).map(v=>clone(obj(v)));
@@ -120,8 +125,8 @@ function mergePublic<T extends J>(base:T,c:Companion,baseSHA:string):T{
  return {...base,picks,fixtures,distinctPicks:picks.length,authorCount:new Set(picks.map(p=>p.authorId)).size,claimIds:[...new Set([...claims,c.claimId])],olbgCampaignCompanion:{state:'accepted_batches',batches:c.batchCount,sourceReady:false,recurringCollectionActive:false,globalCoverage:'UNKNOWN'}} as T;
 }
 export function mergeCampaignCatalogue<T extends J>(base:T,c:Companion):T{
- const candidates=arr(base.candidates,317).map(obj),matches=candidates.filter(x=>x.id===TARGET);check(matches.length===1);const target=matches[0],origin=obj(target.origin);check(target.platform==='OLBG'&&target.sourceUrl===URL&&origin.sheet==='Catalogue'&&origin.row===269);
- const q=obj(target.qualification??{picks:[]}),picks=mergeCampaignPicks(q.picks??[],c.picks),ids=new Set(c.picks.map(p=>'olbg-pending-648433-'+integer(p.sourceTipId)));
+ const profile=companionProfile(c),URL=profile.url,history='https://www.olbg.com/tipsters/tips/history/'+profile.id,candidates=arr(base.candidates,20000).map(obj),matches=candidates.filter(x=>x.platform==='OLBG'&&(x.sourceUrl===URL||x.sourceUrl===history));check(matches.length===1);const target=matches[0],origin=obj(target.origin);check(target.id==='catalogue:'+hash(text(target.sourceUrl))&&origin.sheet==='Catalogue'&&typeof origin.row==='number'&&Number.isSafeInteger(origin.row)&&origin.row>0);
+ const q=obj(target.qualification??{picks:[]}),picks=mergeCampaignPicks(q.picks??[],c.picks),ids=new Set(c.picks.map(p=>'olbg-pending-'+profile.id+'-'+integer(p.sourceTipId)));
  let pending=target.pendingOLBGObservation;if(pending!==undefined){const p=obj(pending);pending={...p,records:arr(p.records,20).filter(v=>!ids.has(text(obj(v).key)))};}
  const qualified={...q,picks,personallyProven:picks.length>0,retainedClaimIds:[...new Set([...arr(q.retainedClaimIds??[],200),c.claimId])]};
  const updated=candidates.map(row=>row===target?{...row,qualification:qualified,...(pending===undefined?{}:{pendingOLBGObservation:pending})}:row);
@@ -129,7 +134,10 @@ export function mergeCampaignCatalogue<T extends J>(base:T,c:Companion):T{
  return {...base,candidates:updated,...(qualification===undefined?{}:{qualification}),olbgCampaignCompanion:{state:'accepted_batches',batches:c.batchCount,sourceReady:false,recurringCollectionActive:false,globalCoverage:'UNKNOWN'}} as T;
 }
 function readLocal(root:string,a:OLBGCampaignApproval,parentIO?:ParentProofIO):Companion{
- const dir=resolve(root,'.ci/local-robin/olbg-opaque-campaign');
+ const legacy=resolve(root,'.ci/local-robin/olbg-opaque-campaign');
+ const expected=resolve(root,'.ci/local-robin/olbg-opaque-campaigns',a.planSHA256);
+ check(HASH.test(a.planSHA256)&&(a.campaignDirectory===undefined||a.campaignDirectory===legacy||a.campaignDirectory===expected));
+ const dir=a.campaignDirectory??legacy;
  return readCampaignBuffers(bounded(resolve(dir,'plan.json'),65536),bounded(resolve(dir,'manifest.json'),16384),bounded(resolve(dir,'events.jsonl'),2_000_000),name=>bounded(resolve(dir,name),131072),a,parentIO);
 }
 export function applyOLBGCampaignCatalogue<T extends J>(base:T,root:string,a:OLBGCampaignApproval|null=OLBG_CAMPAIGN_APPROVAL,parentIO?:ParentProofIO):T{if(a===null)return base;try{return mergeCampaignCatalogue(base,readLocal(root,a,parentIO));}catch{return {...base,olbgCampaignCompanion:{state:'waiting_or_unavailable',sourceReady:false}} as T;}}

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "robin-tipsters-engineering-result-v1",
+  "generatedAt": "2026-11-25T11:09:24.681Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.SCRIPT.SRC.R4.BOOTSTRAP.PARTIAL.RESULT.20261125",
+  "status": "PARTIAL_SOURCE_BOOTSTRAP_REFUSED_ROOT_RECEIPTS_MISSING",
+  "scope": "Observed R4 source-parent and child primary only. No durable Root result/primary/STOP, source readiness, actual GET zero or timing conformity claim.",
+  "missionId": "NOTBETTING_SCRIPT_SRC_DISCOVERY_NATIVE_R4_20261125",
+  "child": {
+    "status": "BOOTSTRAP_REFUSED",
+    "errorClass": "ValueError",
+    "exit": 1,
+    "stderrBytes": 0
+  },
+  "job": {
+    "exit": 1,
+    "timedOut": false,
+    "subtreeKillConfirmed": true,
+    "elapsedSeconds": 39.469,
+    "descendantTerminationIndependentlyObserved": false
+  },
+  "sourceGETReservations": null,
+  "sourceGETMeasured": false,
+  "nativeSpentMarker": true,
+  "robotsSpentMarker": false,
+  "picksSpentMarker": false,
+  "forecasts": 0,
+  "applicationAdmissions": 0,
+  "parentResultStatus": "PARTIAL",
+  "parentStopAt": "2026-11-25T11:06:51.441822+00:00",
+  "rootDurability": "UNPROVEN",
+  "rootReceiptsPresent": false,
+  "outerCaptureFailure": "Node tool kernel timeout at45s before parent host output retained",
+  "exactCause": "UNKNOWN",
+  "retry": false,
+  "sourceReady": false,
+  "priorSourceAuthorityClosed": true,
+  "hashes": {
+    "source-primary.json": "0464cad27f4f9a0afbd723c1ed36ac3a106cb9807fb5239ebb6479270f0f6d6c",
+    "source-child-primary.json": "607ff7305114aba965100999ffd9f3cd22c9b842affbebf47ae3a4e16a79423a",
+    "source-parent-result.json": "ed57a90e916f1200a6cb11633fd55771e51e2a01dee85e5fb331538905633517",
+    "source-parent-AUTHOR-STOP.json": "3ee6c1249eea3b407e0dbf9d77451b8f0c932fc5a2f03fad7d85b0d7e641015a"
+  },
+  "reviewedBy": [
+    "C0",
+    "C4"
+  ],
+  "next": "Stop this NotBetting route and prioritize existing OLBG native chain with minimal generic profile support."
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "robin-app-engineering-result-v1",
+  "generatedAt": "2026-11-25T12:12:17.697Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.MULTI.PROFILE.APP.TARGETED.ENGINEERING.RESULT.20261125",
+  "status": "TARGETED_ENGINEERING_PASS_GLOBAL_TYPECHECK_NOT_ATTESTED",
+  "scope": "Generic OLBG profile/identity overlay/checkpoint and three targeted synthetic methods, strict reader typing and selected lint only; not runtime activation.",
+  "missionId": "OLBG642100_APP_TARGETED_VALIDATION_E1_20261125",
+  "codeHashes": {
+    "cockpit/scripts/catalogue-independent.ts": "f56df82f7f2778aab9c96a1d61a9ed463d052731a57abeec621c77dab5c3fbf4",
+    "cockpit/scripts/olbg-parent-adoption.ts": "9614e426196b2d7ba7243730111aa5f8ca80f23a4e8447c7ed0346d66ce6589a",
+    "cockpit/scripts/olbg-campaign-companion.ts": "e78c577b14cb9685c921acc79566097d79b584438c8d7888a98e6d56e9c0e984"
+  },
+  "methods": 3,
+  "passed": 3,
+  "failed": 0,
+  "seconds": 0.2743316,
+  "testPrimarySHA256": "5a1871c233fb747475a9678ae52d0e5cc2eb5a9ed645954b6600eb2665215581",
+  "typeOnlyAnnotationAfterTests": true,
+  "executableBehaviourChangedByAnnotation": false,
+  "targetedTypecheckExit": 0,
+  "selectedLintExit": 0,
+  "emptySuccessPrimarySHA256": "732883d74fff105b6916110dd67928d04765fdfa4fce96791f3d3be410b4440f",
+  "rawDefaultProjectTypecheckExit": 2,
+  "rawDefaultProjectPrimarySHA256": "14787d68ebdf553e6cd22ada465fb95002a77ede696c1ec0571456d16dd74065",
+  "ownInferenceErrorsCorrected": true,
+  "wholeProjectTypecheckGreenClaimed": false,
+  "sourceGET": 0,
+  "fullSuiteReruns": 0,
+  "applicationWrites": 0
+}

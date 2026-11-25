@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "robin-tipsters-engineering-result-v1",
+  "generatedAt": "2026-11-25T11:00:15.975Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.SCRIPT.SRC.R3.PARENT.ENTRY.PARTIAL.RESULT.20261125",
+  "status": "PARTIAL_RETURN_E1_MINIMAL_CORRECTION",
+  "scope": "Observed closed R3 host/caller outcome and static minimal entry-floor correction. No forecast or source readiness claim.",
+  "sourceMissionId": "NOTBETTING_SCRIPT_SRC_DISCOVERY_NATIVE_R3_20261125",
+  "hostExit": 1,
+  "callerExit": 1,
+  "callerSeconds": 9.938,
+  "callerErrorKind": "ValueError",
+  "sourceGETReservations": null,
+  "sourceEffectsMayHaveOccurred": true,
+  "nativeSpentMarkerObserved": false,
+  "robotsSpentMarkerObserved": false,
+  "picksSpentMarkerObserved": false,
+  "forecasts": 0,
+  "applicationAdmissions": 0,
+  "exactRuntimeCause": "UNKNOWN",
+  "suspectedGuard": "parent_source.py clock_left(a)[1] > 65",
+  "correctiveProposal": {
+    "substitution": "clock_left(a)[1] > 65 -> clock_left(a)[1] > 50",
+    "physicalOriginUnchanged": true,
+    "absoluteDeadlinesSeconds": {
+      "capture": 45,
+      "worker": 50,
+      "jobHard": 60,
+      "watchdog": 70
+    },
+    "sourceEntryMinimumSeconds": 170,
+    "preAuthMinimumSeconds": 190,
+    "postReserveSeconds": 80,
+    "budgetsRaised": false,
+    "additionalTests": 0,
+    "staticReviewers": [
+      "C1",
+      "C4"
+    ]
+  },
+  "primaryHashes": {
+    "host": "ea42c8395e2c8adbce018a28fd722491017ee8189bc8a7ef7ca00b950531b267",
+    "caller": "48998ae1111e84e56dd2b0d511dfe2539a8759e2687ad1157b97762da464e12a",
+    "result": "7c9a5db6d89c23027b05ebae5bc5e9824438068c5302f9645599db78c44de095",
+    "stop": "9a59d67e5f92342c2852ded0f7497e7e6c53e676e92d1b9def233ad53fd930ab"
+  },
+  "oldAuthorityClosed": true,
+  "retry": false,
+  "sourceReady": false
+}

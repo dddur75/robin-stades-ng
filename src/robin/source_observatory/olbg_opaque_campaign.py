@@ -32,6 +32,14 @@ ENDPOINT = "https://www.olbg.com/tipsters/tips/648433"
 SCHEMA = "robin-olbg-opaque-campaign-batch-v1"
 
 
+def _profile_id(plan: dict[str, Any]) -> int:
+    profile_id = plan.get("profileId", 648433)
+    if (type(profile_id) is not int or profile_id <= 0
+            or plan.get("endpoint") != f"https://www.olbg.com/tipsters/tips/{profile_id}"):
+        raise ValueError("CAMPAIGN_PROFILE_SCOPE")
+    return profile_id
+
+
 STOP_CODES = {
     "ROBOTS_BOOTSTRAP_SCOPE": "ROBOTS_BOOTSTRAP_SCOPE",
     "robots denied": "ROBOTS_POLICY_DENIED",
@@ -118,8 +126,8 @@ def validate_campaign(
             or len(set(slots)) != len(slots) or slots != sorted(slots)
             or any(instant(s) >= instant(mission["expires_at"]) for s in slots)):
         raise ValueError("CAMPAIGN_SLOTS")
-    if (plan["endpoint"] != ENDPOINT
-            or plan["robotsUrl"] != "https://www.olbg.com/robots.txt"
+    _profile_id(plan)
+    if (plan["robotsUrl"] != "https://www.olbg.com/robots.txt"
             or plan["termsUrl"] != "https://www.olbg.com/use"
             or plan["zeroEligiblePolicy"] != "HALT"
             or not 1 <= len(plan["fixtures"]) <= 32
@@ -149,11 +157,14 @@ def validate_campaign(
 def project_profile(
     facts: dict[str, Any], plan: dict[str, Any], observed: datetime, response_sha: str
 ) -> dict[str, Any]:
+    profile_id = _profile_id(plan)
+    if type(facts.get("authorId")) is not int or facts["authorId"] != profile_id:
+        raise ValueError("CAMPAIGN_PERSONAL_AUTHOR_MISMATCH")
     if len(facts["records"]) > 20:
         raise ValueError("OPAQUE_RECORD_CAP")
     source = {
         "profiles": [{"facts": facts, "request": {
-            "url": ENDPOINT, "observedAt": observed.isoformat(),
+            "url": plan["endpoint"], "observedAt": observed.isoformat(),
             "responseSha256": response_sha}}],
         "fixtures": plan["fixtures"], "calendarSha256": plan["calendarSha256"],
     }
@@ -369,7 +380,7 @@ def run_opaque_slot(
                         raise ValueError("terms changed")
                 else:
                     snapshot = project_profile(
-                        extract_profile(response.body, 648433), plan, observed, digest
+                        extract_profile(response.body, _profile_id(plan)), plan, observed, digest
                     )
                     picks = snapshot["picks"]
                     journal.append(

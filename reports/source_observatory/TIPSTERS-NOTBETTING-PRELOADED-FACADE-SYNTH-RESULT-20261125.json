@@ -1,0 +1,53 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PRELOADED.FACADE.SYNTH.RESULT.20261125",
+  "status": "TWENTYTWO_SYNTH_CLOCK_EXIT_AND_HOST_PROTOCOL_CHECKS_PASS",
+  "scope": "22 SYNTH checks of preloaded facade clock/sequencing/exit seams and host protocol with fake preload; no native Source or production host execution.",
+  "tests": 22,
+  "negativeClockCases": 9,
+  "positiveClockCase": 1,
+  "sequenceCase": 1,
+  "exitCases": 3,
+  "sanitizedErrorCases": 2,
+  "hostStubCases": 6,
+  "artifacts": [
+    {
+      "file": "preloaded_launch.py",
+      "sha256": "1c0730e63b1b59f4e2562a71aea4309cd5e825157e0559e64468b951f49938d0"
+    },
+    {
+      "file": "persistent_preload_host.py",
+      "sha256": "35fac4ac0ca42619c209b331497c5f64e6e51bc11cea277eb0a0fa52322b7906"
+    },
+    {
+      "file": "test_preloaded_launch_proposed.py",
+      "sha256": "cd1b45d98d9ae50207e2fc8dca398cf5510daf7f0bcd4f74d0740036e446e299"
+    },
+    {
+      "file": "test_persistent_host_synthetic.py",
+      "sha256": "3a5ff73628ef3bed5007f04a47d61d025e18fdc8b6d1e8f010c7bd022b004760"
+    },
+    {
+      "file": "driver.py",
+      "sha256": "b9b376bdf861632c5d038f1917b5af456cc60431e7527b0c76753ea1d65025fa"
+    },
+    {
+      "file": "pytest.ini",
+      "sha256": "713f986ee48be06ad4bff2a700d39514a9f69e34b3547af52366c0a274e30e5b"
+    }
+  ],
+  "primarySHA": "cb8a21873127b82f08b0c75483c416087540078f751fd83e90d0690867e887dd",
+  "actualSDKLoads": 0,
+  "actualNativeJobs": 0,
+  "productionHostProcesses": 0,
+  "realSourceGrantsCreated": 0,
+  "SourceGET": 0,
+  "networkAudit": 0,
+  "spawnAudit": 0,
+  "newPredictions": 0,
+  "sourceReady": false,
+  "recurringCollectionActive": false,
+  "limits": [
+    "Fake host preload and shimmed Core identity are SYNTH-only; real persistent process and actual current Source gate remain untested.",
+    "Existing source clocks300/600 and physical thresholds190/170/80/70 unchanged; no old grant reused."
+  ]
+}

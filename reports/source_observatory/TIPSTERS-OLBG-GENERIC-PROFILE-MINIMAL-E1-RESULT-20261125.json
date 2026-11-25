@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "robin-tipsters-engineering-result-v1",
+  "generatedAt": "2026-11-25T11:12:43.562Z",
+  "missionId": "OLBG_GENERIC_PROFILE_LOCAL_E1_20261125",
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.GENERIC.PROFILE.MINIMAL.E1.RESULT.20261125",
+  "status": "ONE_TARGETED_TEST_PASS_GENERIC_PERSONAL_PROFILE_PORT",
+  "scope": "Exact generic profile delta and one synthetic parser-to-builder test only; not live source readiness or admissions.",
+  "codePath": "src/robin/source_observatory/olbg_opaque_campaign.py",
+  "codeSHA256": "3d20edd3be9072694dbab1c1417e595641bb3f07f80104d7f8fa9003253ca03a",
+  "testSHA256": "13306221f168af122ba69a56cca0e494ee7c6655f3263b66dcf14e0501300f89",
+  "primarySHA256": "34a5712619570255f982da767dff08706bb0db3adc2c69c3a9a23e93cdf1307b",
+  "testMethods": 1,
+  "testSeconds": 0.763,
+  "testExit": 0,
+  "sourceGET": 0,
+  "corpusReplays": 0,
+  "sourceAuthorityTransferred": false,
+  "legacyDefault": 648433,
+  "configuredExamples": [
+    522767,
+    642100
+  ],
+  "invariants": [
+    "strict positive int ID",
+    "canonical source endpoint bound to ID",
+    "native personal author matches requested ID",
+    "source provenance uses that endpoint",
+    "existing current/football/Open/fixture/pre-kickoff builder unchanged"
+  ],
+  "publicRegressionPath": "tests/source_observatory/test_olbg_generic_profile.py",
+  "publicRegressionSHA256": "3e177c2d43740dd2f7fe0de412dc16c70fc3c395009c37b9311cba30ae97eb0e",
+  "publicRegressionPathOnlyAdaptation": true,
+  "additionalTestExecution": 0,
+  "sourceReady": false
+}
