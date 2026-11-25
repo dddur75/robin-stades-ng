@@ -1,0 +1,52 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.SCRIPT.SRC.R2.TIMING.REDESIGN.RESULT.20261125",
+  "status": "FAIL_AND_REDESIGN_RETURN_TO_E1",
+  "scope": "Two authority-window orchestration failures, no native NotBetting source execution; prepare preloaded facade before any distinct new E1 mission.",
+  "firstFailure": {
+    "missionId": "NOTBETTING_SCRIPT_SRC_DISCOVERY_NATIVE_R1_20261125",
+    "closedDecisionHash": "dbbc157c6c7f0672d960da2e16f1c31c143300e480b6dae386fd42f426ae0caa",
+    "stopReceiptSHA": "db67a8c1fe78063988babb210322d78d837d4cf1314db3bc7229aad1f641a8f2",
+    "sourceDecisionCreated": false
+  },
+  "secondFailure": {
+    "missionId": "NOTBETTING_SCRIPT_SRC_DISCOVERY_NATIVE_R2_20261125",
+    "sourceEffectiveEnd": "2026-11-25T08:53:16.211893+00:00",
+    "entryMinimumSeconds": 170,
+    "latestEntryAt": "2026-11-25T08:50:26.211893+00:00",
+    "rootAuthorizedAt": "2026-11-25T08:50:47.194461+00:00",
+    "entryLateSeconds": 20.982568,
+    "remainingAtRootAuthorizationSeconds": 149.017432,
+    "windowSHA": "57c5e5774fca55f298a378e73842804bd301bd49333c353664a91e16fcb7fa4d",
+    "rootAuthoritySHA": "4e49a96523be3b19d0e2c91b25e865bc4725f9a3ba3b6532a598ad8e55dcc480",
+    "resultSHA": "bdc059cc2c7ffe3568e82af9b07c469d36c9e0877d082b9d47d6a5f1c57f78ed",
+    "stopSHA": "fb48f66c7dc1d664f4db8f5d795f3e3904694478d30a45fb9ebac4c562058542",
+    "primarySHA": "900f3f8e0ae49cdd47972b765dc1d9c3c5fa764680b439d9913d65a970e0a568",
+    "callerExit": null,
+    "sourceGETReservations": null,
+    "sourceEffectsMayHaveOccurred": false,
+    "ownedCallerLaunched": false,
+    "noSourceGETInferredFromNoLaunch": true
+  },
+  "nativeTransportResult": null,
+  "sourceAccessFailureProven": false,
+  "SourceGETMeasured": null,
+  "applicationAdmissions": 0,
+  "sourceReady": false,
+  "recurringCollectionActive": false,
+  "identicalThirdAttemptForbidden": true,
+  "oldGrantsReused": 0,
+  "minimumOperationalRedesign": {
+    "preloadFacadeBeforeSourceDecision": true,
+    "freshStateReadAtLaunch": true,
+    "rootAuthorizationAndControllerSameExecution": true,
+    "sourceEntryThresholdSeconds": 170,
+    "postWindowReserveSeconds": 80,
+    "physicalWatchdogSeconds": 70,
+    "sourceDecisionWindowSeconds": 300,
+    "initialAuthorityWindowSeconds": 600,
+    "freshSourceFourKeysRequired": true,
+    "freshPhysicalRootThreeKeysRequired": true
+  },
+  "newSourceAuthorityCreated": false,
+  "newSourceMissionAuthorized": false
+}

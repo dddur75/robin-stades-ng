@@ -46,7 +46,36 @@ export function mergeCampaignPicks(previous:unknown,additional:J[]):J[]{
  }return out;
 }
 type Companion={picks:J[];fixtures:J[];claimId:string;calendarSHA256:string;batchCount:number;publicBaseSHA256:string};
-export function readCampaignBuffers(planRaw:Uint8Array,mfRaw:Uint8Array,journalRaw:Uint8Array,loadBatch:(name:string)=>Uint8Array,a:OLBGCampaignApproval):Companion{
+export type ParentProofIO={loadControl:(slot:string,name:'primary.json'|'result.json'|'AUTHOR-STOP.json')=>Uint8Array;confirmExit:(campaignId:string,slot:string,receiptSHA256:string)=>boolean};
+const PARENT_KEYS='schemaVersion missionId slotRunMissionId slot sourceDecisionLedgerHash accepted childExit timedOut subtreeKillConfirmed batch primarySHA256 resultSHA256 STOP_SHA256 rawStdout rawStderr postChildFullGuardPassed sourceReady'.split(' ');
+function verifyParent(plan:J,slot:string,receipt:J,loadFile:(name:string)=>Uint8Array,io:ParentProofIO|undefined):number{
+ try{
+  check(io!==undefined);
+  const raw=loadFile('slot-parent-'+hash(slot)+'.json');check(raw.length>0&&raw.length<=16384);
+  const r=obj(JSON.parse(new TextDecoder('utf8',{fatal:true}).decode(raw)));
+  check(Object.keys(r).length===PARENT_KEYS.length&&PARENT_KEYS.every(k=>Object.hasOwn(r,k)));
+  check(r.schemaVersion==='olbg-slot-parent-accepted-v1'&&r.missionId===plan.id&&r.slot===slot&&r.accepted===true&&r.childExit===0&&r.timedOut===false&&r.subtreeKillConfirmed===true&&r.postChildFullGuardPassed===true&&r.sourceReady===false);
+  text(r.slotRunMissionId,200);check(HASH.test(text(r.sourceDecisionLedgerHash)));
+  const batch=obj(r.batch);check(Object.keys(batch).length===4&&batch.file===receipt.observationFile&&batch.sha256===receipt.observationSha256&&typeof batch.bytes==='number'&&Number.isSafeInteger(batch.bytes)&&batch.bytes>0&&batch.bytes<=131072&&batch.recordCount===receipt.count);
+  const values=new Map<string,J>();
+  for(const [name,field,cap] of [['primary.json','primarySHA256',32768],['result.json','resultSHA256',8192],['AUTHOR-STOP.json','STOP_SHA256',4096]]as const){
+   const bytes=io!.loadControl(slot,name);values.set(name,obj(decode(bytes,text(r[field]),cap)));
+  }
+  const primary=values.get('primary.json')!,result=values.get('result.json')!,stop=values.get('AUTHOR-STOP.json')!,job=obj(primary.job);
+  check(job.exit===0&&job.timedOut===false&&job.subtreeKillConfirmed===true&&primary.failureKind===null);
+  check(result.schemaVersion==='olbg-slot-parent-result-v1'&&result.status==='SLOT_PROCESS_COMPLETE'&&result.accepted===true&&result.missionId===plan.id&&result.slot===slot&&equal(result.batch,batch)&&result.primarySHA256===r.primarySHA256&&obj(result.child).status==='OPAQUE_SLOT_DISPATCH_COMPLETE'&&stop.accepted===true&&stop.resultSHA256===r.resultSHA256);
+  for(const[name,field]of[['stdout.raw','rawStdout'],['stderr.raw','rawStderr']]as const){
+   const summary=obj(r[field]),retained=obj(obj(primary.rawStreams)[name]);check(Object.keys(summary).length===2&&Object.hasOwn(summary,'sha256')&&Object.hasOwn(summary,'bytes'));
+   const encoded=typeof retained.base64==='string'?retained.base64:'';const decoded=Buffer.from(encoded,'base64');
+   check(decoded.toString('base64')===encoded&&decoded.length<=8192&&decoded.length===summary.bytes&&retained.bytes===summary.bytes&&hash(decoded)===summary.sha256&&retained.sha256===summary.sha256);
+  }
+  // CALLER_R1 has childExit, not its own OS exit. ROOT must supply actual return proof.
+  check(io!.confirmExit(text(plan.id),slot,hash(raw))===true);
+  return batch.bytes as number;
+ }catch{throw Error('OLBG_PARENT_RECEIPT_WAIT');}
+}
+
+export function readCampaignBuffers(planRaw:Uint8Array,mfRaw:Uint8Array,journalRaw:Uint8Array,loadBatch:(name:string)=>Uint8Array,a:OLBGCampaignApproval,parentIO?:ParentProofIO):Companion{
  const plan=obj(decode(planRaw,a.planSHA256,65536)),mf=obj(decode(mfRaw,a.manifestSHA256,16384));
  check(Object.keys(mf).length===8&&mf.mission_id===plan.id&&mf.maximum_stage==='E2'&&equal(mf.authorized_stages,['E1','E2'])&&mf.source_hash===hash(canonical(plan)));
  check(plan.claimId===a.claimId&&plan.endpoint===URL&&plan.robotsUrl==='https://www.olbg.com/robots.txt'&&plan.termsUrl==='https://www.olbg.com/use'&&plan.zeroEligiblePolicy==='HALT');
@@ -66,7 +95,8 @@ export function readCampaignBuffers(planRaw:Uint8Array,mfRaw:Uint8Array,journalR
   const segment=events.slice(Number(ss[0].sequence),Number(receipt.sequence)-1),q=segment.filter(e=>e.kind==='PUBLIC_PICKS_QUALIFIED'),requests=segment.filter(e=>e.kind==='REQUEST_FINISHED'&&e.sourceId==='SRC_014'&&e.url===URL&&e.httpStatus===200);check(q.length===1&&requests.length===1);
   const proof=q[0];check(proof.responseSha256===requests[0].responseSha256&&proof.parserSha256===plan.parserSha256&&proof.calendarSha256===plan.calendarSha256&&proof.count===receipt.count);
   const digest=text(receipt.observationSha256),name=text(receipt.observationFile);check(HASH.test(digest)&&name==='observations-'+digest+'.json');
-  const b=obj(decode(loadBatch(name),digest,131072));check(b.schemaVersion==='robin-olbg-opaque-campaign-batch-v1'&&b.missionId===plan.id&&b.claimId===a.claimId&&b.parserSha256===plan.parserSha256&&b.builderSha256===plan.builderSha256&&b.calendarSha256===plan.calendarSha256&&b.sourceReady===false&&b.applicationAdmissions===0&&b.recurrence===true);
+  const parentBytes=verifyParent(plan,text(receipt.slot),receipt,loadBatch,parentIO);const batchRaw=loadBatch(name);check(batchRaw.length===parentBytes);
+  const b=obj(decode(batchRaw,digest,131072));check(b.schemaVersion==='robin-olbg-opaque-campaign-batch-v1'&&b.missionId===plan.id&&b.claimId===a.claimId&&b.parserSha256===plan.parserSha256&&b.builderSha256===plan.builderSha256&&b.calendarSha256===plan.calendarSha256&&b.sourceReady===false&&b.applicationAdmissions===0&&b.recurrence===true);
   const source=obj(b.source);check(equal(source.fixtures,fixtures)&&source.calendarSha256===plan.calendarSha256);
   const profiles=arr(source.profiles,1);check(profiles.length===1);const profile=obj(profiles[0]),facts=obj(profile.facts),request=obj(profile.request);check(facts.authorId===648433&&facts.mode==='current'&&request.url===URL&&request.responseSha256===proof.responseSha256);text(facts.authorLabel,80);utc(request.observedAt);
   const records=arr(facts.records,20).map(obj),accepted=arr(b.acceptedSourceTipIds,20).map(integer),rows=arr(b.picks,20).map(obj);check(rows.length>0&&rows.length===receipt.count&&rows.length===accepted.length&&new Set(accepted).size===accepted.length);
@@ -98,9 +128,9 @@ export function mergeCampaignCatalogue<T extends J>(base:T,c:Companion):T{
  const root=base.qualification===undefined?undefined:obj(base.qualification);const qualification=root?.status==='ok'?{...root,qualifiedCount:updated.filter(row=>obj(row.qualification??{}).personallyProven===true).length}:base.qualification;
  return {...base,candidates:updated,...(qualification===undefined?{}:{qualification}),olbgCampaignCompanion:{state:'accepted_batches',batches:c.batchCount,sourceReady:false,recurringCollectionActive:false,globalCoverage:'UNKNOWN'}} as T;
 }
-function readLocal(root:string,a:OLBGCampaignApproval):Companion{
+function readLocal(root:string,a:OLBGCampaignApproval,parentIO?:ParentProofIO):Companion{
  const dir=resolve(root,'.ci/local-robin/olbg-opaque-campaign');
- return readCampaignBuffers(bounded(resolve(dir,'plan.json'),65536),bounded(resolve(dir,'manifest.json'),16384),bounded(resolve(dir,'events.jsonl'),2_000_000),name=>bounded(resolve(dir,name),131072),a);
+ return readCampaignBuffers(bounded(resolve(dir,'plan.json'),65536),bounded(resolve(dir,'manifest.json'),16384),bounded(resolve(dir,'events.jsonl'),2_000_000),name=>bounded(resolve(dir,name),131072),a,parentIO);
 }
-export function applyOLBGCampaignCatalogue<T extends J>(base:T,root:string,a:OLBGCampaignApproval|null=OLBG_CAMPAIGN_APPROVAL):T{if(a===null)return base;try{return mergeCampaignCatalogue(base,readLocal(root,a));}catch{return {...base,olbgCampaignCompanion:{state:'unavailable',sourceReady:false}} as T;}}
-export function applyOLBGCampaignPublic<T extends J>(base:T,root:string,baseSHA:string,a:OLBGCampaignApproval|null=OLBG_CAMPAIGN_APPROVAL):T{if(a===null)return base;try{return mergePublic(base,readLocal(root,a),baseSHA);}catch{return {...base,olbgCampaignCompanion:{state:'unavailable',sourceReady:false}} as T;}}
+export function applyOLBGCampaignCatalogue<T extends J>(base:T,root:string,a:OLBGCampaignApproval|null=OLBG_CAMPAIGN_APPROVAL,parentIO?:ParentProofIO):T{if(a===null)return base;try{return mergeCampaignCatalogue(base,readLocal(root,a,parentIO));}catch{return {...base,olbgCampaignCompanion:{state:'waiting_or_unavailable',sourceReady:false}} as T;}}
+export function applyOLBGCampaignPublic<T extends J>(base:T,root:string,baseSHA:string,a:OLBGCampaignApproval|null=OLBG_CAMPAIGN_APPROVAL,parentIO?:ParentProofIO):T{if(a===null)return base;try{return mergePublic(base,readLocal(root,a,parentIO),baseSHA);}catch{return {...base,olbgCampaignCompanion:{state:'unavailable',sourceReady:false}} as T;}}

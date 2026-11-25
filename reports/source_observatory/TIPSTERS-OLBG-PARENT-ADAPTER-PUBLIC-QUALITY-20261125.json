@@ -1,0 +1,68 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.PARENT.ADAPTER.PUBLIC.QUALITY.RESULT.20261125",
+  "status": "STRICT_PARENT_ADAPTER_TARGETED_QUALITY_PASS",
+  "scope": "Exact PUBLIC adapter code: retained Node 8 TAP passes including seven methods and wrapper, sixteen assertions; fresh typecheck and targeted lint only; no runtime or source readiness.",
+  "nodePrimarySHA": "9d808157e092a0faa77cb3f18090f1ae4cd80cc3a8702cca139f4766c4fbbef9",
+  "originalPortStatus": "PARTIAL_HARNESS_COUNT_ERROR_UNCHANGED",
+  "nodeTAPTests": 8,
+  "nodeMethods": 7,
+  "nodePass": 8,
+  "nodeFail": 0,
+  "legacyAssertions": 16,
+  "checkpointResultSHA": "a9e582142f2a2b9295c69560d02712c475fbb2c2a3ac235235fd919082c9dece",
+  "commands": [
+    {
+      "kind": "TYPECHECK",
+      "exit": 0,
+      "primarySHA": "dddc59ce45232db81469ea13fd4f4cc6b71e64eccd56138c0395c25208f24aae"
+    },
+    {
+      "kind": "LINT_TARGETED",
+      "exit": 0,
+      "primarySHA": "dddc59ce45232db81469ea13fd4f4cc6b71e64eccd56138c0395c25208f24aae"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "cockpit/scripts/catalogue-independent.ts",
+      "sha256": "6cc0d461a8e5ed63b27c61427c12f66fa93fac9dfc810c90ec1e8ab922877cc0"
+    },
+    {
+      "path": "cockpit/tests/olbg-campaign-companion.test.mjs",
+      "sha256": "0cd14506c43d7672f044b6e89cfc09b1b58208b959ae0c072b604cf07ca185e3"
+    },
+    {
+      "path": "cockpit/scripts/olbg-campaign-companion.ts",
+      "sha256": "05125409456d7120fb7909f64c4a407fa14519761928fd10da85de6c8dda087c"
+    },
+    {
+      "path": "cockpit/tests/olbg-parent-adoption.test.mjs",
+      "sha256": "fe85c37586ddc16277b04d1b75e3915ee7fe50649e506cd47194cac344d571ed"
+    },
+    {
+      "path": "cockpit/scripts/olbg-parent-adoption.ts",
+      "sha256": "63782697715de3eb4521abb98fc83d55d8bc8da9536d9156018c58bdf7f5ff03"
+    },
+    {
+      "path": "cockpit/scripts/public-tipsters-plugin.ts",
+      "sha256": "ba7c51c99c63822f121e33b695a30501eaf889fe60257a029aa93a35b144c87d"
+    },
+    {
+      "path": "cockpit/tests/reviewed-source-observation.test.mjs",
+      "sha256": "5e4bd7064c9ab69f3f42df9fbbc7683c276c15722b442f9b81cfce43e1372511"
+    },
+    {
+      "path": "cockpit/scripts/root-parent-proof.ts",
+      "sha256": "2bcb74f7b086b9716733492cc4b85eb3dfe589eafbb541731c80df759cde025a"
+    }
+  ],
+  "SourceGET": 0,
+  "appRuntimeActivation": 0,
+  "newAdmissions": 0,
+  "Task": 0,
+  "Git": 0,
+  "sourceReady": false,
+  "recurringCollectionActive": false,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null
+}

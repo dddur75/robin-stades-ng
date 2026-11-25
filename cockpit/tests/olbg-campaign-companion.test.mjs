@@ -15,22 +15,34 @@ function pack(){
  const plan={id:'SYNTH_OPAQUE_CAMPAIGN',claimId:claim,endpoint,robotsUrl:'https://www.olbg.com/robots.txt',termsUrl:'https://www.olbg.com/use',zeroEligiblePolicy:'HALT',slots,fixtures:[fixture],calendarSha256:cal,parserSha256:parser,builderSha256:builder};
  const mf={mission_id:plan.id,authorized_stages:['E1','E2'],maximum_stage:'E2',external_effects:{https_get_max:6,per_source_max:6},compute_budget:{},time_budget:{seconds:600},source_hash:hash(canonical(plan)),expires_at:'2026-11-27T19:00:00+00:00'};
  const planRaw=bytes(plan),mfRaw=bytes(mf),approval={planSHA256:hash(planRaw),manifestSHA256:hash(mfRaw),claimId:claim,publicBaseSHA256:'f'.repeat(64)};
- const events=[],files=new Map();let previous='0'.repeat(64);
- function append(kind,data={}){const e={sequence:events.length+1,kind,at:slots[events.length>5?1:0],previousHash:previous,...data};e.hash=hash(canonical(e));previous=e.hash;events.push(e);}
+ const events=[],files=new Map(),controls=new Map(),confirmed=new Map();let currentAt=slots[0];let previous='0'.repeat(64);
+ function append(kind,data={}){const e={sequence:events.length+1,kind,at:data.slot??currentAt,previousHash:previous,...data};e.hash=hash(canonical(e));previous=e.hash;events.push(e);}
  function batch(at,rows){
   const response=hash('SYNTH'+at),records=rows.map(([tid,selection])=>({tipid:tid,eventid:900,eventname:'Home v Away',selection,market:'synthetic market',winew:'',event_datetime:'2026-11-27 20:00:00',vc_sport_id:1,result:'Open'}));
   const picks=records.map(n=>({id:'olbg-tip:'+n.tipid,sourceId:'SRC_014',authorId:'olbg:648433',authorLabel:'Synthetic',authorUrl:endpoint,sourceUrl:endpoint,sourceTipId:n.tipid,sourceEventId:n.eventid,fixtureId:fixture.id,fixtureLabel:fixture.label,kickoff:fixture.kickoff,selection:n.selection,market:'source_native_opaque',marketLabel:'Synthetic opaque',sourceMarketLabel:n.market,sourceBetType:n.winew,sourceFields:n,sourceEventLocalText:n.event_datetime,sourceEventTimezone:null,publishedAt:null,publishedCivilDate:null,observedAt:at,firstSeenAt:at,responseSha256:response,parserSha256:parser,calendarSha256:cal,performanceEvaluationAllowed:false,settlementAllowed:false,marketInterpretationAllowed:false,versions:[{selection:n.selection,observedAt:at}],versionCount:1}));
   return {schemaVersion:'robin-olbg-opaque-campaign-batch-v1',missionId:plan.id,claimId:claim,source:{profiles:[{facts:{authorId:648433,authorLabel:'Synthetic',mode:'current',records},request:{url:endpoint,observedAt:at,responseSha256:response}}],fixtures:[fixture],calendarSha256:cal},acceptedSourceTipIds:records.map(r=>r.tipid),picks,parserSha256:parser,builderSha256:builder,calendarSha256:cal,sourceReady:false,applicationAdmissions:0,recurrence:true};
  }
- function accept(slot,rows){const b=batch(slot,rows),raw=bytes(b),digest=hash(raw),name='observations-'+digest+'.json',response=b.source.profiles[0].request.responseSha256;files.set(name,raw);
+  function parentReceipt(slot,batchName,batchRaw,count){
+  const summary=raw=>({bytes:raw.length,sha256:hash(raw)}),stdout=Buffer.from('{"state":"succeeded","requests":3}\\n'),stderr=Buffer.alloc(0);
+  const batch={file:batchName,sha256:hash(batchRaw),bytes:batchRaw.length,recordCount:count};
+  const primary={job:{exit:0,timedOut:false,subtreeKillConfirmed:true},failureKind:null,rawStreams:{'stdout.raw':{...summary(stdout),base64:stdout.toString('base64')},'stderr.raw':{...summary(stderr),base64:''}}};
+  const primaryRaw=Buffer.from(canonical(primary));
+  const result={schemaVersion:'olbg-slot-parent-result-v1',status:'SLOT_PROCESS_COMPLETE',accepted:true,missionId:plan.id,slot,batch,primarySHA256:hash(primaryRaw),child:{status:'OPAQUE_SLOT_DISPATCH_COMPLETE'}};
+  const resultRaw=Buffer.from(canonical(result)),stopRaw=Buffer.from(canonical({accepted:true,resultSHA256:hash(resultRaw)}));
+  const receipt={schemaVersion:'olbg-slot-parent-accepted-v1',missionId:plan.id,slotRunMissionId:'SYNTH_SLOT',slot,sourceDecisionLedgerHash:'a'.repeat(64),accepted:true,childExit:0,timedOut:false,subtreeKillConfirmed:true,batch,primarySHA256:hash(primaryRaw),resultSHA256:hash(resultRaw),STOP_SHA256:hash(stopRaw),rawStdout:summary(stdout),rawStderr:summary(stderr),postChildFullGuardPassed:true,sourceReady:false};
+  const receiptRaw=Buffer.from(canonical(receipt));files.set('slot-parent-'+hash(slot)+'.json',receiptRaw);
+  controls.set(slot+'|primary.json',primaryRaw);controls.set(slot+'|result.json',resultRaw);controls.set(slot+'|AUTHOR-STOP.json',stopRaw);confirmed.set(slot,hash(receiptRaw));
+ }
+
+ function accept(slot,rows){currentAt=slot;const b=batch(slot,rows),raw=bytes(b),digest=hash(raw),name='observations-'+digest+'.json',response=b.source.profiles[0].request.responseSha256;files.set(name,raw);
   append('RUN_STARTED',{slot});append('PUBLIC_SLOT_STARTED',{slot});
   append('REQUEST_FINISHED',{sourceId:'SRC_014',url:endpoint,httpStatus:200,responseSha256:response});
   append('PUBLIC_PICKS_QUALIFIED',{sourceId:'SRC_014',responseSha256:response,parserSha256:parser,calendarSha256:cal,count:b.picks.length});
   append('PUBLIC_COLLECTION_ACCEPTED',{slot,observationFile:name,observationSha256:digest,count:b.picks.length});
-  append('PUBLIC_SLOT_FINISHED',{slot,count:b.picks.length});append('RUN_FINISHED',{slot});return b;
+  append('PUBLIC_SLOT_FINISHED',{slot,count:b.picks.length});append('RUN_FINISHED',{slot});parentReceipt(slot,name,raw,b.picks.length);return b;
  }
- const read=()=>readCampaignBuffers(planRaw,mfRaw,Buffer.from(events.map(canonical).join('\n')+'\n'),name=>files.get(name),approval);
- return {approval,events,files,append,accept,read,batch};
+ const read=()=>readCampaignBuffers(planRaw,mfRaw,Buffer.from(events.map(canonical).join('\n')+'\n'),name=>files.get(name),approval,{loadControl:(slot,name)=>controls.get(slot+'|'+name),confirmExit:(campaign,slot,digest)=>campaign===plan.id&&confirmed.get(slot)===digest});
+ return {approval,events,files,controls,confirmed,append,accept,read,batch};
 }
 test('two receipt batches count one recurring pick once and preserve old rows',()=>{
  const p=pack(),first=p.accept(slots[0],[[10,'FIRST']]);p.accept(slots[1],[[10,'UPDATED'],[11,'NEW']]);
@@ -53,4 +65,7 @@ test('default denial, orphan, duplicate slot, body corruption and after KO fail 
  const conflict={...row,fixtureId:'synth:other'};assert.throws(()=>mergeCampaignPicks([row],[conflict]));
  const backfill={...row,firstSeenAt:'2026-11-27T11:00:00+00:00',observedAt:slots[1],lastSeenAt:slots[1]};assert.throws(()=>mergeCampaignPicks([row],[backfill]));
  assert.throws(()=>mergeCampaignPicks([],[{...row,firstSeenAt:slots[1]}]));
+ const valid=pack();valid.accept(slots[0],[[10,'FIRST']]);const receiptName='slot-parent-'+hash(slots[0])+'.json',parentRaw=valid.files.get(receiptName);valid.files.delete(receiptName);assert.throws(()=>valid.read());valid.files.set(receiptName,parentRaw);
+ for(const patch of [{accepted:false},{missionId:'FOREIGN'},{childExit:1},{resultSHA256:'0'.repeat(64)}]){valid.files.set(receiptName,Buffer.from(canonical({...JSON.parse(parentRaw),...patch})));assert.throws(()=>valid.read());}valid.files.set(receiptName,parentRaw);
+ const controlKey=slots[0]+'|AUTHOR-STOP.json',beforeControl=valid.controls.get(controlKey);valid.controls.set(controlKey,Buffer.from('{}'));assert.throws(()=>valid.read());valid.controls.set(controlKey,beforeControl);valid.confirmed.set(slots[0],'0'.repeat(64));assert.throws(()=>valid.read());
 });

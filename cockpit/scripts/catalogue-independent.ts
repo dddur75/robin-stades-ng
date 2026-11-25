@@ -1,4 +1,5 @@
-import {applyOLBGCampaignCatalogue} from './olbg-campaign-companion';
+import {OLBG_CAMPAIGN_APPROVAL} from './olbg-campaign-companion';
+import {restoreStableCatalogue,applyParentCampaignCatalogue} from './olbg-parent-adoption';
 import {applyLocalOLBGCatalogue} from './olbg-retained-approved';
 import {OLBG_RETAINED_APPROVAL} from './olbg-retained-approval';
 import {applyReviewedOLBGPendingToCandidate} from './olbg-pending-candidate';
@@ -128,7 +129,8 @@ export function readIndependentCatalogue(root:string):Catalogue{
  if(OLBG_REVIEWED_APPROVAL!==null){
   try{pending=applyReviewedOLBGPendingToCandidate(pending,readBounded(resolve(root,'.ci/local-robin/olbg-pending-profile-observations.json'),131072),readBounded(resolve(root,'.ci/local-robin/olbg-pending-profile-receipt.json'),65536),OLBG_REVIEWED_APPROVAL);}catch{/* Unapproved or unavailable OLBG snapshot never replaces existing facts. */}
  }
- return applyOLBGCampaignCatalogue(applyLocalOLBGCatalogue(pending,root,OLBG_RETAINED_APPROVAL),root);
+ const stable=restoreStableCatalogue(applyLocalOLBGCatalogue(pending,root,OLBG_RETAINED_APPROVAL));
+ return applyParentCampaignCatalogue(stable,root,OLBG_CAMPAIGN_APPROVAL);
 }
 
 export type InventoryRow=FactObject&{reviewedSourceObservation?:ReviewedSourceObservation;recordId:string;candidateId?:string;sheet:string;row:number;sourceUrl?:string|null;collectionEnabled:unknown;qualification?:FactObject;qualifiedRecordId?:string};

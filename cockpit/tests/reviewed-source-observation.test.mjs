@@ -20,7 +20,14 @@ const retainedApprovalSource=readFileSync(new URL('../scripts/olbg-retained-appr
 const retainedApprovalURL='data:text/javascript;base64,'+Buffer.from(stripTypeScriptTypes(retainedApprovalSource)).toString('base64');
 const campaignSource=readFileSync(new URL('../scripts/olbg-campaign-companion.ts',import.meta.url),'utf8');
 const campaignURL='data:text/javascript;base64,'+Buffer.from(stripTypeScriptTypes(campaignSource)).toString('base64');
+const proofSource=readFileSync(new URL('../scripts/root-parent-proof.ts',import.meta.url),'utf8');
+const proofURL='data:text/javascript;base64,'+Buffer.from(stripTypeScriptTypes(proofSource)).toString('base64');
+const adoptionSource=readFileSync(new URL('../scripts/olbg-parent-adoption.ts',import.meta.url),'utf8');
+const adoptionURL='data:text/javascript;base64,'+Buffer.from(stripTypeScriptTypes(adoptionSource)
+  .replaceAll("'./olbg-campaign-companion'",JSON.stringify(campaignURL))
+  .replaceAll("'./root-parent-proof'",JSON.stringify(proofURL))).toString('base64');
 const resolvedSource=stripTypeScriptTypes(source)
+  .replace("from './olbg-parent-adoption'","from '"+adoptionURL+"'")
   .replace("from './olbg-campaign-companion'","from '"+campaignURL+"'")
   .replace("from './olbg-retained-approved'","from '"+retainedURL+"'")
   .replace("from './olbg-retained-approval'","from '"+retainedApprovalURL+"'")
