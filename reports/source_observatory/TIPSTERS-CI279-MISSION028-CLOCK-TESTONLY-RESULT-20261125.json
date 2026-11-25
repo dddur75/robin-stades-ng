@@ -1,0 +1,73 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI279.MISSION028.CLOCK.TESTONLY.RESULT.20261125",
+  "missionId": "CI279_CLOCK_CORRECTIVE_EVIDENCE_E1_20261125",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Two literal synthetic clock scenarios verified across retained exact primaries; production expiration guard unchanged. This is not a fresh full-file or whole-project green test run.",
+  "target": "tests/historical_deep/test_mission028.py",
+  "targetRawSHA": "c897abe52b3ab79205fc587d0e3e6b981af7f538e8af148f6e553b3426d77506",
+  "fixtureSubscriptionEndUnchanged": "2026-11-25",
+  "validCacheReplay": {
+    "caseId": "valid-cache-replay",
+    "primarySHA": "77497f32cc8bfbc1243fcd511a99b251eda6916e3f908835f70043b061d89bb9",
+    "exit": 0,
+    "passedCases": 1,
+    "executionMode": "-I -X utf8 -B",
+    "cwdUnchanged": true
+  },
+  "expiredBeforeCensus": {
+    "caseId": "expired-before-census",
+    "primarySHA": "3656337ba6323d5983dc10ce655ab3ff35732cd09788945200068780bc4c3c98",
+    "observedCaseStatus": "PASS",
+    "wholeRunExit": 1,
+    "reused": true,
+    "successfulCaseReplayed": false,
+    "statusOnly": true,
+    "censusReservations": 0
+  },
+  "ruff": {
+    "primarySHA": "d20d1a08c1171be488127064b0516db95b3ef8bb301301508d8affa3fbea1d7e",
+    "exit": 0,
+    "scope": "Only corrected test file"
+  },
+  "priorHarnessResults": {
+    "r1ResultSHA": "90bcf15a409d03e57976ceaa337cc8c1174cdd505f7383616518f0c35d34da5c",
+    "r1": "COLLECTION_REFUSED_BEFORE_ANY_CASE",
+    "r2ResultSHA": "a615d594901d6bb8a12616bfb3647270e2e75aed9785af26ac3cb4dfb75952b9",
+    "r2": "EXPIRED_PASS_VALID_UNICODEDECODEERROR",
+    "redesign": "e20da123f5687f250a1b7048fed5697a3ef9ae8d7d713036a82d9106c839d56f"
+  },
+  "resultSHA": "ae36a9df0d0c83f6658243fad8bc479a283068749c529360ae4938045f997bd3",
+  "stopSHA": "15bff57d7fd89222d87cfed971a788334fa44eca0e50b90812ed1085e275d9e3",
+  "audit": {
+    "networkEventsRefused": 1,
+    "providerGET": 0,
+    "spawnEvents": 0,
+    "localHostnameQueries": 1,
+    "hostnameValuesLogged": false,
+    "networkDenialUnchanged": true
+  },
+  "productionChanges": 0,
+  "SourceGET": 0,
+  "applicationWrites": 0,
+  "Task": 0,
+  "corpus60515Loads": 0,
+  "wholeFileRuns": 0,
+  "artifact_hashes": {
+    "tests/historical_deep/test_mission028.py": "4124ea4e84a6eff64980a2fe02515ef186c352d73faadf082dd6b027e12f8f1f",
+    "reports/source_observatory/TIPSTERS-CI279-HISTORICAL-DEEP-JOB-FAILURE-20261125.json": "e5b464e5370047ee66b4c07e31d02be89e2f8049283196073d9862a3e7f1bf40"
+  },
+  "artifact_hash_algorithm": "SHA-256",
+  "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+  "artifact_path_count": 2,
+  "engineering_projection_sha256": "5b6bb8a7b44261262ef727ff8cfadbe226cfabba1584216e86d5b256f3077638",
+  "code_revision": "precommit-projection:5b6bb8a7b44261262ef727ff8cfadbe226cfabba1584216e86d5b256f3077638",
+  "supersedes": [],
+  "globalDelivery": "PARTIAL",
+  "recurringCollectionActive": false,
+  "allCompatibleIntegrated": false
+}

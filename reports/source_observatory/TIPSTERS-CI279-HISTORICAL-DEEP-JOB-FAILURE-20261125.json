@@ -1,0 +1,23 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI279.HISTORICAL.DEEP.EXACT.JOB.FAILURE.RESULT.20261125",
+  "status": "EXACT_JOB_FAILURE_OBSERVED_WORKFLOW_STILL_IN_PROGRESS_AT_CAPTURE",
+  "commit": "de649caacf31603c38030f1aa197451032c1d44e",
+  "workflowRunId": 45551862230,
+  "workflowRunNumber": 279,
+  "jobId": 138994644610,
+  "jobName": "Historical Deep — contrat cache-only",
+  "jobConclusion": "failure",
+  "failedNodeId": "tests/historical_deep/test_mission028.py::test_entrypoint_then_replay_uses_durable_cache_without_http",
+  "observedAssertion": "main returned2, expected0",
+  "passedTestsInJob": 365,
+  "failedTestsInJob": 1,
+  "primaryLogSHA": "36233ee2a3caabfb7b7692f5921f5ef33349a5d256f2dcbd8bcb0579b57da87f",
+  "fixtureSubscriptionEnd": "2026-11-25",
+  "cause": "Synthetic subscription end was reached by the real UTC clock; production correctly rejected expired status",
+  "wholeWorkflowTerminalOutcome": "NOT_YET_OBSERVED",
+  "rawLogPublished": false,
+  "SourceGET": 0,
+  "scope": "GitHub job logs and synthetic fixture only; no application collection or provider call",
+  "sourceMetricScope": "Local read-only diagnostic only; not an independent OS network census of the CI job",
+  "causeBasis": "Corroborated by fixed fixture end, production date guard and retained explicit-expiry synthetic witness; CI receipt reason code was not separately captured"
+}
