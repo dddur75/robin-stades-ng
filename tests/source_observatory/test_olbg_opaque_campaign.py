@@ -9,14 +9,22 @@ from datetime import UTC, datetime
 from hashlib import sha256
 from pathlib import Path
 
+from robin.source_observatory.collector import robots_policy
 from robin.source_observatory.connectors import Journal, Response, canonical
 from robin.source_observatory.olbg import extract_profile
 from robin.source_observatory.olbg_opaque_batches import merge_versions, read_campaign
 from robin.source_observatory.olbg_opaque_campaign import (
     bind_source_runtime,
     project_profile,
+    robots_rules_document,
     rules_digest,
     run_opaque_slot,
+)
+from robin.source_observatory.olbg_robots_policy import (
+    RobotsPolicyError,
+)
+from robin.source_observatory.olbg_robots_policy import (
+    policy as olbg_robots_policy,
 )
 from robin.source_observatory.opaque_choices import build_opaque_choices
 
@@ -150,6 +158,145 @@ class CampaignPacks(unittest.TestCase):
             unordered[0]["firstSeenAt"] = plan["slots"][1]
             with self.assertRaises(ValueError):
                 merge_versions([], unordered)
+
+    def test_robots_comments_html_deny_delay_and_closed_stop(self) -> None:
+        fake_calls, slot_calls = 0, 0
+        try:
+            cases = ("comments", "html", "deny_delay", "poison")
+            for case in cases:
+                with self.subTest(case=case), tempfile.TemporaryDirectory() as tmp:
+                    root = Path(tmp)
+                    plan, _, approval = setup(root)
+                    at = datetime.fromisoformat(plan["slots"][0])
+                    if case == "comments":
+                        robots = b"# <valid RFC comment>\r\nUser-agent: *\rAllow: /\n# <tail>\n"
+                    elif case == "html":
+                        robots = b"<html>User-agent: *\nAllow: /</html>"
+                    else:
+                        robots = b"User-agent: *\nDisallow: /use # <comment>\n"
+                    responses = [Response(200, robots, "text/plain", None),
+                                 Response(200, TERMS, "text/html", None),
+                                 Response(200, profile([
+                                     native(10, "SYNTH_ONLY")]), "text/html", None)]
+                    case_calls = 0
+                    def fake_get(_url, **_kwargs):
+                        nonlocal fake_calls, case_calls
+                        fake_calls += 1
+                        case_calls += 1
+                        self.assertLessEqual(fake_calls, 6)
+                        if case == "poison":
+                            raise ValueError("POISON_PRIVATE_EXCEPTION")
+                        return responses.pop(0)
+                    slot_calls += 1
+                    kwargs = dict(approval=approval, synthetic_only=True, now=at,
+                                  clock=lambda: at, sleep=lambda _delay: None, get=fake_get)
+                    if case == "comments":
+                        result = run_opaque_slot(root, **kwargs)
+                        self.assertEqual(result["state"], "succeeded")
+                        self.assertEqual(result["picks"], 1)
+                        self.assertEqual(case_calls, 3)
+                    else:
+                        with self.assertRaises(ValueError):
+                            run_opaque_slot(root, **kwargs)
+                        events = [json.loads(line) for line in (root / "events.jsonl").read_bytes().splitlines()]
+                        stopped = [e for e in events if e["kind"] == "CAMPAIGN_HALTED"]
+                        self.assertEqual(len(stopped), 1)
+                        expected = {"html": "ROBOTS_ACTIVE_HTML", "deny_delay": "ROBOTS_POLICY_DENIED",
+                                    "poison": "BUSINESS_UNPROVEN"}[case]
+                        self.assertEqual(stopped[0]["reasonCode"], expected)
+                        self.assertEqual(stopped[0]["reason"], "ValueError")
+                        self.assertEqual(case_calls, 1)
+                        self.assertNotIn(b"POISON_PRIVATE_EXCEPTION", (root / "events.jsonl").read_bytes())
+                        self.assertFalse(any(root.glob("observations-*.json")))
+                    if case == "deny_delay":
+                        rules = robots_rules_document(
+                            b"User-agent: *\nDisallow: /use # <valid>\nCrawl-delay: 31\n")
+                        allowed, delay = robots_policy(rules, plan["termsUrl"])
+                        self.assertIs(allowed, False)
+                        self.assertEqual(delay, 31)
+                        self.assertEqual(robots_policy(rules, plan["endpoint"]), (True, 31))
+            self.assertEqual(fake_calls, 6)
+            self.assertEqual(slot_calls, 4)
+        finally:
+            print(json.dumps({"syntheticFakeHTTPCalls": fake_calls,
+                              "realCampaignSlotCalls": slot_calls, "sourceGET": 0}))
+
+    def test_selected_foreign_boundaries_and_ambiguous_target(self) -> None:
+        calls = 0
+        def check(body, target):
+            nonlocal calls
+            calls += 1
+            return olbg_robots_policy(body, target, "RobinSourceObservatory",
+                                      max_delay_seconds=60, max_bytes=65536)
+        target = "https://www.olbg.com/use"
+        foreign = b"User-agent: ForeignBot2/1.0\nDisallow: /\nUser-agent: *\nAllow: /use\n"
+        own = (b"User-agent: *\nAllow: /\nUser-agent: RobinSourceObservatory\n"
+               b"Disallow: /use\nAllow: /use/public\nDisallow: /use/tie\n"
+               b"Allow: /use/tie\nCrawl-delay: 3\n")
+        boundary = b"User-agent: *\nAllow: /use\nUser-agent: ForeignBot2/1.0\nDisallow: /use\n"
+        ambiguous = b"User-agent: RobinSourceObservatory/1.0\nAllow: /\nUser-agent: *\nAllow: /\n"
+        try:
+            self.assertEqual(check(foreign, target), (True, 0.0))
+            self.assertEqual(check(own, target), (False, 3.0))
+            self.assertEqual(check(own, target + "/public"), (True, 3.0))
+            self.assertEqual(check(own, target + "/tie"), (True, 3.0))
+            self.assertEqual(check(boundary, target), (True, 0.0))
+            with self.assertRaises(RobotsPolicyError) as refused:
+                check(ambiguous, target)
+            self.assertEqual(refused.exception.reason, "UA_SYNTAX")
+            self.assertEqual(calls, 6)
+        finally:
+            print(json.dumps({"purePolicyCalls": calls, "sourceGET": 0}))
+
+    def test_campaign_rep_bootstrap_and_delay_gate(self) -> None:
+        fake_calls, slot_calls = 0, 0
+        try:
+            for case in ("foreign", "incomplete", "delay31"):
+                with self.subTest(case=case), tempfile.TemporaryDirectory() as tmp:
+                    root = Path(tmp)
+                    plan, _, approval = setup(root)
+                    at = datetime.fromisoformat(plan["slots"][0])
+                    rules = (b"User-agent: ForeignBot2/1.0\nDisallow: /\n"
+                             b"User-agent: *\nAllow: /\n")
+                    if case == "incomplete":
+                        rules = b" \n"
+                    elif case == "delay31":
+                        rules = b"User-agent: *\nAllow: /\nCrawl-delay: 31\n"
+                    responses = [Response(200, rules, "text/plain", None),
+                                 Response(200, TERMS, "text/html", None),
+                                 Response(200, profile([native(10, "SYNTH_ONLY")]), "text/html", None)]
+                    case_calls = 0
+                    def fake_get(url, **_kwargs):
+                        nonlocal fake_calls, case_calls
+                        self.assertEqual(url, [plan["robotsUrl"], plan["termsUrl"],
+                                              plan["endpoint"]][case_calls])
+                        fake_calls += 1
+                        case_calls += 1
+                        self.assertLessEqual(fake_calls, 5)
+                        return responses.pop(0)
+                    kwargs = dict(approval=approval, synthetic_only=True, now=at,
+                                  clock=lambda: at, sleep=lambda _delay: None, get=fake_get)
+                    slot_calls += 1
+                    if case == "foreign":
+                        result = run_opaque_slot(root, **kwargs)
+                        self.assertEqual(result["state"], "succeeded")
+                        self.assertEqual(result["picks"], 1)
+                        self.assertEqual(case_calls, 3)
+                    else:
+                        with self.assertRaises(ValueError):
+                            run_opaque_slot(root, **kwargs)
+                        events = [json.loads(line) for line in (root / "events.jsonl").read_bytes().splitlines()]
+                        halted = [e for e in events if e["kind"] == "CAMPAIGN_HALTED"]
+                        self.assertEqual(len(halted), 1)
+                        self.assertEqual(halted[0]["reasonCode"], "ROBOTS_POLICY_NO_POLICY"
+                                         if case == "incomplete" else "ROBOTS_POLICY_DENIED")
+                        self.assertEqual(case_calls, 1)
+                        self.assertFalse(any(root.glob("observations-*.json")))
+            self.assertEqual(fake_calls, 5)
+            self.assertEqual(slot_calls, 3)
+        finally:
+            print(json.dumps({"bootstrapFakeHTTPCalls": fake_calls,
+                              "bootstrapCampaignCalls": slot_calls, "sourceGET": 0}))
 
 
 if __name__ == "__main__":

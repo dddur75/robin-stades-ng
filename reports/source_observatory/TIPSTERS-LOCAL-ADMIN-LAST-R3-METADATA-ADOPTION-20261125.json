@@ -1,0 +1,45 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.LOCAL.ADMIN.LAST.R3.METADATA.ADOPTION.RESULT.20261125",
+  "status": "LOCAL_METADATA_APPLIED_API_EXACT_HTML200",
+  "scope": "One latest technical collection outcome appended to the existing local admin snapshot; no new personal prediction or source request.",
+  "actorSHA": "65749d26ee2badd961d7c8bf5aa11bfc4a846dc546028e118fbcf1e50a81c6d4",
+  "planCAN": "e4744ff3794997783e73de7aef007257c04bff1e65e73553102c8cb3843ca68c",
+  "manifestCAN": "827b7a462bf013c13a3684487de387e3c2953c226c2d43ab98a0057c7ff1af14",
+  "beforeSHA": "abaecbf7020bcb8012d6b1b5602ecedbfa8720bee6c7cec9a2908b1272034947",
+  "targetSHA": "25e9f6af9d62494b3a470319d4510a7fe656f37e0519a253393c7046b2d10415",
+  "sourceClaimId": "ENG.SOURCE_OBSERVATORY.OLBG.UEFA25.NATIVE.DIAGNOSTIC.R3.ACTUAL.RESULT.20261125",
+  "addedResultId": "olbg-uefa25-native-r3-partial-20261125",
+  "rows": 41,
+  "oldRowsPreserved": 40,
+  "originalAdmitted3RowPreserved": true,
+  "newPersonalPredictionsAdmitted": 0,
+  "metadataReplacements": 1,
+  "loopbackGET": 2,
+  "responses": [
+    {
+      "bytes": 36268,
+      "routeKind": "QUALIFICATION",
+      "status": 200
+    },
+    {
+      "bytes": 28447,
+      "routeKind": "ADMIN",
+      "status": 200
+    }
+  ],
+  "NodeExit": 0,
+  "nodePrimarySHA": "17fcca82c90d2600056655bd2ac7b9e17b5b4cfc3d66cbe9efab7583539240a5",
+  "resultSHA": "9a7d34f53465f9b7e923675e64c637923886f1b627b35da9fbdb0f216b2c639e",
+  "stopSHA": "ee7d0b9bce30d96434a255618827c138a38a109614561cba53b64df0b11f895f",
+  "SourceGET": 0,
+  "Task": 0,
+  "codeChanges": 0,
+  "globalUIProven": false,
+  "allCompatibleIntegrated": false,
+  "limitations": [
+    "API contents equal exact candidate; admin HTML returned200",
+    "Global visual, accessibility and full UI acceptance not established by this metadata-only update",
+    "Prior first actor failure remains PARTIAL and unchanged",
+    "No recurring collection or Source authorization created"
+  ]
+}

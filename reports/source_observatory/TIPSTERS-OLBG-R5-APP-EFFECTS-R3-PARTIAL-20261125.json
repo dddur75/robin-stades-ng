@@ -1,0 +1,30 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.R5.APP.EFFECTS.R3.PARTIAL.RESULT.20261125",
+  "status": "PARTIAL_EIGHT_WRITES_COMPLETE_PUBLIC_API_READINESS_UNPROVEN",
+  "scope": "Actual eight local writes completed; two closed readiness attempts failed; no app admission asserted",
+  "resultSHA": "34ccb2c423e40f12e4c04924c51416a7619a4d91dae638780a2afaea3706f219",
+  "stopSHA": "fa6fd9449239638cbafdf814c0a67f36470f5eb28476ede98bdf72ac0a961661",
+  "controllerPrimarySHA": "bf3d7e33a1c8dc2a9945da55936411abebc4eeab678ad628c389d489c21f6c69",
+  "targetWrites": 8,
+  "createdDirectories": 1,
+  "allTargetHashesMatched": true,
+  "oldThreeDataAndAdmin43InvariantHashesMatched": true,
+  "readback": {
+    "exit": 1,
+    "stage": "PUBLIC_READINESS",
+    "localGET": 2,
+    "publicAttempts": 2,
+    "cause": "UNKNOWN"
+  },
+  "applicationAdmissionProven": false,
+  "effectiveAppChoices": null,
+  "SourceGET": 0,
+  "Task": 0,
+  "manualProcessLifecycle": 0,
+  "retry": false,
+  "sourceReady": false,
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.UEFA25.REP.OWNER.R5.ACTUAL.RESULT.20261125",
+    "ENG.SOURCE_OBSERVATORY.OLBG.R5.ONE.LOCAL.VALIDATION.RESULT.20261125"
+  ]
+}

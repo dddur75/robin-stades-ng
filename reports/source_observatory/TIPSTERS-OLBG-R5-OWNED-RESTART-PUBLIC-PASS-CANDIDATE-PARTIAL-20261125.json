@@ -1,0 +1,29 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.R5.OWNED.RESTART.PUBLIC.PASS.CANDIDATE.PARTIAL.RESULT.20261125",
+  "status": "PUBLIC484_PRESERVED483_CANDIDATE_PARTIAL",
+  "scope": "One exact owned process cycle; public predicates passed, candidate predicate unproven",
+  "outerResultSHA": "cd5cd5d4eaa02f43556a3530fd3d373ccf4664bd05f629d76d1d551708cfc964",
+  "outerStopSHA": "eae0475106ccb971fe4c435d25cef9a618a393dd12f543867b6b4aee5eb954b7",
+  "controllerSHA": "34f79ddbaab606e7aa47d288e44f30c462c83cdc195ba8bdb86ffee6f764bd94",
+  "stopInvocations": 1,
+  "startInvocations": 1,
+  "oldPID": 67264,
+  "newOwnedPID": 292,
+  "listenerVerified": true,
+  "publicChoicesProven": 484,
+  "oldPublicChoicesPreserved": 483,
+  "oldFixturesPreserved": true,
+  "publicSourceReady": false,
+  "recurringCollectionActive": false,
+  "candidateProof": false,
+  "readbackStage": "CANDIDATE_READBACK",
+  "localGET": 2,
+  "SourceGET": 0,
+  "Task": 0,
+  "contentWrites": 0,
+  "applicationAdmissionFullyProven": false,
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.R5.ONE.LOCAL.VALIDATION.RESULT.20261125",
+    "ENG.SOURCE_OBSERVATORY.OLBG.R5.CONFIG.RELOAD.PARTIAL.REDESIGN.RESULT.20261125"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.LOCAL.ADMIN.LAST.R4.METADATA.ADOPTION.RESULT.20261125",
+  "status": "LOCAL_METADATA_API_EXACT_HTML200_TARGETED_ONLY",
+  "scope": "Local admin last R4 technical stop; no new forecasts or source success",
+  "at": "2026-11-25T02:34:14.975Z",
+  "actorSHA": "5c4b7f6fc3928e16ca4a72aee59c33ec27095d435a4f18e445b50cd0fc85a502",
+  "planSHA": "590a75f13c16e81354c3cc2ea561f57bfd4ab2cb34031f28d0b39b9f6bde9f24",
+  "manifestSHA": "43971d2516f53b04e2b1e13236fd08f8662cf3e8ed6b2b14d077664453be4d4b",
+  "resultSHA": "7eabcec2582b92e3cb626928c7da8415f660adf1cbd4a8cfbfcce21b96b7f035",
+  "stopSHA": "3a2c8a1aa4b3cc996baaefd40b290f939d7c8a75c75e5befe8ca5f475f815a55",
+  "controllerPrimarySHA": "cfa709fb74b40f432ab546fba0f420e384b25105c5289824d3c196329f9b8db9",
+  "targetSHA": "34cd265a098a7cd4dd71185552474ce1eebb47f06426f3880ebb4ece71d52b87",
+  "rows": 42,
+  "oldRowsPreserved": 41,
+  "oldThreeAdmittedPreserved": true,
+  "localGET": 2,
+  "qualificationAPI": {
+    "status": 200,
+    "bytes": 37123,
+    "exactCandidate": true
+  },
+  "adminHTML": {
+    "status": 200,
+    "bytes": 28462
+  },
+  "nodeExit": 0,
+  "globalUIProven": false,
+  "sourceClaim": "ENG.SOURCE_OBSERVATORY.OLBG.UEFA25.POSTREDESIGN.R4.ACTUAL.RESULT.20261125",
+  "sourceGET": 0,
+  "applicationAdmissions": 0,
+  "Task": 0,
+  "GitMutations": 0,
+  "retry": false
+}

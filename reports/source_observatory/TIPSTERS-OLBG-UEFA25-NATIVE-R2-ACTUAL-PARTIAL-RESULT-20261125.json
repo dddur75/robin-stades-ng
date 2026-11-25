@@ -1,0 +1,60 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.UEFA25.NATIVE.R2.ACTUAL.PARTIAL.RESULT.20261125",
+  "status": "PARTIAL_NO_NEW_PREDICTION_NO_RETRY",
+  "scope": "One actual Windows Job canary under exact R2 source tuple; stopped during first fixed robots GET path before terms/profile.",
+  "tuple": {
+    "parentPlanSHA": "608806c7e1d82a6cfbfc819643df627d3d3c1f8b5394c934b8e975487e5fc63d",
+    "parentManifestSHA": "e5615f8c5bf69a59e061199f70d9aaf64130fe0f2716daeb610c68bd2304f0c9",
+    "childPlanSHA": "9eb15976f63a9ea7dc01d7ba92455d021e03991ebfa4d9c1f04d953f977d1f03",
+    "childManifestSHA": "8f8c2cca8021c146bfab0a1a78b0da8da2c6549d1e389ba81e2c7ff4d87d10a9"
+  },
+  "rootTupleRAW": {
+    "planSHA": "742bbc64d59838a58a73b6861545683f7b1e22ed133699829857eb38e8898372",
+    "manifestSHA": "a0d33fe7d08dc52e6b32956ce5dbc9e791b56009be1ff4a80c4814105782a606"
+  },
+  "sourceGrant": "c94d9abfdc47466e2e2655b5cdfafbb883bc6541d7e0890d0308793ecf8e800d",
+  "sourceSlotUTC": "2026-11-25T00:21:00+00:00",
+  "actualTopControllerExit": 1,
+  "actualRootWrapperExit": 1,
+  "rootWrapperSeconds": 33.82799999997951,
+  "job": {
+    "activeSecondsMax": 50,
+    "elapsedSeconds": 12.639999999955762,
+    "exit": 1,
+    "hardSeconds": 60,
+    "sourceGET": null,
+    "subtreeKillConfirmed": true,
+    "taskMutations": 0,
+    "timedOut": false
+  },
+  "auditCounts": {
+    "DNS": 1,
+    "GET_SEND": 1,
+    "TCP": 1,
+    "activeGET": false,
+    "reservedAttempts": 1,
+    "sourceReady": false
+  },
+  "childErrorKind": "ValueError",
+  "actualBusinessOrNetworkCause": "UNKNOWN_DIAGNOSTIC_NOT_RETAINED",
+  "retainedProviderPayloads": 0,
+  "newStructuredChoices": 0,
+  "applicationAdmissions": 0,
+  "Task": 0,
+  "retry": false,
+  "unusedGETCeilingAbandoned": 2,
+  "privatePrimarySHA256": "fa2219580fa2cdc2f9d698e73529a7b7ccbca62f8552afa8fd2b68ac9b7d8eb6",
+  "privateChildResultSHA256": "4124fa427e7800ec65be0e5e17ac3a6a501b36e13ee554a2272c4d536830c78a",
+  "privateParentResultSHA256": "691d2f5a2e7785f4d3de157a85b3abfe867e9459ceb56d13dc5a91c3b68b1e9a",
+  "privateRootResultSHA256": "af6130238562b7392f95c943de3f0cf150e496a8bdb5b1f4f299712010dd5043",
+  "limitations": [
+    "One GET_SEND audit event does not prove response receipt or content",
+    "Native TLS and successful business extraction not independently established",
+    "Watchdog subtreeConfirmed=false is distinct from inner Windows Job subtreeKillConfirmed=true",
+    "No retained transport diagnostic, no inferred timeout cause",
+    "No recurring activation or automatic app admission"
+  ],
+  "sourceReady": false,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null
+}

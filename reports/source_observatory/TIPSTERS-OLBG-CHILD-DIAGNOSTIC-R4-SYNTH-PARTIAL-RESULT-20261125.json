@@ -1,0 +1,27 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.CHILD.DIAGNOSTIC.R4.SYNTH.PARTIAL.RESULT.20261125",
+  "status": "FUNCTIONAL_SYNTH_PASS_TYPING_UNPROVEN",
+  "scope": "Exact one-method/four child.execute synthetic diagnostic test; no new Source or actual provider payload.",
+  "childSHA": "62ae1f91e3b759b75ac16003e9787f2802c06c4480d79963e5887dc36463e363",
+  "testSHA": "5149d4cbbfc705e827c82a0b2305f45c4c20c691af8746d1a9b81b8749759bb1",
+  "methodCount": 1,
+  "childExecuteCalls": 4,
+  "testExit": 0,
+  "testPrimarySHA": "ec44e8b3e1a0d8422d8cbbcbd5ec8a3ee99fac133e72e604be0461993554babe",
+  "qualityPrimarySHA": "d9e4041514b8a3768dccf9506d4eb5f9b39824f6efbdf4dd93aea4c9509914fb",
+  "quality": {
+    "ruffExit": 0,
+    "ramCompileExit": 0,
+    "mypyExit": 2,
+    "mypyCause": "UNKNOWN_INTERNAL_ERROR_2.4.1"
+  },
+  "producerSTOP_SHA": "23f28ac57b90784bbff964ed27934aed29111675263ec3d89965f0a6427f1c11",
+  "sourceGET": 0,
+  "Job": 0,
+  "sourceReady": false,
+  "limitations": [
+    "Typing did not complete; no inference about code typing correctness",
+    "Synthetic runtime/import/CLI/Job guards; no native provider success",
+    "Existing successful test/lint/compile need not be replayed for mypy runner diagnosis"
+  ]
+}

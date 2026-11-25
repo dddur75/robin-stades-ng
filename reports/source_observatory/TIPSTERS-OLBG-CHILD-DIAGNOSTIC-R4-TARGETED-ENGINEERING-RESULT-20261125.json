@@ -1,0 +1,52 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.CHILD.DIAGNOSTIC.R4.TARGETED.ENGINEERING.RESULT.20261125",
+  "status": "TARGETED_SYNTH_AND_QUALITY_PASS_NO_SOURCE_EXECUTION",
+  "scope": "One synthetic method covering four actual child.execute calls; exact same child bytes linted, RAM compiled and strictly typed. Prior failed quality scopes preserved.",
+  "author": "C3",
+  "runner": "C0",
+  "childSHA": "62ae1f91e3b759b75ac16003e9787f2802c06c4480d79963e5887dc36463e363",
+  "testSHA": "5149d4cbbfc705e827c82a0b2305f45c4c20c691af8746d1a9b81b8749759bb1",
+  "test": {
+    "methods": 1,
+    "actualChildExecuteCalls": 4,
+    "diagnosticCalls": 4,
+    "exit": 0,
+    "primarySHA": "ec44e8b3e1a0d8422d8cbbcbd5ec8a3ee99fac133e72e604be0461993554babe"
+  },
+  "quality": {
+    "ruffExit": 0,
+    "ramCompileExit": 0,
+    "mypyExit": 0,
+    "mypySourceFiles": 1,
+    "partialPrimarySHA": "d9e4041514b8a3768dccf9506d4eb5f9b39824f6efbdf4dd93aea4c9509914fb",
+    "tracebackPrimarySHA": "17d361bb61b8f2c6f1d179041d2caecf4be0852b6dfdfc40a54806521ba5232d",
+    "cacheFixPrimarySHA": "e4a58d64c80d87df7adf1129727840249b5aa07fe26b42d31cc0610c3409c914",
+    "oldErrorPreserved": true,
+    "minimalRunnerFix": "Private valid cache directory replaces Windows NUL path"
+  },
+  "SourceGET": 0,
+  "Job": 0,
+  "APP": 0,
+  "Task": 0,
+  "diagnosticContract": {
+    "fields": 18,
+    "schemaVersionExact": true,
+    "statuses": [
+      "VALID",
+      "ABSENT",
+      "REJECTED"
+    ],
+    "traceBytesMax": 2048,
+    "childResultBytesMax": 4096,
+    "initialErrorPreserved": true,
+    "noRawPayloadOrFreeText": true
+  },
+  "limitations": [
+    "Fake runtime/import/CLI/Job, real child metadata path only",
+    "No observed native transport diagnostic yet",
+    "No Source authorization or operational success inferred"
+  ],
+  "sourceReady": false,
+  "automaticAdmissions": false,
+  "allCompatibleIntegrated": false
+}

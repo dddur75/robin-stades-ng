@@ -12,17 +12,73 @@ from pathlib import Path
 from types import ModuleType
 from typing import Any
 
-from robin.source_observatory.collector import robots_policy
 from robin.source_observatory.connectors import Journal, Response, canonical, public_get
 from robin.source_observatory.olbg import extract_profile
 from robin.source_observatory.olbg_campaign import rules_digest
+from robin.source_observatory.olbg_robots_policy import (
+    REASONS as ROBOTS_REASON_CODES,
+)
+from robin.source_observatory.olbg_robots_policy import (
+    RobotsPolicyError,
+)
+from robin.source_observatory.olbg_robots_policy import (
+    policy as olbg_robots_policy,
+)
 from robin.source_observatory.opaque_choices import build_opaque_choices
-from robin.source_observatory.public_formats import decode_document
 from robin.source_observatory.recurring import instant
 
 APPROVAL: dict[str, str] | None = None
 ENDPOINT = "https://www.olbg.com/tipsters/tips/648433"
 SCHEMA = "robin-olbg-opaque-campaign-batch-v1"
+
+
+STOP_CODES = {
+    "ROBOTS_BOOTSTRAP_SCOPE": "ROBOTS_BOOTSTRAP_SCOPE",
+    "robots denied": "ROBOTS_POLICY_DENIED",
+    "slot deadline exhausted": "SLOT_DEADLINE_EXHAUSTED",
+    "slot deadline exceeded": "SLOT_DEADLINE_EXCEEDED",
+    "source access refused": "SOURCE_HTTP_REFUSED",
+    "terms changed": "TERMS_CHANGED",
+    "no admissible personal pick": "ZERO_ELIGIBLE",
+    "PROFILE_CAPTURE_ABSENT": "PROFILE_CAPTURE_ABSENT",
+    "OPAQUE_BATCH_CAP": "OPAQUE_BATCH_CAP",
+    "SYNTH_TRANSPORT_REQUIRED": "SYNTH_TRANSPORT_REQUIRED",
+    "unsupported robots user-agent": "ROBOTS_POLICY_UNSUPPORTED_AGENT",
+    "unsupported robots delay": "ROBOTS_POLICY_UNSUPPORTED_DELAY",
+    "ROBOTS_BODY_TYPE_OR_CAP": "ROBOTS_BODY_TYPE_OR_CAP",
+    "ROBOTS_UTF8_INVALID": "ROBOTS_UTF8_INVALID",
+    "ROBOTS_CONTROL_INVALID": "ROBOTS_CONTROL_INVALID",
+    "ROBOTS_ACTIVE_HTML": "ROBOTS_ACTIVE_HTML",
+}
+
+
+def closed_stop_reason(error: Exception) -> str:
+    """Compare only known local messages; never echo exception arguments."""
+    if type(error) is RobotsPolicyError:
+        reason = error.reason
+        if type(reason) is str and reason in ROBOTS_REASON_CODES:
+            return "ROBOTS_POLICY_" + reason
+        return "ROBOTS_POLICY_UNPROVEN"
+    if type(error) is ValueError and len(error.args) == 1 and type(error.args[0]) is str:
+        return STOP_CODES.get(error.args[0], "BUSINESS_UNPROVEN")
+    return "BUSINESS_UNPROVEN"
+
+
+def robots_rules_document(body: bytes) -> str:
+    """RFC9309 comment handling only; this is not a complete REP validator."""
+    if type(body) is not bytes or len(body) > 65536:
+        raise ValueError("ROBOTS_BODY_TYPE_OR_CAP")
+    try:
+        text = body.decode("utf-8-sig", "strict")
+    except UnicodeDecodeError:
+        raise ValueError("ROBOTS_UTF8_INVALID") from None
+    if any(ord(char) < 32 and char not in "\t\r\n" for char in text):
+        raise ValueError("ROBOTS_CONTROL_INVALID")
+    # Preserve active directives; ignore only the RFC # comment suffix of each line.
+    rules = "\n".join(line.partition("#")[0] for line in re.split(r"\r\n|\r|\n", text))
+    if "<" in rules:
+        raise ValueError("ROBOTS_ACTIVE_HTML")
+    return rules
 
 
 def denied_get(*_args: Any, **_kwargs: Any) -> Response:
@@ -249,11 +305,24 @@ def run_opaque_slot(
         before = sum(e["kind"] == "REQUEST_RESERVED" for e in journal.events)
         deadline = current + timedelta(seconds=210)
         rules = ""
+        robots_state = "UNOBSERVED"
         picks = []
         snapshot = None
         try:
             for url in [plan["robotsUrl"], plan["termsUrl"], plan["endpoint"]]:
-                allowed, delay = robots_policy(rules, url)
+                if robots_state == "UNOBSERVED":
+                    if url != plan["robotsUrl"]:
+                        raise ValueError("ROBOTS_BOOTSTRAP_SCOPE")
+                    allowed, delay = True, 0.0
+                elif robots_state == "ABSENT_404":
+                    allowed, delay = True, 0.0
+                elif robots_state == "PRESENT_200":
+                    allowed, delay = olbg_robots_policy(
+                        rules.encode("utf-8"), url, "RobinSourceObservatory",
+                        max_delay_seconds=60, max_bytes=65536,
+                    )
+                else:
+                    raise ValueError("ROBOTS_BOOTSTRAP_SCOPE")
                 if not allowed or delay > 30:
                     raise ValueError("robots denied")
                 remaining = min(journal.remaining_seconds(), (deadline - clock()).total_seconds())
@@ -288,13 +357,13 @@ def run_opaque_slot(
                     journal.append(
                         "ROBOTS_ABSENCE_OBSERVED", policy="RFC9309-2.3.1.3", httpStatus=404
                     )
+                    robots_state = "ABSENT_404"
                     continue
                 if response.status != 200:
                     raise ValueError("source access refused")
                 if url == plan["robotsUrl"]:
-                    rules = decode_document(response.body)
-                    if "<" in rules or "\x00" in rules:
-                        raise ValueError("invalid robots document")
+                    rules = robots_rules_document(response.body)
+                    robots_state = "PRESENT_200"
                 elif url == plan["termsUrl"]:
                     if rules_digest(response.body) != plan["rulesSha256"]:
                         raise ValueError("terms changed")
@@ -342,7 +411,8 @@ def run_opaque_slot(
                 requests=sum(e["kind"] == "REQUEST_RESERVED" for e in journal.events) - before,
             )
         except Exception as exc:
-            journal.append("CAMPAIGN_HALTED", slot=slot, reason=type(exc).__name__)
+            journal.append("CAMPAIGN_HALTED", slot=slot, reason=type(exc).__name__,
+                           reasonCode=closed_stop_reason(exc))
             raise
         finally:
             journal.append("RUN_FINISHED", slot=slot)

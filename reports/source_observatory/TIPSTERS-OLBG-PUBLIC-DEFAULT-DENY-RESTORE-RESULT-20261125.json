@@ -1,0 +1,28 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.PUBLIC.DEFAULT.DENY.RESTORE.RESULT.20261125",
+  "status": "PUBLIC_DEFAULT_DENY_RESTORED_PRIMARY_TEST_PASS_DIAGNOSTIC_PARTIAL",
+  "primarySHA": "c0984dd603048003b4e8cb50743b4f011e2f30a71969ca6bbf3530275905b5b7",
+  "resultSHA": "c12a10746575ce83ff5cdcbf8f2e0d43bc0910719d181d9d178caf2b25294545",
+  "stopSHA": "acda887b2488da689a81daf32e178a5adfb1dddfb83850098cf56b0af9be0026",
+  "publicSHA": "ce42f21ad66d1c2dfa1de60737803eade97c9d46008742806bd8e218e5654799",
+  "runtimeSHA": "e7f1d0ec9e3de7e22ae6d55495a4d4c5705ed8625041fceec8e173f660c9fe3c",
+  "adminSHA": "01b4849a3200b8f25ce52d25ecaf06121d05f1e78bea46f856b54de71b86e96f",
+  "copies": 1,
+  "tests": {
+    "invocations": 1,
+    "methods": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "exit": 0,
+    "source": "Original retained Node SPEC stdout; no replay"
+  },
+  "diagnostic": "Parent expected TAP pass line; SPEC pass line caused null parsed count and PARTIAL. Producer records preserved unchanged.",
+  "SourceGET": 0,
+  "localGET": 0,
+  "runtimeWrites": 0,
+  "dataWrites": 0,
+  "Task": 0,
+  "recurringCollectionActive": false,
+  "globalUIRecette": false
+}

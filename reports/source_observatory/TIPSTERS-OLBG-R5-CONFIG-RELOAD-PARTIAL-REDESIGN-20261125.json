@@ -1,0 +1,29 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.R5.CONFIG.RELOAD.PARTIAL.REDESIGN.RESULT.20261125",
+  "status": "SECOND_SIMILAR_LOCAL_READINESS_FAILURE_REDESIGN_E1",
+  "scope": "One mtime-only reload signal; no content copy; readback still refused",
+  "resultSHA": "e295d4a9ca3661601c0aa8cdbabcdc627983d2eb2ad317354b5c3cca3ff8a2d8",
+  "stopSHA": "07e42c79733d2f34f336721fc1c6c4b42058069ec53ae1d570f8b29a9a54b9ce",
+  "controllerPrimarySHA": "e8b3aafa888054e163ad47f9d023cb10a4a096420086e5029e58e28255ff1ea3",
+  "metadataTouches": 1,
+  "configContentUnchanged": true,
+  "installedEightContentPinsUnchanged": true,
+  "readback": {
+    "APPWrites": 0,
+    "localGET": 2,
+    "publicAttempts": 2,
+    "retry": false,
+    "sourceGET": 0,
+    "stage": "PUBLIC_READINESS",
+    "status": "PARTIAL",
+    "valuesLogged": false
+  },
+  "applicationAdmissionProven": false,
+  "SourceGET": 0,
+  "Task": 0,
+  "manualProcessLifecycle": 0,
+  "secondTouchForbidden": true,
+  "next": "FRESH_E1_OWNED_PROCESS_LIFECYCLE_DESIGN_ONLY_BEFORE_EXECUTION",
+  "priorFailureClaim": "ENG.SOURCE_OBSERVATORY.OLBG.R5.APP.EFFECTS.R3.PARTIAL.RESULT.20261125",
+  "diagnosticClaim": "ENG.SOURCE_OBSERVATORY.OLBG.R5.APP.ONE.GET.DIAGNOSTIC.RESULT.20261125"
+}

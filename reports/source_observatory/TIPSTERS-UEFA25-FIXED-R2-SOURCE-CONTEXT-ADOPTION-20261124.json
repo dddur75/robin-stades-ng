@@ -1,0 +1,38 @@
+{
+  "claimId": "GOV.SOURCE_OBSERVATORY.UEFA25.FIXED.CANARY.R2.CONTEXT.ADOPTION.20261124",
+  "status": "FRESH_FIXED_CONTEXT_FOR_NEW_R2_SINGLE_SLOT_PLAN_ONLY",
+  "scope": "Fresh independent context adoption for a new R2 one-slot OLBG648433 plan after R1 expired without Source grant, request or Job. No transfer or rearm of the abandoned R1 quota or opinions. Exact same retained official nine-fixture context, no recalculation, alias or new Source authority.",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.UEFA.25NOV.PRIMARY.CALENDAR.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.PROCESS.CHAIN.TARGETED.ENGINEERING.RESULT.20261124"
+  ],
+  "contextRAW_SHA256": "c6b225e2beafb7567009f365582132b69cfa0a39a3c38c470e002f02ca4751ad",
+  "calendarCanonicalSHA256": "9ac912e11c2fb975f1aba53554873d9410d2681fc834248b6374461b3d1150a3",
+  "documentarySnapshotSHA256": "b98cceec71a16a0092bc3d53e18b0331d342bd76063b0f97c53836f67b978ecb",
+  "helperSHA256": "91964e65354631feb38ea21530be7561452cb46b6e44965e9f43a93766387e5f",
+  "derivationResultSHA": "2d1049daf8cd9215cfc0573efbf07c850811ba9179e4164b360f13d5e16ccb39",
+  "derivationScopeOverall": "PARTIAL_UNRELATED_READER_IMPORT_AND_RUFF_FAILURES_PRESERVED_CONTEXT_COMMAND_EXIT0",
+  "fixtures": 9,
+  "officialDate": "2026-11-25",
+  "timezone": "CET_UTC_PLUS_01_EXPLICIT",
+  "fixtureIdsDerivedNotNative": true,
+  "aliasesInferred": false,
+  "actualWhistleProven": false,
+  "sourceId": "SRC_014",
+  "endpoint": "https://www.olbg.com/tipsters/tips/648433",
+  "canarySlotsMax": 1,
+  "canaryGETMax": 3,
+  "sourceAllowed": false,
+  "applicationAdmissions": 0,
+  "taskChanges": 0,
+  "recurringCollectionActive": false,
+  "priorClosedAttempt": {
+    "missionId": "OLBG_UEFA25_SINGLE_SLOT_RUN_R1_20261124",
+    "terminalLedger": "38fcd1d7b25620a8ffec58ed735157b1b111139b4f72895e1eaa73efa59f1f42",
+    "SourceGET": 0,
+    "Job": 0,
+    "SourceGrantCommitted": false,
+    "unusedGETQuotaAbandoned": 3
+  },
+  "newPlanMissionId": "OLBG_UEFA25_SINGLE_SLOT_NATIVE_R2_20261124"
+}

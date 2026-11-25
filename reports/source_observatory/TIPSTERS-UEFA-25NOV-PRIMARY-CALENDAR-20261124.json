@@ -1,0 +1,141 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.UEFA.25NOV.PRIMARY.CALENDAR.20261124",
+  "missionId": "UEFA_25NOV_PRIMARY_CALENDAR_E1_20261124",
+  "status": "PRIMARY_DOCUMENTARY_CALENDAR_ONLY",
+  "scope": "Nine scheduled fixtures dated 25 November 2026 from one opened official UEFA page. Explicit CET/+01 conversion; no actual whistle, native fixture identity, aliases beyond official labels, schedule stability or tipster choice admission is proved.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V43.ENGINEERING.RECETTE.20261124"
+  ],
+  "sourceURL": "https://www.uefa.com/uefachampionsleague/news/02a8-2174c9e9019d-f909a77bd77a-1000--2026-27-champions-league-a/",
+  "observedAtUTC": "2026-11-24T22:31:47.349Z",
+  "managedToolRepresentationSHA256": "5c02e11abbf98163bdb02ab8d7ed8b5871d4542213f3a0cbc044eb26da72d5d1",
+  "rawHTTPBodySHA256": null,
+  "timezoneStatement": "Kick-offs are 21:00 unless stated; all times CET.",
+  "timezoneLine": 17,
+  "fixtureDateLine": 30,
+  "fixtures": [
+    {
+      "home": "Sabah",
+      "away": "Barcelona",
+      "sourceLocalDate": "2026-11-25",
+      "sourceLocalTime": "18:45",
+      "sourceTimezone": "CET",
+      "sourceUTCOffset": "+01:00",
+      "scheduledKickoffUTC": "2026-11-25T17:45:00.000Z",
+      "line": 31,
+      "actualWhistleProven": false
+    },
+    {
+      "home": "Slavia Praha",
+      "away": "Villarreal",
+      "sourceLocalDate": "2026-11-25",
+      "sourceLocalTime": "18:45",
+      "sourceTimezone": "CET",
+      "sourceUTCOffset": "+01:00",
+      "scheduledKickoffUTC": "2026-11-25T17:45:00.000Z",
+      "line": 32,
+      "actualWhistleProven": false
+    },
+    {
+      "home": "Atlético de Madrid",
+      "away": "Viking",
+      "sourceLocalDate": "2026-11-25",
+      "sourceLocalTime": "21:00",
+      "sourceTimezone": "CET",
+      "sourceUTCOffset": "+01:00",
+      "scheduledKickoffUTC": "2026-11-25T20:00:00.000Z",
+      "line": 33,
+      "actualWhistleProven": false
+    },
+    {
+      "home": "Club Brugge",
+      "away": "Liverpool",
+      "sourceLocalDate": "2026-11-25",
+      "sourceLocalTime": "21:00",
+      "sourceTimezone": "CET",
+      "sourceUTCOffset": "+01:00",
+      "scheduledKickoffUTC": "2026-11-25T20:00:00.000Z",
+      "line": 34,
+      "actualWhistleProven": false
+    },
+    {
+      "home": "Inter",
+      "away": "Stuttgart",
+      "sourceLocalDate": "2026-11-25",
+      "sourceLocalTime": "21:00",
+      "sourceTimezone": "CET",
+      "sourceUTCOffset": "+01:00",
+      "scheduledKickoffUTC": "2026-11-25T20:00:00.000Z",
+      "line": 35,
+      "actualWhistleProven": false
+    },
+    {
+      "home": "Shakhtar Donetsk",
+      "away": "Fenerbahçe",
+      "sourceLocalDate": "2026-11-25",
+      "sourceLocalTime": "21:00",
+      "sourceTimezone": "CET",
+      "sourceUTCOffset": "+01:00",
+      "scheduledKickoffUTC": "2026-11-25T20:00:00.000Z",
+      "line": 36,
+      "actualWhistleProven": false
+    },
+    {
+      "home": "Lille",
+      "away": "Bayern München",
+      "sourceLocalDate": "2026-11-25",
+      "sourceLocalTime": "21:00",
+      "sourceTimezone": "CET",
+      "sourceUTCOffset": "+01:00",
+      "scheduledKickoffUTC": "2026-11-25T20:00:00.000Z",
+      "line": 37,
+      "actualWhistleProven": false
+    },
+    {
+      "home": "Paris Saint-Germain",
+      "away": "Roma",
+      "sourceLocalDate": "2026-11-25",
+      "sourceLocalTime": "21:00",
+      "sourceTimezone": "CET",
+      "sourceUTCOffset": "+01:00",
+      "scheduledKickoffUTC": "2026-11-25T20:00:00.000Z",
+      "line": 38,
+      "actualWhistleProven": false
+    },
+    {
+      "home": "Sporting CP",
+      "away": "Manchester United",
+      "sourceLocalDate": "2026-11-25",
+      "sourceLocalTime": "21:00",
+      "sourceTimezone": "CET",
+      "sourceUTCOffset": "+01:00",
+      "scheduledKickoffUTC": "2026-11-25T20:00:00.000Z",
+      "line": 39,
+      "actualWhistleProven": false
+    }
+  ],
+  "managedSearchCalls": 1,
+  "managedOpenCalls": 1,
+  "underlyingHTTPCalls": null,
+  "nativeTipsterGET": 0,
+  "API_FOOTBALL_CALLS": 0,
+  "applicationAdmissions": 0,
+  "calendarAdopted": false,
+  "producerStop": {
+    "at": "2026-11-24T22:31:51.975280+00:00",
+    "authorityClosed": true,
+    "status": "PRIMARY_DOCUMENTARY_FACTS_RETAINED"
+  },
+  "resultSHA": "8e1308083c3b6a477d9da2105548640c3756a54248910b8f2a4dfbe36ff2ff3a",
+  "stopSHA": "424001e67a361eb2510f2d90faab2df96c3a48eae2c75a6ac221e3e32e229d1e",
+  "primarySHAs": {
+    "open": "1bc8d3aa512f27ab04a647733ce8e1b2f60bb421e160862a137997b230b7ab2b",
+    "search": "086d24520c55696416919cb59c00d253c548f4ca543118a60a7b438c0ae5ce56"
+  },
+  "allCompatibleIntegrated": false
+}

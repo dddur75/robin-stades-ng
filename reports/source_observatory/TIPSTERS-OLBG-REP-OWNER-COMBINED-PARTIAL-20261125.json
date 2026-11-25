@@ -1,0 +1,41 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.REP.OWNER.COMBINED.PARTIAL.RESULT.20261125",
+  "status": "PARTIAL_RUFF_IMPORT_ORDER_ONLY",
+  "scope": "Closed synthetic engineering only; no native success or source authority",
+  "at": "2026-11-25T02:28:10.773Z",
+  "producerResultSHA": "ac33e404563b77f9c49affca38767302e7e2245e6a777d2440bec7d54ffe5cd6",
+  "producerStopSHA": "21283ab17cb5bf1409807f987f139854197889e41c0b085747474080adf5d831",
+  "testPrimarySHA": "ae996cae182e77cff728b90ad68787b235786cf47cfbe0484cb8c8be3158fba7",
+  "qualityPrimarySHA": "f97740cb238c602beeaf2b08fbac7474312d2c311cf489846099dc43b4c29b51",
+  "methodsPassed": 3,
+  "subtestsPassed": 7,
+  "campaignCalls": 7,
+  "syntheticHTTP": 11,
+  "pureOwnerCalls": 6,
+  "allOwnerCallsUpperBound": 13,
+  "mypy": {
+    "files": 2,
+    "exit": 0
+  },
+  "bandit": {
+    "exit": 0,
+    "findings": 0,
+    "existingLocalB102Exclusion": 1,
+    "warningsRetained": true
+  },
+  "ramCompileFiles": 4,
+  "ruff": {
+    "exit": 1,
+    "codes": [
+      "I001"
+    ],
+    "files": 2
+  },
+  "producerStoppedWithinOriginal300Seconds": true,
+  "administrativeReviewAfterOriginalWindow": true,
+  "SourceGET": 0,
+  "APP": 0,
+  "Task": 0,
+  "GitMutations": 0,
+  "sourceReady": false
+}

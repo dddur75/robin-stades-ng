@@ -1,0 +1,38 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI278.EXACT.HEAD.SUCCESS.RESULT.20261124",
+  "status": "EXACT_HEAD_TERMINAL_CI_SUCCESS",
+  "scope": "GitHub CI278 terminal success for published commit86a51c35 only; not native Source collection, recurrence, app delivery, merge, production or full workbook integration.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V43.ENGINEERING.RECETTE.20261124"
+  ],
+  "repository": "dddur75/robin-stades-ng",
+  "commit": "86a51c355061200437366e229fb60f2306fa1984",
+  "PR": 133,
+  "PRState": "OPEN_DRAFT_UNMERGED",
+  "runId": 45498757325,
+  "runNumber": 278,
+  "runURL": "https://github.com/dddur75/robin-stades-ng/actions/runs/45498757325",
+  "workflow": "00 - Qualite continue SAFE V2",
+  "runStatus": "completed",
+  "runConclusion": "success",
+  "jobs": {
+    "total": 17,
+    "uniqueIDs": 17,
+    "success": 17,
+    "failure": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "allSameRun": true
+  },
+  "observedAtUTC": "2026-11-24T22:47:45.089Z",
+  "evidenceKind": "MCP_NORMALIZED_NOT_RAW_HTTP",
+  "primarySHA256": "0db2a36bcab3be26b2b18fff5fe07751ce7ae341cd54f74859069e38f32f641d",
+  "association": "Commit-filtered MCP query plus PR exact head equality; workflow-run normalized payload omits head_sha.",
+  "nativeSourceGET": 0,
+  "applicationAdmissions": 0,
+  "recurringCollectionActive": false,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "authorityCreated": false,
+  "noMorePolling": true
+}
