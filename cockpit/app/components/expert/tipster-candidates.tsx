@@ -15,9 +15,9 @@ import {choiceHeading,OpaqueChoiceDetails,type SourceChoice} from './source-choi
 
 type Access={platform:string;label:string;reason:string;requiredAccess:string;ownerAction:string;url:string;scope:string};
 type Unadmitted={fixtureLabel:string;selection:string;marketLabel:string;sourceEventText:string;observedAt:string;sourceUrl:string;reason:string};
-type Qualification=Access&{profileVisited:boolean;documentaryIssues:string[];personallyProven:boolean;observedAt?:string;unadmittedFacts?:Unadmitted[];expansionClaimId?:string;picks:(SourceChoice&{id:string;fixtureLabel:string;selection:string;market?:string;observedAt:string;kickoff:string;sourceUrl:string})[]};
+type Qualification=Partial<Access>&{profileVisited?:boolean;documentaryIssues?:string[];personallyProven:boolean;observedAt?:string;lastObservedAt?:string;unadmittedFacts?:Unadmitted[];expansionClaimId?:string;picks:(SourceChoice&{id:string;fixtureLabel:string;selection:string;market?:string;observedAt:string;kickoff:string;sourceUrl:string})[]};
 type Candidate={pendingOLBGObservation?:OLBGPendingObservation;pendingChannelObservation?:PendingChannelObservation;reviewedSourceObservation?:ReviewedSourceObservation;id:string;label:string;platform:string;sourceUrl:string;evidenceUrl:string;declaredLastDate:string|null;
- status:'pending_qualification';collectionEnabled:boolean|null;qualification?:Qualification;origin:{sheet?:string;row?:number;workbookSha256?:string;nativeContestLabel?:string;captureSHA256?:string;parentWorkbook?:{sheet:string;row:number;workbookSha256:string}}};
+ status:'pending_qualification';collectionEnabled:boolean|null;qualification?:Qualification;origin:{kind?:string;sheet?:string;row?:number;workbookSha256?:string;nativeContestLabel?:string;captureSHA256?:string;parentWorkbook?:{sheet:string;row:number;workbookSha256:string}}};
 type Registry={platformPendingObservations?:PlatformPendingObservations;historicalEvidence?:{sourceObservedAt?:string|null};operationalState?:'unknown';status:string;schemaVersion:string;count:number;platformCount:number;datedCount:number;enabledCount?:number|null;candidates:Candidate[];receipt:{registrySha256:string;claimId:string};qualification?:{status:string;claimId?:string;technicalClaimId?:string;technicalClaimIds?:string[];followupOverlayState?:string;expansionState?:string;expansionClaimId?:string;personalOverlayState?:string;personalCollectionState?:string;personalClaimId?:string;compatibleAccessState?:string;compatibleClaimId?:string;rosterCollectionState?:string;rosterRecurringState?:string;familyCollectionState?:string;familyNativeWinState?:string;familyOpaqueState?:string;familyClaimId?:string;assessedCount?:number;qualifiedCount?:number;platforms?:Access[]}};
 export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;tipsterId?:string}){
  const [data,setData]=useState<Registry|null>(null);const[error,setError]=useState(false);
@@ -29,6 +29,7 @@ export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;ti
  }).catch(()=>{if(alive)setError(true);}).finally(()=>{pending=false;});};read();
  const timer=setInterval(()=>{if(!document.hidden)read();},15000);return()=>{alive=false;c.abort();clearInterval(timer);};},[]);
  const rows=data?.candidates??[];const selected=rows.find(r=>r.id===tipsterId);
+ const nativeProfile=selected?.origin.kind==='accepted_native_personal_profile';
  const platformResultIds=selected?platformQualificationResultIds(selected.platform):[];
  const filtered=rows.filter(r=>(!platform||r.platform===platform)&&(!dated||r.declaredLastDate)&&`${r.label} ${r.platform}`.toLocaleLowerCase('fr').includes(q.trim().toLocaleLowerCase('fr')));
  const reset=()=>setPage(0);
@@ -57,26 +58,26 @@ export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;ti
    {compact?<InlineLink href="/expert/catalogue-tipsters">Consulter les {data.count} fiches tipsters</InlineLink>:tipsterId?<>
     <InlineLink href="/expert/catalogue-tipsters">Retour aux fiches candidates</InlineLink>
     {selected?<article className="section-card">
-     <p>{selected.platform} · {selected.reviewedSourceObservation?'Messages reçus, à qualifier':selected.qualification?.label??'À qualifier'} · {selected.collectionEnabled===null?'État actuel de collecte non vérifié':selected.collectionEnabled?'Collecte autorisée dans la campagne':'Collecte désactivée'}</p>
-     <p>Dernière date déclarée dans l’inventaire : {selected.declaredLastDate??'Non renseignée'}. Elle ne certifie pas une publication avant match.</p>
-     {selected.origin.nativeContestLabel?<p>Provenance : participant nommé du concours {selected.origin.nativeContestLabel}. Cette identité reste limitée au concours et à sa saison.</p>:<p>Provenance : Catalogue, ligne {selected.origin.row}. Classement historique A, Ligue 1.</p>}
+     <p>{selected.platform} · {selected.reviewedSourceObservation?'Messages reçus, à qualifier':selected.qualification?.label??(selected.qualification?.personallyProven?'Choix personnels observés avant match':'À qualifier')} · {selected.collectionEnabled===null?'État actuel de collecte non vérifié':selected.collectionEnabled?'Collecte autorisée dans la campagne':'Collecte désactivée'}</p>
+     {nativeProfile?<p>Publication : date et fuseau non certifiés.</p>:<p>Dernière date déclarée dans l’inventaire : {selected.declaredLastDate??'Non renseignée'}. Elle ne certifie pas une publication avant match.</p>}
+     {nativeProfile?<p>Provenance : profil public {selected.platform}, observé lors de la collecte. Ce profil ne provient pas de l’import du classeur.</p>:selected.origin.nativeContestLabel?<p>Provenance : participant nommé du concours {selected.origin.nativeContestLabel}. Cette identité reste limitée au concours et à sa saison.</p>:<p>Provenance : Catalogue, ligne {selected.origin.row}. Classement historique A, Ligue 1.</p>}
      {selected.reviewedSourceObservation&&<ReviewedSourceObservationPanel observation={selected.reviewedSourceObservation}/>}
      {selected.pendingOLBGObservation&&<OLBGPendingPanel observation={selected.pendingOLBGObservation} assigned candidateId={selected.id}/>}
      {selected.pendingChannelObservation&&<PendingChannelPanel observation={selected.pendingChannelObservation}/>}
      {platformResultIds.length>0&&<TipsterQualification resultIds={platformResultIds} platformContext/>}
      {selected.qualification?<>
       <details open={!selected.reviewedSourceObservation}><summary>Évaluation historique conservée</summary>
-      <p>Qualification historique : {selected.qualification.observedAt?formatDateTime(selected.qualification.observedAt,true):'date non renseignée'}. État actuel non vérifié.</p>
+      {nativeProfile?<p>Dernière observation source : {selected.qualification.lastObservedAt?formatDateTime(selected.qualification.lastObservedAt,true):'date non renseignée'}. Cet horaire ne certifie pas la publication.</p>:<p>Qualification historique : {selected.qualification.observedAt?formatDateTime(selected.qualification.observedAt,true):'date non renseignée'}. État actuel non vérifié.</p>}
       <p>{selected.qualification.reason}</p><p>Accès à établir : {selected.qualification.requiredAccess}</p><p>{selected.qualification.ownerAction}</p>
-      <p>{selected.qualification.profileVisited?'Route de profil déjà visitée dans l’historique des contrôles.':'Aucune visite individuelle du profil ; portée du contrôle précisée ci-dessus.'}</p>
-      {selected.qualification.documentaryIssues.map((x,i)=><p key={i}>{x}</p>)}
+      <p>{nativeProfile?'Profil public observé lors de cette collecte.':selected.qualification.profileVisited?'Route de profil déjà visitée dans l’historique des contrôles.':'Aucune visite individuelle du profil ; portée du contrôle précisée ci-dessus.'}</p>
+      {selected.qualification.documentaryIssues?.map((x,i)=><p key={i}>{x}</p>)}
       </details>
       {selected.qualification.picks.length?<><h3>Choix personnels conservés</h3>{selected.qualification.picks.map(p=><article className="section-card" key={p.id}><h4>{p.fixtureLabel} · {choiceHeading(p)} {p.selection}</h4><p>Observé le {formatDateTime(p.observedAt,true)} · coup d’envoi le {formatDateTime(p.kickoff,true)}.</p>{p.market==='source_native'&&<p>Publication, marché normalisé et durée non certifiés ; évaluation de performance désactivée.</p>}<OpaqueChoiceDetails choice={p}/><a className="inline-link" href={p.sourceUrl} target="_blank" rel="noopener noreferrer">Voir le message original</a></article>)}</>:<p>Aucun choix personnel admissible n’est établi pour cette fiche.</p>}
       {!!selected.qualification.unadmittedFacts?.length&&<details><summary>{selected.qualification.unadmittedFacts.length} choix source lus, qualification avant match incomplète</summary><p>Ces faits restent séparés du compteur des pronostics admis. Leur date annoncée ne constitue pas un coup d’envoi canonique.</p>{selected.qualification.unadmittedFacts.map((f,i)=><article className="section-card" key={i}><h4>{f.fixtureLabel} · {f.selection}</h4><p>Marché source : {f.marketLabel}. Date annoncée : {f.sourceEventText}.</p><p>Lu le {formatDateTime(f.observedAt,true)}. Blocage : {f.reason}.</p><a className="inline-link" href={f.sourceUrl} target="_blank" rel="noopener noreferrer">Consulter le choix sur sa source</a></article>)}</details>}
      </>:<p>Aucun pronostic collecté n’est attribué à cette fiche par cet import.</p>}
      <p><a className="inline-link" href={selected.sourceUrl} target="_blank" rel="noopener noreferrer">Ouvrir la fiche source</a></p>
      <p><a className="inline-link" href={selected.evidenceUrl} target="_blank" rel="noopener noreferrer">Consulter la référence historique</a></p>
-     {selected.origin.nativeContestLabel?<details><summary>Provenance de la capture du concours</summary><p>Empreinte de capture : <code style={{overflowWrap:'anywhere'}}>{selected.origin.captureSHA256??'Non renseignée'}</code></p>{selected.origin.parentWorkbook&&<p>Référence documentaire du concours : {selected.origin.parentWorkbook.sheet}, ligne {selected.origin.parentWorkbook.row}. <code style={{overflowWrap:'anywhere'}}>{selected.origin.parentWorkbook.workbookSha256}</code></p>}</details>:<details><summary>Empreinte du classeur d’origine</summary><code style={{overflowWrap:'anywhere'}}>{selected.origin.workbookSha256}</code></details>}
+     {nativeProfile?<details><summary>Provenance du profil public</summary><p>Identité : pseudonyme publié sur la plateforme. Cette fiche est distincte de l’inventaire Excel.</p></details>:selected.origin.nativeContestLabel?<details><summary>Provenance de la capture du concours</summary><p>Empreinte de capture : <code style={{overflowWrap:'anywhere'}}>{selected.origin.captureSHA256??'Non renseignée'}</code></p>{selected.origin.parentWorkbook&&<p>Référence documentaire du concours : {selected.origin.parentWorkbook.sheet}, ligne {selected.origin.parentWorkbook.row}. <code style={{overflowWrap:'anywhere'}}>{selected.origin.parentWorkbook.workbookSha256}</code></p>}</details>:<details><summary>Empreinte du classeur d’origine</summary><code style={{overflowWrap:'anywhere'}}>{selected.origin.workbookSha256}</code></details>}
     </article>:<p>Cette fiche candidate ne figure pas dans le registre vérifié.</p>}
    </>:<>
     <div className="filter-panel pilot-filters">
@@ -86,7 +87,7 @@ export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;ti
     </div>
     <p role="status">{filtered.length} fiche(s) trouvée(s). Page {Math.min(page+1,Math.max(1,Math.ceil(filtered.length/25)))} sur {Math.max(1,Math.ceil(filtered.length/25))}.</p>
     {filtered.length?<ul>{filtered.slice(page*25,page*25+25).map(r=><li key={r.id} style={{overflowWrap:'anywhere'}}>
-     <Link className="inline-link" href={`/expert/tipsters/${encodeURIComponent(r.id)}`}>{r.label}</Link> · {r.platform} · {r.qualification?.label??'À qualifier'} · {r.declaredLastDate??'Date non renseignée'}
+     <Link className="inline-link" href={`/expert/tipsters/${encodeURIComponent(r.id)}`}>{r.label}</Link> · {r.platform} · {r.qualification?.label??(r.qualification?.personallyProven?'Choix personnels observés avant match':'À qualifier')} · {r.declaredLastDate??'Date non renseignée'}
     </li>)}</ul>:<p>Aucune fiche ne correspond à ces filtres.</p>}
     <nav aria-label="Pages des fiches candidates" className="pilot-actions">
      <button className="pilot-button" disabled={page===0} onClick={()=>setPage(p=>p-1)}>Page précédente</button>

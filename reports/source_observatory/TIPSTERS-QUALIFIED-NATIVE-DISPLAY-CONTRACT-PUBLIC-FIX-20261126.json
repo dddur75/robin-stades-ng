@@ -1,0 +1,54 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.QUALIFIED.NATIVE.DISPLAY.CONTRACT.PUBLIC.FIX.20261126",
+  "generatedAt": "2026-11-26T11:36:23.681Z",
+  "status": "VERIFIED_LOCAL_NATIVE_DISPLAY_FIX_PUBLICATION_PENDING",
+  "scope": "Display-only fixes for directly collected native profiles: explicit ten-field qualification row projection preserves strict validation while keeping audit metadata outside display schema; optional Excel-only fields no longer crash native fiches; native provenance is distinguished from workbook import, observations from publication, and the catalogue heading is generic. No source collection, stored prediction, grant or recurring task changes.",
+  "hashNormalization": "LF_NORMALIZED_TEXT_BYTES",
+  "codeFiles": [
+    {
+      "path": "cockpit/app/components/expert/tipster-qualification.tsx",
+      "sha256": "a99a1525a1eacdd3ed669510d84a0fc6a232b55df18727200ca91d25f11b59fe"
+    },
+    {
+      "path": "cockpit/app/components/expert/tipster-candidates.tsx",
+      "sha256": "884ab44ae83caf999a899e3777fcc55fb78b65277f8bf365c0c03136f210618b"
+    },
+    {
+      "path": "cockpit/app/expert/tipsters/[id]/page.tsx",
+      "sha256": "85b89de7a4819c2fe11f32ab34886180bc43b4deb91f858660cd83aadf62c5a9"
+    }
+  ],
+  "validation": {
+    "typecheck": {
+      "exit": 0
+    },
+    "targetedLint": {
+      "exit": 0
+    },
+    "adminCauseTwoRows": {
+      "receiptSHA256": "b65f802e470c85998acc366484525423d6cd5c1fbb3e86a216e9336beb84020c",
+      "status": "CONFIRMED"
+    },
+    "actualSixAdminRowsAndTwoNativeFiches": {
+      "receiptSHA256": "89bad84206fd528cd33a67370a708da99ffbe05d2a088ff1059877c541c663f8",
+      "checks": 12,
+      "status": "PASS",
+      "externalSourceGET": 0
+    }
+  },
+  "independentReviews": {
+    "C1": "Exact boundary fields, source-native provenance, actual12UIchecks and one visual reviewed PASS.",
+    "C3": "Native profile provenance and observation/publication semantics reviewed PASS."
+  },
+  "SourceGET": 0,
+  "TaskMutations": 0,
+  "APPDataWrites": 0,
+  "additionalRestarts": 0,
+  "rawProviderPayloadIncluded": false,
+  "publicPR": 133,
+  "PRDraft": true,
+  "PRMerge": 0,
+  "deployment": 0,
+  "allCompatibleIntegrated": false,
+  "globalDelivery": "PARTIAL"
+}

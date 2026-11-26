@@ -28,7 +28,9 @@ export function TipsterQualification({ resultIds, platformContext = false }: { r
       const { status } = body;
       // The API envelope carries archive provenance outside the strict display snapshot.
       const value = { schemaVersion: body.schemaVersion, capturedAt: body.capturedAt, coverage: body.coverage,
-        results: Array.isArray(body.results) ? body.results.map((row: Record<string, unknown>) => ({ ...row,
+        results: Array.isArray(body.results) ? body.results.map((row: Record<string, unknown>) => ({
+          id: row.id, label: row.label, dateKind: row.dateKind, summary: row.summary,
+          scope: row.scope, nextStep: row.nextStep, metrics: row.metrics, claims: row.claims,
           outcome: row.outcome === "partial" ? "missing_evidence" : row.outcome,
           checkedAt: typeof row.checkedAt === "string" ? row.checkedAt.replace(/(\.\d{6})\d+(Z|\+00:00)$/, "$1$2") : row.checkedAt,
         })) : body.results };
