@@ -1,0 +1,62 @@
+{
+  "at": "2026-11-26T00:53:48.116Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.PROVEN73.FINITE.RECURRING.20261126",
+  "status": "PARTIAL_FIRST_SLOT_CAPTURE_CLOSED_APP_IMPORTED_CAMPAIGN_HALTED",
+  "missionId": "OLBG_PROVEN73_FINITE_RECURRING_20261126",
+  "scope": "Actual first Source73 slot only; no successful recurring future execution asserted.",
+  "slot": "2026-11-26T00:45:00.000Z",
+  "sourceProfileTargets": 73,
+  "sourceRequestsReserved": 65,
+  "HTTPResponses": 64,
+  "sourceGETTransmissionBounds": [
+    64,
+    65
+  ],
+  "profilesWithHTTPResponse": 62,
+  "qualifiedChoices": 64,
+  "qualifiedAccounts": 19,
+  "all64BeforeScheduledKickoff": true,
+  "all64ChoicesInApplication": true,
+  "newUniqueAppChoices": 9,
+  "newPublicAuthors": 0,
+  "publicChoices": 773,
+  "candidateFiches": 377,
+  "adminRows": 54,
+  "minimumIndividuallyProvenAccounts": 73,
+  "minimumCoverageClaim": "DATA.SOURCE_OBSERVATORY.OLBG.131.NEW.TIPSTERS.CAPTURE.20261126",
+  "sourceResultSHA256": "46169e9b6cd9b4dd10d492208293f95369b705e22388a61749c011e00b982fca",
+  "aggregateSHA256": "8a647676a7a2c373591b9e41cccbe30edbf7ead218bfacc9493bdc3bb20de4cf",
+  "journalPrefix": {
+    "bytes": 116393,
+    "head": "428714f3fce8db8b38acd6375dc3564c5d95ab86f3ba1e7ccbf5cf9138b68419",
+    "ignoredTailBytes": 0,
+    "ignoredTailSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "sha256": "77ec944f231dcd318a484700ccb182d262ad804f40f1c1f6dfb44625ddb3e3b3"
+  },
+  "nativeJob": {
+    "activeSecondsMax": 960,
+    "elapsedSeconds": 425.5149999999994,
+    "exit": 1,
+    "hardSeconds": 970,
+    "sourceGET": null,
+    "subtreeKillConfirmed": true,
+    "taskMutations": 0,
+    "timedOut": false
+  },
+  "RootElapsedSeconds": 425.92199999999866,
+  "campaignHalted": true,
+  "futureSlotsSourceAllowed": false,
+  "nextAction": "New bounded mission after minimal transport failure isolation fix; never rearm V1.",
+  "lastReservedProfile": 13000,
+  "lastReservationWithoutHTTPResponse": true,
+  "exactFailureCause": "UNKNOWN_NOT_RETAINED",
+  "readbackSHA256s": [
+    "f3889ff2e6c1d5bec2022508c72e9de674a29414678ecfe8b6456931363d5798",
+    "3c36a075dd8abec398f0b74dc25e717e2972836e5590d8e42a448adfddad32a7",
+    "482fe83c8504467264fe986ead87fc87629fd33417662b0b1721ee9afcc8fdbe"
+  ],
+  "APPManualDataWrites": 0,
+  "automaticNativeAdmission": true,
+  "allCompatibleIntegrated": false,
+  "globalDelivery": "PARTIAL"
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ROBIN_THREE_CLUB_VARIANTS_QUALIFICATION_ACTUAL_V1",
+  "generatedAt": "2026-11-25T21:23:14.359Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.THREE.CLUB.ALIASES.QUALIFICATION.RESULT.20261125",
+  "missionId": "OLBG_THREE_EXPLICIT_CLUB_ALIASES_QUALIFICATION_20261125",
+  "status": "ACTUAL_SIX_ADDITIONAL_CHOICES_QUALIFIED_APP_PENDING",
+  "scope": "Four retained snapshots qualified using three explicitly reviewed contextual club-name variants, exact opponent and26November fixture.14returned choices include8alreadyprepared; only6additional distinct choices. No new source observation, native timezone or native event identity inferred.",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.THREE.EXPLICIT.CLUB.ALIASES.CALENDAR.20261125",
+    "DATA.SOURCE_OBSERVATORY.OLBG.HUNDRED.NEW.WORKBOOK.PROFILES.BATCH.R2.RESULT.20261125"
+  ],
+  "resultSHA256": "740e63f4ba26ffe542ada8aa3e2759407796e0fbbea5cc662dce14c201109433",
+  "profileSnapshots": 4,
+  "nativeFactsRead": 70,
+  "returnedChoices": 14,
+  "alreadyQualifiedChoices": 8,
+  "newUniqueChoices": 6,
+  "newPublicAuthorsBeyondPreparedR2": 1,
+  "SourceGET": 0,
+  "APP": 0,
+  "Task": 0,
+  "elapsedSeconds": 0.75,
+  "globalDelivery": "PARTIAL"
+}

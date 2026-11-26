@@ -1,0 +1,39 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.BETTING.FORUM.HOME.CORRECTIVE.ACTUAL.20261126",
+  "status": "PARTIAL_SECOND_HOME_METHOD_FAILED_REDESIGN_REQUIRED",
+  "scope": "Existing first homepage capture failed at2,000,000bytes; one corrected8,000,000bytes body-cap capture used2GET but timed out12seconds. Both native jobs physically closed; no forecast or app admission. No third same-homepage attempt authorized.",
+  "at": "2026-11-26T07:05:06.319Z",
+  "corrective": {
+    "APP": 0,
+    "SourceGET": 2,
+    "Task": 0,
+    "at": "2026-11-26T06:22:57.828366+00:00",
+    "authorityClosed": true,
+    "discoveredThreadCount": null,
+    "errorCode": "REQUEST_TIMEOUT",
+    "feedEntryCount": null,
+    "job": {
+      "activeSecondsMax": 50,
+      "elapsedSeconds": 13,
+      "exit": 1,
+      "hardSeconds": 60,
+      "sourceGET": null,
+      "subtreeKillConfirmed": true,
+      "taskMutations": 0,
+      "timedOut": false
+    },
+    "phase": "HOMEPAGE",
+    "qualifiedForecasts": 0,
+    "resultSHA256": "5300bc8b77c5402d924f10d532a3033ee2a4ed3e8d0ba5add113e7072c213fa4",
+    "retry": false,
+    "sourceReady": false,
+    "status": "PARTIAL"
+  },
+  "priorMethodError": "CHUNK_DECLARED_LIMIT",
+  "currentMethodError": "REQUEST_TIMEOUT",
+  "knownMissingAccess": null,
+  "nextDecision": "FAIL_AND_REDESIGN",
+  "nextAction": "Use a smaller exact native workbook route with a new E1 if this family is pursued; no identical full-home retry.",
+  "globalDelivery": "PARTIAL",
+  "allCompatibleIntegrated": false
+}

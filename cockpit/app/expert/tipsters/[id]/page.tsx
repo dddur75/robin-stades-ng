@@ -8,6 +8,7 @@ import { ExperienceShell } from "../../../components/navigation/experience-shell
 export default async function TipsterRoute({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const forum=/^forum:[a-f0-9]{64}$/.test(id);
+  if (/^kicktipp:contest-season-name:[a-f0-9]{64}$/.test(id)) return <ExperienceShell active="tipsters"><PageHeader eyebrow="Dossier fidèle" title="Participant Kicktipp" subtitle="Pronostics attribués au nom publié dans ce concours et cette saison."/><TipsterCandidates tipsterId={id} /></ExperienceShell>;
   if (/^catalogue:[a-f0-9]{64}$/.test(id)) return <ExperienceShell active="tipsters"><PageHeader eyebrow="Dossier fidèle" title="Fiche candidate Ligue 1" subtitle="Qualification et provenance de l’inventaire."/><TipsterCandidates tipsterId={id} /></ExperienceShell>;
   if (/^public:[a-f0-9]{64}$/.test(id)||/^olbg:[1-9][0-9]{0,11}$/.test(id)||forum) return <ExperienceShell active="tipsters"><PageHeader eyebrow="Dossier fidèle" title="Fiche tipster" subtitle="Choix attribués à un pseudonyme public." /><PublicTipsters tipsterId={forum?id.slice(6):id} /></ExperienceShell>;
   if (/^forecaster:[a-f0-9]{64}$/.test(id)) return <ExperienceShell active="tipsters">

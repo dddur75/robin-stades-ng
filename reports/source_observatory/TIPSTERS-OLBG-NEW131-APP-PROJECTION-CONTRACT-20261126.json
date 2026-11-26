@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "ROBIN_READONLY_TWO_CAPTURE_APP_CONTRACT_V1",
+  "generatedAt": "2026-11-25T23:48:11.227Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.NEW131.APP.PROJECTION.20261126",
+  "missionId": "OLBG_NEW131_APP_MULTI_SCOPE_PROJECTION_20261126",
+  "status": "REVIEWED_READONLY_CONTRACT_NO_FUTURE_CAPTURE_CLAIM",
+  "scope": "Approvedread-only accumulation of preserved R4 archive plus onenew131account intake. No131capture,profilequalificationornewAPProwsclaimedbythiscontract.",
+  "archiveBinding": "ba3b2e92e37f0f48fd9eae4414441e73a05defb0d945166617894024ca028a82",
+  "intakeBinding": "844ac4c3f0f2bfda1136ff9f3535ec9003643027b90ab3f459889452aa5782b1",
+  "projectionManifestSHA256": "9de19b86d9cb65068494cf5522584414cee85f24c920323b274a68c1d2c12e6d",
+  "SourceGET": 0,
+  "Task": 0,
+  "APPDataWrites": 0,
+  "globalDelivery": "PARTIAL"
+}

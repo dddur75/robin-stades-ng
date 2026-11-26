@@ -1,3 +1,7 @@
+import {applyMultiQualification} from './olbg-multi-capture';
+import {MULTI_CAPTURE_APPROVALS} from './olbg-multi-capture-approval';
+import {applyFiniteNativeQualification} from './olbg-finite-native';
+import {FINITE_NATIVE_CAPTURE_APPROVAL} from './olbg-finite-native-approval';
 import { open } from "node:fs/promises";
 import { resolve } from "node:path";
 import type { IncomingMessage, ServerResponse } from "node:http";
@@ -20,7 +24,7 @@ export async function readQualificationSnapshot(path: string): Promise<Qualifica
       size += bytesRead;
     }
     if (size > maximumBytes) throw new Error("Invalid snapshot size");
-    return parseQualificationSnapshot(JSON.parse(buffer.toString("utf8", 0, size)));
+    return parseQualificationSnapshot(MULTI_CAPTURE_APPROVALS.reduce((data,scope)=>applyMultiQualification(data,scope),applyFiniteNativeQualification(parseQualificationSnapshot(JSON.parse(buffer.toString("utf8", 0, size))),FINITE_NATIVE_CAPTURE_APPROVAL)));
   } finally { await file.close(); }
 }
 

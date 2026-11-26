@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "robin-local-curated-admission-v2",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.RETAINED.NOV26.PROFILE148882.APP.ADMISSION.20261125",
+  "status": "CURATED_DATASET_PREPARED_RUNTIME_INACTIVE",
+  "scope": "Four retained personal football observations qualified against forthcoming official26November programme; no new source capture.",
+  "priorCheckpointSHA256": "d8c76ac3e31feac175198137801356d59b7f7b6c1c0fe081e48d9a1a2ab6a55c",
+  "sourceBatchSHA256": "4dab7b453a8ca870ec253c15b08d74f2fc5c280e3d04d3716a100c7f0987094c",
+  "nativeAuthorId": 148882,
+  "newUniqueAdmitted": 2,
+  "oldPublicChoicesPreserved": 703,
+  "publicChoices": 705,
+  "candidateFiches": 368,
+  "newCandidateFiches": 0,
+  "newPublicAuthor": false,
+  "documentaryPrematchRecertified": false,
+  "sourceReady": false,
+  "recurringCollectionActive": false,
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.RETAINED.FACTS.NOV26.QUALIFICATION.20261125"
+  ],
+  "qualifiedAt": "2026-11-25T21:05:05.417Z",
+  "sourceObservedAt": "2026-11-25T19:13:08.137959+00:00"
+}

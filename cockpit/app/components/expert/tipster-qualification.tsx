@@ -4,7 +4,7 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { formatDateTime } from "../../i18n";
 import { parseQualificationSnapshot, qualificationAnchorTarget, qualificationAdminHref, qualificationCount, qualificationResults, type QualificationSnapshot } from "../../lib/tipster-qualification";
 
-const labels = { no_eligible: "Lecture terminée, aucun candidat admissible", technical_failure: "Contrôle technique interrompu",
+const labels = { no_eligible: "Aucun pronostic admissible confirmé", technical_failure: "Contrôle technique interrompu",
   missing_evidence: "Preuve nécessaire manquante", qualified: "Lot qualifié" };
 const dateLabels = { observation: "Observé", documentary_record: "Rapport documentaire enregistré", technical_close: "Contrôle clos" };
 
@@ -25,7 +25,13 @@ export function TipsterQualification({ resultIds, platformContext = false }: { r
     try {
       const response = await fetch("/api/tipsters/qualification", { cache: "no-store", signal: controller.signal });
       const body = await response.json();
-      const { status, ...value } = body;
+      const { status } = body;
+      // The API envelope carries archive provenance outside the strict display snapshot.
+      const value = { schemaVersion: body.schemaVersion, capturedAt: body.capturedAt, coverage: body.coverage,
+        results: Array.isArray(body.results) ? body.results.map((row: Record<string, unknown>) => ({ ...row,
+          outcome: row.outcome === "partial" ? "missing_evidence" : row.outcome,
+          checkedAt: typeof row.checkedAt === "string" ? row.checkedAt.replace(/(\.\d{6})\d+(Z|\+00:00)$/, "$1$2") : row.checkedAt,
+        })) : body.results };
       if (!response.ok || status !== "ok") throw new Error("Unavailable");
       const result = parseQualificationSnapshot(value);
       if (!controller.signal.aborted) { setSnapshot(result); setError(""); }

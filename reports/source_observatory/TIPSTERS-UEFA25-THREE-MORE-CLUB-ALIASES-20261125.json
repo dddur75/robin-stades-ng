@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "robin-official-club-alias-proof-v1",
+  "generatedAt": "2026-11-25T16:09:41.602Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.UEFA25.THREE.MORE.CLUB.ALIASES.20261125",
+  "missionId": "UEFA25_MORE_CLUB_ALIAS_CONTEXT_20261125",
+  "status": "THREE_PRIMARY_CLUB_IDENTITY_PAIRS_APPROVED",
+  "scope": "Three club label identities for the nine existing pinned UEFA fixtures only; no fuzzy matching, new schedule or automatic source admission.",
+  "pairs": [
+    {
+      "canonical": "Bayern München",
+      "alias": "Bayern Munich",
+      "sourceURL": "https://fcbayern.com/en",
+      "quotes": [
+        "FC Bayern München",
+        "FC Bayern Munich - Official Website"
+      ],
+      "basis": "Same official club homepage header and title."
+    },
+    {
+      "canonical": "Sporting CP",
+      "alias": "Sporting",
+      "sourceURLs": [
+        "https://sporting.pt/",
+        "https://www.manutd.com/en"
+      ],
+      "quotesBySource": {
+        "https://sporting.pt/": [
+          "Sporting Clube de Portugal",
+          "Sporting CP"
+        ],
+        "https://www.manutd.com/en": [
+          "Sporting Clube de Portugal",
+          "Sporting"
+        ]
+      },
+      "basis": "Official club identity joins SportingCP to full name; prior retained official opponent page links same full club badge to Sporting."
+    },
+    {
+      "canonical": "Slavia Praha",
+      "alias": "Slavia Prague",
+      "sourceURL": "https://www.slavia.cz/eng",
+      "quotes": [
+        "SK Slavia Praha",
+        "SK Slavia Prague"
+      ],
+      "basis": "Same official club English homepage identifies the club in its header and official fanshop; SK appears in both full labels."
+    }
+  ],
+  "retainedSelectionSHA256": "8817c9a5ca0d1fbf9f6b40f0cacfeeb2148a2b116de3f2d5c0ac95512f518cd0",
+  "priorFiveAliasClaim": "DATA.SOURCE_OBSERVATORY.UEFA25.FIVE.CLUB.ALIASES.20261125",
+  "priorManUtdRepresentationSHA256": "9f47ec702ee00187cb6b0187d47a2f447b0dcf477862d23899276c3dd2d0da7b",
+  "sourceTipsterGET": 0,
+  "APP": 0,
+  "newTestFiles": 0,
+  "rejectedUnproven": [
+    "Atletico Madrid -> Atlético de Madrid"
+  ],
+  "sourceReady": false
+}

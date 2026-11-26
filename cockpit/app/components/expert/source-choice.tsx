@@ -7,6 +7,7 @@ export type SourceChoice = {
 };
 
 export function choiceHeading(choice:SourceChoice):string {
+ if(choice.sourceBetType==='native_contest_score')return 'Score prévu dans le concours :';
  if(choice.market==='source_native_opaque')return 'Choix publié (marché source non interprété) :';
  return choice.market==='source_native'?'Choix publié (Win) :':'score prévu';
 }

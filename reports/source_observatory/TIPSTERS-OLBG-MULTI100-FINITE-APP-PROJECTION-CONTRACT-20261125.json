@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "ROBIN_MULTI_FINITE_APP_PROJECTION_CONTRACT_V1",
+  "generatedAt": "2026-11-25T22:40:09.397Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.MULTI100.FINITE.APP.PROJECTION.20261125",
+  "missionId": "OLBG_MULTI100_FINITE_APP_PROJECTION_R2_20261125",
+  "status": "REVIEWED_READ_ONLY_CONTRACT_NOT_RUNTIME_RESULT",
+  "scope": "Read-only projection contract for100fixed OLBG sourceaccounts,12slots and verified individual prematch native rows; no capture or runtimecompletion claimed by this artifact.",
+  "bindingSHA256": "f3b14781bfdc39c6053043b045fc50bfc90c9138103ec95ae8d2c06b156688bd",
+  "sourceGrant": "2639eeac27d8dfd60446265d0f5a188cef3c0853ad598ada6a00124ff126c01f",
+  "projectionGrant": "14214a1089fae60f7fbb2e467017be8d03f6f848d553668f3160e67769db37dd",
+  "codeE1ReceiptSHA256": "57bcd16e5a914be53a97ebef2fa024dab85d6387697650b148f85f604cd73e62",
+  "SourceGET": 0,
+  "Task": 0,
+  "APPDataWrites": 0,
+  "globalDelivery": "PARTIAL",
+  "allCompatibleIntegrated": false
+}

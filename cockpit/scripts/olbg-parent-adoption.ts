@@ -12,7 +12,7 @@ import type {RootNamespaceRecord} from './root-parent-proof';
 
 type J=Record<string,unknown>;
 type Companion=Parameters<typeof mergeCampaignCatalogue>[1];
-type ApprovedCheckpoint=Companion&{admissionClaimId:string;priorClaimIds?:string[];priorCompanion?:Companion};
+type ApprovedCheckpoint=Companion&{admissionClaimId:string;priorClaimIds?:string[];priorBatches?:Companion[]};
 export type StableCheckpointApproval=Readonly<{
  data:RootNamespaceRecord;admissionReport:RootNamespaceRecord;sourceBatchSHA256:string;
 }>;
@@ -42,16 +42,40 @@ function readApproved(record:RootNamespaceRecord,cap:number):unknown{
   return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(raw.subarray(0,n)));
  }finally{closeSync(fd);}
 }
+function checkpointBatches(saved:J,depth=0):ApprovedCheckpoint[]{
+ need(depth<100&&(saved.schemaVersion==='olbg-admitted-r5-checkpoint-v1'||saved.schemaVersion==='olbg-admitted-checkpoint-v2'));
+ const c=obj(saved.companion);
+ need(typeof saved.admissionClaimId==='string'&&/^DATA\.SOURCE_OBSERVATORY\.[A-Z0-9_.]+$/.test(saved.admissionClaimId)
+  &&typeof saved.admissionReportSHA256==='string'&&HASH.test(saved.admissionReportSHA256)&&typeof saved.sourceBatchSHA256==='string'&&HASH.test(saved.sourceBatchSHA256)
+  &&Array.isArray(c.picks)&&c.picks.length>0&&c.picks.length<=250&&Array.isArray(c.fixtures)&&c.fixtures.length>0&&c.fixtures.length<=32
+  &&typeof c.claimId==='string'&&c.claimId.length>0&&typeof c.calendarSHA256==='string'&&HASH.test(c.calendarSHA256)
+  &&typeof c.publicBaseSHA256==='string'&&HASH.test(c.publicBaseSHA256)&&Number.isSafeInteger(c.batchCount)&&Number(c.batchCount)>0&&Number(c.batchCount)<=100);
+ const allFixtures=c.fixtures.map(obj); let batches:ApprovedCheckpoint[]=[],offset=0;
+ if(saved.schemaVersion==='olbg-admitted-checkpoint-v2'){
+  const record=obj(saved.priorCheckpoint);need(typeof record.path==='string'&&typeof record.sha256==='string'&&HASH.test(record.sha256));
+  const prior=obj(readApproved(record as RootNamespaceRecord,1048576)),pc=obj(prior.companion);
+  batches=checkpointBatches(prior,depth+1);
+  need(Array.isArray(pc.picks)&&Array.isArray(pc.fixtures)&&c.picks.length>pc.picks.length&&c.picks.length-pc.picks.length<=20
+   &&equal(c.picks.slice(0,pc.picks.length),pc.picks)&&c.publicBaseSHA256===pc.publicBaseSHA256
+   &&c.batchCount===Number(pc.batchCount)+1&&saved.sourceBatchSHA256!==prior.sourceBatchSHA256
+   &&pc.fixtures.every(f=>allFixtures.some(v=>equal(v,f))));
+  offset=pc.picks.length;
+ }else need(saved.admissionClaimId===ADMISSION&&c.batchCount===1&&c.picks.length===1);
+ const picks=c.picks.slice(offset).map(obj),fixtures=c.fixtures.map(obj).filter(f=>picks.some(p=>p.fixtureId===f.id));
+ need(picks.length>0&&picks.every(p=>p.calendarSha256===c.calendarSHA256&&fixtures.some(f=>f.id===p.fixtureId)));
+ return [...batches,{picks,fixtures,claimId:c.claimId,calendarSHA256:c.calendarSHA256,batchCount:1,
+  publicBaseSHA256:c.publicBaseSHA256,admissionClaimId:saved.admissionClaimId}];
+}
 function checkpointV2(saved:J,report:J,a:StableCheckpointApproval):ApprovedCheckpoint{
  const priorRecord=obj(saved.priorCheckpoint);
  need(typeof priorRecord.sha256==='string'&&HASH.test(priorRecord.sha256)
   &&typeof priorRecord.path==='string'&&report.priorCheckpointSHA256===priorRecord.sha256);
- const prior=obj(readApproved(priorRecord as RootNamespaceRecord,262144)),priorC=obj(prior.companion);
+ const prior=obj(readApproved(priorRecord as RootNamespaceRecord,1048576)),priorC=obj(prior.companion);
  need((prior.schemaVersion==='olbg-admitted-r5-checkpoint-v1'&&prior.admissionClaimId===ADMISSION
    ||prior.schemaVersion==='olbg-admitted-checkpoint-v2'&&typeof prior.admissionClaimId==='string'&&/^DATA\.SOURCE_OBSERVATORY\.[A-Z0-9_.]+$/.test(prior.admissionClaimId))
   &&typeof prior.admissionReportSHA256==='string'&&HASH.test(prior.admissionReportSHA256)
   &&typeof prior.sourceBatchSHA256==='string'&&HASH.test(prior.sourceBatchSHA256)
-  &&prior.sourceBatchSHA256!==a.sourceBatchSHA256&&Number.isSafeInteger(priorC.batchCount)&&Number(priorC.batchCount)>0&&Number(priorC.batchCount)<50
+  &&prior.sourceBatchSHA256!==a.sourceBatchSHA256&&Number.isSafeInteger(priorC.batchCount)&&Number(priorC.batchCount)>0&&Number(priorC.batchCount)<100
   &&typeof priorC.calendarSHA256==='string'&&HASH.test(priorC.calendarSHA256)
   &&typeof priorC.claimId==='string'&&priorC.claimId.length>0);
  const claim=report.claimId,newCount=report.newUniqueAdmitted,oldCount=report.oldPublicChoicesPreserved;
@@ -63,8 +87,8 @@ function checkpointV2(saved:J,report:J,a:StableCheckpointApproval):ApprovedCheck
   &&saved.admissionClaimId===claim&&saved.admissionReportSHA256===a.admissionReport.sha256
   &&HASH.test(a.sourceBatchSHA256)&&saved.sourceBatchSHA256===a.sourceBatchSHA256&&report.sourceBatchSHA256===a.sourceBatchSHA256);
  const c=obj(saved.companion);
- need(Array.isArray(priorC.picks)&&priorC.picks.length>0&&priorC.picks.length<=50&&Array.isArray(priorC.fixtures)
-  &&Array.isArray(c.picks)&&c.picks.length===priorC.picks.length+Number(newCount)&&c.picks.length<=50
+ need(Array.isArray(priorC.picks)&&priorC.picks.length>0&&priorC.picks.length<=250&&Array.isArray(priorC.fixtures)
+  &&Array.isArray(c.picks)&&c.picks.length===priorC.picks.length+Number(newCount)&&c.picks.length<=250
   &&Array.isArray(c.fixtures)&&c.fixtures.length>0&&c.fixtures.length<=32&&c.batchCount===Number(priorC.batchCount)+1
   &&typeof c.claimId==='string'&&c.claimId.length>0&&typeof c.calendarSHA256==='string'&&HASH.test(c.calendarSHA256)
   &&typeof c.publicBaseSHA256==='string'&&HASH.test(c.publicBaseSHA256)
@@ -87,14 +111,14 @@ function checkpointV2(saved:J,report:J,a:StableCheckpointApproval):ApprovedCheck
   const fixture=obj(c.fixtures.find(v=>obj(v).id===p.fixtureId));need(fixture.kickoff===p.kickoff);
   const key=canonical([p.sourceId,p.authorId,p.sourceTipId]);need(!nativeKeys.has(key));nativeKeys.add(key);ids.add(p.id);
  }
+ const priorBatches=checkpointBatches(prior);
  return {picks:c.picks.map(obj),fixtures:c.fixtures.map(obj),claimId:c.claimId,calendarSHA256:c.calendarSHA256,
-  batchCount:Number(c.batchCount),publicBaseSHA256:c.publicBaseSHA256,admissionClaimId:claim,priorClaimIds:[ADMISSION,String(prior.admissionClaimId),priorC.claimId],
-  priorCompanion:{picks:priorC.picks.map(obj),fixtures:priorC.fixtures.map(obj),claimId:priorC.claimId,
-   calendarSHA256:priorC.calendarSHA256,batchCount:Number(priorC.batchCount),publicBaseSHA256:c.publicBaseSHA256}};
+  batchCount:Number(c.batchCount),publicBaseSHA256:c.publicBaseSHA256,admissionClaimId:claim,
+  priorClaimIds:priorBatches.flatMap(b=>[b.admissionClaimId,b.claimId]),priorBatches};
 }
 function checkpoint(a:StableCheckpointApproval):ApprovedCheckpoint{
  const report=obj(readApproved(a.admissionReport,16384));
- const saved=obj(readApproved(a.data,262144));
+ const saved=obj(readApproved(a.data,1048576));
  if(saved.schemaVersion==='olbg-admitted-checkpoint-v2')return checkpointV2(saved,report,a);
  need(report.claimId===ADMISSION&&report.newUniqueAdmitted===1
   &&report.oldPublicChoicesPreserved===483&&report.publicChoices===484
@@ -145,8 +169,8 @@ export function restoreStableCatalogue<T extends J>(base:T,a:StableCheckpointApp
  if(a===null)return base;
  const c=checkpoint(a);
  let restored=base;
- if(c.priorCompanion){
-  for(const batch of [c.priorCompanion,{...c,picks:c.picks.slice(c.priorCompanion.picks.length)}]){
+ if(c.priorBatches){
+  for(const batch of [...c.priorBatches,{...c,batchCount:1,picks:c.picks.slice(c.priorBatches.reduce((n,b)=>n+b.picks.length,0))}]){
    const groups=new Map<string,J[]>();
    for(const p of batch.picks){const author=String(p.authorId);groups.set(author,[...(groups.get(author)??[]),p]);}
    for(const picks of groups.values())restored=mergeCampaignCatalogue(restored,{...batch,picks,fixtures:batch.fixtures.filter(f=>picks.some(p=>p.fixtureId===f.id))});

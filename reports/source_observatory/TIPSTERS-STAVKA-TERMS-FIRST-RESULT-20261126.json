@@ -1,0 +1,21 @@
+{
+  "at": "2026-11-26T00:45:40.850Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.STAVKA.TERMS.FIRST.CAPTURE.RESULT.20261126",
+  "status": "PARTIAL_PROJECTION_LIMIT",
+  "sourceGET": 2,
+  "httpStatuses": {
+    "robots": 200,
+    "terms": 200
+  },
+  "nativeResultSHA256": "42d4ba154c252f8a6aec176d8bcaf549805a3f7acc4d1b23395f68d1edfdb935",
+  "nativeStdoutSHA256": "e89cdd4245c30c0094eb27d3486dc1d8c93f19467c8bab39050d2b99b4760d7b",
+  "businessReason": "PROJECTION_LIMIT",
+  "termsDiagnosticWritten": false,
+  "termsInterpretation": null,
+  "profilesRead": 0,
+  "predictions": 0,
+  "APP": 0,
+  "Task": 0,
+  "sourceGrant": "8c8c62e4d8172043bd6e74f94c244a1f8aa7e1b37eb19a377dbe7fb6b1ffc365",
+  "next": "Retain matched operative blocks with parent headings and list-introduction closure under original64KiBcap; no inference from missing projection."
+}

@@ -39,7 +39,7 @@ const metricKeys = ["requests", "nativeRecords", "footballRecords", "candidates"
 export function parseQualificationSnapshot(value: unknown): QualificationSnapshot {
   const data = object(value, ["schemaVersion", "capturedAt", "coverage", "results"]);
   if (data.schemaVersion !== "robin-source-qualification-v1" || data.coverage !== "partial"
-    || !Array.isArray(data.results) || data.results.length > 50) throw new Error("Invalid qualification snapshot");
+    || !Array.isArray(data.results) || data.results.length > 100) throw new Error("Invalid qualification snapshot");
   const capturedAt = date(data.capturedAt);
   const ids = new Set<string>();
   const results = data.results.map((entry): QualificationResult => {

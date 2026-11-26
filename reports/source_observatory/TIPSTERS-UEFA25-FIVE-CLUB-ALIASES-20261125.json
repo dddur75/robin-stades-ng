@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "robin-official-club-alias-proof-v1",
+  "generatedAt": "2026-11-25T14:58:47.134Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.UEFA25.FIVE.CLUB.ALIASES.20261125",
+  "missionId": "UEFA25_OFFICIAL_CLUB_ALIAS_PROOF_20261125",
+  "status": "FIVE_PAIRS_APPROVED_TWO_UNPROVEN",
+  "scope": "Five exact club identity pairs only within the nine pinned UEFA fixtures, never fuzzy matching or automatic source admission.",
+  "pairs": [
+    {
+      "canonical": "Manchester United",
+      "alias": "Man Utd",
+      "sourceURL": "https://www.manutd.com/en"
+    },
+    {
+      "canonical": "Inter",
+      "alias": "Inter Milan",
+      "sourceURL": "https://www.inter.it/en/news/category/club"
+    },
+    {
+      "canonical": "Viking",
+      "alias": "Viking FK",
+      "sourceURL": "https://www.vikingfotball.no/om-klubben/vikinghordene"
+    },
+    {
+      "canonical": "Paris Saint-Germain",
+      "alias": "PSG",
+      "sourceURL": "https://www.psg.fr/en/the-club/about/identity"
+    },
+    {
+      "canonical": "Stuttgart",
+      "alias": "VfB Stuttgart",
+      "sourceURL": "https://de.uefa.com/uefachampionsleague/clubs/50107--stuttgart/"
+    }
+  ],
+  "excludedUnproven": [
+    "Sporting -> Sporting CP",
+    "Atletico Madrid -> Atlético de Madrid"
+  ],
+  "representationSHA256": "9f47ec702ee00187cb6b0187d47a2f447b0dcf477862d23899276c3dd2d0da7b",
+  "stopSHA256": "3e2f79d7590d2e905941fa064dc66cc3d2e730c5facfc7a7e31191ec47807e23",
+  "calendarClaimId": "DATA.SOURCE_OBSERVATORY.UEFA.25NOV.PRIMARY.CALENDAR.20261124",
+  "managedSearchCalls": 2,
+  "managedQueries": 6,
+  "managedOpenOperations": 8,
+  "underlyingHTTP": "UNKNOWN",
+  "directForbiddenResponses": 1,
+  "sourceTipsterGET": 0,
+  "APPWrites": 0,
+  "tests": 0,
+  "aliasesAdoptedInLiveApp": 0,
+  "allCompatibleIntegrated": false
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "robin-documentary-supplement-receipt-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.EXISTING.PUBLIC.FICHES.SUPPLEMENT.20261125",
+  "missionId": "OLBG_EXISTING_PUBLIC_FICHES_LINK_APP_20261125",
+  "status": "VERIFIED_DOCUMENTARY_PROPOSAL_NOT_ACTIVE",
+  "scope": "Twenty-row cumulative supplement preserves the three previous rows and adds seventeen workbook identities already represented in the public records.",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.EXISTING.PUBLIC.FICHES.SOURCES.20261125"
+  ],
+  "payloadSHA256": "fc9fe4591147aa33f065d65b201a36382d20c614e3cdc59b6bd75ac94532f4ac",
+  "rows": 20,
+  "newFiches": 17,
+  "newPublicAuthors": 0,
+  "APP": 0
+}

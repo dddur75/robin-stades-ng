@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "robin-rendered-source-receipt-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.RENDERED.R4.ACTUAL.RESULT.20261125",
+  "missionId": "COTEUR_RENDERED_PUBLIC_COLLECTION_R4_20261125",
+  "status": "PARTIAL_NATIVE_STATISTICS_POST_PATHS_IDENTIFIED_PREDICTIONS_LOADING",
+  "scope": "A second bounded GET-only public render identified the two native statistics POST paths that the collector refused. No forecasts qualified; no blocked request was sent.",
+  "sourcePrimarySHA256": "a4fa4bfb38d3ed32d59d2a76a2658e29ac7180a2208cdfa4c59474648f8b9281",
+  "retainedFactsSHA256": "4ef4990a1476f4e43f1fb41b35c3e69b91a65b4a9df8bb51aaf867a7bf9f5eba",
+  "workerStopSHA256": "28b41b88fd20045c91d17f20539386f05c590324d86865310ab5adeb43c056b8",
+  "authorStopSHA256": "5f38fd5f94303415242209cb7ad8159d0c02220abc6399128f80946813d19ce7",
+  "SourceGET": 7,
+  "HTTP200": 7,
+  "JobElapsedSeconds": 6.0459999999984575,
+  "RootElapsedSeconds": 6.062000000001717,
+  "jobTimedOut": false,
+  "ownedSubtreeClosed": true,
+  "publicHeadingMatchesCatalogue": true,
+  "tables": 1,
+  "loadingRows": 1,
+  "structuredObjects": 0,
+  "qualifiedForecasts": 0,
+  "APP": 0,
+  "newTestMethods": 0,
+  "rawBodiesStored": false,
+  "sourceAuthorityClosed": true,
+  "sourceReady": false,
+  "globalDelivery": "PARTIAL",
+  "observedRefusals": [
+    {
+      "method": "GET",
+      "origin": "https://cse.google.com",
+      "path": "/cse.js",
+      "queryFields": [
+        "cx"
+      ],
+      "bodyFields": [],
+      "bodyEncoding": "NONE"
+    },
+    {
+      "method": "POST",
+      "origin": "https://www.coteur.com",
+      "path": "/api/user/concoursevolution",
+      "queryFields": [],
+      "bodyFields": [],
+      "bodyEncoding": "OTHER"
+    },
+    {
+      "method": "POST",
+      "origin": "https://www.coteur.com",
+      "path": "/api/user/statsconcours",
+      "queryFields": [],
+      "bodyFields": [],
+      "bodyEncoding": "OTHER"
+    },
+    {
+      "method": "GET",
+      "origin": "https://oddsv2.coteur.com",
+      "path": "/socket.io/",
+      "queryFields": [
+        "EIO",
+        "transport",
+        "t"
+      ],
+      "bodyFields": [],
+      "bodyEncoding": "NONE"
+    },
+    {
+      "method": "POST",
+      "origin": "https://www.coteur.com",
+      "path": "/api/pano/19",
+      "queryFields": [],
+      "bodyFields": [],
+      "bodyEncoding": "NONE"
+    },
+    {
+      "method": "GET",
+      "origin": "https://oddsv2.coteur.com",
+      "path": "/socket.io/",
+      "queryFields": [
+        "EIO",
+        "transport",
+        "t"
+      ],
+      "bodyFields": [],
+      "bodyEncoding": "NONE"
+    }
+  ],
+  "POSTSent": 0,
+  "readSemantics": "INFERENCE_NOT_ESTABLISHED_BY_PATH_NAMES_ALONE",
+  "redesignRequired": true
+}

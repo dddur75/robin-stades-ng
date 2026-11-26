@@ -1,0 +1,46 @@
+{
+  "at": "2026-11-25T22:49:29.282Z",
+  "missionId": "OLBG_MULTI100_CONTEXT_LOCAL_DEPLOY_20261125",
+  "status": "PASS_LOCAL_READER_AWAITING_FIRST_CLOSED_SLOT",
+  "publicChoices": 715,
+  "candidateFiches": 370,
+  "adminRows": 52,
+  "prior715Preserved": true,
+  "prior370FichesPreserved": true,
+  "prior51AdminPreserved": true,
+  "multiState": "awaiting_first_capture",
+  "sourceScopes": 100,
+  "closedSlots": 0,
+  "SourceGET": 0,
+  "Task": 0,
+  "APPCodeWrites": 2,
+  "APPDataWrites": 0,
+  "localGET": 5,
+  "html": [
+    {
+      "path": "/expert/admin-collecte",
+      "status": 200,
+      "bytes": 28449,
+      "sha256": "eb3feb0e16116cb590441a610997fea5478cc3828bdf87171bada7aa94d302f6"
+    },
+    {
+      "path": "/expert/tipsters/catalogue%3A998ddf45839ca0b5ad984f0e766b31a9fb9fc1f1e0e744a2b918b13418b848b5",
+      "status": 200,
+      "bytes": 28494,
+      "sha256": "c32b4d60373afae7cfc26cfa260eb668454784c7b5638a6a9185dbdd293f2a1a"
+    }
+  ],
+  "newPID": 32236,
+  "globalUIRecette": false,
+  "allCompatibleIntegrated": false,
+  "schemaVersion": "ROBIN_MULTI_CAPTURE_LOCAL_READER_RUNTIME_RESULT_V1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.MULTI100.LOCAL.READER.RUNTIME.RESULT.20261125",
+  "scope": "Actual local read-only multi100 reader deployment at22:49UTC beforefirstsourceclosure;715choices/370fiches/52adminpreserved,5HTTP200. No new sourcechoice or wholeUI completion claimed.",
+  "runtimeResultSHA256": "6e453bc454a91c771ee5dc69c68e61e6683f2897f422d714374d7769b24ab3ff",
+  "readbackSHA256s": [
+    "510ea9527257830ffb02c9761dc9424640f733d6050c90712c247e79fe5ab012",
+    "4dd921f90dbf118eb0710920551553fad90cf21d72cc5cd75ba7d3d895872e8c",
+    "892151cd47abf97a7320108acfdfaf69c5fd1211f3ab0d0a96b0d115a6c6f5b0"
+  ],
+  "globalDelivery": "PARTIAL"
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "robin-retained-data-qualification-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.PROFILE246295.RETAINED.FINAL19.QUALIFICATION.20261125",
+  "missionId": "OLBG_FIVE_ROSTER_R1E_RETAINED_QUALIFICATION_20261125",
+  "status": "VERIFIED_DATA_APP_PENDING",
+  "scope": "Exact retained personal choices, literal source fields and original observation timestamps under the approved nineteen-fixture context.",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.FIVE.ROSTER.RETAINED.QUALIFICATION.20261125"
+  ],
+  "sourceBatchSHA256": "dcdaca521456a6661ec57e1f1ff7324cefcf4018f25d885d8d525df292a1f71e",
+  "newQualified": 1,
+  "sourceGET": 0,
+  "APP": 0
+}

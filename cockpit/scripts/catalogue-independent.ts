@@ -1,3 +1,7 @@
+import {applyMultiCatalogue} from './olbg-multi-capture';
+import {MULTI_CAPTURE_APPROVALS} from './olbg-multi-capture-approval';
+import {applyFiniteNativeCatalogue} from './olbg-finite-native';
+import {FINITE_NATIVE_CAPTURE_APPROVAL} from './olbg-finite-native-approval';
 import {OLBG_CAMPAIGN_APPROVAL} from './olbg-campaign-companion';
 import {restoreStableCatalogue,applyParentCampaignCatalogue} from './olbg-parent-adoption';
 import {applyLocalOLBGCatalogue} from './olbg-retained-approved';
@@ -80,7 +84,7 @@ export const CANDIDATE_SUPPLEMENT_APPROVAL:CandidateSupplementApproval|null=null
 function exactKeys(value:FactObject,keys:string[]):void{check(Object.keys(value).length===keys.length&&keys.every(k=>Object.hasOwn(value,k)));}
 /** Add documentary identities only; native choices remain a separate admission. */
 export function projectCandidateSupplement(base:Catalogue,raw:Uint8Array,a:CandidateSupplementApproval):Catalogue{
- check(Number.isSafeInteger(a.count)&&a.count>=1&&a.count<=50);
+ check(Number.isSafeInteger(a.count)&&a.count>=1&&a.count<=100);
  for(const pin of [a.sha256,a.workbookSHA256,a.indexSHA256])check(HASH.test(pin));
  string(a.sourceClaimId);string(a.candidateClaimId);
  check(base.receipt.sourceWorkbookSha256===a.workbookSHA256&&base.count===base.candidates.length);
@@ -179,7 +183,49 @@ export function readIndependentCatalogue(root:string):Catalogue{
  const retained=applyLocalOLBGCatalogue(pending,root,OLBG_RETAINED_APPROVAL);
  const supplemented=applyApprovedCandidateSupplement(retained,root);
  const stable=restoreStableCatalogue(supplemented);
- return applyParentCampaignCatalogue(stable,root,OLBG_CAMPAIGN_APPROVAL);
+ return MULTI_CAPTURE_APPROVALS.reduce((data,scope)=>applyMultiCatalogue(data,scope),applyFiniteNativeCatalogue(applyApprovedExistingPublicCatalogueLink(applyParentCampaignCatalogue(stable,root,OLBG_CAMPAIGN_APPROVAL),root),FINITE_NATIVE_CAPTURE_APPROVAL));
+}
+
+
+export type ExistingPublicCatalogueLinkApproval=Readonly<{relativePath:string;sha256:string;publicSnapshotSHA256:string;claimId:string;count:number;authors:number}>;
+export const EXISTING_PUBLIC_CATALOGUE_LINK_APPROVAL:ExistingPublicCatalogueLinkApproval|null=null;
+/** Link already published native records; preserve their source observations and flags. */
+export function projectExistingPublicCatalogueLink(base:Catalogue,raw:Uint8Array,a:ExistingPublicCatalogueLinkApproval):Catalogue{
+ check(Number.isSafeInteger(a.count)&&a.count>0&&a.count<=2000&&Number.isSafeInteger(a.authors)&&a.authors>0&&a.authors<=50&&HASH.test(a.publicSnapshotSHA256));
+ const envelope=object(decode(raw,a.sha256,2_000_000));
+ exactKeys(envelope,['schemaVersion','claimId','publicSnapshotSHA256','sourceGET','newPublicRecords','picks']);
+ check(envelope.schemaVersion==='robin-existing-public-catalogue-link-v1'&&envelope.claimId===a.claimId&&envelope.publicSnapshotSHA256===a.publicSnapshotSHA256&&envelope.sourceGET===0&&envelope.newPublicRecords===0&&Array.isArray(envelope.picks)&&envelope.picks.length===a.count);
+ const groups=new Map<string,FactObject[]>(),ids=new Set<string>();
+ for(const input of envelope.picks){
+  const p=object(input),author=string(p.authorId),match=/^olbg:([1-9][0-9]*)$/.exec(author),native=object(p.sourceFields);
+  check(match!==null&&p.authorUrl==='https://www.olbg.com/tipsters/tips/'+match[1]&&p.sourceUrl===p.authorUrl&&p.sourceId==='SRC_014');
+  check(p.market==='source_native_opaque'&&p.performanceEvaluationAllowed===false&&p.settlementAllowed===false&&p.marketInterpretationAllowed===false);
+  check(Number.isSafeInteger(p.sourceTipId)&&Number(p.sourceTipId)>0&&p.id==='olbg-tip:'+p.sourceTipId&&!ids.has(string(p.id))&&native.tipid===p.sourceTipId&&native.eventid===p.sourceEventId&&native.vc_sport_id===1&&native.result==='Open');
+  check(p.selection===native.selection&&p.sourceMarketLabel===native.market&&p.sourceBetType===native.winew&&p.sourceEventLocalText===native.event_datetime);
+  check(typeof p.observedAt==='string'&&typeof p.kickoff==='string'&&/(?:Z|[+]00:00)$/.test(p.observedAt)&&/(?:Z|[+]00:00)$/.test(p.kickoff)&&Number.isFinite(Date.parse(p.observedAt))&&Date.parse(p.observedAt)<Date.parse(p.kickoff));
+  for(const field of ['responseSha256','parserSha256','calendarSha256'])check(HASH.test(string(p[field])));
+  ids.add(string(p.id));groups.set(author,[...(groups.get(author)??[]),p]);
+ }
+ check(groups.size===a.authors);
+ const targets=new Map<string,{candidate:Candidate;picks:FactObject[]}>();
+ for(const [author,picks] of groups){
+  const uid=author.slice(5),urls=['https://www.olbg.com/tipsters/tips/'+uid,'https://www.olbg.com/tipsters/tips/history/'+uid],matches=base.candidates.filter(c=>c.platform==='OLBG'&&urls.includes(c.sourceUrl));
+  check(matches.length===1);targets.set(matches[0].id,{candidate:matches[0],picks});
+ }
+ const candidates=base.candidates.map(c=>{
+  const group=targets.get(c.id);if(!group)return c;
+  const q=c.qualification??{},previous=Array.isArray(q.picks)?q.picks.map(object):[],existing=new Map(previous.map(p=>[string(p.id),p])),added:FactObject[]=[];
+  for(const p of group.picks){const old=existing.get(string(p.id));if(old){for(const k of ['sourceId','authorId','sourceTipId','fixtureId','kickoff'])check(old[k]===p[k]);}else{added.push(structuredClone(p));existing.set(string(p.id),p);}}
+  const picks=[...previous,...added],claims=Array.isArray(q.retainedClaimIds)?q.retainedClaimIds:[];
+  return {...c,qualification:{...q,picks,personallyProven:picks.length>0,label:'Pronostics archivés déjà publiés dans Robin',retainedClaimIds:[...new Set([...claims,a.claimId])]}};
+ });
+ const qualification=base.qualification.status==='ok'?{...base.qualification,qualifiedCount:candidates.filter(c=>c.qualification?.personallyProven===true).length}:base.qualification;
+ return {...base,candidates,qualification,existingPublicCatalogueLink:{state:'accepted_existing_records',claimId:a.claimId,records:a.count,sourceAccounts:a.authors,newSourceGET:0,newPublicRecords:0,captureTimesChanged:false}};
+}
+export function applyApprovedExistingPublicCatalogueLink(base:Catalogue,root:string,a:ExistingPublicCatalogueLinkApproval|null=EXISTING_PUBLIC_CATALOGUE_LINK_APPROVAL):Catalogue{
+ if(a===null)return base;
+ try{check(/^\.ci\/[a-zA-Z0-9/_-]+\.json$/.test(a.relativePath)&&!a.relativePath.split('/').includes('..'));return projectExistingPublicCatalogueLink(base,readBounded(resolve(root,a.relativePath),2_000_000),a);}
+ catch{return {...base,existingPublicCatalogueLink:{state:'unavailable',claimId:a.claimId}};}
 }
 
 export type InventoryRow=FactObject&{reviewedSourceObservation?:ReviewedSourceObservation;recordId:string;candidateId?:string;sheet:string;row:number;sourceUrl?:string|null;collectionEnabled:unknown;qualification?:FactObject;qualifiedRecordId?:string};

@@ -1,0 +1,10 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.COTEUR.NATIVE20.RETAINED.QUALIFICATION.20261126",
+  "status": "VERIFIED_RETAINED_NATIVE_COMPONENTS",
+  "scope": "20 native ticket components from5 accounts observed before native joined kickoff.2 old objects preserved and18 new objects admitted from retained profile receipts.No independent bet/performance/settlement inference.",
+  "components": 20,
+  "accounts": 5,
+  "newComponents": 18,
+  "newComponentFileSHA256": "957447cca0b7abffb77779b6c9a648498097b5be5e092c952bf51fac374fb2a0",
+  "qualificationSHA256": "eaaaf91d014f2b6fbb49d925b390496ea6a472f62cfe8035f209610001a35f0b"
+}

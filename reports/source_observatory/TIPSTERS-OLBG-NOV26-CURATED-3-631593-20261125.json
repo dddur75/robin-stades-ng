@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "robin-local-curated-admission-v2",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.THREEALIASES.PROFILE631593.APP.ADMISSION.20261125",
+  "status": "CURATED_DATASET_PREPARED_RUNTIME_INACTIVE",
+  "scope": "Native choices joined to three explicitly reviewed club-name variants for exact26November fixtures. Original author, literal choice, response and observation retained; contextual fixture association only.",
+  "priorCheckpointSHA256": "776406db0452bcf3078964889f562eb2f67436ced1f18efbdb266a6f8e9cd376",
+  "sourceBatchSHA256": "04dcc785c4b78647b67c65114afd17a29cfc0669e71cc894b377a52d04131554",
+  "nativeAuthorId": 631593,
+  "newUniqueAdmitted": 1,
+  "oldPublicChoicesPreserved": 709,
+  "publicChoices": 710,
+  "candidateFiches": 368,
+  "newCandidateFiches": 0,
+  "newPublicAuthor": false,
+  "documentaryPrematchRecertified": false,
+  "sourceReady": false,
+  "recurringCollectionActive": false,
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.THREE.CLUB.ALIASES.QUALIFICATION.RESULT.20261125"
+  ],
+  "qualifiedAt": "2026-11-25T21:15:39.868Z",
+  "sourceObservedAt": "2026-11-25T18:56:20.730380+00:00"
+}

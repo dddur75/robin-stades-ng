@@ -1,0 +1,440 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.UEFA.26NOV.PRIMARY.CALENDAR.20261125",
+  "missionId": "UEFA_NEXT_FIXTURES_PRIMARY_20261125",
+  "status": "PRIMARY_DOCUMENTARY_CALENDAR_ADOPTED_FOR_DEDICATED_QUALIFICATION",
+  "scope": "36scheduled fixtures dated26November2026 from two official UEFA programmes with explicitCET/+01 offset. Documentary scheduled kickoff only; no actual whistle/native event identity/performance inference.",
+  "observedAtUTC": "2026-11-25T20:54:27.265Z",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.UEFA.25NOV.PRIMARY.CALENDAR.20261124"
+  ],
+  "documents": [
+    {
+      "sourceURL": "https://www.uefa.com/uefaeuropaleague/news/02a8-2174cafa5bb6-82bbc20c9b92-1000--2026-27-europa-league-all-the-league-phase-fixtures-and-results/",
+      "competition": "Europa League",
+      "timezoneStatement": "Kick-offs are 21:00 unless stated; all times CET.",
+      "timezoneLine": 16,
+      "fixtureDateLine": 112,
+      "fixtures": [
+        {
+          "home": "Beşiktaş",
+          "away": "Hapoel Beer-Sheva",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "18:45",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T17:45:00.000Z",
+          "line": 113,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Salzburg",
+          "away": "Ararat-Armenia",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "18:45",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T17:45:00.000Z",
+          "line": 114,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Viktoria Plzeň",
+          "away": "Benfica",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "18:45",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T17:45:00.000Z",
+          "line": 115,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "GNK Dinamo",
+          "away": "Leverkusen",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "18:45",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T17:45:00.000Z",
+          "line": 116,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Olympiacos",
+          "away": "Milan",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "18:45",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T17:45:00.000Z",
+          "line": 117,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Marseille",
+          "away": "Levski Sofia",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "18:45",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T17:45:00.000Z",
+          "line": 118,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Union SG",
+          "away": "Lech Poznań",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "18:45",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T17:45:00.000Z",
+          "line": 119,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Celta",
+          "away": "Bournemouth",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "18:45",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T17:45:00.000Z",
+          "line": 120,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Sparta Praha",
+          "away": "AZ Alkmaar",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "21:00",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T20:00:00.000Z",
+          "line": 121,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Crystal Palace",
+          "away": "Real Sociedad",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "21:00",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T20:00:00.000Z",
+          "line": 122,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Ferencváros",
+          "away": "Celje",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "21:00",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T20:00:00.000Z",
+          "line": 123,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Juventus",
+          "away": "Omonia",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "21:00",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T20:00:00.000Z",
+          "line": 124,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "N.E.C. Nijmegen",
+          "away": "Rennes",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "21:00",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T20:00:00.000Z",
+          "line": 125,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "OFI Crete",
+          "away": "Anderlecht",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "21:00",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T20:00:00.000Z",
+          "line": 126,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Lyon",
+          "away": "Lillestrøm",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "21:00",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T20:00:00.000Z",
+          "line": 127,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Torreense",
+          "away": "Celtic",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "21:00",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T20:00:00.000Z",
+          "line": 128,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Sunderland",
+          "away": "Jagiellonia",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "21:00",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T20:00:00.000Z",
+          "line": 129,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Hoffenheim",
+          "away": "Sturm Graz",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "21:00",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T20:00:00.000Z",
+          "line": 130,
+          "actualWhistleProven": false
+        }
+      ]
+    },
+    {
+      "sourceURL": "https://www.uefa.com/uefaconferenceleague/news/02a8-2174cb200f25-b94693ddff4e-1000--2026-27-conference-league-all-the-league-phase-fixtures/",
+      "competition": "Conference League",
+      "timezoneStatement": "Kick-offs are 21:00 unless stated; all times CET.",
+      "timezoneLine": 16,
+      "fixtureDateLine": 83,
+      "fixtures": [
+        {
+          "home": "Kairat Almaty",
+          "away": "Mjällby",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "16:30",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T15:30:00.000Z",
+          "line": 84,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Ajax",
+          "away": "Thun",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "18:45",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T17:45:00.000Z",
+          "line": 85,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Brighton",
+          "away": "Universitatea Craiova",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "18:45",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T17:45:00.000Z",
+          "line": 86,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Iberia Tbilisi",
+          "away": "Getafe",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "18:45",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T17:45:00.000Z",
+          "line": 87,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Jablonec",
+          "away": "Lugano",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "18:45",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T17:45:00.000Z",
+          "line": 88,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Kauno Žalgiris",
+          "away": "Riga",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "18:45",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T17:45:00.000Z",
+          "line": 89,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Hearts",
+          "away": "Monaco",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "18:45",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T17:45:00.000Z",
+          "line": 90,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Egnatia",
+          "away": "Lincoln Red Imps",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "18:45",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T17:45:00.000Z",
+          "line": 91,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Pafos",
+          "away": "Midtjylland",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "18:45",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T17:45:00.000Z",
+          "line": 92,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Brann",
+          "away": "Aarhus",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "18:45",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T17:45:00.000Z",
+          "line": 93,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Nordsjælland",
+          "away": "Panathinaikos",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "21:00",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T20:00:00.000Z",
+          "line": 94,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Borac",
+          "away": "Atalanta",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "21:00",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T20:00:00.000Z",
+          "line": 95,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Hajduk Split",
+          "away": "Sint-Truidense",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "21:00",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T20:00:00.000Z",
+          "line": 96,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Inter Escaldes",
+          "away": "Copenhagen",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "21:00",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T20:00:00.000Z",
+          "line": 97,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Gent",
+          "away": "Crvena Zvezda",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "21:00",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T20:00:00.000Z",
+          "line": 98,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "CSKA Sofia",
+          "away": "Trabzonspor",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "21:00",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T20:00:00.000Z",
+          "line": 99,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Braga",
+          "away": "KuPS Kuopio",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "21:00",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T20:00:00.000Z",
+          "line": 100,
+          "actualWhistleProven": false
+        },
+        {
+          "home": "Freiburg",
+          "away": "Twente",
+          "sourceLocalDate": "2026-11-26",
+          "sourceLocalTime": "21:00",
+          "sourceTimezone": "CET",
+          "sourceUTCOffset": "+01:00",
+          "scheduledKickoffUTC": "2026-11-26T20:00:00.000Z",
+          "line": 101,
+          "actualWhistleProven": false
+        }
+      ]
+    }
+  ],
+  "managedToolRepresentationSHA256": "a9777b8acb47d2b152d7bdc37aab82c8da9ddd01e26fd89f0acee037b289b1db",
+  "rawHTTPBodySHA256": null,
+  "managedSearchCalls": 1,
+  "managedOpenCalls": 2,
+  "underlyingHTTPCalls": "UNKNOWN_MANAGED_TOOL",
+  "SourceTipsterGET": 0,
+  "API_FOOTBALL_CALLS": 0,
+  "APP": 0,
+  "Task": 0,
+  "calendarAdopted": true,
+  "globalDelivery": "PARTIAL",
+  "fixtureCount": 36,
+  "calendarSHA256": "b6fcbff1fb2f268db79f83fdf9e1505fe413433e71749e8386eacbd1b1f198e9",
+  "adoptionScope": "Only36fixtures26Nov2026, literal official labels; original observation times and source response hashes remain required for each personal choice."
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "robin-local-curated-admission-v2",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.FIRST.NATURAL.THREE.APP.ADMISSION.20261125",
+  "status": "CURATED_DATASET_PREPARED_RUNTIME_INACTIVE",
+  "scope": "Three new personal choices from the first natural Windows scheduled launch; exact source fields and observations retained. Three duplicate source choices not re-admitted.",
+  "priorCheckpointSHA256": "49a60e48d3ce4d9487213e58d6a852ea4319b7c28eeddaf8ea14591ddb3208c6",
+  "sourceBatchSHA256": "fc714035395fc9eb0c24692d5e522429f6d28242d31e7844d7e853222833fcc6",
+  "nativeAuthorId": 203797,
+  "newUniqueAdmitted": 3,
+  "oldPublicChoicesPreserved": 628,
+  "publicChoices": 631,
+  "candidateFiches": 355,
+  "newCandidateFiches": 0,
+  "newPublicAuthor": false,
+  "documentaryPrematchRecertified": false,
+  "sourceReady": false,
+  "recurringCollectionActive": false,
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.FINITE.RECURRING.FIRST.NATURAL.CAPTURE.20261125"
+  ],
+  "qualifiedAt": "2026-11-25T19:28:07.179Z",
+  "sourceObservedAt": "2026-11-25T19:21:20.342924+00:00",
+  "missionId": "OLBG_FIRST_NATURAL_THREE_APP_ADMISSION_20261125"
+}

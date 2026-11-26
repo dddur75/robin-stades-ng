@@ -1,0 +1,7 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.COTEUR.NATIVE11.TIMESTAMP.JOINS.20261126",
+  "status": "VERIFIED_DOCUMENT_CONTEXT_JOINS",
+  "scope": "Eleven Coteur native event IDs/H1 and first3 explicit time elements joined to64fixture primary calendar; documentary context accepted; parser nativeAssociation remainsUNPROVEN,no SportsEvent or DOMparent claim.",
+  "eventCount": 11,
+  "joinReceiptSHA256": "8598513327fdec0adea0608039fa019a36799ad075c5bca449a60839bec47e2b"
+}

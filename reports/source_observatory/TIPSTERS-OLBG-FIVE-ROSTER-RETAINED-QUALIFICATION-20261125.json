@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "robin-retained-data-qualification-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.FIVE.ROSTER.RETAINED.QUALIFICATION.20261125",
+  "missionId": "OLBG_FIVE_ROSTER_R1E_RETAINED_QUALIFICATION_20261125",
+  "status": "VERIFIED_DATA_APP_PENDING",
+  "scope": "Five once-read personal profiles,65 retained facts; ten newly qualified choices from two authors already present in the public dataset. Their catalogue fiches are missing.",
+  "retainedFacts": 65,
+  "sourceGET": 15,
+  "qualifiedNewUnique": 10,
+  "newPublicAuthors": 0,
+  "newFichesRequired": 2,
+  "qualificationSourceGET": 0,
+  "newTests": 0,
+  "resultSHA256": "c1a6ec85b255e603db5be6c4d5ca59895cecd588ffd9add645ca97012534498a",
+  "allCompatibleIntegrated": false
+}

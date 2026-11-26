@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "robin-source-capture-actual-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.COTEUR.NATIVE.BOUNDED.CAPTURE.20261126",
+  "status": "VERIFIED_NATIVE_CAPTURE_NOT_ALL_PROFILES_PREMATCH_QUALIFIED",
+  "scope": "Exact280Coteurpublicprofilesfrom281workbookrows;onecontesthubexcluded. Structuredprivatecaptureonly.",
+  "asOf": "2026-11-26T04:10:06.922Z",
+  "counts": {
+    "workbookRows": 281,
+    "nativeIndividualProfiles": 280,
+    "excludedHubRows": 1,
+    "nativeTickets": 2744,
+    "nativeTicketComponents": 6524,
+    "profileAcquisitionGET": 378,
+    "closedNativeJobs": 18,
+    "profilesWithNovember2026Contest": 103,
+    "qualifiedPrematchComponents": 2,
+    "qualifiedPrematchSourceAccounts": 1
+  },
+  "evidence": {
+    "artifactIndexSHA256": "5d2630e756c8229020e5523681251e5514d986963510fcbb264de13a53d8716c",
+    "packetSHA256": "210bd45a630cdf7e8f0317c8be3a3281bd9fa598f2ed90d8d156b5600e85ddac",
+    "primaryCalendarPlanSHA256": "c56b622a606b03092a064831abf5a5772882f7b0b25581009bbc8b8d15b5fec9",
+    "source62WitnessSHA256": "a920cd729b7be6f77bc163ab65c370b7b8ad17ee369cbf862793e51f4d06aa59",
+    "source62ProfileArtifactSHA256": "0c0ac29b3207cbbe605cf3e590da56cffc735498887d4ee9d99f75f0acca3f9b",
+    "additionalBulkIndexSHA256": "e278cf6c786e77e30cff6e344e3bc3311046f14c61d3fb429bc6ade3e620091d"
+  },
+  "semantics": {
+    "individualCivilIdentityCertified": false,
+    "prematchPublicationTimeKnown": false,
+    "sourcePublicationTimezoneKnown": false,
+    "independentBet": false,
+    "performanceEvaluationAllowed": false,
+    "settlementAllowed": false,
+    "recurringCollectionActive": false
+  },
+  "globalDelivery": "PARTIAL",
+  "allCompatibleIntegrated": false
+}

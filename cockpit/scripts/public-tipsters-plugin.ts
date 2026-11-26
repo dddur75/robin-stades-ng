@@ -1,3 +1,7 @@
+import {applyMultiPublic} from './olbg-multi-capture';
+import {MULTI_CAPTURE_APPROVALS} from './olbg-multi-capture-approval';
+import {applyFiniteNativePublic} from './olbg-finite-native';
+import {FINITE_NATIVE_CAPTURE_APPROVAL} from './olbg-finite-native-approval';
 import {OLBG_CAMPAIGN_APPROVAL} from './olbg-campaign-companion';
 import {restoreStablePublic,applyParentCampaignPublic} from './olbg-parent-adoption';
 import {applyLocalOLBGPublic} from './olbg-retained-approved';
@@ -31,7 +35,7 @@ export function publicTipsters(approval:SnapshotApproval=REVIEWED_PUBLIC_SNAPSHO
   try{
    const base=readReviewedPublicSnapshot(root,approval);
    const stable=restoreStablePublic(applyLocalOLBGPublic(base,root,OLBG_RETAINED_APPROVAL,approval.sha256),approval.sha256);
-   const facts=applyParentCampaignPublic(stable,root,approval.sha256,OLBG_CAMPAIGN_APPROVAL);
+   const facts=MULTI_CAPTURE_APPROVALS.reduce((data,scope)=>applyMultiPublic(data,scope,approval.sha256),applyFiniteNativePublic(applyParentCampaignPublic(stable,root,approval.sha256,OLBG_CAMPAIGN_APPROVAL),FINITE_NATIVE_CAPTURE_APPROVAL,approval.sha256));
    response.end(JSON.stringify(facts));
   }catch{
    response.statusCode=503;

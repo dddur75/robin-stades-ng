@@ -1,0 +1,10 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.R5.APP.PROJECTION.READY.20261126",
+  "status": "VERIFIED_PASSIVE_READER_READY_AWAITING_FIRST_SOURCE_CAPTURE",
+  "scope": "R5reader b4315a25 and live tuple grant verified in actual source-zero preflight and3applicationAPIreads;0closedslots;automatic future valid closed-slot projection configured;no source success claim.",
+  "readerSHA256": "b4315a25f17c8411acb8536324f7619bf1a9e644669913d47a69f6ccfad0bbf4",
+  "binding": "820aa5331e36304d702e58c1df4a4b8df2b1366b981789a1cca80d7967dd7b0f",
+  "preflightSHA256": "033b81b83cea5505a43a40fd17cac4b021485d69d31a435563086c9bdfe48f66",
+  "archiveClaim": "ENG.SOURCE_OBSERVATORY.ROBIN.TIPSTERS.DURABLE835.R5.APP.20261126",
+  "sourceCaptured": false
+}

@@ -1,0 +1,55 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.FOUR.FORUM.PUBLIC.DISCOVERY.ACTUAL.20261126",
+  "status": "VERIFIED_NINE_GET_FOUR_CLOSED_JOBS_PARTIAL_SOURCE_DISCOVERY",
+  "scope": "One serial bounded metadata discovery of4workbook forums,9GET total,all4 nativeJobs physically closed. Svijet40native topics retained;FISO HTTP200but0usable topic/feedlinks;BettingForum HTTP200body exceeded2MBdeclared cap;PuntersLoungeHTTP403.No personal forecast admitted,not an account-authorization diagnosis.",
+  "at": "2026-11-26T06:14:14.005Z",
+  "SourceGET": 9,
+  "results": [
+    {
+      "forum": "betting-forum",
+      "status": "PARTIAL",
+      "requests": 2,
+      "httpStatus": 200,
+      "error": "CHUNK_DECLARED_LIMIT",
+      "discoveredTopics": 0,
+      "feedEntries": 0
+    },
+    {
+      "forum": "punters-lounge",
+      "status": "PARTIAL",
+      "requests": 2,
+      "httpStatus": 403,
+      "error": "HTTP_OR_REDIRECT",
+      "discoveredTopics": 0,
+      "feedEntries": 0
+    },
+    {
+      "forum": "svijet-kladjenja",
+      "status": "CAPTURED_UNQUALIFIED",
+      "requests": 3,
+      "httpStatus": 200,
+      "error": null,
+      "discoveredTopics": 40,
+      "feedEntries": 0
+    },
+    {
+      "forum": "fiso",
+      "status": "CAPTURED_UNQUALIFIED",
+      "requests": 2,
+      "httpStatus": 200,
+      "error": null,
+      "discoveredTopics": 0,
+      "feedEntries": 0
+    }
+  ],
+  "nextSvijetNativeTopicIds": [
+    "29965",
+    "30034"
+  ],
+  "batchReceiptSHA256": "332d8e3da2863282006ef57d8b639d2c8eefe6e71e4e40d048db16c2cb905768",
+  "APP": 0,
+  "Task": 0,
+  "newSourceAuthors": 0,
+  "newForecasts": 0,
+  "globalDelivery": "PARTIAL"
+}

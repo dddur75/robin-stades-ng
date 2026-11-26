@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "robin-documentary-source-composite-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.TWO.ROSTER.DOCUMENTARY.SUPPLEMENT.SOURCES.20261125",
+  "missionId": "OLBG_TWO_ROSTER_DOC_SUPPLEMENT_20261125",
+  "status": "VERIFIED_DOCUMENTARY_INPUTS",
+  "scope": "Composite documentary provenance only: preserved642100 row and two exact current138 index rows. No source authority or forecast admission is created.",
+  "sourceProofIndexSHA256": "97108c2bb9dd4ab99e5cdff0a6bb44925cb008b1971f107e53dca7dad3436335",
+  "workbookSHA256": "c6b15829bb11e40d3145bf25b6cce8a7066de6105897d2b48dc4a74ba9286622",
+  "indexSHA256": "0a4cfac9f560bbc2317ca19d5ccf790695b0b14ea4bfd4a352e6be11d4befcb5",
+  "preservedPriorRow": true,
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.PROFILE642100.NATIVE.R1.RESULT.20261125",
+    "DATA.SOURCE_OBSERVATORY.OLBG.CURRENT138.CORRECTED.20261120",
+    "DATA.SOURCE_OBSERVATORY.OLBG.FIVE.ROSTER.RETAINED.QUALIFICATION.20261125"
+  ]
+}

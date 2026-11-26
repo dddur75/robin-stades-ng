@@ -79,6 +79,23 @@ function verifyParent(plan:J,slot:string,receipt:J,loadFile:(name:string)=>Uint8
  }catch{throw Error('OLBG_PARENT_RECEIPT_WAIT');}
 }
 
+/** Validate the owning producer's accepted native batch; no new JS qualifier. */
+export function readAcceptedOLBGNativeBatch(batchRaw:Uint8Array,digest:string,plan:J,expectedResponseSHA:string,expectedCount:unknown):J[]{
+ const profileId=plan.profileId??648433;check(typeof profileId==='number'&&Number.isSafeInteger(profileId)&&profileId>0);
+ const URL='https://www.olbg.com/tipsters/tips/'+profileId,fixtures=arr(plan.fixtures,32).map(obj),proof={responseSha256:expectedResponseSHA},receipt={count:expectedCount},a={claimId:plan.claimId};
+  const b=obj(decode(batchRaw,digest,131072));check(b.schemaVersion==='robin-olbg-opaque-campaign-batch-v1'&&b.missionId===plan.id&&b.claimId===a.claimId&&b.parserSha256===plan.parserSha256&&b.builderSha256===plan.builderSha256&&b.calendarSha256===plan.calendarSha256&&b.sourceReady===false&&b.applicationAdmissions===0&&b.recurrence===true);
+  const source=obj(b.source);check(equal(source.fixtures,fixtures)&&source.calendarSha256===plan.calendarSha256);
+  const profiles=arr(source.profiles,1);check(profiles.length===1);const profile=obj(profiles[0]),facts=obj(profile.facts),request=obj(profile.request);check(facts.authorId===profileId&&facts.mode==='current'&&request.url===URL&&request.responseSha256===proof.responseSha256);text(facts.authorLabel,80);utc(request.observedAt);
+  const records=arr(facts.records,20).map(obj),accepted=arr(b.acceptedSourceTipIds,20).map(integer),rows=arr(b.picks,20).map(obj);check(rows.length>0&&rows.length===receipt.count&&rows.length===accepted.length&&new Set(accepted).size===accepted.length);
+  check(new Set(rows.map(p=>p.sourceTipId)).size===rows.length);for(const p of rows){const tid=integer(p.sourceTipId),matches=records.filter(n=>n.tipid===tid);check(matches.length===1&&accepted.includes(tid));const native=matches[0],fixture=fixtures.find(f=>f.id===p.fixtureId);check(fixture&&equal(p.sourceFields,native)&&native.vc_sport_id===1&&native.result==='Open');integer(native.eventid);
+   check(p.id==='olbg-tip:'+tid&&p.sourceId==='SRC_014'&&p.authorId==='olbg:'+profileId&&p.sourceEventId===native.eventid&&p.authorLabel===facts.authorLabel&&p.authorUrl===URL&&p.sourceUrl===URL&&p.kickoff===fixture.kickoff&&p.fixtureLabel===fixture.label);
+   check(p.observedAt===request.observedAt&&p.firstSeenAt===request.observedAt&&utc(p.observedAt)<utc(p.kickoff)&&p.selection===native.selection&&p.sourceMarketLabel===native.market&&p.sourceBetType===native.winew&&p.sourceEventLocalText===native.event_datetime);
+   check(p.responseSha256===proof.responseSha256&&p.parserSha256===plan.parserSha256&&p.calendarSha256===plan.calendarSha256&&p.market==='source_native_opaque'&&FLAGS.every(k=>p[k]===false)&&p.publishedAt===null&&p.publishedCivilDate===null&&p.sourceEventTimezone===null);
+   check(p.versionCount===1&&equal(p.versions,[{selection:p.selection,observedAt:p.observedAt}]));text(p.selection,120);text(p.fixtureId);
+  }
+ return rows;
+}
+
 export function readCampaignBuffers(planRaw:Uint8Array,mfRaw:Uint8Array,journalRaw:Uint8Array,loadBatch:(name:string)=>Uint8Array,a:OLBGCampaignApproval,parentIO?:ParentProofIO):Companion{
  const plan=obj(decode(planRaw,a.planSHA256,65536)),mf=obj(decode(mfRaw,a.manifestSHA256,16384));
  const profileId=plan.profileId??648433;check(typeof profileId==='number'&&Number.isSafeInteger(profileId)&&profileId>0);const URL='https://www.olbg.com/tipsters/tips/'+profileId;
@@ -101,16 +118,7 @@ export function readCampaignBuffers(planRaw:Uint8Array,mfRaw:Uint8Array,journalR
   const proof=q[0];check(proof.responseSha256===requests[0].responseSha256&&proof.parserSha256===plan.parserSha256&&proof.calendarSha256===plan.calendarSha256&&proof.count===receipt.count);
   const digest=text(receipt.observationSha256),name=text(receipt.observationFile);check(HASH.test(digest)&&name==='observations-'+digest+'.json');
   const parentBytes=verifyParent(plan,text(receipt.slot),receipt,loadBatch,parentIO);const batchRaw=loadBatch(name);check(batchRaw.length===parentBytes);
-  const b=obj(decode(batchRaw,digest,131072));check(b.schemaVersion==='robin-olbg-opaque-campaign-batch-v1'&&b.missionId===plan.id&&b.claimId===a.claimId&&b.parserSha256===plan.parserSha256&&b.builderSha256===plan.builderSha256&&b.calendarSha256===plan.calendarSha256&&b.sourceReady===false&&b.applicationAdmissions===0&&b.recurrence===true);
-  const source=obj(b.source);check(equal(source.fixtures,fixtures)&&source.calendarSha256===plan.calendarSha256);
-  const profiles=arr(source.profiles,1);check(profiles.length===1);const profile=obj(profiles[0]),facts=obj(profile.facts),request=obj(profile.request);check(facts.authorId===profileId&&facts.mode==='current'&&request.url===URL&&request.responseSha256===proof.responseSha256);text(facts.authorLabel,80);utc(request.observedAt);
-  const records=arr(facts.records,20).map(obj),accepted=arr(b.acceptedSourceTipIds,20).map(integer),rows=arr(b.picks,20).map(obj);check(rows.length>0&&rows.length===receipt.count&&rows.length===accepted.length&&new Set(accepted).size===accepted.length);
-  check(new Set(rows.map(p=>p.sourceTipId)).size===rows.length);for(const p of rows){const tid=integer(p.sourceTipId),matches=records.filter(n=>n.tipid===tid);check(matches.length===1&&accepted.includes(tid));const native=matches[0],fixture=fixtures.find(f=>f.id===p.fixtureId);check(fixture&&equal(p.sourceFields,native)&&native.vc_sport_id===1&&native.result==='Open');integer(native.eventid);
-   check(p.id==='olbg-tip:'+tid&&p.sourceId==='SRC_014'&&p.authorId==='olbg:'+profileId&&p.sourceEventId===native.eventid&&p.authorLabel===facts.authorLabel&&p.authorUrl===URL&&p.sourceUrl===URL&&p.kickoff===fixture.kickoff&&p.fixtureLabel===fixture.label);
-   check(p.observedAt===request.observedAt&&p.firstSeenAt===request.observedAt&&utc(p.observedAt)<utc(p.kickoff)&&p.selection===native.selection&&p.sourceMarketLabel===native.market&&p.sourceBetType===native.winew&&p.sourceEventLocalText===native.event_datetime);
-   check(p.responseSha256===proof.responseSha256&&p.parserSha256===plan.parserSha256&&p.calendarSha256===plan.calendarSha256&&p.market==='source_native_opaque'&&FLAGS.every(k=>p[k]===false)&&p.publishedAt===null&&p.publishedCivilDate===null&&p.sourceEventTimezone===null);
-   check(p.versionCount===1&&equal(p.versions,[{selection:p.selection,observedAt:p.observedAt}]));text(p.selection,120);used.add(text(p.fixtureId));
-  }
+  const rows=readAcceptedOLBGNativeBatch(batchRaw,digest,plan,text(proof.responseSha256),receipt.count);for(const p of rows)used.add(text(p.fixtureId));
   // The approved campaign writer performs the exact owning Python builder.
   // This consumer proves accepted-chain/code/field lineage, not a new JS qualifier.
   picks=mergeCampaignPicks(picks,rows);
@@ -128,7 +136,7 @@ export function mergeCampaignCatalogue<T extends J>(base:T,c:Companion):T{
  const profile=companionProfile(c),URL=profile.url,history='https://www.olbg.com/tipsters/tips/history/'+profile.id,candidates=arr(base.candidates,20000).map(obj),matches=candidates.filter(x=>x.platform==='OLBG'&&(x.sourceUrl===URL||x.sourceUrl===history));check(matches.length===1);const target=matches[0],origin=obj(target.origin);check(target.id==='catalogue:'+hash(text(target.sourceUrl))&&origin.sheet==='Catalogue'&&typeof origin.row==='number'&&Number.isSafeInteger(origin.row)&&origin.row>0);
  const q=obj(target.qualification??{picks:[]}),picks=mergeCampaignPicks(q.picks??[],c.picks),ids=new Set(c.picks.map(p=>'olbg-pending-'+profile.id+'-'+integer(p.sourceTipId)));
  let pending=target.pendingOLBGObservation;if(pending!==undefined){const p=obj(pending);pending={...p,records:arr(p.records,20).filter(v=>!ids.has(text(obj(v).key)))};}
- const qualified={...q,picks,personallyProven:picks.length>0,retainedClaimIds:[...new Set([...arr(q.retainedClaimIds??[],200),c.claimId])]};
+ const qualified={...q,picks,personallyProven:picks.length>0,retainedClaimIds:[...new Set([...arr(q.retainedClaimIds??[],200),...(!equal(picks,q.picks??[])?[c.claimId]:[])])]};
  const updated=candidates.map(row=>row===target?{...row,qualification:qualified,...(pending===undefined?{}:{pendingOLBGObservation:pending})}:row);
  const root=base.qualification===undefined?undefined:obj(base.qualification);const qualification=root?.status==='ok'?{...root,qualifiedCount:updated.filter(row=>obj(row.qualification??{}).personallyProven===true).length}:base.qualification;
  return {...base,candidates:updated,...(qualification===undefined?{}:{qualification}),olbgCampaignCompanion:{state:'accepted_batches',batches:c.batchCount,sourceReady:false,recurringCollectionActive:false,globalCoverage:'UNKNOWN'}} as T;

@@ -1,0 +1,56 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.SVIJET.NATIVE.POSTS.IMAGE.OCR.ACTUAL.20261126",
+  "status": "PARTIAL_NATIVE_POST_READER_FIXED_OCR_CAPTURED_ZERO_ADMISSIONS",
+  "at": "2026-11-26T07:05:06.317Z",
+  "scope": "Actual two native competition threads: corrected form traversal yields37 posts, one unqualified text candidate and20 image references. Two exact native images read by Windows OCR;3 retained fragments, no complete qualified football prediction. Four closed capture/diagnostic jobs11GET total; no recurrence or app admission.",
+  "captures": [
+    {
+      "actualSHA256": "d2d4c6278171b9103e365da4f4576af6738eb66013c46e67b6ff103bb3095bb2",
+      "GET": 3,
+      "closed": true,
+      "exit": 0,
+      "seconds": 7.390999999988708
+    },
+    {
+      "actualSHA256": "e92e4f180edfb9392dd6e2cba5ba1bd4f3781fcbae8c9b36195db85a9fe03882",
+      "GET": 2,
+      "closed": true,
+      "exit": 0,
+      "seconds": 4.078000000008615
+    },
+    {
+      "actualSHA256": "a87a57a1da9a32674a139d150a1e31f84b1381b6da9ea8464896ab90dd2dcadf",
+      "GET": 3,
+      "closed": true,
+      "exit": 0,
+      "seconds": 7
+    },
+    {
+      "actualSHA256": "e18df65c9627282b355bc456a81188d5124f621a400a89226d158be6d50912cf",
+      "GET": 3,
+      "closed": true,
+      "exit": 0,
+      "seconds": 3.436999999990803
+    }
+  ],
+  "postCount": 37,
+  "textCandidates": 1,
+  "imageMetadataReferences": 20,
+  "imagesFetched": 2,
+  "OCRFragments": 3,
+  "qualifiedForecasts": 0,
+  "APPAdmissions": 0,
+  "Task": 0,
+  "replays": 0,
+  "rawImagesOrFullOCRTextDurable": false,
+  "OCRArtifactSHA256": "74ea4fcb0f134aaf050ee627940ef9cf0ec9bebf390751c8821297f20b84172c",
+  "limitations": [
+    "Text candidate fixture/sport/calendar not established.",
+    "OCR fragments lack a complete own choice with fixture and kickoff proof.",
+    "Image first observation is November26, not inherited from post publication November23/24.",
+    "No personal prematch eligibility or universal source incompatibility inferred."
+  ],
+  "nextAction": "Continue other documented source families; reuse corrected native post/OCR readers for newly available complete choices.",
+  "globalDelivery": "PARTIAL",
+  "allCompatibleIntegrated": false
+}

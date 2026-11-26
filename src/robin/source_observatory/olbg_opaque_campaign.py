@@ -1,4 +1,5 @@
 """Private proposal. The native transport remains unavailable until separate binding."""
+
 from __future__ import annotations
 
 import json
@@ -34,8 +35,11 @@ SCHEMA = "robin-olbg-opaque-campaign-batch-v1"
 
 def _profile_id(plan: dict[str, Any]) -> int:
     profile_id = plan.get("profileId", 648433)
-    if (type(profile_id) is not int or profile_id <= 0
-            or plan.get("endpoint") != f"https://www.olbg.com/tipsters/tips/{profile_id}"):
+    if (
+        type(profile_id) is not int
+        or profile_id <= 0
+        or plan.get("endpoint") != f"https://www.olbg.com/tipsters/tips/{profile_id}"
+    ):
         raise ValueError("CAMPAIGN_PROFILE_SCOPE")
     return profile_id
 
@@ -111,29 +115,48 @@ def validate_campaign(
     if len(plan_raw) > 65536 or len(mf_raw) > 16384:
         raise ValueError("CAMPAIGN_SIZE")
     plan, mission = json.loads(plan_raw), json.loads(mf_raw)
-    if (sha256(plan_raw).hexdigest() != approval["planSHA256"]
-            or sha256(mf_raw).hexdigest() != approval["manifestSHA256"]):
+    if (
+        sha256(plan_raw).hexdigest() != approval["planSHA256"]
+        or sha256(mf_raw).hexdigest() != approval["manifestSHA256"]
+    ):
         raise ValueError("CAMPAIGN_PIN")
-    required = {"mission_id", "authorized_stages", "maximum_stage", "external_effects",
-                "compute_budget", "time_budget", "source_hash", "expires_at"}
-    if (set(mission) != required or mission["maximum_stage"] != "E2"
-            or mission["authorized_stages"] != ["E1", "E2"]
-            or mission["source_hash"] != sha256(canonical(plan)).hexdigest()
-            or mission["mission_id"] != plan["id"]):
+    required = {
+        "mission_id",
+        "authorized_stages",
+        "maximum_stage",
+        "external_effects",
+        "compute_budget",
+        "time_budget",
+        "source_hash",
+        "expires_at",
+    }
+    if (
+        set(mission) != required
+        or mission["maximum_stage"] != "E2"
+        or mission["authorized_stages"] != ["E1", "E2"]
+        or mission["source_hash"] != sha256(canonical(plan)).hexdigest()
+        or mission["mission_id"] != plan["id"]
+    ):
         raise ValueError("CAMPAIGN_TUPLE")
     slots = plan["slots"]
-    if (not isinstance(slots, list) or not 1 <= len(slots) <= 12
-            or len(set(slots)) != len(slots) or slots != sorted(slots)
-            or any(instant(s) >= instant(mission["expires_at"]) for s in slots)):
+    if (
+        not isinstance(slots, list)
+        or not 1 <= len(slots) <= 12
+        or len(set(slots)) != len(slots)
+        or slots != sorted(slots)
+        or any(instant(s) >= instant(mission["expires_at"]) for s in slots)
+    ):
         raise ValueError("CAMPAIGN_SLOTS")
     _profile_id(plan)
-    if (plan["robotsUrl"] != "https://www.olbg.com/robots.txt"
-            or plan["termsUrl"] != "https://www.olbg.com/use"
-            or plan["zeroEligiblePolicy"] != "HALT"
-            or not 1 <= len(plan["fixtures"]) <= 32
-            or plan["calendarSha256"] != sha256(canonical(plan["fixtures"])).hexdigest()
-            or mission["external_effects"] != {
-                "https_get_max": len(slots) * 3, "per_source_max": len(slots) * 3}):
+    if (
+        plan["robotsUrl"] != "https://www.olbg.com/robots.txt"
+        or plan["termsUrl"] != "https://www.olbg.com/use"
+        or plan["zeroEligiblePolicy"] != "HALT"
+        or not 1 <= len(plan["fixtures"]) <= 32
+        or plan["calendarSha256"] != sha256(canonical(plan["fixtures"])).hexdigest()
+        or mission["external_effects"]
+        != {"https_get_max": len(slots) * 3, "per_source_max": len(slots) * 3}
+    ):
         raise ValueError("CAMPAIGN_SCOPE")
     for key in ("parserSha256", "builderSha256", "rulesSha256"):
         if re.fullmatch("[a-f0-9]{64}", plan[key]) is None:
@@ -163,10 +186,18 @@ def project_profile(
     if len(facts["records"]) > 20:
         raise ValueError("OPAQUE_RECORD_CAP")
     source = {
-        "profiles": [{"facts": facts, "request": {
-            "url": plan["endpoint"], "observedAt": observed.isoformat(),
-            "responseSha256": response_sha}}],
-        "fixtures": plan["fixtures"], "calendarSha256": plan["calendarSha256"],
+        "profiles": [
+            {
+                "facts": facts,
+                "request": {
+                    "url": plan["endpoint"],
+                    "observedAt": observed.isoformat(),
+                    "responseSha256": response_sha,
+                },
+            }
+        ],
+        "fixtures": plan["fixtures"],
+        "calendarSha256": plan["calendarSha256"],
     }
     accepted: list[int] = []
     for native in facts["records"]:
@@ -181,11 +212,20 @@ def project_profile(
     picks = build_opaque_choices(source, accepted, parser_sha=plan["parserSha256"])
     if not picks:
         raise ValueError("ZERO_ELIGIBLE_HALT")
-    return {"schemaVersion": SCHEMA, "missionId": plan["id"], "claimId": plan["claimId"],
-            "source": source, "acceptedSourceTipIds": accepted, "picks": picks,
-            "parserSha256": plan["parserSha256"], "builderSha256": plan["builderSha256"],
-            "calendarSha256": plan["calendarSha256"], "sourceReady": False,
-            "applicationAdmissions": 0, "recurrence": True}
+    return {
+        "schemaVersion": SCHEMA,
+        "missionId": plan["id"],
+        "claimId": plan["claimId"],
+        "source": source,
+        "acceptedSourceTipIds": accepted,
+        "picks": picks,
+        "parserSha256": plan["parserSha256"],
+        "builderSha256": plan["builderSha256"],
+        "calendarSha256": plan["calendarSha256"],
+        "sourceReady": False,
+        "applicationAdmissions": 0,
+        "recurrence": True,
+    }
 
 
 def _save_exclusive(path: Path, raw: bytes) -> None:
@@ -195,36 +235,41 @@ def _save_exclusive(path: Path, raw: bytes) -> None:
         os.fsync(stream.fileno())
 
 
-
 def source_guard(directory: Path, approval: dict[str, str], now: datetime) -> None:
     """Campaign approval is the explicit finite SOURCE grant, never a per-batch grant."""
     plan, mission = validate_campaign(directory, approval)
     raw = _read_bounded(directory / "authorization.json", 32768)
-    if (len(raw) > 32768 or sha256(raw).hexdigest() != approval["authorizationSHA256"]):
+    if len(raw) > 32768 or sha256(raw).hexdigest() != approval["authorizationSHA256"]:
         raise PermissionError("SOURCE_APPROVAL_PIN")
     grant = json.loads(raw)
-    if (grant.get("planSha256") != sha256(canonical(plan)).hexdigest()
-            or grant.get("manifestSha256") != sha256(canonical(mission)).hexdigest()
-            or grant.get("ownerMessage") != plan.get("ownerMessage")
-            or not isinstance(plan.get("ownerMessage"), str)
-            or plan.get("scope") != "LOCAL_PERSONAL_NONCOMMERCIAL"
-            or plan.get("sourceId") != "SRC_014"
-            or grant.get("keys") != ["C0", "C1", "C3", "C4"]
-            or grant.get("sourceAllowed") is not True
-            or grant.get("rulesSha256") != plan["rulesSha256"]
-            or not instant(grant["authorizedAt"]) <= now < instant(grant["expiresAt"])
-            or now >= instant(mission["expires_at"])
-            or instant(grant["termsApprovedAt"]) > now):
+    if (
+        grant.get("planSha256") != sha256(canonical(plan)).hexdigest()
+        or grant.get("manifestSha256") != sha256(canonical(mission)).hexdigest()
+        or grant.get("ownerMessage") != plan.get("ownerMessage")
+        or not isinstance(plan.get("ownerMessage"), str)
+        or plan.get("scope") != "LOCAL_PERSONAL_NONCOMMERCIAL"
+        or plan.get("sourceId") != "SRC_014"
+        or grant.get("keys") != ["C0", "C1", "C3", "C4"]
+        or grant.get("sourceAllowed") is not True
+        or grant.get("rulesSha256") != plan["rulesSha256"]
+        or not instant(grant["authorizedAt"]) <= now < instant(grant["expiresAt"])
+        or now >= instant(mission["expires_at"])
+        or instant(grant["termsApprovedAt"]) > now
+    ):
         raise PermissionError("SOURCE_AUTHORITY")
     # The real legacy transport is pinned and callable, not an implementation stub.
     transport = next(x for x in plan["codePins"] if x["role"] == "transport")
-    if (Path(transport["path"]).resolve() != Path(public_get.__code__.co_filename).resolve()
-            or transport["sha256"] != approval["transportSHA256"]):
+    if (
+        Path(transport["path"]).resolve() != Path(public_get.__code__.co_filename).resolve()
+        or transport["sha256"] != approval["transportSHA256"]
+    ):
         raise PermissionError("SOURCE_TRANSPORT_PIN")
 
 
 def bind_source_runtime(
-    directory: Path, plan: dict[str, Any], mission: dict[str, Any],
+    directory: Path,
+    plan: dict[str, Any],
+    mission: dict[str, Any],
     approval: dict[str, str],
 ) -> Any:
     """Mandatory future ROOT SOURCE binding; no legacy-grant-only activation.
@@ -234,10 +279,13 @@ def bind_source_runtime(
     No implementation or proof of that SOURCE binding is supplied here.
     """
     record = plan.get("sourceRuntime")
-    if (type(record) is not dict or set(record) != {"path", "sha256"}
-            or record.get("sha256") != approval.get("sourceRuntimeSHA256")
-            or not isinstance(record.get("sha256"), str)
-            or re.fullmatch("[a-f0-9]{64}", record["sha256"]) is None):
+    if (
+        type(record) is not dict
+        or set(record) != {"path", "sha256"}
+        or record.get("sha256") != approval.get("sourceRuntimeSHA256")
+        or not isinstance(record.get("sha256"), str)
+        or re.fullmatch("[a-f0-9]{64}", record["sha256"]) is None
+    ):
         raise PermissionError("CURRENT_SOURCE_RUNTIME_REQUIRED")
     raw = _read_bounded(Path(record["path"]), 65536)
     if sha256(raw).hexdigest() != record["sha256"]:
@@ -247,12 +295,17 @@ def bind_source_runtime(
     # Execute only approved local runtime bytes SHA-256 checked above.
     exec(compile(raw, record["path"], "exec"), vars(module))  # nosec B102
     runtime = module.bind_source(
-        directory=directory, plan=plan, mission=mission, approval=approval,
+        directory=directory,
+        plan=plan,
+        mission=mission,
+        approval=approval,
         legacy_get=public_get,
     )
-    if (not callable(getattr(runtime, "guard", None))
-            or not callable(getattr(runtime, "get", None))
-            or runtime.guard("source-runtime-bound") is not True):
+    if (
+        not callable(getattr(runtime, "guard", None))
+        or not callable(getattr(runtime, "get", None))
+        or runtime.guard("source-runtime-bound") is not True
+    ):
         raise PermissionError("CURRENT_SOURCE_RUNTIME_REFUSED")
     return runtime
 
@@ -281,8 +334,11 @@ def run_opaque_slot(
 
     def guard() -> None:
         observed = clock()
-        if (observed < wall_start or observed >= instant(mission["expires_at"])
-                or time.monotonic() - mono_start >= 210):
+        if (
+            observed < wall_start
+            or observed >= instant(mission["expires_at"])
+            or time.monotonic() - mono_start >= 210
+        ):
             raise TimeoutError("CAMPAIGN_DEADLINE")
         if synthetic_only is not True:
             source_guard(directory, approval, observed)
@@ -329,8 +385,11 @@ def run_opaque_slot(
                     allowed, delay = True, 0.0
                 elif robots_state == "PRESENT_200":
                     allowed, delay = olbg_robots_policy(
-                        rules.encode("utf-8"), url, "RobinSourceObservatory",
-                        max_delay_seconds=60, max_bytes=65536,
+                        rules.encode("utf-8"),
+                        url,
+                        "RobinSourceObservatory",
+                        max_delay_seconds=60,
+                        max_bytes=65536,
                     )
                 else:
                     raise ValueError("ROBOTS_BOOTSTRAP_SCOPE")
@@ -379,9 +438,40 @@ def run_opaque_slot(
                     if rules_digest(response.body) != plan["rulesSha256"]:
                         raise ValueError("terms changed")
                 else:
-                    snapshot = project_profile(
-                        extract_profile(response.body, _profile_id(plan)), plan, observed, digest
+                    facts = extract_profile(response.body, _profile_id(plan))
+                    native_count = len(facts["records"])
+                    facts = dict(facts, records=facts["records"][:20])
+                    pending = dict(
+                        schemaVersion="OLBG_UNADMITTED_FACTS_V1",
+                        missionId=plan["id"],
+                        slot=slot,
+                        observedAt=observed.isoformat(),
+                        sourceURL=url,
+                        responseSHA256=digest,
+                        parserSHA256=plan["parserSha256"],
+                        sourceRecordCount=native_count,
+                        omittedRecords=native_count - len(facts["records"]),
+                        facts=facts,
+                        applicationAdmissions=0,
+                        sourceReady=False,
                     )
+                    pending_raw = canonical(pending) + b"\n"
+                    if len(pending_raw) > 131072:
+                        raise ValueError("OPAQUE_BATCH_CAP")
+                    pending_name = "unadmitted-facts-" + sha256(pending_raw).hexdigest() + ".json"
+                    guard()
+                    _save_exclusive(directory / pending_name, pending_raw)
+                    guard()
+                    journal.append(
+                        "PUBLIC_FACTS_RETAINED",
+                        slot=slot,
+                        observationFile=pending_name,
+                        observationSha256=sha256(pending_raw).hexdigest(),
+                        count=len(facts["records"]),
+                        sourceRecordCount=native_count,
+                        omittedRecords=native_count - len(facts["records"]),
+                    )
+                    snapshot = project_profile(facts, plan, observed, digest)
                     picks = snapshot["picks"]
                     journal.append(
                         "PUBLIC_PICKS_QUALIFIED",
@@ -422,8 +512,12 @@ def run_opaque_slot(
                 requests=sum(e["kind"] == "REQUEST_RESERVED" for e in journal.events) - before,
             )
         except Exception as exc:
-            journal.append("CAMPAIGN_HALTED", slot=slot, reason=type(exc).__name__,
-                           reasonCode=closed_stop_reason(exc))
+            journal.append(
+                "CAMPAIGN_HALTED",
+                slot=slot,
+                reason=type(exc).__name__,
+                reasonCode=closed_stop_reason(exc),
+            )
             raise
         finally:
             journal.append("RUN_FINISHED", slot=slot)

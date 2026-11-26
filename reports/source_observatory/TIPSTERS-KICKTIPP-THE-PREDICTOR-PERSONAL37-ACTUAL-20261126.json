@@ -1,0 +1,55 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.KICKTIPP.THE_PREDICTOR.PERSONAL37.NATIVE.20261126",
+  "status": "PARTIAL",
+  "missionId": "KICKTIPP_NAMED_PARTICIPANT_COMPACT_DIAG_R3_20261126",
+  "sourceGrantHash": "eb3cbe79c3315374e5a4177e3d02a75a2a5beabfa1e8f4309552bd1d5ba8cbeb",
+  "captureSHA256": "ecbd22c201f7b7643a57c3b4dfd2c6961e469d81338c21d63229ecd8848ef56b",
+  "resultSHA256": "f10686a76a1fc5521bc10c7a0794f82e556c8d6370bc51b515f64dd46b5850cf",
+  "sourceObservedAt": "2026-11-26T02:19:51.374140+00:00",
+  "closedAt": "2026-11-26T02:19:51.964514+00:00",
+  "requests": 3,
+  "http200": 3,
+  "personalForecastsObservedBeforeKickoff": 37,
+  "distinctContestSeasonNamedParticipants": 37,
+  "rejectedScores": 11,
+  "individuallyLinkedRows": 37,
+  "publicationKnown": false,
+  "nativeTimezoneKnown": false,
+  "civilIdentityCertified": false,
+  "identityScope": "SOURCE_CONTEST_SEASON_NAMED_PARTICIPANT_NOT_CIVIL_OR_GLOBAL_ACCOUNT",
+  "fixture": {
+    "id": "calendar:93b3736fd5f74b4b839d80d4c5d63883de0d0e3c62ff2264106303bac6d7ba2d",
+    "kickoff": "2026-11-26T17:45:00.000Z",
+    "nativeGameId": "1678362200",
+    "primaryCalendarSHA256": "3bff3ff9a06db975c7556774a455d2fee14d599d1cfa8418057dec130ad0294f",
+    "eventScopedAlias": {
+      "native": "AFC Bournemouth",
+      "canonical": "Bournemouth",
+      "globalAlias": false
+    }
+  },
+  "nativeParent": {
+    "exit": 0,
+    "subtreeKillConfirmed": true,
+    "timedOut": false,
+    "elapsedSeconds": 2.75,
+    "receiptSHA256": "51af4226c7f51c7d9f4eb8ae8b457a310c3b3a1a7ddfb375e2655519908dd203"
+  },
+  "sourceAuthorityClosed": true,
+  "appAdmissions": 0,
+  "recurringKicktipp": false,
+  "independentKeys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "allCompatibleIntegrated": false,
+  "globalDelivery": "PARTIAL",
+  "limits": [
+    "Named contest-season participants are not civil identities or global accounts.",
+    "Eleven unproven scores excluded.",
+    "Native publication and timezone unknown; UTCkickoff supplied solely by reviewed primarycalendar.",
+    "R2preciseValueErrorcause remainsunknown; R3succeeded under redesigned projection."
+  ]
+}

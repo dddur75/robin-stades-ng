@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "ROBIN_EXPLICIT_CLUB_VARIANTS_CALENDAR_V1",
+  "generatedAt": "2026-11-25T21:12:32.141Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.THREE.EXPLICIT.CLUB.ALIASES.CALENDAR.20261125",
+  "missionId": "OLBG_THREE_EXPLICIT_CLUB_ALIASES_QUALIFICATION_20261125",
+  "status": "EXPLICIT_VARIANTS_FOR_DEDICATED_NATIVE_DATA_QUALIFICATION",
+  "scope": "Three explicit manually reviewed club-name variants, tied to exact opponent and native date, original UEFA26Nov official fixture; no fuzzy matching, native event-ID identity or native timezone inference.",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.UEFA.26NOV.PRIMARY.CALENDAR.20261125",
+    "DATA.SOURCE_OBSERVATORY.OLBG.HUNDRED.NEW.WORKBOOK.PROFILES.BATCH.R2.RESULT.20261125"
+  ],
+  "calendarAdopted": true,
+  "calendarSHA256": "ec34011d0ba43542cfe3d4a1a2724b7833951fff8d4d336f7a6156957b95866c",
+  "sourceCalendarReportSHA256": "a0dd369ababc18eca0d762f46766a7e4ad1b2537360013517972c0a7d490e3d3",
+  "aliasProvenanceSHA256": "c08a00b654d93c31f4f0cc0056595188cf7aa2ae75133ed8c7ffd4c267f25f7c",
+  "variants": [
+    {
+      "official": "Milan",
+      "native": "AC Milan",
+      "home": "Olympiacos",
+      "away": "Milan",
+      "nativeEvent": "Olympiacos v AC Milan",
+      "side": "awayAliases",
+      "fixtureId": "calendar:51692e28acab9a35ea44610e94b4efc61d9173c6ebd40ff38e951924c11476a9",
+      "kickoff": "2026-11-26T17:45:00.000Z"
+    },
+    {
+      "official": "Omonia",
+      "native": "Omonia Nicosia",
+      "home": "Juventus",
+      "away": "Omonia",
+      "nativeEvent": "Juventus v Omonia Nicosia",
+      "side": "awayAliases",
+      "fixtureId": "calendar:0d44b405af68219b9a5fc2fc5e0f7884822a44287c80373ed04c98b10e074e4c",
+      "kickoff": "2026-11-26T20:00:00.000Z"
+    },
+    {
+      "official": "Celta",
+      "native": "Celta Vigo",
+      "home": "Celta",
+      "away": "Bournemouth",
+      "nativeEvent": "Celta Vigo v Bournemouth",
+      "side": "homeAliases",
+      "fixtureId": "calendar:93b3736fd5f74b4b839d80d4c5d63883de0d0e3c62ff2264106303bac6d7ba2d",
+      "kickoff": "2026-11-26T17:45:00.000Z"
+    }
+  ],
+  "fixtureCount": 36,
+  "sourceGET": 0,
+  "nativeEventIdentityProven": false,
+  "nativeTimezoneInferred": false
+}

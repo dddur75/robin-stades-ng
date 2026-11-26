@@ -1,0 +1,2 @@
+export type MultiCaptureSpec=Readonly<{directory:string;archiveReadOnly?:boolean;captureGrammar?:'OLBG_CLOSED_TRANSIENT_FAILURE_V1';includeExisting203797?:boolean;qualificationRowId?:string;planSHA256:string;manifestSHA256:string;authorizationSHA256:string;sourceGrantHash:string;ledgerPath:string;ledgerPrefix:{bytes:number;sha256:string;head:string};projectionMissionId:string;claimId:string;publicBaseSHA256:string;consumerPins:readonly{path:string;sha256:string}[]}>;
+export type MultiCaptureApproval=Readonly<{spec:MultiCaptureSpec;bindingSHA256:string}>;

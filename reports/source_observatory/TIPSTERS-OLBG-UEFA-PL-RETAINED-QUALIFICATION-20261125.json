@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "robin-retained-qualification-receipt-v1",
+  "generatedAt": "2026-11-25T16:41:23.888Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.UEFA.PL.RETAINED.QUALIFICATION.20261125",
+  "missionId": "OLBG_RETAINED_UEFA_PL_QUALIFICATION_20261125",
+  "status": "ACTUAL_THIRTY_NEW_UNIQUE_CHOICES_QUALIFIED_NOT_YET_ADMITTED",
+  "scope": "Thirty unique source-native individual choices qualified from97 retained observations by matching19 exact published official fixtures; original source observation times and fields preserved. The earlier16 are included, not additional.",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.SIX.PERSONAL.CAPTURE.R1B.RESULT.20261125",
+    "DATA.SOURCE_OBSERVATORY.PREMIERLEAGUE.NOVEMBER.FUTURE.GMT.PROGRAMME.RESULT.20261124",
+    "DATA.SOURCE_OBSERVATORY.UEFA25.FIVE.CLUB.ALIASES.20261125",
+    "DATA.SOURCE_OBSERVATORY.UEFA25.THREE.MORE.CLUB.ALIASES.20261125",
+    "DATA.SOURCE_OBSERVATORY.OLBG.PROFILE158.ONE.SHOT.RETAINING.R2.RESULT.20261125",
+    "DATA.SOURCE_OBSERVATORY.OLBG.PROFILE609057.RETAINING.R1.RESULT.20261125"
+  ],
+  "resultSHA256": "47fdb5c5322c5b33af64b181b65a245b18a28805077a6fa39fc34e221e2d666f",
+  "stopSHA256": "9617423034f2ce5e4c246f0b93cea4c1f10277c3d0441f502f6ac121a492cc26",
+  "sourceContextSHA256": "5a1eeb60c99202f52862ef488b3f44cda52d580d2aafd2494d019f2dba863679",
+  "profiles": [
+    {
+      "batchSHA256": "deb803e0a8f40bdc928c977d523f83906eef219f7650b52efab91849a5e3528f",
+      "newUniqueQualified": 1,
+      "observedAt": "2026-11-25T13:42:53.159563+00:00",
+      "priorQualifiedExcluded": 1,
+      "profileId": 158,
+      "qualifiedTotal": 2,
+      "retainedRows": 3
+    },
+    {
+      "batchSHA256": "68fca45f5a45433efc90877fea77226d3ec2c7793bf60eed849171248372c4a7",
+      "newUniqueQualified": 2,
+      "observedAt": "2026-11-25T14:25:55.219746+00:00",
+      "priorQualifiedExcluded": 4,
+      "profileId": 609057,
+      "qualifiedTotal": 6,
+      "retainedRows": 11
+    },
+    {
+      "batchSHA256": "9c3c56d0614c8aef9de33b27b94660f1da349e7a3a565ddb62c2d5f42818a660",
+      "newUniqueQualified": 5,
+      "observedAt": "2026-11-25T15:57:02.428085+00:00",
+      "priorQualifiedExcluded": 0,
+      "profileId": 648478,
+      "qualifiedTotal": 5,
+      "retainedRows": 20
+    },
+    {
+      "batchSHA256": "787454348c21371d3847de8f0867f488c8d9c20ad56e34acd20b720c202afd37",
+      "newUniqueQualified": 9,
+      "observedAt": "2026-11-25T15:57:23.872464+00:00",
+      "priorQualifiedExcluded": 0,
+      "profileId": 203797,
+      "qualifiedTotal": 9,
+      "retainedRows": 12
+    },
+    {
+      "batchSHA256": null,
+      "newUniqueQualified": 0,
+      "observedAt": "2026-11-25T16:02:14.779401+00:00",
+      "priorQualifiedExcluded": 0,
+      "profileId": 79569,
+      "qualification": "ZERO_ELIGIBLE",
+      "qualifiedTotal": 0,
+      "retainedRows": 0
+    },
+    {
+      "batchSHA256": "4a7263dd9610faa2d0f9fac6af194511adaa4faa38ffde32c2b098e9e9bb9e54",
+      "newUniqueQualified": 4,
+      "observedAt": "2026-11-25T16:02:51.606417+00:00",
+      "priorQualifiedExcluded": 0,
+      "profileId": 530492,
+      "qualifiedTotal": 4,
+      "retainedRows": 20
+    },
+    {
+      "batchSHA256": "05389b0c0e43bf18ff57244b2a8ba8b1cf6f1ea671701c46da2143fa96905aa1",
+      "newUniqueQualified": 4,
+      "observedAt": "2026-11-25T16:05:47.800873+00:00",
+      "priorQualifiedExcluded": 0,
+      "profileId": 229856,
+      "qualifiedTotal": 4,
+      "retainedRows": 20
+    },
+    {
+      "batchSHA256": "1b93cbd0d2f17ef35a7ecc24835588916d65a75c8ffceaeafefeaac0af536d3e",
+      "newUniqueQualified": 5,
+      "observedAt": "2026-11-25T16:06:46.953660+00:00",
+      "priorQualifiedExcluded": 0,
+      "profileId": 13000,
+      "qualifiedTotal": 5,
+      "retainedRows": 11
+    }
+  ],
+  "processedRows": 97,
+  "retainedOpenFootballRecords": 74,
+  "qualifiedIncludingFiveAlreadyPresent": 35,
+  "newUniqueQualified": 30,
+  "authorsWithNewChoices": 7,
+  "baselinePublicChoices": 491,
+  "projectedPublicChoices": 521,
+  "applicationAdmissions": 0,
+  "SourceGETDuringQualification": 0,
+  "sourceFootprintOfReusedEightCapturesGET": 24,
+  "APP": 0,
+  "tests": 0,
+  "elapsedSeconds": 0.8909999999996217,
+  "officialFixtures": 19,
+  "originalUEFAFixtures": 9,
+  "additionalPLFixtures": 10,
+  "clubAliasesAddedOnUEFAOnly": 8,
+  "sourceEventTimezoneRemainsNull": true,
+  "officialFixtureIDsInvented": false,
+  "internalFixtureIDsDerived": true,
+  "actualWhistleProven": false,
+  "subsequentReschedulingUnknown": true,
+  "nativeRowsOmittedAtSixSourceCaptures": 43,
+  "sourceReady": false,
+  "recurringCollectionActive": false,
+  "allCompatibleIntegrated": false,
+  "globalDelivery": "PARTIAL"
+}

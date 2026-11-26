@@ -1,0 +1,7 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.COTEUR.L1.NATIVE5.CALENDAR.20261126",
+  "status": "VERIFIED_SOURCE_SCOPED_COMPOSITE_CALENDAR",
+  "scope": "Five Coteur native2026/+01 kickoff literals agree with official LFP civil programme;5retained ticket components from62phidel observed before kickoff.No inferred timezone; original LFP nativeUTCProof remainsfalse; source-scoped fixture namespace.",
+  "newComponentFileSHA256": "c57084e3af575b15438b8040ed839dda0e9cc810ba79ce6119ee84e7f0c9ca05",
+  "calendarReceiptSHA256": "f61a1ada19c8bb22ac95d61c171ec094ce0160d2e93b187260a185d982f5c8de"
+}

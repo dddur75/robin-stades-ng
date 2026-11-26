@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "robin-new-authors-candidate-source-proof-v1",
+  "generatedAt": "2026-11-25T19:03:00.724Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.THREE.NEW.AUTHORS.FICHES.SUPPLEMENT.20261125",
+  "missionId": "OLBG_THREE_NEW_AUTHORS_APP_ADMISSION_20261125",
+  "status": "VERIFIED_SUPPLEMENT_PROPOSAL",
+  "scope": "Bounded22-row documentary supplement prepared; two missing fiches added in proposal only, no current activity inferred from workbook metadata.",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.THREE.NEW.AUTHORS.FICHES.SOURCES.20261125"
+  ],
+  "indexSHA256": "0a4cfac9f560bbc2317ca19d5ccf790695b0b14ea4bfd4a352e6be11d4befcb5",
+  "supplementSHA256": "8474a0bd718e6d178fd687bd4843892e03897bf41b81fc7444ce722189348cf0",
+  "rows": 22,
+  "newRows": 2,
+  "sourceGET": 0,
+  "APPWrites": 0
+}

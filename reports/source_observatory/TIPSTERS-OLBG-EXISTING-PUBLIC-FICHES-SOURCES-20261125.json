@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "robin-existing-source-proof-index-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.EXISTING.PUBLIC.FICHES.SOURCES.20261125",
+  "missionId": "OLBG_EXISTING_PUBLIC_FICHES_LINK_APP_20261125",
+  "status": "VERIFIED_REUSED_INPUTS",
+  "scope": "Existing workbook identities and previously accepted native observations reused for seventeen missing catalogue fiches. No new capture, author or timestamp certification.",
+  "proofIndexSHA256": "61547cccc7e780e3bba472f2e9f0ce2f1ffd9ec0532009fb09388c44b6d48d9a",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.CURRENT138.CORRECTED.20261120",
+    "DATA.SOURCE_OBSERVATORY.OLBG.SIX.RETAINED.PREMATCH.20261121",
+    "DATA.SOURCE_OBSERVATORY.OLBG.NORWICH.SEVEN.PREMATCH.20261121",
+    "DATA.SOURCE_OBSERVATORY.OLBG.NORWICH.ONE.RETAINED.PREMATCH.20261121",
+    "DATA.SOURCE_OBSERVATORY.OLBG.LIVERPOOL.ONE.RETAINED.PREMATCH.20261121",
+    "DATA.SOURCE_OBSERVATORY.ROSTER42.FINAL.NATURAL.20261121"
+  ],
+  "coveredByAssessment": 57,
+  "coveredByRecurringReceipts": 19,
+  "coveredByHistoricalEnvelope": 1,
+  "unpairedPublicRecordsExcluded": 5,
+  "SourceGET": 0
+}

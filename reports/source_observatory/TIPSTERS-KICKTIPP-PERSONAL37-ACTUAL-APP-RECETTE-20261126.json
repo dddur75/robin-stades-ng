@@ -1,0 +1,88 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.KICKTIPP.PERSONAL37.APP.ADMISSION.20261126",
+  "status": "PASS_LOCAL_APP_INCREMENT_GLOBAL_PARTIAL",
+  "missionId": "KICKTIPP_REVIEWED37_APP_PROJECTION_R2_20261126",
+  "sourceClaimId": "DATA.SOURCE_OBSERVATORY.KICKTIPP.THE_PREDICTOR.PERSONAL37.NATIVE.20261126",
+  "sourceCaptureSHA256": "ecbd22c201f7b7643a57c3b4dfd2c6961e469d81338c21d63229ecd8848ef56b",
+  "sourceObservedAt": "2026-11-26T02:19:51.374140+00:00",
+  "packetSHA256": "01c2a10b429075d4bd4b66a626fea6e5a2d9eb1cd4eb508bf981cdee087a4526",
+  "appGrantHash": "1dc4919c918002663bb39f80ee5738e904e4f0c02d46d49d0343a5ec19229d9e",
+  "bindingSHA256": "143fbc7941e0836c72512089d68b2e11e4d560a5e8b8179e0ffdc0e851b7d4c0",
+  "appObservedAt": "2026-11-26T02:34:52.570Z",
+  "runtime": {
+    "oldPID": 50988,
+    "newPID": 26196,
+    "loopbackOrigin": "http://127.0.0.1:4173",
+    "startedAt": "2026-11-26T02:31:19.5771934Z",
+    "serverSHA256": "20a5f7cdb637c36fe2f1d98735c4db9ff2545e25956fe781bfa8cbbb9a73e361",
+    "locksPreserved": true,
+    "ownedRestarts": 1,
+    "activationWrapper": {
+      "finalExitCode": -1,
+      "reason": "Controller completed and serverstarted; parent stdout read waited on inherited pipe. Only identified wrapper51908 stopped without descendants; server26196verified alive; no restartretry."
+    }
+  },
+  "actualAPIs": [
+    {
+      "endpoint": "/api/tipsters/public",
+      "status": 200,
+      "sha256": "4c680a6553ef52fc48df180801deea6629eaa10554ef8b051a7423233f5d88db"
+    },
+    {
+      "endpoint": "/api/tipsters/candidates",
+      "status": 200,
+      "sha256": "4782044b26251b8aca550f1f6b4890224b70849b1b379370b769972649984c09"
+    },
+    {
+      "endpoint": "/api/tipsters/qualification",
+      "status": 200,
+      "sha256": "03b616299663aae33f07d88cf9eab8c5cdbcddb3c4ecbb55db8ca151494b51a7"
+    }
+  ],
+  "counts": {
+    "publicPredictions": 810,
+    "candidateFiches": 414,
+    "adminRows": 56,
+    "newlyAdmittedPredictions": 37,
+    "newNamedContestSeasonParticipants": 37,
+    "previouslyProvenSourceAccounts": 73,
+    "individuallyAttributedSourceIdentitiesLowerBound": 110,
+    "civilPeopleCount": null,
+    "globalSourceAccountsCount": null
+  },
+  "preservation": {
+    "oldPicks": true,
+    "oldCandidates": true,
+    "oldAdmin": true,
+    "new37Picks": true,
+    "new37Fiches": true,
+    "newAdmin": true
+  },
+  "ui": {
+    "status": "PASS_LOCAL_UI",
+    "checks": {
+      "adminKicktippVisible": true,
+      "nativeScoreVisible": true,
+      "authorVisible": true,
+      "nativeProvenanceVisible": true,
+      "correctScoreVisible": true
+    },
+    "errors": [],
+    "receiptSHA256": "76791cc7fbfad6e76d4a12febaf4083d1000f87586af667b909f389eeef256a4",
+    "selectorCorrectionOnly": true
+  },
+  "sourceRecurringOLBG": "EXISTING_73_ACCOUNT_FINITE_CAMPAIGN_UNCHANGED",
+  "sourceRecurringKicktipp": false,
+  "SourceGETDuringAPP": 0,
+  "TaskChanges": 0,
+  "sourceIdentityScope": "SOURCE_CONTEST_SEASON_NAMED_PARTICIPANT_NOT_CIVIL_OR_GLOBAL_ACCOUNT",
+  "qualificationLimits": [
+    "73 prior source accounts plus37 named contest-season entries; no cross-platform civil-person deduplication claimed.",
+    "37 scores observed before primary17:45UTC; publication and native timezone unknown.",
+    "11 unproven scores excluded.",
+    "Kicktipp sourcecapture is one-shot; recurringKicktipp not activated."
+  ],
+  "globalDelivery": "PARTIAL",
+  "allCompatibleIntegrated": false,
+  "globalUICertified": false
+}

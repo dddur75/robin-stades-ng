@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "robin-retained-qualification-receipt-v1",
+  "generatedAt": "2026-11-25T15:05:09.576Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.RETAINED.ALIAS.QUALIFICATION.20261125",
+  "missionId": "OLBG_RETAINED_ALIAS_QUALIFICATION_20261125",
+  "status": "ACTUAL_TWO_NEW_UNIQUE_QUALIFIED",
+  "scope": "Fourteen retained facts from two individual authors processed once using five independently approved club identities within nine fixtures. Two newly qualified choices; no application admission yet.",
+  "aliasClaimId": "DATA.SOURCE_OBSERVATORY.UEFA25.FIVE.CLUB.ALIASES.20261125",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.PROFILE158.ONE.SHOT.RETAINING.R2.RESULT.20261125",
+    "DATA.SOURCE_OBSERVATORY.OLBG.PROFILE609057.RETAINING.R1.RESULT.20261125"
+  ],
+  "resultSHA256": "190e4024ae7907ca0ad70f86c8faa7ec385477ea74787703e87dc0fd1286c892",
+  "stopSHA256": "d52ebedfa17c4b42e7183107a60e1d8d312ebbcc5d9f8e735727f4417d2a7048",
+  "profiles": [
+    {
+      "batchSHA256": "0fbdfdbe800c70e5c131af9236fd5ae0eb6c9413e873e6c5f37fbdfa319f1dd8",
+      "newUniqueQualified": 0,
+      "observedAt": "2026-11-25T13:42:53.159563+00:00",
+      "priorQualifiedExcluded": 1,
+      "profileId": 158,
+      "qualifiedTotal": 1,
+      "retainedRows": 3
+    },
+    {
+      "batchSHA256": "92938cf01356b007dbf5f5324ca6fba311d68ebdd9f8b87d254c1e4692666d5b",
+      "newUniqueQualified": 2,
+      "observedAt": "2026-11-25T14:25:55.219746+00:00",
+      "priorQualifiedExcluded": 2,
+      "profileId": 609057,
+      "qualifiedTotal": 4,
+      "retainedRows": 11
+    }
+  ],
+  "processedRows": 14,
+  "newUniqueQualified": 2,
+  "priorPublicRows": 489,
+  "SourceGET": 0,
+  "APPWrites": 0,
+  "tests": 0,
+  "elapsedSeconds": 0.9059999999990396,
+  "originalObservationPreserved": true,
+  "sourceFieldsPreserved": true,
+  "qualificationPerformedAt": "2026-11-25T15:05:09.577Z",
+  "rawFactsMutation": false,
+  "globalDelivery": "PARTIAL"
+}

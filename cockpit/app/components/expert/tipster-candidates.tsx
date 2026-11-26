@@ -17,7 +17,7 @@ type Access={platform:string;label:string;reason:string;requiredAccess:string;ow
 type Unadmitted={fixtureLabel:string;selection:string;marketLabel:string;sourceEventText:string;observedAt:string;sourceUrl:string;reason:string};
 type Qualification=Access&{profileVisited:boolean;documentaryIssues:string[];personallyProven:boolean;observedAt?:string;unadmittedFacts?:Unadmitted[];expansionClaimId?:string;picks:(SourceChoice&{id:string;fixtureLabel:string;selection:string;market?:string;observedAt:string;kickoff:string;sourceUrl:string})[]};
 type Candidate={pendingOLBGObservation?:OLBGPendingObservation;pendingChannelObservation?:PendingChannelObservation;reviewedSourceObservation?:ReviewedSourceObservation;id:string;label:string;platform:string;sourceUrl:string;evidenceUrl:string;declaredLastDate:string|null;
- status:'pending_qualification';collectionEnabled:boolean|null;qualification?:Qualification;origin:{sheet:string;row:number;workbookSha256:string}};
+ status:'pending_qualification';collectionEnabled:boolean|null;qualification?:Qualification;origin:{sheet?:string;row?:number;workbookSha256?:string;nativeContestLabel?:string;captureSHA256?:string;parentWorkbook?:{sheet:string;row:number;workbookSha256:string}}};
 type Registry={platformPendingObservations?:PlatformPendingObservations;historicalEvidence?:{sourceObservedAt?:string|null};operationalState?:'unknown';status:string;schemaVersion:string;count:number;platformCount:number;datedCount:number;enabledCount?:number|null;candidates:Candidate[];receipt:{registrySha256:string;claimId:string};qualification?:{status:string;claimId?:string;technicalClaimId?:string;technicalClaimIds?:string[];followupOverlayState?:string;expansionState?:string;expansionClaimId?:string;personalOverlayState?:string;personalCollectionState?:string;personalClaimId?:string;compatibleAccessState?:string;compatibleClaimId?:string;rosterCollectionState?:string;rosterRecurringState?:string;familyCollectionState?:string;familyNativeWinState?:string;familyOpaqueState?:string;familyClaimId?:string;assessedCount?:number;qualifiedCount?:number;platforms?:Access[]}};
 export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;tipsterId?:string}){
  const [data,setData]=useState<Registry|null>(null);const[error,setError]=useState(false);
@@ -33,7 +33,7 @@ export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;ti
  const filtered=rows.filter(r=>(!platform||r.platform===platform)&&(!dated||r.declaredLastDate)&&`${r.label} ${r.platform}`.toLocaleLowerCase('fr').includes(q.trim().toLocaleLowerCase('fr')));
  const reset=()=>setPage(0);
  return <section className="section-card">
-  <SectionHeading title={selected?.label??'Fiches Ligue 1 à qualifier'} />
+  <SectionHeading title={selected?.label??'Fiches tipsters'} />
   <InlineLink href="/expert/catalogue-sources">Catalogue complet des sources</InlineLink>
   {error?<p role="alert">Le registre local des candidats est indisponible. Aucun total de fiches n’est déduit de cette erreur.</p>:!data?<p role="status">Lecture du registre local…</p>:<>
    <p>Registre : <strong>{data.count} fiches importées</strong> · {data.platformCount} libellés de plateforme · {data.datedCount} dates historiques renseignées.</p>
@@ -54,12 +54,12 @@ export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;ti
    {data.platformPendingObservations?.NotBetting&&(compact||selected?.platform==='NotBetting')&&<NotBettingPendingPanel observation={data.platformPendingObservations.NotBetting}/>}
    {compact&&rows.filter(c=>c.pendingOLBGObservation).map(c=><OLBGPendingPanel key={c.id} observation={c.pendingOLBGObservation!} assigned candidateId={c.id}/>)}
    {data.platformPendingObservations?.OLBG&&(compact||selected?.platform==='OLBG')&&<OLBGPendingPanel observation={data.platformPendingObservations.OLBG}/>} 
-   {compact?<InlineLink href="/expert/catalogue-tipsters">Consulter les 317 fiches Ligue 1</InlineLink>:tipsterId?<>
+   {compact?<InlineLink href="/expert/catalogue-tipsters">Consulter les {data.count} fiches tipsters</InlineLink>:tipsterId?<>
     <InlineLink href="/expert/catalogue-tipsters">Retour aux fiches candidates</InlineLink>
     {selected?<article className="section-card">
      <p>{selected.platform} · {selected.reviewedSourceObservation?'Messages reçus, à qualifier':selected.qualification?.label??'À qualifier'} · {selected.collectionEnabled===null?'État actuel de collecte non vérifié':selected.collectionEnabled?'Collecte autorisée dans la campagne':'Collecte désactivée'}</p>
      <p>Dernière date déclarée dans l’inventaire : {selected.declaredLastDate??'Non renseignée'}. Elle ne certifie pas une publication avant match.</p>
-     <p>Provenance : Catalogue, ligne {selected.origin.row}. Classement historique A, Ligue 1.</p>
+     {selected.origin.nativeContestLabel?<p>Provenance : participant nommé du concours {selected.origin.nativeContestLabel}. Cette identité reste limitée au concours et à sa saison.</p>:<p>Provenance : Catalogue, ligne {selected.origin.row}. Classement historique A, Ligue 1.</p>}
      {selected.reviewedSourceObservation&&<ReviewedSourceObservationPanel observation={selected.reviewedSourceObservation}/>}
      {selected.pendingOLBGObservation&&<OLBGPendingPanel observation={selected.pendingOLBGObservation} assigned candidateId={selected.id}/>}
      {selected.pendingChannelObservation&&<PendingChannelPanel observation={selected.pendingChannelObservation}/>}
@@ -76,7 +76,7 @@ export function TipsterCandidates({compact=false,tipsterId}:{compact?:boolean;ti
      </>:<p>Aucun pronostic collecté n’est attribué à cette fiche par cet import.</p>}
      <p><a className="inline-link" href={selected.sourceUrl} target="_blank" rel="noopener noreferrer">Ouvrir la fiche source</a></p>
      <p><a className="inline-link" href={selected.evidenceUrl} target="_blank" rel="noopener noreferrer">Consulter la référence historique</a></p>
-     <details><summary>Empreinte du classeur d’origine</summary><code style={{overflowWrap:'anywhere'}}>{selected.origin.workbookSha256}</code></details>
+     {selected.origin.nativeContestLabel?<details><summary>Provenance de la capture du concours</summary><p>Empreinte de capture : <code style={{overflowWrap:'anywhere'}}>{selected.origin.captureSHA256??'Non renseignée'}</code></p>{selected.origin.parentWorkbook&&<p>Référence documentaire du concours : {selected.origin.parentWorkbook.sheet}, ligne {selected.origin.parentWorkbook.row}. <code style={{overflowWrap:'anywhere'}}>{selected.origin.parentWorkbook.workbookSha256}</code></p>}</details>:<details><summary>Empreinte du classeur d’origine</summary><code style={{overflowWrap:'anywhere'}}>{selected.origin.workbookSha256}</code></details>}
     </article>:<p>Cette fiche candidate ne figure pas dans le registre vérifié.</p>}
    </>:<>
     <div className="filter-panel pilot-filters">

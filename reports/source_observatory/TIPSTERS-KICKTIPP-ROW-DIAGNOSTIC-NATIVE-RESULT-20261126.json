@@ -1,0 +1,21 @@
+{
+  "at": "2026-11-26T00:31:12.063Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.KICKTIPP.ROW.DIAGNOSTIC.NATIVE.RESULT.20261126",
+  "state": "PARTIAL",
+  "sourceGET": 2,
+  "httpStatuses": {
+    "robots": 200,
+    "picks": 301
+  },
+  "resultSHA256": "070cf0e8d538102ffb16f428811e287eeed09a0e5217c74f6d8023594ac74a4f",
+  "outerSHA256": "7fb176c415bc9b72b81a523d40a902b644cfd7a1f00fb420a0fa47bde7e4cecc",
+  "nativeJobExit": 1,
+  "launcherProcessExit": 0,
+  "subtreeClosed": true,
+  "diagnosticWritten": false,
+  "acceptedPredictions": 0,
+  "APPAdmissions": 0,
+  "nextRequiredEvidence": "Literal HTTP Location header from the301 response. Do not inferloginornewURL.",
+  "sourceGrant": "c3f73156e9c3e6c8f22827265fc09330813130db8ffdbc2659d25a0d6bc7a82e",
+  "allCompatibleIntegrated": false
+}

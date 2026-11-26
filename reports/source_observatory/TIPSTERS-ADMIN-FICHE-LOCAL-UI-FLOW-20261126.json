@@ -1,0 +1,28 @@
+{
+  "missionId": "ROBIN_TIPSTERS_READONLY_UI_20261126",
+  "startedAt": "2026-11-25T23:52:23.043Z",
+  "checks": {
+    "admin131Visible": true,
+    "adminArchiveVisible": true,
+    "capturedPersonalPickVisible": true
+  },
+  "errors": [],
+  "localRequests": 164,
+  "externalBlocked": 4,
+  "SourceGET": 0,
+  "APP": 0,
+  "Task": 0,
+  "status": "PASS_LOCAL_UI_FLOW",
+  "elapsedSeconds": 4.37,
+  "finishedAt": "2026-11-25T23:52:27.413Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TIPSTERS.ADMIN.FICHE.UI.FLOW.20261126",
+  "scope": "Actual read-only Edgeheadlessadminandonequalifiedtipsterficheflow, visiblebothcampaignlabelsandpersonalchoice296438937. Notwholeapplicationrecette. Screenshotsprecedeliteralonlylabelcorrection, reviewedstatically.",
+  "screenshotSHA256s": [
+    "fed7c0c313e8830cc481ab6d03494a63ef55b90fc06b5ca01d2b692fd0e0b8cf",
+    "0630acdf16a90a2fe6a3f120545009648abe8646ae83e3dc1bb7f4b0fb1d6637"
+  ],
+  "nativeChoiceId": "olbg-tip:296438937",
+  "labelCorrectionSHA256": "78334ad8ac6036834f7f1997d4f39bd305ce6f449cdc404102663388b597c219",
+  "globalUIRecette": false,
+  "allCompatibleIntegrated": false
+}

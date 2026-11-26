@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "robin-documentary-supplement-receipt-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.TWO.ROSTER.DOCUMENTARY.SUPPLEMENT.20261125",
+  "missionId": "OLBG_TWO_ROSTER_DOC_SUPPLEMENT_20261125",
+  "status": "VERIFIED_DOCUMENTARY_PROPOSAL_NOT_ACTIVE",
+  "scope": "Three-row cumulative supplement preserves the existing642100 row and proposes two missing catalogue fiches for already known public authors.",
+  "payloadSHA256": "66ccba48cc652ddd4fd7a2d13018c47627f76f951903a02b26b0d6f11324a5dd",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.TWO.ROSTER.DOCUMENTARY.SUPPLEMENT.SOURCES.20261125"
+  ],
+  "rows": 3,
+  "newFiches": 2,
+  "newPublicAuthors": 0,
+  "sourceGET": 0,
+  "APP": 0
+}

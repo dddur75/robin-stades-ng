@@ -51,6 +51,8 @@ export default defineConfig(async () => {
   const { cloudflare } = await import("@cloudflare/vite-plugin");
 
   return {
+    // The RSC entry imports virtual modules resolved by the RSC plugin.
+    environments: { rsc: { optimizeDeps: { exclude: ["@vitejs/plugin-rsc/rsc"] } } },
     server: isCodexSeatbeltSandbox
       ? { watch: { useFsEvents: false, usePolling: true } }
       : undefined,
