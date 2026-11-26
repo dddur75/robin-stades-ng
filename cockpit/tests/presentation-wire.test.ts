@@ -114,3 +114,20 @@ test("one already prepared projection roundtrips exactly and checked-in client w
   assert.ok(JSON.stringify(wire).length < before.length);
 });
 
+
+test("timeline parent metadata is shared only when exact and decoded without collisions", () => {
+  const source = { matches: [{ id: "fixture-a", kickoff: "2026-11-26T17:45:00Z", timeline: [
+    { id: "window", fixtureId: "fixture-a", kickoffAt: "2026-11-26T17:45:00Z", policyVersion: "alpha", status: "OPEN" },
+  ] }] };
+  const wire = encodePresentationWire(source);
+  const match = (wire.matches as Record<string, unknown>[])[0];
+  assert.equal(match.timelineMatchMetadataShared, true);
+  assert.equal(Object.hasOwn((match.timeline as object[])[0], "fixtureId"), false);
+  assert.deepEqual(decodePresentationWire(wire), source);
+  const foreign = structuredClone(source); foreign.matches[0].timeline[0].fixtureId = "fixture-b";
+  assert.deepEqual(decodePresentationWire(encodePresentationWire(foreign)), foreign);
+  assert.throws(() => encodePresentationWire({ matches: [{ ...source.matches[0], timelineMatchMetadataShared: true }] }), /PRESENTATION_WIRE_/);
+  for (const extra of [{ fixtureId: "fixture-a" }, { kickoffAt: source.matches[0].kickoff }]) {
+    assert.throws(() => decodePresentationWire({ ...wire, matches: [{ ...match, timeline: [{ ...(match.timeline as object[])[0], ...extra }] }] }), /PRESENTATION_WIRE_/);
+  }
+});

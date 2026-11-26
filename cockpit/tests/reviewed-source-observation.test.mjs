@@ -26,7 +26,21 @@ const adoptionSource=readFileSync(new URL('../scripts/olbg-parent-adoption.ts',i
 const adoptionURL='data:text/javascript;base64,'+Buffer.from(stripTypeScriptTypes(adoptionSource)
   .replaceAll("'./olbg-campaign-companion'",JSON.stringify(campaignURL))
   .replaceAll("'./root-parent-proof'",JSON.stringify(proofURL))).toString('base64');
+const moduleURL=code=>'data:text/javascript;base64,'+Buffer.from(stripTypeScriptTypes(code)).toString('base64');
+const nativeBatchURL=moduleURL(readFileSync(new URL('../scripts/olbg-native-validated-batch.ts',import.meta.url),'utf8'));
+const multiMergeURL=moduleURL(readFileSync(new URL('../scripts/olbg-multi-capture-merge.ts',import.meta.url),'utf8').replaceAll("'./olbg-campaign-companion'",JSON.stringify(campaignURL)));
+const multiURL=moduleURL(readFileSync(new URL('../scripts/olbg-multi-capture.ts',import.meta.url),'utf8')
+  .replaceAll("'./olbg-native-validated-batch'",JSON.stringify(nativeBatchURL))
+  .replaceAll("'./olbg-campaign-companion'",JSON.stringify(campaignURL))
+  .replaceAll("'./olbg-multi-capture-merge'",JSON.stringify(multiMergeURL)));
+const multiApprovalURL=moduleURL(readFileSync(new URL('../scripts/olbg-multi-capture-approval.ts',import.meta.url),'utf8'));
+const finiteURL=moduleURL(readFileSync(new URL('../scripts/olbg-finite-native.ts',import.meta.url),'utf8').replaceAll("'./olbg-campaign-companion'",JSON.stringify(campaignURL)));
+const finiteApprovalURL=moduleURL(readFileSync(new URL('../scripts/olbg-finite-native-approval.ts',import.meta.url),'utf8'));
 const resolvedSource=stripTypeScriptTypes(source)
+  .replaceAll("'./olbg-multi-capture'",JSON.stringify(multiURL))
+  .replaceAll("'./olbg-multi-capture-approval'",JSON.stringify(multiApprovalURL))
+  .replaceAll("'./olbg-finite-native'",JSON.stringify(finiteURL))
+  .replaceAll("'./olbg-finite-native-approval'",JSON.stringify(finiteApprovalURL))
   .replace("from './olbg-parent-adoption'","from '"+adoptionURL+"'")
   .replace("from './olbg-campaign-companion'","from '"+campaignURL+"'")
   .replace("from './olbg-retained-approved'","from '"+retainedURL+"'")

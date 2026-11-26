@@ -16,7 +16,7 @@ function owns(value: JsonObject, key: string): boolean {
   return Object.prototype.hasOwnProperty.call(value, key);
 }
 
-/** Factor only timeline policies; preserve every other presentation field. */
+/** Factor repeated timeline policies and parent metadata; preserve every presented field. */
 export function encodePresentationWire(value: unknown): JsonObject {
   const source = object(value);
   if (owns(source, "timelinePolicyVersions")) {
@@ -27,8 +27,18 @@ export function encodePresentationWire(value: unknown): JsonObject {
   const matches = [];
   for (const item of array(source.matches)) {
     const match = object(item);
+    if (owns(match, "timelineMatchMetadataShared")) {
+      throw new Error("PRESENTATION_WIRE_MATCH_METADATA_COLLISION");
+    }
+    const windows = array(match.timeline);
+    const shared = windows.length > 0 && typeof match.id === "string" && typeof match.kickoff === "string"
+      && windows.every((item) => {
+        const window = object(item);
+        return owns(window, "fixtureId") && owns(window, "kickoffAt")
+          && window.fixtureId === match.id && window.kickoffAt === match.kickoff;
+      });
     const timeline = [];
-    for (const item of array(match.timeline)) {
+    for (const item of windows) {
       const window = object(item);
       if (owns(window, "policyVersionIndex")) {
         throw new Error("PRESENTATION_WIRE_INDEX_COLLISION");
@@ -43,9 +53,10 @@ export function encodePresentationWire(value: unknown): JsonObject {
         policies.push(policyVersion);
         indices.set(policyVersion, index);
       }
+      if (shared) { delete fields.fixtureId; delete fields.kickoffAt; }
       timeline.push({ ...fields, policyVersionIndex: index });
     }
-    matches.push({ ...match, timeline });
+    matches.push({ ...match, ...(shared ? { timelineMatchMetadataShared: true } : {}), timeline });
   }
   return { ...source, matches, timelinePolicyVersions: policies };
 }
@@ -67,6 +78,12 @@ export function decodePresentationWire(value: unknown): JsonObject {
   const matches = [];
   for (const item of array(wire.matches)) {
     const match = object(item);
+    const { timelineMatchMetadataShared, ...matchFields } = match;
+    const shared = owns(match, "timelineMatchMetadataShared");
+    if (shared && (timelineMatchMetadataShared !== true || typeof match.id !== "string"
+      || typeof match.kickoff !== "string" || array(match.timeline).length === 0)) {
+      throw new Error("PRESENTATION_WIRE_MATCH_METADATA_INVALID");
+    }
     const timeline = [];
     for (const item of array(match.timeline)) {
       const window = object(item);
@@ -83,9 +100,16 @@ export function decodePresentationWire(value: unknown): JsonObject {
       ) {
         throw new Error("PRESENTATION_WIRE_INDEX_INVALID");
       }
+      if (shared) {
+        if (owns(window, "fixtureId") || owns(window, "kickoffAt")) {
+          throw new Error("PRESENTATION_WIRE_MATCH_METADATA_COLLISION");
+        }
+        fields.fixtureId = match.id;
+        fields.kickoffAt = match.kickoff;
+      }
       timeline.push({ ...fields, policyVersion: policies[policyVersionIndex] });
     }
-    matches.push({ ...match, timeline });
+    matches.push({ ...matchFields, timeline });
   }
   const result: JsonObject = { ...wire, matches };
   delete result.timelinePolicyVersions;
