@@ -37,7 +37,7 @@ test("le contrat refuse données brutes, états actifs et preuves ou dates inval
     { ...fixture(), results: [{ ...fixture().results[0], rawFacts: [] }] },
     { ...fixture(), results: [{ ...fixture().results[0], metrics: { ...fixture().results[0].metrics, candidates: -1 } }] },
     { ...fixture(), results: [fixture().results[0], fixture().results[0]] },
-    { ...fixture(), results: Array.from({ length: 51 }, (_, id) => ({ ...fixture().results[0], id: `source-${id}` })) },
+    { ...fixture(), results: Array.from({ length: 101 }, (_, id) => ({ ...fixture().results[0], id: `source-${id}` })) },
   ];
   for (const value of cases) assert.throws(() => parseQualificationSnapshot(value));
 });
