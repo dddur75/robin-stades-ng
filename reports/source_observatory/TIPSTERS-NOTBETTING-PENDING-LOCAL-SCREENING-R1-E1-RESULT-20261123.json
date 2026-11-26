@@ -1,0 +1,26 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.LOCAL.SCREENING.R1.E1.RESULT.20261123",
+  "missionId": "NOTBETTING_PENDING_LOCAL_SCREENING_R1_20261123",
+  "generatedAt": "2026-11-23T16:25:32.476Z",
+  "status": "SYNTHETIC_SCREENING_E1_PASS_ONLY",
+  "keys": [
+    "C0",
+    "C1",
+    "C3"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.SOURCE.NATIVE.R1.ACTUAL.RESULT.20261123",
+    "DATA.SOURCE_OBSERVATORY.BUNDES.J11.FUTURE.UTC.PROGRAMME.RESULT.20261123"
+  ],
+  "scope": "FourSYNTHmethodsPASS/criticalRuff0/RAMcompile0, sourceartifactparse0, independentlyreviewedC1/C3. Outputsclosedcompetitionenum/sourceDECLAREDdaterelation/programmestopCOUNTS only, no rawfields/IDs/choice/event/dateliterals;0admission/globalUNKNOWN. Source-datecomparison notactualwhistle or canonicaljoin. Plan didnotcode/config pin: freshE2localdecisionANDinvocation MUSTexplicitlybindcode3ec7/config7cd0/testhash thenverifybeforeexec, notplanhashalone. NoSOURCEgrant.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "planSHA": "3ee8d09549334e5e9a88edf791d7f35a4bf3beb9bd5b82f4365ae36536c81460",
+  "manifestSHA": "45c12341cfba4647b600a229906f93406e0a144ac76f630998a346c74609029b",
+  "codeSHA": "3ec7a1eed21ad9bf0ec75956eeedec2ef5dc26c51938d9f074d367d4bc8d5f9f",
+  "configSHA": "7cd08db4c38bb4841b98b158f8fea56dab0f7c59f0f5fb4a296974975efc9668",
+  "testsSHA": "0b1cf5ddce471b3720369a03075106bfadd11189576e13a9fea3ac0f300539a1",
+  "primarySHA": "0ef6a6dc7a0b8ad6b1bea137b7cf8e179141231bfc3b6c5f939e35c111a27cd8"
+}

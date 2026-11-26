@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "robin-retained-data-qualification-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.TWO.EXTRA.RETAINED.QUALIFICATION.20261125",
+  "missionId": "OLBG_TWO_ADDITIONAL_RETAINED_QUALIFICATION_20261125",
+  "scope": "Two additional individual OLBG profiles acquired once; qualify only the five retained facts with the already approved nineteen-fixture calendar and original observations; no new test or source replay.",
+  "status": "VERIFIED_RETAINED_DATA_QUALIFICATION_APP_PENDING",
+  "sourceGET": 6,
+  "nativeJobs": 2,
+  "retainedFacts": 5,
+  "qualifiedNewUnique": 4,
+  "authorsWithNewChoices": 2,
+  "sourceJobsClosed": true,
+  "qualificationSourceGET": 0,
+  "APP": 0,
+  "testSuiteRuns": 0,
+  "newTests": 0,
+  "allCompatibleIntegrated": false,
+  "globalDelivery": "PARTIAL",
+  "sourceResultHashes": [
+    "91fe84a5bab69f281811a2d5ebcd7a5dbcde7b4ddb067f2c6f80530796dc9932",
+    "c07a211cc329f5355515d7c10bdfd967b358987491f26546d44a2056deb30d7a"
+  ],
+  "qualificationResultSHA256": "4ac20752ec0d78c45f841506a62a821c640520903e3dc2910b48cc1e88fb0b46",
+  "calendarContextSHA256": "89a95c97cb71b82cfedcf978831a0e25e4110e16266efb01e1d289f1eaa567b1"
+}

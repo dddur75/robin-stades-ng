@@ -1,0 +1,50 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.PROCESS.CHAIN.SYNTH.R2.PARTIAL.RESULT.20261124",
+  "status": "PARTIAL_REQUIRES_CODE_CLOSURE_REDESIGN_E1",
+  "scope": "Targeted private process-chain engineering only. Thirteen successful methods reused/acquired across two honest partial scopes; two reader methods never started because closed import validation refused incomplete module maps. No native Source or Job execution.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V43.ENGINEERING.RECETTE.20261124",
+    "DATA.SOURCE_OBSERVATORY.UEFA.25NOV.PRIMARY.CALENDAR.20261124"
+  ],
+  "privateReceiptSHAs": {
+    "r1Result": "299a353fdce29a32f37d94d37faa0201732b06bc5637b1f51bb422f5a97ea933",
+    "r1STOP": "79736bf7a80254d20ae803e505e796b1d9be6137d8a43e00069a64d3ba0b9b5c",
+    "r2Result": "2d1049daf8cd9215cfc0573efbf07c850811ba9179e4164b360f13d5e16ccb39",
+    "r2STOP": "01b2f4d6b9bcb185fe21ddc1f0ec3311f87b879cfa9665a72fd5e5de3fccd2cc"
+  },
+  "methods": {
+    "parent": 4,
+    "bridge": 6,
+    "nodeReaders": 2,
+    "newClosedLoader": 1,
+    "successfulTotal": 13,
+    "pythonReadersExecuted": 0,
+    "pythonReadersRemaining": 2
+  },
+  "quality": {
+    "parentBridgeMypy4": "PASS",
+    "qualifiedReaderMypy1": "PASS",
+    "targetedBandit5": "PASS_WITH_7_REVIEWED_LOCAL_EXCLUSIONS_AND_WARNINGS",
+    "ruff": "FAIL_I001_LEADING_IMPORT_COMMENT"
+  },
+  "nativeCurrentPrefixValidated": false,
+  "actualSourceGET": 0,
+  "actualJob": 0,
+  "applicationAdmissions": 0,
+  "recurringCollectionActive": false,
+  "automaticParentProofIOEnabled": false,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "redesign": {
+    "similarClosureFailures": 2,
+    "thirdIdenticalAttemptForbidden": true,
+    "next": "AST fixpoint resolver with submodule from-import handling, small synthetic test and all-edge static proof before the two reader methods."
+  },
+  "documentaryContext": {
+    "snapshotClaim": "DATA.SOURCE_OBSERVATORY.UEFA.25NOV.PRIMARY.CALENDAR.20261124",
+    "privateContextSHA": "c6b225e2beafb7567009f365582132b69cfa0a39a3c38c470e002f02ca4751ad",
+    "calendarSHA": "9ac912e11c2fb975f1aba53554873d9410d2681fc834248b6374461b3d1150a3",
+    "fixtures": 9,
+    "sourceAdoption": false
+  }
+}

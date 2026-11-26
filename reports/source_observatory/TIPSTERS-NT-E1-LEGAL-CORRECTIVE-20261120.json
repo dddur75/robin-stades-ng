@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "robin-nt-legal-corrective-authority-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NT.E1.LEGAL.CORRECTIVE.20261120",
+  "generatedAt": "2026-11-20T06:38:59.830610+00:00",
+  "status": "FIRST_READER_PARTIAL_CORRECTIVE_RULES_ONLY",
+  "missionId": "ROBIN-NT-LEGAL-CORRECTIVE-20261120-E1",
+  "planSha256": "7f831ef838b08a8484861413e3c6066a69cb3f9bf283eaf276ac04b5332e87e7",
+  "manifestSha256": "ece5d98ed202739679d2b6b29d62faf5088585a26e6852331af4cfd6b3130f21",
+  "manifest": {
+    "authorized_stages": [
+      "E1"
+    ],
+    "compute_budget": {
+      "process_ram_seconds": 1800,
+      "response_bytes_max": 2000000,
+      "review_words_max": 180,
+      "workers": 1
+    },
+    "expires_at": "2026-11-20T08:00:00+00:00",
+    "external_effects": {
+      "api_calls": false,
+      "authenticated": false,
+      "notbetting_get_max": 1,
+      "post": false,
+      "public_get_max": 2,
+      "telegram_get_max": 1
+    },
+    "maximum_stage": "E1",
+    "mission_id": "ROBIN-NT-LEGAL-CORRECTIVE-20261120-E1",
+    "source_hash": "7f831ef838b08a8484861413e3c6066a69cb3f9bf283eaf276ac04b5332e87e7",
+    "time_budget": {
+      "family_active_seconds_max": 300,
+      "family_network_seconds_max": 144,
+      "prior_active_seconds": 128.21899999998277,
+      "prior_network_conservative_seconds": 96
+    }
+  },
+  "priorQualificationGET": 98,
+  "maximumAfterThisCorrective": 100,
+  "sharedCeiling": 134,
+  "family": {
+    "priorGET": 8,
+    "maximumGET": 12,
+    "afterCorrective": 10,
+    "priorNotBettingGET": 2,
+    "afterNotBettingGET": 3,
+    "notbettingMax": 4,
+    "priorTelegramGET": 6,
+    "afterTelegramGET": 7,
+    "telegramMax": 8,
+    "priorActiveSeconds": 128.21899999998277,
+    "sharedActiveSecondsMax": 300,
+    "priorNetworkConservativeSeconds": 96,
+    "sharedNetworkSecondsMax": 144
+  },
+  "sourceProofLimit": "First reader could not establish leaf-div NotBetting clauses and selected generic Telegram licensing sentences before the operative restriction. No personal content was read. Preserve source, code and receipts; apply the smallest corrected legal reading at E1.",
+  "priorJournal": "cockpit/.ci/tipsters-notbetting-telegram-20261120/events.jsonl",
+  "priorJournalSha256": "8ad12e668458c84cbb71d0fbb86bb76afe75e8c933f9867383ab47909fbc214b",
+  "codePins": {
+    "cockpit/.ci/tipsters-nt-legal-corrective-20261120/legal.py": "0247b02bb2d88b0275ee4ef88e6898e0ed3c5d0f2ba6947b28541e1963fa6f4d",
+    "cockpit/.ci/tipsters-notbetting-telegram-20261120/qualify_v2.py": "6de6b198dbdb6f11da23d90ff04d7930451a322822ccfc160c610e84cfb8ce37",
+    "cockpit/.ci/tipsters-notbetting-telegram-20261120/transport.py": "6ec2b85b2a5b36e578ec9a2ef23c2cd5303a1e2d7e3717869df08030529b1ad5",
+    "src/robin/source_observatory/connectors.py": "ba991ea9c1ab0ebc4bca7814d5216edc47a91ac7ea7e3ecb219270326ffe79a6",
+    "src/robin/source_observatory/public_formats.py": "b6750a73cc21a105958df82d035d63f3bbede259ef830140b8c629d8a580cf09"
+  },
+  "tests": {
+    "correctiveSyntheticPassed": 5,
+    "previousOfflinePassed": 18,
+    "newSourceGetDuringTests": 0
+  },
+  "scope": "Two exact legal documents only. Source bodies in RAM, hashes/locators/categories on disk; selected sentence excerpts bounded180 words in reviewer output. No profile, API, asset, channel or activation.",
+  "operatorConstraint": "C0 enforces at most one quote per (source URL, locator), regardless of category, as the stricter plan and C2 key require.",
+  "portableProjection": {
+    "originalPublicReportSha256": "bcb0899d654ab444a70312f0d9107f52de49ffa853b7ba87b3447216eca77c04",
+    "originalBytesRetainedAt": "cockpit/.ci/tipsters-nt-delivery-20261120/pre-portability/bcb0899d654ab444a70312f0d9107f52de49ffa853b7ba87b3447216eca77c04-TIPSTERS-NT-E1-LEGAL-CORRECTIVE-20261120.json",
+    "normalization": "REPOSITORY_RELATIVE_POINTERS_ONLY",
+    "factsAndPrivatePacketsUnchanged": true
+  }
+}

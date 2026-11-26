@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "robin-source-plan-reference-binding-v1",
+  "generatedAt": "2026-11-25T11:56:37.782Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.PROFILE642100.NATIVE.R1.ACTUAL.RESULT.20261125",
+  "status": "REFERENCE_BINDING_TO_VERIFIED_ACTUAL_RESULT",
+  "scope": "Immutable source-plan claim reference for the same audited collection; no new metric, observation, readiness or person alias.",
+  "missionId": "OLBG_PROFILE642100_NATIVE_R1_20261125",
+  "sourcePlanClaimId": "ENG.SOURCE_OBSERVATORY.OLBG.PROFILE642100.NATIVE.R1.ACTUAL.RESULT.20261125",
+  "actualDataClaimId": "DATA.SOURCE_OBSERVATORY.OLBG.PROFILE642100.NATIVE.R1.RESULT.20261125",
+  "actualReportSHA256": "ebaa5dc0b8eb93bf74f76abd7eba9ae62fd10298754fe1a2d6aeec3205c9276b",
+  "sourceBatchSHA256": "5e76adba8a3fa825640c7acc7468314b64606140517a8a4eb3fe38878a265d62",
+  "sourceBatchBytes": 10946,
+  "sourceTuple": {
+    "parentPlanSHA": "70c5991a6c557558daeffbef9d579acafe492df783a716f10f1191011604ae27",
+    "parentManifestSHA": "76c86117c9061a1afb5400c435f7ae9c72a85ada9d2146411ce0711791aa5410",
+    "childPlanSHA": "e9b6d2a35e6ac3e040b3d334628e7255259815b000c58908c274ba706747806b",
+    "childManifestSHA": "94f5416f80f4ddc9875713edaa10e298439870441404cc6f497a28ba224dfe9d"
+  },
+  "rootResultSHA256": "8bc6d590cf7e92942bac5b340755221a826423ebc5fe5c64dbd3b3a74f487871",
+  "actualControllerPrimarySHA256": "216e1a94fd02ed2167e6c287e02628d9a03c8a7ddef55465a206c2d5faf08900",
+  "immutableSourceArtifactsChanged": false,
+  "additionalObservations": 0,
+  "sourceReady": false
+}

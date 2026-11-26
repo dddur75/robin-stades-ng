@@ -1,0 +1,24 @@
+{
+  "generatedAt": "2026-11-23T08:23:24.856Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.BOUND.WITNESS.ADAPTER.PRIVATE.RESULT.20261123",
+  "missionId": "COTEUR_BOUND_WITNESS_ADAPTER_PRIVATE_E1_20261123",
+  "status": "PRIVATE_PROTOCOL_VERIFIED_WITH_DISCLOSED_TEST_LIMITATION",
+  "scope": "Strict closed diagnostic-only Python consumer; no source promotion. Sixteen unique JSON cases in prior GREEN, seventeen executions including repeated RED; final C1-control tightening reviewed statically but not dynamically in this private phase. Later PUBLIC integration tests are separate evidence.",
+  "keys": [
+    "C0",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.BOUNDED.ITERATIVE.REDESIGN.PRIVATE.RESULT.20261123"
+  ],
+  "protocolSHA256": "ad4bbb62d2a68be2618626b7ed3f4a0a31fd2747db7312987f6067cf96e9a7be",
+  "resultSHA256": "c0b804101bb7c5644c9676e10eb49fb42bbbfbbb54aab97757e38433d04ecc23",
+  "codeMapCAN": "99c3b7b982c29d077fcddf1dbd671b35475f85a60b03ecb5d495d086a04d9dba",
+  "authorStatus": "STOP",
+  "elapsedSeconds": 198.484795,
+  "finalControlChangeDynamicallyRetested": false,
+  "sourceGET": 0,
+  "sourceReady": false,
+  "providerDataReads": 0
+}

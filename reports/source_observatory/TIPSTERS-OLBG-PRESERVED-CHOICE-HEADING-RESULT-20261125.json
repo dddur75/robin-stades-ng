@@ -1,0 +1,16 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.PRESERVED.CHOICE.HEADING.RESULT.20261125",
+  "status": "TWO_EXACT_HEADING_COPIES_APPLIED",
+  "scope": "One neutral heading edit, no temporal recertification or data change",
+  "resultSHA": "a9801b831c2e750e23369c998325b3d88d23161ae67d0608c0c1c6553fdbc575",
+  "stopSHA": "a1aa9a42dbc8623ff6046b5caa98b0a4d3ee64f894c7d645bf42e8a11453b70d",
+  "beforeSHA": "8e8a6213f5fe84aaf402b4896e313f1cf8f58d8da3c0d2edd9f203c806718372",
+  "afterSHA": "9ec689675328760fbb04b20350d71ed7448e2eec623f5b99c83da0f008f06a6e",
+  "copies": 2,
+  "logicChanged": false,
+  "dataChanged": false,
+  "heading": "Choix personnels conservés",
+  "baselineClaim": "ENG.SOURCE_OBSERVATORY.OLBG.R5.CANDIDATE.BASELINE.DELTA.RESULT.20261125",
+  "SourceGET": 0,
+  "globalUIProven": false
+}

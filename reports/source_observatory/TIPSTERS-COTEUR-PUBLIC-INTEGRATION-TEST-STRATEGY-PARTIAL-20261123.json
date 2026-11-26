@@ -1,0 +1,40 @@
+{
+  "actualTargetedTestRuns": 2,
+  "authorElapsedSeconds": 179.770311,
+  "authorStoppedAt": "2026-11-23T03:29:32.584Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.PUBLIC.INTEGRATION.TEST.STRATEGY.PARTIAL.20261123",
+  "finalCriticalRuffExit": 0,
+  "finalNodeSyntaxExit": 0,
+  "firstActualRun": {
+    "CLIProcesses": 3,
+    "failed": 1,
+    "passed": 5
+  },
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "limits": [
+    "Two depth-based tests returned fail-closed OUTPUT_CONTRACT rather than asserted INVALID_JSON; decoder exception cause not established. No six-case green exists.",
+    "Incorrect v3 success wording was superseded append-only; duplicate actualTargetedTestRuns field previously inherited1 is corrected here to2, no primary changed.",
+    "Prelaunch env assembly had no process output/exit; no actual test claimed for it.",
+    "No source/API/native/app/Task/push effects; production code unchanged on second trial. No third identical depth trial."
+  ],
+  "missionId": "COTEUR_QUERY_SHAPES_PUBLIC_INTEGRATION_R2_E1_20261123",
+  "publicProjectionSHA256": "67ab6ac9f550e76f1d55c9f029a53323cccdbaf4fe9bbdbe60a527ca05686d45",
+  "publicProtocolSHA256": "9a71bd2da8d99a16c682dc500b133fb6cd0fe6e3ae49e5392c1e51cd0a0a8ce0",
+  "scope": "PUBLIC_METADATA_CLI_IMPLEMENTED_FIVE_CASES_PASSED_ONE_TEST_EXPECTATION_FAILED_TWICE",
+  "secondTargetedRun": {
+    "CLIProcesses": 0,
+    "failed": 1,
+    "passed": 0
+  },
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.SHAPES.PRIVATE.RESULT.20261123"
+  ],
+  "sourceGET": 0,
+  "sourceReady": false,
+  "status": "PARTIAL_TEST_STRATEGY_REDESIGN_REQUIRED"
+}

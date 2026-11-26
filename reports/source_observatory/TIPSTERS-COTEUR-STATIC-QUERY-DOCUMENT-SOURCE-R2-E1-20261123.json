@@ -1,0 +1,61 @@
+{
+  "missionId": "COTEUR_STATIC_QUERY_DOCUMENT_SOURCE_R2_20261123",
+  "status": "ACCEPTED_E1_SOURCE_CALLER_BINDING_ONLY",
+  "writer": "C0",
+  "authorStoppedAt": "2026-11-23T04:16:52.313Z",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "actualNodeProcesses": 0,
+  "sourceReady": false,
+  "loadExit": 0,
+  "lintExit": 0,
+  "planCanonicalSHA256": "79cc8bae7ba94fe2352cf25650e81f3b2024dd154499147e14330c58210f1659",
+  "manifestCanonicalSHA256": "8c016a7c0ccacf004680972a7df2de7868b65fb15b6a542650471c39862923e8",
+  "codeMap": {
+    "authority_policy.py": "b88228c419b5b82606f7e24cafa37892b299e73714d0aec81e9d671a74275fc7",
+    "native_outer.py": "7cfb44b9e52852bd254edf864644cafce5b3748d8273d5c60371d5a8825624ec",
+    "fixed_transport.py": "2a0096cdda67d3f97a18d09e23cd1a6f3407aa052c99ae8983abb7e0da675c20",
+    "source_worker.py": "62f87bdd8992ebe71afbcb5c5b43049c5bbe2cf3ff9b3457b22ddb5f1911e8a4",
+    "plan.json": "93078293afa67a547b7cf401563231b6113fe1e093f5de34be5e23e9377b9aaf",
+    "mission.json": "a0195ab06aaf3853df4cd4a8e36d9cd4c71411e5678507eb41a17d22e6570ab5",
+    "config.json": "b050ef6c3d35b5fccebd5c357d22ee188b773d8b0316988e23a63b433f4930db",
+    "test_load.py": "5d21d238b3ce90a92ddce495977984470ac2ad83c2cd8b5bf9725e7fcdc10ec6",
+    "load-primary.json": "4f40e5cebcbcd4cbebe365f2b5fe648caf26f00c820bb09fd82651d1d817afad",
+    "critical-ruff-primary.json": "c7421798d280e44acf0389f137b4cc5e198998dae8580a12afd51de06b8cbb8b"
+  },
+  "reusedProofs": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.CANONICAL.PREFLIGHT.CALLER.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.DOCUMENTARY.PERSONAL.CONTEXT.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.PUBLIC.INTEGRATION.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.SECOND.ASSET.AST.RESULT.20261121",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.WINDOWS.AUDITED.SPAWN.FIX.RESULT.20261123"
+  ],
+  "limits": [
+    "Distinct documentmetadata qualification purpose, not replaying old failed probe or qualifying tipsters. Attested exactasset only, nofallback/redirect/retry/sourceAPI action. AlloldmissionsquotasSTOP.",
+    "Coteur primarycached2days/§4browser-clientcomplianceUNKNOWN/§5RAMinspectionreproductionapplicabilityUNKNOWN/§7databaseprotection/explicitautomationpermissionUNKNOWN preserved. Personal purpose is not a licence; reviewedcontext doesnot grantSOURCE. FourSOURCEkeys may accept or deny this exactlimitedoperation, no automaticlegalclearance.",
+    "Python audit applies worker only; Node networkconfinement notdirectlymeasured. Assurance comes from exactNode/TS/projectorpins/AST-onlyproviderhandling and singleauditedPopen; no claim strongerthanactualJob/lifecycleproof.",
+    "No rawJS/nativeproviderpayload inGit/R2/SQL, no choices/messages/queryvalues/modeling/bets/purchases/social. NewHTTPrefusal/parserpartial/zeroeligible/timeoutSTOPwithdurablecloseddiagnostics, no remainingquota reuse."
+  ],
+  "parentGrant": "f10e5bcbda1e36f2327331fd8892c732eb935e0198487b560148026b133caf27",
+  "planSHA": "79cc8bae7ba94fe2352cf25650e81f3b2024dd154499147e14330c58210f1659",
+  "manifestSHA": "8c016a7c0ccacf004680972a7df2de7868b65fb15b6a542650471c39862923e8",
+  "configSHA": "b050ef6c3d35b5fccebd5c357d22ee188b773d8b0316988e23a63b433f4930db",
+  "workerSHA": "62f87bdd8992ebe71afbcb5c5b43049c5bbe2cf3ff9b3457b22ddb5f1911e8a4",
+  "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+  "outerSHA": "7cfb44b9e52852bd254edf864644cafce5b3748d8273d5c60371d5a8825624ec",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.DOCUMENT.SOURCE.R2.E1.20261123",
+  "scope": "NEW_BINDING_AND_ONE_ISOLATED_COMPONENT_LOAD_NO_SOURCE_EFFECT",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.CANONICAL.PREFLIGHT.CALLER.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.DOCUMENTARY.PERSONAL.CONTEXT.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.PUBLIC.INTEGRATION.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.SECOND.ASSET.AST.RESULT.20261121",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.WINDOWS.AUDITED.SPAWN.FIX.RESULT.20261123"
+  ]
+}

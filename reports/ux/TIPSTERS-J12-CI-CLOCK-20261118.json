@@ -1,0 +1,25 @@
+{
+  "claim_id": "ENG.SOURCE_OBSERVATORY.J12.CI_CLOCK.20261118",
+  "failed_run": 44206004800,
+  "failed_job": 134471970937,
+  "base_revision": "cbd2c4d39aba69e58f88b19544537c47e367df1f",
+  "runtime_changed": false,
+  "provider_calls": 0,
+  "cause": "A time-relative cached quota proof crossed UTC midnight while the test expected the same-day reuse branch.",
+  "reproduction": {
+    "12:14_UTC": "PASS",
+    "00:14_UTC": "EXPECTED_ORIGINAL_ASSERTION_REPRODUCED"
+  },
+  "correction": "Use a fixed UTC instant in only the preflight cache test and add the midnight refresh case.",
+  "verification": {
+    "targeted_parameters": 5,
+    "result": "PASS",
+    "ruff": "PASS",
+    "independent_review": {
+      "A3": "PASS",
+      "C4": "PASS"
+    }
+  },
+  "source_file": "tests/historical_deep/test_mission028_performance.py",
+  "source_sha256": "1f4d605c224b188adcea40308f8a73506de4a47fc432e3f9a15c34fdcc26ae8d"
+}

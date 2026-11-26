@@ -1,0 +1,23 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.PREFIX.NATIVE.R1.E1.FAILURE.20261123",
+  "missionId": "TELEGRAM_BEXTRA_PREFIX_NATIVE_R1_20261123",
+  "status": "FAIL_AND_STOP",
+  "generatedAt": "2026-11-23T16:16:05.582Z",
+  "keys": [
+    "C0"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.FIXED.ROUTE.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.STRUCTURED.NATIVE.R2.ACTUAL.RESULT.20261123",
+    "DATA.SOURCE_OBSERVATORY.WORKBOOK.COMPLETE.20261120",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.EU.DSA.NATIVE.DOCS.E1.RESULT.20261122"
+  ],
+  "scope": "Root E1exactloader harness incorrectly retainedoldbetsoccer syntheticbody/channel againstBextraworkervalidated_prefix, PREFIX_CONTRACT refusal. FullpolicyfourRAMcases passed butE1notpassed. No realSD/spent/Job/GET/store. Scope singleloader/syntheticprobe consumed, immutablecampaignSTOP; futurecorrectivetestmustfreshmanifest. This is testfixture mismatch not Bextra sourcecontent failure. Failure conservatively recordedC0, independentreview stillpending.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "loaderExit": 1,
+  "reason": "PREFIX_CONTRACT_INCORRECT_SYNTHETIC_CHANNEL",
+  "primarySHA": "332f94b5f23fc5b2a699028f5fb1a2c60189f4c538c3935be047479383f9dd40"
+}

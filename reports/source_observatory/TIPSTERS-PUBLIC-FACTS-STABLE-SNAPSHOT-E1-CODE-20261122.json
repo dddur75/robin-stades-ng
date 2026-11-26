@@ -1,0 +1,46 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.PUBLIC.FACTS.STABLE.SNAPSHOT.E1.CODE.20261122",
+  "recordedAt": "2026-11-22T10:33:48.144Z",
+  "status": "E1_CODE_AND_DATA_VERIFIED_E2_NOT_YET_EXECUTED",
+  "scope": "Explicit fixed reviewed structured fact snapshot; no operation-state carryover or historical subprocess/Task query. Exact legacy,SCO,GR approval chain preserves479 choices and advances only42 authorized lastSeen timestamps.",
+  "planSHA256": "4c19571c9efd8c3d3527c89f109f76e974f84d2b1edbac2f47ee7932c3d110bb",
+  "manifestSHA256": "d69dda4ba505b7d1a1e62afe2cce612ede99fbf99d2ade050437f73bb8a94048",
+  "codeHashes": {
+    "cockpit/scripts/reviewed-public-snapshot.ts": "a18ffb64ae411236f81802c5e5470aa3fba65850098f2ef1a6a0734e9e1a1854",
+    "cockpit/tests/reviewed-public-snapshot.test.ts": "956701c76fbe9bdddf6ff48ef34337575b9de776f8faedb50584b67da5857f23",
+    "cockpit/scripts/public-tipsters-plugin.ts": "729f775ef5ee6763b7d19da0c69ee69644192aafdd174391227ee6b521f78ceb",
+    "cockpit/app/components/expert/public-tipsters.tsx": "1b3547c3d6d6c4dc16b1751564b953e65eee20f8248c384726ab7a967ba7eb7a"
+  },
+  "projection": {
+    "state": "PASS",
+    "choices": 479,
+    "pseudonyms": 80,
+    "fixtures": 20,
+    "advancedLastSeen": 42,
+    "allOtherPickFieldsPreserved": true,
+    "sourceObservedThrough": "2026-11-22T09:55:32.548710+00:00",
+    "originalSnapshotPreparedAt": "2026-11-22T04:43:05.096Z",
+    "operationalState": "unknown",
+    "historicalSubprocess": 0,
+    "TaskQueries": 0,
+    "sourceGET": 0,
+    "elapsedMs": 28.2457
+  },
+  "checks": {
+    "snapshotTests": 11,
+    "forumTestsReused": 16,
+    "typecheck": "PASS",
+    "lint": "PASS",
+    "fullLocalSuite": 0
+  },
+  "reviews": {
+    "C1": "Independent exact complete-pick comparison and dated provenance PASS.",
+    "C3": "Real core/middleware RAM tests and independent projection PASS, no P0/P1.",
+    "C4": "Exact R2 scope PASS before construction; E2 requires these C1/C3 keys and C0."
+  },
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "publications": 0,
+  "globalDelivery": "PARTIAL"
+}

@@ -1,0 +1,56 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.WHOLE.NATIVE.BINDING.R2.E1.RESULT.20261124",
+  "missionId": "OLBG_PENDING_WHOLE_NATIVE_BINDING_R2_20261124",
+  "status": "PASS_AND_HOLD_WHOLE_SYNTH_BINDING_NAMESPACE_PRISTINE_AWAITING_SOURCE",
+  "scope": "Complete isolated synthetic canary with production output namespace independently verified pristine; actual SOURCE authority not yet granted",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.FILESYSTEM.POLICY.POSITIVE.R2.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.ZERO.ELIGIBLE.PENDING.CAPTURE.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.OBSERVATION.BUILDER.E1.RESULT.20261124",
+    "DATA.SOURCE_OBSERVATORY.OLBG.FIRST.OPAQUE.REFUSAL.NATIVE.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.TERMS.LOCAL.DOC.RESULT.20261121",
+    "DATA.SOURCE_OBSERVATORY.LIGUE1.J12.OFFICIAL.SCHEDULE.DOCUMENTARY.20261122"
+  ],
+  "resultSHA": "6fbf1b976052164c4d1f53646da9ba3a36be2c4e3cdadc060f45d94fcb37cbbb",
+  "mapSHA": "982922115256642ef28092b421950a5c5ed40cb39c17fd8a6cfecde34ea37e69",
+  "namespaceProofSHA": "aed4be8277704fba5e26ef0a29cdf422f24b2a4ec43326d5c783f53c27c80209",
+  "configSHA": "96e66cf6613afffd324ece2ccfdcd60bf6fb8f9d167516df70499ec7d46aea9f",
+  "workerSHA": "531f7eb90fa1a71ecccfe8f6a1c06e49d9ba75705ac3ebcd1deb60dc29221914",
+  "outerSHA": "2104113862827e7df37b065b796b7d10de63367eb0e4b7f6218c830a30bd8595",
+  "policySHA": "3dc8425a8e233345d3585d9625ce7ad30f6c4c4861c625658464fd7d63696e90",
+  "verification": {
+    "fakeGET": 2,
+    "realSyntheticPendingWrites": 1,
+    "pendingBytes": 1135,
+    "pendingRows": 1,
+    "realPolicyValidationsOnSyntheticLedger": 31,
+    "productionOutputNamesAbsentPrePostAndIndependentReview": 11,
+    "criticalRuffExit": 0,
+    "mypyCallerWriterBuilderExit": 0,
+    "authorLaunches": 10,
+    "privateFiles": 40,
+    "totalOSProcesses": null
+  },
+  "timing": {
+    "producerStoppedAt": "2026-11-24T14:03:59.332064Z",
+    "originalE1Deadline": "2026-11-24T14:06:48.585161Z",
+    "UTCAndMonotonicPrePostFsyncPassed": true
+  },
+  "sourceGET": 0,
+  "realPendingWrites": 0,
+  "sourceAllowed": false,
+  "sourceReady": false,
+  "applicationAdmission": false,
+  "nativeUTCProof": false,
+  "limits": [
+    "Namespace pristine is not SOURCE authority; must recheck before actual grant/SD/spent/job",
+    "Actual defaultPREFIX/live ledger and fresh dated C4 terms still required",
+    "No actual prematch, certified human or global fixture absence proof"
+  ]
+}

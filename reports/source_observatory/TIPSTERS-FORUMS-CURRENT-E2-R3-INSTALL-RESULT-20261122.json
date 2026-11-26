@@ -1,0 +1,41 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.FORUMS.CURRENT.E2.R3.INSTALL.RESULT.20261122",
+  "recordedAt": "2026-11-22T05:49:30.081Z",
+  "status": "INSTALLATION_UNKNOWN_NO_ADOPTION_NO_SOURCE_COLLECTION",
+  "scope": "One actual registration process failed its enabled projection check;task exists natively enabled but is not adopted. R3 failure receipts preserved;no retrospective acceptance.",
+  "missionId": "FORUMS_CURRENT_E1_E2_R3_20261122",
+  "planSHA256": "c4fa0525c2cddd9725f08ec78fd89d47ef34f5717559d40aced1c687b0c0fc39",
+  "manifestSHA256": "02bc6eb72070ad0d22dee9107613169e1c10bdc079102d787bac4f42b66e28bd",
+  "externalProcess": {
+    "startedAt": "2026-11-22T05:41:34.792Z",
+    "closedAt": "2026-11-22T05:41:38.586Z",
+    "exit": 1
+  },
+  "taskXMLSHA256": "2ca59b4988da427adb4ea2d8807d849e4eb0de8ec2bc537474bab507e7bb6c53",
+  "actualNativeState": {
+    "state": "Ready",
+    "enabled": true,
+    "triggersEnabled": [
+      true,
+      true
+    ],
+    "observedAt": "2026-11-22T05:49:03.8942029Z",
+    "everRun": false
+  },
+  "diagnostic": {
+    "projectedEnabled": false,
+    "xmlEnabledElementPresent": false,
+    "cause": "ABSENT_XML_ENABLED_DEFAULT_MISPROJECTED_AS_FALSE",
+    "independentC4": "CIM and COM true;XML element absent;exact hash unchanged",
+    "primarySpecification": "https://learn.microsoft.com/en-us/windows/win32/taskschd/taskschedulerschema-settingstype-complextype"
+  },
+  "registrationAttempts": 1,
+  "sourceGET": 0,
+  "appAdmissions": 0,
+  "confirmedReceipt": false,
+  "externalAdoption": false,
+  "unknownReceiptPreserved": true,
+  "secondRegistrationAllowed": false,
+  "taskStartedManually": false,
+  "globalDelivery": "PARTIAL"
+}

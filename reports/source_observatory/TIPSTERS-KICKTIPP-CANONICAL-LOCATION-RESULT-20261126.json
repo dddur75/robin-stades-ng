@@ -1,0 +1,29 @@
+{
+  "at": "2026-11-26T00:42:51.827Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.KICKTIPP.CANONICAL.LOCATION.RESULT.20261126",
+  "status": "PASS_LOCATION_OBSERVED_NO_REDIRECT_FOLLOWED",
+  "SourceGET": 2,
+  "httpStatuses": {
+    "robots": 200,
+    "picks": 301
+  },
+  "nativeJobExit": 1,
+  "metadataObjectiveSatisfied": true,
+  "redirectFollowed": false,
+  "locationCount": 1,
+  "location": {
+    "kind": "PUBLIC_PATH_LITERAL",
+    "length": 33,
+    "origin": null,
+    "path": "/the-predictor/tableau-pronostics",
+    "sha256": "3b4155e974c07e76981b7915c3e1b7cdc22bcff745a79bc851713c3721ebb8ac"
+  },
+  "canonicalPublicURL": "https://www.kicktipp.fr/the-predictor/tableau-pronostics",
+  "resultSHA256": "9209c3832cd780afa9a630565f6267bfcc07720892ac38e2cdae05353b353e09",
+  "nativeStdoutSHA256": "7fb176c415bc9b72b81a523d40a902b644cfd7a1f00fb420a0fa47bde7e4cecc",
+  "sourceGrant": "66481a30435e37f24a082f02a1fa0edf385e11af06f3c4a477a4c1189c36373a",
+  "predictions": 0,
+  "APP": 0,
+  "Task": 0,
+  "allCompatibleIntegrated": false
+}

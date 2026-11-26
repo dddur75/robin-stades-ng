@@ -1,0 +1,55 @@
+{
+  "authorStoppedAt": "2026-11-23T03:59:47.605419+00:00",
+  "c0CodeReview": "Policy/outer/worker/transportscope reviewed; exact current d0cd context is bound, not generic publisher permission. Source integration will additionally refuse automationBanObserved true or absent explicitly.",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.CANONICAL.PREFLIGHT.CALLER.PRIVATE.RESULT.20261123",
+  "codeMapCanonicalSHA256": "f3daa475a55b68ea0347e81d8a5ab379534ebe3de56b17926c8e2210064fecd7",
+  "effects": {
+    "DNS": 0,
+    "GitMutation": 0,
+    "Task": 0,
+    "Win32": 0,
+    "app": 0,
+    "nativeJob": 0,
+    "oldControlPackReplay": 0,
+    "realAssetReplay": 0,
+    "sourceGET": 0
+  },
+  "elapsedSeconds": 157.953471,
+  "grant": "967db9a06a492fb2caf3bdf061d0f3fa282db23f7b83e643f26343e1e6a6bf27",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "limits": [
+    "Pure private E1, no SOURCE grant/config/plan or spent files. E1 canonical-config-e1.json contains only dependency pins, never source authority.",
+    "One real local Node CLI synthetic bootstrap/capture exit0; DOES NOT establish inherited WinJob confinement or Node network confinement. Audit negatives were pure helper calls; no nonremovable host audit installed.",
+    "Actual load_components SOURCE-sidecar/SSL integration not executed; source caller binding/manifest/grants/native lifecycle still require independent review and future E1/E2 authority.",
+    "All context browser/reproduction/nativefreshness/automationpermission unknowns remain; reviewed context is not permission.",
+    "C0CODE/C1FACTS/C4SCOPE independent review required; author does not selfvalidate."
+  ],
+  "manifestSHA256": "b02b1f3d15d05d90715e4f130a94a546fbbb479f98adc1ae0e14ca276ce20354",
+  "missionId": "COTEUR_CANONICAL_PREFLIGHT_CALLER_PRIVATE_E1_20261123",
+  "planSHA256": "379f49ab51c496c7c4f6ea4d39a6b3af67b4b2e5b5a116465be36ddd137121ac",
+  "scope": "EIGHT_SYNTHETIC_PRIVATE_CALLER_CASES_NOT_SOURCE_AUTHORITY",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.NATIVE.CALLER.PRIVATE.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.DOCUMENTARY.PERSONAL.CONTEXT.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.PUBLIC.INTEGRATION.RESULT.20261123"
+  ],
+  "sourceReady": false,
+  "status": "ACCEPTED_PRIVATE_CANONICAL_PREFLIGHT_AND_LOCAL_NODE_ONLY",
+  "tests": {
+    "RAMCompiles": 5,
+    "actualNodeCLIProcesses": 1,
+    "actualSourceGET": 0,
+    "criticalRuff": 0,
+    "exit": 0,
+    "negativePreflightGETs": 0,
+    "negativePreflightReservations": 0,
+    "scenarios": 8,
+    "simulatedGETs": 6,
+    "targetedRuns": 1
+  },
+  "workerSHA256": "68042a0012719de601875b4df4a616d8cde2211a6ea686a63f4aace81392882b"
+}

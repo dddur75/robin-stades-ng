@@ -1,0 +1,42 @@
+{
+  "generatedAt": "2026-11-23T07:14:23.507Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.CURRENT.HOME.HTML5.CALLER.PRIVATE.PARTIAL.20261123",
+  "missionId": "COTEUR_CURRENT_HOME_HTML5_CALLER_PRIVATE_E1_20261123",
+  "status": "PARTIAL_AUTHOR_TIME_LIMIT_EXCEEDED",
+  "scope": "Nine offline caller cases passed but final sealing exceeded author300s and expiry. Full source binding/native durability unexercised; no source promotion.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.HTML5.REFERENCE.R2.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.DOCUMENT.SOURCE.R3.NATIVE.PARTIAL.20261123"
+  ],
+  "resultSHA256": "ba26d8115ac062be63b6d8c05167a423eef517f155431c6240ec11b72c1431f8",
+  "codeMapCAN": "7f75b29e5fea4d1ca5c9771502748c09bb72cf1df4d87ac4fec6856e4f737941",
+  "workerSHA256": "dc477fbd4394eeeeb0079a0d4c73055fb28aceec848846529d13bbab0ae9801c",
+  "elapsedSeconds": 301.684533,
+  "authorSecondsMax": 300,
+  "expiryExceededSeconds": 3.536889,
+  "syntheticCases": 9,
+  "helperDependencyLoads": 1,
+  "fakeCollectCalls": 4,
+  "fakeGETs": 7,
+  "criticalLintExit": 0,
+  "WinJobDefinitionsASTSame": 8,
+  "transportChangedDefinitions": [
+    "_fetch_transport"
+  ],
+  "transportDeltaGuardFailed": true,
+  "fullTransportEquivalenceClaimed": false,
+  "initialConstructionSyntaxFailurePreserved": true,
+  "sourceBindingStatus": "DRAFT_NOT_AUTHORIZED",
+  "sourceGET": 0,
+  "network": 0,
+  "Node": 0,
+  "WinJob": 0,
+  "Task": 0,
+  "appChanges": 0,
+  "sourceReady": false
+}

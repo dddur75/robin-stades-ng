@@ -1,0 +1,40 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.TELEGRAM.PUBLIC82.ATTRIBUTION.ACTUAL.20261126",
+  "status": "VERIFIED_BOUNDED_WINDOWS_NO_INDIVIDUAL_AUTHOR_PROOF",
+  "scope": "82 distinct public source windows assessed;70 previews/700 metadata messages retained;12 unavailable or unproven;zero individual-signature or independent-person references in these windows. No universal absence claim;4 nonpublic routes unresolved.",
+  "actual": {
+    "at": "2026-11-26T04:45:34.236Z",
+    "SourceGET": 78,
+    "metadataDocs": 66,
+    "messageCount": 660,
+    "outcomeStates": {
+      "ATTRIBUTION_METADATA_CAPTURED_UNQUALIFIED": 66,
+      "ATTRIBUTION_CONTEXT_UNPROVEN": 8,
+      "PUBLIC_PREVIEW_UNAVAILABLE": 2
+    },
+    "regionKinds": {
+      "CHANNEL_HEADER": 721,
+      "FORWARDED_AUTHOR": 62
+    },
+    "signatureFacts": [],
+    "publicIndividualReferences": [],
+    "allJobsClosed": true,
+    "messageBodiesRetained": false,
+    "qualifiedForecasts": 0,
+    "APP": 0,
+    "Task": 0,
+    "publicUsernameChannelHeaderReferences": 660,
+    "nativeIndividualSignatureCount": 0,
+    "nativeIndependentPersonReferenceCount": 0,
+    "assessedNewDistinctSources": 78,
+    "priorCapturedPublicSources": 4,
+    "totalPublicSourcesAssessed": 82,
+    "totalPreviewWindowsCaptured": 70,
+    "totalMetadataPostsCaptured": 700,
+    "publicSourcesWithUnavailableOrUnprovenPreview": 12,
+    "civilIdentitiesCertified": 0,
+    "noUniversalAbsenceClaim": true
+  },
+  "receiptSHA256": "889f6b89680da3bda3f6e6b473dcddb3675f82d4fb2f5a438b9fcf991737081c",
+  "activeCollection": false
+}

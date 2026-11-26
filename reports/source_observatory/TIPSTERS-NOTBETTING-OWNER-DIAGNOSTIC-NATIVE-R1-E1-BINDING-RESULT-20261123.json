@@ -1,0 +1,34 @@
+{
+  "generatedAt": "2026-11-23T08:44:40.354Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.DIAGNOSTIC.NATIVE.R1.E1.BINDING.RESULT.20261123",
+  "missionId": "NOTBETTING_OWNER_DIAGNOSTIC_NATIVE_R1_20261123",
+  "status": "E1_LOCAL_DEPENDENCY_BINDINGS_VERIFIED",
+  "scope": "One real local load_components canary under network/spawn DENY; one SOURCE decision injected only in RAM, nine retained calendar rows reused. No collect/fetch/main/nativeJob or source decision file. Current13pins bind diagnostic-only worker; source E2 remains separately gated.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.DIAGNOSTIC.CALLER.PRIVATE.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.WITNESS.PUBLIC.INTEGRATION.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PLAIN.REFERENCE.SOURCE.R3.NATIVE.PARTIAL.20261123",
+    "DATA.SOURCE_OBSERVATORY.BUNDES.J11.FUTURE.UTC.PROGRAMME.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CURRENT.TERMS.PERSONAL.CONTEXT.RESULT.20261123"
+  ],
+  "planSHA": "87a8d2f44a01801bf918164d1396622ab2ad97723c16ba51fdc7b3a7622d08ed",
+  "manifestSHA": "74108da6396556a22719ecaed9c80956595dc68a35b4e88c2e86f40028bb5a8c",
+  "configSHA": "f18fe1843140763045d4103ca78228329e4b457d464d6a7eb1ae484c9be8b682",
+  "workerSHA": "3a4d13200e64113345509ee01bda437e3244c0631991258c69c64833501375a6",
+  "outerSHA": "d9876f8c48395d14b43b22c07f1d354ed38e6f316d1714e6190ef3e5e2c2e1db",
+  "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+  "policySHA": "7799199fc267e151514d67a80f63a40b93bc6572cb803b22b5c9e770649e502a",
+  "transportSHA": "54293fd94de94f7db4d10c1e2280ed3d5d94d1772a11a9f5a44fcd49f04b2670",
+  "parserSHA": "179509b12a9d434ad50828d6ddefce5bbc5556e4254a11c0689af8fceb0b2fdf",
+  "expiresAt": "2026-11-23T08:53:02.284Z",
+  "primarySHA256": "ffe1a40371646fb59bb9af04004257a8104da742f3fb6dd248d9c9cc5cec63df",
+  "sourceGET": 0,
+  "sourceReady": false,
+  "actualSourceAuthorityGranted": false
+}

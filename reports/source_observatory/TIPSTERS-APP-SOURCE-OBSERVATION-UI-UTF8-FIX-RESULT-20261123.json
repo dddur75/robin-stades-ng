@@ -1,0 +1,32 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.APP.SOURCE.OBSERVATION.UI.UTF8.FIX.RESULT.20261123",
+  "missionId": "SOURCE_OBSERVATION_UI_UTF8_FIX_E1_20261123",
+  "generatedAt": "2026-11-23T16:53:02.818Z",
+  "status": "CORRECTED_FUNCTIONAL_CODE_ACCEPTED_ONLY",
+  "keys": [
+    "C0",
+    "C1",
+    "C3"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.APP.SOURCE.OBSERVATION.BRIDGE.R1.REJECTED.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.STRUCTURED.NATIVE.R2.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.CACHED.SCREENING.LOCAL.R1.ACTUAL.RESULT.20261123"
+  ],
+  "scope": "C4freshcorrectivephase independentlyC0/C1/C3accepted sevenRAWfunctionalhashes map65e469. TwoUI reconstructedfromcleanUTF8before+minimalimports/type/latestpanel/historydetails, 76of76Frenchlabels retained/noU+00C3orU+FFFD. Existingjoin/descriptor/panelcontractsbyteexact, permanentportableencodingtest. RED1 then2encoding+16bridgeassertions/type4roots0/lint0/185.983sSTOP. Oldbadversions+results preserved, additiveoldcontrollerShellCalls6→actual7; newphase5shells/5targetprocesses. No API/browser/fullcatalogue317/nativevalues/runtime/publiccopy orSOURCEauthority yet. Freshintegrationbindingrequired.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "functionalMapSHA": "65e469b713c35942dc976851794adf1929f35e6e5327f164d775dfa40d301725",
+  "resultSHA": "c37a67944e357dd3828cb92b01e9e416d2d840c14a605f9296e21a721725ddad",
+  "functionalFiles": {
+    "cockpit/app/components/expert/reviewed-source-observation.tsx": "609a360e24b0224aee379aa9ba07fd892849c01ffb74b213794030f47ff87b66",
+    "cockpit/app/components/expert/tipster-candidates.tsx": "5c62c509f2bc44b498bebdfc45d3ae9f950a8e5800cc0007948238d1ae107066",
+    "cockpit/app/components/expert/workbook-catalogue.tsx": "6fcddcdfc28837e1a0d27ade656e30be7effd9ff05f3a812dcb7fb997cf7dd99",
+    "cockpit/scripts/catalogue-independent.ts": "621acc1a214658bb89872ee1c1167f627849db0034b0ac79aaaa3e68fb4b5d64",
+    "cockpit/tests/reviewed-source-observation.test.mjs": "4590ef0ee8d34da9e802352c3d009813688690d89fe7e0795e4b43cd3705522d",
+    "cockpit/tests/source-observation-ui-encoding.test.mjs": "d8c73a260da88d012058ef8a046d23db990ed1140736fddfc38465783677a575",
+    "configs/source_observatory/reviewed-source-observations.json": "e4c97ea493c5ef304eae72e419f2e4ae9fd8b6709ddec5eb5d0ef6839e082853"
+  }
+}

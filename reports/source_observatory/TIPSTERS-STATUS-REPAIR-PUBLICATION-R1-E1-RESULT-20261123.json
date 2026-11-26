@@ -1,0 +1,49 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.STATUS.REPAIR.PUBLICATION.R1.E1.RESULT.20261123",
+  "missionId": "SOURCE_OBSERVATION_STATUS_REPAIR_AND_PUBLICATION_R1_20261123",
+  "status": "E1_METADATA_REPAIR_ACCEPTED_GIT_NOT_YET_AUTHORIZED",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "scope": "Exactly two old graph statuses downgraded VERIFIED→PARTIAL; IDs/hashes/reports/old reviewers unchanged. One targeted postrepair graph guard passed. Guard precedes source-label correction of newly created audit plus additive decision/edge bookkeeping and this closure; it is not proof of final exact pushed graph. No existing structure or scientific result changed, no fabricated reviewer. Publication requires fresh E2 keys.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.PUBLIC.VERIFICATION.STATUS.REPAIR.R1.20261123",
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V29.ENGINEERING.RECETTE.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.UI.ADMIN.ROWS.REDESIGN.R1.ACTUAL.RESULT.20261123"
+  ],
+  "guardPrimarySHA": "ea3348fb2896b280ae75d2d1fd644168ff96b6fc1414d1f9b4c5c53cf4dee291",
+  "guardExit": 0,
+  "guardTestsPassed": 1,
+  "guardElapsedMS": 13675.0196999982,
+  "changes": [
+    {
+      "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREDICATE.COMPLETION.BATCH.R1.PARTIAL.RESULT.20261123",
+      "before": "VERIFIED",
+      "after": "PARTIAL",
+      "originalHashPreserved": "75190cd01cd61afffe6924a97c87f2f167ad441f7727930a12afad715e2ed24a",
+      "originalKeysPreserved": [
+        "C0"
+      ]
+    },
+    {
+      "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.PREFIX.NATIVE.R1.E1.FAILURE.20261123",
+      "before": "VERIFIED",
+      "after": "PARTIAL",
+      "originalHashPreserved": "0240e54584e575995f39cbd63f5999a460ebde5395d1ab0bd4c909d0a348157f",
+      "originalKeysPreserved": [
+        "C0"
+      ]
+    }
+  ],
+  "codeFilesUnchanged": 9,
+  "engineeringMapSHA": "071adfa4b751fd6b114c2bd5feb5b9eb7e45f352962d974cbb8425f2e62c17be",
+  "sourceGET": 0,
+  "GitCommit": 0,
+  "GitPush": 0,
+  "newForecasts": 0,
+  "allCompatibleIntegrated": false,
+  "overallStatus": "PARTIAL"
+}

@@ -1,0 +1,47 @@
+{
+  "generatedAt": "2026-11-23T11:52:18.548Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI263.INTEGRATED.CORRECTION.RESULT.20261123",
+  "missionId": "CI263_INTEGRATED_CORRECTION_E1_20261123",
+  "status": "TARGETED_PASS_GLOBAL_LOCAL_ENVIRONMENT_PARTIAL",
+  "scope": "Integrate independently reviewed annotation-only Coteur and NotBetting candidates, preserving runtime business AST and admission gates. Exact CI mypy command removes all105 original parser errors but exits1 for14 missing pandas stub errors in unrelated modules in this local venv; not a global typing pass.46 targeted tests, Ruff and Bandit pass. Frontend typecheck and delivered-file lint pass; .ci private diagnostics are untracked and separately excluded only in local lint invocation, not config. Build:data triggered fallback generator invocation attempts and failed without child outputs retained by the existing script. Depth and cause of child work are UNKNOWN; neither completed replay nor absence of reconstruction attempts is claimed. Server build not executed.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.CI263.TYPING.CJS.PRIVATE.REVIEW.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.CI263.EXACT.HEAD.FAILURE.RESULT.20261123"
+  ],
+  "headUnderTest": "e87e627c0ea1f6bfe7a57356b7230422f477fa65",
+  "candidateSHA256": {
+    "coteur": "21c45019ae58cf4415811a73587fe3c09db5d678f85eaa74edef853af348584a",
+    "notbetting": "57888da1fdc75c4b83b5fdc2a6366cec444d8c0b89b8bf5ae6eecfc0570aa2e8"
+  },
+  "ESLintConfigLFSHA256": "812419ef4ca616c58abfad522fcd781f4e023d1676f7883113121a0ae5f7ed30",
+  "testsPassed": 46,
+  "domainPrimarySHA256": "120e353525cd70ca0d92b304127abe2b70e8df269b37e8c2eeaae0e54aa9ef20",
+  "ruffExit": 0,
+  "banditExit": 0,
+  "globalLocalMypy": {
+    "exit": 1,
+    "remainingErrors": 14,
+    "remainingParserErrors": 0,
+    "checkedFiles": 295,
+    "cause": "MISSING_LOCAL_PANDAS_STUBS"
+  },
+  "frontend": {
+    "typecheckExit": 0,
+    "deliveredLintExit": 0,
+    "warnings": 1,
+    "buildDataExit": 1,
+    "serverBuildExecuted": false,
+    "fallbackGeneratorInvocationAttempted": true,
+    "fallbackWorkDepth": "UNKNOWN"
+  },
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "allCompatibleIntegrated": false
+}

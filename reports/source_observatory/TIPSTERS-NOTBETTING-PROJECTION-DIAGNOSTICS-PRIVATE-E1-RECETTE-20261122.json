@@ -1,0 +1,45 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PROJECTION.DIAGNOSTICS.PRIVATE.E1.RECETTE.20261122",
+  "generatedAt": "2026-11-22T23:00:57.422Z",
+  "status": "PASS_AND_HOLD_PRIVATE_AST_CORRECTION_ONLY",
+  "missionId": "NOTBETTING_PROJECTION_DIAGNOSTICS_PRIVATE_E1_20261122",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "author": "C3",
+  "grant": "587f75248bc8431812bd2b9626f9af968ddae71e8ad919b367da30c8a96147d6",
+  "planSHA256": "4e88692352cff4d30ab3c2d710a9d4fff41bcabe38c8a38f54da92a5367c85f7",
+  "manifestSHA256": "0a6443b3a2d75b08f2ab3ebe474ad8abf7da29ff63137ae95f33a2d1ccfe1ef4",
+  "authorResultRAW_SHA256": "fd80844a6debc816698849e47d5b6be6269f299905000c012d7f857524b6ca6f",
+  "codeMapCanonicalSHA256": "d848b683dc7131fe22e0130bb631e84804bb92c368609dc9ff02647584c4c203",
+  "authorStoppedAt": "2026-11-22T22:53:53.773001+00:00",
+  "authorElapsedSeconds": 236.103892,
+  "review": {
+    "C0_CODE": "PASS_FOR_PURE_HELPER_AND_AST_CALLER",
+    "C1_FACTS": "PASS_LIMITED_TO_RETAINED_RECEIPTS",
+    "C4_SCOPE": "PASS_PRIVATE_ONLY_NO_SOURCE_BINDINGS"
+  },
+  "syntheticUniqueProjections": 3,
+  "positiveCaptureAndSixJournalEventsByteIdentical": true,
+  "lateDurabilityFailureStaysClosed": true,
+  "oldNativeZeroCause": "NOT_RETAINED",
+  "noTestsRerunByReviewer": true,
+  "ramCompileClaim": "AUTHOR_REPORTED_NO_SEPARATE_RECEIPT",
+  "sourceBindingsInstalled": false,
+  "executableSourcePacket": false,
+  "isolatedLaunchVerified": false,
+  "sourceReady": false,
+  "recurrenceOperational": false,
+  "sourceGET": 0,
+  "appChanges": 0,
+  "TaskChanges": 0,
+  "GitPush": 0,
+  "globalDelivery": "PARTIAL",
+  "limits": [
+    "AST harness injected projection transport clock and validation boundaries; parser semantics not requalified.",
+    "Sidecar alone never proves success predecessor or admission.",
+    "New plain helper import is not hash-pinned or isolated-launch qualified; authority.py and SOURCE bindings absent. Future executable packet requires explicit same-buffer pinned loader and fresh authority."
+  ]
+}

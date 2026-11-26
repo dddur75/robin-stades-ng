@@ -1,0 +1,151 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI277.EXACT.HEAD.BANDIT.FAILURE.RESULT.20261124",
+  "missionId": "OLBG_OPAQUE_PACKAGE_PUBLICATION_GIT_R6_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Terminal GitHub CI277 exact queried commit c003b4a. Three direct security job failures expose the same single B102, and the aggregate tests gate fails. No success inferred from prior CI276.",
+  "commit": "c003b4a1726a6b51bb8d61cf0226611b5cf50371",
+  "runId": 45490701498,
+  "runNumber": 277,
+  "runStatus": "completed",
+  "conclusion": "failure",
+  "jobs": 17,
+  "success": 12,
+  "failure": 4,
+  "skipped": 1,
+  "jobResults": [
+    {
+      "id": 138787929091,
+      "name": "End-to-End Live Path Replay",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138787929484,
+      "name": "Historical Deep — contrat cache-only",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138787929658,
+      "name": "Exact Workflow Entrypoint",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138787929663,
+      "name": "Historical Authority Workflows Disabled",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138787929683,
+      "name": "Bounded live canary - Ubuntu",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138787929685,
+      "name": "Chronos PostgreSQL profiles / tests (superuser)",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 138787929730,
+      "name": "Jalon 10 - entrees de preuve gelees",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138787929733,
+      "name": "Residual Fault Matrix",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138787929846,
+      "name": "Bounded live canary - Windows",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138787930472,
+      "name": "Chronos PostgreSQL profiles / Chronos source and activation",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138787930512,
+      "name": "Chronos PostgreSQL profiles / tests (non_superuser_createrole)",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 138787930525,
+      "name": "Chronos PostgreSQL profiles / Chronos static contracts",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138789537874,
+      "name": "Chronos PostgreSQL profiles / Chronos provider-free Cockpit",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "id": 138793345586,
+      "name": "Robin Experience — preuves visuelles",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138793345615,
+      "name": "Jalon 10 - trois temoins R3 bornes",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138793345818,
+      "name": "Quality and domain tests",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 138795507468,
+      "name": "tests",
+      "status": "completed",
+      "conclusion": "failure"
+    }
+  ],
+  "directSecurityJobs": [
+    138787929685,
+    138787930512,
+    138793345818
+  ],
+  "aggregateGate": 138795507468,
+  "diagnostic": {
+    "rule": "B102",
+    "file": "src/robin/source_observatory/olbg_opaque_campaign.py",
+    "line": 180,
+    "issuesPerDirectJob": 1
+  },
+  "primaryKind": "MCP_GITHUB_NORMALIZED_NOT_HTTP_RAW",
+  "primarySHA256": "f7c44a728752fcd11a37227732f6ad2b2c2d3ff2905badd6c0378de096370020",
+  "association": "Commit-specific workflow query plus PR133 head c003; normalized workflow response does not expose head_sha.",
+  "PR": {
+    "number": 133,
+    "draft": true,
+    "state": "open",
+    "merged": false,
+    "baseSHA": "1d2c45ba6161465f9e69fa9ce76dbbbfcf1eee40"
+  },
+  "sourceGET": 0,
+  "recurringCollectionActive": false,
+  "newSourceAdmissions": 0,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null
+}

@@ -1,0 +1,45 @@
+{
+  "generatedAt": "2026-11-21T04:27:53.029607+00:00",
+  "schemaVersion": "robin-native-null-next-run-recette-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NATIVE.NULL.NEXT.RUN.RECETTE.20261121",
+  "status": "LOCAL_DEFECT_FIXED_AND_RECETTED",
+  "observedAt": "2026-11-21T04:23:41.238Z",
+  "declarationIds": 402,
+  "successfulNativeTaskWithoutNextRunIsNotUnavailable": true,
+  "finalRunningTaskPreserved": true,
+  "schedulingEndIsNotActivation": true,
+  "stopAndExpiryPriorityPreserved": true,
+  "internalStateTranslated": true,
+  "desktopAndMobile360Checked": true,
+  "http200": true,
+  "pageErrors": 0,
+  "externalBrowserRequests": 0,
+  "horizontalOverflow": false,
+  "targetedChecks": [
+    "3actualPowerShellmockstatesPASS",
+    "11nativeauthorityTSPASS",
+    "10campaign/nativeTSPASS",
+    "TypeScriptPASS",
+    "targetedESLintPASS",
+    "vinextbuildPASS_without_corpus_replay"
+  ],
+  "caveat": "Windows client bundle measured1358008bytes;1.35MB universal cap has not been certified by this build. ExistingCI248isolderhead;newLinuxCIrequiredbeforepublicationacceptance.",
+  "evidence": [
+    {
+      "path": "cockpit/.ci/official-doc-research-20261121/bundes/ended-ui-receipt.json",
+      "sha256": "9ba9fdd4e305912f833cf256309c79141ad51366e5bf08cb3b65e2da7fec990b"
+    },
+    {
+      "path": "cockpit/.ci/official-doc-research-20261121/bundes/ended-desktop.png",
+      "sha256": "e90eded648b14b8d6add574c2012b4c60e06dc445b2d6fb04a740632f4f87ecb"
+    },
+    {
+      "path": "cockpit/.ci/official-doc-research-20261121/bundes/ended-mobile.png",
+      "sha256": "9cb1ac9fce09ffc06fca2b3d1c52aec0f0d95b6869d46858d2d9424a4b98f387"
+    },
+    {
+      "path": "cockpit/.ci/official-doc-research-20261121/bundes/test-null-task-time.ps1",
+      "sha256": "3e97c48d4b88743e29aaf26af793be0e40f1e33d84599969a4f342fc2a842736"
+    }
+  ]
+}

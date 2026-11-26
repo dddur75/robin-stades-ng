@@ -1,0 +1,32 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.STRUCTURED.NATIVE.R2.ACTUAL.RESULT.20261123",
+  "missionId": "TELEGRAM_PREFIX_STRUCTURED_NATIVE_R2_20261123",
+  "generatedAt": "2026-11-23T15:57:49.419Z",
+  "status": "PARTIAL_STRUCTURE_ONLY",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.STRUCTURED.NATIVE.R2.E1.RESULT.20261123"
+  ],
+  "scope": "One fixed public preview GET, one Job1.0s exit0/noTimeout/killconfirmed. Producer validated and privately stored ten structured UNQUALIFIED prefix messages; hash/stat independent reviews only. Total null/suffixHTMLunexamined, messagesAreForecasts false/fourfalsegates, no personal identity/forecast/canonicalfixture/admission/readiness/globalcompatibility claim. Campaign consumed STOP without retry. No message values/stdout/model/Git or rawHTML durability. New local qualification scope required.",
+  "sourceGET": 1,
+  "nativeJobs": 1,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "structuredMessageCount": 10,
+  "totalMessageCount": null,
+  "suffixHTMLUnexamined": true,
+  "privateArtifact": {
+    "bytes": 6533,
+    "sha256": "7cb237a9268f03ebd7ff29e32512304b17ba9f2663b1a8ac3acf5548e7964326"
+  },
+  "primarySHA": "4c237df02f024dd62688925f27a6fdd1dc7c724aeeea38744580b1fd284492b8",
+  "resultSHA": "d34a44c07e3317877b231aa57dd8e063d880c3b752a1e5b2789ce031295c8159",
+  "sourceDecisionSHA": "3999d9b2eb7b7bb0271069bb79bb8455a7ebe511f07c5be9d4c1e151282bdc2c",
+  "observedAtUTC": "2026-11-23T15:56:21.512860+00:00",
+  "closedAtUTC": "2026-11-23T15:56:21.529411+00:00"
+}

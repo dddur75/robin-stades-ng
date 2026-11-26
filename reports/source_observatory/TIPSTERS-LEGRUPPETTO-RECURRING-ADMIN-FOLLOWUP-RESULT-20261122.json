@@ -1,0 +1,19 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.LEGRUPPETTO.RECURRING.ADMIN.FOLLOWUP.RESULT.20261122",
+  "recordedAt": "2026-11-22T12:06:45.692Z",
+  "status": "DATED_INSTALLATION_ROW_VISIBLE_IN_LOCAL_ADMIN_API",
+  "scope": "One control metadata row added; source execution and source fact admission still unproven.",
+  "HTTP": 200,
+  "responseSHA256": "0fbe530b94cc23387ca6bf56605447e4eb990199cbf2e406c423c5effd4cdc0d",
+  "rows": 15,
+  "priorRowsPreserved": 14,
+  "rowId": "legruppetto-recurring-r2-install",
+  "installationClaim": "ENG.SOURCE_OBSERVATORY.LEGRUPPETTO.RECURRING.R2.INSTALL.RESULT.20261122",
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "loopbackGET": 1,
+  "admissions": 0,
+  "codeChanges": 0,
+  "globalDelivery": "PARTIAL"
+}

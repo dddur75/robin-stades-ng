@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "robin-bounded-source-result-v1",
+  "generatedAt": "2026-11-25T14:08:22.619Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.PROFILE669088.RETAINING.R1.RESULT.20261125",
+  "missionId": "OLBG_ONE_SHOT_PROFILE669088_RETAINING_R1_20261125",
+  "status": "PARTIAL_NO_ELIGIBLE_FOOTBALL_STOPPED",
+  "scope": "One real personal source observation retained; native sport7 is outside football scope1. No conclusion about future availability or permanent incompatibility.",
+  "tuple": {
+    "planSHA": "1ed9f3052764e93f0a35ebc69f8cd9cec6210d28b908d8e5df05a70a7d911d32",
+    "manifestSHA": "d4c2f11b13deebff043c096b7b184e1dc366d4109c62b44534b25dac0ea7e382",
+    "configSHA": "9680fbbb5eaae29af53fc4e34f9605891f68640f2996a2a4e8fa4685026683dd",
+    "controllerSHA": "565281cbfdbe3c1812287ab22bec31d46b3d1ff599d375ab80046caa300a8781"
+  },
+  "primarySHA256": "d737032118aee20e45863d0a6285a4551469364c4446facb10d4a86ba958c70f",
+  "resultSHA256": "a4eed36d040e74932e23b3e6039b5e56150e10b9de99589b262ce93a7341e824",
+  "stopSHA256": "90856ebf6f8e5df267bec571d652db56c1c0c312df93df10d8eec03926e4356b",
+  "factsSHA256": "02cc544cf2c98f827f5c30c78288b4f29623307bc8df3e4f0cd94b9b94f11b44",
+  "sourceAccountId": 669088,
+  "sourceRecordCount": 1,
+  "retainedRows": 1,
+  "distinctSourceTipIds": 1,
+  "footballRows": 0,
+  "omittedRows": 0,
+  "qualifiedChoices": 0,
+  "applicationAdmissions": 0,
+  "observedAt": "2026-11-25T14:01:19.656783+00:00",
+  "counts": {
+    "DNS": 3,
+    "GET_SEND": 3,
+    "TCP": 3,
+    "reservedGET": 3
+  },
+  "errorCode": "ZERO_ELIGIBLE_HALT",
+  "jobSeconds": 10.468000000000757,
+  "jobTimedOut": false,
+  "sourceAuthorityClosed": true,
+  "retry": false,
+  "sourceReady": false,
+  "recurringCollectionActive": false
+}

@@ -1,0 +1,3 @@
+"""Exact independently reviewed profile campaign anchors."""
+PLAN_SHA256 = '5c05bd9d13aa35b23d779c506667078a305e91746944e226a88689d8810d71cc'
+MANIFEST_SHA256 = 'f35594f71c4b74702ff3315cb7b4b5318f19d1341add356c9431732b8aa6dc17'

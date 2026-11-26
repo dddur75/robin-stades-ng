@@ -1,0 +1,60 @@
+{
+  "generatedAt": "2026-11-23T08:55:22.686Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.EXPLICIT.TCP.STRUCTURAL.NATIVE.R2.ACTUAL.RESULT.20261123",
+  "missionId": "TELEGRAM_EXPLICIT_TCP_STRUCTURAL_NATIVE_R2_20261123",
+  "status": "PUBLIC_PREVIEW_STRUCTURAL_AB_VERIFIED",
+  "scope": "Two real complete CL-framed responses: robots404 and public preview200. Same body RAM shows old parser ambiguous/UNRECOGNIZED versus corrected nonambiguous/PREVIEW_MARKUP. Access and this structural fix measured, no message content/fields/choices extracted or qualified, no sourceReady or old fine-cause reconstruction. Robots404 is unavailable with policy null, never permission.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.EXPLICIT.TCP.STRUCTURAL.NATIVE.R2.E1.BINDING.RESULT.20261123"
+  ],
+  "planSHA": "cc7c0e9236f4ce611658e5b7129d6520ec64936627ae5026e13f56db7237ed8b",
+  "manifestSHA": "ff14c9222d61114fa8af53a93780b0fff3bc38277218f6a4d80a1a9400a68ce7",
+  "configSHA": "25f429cc93bc77a4eb74e7c9c21b898068b7330bee4e88d626fc39afd6361aaf",
+  "workerSHA": "7574f3ce5f1ca92f3ec2e496a91595af467c99ac9a5d91db9def366476b53b40",
+  "outerSHA": "1f51a8ce6e5c4876494b74ae01fa82db444a2769144bf0510bfa885ba28cb975",
+  "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+  "policySHA": "2bb4c3de85b284ba82eacf68986e3059356162c59f51d2b0e0911bc774cb3233",
+  "transportSHA": "fc19e9274c13cc557d58b73d660aa66f00ecc1e380ac895325e0d7026000fa62",
+  "expiresAt": "2026-11-23T08:54:17.559Z",
+  "sourceDecisionSHA256": "830b5bede414ae4c6a3ebf18906be9e718994f83876d89d02f2ff8ce9326edd7",
+  "resultSHA256": "2ef8957eebf9d905f0296428c25cc53a5952b1b210b0b0f6d259062015061de6",
+  "nativePrimarySHA256": "8a514127bd6ca40da9a43739c019236d59fd4e96f560128cff5ca8417035bdb1",
+  "closedAt": "2026-11-23T08:48:43.681792+00:00",
+  "sourceGET": 2,
+  "outerSourceGET": null,
+  "HTTPStatuses": [
+    404,
+    200
+  ],
+  "responseBytes": [
+    153,
+    113947
+  ],
+  "framing": "UNIQUE_CL_COMPLETE",
+  "attemptedFamily": "IPV4",
+  "auditDNS": 2,
+  "auditTCP": 2,
+  "auditGETSendBoundary": 2,
+  "jobElapsedSeconds": 4.141,
+  "outerExit": 0,
+  "childExit": 0,
+  "timedOut": false,
+  "subtreeKillConfirmed": true,
+  "oldParseAmbiguous": true,
+  "newParseAmbiguous": false,
+  "pageShape": "PREVIEW_MARKUP",
+  "firstAmbiguity": null,
+  "authenticationMarkupPresent": false,
+  "dedicatedChallengeMarkupPresent": false,
+  "messageFieldsExtracted": false,
+  "messageTextExtracted": false,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "sourceReuseContract": "UNKNOWN"
+}

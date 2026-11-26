@@ -2356,6 +2356,7 @@ def test_h24_future_planning_and_ready_direct_behavior_are_unchanged(
         execute=True,
         owner_present_for_at_least_20_minutes=True,
         clock=FixedClock(BASE),
+        monotonic=SequenceMonotonic(),
         workspace_validator=lambda _: None,
         raw_evidence_verifier=synthetic_raw_evidence_verifier,
     )
@@ -2400,6 +2401,7 @@ def test_h24_future_planning_and_ready_direct_behavior_are_unchanged(
         execute=True,
         owner_present_for_at_least_20_minutes=True,
         clock=FixedClock(execution_at),
+        monotonic=SequenceMonotonic(),
         workspace_validator=lambda _: None,
         raw_evidence_verifier=synthetic_raw_evidence_verifier,
         atomic_runner=partial(
@@ -2407,7 +2409,7 @@ def test_h24_future_planning_and_ready_direct_behavior_are_unchanged(
             binding_preparer=fake_binding_preparer,
         ),
     )
-    assert ready.status == "OWNER_REVIEW_PACK_CREATED"
+    assert ready.status == "OWNER_REVIEW_PACK_CREATED", ready.code
     assert resolver_calls.value == 1
 
 

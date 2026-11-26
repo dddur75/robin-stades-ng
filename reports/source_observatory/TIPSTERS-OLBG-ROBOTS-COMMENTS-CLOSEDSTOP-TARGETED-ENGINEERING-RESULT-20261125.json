@@ -1,0 +1,43 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.ROBOTS.COMMENTS.CLOSEDSTOP.TARGETED.ENGINEERING.RESULT.20261125",
+  "status": "TARGETED_RED_GREEN_AND_QUALITY_PASS_NO_SOURCE",
+  "scope": "Valid RFC9309 comment witness reproduced against old code and passed against the proposed change; deny/delay/HTML refusal and closed stop-code privacy preserved.",
+  "candidateSHA": "35da8e71a65b19ba6d53652d16484975c5c444e0bf60f9504dda7de250a80e90",
+  "testSHA": "52f0ef3315e1e439e99bed5f9e0017c03f798629f8b39b45ff22d1511712e436",
+  "baselineSHA": "e7ffd0b4d21b0262a6afd87e9635316cc4dcf907109f3c057e2cc5f6c1362d9a",
+  "collectorSHA": "824855b174dcf116d82c34f2f7521bcbc891150efceedba8950baa943f2ef8dc",
+  "logicalMethods": 1,
+  "methodExecutions": 2,
+  "slotCalls": 5,
+  "fakeHTTP": 7,
+  "red": {
+    "exit": 1,
+    "expectedCode": "invalid robots document",
+    "primarySHA": "e41553e3731f58d5296f559c45515f874fde3b564a638e66c98bac3a8a64a5cb"
+  },
+  "green": {
+    "exit": 0,
+    "slotCalls": 4,
+    "fakeHTTP": 6,
+    "primarySHA": "1809e29c244382a0cf2547533dcc069e2647f69c7b40fac816fb5139fe3dc6df"
+  },
+  "quality": {
+    "ruffExit": 0,
+    "mypyExit": 0,
+    "mypySourceFiles": 1,
+    "ramCompileExit": 0,
+    "primarySHA": "31b0b117450f48104fcdaeffbc139e5404c0b1c5bf9976f42570bb3fd93e5221"
+  },
+  "stopSHA": "1e391fb0e3ceaa2d1d2b3a26f3de4182845204279bcb8865e2b57fb2141b5f2e",
+  "documentation": "https://www.rfc-editor.org/rfc/rfc9309.html#section-2.2",
+  "SourceGET": 0,
+  "APP": 0,
+  "Job": 0,
+  "sourceReady": false,
+  "actualR3Cause": "UNKNOWN",
+  "limitations": [
+    "Comment handling only; not complete RFC compliance",
+    "Actual retained robots bytes not read; presence of an angle bracket comment is unproven",
+    "No public code installation, Source grant or successful live collection inferred"
+  ]
+}

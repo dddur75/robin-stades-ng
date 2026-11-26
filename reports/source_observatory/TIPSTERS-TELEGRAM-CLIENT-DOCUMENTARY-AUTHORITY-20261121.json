@@ -1,0 +1,37 @@
+{
+  "generatedAt": "2026-11-21T01:10:22.486600+00:00",
+  "schemaVersion": "robin-client-documentary-authority-v1",
+  "claimId": "GOV.SOURCE_OBSERVATORY.TELEGRAM.CLIENT.DOCUMENTARY.20261121",
+  "missionId": "ROBIN-TELEGRAM-CLIENT-DOCUMENTARY-E1V2-20261121",
+  "status": "OFFICIAL_DOCUMENTS_ONLY_NO_TELEGRAM_USER_CONTENT",
+  "planSha256": "fa680a46626067ffd447fd2e57854673947f4761a236aab0d6cf9588f313f0ca",
+  "manifestSha256": "0ba5244563199973d17a63abf1b9af77fa76b38333c8d7343463a9ccebbd57d0",
+  "operations": [
+    {
+      "role": "robots",
+      "url": "https://telegram.org/robots.txt"
+    },
+    {
+      "role": "licensing",
+      "url": "https://telegram.org/tos/content-licensing"
+    },
+    {
+      "role": "apps",
+      "url": "https://telegram.org/apps"
+    }
+  ],
+  "mozillaCaSha256": "2ef52ad56b4803e264045c915e55c236cbfa045b84b81efefc218a19eb44bd2b",
+  "appsWitnessSha256": "cee00209a450ecf3c252e0a3a486d3a279f0121b759142f94e859d443719a269",
+  "newGETMax": 3,
+  "qualificationMax": 308,
+  "expiresAt": "2026-11-21T02:00:00Z",
+  "syntheticTests": 3,
+  "messages": 0,
+  "channels": 0,
+  "sourceAPI": 0,
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

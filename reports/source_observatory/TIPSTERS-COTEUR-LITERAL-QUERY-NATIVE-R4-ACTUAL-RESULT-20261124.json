@@ -1,0 +1,118 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.LITERAL.QUERY.NATIVE.R4.ACTUAL.RESULT.20261124",
+  "missionId": "COTEUR_LITERAL_QUERY_NATIVE_R4_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Actual Coteur bounded twoGET native receipt independently verified. Freshrobots allowed, asset634651B exactSHAcef3, Job13.453s/Node1. Literalquery lexical scan completed this received script with15returnedspans/zeroomissions/capNONE, queryvalues elided. Completeness is lexical only: syntaxValidityUNPROVEN, ownership/binding/contracts/runtimequerycontractfalse. No API/tipsterdata/forecast/admission, quotasclosed/no retry, overallPARTIAL.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LEXICAL.NATIVE.IO.PRIVATE.E1.HISTORICAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LEXICAL.STREAM.PRIVATE.R2.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LEXICAL.CLI.PROTOCOL.PRIVATE.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LITERAL.QUERY.CONSUMER.CORRECTIVE.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LITERAL.QUERY.IO.REBIND.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LITERAL.QUERY.FULL.BINDING.R3.E1.RESULT.20261124"
+  ],
+  "result": {
+    "missionId": "COTEUR_LITERAL_QUERY_NATIVE_R4_20261124",
+    "status": "PARTIAL",
+    "decision": "PASS_AND_HOLD",
+    "closedAtUTC": "2026-11-24T04:55:32.799341+00:00",
+    "tuple": {
+      "missionId": "COTEUR_LITERAL_QUERY_NATIVE_R4_20261124",
+      "planSHA": "0b9c08de001b7d1217dc88511052986bc8295b1e61f0825b5e67687f8f8df4da",
+      "manifestSHA": "8ca04c0440101ba0afc90830f1b59a228b4371876693f145de51152f5208c73c",
+      "configSHA": "e0cc47f2f4172fb46118f48135012c6c7e73effa8b47dd211b2568100e4eab51",
+      "workerSHA": "b733c86c41b1c4d1989492a98bf33db8c2cd46627c5fc6dd2db4bdc7eaa5aaf7",
+      "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+      "outerSHA": "3330951411603c0447b3d92b7dad3dca31fd59fafc0114d9fe01ed1e67311231",
+      "parentGrant": "9165f9b9f0d052cd793a00d8268dbb131c05ab4667e1bf29a1d9679a29804e2a"
+    },
+    "SDRawSHA": "f08e170af9b6a78c1b17ed526cbccc034728c127187360847a81cf98bebe77b6",
+    "nativeInvocations": 1,
+    "sourceGETReservations": 2,
+    "auditCounts": {
+      "DNS": 2,
+      "GET_SEND_BOUNDARY": 2,
+      "NODE": 1,
+      "TCP": 2
+    },
+    "job": {
+      "activeSecondsMax": 50,
+      "elapsedSeconds": 13.452999999979511,
+      "exit": 0,
+      "hardSeconds": 60,
+      "sourceGET": null,
+      "subtreeKillConfirmed": true,
+      "taskMutations": 0,
+      "timedOut": false
+    },
+    "freshRobotsAllowed": true,
+    "responseBytes": 634651,
+    "responseSHA": "cef3dc549b4a0ba0f845d501c45efb1fa0f95f4a5bd0aa832a1b313ace1c132c",
+    "observedAtUTC": "2026-11-24T04:55:31.264512+00:00",
+    "workerClosedAtUTC": "2026-11-24T04:55:31.656677+00:00",
+    "resultStatus": "LEXICAL_ONLY_UNQUALIFIED",
+    "reason": null,
+    "lexical": {
+      "status": "LITERAL_QUERY_LOOKALIKES_ONLY",
+      "inputBytes": 634651,
+      "tokensObserved": 243521,
+      "maximumDelimiterDepth": 38,
+      "potentialCallCount": 90,
+      "literalFirstArgumentCount": 63,
+      "eligibleLiteralCount": 15,
+      "rejectedLiteralCount": 21,
+      "unsupportedArgumentCount": 54,
+      "pendingArgumentUnproven": false,
+      "spansOmitted": 0,
+      "capStatus": "NONE",
+      "completeLexicalScan": true,
+      "syntaxValidity": "UNPROVEN",
+      "ownershipProven": false,
+      "contractEstablished": false,
+      "bindingEstablished": false,
+      "runtimeQueryContractEstablished": false,
+      "sourceReady": false,
+      "admissions": 0,
+      "returnedSpans": 15,
+      "bodyUTF16Length": 634118,
+      "queryValuesElidedForAllReturnedSpans": true
+    },
+    "admissions": 0,
+    "forecastsCollected": 0,
+    "rawDurableStorage": 0,
+    "sourceReady": false,
+    "coverage": "UNKNOWN",
+    "authorityClosed": true,
+    "remainingGET": 0,
+    "remainingJobs": 0,
+    "retry": false,
+    "primarySHA": "bf993aba285eef0064de63fd6f33289647ab417c2dcd90279f0a715b8a2b70b9",
+    "allCompatibleIntegrated": false,
+    "unknowns": [
+      "Section4 browser-client compliance UNKNOWN",
+      "Section5 reproduction/adaptation applicability to transient RAM inspection UNKNOWN",
+      "Section7 database protection scope UNKNOWN",
+      "Native terms freshness UNKNOWN",
+      "Explicit automation permission UNKNOWN"
+    ]
+  },
+  "receiptSHA": "bc161e91d97d9946c82876052f45d6528ca0e936d4abd9880fdcad3d1edb5241",
+  "STOP": {
+    "hash": "eed89ebbc953f1bd3cd9c3ef2a3b87168a8ccff105cd26024b9dc82858e007a8",
+    "date": "2026-11-24T04:55:32.840719+00:00",
+    "authorityClosed": true
+  },
+  "limits": {
+    "sourceReady": false,
+    "admissions": 0,
+    "allCompatibleIntegrated": false,
+    "compatibleDenominator": null,
+    "APIOrTipsterDataRead": 0,
+    "providerRawDurableStorage": 0
+  }
+}

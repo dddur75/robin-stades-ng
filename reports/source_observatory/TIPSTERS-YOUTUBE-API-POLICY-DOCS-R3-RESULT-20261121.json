@@ -1,0 +1,69 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.YOUTUBE.API.POLICY.DOCS.R3.RESULT.20261121",
+  "generatedAt": "2026-11-21T22:34:46.563Z",
+  "status": "DOCUMENTARY_OBSERVED_WINDOW_VERIFIED_SOURCE_NOT_GRANTED",
+  "scope": "Two official Google API documents, no channel/feed/video/prediction read. Regional France terms remain unavailable from the prior mediated route.",
+  "missionId": "YOUTUBE_GOOGLE_API_POLICY_DOCS_E1_R3_20261121",
+  "planSHA256": "9eadb387db94c6625770e05f6a3b54b371dc95db8379160a31470236058628fb",
+  "manifestSHA256": "909a088891af05483a52488af28f8b6430d37a0e72ac14aaa2cf245e7af7a229",
+  "mediatedOperations": 2,
+  "directSourceGET": 0,
+  "backendHTTPAndRedirectCount": "UNKNOWN",
+  "rawHTTPBodyStored": false,
+  "documents": [
+    {
+      "url": "https://developers.google.com/youtube/terms/api-services-terms-of-service",
+      "toolReference": "turn70view0",
+      "toolCrawlAge": "today",
+      "renderedTotalLines": 294,
+      "observedOperativeLines": [
+        47,
+        89,
+        155,
+        162
+      ],
+      "facts": [
+        "API-services scope covers offered services, related developer documentation and API data; use is governed by the agreement.",
+        "Section3.1 requires use by means described in the agreement and service-specific documentation.",
+        "Registration information may be required; the document does not prove a universal API-key requirement for every interface.",
+        "The agreement incorporates developer policies, guidelines and YouTube terms; no implied further rights are granted."
+      ]
+    },
+    {
+      "url": "https://developers.google.com/youtube/terms/developer-policies",
+      "toolReference": "turn71view0",
+      "toolCrawlAge": "today",
+      "renderedTotalLines": 469,
+      "observedWindowEndsAt": 244,
+      "unobservedRemainingPolicySections": true,
+      "observedOperativeLines": [
+        144,
+        164,
+        207,
+        228
+      ],
+      "facts": [
+        "Credentials are required for some services; service documentation specifies requirements. User authorization depends on the action and is distinct from credentials.",
+        "Undocumented API access and reverse engineering are restricted; access must follow authorized documentation.",
+        "Cross-owner API-data aggregation is restricted, with a stated exception involving recognized content ownership and viewing by that owner.",
+        "The observed window does not include the full later data-storage section; no retention duration or derived-metric permission is concluded."
+      ]
+    }
+  ],
+  "conclusions": {
+    "universalAPIKeyRequirementProven": false,
+    "unrestrictedDirectPollingGrantProven": false,
+    "crossSourceTipsterDatasetAggregationGrantProven": false,
+    "franceTermsQualified": false,
+    "officialWebSubGuideStillRelevant": true,
+    "sourceCompatibility": "UNQUALIFIED_FOR_CURRENT_AGGREGATED_PERSONAL_FORECAST_DATASET"
+  },
+  "sourceFeedsRead": 0,
+  "sourceVideosRead": 0,
+  "sourcePredictionsRead": 0,
+  "newTasks": 0,
+  "purchases": 0,
+  "elapsedBeforeInitialMetadataSeconds": 59.515,
+  "globalDelivery": "PARTIAL",
+  "operationsAndInitialMetadataCloseSeconds": 59.56
+}

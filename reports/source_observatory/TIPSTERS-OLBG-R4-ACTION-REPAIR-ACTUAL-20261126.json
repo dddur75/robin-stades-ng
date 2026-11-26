@@ -1,0 +1,41 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.R4.ACTION.REPAIR.ACTUAL.20261126",
+  "status": "VERIFIED_ONE_ACTION_CHANGED_SOURCE_FIRST_SLOT_HALTED",
+  "scope": "One owned Windows task action updated to R4; existing triggers settings principal preserved. First natural R4slot closed at0GET with native Journal mission encoding mismatch.No slot rerun.",
+  "actionReceiptSHA256": "220e59f41ac4c11e20f60af5e5b3010efa9f4e6118dcee34f84f36e9899c258d",
+  "boundedReceiptSHA256": "afe47a5b7dfee3883f6da53a395710609870bb28d4b5b0df88f06426fc120d1f",
+  "sourceFirstSlot": {
+    "APP": 0,
+    "RootElapsedSeconds": 1.5319999999919673,
+    "aggregate": {
+      "file": "closed-slot-80829f3ed1b44f791ba582e22a87663d9e0b9d93c38c29635747fa3d7aaa9504.json",
+      "sha256": "4094f507d9120c7b72ec29f886464fba4d7782e6778579300bb4b6dda2f3a31f"
+    },
+    "candidateResult": true,
+    "job": {
+      "activeSecondsMax": 960,
+      "elapsedSeconds": 1.235000000000582,
+      "exit": 1,
+      "hardSeconds": 970,
+      "sourceGET": null,
+      "subtreeKillConfirmed": true,
+      "taskMutations": 0,
+      "timedOut": false
+    },
+    "journalPrefix": {
+      "bytes": 0,
+      "head": "0000000000000000000000000000000000000000000000000000000000000000",
+      "ignoredTailBytes": 0,
+      "ignoredTailSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "qualifiedChoices": 0,
+    "qualifiedProfiles": 0,
+    "reservedSourceGET": 0,
+    "retry": false,
+    "schemaVersion": "OLBG_MULTI_SLOT_RESULT_V1",
+    "slot": "2026-11-26T05:35:00.000Z",
+    "state": "halted"
+  },
+  "sourceReady": false
+}

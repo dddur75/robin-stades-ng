@@ -1,0 +1,41 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.BUNDES.PDF.PINNED.CORE.PARTIAL.E1.REVIEW.20261122",
+  "generatedAt": "2026-11-22T23:10:30.267Z",
+  "status": "PARTIAL_PRIVATE_PINNING_CAPS_ONLY_OFFICIAL_FORMAT_REJECTED",
+  "missionId": "BUNDES_J11_NATIVE_CALLER_PRIVATE_E1_20261122",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "author": "C3",
+  "grant": "7a316cf36d958ca1306508279e744938d606256ae19e9535b98e4859e1af9a46",
+  "planSHA256": "b60e26484ac6b759a30d7becd7e8978ac377ec9634fc2e33869a45efb4e65773",
+  "manifestSHA256": "8b7616712ae95bb363bb0d9c2e94137567a359d5dc72ad16a057f02d28aa2d0e",
+  "authorResultRAW_SHA256": "dc070055702af3481826a5073c9dca501a3ecbc21547ef6b7330d9bb11952f15",
+  "codeMapCanonicalSHA256": "f5bf1e3ff9bd2fd8596095bb06fb1c13a0e139496e9fa67eab4f40962f972ff6",
+  "authorStoppedAt": "2026-11-22T23:08:31.247381+00:00",
+  "authorSeconds": 245.09671,
+  "libraryFiles": 59,
+  "libraryBytes": 1768812,
+  "testGroups": 3,
+  "uniqueSyntheticPDFs": 1,
+  "REDMeaning": "Default library decompression cap exceeds requested cap only; not existing caller regression.",
+  "codeObjection": "project() requires invented title/header incompatible with retained official documentary format. Synthetic grammar not a DFL compatibility proof.",
+  "officialFormatProofRAW_SHA256": "a752fd5b88eb5d6df790b28231281f8c501c25b6181f89e1b89d24c54acbc440",
+  "transportBound": false,
+  "CABound": false,
+  "physicalCaller": false,
+  "sourceReady": false,
+  "nativeAlignmentProven": false,
+  "sourceGET": 0,
+  "appChanges": 0,
+  "TaskChanges": 0,
+  "globalDelivery": "PARTIAL",
+  "correctionRequiredAtSameE1": true,
+  "review": {
+    "C0_CODE": "PASS_PINNING_CAPS_ONLY_FUNCTIONAL_OBJECTION",
+    "C1_FACTS": "PASS_LIMITED_CORE",
+    "C4_SCOPE": "PASS_LIMITED_CORE"
+  }
+}

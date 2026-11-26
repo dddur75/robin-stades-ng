@@ -1,0 +1,17 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.TERMS.LOCAL.DOC.READINESS.20261121",
+  "status": "DOCUMENTARY_LOCAL_ROUTE_READY_NOT_EXECUTED",
+  "scope": "One ordinary public robots/terms documentary read with the existing A9 transport, no profile, task, API, permission or recurrence extension.",
+  "manifestCanonicalSha256": "24b50e8f26d9eed32c025b7b4f97d702bde1edcdc634eeece733cd6ad15dc03e",
+  "manifestRawSha256": "8e078fa513538e76ee5fe3d24cae4024ee55da753a90ad853a460727c66e70a2",
+  "planCanonicalSha256": "8ffedf8ded4f5fe4d9fdfff14532b2d0b637acc3e3673458d9015b1c4c6e86c8",
+  "workerRawSha256": "5ecf72956aaab8a009f66288aba8eaa65da851c4051856cd93134bde14ad8458",
+  "pinsVerified": 87,
+  "syntheticCasesPassed": 2,
+  "sourceGETMaximum": 2,
+  "profileGETMaximum": 0,
+  "workerSecondsMaximum": 90,
+  "rawBodyRetention": false,
+  "normalizedFullTextRetention": false,
+  "noAutomaticNewGrant": true
+}

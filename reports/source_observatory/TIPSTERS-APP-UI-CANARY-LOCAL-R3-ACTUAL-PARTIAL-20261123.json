@@ -1,0 +1,26 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.APP.UI.CANARY.LOCAL.R3.ACTUAL.PARTIAL.20261123",
+  "missionId": "SOURCE_OBSERVATION_UI_CANARY_LOCAL_R3_20261123",
+  "status": "PARTIAL_REDЕSIGN_REQUIRED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Second similar actual UI failure. FAIL_AND_REDESIGN returns E1; no third unchanged canary or timeout increase. API fulfilled does not prove view rendered; pageerror events are not distinct defects. Physical cleanup unproven.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.APP.UI.CANARY.LOCAL.R3.E1.RESULT.20261123"
+  ],
+  "primarySHA": "cc31a5c4b0685e273096a9a4bf0cec748294ed1df406017886bae5a47e604fc6",
+  "diagnosticSHA": "d58b9129648f6db24d256666f8408448dbab9b613af1246ff0d5193e8518b9da",
+  "exit": 1,
+  "phase": "WAIT_WORKBOOK_PANEL",
+  "APIReservations": 1,
+  "APIHeaderResponses": 1,
+  "APIFulfilled": 1,
+  "pageErrorEvents": 111531,
+  "viewsAccepted": 0,
+  "sourceGET": 0,
+  "admissions": 0,
+  "cause": "UNKNOWN"
+}

@@ -1,0 +1,14 @@
+{
+  "generatedAt": "2026-11-21T04:20:40.542573+00:00",
+  "schemaVersion": "robin-coteur-e1-boot-failure-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.E1.BOOT.FAILED.20261121",
+  "status": "STOPPED_BEFORE_SOURCE_REQUEST",
+  "executionChunk": "62d65d",
+  "failureObservedBefore": "2026-11-21T04:18:57Z",
+  "sourceRequestsReserved": 0,
+  "sourceGETs": 0,
+  "reason": "FROZEN_JOURNAL_REQUIRES_E2_AND_REJECTED_E1",
+  "oldRunMarkerSha256": "eaf5ec1eaf72fe9d97356b2b35651f11ecfb3989fc92c48dd28dcebccf2ddcbe",
+  "oldPlanSha256": "840fa804552537500bdc5abc7deced6321a32a606739005439dc0918a6713ca7",
+  "oldHistoryUnchanged": true
+}

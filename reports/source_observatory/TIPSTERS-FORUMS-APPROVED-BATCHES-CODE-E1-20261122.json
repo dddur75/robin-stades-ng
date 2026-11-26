@@ -1,0 +1,30 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.FORUMS.APPROVED.BATCHES.CODE.E1.20261122",
+  "recordedAt": "2026-11-22T09:04:39.742Z",
+  "status": "PUBLIC_CODE_DOMAIN_PASS_RUNTIME_NOT_YET_COPIED",
+  "scope": "Bounded projection of explicitly reviewed v1 forum envelopes, including unchanged reobservations without new IDs. The legacy prefix is applied first; invalid later batches preserve approved records. No admission follows from this code alone.",
+  "planSHA256": "5784d339f18aaa8cff595a0ec9ee7b88354393536f93e8ab6c7b1937df65cc83",
+  "manifestSHA256": "8a2872d378b4d2d95dff716c26749e3b92f33bd45658d6ac85eed0c37a175523",
+  "artifact_hashes": {
+    "cockpit/scripts/forums-accepted.ts": "3eec3cababcae4abe3b96cf07d048af48f57d0330d065e7716eaf18dc6a4041d",
+    "cockpit/scripts/public-tipsters-plugin.ts": "3d8f52f9cdf5791a392f9c8cb5b4f83ab779292c9af72f5f8d40d815dd0edc1a",
+    "cockpit/tests/forums-accepted.test.ts": "e993c874a42223ba2c77c34d577ede36d131ec0e6fe22dfc07db0d6d87e0ba0b"
+  },
+  "tests": {
+    "domain": 16,
+    "typecheck": "PASS",
+    "targetedLint": "PASS",
+    "fullLocalSuite": 0
+  },
+  "reviews": {
+    "C3": "Exact module3eec3cab/plugin3d8f52f9 independently reviewed; fifteen cases and five malformed-history witnesses verified without source IO.",
+    "C4": "Exact three-file code scope and v1 contract only, no source or new admission authority."
+  },
+  "emptyExtraApprovalList": true,
+  "slotBearingUnknownSchemas": "REFUSED",
+  "sourceGET": 0,
+  "TaskChanges": 0,
+  "publications": 0,
+  "newAdmissions": 0,
+  "globalDelivery": "PARTIAL"
+}

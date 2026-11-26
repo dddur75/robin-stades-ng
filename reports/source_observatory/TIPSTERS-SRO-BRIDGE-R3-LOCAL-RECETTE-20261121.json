@@ -1,0 +1,62 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.SRO.BRIDGE.R3.LOCAL.RECETTE.20261121",
+  "status": "PARTIAL_CODE_INTEGRATED_SRO_NEXT_NOT_ACTIVATED",
+  "scope": "Exact local source bridge R3 code, prepared client build and current historical data restoration. Source campaign/Windows task/data grant not activated by this claim. Transient initial unavailability not explained or declared fixed.",
+  "sourcePlanRawSHA256": "fe4436c3cd210c8094100d656249e14711e9bcfd9061fd93c875f8d5fac90b65",
+  "productionPins": {
+    "cockpit/scripts/read-public-tipsters.py": "b9d3377c0e37a88bb5b8e579d3081cd50f10e1e91c261b9384ccf44ecd91d7a7",
+    "cockpit/scripts/read-tipster-candidates.py": "b98a44f271f574fd649f5189902ae3303631d70e1b8bb5837a21017a71f25cf5",
+    "cockpit/scripts/tipsters-native-state.ts": "702675a95302e9cc8eff1fde905584c42bd704fa914fd66347b055a1b8113306",
+    "cockpit/scripts/read-public-task-state.ps1": "9d9c3ba1a52586c35ade59de01443cb2c2edfd5e6e1c9bcae16172c7764b04f1",
+    "cockpit/app/components/expert/public-tipsters.tsx": "e1ba8632abf784adf834329fc169505ad2b7db3f96acee7c7d851d3f82bd8f23",
+    "cockpit/scripts/public-tipsters-plugin.ts": "9ee8f9f60a26a7c04b8414809fd62b67e9b4b4008f7efe906281d5920e4d9cdb",
+    "src/robin/source_observatory/sro_successor_view.py": "a0d2ee57441254d75c6c60066a83cb434118a09492676db929dae91a39979f09"
+  },
+  "targetedPythonTestsPassed": 52,
+  "targetedPowerShellSyntheticCasesPassed": 15,
+  "earlierNodeTargetedTestsRetained": true,
+  "sourceRequests": 0,
+  "windowsTasksCreated": 0,
+  "sroLiveConfigPresent": false,
+  "preparedBuild": {
+    "resultRawSHA256": "bdb3ee2d28214a3a5953f20032e3168f2cd1f705e3d8f4a1858bd39d25ca458a",
+    "clientJSBytes": 1340237,
+    "exclusiveMaximumBytes": 1350000,
+    "strictBudgetPassed": true,
+    "assets": 43,
+    "scientificReplays": 0,
+    "buildDataExecuted": false
+  },
+  "initialRead": {
+    "choices": 462,
+    "missingPreviouslyAcceptedChoices": 15,
+    "cause": "UNKNOWN_NOT_REPRODUCED",
+    "acceptedAsConservationRecipe": false
+  },
+  "rollbackReadbackRawSHA256": "f106b19b61ba2726168952f7e2332de36a1fc132c40d15d48fa1d5b1201ac52e",
+  "isolatedR4TimingReceiptRawSHA256": "f6f334f1f3c5e41efae3696720624826d9ed2f3a51c6ef52dab687ac0a7c8464",
+  "currentRead": {
+    "observedAt": "2026-11-21T19:43:57.081Z",
+    "rawSHA256": "f4d862bf79ddc53e17f23b6d8f7cfca6dd8bbb2dd8bbbd3006c77d580529b52f",
+    "http": 200,
+    "milliseconds": 5793,
+    "choices": 477,
+    "authors": 79,
+    "fixtures": 20,
+    "allChoicesWholeAndOrderedPreserved": true,
+    "allFixturesWholePreserved": true,
+    "olbgNextState": "collecting",
+    "olbgNextGET": 43,
+    "olbgNextGETMaximum": 129,
+    "olbgNextSuccessfulSlots": 1,
+    "sroNextPresent": false
+  },
+  "notBettingStatusReportClaimId": "ENG.SOURCE_OBSERVATORY.LATEST.SOURCE.STATUS.V2.20261121",
+  "notBettingStatusLocalResponseRawSHA256": "93e595c4c2613f1904fd33ee4499405d44878d29ce4218f7ded812a096dcf0fc",
+  "oldRuntimeLedgerGraphAndRosterUnchanged": true,
+  "globalDelivery": "PARTIAL",
+  "verifiedBy": [
+    "C0",
+    "C2"
+  ]
+}

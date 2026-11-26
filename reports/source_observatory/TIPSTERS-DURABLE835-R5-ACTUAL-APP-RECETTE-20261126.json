@@ -1,0 +1,122 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.ROBIN.TIPSTERS.DURABLE835.R5.APP.20261126",
+  "status": "VERIFIED_LOCAL_APP_R5_SCHEDULED_NOT_YET_COLLECTED",
+  "scope": "Actual app835 choices167 source identities673fiches60admin;835 old choice objects preserved in full;3API200 and2UIflowsPASS. One action update points existing owned task to corrected canonical-mission R5;next natural slot07:35UTC. Zero R5 source requests yet; recurring success is unproven.",
+  "at": "2026-11-26T05:48:56.754Z",
+  "API": {
+    "at": "2026-11-26T05:48:05.121Z",
+    "status": "PASS_THREE_ROUTES",
+    "routes": [
+      {
+        "route": "/api/tipsters/public",
+        "status": 200,
+        "liveState": "awaiting_first_capture",
+        "archiveClaim": "ENG.SOURCE_OBSERVATORY.ROBIN.TIPSTERS.DURABLE835.R5.APP.20261126"
+      },
+      {
+        "route": "/api/tipsters/candidates",
+        "status": 200,
+        "liveState": "awaiting_first_capture",
+        "archiveClaim": "ENG.SOURCE_OBSERVATORY.ROBIN.TIPSTERS.DURABLE835.R5.APP.20261126"
+      },
+      {
+        "route": "/api/tipsters/qualification",
+        "status": 200,
+        "liveState": "awaiting_first_capture",
+        "archiveClaim": "ENG.SOURCE_OBSERVATORY.ROBIN.TIPSTERS.DURABLE835.R5.APP.20261126"
+      }
+    ],
+    "choices": 835,
+    "authors": 167,
+    "fiches": 673,
+    "admin": 60,
+    "old835FullPreserved": 835,
+    "sourceGET": 0,
+    "Task": 0
+  },
+  "UI": {
+    "status": "PASS_LOCAL_UI",
+    "checks": {
+      "adminCoteurVisible": true,
+      "authorVisible": true,
+      "firstSelectionVisible": true,
+      "secondSelectionVisible": true,
+      "nativeProvenanceVisible": true
+    },
+    "errors": [],
+    "receiptSHA256": "42f5de2b21ff532bc72e615cd7a1242c812be56cacac17114a536b38f0acfdbd"
+  },
+  "activation": {
+    "at": "2026-11-26T05:47:41.320578+00:00",
+    "oldPID": 48180,
+    "newPID": 50392,
+    "ownedRestarts": 1,
+    "SourceGET": 0,
+    "Task": 0,
+    "locksPreserved": true,
+    "stopJob": {
+      "exit": 0,
+      "timedOut": false,
+      "subtreeKillConfirmed": true,
+      "elapsedSeconds": 1.5930000000080327,
+      "hardSeconds": 60,
+      "activeSecondsMax": 50,
+      "sourceGET": null,
+      "taskMutations": 0
+    },
+    "elapsedSeconds": 7.734000000011292,
+    "startedOutsideStopJob": true,
+    "retry": false,
+    "listenerReady": true
+  },
+  "task": {
+    "at": "2026-11-26T05:44:51.7335529Z",
+    "state": "ACTION_UPDATED_WAIT_FUTURE_SLOT",
+    "TaskActionUpdates": 1,
+    "TaskCreates": 0,
+    "TaskDeletes": 0,
+    "TaskDisables": 0,
+    "SourceGET": 0,
+    "APP": 0,
+    "NoJ12": true,
+    "unchangedOutsideActions": true,
+    "taskName": "Robin-OLBG-Proven73-Finite-20261126-R3",
+    "nextRunTime": "2026-11-26T08:35:00.0000000+01:00",
+    "lastTaskResult": 1,
+    "elapsedSeconds": 1.788405,
+    "retry": false
+  },
+  "source": {
+    "missionId": "OLBG_PROVEN73_FINITE_RECURRING_R5_REMAINING_20261126",
+    "P": "f633f073dfaf1de366d7d8f4c50c213396e7db9a6dcebcc116954549a10da7da",
+    "MF": "0a71489423e9975bdb7dadc209257cb415ea49cd0ed4c621378526cbe29ee440",
+    "slots": [
+      "2026-11-26T07:35:00.000Z",
+      "2026-11-26T09:35:00.000Z",
+      "2026-11-26T11:35:00.000Z",
+      "2026-11-26T13:35:00.000Z",
+      "2026-11-26T15:35:00.000Z",
+      "2026-11-26T17:35:00.000Z",
+      "2026-11-26T19:35:00.000Z",
+      "2026-11-26T21:35:00.000Z",
+      "2026-11-26T23:35:00.000Z"
+    ],
+    "sourceGETMax": 675,
+    "priorConsumedGET": 75,
+    "cumulativeMax": 750,
+    "originalMax": 900,
+    "sourceCaptured": false,
+    "nativePreflight": "PASS_SOURCE0_PERMISSION_TRANSPORT_AND_CANONICAL_MISSION",
+    "sourceGrantHash": "3bfb0ef292157857878116e21e911833ea8afc37495d7b36df8bb0410fff4f0b",
+    "firstSlotR4Preserved": true,
+    "noCatchup": true
+  },
+  "claims": {
+    "data835": "DATA.SOURCE_OBSERVATORY.ROBIN.TIPSTERS.DURABLE835.APP.20261126",
+    "liveProjection": "ENG.SOURCE_OBSERVATORY.OLBG.R5.APP.PROJECTION.READY.20261126"
+  },
+  "globalDelivery": "PARTIAL",
+  "allCompatibleIntegrated": false,
+  "sourceBodiesInGit": false,
+  "publication": "UNCOMMITTED_LOCAL_ONLY_NO_CI_CLAIM"
+}

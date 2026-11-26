@@ -1,0 +1,42 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.OPAQUE.DIAGNOSTIC.QUALITY.R2.RESULT.20261124",
+  "missionId": "OLBG_OPAQUE17X9_QUALITY_ONLY_R2_E1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Private diagnostic prefix only: whole helper AST inverse to original35df after exactly five validated typing casts; mapper equivalent to original; synthetic test assertions equivalent except helper pin. Reuse actual eight original synthetic methods without replay. No actual pending data read, fixture adoption or prematch admission.",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.PENDING.REAL.NATIVE.RESULT.20261124",
+    "DATA.SOURCE_OBSERVATORY.UEFA.24NOV.PRIMARY.CALENDAR.20261124"
+  ],
+  "actualQuality": {
+    "RAMCompiledFiles": 3,
+    "mypyHelpers": 2,
+    "mypyExit": 0,
+    "ruffFiles": 3,
+    "ruffExit": 0,
+    "inverseWholeHelperAST": true,
+    "inverseWholeMapperAST": true,
+    "inverseWholeTestASTApartPin": true,
+    "validatedCasts": 5,
+    "newSyntheticCalls": 0,
+    "newBaselineCalls": 0,
+    "reusedOriginalSyntheticMethods": 8,
+    "reusedOriginalDiagnosticCalls": 8,
+    "reusedOriginalBaselineCalls": 8,
+    "sourceGET": 0,
+    "actualPayloadReads": 0
+  },
+  "privateHelperSHA256": "0db0ddb333db28a43c7255f567b1748d6d1937b12feda512828282ee8e7aca84",
+  "privateMappingSHA256": "c842605c09b64acd3bd7e9244b472ed3c6f052325266c16b5ad1f4c90bf49a33",
+  "actualResultSHA256": "c904acffbba93f28f88b29a699882a3c4427f2067120812e583e8d7a4e040719",
+  "actualStopSHA256": "bb29a5ebce0b0901aee2af00e2a1468149bfb92a3594b7ad6c88eb372c8ae522",
+  "priorPartialPreserved": true,
+  "sourceReady": false,
+  "admissions": 0,
+  "allCompatibleIntegrated": false,
+  "authorityClosed": true
+}

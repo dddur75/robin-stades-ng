@@ -1,0 +1,27 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.APP.SOURCE.OBSERVATION.INTEGRATION.R1.E1.RESULT.20261123",
+  "missionId": "SOURCE_OBSERVATION_APP_INTEGRATION_R1_20261123",
+  "generatedAt": "2026-11-23T16:56:28.467Z",
+  "status": "PUBLIC_BYTECOPY_TARGETED_TESTS_PASS_E1_ONLY",
+  "keys": [
+    "C0",
+    "C1",
+    "C3"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.APP.SOURCE.OBSERVATION.UI.UTF8.FIX.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.BUNDES.LITERAL.NATIVE.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.WITNESS.NATIVE.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.CACHED.SCREENING.LOCAL.R1.ACTUAL.RESULT.20261123"
+  ],
+  "scope": "IndependentC1/C3accept7PUBLICRAWfiles byteequalapprovedcorrectedmap65e469,3exactbackups/4newpreviouslyabsent. OneNode--test --test-isolation=none process2files18assertionsPASS/stripTypeScriptTypesexperimentalwarningdeclared. Reuseprivatecode/type/lintbecauseidenticalbytes. RT7preimages/newabsent unchanged, qualificationfc02unchanged; originalRTUI differsfromPUBcleanonlyCRLFnormequal. NoAPI/browser/native/corpusreplay/runtimecopy/SOURCE/admission. FreshLOCALC0/C1/C3afterdurableclose required forE2boundedRTcopy/curatedrows/API4/browser1max60s.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "planSHA": "4c9756d2d71feb669b259cdaf47256f985b80732fbc79a476ed3892119809ad3",
+  "manifestSHA": "20d5c45c781ad9dbf7332f58cfc3505d808ad4d411f85bbee83da826effb7aa4",
+  "functionalMapSHA": "65e469b713c35942dc976851794adf1929f35e6e5327f164d775dfa40d301725",
+  "pubCopyPrimarySHA": "72365adf58b1a27f735c5895d200fd0d9758261d42d2255312a3bff4b65f0fe1",
+  "testsPrimarySHA": "f1961d70abd1c6be1a0c180d9cd280636d1399d8d7e6fa3cda280d86e9b62a2e"
+}

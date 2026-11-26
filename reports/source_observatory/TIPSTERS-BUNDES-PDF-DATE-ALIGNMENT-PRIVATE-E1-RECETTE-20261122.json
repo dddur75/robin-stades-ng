@@ -1,0 +1,51 @@
+{
+  "mission_id": "BUNDES_PDF_DATE_ALIGNMENT_CORRECTIVE_E1_20261122",
+  "status": "PASS_AND_HOLD_PRIVATE_DATE_ALIGNMENT_REFUSAL",
+  "author": "C0",
+  "grant": "09f803c11c8aa552deda0f3e351d2ee36401e9d901c470af9ebe9c0e3bc1b779",
+  "planSHA256": "1838c305ac4c031ebab4768a49a109cd219788b052209339876b1479aea33f9a",
+  "manifestSHA256": "d6b24063ec52dbece7cc211be53c00a7925b56cd9c74ea0e31c8e176d82b6141",
+  "codeMapCanonicalSHA256": "3ea80eb57256c6881cfd4eee661d1562ba5f09ed2206dcafec5465576c8c7226",
+  "authorStoppedAt": "2026-11-22T23:19:27.663Z",
+  "elapsedSeconds": 49.362,
+  "tests": {
+    "uniqueSyntheticInput": 1,
+    "variants": 2,
+    "redAcceptedAmbiguousDate": true,
+    "greenRolloverAndContradictionRefused": true,
+    "coherent1930UTCUnchanged": true,
+    "criticalRuff": 0,
+    "ramCompiled": 2,
+    "onlyProjectChanged": true,
+    "pypdfImported": false
+  },
+  "sourceGET": 0,
+  "DNS": 0,
+  "Win32": 0,
+  "appChanges": 0,
+  "TaskChanges": 0,
+  "sourceReady": false,
+  "physicalCallerReady": false,
+  "nativeJ11CalendarProven": false,
+  "reviewKeys": [
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "limits": [
+    "Conservative rejection of date rollover and inconsistent clocks, no date conversion.",
+    "Source original programme/extraction/native alignment not observed.",
+    "No pypdf/PDF replay; prior loader/cap proofs reused via unchanged AST.",
+    "Future integrated packet needs same-buffer pins CA/transport/Job/source authority."
+  ],
+  "claimId": "ENG.SOURCE_OBSERVATORY.BUNDES.PDF.DATE.ALIGNMENT.PRIVATE.E1.RECETTE.20261122",
+  "missionId": "BUNDES_PDF_DATE_ALIGNMENT_CORRECTIVE_E1_20261122",
+  "generatedAt": "2026-11-22T23:21:38.306Z",
+  "keys": [
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "authorResultRAW_SHA256": "96c2c3cfd223fd49e3ee45aca03241d2f5f5fa3f39088505331635adc45e4549",
+  "temporalVetoResolvedOnlyForWorker": "6427e394e3c2d3d1347bac138d515a58160b5fb00a10c8d2fa468a1f424f314c"
+}

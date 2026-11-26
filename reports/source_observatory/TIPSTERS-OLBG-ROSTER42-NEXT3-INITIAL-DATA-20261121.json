@@ -1,0 +1,23 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.ROSTER42.NEXT3.20261121",
+  "status": "INITIAL_SNAPSHOT_ZERO_NEW_SOURCE_OBSERVATIONS",
+  "scope": "Only the retained initial13:13UTC snapshot:246 prior choices reused, zero new source reservation, personal choice or successful slot. Future acquisitions require their own dated receipts.",
+  "observedAt": "2026-11-21T13:13:27.379Z",
+  "candidateObservedAt": "2026-11-21T13:13:30.922Z",
+  "predecessorDataClaimId": "DATA.SOURCE_OBSERVATORY.ROSTER42.FINAL.NATURAL.20261121",
+  "baselineWholeChoicesReused": 246,
+  "newSourceRequests": 0,
+  "newPersonalChoices": 0,
+  "newSuccessfulSlots": 0,
+  "requestMaximum": 129,
+  "plannedSlots": 3,
+  "nextRunUTC": "2026-11-21T17:05:00Z",
+  "registryCount": 317,
+  "registryQualified": 24,
+  "registryEnabled": 13,
+  "assessedOLBGRosterCount": 137,
+  "assessedOLBGRosterEnabled": 42,
+  "localReadbackRawSHA256": "5c4340d5d5c16db3299206099f72f83a2d4811309ba97ea4ac8e05a781b56fc7",
+  "comparisonRawSHA256": "5581ca4a9102d8cba570893ed44f19da7a808139e11b34ae121fc8c99c662b51",
+  "futureExecutionProved": false
+}

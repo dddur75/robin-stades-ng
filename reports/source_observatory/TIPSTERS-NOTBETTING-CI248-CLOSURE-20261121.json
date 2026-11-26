@@ -1,0 +1,157 @@
+{
+  "generatedAt": "2026-11-21T02:40:03.253378+00:00",
+  "schemaVersion": "robin-compatible-ci-closure-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.CI248.CLOSURE.20261121",
+  "status": "EXACT_HEAD_CI_ACCEPTED_GLOBAL_SOURCE_COVERAGE_PARTIAL",
+  "head": "334b7868bee721f5d401b313df4dcf08eaf2ddd4",
+  "pr": 133,
+  "draft": true,
+  "merged": false,
+  "deployed": false,
+  "ci": {
+    "runId": 44853843873,
+    "runNumber": 248,
+    "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/44853843873",
+    "successfulJobs": 17,
+    "jobs": [
+      {
+        "id": 136691248192,
+        "name": "Bounded live canary - Windows",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136691248215,
+        "name": "Historical Deep — contrat cache-only",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136691248223,
+        "name": "Historical Authority Workflows Disabled",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136691248234,
+        "name": "Chronos PostgreSQL profiles / tests (superuser)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136691248240,
+        "name": "End-to-End Live Path Replay",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136691248247,
+        "name": "Residual Fault Matrix",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136691248256,
+        "name": "Exact Workflow Entrypoint",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136691248322,
+        "name": "Jalon 10 - entrees de preuve gelees",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136691248390,
+        "name": "Chronos PostgreSQL profiles / Chronos static contracts",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136691248433,
+        "name": "Chronos PostgreSQL profiles / Chronos source and activation",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136691248503,
+        "name": "Chronos PostgreSQL profiles / tests (non_superuser_createrole)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136691248600,
+        "name": "Bounded live canary - Ubuntu",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136692111939,
+        "name": "Chronos PostgreSQL profiles / Chronos provider-free Cockpit",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136693557628,
+        "name": "Jalon 10 - trois temoins R3 bornes",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136693557681,
+        "name": "Quality and domain tests",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136693557751,
+        "name": "Robin Experience — preuves visuelles",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136700675767,
+        "name": "tests",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "tests": {
+    "pythonPassed": 5175,
+    "pythonSkipped": 41,
+    "pythonXfailed": 1,
+    "pythonSeconds": 1147.83,
+    "visualPassed": 106,
+    "visualSkipped": 2,
+    "visualSeconds": 34.8
+  },
+  "sourceDataClaim": "DATA.SOURCE_OBSERVATORY.NOTBETTING.OPAQUE.PREMATCH.20261121",
+  "integrationClaim": "ENG.SOURCE_OBSERVATORY.NOTBETTING.INTEGRATION.RECETTE.20261121",
+  "allCompatibleSourcesIntegrated": false,
+  "recurringNotbettingCertified": false,
+  "uncommittedE2DraftCovered": false,
+  "evidence": [
+    {
+      "namespace": "A9_PRIVATE_CI_LOGS",
+      "path": "cockpit/.ci/notbetting-prospective-0130-v2-20261121/ci248-terminal-jobs.json",
+      "sha256": "fd83610863a43db013bc6a4fb6fb41c114ec68c4a6d5af559a902ee35f8e636d"
+    },
+    {
+      "namespace": "A9_PRIVATE_CI_LOGS",
+      "path": "cockpit/.ci/notbetting-prospective-0130-v2-20261121/ci248-terminal-runs.json",
+      "sha256": "f6e82f30cae6c97fc5d2bd0414b60d09e30f4afcd3b062acf0ced6cf181e130d"
+    },
+    {
+      "namespace": "A9_PRIVATE_CI_LOGS",
+      "path": "cockpit/.ci/notbetting-prospective-0130-v2-20261121/ci248-quality-log.json",
+      "sha256": "dc6dde9288168b3b1031a2fc287c4f40b10580856aad6c37e4e029ea939edeca"
+    },
+    {
+      "namespace": "A9_PRIVATE_CI_LOGS",
+      "path": "cockpit/.ci/notbetting-prospective-0130-v2-20261121/ci248-visual-log.json",
+      "sha256": "1787078f48482370363ccba0cd65f2ab81caa969f9ac4a73ad9db550a893be95"
+    }
+  ]
+}

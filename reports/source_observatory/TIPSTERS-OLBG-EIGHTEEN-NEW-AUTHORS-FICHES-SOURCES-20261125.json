@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "robin-new-authors-candidate-source-proof-v1",
+  "generatedAt": "2026-11-25T19:20:56.731Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.EIGHTEEN.NEW.AUTHORS.FICHES.SOURCES.20261125",
+  "missionId": "OLBG_EIGHTEEN_NEW_AUTHORS_APP_ADMISSION_20261125",
+  "status": "VERIFIED_DOCUMENTARY_MAPPING",
+  "scope": "Twenty-two previous supplement rows preserved exactly; sixteen additional workbook identities linked to exact newly captured native source response/author IDs. No application mutation implied.",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.THREE.NEW.AUTHORS.FICHES.SOURCES.20261125",
+    "DATA.SOURCE_OBSERVATORY.OLBG.FORTYNINE.NEW.AUTHORS.BATCH.R1.RESULT.20261125"
+  ],
+  "indexSHA256": "0a4cfac9f560bbc2317ca19d5ccf790695b0b14ea4bfd4a352e6be11d4befcb5",
+  "supplementSHA256": "670f08fb4df6f6360d48377d4072bd0744b5deb6a464be819f5fae98ff69dc5f",
+  "rows": 38,
+  "newRows": 16,
+  "SourceGET": 0,
+  "APPWrites": 0
+}

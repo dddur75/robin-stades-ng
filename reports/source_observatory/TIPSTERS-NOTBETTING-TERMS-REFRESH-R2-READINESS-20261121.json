@@ -1,0 +1,29 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.TERMS.REFRESH.R2.READINESS.20261121",
+  "status": "ONE_DOCUMENT_GET_AUTHORIZED_NO_PROFILE_PERMISSION",
+  "scope": "Single exact terms GET, private documentary projection only. Proposed family budget20 explicitly carries15old,1document and4future reserved capacity; no future profile request authorized.",
+  "planCanonicalSHA256": "fb2bfc4dd95a85987b955a253dd78fb1edeeb685d382239d67b0c4cfe7679ade",
+  "manifestCanonicalSHA256": "82a13026afd7dc917059b065a1c3a9e9344287464b2482f60e57be8de8b59c58",
+  "indexRawSHA256": "e05588a314e5be793148b8035ae6e7afda4474e45a7fd1a0d1c2fc8cae7c9e01",
+  "sourceURL": "https://notbetting.com/terms",
+  "documentGETMaximum": 1,
+  "oldGETConsumed": 15,
+  "oldFamilyCeiling": 19,
+  "newFamilyCeiling": 20,
+  "futureProfileCapacityReserved": 4,
+  "futureProfileGETAuthorized": 0,
+  "oldChargedMilliseconds": 47999,
+  "documentReservedMilliseconds": 50000,
+  "wholeFamilyPlannedMilliseconds": 197999,
+  "familyMillisecondsCeiling": 600000,
+  "expiresAt": "2026-11-21T17:15:00Z",
+  "sourceGETExecuted": 0,
+  "rawBodyRetention": false,
+  "policyInterpretationAutomatic": false,
+  "sourceBodyLanguageStillUnknown": true,
+  "verifiedBy": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

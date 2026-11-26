@@ -1,0 +1,34 @@
+{
+  "generatedAt": "2026-11-23T07:49:21.488Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.CLOSED.WITNESS.R2.PRIVATE.RESULT.20261123",
+  "missionId": "NOTBETTING_OWNER_CLOSED_WITNESS_PRIVATE_R2_E1_20261123",
+  "status": "PRIVATE_DIAGNOSTIC_OWNER_CATCH_VERIFIED",
+  "scope": "Minimal owner catch now captures a closed diagnostic before the existing refusal. Two synthetic owner variants and all observer modes preserve qualification, inputs and empty partial picks. No native cause or source readiness inferred.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CLOSED.FAILURE.WITNESS.REDESIGN.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PLAIN.REFERENCE.SOURCE.R3.NATIVE.PARTIAL.20261123"
+  ],
+  "resultSHA256": "ac591dd2963996a66655ae115811b3220a5f7fb20e48f05dd454672228e20995",
+  "codeMapCAN": "1b3719bd1d3e774b8d81ae126fdf101f66d26596d50a909640205f7f22dd274d",
+  "qualifierSHA256": "f6c225a699504ab6b9bdbdf74f3a0b3cf647439fb218c53db38dbda8c56cff77",
+  "minimalChangedLines": 2,
+  "syntheticVariants": 2,
+  "observerModes": 3,
+  "parserCalls": 6,
+  "testsExit": 0,
+  "criticalLintExit": 0,
+  "sourceGET": 0,
+  "providerDataReads": 0,
+  "publicWrites": 0,
+  "runtimeWrites": 0,
+  "sourceReady": false,
+  "unknownReferenceSHADepthCount": null,
+  "allProjectionsInputsIdentical": true,
+  "maxWitnesses": 4,
+  "maxWitnessBytes": 4096
+}

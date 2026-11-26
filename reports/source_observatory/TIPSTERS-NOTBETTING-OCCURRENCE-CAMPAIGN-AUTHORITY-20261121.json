@@ -1,0 +1,76 @@
+{
+  "generatedAt": "2026-11-21T05:38:54.353308+00:00",
+  "schemaVersion": "robin-positive-closed-declarations-source-e2-authority-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.OCCURRENCE.CAMPAIGN.AUTHORITY.20261121",
+  "missionId": "NOTBETTING_CLOSED_OCCURRENCE_E2_20261121",
+  "status": "SCIENTIFIC_BOUNDED_SOURCE_CAPTURE_AUTHORIZED_NOT_EXECUTED",
+  "workload": "POSITIVE_CLOSED_DECLARATIONS_NONCANONICAL",
+  "planSha256": "b3416214560ba160cb91694b0be004a282b57cd4a47b2436e43667ce55d15406",
+  "manifestSha256": "26eeb127708847b6c7484d351c849cfebbec33f100e071603aad6fc5fc60d1e7",
+  "codeProjection": "3e338efd0e77f0d9117edfe33b08079049ef96078af42cdb85d66bcb5cd16e76",
+  "baselineDataClaim": "DATA.SOURCE_OBSERVATORY.NOTBETTING.CLOSED.OCCURRENCES.E1.20261121",
+  "baselineDeclarations": 2,
+  "baselineTemporalObservations": 4,
+  "canaryRequiredSourceTipIds": [
+    "e112cc31-2939-4cd2-b65e-e20bd61e050e",
+    "b168b629-22df-497b-9e32-ded520a72a01"
+  ],
+  "canaryAt": "2026-11-21T05:40:00Z",
+  "slots": [
+    "2026-11-21T07:00:00Z",
+    "2026-11-21T09:00:00Z",
+    "2026-11-21T11:00:00Z"
+  ],
+  "expiresAt": "2026-11-21T11:15:00Z",
+  "budgets": {
+    "priorGET": 11,
+    "newGETMax": 8,
+    "familyGETMax": 19,
+    "priorMilliseconds": 29062,
+    "newMillisecondsMax": 570938,
+    "familyMillisecondsMax": 600000
+  },
+  "noncanonical": true,
+  "sourceExhaustivenessNotClaimed": true,
+  "globalVariantsUnknown": true,
+  "performanceEvaluationAllowed": false,
+  "settlementAllowed": false,
+  "marketInterpretationAllowed": false,
+  "newUUIDState": "PENDING_UNTIL_TWO_MATCHING_TEMPORAL_CAPTURES",
+  "encounteredVersionConflict": "VETO_NO_WINNER",
+  "prefixScope": "IMMUTABLE_PREFIX_THROUGH_CAPTURE_EVENT",
+  "unfinishedOrInvalidatedSlotsNotExposed": true,
+  "stableJournalReadMandatory": true,
+  "sourceExperimentsR3R4RemainFailed": true,
+  "futureSlotsRequireRealCanaryFourKeysAndSeparateWindowsGrant": true,
+  "windowsRegistrationAuthorized": false,
+  "applicationHookAuthorized": false,
+  "newRawBodiesStored": false,
+  "tests": {
+    "targetedCombinedPassed": 44,
+    "seconds": 3.48,
+    "corePassed": 24,
+    "ruff": "PASS",
+    "strictMypy": "PASS_4_FILES",
+    "bandit": "PASS",
+    "independentCodeReviews": [
+      "C1",
+      "C2",
+      "C4"
+    ]
+  },
+  "evidence": [
+    {
+      "path": "cockpit/.ci/notbetting-occurrence-campaign-20261121/plan.json",
+      "sha256": "57c3cca7351cb34c4b38e2305867e5119236a49266964ca00fbf1872c3ba52ab"
+    },
+    {
+      "path": "cockpit/.ci/notbetting-occurrence-campaign-20261121/mission.json",
+      "sha256": "def52064d2375061c3f0d83b4d480076d1e6e30488a24d2586ad55c63c882ba6"
+    },
+    {
+      "path": "cockpit/.ci/notbetting-occurrence-campaign-20261121/code-projection.json",
+      "sha256": "ee1ce3cda22750698239e91c82bade522722d79f9e6f7c7b1b400de5fbd7f4f9"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.PUBLIC.HEAD.DIAGNOSTIC.R2.RESULT.20261121",
+  "status": "PARTIAL_TIMEOUT_PHASE_UNKNOWN_NO_COLLECTION_ADMITTED",
+  "scope": "Exact spent R2 transport diagnostic result. One robots GET reservation, zero HEAD attempts; no response metadata retained. No message content and no source compatibility established.",
+  "observedAt": "2026-11-21T14:24:24.699353+00:00",
+  "outcome": "TIMEOUT",
+  "failureCode": "TIMEOUT",
+  "policy": "NOT_ASSESSED",
+  "receiptSHA256": {
+    "result.json": "9a3bd87a90fd0c10778ea365ecf73a28acbe01a4ea50dfb1285512a86cc61d97",
+    "events.jsonl": "d55dd4254143ba5e7b235fe39ea01b748653ad2c8946695fc93e80f673ec5d95",
+    "spent.json": "b4a10a27897127483fd840439923553d57835a3f84f0c3cdce7e29852511838c"
+  },
+  "validLinkedRecords": 3,
+  "robotsGETReserved": 1,
+  "headAttempts": 0,
+  "familyHTTPReservationsConsumed": 2,
+  "retainedResponses": 0,
+  "messageContentRead": 0,
+  "overrunMarkerPresent": false,
+  "networkPhase": "UNKNOWN",
+  "oldE1FailurePreserved": true,
+  "noRetryAuthorityCreated": true,
+  "verifiedBy": [
+    "C0",
+    "C4"
+  ]
+}

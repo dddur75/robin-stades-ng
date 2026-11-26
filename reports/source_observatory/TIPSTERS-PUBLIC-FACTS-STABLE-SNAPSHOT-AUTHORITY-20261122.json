@@ -1,0 +1,22 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.PUBLIC.FACTS.STABLE.SNAPSHOT.AUTHORITY.20261122",
+  "recordedAt": "2026-11-22T10:24:08.104Z",
+  "status": "E1_CONSTRUCTION_ONLY_E2_REVIEW_REQUIRED",
+  "scope": "An explicit trusted reviewed snapshot descriptor configures this endpoint. Read only that fixed private structured snapshot, pin raw SHA before parsing, validate schema/counters/native-ID set/immutable-row projection. Missing/corrupt/oversize/contradictory snapshot gives503; no historic subprocess or native Task query fallback in this configured mode. Whitelist factual fields and historical choice-observation companions only; strip ALL old campaign operational objects, recurring/halted/ready/native verified states. Expose French notice that automatic campaign state is not certified here. Apply existing legacy/SCO/GR approvals in the same order. No new prediction or author is admitted.",
+  "missionId": "PUBLIC_FACTS_STABLE_REVIEWED_SNAPSHOT_E1_E2_R2_20261122",
+  "planSHA256": "4c19571c9efd8c3d3527c89f109f76e974f84d2b1edbac2f47ee7932c3d110bb",
+  "manifestSHA256": "d69dda4ba505b7d1a1e62afe2cce612ede99fbf99d2ade050437f73bb8a94048",
+  "snapshotSHA256": "9efe723236e37b6817175a6583e08471c8acd54a3405c6dfc3d5d98f3e857b66",
+  "snapshotClaim": "DATA.SOURCE_OBSERVATORY.APP479.PREMATCH.METADATA.AUDIT.20261122",
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "newChoices": 0,
+  "publications": 0,
+  "globalDelivery": "PARTIAL",
+  "reviews": {
+    "C1": "Exact retained facts baseline and42 authorized reobservations admissible; strip operation metadata.",
+    "C3": "Exact corrected R2 contract PASS; E2 code review outstanding.",
+    "C4": "Exact corrected R2 E1 construction scope PASS; E2 remains closed before DATA/CODE."
+  }
+}

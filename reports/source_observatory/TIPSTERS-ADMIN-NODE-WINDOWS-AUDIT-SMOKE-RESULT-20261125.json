@@ -1,0 +1,25 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.LOCAL.ADMIN.NODE.WINDOWS.AUDIT.SMOKE.RESULT.20261125",
+  "status": "TARGETED_WINDOWS_OS_SMOKE_PASS_FACTS_ONLY",
+  "scope": "Exact fixed actor audit/run AST with closed Node program only; no application or network data.",
+  "actorSHA": "65749d26ee2badd961d7c8bf5aa11bfc4a846dc546028e118fbcf1e50a81c6d4",
+  "baselineActorSHA": "31d8a76e973ebf51b4c4a4d6dd7dac85a35ba46e899ad042194ed68bf9680383",
+  "inverseOneKeywordExact": true,
+  "primarySHA": "0adfddbe09d7e94ff0a00f94fd8a373aa304fa9ebb95f7de4d5b492b7297fb97",
+  "resultSHA": "ab5ec76a14da1381a687020653fb997baf12db2f66b6cb2da21db76f9d4201e4",
+  "stopSHA": "155cfb58523022d34969122bbfbf60aeacfaf3a16fdb7e7f569b59e80d654af9",
+  "negativeNoneProbeTypeError": true,
+  "actualNodeChildren": 1,
+  "nodeExit": 0,
+  "SourceGET": 0,
+  "APP": 0,
+  "Job": 0,
+  "priorOrchestrationGuardRefusalRetained": true,
+  "originalAuthorityAndMonotonicAnchorPreserved": true,
+  "authorityConformityNotRewritten": true,
+  "limitations": [
+    "One closed OS spawn only; no app parser/API or metadata write tested",
+    "Prior LOCAL failure and helper refusal remain immutable",
+    "No source or later LOCAL authority inferred"
+  ]
+}

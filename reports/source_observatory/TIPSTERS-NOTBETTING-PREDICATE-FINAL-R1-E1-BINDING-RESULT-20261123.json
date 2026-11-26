@@ -1,0 +1,37 @@
+{
+  "parentGrant": "e44fff143bbb1a060a913f9ed1871966cc4658b7d8ebb1db48257fd98133b5c7",
+  "planSHA": "e5debe5001c1c54bd8b09ea3f93f48bd96806eb5b81de1eb42d5515791678ceb",
+  "manifestSHA": "17988e419656bf0fac790ec8342af2be0bec01e35b30c350fdf86193087fecb6",
+  "configSHA": "cc5491f9e5d177b3c06eed69b893ff7310e49b3de7a06a6aa92a386380b064cc",
+  "workerSHA": "f82bd07c4c4137c387672d651d7715203b069d1b96fd6342f8e6def91cc9206d",
+  "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+  "outerSHA": "d9876f8c48395d14b43b22c07f1d354ed38e6f316d1714e6190ef3e5e2c2e1db",
+  "observerSHA": "d13021af98241f41e3a9d9635f70e73508fb548ec9b3a957e7dd654665f56b9a",
+  "consumerSHA": "570ad0fad9135a5be91fe9e1b7a5b8844550fa08d912d5d04599d2663c5e19e4",
+  "coreSHA": "f43374deb46d5bbe5244d34bcfbca16dd7da23384e1b8453ce6e72d49d78b93a",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREDICATE.FINAL.R1.E1.BINDING.RESULT.20261123",
+  "missionId": "NOTBETTING_PREDICATE_FINAL_BINDING_R1_20261123",
+  "status": "EXACT_FINAL_BINDING_AND_TARGETED_TESTS_PASS_E1_ONLY",
+  "generatedAt": "2026-11-23T14:32:06.530Z",
+  "scope": "Frozen finalpostfixbytes now independentlyverified with12syntheticmethods, strictmypy2files andcriticalRuff6files plus exactactual6componentloader/9calendarSSLstrict+oneemptycloseddiagconsumerprobe underDENYbeforeimports/RAMsyntheticSD. No codeedits/no pre-fixproofsubstitution. OldmissionSTOP/lateclosurepreserved. No actualSD/Job/GET/nativeprematch/forecastadmission proof; freshSOURCEkeys required afterdurableclose.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREDICATE.POSTFIX.PRIVATE.REVIEW.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.SCHEMA.NATIVE.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CURRENT.TERMS.PERSONAL.CONTEXT.RESULT.20261123"
+  ],
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "tests": 12,
+  "targetedProcesses": 4,
+  "strictMypyExit": 0,
+  "criticalRuffExit": 0,
+  "actualLoaderExit": 0
+}

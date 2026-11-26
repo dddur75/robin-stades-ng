@@ -1,0 +1,165 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.EXACT.FICHE.ADMIN.TWO.VIEW.LOCAL.RECETTE.RESULT.20261124",
+  "missionId": "ROBIN_ORIGINAL_READ_ENVIRONMENT_RESTORATION_20261124",
+  "status": "PASS_AND_HOLD_TARGETED_LOCAL_APP_RECETTE",
+  "scope": "Restored exact original read environment and original runtime cwd with one owned server replacement. Native PILOT/CONNECTORS/RECURRING and candidates APIs return200. Actual two local DOM views verify17unqualified source-account observations on one exact fiche and collection admin, real fields in RAM,39qualification rows, preserved historical and other pending records; console/page errors0. No prematch qualification/admissions, source activation, global UI acceptance or complete compatible-source delivery.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.ROBIN.ORIGINAL.READ.ENVIRONMENT.PREPARATION.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.RUNNING.SERVER.READONLY.METADATA.E1.RESULT.20261124",
+    "DATA.SOURCE_OBSERVATORY.OLBG.PENDING.REAL.NATIVE.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.EXACT.FICHE.APP.WIRING.E1.RESULT.20261124"
+  ],
+  "actual": {
+    "Git": 0,
+    "Task": 0,
+    "admissions": 0,
+    "authorityClosed": true,
+    "browser": {
+      "actualFieldDOMComparisonInMemory": true,
+      "adminPendingVisible": true,
+      "applicationAdmissions": 0,
+      "catalogueRows": 317,
+      "closedAtUTC": "2026-11-24T15:44:44.681Z",
+      "exactCandidateAttachments": 1,
+      "fichePendingVisible": true,
+      "globalUIRecette": false,
+      "historyAndOtherPendingUnchanged": true,
+      "originalProviderRequestsContinued": 0,
+      "otherCandidatesUnaffected": true,
+      "pendingRecords": 17,
+      "qualificationRows": 39,
+      "realChoicesLogged": false,
+      "screenshots": 0,
+      "sourceCollectorRuns": 0,
+      "stats": {
+        "blockedExternal": 0,
+        "blockedWebSockets": 0,
+        "blockedWrites": 0,
+        "consoleErrors": 0,
+        "droppedClientHMRFrames": 0,
+        "localGET": 165,
+        "localHMRSockets": 2,
+        "pageErrors": 0,
+        "requestCapHit": false
+      },
+      "status": "LOCAL_EXACT_OLBG_PENDING_CANARY_PASS"
+    },
+    "closedAtUTC": "2026-11-24T15:44:45.240882+00:00",
+    "codeWrites": 0,
+    "dataWrites": 0,
+    "globalUIRecette": false,
+    "job": {
+      "activeSecondsMax": 50,
+      "elapsedSeconds": 4.48399999999674,
+      "exit": 0,
+      "hardSeconds": 60,
+      "sourceGET": null,
+      "subtreeKillConfirmed": true,
+      "taskMutations": 0,
+      "timedOut": false
+    },
+    "metadata": {
+      "attachments": 1,
+      "catalogueRows": 317,
+      "gatesFalse": true,
+      "http": 200,
+      "loopbackGET": 4,
+      "nativeReaders": [
+        {
+          "bodyBytes": 5305,
+          "http": 200,
+          "kind": "PILOT"
+        },
+        {
+          "bodyBytes": 260113,
+          "http": 200,
+          "kind": "CONNECTORS"
+        },
+        {
+          "bodyBytes": 2539,
+          "http": 200,
+          "kind": "RECURRING"
+        }
+      ],
+      "notBettingPreserved": true,
+      "pendingRecords": 17,
+      "readyForBrowser": true,
+      "sourceGET": 0,
+      "status": "CLOSED_METADATA_BATCH",
+      "targetExact": true,
+      "valuesLogged": false
+    },
+    "metadataWrites": 0,
+    "missionId": "ROBIN_ORIGINAL_READ_ENVIRONMENT_RESTORATION_20261124",
+    "newPID": 61260,
+    "readiness": {
+      "host": "127.0.0.1",
+      "pid": 61260,
+      "port": 4173,
+      "ready": true,
+      "sourceGET": 0,
+      "status": "OWNED_SERVER_READY"
+    },
+    "retry": false,
+    "sourceGET": 0,
+    "status": "LOCAL_ENV_RESTORED_AND_TWO_VIEW_PASS",
+    "stop": {
+      "at": "2026-11-24T15:44:29.6374890+00:00",
+      "oldPID": 7056,
+      "ownershipVerified": true,
+      "sourceGET": 0,
+      "status": "OWNED_SERVER_STOPPED_PORT_FREE"
+    }
+  },
+  "receiptSHA256": "c52509588457fbed3d7a67f23b766bd05d929579fcd6b8a675555b64fae21695",
+  "stopSHA256": "ab96254384f992039bd6b2683e788fe6c18f535f4ceb48b4085f83ea1b9970d9",
+  "runtimeCodePins": {
+    "cockpit/scripts/notbetting-pending-source.ts": {
+      "bytes": 6793,
+      "sha256": "cd6537f8fbe0f34b07628ac4adaa53612056b710d5b5fdf6735d5948ead28896"
+    },
+    "cockpit/scripts/catalogue-independent.ts": {
+      "bytes": 17777,
+      "sha256": "df23838788e1252d2c67bd0c9f85fcd1b2ccfe03f917602cc0349699331d5bd7"
+    },
+    "cockpit/app/components/expert/tipster-candidates.tsx": {
+      "bytes": 17099,
+      "sha256": "8e8a6213f5fe84aaf402b4896e313f1cf8f58d8da3c0d2edd9f203c806718372"
+    },
+    "cockpit/scripts/olbg-pending-source.ts": {
+      "bytes": 6709,
+      "sha256": "28da007500b5727802f7fba15b112e421f84e54761cb2f983e8b2583855ac015"
+    },
+    "cockpit/app/components/expert/olbg-pending-panel.tsx": {
+      "bytes": 1931,
+      "sha256": "eb4e3d46fcf136bd9f56e754850f642628ac8f10d450d199b73437fc43245821"
+    },
+    "cockpit/scripts/olbg-reviewed-pending-approval.ts": {
+      "bytes": 936,
+      "sha256": "8780a00e049746ec8bd758e8cc919ddbb1b1a6eff7f5a1183376f41713f76bbc"
+    },
+    "cockpit/scripts/olbg-pending-candidate.ts": {
+      "bytes": 1074,
+      "sha256": "8a7371a4fc6a0ac2fabe887fcf07e669068f414c11c0c537e94017fd66768c60"
+    }
+  },
+  "originalEnvironmentSHA": "0f9ffb4e960558bc4c55df14c6d203043b577ac7149b25e660be6c8fee9c54bc",
+  "metadataSHA": "14eafb19a57fab3557724c8f29ba62269e6f3c02ed1333ef41d82b079ad3f01a",
+  "sourceReady": false,
+  "admissions": 0,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "authorityClosed": true,
+  "limitations": [
+    "Two targeted local DOM views only; no global usability/screen-reader/pixel acceptance.",
+    "17 observations remain unqualified: no canonical fixture, human identity certification or new proven-prematch admission. Historical480choices are preserved separately.",
+    "Prior failed control windows and orchestration receipts remain PARTIAL; this successful recipe does not repair their history.",
+    "No source campaign/task restarted; J12 remains separate. Private observations remain local, outsideGit.",
+    "Restoration fixed observed API503/console regression; unique underlying cause of previous launcher handle wait remains unknown."
+  ]
+}

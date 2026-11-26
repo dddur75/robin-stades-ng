@@ -1,0 +1,30 @@
+{
+  "generatedAt": "2026-11-23T11:02:49.117Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI262.IMPORTS.CORRECTIVE.RESULT.20261123",
+  "missionId": "CI262_IMPORTS_CORRECTIVE_ENGINEERING_E1_20261123",
+  "status": "LOCAL_CORRECTION_VERIFIED_NOT_YET_PUBLISHED",
+  "scope": "Correct3 actual CI262 E401/I001 import declarations/order errors in2 pure modules. Independent binding-set and entire non-importAST comparisons unchanged.46 affected synthetic tests pass on corrected bytes, full configured Ruff and Bandit2modules pass. Five targeted commands, no graph insertion in code phase. Does not retrospectively make CI262 green; metadata projection V24 and future publication distinct. No real source/data/runtime/caller or authority change.",
+  "keys": [
+    "C0",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V23.ENGINEERING.RECETTE.20261123"
+  ],
+  "headUnderTest": "84a90f4c25bab1e13fb9a9971931fbca086912d5",
+  "CI262": 45159558336,
+  "changedFiles": [
+    "src/robin/source_observatory/coteur_static.py",
+    "src/robin/source_observatory/notbetting_prospective.py"
+  ],
+  "ASTProofSHA256": "cc24889d1f7a750f781e3de1fc1f48ad133f33c739e1a2eff4bc367569c0f6da",
+  "domainPrimarySHA256": "c1fef076f90c6f117bc20834a340825968bd35454915b24fb8d8c4354726eef6",
+  "testsPassed": 46,
+  "configuredRuffExit": 0,
+  "banditExit": 0,
+  "targetedCommands": 5,
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "sourceReady": false
+}

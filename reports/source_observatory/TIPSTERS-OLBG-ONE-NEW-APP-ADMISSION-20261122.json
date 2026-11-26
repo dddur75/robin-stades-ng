@@ -1,0 +1,48 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.ONE.NEW.APP.ADMISSION.20261122",
+  "recordedAt": "2026-11-22T17:03:06.289Z",
+  "status": "ONE_NEW_NATIVE_CHOICE_APPROVED_FOR_LOCAL_SNAPSHOT_ADMISSION",
+  "scope": "C1 DATA/C3 CODE/C4 SCOPE approve exactly one native OLBG choice and the frozen snapshot480 for local admission. All479 previous rows and historical metadata preserved. This authority is not an observed application receipt; E2 canary will establish actual application state.",
+  "missionId": "OLBG_NEW_ONE_FROZEN_SNAPSHOT_LOCAL_ADMISSION_20261122",
+  "planSHA256": "fabc9a62a877be533510657b5e3c68c0cef3eb91d8c1c1065995fe8f24f13ffb",
+  "manifestSHA256": "04e1a9f178b2b1d44ea8372d0f2287f07dd42156608fdfa05d10fee305b89e9a",
+  "snapshotSHA256": "ae54e8e74500795fbcfe759cbabdcfe42a006f0855c00e5ba9dd7a92ba528aec",
+  "codeMap": {
+    "cockpit/scripts/public-tipsters-plugin.ts": "71f263f9ca419922baa6ff08b23d6b83e0e78b2e0ede4f14acf7063eaa01077e",
+    "cockpit/scripts/reviewed-public-snapshot.ts": "5bfc59221c3d1a13a67923015b2cc275c0e515122095c09b250f4f8c34bc604a",
+    "cockpit/tests/reviewed-public-snapshot.test.ts": "caa31b481dea7939d49a00e8e84100215a109ab4ab8a11958851a910d6ef3e1c",
+    "cockpit/app/components/expert/public-tipsters.tsx": "84c2f3aa6086a366912c9ac83048c58ed248e01d2cd18e1059c8e30b06e69e36"
+  },
+  "codeMapSHA256": "56c8d914a601dcafdb3edc60193be210a7dd8c0cd09665e790f9147be711b95a",
+  "baselineSHA256": "de8939b8283e577ebed97f85db4a38e7fdb1a65d0f4e36c08abc52caa5f49532",
+  "candidateSHA256": "d0329e45a6d6fed08e7dd65fd38c399b0b80957a67fa173d584cb1bef34f776d",
+  "sourceClaim": "DATA.SOURCE_OBSERVATORY.OLBG.SINGLE.PERSONAL.REP.V2.PREMATCH.RESULT.20261122",
+  "projectedCounts": {
+    "choices": 480,
+    "pseudonyms": 80,
+    "fixtures": 20,
+    "newChoices": 1
+  },
+  "all479Unchanged": true,
+  "historicalSRO55AndFourForumBatchesUnchanged": true,
+  "rawCandidateUnchanged": true,
+  "sourceGET": 0,
+  "TaskChanges": 0,
+  "GitPush": 0,
+  "applicationAlreadyObserved": false,
+  "maximumAPIReads": 2,
+  "maximumBrowserPages": 1,
+  "maximumNativeAdmissions": 1,
+  "budgetStartedAt": "2026-11-22T16:49:31.049479+00:00",
+  "budgetSeconds": 1800,
+  "independentReview": {
+    "C1": "Actual snapshot hash/48080/20/479deepEqual75updates/projection exact including canonical author bridge. Original candidate unchanged and preKO.",
+    "C3": "Exact4codepins/reader+proposedplugin13PASS/types/lint/projection sourceproofs and no overlays/fallback PASS.",
+    "C4": "Exact scope/hash/code/whitelist/caption/privacy actual PASS, E2 bounded after otherkeys, cumulative1800s unchanged."
+  },
+  "unknowns": [
+    "No ongoing recurrence or current native state established.",
+    "No physical identity, UTC publication timestamp or performance established."
+  ],
+  "globalDelivery": "PARTIAL"
+}

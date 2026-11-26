@@ -1,0 +1,32 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.APP.WARM.DURABLE.R2.FINAL.CODE.ARTIFACT.20261123",
+  "missionId": "SOURCE_OBSERVATION_WARM_DURABLE_R2_20261123",
+  "generatedAt": "2026-11-23T17:22:58.396Z",
+  "status": "CODE_ACCEPTED_ARTIFACT_E1_WINDOW_CLOSED_NO_EFFECT",
+  "keys": [
+    "C0",
+    "C1",
+    "C3"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.APP.OWNED.RELOAD.R1.E1.REJECTED.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.SOURCE.OBSERVATION.INTEGRATION.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.SOURCE.OBSERVATION.UI.UTF8.FIX.RESULT.20261123"
+  ],
+  "scope": "Finalcontrollerd0ab acceptedC1/C3 after2minimalfixes: SAMEverifiedhelperbufferpreexec/literal8123+e2hash andplanAPIbudgetderived/assert4; helper8123unchanged/twofsyncclockregressionsreused. AuthorfinalSTOP17:20:32beforeE1cut17:21:02 BUTindependentfinalC3review17:21:38aftercut: NOretroactiveE1close/oldE2authority. Alltouch/API/stop/start/browser0. Old9760version recoveredinverseexactSHash, notbackupantériority. Artifactreusable in freshbinding withoutcodechanges/corpusreplay. OldmissionFAIL_AND_STOP,reliquats0.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "configTouches": 0,
+  "apiReads": 0,
+  "tuple": {
+    "planSHA": "b2d42d31f3712073bbcd7c6ef6dbbeadb65d50a9f4bab33d0737abf181ff6525",
+    "manifestSHA": "b0c3e9faab1b2d74a96cd9900c1bcdfc6204034b198050237c8db016851ce0e1",
+    "controllerSHA": "d0ab0bc15fe3844a61205a0380e4497f3bfaf5375746535790d8e2478a64604f",
+    "durabilitySHA": "81238957ad82a5b7f94addce5d24deec6bd1dc728bf3a22b8c626e17ff34c8a2",
+    "ownershipSHA": "c3f5afe2906c9c37e3fc25c5d78259760fc4b0fa5c8bbf17c916d3a4f0abcc6f",
+    "ownerPrimarySHA": "3ba1ff8830afb70a4311c01e031e4e241a6c826498eba383b63f0c110ceba88e"
+  },
+  "testsPrimarySHA": "d6e4159e2f2a88c5e670cf5f131178d4be3b287ec21eb108a0d17857d95211b8"
+}

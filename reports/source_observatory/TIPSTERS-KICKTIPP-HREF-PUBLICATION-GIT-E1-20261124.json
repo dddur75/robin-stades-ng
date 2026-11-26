@@ -1,0 +1,58 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.KICKTIPP.HREF.PUBLICATION.GIT.E1.20261124",
+  "missionId": "KICKTIPP_HREF_PUBLICATION_GIT_R1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Publish one exact reviewed Kicktipp passive native href-shape correction and honest independently reviewed local fact receipts in existing draft PR133. Source readiness, author identity, canonical fixture and prematch remain unproven; global delivery PARTIAL.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V38.ENGINEERING.RECETTE.20261124",
+    "ENG.SOURCE_OBSERVATORY.KICKTIPP.NATIVE.HREF.CORRECTION.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.NATIVE.LITERAL.CONTEXT.SOURCE.R2.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.PUBLICATION.CI273.EXACT.HEAD.SUCCESS.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.LOCAL.GENERATED.FIXTURE.REUSE.MJS.DOMAIN.RESULT.20261124"
+  ],
+  "binding": {
+    "mission_id": "KICKTIPP_HREF_PUBLICATION_GIT_R1_20261124",
+    "planSHA": "16c80aaeb64e74e998a6fb291354f2d9c2f283ba7f49af46a5ce1fb6ca41d72f",
+    "manifestSHA": "0f70bd450811af7261893d3e4c495e861de391139f3a511613772ba231fc0ca3",
+    "controllerSHA": "0cfeba9fbe856685c3b64403ed619a9e1d18397beaefd91bf4ccdff76145c34f",
+    "baseHEAD": "5a4483ceab9693cae8019e048a72a5180bc7997e",
+    "remote": "origin",
+    "remoteBranch": "codex/robin-dossier-fidele",
+    "localBranch": "codex/robin-bounded-delivery-public-r1",
+    "files": [
+      "reports/council/decision-ledger.jsonl",
+      "reports/evidence/evidence-graph.json",
+      "reports/source_observatory/TIPSTERS-KICKTIPP-HREF-PUBLICATION-GIT-E1-20261124.json",
+      "reports/source_observatory/TIPSTERS-KICKTIPP-NATIVE-HREF-CORRECTION-E1-RESULT-20261124.json",
+      "reports/source_observatory/TIPSTERS-LOCAL-FOLLOWUP-V38-ENGINEERING-RECETTE-20261124.json",
+      "reports/source_observatory/TIPSTERS-LOCAL-GENERATED-FIXTURE-REUSE-MJS-DOMAIN-RESULT-20261124.json",
+      "reports/source_observatory/TIPSTERS-NOTBETTING-NATIVE-FIELD-SHAPES-LOCAL-R1-ACTUAL-RESULT-20261124.json",
+      "reports/source_observatory/TIPSTERS-NOTBETTING-NATIVE-FIELD-SHAPES-PRIVATE-CODE-E1-RESULT-20261124.json",
+      "reports/source_observatory/TIPSTERS-NOTBETTING-NATIVE-LITERAL-CONTEXT-DEPTH-FIX-PRIVATE-CODE-E1-RESULT-20261124.json",
+      "reports/source_observatory/TIPSTERS-NOTBETTING-NATIVE-LITERAL-CONTEXT-SOURCE-R2-ACTUAL-RESULT-20261124.json",
+      "reports/source_observatory/TIPSTERS-PUBLICATION-CI272-EXACT-HEAD-CANCELLED-RESULT-20261124.json",
+      "reports/source_observatory/TIPSTERS-PUBLICATION-CI273-EXACT-HEAD-SUCCESS-RESULT-20261124.json",
+      "src/robin/source_observatory/kicktipp_linked.py",
+      "tests/source_observatory/test_kicktipp_linked.py"
+    ]
+  },
+  "tests": {
+    "syntheticRED": 1,
+    "goldenGREEN": 29,
+    "ruff": 0,
+    "mypy": 0,
+    "bandit": 0,
+    "V38": "ONE_GUARD_PASS_TIMING_CONFORMANT",
+    "localMjs": "43PASS_0FAIL_4SKIP_AUTHENTIC_BUNDLE_MISSING",
+    "previousCI273": "SUCCESS17_EXACT5A_ONLY"
+  },
+  "baseReuse": "Previous pre-stage frozen base graph and ledger reconstructed as exact raw bytes: full byte count and SHA256 match, no additional Git command. Unlisted show command was refused before execution, no mutation.",
+  "sourceReady": false,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null
+}

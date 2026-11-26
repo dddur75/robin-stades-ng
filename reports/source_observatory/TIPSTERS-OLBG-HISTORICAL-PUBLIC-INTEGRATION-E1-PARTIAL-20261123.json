@@ -1,0 +1,37 @@
+{
+  "generatedAt": "2026-11-23T06:40:04.681Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.HISTORICAL.PUBLIC.INTEGRATION.E1.PARTIAL.20261123",
+  "missionId": "OLBG_HISTORICAL_PUBLIC_APP_INTEGRATION_E1_20261123",
+  "status": "PARTIAL_TEST_CASE_BUDGET_EXCEEDED",
+  "scope": "Exact4 app files and private sidecar copied;25 targeted tests pass but executed25 exceeds mission16case limit. Mission stopped; app canary and lint not performed.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.HISTORICAL.DIAGNOSTIC.R3.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.OLBG.HISTORICAL.INTEGRATION.QUALITY.PRIVATE.RESULT.20261123"
+  ],
+  "authorStatus": "STOP",
+  "authorizedAt": "2026-11-23T06:38:01.272842+00:00",
+  "frozenAt": "2026-11-23T06:39:00.686Z",
+  "fourCopiesExact": true,
+  "privateSidecarCopied": true,
+  "newPublicTests": 12,
+  "reusedExistingReaderTests": 13,
+  "totalExecutedSyntheticTests": 25,
+  "syntheticCaseBudget": 16,
+  "limitExceeded": true,
+  "testsExit": 0,
+  "testsPass": 25,
+  "testsFail": 0,
+  "targetedRuns": 1,
+  "actualAppCanaryReads": 0,
+  "lintRun": false,
+  "runtimeWrites": 0,
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "codeMapCAN": "133ded5d44e33d798deeda47f9aeff710e59eadebcfaaab496e71c7ce983af8d",
+  "remaining": "Do not call canary under this mission. New bounded scope must reuse25test primary, exact copies and prior full-app typecheck; permit only one app canary and one targeted lint."
+}

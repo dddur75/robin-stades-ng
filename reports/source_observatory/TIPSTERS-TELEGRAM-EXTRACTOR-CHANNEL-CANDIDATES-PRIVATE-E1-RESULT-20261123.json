@@ -1,0 +1,58 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.EXTRACTOR.CHANNEL.CANDIDATES.PRIVATE.E1.RESULT.20261123",
+  "missionId": "TELEGRAM_EXTRACTOR_CHANNEL_CANDIDATES_PRIVATE_E1_20261123",
+  "status": "ACCEPTED_PRIVATE_CHANNEL_CANDIDATE_BRIDGE_SYNTHETIC_ONLY",
+  "scope": "Reuse exact existing deterministic extractor/models/schema and temporal validation through isolated private modules and SAMEverifiedRAMschema. Returns closed summary plus private UNQUALIFIED CHANNEL candidates only; resolved grammar is not personal forecast, fixture or prematch qualification. No real cache or source.",
+  "keys": [
+    "C0",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.INHERITED.TEXT.NATIVE.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.TEMPORAL.METADATA.LOCAL.E1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.TEMPORAL.METADATA.FINAL.PRIVATE.E1.RESULT.20261123"
+  ],
+  "bridgeSHA": "a0479490b73d01bb9dae12f789aec9bf7093328364cb29923f7367f6fe9e3ddf",
+  "resultSHA": "465b22cc51426b6655ae81866136cd36539aaf3c396cb7508ebe5b550b5bd0a5",
+  "fileMapSHA": "389fe9e23722b9b9f8d86784a759e79da4edf7bdd9d350248bd9b4560c04fdfc",
+  "copiedPublishedPins": {
+    "extractor": {
+      "path": "src/robin/source_observatory/extractor.py",
+      "sha256": "b15ef45f3a52f8eb4d998370bd46ec22aa5867df0dfbffd293dfec9a38c31d90",
+      "bytes": 16933
+    },
+    "models": {
+      "path": "src/robin/source_observatory/models.py",
+      "sha256": "68047d99dacb99999483ac66e3b8b2bd6101c4741ab64e9ab6fd9a956f1f09a0",
+      "bytes": 27423
+    },
+    "schema_validation": {
+      "path": "src/robin/source_observatory/schema_validation.py",
+      "sha256": "73cafe1310f2be0d966d12d4f6b299be108a230e26d5eeecce638b2a400c84ea",
+      "bytes": 5511
+    },
+    "schema": {
+      "path": "src/robin/source_observatory/schemas/contribution.schema.json",
+      "sha256": "bf0e00cd0d26500fa5f912d57d908f85c7e7261b53fb7d483f42ba5877247d70",
+      "bytes": 13001
+    }
+  },
+  "temporalHelperSHA": "a6111f784c2ef99b48571f8add65a680072d18c8e12b6d8d7974a02ee4678885",
+  "validation": {
+    "GREENMethods": 3,
+    "syntheticFixtures": 8,
+    "criticalRuffExit": 0,
+    "PythonRAMCompileFiles": 2,
+    "targetedAuthorChildren": 4,
+    "GitROProcesses": 5
+  },
+  "privateCandidateMax": 32,
+  "privateCandidateBytesMax": 65536,
+  "sourceGET": 0,
+  "realCacheReads": 0,
+  "privateRealCandidateStorage": 0,
+  "sourceReady": false,
+  "newForecasts": 0,
+  "LOCALAuthority": false
+}

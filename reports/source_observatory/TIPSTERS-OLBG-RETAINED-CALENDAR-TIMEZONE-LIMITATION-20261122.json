@@ -1,0 +1,42 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.RETAINED.CALENDAR.TIMEZONE.LIMITATION.20261122",
+  "recordedAt": "2026-11-22T19:43:24.447Z",
+  "status": "PRE_KO_COMPARISON_USES_RETAINED_CALENDAR_NATIVE_TIMEZONE_NOT_CERTIFIED",
+  "scope": "Limited temporal lineage audit of three private OLBG observations and fixed retained calendar references. Counts, choices, original payloads, observations and historical claims are not rewritten. PreKO means comparison to retained calendar UTC, not independent native UTC proof.",
+  "observationsAudited": 3,
+  "privateBatchSHA256": [
+    "d0329e45a6d6fed08e7dd65fd38c399b0b80957a67fa173d584cb1bef34f776d",
+    "410fca5ae968e616717cfca42ef2a1b34c8272bd1d5188d2bacdd2137d47846a"
+  ],
+  "nativeEventType": "STRING",
+  "nativeEventFormat": "NAIVE_YMD_SPACE_HMS",
+  "nativeExplicitOffset": false,
+  "knownEpochConvention": false,
+  "sourceEventTimezoneAllNull": true,
+  "independentNativeUTCProof": false,
+  "parserSHA256": "275f6c296dca7c3ff342e705b131b68b053ae10d09ee56d4fe7b163304d9a8a8",
+  "opaqueParserSHA256": "be17ad95f30c7a7e5dd9e2992d6f9787595966f305e3e91081bb4e591c09be38",
+  "parserBehavior": "Compare native civil date only to retained fixture date, then observed system UTC before retained fixture kickoff UTC. Native hour is not used to establish UTC.",
+  "calendarBasis": "RETAINED_UTC_VALUES_NO_NEW_NATIVE_UTC_CLAIM",
+  "futureJ12": {
+    "documentaryScheduleURL": "https://ligue1.com/fr/articles/l1_article_5843-",
+    "documentaryCivilFixtures": 9,
+    "independentNativeUTCProof": false,
+    "pilotSubsetFixtures": 7,
+    "pilotAuthorityTransferred": false
+  },
+  "qualifiesClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.SINGLE.PERSONAL.REP.V2.PREMATCH.RESULT.20261122",
+    "DATA.SOURCE_OBSERVATORY.OLBG.TWO.KNOWN.PROFILES.PREMATCH.PARTIAL.20261122",
+    "DATA.SOURCE_OBSERVATORY.OLBG.ONE.NEW.APP.ADMISSION.20261122"
+  ],
+  "countsUnchanged": true,
+  "globalNativeUTCProvenCount": null,
+  "appChoices": 480,
+  "newSourceGET": 0,
+  "TaskQueries": 0,
+  "appChanges": 0,
+  "performanceEvaluationAllowed": false,
+  "nativePersonalContentExposed": false,
+  "requiredNextStep": "Verify a primary timezone convention or absolute source kickoff before claiming independent native UTC proof or activating a future collection requiring it."
+}

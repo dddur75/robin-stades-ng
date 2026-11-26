@@ -1,0 +1,50 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.PUBLICATION.CI272.EXACT.HEAD.DIRECT.FAILURE.SNAPSHOT.RESULT.20261124",
+  "missionId": "PUBLICATION_CI272_DIRECT_FAILURE_SNAPSHOT_20261124",
+  "status": "PARTIAL",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Independent exact-head nonterminal CI snapshot: one directly failed Cockpit job, fourteen successful jobs and one still active on sixteen visible jobs. No global terminal result or cancellation asserted.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.APP.PUBLIC.INTEGRATION.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.TEST.LOADER.CI.FIX.E1.RESULT.20261124"
+  ],
+  "commitSHA": "cfd3874bb01df86722ccce63ae7c5c0de773290d",
+  "runId": 45359912980,
+  "runNumber": 272,
+  "runStatus": "in_progress",
+  "runConclusion": null,
+  "asOfIndependentC1SnapshotUTC": "2026-11-24T09:11:33Z",
+  "C4RecheckedSameNonterminalState": true,
+  "recordedAtUTC": "2026-11-24T09:12:55.667Z",
+  "visibleJobs": 16,
+  "successfulJobs": 14,
+  "directFailedJobs": 1,
+  "activeJobs": 1,
+  "skippedJobs": 0,
+  "directFailure": {
+    "jobId": 138328246444,
+    "name": "Chronos PostgreSQL profiles / Chronos provider-free Cockpit",
+    "step": "Construire l'artifact serveur avant les tests SSR",
+    "errorCode": "ERR_UNSUPPORTED_RESOLVE_REQUEST",
+    "unresolvedImport": "./notbetting-pending-source",
+    "test": "cockpit/tests/reviewed-source-observation.test.mjs"
+  },
+  "activeJob": {
+    "id": 138330003546,
+    "name": "Quality and domain tests"
+  },
+  "newCorrectiveTargetSHA256": "f3c578accd7ff0e94426608f3222515f5183200f113e7746b990767a3463d263",
+  "sourceReady": false,
+  "admissions": 0,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "limits": [
+    "Metadata snapshots independently read against the same exact commit/run. Error detail supported separately by targeted job log and local RED primary, not inferred from metadata alone.",
+    "No 17-job terminal conclusion, global CI success, Quality success or cancellation asserted.",
+    "No rerun/cancel API action performed. A later necessary corrective push may trigger workflow concurrency; actual old run terminal result must be tracked separately."
+  ]
+}

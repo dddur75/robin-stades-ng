@@ -1,0 +1,54 @@
+{
+  "at": "2026-11-26T00:33:09.487Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.PROVEN73.TASK.APP.RUNTIME.RESULT.20261126",
+  "status": "PASS_LOCAL_CONNECTED_WAITING_FIRST_CAPTURE",
+  "runtimePID": 11972,
+  "publicChoices": 764,
+  "candidateFiches": 377,
+  "adminRows": 54,
+  "minimumIndividuallyProvenAccounts": 73,
+  "minimumProofClaim": "DATA.SOURCE_OBSERVATORY.OLBG.131.NEW.TIPSTERS.CAPTURE.20261126",
+  "allPrior764PickIdsPreserved": true,
+  "allPrior377FicheIdsPreserved": true,
+  "source73ReadContractVerified": true,
+  "source73CompletedSlots": 0,
+  "source73AutomaticAdmissionVerified": false,
+  "source73TaskState": "Ready",
+  "source73TaskTriggers": 12,
+  "source73NextRunUTC": "2026-11-26T00:45:00.0000000Z",
+  "source73SourceGrant": "9b6c0b1c6ad16d14dccc1909de22247bcb0cba7166afbdd91a31a13258e3aa9d",
+  "source73AppGrant": "6ffd0f5082d0e496eea70a68aa977998350c3b4a0fbd2b622c5a725256c120ea",
+  "source73TaskGrant": "a17d76f03fd296a72ecf42dc8e74f2816e1525f8a42067114971ff51942a1972",
+  "old203797TaskUnchanged": true,
+  "J12TaskUnchanged": true,
+  "lifecycleCorrected": true,
+  "localApiGET": 3,
+  "localPagesGET": 2,
+  "readbackSHA256s": [
+    "341f249bc92796243e9f3d428eac7e11340e3c12cf680dfec7af3c9b350312c1",
+    "98dac7160099d076f9aabdd9133e1d95992cef5170a388c4d15b2056d9adb080",
+    "bd4d9a54b73ccbf6992638b25d02b312a7b2dc2d329eb1f0c041c6ae5552f4ca"
+  ],
+  "pages": [
+    {
+      "path": "/expert/admin-collecte",
+      "status": 200,
+      "bytes": 28452,
+      "sha256": "fcbe183dc7316cc0de9d7d02287d1bb2d0cb55e4cec50b61c3d65f6c3daf8159"
+    },
+    {
+      "path": "/expert/tipsters/catalogue%3A998ddf45839ca0b5ad984f0e766b31a9fb9fc1f1e0e744a2b918b13418b848b5",
+      "status": 200,
+      "bytes": 28494,
+      "sha256": "fceb67ea694f1d27344e2a81cc23a31c69f75ae133e3141be0841f89b641b6c6"
+    }
+  ],
+  "APPCodeWrites": 3,
+  "APPAdminWrites": 1,
+  "SourceGET": 0,
+  "TaskCreates": 1,
+  "productionLocked": true,
+  "allCompatibleIntegrated": false,
+  "globalUIRecette": false,
+  "globalDelivery": "PARTIAL"
+}

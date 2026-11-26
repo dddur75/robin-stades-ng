@@ -1,0 +1,74 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.TEXT.REGION.NATIVE.R1.ACTUAL.RESULT.20261123",
+  "missionId": "TELEGRAM_BEXTRA_TEXT_REGION_WITNESS_NATIVE_R1_20261123",
+  "status": "PARTIAL_ATOMIC_REFUSAL_CLOSED_DIAGNOSTIC_OBSERVED_SOURCE_STOP",
+  "scope": "One current fixed Bextra GET measures DUPLICATE_TEXT at a second text block while inherited text context is active, after four completed prefixes in RAM. No source messages retained; atomic refusal and all business gates unchanged. Does not prove DOM positions, four forecasts, humans or total message count.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.TEXT.REGION.NATIVE.R1.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.TEXT.WITNESS.FINAL.BYTE.PRIVATE.E1.RESULT.20261123"
+  ],
+  "tuple": {
+    "parentGrant": "73af8a0bbf96f6160c794bbb418740b1425472d9d4c57b341f5ca992a0cbe7db",
+    "planSHA": "5071e011db5280645b4041ea78dccf05a8afe4cc32354e0f56d61f2965cab564",
+    "manifestSHA": "06723eb020e175c85a526fc1015c940b7598d46bffd4054e0bae30ada2c136f9",
+    "configSHA": "f24b331469ddfb1e38c5c1b8960b3bab2b4b2d8fe6f4a86e9d180c802fa2dd96",
+    "workerSHA": "4a753cd20eff35d7263c39915e1ae8fc284561eb090e8959755a76f2471e6437",
+    "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+    "outerSHA": "df5672eb4188672fb9fa5d95d2a82f390ec2b2b825195425b46c68cddcb8c4c9"
+  },
+  "sourceDecisionSHA": "64d4ebc885269865127e68890342aa1d21a15958f8aa3ef7a304f6e5a5c07578",
+  "nativePrimarySHA": "b5c68648bb08b7aa7e13405a6606b4ee52bbd93f858aba2c825e265ca332f165",
+  "resultSHA": "5a756e96bdd49c482e9f49766d094bff5679545fac11a8641d14687985da9a83",
+  "sourceClosedAtUTC": "2026-11-23T21:44:16.251921+00:00",
+  "sourceObservedAtUTC": "2026-11-23T21:44:16.243178+00:00",
+  "sourceGET": 1,
+  "auditCounts": {
+    "DNS": 1,
+    "GET_SEND_BOUNDARY": 1,
+    "NODE": 0,
+    "TCP": 1
+  },
+  "responseBytes": 98406,
+  "responseSHA": "31963ebfca04049be2c0890015c0e51c1708ce5a84ad48ff6c28f1d74a67db7b",
+  "rawRetained": false,
+  "outerExit": 0,
+  "childExit": 1,
+  "jobSeconds": 1,
+  "timeout": false,
+  "subtreeKillConfirmed": true,
+  "parserWitness": {
+    "admissibleIsFalse": true,
+    "nativeMarkupContractProvenIsFalse": true,
+    "parserStatus": "UNPROVEN",
+    "personIdentityVerifiedIsFalse": true,
+    "prefixCount": 0,
+    "prefixStopReason": "REFUSED",
+    "refusalReason": "DUPLICATE_TEXT",
+    "schemaVersion": "telegram-parser-witness-v1",
+    "sourceReadyIsFalse": true,
+    "structuredMessageCount": 0
+  },
+  "textRegionWitness": {
+    "alreadyInsideText": true,
+    "completedPrefixCount": 4,
+    "currentMessageOpen": true,
+    "schemaVersion": "telegram-text-region-witness-v1",
+    "site": "TEXT_BLOCK_GUARD",
+    "tagKind": "DIV",
+    "textBlockCount": 2
+  },
+  "IDdiagnosticObserverExecuted": false,
+  "returnedStructuredMessages": 0,
+  "messageCount": null,
+  "newForecasts": 0,
+  "admissions": 0,
+  "sourceReady": false,
+  "allCompatibleIntegrated": false,
+  "sourceAuthorityClosed": true,
+  "retryAllowed": false
+}

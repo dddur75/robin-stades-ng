@@ -1,0 +1,63 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.FORUMS.CURRENT.E2.R4.RECOVERY.ALGORITHM.20261122",
+  "recordedAt": "2026-11-22T05:55:04.802Z",
+  "status": "REVIEWED_CONDITIONAL_RECOVERY_SCOPE_NO_EFFECT_YET",
+  "scope": "Minimal recovery of existing exact Windows task by one action/working-directory update only,new source grant and external adoption;old failed R3 stays unadoptable. Source ceiling remains12new GET across same two slots,not an additionalR3 allowance.",
+  "missionId": "FORUMS_CURRENT_E1_E2_RECOVERY_R4_20261122",
+  "planSHA256": "8c07095759536c063184ecb26a60777f77cf05193a9d5a36cd63f7eae01f986c",
+  "manifestSHA256": "c67bf39475cc7dab95f2f0667b399aa12dbc79bfe576cd49bf8c9972b83f0113",
+  "E1ReceiptSHA256": "0ee08d19f68ebfc4b8bc7dfc8df4256dd9a9c8b8ab591ae81e93431a6ffe818d",
+  "reusedSourceDataClaim": "DATA.SOURCE_OBSERVATORY.FORUMS.SUCCESSOR.PREMATCH.E1.R5.20261122",
+  "E1NewGET": 0,
+  "codePins": 84,
+  "ASTPins": 9,
+  "sourceURLs": [
+    "http://forum.sco1919.com/robots.txt",
+    "http://forum.sco1919.com/ucp.php?mode=terms",
+    "http://forum.sco1919.com/viewtopic.php?t=13259&start=300",
+    "https://legruppetto.fr/robots.txt",
+    "https://legruppetto.fr/forum/ucp.php?mode=terms",
+    "https://legruppetto.fr/forum/viewtopic.php?f=21&t=24850&start=240"
+  ],
+  "slotsUTC": [
+    "2026-11-22T06:15:00Z",
+    "2026-11-22T08:15:00Z"
+  ],
+  "expiresAt": "2026-11-22T08:20:00Z",
+  "maximumNewGET": 12,
+  "perSlotGET": 6,
+  "perSlotSeconds": 90,
+  "totalCollectionSeconds": 180,
+  "installationSeconds": 30,
+  "OSLatencySeconds": 10,
+  "deadlineAnchoredToSlot": true,
+  "sourceGETBeforeTriggers": 0,
+  "taskRegistrationsMaximum": 0,
+  "windowlessTaskAction": true,
+  "scheduledPythonwSHA256": "d72294fb338bc2fc8896d25a7395a4db466425427e1559e77185d5135a830681",
+  "oldNext3Rearm": false,
+  "oldSourceAuthoritiesTransferred": false,
+  "applicationAdmissions": 0,
+  "recurrenceRequiresExternalC0Adoption": true,
+  "adoptionVerificationFields": 11,
+  "adoptionContextFields": 10,
+  "unknownFailedLateCloseStopsAllSources": true,
+  "history": {
+    "knownClosedPriorGET": 79,
+    "maximumKnownSubsetIncludingNew": 91,
+    "allTimeForumFamilyGET": "UNKNOWN"
+  },
+  "reviews": {
+    "C1": "Author58Python+12syntheticPowerShell tests,84pins9AST;no self-acceptance",
+    "C3": "Exact84pins9AST;7independentPython+12syntheticPowerShell+6RAMfailurepriority cases PASS",
+    "C4": "Exactscope PASS;oneexistingTaskActionRebind only;noRegister/Enable/Start/delete;freshadoptionmandatory"
+  },
+  "sourceGET": 0,
+  "taskInstalled": false,
+  "rawProviderBodiesStored": false,
+  "globalDelivery": "PARTIAL",
+  "taskActionUpdatesMaximum": 1,
+  "repairPreimageXMLSHA256": "2ca59b4988da427adb4ea2d8807d849e4eb0de8ec2bc537474bab507e7bb6c53",
+  "oldR3UnknownPreserved": true,
+  "enableStartDeleteOperations": 0
+}

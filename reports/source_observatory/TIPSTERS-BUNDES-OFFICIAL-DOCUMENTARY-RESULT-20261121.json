@@ -1,0 +1,48 @@
+{
+  "generatedAt": "2026-11-21T03:09:13.756424+00:00",
+  "schemaVersion": "robin-mediated-documentary-result-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.BUNDES.OFFICIAL.DOCUMENTARY.RESULT.20261121",
+  "missionId": "ROBIN-BUNDES-OFFICIAL-CALENDAR-E1-20261121",
+  "status": "DOCUMENTARY_TARGET_ESTABLISHED_NO_CONTENT_OR_COLLECTION_GRANT",
+  "mediatedToolOperations": 3,
+  "activeMilliseconds": 8701,
+  "publisherHTTPCountUnknown": true,
+  "evidenceKind": "TOOL_RENDERED_OFFICIAL_DOCUMENT_NOT_RAW_HTTP_BODY",
+  "details": {
+    "fixtureCount": 2,
+    "competition": "Bundesliga",
+    "season": "2026/27",
+    "date": "2026-11-21",
+    "UTCkickoffs": [
+      "14:30",
+      "17:30"
+    ],
+    "explicitUTCColumn": true,
+    "newChoicesAdmitted": 0,
+    "sourceRefetches": 0,
+    "existingE2CalendarExpanded": false,
+    "historicalQualificationPending": true
+  },
+  "evidence": [
+    {
+      "namespace": "A9_MEDIATED_OFFICIAL_DOCUMENTS",
+      "path": "cockpit/.ci/official-doc-research-20261121/bundes/operations.jsonl",
+      "sha256": "54ec552205cec301b09cc7003abb048f36272c2d6d3c35a56cf1def9d98657b5"
+    },
+    {
+      "namespace": "A9_MEDIATED_OFFICIAL_DOCUMENTS",
+      "path": "cockpit/.ci/official-doc-research-20261121/bundes/search-result.json",
+      "sha256": "417a997e7c271d3c2a2055d72461c76f1ba711f238363c7ec1ba96bf662c9196"
+    },
+    {
+      "namespace": "A9_MEDIATED_OFFICIAL_DOCUMENTS",
+      "path": "cockpit/.ci/official-doc-research-20261121/bundes/open-fixtures-result.json",
+      "sha256": "00d2d8eb15dbb0b440bc23f14c03455b7bb6dce70af5de74ad70b6725d8a43e3"
+    },
+    {
+      "namespace": "A9_MEDIATED_OFFICIAL_DOCUMENTS",
+      "path": "cockpit/.ci/official-doc-research-20261121/bundes/open-pdf-result.json",
+      "sha256": "a752fd5b88eb5d6df790b28231281f8c501c25b6181f89e1b89d24c54acbc440"
+    }
+  ]
+}

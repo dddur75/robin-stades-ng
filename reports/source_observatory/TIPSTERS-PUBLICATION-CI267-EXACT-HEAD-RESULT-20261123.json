@@ -1,0 +1,40 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.PUBLICATION.CI267.EXACT.HEAD.RESULT.20261123",
+  "missionId": "SOURCE_OBSERVATORY_CI266_MAPPED_SUCCESSOR_CORRECTIVE_R1_20261123",
+  "status": "EXACT_PUBLISHED_HEAD_CI_SUCCESS",
+  "scope": "Read-only follow-through of the published corrective commit CI. All terminal jobs succeeded for this exact HEAD only. This observation does not qualify subsequent private changes, source compatibility, activation or full application acceptance. Publication effects were already closed; no expired publication authority is reused.",
+  "keys": [
+    "C0",
+    "C1"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V31.ENGINEERING.RECETTE.20261123",
+    "ENG.SOURCE_OBSERVATORY.CI266.SEALED.TEST.RECEIPTS.CORRECTIVE.R1.20261123",
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V30.ENGINEERING.RECETTE.20261123"
+  ],
+  "commit": "1a6cf4181cc8589f90b9a1c1f84bbb78f6a4b693",
+  "parent": "54bee6609d52630fb281bd574d7ee7dff680aaa5",
+  "tree": "e6ccead6b18db7b13bdff1ba46be32a5ad5b076f",
+  "PR": 133,
+  "workflowRunId": 45254702578,
+  "workflowNumber": 267,
+  "workflowURL": "https://github.com/dddur75/robin-stades-ng/actions/runs/45254702578",
+  "terminalStatus": "completed",
+  "terminalConclusion": "success",
+  "jobs": 17,
+  "successfulJobs": 17,
+  "failedJobs": 0,
+  "skippedJobs": 0,
+  "observedAt": "2026-11-23T20:30:43.199Z",
+  "GitHubFinishedAt": null,
+  "primarySHA": "9fb8decc9e2d290f86721259164e9015efbd8dd44ef57e4f7af5d1292c683aec",
+  "publicationAuthorityClosedAt": "2026-11-23T20:00:18Z",
+  "readOnlyObservationOutsideClosedPublicationGrant": true,
+  "additionalWorkflowRunsTriggered": 0,
+  "reruns": 0,
+  "newSourceAuthority": false,
+  "allCompatibleIntegrated": false,
+  "overallStatus": "PARTIAL",
+  "fullUIAccepted": false,
+  "fullAdminAccepted": false
+}

@@ -1,0 +1,27 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.TWO.SLOTS.POST.CALLER.PARTIAL.E1.REVIEW.20261122",
+  "recordedAt": "2026-11-22T18:51:55.918Z",
+  "status": "PARTIAL_NON_EXECUTABLE_FAIL_AND_STOP_PROMOTION",
+  "scope": "Independent review of C1 frozen incomplete post-caller prototype. Twenty-six syntax compilations and three pure tests pass, but physical Job60 and prepare/publish/finalization gates, native bindings and effective source/post tuples are absent. No recurrence readiness or deployment.",
+  "missionId": "OLBG_TWO_SLOTS_POST_CALLER_PRIVATE_PREPARATION_E1_20261122",
+  "planSHA256": "1b8b5e45285cffae3edc51945c7a1525d264bc7104b3e70f1498ea4030913ab3",
+  "manifestSHA256": "a0769ef6cb0904222af434c112e548d43f340c73546e1db2dfa009dd404833a6",
+  "resultSHA256": "3ff24b58f050059900a0469f091c2fb8e74bc4734379708fa74db42562d648d5",
+  "codeMapSHA256": "50fbfda812c3ba9652a42cad6bd331519f19c4708044b8a66990cef912240713",
+  "frozenAt": "2026-11-22T18:05:25.259656Z",
+  "elapsedSeconds": 876.645083,
+  "budgetSeconds": 900,
+  "pinsVerified": 45,
+  "author": "C1_STOPPED",
+  "reviewers": [
+    "C0",
+    "C3"
+  ],
+  "sourceGET": 0,
+  "nativeCalls": 0,
+  "TaskChanges": 0,
+  "appChanges": 0,
+  "GitPush": 0,
+  "scheduledSlotsInstalled": false,
+  "catchUpAllowed": false
+}

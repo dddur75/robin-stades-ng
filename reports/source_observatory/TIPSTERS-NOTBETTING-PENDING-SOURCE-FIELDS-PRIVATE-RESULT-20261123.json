@@ -1,0 +1,23 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.SOURCE.FIELDS.PRIVATE.RESULT.20261123",
+  "missionId": "NOTBETTING_PENDING_SOURCE_FIELDS_PRIVATE_E1_20261123",
+  "status": "PRIVATE_SYNTHETIC_ADAPTER_ACCEPTED",
+  "generatedAt": "2026-11-23T16:05:49.204Z",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.NATIVE.OWNER.STORAGE.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.STRUCTURED.NATIVE.R1.ACTUAL.RESULT.20261123"
+  ],
+  "scope": "C3 solewriter stopped223.585s, C0/C1/C4 independently accept private optionalpending callback exactly selected record identity and alreadyresolved fields/stripAST unchanged; fourcanonical ownerUUID equal/label/sourceID/coreSTRcaps beforeclosedUNQUALIFIED delivery. No resolver/gate changes, defaultqualifiedsink old/new equal. OneREDsixGREEN (7methodexec), criticalRuff3filesPASS, nofullmypy/Ruff. Callback earlier RAMdeliveries cannotrollback; futureworker must deferallFSuntilsuccessfulreturn/closedvalidation anddiscardcapturesonfailure, pin sourceobservation/hashlineage. No worker/policy/store/SOURCE/native effect or admission/readiness/canonicaldate guarantee.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "adapterSHA": "138214bd7a5933e1fbcc56cecd076031296f982305c3fdf61bb3447bac5a23f6",
+  "fileMapSHA": "3d0d684f0bf3c878d42264438138e6df3a71d413d9a1888fbf7af1e573adb095",
+  "resultSHA": "60d85ef7bf85c5708125a52c1e4da5f510f1001c75fe3dde3e4db7c57e70e056"
+}

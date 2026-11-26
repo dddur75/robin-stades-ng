@@ -1,0 +1,50 @@
+{
+  "missionId": "NOTBETTING_PENDING_APP_PUBLIC_E1_20261124",
+  "status": "VERIFIED",
+  "files": {
+    "cockpit/scripts/notbetting-pending-source.ts": {
+      "sha256": "debf492cfade61e65d0d3a81b5b4c8d2fd2b3f090965ad1200c0f96502ec90c9",
+      "bytes": 6697
+    },
+    "cockpit/scripts/catalogue-independent.ts": {
+      "sha256": "7c1e56818110c428fa2231e421b6fc52c0aba935b690cac5c89f82f1790e53f8",
+      "bytes": 17072
+    },
+    "cockpit/app/components/expert/tipster-candidates.tsx": {
+      "sha256": "8c199f3e4b58f376784018098c74f297dd5e4eeec8e42fd5c4a51a7bb9e7a053",
+      "bytes": 16454
+    },
+    "cockpit/tests/notbetting-pending-source.test.mjs": {
+      "sha256": "2e453952d10bed20aac20c6156e16b1845ed7fd2ba182bf75d4301b8aea1d0c1",
+      "bytes": 6365
+    }
+  },
+  "sourceGET": 0,
+  "actualPayloadReads": 0,
+  "runtimeWrites": 0,
+  "Git": 0,
+  "appAdmissions": 0,
+  "qualificationFlagsChanged": false,
+  "personalJoinsAdded": 0,
+  "actualStoppedAt": "2026-11-24T08:05:39.426683+00:00",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.APP.PUBLIC.INTEGRATION.E1.RESULT.20261124",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Fourpublicfiles addstrictoptionalNotBettingpendingplatformcontext viaexistinglocalcandidateAPI; 8newmethods+TGscript9Nodeentries/tscAPP/lintPASS. Sourcependingnotread, no personaljoin/317/qualificationflags/admission/sourceactivation change. Runtimeadoption/browserrecettefutureseparate.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PL.NATIVE.R2.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PL.PENDING.ADMIN.LOCAL.ROUNDTRIP.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.PUBLICATION.CI271.EXACT.HEAD.SUCCESS.RESULT.20261124"
+  ],
+  "tests": {
+    "nodeEntries": 9,
+    "newMethods": 8,
+    "existingTelegramScriptEntries": 1,
+    "APPTypecheckExit": 0,
+    "lintExit": 0
+  },
+  "primaryResultSHA": "68459a18ae75e6993df41dfc7548543f602c214dcf7783aeee3c375102a2d945"
+}

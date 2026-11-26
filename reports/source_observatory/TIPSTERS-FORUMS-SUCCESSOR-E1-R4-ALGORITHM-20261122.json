@@ -1,0 +1,50 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.FORUMS.SUCCESSOR.E1.R4.ALGORITHM.20261122",
+  "recordedAt": "2026-11-22T04:08:49.358Z",
+  "status": "REVIEWED_ONE_SHOT_PRIVATE_CANDIDATES",
+  "scope": "SCO1919 and LeGruppetto, at most6conditional GET,3current Sunday L1 fixtures, minimal private candidates only. No admission, task or recurrence.",
+  "missionId": "FORUMS_SUCCESSOR_E1_R4_20261122",
+  "planSHA256": "4e07e29b5819bc999e0ef1286683b8adbe54a56af84cc8f4ee9a4682892ae8b9",
+  "manifestSHA256": "d4b7c0dbbdc63c81c284b154838ba9e7b473f56fa60fc88c0625dc65e4d29778",
+  "codePins": 38,
+  "astPins": 7,
+  "calendarSHA256": "7e61eebf7dd920011fb18558212d67cb70f242c0da3e335c4a036fc4fb806977",
+  "fixtureCount": 3,
+  "maximumGET": 6,
+  "maximumSeconds": 90,
+  "expiresAt": "2026-11-22T04:30:00Z",
+  "strictRobotsSHA256": "7bf0ef690ddaf2f7dc78108305d3452156dcd8dbe269ad991e263d86e3c4d5a3",
+  "nativeGETScope": [
+    "http://forum.sco1919.com/robots.txt",
+    "http://forum.sco1919.com/ucp.php?mode=terms",
+    "http://forum.sco1919.com/viewtopic.php?t=13259&start=300",
+    "https://legruppetto.fr/robots.txt",
+    "https://legruppetto.fr/forum/ucp.php?mode=terms",
+    "https://legruppetto.fr/forum/viewtopic.php?f=21&t=24850&start=240"
+  ],
+  "robotsAndUnchangedTermsRequired": true,
+  "privateMinimalProjection": true,
+  "newVsReobserved": "UNKNOWN_NO_BASELINE_IN_THIS_CANARY",
+  "nativeChoiceIndependentOfMission": true,
+  "selectionVersionIndependentOfPageHash": true,
+  "sourcePublicationTimeZone": "UNKNOWN",
+  "identityCertified": false,
+  "eligibleForApplication": false,
+  "admissions": 0,
+  "recurrence": 0,
+  "taskMutations": 0,
+  "sourceRawBodiesStored": false,
+  "reviews": {
+    "C1": "38pins/7AST/MF8/calendar3/CGU/source scope exact independent facts",
+    "C3": "FullR3code reviewed;R4delta5targeted testsPASS postreserve veto/time0GET/fresh90;noP1P2open",
+    "C4": "ExactR4scope and privacy PASS conditionalkeys"
+  },
+  "historical": {
+    "oldClosedCampaignGET": 72,
+    "oldClosedSlots": 12,
+    "priorUnexecutedR1R2R3GET": 0,
+    "knownCampaignPlusThisCeiling": 78,
+    "allTimeForumFamilyGET": "UNKNOWN"
+  },
+  "globalDelivery": "PARTIAL"
+}

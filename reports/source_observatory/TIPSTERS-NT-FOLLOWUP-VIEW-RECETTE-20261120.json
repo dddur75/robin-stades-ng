@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "robin-nt-followup-view-recette-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NT.FOLLOWUP.VIEW.20261120",
+  "generatedAt": "2026-11-20T07:12:32.118919+00:00",
+  "status": "LOCAL_READ_ONLY_VIEW_ACCEPTED_CI_PENDING_GLOBAL_PARTIAL",
+  "sourceClaimId": "ENG.SOURCE_OBSERVATORY.NT.QUALIFICATION.20261120",
+  "firstSlotClaimId": "DATA.SOURCE_OBSERVATORY.FIRST.RECURRING.SLOT.20261120",
+  "assessmentComparison": {
+    "recordsChanged": 7,
+    "initialAssessmentsPreserved": true,
+    "historicalProfileVisitFlagsPreserved": true,
+    "personalPicksAndProofsPreserved": true,
+    "unrelatedPlatformsEqual": true,
+    "activationFlagsUnchanged": true,
+    "readerUnavailableFallbackPreservesPreviousFacts": true,
+    "qualifiedCountBefore": 6,
+    "qualifiedCountAfter": 6,
+    "enabledCountBefore": 6,
+    "enabledCountAfter": 6,
+    "claims": [
+      "ENG.SOURCE_OBSERVATORY.PUBLIC.TECHNICAL.ACCESS.20261119",
+      "ENG.SOURCE_OBSERVATORY.NT.QUALIFICATION.20261120"
+    ],
+    "sourceHttp": 0
+  },
+  "actualA9": {
+    "verifiedAt": "2026-11-20T07:09:10.537Z",
+    "records": 7,
+    "notbetting": 1,
+    "telegram": 6,
+    "enabledAmongThese": 0,
+    "newPersonalPicks": 0,
+    "qualifiedCount": 6,
+    "claims": [
+      "ENG.SOURCE_OBSERVATORY.PUBLIC.TECHNICAL.ACCESS.20261119",
+      "ENG.SOURCE_OBSERVATORY.NT.QUALIFICATION.20261120"
+    ],
+    "blockedExternalAttempts": 6,
+    "writes": 0
+  },
+  "tests": {
+    "targetedPython": 6,
+    "candidateBrowser": 12,
+    "actualA9DesktopMobileAnd20AuthorLinks": 2,
+    "typecheck": "PASS",
+    "ruff": "PASS",
+    "targetedEslint": "PASS",
+    "strictMypy": "PASS",
+    "bandit": "PASS",
+    "portabilityGuard": 21
+  },
+  "evidenceReadback": [
+    {
+      "path": "cockpit/.ci/tipsters-nt-delivery-20261120/a9-access-readback.json",
+      "sha256": "425e336e25e05e1b35996fc34c41178a3455a24f5d01c71292f8523576e5ac7f"
+    },
+    {
+      "path": "cockpit/.ci/tipsters-nt-delivery-20261120/actual-overlay-comparison.json",
+      "sha256": "25fb2e4a3470d4a38809b4623b36c6fb4436593621e18e5ddbfb447d244f684b"
+    },
+    {
+      "path": "cockpit/.ci/tipsters-nt-delivery-20261120/first-slot-readback.json",
+      "sha256": "837f27c96e8a2730e3525b081196be545f4596e5875d3c0cc254015447486a29"
+    }
+  ],
+  "codeHashesLF": {
+    "src/robin/source_observatory/followup_access.py": "ea1912f83a26a9b9ed21e5983d09b56fda0abfda7ce138f4bd31a36d06321a09",
+    "cockpit/scripts/read-tipster-candidates.py": "1234aa34a757f133cd1992109fabc2c4ddbb820213164d6ab6823fb296e11fbb",
+    "cockpit/app/components/expert/tipster-candidates.tsx": "4c7106ba97f47f2aef45f27f9924486a603acb424d0cd87f5d2c4d62d02b004b",
+    "tests/source_observatory/test_followup_access.py": "54c6690a25ba5ec715b3e7e90079a226bc8235fe715e7c6a346c09a987466e84",
+    "cockpit/tests/tipster-candidates.spec.ts": "7014ae3eea45340f0fb36fb0f1a573118e3d14c022963ab0e6298ce3bc8520fa",
+    "docs/superpowers/plans/2026-11-20-notbetting-telegram-qualification.md": "efb09172ad58a2708672063cb75169358c75da6f0b5d061d5785ae59f064b5d0",
+    "scripts/check_no_tracked_absolute_paths.py": "41400ea64d624aadc0a79e2db29848bda51d1dc254a0a7ee7284bb2ac92854df",
+    "tests/portability/test_no_tracked_absolute_paths.py": "8dcc94dcc7385fe1d27f958a68513fe14e2ee453bfefcf31af8c917b4695348c"
+  },
+  "scope": "Partial hash-pinned follow-up access layer for seven records. Initial assessments, flat previous technical assessment, personal facts, other sources and flags preserved. Repeated application idempotent; missing latest report preserves earlier facts with an explicit warning and old provenance.",
+  "effects": {
+    "publisherGETDuringViewRecette": 0,
+    "activationChanges": 0,
+    "scheduleOrCollectorPinChanges": 0,
+    "deploy": false,
+    "merge": false
+  },
+  "limits": [
+    "Source qualification closes PARTIAL; no personal NotBetting or Telegram picks claimed.",
+    "Current active catalogue count6 comes from accepted SRO source facts after08h, not this overlay.",
+    "CI of the forthcoming commit is not yet certified by this local report."
+  ],
+  "portableProjection": {
+    "originalPublicReportSha256": "8de0831191064f102503046e953fec25db51a1d7f52b92d0a5f9a05717a5b061",
+    "originalBytesRetainedAt": "cockpit/.ci/tipsters-nt-delivery-20261120/pre-portability/8de0831191064f102503046e953fec25db51a1d7f52b92d0a5f9a05717a5b061-TIPSTERS-NT-FOLLOWUP-VIEW-RECETTE-20261120.json",
+    "normalization": "REPOSITORY_RELATIVE_POINTERS_ONLY",
+    "factsAndPrivatePacketsUnchanged": true
+  }
+}

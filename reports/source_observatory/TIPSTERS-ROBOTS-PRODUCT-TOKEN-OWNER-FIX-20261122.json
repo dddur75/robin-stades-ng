@@ -1,0 +1,33 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.ROBOTS.PRODUCT.TOKEN.OWNER.FIX.20261122",
+  "recordedAt": "2026-11-22T04:43:50.216Z",
+  "status": "LOCAL_CODE_REVIEWED_NOT_PUBLISHED",
+  "scope": "Shared REP group selection uses the honest exact product token; invalid group tokens fail unproven. Path matching, delay calculation and other source code remain unchanged. Not full REP conformance or current source permission.",
+  "missionId": "ROBOTS_PRODUCT_TOKEN_OWNER_FIX_E1_20261122",
+  "beforeSourceSHA256": "955c10b28755fb4551b431bbbaa58588ecc254ee993d9cf5b9d67780f1515853",
+  "afterSourceSHA256": "824855b174dcf116d82c34f2f7521bcbc891150efceedba8950baa943f2ef8dc",
+  "regressionTestsSHA256": "88ad45b1d5c18ff331962b112f0293536cf4b7a95792d20fe076a9a7dd71f693",
+  "expectedREDTests": 6,
+  "greenCollectorDomainTests": 45,
+  "greenDomainElapsedSeconds": 1.64,
+  "independentC3Tests": 7,
+  "independentC3ElapsedSeconds": 0.49,
+  "independentC3ASTOutsideChangedFunctionUnchanged": true,
+  "ruff": "PASS_TWO_FILES",
+  "typing": "PASS_ONE_SOURCE",
+  "bandit": {
+    "exitCode": 0,
+    "findings": 0,
+    "existingCommentMetadataWarnings": true
+  },
+  "diffCheck": "PASS",
+  "sourceGET": 0,
+  "taskMutations": 0,
+  "runtimeSourceChanges": 0,
+  "push": 0,
+  "commit": 0,
+  "oldNext3PinsModified": 0,
+  "oldNext3PublicPathPins": 0,
+  "earlierR5CollectionPinsRemainHistorical": true,
+  "globalDelivery": "PARTIAL"
+}

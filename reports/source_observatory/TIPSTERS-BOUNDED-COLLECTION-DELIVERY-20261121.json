@@ -1,0 +1,158 @@
+{
+  "schemaVersion": "robin-bounded-collection-delivery-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.BOUNDED.COLLECTION.DELIVERY.20261121",
+  "generatedAt": "2026-11-21T06:26:40.295603+00:00",
+  "status": "LOCAL_DEVELOPMENT_AND_RECETTE_PASS_NEW_HEAD_CI_PENDING_GLOBAL_SOURCE_DELIVERY_PARTIAL",
+  "missionId": "ROBIN-BOUNDED-COLLECTION-DELIVERY-20261121-PUBLIC-R1",
+  "scope": "Preserve established prematch declarations, add accepted Bundesliga and closed native NotBetting occurrences, separate bounded recurrence observations from original declarations, show native programming in profile/admin, and update dated source access findings.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OCCURRENCE.APP.RECETTE.20261121",
+    "DATA.SOURCE_OBSERVATORY.NOTBETTING.BUNDES.BOUNDED.OCCURRENCES.20261121",
+    "DATA.SOURCE_OBSERVATORY.NOTBETTING.CLOSED.OCCURRENCES.E1.20261121",
+    "DATA.SOURCE_OBSERVATORY.NOTBETTING.OCCURRENCE.CANARY.20261121",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OCCURRENCE.WINDOWS.RECETTE.20261121",
+    "ENG.SOURCE_OBSERVATORY.COMPATIBLE.RESULTS.FOLLOWUP.20261121",
+    "ENG.SOURCE_OBSERVATORY.NATIVE.NULL.NEXT.RUN.RECETTE.20261121",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CI248.CLOSURE.20261121",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OCCURRENCE.WINDOWS.PUBLIC.METADATA.20261121"
+  ],
+  "actualA9": {
+    "observedAt": "2026-11-21T06:05:22.062Z",
+    "adminObservedAt": "2026-11-21T06:07:59.573Z",
+    "publicDeclarations": 403,
+    "pseudonyms": 78,
+    "fixtures": 16,
+    "previousChoicesBeforeThisLot": 400,
+    "additionalDistinctDeclarationsThisLot": 3,
+    "previousWholeDeclarationsPreservedByRecurringHook": 403,
+    "newDeclarationsByRecurringHook": 0,
+    "notbettingDeclarationsDisplayed": 4,
+    "notbettingCanonicalOneTimeDeclarations": 1,
+    "notbettingBoundedNoncanonicalDeclarations": 3,
+    "notbettingCompanionIDs": 2,
+    "temporalObservationsEach": 3,
+    "scheduledNotbettingPassesCompleted": 0,
+    "registryCandidates": 317,
+    "qualifiedCandidates": 24,
+    "nativeEnabledAtRead": 14,
+    "sourcePreparationsUnchanged": 74
+  },
+  "checks": {
+    "targetedPythonDomainPassed": 263,
+    "targetedPublicTipsterBrowserPassed": 24,
+    "campaignNativeTSPassed": 11,
+    "mypy": "PASS_6_MODULES",
+    "ruff": "PASS_27_CHANGED_PYTHON_FILES",
+    "bandit": "PASS_6_MODULES",
+    "typecheck": "PASS",
+    "targetedESLint": "PASS",
+    "build": "PASS",
+    "windowsClientJSBytes": 1359429,
+    "strictLinuxClientJSBudget": 1350000,
+    "newHeadCIPending": true,
+    "thresholdRaised": false,
+    "actualProfileHTTP": 200,
+    "actualAdminHTTP": 200,
+    "pageErrors": 0,
+    "externalBrowserRequests": 0,
+    "mobileOverflow": false,
+    "syntheticXMLDivergenceRefused": true,
+    "durableHaltFlagOnlyStopsDisplay": true
+  },
+  "evidence": [
+    {
+      "namespace": "A9_ROBIN_PRIVATE_LOCAL_APP_RECETTE",
+      "path": "cockpit/.ci/notbetting-occurrence-campaign-20261121/app-recette.json",
+      "sha256": "c4269424825a5bdf8553450742e3ec2ac11e06081cef12d5d2128327d9d849bb"
+    },
+    {
+      "namespace": "A9_ROBIN_PRIVATE_LOCAL_APP_RECETTE",
+      "path": "cockpit/.ci/notbetting-occurrence-campaign-20261121/admin-recette.json",
+      "sha256": "2e4a72a61e87c599077d242219aa0d2c0d262478c52ca662ce14dbfdab15d45a"
+    },
+    {
+      "namespace": "A9_ROBIN_PRIVATE_LOCAL_APP_RECETTE",
+      "path": "cockpit/.ci/notbetting-occurrence-campaign-20261121/preservation-recette.json",
+      "sha256": "7daec5f06f34f9be71de8cccad7bc2d3350c2ece6bd06db5a858d53b6454d9f8"
+    },
+    {
+      "namespace": "A9_ROBIN_PRIVATE_LOCAL_APP_RECETTE",
+      "path": "cockpit/.ci/notbetting-occurrence-campaign-20261121/app-desktop.png",
+      "sha256": "7c00fcadbaac8ba8f58af10ca7927eab091e5252c95eaaebdfd6d3dbff0207fd"
+    },
+    {
+      "namespace": "A9_ROBIN_PRIVATE_LOCAL_APP_RECETTE",
+      "path": "cockpit/.ci/notbetting-occurrence-campaign-20261121/app-mobile.png",
+      "sha256": "b7dccf4882fc9a900b3ca771b7366cf3c5290623d7a464b4e8ba038847c17e42"
+    },
+    {
+      "namespace": "A9_ROBIN_PRIVATE_LOCAL_APP_RECETTE",
+      "path": "cockpit/.ci/notbetting-occurrence-campaign-20261121/admin-desktop.png",
+      "sha256": "ea87db4571442e627d1219b6340e2b21bb8d8f86222a45f28d68fd4b7fc8da89"
+    },
+    {
+      "namespace": "A9_ROBIN_PRIVATE_LOCAL_APP_RECETTE",
+      "path": "cockpit/.ci/notbetting-occurrence-campaign-20261121/admin-mobile.png",
+      "sha256": "81cc4560b54caf41389ccb82ea2b84f01aaecc545afa2899db7a9848df3fa0ab"
+    }
+  ],
+  "sourceLimits": {
+    "allCompatibleSourcesIntegrated": false,
+    "providerRawBodiesInGit": false,
+    "sourceChoicesKeptPrivate": true,
+    "notbettingTraversalComplete": false,
+    "canonicalQualificationOfBoundedRows": false,
+    "globalVariantConsistency": "NOT_ESTABLISHED_OUTSIDE_RETAINED_RECORDS",
+    "performanceEvaluationAllowed": false,
+    "settlementAllowed": false,
+    "oldR3R4SourceExperimentsRemainFailed": true,
+    "TelegramMessagesRead": 0,
+    "TelegramExportAvailableUserReported": false,
+    "Coteur": "PARTIAL_AFTER_TWO_FAILED_ARCHITECTURES_NO_BLIND_THIRD_ATTEMPT",
+    "Kicktipp": "CONTEST_SPECIFIC_PREMATCH_VISIBILITY_AND_JOIN_LIMITS_REMAIN"
+  },
+  "publication": {
+    "pr": 133,
+    "remoteBranch": "codex/robin-dossier-fidele",
+    "expectedRemoteSHA": "334b7868bee721f5d401b313df4dcf08eaf2ddd4",
+    "base": "main",
+    "draft": true,
+    "nonForcePushMax": 1,
+    "merge": false,
+    "deployment": false,
+    "allCompatibleSourcesIntegrated": false
+  },
+  "previousCI": {
+    "commit": "334b7868bee721f5d401b313df4dcf08eaf2ddd4",
+    "runId": 44853843873,
+    "runNumber": 248,
+    "successfulJobs": 17,
+    "newLotCertified": false
+  },
+  "locks": {
+    "STORAGE_PAUSED": true,
+    "P3_P4_PAUSED": true,
+    "PRODUCTION_LOCKED": true,
+    "REAL_BETS": false,
+    "NO_BET_DEFAULT": true,
+    "PROMOTION_LOCKED": true,
+    "SOCIAL_PUBLISHING_ENABLED": false,
+    "DEMO_MODE_ENABLED": false
+  },
+  "limits": [
+    "Only exact new-head CI certifies this changed lot. Windows build passes; Linux strict 1350000-byte client budget is still pending and is not raised.",
+    "The author label and literal native selections are retained without market interpretation, settlement, ROI or civil identity inference.",
+    "A verified Windows schedule does not prove a scheduled collection happened; future passes require their own source receipts.",
+    "Source budgets, old failures, immutable private proof payloads and historical firstSeen remain separate and preserved.",
+    "Frozen existing source workers remain unchanged. The pre-existing Hepter style exception must be reconsidered only after its 11:15UTC source campaign closes and before any merge.",
+    "No merge or deployment is authorized by this delivery. The source inventory is not a claim that every workbook address is a compatible tipster."
+  ],
+  "publicationSanitization": {
+    "localInterpreterPathOmitted": true,
+    "originalAuthorityClaimPreserved": true,
+    "originalPrivateArtifactSha256": "2f04962b8d36ab701ebd7a520e699ca4e74ffb66f071dfc83a618c8dc55c86a2",
+    "publicSuccessorClaimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.OCCURRENCE.WINDOWS.PUBLIC.METADATA.20261121",
+    "sourcePlanGrantsPinsUnchanged": true,
+    "priorEngineeringProjectionNeverPublished": true
+  }
+}

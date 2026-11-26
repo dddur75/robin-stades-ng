@@ -1,0 +1,33 @@
+{
+  "acceptedCopyByteEqual": true,
+  "appChanges": 0,
+  "authorElapsedSeconds": 34.172452,
+  "authorStoppedAt": "2026-11-23T02:47:20.362Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PLAIN.REFERENCE.PUBLIC.INTEGRATION.RESULT.20261123",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "limits": [
+    "Public reusable code integration only; no source/native cause/version or live compatibility established.",
+    "Six private guard variants receipt reused; only the positive was executed through public package import. Other public regression variants persisted but not rerun."
+  ],
+  "missionId": "NOTBETTING_PLAIN_REFERENCE_PUBLIC_INTEGRATION_E1_20261123",
+  "publicParserSHA256": "db7093591a3e1e18be1a19920bda2c8b69b0b6a7d09ceaaf36cb09fb46637d97",
+  "publicTestSHA256": "cc7221ad9a75d1b25335f982658847bc8322322571cadb52f79295e17d95c5f2",
+  "reusedClaim": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PLAIN.REFERENCE.GATES.FIX.PRIVATE.RESULT.20261123",
+  "scope": "EXACT_PRIVATE_ACCEPTED_PROFILE_COPY_AND_ONE_PUBLIC_IMPORT_POSITIVE",
+  "sourceGET": 0,
+  "sourceReady": false,
+  "status": "ACCEPTED_REUSABLE_PUBLIC_CODE_INTEGRATION_ONLY",
+  "tests": {
+    "criticalRuffExit": 0,
+    "oldEightPackReplay": 0,
+    "portableVariantsPersisted": 6,
+    "publicSelectedPositiveExit": 0,
+    "publicSelectedPositiveRuns": 1,
+    "targetedGuardPackReplay": 0
+  },
+  "writer": "C0"
+}

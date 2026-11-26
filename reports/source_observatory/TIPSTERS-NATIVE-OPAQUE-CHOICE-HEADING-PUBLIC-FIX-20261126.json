@@ -1,0 +1,51 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NATIVE.OPAQUE.CHOICE.HEADING.PUBLIC.FIX.20261126",
+  "generatedAt": "2026-11-26T11:12:07.599Z",
+  "status": "VERIFIED_TWO_LINE_DISPLAY_FIX_PUBLICATION_PENDING",
+  "scope": "Display-only correction prevents a legacy source-native category from labeling an explicitly uninterpretable market Win. Existing contest-score precedence and native choices without the flag are preserved. No collection, source permission, stored prediction or recurring task changes.",
+  "codeFile": "cockpit/app/components/expert/source-choice.tsx",
+  "codeBeforeSHA256": "b305ff5dc7baac2fb43c41d2549603e84dbfae92e162f7ee724a530a3af68695",
+  "codeAfterSHA256": "405d3d989a009d253ef8d7a19c251ec68c12a96c472d7b761699c4b72868824d",
+  "sourceBranchBase": "059f4b46bd93f720bad672f2d3630eaa3188131d",
+  "validation": {
+    "typecheck": {
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "-p",
+        "tsconfig.app.json"
+      ],
+      "exit": 0
+    },
+    "targetedLint": {
+      "command": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "app/components/expert/source-choice.tsx"
+      ],
+      "exit": 0
+    },
+    "threeTargetedHeadingCases": {
+      "receiptSHA256": "6b68716bf09a956329b3c98853f426a7abbb45bce831cd3850c0059ea8ecdc2a",
+      "status": "PASS"
+    },
+    "twoActualLocalViews": {
+      "receiptSHA256": "090cd2c12e22e4e003f9ace208074662284a81feefc75005023bd1fe341a04d4",
+      "status": "PASS",
+      "externalSourceGET": 0
+    }
+  },
+  "independentReview": "C1 exact two-line code diff, actual targeted receipts and visual correction checked PASS.",
+  "SourceGET": 0,
+  "TaskMutations": 0,
+  "APPDataWrites": 0,
+  "grantsReissued": 0,
+  "rawProviderPayloadIncluded": false,
+  "publicPR": 133,
+  "PRDraft": true,
+  "PRMerge": 0,
+  "deployment": 0,
+  "globalDelivery": "PARTIAL",
+  "allCompatibleIntegrated": false
+}

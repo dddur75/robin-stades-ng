@@ -1,0 +1,36 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI254.UTC.REGEX.PORTABILITY.FIX.20261122",
+  "generatedAt": "2026-11-22T02:40:10.100Z",
+  "status": "TARGETED_LOCAL_FIX_VERIFIED_CI_FAILURE_STILL_NOT_CLOSED",
+  "scope": "One semantically equivalent UTC regex line only. Existing path and date guards remain enforced; no UI behavior, source collection or scientific-data change.",
+  "failedHead": "45ea2bf5f54c862ae7d070ad8832dd1dc626e3b9",
+  "failedRun": 44976353421,
+  "failedRunNumber": 254,
+  "workflowAtObservation": "in_progress",
+  "observationAt": "2026-11-22T02:38:26Z",
+  "failedJobsAtObservation": [
+    "Bounded live canary - Ubuntu",
+    "Chronos PostgreSQL profiles / Chronos static contracts",
+    "Quality and domain tests"
+  ],
+  "failedCommand": "python scripts/check_no_tracked_absolute_paths.py",
+  "cause": "Static Windows-drive detector misclassified adjacent ECMAScript digit escapes and time separators in the timestamp validation regex.",
+  "file": "cockpit/app/lib/tipster-qualification.ts",
+  "beforeCodeSHA256": "dd7341f9d4bd4240c361629a5997ce0d05a7b1d811647055150fd4bb57d42415",
+  "afterCodeSHA256": "8cc39551b58735c1300c1781c1bcb2ac2f329c671cf9a984ff95b297172a3070",
+  "fix": "Use equivalent explicit ASCII digit classes in UTC regex; do not weaken the path scanner.",
+  "validation": {
+    "localFailureBefore": 1,
+    "localPathGuardAfter": 0,
+    "contractAndAPITestsPassed": 4,
+    "C3IndependentRegexComparisons": 364,
+    "C3RealFunctionValidDatesAccepted": 2,
+    "C3RealFunctionInvalidDatesRejected": 9
+  },
+  "sourceGET": 0,
+  "tasks": 0,
+  "guardChanged": false,
+  "appSnapshotUnchanged": true,
+  "publication": "NOT_YET_AUTHORIZED_EXTRA_CORRECTIVE_PUSH",
+  "globalDelivery": "PARTIAL"
+}

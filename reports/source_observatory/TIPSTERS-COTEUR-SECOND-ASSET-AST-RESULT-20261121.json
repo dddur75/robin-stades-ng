@@ -1,0 +1,79 @@
+{
+  "generatedAt": "2026-11-21T04:22:44.043110+00:00",
+  "schemaVersion": "robin-coteur-static-documentary-result-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.SECOND.ASSET.AST.RESULT.20261121",
+  "missionId": "ROBIN-COTEUR-SECOND-ASSET-AST-E1-V2-20261121",
+  "status": "PARTIAL_TECHNICAL_PROJECTION_NOT_ESTABLISHED",
+  "firstReservedAt": "2026-11-21T04:20:43.124504+00:00",
+  "lastEventAt": "2026-11-21T04:20:48.292686+00:00",
+  "reservedGETs": 2,
+  "completedHTTP200": 2,
+  "chargedMilliseconds": 10173,
+  "journalSha256": "168d8d89af87fc11aa1a1e559afc8c2fffd511a22ec5a09769ca97a7b87c12e1",
+  "journalHead": "42787f2546f5feb1d2cf235d8d787dc5e6c32bc40ed4ceaadbd10b0f7bb0a9f2",
+  "responses": [
+    {
+      "at": "2026-11-21T04:20:43.530266+00:00",
+      "bytes": 1960,
+      "elapsedMilliseconds": 5423,
+      "kind": "REQUEST_FINISHED",
+      "previousHash": "bb9731e942fa4605e3cb9cdb041e9bb03dad35f14f3f755f37c0ee93a13d11cd",
+      "responseSha256": "f2d61297a3430cf6a5721642687d216474adb2395988d83d973499efb057d11b",
+      "sequence": 2,
+      "status": 200,
+      "url": "https://www.coteur.com/robots.txt",
+      "hash": "8b5e8d0d107dab6dfae9290b6614f8035127d8bfd66fbd67e9e13cf5c6351818"
+    },
+    {
+      "at": "2026-11-21T04:20:47.494294+00:00",
+      "bytes": 1357885,
+      "elapsedMilliseconds": 9375,
+      "kind": "REQUEST_FINISHED",
+      "previousHash": "309a42e6c9d6a7747c70016ec3226830f7b49962c660508557398fbf4f6d0b85",
+      "responseSha256": "a9e4e398e6c650890b4f0b230068ebe427a758d1f72b8fc872838052b0a976b2",
+      "sequence": 4,
+      "status": 200,
+      "url": "https://www.coteur.com/build/788.7e914fb9.js",
+      "hash": "9c63431b7a57336df930a31cd5045b7191f739cdb26af35ca19c8bfe4f12bdc5"
+    }
+  ],
+  "qualificationLineageReservedBefore": 311,
+  "qualificationLineageReservedAfter": 313,
+  "sourceAPIRequests": 0,
+  "admittedChoices": 0,
+  "projectionResultRetained": false,
+  "candidateCount": null,
+  "candidateCountStatus": "UNKNOWN_NOT_MEASURED",
+  "detailedFailureCause": "UNKNOWN_VALUE_ERROR_AFTER_TWO_HTTP200_RESPONSES",
+  "notProven": [
+    "AST bound",
+    "syntax error",
+    "TLS failure",
+    "publisher refusal",
+    "global incompatibility",
+    "account or purchase requirement"
+  ],
+  "sourceActivated": false,
+  "rawBodiesStored": false,
+  "retriesAuthorized": 0,
+  "refetchForParserDebugAuthorized": false,
+  "otherAssetAuthorized": false,
+  "evidence": [
+    {
+      "path": "cockpit/.ci/coteur-static-ast-e1-v2-20261121/events.jsonl",
+      "sha256": "168d8d89af87fc11aa1a1e559afc8c2fffd511a22ec5a09769ca97a7b87c12e1"
+    },
+    {
+      "path": "cockpit/.ci/coteur-static-ast-e1-v2-20261121/run.once",
+      "sha256": "eaf5ec1eaf72fe9d97356b2b35651f11ecfb3989fc92c48dd28dcebccf2ddcbe"
+    },
+    {
+      "path": "cockpit/.ci/coteur-static-ast-e1-v2-20261121/plan.json",
+      "sha256": "31c9ac5eb2f9ac076cf428508e0af94115959df9131bb68a3e0edfe69b224315"
+    },
+    {
+      "path": "cockpit/.ci/coteur-static-ast-e1-v2-20261121/mission.json",
+      "sha256": "d1c9108bda9cec31016258321be88b1e1dd38156c4c09e42d4caf8ecb025f631"
+    }
+  ]
+}

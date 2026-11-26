@@ -1,0 +1,66 @@
+{
+  "generatedAt": "2026-11-21T01:15:32.911957+00:00",
+  "schemaVersion": "robin-client-documentary-result-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.CLIENT.DOCUMENTARY.RESULT.20261121",
+  "missionId": "ROBIN-TELEGRAM-CLIENT-DOCUMENTARY-E1V2-20261121",
+  "status": "PARTIAL_CLIENT_CONTRACT_LINK_ESTABLISHED_NOT_REVIEWED",
+  "requests": 3,
+  "activeMilliseconds": 4858,
+  "qualificationUnits": 308,
+  "responses": [
+    {
+      "bytes": 0,
+      "contentType": "text/html",
+      "observedAt": "2026-11-21T01:10:27.550111+00:00",
+      "responseSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "robots",
+      "status": 404,
+      "url": "https://telegram.org/robots.txt"
+    },
+    {
+      "bytes": 8333,
+      "contentType": "text/html; charset=utf-8",
+      "observedAt": "2026-11-21T01:10:29.828367+00:00",
+      "responseSha256": "f96d1044c741a60bc2de2612ca8c4e3fab9ace339f1a51df7d39b3dc99044245",
+      "role": "licensing",
+      "status": 200,
+      "url": "https://telegram.org/tos/content-licensing"
+    },
+    {
+      "bytes": 15674,
+      "contentType": "text/html; charset=utf-8",
+      "observedAt": "2026-11-21T01:10:32.089525+00:00",
+      "responseSha256": "c60d60b8bd857e14b9f22fd7b17c3c35722d7d5135666ac02385007d8d4290cd",
+      "role": "apps",
+      "status": 200,
+      "url": "https://telegram.org/apps"
+    }
+  ],
+  "normalizedDocumentCharacters": [
+    2471,
+    3198
+  ],
+  "officialLinks": [
+    8,
+    8
+  ],
+  "omittedOfficialLinks": 0,
+  "nativeClientTermsUrl": "https://core.telegram.org/api/terms",
+  "messagesRead": 0,
+  "channelsRead": 0,
+  "sourceAPICalls": 0,
+  "newAdmittedChoices": 0,
+  "resultSha256": "19b3b680a3aa5e52b88f7ec7756d58bf26dec4a409ac33340665e07ab4e056c9",
+  "journalSha256": "e747b8ee89b345ba8c7b3cabf67fb8b4937c9eb66f718310398869ebc6d20e7a",
+  "journalHead": "da82a5a8417ada3332adcca7b5d2de375871f04221cc27ec4955622b01091612",
+  "limitations": [
+    "Native link establishes exact document location,not its content or permission.",
+    "TDLibsoftware licence is not content licence or a qualified client architecture.",
+    "No channel/message/privatecontent provided to AI; no follow-up link grant."
+  ],
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

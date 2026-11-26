@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "robin-exact-head-ci-receipt-v1",
+  "generatedAt": "2026-11-25T14:14:19.436Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI283.EXACT.HEAD.SUCCESS.RESULT.20261125",
+  "missionId": "CI283_EXACT_HEAD_READBACK_20261125",
+  "status": "EXACT_HEAD_CI_SUCCESS",
+  "scope": "GitHub Actions run283 on exact published e347090 only; does not cover subsequent d009/d8b59 changes or private one-shot/runtime code.",
+  "repository": "dddur75/robin-stades-ng",
+  "PR": 133,
+  "head": "e34709028115424aa4bde57b8d975010fe49949b",
+  "runId": 45620642164,
+  "runNumber": 283,
+  "workflowStatus": "completed",
+  "conclusion": "success",
+  "jobs": 17,
+  "successJobs": 17,
+  "failureJobs": 0,
+  "runURL": "https://github.com/dddur75/robin-stades-ng/actions/runs/45620642164",
+  "independentReader": "C1 live GitHub plugin verification after C0 tool receipt",
+  "rerunsTriggered": 0,
+  "globalDelivery": "PARTIAL"
+}

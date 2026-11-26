@@ -1,0 +1,48 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.FILESYSTEM.POLICY.POSITIVE.R2.E1.RESULT.20261124",
+  "missionId": "OLBG_PENDING_FILESYSTEM_POLICY_POSITIVE_R2_E1_20261124",
+  "status": "PASS_AND_HOLD_CODE_AND_SYNTHETIC_FILESYSTEM_ONLY",
+  "scope": "Missing positive local writer plus real derivative policy verified on synthetic authority; seven previous passing cases reused byte-exact without replay",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.FILESYSTEM.POLICY.E1.PARTIAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.ZERO.ELIGIBLE.PENDING.CAPTURE.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.OBSERVATION.BUILDER.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.APP.READER.E1.RESULT.20261124"
+  ],
+  "resultSHA": "f3351d58634acef672eccd5d9797fe150d2441a1396b0c00ad6f318f9d49aeb0",
+  "mapSHA": "beb02678f6d48e0b05bef5f1cdb08ded9f2f631d5b464497f39c43f8e47434ac",
+  "writerSHA": "86f005cdba412d1a2c54f0a4771bb8c6bd1f6ed819c0fc6b67e64ab3ac05adcd",
+  "policySHA": "3dc8425a8e233345d3585d9625ce7ad30f6c4c4861c625658464fd7d63696e90",
+  "testSHA": "b1a186d1f1b1d6554509b210ef22dd5322f5bda881f9416027e41205c0657716",
+  "verification": {
+    "newPositiveMethods": 1,
+    "newSyntheticPayloadWrites": 1,
+    "newAcceptedReceipts": 1,
+    "newRealPolicyValidationsOnSyntheticLedger": 2,
+    "oldPassingCasesReused": 7,
+    "oldCaseReplays": 0,
+    "ruffFullFiles": 3,
+    "ruffExit": 0,
+    "mypyStrictWriterExit": 0,
+    "authorDirectLaunches": 11,
+    "privateFiles": 19,
+    "networkAttempts": 0,
+    "spawnAttempts": 0,
+    "totalOSProcesses": null
+  },
+  "limits": [
+    "Real ledger/source entry binding and policy installation not exercised",
+    "No actual SOURCE or native pending write authority",
+    "Post-write refusal can leave an unaccepted orphan; no rollback or crash atomicity guarantee"
+  ],
+  "sourceGET": 0,
+  "realPendingWrites": 0,
+  "sourceReady": false,
+  "applicationAdmission": false,
+  "allCompatibleIntegrated": false
+}

@@ -1,0 +1,40 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.LEGRUPPETTO.RECURRING.ADMIN.FOLLOWUP.AUTHORITY.20261122",
+  "recordedAt": "2026-11-22T12:06:43.971Z",
+  "status": "ONE_PRIVATE_CONTROL_METADATA_ROW_ONLY",
+  "scope": "Display only the dated verified installation in existing admin qualification view. Separate from source worker appChanges0. No forecast admission or current native scheduler status inferred.",
+  "planSHA256": "5551def67837921b1ab2e60242266c0648f53040aa5eea8ac483158a47017c1b",
+  "manifestSHA256": "1487df1d412315a1a2710ada0045612de4ca506b1e80aa145a078c96cf57ee40",
+  "installationClaim": "ENG.SOURCE_OBSERVATORY.LEGRUPPETTO.RECURRING.R2.INSTALL.RESULT.20261122",
+  "baseSHA256": "ccea276942114d9215c9186e89c820a3d0db4bbedc6406b87ecabfafe1817ae9",
+  "row": {
+    "id": "legruppetto-recurring-r2-install",
+    "label": "LeGruppetto · deux passages programmés",
+    "checkedAt": "2026-11-22T11:53:39.879Z",
+    "dateKind": "technical_close",
+    "outcome": "missing_evidence",
+    "summary": "Deux tâches ponctuelles installées et adoptées à ce relevé. Aucun appel source effectué ; exécution des créneaux non encore observée.",
+    "scope": "Page 240 du forum seulement. Le 22/11 à 13:15 et 15:15 Paris : 3 GET par passage, 6 maximum. État global actuel des tâches non certifié.",
+    "nextStep": "Attendre les reçus. Le second passage exige la clôture positive et l’acceptation C0 du premier. Aucun rattrapage, retry ou admission automatique.",
+    "metrics": {
+      "requests": 0,
+      "nativeRecords": null,
+      "footballRecords": null,
+      "candidates": null,
+      "admitted": 0
+    },
+    "claims": [
+      "ENG.SOURCE_OBSERVATORY.LEGRUPPETTO.RECURRING.R2.INSTALL.RESULT.20261122"
+    ]
+  },
+  "reviews": {
+    "C1": "Exact row validated with real qualification parser in RAM;14 previous rows preserved.",
+    "C3": "Independent installation and adoption source proof PASS.",
+    "C4": "Independent native installation/adoption source proof PASS."
+  },
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "automaticAdmission": false,
+  "globalDelivery": "PARTIAL"
+}

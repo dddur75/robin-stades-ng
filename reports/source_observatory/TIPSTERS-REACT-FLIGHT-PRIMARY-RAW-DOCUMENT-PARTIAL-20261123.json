@@ -1,0 +1,36 @@
+{
+  "actualGitHubConnectorOperations": 1,
+  "actualSearchServiceWebOperations": 0,
+  "claimId": "ENG.SOURCE_OBSERVATORY.REACT.FLIGHT.PRIMARY.RAW.DOCUMENT.PARTIAL.20261123",
+  "decision": "FAIL_AND_STOP",
+  "errorClass": "HTTPError",
+  "errorCode": "INVALID_ARGUMENT",
+  "errorSummary": "GitHub connector returned file metadata without a file SHA; response metadata None",
+  "grammarVerified": false,
+  "independentArchitecturesFailedEstablished": false,
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "limits": [
+    "Both documentary attempts used two interfaces of the same GitHub connector; independence of transport architectures was not established.",
+    "Do not infer providerHTTP400/notfound/permission denial or native format from connector metadata error. No retry or fallback under this consumed manifest."
+  ],
+  "managedOpenOperations": 1,
+  "missionId": "REACT_FLIGHT_PRIMARY_RAW_DOCUMENT_E1_20261123",
+  "nativeCauseEstablished": false,
+  "observedAt": "2026-11-23T01:36:21.217Z",
+  "primaryRepresentationSHA256": "b72efc19b9e21c4e2199a5db49887adc188390347f4d24e9a0b305813a00154c",
+  "providerHTTPStatus": null,
+  "returnedBlobSHA": null,
+  "returnedCommitSHA": null,
+  "routingDeviation": "Manifest announced managedWebOpen; actual call used GitHub connector fetch. No WEB read occurred or is retroactively claimed.",
+  "sourceContentAvailable": false,
+  "sourceExecutions": 0,
+  "status": "PARTIAL",
+  "tipsterGET": 0,
+  "toolIsError": true,
+  "toolReportedStatus": 400,
+  "underlyingHTTPCount": null
+}

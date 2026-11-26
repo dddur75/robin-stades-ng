@@ -1,0 +1,52 @@
+{
+  "generatedAt": "2026-11-21T07:22:51.075651+00:00",
+  "schemaVersion": "robin-official-documentary-result-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.MIGHTYTIPS.OFFICIAL.DOCUMENTARY.RESULT.20261121",
+  "status": "PARTIAL_FACTS_VERIFIED_DURABLE_CLOSE_TIME_BUDGET_EXCEEDED_NO_CONTENT_GRANT",
+  "scope": "Personal computer storage exception is explicit, subject to terms. Temporary viewing license and copying, public display, transfer and destruction restrictions remain. Blanket written permission for all personal storage is unsupported; unrestricted durable collection is not established.",
+  "sourceURL": "https://www.mightytips.com/about-us/terms-conditions/",
+  "publishedVersionDate": "2023-08-01",
+  "operativeRendererLines": [
+    598,
+    659
+  ],
+  "mediatedOperations": 2,
+  "directCollectorGETs": 0,
+  "backendHTTPUnknown": true,
+  "activeOperationUpperBoundSeconds": 42.693519,
+  "durableClosureElapsedSeconds": 135.31177,
+  "durableClosureBudgetSeconds": 120,
+  "durableClosureOverBudgetSeconds": 15.311769999999996,
+  "choicesRead": 0,
+  "admissions": 0,
+  "newTasks": 0,
+  "rawHTTPBodyStored": false,
+  "blanketWrittenPermissionForAllPersonalStorageSupported": false,
+  "durableCollectionCompatibility": "NOT_ESTABLISHED",
+  "newIndexOrArticleGrant": false,
+  "sourceEvidence": [
+    {
+      "namespace": "A9_PRIVATE_DOCUMENTARY_PROJECTION_NOT_RAW_HTTP",
+      "path": "cockpit/.ci/mightytips-official-documentary-20261121/result.json",
+      "sha256": "ca2e395db6f9b1b468a18c10c7558b570d829bd054c9531062b87c3c4279acf9"
+    },
+    {
+      "namespace": "A9_PRIVATE_DOCUMENTARY_PROJECTION_NOT_RAW_HTTP",
+      "path": "cockpit/.ci/mightytips-official-documentary-20261121/robots-metadata.json",
+      "sha256": "61fc124d119c2b3ff71f6db81b20a0ea2a25c11d7828e6965d63236f41290079"
+    },
+    {
+      "namespace": "A9_PRIVATE_DOCUMENTARY_PROJECTION_NOT_RAW_HTTP",
+      "path": "cockpit/.ci/mightytips-official-documentary-20261121/operations.jsonl",
+      "sha256": "058938657de85c7f84427f6a80b661db10e53fefe09b69388408585aed8a73ea"
+    },
+    {
+      "namespace": "A9_PRIVATE_DOCUMENTARY_PROJECTION_NOT_RAW_HTTP",
+      "path": "cockpit/.ci/mightytips-official-documentary-20261121/terms-operative-rendered-excerpt.json",
+      "sha256": "6fb38b86dd70ee76c29305721769444a6d59ef8e86e9fa0cfa8a5f7ef9470c23"
+    }
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.MIGHTYTIPS.OFFICIAL.DOCUMENTARY.AUTHORITY.20261121"
+  ]
+}

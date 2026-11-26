@@ -1,0 +1,20 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.NEXT3.PROSPECTIVE.PERMISSION.HOLD.20261122",
+  "recordedAt": "2026-11-22T03:53:03.277Z",
+  "status": "PROSPECTIVE_HOLD_NEXT_NATURAL_SLOT",
+  "scope": "Prevent future requests under a demonstrated unreliable permission gate. No historical publisher-policy bypass is asserted.",
+  "reasonClaim": "ENG.SOURCE_OBSERVATORY.ROBOTS.PERMISSION.OFFLINE.CONTRADICTIONS.20261122",
+  "mechanism": "EXISTING_RUNTIME_HALT_FLAG",
+  "nextSlot": "2026-11-22T05:05:00Z",
+  "observedPriorSlots": 2,
+  "observedPriorGET": 55,
+  "priorFamilyGETMaximum": 129,
+  "newGET": 0,
+  "codePinsModified": 0,
+  "taskMutations": 0,
+  "oldJournalRewritten": false,
+  "admissions": 0,
+  "independentReviewer": "C4",
+  "rearmAllowed": false,
+  "globalDelivery": "PARTIAL"
+}

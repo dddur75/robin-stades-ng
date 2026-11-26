@@ -1,0 +1,59 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.WHOLE.NATIVE.BINDING.E1.RESULT.20261124",
+  "missionId": "OLBG_PENDING_WHOLE_NATIVE_BINDING_20261124",
+  "status": "PASS_AND_HOLD_SYNTHETIC_WHOLE_BINDING_ONLY",
+  "scope": "Actual whole main/load/collect/probe and exclusive pending writer tested with synthetic transport/authority; no actual SOURCE grant or live ledger validation yet",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.FILESYSTEM.POLICY.POSITIVE.R2.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.ZERO.ELIGIBLE.PENDING.CAPTURE.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.OBSERVATION.BUILDER.E1.RESULT.20261124",
+    "DATA.SOURCE_OBSERVATORY.OLBG.FIRST.OPAQUE.REFUSAL.NATIVE.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.TERMS.LOCAL.DOC.RESULT.20261121",
+    "DATA.SOURCE_OBSERVATORY.LIGUE1.J12.OFFICIAL.SCHEDULE.DOCUMENTARY.20261122"
+  ],
+  "resultSHA": "9048cd685181a8825b8f03dc9e642d87dc1c6e210011af1fdc5ed14af31edf0d",
+  "mapSHA": "7f936f5eb3176f5fd34f1188cc77d7a5de533b91cdbf279afef35da29109f9c3",
+  "configSHA": "3eb1d3c4b4dfd7298460e907b7416dbcd6303f4e2619e9e4441f7ff680376c7b",
+  "workerSHA": "381466833a68a441162b83273cfc96b1009d5daa510d0561aad0a7f0f5d0c924",
+  "outerSHA": "2104113862827e7df37b065b796b7d10de63367eb0e4b7f6218c830a30bd8595",
+  "policySHA": "3dc8425a8e233345d3585d9625ce7ad30f6c4c4861c625658464fd7d63696e90",
+  "verification": {
+    "actualMainFullCollectProbe": 1,
+    "fakeGET": 2,
+    "syntheticPendingWrites": 1,
+    "syntheticPendingBytes": 1135,
+    "syntheticPendingRows": 1,
+    "realPolicyValidationsOnSyntheticLedger": 31,
+    "writerBypassSpyPassed": true,
+    "criticalRuffExit": 0,
+    "mypyCallerWriterBuilderExit": 0,
+    "oldPackReplays": 0,
+    "authorLaunches": 10,
+    "privateFiles": 38,
+    "totalOSProcesses": null
+  },
+  "timing": {
+    "UTCAndMonotonicPrePostFsyncCheckedInSameActor": true,
+    "producerStoppedAt": "2026-11-24T13:50:55.181338Z",
+    "E1Deadline": "2026-11-24T13:52:43.265254Z",
+    "producerWithinWindow": true
+  },
+  "sourceGET": 0,
+  "realPendingWrites": 0,
+  "sourceAllowed": false,
+  "sourceReady": false,
+  "applicationAdmission": false,
+  "nativeUTCProof": false,
+  "limitations": [
+    "Real defaultPREFIX/live ledger and fresh dated C4 terms require distinct SOURCE grant",
+    "No ledger revocation-instant guarantee inside ongoing HTTP read",
+    "Source account not certified human, nine L1 calendar contextual only",
+    "Postwrite refusal may leave unaccepted orphan; no rollback"
+  ]
+}

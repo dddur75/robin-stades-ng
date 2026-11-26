@@ -1,0 +1,46 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.UTC.WITNESS.DATE.BINDING.R2.PRIVATE.E1.RECETTE.20261122",
+  "generatedAt": "2026-11-22T21:07:46.100Z",
+  "status": "PRIVATE_E1_CORRECTION_ACCEPTED_NO_SOURCE_READINESS",
+  "scope": "Single Date.parse call-position guard and three synthetic variants; syntax candidate only, no primary UTC proof or acquisition capability.",
+  "missionId": "OLBG_UTC_WITNESS_DATE_BINDING_CORRECTIVE_R2_E1_20261122",
+  "planSHA256": "f97719efea3570bac8881a7103307775f7550be3fce81f72ee4c6bf47b09da15",
+  "manifestSHA256": "2d58ccf1007950682323f27d092420bd463e3d25722abdfe847d87189c9749e1",
+  "grant": "2c96598eabc2f416f3d535353bcc2df34a5abb2b7c9069671d43e4a5bcce862b",
+  "resultSHA256": "bb218635aa1ef01a2a16ac8f9a370c1fe4acfc4c873e1e8d65dbf37abd024895",
+  "codeMapSHA256": "400d0a677254bf34855b2f90096749df182ffec421154875ed2fd226c7925165",
+  "pins": 18,
+  "keys": [
+    "C0_CODE_NOT_AUTHOR",
+    "C1_FACTS",
+    "C4_SCOPE"
+  ],
+  "author": "C3_STOPPED",
+  "elapsedSeconds": 166.978681,
+  "budgetSeconds": 300,
+  "methods": 12,
+  "syntheticBaseFragments": 3,
+  "qualification": {
+    "baseFragmentsEquivalent": "AFTER_LF_NORMALIZATION_NOT_RAW_BYTE_EXACT_CRLF_ONLY",
+    "authorRawByteExactField": "INACCURATE_PRESERVED_WITH_THIS_ADDITIVE_QUALIFICATION",
+    "scriptRefsRawByteExact": true,
+    "ruffCriticalExit": 0,
+    "banditExit": 0,
+    "pythonChecksScope": "script-refs.py only; no JavaScript or whole-system security-zero claim"
+  },
+  "effects": {
+    "sourceGET": 0,
+    "sourceJSExecution": 0,
+    "TaskChanges": 0,
+    "appChanges": 0,
+    "GitPush": 0
+  },
+  "sourceReady": false,
+  "nativeUTCProof": false,
+  "remaining": [
+    "Primary acquisition and binding absent",
+    "Runtime reachability and server datetime semantics absent",
+    "Dependency pin-before-require trust assumption remains"
+  ],
+  "globalDelivery": "PARTIAL"
+}

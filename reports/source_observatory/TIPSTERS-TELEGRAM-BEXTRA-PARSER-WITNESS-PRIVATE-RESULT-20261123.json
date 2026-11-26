@@ -1,0 +1,24 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.PARSER.WITNESS.PRIVATE.RESULT.20261123",
+  "missionId": "TELEGRAM_BEXTRA_PARSER_WITNESS_PRIVATE_E1_20261123",
+  "generatedAt": "2026-11-23T16:33:13.018Z",
+  "status": "PRIVATE_COMPONENT_ACCEPTED",
+  "keys": [
+    "C0",
+    "C1",
+    "C3"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.FIXED.ROUTE.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.STRUCTURED.NATIVE.R2.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.PREFIX.NATIVE.R2.ACTUAL.RESULT.20261123"
+  ],
+  "scope": "C4closeddiagnosticworker independentlyreviewedC0/C1/C3. Exactlyoneclosed_parser_witness function+oneassignment; strippingreturnsentireoldworkerAST, fiveadjacentfilesbyteunchanged. Staticclosedreason/status/stop/countstrict0..10/fourisFalsebool, no nativefields/IDs/text/permalinks/reflectedstrings. Hookafterexistingfourflagprecheck andbeforeunchangedconsumer, doesnotcoverprecheckfailures. OneREDfourGREEN/criticalRuff2files0/RAMcompile2/148sSTOP. OldBextraPREFIX_CONTRACT finecauseUNKNOWN, futurewitnessonlydescribesnewsample. No freshfullnativebinding/SSL/realledger/Job/sourceauthority/admission.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "workerSHA": "53f203edf61a6e6c9fda25d709b0854f6ee7ad09877328e1756978d555b1e8ed",
+  "fileMapSHA": "92a9c51e0f514366daf9ae1acfa4e3cb64e26dd0409b35f225a31d713265c815",
+  "resultSHA": "89382d952fd96581eedacce587f6150c35ba65d883ec2793c1cd14d0b23e884b"
+}

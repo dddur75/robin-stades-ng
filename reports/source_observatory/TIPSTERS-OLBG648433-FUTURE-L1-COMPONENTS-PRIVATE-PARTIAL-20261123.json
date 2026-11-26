@@ -1,0 +1,27 @@
+{
+  "generatedAt": "2026-11-23T09:29:54.465Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG648433.FUTURE.L1.COMPONENTS.PRIVATE.PARTIAL.20261123",
+  "missionId": "OLBG648433_FUTURE_L1_CALLER_PRIVATE_E1_20261123",
+  "status": "PARTIAL_PRIVATE_COMPONENTS_ONLY",
+  "scope": "Nine retained future L1J12 contextual fixtures and loader3-to9 rebinding. Five guards pass; two load attempts: one refused pin then one successful after current raw connector pin refresh with selected AST unchanged. No executable source authority, native UTC proof or app admission.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.SINGLE.PERSONAL.REP.V2.PREMATCH.RESULT.20261122",
+    "DATA.SOURCE_OBSERVATORY.LIGUE1.J12.OFFICIAL.SCHEDULE.DOCUMENTARY.20261122",
+    "ENG.SOURCE_OBSERVATORY.FUTURE.L1.CALENDAR.CONTEXTUAL.POLICY.20261122"
+  ],
+  "resultSHA256": "0a1a7820c76ca4bd5432a3ca7c33522f2da3dc2b4723bb981e009ba29f883007",
+  "codeMapCAN": "4d3454507d20ec999e8ef9c631d978ef994915f2cdf2587b8ddf892823fd6a6e",
+  "authorSeconds": 188.095811,
+  "loadAttempts": 2,
+  "successfulLoads": 1,
+  "guardCases": 5,
+  "sourceGET": 0,
+  "nativeUTCProof": false,
+  "applicationAdmission": false,
+  "sourceReady": false
+}

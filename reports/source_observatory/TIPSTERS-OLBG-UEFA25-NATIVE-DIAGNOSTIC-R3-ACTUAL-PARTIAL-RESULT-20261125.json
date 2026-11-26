@@ -1,0 +1,99 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.UEFA25.NATIVE.DIAGNOSTIC.R3.ACTUAL.RESULT.20261125",
+  "status": "PARTIAL_POST_ROBOTS_CONTROL_FAILURE_NO_NEW_PREDICTION",
+  "scope": "Second distinct native canary after minimal closed diagnostic retention fix; one robots HTTP response completed, stopped before rules or personal profile.",
+  "tuple": {
+    "parentPlanSHA": "0a332eab7958bd6a382d3810f41c88f331bdfbc22e3a76e325ea372fd254bc28",
+    "parentManifestSHA": "633f7d75cbe5df87670c16df58e93990bb0eae76f0ef8b524e3a6988a3a41ffe",
+    "childPlanSHA": "8e37af54d6359bc30598bd424de3d4a5a4d02f84934769b79c27a33175a980ac",
+    "childManifestSHA": "f5bbb6f2def5e8a867b3e063c1ee32858e37a9e1da8c81e1dca5d5d0df2f389f"
+  },
+  "rootTupleRAW": {
+    "planSHA": "6fac854fbb23cde1296855fc14254e3f6be8c5144f74d6215252a9673a7bbed2",
+    "manifestSHA": "936428fa5bb6d59c1d5b2a48e31832ba3e2208ebdf5c5fe23d6535fa83f49162"
+  },
+  "sourceSlotUTC": "2026-11-25T00:55:00+00:00",
+  "sourceGrant": "e276fac9077a748dbfa3f4830e998e1574744e708c32db5bc233ce3cfc11c7c6",
+  "actualTopControllerExit": 1,
+  "actualRootWrapperExit": 1,
+  "rootWrapperSeconds": 29.42199999996228,
+  "job": {
+    "activeSecondsMax": 50,
+    "elapsedSeconds": 11.578000000037719,
+    "exit": 1,
+    "hardSeconds": 60,
+    "sourceGET": null,
+    "subtreeKillConfirmed": true,
+    "taskMutations": 0,
+    "timedOut": false
+  },
+  "auditCounts": {
+    "DNS": 1,
+    "GET_SEND": 1,
+    "TCP": 1,
+    "activeGET": false,
+    "reservedAttempts": 1,
+    "sourceReady": false
+  },
+  "transportDiagnosticStatus": "VALID",
+  "transportDiagnostic": {
+    "CLbucket": "VALID",
+    "CLcount": 1,
+    "TEbucket": "ABSENT",
+    "TEcount": 0,
+    "bodyComplete": true,
+    "bytesReceived": 9452,
+    "contentEncodingBucket": "ABSENT",
+    "exceptionKind": null,
+    "familyAttempted": "IPV4",
+    "finalZeroSeen": null,
+    "framing": "CL",
+    "httpStatus": 200,
+    "phase": "DONE",
+    "reason": null,
+    "robotsAvailability": "PRESENT_200",
+    "schemaVersion": "telegram-ipv4-strict-transport-diagnostic-v1",
+    "terminalStrictVerified": null,
+    "trailerComplete": null
+  },
+  "requestFinishedHTTP": [
+    {
+      "httpStatus": 200,
+      "responseSha256": "3e6044a915c133edb598a707c900d8cf9de6926aaba75117c9392683257f8106"
+    }
+  ],
+  "childErrorKind": "ValueError",
+  "firstResponseRecorded": true,
+  "termsRequests": 0,
+  "profileRequests": 0,
+  "businessStopReason": "UNKNOWN_POST_ROBOTS_CONTROL_CODE_NOT_RETAINED",
+  "newStructuredChoices": 0,
+  "applicationAdmissions": 0,
+  "Task": 0,
+  "retry": false,
+  "unusedGETCeilingAbandoned": 2,
+  "retainedRawProviderPayloads": 0,
+  "primarySHA": "b5e4649d3b117c5272e39de8d4e9e29ee201d434495175f0ed4d983054b18770",
+  "parentResultSHA": "eabe22017a543e7acf766d087c6a315a2ed0474d9de81cdaa737fd30fa5554c8",
+  "childResultSHA": "43f3cb99ba414811de5b09d7a2b0d1cdb46583e4962994c8d6d3e1e0144401de",
+  "rootResultSHA": "97baee165ebad509851ceea428b97824a05a0bd72a094f1b51c3eb21e53c0fd4",
+  "requiredNextDecision": "FAIL_AND_REDESIGN_RETURN_E1_NO_THIRD_IDENTICAL_ATTEMPT",
+  "limitations": [
+    "HTTP200 complete robots transport is not qualification of the robots text or permission to read later routes",
+    "ValueError after first request remains an unknown business/policy control cause",
+    "No personal profile content observed in this canary",
+    "No recurring activation, admission or Source readiness inferred"
+  ],
+  "sourceReady": false,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "comparativeRetainedEvidence": {
+    "priorActualClaimId": "DATA.SOURCE_OBSERVATORY.OLBG.PENDING.REAL.NATIVE.RESULT.20261124",
+    "priorRobotsReceiptSHA": "35d29c28f55390712cc0055ccb725de972666379efdfe3ce049c0cf08f009f1c",
+    "priorObservedAt": "2026-11-24T14:09:39.176346+00:00",
+    "robotsBodySHA": "3e6044a915c133edb598a707c900d8cf9de6926aaba75117c9392683257f8106",
+    "R2AndR3RecordedSameHTTP200BodySHA": true,
+    "priorNativeProfilePolicy": "ALLOW_COMPLETE_DELAY_0",
+    "limits": "Comparative witness only. Does not validate the new document check, /use route, current business cause, or future grant."
+  }
+}

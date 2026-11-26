@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "robin-bounded-source-attempt-result-v1",
+  "generatedAt": "2026-11-25T12:49:03.663Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.PROFILE383717.R1.DUE.REFUSAL.RESULT.20261125",
+  "status": "PARTIAL_CLOSED_BEFORE_ROOT_AUTH_MISSING_KEYS_AFTER_DUE_WINDOW",
+  "scope": "Orchestration failure before Root authorization and native provider execution; no compatibility judgment about the profile.",
+  "missionId": "OLBG_PROFILE383717_NATIVE_R1_20261125",
+  "planTuple": {
+    "parentPlanSHA": "5338ccad6c2d750a0780595f7247274a47d777b5734ff60ff4a03d705c03cc81",
+    "parentManifestSHA": "f392e09465acfbaf43ac4854881753a9bd8a8afdb1d469acc085545d42e1c737",
+    "childPlanSHA": "36c3dbd007ac839f052b95cdcc6cb0c4a2f106a384f619851215a53d0a9b273c",
+    "childManifestSHA": "f13ac0335cae21847167910d1014ab820ab16a128a5b654746ddc5c6abd0f41a"
+  },
+  "RootControllerInvocations": 1,
+  "RootControllerExit": 1,
+  "primarySHA256": "cf7b45ec6756d9b072158b8df8403f76c5eea4381773f0198136bc32b1cb7749",
+  "keyCreationRefusedAfterDue": true,
+  "controllerWasInvokedDespiteKeyCreationToolError": true,
+  "controllerFailure": "MISSING_NATIVE_CONTROL_C0_BEFORE_ROOT_AUTH",
+  "rootAUTHCreated": false,
+  "nativeLaunchMarker": false,
+  "sourceGETMeasured": null,
+  "sourceGETInferred": 0,
+  "inferenceBasis": "Missing control key exception occurs before Root AUTH/job; authority and native-spent absent.",
+  "newObservations": 0,
+  "applicationAdmissions": 0,
+  "oldPermissionClosed": true,
+  "oldPermissionReused": false,
+  "retryUnderOldMission": false,
+  "nextCorrection": "New distinct mission/slot after preparation, explicit dependency checks stop after tool errors; no parser or synthetic tests changed.",
+  "sourceReady": false
+}

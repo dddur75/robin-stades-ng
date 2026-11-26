@@ -1,0 +1,89 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.UEFA25.REP.OWNER.R5.ACTUAL.RESULT.20261125",
+  "status": "ACTUAL_NATIVE_SINGLE_SLOT_COMPLETE_LOCAL_ADMISSION_PENDING",
+  "scope": "One OLBG personal-profile native canary; opaque source-literal selection, not recurring or all-source delivery",
+  "sourceTuple": {
+    "parentPlanSHA": "1800ba1bf90bb01aec9798324605465cc4accea587d6e77c2a9e9af686585295",
+    "parentManifestSHA": "407c7360ac3624b3f76e04ff57c3d6e47055f0b2a915058332d46f59cb5f6786",
+    "childPlanSHA": "2baef41326d6a16a4ec8cccd5a19f412e93b005a0891993db779e75787f524be",
+    "childManifestSHA": "05340bd9c82e560a7b89737adcc660991a2aa28d4c5b201c0699b593c90ba5c3"
+  },
+  "rootTupleRAW": {
+    "planSHA": "cca6168ce74ff88131dd83182c869ed4ca25c25e0f808e46510f2db271db6db0",
+    "manifestSHA": "7c659c127fc0882410696f167d3183ebc111a184a250d632264a232afe9790c3"
+  },
+  "sourceGrant": "95e655bfd10a398119f98c96c7a4219136a9d520dbacc41c1ef6d9ec18e6c486",
+  "slotUTC": "2026-11-25T02:43:00+00:00",
+  "finishedAtUTC": "2026-11-25T02:44:18.300226+00:00",
+  "resultSHA": "4e58a70112814f6d266761e41859d6e9efc257d0f0744c8a3df4acd96b59e94c",
+  "stopSHA": "9e180b8d3074cc4f2d650618a8c1a649d4ce1378ab93c14b40eccf6e1bfbb798",
+  "actualControllerPrimarySHA": "447d2ca9183acd918441220632d016ba4a51a69bf9722e7ec365dd59e5a6da18",
+  "actualTopControllerExit": 0,
+  "actualRootWrapperExit": 0,
+  "actualRootWrapperExit0Observed": true,
+  "ownedWrapperSeconds": 48.65599999995902,
+  "outerWallSeconds": 59.15117190000415,
+  "job": {
+    "activeSecondsMax": 50,
+    "elapsedSeconds": 28.20300000003772,
+    "exit": 0,
+    "hardSeconds": 60,
+    "sourceGET": null,
+    "subtreeKillConfirmed": true,
+    "taskMutations": 0,
+    "timedOut": false
+  },
+  "network": {
+    "DNS": 3,
+    "GET_SEND": 3,
+    "TCP": 3,
+    "activeGET": false,
+    "reservedAttempts": 3,
+    "sourceReady": false
+  },
+  "structuredSelectionRecords": 1,
+  "batchMetadata": {
+    "bytes": 7150,
+    "file": "observations-5a87710d8912e115dbf5b0fb32b08da6f353af0d1166fdf92a89b5ed40c6b6cb.json",
+    "recordCount": 1,
+    "sha256": "5a87710d8912e115dbf5b0fb32b08da6f353af0d1166fdf92a89b5ed40c6b6cb"
+  },
+  "newUniqueChoicesComparedWithApplication": null,
+  "applicationAdmissions": 0,
+  "Task": 0,
+  "retry": false,
+  "sourceReady": false,
+  "recurringCollectionActive": false,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "limitations": [
+    "One profile and fixed official fixture context only",
+    "Native market remains source_native_opaque; no normalized market inferred",
+    "Distinct local validation/admission required; global UI recette not established",
+    "No new campaign, future quota or recurring permission created",
+    "Owned wrapper subtreeConfirmed=false; inner Job subtreeKillConfirmed=true; no overall descendant attestation"
+  ],
+  "framing": {
+    "strictPinnedCodePathAccepted": true,
+    "finalDiagnosticState": "ABSENT",
+    "detailedThreeWireTracesProven": false
+  },
+  "nativeJournal": {
+    "requestsHTTP200": 3,
+    "qualified": 1,
+    "accepted": 1,
+    "finished": 1,
+    "halted": 0
+  },
+  "tos": {
+    "baseline": "1248b86c3f9e8adc061c3fd489b3ba0576812956ff8ff051b8b3483ce6e4590f",
+    "conditionalComparisonPassedByPinnedControlFlow": true,
+    "independentRawBodyRecalculation": false
+  },
+  "entrySourceMarginSeconds": 374.443,
+  "finalSourceMarginSeconds": 317.649,
+  "councilFactsRecordedAtUTC": "2026-11-25T02:48:26.321548+00:00",
+  "producerCompletedWithinOriginalBounds": true,
+  "administrativeFactsCloseAfterRoot300Window": true,
+  "administrativeReviewConformity": "NOT_ATTESTED_AFTER_ORIGINAL_ROOT_WINDOW_NO_AUTHORITY_REOPENED"
+}

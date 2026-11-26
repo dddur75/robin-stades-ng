@@ -1,0 +1,35 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.PUBLICATION.CI268.EXACT.HEAD.RESULT.20261124",
+  "missionId": "PUBLICATION_CI268_EXACT_HEAD_READONLY_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "GitHub plugin exact commit query returned workflow run268 completed success; all17 unique jobs completed success in run45291412231, and PR133 head matches d0fa199ae71dfb218fc94155088878c3b6c3ebda. This CI covers that published commit only. Five uncommitted pending-app integration files and the LOCAL producer control are not certified by this run.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.CHANNEL.PUBLICATION.GIT.R2.E1.20261124",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.CHANNEL.PREFIX.PUBLIC.INTEGRATION.E1.RESULT.20261123"
+  ],
+  "repository": "dddur75/robin-stades-ng",
+  "PR": 133,
+  "commitSHA": "d0fa199ae71dfb218fc94155088878c3b6c3ebda",
+  "runId": 45291412231,
+  "runNumber": 268,
+  "conclusion": "success",
+  "jobs": 17,
+  "successfulJobs": 17,
+  "allJobsSameRun": true,
+  "primarySHA": "1363e13d35fb4080d6989d28387bb2f8c36ad8ba6129f7666f22454f81151185",
+  "limits": {
+    "uncommittedAppFilesCovered": false,
+    "LOCALProducerRepaired": false,
+    "merge": false,
+    "PROD": false,
+    "sourceGET": 0,
+    "newAdmittedForecasts": 0,
+    "allCompatibleIntegrated": false,
+    "overall": "PARTIAL"
+  }
+}

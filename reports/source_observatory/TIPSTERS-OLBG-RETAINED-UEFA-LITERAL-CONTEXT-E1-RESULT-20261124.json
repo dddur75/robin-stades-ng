@@ -1,0 +1,44 @@
+{
+  "applicationAdmissions": 0,
+  "calendarObservedAfterCapture": true,
+  "calendarSHA": "dc9181bf657f1b72d64c4ce143dc0daff611856aa7fa6a395fadc857fc8f9ee1",
+  "canonicalFixtureProven": false,
+  "closedAtUTC": "2026-11-24T14:47:33.808655+00:00",
+  "comparedField": "eventText",
+  "comparisons": 153,
+  "counts": {
+    "AMBIGUOUS": 0,
+    "NONE": 13,
+    "UNIQUE": 4,
+    "observedBeforeScheduled": 4,
+    "observedNotBeforeScheduled": 0
+  },
+  "fixtures": 9,
+  "globalCoverage": "UNKNOWN",
+  "missionId": "OLBG_RETAINED_UEFA_LITERAL_CONTEXT_E1_20261124",
+  "nativeDateInterpreted": false,
+  "pendingSHA": "3985cda1cfa064f27d4f7af3fd44a1e7e5be6433f5e30011f7c3d9a2fd63fe11",
+  "personIdentityVerified": false,
+  "privateValuesLogged": false,
+  "records": 17,
+  "scope": "17 retained OLBG observation records versus nine documentary UEFA schedules: four record-occurrences have unique literal team-pair co-presence and earlier capture UTC than schedule, thirteen have no literal context match. Not four distinct fixtures or people. Retrospective schedule observed after capture; no canonical join, human certification, actual whistle, prematch admission or source activation.",
+  "sourceGET": 0,
+  "sourceReady": false,
+  "status": "PASS_AND_HOLD_CONTEXT_ONLY",
+  "syntheticCases": 4,
+  "temporalUnproven": 13,
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.RETAINED.UEFA.LITERAL.CONTEXT.E1.RESULT.20261124",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.PENDING.REAL.NATIVE.RESULT.20261124",
+    "DATA.SOURCE_OBSERVATORY.UEFA.24NOV.PRIMARY.CALENDAR.20261124"
+  ],
+  "actorSHA256": "428e589d969a9b0f134a1dcbe5c17d1769ba883a2de3bfb4795da3a22fae02fc",
+  "resultSHA256": "67f782d9c684f1345fb7b7002345b2cd642146e8b1cfbd61309031adb1f68dd0",
+  "stopSHA256": "0696d93cc8f4ff1e21ce2e5ba18bcc26d06b21a5b735a70f1ee986f789568803",
+  "allCompatibleIntegrated": false
+}

@@ -20,11 +20,21 @@ from .test_round2_regressions import combo_evidence
 
 @pytest.mark.parametrize('agent', ['RobinSourceObservatory/1.0', 'RobinSourceObservatory*',
                                   'Robin*Observatory'])
-def test_r3_1_targeted_agent_denial_never_fetches_content(tmp_path, monkeypatch, agent):
+def test_r3_1_invalid_agent_syntax_fails_closed_before_content(tmp_path, monkeypatch, agent):
     http = FakeHTTP(robots=f'User-agent: {agent}\nDisallow: /\nUser-agent: *\nAllow: /'.encode())
+    _, store = run(tmp_path, monkeypatch, http=http)
+    # Unsupported REP syntax is unproven, not an explicit publisher denial.
+    assert receipts(store)[0].status == 'echec'
+    assert len(http.calls) == 1
+    assert not any(isinstance(e, models.PublicationVersion) for e in store.entities())
+
+
+def test_r3_1_exact_product_denial_never_fetches_content(tmp_path, monkeypatch):
+    http = FakeHTTP(robots=b'User-agent: RobinSourceObservatory\nDisallow: /\nUser-agent: *\nAllow: /')
     _, store = run(tmp_path, monkeypatch, http=http)
     assert receipts(store)[0].status == 'bloque_robots'
     assert len(http.calls) == 1
+    assert not any(isinstance(e, models.PublicationVersion) for e in store.entities())
 
 
 @pytest.mark.parametrize('terms', [

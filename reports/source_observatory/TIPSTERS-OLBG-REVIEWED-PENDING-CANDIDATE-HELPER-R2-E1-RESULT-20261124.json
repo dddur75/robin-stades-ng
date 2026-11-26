@@ -1,0 +1,56 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.REVIEWED.PENDING.CANDIDATE.HELPER.R2.E1.RESULT.20261124",
+  "missionId": "OLBG_REVIEWED_PENDING_CANDIDATE_HELPER_R2_E1_20261124",
+  "status": "PASS_AND_HOLD_PRIVATE_CODE_ONLY",
+  "scope": "Two pure modules: fixed SHA-reviewed OLBG pending descriptor and fail-closed exact unique source-account candidate join; six synthetic methods/calls, byteexact default-NULL reader reused. No real payload read, runtime adoption, human identity certification or admission.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.LOCAL.SNAPSHOT.ORCHESTRATION.REFUSAL.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.APP.READER.E1.RESULT.20261124",
+    "DATA.SOURCE_OBSERVATORY.OLBG.PENDING.REAL.NATIVE.RESULT.20261124",
+    "DATA.SOURCE_OBSERVATORY.CANDIDATES317.20261119"
+  ],
+  "codeResult": {
+    "GitMutations": 0,
+    "actualFilesIncludingMapResultStop": 19,
+    "admissions": 0,
+    "applicationAdoption": false,
+    "checks": {
+      "lint1": 0,
+      "lint2": 0,
+      "syntax": 0,
+      "synthetic": 0,
+      "tsc": 0
+    },
+    "counters": {
+      "helperCalls": 6,
+      "methods": 6
+    },
+    "errors": [],
+    "explicitLaunches": 13,
+    "oldReaderByteExact": true,
+    "oldReaderPackReplays": 0,
+    "publicWrites": 0,
+    "realPendingReads": 0,
+    "receiptReads": 0,
+    "runtimeWrites": 0,
+    "sourceGET": 0,
+    "status": "COMPLETE_PENDING_INDEPENDENT_REVIEW",
+    "totalOSProcesses": "UNKNOWN"
+  },
+  "producerStop": {
+    "UTCAndOriginalMonoGuarded": true,
+    "actualStoppedAt": "2026-11-24T14:48:51.239253+00:00",
+    "immutableAfterStop": true,
+    "status": "COMPLETE_PENDING_INDEPENDENT_REVIEW"
+  },
+  "resultSHA256": "0cbfb1efa8075d0999baab7ae0cafbb6ad80aee73d0e262eef01c61ecdfb8c20",
+  "fileMapSHA256": "1da3054e8d85c9ff9f8f36c59e20db78e7d7805840f0751158ee5de6e9c74e7b",
+  "sourceReady": false,
+  "admissions": 0,
+  "authorityClosed": true
+}

@@ -1,0 +1,24 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.NATIVE.PENDING.STORAGE.PRIVATE.RESULT.20261123",
+  "missionId": "NOTBETTING_NATIVE_PENDING_STORAGE_PRIVATE_E1_20261123",
+  "generatedAt": "2026-11-23T16:14:20.944Z",
+  "status": "PRIVATE_COMPONENT_ACCEPTED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.SOURCE.FIELDS.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.NATIVE.OWNER.STORAGE.PRIVATE.RESULT.20261123"
+  ],
+  "scope": "AcceptedC3privateworker after independentC0/C1/C4 review: pendingcallbackRAM/closedbridge/closed_pending/envelopeprovenance validation beforepayloadFS. Separatequalified/pendingoptionalfiles each4/32768, wx/fsync/readbackhash; discoveryfailure0payloadfiles, IOfailuremayleaveorphan/noatomicity. 5syntheticmethods/4fullpolicyRAMcases/criticalRuff4files0/5RAMcompile/217.031sSTOP. No actual fullsource loaderSSL/ledger/Job/GET; no admission/forecast/personalidentity proof. FutureMF mustexplicitlyauthorize BOTH distinctfilecapacities.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "workerSHA": "dc15cf61bfbfeb4eb4d63e3d480361a1b432a17c119529fe790b10d09df863ec",
+  "policySHA": "2926fe57391073fd53ee98db1102dd4d2c33c555521fb8a27a6b1635bcc90c89",
+  "outerSHA": "c0779bf07e5bb71eec7aa690037cebe07456341212e70614fe92aeeb1cfbc368",
+  "fileMapSHA": "9d50e52e89425a28858a3caa3a96f39ca95df636a0c1b4b8c437623d1b1af580"
+}

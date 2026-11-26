@@ -1,0 +1,70 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.POST.PINNED.BOOTSTRAP.PRIVATE.E1.RECETTE.20261122",
+  "recordedAt": "2026-11-22T20:33:33.574Z",
+  "status": "PRIVATE_PINNED_BOOTSTRAP_ACCEPTED_NO_NATIVE_CANARY",
+  "scope": "Independent C0 CODE C1 FACTS C4 SCOPE accept C3 frozen same-buffer verified bootstrap under existing Job60. Twelve synthetic methods only; no Windows/native timing, source, Task or recurrence readiness.",
+  "missionId": "OLBG_POST_PINNED_BUFFERS_BOOTSTRAP_PRIVATE_E1_20261122",
+  "planSHA256": "61ce5bb85a1d70c1fbcbaf2f64433d8fd9397d8a5995a0726dd3c93bd3d03b5a",
+  "manifestSHA256": "ca5210b8cff36f82af16420f862f72979c0b2d52178abd63fb2cdee0047465e3",
+  "grant": "70471d55082c873ebc506edf20e83ef0d34d9686bf9ebf0b319fa19f0fabd493",
+  "resultSHA256": "4ae9125946d60e9620f0f426b4dd105b72993195e2ee626fe77b7194c41d6484",
+  "codeMapSHA256": "13a304a57ec66069891714b20d1d47b17daba03d5dfb48ff41199e9473314731",
+  "pinsVerified": 22,
+  "coreByteExact": true,
+  "hardJobASTUnchanged": true,
+  "author": "C3_STOPPED",
+  "independentCodeReviewer": "C0_NOT_AUTHOR",
+  "authorStoppedAt": "2026-11-22T20:17:16.920673+00:00",
+  "elapsedSeconds": 481.054521,
+  "budgetSeconds": 900,
+  "tests": {
+    "methods": 12,
+    "syntheticRows": 3,
+    "redFailures": 1,
+    "finalFailures": 0,
+    "finalErrors": 0,
+    "RAMCompiles": 5,
+    "criticalRuffExit": 0
+  },
+  "bandit": {
+    "exit": 1,
+    "findings": [
+      "B404 LOW inherited subprocess import",
+      "B102 MEDIUM intentional hash-verified exec"
+    ],
+    "securityZeroClaimed": false
+  },
+  "applicationClosure": {
+    "post_core.py": "b6764319b72fd20dcbe16717d548bedd5296db283ca7f923774d4e55de8c90f1",
+    "slot0/post-outer.py": "51e81214a2b7ae4e30e45ddad05c887ed3718c93298ca4967ba595a3534ac823",
+    "slot0/post-worker.py": "067aaddb4d940409ec8ce82a1bb7a06c278c9891ad273841dd0405e511292c9a"
+  },
+  "bootstrapSHA256": "f3af5d0705fdd7c5c7c4b1d92196b75031a67bd9dd0857a55f59e1a2da53e35d",
+  "sourceGET": 0,
+  "network": 0,
+  "Win32Calls": 0,
+  "nativeProcesses": 0,
+  "nativeCanaryExecuted": false,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "appChanges": 0,
+  "GitPush": 0,
+  "sourceReady": false,
+  "postReady": false,
+  "effectiveBindingsPresent": false,
+  "sourceGETMeasuredByNativeParent": null,
+  "childStdoutCaptureProven": false,
+  "futureInferenceMustBeLabelled": true,
+  "remaining": [
+    "Independent C0 CODE and C1/C4 acceptance",
+    "Separate fresh manifest/grant/pinned launcher required before real zero-GET Win32 load-only canary",
+    "No real Win32/filesystem timing or cleanup proof in E1",
+    "Future C0 trust anchor must pin already-loaded outer, interpreter/runtime and application closure",
+    "No source/POST/Task/deployment or old-grant rearm authority"
+  ],
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

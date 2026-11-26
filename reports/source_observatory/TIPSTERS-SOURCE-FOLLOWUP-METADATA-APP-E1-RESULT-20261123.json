@@ -1,0 +1,33 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.SOURCE.FOLLOWUP.METADATA.APP.E1.RESULT.20261123",
+  "missionId": "SOURCE_FOLLOWUP_METADATA_APP_PRIVATE_E1_20261123",
+  "status": "TWO_QUALIFICATION_ROWS_AND_LIVE_API_UPDATED_OVERALL_PARTIAL",
+  "scope": "Exactly two existing qualification rows updated from accepted Bextra10UNQUALIFIED prefix and NotBetting4x9cached screening. Live localhost API returns all38 snapshot rows,36 unchanged; equality normalizes only extra status:ok envelope. No new catalogue/Bextra observation panel or full UI receipt, source activation, recurrence or forecast admission.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.INHERITED.TEXT.NATIVE.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.L1.CONTEXTUAL.LOCAL.R2.ACTUAL.RESULT.20261123"
+  ],
+  "beforeSHA": "49d1722ffa363bce84caf2472490a30aa72264ab0a952dcc71f62d7e9719e0e5",
+  "afterSHA": "70bd31de4e346ce2e2d5d1972640a62f662de22c1c4dfa226764da462c00bcc3",
+  "resultSHA": "993fd5b9d8e920ca952147837cd235057a0e5dc35569e2ddb778c436e0ae0a22",
+  "apiPrimarySHA": "cb1cb01477af81e86c7fe6cf95579a6cae7bac014bcc68744486a1c7168c807e",
+  "totalRows": 38,
+  "changedRows": 2,
+  "unchangedRows": 36,
+  "HTTPStatus": 200,
+  "localHTTPReads": 1,
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "sourceActivations": 0,
+  "recurrence": 0,
+  "appCodeWrites": 0,
+  "appRestart": 0,
+  "fullUIReceipt": false,
+  "allCompatibleIntegrated": false
+}

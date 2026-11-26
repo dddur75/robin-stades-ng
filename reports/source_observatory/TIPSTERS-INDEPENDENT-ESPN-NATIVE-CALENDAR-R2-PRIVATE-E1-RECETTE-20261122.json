@@ -1,0 +1,39 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.INDEPENDENT.ESPN.NATIVE.CALENDAR.R2.PRIVATE.E1.RECETTE.20261122",
+  "generatedAt": "2026-11-22T21:21:45.299Z",
+  "status": "E1_SYNTHETIC_PARSER_AND_FRAMING_TESTS_ACCEPTED_NO_NATIVE_SOURCE_READINESS",
+  "scope": "Four targeted synthetic tests and two RAM compilation checks; no source acquisition or native Job executed.",
+  "missionId": "INDEPENDENT_ESPN_NATIVE_CALENDAR_R2_20261122",
+  "planSHA256": "33a07dd203b63d28fb3c0775be4356a7769de63a1060c4439307b848054dcf83",
+  "manifestSHA256": "a4ce5bb404116cecbb0c0c5a66e6b3a7ede5595d4eaec10b9a4220bf6bcef918",
+  "grant": "b7372e5c2e529411c5b57fc39de88356b80a5b67fa7dec0c4ed03b48687a6001",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "author": "C0",
+  "independentReviewers": [
+    "C1_FACTS",
+    "C3_CODE",
+    "C4_SCOPE"
+  ],
+  "goldenResultSHA256": "8878df38837495e0e1feb4e076e9dc64615ef6f8be606618f0a574c0c53829ed",
+  "methods": 4,
+  "passed": 4,
+  "sourceGET": 0,
+  "Win32Calls": 0,
+  "appChanges": 0,
+  "harnessFirstFailure": {
+    "loaderErrors": 2,
+    "targetMethodsRun": 0,
+    "reason": "WRAPPER_ARGV_PASSED_TO_UNITTEST",
+    "correction": "RESET_ARGV_ONLY_NO_WORKER_OR_TEST_CHANGE",
+    "preserved": true
+  },
+  "HTTPContract": "One explicit Content-Length, no Transfer-Encoding, exact bytes and native residual0; other framing UNPROVEN, not source incompatible.",
+  "sourceReady": false,
+  "futureE2": "REQUIRES_FRESH_EXACT_KEYS_AND_GRANT",
+  "globalDelivery": "PARTIAL"
+}

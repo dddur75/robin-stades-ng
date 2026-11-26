@@ -1,0 +1,55 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.WORKBOOK.SUIVI.RECETTE.20261121",
+  "generatedAt": "2026-11-21T08:37:15.776301+00:00",
+  "status": "DATED_LOCAL_WORKBOOK_VERIFIED_GLOBAL_COLLECTION_PARTIAL",
+  "scope": "Update only Suivi Robin in the existing enriched workbook; preserve all nine source sheets and historical per-row Robin columns. No claim that the documentary inventory is fully operational.",
+  "output": {
+    "namespace": "A9_LOCAL_WORKBOOK_DELIVERABLE",
+    "path": "outputs/robin-v3-suivi-20261121-01a1e3dd/Robin_des_Stades_sources_et_tipsters_suivi.xlsx",
+    "sha256": "9062ab7bb8cb7e002a4b0350ea0e11faec0b700a0bb51ae471d39f9555cba395",
+    "bytes": 3356159
+  },
+  "inputEnrichedSHA256": "38978efe53f64ab725fea57025968bacfc4acaee028effa667e4fa6695cfd747",
+  "originalDownloadsSHA256": "c6b15829bb11e40d3145bf25b6cce8a7066de6105897d2b48dc4a74ba9286622",
+  "checks": [
+    {
+      "check": "sheet_order_and_names",
+      "count": 10,
+      "pass": true
+    },
+    {
+      "check": "unchanged_source_sheets_cells_formulas_styles",
+      "sheets": 9,
+      "cells": 394127,
+      "pass": true
+    },
+    {
+      "check": "native_tables_names_ranges_headers_filters",
+      "count": 9,
+      "pass": true
+    },
+    {
+      "check": "summary_changes_only_authorized_cells",
+      "pass": true
+    },
+    {
+      "check": "no_excel_errors_in_edited_cells",
+      "pass": true
+    }
+  ],
+  "sourceSheetsUnchanged": 9,
+  "sourceCellsUnchanged": 394127,
+  "nativeTablesPreserved": 9,
+  "totalSheetsPreserved": 10,
+  "platformStatusRowsUpdated": 6,
+  "asOfParis": "2026-11-21 09:25",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.CI250.LOCAL.RESTORE.RECETTE.20261121",
+    "ENG.SOURCE_OBSERVATORY.KICKTIPP.PREMATCH.TIMING.CONTRACT.20261121",
+    "DATA.SOURCE_OBSERVATORY.NOTBETTING.OCCURRENCE.FIRST.SCHEDULED.20261121"
+  ],
+  "verifiedBy": [
+    "C0",
+    "C4"
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "ROBIN_TWO_SCOPE_LOCAL_APP_RUNTIME_V1",
+  "at": "2026-11-25T23:48:45.002Z",
+  "missionId": "OLBG_ARCHIVE_AND_NEW131_APP_DEPLOY_20261126",
+  "status": "PASS_LOCAL_ARCHIVE_AND_131_WAITING",
+  "runtimePID": 35816,
+  "publicChoices": 756,
+  "candidateFiches": 373,
+  "adminRows": 53,
+  "previous756PickIdsPreserved": true,
+  "previous373FicheIdsPreserved": true,
+  "archive66PublicAndLinked": true,
+  "old66AdminRetained": true,
+  "new131AdminWaiting": true,
+  "source131CompletedSlots": 0,
+  "source131Targets": 131,
+  "APPCodeWrites": 6,
+  "APPDataWrites": 1,
+  "SourceGET": 0,
+  "Task": 0,
+  "localGET": 5,
+  "pages": [
+    {
+      "path": "/expert/admin-collecte",
+      "status": 200,
+      "bytes": 28432,
+      "sha256": "78f4ea21e34dd0a097377ae48c63df36a7fe91bce2779cd3585d7579261de922"
+    },
+    {
+      "path": "/expert/tipsters/catalogue%3A998ddf45839ca0b5ad984f0e766b31a9fb9fc1f1e0e744a2b918b13418b848b5",
+      "status": 200,
+      "bytes": 28468,
+      "sha256": "6c05e79bd4f68c2b436ba643f2d25dbd206ce82a1a425d6f72eb70620609b2a3"
+    }
+  ],
+  "readbackSHA256s": [
+    "2616c66b041279310acb353ddaec406b9380c7e18b6df0bee8c6bbdcf8673979",
+    "6f25fc04421c3a2e8854d60b9552fdbf1f4109c2287b2e1dbbe526b0cab5492f",
+    "3eaff636bccbd62cac3a834431240ed0152d268c8ea975c531e1c212e5204726"
+  ],
+  "globalUIRecette": false,
+  "allCompatibleIntegrated": false,
+  "globalDelivery": "PARTIAL",
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.ARCHIVE.NEW131.APP.RUNTIME.RESULT.20261126",
+  "scope": "Actual local runtime before131closure preserves756choiceIDs/373ficheIDs and old66archive,53adminrows,5HTTP200.131sourcewaiting atmeasurement; nofuturecaptureorwholeUIcompletion inferred.",
+  "sourceRuntimeResultSHA256": "a33a4807d7661ad81a1937083f3289396a0e55ec166241857553efda641fa3e3",
+  "runtimeResultReviewedBy": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

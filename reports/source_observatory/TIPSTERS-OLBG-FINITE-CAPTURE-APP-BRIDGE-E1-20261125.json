@@ -1,0 +1,31 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.FINITE.CAPTURE.APP.BRIDGE.E1.20261125",
+  "scope": "Engineering bounded local admission reader only; no actual future novel choices or whole-source coverage claimed.",
+  "missionId": "OLBG_FINITE_CAPTURE_APP_BRIDGE_DEPLOY_20261125_R2",
+  "at": "2026-11-25T20:42:09.464Z",
+  "readerSHA": "78501f238e8d1e5c486f170d95b917d0da85eef4d4173f2feada11e25944e647",
+  "helperSHA": "d47e9decf2110756646e0073a00c1e385cc147ca99714fa9f88fb4dc7ba696f0",
+  "bindingSHA": "9fec966dec13803694972f4fb8dabaf827a4224192cd8fd73ef0caeec439a6a8",
+  "projectionMF": "cfff05dfcfaad7ab04550a5643a831bdd1f6e4fbde3a959fd9353cf09855e0ce",
+  "deployPlan": "41e6772ebe5741d55583eb06d0d4ecce19fe74ead51ef592374396b7599636cc",
+  "deployMF": "19a6f1c7cabb336c552be5545bd134700fcc98492b68ca50121ad60e90a855b7",
+  "golden": {
+    "sha256": "438a6791c69562ce6069fcb8028a3e08e451e3443961deb82f37120a5f61e9c2",
+    "checks": 18,
+    "syntheticFutureNotRealCollection": true
+  },
+  "SourceGET": 0,
+  "Task": 0,
+  "APPWrites": 0,
+  "schemaVersion": "ROBIN_FINITE_APP_BRIDGE_E1_V1",
+  "generatedAt": "2026-11-25T20:42:09.464Z",
+  "status": "TARGETED_ENGINEERING_PASS_NOT_FUTURE_LIVE_COLLECTION",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.HUNDRED.WORKBOOK.PROFILES.BATCH.R1.RESULT.20261125"
+  ],
+  "legacyTargetedTestsPassed": 3,
+  "appTypecheckPassed": true,
+  "globalDelivery": "PARTIAL",
+  "runtimeHelperSHA": "2c26b4e05d3cf07858c01cd3d0daba095edb70ed59dff90fd72a8269c7c2d1f1",
+  "privateLegacyApprovalPreserved": true
+}

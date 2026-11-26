@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-11-23T06:37:01.568Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.HTML5.REFERENCE.R2.PRIVATE.RESULT.20261123",
+  "missionId": "COTEUR_HTML5_REFERENCE_BOUNDARY_R2_PRIVATE_E1_20261123",
+  "status": "OFFLINE_BOUNDARY_CORRECTION_VERIFIED",
+  "scope": "Both previous URL/template boundary defects reproduced and corrected with conservative template-token global refusal;25 positive/negative synthetic cases pass. No source caller integration or GET.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.HTML5.REFERENCE.R1.PRIVATE.PARTIAL.20261123"
+  ],
+  "resultSHA256": "54b231b199445dfebd4bcdf9e9716676870b3b64a8ab01c9ee018144fcf09a85",
+  "codeMapCAN": "f966d74feb503678c652bfea1a42b8588a9680d85d7c46290c41192d378d9c10",
+  "helperSHA256": "438594587bac1f6137d4b42d83da1eddfbd3f3ffe771915813f7241aadd23a2f",
+  "redCases": 2,
+  "greenCases": 25,
+  "totalCaseExecutions": 27,
+  "targetedRuns": 3,
+  "criticalLintExit": 0,
+  "compileCountDeclaredByAuthor": 2,
+  "separateCompilePrimaryExamined": false,
+  "dependencySourceBuffersAvailable": 39,
+  "actualImportedDependencyModuleCount": null,
+  "templateBearingDocumentsSupported": false,
+  "providerJSExecuted": false,
+  "DOMConstructionMemoryBoundProven": false,
+  "referenceKind": "HTML_LITERAL_NOT_RUNTIME_LOAD_PROOF",
+  "sourceGET": 0,
+  "sourceReady": false
+}

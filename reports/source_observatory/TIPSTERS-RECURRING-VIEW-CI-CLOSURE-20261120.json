@@ -1,0 +1,246 @@
+{
+  "schemaVersion": "robin-tipsters-recurring-view-ci-closure-v1",
+  "generatedAt": "2026-11-20T02:10:59.470904+00:00",
+  "claimId": "ENG.SOURCE_OBSERVATORY.RECURRING.VIEW.CI.CLOSURE.20261120",
+  "status": "EXACT_HEAD_CI_SUCCESS_LOCAL_VIEW_ACCEPTED_GLOBAL_PARTIAL",
+  "functionalHead": "d130d9f13fb80623bc7c5d9ef72de025ce8a785f",
+  "ci": {
+    "head": "d130d9f13fb80623bc7c5d9ef72de025ce8a785f",
+    "runId": 44655326475,
+    "runNumber": 241,
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/44655326475",
+    "independentC1Confirmed": true,
+    "jobs": [
+      {
+        "id": 136019999692,
+        "name": "Jalon 10 - entrees de preuve gelees",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136019999880,
+        "name": "Bounded live canary - Ubuntu",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136019999955,
+        "name": "End-to-End Live Path Replay",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136020000081,
+        "name": "Bounded live canary - Windows",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136020000119,
+        "name": "Historical Deep — contrat cache-only",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136020000125,
+        "name": "Exact Workflow Entrypoint",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136020000138,
+        "name": "Historical Authority Workflows Disabled",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136020000190,
+        "name": "Chronos PostgreSQL profiles / tests (superuser)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136020000217,
+        "name": "Residual Fault Matrix",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136020000373,
+        "name": "Chronos PostgreSQL profiles / Chronos source and activation",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136020001471,
+        "name": "Chronos PostgreSQL profiles / Chronos static contracts",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136020001554,
+        "name": "Chronos PostgreSQL profiles / tests (non_superuser_createrole)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136020940194,
+        "name": "Chronos PostgreSQL profiles / Chronos provider-free Cockpit",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136022318242,
+        "name": "Robin Experience — preuves visuelles",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136022318255,
+        "name": "Jalon 10 - trois temoins R3 bornes",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136022318278,
+        "name": "Quality and domain tests",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136031363284,
+        "name": "tests",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "tests": {
+      "python": {
+        "passed": 5039,
+        "skipped": 41,
+        "xfailed": 1,
+        "failed": 0,
+        "seconds": 1140.68
+      },
+      "cockpitModel": {
+        "passed": 107,
+        "failed": 0
+      },
+      "node": {
+        "passed": 32,
+        "skipped": 4,
+        "failed": 0
+      },
+      "visual": {
+        "passed": 86,
+        "skipped": 2,
+        "failed": 0
+      },
+      "ubuntu": {
+        "passed": 1043,
+        "skipped": 23
+      },
+      "windows": {
+        "passed": 1031
+      },
+      "unapprovedNetworkAttempts": 0
+    }
+  },
+  "actualLocalReadback": {
+    "verifiedAt": "2026-11-20T02:10:59.2110247+00:00",
+    "distinctPicks": 60,
+    "authors": 13,
+    "campaigns": {
+      "forums": {
+        "state": "scheduled",
+        "taskName": "Robin-Tipsters-Forums-V1-20261120",
+        "startsAt": "2026-11-20T07:00:00Z",
+        "expiresAt": "2026-11-21T07:00:00Z",
+        "slots": 12,
+        "requestsMax": 72,
+        "requests": 0,
+        "successfulSlots": 0,
+        "journalHead": null,
+        "native": {
+          "olbg": {
+            "state": "Ready",
+            "lastResult": 0,
+            "verifiedAt": "2026-11-20T03:10:59.0864004+01:00",
+            "enabled": true,
+            "nextRunTime": "2026-11-20T08:00:00+01:00"
+          },
+          "enabled": true,
+          "state": "Ready",
+          "nextRunTime": "2026-11-20T08:00:00+01:00",
+          "verifiedAt": "2026-11-20T03:10:58.0963218+01:00",
+          "lastResult": 267011,
+          "sro": {
+            "state": "Ready",
+            "lastResult": 0,
+            "verifiedAt": "2026-11-20T03:10:58.5831055+01:00",
+            "enabled": true,
+            "nextRunTime": "2026-11-20T08:00:00+01:00"
+          }
+        }
+      },
+      "sro": {
+        "state": "collecting",
+        "startsAt": "2026-11-19T16:50:00+01:00",
+        "expiresAt": "2026-11-21T08:00:00+01:00",
+        "slots": 12,
+        "successfulSlots": 1,
+        "requests": 6,
+        "requestsMax": 39,
+        "priorRequests": 3,
+        "currentRequests": 3,
+        "currentRequestsMax": 36,
+        "native": {
+          "state": "Ready",
+          "lastResult": 0,
+          "verifiedAt": "2026-11-20T03:10:58.5831055+01:00",
+          "enabled": true,
+          "nextRunTime": "2026-11-20T08:00:00+01:00"
+        }
+      },
+      "olbg": {
+        "state": "collecting",
+        "successfulSlots": 1,
+        "requests": 3,
+        "requestsMax": 36,
+        "slots": 12,
+        "startsAt": "2026-11-19T19:48:00+01:00",
+        "expiresAt": "2026-11-21T08:00:00+01:00",
+        "native": {
+          "state": "Ready",
+          "lastResult": 0,
+          "verifiedAt": "2026-11-20T03:10:59.0864004+01:00",
+          "enabled": true,
+          "nextRunTime": "2026-11-20T08:00:00+01:00"
+        }
+      }
+    },
+    "upcomingFirstSlot": "2026-11-20T08:00:00+01:00",
+    "firstSlotExecuted": false
+  },
+  "priorAcceptanceClaim": "ENG.SOURCE_OBSERVATORY.RECURRING.VIEW.20261120",
+  "sourceClaimIds": [
+    "DATA.SOURCE_OBSERVATORY.PUBLIC_PICKS.20261119",
+    "DATA.SOURCE_OBSERVATORY.SRO.PICKS.20261119",
+    "DATA.SOURCE_OBSERVATORY.OLBG.NATIVE.PICKS.20261119"
+  ],
+  "effects": {
+    "newSourceGets": 0,
+    "taskMutations": 0,
+    "taskLaunches": 0,
+    "merge": false,
+    "deploy": false,
+    "scale": false
+  },
+  "limitations": [
+    "Public sources globally PARTIAL; this change delivers the recurring read view",
+    "Upcoming 08:00 Paris slots are scheduled, not proven executed",
+    "Closure metadata was recorded after CI and is not part of the tested functional commit"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.NEXT3.FINAL.NATURAL.HALT.RESULT.20261122",
+  "recordedAt": "2026-11-22T05:08:11.655Z",
+  "status": "NATURAL_FINAL_ATTEMPT_REFUSED_NO_NEW_SOURCE_COLLECTION",
+  "scope": "Existing Windows trigger ran under the preserved halt gate; no manual start or rearm. Prior collected data and source journal remain unchanged.",
+  "scheduledSlotUTC": "2026-11-22T05:05:00Z",
+  "nativeTaskLastResult": 1,
+  "nativeTaskState": "Ready",
+  "nativeTaskEnabled": true,
+  "nextRunTime": null,
+  "taskLastReceipt": {
+    "at": "2026-11-22T05:05:01.316114+00:00",
+    "errorClass": "ValueError",
+    "sourceStatus": "PARTIAL",
+    "state": "REFUSED"
+  },
+  "taskLastReceiptSHA256": "e163dadc70226fedacb652d5397ab570273b8b9d3c88b7dd3d72e145c93b445c",
+  "journalSHA256": "0e8b3bdfd32447da39548e36d21e763e7e59bcc9474b23dd202f5759e6378558",
+  "journalRows": 167,
+  "previousAndCurrentReservedGET": 55,
+  "successfulSourceSlots": 2,
+  "additionalSourceGET": 0,
+  "thirdSourceSlotRecorded": false,
+  "haltPresent": true,
+  "haltSHA256": "494b23efb319253075042595e10ffb714379e0ac5ed01aafbc6f50f55e7f3bd4",
+  "rearmAllowed": false,
+  "historicalFramingOrPolicyBypassClaim": false,
+  "independentReview": "C4 actual native task query and journal/gate read-only audit",
+  "sourceTaskMutation": 0,
+  "manualStart": 0,
+  "globalDelivery": "PARTIAL"
+}

@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "ROBIN_NOTBETTING_NATIVE20_ACTUAL_CAPTURE_V1",
+  "generatedAt": "2026-11-25T23:26:43.168Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.NOTBETTING.NATIVE20.FRESH.CAPTURE.RESULT.20261126",
+  "missionId": "NOTBETTING_NATIVE20_FRESH_CAPTURE_20261125",
+  "status": "ACTUAL_PUBLIC_READ_SUCCESS_PRIVATE_PENDING_ONLY",
+  "scope": "Oneactual nativecapture with2publicHTTP200,20unqualifiedliteraloccurrences and6declaredownerUUIDs.0APPadmissionsand0provenprematchmatchforecasts; no20newtipstersorcurrentfootballadmission inferred. Source2GET/oneJob/sansretry.",
+  "sourceResultSHA256": "05b9b4e47ab37a7e89727afa762f28154a31238198774dc56a8aef0185db856b",
+  "invocationSHA256": "c62ccfb1b7d8b3f31f0f5e68aca7b8938f1a2b65286658f6cb26e2e3ea8e1eee",
+  "nativeJobSHA256": "896173b09c95e53f597d268c98332bf143393e42de0286a664cf39492c737146",
+  "pendingReceiptSHA256": "350c4a4d648abb5f5100ef300d3579f25b499fa156b715dbe784a23801ab83b5",
+  "GETReservations": 2,
+  "GETTransmissionCount": 2,
+  "HTTPStatuses": {
+    "robots": 200,
+    "picks": 200
+  },
+  "nativeJob": {
+    "activeSecondsMax": 50,
+    "elapsedSeconds": 5.421999999998661,
+    "exit": 0,
+    "hardSeconds": 60,
+    "sourceGET": null,
+    "subtreeKillConfirmed": true,
+    "taskMutations": 0,
+    "timedOut": false
+  },
+  "nativePendingRecords": 20,
+  "uniqueDeclaredOwnerUUIDs": 6,
+  "qualifiedRecords": 0,
+  "applicationAdmissions": 0,
+  "selectionComplete": false,
+  "globalCoverage": "UNKNOWN",
+  "omittedBranches": 7,
+  "nonAdmissibleExamples": [
+    "PastChampionsLeagueandmulti-eventrecords",
+    "Seasonfutures:ChelseaCampeón/TemporadaPremierLeague,date2027-06-01preserved",
+    "Othercompetitionsandsportsnotcalendar-qualified"
+  ],
+  "nativeYearPreserved": true,
+  "sourcePersonalContextDocumentaryReuse": true,
+  "API_FOOTBALL_CALLS": 0,
+  "rawStorage": 0,
+  "APP": 0,
+  "Task": 0,
+  "R2": 0,
+  "SQL": 0,
+  "retries": 0,
+  "globalDelivery": "PARTIAL"
+}

@@ -1,0 +1,80 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.HISTORY.ROUTE.E1.R3.RESULT.20261122",
+  "generatedAt": "2026-11-22T00:33:11.195Z",
+  "status": "PASS_DOCUMENTARY_EXACT_NATIVE_HREF_ONLY",
+  "scope": "Exact current-route href observed in one historical body; no current-page GET, activity, personal choice or permission inference.",
+  "missionId": "OLBG_HISTORY_ROUTE_E1_20261122_R3",
+  "planSHA256": "4a216b861271b59f54ca792f1bc2af1a5d70344e8bc78628b281bd0cfc70ea95",
+  "manifestSHA256": "52a785e24e05bd43a341c6aac81294e74a986bd74cd0e5c9a96909dace5f719b",
+  "sourceGrant": "c0b232f464b04bcd1d11ee7a28a81cf6c9d7e0d2d214e5f3cc85151efaf510c8",
+  "result": {
+    "reservations": 2,
+    "responses": 2,
+    "HTTP200": 2,
+    "robotsBytes": 9452,
+    "historyBytes": 212802,
+    "exactNativeAnchorCount": 1,
+    "currentRoute": "https://www.olbg.com/tipsters/tips/334365",
+    "currentRouteSHA256": "83f9816395feba6870c4eff6c890789826b949e5ac81a33b15cec4c57110d496",
+    "proofBodySHA256": "db7c29b0b280b25b92a6dee624ac54234f66235119663d24adf5aa9c59d7eabe",
+    "currentGET": 0,
+    "admissions": 0,
+    "verifiedPreMatchCount": 0,
+    "externalExit": 0,
+    "externalElapsedSeconds": 6.3959892,
+    "spentToOuterResultSeconds": 6.1752,
+    "interReservationSeconds": 3.625057,
+    "robotsResponseToHistoryReservationSeconds": 3.325315,
+    "knownStructuredBarrierDetected": false,
+    "barrierCause": "NONE",
+    "barrierAndAnchorScansCompleted": true
+  },
+  "diagnostics": {
+    "anchorParsingCompleted": true,
+    "anchorParsingStarted": true,
+    "barrierCause": "NONE",
+    "barrierParsingCompleted": true,
+    "barrierParsingStarted": true,
+    "captchaIntegrationPresent": false,
+    "challengeMarkupPresent": false,
+    "currentRoutePresent": true,
+    "interstitialTextPresent": false,
+    "interstitialTitlePresent": false,
+    "nativeAnchorPresent": true,
+    "sourceBarrierDetected": false
+  },
+  "receiptHashes": {
+    "candidate-pending-review.json": "ae31bbec7ae3f276a6db3733efd4c418372fb860ddf08e1c8f499cdc11b66dd8",
+    "outer-result.json": "7604ea2a6531570dfb0279a158c8ea3ff11329bc75ff6c1dac7df180518ff8a2",
+    "parent-result.json": "4faa7aad48a938b5eac2bc84b2188c95232d5ba47e8712b4d46c5093bea9fbf9",
+    "parent-started.json": "8b0731c12b5327766758428ce425c266e859462defdef98ff8ee757c0df9fc56",
+    "reservation-1.json": "f32975870535fcda4c78b39267b194911c13e5ac0bbb00804eeb5005b221fc7e",
+    "reservation-2.json": "e4f6aa3484fe9e372a3332a2183ef9e7e5ca098eafc170842d269fb418467919",
+    "response-1.json": "7e2ad4f5a2c2cc571b8f9081c258492896d5327dd6d31b485dfce3d93b35835c",
+    "response-2.json": "687990035caf3b157170cb9d34c65f45c0eca68a7cd7e26f2f618ea44f4740f2",
+    "spent.json": "703c18cb4cdc43056c848543359f0f773a7a57e20f49548ba59d080e48225341",
+    "worker-started.json": "3b748c85e9e85809149d1b5f9aafdee490d5bf76905bb095db188764abe2afa1"
+  },
+  "episode": {
+    "actualAttempts": 2,
+    "actualGET": 4,
+    "maximumAttempts": 2,
+    "maximumGET": 4,
+    "historyEpisodeClosed": true,
+    "noThirdIdenticalAttempt": true,
+    "next3Unchanged": true
+  },
+  "limitations": [
+    "Only a native href was established, not current activity or prediction eligibility.",
+    "Known-marker scan is not an exhaustive absence-of-challenge guarantee.",
+    "Current route requires separate fresh scope and independent keys before any GET.",
+    "R3 body hash differs from R2; R2 fine cause remains UNKNOWN.",
+    "No raw source body, prose, headers, author name or choice retained."
+  ],
+  "reviews": {
+    "C0": "Native external completion and metadata readback",
+    "C3": "Independent ten-receipt hashes, exact grant,16pins, timestamps, bounds, links and retained closed fields"
+  },
+  "globalDelivery": "PARTIAL",
+  "allCompatibleSourcesIntegrated": false
+}

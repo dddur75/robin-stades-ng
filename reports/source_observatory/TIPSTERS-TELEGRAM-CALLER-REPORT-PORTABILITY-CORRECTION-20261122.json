@@ -1,0 +1,15 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.CALLER.REPORT.PORTABILITY.CORRECTION.20261122",
+  "status": "PUBLIC_PATH_LABEL_PROJECTION_ONLY",
+  "scope": "Uncommitted public engineering report path labels projected to repository-relative private artifact labels; original bytes preserved privately, source code, pins, tests and authority unchanged.",
+  "recordedAt": "2026-11-22T18:51:24.918Z",
+  "originalPrivateSHA256": "011be19a1a2719741b9537e2651ecc2eb61e3d5a1d2e6f1fd8f12764eaa8db94",
+  "publicProjectionSHA256": "55ab5d210acdd9b3b10518b111109e0b00277e5e9f5d8db6dcb618449422579d",
+  "originalClaimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.WITNESS.CALLER.PRIVATE.E1.RECETTE.20261122",
+  "publicArtifact": "reports/source_observatory/TIPSTERS-TELEGRAM-WITNESS-CALLER-PRIVATE-E1-RECETTE-20261122.json",
+  "pinCount": 11,
+  "sourceGET": 0,
+  "taskChanges": 0,
+  "appChanges": 0,
+  "revision": "V2_RUNTIME_EXECUTABLE_LABEL_INCLUDED"
+}

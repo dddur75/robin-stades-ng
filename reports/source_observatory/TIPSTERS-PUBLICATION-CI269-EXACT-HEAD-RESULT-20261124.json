@@ -1,0 +1,35 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.PUBLICATION.CI269.EXACT.HEAD.RESULT.20261124",
+  "missionId": "PUBLICATION_CI269_EXACT_HEAD_READONLY_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "GitHub plugin exact commit query returned workflow run269 completed success; all17 unique jobs completed success in run45301223643, and C4 independently verified PR133 head ee44ae27cc550e6974780fed87bb8103b2583143. Covers the published pending-channel app integration and V32 owning projection on this exact commit. No repair of the historical partial LOCAL producer and no source or promotion authority.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PENDING.APP.PUBLIC.INTEGRATION.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V32.ENGINEERING.RECETTE.20261124",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PENDING.APP.LOCAL.TARGETED.RECETTE.20261124"
+  ],
+  "repository": "dddur75/robin-stades-ng",
+  "PR": 133,
+  "commitSHA": "ee44ae27cc550e6974780fed87bb8103b2583143",
+  "runId": 45301223643,
+  "runNumber": 269,
+  "conclusion": "success",
+  "jobs": 17,
+  "successfulJobs": 17,
+  "allJobsSameRun": true,
+  "primarySHA": "882a48f1b38832d8c592830575d6c6b7a872a5a85533e84400100fb50c68eca2",
+  "limits": {
+    "LOCALProducerRepaired": false,
+    "merge": false,
+    "PROD": false,
+    "sourceGET": 0,
+    "newAdmittedForecasts": 0,
+    "allCompatibleIntegrated": false,
+    "overall": "PARTIAL"
+  }
+}

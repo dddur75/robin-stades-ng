@@ -1,0 +1,34 @@
+{
+  "generatedAt": "2026-11-21T00:57:39.031047+00:00",
+  "schemaVersion": "robin-static-asset-result-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.ASSET.RESULT.20261121",
+  "missionId": "ROBIN-COTEUR-STATIC-ASSET-E1-20261121",
+  "status": "PARTIAL_CONTRACT_NOT_ESTABLISHED",
+  "requests": 1,
+  "statusCode": 200,
+  "bytes": 634651,
+  "responseSha256": "3e84e0565c49fb4d9076a5863ddbbfd5bfefff1cc917caccc0eac344a168e607",
+  "observedAt": "2026-11-21T00:53:37.551787+00:00",
+  "activeMilliseconds": 593,
+  "qualificationUnits": 302,
+  "textualReferences": 32,
+  "omittedReferences": 9,
+  "rawBodyStored": false,
+  "sourceAPICalls": 0,
+  "JavaScriptExecuted": false,
+  "newAdmittedChoices": 0,
+  "resultSha256": "bb3efa10c61669ab065da06b59b15c0e2feb1b91af788d270e992df53c7d7b22",
+  "journalSha256": "2269c51543658eb94a042e8b06d58223f1eebe741c9fb5cccca98bc95f07e1bf",
+  "journalHead": "30b0b82a79c2970abc5e5f40fe6900bd7ae638063b2a32914736fcfe38adef85",
+  "limitations": [
+    "Textual prefixes do not establish full endpoint,method,parameters or personal-choice contract.",
+    "completeLiteral means no interpolation detected in retained substring only,not a complete operational URL.",
+    "No grant to call or complete any reference,including admin/mutation/user routes.",
+    "No parser-only refetch or account/purchase necessity inferred."
+  ],
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

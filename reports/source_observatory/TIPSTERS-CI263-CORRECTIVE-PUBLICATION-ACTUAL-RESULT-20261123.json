@@ -1,0 +1,32 @@
+{
+  "generatedAt": "2026-11-23T12:06:02.375Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI263.CORRECTIVE.PUBLICATION.ACTUAL.RESULT.20261123",
+  "missionId": "CI263_TYPING_CJS_PUBLICATION_E1_E2_20261123",
+  "status": "ONE_COMMIT_ONE_NONFORCE_PUSH_CONFIRMED",
+  "scope": "C1 FACTS and C4 SCOPE independently reviewed actual controlled receipts. One commit and one non-force push of13 approved files to existing draftPR133, no PR metadata update. This closes the Git publication only; exact-head CI264 remains pending and no source collection/application delivery is inferred.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V26.ENGINEERING.RECETTE.20261123",
+    "ENG.SOURCE_OBSERVATORY.CI263.INTEGRATED.CORRECTION.RESULT.20261123"
+  ],
+  "head": "27cb9322c55081008fc11270d960fc58522c18ab",
+  "parent": "e87e627c0ea1f6bfe7a57356b7230422f477fa65",
+  "tree": "25a3b24ba648dd2a1a9e8954211276c0b5f5f0c0",
+  "PR": 133,
+  "files": 13,
+  "commitCount": 1,
+  "nonForcePushCount": 1,
+  "PRMetadataUpdates": 0,
+  "commitClosedAt": "2026-11-23T12:01:04.796349+00:00",
+  "pushClosedAt": "2026-11-23T12:01:18.956665+00:00",
+  "effectiveDeadline": "2026-11-23T12:04:50.870521+00:00",
+  "externalPrimarySHA256": "6a21c84797e6756afa131992e76d6fab6ab95ec7229d4d6c2d7a1d9690255940",
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "allCompatibleIntegrated": false
+}

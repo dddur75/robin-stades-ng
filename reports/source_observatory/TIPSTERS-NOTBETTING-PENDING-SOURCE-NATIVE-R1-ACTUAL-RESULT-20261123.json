@@ -1,0 +1,37 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.SOURCE.NATIVE.R1.ACTUAL.RESULT.20261123",
+  "missionId": "NOTBETTING_PENDING_SOURCE_NATIVE_R1_20261123",
+  "generatedAt": "2026-11-23T16:20:36.763Z",
+  "status": "PARTIAL_PRIVATE_PENDING_ONLY",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.SOURCE.NATIVE.R1.E1.RESULT.20261123"
+  ],
+  "scope": "OneJob1.390s outer0child0 noTimeoutkillconfirmed, twofixedstrictcompleteHTTP200GETs/freshREPallow0. Four selected ownercoherent occurrences stopCOMPETITION_MISMATCH; fourPRIVATEUNQUALIFIED sourcefieldenvelopes stored3338B SHAverifiedstat/hashonly. Zeroqualifiedrecord/file/admission/candidatecountNULL/globalUNKNOWN. Not4distinctauthors/humans/pronos. No sourcevaluesmodelstdoutGit/rawHTML. CampaignconsumedSTOPnoretry; futurelocalreadscope needed.",
+  "sourceGET": 2,
+  "nativeJobs": 1,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "ownerCoherentOccurrences": 4,
+  "qualificationStops": {
+    "COMPETITION_MISMATCH": 4
+  },
+  "privatePendingReceipt": {
+    "SHA256": "c7d8ffcff0e449aa0af8d455a93859ff41674c194f7866947ecbd4bb2258e080",
+    "applicationAdmissions": 0,
+    "bytes": 3338,
+    "recordCount": 4,
+    "status": "PRIVATE_UNQUALIFIED_ONLY"
+  },
+  "qualifiedRecords": 0,
+  "primarySHA": "80b078184ce5ea3b2917fd626bc2cf488ed17acddbb6d4dcb9af5e1d691da5bf",
+  "resultSHA": "c1249743271fb9f0cbe484669a1591e3b1603f1c0f4aaef0c85107f76d5549b4",
+  "sourceDecisionSHA": "5a26bf93e46e90070d1d3d4953f8821aec86f913f600c531e634e5d005db7359",
+  "observedAt": "2026-11-23T16:17:59.063327+00:00",
+  "closedAt": "2026-11-23T16:17:59.147118+00:00"
+}

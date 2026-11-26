@@ -1,0 +1,24 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.FIXED.ROUTE.PRIVATE.RESULT.20261123",
+  "missionId": "TELEGRAM_BEXTRA_FIXED_ROUTE_PRIVATE_E1_20261123",
+  "generatedAt": "2026-11-23T16:14:22.658Z",
+  "status": "PRIVATE_COMPONENT_ACCEPTED",
+  "keys": [
+    "C0",
+    "C1",
+    "C3"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.STRUCTURED.NATIVE.R2.ACTUAL.RESULT.20261123",
+    "DATA.SOURCE_OBSERVATORY.WORKBOOK.COMPLETE.20261120"
+  ],
+  "scope": "C4privatefixedroute successor independentlyacceptedC0/C1/C3; inverseASTworker/transport/policychannelreplacement only, outerPOLICY_SHA only. Parenta7/prefix7b926 unchanged. OneREDsixGREEN/criticalRuff5files0/5RAMcompile/126.354sSTOP. DocumentaryBextraURL notproofcurrentaccess/content/license. Futurefreshmanifest/loaderSSL/fullpolicy/RAMcases/sourceauthority required. Valuesunqualified/privateonly, noadmission/readiness.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "workerSHA": "f3019f9180dfc13bd38a294c2927f2b8f7834f8408dabc0cfa61cca4bcdb655b",
+  "policySHA": "b248c36c7bb9bdad53c49ed5f8e16d7fe4ea73a1411c8ea787c9eaefaeadddfa",
+  "outerSHA": "df5672eb4188672fb9fa5d95d2a82f390ec2b2b825195425b46c68cddcb8c4c9",
+  "fileMapSHA": "ee489d0d513d31bb0253069c39b570b051b798bb3b05932553ac2fdf151aeeb1"
+}

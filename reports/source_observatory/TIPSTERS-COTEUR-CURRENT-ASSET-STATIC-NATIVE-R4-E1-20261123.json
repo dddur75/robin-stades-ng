@@ -1,0 +1,42 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.CURRENT.ASSET.STATIC.NATIVE.R4.E1.20261123",
+  "missionId": "COTEUR_CURRENT_ATTESTED_ASSET_STATIC_NATIVE_R4_20261123",
+  "status": "CURRENT_ATTESTED_URI_REBIND_VERIFIED",
+  "scope": "Current homepage-attested script URI rebound with four globals-only AST equivalence proofs; all function/class bodies unchanged from accepted R3. No caller load, Node, Job, source GET or provider JS execution.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.CURRENT.HOME.HTML5.NATIVE.R1.DOCUMENTARY.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.DOCUMENT.SOURCE.R3.NATIVE.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.PUBLIC.INTEGRATION.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.WINDOWS.AUDITED.SPAWN.FIX.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.ROBOTS.CLOSURE.FIX.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.DOCUMENTARY.PERSONAL.CONTEXT.RESULT.20261123"
+  ],
+  "parentGrant": "5e50d7b8043b6154ba099c4148b650cfbf1f0dd1fc9c611a3677fb03f81f21bb",
+  "planSHA": "dd4b3c4dd8b8f1c8d4e330ec87f1eedcb94590da7773c29d7014384d3d078f1b",
+  "manifestSHA": "99e1cf33be0575866266a39d00b9c04bd0c6db8676efeb9ec45fab93ff498561",
+  "configSHA": "9cf698b5682eef342c6b93b6dc4532c8b671f89efe102b2ec4c47bc63aa2c75d",
+  "workerSHA": "0e03fcfd53928d7bb5bfbae58576dcda3013f02e85e8578fd66afab95c0ff4b7",
+  "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+  "outerSHA": "0320233e5beacd4a7d84f4a75a35d9a4fc8255ca6a90531f5f4bc0835ba554bb",
+  "policySHA": "11dd277e25e5e226761c2f72e10ed561b03538ccbabd4e3036e6b9d7a438467a",
+  "transportSHA": "e5a3e44d1a41f6eef35d83d0b8d0f13df2d51c2077cfd48fe739aca429eb5bd9",
+  "authorizedAt": "2026-11-23T07:26:15.477589+00:00",
+  "frozenAt": "2026-11-23T07:26:16.402Z",
+  "authorStatus": "STOP",
+  "ASTProofRuns": 1,
+  "ASTProofExit": 0,
+  "callerLoads": 0,
+  "dependencyImports": 0,
+  "oldPackReplay": 0,
+  "sourceGET": 0,
+  "Node": 0,
+  "WinJob": 0,
+  "sourceReady": false,
+  "attestedAsset": "https://www.coteur.com/build/788.c5590343.js"
+}

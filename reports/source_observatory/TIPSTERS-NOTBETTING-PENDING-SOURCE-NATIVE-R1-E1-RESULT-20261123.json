@@ -1,0 +1,32 @@
+{
+  "parentGrant": "92bc367b47905c82db20cbc05f03169516e1a8508ed3703459c5d8450a93e9f8",
+  "planSHA": "3e196c77a2ffc1079e031f303ba7f53b83bfe5afe33b50d61d7e1137e6e828b6",
+  "manifestSHA": "4a77d8f678b0981ddb3b836f3433c57796afdebd6874d966d7ed19abf54d0ab8",
+  "configSHA": "5bd5cb61f75b0d9992af447dd4649a6897402622ba4f70d2f3a7f786319f02c0",
+  "workerSHA": "dc15cf61bfbfeb4eb4d63e3d480361a1b432a17c119529fe790b10d09df863ec",
+  "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+  "outerSHA": "c0779bf07e5bb71eec7aa690037cebe07456341212e70614fe92aeeb1cfbc368",
+  "policySHA": "2926fe57391073fd53ee98db1102dd4d2c33c555521fb8a27a6b1635bcc90c89",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.SOURCE.NATIVE.R1.E1.RESULT.20261123",
+  "missionId": "NOTBETTING_PENDING_SOURCE_NATIVE_R1_20261123",
+  "generatedAt": "2026-11-23T16:16:26.231Z",
+  "status": "FROZEN_LOADER_SSL_FULL_POLICY_SYNTHETIC_PASS_E1_ONLY",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.NATIVE.PENDING.STORAGE.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.SOURCE.FIELDS.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CURRENT.TERMS.PERSONAL.CONTEXT.RESULT.20261123"
+  ],
+  "scope": "Independentfourkeys E1accept exactfrozenfull_load_components strictSSL/9calendar+emptybridge and fullpurepolicy.validate actualplanMF fourRAMsyntheticcases positive/threependingboolrejectPRIVATE_PENDING_SCOPE. Noactualauthority/Job/GET/collect/store. MFexplicit separatequalified4/32768 andpending4/32768 twofiles/65536combined; sameoccurrences mayoverlap not8facts. FreshSOURCEfourkeys required postdurableclose.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "primarySHA": "5d1ec3f8c238d77a79bb5d8980696f98cfb867ecbea4dddf5b4cefa837a5b28b",
+  "policyPrimarySHA": "9326c8844860986034e6fc1bef7ae275ed23a949984af4bd2ef3825d67f6b47d"
+}

@@ -1,0 +1,99 @@
+{
+  "generatedAt": "2026-11-23T09:57:02.497Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.TYPED.TARGET.NATIVE.R1.ACTUAL.RESULT.20261123",
+  "missionId": "NOTBETTING_TYPED_TARGET_NATIVE_R1_20261123",
+  "status": "PARTIAL_DIAGNOSTIC_SOURCE_CLOSED",
+  "scope": "One actual diagnostic Job and2 strict complete GET200. Four seven-field samples describe WHOLE_TREE_WALK entry references only:3 PLAIN_REF/JSON_MODEL_PRESENT share one SHA and1 LAZY_L/ABSENT. Recursive plain may fail on descendant, so these are not leaf causes or independent failures. Global source coverage and actual admissible predictions remain UNKNOWN. No picks retained or admitted, no automatic retry, no app/task/recurrence effects. Return E1 for record-scoped design; no blind typed-reference bypass.",
+  "keys": [
+    "C0",
+    "C1"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.TYPED.TARGET.NATIVE.R1.E1.BINDING.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.TYPED.TARGET.CALLER.PRIVATE.RESULT.20261123"
+  ],
+  "resultSHA256": "f4db0a08fdc5a71cb356a3940cc653b84966bfc18722dda976d338d97f9c0ad0",
+  "primarySHA256": "56284da618e3ec14ab9646bf9c1aa33a9c2e926305775a320840a3e657b13f01",
+  "sourceDecisionSHA256": "a2289f358640e27b778746ea5c5f93365d2d6d27ab5eaa85f942177fa5be77a5",
+  "observedAt": "2026-11-23T09:55:08.396132+00:00",
+  "closedAt": "2026-11-23T09:55:08.445120+00:00",
+  "GETReservations": 2,
+  "HTTPResponses": 2,
+  "bodyBytes": {
+    "robots": 1300,
+    "picks": 850659
+  },
+  "strictBodiesComplete": true,
+  "job": {
+    "activeSecondsMax": 50,
+    "elapsedSeconds": 1.312000000005355,
+    "exit": 1,
+    "hardSeconds": 60,
+    "sourceGET": null,
+    "subtreeKillConfirmed": true,
+    "taskMutations": 0,
+    "timedOut": false
+  },
+  "projection": {
+    "closedFailures": [
+      {
+        "captureSite": "WHOLE_TREE_WALK",
+        "depth": 5,
+        "reason": "unsupported_required_reference",
+        "referenceCount": 0,
+        "referenceFamily": "PLAIN_REF",
+        "referenceSHA256": "c1b43b36df09f0bf0e0612b54e90e47df2e8722dd90821b3b0613dc8a4f7d5f4",
+        "referenceTargetKind": "JSON_MODEL_PRESENT"
+      },
+      {
+        "captureSite": "WHOLE_TREE_WALK",
+        "depth": 7,
+        "reason": "unsupported_required_reference",
+        "referenceCount": 0,
+        "referenceFamily": "PLAIN_REF",
+        "referenceSHA256": "c1b43b36df09f0bf0e0612b54e90e47df2e8722dd90821b3b0613dc8a4f7d5f4",
+        "referenceTargetKind": "JSON_MODEL_PRESENT"
+      },
+      {
+        "captureSite": "WHOLE_TREE_WALK",
+        "depth": 9,
+        "reason": "unsupported_required_reference",
+        "referenceCount": 0,
+        "referenceFamily": "LAZY_L",
+        "referenceSHA256": "451fc715b7405ae406f539aec07c988d088c6b0890954537c9d47da2d4c7e14f",
+        "referenceTargetKind": "ABSENT"
+      },
+      {
+        "captureSite": "WHOLE_TREE_WALK",
+        "depth": 9,
+        "reason": "unsupported_required_reference",
+        "referenceCount": 0,
+        "referenceFamily": "PLAIN_REF",
+        "referenceSHA256": "c1b43b36df09f0bf0e0612b54e90e47df2e8722dd90821b3b0613dc8a4f7d5f4",
+        "referenceTargetKind": "JSON_MODEL_PRESENT"
+      }
+    ],
+    "closedFailuresSampleOnly": true,
+    "closedFailuresSchema": "typed-target-v3",
+    "depthBoundHit": false,
+    "excludedOtherOwners": 0,
+    "observerUnproven": false,
+    "omittedAdmissible": 0,
+    "omittedWitnesses": 0,
+    "reasons": [
+      "no_admissible_choice",
+      "unresolved_data_reference"
+    ],
+    "retainedPicks": 0,
+    "sampleOnly": true,
+    "traversalComplete": false,
+    "unknownReasonPresent": true,
+    "visitedNodes": 444,
+    "walkBoundHit": false,
+    "witnesses": []
+  },
+  "sourceReady": false,
+  "admitted": 0,
+  "picksRetained": 0,
+  "recurrenceActivated": false
+}

@@ -1,0 +1,213 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.KICKTIPP.THREE.FOOTBALL.RULES.ACTUAL.20261126",
+  "status": "VERIFIED_NATIVE_RULES_NO_PUBLIC_PREMATCH_WINDOW",
+  "scope": "Three additional native football contests: Champions League,Ligue2,Coupe de France; scores hidden until deadline at kickoff.7newGET+3prior directoryGET,closedjob.No new authors or picks admitted.",
+  "completedContests": 3,
+  "contests": [
+    {
+      "automaticVisibilityOrLeadTimeInferred": false,
+      "contest": "champions-league-ucl",
+      "operativeLiterals": [
+        {
+          "contest": "champions-league-ucl",
+          "contextEnd": 538,
+          "contextStart": 148,
+          "literal": "ouhaité Centre des pronostics Calendrier Classement Règles Messages Devenir membre Connexion Règles Visibilité des pronostics Les pronostics ne sont visibles qu'une fois le temps de pronostic écoulé. Mode de pronostics On pronostique le résultat exact . On pronostique le résultat \"Après les tirs au but\" . Égalité en points Dans la mesure où il n'en a pas été convenu autrement, le nombre ",
+          "notAutomaticallyInterpreted": true,
+          "sourceURL": "https://www.kicktipp.fr/champions-league-ucl/regles",
+          "textSHA256": "f3148e22398b7030e251ffb331c3ee52a8da929880e8b8e843a5007ecc94f22f"
+        },
+        {
+          "contest": "champions-league-ucl",
+          "contextEnd": 576,
+          "contextStart": 178,
+          "literal": "Calendrier Classement Règles Messages Devenir membre Connexion Règles Visibilité des pronostics Les pronostics ne sont visibles qu'une fois le temps de pronostic écoulé. Mode de pronostics On pronostique le résultat exact . On pronostique le résultat \"Après les tirs au but\" . Égalité en points Dans la mesure où il n'en a pas été convenu autrement, le nombre de victoires de la journée (\"Victoires",
+          "notAutomaticallyInterpreted": true,
+          "sourceURL": "https://www.kicktipp.fr/champions-league-ucl/regles",
+          "textSHA256": "f3148e22398b7030e251ffb331c3ee52a8da929880e8b8e843a5007ecc94f22f"
+        },
+        {
+          "contest": "champions-league-ucl",
+          "contextEnd": 966,
+          "contextStart": 579,
+          "literal": "prévaut sur le classement des parieurs en cas d'égalité du nombre de points. Règle de pronostics: 0 minutes en avance La période de pronostic se termine 0 minutes avant la date de l'évènement correspondant. Règle des points: 3 - 12 points Nombre minimum de points 3 Nombre maximum de points 10 Tendance Ecart de buts Résultat Victoire 0 1 2 Match nul 0 - 2 Les points dépendent de la cot",
+          "notAutomaticallyInterpreted": true,
+          "sourceURL": "https://www.kicktipp.fr/champions-league-ucl/regles",
+          "textSHA256": "f3148e22398b7030e251ffb331c3ee52a8da929880e8b8e843a5007ecc94f22f"
+        },
+        {
+          "contest": "champions-league-ucl",
+          "contextEnd": 1021,
+          "contextStart": 634,
+          "literal": " du nombre de points. Règle de pronostics: 0 minutes en avance La période de pronostic se termine 0 minutes avant la date de l'évènement correspondant. Règle des points: 3 - 12 points Nombre minimum de points 3 Nombre maximum de points 10 Tendance Ecart de buts Résultat Victoire 0 1 2 Match nul 0 - 2 Les points dépendent de la cote qui résulte des pronostics au sein de la communauté. ",
+          "notAutomaticallyInterpreted": true,
+          "sourceURL": "https://www.kicktipp.fr/champions-league-ucl/regles",
+          "textSHA256": "f3148e22398b7030e251ffb331c3ee52a8da929880e8b8e843a5007ecc94f22f"
+        }
+      ],
+      "operativeMatchesOmitted": 0,
+      "rulesLink": {
+        "hrefLiteral": "/champions-league-ucl/regles",
+        "label": "Règles",
+        "ref": {
+          "column": 2849,
+          "line": 25,
+          "startTagSHA256": "35256837bbaae9ad7b858b515eb44576c3959573f324936d8f6ea2c8cc3dccab",
+          "tag": "a"
+        },
+        "url": "https://www.kicktipp.fr/champions-league-ucl/regles"
+      },
+      "sourceLink": {
+        "contest": "champions-league-ucl",
+        "hrefLiteral": "/champions-league-ucl/",
+        "label": "champions-league-uclPronostics Ligue des Champions La meilleure des compétitions à pronostiquer entre amis sur une saison. Sans trop de matchs et une belle complexité du football. Rejoins les pronos L",
+        "ref": {
+          "column": 3576,
+          "line": 25,
+          "startTagSHA256": "09431ff6a1305e6b1edd0db9a5af7d5cdafb90842d1cb6e87750ffdc95c56f47",
+          "tag": "a"
+        },
+        "url": "https://www.kicktipp.fr/champions-league-ucl/"
+      }
+    },
+    {
+      "automaticVisibilityOrLeadTimeInferred": false,
+      "contest": "pronostics-ligue2",
+      "operativeLiterals": [
+        {
+          "contest": "pronostics-ligue2",
+          "contextEnd": 529,
+          "contextStart": 139,
+          "literal": "ouhaité Centre des pronostics Calendrier Classement Règles Messages Devenir membre Connexion Règles Visibilité des pronostics Les pronostics ne sont visibles qu'une fois le temps de pronostic écoulé. Mode de pronostics On pronostique le résultat exact . Égalité en points Dans la mesure où il n'en a pas été convenu autrement, le nombre de victoires de la journée (\"Victoires\") prévaut sur ",
+          "notAutomaticallyInterpreted": true,
+          "sourceURL": "https://www.kicktipp.fr/pronostics-ligue2/regles",
+          "textSHA256": "db8f8ffeaf13775654537f720c149a46d6b34f57a92d9f4e37d5d6fc58d765d4"
+        },
+        {
+          "contest": "pronostics-ligue2",
+          "contextEnd": 567,
+          "contextStart": 169,
+          "literal": "Calendrier Classement Règles Messages Devenir membre Connexion Règles Visibilité des pronostics Les pronostics ne sont visibles qu'une fois le temps de pronostic écoulé. Mode de pronostics On pronostique le résultat exact . Égalité en points Dans la mesure où il n'en a pas été convenu autrement, le nombre de victoires de la journée (\"Victoires\") prévaut sur le classement des parieurs en cas d'ég",
+          "notAutomaticallyInterpreted": true,
+          "sourceURL": "https://www.kicktipp.fr/pronostics-ligue2/regles",
+          "textSHA256": "db8f8ffeaf13775654537f720c149a46d6b34f57a92d9f4e37d5d6fc58d765d4"
+        },
+        {
+          "contest": "pronostics-ligue2",
+          "contextEnd": 969,
+          "contextStart": 582,
+          "literal": " de points. Club préféré Nombre de points maximal pour l'adhésion: 20 Points Règle de pronostics: 0 minutes en avance La période de pronostic se termine 0 minutes avant la date de l'évènement correspondant. Règle des points: 3 - 12 points Nombre minimum de points 3 Nombre maximum de points 10 Tendance Ecart de buts Résultat Victoire 0 1 2 Match nul 0 - 2 Les points dépendent de la cot",
+          "notAutomaticallyInterpreted": true,
+          "sourceURL": "https://www.kicktipp.fr/pronostics-ligue2/regles",
+          "textSHA256": "db8f8ffeaf13775654537f720c149a46d6b34f57a92d9f4e37d5d6fc58d765d4"
+        },
+        {
+          "contest": "pronostics-ligue2",
+          "contextEnd": 1024,
+          "contextStart": 637,
+          "literal": "l'adhésion: 20 Points Règle de pronostics: 0 minutes en avance La période de pronostic se termine 0 minutes avant la date de l'évènement correspondant. Règle des points: 3 - 12 points Nombre minimum de points 3 Nombre maximum de points 10 Tendance Ecart de buts Résultat Victoire 0 1 2 Match nul 0 - 2 Les points dépendent de la cote qui résulte des pronostics au sein de la communauté. ",
+          "notAutomaticallyInterpreted": true,
+          "sourceURL": "https://www.kicktipp.fr/pronostics-ligue2/regles",
+          "textSHA256": "db8f8ffeaf13775654537f720c149a46d6b34f57a92d9f4e37d5d6fc58d765d4"
+        }
+      ],
+      "operativeMatchesOmitted": 0,
+      "rulesLink": {
+        "hrefLiteral": "/pronostics-ligue2/regles",
+        "label": "Règles",
+        "ref": {
+          "column": 2632,
+          "line": 25,
+          "startTagSHA256": "73d3b9ed8bed488e8b1ee891ac17bd66d0ad2e452a5ca9dd9dd2909fcc0140c3",
+          "tag": "a"
+        },
+        "url": "https://www.kicktipp.fr/pronostics-ligue2/regles"
+      },
+      "sourceLink": {
+        "contest": "pronostics-ligue2",
+        "hrefLiteral": "/pronostics-ligue2/",
+        "label": "Pronostics Ligue2Jeu de pronostics football de Ligue 2 avec règle de cote Que feront le relégués? Quel état d'esprit pour les équipes ayant raté de peu la montée ? Pronostique la Ligue 2 2022/2023 ave",
+        "ref": {
+          "column": 74,
+          "line": 31,
+          "startTagSHA256": "67e2f162912cda95ac208098e2c79e2942538f757e7bdab72399d958264a0183",
+          "tag": "a"
+        },
+        "url": "https://www.kicktipp.fr/pronostics-ligue2/"
+      }
+    },
+    {
+      "automaticVisibilityOrLeadTimeInferred": false,
+      "contest": "pronostics-de-coupe-de-france",
+      "operativeLiterals": [
+        {
+          "contest": "pronostics-de-coupe-de-france",
+          "contextEnd": 565,
+          "contextStart": 175,
+          "literal": "ouhaité Centre des pronostics Calendrier Classement Règles Messages Devenir membre Connexion Règles Visibilité des pronostics Les pronostics ne sont visibles qu'une fois le temps de pronostic écoulé. Mode de pronostics On pronostique le résultat exact . On pronostique le résultat \"Après les tirs au but\" . Égalité en points Dans la mesure où il n'en a pas été convenu autrement, le nombre ",
+          "notAutomaticallyInterpreted": true,
+          "sourceURL": "https://www.kicktipp.fr/pronostics-de-coupe-de-france/regles",
+          "textSHA256": "98d153a6f32f48df0fc0ee4b3c4e5355e64e9b2ae3fe6dacb5b3fc7b8ecff7c2"
+        },
+        {
+          "contest": "pronostics-de-coupe-de-france",
+          "contextEnd": 603,
+          "contextStart": 205,
+          "literal": "Calendrier Classement Règles Messages Devenir membre Connexion Règles Visibilité des pronostics Les pronostics ne sont visibles qu'une fois le temps de pronostic écoulé. Mode de pronostics On pronostique le résultat exact . On pronostique le résultat \"Après les tirs au but\" . Égalité en points Dans la mesure où il n'en a pas été convenu autrement, le nombre de victoires de la journée (\"Victoires",
+          "notAutomaticallyInterpreted": true,
+          "sourceURL": "https://www.kicktipp.fr/pronostics-de-coupe-de-france/regles",
+          "textSHA256": "98d153a6f32f48df0fc0ee4b3c4e5355e64e9b2ae3fe6dacb5b3fc7b8ecff7c2"
+        },
+        {
+          "contest": "pronostics-de-coupe-de-france",
+          "contextEnd": 1191,
+          "contextStart": 804,
+          "literal": "r rejoindre une équipe: 20 Points Autres remarques sur l'évaluation d'équipe Règle de pronostics: 0 minutes en avance La période de pronostic se termine 0 minutes avant la date de l'évènement correspondant. Règle des points: 4 - 12 points Nombre minimum de points 3 Nombre maximum de points 10 Tendance Ecart de buts Résultat Victoire 1 1 2 Match nul 1 - 2 Les points dépendent de la cot",
+          "notAutomaticallyInterpreted": true,
+          "sourceURL": "https://www.kicktipp.fr/pronostics-de-coupe-de-france/regles",
+          "textSHA256": "98d153a6f32f48df0fc0ee4b3c4e5355e64e9b2ae3fe6dacb5b3fc7b8ecff7c2"
+        },
+        {
+          "contest": "pronostics-de-coupe-de-france",
+          "contextEnd": 1246,
+          "contextStart": 859,
+          "literal": "l'évaluation d'équipe Règle de pronostics: 0 minutes en avance La période de pronostic se termine 0 minutes avant la date de l'évènement correspondant. Règle des points: 4 - 12 points Nombre minimum de points 3 Nombre maximum de points 10 Tendance Ecart de buts Résultat Victoire 1 1 2 Match nul 1 - 2 Les points dépendent de la cote qui résulte des pronostics au sein de la communauté. ",
+          "notAutomaticallyInterpreted": true,
+          "sourceURL": "https://www.kicktipp.fr/pronostics-de-coupe-de-france/regles",
+          "textSHA256": "98d153a6f32f48df0fc0ee4b3c4e5355e64e9b2ae3fe6dacb5b3fc7b8ecff7c2"
+        }
+      ],
+      "operativeMatchesOmitted": 0,
+      "rulesLink": {
+        "hrefLiteral": "/pronostics-de-coupe-de-france/regles",
+        "label": "Règles",
+        "ref": {
+          "column": 2821,
+          "line": 25,
+          "startTagSHA256": "49fa64dd2974f653c2785e77c42e3d17effa74cf8825baac595430d097d3ee02",
+          "tag": "a"
+        },
+        "url": "https://www.kicktipp.fr/pronostics-de-coupe-de-france/regles"
+      },
+      "sourceLink": {
+        "contest": "pronostics-de-coupe-de-france",
+        "hrefLiteral": "/pronostics-de-coupe-de-france/",
+        "label": "Pronostics de Coupe de FrancePronostics de Coupe de France Venez participer au jeu public de Pronostics pour la Coupe de France 🇫🇷.",
+        "ref": {
+          "column": 74,
+          "line": 33,
+          "startTagSHA256": "442302684855e18fc00415bd51edb73dda72d63f32550b984765f44ae65a6edb",
+          "tag": "a"
+        },
+        "url": "https://www.kicktipp.fr/pronostics-de-coupe-de-france/"
+      }
+    }
+  ],
+  "counts": {
+    "DNS": 7,
+    "GET": 7,
+    "TCP": 7
+  },
+  "resultSHA256": "c9cd6b26b285cf638fcca28c9a4c3e4080e9d60dd5d6bc2838912a60c27100d7",
+  "ordinaryAccountMissingProven": false
+}

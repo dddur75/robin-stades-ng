@@ -1,0 +1,57 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.APP.PREDICATE.AND.LOADER.FIX.R2.E1.RESULT.20261124",
+  "missionId": "OLBG_APP_PREDICATE_AND_LOADER_FIX_R2_E1_20261124",
+  "status": "PASS_AND_HOLD_LOCAL_DIAGNOSTIC",
+  "scope": "Targeted public data-URL loader fixed with unchanged16assertions (RED expected then GREEN/lint). Exact actual retained RT17records pass offline projector and helper attaches one candidate, but one loopbackAPI200/317 candidates has no OLBG pending overlay. Loaded server code/path/cache causal issue remains unknown. No browser, source query or admitted forecasts.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.EXACT.FICHE.APP.LOCAL.FIRST.CANARY.PARTIAL.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.EXACT.FICHE.APP.WIRING.E1.RESULT.20261124"
+  ],
+  "result": {
+    "admissions": 0,
+    "browserJobs": 0,
+    "closedAtUTC": "2026-11-24T15:04:07.237161+00:00",
+    "diag": {
+      "admissions": 0,
+      "apiCandidateAttachmentCount": 0,
+      "apiCandidateCount": 317,
+      "apiHTTP": 200,
+      "apiNotBettingPendingCount": 1,
+      "apiPendingCount": null,
+      "apiPendingExists": false,
+      "apiPendingGatesFalse": null,
+      "apiPlatformOLBGPendingExists": false,
+      "apiStatusOK": true,
+      "apiTargetExists": true,
+      "apiTargetPlatformExact": true,
+      "apiTargetURLExact": true,
+      "loopbackGET": 1,
+      "offlineHelperAttachedCount": 1,
+      "offlineProjectedCount": 17,
+      "offlineProjectorAccepted": true,
+      "realValuesLogged": false,
+      "sourceGET": 0,
+      "status": "CLOSED_PREDICATES_ONLY"
+    },
+    "fixedTestSHA": "4d1ad0b318edd7c6185f7499bc6f076524220fbae957275911e2c8995cfbd0c2",
+    "greenAssertions16": true,
+    "greenExit": 0,
+    "lintExit": 0,
+    "publicTestWrites": 1,
+    "redExit": 1,
+    "runtimeWrites": 0,
+    "sourceGET": 0,
+    "status": "COMPLETE_PENDING_INDEPENDENT_REVIEW"
+  },
+  "resultSHA256": "4e56ba337d073321da22bd61e075fe060a80dcb079bc7dea13128e23a5d4b62c",
+  "stopSHA256": "2545a6564a9733bbc79b8b2db2570d732488dfafda223c12871e2fe6f59b7655",
+  "publicationHarnessP1": "RESOLVED_TARGETED_NO_NEW_CI",
+  "admissions": 0,
+  "sourceReady": false,
+  "authorityClosed": true
+}

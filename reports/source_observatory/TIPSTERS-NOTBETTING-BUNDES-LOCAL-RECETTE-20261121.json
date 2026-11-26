@@ -1,0 +1,61 @@
+{
+  "generatedAt": "2026-11-21T04:09:36.449273+00:00",
+  "schemaVersion": "robin-bounded-native-local-recette-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.BUNDES.LOCAL.RECETTE.20261121",
+  "status": "LOCAL_APP_RECETTED_GLOBAL_DELIVERY_PARTIAL",
+  "observedAt": "2026-11-21T04:04:26.074Z",
+  "declarationIds": 402,
+  "pseudonyms": 78,
+  "fixtures": 16,
+  "preservedWholeOrderedChoices": 400,
+  "preservedOriginalFixtures": 14,
+  "preservedPLSummary": true,
+  "boundedAdditionalOccurrences": 2,
+  "canonicalQualification": false,
+  "recurringAuthority": false,
+  "apiCandidateSnapshot": {
+    "observedAt": "2026-11-21T04:04:26.074Z",
+    "count": 317,
+    "qualified": 24,
+    "enabled": 14
+  },
+  "candidateEnabledCountIsTimeSensitive": true,
+  "zeroPageErrors": true,
+  "zeroExternalBrowserRequests": true,
+  "mobileHorizontalOverflow": false,
+  "viewportWidth": 360,
+  "sourceGETs": 0,
+  "newTaskInstalled": false,
+  "qualityWarningsPerOccurrence": true,
+  "evidence": [
+    {
+      "path": "cockpit/.ci/official-doc-research-20261121/bundes/local-ui-receipt.json",
+      "sha256": "17032a6228e37b0737a882c3d2b9b8037872cb580cfbcb1792f63ea34a43aeca"
+    },
+    {
+      "path": "cockpit/.ci/official-doc-research-20261121/bundes/local-desktop.png",
+      "sha256": "2e71f58d6727db846093a6944c609d8271b97aea2f69046f2de61e549c530342"
+    },
+    {
+      "path": "cockpit/.ci/official-doc-research-20261121/bundes/local-mobile.png",
+      "sha256": "a7f57b0eead094ee6415df76c74fa2b17000551a9b5ff73b012461b8de899979"
+    },
+    {
+      "path": "cockpit/.ci/official-doc-research-20261121/bundes/preview-public-v2.json",
+      "sha256": "f1fba495424c2b4c36d5eaa933f7698472be0da425087fc5f6f9ecce6c144c89"
+    }
+  ],
+  "targetedChecks": [
+    "18qualifier tests PASS",
+    "6loader/merge tests PASS",
+    "1browser quality test PASS",
+    "TypeScript PASS",
+    "targeted ESLint PASS"
+  ],
+  "limitations": [
+    "Two retained occurrences, not exhaustive canonical source qualification.",
+    "No recurring NotBetting authority.",
+    "CI248 certifies334b786 only, not this uncommitted change.",
+    "Candidate enabledCount14 is an observed operational snapshot, not a lifetime qualification count."
+  ]
+}

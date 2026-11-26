@@ -1,0 +1,50 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.BANDIT.CORRECTIVE.PUBLICATION.GIT.E1.20261124",
+  "missionId": "NOTBETTING_BANDIT_CORRECTIVE_PUBLICATION_GIT_R1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "ConsequentialCI270correction publichelperthree casts afterunchangedguards, pending1/adminfactsevidence only, exactnewheadCIawaited, allCompatiblefalse.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V35.ENGINEERING.RECETTE.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.SELECTOR.BANDIT.CORRECTIVE.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.PUBLICATION.CI270.EXACT.HEAD.FAILURE.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PL.NATIVE.R2.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PL.PENDING.ADMIN.LOCAL.ROUNDTRIP.RESULT.20261124"
+  ],
+  "binding": {
+    "mission_id": "NOTBETTING_BANDIT_CORRECTIVE_PUBLICATION_GIT_R1_20261124",
+    "planSHA": "6b1b11e9fce84871e6557ca31c2173cf4a863e0bf100076fe24dede86f79bfe6",
+    "manifestSHA": "c3ee3f9e0bc2839c4b31e3e272610c28f0b2598f871d2cac29f50bbce4da5248",
+    "controllerSHA": "0cfeba9fbe856685c3b64403ed619a9e1d18397beaefd91bf4ccdff76145c34f",
+    "baseHEAD": "c2ee4b2ba39deb1a7c40df68ffecbc87ff89b6c8",
+    "remote": "origin",
+    "remoteBranch": "codex/robin-dossier-fidele",
+    "localBranch": "codex/robin-bounded-delivery-public-r1",
+    "files": [
+      "reports/council/decision-ledger.jsonl",
+      "reports/evidence/evidence-graph.json",
+      "reports/source_observatory/TIPSTERS-LOCAL-FOLLOWUP-V35-ENGINEERING-RECETTE-20261124.json",
+      "reports/source_observatory/TIPSTERS-NOTBETTING-BANDIT-CORRECTIVE-PUBLICATION-GIT-E1-20261124.json",
+      "reports/source_observatory/TIPSTERS-NOTBETTING-PL-NATIVE-R2-ACTUAL-RESULT-20261124.json",
+      "reports/source_observatory/TIPSTERS-NOTBETTING-PL-PENDING-ADMIN-LOCAL-ROUNDTRIP-20261124.json",
+      "reports/source_observatory/TIPSTERS-NOTBETTING-PL-PROGRAMME-PRIVATE-CODE-QUALITY-E1-20261124.json",
+      "reports/source_observatory/TIPSTERS-NOTBETTING-SELECTOR-BANDIT-CORRECTIVE-E1-RESULT-20261124.json",
+      "reports/source_observatory/TIPSTERS-PUBLICATION-CI270-EXACT-HEAD-FAILURE-RESULT-20261124.json",
+      "src/robin/source_observatory/notbetting_selection.py"
+    ]
+  },
+  "tests": {
+    "selector": 25,
+    "banditIssues": 0,
+    "ruff": "PASS",
+    "strictMypy": "PASS",
+    "V35Graph": "PASS"
+  },
+  "sourceReady": false,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null
+}

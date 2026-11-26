@@ -1,0 +1,50 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.CACHED.SCREENING.LOCAL.R1.ACTUAL.RESULT.20261123",
+  "missionId": "TELEGRAM_CACHED_QUALIFICATION_LOCAL_R1_20261123",
+  "generatedAt": "2026-11-23T16:05:21.124Z",
+  "status": "PARTIAL_LOCAL_SCREENING_ONLY",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.CACHED.SCREENING.LOCAL.R1.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.STRUCTURED.NATIVE.R2.ACTUAL.RESULT.20261123",
+    "DATA.SOURCE_OBSERVATORY.BUNDES.J11.FUTURE.UTC.PROGRAMME.RESULT.20261123"
+  ],
+  "scope": "One exact local cached message screening after fresh C0/C1/C4 local decision; one process exit0/stdoutstderr0. Ten messages published Sep1-4 2024, zero normalized literal pair mentions among nine future Bundesliga scheduled programme rows and five lexical cues. No forecast/selection/person/globalabsence inference. All unqualified and zero admissions; scheduledUTC is published programme not actual whistle. No native message values or rawHTML to model/stdout/Git, only aggregates. Runner is exact bounded manual local control, not generic source guard; whole read precedes length/hash and runner doesnot autonomously validate ledger/MFhash.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "aggregate": {
+    "admissions": 0,
+    "calendarClaim": "DATA.SOURCE_OBSERVATORY.BUNDES.J11.FUTURE.UTC.PROGRAMME.RESULT.20261123",
+    "calendarSHA256": "7a19874ddc06fb1c194fa0c740eccaefb2333d6da93db0605850558a8d1c4936",
+    "cyrillicMessageCount": 0,
+    "firstStopCounts": {
+      "FIXTURE_NOT_ESTABLISHED_IN_BOUNDED_PROGRAMME": 10
+    },
+    "fixtureMatching": "LITERAL_NORMALIZED_ONLY_NO_ALIAS_OR_GLOBAL_ABSENCE",
+    "fixturePoolSize": 9,
+    "futureFixtureTextCandidates": 0,
+    "globalCoverage": "UNKNOWN",
+    "inputSHA256": "7cb237a9268f03ebd7ff29e32512304b17ba9f2663b1a8ac3acf5548e7964326",
+    "literalFixtureMentionMessageCount": 0,
+    "marketCueMessageCount": 5,
+    "messageCount": 10,
+    "nativeJobs": 0,
+    "personalAuthorVerified": false,
+    "publishedFrom": "2024-09-01T12:04:35+00:00",
+    "publishedThrough": "2024-09-04T19:30:37+00:00",
+    "schemaVersion": "telegram-local-screening-v1",
+    "selectionContractVerified": false,
+    "sourceGET": 0,
+    "sourceObservationClaim": "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.STRUCTURED.NATIVE.R2.ACTUAL.RESULT.20261123",
+    "sourceReady": false
+  },
+  "primarySHA": "2385ae2a88ae3339090fd9ea9728b4ffd5d0d0c04f564603344c931dabf1e58a",
+  "resultSHA": "0b3898967d7c816bf8b34f5fc30dfc44e9d4d2fe0cbe7f3ade9dc51871b6ce3f"
+}

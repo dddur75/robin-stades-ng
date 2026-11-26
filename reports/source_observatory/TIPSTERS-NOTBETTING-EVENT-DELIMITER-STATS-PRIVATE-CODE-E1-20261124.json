@@ -1,0 +1,70 @@
+{
+  "missionId": "NOTBETTING_EVENT_DELIMITER_STATS_PRIVATE_E1_20261124",
+  "author": "C3",
+  "status": "VERIFIED",
+  "actualStoppedAt": "2026-11-24T07:40:20.418983+00:00",
+  "files": {
+    "event_delimiter_stats.py": {
+      "sha256": "f0db7e5ab1647140c5aefe5db8449aad1c97b2ca2dc5364a54a9a86bba0fac84",
+      "bytes": 2222
+    },
+    "test_event_delimiter_stats.py": {
+      "sha256": "96705dd45461405c79897e4b9103413c6f7c144b55a5863ccd4a819a9f19f02c",
+      "bytes": 4095
+    }
+  },
+  "constructorProcesses": 1,
+  "verificationChildren": 4,
+  "safeGitProcesses": 5,
+  "toolShellEntries": 1,
+  "totalOSProcesses": 11,
+  "runtimeCounters": {
+    "red-runtime-counts.json": {
+      "calls": 1,
+      "methods": 1,
+      "network": 0,
+      "spawn": 0
+    },
+    "green-runtime-counts.json": {
+      "calls": 11,
+      "methods": 6,
+      "network": 0,
+      "spawn": 0
+    }
+  },
+  "proof": {
+    "parentSHA": "cc6362abca54c16b94651198f2427072d29bcfe6872074c8b8a1edb791efece9",
+    "parentSeparatorASTLiteralEqual": true,
+    "functionCalls": 12,
+    "methodExecutions": 7,
+    "uniqueMethods": 6,
+    "RAMCompile": 2,
+    "actualPayloadReads": 0
+  },
+  "errorClass": null,
+  "sourceGET": 0,
+  "realPayloadReads": 0,
+  "DNS": 0,
+  "TCP": 0,
+  "Node": 0,
+  "Job": 0,
+  "admissions": 0,
+  "sourceReady": false,
+  "limitations": [
+    "Synthetic lexical counts only",
+    "No parser fallback/alias/fixture qualification",
+    "No actual cached event read",
+    "mypy helper only"
+  ],
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.EVENT.DELIMITER.STATS.PRIVATE.CODE.E1.RESULT.20261124",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Pureboundedlexicaleventcounts SYNTHcodeonly,6GREEN/12functioncalls/11OS; no nativeeventread, no parserwidening/alias/fixture/date/choiceinterpretation.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CACHED.FIXTURE.DIAGNOSTIC.PRIVATE.CODE.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PL.NATIVE.R2.ACTUAL.RESULT.20261124"
+  ]
+}

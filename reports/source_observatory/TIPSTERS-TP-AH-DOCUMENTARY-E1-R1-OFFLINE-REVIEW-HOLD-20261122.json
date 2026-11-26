@@ -1,0 +1,35 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TP.AH.DOCUMENTARY.E1.R1.OFFLINE.REVIEW.HOLD.20261122",
+  "recordedAt": "2026-11-22T12:48:28.424Z",
+  "status": "CODE_KEY_WITHHELD_OFFLINE_HTML_CONTRADICTION_NO_SOURCE_ATTEMPT",
+  "scope": "Independent synthetic review found a false native-link association in unreleased R1 HTML structure probe. Preserve R1 and withhold all source effects; smallest offline correction at E1 only. No source behavior or current platform compatibility inferred.",
+  "missionId": "TP_AH_STRUCTURE_DOCUMENTARY_E1_20261122",
+  "planSHA256": "245b7722ff846b24c554e837eed2679475d295c2f79c86b2e4104a5315fa0235",
+  "manifestSHA256": "4d9c25548cdbb736b73efcd238a6a6baf60b6dfa638c498f9e9069a29bba0449",
+  "pinsReviewed": 26,
+  "existingSyntheticTestsPassed": 14,
+  "criticalFinding": {
+    "reviewer": "C3",
+    "rootCause": "HTML_NONVOID_SELF_CLOSING_INTERPRETED_AS_XML",
+    "consequence": "Inert or hidden link could falsely establish native export association.",
+    "minimumCorrection": "Fail closed on non-void self-closing tags; correct rawtext opacity and distinguish incidental CAPTCHA from dedicated challenge."
+  },
+  "associatedFalseRefusals": [
+    "RAWTEXT_NESTED_MARKUP_ENDTAG",
+    "INCIDENTAL_CAPTCHA_WIDGET_AS_GLOBAL_BARRIER"
+  ],
+  "sourceGET": 0,
+  "sourceGrantIssued": false,
+  "spentFile": false,
+  "CSVGET": 0,
+  "choiceExtraction": 0,
+  "TaskQueries": 0,
+  "appChanges": 0,
+  "authorR1Stopped": true,
+  "R1Preserved": true,
+  "successorRequested": "TP_AH_STRUCTURE_DOCUMENTARY_E1_R2_20261122",
+  "successorEffectAuthority": false,
+  "sameStage": "E1",
+  "currentTermsCertified": false,
+  "globalDelivery": "PARTIAL"
+}

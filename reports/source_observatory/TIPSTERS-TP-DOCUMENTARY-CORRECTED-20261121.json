@@ -1,0 +1,30 @@
+{
+  "generatedAt": "2026-11-20T23:59:30.464477+00:00",
+  "schemaVersion": "robin-documentary-corrected-result-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TP.DOCUMENTARY.CORRECTED.20261121",
+  "missionId": "ROBIN-TP-DOCUMENTARY-E1V2R1-20261121",
+  "status": "TECHNICAL_PROJECTION_RECETTED_EXACT_PUBLIC_EXPORT_REVIEW_ONLY",
+  "requests": 1,
+  "HTTP200": 1,
+  "bytes": 87745,
+  "sourceSha256": "8e2477fc1b2d163b556d78398581445603b130f5997f1e369bc29bf310424e1d",
+  "legalTextCharacters": 11100,
+  "legalTextSha256": "bbf4fd3e29fea9c1bdd06ce7d30b802bb34b5fd9ad7722b050b166219d04455e",
+  "bodyCount": 1,
+  "mainCount": 2,
+  "structuresClosed": true,
+  "activeMilliseconds": 766,
+  "TPFamilyGET": 3,
+  "TPFamilyActiveMilliseconds": 3766,
+  "qualificationUnits": 294,
+  "resultSha256": "73dee265e82733f9d734c2ef53b651b8a6a930f5a4439f339041b67430ab67fd",
+  "journalSha256": "bd24557ef32ad683c5a71a6a25d3b000baa9749425f9f39e2e3932d881c2158c",
+  "reviewScope": "Complete documentary text reviewed for one exact public private native-export canary; no subscriber access,redistribution,analysis,settlement,performance or global licence inferred.",
+  "profilesRead": 0,
+  "choicesRead": 0,
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

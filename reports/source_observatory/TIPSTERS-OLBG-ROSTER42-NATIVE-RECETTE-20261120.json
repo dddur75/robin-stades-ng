@@ -1,0 +1,274 @@
+{
+  "generatedAt": "2026-11-20T22:43:54.290386+00:00",
+  "schemaVersion": "robin-roster42-native-recette-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.ROSTER42.NATIVE.RECETTE.20261120",
+  "missionId": "ROBIN-OLBG-ROSTER42-E2V2-20261120",
+  "status": "NATIVE_READY_GROUP_VIEWS_RECETTED_FUTURE_RUNS_UNPROVEN",
+  "taskName": "Robin-Tipsters-OLBG-Roster42-20261120",
+  "xmlSha256": "80883af5515e424b450a24772e86fe3ac17861524b33a6e597a8571ed7ac3cdf",
+  "nativeRegistrationSha256": "241911f756c9f5fd228ee61af2bc251dc00b44eba4d35c2063e009511ae0eb1a",
+  "canaryReceiptSha256": "2df5f8b51d39d166414b9c1c1d3375c4d80ff107f9d0368cc83709478f386be8",
+  "principal": "Interactive/Limited",
+  "hidden": true,
+  "multipleInstances": "IgnoreNew",
+  "executionLimitSeconds": 180,
+  "wake": false,
+  "catchup": false,
+  "retries": 0,
+  "scheduledUTC": [
+    "2026-11-20T23:05:00Z",
+    "2026-11-21T05:05:00Z",
+    "2026-11-21T11:05:00Z"
+  ],
+  "expiresAt": "2026-11-21T11:15:00Z",
+  "lastNativeResult": 267011,
+  "futureAutomaticRunsProven": false,
+  "sourceGETConsumed": 4,
+  "sourceGETRemaining": 129,
+  "sourceGETCap": 133,
+  "activeMillisecondsConsumed": 10125,
+  "activeMillisecondsRemaining": 589875,
+  "activeMillisecondsCap": 600000,
+  "actualA9": {
+    "readAt": "2026-11-20T22:38:52.308Z",
+    "views": [
+      {
+        "path": "/robin-live",
+        "http": 200,
+        "h1": [
+          "Robin suit les cinq grands championnats"
+        ]
+      },
+      {
+        "path": "/expert/admin-collecte",
+        "http": 200,
+        "h1": [
+          "Suivi admin de la collecte"
+        ]
+      },
+      {
+        "path": "/expert/catalogue-sources",
+        "http": 200,
+        "h1": [
+          "Catalogue complet des sources"
+        ]
+      },
+      {
+        "path": "/expert/collecte-recurrente",
+        "http": 200,
+        "h1": [
+          "Collecte récurrente"
+        ]
+      },
+      {
+        "path": "/expert/tipsters/olbg%3A669101",
+        "http": 200,
+        "h1": [
+          "Fiche tipster"
+        ]
+      }
+    ],
+    "errors": [],
+    "externalRequests": [],
+    "mobileOverflow": false,
+    "public": {
+      "distinctPicks": 363,
+      "authorCount": 73,
+      "rosterCampaign": {
+        "state": "collecting",
+        "successfulSlots": 1,
+        "slots": 4,
+        "requests": 4,
+        "requestsMax": 133,
+        "startsAt": "2026-11-20T23:05:00Z",
+        "expiresAt": "2026-11-21T11:15:00Z",
+        "campaignId": "ROBIN-OLBG-ROSTER42-E2V2-20261120",
+        "authorIds": [
+          "olbg:13000",
+          "olbg:46601",
+          "olbg:55960",
+          "olbg:62103",
+          "olbg:79569",
+          "olbg:119481",
+          "olbg:141750",
+          "olbg:154645",
+          "olbg:192737",
+          "olbg:197017",
+          "olbg:203797",
+          "olbg:229856",
+          "olbg:231310",
+          "olbg:246295",
+          "olbg:253741",
+          "olbg:254608",
+          "olbg:269051",
+          "olbg:375469",
+          "olbg:377758",
+          "olbg:378852",
+          "olbg:383717",
+          "olbg:411789",
+          "olbg:458096",
+          "olbg:460418",
+          "olbg:506193",
+          "olbg:507269",
+          "olbg:511157",
+          "olbg:530492",
+          "olbg:544617",
+          "olbg:590816",
+          "olbg:591729",
+          "olbg:594504",
+          "olbg:595998",
+          "olbg:602760",
+          "olbg:633943",
+          "olbg:642599",
+          "olbg:643087",
+          "olbg:644907",
+          "olbg:648478",
+          "olbg:658159",
+          "olbg:668600",
+          "olbg:669101"
+        ],
+        "lastObservedAt": "2026-11-20T22:07:37.757689+00:00",
+        "profileCount": 42,
+        "poolAuthorIds": [
+          "olbg:13000",
+          "olbg:46601",
+          "olbg:55960",
+          "olbg:62103",
+          "olbg:79569",
+          "olbg:119481",
+          "olbg:141750",
+          "olbg:154645",
+          "olbg:192737",
+          "olbg:197017",
+          "olbg:203797",
+          "olbg:229856",
+          "olbg:231310",
+          "olbg:246295",
+          "olbg:253741",
+          "olbg:254608",
+          "olbg:269051",
+          "olbg:375469",
+          "olbg:377758",
+          "olbg:378852",
+          "olbg:383717",
+          "olbg:411789",
+          "olbg:458096",
+          "olbg:460418",
+          "olbg:506193",
+          "olbg:507269",
+          "olbg:511157",
+          "olbg:530492",
+          "olbg:544617",
+          "olbg:590816",
+          "olbg:591729",
+          "olbg:594504",
+          "olbg:595998",
+          "olbg:602760",
+          "olbg:633943",
+          "olbg:642599",
+          "olbg:643087",
+          "olbg:644907",
+          "olbg:648478",
+          "olbg:658159",
+          "olbg:668600",
+          "olbg:669101"
+        ],
+        "native": {
+          "nextRunTime": "2026-11-21T00:05:00.0000000+01:00",
+          "enabled": true,
+          "lastResult": 267011,
+          "verifiedAt": "2026-11-20T22:38:37.5484691+00:00",
+          "state": "Ready"
+        }
+      },
+      "claimIds": [
+        "DATA.SOURCE_OBSERVATORY.PUBLIC_PICKS.20261119",
+        "ENG.SOURCE_OBSERVATORY.FORUMS.CAMPAIGN.20261119",
+        "DATA.SOURCE_OBSERVATORY.SRO.PICKS.20261119",
+        "DATA.SOURCE_OBSERVATORY.OLBG.NATIVE.PICKS.20261119",
+        "DATA.SOURCE_OBSERVATORY.EXPANSION.PREMATCH.20261120",
+        "DATA.SOURCE_OBSERVATORY.EXPANDED.OLBG.E2.20261120",
+        "DATA.SOURCE_OBSERVATORY.PERSONAL.PREMATCH.20261120",
+        "DATA.SOURCE_OBSERVATORY.OLBG.FAMILY.E1.20261120",
+        "DATA.SOURCE_OBSERVATORY.OPAQUE.PREMATCH.E1.20261120",
+        "DATA.SOURCE_OBSERVATORY.HEPTER.RECURRING.20261120",
+        "DATA.SOURCE_OBSERVATORY.OLBG.CURRENT138.CORRECTED.20261120",
+        "DATA.SOURCE_OBSERVATORY.OLBG.ROSTER42.RECURRING.20261120"
+      ]
+    },
+    "candidates": {
+      "count": 317,
+      "qualified": 21,
+      "enabled": 20,
+      "rosterEnabled": 42,
+      "rosterCount": 137,
+      "compatibleClaimId": "ENG.SOURCE_OBSERVATORY.COMPATIBLE.QUALIFICATION.20261120"
+    },
+    "admin": {
+      "recurring": {
+        "http": 200,
+        "status": "ok",
+        "counts": {
+          "planned": 64,
+          "running": 0,
+          "succeeded": 1,
+          "failed": 0,
+          "missed": 19,
+          "interrupted": 0
+        },
+        "halted": true,
+        "journalHead": "3971151f3649f6991f47bc80654fda706a572c738506abf0e4fb1c27929f4ec0"
+      },
+      "connectors": {
+        "http": 200,
+        "status": "ok",
+        "counts": {
+          "requests": 105,
+          "attemptedSources": 57,
+          "collectedSources": 9,
+          "publications": 173,
+          "candidates": 0,
+          "unresolvedExtractions": 3,
+          "verifiedPreMatch": 0
+        },
+        "canRun": false,
+        "journalHead": "541a5f2d86baef5945a5dff6f2f1133e5b0ffb6301166659a207d7a64641fd84"
+      },
+      "sources": {
+        "http": 200,
+        "status": "ok",
+        "counts": {
+          "manuel": 14,
+          "a_construire": 57,
+          "bloque": 3
+        },
+        "prepared": 74,
+        "revision": "1180fd446fab782b621f45db80f796f674d686b00cc2b95c3d4e8ca7190a7ddc"
+      }
+    }
+  },
+  "history": {
+    "publicChoices": 363,
+    "authors": 73,
+    "registryRows": 317,
+    "personallyProvenRegistryRows": 21,
+    "nativeEnabledRegistryRows": 20,
+    "groupEnabledProfiles": 42,
+    "catalogueOnlyGroupEnabledProfiles": 29,
+    "oldPublicChoiceObjectsStrictlyPreserved": 363
+  },
+  "evidence": [
+    {
+      "path": "cockpit/.ci/olbg-roster-recurring-20261120/integration-readback.json",
+      "sha256": "6405823c7cd658b580ac6ab5c4074a8053c5347d4c09b0479cac2dc285ceb493"
+    },
+    {
+      "path": "cockpit/.ci/olbg-roster-recurring-20261120/oliver-mobile.png",
+      "sha256": "f8023101716fa841d61e2284efe4190cc9e5032b53bed3af0a783e0896d57032"
+    },
+    {
+      "path": "cockpit/.ci/olbg-roster-recurring-20261120/oliver-desktop.png",
+      "sha256": "85665e0a46f623b512c11b1e2a849e97ce71f914b0f8cd4710289db3d6dea353"
+    }
+  ]
+}

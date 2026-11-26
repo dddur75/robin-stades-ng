@@ -1,0 +1,69 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.WORKBOOK.SUIVI.V7.RECETTE.20261122",
+  "generatedAt": "2026-11-21T23:33:03.850Z",
+  "status": "INDEPENDENT_WORKBOOK_RECETTE_PASS",
+  "scope": "Minimal fourteen-cell follow-up in a private workbook copy; no source-sheet regeneration, source collection or global compatibility inference.",
+  "workbookSHA256": "c7fd2c3d2924f15ed8a2de973735de232ac81525c75bb73fd3c61883b64dcdab",
+  "baseWorkbookSHA256": "ec6b34e5a0090da740899dd56113f9e35301545dc354bb8a22fdbd2bf31d2e25",
+  "sourceSheetsPreserved": 9,
+  "tabCount": 10,
+  "nativeTablesPreserved": 9,
+  "styleXMLUnchanged": true,
+  "sourceRelationIdRenumberingOnlySheets": 8,
+  "reused394127CellProof": true,
+  "fullCellReplay": false,
+  "formulaErrors": 0,
+  "modifiedCells": [
+    "B12",
+    "B16",
+    "B17",
+    "B18",
+    "B85",
+    "C11",
+    "C12",
+    "C13",
+    "C14",
+    "C85",
+    "D11",
+    "D12",
+    "D13",
+    "D85"
+  ],
+  "appProof": "DATA.SOURCE_OBSERVATORY.OLBG.ROSTER42.NEXT3.SECOND.NATURAL.20261121",
+  "appObservationAt": "2026-11-21T23:11:27.632Z",
+  "appCounts": {
+    "picks": 478,
+    "authors": 79,
+    "fixtures": 20
+  },
+  "olbg": {
+    "successfulSlots": 2,
+    "plannedSlots": 3,
+    "GET": 55,
+    "maximumGET": 129,
+    "activeProfiles": 3,
+    "stoppedProfiles": 39,
+    "nextSlotParis": "2026-11-22T06:05:00+01:00",
+    "nextSlotResult": "NOT_OBSERVED"
+  },
+  "youtubeProof": "ENG.SOURCE_OBSERVATORY.YOUTUBE.TOPIC.DISCOVERY.E1.V2.RESULT.20261121",
+  "youtube": {
+    "GET": 2,
+    "HTTP200": 2,
+    "admissions": 0,
+    "state": "PARTIAL_DISCOVERY_CONTRACT_STOPPED",
+    "newLocalCodeCI": "NOT_EXECUTED"
+  },
+  "verificationSHA256": "3d641a00acc5623fd1f2c0cce404ba79e657370e5eded185692db52d4ade2baa",
+  "sourcePayloadOrChoicesInGit": false,
+  "globalDelivery": "PARTIAL",
+  "allCompatibleSourcesIntegrated": false,
+  "receiptSHA256": "e70242740ca6142b6bb494028f71380832ac521e843601b5ba46c5ca3cddc194",
+  "agentReportSHA256": "45538b3c29cbe22e8aa56f8067c310dce350dc063d9b7048e9344353eaf8b849",
+  "verifiedBy": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "independentReview": "C4 exact workbook SHA, fourteen cells, nine source sheets with resolved relations, nine tables/styles, metrics, receipts and two renders. Native Excel not opened."
+}

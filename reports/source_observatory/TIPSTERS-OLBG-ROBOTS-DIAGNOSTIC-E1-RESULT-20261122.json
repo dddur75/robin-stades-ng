@@ -1,0 +1,22 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.ROBOTS.DIAGNOSTIC.E1.RESULT.20261122",
+  "recordedAt": "2026-11-22T07:58:54.454Z",
+  "status": "TECHNICAL_DIAGNOSTIC_COMPLETE_PERMISSION_UNPROVEN",
+  "scope": "One robots response diagnosed an unsupported header, no profile acquisition; historic strict-v3 first failure branch remains unproven.",
+  "planSHA256": "be5794f2efaed663d9380363899a568dcb6d32197e06012acb4cf01476a689c4",
+  "manifestSHA256": "047d544a6c21d1caffc7356f9e7007750d8cacad2ff294e4fdbfbfe9212aa235",
+  "grant": "dc72068185cee4a1f1d64394dbb31c06f6636ac72fb0854b5841b6e8da1362d6",
+  "observedAt": "2026-11-22T07:00:55.444756+00:00",
+  "sourceGET": 1,
+  "profileGET": 0,
+  "applicationAdmissions": 0,
+  "responseSHA256": "3e6044a915c133edb598a707c900d8cf9de6926aaba75117c9392683257f8106",
+  "diagnosticSHA256": "08e7a304694decaa90aa5ccf80973e3436dff762b07c7e9d0277cce8067d9e26",
+  "reason": "UA_SYNTAX",
+  "lineOrdinal": 192,
+  "directiveSHA256": "5917b09b26c9b64b8b02d114c97174e8f8e482ef5d9b4c2e72a09ffbfd14d1e6",
+  "permissionGranted": false,
+  "rawBodyStored": false,
+  "unusedAuthority": 0,
+  "globalDelivery": "PARTIAL"
+}

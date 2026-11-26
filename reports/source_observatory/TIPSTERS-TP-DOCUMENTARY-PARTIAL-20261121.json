@@ -1,0 +1,27 @@
+{
+  "generatedAt": "2026-11-20T23:32:25.582455+00:00",
+  "schemaVersion": "robin-documentary-result-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TP.DOCUMENTARY.PARTIAL.20261121",
+  "missionId": "ROBIN-TP-DOCUMENTARY-E1-20261121",
+  "status": "PARTIAL_TECHNICAL_DOCUMENT_PROJECTION",
+  "requests": 2,
+  "robotsStatus": 200,
+  "termsStatus": 200,
+  "termsResponseSha256": "8e2477fc1b2d163b556d78398581445603b130f5997f1e369bc29bf310424e1d",
+  "termsBytes": 87745,
+  "activeMilliseconds": 3000,
+  "termsProjectionRetained": false,
+  "structuralFailure": "ambiguous or incomplete documentary envelope",
+  "whichStructuralPredicateFailed": "UNESTABLISHED",
+  "profilesRead": 0,
+  "choicesRead": 0,
+  "qualificationUnits": 293,
+  "journalSha256": "aeafaddb2d818d13b5bedaa17b17b0e96a39ac878b9d542a09da2cfbe3ac23af",
+  "resultSha256": "5668cc988fe6ed27efa782b9d920b9701418f03ec3f8df4df7f587dba75c999e",
+  "sourceCompatibility": "UNESTABLISHED_NOT_PLATFORM_REFUSAL",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

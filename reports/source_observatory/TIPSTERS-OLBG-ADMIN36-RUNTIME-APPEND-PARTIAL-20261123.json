@@ -1,0 +1,24 @@
+{
+  "generatedAt": "2026-11-23T09:49:34.828Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.ADMIN36.RUNTIME.APPEND.PRIVATE.PARTIAL.20261123",
+  "missionId": "ADMIN36_OLBG_RUNTIME_E1_20261123",
+  "status": "PARTIAL_BROWSER_NOT_LAUNCHED",
+  "scope": "Runtime qualification JSON appended one exact OLBG diagnostic row; 35 prior rows preserved. Initial browser harness failed module resolution before launch because runtimeRoot omitted cockpit. This is an initial harness failure, not evidence of application UI failure. Author stopped without extra attempt; later fresh canary is separate.",
+  "keys": [
+    "C0",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG648433.FUTURE.L1.NATIVE.R1.ACTUAL.RESULT.20261123"
+  ],
+  "author": "C1",
+  "authorSTOP": "2026-11-23T09:41:20.537186+00:00",
+  "resultSHA256": "dcab63908940c6ae676c6677ea623a5dda98c463eff24acb1347738e91c834e1",
+  "rows": 36,
+  "old35Preserved": true,
+  "runtimeSHA256": "2742e6db5d61006dcb85959c58ab960e710664fe98bd06c9956df8aaca22e68a",
+  "browserLaunched": false,
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "fullAdminAccepted": false
+}

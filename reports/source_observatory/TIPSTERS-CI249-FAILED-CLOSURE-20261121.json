@@ -1,0 +1,165 @@
+{
+  "generatedAt": "2026-11-21T07:29:49.990691+00:00",
+  "schemaVersion": "robin-exact-head-ci-failure-closure-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI249.CLOSURE.20261121",
+  "status": "FAILED_STRICT_CLIENT_BUDGET_NO_NEW_HEAD_CERTIFICATION",
+  "scope": "CI249 at exact5b759head:13successfuljobs,3clientbudgetfailures and their aggregator. Python5436pass doesnot certifyclientbudget. Keep original strict threshold unchanged.",
+  "head": "5b7599477d9995576279755ac6b8a63d0854fa99",
+  "runId": 44877663573,
+  "runNumber": 249,
+  "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/44877663573",
+  "successfulJobs": 13,
+  "failedJobs": 4,
+  "jobs": [
+    {
+      "id": 136765830868,
+      "name": "Historical Authority Workflows Disabled",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 136765830968,
+      "name": "Bounded live canary - Windows",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 136765831019,
+      "name": "Chronos PostgreSQL profiles / tests (non_superuser_createrole)",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 136765831042,
+      "name": "Residual Fault Matrix",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 136765831065,
+      "name": "Historical Deep — contrat cache-only",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 136765831068,
+      "name": "Bounded live canary - Ubuntu",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 136765831075,
+      "name": "End-to-End Live Path Replay",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 136765831094,
+      "name": "Exact Workflow Entrypoint",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 136765831099,
+      "name": "Jalon 10 - entrees de preuve gelees",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 136765831130,
+      "name": "Chronos PostgreSQL profiles / Chronos source and activation",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 136765831144,
+      "name": "Chronos PostgreSQL profiles / tests (superuser)",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 136765831217,
+      "name": "Chronos PostgreSQL profiles / Chronos static contracts",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 136766535423,
+      "name": "Chronos PostgreSQL profiles / Chronos provider-free Cockpit",
+      "status": "completed",
+      "conclusion": "failure",
+      "failedSteps": [
+        "Construire l'artifact serveur avant les tests SSR"
+      ]
+    },
+    {
+      "id": 136766884247,
+      "name": "Quality and domain tests",
+      "status": "completed",
+      "conclusion": "failure",
+      "failedSteps": [
+        "Compiler et tester le Cockpit Live V2"
+      ]
+    },
+    {
+      "id": 136766884267,
+      "name": "Jalon 10 - trois temoins R3 bornes",
+      "status": "completed",
+      "conclusion": "success",
+      "failedSteps": []
+    },
+    {
+      "id": 136766884302,
+      "name": "Robin Experience — preuves visuelles",
+      "status": "completed",
+      "conclusion": "failure",
+      "failedSteps": [
+        "Verifier la publication locale des preuves"
+      ]
+    },
+    {
+      "id": 136772671669,
+      "name": "tests",
+      "status": "completed",
+      "conclusion": "failure",
+      "failedSteps": [
+        "Refuser tout contrôle absent, annulé ou en échec"
+      ]
+    }
+  ],
+  "python": {
+    "passed": 5436,
+    "skipped": 41,
+    "xfail": 1,
+    "seconds": 1166.48
+  },
+  "clientBudget": {
+    "actualLinuxJSBytes": 1351615,
+    "strictLimitBytes": 1350000,
+    "minimumReductionBytes": 1616
+  },
+  "privateEvidence": {
+    "path": "cockpit/.ci/client-budget-corrective-20261121/ci249-terminal.json",
+    "sha256": "52f07f77627cdee72e2111681940c02360dde819b88aebe0b060fbb3bcd25371"
+  },
+  "independentVerification": [
+    "C0",
+    "C2"
+  ],
+  "newCorrectiveHeadCertified": false,
+  "sourceCampaignsUnchanged": true,
+  "merge": false,
+  "deployed": false
+}

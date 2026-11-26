@@ -1,0 +1,42 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.LEGRUPPETTO.RECURRING.R2.E1.20261122",
+  "recordedAt": "2026-11-22T11:46:54.963Z",
+  "status": "E1_REVIEWED_CONDITIONAL_E2_ONLY",
+  "scope": "New separate fixed two-slot LeGruppetto campaign. R1 was not authorized or activated. Native source/parser/Job proofs reused, late PFC fixture excluded by real pinned closure at second slot. No app admission, manual trigger or old grant reuse.",
+  "planSHA256": "87a07786314afe89742cca7a41b6027a9adee38b0e83b5d855711fb2d04dd540",
+  "manifestSHA256": "3b20e6a2149716d279db8bb1de23a50584a80fd2316894e6b43f389177d72db3",
+  "e1ReceiptSHA256": "e6db4ca1bf0e598883c4d96c1ff4b8fe1a9799cbdc338eb31ceaf953dfbbeb45",
+  "sourceClaim": "DATA.SOURCE_OBSERVATORY.LEGRUPPETTO.PERSONAL.CURRENT.E1.R1.PREMATCH.20261122",
+  "slots": [
+    "2026-11-22T12:15:00Z",
+    "2026-11-22T14:15:00Z"
+  ],
+  "taskNames": [
+    "Robin-Tipsters-LeGruppetto-20261122-1215",
+    "Robin-Tipsters-LeGruppetto-20261122-1415"
+  ],
+  "maximumGET": 6,
+  "installationDeadline": "2026-11-22T12:05:00Z",
+  "expiry": "2026-11-22T14:20:00Z",
+  "nativeSchedulerOperations": {
+    "installationReads": 8,
+    "registrations": 2,
+    "postReads": 6,
+    "total": 16
+  },
+  "sourceTaskQueries": 0,
+  "sourceSecondsMax": 180,
+  "installationSecondsMax": 60,
+  "postAuditSecondsMax": 60,
+  "operatorSHA256": "707f24f43c48826a5c04a217625bc63aceaaa192a4339ebfa354f371380dbc13",
+  "autoAdmission": false,
+  "schedulerOriginAttestedByWorker": false,
+  "manualTriggerProhibitedProcedurally": true,
+  "sourceGETAtAuthorization": 0,
+  "reviews": {
+    "C1": "45pins/9AST, original source E1 proof and targeted late-fixture test, writer phase closed.",
+    "C3": "Exact final R2 CODE and pinned closure test PASS; no P0/P1 blocking.",
+    "C4": "Exact final R2 and operator literal delta PASS; adoption of both tasks required before12:05."
+  },
+  "globalDelivery": "PARTIAL"
+}

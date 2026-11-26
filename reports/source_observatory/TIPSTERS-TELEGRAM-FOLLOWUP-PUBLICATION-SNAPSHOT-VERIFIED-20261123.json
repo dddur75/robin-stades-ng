@@ -1,0 +1,47 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.FOLLOWUP.PUBLICATION.SNAPSHOT.VERIFIED.20261123",
+  "missionId": "TELEGRAM_PUBLICATION_SNAPSHOT_REVERIFICATION_E1_20261123",
+  "status": "PORTABLE_REVIEWED_SNAPSHOT_VERIFICATION_ONLY_NO_GIT_AUTHORITY",
+  "scope": "Independent exact40file review snapshot:2source/tests+36engineeringreports+graphledger. Four owning codepath strings only changed to reporelative in one newreport, original retained privately.36newclaim artifacthashes/newnodehashes pass and oldledgerprefix/oldclaims unchanged. Original preparation remainsPARTIAL310.842s>300; distinct verification2.323s doesnotretroactivelyrepair. No new source/payload/privatechoices, CI or Git publication yet.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.CHANNEL.PREFIX.PUBLIC.INTEGRATION.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.CHANNEL.CANDIDATES.LOCAL.E1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LEXICAL.CLI.PROTOCOL.PRIVATE.E1.RESULT.20261123"
+  ],
+  "reviewedProducerFileMapSHA": "e6722f6d2ff3178e85b89acb85767099b63a53cb6874242d7a818fa74bbd03c9",
+  "reviewedProducerFiles": 40,
+  "unchangedNonControlFiles": 38,
+  "newClaimsAtAudit": 36,
+  "ledgerTailRecordsAtAudit": 133,
+  "oldLedgerPrefixUnchanged": true,
+  "oldClaimsUnchanged": true,
+  "newArtifactHashesMatch": true,
+  "newDecisionNodesMatch": true,
+  "absolutePathViolations": 0,
+  "portablePathProjection": {
+    "changedValues": 4,
+    "originalReportSHA": "046c7a542569dee9840bc2c0df2f504e087eb7093bb132a112c4c4acbe16d76f",
+    "portableReportSHA": "9c8cd780332d70cdd68a081db8f32bfe93af92a67197d0ffe388a8984f85e0ea",
+    "sameOtherFactsAndSigners": true
+  },
+  "originalPreparation": {
+    "status": "PARTIAL",
+    "authorSeconds": 310.842,
+    "maximumSeconds": 300
+  },
+  "distinctVerification": {
+    "processes": 1,
+    "authorSeconds": 2.323
+  },
+  "sourceGET": 0,
+  "newAdmittedForecasts": 0,
+  "pendingChannelCandidates": 4,
+  "allCompatibleIntegrated": false,
+  "GitCommit": false,
+  "GitPush": false
+}

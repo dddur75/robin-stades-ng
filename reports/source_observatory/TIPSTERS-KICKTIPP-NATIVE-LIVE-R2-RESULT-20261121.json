@@ -1,0 +1,88 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.KICKTIPP.NATIVE.LIVE.R2.RESULT.20261121",
+  "status": "PARTIAL_FAILED_CLOSED_NO_FURTHER_ATTEMPT_AUTHORIZED",
+  "scope": "Exact second native extraction closure. No author choice fixture binding or personal prediction admitted.",
+  "resultSha256": "8e63e42e72110022d234e0dc917ec050229f1814103788dc68233c6b22cf679a",
+  "journalSha256": "32682e4c7bfe00056aac9f247821bd845750a160dfb93d18a7a835492208abae",
+  "journalHead": "847e824be734f954e143d7e1eac95f2709e0edd294811520e0e61f7b2a312f6b",
+  "journalRecords": 7,
+  "sourceGETReserved": 2,
+  "http200": 2,
+  "newChoices": 0,
+  "bindingEstablished": false,
+  "diagnostic": {
+    "admittedChoices": 0,
+    "bindingEstablished": false,
+    "code": "RANKING_NONRECTANGULAR",
+    "stage": "RANKING_ROWS",
+    "tables": {
+      "ranking": {
+        "omittedShapeBins": 0,
+        "rows": 50,
+        "shapes": [
+          {
+            "count": 1,
+            "kind": "DATA",
+            "spanClasses": [
+              "ABSENT",
+              "NONUNIT"
+            ],
+            "width": 1
+          },
+          {
+            "count": 48,
+            "kind": "DATA",
+            "spanClasses": [
+              "ABSENT"
+            ],
+            "width": 11
+          },
+          {
+            "count": 1,
+            "kind": "HEADER",
+            "spanClasses": [
+              "ABSENT"
+            ],
+            "width": 11
+          }
+        ],
+        "tableCount": 1
+      },
+      "spielplanSpiele": {
+        "omittedShapeBins": 0,
+        "rows": 6,
+        "shapes": [
+          {
+            "count": 5,
+            "kind": "DATA",
+            "spanClasses": [
+              "ABSENT"
+            ],
+            "width": 5
+          },
+          {
+            "count": 1,
+            "kind": "HEADER",
+            "spanClasses": [
+              "ABSENT"
+            ],
+            "width": 5
+          }
+        ],
+        "tableCount": 1
+      }
+    },
+    "visitedElements": 1283
+  },
+  "unknowns": [
+    "Literal span attributes and role of nonrectangular row were not retained; histogram is not a native row contract.",
+    "No global incompatibility conclusion for all Kicktipp contests."
+  ],
+  "rawBodyStored": false,
+  "elapsedBeforeFinalizationMilliseconds": 750,
+  "lastEventAtBeforeItsFsync": "2026-11-21T11:16:03.936699+00:00",
+  "exactDurableCloseTimeUnknown": true,
+  "noNewAttemptAuthorized": true,
+  "newAuthority": false,
+  "recordedAt": "2026-11-21T12:36:31.727506+00:00"
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "robin-local-curated-admission-v2",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.PROFILE609057.ALIAS.LOCAL.APP.ADMISSION.20261125",
+  "status": "CURATED_DATASET_PREPARED_RUNTIME_INACTIVE",
+  "scope": "Two previously retained individual source choices newly qualified using five independently proven club aliases; local dataset proposal only.",
+  "priorCheckpointSHA256": "697e4c9efe010b7c4c584459c024fca623550d0589a519fce2c60a9d71d10b9a",
+  "sourceBatchSHA256": "92938cf01356b007dbf5f5324ca6fba311d68ebdd9f8b87d254c1e4692666d5b",
+  "nativeAuthorId": 609057,
+  "newUniqueAdmitted": 2,
+  "oldPublicChoicesPreserved": 489,
+  "publicChoices": 491,
+  "candidateFiches": 318,
+  "newCandidateFiches": 0,
+  "newPublicAuthor": false,
+  "documentaryPrematchRecertified": false,
+  "sourceReady": false,
+  "recurringCollectionActive": false,
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.RETAINED.ALIAS.QUALIFICATION.20261125",
+    "DATA.SOURCE_OBSERVATORY.UEFA25.FIVE.CLUB.ALIASES.20261125"
+  ],
+  "retainedObservationAt": "2026-11-25T14:25:55.219746+00:00",
+  "qualifiedAt": "2026-11-25T15:03:48.530Z",
+  "missionId": "OLBG609057_ALIAS_LOCAL_APP_ADMISSION_20261125"
+}

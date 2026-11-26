@@ -1,0 +1,56 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.KICKTIPP.NATIVE.HREF.CORRECTION.E1.RESULT.20261124",
+  "missionId": "KICKTIPP_NATIVE_HREF_CORRECTION_E1_20261124",
+  "status": "PASS_AND_HOLD",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Independent engineering acceptance of exact Kicktipp native route/query-name recognition, bounded numeric synthetic values only. No real native value grammar, game semantics, author fixture identity or prematch qualification established.",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.KICKTIPP.STRUCTURAL.DIAGNOSTIC.20261121"
+  ],
+  "files": {
+    "src/robin/source_observatory/kicktipp_linked.py": {
+      "sha256": "978a26132a87730f3d394a6d649bdc23db01980a017dbf425bd2bb461b61f7d3",
+      "bytes": 9518
+    },
+    "tests/source_observatory/test_kicktipp_linked.py": {
+      "sha256": "9ebe45824fd5afe3da233d3c6e5018a581dd645bcc679e5d0d73da7b003fa475",
+      "bytes": 6293
+    }
+  },
+  "before": {
+    "src/robin/source_observatory/kicktipp_linked.py": "b4cc6fb2edced54aa44cee77d4b01d5dbc7d07c9b3948a17c3f8522e66214e62",
+    "tests/source_observatory/test_kicktipp_linked.py": "40d6230b1e587fc1f4ebe51782e5826b0c404e2d3b3722727c2d94c759dbb63a"
+  },
+  "resultSHA": "a81ad8af67a34f57887a1291243c2bdc0891dc88d47e7b386cf962b816fa0499",
+  "authorStoppedAtUTC": "2026-11-24T10:48:45.262950+00:00",
+  "tests": {
+    "expectedRED": 1,
+    "goldenGREEN": 29,
+    "failedGREEN": 0,
+    "syntheticCasesExecuted": 30
+  },
+  "quality": {
+    "golden-domain": 0,
+    "ruff": 0,
+    "mypy": 0,
+    "bandit": 0
+  },
+  "sourceGET": 0,
+  "sourceReady": false,
+  "newAdmissions": 0,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "limitations": [
+    "Exact native path/query-names only. Bounded numeric values are synthetic, not observed.",
+    "Legacy branches unchanged; no native query equality normalization or ID-only join.",
+    "Ranking nonrectangular source issue remains; other contests and actual author/fixture/prematch not qualified.",
+    "Node orchestration caught forbidden node:process import and patch anchor/undefined variable before any production patch or child process; no source/network effects."
+  ],
+  "actualSourceValueGrammar": "UNKNOWN_SYNTHETIC_NUMERIC_SUPPORT_ONLY",
+  "publicCommitted": false,
+  "runtimeCopied": false
+}

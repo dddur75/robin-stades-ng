@@ -1,0 +1,37 @@
+{
+  "generatedAt": "2026-11-23T13:04:01.079Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI264.CORRECTIVE.PUBLICATION.ACTUAL.RESULT.20261123",
+  "missionId": "CI264_DEPENDENCY_TELEGRAM_PUBLICATION_E1_E2_20261123",
+  "status": "ONE_COMMIT_ONE_NONFORCE_PUSH_CONFIRMED_CI265_PENDING",
+  "scope": "C1 FACTS and C4 SCOPE independently reviewed real receipts:17exactapprovedfiles committed and nonforcepushed to existing draftPR133 before strictdeadline, parent27cb/treeexact. NoPRmetadata/source/task/merge/deploy. This verifies publication only; current CI265 remains pending and no source readiness or app delivery is inferred.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V28.ENGINEERING.RECETTE.20261123",
+    "GOV.V31.CI.RUNNER.PROJECTION.20261123.002",
+    "ENG.SOURCE_OBSERVATORY.CI264.DEPENDENCY.ORDER.CORRECTIVE.RESULT.20261123"
+  ],
+  "head": "93e7ea9dd14715f4a99a58ecc8c049ed95ab83db",
+  "parent": "27cb9322c55081008fc11270d960fc58522c18ab",
+  "tree": "2c45bb91c7c42948cd00de104f788e5db8d5415d",
+  "PR": 133,
+  "files": 17,
+  "commits": 1,
+  "nonForcePushes": 1,
+  "PRMetadataUpdates": 0,
+  "commitClosedAt": "2026-11-23T12:58:30.372030+00:00",
+  "pushClosedAt": "2026-11-23T12:58:46.047765+00:00",
+  "effectiveDeadline": "2026-11-23T13:01:46.218535+00:00",
+  "externalPrimarySHA256": "d241e5d55e54f08304316d5b2378f5dfe5904547f54f9e038bb449e424a2a6f2",
+  "CI265": {
+    "runId": 45179387924,
+    "status": "in_progress",
+    "conclusion": null
+  },
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "sourceReady": false
+}

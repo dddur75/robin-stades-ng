@@ -1,0 +1,39 @@
+{
+  "generatedAt": "2026-11-23T13:03:59.438Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.ADMIN.PRIMARY.LATEST.RUNTIME.RESULT.20261123",
+  "missionId": "ADMIN_TELEGRAM_CACHED_ROW_CANARY_E1_20261123",
+  "status": "PRIMARY_RUNTIME_ROW_AND_CACHED_VIEW_TARGETED_ACCEPTED",
+  "scope": "Latest real Telegram oneGET refusal is reflected in current runtime primary row.36rows, only Telegram row changed plus captureheader,35otherrows unchanged; unknown native/football/candidate counts remain null and0admitted. Earlier actualAPI200 datafields equal file with extra status=ok envelope. Targeted browser reuses that actual cached API after rechecking currentfile equivalence:1navigation/1cacheResponse/0backendGET, latestrefusal/nonmesuré/0visible; screenshot inspected byC0/C4.5otherAPIs intentionallyblocked and5consoleerrors recorded without causal attribution;0pageerrors/fullAdminAcceptedfalse. Previous module-name and exact-header-timeout harness failures retained; their planned counts and total actual navigations UNKNOWN, not backfilled. No product bug, fulladmin/source/forecast success inferred.",
+  "keys": [
+    "C0",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.MESSAGE.CONTRACT.NATIVE.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.MESSAGE.PARSER.PUBLIC.INTEGRATION.RESULT.20261123"
+  ],
+  "runtimeSnapshotSHA256": "98b0575a7dbac0877f58990fa05a2e135945ee0bcc3df4f4edddc698588181f4",
+  "sourceObservedClose": "2026-11-23T12:32:05.350716+00:00",
+  "rows": 36,
+  "changedRows": 1,
+  "otherRowsUnchanged": 35,
+  "historicalTgSourceGET": 1,
+  "unknownCountsRemainNull": true,
+  "admitted": 0,
+  "APIHTTPStatus": 200,
+  "APIEnvelopeStatus": "ok",
+  "APIDataFieldsEqualFile": true,
+  "cachedAPIResponses": 1,
+  "backendGET": 0,
+  "browserNavigations": 1,
+  "blockedOtherAPIs": 5,
+  "consoleErrors": 5,
+  "pageErrors": 0,
+  "fullAdminAccepted": false,
+  "screenshotSHA256": "d0a4a55f55fe23d250e7018d8f3ad0f707cbc10d68d80997d19634e68d1500b2",
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "allCompatibleIntegrated": false
+}

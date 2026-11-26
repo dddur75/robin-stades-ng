@@ -1,0 +1,38 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.WITNESS.NATIVE.R1.ACTUAL.RESULT.20261123",
+  "missionId": "TELEGRAM_BEXTRA_WITNESS_NATIVE_R1_20261123",
+  "generatedAt": "2026-11-23T16:45:07.820Z",
+  "status": "PARTIAL_FAIL_AND_REDESIGN_TO_E1",
+  "keys": [
+    "C0",
+    "C1",
+    "C3"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.WITNESS.NATIVE.R1.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.PREFIX.NATIVE.R2.ACTUAL.RESULT.20261123"
+  ],
+  "scope": "OnefixedGET/oneJob1.016s outer0child1 noTimeoutkillconfirmed, sourceclosed16:38:22.137940 inbudget. Newclosedwitness attestsMESSAGE_ID/UNPROVEN/REFUSED/fourisFalseTrue thenconsumerPREFIX_CONTRACT, no parsedfile/admission. PrefixCount0/structuredMessageCount0 describe atomicrefusedprojection NOTcanaltotal/norabsenceofpreviousvalidwrappers. MESSAGE_IDsubbranch(missing/format/channel/duplicate)UNKNOWN,noalias/caseinference; oldR2finecauseUNKNOWN unchanged differentpayload. SECONDsimilarconsumerfailure mandatesFAIL_AND_REDESIGNreturnE1, allquotaSTOP,no3rdunchanged/newSOURCEgrant. No body/cache/nativevaluesread/modelstdoutGit.",
+  "sourceGET": 1,
+  "nativeJobs": 1,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "parserWitness": {
+    "admissibleIsFalse": true,
+    "nativeMarkupContractProvenIsFalse": true,
+    "parserStatus": "UNPROVEN",
+    "personIdentityVerifiedIsFalse": true,
+    "prefixCount": 0,
+    "prefixStopReason": "REFUSED",
+    "refusalReason": "MESSAGE_ID",
+    "schemaVersion": "telegram-parser-witness-v1",
+    "sourceReadyIsFalse": true,
+    "structuredMessageCount": 0
+  },
+  "responseBytes": 98405,
+  "responseSHA256": "fe00961a22e076899704009e7168a10435f559ed908f03613da822e533261049",
+  "observedAtUTC": "2026-11-23T16:38:22.127761+00:00",
+  "closedAtUTC": "2026-11-23T16:38:22.137940+00:00",
+  "primarySHA": "f82be5791e4c7e0fd8632279b8b312a0303a92420e07f5255b82a0ce37648c93",
+  "resultSHA": "b3d89f1a40b57684d0bfa074a435829d411853f24850ac7a8f81bca3e1879f27"
+}

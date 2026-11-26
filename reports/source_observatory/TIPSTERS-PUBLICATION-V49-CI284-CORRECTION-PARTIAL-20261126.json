@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "robin-publication-ci-correction-proposal-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.PUBLICATION.V49.CI284.CORRECTION.PARTIAL.20261126",
+  "missionId": "TIPSTERS_PUBLIC_CI284_CORRECTION_V49_20261126",
+  "status": "PARTIAL_LOCAL_TARGETED_CHECKS_PASS_REVIEWS_AND_EXACT_HEAD_CI_PENDING",
+  "at": "2026-11-26T08:09:27.060720+00:00",
+  "namespace": "PUBLICATION_CI_CORRECTION_PROPOSAL_NOT_RUNTIME",
+  "author": "C3",
+  "baseCommit": "441e3514ec1972038e192043fb4b46fa6745b596",
+  "priorCI": {
+    "runId": 45777816751,
+    "failedJobId": 139767132636,
+    "scope": "Chronos provider-free Cockpit",
+    "reportedBundleBytes": 1350991
+  },
+  "causes": [
+    {
+      "issue": "Client route bundle exceeds unchanged1350000byte budget",
+      "cause": "792 timeline windows repeat fixtureId and kickoffAt already present on their66 parent matches.",
+      "fix": "Share parent metadata only on strict exact equality; decoder restores every original field and rejects marker/field collisions. Mismatches remain explicit."
+    },
+    {
+      "issue": "Data-URL test import ERR_INVALID_URL",
+      "cause": "Catalogue gained relative multi/finite module imports absent from the test loader rewrite graph.",
+      "fix": "Bind those modules and their local transitive dependencies to reviewed data URLs; keep all original16 assertions."
+    },
+    {
+      "issue": "Windows descriptor bytes differ from reviewed LF pin",
+      "cause": "This config JSON had no LF checkout rule.",
+      "fix": "One exact .gitattributes LF rule and original reviewed LF bytes; no hash guard change."
+    },
+    {
+      "issue": "Inherited R4/R5 qualification strings contain mojibake",
+      "cause": "Public helper literals were incorrectly encoded.",
+      "fix": "Only applyMultiQualification literals repaired using ASCII Unicode escapes; no private reader or authority changed."
+    }
+  ],
+  "localChecks": {
+    "build": {
+      "command": "pnpm exec vinext build",
+      "exit": 0,
+      "log": {
+        "path": "cockpit/.ci/ci284-c3-correction-20261126/bundle-after.log",
+        "sha256": "c30d8329590623353d249cd16eaafafd20a2136b864bc7a8af8a3c64f06e17c4"
+      },
+      "mode": "EXISTING_PREPARED_PRESENTATION_NO_SUCCESSFUL_GENERATOR_REBUILD"
+    },
+    "twoCITests": {
+      "command": "node --test tests/rendered-html.test.mjs tests/reviewed-source-observation.test.mjs",
+      "passed": 9,
+      "failed": 0,
+      "log": {
+        "path": "cockpit/.ci/ci284-c3-correction-20261126/two-ci-tests.log",
+        "sha256": "55df1827052ebe1819b88d5a5878cdb967b6608142fd17c5f3633eb4f7034917"
+      }
+    },
+    "wireTests": {
+      "command": "pnpm exec tsx --test tests/presentation-wire.test.ts",
+      "passed": 7,
+      "failed": 0,
+      "log": {
+        "path": "cockpit/.ci/ci284-c3-correction-20261126/presentation-wire-test.log",
+        "sha256": "011d0682c507b7b2553b648463b4c1e2198cf919558044b93dd11c1580f330a6"
+      }
+    },
+    "bundle": {
+      "localBeforeBytes": 1358805,
+      "localAfterBytes": 1304988,
+      "reductionBytes": 53817,
+      "limitBytes": 1350000,
+      "largestChunkBytes": 493220,
+      "largestLimitBytes": 600000,
+      "sharedMatches": 66,
+      "sharedWindows": 792
+    },
+    "sourceGET": 0,
+    "Task": 0,
+    "APP": 0,
+    "GitCommit": 0,
+    "GitPush": 0
+  },
+  "artifact_hashes_delta": {
+    ".gitattributes": "2e9bf1daa5f10de2948fdabcc4cf5c7441a8fa5895af7b1f2928779407bca6f8",
+    "cockpit/app/cockpit-presentation-client.json": "9613bff78132fb4ae745de6af35036f8d6f25724fc2b8a41346d3c2095d58492",
+    "cockpit/app/lib/presentation-wire.ts": "c58f52de018e69b11aea7568eca2ed9ab16834de24c46f5cc9f0738b88a1db34",
+    "cockpit/scripts/olbg-r4-capture.ts": "6737afcaa49b33180ee959ab662ca0bed8c65e87b952fcbf64c1adcd9c1469ef",
+    "cockpit/scripts/olbg-r5-capture.ts": "04c70096ebe8abbb420dccc52bc3ab9cbf582c0656e0c8d3f7bd618ec37b6647",
+    "cockpit/tests/presentation-wire.test.ts": "9b6253aa6236edb748f391a59668fbbe3a54d91c4c67fe708de12f19c9497674",
+    "cockpit/tests/reviewed-source-observation.test.mjs": "bff8a58f0868e3da287d5fb4cac67a33b328e11d7f8e1c330dff9edcf9679259"
+  },
+  "baseFrozenOwnership": {
+    "claimId": "ENG.SOURCE_OBSERVATORY.PUBLICATION.V48.835.R5.PORTABLE.PROJECTION.20261126",
+    "artifactCount": 704,
+    "reportSHA256": "dca638b3c1863c4743c4d3a3301b46abb86f67070e0afef87517aa5a9d168895",
+    "unchanged": true
+  },
+  "requiredIndependentReviewers": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "reviewReceipts": [],
+  "authorChecksAreNotIndependentAcceptance": true,
+  "proposedSuccessorOnly": true,
+  "publicGraphRegistrationPending": true,
+  "publicApprovalsActive": false,
+  "allCompatibleIntegrated": false,
+  "globalDelivery": "PARTIAL",
+  "SourceGET": 0,
+  "APP": 0,
+  "Task": 0,
+  "GitCommit": 0,
+  "GitPush": 0,
+  "limits": [
+    "No new full suite, source/corpus replay, provider request or running application mutation.",
+    "The two CI test files and the wire contract test passed locally; no successful new exact-head remote CI is claimed.",
+    "Prepared projection is roundtripped exactly. Initial standard build:data attempt stopped with HYPOTHESIS_NODE_BUILD_FAILED; no successful hypothesis regeneration is claimed or reused.",
+    "No new independent keys/grants are created by this author report. C0/C1/C4 must review before any commit/push.",
+    "V48 frozen704map and all private/runtime sources remain historical and untouched."
+  ]
+}

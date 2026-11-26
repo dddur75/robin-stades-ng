@@ -1,0 +1,27 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.APP.UI.HMR.REDESIGN.R3.ACTUAL.PARTIAL.20261123",
+  "missionId": "SOURCE_OBSERVATION_UI_HMR_REDESIGN_R3_20261123",
+  "status": "PARTIAL_ADMIN_UNACCEPTED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Two real views (catalogue/candidate) passed; admin unaccepted. All3 backend responses fulfilled, zero pageerrors. WAIT_ADMIN not fine-grained, so exact expired assertion unknown. Rowheader contains label+date; use semantic prefix instead of exact text. Console6 not causally assigned to6 blocked APIs.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.APP.UI.HMR.REDESIGN.R3.E1.RESULT.20261123"
+  ],
+  "primarySHA": "f98db0ee3e771bca257dc225da6402502f63cd41c7685d8e5e8f70108c54a56b",
+  "diagnosticSHA": "32e845b70a634bbeb64e3aeb4cea503ac24c9fa47273b92d095a1b1477318de7",
+  "exit": 1,
+  "viewsAccepted": 2,
+  "backendReservations": 3,
+  "APIHeaderResponses": 3,
+  "APIFulfills": 3,
+  "HMRReservations": 2,
+  "pageErrorEvents": 0,
+  "consoleErrors": 6,
+  "otherAPIBlocked": 6,
+  "sourceGET": 0,
+  "admissions": 0
+}

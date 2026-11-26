@@ -1,0 +1,163 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI259.EXACT.HEAD.RESULT.20261122",
+  "recordedAt": "2026-11-22T15:50:05.296Z",
+  "status": "PUBLISHED_COMMIT_CI_FAILED_VISUAL_CONTRACT",
+  "scope": "Exact head8dd2 CI259 terminal failure;15 successful jobs, one visual job failure from2 stale synthetic UI contracts and one consequential aggregate gate failure. Local corrections have independent two-case PASS receipt; no claim old CI was rerun/fixed.",
+  "head": "8dd2ea38a164c65ef64e69cf938e5aaf6f3d9901",
+  "runId": 45036992965,
+  "runNumber": 259,
+  "runURL": "https://github.com/dddur75/robin-stades-ng/actions/runs/45036992965",
+  "terminalRun": {
+    "status": "completed",
+    "conclusion": "failure",
+    "observedAt": "2026-11-22T15:47:47.351Z"
+  },
+  "jobs": [
+    {
+      "id": 137252834966,
+      "name": "Jalon 10 - entrees de preuve gelees",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137252835101,
+      "name": "Residual Fault Matrix",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137252835121,
+      "name": "Chronos PostgreSQL profiles / tests (non_superuser_createrole)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137252835158,
+      "name": "Chronos PostgreSQL profiles / Chronos source and activation",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137252835192,
+      "name": "Chronos PostgreSQL profiles / tests (superuser)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137252835205,
+      "name": "End-to-End Live Path Replay",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137252835217,
+      "name": "Historical Deep — contrat cache-only",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137252835223,
+      "name": "Historical Authority Workflows Disabled",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137252835246,
+      "name": "Exact Workflow Entrypoint",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137252835353,
+      "name": "Bounded live canary - Windows",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137252835390,
+      "name": "Bounded live canary - Ubuntu",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137252835503,
+      "name": "Chronos PostgreSQL profiles / Chronos static contracts",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137254386717,
+      "name": "Chronos PostgreSQL profiles / Chronos provider-free Cockpit",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137254877135,
+      "name": "Robin Experience — preuves visuelles",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 137254877188,
+      "name": "Jalon 10 - trois temoins R3 bornes",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137254877197,
+      "name": "Quality and domain tests",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137260895366,
+      "name": "tests",
+      "status": "completed",
+      "conclusion": "failure"
+    }
+  ],
+  "counts": {
+    "total": 17,
+    "success": 15,
+    "failure": 2,
+    "incomplete": 0
+  },
+  "visual": {
+    "passed": 107,
+    "failed": 2,
+    "skipped": 2,
+    "jobId": 137254877135
+  },
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.CI259.VISUAL.FAILURE.20261122",
+    "ENG.SOURCE_OBSERVATORY.CI259.VISUAL.CONTRACT.LOCAL.RECETTE.20261122"
+  ],
+  "watch": {
+    "startedAt": "2026-11-22T15:10:27.217668+00:00",
+    "closedAt": "2026-11-22T15:47:47.351Z",
+    "readCalls": 13,
+    "maximumReadCalls": 90,
+    "maximumSeconds": 2700,
+    "elapsedSeconds": 2240.134,
+    "workflowReruns": 0
+  },
+  "publication": {
+    "commits": 1,
+    "nonForcePushes": 1,
+    "PRMetadataUpdates": 1,
+    "knownPushCalls": 9,
+    "files": 47,
+    "merge": 0,
+    "deployment": 0
+  },
+  "primaryResultHashes": {
+    "run": "cb41a097caf03d46f35c3b5f435c43c259ba5c6e357891df07a266233df2af0c",
+    "jobs": "a64b28bef91532f84379f0435f88119fefa51b5dfafb5393e0a192f0d649c86e",
+    "logs": "3b35350c7fce7a315d11384a321676275e108024b359ff66f96edec4d189f8ca"
+  },
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "globalDelivery": "PARTIAL",
+  "independentReview": "C3 and C4 exact terminal run/job primaries PASS as failure evidence:17complete15success2failed,13reads bounded,onecommit/push/body only. No old CI rerun."
+}

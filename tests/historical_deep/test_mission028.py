@@ -88,8 +88,24 @@ def test_once_only_even_after_failure_and_new_collector(crash):
     assert provider.calls == budget.total == 1
 
 
-def test_entrypoint_then_replay_uses_durable_cache_without_http(monkeypatch, tmp_path):
+@pytest.mark.parametrize(("instant", "expected_exit"), [
+    (datetime(2026, 11, 24, 12, tzinfo=UTC), 0),
+    (datetime(2026, 11, 25, tzinfo=UTC), 2),
+], ids=["valid-cache-replay", "expired-before-census"])
+def test_entrypoint_then_replay_uses_durable_cache_without_http(
+    monkeypatch, tmp_path, instant, expected_exit,
+):
+    from robin.historical_deep import provider, quota
     from scripts import run_mission028 as run
+
+    class FrozenDateTime(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return instant.astimezone(tz) if tz is not None else instant.replace(tzinfo=None)
+
+    for module in (run, provider, quota):
+        monkeypatch.setattr(module, "datetime", FrozenDateTime)
+    monkeypatch.delenv("MISSION028_REPLAY", raising=False)
     store, endpoints = InMemoryObjectStore(), []
     locks = dict(STORAGE_PAUSED="true", P3_P4_PAUSED="true", PRODUCTION_LOCKED="true",
         REAL_BETS="false", NO_BET_DEFAULT="true", PROMOTION_LOCKED="true",
@@ -115,7 +131,15 @@ def test_entrypoint_then_replay_uses_durable_cache_without_http(monkeypatch, tmp
         return SimpleNamespace(status_code=200, headers={}, json=lambda: {"response": response})
 
     monkeypatch.setattr(run.requests, "get", get)
-    assert run.main() == 0
+    assert run.main() == expected_exit
+    if expected_exit == 2:
+        receipt = json.loads((tmp_path / "public-receipt.json").read_text())
+        assert receipt["status"] == "PARTIAL"
+        assert receipt["reason_code"] == "API_FOOTBALL_STATUS_INVALID"
+        assert receipt["calls"] == 0 and receipt["status_calls"] == 1
+        assert endpoints == ["status"]
+        assert not tuple(store.iter_keys(f"{run.PREFIX}/requests/"))
+        return
     assert endpoints == ["status"] + ["fixtures"] * 6
     receipt = json.loads((tmp_path / "public-receipt.json").read_text())
     assert receipt["calls"] == 6 and receipt["status_calls"] == 1

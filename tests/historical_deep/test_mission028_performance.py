@@ -155,26 +155,30 @@ def test_worker_deadline_is_partial_success_but_real_errors_fail(monkeypatch, tm
         assert not tuple(store.iter_keys(f'{run.PREFIX}/pause/'))
 
 
-@pytest.mark.parametrize('age,remaining,new_call', [(20, 100, 0), (94, 16, 1), (20, 90, 1), (10, 99, 1)])
-def test_preflight_requires_full_slice_plus_margin(monkeypatch, tmp_path, age, remaining, new_call):
+@pytest.mark.parametrize('hour,age,remaining,new_call', [
+    (12, 20, 100, 0), (12, 94, 16, 1), (12, 20, 90, 1), (12, 10, 99, 1),
+    (0, 20, 100, 1),  # A cached status from the previous UTC day must be renewed.
+])
+def test_preflight_requires_full_slice_plus_margin(monkeypatch, tmp_path, hour, age, remaining, new_call):
     import json
 
     from robin.historical_deep.contracts import ProviderStatus
+    now = datetime(2026, 11, 18, hour, tzinfo=UTC)
     class Clock(datetime):
         @classmethod
         def now(cls, tz=None):
-            return NOW
+            return now
     store, calls = InMemoryObjectStore(), []
     manifest = tmp_path / 'mapping.json'
     manifest.write_bytes(b'synthetic mapping')
     def proof(checked, expiry):
         return ProviderStatus(plan='Mega', active=True, daily_limit=150000, daily_used=0,
             daily_remaining=150000, checked_at=checked, expires_at=expiry)
-    old = proof(NOW - timedelta(minutes=age), NOW + timedelta(minutes=remaining))
+    old = proof(now - timedelta(minutes=age), now + timedelta(minutes=remaining))
     store.put_if_absent(f'{run.PREFIX}/preflight/old.json', old.model_dump_json().encode())
     def client(**kwargs):
         calls.append(kwargs['status_ttl_seconds'])
-        return SimpleNamespace(get_status=lambda: proof(NOW, NOW + timedelta(seconds=kwargs['status_ttl_seconds'])))
+        return SimpleNamespace(get_status=lambda: proof(now, now + timedelta(seconds=kwargs['status_ttl_seconds'])))
     for name, value in dict(datetime=Clock, OUTPUT=tmp_path, MANIFEST=manifest, load_mapping=lambda: [],
             R2ObjectStore=lambda env: store, assert_safety_locks=lambda env: None, ApiFootballDeepClient=client).items():
         monkeypatch.setattr(run, name, value)

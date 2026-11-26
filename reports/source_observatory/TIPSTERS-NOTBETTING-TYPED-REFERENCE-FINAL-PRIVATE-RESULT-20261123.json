@@ -1,0 +1,28 @@
+{
+  "generatedAt": "2026-11-23T09:15:47.228Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.TYPED.REFERENCE.FINAL.PRIVATE.RESULT.20261123",
+  "missionId": "NOTBETTING_TYPED_REFERENCE_FINAL_E1_20261123",
+  "status": "FINAL_PRIVATE_OPTIONAL_DIAGNOSTIC_VERIFIED",
+  "scope": "Nine final synthetic variants and36 qualifier calls compare parent/OFF/ON/throwing sink, including one positive qualified synthetic. Old four-field observer/results unchanged. Resolve failure depth/count set null by reviewed code; no dedicated dynamic null assertion claimed. Families lexical only, not native semantic/version/cause proof. No source or public/runtime integration.",
+  "keys": [
+    "C0",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.TYPED.REFERENCE.WITNESS.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.DIAGNOSTIC.NATIVE.R1.ACTUAL.RESULT.20261123"
+  ],
+  "qualifierSHA256": "4eb49dbbe96d8c5a710bf5b8169993429bf74055816c368df3d366a4cc6e573f",
+  "primarySHA256": "d743d90aa2d8df35ee2628c49f396a4a841e802c8a8d924ecc6b57b0c93306ad",
+  "testsPassed": 9,
+  "qualifierCalls": 36,
+  "syntheticPositiveQualified": 1,
+  "actualNewForecasts": 0,
+  "criticalRuffExit": 0,
+  "unknownResolveDepthAndCount": "NULL_BY_STATIC_REVIEW",
+  "authorStatus": "STOP",
+  "frozenAt": "2026-11-23T09:05:11.244Z",
+  "sourceGET": 0,
+  "sourceReady": false
+}

@@ -1,0 +1,60 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.PROCESS.CHAIN.TARGETED.ENGINEERING.RESULT.20261124",
+  "status": "TARGETED_SYNTHETIC_ENGINEERING_PASS_NATIVE_BINDING_PENDING",
+  "scope": "Private parent, child loader and receipt readers targeted engineering, with exact fail-closed public-package import closure. Sixteen successful methods across immutable reviewed scopes, no replay of previous successes. Not actual native Source, TLS, Windows Job, recurring activation or whole-workbook delivery.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.PROCESS.CHAIN.SYNTH.R2.PARTIAL.RESULT.20261124",
+    "DATA.SOURCE_OBSERVATORY.UEFA.25NOV.PRIMARY.CALENDAR.20261124",
+    "ENG.SOURCE_OBSERVATORY.CI278.EXACT.HEAD.SUCCESS.RESULT.20261124"
+  ],
+  "methods": {
+    "parent": 4,
+    "bridge": 6,
+    "nodeReaders": 2,
+    "closedLoader": 1,
+    "staticClosureMicrotest": 1,
+    "pythonReaders": 2,
+    "total": 16
+  },
+  "codePins": {
+    "parent": "aaef130014a3eb7dc3c86561c76de3d675c9f08d1f9a95d28a74926570bfc727",
+    "child": "dcc79a2baf1c79b8abc2318b3ae9cd2ff1bf678bad1afa1d9703053a42fbd97a",
+    "rootWrapper": "82b2b2f9e679719e5e194175e94ff3ae1bd29cd584dde790b0b9cc2f0167a4a9",
+    "pythonBatchReader": "a2161b7e1d385ace66d65caa673af61711efff49f9d7195b203226e76d264fe3",
+    "typescriptCompanion": "05125409456d7120fb7909f64c4a407fa14519761928fd10da85de6c8dda087c"
+  },
+  "actualReceipts": {
+    "R3Result": "267287c06485bbdb6d8a3b55647a361fe78bedf926ec04f4bffae089b686b07a",
+    "R3STOP": "ae5915d981561500d6b0f728a0ea137aec26dd1b1a396c34546b0ff1828a0b2c",
+    "R3Close": "08d71be761376cc3f9be43dad50eeaf1f9d63d1260e15d0031b7af0492225ffb",
+    "conditionalPrimary": "808c56716fe49a8df790bc25fea34470956076f6909dd694afc2871185ef1846"
+  },
+  "importProof": {
+    "modules": 32,
+    "closedEdges": 168,
+    "bytes": 412046,
+    "staticProofSHA": "0d353cdc73967a256c81d45bc17cfab0116215efaf38f216a59fd7b93c8e8492",
+    "dynamicImportsProven": false,
+    "syntheticReaderImportedRealPublicPackage": true,
+    "privateReaderOverrideOnly": true,
+    "sourceMustUsePublicBatchReader": true
+  },
+  "quality": {
+    "targetedRuff": "PASS",
+    "parentBridgeStrictMypy4": "PASS_REUSED",
+    "qualifiedReaderMypy": "PASS_REUSED",
+    "BanditDefault5": "PASS_WITH_7_REVIEWED_LOCAL_EXCLUSIONS_AND_WARNINGS_REUSED",
+    "BanditR6Only": "PASS_3_LOCAL_EXCLUSIONS_WARNINGS_RETAINED",
+    "typescriptTypeAndLint": "PASS_REUSED_IDENTICAL_BYTES"
+  },
+  "actualSourceGET": 0,
+  "actualJob": 0,
+  "actualNativeTLSProven": false,
+  "defaultNativeSourcePolicyBindingProven": false,
+  "applicationAdmissions": 0,
+  "recurringCollectionActive": false,
+  "automaticParentProofIOEnabled": false,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "remaining": "Fresh fixed context adoption and real parent/slot policy authorization, strict TLS/Job canary and C0 observed root-wrapper exit0 before distinct local app adoption."
+}

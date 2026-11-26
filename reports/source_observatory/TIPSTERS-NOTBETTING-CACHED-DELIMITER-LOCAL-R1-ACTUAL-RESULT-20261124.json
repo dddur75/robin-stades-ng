@@ -1,0 +1,44 @@
+{
+  "applicationAdmissions": 0,
+  "authorityClosed": true,
+  "closedAtUTC": "2026-11-24T07:45:15.158815+00:00",
+  "counts": {
+    "codeReads": 4,
+    "network": 0,
+    "payloadReads": 1,
+    "spawn": 0
+  },
+  "diagnoseCalls": 1,
+  "diagnostic": {
+    "admissions": 0,
+    "literalEmDashCount": 0,
+    "literalEnDashCount": 0,
+    "literalHyphenCount": 0,
+    "parentSeparatorMatches": 0,
+    "parentSplitParts": 1,
+    "sourceReady": false,
+    "spacedVCount": 0,
+    "spacedVsCount": 0,
+    "spacedVsDotCount": 0,
+    "status": "UNQUALIFIED"
+  },
+  "missionId": "NOTBETTING_CACHED_DELIMITER_LOCAL_R1_20261124",
+  "payloadMutations": 0,
+  "retry": false,
+  "sourceGET": 0,
+  "status": "PARTIAL",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.CACHED.DELIMITER.LOCAL.R1.ACTUAL.RESULT.20261124",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Onepinnedcachedrecordlexicalstatistics only. Listedliteralcounts0/parentparts1; no inferenceofalternativegrammar/absence/canonicalfixture/date/person/qualification. Onepayloadread4code/1call/source0/admissions0.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.EVENT.DELIMITER.STATS.PRIVATE.CODE.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CACHED.FIXTURE.LOCAL.R1.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PL.NATIVE.R2.ACTUAL.RESULT.20261124"
+  ],
+  "receiptSHA": "f049309dde68950f20499b845b9186b6a80c47e8fc1748c3fd218ad33e307fff",
+  "reviewersDidNotReadPayload": true
+}

@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-11-23T09:29:56.386Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG648433.FUTURE.L1.WHOLECALLER.PRIVATE.PARTIAL.20261123",
+  "missionId": "OLBG648433_FUTURE_L1_WHOLECALLER_PRIVATE_E1_20261123",
+  "status": "PARTIAL_PRIVATE_WHOLECALLER_NATIVE_BINDING_UNPROVEN",
+  "scope": "Modern bounded caller wired to frozen OLBG probe/helper and contextual future9 calendar. Six final tiny cases over two runs, two real helper loads and14 fake HTTP callbacks total(7perrun, correcting erroneous8 in SCOPE). Three test/ruff processes versus7 shell cells under declared5targetedcommands remains disclosed ambiguous; final Ruff preceded row-margin guard. No native source/TLS/Job/full binding tested. Private20/128KiB candidates only, native UTC/admission false.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG648433.FUTURE.L1.COMPONENTS.PRIVATE.PARTIAL.20261123",
+    "DATA.SOURCE_OBSERVATORY.OLBG.SINGLE.PERSONAL.REP.V2.PREMATCH.RESULT.20261122",
+    "DATA.SOURCE_OBSERVATORY.LIGUE1.J12.OFFICIAL.SCHEDULE.DOCUMENTARY.20261122",
+    "ENG.SOURCE_OBSERVATORY.FUTURE.L1.CALENDAR.CONTEXTUAL.POLICY.20261122"
+  ],
+  "resultSHA256": "9a6bbe8075e98b6c42c75425e223018c4c87d3a4e3a3265d5ef4c9c6820f663d",
+  "codeMapCAN": "b4dd29ccd5cd3ecdc2b0f4a32d2748f166b75341902a6bec8461f2db22e59d88",
+  "testsUnique": 6,
+  "testRuns": 2,
+  "fakeHTTPCallbacks": 14,
+  "targetedTestRuffProcesses": 3,
+  "shellCells": 7,
+  "declaredTargetedCommandsMax": 5,
+  "commandBudgetInterpretation": "UNRESOLVED_PARTIAL",
+  "sourceGET": 0,
+  "nativeUTCProof": false,
+  "applicationAdmission": false,
+  "sourceReady": false
+}

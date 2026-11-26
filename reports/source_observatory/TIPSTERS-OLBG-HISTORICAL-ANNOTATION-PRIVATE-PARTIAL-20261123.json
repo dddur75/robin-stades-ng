@@ -1,0 +1,48 @@
+{
+  "missionId": "OLBG_ONE_HISTORICAL_ANNOTATION_PRIVATE_E1_20261123",
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.HISTORICAL.ANNOTATION.PRIVATE.PARTIAL.20261123",
+  "status": "ACCEPTED_PRIVATE_SYNTHETIC_PROPOSAL_INTEGRATION_HOLD",
+  "scope": "ONE_HISTORICAL_COMPANION_PROPOSAL_NO_REAL_ANNOTATION_ADMISSION",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "writer": "C3",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.ONE.PROGRAMME.AUTHOR.NAMESPACE.FIX.RESULT.20261123"
+  ],
+  "authorStoppedAt": "2026-11-23T05:34:02.655653+00:00",
+  "elapsedSeconds": 293.308737,
+  "codeMapCanonicalSHA256": "6a72620baa95f2310dd98f2ce007a00d249e03f421c631ff7332d2848f7c71dd",
+  "resultSHA256": "66caef91d6c1e6f9a6665fe9f46ddc8149002b3ff0e8cddd51d6b9589390de7d",
+  "moduleSHA256": "c998aa8a71ec57343ff36cdf560b1aca51a655dd6a030ea5c30a9073f9811a83",
+  "actualMembershipSHA256": "33e5dac82198b660ad3370b63d789672e0abe64e0821029bb153f0bd0c357dfb",
+  "actualMembershipUnique": true,
+  "actualMembershipLookups": 1,
+  "actualTSApplication": false,
+  "sourceGET": 0,
+  "newFutureForecasts": 0,
+  "appChanges": 0,
+  "sourceReady": false,
+  "tests": {
+    "rows": 3,
+    "syntheticCases": 13,
+    "targetedRuns": 1,
+    "testExit": 0,
+    "typecheckExit": 0
+  },
+  "limits": [
+    "Private proposed code/descriptor only. NO public/runtime/ledger mutation or actual annotation admission. Independent C0CODE/C1FACTS/C4SCOPE required.",
+    "One approved snapshot read, ID hash lookup only, target row compared/hashed; no other row semantic requalification or fixture replay. Native names/picks/markets/clocks never printed.",
+    "Actual target membership proven; actual TS application to real row was not executed. Python-canonical target row hash versus JavaScript canonical serialization remains to verify during separate actual masked projection (numeric serialization may differ).",
+    "13synthetic tests verify atomic mismatch rejection, field/clock preservation and microsecond UTC compare; no actual UI/build/browser/reader fullproject typecheck performed. Module-only typecheck result recorded honestly.",
+    "No publication/native timezone/actualKO/programme stability/known-at-capture/performance/current-future/sourceReady/recurrence promotion."
+  ],
+  "codeReviewFindings": [
+    "Proposed plugin introduces unrelated UTF8 mojibake; preserve baseline text before any integration.",
+    "Historical row UI must replace unconditional before-match/kickoff language with retained-official-programme wording.",
+    "Actual row/versions hashes use Python canonical JSON; JavaScript correspondence and real one-row application remain unproven."
+  ],
+  "scaleCondition": "New masked one-row projection and corrected proposed integration, then independent C0CODE C1FACTS C4SCOPE before any app admission."
+}

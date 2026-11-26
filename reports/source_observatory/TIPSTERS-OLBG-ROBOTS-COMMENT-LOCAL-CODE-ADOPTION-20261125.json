@@ -1,0 +1,26 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.ROBOTS.COMMENT.LOCAL.CODE.ADOPTION.RESULT.20261125",
+  "status": "EXACT_REVIEWED_LOCAL_WORKING_CODE_ADOPTED",
+  "scope": "One reversible public working-file update from reviewed SYNTH+quality-tested bytes, without Git or Source effects.",
+  "target": "src/robin/source_observatory/olbg_opaque_campaign.py",
+  "beforeSHA": "e7ffd0b4d21b0262a6afd87e9635316cc4dcf907109f3c057e2cc5f6c1362d9a",
+  "afterSHA": "35da8e71a65b19ba6d53652d16484975c5c444e0bf60f9504dda7de250a80e90",
+  "backupSHA": "e7ffd0b4d21b0262a6afd87e9635316cc4dcf907109f3c057e2cc5f6c1362d9a",
+  "sourceFileWrites": 1,
+  "otherTrackedSourceDiffPathsPreserved": true,
+  "proofClaimId": "ENG.SOURCE_OBSERVATORY.OLBG.ROBOTS.COMMENTS.CLOSEDSTOP.TARGETED.ENGINEERING.RESULT.20261125",
+  "resultSHA": "4423d8247fe293b0b0e7c59908eb1ecd327e44956e9c5ed6b898e4a9a278f17e",
+  "stopSHA": "65c866e65e6c0492ba81832e6bbcc9d7fc05687ae4195569b6057e2db3077a30",
+  "SourceGET": 0,
+  "APP": 0,
+  "Task": 0,
+  "GitMutations": 0,
+  "newTests": 0,
+  "sourceReady": false,
+  "allCompatibleIntegrated": false,
+  "limitations": [
+    "Working code only; not committed or pushed",
+    "No current native cause, collection success or recurring readiness inferred",
+    "A new owning projection is required before future publication"
+  ]
+}

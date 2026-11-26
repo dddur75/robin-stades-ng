@@ -1,0 +1,88 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.ADMIN.CONSOLE.DIAGNOSTIC.E1.RESULT.20261124",
+  "missionId": "OLBG_ADMIN_SINGLE_VIEW_CONSOLE_DIAGNOSTIC_E1_20261124",
+  "status": "PASS_AND_HOLD_DIAGNOSTIC_ONLY",
+  "scope": "Actual one-view ADMIN diagnostic confirms17pending articles/39qualification rows and exactly3FAILED_FETCH console events with HTTP503 for PILOT/CONNECTORS/RECURRING. No hydration/404/import/page error. Native backend configuration cause remains to be tested, not UI completion. No server lifecycle, data/code/source or admissions.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.FICHE.DOM.ADMIN.PARTIAL.ACTUAL.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.RUNNING.SERVER.READONLY.METADATA.E1.RESULT.20261124"
+  ],
+  "result": {
+    "admissions": 0,
+    "closedAtUTC": "2026-11-24T15:31:50.160860+00:00",
+    "codeWrites": 0,
+    "dataWrites": 0,
+    "diagnostic": {
+      "closedAtUTC": "2026-11-24T15:31:49.821Z",
+      "consoleKinds": {
+        "FAILED_FETCH": 3,
+        "HTTP404": 0,
+        "HYDRATION_MISMATCH": 0,
+        "IMPORT_RESOLUTION": 0,
+        "INVALID_HOOK": 0,
+        "OTHER": 0,
+        "SSR_RENDER_ERROR": 0
+      },
+      "globalUIRecette": false,
+      "httpErrors": [
+        {
+          "count": 1,
+          "kind": "RECURRING",
+          "status": 503
+        },
+        {
+          "count": 1,
+          "kind": "CONNECTORS",
+          "status": 503
+        },
+        {
+          "count": 1,
+          "kind": "PILOT",
+          "status": 503
+        }
+      ],
+      "panelArticleCount": 17,
+      "processLifecycleMutations": 0,
+      "qualificationRows": 39,
+      "rawValuesLogged": false,
+      "screenshots": 0,
+      "sourceGET": 0,
+      "stats": {
+        "blockedExternal": 0,
+        "blockedWebSockets": 0,
+        "blockedWrites": 0,
+        "consoleErrors": 3,
+        "droppedClientHMRFrames": 0,
+        "localGET": 88,
+        "localHMRSockets": 1,
+        "pageErrors": 0,
+        "requestCapHit": false
+      },
+      "status": "ADMIN_DIAGNOSTIC_COMPLETE"
+    },
+    "job": {
+      "activeSecondsMax": 50,
+      "elapsedSeconds": 1.875,
+      "exit": 0,
+      "hardSeconds": 60,
+      "sourceGET": null,
+      "subtreeKillConfirmed": true,
+      "taskMutations": 0,
+      "timedOut": false
+    },
+    "missionId": "OLBG_ADMIN_SINGLE_VIEW_CONSOLE_DIAGNOSTIC_E1_20261124",
+    "processLifecycleMutations": 0,
+    "sourceGET": 0,
+    "status": "DIAGNOSTIC_COMPLETE"
+  },
+  "resultSHA256": "9f166d60efb6f443f3c4a41dac16d0adc84b004c6941d6afcc15ea57ac01f47b",
+  "stopSHA256": "1fce5e34d57d519cb730922f69e5eb9a7bc1c4d2b0041cc333a1275f38960d0d",
+  "admissions": 0,
+  "sourceReady": false,
+  "authorityClosed": true
+}

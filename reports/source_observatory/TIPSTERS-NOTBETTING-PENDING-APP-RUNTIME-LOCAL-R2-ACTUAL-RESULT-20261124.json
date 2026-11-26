@@ -1,0 +1,91 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.APP.RUNTIME.LOCAL.R2.ACTUAL.RESULT.20261124",
+  "missionId": "NOTBETTING_PENDING_APP_RUNTIME_LOCAL_R2_20261124",
+  "status": "PARTIAL",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.APP.PUBLIC.INTEGRATION.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PL.NATIVE.R2.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PL.PENDING.ADMIN.LOCAL.ROUNDTRIP.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.PUBLICATION.CI271.EXACT.HEAD.SUCCESS.RESULT.20261124"
+  ],
+  "scope": "Independent actual facts only: three reviewed code files and two pinned private structured files copied locally, existing qualification metadata unchanged. Browser stopped after first candidates API GET200 with an assertion before the three app views; exact assertion cause unknown. No accepted UI recette or source upgrade.",
+  "observedAt": "2026-11-24T08:28:08.245044+00:00",
+  "sourceReady": false,
+  "admissions": 0,
+  "authorityClosed": true,
+  "globalCoverage": "UNKNOWN",
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "codeFileWrites": 3,
+  "privateDataWrites": 2,
+  "qualificationMetadataWrites": 0,
+  "privateFilePins": [
+    {
+      "SHA256": "d676b71d18f9e9570724159771e81df362749bc74423649d7ee5dbc679a8128b",
+      "bytes": 1238
+    },
+    {
+      "SHA256": "3ff30b9c2fa169f539e9d9e5e6404507fe6f4bb6858b9f313a630140e96d01df",
+      "bytes": 6413
+    }
+  ],
+  "runtimeCodeHashes": {
+    "cockpit/app/components/expert/tipster-candidates.tsx": "8c199f3e4b58f376784018098c74f297dd5e4eeec8e42fd5c4a51a7bb9e7a053",
+    "cockpit/scripts/catalogue-independent.ts": "7c1e56818110c428fa2231e421b6fc52c0aba935b690cac5c89f82f1790e53f8",
+    "cockpit/scripts/notbetting-pending-source.ts": "debf492cfade61e65d0d3a81b5b4c8d2fd2b3f090965ad1200c0f96502ec90c9"
+  },
+  "qualificationSHA256": "14eafb19a57fab3557724c8f29ba62269e6f3c02ed1333ef41d82b079ad3f01a",
+  "browser": {
+    "status": "PARTIAL",
+    "step": "READ_CANDIDATE_METADATA",
+    "errorKind": "AssertionError",
+    "stats": {
+      "blockedExternal": 0,
+      "blockedWebSockets": 0,
+      "blockedWrites": 0,
+      "consoleErrors": 0,
+      "droppedClientHMRFrames": 0,
+      "localGET": 1,
+      "localHMRSockets": 0,
+      "pageErrors": 0,
+      "requestCapHit": false
+    },
+    "validatedViews": 0,
+    "globalUIRecette": false,
+    "realChoicesLogged": false,
+    "screenshots": 0
+  },
+  "job": {
+    "activeSecondsMax": 50,
+    "elapsedSeconds": 1.797000000020489,
+    "exit": 1,
+    "hardSeconds": 60,
+    "sourceGET": null,
+    "subtreeKillConfirmed": true,
+    "taskMutations": 0,
+    "timedOut": false
+  },
+  "agentManualServerRestarts": 0,
+  "viteManagedConfigReloadCount": null,
+  "sourceGET": 0,
+  "sourceCollectorRuns": 0,
+  "Git": 0,
+  "Task": 0,
+  "receiptSHA256": "97943f90e8b494e8467741af4e5d44465e3dc4a0878a51610c497750a30f318f",
+  "stop": {
+    "hash": "7cdc08236b9d5b7006cd8ea567a0c054f7992ae1aa4c9e04cd70e87eac7ab61d",
+    "date": "2026-11-24T08:28:09.484461+00:00",
+    "authorityClosed": true
+  },
+  "limits": [
+    "The assertion occurs after API200 but before platform and pending checks have distinct retained failure markers. No cause inferred.",
+    "Private source values were copied only to local app storage and compared nowhere in the stopped browser. Not published.",
+    "Actual data copy does not activate collection or establish person, fixture, timestamp or performance.",
+    "CI271 covers prior published commit, not these uncommitted UI files."
+  ]
+}

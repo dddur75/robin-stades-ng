@@ -1,0 +1,27 @@
+{
+  "appChanges": 0,
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.ONE.INDEPENDENT.PROGRAMME.JOIN.PARTIAL.20261123",
+  "diagnosis": "Validator compared application olbg:UID namespace to native positive integer UID without the exact existing audited mapping.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "limits": [
+    "Run quota consumed; no rerun under old mission.",
+    "No private names, selections, markets or native clocks exposed; no original input or application mutation."
+  ],
+  "missionId": "OLBG_ONE_INDEPENDENT_PROGRAMME_JOIN_E1_20261123",
+  "observationBeforeOfficialProgrammeVerifiedByThisRun": null,
+  "primarySHA256": "0628e7b2d0a94827e7042e065cce0b11c7090b167cf2dfb61e3454600d882876",
+  "reason": "RECORD_IDENTITY",
+  "scope": "ONE_RETAINED_OCCURRENCE_VALIDATOR_FAILED_BEFORE_CHRONOLOGY",
+  "sourceGET": 0,
+  "sourceReady": false,
+  "status": "PARTIAL_TARGETED_RUN_FAILED",
+  "tests": {
+    "processExit": 1,
+    "targetedRuns": 1
+  },
+  "validatorSHA256": "41f2e894c3728a541a97ba4b8a05cdf31203c80463190efb8d797992fdca5526"
+}

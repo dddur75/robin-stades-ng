@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "robin-curated-checkpoint-approval-v1",
+  "generatedAt": "2026-11-25T12:12:19.290Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.PROFILE642100.LOCAL.CHECKPOINT.APPROVAL.20261125",
+  "status": "CURATED_LOCAL_DATASET_APPROVED_RUNTIME_NOT_YET_ACTIVATED",
+  "scope": "Independently reviewed real-data projection and curated local checkpoint approval only; runtime deployment remains unproven.",
+  "missionId": "OLBG642100_LOCAL_APP_ADMISSION_R1_20261125",
+  "sourceClaimId": "DATA.SOURCE_OBSERVATORY.OLBG.PROFILE642100.NATIVE.R1.RESULT.20261125",
+  "sourceBatchSHA256": "5e76adba8a3fa825640c7acc7468314b64606140517a8a4eb3fe38878a265d62",
+  "privateDataSHA256": "571a051c8d69ef76a4f4ecf2834737180512cf6b85d61fc44b5a9277a9af1660",
+  "privateAdmissionReportSHA256": "efe9a0f4d5305f7a5f9fb620d7391ab8097df6f99df7cd2cedbd1485690714ed",
+  "priorCheckpointSHA256": "392ef5662928f82fd751eeae24188a8744751c598ca061ac24d06bd35f83d5e5",
+  "projectionPrimarySHA256": "3628f52902deac9706ff2e5bfb220a800116c4b6f0e9bad9c520a48f23c2fa6c",
+  "before": {
+    "publicChoices": 484,
+    "candidates": 317
+  },
+  "projected": {
+    "publicChoices": 486,
+    "candidates": 318,
+    "newIndividualProfileChoices": 2
+  },
+  "entireOldPublicPreserved": true,
+  "entireOldCataloguePreserved": true,
+  "sourceReaderAndParentIO": true,
+  "idempotencePublic": true,
+  "idempotenceCatalogue": true,
+  "applicationRuntimeAccepted": false,
+  "sourceReady": false,
+  "recurringCollectionActive": false,
+  "sourceGET": 0,
+  "reviewedBy": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

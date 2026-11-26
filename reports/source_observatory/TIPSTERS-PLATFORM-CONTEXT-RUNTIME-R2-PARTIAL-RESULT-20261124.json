@@ -1,0 +1,90 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.PLATFORM.CONTEXT.RUNTIME.R2.PARTIAL.RESULT.20261124",
+  "missionId": "PLATFORM_CONTEXT_RUNTIME_CANARY_R2_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Actual local runtime adoption and bounded canary facts independently reviewed. Three exact reviewed UI codefiles and one latestNotBetting metadata snapshot copied; RTpins2fe4/fe03/0fed andmetadata c673 exact. BrowserJob12.406s child1/noTimeout/killconfirmed. Controlflow and cropped technical screenshot show Coteur exactfiche platformcontext1row/nonpersonalcaption/claim/adminhref assertions reached before failure. Compound FOLLOW_ADMIN_ANCHOR phase failed; exact assertion and cause remain UNKNOWN. 165loopbackGET/HMR2/clientdrop0/pageerrors0/consoleerrors0/external0/writes0 measured. Otherplatform and fullnavigation/UI notverified. FirstresultSTOP, authorityclosed/no retry/no sourceor admissions, PARTIAL retained.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.PLATFORM.CONTEXT.FICHES.UI.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.ADMIN.COTEUR.NOTBETTING.LOCAL.ROUNDTRIP.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.COMPETITION.BUCKETS.NATIVE.R2.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.APP.UI.ADMIN.ROWS.REDESIGN.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.UI.HMR.REDESIGN.R2.E1.RESULT.20261123"
+  ],
+  "result": {
+    "Git": 0,
+    "Task": 0,
+    "authorityClosed": true,
+    "browser": {
+      "errorKind": "Error",
+      "fatal": null,
+      "realChoicesLogged": false,
+      "sourceCollectorRuns": 0,
+      "stats": {
+        "blockedExternal": 0,
+        "blockedWebSockets": 0,
+        "blockedWrites": 0,
+        "consoleErrors": 0,
+        "droppedClientHMRFrames": 0,
+        "localGET": 165,
+        "localHMRSockets": 2,
+        "pageErrors": 0,
+        "requestCapHit": false
+      },
+      "status": "PARTIAL",
+      "step": "FOLLOW_ADMIN_ANCHOR",
+      "timedOut": false
+    },
+    "browserJobs": 1,
+    "closedAtUTC": "2026-11-24T06:16:11.424391+00:00",
+    "codeFileWrites": 3,
+    "globalUIRecette": false,
+    "job": {
+      "activeSecondsMax": 50,
+      "elapsedSeconds": 12.405999999988126,
+      "exit": 1,
+      "hardSeconds": 60,
+      "sourceGET": null,
+      "subtreeKillConfirmed": true,
+      "taskMutations": 0,
+      "timedOut": false
+    },
+    "metadataWrites": 1,
+    "missionId": "PLATFORM_CONTEXT_RUNTIME_CANARY_R2_20261124",
+    "newAdmissions": 0,
+    "retry": false,
+    "runtimeCodeHashes": {
+      "cockpit/app/components/expert/tipster-candidates.tsx": "0fedb2a77008bec56c292c361ccf52ce08fb0cefa69c4a598034476a00712c74",
+      "cockpit/app/components/expert/tipster-qualification.tsx": "fe033e0faa664e846eb1ade8401d7786af88e28e020fb754e2d38ee92a92dbbd",
+      "cockpit/app/lib/tipster-qualification.ts": "2fe4c1702100f4832ef55ba2d9a5c66545c96ec6c3020e8d93023143eff86a12"
+    },
+    "serverRestarts": 0,
+    "sourceActivation": false,
+    "sourceCollectorRuns": 0,
+    "status": "PARTIAL",
+    "targetMetadataSHA": "c6736687a3a58645d91e6710646f430a8ada93ff962836e4ff2b170d29bdc8cd"
+  },
+  "receiptSHA": "873a25c6e4160ce1c448e8d18a13a765a752f8c825eba9b3bfaa19dd3d6bef8c",
+  "screenshotSHA": "7c4a937058a7cf97409b4d7b49c2071d1baf274d8eec9cd75d36627cbf97f00e",
+  "screenshotScope": "Technicalplatformsection only; independently inspected by C0, not a fullUI proof",
+  "STOP": {
+    "hash": "ca37ced28bd1ed60c1a8f5b9248952dfc70a8833c94fc9ffe1a4dfba3d9d1f22",
+    "date": "2026-11-24T06:16:12.684645+00:00",
+    "authorityClosed": true
+  },
+  "limits": {
+    "newAdmissions": 0,
+    "sourceCollectorRuns": 0,
+    "serverRestarts": 0,
+    "Git": 0,
+    "Task": 0,
+    "sourceActivation": false,
+    "globalUIRecette": false,
+    "anchorCause": "UNKNOWN",
+    "allCompatibleIntegrated": false
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.APP.UI.CANARY.LOCAL.R3.E1.RESULT.20261123",
+  "missionId": "SOURCE_OBSERVATION_UI_CANARY_LOCAL_R3_20261123",
+  "status": "EXACT_CORRECTED_UI_ONLY_BINDING_ACCEPTED_E1",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Independently reviewed first-failure correction: wait15 vs HTTP12, closed phase and response/fulfill diagnostics, original browser/time/API caps unchanged. No actual execution or causality claim.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.APP.WARM.FINAL.BINDING.R3.ACTUAL.API.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.WARM.FINAL.BINDING.R3.LOCAL.CLOSE.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.SOURCE.OBSERVATION.UI.UTF8.FIX.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.UI.CANARY.FIX.PRIVATE.CODE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.UI.CANARY.LOCAL.R2.ACTUAL.PARTIAL.20261123"
+  ],
+  "planSHA": "93679f6231de6c95e25a94c69d70f1eae9d34a04d6b87a4c995b9ad19c247bb4",
+  "manifestSHA": "cfd905d523d387af0086d3f96eba69d27db71a9053e9071e587d09b4c7d8e925",
+  "canarySHA": "dd4c1d79c411f680c2ce777a6933ab5d53637be85cecf18e9f553f7a45aa640d",
+  "syntaxExit": 0,
+  "reusedPureTests": 2,
+  "sourceGET": 0,
+  "appAPIReads": 0,
+  "browserLaunches": 0
+}

@@ -1,0 +1,42 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.ROBOTS.SHAPE.E1.RESULT.20261122",
+  "recordedAt": "2026-11-22T07:59:19.745Z",
+  "status": "TECHNICAL_SHAPE_SCAN_COMPLETE_PERMISSION_UNPROVEN",
+  "scope": "One robots-only E1 diagnostic completed; closed shape aggregates do not establish profile permission or a native forecast.",
+  "planSHA256": "100dff1a3500f56a4e1002e2228dbc8bbfa48b817d76a6456ff23eaf6e786475",
+  "manifestSHA256": "616601204f1fe11febe8545a096da35444305a279dc0e71d1572123528b313bc",
+  "grant": "8f9bd8456b046463525769bf66341675ab874af379cb026bf281c8836d88a07d",
+  "externalProcess": {
+    "startedAt": "2026-11-22T07:52:22.801Z",
+    "closedAt": "2026-11-22T07:52:29.094Z",
+    "exit": 0,
+    "error": null,
+    "stdoutBytes": 0,
+    "stderrBytes": 0,
+    "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "observedAt": "2026-11-22T07:52:27.959426+00:00",
+  "sourceGET": 1,
+  "profileGET": 0,
+  "forecasts": 0,
+  "applicationAdmissions": 0,
+  "diagnosticSHA256": "f893a090a30ab064b3067299d23f6247599e18594a61632dea6ee47dd3b48d18",
+  "responseSHA256": "3e6044a915c133edb598a707c900d8cf9de6926aaba75117c9392683257f8106",
+  "anchorVerified": true,
+  "scanComplete": true,
+  "overflow": false,
+  "headersSeen": 168,
+  "shapeCounts": {
+    "VALID_REP_HEADER": 111,
+    "WHITESPACE_PRESENT": 34,
+    "FOREIGN_CLASS_MATCH": 20,
+    "VERSION_FORM_REJECTED": 2,
+    "IDENTIFIER_FORM_OR_LIMIT": 1
+  },
+  "permissionGranted": false,
+  "rawBodyStored": false,
+  "knownClosedOLBGSubsetGET": 59,
+  "allTimeOLBGGET": "UNKNOWN",
+  "globalDelivery": "PARTIAL"
+}

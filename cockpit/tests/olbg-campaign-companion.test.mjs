@@ -1,0 +1,86 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import {createHash} from 'node:crypto';
+import {readFileSync} from 'node:fs';
+import {stripTypeScriptTypes} from 'node:module';
+const raw=readFileSync(new URL('../scripts/olbg-campaign-companion.ts',import.meta.url),'utf8');
+const {readCampaignBuffers,mergeCampaignPicks,mergeCampaignCatalogue,applyOLBGCampaignCatalogue,applyOLBGCampaignPublic}=
+ await import('data:text/javascript;base64,'+Buffer.from(stripTypeScriptTypes(raw)).toString('base64'));
+const canonical=v=>Array.isArray(v)?'['+v.map(canonical).join(',')+']':v&&typeof v==='object'?'{'+Object.keys(v).sort().map(k=>JSON.stringify(k)+':'+canonical(v[k])).join(',')+'}':JSON.stringify(v);
+const hash=v=>createHash('sha256').update(v).digest('hex'),bytes=v=>Buffer.from(canonical(v)+'\n');
+const endpoint='https://www.olbg.com/tipsters/tips/648433',slots=['2026-11-27T12:00:00+00:00','2026-11-27T13:00:00+00:00'];
+const fixture={id:'synth:match',home:'Home',away:'Away',label:'Home - Away',homeAliases:['Home'],awayAliases:['Away'],kickoff:'2026-11-27T20:00:00+00:00'};
+// Proposed targeted method only; C3 did not run this file or its retained tests.
+test('generic personal profile default642100 and unique catalogue join',()=>{
+ for(const id of [648433,642100]){
+  const p=pack(id);p.accept(slots[0],[[10,'SYNTH_ONLY']]);const c=p.read(),url='https://www.olbg.com/tipsters/tips/'+id;
+  assert.equal(c.profileId,id);assert.equal(c.picks[0].authorId,'olbg:'+id);
+  const sourceUrl=id===642100?'https://www.olbg.com/tipsters/tips/history/'+id:url;
+  const target={id:'catalogue:'+hash(sourceUrl),platform:'OLBG',sourceUrl,origin:{sheet:'Catalogue',row:269},qualification:{picks:[]}};
+  const base={candidates:[target]},before=JSON.stringify(base);const decorated=mergeCampaignCatalogue(base,c);
+  assert.equal(decorated.candidates[0].qualification.picks.length,1);assert.equal(JSON.stringify(base),before);
+  assert.throws(()=>mergeCampaignCatalogue({candidates:[target,{...target,id:'catalogue:'+hash(url),sourceUrl:url}]},c));
+  assert.throws(()=>mergeCampaignCatalogue({candidates:[{...target,sourceUrl:url+'/'}]},c));
+ }
+});
+function pack(profileId=648433){
+ const endpoint='https://www.olbg.com/tipsters/tips/'+profileId;
+ const cal=hash(canonical([fixture])),parser='a'.repeat(64),builder='b'.repeat(64),claim='SYNTH.NOT.REAL';
+ const plan={id:'SYNTH_OPAQUE_CAMPAIGN',claimId:claim,endpoint,robotsUrl:'https://www.olbg.com/robots.txt',termsUrl:'https://www.olbg.com/use',zeroEligiblePolicy:'HALT',slots,fixtures:[fixture],calendarSha256:cal,parserSha256:parser,builderSha256:builder};
+ if(profileId!==648433)plan.profileId=profileId;
+ const mf={mission_id:plan.id,authorized_stages:['E1','E2'],maximum_stage:'E2',external_effects:{https_get_max:6,per_source_max:6},compute_budget:{},time_budget:{seconds:600},source_hash:hash(canonical(plan)),expires_at:'2026-11-27T19:00:00+00:00'};
+ const planRaw=bytes(plan),mfRaw=bytes(mf),approval={planSHA256:hash(planRaw),manifestSHA256:hash(mfRaw),claimId:claim,publicBaseSHA256:'f'.repeat(64)};
+ const events=[],files=new Map(),controls=new Map(),confirmed=new Map();let currentAt=slots[0];let previous='0'.repeat(64);
+ function append(kind,data={}){const e={sequence:events.length+1,kind,at:data.slot??currentAt,previousHash:previous,...data};e.hash=hash(canonical(e));previous=e.hash;events.push(e);}
+ function batch(at,rows){
+  const response=hash('SYNTH'+at),records=rows.map(([tid,selection])=>({tipid:tid,eventid:900,eventname:'Home v Away',selection,market:'synthetic market',winew:'',event_datetime:'2026-11-27 20:00:00',vc_sport_id:1,result:'Open'}));
+  const picks=records.map(n=>({id:'olbg-tip:'+n.tipid,sourceId:'SRC_014',authorId:'olbg:'+profileId,authorLabel:'Synthetic',authorUrl:endpoint,sourceUrl:endpoint,sourceTipId:n.tipid,sourceEventId:n.eventid,fixtureId:fixture.id,fixtureLabel:fixture.label,kickoff:fixture.kickoff,selection:n.selection,market:'source_native_opaque',marketLabel:'Synthetic opaque',sourceMarketLabel:n.market,sourceBetType:n.winew,sourceFields:n,sourceEventLocalText:n.event_datetime,sourceEventTimezone:null,publishedAt:null,publishedCivilDate:null,observedAt:at,firstSeenAt:at,responseSha256:response,parserSha256:parser,calendarSha256:cal,performanceEvaluationAllowed:false,settlementAllowed:false,marketInterpretationAllowed:false,versions:[{selection:n.selection,observedAt:at}],versionCount:1}));
+  return {schemaVersion:'robin-olbg-opaque-campaign-batch-v1',missionId:plan.id,claimId:claim,source:{profiles:[{facts:{authorId:profileId,authorLabel:'Synthetic',mode:'current',records},request:{url:endpoint,observedAt:at,responseSha256:response}}],fixtures:[fixture],calendarSha256:cal},acceptedSourceTipIds:records.map(r=>r.tipid),picks,parserSha256:parser,builderSha256:builder,calendarSha256:cal,sourceReady:false,applicationAdmissions:0,recurrence:true};
+ }
+  function parentReceipt(slot,batchName,batchRaw,count){
+  const summary=raw=>({bytes:raw.length,sha256:hash(raw)}),stdout=Buffer.from('{"state":"succeeded","requests":3}\\n'),stderr=Buffer.alloc(0);
+  const batch={file:batchName,sha256:hash(batchRaw),bytes:batchRaw.length,recordCount:count};
+  const primary={job:{exit:0,timedOut:false,subtreeKillConfirmed:true},failureKind:null,rawStreams:{'stdout.raw':{...summary(stdout),base64:stdout.toString('base64')},'stderr.raw':{...summary(stderr),base64:''}}};
+  const primaryRaw=Buffer.from(canonical(primary));
+  const result={schemaVersion:'olbg-slot-parent-result-v1',status:'SLOT_PROCESS_COMPLETE',accepted:true,missionId:plan.id,slot,batch,primarySHA256:hash(primaryRaw),child:{status:'OPAQUE_SLOT_DISPATCH_COMPLETE'}};
+  const resultRaw=Buffer.from(canonical(result)),stopRaw=Buffer.from(canonical({accepted:true,resultSHA256:hash(resultRaw)}));
+  const receipt={schemaVersion:'olbg-slot-parent-accepted-v1',missionId:plan.id,slotRunMissionId:'SYNTH_SLOT',slot,sourceDecisionLedgerHash:'a'.repeat(64),accepted:true,childExit:0,timedOut:false,subtreeKillConfirmed:true,batch,primarySHA256:hash(primaryRaw),resultSHA256:hash(resultRaw),STOP_SHA256:hash(stopRaw),rawStdout:summary(stdout),rawStderr:summary(stderr),postChildFullGuardPassed:true,sourceReady:false};
+  const receiptRaw=Buffer.from(canonical(receipt));files.set('slot-parent-'+hash(slot)+'.json',receiptRaw);
+  controls.set(slot+'|primary.json',primaryRaw);controls.set(slot+'|result.json',resultRaw);controls.set(slot+'|AUTHOR-STOP.json',stopRaw);confirmed.set(slot,hash(receiptRaw));
+ }
+
+ function accept(slot,rows){currentAt=slot;const b=batch(slot,rows),raw=bytes(b),digest=hash(raw),name='observations-'+digest+'.json',response=b.source.profiles[0].request.responseSha256;files.set(name,raw);
+  append('RUN_STARTED',{slot});append('PUBLIC_SLOT_STARTED',{slot});
+  append('REQUEST_FINISHED',{sourceId:'SRC_014',url:endpoint,httpStatus:200,responseSha256:response});
+  append('PUBLIC_PICKS_QUALIFIED',{sourceId:'SRC_014',responseSha256:response,parserSha256:parser,calendarSha256:cal,count:b.picks.length});
+  append('PUBLIC_COLLECTION_ACCEPTED',{slot,observationFile:name,observationSha256:digest,count:b.picks.length});
+  append('PUBLIC_SLOT_FINISHED',{slot,count:b.picks.length});append('RUN_FINISHED',{slot});parentReceipt(slot,name,raw,b.picks.length);return b;
+ }
+ const read=()=>readCampaignBuffers(planRaw,mfRaw,Buffer.from(events.map(canonical).join('\n')+'\n'),name=>files.get(name),approval,{loadControl:(slot,name)=>controls.get(slot+'|'+name),confirmExit:(campaign,slot,digest)=>campaign===plan.id&&confirmed.get(slot)===digest});
+ return {approval,events,files,controls,confirmed,append,accept,read,batch};
+}
+test('two receipt batches count one recurring pick once and preserve old rows',()=>{
+ const p=pack(),first=p.accept(slots[0],[[10,'FIRST']]);p.accept(slots[1],[[10,'UPDATED'],[11,'NEW']]);
+ const c=p.read();assert.equal(c.picks.length,2);assert.equal(c.batchCount,2);
+ const row=c.picks.find(x=>x.sourceTipId===10);assert.equal(row.observedAt,slots[1]);assert.equal(row.firstSeenAt,slots[0]);assert.equal(row.lastSeenAt,slots[1]);assert.equal(row.versionCount,2);assert.equal(row.observationVersions.length,2);
+ const historical={...first.picks[0]},before=JSON.stringify(historical),merged=mergeCampaignPicks([historical],c.picks);
+ assert.equal(merged.length,2);assert.equal(merged[0].lastSeenAt,slots[1]);assert.equal(JSON.stringify(historical),before);
+ assert.equal(first.picks[0].selection,'FIRST');assert.equal(merged[0].performanceEvaluationAllowed,false);
+ assert.equal(merged[0].observedAt,slots[1]);assert.equal(merged[0].responseSha256,row.responseSha256);assert.deepEqual(merged[0].sourceFields,row.sourceFields);
+ const target={id:'catalogue:d6120a2a545cd92a3d9b740d887d663e90af1023dfe8a64101e35cc8ea5415c1',platform:'OLBG',sourceUrl:endpoint,origin:{sheet:'Catalogue',row:269},qualification:{picks:[],personallyProven:false}};
+ const other={id:'synth:other',qualification:{picks:[],personallyProven:true}};const catalogue={candidates:[target,other],qualification:{status:'ok',qualifiedCount:1}};const rawBefore=JSON.stringify(catalogue),decorated=mergeCampaignCatalogue(catalogue,c);assert.equal(decorated.qualification.qualifiedCount,2);assert.equal(decorated.candidates[0].qualification.picks.length,2);assert.equal(JSON.stringify(catalogue),rawBefore);assert.deepEqual(decorated.candidates[1],other);
+});
+test('default denial, orphan, duplicate slot, body corruption and after KO fail closed',()=>{
+ const base={picks:[],fixtures:[],candidates:[]};assert.equal(applyOLBGCampaignCatalogue(base,'unused'),base);assert.equal(applyOLBGCampaignPublic(base,'unused','f'.repeat(64)),base);
+ const empty=pack();assert.throws(()=>empty.read());const started=pack();started.append('PUBLIC_SLOT_STARTED',{slot:slots[0]});assert.throws(()=>started.read());
+ const orphan=pack();orphan.append('PUBLIC_SLOT_FINISHED',{slot:slots[0],count:1});assert.throws(()=>orphan.read());
+ const duplicate=pack();duplicate.accept(slots[0],[[10,'FIRST']]);duplicate.accept(slots[0],[[10,'FIRST']]);assert.throws(()=>duplicate.read());
+ const corrupt=pack();corrupt.accept(slots[0],[[10,'FIRST']]);const name=[...corrupt.files.keys()][0];corrupt.files.set(name,Buffer.from('{}'));assert.throws(()=>corrupt.read());
+ const p=pack(),row=p.batch(slots[0],[[10,'FIRST']]).picks[0],late={...row,observedAt:'2026-11-27T21:00:00+00:00'};assert.throws(()=>mergeCampaignPicks([], [late]));
+ const conflict={...row,fixtureId:'synth:other'};assert.throws(()=>mergeCampaignPicks([row],[conflict]));
+ const backfill={...row,firstSeenAt:'2026-11-27T11:00:00+00:00',observedAt:slots[1],lastSeenAt:slots[1]};assert.throws(()=>mergeCampaignPicks([row],[backfill]));
+ assert.throws(()=>mergeCampaignPicks([],[{...row,firstSeenAt:slots[1]}]));
+ const valid=pack();valid.accept(slots[0],[[10,'FIRST']]);const receiptName='slot-parent-'+hash(slots[0])+'.json',parentRaw=valid.files.get(receiptName);valid.files.delete(receiptName);assert.throws(()=>valid.read());valid.files.set(receiptName,parentRaw);
+ for(const patch of [{accepted:false},{missionId:'FOREIGN'},{childExit:1},{resultSHA256:'0'.repeat(64)}]){valid.files.set(receiptName,Buffer.from(canonical({...JSON.parse(parentRaw),...patch})));assert.throws(()=>valid.read());}valid.files.set(receiptName,parentRaw);
+ const controlKey=slots[0]+'|AUTHOR-STOP.json',beforeControl=valid.controls.get(controlKey);valid.controls.set(controlKey,Buffer.from('{}'));assert.throws(()=>valid.read());valid.controls.set(controlKey,beforeControl);valid.confirmed.set(slots[0],'0'.repeat(64));assert.throws(()=>valid.read());
+});

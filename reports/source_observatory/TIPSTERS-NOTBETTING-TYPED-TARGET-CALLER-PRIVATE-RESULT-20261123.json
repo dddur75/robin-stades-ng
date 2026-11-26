@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-11-23T09:50:37.844Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.TYPED.TARGET.CALLER.PRIVATE.RESULT.20261123",
+  "missionId": "NOTBETTING_TYPED_TARGET_CALLER_PRIVATE_E1_20261123",
+  "status": "PRIVATE_TYPED_TARGET_DIAGNOSTIC_VERIFIED",
+  "scope": "Private seven-field closed diagnostic only. Eight final synthetic variants compare parent/OFF/ON/throwing sink; 65 calls across initial/final runs including one actual worker collect with two fake fetches, four targeted processes. Shallow target-key declaration membership only, not reference resolution, native React version, global decoder consistency, gate bypass, SOURCE authority or admission. Sorting import ids unnecessary for membership; target collision yields UNKNOWN; unrelated collision not assessed. Original four-field observer and qualification algorithm preserved by AST.",
+  "keys": [
+    "C0",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.TYPED.REFERENCE.FINAL.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.DIAGNOSTIC.NATIVE.R1.ACTUAL.RESULT.20261123"
+  ],
+  "resultSHA256": "2b7ce3c6891631f2a2bc3e69566ed44151a7dab62d7d2e527d374333facc3a00",
+  "parserSHA256": "cc6362abca54c16b94651198f2427072d29bcfe6872074c8b8a1edb791efece9",
+  "workerSHA256": "ffc217e2fb6774fcd612ea0df3e306ed0ace5528c3392687e3f922b8ebac8663",
+  "tests": {
+    "RAMCompile": "PASS",
+    "actualWorkerCollect": 1,
+    "criticalRuffFinal": 0,
+    "fakeFetch": 2,
+    "finalCalls": 33,
+    "finalExit": 0,
+    "matrixInitialCalls": 32,
+    "processes": 4,
+    "totalCalls": 65,
+    "uniqueVariants": 8
+  },
+  "sourceGET": 0,
+  "sourceReady": false,
+  "nativeVersionKnown": false
+}

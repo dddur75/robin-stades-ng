@@ -1,0 +1,28 @@
+{
+  "generatedAt": "2026-11-23T12:21:24.798Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.MESSAGE.PARSER.PUBLIC.INTEGRATION.RESULT.20261123",
+  "missionId": "TELEGRAM_MESSAGE_PARSER_PUBLIC_INTEGRATION_E1_20261123",
+  "status": "LOCAL_PACKAGE_INTEGRATION_TARGETED_PASS_NOT_SOURCE_ACTIVATED",
+  "scope": "Reviewed private parser integrated byteexact as new PUBLIC Python module. Test file differs only by package import and LF normalization;14 methods and6 subtests pass against PUBLIC module, strictmypy and Ruff2files pass. No network adapter, native contract, actual message, fixture join, human identity or source activation inferred.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.MESSAGE.CONTEXT.PRIVATE.RESULT.20261123"
+  ],
+  "moduleSHA256": "a7a0da012b63717c76a68ed89f7940d9de7f1568cb27abcb90bf28111b63a5f7",
+  "testSHA256": "237f708cd7631b95f78e0116bf1ca83ffaf21db45cabac93167f82d5efc6815d",
+  "domainPrimarySHA256": "39c58eafd04a39393bc40823c7f6809b63b0d0020da86b2994d0c83d27edcea8",
+  "testsPassed": 14,
+  "subtestsPassed": 6,
+  "mypyStrictExit": 0,
+  "ruffExit": 0,
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "admissible": false,
+  "nativeMarkupContractProven": false
+}

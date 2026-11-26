@@ -1,0 +1,92 @@
+{
+  "schema_version": "robin-recurring-acceptance-v1",
+  "claim_id": "ENG.SOURCE_OBSERVATORY.RECURRING.20261118",
+  "observed_at": "2026-11-18T13:54:47.012750+00:00",
+  "base_head": "50a8f20bbd046d86f3bf404c0d7b10dbde874209",
+  "engineering": "PASS_AND_HOLD",
+  "business": "PARTIAL",
+  "personal_picks": 0,
+  "excluded_l1_selections": 7,
+  "real_slots_succeeded": 2,
+  "real_canary_gets": 21,
+  "journals": {
+    "tipsters-recurrence": {
+      "records": 58,
+      "head": "00afb8fe184fa39b83cd88aaf2cfa8d0cc0d4608f8c45612b32ae12084388be7",
+      "sha256": "8ef741cc2adaadba59e79636cca33be007943056bd0e8ba9e9dd68717a7391b9",
+      "requests": 21
+    },
+    "tipsters-identity-audit": {
+      "records": 5,
+      "head": "9f1a9f28704d95405661b1a57924086f9db702392c52f7f5823b946ad95e0414",
+      "sha256": "5fb00aa21bbc0163984c7efbab5daf34b123aed6dac47ccb92d0d34cc123a77a",
+      "requests": 2
+    },
+    "tipsters-named-discovery": {
+      "records": 13,
+      "head": "23047f8743634b0f1f3c378c588f95590f6195877a5559f8a94e91d4407f57e0",
+      "sha256": "29a9c465e97a6a118879e38c15c5f0c279cb94d930347906c8d3ba43e88705b7",
+      "requests": 6
+    },
+    "tipsters-sportsmole-audit": {
+      "records": 6,
+      "head": "529b34803a625d7f63aa54936cd55276a4df0beddcc7424ff3dc9108007a6d2f",
+      "sha256": "ef7a497d4201975d3630df62a7dc0bb727083b68cd59c1e5c4781f21a9078805",
+      "requests": 2
+    }
+  },
+  "scope_limits": [
+    "Brazilian discovery is separate from Ligue1 canary and campaign",
+    "No named speaker or article byline alone qualifies a personal forecast",
+    "No identity certification",
+    "No recurring task installed",
+    "No merge or deployment"
+  ],
+  "campaign": {
+    "directory": "cockpit/.ci/tipsters-recurring-final-20261118",
+    "manifest_sha256": "67b3d64d7f625c4eaabebe5d92cb570ba73fe7a1aae619ade522ad4b40d2e81e",
+    "plan_sha256": "0d755d8c1d0109e21787a232babedb27cf9467ee073a06455b8e210444a36689",
+    "slots": 84,
+    "requests_max": 504,
+    "starts_at": "2026-11-19T07:00:00+00:00",
+    "expires_at": "2026-11-26T07:00:00+00:00",
+    "authorized": false,
+    "installed": false,
+    "code_pins": {
+      "cockpit/scripts/tipsters-recurring.py": "d5d5673aa3e7c020767609f95162ad785fbab748a618db4fef6b4d40fd6b862f",
+      "cockpit/scripts/tipsters-recurring-task.ps1": "384ab70c242fb0e218d404e213bff5de3cfe03bf015fe1a22f6a5fffe11bbbb1",
+      "cockpit/scripts/tipsters-recurring-tick.ps1": "256487a2773d45cbbc324698a046eb346fd7a9725873b05da68a0bc73685e729",
+      "src/robin/source_observatory/recurring.py": "6795fa0747e10b0d70c9bcea1e3b8aa0178e2df07bb0bc916705853991b918f5",
+      "src/robin/source_observatory/connectors.py": "ba991ea9c1ab0ebc4bca7814d5216edc47a91ac7ea7e3ecb219270326ffe79a6",
+      "src/robin/source_observatory/collector.py": "8cb27141974f14b78afcfed9de288127c40dcdba420c0dcfd95e0c6539215949",
+      "src/robin/source_observatory/public_formats.py": "b6750a73cc21a105958df82d035d63f3bbede259ef830140b8c629d8a580cf09",
+      "src/robin/source_observatory/extractor.py": "9e119ed51d44b1fb175ba7d76a886147175cd068585fffd5a818bc8be5639eaa",
+      "src/robin/source_observatory/models.py": "2e8622776f12f8a43698f7272aa368dad6cfe95fe16c23ab99537ca8791cd584",
+      "src/robin/source_observatory/schema_validation.py": "1e540016e779d8c78d40dccac208437012e56dba02b5b863b84b516e6be2e366"
+    },
+    "stop_if_no_individual_attribution": true
+  },
+  "tests": {
+    "recurring_python": "25 passed",
+    "source_domain_windows": "658 passed, 1 historical CRLF registry-hash failure; normalized LF matches pinned hash; new tests separately pass",
+    "cockpit": "pnpm test PASS: typecheck, lint, build, 32 server/static tests passed and 4 skipped, 100 model tests passed",
+    "browser": "32 passed, including 9 recurring cases; mobile widths 360/375/390/430",
+    "ruff": "PASS",
+    "mypy_strict": "PASS",
+    "bandit": "PASS",
+    "windows_task_dry_run": "84 slots, two triggers, no catch-up, not installed",
+    "ci": "PENDING exact successor head"
+  },
+  "reviews": {
+    "C1": "PASS_AND_HOLD honest evidence; no business PASS",
+    "C4": "PASS integration, P0=0 P1=0",
+    "UX6": "PASS integration, P0=0 P1=0"
+  },
+  "j12": {
+    "task": "Robin-Tipsters-J12-20261127",
+    "observed_state": "Ready",
+    "maximum_gets": 51,
+    "changed": false
+  },
+  "raw_provider_payload_in_git": false
+}

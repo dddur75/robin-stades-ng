@@ -1,0 +1,24 @@
+{
+  "generatedAt": "2026-11-23T08:44:16.034Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.EXPLICIT.TCP.PROTOCOL.PRIVATE.RESULT.20261123",
+  "missionId": "TELEGRAM_EXPLICIT_TCP_PROTOCOL_PRIVATE_E1_20261123",
+  "status": "PRIVATE_EXPLICIT_TCP_PROTOCOL_FIX_VERIFIED",
+  "scope": "Only request IPPROTO_TCP explicitly. Complete AST identical after removing this keyword; protocol6/public IPv4/framing/no-fallback guards unchanged. Six local cases: two AI_NUMERICHOST probes show0 vs6 and four fake fetch cases. Zero externalDNS/TCP/GET/Job; old real DNS refusal fine cause remains UNKNOWN. No source authority.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.IPV4.STRUCTURAL.NATIVE.R1.E1.BINDING.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.IPV4.STRICT.TRANSPORT.PRIVATE.RESULT.20261123"
+  ],
+  "transportSHA256": "fc19e9274c13cc557d58b73d660aa66f00ecc1e380ac895325e0d7026000fa62",
+  "resultSHA256": "8d2825591e8e1c202b4226fa0953a601196c0eb3dd692d46f3efb29327d01b59",
+  "codeMapCAN": "2799a91c62625321399427c770bdc553b4e7d3083fe5a7970390f80d1fecacc9",
+  "elapsedSeconds": 119.521574,
+  "testsPassed": 6,
+  "sourceGET": 0,
+  "externalDNS": 0,
+  "sourceReady": false
+}

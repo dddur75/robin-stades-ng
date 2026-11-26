@@ -1,0 +1,67 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.EXACT.FICHE.APP.LOCAL.FIRST.CANARY.PARTIAL.20261124",
+  "missionId": "OLBG_EXACT_FICHE_APP_WIRING_20261124",
+  "status": "PARTIAL",
+  "scope": "First local app adoption copied exact7code+2private reviewed snapshots, but one local API GET failed an unspecified assertion before any DOM view. Job stopped without timeout; no browser retry, no UI acceptance or new prematch admission. Precise failing API predicate remains unknown.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.EXACT.FICHE.APP.WIRING.E1.RESULT.20261124"
+  ],
+  "actual": {
+    "applicationAdmissions": 0,
+    "authorityClosed": true,
+    "browser": {
+      "errorKind": "AssertionError",
+      "fatal": null,
+      "realChoicesLogged": false,
+      "sourceCollectorRuns": 0,
+      "stats": {
+        "blockedExternal": 0,
+        "blockedWebSockets": 0,
+        "blockedWrites": 0,
+        "consoleErrors": 0,
+        "droppedClientHMRFrames": 0,
+        "localGET": 1,
+        "localHMRSockets": 0,
+        "pageErrors": 0,
+        "requestCapHit": false
+      },
+      "status": "PARTIAL",
+      "step": "API",
+      "timedOut": false
+    },
+    "closedAtUTC": "2026-11-24T14:57:05.098340+00:00",
+    "codeFilesWritten": 7,
+    "globalUIRecette": false,
+    "job": {
+      "activeSecondsMax": 50,
+      "elapsedSeconds": 2.327999999979511,
+      "exit": 1,
+      "hardSeconds": 60,
+      "sourceGET": null,
+      "subtreeKillConfirmed": true,
+      "taskMutations": 0,
+      "timedOut": false
+    },
+    "metadataWrites": 0,
+    "missionId": "OLBG_EXACT_FICHE_APP_WIRING_20261124",
+    "normalApplicationFileReads": "UNKNOWN",
+    "privateSnapshotFilesWritten": 2,
+    "realValuesLogged": false,
+    "retry": false,
+    "sourceGET": 0,
+    "sourceReady": false,
+    "status": "PARTIAL",
+    "structuredCopyBufferReads": 1
+  },
+  "receiptSHA256": "c63d971df1c1fcc3bf71d9868cb78ba2d45d499d20fa5d962454bcbeab90eda1",
+  "stopSHA256": "4e7e6f6dcd60df82e0c1b1e0d142196cfca0d265e6f501d4750177caf4be1139",
+  "authorityClosed": true,
+  "sourceReady": false,
+  "admissions": 0,
+  "allCompatibleIntegrated": false
+}

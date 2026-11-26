@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "robin-public-technical-recette-v1",
+  "generatedAt": "2026-11-19T18:54:51.214538+00:00",
+  "status": "PARTIAL_GLOBAL_LOCAL_E2_ACCEPTED",
+  "scope": "LocalA9personalnoncommercial,notdeployment/globalqualification/futureexecution/ROI/civilidentityproof",
+  "metrics": {
+    "distinctPrematchChoices": 60,
+    "pseudonyms": 13,
+    "catalogueRecords": 317,
+    "personallyQualifiedRecords": 5,
+    "enabledRecords": 5,
+    "olbgDistinctChoices": 2,
+    "olbgPseudonyms": 1,
+    "olbgSameIDsAsE1": true
+  },
+  "canary": {
+    "state": "succeeded",
+    "slot": "2026-11-19T18:48:00+00:00",
+    "observedAt": "2026-11-19T18:48:09.433955+00:00",
+    "GETReserved": 3,
+    "HTTP200": 3,
+    "acceptedBundleSha256": "ffbda3556b2a6e2c54828db707d0c418fdf2f8f2987c9477d9657a62c016275a",
+    "journalHead": "9d5a0b927ee9262fa132197ddf79eac2c674268ed0c24ca486807029cb1be869",
+    "futureGETRemaining": 33,
+    "futureSlots": 11,
+    "expiresAt": "2026-11-21T07:00:00+00:00",
+    "native": {
+      "state": "Ready",
+      "verifiedAt": "2026-11-19T18:53:49.8985362+00:00",
+      "enabled": true,
+      "lastResult": 0,
+      "nextRunTime": "2026-11-20T08:00:00.0000000+01:00"
+    }
+  },
+  "budgets": {
+    "qualificationConsumed": 90,
+    "qualificationMax": 134,
+    "olbgE2Consumed": 3,
+    "olbgE2Max": 36,
+    "sroConsumed": 6,
+    "sroMax": 39,
+    "forumsConsumed": 0,
+    "forumsMax": 72,
+    "J12": "Distinct51GETcampaignnotexecutedhere"
+  },
+  "validation": {
+    "targetedPythonPassed": 56,
+    "sourceDomainWindowsPassed": 801,
+    "sourceDomainWindowsFailed": 1,
+    "councilWindowsPassed": 27,
+    "councilWindowsFailed": 4,
+    "windowsFailureReason": "ExistingCRLFcheckout: exact registrybytehash and four ledgerbyteprefix checks; normalizedCSVmatchesHEAD; normalizedledgerstrictlyappendonly; frozenfilesnotrewritten; fullLinuxCIpending",
+    "nodeNativeGatePassed": 3,
+    "UIBrowserPassed": 21,
+    "actualA9BrowserPassed": 4,
+    "actualA9MobileWidth": 390,
+    "manualAssistiveTechnology": "NOT_PERFORMED",
+    "mypy": "PASS6modules",
+    "ruffChangedFiles": "PASS",
+    "banditChangedModules": "PASS",
+    "externalSourceBrowserGET": 0,
+    "externalAssetRequests": 2
+  },
+  "receiptHashes": {
+    "cockpit/.ci/tipsters-olbg-recurring-20261119-v2/plan.json": "2e41285b268ec22a1d5f4eb8c36b3932d5bd165f43861f1c8cca5c0781b1dcbb",
+    "cockpit/.ci/tipsters-olbg-recurring-20261119-v2/manifest.json": "d71d6b4014d316b52bbec6518c5146d2e97e48998ee9bedfa7bce0619baf2270",
+    "cockpit/.ci/tipsters-olbg-recurring-20261119-v2/authorization.json": "8bcac099dbff8ba443918b52db9cd8b931414bfa5fab809cad612b1a031a9711",
+    "cockpit/.ci/tipsters-olbg-recurring-20261119-v2/events.jsonl": "f1829e52efa4903a4e578e93095b56383d1f61d7c0fb0fcbb59b522bb8076660",
+    "cockpit/.ci/tipsters-olbg-recurring-20261119-v2/installed-task.xml": "f310c546ace55a0a13d23190634eb6368f5ccbf71182e3792ff1d59ba7a9a6db",
+    "cockpit/.ci/tipsters-olbg-recurring-20261119-v2/task-last.json": "548dfad4aa9ef55d1bcc3b1345c9290a8a1b04c774034460e985695f4a882dec",
+    "cockpit/.ci/tipsters-technical-20261119/a9-readback.json": "e2eab805c533ed21f8444cc0195115c847c064b3dec923fb2df810332ce3c9a6",
+    "cockpit/.ci/tipsters-technical-20261119/ui-report.json": "79cfcd66eae95e5075d4cc58e1b572d3f5b339f608a53e9faa17d90a12589047",
+    "cockpit/.ci/tipsters-technical-20261119/a9-report.json": "8ae7d851b207b1b192ce63c6c0b4e7f12bc576abe27906a34ea37fb6163d402b",
+    "cockpit/.ci/tipsters-technical-20261119/a9-public.png": "e7399dc63985048bd1b83511f03b6d1c8c1d51d51e6df20442b6468aa2e7154d",
+    "cockpit/.ci/tipsters-technical-20261119/a9-profile-mobile.png": "99d0ee10c749b9bb479a6f93023a3e45deb0684d068fa16d22dc4e7207a24651",
+    "cockpit/.ci/tipsters-technical-20261119/a9-admin.png": "617744316d6516aac75549a4da009b7491ffc5e9a210e9c96c1f5ecc64ccfa9b"
+  },
+  "reviewKeys": [
+    "C0",
+    "C1",
+    "C2",
+    "C4"
+  ],
+  "publicationBoundary": "Auditmetadataonly,personalchoices/odds/sourcepayloadsremainlocaluntracked.ci",
+  "remaining": [
+    "Other30OLBGprofilesnotpersonallycertified",
+    "Kicktipporganizer-authorizedprospectiveexportneeded",
+    "NotBettingpublicpersonalpickrouteunverified,noaccountneedproved",
+    "Stavkaautomationtermsclarificationrequired",
+    "Telegramchanneltechnicalqualificationnotdone,noaccountneedproved",
+    "ExactpublishedheadCIpending"
+  ]
+}

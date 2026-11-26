@@ -1,0 +1,41 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.FRAMING.AUTHORITY.SPLIT.PRIVATE.E1.RESULT.20261124",
+  "missionId": "NOTBETTING_FRAMING_AUTHORITY_SPLIT_PRIVATE_E1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Private framing/authority split component accepted narrowly; integration coverage remains PARTIAL. FULL authority before/after every8KiB read including finally/EOF/errors and effects, time-only controls internal to active already-reserved GET with preexisting positive proof. StrictHTTPResponse framing unchanged/body2MiBHTTP12. Unitveto/config use boolean guard; decodeStoreNextGET0 literal is NOT a measured spy and is not evidence. Actual policy/collect integration remains required before SOURCE.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREFILTER.NATIVE.R2.TIMEOUT.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.POLICY.PROOF.CACHE.PRIVATE.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.STATIC.SELECTOR.GUARDED.CALLER.E1.RESULT.20261124"
+  ],
+  "resultSHA": "1f1bc0a2be55e6fb4656786477279cdaf8cb3afa3cc752386c7e92ba7c7270b9",
+  "workerSHA": "d9f074c9fba87dc1751730adf7974725273fe985df38fcdfc14ebffcd4378e4d",
+  "transportSHA": "757650ee46452f40ec9aad6f6358b31e7805a3e84516f3e3692d848ac2407f00",
+  "tests": {
+    "RED": 1,
+    "GREEN": 9,
+    "RuffCriticalExit": 0,
+    "readBuffer": 8192,
+    "fullCallsAggregateFourFetch": 39,
+    "clockCallsAggregateFourFetch": 263,
+    "decodeStoreNextGETMeasured": false
+  },
+  "limits": {
+    "sourceGET": 0,
+    "Node": 0,
+    "nativeJobs": 0,
+    "realMidReadPolicyMutationsProved": false,
+    "actualCollectIntegrationProved": false,
+    "instantaneousRevocation": false,
+    "revocationBoundary": "next full pre/post8KiB checkpoint, already engaged read may receive bytes then discard before use",
+    "sourceReady": false,
+    "admissions": 0,
+    "allCompatibleIntegrated": false,
+    "overall": "PARTIAL"
+  }
+}

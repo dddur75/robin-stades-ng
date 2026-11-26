@@ -1,0 +1,58 @@
+{
+  "authorStoppedAt": "2026-11-23T02:59:53.518605+00:00",
+  "c0IndependentWholeModuleASTStrip": true,
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.CLOSED.FAILURE.WITNESS.REDESIGN.PRIVATE.RESULT.20261123",
+  "codeMapCanonicalSHA256": "ff4661c9f0e6f7a19cbf8b3eef40c87bcff227b29f034890986e6515475dd0f1",
+  "effects": {
+    "DNS": 0,
+    "GitMutation": 0,
+    "Task": 0,
+    "Win32": 0,
+    "app": 0,
+    "nativeJob": 0,
+    "oldPackReplay": 0,
+    "realData": 0,
+    "sourceGET": 0
+  },
+  "elapsedSeconds": 164.736948,
+  "grant": "a2202edc480e14d76991b216d03ad431f22b5d885b5a5a4bc85f791cf9c043ef",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "limits": [
+    "Private measurement E1 only; no third native trial or SOURCE authority. Native cause and version UNKNOWN.",
+    "Only 3 existing ReferenceFailure catches instrumented; broad owner-backlink exception catch unchanged. Reference SHA/counts may be null when not locally observable; no raw key/path/body traversal or source values.",
+    "Witness sink exception contained; no core result field changed. Four distinct max and sum of canonical witness bytes <=4096; actual synthetic witness list also <=4096.",
+    "Author does not selfvalidate; C0 CODE/C1 FACTS/C4 SCOPE required. All old packets/public parser immutable.",
+    "Six calls compare instrumented reader with observer absent/present; equivalence to parent is supported by independent static whole-module AST strip, not a parent replay.",
+    "Two RAM compilations are author-declared without standalone primary receipt."
+  ],
+  "manifestSHA256": "96620b9d00b66635243c537b79bef9b373d8ccf355ab2bd224ba27d4cc92e839",
+  "missionId": "NOTBETTING_CLOSED_FAILURE_WITNESS_REDESIGN_E1_20261123",
+  "parentExecutedByTheseSixCalls": false,
+  "planSHA256": "2ac45322cbc08207effbe6a33324ee40989d0d9304fa3004af4afba67442f1ee",
+  "qualifierSHA256": "6dbbec8c934b8ce89cea4578e5f8e021615d7de2f46baa9c05e2625bf14951e6",
+  "scope": "THREE_NEW_SYNTHETIC_OBSERVER_PAIRS_UNCHANGED_CORE_AST",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PLAIN.REFERENCE.SOURCE.R3.NATIVE.PARTIAL.20261123"
+  ],
+  "sourceReady": false,
+  "status": "ACCEPTED_PRIVATE_CLOSED_FAILURE_MEASUREMENT_ONLY",
+  "tests": {
+    "criticalRuff": 0,
+    "exit": 0,
+    "fullProjectionEquality": true,
+    "graphSeeds": 1,
+    "inputImmutability": true,
+    "qualifierCalls": 6,
+    "ramCompiles": 2,
+    "rowSkeletons": 1,
+    "runs": 1,
+    "sinkExceptionContained": true,
+    "syntheticCalendars": 1,
+    "variants": 3,
+    "wholeModuleASTStripProof": true
+  }
+}

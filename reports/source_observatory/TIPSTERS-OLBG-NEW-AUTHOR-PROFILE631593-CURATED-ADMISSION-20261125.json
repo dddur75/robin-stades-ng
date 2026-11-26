@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "robin-local-curated-admission-v2",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.NEW.AUTHOR.PROFILE631593.APP.ADMISSION.20261125",
+  "status": "CURATED_DATASET_PREPARED_RUNTIME_INACTIVE",
+  "scope": "New personal football choices from a previously absent source account; exact observed timestamps and native fields retained.",
+  "priorCheckpointSHA256": "6b22fc0aa33a56ae51534ba76f04039a7adac0edf4ea9cbda9dc83d190917782",
+  "sourceBatchSHA256": "2cf0e305cee4c3cf89a4a0539269ca8988af9868d60221f6763aa2c6279adbbf",
+  "nativeAuthorId": 631593,
+  "newUniqueAdmitted": 6,
+  "oldPublicChoicesPreserved": 545,
+  "publicChoices": 551,
+  "candidateFiches": 338,
+  "newCandidateFiches": 1,
+  "newPublicAuthor": true,
+  "documentaryPrematchRecertified": false,
+  "sourceReady": false,
+  "recurringCollectionActive": false,
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.TEN.NEW.AUTHORS.BATCH.R1.RESULT.20261125"
+  ],
+  "qualifiedAt": "2026-11-25T18:58:39.667Z",
+  "sourceObservedAt": "2026-11-25T18:56:20.730380+00:00",
+  "missionId": "OLBG_THREE_NEW_AUTHORS_APP_ADMISSION_20261125"
+}

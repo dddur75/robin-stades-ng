@@ -1,0 +1,46 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.PENDING.METADATA.PRIVATE.E1.RECETTE.20261122",
+  "recordedAt": "2026-11-22T17:00:39.847Z",
+  "status": "SYNTHETIC_PRIVATE_READER_REVIEWED_NO_REAL_APPLICATION_INTEGRATION",
+  "scope": "E1 only passive pending metadata reader: ten targeted synthetic cases on three reused rows, no real source/candidate read or application integration. Opaque candidate bytes only hashed. Whole pending unavailable/null on any failure, observations are not distinct or admitted choices. Producer and real descriptors not yet qualified.",
+  "missionId": "PENDING_OBSERVATION_METADATA_PRIVATE_E1_20261122",
+  "planSHA256": "f000f7fceb92392e5f079257517a87697d2cf5c59ccfff7681a0d95c070d3002",
+  "manifestSHA256": "904908aee2be765b9b67e887232a05fc82337cd4750ab97562ab1f7d2c75c1dd",
+  "grantSHA256": "c1ac1ccce82449b2ff6748a322bc8d7860757b0e570214cbe18b1b44a57e5002",
+  "hashes": {
+    "helper": "fa58b2b145d4e14d15a78678678e1d534451e8d72bccb064a81b51e813bea85d",
+    "tests": "d3e2c0d4c5ec6381cda6e14cb340ceab1b3aade5de549ebdc6fd0a3ebc9e5650",
+    "result": "78991874f8bac5a1c2d973e8f4edb7e09a54979a6b61a7ff14a327252dfc2abe",
+    "codeMap": "22d04a36e88d750db5ef56bfd1043393b9635a5586bc661ce515c1a45395fc2c"
+  },
+  "bounds": {
+    "maximumMissions": 8,
+    "filesPerMission": 3,
+    "fileBytesMax": 131072,
+    "fileReadsMax": 24,
+    "totalBytesMax": 3145728
+  },
+  "tests": {
+    "casesPassed": 10,
+    "syntheticRows": 3,
+    "typeTarget": "ES2017",
+    "typeExit": 0,
+    "lintErrors": 0,
+    "lintWarnings": 0,
+    "fullSuite": 0
+  },
+  "sourceGET": 0,
+  "realCandidateReads": 0,
+  "nativeCalls": 0,
+  "TaskChanges": 0,
+  "appChanges": 0,
+  "admissions": 0,
+  "codeAdopted": false,
+  "safeSummaryProducerImplemented": false,
+  "realDescriptorsQualified": false,
+  "independentReview": {
+    "C3": "Frozen hashes/code and retained targeted receipts verified, no rerun. Three relocation sites need rebinding in E2 (two specifiers and one path), not two sites.",
+    "C4": "Exact E1 scope/privacy/bounds/unknowns PASS. No E2 copy or real integration authority."
+  },
+  "globalDelivery": "PARTIAL"
+}

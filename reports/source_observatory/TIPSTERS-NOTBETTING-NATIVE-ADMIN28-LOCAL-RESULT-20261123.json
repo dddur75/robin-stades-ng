@@ -1,0 +1,47 @@
+{
+  "APIReads": 2,
+  "TaskChanges": 0,
+  "TaskQueries": 0,
+  "WindowsCurrentStateAccepted": false,
+  "actualAppCheckedAt": "2026-11-23T01:22:09.849Z",
+  "addedRows": 1,
+  "admittedFromNewRow": 0,
+  "candidateCount": null,
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.NATIVE.ADMIN28.LOCAL.RESULT.20261123",
+  "closedAt": "2026-11-23T01:22:09.878Z",
+  "codeChanges": 0,
+  "elapsedSecondsSinceGrant": 8.944248,
+  "expectedDirectBrowserAPI_SHA256": "57a28719480903b46f8dbab23e9529a29b5ef4324587867a1725b5cae16eb51e",
+  "forecastSnapshotChanged": false,
+  "fullAdminCurrentStateAccepted": false,
+  "globalDelivery": "PARTIAL",
+  "imageSHA256": "efb066c6fd90c5b8c4edfa19bf6ae3419d81edd268346fc84568ea9fd3372bc9",
+  "independentReviews": {
+    "C1": "ACTUAL_FACTS_CODE_AND_IMAGE_PASS",
+    "C4": "ACTUAL_SCOPE_AND_IMAGE_PASS"
+  },
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "limits": [
+    "One actual row only; full admin/current Windows operational state not accepted.",
+    "Technical-close timestamp retained as technical_close; unknown native/football/candidate metrics remain null, admissions0.",
+    "Validator positive stdout lacks standalone exitcode field; no stronger standalone receipt claim."
+  ],
+  "missionId": "NOTBETTING_NATIVE_ADMIN28_LOCAL_E1_20261123",
+  "outOfScopeAPIsBlockedBeforeTransport": 5,
+  "pageErrors": 0,
+  "pages": 1,
+  "previous27Preserved": true,
+  "rowScreenshots": 1,
+  "rows": 28,
+  "runtimeSnapshotSHA256": "1c6464894aa18031c609860218db074999cf204413f591669bce4f85beb3cd22",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PROSPECTIVE.SOURCE.R2.NATIVE.PARTIAL.20261123"
+  ],
+  "sourceGET": 0,
+  "sourceReady": false,
+  "status": "PASS_LOCAL_PARTIAL_SOURCE_RESULT_ROW_ONLY"
+}

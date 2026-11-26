@@ -1,0 +1,61 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.SINGLE.PERSONAL.REP.V2.SOURCE.AUTHORITY.20261122",
+  "recordedAt": "2026-11-22T16:35:06.128Z",
+  "status": "TWO_GET_SINGLE_PRIVATE_PERSONAL_CANARY_ONLY",
+  "scope": "Fresh bounded canary for one proven public profile,648433. Fresh REP must allow its exact route before the profile GET. Dated CGU explicitly reused under fresh C4 scope for personal noncommercial deterministic private use; no model input or training of native forecast content. Private observations only, no app/admission/Task effects.",
+  "missionId": "OLBG_SINGLE_PERSONAL_REP_V2_SOURCE_E1_20261122",
+  "planSHA256": "866630b06ee6b1f31677204fc5c4b5e5e5d17da715c8b32ea5e4a8addb957e18",
+  "manifestSHA256": "3598c34c2725d4a3e9fccac74275184894e2de9f8350f0e1754b66365b71edfa",
+  "sourceContext": {
+    "mission_id": "OLBG_SINGLE_PERSONAL_REP_V2_SOURCE_E1_20261122",
+    "grant": "OLBG_648433_TWO_GET_PERSONAL_PRIVATE_ONLY",
+    "keys": [
+      "C0",
+      "C1",
+      "C3",
+      "C4"
+    ],
+    "plan_sha256": "866630b06ee6b1f31677204fc5c4b5e5e5d17da715c8b32ea5e4a8addb957e18",
+    "manifest_sha256": "3598c34c2725d4a3e9fccac74275184894e2de9f8350f0e1754b66365b71edfa"
+  },
+  "preparationPlanSHA256": "d02a0a00daa7d1ab4f98799bc3299cb232b639d0ea3f473833ced7fab497a945",
+  "preparationManifestSHA256": "833f10a5979efa0ca72ba349389b11e36bc3726b6333152e89475f9bf9a49458",
+  "ordered": [
+    "https://www.olbg.com/robots.txt",
+    "https://www.olbg.com/tipsters/tips/648433"
+  ],
+  "maximumGET": 2,
+  "maximumHTTPWallSeconds": 12,
+  "maximumJobSeconds": 70,
+  "minimumPacingSeconds": 3,
+  "maximumRobotsDelaySeconds": 10,
+  "datedTermsAcceptance": {
+    "accepted": true,
+    "currentTermsFetch": false,
+    "datedPrimaryObservedAt": "2026-11-20T20:53:34.717680+00:00",
+    "datedReconfirmationObservedAt": "2026-11-21T12:00:18.423812+00:00",
+    "normalizedTextSHA256": "1248b86c3f9e8adc061c3fd489b3ba0576812956ff8ff051b8b3483ce6e4590f",
+    "primaryReceiptSHA256": "d1436b22fad8c1aa4a5e17c71d74d817787bed04322b309f17a831ee38d06d06",
+    "reconfirmationReceiptSHA256": "709664c03677b1da0220a9585914406dc4345cac3f05e828d047810fd7b7c5cd",
+    "scope": "THIS_SOURCE_TUPLE"
+  },
+  "termsFreshnessClaimed": false,
+  "ContentSignalUsedAsGrant": false,
+  "privateNativeForecastContentsToModels": false,
+  "privateNativeForecastContentsToStdout": false,
+  "privateNativeForecastContentsToGit": false,
+  "admissions": 0,
+  "appChanges": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "API_FOOTBALL": 0,
+  "retries": 0,
+  "redirects": 0,
+  "reviews": {
+    "C1": "FRESH SOURCE FACTS PASS exact8666/3598, native profileURI proof and36pins/CGU receipts/date/calendar verified.",
+    "C3": "FRESH SOURCE CODE PASS exact8666/3598, ctx5/MF8/36pins12AST/ledgeranchor, no effects from drafts; CodeE1 context correction append-only verified.",
+    "C4": "FRESH SOURCE SCOPE PASS and EXPLICIT DATED TERMS REACCEPTANCE exact8666/3598, primary20Nov/reconf21Nov/fulltext1248 for this tuple only; no concrete veto, no general license or ContentSignal grant;2GET/Job70/17:15 and privacy restrictions."
+  },
+  "expiresAt": "2026-11-22T17:15:00Z",
+  "globalDelivery": "PARTIAL"
+}

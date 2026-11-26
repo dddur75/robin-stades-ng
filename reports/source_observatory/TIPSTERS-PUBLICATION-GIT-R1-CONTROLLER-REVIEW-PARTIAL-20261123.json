@@ -1,0 +1,27 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.PUBLICATION.GIT.R1.CONTROLLER.REVIEW.PARTIAL.20261123",
+  "missionId": "TELEGRAM_CHANNEL_PUBLICATION_GIT_R1_20261123",
+  "status": "PARTIAL_E1_THREE_PRIVATE_GUARD_P1_NO_GIT_MUTATION_AUTHORIZED",
+  "scope": "Privatepublicationguard preflightHEAD/missinggrantrefusal valid but three independently reviewedP1s preventE2: missingcurrentledger/fulltuplebinding, permissivefirstverbREADallowedoutputoption, no timingrecheckafterreservationfsync. No exploit or Gitmutation executed; currentHEAD remains1a6, oldcontrollerfrozen andmustnotbeadopted.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.FOLLOWUP.PUBLICATION.SNAPSHOT.VERIFIED.20261123"
+  ],
+  "controllerSHA": "2bd48bd4e390f12e91bb4303d26059e6ba106349cb0d19f234da10e1c4e82b33",
+  "planSHA": "a9612fc0e3dd05a21a150266ea06476a21e423dc47718d2426e5bc53acfaed89",
+  "manifestSHA": "20e3466deb0ea39283de50934b643a3d236979f9d449db24d7ef8c1e4c833c6c",
+  "authorResultSHA": "79ee04ae05b6025a191f12dfd7f994f7692923ab582c9b7b4c2db5eddb69ae74",
+  "actualReadHEAD": "1a6cf4181cc8589f90b9a1c1f84bbb78f6a4b693",
+  "GitReadSubprocesses": 5,
+  "GitStage": 0,
+  "GitCommit": 0,
+  "GitPush": 0,
+  "E2Authority": false,
+  "criticalP1Count": 3,
+  "sourceGET": 0,
+  "newAdmittedForecasts": 0
+}

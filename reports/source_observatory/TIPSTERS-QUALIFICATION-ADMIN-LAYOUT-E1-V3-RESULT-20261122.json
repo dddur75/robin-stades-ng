@@ -1,0 +1,198 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.QUALIFICATION.ADMIN.LAYOUT.E1.V3.RESULT.20261122",
+  "generatedAt": "2026-11-22T02:15:25.691Z",
+  "status": "TARGETED_RECETTE_PASSED_PRIVATE_PROTOTYPE",
+  "scope": "Local read-only admin qualification panel, six dated summaries, keyboard refresh and four mobile widths. Not full cockpit accessibility acceptance or all-source delivery.",
+  "url": "http://127.0.0.1:4173/expert/admin-collecte",
+  "codeProjectionSHA256": "223b4fa7d36739b1633f6c05050d6cb5d3e60c6ac79b529bb57f79c793a67063",
+  "snapshotSHA256": "50a1efe32910605b80ba3a757a93095811d557e1a459c6bb4c667bf85bcab481",
+  "snapshotRows": 6,
+  "planSHA256": "84583349e8b5180057dd7a4b434db30902c91c4220fb0782721f244518e94b44",
+  "manifestSHA256": "b2f62c5d3bcf97fb8d715434d93ddef9389a66f3d18839d6a7019571064d3ab7",
+  "runtimeCopy": {
+    "startedAt": "2026-11-22T02:12:02.871Z",
+    "writer": "C0",
+    "reviews": {
+      "C3": "PASS_AND_HOLD final8file code projection223b4fa7d36739b1633f6c05050d6cb5d3e60c6ac79b529bb57f79c793a67063",
+      "C4": "PASS_AND_HOLD snapshotV2 exact50a1efe..."
+    },
+    "files": [
+      {
+        "path": "cockpit/app/lib/tipster-qualification.ts",
+        "beforeSHA256": "c2fc4a52bb64a5c027b36ebc0070dc2e53312732248db4d076eb4b43495f7e72",
+        "afterSHA256": "dd7341f9d4bd4240c361629a5997ce0d05a7b1d811647055150fd4bb57d42415"
+      },
+      {
+        "path": "cockpit/app/components/expert/tipster-qualification.tsx",
+        "beforeSHA256": "6b18d9af89b190b1fc16d692b0de70fce1436ae5878c22ff8a0f4b65655af52c",
+        "afterSHA256": "ca1f95dd47992aa16a8601bd42ff19e70d8eb47bb722f1d7cfd59c0b4339f4ec"
+      },
+      {
+        "path": "cockpit/app/globals.css",
+        "beforeSHA256": "95353aa4af68477e7d9465e4b7e9731ef95b61a8a59033e9f00a028a1eff25ab",
+        "afterSHA256": "a53379f048184d164fe4151d447e829ad234697e3722f20559874933a3469fd0"
+      }
+    ],
+    "providerRequests": 0,
+    "taskChanges": 0,
+    "ledgerAndGraphCopied": false,
+    "snapshotSHA256": "50a1efe32910605b80ba3a757a93095811d557e1a459c6bb4c667bf85bcab481",
+    "finishedAt": "2026-11-22T02:12:02.879Z"
+  },
+  "browser": {
+    "status": "ADMIN_QUALIFICATION_DOM_VERIFIED",
+    "startedAt": "2026-11-22T02:12:48.034Z",
+    "localGET": 174,
+    "qualificationGET": 4,
+    "navigations": 2,
+    "externalBlocked": 0,
+    "writesBlocked": 0,
+    "webSocketsBlocked": 0,
+    "pageErrors": [],
+    "sourceGET": 0,
+    "taskChanges": 0,
+    "admissions": 0,
+    "webSocketsAllowed": 2,
+    "rows": [
+      {
+        "label": "OLBG · profil 642100Observé le 22 novembre 2026 à 02 h 53 · Paris",
+        "candidates": "0",
+        "admitted": "0"
+      },
+      {
+        "label": "OLBG · profil 334365Observé le 22 novembre 2026 à 01 h 50 · Paris",
+        "candidates": "0",
+        "admitted": "0"
+      },
+      {
+        "label": "YouTube · SRC_023Observé le 22 novembre 2026 à 00 h 21 · Paris",
+        "candidates": "Non mesuré",
+        "admitted": "0"
+      },
+      {
+        "label": "MightyTips · SRC_045Observé le 21 novembre 2026 à 23 h 02 · Paris",
+        "candidates": "0",
+        "admitted": "0"
+      },
+      {
+        "label": "TelegramRapport documentaire enregistré le 22 novembre 2026 à 01 h 45 · Paris",
+        "candidates": "Non mesuré",
+        "admitted": "0"
+      },
+      {
+        "label": "OLBG · profil 522767Contrôle clos le 22 novembre 2026 à 03 h 06 · Paris",
+        "candidates": "Non mesuré",
+        "admitted": "0"
+      }
+    ],
+    "keyboardRefresh": true,
+    "refreshVerified": true,
+    "datedStaleViewRetained": true,
+    "mobile": {
+      "width": 328,
+      "viewport": 390,
+      "scrollWidth": 328,
+      "overflow": "auto"
+    },
+    "widthChecks": [
+      {
+        "width": 360,
+        "cardDisplay": "grid",
+        "cardWidth": 298,
+        "viewport": 360,
+        "fontSize": 14,
+        "dateDisplay": "block"
+      },
+      {
+        "width": 375,
+        "cardDisplay": "grid",
+        "cardWidth": 313,
+        "viewport": 375,
+        "fontSize": 14,
+        "dateDisplay": "block"
+      },
+      {
+        "width": 390,
+        "cardDisplay": "grid",
+        "cardWidth": 328,
+        "viewport": 390,
+        "fontSize": 14,
+        "dateDisplay": "block"
+      },
+      {
+        "width": 430,
+        "cardDisplay": "grid",
+        "cardWidth": 368,
+        "viewport": 430,
+        "fontSize": 14,
+        "dateDisplay": "block"
+      }
+    ],
+    "reducedMotionEmulation": true,
+    "panelAccessibilityTreeSHA256": "4f436c30d034ca92ebb84fa374c78c516bee965532bd55e2426750822ad6608d",
+    "initial503HasNoTable": true,
+    "browserClosed": true,
+    "closeMilliseconds": 79,
+    "finishedAt": "2026-11-22T02:12:50.665Z",
+    "elapsedMilliseconds": 2632
+  },
+  "rawResultSHA256": "efac5ec324c99834b7273724227350fb606f2f38aa4a7ce50efc34b3e21034ff",
+  "boundedReceiptSHA256": "7b87e4f089552dd1f29886838b94855c0308d6bee67daa74d53f8b5ef54120ae",
+  "outerExit": 0,
+  "outerElapsedMilliseconds": 2969,
+  "checks": {
+    "tests": {
+      "exit": 0
+    },
+    "lint": {
+      "exit": 0
+    },
+    "typecheck": {
+      "exit": 0
+    },
+    "build": {
+      "exit": 0,
+      "elapsedSeconds": 4.3252107,
+      "command": "node24 node_modules/vinext/dist/cli.js build"
+    },
+    "bundle": {
+      "bytes": 1346386,
+      "maximum": 1350000,
+      "pass": true
+    },
+    "finalBuild": {
+      "exit": 0,
+      "clientJavaScriptBytes": 1346639,
+      "limit": 1350000
+    },
+    "finalLint": {
+      "exit": 0
+    },
+    "finalBundleTest": {
+      "exit": 0
+    }
+  },
+  "independentC3": "Final code and exact runtime/data pins, receipt and screenshots independently reviewed without another navigation.",
+  "dataC4": "Exact six-row snapshot50a1efe... approved local read-only; no source authority.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.NEWPROFILE642100.E1.RESULT.20261122",
+    "ENG.SOURCE_OBSERVATORY.FUTURE.L1.CALENDAR.CONTEXTUAL.POLICY.20261122",
+    "ENG.SOURCE_OBSERVATORY.OLBG.CURRENT334365.E1.RESULT.20261122",
+    "ENG.SOURCE_OBSERVATORY.YOUTUBE.TOPIC.DISCOVERY.E1.V2.RESULT.20261121",
+    "ENG.SOURCE_OBSERVATORY.MIGHTYTIPS.PERSONAL.RAM.E1.V3.RESULT.20261121",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.NATIVE.FRENCH.TOS.DOCS.RESULT.20261122",
+    "ENG.SOURCE_OBSERVATORY.OLBG.NEWPROFILE522767.E1.RESULT.20261122"
+  ],
+  "visualReview": "Text readable; responsive cards contained at all four tested widths. Desktop screenshot is scrolled and does not display all six rows at once.",
+  "remainingAcceptance": [
+    "Manual screen-reader trace not performed",
+    "Real200percent browser zoom not performed",
+    "Keyboard check limited to focus and Enter refresh",
+    "Reduced-motion emulated only",
+    "Full UX6/A3 cockpit acceptance not established"
+  ],
+  "sourceActivationChanges": 0,
+  "API_FOOTBALL_CALLS": 0,
+  "globalDelivery": "PARTIAL",
+  "allCompatibleSourcesIntegrated": false
+}

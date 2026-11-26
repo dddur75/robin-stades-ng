@@ -1,0 +1,33 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.LIVERPOOL.ONE.LOCAL.RECETTE.20261121",
+  "status": "ONE_RETAINED_CHOICE_INTEGRATED_GLOBAL_DELIVERY_PARTIAL",
+  "scope": "EXACT_THREE_COPY_THREE_LOOPBACK_READ_E2_RECETTE",
+  "observedAt": "2026-11-21T13:49:02.016Z",
+  "readbackRawSHA256": "f75f1a12066dd9ce8f440a371d37e7cf62314724ffd3b364cf01a746ba449ee0",
+  "dataClaimId": "DATA.SOURCE_OBSERVATORY.OLBG.LIVERPOOL.ONE.RETAINED.PREMATCH.20261121",
+  "applicationChoices": 461,
+  "applicationAuthors": 79,
+  "applicationFixtures": 20,
+  "all460WholeChoicesPreserved": true,
+  "all19WholeFixturesPreserved": true,
+  "newlyIntegratedRetainedChoices": 1,
+  "newSourceAcquisitions": 0,
+  "observationDate": "2026-11-20",
+  "qualificationDate": "2026-11-21",
+  "sourceGET": 0,
+  "taskMutations": 0,
+  "localFileCopies": 3,
+  "backups": 2,
+  "localHTTPReads": 3,
+  "localHTTP200": 3,
+  "elapsedBeforeFinalFsyncMilliseconds": 43054,
+  "hepterCandidateEnabled": [
+    false,
+    false
+  ],
+  "hepterPublicCampaignState": "expired",
+  "newRosterRequests": 0,
+  "newRosterSuccessfulSlots": 0,
+  "candidateNativeWasStale": true,
+  "subsequentObserverClaimId": "ENG.SOURCE_OBSERVATORY.OLBG.LIVERPOOL.ONE.NATIVE.OBSERVER.20261121"
+}

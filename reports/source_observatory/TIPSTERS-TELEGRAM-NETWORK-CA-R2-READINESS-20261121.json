@@ -1,0 +1,42 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.NETWORK.CA.R2.READINESS.20261121",
+  "status": "ZERO_HTTP_NETWORK_DIAGNOSTIC_AUTHORIZED_NOT_EXECUTED",
+  "scope": "One DNS resolution, one TCP connection, one strict default TLS handshake augmented only in RAM with the pinned installed CA bundle only. Zero HTTP and zero application-data send/read. No source compatibility or collection inferred.",
+  "planCanonicalSHA256": "c0c670a7705f0b476890fa0b9f177a98a04496396427473779a016c9cf553b12",
+  "manifestCanonicalSHA256": "09ea7f18353627d72a8903476d0f92d6f3519efc11e7b61eaa30718e8e8761d8",
+  "workerSHA256": "8faf8bb064e5a072d27c25f9298e18edf6e078d016c5daa23419bc0b7330c9e1",
+  "caBundleSHA256": "2ef52ad56b4803e264045c915e55c236cbfa045b84b81efefc218a19eb44bd2b",
+  "defaultStrictCARamApproved": true,
+  "OSChanges": 0,
+  "priorNetworkDiagnosticPreserved": true,
+  "familyDNSMaximum": 2,
+  "familyTCPMaximum": 2,
+  "familyTLSMaximum": 2,
+  "httpMaximum": 0,
+  "applicationDataAllowed": false,
+  "DNSMaximum": 1,
+  "TCPMaximum": 1,
+  "TLSMaximum": 1,
+  "phaseSeconds": {
+    "DNS": 4,
+    "TCP": 5,
+    "TLS": 8
+  },
+  "maximumSeconds": 30,
+  "closureMarginSeconds": 5,
+  "expiresAt": "2026-11-21T15:25:00Z",
+  "priorHTTPReservationsConsumed": 2,
+  "priorHTTPFailuresPreserved": true,
+  "sourceContentRequestsExecuted": 0,
+  "networkDiagnosticsExecuted": 0,
+  "globalSourceDelivery": "PARTIAL",
+  "limits": [
+    "DNS daemon timeout bounds Python wait, not OS cancellation or packet count.",
+    "Phase label means phase entered; guard may refuse before native call."
+  ],
+  "verifiedBy": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

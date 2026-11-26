@@ -1,0 +1,77 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.YOUTUBE.API.DOCS.R2.AUTHORITY.20261121",
+  "generatedAt": "2026-11-21T22:30:21.289444+00:00",
+  "status": "AUTHORIZED_DOCUMENTARY_ONLY_NOT_ACQUISITION",
+  "scope": "Clarify regional and API-specific terms of the documented official Atom/WebSub interface before any channel-data acquisition. Documentary-only successor; no source-data authority.",
+  "planSHA256": "70dafe1d8c46df2c9e434baf31a1365c06d0019b9182a973abc4027df5dd1ba4",
+  "manifestSHA256": "d831512b6139733698ba69f2806cd89d7f949aa2576d98be50e9071710e60cf7",
+  "plan": {
+    "mission_id": "YOUTUBE_API_DOCS_SCOPE_E1_R2_20261121",
+    "purpose": "Clarify regional and API-specific terms of the documented official Atom/WebSub interface before any channel-data acquisition. Documentary-only successor; no source-data authority.",
+    "operations": [
+      {
+        "kind": "regional_terms_document",
+        "url": "https://www.youtube.com/t/terms?gl=FR&hl=en"
+      },
+      {
+        "kind": "api_terms_document",
+        "url": "https://developers.google.com/youtube/terms/api-services-terms-of-service"
+      },
+      {
+        "kind": "api_developer_policy_document",
+        "url": "https://developers.google.com/youtube/terms/developer-policies"
+      }
+    ],
+    "transport": "MEDIATED_WEB_OPEN_ONLY",
+    "mediatedOperationsMaximum": 3,
+    "directSourceGET": 0,
+    "backendHTTPAndRedirectCount": "UNKNOWN",
+    "sourceChannelsRead": 0,
+    "sourceFeedsRead": 0,
+    "sourceVideosRead": 0,
+    "sourcePredictionsRead": 0,
+    "rawHTTPBodyStored": false,
+    "durableStorage": "BOUNDED_DOCUMENTARY_METADATA_HASHES_AND_SHORT_PARAPHRASES_ONLY",
+    "priorDocumentaryProjectionSHA256": "6c39018e69dbf77cc48cb6fd4f692e343acc0edb1de7bbcd4291357ec8a805e1",
+    "robotsScope": "Deferred until any separately authorized direct feed acquisition; robots does not establish contractual permission.",
+    "stopOnRefusalChallengeOrBudget": true,
+    "purchases": 0,
+    "accounts": 0,
+    "APIKeys": 0,
+    "tasks": 0,
+    "expires_at": "2026-11-21T22:55:00Z"
+  },
+  "manifest": {
+    "mission_id": "YOUTUBE_API_DOCS_SCOPE_E1_R2_20261121",
+    "authorized_stages": [
+      "E1"
+    ],
+    "maximum_stage": "E1",
+    "external_effects": {
+      "mediated_document_operations_maximum": 3,
+      "direct_source_gets": 0,
+      "channel_feed_video_reads": 0,
+      "source_predictions_read": 0,
+      "new_tasks": 0,
+      "purchases": 0,
+      "accounts": 0,
+      "raw_body_storage": 0
+    },
+    "compute_budget": {
+      "workers": 1,
+      "corpus_replays": 0
+    },
+    "time_budget": {
+      "elapsed_active_operations_and_initial_metadata_close_seconds": 120
+    },
+    "source_hash": "70dafe1d8c46df2c9e434baf31a1365c06d0019b9182a973abc4027df5dd1ba4",
+    "expires_at": "2026-11-21T22:55:00Z"
+  },
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceFeedsRead": 0,
+  "sourcePredictionsRead": 0
+}

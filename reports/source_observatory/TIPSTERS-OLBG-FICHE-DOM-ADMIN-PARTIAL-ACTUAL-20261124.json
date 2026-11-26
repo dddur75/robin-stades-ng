@@ -1,0 +1,67 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.FICHE.DOM.ADMIN.PARTIAL.ACTUAL.20261124",
+  "missionId": "OLBG_RUNNING_SERVER_READONLY_UI_RECETTE_20261124",
+  "status": "PARTIAL",
+  "scope": "Actual browser completed fiche verification of17unqualified observations, native fields/hrefs and exact account link, before enteringADMIN. Job then failed unspecifiedADMIN assertion;3consoleerrors were recorded without source attribution. No full two-view/UI acceptance, source activation or admission. All runtime code/data/metadata preserved.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.RUNNING.SERVER.READONLY.METADATA.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.EXACT.FICHE.APP.WIRING.E1.RESULT.20261124"
+  ],
+  "actual": {
+    "admissions": 0,
+    "authorityClosed": true,
+    "browser": {
+      "errorKind": "AssertionError",
+      "fatal": null,
+      "realChoicesLogged": false,
+      "sourceCollectorRuns": 0,
+      "stats": {
+        "blockedExternal": 0,
+        "blockedWebSockets": 0,
+        "blockedWrites": 0,
+        "consoleErrors": 3,
+        "droppedClientHMRFrames": 0,
+        "localGET": 165,
+        "localHMRSockets": 2,
+        "pageErrors": 0,
+        "requestCapHit": false
+      },
+      "status": "PARTIAL",
+      "step": "ADMIN",
+      "timedOut": false
+    },
+    "closedAtUTC": "2026-11-24T15:25:38.403302+00:00",
+    "codeWrites": 0,
+    "globalUIRecette": false,
+    "job": {
+      "activeSecondsMax": 50,
+      "elapsedSeconds": 4.98399999999674,
+      "exit": 1,
+      "hardSeconds": 60,
+      "sourceGET": null,
+      "subtreeKillConfirmed": true,
+      "taskMutations": 0,
+      "timedOut": false
+    },
+    "metadataWrites": 0,
+    "missionId": "OLBG_RUNNING_SERVER_READONLY_UI_RECETTE_20261124",
+    "observationWrites": 0,
+    "processMutations": 0,
+    "retry": false,
+    "sourceGET": 0,
+    "sourceReady": false,
+    "status": "PARTIAL"
+  },
+  "receiptSHA256": "2a8b2a756b127111aa9d8aa9752f2147d354ea89fa9cc77476da6b3d4858ffeb",
+  "stopSHA256": "8a06c809aea42fd5ec800470e24fbf4a1bbbb4f398faf489c19a90168e255fa3",
+  "ficheSubsetPassedByPinnedControlFlow": true,
+  "adminExactFailurePredicate": "UNKNOWN",
+  "sourceReady": false,
+  "admissions": 0,
+  "authorityClosed": true
+}

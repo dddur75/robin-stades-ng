@@ -1,0 +1,25 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.APP.UI.CANARY.FIX.PRIVATE.CODE.RESULT.20261123",
+  "missionId": "SOURCE_OBSERVATION_UI_CANARY_FIX_PRIVATE_E1_20261123",
+  "status": "INDEPENDENT_PRIVATE_CODE_ACCEPTED_RUNTIME_UNPROVEN",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Only corrected private UI-only canary code. No execution grant, actual browser or API acceptance. Author C3 independently reviewed by C0/C1/C4.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.APP.WARM.FINAL.BINDING.R3.ACTUAL.API.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.WARM.FINAL.BINDING.R3.LOCAL.CLOSE.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.SOURCE.OBSERVATION.UI.UTF8.FIX.RESULT.20261123"
+  ],
+  "canarySHA": "e0e3265837f01fdcba9323ed8bbdea71550051d91e9e9a2c96912bc129288969",
+  "fileMapCAN": "bba2f40eb0fdec11a76cb8bd4ad20081e78f5d203dea0b51089360855274ae4d",
+  "resultSHA": "1778813ba7420353ffd81843ec8d73a6116043589db60f9dfb8baf0677dcd6c0",
+  "syntaxExit": 0,
+  "pureTests": 2,
+  "actualBrowser": 0,
+  "appAPIReads": 0,
+  "sourceGET": 0,
+  "admissions": 0
+}

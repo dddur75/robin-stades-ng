@@ -1,0 +1,41 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PERSONAL.TWO.R3.READINESS.20261121",
+  "status": "EXACT_TWO_PHASE_E1_CANARY_AUTHORIZED_NO_EXECUTION_YET",
+  "scope": "Only two bounded manual captures under the exact new personal E1 scope. No task, recurrence or automatic application admission.",
+  "planCanonicalSHA256": "45986765d08a5938d0b2657fb1c36b8984dae15df2a48edf3896e8dc89fb113d",
+  "manifestCanonicalSHA256": "b742d5676f24cbf99eebec7383d8621945a75702b84982539359b3a501147482",
+  "indexRawSHA256": "2f66170abe9f9ca241e5d54f7d09c5c99940c027e5922a4fb09b750f9a26f2c6",
+  "expiresAt": "2026-11-21T19:20:00Z",
+  "sourceGETExecuted": 0,
+  "sourceHEADExecuted": 0,
+  "planned": {
+    "priorHTTP": 18,
+    "priorGET": 17,
+    "priorHEAD": 1,
+    "newGETMaximum": 4,
+    "familyHTTPCeiling": 22,
+    "oldHTTPCeiling": 20,
+    "familyReservedMilliseconds": 297999,
+    "familyMillisecondsCeiling": 600000,
+    "currentTerms": "UNKNOWN",
+    "historicalTermsObserved": "2026-11-20T16:15:14.330276Z",
+    "oldInternal24HourThresholdExpired": true,
+    "maximumCaptures": 2,
+    "firstHardClose": "2026-11-21T19:10:00Z",
+    "secondDue": "2026-11-21T19:15:00Z",
+    "secondDueWindowSeconds": 90,
+    "expiry": "2026-11-21T19:20:00Z",
+    "minimumParentEntrySecondsStrict": 50,
+    "owner": "ELIMAGAR",
+    "fixture": "epl-20261122-liverpool-manutd",
+    "firstNoEligibleStopsSecond": true,
+    "rawBodyStorage": false,
+    "applicationAdmissionAllowed": false,
+    "recurrenceAllowed": false
+  },
+  "verifiedBy": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

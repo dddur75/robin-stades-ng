@@ -1,0 +1,25 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.J12.STABLE.LAUNCHER.APPLIED.20261121",
+  "status": "REPAIRED_AWAIT_NATURAL_PILOT_NO_COLLECTION_PROVEN",
+  "scope": "Exact J12 action repair and stable bootstrap installed once; original pilot scope and51GET ceiling preserved.",
+  "appliedAt": "2026-11-21T10:35:14.0762458+00:00",
+  "nativeObservedAt": "2026-11-21T10:36:19.4343420+00:00",
+  "nativeObservationAfterMutationWindow": true,
+  "receiptsSha256": {
+    "apply-result.json": "040ea6105569197fb2154cdc89c26f39ce5c9004625ea0a46a1d1bbc46415dee",
+    "controller-result.json": "8071d5bebfb68d52ab46c630affa544ed6811f70a4e594ed687a24b2657604e8",
+    "native-after.json": "f15e21720504fdb24f6495d64b409ff2f0dc25765848ac12406e279b73d05d84"
+  },
+  "taskState": "Ready",
+  "nextRunUTC": "2026-11-26T07:45:00.0000000Z",
+  "executablePresent": true,
+  "triggersPreserved": 24,
+  "taskUpdates": 1,
+  "bootstrapCopies": 1,
+  "manualRuns": 0,
+  "sourceGET": 0,
+  "lastResultHistoricalNeverExecuted": 267011,
+  "collectionObserved": false,
+  "pilotRequestLimitUnchanged": 51,
+  "recordedAt": "2026-11-21T10:38:34.061129+00:00"
+}

@@ -1,0 +1,32 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.INDEPENDENT.ESPN.UTC.CALENDAR.E1.ACCESS.PARTIAL.20261122",
+  "generatedAt": "2026-11-22T21:09:03.818Z",
+  "missionId": "INDEPENDENT_ESPN_UTC_CALENDAR_E1_20261122",
+  "status": "PARTIAL_MEDIATED_ACCESS_FAILED_NO_CALENDAR_EVIDENCE",
+  "scope": "One exact mediated ESPN URL open failed at tool access layer; no assertion about native endpoint availability or calendar absence.",
+  "planSHA256": "f476ee44ec8bf0f3898c305168e71ccd1d8c253d810b0cbd2b59578d7bb0da00",
+  "manifestSHA256": "60b2eeb8d56a81a4421682003530e88a40a5fc7e3f9c13992632f435ac2d036a",
+  "grant": "381e95a856f30ad04d0bde1507b5f94d0e4a9a534773a8bbd0fb80a764156d63",
+  "mediatedOperations": 1,
+  "underlyingHTTPCount": null,
+  "toolIsErrorFlag": false,
+  "contentOutcome": "INTERNAL_ERROR_URL_NOT_ACCESSIBLE_VIA_THIS_TOOL",
+  "representationSHA256": "23608af7893f2947c7ee6c07202b6486c1905c7941e2e00ee5a36c19e80c6129",
+  "representationBytes": 362,
+  "fixturesObserved": null,
+  "explicitUTCProof": false,
+  "scheduledKOProof": false,
+  "resolvedHost": null,
+  "noRetry": true,
+  "appChanges": 0,
+  "sourceTipsObserved": 0,
+  "API_FOOTBALL_CALLS": 0,
+  "sourceReady": false,
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "independentReview": "C1_FACTS_C4_SCOPE_CLOSE_ONLY_REPRESENTATION_HASH_C0_ATTESTED_NOT_INDEPENDENTLY_RECOMPUTED"
+}

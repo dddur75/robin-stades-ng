@@ -1,0 +1,72 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.YOUTUBE.TOPIC.DISCOVERY.E1.V2.ALGORITHM.20261121",
+  "generatedAt": "2026-11-21T23:21:17.710Z",
+  "status": "INDEPENDENT_EXACT_BOUNDED_ALGORITHM_REVIEW",
+  "scope": "One separately authorized single-channel technical discovery in RAM, at most three GETs including robots and one exact optional same-channel redirect. No durable API content, dataset admission, recurring collection, subscription or public callback.",
+  "planSHA256": "2e99f2c2bbce53570def0d90717a28ae5c24b236c3642134b6773b9227663573",
+  "manifestSHA256": "06ebb8ba779c4450c1825702f80f107e5e9efe2d976375348147466154aae848",
+  "pinnedArtifacts": {
+    "PUBLIC/src/robin/source_observatory/collector.py": "955c10b28755fb4551b431bbbaa58588ecc254ee993d9cf5b9d67780f1515853",
+    "PUBLIC/src/robin/source_observatory/connectors.py": "98239d46c5721cc4b976990cef75c42e5c897562b7a802ed390d3a0d41838700",
+    "PUBLIC/src/robin/source_observatory/extractor.py": "b15ef45f3a52f8eb4d998370bd46ec22aa5867df0dfbffd293dfec9a38c31d90",
+    "PUBLIC/src/robin/source_observatory/models.py": "68047d99dacb99999483ac66e3b8b2bd6101c4741ab64e9ab6fd9a956f1f09a0",
+    "PUBLIC/src/robin/source_observatory/public_formats.py": "4c77577a07d7d26b8c490932d99d056a9c912a6592dddc871bdfcc5b69610414",
+    "PUBLIC/src/robin/source_observatory/schema_validation.py": "73cafe1310f2be0d966d12d4f6b299be108a230e26d5eeecce638b2a400c84ea",
+    "PUBLIC/src/robin/source_observatory/schemas/contribution.schema.json": "bf0e00cd0d26500fa5f912d57d908f85c7e7261b53fb7d483f42ba5877247d70",
+    "PUBLIC/src/robin/source_observatory/youtube_atom.py": "491aa96dcda30e8c823ee9bbc6d7fac98fc17d0039fa6e448e35a0ea8793b754",
+    "PRIVATE_CANARY/control.py": "a237723f2dd584da11719ed72f328598b3158e88455cadf8cd446757f8f32e45",
+    "PRIVATE_CANARY/probe.py": "b470cc0d95859b85f9855293952e5b17c2cb6116aec3ecf8e09a21ccfa61dc34",
+    "PRIVATE_CANARY/source_loading.py": "20ada798f24f661b042eb7f3aea2ffabbb87bb11913cea95a05a107424508e77",
+    "EXISTING_PRIVATE_BOUNDED_JOB_LAUNCHER": "435eaa48f02772cef806bcdafc6a9bcd7ada23c47fa75502c901ed5fbc235305",
+    "A9_PINNED_BASE_PYTHON": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a"
+  },
+  "privatePacketNamespace": "A9_PRIVATE_CLIENTWIRE_YOUTUBE_TOPIC_DISCOVERY_E1_20261121",
+  "sourceId": "SRC_023",
+  "currentHandleAssociation": "UNKNOWN_REGISTRY_ID_BINDING_ONLY",
+  "maximumGET": 3,
+  "timeBudget": {
+    "closeReserveSeconds": 3,
+    "jobKillSeconds": 5,
+    "jobSeconds": 50,
+    "marginSeconds": 7,
+    "totalSecondsFromSupervisorEntry": 65,
+    "workerEffectiveMaxSeconds": 42
+  },
+  "expiresAt": "2026-11-21T23:40:00Z",
+  "quality": {
+    "syntheticProbeTests": 7,
+    "syntheticControlTests": 7,
+    "syntheticLoaderTests": 4,
+    "total": 18,
+    "C3IndependentFinalPinnedLoaderAndAST": "PASS",
+    "schemaRereadP1": "RESOLVED_PINNED_IMMUTABLE_BYTES_AND_STRICT_NATIVE_FALLBACK",
+    "headers": "HTTP Link first; present invalid is terminal; embedded Atom only when absent",
+    "redirection": "One exact planned alias after allowed status and robots, no recursion or retry"
+  },
+  "reviews": {
+    "author": "C2",
+    "C3": "Final CODE and13pins/AST/schema closure verified",
+    "C1": "Exact source-id registry association, URL and cap facts",
+    "C4": "Exact transient-data scope and bounded controller privacy"
+  },
+  "retainedFields": "Technical diagnostics, hashes, sizes, structural counts and booleans only",
+  "prohibitedPersistence": [
+    "author names",
+    "author IDs",
+    "video IDs",
+    "video URLs",
+    "choices",
+    "titles",
+    "prose",
+    "XML",
+    "raw API content",
+    "Link values"
+  ],
+  "admissions": 0,
+  "newTasks": 0,
+  "accounts": 0,
+  "APIKeys": 0,
+  "purchases": 0,
+  "aggregationRetentionLicence": "UNQUALIFIED",
+  "globalDelivery": "PARTIAL"
+}

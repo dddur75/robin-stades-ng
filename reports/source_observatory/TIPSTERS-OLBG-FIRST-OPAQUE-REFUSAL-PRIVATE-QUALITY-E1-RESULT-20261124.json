@@ -1,0 +1,61 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.FIRST.OPAQUE.REFUSAL.PRIVATE.QUALITY.E1.RESULT.20261124",
+  "missionId": "OLBG_FIRST_OPAQUE_R2_QUALITY_ONLY_E1_20261124",
+  "status": "PASS_AND_HOLD",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Independently accepted private synthetic first-individual-opaque-refusal observer. Exactly original _choices output/order and AST inverse preserved. Quality successor changes only test import ordering; no native cause or SOURCE authority is established.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG648433.FUTURE.L1.NATIVE.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.OLBG.ONE.NEW.LOCAL.ADMISSION.RESULT.20261122"
+  ],
+  "helperSHA": "b5d43a6cee8bffbe5c89c4067f6fe533e554a7728d83ec6089544adb6b7d4f72",
+  "testSHA": "7fa39f40c1ec49f4b524a16a42afc2cc55f3a6771cc7d73727b84ae73b842bf3",
+  "qualityResultSHA": "1f05040d648e26a2e5832d3825b7a28481bc955d2e08a0f2b0ce7f9f37e3c82d",
+  "functionalResultSHA": "f75abed650635a38bbf5e97e7c2793bd72daee05f7bf30cce47766bff4692c55",
+  "sourcePins": {
+    "choices": "ff5547639da87c6241b2591e3d5fd6457bf6d532adcb44512c158ba669b34fbc",
+    "opaque": "be17ad95f30c7a7e5dd9e2992d6f9787595966f305e3e91081bb4e591c09be38"
+  },
+  "synthetic": {
+    "expectedRED": 1,
+    "goldenGREEN": 4,
+    "totalTestExecutions": 5,
+    "trackedNamedCalls": 236,
+    "trackedNamedCallsMax": 512,
+    "choicesCalls": 11,
+    "choicesCallsMax": 16,
+    "factoryCalls": 2,
+    "factoryCallsMax": 2
+  },
+  "quality": {
+    "ruffFiles": 2,
+    "ruffExit": 0,
+    "RAMCompileFiles": 2,
+    "mypyHelperExit": 0,
+    "mypyReusedSameHelper": true,
+    "newFunctionalReplays": 0,
+    "wholeModuleASTEqualAfterImportOrdering": true,
+    "testBusinessSuffixByteExact": true
+  },
+  "qualityAuthorStoppedAtUTC": "2026-11-24T11:42:41.117295+00:00",
+  "qualityDirectChildLaunches": 8,
+  "qualityCreatedFiles": 12,
+  "totalOSProcesses": null,
+  "sourceGET": 0,
+  "providerPayloadReads": 0,
+  "sourceReady": false,
+  "admissions": 0,
+  "allCompatibleIntegrated": false,
+  "authorityClosed": true,
+  "limits": [
+    "Witness only is closed to512bytes with fixed reason/error enums; original ChoiceOutput tuple may contain private values and gains no logging/export authority.",
+    "Only the first individual build_opaque_choices([tipid]) exception is captured; no upstream/final/Win/paid gate claim. Missing witness does not establish an absence of refusals.",
+    "Dependencies admit_facts/instant/team in synthetic tests are synthetic callbacks; a native caller must separately pin and prove their actual binding.",
+    "Original failed budget phase and R2 PARTIAL_QUALITY remain historical; this quality successor does not retroactively repair them.",
+    "No SOURCE/LOCAL execution, runtime adoption or native forecast qualification is authorized by this private engineering proof."
+  ]
+}

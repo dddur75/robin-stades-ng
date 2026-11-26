@@ -1,0 +1,69 @@
+{
+  "missionId": "COTEUR_CURRENT_ENTRYPOINT_DOCUMENT_DISCOVERY_R1_20261123",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.CURRENT.ENTRYPOINT.DISCOVERY.R1.E1.PARTIAL.20261123",
+  "status": "PARTIAL_SYNTHETIC_TESTS_PASSED_CODE_REVIEW_REJECTED",
+  "scope": "CURRENT_HOMEPAGE_SCRIPT_REFERENCE_READER_PREPARATION_ONLY",
+  "writer": "C0",
+  "authorStoppedAt": "2026-11-23T04:42:26.994Z",
+  "sourceGET": 0,
+  "actualNodeChildren": 0,
+  "nativeJobs": 0,
+  "sourceReady": false,
+  "testExit": 0,
+  "lintExit": 0,
+  "codeMap": {
+    "authority_policy.py": "f9e4684f2bf8186324f0ae49dbb086b1e593c630541debbfd7525b077556352a",
+    "native_outer.py": "8f00ce3b0a685c6be7faf617a120d398f767e24dc50c2cb09d8972d803990253",
+    "fixed_transport.py": "a7dff76c7c9428a8d2d55f50468147b7a6de5e4e7b102c91dbeeb5ec39dd7d49",
+    "source_worker.py": "29f4ab5813fc2a267d31d913f04ac5b2055e524f2ff21801eb3c817305b38fab",
+    "plan.json": "7e32f11c742c0701f4216a337065cf26b4cf325546a351356dff562482a4ae1b",
+    "mission.json": "067e3e42ae3cb122163edc6fc3153b1cf48eb226ba20795dc49fff556625e729",
+    "config.json": "bf05267aad89cf436afc9826b476083a7ef56ae47322a314a9c245a236cfc73f",
+    "test_entrypoint.py": "75e12bfa160818207a378cf1c0cb187d57b79582d6faffe34020daea99553e76",
+    "test-primary.json": "61d23b4ef0c3fe6be3c369bc9930a905b4f0f6d6d7d86d3d678f3dc5d9e0b4fa",
+    "lint-primary.json": "c7421798d280e44acf0389f137b4cc5e198998dae8580a12afd51de06b8cbb8b"
+  },
+  "planSHA": "326361c6f6e2d6cf5a620b06cfedacbc93ae271e585a06122fa563b065f8036e",
+  "manifestSHA": "c960b714304c7adf08b6b5600450f8266d18699d07c88b861da7fc4a5b601081",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.DOCUMENT.SOURCE.R3.NATIVE.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.ROBOTS.CLOSURE.FIX.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.DOCUMENTARY.PERSONAL.CONTEXT.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.DOCUMENT.SOURCE.R3.E1.20261123"
+  ],
+  "limits": [
+    "New explicit homepage-document discovery after a separately closed stale asset404, not a retry or fallback under old quota. Only exact robots+homepage routes, no original asset download, no automatic discovered-URL fetch.",
+    "Retained reviewed Coteur context d0cd/primary72984 reused with browser/temporary-copy/database/freshness/automation-permission applicability UNKNOWN. No licence or universal account/publisher-approval need inferred. Independent exact SOURCE scope decision required.",
+    "Document content is RAM only. Extracted safe URLs have exact www.coteur.com HTTPS origin, root paths ending .js, no credentials/query/fragment or traversal; all other src omitted and incomplete projection flagged. No inline JS/body/query values retained or executed.",
+    "Python audit denies all child spawns. Source choices/API/admissions/tasks/app/push/production/recurrence0. HTTP refusal/malformed/partial/zero routes STOP, no retry or remaining-quota reuse."
+  ],
+  "syntheticTests": {
+    "cases": 9,
+    "actualLoads": 1,
+    "actualREPCalls": 1,
+    "actualAuthorityValidateWithSyntheticRAMLedger": true,
+    "fakeGETs": 4,
+    "realNetwork": 0,
+    "Node": 0,
+    "Job": 0
+  },
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "reviewOutcomes": {
+    "C1": "Limited synthetic facts verified",
+    "C3": "FAIL_AND_STOP promotion: inert/rawtext/base and raw URL validation P1",
+    "C4": "Documentary scope conditional on CODE, no SOURCE authority"
+  },
+  "codeReviewFailures": [
+    "HTML_RAWTEXT_TEMPLATE_CONTEXT_NOT_ESTABLISHED",
+    "BASE_HREF_ORIGIN_BINDING_NOT_ESTABLISHED",
+    "RAW_SRC_CONTROLS_OR_EMPTY_QUERY_FRAGMENT_DELIMITERS_ACCEPTED"
+  ],
+  "E2NeverOpened": true,
+  "unusedSourceGETCanceled": 2,
+  "nextArchitecture": "Use independently pinned standards HTML5 parser; no third identical homemade parsing attempt"
+}

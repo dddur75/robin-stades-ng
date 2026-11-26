@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "robin-local-curated-admission-v2",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.UEFA.PL.PROFILE648478.APP.ADMISSION.20261125",
+  "status": "CURATED_DATASET_PREPARED_RUNTIME_INACTIVE",
+  "scope": "Exact real personal choices admitted as a local dataset proposal only; original observation and source fields retained.",
+  "priorCheckpointSHA256": "0939ce392b38babfb360babddd5125218915dc9a6bbffff1a0470102c9fbf8f9",
+  "sourceBatchSHA256": "9c3c56d0614c8aef9de33b27b94660f1da349e7a3a565ddb62c2d5f42818a660",
+  "nativeAuthorId": 648478,
+  "newUniqueAdmitted": 5,
+  "oldPublicChoicesPreserved": 494,
+  "publicChoices": 499,
+  "candidateFiches": 318,
+  "newCandidateFiches": 0,
+  "newPublicAuthor": false,
+  "documentaryPrematchRecertified": false,
+  "sourceReady": false,
+  "recurringCollectionActive": false,
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.UEFA.PL.RETAINED.QUALIFICATION.20261125"
+  ],
+  "qualifiedAt": "2026-11-25T16:24:51.299Z",
+  "sourceObservedAt": "2026-11-25T15:57:02.428085+00:00",
+  "missionId": "OLBG_UEFA_PL_LOCAL_APP_ADMISSION_20261125",
+  "privateAdmissionReportSHA256": "fe7d52ba9f5a1f49e8e6cf2be62dbad6f9f0039c316b3405978f46a77040b5bb",
+  "privateCheckpointSHA256": "5b6737f12d1b343f33e744e42f4d8b5e8be51294134e6bd36a020f4dc2660e52"
+}

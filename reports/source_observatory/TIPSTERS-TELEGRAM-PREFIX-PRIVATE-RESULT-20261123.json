@@ -1,0 +1,26 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.PRIVATE.RESULT.20261123",
+  "missionId": "TELEGRAM_PREFIX_PRIVATE_E1_20261123",
+  "generatedAt": "2026-11-23T15:03:24.074Z",
+  "status": "PRIVATE_PREFIX_COMPONENT_ACCEPTED_PENDING_NATIVE_BINDING",
+  "scope": "IndependentC0/C1/C3 accept prefixprototype only. Unchangeda7aparent validatesmessages up toNthclosed N1..10, sentinelidentity caughtonlyinsideparse(super.parse), postmessagevalidationdate/observed/permalink retained. ParentfinalDOM/stack/close afterintentionalstop deliberatelyNOTexecuted; suffix/enclosingDOMunvalidated,totalUNKNOWN/fourSafetyGatesfalse. WholebodyUTF8/inputcaps stillenforced. REDparent0versus10thenGREEN8/9methods,Ruffcritical2files0/RAMcompile3; monothreadprivateparentfactoryfinallyrestore. Addendum correctsauthorshellcalls5→reported7 andoldGitdiff129INVALID; newGitproofcurrentonly. No oldnativefinecause inference/no SOURCE/admission/humanidentity.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.MESSAGE.PARSER.PUBLIC.INTEGRATION.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.MESSAGE.CONTRACT.NATIVE.R1.ACTUAL.RESULT.20261123"
+  ],
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "prefixSHA": "7b9262a7bff52e0692c07251bd903aff270f06b786c3ebe823f24c3aa55b159b",
+  "parentSHA": "a7a0da012b63717c76a68ed89f7940d9de7f1568cb27abcb90bf28111b63a5f7",
+  "tests": 8,
+  "redMethods": 1,
+  "methodExecutions": 9,
+  "addendumSHA": "89b7ead0aea54219d979df4a1a7e15961a9fb3a4428b9b0365749193af2dfd9e"
+}

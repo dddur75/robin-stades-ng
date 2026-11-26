@@ -1,0 +1,64 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.SCHEMA.NATIVE.R1.ACTUAL.RESULT.20261123",
+  "missionId": "NOTBETTING_TECHNICAL_SCHEMA_NATIVE_R1_20261123",
+  "generatedAt": "2026-11-23T14:02:49.932Z",
+  "status": "PARTIAL_CAMPAIGN_STOP",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.SCHEMA.NATIVE.R1.E1.BINDING.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.SCHEMA.TRUNCATION.CONTRACT.FIX.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.RECORD.INDEX.STANDALONE.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CURRENT.TERMS.PERSONAL.CONTEXT.RESULT.20261123"
+  ],
+  "scope": "One authorized Job/twoGET consumed then STOP. Native private technical schema presence/type evidence only. Sixforms and their physicaloccurrences are not unique forecasts/persons. Seven depthbranches omitted,43sensitive subtrees excluded: scanCompletefalse/globalCoverageUNKNOWN. Rawsourcevalues/body not retained; no forecasts admitted, no recurrence/sourceactivation, no all-compatible claim. Earlier campaigns staySTOP and J12 untouched.",
+  "sourceDecisionSHA": "657cbaee99c8deff8ae538457fc58a1775650ca3fa7a57890d8a761df8107d92",
+  "sourceGET": 2,
+  "nativeJobs": 1,
+  "DNS": 2,
+  "TCP": 2,
+  "http200": 2,
+  "robotsAllowed": true,
+  "crawlDelay": 0,
+  "outerExit": 0,
+  "workerExit": 1,
+  "workerClosedAt": "2026-11-23T14:00:13.569887+00:00",
+  "jobSeconds": 1.1719999999913853,
+  "timedOut": false,
+  "subtreeKillConfirmed": true,
+  "schemaForms": 6,
+  "physicalOccurrences": [
+    37,
+    37,
+    68,
+    37,
+    2,
+    37
+  ],
+  "visitedNodes": 22435,
+  "omittedDepthBranches": 7,
+  "prunedSensitiveSubtrees": 43,
+  "outputTruncated": false,
+  "scanComplete": false,
+  "globalCoverage": "UNKNOWN",
+  "candidateCount": null,
+  "admittedCount": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "nativeResultSHA": "468b6fb3bb10ffe4f91405d90d88a18c265f7da78726243c3097b3f1fed70163",
+  "diagnosticSHA": "c9c4c865c8e4118b46bed97ae8d0998f9a8deffdc5534402da19a8593c1707f3",
+  "nativePrimarySHA": "ea92ba38f1c3be7ec1feb1465e69dc39715c7eb2adcadaacc192f0bf04ece5ba",
+  "privacyProjection": {
+    "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.SCHEMA.NATIVE.R1.PUBLIC.PROJECTION.20261123",
+    "originalSHA256": "cf8806b2cdf50cc02ebe7064199a1e183e734e0d09f6fecd4ec0a717b700f191",
+    "removedFields": [
+      "technicalFieldTypesOnly"
+    ],
+    "privateOriginalRetained": true,
+    "scope": "PUBLIC_METADATA_REDACTION_NO_AUTHORITY_CHANGE"
+  }
+}

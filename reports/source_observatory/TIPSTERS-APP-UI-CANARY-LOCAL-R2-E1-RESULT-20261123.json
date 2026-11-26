@@ -1,0 +1,24 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.APP.UI.CANARY.LOCAL.R2.E1.RESULT.20261123",
+  "missionId": "SOURCE_OBSERVATION_UI_CANARY_LOCAL_R2_20261123",
+  "status": "EXACT_UI_ONLY_BINDING_ACCEPTED_E1",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Fresh E1 binding only. Old warm DATA, no reused grant/quota. E2 requires new explicit keys and browser grant; zero source or browser calls so far.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.APP.WARM.FINAL.BINDING.R3.ACTUAL.API.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.WARM.FINAL.BINDING.R3.LOCAL.CLOSE.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.SOURCE.OBSERVATION.UI.UTF8.FIX.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.UI.CANARY.FIX.PRIVATE.CODE.RESULT.20261123"
+  ],
+  "planSHA": "a9799568b90d433bec4a73709b00d358697122a82aa4ed4cb355e4a2e3aea0e2",
+  "manifestSHA": "ab3bed1d51977518bc9416936796baf74c28245370ec85aa3157c305be3c4f8c",
+  "pinCount": 13,
+  "allPinsMatch": true,
+  "sourceGET": 0,
+  "appAPIReads": 0,
+  "browserLaunches": 0
+}

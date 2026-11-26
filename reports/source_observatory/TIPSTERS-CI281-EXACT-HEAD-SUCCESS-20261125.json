@@ -1,0 +1,29 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI281.EXACT.HEAD.SUCCESS.RESULT.20261125",
+  "status": "VERIFIED",
+  "scope": "Exact-head engineering CI outcome only; not delivery of all compatible sources or recurring collection.",
+  "commit": "8a91b9477e5f75b961b27cb9172185619cfda4f0",
+  "treeSHA": "93fba20be6923cc4a6a5f01cf520a6d310dfd1b2",
+  "workflowRunId": 45566201379,
+  "workflowRunNumber": 281,
+  "workflowStatus": "completed",
+  "workflowConclusion": "success",
+  "jobs": {
+    "total": 17,
+    "success": 17,
+    "failure": 0
+  },
+  "primarySHA": "bfabead2261b51282cb81ce3139e31b42181f699dc303d212461514b4b7ee3fe",
+  "primaryProvenance": "GitHub connector run and latest-attempt job endpoints",
+  "runURL": "https://github.com/dddur75/robin-stades-ng/actions/runs/45566201379",
+  "PR": 133,
+  "PRDraft": true,
+  "merged": false,
+  "previousCI280ExactCause": "UNKNOWN",
+  "SourceGET": 0,
+  "appAdmissions": 0,
+  "recurringCollectionActive": false,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "globalDelivery": "PARTIAL"
+}

@@ -1,0 +1,31 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.SCHEMA.TRUNCATION.CONTRACT.FIX.RESULT.20261123",
+  "missionId": "NOTBETTING_SCHEMA_TRUNCATION_CONTRACT_FIX_E1_20261123",
+  "status": "PRIVATE_CALLER_CORRECTED_ACCEPTED",
+  "stoppedAt": "2026-11-23T13:56:22.875Z",
+  "writer": "C0",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.SCHEMA.PENDING.BOUND.FIX.RESULT.20261123"
+  ],
+  "samplerSHA": "02ccd3f852acf239bb58fa69032b7801c896861261742c3bcafc03c99077fc4b",
+  "consumerSHA": "fdd66421fe4da8841bdb61ca9027f01c22f59012005b2b3687f2dc0cefc97ed0",
+  "workerSHA": "08bc78dc155a8157f5faf8e0ab451abd3329bd2d5bb2b4bfaf03378a4a3188b5",
+  "redMethods": 1,
+  "greenMethods": 10,
+  "methodExecutions": 11,
+  "methodExecutionsMax": 11,
+  "processes": 4,
+  "processesMax": 4,
+  "mypyStrictExit": 0,
+  "criticalRuffExit": 0,
+  "scope": "Exactly one sampler outputTruncated branch additionally sets retained omittedTechnicalKeys=0 after discarding all schemas. droppedSchemaOccurrences preserved; matches consumer retained-row sum. RED128!=0 proves actual byteoverflow; GREEN actualoverflow roundtrip+9frozenconsumer tests. Workreservation/privacy/caps unchanged; consumer+worker byteexact acceptedprivate candidates. No fullRuff/globalquality/sourcebinding or business qualification claim."
+}

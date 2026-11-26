@@ -1,0 +1,44 @@
+{
+  "generatedAt": "2026-11-20T23:59:30.485014+00:00",
+  "schemaVersion": "robin-public-native-export-e1-authority-v1",
+  "claimId": "GOV.SOURCE_OBSERVATORY.TP.SARRACINO.E1V2.20261121",
+  "missionId": "ROBIN-TP-SARRACINO-E1V2-20261121",
+  "status": "ONE_PUBLIC_OWNER_AND_EXACT_NATIVE_CSV_ACQUISITION_ONLY",
+  "planSha256": "46abb46935462d07eb8214c6f0859b9f2609193621b272ced2b83255ad52f1e4",
+  "manifestSha256": "3966886e71fcd13460a77957d01c1b3dc0ee8c0edd607afeb0cf1e6f8e4258be",
+  "robots": "https://tipsterplatform.com/robots.txt",
+  "profile": "https://tipsterplatform.com/tipster/sarracino",
+  "conditionalExport": "https://tipsterplatform.com/tipster/sarracino/historial.csv",
+  "legalClaim": "ENG.SOURCE_OBSERVATORY.TP.DOCUMENTARY.CORRECTED.20261121",
+  "GETMax": 3,
+  "priorQualificationUnits": 294,
+  "qualificationMax": 297,
+  "TPFamilyGETMax": 6,
+  "newActiveSecondsMax": 296.234,
+  "priorActiveSeconds": 3.766,
+  "familyActiveSecondsMax": 300,
+  "expiresAt": "2026-11-21T00:50:00Z",
+  "sourceChoicesAdmitted": 0,
+  "newTasks": 0,
+  "syntheticTests": 13,
+  "retention": {
+    "fieldCharactersMax": 300,
+    "futureFactsMax": 200,
+    "olderRowFactsStored": false,
+    "omissionsCounted": true,
+    "rawHtml": false,
+    "robotsDirectivesCharactersMax": 8192,
+    "rowsMax": 5000,
+    "sourceAnalyses": false,
+    "unknownSourceTimeWitnessFields": [
+      "event_date",
+      "eventLabelSha256"
+    ],
+    "unknownSourceTimeWitnessesMax": 3
+  },
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

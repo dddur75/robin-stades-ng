@@ -1,0 +1,189 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.OPAQUE.RECURRING.PACKAGE.ENGINEERING.RESULT.20261124",
+  "missionId": "OLBG_OPAQUE_PACKAGE_PORT_R1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Ten real PUBLIC code files integrate receipt-driven opaque OLBG campaigns into the package and optional cockpit readers. Synthetic/domain quality only; actual recurring SOURCE transport, campaign activation, RT adoption and full delivery remain unproven.",
+  "code": [
+    {
+      "path": "src/robin/source_observatory/olbg_opaque_campaign.py",
+      "sha256": "2d29f1b0baa8b6a2ec45e72fc4acd0390746c0e9a57497f91dc5ef3c0a02ae2c",
+      "bytes": 16221
+    },
+    {
+      "path": "src/robin/source_observatory/olbg_opaque_batches.py",
+      "sha256": "b29e76c8122a5f70da54bdc0c1b72f5f60508ace7d2c0cbae7a55c16ba1d4bdb",
+      "bytes": 8662
+    },
+    {
+      "path": "tests/source_observatory/test_olbg_opaque_campaign.py",
+      "sha256": "bf2b520568b05bac1a6e556bc1641fd7fe7fad4502005ee94643b3126d207662",
+      "bytes": 7630
+    },
+    {
+      "path": "cockpit/scripts/collect-olbg-tipsters.py",
+      "sha256": "604ed522f3f7c3eae04bd5e6cdfecc55c1534fb2455ae618fee7bedf8053369e",
+      "bytes": 2091
+    },
+    {
+      "path": "cockpit/scripts/olbg-campaign-companion.ts",
+      "sha256": "ce42f21ad66d1c2dfa1de60737803eade97c9d46008742806bd8e218e5654799",
+      "bytes": 14797
+    },
+    {
+      "path": "cockpit/scripts/catalogue-independent.ts",
+      "sha256": "662e4f22cc154bec36f054c4acebaa52f7e1bdca4af8ad76d26eaacdd47b213c",
+      "bytes": 18065
+    },
+    {
+      "path": "cockpit/scripts/public-tipsters-plugin.ts",
+      "sha256": "80bbc6f4890f2eed9b211e143a4f11890719e9f7f0421f413a79e57902a37096",
+      "bytes": 3132
+    },
+    {
+      "path": "cockpit/tests/reviewed-source-observation.test.mjs",
+      "sha256": "7c1964aaa1b4788232c89a57291cfe0c248591e0e2719b9f058df0052f29f0a4",
+      "bytes": 5818
+    },
+    {
+      "path": "cockpit/tests/olbg-campaign-companion.test.mjs",
+      "sha256": "66179ee69350fcd352c4aa6c96e71fed64f22440b0752a6e99c51a4fb5e8eddb",
+      "bytes": 7670
+    },
+    {
+      "path": "tests/source_observatory/test_olbg_opaque_cli.py",
+      "sha256": "c61d669715170521eacca5cbcf9e4293e4f40eeacba61d637f25951d60b930df",
+      "bytes": 3415
+    }
+  ],
+  "PythonPackage": {
+    "methods": 3,
+    "failures": 0,
+    "errors": 0,
+    "fakeGET": 6,
+    "receiptSHA": "2b3590c7faeca8eef00d5f3280adecb104343c8e32007abb808c3f74d7ddebe7",
+    "realPackageImports": true,
+    "legacyCLICompatibility": true,
+    "opaqueExecutionExplicit": true
+  },
+  "typing": {
+    "sourceFiles": 3,
+    "status": "PASS",
+    "strict": true,
+    "followImports": "skip",
+    "receiptSHA": "dc86aa9c559def7b16f6064e0835862cee52f7ef8bef4bb93641c637f8ed9862"
+  },
+  "lint": {
+    "pythonFiles": 5,
+    "status": "PASS",
+    "receiptSHA": "e3e97ac181a7f3dd1ced9eb00b5dea43aa4a258595d5a6ef43cb7ec7fe2ee804"
+  },
+  "TypeScriptReused": {
+    "nodeMethods": 2,
+    "nodeReceiptSHA": "83d28773c145be48e300a5833e3c72ea66593027cd323b78f352e02049294023",
+    "legacyLoaderEntry": 1,
+    "legacyLabel": "16 synthetic assertions PASS",
+    "additionalWiringPreAssertions": 3,
+    "legacyReceiptSHA": "b0cf66cd7b41aa5cb7d9a6487a325d38bd2dacfc8c91289e21e275825d1aee22",
+    "typecheckReceiptSHA": "aa57de641d1f4295c21d3f15027430b20bcf5e826f33b23fb24cadd5faa702e3",
+    "lintReceiptSHA": "2861bbde7e06fe25c2ddc59a7b0fd2b22d19ac0f6ef38b55d35885b2e2224c2b",
+    "codeAndDependencies": [
+      {
+        "path": "cockpit/scripts/catalogue-independent.ts",
+        "sha256": "662e4f22cc154bec36f054c4acebaa52f7e1bdca4af8ad76d26eaacdd47b213c"
+      },
+      {
+        "path": "cockpit/scripts/public-tipsters-plugin.ts",
+        "sha256": "80bbc6f4890f2eed9b211e143a4f11890719e9f7f0421f413a79e57902a37096"
+      },
+      {
+        "path": "cockpit/scripts/olbg-campaign-companion.ts",
+        "sha256": "ce42f21ad66d1c2dfa1de60737803eade97c9d46008742806bd8e218e5654799"
+      },
+      {
+        "path": "cockpit/scripts/olbg-retained-approved.ts",
+        "sha256": "11fbbf7b3492791a71eca3cb87873fecb6482a0a5c07f40212a6b025942e6f1d"
+      },
+      {
+        "path": "cockpit/scripts/olbg-retained-approval.ts",
+        "sha256": "b07786970acbfe6c72e664ff5639e67e1739c2009b266cab4c719cbc369e78d1"
+      },
+      {
+        "path": "cockpit/scripts/olbg-pending-candidate.ts",
+        "sha256": "8a7371a4fc6a0ac2fabe887fcf07e669068f414c11c0c537e94017fd66768c60"
+      },
+      {
+        "path": "cockpit/scripts/olbg-reviewed-pending-approval.ts",
+        "sha256": "8780a00e049746ec8bd758e8cc919ddbb1b1a6eff7f5a1183376f41713f76bbc"
+      },
+      {
+        "path": "cockpit/scripts/olbg-pending-source.ts",
+        "sha256": "28da007500b5727802f7fba15b112e421f84e54761cb2f983e8b2583855ac015"
+      },
+      {
+        "path": "cockpit/scripts/notbetting-pending-source.ts",
+        "sha256": "cd6537f8fbe0f34b07628ac4adaa53612056b710d5b5fdf6735d5948ead28896"
+      },
+      {
+        "path": "cockpit/scripts/telegram-pending-channel.ts",
+        "sha256": "348aea21b297062cfe3eb61460ff0a15c9991fdd574db1dc10493a2c0fe2da25"
+      },
+      {
+        "path": "cockpit/scripts/tipsters-pilot-plugin.ts",
+        "sha256": "0fa7f99fbe1702f7c236e14db18c4d9968fe086ca12aee0294cf2c9425ff2228"
+      },
+      {
+        "path": "cockpit/scripts/reviewed-public-snapshot.ts",
+        "sha256": "7b6b23048713186a801b2634d0441756e0d4bbd3c4787a2696f35106e0490456"
+      },
+      {
+        "path": "cockpit/scripts/olbg-historical-annotation.ts",
+        "sha256": "90add7f07bab81c582874e039661ef7dfe450b762140ad90887c16dd92cf6ac9"
+      },
+      {
+        "path": "cockpit/scripts/forums-accepted.ts",
+        "sha256": "3eec3cababcae4abe3b96cf07d048af48f57d0330d065e7716eaf18dc6a4041d"
+      }
+    ],
+    "NodeTestPortChange": "Only relative fixture-module URL changes from scripts-local to ../scripts; inverse bytes match the successfully executed test."
+  },
+  "format": {
+    "redesign": true,
+    "oneLFRemoved": true,
+    "ASTEqual": true,
+    "bodyByteEqual": true,
+    "resultSHA": "d6426c738a5f2b3cef818c698088ceba8991d44e23904b0a7bba4255d6ebe49a",
+    "stopSHA": "34c5bcae0df054f2a2ea25ffe2d246d34490c9843565f178a3dc6b09f866e4d6",
+    "closeHash": "a7225d37193546e015c7865a4fc6f6a76e9e515082fc1bcbdc246f0b86fae390"
+  },
+  "priorFailureReceiptsPreserved": [
+    {
+      "phase": "R2 harness",
+      "resultSHA": "c165b610bb5e016727dc238a9caa3bd50fa610da642c53231e18614a2edf6664"
+    },
+    {
+      "phase": "R3 remaining checks",
+      "resultSHA": "280d4101a782e38e77008c1d65fb64af74b96e73770d3f9e7fa8b71da53d1457"
+    },
+    {
+      "phase": "PACKAGE PORT",
+      "resultSHA": "b0cb62d606b7e0f7bff52a3b65c07e9cb251f2384b5c9ac26c065f8413037e36"
+    }
+  ],
+  "sourceGET": 0,
+  "actualPayloadReads": 0,
+  "applicationAdmissions": 0,
+  "runtimeWrites": 0,
+  "taskMutations": 0,
+  "TSApprovalDefault": null,
+  "sourceReady": false,
+  "recurringCollectionActive": false,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "globalUIRecette": false,
+  "authorityClosed": true
+}

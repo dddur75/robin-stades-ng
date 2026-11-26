@@ -1,0 +1,23 @@
+{
+  "generatedAt": "2026-11-23T10:21:24.366Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.RECORD.INDEX.CALLER.PRIVATE.RESULT.20261123",
+  "missionId": "NOTBETTING_RECORD_INDEX_CALLER_PRIVATE_E1_20261123",
+  "status": "PRIVATE_DIAGNOSTIC_CALLER_VERIFIED",
+  "scope": "Private diagnostic wiring only. Frozen indexR2, parent and schema plus unchanged controls; exact parent adjacent to parser and actual parser __file__ pinned before execution. Strict closed consumer keys/types/enums/hash/caps16/4/8/16KiB and visit-count consistency. Six tiny variants pass, actual collect4 with fake fetch7 and RAM sink; two targeted processes including finalRuff0. DIAGNOSTIC_COMPLETE means bounded instrument without truncation and can include zero/rejected records; not business qualification, global absence or source readiness. Always picksNone/candidatesNULL/admission0/contextUNPROVEN. Full load/main/authority/nativeJob not exercised, DRAFT only, no SOURCE decision or promotion.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.RECORD.INDEX.R2.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.TYPED.TARGET.NATIVE.R1.ACTUAL.RESULT.20261123"
+  ],
+  "resultSHA256": "5151579a93338c2cc36873b186ccbeab645295896f914dfffaa8f45e9040c0a6",
+  "workerSHA256": "0f7cf7e2b5c19a1f70c41a3235ec7964564712ba239f774eaf20771c09b024cc",
+  "codeMapCanonicalSHA256": "1cedb98848c545c4acc549e262fbe08d51df59a15ba8e7da998937a15110a1dd",
+  "sourceGET": 0,
+  "sourceReady": false,
+  "admitted": 0,
+  "actualNativeConfinementProven": false
+}

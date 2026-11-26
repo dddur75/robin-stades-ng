@@ -1,0 +1,156 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.PUBLICATION.CI275.EXACT.HEAD.SUCCESS.RESULT.20261124",
+  "missionId": "ROBIN_PR133_CI275_EXACT_HEAD_READONLY_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Exact published commit90914 only: CI275 run45440733790 completed successfully with seventeen unique completed-success jobs. This does not cover later uncommitted Telegram policy, private normalization, runtime adoption, all compatible sources or a production release.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.FICHE.ADMIN.PUBLICATION.ACTUAL.RESULT.20261124"
+  ],
+  "commitSHA": "90914fba8733f8c9980f034a99d7a34172f4a3d7",
+  "treeSHA": "81a89b1d8a0de7448e9d1a0002b1e2443d4c677b",
+  "PR": 133,
+  "runId": 45440733790,
+  "runNumber": 275,
+  "runStatus": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "id": 138610806957,
+      "name": "End-to-End Live Path Replay",
+      "status": "completed",
+      "conclusion": "success",
+      "runId": 45440733790
+    },
+    {
+      "id": 138610807024,
+      "name": "Jalon 10 - entrees de preuve gelees",
+      "status": "completed",
+      "conclusion": "success",
+      "runId": 45440733790
+    },
+    {
+      "id": 138610807076,
+      "name": "Chronos PostgreSQL profiles / tests (non_superuser_createrole)",
+      "status": "completed",
+      "conclusion": "success",
+      "runId": 45440733790
+    },
+    {
+      "id": 138610807077,
+      "name": "Residual Fault Matrix",
+      "status": "completed",
+      "conclusion": "success",
+      "runId": 45440733790
+    },
+    {
+      "id": 138610807091,
+      "name": "Chronos PostgreSQL profiles / Chronos static contracts",
+      "status": "completed",
+      "conclusion": "success",
+      "runId": 45440733790
+    },
+    {
+      "id": 138610807189,
+      "name": "Exact Workflow Entrypoint",
+      "status": "completed",
+      "conclusion": "success",
+      "runId": 45440733790
+    },
+    {
+      "id": 138610807199,
+      "name": "Historical Authority Workflows Disabled",
+      "status": "completed",
+      "conclusion": "success",
+      "runId": 45440733790
+    },
+    {
+      "id": 138610807257,
+      "name": "Bounded live canary - Ubuntu",
+      "status": "completed",
+      "conclusion": "success",
+      "runId": 45440733790
+    },
+    {
+      "id": 138610807388,
+      "name": "Bounded live canary - Windows",
+      "status": "completed",
+      "conclusion": "success",
+      "runId": 45440733790
+    },
+    {
+      "id": 138610807393,
+      "name": "Chronos PostgreSQL profiles / tests (superuser)",
+      "status": "completed",
+      "conclusion": "success",
+      "runId": 45440733790
+    },
+    {
+      "id": 138610807903,
+      "name": "Chronos PostgreSQL profiles / Chronos source and activation",
+      "status": "completed",
+      "conclusion": "success",
+      "runId": 45440733790
+    },
+    {
+      "id": 138610809052,
+      "name": "Historical Deep — contrat cache-only",
+      "status": "completed",
+      "conclusion": "success",
+      "runId": 45440733790
+    },
+    {
+      "id": 138613364535,
+      "name": "Chronos PostgreSQL profiles / Chronos provider-free Cockpit",
+      "status": "completed",
+      "conclusion": "success",
+      "runId": 45440733790
+    },
+    {
+      "id": 138615566286,
+      "name": "Robin Experience — preuves visuelles",
+      "status": "completed",
+      "conclusion": "success",
+      "runId": 45440733790
+    },
+    {
+      "id": 138615566345,
+      "name": "Quality and domain tests",
+      "status": "completed",
+      "conclusion": "success",
+      "runId": 45440733790
+    },
+    {
+      "id": 138615566443,
+      "name": "Jalon 10 - trois temoins R3 bornes",
+      "status": "completed",
+      "conclusion": "success",
+      "runId": 45440733790
+    },
+    {
+      "id": 138636885765,
+      "name": "tests",
+      "status": "completed",
+      "conclusion": "success",
+      "runId": 45440733790
+    }
+  ],
+  "jobCount": 17,
+  "success": 17,
+  "failure": 0,
+  "skipped": 0,
+  "cancelled": 0,
+  "normalizedAPIPrimarySHA256": "72e3a29841dc220fde54d0f5b2a7a35960ee11c44bfd31d37427cf25007e62c6",
+  "provenance": "MCP_GITHUB_NORMALIZED_API_COMMIT_SCOPED_QUERY_NOT_RAW_HTTP",
+  "sourceGET": 0,
+  "reruns": 0,
+  "merge": 0,
+  "production": 0,
+  "sourceReady": false,
+  "admissions": 0,
+  "allCompatibleIntegrated": false
+}

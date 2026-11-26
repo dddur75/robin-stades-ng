@@ -1,0 +1,101 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.NEWPROFILE522767.E1.RESULT.20261122",
+  "recordedAt": "2026-11-22T02:09:21.005Z",
+  "status": "PARTIAL_HISTORY_TRANSPORT_TIMEOUT_NO_CURRENT_PARSE",
+  "scope": "One historical workbook profile canary; timeout before history response or any current-source read. No source-wide incompatibility or inactivity inference.",
+  "missionId": "OLBG_NEWPROFILE522767_E1_20261122",
+  "planSHA256": "52854b4312e98610496fdd5f2624951861e5acc292c2debec9404fc0ae0123d1",
+  "manifestSHA256": "6ac9b6bad364d6e7ad3183fd9d373d578493781115f9df62d9abb1fc1cb8d27b",
+  "grant": "fc43713a671d6a71e2cb0b0b53dcbaaff69c07fbd631d2916862ffffd5524bb9",
+  "closedAt": "2026-11-22T02:06:28.8910627Z",
+  "externalExitCode": 1,
+  "externalElapsedSeconds": 17.6007907,
+  "reservations": 2,
+  "responses": 1,
+  "completeHTTPStatuses": [
+    200
+  ],
+  "currentGETReserved": 0,
+  "admissions": 0,
+  "candidateFilePresent": false,
+  "diagnostics": {
+    "barrierCause": "NOT_EVALUATED",
+    "barrierParsingCompleted": false,
+    "barrierParsingStarted": false,
+    "candidateCount": null,
+    "captchaIntegrationPresent": false,
+    "challengeMarkupPresent": false,
+    "choiceCompositionCompleted": false,
+    "choiceCompositionStarted": false,
+    "currentRoutePresent": false,
+    "exactAnchorCount": null,
+    "footballFactCount": null,
+    "historyRouteParsingCompleted": false,
+    "historyRouteParsingStarted": false,
+    "interstitialTextPresent": false,
+    "interstitialTitlePresent": false,
+    "nativeFactCount": null,
+    "nativeParsingCompleted": false,
+    "nativeParsingStarted": false,
+    "opaqueCount": null,
+    "sourceBarrierDetected": false,
+    "winCount": null
+  },
+  "stopReason": "UNPROVEN_OR_TRANSPORT",
+  "exceptionClass": "TimeoutError",
+  "individualTimeoutPhase": "UNKNOWN_NOT_RETAINED",
+  "receiptHashes": {
+    "spent.json": {
+      "sha256": "539a86d21cc76834caf1a663a439ff88dca16d3fc99079fa79d162fdcb33e72e",
+      "bytes": 371
+    },
+    "parent-started.json": {
+      "sha256": "beccd916dcb52fb6b119110c4a44d3eee9e0524746f8eeb26d5b03511f4715e2",
+      "bytes": 427
+    },
+    "worker-started.json": {
+      "sha256": "7c1f4bd88b6e7779d256be8194856422e62af99c5b05d97bf7488f56cba9b8cc",
+      "bytes": 288
+    },
+    "reservation-1.json": {
+      "sha256": "edaef6b09412deedba98408053abc09a486b675d597261e3578fee6136262243",
+      "bytes": 354
+    },
+    "response-1.json": {
+      "sha256": "9def3841adf73b4a5f8b6ae7a4fbecd09f84f496b068a25d76051c96245f7ad9",
+      "bytes": 451
+    },
+    "reservation-2.json": {
+      "sha256": "101d84f176758a9da7596a2d5c21d3800e856722d2d4bf366f75234436ada7eb",
+      "bytes": 354
+    },
+    "worker-stop.json": {
+      "sha256": "34c9dc808f3e71a4b2631d45d12a01f563954cc561bee50508baa19285385aaa",
+      "bytes": 993
+    },
+    "parent-result.json": {
+      "sha256": "a3705a4a6f60d23fb57d7af860377550d4f60b4f2af12cedb122e251588eacb2",
+      "bytes": 356
+    },
+    "outer-veto.json": {
+      "sha256": "4e90dffea1f4c535c00686cea7eccc3a36306f7d632264a72da5a55aca39e0cb",
+      "bytes": 284
+    }
+  },
+  "independentC3": {
+    "receipts": 9,
+    "pins": 31,
+    "allValid": true,
+    "spentToVetoSeconds": 17.305518,
+    "robotsResponseToHistoryReservationSeconds": 3.52937,
+    "historyReservationToStopSeconds": 12.122477
+  },
+  "decision": "FAIL_AND_STOP",
+  "sourceEpisodeClosed": true,
+  "noRetry": true,
+  "remainingGETAuthority": 0,
+  "runtimeChanges": 0,
+  "API_FOOTBALL_CALLS": 0,
+  "globalDelivery": "PARTIAL",
+  "allCompatibleSourcesIntegrated": false
+}

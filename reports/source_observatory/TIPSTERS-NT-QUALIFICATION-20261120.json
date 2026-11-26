@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "robin-nt-qualification-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NT.QUALIFICATION.20261120",
+  "generatedAt": "2026-11-20T07:02:46.627298+00:00",
+  "status": "PARTIAL_NO_SOURCE_ACTIVATION",
+  "qualificationGET": 101,
+  "qualificationGETCeiling": 134,
+  "priorQualificationGET": 90,
+  "newQualificationGET": 11,
+  "family": {
+    "usedGET": 11,
+    "maximumGET": 12,
+    "notbettingUsed": 4,
+    "notbettingMax": 4,
+    "telegramFamilyUsed": 7,
+    "telegramFamilyMax": 8,
+    "activeMilliseconds": 131683,
+    "activeMaxMilliseconds": 300000,
+    "networkConservativeSeconds": 132,
+    "networkMaxSeconds": 144
+  },
+  "platforms": [
+    {
+      "platform": "NotBetting",
+      "label": "Conditions et voie de collecte non établies",
+      "reason": "Le document /en/terms a été examiné par un lecteur puis un DOM Chromium indépendant hors réseau, sans scripts. Cette vue statique n’établit pas les conditions opérantes applicables à Robin. Aucun profil n’a été lu dans cette mission ; /api/ demeure interdit par robots. La porte contenu est arrêtée.",
+      "requiredAccess": "Une version officielle applicable et lisible des conditions d’accès et de réutilisation, puis une voie documentée autorisée donnant les choix personnels avant match : URL publique compatible, flux ou export explicitement autorisé.",
+      "ownerAction": "Fournir ces documents ou les obtenir de NotBetting. La nécessité d’un compte, abonnement ou achat n’est pas démontrée ; ne communiquer aucun mot de passe ni token.",
+      "observedAt": "2026-11-20T06:56:05.639388+00:00",
+      "status": "partial_conditions_not_established",
+      "evidenceRefs": [
+        "ENG.SOURCE_OBSERVATORY.NT.QUALIFICATION.20261120",
+        "sha256:dfabc9e9f5d5f7adf58add92421fe150181c4bd69b6d6d99f18b465030b79667"
+      ]
+    },
+    {
+      "platform": "Telegram",
+      "label": "Droits incompatibles avec le pipeline IA proposé",
+      "reason": "Les clauses lues excluent les usages hors utilisation ordinaire prévue et interdisent collecte ou agrégation de données pour le développement, le benchmark ou le déploiement de technologies IA/ML. Les six canaux restent fermés au contrôle des droits ; aucun message ni choix personnel n’a été inspecté.",
+      "requiredAccess": "Une permission expresse couvrant cet usage et les droits des contenus, ou une source première distincte avec une distribution explicitement licenciée compatible.",
+      "ownerAction": "Obtenir l’accord spécifique et sa portée, ou un flux directement autorisé par les auteurs hors de cette voie Telegram. Un compte, un bot, un token ou une API ne remplace pas les droits ; aucun achat indispensable n’est établi.",
+      "observedAt": "2026-11-20T06:39:06.162499+00:00",
+      "status": "blocked_external_action",
+      "evidenceRefs": [
+        "ENG.SOURCE_OBSERVATORY.NT.QUALIFICATION.20261120",
+        "sha256:882c8a1472bc4a3cbced8228e71e1782566b08869fa6bd116f57f1288e7317a8"
+      ]
+    }
+  ],
+  "decisions": {
+    "NotBetting": "FAIL_AND_STOP",
+    "Telegram": "BLOCKED_EXTERNAL_ACTION"
+  },
+  "coverage": {
+    "catalogueRecordsAffected": 7,
+    "notbettingProfilesReadInThisMission": 0,
+    "telegramChannelsRead": 0,
+    "newPersonalPicks": 0,
+    "sourceActivations": 0
+  },
+  "sources": {
+    "NotBetting": "https://notbetting.com/en/terms",
+    "Telegram": "https://telegram.org/tos/content-licensing"
+  },
+  "receipts": [
+    {
+      "path": "cockpit/.ci/tipsters-notbetting-telegram-20261120/events.jsonl",
+      "sha256": "8ad12e668458c84cbb71d0fbb86bb76afe75e8c933f9867383ab47909fbc214b",
+      "requests": 8
+    },
+    {
+      "path": "cockpit/.ci/tipsters-nt-legal-corrective-20261120/events.jsonl",
+      "sha256": "5c6311bb795401a546dab6e86ebea55bbaa50ce5928d7eef529856a1ea4d9cc4",
+      "requests": 2
+    },
+    {
+      "path": "cockpit/.ci/tipsters-nt-dom-redesign-20261120/events.jsonl",
+      "sha256": "054696204df88fea6ee47da569fdfeb37c26dddcd23105f3a42cd888c07f8043",
+      "requests": 1
+    }
+  ],
+  "domProjection": {
+    "path": "cockpit/.ci/tipsters-nt-dom-redesign-20261120/dom-projection.json",
+    "sha256": "ffab89fa63a0485677456650d5ae332fff6e4a9bff0cc2d4ab248a4227c6f0ea"
+  },
+  "limits": [
+    "The static NotBetting view does not prove the contents of JavaScript-loaded terms or a licence.",
+    "Platform rights review does not certify individual Telegram channels or personal authors.",
+    "No further NotBetting source GET in this closed mission. No transfer of unused Telegram allowance.",
+    "Existing Forums/SRO/OLBG/J12 campaigns and their distinct quotas are unchanged."
+  ],
+  "effects": {
+    "apiCalls": 0,
+    "apiFootball": 0,
+    "authenticated": false,
+    "cookieUse": false,
+    "purchases": 0,
+    "rawBodiesInGit": 0,
+    "deploy": false,
+    "merge": false
+  }
+}

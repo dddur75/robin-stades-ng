@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-11-23T09:51:16.158Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.TYPED.TARGET.NATIVE.R1.E1.BINDING.RESULT.20261123",
+  "missionId": "NOTBETTING_TYPED_TARGET_NATIVE_R1_20261123",
+  "status": "E1_LOCAL_DEPENDENCY_BINDINGS_VERIFIED",
+  "scope": "One actual isolated load_components canary with explicitly synthetic E2-shaped sidecar injected only in RAM because legacy loader requires stage E2. This does not create a SOURCE decision file/grant, execute main/collect/fetch/Job or claim native authority. Bind final typed-target-v3 parser cc636 and worker ffc217;9 retained calendar rows only.",
+  "keys": [
+    "C0",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.TYPED.TARGET.CALLER.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.WITNESS.PUBLIC.INTEGRATION.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PLAIN.REFERENCE.SOURCE.R3.NATIVE.PARTIAL.20261123",
+    "DATA.SOURCE_OBSERVATORY.BUNDES.J11.FUTURE.UTC.PROGRAMME.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CURRENT.TERMS.PERSONAL.CONTEXT.RESULT.20261123"
+  ],
+  "planSHA": "a5777808cc0c74ae26326575789b28beaab3a128fd4179c43d39bd82cc119d64",
+  "manifestSHA": "166a854c8919c910e7d3519c3d22d2c6573e15c8bad7c7c8e8d17bf4a4a1f592",
+  "configSHA": "256049f906f256df50679bfa33269856a657e8773f77158d0f6498dc72e30113",
+  "workerSHA": "ffc217e2fb6774fcd612ea0df3e306ed0ace5528c3392687e3f922b8ebac8663",
+  "outerSHA": "d9876f8c48395d14b43b22c07f1d354ed38e6f316d1714e6190ef3e5e2c2e1db",
+  "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+  "policySHA": "7799199fc267e151514d67a80f63a40b93bc6572cb803b22b5c9e770649e502a",
+  "transportSHA": "54293fd94de94f7db4d10c1e2280ed3d5d94d1772a11a9f5a44fcd49f04b2670",
+  "parserSHA": "cc6362abca54c16b94651198f2427072d29bcfe6872074c8b8a1edb791efece9",
+  "expiresAt": "2026-11-23T10:00:56.714Z",
+  "primarySHA256": "2460c04420c72cde83fbb61aedfdb81540f517b15d67aa89a2ba56dc22bd9239",
+  "sourceGET": 0,
+  "sourceReady": false,
+  "actualSourceAuthorityGranted": false,
+  "parentGrant": "42efb19c74bece387498f1187807c2bbd0caab21b3a267cd4140586f70c65511"
+}

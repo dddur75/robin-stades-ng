@@ -1,0 +1,41 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.LOCAL.SERVER.RELOAD.ACTUAL.PARTIAL.20261124",
+  "missionId": "OLBG_LOCAL_SERVER_RELOAD_AND_TWO_VIEW_20261124",
+  "status": "PARTIAL",
+  "scope": "Exactly one owned local server stop and hidden relaunch completed, newPID7056 owns127.0.0.1:4173. Readiness retained; orchestration caller timed out before returning server-control/API/browser receipts. No parent producerSTOP or UI acceptance is claimed. No second restart/retry under this mission.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.LOCAL.SERVER.RELOAD.PREPARATION.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.APP.PREDICATE.AND.LOADER.FIX.R2.E1.RESULT.20261124"
+  ],
+  "readiness": {
+    "normalAPIRequests": 0,
+    "newCreatedUTC": "2026-11-24T15:17:12.4838610Z",
+    "oneLaunch": true,
+    "scriptSHA": "8bfa717e0b89d65708febeda4837937082d02cb69c01eddf34372c556deccff3",
+    "hidden": true,
+    "sourceGET": 0,
+    "host": "127.0.0.1",
+    "status": "OWNED_LOCAL_SERVER_RESTARTED",
+    "at": "2026-11-24T15:17:22.5734244+00:00",
+    "newPID": 7056,
+    "port": 4173,
+    "oneStop": true,
+    "oldPID": 42672
+  },
+  "readinessSHA256": "6fdc0e8bf50e3577659d0b759d8727823bd759e26e4896fc30b6476a5708de04",
+  "stopSpentSHA256": "e80aea2c2ea3fc3fa7cc63be64563939d09869374dbe6afeef91be2d0e70d17f",
+  "launchSpentSHA256": "4ca145a1de67c50cc48fd8c6131c7093d94c985c9f01275043c1444fd2267a3c",
+  "parentResultPresent": false,
+  "parentStopPresent": false,
+  "metadataAPIObserved": false,
+  "browserJobsObserved": 0,
+  "sourceGET": 0,
+  "admissions": 0,
+  "sourceReady": false,
+  "authorityClosed": true
+}

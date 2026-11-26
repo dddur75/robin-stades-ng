@@ -1,0 +1,53 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.PINNED.LOADER.B102.TARGETED.QUALITY.RESULT.20261124",
+  "missionId": "OLBG_PINNED_RUNTIME_LOADER_B102_TARGETED_E1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Comment-only line-local B102 exception for bounded approved local runtime bytes; same-buffer SHA check and runtime behavior unchanged. Targeted audit only, not SOURCE permission or sandbox.",
+  "oldCodeSHA": "2d29f1b0baa8b6a2ec45e72fc4acd0390746c0e9a57497f91dc5ef3c0a02ae2c",
+  "newCodeSHA": "e7ffd0b4d21b0262a6afd87e9635316cc4dcf907109f3c057e2cc5f6c1362d9a",
+  "codeRevision": "precommit-code:e7ffd0b4d21b0262a6afd87e9635316cc4dcf907109f3c057e2cc5f6c1362d9a",
+  "ASTEqual": true,
+  "inverseBytesEqual": true,
+  "bandit": {
+    "files": 2,
+    "before": {
+      "exit": 1,
+      "issues": 1,
+      "rule": "B102",
+      "errors": []
+    },
+    "after": {
+      "exit": 0,
+      "issues": 0,
+      "errors": [],
+      "skippedTests": 1,
+      "stderrBytes": 260,
+      "stderrMeaning": "Two nosec B102/no failed test warnings at line181, not findings."
+    }
+  },
+  "ruff": {
+    "files": 1,
+    "exit": 0
+  },
+  "resultSHA256": "a9608cc9e5523586142db690dc0a9570eada32213e66dc3ba17d6763a31843d4",
+  "stopSHA256": "74eb92d17e1eff4038907871e43ca1cf5fb9a5f92cc59318cd1285316f3d2593",
+  "closeHash": "0c8690516f48ed0faeb3964196782fbedf1eedfc97b8a87d10fc4c1d40ab780b",
+  "trustAssumption": "Caller/config integrity and approved local code; SHA establishes identity, not innocuity or sandbox.",
+  "globalBanditRulesChanged": false,
+  "businessReplay": 0,
+  "sourceGET": 0,
+  "actualPayloadReads": 0,
+  "applicationAdmissions": 0,
+  "runtimeWrites": 0,
+  "taskMutations": 0,
+  "sourceReady": false,
+  "recurringCollectionActive": false,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "authorityClosed": true
+}

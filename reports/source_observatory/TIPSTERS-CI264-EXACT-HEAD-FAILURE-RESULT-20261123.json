@@ -1,0 +1,42 @@
+{
+  "generatedAt": "2026-11-23T12:35:40.373Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI264.EXACT.HEAD.FAILURE.RESULT.20261123",
+  "missionId": "CI264_EXACT_HEAD_READONLY_WATCH_20261123",
+  "status": "TERMINAL_FAILURE",
+  "scope": "C1 unique managed read-only watch confirmed CI264 terminal failure for published exact head27cb.15 jobs succeeded, Quality tests and aggregator failed. All12 tests failed in Coteur CLI tests; original Ruff/mypy/CommonJS lint gates succeeded. DEPENDENCY_UNPROVEN observed, detailed loader cause UNKNOWN in truncated CI logs. No rerun/cancel/Git/PR/source effects. New local Telegram files are not covered by this historical CI head.",
+  "keys": [
+    "C0",
+    "C1"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.CI263.CORRECTIVE.PUBLICATION.ACTUAL.RESULT.20261123"
+  ],
+  "runId": 45170381892,
+  "runNumber": 264,
+  "head": "27cb9322c55081008fc11270d960fc58522c18ab",
+  "GitHubCompletedAt": null,
+  "jobs": {
+    "total": 17,
+    "success": 15,
+    "failure": 2,
+    "skipped": 0
+  },
+  "pytest": {
+    "failed": 12,
+    "passed": 5600,
+    "skipped": 41,
+    "xfailed": 1,
+    "subtestsPassed": 39,
+    "seconds": 1158.4
+  },
+  "failedTestFiles": [
+    "tests/source_observatory/test_coteur_bound_witness.py",
+    "tests/source_observatory/test_coteur_static.py"
+  ],
+  "managedReads": 28,
+  "watchSecondsApprox": 1896,
+  "workflowURL": "https://github.com/dddur75/robin-stades-ng/actions/runs/45170381892",
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "sourceReady": false
+}

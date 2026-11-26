@@ -1,0 +1,26 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.TWO.KNOWN.PROFILES.PRIVATE.E1.RECETTE.20261122",
+  "recordedAt": "2026-11-22T18:46:41.475Z",
+  "status": "PASS_AND_HOLD_PRIVATE_E1_NO_SOURCE_AUTHORITY",
+  "scope": "Independent C0 CODE, C1 FACTS and C4 SCOPE review of C3 frozen two-profile OLBG preparation. Seven targeted goldens reuse three synthetic rows; no native source request, Task, admission or app effect.",
+  "missionId": "OLBG_TWO_KNOWN_PROFILES_COHORT_PRIVATE_E1_20261122",
+  "planSHA256": "45ad0fc83715fc607433b7e595799d59c773e9a62aacc62dfa0144e3911459ff",
+  "manifestSHA256": "1f7e58e0f08be4f16a66497ccb2bc696a5557c9e71710b62aefa00d8d6f068a6",
+  "codeMapSHA256": "954ed14ec36f7e42b7618c2e124375e20448cf1cf4db4c6ba0e2003fb54fcacb",
+  "resultSHA256": "e849f6f54ab8fe4100faa648ee5d6ce7b26582c4425c6745691cc0d948d64e42",
+  "privatePins": 29,
+  "sourcePins": 26,
+  "allPinsMatch": true,
+  "author": "C3_STOPPED",
+  "independentCodeReviewer": "C0_NOT_AUTHOR",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceAuthority": false,
+  "newSourceGET": 0,
+  "taskMutations": 0,
+  "appChanges": 0,
+  "admissions": 0
+}

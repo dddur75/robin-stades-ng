@@ -1,0 +1,62 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.SCO1919.LOCAL.GUARD.BENCHMARK.E1.R2.RESULT.20261122",
+  "recordedAt": "2026-11-22T09:04:39.738Z",
+  "status": "MEASURED_COMPONENTS_REVIEWED_NOT_SOURCE_PERMISSION",
+  "scope": "One local measurement of explicit code-pin/ledger checks and a readonly native query; not an execution of old authority or a guarantee of future HTTP workload.",
+  "planSHA256": "9b6d7a34d008cdd5ebe6c08a60bf4c1f8d56be9b0c37c71584fc571b4c7294f2",
+  "manifestSHA256": "cdb58a10cc2114381112ff0be4768be72274cb27e044b2463aa05d5b023f9739",
+  "approvalSHA256": "86fddfc81c7753db5fd15f9ba54e4168e3a649452a184d30deb69e6cedd04db5",
+  "externalProcess": {
+    "startedAt": "2026-11-22T08:58:18.637Z",
+    "closedAt": "2026-11-22T08:58:25.751Z",
+    "exit": 0,
+    "error": null,
+    "stdoutBytes": 163,
+    "stderrBytes": 0,
+    "stdoutSHA256": "b75553e8c87a5d80265f2fe499ea90768e9f3cf23b8180ab8664ff1a904cbb35",
+    "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "resultSHA256": "a3d75aaa86fbb3d6a877ddd5e5b5a4825b384980e7634cc66da2bf44d2e8c658",
+  "outerResultSHA256": "42250003ccc7cc73574edd7ace4b2b60eccaccacea81c78fc1aa5129bd5e92c4",
+  "outerJobStdoutSHA256": "b75553e8c87a5d80265f2fe499ea90768e9f3cf23b8180ab8664ff1a904cbb35",
+  "outerJob": {
+    "exit": 0,
+    "timedOut": false,
+    "subtreeKillConfirmed": true,
+    "elapsedSeconds": 7.062999999994645,
+    "hardSeconds": 30,
+    "activeSecondsMax": 22,
+    "sourceGET": 0,
+    "taskMutations": 0
+  },
+  "fullCycles": {
+    "count": 3,
+    "pinsPerCycle": 118,
+    "bytesPerCycle": 9153842,
+    "minimumSeconds": 1,
+    "maximumSeconds": 1.0779999999940628
+  },
+  "dynamicCycles": {
+    "count": 12,
+    "maximumSeconds": 0.03200000000651926
+  },
+  "nativeReads": 1,
+  "nativeQuerySeconds": 2.8280000000086147,
+  "workerSeconds": 6.609000000011292,
+  "ledgerStableSHA256": "979c7d75d735f0358279c296cb03cdbd5facadb0b16f166b0f03910eeb4a0671",
+  "historicalAuthorityConsumed": false,
+  "sourceGET": 0,
+  "TaskChanges": 0,
+  "applicationAdmissions": 0,
+  "prelaunchError": {
+    "processStarted": false,
+    "nativeReads": 0,
+    "correctedBeforeUniqueExecution": true
+  },
+  "reviews": {
+    "C1": "Exact sealed implementation and bounded closure.",
+    "C3": "Actual result, parent linkage, stdout and external exit verified.",
+    "C4": "Actual scope, component counts, ledger stability and zero source/Task/admission verified."
+  },
+  "globalDelivery": "PARTIAL"
+}

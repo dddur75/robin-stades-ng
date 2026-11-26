@@ -1,0 +1,25 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.CACHED.SCREENING.LOCAL.R1.E1.RESULT.20261123",
+  "missionId": "TELEGRAM_CACHED_QUALIFICATION_LOCAL_R1_20261123",
+  "status": "SYNTHETIC_SCREENING_TESTS_PASS_E1_ONLY",
+  "generatedAt": "2026-11-23T16:01:51.307Z",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.STRUCTURED.NATIVE.R2.ACTUAL.RESULT.20261123",
+    "DATA.SOURCE_OBSERVATORY.BUNDES.J11.FUTURE.UTC.PROGRAMME.RESULT.20261123"
+  ],
+  "scope": "Four synthetic screen methods PASS, independently reviewed C1/C4 code/pins/scope; no cached message parse/run_local/source GET. Tests verify literal fixture text candidate remains unadmitted, opaque text unknown, scheduled programme passed, future publication and cap rejected. Not semantic forecast qualification; POST_KICKOFF enum means observed>=published scheduledUTC only, never actual whistle. Primary alone does not attest DENY hook. E2 needs separate local keys plus exact source observation15:56:21.512860, pins and one process/read bounds.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "admissions": 0,
+  "sourceReady": false,
+  "planSHA": "7067431130a8694936a63e3dcfb854e2ed68419a2ee591861d010f922ea7723c",
+  "manifestSHA": "c2e3d3169a3294412e5d5643a2c1735933cc89b0c572e44f49ec7fa48a2515d9",
+  "codeSHA": "d1a840a36639f455b85c2d9df09d7ca7b43d790c0be78748858cdd765d8dc9a4",
+  "testsSHA": "222086c6ac211cb6843b70f7b738c26b31271965fbd8b81e8fb359e2dcb9e357",
+  "primarySHA": "fb20aae19321478d6378cd40a63509d2891bbb63913533722a14093c9ba5b922"
+}

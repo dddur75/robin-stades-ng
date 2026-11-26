@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "robin-bounded-source-result-v1",
+  "generatedAt": "2026-11-25T13:29:50.748Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.PROFILE383717.ONE.SHOT.R1.RESULT.20261125",
+  "missionId": "OLBG_ONE_SHOT_PROFILE383717_R1_20261125",
+  "status": "PARTIAL",
+  "scope": "Actual bounded immediate launch completed; profile phase ValueError, exact HTTP/business cause unproven; no compatibility verdict.",
+  "tuple": {
+    "planSHA": "0e5aea0eb6158b28ea89a31702fb81a80bd25e6d4fceaa6c6b6cfe28cb668f85",
+    "manifestSHA": "1cfbef5f18299360b614fa8bffcf39e2dc70ebeeaea961437ed1d17add092243",
+    "configSHA": "e7d54fde834669a79ffda0aeec03a9f3c52379c3f4949aa37c1f49849f52467f",
+    "controllerSHA": "350ab544c79db33072e842272193d9ba8174afebee02c3544663da230e4b3240"
+  },
+  "primarySHA256": "b9a895186d7e6b65b160f337caf6fb6c883636cde5ef41201b3623c8a1860afb",
+  "resultSHA256": "7067376d13927d0c1de6462eea839a05c172800990b832b56f387b5827d1d586",
+  "stopSHA256": "83a5ba886c221a753a7b7d072c85780e2ce8aa278ffc7fe39ea51114be0af2c9",
+  "rootExit": 1,
+  "captureKilled": false,
+  "stderrBytes": 0,
+  "counts": {
+    "DNS": 3,
+    "GET_SEND": 3,
+    "TCP": 3,
+    "reservedGET": 3
+  },
+  "jobSeconds": 21.04699999999866,
+  "jobTimedOut": false,
+  "jobSubtreeClosed": true,
+  "phase": "PROFILE",
+  "errorKind": "ValueError",
+  "exactCause": "UNKNOWN",
+  "HTTPStatus": "UNPROVEN",
+  "newStructuredChoices": 0,
+  "applicationAdmissions": 0,
+  "sourceAuthorityClosed": true,
+  "retry": false,
+  "sourceReady": false,
+  "recurringCollectionActive": false
+}

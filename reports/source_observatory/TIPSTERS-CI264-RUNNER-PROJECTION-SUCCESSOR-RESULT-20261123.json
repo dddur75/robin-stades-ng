@@ -1,0 +1,44 @@
+{
+  "generatedAt": "2026-11-23T12:43:22.229Z",
+  "claimId": "GOV.V31.CI.RUNNER.PROJECTION.20261123.002",
+  "missionId": "CI264_RUNNER_PROJECTION_SUCCESSOR_E1_20261123",
+  "status": "CURRENT_ARTIFACT_PROJECTION_ONLY_NOT_CI_GREEN",
+  "scope": "Successor to the living two-file CI-runner artifact projection GOV.V31.CI.RUNNER.20261116.001 after dependency-order change. Original immutable claim, historical decisions, scientific/runtime results remain retained. Same runner, services, permissions and action version/pins; only two quality jobs installation order and tiny AST preflight changed as independently reviewed. Carry unchanged pilot-bridge test hash; update current ci-safe-v2 workflow hash. This verifies current artifact mapping, not runner execution success, scientific result, full-suite acceptance or application delivery. Carries the inherited artifact-projection succession identifiers because the graph contract checks direct successors, while preserving all original scientific/runtime claims, statuses and results unchanged; no scientific or historical execution conclusion is reissued.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "GOV.V31.CI.RUNNER.20261116.001",
+    "ENG.SOURCE_OBSERVATORY.CI264.DEPENDENCY.ORDER.CORRECTIVE.RESULT.20261123"
+  ],
+  "artifact_hashes": {
+    ".github/workflows/ci-safe-v2.yml": "c7cbb22f0dbe2632214aa12e08f8fe23802bd43f7843c3cc8c77f051564f4ce5",
+    "tests/jalon12/test_pilot_bridge_security.py": "57e28ba73419277cfd97224f7829f7d593fd9e1d013f044efb8ac1e5fe0aaa3f"
+  },
+  "artifact_hash_algorithm": "SHA-256",
+  "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+  "artifact_path_count": 2,
+  "engineering_projection_sha256": "89774ec521d4be3bc5c82a33931e4c49fa92c9a817c8aa71ea834fad1917af33",
+  "code_revision": "precommit-projection:89774ec521d4be3bc5c82a33931e4c49fa92c9a817c8aa71ea834fad1917af33",
+  "supersedes": [
+    "GOV.V31.CI.RUNNER.20261116.001",
+    "DATA.ROBIN.SIMPLIFICATION.R3.JALON10.NON_REGRESSION.V1.002",
+    "PERF.ROBIN.SIMPLIFICATION.CI.DAG.V1.002",
+    "GOV.CI.ROBIN.SIMPLIFICATION.FULL_SUITE.HISTORICAL_CONTRACTS.FAILURE.V1.001",
+    "GOV.CI.ROBIN.SIMPLIFICATION.SAFE_LEGACY.CONTRACT.REGRESSION.V1.001",
+    "GITHUB_ACTIONS_RUN_37374898738",
+    "GITHUB_ACTIONS_RUN_37384646164",
+    "PERF.ROBIN.SIMPLIFICATION.CI.CANDIDATE.RUN1.V1.001",
+    "PERF.ROBIN.SIMPLIFICATION.CI.CANDIDATE.RUN2.V1.001",
+    "PERF.ROBIN.SIMPLIFICATION.CI.CANDIDATE.RUN3.V1.001",
+    "GOV.CI.ROBIN.SIMPLIFICATION.SAFE_LEGACY.CONTRACT.REGRESSION.V1.002",
+    "GOV.CI.ROBIN.SIMPLIFICATION.CROSS_PLATFORM.SUCCESSOR.FAILURE.V1.001"
+  ],
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "CIExecutionAccepted": false
+}

@@ -1,0 +1,45 @@
+{
+  "DNS": 0,
+  "blocker": {
+    "detail": "Valid linked suffix could contain a veto/failure/redesign after grant without stopping; matched decision binding insufficient. Independent C3 CODE refuses E2.",
+    "scope": "NATIVE_AUTHORITY_PREFLIGHT",
+    "severity": "P1"
+  },
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PROSPECTIVE.NATIVE.PREPARATION.HOLD.20261123",
+  "codeMapCanonicalSHA256": "ae5f3198d0786671ec117debf2168acb3fbc758d7c0a75ff4de4159e622918d3",
+  "decision": "PASS_AND_HOLD",
+  "elapsedSeconds": 290.573055,
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "limits": [
+    "First synthetic variant failed on TypeError from configure/framing callsites not updated; actual source diff inspected and five missing adaptation sites corrected. Old raw stdout/stderr immutable, no source access.",
+    "Test collect() actual pure integration with injected fetch/durable boundaries; load_components/main native authority glue statically checked only; physical unchanged Job receipt reused, no native preparation.",
+    "No source authority until final parser independently accepted and C1CODEFACTS/C4SCOPE fresh exact keys plus immediate E2 C0 decision.",
+    "All native content RAM except private structured candidates; never model/stdout/Git."
+  ],
+  "missionId": "NOTBETTING_PROSPECTIVE_NATIVE_CANARY_20261123",
+  "nativeJobs": 0,
+  "preparedResultSHA256": "291a4ced6801eda9d6f3e029715bf65c2377709310cfdcf2684a359b9f27007b",
+  "sourceAuthorityGranted": false,
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PROSPECTIVE.CALENDAR.FIX.PRIVATE.E1.RESULT.20261123"
+  ],
+  "sourceGET": 0,
+  "sourceReady": false,
+  "status": "PARTIAL",
+  "stoppedAt": "2026-11-23T00:53:01.016Z",
+  "tests": {
+    "RAMASTCompile": 4,
+    "baseSyntheticRows": 1,
+    "criticalRuff": 0,
+    "finalIntegration": 3,
+    "finalSyntheticPass": true,
+    "finalWire": 6,
+    "initialFailedVariants": 1,
+    "totalVariantCalls": 10
+  }
+}

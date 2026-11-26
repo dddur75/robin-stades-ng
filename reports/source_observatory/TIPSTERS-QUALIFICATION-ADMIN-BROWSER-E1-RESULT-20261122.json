@@ -1,0 +1,23 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.QUALIFICATION.ADMIN.BROWSER.E1.RESULT.20261122",
+  "generatedAt": "2026-11-22T02:07:31.507Z",
+  "status": "PARTIAL_FIRST_BROWSER_CHECK_FAILED",
+  "scope": "One local admin navigation; five rows matched but details interaction timed out. Application defect vs HMR harness effect not established.",
+  "planSHA256": "4578b571032b56bed11660c7ad15e4a7c9178eb711452ea8539f8f6bb2bb67ba",
+  "manifestSHA256": "44db64c04f5e7c460538ccd2cd32b023d0927421a5b713501d007399b77d0769",
+  "localGET": 86,
+  "sourceGET": 0,
+  "writes": 0,
+  "navigations": 1,
+  "pageErrorCount": 9382,
+  "distinctErrorHashes": 1,
+  "pageErrorMessageStored": false,
+  "blockedHMRWebSockets": 2,
+  "rowsCorrect": 5,
+  "browserClosed": true,
+  "outerExit": 2,
+  "outerElapsedMilliseconds": 4453,
+  "actualFailure": "DETAIL_CLICK_TIMEOUT_2000MS",
+  "rawReceiptSHA256": "1b8d97ce4628749ad985f93d190299c44fffc0286e435e3a363c29345ff2168e",
+  "globalDelivery": "PARTIAL"
+}

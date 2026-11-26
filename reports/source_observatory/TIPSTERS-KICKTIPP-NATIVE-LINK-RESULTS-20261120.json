@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-11-20T22:36:42.280298+00:00",
+  "schemaVersion": "robin-kicktipp-native-link-receipt-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.KICKTIPP.NATIVE.LINK.RESULTS.20261120",
+  "missionId": "ROBIN-KICKTIPP-NATIVE-LINK-E1V3-20261120",
+  "status": "PARTIAL_NATIVE_JOIN_AND_PREMATCH_PROOF_NOT_ESTABLISHED",
+  "sourceResultSha256": "5135c2ddcd94badfde3b865f798d7cde21a1b70d2726b2b4987c23cbaf323df6",
+  "journalSha256": "21eb644bb1db7d331a101d1d945be8edd194b72006a66c57efd6cb793dec26c9",
+  "GETUsed": 2,
+  "http200": 2,
+  "activeMilliseconds": 2735,
+  "qualificationLineageUnits": 288,
+  "sourceScheduleDeclarations": 5,
+  "recognizedNativeGameJoins": 0,
+  "linkedParticipants": 0,
+  "admittedChoices": 0,
+  "sourceAPI": 0,
+  "newTasks": 0,
+  "rawBodiesStored": false,
+  "limits": [
+    "No recognized native game join in this bounded reader does not prove absence of source links, personal choices or a pre-match window.",
+    "Two civil declarations without numeric results retain an unknown timezone and canonical kickoff.",
+    "This unchanged technical line stops without a third identical read; no platform-wide prohibition, purchase or account requirement is inferred."
+  ]
+}

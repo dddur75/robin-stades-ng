@@ -1,0 +1,37 @@
+{
+  "appChanges": 0,
+  "authorElapsedSeconds": 131.668672,
+  "authorStoppedAt": "2026-11-23T02:43:35.383115+00:00",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PLAIN.REFERENCE.GATES.FIX.PRIVATE.RESULT.20261123",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "limits": [
+    "Access absent is not authorization; all unproven present access values reject. Metadata and property paths retain existing exclusions.",
+    "Private profile synthetic acceptance only; whole native compatibility/cause/version remain unknown.",
+    "Two RAM compilations are author-declared without separate receipt. No oldpack/source/calendar-real replay or app/source authority."
+  ],
+  "mapCanonicalSHA256": "e906794cd49ecb6cf47a2167832e868e863b085f87d51be5be2a612659df8245",
+  "missionId": "NOTBETTING_PLAIN_REFERENCE_GATES_FIX_E1_20261123",
+  "nativeCauseProven": false,
+  "nativeVersionKnown": false,
+  "qualifierSHA256": "db7093591a3e1e18be1a19920bda2c8b69b0b6a7d09ceaaf36cb09fb46637d97",
+  "resultRAW_SHA256": "99815321a80c57a31e5c658ee625c5b3e25efe61b9535ac8e5cbc68a9869d7d4",
+  "scope": "TWO_P1_ACCESS_AND_FILTERED_PATH_CONTEXT_CORRECTIONS_ONLY",
+  "sourceGET": 0,
+  "sourceReady": false,
+  "status": "ACCEPTED_PRIVATE_SYNTHETIC_CORRECTIVE_PROFILE_ONLY",
+  "tests": {
+    "c0IndependentASTProof": true,
+    "criticalRuff": 0,
+    "graphSeeds": 1,
+    "oldPackReplay": 0,
+    "primaryExit": 0,
+    "rowSkeletons": 1,
+    "runs": 1,
+    "syntheticCalendars": 1,
+    "targetedVariants": 6
+  }
+}

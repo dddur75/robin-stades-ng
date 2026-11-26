@@ -1,0 +1,28 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.PREFIX.NATIVE.R2.ACTUAL.RESULT.20261123",
+  "missionId": "TELEGRAM_BEXTRA_PREFIX_NATIVE_R2_20261123",
+  "generatedAt": "2026-11-23T16:24:37.152Z",
+  "status": "PARTIAL_FAIL_AND_STOP",
+  "keys": [
+    "C0",
+    "C1",
+    "C3"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.PREFIX.NATIVE.R2.E1.RESULT.20261123"
+  ],
+  "scope": "OnefixedpreviewGET/oneJob1.109s outer0child1 noTimeoutkillconfirmed; response98405B then UNPROVEN/PREFIX_CONTRACT/messageCountNULL, no structuredmessagefile oradmission. Fineparser/consumerreason unretained UNKNOWN, cannotinfer0messages/predictions/markup/date/channelabsence. Bodydiscarded/no rawHTML ormessagevaluesmodelstdoutGit. CampaignSTOPnoretry; futurewitnesscanexplainonlyitsnewobservation, notthishistoriccause.",
+  "sourceGET": 1,
+  "nativeJobs": 1,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "messageCount": null,
+  "responseBytes": 98405,
+  "responseSHA256": "79ad12cbec148a81630004687fb731c651074f80e306c35ba997ca8567c811e4",
+  "reason": "PREFIX_CONTRACT",
+  "fineReason": "UNKNOWN",
+  "primarySHA": "83e33e46e0b9e76917de3a6f2517e1d6261e2cabf68a7e61f5420a35c1edb5b1",
+  "resultSHA": "774bdfe94cbe62b4112071656ba70f0b8e6ab81b58004cff5b61c1a4e488a160",
+  "observedAtUTC": "2026-11-23T16:19:38.629859+00:00",
+  "closedAtUTC": "2026-11-23T16:19:38.634614+00:00"
+}

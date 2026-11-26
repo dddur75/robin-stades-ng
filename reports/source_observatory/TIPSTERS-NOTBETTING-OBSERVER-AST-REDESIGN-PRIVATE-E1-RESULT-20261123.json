@@ -1,0 +1,45 @@
+{
+  "DNS": 0,
+  "authorResultSHA256": "2cc1ef8ef7f015b60fe991189a0fe38c744a99033081c926438d873040da594e",
+  "authorStoppedAt": "2026-11-23T01:33:33.562794+00:00",
+  "builderSHA256": "46bae4af1fd3f74e33d6103f3a9acc57e64069411df5a50e17e77e673aaff9de",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.OBSERVER.AST.REDESIGN.PRIVATE.E1.RESULT.20261123",
+  "codeMapCanonicalSHA256": "2df9dd085ce92711cefd2a415260aa5215d3aa173d002c6118469310815e9606",
+  "codeReview": "C0 independently read complete deterministic AST transformer with full ast.Constant labels, exact parent RAW gate/four condition selectors/one signature, then independent static strip of exact four capture guards and one optional argument restores whole parent AST. C1 FACTS and C4 SCOPE actual receipt/pins accepted.",
+  "decision": "PASS_AND_HOLD",
+  "elapsedSeconds": 169.875272,
+  "instrumentedQualifierSHA256": "17a698a935eac587d1f174c819b09c121f36447bfa7595d070633880cb1e34d8",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "limits": [
+    "New AST construction method resolves prior generation defect for this private artifact only; old partial/REDESIGN history preserved.",
+    "Five selected regression cases only, no old25/8pack replay or provider/native data. No sourceReady/capture authority/native cause/qualification or parser promotion."
+  ],
+  "missionId": "NOTBETTING_OBSERVER_AST_REDESIGN_PRIVATE_E1_20261123",
+  "nativeJobs": 0,
+  "observerSHA256": "b9f7777c41fc39ceb485cce7b4bfd75942e70cff6d14a87eb31e37e369c26095",
+  "proof": {
+    "compositeBytes": 1824,
+    "compositeClosedClasses": 4,
+    "criticalRuffExit": 0,
+    "deterministicRAMBuilds": 2,
+    "independentCoreASTPrimarySHA256": "6c884d1269069f47224b2bfae254590ba84894465273f96efc956f5f09913b67",
+    "independentCoreASTSHA256": "ddda1e511d6b5aa6696acc1d2598787657630a8a6e30a7322fea31c3cd3c7305",
+    "oldNewPairs": 3,
+    "qualifierCalls": 6,
+    "rowSkeletons": 1,
+    "syntheticGraphSeeds": 2,
+    "targetedCasesPassed": 5,
+    "wrongParentRejectedBeforeOutput": true
+  },
+  "realData": 0,
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.REFERENCE.OBSERVER.PRIVATE.E1.PARTIAL.20261123"
+  ],
+  "sourceGET": 0,
+  "sourceReady": false,
+  "status": "PARTIAL"
+}

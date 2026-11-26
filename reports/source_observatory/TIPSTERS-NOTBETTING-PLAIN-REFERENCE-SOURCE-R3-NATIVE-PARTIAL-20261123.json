@@ -1,0 +1,123 @@
+{
+  "GETReservations": 2,
+  "GETTransmissionBounds": [
+    2,
+    2
+  ],
+  "GETTransmissionCount": 2,
+  "TaskChanges": 0,
+  "admittedCount": 0,
+  "appChanges": 0,
+  "auditCounts": {
+    "DNS": 2,
+    "GET_SEND_BOUNDARY": 2,
+    "SPAWN_BLOCKED": 0,
+    "TCP": 2
+  },
+  "auditRefusal": null,
+  "bodyBytes": 908833,
+  "candidateCount": null,
+  "childExit": 1,
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PLAIN.REFERENCE.SOURCE.R3.NATIVE.PARTIAL.20261123",
+  "closedAt": "2026-11-23T02:53:21.628729+00:00",
+  "externalSeconds": 1.142,
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "limits": [
+    "No fine native reference failure reason retained beyond unresolved_data_reference and unknownReasonPresent. No native version/cause or global absence established.",
+    "Depth limit not hit on this new response; differing response bytes prevent sole-cause attribution to parser change.",
+    "Second similar native reference-traversal failure requires FAIL_AND_REDESIGN and return E1. Third identical trial forbidden; all R3 source authority/quota closed, no retry/remainder/recurrence/app/Task.",
+    "Current ledger veto checked beforeJob only, not per GET. Raw body discarded; private opaque content never exposed in model/stdout/Git.",
+    "Zero retained choices from incomplete traversal is not zero available eligible forecasts."
+  ],
+  "localControlInterruption": {
+    "c0Observation": "Post-interruption directory showed no source-decision/spent; ledger tail still E1 close; no Python process observed. No native launch from that interrupted call was observed.",
+    "independentHistoricalProcessAbsenceEstablished": false,
+    "separatePrimaryReceiptAvailable": false,
+    "toolTimeoutMilliseconds": 1000,
+    "verifiedCurrentMission": "One authenticated E2 decision, one native spent, two GET spent and two sends/responses verified."
+  },
+  "missionId": "NOTBETTING_PLAIN_REFERENCE_SOURCE_R3_20261123",
+  "nativeJobSeconds": 1.078,
+  "nativeJobs": 1,
+  "nativeResultRAW_SHA256": "e6b4de39910e5ba25c7b8e4c1eeb7e3461e757546fdefb84aa84ebe187e49832",
+  "observedAt": "2026-11-23T02:53:21.587730+00:00",
+  "outerProcessExit": 0,
+  "phase": "QUALIFY",
+  "projection": {
+    "depthBoundHit": false,
+    "excludedOtherOwners": 0,
+    "omittedAdmissible": 0,
+    "omittedWitnesses": 0,
+    "reasons": [
+      "no_admissible_choice",
+      "unresolved_data_reference"
+    ],
+    "retainedPicks": 0,
+    "sampleOnly": true,
+    "traversalComplete": false,
+    "unknownReasonPresent": true,
+    "visitedNodes": 444,
+    "walkBoundHit": false,
+    "witnesses": []
+  },
+  "reason": "QUALIFICATION_PARTIAL",
+  "responseSHA": "05a75b136d9b32167f432158fc7a9bef9e6b7a94edf3a3f3e8fcec79c2559265",
+  "retainedPicks": 0,
+  "robotsAllowed": true,
+  "scope": "TWO_REAL_HTTP_RESPONSES_QUALIFICATION_INCOMPLETE_NO_ADMISSION",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.NATIVE.AUTHORITY.CORRECTION.PRIVATE.E1.RESULT.20261123",
+    "DATA.SOURCE_OBSERVATORY.BUNDES.J11.FUTURE.UTC.PROGRAMME.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CURRENT.TERMS.PERSONAL.CONTEXT.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PLAIN.REFERENCE.PUBLIC.INTEGRATION.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PROSPECTIVE.SOURCE.R2.NATIVE.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.REACT.FLIGHT.PRIMARY.WEB.GRAMMAR.E1.RESULT.20261123"
+  ],
+  "sourceGET": 2,
+  "sourceReady": false,
+  "sourceStoppedAt": "2026-11-23T02:53:21.628729+00:00",
+  "status": "PARTIAL_SOURCE_STOPPED_REDESIGN_REQUIRED",
+  "traces": {
+    "picks": {
+      "CLbucket": "ABSENT",
+      "CLcount": 0,
+      "TEbucket": "CHUNKED",
+      "TEcount": 1,
+      "bodyComplete": true,
+      "bytesReceived": 908833,
+      "contentEncodingBucket": "ABSENT",
+      "exceptionKind": null,
+      "finalZeroSeen": true,
+      "framing": "CHUNKED",
+      "httpStatus": 200,
+      "phase": "DONE",
+      "reason": null,
+      "schemaVersion": "notbetting-fixed-transport-diagnostic-v1",
+      "terminalStrictVerified": true,
+      "trailerComplete": true
+    },
+    "robots": {
+      "CLbucket": "ABSENT",
+      "CLcount": 0,
+      "TEbucket": "CHUNKED",
+      "TEcount": 1,
+      "bodyComplete": true,
+      "bytesReceived": 1300,
+      "contentEncodingBucket": "ABSENT",
+      "exceptionKind": null,
+      "finalZeroSeen": true,
+      "framing": "CHUNKED",
+      "httpStatus": 200,
+      "phase": "DONE",
+      "reason": null,
+      "schemaVersion": "notbetting-fixed-transport-diagnostic-v1",
+      "terminalStrictVerified": true,
+      "trailerComplete": true
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.AJA.PUBLIC.THREAD.DISCOVERY.20261126",
+  "status": "VERIFIED_BOUNDED_ROBOTS_HTTP503_NO_DISCOVERY",
+  "scope": "One actual GET to forum AJA robots returned HTTP503 with physical transport closure. Native job exit1,closed,no timeout;homepage/feed/terms not requested. Zero threads,authors or forecasts collected;no retry,no APP or Task effect.No missing account or permission inferred from503.",
+  "at": "2026-11-26T06:00:52.022Z",
+  "actual": {
+    "APP": 0,
+    "SourceGET": 1,
+    "Task": 0,
+    "at": "2026-11-26T05:58:31.304711+00:00",
+    "authorityClosed": true,
+    "discoveredThreadCount": null,
+    "errorCode": "HTTP_OR_REDIRECT",
+    "feedEntryCount": null,
+    "job": {
+      "activeSecondsMax": 50,
+      "elapsedSeconds": 0.7960000000020955,
+      "exit": 1,
+      "hardSeconds": 60,
+      "sourceGET": null,
+      "subtreeKillConfirmed": true,
+      "taskMutations": 0,
+      "timedOut": false
+    },
+    "phase": "ROBOTS",
+    "qualifiedForecasts": 0,
+    "resultSHA256": "8dbaceddd781526394542e79ed25ebcdbf50c54786458adfe2719853aa96b78f",
+    "retry": false,
+    "sourceReady": false,
+    "status": "PARTIAL"
+  },
+  "robotsTrace": {
+    "trace": {
+      "CLbucket": null,
+      "CLcount": null,
+      "TEbucket": null,
+      "TEcount": null,
+      "bodyComplete": null,
+      "bytesReceived": null,
+      "contentEncodingBucket": null,
+      "exceptionKind": "CONTRACT_ERROR",
+      "familyAttempted": "IPV4",
+      "finalZeroSeen": null,
+      "framing": null,
+      "httpStatus": 503,
+      "phase": "HEADER_VALIDATE",
+      "reason": "HTTP_OR_REDIRECT",
+      "robotsAvailability": null,
+      "schemaVersion": "telegram-ipv4-strict-transport-diagnostic-v1",
+      "terminalStrictVerified": null,
+      "trailerComplete": null,
+      "transportClosed": true
+    }
+  },
+  "tuple": {
+    "planSHA": "4d06f9e30d44ad30baed6a8ba58f8026c9a8f085e938ff08197e44203c2a3533",
+    "manifestSHA": "fa236e9f96aea120d0df00ee954ee94b89bb7d63da987b9c21249fc6bcee4a40",
+    "configSHA": "249d91dd5f735fa7cf26f1078a6a15421fa0dbd2eb4327e0ce734129ecaad786",
+    "controllerSHA": "8e4b37b337011940316fed4d36ecc065d8e0fb047e5baf2a70f970b2b1019605"
+  },
+  "controllerReceiptSHA256": "f87c5439fb90f0043b53a004ca2b8eec3bb667a4e9b20951e204b7e9584534e7",
+  "sourceFichesDocumented": 42,
+  "sourceFichesIndividuallyQualified": 0,
+  "requiredUserAccess": "NONE_PROVEN_SERVER_ROBOTS_HTTP503",
+  "globalDelivery": "PARTIAL"
+}

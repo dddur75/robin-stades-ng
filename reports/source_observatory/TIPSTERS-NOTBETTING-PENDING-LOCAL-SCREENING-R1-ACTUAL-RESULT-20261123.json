@@ -1,0 +1,46 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.LOCAL.SCREENING.R1.ACTUAL.RESULT.20261123",
+  "missionId": "NOTBETTING_PENDING_LOCAL_SCREENING_R1_20261123",
+  "generatedAt": "2026-11-23T16:31:28.884Z",
+  "status": "PARTIAL_PRIVATE_LOCAL_CLASSIFICATION_ONLY",
+  "keys": [
+    "C0",
+    "C1",
+    "C3"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.LOCAL.SCREENING.R1.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.SOURCE.NATIVE.R1.ACTUAL.RESULT.20261123"
+  ],
+  "scope": "Freshlocaldecision/start boundcode/config/tests/runnerSHA beforeoneprocess0.112s exit0/stdoutstderr0; oneboundedinput3338B read/cal9/0GET. FourretainedUNQUALIFIEDoccurrences classifyNBA2 byexactsource literal andUNRECOGNIZED_LITERAL2 sportUNKNOWN; allfour sourceDECLAREDdatesafterOBS not actualkickoff, alloutside reusedBundesprogramme. No4football/pronos/humans/globalabsence ornativevaluesmodelstdoutGit. RootC1C3actualreviewaccepted; onepassSTOPconsumed, no reread underoldscope.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "aggregate": {
+    "admissions": 0,
+    "calendarClaim": "DATA.SOURCE_OBSERVATORY.BUNDES.J11.FUTURE.UTC.PROGRAMME.RESULT.20261123",
+    "competitionClassCounts": {
+      "NBA": 2,
+      "UNRECOGNIZED_LITERAL": 2
+    },
+    "globalCoverage": "UNKNOWN",
+    "inputSHA": "c7d8ffcff0e449aa0af8d455a93859ff41674c194f7866947ecbd4bb2258e080",
+    "nativeJobs": 0,
+    "personalIdentityVerified": false,
+    "programmeComponentStopCounts": {
+      "COMPETITION_OUTSIDE_REUSED_PROGRAMME": 4
+    },
+    "recordCount": 4,
+    "schemaVersion": "notbetting-pending-local-screening-v1",
+    "sourceDateSemantics": "SOURCE_DECLARED_ONLY_NOT_ACTUAL_KICKOFF",
+    "sourceDeclaredDateRelationCounts": {
+      "AFTER_SOURCE_OBSERVATION": 4
+    },
+    "sourceGET": 0,
+    "sourceObservationClaim": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.SOURCE.NATIVE.R1.ACTUAL.RESULT.20261123",
+    "sourceReady": false
+  },
+  "primarySHA": "449a725af445f9869697d54770602fdd517ec4269e3b91ae67a7bb78228890b1",
+  "resultSHA": "8cab05f7b414bdd26c83046971b221d9517751e3873e87493bb90ffa419aeec1"
+}

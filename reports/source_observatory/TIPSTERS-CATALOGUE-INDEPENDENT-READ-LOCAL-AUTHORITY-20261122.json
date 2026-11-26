@@ -1,0 +1,61 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CATALOGUE.INDEPENDENT.READ.LOCAL.AUTHORITY.20261122",
+  "recordedAt": "2026-11-22T13:26:55.501Z",
+  "status": "EXACT_LOCAL_DOCUMENTARY_CATALOGUE_E1_E2_AUTHORITY_NOT_YET_COPIED",
+  "scope": "Permit seven exact code/test files in PUBLIC and RUNTIME and four private structured inputs; independent317/18003 catalogue reads with historical qualification and unknown operational states. No new prediction, source request, Task query, native activation, census, corpus replay, publication or all-source compatibility certification.",
+  "missionId": "CATALOGUE_INDEPENDENT_READ_LOCAL_E1_E2_20261122",
+  "planSHA256": "aa9826a1acb16feec221338b0c374adbdd32af2ba401e105ea3e9f3b694746f2",
+  "manifestSHA256": "e7cfd21c59dd5fac419d62de267f5d3776467159b199d4a2880c550f7526c3e1",
+  "prototypePlanSHA256": "9ac6438b1795f107d9f470c64f90f99e95e5a9ef0c71260242a723d480ce7cfa",
+  "prototypeManifestSHA256": "f33d4b11a891d103765bed3c5bcb0b9e779ce5d11c668a0e7a5fd5c0b74fed34",
+  "codeHashes": {
+    "cockpit/scripts/catalogue-independent.ts": "137c9934ec0717d7ab07a8d323f7f0ce05b5c36233c18cf0f14431a5ef60bf48",
+    "cockpit/scripts/tipster-candidates-plugin.ts": "62a6df7f14dae6bb6197a7c9638dbc0a2232be720c6f1b613b24d644943aefae",
+    "cockpit/app/components/expert/tipster-candidates.tsx": "4e2e6d66ac4c03a07bdd28b425310d0a54e83ff1de658ca6cacb8129f730a9c5",
+    "cockpit/app/components/expert/workbook-catalogue.tsx": "d7120835240a81e18e1e8dec73adc2f520bce002d3b7b0958d7a14d7ee2225a6",
+    "cockpit/scripts/workbook-inventory-plugin.ts": "0eb4b40107fe34678da73d23cb2a904b2636f059b2587734d31d6ff722a57adb",
+    "cockpit/tests/catalogue-independent.test.ts": "c5d60bc2fcd7a1bbe110e38389bb398d60bfe15bf5172abc717248227715b52b",
+    "cockpit/tests/profile-native-authority.test.ts": "285db9079138075ab98deb9f568f6171f24cc1905578215bca9e0b4977145637"
+  },
+  "privateInputHashes": {
+    "registry": "74def990602b5d2bf1b2a030827967e8d155af664ed9016769cf81b4cdd236ce",
+    "receipt": "da1098fac5cf1b2606d10fef956f3b9e1e1d3962d72b8ad567cdad0f1f526414",
+    "qualification": "c5775a1b108a7ad99637c11558c757713402662f1a49c05991630ca2edf433c9",
+    "adminQualification": "5cd19dbf965e0ef5f38ebb313279e7e77d909008a831d22eb50844de932dae80"
+  },
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.CANDIDATES317.20261119",
+    "ENG.SOURCE_OBSERVATORY.SRO.BRIDGE.R3.LOCAL.RECETTE.20261121",
+    "ENG.SOURCE_OBSERVATORY.TP.AH.DOCUMENTARY.E1.R2.ACTUAL.RESULT.20261122",
+    "DATA.SOURCE_OBSERVATORY.LEGRUPPETTO.RECURRING.R2.SLOT0.APP.ADMISSION.20261122"
+  ],
+  "maximumStage": "E2",
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "sourceAdmissions": 0,
+  "predictionChanges": 0,
+  "newChoices": 0,
+  "newAuthors": 0,
+  "privateInputsMaximum": 4,
+  "codeFilesPerWorktreeMaximum": 7,
+  "APIRequestsMaximum": 10,
+  "browserPagesMaximum": 2,
+  "HTTPWritesAllowed": 0,
+  "externalRequestsAllowed": 0,
+  "activeSecondsMaximum": 600,
+  "expiresAt": "2026-11-22T14:00:00Z",
+  "fullSuite": 0,
+  "corpusReplay": 0,
+  "indexRebuild": 0,
+  "publications": 0,
+  "merge": 0,
+  "deployment": 0,
+  "retainedQualificationCurrentStateVerified": false,
+  "serverReadiness": "Capture active Vite log offset before copy; require new candidate-plugin change and subsequent server-restarted after all byte copies before any candidate API. Stop with zero API if no proof; no manual process start/kill.",
+  "reviews": {
+    "C3": "Exact R3 P2 closure,7code/input/baseline bindings,test migration/portable test invariants and read-only GET callgraphs PASS.",
+    "C4": "ExactnewE2MF8/7files+4inputs/10API2pages/600s14:00/0sourceTaskpub,DATA bounds and historical unknown-state semantics PASS."
+  },
+  "globalDelivery": "PARTIAL"
+}

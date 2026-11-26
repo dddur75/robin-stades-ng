@@ -1,0 +1,21 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI259.VISUAL.CONTRACT.LOCAL.AUTHORITY.20261122",
+  "recordedAt": "2026-11-22T15:37:56.207Z",
+  "status": "TWO_SYNTHETIC_VISUAL_CASES_LOCAL_FIX_ONLY",
+  "scope": "Only two existing synthetic Playwright cases align to reviewed historical UI. Keep source choice Alice, unqualified Bob, unknown current operation, measured-zero/date distinction. No product logic or data changes.",
+  "missionId": "CI259_VISUAL_HISTORICAL_CONTRACT_LOCAL_FIX_20261122",
+  "planSHA256": "bfa71b7d0407c3b58a3726f1ce016decbe20a72ec88e03b0d22d83f4ecba43a3",
+  "manifestSHA256": "1359d13c119be54c844ed67ced69871be7620bcf575ed5775fe1febd5bd4745c",
+  "runnerSHA256": "13b4947f237d126a79059ef46e9157c2cd80fd390aa2cd4ce68cfa8bf906a8f4",
+  "sourceVisualFailureClaim": "ENG.SOURCE_OBSERVATORY.CI259.VISUAL.FAILURE.20261122",
+  "reviews": {
+    "C3": "PASS exact previews fd53/ce4d and local runner13b; old107pass2fail primary diagnosed. Fixture unknown/null with original source choice/dates and Bob unqualified retained.",
+    "C4": "PASS exact tuple,2cases/2contexts/3navigation/4mocks,600s16:00,sourceTaskrealAPIpub0; laterpublicationseparate."
+  },
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "newAdmissions": 0,
+  "publications": 0,
+  "globalDelivery": "PARTIAL"
+}

@@ -1,0 +1,31 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.BUNDES.LITERAL.NATIVE.R1.ACTUAL.RESULT.20261123",
+  "missionId": "NOTBETTING_BUNDES_LITERAL_NATIVE_R1_20261123",
+  "generatedAt": "2026-11-23T16:49:25.323Z",
+  "status": "PARTIAL_FAIL_AND_STOP",
+  "keys": [
+    "C0",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.BUNDES.LITERAL.NATIVE.R1.E1.RESULT.20261123"
+  ],
+  "scope": "OneJob1.484s outer0child1 noTimeoutkillconfirmed/twofixedstrictcompleteHTTP200GETs/freshREPallow0. Boundedselection sees41candidateoccurrencesoutsideexactBundesliteral,0selected/qualificationcalls0/23808physicalvisits/7omissions/82filtered43sensitive/refunknown0/selectionCompletefalse/limitfalse/globalUNKNOWN. Noqualified/pendingrecords orpayloadfiles/admission/candidateCountNULL/sourceReadyfalse. NOT41forecasts/authors,noglobalBundesabsence/windowforecast/canonicalhumanclaim. Nativebodydiscarded/no fieldsmodelstdoutGit. FirstresultcampaignFAIL_AND_STOP/no retry/reliquat/newSOURCEgrant. IndependentC3actualCODE+C4scope accepted, C1facts pending separately notinvented.",
+  "sourceGET": 2,
+  "nativeJobs": 1,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "selectedOccurrences": 0,
+  "competitionOutsideLiteral": 41,
+  "competitionReferenceUnresolved": 0,
+  "physicalVisits": 23808,
+  "omittedBranches": 7,
+  "selectionComplete": false,
+  "qualifiedRecords": 0,
+  "pendingRecords": 0,
+  "sourceObservation": "2026-11-23T16:46:38.758125+00:00",
+  "sourceClosedAt": "2026-11-23T16:46:38.839587+00:00",
+  "primarySHA": "2ee731e175da92185477045669f9fb564d6a81be7d628d8bd2fae4e3c4158ff8",
+  "resultSHA": "5ce634d52cf955f61a026e5de459dc50e3b975a50e211dc2afb3af8e84b49485"
+}

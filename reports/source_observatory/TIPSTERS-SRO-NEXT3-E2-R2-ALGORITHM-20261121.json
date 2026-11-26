@@ -1,0 +1,43 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.SRO.NEXT3.E2.ALGORITHM.20261121",
+  "status": "REVIEWED_BOUNDED_E2_ALGORITHM_NO_WINDOWS_EFFECT_YET",
+  "scope": "Strict closed successful receipts only; immutable seed preserved. Automatic acceptance only within exact source/owner/fixture/time and journal snapshot contract. Not a new source count or a guarantee of future results.",
+  "planCanonicalSHA256": "2526e65a6b5165b79ce53df99167d536e6ef3f3962da40cc04e44be557d1a02b",
+  "manifestCanonicalSHA256": "6c75104deb45995dec0b389b168a43b34dcf27bddcb4cb42439b753a2501b026",
+  "indexRawSHA256": "16a4163d0e6ec0ab252a09e773640384791f6abefca54061a9892f960b62c7fb",
+  "sourceCodePins": {
+    "authority.py": "d6b02d55c74bb0410be0e65f0e573e1c33a9af947b85ce350e9b1f454c4af8cc",
+    "engine.py": "e91a209b1a39ef2b2b7739de7ce1d0ca598c2408a8905b75d4f88d95bbe71689",
+    "bootstrap.py": "1cff8993f6d2780e1c92bc868af964cbb9741afb78609e444cfa02551535ccfd",
+    "read.py": "d2e89c31e552875cf0909fcc42bca84107051fc84f11b781cd61717dfce793be",
+    "frozen.json": "b05fdadd65cc475dcf784547ddb880ad092f558a0f3197588936bcd224bccd1b",
+    "seed.json": "6f55951fa9c3ef9446d26ea442ab444691774998500ed085b157146f9ab9a2fe",
+    "calendar.json": "6a4eff7bbda530d91c6dd1b1b4d738e0b97873c0cb694537b421513a5d0b72a7",
+    "task_xml.py": "a265d0fc0bfc5553930a801afac6590a9516d4544c4bc74bf959780c7f51a449",
+    "root_guard.py": "a20a485097d01030bb4d4030ff35c7bdd74ac959d6b6fe30f972a730d00b6e5d",
+    "root-install.ps1": "190f4810cc39cbc54302f9d4be9ec7d3a1ca63ace8d07ef042cace211ee841bd"
+  },
+  "slots": [
+    "2026-11-21T20:00:00Z",
+    "2026-11-22T02:00:00Z",
+    "2026-11-22T08:00:00Z"
+  ],
+  "expiresAt": "2026-11-22T08:10:00Z",
+  "canaryDataClaimId": "DATA.SOURCE_OBSERVATORY.SRO.CANARY.R2.REOBSERVED.20261121",
+  "priorFamilyGET": 42,
+  "newGETMax": 9,
+  "familyGETMax": 51,
+  "newMillisecondsMax": 150000,
+  "historicalFamilyMilliseconds": null,
+  "initialPoolFixtures": 7,
+  "eligibleFutureFixturesAtFirstSlot": 3,
+  "authorPool": 8,
+  "newSourceGETExecuted": 0,
+  "windowsTasksInstalled": 0,
+  "verifiedBy": [
+    "C0",
+    "C1",
+    "C2",
+    "C4"
+  ]
+}

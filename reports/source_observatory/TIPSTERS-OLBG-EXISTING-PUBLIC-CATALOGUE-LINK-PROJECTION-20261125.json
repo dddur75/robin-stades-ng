@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "robin-existing-public-link-receipt-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.EXISTING.PUBLIC.CATALOGUE.LINK.20261125",
+  "missionId": "OLBG_EXISTING_PUBLIC_FICHES_LINK_APP_20261125",
+  "status": "VERIFIED_PREPARED_RUNTIME_INACTIVE",
+  "scope": "Exact copies of77 already published personal records linked to17 missing fiches; observations, choices and flags preserved. No new source observation or new public author.",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.EXISTING.PUBLIC.FICHES.SOURCES.20261125",
+    "DATA.SOURCE_OBSERVATORY.OLBG.EXISTING.PUBLIC.FICHES.SUPPLEMENT.20261125",
+    "ENG.SOURCE_OBSERVATORY.OLBG.TWO.MISSING.FICHES.APP.RUNTIME.RESULT.20261125"
+  ],
+  "payloadSHA256": "3721858fdb6939f1c10b4b0d0b1f22707491639c87117619ae43c85f318a672c",
+  "publicSnapshotSHA256": "065c5a5cd56b0ebdffa456658d3dcbe220748083741a2b5f78e2b6f59f1d1503",
+  "projectionSHA256": "4190148bba20b93e215882edba835cfd2bbb1dd38a8dcccbb3a5dd4c41e0098a",
+  "existingRecordsLinked": 77,
+  "newFiches": 17,
+  "newPublicRecords": 0,
+  "newPublicAuthors": 0,
+  "expectedPublicChoices": 545,
+  "expectedFiches": 337,
+  "SourceGET": 0,
+  "typecheckCommand": "tsc --noEmit -p tsconfig.app.json",
+  "typecheckAppExit": 0,
+  "fullSuiteRuns": 0
+}

@@ -1,0 +1,38 @@
+{
+  "authorElapsedSeconds": 127.095571,
+  "authorStoppedAt": "2026-11-23T03:46:46.859Z",
+  "backendHTTPCount": null,
+  "cacheCrawlLabel": "2 days ago",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.DOCUMENTARY.PERSONAL.CONTEXT.RESULT.20261123",
+  "documentOperations": 1,
+  "explicitSourceAPIRequests": 0,
+  "explicitTipsterReads": 0,
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "limits": [
+    "Observed as mediated page extract with cachelabel2daysago, not verified current nativeHTTPdocument or dated effective conditions.",
+    "Purpose only static script metadata/endpointpath+querykeynames, queryvalueselided/no providerJSexecution/no rawJSstored/no API/factdata/forecastadmission.",
+    "Any separately observed applicable restriction, source refusal or robots denial remains STOP; no rights or permission for other platforms or bulk collection inferred.",
+    "Personal/noncommercial purpose is not an established exception to reproduction/adaptation restrictions; applicability to proposed transient RAM inspection remains unresolved.",
+    "This is a received documentary context only; sourceAuthorityGranted and collectionAuthorityGranted are both false, sourceAPIRequests and APIRequestsAllowed both0. A separate exact source review must retain the browser-client and reproduction-scope unknowns."
+  ],
+  "missionId": "COTEUR_CURRENT_PERSONAL_DOCUMENT_CONTEXT_E1_20261123",
+  "nativeDocumentFreshnessEstablished": false,
+  "primaryRepresentationRAW_SHA256": "72984cd4117790afe81a880b504fe19d2b225049524ef9fe3eb7347657fc6bf1",
+  "readAt": "2026-11-23T03:45:58.486Z",
+  "reviewedContextRAW_SHA256": "d0cd99e9bbb9135fb0ba220c3595fa7a772c3cec5f9c00a87eca5d22dedd7065",
+  "scope": "ONE_OFFICIAL_MEDIATED_CACHED_COTEUR_LEGAL_EXTRACT",
+  "scopeFindings": [
+    "Protected site elements include software; reproduction/adaptation/publication restrictions observed. Database protection observed.",
+    "Browser/equipment access condition observed; no explicit automation permission, personal exception, universal account or purchase requirement established."
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.PERSONAL.ACCESS.20261120",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.PUBLIC.INTEGRATION.RESULT.20261123"
+  ],
+  "sourceReady": false,
+  "status": "ACCEPTED_DOCUMENTARY_CONTEXT_ONLY_NO_SOURCE_AUTHORITY"
+}

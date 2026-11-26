@@ -1,0 +1,32 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.LOCAL.ADOPTION.PORTABILITY.TARGETED.QUALITY.20261124",
+  "missionId": "OLBG_LOCAL_ADOPTION_PUBLIC_QUALITY_E1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Targeted portability quality for one exact closed ledger locator only; all historical ledger bytes unchanged and future locators portable.",
+  "testsPassed": 32,
+  "ruffExit": 0,
+  "ledgerPathViolations": 0,
+  "sealedRecords": 51,
+  "sealedStringSpans": 52,
+  "newSealedSpans": 1,
+  "sourceGET": 0,
+  "actualPayloadReads": 0,
+  "runtimeWrites": 0,
+  "applicationAdmissions": 0,
+  "codeHashes": {
+    "scripts/check_no_tracked_absolute_paths.py": "f48a4d80d0b9151d04003562927edaf17991234f1c350616ee9792355f45a4ef",
+    "tests/portability/test_no_tracked_absolute_paths.py": "b4309bc5bd4f0f179271b583f55cd434654855c0cf1d0517ea37136afdb1ba1e"
+  },
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V40.ENGINEERING.RECETTE.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.RETAINED.TS.PUBLIC.CODE.RESULT.20261124",
+    "DATA.SOURCE_OBSERVATORY.OLBG.THREE.LOCAL.APP.ADMISSION.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.THREE.AND.TELEGRAM.TWO.VIEW.UI.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.INDIVIDUAL.AUTHOR.POLICY.CODE.RESULT.20261124"
+  ]
+}

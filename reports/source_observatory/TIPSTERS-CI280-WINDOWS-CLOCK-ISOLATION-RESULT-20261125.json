@@ -1,0 +1,63 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI280.WINDOWS.CLOCK.ISOLATION.RESULT.20261125",
+  "missionId": "CI280_CLOCK_ISOLATION_EVIDENCE_E1_20261125",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Three-line test fixture clock isolation verified by five targeted synthetic cases; exact CI280 reason remains unknown; no production guard change.",
+  "target": "tests/capture/test_predns_orchestration_v1.py",
+  "targetRawSHA": "bb39f7f9ece2bec0b356dfbc2e6a3662f9328f453b2d3b391a3db5dd634626be",
+  "change": {
+    "syntheticMonotonicInjectedInExistingCalls": 2,
+    "statusAssertionShowsExistingReasonCode": true,
+    "productionChanged": false
+  },
+  "unchangedLocalDiagnostic": {
+    "primarySHA": "d5d376025d4f1ec31fbaaff611a8f7221a388c176be8b1f33748ac4a48cffc2b",
+    "resultSHA": "500d9ebf969b2666695ca30f2cf4f1d0079d7ca37ba217f51a6ef4bef28acee4",
+    "exit": 0,
+    "passedCases": 1,
+    "CI280Reproduced": false
+  },
+  "targetedCases": {
+    "nodeids": [
+      "tests/capture/test_predns_orchestration_v1.py::test_h24_future_planning_and_ready_direct_behavior_are_unchanged",
+      "tests/capture/test_predns_orchestration_v1.py::test_single_owner_resident_wait_rejects_temporal_anomalies_before_dns[monotonic_divergence]",
+      "tests/capture/test_predns_orchestration_v1.py::test_runner_enforces_inclusive_five_and_120_second_budgets"
+    ],
+    "passedCases": 5,
+    "exit": 0,
+    "primarySHA": "a3829e9fdb7fc14a5b2f6d7a08d4d119a6fd6a48f308e634982df9eaf115fe6b",
+    "resultSHA": "6b9fc294e827feaa4e2fa231b3872655ce5bdc06b397a7b9af086844c341acb5",
+    "stopSHA": "3c5cfd7bfa396d707362cebcbe28bedc565ed8b4b5e2b089ec37a6ae7e24d638",
+    "durationSeconds": 5.59
+  },
+  "guardEvidence": {
+    "divergenceRejectedBeforeDNS": true,
+    "inclusiveStartSeconds": 5,
+    "inclusiveCompletionSeconds": 120,
+    "productionClockDivergenceSeconds": 2,
+    "productionGuardChanges": 0
+  },
+  "audit": {
+    "networkEvents": 0,
+    "spawnEvents": 0,
+    "SourceGET": 0
+  },
+  "artifact_hashes": {
+    "tests/capture/test_predns_orchestration_v1.py": "5564bb3c67607aebf5b6fc49862b7907d007e24afd23d0bc8988845c922e5b1f",
+    "reports/source_observatory/TIPSTERS-CI280-WINDOWS-JOB-FAILURE-20261125.json": "60bd5bef7ffdfd821d8855c5e27a15d0edac9a1757714fa0ae47b871b1b1a7b9"
+  },
+  "artifact_hash_algorithm": "SHA-256",
+  "artifact_hash_normalization": "LF_NORMALIZED_TEXT_BYTES",
+  "artifact_path_count": 2,
+  "engineering_projection_sha256": "2bb63e188b63e73b65e685705f93958f4ad0904ca4fb22929899a2e863622ef7",
+  "code_revision": "precommit-projection:2bb63e188b63e73b65e685705f93958f4ad0904ca4fb22929899a2e863622ef7",
+  "supersedes": [],
+  "globalDelivery": "PARTIAL",
+  "recurringCollectionActive": false,
+  "allCompatibleIntegrated": false
+}

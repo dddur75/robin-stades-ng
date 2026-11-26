@@ -1,0 +1,94 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.QUALIFICATION.ADMIN.E1.ALGORITHM.20261122",
+  "generatedAt": "2026-11-22T02:04:46.956Z",
+  "status": "LOCAL_PRIVATE_PROTOTYPE_READY_FOR_TARGETED_BROWSER_RECETTE",
+  "scope": "Five dated source qualification summaries on local admin; no source activation or complete cockpit accessibility acceptance.",
+  "codeReviewProjectionSHA256": "84b5340e7df231af020263638743cee0378793ea5211b51d8ae24abb47e6e88c",
+  "snapshotSHA256": "ccad61e5e38c4adb09b283ab159a2223944b5b8930d8e349ed131e923283f666",
+  "rows": 5,
+  "checks": {
+    "tests": {
+      "exit": 0
+    },
+    "lint": {
+      "exit": 0
+    },
+    "typecheck": {
+      "exit": 0
+    },
+    "build": {
+      "exit": 0,
+      "elapsedSeconds": 4.3252107,
+      "command": "node24 node_modules/vinext/dist/cli.js build"
+    },
+    "bundle": {
+      "bytes": 1346386,
+      "maximum": 1350000,
+      "pass": true
+    }
+  },
+  "postBuildChange": "Strict outcome array rejection, independent targeted test and typecheck pass; no second build yet.",
+  "reviews": {
+    "C3": "Final exact CODE PASS_AND_HOLD",
+    "C4": "Sanitized snapshot scope correction applied",
+    "C1": "Five row factual review"
+  },
+  "runtimeCopy": {
+    "startedAt": "2026-11-22T02:02:07.505Z",
+    "writer": "C0",
+    "reviews": {
+      "C3": "PASS_AND_HOLD final code",
+      "C4": "PASS_AND_HOLD after exact48h scope correction"
+    },
+    "files": [
+      {
+        "path": "cockpit/app/lib/tipster-qualification.ts",
+        "beforeSHA256": null,
+        "afterSHA256": "c2fc4a52bb64a5c027b36ebc0070dc2e53312732248db4d076eb4b43495f7e72"
+      },
+      {
+        "path": "cockpit/app/components/expert/tipster-qualification.tsx",
+        "beforeSHA256": null,
+        "afterSHA256": "6b18d9af89b190b1fc16d692b0de70fce1436ae5878c22ff8a0f4b65655af52c"
+      },
+      {
+        "path": "cockpit/scripts/tipster-qualification-plugin.ts",
+        "beforeSHA256": null,
+        "afterSHA256": "c8156ca4348be605e6329308d870adcecb51d0c89d8329137f68c25d5d8c0dae"
+      },
+      {
+        "path": "cockpit/app/api/tipsters/qualification/route.ts",
+        "beforeSHA256": null,
+        "afterSHA256": "73c4d7d1cdb7630ca8bcc92030ca9ebb56e89c23367f2792e8531876b81da58f"
+      },
+      {
+        "path": "cockpit/app/expert/admin-collecte/page.tsx",
+        "beforeSHA256": "ae90a4c481559e64472e99e2c741daeea00b8303ade5b03658c40fb1afcb5314",
+        "afterSHA256": "6af1afbfa1071666a65201151cde83cc4ccba2fb938fe43c4c150019532deb2f"
+      },
+      {
+        "path": "cockpit/vite.config.ts",
+        "beforeSHA256": "6994e57167d250b390c7dc84a58ffd5934b0992dfa7475b53e57a77278dd78f4",
+        "afterSHA256": "a3f39facd9913c355ba765011a6d435f7177668a19c167fc39a67e4f8253f275"
+      }
+    ],
+    "ledgerAndGraphCopied": false,
+    "providerRequests": 0,
+    "taskChanges": 0,
+    "snapshotSHA256": "ccad61e5e38c4adb09b283ab159a2223944b5b8930d8e349ed131e923283f666",
+    "finishedAt": "2026-11-22T02:02:07.519Z"
+  },
+  "automaticViteRestartObserved": true,
+  "manualServerRestart": false,
+  "initialDuringRestartHTTP503": true,
+  "afterRestartHTTP200": true,
+  "browserPlanSHA256": "4578b571032b56bed11660c7ad15e4a7c9178eb711452ea8539f8f6bb2bb67ba",
+  "browserManifestSHA256": "44db64c04f5e7c460538ccd2cd32b023d0927421a5b713501d007399b77d0769",
+  "missingFullCockpitAcceptance": [
+    "UX6/A3 complete interface keys",
+    "manual screen-reader trace",
+    "all specified widths and200percent zoom"
+  ],
+  "globalDelivery": "PARTIAL",
+  "allCompatibleSourcesIntegrated": false
+}

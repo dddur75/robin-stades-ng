@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "robin-documentary-preflight-authority-v1",
+  "claimId": "GOV.SOURCE_OBSERVATORY.OLBG.ROSTER.LEGAL.E1.20261120",
+  "generatedAt": "2026-11-20T20:53:30.102479+00:00",
+  "status": "TWO_DOCUMENTARY_GET_ONLY_NO_PROFILE_PERMISSION",
+  "planSha256": "192e47db86c7e7df1865e687ca1f728523b0255b2d10cfbfef24b418215e1e2d",
+  "manifestSha256": "b1020f5e8c0e0159b188587cc6493ec37d3b83998d28bd7fed53f6c48bb09fbc",
+  "urls": [
+    "https://www.olbg.com/robots.txt",
+    "https://www.olbg.com/use"
+  ],
+  "priorQualificationUnits": 152,
+  "newDocumentaryGETMax": 2,
+  "projectedQualificationMax": 154,
+  "expiresAt": "2026-11-20T22:00:00Z",
+  "roster": {
+    "automaticHistoryToCurrentRewrite": false,
+    "currentRoutes": 138,
+    "distinctAuthorIds": 400,
+    "historyRoutes": 262,
+    "rosterFileSha256": "82d3bf36c9958279a19370601dfd20319bd1db291c9d770f2fc3fa65ff869237",
+    "workbookIndexSha256": "0a4cfac9f560bbc2317ca19d5ccf790695b0b14ea4bfd4a352e6be11d4befcb5"
+  },
+  "retention": {
+    "analysis": false,
+    "forecasts": false,
+    "legalTextCharactersMax": 80000,
+    "privateStructuredNormalizedLegalText": true,
+    "rawHtml": false,
+    "reason": "Complete operative context required for independent scope review; source body remains RAM. Legal text and any derived clauses remain private and are not published."
+  },
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "profileGET": 0,
+  "sourceAPI": 0,
+  "newTasks": 0,
+  "sourceChoices": 0,
+  "bulkCollectionAuthorized": false,
+  "limits": [
+    "No138or400profile harvesting is authorized by this documentary preflight.",
+    "Complete operative context must be independently reviewed before any distinct SCALE_APPROVED decision.",
+    "Hepter18GET and all earlier budgets remain unchanged."
+  ]
+}

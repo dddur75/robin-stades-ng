@@ -1,0 +1,23 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.KICKTIPP.STRUCTURAL.DIAGNOSTIC.CODE.E1V2.20261121",
+  "generatedAt": "2026-11-21T09:11:38.047350+00:00",
+  "status": "OFFLINE_DIAGNOSTIC_REVIEWED_NO_NATIVE_CONTRACT_OR_CHOICE_ADMISSION",
+  "scope": "Passive bounded structural diagnostic: preserves partial metadata, known table IDs and unknown same-origin link signatures. No author attribution, event binding, kickoff, source timezone conversion, performance or settlement is certified.",
+  "packetIndexRawSHA256": "d257a7ef242e3075146d0355069cd66e77aa6c05c5b2fecddb1208852acbb122",
+  "packetProjectionSHA256": "e410d3bccb76aa97aef426cabe53eb1ae2296697efcd715d51506180f2654483",
+  "engineRawSHA256": "9f3754a1d92f8bd4dfd1025f0efed8b96bedc97e955d4769162282131428ad0a",
+  "artifacts": 27,
+  "syntheticTestsPassed": 12,
+  "goldenBytes": 69657,
+  "goldenRankingRows": 50,
+  "goldenRankingCells": 540,
+  "goldenElements": 634,
+  "sourceBodiesReplayed": 0,
+  "admittedChoices": 0,
+  "sourceGETBeforeThisGrant": 0,
+  "verifiedBy": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

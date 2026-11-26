@@ -1,0 +1,63 @@
+{
+  "generatedAt": "2026-11-23T07:06:32.779Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.HISTORICAL.ADMIN33.RUNTIME.PARTIAL.20261123",
+  "missionId": "OLBG_HISTORICAL_ADMIN33_LOCAL_RUNTIME_DELIVERY_E1_20261123",
+  "status": "RUNTIME_PUBLIC_PROFILE_PASSED_ADMIN_UNPROVEN",
+  "scope": "Exact local copies and admin33 append completed; runtime typecheck and browser collection/profile checks passed before ADMIN closed failure. Admin predicate not retained, no whole-admin acceptance.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.HISTORICAL.PUBLIC.CANARY.R2.LOCAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V20.ENGINEERING.RECETTE.20261123"
+  ],
+  "authorStatus": "STOP",
+  "authorizedAt": "2026-11-23T06:58:35.127544+00:00",
+  "frozenAt": "2026-11-23T07:01:56.472Z",
+  "runtimeCopies": 5,
+  "sidecarCopied": true,
+  "adminRows": 33,
+  "adminSHA256": "78aec558dc941e86814566d6c70930fcbea9b0203c2621f7133f1a4789a2c332",
+  "previous32AdminRowsIdentical": true,
+  "typecheckExit": 0,
+  "targetedProcesses": 2,
+  "syntheticReruns": 0,
+  "browserPrimarySHA256": "ad437fa4656e819880afeaedc1776b0e739e56f1fa75e5f8b35f6bf5793c4a93",
+  "browserMeasurement": {
+    "status": "PARTIAL_BROWSER_CLOSED",
+    "phase": "ADMIN",
+    "timedOut": false,
+    "navigations": 3,
+    "backendReads": {
+      "public": 1,
+      "qualification": 1
+    },
+    "cachedReplays": {
+      "public": 2,
+      "qualification": 0
+    },
+    "pageErrors": 0,
+    "consoleErrors": 6,
+    "blockedOtherAPIs": 6,
+    "blockedExternal": 0,
+    "blockedWrites": 0,
+    "loopbackRequests": 236,
+    "sourceGET": 0,
+    "providerValuesExposed": false
+  },
+  "serverRestarts": 0,
+  "processKills": 0,
+  "TaskMutations": 0,
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "overallStatus": "PARTIAL",
+  "allCompatibleIntegrated": false,
+  "publicAndProfileChecksProvenByControlFlow": true,
+  "adminVisibleEstablished": false,
+  "oldAdminFailureFineCause": "NOT_RETAINED",
+  "staticSelectorDefect": "Exact bare label does not match rowheader containing date small element",
+  "selectorObservationNotRetroactiveFailureCause": true
+}

@@ -1,0 +1,65 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.NEWPROFILE642100.E1.ALGORITHM.20261122",
+  "generatedAt": "2026-11-22T01:52:33.188Z",
+  "status": "INDEPENDENT_EXACT_NATIVE_ROUTE_THEN_CURRENT_PRIVATE_CANARY",
+  "scope": "One workbook profile, up to three conditional GET and ten selected L1 fixtures; no admission or recurrence.",
+  "missionId": "OLBG_NEWPROFILE642100_E1_20261122",
+  "planSHA256": "210266e843d6970bebdb3bbfbc881b172f09c87ffba52ad0f68a73ba02b905ae",
+  "manifestSHA256": "9dbb61e8d0559ec3a78cddfb69ddbd98e94e4c1e744d805781519bfe56b08690",
+  "source": {
+    "catalogue": "Catalogue12372",
+    "conditionalCurrentURI": "https://www.olbg.com/tipsters/tips/642100",
+    "currentRouteUnqualifiedUntilNativeAnchor": true,
+    "workbookNativeURI": "https://www.olbg.com/tipsters/tips/history/642100",
+    "workbookRecordId": "workbook:8baf8650c84e84baa73f5eb9f2be4759beb817f480344cb8fa538fbb64dc6f02"
+  },
+  "calendar": {
+    "fixtureCount": 10,
+    "canonicalSHA256": "737723c9cb9ce16f52c20dca72225cc52e92e73af9396542aa9b12c1cc6b152d",
+    "provisionalFixtures": 7,
+    "nativeUTCProof": false,
+    "contextualPolicyClaim": "ENG.SOURCE_OBSERVATORY.FUTURE.L1.CALENDAR.CONTEXTUAL.POLICY.20261122",
+    "minimumContextualLeadHours": 48,
+    "preselection": "Earliest10FutureL1",
+    "oldCalendarsUnchanged": true
+  },
+  "reuse": {
+    "publishedCIClaim": "ENG.SOURCE_OBSERVATORY.CI253.EXACT.HEAD.RESULT.20261122",
+    "pins": 28,
+    "astPins": 9,
+    "oldCorpusReplay": false
+  },
+  "bounds": {
+    "GET": 3,
+    "attempts": 1,
+    "seconds": 90,
+    "nativeFacts": 100,
+    "API_FOOTBALL_CALLS": 0,
+    "admissions": 0,
+    "tasks": 0,
+    "old334365Requests": 0
+  },
+  "privacy": {
+    "admissions": 0,
+    "candidateFile": "candidate-pending-review.json",
+    "directory": "A9_PRIVATE_OLBG_NEWPROFILE642100_E1_20261122",
+    "eligibleForApplication": false,
+    "gitignoredPrivateDirectory": true,
+    "projection": "Explicit minimal Win/opaque literal whitelist; author pseudonymized; no HTML/rawfacts/sourceFields/authorLabel/comments/versions.",
+    "publicOutput": "Hashes/counts/closed phases only, never normalizedCandidates"
+  },
+  "tests": {
+    "C2": 19,
+    "C3Independent": 19,
+    "ruffExit": 0,
+    "mypyTargetedExit": 0,
+    "banditExit": 0
+  },
+  "reviews": {
+    "C1": "PASS_AND_HOLD exact tuple; calendar/alias facts",
+    "C3": "PASS_AND_HOLD 19 true-loader tests and exact code",
+    "C4": "PASS_AND_HOLD minimal private retention; contextual times"
+  },
+  "globalDelivery": "PARTIAL",
+  "allCompatibleSourcesIntegrated": false
+}

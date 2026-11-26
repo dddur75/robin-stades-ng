@@ -1,0 +1,39 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.APP.READER.E1.RESULT.20261124",
+  "missionId": "OLBG_PENDING_APP_READER_E1_20261124",
+  "status": "PASS_AND_HOLD_CODE_ONLY",
+  "scope": "Pure bounded app reader, synthetic inputs, default approval null; no file loader/API/UI/runtime adoption or SOURCE authority",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.PENDING.OBSERVATION.BUILDER.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.OLBG.ZERO.ELIGIBLE.PENDING.CAPTURE.E1.RESULT.20261124"
+  ],
+  "resultSHA": "568d03a10a8373328ed4414610d1af74439e6c74464be4f6ad15557893e46535",
+  "moduleSHA": "28da007500b5727802f7fba15b112e421f84e54761cb2f983e8b2583855ac015",
+  "testSHA": "5ed5d3c92d3c58ab9d3865c05b385bd59b74d0c2d096682b78ca4dde49ccbf7a",
+  "verification": {
+    "greenTests": 16,
+    "skip": 0,
+    "typescriptStrictSourceAndTestExit": 0,
+    "eslintReaderStdinExit": 0,
+    "privateFilesAtStop": 11,
+    "explicitRootLaunchesBeforeRegistryUpperBound": 13,
+    "totalOSProcesses": null
+  },
+  "sourceGET": 0,
+  "realPendingWrites": 0,
+  "runtimeIntegration": false,
+  "sourceReady": false,
+  "applicationAdmission": false,
+  "allCompatibleIntegrated": false,
+  "limitations": [
+    "Future approval is a trusted input whose authenticity must be established by an independently reviewed caller",
+    "Claim prefix is not evidence registry authentication",
+    "Unicode test uses BMP only; astral counting and lone surrogate refusal reviewed statically",
+    "Initial quality receipt lost on tool timeout; functional tests not replayed"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREDICATE.POSTFIX.PRIVATE.REVIEW.RESULT.20261123",
+  "missionId": "NOTBETTING_PREDICATE_POSTFIX_PRIVATE_REVIEW_20261123",
+  "generatedAt": "2026-11-23T14:29:57.229Z",
+  "status": "PRIVATE_CORRECTIONS_ACCEPTABLE_BINDING_REQUIRED",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREDICATE.COMPLETION.BATCH.R1.PARTIAL.RESULT.20261123"
+  ],
+  "scope": "Independent read-only post-fix reviews accept targetedprivate corrections and actual3RED→3GREEN evidence only. Bufferexec/prunedgatedancestors/selectedrecordemit identity corrected. Priorbinding/types/lint do not coverfinalbytes; consumedmission staysSTOP/source0 and authorclosurewaslate. No currentSOURCEauthority/nativepromotion. Fresh verification/binding without codechanges required.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "observerSHA": "d13021af98241f41e3a9d9635f70e73508fb548ec9b3a957e7dd654665f56b9a",
+  "coreSHA": "f43374deb46d5bbe5244d34bcfbca16dd7da23384e1b8453ce6e72d49d78b93a",
+  "consumerSHA": "570ad0fad9135a5be91fe9e1b7a5b8844550fa08d912d5d04599d2663c5e19e4"
+}

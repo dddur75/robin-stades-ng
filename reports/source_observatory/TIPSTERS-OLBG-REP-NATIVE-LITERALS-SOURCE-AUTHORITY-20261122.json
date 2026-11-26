@@ -1,0 +1,45 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.REP.NATIVE.LITERALS.SOURCE.AUTHORITY.20261122",
+  "recordedAt": "2026-11-22T15:52:44.392Z",
+  "status": "ONE_DOCUMENTARY_ROBOTS_GET_ONLY",
+  "scope": "Fresh independent one-GET robots lexical evidence acquisition only. Exact public URL and same truthful observer UA; no profile,terms,permission evaluation,Task,app change or admission. Old campaigns remain closed.",
+  "missionId": "OLBG_REP_NATIVE_LITERALS_SOURCE_E1_20261122",
+  "planSHA256": "47a2b0c6a60acc8ca57eed51211fac2ae716ac397fddba9a13986b52282a5316",
+  "manifestSHA256": "6a22a3fae3d0da40e5451fb77a20a1751d8412d71bf9d7ddfb8857138922b9e4",
+  "preparationPlanSHA256": "61ae0f68e0ee03a3135553c8eb1f1d7e72e067fc1dd9b5d7fd71d97b0ea131d4",
+  "preparationManifestSHA256": "40e6bd78757a0ca4c759aa0eb0a6d0c0d5b049a1cd348a687e8f39dd69e5f6b6",
+  "ordered": [
+    "https://www.olbg.com/robots.txt"
+  ],
+  "maximumGET": 1,
+  "maximumHTTPWallSeconds": 12,
+  "maximumJobSeconds": 30,
+  "maximumBodyBytes": 65536,
+  "profileGET": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "admissions": 0,
+  "appChanges": 0,
+  "permissionEvaluationPerformed": false,
+  "profileBlocked": true,
+  "sourceContext": {
+    "mission_id": "OLBG_REP_NATIVE_LITERALS_SOURCE_E1_20261122",
+    "grant": "OLBG_REP_NATIVE_LITERALS_ONE_GET_NO_PERMISSION",
+    "keys": [
+      "C0",
+      "C1",
+      "C3",
+      "C4"
+    ],
+    "plan_sha256": "47a2b0c6a60acc8ca57eed51211fac2ae716ac397fddba9a13986b52282a5316",
+    "manifest_sha256": "6a22a3fae3d0da40e5451fb77a20a1751d8412d71bf9d7ddfb8857138922b9e4"
+  },
+  "jobReuseClarification": "Preparation PLAN.md overclaims full byte/AST equality for hard_job. Six control/kernel structures are identical; only returned sourceGET metadata changes0 to null, conservatively unknown. No Job-control change. C3 reviewed actual code; original preparation stays immutable.",
+  "reviews": {
+    "C1": "FRESH SOURCE FACTS PASS exact47a2/6a22, derivation and22pins; native literals absent in retained qualified diagnostics, old slots not inherited.",
+    "C3": "FRESH SOURCE CODE PASS exact47a2/6a22, control/transport guards,22pins and ledger anchor; source-context5/MF8; same fixed16:00expiry.",
+    "C4": "FRESH SOURCE SCOPE PASS exact47a2/6a22 oneGETrobots only/no profiles or permission,HTTP12wallJob30,cap64KiB/no redirectretry;cutoff15:59:30/close16:00."
+  },
+  "expiresAt": "2026-11-22T16:00:00Z",
+  "globalDelivery": "PARTIAL"
+}

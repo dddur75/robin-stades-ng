@@ -1,0 +1,35 @@
+{
+  "generatedAt": "2026-11-23T14:27:20.470Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREDICATE.COMPLETION.BATCH.R1.PARTIAL.RESULT.20261123",
+  "missionId": "NOTBETTING_PREDICATE_COMPLETION_BATCH_R1_20261123",
+  "status": "PARTIAL_CODE_CORRECTED_BINDING_STALE_SOURCE_FORBIDDEN",
+  "keys": [
+    "C0"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.QUALIFICATION.PREDICATES.PRIVATE.PARTIAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.SCHEMA.NATIVE.R1.ACTUAL.RESULT.20261123"
+  ],
+  "scope": "Current batch closes without SOURCE. Three genuine synthetic regressions failed then passed: execute verifiedbuffer without fileloader reread; conservatively prune gated ancestor subtrees; bind predicateemits to the selectedrecord so nestedexamines cannot overwrite observations. Immutable originalprimaries/pins retained. Final helperbytes changed AFTER the one permitted actualE1loader; config/actualbinder refer olderbytes. No newload/source allowed in this consumed budget. Postfixtyping/fullcriticallint not rerun; old mypy/Ruff results are pre-fix only. Core/selector/consumer require independent review and fresh exactbinding before any distinct sourcegrant.",
+  "authorStoppedAt": "2026-11-23T14:27:20.470Z",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "oldTestsGreen": 9,
+  "redStubMethods": 1,
+  "newRegressionRedMethods": 3,
+  "newRegressionGreenMethods": 3,
+  "totalMethodExecutions": 16,
+  "methodExecutionsMax": 16,
+  "targetedProcesses": 6,
+  "targetedProcessesMax": 6,
+  "actualE1LoaderExecutions": 1,
+  "actualE1LoaderMax": 1,
+  "postfixObserverSHA": "d13021af98241f41e3a9d9635f70e73508fb548ec9b3a957e7dd654665f56b9a",
+  "postfixCoreSHA": "f43374deb46d5bbe5244d34bcfbca16dd7da23384e1b8453ce6e72d49d78b93a",
+  "consumerSHA": "570ad0fad9135a5be91fe9e1b7a5b8844550fa08d912d5d04599d2663c5e19e4",
+  "regressionPrimarySHA": "d4a2f0bdb191e1b160aaa267ed34f4e67fa3c9c741e0eef95d7344876fa97e4e",
+  "configBindingValid": false,
+  "sourceDecisionExists": false
+}

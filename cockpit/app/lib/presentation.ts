@@ -1,5 +1,6 @@
 import expertSnapshot from "../cockpit-expert-data.json";
-import presentation from "../cockpit-presentation.json";
+import presentation from "../cockpit-presentation-client.json";
+import { decodePresentationWire } from "./presentation-wire";
 
 import {
   type CoverageState,
@@ -16,7 +17,7 @@ export type {
   PrequentialLearningPresentation,
 };
 
-const typedPresentation = presentation as unknown as PresentationModel;
+const typedPresentation = decodePresentationWire(presentation) as unknown as PresentationModel;
 
 export const operationalEvidence = typedPresentation.dashboard.operationalEvidence;
 export const matches = typedPresentation.matches;

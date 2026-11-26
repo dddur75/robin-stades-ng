@@ -1,0 +1,86 @@
+{
+  "schema_version": "robin-tipster-source-settings-acceptance-v1",
+  "scope": "PRIVATE_LOCAL_SOURCE_PREPARATION",
+  "base_revision": "0dba2ed766c3fc5ff6d78a391e4d777f629dd06f",
+  "claim_id": "ENG.SOURCE_OBSERVATORY.SOURCE_SETTINGS.20261118",
+  "development_verdict": "PASS_LOCAL",
+  "all_sources_collection_verdict": "PARTIAL",
+  "observed_at": "2026-11-18T09:23:15.622959+00:00",
+  "registry_sha256": "cbf70f2bd7d985b93a8aa29a08ceec01dbea223d8af8ccf130437108bc4ac88c",
+  "registry_total": 74,
+  "historical_states": {
+    "manuel": 14,
+    "a_construire": 57,
+    "bloque": 3
+  },
+  "locally_prepared_sources": 74,
+  "settings_head_sha256": "1180fd446fab782b621f45db80f796f674d686b00cc2b95c3d4e8ca7190a7ddc",
+  "settings_file_sha256": "f231b2c8de5d88b80b73bd29c8eda6a07cb2f76a06434e1c51ffd8ca99192e5f",
+  "proposed_defaults": {
+    "interval_minutes": 360,
+    "requests_per_visit": 2
+  },
+  "pilot": {
+    "provider": "Forecast Record",
+    "requests_max": 51,
+    "frozen_files_unchanged": true,
+    "historical_sources_added_to_pilot": 0
+  },
+  "checks": {
+    "new_python_regressions": 21,
+    "existing_pilot_python_regressions": 20,
+    "ruff": "PASS",
+    "mypy": "PASS",
+    "cockpit_full_test": "PASS",
+    "typescript_tests": 99,
+    "browser_checks": 15,
+    "real_http_parallel_writes": [
+      200,
+      409
+    ],
+    "foreign_origin": 403,
+    "excessive_body": 413,
+    "real_browser_save_and_reopen": "PASS",
+    "page_errors": 0,
+    "viewports": [
+      360,
+      375,
+      390,
+      430
+    ],
+    "historical_ssr_assets": "FOUR_EXISTING_TESTS_SKIPPED",
+    "physical_screen_reader": "NOT_RUN"
+  },
+  "reviews": {
+    "C3": "PASS_LOCAL",
+    "UX6": "PASS_LOCAL",
+    "A3": "PASS_LOCAL"
+  },
+  "source_file_sha256": {
+    "cockpit/app/api/tipsters/sources/route.ts": "8360b90aa770ec39ac1e2680ff116d9290246ea723f29f5e747ec6d4fd973eb0",
+    "cockpit/app/components/expert/tipster-sources.tsx": "456063edd32f0d9d562eb1eaa699c1e64ea0ec4ff1c34cd5aecb2dc16c00e999",
+    "cockpit/app/expert/sources-tipsters/page.tsx": "3cfc84aa30dbb9194a246c0092660212cacefb8b25c95ef863582aff71877180",
+    "cockpit/scripts/tipsters_source_settings.py": "b1d5608e1be909c967b1b5209558d196c23c53b66a6bf76bf181cd0d9bb86512",
+    "cockpit/tests/tipster-sources.spec.ts": "806ace88f2c0ec32133f23869f73b88d5451466cf36ef7c4e9f27dff97e4f7a2",
+    "tests/ux/test_tipster_source_settings.py": "ca08151f69408eab0d368a9bd90a108596bb6d486f8997fadad99371cf55a83c",
+    "cockpit/app/components/expert/expert-page.tsx": "fa0b6b2710575f1024be0a37479093179e9f62bd2642d029a23ea0ebcd7c4b77",
+    "cockpit/app/components/expert/tipsters-pilot.tsx": "83b30fbc6865a1ca4711eb87fdeaaaeafd5cde08860418c02827eec8c620ba06",
+    "cockpit/app/components/navigation/experience-shell-client.tsx": "83553f6eeb8409779381fb8788cf4498569f9d12ce1f062bbeb3c4170ef66af2",
+    "cockpit/app/globals.css": "767475c16d15f0b8540090b85cbe32a3445659bca0815d41550ea7b991720668",
+    "cockpit/playwright.config.ts": "23afce84d6a84f0c2408af7e292810fe778f283b34ed6830702cf77bb8194965",
+    "cockpit/scripts/tipsters-pilot-plugin.ts": "8770820e3a5c9cf2988a922449cc5bc7dde71df6a07bde4abf047d18687ee59d",
+    "cockpit/tests/tipsters-local-api.test.ts": "a25244f3d06b0ae3ed8ec772bcfcca49a4392649be9c846158fc8d37a371ce0e",
+    "docs/ux/DOSSIER-FIDELE-COCKPIT.md": "e7ab02a6f4359b9e856a800c1de8a60f06e606d7fc52069fc6dc25a0d88d362c"
+  },
+  "local_visual_evidence": {
+    "catalogue-74.png": "4c36e7bb6d9656f2469132a3522550810bd6b84edc44fda2d87aa59b87389873",
+    "fiche-source.png": "b07186f3a58f09937301068084aac14516dba2e60b263ba3283106399dffe2d1",
+    "fiche-aria.txt": "744a17101fa5e0c1549b9390ef39d42936bb21ec22bf94f9ab91f40bc05f24b8"
+  },
+  "limits": [
+    "Registered configuration is preparation and grants no collection authority.",
+    "Current source availability, usage rights and per-source extraction require revalidation.",
+    "The delivered editor uses the local A9_Mega server; hosted publication remains separate.",
+    "A hard process kill may leave an exclusive lock requiring local recovery after checking no writer is active."
+  ]
+}

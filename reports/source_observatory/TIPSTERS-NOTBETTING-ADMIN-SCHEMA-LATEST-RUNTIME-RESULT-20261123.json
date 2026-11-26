@@ -1,0 +1,23 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.ADMIN.SCHEMA.LATEST.RUNTIME.RESULT.20261123",
+  "missionId": "ADMIN_NOTBETTING_SCHEMA_LATEST_E1_20261123",
+  "generatedAt": "2026-11-23T14:07:46.661Z",
+  "status": "LOCAL_ROW_API_ACCEPTED",
+  "keys": [
+    "C0",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.SCHEMA.NATIVE.R1.ACTUAL.RESULT.20261123"
+  ],
+  "scope": "One ignored runtime primary NotBetting row refreshed to accepted14:00native technicalreceipt, other36rowsunchanged/37total. One loopbackAPI200 exact normalizeddata. Nullforecastcounts andadmissions0 retained. No fulladmin/browser/sourcecompatibility/newforecast acceptance, no SOURCE/task/Git/code changes.",
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "localAPIReads": 1,
+  "localAPIStatus": 200,
+  "beforeSHA": "657e7b8368a6e1a378c426e9d4afedfefe000eddca4b198a73d44a777b78890d",
+  "afterSHA": "cd77df1aedb552b8dd7a639cd2a89e6e4416dea44bf2bba40360f75c007701c3",
+  "rows": 37,
+  "other36Unchanged": true
+}

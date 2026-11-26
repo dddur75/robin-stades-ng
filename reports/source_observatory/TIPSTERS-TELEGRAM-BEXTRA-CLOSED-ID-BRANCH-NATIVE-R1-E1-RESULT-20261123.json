@@ -1,0 +1,38 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.CLOSED.ID.BRANCH.NATIVE.R1.E1.RESULT.20261123",
+  "missionId": "TELEGRAM_BEXTRA_CLOSED_ID_BRANCH_NATIVE_R1_20261123",
+  "status": "EXACT_CURRENT_TUPLE_LOADER_SSL_AND_PURE_POLICY_E1_PASS",
+  "scope": "Exact accepted frozen parser/factory/worker binding to current immutable source manifest and configuration. Current loader and SSL properties pass one source-free synthetic probe; full policy passes four RAM cases. Actual real-ledger source grant and native Job have not been exercised. This E1 closure grants no GET; fresh four SOURCE keys and real full-policy validation are mandatory before execution.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.ID.BRANCH.PRIVATE.REDESIGN.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.ID.WORKER.PRIVATE.E1.RESULT.20261123",
+    "DATA.SOURCE_OBSERVATORY.WORKBOOK.COMPLETE.20261120",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.EU.DSA.NATIVE.DOCS.E1.RESULT.20261122"
+  ],
+  "parentGrant": "a774f24742214edfb54c37eb076fc100ef9d75fe656de5712a0c9072718ba314",
+  "planSHA": "8301c02129100ff687df9e05d27b945eefd69624b4d70f8f103d048276fce789",
+  "manifestSHA": "cea6f10f7e5c347d77e3388d7875785fb6bfeda49352d54d735280f66acedcd3",
+  "configSHA": "51a7f784c3abc7b9c7b1b03dc8b3b9ecd82d33b9fe43c685a16feb6b65de55c3",
+  "workerSHA": "21e64d142c08e117f12848deb31590e96629dae8b454fc4ba38808fdb821caaf",
+  "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+  "outerSHA": "df5672eb4188672fb9fa5d95d2a82f390ec2b2b825195425b46c68cddcb8c4c9",
+  "bindingPrimarySHA": "9e082b75b5e7e31f333e83582f34f1f41d4c5aa5312898447af1a3aa7d4a3e6a",
+  "policyPrimarySHA": "e9d42af7238fd881df87ba135a11a699145455a15c0e2de6ccc4f20fc8dec08d",
+  "bindingExit": 0,
+  "policyExit": 0,
+  "purePolicyCases": 4,
+  "syntheticMessages": 1,
+  "actualSourceAuthorityValidated": false,
+  "nativeJobs": 0,
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "allCompatibleIntegrated": false,
+  "overallStatus": "PARTIAL"
+}

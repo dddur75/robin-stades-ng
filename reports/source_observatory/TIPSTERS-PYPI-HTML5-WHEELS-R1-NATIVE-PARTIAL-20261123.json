@@ -1,0 +1,97 @@
+{
+  "missionId": "PYPI_HTML5_WHEEL_QUARANTINE_NATIVE_R1_20261123",
+  "claimId": "ENG.SOURCE_OBSERVATORY.PYPI.HTML5.WHEELS.R1.NATIVE.PARTIAL.20261123",
+  "status": "PARTIAL_ONE_VERIFIED_ARCHIVE_SECOND_MIME_UNOBSERVED_BODY",
+  "scope": "ONE_REUSABLE_OPAQUE_HTML5LIB_ARCHIVE_NO_PACKAGE_EXECUTION",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.PYPI.HTML5.WHEELS.R1.E1.20261123",
+    "ENG.SOURCE_OBSERVATORY.PYPI.HTML5.METADATA.R2.NATIVE.RESULT.20261123"
+  ],
+  "closedAt": "2026-11-23T05:38:41.694039+00:00",
+  "registryGET": 2,
+  "tipsterGET": 0,
+  "packagesAcquired": 1,
+  "packageExtraction": 0,
+  "packageExecution": 0,
+  "packageInstallation": 0,
+  "Node": 0,
+  "nativeJobs": 1,
+  "sourceReady": false,
+  "archives": [
+    {
+      "archiveRelativePath": "quarantine/html5lib-1.1-py2.py3-none-any.whl",
+      "bytes": 112173,
+      "extracted": false,
+      "filename": "html5lib-1.1-py2.py3-none-any.whl",
+      "installed": false,
+      "metadataResponseSHA256": "8de73e452a5e5f55523b83a9e439386042b702d253fe3f8b50eb6231a4424997",
+      "packageExecuted": false,
+      "project": "html5lib",
+      "sha256Verified": "0d78f8fde1c230e99fe37986a60526d7049ed4bf8a9fadbad5f00e22e58e041d",
+      "version": "1.1"
+    }
+  ],
+  "traces": {
+    "asset": {
+      "CLbucket": null,
+      "CLcount": null,
+      "TEbucket": null,
+      "TEcount": null,
+      "bodyComplete": null,
+      "bytesReceived": null,
+      "contentEncodingBucket": null,
+      "exceptionKind": "CONTRACT_ERROR",
+      "finalZeroSeen": null,
+      "framing": null,
+      "httpStatus": 200,
+      "phase": "HEADER_VALIDATE",
+      "reason": "DOCUMENT_MIME",
+      "schemaVersion": "robin-package-fixed-transport-diagnostic-v1",
+      "terminalStrictVerified": null,
+      "trailerComplete": null
+    },
+    "robots": {
+      "CLbucket": "VALID",
+      "CLcount": 1,
+      "TEbucket": "ABSENT",
+      "TEcount": 0,
+      "bodyComplete": true,
+      "bytesReceived": 112173,
+      "contentEncodingBucket": "ABSENT",
+      "exceptionKind": null,
+      "finalZeroSeen": null,
+      "framing": "CL",
+      "httpStatus": 200,
+      "phase": "DONE",
+      "reason": null,
+      "schemaVersion": "robin-package-fixed-transport-diagnostic-v1",
+      "terminalStrictVerified": null,
+      "trailerComplete": null
+    }
+  },
+  "auditCounts": {
+    "DNS": 2,
+    "GET_SEND_BOUNDARY": 2,
+    "NODE": 0,
+    "TCP": 2
+  },
+  "reason": "DOCUMENT_MIME",
+  "failurePhase": "ASSET_WHEEL_FETCH",
+  "outerExit": 0,
+  "workerExit": 1,
+  "primarySHA256": "b576a2c8e37f1e45081bf4a46c6ca003975e2fb2c48ede088dbffcf73137c3e8",
+  "nativeResultSHA256": "5d67c3286a2a4824cf6e24e70c6008b76e526dbaac40ced6ec4eaf46f7205833",
+  "sourceDecisionSHA256": "97afb800f5ee0b126f29667dd94ca5c1c1c5865f33321dcf7b27e65e0d3a6fd3",
+  "limits": [
+    "Actual html5lib archive size and SHA verified against official metadata and independent opaque file reads; reusable without redownload.",
+    "Second HTTP200 rejected on Content-Type contract; actual MIME value/cardinality/body/framing/bytes not retained. binary/octet-stream is a hypothesis, not an old observation.",
+    "Outer lifecycle exit0 is not two-wheel success; child1 and sourceReadyfalse preserved. Budget2/2closed, no retry or further acquisition under this tuple.",
+    "No ZIP opened, extracted, imported, installed or executed; no tipster/app/Task/push."
+  ]
+}

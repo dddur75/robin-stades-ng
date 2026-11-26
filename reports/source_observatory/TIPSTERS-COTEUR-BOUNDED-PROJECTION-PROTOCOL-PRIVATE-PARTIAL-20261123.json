@@ -1,0 +1,36 @@
+{
+  "authorElapsedSeconds": 114.164267,
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.BOUNDED.PROJECTION.PROTOCOL.PRIVATE.PARTIAL.20261123",
+  "findings": [
+    "C0 CODE and C3 static confirmation: projectionComplete ignores omittedCandidates/omittedPrefixes, so accepted true can overstate bounded coverage.",
+    "C4: protocol passes whole decoded object with only partial shape checks; it is not a sanitizer for a future model/Git consumer.",
+    "Existing query ban prevents functional query-key discovery; no endpoint source contract established."
+  ],
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "limits": [
+    "Earlier native cause remains unknown; no source/rerun/refetch authority.",
+    "Private test passes are preserved, not promoted to accepted implementation."
+  ],
+  "missionId": "COTEUR_BOUNDED_PROJECTION_PROTOCOL_FIX_PRIVATE_E1_20261123",
+  "projectionRAW_SHA256": "e7d9b05574ea2c968f57b8882af532b35af476a7adb43a021975aae1da0837a8",
+  "protocolRAW_SHA256": "a19fe30e90a5bb25c96316752ce270c7b7ba94142e845063c367d4366b72246d",
+  "resultRAW_SHA256": "790e539a66622e80325952c86d195dc4588580669638e9c0ecdc44327af66fb6",
+  "scope": "PRIVATE_SYNTHETIC_THREE_FIXES_WITH_NEW_COMPLETENESS_DEFECT",
+  "sourceGET": 0,
+  "sourceReady": false,
+  "status": "PARTIAL_CODE_REVIEW_HOLD_COMPLETENESS_FIELD",
+  "tests": {
+    "criticalRuff": 0,
+    "primaryExits": [
+      0,
+      0
+    ],
+    "projectionCalls": 2,
+    "pureProtocolCalls": 2,
+    "scenarios": 3
+  }
+}

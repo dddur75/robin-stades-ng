@@ -1,0 +1,21 @@
+{
+  "generatedAt": "2026-11-23T13:40:42.659Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.BOUNDARY.OBSERVER.PRIVATE.RESULT.20261123",
+  "missionId": "TELEGRAM_BOUNDARY_OBSERVER_PRIVATE_E1_20261123",
+  "status": "PRIVATE_CLOSED_OBSERVER_ACCEPTED_NATIVE_BINDING_REQUIRED",
+  "scope": "C0 CODE C1 FACTS C4 SCOPE accepted frozen single-thread transient observer and private caller. Exact parser/caps/control parents unchanged, exception preserved and parent class restored in finally. Closed boundary enum/prefix0..10/openboolean only; prefix is not source total. RED1+GREEN7, criticalRuff andRAMcompile pass; no strictmypy/fullRuff/native loader/authority/Job proof. Earlier native cause staysUNKNOWN. No actual source or output values.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.MESSAGE.CONTRACT.NATIVE.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.MESSAGE.ONEGET.CALLER.PRIVATE.RESULT.20261123"
+  ],
+  "observerSHA": "69947fb4b0f12378b55727866c0f39cefe758a4c26f7659619534cc93d37b6f8",
+  "workerSHA": "eb196c759da13cfdabb8408851e6b7ce877c4fdbbea28fd070b37cbae970f732",
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "sourceReady": false
+}

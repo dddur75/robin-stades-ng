@@ -1,0 +1,28 @@
+{
+  "appChanges": 0,
+  "artifactSHA256": "cc55f5060b4dcb70167e8405c50940e3ac356658cb40869bbeb9b38a700af804",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PLAIN.REFERENCE.PROFILE.PRIVATE.PARTIAL.20261123",
+  "findings": [
+    "Unknown or null access values were accepted; access absent and proven public are not equivalent.",
+    "Plain property references could jump past recommendation metadata or excluded key context."
+  ],
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "limits": [
+    "Synthetic success is not code acceptance or native compatibility.",
+    "No native cause/version or data admission established; predecessor immutable."
+  ],
+  "missionId": "NOTBETTING_PLAIN_REFERENCE_PROFILE_PRIVATE_E1_20261123",
+  "scope": "FROZEN_PRIVATE_SYNTHETIC_PROFILE_WITH_TWO_CONFIRMED_ACCESS_CONTEXT_P1",
+  "sourceGET": 0,
+  "sourceReady": false,
+  "status": "PARTIAL_CODE_REVIEW_REFUSED",
+  "tests": {
+    "primaryExit": 0,
+    "runs": 1,
+    "targetedVariants": 10
+  }
+}

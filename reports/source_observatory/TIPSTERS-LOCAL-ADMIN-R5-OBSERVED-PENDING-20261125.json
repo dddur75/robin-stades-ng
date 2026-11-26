@@ -1,0 +1,22 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.LOCAL.ADMIN.R5.OBSERVED.PENDING.RESULT.20261125",
+  "status": "LOCAL_ADMIN_OBSERVED_PENDING_API_EXACT_HTML200",
+  "scope": "One R5 metadata row, no forecast admission",
+  "resultSHA": "7fb50b5dd7bdee059fb05c43d44b78cd86bc41d0585ff7fdbb14402dbdabf1b5",
+  "stopSHA": "b2b4dde8ff1dd2e7bb8ecac9faefb10d539c1e1b01479f5befb155d4607591cc",
+  "targetSHA": "02919502a8c5a8822dabd7c5307c5d5bc74643e23a4774157d47e07f5028e071",
+  "rows": 43,
+  "oldRowsPreserved": 42,
+  "oldThreeAdmittedPreserved": true,
+  "qualificationAPIHTTP": 200,
+  "qualificationBytes": 38021,
+  "adminHTMLHTTP": 200,
+  "adminHTMLBytes": 28430,
+  "nodeExit": 0,
+  "localGET": 2,
+  "sourceGET": 0,
+  "applicationAdmissions": 0,
+  "newUniqueChoices": null,
+  "globalUIProven": false,
+  "sourceClaim": "ENG.SOURCE_OBSERVATORY.OLBG.UEFA25.REP.OWNER.R5.ACTUAL.RESULT.20261125"
+}

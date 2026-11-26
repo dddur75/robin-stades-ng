@@ -1,0 +1,52 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.LEGRUPPETTO.RECURRING.R2.INSTALL.RESULT.20261122",
+  "recordedAt": "2026-11-22T12:01:25.237Z",
+  "status": "TWO_NATIVE_TASKS_INSTALLED_AND_EXTERNALLY_ADOPTED_SOURCE_NOT_YET_EXECUTED",
+  "scope": "Dated proof of two private one-shot registrations and conditional six-GET campaign. Scheduler state at capture only; no recurring-source success, prediction admission or current all-source operational state certified.",
+  "planSHA256": "87a07786314afe89742cca7a41b6027a9adee38b0e83b5d855711fb2d04dd540",
+  "manifestSHA256": "3b20e6a2149716d279db8bb1de23a50584a80fd2316894e6b43f389177d72db3",
+  "sourceGrant": "b443c7030c1d95345e2506264d7276cfaf753c9fe7a3c0295cffbb16818acb49",
+  "installationGrant": "64ae40369da803c32428188c4b7a69995820c0f8c336d8774729024fb06be93b",
+  "acceptedAt": "2026-11-22T11:53:39.879Z",
+  "adoptionSHA256": "3972c582a3267eca98b946d2b42d299e8f566eb0db16bfb63b4fd2b37adaddd3",
+  "tasks": [
+    {
+      "name": "Robin-Tipsters-LeGruppetto-20261122-1215",
+      "startUTC": "2026-11-22T12:15:00Z",
+      "enabledAtCapture": true,
+      "externalExit": 0,
+      "unknown": false,
+      "failed": false,
+      "XMLSHA256": "65812b05096207aae836daf31291d02b44988e97edad1de07b2f8b844bf3ef59"
+    },
+    {
+      "name": "Robin-Tipsters-LeGruppetto-20261122-1415",
+      "startUTC": "2026-11-22T14:15:00Z",
+      "enabledAtCapture": true,
+      "externalExit": 0,
+      "unknown": false,
+      "failed": false,
+      "XMLSHA256": "5e8d88197c777a01e42e4c5cb9789aa334ea6ff26cfcaa0b6faee7e29612a452"
+    }
+  ],
+  "nativeReads": 8,
+  "registrations": 2,
+  "postReadsReserved": 6,
+  "maximumNativeSchedulerOperations": 16,
+  "operatorProcesses": 3,
+  "originalInputErrorBeforeNativeEffectsRetained": true,
+  "activeInstallationSeconds": 4.998553399994969,
+  "sourceGETAtAdoption": 0,
+  "newSourceGETLimit": 6,
+  "sourceTaskQueries": 0,
+  "sourceOriginsAttestedByWorker": false,
+  "manualStarts": 0,
+  "secondNeedsFirstPositiveCloseAndC0Acceptance": true,
+  "automaticAdmission": false,
+  "expiry": "2026-11-22T14:20:00Z",
+  "reviews": {
+    "C3": "Actual raw adoption, real pure ledger/campaign_gate, native receipts/views/XML and45pins PASS.",
+    "C4": "Actual installation/adoption before12:05, timing/effects and original error retention PASS."
+  },
+  "globalDelivery": "PARTIAL"
+}

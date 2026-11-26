@@ -1,0 +1,148 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.SOURCE.COVERAGE.CLOSURE.PARTIAL.20261122",
+  "recordedAt": "2026-11-22T10:41:15.075Z",
+  "status": "PARTIAL_COMPATIBLE_SOURCE_DENOMINATOR_UNKNOWN",
+  "scope": "Evidence-based source coverage audit only. Documentary inventory and generic connectors are not certified personal forecast collectors; no assertion that all compatible workbook sources are operational.",
+  "inventory": {
+    "uniqueDocumentaryAddresses": 18003,
+    "platformLabels": 183,
+    "genericConnectors": 57,
+    "compatibleSourceCount": null,
+    "allCompatibleSourcesIntegrated": false
+  },
+  "inventoryClaims": [
+    "DATA.SOURCE_OBSERVATORY.WORKBOOK.COMPLETE.20261120",
+    "ENG.SOURCE_OBSERVATORY.CONNECTORS57.20261118",
+    "DATA.SOURCE_OBSERVATORY.QUALIFICATION317.20261119"
+  ],
+  "sourceFindings": [
+    {
+      "claimId": "DATA.SOURCE_OBSERVATORY.WORKBOOK.COMPLETE.20261120",
+      "report": "reports/source_observatory/TIPSTERS-WORKBOOK-COMPLETE-20261120.json",
+      "status": "FULL_DOCUMENT_INTEGRATION_VERIFIED_COLLECTION_PARTIAL"
+    },
+    {
+      "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.ROBOTS.SHAPE.E1.RESULT.20261122",
+      "report": "reports/source_observatory/TIPSTERS-OLBG-ROBOTS-SHAPE-E1-RESULT-20261122.json",
+      "status": "TECHNICAL_SHAPE_SCAN_COMPLETE_PERMISSION_UNPROVEN"
+    },
+    {
+      "claimId": "ENG.SOURCE_OBSERVATORY.SRO.NEXT3.E2.R2.WINDOWS.RESULT.20261121",
+      "report": "reports/source_observatory/TIPSTERS-SRO-NEXT3-E2-R2-WINDOWS-RESULT-20261121.json",
+      "status": "PARTIAL_FAIL_AND_STOP_INSTALLATION_UNCONFIRMED"
+    },
+    {
+      "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.SECOND.ASSET.AST.RESULT.20261121",
+      "report": "reports/source_observatory/TIPSTERS-COTEUR-SECOND-ASSET-AST-RESULT-20261121.json",
+      "status": "PARTIAL_TECHNICAL_PROJECTION_NOT_ESTABLISHED"
+    },
+    {
+      "claimId": "ENG.SOURCE_OBSERVATORY.KICKTIPP.NATIVE.LIVE.R3.RESULT.20261121",
+      "report": "reports/source_observatory/TIPSTERS-KICKTIPP-NATIVE-LIVE-R3-RESULT-20261121.json",
+      "status": "PARTIAL_FAILED_CLOSED_NO_FURTHER_ATTEMPT_AUTHORIZED"
+    },
+    {
+      "claimId": "DATA.SOURCE_OBSERVATORY.NOTBETTING.OCCURRENCE.FIRST.SCHEDULED.20261121",
+      "report": "reports/source_observatory/TIPSTERS-NOTBETTING-FIRST-SCHEDULED-RECETTE-20261121.json",
+      "status": "FIRST_SCHEDULED_PASS_ACCEPTED_NONCANONICAL_REOBSERVATIONS_ZERO_NEW_DECLARATIONS"
+    },
+    {
+      "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.BETSOCCER.AVAILABILITY.E1.R4.RESULT.20261122",
+      "report": "reports/source_observatory/TIPSTERS-TELEGRAM-BETSOCCER-AVAILABILITY-E1-R4-RESULT-20261122.json",
+      "status": "HTTP200_TECHNICAL_ACQUISITION_STRUCTURE_UNQUALIFIED"
+    },
+    {
+      "claimId": "ENG.SOURCE_OBSERVATORY.YOUTUBE.TOPIC.DISCOVERY.E1.V2.RESULT.20261121",
+      "report": "reports/source_observatory/TIPSTERS-YOUTUBE-TOPIC-DISCOVERY-E1-V2-RESULT-20261121.json",
+      "status": "PARTIAL_DISCOVERY_CONTRACT_STOPPED"
+    },
+    {
+      "claimId": "ENG.SOURCE_OBSERVATORY.MIGHTYTIPS.PERSONAL.RAM.E1.V3.RESULT.20261121",
+      "report": "reports/source_observatory/TIPSTERS-MIGHTYTIPS-PERSONAL-RAM-E1-V3-RESULT-20261121.json",
+      "status": "PARTIAL"
+    },
+    {
+      "claimId": "ENG.SOURCE_OBSERVATORY.TP.CRIS5687.NATIVE.EXPORT.E1.RESULT.20261122",
+      "report": "reports/source_observatory/TIPSTERS-TP-CRIS5687-NATIVE-EXPORT-E1-RESULT-20261122.json",
+      "status": "PARTIAL_ZERO_ELIGIBLE_UNDER_TEN_L1_FIXTURE_FILTER"
+    },
+    {
+      "claimId": "DATA.SOURCE_OBSERVATORY.SCO1919.PERSONAL.CURRENT.E1.R1.PREMATCH.20261122",
+      "status": "VERIFIED",
+      "reference": "reports/evidence/evidence-graph.json"
+    },
+    {
+      "claimId": "DATA.SOURCE_OBSERVATORY.LEGRUPPETTO.PERSONAL.CURRENT.E1.R1.PREMATCH.20261122",
+      "status": "VERIFIED",
+      "reference": "reports/evidence/evidence-graph.json"
+    },
+    {
+      "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.ASSET.RESULT.20261121",
+      "status": "VERIFIED",
+      "reference": "reports/evidence/evidence-graph.json"
+    }
+  ],
+  "blockers": [
+    {
+      "family": "Forums SCO1919/LeGruppetto",
+      "state": "REAL_PREMATCH_REOBSERVATIONS;RECURRENCE_NOT_RECETTED",
+      "next": "Preserve separately qualified source lots. No third identical combined task attempt; future recurring execution needs a reviewed per-source design and bounded authority."
+    },
+    {
+      "family": "OLBG",
+      "state": "PROSPECTIVE_PERMISSION_UNPROVEN;PRIOR_CAMPAIGN_CLOSED",
+      "next": "Resolve exact REP contract offline before any prospective profile call; no inference of source-wide inactivity or required account."
+    },
+    {
+      "family": "NotBetting",
+      "state": "HISTORICAL_RECORDS_RETAINED;CAMPAIGN_EXPIRED",
+      "lastReportedGET": 15,
+      "oldCap": 19,
+      "allTime": "UNKNOWN",
+      "next": "Closed authority is not reusable;19 of19 spent is not established by the retained report."
+    },
+    {
+      "family": "Coteur",
+      "state": "TWO_APPROACHES_CLOSED;NATIVE_AUTHOR_CHOICE_FIXTURE_PROJECTION_MISSING",
+      "next": "Source-contract redesign, no third identical source request."
+    },
+    {
+      "family": "Kicktipp",
+      "state": "CONTEST_SPECIFIC_VISIBILITY_OR_PROJECTION_UNPROVEN",
+      "next": "A native prematch author-choice-fixture binding is still required per contest."
+    },
+    {
+      "family": "Telegram",
+      "state": "PUBLIC_PREVIEW_HTTP200;STRUCTURE_AND_COLLECTION_CONTRACT_UNQUALIFIED",
+      "exportRequiredEstablished": false,
+      "accountRequiredEstablished": false,
+      "APIRequiredEstablished": false,
+      "next": "Resolve the specific public-preview structure and permissible personal collection contract; no universal export or login requirement was proved.",
+      "userReportsNoExport": true
+    },
+    {
+      "family": "SRO",
+      "state": "PRIOR_DATA_COMPATIBLE;NEW_INSTALLATION_UNCONFIRMED",
+      "next": "Diagnose retained local installation evidence before a new reviewed execution plan."
+    },
+    {
+      "family": "YouTube/MightyTips/TipsterPlatform",
+      "state": "INDIVIDUAL_ROUTE_CONTRACT_OR_ELIGIBILITY_UNPROVEN",
+      "next": "Respect exact closed route receipts; generic adapter tests do not establish source-native personal forecasts."
+    },
+    {
+      "family": "Other workbook addresses",
+      "state": "UNKNOWN_NOT_ESTABLISHED_BY_THIS_AUDIT",
+      "next": "No extrapolation from317 candidate rows,57 generic connectors or a platform sample to all documentary addresses."
+    }
+  ],
+  "humanInputForCurrentTechnicalPatch": [],
+  "accessCaveat": "Only a specific authenticated AJA profile route historically requested login. This does not establish that an account, paid access, export or API key is universally missing for the other public routes.",
+  "reviews": {
+    "C1": "Source closure matrix and exact10 findings verified; requested three supplemental claim references and two wording clarifications applied by C0."
+  },
+  "sourceGET": 0,
+  "TaskChanges": 0,
+  "corpusReplay": 0,
+  "globalDelivery": "PARTIAL"
+}

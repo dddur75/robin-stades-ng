@@ -1,0 +1,31 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.TERMS.HEAD.E1.READINESS.20261121",
+  "status": "ONE_HEADER_ONLY_HEAD_AUTHORIZED_NO_DESTINATION_ACCESS",
+  "scope": "One exact HEAD /terms; no body,redirect follow,GET or profile authority. Validated native header path only; no current terms or policy conclusion established.",
+  "planCanonicalSHA256": "424025e4a69bafe153b4f20732228666d05fbb1b2a3e57e872d452aba4684185",
+  "manifestCanonicalSHA256": "52828ffcad3f88f717e72763e5de79f72a80d2ea0c11023b4491056f82362ace",
+  "indexRawSHA256": "2add909c317cae815775dfe61d4fd4a1791d40770b5908b3156ca1be15d2894d",
+  "sourceURL": "https://notbetting.com/terms",
+  "HEADMaximum": 1,
+  "GETMaximum": 0,
+  "bodyReadsMaximum": 0,
+  "redirectFollowMaximum": 0,
+  "oldFamilyReservations": 16,
+  "familyAfterHEADReservation": 17,
+  "familyCeilingUnchanged": 20,
+  "futureCapacityReservedNotGranted": 3,
+  "priorChargedMilliseconds": 97999,
+  "newReservedMilliseconds": 50000,
+  "familyAfterReservedMilliseconds": 147999,
+  "familyMillisecondsCeiling": 600000,
+  "familyCeilingIncreaseAuthorized": false,
+  "expiresAt": "2026-11-21T18:15:00Z",
+  "sourceHEADExecuted": 0,
+  "profileGETAuthorized": 0,
+  "termsRenewalAuthorized": false,
+  "verifiedBy": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

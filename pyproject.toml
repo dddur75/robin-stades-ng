@@ -54,6 +54,12 @@ line-length = 100
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F", "I"]
 
+[tool.ruff.lint.per-file-ignores]
+# Temporary presentation-only exception for the exact live E2V2 execution hash.
+# After the campaign closes on 2026-11-21 at 11:15 UTC, format this file and
+# remove this entry. This static configuration does not expire automatically.
+"src/robin/source_observatory/profile_campaign.py" = ["E701", "E702", "I001"]
+
 [tool.mypy]
 python_version = "3.12"
 strict = true

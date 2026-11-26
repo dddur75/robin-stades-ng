@@ -1,0 +1,55 @@
+{
+  "mission_id": "BUNDES_PDF_FIXED_TRANSPORT_PRIVATE_E1_20261122",
+  "status": "PASS_AND_HOLD_FAKE_CONNECTION_TRANSPORT_ONLY",
+  "author": "C0",
+  "grant": "5d3a949ff4e90356bf409b3a02208f2f981c16fd73a4bd6a19c76d7777ee23bf",
+  "planSHA256": "d2a54793fe76a8076667c00b041583c25b47bf8ff3bb414b131f55cb086bd677",
+  "manifestSHA256": "e85093257c119f02cf44fe5a1db7e35e333765ad49ef9375453a5fcb064f43db",
+  "codeMapCanonicalSHA256": "962a63909925479245cdaa5582e9a63024a4a57b54ea6c1f7f21c2b056995d75",
+  "authorStoppedAt": "2026-11-22T23:15:29.257Z",
+  "elapsedSeconds": 103.118,
+  "tests": {
+    "groups": 3,
+    "uniqueBodyInputs": 1,
+    "variants": 9,
+    "redBaselineFixedRoleAbsent": true,
+    "green": true,
+    "criticalRuff": 0,
+    "ramCompiled": 2
+  },
+  "sourceURL": "https://products.bundesliga.com/fixtures/export/pdf?league%5B0%5D=1d570dd9-b10b-44de-9f64-8c91e56bf168&matchday%5B0%5D=11&season=b2f90c16-d6ef-40b1-a974-e6b1bf102c2a",
+  "sourceGET": 0,
+  "DNS": 0,
+  "Win32": 0,
+  "appChanges": 0,
+  "TaskChanges": 0,
+  "realProviderPDF": 0,
+  "sourceReady": false,
+  "physicalCallerReady": false,
+  "actualSourceTransportProven": false,
+  "reviewKeys": [
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "limits": [
+    "Only fake connections exercised. DNS/TCP/TLS native behavior and provider compatibility not observed.",
+    "Derived reviewed transport retains first public DNS address only, no address fallback.",
+    "No CA/source authority/main/native launcher or parser bound in this phase.",
+    "No functional app admission, calendar, recurrence or full suite claim."
+  ],
+  "claimId": "ENG.SOURCE_OBSERVATORY.BUNDES.PDF.FIXED.TRANSPORT.PRIVATE.E1.RECETTE.20261122",
+  "generatedAt": "2026-11-22T23:18:14.370Z",
+  "missionId": "BUNDES_PDF_FIXED_TRANSPORT_PRIVATE_E1_20261122",
+  "keys": [
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "review": {
+    "C1_FACTS": "PASS_EXACT_RECEIPTS",
+    "C3_CODE": "PASS_NO_P1_IN_DELTA",
+    "C4_SCOPE": "PASS_PRIVATE_ONLY"
+  },
+  "authorResultRAW_SHA256": "4c8021af318411b9a23ea5dc030d970645ab62205daafb019be2f964653cc470"
+}

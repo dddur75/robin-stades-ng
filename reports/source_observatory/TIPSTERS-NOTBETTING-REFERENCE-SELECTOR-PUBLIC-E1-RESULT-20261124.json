@@ -1,0 +1,61 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.REFERENCE.SELECTOR.PUBLIC.E1.RESULT.20261124",
+  "missionId": "NOTBETTING_REFERENCE_PUBLIC_ADOPTION_E1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "scope": "Public uncommitted bounded competition plain-reference selector a777 and portable public tests verified independently against baselineGitHEAD ee44ae27cc550e6974780fed87bb8103b2583143. Resolves supported canonical data references before quota, preserving RAM record identity, access/sensitive gates, shared work bounds and downstream public qualification equivalence. 25 targeted pytest items PASS, expected old-code RED, full Ruff2files and strict mypy1source PASS. This is an engineering successor to historical b29 helper, not native source eligibility, coverage or application activation.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.STATIC.COMPETITION.SELECTOR.PUBLIC.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.STATIC.SELECTOR.GUARDED.CALLER.E1.RESULT.20261124"
+  ],
+  "files": {
+    "src/robin/source_observatory/notbetting_selection.py": {
+      "sha256": "a777e2fa2c4407e66d5d2f1da4d0e88458c33a9a48b06f0dd95c5c312483f374",
+      "bytes": 8868
+    },
+    "tests/source_observatory/test_notbetting_selection_references.py": {
+      "sha256": "19d89dec25247221967a85b431ff6445cf151e0b272f3b048c7a0eb2426ff2bc",
+      "bytes": 5011
+    }
+  },
+  "primarySHA": "fb09a8094c334a1ea814d313fc7d53dc555bd73e58e3d50ceff5056f5e4357c1",
+  "privateReviewedSelectorResultSHA": "3c4364666cf8003f67483c8ebcc3a78162e0c2f242fcaf2194201afafa897d3b",
+  "receipts": {
+    "red.json": "916ae38dc702a1645123a805a908ee75346eb3ff489618c8629a8f3522b0f685",
+    "green.json": "8ec58f9ad143e8bdf09756020ce6a94708b67c6b8ffe8745bf53d43232021844",
+    "ruff.json": "ef2b63cc76f84a1b9f58a91c05d89155a147471292717a9961d27295cd779834",
+    "mypy.json": "08c97b5b1af59ddb3acde4c29c190f1512d57efe37925d0dc70a54d5054dbc95",
+    "AUTHOR-STOP.json": "a69e9c1fdf81c8aae7aac490c61bb59bd48fbb766068709075c9e602e53d3c49",
+    "review-counting-addendum.json": "95faa6ad47f57563b2a0447456e5a1206a8d4071d9fd438ed448c6d45caaf3f2"
+  },
+  "tests": {
+    "GREENpytestItems": 25,
+    "REDpytestItems": 1,
+    "syntheticFunctionCallsUpperBound": 35,
+    "syntheticCallCap": 40,
+    "Ruff": "PASS twofiles",
+    "mypyStrict": "PASS onesource",
+    "fullSuite": 0
+  },
+  "oldHelperPreservedPrivateSHA": "b29a3fdea180fa6639d1297dd58f9083ca73f4c43508eb87c00b659b5699442d",
+  "limits": {
+    "sourceGET": 0,
+    "providerPayloadReads": 0,
+    "runtimeWrites": 0,
+    "GitMutations": 0,
+    "CIOfNewFiles": false,
+    "sourceReady": false,
+    "admissions": 0,
+    "allCompatibleIntegrated": false,
+    "overall": "PARTIAL",
+    "nativeZeroCause": "UNKNOWN",
+    "rawTipsterDICTAndCreatedAtKindStatusRequired": true,
+    "oversizedSegmentTestIsNotIsolated": true
+  },
+  "historicalPredecessorUnchanged": true
+}

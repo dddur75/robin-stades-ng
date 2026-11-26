@@ -1,0 +1,155 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI258.EXACT.HEAD.RESULT.20261122",
+  "recordedAt": "2026-11-22T11:29:06.221Z",
+  "status": "CI_COMPLETE_SUCCESS_EXACT_PUBLISHED_HEAD",
+  "scope": "Exact pushed commit and its PR-triggered workflow only. CI validates the code, not complete-source collection, recurring source operation, production deployment or physical identities.",
+  "repository": "dddur75/robin-stades-ng",
+  "PR": 133,
+  "head": "d882f77f8f882d89484122d86843194d0701e9c8",
+  "parent": "0c8efea46a86e203ca1377dbc21f9753530f68ff",
+  "commit": {
+    "closedAt": "2026-11-22T10:49:37.087017+00:00",
+    "head": "d882f77f8f882d89484122d86843194d0701e9c8",
+    "tree": "0d2cc2a0ad6912c7b5abd5e955bd83a4a723760b"
+  },
+  "push": {
+    "closedAt": "2026-11-22T10:49:51.982127+00:00",
+    "exit": 0,
+    "head": "d882f77f8f882d89484122d86843194d0701e9c8"
+  },
+  "run": {
+    "id": 45014327849,
+    "number": 258,
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/dddur75/robin-stades-ng/actions/runs/45014327849"
+  },
+  "jobs": [
+    {
+      "id": 137183271392,
+      "name": "Exact Workflow Entrypoint",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137183271585,
+      "name": "End-to-End Live Path Replay",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137183271587,
+      "name": "Historical Deep — contrat cache-only",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137183271593,
+      "name": "Jalon 10 - entrees de preuve gelees",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137183271677,
+      "name": "Bounded live canary - Ubuntu",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137183271711,
+      "name": "Chronos PostgreSQL profiles / Chronos static contracts",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137183271712,
+      "name": "Historical Authority Workflows Disabled",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137183271726,
+      "name": "Residual Fault Matrix",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137183271758,
+      "name": "Bounded live canary - Windows",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137183271815,
+      "name": "Chronos PostgreSQL profiles / Chronos source and activation",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137183271986,
+      "name": "Chronos PostgreSQL profiles / tests (non_superuser_createrole)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137183272036,
+      "name": "Chronos PostgreSQL profiles / tests (superuser)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137183966947,
+      "name": "Chronos PostgreSQL profiles / Chronos provider-free Cockpit",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137184710018,
+      "name": "Jalon 10 - trois temoins R3 bornes",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137184710023,
+      "name": "Quality and domain tests",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137184710070,
+      "name": "Robin Experience — preuves visuelles",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137191148590,
+      "name": "tests",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "successfulJobs": 17,
+  "totalJobs": 17,
+  "knownPushCallsBefore": 7,
+  "knownPushCallsAfter": 8,
+  "nonForcePushesThisMission": 1,
+  "PRBodyUpdatesThisMission": 1,
+  "PRRemainsDraft": true,
+  "watchedAt": "2026-11-22T11:28:12.160Z",
+  "CIReadCalls": 8,
+  "CIWatchSeconds": 2251.222,
+  "primaryRunSHA256": "09e1ff00f7182225762ba6ab2b0002bb4d3e57f7dd67b6c63c5541f146401b01",
+  "primaryJobsSHA256": "2bd7d3db1d9e777122685569e222c6cff7a3a015a1d321ba561881c4e4f5d9aa",
+  "readJournalSHA256": "869811d1ab6dbb348a50f7cdb3ab9d9b481d5c0a03c3f2cbd9fa618c380844cd",
+  "workbookPublished": false,
+  "rawProviderDataPublished": false,
+  "sourceGET": 0,
+  "TaskChanges": 0,
+  "merge": 0,
+  "deployment": 0,
+  "globalDelivery": "PARTIAL",
+  "reviews": {
+    "C3": "Final publication controller/files/ledger/commit scope reviewed before commit.",
+    "C4": "Independent final run/jobs/commit/push/PR primary receipts and full watch journal PASS; min interval56.170s,17 distinct successful jobs."
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.SCO1919.CURRENT.PREMATCH.ADMISSION.20261122",
+  "recordedAt": "2026-11-22T09:52:09.429Z",
+  "status": "LOCAL_SCO_REOBSERVATIONS_ADMITTED_WITHOUT_NEW_CHOICES",
+  "scope": "Twelve exact previously known SCO choices now expose their newly observed lastSeen timestamps in the local tipster profiles and admin. All479 immutable choices, scores, first observations, labels and versions are preserved.",
+  "planSHA256": "5f4cee7ee51bf9130e1879da18436fe361b033efb2e26e629d9f1a448c99b510",
+  "manifestSHA256": "be5232ad571325f14344146d65f3dff2673a39519af13315e71fc99c35ccdd34",
+  "decisionSHA256": "b13d15e68b90ed37709575263cbb744c50a262c163f5ab8294ee18b5dcc0c950",
+  "descriptorCanonicalSHA256": "2caed5ebd0dc8464f08a59567234fa6335ab9e00d5fcc245568459df7d546546",
+  "envelopeSHA256": "6cdc9e683826bb9596f404c45a3097bf19a14731adb1c982d0381b7d6d189de4",
+  "sourceCandidateSHA256": "893eba5541c96f3a9f28622efcb93ab64dd935d814e49c73bd22d9d1f7bda2e5",
+  "sourceClaim": "DATA.SOURCE_OBSERVATORY.SCO1919.PERSONAL.CURRENT.E1.R1.PREMATCH.20261122",
+  "reobservationsAccepted": 12,
+  "newDistinctChoices": 0,
+  "newAuthors": 0,
+  "choices": 479,
+  "pseudonyms": 80,
+  "fixtures": 20,
+  "immutableFieldsChanged": 0,
+  "sourceObservedThrough": "2026-11-22T09:20:12.319920+00:00",
+  "generatedAt": "2026-11-22T09:31:30.758Z",
+  "publishedAtUnknown": true,
+  "identityCertified": false,
+  "recurringActivated": false,
+  "C0API": {
+    "observedAt": "2026-11-22T09:43:34.761Z",
+    "HTTP": 200,
+    "responseSHA256": "c1b2815260fdf80a9e949a13856981f4f53ed407632560956c30d2811c01269e",
+    "advancedLastSeen": 12
+  },
+  "C3API": {
+    "observedAt": "2026-11-22T09:46:31.866Z",
+    "HTTP": 200,
+    "responseSHA256": "08a85d7644aa510cdbdbf28a6cd134ad7355641925ca0e7e0ddb5123af35146f",
+    "baselineImmutableExactlyPreserved": true
+  },
+  "qualification": {
+    "rows": 13,
+    "priorRowsPreserved": 12,
+    "candidates": 12,
+    "newChoicesAdmitted": 0,
+    "HTTP": 200,
+    "responseSHA256": "72321acf02bd4a5513edef3f57ca2d4b624117a99a1a70be3602780a955e3205"
+  },
+  "browser": {
+    "startedAt": "2026-11-22T09:48:55.532Z",
+    "closedAt": "2026-11-22T09:49:08.300Z",
+    "state": "PASS",
+    "localGET": 161,
+    "sourceGET": 0,
+    "externalBlocked": 0,
+    "HTTPWrites": 0,
+    "pageErrors": 0,
+    "adminCount479": true,
+    "singleSourceCaption": true,
+    "profileOnePick": true,
+    "reobservationVisible": true,
+    "firstObservationPreserved": true
+  },
+  "checks": {
+    "targetedTests": 16,
+    "typecheck": "PASS",
+    "lint": "PASS",
+    "localFullSuite": 0
+  },
+  "actualCompletedWithin600Seconds": true,
+  "firstImmediateLocalFetch": {
+    "failed": true,
+    "HTTP": null,
+    "fineCause": "UNKNOWN_NOT_RETAINED",
+    "laterAPIAndUIRecette": "PASS"
+  },
+  "sourceGET": 0,
+  "TaskChanges": 0,
+  "publications": 0,
+  "globalDelivery": "PARTIAL"
+}

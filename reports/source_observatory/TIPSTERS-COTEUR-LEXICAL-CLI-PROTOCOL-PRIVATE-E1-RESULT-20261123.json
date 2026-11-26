@@ -1,0 +1,36 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.LEXICAL.CLI.PROTOCOL.PRIVATE.E1.RESULT.20261123",
+  "missionId": "COTEUR_LEXICAL_CLI_PROTOCOL_PRIVATE_E1_20261123",
+  "status": "ACCEPTED_PRIVATE_LEXICAL_CLI_AND_CLOSED_PROTOCOL_NO_SOURCE_CALLER",
+  "scope": "BoundedUTF8/base64canonical/bodySHA CLI wraps exact lexicalscanner and pure Python whitelistvalidator. Returns only LOOKALIKE metadata. BodyUTF16Length is declaredCLIlength, not independentbodyproof; offsets onlyopeningtokens. No native sourcecaller, hardouterdeadline, endpointownership or sourcecollectability proved.",
+  "keys": [
+    "C0",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LEXICAL.STREAM.PRIVATE.R2.E1.RESULT.20261123"
+  ],
+  "CLI_SHA": "3d847ad7d6683ac5f20da4a75d6ca47f8ef06e27f6df7f1abc96caa25896542c",
+  "validatorSHA": "f3b3e6a09e100317d37e0c762df7d6577889f363a50d71ab5edd511b4b120588",
+  "scannerSHA": "f858febf7e1d747ba9b07e2b93c2d8ee8c23c5bc9594640191b40a669213fce9",
+  "resultSHA": "558d27f6674fb42d55eade024abbf731c1dee224b5d56320d7cb4325ed3fe83c",
+  "fileMapSHA": "52e32ffea777edb68fbb076a92605078d077d1cf33a62714b19e42f12a910f44",
+  "validation": {
+    "syntheticFrames": 6,
+    "actualSyntheticStdinCalls": 1,
+    "PythonValidatorTests": 2,
+    "criticalRuffExit": 0,
+    "targetedAuthorChildren": 6,
+    "mandatoryGitROProcesses": 5
+  },
+  "limitations": [
+    "DuplicateJSONkeys branch not exercised; author escaping concern withdrawn after source inspection.",
+    "Future source caller requires hardstdin/process/stream deadlines and exact NodeCLIscannerAcornvalidator/body lineage pins."
+  ],
+  "sourceGET": 0,
+  "realProviderPayloadReads": 0,
+  "sourceReady": false,
+  "newForecasts": 0,
+  "scaleApproved": false
+}

@@ -1,0 +1,20 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.LEGRUPPETTO.RECURRING.R2.INSTALL.DECODE.CORRECTION.20261122",
+  "recordedAt": "2026-11-22T11:53:33.818Z",
+  "status": "OPERATOR_INPUT_ERROR_CORRECTED_BEFORE_NATIVE_EFFECT",
+  "scope": "Original process and spent retained. JSON array decoding corrected before any native scheduler operation. Source code, manifests, grants and effect ceilings unchanged; no scientific source attempt has executed.",
+  "oldOperatorSHA256": "707f24f43c48826a5c04a217625bc63aceaaa192a4339ebfa354f371380dbc13",
+  "newOperatorSHA256": "eaf35abc34074e13437bdbf51fc030976f7faea6faac4f1fe664cbc150bd815f",
+  "oldProcessSeconds": 0.883,
+  "oldNativeReads": 0,
+  "oldRegistrations": 0,
+  "oldSourceGET": 0,
+  "task0CorrectedTimeoutSeconds": 29,
+  "task1TimeoutSeconds": 30,
+  "maximumRegistrationCmdlets": 2,
+  "maximumInstallationReads": 8,
+  "reviews": {
+    "C3": "Exact one-line-to-two substitution and original pre-effect error verified.",
+    "C4": "First local correction holds E2;29+.883 and30 within per-task/cumulative bounds; no source or registration retry."
+  }
+}

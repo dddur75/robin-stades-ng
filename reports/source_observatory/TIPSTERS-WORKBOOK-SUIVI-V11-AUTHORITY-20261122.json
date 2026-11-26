@@ -1,0 +1,34 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.WORKBOOK.SUIVI.V11.AUTHORITY.20261122",
+  "recordedAt": "2026-11-22T14:54:30.180Z",
+  "status": "EXACT_SIXTEEN_LITERAL_CELL_UPDATE_ONLY",
+  "scope": "V10 to V11 sixteen literal Suivi Robin cells only. Preserve nine source tabs/native tables/styles/formulas; reuse prior394127cell proof without corpus replay or full recalculation.",
+  "missionId": "WORKBOOK_SUIVI_V11_LOCAL_UPDATE_20261122",
+  "planSHA256": "91d66940a08ccce772a15dbf01a41c7360b8d360bdbb7a9579d95a8f90a6a37e",
+  "manifestSHA256": "f11f2567a7fb9b81b83c2adbca6d631869d15c0d995c5a73593f42f8537853f0",
+  "baseSHA256": "32eec77d42db95f07597691963d1e6ffd616b6c550c5f76d2069739fe5299547",
+  "editsProposedCAN": "636b94867cddd17b3830e30996b963b75196e2aef640404ba2c066d44e45c9da",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.HISTORICAL.SRO.GR.LOCAL.ADMISSION.RESULT.20261122",
+    "DATA.SOURCE_OBSERVATORY.SRO.HISTORICAL.CANARY.R2.APP.ADMISSION.20261122",
+    "DATA.SOURCE_OBSERVATORY.LEGRUPPETTO.RECURRING.R2.SLOT1.APP.ADMISSION.20261122",
+    "ENG.SOURCE_OBSERVATORY.CATALOGUE.INDEPENDENT.READ.LOCAL.RESULT.20261122",
+    "ENG.SOURCE_OBSERVATORY.TP.AH.DOCUMENTARY.E1.R2.ACTUAL.RESULT.20261122"
+  ],
+  "readAt": "2026-11-22T14:46:04.941Z",
+  "writer": "C0",
+  "maximumExports": 1,
+  "maximumRenders": 3,
+  "maximumActiveSeconds": 600,
+  "expiresAt": "2026-11-22T16:00:00Z",
+  "reviews": {
+    "C1": "PASS corrected636b values, DATA actual observed dates and counts; no compatible denominator invented.",
+    "C4": "PASS corrected636b values and exact16cell scope; B16 realAPI time, no old export counter; GR failedinitial versuslateaudit distinguished.",
+    "C3": "PASS exact builder3ff913 syntax, one --apply invocation only, sixteen literal values, three renders then one staged export; no source tab/formula/style/table assignment. Effective XML preservation requires independent postexport check."
+  },
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "publications": 0,
+  "globalDelivery": "PARTIAL"
+}

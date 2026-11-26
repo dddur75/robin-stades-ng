@@ -1,0 +1,96 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.KICKTIPP.STRUCTURAL.DIAGNOSTIC.20261121",
+  "generatedAt": "2026-11-21T09:36:39.894138+00:00",
+  "status": "VERIFIED_STRUCTURE_ONLY_SOURCE_PERSONAL_COLLECTION_PARTIAL",
+  "scope": "Two bounded passive GETs after independently reviewed redesign expose the actual game-link schema. This is structural source evidence, not author/choice/event qualification or collection activation.",
+  "missionId": "ROBIN-KICKTIPP-STRUCTURAL-DIAGNOSTIC-E1V2-20261121",
+  "manifestCanonicalSHA256": "06a4c698eddb33dbd81092ef15be9cbae5611a57ce8bef9ca758e96262d79530",
+  "reservedGET": 2,
+  "completedHTTP200": 2,
+  "rawBodyStored": false,
+  "admittedChoices": 0,
+  "elapsedBeforeFinalRecordMilliseconds": 859,
+  "lastJournalRecordedAt": "2026-11-21T09:11:39.948012+00:00",
+  "durableClosureUpperBoundUTC": "2026-11-21T09:11:40.1447834Z",
+  "responseBytes": 69717,
+  "bodySHA256": "2fd28491ef7203ea048c95124e9a034550252e2b0a0387887a032b9618cf1d83",
+  "visitedElements": 1283,
+  "calendarRows": 5,
+  "ranking": {
+    "headers": 11,
+    "sampleCells": 11,
+    "dataRows": 49,
+    "nativeNameHeaderColumn": 3,
+    "gameHeaderColumns": [
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "spanInHeadersOrSample": false,
+    "authorAttributionEstablished": false
+  },
+  "newNativeGameLink": {
+    "path": "/the-predictor/tippuebersicht/spiel",
+    "queryNames": [
+      "spieltagIndex",
+      "tippsaisonId",
+      "tippspielId"
+    ],
+    "valuesRetained": false,
+    "linksFollowed": 0,
+    "semanticGameBindingEstablished": false
+  },
+  "unknownLinkOccurrences": 9,
+  "unknownPathPatterns": 2,
+  "nativeAuthorHints": 0,
+  "nativeEventHints": 0,
+  "sourceTimezone": null,
+  "officialKickoffBinding": false,
+  "templateCertified": false,
+  "performanceAllowed": false,
+  "settlementAllowed": false,
+  "evidence": [
+    {
+      "namespace": "A9_PRIVATE_KICKTIPP_STRUCTURAL_PROBE_E1V2",
+      "path": "cockpit/.ci/kicktipp-structural-probe-e1v2-20261121/manifest.json",
+      "sha256": "3f6b95f378011304983d9e4ac6878a37973096ea837aa72edd62b9eb4f7a39e7"
+    },
+    {
+      "namespace": "A9_PRIVATE_KICKTIPP_STRUCTURAL_PROBE_E1V2",
+      "path": "cockpit/.ci/kicktipp-structural-probe-e1v2-20261121/plan.json",
+      "sha256": "f8e4c5a5bae359da7496adb9b85786cc7c9d152d0bc89dcc569ba2dd9875a1ad"
+    },
+    {
+      "namespace": "A9_PRIVATE_KICKTIPP_STRUCTURAL_PROBE_E1V2",
+      "path": "cockpit/.ci/kicktipp-structural-probe-e1v2-20261121/authorization.json",
+      "sha256": "605bbb9cae4497dc6ebccf61bec62c01c9602266aee8cff2c8b9e92133739e5f"
+    },
+    {
+      "namespace": "A9_PRIVATE_KICKTIPP_STRUCTURAL_PROBE_E1V2",
+      "path": "cockpit/.ci/kicktipp-structural-probe-e1v2-20261121/spent-marker.json",
+      "sha256": "8d7f12b98adeb0ee1271651a44676bf92a1da3304a5afa8ee7f0ef0252278f72"
+    },
+    {
+      "namespace": "A9_PRIVATE_KICKTIPP_STRUCTURAL_PROBE_E1V2",
+      "path": "cockpit/.ci/kicktipp-structural-probe-e1v2-20261121/result.json",
+      "sha256": "8d6b940c8bd8e66543796b3498ea47ed8cd158035afbe9472b7444d53ee056b5"
+    },
+    {
+      "namespace": "A9_PRIVATE_KICKTIPP_STRUCTURAL_PROBE_E1V2",
+      "path": "cockpit/.ci/kicktipp-structural-probe-e1v2-20261121/projection.json",
+      "sha256": "68f1d1d79db54b9e6dc4061e29f06786335fceb5be11cd0e7b968bd19c76970d"
+    },
+    {
+      "namespace": "A9_PRIVATE_KICKTIPP_STRUCTURAL_PROBE_E1V2",
+      "path": "cockpit/.ci/kicktipp-structural-probe-e1v2-20261121/events.jsonl",
+      "sha256": "4be759a69e4d6ac37706aca9f102a9995281384113e138d4a54d8d6b60e694be"
+    }
+  ],
+  "verifiedBy": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "TaskChanges": 0,
+  "appChanges": 0,
+  "authorStoppedAt": "2026-11-23T01:49:07.682Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.REACT.FLIGHT.PRIMARY.WEB.GRAMMAR.E1.RESULT.20261123",
+  "codeExecuted": false,
+  "decision": "PASS_AND_HOLD",
+  "elapsedSeconds": 268.701073,
+  "exactURLOpens": 1,
+  "fullSourceFileReadOrCachedEstablished": false,
+  "grammarSummary": "The observed official implementation reads a hexadecimal chunk identifier and optional colon-separated property path. Path access requires a plain object or array and an existing own property; missing access raises an error. The string dispatcher distinguishes escaped literals, lazy and promise references, typed constructors and plain model references. These categories cannot all be treated as interchangeable plain JSON references.",
+  "installedNativeVersionEstablished": false,
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "limits": [
+    "Read-only primary source code observation from mutable main, not a returned immutable commit, release or proven installed NotBetting React version.",
+    "This establishes observed implementation grammar only; it does not prove which reference kind caused the retained native parser failure or authorize source acquisition/promotion.",
+    "Three exact managed operations exhausted; underlying HTTP count unknown. Private tool representations retained, no code executed or native provider body replayed."
+  ],
+  "managedWebOperations": 3,
+  "missionId": "REACT_FLIGHT_PRIMARY_WEB_DOCUMENT_E1_20261123",
+  "nativeCauseEstablished": false,
+  "primaryEvidenceLines": {
+    "outlinedReference": [
+      2235,
+      2364
+    ],
+    "stringDispatch": [
+      2591,
+      2907
+    ]
+  },
+  "representations": {
+    "find": "9ce39d66cbdbb406ceb0eb49e87882350b64edd650b7527a9d63af7afa1c7467",
+    "open": "9ffd1439ec63aa411b5e4038cee95b1b3e50ff7d142b795c19a090f0b8aac035",
+    "viewport": "63e330f75babe42768940814d0c5c83481b8d149e93382b56c6ee1875a107e5d"
+  },
+  "retainedDocumentFinds": 1,
+  "retainedViewportOpens": 1,
+  "returnedBlobSHA": null,
+  "returnedCommitSHA": null,
+  "sourceBranch": "main",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.REACT.FLIGHT.PRIMARY.RAW.DOCUMENT.PARTIAL.20261123"
+  ],
+  "sourceContentType": "text/plain",
+  "sourceCrawledLabel": "today",
+  "sourceReady": false,
+  "sourceRepository": "facebook/react",
+  "sourceTotalLinesAnnounced": 5624,
+  "sourceURL": "https://raw.githubusercontent.com/facebook/react/main/packages/react-client/src/ReactFlightClient.js",
+  "status": "PARTIAL",
+  "tipsterGET": 0,
+  "underlyingHTTPCount": null
+}

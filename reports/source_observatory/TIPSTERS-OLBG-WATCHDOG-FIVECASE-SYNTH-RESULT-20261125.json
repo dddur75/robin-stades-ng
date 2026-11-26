@@ -1,0 +1,31 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.WATCHDOG.FIVECASE.SYNTH.RESULT.20261125",
+  "status": "TARGETED_SYNTHETIC_PASS_NO_NATIVE_SOURCE_PROOF",
+  "scope": "One Python unittest method covering five FakePopen paths; no real provider request or child process spawned by the test.",
+  "observedAt": "2026-11-25T00:11:26.791Z",
+  "author": "C3",
+  "reviewers": [
+    "C0",
+    "C4"
+  ],
+  "helperSHA256": "15a7c22f2b26d600d7d9da554fe782a3c63da32c539691f4ee7e43518254a559",
+  "testSHA256": "eb2e07ffc73bedf9696822e791e90195ff034b743e44d9ce59e5d453d57a0cd7",
+  "primarySHA256": "f93ca8018be0d6a5f59907c5ac7e291524d47578431553d67cc5062914a76f83",
+  "resultSHA256": "a45520a9ccdf5cfe44135e3c2c1b5d01f96feb9bbcdd7a35e81229773f8b42de",
+  "stopSHA256": "730471fb58230cf126448f02dcf233c373867e03b24f586339d1082299af68ff",
+  "exit": 0,
+  "passedMethods": 1,
+  "syntheticCases": 5,
+  "sourceGET": 0,
+  "realChildrenSpawnedByTest": 0,
+  "limitations": [
+    "No Windows physical subtree termination proof",
+    "No strict hard-stop within 70 seconds: bounded cleanup may add delay",
+    "No native TLS or Source authorization proof"
+  ],
+  "sourceReady": false,
+  "automaticAdmissions": false,
+  "allCompatibleIntegrated": false,
+  "fakePopenCallsProposed": 9,
+  "authorityConformity": "NOT_ATTESTED: C4 prior opinion was STATIC_ONLY; factual test acceptance does not confer retrospective Council authority."
+}

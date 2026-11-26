@@ -1,0 +1,34 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.NETWORK.CA.R2.RESULT.20261121",
+  "status": "STRICT_TLS_VERIFIED_ONLY_GLOBAL_DELIVERY_PARTIAL",
+  "scope": "Exact spent zero-HTTP network diagnostic. DNS, TCP and TLS finished with default strict verification plus the pinned installed CA snapshot in RAM. No source content or collection capability established.",
+  "observedAt": "2026-11-21T15:08:02.594261+00:00",
+  "outcome": "TLS_ONLY_NO_HTTP",
+  "failureCode": "NONE",
+  "verifyCode": null,
+  "caBundleSHA256": "2ef52ad56b4803e264045c915e55c236cbfa045b84b81efefc218a19eb44bd2b",
+  "grantConsumed": true,
+  "receiptRawSHA256": {
+    "result.json": "ff2c44c12e3d327b950e757a6acffe50f627471554a7482783e9901a331310d8",
+    "events.jsonl": "8a357a87cf70fe6003a77739fed7d201c70ca92edd931ce961fa2b5ce73d6487",
+    "spent.json": "d129d4202d9919dd24bab5632d54bcbcdce4e68d52b401012f32e5f8fd14d519"
+  },
+  "validLinkedRecords": 8,
+  "DNSFinished": true,
+  "TCPFinished": true,
+  "TLSFinished": true,
+  "addressFamily": 6,
+  "addressCount": 2,
+  "allAddressesGlobal": true,
+  "httpOperations": 0,
+  "applicationContentRead": 0,
+  "priorHTTPReservationsConsumed": 2,
+  "priorFailuresPreserved": true,
+  "overrunMarkerPresent": false,
+  "rootCertificateCause": "UNKNOWN",
+  "retryAuthorityCreated": false,
+  "verifiedBy": [
+    "C0",
+    "C4"
+  ]
+}

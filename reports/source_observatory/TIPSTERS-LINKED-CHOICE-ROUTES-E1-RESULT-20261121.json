@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-11-21T00:49:48.396214+00:00",
+  "schemaVersion": "robin-linked-route-result-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.LINKED.CHOICE.ROUTES.E1.RESULT.20261121",
+  "missionId": "ROBIN-LINKED-CHOICE-ROUTES-E1V2-20261121",
+  "status": "PARTIAL_NO_PERSONAL_CHOICE_ADMITTED",
+  "requests": 4,
+  "activeMilliseconds": 6203,
+  "qualificationUnits": 300,
+  "resultSha256": "d0f1795e01c0c0e6aeb7889d72ab8af8ebe978ed807df0623d3508ed3e226921",
+  "journalSha256": "b730f3de7ec59e6d4d1b7c3e63c74d5f718d74ce899fd92728ec9df0ae6502e8",
+  "journalHead": "e0321b78966dba34fb62dc0b916c6843b11a79fadabe0a092aa1813c59d0a3d2",
+  "coteur": {
+    "status": 200,
+    "bytes": 107276,
+    "responseSha256": "321db706d1b03ad6b1be61cc646c82804d2a667f1d32e63db1f0967b94e063a9",
+    "pageOwnerHint": "jamakom",
+    "tables": 0,
+    "jsonDocuments": 0,
+    "records": 0,
+    "APIRobotsNotBlocked": true,
+    "ajaxForbidden": true,
+    "APIGrant": false
+  },
+  "notbetting": {
+    "state": "TRANSPORT_SIZE_LIMIT_BEFORE_PARSER",
+    "acceptedBodyCap": 2000000,
+    "fullResponseHash": null,
+    "fullResponseBytes": null
+  },
+  "admittedChoices": 0,
+  "accountOrPurchaseNecessityEstablished": false,
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

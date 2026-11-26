@@ -1,0 +1,25 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI260.HEAD.FORMAT.CORRECTION.20261122",
+  "recordedAt": "2026-11-22T16:43:08.857Z",
+  "status": "APPEND_ONLY_HEAD_REPRESENTATION_CORRECTION",
+  "scope": "The original CI260 receipt retained the complete commit receipt object in head instead of its string member. Its head.head and owning code_revision already identify the exact verified commit. Preserve original evidence and append the canonical string; no result or source observation changed.",
+  "correctedClaim": "ENG.SOURCE_OBSERVATORY.CI260.EXACT.HEAD.RESULT.20261122",
+  "head": "e6fa8e817665f0c54daeab248e13a495af6d3799",
+  "originalHeadValue": {
+    "closedAt": "2026-11-22T16:06:13.217941+00:00",
+    "head": "e6fa8e817665f0c54daeab248e13a495af6d3799",
+    "tree": "e5f8d5dcc47bebaae05c525d55f65c70b2c7c864"
+  },
+  "runId": 45041959811,
+  "runNumber": 260,
+  "counts": {
+    "total": 17,
+    "success": 17,
+    "failure": 0,
+    "incomplete": 0
+  },
+  "newCIReads": 0,
+  "newSourceGET": 0,
+  "retests": 0,
+  "independentReview": "Underlying exact hash and CI terminal primaries reviewed C3/C4; representation correction only, no factual conclusion change."
+}

@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "robin-passive-hydration-authority-v1",
+  "claimId": "GOV.SOURCE_OBSERVATORY.PASSIVE.HYDRATION.E1V2.20261120",
+  "generatedAt": "2026-11-20T20:38:14.495627+00:00",
+  "status": "ONE_BOUNDED_DIAGNOSTIC_RUN_NOT_ADMISSION",
+  "planSha256": "d48dd8c264dd0b330ea1bcc7815538a2d7a9b1b3faabff495106f4d2f3498c68",
+  "manifestSha256": "b58ee10e368ba65db9609956c232f2e1c52b31d46bbe2fb6cfa03d4be0094b57",
+  "stage": "E1",
+  "priorQualificationUnits": 148,
+  "newDiagnosticGETMax": 4,
+  "qualificationLineageProjectedMax": 152,
+  "fixedProfiles": 2,
+  "profileGETMax": 2,
+  "robotsGETMax": 2,
+  "activeSecondsMax": 300,
+  "requestSecondsMax": 12,
+  "supervisedChildSecondsMax": 110,
+  "expiresAt": "2026-11-20T21:15:00Z",
+  "redesign": "Passive decoding of page-embedded JSON transport and factual table columns, distinct from the prior generic DOM approach. No source link, asset or API followed and no JavaScript executed.",
+  "parserSha256": "6db87a1d044b916afd60c4848085b31af5e50082c68ec93424ab6e1b1a37513e",
+  "retention": {
+    "rawBodies": false,
+    "analysis": false,
+    "contacts": false,
+    "tableValues": "closed factual header list only; unknown columns shape only; explicit omissions"
+  },
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "admittedChoices": 0,
+  "newTasks": 0,
+  "sourceAPI": 0,
+  "auth": 0,
+  "purchases": 0,
+  "previousUnexecutedPacket": {
+    "GET": 0,
+    "manifestSha256": "d9b5a149b88e17f2ec9ce571555c5b8df2046124b2a8e4df67e8e4a05b3c2199",
+    "planSha256": "613aa441653d27563e619faae17aeafd8e4cd6d09620e278a78389ad8b122b9f",
+    "reason": "Retain table values only under explicit factual headers; unknown/prose/contact columns are structure only, with omissions recorded.",
+    "tasks": 0
+  },
+  "limits": [
+    "A matching owner value is not personal attribution or pre-match proof.",
+    "Existing campaigns, budgets and private executed ledgers remain unchanged.",
+    "Global source integration remains partial."
+  ]
+}

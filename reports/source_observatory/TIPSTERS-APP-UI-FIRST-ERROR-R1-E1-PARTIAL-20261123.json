@@ -1,0 +1,22 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.APP.UI.FIRST.ERROR.R1.E1.PARTIAL.20261123",
+  "missionId": "SOURCE_OBSERVATION_UI_FIRST_ERROR_R1_20261123",
+  "status": "PARTIAL_CODE_REDACTION_REJECTED_NO_EXECUTION",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Private diagnostic rejected before browser execution: stack message header could masquerade as arbitrary local module path. No browser/API/source effects. Closed successor must ignore header and allow only exact pinned static modules.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.APP.UI.CANARY.LOCAL.R3.ACTUAL.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.UI.CANARY.FIX.PRIVATE.CODE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.WARM.FINAL.BINDING.R3.ACTUAL.API.RESULT.20261123"
+  ],
+  "codeSHA": "a4eb32134ba7058573dc4ce973c88ef3f6bf36db859f4e3d6fe5c065253065c0",
+  "redExit": 1,
+  "greenCases": 3,
+  "browser": 0,
+  "physicalAPI": 0,
+  "sourceGET": 0
+}

@@ -1,0 +1,82 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.PL.CLAUSE.CONTEXT.LOCAL.R1.ACTUAL.RESULT.20261124",
+  "missionId": "TELEGRAM_BEXTRA_PL_CLAUSE_CONTEXT_LOCAL_R1_20261124",
+  "status": "PASS_AND_HOLD",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PL.CLAUSE.PRIVATE.CODE.E1.RESULT.20261124",
+    "DATA.SOURCE_OBSERVATORY.PREMIERLEAGUE.NOVEMBER.FUTURE.GMT.PROGRAMME.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.CHANNEL.CANDIDATES.LOCAL.E1.ACTUAL.RESULT.20261123"
+  ],
+  "scope": "Independent actual metadata only from one cached comparison of four channel candidate clauses with ten official exact PL label pairs. No fresh collection, canonical fixture, personal identity or prematch admission.",
+  "sourceReady": false,
+  "admissions": 0,
+  "authorityClosed": true,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "sourceObservedAtUTC": "2026-11-23T21:58:18.320357+00:00",
+  "closedAtUTC": "2026-11-24T08:43:46.645269+00:00",
+  "context": {
+    "actualWhistle": false,
+    "admissible": false,
+    "admissions": 0,
+    "aliasesAdded": false,
+    "applicationAdmission": false,
+    "candidateCount": 4,
+    "canonicalFixture": null,
+    "classificationCounts": {
+      "AMBIGUOUS": 0,
+      "NONE": 4,
+      "UNIQUE": 0,
+      "UNPROVEN": 0
+    },
+    "fixtureCount": 10,
+    "globalCoverage": "UNKNOWN",
+    "headerAssociationAllowed": false,
+    "literalPatternsExamined": 80,
+    "nativeUTCProof": false,
+    "personIdentityVerified": false,
+    "preMatchProven": false,
+    "programmeOnly": true,
+    "programmeTimezone": "GMT",
+    "programmeUTCProof": true,
+    "recordFixturePairsExamined": 40,
+    "schemaVersion": "telegram-pl-clause-context-v1",
+    "sourceGET": 0,
+    "sourceReady": false,
+    "status": "OFFICIAL_LABELPAIR_CONTEXT_ONLY"
+  },
+  "counts": {
+    "codeReads": 1,
+    "dependentCodeReads": 9,
+    "network": 0,
+    "newHelperCalls": 1,
+    "payloadReads": 3,
+    "projectorCalls": 8,
+    "spawn": 0
+  },
+  "receiptSHA256": "f6df35e053e93d560824d7216ee456b8a1431d01973577df0a58c432c92956b8",
+  "resultSHA256": "6008c378982e1b6655aa77606f84f19fa19a5daac113e5d74bd5eb6dfc57cf49",
+  "stop": {
+    "hash": "b86dddae0ce4166772b77d609de51fb686bd233039e323fc7d30e168d02fbf89",
+    "date": "2026-11-24T08:43:47.961121+00:00",
+    "authorityClosed": true,
+    "retry": false
+  },
+  "process": {
+    "exit": 0,
+    "stderrEmpty": true,
+    "sourceGET": 0,
+    "sourcePayloadMutations": 0
+  },
+  "limits": [
+    "NONE4 means no oriented exact official-label pair occurs within these four specific clauses. It proves no global absence of PL forecasts or source coverage.",
+    "ProgrammeUTCProof is documentary GMT only. NativeUTCProof, personIdentityVerified, preMatchProven, admissible, sourceReady and applicationAdmission remain false; canonicalFixture null.",
+    "codeReads1 is included in total dependentCodeReads9; eight tracked calls include one new helper call.",
+    "Actual private values remain outside Git and model logs. Source observation remains Nov23, not current collection freshness."
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "robin-local-app-recette-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.COTEUR.NATIVE.PROFILES.APP.ADMISSION.20261126",
+  "sourceClaimId": "DATA.SOURCE_OBSERVATORY.COTEUR.NATIVE.BOUNDED.CAPTURE.20261126",
+  "status": "PASS_LOCAL_APP_ONLY_GLOBAL_PARTIAL",
+  "scope": "Actual local3APIreadbacksand2UIflows;Coteur280sourcefichesand2nativeprematchticketcomponentsfromoneaccount.",
+  "asOf": "2026-11-26T04:10:06.923Z",
+  "missionId": "COTEUR_NATIVE_PROFILES_LOCAL_APP_E2_20261126",
+  "counts": {
+    "totalChoices": 812,
+    "totalFiches": 673,
+    "totalAdminResults": 57,
+    "coteurFiches": 280,
+    "addedFiches": 259,
+    "updatedFiches": 21,
+    "coteurPrematchComponents": 2,
+    "coteurPrematchSourceAccounts": 1,
+    "retainedCoteurTickets": 2744,
+    "retainedCoteurNativeComponents": 6524,
+    "coteurProfilesWithNovember2026Contest": 103
+  },
+  "runtime": {
+    "origin": "http://127.0.0.1:4173",
+    "pid": 44752,
+    "oldPID": 26196,
+    "ownedRestarts": 1,
+    "controllerExit": 0,
+    "controllerSeconds": 1.7026832,
+    "pipeReadCompletion": "PIPE_NOT_CLOSED_RETAINED",
+    "expiresAt": "2026-11-27T02:00:00.000Z"
+  },
+  "checks": {
+    "apiHTTP200": 3,
+    "uiFlows": 2,
+    "uiStatus": "PASS_LOCAL_UI",
+    "uiErrors": 0,
+    "oldChoicesExact": 810,
+    "oldAdminResultsExact": 56,
+    "nonCoteurFichesExact": 393
+  },
+  "evidence": {
+    "actualReceiptSHA256": "4a49a8fdf407ffd9002828f6216c81350b0e97af1b27fdd3abdad7486eeb909b",
+    "packetSHA256": "210bd45a630cdf7e8f0317c8be3a3281bd9fa598f2ed90d8d156b5600e85ddac",
+    "artifactIndexSHA256": "5d2630e756c8229020e5523681251e5514d986963510fcbb264de13a53d8716c",
+    "apiReceiptSHA256": "4a6b5bbd7826d670f904495ea5e3e18b0a4190ae10cfb9e4e45f9654f709c48b",
+    "uiReceiptSHA256": "23b6cc3954f2c7595791e282eeeaf6b449c7a9ba48c488e481522f6c84e5abd5",
+    "bindingSHA256": "9cd2638d67a5761c711b879a5f37553ae1f6a1d185352686b3489a440bb4f152",
+    "grantHash": "6fd0ffd649f48b7718af0c47dc6f87c3f866c188d179da9cf57ca81500e25db3",
+    "manifestSHA256": "250fa8d099b56030df06a8eaf455f9b1d1958db5249875ffdb2de0645525e58f"
+  },
+  "SourceGETDuringAPP": 0,
+  "TaskMutationsDuringAPP": 0,
+  "limitations": [
+    "Local capture and projection only; Coteur recurrence not activated.",
+    "Only two native ticket components, from one source account, proved before kickoff. Archived or unmatched components excluded.",
+    "App approval and existing Kicktipp dependency expire2026-11-27T02:00:00Z.",
+    "OLBG03:35Z scheduled launch ended LastTaskResult1; causeunknown, never rerun.",
+    "Global all-compatible-source delivery remainsPARTIAL."
+  ],
+  "globalDelivery": "PARTIAL",
+  "allCompatibleIntegrated": false
+}

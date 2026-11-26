@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-11-23T08:34:05.404Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.IPV4.CALLER.CLOSURE.LOCAL.RESULT.20261123",
+  "missionId": "TELEGRAM_IPV4_CALLER_CLOSURE_E1_20261123",
+  "status": "LOCAL_MODULE_CLOSURE_VERIFIED",
+  "scope": "Five tiny cases load real pinned observer/REP/transport/CA and run actual collect/pipeline with fake responses. Four authority control records are RAM-only synthetic. Actual observer scans3/REPpolicy2/TLScontext strict; no real network/handshake/policy/Job execution or SOURCE grant.",
+  "keys": [
+    "C0",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.IPV4.STRICT.TRANSPORT.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.IPV4.STRICT.CALLER.PRIVATE.PARTIAL.20261123"
+  ],
+  "authorStatus": "STOP",
+  "authorizedAt": "2026-11-23T08:32:05.110951+00:00",
+  "frozenAt": "2026-11-23T08:32:27.587Z",
+  "stoppedAt": "2026-11-23T08:32:27.587Z",
+  "workerSHA256": "7574f3ce5f1ca92f3ec2e496a91595af467c99ac9a5d91db9def366476b53b40",
+  "testSHA256": "e47f7b7b9acc150cb6a4bdb2c9da8e472d87d884b81a044ce5e7d1e32ef3a30b",
+  "primarySHA256": "b6d17e302152cfbb0ea90dda7df776276e385c60ac9003afda6a18ad88aac13d",
+  "quality": 0,
+  "sourceGET": 0,
+  "network": 0,
+  "sourceControls": "RAM_SYNTHETIC_ONLY",
+  "nativeJobRun": false,
+  "testsPassed": 5,
+  "testsExit": 0,
+  "sourceReady": false
+}

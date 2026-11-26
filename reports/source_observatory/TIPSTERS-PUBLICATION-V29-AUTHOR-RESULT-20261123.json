@@ -1,0 +1,34 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.PUBLICATION.V29.AUTHOR.RESULT.20261123",
+  "missionId": "SOURCE_OBSERVATION_PUBLICATION_FINAL_BINDING_R1_20261123",
+  "status": "PARTIAL_CI266_PORTABILITY_FAILED",
+  "scope": "C0 author-observed publication facts only, pending independent acceptance. One commit/nonforcepush54bee66 and one draftPR133 metadata update completed before original expiry. CI266 terminal13success4failure; three direct portability failures and failed aggregate, exact immutable ledger1993 five testreceipt paths. No source/forecast/full application qualification. Last effect remote PR timestamp19:14:53Z precedes expiry19:15:06.732Z; formal control recording is later and creates no renewed authority.",
+  "keys": [
+    "C0"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V29.ENGINEERING.RECETTE.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.SCHEMA.NATIVE.R1.PUBLIC.PROJECTION.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.UI.ADMIN.ROWS.REDESIGN.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.PUBLIC.VERIFICATION.STATUS.REPAIR.R1.20261123",
+    "ENG.SOURCE_OBSERVATORY.STATUS.REPAIR.PUBLICATION.R1.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.PUBLIC.LIBRARY.RESULT.20261123"
+  ],
+  "commit": "54bee6609d52630fb281bd574d7ee7dff680aaa5",
+  "parent": "93e7ea9dd14715f4a99a58ecc8c049ed95ab83db",
+  "tree": "95df659a20e23f5dfc136614538ab0a07737ba7f",
+  "GitCommit": 1,
+  "GitPush": 1,
+  "PRMetadataUpdates": 1,
+  "lastPushClosedAt": "2026-11-23T19:14:16.926Z",
+  "remotePRUpdatedAt": "2026-11-23T19:14:53Z",
+  "authorityExpiredAt": "2026-11-23T19:15:06.732Z",
+  "ciRun": 45246820098,
+  "ciRunNumber": 266,
+  "ciSuccessJobs": 13,
+  "ciFailureJobs": 4,
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "allCompatibleIntegrated": false,
+  "overallStatus": "PARTIAL"
+}

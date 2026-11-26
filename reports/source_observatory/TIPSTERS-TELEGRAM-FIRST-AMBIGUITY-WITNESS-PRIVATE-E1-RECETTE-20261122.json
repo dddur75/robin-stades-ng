@@ -1,0 +1,34 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.FIRST.AMBIGUITY.WITNESS.PRIVATE.E1.RECETTE.20261122",
+  "recordedAt": "2026-11-22T17:33:35.483Z",
+  "status": "SYNTHETIC_METADATA_OBSERVER_VERIFIED_NO_NATIVE_CAUSE",
+  "scope": "Private observer for first false-to-true parser ambiguity, preserving frozen R4 classification. Only closed reason/tag enums, callback ordinal, bounded stack flags and booleans; no message/body/native attribute/text/identity value retained. Three synthetic fragments prove unchanged diagnostics and no poison-literal leakage. No real page read and no Telegram source fix established.",
+  "missionId": "TELEGRAM_FIRST_AMBIGUITY_WITNESS_PRIVATE_E1_20261122",
+  "planSHA256": "cfc2a14cdaa45e75234523977d0f026cd60c1c367244223c1a13f678262147f3",
+  "manifestSHA256": "4edbb3c7d38429c5bb33ad802dab0469194f4a4655be7581d03a0fb51471d8b8",
+  "baseSHA256": "ee51c891992806632729986b77ab3d2095dae74ff9bd18b21827beae15c18d14",
+  "codePins": {
+    "observer": "73cb43abf6429e279be55cee13e6d9d0b7dad4d79e5b1175b6c94401fd84bd47",
+    "test": "1ee498492457ca64ea8e682a44775fc94e6e8b0ed07c63285eca0cc9dc673db5"
+  },
+  "branchesInstrumented": 8,
+  "syntheticFragments": 3,
+  "diagnosticsEquivalent": true,
+  "poisonLiteralsAbsent": true,
+  "stackFramesMax": 12,
+  "outputBytesMax": 8192,
+  "criticalLintExit": 0,
+  "sourceGET": 0,
+  "realBodyReads": 0,
+  "TaskChanges": 0,
+  "appChanges": 0,
+  "GitPush": 0,
+  "nativeCause": "UNKNOWN",
+  "messageCollectionQualified": false,
+  "sourceAuthority": false,
+  "independentReview": {
+    "C3": "Code/base hashes/8branch mapping includingFINISH, no locals/text/attrs, retained three-case equivalence/poison and lint PASS. No rerun.",
+    "C4": "Exact private scope/privacy/bounds and synthetic-only findings PASS, no native fix/license/source grant."
+  },
+  "globalDelivery": "PARTIAL"
+}

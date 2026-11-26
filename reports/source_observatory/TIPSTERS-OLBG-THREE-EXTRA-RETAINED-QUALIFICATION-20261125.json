@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "robin-retained-data-qualification-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.THREE.EXTRA.RETAINED.QUALIFICATION.20261125",
+  "missionId": "OLBG_THREE_ADDITIONAL_R1D_RETAINED_QUALIFICATION_20261125",
+  "scope": "Three additional individual profiles acquired once, forty-six retained facts qualified with the previously approved nineteen-fixture context; original observation fields preserved.",
+  "status": "VERIFIED_RETAINED_DATA_QUALIFICATION_APP_PENDING",
+  "sourceGET": 9,
+  "nativeJobs": 3,
+  "retainedFacts": 46,
+  "qualifiedNewUnique": 10,
+  "authorsWithNewChoices": 3,
+  "sourceJobsClosed": true,
+  "qualificationSourceGET": 0,
+  "APP": 0,
+  "testSuiteRuns": 0,
+  "newTests": 0,
+  "allCompatibleIntegrated": false,
+  "globalDelivery": "PARTIAL",
+  "sourceResultHashes": [
+    "7ea98c998be810f00511fd9004533ce5530eb8e28820940bc4640ee7a45a04fb",
+    "5ce92fc7dc6c7487a728aef98a940fda57edcf0b914bff71269c2a345a857a4e",
+    "58da48cf8df97b2e314d26a46572d9dd88c12fe4dbdb2e0fdebb54b0372d7803"
+  ],
+  "qualificationResultSHA256": "7fd9c5060846cd7861d7141b0f781f3ee1bb94f4a3bca4b74425965b7da84c6c",
+  "calendarContextSHA256": "89a95c97cb71b82cfedcf978831a0e25e4110e16266efb01e1d289f1eaa567b1",
+  "omittedNativeRecords": 3
+}

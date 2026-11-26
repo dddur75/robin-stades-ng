@@ -1,0 +1,51 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.NATIVE.FIELD.SHAPES.PRIVATE.CODE.E1.RESULT.20261124",
+  "missionId": "NOTBETTING_NATIVE_FIELD_SHAPES_PRIVATE_E1_20261124",
+  "status": "PASS_AND_HOLD",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Independent private synthetic classifier facts only. Exact bounded API reports literal shapes without values or business meaning; no real pending data read or source authority.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PL.NATIVE.R2.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CACHED.DELIMITER.LOCAL.R1.ACTUAL.RESULT.20261124"
+  ],
+  "helperSHA256": "fe5baafc81f8dd44f53a0493dcb92f26cb0675c7b6d5fa0bbc020fc62e938944",
+  "testSHA256": "aae059532e7d3bead84c90f744ed89a44b9999a1020002cfc34f79162ea3e940",
+  "resultSHA256": "322a3983753a74d779cc56e0b17b9e247ddccbea5723b9585bcba12227b6e9a4",
+  "synthetic": {
+    "uniqueMethods": 4,
+    "methodExecutions": 5,
+    "helperInvocations": 19,
+    "RED": 1,
+    "GREEN": 18,
+    "countersPersistFinally": true
+  },
+  "quality": {
+    "ruffFiles": 2,
+    "ruffExit": 0,
+    "mypyHelperStrictExit": 0,
+    "RAMCompiled": 2
+  },
+  "rootLaunchedProcesses": 11,
+  "privateFilesIncludingRootControls": 12,
+  "actualAuthorStoppedAtUTC": "2026-11-24T09:45:03.975017+00:00",
+  "effectiveAuthorDeadline": "2026-11-24T09:47:50.152497+00:00",
+  "sourceGET": 0,
+  "actualProviderPayloadReads": 0,
+  "sourceReady": false,
+  "admissions": 0,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "limits": [
+    "SYNTHETIC_ONLY",
+    "Shape enum proves no field meaning/fixture/KO/publication/timezone semantics",
+    "FLIGHT_REFERENCE_LIKE is unverified lexical resemblance; no resolution",
+    "BRACKETED_JSON_TEXT checks bracket boundary only; no JSON validity claimed",
+    "No real pending or programme/page read",
+    "mypy helper only",
+    "No LOCAL/SOURCE authority"
+  ]
+}

@@ -1,8 +1,77 @@
 from __future__ import annotations
 
+import hashlib
 import json
+from pathlib import Path
 
+import scripts.check_no_tracked_absolute_paths as candidate_checker
 from scripts.check_no_tracked_absolute_paths import find_forbidden_absolute_paths
+
+
+def sealed_authorization_line() -> str:
+    path = Path(__file__).resolve().parents[2] / "reports/council/decision-ledger.jsonl"
+    line = path.read_text(encoding="utf-8").splitlines()[460]
+    assert json.loads(line)["decision_id"] == "RCV3-20261120-NT-E1-LEGAL-AUTHORIZED"
+    return line
+
+
+def scan_sealed(line: str, path: str = "reports/council/decision-ledger.jsonl"):
+    return find_forbidden_absolute_paths("\n" * 460 + line, path=path)
+
+
+def canonical_record(record: dict) -> str:
+    record["hash"] = hashlib.sha256(
+        json.dumps(
+            {k: v for k, v in record.items() if k != "hash"},
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+    ).hexdigest()
+    return json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+
+def test_exact_immutable_authorization_file_locators_have_one_narrow_exception() -> None:
+    assert scan_sealed(sealed_authorization_line()) == []
+
+
+def test_copy_of_the_immutable_record_at_another_line_or_file_is_rejected() -> None:
+    line = sealed_authorization_line()
+    findings = scan_sealed(line + "\n" + line)
+    assert findings and all(f.line == 462 for f in findings)
+    assert scan_sealed(line, path="reports/other.jsonl")
+
+
+def test_immutable_exception_rejects_modified_or_rehashed_values() -> None:
+    line = sealed_authorization_line()
+    for recompute in [False, True]:
+        record = json.loads(line)
+        record["context"]["files"][1] += ".changed"
+        changed = (
+            canonical_record(record) if recompute else json.dumps(record, separators=(",", ":"))
+        )
+        assert scan_sealed(changed)
+
+
+def test_immutable_exception_never_allows_third_path_other_field_or_other_decision() -> None:
+    line = sealed_authorization_line()
+    for kind in ["third", "other_field", "decision", "moved"]:
+        record = json.loads(line)
+        if kind == "third":
+            record["context"]["files"].append(record["context"]["files"][1] + ".new")
+        elif kind == "other_field":
+            record["proposal"] = record["context"]["files"][1]
+        elif kind == "decision":
+            record["decision_id"] = "RCV3-UNREVIEWED"
+        else:
+            record["context"]["files"][1:3] = list(reversed(record["context"]["files"][1:3]))
+        assert scan_sealed(canonical_record(record))
+
+
+def test_semantically_identical_but_noncanonical_or_moved_line_is_rejected() -> None:
+    line = sealed_authorization_line()
+    assert scan_sealed(line.replace(":", ": ", 1))
+    assert find_forbidden_absolute_paths(line, path="reports/council/decision-ledger.jsonl")
 
 
 def managed_worktree(
@@ -192,3 +261,211 @@ def test_worktree_field_outside_append_only_ledger_remains_rejected() -> None:
     )
 
     assert any(finding.category == "WINDOWS_ABSOLUTE_PATH" for finding in findings)
+
+
+# New immutable-publication receipt regression; no provider corpus is loaded.
+
+
+def publication_line() -> str:
+    root = Path(__file__).resolve().parents[2]
+    assert (
+        Path(candidate_checker.__file__).resolve()
+        == root / "scripts/check_no_tracked_absolute_paths.py"
+    )
+    return (
+        (root / "reports/council/decision-ledger.jsonl")
+        .read_text(encoding="utf-8")
+        .splitlines()[1992]
+    )
+
+
+def scan_publication(
+    line: str, *, number: int = 1993, path: str = "reports/council/decision-ledger.jsonl"
+):
+    return find_forbidden_absolute_paths("\n" * (number - 1) + line, path=path)
+
+
+def test_exact_publication_test_receipt_values_are_sealed() -> None:
+    passed = not scan_publication(publication_line())
+    assert passed, "EXACT_PUBLICATION_RECEIPTS_NOT_MASKED"
+
+
+def test_publication_copy_wrong_line_and_file_are_rejected() -> None:
+    line = publication_line()
+    assert scan_publication(line, number=1994)
+    assert scan_publication(line, path="reports/other.jsonl")
+
+
+def test_publication_mutations_remain_rejected() -> None:
+    for mutation in ("id", "hash", "value", "order", "sixth", "other", "newrecord"):
+        record = json.loads(publication_line())
+        values = record["context"]["targeted_tests"]
+        if mutation == "id":
+            record["decision_id"] = "UNREVIEWED"
+        elif mutation == "hash":
+            record["hash"] = "0" * 64
+        elif mutation == "value":
+            values[0] += ".changed"
+        elif mutation == "order":
+            values.reverse()
+        elif mutation == "sixth":
+            values.append(values[0] + ".sixth")
+        elif mutation == "other":
+            record["proposal"] = values[0]
+        else:
+            record = {"decision_id": "NEW", "context": {"targeted_tests": values}}
+        changed = (
+            json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+            if mutation == "hash"
+            else canonical_record(record)
+        )
+        assert scan_publication(changed)
+    record = json.loads(publication_line())
+    record["context"]["targeted_tests"][0] += ".changed"
+    assert scan_publication(
+        json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    )
+    assert scan_publication(publication_line().replace(":", ": ", 1))
+
+
+def test_publication_masks_only_five_string_interiors() -> None:
+    line = publication_line()
+    masked = candidate_checker._mask_sealed_publication_test_values(line, 1993)
+    expected = line
+    values = json.loads(line)["context"]["targeted_tests"]
+    for value in values:
+        encoded = json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+        assert expected.count(encoded) == 1
+        expected = expected.replace(encoded, '"' + " " * (len(encoded) - 2) + '"', 1)
+    assert masked == expected
+    assert len(masked) == len(line)
+
+
+def audit_lines():
+    root = Path(__file__).resolve().parents[2]
+    lines = (root / "reports/council/decision-ledger.jsonl").read_text(encoding="utf8").splitlines()
+    return [(seal, lines[seal["line"] - 1]) for seal in candidate_checker.SEALED_LOCAL_AUDIT_VALUES]
+
+
+def test_local_audit_exact_seals_mask_only_one_string_interior():
+    for seal, line in audit_lines():
+        encoded = json.dumps(
+            json.loads(line)["context"][seal["field"]], ensure_ascii=False, separators=(",", ":")
+        )
+        assert line.count(encoded) == 1
+        expected = line.replace(encoded, '"' + " " * (len(encoded) - 2) + '"', 1)
+        assert candidate_checker._mask_sealed_local_audit_value(line, seal["line"]) == expected
+        assert not scan_publication(line, number=seal["line"])
+
+
+def test_local_audit_copies_other_lines_files_and_noncanonical_refused():
+    for seal, line in audit_lines():
+        assert scan_publication(line, number=seal["line"] + 1)
+        assert scan_publication(line, number=seal["line"], path="reports/other.jsonl")
+        assert scan_publication(line.replace(":", ": ", 1), number=seal["line"])
+
+
+def test_local_audit_rehashed_mutations_and_new_paths_refused():
+    for seal, line in audit_lines():
+        for mutation in ("value", "decision", "hash", "extra", "moved"):
+            record = json.loads(line)
+            if mutation == "value":
+                record["context"][seal["field"]] += ".changed"
+            elif mutation == "decision":
+                record["decision_id"] = "NEW-UNREVIEWED"
+            elif mutation == "hash":
+                record["hash"] = "0" * 64
+            elif mutation == "extra":
+                record["proposal"] = record["context"][seal["field"]]
+            else:
+                record["proposal"] = record["context"].pop(seal["field"])
+            changed = (
+                json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+                if mutation == "hash"
+                else canonical_record(record)
+            )
+            assert scan_publication(changed, number=seal["line"])
+
+
+# Exact historical audit spans: no provider corpus or network access.
+def current_audit_lines():
+    root = Path(__file__).resolve().parents[2]
+    lines = (root / candidate_checker.LEDGER_PATH).read_text(encoding="utf8").splitlines()
+    return [(seal, lines[seal["line"] - 1]) for seal in candidate_checker.SEALED_CURRENT_AUDIT_SPANS]
+
+
+def test_current_audit_exact_spans_preserve_every_other_byte():
+    rows = current_audit_lines()
+    assert len(rows) == 51
+    assert sum(len(seal["fields"]) for seal, _ in rows) == 52
+    duplicates = 0
+    for seal, line in rows:
+        masked = candidate_checker._mask_sealed_current_audit_spans(line, seal["line"])
+        assert len(masked) == len(line)
+        source, actual = json.loads(line), json.loads(masked)
+        expected = json.loads(line)
+        for field in seal["fields"]:
+            parent = expected
+            for key in field["path"][:-1]:
+                parent = parent[key]
+            key = field["path"][-1]
+            encoded = json.dumps(parent[key], ensure_ascii=False, separators=(",", ":"))
+            parent[key] = " " * (len(encoded) - 2)
+        assert masked == json.dumps(expected, ensure_ascii=False, separators=(",", ":"))
+        assert actual["context"]["worktree"] == source["context"]["worktree"]
+        if source["context"].get("controllerWorktree") == source["context"]["worktree"]:
+            duplicates += 1
+        assert not scan_publication(line, number=seal["line"])
+    assert duplicates == 6
+
+
+def test_current_audit_wrong_line_file_and_noncanonical_are_refused():
+    for seal, line in current_audit_lines():
+        assert scan_publication(line, number=seal["line"] + 1)
+        assert scan_publication(line, number=seal["line"], path="reports/other.jsonl")
+        assert scan_publication(line.replace(":", ": ", 1), number=seal["line"])
+
+
+def test_current_audit_rehashed_mutations_cannot_reuse_a_seal():
+    for seal, line in current_audit_lines():
+        for mutation in ("value", "decision", "hash", "extra", "moved"):
+            record = json.loads(line)
+            field = seal["fields"][0]
+            parent = record
+            for key in field["path"][:-1]:
+                parent = parent[key]
+            key = field["path"][-1]
+            if mutation == "value":
+                parent[key] += ".changed"
+            elif mutation == "decision":
+                record["decision_id"] = "NEW-UNREVIEWED"
+            elif mutation == "hash":
+                record["hash"] = "0" * 64
+            elif mutation == "extra":
+                record["proposal"] = parent[key]
+            else:
+                record["proposal"] = parent[key]
+                parent[key] = "reports/moved"
+            changed = (
+                json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+                if mutation == "hash"
+                else canonical_record(record)
+            )
+            assert candidate_checker._mask_sealed_current_audit_spans(changed, seal["line"]) == changed
+            assert scan_publication(changed, number=seal["line"])
+
+
+def test_current_audit_two_array_spans_are_atomic_and_order_bound():
+    seal, line = next((s, line) for s, line in current_audit_lines() if len(s["fields"]) == 2)
+    for mutate in ("reverse", "append", "onevalue"):
+        record = json.loads(line)
+        values = record["context"]["files"]
+        if mutate == "reverse":
+            values.reverse()
+        elif mutate == "append":
+            values.append(values[0])
+        else:
+            values[0] += ".changed"
+        changed = canonical_record(record)
+        assert candidate_checker._mask_sealed_current_audit_spans(changed, seal["line"]) == changed
+        assert scan_publication(changed, number=seal["line"])

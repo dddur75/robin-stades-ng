@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ROBIN_DOCUMENTARY_NATIVE_MAPPING_V1",
+  "generatedAt": "2026-11-25T21:23:14.360Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.NOV26.FICHES.SOURCES.20261125",
+  "status": "TWO_NEW_MAPPINGS_PREPARED_NOT_FIFTYTHREE_COLLECTED_AUTHORS",
+  "scope": "Two new workbook/native personal profile mappings appended to51unchanged documentary supplement rows. No new source collection or independent recertification of old51.",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.HUNDRED.NEW.WORKBOOK.PROFILES.BATCH.R2.RESULT.20261125",
+    "DATA.SOURCE_OBSERVATORY.OLBG.THREE.CLUB.ALIASES.QUALIFICATION.RESULT.20261125",
+    "DATA.SOURCE_OBSERVATORY.OLBG.FIFTEEN.WORKBOOK.AUTHORS.FICHES.SOURCES.20261125"
+  ],
+  "workbookSHA256": "c6b15829bb11e40d3145bf25b6cce8a7066de6105897d2b48dc4a74ba9286622",
+  "indexSHA256": "0a4cfac9f560bbc2317ca19d5ccf790695b0b14ea4bfd4a352e6be11d4befcb5",
+  "rows": 53,
+  "oldRowsPreserved": 51,
+  "newNativeMappings": 2,
+  "newProfileIds": [
+    577917,
+    241127
+  ],
+  "supplementSHA256": "deb0e3d137a7a728f59e773d9d60bc3c0d5f6ee06d05b6b65750574991d3f49d",
+  "APP": 0,
+  "SourceGET": 0
+}

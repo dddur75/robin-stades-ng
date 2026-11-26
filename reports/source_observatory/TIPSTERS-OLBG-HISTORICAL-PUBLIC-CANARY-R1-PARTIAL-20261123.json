@@ -1,0 +1,36 @@
+{
+  "generatedAt": "2026-11-23T06:45:52.233Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.HISTORICAL.PUBLIC.CANARY.R1.PARTIAL.20261123",
+  "missionId": "OLBG_HISTORICAL_PUBLIC_PRESERVATION_CANARY_E1_20261123",
+  "status": "PARTIAL_CANARY_HARNESS_PATH_UNPROVEN",
+  "scope": "Targeted lint passed; passive canary closed exit1 without retaining its failure phase or reader count. Later static encoded-path observation is not retroactive child-cause evidence.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.HISTORICAL.PUBLIC.INTEGRATION.E1.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.OLBG.HISTORICAL.INTEGRATION.QUALITY.PRIVATE.RESULT.20261123"
+  ],
+  "authorStatus": "STOP",
+  "authorizedAt": "2026-11-23T06:41:30.103238+00:00",
+  "frozenAt": "2026-11-23T06:43:28.381Z",
+  "targetedRuns": 2,
+  "lintExit": 0,
+  "canaryExit": 1,
+  "canaryClosedOutput": true,
+  "canaryFirstFailurePhase": "NOT_RETAINED",
+  "actualAppReadSuccess": false,
+  "sourceGET": 0,
+  "runtimeWrites": 0,
+  "appCodeWrites": 0,
+  "subsequentStaticObservation": {
+    "urlPathnameContainsEncodedSpace": true,
+    "computedEncodedPlanPathExists": false,
+    "readerInvocationAppearsAfterPlanRead": true
+  },
+  "causeNotRetroactivelyMeasuredInChild": true,
+  "remaining": "Distinct minimal harness fix fileURLToPath plus safe phase/counter diagnostics; reuse successful lint/tests/typecheck, no app code changes.",
+  "actualReaderInvocations": null
+}

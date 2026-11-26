@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "robin-compatible-e1-result-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.COMPATIBLE.E1.DOCUMENTS.20261120",
+  "generatedAt": "2026-11-20T18:37:11.335413+00:00",
+  "status": "PARTIAL_NO_NEW_SOURCE_ADMISSIONS",
+  "scope": "E1V2 exact source diagnostics and contest rules; not an exhaustive source census or a licence.",
+  "metrics": {
+    "newReservedOperations": 11,
+    "historicalReservedOperations": 128,
+    "aggregateReservedOperations": 139,
+    "activeMilliseconds": 4152,
+    "newAdmittedChoices": 0
+  },
+  "platforms": [
+    {
+      "platform": "Coteur",
+      "status": "personal_scope_unestablished",
+      "ownerMatched": true,
+      "visibleTables": 1,
+      "reason": "The blanket Loading stop is repaired. The real observed table is not yet linked to an independently established personal-choice area."
+    },
+    {
+      "platform": "NotBetting",
+      "status": "personal_content_unestablished",
+      "reason": "No visible heading/table in the passive response. Inline scripts exist, without proof they contain personal choices. No actual challenge or account requirement established."
+    },
+    {
+      "platform": "Telegram",
+      "status": "verified_tls_chain_failure",
+      "reason": "The fixed public robots request stopped on certificate verification before documents. No Telegram message or channel was read."
+    }
+  ],
+  "contestAssessments": {
+    "bundesliga-tippspiel": {
+      "sourceUrl": "https://www.kicktipp.de/bundesliga-tippspiel/spielregeln",
+      "status": "pre_kickoff_visibility_blocked",
+      "visibility": "After the deadline; deadline at event time.",
+      "minutesBeforeEvent": 0,
+      "claimId": "DATA.SOURCE_OBSERVATORY.COMPATIBLE.E1.DOCUMENTS.20261120"
+    },
+    "ligue-mm": {
+      "sourceUrl": "https://www.kicktipp.fr/ligue-mm/regles",
+      "status": "pre_kickoff_visibility_blocked",
+      "visibility": "After the deadline; deadline at event time.",
+      "minutesBeforeEvent": 0,
+      "claimId": "DATA.SOURCE_OBSERVATORY.COMPATIBLE.E1.DOCUMENTS.20261120"
+    },
+    "the-predictor": {
+      "sourceUrl": "https://www.kicktipp.fr/the-predictor/regles",
+      "status": "potential_pre_kickoff_visibility_unverified",
+      "visibility": "After the deadline; deadline1440minutes before the event. Actual visible cells and current canonical fixtures remain unverified.",
+      "minutesBeforeEvent": 1440,
+      "claimId": "DATA.SOURCE_OBSERVATORY.COMPATIBLE.E1.DOCUMENTS.20261120"
+    }
+  },
+  "evidence": [
+    {
+      "path": "cockpit/.ci/compatible-source-readers-20261120/coteur-result.json",
+      "sha256": "03f7dd4dc37e177ebacb18a961611789dfbd7a244a263b4d6d2cc8d7c99f3e74"
+    },
+    {
+      "path": "cockpit/.ci/compatible-source-readers-20261120/notbetting-result.json",
+      "sha256": "855cb8105e8dedf4f8b81f72ad6bb239d6701faca1f31d5941deb27b1442bd7d"
+    },
+    {
+      "path": "cockpit/.ci/compatible-source-readers-20261120/telegram-docs-result.json",
+      "sha256": "de3124f6764520d71ece8553981d99ad13e2c91b4f4ce40018ca8a197e6ebb99"
+    },
+    {
+      "path": "cockpit/.ci/compatible-source-readers-20261120/kicktipp-de-docs-result.json",
+      "sha256": "b3aa71ce77e62423ea84d81dd162027672075decebe72e6a8b9aeb33aa7412bf"
+    },
+    {
+      "path": "cockpit/.ci/compatible-source-readers-20261120/kicktipp-fr-docs-result.json",
+      "sha256": "d1f9b1e5b78e39bce63b3ab0bf842d2639c86abb837e4ef11aee333e77db48c3"
+    }
+  ],
+  "journal": {
+    "sha256": "91f702e7971054281be5b985fe2943f9bfb1e75d7b7e84df05af8fae17d07af8",
+    "records": 32,
+    "chainVerifiedBy": [
+      "C0",
+      "C1",
+      "C4"
+    ]
+  },
+  "limits": [
+    "No source-specific success is generalized to other contests or authors.",
+    "KDE terms response HTTP status is not durably established; only its status/MIME processing failure is recorded.",
+    "Zero new personal choices admitted. Existing collection facts and immutable prior audit remain unchanged."
+  ]
+}

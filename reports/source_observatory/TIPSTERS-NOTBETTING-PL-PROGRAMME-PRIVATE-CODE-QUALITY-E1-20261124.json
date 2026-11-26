@@ -1,0 +1,67 @@
+{
+  "missionId": "NOTBETTING_PL_PROGRAMME_LINT_COMPLETION_E1_20261124",
+  "author": "C3",
+  "status": "VERIFIED",
+  "actualStoppedAt": "2026-11-24T06:46:47.691459+00:00",
+  "files": {
+    "programme_calendar.py": {
+      "sha256": "7c384a8c8f9620751ebafa26a049710e257c499e867cfbca4ca4b18582788f2a",
+      "bytes": 5154
+    },
+    "source_worker.py": {
+      "sha256": "6b6e93cd837d75807556c7b2374f7e76843ea786c39a5151770fecffbb1abce0",
+      "bytes": 25460
+    },
+    "test_programme_calendar.py": {
+      "sha256": "0eec5283dcca6c7d5ed02fdb62129223b353bb6cabb03674a7a565c688469e3b",
+      "bytes": 6650
+    }
+  },
+  "parentResultSHA": "b5b7f8fcaf0059ddca652d24c4e91ba4b76ac5b113dfb723fe9ed9ce8477fa83",
+  "constructorProcesses": 1,
+  "verificationChildren": 2,
+  "safeGitProcesses": 5,
+  "totalWorkloadProcesses": 3,
+  "totalOSChildrenIncludingSafeGit": 8,
+  "toolShellEntries": 1,
+  "pytestReplay": 0,
+  "syntheticMethodsExecuted": 0,
+  "reusedMethods": 8,
+  "proof": {
+    "testASTEqualExceptExactUnusedDatetimeImport": true,
+    "testSemicolonLinesSplit": 6,
+    "decoderByteExact": true,
+    "workerByteExact": true,
+    "inverseWorkerByteExactABA8": true,
+    "originalWorkerSHA": "aba8fb4755c35c96795f45dae8760027c6858c85b9c8b8ad2a2b0d3ef219a1c4",
+    "RAMCompileFiles": 3,
+    "pytestReplay": 0
+  },
+  "errorClass": null,
+  "sourceGET": 0,
+  "DNS": 0,
+  "TCP": 0,
+  "Node": 0,
+  "Job": 0,
+  "sourceReady": false,
+  "admissions": 0,
+  "limitations": [
+    "Old phase PARTIAL retained unchanged",
+    "No actual loader/source/SSL or personal qualification proved",
+    "Previous collect test uses RAM doubles",
+    "mypy decoder only",
+    "No provider projection/forecast values read"
+  ],
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PL.PROGRAMME.PRIVATE.CODE.QUALITY.E1.RESULT.20261124",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Private documentaryPLdecoder andworkercompetition plumbing codequality only. EightpriorGREENpacksreused viaASTequivalence; no actualSOURCE/fullqualifier claim. Originalpartialretained.",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.PREMIERLEAGUE.NOVEMBER.FUTURE.GMT.PROGRAMME.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.COMPETITION.BUCKETS.NATIVE.R2.ACTUAL.RESULT.20261124"
+  ],
+  "resultSHA": "e8f7ffa954246817db9849d04a9d1e0a359050dc8e8da854bc18581fb66a426f"
+}

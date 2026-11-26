@@ -1,0 +1,54 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.PLATFORM.CONTEXT.FICHES.UI.E1.RESULT.20261124",
+  "missionId": "SOURCE_PLATFORM_CONTEXT_UI_E1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "scope": "Public uncommitted UI code independently reviewed on exactfour artifacthashes. Candidate pages show selected Coteur/NotBetting platformtechnical observations via fixed exactrowIDs, explicit no-personal-proof caption, safe adminanchor and unique embeddedh3 IDs. Empty/unknown filters never fallback; defaultadminall, copiedstable newestfirst sort leaves snapshot/history/personalchoices/collectionflags/provenance intact. Eight focused domain tests, appTypeScript and lintfourfiles PASS. No runtimeadoption/browserrecette/CI/Git/sourceactivation proved in this E1.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LITERAL.QUERY.NATIVE.R4.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.SHAPE.NATIVE.R2.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.ADMIN.COTEUR.NOTBETTING.LOCAL.ROUNDTRIP.RESULT.20261124"
+  ],
+  "files": {
+    "cockpit/app/lib/tipster-qualification.ts": {
+      "sha256": "2fe4c1702100f4832ef55ba2d9a5c66545c96ec6c3020e8d93023143eff86a12",
+      "bytes": 5083
+    },
+    "cockpit/app/components/expert/tipster-qualification.tsx": {
+      "sha256": "fe033e0faa664e846eb1ade8401d7786af88e28e020fb754e2d38ee92a92dbbd",
+      "bytes": 5817
+    },
+    "cockpit/app/components/expert/tipster-candidates.tsx": {
+      "sha256": "0fedb2a77008bec56c292c361ccf52ce08fb0cefa69c4a598034476a00712c74",
+      "bytes": 14700
+    },
+    "cockpit/tests/tipster-qualification.test.ts": {
+      "sha256": "2bd5054d2eda28755481073c64d9101f2027d8af8998b93760582332f20db63f",
+      "bytes": 8114
+    }
+  },
+  "primarySHA": "167a5c5a2e4f6df337f8fef4abcf9a24b15305295d65258684cc9f50f2d4d2d3",
+  "tests": {
+    "domainTests": 8,
+    "failures": 0,
+    "typecheckApp": "PASS",
+    "lintFourFiles": "PASS",
+    "fullSuite": 0,
+    "buildDataReplay": 0
+  },
+  "limits": {
+    "runtimeCodeWrites": 0,
+    "sourceGET": 0,
+    "GitMutations": 0,
+    "newAdmissions": 0,
+    "sourceReady": false,
+    "allCompatibleIntegrated": false,
+    "fullVisualUIRecette": false,
+    "stdoutEncoding": "UTF8sourceintact; only capturedWindowsconsole testlabelsCP1252mojibake."
+  }
+}

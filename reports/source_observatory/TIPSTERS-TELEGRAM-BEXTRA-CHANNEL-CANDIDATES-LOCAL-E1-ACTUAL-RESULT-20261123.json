@@ -1,0 +1,63 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.CHANNEL.CANDIDATES.LOCAL.E1.ACTUAL.RESULT.20261123",
+  "missionId": "BEXTRA_CHANNEL_CANDIDATES_LOCAL_E1_20261123",
+  "status": "FOUR_PRIVATE_UNQUALIFIED_CHANNEL_SELECTION_CANDIDATES_NO_ADMISSIONS_AUTHORITY_STOP",
+  "scope": "One cached10messageprefix extraction detects4grammatically resolved selectioncandidates in4messages, sixwithout. Private structuredenvelope retained, content neveropenedbymodel. Grammarresolution is not personalforecast, canonicalfixture or prematch qualification; source/appgates remainfalse and originalsourceobservation is not analysis time.",
+  "keys": [
+    "C0",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.EXTRACTOR.CHANNEL.CANDIDATES.PRIVATE.E1.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.INHERITED.TEXT.NATIVE.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.TEMPORAL.METADATA.LOCAL.E1.ACTUAL.RESULT.20261123"
+  ],
+  "resultSHA": "efdcb6944871a717c4e7ad80664d38033539782ad80d38f775423d1ae696ed26",
+  "primarySHA": "dfb64c4e3bcf48cc0239441a68fef0849de7c76bc1d3d47d88813c17a049915a",
+  "finalAcceptedReturnSHA": "c6bc39e1e02b474f6d88866fa540ebf7a8c685c0de3187d807882e61a963480c",
+  "privateCandidateSHA": "cda62284e2080eef48e2e567a82f643b5bb72896d3bfcbb00c93a3551db20b61",
+  "privateCandidateBytes": 6139,
+  "summary": {
+    "admissible": false,
+    "admissions": 0,
+    "candidateCount": 4,
+    "globalCoverage": "UNKNOWN",
+    "grammarStatusCounts": {
+      "non_resolu": 0,
+      "resolu": 4
+    },
+    "inputMessageCount": 10,
+    "interpretationAllowed": false,
+    "marketCounts": {
+      "1N2": 1,
+      "btts": 0,
+      "combine": 0,
+      "double_chance": 1,
+      "handicap": 0,
+      "indetermine": 0,
+      "score_exact": 0,
+      "total": 2
+    },
+    "messagesWithCandidates": 4,
+    "messagesWithoutCandidates": 6,
+    "nativeMarkupContractProven": false,
+    "performanceEvaluationAllowed": false,
+    "personIdentityVerified": false,
+    "preMatchProven": false,
+    "schemaVersion": "telegram-channel-candidate-summary-v1",
+    "settlementAllowed": false,
+    "sourceReady": false,
+    "totalMessageCount": null
+  },
+  "sourceObservedAtUTC": "2026-11-23T21:58:18.320357+00:00",
+  "sourceGET": 0,
+  "prefixReads": 1,
+  "elapsedMilliseconds": 271.98519998788834,
+  "postFsyncDeadlineChecked": true,
+  "newAdmittedForecasts": 0,
+  "sourceReady": false,
+  "allCompatibleIntegrated": false,
+  "localAuthorityClosed": true,
+  "retryAllowed": false
+}

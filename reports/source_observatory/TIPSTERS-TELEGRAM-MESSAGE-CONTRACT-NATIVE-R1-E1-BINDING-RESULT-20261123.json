@@ -1,0 +1,43 @@
+{
+  "DNS": 0,
+  "SSLCertRequired": true,
+  "SSLHostnameChecked": true,
+  "TCP": 0,
+  "collectExecuted": false,
+  "configSHA": "faaec610ee143f0162ee9b150f121e5864a517810caca20fd71980a4f206d21f",
+  "loaderExecuted": true,
+  "mainExecuted": false,
+  "manifestSHA": "e43044a7bb7e4a15750fddf6b65516004deeabbcc73541390d48ad348dd96292",
+  "nativeJobs": 0,
+  "outerSHA": "ad7bcecba11b3281ffc5a6c46bdfde9620be561a47cb369881c8af98da5a2c5e",
+  "parentGrant": "7bc793fafd9ecf26edab8f621bfeaf80e731391193f019a2d4fb3e782640bdfe",
+  "parserSHA": "a7a0da012b63717c76a68ed89f7940d9de7f1568cb27abcb90bf28111b63a5f7",
+  "planSHA": "0eb3dfad4492de534e6c9471976d92250c649acad49a7f6f61a8ca797299e010",
+  "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+  "realAuthorityValidated": false,
+  "sourceDecisionSynthetic": true,
+  "sourceGET": 0,
+  "spawns": 0,
+  "status": "E1_EXACT_LOADER_SSL_ACCEPTED_NO_SOURCE_AUTHORITY",
+  "transportSHA": "fc19e9274c13cc557d58b73d660aa66f00ecc1e380ac895325e0d7026000fa62",
+  "workerSHA": "a7189dfcf9415f5cfee48dd3b861446e903d636d9a97fe87e324e724735761d6",
+  "generatedAt": "2026-11-23T12:29:41.663Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.MESSAGE.CONTRACT.NATIVE.R1.E1.BINDING.RESULT.20261123",
+  "missionId": "TELEGRAM_MESSAGE_CONTRACT_NATIVE_ONEGET_R1_20261123",
+  "scope": "Independent C0 CODE C1 FACTS C3 binding C4 SCOPE reviewed exact loader/strictSSL pass under DENY network/spawn before module execution. Synthetic sidecar is a real file in isolated e1-synthetic-sidecar, not root SOURCE decision and not a real grant. No collect/main/Job/GET or server TLS validation. Fresh SOURCE keys are distinct after this durable E1 close; one-previewGET/counts-only and documented applicability UNKNOWN remain explicit.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.MESSAGE.ONEGET.CALLER.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.MESSAGE.CONTEXT.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.EXPLICIT.TCP.STRUCTURAL.NATIVE.R2.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.EU.DSA.NATIVE.DOCS.E1.RESULT.20261122"
+  ],
+  "primarySHA256": "e98b8dd8cbc4b5d80a59c27641eede17dc1bdd803a2a099ca9593818b4eeb7f9",
+  "sourceReady": false,
+  "newForecasts": 0
+}

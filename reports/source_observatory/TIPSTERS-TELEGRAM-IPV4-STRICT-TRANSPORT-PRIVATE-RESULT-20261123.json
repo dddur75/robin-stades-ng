@@ -1,0 +1,28 @@
+{
+  "generatedAt": "2026-11-23T08:23:26.917Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.IPV4.STRICT.TRANSPORT.PRIVATE.RESULT.20261123",
+  "missionId": "TELEGRAM_IPV4_STRICT_TRANSPORT_PRIVATE_E1_20261123",
+  "status": "PRIVATE_TRANSPORT_COMPONENT_VERIFIED",
+  "scope": "Twelve memory-wire cases through public fetch and NativeConnection with fake socket and real StrictHTTPResponse. Explicit attempted IPv4 and strict framing, robots404 is availability only. No real DNS/TCP/TLS, CA/Job/caller or source qualification. Old timeout fine cause remains UNKNOWN.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.SVG.NATIVE.AB.TRANSPORT.STOP.20261122"
+  ],
+  "transportSHA256": "a6130fa31d06fd624d4e97a55c602b15089c93e423461712ec52d46b2e585b23",
+  "resultSHA256": "d33ba23616a4117f2b4a1fadc5bbe3fbe85cdb0d31be016b4e3c55ebfa5f0006",
+  "codeMapCAN": "857ca979be2f064fd1022ac68093509beff84b1221455251ed44352d3bad73c5",
+  "authorStatus": "STOP",
+  "elapsedSeconds": 207.787336,
+  "syntheticWireCases": 12,
+  "testsExit": 0,
+  "criticalLintExit": 0,
+  "actualDNS": 0,
+  "actualTCP": 0,
+  "sourceGET": 0,
+  "sourceReady": false,
+  "providerDataReads": 0
+}

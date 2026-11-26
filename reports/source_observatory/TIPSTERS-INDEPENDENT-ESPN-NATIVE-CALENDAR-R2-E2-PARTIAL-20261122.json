@@ -1,0 +1,52 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.INDEPENDENT.ESPN.NATIVE.CALENDAR.R2.E2.PARTIAL.20261122",
+  "generatedAt": "2026-11-22T21:24:32.067Z",
+  "status": "PARTIAL_NO_QUALIFIED_CALENDAR",
+  "scope": "One bounded native ESPN future-calendar acquisition after synthetic E1; process closure proved but HTTP error leaves mandatory calendar source evidence absent. No global endpoint unavailability inferred.",
+  "missionId": "INDEPENDENT_ESPN_NATIVE_CALENDAR_R2_20261122",
+  "planSHA256": "33a07dd203b63d28fb3c0775be4356a7769de63a1060c4439307b848054dcf83",
+  "manifestSHA256": "a4ce5bb404116cecbb0c0c5a66e6b3a7ede5595d4eaec10b9a4220bf6bcef918",
+  "grant": "fa2ebc70e704f32cd166035d200873db2f953ed9c14372cad17c0f5f11a03a5a",
+  "invokerSHA256": "9e8318ef745111db01e2a67087a1d0b23aab1f7bbbfe18f244e5ffda1d9fd1c9",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceResultSHA256": "4bb5f35031f8fa192d4ff88fae21e5df8f28916bf8d1674a2bdea49e29d03d1e",
+  "processResultSHA256": "c84bf46f46cbc648e93c22f27282e78c6101d22703aa3053a9f8031a451523d0",
+  "assessmentSHA256": "259b5aa6857bb9e07b8c4b4f9e2f2c9072a57b3b0a21a902fe36546fb7304ed0",
+  "nativeAttempts": 1,
+  "GETReservations": 1,
+  "actualHTTPResponses": null,
+  "GETTransmissionCount": null,
+  "HTTPExceptionKind": "HTTPError",
+  "HTTPStatusCode": null,
+  "payloadHash": null,
+  "bodyReadComplete": false,
+  "fixtureCount": null,
+  "processClosure": {
+    "exitCode": 0,
+    "externalSeconds": 0.5579543999880552,
+    "childExitCode": 0,
+    "jobSeconds": 0.5,
+    "timedOut": false,
+    "subtreeKillConfirmed": true
+  },
+  "assessmentAt": "2026-11-22T21:23:14.988Z",
+  "secondsFromE1": 408.139,
+  "budgetSeconds": 600,
+  "calendarQualified": false,
+  "sourceReady": false,
+  "appChanges": 0,
+  "TaskChanges": 0,
+  "API_FOOTBALL_CALLS": 0,
+  "noFurtherAttempts": true,
+  "remaining": [
+    "Required independent UTC calendar evidence absent",
+    "HTTP status not retained; no TLS/403/404/login inference",
+    "No collection recurrence or historical requalification"
+  ],
+  "globalDelivery": "PARTIAL"
+}

@@ -1,0 +1,38 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CATALOGUE.INDEPENDENT.READ.E1.R1.REVIEW.20261122",
+  "recordedAt": "2026-11-22T13:14:37.247Z",
+  "status": "OFFLINE_PROTOTYPE_REVIEWED_SMALLEST_CORRECTION_REQUESTED_NO_COPY",
+  "scope": "Independent synthetic review of documentary catalogue decoupling only. Frozen R1 is not copied; no real317 projection/index read, HTTP, Task, source or app admission. Current exact retained qualification input contains valid blocks, but optional partial-input projection needs a small robustness fix.",
+  "planSHA256": "4453adfa2cc936da586e85d195fc16ff1e72caf4f546700bd9bcf075519fb6b4",
+  "manifestSHA256": "fbef9d9ef4327b8d86e50e0e8b95257d037fea27ea4474192bc1b020af4f8284",
+  "missionId": "CATALOGUE_INDEPENDENT_READ_OFFLINE_E1_20261122",
+  "productionFiles": 5,
+  "productionLines": 319,
+  "verifiedPins": 27,
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "HTTP": 0,
+  "real317Projection": 0,
+  "real18003IndexRead": 0,
+  "PUBLICCodeCopied": false,
+  "runtimeCopied": false,
+  "finding": {
+    "severity": "P2",
+    "cause": "OPTIONAL_MISSING_QUALIFICATION_PROJECTED_AS_EMPTY_OBJECT",
+    "effect": "Future malformed optional block could crash selected-row UI.",
+    "presentInExactApprovedQualification": false,
+    "correction": "Omit absent blocks and validate picks/documentaryIssues arrays; keep valid registry visible."
+  },
+  "testCompatibility": {
+    "obsoleteCandidateNativeGateExportImport": "MIGRATION_REQUIRED",
+    "preserveOperationalGateAssertions": true,
+    "newCandidateMiddlewareContract": "UNKNOWN_STATE_WITH_ZERO_NATIVE_CALLS",
+    "portableCommittableTestProjectionRequired": true
+  },
+  "reviews": {
+    "C3": "Exact27pins/true middleware synthetic tests/constraints PASS; P2 reproduction confirmed.",
+    "C4": "E1 private scope and dated historical/null-state semantics PASS; no E2 authority."
+  },
+  "next": "Smallest E1 successor only; fresh E2 exact authority after independent reviews.",
+  "globalDelivery": "PARTIAL"
+}

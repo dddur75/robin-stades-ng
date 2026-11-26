@@ -1,0 +1,59 @@
+{
+  "allCompatibleIntegrated": false,
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI266.SEALED.TEST.RECEIPTS.CORRECTIVE.R1.20261123",
+  "fullAdminAccepted": false,
+  "fullUIAccepted": false,
+  "independentReviewRequiredBeforeAdoption": false,
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "missionId": "SOURCE_OBSERVATORY_CI266_SEALED_RECEIPT_CORRECTIVE_R1_20261123",
+  "newForecasts": 0,
+  "oldLedgerPrefixBytes": 3463902,
+  "oldLedgerPrefixSHA": "493f24dfa911d4cf8799ba99ed6725c22e0b81237b28f745661c70d2b8bef312",
+  "overallStatus": "PARTIAL",
+  "scope": "Preserve immutable ledger line1993 byte for byte. A dedicated portability mask recognizes only its full line SHA, record identity/hash/canonical hash and five ordered testreceipt-value SHAs. Only five JSON string interiors may be masked; every mismatch returns unchanged text. Other paths, records and existing guards remain subject to rejection. No source or application behavior change, no new authority.",
+  "sealedRecord": {
+    "field": "context.targeted_tests",
+    "fieldPurpose": "Immutable local test-receipt references only; not a general permission for arbitrary paths or a new source authority",
+    "ledgerPath": "reports/council/decision-ledger.jsonl",
+    "line": 1993,
+    "lineSHA256": "045d94358ad1e21dda6fa42cc5b7d621eea5ef586e6c8b0a134685dbc7172265",
+    "oldLedgerMustRemainByteExact": true,
+    "recordHash": "526b7d9c251b6cc31784eb6d5f44fb6486a03753d7e30a6899e47cae1b5863dc",
+    "recordId": "RCV3-20261123-C0-FINAL-PUBLIC-BINDING-R1-PRECOMMIT",
+    "sourceCommit": "54bee6609d52630fb281bd574d7ee7dff680aaa5",
+    "valueCount": 5,
+    "valueSHA256": [
+      "0fd8bac29b1ba979c6576f082a9e103d5fa6946c2f94a54f06fd33878e923c87",
+      "e79fa7c7861c3c6ba4921e370136a33f531bb74f737d994fdf591b6d57ca8da7",
+      "4d4ec701a0a57f691e5530b0879eb4baaf2bb15ec9a538b13d15171e54abcc95",
+      "f2fc832a56caf88078e251f3c6ff03d42c1ec1a215685b198a803ed4d3d727b0",
+      "cbd3014570af2be8394a54a620e8739d01ac8e64b6f9981b264260a9ca10acd4"
+    ]
+  },
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V29.ENGINEERING.RECETTE.20261123",
+    "ENG.SOURCE_OBSERVATORY.APP.UI.ADMIN.ROWS.REDESIGN.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.PUBLICATION.V29.AUTHOR.RESULT.20261123"
+  ],
+  "sourceGET": 0,
+  "status": "EXACT_IMMUTABLE_METADATA_SPAN_CORRECTION",
+  "codeLFHashes": {
+    "scripts/check_no_tracked_absolute_paths.py": "dfea189e3ff1dc7301d82dd87f98b35847f6f230350d6151612302bfa3bbc976",
+    "tests/portability/test_no_tracked_absolute_paths.py": "4f9fa4b4f2958875df1c7e617e9f53d83ddf75095120970ed05398c8778533eb"
+  },
+  "privateProducerResultSHA": "9a61cc36025f4b97e7b6e0a1de3bd90e3107b91319248a0e8153c628617ff33d",
+  "targetedTestsPassed": 25,
+  "oldGoldenMethodsPreserved": 21,
+  "ruffExit": 0,
+  "originalCheckerSemanticsPreservedByAST": true,
+  "independentReview": [
+    "C1 CODE+FACTS PASS_AND_HOLD",
+    "C4 CODE+SCOPE PASS_AND_HOLD"
+  ],
+  "newMethods": 4
+}

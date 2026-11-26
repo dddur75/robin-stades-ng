@@ -1,0 +1,75 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.APP.PUBLICATION.GIT.E1.20261124",
+  "missionId": "NOTBETTING_PENDING_APP_PUBLICATION_GIT_R3_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Preparation review of exact public4file pending panel and metadata-only facts. LocalAPI proves317catalogue andpending1unqualified, actual browser recette remainsPARTIAL; no private choice values/sourceactivation/merge/globaldelivery.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V36.ENGINEERING.RECETTE.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.APP.PUBLIC.INTEGRATION.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.APP.RUNTIME.LOCAL.R2.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.APP.LOOPBACK.METADATA.R3.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PL.CLAUSE.PRIVATE.CODE.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.PL.CLAUSE.CONTEXT.LOCAL.R1.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.PUBLICATION.CI271.EXACT.HEAD.SUCCESS.RESULT.20261124"
+  ],
+  "binding": {
+    "mission_id": "NOTBETTING_PENDING_APP_PUBLICATION_GIT_R3_20261124",
+    "planSHA": "8c6ceeb1bd278a1dbb713e72092f4641b1d28c03931592bcdf9ed3601c10b3e5",
+    "manifestSHA": "edc4320afe426ab36fbc7f5e72b6d604f3900eff8afa9fc6a390882feffadd81",
+    "controllerSHA": "0cfeba9fbe856685c3b64403ed619a9e1d18397beaefd91bf4ccdff76145c34f",
+    "baseHEAD": "3a30319c5503bf54e851e233f4a9dc034ef602c9",
+    "remote": "origin",
+    "remoteBranch": "codex/robin-dossier-fidele",
+    "localBranch": "codex/robin-bounded-delivery-public-r1",
+    "files": [
+      "cockpit/app/components/expert/tipster-candidates.tsx",
+      "cockpit/scripts/catalogue-independent.ts",
+      "cockpit/scripts/notbetting-pending-source.ts",
+      "cockpit/tests/notbetting-pending-source.test.mjs",
+      "reports/council/decision-ledger.jsonl",
+      "reports/evidence/evidence-graph.json",
+      "reports/source_observatory/TIPSTERS-LOCAL-FOLLOWUP-V36-ENGINEERING-RECETTE-20261124.json",
+      "reports/source_observatory/TIPSTERS-NOTBETTING-CACHED-DELIMITER-LOCAL-R1-ACTUAL-RESULT-20261124.json",
+      "reports/source_observatory/TIPSTERS-NOTBETTING-CACHED-FIXTURE-DIAGNOSTIC-PRIVATE-CODE-E1-20261124.json",
+      "reports/source_observatory/TIPSTERS-NOTBETTING-CACHED-FIXTURE-LOCAL-R1-ACTUAL-RESULT-20261124.json",
+      "reports/source_observatory/TIPSTERS-NOTBETTING-EVENT-DELIMITER-STATS-PRIVATE-CODE-E1-20261124.json",
+      "reports/source_observatory/TIPSTERS-NOTBETTING-PENDING-APP-LOOPBACK-METADATA-R3-ACTUAL-RESULT-20261124.json",
+      "reports/source_observatory/TIPSTERS-NOTBETTING-PENDING-APP-PUBLIC-INTEGRATION-E1-20261124.json",
+      "reports/source_observatory/TIPSTERS-NOTBETTING-PENDING-APP-PUBLICATION-GIT-E1-20261124.json",
+      "reports/source_observatory/TIPSTERS-NOTBETTING-PENDING-APP-RUNTIME-LOCAL-R2-ACTUAL-RESULT-20261124.json",
+      "reports/source_observatory/TIPSTERS-PUBLICATION-CI271-EXACT-HEAD-SUCCESS-RESULT-20261124.json",
+      "reports/source_observatory/TIPSTERS-TELEGRAM-BEXTRA-PL-CLAUSE-CONTEXT-LOCAL-R1-ACTUAL-RESULT-20261124.json",
+      "reports/source_observatory/TIPSTERS-TELEGRAM-PL-CLAUSE-PRIVATE-CODE-E1-RESULT-20261124.json"
+    ]
+  },
+  "tests": {
+    "newPendingSynthetic": 8,
+    "telegramRegressionNodeEntry": "PASS",
+    "appTypeScriptNoEmit": "PASS",
+    "ESLint4Files": "PASS",
+    "V36GraphGuard": "PASS",
+    "actualLocalAPI": {
+      "HTTP": 200,
+      "catalogue": 317,
+      "pending": 1,
+      "admissions": 0
+    },
+    "actualBrowser": "PARTIAL_BEFORE_VIEWS",
+    "TelegramPL": {
+      "syntheticTests": 6,
+      "Ruff": "PASS",
+      "mypyHelperStrict": "PASS",
+      "actualPairs": 40,
+      "NONE": 4,
+      "sourceGET": 0
+    }
+  },
+  "sourceReady": false,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null
+}

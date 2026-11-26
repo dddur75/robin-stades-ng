@@ -1,0 +1,35 @@
+{
+  "generatedAt": "2026-11-23T06:31:36.336Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.HTML5.REFERENCE.R1.PRIVATE.PARTIAL.20261123",
+  "missionId": "COTEUR_HTML5_SCRIPT_REFERENCE_PRIVATE_E1_20261123",
+  "status": "PARTIAL_REVIEW_BOUNDARY_GAPS",
+  "scope": "Pinned offline HTML5 parser passes20 synthetic cases; independent code review finds backslash URL ambiguity and suspected table/template reparenting gap. No source activation.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.PYPI.WEBENC.COMPLETION.R2.NATIVE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.PYPI.HTML5.WHEELS.R1.NATIVE.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.CURRENT.ENTRYPOINT.DISCOVERY.R1.E1.PARTIAL.20261123"
+  ],
+  "resultSHA256": "b7a3a18df5cce7c38446c85deb1dd99da7d5fdc3f42be3a04f14656943c7fde3",
+  "codeMapCAN": "26e56e6325178c6caa2d70fd08a440828943e9283649e32a032171ff1b6e344e",
+  "syntheticCases": 20,
+  "targetedRuns": 2,
+  "dependencySourceModulesAvailable": 39,
+  "actualImportedModuleCount": null,
+  "html5libImportUsedIn20Cases": true,
+  "authorCounterCorrection": "dependencyModulesLoaded was source buffers available, not measured imports",
+  "codeReviewFindings": [
+    "BACKSLASH_URL_RESOLUTION_DIVERGENCE",
+    "TEMPLATE_TABLE_REPARENTING_COUNTEREXAMPLE_NOT_YET_EXECUTED"
+  ],
+  "sourceGET": 0,
+  "sourceReady": false,
+  "packageExtraction": 0,
+  "globalInstallation": 0,
+  "providerJSExecution": 0
+}

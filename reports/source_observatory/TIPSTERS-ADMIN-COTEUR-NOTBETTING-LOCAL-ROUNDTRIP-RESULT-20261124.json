@@ -1,0 +1,69 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.ADMIN.COTEUR.NOTBETTING.LOCAL.ROUNDTRIP.RESULT.20261124",
+  "missionId": "SOURCE_ADMIN_COTEUR_NOTBETTING_OBSERVATIONS_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Actual localadmin metadata roundtrip independently verified. One atomic target replacement, baseline hash preserved, new target3a93d7bc exactcandidate. Thirtynine sourceobservation rows after one NotBetting latest update and one Coteur technical addition, thirtyseven other rows unchanged. Two loopbackHTTP200 responses: qualificationAPI exactsnapshot andadminHTML. Historical observations preserved, no new admitted forecasts or global absence claim. Producer and canonical STOP timely, authorityclosed. HTML200 does not establish full visual/UIrecette.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.LITERAL.QUERY.NATIVE.R4.ACTUAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.SHAPE.NATIVE.R2.ACTUAL.RESULT.20261124"
+  ],
+  "result": {
+    "closedAtUTC": "2026-11-24T05:12:24.847393+00:00",
+    "fullAdminUIRecette": false,
+    "localHTTPGET": 2,
+    "metadataWrites": 1,
+    "overall": "PARTIAL",
+    "results": [
+      {
+        "HTTP": 200,
+        "checkedAt": "2026-11-24T04:55:39.550567+00:00",
+        "claims": [
+          "ENG.SOURCE_OBSERVATORY.NOTBETTING.SHAPE.NATIVE.R2.ACTUAL.RESULT.20261124"
+        ],
+        "kind": "API",
+        "metrics": {
+          "admitted": 0,
+          "candidates": null,
+          "footballRecords": null,
+          "nativeRecords": 0,
+          "requests": 2
+        },
+        "other37RowsEqual": true,
+        "outcome": "missing_evidence",
+        "rowCount": 39
+      },
+      {
+        "HTTP": 200,
+        "bodyBytes": 28445,
+        "kind": "ADMIN_ROUTE_HTML",
+        "visualFlowVerified": false
+      }
+    ],
+    "serverRestarts": 0,
+    "sourceGET": 0,
+    "status": "LOCAL_METADATA_ROUNDTRIP_PASS",
+    "targetSHA": "3a93d7bcec6e864eadd1e0bbbe42a276ee9dd754cc6bfaa365a16ab3dab5ddce"
+  },
+  "receiptSHA": "8e2ce0f98027617cf63def7013b8e3adbadd37f128d8ce8cd9d9392082500795",
+  "baselineSHA": "649bd5d51d83c8b68069e31a797101d831764a583f3409f025c1d49b7ae3ca42",
+  "candidateSHA": "3a93d7bcec6e864eadd1e0bbbe42a276ee9dd754cc6bfaa365a16ab3dab5ddce",
+  "guardedControllerSHA": "04680a8cdb4e141a5ebb93231e18238d052bde3488c8a90fd85255f1dca4c3c4",
+  "limits": {
+    "sourceGET": 0,
+    "localMetadataWrites": 1,
+    "localHTTPGET": 2,
+    "serverRestarts": 0,
+    "codeWrites": 0,
+    "Task": 0,
+    "Git": 0,
+    "newAdmissions": 0,
+    "fullVisualUIRecette": false,
+    "overall": "PARTIAL",
+    "sourceActivation": false
+  }
+}

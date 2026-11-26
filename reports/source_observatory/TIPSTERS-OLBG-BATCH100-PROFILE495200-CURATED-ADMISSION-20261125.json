@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "robin-local-curated-admission-v2",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.BATCH100.PROFILE495200.APP.ADMISSION.20261125",
+  "status": "CURATED_DATASET_PREPARED_RUNTIME_INACTIVE",
+  "scope": "New personal football choices from a workbook account absent in public631; original native fields and observations retained.",
+  "priorCheckpointSHA256": "bf0e31be642b2ff4ad40d36e370acb15ef53eca44f891387c75f49c7027f44d5",
+  "sourceBatchSHA256": "4d258c92bd96bdc68651b70212f1578b5cd8f55d447086a44f5d96266466c00d",
+  "nativeAuthorId": 495200,
+  "newUniqueAdmitted": 6,
+  "oldPublicChoicesPreserved": 631,
+  "publicChoices": 637,
+  "candidateFiches": 355,
+  "newCandidateFiches": 0,
+  "newPublicAuthor": true,
+  "documentaryPrematchRecertified": false,
+  "sourceReady": false,
+  "recurringCollectionActive": false,
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.HUNDRED.WORKBOOK.PROFILES.BATCH.R1.RESULT.20261125"
+  ],
+  "qualifiedAt": "2026-11-25T20:06:54.702Z",
+  "sourceObservedAt": "2026-11-25T19:57:16.999428+00:00",
+  "missionId": "OLBG_FIFTEEN_WORKBOOK_AUTHORS_APP_ADMISSION_20261125"
+}

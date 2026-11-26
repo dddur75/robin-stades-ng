@@ -1,0 +1,44 @@
+{
+  "DNS": 0,
+  "authorResultSHA256": "6c6b9ee28262e78cb9f334c824f5a824df14acb0176b4d6190a4c01815154298",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PROSPECTIVE.CALENDAR.FIX.PRIVATE.E1.RESULT.20261123",
+  "codeMapCanonicalSHA256": "acf9fe07cbb948c695f15ce840916b5ae9d4791ffd6b516aaa3814975087f666",
+  "codeReview": "Independent C0 read full245lines, only prefix change separator133 to ASCII escaped hyphen/en-dash; pure adapter checks exact RAW SHA before JSON duplicate-key rejection, expected schema/claim/status/UTC/time order/future date range/unique clubs, technical deterministic fixture IDs. Binding only, no authority.",
+  "decision": "PASS_AND_HOLD",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "limits": [
+    "Initial pytest failure is a harness assertion, source SHA rejection occurred correctly before JSON. Full final suite not rerun to respect call budget; no blanket green claim.",
+    "Current private parser/calendar adapter accepted for a separately reviewed bounded source caller only; no real tipster data, application admission or recurrence."
+  ],
+  "missionId": "NOTBETTING_PROSPECTIVE_CALENDAR_FIX_E1_20261123",
+  "realPicks": 0,
+  "reviewedAt": "2026-11-23T00:54:18.103Z",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.BUNDES.J11.FUTURE.UTC.PROGRAMME.RESULT.20261123"
+  ],
+  "sourceGET": 0,
+  "sourceReady": false,
+  "sourceSHA256": "afd65ff663d372a3aca597b066c1e9dec7259c47fb296a5fa01264a840e38057",
+  "status": "PARTIAL",
+  "testDeltaReview": [
+    "Faulty expected error string corrected to ACCEPTED_CALENDAR_SHA.",
+    "Print metadata normalizerImplemented=False corrected to hasattr; no assertion weakened or pure qualifier change."
+  ],
+  "testProof": {
+    "additionalCalls": 12,
+    "collectedTestFunctions": 2,
+    "compileReceiptEstablished": false,
+    "criticalRuffExit": 0,
+    "fullFinalPytestPassEstablished": false,
+    "initialPytestFailed": 1,
+    "initialPytestPassed": 1,
+    "oldPackPassedOnce": 25,
+    "realCalendarRowsNormalized": 9,
+    "remainingCallsPassed": 4
+  },
+  "testSHA256": "50748cffbff8239483c22e4ce1a12fcb40c0a9fe415aa8cbd60611ff9754a398"
+}

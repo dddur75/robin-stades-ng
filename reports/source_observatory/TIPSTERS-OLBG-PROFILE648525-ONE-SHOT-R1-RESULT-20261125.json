@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "robin-bounded-source-result-v1",
+  "generatedAt": "2026-11-25T13:38:14.742Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.PROFILE648525.ONE.SHOT.R1.RESULT.20261125",
+  "missionId": "OLBG_ONE_SHOT_PROFILE648525_R1_20261125",
+  "status": "PARTIAL",
+  "scope": "Three real HTTP200 complete responses; projection-phase ValueError with business cause unknown. No extracted personal records retained, no compatibility verdict.",
+  "tuple": {
+    "planSHA": "f3b09cdccbdffce15c40e8ce88e7834248324fdfde9ab13ced14918e5788c91a",
+    "manifestSHA": "eec04b35b74ae95f71986547cd82302935709865e4768afa8bb2d3f8ac04ff0b",
+    "configSHA": "63951d8b221ebeae5e059d867ea8cdb65a2a941445e48b5443c9331b87fd594a",
+    "controllerSHA": "c54305e755d8002cc149bc00cc03e954315bb23685a21bdc7a9974f175ffd5ef"
+  },
+  "primarySHA256": "992dad90dd9d7b48147479718b69b41dffc217e17833ae42841127610cf4d113",
+  "resultSHA256": "f2964773cb1499af18801d2dce801ccfd9e2d85f2e75c464d25be4e0a30ddbba",
+  "stopSHA256": "9efa542fd74e58629e41e04f7ef8dcc83f8171ee552bf5bd188d97531c02e747",
+  "counts": {
+    "DNS": 3,
+    "GET_SEND": 3,
+    "TCP": 3,
+    "reservedGET": 3
+  },
+  "jobSeconds": 9.90599999999904,
+  "jobTimedOut": false,
+  "HTTP": [
+    {
+      "role": "robots",
+      "httpStatus": 200,
+      "bodyComplete": true,
+      "bytes": 9452,
+      "receiptSHA": "781d4ebbb0c04de9d718afddcda9ff26cce26ed7fc4f6172de4d6b1bffba1cdf"
+    },
+    {
+      "role": "terms",
+      "httpStatus": 200,
+      "bodyComplete": true,
+      "bytes": 282166,
+      "receiptSHA": "0cc33603c7e42506aa976609d9f90561ac6562ce817959c194dea640a0959425"
+    },
+    {
+      "role": "profile",
+      "httpStatus": 200,
+      "bodyComplete": true,
+      "bytes": 158571,
+      "receiptSHA": "a4f8938e964983d10bcaf7a96d406fc0c7feb029404d0dddf3d50d2ab5c7a53d"
+    }
+  ],
+  "phase": "PROJECT",
+  "errorKind": "ValueError",
+  "exactBusinessCause": "UNKNOWN",
+  "newStructuredChoices": 0,
+  "applicationAdmissions": 0,
+  "sourceReady": false,
+  "sourceAuthorityClosed": true,
+  "retry": false
+}

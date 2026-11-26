@@ -1,0 +1,131 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.ROBIN.TIPSTERS.DURABLE835.APP.20261126",
+  "status": "VERIFIED_LOCAL_APP_WITH_SOURCE_RECURRENCE_HALTED",
+  "scope": "Actual loopback app835 choices,167 source identities,673 candidate fiches,60 admin rows.23 new Coteur native ticket components observed before kickoff;5 Coteur accounts total.812 previous choices preserved in full. Three API200 and two UI flows passed after display adapter repair. No global delivery claim.",
+  "at": "2026-11-26T05:38:46.478Z",
+  "actual": {
+    "at": "2026-11-26T05:33:32.512Z",
+    "routes": [
+      {
+        "route": "/api/tipsters/public",
+        "status": 200,
+        "archive": {
+          "state": "accepted_frozen_archive",
+          "claimId": "DATA.SOURCE_OBSERVATORY.ROBIN.TIPSTERS.DURABLE835.APP.20261126",
+          "archivedAt": "2026-11-26T05:15:56.106Z",
+          "admittedAt": "2026-11-26T05:33:02.210203+00:00",
+          "readAt": "2026-11-26T05:33:31.942Z",
+          "frozen": true,
+          "stale": true,
+          "snapshotAgeMilliseconds": 1055836,
+          "liveState": "awaiting_first_capture",
+          "sourceGET": 0
+        }
+      },
+      {
+        "route": "/api/tipsters/candidates",
+        "status": 200,
+        "archive": {
+          "state": "accepted_frozen_archive",
+          "claimId": "DATA.SOURCE_OBSERVATORY.ROBIN.TIPSTERS.DURABLE835.APP.20261126",
+          "archivedAt": "2026-11-26T05:15:56.106Z",
+          "admittedAt": "2026-11-26T05:33:02.210203+00:00",
+          "readAt": "2026-11-26T05:33:32.188Z",
+          "frozen": true,
+          "stale": true,
+          "snapshotAgeMilliseconds": 1056082,
+          "liveState": "awaiting_first_capture",
+          "sourceGET": 0
+        }
+      },
+      {
+        "route": "/api/tipsters/qualification",
+        "status": 200,
+        "archive": {
+          "state": "accepted_frozen_archive",
+          "claimId": "DATA.SOURCE_OBSERVATORY.ROBIN.TIPSTERS.DURABLE835.APP.20261126",
+          "archivedAt": "2026-11-26T05:15:56.106Z",
+          "admittedAt": "2026-11-26T05:33:02.210203+00:00",
+          "readAt": "2026-11-26T05:33:32.416Z",
+          "frozen": true,
+          "stale": true,
+          "snapshotAgeMilliseconds": 1056310,
+          "liveState": "awaiting_first_capture",
+          "sourceGET": 0
+        }
+      }
+    ],
+    "choices": 835,
+    "authors": 167,
+    "candidates": 673,
+    "admin": 60,
+    "coteurComponents": 25,
+    "coteurAuthors": 5,
+    "old812Preserved": 812,
+    "SourceGET": 0,
+    "Task": 0
+  },
+  "activation": {
+    "at": "2026-11-26T05:33:11.722988+00:00",
+    "oldPID": 44752,
+    "newPID": 48180,
+    "ownedRestarts": 1,
+    "SourceGET": 0,
+    "Task": 0,
+    "locksPreserved": true,
+    "stopJob": {
+      "exit": 0,
+      "timedOut": false,
+      "subtreeKillConfirmed": true,
+      "elapsedSeconds": 1.7969999999913853,
+      "hardSeconds": 60,
+      "activeSecondsMax": 50,
+      "sourceGET": null,
+      "taskMutations": 0
+    },
+    "elapsedSeconds": 8.514999999999418,
+    "startedOutsideStopJob": true,
+    "retry": false,
+    "listenerReady": true,
+    "receiptSHA256": "be155576fe2a8007835fa18ad5beb47e15b6480066e862b65560fe19f2d02127"
+  },
+  "UI": {
+    "status": "PASS_LOCAL_UI",
+    "checks": {
+      "adminCoteurVisible": true,
+      "authorVisible": true,
+      "firstSelectionVisible": true,
+      "secondSelectionVisible": true,
+      "nativeProvenanceVisible": true
+    },
+    "errors": [],
+    "receiptSHA256": "9475f4fb6a5b178a28775c8f2850ee7e80fcef0c06154c278ad2b09250ae50a8"
+  },
+  "code": {
+    "readerSHA": "644f9a87b44f6b08c147100d8d01365a3dea9e6fc75e6d36d186378dabf117d5",
+    "archiveSHA": "76a8b4e1d69c91663d8026f459c4241850b5a19d536d4037bedb4c041a884fbd",
+    "serverSHA": "c012f4653d33494c05e191b22f303450b8b6319e3e4ed0b1734e9e7ed854ff0c",
+    "displayAdapterSHA": "08cdff54c7b12a47def03a80179853354258d42a411a4a358890fdd370dc8ee2"
+  },
+  "sourceRecurrence": {
+    "state": "HALTED",
+    "firstSlot": "2026-11-26T05:35:00.000Z",
+    "reservedSourceGET": 0,
+    "newChoices": 0,
+    "jobExit": 1,
+    "subtreeClosed": true,
+    "receiptSHA256": "1f49b3e2e6d1183571fb7d3ca331492f722208a333267dfb72c7637d63e3000b",
+    "cause": "Journal mission file is pretty JSON while native Journal requires canonical JSON plus LF",
+    "missionFileSHA256": "b6708e055b481db3b1df37c2233039d708f225b4f3d75b60055608609d2e43da",
+    "expectedCanonicalSHA256": "e827c0d07d4c83da5a06331089a6ba4a090c01a952ee014bd67c793c396dbeb7",
+    "retry": false
+  },
+  "limits": {
+    "sourceIdentitiesNotCertifiedCivilPeople": true,
+    "coteurTicketComponentsNotIndependentBets": true,
+    "performanceEvaluationAllowed": false,
+    "allCompatibleIntegrated": false,
+    "globalDelivery": "PARTIAL",
+    "rawProviderBodiesInGit": false
+  }
+}

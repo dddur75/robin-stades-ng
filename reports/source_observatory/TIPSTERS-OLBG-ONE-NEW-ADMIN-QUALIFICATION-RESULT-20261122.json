@@ -1,0 +1,50 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.ONE.NEW.ADMIN.QUALIFICATION.RESULT.20261122",
+  "recordedAt": "2026-11-22T17:13:28.119Z",
+  "status": "ACTUAL_ADMIN_QUALIFICATION_ROW_VISIBLE",
+  "scope": "One additional admin qualification row for the already-admitted new OLBG pre-match choice, no new source collection or admission. Actual qualification API and scoped admin row canary pass, nineteen previous rows preserved. Five unrelated admin APIs intentionally blocked before transport; no claim current global admin or Windows state was checked.",
+  "missionId": "OLBG_ONE_NEW_ADMIN_QUALIFICATION_LOCAL_E1_20261122",
+  "planSHA256": "5219cee2d4d6f3a601741268cd3b172d84a464f6dd5d652a05a2ea7dd65e39f9",
+  "manifestSHA256": "26f566cb7dde27ed15cae1b1a3eed9ee9ba3102c3677d5f217cbd31a46b99e15",
+  "fileSHA256": "4da7a0b7be5e4fc2b76fd2dca05446d141779cbbd20ee5b6085b23bf66f501f2",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.SINGLE.PERSONAL.REP.V2.PREMATCH.RESULT.20261122",
+    "DATA.SOURCE_OBSERVATORY.OLBG.ONE.NEW.APP.ADMISSION.20261122",
+    "ENG.SOURCE_OBSERVATORY.OLBG.ONE.NEW.LOCAL.ADMISSION.RESULT.20261122"
+  ],
+  "actual": {
+    "startedAt": "2026-11-22T17:11:11.411Z",
+    "status": "PASS",
+    "APIReads": 2,
+    "pages": 1,
+    "sourceGET": 0,
+    "TaskQueries": 0,
+    "externalBlocked": 0,
+    "writesBlocked": 0,
+    "outOfScopeAPIBlocked": 5,
+    "pageErrors": 0,
+    "personalContentExposed": false,
+    "expectedAPIHash": "cf3c7669558618c0bbf834152a8912ee419555c653107d44d3e63c2089ca2506",
+    "directAPIHash": "cf3c7669558618c0bbf834152a8912ee419555c653107d44d3e63c2089ca2506",
+    "qualificationRows": 20,
+    "previous19DeepEqual": true,
+    "newCandidates": 1,
+    "newAdmitted": 1,
+    "browserAPIHash": "cf3c7669558618c0bbf834152a8912ee419555c653107d44d3e63c2089ca2506",
+    "adminRowVisible": true,
+    "otherAPIsIntentionallyBlocked": true,
+    "fullAdminCurrentStateAccepted": false,
+    "closedAt": "2026-11-22T17:11:12.069Z"
+  },
+  "sourceGET": 0,
+  "TaskChanges": 0,
+  "TaskQueries": 0,
+  "codeChanges": 0,
+  "GitPush": 0,
+  "newAdmissions": 0,
+  "independentReview": {
+    "C3": "Actual runtimeJSON/APIhash20rows/old19deepEqual/oneexactrow,2API1page/5blocked/zeroother effects and bounded closure PASS, no rerun.",
+    "C4": "Same exact actual scope/privacy/copy/row/clock and partialadmin limitation PASS; image contains metadata only."
+  },
+  "globalDelivery": "PARTIAL"
+}

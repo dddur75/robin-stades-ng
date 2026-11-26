@@ -1,0 +1,56 @@
+{
+  "missionId": "COTEUR_HTML5LIB_DEPENDENCY_ACQUISITION_R1_20261123",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.HTML5LIB.DEPS.R1.E1.PARTIAL.20261123",
+  "status": "PARTIAL_PURE_VALIDATORS_PASSED_CODE_REVIEW_REJECTED",
+  "writer": "C0",
+  "authorStoppedAt": "2026-11-23T04:55:53.962Z",
+  "sourceGET": 0,
+  "PyPI_GET": 0,
+  "packageExecution": 0,
+  "globalInstall": 0,
+  "sourceReady": false,
+  "testExit": 0,
+  "launcherCompileExit": 0,
+  "codeMap": {
+    "plan.json": "d07ce3d9b84a2b386d7677abf1f85d29610eb0a0ab6fe153b80aaaf9ed54edff",
+    "mission.json": "d5361dbded2774f2d236434674fe24a9d9dd38ed03c7330470c114563e501f2c",
+    "download-wheels.cjs": "2b4cbc0086d296034532d3fb435e21a3d2d92c4802f3a6ae0a4264a28f66b87a",
+    "test_download.cjs": "1208288c1730ea53188ccf0817cc98ca9b14713d316b44cfa52af1ef3fc02493",
+    "test-primary.json": "8b92893c6e30871232bfa73fc63d25d2b57fa641173ef96d72be3429f2c58b60",
+    "launch.py": "5e7b2fbaf49d5e7c8b8291ae2a875516765473ae24c98ea8d6233062b8683c87",
+    "launcher-compile-primary.json": "c9f233434d35b3a78474c96fe54a07cb9c3c3d84cbea1a13601063970b2c641d",
+    "post-test-main-exit-delta.json": "71c65a5a0ece1ef935f66c968cf74f6c1b5b0e563051359ed14ead4d2852ad00"
+  },
+  "planSHA": "bc3fd98ef0f2e1f1be956c994e07f2e6cc957b787ec05bf42e99845155f6f6b6",
+  "manifestSHA": "02bf97896305dd85e7e921507a1292d30b7730f2bd7bfc0da70e1ea9ed7b71b0",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.CURRENT.ENTRYPOINT.DISCOVERY.R1.E1.PARTIAL.20261123",
+    "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.DOCUMENT.SOURCE.R3.NATIVE.PARTIAL.20261123"
+  ],
+  "testLimits": [
+    "14 synthetic pure validator cases only; actual authority/main/TLS/download/durable receipt branches not executed.",
+    "Main-only deterministic exit after sync receipt added after test; validators and test source unchanged, no rerun claimed.",
+    "No package code downloaded, imported, extracted or installed."
+  ],
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "codeReviewFailures": [
+    "LEDGER_PREFIX_CHAIN_IDS_NOT_PROVEN",
+    "PARENT_HASH_IDENTITY_AND_AWARE_DATE_ORDER_NOT_PROVEN",
+    "COMMON_ORIGIN_AND_MISSION_BOUND_LIFECYCLE_NOT_PROVEN"
+  ],
+  "reviewOutcomes": {
+    "C1": "Only14purevalidator facts and compile confirmed",
+    "C3": "FAIL_AND_STOP acquisition promotion; authority/lifecycle P1",
+    "C4": "SCOPE conditional on independent CODE, no effective download grant"
+  },
+  "E2NeverOpened": true,
+  "tipsterSourceGET": 0,
+  "packagesAcquired": 0,
+  "unusedRegistryGETCanceled": 4,
+  "nextArchitecture": "Reuse accepted Python canonical-ledger policy and strict two-GET Job transport in distinct metadata then digest-pinned wheel missions; abandon weak Node authority."
+}

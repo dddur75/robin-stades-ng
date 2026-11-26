@@ -1,0 +1,64 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREFILTER.NATIVE.R2.TIMEOUT.ACTUAL.RESULT.20261124",
+  "missionId": "NOTBETTING_COMPETITION_PREFILTER_NATIVE_R2_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Actual bounded NotBetting capture stopped on REQUEST_TIMEOUT while reading PICKS body. Engineering/negative receipt verified, overallPARTIAL/FAIL_AND_STOP. Robots200strictcomplete1300bytes and freshallow; picks200CHUNKED BODY_READ incomplete, bytes received UNKNOWN. OneJob17.89s childexit1/outerprogram0/noJobtimeout/subtreeclosed. TwoGETreserved/transmitted; no normalized/pending forecasts created, zero admissions; no absence-of-forecasts inference.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.STATIC.COMPETITION.SELECTOR.PUBLIC.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.STATIC.SELECTOR.GUARDED.CALLER.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CURRENT.TERMS.PERSONAL.CONTEXT.RESULT.20261123",
+    "DATA.SOURCE_OBSERVATORY.BUNDES.J11.FUTURE.UTC.PROGRAMME.RESULT.20261123"
+  ],
+  "receiptSHA": "65bc58a2b2208e4a3d8d5a7fb033b560ae540b5dfe13b0fc1d2ab78371af4341",
+  "primarySHA": "3c76cfc2a59752eb2fc89badfaafe22cd561ca994ac1d3c46d5ef642e4201142",
+  "tuple": {
+    "configSHA": "c3b02a5d88dbd324edc462f0dd2143915553aaca28fcd5cc6f3814c4d2d1eb40",
+    "manifestSHA": "298ade70df26d8bb99d3647c91b8a8ce99bbacf66f031fa8b74d5cb780ad49a5",
+    "missionId": "NOTBETTING_COMPETITION_PREFILTER_NATIVE_R2_20261124",
+    "outerSHA": "c0779bf07e5bb71eec7aa690037cebe07456341212e70614fe92aeeb1cfbc368",
+    "parentGrant": "2929e0e46d1220bef938ace0729e8965cc0a755bebdadc490644bf4429461364",
+    "planSHA": "b42cb0107e6ce8e72769952bdf5aefb5867ed741d2b8916e2f9de72ce1591d74",
+    "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+    "workerSHA": "72af8989abf084a2b132fdb005566e62f067344ebf29971838d1d55814ba78c9"
+  },
+  "actual": {
+    "GETReservations": 2,
+    "GETTransmissionBounds": [
+      2,
+      2
+    ],
+    "DNS": 2,
+    "TCP": 2,
+    "GETSendBoundaries": 2,
+    "nativeInvocations": 1,
+    "jobSeconds": 17.89,
+    "childExit": 1,
+    "outerProgramExit": 0,
+    "JobTimeout": false,
+    "outerGET": null,
+    "robotsBytes": 1300,
+    "picksHTTPStatus": 200,
+    "picksBodyBytes": null,
+    "picksBodyComplete": null,
+    "newStructuredForecastFiles": 0,
+    "newAdmittedForecasts": 0
+  },
+  "limits": {
+    "sourceReady": false,
+    "overall": "PARTIAL",
+    "allCompatibleIntegrated": false,
+    "globalForecastAvailability": "UNKNOWN",
+    "authorityClosed": true,
+    "remainingGET": 0,
+    "remainingJobs": 0,
+    "retry": false,
+    "requestTimeoutSeconds": 12,
+    "bodyLimitBytes": 2097152,
+    "performanceCause": "UNPROVEN_HYPOTHESIS_OF_POLICY_REPARSE_COST"
+  }
+}

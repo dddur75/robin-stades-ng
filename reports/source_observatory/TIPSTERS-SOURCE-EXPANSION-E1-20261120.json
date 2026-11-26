@@ -1,0 +1,145 @@
+{
+  "schemaVersion": "robin-source-expansion-e1-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.EXPANSION.PREMATCH.20261120",
+  "generatedAt": "2026-11-20T09:55:57.381621+00:00",
+  "status": "VERIFIED_ONE_PREMATCH_CHOICE_GLOBAL_PARTIAL_NO_RECURRENT_GRANT",
+  "scope": "Personal noncommercial local factual use only; no commercial licence, normalized bet contract, AI training, public raw payload or performance claim.",
+  "sourceGET": {
+    "prior": 101,
+    "new": 12,
+    "total": 113,
+    "globalMaximum": 134
+  },
+  "calendarResearch": {
+    "searchQueries": 2,
+    "officialOpens": 2,
+    "conservativeCumulativeUnits": 117,
+    "conservativeMaximumUnits": 134,
+    "notObservedPublisherGETCount": true
+  },
+  "profiles": [
+    {
+      "id": "catalogue:f1169ca3a05a7cc1946a6b817ab0e6380ebaee2f8bbf75322fd238134052ad3c",
+      "platform": "OLBG",
+      "sourceUrl": "https://www.olbg.com/tipsters/tips/568518",
+      "observedAt": "2026-11-20T09:38:54.553329+00:00",
+      "responseSha256": "5cfca49ba7fba5281c49b30a1fc87cd4ac24566606ee51355b547c1c09e2b591",
+      "profileVisited": true,
+      "footballFacts": 0,
+      "admittedChoices": 0,
+      "unadmittedFootballFacts": 0,
+      "label": "Profil public accessible, aucun choix personnel actuel lu",
+      "reason": "Le tableau personnel courant est vide lors du contrôle.",
+      "requiredAccess": "Une publication personnelle actuelle admissible avant match.",
+      "ownerAction": "Pas de relance de cette mission ni abonnement déduit de cet état vide."
+    },
+    {
+      "id": "catalogue:f99c5b110457584ede5574932f8f67b83003a18b1eb4d4b74763f370ffdcb1b8",
+      "platform": "OLBG",
+      "sourceUrl": "https://www.olbg.com/tipsters/tips/383717",
+      "observedAt": "2026-11-20T09:38:55.699316+00:00",
+      "responseSha256": "ebf0eeb54b62bc8acb6e14b54b5772dc695a19cbbc8816e5bad7a133a1a5c20c",
+      "profileVisited": true,
+      "footballFacts": 10,
+      "admittedChoices": 1,
+      "unadmittedFootballFacts": 9,
+      "label": "Choix personnel avant match prouvé, campagne distincte à établir",
+      "reason": "Un choix NativeWin est attribué au profil et son match est confirmé par la Premier League. Les autres faits conservent leurs limites de calendrier ou de marché.",
+      "requiredAccess": "Campagne bornée couvrant ce profil exact avant récurrence.",
+      "ownerAction": "Aucun compte ni achat nécessaire ; ne pas hériter de la campagne du profil648433."
+    },
+    {
+      "id": "catalogue:b526130aebd9e9020f291f2230305671abbb32a3b39480c8519321e0bc8967e5",
+      "platform": "OLBG",
+      "sourceUrl": "https://www.olbg.com/tipsters/tips/657210",
+      "observedAt": "2026-11-20T09:38:56.353293+00:00",
+      "responseSha256": "dd2518a7cfca5475e4d394d955012fd25be99b7a042cd1a6594ba0550ce8cfd9",
+      "profileVisited": true,
+      "footballFacts": 0,
+      "admittedChoices": 0,
+      "unadmittedFootballFacts": 0,
+      "label": "Profil public accessible, aucun choix personnel actuel lu",
+      "reason": "Le tableau personnel courant est vide lors du contrôle.",
+      "requiredAccess": "Une publication personnelle actuelle admissible avant match.",
+      "ownerAction": "Pas de relance de cette mission ni abonnement déduit de cet état vide."
+    },
+    {
+      "id": "catalogue:1eda8ae0a0806a728bd9345353f7ab060460b1d1c204ba84c096b4fe83561bf8",
+      "platform": "OLBG",
+      "sourceUrl": "https://www.olbg.com/tipsters/tips/632242",
+      "observedAt": "2026-11-20T09:38:57.403566+00:00",
+      "responseSha256": "4f68826a88ff2c9448412412a3675f791f2c3f3456a8b5ad44e1bb5c10b134b9",
+      "profileVisited": true,
+      "footballFacts": 22,
+      "admittedChoices": 0,
+      "unadmittedFootballFacts": 22,
+      "label": "Choix football lus, qualification avant match partielle",
+      "reason": "Les choix personnels sont accessibles, mais aucun ne remplit actuellement le contrat et le calendrier canonique vérifiés.",
+      "requiredAccess": "Calendrier officiel horodaté pour les matchs et contrat adapté pour les marchés exclus.",
+      "ownerAction": "Conserver les faits lus sans les compter comme pronostics avant match admis."
+    },
+    {
+      "id": "catalogue:a7e833d0d20a58a983935334f8baef475df04ae7e97082fcb5d09677b34a8751",
+      "platform": "Tipster Platform",
+      "sourceUrl": "https://tipsterplatform.com/tipster/charlespicks",
+      "observedAt": "2026-11-20T09:38:59.357268+00:00",
+      "responseSha256": "cfa3bf338ec41d9609a72d68117f0a4399112b54d40c4cca36cd2074fb9c4866",
+      "profileVisited": true,
+      "historicalExportRows": 558,
+      "prospectiveSourceRows": 0,
+      "admittedChoices": 0,
+      "label": "Export public personnel accessible, aucun choix encore futur observé",
+      "reason": "Le profil offre explicitement son CSV public. Toutes les rencontres du fichier sont déjà passées au moment de lecture.",
+      "requiredAccess": "Une publication personnelle prospective avant match.",
+      "ownerAction": "Aucun compte, token ou achat requis pour cet export public ; conserver les limites de preuve."
+    },
+    {
+      "id": "catalogue:dd0fcc2e67d807ffca3adbc94cb442bf8415a43d34e07de475969b157e0af04c",
+      "platform": "Tipster Platform",
+      "sourceUrl": "https://tipsterplatform.com/tipster/cr-is5687",
+      "observedAt": "2026-11-20T09:39:00.685117+00:00",
+      "responseSha256": "e770d8187a417af8c031e371df87dbb24efdf0bb24f883e23c906c33efbefbf1",
+      "profileVisited": true,
+      "historicalExportRows": 319,
+      "prospectiveSourceRows": 1,
+      "admittedChoices": 0,
+      "label": "Export public personnel accessible, preuve avant match partielle",
+      "reason": "Le profil offre explicitement son CSV public. Les lignes historiques restent séparées. Le seul événement encore futur ne possède pas de fuseau officiel vérifié ni de contrat h2h admis.",
+      "requiredAccess": "Horaire officiel avec fuseau et contrat de marché natif vérifié.",
+      "ownerAction": "Aucun compte, token ou achat requis pour cet export public ; conserver les limites de preuve."
+    }
+  ],
+  "counts": {
+    "visitedProfiles": 6,
+    "olbgPersonalFacts": 51,
+    "olbgFootballFacts": 32,
+    "otherSportsExcluded": 19,
+    "olbgAdmittedChoices": 1,
+    "olbgUnadmittedFootballFacts": 31,
+    "tpExportRows": 877,
+    "tpProspectiveSourceRows": 1,
+    "tpAdmittedChoices": 0,
+    "newPrematchChoices": 1,
+    "newProvenAuthors": 1,
+    "recurrentActivations": 0
+  },
+  "evidence": {
+    "contentSha256": "594df70644f8f5699757ff566bf910f0416fafe097d833889e9aff13abbbf98d",
+    "journalSha256": "f5c7314b2a6e389c2dde776107d4a209a602ab1e187ee5c25ef13710c156b7c3",
+    "bundleSha256": "0e1abfc6d3973fdaa0887bca68d90af1f5cb597d0e8f858c4898a7202a8ec408",
+    "calendarProjectionSha256": "d4c199b3b1317a3707bb7fa64d54d3ca75b4e7c2513acd77fa229122e27c8694",
+    "officialSource": "https://www.premierleague.com/en/games/coke-top-three/2026-27/matchweek-11"
+  },
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "limits": [
+    "The two empty OLBG profiles are not active sources.",
+    "Four other EPL fixtures and the German timezone remain unverified.",
+    "No existing campaign or30pins changed; the new author cannot inherit profile648433 recurring authority.",
+    "Future E2 requires a distinct manifest and exact keys.",
+    "Choices and normalized source facts remain private, outside Git."
+  ]
+}

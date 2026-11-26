@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "robin-local-curated-admission-v2",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.TWO.EXTRA.PROFILE269051.APP.ADMISSION.20261125",
+  "status": "CURATED_DATASET_PREPARED_RUNTIME_INACTIVE",
+  "scope": "Exact real personal choices admitted as a local dataset proposal only; original observation and source fields retained.",
+  "priorCheckpointSHA256": "0285a9701c5d7c907f1a33cf0671cab67c547bd5a777717cef3568d255f3fcd7",
+  "sourceBatchSHA256": "018df4b2bfd394fb0285e9dc3eb598e8c149f78e7b3cd4c8fa7de198c4fbf3b2",
+  "nativeAuthorId": 269051,
+  "newUniqueAdmitted": 1,
+  "oldPublicChoicesPreserved": 524,
+  "publicChoices": 525,
+  "candidateFiches": 318,
+  "newCandidateFiches": 0,
+  "newPublicAuthor": false,
+  "documentaryPrematchRecertified": false,
+  "sourceReady": false,
+  "recurringCollectionActive": false,
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.TWO.EXTRA.RETAINED.QUALIFICATION.20261125"
+  ],
+  "qualifiedAt": "2026-11-25T17:08:52.886Z",
+  "sourceObservedAt": "2026-11-25T17:07:03.558447+00:00",
+  "missionId": "OLBG_TWO_ADDITIONAL_LOCAL_APP_ADMISSION_20261125",
+  "privateAdmissionReportSHA256": "55377820388da2208115c90d88b9b1755f7005d0636b2391df904f2513a98521",
+  "privateCheckpointSHA256": "e94be39829ec47ba1624cb161d8270e7cdfc323b438ff57d058069a8339a5334"
+}

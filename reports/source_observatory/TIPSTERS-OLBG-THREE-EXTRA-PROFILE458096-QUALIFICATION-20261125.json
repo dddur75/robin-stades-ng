@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "robin-retained-data-qualification-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.PROFILE458096.RETAINED.FINAL19.QUALIFICATION.20261125",
+  "missionId": "OLBG_THREE_ADDITIONAL_R1D_RETAINED_QUALIFICATION_20261125",
+  "status": "VERIFIED_DATA_APP_PENDING",
+  "scope": "Exact retained personal choices under the previously approved nineteen-fixture context.",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.THREE.EXTRA.RETAINED.QUALIFICATION.20261125"
+  ],
+  "sourceBatchSHA256": "eac9c48b4b2a604ce3c83b175ed86c052f5b056353170c393eb471b7814d3ae5",
+  "newQualified": 3,
+  "sourceGET": 0,
+  "APP": 0
+}

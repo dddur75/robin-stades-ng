@@ -1,0 +1,23 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.BUNDES.LITERAL.SELECTOR.PRIVATE.RESULT.20261123",
+  "missionId": "NOTBETTING_BUNDES_LITERAL_SELECTOR_PRIVATE_E1_20261123",
+  "generatedAt": "2026-11-23T16:42:06.030Z",
+  "status": "PRIVATE_COMPONENT_ACCEPTED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PENDING.LOCAL.SCREENING.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.NATIVE.PENDING.STORAGE.PRIVATE.RESULT.20261123"
+  ],
+  "scope": "C3privatebridge independentlyacceptedC0/C1/C4. ExactliteralBundesliga filter before4physicalcap, otherliteralscontinuewalk, unresolved$refsUNKNOWN/counterforcesselectionCompletefalse. Noresolver/capraise/gate/owner/date/calendar/pendingchanges, nineadjacentsbyteexact. ExactstriprestoresfulloldselectorprefixAST. OneREDfiveGREEN/criticalRuff3files0/RAMcompile3/189.637sSTOP. No nativeBundesexistencebeyondoldsamples/globalabsence/qualifiedforecast claims. Futurebindingcfgbridgehash+expandedclosedcountersschema/freshSOURCE required.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "bridgeSHA": "c6b97213e3b043d0c9806fc7af93021eb482d34e76a7d0e78037818276047c56",
+  "fileMapSHA": "a11e34fddd18be88fe3ac5309c9727e4a8df1f60c1e4f31eda64dc80ab740206",
+  "resultSHA": "c33b582e7e365e01650d344f3644372e06e739963f4cb80c1a93a108933ede9d"
+}

@@ -1,0 +1,104 @@
+{
+  "missionId": "PYPI_HTML5_METADATA_NATIVE_R2_20261123",
+  "claimId": "ENG.SOURCE_OBSERVATORY.PYPI.HTML5.METADATA.R2.NATIVE.RESULT.20261123",
+  "status": "ACCEPTED_OFFICIAL_PYPI_WHEEL_METADATA_ONLY",
+  "scope": "TWO_PUBLIC_VERSION_JSON_DOCUMENTS_NO_WHEEL_DOWNLOAD",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.PYPI.HTML5.METADATA.R2.E1.20261123"
+  ],
+  "closedAt": "2026-11-23T05:15:56.160877+00:00",
+  "registryGET": 2,
+  "tipsterGET": 0,
+  "nativeJobs": 1,
+  "Node": 0,
+  "packagesAcquired": 0,
+  "packageExecution": 0,
+  "sourceReady": false,
+  "selected": [
+    {
+      "filename": "html5lib-1.1-py2.py3-none-any.whl",
+      "metadataResponseSHA256": "8de73e452a5e5f55523b83a9e439386042b702d253fe3f8b50eb6231a4424997",
+      "metadataSourceURL": "https://pypi.org/pypi/html5lib/1.1/json",
+      "packageExecuted": false,
+      "project": "html5lib",
+      "version": "1.1",
+      "wheelBytesFromMetadata": 112173,
+      "wheelDownloaded": false,
+      "wheelSHA256FromMetadata": "0d78f8fde1c230e99fe37986a60526d7049ed4bf8a9fadbad5f00e22e58e041d",
+      "wheelURL": "https://files.pythonhosted.org/packages/6c/dd/a834df6482147d48e225a49515aabc28974ad5a4ca3215c18a882565b028/html5lib-1.1-py2.py3-none-any.whl"
+    },
+    {
+      "filename": "webencodings-0.5.1-py2.py3-none-any.whl",
+      "metadataResponseSHA256": "a3c3223dabd0491c3d56ff490527efdb6e971b2cc31d7dd79906ea4b3ee300b6",
+      "metadataSourceURL": "https://pypi.org/pypi/webencodings/0.5.1/json",
+      "packageExecuted": false,
+      "project": "webencodings",
+      "version": "0.5.1",
+      "wheelBytesFromMetadata": 11774,
+      "wheelDownloaded": false,
+      "wheelSHA256FromMetadata": "a0af1213f3c2226497a97e2b3aa01a7e4bee4f403f95be16fc9acd2947514a78",
+      "wheelURL": "https://files.pythonhosted.org/packages/f4/24/2a3e3df732393fed8b3ebf2ec078f05546de641fe1b667ee316ec1dcf3b7/webencodings-0.5.1-py2.py3-none-any.whl"
+    }
+  ],
+  "traces": {
+    "asset": {
+      "CLbucket": "VALID",
+      "CLcount": 1,
+      "TEbucket": "ABSENT",
+      "TEcount": 0,
+      "bodyComplete": true,
+      "bytesReceived": 4351,
+      "contentEncodingBucket": "ABSENT",
+      "exceptionKind": null,
+      "finalZeroSeen": null,
+      "framing": "CL",
+      "httpStatus": 200,
+      "phase": "DONE",
+      "reason": null,
+      "schemaVersion": "robin-package-fixed-transport-diagnostic-v1",
+      "terminalStrictVerified": null,
+      "trailerComplete": null
+    },
+    "robots": {
+      "CLbucket": "VALID",
+      "CLcount": 1,
+      "TEbucket": "ABSENT",
+      "TEcount": 0,
+      "bodyComplete": true,
+      "bytesReceived": 18655,
+      "contentEncodingBucket": "ABSENT",
+      "exceptionKind": null,
+      "finalZeroSeen": null,
+      "framing": "CL",
+      "httpStatus": 200,
+      "phase": "DONE",
+      "reason": null,
+      "schemaVersion": "robin-package-fixed-transport-diagnostic-v1",
+      "terminalStrictVerified": null,
+      "trailerComplete": null
+    }
+  },
+  "auditCounts": {
+    "DNS": 2,
+    "GET_SEND_BOUNDARY": 2,
+    "NODE": 0,
+    "TCP": 2
+  },
+  "outerExit": 0,
+  "workerExit": 0,
+  "selectedPrivateSHA256": "277f2d7d98bc26bf420d43d5bc81d16e97f6932abde4af467e5d4767cf74b1bb",
+  "nativeResultSHA256": "896b3b853313a14b0bca656307897bcc305573c37339d252f9c3840886db1b21",
+  "primarySHA256": "f6a1064970be67845425f8f68b1940e969785fdc2de32130c5963395a00ea385",
+  "sourceDecisionSHA256": "8c86b01d66a57e9a694de917694d295799c58de6990f31bbc223351f72c485bf",
+  "limits": [
+    "Wheel digests/sizes are official version metadata assertions, not measured archive hashes; no wheel downloaded or executed.",
+    "Outer sourceGET null preserved; two registry GETs established by worker send counters and two complete200responses.",
+    "No tipster collection, app/task/push, dependency install, licence acceptance or HTML parser qualification; future wheel acquisition requires distinct mission/pins/keys."
+  ]
+}

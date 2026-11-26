@@ -1,0 +1,76 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.STATIC.SELECTOR.GUARDED.CALLER.E1.RESULT.20261124",
+  "missionId": "NOTBETTING_STATIC_SELECTOR_GUARDED_REDESIGN_E1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Fresh guarded private caller adoption after explicit REDESIGN, reviewed exact copied code and six synthetic qualification paths. Same pure pinned public selector is used by diagnostic and bridge; target after four other-competition records passes synthetic owner/fixture/prematch gates, late/paid/badpin refuse. Constructor completes0.531s with originalAUTH300/MF/mono50 guards before/after writes/test, STOPtimely. Two old late phases and erroneous old TIMELY label remain withdrawn/PARTIAL. No SOURCE/outer/runtime authority.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.STATIC.COMPETITION.SELECTOR.PUBLIC.E1.RESULT.20261124"
+  ],
+  "resultSHA": "f97211769c776b8f913647367d4c2ac6f2ef8d7190c1b193ee23aca119951a7e",
+  "stopSHA": "0ff0364baa562915413fd08db6099873ca92abb439dfee2156b2bf34334a6fc5",
+  "artifactFiles": {
+    "bridge.py": {
+      "SHA256": "743be94e86b777a5c40160be8294b0a7df9f5fa846139806eae2ac8f08c57bdc",
+      "bytes": 2531
+    },
+    "green-primary.json": {
+      "SHA256": "eceb64b623e143df308089fce7bc2ad202dbc43898658b2e1aa7fa359597e7cd",
+      "bytes": 543
+    },
+    "owner-loader-config.json": {
+      "SHA256": "ea8f1acb6adb27eb99c952d57f75690d01eec42c0e164b834497e845e5400a7a",
+      "bytes": 1858
+    },
+    "owner_discovery.py": {
+      "SHA256": "138214bd7a5933e1fbcc56cecd076031296f982305c3fdf61bb3447bac5a23f6",
+      "bytes": 12685
+    },
+    "parent-qualifier.py": {
+      "SHA256": "cc6362abca54c16b94651198f2427072d29bcfe6872074c8b8a1edb791efece9",
+      "bytes": 24280
+    },
+    "predicates.py": {
+      "SHA256": "f43374deb46d5bbe5244d34bcfbca16dd7da23384e1b8453ce6e72d49d78b93a",
+      "bytes": 8411
+    },
+    "qualifier_observer.py": {
+      "SHA256": "3f3ca665d5587b4ece17993a13643db00122370716ff4389cc11639d8e65990f",
+      "bytes": 5228
+    },
+    "record_index.parent.py.txt": {
+      "SHA256": "56a9027a85c8487bcc230214b6cbc099ba21009d332ea1538c9b2ca6c6dfec08",
+      "bytes": 7927
+    },
+    "source_worker.py": {
+      "SHA256": "90dc23c88ea7c84db6e49ad7870933b5d255293a5e1c72b3e3010086f88f2c9e",
+      "bytes": 19667
+    },
+    "test_caller.py": {
+      "SHA256": "7575cdddd1f1063ea2fe71a45ec870075ac6c86752ea2ad550546c0be11671ec",
+      "bytes": 3078
+    }
+  },
+  "tests": {
+    "syntheticCases": 6,
+    "processExit": 0,
+    "elapsedSeconds": 0.531,
+    "sourceGET": 0
+  },
+  "limits": {
+    "knownAuthorProcesses": 2,
+    "totalOSProcessesClaimed": false,
+    "newFaultInjection": false,
+    "realCalendarOpened": false,
+    "actualSourceAuthorityValidated": false,
+    "outerPolicyValidated": false,
+    "sourceReady": false,
+    "admissions": 0,
+    "allCompatibleIntegrated": false,
+    "overall": "PARTIAL"
+  }
+}

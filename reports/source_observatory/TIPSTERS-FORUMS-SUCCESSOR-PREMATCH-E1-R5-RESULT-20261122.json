@@ -1,0 +1,83 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.FORUMS.SUCCESSOR.PREMATCH.E1.R5.20261122",
+  "recordedAt": "2026-11-22T04:37:30.998Z",
+  "status": "PRIVATE_QUALIFIED_PREMATCH_CANDIDATES_PENDING_APP_ADMISSION",
+  "scope": "Six actual native responses yield42 qualified personal correct-score observations over3future Ligue1fixtures. One new native choice and41reobservations; none admitted under this source-only mission.",
+  "missionId": "FORUMS_SUCCESSOR_E1_R5_20261122",
+  "planSHA256": "75db5c1a85d5dfd6cca374bcf441131d8d0a3d5e72618c4a043666794e48b740",
+  "manifestSHA256": "719fbe76f7b957f1ae431e1e7632700738f9e78ec4037e7112f0576c4a6575e8",
+  "grant": "d27c046700dd5d8bf7f342aab73c7dda0ee3990334c7cc6b805075cfdff15085",
+  "sourceGET": 6,
+  "HTTP200": 6,
+  "bodyCompleteResponses": 6,
+  "redirects": 0,
+  "nativePosts": 47,
+  "qualifiedCandidateObservations": 42,
+  "uniqueNativeChoiceIds": 42,
+  "duplicateNativeChoiceIds": 0,
+  "sourceCounts": {
+    "SRC_038": 12,
+    "SRC_058": 30
+  },
+  "fixtureCandidateCounts": [
+    22,
+    10,
+    10
+  ],
+  "fixtureCount": 3,
+  "pseudonymHashes": 22,
+  "firstObservedAtUTC": "2026-11-22T04:26:55.775943+00:00",
+  "lastObservedAtUTC": "2026-11-22T04:27:08.690717+00:00",
+  "allObservedStrictlyBeforeKickoff": true,
+  "publicationClock": null,
+  "sourceTimezone": null,
+  "identityCertified": false,
+  "privateCandidateSHA256": "d03ab8eeed949d0db8c65055deefad057015f52bac60aae74ad9771798018f61",
+  "privateReadbackSHA256": "c8749a007b36e501dda2b75c9a480fae4cdb6f58c846111a325f13c48105d8de",
+  "externalExitCode": 0,
+  "supervisorElapsedBeforeFsyncSeconds": 42.437,
+  "outerClosedAt": "2026-11-22T04:27:09.901708Z",
+  "C1MetadataComparison": {
+    "localAPIObservedAt": "2026-11-22T04:29:26Z",
+    "localAPISHA256": "8cab576ef85bc2f88c62751ef75c6630921fe34ec3e8c96986a41245f72b6c12",
+    "baseDistinctPicks": 478,
+    "baseForumChoices": 102,
+    "newNativeChoices": 1,
+    "reobservationsSameSelection": 41,
+    "changedSelectionVersions": 0,
+    "parserReplayOldCorpus": false
+  },
+  "C3Recette": {
+    "pins": 45,
+    "AST": 9,
+    "readbackFiles": 18,
+    "allValid": true,
+    "SCOPacingResponseToReservationSeconds": [
+      10.349375,
+      10.365936
+    ],
+    "otherPacingSeconds": [
+      3.376661,
+      3.345969,
+      3.363059
+    ],
+    "spentToOuterRecordSeconds": 42.240906,
+    "readonly": true
+  },
+  "C4Review": "Current fresh robots/CGU gates and private42projection qualified; no admission or recurrence authority. Historical framing not retroactively proven.",
+  "eligibleForApplication": false,
+  "admissions": 0,
+  "currentAppDistinctPicks": 478,
+  "conditionalAppDistinctPicksAfterSeparateAdmission": 479,
+  "newNativeChoicesAdmitted": 0,
+  "rawProviderBodiesStored": false,
+  "selectionOrProviderProseInGit": false,
+  "knownClosedCampaignPlusCanariesGET": 79,
+  "allTimeForumFamilyGET": "UNKNOWN",
+  "attemptConsumed": true,
+  "retryAllowed": false,
+  "taskCreated": false,
+  "sourceActivation": false,
+  "globalDelivery": "PARTIAL",
+  "allCompatibleSourcesIntegrated": false
+}

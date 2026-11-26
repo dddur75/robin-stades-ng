@@ -1,0 +1,22 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI252.EXACT.HEAD.RESULT.20261121",
+  "generatedAt": "2026-11-21T22:04:44.801Z",
+  "status": "SUCCESS_EXACT_PUBLISHED_COMMIT",
+  "scope": "GitHub CI verification applies only to the exact published commit. Later private source qualification does not inherit a successful collection result from CI.",
+  "commit": "91b6d88e7aa13ea94ef817212a766ca6a5381792",
+  "runId": 44951953419,
+  "runNumber": 252,
+  "conclusion": "success",
+  "jobsSucceeded": 17,
+  "jobsFailed": 0,
+  "jobsTotal": 17,
+  "runURL": "https://github.com/dddur75/robin-stades-ng/actions/runs/44951953419",
+  "privateReceiptSHA256": "c98ed947da4d44011ea56a2d573f3ecf8143917ea70ac123456c05527878041c",
+  "verification": "GitHub connector completed workflow and all17 completed successful jobs, independently checked by C3",
+  "pullRequest": 133,
+  "pullRequestState": "OPEN_DRAFT",
+  "merge": 0,
+  "deployment": 0,
+  "localControlReportsAddedAfterCommit": true,
+  "globalDelivery": "PARTIAL"
+}

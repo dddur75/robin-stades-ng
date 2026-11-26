@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "robin-complete-workbook-inventory-v1",
+  "claimId": "DATA.SOURCE_OBSERVATORY.WORKBOOK.COMPLETE.20261120",
+  "generatedAt": "2026-11-20T10:58:57.736924+00:00",
+  "status": "FULL_DOCUMENT_INTEGRATION_VERIFIED_COLLECTION_PARTIAL",
+  "inventory": {
+    "originalSheets": 9,
+    "originalCellsPreserved": 304102,
+    "catalogueAddresses": 16194,
+    "frAddresses": 1809,
+    "exactDistinctAddresses": 18003,
+    "referenceRowsAllSheets": 18375,
+    "platformLabels": 183,
+    "hosts": 263,
+    "samePseudonymPlatformCollisionGroups": 78,
+    "collisionExcessRows": 101,
+    "unit": "Documentary addresses and references, not certified people."
+  },
+  "sheetRows": {
+    "Repères": 13,
+    "Catalogue": 16194,
+    "Plateformes": 183,
+    "Profils FR": 1809,
+    "Pilote L1": 74,
+    "Sujets et archives": 20,
+    "Hors pilote": 19,
+    "Dépôts": 54,
+    "Réservoirs": 9
+  },
+  "provenance": {
+    "originalWorkbookSha256": "c6b15829bb11e40d3145bf25b6cce8a7066de6105897d2b48dc4a74ba9286622",
+    "extractionSha256": "518b5738e1fc5918f9655034adb0ac4b937a25a6161711179966414d4ead541d",
+    "formulaLinksSha256": "f370709470b7fb56584cb1f4bc63ec4e80086edd9edf2f2771d9db8b320fd500",
+    "privateIndexSha256": "0a4cfac9f560bbc2317ca19d5ccf790695b0b14ea4bfd4a352e6be11d4befcb5",
+    "enrichedWorkbookSha256": "924009a40676bce3c2a9220a4afd89ee894903230168df6fb6424d5e95bd644f",
+    "originalUnmodified": true,
+    "archiveFormulaTargetsRecovered": 20
+  },
+  "workbook": {
+    "newSheet": "Suivi Robin",
+    "newColumns": [
+      "État Robin",
+      "Collecte Robin",
+      "Action requise",
+      "Fiche Robin",
+      "Preuve Robin"
+    ],
+    "nativeAppLinks": 18003,
+    "nativeTablesExtended": {
+      "Catalogue": "A4:V16198",
+      "Profils FR": "A4:S1813"
+    },
+    "otherOriginalTablesUnchanged": 6,
+    "newAccessTable": "A20:D203",
+    "originalCellValuesTypesFormulasStylesAttributesPreserved": true,
+    "verification": "C1 independent ZIP/XML comparisons; C0 rendered visual inspection. Interactive Excel sorting not exercised."
+  },
+  "verifiedCollectionSnapshot": {
+    "publicObservedThrough": "2026-11-20T10:18:04.800464+00:00",
+    "nativeQualifiedReadAt": "2026-11-20T10:39:09.5555825+00:00",
+    "uniqueChoices": 101,
+    "sourcePseudonyms": 22,
+    "allObservedStrictlyBeforeKickoff": true,
+    "sourceCounts": {
+      "SRC_038": 10,
+      "SRC_058": 45,
+      "SRC_039": 43,
+      "SRC_014": 3
+    },
+    "qualifiedCatalogueProfiles": 7,
+    "enabledCatalogueProfiles": 7,
+    "publicSnapshotSha256": "4b8492ef307eac4d4f810cdc592ac534e0b871f0773b490d853c7aa7cc514c2d",
+    "qualifiedSnapshotSha256": "dfac2b3f42f9e81e8cd56c6336997ab23d7f7e5be801a4e08c055455962f4909",
+    "incrementAttribution": "Nine additional choices and one pseudonym came from pre-existing forum campaigns; one additional choice and one pseudonym came from the new OLBG profile. Relative to this snapshot, the pre-expansion baseline is100/21."
+  },
+  "sourceExpansionClaims": [
+    "DATA.SOURCE_OBSERVATORY.EXPANSION.PREMATCH.20261120",
+    "DATA.SOURCE_OBSERVATORY.EXPANDED.OLBG.E2.20261120"
+  ],
+  "remainingGates": {
+    "Kicktipp": "Current Ligue1 contest sample hides choices until kickoff; prospective authorized organizer export with individual choices and timestamps required. Not a finding about every contest in the workbook.",
+    "Coteur": "Written reuse scope or official feed required for structured extraction at the proposed cadence.",
+    "NotBetting": "Applicable readable terms and an authorized personal-choice route required; no mandatory account or purchase established.",
+    "Telegram": "Express permission compatible with the proposed use and content rights, or independently licensed first-party distribution. Account/token alone is insufficient.",
+    "otherReferences": "Individual access, permitted reuse, personal-choice and canonical kickoff proof remain unestablished unless an exact record is already qualified. Presence in this inventory creates no collection authority."
+  },
+  "limits": [
+    "No claim that18003addresses or183platforms are active.",
+    "Platform sample rights are not automatically applicable to all profiles or competitions.",
+    "Source pseudonyms are not certified identities.",
+    "PublishedAt and normalized market scope remain unknown unless independently proven; no ROI or betting claim.",
+    "Detailed workbook data, publisher bodies and detailed choices remain outside Git.",
+    "No API-Football, purchase, production deployment, real bet, promotion or social publication."
+  ]
+}

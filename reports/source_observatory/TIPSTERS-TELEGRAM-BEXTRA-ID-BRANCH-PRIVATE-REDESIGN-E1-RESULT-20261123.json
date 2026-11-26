@@ -1,0 +1,41 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.ID.BRANCH.PRIVATE.REDESIGN.E1.RESULT.20261123",
+  "missionId": "TELEGRAM_BEXTRA_MESSAGE_ID_CLOSED_BRANCH_REDESIGN_E1_20261123",
+  "status": "PRIVATE_SYNTHETIC_DIAGNOSTIC_COMPONENT_ACCEPTED",
+  "scope": "Private synthetic MESSAGE_ID branch witness only. Actual rejection and original projection remain unchanged; five closed diagnostic fields contain no source values. Native caller binding, SSL/authority/Job and real source branch are unproved. No collection activation or new GET is authorized.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.WITNESS.NATIVE.R1.ACTUAL.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.PUBLIC.LIBRARY.RESULT.20261123"
+  ],
+  "author": "C3",
+  "authorStoppedAt": "2026-11-23T20:08:13.170861+00:00",
+  "privateResultSHA": "ac451a6229a7bff28b65cce43ac7364c54cf95d941324f87518e574917522129",
+  "codeSHA": "ad344906b8d660885c24a8b432f0a5e1ca2eab78ba912222c1abb809a81b5f8c",
+  "testSHA": "d9a94a6030c25db03ba54dc3615b4735c505a48f9a6e6ee4e814d2cafcff5e22",
+  "fileMapSHA": "bf9217791df1f1644a143f48b306797612e15b883e2266c379c8ac6a51897917",
+  "targetedMethodsPassed": 3,
+  "syntheticFixtures": 6,
+  "baseFixtures": 5,
+  "ruffExit": 0,
+  "targetedProcesses": 7,
+  "processBudget": 8,
+  "ASTProof": {
+    "parentWholeASTEqual": true,
+    "prefixWholeASTEqual": true,
+    "parentSites": 1,
+    "prefixSites": 1
+  },
+  "actualWorkerConsumerTested": false,
+  "actualNativeFineCause": "UNKNOWN",
+  "sourceGET": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "allCompatibleIntegrated": false,
+  "overallStatus": "PARTIAL"
+}

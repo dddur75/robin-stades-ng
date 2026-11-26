@@ -1,0 +1,73 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CATALOGUE.FILTER.BROWSER.RECETTE.20261122",
+  "generatedAt": "2026-11-21T23:45:03.116Z",
+  "status": "PASS_ONE_LOCAL_CATALOGUE_FILTER_AND_RESET",
+  "scope": "One existing platform filter in local catalogue UI; first25 displayed rows only, no pagination or public-prediction filter test.",
+  "route": "/expert/catalogue-tipsters",
+  "sourceResultClaimId": "ENG.SOURCE_OBSERVATORY.CANDIDATE.OLBG.FILTER.DOM.QA.20261122",
+  "sourceResultSHA256": "54842f3b949f98ea0230cf2467ad8b7dd4cfdaf8bbe97ec7ad2ddbe5120dc9cf",
+  "sourceReceiptSHA256": "1dbedc90057a970e98a8f403f6ac439eae74f8e4ab259171347bea2907af5675",
+  "sourceAgentReportSHA256": "60aed3696aef77a48705774e9fed8532f045c75df5d6ccaa1b55a572c9b4ab3f",
+  "planSHA256": "92bdbc46f0320afca969aad53653be8dfe8e7f290af207115b018d736a5fe297",
+  "manifestSHA256": "56766e848250971d662d33b5b92627942875d0bf4f35ec80ede1c6d2be19d95c",
+  "dom": {
+    "before": {
+      "count": 317,
+      "pages": 13,
+      "visibleRows": 25
+    },
+    "afterOLBG": {
+      "count": 31,
+      "pages": 2,
+      "visibleRows": 25,
+      "allVisibleRowsOLBG": true,
+      "allVisibleIdsInExactAPISubset": true
+    },
+    "reset": {
+      "count": 317,
+      "pages": 13,
+      "same25InitialIds": true
+    },
+    "navigationCount": 1,
+    "navigationUnchanged": true
+  },
+  "registry": {
+    "observedAt": "2026-11-21T23:42:06.865Z",
+    "payloadSHA256": "8933164172098bf02bf30ad158570ef6c436e7fc330528fb2ff713995f3f321a",
+    "records": 317,
+    "qualifiedCount": 24,
+    "enabledCount": 2,
+    "distinctFromNext3ActiveProfiles": true
+  },
+  "network": {
+    "allowedLocalGET": 72,
+    "allowedLoopbackWebSockets": 1,
+    "sourceProviderGET": 0,
+    "externalRequestsAllowed": 0,
+    "blockedExternal": 0,
+    "persistentAppMutations": 0,
+    "taskMutations": 0
+  },
+  "supervision": {
+    "jobWallSeconds": 6.967,
+    "browserCloseMilliseconds": 61,
+    "browserClosed": true
+  },
+  "errors": {
+    "page": 0,
+    "console": 0
+  },
+  "reviewedBy": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "rawDOMIdsAndCapturesInGit": false,
+  "limitations": [
+    "First25 OLBG rows only; pagination not exercised.",
+    "No platform filter exists in the public predictions component; its internal tipsterId property is not this UI filter.",
+    "Registry-enabled cards and active collector profiles have different grains."
+  ],
+  "globalDelivery": "PARTIAL",
+  "allCompatibleSourcesIntegrated": false
+}

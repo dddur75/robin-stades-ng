@@ -1,0 +1,24 @@
+{
+  "missionId": "PYPI_HTML5_METADATA_NATIVE_R1_20261123",
+  "claimId": "ENG.SOURCE_OBSERVATORY.PYPI.HTML5.METADATA.R1.E1.PARTIAL.20261123",
+  "status": "PARTIAL_LOCAL_COMPILE_FAILED_BEFORE_COMPONENT_IMPORT",
+  "writer": "C0",
+  "authorStoppedAt": "2026-11-23T05:09:19.558Z",
+  "testExit": 1,
+  "sourceGET": 0,
+  "registryGET": 0,
+  "tipsterGET": 0,
+  "packagesAcquired": 0,
+  "sourceReady": false,
+  "failedRuns": 1,
+  "workerSHA256": "83974e6a730222d3439e49d216e507a543babcc9133ec87b6d766cc9f831520b",
+  "primarySHA256": "4d09ce71dc4e4da040c1eef6270baadd4b3af19c0607caaa9ff3c4e089d804bf",
+  "reason": "SYNTAX_ERROR_MISSING_WHITESPACE_IN_CONDITIONAL_EXCEPTION_KIND",
+  "E2NeverOpened": true,
+  "unusedGETCanceled": 2,
+  "limits": [
+    "No worker module imported and no authority/metadata case executed; failed primary cannot support functional success.",
+    "Code outputs were over-pinned before E1 construction. Successor will retain immutable baseline/control input pins, and bind completed E1 outputs through fresh E2 decision tuple.",
+    "No source or registry request, wheel download, package execution, app/Task/push operation."
+  ]
+}

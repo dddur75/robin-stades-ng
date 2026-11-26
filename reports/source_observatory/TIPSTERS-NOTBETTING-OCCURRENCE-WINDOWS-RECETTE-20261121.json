@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-11-21T06:04:28.682491+00:00",
+  "schemaVersion": "robin-single-windows-task-installation-recette-v1",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.OCCURRENCE.WINDOWS.RECETTE.20261121",
+  "status": "INSTALLED_FIRST_SCHEDULED_EXECUTION_NOT_YET_OBSERVED",
+  "observedAt": "2026-11-21T05:59:03.4149252+00:00",
+  "taskName": "Robin-Tipsters-NotBetting-Occurrences-E2-20261121",
+  "xmlSha256": "7503cdd2197e6eb0459e3cbd07465416d90c732ea233d7fdf2435a00adf81de6",
+  "triggersUTC": [
+    "2026-11-21T07:00:00Z",
+    "2026-11-21T09:00:00Z",
+    "2026-11-21T11:00:00Z"
+  ],
+  "endBoundaryUTC": "2026-11-21T11:15:00Z",
+  "nativeState": "Ready",
+  "enabled": true,
+  "principal": {
+    "logonType": "Interactive",
+    "runLevel": "Limited"
+  },
+  "settings": {
+    "hidden": true,
+    "multipleInstances": "IgnoreNew",
+    "executionTimeLimit": "PT2M",
+    "wakeToRun": false,
+    "startWhenAvailable": false,
+    "restartCount": 0
+  },
+  "nextRunTimeUTC": "2026-11-21T07:00:00Z",
+  "lastResult": 267011,
+  "operatorElapsedMilliseconds": 8219,
+  "creations": 1,
+  "sourceGETsForRegistration": 0,
+  "manualSourceTriggers": 0,
+  "registrationGrantDecisionHash": "4cdcf78b2d776b3b8bf0f4e09f73aab729ffe2aea95d94292f12bdd071b55a96",
+  "firstScheduledPassVerified": false,
+  "applicationRecette": false
+}

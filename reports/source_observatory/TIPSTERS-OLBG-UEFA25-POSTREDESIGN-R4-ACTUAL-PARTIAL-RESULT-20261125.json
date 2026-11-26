@@ -1,0 +1,97 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.UEFA25.POSTREDESIGN.R4.ACTUAL.RESULT.20261125",
+  "status": "PARTIAL_ROBOTS_AGENT_PARSE_BLOCK_NO_PROFILE_REQUEST",
+  "scope": "First live canary after tested comment/closed-code redesign; stopped after complete robots response at the agent-line parser.",
+  "tuple": {
+    "parentPlanSHA": "b5aaa059941e872cb909e17839f348c6a770fb060b21f62565276225d71a7d9c",
+    "parentManifestSHA": "f481bac68eb9b9b4a1dbefe51349b45fcc5f117c36987ad7112c07d667b1565e",
+    "childPlanSHA": "5ce14fa7b48e04a383b767df4a65ca12f4a8eceffeb8393d75fa09a5e891c05a",
+    "childManifestSHA": "c13bb39da47f4c8c53c07695478eae9ed5f44239c22f7117e86616bbe21db821"
+  },
+  "rootTupleRAW": {
+    "planSHA": "99ae9004072c598b9638e3d0c9f4eb094a1abfae36eeb21552fa9c69b2b8e835",
+    "manifestSHA": "a47afe50ff0d6f6376ec14e02354c498f78985818df5c68a3d664cd104f118b0"
+  },
+  "sourceSlotUTC": "2026-11-25T01:50:00+00:00",
+  "sourceGrant": "42ec461730f7d8906a280bc6f37490797f193b896bd9783c21317f148e8c96fd",
+  "actualTopControllerExit": 1,
+  "actualRootWrapperExit": 1,
+  "rootWrapperSeconds": 28.95400000002701,
+  "job": {
+    "activeSecondsMax": 50,
+    "elapsedSeconds": 12.061999999976251,
+    "exit": 1,
+    "hardSeconds": 60,
+    "sourceGET": null,
+    "subtreeKillConfirmed": true,
+    "taskMutations": 0,
+    "timedOut": false
+  },
+  "auditCounts": {
+    "DNS": 1,
+    "GET_SEND": 1,
+    "TCP": 1,
+    "activeGET": false,
+    "reservedAttempts": 1,
+    "sourceReady": false
+  },
+  "transportDiagnosticStatus": "VALID",
+  "transportDiagnostic": {
+    "CLbucket": "VALID",
+    "CLcount": 1,
+    "TEbucket": "ABSENT",
+    "TEcount": 0,
+    "bodyComplete": true,
+    "bytesReceived": 9452,
+    "contentEncodingBucket": "ABSENT",
+    "exceptionKind": null,
+    "familyAttempted": "IPV4",
+    "finalZeroSeen": null,
+    "framing": "CL",
+    "httpStatus": 200,
+    "phase": "DONE",
+    "reason": null,
+    "robotsAvailability": "PRESENT_200",
+    "schemaVersion": "telegram-ipv4-strict-transport-diagnostic-v1",
+    "terminalStrictVerified": null,
+    "trailerComplete": null
+  },
+  "closedBusinessReasonCode": "ROBOTS_POLICY_UNSUPPORTED_AGENT",
+  "errorKind": "ValueError",
+  "termsRequests": 0,
+  "profileRequests": 0,
+  "newStructuredChoices": 0,
+  "applicationAdmissions": 0,
+  "Task": 0,
+  "retry": false,
+  "unusedGETCeilingAbandoned": 2,
+  "retainedRawProviderPayloads": 0,
+  "robotsBodySHA": "3e6044a915c133edb598a707c900d8cf9de6926aaba75117c9392683257f8106",
+  "rootResultSHA": "a2b4230e3839c87c31d8416705fc1121357b5e07312bfff0742fc6ff86b3d926",
+  "childResultSHA": "43f3cb99ba414811de5b09d7a2b0d1cdb46583e4962994c8d6d3e1e0144401de",
+  "parentResultSHA": "9a9c7fafa5cb7569c9c529d1cb8dca2c67bfd326e053dc3051477ccd45623b82",
+  "primarySHA": "3da25bc435c97940992fbb3ab53c0641416a4eb9c777f85ed1114f0ec6e77ace",
+  "journalSHA": "2c7c398fb8d8ac7e8d0c93187271d6e7aa7bad841b9a718ac9b1dc4eefcec309",
+  "codeLocalization": {
+    "file": "src/robin/source_observatory/collector.py",
+    "parserStage": "agent line validation before group selection",
+    "configuredProduct": "RobinSourceObservatory",
+    "configuredProductPassesExistingRegex": true,
+    "offendingAgentName": "UNREAD_UNKNOWN"
+  },
+  "comparativeNativeOwner": {
+    "pathLabel": "DESIGN/cockpit/.ci/olbg-pending-whole-native-binding-r2-e1-20261124/rep_foreign_boundaries_v2.py",
+    "sha256": "db48668eb3f8089afda913ef6618c1e7fed078a7dd7a03b75078ba834727963d",
+    "actualPriorPolicyClaim": "DATA.SOURCE_OBSERVATORY.OLBG.PENDING.REAL.NATIVE.RESULT.20261124",
+    "use": "Read-only code comparison and targeted E1 requalification only"
+  },
+  "limitations": [
+    "Agent-line parser refusal does not establish robots deny or network failure",
+    "Offending native agent text was not read or retained",
+    "Causes R2/R3 remain UNKNOWN and unchanged",
+    "No Source authority, recurring activation or admission inferred"
+  ],
+  "sourceReady": false,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null
+}

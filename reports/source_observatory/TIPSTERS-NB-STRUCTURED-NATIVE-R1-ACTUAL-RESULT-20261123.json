@@ -1,0 +1,32 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.STRUCTURED.NATIVE.R1.ACTUAL.RESULT.20261123",
+  "missionId": "NOTBETTING_OWNER_STRUCTURED_NATIVE_R1_20261123",
+  "generatedAt": "2026-11-23T15:53:11.803Z",
+  "status": "PARTIAL",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.STRUCTURED.NATIVE.R1.E1.RESULT.20261123"
+  ],
+  "scope": "Two fixed complete strict HTTP200 GETs, fresh REPallow and one bounded Job. Four sampled physical occurrences have coherent owner contract but all stop at COMPETITION_MISMATCH on configured Bundesliga. No qualified stored record or admission. This is not four distinct authors/humans or global absence; coverage UNKNOWN. Campaign FAIL_AND_STOP, no retry.",
+  "sourceGET": 2,
+  "nativeJobs": 1,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "globalCoverage": "UNKNOWN",
+  "storedRecords": 0,
+  "primarySHA": "72f71617c0cb9670bf369a18e40361cb20ed7f336322e5ed09d1c43a9e4ed23a",
+  "sourceDecisionSHA": "95e1784b2d3689a622ee78b3910c1cc8fdfc3fec2cd213e4b71c7c10fd682c85",
+  "nativeResultSHA": "d1be73419b6a51e8db8709d912e1b09123862e7db380989b9f5c589e97aca51c",
+  "ownerContractSampleOccurrences": 4,
+  "secondPassStops": {
+    "COMPETITION_MISMATCH": 4
+  },
+  "jobSeconds": 1.515,
+  "outerExit": 0,
+  "childExit": 1
+}

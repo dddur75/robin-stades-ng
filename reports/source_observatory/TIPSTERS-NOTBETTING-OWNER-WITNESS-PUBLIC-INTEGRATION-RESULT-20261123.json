@@ -1,0 +1,34 @@
+{
+  "generatedAt": "2026-11-23T08:03:55.533Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.WITNESS.PUBLIC.INTEGRATION.RESULT.20261123",
+  "missionId": "NOTBETTING_OWNER_WITNESS_PUBLIC_INTEGRATION_E1_20261123",
+  "status": "PUBLIC_DIAGNOSTIC_INTEGRATION_VERIFIED",
+  "scope": "Reviewed optional diagnostic observer integrated into public qualifier, LF-normalized AST identical to private;16 targeted tests verify unchanged qualification and contained owner-error diagnostics. No native source cause or activation.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.CLOSED.WITNESS.R2.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.CLOSED.FAILURE.WITNESS.REDESIGN.PRIVATE.RESULT.20261123"
+  ],
+  "authorStatus": "STOP",
+  "authorizedAt": "2026-11-23T07:56:54.616086+00:00",
+  "frozenAt": "2026-11-23T07:56:57.175Z",
+  "targetedCommands": 3,
+  "testsExit": 0,
+  "criticalLintExit": 0,
+  "ASTCopyExit": 0,
+  "codeMapCAN": "3d70d92f38cd86ccfba2e835e9b97e963e263991cc5dd6aac883ae7f1abe6d18",
+  "sourceGET": 0,
+  "providerDataReads": 0,
+  "runtimeWrites": 0,
+  "admissibilityChanged": false,
+  "sourceReady": false,
+  "testsPassed": 16,
+  "sourceCodeSHA256": "179509b12a9d434ad50828d6ddefce5bbc5556e4254a11c0689af8fceb0b2fdf",
+  "regressionSHA256": "40d72cdcb09f7813ab4d940536cc9a934bfcf96ec4b699d361d74f63a41df20e",
+  "LFNormalizationOnlyBeyondReviewedCode": true
+}

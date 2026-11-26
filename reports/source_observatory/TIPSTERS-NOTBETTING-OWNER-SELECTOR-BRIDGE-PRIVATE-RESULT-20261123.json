@@ -1,0 +1,24 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.SELECTOR.BRIDGE.PRIVATE.RESULT.20261123",
+  "missionId": "NOTBETTING_OWNER_SELECTOR_BRIDGE_PRIVATE_E1_20261123",
+  "generatedAt": "2026-11-23T15:03:22.465Z",
+  "status": "PRIVATE_COMPONENT_ACCEPTED_PENDING_NATIVE_BINDING",
+  "scope": "IndependentC0/C1/C4 accept exactASTphysicalselectorprefix+owneradaptertwo-passbridge only.3syntheticmethods,criticalRuff4files0,RAMcompile4; no RED/mypy/fullRuff/nativecaller. Gates/SKIP/sensitivepruning precedeselect,physicalnongatedcontextnotbusinessanchor. Max4occurrencesnotuniquehumans, total150kphysical+sharedtwoqualifierpasses. secondPassFirstStopclosed before fullprojectiondiscard; profilecounts syntheticcomponentpassedownerhashes not appprofiles/nativeidentity/admissions. BufferverifiedModuleType syntheticpreload proof6modules; futureexactbinding/SOURCEseparate.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.OWNER.DISCOVERY.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PREDICATE.FINAL.R1.ACTUAL.RESULT.20261123"
+  ],
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "bridgeSHA": "dc277a58b85cc0d2e796319f4387ca70904d8cbb4dd28f20c385aaa93e8375c7",
+  "ownerAdapterSHA": "7c83f07eb2fafdc7f40359e07bed32cc42fe762c9968c082ce09c9f401181c44",
+  "codeMapCAN": "bdaf87796e2321c54e68311ff22a343ab3ba92fae1aa2330b1b0cd02dfebb34e",
+  "tests": 3
+}

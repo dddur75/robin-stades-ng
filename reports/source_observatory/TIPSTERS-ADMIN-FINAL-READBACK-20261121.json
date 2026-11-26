@@ -1,0 +1,27 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.ADMIN.FINAL.READBACK.20261121",
+  "generatedAt": "2026-11-21T22:08:27.896Z",
+  "status": "VERIFIED_LOCAL_API_READBACK",
+  "scope": "Actual loopback structured API response on A9; preserves the previously verified personal declarations. This is not a new acquisition and does not prove all source compatibility or Robin Live home freshness.",
+  "observedAt": "2026-11-21T22:05:32.279Z",
+  "url": "http://127.0.0.1:4173/api/tipsters/public",
+  "httpStatus": 200,
+  "elapsedMilliseconds": 5971.703500002623,
+  "distinctPicks": 477,
+  "authors": 79,
+  "fixtures": 20,
+  "wholePicksEqualPriorCanary": true,
+  "wholeFixturesEqualPriorCanary": true,
+  "receiptSHA256": "b60a1400de5490d5413c8de119318d8b25a69f7cfeeffb026d10274b4abdeebe",
+  "structuredPayloadSHA256": "92ba65f088d40d3101de21ced978287ddf0405516fcba56b60856cc6abe8614f",
+  "priorCodeCanaryNamespace": "CI251_LOCAL_PORTABILITY_CANARY",
+  "sourceGET": 0,
+  "newAcquisitions": 0,
+  "runtimeCheckoutHEAD": "334b7868bee721f5d401b313df4dcf08eaf2ddd4",
+  "publishedCodeCommit": "91b6d88e7aa13ea94ef817212a766ca6a5381792",
+  "reviews": {
+    "C0": "Actual loopback fetch and whole ordered arrays comparison",
+    "C3": "Independent receipt/payload/hash/count/preservation validation"
+  },
+  "globalDelivery": "PARTIAL"
+}

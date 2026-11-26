@@ -1,0 +1,37 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.FIRST.AMBIGUITY.SOURCE.AUTHORITY.20261122",
+  "recordedAt": "2026-11-22T17:54:49.538Z",
+  "status": "TWO_GET_STRUCTURAL_METADATA_WITNESS_ONLY",
+  "scope": "Fresh exact two-GET native structural witness: robots then known public Telegram preview only. First ambiguity closed metadata, no message text/fields/identity/date or raw body retained, no contents to model and no message collection/admission/app/Task authority.404neverimpliespermission. Old R4 budgets remain closed.",
+  "missionId": "TELEGRAM_FIRST_AMBIGUITY_WITNESS_SOURCE_E1_20261122",
+  "sourceContext": {
+    "mission_id": "TELEGRAM_FIRST_AMBIGUITY_WITNESS_SOURCE_E1_20261122",
+    "grant": "TELEGRAM_TWO_GET_FIRST_AMBIGUITY_METADATA_ONLY",
+    "keys": [
+      "C0",
+      "C1",
+      "C3",
+      "C4"
+    ],
+    "plan_sha256": "373f10da6a9297f79b1d65432d810b14d9b9e718c266a43771272a95e670b1f3",
+    "manifest_sha256": "e23464623e235017f9a327a47771c7bccd407f80c3be9ae89503897c3c0189d4"
+  },
+  "maximumGET": 2,
+  "jobSecondsMax": 70,
+  "HTTPSecondsMax": 12,
+  "latestStartUTC": "2026-11-22T17:58:50Z",
+  "expiresAt": "2026-11-22T18:00:00Z",
+  "acceptance": "C4 EXPLICIT STRUCTURAL_METADATA_WITNESS_ONLY exact373f/e234, conditionalfreshC1FACTS/C3CODE andC0grant allnowpresent.",
+  "reviews": {
+    "C1": "Fresh exact SOURCE FACTS MF8ctx5/11pins/prefix/provenR4route/clock/privacy PASS.",
+    "C3": "Fresh exact SOURCE CODE11pins equal reviewedPREP afterWinpath normalization,MF8ctx5/scope/prefix/clock PASS.",
+    "C4": "Fresh exact SOURCE SCOPE and explicitmetadata-onlyacceptance, no licence/messages/export inference and strictcutoff PASS."
+  },
+  "sourceGETConsumedNotYetObserved": true,
+  "admissions": 0,
+  "appChanges": 0,
+  "TaskChanges": 0,
+  "sourceBodyStored": false,
+  "personalContentsToModels": false,
+  "globalDelivery": "PARTIAL"
+}

@@ -1,0 +1,46 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.WORKBOOK.SUIVI.V8.RECETTE.20261122",
+  "generatedAt": "2026-11-21T23:47:59.715Z",
+  "status": "INDEPENDENT_WORKBOOK_RECETTE_PASS",
+  "scope": "Two-cell correction in final private workbook copy; registry observation and collector profile counts retain distinct grains and timestamps.",
+  "baseWorkbookClaimId": "ENG.SOURCE_OBSERVATORY.WORKBOOK.SUIVI.V7.RECETTE.20261122",
+  "baseWorkbookSHA256": "c7fd2c3d2924f15ed8a2de973735de232ac81525c75bb73fd3c61883b64dcdab",
+  "workbookSHA256": "0b330526d5a368c78bbc808bebb945de62f929651f1d289e0b80762d4ce8d7ce",
+  "modifiedCells": [
+    "B13",
+    "D13"
+  ],
+  "sourceSheetsPreserved": 9,
+  "nativeTablesPreserved": 9,
+  "styleXMLUnchanged": true,
+  "sourceSheetsComparedWithResolvedRelations": true,
+  "registry": {
+    "observedAt": "2026-11-21T23:42:06.865Z",
+    "cards": 317,
+    "qualified": 24,
+    "enabled": 2,
+    "claimId": "ENG.SOURCE_OBSERVATORY.CATALOGUE.FILTER.BROWSER.RECETTE.20261122"
+  },
+  "unchanged": {
+    "picks": 478,
+    "picksObservedAt": "2026-11-21T23:11:27.632Z",
+    "next3ActiveProfiles": 3,
+    "next3StoppedProfiles": 39
+  },
+  "receiptSHA256": "e3bd40658f180a30ff129569eabaf3a652a1e7761668bee0c5fc9b753c4d0bc0",
+  "verificationSHA256": "5e013d603cc34fb49bbaaa8ce98794c088f70dc2b1066d699a69737a0a463b0f",
+  "agentReportSHA256": "37889fa2c9201e9be4ab293bd0eae2500243e3167fdc84413b0d0328e50ff073",
+  "sourceGET": 0,
+  "fullCellReplay": false,
+  "formulaErrors": 0,
+  "nativeExcelOpened": false,
+  "verifiedBy": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "independentReview": "C4 exact workbook hash, two cells, nine source sheets, nine tables/styles, counts, receipts and readable render.",
+  "workbookAndPrivatePayloadInGit": false,
+  "globalDelivery": "PARTIAL",
+  "allCompatibleSourcesIntegrated": false
+}

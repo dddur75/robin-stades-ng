@@ -1,0 +1,78 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.YOUTUBE.API.POLICY.DOCS.R3.AUTHORITY.20261121",
+  "generatedAt": "2026-11-21T22:33:30.275761+00:00",
+  "status": "AUTHORIZED_DOCUMENTARY_ONLY_NOT_ACQUISITION",
+  "scope": "Read two still-unread official Google API documents independently of the refused YouTube regional terms route. No retry of /t/terms or alternate YouTube route; no data-source acquisition.",
+  "planSHA256": "9eadb387db94c6625770e05f6a3b54b371dc95db8379160a31470236058628fb",
+  "manifestSHA256": "909a088891af05483a52488af28f8b6430d37a0e72ac14aaa2cf245e7af7a229",
+  "plan": {
+    "mission_id": "YOUTUBE_GOOGLE_API_POLICY_DOCS_E1_R3_20261121",
+    "purpose": "Read two still-unread official Google API documents independently of the refused YouTube regional terms route. No retry of /t/terms or alternate YouTube route; no data-source acquisition.",
+    "operations": [
+      {
+        "kind": "api_terms_document",
+        "url": "https://developers.google.com/youtube/terms/api-services-terms-of-service"
+      },
+      {
+        "kind": "api_developer_policy_document",
+        "url": "https://developers.google.com/youtube/terms/developer-policies"
+      }
+    ],
+    "transport": "MEDIATED_WEB_OPEN_ONLY",
+    "mediatedOperationsMaximum": 2,
+    "directSourceGET": 0,
+    "backendHTTPAndRedirectCount": "UNKNOWN",
+    "sourceChannelsRead": 0,
+    "sourceFeedsRead": 0,
+    "sourceVideosRead": 0,
+    "sourcePredictionsRead": 0,
+    "rawHTTPBodyStored": false,
+    "durableStorage": "BOUNDED_DOCUMENTARY_METADATA_HASHES_AND_SHORT_PARAPHRASES_ONLY",
+    "priorRegionalTermsAttempt": {
+      "mission": "YOUTUBE_API_DOCS_SCOPE_E1_R2_20261121",
+      "result": "MEDIATED_ROBOTS_REFUSAL",
+      "nativeHTTPStatus": "NOT_OBSERVED",
+      "remainingOperationsCancelled": true,
+      "retry": false
+    },
+    "stopOnRefusalChallengeOrBudget": true,
+    "purchases": 0,
+    "accounts": 0,
+    "APIKeys": 0,
+    "tasks": 0,
+    "expires_at": "2026-11-21T23:00:00Z"
+  },
+  "manifest": {
+    "mission_id": "YOUTUBE_GOOGLE_API_POLICY_DOCS_E1_R3_20261121",
+    "authorized_stages": [
+      "E1"
+    ],
+    "maximum_stage": "E1",
+    "external_effects": {
+      "mediated_document_operations_maximum": 2,
+      "direct_source_gets": 0,
+      "channel_feed_video_reads": 0,
+      "source_predictions_read": 0,
+      "new_tasks": 0,
+      "purchases": 0,
+      "accounts": 0,
+      "raw_body_storage": 0
+    },
+    "compute_budget": {
+      "workers": 1,
+      "corpus_replays": 0
+    },
+    "time_budget": {
+      "elapsed_active_operations_and_initial_metadata_close_seconds": 120
+    },
+    "source_hash": "9eadb387db94c6625770e05f6a3b54b371dc95db8379160a31470236058628fb",
+    "expires_at": "2026-11-21T23:00:00Z"
+  },
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceFeedsRead": 0,
+  "sourcePredictionsRead": 0
+}

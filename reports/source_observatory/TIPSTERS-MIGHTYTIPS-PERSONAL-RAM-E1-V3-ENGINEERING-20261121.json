@@ -1,0 +1,60 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.MIGHTYTIPS.PERSONAL.RAM.E1.V3.ENGINEERING.20261121",
+  "generatedAt": "2026-11-21T22:01:47.632Z",
+  "status": "INDEPENDENT_EXACT_E1_ENGINEERING_REVIEW_ONLY",
+  "scope": "One private RAM qualification invocation of SRC_045, at most three ordered GETs and one literal article. No recurring activation or application admission. Native visible signature and primary physical calendar remain unproven.",
+  "planSHA256": "eb19bdc033095d69b9c483f26e736686e8f3df00d126f205cd2e17b7ecee838d",
+  "manifestSHA256": "bcdfdf2f5bede62f258e1b76e8027bb0e8b27271b3ce836ce3a0aa0c0bc1f383",
+  "codePins": {
+    "control": "80a68ed6ec4dc054341cf679aad2a4a86f78ada2d0a45073465f40c09c48c86c",
+    "probe": "fa70e759a6833f4c9b1bf0ccbf10186e3fb1e465971c5ebc29682c8100441889"
+  },
+  "privatePacketNamespace": "A9_PRIVATE_CLIENTWIRE_MIGHTYTIPS_E1_20261121",
+  "verifiedPinCount": 29,
+  "targetedTests": {
+    "sourceProjection": 8,
+    "controller": 6,
+    "rootIndependentRun": "PASS",
+    "nativeNestedJob": {
+      "innerSyntheticExit": 124,
+      "outerSyntheticExit": 0,
+      "elapsedSeconds": 0.266,
+      "meaning": "Synthetic sleeping process terminated, no source request."
+    }
+  },
+  "reviews": {
+    "C0": "Exact code delta and targeted tests",
+    "C1": "Exact source routes, fixture priority, non-native diagnostic market",
+    "C3": "Exact CODE approval; observed external exit0/65s/no-veto required for success",
+    "C4": "Exact RAM/private atomic-facts scope; no prose, redistribution or admission"
+  },
+  "limits": {
+    "sourceGET": 3,
+    "invocations": 1,
+    "parentSeconds": 65,
+    "outerJobSeconds": 50,
+    "killSeconds": 5,
+    "closeReserveSeconds": 3,
+    "extraReserveSeconds": 7,
+    "admissions": 0,
+    "sourceBodiesStored": false,
+    "purchases": 0,
+    "accounts": 0,
+    "tasks": 0
+  },
+  "historical": {
+    "exactLegacySequences": [
+      95,
+      97,
+      269,
+      271
+    ],
+    "knownSRC045Reservations": 4,
+    "mediatedBackendHTTPCount": null,
+    "olderDirectScopeClaim": 8,
+    "overlapAndCumulativeFamilyTotal": null,
+    "previousMediatedDocumentReads": 2
+  },
+  "calendarStatus": "SECONDARY_PROJECTION_ONLY_PRIMARY_NOT_PHYSICALLY_VERIFIED",
+  "globalDelivery": "PARTIAL"
+}

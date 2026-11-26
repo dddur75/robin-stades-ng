@@ -1,0 +1,24 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.NATIVE.FRENCH.TOS.DOCS.AUTHORITY.20261122",
+  "generatedAt": "2026-11-22T00:42:14.425Z",
+  "status": "ONE_NATIVE_OFFICIAL_LOCALE_LINK_ONLY",
+  "scope": "Native French locale link from already rendered official ToS navigation. No automatic applicability or collection inference.",
+  "planSHA256": "41d475278abb8d52751301379f93a632949ceae56914888d0d43c4af27aaf7fe",
+  "manifestSHA256": "43633c710ae8c182e2689b67fb79959fa96b215d1e7fd8ce3891048a5add1b34",
+  "sourceReference": "turn73view0",
+  "sourceRenderedURL": "https://telegram.org/tos/br",
+  "linkId": 6,
+  "observedLabel": "Français",
+  "targetURL": "NOT_RESOLVED_YET",
+  "maximumMediatedCalls": 1,
+  "nativeSourceGET": 0,
+  "channelOrPreviewReads": 0,
+  "accountActions": 0,
+  "collectionOrAIGrant": 0,
+  "deadlineSeconds": 90,
+  "reviewedBy": [
+    "C0",
+    "C4"
+  ],
+  "globalDelivery": "PARTIAL"
+}

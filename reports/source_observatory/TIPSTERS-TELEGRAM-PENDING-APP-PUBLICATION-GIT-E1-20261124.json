@@ -1,0 +1,59 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.PENDING.APP.PUBLICATION.GIT.E1.20261124",
+  "missionId": "TELEGRAM_PENDING_APP_PUBLICATION_GIT_R1_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Reviewed preparation of exact five pending-app files and three metadata receipts for existing PR133. Static portable/hash-link audit passes, old facts preserved. Reused domain tests/types/lint and local targeted app receipt. This E1 binding is not Git E2, staged-tree or PR mutation authority.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PENDING.APP.LOCAL.TARGETED.RECETTE.20261124",
+    "ENG.SOURCE_OBSERVATORY.PUBLICATION.CI268.EXACT.HEAD.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PENDING.APP.PUBLIC.INTEGRATION.E1.RESULT.20261124"
+  ],
+  "planSHA": "684cdf7e4ff74187425cc00e64af0a48db684e90fbcc25cbdd966c52fed6365a",
+  "manifestSHA": "794b637fef04783ee5fa3cafcf8afd405875bdedb049c72d8140ec2057c8d406",
+  "controllerSHA": "0cfeba9fbe856685c3b64403ed619a9e1d18397beaefd91bf4ccdff76145c34f",
+  "baseHEAD": "d0fa199ae71dfb218fc94155088878c3b6c3ebda",
+  "branch": "codex/robin-bounded-delivery-public-r1",
+  "PR": 133,
+  "files": [
+    "cockpit/app/components/expert/tipster-candidates.tsx",
+    "cockpit/scripts/catalogue-independent.ts",
+    "cockpit/scripts/telegram-pending-channel.ts",
+    "cockpit/tests/reviewed-source-observation.test.mjs",
+    "cockpit/tests/telegram-pending-channel.test.mjs",
+    "reports/council/decision-ledger.jsonl",
+    "reports/evidence/evidence-graph.json",
+    "reports/source_observatory/TIPSTERS-PUBLICATION-CI268-EXACT-HEAD-RESULT-20261124.json",
+    "reports/source_observatory/TIPSTERS-TELEGRAM-PENDING-APP-LOCAL-TARGETED-RECETTE-20261124.json",
+    "reports/source_observatory/TIPSTERS-TELEGRAM-PENDING-APP-PUBLIC-INTEGRATION-E1-RESULT-20261124.json",
+    "reports/source_observatory/TIPSTERS-TELEGRAM-PENDING-APP-PUBLICATION-GIT-E1-20261124.json"
+  ],
+  "preflight": {
+    "presentBeforeBinding": 10,
+    "plannedAfterBinding": 11,
+    "sourceGET": 0,
+    "portableViolations": 0,
+    "oldLedgerPrefixUnchanged": true,
+    "oldClaimsUnchanged": true,
+    "newClaims": 3,
+    "ledgerTailRecords": 19,
+    "newFunctionalTestReplay": 0
+  },
+  "bodyTemplateSHA": "865b423733326b525812fd85210d335466189263c5442fc0a69656225e466e91",
+  "bodyPrecision": "Literal alias-pair context screen only; no canonical contradiction claimed. Exact current body and only new-commit SHA substitution require fresh E2 review.",
+  "limits": {
+    "producerLOCALStatus": "PARTIAL_FAIL_AND_STOP_PRESERVED",
+    "CI268": "OLD_COMMIT_D0FA_17_SUCCESS_ONLY",
+    "sourceGET": 0,
+    "runtimeWrites": 0,
+    "privatePayloadPublication": false,
+    "admissions": 0,
+    "allCompatibleIntegrated": false,
+    "compatibleDenominator": null,
+    "overall": "PARTIAL"
+  }
+}

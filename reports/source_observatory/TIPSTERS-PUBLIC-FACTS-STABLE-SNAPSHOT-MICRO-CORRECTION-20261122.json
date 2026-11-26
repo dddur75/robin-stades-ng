@@ -1,0 +1,41 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.PUBLIC.FACTS.STABLE.SNAPSHOT.MICRO.CORRECTION.20261122",
+  "recordedAt": "2026-11-22T10:40:08.215Z",
+  "status": "P2_UNUSED_OPERATIONAL_FLAGS_REMOVED_SAME_E2_LEVEL",
+  "scope": "Project historical NotBetting/SRO companions to updates only. No personal fact, UI behavior, operational authority or observation timestamp changes.",
+  "oldHelperSHA256": "a18ffb64ae411236f81802c5e5470aa3fba65850098f2ef1a6a0734e9e1a1854",
+  "helperSHA256": "32a5931c77bee1069a99851228b90083efcbf4da5d73f511376ddd47ad6fad17",
+  "testsSHA256": "618d8d894fdf9744caf940e2f284501861feba1a4697ab4470bc1b198604eddb",
+  "projection": {
+    "nestedOperationsRemoved": true,
+    "state": "PASS",
+    "choices": 479,
+    "pseudonyms": 80,
+    "fixtures": 20,
+    "advancedLastSeen": 42,
+    "allOtherPickFieldsPreserved": true,
+    "sourceObservedThrough": "2026-11-22T09:55:32.548710+00:00",
+    "originalSnapshotPreparedAt": "2026-11-22T04:43:05.096Z",
+    "operationalState": "unknown",
+    "historicalSubprocess": 0,
+    "TaskQueries": 0,
+    "sourceGET": 0,
+    "elapsedMs": 28.183899999999994
+  },
+  "checks": {
+    "snapshotTests": 12,
+    "typecheck": "PASS",
+    "lint": "PASS",
+    "redWitness": true
+  },
+  "reviews": {
+    "C3": "One-line helper delta, two independent RAM cases, unchanged updates and full projection PASS.",
+    "C4": "P2 reserve resolved in projection; prior dated browser reuse acceptable, no new GET."
+  },
+  "APIAdditionalReads": 0,
+  "sourceGET": 0,
+  "TaskQueries": 0,
+  "TaskChanges": 0,
+  "publications": 0,
+  "globalDelivery": "PARTIAL"
+}

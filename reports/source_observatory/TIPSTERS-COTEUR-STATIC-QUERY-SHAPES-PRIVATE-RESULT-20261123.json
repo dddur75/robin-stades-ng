@@ -1,0 +1,56 @@
+{
+  "authorStoppedAt": "2026-11-23T03:20:40.542212+00:00",
+  "c0CodeReview": "Final projection/protocol read completely; static regex parser confirms backslash/control exclusions. All output authority false; exact fresh whitelist. Three postGREEN guards accepted statically only.",
+  "claimId": "ENG.SOURCE_OBSERVATORY.COTEUR.STATIC.QUERY.SHAPES.PRIVATE.RESULT.20261123",
+  "codeMapCanonicalSHA256": "a33bd6ead84f8c465e3548ea259d34f9772ae7f18de5fcd946e284bf7ae65657",
+  "effects": {
+    "DNS": 0,
+    "GitMutation": 0,
+    "Task": 0,
+    "app": 0,
+    "nativeJob": 0,
+    "oldPackReplay": 0,
+    "realAssetReplay": 0,
+    "sourceGET": 0
+  },
+  "elapsedSeconds": 201.199995,
+  "grant": "8e40f9e61255054d3afe594c5f3b154d202834a1f4de556ad863b99e5c70c110",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "limits": [
+    "Private staticmetadata only, not runtime querycontract/authority/endpoint compatibility/nativecause or thirdtrial permission.",
+    "Final static guards added after bounded GREEN calls without rerun: methodEvidence strict type, JSON recursionclosed, dependency CLIclosed. Finalsyntax/RAMcompile only; Ruff claim refers to preguard bytes.",
+    "Four scenarios cap: invalidsyntax case exercised pure project error, not actual CLI stdin process. No native integration or live source bindings.",
+    "Querykeys only are syntactically observed; opaque dynamics can inject runtime delimiters, runtimeQueryContractEstablished always false.",
+    "Independent C0CODE/C1FACTS/C4SCOPE required; author does not selfvalidate.",
+    "Three final guards after GREEN are covered by static code/syntax only; no final fullGREEN or final Ruff claim. Actual CLI stdin/dependency failure must be tested in separate integration phase."
+  ],
+  "manifestSHA256": "644694147324b0fd29a30d90c16dae398cbe487dd3f66707200e71e0e894c81e",
+  "missionId": "COTEUR_STATIC_QUERY_SHAPES_PRIVATE_E1_20261123",
+  "planSHA256": "52d8f46946e3e5c7045ab7761a43c99209021245e5ea3a36ff321cef2a850477",
+  "projectionSHA256": "f100dbd18f4bd354c81b45296e361ae876103a69818b2f93dab581cf33ac5bfd",
+  "protocolSHA256": "cdcb398957d7459f23b679498056cb4a85a79dd95bfb0de085f1c963d13aa7c3",
+  "scope": "PRIVATE_STATIC_QUERY_KEYS_ONLY_NO_RUNTIME_CONTRACT",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.COTEUR.BOUNDED.PROJECTION.PROTOCOL.PRIVATE.PARTIAL.20261123"
+  ],
+  "sourceReady": false,
+  "status": "ACCEPTED_PRIVATE_QUERY_METADATA_WITH_FINAL_STATIC_GUARDS_DISCLOSED",
+  "tests": {
+    "GREENprojectionExit": 0,
+    "GREENprotocolExit": 0,
+    "RAMCompiles": 2,
+    "criticalRuffBeforeFinalStaticGuards": 0,
+    "finalNodeSyntax": 0,
+    "finalStaticGuardsRetested": false,
+    "newProjectCalls": 4,
+    "parentCalls": 1,
+    "parentREDexit": 1,
+    "protocolCalls": 4,
+    "scenarios": 4,
+    "uniqueJSPrograms": 4
+  }
+}

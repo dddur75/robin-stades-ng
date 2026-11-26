@@ -1,0 +1,55 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.YOUTUBE.WEBSUB.PROTOCOL.DOCS.R4.RESULT.20261121",
+  "generatedAt": "2026-11-21T22:50:27.721Z",
+  "status": "PARTIAL_TOOL_VALIDATION_ERROR_WITH_OBSERVED_SECOND_DECLARED_SPEC",
+  "scope": "Two declared documentary operations only; first tool validation failed, second declared W3C document was read. No source channel/feed/video/prediction access.",
+  "missionId": "YOUTUBE_WEBSUB_PROTOCOL_DOCS_E1_R4_20261121",
+  "planSHA256": "9501ea9485fcfeba0bbc2516a0bafc9b9bc1a4558895f2c7ea8a4527b66f2ebe",
+  "manifestSHA256": "ee646c0f71e27f4247430e04b6222d0a8d2090457ab9c87e806ce1dce47a94eb",
+  "mediatedOperations": 2,
+  "directSourceGET": 0,
+  "backendHTTPAndRedirectCount": "UNKNOWN",
+  "operations": [
+    {
+      "url": "https://api.github.com/repos/pubsubhubbub/PubSubHubbub/readme",
+      "tool": "github.fetch",
+      "outcome": "INVALID_ARGUMENT_UNSUPPORTED_TOOL_ENDPOINT",
+      "nativeProviderStatus": "NOT_OBSERVED",
+      "repositoryReadmeAcquired": false,
+      "retry": false
+    },
+    {
+      "url": "https://www.w3.org/TR/websub/",
+      "tool": "web.open",
+      "outcome": "DOCUMENT_OBSERVED",
+      "toolReference": "turn72view0",
+      "toolCrawlAge": "today",
+      "renderedTotalLines": 625,
+      "observedWindowEndsAt": 377,
+      "documentVersion": "2026-06-02",
+      "operativeLines": [
+        39,
+        41,
+        101,
+        128,
+        203,
+        242
+      ],
+      "facts": [
+        "The W3C specification identifies WebSub as the successor name of PubSubHubbub and references versions0.3 and0.4.",
+        "A topic is an HTTP(S) resource; section4 discovery explicitly requires subscribers to issue GET or HEAD to retrieve its URL and inspect HTTP Link headers before embedded links.",
+        "The subscriber callback must be network-accessible for actual notifications; subscription itself uses a separate hub POST.",
+        "Protocol discovery is not an unrestricted polling, permanent storage or cross-owner aggregation license."
+      ]
+    }
+  ],
+  "controlInterpretation": "C0 treated local invalid-argument validation as a tool capability error rather than publisher refusal; continued only the second already-declared operation without retry. Independent scope review required.",
+  "sourceFeedsRead": 0,
+  "sourceVideosRead": 0,
+  "sourcePredictionsRead": 0,
+  "rawHTTPBodyStored": false,
+  "elapsedBeforeInitialMetadataSeconds": 83.134,
+  "sourceAcquisitionGrant": false,
+  "globalDelivery": "PARTIAL",
+  "independentReview": "C4 confirms protocol facts; local tool validation error is not established as publisher refusal or control nonconformance."
+}

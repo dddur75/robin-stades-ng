@@ -1,0 +1,27 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.STRUCTURED.NATIVE.R1.ACTUAL.RESULT.20261123",
+  "missionId": "TELEGRAM_PREFIX_STRUCTURED_NATIVE_R1_20261123",
+  "generatedAt": "2026-11-23T15:53:13.630Z",
+  "status": "PARTIAL",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.STRUCTURED.NATIVE.R1.E1.RESULT.20261123"
+  ],
+  "scope": "Native outer preflight failed NODE_COMPUTE_SCOPE before native-spent and hard_job: zero Job/GET; manifest omitted NodeChildrenMax0 and messageParsingMax10. This is not source-content failure. Review missed the manifest mismatch; full loader E1 did not validate the policy. Existing immutable campaign FAIL_AND_STOP; no mutation/retry.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "globalCoverage": "UNKNOWN",
+  "storedRecords": 0,
+  "primarySHA": "c60726167df15fcfc57952feb5f1f63c329dbf9a66aca42d4d102e6e8d5dbcd2",
+  "sourceDecisionSHA": "24b62ceba81e7dca63ad852ea37adcbdd957be9a89e029f925093a7984b1ca89",
+  "outerExit": 1,
+  "preflightFailure": "NODE_COMPUTE_SCOPE",
+  "sourceContentTested": false
+}

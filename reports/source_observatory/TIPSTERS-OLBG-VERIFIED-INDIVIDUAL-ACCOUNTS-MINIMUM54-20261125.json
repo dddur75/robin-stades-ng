@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "robin-verified-individual-coverage-lower-bound-v1",
+  "generatedAt": "2026-11-25T20:15:59.410Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.VERIFIED.INDIVIDUAL.ACCOUNTS.MINIMUM54.20261125",
+  "missionId": "OLBG_FIFTEEN_WORKBOOK_AUTHORS_APP_ADMISSION_20261125",
+  "status": "ACTUAL_MINIMUM54_ACCOUNTS_PRESENT_IN_APP_VERIFIED",
+  "scope": "At least54 distinct individual OLBG source accounts have at leastone personally attributed football choice observed before its official scheduled kickoff and present in APP701. A non-exhaustive source-account lower bound; not368 documentary fiches, not54 newly collected accounts and not certification of civil identity.",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.EXISTING.PUBLIC.FICHES.SOURCES.20261125",
+    "DATA.SOURCE_OBSERVATORY.OLBG.TEN.NEW.AUTHORS.BATCH.R1.RESULT.20261125",
+    "DATA.SOURCE_OBSERVATORY.OLBG.FORTYNINE.NEW.AUTHORS.BATCH.R1.RESULT.20261125",
+    "DATA.SOURCE_OBSERVATORY.OLBG.FINITE.RECURRING.FIRST.NATURAL.CAPTURE.20261125",
+    "DATA.SOURCE_OBSERVATORY.OLBG.HUNDRED.WORKBOOK.PROFILES.BATCH.R1.RESULT.20261125",
+    "ENG.SOURCE_OBSERVATORY.OLBG.FIFTEEN.WORKBOOK.AUTHORS.APP.RUNTIME.RESULT.20261125"
+  ],
+  "proofIndexSHA256": "0e9e4ff41301f6c4029724696b75a2b13e2200b6aca7789c7f6d13750d73283c",
+  "publicReadbackSHA256": "d1c3fe24db0e2520055f263ffc997efdd9eb0ffb60702054918d5df38ce633ea",
+  "verifiedIndividualSourceAccountsMinimum": 54,
+  "oneDistinctChoiceWitnessPerAccount": 54,
+  "exhaustive": false,
+  "newAccountsThisContinuation": 36,
+  "sourceId": "SRC_014",
+  "SourceGET": 0,
+  "APPWrites": 0
+}

@@ -1,0 +1,42 @@
+{
+  "generatedAt": "2026-11-23T11:04:17.475Z",
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI262.EXACT.HEAD.FAILURE.RESULT.20261123",
+  "missionId": "CI262_EXACT_HEAD_READ_ONLY_WATCH_20261123",
+  "status": "CI_TERMINAL_FAILURE",
+  "scope": "C1 independently followed exact published HEAD84a90f4 to terminal CI262.17 completed jobs:12success/4failure/1skipped. Three domain jobs fail on same3 Ruff import errors E401/I001; aggregator refuses failed checks. Windows canary and visual checks succeed. No rerun/cancel/comment/workflow mutation; this run remains failed irrespective of local correction.",
+  "keys": [
+    "C0",
+    "C1"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.PUBLICATION.V23.ACTUAL.RESULT.20261123"
+  ],
+  "head": "84a90f4c25bab1e13fb9a9971931fbca086912d5",
+  "run": 45159558336,
+  "number": 262,
+  "GitHubStatus": "completed",
+  "GitHubConclusion": "failure",
+  "jobs": {
+    "total": 17,
+    "success": 12,
+    "failure": 4,
+    "skipped": 1
+  },
+  "failedJobs": [
+    137641120188,
+    137641120559,
+    137643500217,
+    137646849228
+  ],
+  "managedReads": 12,
+  "readCeiling": 90,
+  "minimumWatchIntervalSeconds": 30,
+  "GitHubCompletedAt": null,
+  "evidenceRefs": [
+    "https://github.com/dddur75/robin-stades-ng/actions/runs/45159558336"
+  ],
+  "diagnosticSHA256": "15aef1fc0799b574b06e00e3d6da843e456d38711f711b9f7c1f89993f483862",
+  "sourceGET": 0,
+  "GitMutations": 0,
+  "newForecasts": 0
+}

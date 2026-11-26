@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "robin-local-curated-admission-v2",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.PROFILE158.LOCAL.APP.ADMISSION.20261125",
+  "status": "CURATED_DATASET_PREPARED_RUNTIME_INACTIVE",
+  "scope": "Approved local structured dataset proposal, not runtime receipt; one new native choice with its own one-shot receipts. Legacy parent namespace covers R6 only.",
+  "priorCheckpointSHA256": "571a051c8d69ef76a4f4ecf2834737180512cf6b85d61fc44b5a9277a9af1660",
+  "sourceBatchSHA256": "5d94148e9b3d7d87f1a1460600e9b7a55f17f61c415ce58867e882cdee62628e",
+  "nativeAuthorId": 158,
+  "newUniqueAdmitted": 1,
+  "oldPublicChoicesPreserved": 486,
+  "publicChoices": 487,
+  "oldCandidateFiches": 318,
+  "candidateFiches": 318,
+  "newCandidateFiches": 0,
+  "documentaryPrematchRecertified": false,
+  "sourceReady": false,
+  "recurringCollectionActive": false,
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.PROFILE158.ONE.SHOT.RETAINING.R2.RESULT.20261125"
+  ],
+  "sourcePrimarySHA256": "990c2a1bbb52405decfba21016906612bf7f412bc404ae06dd08485b82ff2de8",
+  "sourceResultSHA256": "5ef0de800e4b815676a9948a276a1648b59dccfc463587cba7388c10d30e9720",
+  "sourceStopSHA256": "a44d7680c70bbb0ff3c273aa8a61d64db965c0a4fd79bf8648ad7fbd9f2b4832",
+  "legacyParentProofScope": "R6_ONLY_NOT_PROOF_OF_ONE_SHOT158",
+  "missionId": "OLBG158_LOCAL_APP_ACTIVATION_20261125",
+  "privateAdmissionReportSHA256": "d95bfc6cd8dda3419feeaa08ccaba6262d8c4b624d5619f93cb72ca1d18d9af5",
+  "checkpointSHA256": "7cd0c77136f75783b014c849c52264151c7c28b81b90976feebe15d04298ec88",
+  "projectionPrimarySHA256": "bdccdfdfdb110fb678b339db079a13d3b521a8586819f713e7f5d84f2d105a43",
+  "approvedBy": [
+    "C0",
+    "C1",
+    "C4"
+  ]
+}

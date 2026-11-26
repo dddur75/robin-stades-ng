@@ -1,0 +1,48 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.OBSERVER.COMPLETE.COLLECTOR.CALLER.R2.E1.RESULT.20261124",
+  "missionId": "OLBG_OBSERVER_COMPLETE_COLLECTOR_CALLER_R2_E1_20261124",
+  "scope": "Private actual pinned loader/probe/worker caller, synthetic data and transports only; not runtime installation or SOURCE authority",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.OLBG.FIRST.OPAQUE.REFUSAL.PRIVATE.QUALITY.E1.RESULT.20261124"
+  ],
+  "planSHA": "f33b9a3f666333d64975690f59d81a90112c897452ec1aedbfec3cfbe610c6a3",
+  "manifestSHA": "988badbca5c292a6d22c275b8a1672afedb67d3c6eae40b95806b709dddd6f35",
+  "callerSHA": "69a1e3288abaeadbbf8e387dcda697f93c4365f84186c1af6762aaeee85614d2",
+  "testSHA": "c425a33ad4deb7e98ca8b5a5b048d9710fa5865f5d4285ebe2cb0d7a054a46a8",
+  "resultSHA": "a905fae331509f47458d52222ad98373d7491e7f30f94c13f6ecdef2f9767064",
+  "status": "PASS_AND_HOLD",
+  "evidence": {
+    "methods": 4,
+    "actualCollectCalls": 3,
+    "injectedCollectorFailure": 1,
+    "fakeGET": 6,
+    "sourceGET": 0,
+    "loaderLoads": 1,
+    "privateFilesBeforeReviews": 11,
+    "caches": 0,
+    "explicitChildLaunchesBeforeReport": 9,
+    "totalOSProcesses": null
+  },
+  "nativeUTCProof": false,
+  "applicationAdmission": false,
+  "sourceReady": false,
+  "allCompatibleIntegrated": false,
+  "limitations": [
+    "No individual callback independent authentication; fresh pinned loader namespace must remain unchanged before wrapper",
+    "Not installed into scheduled/native runtime; no source approval",
+    "No nativeUTC/calendar/admission improvement"
+  ],
+  "priorPhases": {
+    "binding": "PARTIAL_BUDGET_NONCONFORMANT_TOOL_CACHES",
+    "callerR1": "STOPPED_BEFORE_SECOND_LOADER_LOAD"
+  },
+  "reviewFacts": {
+    "C1": "PASS_AND_HOLD private engineering only, actual hashes/full pipeline/restoration/11files and timely STOP verified, no SOURCE key",
+    "C4": "PASS_AND_HOLD private engineering only, DENY before load, closed witness, limited quality scope, no native authority"
+  }
+}

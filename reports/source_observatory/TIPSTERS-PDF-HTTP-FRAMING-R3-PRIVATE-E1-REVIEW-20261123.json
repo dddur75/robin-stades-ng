@@ -1,0 +1,44 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.PDF.HTTP.FRAMING.R3.PRIVATE.E1.REVIEW.20261123",
+  "generatedAt": "2026-11-23T00:05:27.575Z",
+  "status": "PASS_AND_HOLD_PRIVATE_FRAMING_PROFILE_WITH_RETAINED_TEST_SUMMARY",
+  "missionId": "PDF_HTTP_FRAMING_R3_PRIVATE_E1_20261122",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "author": "C3",
+  "grant": "d764364d7eba8f2cea7f6345cc69a276e371732cb30425ce46b3da1fd085bcd3",
+  "resultRAW_SHA256": "c55b46ff02bcb9c8a5067eb759d71404c139152378275ff3d4c073af16791c40",
+  "codeMapCanonicalSHA256": "b49c4d715b7592293e6ea9f7644e9147f727fc20e58d41a571788ab7e66835ee",
+  "transportSHA256": "8d7bd9d8460d44d97c7e06119ceb3704543080d49a6460f1dfb3dffef5545969",
+  "authorStoppedAt": "2026-11-23T00:01:53.432912+00:00",
+  "authorSeconds": 222.937642,
+  "review": {
+    "C0_CODE": "PASS_STRICT_CL_CHUNKED_IMPLEMENTATION",
+    "C1_FACTS": "PASS_PINS_AST_RETAINED_SUMMARY_ONLY",
+    "C4_SCOPE": "PASS_PRIVATE_ONLY"
+  },
+  "wireCasesReported": 22,
+  "redWireExecutionsReported": 3,
+  "wireExecutionsReportedTotal": 25,
+  "uniqueSyntheticBody": 1,
+  "seededCounterVariants": 2,
+  "exactGreenStdoutRetained": false,
+  "greenRetention": "Labeled summary of author tool result chunk da2bf2; no independent full stdout claim.",
+  "oldFailureCause": "UNKNOWN_NOT_RETAINED",
+  "sourceGET": 0,
+  "DNS": 0,
+  "Win32": 0,
+  "appChanges": 0,
+  "TaskChanges": 0,
+  "sourceReady": false,
+  "physicalCallerReady": false,
+  "profileUnsupported": [
+    "close-delimited",
+    "chunk extensions",
+    "trailer fields"
+  ],
+  "globalDelivery": "PARTIAL"
+}

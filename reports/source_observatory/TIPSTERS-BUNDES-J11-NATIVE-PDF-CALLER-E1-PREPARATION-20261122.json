@@ -1,0 +1,21 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.BUNDES.J11.NATIVE.PDF.CALLER.E1.PREPARATION.20261122",
+  "status": "E1_ASSEMBLY_PROVEN_E2_EFFECT_STILL_CLOSED",
+  "generatedAt": "2026-11-22T23:36:49.855Z",
+  "missionId": "BUNDES_J11_NATIVE_PDF_CANARY_E1_E2_20261122",
+  "keys": [
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "author": "C0",
+  "grant": "fd3a3165b47be423761cd786ed16c86f441c33f3e67ca1616ad81ea874ba63d1",
+  "codeMapCanonicalSHA256": "c7e612c1e900e46a33b82171afc0714420e5d1559cca4b18603150143834576b",
+  "preparedResultRAW_SHA256": "c1a2aa581d022cc3e208f2acf5dfb529b52d094f4f37d65a2c3410d738b1c248",
+  "sourceGET": 0,
+  "DNS": 0,
+  "Win32": 0,
+  "sourceReady": false,
+  "exactSourceURL": "https://products.bundesliga.com/fixtures/export/pdf?league%5B0%5D=1d570dd9-b10b-44de-9f64-8c91e56bf168&matchday%5B0%5D=11&season=b2f90c16-d6ef-40b1-a974-e6b1bf102c2a",
+  "globalDelivery": "PARTIAL"
+}

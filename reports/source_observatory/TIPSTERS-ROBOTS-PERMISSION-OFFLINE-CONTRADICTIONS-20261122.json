@@ -1,0 +1,33 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.ROBOTS.PERMISSION.OFFLINE.CONTRADICTIONS.20261122",
+  "recordedAt": "2026-11-22T03:51:44.029Z",
+  "status": "CODE_GATES_HELD_BEFORE_SOURCE",
+  "scope": "Synthetic permission maintenance only. Historical actual publisher-policy effect remains unknown without exact native robots document and target revalidation.",
+  "legacy": {
+    "owner": "src/robin/source_observatory/collector.py",
+    "matching": "Full User-Agent header permits invalid slash/version/comment group to override wildcard denial",
+    "independentC3Confirmed": true
+  },
+  "firstStrictHelper": {
+    "sha256": "1e9507aae3e66ef4db20481a13590a11476fb1bfd200218a94ccd008cb493d07",
+    "issue": "Blank line incorrectly terminates a group, allowing wildcard empty-group fallback",
+    "independentC3Confirmed": true,
+    "syntheticCounterexample": "User-agent: *\\n\\nUser-agent: OtherBot\\nDisallow: /\\n",
+    "actualResult": "ALLOW",
+    "requiredResult": "DENY"
+  },
+  "reference": "https://www.rfc-editor.org/rfc/rfc9309.html#section-2.1",
+  "frozenPacketsHeld": [
+    "TELEGRAM_BETSOCCER_AVAILABILITY_R1",
+    "FORUMS_SUCCESSOR_E1_R1",
+    "FORUMS_SUCCESSOR_E1_R2"
+  ],
+  "sourceGET": 0,
+  "sourceGrant": 0,
+  "spentAttempts": 0,
+  "newSourceHelperCorrection": "VERSIONED_MINIMUM_DELTA_PENDING_FRESH_REVIEW",
+  "oldSourcePinsModified": 0,
+  "historicalResultsRewritten": 0,
+  "productionChanges": 0,
+  "globalDelivery": "PARTIAL"
+}

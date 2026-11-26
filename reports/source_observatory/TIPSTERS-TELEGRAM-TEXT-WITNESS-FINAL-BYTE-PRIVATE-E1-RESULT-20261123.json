@@ -1,0 +1,41 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.TEXT.WITNESS.FINAL.BYTE.PRIVATE.E1.RESULT.20261123",
+  "status": "ACCEPTED_PRIVATE_COMPONENT_ON_SEPARATE_FINAL_BYTE_VERIFICATION",
+  "missionId": "TELEGRAM_TEXT_WITNESS_FINAL_BYTE_VERIFICATION_E1_20261123",
+  "scope": "Accept exact private closed text-region witness on new final-byte verification plus independent static reviews; preserve original author phase PARTIAL9/8 without retroactive repair.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.CASE.CANONICAL.NATIVE.R1.ACTUAL.RESULT.20261123"
+  ],
+  "pins": {
+    "diagnostic_factory.py": "c51e29c8ba66db419e9eb90dc6a08235559858d10c0bb5d23a8ca59c7bbeb094",
+    "source_worker.py": "4a753cd20eff35d7263c39915e1ae8fc284561eb090e8959755a76f2471e6437",
+    "test_text_witness.py": "2307c592a5a8e9317b4dd06e182e7f3b708c7314465b7df31ea23a60071c0a6d"
+  },
+  "originalAuthorResultSHA": "3a26f64ca403165839c2b72e7fe1042d2fa180d64654053f179b86474f981de9",
+  "verificationResultSHA": "64dd1d1d80d634581188d874a957400e0005767ed2c0b0eb7437d6ffa143e3b3",
+  "primarySHA": "6a997bdfc1b2c519d32f41c145854e32d0c07fc1360715a8b296df911ea12df4",
+  "originalPhase": {
+    "status": "PARTIAL",
+    "conservativeProcesses": 9,
+    "maximumProcesses": 8,
+    "finalTestBeforeImportFix": true
+  },
+  "verificationPhase": {
+    "targetedProcesses": 1,
+    "testsPASS": 3,
+    "authorSeconds": 12.443,
+    "unchangedPins": true
+  },
+  "IDdiagnosticObserverExecuted": false,
+  "textRegionObserverImplemented": true,
+  "nativeTextRegionCauseObserved": false,
+  "sourceGET": 0,
+  "admissions": 0,
+  "sourceReady": false,
+  "sourceAuthority": false
+}

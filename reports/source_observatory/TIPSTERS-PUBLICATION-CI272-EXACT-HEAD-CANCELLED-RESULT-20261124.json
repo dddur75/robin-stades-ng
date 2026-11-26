@@ -1,0 +1,55 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.PUBLICATION.CI272.EXACT.HEAD.CANCELLED.RESULT.20261124",
+  "missionId": "PUBLICATION_CI272_TERMINAL_FACT_REVIEW_20261124",
+  "status": "PARTIAL",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Independent exact-head terminal CI facts: run concluded CANCELLED; jobs fourteen successes, two failures and one cancelled. No verdict for the cancelled Quality code tests and no certification of corrective head.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.PUBLICATION.CI272.EXACT.HEAD.DIRECT.FAILURE.SNAPSHOT.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.TEST.LOADER.CI.FIX.E1.RESULT.20261124"
+  ],
+  "commitSHA": "cfd3874bb01df86722ccce63ae7c5c0de773290d",
+  "runId": 45359912980,
+  "runNumber": 272,
+  "runStatus": "completed",
+  "runConclusion": "cancelled",
+  "jobs": 17,
+  "success": 14,
+  "failure": 2,
+  "cancelled": 1,
+  "skipped": 0,
+  "failedJobs": [
+    {
+      "id": 138328246444,
+      "name": "Chronos PostgreSQL profiles / Chronos provider-free Cockpit",
+      "error": "ERR_UNSUPPORTED_RESOLVE_REQUEST"
+    },
+    {
+      "id": 138341270732,
+      "name": "tests",
+      "reason": "Aggregate refuses absent, cancelled or failed checks"
+    }
+  ],
+  "cancelledJobs": [
+    {
+      "id": 138330003546,
+      "name": "Quality and domain tests",
+      "codeVerdict": null
+    }
+  ],
+  "manualCancelAPI": false,
+  "manualRerunAPI": false,
+  "sourceReady": false,
+  "admissions": 0,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "limits": [
+    "Earlier nonterminal snapshot remains historical, not rewritten.",
+    "Run-level conclusion is cancelled, not failure. One direct code failure plus one aggregate failure remain visible.",
+    "No quality code failure or success inferred from cancellation. New head5a4483 has separate CI273 still followed."
+  ]
+}

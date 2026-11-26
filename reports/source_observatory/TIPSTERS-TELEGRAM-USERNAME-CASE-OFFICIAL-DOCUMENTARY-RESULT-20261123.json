@@ -1,0 +1,31 @@
+{
+  "claimId": "DATA.SOURCE_OBSERVATORY.TELEGRAM.USERNAME.CASE.OFFICIAL.DOCUMENTARY.RESULT.20261123",
+  "missionId": "TELEGRAM_USERNAME_FAQ_SECTION_DOCUMENTARY_R1_20261123",
+  "status": "OFFICIAL_GENERAL_USERNAME_CASE_RULE_DOCUMENTED",
+  "scope": "Official FAQ documentary rule only: Telegram basic usernames are case-insensitive and chosen capitalization is retained. This does not prove that current Bextra mismatch is case-only or that the observed HTML identities agree. No parser acceptance change, SOURCE request or activation is authorized by this documentary result.",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.CLOSED.ID.BRANCH.NATIVE.R1.ACTUAL.RESULT.20261123"
+  ],
+  "officialURL": "https://telegram.org/faq#q-what-can-i-use-as-my-username",
+  "renderedLine": 607,
+  "shortQuote": "Usernames are case-insensitive",
+  "quotedWords": 3,
+  "renderedRepresentationSHA": "4e5e7b32f77bbed495b397f6cff5af606744d30ab0103b827367075138f28aa8",
+  "authorReceiptSHA": "b2feeddf7e54d84c9f34b267ead0e1cee5b95e0963627a2d66708718c4ab3f3e",
+  "authorFinishedAt": "2026-11-23T20:36:35.810Z",
+  "webToolOpens": 1,
+  "underlyingHTTPRequests": null,
+  "representationIsHTTPBody": false,
+  "nativeChannelAgreementEstablished": false,
+  "currentBextraCaseOnlyProven": false,
+  "parserChangeAuthorized": false,
+  "sourceObservationGET": 0,
+  "nativeJob": 0,
+  "newForecasts": 0,
+  "overallStatus": "PARTIAL"
+}

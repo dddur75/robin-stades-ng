@@ -1,0 +1,71 @@
+{
+  "DNS": 0,
+  "authorResultSHA256": "6cf9603dc2e464b18e594ce5b866f564233d707dca1241006db2fae9f13b3a5d",
+  "authorStoppedAt": "2026-11-23T01:24:16.027415+00:00",
+  "claimId": "ENG.SOURCE_OBSERVATORY.NOTBETTING.REFERENCE.OBSERVER.PRIVATE.E1.PARTIAL.20261123",
+  "codeMapCanonicalSHA256": "a5e913b174109c025085369a2ee7fc0057bedf95f981a6a9fdd878c6e398a065",
+  "decision": "FAIL_AND_REDESIGN",
+  "diagnosticContract": {
+    "UTF8BytesMax": 4096,
+    "classes": [
+      "MISSING_LOCAL_KEY",
+      "ACTIVE_STACK_CYCLE",
+      "REF_CHAIN_LIMIT",
+      "STRUCT_DEPTH_LIMIT"
+    ],
+    "firstWitnessPerClass": true,
+    "hashKind": "REFERENCE_STRING_OR_SHALLOW_TYPE_LENGTH_DESCRIPTOR",
+    "nativeLiteralsOrFields": false,
+    "witnessesMax": 4
+  },
+  "elapsedSeconds": 245.374018,
+  "generationRedesign": {
+    "decision": "FAIL_AND_REDESIGN",
+    "futureAssembly": "AST_OR_EXACT_LITERAL_EDITS_NO_GLOBAL_MARKER_SUBSTITUTION",
+    "returnStage": "E1",
+    "similarFailureOrdinal": 2,
+    "thirdIdenticalAttemptForbidden": true
+  },
+  "independentC0ASTProof": {
+    "coreASTSHA256": "ddda1e511d6b5aa6696acc1d2598787657630a8a6e30a7322fea31c3cd3c7305",
+    "executedQualifierCalls": 0,
+    "proofPrimarySHA256": "0d676dbf855510fa60f659f2676b7bb9348e661067f7eb2bdd9a78be07b0f81d",
+    "unchangedCoreASTAfterExactlyFourGuardsAndOneKwOnlyArgRemoved": true
+  },
+  "instrumentedQualifierSHA256": "6574acbaa9c73489d76a10f0f1dd2b6c90742cd2e95aead26263f5c4b7d804c0",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "limits": [
+    "Five initial projection pairs equal before diagnostic label assertion failure; two enum constants corrected, only three remaining pairs executed. No final-eight-PASS claim.",
+    "Independent C0 static AST strip proof confirms whole parent core identity, not a native diagnostic or scientific qualification.",
+    "Four closed classes proven on synthetic graphs only, no further native cause inferred. No nativebody reconstitution or provider data replay.",
+    "Historical private packet frozen under generation REDESIGN; no parser/source promotion or future acquisition. New preparation requires different deterministic construction method and independent keys."
+  ],
+  "missionId": "NOTBETTING_REFERENCE_OBSERVER_PRIVATE_E1_20261123",
+  "nativeJobs": 0,
+  "observerSHA256": "b9f7777c41fc39ceb485cce7b4bfd75942e70cff6d14a87eb31e37e369c26095",
+  "realData": 0,
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.PROSPECTIVE.SOURCE.R2.NATIVE.PARTIAL.20261123"
+  ],
+  "sourceGET": 0,
+  "sourceReady": false,
+  "status": "PARTIAL",
+  "tests": {
+    "criticalRuffExit": 0,
+    "finalCompositeClasses": 4,
+    "finalCompositeDiagnosticBytes": 1824,
+    "fullFinalPackPassed": false,
+    "initialPairs": 5,
+    "initialProcessExit": 1,
+    "pairedVariants": 8,
+    "qualifierCalls": 16,
+    "remainingPairs": 3,
+    "remainingProcessExit": 0,
+    "rowSkeletons": 1,
+    "syntheticGraphSeeds": 3
+  }
+}

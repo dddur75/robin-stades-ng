@@ -1,0 +1,33 @@
+{
+  "parentGrant": "ae4330f546f758680726495b8c43681bc293b91c0844b51802d22bfc7ae19148",
+  "planSHA": "5dbacde3adcdcdc55b036def97c78bf85be91f6f71f245f2efbf9b2be04cf871",
+  "manifestSHA": "dc202b0a0e874b14acb3b454a8430a8a91009d58ace32ee891949129af5bf562",
+  "configSHA": "50e3ffead47a5e3ed3b1d333decf7f92817f617b86333a894d52f41c56719c63",
+  "workerSHA": "53f203edf61a6e6c9fda25d709b0854f6ee7ad09877328e1756978d555b1e8ed",
+  "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+  "outerSHA": "df5672eb4188672fb9fa5d95d2a82f390ec2b2b825195425b46c68cddcb8c4c9",
+  "policySHA": "b248c36c7bb9bdad53c49ed5f8e16d7fe4ea73a1411c8ea787c9eaefaeadddfa",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.WITNESS.NATIVE.R1.E1.RESULT.20261123",
+  "missionId": "TELEGRAM_BEXTRA_WITNESS_NATIVE_R1_20261123",
+  "generatedAt": "2026-11-23T16:37:03.297Z",
+  "status": "FROZEN_LOADER_SSL_CLOSED_WITNESS_FULL_POLICY_SYNTHETIC_PASS_E1_ONLY",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.PARSER.WITNESS.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.PREFIX.NATIVE.R2.ACTUAL.RESULT.20261123",
+    "DATA.SOURCE_OBSERVATORY.WORKBOOK.COMPLETE.20261120",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.EU.DSA.NATIVE.DOCS.E1.RESULT.20261122"
+  ],
+  "scope": "Fourindependentreviewkeysaccept exactfrozenfullSSLloader+oneSYNTHBextra projection witnesscount1/isFalseTrue ANDunchangedconsumerPASS, fullpurepolicyfourRAMsyntheticcasespositive/threeexactnegatives. No actualauthority/collect/store/Job/GET/rootSD/spents. FrozencloseddiagnosticONLY after priorPREFIX_CONTRACTunknown, no acceptancechange/capraise. Repeatedsimilarfailure⇒REDESIGNtoE1/no thirdunchangedattempt. FreshfourSOURCEkeysafterdurableclose required.",
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "primarySHA": "27af07e415a6b48d3b34b91a5d3f13839858462f55539780a820b295a1a6ba16",
+  "policyPrimarySHA": "09ff32e07afac17d26c00d1920c939ea7f6e50128b5031d7ee1368910eb4a2b4"
+}

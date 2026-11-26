@@ -1,0 +1,32 @@
+{
+  "parentGrant": "3d63d70f582a0a80244e62cc3c7213f3014a68fd83a5e0bee8aced73363a04a7",
+  "planSHA": "89c6c1964385bca5f651b680e3bc506099ed8572f19eca7167a53b76298692c7",
+  "manifestSHA": "3dd75bf7b4b56730ca89a3c95fb8617232cfa99189f4cd9bac1cef93831f4aeb",
+  "configSHA": "5e6c425ab73b13d2b9ebe9b4a320f231a0ea518f4c0cc5f50af9902092644614",
+  "workerSHA": "221ea41b45ee0d9667e7c11fcd67fef74c4396ca98184f6fbaa6b293182a0cb6",
+  "pythonSHA": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+  "outerSHA": "9560c89b76ccec35c2ba7cfbd0e6e29c32b3761f9983c2ae430cf3e1b7ac3c35",
+  "policySHA": "4726ce94b35c3b4ec51558d01759aaa201d7216574f4aa2a477d327e28a9a5d4",
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.STRUCTURED.NATIVE.R1.E1.RESULT.20261123",
+  "missionId": "TELEGRAM_PREFIX_STRUCTURED_NATIVE_R1_20261123",
+  "generatedAt": "2026-11-23T15:37:34.229Z",
+  "status": "EXACT_FROZEN_FULL_LOADER_SSL_SYNTHETIC_PROBE_PASS_E1_ONLY",
+  "scope": "IndependentC0/C1/C3/C4 exactcode/pin/binding reviews acceptedactualfull_load_components strictSSL underDENYbeforeimports/RAMfakeSD. One SYNTHETICmessage+strictvalidated_prefixprobe. No collect/storage/sourceSD/rootspents/Job/GET or realauthorityvalidation. ManifestV2explicitboundedPRIVATEstructuredstorage; rawproviderHTML/notproviderJSEXEC/stdout-model-Git data0. No nativehuman/admission/compatibilityclaim; freshSOURCEkeys required AFTER durableclose.",
+  "keys": [
+    "C0",
+    "C1",
+    "C3",
+    "C4"
+  ],
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.NATIVE.PREFIX.STORAGE.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.PREFIX.PRIVATE.RESULT.20261123",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.EU.DSA.NATIVE.DOCS.E1.RESULT.20261122"
+  ],
+  "sourceGET": 0,
+  "nativeJobs": 0,
+  "newForecasts": 0,
+  "sourceReady": false,
+  "actualLoaderExit": 0,
+  "primarySHA": "7fb4729a76f9fb2197886ad7ad64f64d27d0edf3b567a8a510cd652ba4c71cde"
+}

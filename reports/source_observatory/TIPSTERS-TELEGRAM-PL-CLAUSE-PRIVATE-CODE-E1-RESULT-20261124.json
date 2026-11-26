@@ -1,0 +1,65 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.PL.CLAUSE.PRIVATE.CODE.E1.RESULT.20261124",
+  "missionId": "TELEGRAM_PL_CLAUSE_CONTEXT_PRIVATE_QUALITY_R2_E1_20261124",
+  "status": "PASS_AND_HOLD",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.PREMIERLEAGUE.NOVEMBER.FUTURE.GMT.PROGRAMME.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.TELEGRAM.BEXTRA.CLAUSE.CONTEXT.LOCAL.E1.ACTUAL.RESULT.20261123"
+  ],
+  "scope": "Post-phase independent C0/C1/C4 facts review of frozen private synthetic code and static quality only; no late authorization or extension of expired author windows.",
+  "sourceReady": false,
+  "admissions": 0,
+  "authorityClosed": true,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "helperSHA256": "9cdc5dd039553d1218d39d2cbcc4d54fef4b7cdc3da241423e376cfa922ae866",
+  "testSHA256": "8f198fd4d808feb706de5a460c0db862be4c22142af5f6685dcccc731d84179b",
+  "qualityResultSHA256": "f5eebfad968033ed930d6677e8652b972d4254402475054a1eed42d043b18071",
+  "quality": {
+    "RuffFiles": 2,
+    "RuffExit": 0,
+    "mypyHelperStrictExit": 0,
+    "RAMCompiledFiles": 2,
+    "testASTEquivalent": true,
+    "localNoqaE402": 8,
+    "functionalReplay": 0,
+    "totalOSProcesses": 9,
+    "authorStoppedAtUTC": "2026-11-24T08:37:12.455741+00:00"
+  },
+  "reusedFunctional": {
+    "tests": 6,
+    "uniqueMethods": 6,
+    "methodExecutions": 7,
+    "totalProjectorCalls": 51,
+    "newHelperCalls": 10,
+    "REDProjectorCalls": 4,
+    "GREENProjectorCalls": 47,
+    "primarySHA256": "e5937774c7fc33ff9745cbe73484eef37e519fe753adc53c75f55e33ca5fc98c",
+    "priorProducerStatus": "PARTIAL_RUFF_E402_PRESERVED"
+  },
+  "contract": {
+    "fixtures": 10,
+    "maxRecordFixturePairs": 40,
+    "maxLiteralPatterns": 80,
+    "officialLabelsExact": true,
+    "aliasesAdded": false,
+    "programmeUTCProof": "DOCUMENTARY_GMT_ONLY",
+    "nativeUTCProof": false,
+    "canonicalFixture": null,
+    "preMatchProven": false,
+    "personIdentityVerified": false,
+    "admissible": false
+  },
+  "limits": [
+    "UNIQUE means literal occurrence in the specific clause only, never a canonical fixture or admitted forecast.",
+    "Only synthetic payloads used; no real input read or LOCAL authority yet.",
+    "Pinned source adaptation replaces seven unique fragments and proves inverse equality on each call.",
+    "500-character clause boundary returns UNPROVEN.",
+    "Quality fixes eight E402 annotations in test only; helper byteexact, test AST equal."
+  ]
+}

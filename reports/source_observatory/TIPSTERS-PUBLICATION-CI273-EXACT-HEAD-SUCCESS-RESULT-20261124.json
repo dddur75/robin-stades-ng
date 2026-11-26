@@ -1,0 +1,148 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.PUBLICATION.CI273.EXACT.HEAD.SUCCESS.RESULT.20261124",
+  "missionId": "PUBLICATION_CI273_TERMINAL_FACT_REVIEW_20261124",
+  "status": "VERIFIED",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Independent terminal GitHub CI result for exact corrective commit only.17jobsSUCCESS does not establish local complete visual recette, source compatibility, collection activation or production delivery.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.NOTBETTING.TEST.LOADER.CI.FIX.E1.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V37.ENGINEERING.RECETTE.20261124",
+    "ENG.SOURCE_OBSERVATORY.LOCAL.FOLLOWUP.V37.GUARD.TIMING.PARTIAL.RESULT.20261124",
+    "ENG.SOURCE_OBSERVATORY.PUBLICATION.CI272.EXACT.HEAD.CANCELLED.RESULT.20261124"
+  ],
+  "commitSHA": "5a4483ceab9693cae8019e048a72a5180bc7997e",
+  "runId": 45364063746,
+  "runNumber": 273,
+  "runStatus": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "id": 138341322400,
+      "name": "Bounded live canary - Windows",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138341322657,
+      "name": "Chronos PostgreSQL profiles / tests (non_superuser_createrole)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138341322683,
+      "name": "End-to-End Live Path Replay",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138341322741,
+      "name": "Chronos PostgreSQL profiles / tests (superuser)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138341322755,
+      "name": "Chronos PostgreSQL profiles / Chronos static contracts",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138341322817,
+      "name": "Chronos PostgreSQL profiles / Chronos source and activation",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138341322835,
+      "name": "Residual Fault Matrix",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138341322912,
+      "name": "Historical Deep — contrat cache-only",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138341322931,
+      "name": "Exact Workflow Entrypoint",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138341322973,
+      "name": "Jalon 10 - entrees de preuve gelees",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138341323025,
+      "name": "Historical Authority Workflows Disabled",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138341323246,
+      "name": "Bounded live canary - Ubuntu",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138343064717,
+      "name": "Chronos PostgreSQL profiles / Chronos provider-free Cockpit",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138344087715,
+      "name": "Quality and domain tests",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138344087786,
+      "name": "Jalon 10 - trois temoins R3 bornes",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138344087915,
+      "name": "Robin Experience — preuves visuelles",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138357078553,
+      "name": "tests",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "successJobs": 17,
+  "failedJobs": 0,
+  "cancelledJobs": 0,
+  "skippedJobs": 0,
+  "treeSHA": "10ea5ae0bb3139d3e2fd49955b6ce2164ddae323",
+  "parentSHA": "cfd3874bb01df86722ccce63ae7c5c0de773290d",
+  "PR": 133,
+  "PRDraft": true,
+  "merged": false,
+  "primarySHA256": "dd78dfd6e39a40b01c1cbef8cf40f4d4435b4f1b6c9ed01a7409dce14fbcb993",
+  "sourceReady": false,
+  "admissions": 0,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "sourceCollectorRuns": 0,
+  "productionRelease": false,
+  "limits": [
+    "Only head5a4483ceab9693cae8019e048a72a5180bc7997e certified; uncommitted local fact receipts are not included in that SHA.",
+    "Old CI272 remains CANCELLED with one direct loader failure, aggregate failure and cancelled Quality; no old conclusion rewritten.",
+    "V37 timing phase remains PARTIAL_TIMING_NOT_CONFORMANT, static mapping and functional facts only.",
+    "No bookkeeping push or additional CI trigger for these local receipts."
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "robin-retained-qualification-receipt-v1",
+  "generatedAt": "2026-11-25T16:24:49.108Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.EIGHT.PROFILE.RETAINED.QUALIFICATION.20261125",
+  "missionId": "OLBG_EIGHT_PROFILE_RETAINED_QUALIFICATION_20261125",
+  "status": "VERIFIED_INTERMEDIATE_UEFA_ONLY_QUALIFICATION_NOT_ADMITTED",
+  "scope": "Intermediate qualification of97 retained real observations against9 UEFA fixtures and8 approved club aliases;16 unique new choices, before later expansion using an existing official Premier League programme.",
+  "resultSHA256": "1c8f93bbf8b069f2729191e9d6bd2440667144fed89f3f4a8af744b8a0905767",
+  "stopSHA256": "e9ccccd5e6a474346468f37672e72896b828d64343caf4b887f72a72b6623d09",
+  "profiles": [
+    {
+      "batchSHA256": "40543dbae02238779ea0e4156e0f158cf093ec7762240ca0fbde2de55d900e3c",
+      "newUniqueQualified": 1,
+      "observedAt": "2026-11-25T13:42:53.159563+00:00",
+      "priorQualifiedExcluded": 1,
+      "profileId": 158,
+      "qualifiedTotal": 2,
+      "retainedRows": 3
+    },
+    {
+      "batchSHA256": "3d2c02df12948c49029810ddce5afd4593783167af9b7d92bf0cd2cdf75b91eb",
+      "newUniqueQualified": 1,
+      "observedAt": "2026-11-25T14:25:55.219746+00:00",
+      "priorQualifiedExcluded": 4,
+      "profileId": 609057,
+      "qualifiedTotal": 5,
+      "retainedRows": 11
+    },
+    {
+      "batchSHA256": "8b3ad5c03bf1f03baa69435eb133e3e8f1463266dfa53de2c7abea2f62a0f45d",
+      "newUniqueQualified": 5,
+      "observedAt": "2026-11-25T15:57:02.428085+00:00",
+      "priorQualifiedExcluded": 0,
+      "profileId": 648478,
+      "qualifiedTotal": 5,
+      "retainedRows": 20
+    },
+    {
+      "batchSHA256": "1cc13ba88ac4d763e3fd0c73e05f51fec997dbdab593e0f798d31f7ba10603b5",
+      "newUniqueQualified": 1,
+      "observedAt": "2026-11-25T15:57:23.872464+00:00",
+      "priorQualifiedExcluded": 0,
+      "profileId": 203797,
+      "qualifiedTotal": 1,
+      "retainedRows": 12
+    },
+    {
+      "batchSHA256": null,
+      "newUniqueQualified": 0,
+      "observedAt": "2026-11-25T16:02:14.779401+00:00",
+      "priorQualifiedExcluded": 0,
+      "profileId": 79569,
+      "qualification": "ZERO_ELIGIBLE",
+      "qualifiedTotal": 0,
+      "retainedRows": 0
+    },
+    {
+      "batchSHA256": "2c8eec563b8fcc721b3a9e8fbbd2595071601b0a0663b7358d614631d923732d",
+      "newUniqueQualified": 4,
+      "observedAt": "2026-11-25T16:02:51.606417+00:00",
+      "priorQualifiedExcluded": 0,
+      "profileId": 530492,
+      "qualifiedTotal": 4,
+      "retainedRows": 20
+    },
+    {
+      "batchSHA256": "f78af79ed861c9f723c10b0417651fbed68565a5314964f81aed73e8d1432b18",
+      "newUniqueQualified": 4,
+      "observedAt": "2026-11-25T16:05:47.800873+00:00",
+      "priorQualifiedExcluded": 0,
+      "profileId": 229856,
+      "qualifiedTotal": 4,
+      "retainedRows": 20
+    },
+    {
+      "batchSHA256": null,
+      "newUniqueQualified": 0,
+      "observedAt": "2026-11-25T16:06:46.953660+00:00",
+      "priorQualifiedExcluded": 0,
+      "profileId": 13000,
+      "qualification": "ZERO_ELIGIBLE",
+      "qualifiedTotal": 0,
+      "retainedRows": 11
+    }
+  ],
+  "processedRows": 97,
+  "newUniqueQualified": 16,
+  "baselinePublicChoices": 491,
+  "SourceGET": 0,
+  "APP": 0,
+  "tests": 0,
+  "sourceFieldsAndObservationPreserved": true,
+  "fixtureCount": 9,
+  "applicationAdmissions": 0,
+  "allCompatibleIntegrated": false,
+  "globalDelivery": "PARTIAL"
+}

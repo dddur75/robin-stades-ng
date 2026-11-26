@@ -234,15 +234,21 @@ def robots_policy(text: str, url: str) -> tuple[bool, float]:
             if rules:
                 groups.append((agents, rules))
                 agents, rules = [], []
-            agents.append(value.lower())
+            name = value.lower()
+            if re.fullmatch(r'\*|[a-z_-]+', name) is None:
+                raise ValueError('unsupported robots user-agent')
+            agents.append(name)
         elif agents and key in ('allow', 'disallow', 'crawl-delay', 'request-rate'):
             rules.append((key, value))
     if agents:
         groups.append((agents, rules))
-    ua = USER_AGENT.lower()
+    ua = USER_AGENT.split('/', 1)[0].strip().lower()
+    if re.fullmatch('[a-z_-]+', ua) is None:
+        raise ValueError('unsupported robots user-agent')
     def specificity(names: list[str]) -> int:
-        return max((len(name.replace('*', '')) for name in names
-                    if name and re.search(re.escape(name).replace(r'\*', '.*'), ua)), default=-1)
+        if ua in names:
+            return 1
+        return 0 if '*' in names else -1
     best = max((specificity(a) for a, _ in groups), default=-1)
     parsed = urlsplit(url)
     target = unquote(parsed.path or '/') + ('?' + unquote(parsed.query) if parsed.query else '')

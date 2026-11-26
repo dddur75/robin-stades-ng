@@ -1,0 +1,463 @@
+{
+  "schema_version": "robin-tipster-source-authorization-v1",
+  "claim_id": "ENG.SOURCE_OBSERVATORY.RECURRING.20261118",
+  "source_claim": "ENG.SOURCE_OBSERVATORY.CONNECTORS57.20261118",
+  "sources": [
+    {
+      "id": "SRC_006",
+      "name": "PenseBet - Pronostics Ligue 1",
+      "endpoint": "https://pensebet.com/feed/",
+      "status": "terms_http_301",
+      "required_action": "Valider une URL canonique de conditions et un nouveau profil borné; aucune redirection suivie silencieusement.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_041",
+      "name": "Forum MadeInLens - Section Pronostics",
+      "endpoint": "https://forum.madeinlens.com/forum/16-pronostics/",
+      "status": "permission_required",
+      "required_action": "Permission écrite de l’éditeur pour la collecte automatisée de ce point d’accès, ou flux/API contractuel; la seule autorisation du propriétaire de Robin ne remplace pas celle de l’éditeur.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_050",
+      "name": "Foot-National - Rubrique Ligue 1",
+      "endpoint": "https://www.foot-national.com/rss/ligue-1.html",
+      "status": "terms_unverified",
+      "required_action": "Obtenir des conditions applicables vérifiables ou l’autorisation de l’éditeur avant de lire le contenu.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_002",
+      "name": "Coteur - Pronostics Ligue 1",
+      "endpoint": "https://www.coteur.com/pronostic/foot/ligue-1",
+      "status": "permission_required",
+      "required_action": "Permission écrite de l’éditeur pour la collecte automatisée de ce point d’accès, ou flux/API contractuel; la seule autorisation du propriétaire de Robin ne remplace pas celle de l’éditeur.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_004",
+      "name": "ProTipster France - Pronostics Ligue 1",
+      "endpoint": "https://www.protipster.fr/pronostics/foot/france/ligue-1",
+      "status": "terms_unverified",
+      "required_action": "Obtenir des conditions applicables vérifiables ou l’autorisation de l’éditeur avant de lire le contenu.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_007",
+      "name": "MediaPronos (Site Web)",
+      "endpoint": "https://mediapronos.com/feed/",
+      "status": "permission_required",
+      "required_action": "Permission écrite de l’éditeur pour la collecte automatisée de ce point d’accès, ou flux/API contractuel; la seule autorisation du propriétaire de Robin ne remplace pas celle de l’éditeur.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_008",
+      "name": "DailySportPick - Ligue 1 Tips",
+      "endpoint": "https://dailysportpick.com/fr/tips/ligue-1-tips/",
+      "status": "terms_http_301",
+      "required_action": "Valider une URL canonique de conditions et un nouveau profil borné; aucune redirection suivie silencieusement.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_009",
+      "name": "Zone-Supporter (ex-ClubPronostics)",
+      "endpoint": "https://www.zone-supporter.com/tipsters-foot/",
+      "status": "robots_http_429",
+      "required_action": "Blocage HTTP/robots ou échec transport: pas de contournement. Attendre la levée par l’éditeur ou utiliser un accès officiel; toute nouvelle tentative reste bornée et revue.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_010",
+      "name": "Les-Transferts - Rubrique Paris Sportifs",
+      "endpoint": "https://www.les-transferts.com/paris-sportifs/feed/",
+      "status": "robots_denied",
+      "required_action": "Blocage HTTP/robots ou échec transport: pas de contournement. Attendre la levée par l’éditeur ou utiliser un accès officiel; toute nouvelle tentative reste bornée et revue.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_011",
+      "name": "OneFootball - Pronostics & Analyses",
+      "endpoint": "https://onefootball.com/fr/paris-sportif/pronostics",
+      "status": "terms_unverified",
+      "required_action": "Obtenir des conditions applicables vérifiables ou l’autorisation de l’éditeur avant de lire le contenu.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_020",
+      "name": "Feedinco - French Ligue 1 Predictions",
+      "endpoint": "https://www.feedinco.com/predictions/french-ligue-1",
+      "status": "robots_http_302",
+      "required_action": "Blocage HTTP/robots ou échec transport: pas de contournement. Attendre la levée par l’éditeur ou utiliser un accès officiel; toute nouvelle tentative reste bornée et revue.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_021",
+      "name": "Statarea - Football Predictions",
+      "endpoint": "https://www.statarea.com/predictions",
+      "status": "permission_required",
+      "required_action": "Permission écrite de l’éditeur pour la collecte automatisée de ce point d’accès, ou flux/API contractuel; la seule autorisation du propriétaire de Robin ne remplace pas celle de l’éditeur.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_023",
+      "name": "Parieurs Foot - Romain (YouTube)",
+      "endpoint": "https://www.youtube.com/feeds/videos.xml?channel_id=UCfx9qA0LoWgvAKMbXITPbbg",
+      "status": "official_api_required",
+      "required_action": "Accès officiel YouTube à configurer localement, lecture seule et quota explicite. Métadonnées vidéo ≠ pronostic; des descriptions/transcriptions autorisées reliant auteur, sélection et match restent nécessaires.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_025",
+      "name": "Objectif Profits - Paris Sportifs Football (YouTube)",
+      "endpoint": "https://www.youtube.com/feeds/videos.xml?channel_id=UCTl5F_SZE0k9Qevf4P2J6Gg",
+      "status": "official_api_required",
+      "required_action": "Accès officiel YouTube à configurer localement, lecture seule et quota explicite. Métadonnées vidéo ≠ pronostic; des descriptions/transcriptions autorisées reliant auteur, sélection et match restent nécessaires.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_026",
+      "name": "MediaPronos TV (YouTube)",
+      "endpoint": "https://www.youtube.com/feeds/videos.xml?channel_id=UCc6uHcXhEG6jC-bI0_5K-GA",
+      "status": "official_api_required",
+      "required_action": "Accès officiel YouTube à configurer localement, lecture seule et quota explicite. Métadonnées vidéo ≠ pronostic; des descriptions/transcriptions autorisées reliant auteur, sélection et match restent nécessaires.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_027",
+      "name": "Arno Prono Foot (YouTube)",
+      "endpoint": "https://www.youtube.com/feeds/videos.xml?channel_id=UC1dxTHo5KZke1ZtoNsbYMRw",
+      "status": "official_api_required",
+      "required_action": "Accès officiel YouTube à configurer localement, lecture seule et quota explicite. Métadonnées vidéo ≠ pronostic; des descriptions/transcriptions autorisées reliant auteur, sélection et match restent nécessaires.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_028",
+      "name": "Rostom Foot (YouTube)",
+      "endpoint": "https://www.youtube.com/feeds/videos.xml?channel_id=UC-nQ-xo9_Yzi58bbBRnRNSA",
+      "status": "official_api_required",
+      "required_action": "Accès officiel YouTube à configurer localement, lecture seule et quota explicite. Métadonnées vidéo ≠ pronostic; des descriptions/transcriptions autorisées reliant auteur, sélection et match restent nécessaires.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_029",
+      "name": "Arthur D (YouTube)",
+      "endpoint": "https://www.youtube.com/feeds/videos.xml?channel_id=UC8zz4KsLHylM3H8V233bZkA",
+      "status": "official_api_required",
+      "required_action": "Accès officiel YouTube à configurer localement, lecture seule et quota explicite. Métadonnées vidéo ≠ pronostic; des descriptions/transcriptions autorisées reliant auteur, sélection et match restent nécessaires.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_030",
+      "name": "TonyoTv (YouTube)",
+      "endpoint": "https://www.youtube.com/feeds/videos.xml?channel_id=UCtKlXcnN6yNIK2078QHZCmQ",
+      "status": "official_api_required",
+      "required_action": "Accès officiel YouTube à configurer localement, lecture seule et quota explicite. Métadonnées vidéo ≠ pronostic; des descriptions/transcriptions autorisées reliant auteur, sélection et match restent nécessaires.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_031",
+      "name": "Leonel Prono (YouTube)",
+      "endpoint": "https://www.youtube.com/@LEONELPRONO",
+      "status": "official_api_required",
+      "required_action": "Accès officiel YouTube à configurer localement, lecture seule et quota explicite. Métadonnées vidéo ≠ pronostic; des descriptions/transcriptions autorisées reliant auteur, sélection et match restent nécessaires.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_032",
+      "name": "Genie Pro (YouTube)",
+      "endpoint": "https://www.youtube.com/@GENIEPRO-b5z",
+      "status": "official_api_required",
+      "required_action": "Accès officiel YouTube à configurer localement, lecture seule et quota explicite. Métadonnées vidéo ≠ pronostic; des descriptions/transcriptions autorisées reliant auteur, sélection et match restent nécessaires.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_035",
+      "name": "Parieur-Sportif.com",
+      "endpoint": "https://parieur-sportif.com/feed/",
+      "status": "terms_unverified",
+      "required_action": "Obtenir des conditions applicables vérifiables ou l’autorisation de l’éditeur avant de lire le contenu.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_037",
+      "name": "Pari-Ligue1.fr - Concours Pronostics",
+      "endpoint": "https://www.pari-ligue1.fr/",
+      "status": "terms_unverified",
+      "required_action": "Obtenir des conditions applicables vérifiables ou l’autorisation de l’éditeur avant de lire le contenu.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_038",
+      "name": "Forum SCO1919 - Topic Pronos Ligue 1",
+      "endpoint": "http://forum.sco1919.com/viewtopic.php?t=13259",
+      "status": "collected",
+      "required_action": "Le flux public fonctionne pour les publications. Il manque la preuve du marché, du choix, du rôle personnel et de la chronologie avant match; ne pas autoriser un simple article comme pronostic.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_040",
+      "name": "Forum Poteaux-Carres - Concours Pronostics",
+      "endpoint": "https://forum.poteaux-carres.com/viewforum.php?f=42",
+      "status": "robots_http_404",
+      "required_action": "Blocage HTTP/robots ou échec transport: pas de contournement. Attendre la levée par l’éditeur ou utiliser un accès officiel; toute nouvelle tentative reste bornée et revue.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_042",
+      "name": "Forum Hardware.fr - Topic Mon Petit Prono L1/L2",
+      "endpoint": "https://forum.hardware.fr/hfr/Discussions/Sports/petit-ligue-ligue-sujet_94713_1.htm",
+      "status": "read_failed",
+      "required_action": "Blocage HTTP/robots ou échec transport: pas de contournement. Attendre la levée par l’éditeur ou utiliser un accès officiel; toute nouvelle tentative reste bornée et revue.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_043",
+      "name": "Qui Parier ? (QuiParier.com) - Pronostics Ligue 1",
+      "endpoint": "https://www.quiparier.com/competition-football,ligue-1.html",
+      "status": "permission_required",
+      "required_action": "Permission écrite de l’éditeur pour la collecte automatisée de ce point d’accès, ou flux/API contractuel; la seule autorisation du propriétaire de Robin ne remplace pas celle de l’éditeur.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_044",
+      "name": "Wallabet - Pronostics Ligue 1",
+      "endpoint": "https://wallabet.fr/feed/",
+      "status": "collected",
+      "required_action": "Le flux public fonctionne pour les publications. Il manque la preuve du marché, du choix, du rôle personnel et de la chronologie avant match; ne pas autoriser un simple article comme pronostic.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_045",
+      "name": "MightyTips - French Ligue 1 Predictions",
+      "endpoint": "https://www.mightytips.com/football-predictions/ligue-1/",
+      "status": "collected",
+      "required_action": "Le flux public fonctionne pour les publications. Il manque la preuve du marché, du choix, du rôle personnel et de la chronologie avant match; ne pas autoriser un simple article comme pronostic.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_046",
+      "name": "Kicktipp France - Pronostics Ligue 1",
+      "endpoint": "https://www.kicktipp.fr/pronostics-ligue1/",
+      "status": "read_failed",
+      "required_action": "Blocage HTTP/robots ou échec transport: pas de contournement. Attendre la levée par l’éditeur ou utiliser un accès officiel; toute nouvelle tentative reste bornée et revue.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_047",
+      "name": "Football.fr - Rubrique Ligue 1",
+      "endpoint": "https://www.football.fr/ligue-1/feed",
+      "status": "permission_required",
+      "required_action": "Permission écrite de l’éditeur pour la collecte automatisée de ce point d’accès, ou flux/API contractuel; la seule autorisation du propriétaire de Robin ne remplace pas celle de l’éditeur.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_049",
+      "name": "Maxifoot - Matchs & Actualites Ligue 1",
+      "endpoint": "http://rss.maxifoot.com/football-general.xml",
+      "status": "cross_domain_permission_required",
+      "required_action": "Valider le nouvel hôte HTTPS avec son robots.txt et ses conditions; aucun suivi automatique inter-domaines.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_051",
+      "name": "Onze Mondial - Ligue 1 & Paris Sportifs",
+      "endpoint": "https://www.onzemondial.com/rss/france.html",
+      "status": "terms_unverified",
+      "required_action": "Obtenir des conditions applicables vérifiables ou l’autorisation de l’éditeur avant de lire le contenu.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_052",
+      "name": "LiveFoot - Rubrique Ligue 1",
+      "endpoint": "https://www.livefoot.fr/france/ligue1/ligue1.php",
+      "status": "collected",
+      "required_action": "Le flux public fonctionne pour les publications. Il manque la preuve du marché, du choix, du rôle personnel et de la chronologie avant match; ne pas autoriser un simple article comme pronostic.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_053",
+      "name": "Football365 - Rubrique Ligue 1",
+      "endpoint": "https://www.football365.fr/feed",
+      "status": "permission_required",
+      "required_action": "Permission écrite de l’éditeur pour la collecte automatisée de ce point d’accès, ou flux/API contractuel; la seule autorisation du propriétaire de Robin ne remplace pas celle de l’éditeur.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_054",
+      "name": "Pronor - Blog & Analyses Pronostics Ligue 1",
+      "endpoint": "https://www.pronor.fr/feed/",
+      "status": "terms_http_301",
+      "required_action": "Valider une URL canonique de conditions et un nouveau profil borné; aucune redirection suivie silencieusement.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_055",
+      "name": "Ligue1Pro - Concours Gratuit de Pronostics Ligue 1",
+      "endpoint": "https://www.ligue1pro.com/index.php?page=prono",
+      "status": "terms_unverified",
+      "required_action": "Obtenir des conditions applicables vérifiables ou l’autorisation de l’éditeur avant de lire le contenu.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_057",
+      "name": "ASM-VIZU - Forum AS Monaco & Pronostics Ligue 1 Vizu",
+      "endpoint": "https://www.asm-vizu.net/forum/divers/fvpa/1830854-ligue-1-vizu-2026-2027-8%C3%A8me-journ%C3%A9e-avant-le-23-10-20h45",
+      "status": "robots_denied",
+      "required_action": "Blocage HTTP/robots ou échec transport: pas de contournement. Attendre la levée par l’éditeur ou utiliser un accès officiel; toute nouvelle tentative reste bornée et revue.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_058",
+      "name": "Forum Le Gruppetto - Section Football & Pronostics",
+      "endpoint": "https://legruppetto.fr/forum/feed.php?f=21",
+      "status": "readable_no_publication",
+      "required_action": "Le point d’accès est lisible mais ne fournit aucune publication exploitable; demander un flux structuré ou une URL pertinente vérifiable.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_059",
+      "name": "Forum Info-Stades - Section Ligue 1",
+      "endpoint": "https://www.info-stades.fr/forum/viewforum.php?f=1",
+      "status": "collected",
+      "required_action": "Le flux public fonctionne pour les publications. Il manque la preuve du marché, du choix, du rôle personnel et de la chronologie avant match; ne pas autoriser un simple article comme pronostic.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_061",
+      "name": "LesViolets.com - Site Independant Supporters Toulouse FC",
+      "endpoint": "https://www.lesviolets.com/actu/rss",
+      "status": "collected",
+      "required_action": "Le flux public fonctionne pour les publications. Il manque la preuve du marché, du choix, du rôle personnel et de la chronologie avant match; ne pas autoriser un simple article comme pronostic.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_062",
+      "name": "CulturePSG - Media Independant PSG & Ligue 1",
+      "endpoint": "https://www.culturepsg.com/news?rss",
+      "status": "collected",
+      "required_action": "Le flux public fonctionne pour les publications. Il manque la preuve du marché, du choix, du rôle personnel et de la chronologie avant match; ne pas autoriser un simple article comme pronostic.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_063",
+      "name": "MassaliaLive - Blog & Notes Communautaires OM / Ligue 1",
+      "endpoint": "http://www.massalialive.com/feed",
+      "status": "collected",
+      "required_action": "Le flux public fonctionne pour les publications. Il manque la preuve du marché, du choix, du rôle personnel et de la chronologie avant match; ne pas autoriser un simple article comme pronostic.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_064",
+      "name": "AllezParis.fr - Blog Independant Supporters PSG Ligue 1",
+      "endpoint": "https://allezparis.fr/feed/",
+      "status": "permission_required",
+      "required_action": "Permission écrite de l’éditeur pour la collecte automatisée de ce point d’accès, ou flux/API contractuel; la seule autorisation du propriétaire de Robin ne remplace pas celle de l’éditeur.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_065",
+      "name": "Jeunesfooteux - Blog Independant Actu & Matchs Ligue 1",
+      "endpoint": "https://www.jeunesfooteux.com/feed/",
+      "status": "terms_http_301",
+      "required_action": "Valider une URL canonique de conditions et un nouveau profil borné; aucune redirection suivie silencieusement.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_068",
+      "name": "Footpredictif - Pronostics & Probabilites Ligue 1",
+      "endpoint": "https://www.footpredictif.fr/feed/",
+      "status": "permission_required",
+      "required_action": "Permission écrite de l’éditeur pour la collecte automatisée de ce point d’accès, ou flux/API contractuel; la seule autorisation du propriétaire de Robin ne remplace pas celle de l’éditeur.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_069",
+      "name": "Sport.fr - Rubrique Football & Ligue 1",
+      "endpoint": "https://www.sport.fr/football/feed",
+      "status": "terms_unverified",
+      "required_action": "Obtenir des conditions applicables vérifiables ou l’autorisation de l’éditeur avant de lire le contenu.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_070",
+      "name": "Get French Football News (GFFN) - Ligue 1",
+      "endpoint": "https://www.getfootballnewsfrance.com/ligue-1/feed/",
+      "status": "collected",
+      "required_action": "Le flux public fonctionne pour les publications. Il manque la preuve du marché, du choix, du rôle personnel et de la chronologie avant match; ne pas autoriser un simple article comme pronostic.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_071",
+      "name": "FootLegende - Rubrique Ligue 1",
+      "endpoint": "https://www.footlegende.fr/tag/ligue-1/feed",
+      "status": "permission_required",
+      "required_action": "Permission écrite de l’éditeur pour la collecte automatisée de ce point d’accès, ou flux/API contractuel; la seule autorisation du propriétaire de Robin ne remplace pas celle de l’éditeur.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_072",
+      "name": "FootMarseille - Actualites OM & Ligue 1",
+      "endpoint": "https://www.footmarseille.com/feed",
+      "status": "terms_http_301",
+      "required_action": "Valider une URL canonique de conditions et un nouveau profil borné; aucune redirection suivie silencieusement.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_073",
+      "name": "Le Corner - Media Associatif Culture Foot & Ligue 1",
+      "endpoint": "https://lecorner.org/tag/ligue-1/feed/",
+      "status": "permission_required",
+      "required_action": "Permission écrite de l’éditeur pour la collecte automatisée de ce point d’accès, ou flux/API contractuel; la seule autorisation du propriétaire de Robin ne remplace pas celle de l’éditeur.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_074",
+      "name": "DemiVolee - Blog Independant Analyses & Matchs Ligue 1",
+      "endpoint": "https://www.demivolee.com/feed/",
+      "status": "permission_required",
+      "required_action": "Permission écrite de l’éditeur pour la collecte automatisée de ce point d’accès, ou flux/API contractuel; la seule autorisation du propriétaire de Robin ne remplace pas celle de l’éditeur.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_075",
+      "name": "La Diagonale - Site Independant Supporters AS Monaco & Ligue 1",
+      "endpoint": "https://www.ladiagonale.net/index.php/feed/",
+      "status": "permission_required",
+      "required_action": "Permission écrite de l’éditeur pour la collecte automatisée de ce point d’accès, ou flux/API contractuel; la seule autorisation du propriétaire de Robin ne remplace pas celle de l’éditeur.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_076",
+      "name": "AllezPaillade - Blog Independant Supporters MHSC & Ligue 1",
+      "endpoint": "https://www.allezpaillade.com/feed/",
+      "status": "terms_unverified",
+      "required_action": "Obtenir des conditions applicables vérifiables ou l’autorisation de l’éditeur avant de lire le contenu.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_077",
+      "name": "Girondins4Ever - Blog Independant Football & Ligue 1",
+      "endpoint": "https://girondins4ever.com/feed/",
+      "status": "permission_required",
+      "required_action": "Permission écrite de l’éditeur pour la collecte automatisée de ce point d’accès, ou flux/API contractuel; la seule autorisation du propriétaire de Robin ne remplace pas celle de l’éditeur.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_078",
+      "name": "Tribune Nantaise - Blog Independant Supporters FC Nantes & Ligue 1",
+      "endpoint": "https://tribunenantaise.fr/tag/ligue-1/feed/",
+      "status": "permission_required",
+      "required_action": "Permission écrite de l’éditeur pour la collecte automatisée de ce point d’accès, ou flux/API contractuel; la seule autorisation du propriétaire de Robin ne remplace pas celle de l’éditeur.",
+      "personal_picks_proven": 0
+    },
+    {
+      "id": "SRC_079",
+      "name": "En Vert Et Contre Tous (EVECT) - Site Independant Supporters ASSE & Ligue 1",
+      "endpoint": "https://www.envertetcontretous.fr/actus/ligue-1",
+      "status": "permission_required",
+      "required_action": "Permission écrite de l’éditeur pour la collecte automatisée de ce point d’accès, ou flux/API contractuel; la seule autorisation du propriétaire de Robin ne remplace pas celle de l’éditeur.",
+      "personal_picks_proven": 0
+    }
+  ]
+}

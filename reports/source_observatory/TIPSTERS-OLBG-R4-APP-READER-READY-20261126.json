@@ -1,0 +1,9 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.OLBG.R4.APP.PROJECTION.READY.20261126",
+  "status": "VERIFIED_READER_READY_FIRST_SOURCE_CAPTURE_HALTED",
+  "scope": "Isolated R4reader loaded actual source files under real projection grant;0closedslots at preflight.Campaign subsequentlyhalted0GETat firstslot; archive remainsavailable.Reader readiness is not sourcecollection success.",
+  "binding": "da1289d5b805b5b7dfb18943121ea86f6e74772acc5f62a6defa3dad19d400f9",
+  "readerSHA256": "644f9a87b44f6b08c147100d8d01365a3dea9e6fc75e6d36d186378dabf117d5",
+  "preflightSHA256": "1d8fc6f48b477f58407958fa26adaa857632dc8c8f1346287dd2300d5c121c46",
+  "sourceReady": false
+}

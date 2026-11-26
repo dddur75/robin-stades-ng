@@ -1,0 +1,29 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.TELEGRAM.ORDINARY.PERSONAL.DOCS.AUTHORITY.20261122",
+  "generatedAt": "2026-11-22T00:37:44.442Z",
+  "status": "BOUNDED_DOCUMENTARY_ONLY",
+  "scope": "Missing official general ToS and public-message-link documentation, not channel data or permission for collection.",
+  "planSHA256": "3dbe44982f4a73f7af90fd294ff77c5b7b95a45f46c5654b98b6053b77649f4f",
+  "manifestSHA256": "36e08411909829ccab8a83e0b1e25ba800f11cf19bb07e802b88682d82e55913",
+  "exactURLs": [
+    "https://telegram.org/tos",
+    "https://core.telegram.org/api/links#public-message-links"
+  ],
+  "maximumMediatedCalls": 2,
+  "nativeHTTPCount": "UNKNOWN_TOOL_BACKEND",
+  "nativeSourceGET": 0,
+  "channelMessageOrPreviewReads": 0,
+  "accountActions": 0,
+  "sourceRetentionOrAIGrant": 0,
+  "deadlineSeconds": 180,
+  "reviewedBy": [
+    "C0",
+    "C4"
+  ],
+  "priorFinding": "Retained texts distinguish ordinary intended use, API-client prerequisites and broader AI/ML restrictions; universal export/API/permission requirement is not established.",
+  "mandatoryMissingSources": [
+    "general_ToS",
+    "official_public_message_links"
+  ],
+  "globalDelivery": "PARTIAL"
+}

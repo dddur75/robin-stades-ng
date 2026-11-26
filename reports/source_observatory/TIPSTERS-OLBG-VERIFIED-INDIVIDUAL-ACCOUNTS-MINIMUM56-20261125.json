@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ROBIN_VERIFIED_INDIVIDUAL_ACCOUNTS_LOWER_BOUND_V1",
+  "generatedAt": "2026-11-25T21:28:07.704Z",
+  "claimId": "DATA.SOURCE_OBSERVATORY.OLBG.VERIFIED.INDIVIDUAL.ACCOUNTS.MINIMUM56.20261125",
+  "missionId": "OLBG_NOV26_FOURTEEN_CHOICES_APP_ADMISSION_20261125_R2",
+  "status": "DOCUMENTED_LOWER_BOUND_NOT_EXHAUSTIVE",
+  "scope": "At least56distinct individual source accounts have one retained native personal football choice observed before official scheduledkickoff and presentpublic715. Prior54witnesses reused plus2disjoint account witnesses; neither56newaccounts nor exhaustivefullroster nor civilidentityverified.",
+  "sourceClaims": [
+    "DATA.SOURCE_OBSERVATORY.OLBG.VERIFIED.INDIVIDUAL.ACCOUNTS.MINIMUM54.20261125",
+    "ENG.SOURCE_OBSERVATORY.OLBG.NOV26.FOURTEEN.CHOICES.APP.RUNTIME.RESULT.20261125",
+    "DATA.SOURCE_OBSERVATORY.OLBG.HUNDRED.NEW.WORKBOOK.PROFILES.BATCH.R2.RESULT.20261125",
+    "DATA.SOURCE_OBSERVATORY.OLBG.THREE.CLUB.ALIASES.QUALIFICATION.RESULT.20261125"
+  ],
+  "proofExtensionSHA256": "0d53eef1456a840849cd474ed027cd9384c677121c7eacb093fb980e52c1e7f2",
+  "publicReadbackSHA256": "9c77fd3903aa59c808d99e50669808d5711691f4c28920914a0652b55b8ab801",
+  "verifiedIndividualSourceAccountsMinimum": 56,
+  "additionalAccountsThisTurn": 2,
+  "priorVerifiedMinimum": 54,
+  "oneDistinctChoiceWitnessPerAccount": true,
+  "exhaustive": false,
+  "sourceId": "SRC_014",
+  "SourceGET": 0,
+  "APPWrites": 0
+}

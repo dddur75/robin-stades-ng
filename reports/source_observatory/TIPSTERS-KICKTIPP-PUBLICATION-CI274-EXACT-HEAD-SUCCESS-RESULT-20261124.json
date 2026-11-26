@@ -1,0 +1,166 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.KICKTIPP.PUBLICATION.CI274.EXACT.HEAD.SUCCESS.RESULT.20261124",
+  "missionId": "KICKTIPP_HREF_PUBLICATION_GIT_R1_20261124",
+  "status": "PASS_AND_HOLD",
+  "keys": [
+    "C0",
+    "C1",
+    "C4"
+  ],
+  "scope": "Independent terminal GitHub CI274 success for the exact committed head7b53 and approved tree1fef only. Later uncommitted UI R5 receipts, private OLBG observer engineering and metadata are outside this CI snapshot. No source qualification or full delivery inferred.",
+  "sourceClaims": [
+    "ENG.SOURCE_OBSERVATORY.KICKTIPP.HREF.PUBLICATION.ACTUAL.RESULT.20261124"
+  ],
+  "commitSHA": "7b53b3b7f35ecb4e050c39cfd0ec0b8866f4a783",
+  "treeSHA": "1fef534a1e09395b1b2107a556ecd66d615547ce",
+  "parentSHA": "5a4483ceab9693cae8019e048a72a5180bc7997e",
+  "runId": 45380371219,
+  "runNumber": 274,
+  "runStatus": "completed",
+  "runConclusion": "success",
+  "observedTerminalAtUTC": "2026-11-24T11:50:00.797Z",
+  "GitHubRunFinishedAtUTC": null,
+  "jobsSuccessful": 17,
+  "jobsFailed": 0,
+  "jobsCancelled": 0,
+  "jobsSkipped": 0,
+  "jobsActive": 0,
+  "testLevelSkipCounts": "NOT_CAPTURED_NO_ZERO_SKIP_TEST_CLAIM",
+  "primarySHA": "f317ef8cd2bf6edef4833be69a8e9e8539036c37b0b4d91438d32ebb5726dacb",
+  "jobs": [
+    {
+      "id": 138397525893,
+      "run_id": 45380371219,
+      "name": "Bounded live canary - Ubuntu",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138397526065,
+      "run_id": 45380371219,
+      "name": "Residual Fault Matrix",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138397526104,
+      "run_id": 45380371219,
+      "name": "Exact Workflow Entrypoint",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138397526110,
+      "run_id": 45380371219,
+      "name": "End-to-End Live Path Replay",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138397526190,
+      "run_id": 45380371219,
+      "name": "Jalon 10 - entrees de preuve gelees",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138397526260,
+      "run_id": 45380371219,
+      "name": "Historical Authority Workflows Disabled",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138397526269,
+      "run_id": 45380371219,
+      "name": "Historical Deep — contrat cache-only",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138397526325,
+      "run_id": 45380371219,
+      "name": "Bounded live canary - Windows",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138397526335,
+      "run_id": 45380371219,
+      "name": "Chronos PostgreSQL profiles / Chronos static contracts",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138397526621,
+      "run_id": 45380371219,
+      "name": "Chronos PostgreSQL profiles / tests (superuser)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138397526700,
+      "run_id": 45380371219,
+      "name": "Chronos PostgreSQL profiles / tests (non_superuser_createrole)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138397526789,
+      "run_id": 45380371219,
+      "name": "Chronos PostgreSQL profiles / Chronos source and activation",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138398962446,
+      "run_id": 45380371219,
+      "name": "Chronos PostgreSQL profiles / Chronos provider-free Cockpit",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138401466758,
+      "run_id": 45380371219,
+      "name": "Quality and domain tests",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138401466766,
+      "run_id": 45380371219,
+      "name": "Robin Experience — preuves visuelles",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138401466777,
+      "run_id": 45380371219,
+      "name": "Jalon 10 - trois temoins R3 bornes",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 138421109435,
+      "run_id": 45380371219,
+      "name": "tests",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "PR": {
+    "number": 133,
+    "state": "open",
+    "draft": true,
+    "merged": false
+  },
+  "allPublicationMutationsClosed": true,
+  "readOnlyCIWatchOutsideClosedMutationWindow": true,
+  "noMoreCIPolling": true,
+  "sourceGET": 0,
+  "sourceReady": false,
+  "newAdmittedForecasts": 0,
+  "allCompatibleIntegrated": false,
+  "compatibleDenominator": null,
+  "overallDelivery": "PARTIAL"
+}

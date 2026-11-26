@@ -1,0 +1,28 @@
+{
+  "claimId": "ENG.SOURCE_OBSERVATORY.CI280.WINDOWS.EXACT.JOB.FAILURE.RESULT.20261125",
+  "status": "VERIFIED",
+  "commit": "f0849b8d1f864967b6c8a47f22bc831522602692",
+  "workflowRunId": 45556155320,
+  "workflowRunNumber": 280,
+  "jobId": 139008582737,
+  "jobName": "Bounded live canary - Windows",
+  "jobConclusion": "failure",
+  "failedNodeId": "tests/capture/test_predns_orchestration_v1.py::test_h24_future_planning_and_ready_direct_behavior_are_unchanged",
+  "observedAssertion": "POST_DNS_HARD_STOP instead of OWNER_REVIEW_PACK_CREATED",
+  "passedTestsInJob": 1030,
+  "failedTestsInJob": 1,
+  "primaryLogSHA": "a81b33c3ca671ab1ace1e634be319afafd990e6145957a25ad762dd324c2bd36",
+  "wholeWorkflowTerminalOutcome": "failure",
+  "jobTotals": {
+    "success": 15,
+    "failure": 2,
+    "total": 17
+  },
+  "historicalDeep": "success",
+  "quality": "success",
+  "cause": "UNKNOWN_EXACT_CODE_NOT_RETAINED_IN_CI_LOG",
+  "sourceMetricScope": "ENGINEERING_ONLY_NO_NEW_SOURCE_DATA",
+  "rawLogPublished": false,
+  "SourceGET": 0,
+  "scope": "Exact CI280 Windows job failure; generic status is not enough to establish its cause."
+}
